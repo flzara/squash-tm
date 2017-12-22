@@ -1,0 +1,367 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title th:text="#{title.customField}">Espace detail champ personnalisé</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<style th:include="admin/admin-subpage.frag:: subpage-css" th:remove="tag"></style>
+
+
+<script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
+<script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
+<script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+<script type="text/javascript" th:inline="javascript">
+	var squashtm = {};
+	squashtm.app = {
+		locale : /*[[#{squashtm.locale}]]*/,
+		contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
+		cfMod : {
+			noDateLabel: /*[[ #{squashtm.nodata} ]]*/ "-",
+			dateFormat: /*[[ #{squashtm.dateformatShort.datepicker} ]]*/ "dd/mm/yy",
+			customFieldUrl : /*[[ @{'/custom-fields/'+${customField.id}} ]]*/"http://localhost:8080/custom-fields/1",
+			richEditPlaceHolder : /*[[#{rich-edit.placeholder}]]*/'(Click to edit ...)',
+			confirmMandatoryTitle : /*[[#{title.confirmMandatory}]]*/'Confirm mandatory',
+			confirmMandatoryMessage : /*[[#{message.confirmMandatory}]]*/'Do you confirm the change to mandatory ? This change has bad consequences on your health !',
+			confirmLabel : /*[[#{label.Confirm}]]*/'Confirm',
+			okLabel : /*[[ #{label.Ok} ]]*/'Ok',
+			cancelLabel : /*[[ #{label.Cancel} ]]*/'Cancel',
+			informationPanelLabel : /*[[#{label.CUFInformation}]]*/'Custom-Field informations',
+			popupErrorTitle : /*[[#{popup.title.error}]]*/'Error',
+			mandatoryNeedsDefaultMessage : /*[[#{message.mandatoryNeedsDefault}]]*/'The custom field cannot become mandatory without a default value.\n Please set a default value before you uncheck "optional".',
+			optionsPanelLabel : /*[[#{title.optionsDefinition}]]*/'Options definition',
+			ckeditorLang : /*[[#{rich-edit.language.value}]]*/'en',
+			renameLabel : /*[[#{label.Rename}]]*/'Rename',
+			renameCufTitle : /*[[#{title.renameCuf}]]*/'Rename custom-field',
+			checkboxJsonDefaultValues : {
+				'false' : /*[[#{label.false}]]*/"false",
+				'true' : /*[[#{label.true}]]*/"true",
+			},
+			defaultOptionMandatoryMessage : /*[[#{message.defaultOptionMandatory}]]*/'Default option is mandatory when custom field is not optional',
+			defaultValueMandatoryMessage : /*[[#{message.defaultValueMandatory}]]*/'Default value is mandatory when custom field is not optional',
+			optionsTable : {
+				languageUrl : /*[[ @{/datatables/messages} ]]*/"http://localhost:8080/squash/datatables/messages",
+				newOptionUrl : /*[[@{'/custom-fields/'+${customField.id}+'/options/new'}]]*/"http://localhost:8080/squash/custom-fields/1/options/new",
+				ajaxSource : /*[[ @{'/custom-fields/'+${customField.id}+'/options'} ]]*/"http://localhost:8080/squash/custom-fields/1/options",
+				displayLength : /*[[ ${customFieldOptionsPageSize} ]]*/50,
+				deleteTooltip : /*[[ #{label.Remove} ]]*/'Remove',
+				deleteConfirmMessage : /*[[ #{message.customFieldOption.remove} ]]*/'Remove ?',
+				deleteConfirmMessageFirst : /*[[ #{message.customFieldOption.remove.first} ]]*/'Remove ?',
+				deleteConfirmMessageSecond : /*[[ #{message.customFieldOption.remove.second} ]]*/'Remove ?',
+				deleteConfirmMessageThird : /*[[ #{message.customFieldOption.remove.third} ]]*/'Remove ?',
+				deleteConfirmMessageFourth : /*[[ #{message.customFieldOption.remove.fourth} ]]*/'Remove ?',
+				renameCufOptionTitle : /*[[#{title.renameCufOption}]]*/'Rename custom field option',
+				changeOptionCodeTitle : /*[[#{title.changeCufOptionCode}]]*/'Change custom field option code',
+				addCufOptionTitle : /*[[#{title.addCufOption}]]*/'Add custom field option',
+				renameOptionLabel : /*[[#{label.Rename}]]*/'Rename',
+				changeOptionCodeLabel : /*[[#{label.changeCode}]]*/'Change code',
+				addOptionLabel : /*[[#{label.addOption}]]*/'Add option',
+			}
+		}
+	};
+</script>
+<script data-main="../../scripts/custom-field-modification.js"
+  th:attr="data-main=@{/scripts/custom-field-modification.js}" src="../../scripts/require.js"
+  th:src="@{/scripts/require-min.js}">
+
+</script>
+
+</head>
+<body>
+  <div id="navigation" th:include="navbar.frag :: navbar('')">NAVBAR</div>
+  <div id="workspace">
+    <div id="workspace-title">
+      <div class="snap-left">
+        <h2 th:text="#{label.administration}" class="admin">Administration</h2>
+      </div>
+      <div class="snap-right">
+        <div class="main-menubar " th:include="menubar.frag :: menubar">MENUBAR</div>
+        <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">NOTIFICATION</div>
+      </div>
+    </div>
+    <div id="sub-page" class="sub-page">
+
+      <div id="sub-page-header" class="sub-page-header">
+
+        <div id="sub-page-title" class="sub-page-title">
+          <h2 th:text="#{title.customField}">Espace detail champ personnalisé de test</h2>
+        </div>
+
+        <div id="sub-page-buttons" class="sub-page-buttons">
+
+          <input id="back" type="button" th:value="#{ label.Back }" class="sq-btn" value="Back" />
+
+        </div>
+
+        <div class="unsnap"></div>
+      </div>
+
+      <div id="sub-page-content" class="sub-page-content">
+
+        <div id="information-content">
+          <div id="cuf-name-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
+            <div style="float: left; height: 3em">
+              <h2>
+                <label for="cuf-name-header" th:text="#{label.customField}">Custom Field</label> <a id="cuf-name-header"
+                  href="#" th:text="${customField.name}">Test Case description</a>
+              </h2>
+            </div>
+            <div class="snap-right"></div>
+            <div class="unsnap"></div>
+          </div>
+
+          <div class="fragment-body unstyled">
+            <div id="cuf-toolbar" class="toolbar-class ui-corner-all ">
+              <div class="toolbar-button-panel">
+                <input type="button" th:value="#{ label.Rename }" value="Rename" id="rename-cuf-button" class="sq-btn button" />
+                <input type="button" th:value="#{ label.Delete }" value="Delete" id="delete-cuf-button" class="sq-btn button" />
+              </div>
+            </div>
+            <br /> <br />
+
+            <div id="cuf-info-panel" class="information-panel sq-tg expand">
+              <div class="tg-head">
+                <h3 th:text="#{label.CUFInformation}"></h3>
+              </div>
+              <div class="tg-body">
+                <div class="display-table" id="cuf-infos-table">
+                  <div class="display-table-row controls control-group" >
+                    <label for="cuf-label" th:text="#{label.Label}" class="display-table-cell" >Label</label>
+                    <div id="cuf-label" class="display-table-cell" th:text="${customField.label}">Description</div>
+                    <span class="help-inline">&nbsp;</span>
+                  </div>
+                  <div class="display-table-row controls control-group">
+                    <label for="cuf-code" class="control-label display-table-cell" th:text="#{label.code}">Code</label>
+                      <div id="cuf-code" class="display-table-cell" th:text="${customField.code}">code</div>
+                      <span class="help-inline">&nbsp;</span>
+                  </div>
+                  <div class="display-table-row">
+                    <label for="inputType" th:text="#{label.inputType}" class="display-table-cell" >Input Type</label>
+                    <div id="cuf-inputType" class="display-table-cell"
+                      th:attr="data-type=${customField.inputType.name()}" data-type="PLAIN_TEXT"
+                      th:text="#{${customField.inputType.i18nKey}}">PLAIN_TEXT</div>
+                  </div>
+                  <div th:unless="${customField.inputType.name() == 'CHECKBOX'}" class="display-table-row">
+                    <label for="cf-optional" th:text="#{label.Optional}" class="display-table-cell" >Optional</label>
+                    <div class="table-cell">
+                      <input id="cf-optional" name="optional" value="optional" type="checkbox"
+                        th:checked="${customField.optional}" />
+                    </div>
+                    <span class="error-message  optional-error"></span>
+                  </div>
+                  <div th:unless="${customField.inputType.name() == 'DROPDOWN_LIST'}" class="display-table-row">
+                    <label for="cuf-default-value" th:text="#{label.defaultValue}" class="display-table-cell v-centered " >Default value</label>
+
+                    <div th:if="${customField.inputType.name() == 'PLAIN_TEXT'}" id="cuf-default-value"
+                      class="display-table-cell" th:text="${customField.defaultValue}">false</div>
+
+                    <div th:if="${customField.inputType.name() == 'NUMERIC'}" id="cuf-default-value"
+                         class="display-table-cell" th:text="${numericCustomFieldValue}">false</div>
+
+                    <div th:if="${customField.inputType.name() == 'RICH_TEXT'}" id="cuf-default-value"
+                      class="display-table-cell" th:utext="${customField.defaultValue}">false</div>
+
+                    <div th:if="${customField.inputType.name() == 'CHECKBOX'}" id="cuf-default-value"
+                      class="display-table-cell" th:text="#{'label.'+${customField.defaultValue}}">false</div>
+
+                     <div th:if="${customField.inputType.name() == 'DATE_PICKER'}"
+                      class="display-table-cell" >
+                     <span  id="cuf-default-value" th:text="${customField.defaultValueAsDate}? ${#dates.format(customField.defaultValueAsDate,'__#{squashtm.dateformatShort}__')} : #{squashtm.nodata}" data-locale="fr" th:attr="data-locale=#{squashtm.locale}">01-02-2012</span>
+                      </div>
+
+                     <div th:if="${customField.inputType.name() == 'TAG'}"
+                     class="display-table-cell" style="line-height:normal">
+                        <ul id="cuf-default-value" style="margin:0">
+                          <li th:text="${cfTag}" th:each="cfTag , iterStat: ${#strings.listSplit(customField.defaultValue,
+                                                                            T(org.squashtest.tm.domain.customfield.MultiSelectField).SEPARATOR.charAt(0))}" ></li>
+                        </ul>
+                     </div>
+
+                    <span class="error-message  defaultValue-error"></span>
+                  </div>
+                </div>
+                </div>
+              </div>
+              <div id="cuf-options-panel" class="sq-tg expand" th:if="${customField.inputType.name() == 'DROPDOWN_LIST'}">
+               <div class="tg-head">
+                <h3 th:text="#{title.itemDefinition}"></h3>
+                <div class="tg-toolbar">
+                  <input id="add-cuf-option-button"
+               	  class="add-option button" type="button" th:value="#{label.Add}" value="Add an item" />
+                </div>
+               </div>
+               <div class="tg-body">
+                <table id="options-table" class="unstyled-table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th th:text="#{label.option}">Option</th>
+                      <th th:text="#{label.code}">Code</th>
+                      <th th:text="#{label.default}">Default</th>
+                      <th>&nbsp;</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr th:each="cfOpt , iterStat: ${customField.options}" th:object="${cfOpt}">
+                      <td th:text="${iterStat.count}">1</td>
+                      <td th:text="*{label}">label1</td>
+                      <td th:text="*{code}">code1</td>
+                      <td>
+                        <input type="checkbox" name="default" th:value="*{label}" value="label1"
+                          th:checked="${customField.defaultValue == cfOpt.label}" title="Add cuf option" />
+                      </td>
+                      <td></td>
+                    </tr>
+                    <tr th:remove="all">
+                      <td>2</td>
+                      <td class="opt-label">label2</td>
+                      <td class="opt-code">code2</td>
+                      <td class="is-default">
+                        <input type="checkbox" name="default" value="label2" />
+                      </td>
+                      <td class="delete-button"></td>
+                    </tr>
+                    <tr th:remove="all">
+                      <td>3</td>
+                      <td class="opt-label">label3</td>
+                      <td class="opt-code">code3</td>
+                      <td class="is-default">
+                        <input type="checkbox" name="default" value="label3" checked="checked" />
+                      </td>
+                      <td class="delete-button"></td>
+                    </tr>
+                  </tbody>
+                </table>
+                </div>
+              </div>
+          </div>
+
+          <div id="delete-warning-pane" class="not-displayed popup-dialog" title="Delete"
+            th:title="#{label.Delete}">
+			<div class="display-table-row">
+	            <div class="display-table-cell warning-cell">
+	                <div class="generic-error-signal"></div>
+	            </div>
+	            <div class="display-table-cell">
+	              <span th:text="#{message.customField.remove}">Do you wanna remove custom field ?</span>
+	            </div>
+            </div>
+            <div class="popup-dialog-buttonpane">
+              <input class="confirm" type="button" value="Proceed" th:value="#{label.Confirm}" />
+              <input class="cancel" type="button" value="Cancel" th:value="#{label.Cancel}" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--    ====================================POPUPS======================================================  -->
+  <!--    	RENAME POPUP -->
+  <div id="rename-cuf-popup" class="not-displayed popup-dialog" th:title="#{title.renameCuf}">
+    <label for="rename-cuf-input" th:text="#{ label.Rename }">Rename</label> <input type="text" id="rename-cuf-input"
+      maxlength="255" size="50" /> <br /> <span class="error-message name-error"></span>
+      <div class="popup-dialog-buttonpane">
+        <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm"/>
+        <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel" />
+      </div>
+  </div>
+
+  <!-- 	ADD OPTION POPUP  -->
+  <div id="add-cuf-option-popup" class="not-displayed popup-dialog"
+    th:if="${customField.inputType.name() == 'DROPDOWN_LIST'}" th:title="#{title.addCufOption}">
+    <table class="form-horizontal">
+      <tr class="control-group">
+        <td>
+          <label class="control-label" for="new-cuf-option-label" th:text="#{label.newOption}">New Option</label>
+        </td>
+        <td class="controls">
+          <input id="new-cuf-option-label" name="new-cuf-option-label" type="text" value="" maxlength="255" size="50" data-def="maininput"/>
+          <span class="help-inline">&nbsp;</span>
+        </td>
+      </tr>
+      <tr class="control-group">
+        <td>
+          <label class="control-label" for="new-cuf-option-code" th:text="#{label.code}">Code</label>
+        </td>
+        <td class="controls">
+          <input id="new-cuf-option-code" name="new-cuf-option-code" type="text" value="" maxlength="30" size="50" /> <span
+            class="help-inline">&nbsp;</span>
+        </td>
+        <td class="controls">
+        <br /> <span class="error-message name-error"></span>
+        </td>
+      </tr>
+    </table>
+    <div class="popup-dialog-buttonpane">
+   	  <input class="confirm" type="button" th:value="#{label.addAnother}" value="add another" data-def="mainbtn, evt=addanother"/>
+      <input class="confirm" type="button" th:value="#{label.Add}" value="add" data-def="mainbtn, evt=confirm"/>
+      <input class="cancel" type="button"  th:value="#{label.Close}" value="cancel" data-def="mainbtn, evt=cancel"/>
+    </div>
+  </div>
+
+  <!-- 	RENAME OPTION POPUP -->
+  <div id="rename-cuf-option-popup" class="not-displayed popup-dialog"
+    th:if="${customField.inputType.name() == 'DROPDOWN_LIST'}" th:title="#{title.renameCufOption}">
+    <span class="not-displayed" id="rename-cuf-option-previous"></span>
+    <table class="form-horizontal">
+      <tr class="control-group">
+        <td>
+          <label for="rename-cuf-option-label" class="control-label" th:text="#{label.Label}">Label</label>
+        </td>
+        <td class="controls">
+          <input id="rename-cuf-option-label" name="rename-cuf-option-label" type="text" value="" maxlength="255"
+            size="50" /> <span class="help-inline">&nbsp;</span>
+             <br /> <span class="error-message name-error"></span>
+             <span id="nospace" class="error-message name-error"></span>
+        </td>
+      </tr>
+    </table>
+    <div class="popup-dialog-buttonpane">
+        <input type="button" th:value="#{label.Rename}" data-def="mainbtn, evt=confirm"/>
+        <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel" />
+    </div>
+  </div>
+
+  <!-- 	CHANGE OPTION CODE POPUP -->
+  <div id="change-cuf-option-code-popup" class="not-displayed popup-dialog"
+    th:if="${customField.inputType.name() == 'DROPDOWN_LIST'}" th:title="#{title.changeCufOptionCode}">
+    <span class="not-displayed" id="change-cuf-option-code-label"></span>
+    <table class="form-horizontal">
+      <tr class="control-group">
+        <td>
+          <label for="change-cuf-option-optionCode" class="control-label" th:text="#{label.code}">Code</label>
+        </td>
+        <td class="controls">
+          <input id="change-cuf-option-code" name="change-cuf-option-optionCode" type="text" value="" maxlength="30" size="50" />
+          <span class="help-inline">&nbsp;</span>
+        </td>
+      </tr>
+    </table>
+      <div class="popup-dialog-buttonpane">
+        <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm"/>
+        <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel" />
+      </div>
+  </div>
+</body>
+</html>

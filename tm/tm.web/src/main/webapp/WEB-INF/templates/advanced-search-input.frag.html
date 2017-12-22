@@ -1,0 +1,424 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title th:text="#{tabbed_panel.search.pane.new.label}">Test case search</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
+<script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+<script type="text/javascript" th:inline="javascript">
+	var squashtm = {};
+	squashtm.app = {
+		contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
+		localizedDateFormat : /*[[ #{squashtm.dateformatShort.datepicker} ]]*/"dd/mm/yy",
+		locale : /*[[ #{squashtm.locale} ]]*/"fr",
+		projectFilterConf : {
+			url : /*[[ @{/global-filter/filter} ]]*/'/global-filter/filter',
+			title : /*[[ #{dialog.settings.filter.title} ]]*/'Filtre de projets',
+			confirmLabel : /*[[ #{label.Confirm} ]]*/'Confirmer',
+			cancelLabel : /*[[ #{label.Cancel} ]]*/'Annuler',
+		}
+	};
+</script>
+<!-- common head -->
+<link rel="stylesheet" type="text/css" media="all"
+  href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" sq:css="squash.core.css" />
+<link rel="shortcut icon" type="image/x-icon" media="all"
+  href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}" />
+<link rel="stylesheet" type="text/css" media="all"
+  href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.grey.css" sq:css="squash.green.css" />
+<!-- /common head -->
+<link rel="stylesheet" type="text/css" media="all"
+  href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.override.css" sq:css="squash.core.override.css" />
+<link rel="stylesheet" type="text/css" media="all"
+  href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.subpageoverride.css"
+  sq:css="squash.subpage.override.css" />
+<script data-main="../../scripts/advanced-search-input.js" th:attr="data-main=@{/scripts/advanced-search-input.js}"
+  src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
+  </script>
+
+</head>
+<body>
+  <div id="navigation" th:include="navbar.frag :: navbar('')">NAVBAR</div>
+  <div id="workspace">
+    <div id="workspace-title">
+      <div class="snap-left">
+        <h2 th:text="#{workspace.test-case.title}">Espace cas de test</h2>
+      </div>
+      <div class="snap-right">
+        <div class="main-menubar " th:include="menubar.frag :: menubar">MENUBAR</div>
+        <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">NOTIFICATION</div>
+      </div>
+    </div>
+    <div id="sub-page" class="sub-page">
+
+      <div id="sub-page-header" class="sub-page-header">
+
+        <div id="sub-page-title" class="sub-page-title">
+          <h2 th:if="!${associateResult}" th:text="#{tabbed_panel.search.pane.new.label}">Recherche de cas de test</h2>
+          <h2 th:if="${associateResult}" th:text="#{tabbed_panel.search.pane.assoc.label}">Recherche de cas de test</h2>
+        </div>
+
+        <div id="sub-page-buttons" class="sub-page-buttons">
+          <input id="back" type="button" class="sq-btn" th:value="#{label.Back}" value="Retour" />
+
+        </div>
+
+        <div class="unsnap"></div>
+      </div>
+
+      <div id="sub-page-content" class="sub-page-content">
+        <div class="fragment-body-without-upper-margin">
+
+          <div id="advanced-search-input-panel" class="search-panel-wrap" th:fragment="advanced-search-input-panel">
+
+            <div id="advanced-search-toolbar" class="search-panel-footer">
+              <input id="advanced-search-button" type="button" th:value="#{label.Search}"
+                class="button ui-button ui-widget ui-state-default ui-corner-all" />
+            </div>
+
+            <div id="advanced-search-input-form-panel">
+
+              <div id="advanced-search-input-form-panel-column1" align="center" class="search-input-column"></div>
+
+              <script id="toggle-panel-template" type="text/x-handlebars-template">
+				<div class="sq-tg {{toggle-panel-state}} search-toggle-panel" style=" width: calc(100% - 4em);">
+					<div class="tg-head">
+						<h3 ><a class="{{toggle-panel-icon}}">{{toggle-panel-title}}</a></h3>
+					</div>
+					<div id="{{toggle-panel-id}}" class="description-panel tg-body">
+						<div class="display-search-table" id="{{toggle-panel-table-id}}" >
+						</div>
+					</div>
+				</div>
+			  </script>
+
+			  <script id="toggle-panel-perimeter-template" type="text/x-handlebars-template">
+				<div class="sq-tg {{toggle-panel-state}} search-perimeter-toggle-panel" style=" width: calc(30% - 4em);">
+					<div class="tg-head">
+						<h3 ><a class="{{toggle-panel-icon}}">{{toggle-panel-title}}</a></h3>
+					</div>
+					<div id="{{toggle-panel-id}}" class="description-panel tg-body">
+						<div class="display-search-table" id="{{toggle-panel-table-id}}">
+						</div>
+					</div>
+				</div>
+			  </script>
+
+			  <script id="toggle-panel-informations-template" type="text/x-handlebars-template">
+				<div class="sq-tg {{toggle-panel-state}} search-informations-toggle-panel" style=" width: calc(70% - 4em);">
+					<div class="tg-head">
+						<h3 ><a class="{{toggle-panel-icon}}">{{toggle-panel-title}}</a></h3>
+					</div>
+					<div id="{{toggle-panel-id}}" class="description-panel tg-body">
+						<div class="display-search-table" id="{{toggle-panel-table-id}}">
+						</div>
+					</div>
+				</div>
+			  </script>
+
+
+			   <script id="toggle-panel-informationsfull-template" type="text/x-handlebars-template">
+				<div class="sq-tg {{toggle-panel-state}} search-informations-toggle-panel" style=" width: calc(100% - 4em);">
+					<div class="tg-head">
+						<h3 ><a class="{{toggle-panel-icon}}">{{toggle-panel-title}}</a></h3>
+					</div>
+					<div id="{{toggle-panel-id}}" class="description-panel tg-body">
+						<div class="display-search-table" id="{{toggle-panel-table-id}}">
+						</div>
+					</div>
+				</div>
+			  </script>
+
+
+              <script id="textfield-template" type="text/x-handlebars-template">
+				<div class="display-search-table-row">
+                  	<label for="{{text-field-id}}" class="display-search-table-cell">{{text-field-title}}</label>
+                    <div id="{{text-field-id}}" class="search-input" style="display: inline;">
+                      <input type="text" data-widgetname="TextField" data-fieldid="F{{text-field-id}}" value="{{fieldValue}}" class="search-input" />
+                    </div>
+                </div>
+				</script>
+
+              <script id="textfield-id-template" type="text/x-handlebars-template">
+				<div class="display-search-table-row">
+                  	<label for="{{text-field-id}}" class="display-search-table-cell" >{{text-field-title}}</label>
+                    <div id="{{text-field-id}}" class="search-input" style="width: 5em; display: inline;">
+                      <input type="text" data-widgetname="TextField" data-fieldid="F{{text-field-id}}" value="{{fieldValue}}" class="search-input" style="width: 4em" />
+                    </div>
+                </div>
+				</script>
+
+				<script id="textfield-reference-template" type="text/x-handlebars-template">
+				<div class="display-search-table-row">
+                  	<label for="{{text-field-id}}" class="display-search-table-cell">{{text-field-title}}</label>
+                    <div id="{{text-field-id}}" class="search-input" style="width: 7em; display: inline;">
+                      <input type="text" data-widgetname="TextField" data-fieldid="F{{text-field-id}}" value="{{fieldValue}}" class="search-input" style="width: 6em" />
+                    </div>
+                </div>
+				</script>
+
+
+              <script id="textarea-template" type="text/x-handlebars-template">
+				<div class="display-search-table-row">
+                  	<label for="{{text-area-id}}" style="vertical-align: top;" class="display-search-table-cell">{{text-area-title}}</label>
+                    <div id="{{text-area-id}}" class="search-input" style="display: inline;">
+                      <textarea data-widgetname="TextArea" data-fieldid="F{{text-field-id}}" rows="2" class="search-input">{{fieldValue}}</textarea>
+                    </div>
+                </div>
+				</script>
+
+            <script id="multiselect-template" type="text/x-handlebars-template">
+            {{!--<![CDATA[--}}
+            <div class="display-search-table-row">
+              <label for="{{multiselect-id}}" style="vertical-align: top;" class="display-search-table-cell" style="vertical-align: top;">{{multiselect-title}}</label>
+              <div id="{{multiselect-id}}" class="search-input" style="display: inline;">
+                <select data-widgetname="MultiSelect" data-fieldid="F{{multiselect-id}}" multiple="multiple" class="search-input">
+                {{#each options}}
+                  <option value="{{this.code}}" {{selected}}>{{this.value}}</option>
+                {{/each}}
+                </select>
+              </div>
+            </div>
+            {{!--]]>--}}
+			</script>
+
+            <script id="multiselect-perimeter-template" type="text/x-handlebars-template">
+            {{!--<![CDATA[--}}
+            <div class="display-search-table-row">
+               <div id="{{multiselect-id}}" class="search-input" style="display: inline;">
+                <select id="perimeter-multiple-custom" data-widgetname="MultiSelectProject" data-fieldid="F{{multiselect-id}}" multiple="multiple" class="search-input">
+                {{#each options}}
+                  <option value="{{this.code}}" {{selected}}>{{this.value}}</option>
+                {{/each}}
+                </select>
+              </div>
+            </div>
+            {{!--]]>--}}
+			</script>
+
+			<script id="multiautocomplete-template" type="text/x-handlebars-template">
+            {{!--<![CDATA[--}}
+            <div class="display-search-table-row">
+              <label for="{{multiautocomplete-id}}" class="display-search-table-cell" style="vertical-align: top;">{{multiautocomplete-title}}</label>
+              <div id="{{multiautocomplete-id}}" class="search-input" style="display: inline;">
+                <input data-widgetname="MultiAutocomplete" data-fieldid="F{{multiautocomplete-id}}" class="search-input"/>
+              </div>
+            </div>
+            {{!--]]>--}}
+			</script>
+
+            <script id="multicascadeflat-template" type="text/x-handlebars-template">
+			{{!--<![CDATA[--}}
+			<div class="display-search-table-row">
+				<label for="{{multicascadeflat-id}}" class="display-search-table-cell" style="vertical-align: top;">{{multicascadeflat-title}}</label>
+				<div id="{{multicascadeflat-id}}" class="search-input" style="display: inline-table;">
+					<div data-widgetname="MultiCascadeFlat" data-fieldid="F{{multicascadeflat-id}}" style="display: inline;" >
+					<table  >
+					<tr>
+					<td>
+						<select class="multicascadeflat-primary" multiple="multiple" style="display:inline-block; height:65px;">
+							{{#each options}}
+							<option value="{{this.code}}" {{selected}}>{{this.value}}</option>
+							{{/each}}
+						</select>
+					</td>
+					<td>
+						<span>&nbsp;&gt;&nbsp;</span>
+					</td>
+					<td>
+						<select class="multicascadeflat-secondary" multiple="multiple" style="display:inline-block; height:65px">
+							{{#each options}}
+							{{#each this.subInput.possibleValues}}
+							<option value="{{this.code}}" {{selected}}>{{this.value}}</option>
+							{{/each}}
+							{{/each}}
+						</select>
+					</td>
+					</tr>
+					</table>
+					</div>
+				</div>
+			</div>
+			{{!--]]>--}}
+			</script>
+
+                <script id="date-template" type="text/x-handlebars-template">
+                    <div class="display-search-table-row">
+                        <label for="{{text-date-id}}" class="display-search-table-cell">{{text-date-title}}</label>
+                        <div id="{{text-date-id}}" class="search-input" style="display:inline">
+                            <div class="search-line" data-widgetname="Date">
+                                <input type="checkbox"></input>
+                                <span th:text="#{search.testcase.betweenDate.label}"></span>
+                                <input class="date-search-input" type="text"></input>
+                                <span th:text="#{search.testcase.andDate.label}"></span>
+                                <input class="date-search-input" type="text"></input>
+                            </div>
+                        </div>
+                    </div>
+                </script>
+
+                <script id="cf-date-template" type="text/x-handlebars-template">
+                    <div class="display-search-table-row">
+                        <label for="{{text-date-id}}" class="display-search-table-cell">{{text-date-title}}</label>
+                        <div id="{{text-date-id}}" class="search-input" style="display:inline">
+                            <div class="search-line" data-widgetname="DateCustomField">
+                                <input type="checkbox"></input>
+                                <span th:text="#{search.testcase.betweenDate.label}"></span>
+                                <input class="date-search-input" type="text"></input>
+                                <span th:text="#{search.testcase.andDate.label}"></span>
+                                <input class="date-search-input" type="text"></input>
+                            </div>
+                        </div>
+                    </div>
+                </script>
+
+       <script id="range-template" type="text/x-handlebars-template">
+				<div class="display-search-table-row">
+					<div id="{{text-range-id}}" class="search-input" style="display:inline">
+						<div class="search-line" data-widgetname="Range">
+						<input type="checkbox"></input>
+						<span th:text="#{search.testcase.between.label}"></span>
+						<input class="small-search-input" type="text"></input>
+						<span th:text="#{search.testcase.and.label}"></span>
+						<input class="small-search-input" type="text"></input>
+						<span>{{text-range-title}}</span>
+						</div>
+					</div>
+				</div>
+				</script>
+
+        <script id="numeric-range-template" type="text/x-handlebars-template">
+          <div class="display-search-table-row">
+            <div id="{{text-range-id}}" class="search-input" style="display:inline">
+              <div class="search-line" data-widgetname="NumericRange">
+                <input type="checkbox"></input>
+                <span>{{text-range-title}}</span>
+                <span th:text="#{search.testcase.between.label}"></span>
+                <input class="small-search-input" type="text"></input>
+                <span th:text="#{search.testcase.and.label}"></span>
+                <input class="small-search-input" type="text"></input>
+              </div>
+            </div>
+          </div>
+        </script>
+
+              <script id="exists-template" type="text/x-handlebars-template">
+				<div class="display-search-table-row">
+					<div id="{{text-exists-id}}" class="search-input" style="display:inline">
+						<div class="search-line" data-widgetname="Exists">
+						<input type="checkbox"></input>
+						<select></select>
+						<span>{{text-exists-title}}</span>
+						</div>
+					</div>
+				</div>
+			  </script>
+
+              <script id="checkbox-template" type="text/x-handlebars-template">
+				<div class="display-search-table-row">
+					<div id="{{text-checkbox-id}}" class="search-input" style="display:inline">
+						<div class="search-line" data-widgetname="Checkbox">
+							<input type="checkbox" ></input>
+							<label style="cursor:pointer">{{text-checkbox-title}}</label>
+						</div>
+					</div>
+				</div>
+              </script>
+
+			   <script id="existsbefore-template" type="text/x-handlebars-template">
+				<div class="display-search-table-row">
+					<div id="{{text-exists-id}}" class="search-input" style="display:inline">
+						<span><i>{{text-exists-title}}</i></span>
+						<div class="search-line" data-widgetname="Exists">
+						<input type="checkbox"></input>
+						<select></select>
+						</div>
+					</div>
+				</div>
+				</script>
+
+              <script id="radio-button-template" type="text/x-handlebars-template">
+				<div class="display-search-table-row">
+					<div id="{{text-radio-id}}" class="search-input" style="width:inherit">
+						<div class="search-line" data-widgetname="Radio">
+						</div>
+					</div>
+				</div>
+				</script>
+
+              <script id="combomultiselect-template" type="text/x-handlebars-template">
+				<div class="display-search-table-row">
+                  	<label for="{{combomultiselect-id}}" class="display-search-table-cell" style="vertical-align: top;">{{combomultiselect-title}}</label>
+					<div id="{{combomultiselect-id}}" class="search-input" style="display: inline;">
+						<div class="search-line" data-widgetname="ComboMultiSelect" >
+							<input type="checkbox" style="vertical-align:top; margin-top:6px"></input>
+							<select multiple="multiple" class="shorter-search-input"></select>
+						</div>
+					</div>
+                </div>
+			</script>
+              <script id="tags-template" type="text/x-handlebars-template">
+				<div class="display-search-table-row">
+					<label for="{{tags-id}}" class="display-search-table-cell">{{tags-title}}</label>
+					<div id="{{tags-id}}" class="search-input" style="border:1px dotted lightgray">
+						<div class="search-line" data-widgetname="Tags" >
+							<ul style="border:1px solid black;display:inline-block">
+							</ul>
+							<select style="display:inline-block">
+								<option value="OR" th:text="#{label.or}">or</option>
+								<option value="AND" th:text="#{label.and}">and</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</script>
+
+
+
+
+
+            </div>
+
+            <div id="searchModel" class="not-displayed" th:text="${searchModel}"></div>
+            <div id="searchDomain" class="not-displayed" th:text="${searchDomain}"></div>
+            <div th:if="${associateResult}" id="associationType" class="not-displayed"
+              th:text="${associateResultWithType}"></div>
+            <div th:if="${associateResult}" id="associationId" class="not-displayed" th:text="${associateId}"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+  </div>
+
+
+
+
+</body>
+
+</html>
+

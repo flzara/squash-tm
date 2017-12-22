@@ -1,0 +1,245 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<div th:fragment="chart-wizard-filter">
+
+{{#*inline "execution-status"}}
+{{#each status}}
+<option class="exec-status" value="{{this.name}}">
+    {{this.level}} - {{i18n this.i18nkey}}
+</option>
+{{/each}}
+{{/inline}}
+
+{{#*inline "filter"}}
+<div style="display: table-column; width: 20%;float:left">
+
+{{#equal this.columnType "CUF"}}
+  <input type="checkbox" id="filter-selection-{{id}}" name="{{id}}" data-cuf-id="{{cufId}}" data-cuf-binding-id="{{cufBindingId}}"/>
+  {{{cuf-label this}}}
+{{else}}
+  <input type="checkbox" id="filter-selection-{{id}}" name="{{id}}" />
+  {{i18n this.label prefix="chart.column."}}
+{{/equal}}
+</div>
+
+<div style="display: table-column; width: 15%; float:left">
+  {{!--<![CDATA[--}}
+  {{#equal this.columnType "CUF"}}
+    <select id="filter-operation-select-{{id}}" class="filter-operation-select" name="{{id}}" style="width: 80%;"  data-cuf-id="{{cufId}}" data-cuf-binding-id="{{cufBindingId}}" data-original-prototype-id="{{originalPrototypeId}}">
+  {{else}}
+    <select id="filter-operation-select-{{id}}" class="filter-operation-select" name="{{id}}" style="width: 80%;">
+  {{/equal}}
+{{#each  operations}}
+
+
+<option value="{{this}}"  {{#equal this "EQUALS"}} selected="selected"{{/equal}} >
+    {{i18n this prefix="chart.operation."}}
+</option>
+
+
+{{/each}}
+</select>
+      {{!--]]>--}}
+</div>
+
+  {{#equal dataType "NUMERIC"}}
+    <input type="text" id="first-filter-value-{{id}}" name="{{id}}" style="margin-right: 15px;"/>
+    <span id="second-filter-value-label-{{id}}" th:text="#{label.and}" style="margin-right: 15px;"/>
+    <input type="text" id="second-filter-value-{{id}}" name="{{id}}"/>
+  {{/equal}}
+
+  {{#equal dataType "STRING"}}
+      <input type="text" id="first-filter-value-{{id}}" name="{{id}}" />
+  {{/equal}}
+
+  {{#equal dataType "DATE"}}
+    <input class="date-picker" id="first-filter-value-{{id}}" name="{{id}}" style="margin-right: 15px;"/>
+    <span id="second-filter-value-label-{{id}}" th:text="#{label.and}" style="margin-right: 15px;"/>
+    <input class="date-picker" id="second-filter-value-{{id}}" name="{{id}}"/>
+  {{/equal}}
+
+  {{#equal dataType "DATE_AS_STRING"}}
+  <input class="date-picker" id="first-filter-value-{{id}}" name="{{id}}" style="margin-right: 15px;"/>
+  <span id="second-filter-value-label-{{id}}" th:text="#{label.and}" style="margin-right: 15px;"/>
+  <input class="date-picker" id="second-filter-value-{{id}}" name="{{id}}"/>
+  {{/equal}}
+
+  {{#equal dataType "EXECUTION_STATUS"}}
+  <select id="first-filter-value-{{id}}" name="{{id}}"   style=" width: 151px;">
+
+{{#if (eq this.specializedType.entityType "ITEM_TEST_PLAN")}}
+{{>execution-status status=data.itpiExecutionStatus}}
+{{else}}
+{{>execution-status status= data.executionStatus}}
+{{/if}}
+
+
+</select>
+
+
+{{/equal}}
+
+{{#equal dataType "LEVEL_ENUM"}}
+<select id="first-filter-value-{{id}}" name="{{id}}" style=" width: 151px;">
+{{#each  (lookup data.levelEnums label)}}
+<option value="{{this.name}}">
+    {{this.level}} - {{i18n this.i18nkey}}
+</option>
+{{/each}}
+</select>
+{{/equal}}
+
+{{#equal dataType "INFO_LIST_ITEM"}}
+<span id="info-list-filter-container-{{id}}" name="{{label}}"/>
+{{/equal}}
+
+{{#equal dataType "LIST"}}
+<span id="list-filter-container-{{id}}" name="{{attributeName}}" class="cuf-list"/>
+{{/equal}}
+
+{{#equal dataType "TAG"}}
+<span id="list-filter-container-{{id}}" name="{{attributeName}}" class="cuf-list"/>
+{{/equal}}
+
+{{#equal dataType "BOOLEAN"}}
+<select id="first-filter-value-{{id}}" name="{{id}}"   style=" width: 151px;">
+
+<option value="TRUE">
+ <span th:text="#{chart.filter.value.true}"/>
+</option>
+<option value="FALSE">
+ <span th:text="#{chart.filter.value.false}"/>
+</option>
+
+</select>
+
+{{/equal}}
+
+  {{#equal dataType "BOOLEAN_AS_STRING"}}
+  <select id="first-filter-value-{{id}}" name="{{id}}"   style=" width: 151px;">
+
+    <option value="TRUE">
+      <span th:text="#{chart.filter.value.true}"/>
+    </option>
+    <option value="FALSE">
+      <span th:text="#{chart.filter.value.false}"/>
+    </option>
+
+  </select>
+
+  {{/equal}}
+
+
+<br />
+{{/inline}}
+
+
+
+<span style="font-weight: bold;" th:text="#{chart.wizard.creation.step.message.filter}"/>
+<br />
+<span  th:text="#{chart.wizard.creation.step.sub-message.filter}"/>
+
+<br />
+<br />
+{{#each attributes.computedColumnsPrototypes}}
+
+  {{#if (contains ../attributes.selectedEntity @key)}}
+  <div class="sq-tg expand">
+ <div class="tg-head">
+{{i18n @key prefix='chart.entityType.'}}
+</div>
+
+<div class="tg-body">
+{{#each  this}}
+
+{{#if (contains this.role "FILTER")}}
+{{#if (contains ../../attributes.selectedAttributes id)}}
+
+<div style="display: table; width: 100%;">
+{{> filter  operations=(intersect (lookup ../../attributes.columnRoles "FILTER") (lookup ../../attributes.dataTypes dataType)) data=../../attributes}}
+</div>
+
+{{/if}}
+{{/if }}
+{{/each}}
+</div>
+
+ </div>
+ {{/if}}
+{{/each}}
+
+
+
+</div>
+
+
+
+
+<div th:fragment="chart-wizard-info-list">
+ <div style="display: table-column; float:left; margin-right: 40px;">
+ <select id="info-list-{{id}}" class="info-lists" name="{{id}}" style=" width: 151px;">
+{{#each infolists}}
+ <option value="{{this.code}}">
+ {{#if (eq this.createdBy "system")}}
+  {{i18n this.label}}
+  {{else}}
+  {{this.label}}
+  {{/if}}
+ </option>
+{{/each}}
+</select>
+</div>
+<span id="info-list-item-container-{{id}}"/>
+
+</div>
+
+
+
+<div th:fragment="chart-wizard-info-list-item">
+ <div style="display: table-column;float:left">
+ <select id="first-filter-value-{{id}}" name="{{id}}" style=" width: 151px;">
+{{#each items}}
+ <option value="{{this.code}}">
+ {{#if this.isSystem}}
+  {{i18n this.label}}
+  {{else}}
+  {{this.label}}
+  {{/if}}
+ </option>
+{{/each}}
+</select>
+</div>
+</div>
+
+
+
+<div th:fragment="chart-wizard-cuf-list">
+ <select id="first-filter-value-{{id}}" name="{{id}}">
+{{#each items}}
+ <option value="{{this.label}}">
+  {{this.label}}
+ </option>
+{{/each}}
+</select>
+</div>
+

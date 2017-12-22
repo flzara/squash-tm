@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+
+	<changeSet id="tm-1.15.0" author="jthebault">
+		<comment>Update TM database version number</comment>
+		<update tableName="CORE_CONFIG">
+			<column name="VALUE" value="1.15.0" />
+			<where>STR_KEY = 'squashtest.tm.database.version'</where>
+		</update>
+	</changeSet>
+
+  <changeSet id="tm-1.15.0-feature-6365" author="jthebault">
+    <comment>column for numeric cufs</comment>
+    <addColumn tableName="CUSTOM_FIELD">
+      <column name="NUMERIC_DEFAULT_VALUE" type="DECIMAL(20,5)" remarks="a column to persist numeric cuf" />
+    </addColumn>
+    <addColumn tableName="CUSTOM_FIELD_VALUE">
+      <column name="NUMERIC_VALUE" type="DECIMAL(20,5)" remarks="a column to persist numeric cuf" />
+    </addColumn>
+    <addColumn tableName="DENORMALIZED_FIELD_VALUE">
+      <column name="NUMERIC_VALUE" type="DECIMAL(20,5)" remarks="a column to persist denormalized numeric cuf" />
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="tm-1.15.0-cuf-custom-report-1" author="jthebault">
+
+
+    <comment>Denormalize the cuf ID inside the cuf values, so we don't have to make two more joins in custom reports</comment>
+    <createTable tableName="TEMP_CUF_ID">
+      <column name="CFV_ID" type="BIGINT"/>
+      <column name="CF_ID" type="BIGINT"/>
+    </createTable>
+
+    <createIndex tableName="TEMP_CUF_ID" indexName="idx_tmp_cuf_cuf_id">
+      <column name="CF_ID" type="BIGINT"/>
+    </createIndex>
+
+    <createIndex tableName="TEMP_CUF_ID" indexName="idx_tmp_cuf_cfv_id">
+      <column name="CFV_ID" type="BIGINT"/>
+    </createIndex>
+
+    <addColumn tableName="CUSTOM_FIELD_VALUE">
+      <column name="CF_ID" type="BIGINT" remarks="dernomalize the custom field id for custom report queries" />
+    </addColumn>
+
+    <createIndex tableName="CUSTOM_FIELD_VALUE" indexName="idx_cfv_custom_field_id">
+      <column name="CF_ID" type="BIGINT"/>
+    </createIndex>
+
+    <sql>
+      insert into TEMP_CUF_ID (CFV_ID,CF_ID)
+        select cfv.CFV_ID, cfb.CF_ID
+        from CUSTOM_FIELD_VALUE cfv
+        join CUSTOM_FIELD_BINDING cfb on cfv.CFB_ID = cfb.CFB_ID;
+
+      update CUSTOM_FIELD_VALUE
+      set CF_ID = (
+        select TEMP_CUF_ID.CF_ID
+        from TEMP_CUF_ID
+        where TEMP_CUF_ID.CFV_ID = CUSTOM_FIELD_VALUE.CFV_ID
+      );
+    </sql>
+    <dropTable tableName="TEMP_CUF_ID"/>
+
+
+  </changeSet>
+
+  <changeSet id="tm-1.15.0-cuf-custom-report-2" author="jthebault">
+    <comment>columns prototypes for custom fields bound to requirement version.</comment>
+    <sql>
+      insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID,COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
+      values
+      (95,'CUF', TRUE, 'REQUIREMENT_VERSION_CUF_TEXT', 'REQUIREMENT_VERSION', 'CUSTOM_FIELD', 'STRING', 'value', null),
+      (96,'CUF', TRUE, 'REQUIREMENT_VERSION_CUF_CHECKBOX', 'REQUIREMENT_VERSION', 'CUSTOM_FIELD', 'BOOLEAN_AS_STRING', 'value', null),
+      (97,'CUF', TRUE, 'REQUIREMENT_VERSION_CUF_LIST', 'REQUIREMENT_VERSION', 'CUSTOM_FIELD', 'LIST', 'value', null),
+      (98,'CUF', TRUE, 'REQUIREMENT_VERSION_CUF_DATE', 'REQUIREMENT_VERSION', 'CUSTOM_FIELD', 'DATE_AS_STRING', 'value', null),
+      (99,'CUF', TRUE, 'REQUIREMENT_VERSION_CUF_TAG', 'REQUIREMENT_VERSION', 'CUSTOM_FIELD', 'TAG', 'value', null),
+      (100,'CUF', TRUE, 'REQUIREMENT_VERSION_CUF_NUMERIC', 'REQUIREMENT_VERSION', 'CUSTOM_FIELD', 'NUMERIC', 'value', null);
+    </sql>
+
+    <sql>
+      insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
+      values
+      (95, 'MEASURE'), (95, 'AXIS'), (95, 'FILTER'),
+      (96, 'MEASURE'), (96, 'AXIS'), (96, 'FILTER'),
+      (97, 'MEASURE'), (97, 'AXIS'), (97, 'FILTER'),
+      (98, 'MEASURE'), (98, 'AXIS'), (98, 'FILTER'),
+      (99, 'MEASURE'), (99, 'AXIS'), (99, 'FILTER'),
+      (100, 'MEASURE'), (100, 'AXIS'), (100, 'FILTER');
+    </sql>
+
+    <comment>columns prototypes for custom fields bound to test case.</comment>
+    <sql>
+      insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID,COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
+      values
+      (101,'CUF', TRUE, 'TEST_CASE_CUF_TEXT', 'TEST_CASE', 'CUSTOM_FIELD', 'STRING', 'value', null),
+      (102,'CUF', TRUE, 'TEST_CASE_CUF_CHECKBOX', 'TEST_CASE', 'CUSTOM_FIELD', 'BOOLEAN_AS_STRING', 'value', null),
+      (103,'CUF', TRUE, 'TEST_CASE_CUF_LIST', 'TEST_CASE', 'CUSTOM_FIELD', 'LIST', 'value', null),
+      (104,'CUF', TRUE, 'TEST_CASE_CUF_DATE', 'TEST_CASE', 'CUSTOM_FIELD', 'DATE_AS_STRING', 'value', null),
+      (105,'CUF', TRUE, 'TEST_CASE_CUF_TAG', 'TEST_CASE', 'CUSTOM_FIELD', 'TAG', 'value', null),
+      (106,'CUF', TRUE, 'TEST_CASE_CUF_NUMERIC', 'TEST_CASE', 'CUSTOM_FIELD', 'NUMERIC', 'value', null);
+    </sql>
+
+    <sql>
+      insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
+      values
+      (101, 'MEASURE'), (101, 'AXIS'), (101, 'FILTER'),
+      (102, 'MEASURE'), (102, 'AXIS'), (102, 'FILTER'),
+      (103, 'MEASURE'), (103, 'AXIS'), (103, 'FILTER'),
+      (104, 'MEASURE'), (104, 'AXIS'), (104, 'FILTER'),
+      (105, 'MEASURE'), (105, 'AXIS'), (105, 'FILTER'),
+      (106, 'MEASURE'), (106, 'AXIS'), (106, 'FILTER');
+    </sql>
+
+    <comment>columns prototypes for custom fields bound to campaign.</comment>
+    <sql>
+      insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID,COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
+      values
+      (107,'CUF', TRUE, 'CAMPAIGN_CUF_TEXT', 'CAMPAIGN', 'CUSTOM_FIELD', 'STRING', 'value', null),
+      (108,'CUF', TRUE, 'CAMPAIGN_CUF_CHECKBOX', 'CAMPAIGN', 'CUSTOM_FIELD', 'BOOLEAN_AS_STRING', 'value', null),
+      (109,'CUF', TRUE, 'CAMPAIGN_CUF_LIST', 'CAMPAIGN', 'CUSTOM_FIELD', 'LIST', 'value', null),
+      (110,'CUF', TRUE, 'CAMPAIGN_CUF_DATE', 'CAMPAIGN', 'CUSTOM_FIELD', 'DATE_AS_STRING', 'value', null),
+      (111,'CUF', TRUE, 'CAMPAIGN_CUF_TAG', 'CAMPAIGN', 'CUSTOM_FIELD', 'TAG', 'value', null),
+      (112,'CUF', TRUE, 'CAMPAIGN_CUF_NUMERIC', 'CAMPAIGN', 'CUSTOM_FIELD', 'NUMERIC', 'value', null);
+    </sql>
+
+    <sql>
+      insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
+      values
+      (107, 'MEASURE'), (107, 'AXIS'), (107, 'FILTER'),
+      (108, 'MEASURE'), (108, 'AXIS'), (108, 'FILTER'),
+      (109, 'MEASURE'), (109, 'AXIS'), (109, 'FILTER'),
+      (110, 'MEASURE'), (110, 'AXIS'), (110, 'FILTER'),
+      (111, 'MEASURE'), (111, 'AXIS'), (111, 'FILTER'),
+      (112, 'MEASURE'), (112, 'AXIS'), (112, 'FILTER');
+    </sql>
+
+    <comment>columns prototypes for custom fields bound to iteration.</comment>
+    <sql>
+      insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID,COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
+      values
+      (113,'CUF', TRUE, 'ITERATION_CUF_TEXT', 'ITERATION', 'CUSTOM_FIELD', 'STRING', 'value', null),
+      (114,'CUF', TRUE, 'ITERATION_CUF_CHECKBOX', 'ITERATION', 'CUSTOM_FIELD', 'BOOLEAN_AS_STRING', 'value', null),
+      (115,'CUF', TRUE, 'ITERATION_CUF_LIST', 'ITERATION', 'CUSTOM_FIELD', 'LIST', 'value', null),
+      (116,'CUF', TRUE, 'ITERATION_CUF_DATE', 'ITERATION', 'CUSTOM_FIELD', 'DATE_AS_STRING', 'value', null),
+      (117,'CUF', TRUE, 'ITERATION_CUF_TAG', 'ITERATION', 'CUSTOM_FIELD', 'TAG', 'value', null),
+      (118,'CUF', TRUE, 'ITERATION_CUF_NUMERIC', 'ITERATION', 'CUSTOM_FIELD', 'NUMERIC', 'value', null);
+    </sql>
+
+    <sql>
+      insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
+      values
+      (113, 'MEASURE'), (113, 'AXIS'), (113, 'FILTER'),
+      (114, 'MEASURE'), (114, 'AXIS'), (114, 'FILTER'),
+      (115, 'MEASURE'), (115, 'AXIS'), (115, 'FILTER'),
+      (116, 'MEASURE'), (116, 'AXIS'), (116, 'FILTER'),
+      (117, 'MEASURE'), (117, 'AXIS'), (117, 'FILTER'),
+      (118, 'MEASURE'), (118, 'AXIS'), (118, 'FILTER');
+    </sql>
+
+    <comment>columns prototypes for custom fields bound to execution.</comment>
+    <sql>
+      insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID,COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
+      values
+      (119,'CUF', TRUE, 'EXECUTION_CUF_TEXT', 'EXECUTION', 'CUSTOM_FIELD', 'STRING', 'value', null),
+      (120,'CUF', TRUE, 'EXECUTION_CUF_CHECKBOX', 'EXECUTION', 'CUSTOM_FIELD', 'BOOLEAN_AS_STRING', 'value', null),
+      (121,'CUF', TRUE, 'EXECUTION_CUF_LIST', 'EXECUTION', 'CUSTOM_FIELD', 'LIST', 'value', null),
+      (122,'CUF', TRUE, 'EXECUTION_CUF_DATE', 'EXECUTION', 'CUSTOM_FIELD', 'DATE_AS_STRING', 'value', null),
+      (123,'CUF', TRUE, 'EXECUTION_CUF_TAG', 'EXECUTION', 'CUSTOM_FIELD', 'TAG', 'value', null),
+      (124,'CUF', TRUE, 'EXECUTION_CUF_NUMERIC', 'EXECUTION', 'CUSTOM_FIELD', 'NUMERIC', 'value', null);
+    </sql>
+
+    <sql>
+      insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
+      values
+      (119, 'MEASURE'), (119, 'AXIS'), (119, 'FILTER'),
+      (120, 'MEASURE'), (120, 'AXIS'), (120, 'FILTER'),
+      (121, 'MEASURE'), (121, 'AXIS'), (121, 'FILTER'),
+      (122, 'MEASURE'), (122, 'AXIS'), (122, 'FILTER'),
+      (123, 'MEASURE'), (123, 'AXIS'), (123, 'FILTER'),
+      (124, 'MEASURE'), (124, 'AXIS'), (124, 'FILTER');
+    </sql>
+
+    <addColumn tableName="CHART_MEASURE_COLUMN">
+      <column name="CUF_ID" type="BIGINT" remarks="a column to persist cuf id relative to this measure" />
+    </addColumn>
+
+    <addColumn tableName="CHART_AXIS_COLUMN">
+      <column name="CUF_ID" type="BIGINT" remarks="a column to persist cuf id relative to this axis" />
+    </addColumn>
+
+    <addColumn tableName="CHART_FILTER">
+      <column name="CUF_ID" type="BIGINT" remarks="a column to persist cuf id relative to this filter" />
+    </addColumn>
+
+
+  </changeSet>
+
+  <changeSet id="tm-1.15.0-feat-5417" author="jthebault">
+    <addColumn tableName="CHART_DEFINITION">
+      <column name="SCOPE_TYPE" type="VARCHAR(20)" remarks="a column to persist the scope type" />
+    </addColumn>
+
+    <sql>
+      update CHART_DEFINITION
+      set SCOPE_TYPE = 'PROJECTS'
+      where CHART_ID in
+      (select CHART_ID from CHART_SCOPE where ENTITY_REFERENCE_TYPE like 'PROJECT');
+
+      update CHART_DEFINITION
+      set SCOPE_TYPE = 'CUSTOM'
+      where SCOPE_TYPE IS NULL;
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.15.0-feat-5417-2" author="jthebault">
+    <sql>
+      update PARTY_PREFERENCE
+      set PREFERENCE_VALUE = 'default'
+      where PREFERENCE_VALUE = 'message' and PREFERENCE_KEY = 'squash.core.home.content';
+
+      update PARTY_PREFERENCE
+      set PREFERENCE_KEY = 'squash.core.dashboard.content.home'
+      where PREFERENCE_KEY = 'squash.core.home.content';
+
+      update PARTY_PREFERENCE
+      set PREFERENCE_KEY = 'squash.core.favorite.dashboard.home'
+      where PREFERENCE_KEY = 'squash.core.favorite.dashboard';
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.15.0-feat-5417-3" author="jthebault">
+    <sql>
+      insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID,COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
+      values
+      (125,'ATTRIBUTE', FALSE, 'CAMPAIGN_MILESTONE_ID', 'MILESTONE', 'CAMPAIGN_MILESTONE', 'NUMERIC', 'id', null);
+    </sql>
+  </changeSet>
+
+</databaseChangeLog>

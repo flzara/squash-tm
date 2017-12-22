@@ -1,0 +1,242 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title th:text="#{workspace.report.title}">Espace rapports</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/styles/squash.core.css" />
+<link rel="shortcut icon" type="image/x-icon" media="all"
+  href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}" />
+<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/styles/squash.wine.css" />
+
+<script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
+<script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+<script type="text/javascript" th:inline="javascript">
+    /* <![CDATA[ */
+      var require = {
+        rootUrl: /*[[ @{/scripts} ]]*/ "/squash/scripts"
+      }
+      var squashtm = {};
+      squashtm.app = {
+    	locale : /*[[#{squashtm.locale}]]*/ 'fr',
+        reportWorkspaceConf: {
+            expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>',
+            collapseSidebarLabel: /*[[ #{report.workspace.togglebutton.normal.label} ]]*/ '<<'
+          }
+      };
+     /* ]]> */
+    </script>
+<script data-main="../../scripts/report-workspace.js" th:attr="data-main=@{/scripts/report-workspace.js}"
+  src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
+</head>
+<body>
+
+
+
+  <!-- TEXT INPUT -->
+  <!--  params = input -->
+  <div th:fragment="text">
+    <label for="rpt-text-crit" th:for="${input.name}" th:id="${input.name}" th:text="${input.label}" class="rpt-text-crit">Text criteria</label>
+    <input name="rpt-text-crit" class="rpt-text-crit" th:id="${input.name}" th:name="${input.name}" type="text" value="" th:attr="data-disabledby=${input.disabledBy}"/>
+  </div>
+
+
+  <!-- PASSWORD INPUT -->
+  <!--  params = input -->
+  <div th:fragment="password">
+    <label for="rpt-password-crit" th:for="${input.name}" th:id="${input.name}" th:text="${input.label}" class="rpt-password-crit">Password criteria</label>
+    <input name="rpt-password-crit" class="rpt-password-crit" th:id="${input.name}" th:name="${input.name}" type="password" value="" th:attr="data-disabledby=${input.disabledBy}"/>
+  </div>
+
+  <!-- LABEL INPUT -->
+  <!--  params = input -->
+  <div th:fragment="labelText">
+    <span th:id="${input.name}" th:text="${input.label}" class="rpt-label-crit">Label criteria</span>
+  </div>
+
+
+  <!-- CHECKBOX -->
+  <!--  params = input -->
+  <div th:fragment="checkbox">
+    <input name="rpt-chk-crit" th:id="${input.name}" th:name="${input.name}" type="checkbox" th:value="${input.value}"
+      th:checked="${input.defaultSelected}" th:attr="data-grouped=${grouped ne null and grouped}, data-disabledby=${input.disabledBy}"/>
+    <label for="rpt-chk-crit" th:for="${checkboxId}" th:text="${input.label}">Checkbox criteria</label>
+  </div>
+
+
+  <!-- DATE PICKER -->
+  <!--  params = input -->
+  <div th:fragment="datepicker">
+    <label th:for="${input.name}" th:text="${input.label}">Date criteria</label>
+    <span class="rpt-date-crit small" th:id="${input.name}" th:name="${input.name}" th:text="#{squashtm.nodata}"
+      data-locale="fr" data-nodate="no date" th:attr="data-locale=#{squashtm.locale}, data-nodate=#{squashtm.nodata}, data-disabledby=${input.disabledBy}">01-02-2012</span>
+  </div>
+
+
+  <!-- DROPDOWN LIST -->
+  <!--  params = input -->
+  <div th:fragment="dropdownlist">
+    <label for="rpt-drop-crit" th:for="${input.name}" th:text="${input.label}">Dropdown criteria</label>
+    <select name="rpt-drop-crit" th:name="${input.name}" size="1" th:attr="data-disabledby=${input.disabledBy}">
+      <option th:each="opt : ${input.options}" th:name="${opt.name}" th:value="${opt.value}"
+        th:selected="${opt.defaultSelected}" th:text="${opt.label}">Option</option>
+    </select>
+  </div>
+
+
+  <!-- TREE PICKER  -->
+  <!-- params = input , hasLabel -->
+  <div th:fragment="treepicker">
+    <div id="rpt-tree-crit-dialog" th:id="${input.name} + '-dialog'" title="Nodes"
+     	  th:title="#{report.form.tree-picker.dialog.title}"
+          class="rpt-tree-crit-dialog popup-dialog is-contextual not-displayed">
+      <div id="rpt-tree-crit" th:id="${input.name}" class="rpt-tree-crit tree selection-tree"
+            th:attr="data-nodetype=${input.pickedNodeType},data-nodelimit=${input.nodeSelectionLimit},data-isstrict=${input.strict},data-jstreenodetype=${input.jsTreeNodeType}" data-nodetype="CAMPAIGN"  data-nodelimit="1" data-isstrict="false" data-jstreenodetype="CAMPAIGN">NODES
+       </div>
+       <div class="popup-dialog-buttonpane">
+          <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm"/>
+          <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel" />
+       </div>
+    </div>
+    <label th:if="${hasLabel}" for="rpt-tree-crit-open" th:for="${input.name} + '-open'" th:text="${input.label}">Nodes</label>
+    <input id="rpt-tree-crit-open" th:id="${input.name} + '-open'" type="button" class="sq-btn btn-sm rpt-tree-crit-open"
+      th:value="#{report.form.tree-picker.button.label}" value="Pick nodes" data-idopened="rpt-tree-crit-dialog"
+      th:attr="data-idopened=${input.name} + '-dialog', data-disabledby=${input.disabledBy}" />
+  </div>
+
+
+  <!--  PROJECT PICKER -->
+  <!--  params = input , hasLabel -->
+  <div th:fragment="projectpicker">
+    <!-- project picker popup -->
+    <div id="rpt-project-crit" th:id="${input.name}" class="project-picker popup-dialog not-displayed"
+      title="Projects" th:title="${projectMultiselect} ? #{report.form.project-picker.dialog.title} : #{report.form.project-picker.dialog.title.single}"
+      data-multiselect="true" th:attr="data-multiselect=${projectMultiselect}, data-idresult='rpt-project-crit-result'+${input.name}">
+      <div class="cf">
+        <div class="project-filter-list dataTables_wrapper">
+          <span class="filter-warning not-displayed" th:text="${projectMultiselect} ? #{message.projectPicker.warnFilterOn} : #{message.projectPicker.warnFilterOn.single}"></span>
+          <table>
+            <thead>
+              <tr>
+                <th width="25px" class="th-check ui-state-default"></th>
+                <th class="th-name ui-state-default" th:text="#{label.Name}">Name</th>
+                <th class="th-type ui-state-default" th:text="#{label.tag}">Tag</th>
+              </tr>
+            </thead>
+            <tbody class="available-fields">
+              <tr th:each="projectData : ${projectFilterModel.projectData}">
+                <td class="td-check">
+                  <input th:type="${projectMultiselect} ? 'checkbox' : 'radio'" type="checkbox" class="project-checkbox report-init-ignore"
+                    id="project-checkbox-1" th:id="'project-checkbox-'+${projectData[0]}" name="rpt-project-crit"
+                    th:name="${input.name}" value="1" th:value="${projectData[0]}" data-previouschecked="false" />
+                </td>
+                <td class="project-name" th:text="${projectData[1]}">P1</td>
+                <td class="project-label" th:text="${projectData[3]}">P1 label</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div th:if="${projectMultiselect}" class="project-filter-controls">
+          <ul>
+            <li id="dialog-settings-filter-selectall" class="project-picker-selall cursor-pointer"
+              th:text="#{dialog.settings.filter.controls.selectall}">Select all</li>
+            <li id="dialog-settings-filter-deselectall" class="project-picker-deselall cursor-pointer"
+              th:text="#{dialog.settings.filter.controls.deselectall}">Deselect all</li>
+            <li id="dialog-settings-filter-invertselect" class="project-picker-invsel cursor-pointer"
+              th:text="#{dialog.settings.filter.controls.invertselect}">Invert selection</li>
+          </ul>
+        </div>
+      </div>
+      <div class="popup-dialog-buttonpane">
+        <input type="button" th:value="#{label.Confirm}" />
+        <input type="button" th:value="#{label.Cancel}" />
+      </div>
+    </div>
+    <!-- /project picker popup  -->
+    <label th:if="${hasLabel}" for="rpt-project-crit-open" th:for="${input.name} + '-open'" th:text="${input.label}">Projects</label>
+    <span id="rpt-project-crit-result" th:id="'rpt-project-crit-result'+${input.name}" class="rpt-projects-crit-result small"
+      th:attr="data-multiplevaluetext=#{label.multipleProjects}" data-multiplevaluetext="Multiple projects"></span>
+    <input id="rpt-project-crit-open" th:id="${input.name} + '-open'" type="button" class="sq-btn btn-sm rpt-projects-crit-open"
+      th:value="#{report.form.project-picker.button.label}" value="Pick projects"
+      th:attr="data-idopened=${input.name}, data-disabledby=${input.disabledBy}" data-idopened="rpt-project-crit" />
+  </div>
+
+  <!--  MILESTONE PICKER -->
+  <div th:if="${application.milestoneFeatureEnabled}" th:fragment="milestonepicker" >
+    <label th:if="${hasLabel}" th:text="#{${input.labelKey}}" th:for="${input.name}+'-open'">Milestone</label>
+
+    <span th:id="'rpt-milestone-crit-result-'+${input.name}" class="rpt-milestone-crit-result small"></span>
+    <input th:id="${input.name} + '-open'" type="button" class="sq-btn btn-sm rpt-milestone-crit-open" th:value="#{report.form.project-picker.button.label}"
+          th:attr="data-idopened=${input.name}, data-disabledby=${input.disabledBy}" />
+
+    <div class="milestone-picker popup-dialog not-displayed" th:id="${input.name}"
+      th:title="#{message.PickAMilestone}"
+      th:attr="data-idresult='rpt-milestone-crit-result-'+${input.name}">
+
+      <table th:attr="data-def='filter, ajaxsource='+@{/milestones(selectable=true)}">
+        <thead>
+            <th data-def="sClass=milestone-radio, map=empty-delete-holder"></th>
+            <th data-def="map=label, sortable" th:text="#{label.Label}">label</th>
+            <th data-def="map=status, sortable" th:text="#{label.Status}">status</th>
+            <th data-def="map=date, sortable" th:text="#{label.EndDate}">end date</th>
+            <th data-def="map=description, sortable" th:text="#{label.Description}">description</th>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+
+      <div class="popup-dialog-buttonpane">
+        <input type="button" th:value="#{label.Confirm}" data-def="evt=confirm, mainbtn"/>
+        <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
+      </div>
+    </div>
+  </div>
+
+
+ <!--  TAG PICKER -->
+  <div  th:fragment="tagpicker" >
+    <label th:if="${hasLabel}" th:text="#{${input.labelKey}}" th:for="${input.name}+'-open'">Tag</label>
+
+    <span th:id="'rpt-tag-crit-result-'+${input.name}" class="rpt-milestone-crit-result small"></span>
+    <input th:id="${input.name} + '-open'" type="button" class="sq-btn btn-sm rpt-tag-crit-open" th:value="#{report.form.project-picker.button.label}"
+          th:attr="data-idopened=${input.name}, data-disabledby=${input.disabledBy}" />
+
+    <div class="tag-picker popup-dialog not-displayed" th:id="${input.name}"
+      th:title="#{message.choose-a-tag}" data-def="nocleanup"
+      th:attr="data-idresult='rpt-tag-crit-result-'+${input.name}, data-url= @{/custom-fields/tags/__${input.boundEntity}__}">
+
+    <ul class="custom-field tagit ui-widget ui-widget-content squash-tagit" th:id="choose-tag"/>
+
+      <div class="popup-dialog-buttonpane">
+        <input type="button" th:value="#{label.Confirm}" data-def="evt=confirm, mainbtn"/>
+        <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
+      </div>
+    </div>
+  </div>
+
+
+
+</body>
+</html>

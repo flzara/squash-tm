@@ -1,0 +1,105 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<div th:fragment="dashboard-view">
+			<div id="dashboard-name-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
+  			<div id="right-frame-button">
+				<input type="button" class="sq-btn btn-sm" id="toggle-expand-left-frame-button" th:title="#{tooltip.toggleLibraryDisplay}"/>
+  			</div>
+			<div style="float: left; height: 100%;" class="small-margin-left">
+				<h2>
+					{{name}}
+				</h2>
+			</div>
+
+			<div class="unsnap"></div>
+		</div>
+		<div id="element-toolbar" class="toolbar-class ui-corner-all">
+			<div class="toolbar-information-panel">
+				<div id="general-information-panel" class="information-panel">
+					<span th:text="#{label.CreatedOn}+'&nbsp;:&nbsp;'">created on </span>{{createdOn}} ({{createdBy}})
+					<br/>
+					<span th:text="#{workspace.custom-report.timestamp.label}">chart type</span>
+				</div>
+			</div>
+      <div class="toolbar-button-panel">
+
+			<a id="change-favorite-dashboard-button" class="buttonmenu sq-icon-btn buttonmenu-button" role="buttonmenu">
+				<span th:text="#{label.favorite-dashboard}"/>
+			</a>
+
+			<ul id="change-favorite-dashboard-menu" class="buttonmenu-menu squash-buttonmenu ui-menu ui-widget  ui-corner-all collapse" role="menu" tabindex="0" style="position: absolute; overflow: hidden; white-space: nowrap; z-index: 3000; width: 113px; display: none;">
+				<li  class="cursor-pointer ui-menu-item favorite-select" role="presentation" aria-disabled="true">
+					<a class="ui-corner-all " tabindex="-1" role="menuitem" name="home" th:text="#{label.home}">home</a>
+				</li>
+				<li  class="cursor-pointer ui-menu-item favorite-select" role="presentation" aria-disabled="true">
+					<a class="ui-corner-all " tabindex="-1" role="menuitem" name="requirement" th:text="#{label.requirement}">requirement</a>
+				</li>
+				<li  class="cursor-pointer ui-menu-item favorite-select" role="presentation" aria-disabled="true">
+					<a class="ui-corner-all " tabindex="-1" role="menuitem" name="test-case" th:text="#{label.testCase}">test-case</a>
+				</li>
+				<li  class="cursor-pointer ui-menu-item favorite-select" role="presentation" aria-disabled="true">
+					<a class="ui-corner-all " tabindex="-1" role="menuitem" name="campaign" th:text="#{label.Campaign}">campaign</a>
+				</li>
+			</ul>
+
+      {{#if canWrite}}
+				<input type="button" th:attr="value=#{label.Rename},title=#{label.Rename}" id="rename-dashboard-button" class="sq-btn" />
+      {{/if}}
+      </div>
+			<div class="unsnap"></div>
+		</div>
+			{{#if emptyDashboard}}
+				{{> dashboardDoc}}
+			{{/if}}
+		<div id="dashboard-grid" class="dashboard-grid gridster jstree-drop">
+			{{#each chartBindings}}
+   				{{> chart canWrite=../canWrite}}
+ 			{{/each}}
+		</div>
+</div>
+
+<div th:fragment="chart-in-dashboard">
+	<div id="widget-chart-binding-{{id}}" data-binding-id="{{id}}" class="dashboard-graph" data-row="{{row}}" data-col="{{col}}" data-sizex="{{sizeX}}" data-sizey="{{sizeY}}">
+		<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
+		<div id="delete-chart-binding-{{id}}" class="delete-chart-button" data-binding-id="{{id}}">
+			<span class="ui-icon ui-icon-trash"></span>
+		</div>
+	</div>
+</div>
+
+<div th:fragment="new-chart-in-dashboard">
+	<div id="widget-chart-binding-{{id}}" class="dashboard-graph" data-binding-id="{{id}}">
+		<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
+		<div id="delete-chart-binding-{{id}}" class="delete-chart-button" data-binding-id="{{id}}">
+			<span class="ui-icon ui-icon-trash"></span>
+		</div>
+	</div>
+</div>
+
+<div th:fragment="chart-display-area">
+	<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
+		<div id="delete-chart-binding-{{id}}" class="delete-chart-button" data-binding-id="{{id}}">
+				<span class="ui-icon ui-icon-trash"></span>
+		</div>
+		<span class="gs-resize-handle gs-resize-handle-both"></span>
+</div>

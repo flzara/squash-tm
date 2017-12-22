@@ -1,0 +1,1162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="execution-progression" pageWidth="776" pageHeight="595" orientation="Landscape" columnWidth="736" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="/WEB-INF/messages/tm/messages" whenResourceMissingType="Key" uuid="1266b777-3fbe-4cb1-82e8-d0103e9bd968">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<topPen lineWidth="1.0" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="1.0" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="0.5" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="0.5" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="0.5" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<topPen lineWidth="1.0" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="1.0" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="0.5" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="0.5" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="0.5" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<style name="table 2" mode="Opaque" backcolor="#77132E">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+			<topPen lineWidth="0.0"/>
+			<leftPen lineWidth="0.0"/>
+			<bottomPen lineWidth="0.0"/>
+			<rightPen lineWidth="0.0"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#77132E">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+			<topPen lineWidth="0.0"/>
+			<leftPen lineWidth="0.0"/>
+			<bottomPen lineWidth="0.0"/>
+			<rightPen lineWidth="0.0"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+			<topPen lineWidth="0.0"/>
+			<leftPen lineWidth="0.0"/>
+			<bottomPen lineWidth="0.0"/>
+			<rightPen lineWidth="0.0"/>
+		</box>
+	</style>
+	<style name="table 3">
+		<box>
+			<topPen lineWidth="1.0" lineColor="#000000"/>
+			<bottomPen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="emptydataset" uuid="4e325f13-7db2-48c4-bea0-6af954673006"/>
+	<subDataset name="Project_Dataset" uuid="cbdad712-7e0d-4575-8d34-b1ed55e38635">
+		<parameter name="name" class="java.lang.String"/>
+		<parameter name="numberTestCase" class="java.lang.Integer"/>
+		<parameter name="iCountStatusSuccess" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="iCountStatusReady" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="iCountStatusRunning" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="iCountStatusUntestable" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="iCountStatusBloqued" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="iCountStatusFailure" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="iCountStatusSettled" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="fPercentageStatusReady" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="fPercentageStatusSuccess" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="fPercentageStatusBloqued" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="fPercentageStatusRunning" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="fPercentageStatusUntestable" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="fPercentageStatusFailure" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="fPercentageStatusSettled" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="allowsUntestable" class="java.lang.Boolean" isForPrompting="false"/>
+		<parameter name="allowsSettled" class="java.lang.Boolean" isForPrompting="false"/>
+		<parameter name="status" class="java.lang.Enum" isForPrompting="false"/>
+	</subDataset>
+	<subDataset name="Total_Dataset" uuid="e57e43c6-c015-4040-b25e-a53b89f3accc">
+		<parameter name="numberTestCase" class="java.lang.Integer" isForPrompting="false">
+			<parameterDescription><![CDATA[]]></parameterDescription>
+		</parameter>
+		<parameter name="iCountStatusSuccess" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="iCountStatusReady" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="iCountStatusRunning" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="iCountStatusUntestable" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="iCountStatusBloqued" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="iCountStatusFailure" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="iCountStatusSettled" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="fPercentageStatusReady" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="fPercentageStatusSuccess" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="fPercentageStatusBloqued" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="fPercentageStatusRunning" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="fPercentageStatusUntestable" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="fPercentageStatusFailure" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="fPercentageStatusSettled" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="allowsUntestable" class="java.lang.Boolean" isForPrompting="false"/>
+		<parameter name="allowsSettled" class="java.lang.Boolean" isForPrompting="false"/>
+	</subDataset>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Documents and Settings\\bsiri\\Mes documents\\reports\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="executionProgressionCampaign" class="net.sf.jasperreports.engine.JasperReport" isForPrompting="false"/>
+	<parameter name="executionProgressionIteration" class="net.sf.jasperreports.engine.JasperReport" isForPrompting="false"/>
+	<parameter name="milestoneLabel" class="java.lang.String" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="campaigns" class="java.util.List">
+		<fieldDescription><![CDATA[campaigns]]></fieldDescription>
+	</field>
+	<field name="status" class="java.lang.Enum">
+		<fieldDescription><![CDATA[status]]></fieldDescription>
+	</field>
+	<field name="numberTestCase" class="java.lang.Integer">
+		<fieldDescription><![CDATA[numberTestCase]]></fieldDescription>
+	</field>
+	<field name="fPercentageStatusReady" class="java.lang.Float">
+		<fieldDescription><![CDATA[fPercentageStatusReady]]></fieldDescription>
+	</field>
+	<field name="fPercentageStatusSuccess" class="java.lang.Float">
+		<fieldDescription><![CDATA[fPercentageStatusSuccess]]></fieldDescription>
+	</field>
+	<field name="iCountStatusFailure" class="java.lang.Integer">
+		<fieldDescription><![CDATA[iCountStatusFailure]]></fieldDescription>
+	</field>
+	<field name="fPercentageProgress" class="java.lang.Float">
+		<fieldDescription><![CDATA[fPercentageProgress]]></fieldDescription>
+	</field>
+	<field name="fPercentageStatusBloqued" class="java.lang.Float">
+		<fieldDescription><![CDATA[fPercentageStatusBloqued]]></fieldDescription>
+	</field>
+	<field name="fPercentageStatusRunning" class="java.lang.Float">
+		<fieldDescription><![CDATA[fPercentageStatusRunning]]></fieldDescription>
+	</field>
+	<field name="fPercentageStatusUntestable" class="java.lang.Float">
+		<fieldDescription><![CDATA[fPercentageStatusUntestable]]></fieldDescription>
+	</field>
+	<field name="fPercentageStatusSettled" class="java.lang.Float">
+		<fieldDescription><![CDATA[fPercentageStatusSettled]]></fieldDescription>
+	</field>
+	<field name="fPercentageStatusFailure" class="java.lang.Float">
+		<fieldDescription><![CDATA[fPercentageStatusFailure]]></fieldDescription>
+	</field>
+	<field name="iCountStatusSuccess" class="java.lang.Integer">
+		<fieldDescription><![CDATA[iCountStatusSuccess]]></fieldDescription>
+	</field>
+	<field name="iCountStatusReady" class="java.lang.Integer">
+		<fieldDescription><![CDATA[iCountStatusReady]]></fieldDescription>
+	</field>
+	<field name="iCountStatusBloqued" class="java.lang.Integer">
+		<fieldDescription><![CDATA[iCountStatusBloqued]]></fieldDescription>
+	</field>
+	<field name="iCountStatusRunning" class="java.lang.Integer">
+		<fieldDescription><![CDATA[iCountStatusRunning]]></fieldDescription>
+	</field>
+	<field name="iCountStatusUntestable" class="java.lang.Integer">
+		<fieldDescription><![CDATA[iCountStatusUntestable]]></fieldDescription>
+	</field>
+	<field name="iCountStatusSettled" class="java.lang.Integer">
+		<fieldDescription><![CDATA[iCountStatusSettled]]></fieldDescription>
+	</field>
+	<field name="allowsSettled" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[allowsSettled]]></fieldDescription>
+	</field>
+	<field name="allowsUntestable" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[allowsUntestable]]></fieldDescription>
+	</field>
+	<field name="name" class="java.lang.String">
+		<fieldDescription><![CDATA[name]]></fieldDescription>
+	</field>
+	<field name="id" class="java.lang.Long">
+		<fieldDescription><![CDATA[id]]></fieldDescription>
+	</field>
+	<sortField name="name"/>
+	<variable name="allowsSettled" class="java.lang.Boolean" incrementType="Group" incrementGroup="projects" calculation="Sum">
+		<variableExpression><![CDATA[$F{allowsSettled}]]></variableExpression>
+	</variable>
+	<variable name="allowsUntestable" class="java.lang.Boolean" incrementType="Group" incrementGroup="projects" calculation="Sum">
+		<variableExpression><![CDATA[$F{allowsUntestable}]]></variableExpression>
+	</variable>
+	<variable name="total_iCountStatusSuccess" class="java.lang.Integer" incrementType="Group" incrementGroup="projects" calculation="Sum">
+		<variableExpression><![CDATA[$F{iCountStatusSuccess}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="total_iCountStatusFailure" class="java.lang.Integer" incrementType="Group" incrementGroup="projects" calculation="Sum">
+		<variableExpression><![CDATA[$F{iCountStatusFailure}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="total_iCountStatusBloqued" class="java.lang.Integer" incrementType="Group" incrementGroup="projects" calculation="Sum">
+		<variableExpression><![CDATA[$F{iCountStatusBloqued}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="total_iCountStatusReady" class="java.lang.Integer" incrementType="Group" incrementGroup="projects" calculation="Sum">
+		<variableExpression><![CDATA[$F{iCountStatusReady}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="total_iCountStatusRunning" class="java.lang.Integer" incrementType="Group" incrementGroup="projects" calculation="Sum">
+		<variableExpression><![CDATA[$F{iCountStatusRunning}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="total_iCountStatusUntestable" class="java.lang.Integer" incrementType="Group" incrementGroup="projects" calculation="Sum">
+		<variableExpression><![CDATA[$F{iCountStatusUntestable}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="total_iCountStatusSettled" class="java.lang.Integer" incrementType="Group" incrementGroup="projects" calculation="Sum">
+		<variableExpression><![CDATA[$F{iCountStatusSettled}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="total_numberTestCase" class="java.lang.Integer" incrementType="Group" incrementGroup="projects" calculation="Sum">
+		<variableExpression><![CDATA[$F{numberTestCase}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<group name="projects">
+		<groupExpression><![CDATA[$F{id}]]></groupExpression>
+	</group>
+	<columnHeader>
+		<band height="58">
+			<componentElement>
+				<reportElement uuid="51bc8e0b-2206-41aa-83cd-c99a6590876f" key="table 2" style="table" x="0" y="38" width="736" height="20"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Project_Dataset" uuid="754a90c5-62c1-48df-b3f0-145689e28ec5">
+						<datasetParameter name="allowsSettled">
+							<datasetParameterExpression><![CDATA[$F{allowsSettled}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="allowsUntestable">
+							<datasetParameterExpression><![CDATA[$F{allowsUntestable}]]></datasetParameterExpression>
+						</datasetParameter>
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource(1)]]></dataSourceExpression>
+					</datasetRun>
+					<jr:columnGroup width="113" uuid="7bdf4913-bbd2-4b6d-aee7-b9534b49046d">
+						<jr:columnHeader height="30" rowSpan="1"/>
+						<jr:column width="113" uuid="6856f211-e7b8-4cc7-ad03-cf1f2ba5da1e">
+							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement uuid="006e09a3-ba48-49a9-93d1-dc7f9cf8168b" stretchType="RelativeToTallestObject" x="0" y="0" width="113" height="20">
+										<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+									</reportElement>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$R{report.executionprogression.main.iteration.label}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+					</jr:columnGroup>
+					<jr:columnGroup width="220" uuid="aaad1d86-3b03-4f03-9dca-f5bc50d1dc03">
+						<jr:columnHeader height="30" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="1.0"/>
+							</box>
+							<textField>
+								<reportElement uuid="02ceb955-da15-48a3-80ed-78bdd27a5189" x="0" y="0" width="220" height="30"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.header.planning.label}]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:column width="55" uuid="1148a954-ec0b-4762-9f91-ca3690cf67fa">
+							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement uuid="be5883eb-ce43-4681-b4e6-783e8e91c34e" stretchType="RelativeToTallestObject" x="0" y="0" width="55" height="20">
+										<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+									</reportElement>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$R{report.executionprogression.main.schedstart.label}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+						<jr:column width="55" uuid="bc78bac3-621f-46c5-bc25-4b73ea4e998e">
+							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement uuid="03d0af01-5c4e-4277-ac1c-40d4cec66ed9" stretchType="RelativeToTallestObject" x="0" y="0" width="55" height="20">
+										<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+									</reportElement>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$R{report.executionprogression.main.schedend.label}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+						<jr:column width="55" uuid="19f5d63e-ed9a-4cda-be5c-ffe0bea8f84d">
+							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement uuid="2004e0a0-ee53-4d4a-a2af-1c85060a657b" stretchType="RelativeToTallestObject" x="0" y="0" width="55" height="20">
+										<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+									</reportElement>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$R{report.executionprogression.main.actstart.label}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+						<jr:column width="55" uuid="c9c0106b-48b5-4730-94ce-e5aff1e7e72f">
+							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement uuid="1eb34f95-0a69-4514-9c05-018ed9e89d97" stretchType="RelativeToTallestObject" x="0" y="0" width="55" height="20">
+										<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+									</reportElement>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$R{report.executionprogression.main.actend.label}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+					</jr:columnGroup>
+					<jr:columnGroup width="287" uuid="ee744272-dd47-442a-99a7-dcafe1668a52">
+						<jr:columnHeader height="30" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="1.0"/>
+							</box>
+							<textField>
+								<reportElement uuid="936433ec-1c36-48aa-8b26-96a2def0da8a" x="0" y="0" width="287" height="30"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.header.status.label}]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:column width="41" uuid="8ab50309-1635-462d-8af7-ad85369eab84">
+							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement uuid="b2bd0f69-b0d4-40eb-8390-7f26f833f6e9" stretchType="RelativeToTallestObject" x="0" y="0" width="41" height="20">
+										<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+									</reportElement>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$R{report.executionprogression.main.ready.label}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+						<jr:column width="41" uuid="a2b8a56b-9906-4994-85df-9313281f8a48">
+							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement uuid="ee3985e0-998c-4e02-8f20-64d4db6ec92b" stretchType="RelativeToTallestObject" x="0" y="0" width="41" height="20">
+										<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+									</reportElement>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$R{report.executionprogression.main.running.label}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+						<jr:column width="41" uuid="4acfe9f6-5a95-4974-a30e-d014a155f7b3">
+							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement uuid="29260a59-bd08-4e9b-af7d-294a6e4fac08" stretchType="RelativeToTallestObject" x="0" y="0" width="41" height="20">
+										<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+									</reportElement>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$R{report.executionprogression.main.untestable.label}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+						<jr:column width="41" uuid="caec1157-860c-409a-a69e-a9f603abed35">
+							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement uuid="8a317d13-2b41-4d6d-a2e8-e8ca0b0b4ebc" stretchType="RelativeToTallestObject" x="0" y="0" width="41" height="20">
+										<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+									</reportElement>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$R{report.executionprogression.main.bloqued.label}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+						<jr:column width="41" uuid="3d9d6568-8692-4b2f-8702-e82b04ebd830">
+							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement uuid="f6133469-8a30-44ab-83a4-6de8720f9bdc" stretchType="RelativeToTallestObject" x="0" y="0" width="41" height="20" forecolor="#FF3333">
+										<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+									</reportElement>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$R{report.executionprogression.main.failure.label}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+						<jr:column width="41" uuid="a442d3b0-5e84-4e0d-b7d5-8bf9bcc4a15e">
+							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement uuid="470d0ef7-fb12-4d58-9068-8475e072c2c7" stretchType="RelativeToTallestObject" x="0" y="0" width="41" height="20" forecolor="#009900">
+										<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+									</reportElement>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$R{report.executionprogression.main.success.label}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+						<jr:column width="41" uuid="70073d9c-d6c7-445c-9a46-22043b73e55c">
+							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement uuid="0fceb7a0-328d-4ffc-812d-07c6bb4413c8" stretchType="RelativeToTallestObject" x="0" y="0" width="41" height="20" forecolor="#009900">
+										<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+									</reportElement>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$R{report.executionprogression.main.settled.label}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+					</jr:columnGroup>
+					<jr:columnGroup width="113" uuid="04cc7ee7-9b46-4e0b-961d-7848fb8dfdb9">
+						<jr:columnHeader height="30" rowSpan="1"/>
+						<jr:column width="50" uuid="a7997d59-699e-4bbf-8ede-8cfc8da35ffa">
+							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement uuid="dd2472c2-0584-46cf-96fd-dbe526d67f80" stretchType="RelativeToTallestObject" x="0" y="0" width="50" height="20">
+										<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+									</reportElement>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$R{report.executionprogression.main.total.label}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+						<jr:column width="63" uuid="fa470378-73bd-4cc3-809b-5661a022c192">
+							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement uuid="3bc44a5a-09e9-4c57-a73c-8d7f2456cc5c" stretchType="RelativeToTallestObject" x="0" y="0" width="63" height="20">
+										<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+									</reportElement>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$R{report.executionprogression.main.progress.label}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+					</jr:columnGroup>
+				</jr:table>
+			</componentElement>
+			<textField>
+				<reportElement uuid="46a1ae88-615e-4744-97b2-f649d5ec84d7" mode="Transparent" x="10" y="0" width="545" height="20" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[($P{milestoneLabel} != null)]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="13" isBold="true" isItalic="false"/>
+					<paragraph leftIndent="20"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.executionprogression.main.milestone}+" : "+$P{milestoneLabel}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="45">
+			<subreport>
+				<reportElement uuid="2a53c142-c174-46da-bda4-298fbeaeb9af" stretchType="RelativeToTallestObject" x="0" y="20" width="736" height="25" isRemoveLineWhenBlank="true"/>
+				<subreportParameter name="REPORT_RESOURCE_BUNDLE">
+					<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="executionProgressionIteration">
+					<subreportParameterExpression><![CDATA[$P{executionProgressionIteration}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{campaigns})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{executionProgressionCampaign}]]></subreportExpression>
+			</subreport>
+			<componentElement>
+				<reportElement uuid="2337815b-631e-4008-8686-70a6327d2c41" key="table 3" style="table 2" x="0" y="0" width="736" height="20" isRemoveLineWhenBlank="true" backcolor="#77132E"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Project_Dataset" uuid="490c8f74-7499-4b6c-bde7-93786170c6c7">
+						<datasetParameter name="allowsSettled">
+							<datasetParameterExpression><![CDATA[$F{allowsSettled}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="allowsUntestable">
+							<datasetParameterExpression><![CDATA[$F{allowsUntestable}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iCountStatusSuccess">
+							<datasetParameterExpression><![CDATA[$F{iCountStatusSuccess}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iCountStatusReady">
+							<datasetParameterExpression><![CDATA[$F{iCountStatusReady}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iCountStatusRunning">
+							<datasetParameterExpression><![CDATA[$F{iCountStatusRunning}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iCountStatusUntestable">
+							<datasetParameterExpression><![CDATA[$F{iCountStatusUntestable}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iCountStatusBloqued">
+							<datasetParameterExpression><![CDATA[$F{iCountStatusBloqued}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iCountStatusFailure">
+							<datasetParameterExpression><![CDATA[$F{iCountStatusFailure}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iCountStatusSettled">
+							<datasetParameterExpression><![CDATA[$F{iCountStatusSettled}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="fPercentageStatusReady">
+							<datasetParameterExpression><![CDATA[$F{fPercentageStatusReady}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="fPercentageStatusSuccess">
+							<datasetParameterExpression><![CDATA[$F{fPercentageStatusSuccess}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="fPercentageStatusBloqued">
+							<datasetParameterExpression><![CDATA[$F{fPercentageStatusBloqued}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="fPercentageStatusRunning">
+							<datasetParameterExpression><![CDATA[$F{fPercentageStatusRunning}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="fPercentageStatusUntestable">
+							<datasetParameterExpression><![CDATA[$F{fPercentageStatusUntestable}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="fPercentageStatusFailure">
+							<datasetParameterExpression><![CDATA[$F{fPercentageStatusFailure}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="fPercentageStatusSettled">
+							<datasetParameterExpression><![CDATA[$F{fPercentageStatusSettled}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="numberTestCase">
+							<datasetParameterExpression><![CDATA[$F{numberTestCase}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="name">
+							<datasetParameterExpression><![CDATA[$F{name}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="status">
+							<datasetParameterExpression><![CDATA[$F{status}]]></datasetParameterExpression>
+						</datasetParameter>
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource(1)]]></dataSourceExpression>
+					</datasetRun>
+					<jr:columnGroup width="333" uuid="6df6fc2a-f981-44c8-b3fb-31557b1d9bba">
+						<jr:column width="333" uuid="d6d82d51-53f5-49a9-aa2d-2a21a9b010a4">
+							<jr:columnHeader height="19" rowSpan="1">
+								<textField>
+									<reportElement uuid="4ca3ed23-62b8-4837-9f7e-432b0222f39b" mode="Opaque" x="0" y="0" width="333" height="19" forecolor="#FFFFFF" backcolor="#77132E"/>
+									<textElement verticalAlignment="Middle">
+										<font size="9" isBold="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$R{report.executionprogression.main.project.label}+" : "+$P{name}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell height="0" rowSpan="1"/>
+						</jr:column>
+					</jr:columnGroup>
+					<jr:columnGroup width="287" uuid="98f35878-0f42-47c3-abf4-966b431263dd">
+						<jr:column width="41" uuid="2675e806-0120-49ea-b439-c95325fb0c0d">
+							<jr:columnHeader height="19" rowSpan="1">
+								<textField>
+									<reportElement uuid="81ca596b-aa69-482f-bdf7-916bebe8cd46" mode="Opaque" x="0" y="0" width="20" height="19" forecolor="#FFFFFF" backcolor="#77132E"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$P{iCountStatusReady}]]></textFieldExpression>
+								</textField>
+								<textField pattern="#,##0 %">
+									<reportElement uuid="fd01f8da-a13b-405d-ab93-977afbce80cf" mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999" backcolor="#77132E"/>
+									<textElement verticalAlignment="Middle">
+										<font size="7"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$P{fPercentageStatusReady}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+						<jr:column width="41" uuid="e0f50c99-f403-4abb-9c48-982054d85813">
+							<jr:columnHeader height="19" rowSpan="1">
+								<textField>
+									<reportElement uuid="b10a8c0c-52b6-4b6d-8601-062f02835fda" mode="Opaque" x="0" y="0" width="20" height="19" forecolor="#FFFFFF" backcolor="#77132E"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$P{iCountStatusRunning}]]></textFieldExpression>
+								</textField>
+								<textField pattern="#,##0 %">
+									<reportElement uuid="404d8ab7-1ab2-423a-b8b0-1148e11f651d" mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999" backcolor="#77132E"/>
+									<textElement verticalAlignment="Middle">
+										<font size="7"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$P{fPercentageStatusRunning}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+						<jr:column width="41" uuid="8ee946f7-2b24-4317-8b35-8a065008cd2a">
+							<jr:columnHeader height="19" rowSpan="1">
+								<textField>
+									<reportElement uuid="32545d99-dea9-4b17-9f03-bc782fa6c531" mode="Opaque" x="0" y="0" width="20" height="19" forecolor="#FFFFFF" backcolor="#77132E"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$P{allowsUntestable} ? $P{iCountStatusUntestable}.toString() : new String("")]]></textFieldExpression>
+								</textField>
+								<textField pattern="#,##0 %">
+									<reportElement uuid="ea37a943-747e-44fa-bddd-92f42b7bbddb" mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999" backcolor="#77132E"/>
+									<textElement verticalAlignment="Middle">
+										<font size="7"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$P{allowsUntestable} ? $P{fPercentageStatusUntestable} : new String("")]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+						<jr:column width="41" uuid="29509219-7d73-4028-b48f-c4731b8e4d4f">
+							<jr:columnHeader height="19" rowSpan="1">
+								<textField>
+									<reportElement uuid="38a40201-bf85-40c5-bbb9-122cf901a712" mode="Opaque" x="0" y="0" width="20" height="19" forecolor="#FFFFFF" backcolor="#77132E"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$P{iCountStatusBloqued}]]></textFieldExpression>
+								</textField>
+								<textField pattern="#,##0 %">
+									<reportElement uuid="3d3a3673-58dc-4d85-9bf7-42a8080d7e34" mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999" backcolor="#77132E"/>
+									<textElement verticalAlignment="Middle">
+										<font size="7"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$P{fPercentageStatusBloqued}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+						<jr:column width="41" uuid="4c1a7600-a838-477d-a054-a5ac99930097">
+							<jr:columnHeader height="19" rowSpan="1">
+								<textField>
+									<reportElement uuid="d6181dfb-6056-424c-8c6e-e29c53bd6119" mode="Opaque" x="0" y="0" width="20" height="19" forecolor="#FF3333" backcolor="#77132E"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$P{iCountStatusFailure}]]></textFieldExpression>
+								</textField>
+								<textField pattern="#,##0 %">
+									<reportElement uuid="af72b126-8476-4fa8-9eec-75918dbc4a83" mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999" backcolor="#77132E"/>
+									<textElement verticalAlignment="Middle">
+										<font size="7"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$P{fPercentageStatusFailure}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+						<jr:column width="41" uuid="7119b7eb-c73f-453d-a44c-4c79b54e94f9">
+							<jr:columnHeader height="19" rowSpan="1">
+								<textField>
+									<reportElement uuid="7df5334c-2058-4ee3-bfa6-f7f37091eea1" mode="Opaque" x="0" y="0" width="20" height="19" forecolor="#009900" backcolor="#77132E"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$P{iCountStatusSuccess}]]></textFieldExpression>
+								</textField>
+								<textField pattern="#,##0 %">
+									<reportElement uuid="97417448-58d5-439a-8b70-94cfc8ebc9d5" mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999" backcolor="#77132E"/>
+									<textElement verticalAlignment="Middle">
+										<font size="7"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$P{fPercentageStatusSuccess}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+						<jr:column width="41" uuid="a8a36426-95f0-4069-91b0-ed84415d0df4">
+							<jr:columnHeader height="19" rowSpan="1">
+								<textField>
+									<reportElement uuid="5adada3d-96ef-4004-bff3-c02b3a5e404e" mode="Opaque" x="0" y="0" width="20" height="19" forecolor="#009900" backcolor="#77132E"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$P{allowsSettled} ? $P{iCountStatusSettled}.toString() : new String("")]]></textFieldExpression>
+								</textField>
+								<textField pattern="#,##0 %">
+									<reportElement uuid="8116bed8-5d48-49b7-819e-78159fd8d60a" mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999" backcolor="#77132E"/>
+									<textElement verticalAlignment="Middle">
+										<font size="7"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$P{allowsSettled} ? $P{fPercentageStatusSettled} : new String("")]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+					</jr:columnGroup>
+					<jr:columnGroup width="113" uuid="0b862b6b-b4ad-4f1c-9f08-0b8f1dc7a9d2">
+						<jr:column width="50" uuid="8a1d48d0-8705-483b-bba8-8884060b1578">
+							<jr:columnHeader height="19" rowSpan="1">
+								<textField>
+									<reportElement uuid="0a399a73-cd21-405d-ab67-4004bf88ca33" mode="Opaque" x="0" y="0" width="50" height="19" forecolor="#FFFFFF" backcolor="#77132E"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$P{numberTestCase}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+						<jr:column width="63" uuid="95e4006b-36a8-46be-af2b-fcb956b979da">
+							<jr:columnHeader height="19" rowSpan="1">
+								<textField>
+									<reportElement uuid="c743d8d9-acf0-4c3d-9bda-0553b2761e28" mode="Opaque" x="0" y="0" width="63" height="19" forecolor="#FFFFFF" backcolor="#77132E"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[($P{status}.toString()=="CAMPAIGN_RUNNING") ? $R{report.executionprogression.campaignstatus.CAMPAIGN_RUNNING} : $R{report.executionprogression.campaignstatus.CAMPAIGN_OVER}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+					</jr:columnGroup>
+				</jr:table>
+			</componentElement>
+		</band>
+	</detail>
+	<lastPageFooter>
+		<band height="74">
+			<componentElement>
+				<reportElement uuid="659fb009-073a-43df-a963-443f97fa3b1e" key="table 3" x="0" y="50" width="736" height="20"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Total_Dataset" uuid="5fd5d654-5339-4319-b3c6-472df615f6e1">
+						<datasetParameter name="allowsSettled">
+							<datasetParameterExpression><![CDATA[$F{allowsSettled}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="allowsUntestable">
+							<datasetParameterExpression><![CDATA[$F{allowsUntestable}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iCountStatusSuccess">
+							<datasetParameterExpression><![CDATA[$V{total_iCountStatusSuccess}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iCountStatusReady">
+							<datasetParameterExpression><![CDATA[$V{total_iCountStatusReady}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iCountStatusRunning">
+							<datasetParameterExpression><![CDATA[$V{total_iCountStatusRunning}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iCountStatusUntestable">
+							<datasetParameterExpression><![CDATA[$V{total_iCountStatusUntestable}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iCountStatusBloqued">
+							<datasetParameterExpression><![CDATA[$V{total_iCountStatusBloqued}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iCountStatusFailure">
+							<datasetParameterExpression><![CDATA[$V{total_iCountStatusFailure}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iCountStatusSettled">
+							<datasetParameterExpression><![CDATA[$V{total_iCountStatusSettled}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="numberTestCase">
+							<datasetParameterExpression><![CDATA[$V{total_numberTestCase}]]></datasetParameterExpression>
+						</datasetParameter>
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource(1)]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="333" uuid="b685d0f9-6c55-4a0b-89cb-1e28362fb46b">
+						<jr:columnHeader height="20" rowSpan="1">
+							<staticText>
+								<reportElement uuid="9c82a0c7-5d3d-45dc-9706-6c30f8a27f2e" x="0" y="0" width="333" height="20"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<text><![CDATA[TOTAL :     ]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="41" uuid="9fb636c4-aef1-4c78-ae17-ac3f3892c94e">
+						<jr:columnHeader height="20" rowSpan="1">
+							<textField>
+								<reportElement uuid="f1d98214-e8c2-42bd-a087-31e79aa14b69" x="0" y="0" width="20" height="20"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{iCountStatusReady}]]></textFieldExpression>
+							</textField>
+							<textField pattern="#,##0 %">
+								<reportElement uuid="69ce59cb-a0f8-4f98-9e25-1248d2e91d5a" mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[(float)$P{iCountStatusReady}/(float)$P{numberTestCase}]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="41" uuid="2daddb2c-a0de-4b23-8e1a-9c63ece28d08">
+						<jr:columnHeader height="20" rowSpan="1">
+							<textField>
+								<reportElement uuid="4f6b8d84-239a-4792-afd4-eeef4c66c599" x="0" y="0" width="20" height="20"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{iCountStatusRunning}]]></textFieldExpression>
+							</textField>
+							<textField pattern="#,##0 %">
+								<reportElement uuid="ce59bb95-b04c-4cda-8fef-eed9624fe715" mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[(float)$P{iCountStatusRunning}/(float)$P{numberTestCase}]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="41" uuid="f55a6a78-bc80-4c1a-913b-7ca28f835be4">
+						<jr:columnHeader height="20" rowSpan="1">
+							<textField>
+								<reportElement uuid="f52a6348-96d1-41a3-9d4b-4edc354c897d" x="0" y="0" width="20" height="20"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{allowsUntestable} ? $P{iCountStatusUntestable}.toString() : new String("")]]></textFieldExpression>
+							</textField>
+							<textField pattern="#,##0 %">
+								<reportElement uuid="88a5eb86-0204-4246-83f3-a749a3a8ea63" mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{allowsUntestable} ? (float)$P{iCountStatusUntestable}/(float)$P{numberTestCase} : new String("")]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="41" uuid="8438a47f-e09f-4f16-8212-f2e81d9e4397">
+						<jr:columnHeader height="20" rowSpan="1">
+							<textField>
+								<reportElement uuid="586a58ee-3e35-4a69-b866-8d9be51c691e" x="0" y="0" width="20" height="20"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{iCountStatusBloqued}]]></textFieldExpression>
+							</textField>
+							<textField pattern="#,##0 %">
+								<reportElement uuid="1336a189-eda8-4b54-8c6e-7eb83dfe4a8e" mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[(float)$P{iCountStatusBloqued}/(float)$P{numberTestCase}]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="41" uuid="55264851-0628-4073-bc99-5b7701de8257">
+						<jr:columnHeader height="20" rowSpan="1">
+							<textField>
+								<reportElement uuid="c60e633c-f450-4540-b6d2-d16bb19927f8" mode="Transparent" x="0" y="0" width="20" height="20" forecolor="#FF3333" backcolor="#FFFFFF"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{iCountStatusFailure}]]></textFieldExpression>
+							</textField>
+							<textField pattern="#,##0 %">
+								<reportElement uuid="e6443713-9a2d-4db1-ab64-9153ae91a7ee" mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[(float)$P{iCountStatusFailure}/(float)$P{numberTestCase}]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="41" uuid="a55b1799-0caa-4e90-94c8-02871536db85">
+						<jr:columnHeader height="20" rowSpan="1">
+							<textField>
+								<reportElement uuid="7de9e440-3acc-48d3-8d1f-2a1fae24b419" x="0" y="0" width="20" height="20" forecolor="#009900"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{iCountStatusSuccess}]]></textFieldExpression>
+							</textField>
+							<textField pattern="#,##0 %">
+								<reportElement uuid="de3ffbcf-3663-4a43-9431-e79b392df435" mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[(float)$P{iCountStatusSuccess}/(float)$P{numberTestCase}]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="41" uuid="4cad1051-2580-42a3-bdc0-8afbd319d3fa">
+						<jr:columnHeader height="20" rowSpan="1">
+							<textField>
+								<reportElement uuid="b693ed0e-b5ff-4d46-aad6-615f8b0d49bf" x="0" y="0" width="20" height="20" forecolor="#009900"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{allowsSettled} ? $P{iCountStatusSettled}.toString() : new String("")]]></textFieldExpression>
+							</textField>
+							<textField pattern="#,##0 %">
+								<reportElement uuid="18cd73a8-5be5-4a92-bcea-d829aa7051f6" mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{allowsSettled} ? ((float)$P{iCountStatusSettled}/(float)$P{numberTestCase}) : new String("")]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="50" uuid="fd5145db-e71e-4923-a149-71fc155bcf9a">
+						<jr:columnHeader height="20" rowSpan="1">
+							<textField>
+								<reportElement uuid="12c03dd0-6eea-4241-87f9-b5166ad34a04" x="0" y="0" width="50" height="20"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{numberTestCase}]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="63" uuid="23ee2a05-d0b3-4348-93ee-cf55c6da53f9">
+						<jr:columnHeader height="20" rowSpan="1">
+							<textField>
+								<reportElement uuid="79ffee39-7316-403c-bd27-253d51b32270" x="0" y="0" width="63" height="20"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[(($P{iCountStatusSuccess}+$P{iCountStatusFailure}+$P{iCountStatusBloqued}+$P{iCountStatusUntestable})==$P{numberTestCase}) ? $R{report.executionprogression.campaignstatus.CAMPAIGN_OVER} : $R{report.executionprogression.campaignstatus.CAMPAIGN_RUNNING}]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell height="0" rowSpan="1"/>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<componentElement>
+				<reportElement uuid="19b12d64-d1b5-4950-b7c4-5bbfbe37253e" key="table 4" style="table" x="0" y="0" width="736" height="50"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Project_Dataset" uuid="0fcdc2e4-2255-4a47-a89a-7a9648a0833f">
+						<datasetParameter name="allowsSettled">
+							<datasetParameterExpression><![CDATA[$F{allowsSettled}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="allowsUntestable">
+							<datasetParameterExpression><![CDATA[$F{allowsUntestable}]]></datasetParameterExpression>
+						</datasetParameter>
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource(1)]]></dataSourceExpression>
+					</datasetRun>
+					<jr:columnGroup width="333" uuid="15fac6a2-1b4a-479a-93f5-f2fba8b9e504">
+						<jr:columnHeader height="30" rowSpan="1"/>
+						<jr:column width="333" uuid="1bb508cf-8f4b-4736-b5a8-199e28b3bf76">
+							<jr:columnHeader style="table_CH" height="20" rowSpan="1"/>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+					</jr:columnGroup>
+					<jr:columnGroup width="287" uuid="3902ba17-1ba1-473b-a491-603f2cdb4b1e">
+						<jr:columnHeader height="30" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="1.0"/>
+							</box>
+							<textField>
+								<reportElement uuid="fb8abcd4-5e87-4452-8d9b-9a698a825aba" x="0" y="0" width="287" height="30"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.header.status.label}]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:column width="41" uuid="87378bdd-88c4-4b4d-a855-ba23df535213">
+							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="8338fad2-cc74-4dba-b6b4-9569f696e90d" x="0" y="0" width="41" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$R{report.executionprogression.main.ready.label}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+						<jr:column width="41" uuid="12da8506-2c6a-48c1-a462-6784beff604a">
+							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="589bc04a-0533-4585-97b5-0962411fe003" x="0" y="0" width="41" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$R{report.executionprogression.main.running.label}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+						<jr:column width="41" uuid="a84fb546-de3c-4817-b23e-b6200e66f07b">
+							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="6b260f17-bcb1-4f7a-8d39-646b1c6d5209" x="0" y="0" width="41" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$R{report.executionprogression.main.untestable.label}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+						<jr:column width="41" uuid="0feaab9c-731d-4c96-8f9c-a658a9a0f49c">
+							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="14288923-4f62-4ba6-b4b6-37eb10040a83" x="0" y="0" width="41" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$R{report.executionprogression.main.bloqued.label}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+						<jr:column width="41" uuid="8ae3722f-de54-4869-89bf-698f006559ce">
+							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="8592618e-04df-44a9-86d5-8c1eb744928c" x="0" y="0" width="41" height="20" forecolor="#FF3333"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$R{report.executionprogression.main.failure.label}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+						<jr:column width="41" uuid="df74b031-6ee5-4cf9-aed2-084c061f3932">
+							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="90d196b5-f9ed-41d7-8d65-6c8503ac504f" x="0" y="0" width="41" height="20" forecolor="#009900"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$R{report.executionprogression.main.success.label}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+						<jr:column width="41" uuid="e6e843fb-87a4-4fc5-bc1c-e5331e5588b9">
+							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="597cca88-1c81-4056-bb27-40dadff144d3" x="0" y="0" width="41" height="20" forecolor="#009900"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$R{report.executionprogression.main.settled.label}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+					</jr:columnGroup>
+					<jr:columnGroup width="113" uuid="6899e5b5-1d43-4f87-9065-2131f8a848ee">
+						<jr:columnHeader height="30" rowSpan="1"/>
+						<jr:column width="50" uuid="39912423-b27f-47d2-a0f8-595bf7647e0d">
+							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="0f979b78-d265-4d44-9c98-aa91e78fe3ae" x="0" y="0" width="50" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$R{report.executionprogression.main.total.label}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+						<jr:column width="63" uuid="69a1fbe5-2c6e-478e-a4ae-bcac6414ddd1">
+							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="924d4857-0e60-414d-8d61-cb488af6dcd6" x="0" y="0" width="63" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$R{report.executionprogression.main.progress.label}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+					</jr:columnGroup>
+				</jr:table>
+			</componentElement>
+		</band>
+	</lastPageFooter>
+</jasperReport>

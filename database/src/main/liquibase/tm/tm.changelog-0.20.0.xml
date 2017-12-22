@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="tm-0.20.0.01" author="gfouquet">
+		<comment>The PROJECT_ID foreign key in TEST_CASE_LIBRARY is useless, the useful one is in the PROJECT table</comment>
+		<dropForeignKeyConstraint baseTableName="TEST_CASE_LIBRARY" constraintName="fk_tcl_project" />
+		<dropColumn tableName="TEST_CASE_LIBRARY" columnName="PROJECT_ID" />
+	</changeSet>
+
+	<changeSet id="tm-0.20.0.02" author="gfouquet">
+		<comment>The PROJECT_ID foreign key in REQUIREMENT_LIBRARY is useless, the useful one is in the PROJECT table</comment>
+		<dropForeignKeyConstraint baseTableName="REQUIREMENT_LIBRARY" constraintName="fk_rl_project" />
+		<dropColumn tableName="REQUIREMENT_LIBRARY" columnName="PROJECT_ID" />
+	</changeSet>
+
+	<changeSet id="tm-0.20.0.03" author="gfouquet">
+		<comment>The PROJECT_ID foreign key in CAMPAIGN_LIBRARY is useless, the useful one is in the PROJECT table</comment>
+		<dropForeignKeyConstraint baseTableName="CAMPAIGN_LIBRARY" constraintName="fk_cl_project" />
+		<dropColumn tableName="CAMPAIGN_LIBRARY" columnName="PROJECT_ID" />
+	</changeSet>
+
+	
+	
+
+	<changeSet id="tm-0.20.0.05" author="bsiri" >
+		
+
+		<dropNotNullConstraint tableName="EXECUTION" columnName="ISSUE_LIST_ID" columnDataType="BIGINT" />
+		<dropNotNullConstraint tableName="EXECUTION_STEP" columnName="ISSUE_LIST_ID" columnDataType="BIGINT" />
+
+	</changeSet>
+
+
+	<changeSet id="tm-0.20.0.07" author="bsiri" >
+		<comment> add an ondelete set null to the fk campaign test plan item  -> core user</comment>
+
+		<dropForeignKeyConstraint baseTableName="CAMPAIGN_TEST_PLAN_ITEM" constraintName="fk_camp_tp_user" />
+
+		<addForeignKeyConstraint constraintName="fk_camp_tp_user" referencedTableName="CORE_USER"
+			baseColumnNames="USER_ID" baseTableName="CAMPAIGN_TEST_PLAN_ITEM" referencedColumnNames="ID" onDelete="SET NULL" />
+
+	</changeSet>
+
+
+
+
+
+	<changeSet id="tm-0.20.0.40" author="gfouquet">
+		<comment>Replace the ATTACHMENT_LIST_CONTENT table by a FK in ATTACHMENT</comment>
+
+		<addColumn tableName="ATTACHMENT">
+			<column name="ATTACHMENT_LIST_ID" type="BIGINT">
+				<constraints nullable="true" />
+			</column>
+		</addColumn>
+
+		<sql>
+			update ATTACHMENT a set ATTACHMENT_LIST_ID = (select AL_ID from ATTACHMENT_LIST_CONTENT alc where
+			alc.ATTACHMENT_ID = a.ATTACHMENT_ID);
+		</sql>
+
+		<dropTable tableName="ATTACHMENT_LIST_CONTENT" />
+
+		<addForeignKeyConstraint constraintName="fk_attachment_att_list" referencedTableName="ATTACHMENT_LIST"
+			referencedColumnNames="ATTACHMENT_LIST_ID" baseColumnNames="ATTACHMENT_LIST_ID" baseTableName="ATTACHMENT" />
+		<addNotNullConstraint tableName="ATTACHMENT" columnName="ATTACHMENT_LIST_ID" columnDataType="BIGINT" />
+	</changeSet>
+
+	<changeSet id="tm-0.20.0.41" author="gfouquet">
+		<comment>Replace the ISSUE_LIST_CONTENT table by a FK in ISSUE</comment>
+
+		<addColumn tableName="ISSUE">
+			<column name="ISSUE_LIST_ID" type="BIGINT" remarks="References the list of issue to which an issue belongs">
+				<constraints nullable="true" />
+			</column>
+		</addColumn>
+
+		<sql>
+			update ISSUE i set ISSUE_LIST_ID = (select ISSUE_LIST_ID from ISSUE_LIST_CONTENT ilc where ilc.ISSUE_ID =
+			i.ISSUE_ID);
+		</sql>
+
+		<dropTable tableName="ISSUE_LIST_CONTENT" />
+
+		<addForeignKeyConstraint constraintName="fk_issue_issue_list" referencedTableName="ISSUE_LIST"
+			referencedColumnNames="ISSUE_LIST_ID" baseColumnNames="ISSUE_LIST_ID" baseTableName="ISSUE" />
+		  <addNotNullConstraint tableName="ISSUE" columnName="ISSUE_LIST_ID" columnDataType="BIGINT" /> 
+	</changeSet>
+
+	<changeSet id="tm-0.20.0.42" author="gfouquet">
+		<comment>Rename ITEM_TEST_PLAN into ITERATION_TEST_PLAN_ITEM</comment>
+		<renameTable newTableName="ITERATION_TEST_PLAN_ITEM" oldTableName="ITEM_TEST_PLAN" />
+	</changeSet>
+	
+	
+	
+</databaseChangeLog>
+ 

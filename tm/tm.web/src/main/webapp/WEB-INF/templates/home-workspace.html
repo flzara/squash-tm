@@ -1,0 +1,147 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title th:text="#{squashtm}">Squash</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!-- common head -->
+<link rel="stylesheet" type="text/css" media="all"
+  href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" sq:css="squash.core.css" />
+<link rel="shortcut icon" type="image/x-icon" media="all"
+  href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}" />
+<link rel="stylesheet" type="text/css" media="all"
+  href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.wine.css" sq:css="squash.grey.css" />
+<!-- rich jeditable header -->
+<script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-2.1.1.min.js"></script>
+<script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+<script type="text/javascript" th:inline="javascript">
+    /* <![CDATA[ */
+      var squashtm = {};
+      var pathname = window.location.pathname;
+      squashtm.app = {
+        locale : /*[[#{squashtm.locale}]]*/ 'fr',
+        contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
+        homeWorkspaceConf : {
+          welcomeMessage : /*[[${welcomeMessage}]]*/ 'welcome',
+          canShowDashboard : /*[[${canShowDashboard}]]*/ 'true',
+          shouldShowDashboard : /*[[${shouldShowDashboard}]]*/ 'true'
+        },
+        userPrefs : /*[[${userPrefs}]]*/ '{'"squash.core.favorite.dashboard"':'12','"squash.core.favorite.color"':'blue'...}',
+        defaultInfoList : /*[[${defaultInfoLists}]]*/{},
+        testCaseImportance : /*[[${testCaseImportance}]]*/{},
+        testCaseStatus : /*[[${testCaseStatus}]]*/{},
+        requirementStatus : /*[[${requirementStatus}]]*/{},
+        requirementCriticality : /*[[${requirementCriticality}]]*/{},
+        executionStatus : /*[[${executionStatus}]]*/{}
+      };
+
+
+      squashtm.workspace = squashtm.workspace || {};
+      squashtm.workspace.projects = /*[[${projects}]]*/ [];
+
+    /* ]]> */
+</script>
+<script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
+
+<script data-main="../../scripts/home-workspace.js" th:attr="data-main=@{/scripts/home-workspace.js}"
+  src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
+
+
+</head>
+<body>
+  <div class="noprint" id="navigation" th:include="navbar.frag :: navbar('home')">NAVBAR</div>
+
+  <div id="workspace">
+    <div id="workspace-title" class="noprint">
+      <div class="snap-left">
+        <h2 th:text="#{workspace.home.title}">Espace home</h2>
+      </div>
+      <div class="snap-right">
+        <div class="main-menubar" th:include="menubar.frag :: menubar">MENUBAR</div>
+        <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">NOTIFICATION</div>
+      </div>
+      <div class="unsnap"></div>
+    </div>
+
+    <div id="home-workspace">
+      <div id="element-toolbar" class="toolbar-class ui-corner-all">
+          <div class="snap-left">
+            <input type="button" th:attr="value=#{workspace.home.label.message},title=#{workspace.home.title.message}" id="show-welcome-message" class="sq-btn btn-sm" />
+            <input type="button" th:attr="value=#{workspace.home.label.dashboard},title=#{workspace.home.title.dashboard}" id="show-favorite-dashboard" class="sq-btn btn-sm" />
+          </div>
+        <div class="unsnap"></div>
+      </div>
+
+      <div id="home-content">
+        <div id="contextual-content-wrapper" style=" height: 100%; width:92%;">
+          <!--empty -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--  ___________________TEMPLATES_______________________________ -->
+  <!-- SHOW WELCOME MESSAGE -->
+  <script id="tpl-show-welcome-message" type="text/x-handlebars-template"
+          th:inline="text"
+          th:include="home/welcome-message :: welcome-message-view" />
+  <!-- /SHOW WELCOME MESSAGE -->
+
+  <!-- SHOW FAVORITE DASHBOARD -->
+  <!-- SHOW DASHBOARD -->
+  <script id="tpl-show-dashboard" type="text/x-handlebars-template"
+          th:inline="text"
+          th:include="home/show-dashboard :: dashboard-view" />
+
+  <script id="tpl-chart-in-dashboard" type="text/x-handlebars-template"
+          th:inline="text"
+          th:include="home/show-dashboard:: chart-in-dashboard" />
+
+  <script id="tpl-chart-display-area" type="text/x-handlebars-template"
+          th:inline="text"
+          th:include="home/show-dashboard :: chart-display-area" />
+
+  <script id="tpl-new-chart-in-dashboard" type="text/x-handlebars-template"
+          th:inline="text"
+          th:include="home/show-dashboard :: new-chart-in-dashboard" />
+
+  <script id="tpl-dashboard-doc" type="text/x-handlebars-template">
+    <div id="dashboard-doc">
+      <strong th:text="#{workspace.home.dashboard.empty}">dashboard doc</strong>
+    </div>
+  </script>
+
+  <!-- /SHOW DASHBOARD  -->
+  <!-- SHOW DEFAULT DASHBOARD VIEW -->
+  <script id="tpl-default-dashboard" type="text/x-handlebars-template">
+    <div id="dashboard-doc">
+      <strong th:text="#{workspace.home.dashboard.default}">dashboard doc</strong>
+    </div>
+  </script>
+
+  <!-- /SHOW DEFAULT DASHBOARD VIEW -->
+  <!-- /SHOW FAVORITE DASHBOARD -->
+
+  <!--  ___________________/TEMPLATES_______________________________ -->
+</body>
+</html>

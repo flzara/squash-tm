@@ -1,0 +1,90 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+  <div th:fragment="templates" >
+   
+  <script id="chart-view-piechart-template" type="text/x-handlebars-template">
+ 	<div id="{{id}}" class="dashboard-item {{additionalClasses}}" data-def="model-attribute=chartmodel">
+            
+      <div id="{{id}}-view" class="dashboard-item-view">
+              
+      </div>
+      
+      <div class="dashboard-item-meta">
+        <h2 class="dashboard-item-title">{{title}}</h2>
+                
+        <div class="dashboard-item-legend">
+			{{#each legend}}
+            <div>
+              <div class="dashboard-legend-sample-color" style="background-color:{{color}}"></div>
+              <span>{{label}}</span>
+            </div>
+			{{/each}}
+        </div>
+      </div>
+    </div> 
+  </script>
+  
+    <script id="chart-view-singletablechart-template" type="text/x-handlebars-template">
+  <div id="{{id}}" class="dashboard-item " data-def="model-attribute=chartmodel">
+            
+      <div id="{{id}}-view" class="dashboard-item-view">
+		
+		<table  style="border:1px solid black;border-collapse : collapse">            
+			<thead style="border:1px solid black;border-collapse : collapse">
+				<tr>
+					{{#each headers}}
+					<th  style="border:1px solid black;border-collapse : collapse">{{this}}</th>
+					{{/each}}
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					{{#each values}}
+					<td  style="border:1px solid black;border-collapse : collapse">{{this}}</td>
+					{{/each}}
+				</tr>
+			</tbody>
+   		</table>
+      </div>
+      
+      <div class="dashboard-item-meta">
+        <h2 class="dashboard-item-title">{{title}}</h2>
+      </div>
+    </div> 
+  </script>
+  
+  <script id="chart-view-barchart-template" type="text/x-handlebars-template">
+  <div id="{{id}}" class="dashboard-item {{additionalClasses}}" style="width:500px; height:500px;" data-def="model-attribute=chartmodel">
+            
+      <div id="{{id}}-view" class="dashboard-item-view">
+              
+      </div>
+      
+      <div class="dashboard-item-meta">
+        <h2 class="dashboard-item-title">{{title}}</h2>
+      </div>
+    </div> 
+  </script>  
+  
+  </div>       
+  

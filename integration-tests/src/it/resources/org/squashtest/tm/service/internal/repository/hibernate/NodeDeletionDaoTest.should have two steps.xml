@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- 
+	That file will instanciate a complete set of entity dependencies 
+
+	That file declares only entities, not their relationships (except folder-nodes relationships).
+	
+	Additional datasets will be required to link the entities together (eg, a campaign with an iteration)
+	according to each test specifics.
+
+-->
+
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+
+	<!-- =============================== three libraries ============================================ -->
+	
+	
+
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-987"/><TEST_CASE_LIBRARY ATTACHMENT_LIST_ID="-987" TCL_ID="-1"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-989"/><REQUIREMENT_LIBRARY ATTACHMENT_LIST_ID="-989" RL_ID="-1"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-988"/><CAMPAIGN_LIBRARY ATTACHMENT_LIST_ID="-988" CL_ID="-1"/>
+	
+	<!-- =============================== one project ================================================ -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-40"/>
+	<PROJECT PROJECT_ID="-1" NAME="base project" ACTIVE="TRUE" CREATED_BY="IT" CREATED_ON="2011-08-08" 
+			 CL_ID="-1" RL_ID="-1" TCL_ID="-1" ATTACHMENT_LIST_ID="-40"/>
+			 
+	
+	<!-- =============================== attachment-lists =========================================== -->
+	
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-11"  /> <!--  FOR TEST CASE 1 -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-12"  /> <!--  FOR TEST CASE 2 -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-111" /> <!--  FOR TEST STEPS OF TEST CASE 1 -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-121" /> <!--  FOR TEST STEPS OF TEST CASE 2 -->
+	
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-21" /> <!--  FOR REQUIREMENT 1 -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-22" /> <!--  FOR REQUIREMENT 2 -->
+	
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-31" /> <!--  FOR CAMPAIGN 1 -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-32" /> <!--  FOR CAMPAIGN 2 -->
+	
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1" /> <!--  FOR TEST_CASE_FOLDER 1 -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-13" /> <!--  FOR TEST_CASE_FOLDER 2 -->
+	
+
+	<!-- ============================ test_case_library_node ========================================== -->
+	
+	
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-1" NAME="folder1" CREATED_BY="IT" CREATED_ON="2011-08-08" ATTACHMENT_LIST_ID="-1"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-11" NAME="test case 1" CREATED_BY="IT" CREATED_ON="2011-08-08" ATTACHMENT_LIST_ID="-11"/> 
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-12" NAME="test case 2" CREATED_BY="IT" CREATED_ON="2011-08-08" ATTACHMENT_LIST_ID="-12" />  
+	
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-13" NAME="folder 2" CREATED_BY="IT" CREATED_ON="2011-08-08" ATTACHMENT_LIST_ID="-13"/>  
+
+	<!-- ============================ test case folder ================================================= -->
+
+	<TEST_CASE_FOLDER TCLN_ID="-1" />
+	<TEST_CASE_FOLDER TCLN_ID="-13" />	
+	
+	<!-- ============================ test case ======================================================== -->
+	
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-11" VERSION="1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-12" VERSION="1" />
+	
+	<!-- ============================ tcln_relationship ================================================ -->
+	
+	<TCLN_RELATIONSHIP ANCESTOR_ID="-1" DESCENDANT_ID="-11" CONTENT_ORDER="0"/> <!--  TCFOLDER 1 CONTAINS TC1 -->
+	<TCLN_RELATIONSHIP ANCESTOR_ID="-1" DESCENDANT_ID="-12" CONTENT_ORDER="1"/> <!--  TCFOLDER 1 CONTAINS T2 -->
+	
+	<!-- ============================ test case library content =======================================  -->
+	
+	<TEST_CASE_LIBRARY_CONTENT LIBRARY_ID="-1" CONTENT_ID="-1" CONTENT_ORDER="0"/>  <!--  TC LIBRARY 1 CONTAINS TCFOLDER 1 -->
+	<TEST_CASE_LIBRARY_CONTENT LIBRARY_ID="-1" CONTENT_ID="-13" CONTENT_ORDER="1"/>  <!--  TC LIBRARY 1 CONTAINS TCFOLDER 1 -->
+	
+	<!-- ============================ test step ======================================================== -->
+	
+	<TEST_STEP TEST_STEP_ID="-111" /> <!-- TEST CASE 1 STEP 1  -->
+	<TEST_STEP TEST_STEP_ID="-112" /> <!-- TEST CASE 1 STEP 2  -->
+	<TEST_STEP TEST_STEP_ID="-121" /> <!-- TEST CASE 2 STEP 1  -->
+	
+	<!-- ============================ action test step ================================================= -->
+	
+	<ACTION_TEST_STEP TEST_STEP_ID="-111" ACTION="TEST CASE 1 STEP 1" ATTACHMENT_LIST_ID="-111" />
+	<ACTION_TEST_STEP TEST_STEP_ID="-121" ACTION="TEST CASE 2 STEP 1" ATTACHMENT_LIST_ID="-121" />
+
+	<!-- ============================ call test step ===================================================  -->
+	
+	<CALL_TEST_STEP TEST_STEP_ID="-112" CALLED_TEST_CASE_ID="-12" />
+	
+	<!--  ============================ test case steps ================================================== -->
+	
+	<TEST_CASE_STEPS TEST_CASE_ID="-11" STEP_ID="-111" STEP_ORDER="0" /> <!-- TEST CASE 1 STEP 1  -->
+	<TEST_CASE_STEPS TEST_CASE_ID="-11" STEP_ID="-112" STEP_ORDER="1" /> <!-- TEST CASE 1 STEP 2  -->
+	<TEST_CASE_STEPS TEST_CASE_ID="-12" STEP_ID="-121" STEP_ORDER="0" /> <!-- TEST CASE 2 STEP 1  -->
+	
+
+		
+
+</dataset>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

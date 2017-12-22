@@ -1,0 +1,425 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title th:text="#{workspace.report.title}">Espace rapports</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/styles/squash.core.css" />
+<link rel="shortcut icon" type="image/x-icon" media="all"
+  href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}" />
+<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/styles/squash.wine.css" />
+
+<script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
+<script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+<script type="text/javascript" th:inline="javascript">
+    /* <![CDATA[ */
+      var require = {
+        rootUrl: /*[[ @{/scripts} ]]*/ "/squash/scripts"
+      }
+      var squashtm = {};
+      squashtm.app = {
+    	locale : /*[[#{squashtm.locale}]]*/ 'fr',
+
+          reportWorkspaceConf: {
+            expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>',
+            collapseSidebarLabel: /*[[ #{report.workspace.togglebutton.normal.label} ]]*/ '<<'
+          }
+      };
+     /* ]]> */
+    </script>
+<script data-main="../../scripts/report-workspace.js" th:attr="data-main=@{/scripts/report-workspace.js}"
+  src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
+</head>
+<body>
+<div id="navigation" th:include="navbar.frag :: navbar('report')">NAVBAR</div>
+
+<div id="workspace">
+  <div id="workspace-title">
+    <div class="snap-left">
+      <h2 th:text="#{workspace.report.title}">Espace Rapport</h2>
+    </div>
+    <div class="snap-right">
+      <div class="main-menubar" th:include="menubar.frag :: menubar">MENUBAR</div>
+      <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">NOTIFICATION</div>
+    </div>
+  </div>
+
+
+    <div id="outer-category-frame" class="left-frame" >
+      <div title="Cat 1" class="report-category">
+        <div data-href="sample-report/0" class="report-item">
+          <div class="report-item-icon report-spreadsheet-icon"></div>
+          <div class="report-item-description">
+            <label>
+              <strong>Sample report</strong> <br /> <strong>(Sample type)</strong>
+            </label>
+            <br />
+            <span>This report does this and that</span>
+          </div>
+          <div class="unsnap"></div>
+        </div>
+      </div>
+    </div>
+
+
+  <!-- ==========================================REPORT FRAGMENT============================================================== -->
+
+  <!-- ==================================================INPUTS====================================================== -->
+  <div id="contextual-content" class="no-resizable-contextual-content" th:fragment="report">
+    <div id="report-name-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header cf">
+      <div id="right-frame-button" th:unless="${hasBackButton}">
+		<input type="button" class="sq-btn btn-sm" id="toggle-expand-left-frame-button" th:title="#{tooltip.toggleLibraryDisplay}"/>
+      </div>
+
+      <div class="snap-left" style="height: 100%;">
+        <h2>
+          <span th:text="#{report.header.title}">Rapport</span> :&nbsp;<span th:text="${report.label}">Sample report</span>
+        </h2>
+      </div>
+
+      <div class="snap-right" th:if="${hasBackButton}">
+        <input id="back" type="button" th:value="#{label.Back}" class="sq-btn btn-sm"
+          value="Back" />
+      </div>
+    </div>
+
+    <div class="fragment-body ui-widget">
+      <span th:remove="all">'ui-widget' class above is required to get a (somewhat) uniform font size across workspaces</span>
+
+      <div th:if="${parentId != null}">
+        <div id="report-information-panel" class="is-contextual expand sq-tg">
+          <div class="tg-head" th:text="#{label.Information}"> Information</div>
+          <div class="tg-body cf">
+
+            <table style="width:100%; border-spacing:0.5em; ">
+              <tr>
+                <td><label for="report-name" th:text="#{label.Name}"></label></td>
+                <td><input id="report-name" name="name" type="text" size="50" maxlength="255"
+                           data-prop="name" data-object="reportDefinition"/><span
+                  class="error-message name-error"></span></td>
+              </tr>
+              <tr>
+                <td><label style="vertical-align: middle;" for="report-description"
+                           th:text="#{label.Description}"></label></td>
+                <td><textarea class="data-column" id="report-description" data-def="isrich"></textarea></td>
+              </tr>
+            </table>
+
+            <input type="button" class="sq-btn btn-sm snap-right" id="save" value="save" th:value="#{label.save}"/>
+          </div>
+        </div>
+      </div>
+
+      <div id="report-criteria-panel" class="is-contextual expand sq-tg" title="Report form" th:title="#{report.criteria.panel.title}">
+        <div class="tg-head" th:text="#{report.criteria.panel.title}">
+          Report form - should be in an h3 if we had not .report-criteria-panel california style sheet
+        </div>
+        <div class="tg-body cf">
+          <div th:each="input : ${report.form}" th:switch="${input.type.name()}" th:object="${input}">
+
+            <span th:case="'TEXT'" th:include="contextual-report-inputs.frag :: text"> TEXT </span>
+
+            <span th:case="'PASSWORD'" th:include="contextual-report-inputs.frag :: password"> PASSWORD </span>
+
+            <span th:case="'LABEL'" th:include="contextual-report-inputs.frag :: labelText"> LABEL </span>
+
+            <span th:case="'CHECKBOX'" th:include="contextual-report-inputs.frag :: checkbox">
+              CHECKBOX </span>
+
+            <div th:case="'DATE'" class="rpt-date" th:include="contextual-report-inputs.frag :: datepicker">DATE</div>
+
+            <div th:case="'DROPDOWN_LIST'" class="rpt-drop"
+              th:include="contextual-report-inputs.frag :: dropdownlist">DROPDOWN_LIST</div>
+
+            <div th:case="'RADIO_BUTTONS_GROUP'">
+              <label th:text="*{label}">Radio buttons group</label>
+              <ul th:attr="data-disabledby=${input.disabledBy}">
+
+                <!-- display the radio ad a label unless : 1/ the milestone feature is disabled and the input is a milestone picker or 2/ the input is a tag picker but there are no tags -->
+                <li th:each="opt : *{options}"
+                      th:with="radioId = ${opt.givesAccessTo} + '-binder',
+                      hideMilestones=(${application.milestoneFeatureEnabled} == false  and (${opt instanceof T(org.squashtest.tm.api.report.form.ContainerOption)} and ${opt.content.type?.name() == 'MILESTONE_PICKER'})),
+                      hideTags=(${opt instanceof T(org.squashtest.tm.api.report.form.ContainerOption)} and ${opt.content.type?.name() == 'TAG_PICKER'} and ${#lists.isEmpty(availableTags)})">
+
+
+                  <input th:id="${radioId}" th:name="${opt.name}" th:checked="${opt.defaultSelected}" th:attr="data-disabledby=${opt.disabledBy}"
+                  th:unless="${hideMilestones or hideTags}" id="radioId" name="rpt-radio-crit" type="radio" th:value="${opt.value}" data-grouped="true" />
+
+
+                  <label  for="radioId" th:for="${radioId}" th:text="${opt.label}"
+                  th:unless="${hideMilestones or hideTags}" >Option</label>
+
+                  <span th:remove="all">TODO would be better to have a helper which checks the presence of
+                    opt.content field</span>
+                  <span th:if="${opt instanceof T(org.squashtest.tm.api.report.form.ContainerOption)}"
+                    th:switch="${opt.content.type?.name()}">
+                    &nbsp;
+                    <div th:case="'TREE_PICKER'" class="report-selector"
+                      th:include="contextual-report-inputs.frag :: treepicker " th:with="input = ${opt.content}, hasLabel = ${false} ">TREE_PICKER
+                      WITHOUT LABEL</div>
+
+                    <div th:case="'PROJECT_PICKER'"
+                      class="report-selector rpt-projects-crit-container rpt-projects"
+                      th:include="contextual-report-inputs.frag :: projectpicker " th:with="input = ${opt.content}, hasLabel = ${false} ">PROJECT_PICKER
+                      WITHOUT LABEL</div>
+
+                    <div th:if="${application.milestoneFeatureEnabled}" th:case="'MILESTONE_PICKER'" class="report-selector"
+                    th:include="contextual-report-inputs.frag :: milestonepicker"
+                    th:with="input = ${opt.content}, hasLabel = ${false}">
+                    </div>
+
+                    <div th:case="'TAG_PICKER'" class="report-selector" th:include="contextual-report-inputs.frag :: tagpicker" th:unless="${#lists.isEmpty(availableTags)}"
+                    th:with="input = ${opt.content}, hasLabel = ${false}"></div>
+
+                    <div th:case="*">Unsupported type : ${opt.content.type.name()}</div>
+                  </span>
+                </li>
+              </ul>
+            </div>
+            <div th:remove="all">
+              <div>
+                <span>Radio buttons group example</span>
+                <ul>
+                  <li>
+                    <input name="rpt-radio-crit" type="radio" value="radio-val-0" data-grouped="true" />
+                    <label for="rpt-radio-crit">Option 0</label>
+                    <input name="rpt-radio-crit" type="radio" value="radio-val-1" data-grouped="true" />
+                    <label for="rpt-radio-crit">Option 1</label>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div th:case="'CHECKBOXES_GROUP'">
+              <label th:text="*{label}">Checkboxes group</label>
+              <ul th:attr="data-disabledby=${input.disabledBy}">
+                <li th:each="opt : *{options}" th:with="checkboxId = ${opt.givesAccessTo} + '-binder', input = ${opt}, grouped=${true}"
+                  th:include="contextual-report-inputs.frag :: checkbox " >CHECKBOX</li>
+              </ul>
+            </div>
+            <div th:remove="all">
+              <div>
+                <span>Checkboxes group example</span>
+                <ul>
+                  <li>
+                    <input name="rpt-cbxes-crit" type="checkbox" value="cbxes-val-0" data-grouped="true" />
+                    <label for="rpt-cbxes-crit">Checkbox 0</label>
+                  </li>
+                  <li>
+                    <input name="rpt-cbxes-crit" type="checkbox" value="cbxes-val-1" data-grouped="true" />
+                    <label for="rpt-cbxes-crit">Checkbox 1</label>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div th:case="'TREE_PICKER'" th:include="contextual-report-inputs.frag :: treepicker " th:with="hasLabel = ${true}">TREE_PICKER</div>
+
+            <div th:case="'PROJECT_PICKER'" th:include="contextual-report-inputs.frag :: projectpicker" th:with="hasLabel = ${true}">PROJECT_PICKER</div>
+
+            <div th:case="'INPUTS_GROUP'">
+              <label th:text="*{label}">Group of inputs</label>
+              <ul th:attr="data-disabledby=${input.disabledBy}">
+                <li th:each="input : *{inputs}" th:switch="${input.type.name()}" th:object="${input}">
+                  <span th:case="'DATE'" th:include="contextual-report-inputs.frag :: datepicker ">
+                    DATE </span>
+                  <span th:case="'TEXT'" th:include="contextual-report-inputs.frag :: text "> TEXT </span>
+                  <span th:case="'PASSWORD'" th:include="contextual-report-inputs.frag :: password "> PASSWORD </span>
+                  <span th:case="'CHECKBOX'" th:include="contextual-report-inputs.frag :: checkbox ">
+                    CHECKBOX </span>
+                  <div th:case="'DROPDOWN_LIST'" class="rpt-drop"
+                    th:include="contextual-report-inputs.frag :: dropdownlist ">DROPDOWN_LIST</div>
+                  <div th:case="'PROJECT_PICKER'" class="report-selector rpt-projects-crit-container rpt-projects"
+                    th:include="contextual-report-inputs.frag :: projectpicker" th:with="hasLabel = ${true}">PROJECT_PICKER</div>
+                  <div th:case="'TREE_PICKER'" th:include="contextual-report-inputs.frag :: treepicker" th:with="hasLabel = ${true}">TREE_PICKER</div>
+                  <div th:case="*">Unsupported type : ${opt.content.type.name()}</div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <input type="button" class="sq-btn btn-sm snap-right" id="generate-view" value="Generate"
+            th:value="#{report.criteria.panel.button.generate.label}" />
+        </div>
+      </div>
+      <div id="invalid-perimeter" class="popup-dialog not-displayed" th:title="#{popup.title.Info}">
+        <span th:text="#{message.invalidPerimeter}"></span>
+      </div>
+
+      <!-- ===============================================/FORM====================================================== -->
+      <!-- ===============================================RESULT====================================================== -->
+      <div id="view-tabed-panel" class="not-displayed" >
+        <ul >
+          <li th:each="view, it : ${report.views}">
+            <a href="#view-content-panel-sample-0" th:href="'#view-content-panel-' + ${it.index}"
+              th:text="${view.label}">Sample view</a>
+          </li>
+          <li th:remove="all">
+            <a href="#view-content-panel-sample-1">Sample view 2</a>
+          </li>
+
+          <div id="view-formats-panel" class="snap-right" th:unless="${report.DocxTemplate}">
+            <span th:text="#{report.view.panel.label.export.label}">Export</span>
+            <select id="view-format-cmb-0" th:id="'view-format-cmb-' + ${it.index}"
+              th:each="view, it : ${report.views}" class="not-displayed view-format-cmb">
+              <option th:each="format : ${view.formats}" th:text="${format}">pdf</option>
+            </select> <select id="view-format-cmb-1" th:remove="all" class="not-displayed view-format-cmb">
+              <option>pdf</option>
+              <option>csv</option>
+            </select>
+            <input type="button" class="sq-btn btn-sm" id="export" value="Go!" th:value="#{label.Export}" />
+          </div>
+        </ul>
+        <div  th:each="view, it : ${report.views}" class="view-content-panel" th:remove="body"
+          id="view-content-panel-sample-0" th:id="'view-content-panel-' + ${it.index}" style="overflow: scroll;">VIEW
+          HERE</div>
+        <div th:remove="all" id="view-content-panel-sample-1" style="overflow: scroll;">ANOTHER VIEW HERE</div>
+      </div>
+
+      <div id="report-attributs" style="display: none; margin-top: 1.65em;" class="sq-tg collapse">
+        <div class="tg-head">
+          <h3>
+            <span th:text="#{label.Attributes}">Attributes</span>
+          </h3>
+        </div>
+        <div class="tg-body">
+          <div class="display-table">
+            <div class="display-table-row">
+              <label for="report-type" class="display-table-cell"> <span
+                th:text="#{label.Type}">perimetre</span>
+              </label>
+              <div id="report-type">
+                <span class="display-table-cell" style="font-weight: bold; padding-left: 0em;" th:text="${report.label}"/>
+              </div>
+            </div>
+
+            <div class="display-table-row" th:each="attribute : ${reportAttributes}">
+              <div class="display-table-cell" th:switch="${attribute.key}">
+                <label th:case="Project" th:text="#{label.project}"/>
+                <label th:case="Requirement" th:text="#{label.requirement}"/>
+                <label th:case="Testcase" th:text="#{label.testCase}"/>
+                <label th:case="Campaign" th:text="#{label.Campaign}"/>
+                <label th:case="Iteration" th:text="#{label.iteration}"/>
+                <label th:case="Milestone" th:text="#{label.Milestone}"/>
+                <label th:case="tags" th:text="#{customField.inputType.TAG}"/>
+                <label th:case="option" th:text="#{label.options}"/>
+                <label th:case="*" th:text="${attribute.key}"/>
+              </div>
+              <div th:each="val : ${attribute.value}" >
+                <div class="display-table-cell" style="padding-left: 0em;" th:text="${val}"/>
+              </div>
+            </div>
+
+            <div class="display-table-row">
+              <label for="report-desc" class="display-table-cell"> <span
+                th:text="#{label.Description }">Description</span>
+              </label>
+              <div class="display-table-cell" id="report-desc"/>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- =================================================/RESULT====================================================== -->
+  <!-- =========================================/REPORT FRAGMENT==================================================== -->
+
+  <!-- =========================================SCRIPT FRAGMENT======================================================= -->
+  <div th:fragment="script">
+    <script type="text/javascript" th:inline="javascript">
+  /* <![CDATA[ */
+      var squashtm = squashtm || {};
+      squashtm.app = squashtm.app || {};
+      squashtm.app.reportConf = {
+          reportDef : /*[[${reportDef}]]*/,
+          parentId: /*[[${parentId}]]*/,
+          contextPath: /*[[ ${#ctx.servletContext.contextPath} ]]*/ "http://localhost:8080/squash",
+          reportUrl: /*[[ @{'/reports/' + ${report.namespace}} ]]*/ "/squash/reports",
+          dateFormat: /*[[ #{squashtm.dateformatShort.datepicker} ]]*/ "dd/mm/yy",
+          noDateLabel: /*[[ #{squashtm.nodata} ]]*/ "-",
+          okLabel: /*[[ #{label.Confirm} ]]*/ "OK",
+          cancelLabel: /*[[ #{label.Cancel} ]]*/ "Cancel",
+          isDocx: /*[[${report.DocxTemplate}]]*/
+      };
+      require([ "common" ], function() {
+          require([ "jquery", "app/report/squashtm.report" ], function($, Report) {
+            Report.init(squashtm.app.reportConf);
+          });
+      });
+
+      /* ]]> */
+
+      /* TODO : Create a new type of Inputs Group for "Anomalies Details" (CheckboxInput with disable function for TextInput + PasswordInput + LabelInput). Now, we only have separate inputs, so we added css and js this way. */
+      if (navigator.userAgent.toLowerCase().indexOf("firefox") > -1) {
+          $("input#includeLogin").css("margin", "5px 0px 5px 61px");
+      } else {
+          $("input#includeLogin").css("margin", "5px 0px 5px 56px");
+      }
+      $("input#includePassword").css("margin", "0px 0px 5px 10px");
+      $("label#includeLogin").css("padding-left", "48px").css("font-style", "normal");
+      $("label#includePassword").css("padding-left", "48px").css("font-style", "normal");
+      $("#includeBugtrackerConnection").css("font-style", "italic").css("padding-left", "20px").css("font-size", "11px");
+      function cacher() {
+          $("input#includeLogin").hide();
+          $("input#includePassword").hide();
+          $("label#includeLogin").hide();
+          $("label#includePassword").hide();
+          $("#includeBugtrackerConnection").hide();
+      }
+      function afficher() {
+          $("input#includeLogin").show();
+          $("input#includePassword").show();
+          $("label#includeLogin").show();
+          $("label#includePassword").show();
+          $("#includeBugtrackerConnection").show();
+      }
+
+      /* If a report has already been generated, then when the page is reloading, there is a time lapse between the "anomalies details"
+      checkbox generation (always false) and the value from the previous report (may be true)  */
+      $(document).ready( function() {
+          cacher();
+          setTimeout(function(){
+              if ($("#includeAnomaliesDetails").is(":checked") == true) {
+                afficher();
+              } else {
+                cacher();
+              }
+          }, 200);
+      });
+
+      $("#includeAnomaliesDetails").click(function() {
+          if ($("#includeAnomaliesDetails").is(":checked") == true) {
+              afficher();
+          } else {
+              cacher();
+          }
+      });
+
+
+  </script>
+  </div>
+  <!-- ======================================/SCRIPT FRAGMENT==================================================== -->
+</div>
+</body>
+</html>

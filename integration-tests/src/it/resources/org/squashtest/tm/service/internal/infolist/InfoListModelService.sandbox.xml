@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.17.0.dtd">
+<dataset>
+
+
+  <!-- ========================== infolist ================================ -->
+
+  <INFO_LIST INFO_LIST_ID="-1" CODE="DEF_REQ_CAT" CREATED_BY="DBU" CREATED_ON="2010-02-01" LABEL="Req Cat" DESCRIPTION="Desc"/>
+  <INFO_LIST_ITEM ITEM_ID="-1" ITEM_TYPE="SYS" LIST_ID="-1" ITEM_INDEX="0" LABEL="requirement.category.CAT_FUNCTIONAL" CODE="CAT_FUNCTIONAL" IS_DEFAULT="false"/>
+  <INFO_LIST_ITEM ITEM_ID="-2" ITEM_TYPE="SYS" LIST_ID="-1" ITEM_INDEX="1" LABEL="requirement.category.CAT_USE_CASE" CODE="CAT_USE_CASE" IS_DEFAULT="false"/>
+  <INFO_LIST_ITEM ITEM_ID="-3" ITEM_TYPE="SYS" LIST_ID="-1" ITEM_INDEX="2" LABEL="requirement.category.CAT_UNDEFINED" CODE="CAT_UNDEFINED" IS_DEFAULT="true"/>
+
+  <INFO_LIST INFO_LIST_ID="-2" CODE="DEF_TC_NAT" CREATED_BY="DBU" CREATED_ON="2010-02-01"/>
+  <INFO_LIST_ITEM ITEM_ID="-4" ITEM_TYPE="SYS" LIST_ID="-2" ITEM_INDEX="0" LABEL="test-case.nature.NAT_UNDEFINED" CODE="NAT_UNDEFINED" IS_DEFAULT="true"/>
+  <INFO_LIST_ITEM ITEM_ID="-5" ITEM_TYPE="SYS" LIST_ID="-2" ITEM_INDEX="1" LABEL="test-case.nature.NAT_FUNCTIONAL_TESTING" CODE="NAT_FUNCTIONAL_TESTING" IS_DEFAULT="false"/>
+  <INFO_LIST_ITEM ITEM_ID="-6" ITEM_TYPE="SYS" LIST_ID="-2" ITEM_INDEX="2" LABEL="test-case.nature.NAT_USER_TESTING" CODE="NAT_USER_TESTING" IS_DEFAULT="false"/>
+
+  <INFO_LIST INFO_LIST_ID="-3" CODE="DEF_TC_TYP" CREATED_BY="DBU" CREATED_ON="2010-02-01"/>
+  <INFO_LIST_ITEM ITEM_ID="-7" ITEM_TYPE="SYS" LIST_ID="-3" ITEM_INDEX="0" LABEL="test-case.type.TYP_UNDEFINED" CODE="TYP_UNDEFINED" IS_DEFAULT="true"/>
+  <INFO_LIST_ITEM ITEM_ID="-8" ITEM_TYPE="SYS" LIST_ID="-3" ITEM_INDEX="1" LABEL="test-case.type.TYP_EVOLUTION_TESTING" CODE="TYP_EVOLUTION_TESTING" IS_DEFAULT="false"/>
+  <INFO_LIST_ITEM ITEM_ID="-9" ITEM_TYPE="SYS" LIST_ID="-3" ITEM_INDEX="2" LABEL="test-case.type.TYP_END_TO_END_TESTING" CODE="TYP_END_TO_END_TESTING" IS_DEFAULT="false"/>
+
+  <INFO_LIST INFO_LIST_ID="-4" CODE="PERSO" CREATED_BY="DBU" CREATED_ON="2010-02-01"/>
+  <INFO_LIST_ITEM ITEM_ID="-10" ITEM_TYPE="USR" LIST_ID="-4" ITEM_INDEX="0" LABEL="perso_1" CODE="PERSO_1" IS_DEFAULT="true"/>
+  <INFO_LIST_ITEM ITEM_ID="-11" ITEM_TYPE="USR" LIST_ID="-4" ITEM_INDEX="1" LABEL="perso_2" CODE="PERSO_2" IS_DEFAULT="false"/>
+  <INFO_LIST_ITEM ITEM_ID="-12" ITEM_TYPE="USR" LIST_ID="-4" ITEM_INDEX="2" LABEL="perso_3" CODE="PERSO_3" IS_DEFAULT="false"/>
+  <INFO_LIST_ITEM ITEM_ID="-13" ITEM_TYPE="USR" LIST_ID="-4" ITEM_INDEX="3" LABEL="perso_4" CODE="PERSO_4" IS_DEFAULT="false"/>
+
+  <!-- ========================== projects ================================ -->
+
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-987" />
+  <TEST_CASE_LIBRARY ATTACHMENT_LIST_ID="-987" TCL_ID="-1" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-988" />
+  <CAMPAIGN_LIBRARY ATTACHMENT_LIST_ID="-988" CL_ID="-1" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-989" />
+  <REQUIREMENT_LIBRARY ATTACHMENT_LIST_ID="-989" RL_ID="-1" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1" />
+  <PROJECT PROJECT_ID="-1" TCL_ID="-1" CL_ID="-1" RL_ID="-1" NAME="foo" LABEL="foo label" CREATED_BY="DBU" CREATED_ON="2010-02-01"
+           REQ_CATEGORIES_LIST="-1" TC_NATURES_LIST="-2" TC_TYPES_LIST="-4"
+           ATTACHMENT_LIST_ID="-1" />
+
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-997" />
+  <TEST_CASE_LIBRARY ATTACHMENT_LIST_ID="-997" TCL_ID="-20" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-998" />
+  <CAMPAIGN_LIBRARY ATTACHMENT_LIST_ID="-998" CL_ID="-2" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-999" />
+  <REQUIREMENT_LIBRARY ATTACHMENT_LIST_ID="-999" RL_ID="-2" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-2" />
+  <PROJECT PROJECT_ID="-2" TCL_ID="-20" CL_ID="-2" RL_ID="-2" NAME="bar" CREATED_BY="DBU" CREATED_ON="2010-02-01"
+           REQ_CATEGORIES_LIST="-1" TC_NATURES_LIST="-2" TC_TYPES_LIST="-3"
+           ATTACHMENT_LIST_ID="-2" />
+
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-3997" />
+  <TEST_CASE_LIBRARY ATTACHMENT_LIST_ID="-3997" TCL_ID="-3" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-3998" />
+  <CAMPAIGN_LIBRARY ATTACHMENT_LIST_ID="-3998" CL_ID="-3" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-3999" />
+  <REQUIREMENT_LIBRARY ATTACHMENT_LIST_ID="-3999" RL_ID="-3" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-3" />
+  <PROJECT PROJECT_ID="-3" TCL_ID="-3" CL_ID="-3" RL_ID="-3" NAME="baz" CREATED_BY="DBU" CREATED_ON="2010-02-01"
+           REQ_CATEGORIES_LIST="-1" TC_NATURES_LIST="-2" TC_TYPES_LIST="-3"
+           ATTACHMENT_LIST_ID="-3" />
+
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-41" />
+  <TEST_CASE_LIBRARY ATTACHMENT_LIST_ID="-41" TCL_ID="-4" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-42" />
+  <CAMPAIGN_LIBRARY ATTACHMENT_LIST_ID="-988" CL_ID="-4" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-43" />
+  <REQUIREMENT_LIBRARY ATTACHMENT_LIST_ID="-43" RL_ID="-4" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-40" />
+  <PROJECT PROJECT_ID="-4" TCL_ID="-4" CL_ID="-4" RL_ID="-4" NAME="template" CREATED_BY="DBU" CREATED_ON="2010-02-01"
+           REQ_CATEGORIES_LIST="-1" TC_NATURES_LIST="-2" TC_TYPES_LIST="-3"
+           ATTACHMENT_LIST_ID="-40" PROJECT_TYPE="T" />
+
+
+
+</dataset>

@@ -1,0 +1,115 @@
+<?xml version='1.0' encoding='UTF-8'  ?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset >
+
+	<!-- ========================= attachment lists ========================= -->
+
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-500" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-6001" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-6002" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-6003" />
+
+	<!-- ======================= the content of those lists ================= -->
+
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-5001"  />
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-5002"  />
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-60011"  />
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-60012"  />
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-60021"  />
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-60022"  />
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-60031"  />
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-60032"  />
+
+	<ATTACHMENT ATTACHMENT_ID="-5001" NAME="atta" TYPE="txt" SIZE="5" ADDED_ON="2011-08-23" CONTENT_ID="-5001" ATTACHMENT_LIST_ID="-500"/>
+	<ATTACHMENT ATTACHMENT_ID="-5002" NAME="atta" TYPE="txt" SIZE="5" ADDED_ON="2011-08-23" CONTENT_ID="-5002" ATTACHMENT_LIST_ID="-500"/>
+	<ATTACHMENT ATTACHMENT_ID="-60011" NAME="atta" TYPE="txt" SIZE="5" ADDED_ON="2011-08-23" CONTENT_ID="-60011" ATTACHMENT_LIST_ID="-6001"/>
+	<ATTACHMENT ATTACHMENT_ID="-60012" NAME="atta" TYPE="txt" SIZE="5" ADDED_ON="2011-08-23" CONTENT_ID="-60012" ATTACHMENT_LIST_ID="-6001"/>
+	<ATTACHMENT ATTACHMENT_ID="-60021" NAME="atta" TYPE="txt" SIZE="5" ADDED_ON="2011-08-23" CONTENT_ID="-60021" ATTACHMENT_LIST_ID="-6002"/>
+	<ATTACHMENT ATTACHMENT_ID="-60022" NAME="atta" TYPE="txt" SIZE="5" ADDED_ON="2011-08-23" CONTENT_ID="-60022" ATTACHMENT_LIST_ID="-6002"/>
+	<ATTACHMENT ATTACHMENT_ID="-60031" NAME="atta" TYPE="txt" SIZE="5" ADDED_ON="2011-08-23" CONTENT_ID="-60031" ATTACHMENT_LIST_ID="-6003"/>
+	<ATTACHMENT ATTACHMENT_ID="-60032" NAME="atta" TYPE="txt" SIZE="5" ADDED_ON="2011-08-23" CONTENT_ID="-60032" ATTACHMENT_LIST_ID="-6003"/>
+
+
+	<!--  ============== the issue lists ============================= -->
+
+	<ISSUE_LIST ISSUE_LIST_ID="-500" />
+	<ISSUE_LIST ISSUE_LIST_ID="-6001" />
+	<ISSUE_LIST ISSUE_LIST_ID="-6002" />
+	<ISSUE_LIST ISSUE_LIST_ID="-6003" />
+
+	<!--  =============== their content ================================ -->
+
+	<BUGTRACKER BUGTRACKER_ID="-1" KIND="mantis" NAME="mantis" URL="http://localhost/mantisbt" IFRAME_FRIENDLY="false" />
+	<ISSUE ISSUE_ID="-5001" REMOTE_ISSUE_ID="-5001" ISSUE_LIST_ID="-500" 	  BUGTRACKER_ID="-1"/>
+	<ISSUE ISSUE_ID="-5002" REMOTE_ISSUE_ID="-5002" ISSUE_LIST_ID="-500"  	  BUGTRACKER_ID="-1"/>
+	<ISSUE ISSUE_ID="-60011" REMOTE_ISSUE_ID="-60011" ISSUE_LIST_ID="-6001"  BUGTRACKER_ID="-1"/>
+	<ISSUE ISSUE_ID="-60012" REMOTE_ISSUE_ID="-60012" ISSUE_LIST_ID="-6001"  BUGTRACKER_ID="-1"/>
+	<ISSUE ISSUE_ID="-60021" REMOTE_ISSUE_ID="-60021" ISSUE_LIST_ID="-6002"  BUGTRACKER_ID="-1"/>
+	<ISSUE ISSUE_ID="-60022" REMOTE_ISSUE_ID="-60022" ISSUE_LIST_ID="-6002"  BUGTRACKER_ID="-1"/>
+	<ISSUE ISSUE_ID="-60031" REMOTE_ISSUE_ID="-60031" ISSUE_LIST_ID="-6003"  BUGTRACKER_ID="-1"/>
+	<ISSUE ISSUE_ID="-60032" REMOTE_ISSUE_ID="-60032" ISSUE_LIST_ID="-6003"  BUGTRACKER_ID="-1"/>
+
+
+
+
+	<!-- ================= item test plan ================================= -->
+
+	<ITERATION_TEST_PLAN_ITEM ITEM_TEST_PLAN_ID="-9999" CREATED_BY="IT" CREATED_ON="2011-08-23" EXECUTION_STATUS="READY"/>
+
+
+	<!--  ================ execution + steps ============================== -->
+
+	<EXECUTION PREREQUISITE="" EXECUTION_ID="-500" CREATED_BY="IT" CREATED_ON="2011-08-23" NAME="exec 1"
+			ATTACHMENT_LIST_ID="-500" ISSUE_LIST_ID="-500"/>
+
+	<EXECUTION_STEP EXECUTION_STEP_ID="-6001" ACTION="step 1" CREATED_BY="IT" CREATED_ON="2011-08-03"
+			ATTACHMENT_LIST_ID="-6001" ISSUE_LIST_ID="-6001"/>
+	<EXECUTION_STEP EXECUTION_STEP_ID="-6002" ACTION="step 2" CREATED_BY="IT" CREATED_ON="2011-08-03"
+			ATTACHMENT_LIST_ID="-6002" ISSUE_LIST_ID="-6002"/>
+	<EXECUTION_STEP EXECUTION_STEP_ID="-6003" ACTION="step 3" CREATED_BY="IT" CREATED_ON="2011-08-03"
+			ATTACHMENT_LIST_ID="-6003" ISSUE_LIST_ID="-6003"/>
+
+	<EXECUTION_EXECUTION_STEPS EXECUTION_ID="-500" EXECUTION_STEP_ID="-6001" EXECUTION_STEP_ORDER="0" />
+	<EXECUTION_EXECUTION_STEPS EXECUTION_ID="-500" EXECUTION_STEP_ID="-6002" EXECUTION_STEP_ORDER="1" />
+	<EXECUTION_EXECUTION_STEPS EXECUTION_ID="-500" EXECUTION_STEP_ID="-6003" EXECUTION_STEP_ORDER="2" />
+
+	<ITEM_TEST_PLAN_EXECUTION ITEM_TEST_PLAN_ID="-9999" EXECUTION_ID="-500" EXECUTION_ORDER="0" />
+
+
+	<!--  cleanup -->
+
+	<test_case_library_node/>
+	<test_case/>
+	<test_case_folder/>
+	<tcln_relationship/>
+	<test_case_library_content/>
+
+	<test_step/>
+	<action_test_step/>
+	<call_test_step/>
+	<test_case_steps/>
+
+
+</dataset>

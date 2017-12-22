@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1"/> 
+<PROJECT PROJECT_ID="-1" ATTACHMENT_LIST_ID="-1" CREATED_ON="2012-10-18" CREATED_BY="IT" NAME=""/>
+
+<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-10"/> 
+<TEST_CASE_LIBRARY_NODE ATTACHMENT_LIST_ID="-10" TCLN_ID="-10" CREATED_ON="2012-10-18" CREATED_BY="IT" NAME="" PROJECT_ID="-1"/>
+<TEST_CASE PREREQUISITE="" TCLN_ID="-10" VERSION="1" />
+
+<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-20"/> 
+<TEST_CASE_LIBRARY_NODE ATTACHMENT_LIST_ID="-20" TCLN_ID="-20" CREATED_ON="2012-10-18" CREATED_BY="IT" NAME="" PROJECT_ID="-1"/>
+<TEST_CASE PREREQUISITE="" TCLN_ID="-20" VERSION="1" />
+
+
+<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-30"/> 
+<TEST_CASE_LIBRARY_NODE ATTACHMENT_LIST_ID="-30" TCLN_ID="-30" CREATED_ON="2012-10-18" CREATED_BY="IT" NAME="" PROJECT_ID="-1"/>
+<TEST_CASE PREREQUISITE="" TCLN_ID="-30" VERSION="1" />
+
+<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-40"/> 
+<TEST_CASE_LIBRARY_NODE ATTACHMENT_LIST_ID="-40" TCLN_ID="-40" CREATED_ON="2012-10-18" CREATED_BY="IT" NAME="" PROJECT_ID="-1"/>
+<TEST_CASE_FOLDER TCLN_ID="-40" />
+
+<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-50"/> 
+<TEST_CASE_LIBRARY_NODE ATTACHMENT_LIST_ID="-50" TCLN_ID="-50" CREATED_ON="2012-10-18" CREATED_BY="IT" NAME="" PROJECT_ID="-1"/>
+<TEST_CASE_FOLDER TCLN_ID="-50" />
+
+<TCLN_RELATIONSHIP DESCENDANT_ID="-50" ANCESTOR_ID="-40" CONTENT_ORDER="0"/>
+<TCLN_RELATIONSHIP DESCENDANT_ID="-20" ANCESTOR_ID="-40" CONTENT_ORDER="1"/>
+<TCLN_RELATIONSHIP DESCENDANT_ID="-30" ANCESTOR_ID="-50" CONTENT_ORDER="0"/>
+
+
+<test_step/>
+<action_test_step/>
+<call_test_step/>
+<test_case_steps/>
+<parameter/>
+<Dataset/>
+<dataset_param_value/>
+</dataset>

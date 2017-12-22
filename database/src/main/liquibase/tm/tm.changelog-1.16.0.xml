@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+
+	<changeSet id="tm-1.16.0" author="jprioux">
+		<comment>Update TM database version number</comment>
+		<update tableName="CORE_CONFIG">
+			<column name="VALUE" value="1.16.0" />
+			<where>STR_KEY = 'squashtest.tm.database.version'</where>
+		</update>
+	</changeSet>
+
+  <changeSet id="tm-1.16.0-feature-6763" author="jprioux">
+    <comment>column for last connected on</comment>
+    <addColumn tableName="CORE_USER">
+      <column name="LAST_CONNECTED_ON" type="DATETIME" remarks="a column to persist the last connection date" />
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="tm-1.16.0-feature-6799" author="jlor">
+
+    <!-- REQUIREMENT_VERSION_LINK_TYPE TABLE -->
+    <createTable tableName="REQUIREMENT_VERSION_LINK_TYPE">
+      <column name="TYPE_ID" type="BIGINT"
+              autoIncrement="true">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+
+      <column name="ROLE_1" type="VARCHAR(50)"/>
+
+      <column name="ROLE_1_CODE" type="VARCHAR(30)"/>
+
+      <column name="ROLE_2" type="VARCHAR(50)"/>
+
+      <column name="ROLE_2_CODE" type="VARCHAR(30)"/>
+
+      <column name="IS_DEFAULT" type="BOOLEAN" defaultValueBoolean="false"
+              remarks="Only one item per list should have it true ">
+        <constraints nullable="false" />
+      </column>
+
+    </createTable>
+
+    <!-- REQUIREMENT_VERSION_LINK TABLE -->
+    <createTable tableName="REQUIREMENT_VERSION_LINK">
+      <column name="LINK_ID" type="BIGINT"
+            autoIncrement="true">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+
+      <column name="LINK_TYPE_ID" type="BIGINT" remarks="foreign key to the requirement_version_link_type table">
+        <constraints nullable="false"
+                   foreignKeyName="fk_req_version_link_req_version_link_type_link_type_id"
+                   references="REQUIREMENT_VERSION_LINK_TYPE(TYPE_ID)" />
+      </column>
+
+      <column name="LINK_DIRECTION" type="BOOLEAN" defaultValueBoolean="0">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="REQUIREMENT_VERSION_ID" type="BIGINT" remarks="foreign key for requirement version to requirement_version table">
+        <constraints nullable="false"
+                   foreignKeyName="fk_requirement_version_link_requirement_version_id"
+                   references="REQUIREMENT_VERSION(RES_ID)" />
+      </column>
+
+      <column name="RELATED_REQUIREMENT_VERSION_ID" type="BIGINT" remarks="foreign key for related requirement version to requirement_version table">
+        <constraints nullable="false"
+                   foreignKeyName="fk_requirement_version_link_related_requirement_version_id"
+                   references="REQUIREMENT_VERSION(RES_ID)" />
+      </column>
+    </createTable>
+
+    <!-- Inserting default Requirement Version Link Type -->
+    <insert tableName="REQUIREMENT_VERSION_LINK_TYPE">
+      <column name="ROLE_1" value="requirement-version.link.type.related" />
+      <column name="ROLE_1_CODE" value="RELATED" />
+      <column name="ROLE_2" value="requirement-version.link.type.related" />
+      <column name="ROLE_2_CODE" value="RELATED" />
+      <column name="IS_DEFAULT" valueBoolean="true" />
+    </insert>
+
+    <insert tableName="REQUIREMENT_VERSION_LINK_TYPE">
+      <column name="ROLE_1" value="requirement-version.link.type.parent" />
+      <column name="ROLE_1_CODE" value="PARENT" />
+      <column name="ROLE_2" value="requirement-version.link.type.child" />
+      <column name="ROLE_2_CODE" value="CHILD" />
+      <column name="IS_DEFAULT" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="REQUIREMENT_VERSION_LINK_TYPE">
+      <column name="ROLE_1" value="requirement-version.link.type.duplicate" />
+      <column name="ROLE_1_CODE" value="DUPLICATE" />
+      <column name="ROLE_2" value="requirement-version.link.type.duplicate" />
+      <column name="ROLE_2_CODE" value="DUPLICATE" />
+      <column name="IS_DEFAULT" valueBoolean="false" />
+    </insert>
+
+  </changeSet>
+
+</databaseChangeLog>

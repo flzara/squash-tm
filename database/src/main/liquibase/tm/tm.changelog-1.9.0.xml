@@ -1,0 +1,811 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+  <changeSet id="tm-1.9.0" author="flaurens">
+    <comment>Update TM database version number</comment>
+    <update tableName="CORE_CONFIG">
+      <column name="VALUE" value="1.9.0" />
+      <where>STR_KEY = 'squashtest.tm.database.version'</where>
+    </update>
+  </changeSet>
+
+  <changeSet id="tm-1.9.0.feature-3138-1" author="flaurens">
+    <comment>Adding columns to order descendants in node relationship tables</comment>
+    <addColumn tableName="CLN_RELATIONSHIP">
+      <column name="CONTENT_ORDER" type="INT">
+        <constraints nullable="true" />
+      </column>
+    </addColumn>
+    <addColumn tableName="RLN_RELATIONSHIP">
+      <column name="CONTENT_ORDER" type="INT">
+        <constraints nullable="true" />
+      </column>
+    </addColumn>
+    <addColumn tableName="TCLN_RELATIONSHIP">
+      <column name="CONTENT_ORDER" type="INT">
+        <constraints nullable="true" />
+      </column>
+    </addColumn>
+    <addColumn tableName="REQUIREMENT_LIBRARY_CONTENT">
+      <column name="CONTENT_ORDER" type="INT">
+        <constraints nullable="true" />
+      </column>
+    </addColumn>
+    <addColumn tableName="TEST_CASE_LIBRARY_CONTENT">
+      <column name="CONTENT_ORDER" type="INT">
+        <constraints nullable="true" />
+      </column>
+    </addColumn>
+    <addColumn tableName="CAMPAIGN_LIBRARY_CONTENT">
+      <column name="CONTENT_ORDER" type="INT">
+        <constraints nullable="true" />
+      </column>
+    </addColumn>
+  </changeSet>
+
+
+
+ <changeSet id="tm-1.9.0.feature-3138-2" author="jsimon">
+    <preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+      <dbms type="postgresql" />
+    </preConditions>
+    <comment>Creating default order which is identical with the alphabetical order</comment>
+    <sql>
+      create table TEMP_CLN_CONTENT_ORDER(
+        CONTENT_ORDER BIGINT NOT NULL, 
+        ANCESTOR_ID BIGINT NOT NULL, 
+        DESCENDANT_ID BIGINT NOT NULL
+      );
+  </sql>
+     <createProcedure>
+
+        CREATE OR REPLACE FUNCTION testfunction() RETURNS text AS 
+$$
+DECLARE rn integer := 0-1;
+rn2 integer := 0;
+prevtcs bigint := 0;
+r record;
+
+BEGIN
+FOR r in (select  clnr.ANCESTOR_ID, 
+        clnr.DESCENDANT_ID from ( 
+      	select cr.ancestor_id, cr.descendant_id 
+      	from CLN_RELATIONSHIP cr
+        join CAMPAIGN_LIBRARY_NODE cln on cr.DESCENDANT_ID = cln.CLN_ID 
+        order by cr.ANCESTOR_ID, cln.NAME
+       ) as clnr)
+LOOP
+	IF prevtcs  = r.ANCESTOR_ID 
+        THEN 
+             rn2 := rn ;
+             rn := rn2 + 1;
+        ELSE rn := 0 ; 
+             prevtcs := r.ANCESTOR_ID;
+        END IF;
+       insert into TEMP_CLN_CONTENT_ORDER (CONTENT_ORDER, ANCESTOR_ID, DESCENDANT_ID)
+       select rn, r.ANCESTOR_ID , r.DESCENDANT_ID  ;
+END LOOP;
+
+
+FOR r in (select clnrr.LIBRARY_ID, clnrr.CONTENT_ID   from (
+      	select clc.LIBRARY_ID, clc.CONTENT_ID 
+      	from CAMPAIGN_LIBRARY_CONTENT clc
+        join CAMPAIGN_LIBRARY_NODE cln on clc.CONTENT_ID = cln.CLN_ID
+        order by clc.LIBRARY_ID, cln.NAME
+        ) as clnrr)
+LOOP
+	IF prevtcs  = r.LIBRARY_ID 
+        THEN 
+             rn2 := rn ;
+             rn := rn2 + 1;
+        ELSE rn := 0 ; 
+             prevtcs := r.LIBRARY_ID;
+        END IF;
+       insert into TEMP_CLN_CONTENT_ORDER (CONTENT_ORDER, ANCESTOR_ID, DESCENDANT_ID)
+       select rn, r.LIBRARY_ID , r.CONTENT_ID  ;
+END LOOP;
+return 'ok';
+END
+$$ LANGUAGE plpgsql;
+
+select testfunction();
+DROP FUNCTION TestFunction();    
+     </createProcedure>
+  <sql>
+      update CLN_RELATIONSHIP
+      set CONTENT_ORDER = (
+        select TEMP_CLN_CONTENT_ORDER.CONTENT_ORDER
+        from TEMP_CLN_CONTENT_ORDER
+        where TEMP_CLN_CONTENT_ORDER.ANCESTOR_ID = CLN_RELATIONSHIP.ANCESTOR_ID
+          and TEMP_CLN_CONTENT_ORDER.DESCENDANT_ID = CLN_RELATIONSHIP.DESCENDANT_ID
+      );
+
+      update CAMPAIGN_LIBRARY_CONTENT
+      set CONTENT_ORDER = (
+        select TEMP_CLN_CONTENT_ORDER.CONTENT_ORDER
+        from TEMP_CLN_CONTENT_ORDER
+        where TEMP_CLN_CONTENT_ORDER.ANCESTOR_ID = CAMPAIGN_LIBRARY_CONTENT.LIBRARY_ID
+          and TEMP_CLN_CONTENT_ORDER.DESCENDANT_ID = CAMPAIGN_LIBRARY_CONTENT.CONTENT_ID
+      );
+      drop table TEMP_CLN_CONTENT_ORDER;
+    </sql>
+  </changeSet>
+
+
+
+
+  <changeSet id="tm-1.9.0.feature-3138-2" author="flaurens">
+    <preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+      <dbms type="mysql" />
+    </preConditions>
+    <comment>Creating default order which is identical with the alphabetical order</comment>
+    <sql>
+      create table TEMP_CLN_CONTENT_ORDER(
+        CONTENT_ORDER BIGINT NOT NULL, 
+        ANCESTOR_ID BIGINT NOT NULL, 
+        DESCENDANT_ID BIGINT NOT NULL, 
+        DUMMY BIGINT NOT NULL
+      );
+
+      insert into TEMP_CLN_CONTENT_ORDER (CONTENT_ORDER, ANCESTOR_ID, DESCENDANT_ID, DUMMY)
+      select 
+        if(@prevtcs=ANCESTOR_ID, @rownum:=@rownum+1, @rownum:=0) as RANK,
+        clnr.ANCESTOR_ID, 
+        clnr.DESCENDANT_ID, 
+        (@prevtcs:=ANCESTOR_ID)
+      from ( 
+      	select cr.ancestor_id, cr.descendant_id 
+      	from CLN_RELATIONSHIP cr
+        join CAMPAIGN_LIBRARY_NODE cln on cr.DESCENDANT_ID = cln.CLN_ID 
+        order by cr.ANCESTOR_ID, cln.NAME
+       ) as clnr,
+        (SELECT @rownum:=0) r, 
+        (SELECT @prevtcs:=0) s;
+
+      insert into TEMP_CLN_CONTENT_ORDER (CONTENT_ORDER, ANCESTOR_ID, DESCENDANT_ID, DUMMY)
+      select 
+        if(@prevtcs=LIBRARY_ID, @rownum:=@rownum+1, @rownum:=0) as RANK,
+        clnrr.LIBRARY_ID, clnrr.CONTENT_ID, (@prevtcs:=LIBRARY_ID)
+      from (
+      	select clc.LIBRARY_ID, clc.CONTENT_ID 
+      	from CAMPAIGN_LIBRARY_CONTENT clc
+        join CAMPAIGN_LIBRARY_NODE cln on clc.CONTENT_ID = cln.CLN_ID
+        order by clc.LIBRARY_ID, cln.NAME
+        ) as clnrr,
+        (SELECT @rownum:=0) r, 
+        (SELECT @prevtcs:=0) s;
+
+      update CLN_RELATIONSHIP
+      set CONTENT_ORDER = (
+        select TEMP_CLN_CONTENT_ORDER.CONTENT_ORDER
+        from TEMP_CLN_CONTENT_ORDER
+        where TEMP_CLN_CONTENT_ORDER.ANCESTOR_ID = CLN_RELATIONSHIP.ANCESTOR_ID
+          and TEMP_CLN_CONTENT_ORDER.DESCENDANT_ID = CLN_RELATIONSHIP.DESCENDANT_ID
+      );
+
+      update CAMPAIGN_LIBRARY_CONTENT
+      set CONTENT_ORDER = (
+        select TEMP_CLN_CONTENT_ORDER.CONTENT_ORDER
+        from TEMP_CLN_CONTENT_ORDER
+        where TEMP_CLN_CONTENT_ORDER.ANCESTOR_ID = CAMPAIGN_LIBRARY_CONTENT.LIBRARY_ID
+          and TEMP_CLN_CONTENT_ORDER.DESCENDANT_ID = CAMPAIGN_LIBRARY_CONTENT.CONTENT_ID
+      );
+
+      drop table TEMP_CLN_CONTENT_ORDER;
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.9.0.feature-3138-3" author="flaurens">
+    <preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+      <dbms type="h2" />
+    </preConditions>
+    <comment>Creating default order which is identical with the alphabetical order</comment>
+    <sql><![CDATA[
+    create table TEMP_CLN_CONTENT_ORDER(
+      CONTENT_ORDER BIGINT NOT NULL, 
+      ANCESTOR_ID BIGINT NOT NULL, 
+      DESCENDANT_ID BIGINT NOT NULL, 
+      DUMMY BIGINT NOT NULL
+    );
+    
+    set @cprn=-1;
+    set @prevcps=0;
+
+    insert into TEMP_CLN_CONTENT_ORDER (CONTENT_ORDER, ANCESTOR_ID, DESCENDANT_ID, DUMMY)
+    select 
+      casewhen(@prevcps = ANCESTOR_ID, set(@cprn, @cprn+1),
+      set(@cprn, 0)) as RANK,
+      clnr.ANCESTOR_ID, 
+      clnr.DESCENDANT_ID, 
+      (@prevcps:=ANCESTOR_ID)
+      from ( 
+      	select cr.ancestor_id, cr.descendant_id 
+      	from CLN_RELATIONSHIP cr
+        join CAMPAIGN_LIBRARY_NODE cln on cr.DESCENDANT_ID = cln.CLN_ID 
+        order by cr.ANCESTOR_ID, cln.NAME
+       ) as clnr,
+      (SELECT @cprn:=0) r, 
+      (SELECT @prevcps:=0) s;
+
+    set @cprn=-1;
+    set @prevcps=0;
+
+    insert into TEMP_CLN_CONTENT_ORDER (CONTENT_ORDER, ANCESTOR_ID, DESCENDANT_ID, DUMMY)
+    select 
+      casewhen(@prevcps = LIBRARY_ID, set(@cprn, @cprn+1), set(@cprn, 0)) as RANK,
+      clnr.LIBRARY_ID, clnr.CONTENT_ID, (@prevcps:=LIBRARY_ID)
+      from (
+      	select clc.LIBRARY_ID, clc.CONTENT_ID 
+      	from CAMPAIGN_LIBRARY_CONTENT clc
+        join CAMPAIGN_LIBRARY_NODE cln on clc.CONTENT_ID = cln.CLN_ID
+        order by clc.LIBRARY_ID, cln.NAME
+        ) as clnr,
+      (SELECT @cprn:=0) r, 
+      (SELECT @prevcps:=0) s;
+        
+    update CLN_RELATIONSHIP
+    set CONTENT_ORDER = (select TEMP_CLN_CONTENT_ORDER.CONTENT_ORDER
+                         from TEMP_CLN_CONTENT_ORDER
+                         where TEMP_CLN_CONTENT_ORDER.ANCESTOR_ID = CLN_RELATIONSHIP.ANCESTOR_ID
+                         and TEMP_CLN_CONTENT_ORDER.DESCENDANT_ID = CLN_RELATIONSHIP.DESCENDANT_ID);
+
+    update CAMPAIGN_LIBRARY_CONTENT
+    set CONTENT_ORDER = (
+      select TEMP_CLN_CONTENT_ORDER.CONTENT_ORDER
+      from TEMP_CLN_CONTENT_ORDER
+      where TEMP_CLN_CONTENT_ORDER.ANCESTOR_ID = CAMPAIGN_LIBRARY_CONTENT.LIBRARY_ID
+        and TEMP_CLN_CONTENT_ORDER.DESCENDANT_ID = CAMPAIGN_LIBRARY_CONTENT.CONTENT_ID);
+                             
+    drop table TEMP_CLN_CONTENT_ORDER;    
+        ]]></sql>
+  </changeSet>
+
+
+<changeSet id="tm-1.9.0.feature-3138-4" author="jsimon">
+    <preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+      <dbms type="postgresql" />
+    </preConditions>
+    <comment>Creating default order which is identical with the alphabetical order</comment>
+    <sql>
+	create table TEMP_RLN_CONTENT_ORDER(CONTENT_ORDER BIGINT NOT NULL, ANCESTOR_ID BIGINT NOT NULL, DESCENDANT_ID BIGINT NOT
+	      NULL);
+	
+		  
+	create table TMP_MAP_RLN_RESOURCE(RLN_ID BIGINT NOT NULL, 
+		NAME VARCHAR(255));
+	
+	insert into TMP_MAP_RLN_RESOURCE(rln_id, name)
+	select f.rln_id, res.name 
+	from REQUIREMENT_FOLDER f
+	inner join RESOURCE res on f.res_id = res.res_id;
+	
+	insert into TMP_MAP_RLN_RESOURCE(rln_id,  name)
+	select r.rln_id,  res.name
+	from REQUIREMENT r
+	inner join RESOURCE res on  r.current_version_id = res.res_id;
+</sql>
+	<createProcedure>
+	
+        CREATE OR REPLACE FUNCTION testfunction() RETURNS text AS 
+$$
+DECLARE rn integer := 0-1;
+rn2 integer := 0;
+prevtcs bigint := 0;
+r record;
+
+BEGIN
+FOR r in    (select rlnr.ANCESTOR_ID, rlnr.DESCENDANT_ID
+	      from (
+	      	select rln.ancestor_id, rln.descendant_id 
+	      	from RLN_RELATIONSHIP rln
+	      	inner join TMP_MAP_RLN_RESOURCE tmp on rln.descendant_id = tmp.rln_id 
+	      	order by rln.ancestor_id, tmp.name  
+	      ) as rlnr)
+LOOP
+	IF prevtcs  = r.ANCESTOR_ID 
+        THEN 
+             rn2 := rn ;
+             rn := rn2 + 1;
+        ELSE rn := 0 ; 
+             prevtcs := r.ANCESTOR_ID;
+        END IF;
+       insert into TEMP_RLN_CONTENT_ORDER (CONTENT_ORDER, ANCESTOR_ID, DESCENDANT_ID)
+       select rn, r.ANCESTOR_ID , r.DESCENDANT_ID  ;
+END LOOP;
+
+
+FOR r in     (select rlnr.LIBRARY_ID, rlnr.CONTENT_ID
+	      from (
+	      	select rlc.library_id, rlc.content_id 
+	      	from REQUIREMENT_LIBRARY_CONTENT rlc
+	      	inner join TMP_MAP_RLN_RESOURCE tmp on rlc.content_id = tmp.rln_id
+	      	order by rlc.library_id, tmp.name
+	      ) as rlnr)
+LOOP
+	IF prevtcs  = r.LIBRARY_ID 
+        THEN 
+             rn2 := rn ;
+             rn := rn2 + 1;
+        ELSE rn := 0 ; 
+             prevtcs := r.LIBRARY_ID;
+        END IF;
+ 	   insert into TEMP_RLN_CONTENT_ORDER (CONTENT_ORDER, ANCESTOR_ID, DESCENDANT_ID)
+       select rn, r.LIBRARY_ID , r.CONTENT_ID  ;
+END LOOP;
+return 'ok';
+END
+$$ LANGUAGE plpgsql;	
+select testfunction();
+DROP FUNCTION TestFunction(); 
+  
+	</createProcedure>
+	<sql>
+	update RLN_RELATIONSHIP
+	      set CONTENT_ORDER = (select TEMP_RLN_CONTENT_ORDER.CONTENT_ORDER
+	      from TEMP_RLN_CONTENT_ORDER
+	      where TEMP_RLN_CONTENT_ORDER.ANCESTOR_ID = RLN_RELATIONSHIP.ANCESTOR_ID
+	      and TEMP_RLN_CONTENT_ORDER.DESCENDANT_ID = RLN_RELATIONSHIP.DESCENDANT_ID);
+	
+	update REQUIREMENT_LIBRARY_CONTENT
+	      set CONTENT_ORDER = (select TEMP_RLN_CONTENT_ORDER.CONTENT_ORDER
+	      from TEMP_RLN_CONTENT_ORDER
+	      where TEMP_RLN_CONTENT_ORDER.ANCESTOR_ID = REQUIREMENT_LIBRARY_CONTENT.LIBRARY_ID
+	      and TEMP_RLN_CONTENT_ORDER.DESCENDANT_ID = REQUIREMENT_LIBRARY_CONTENT.CONTENT_ID);
+	
+	drop table TEMP_RLN_CONTENT_ORDER;
+	drop table TMP_MAP_RLN_RESOURCE;
+
+    </sql>
+  </changeSet>
+  
+  <changeSet id="tm-1.9.0.feature-3138-4" author="flaurens">
+    <preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+      <dbms type="mysql" />
+    </preConditions>
+    <comment>Creating default order which is identical with the alphabetical order</comment>
+    <sql>
+	create table TEMP_RLN_CONTENT_ORDER(CONTENT_ORDER BIGINT NOT NULL, ANCESTOR_ID BIGINT NOT NULL, DESCENDANT_ID BIGINT NOT
+	      NULL, DUMMY BIGINT NOT NULL);
+	
+		  
+	create table TMP_MAP_RLN_RESOURCE(RLN_ID BIGINT NOT NULL, 
+		NAME VARCHAR(255));
+	
+	insert into TMP_MAP_RLN_RESOURCE(rln_id, name)
+	select f.rln_id, res.name 
+	from REQUIREMENT_FOLDER f
+	inner join RESOURCE res on f.res_id = res.res_id;
+	
+	insert into TMP_MAP_RLN_RESOURCE(rln_id,  name)
+	select r.rln_id,  res.name
+	from REQUIREMENT r
+	inner join RESOURCE res on  r.current_version_id = res.res_id;
+
+	
+		  
+	insert into TEMP_RLN_CONTENT_ORDER (CONTENT_ORDER, ANCESTOR_ID, DESCENDANT_ID, DUMMY)
+	      select if(@prevtcs=ANCESTOR_ID,
+	      @rownum:=@rownum+1,
+	      @rownum:=0) as RANK,
+	      rlnr.ANCESTOR_ID, rlnr.DESCENDANT_ID, (@prevtcs:=ANCESTOR_ID)
+	      from (
+	      	select rln.ancestor_id, rln.descendant_id 
+	      	from RLN_RELATIONSHIP rln
+	      	inner join TMP_MAP_RLN_RESOURCE tmp on rln.descendant_id = tmp.rln_id 
+	      	order by rln.ancestor_id, tmp.name  
+	      ) as rlnr,
+	      (SELECT @rownum:=0) r, (SELECT @prevtcs:=0) s;
+	
+	insert into TEMP_RLN_CONTENT_ORDER (CONTENT_ORDER, ANCESTOR_ID, DESCENDANT_ID, DUMMY)
+	      select if(@prevtcs=LIBRARY_ID,
+	      @rownum:=@rownum+1,
+	      @rownum:=0) as RANK,
+	      rlnr.LIBRARY_ID, rlnr.CONTENT_ID, (@prevtcs:=rlnr.LIBRARY_ID)
+	      from (
+	      	select rlc.library_id, rlc.content_id 
+	      	from REQUIREMENT_LIBRARY_CONTENT rlc
+	      	inner join TMP_MAP_RLN_RESOURCE tmp on rlc.content_id = tmp.rln_id
+	      	order by rlc.library_id, tmp.name
+	      ) as rlnr,
+		(SELECT @rownum:=0) r, (SELECT @prevtcs:=0) s;
+	
+	update RLN_RELATIONSHIP
+	      set CONTENT_ORDER = (select TEMP_RLN_CONTENT_ORDER.CONTENT_ORDER
+	      from TEMP_RLN_CONTENT_ORDER
+	      where TEMP_RLN_CONTENT_ORDER.ANCESTOR_ID = RLN_RELATIONSHIP.ANCESTOR_ID
+	      and TEMP_RLN_CONTENT_ORDER.DESCENDANT_ID = RLN_RELATIONSHIP.DESCENDANT_ID);
+	
+	update REQUIREMENT_LIBRARY_CONTENT
+	      set CONTENT_ORDER = (select TEMP_RLN_CONTENT_ORDER.CONTENT_ORDER
+	      from TEMP_RLN_CONTENT_ORDER
+	      where TEMP_RLN_CONTENT_ORDER.ANCESTOR_ID = REQUIREMENT_LIBRARY_CONTENT.LIBRARY_ID
+	      and TEMP_RLN_CONTENT_ORDER.DESCENDANT_ID = REQUIREMENT_LIBRARY_CONTENT.CONTENT_ID);
+	
+	drop table TEMP_RLN_CONTENT_ORDER;
+	drop table TMP_MAP_RLN_RESOURCE;
+
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.9.0.feature-3138-5" author="flaurens">
+    <preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+      <dbms type="h2" />
+    </preConditions>
+    <comment>Creating default order which is identical with the alphabetical order</comment>
+    <sql><![CDATA[
+      create table TEMP_RLN_CONTENT_ORDER (
+        CONTENT_ORDER BIGINT NOT NULL, 
+        ANCESTOR_ID BIGINT NOT NULL, 
+        DESCENDANT_ID BIGINT NOT NULL, 
+        DUMMY BIGINT NOT NULL
+      );
+		  
+		create table TMP_MAP_RLN_RESOURCE(RLN_ID BIGINT NOT NULL, 
+		NAME VARCHAR(255));
+		      
+		insert into TMP_MAP_RLN_RESOURCE(rln_id, name)
+		select f.rln_id, res.name 
+		from REQUIREMENT_FOLDER f
+		inner join RESOURCE res on f.res_id = res.res_id;
+		
+		insert into TMP_MAP_RLN_RESOURCE(rln_id,  name)
+		select r.rln_id,  res.name
+		from REQUIREMENT r
+		inner join RESOURCE res on  r.current_version_id = res.res_id;
+
+      set @rqrn=-1;
+      set @prevrqs=0;
+
+      insert into TEMP_RLN_CONTENT_ORDER (CONTENT_ORDER, ANCESTOR_ID, DESCENDANT_ID, DUMMY)
+      select 
+        casewhen(@prevtcs = ANCESTOR_ID, set(@rqrn, @rqrn+1), set(@rqrn, 0)) as RANK,
+        rlnr.ANCESTOR_ID, 
+        rlnr.DESCENDANT_ID, 
+        (@prevrqs:=ANCESTOR_ID)
+	      from (
+	      	select rln.ancestor_id, rln.descendant_id 
+	      	from RLN_RELATIONSHIP rln
+	      	inner join TMP_MAP_RLN_RESOURCE tmp on rln.descendant_id = tmp.rln_id 
+	      	order by rln.ancestor_id, tmp.name  
+	      ) as rlnr,
+        (SELECT @rqrn:=0) r, 
+        (SELECT @prevrqs:=0) s;
+
+      set @rqrn=-1;
+      set @prevrqs=0;
+      
+    insert into TEMP_RLN_CONTENT_ORDER (CONTENT_ORDER, ANCESTOR_ID, DESCENDANT_ID, DUMMY)
+    select casewhen(@prevtcs = LIBRARY_ID, set(@rqrn, @rqrn+1),
+      set(@rqrn, 0)) as RANK,
+              rlnr.LIBRARY_ID, rlnr.CONTENT_ID, (@prevrqs:=LIBRARY_ID)
+	      from (
+	      	select rlc.library_id, rlc.content_id 
+	      	from REQUIREMENT_LIBRARY_CONTENT rlc
+	      	inner join TMP_MAP_RLN_RESOURCE tmp on rlc.content_id = tmp.rln_id
+	      	order by rlc.library_id, tmp.name
+	      ) as rlnr,
+    (SELECT @rqrn:=0) r, (SELECT @prevrqs:=0) s;
+    
+        
+    update RLN_RELATIONSHIP
+    set CONTENT_ORDER = (select TEMP_RLN_CONTENT_ORDER.CONTENT_ORDER
+                         from TEMP_RLN_CONTENT_ORDER
+                         where TEMP_RLN_CONTENT_ORDER.ANCESTOR_ID = RLN_RELATIONSHIP.ANCESTOR_ID
+                         and TEMP_RLN_CONTENT_ORDER.DESCENDANT_ID = RLN_RELATIONSHIP.DESCENDANT_ID);
+    
+    update REQUIREMENT_LIBRARY_CONTENT
+    set CONTENT_ORDER = (select TEMP_RLN_CONTENT_ORDER.CONTENT_ORDER
+                         from TEMP_RLN_CONTENT_ORDER
+                         where TEMP_RLN_CONTENT_ORDER.ANCESTOR_ID = REQUIREMENT_LIBRARY_CONTENT.LIBRARY_ID
+                         and TEMP_RLN_CONTENT_ORDER.DESCENDANT_ID = REQUIREMENT_LIBRARY_CONTENT.CONTENT_ID);
+                         
+	drop table TEMP_RLN_CONTENT_ORDER;
+	drop table TMP_MAP_RLN_RESOURCE;
+        ]]></sql>
+  </changeSet>
+
+
+ <changeSet id="tm-1.9.0.feature-3138-6" author="jsimon">
+    <preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+      <dbms type="postgresql" />
+    </preConditions>
+    <comment>Creating default order which is identical with the alphabetical order</comment>
+    <sql>
+       create table TEMP_TCLN_CONTENT_ORDER(CONTENT_ORDER BIGINT NOT NULL, ANCESTOR_ID BIGINT NOT NULL, DESCENDANT_ID BIGINT NOT
+      NULL);
+</sql>
+	  
+<createProcedure>
+        CREATE OR REPLACE FUNCTION testfunction() RETURNS text AS 
+$$
+DECLARE rn integer := 0-1;
+rn2 integer := 0;
+prevtcs bigint := 0;
+r record;
+
+BEGIN
+FOR r in        (select tclnr.ANCESTOR_ID, tclnr.DESCENDANT_ID
+      from (
+      select tr.ancestor_id, tr.descendant_id 
+      from TCLN_RELATIONSHIP tr
+      join TEST_CASE_LIBRARY_NODE tcln on tr.DESCENDANT_ID = tcln.TCLN_ID
+      order by tr.ancestor_id, tcln.name
+      ) as tclnr)
+LOOP
+	IF prevtcs  = r.ANCESTOR_ID 
+        THEN 
+             rn2 := rn ;
+             rn := rn2 + 1;
+        ELSE rn := 0 ; 
+             prevtcs := r.ANCESTOR_ID;
+        END IF;
+          insert into TEMP_TCLN_CONTENT_ORDER (CONTENT_ORDER, ANCESTOR_ID, DESCENDANT_ID)
+       select rn, r.ANCESTOR_ID , r.DESCENDANT_ID  ;
+END LOOP;
+
+
+FOR r in     (select tclnr.LIBRARY_ID, tclnr.CONTENT_ID
+      from (
+      	select tc.library_id, tc.content_id
+      	from TEST_CASE_LIBRARY_CONTENT tc      
+      	join TEST_CASE_LIBRARY_NODE tcln on tc.CONTENT_ID = tcln.TCLN_ID
+      	order by tc.library_id, tcln.name
+      ) as tclnr)
+LOOP
+	IF prevtcs  = r.LIBRARY_ID 
+        THEN 
+             rn2 := rn ;
+             rn := rn2 + 1;
+        ELSE rn := 0 ; 
+             prevtcs := r.LIBRARY_ID;
+        END IF;
+  insert into TEMP_TCLN_CONTENT_ORDER (CONTENT_ORDER, ANCESTOR_ID, DESCENDANT_ID)
+       select rn, r.LIBRARY_ID , r.CONTENT_ID  ;
+END LOOP;
+
+
+return 'ok';
+END
+$$ LANGUAGE plpgsql;
+
+select testfunction();
+DROP FUNCTION TestFunction();
+</createProcedure>  
+<sql>
+    update TCLN_RELATIONSHIP
+      set CONTENT_ORDER = (select TEMP_TCLN_CONTENT_ORDER.CONTENT_ORDER
+      from TEMP_TCLN_CONTENT_ORDER
+      where TEMP_TCLN_CONTENT_ORDER.ANCESTOR_ID = TCLN_RELATIONSHIP.ANCESTOR_ID
+      and TEMP_TCLN_CONTENT_ORDER.DESCENDANT_ID = TCLN_RELATIONSHIP.DESCENDANT_ID);
+
+
+      update TEST_CASE_LIBRARY_CONTENT
+      set CONTENT_ORDER = (select TEMP_TCLN_CONTENT_ORDER.CONTENT_ORDER
+      from TEMP_TCLN_CONTENT_ORDER
+      where TEMP_TCLN_CONTENT_ORDER.ANCESTOR_ID = TEST_CASE_LIBRARY_CONTENT.LIBRARY_ID
+      and TEMP_TCLN_CONTENT_ORDER.DESCENDANT_ID = TEST_CASE_LIBRARY_CONTENT.CONTENT_ID);
+
+      drop table TEMP_TCLN_CONTENT_ORDER;
+          
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.9.0.feature-3138-6" author="flaurens">
+    <preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+      <dbms type="mysql" />
+    </preConditions>
+    <comment>Creating default order which is identical with the alphabetical order</comment>
+    <sql>
+      create table TEMP_TCLN_CONTENT_ORDER(CONTENT_ORDER BIGINT NOT NULL, ANCESTOR_ID BIGINT NOT NULL, DESCENDANT_ID BIGINT NOT
+      NULL, DUMMY BIGINT NOT NULL);
+
+      insert into TEMP_TCLN_CONTENT_ORDER (CONTENT_ORDER, ANCESTOR_ID, DESCENDANT_ID, DUMMY)
+      select if(@prevtcs=ANCESTOR_ID,
+      @rownum:=@rownum+1,
+      @rownum:=0) as RANK,
+      tclnr.ANCESTOR_ID, tclnr.DESCENDANT_ID, (@prevtcs:=ANCESTOR_ID)
+      from (
+      select tr.ancestor_id, tr.descendant_id 
+      from TCLN_RELATIONSHIP tr
+      join TEST_CASE_LIBRARY_NODE tcln on tr.DESCENDANT_ID = tcln.TCLN_ID
+      order by tr.ancestor_id, tcln.name
+      ) as tclnr,
+      (SELECT @rownum:=0) r, (SELECT @prevtcs:=0) s;
+
+      insert into TEMP_TCLN_CONTENT_ORDER (CONTENT_ORDER, ANCESTOR_ID, DESCENDANT_ID, DUMMY)
+      select if(@prevtcs=LIBRARY_ID,
+      @rownum:=@rownum+1,
+      @rownum:=0) as RANK,
+      tclnr.LIBRARY_ID, tclnr.CONTENT_ID, (@prevtcs:=LIBRARY_ID)
+      from (
+      	select tc.library_id, tc.content_id
+      	from TEST_CASE_LIBRARY_CONTENT tc      
+      	join TEST_CASE_LIBRARY_NODE tcln on tc.CONTENT_ID = tcln.TCLN_ID
+      	order by tc.library_id, tcln.name
+      ) as tclnr,
+      (SELECT @rownum:=0) r, (SELECT @prevtcs:=0) s;
+
+      update TCLN_RELATIONSHIP
+      set CONTENT_ORDER = (select TEMP_TCLN_CONTENT_ORDER.CONTENT_ORDER
+      from TEMP_TCLN_CONTENT_ORDER
+      where TEMP_TCLN_CONTENT_ORDER.ANCESTOR_ID = TCLN_RELATIONSHIP.ANCESTOR_ID
+      and TEMP_TCLN_CONTENT_ORDER.DESCENDANT_ID = TCLN_RELATIONSHIP.DESCENDANT_ID);
+
+
+      update TEST_CASE_LIBRARY_CONTENT
+      set CONTENT_ORDER = (select TEMP_TCLN_CONTENT_ORDER.CONTENT_ORDER
+      from TEMP_TCLN_CONTENT_ORDER
+      where TEMP_TCLN_CONTENT_ORDER.ANCESTOR_ID = TEST_CASE_LIBRARY_CONTENT.LIBRARY_ID
+      and TEMP_TCLN_CONTENT_ORDER.DESCENDANT_ID = TEST_CASE_LIBRARY_CONTENT.CONTENT_ID);
+
+      drop table TEMP_TCLN_CONTENT_ORDER;
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.9.0.feature-3138-7" author="flaurens">
+    <preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+      <dbms type="h2" />
+    </preConditions>
+    <comment>Creating default order which is identical with the alphabetical order</comment>
+    <sql><![CDATA[
+      create table TEMP_TCLN_CONTENT_ORDER(
+        CONTENT_ORDER BIGINT NOT NULL, 
+        ANCESTOR_ID BIGINT NOT NULL, 
+        DESCENDANT_ID BIGINT NOT NULL, 
+        DUMMY BIGINT NOT NULL
+      );
+    
+      set @tcrn=-1;
+      set @prevtcs=0;
+      
+      insert into TEMP_TCLN_CONTENT_ORDER (CONTENT_ORDER, ANCESTOR_ID, DESCENDANT_ID, DUMMY)
+      select  
+        casewhen(@prevtcs = ANCESTOR_ID, set(@tcrn, @tcrn+1), set(@tcrn, 0)) as RANK,
+        tclnr.ANCESTOR_ID, 
+        tclnr.DESCENDANT_ID, 
+        (@prevtcs:=ANCESTOR_ID)
+	      from (
+	      select tr.ancestor_id, tr.descendant_id 
+	      from TCLN_RELATIONSHIP tr
+	      join TEST_CASE_LIBRARY_NODE tcln on tr.DESCENDANT_ID = tcln.TCLN_ID
+	      order by tr.ancestor_id, tcln.name
+	      ) as tclnr,
+        (SELECT @tcrn:=0) r, 
+        (SELECT @prevtcs:=0) s;    
+
+      set @tcrn=-1;
+      set @prevtcs=0;
+
+      insert into TEMP_TCLN_CONTENT_ORDER (CONTENT_ORDER, ANCESTOR_ID, DESCENDANT_ID, DUMMY)
+      select
+        casewhen(@prevtcs = LIBRARY_ID, set(@tcrn, @tcrn+1), set(@tcrn, 0)) as RANK,
+        tclnr.LIBRARY_ID, 
+        tclnr.CONTENT_ID, 
+        (@prevtcs:=LIBRARY_ID)
+	      from (
+	      	select tc.library_id, tc.content_id
+	      	from TEST_CASE_LIBRARY_CONTENT tc      
+	      	join TEST_CASE_LIBRARY_NODE tcln on tc.CONTENT_ID = tcln.TCLN_ID
+	      	order by tc.library_id, tcln.name
+	      ) as tclnr,
+        (SELECT @tcrn:=0) r, 
+        (SELECT @prevtcs:=0) s;
+        
+      update TCLN_RELATIONSHIP
+      set CONTENT_ORDER = (
+        select TEMP_TCLN_CONTENT_ORDER.CONTENT_ORDER
+        from TEMP_TCLN_CONTENT_ORDER
+        where TEMP_TCLN_CONTENT_ORDER.ANCESTOR_ID = TCLN_RELATIONSHIP.ANCESTOR_ID
+          and TEMP_TCLN_CONTENT_ORDER.DESCENDANT_ID = TCLN_RELATIONSHIP.DESCENDANT_ID
+      );
+    
+    update TEST_CASE_LIBRARY_CONTENT
+    set CONTENT_ORDER = (
+      select TEMP_TCLN_CONTENT_ORDER.CONTENT_ORDER
+      from TEMP_TCLN_CONTENT_ORDER
+      where TEMP_TCLN_CONTENT_ORDER.ANCESTOR_ID = TEST_CASE_LIBRARY_CONTENT.LIBRARY_ID
+        and TEMP_TCLN_CONTENT_ORDER.DESCENDANT_ID = TEST_CASE_LIBRARY_CONTENT.CONTENT_ID);
+  
+      drop table TEMP_TCLN_CONTENT_ORDER;    
+    ]]>
+    </sql>
+  </changeSet>
+      
+  <changeSet id="tm-1.9.0.feature-3138-8" author="flaurens">
+    <dropNotNullConstraint tableName="REQUIREMENT_VERSION_COVERAGE" columnName="VERIFIED_REQ_VERSION_ID" columnDataType="BIGINT"/>
+  </changeSet>
+
+  <changeSet id="tm-1.9.0.feature-3211-1" author="flaurens">
+    <createTable tableName="DISABLED_EXECUTION_STATUS">
+      <column name="CL_ID" type="BIGINT">
+        <constraints nullable="false" references="CAMPAIGN_LIBRARY(CL_ID)" foreignKeyName="FK_DISABLED_EXEC_STATUS_CL_ID" />
+      </column>
+      <column name="EXECUTION_STATUS" type="java.sql.Types.VARCHAR(255)">
+        <constraints nullable="false"></constraints>
+      </column>
+    </createTable>
+  </changeSet>
+  
+   <changeSet id="tm-1.9.0.feature-3211-2" author="flaurens">
+    <comment>Inserting default disabled execution statuses for existing libraries</comment>
+    <sql><![CDATA[
+   	insert into DISABLED_EXECUTION_STATUS (CL_ID, EXECUTION_STATUS)
+	select cl_id, 'ERROR' from CAMPAIGN_LIBRARY;
+		
+	insert into DISABLED_EXECUTION_STATUS (CL_ID, EXECUTION_STATUS)
+	select cl_id, 'WARNING' from CAMPAIGN_LIBRARY;
+
+	insert into DISABLED_EXECUTION_STATUS (CL_ID, EXECUTION_STATUS)
+	select cl_id, 'NOT_RUN' from CAMPAIGN_LIBRARY;
+
+	insert into DISABLED_EXECUTION_STATUS (CL_ID, EXECUTION_STATUS)
+	select cl_id, 'SETTLED' from CAMPAIGN_LIBRARY;
+	]]>
+    </sql>
+   </changeSet>
+   
+    <changeSet id="tm-1.9.0-issue-3236-01" author="flaurens">
+      <sql><![CDATA[
+		update DENORMALIZED_FIELD_VALUE
+		set FIELD_TYPE = 'CF'
+		where FIELD_TYPE = ''
+	]]>
+    </sql>
+  </changeSet>
+  
+  <changeSet id="tm-1.9.0-issue--01" author="flaurens">
+  		<dropNotNullConstraint
+            columnDataType="CLOB"
+            columnName="ACTION"
+            tableName="ACTION_TEST_STEP"/>
+  </changeSet>
+  
+  <changeSet id="tm-1.9.0-issue-3140-01" author="mpagnon">
+    <sql>
+        create table TEMP_VS(
+          RVC_ID BIGINT NOT NULL,
+          TS_ID BIGINT NOT NULL
+        );
+        
+        insert into TEMP_VS(RVC_ID, TS_ID)
+        select vs.REQUIREMENT_VERSION_COVERAGE_ID, vs.TEST_STEP_ID
+        from VERIFYING_STEPS as vs
+        group by vs.REQUIREMENT_VERSION_COVERAGE_ID, vs.TEST_STEP_ID
+        ;
+        
+        delete from VERIFYING_STEPS 
+        ;
+        
+        insert into  VERIFYING_STEPS (REQUIREMENT_VERSION_COVERAGE_ID, TEST_STEP_ID)
+        select RVC_ID , TS_ID
+        from TEMP_VS
+        ;
+        
+        drop table TEMP_VS;
+    </sql>
+  </changeSet>
+
+</databaseChangeLog>

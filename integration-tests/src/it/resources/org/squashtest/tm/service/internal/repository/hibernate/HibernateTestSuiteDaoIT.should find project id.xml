@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-31"/>
+	<CAMPAIGN_LIBRARY CL_ID="-1" ATTACHMENT_LIST_ID="-31"/>
+
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-30"/>
+	<PROJECT PROJECT_ID="-1" ATTACHMENT_LIST_ID="-30" CREATED_ON="2013-10-08" CREATED_BY="mp" NAME="" CL_ID="-1"/>
+	
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-32"/>
+	<CAMPAIGN_LIBRARY CL_ID="-2" ATTACHMENT_LIST_ID="-32"/>
+
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-33"/>
+	<PROJECT PROJECT_ID="-2" ATTACHMENT_LIST_ID="-33" CREATED_ON="2013-10-08" CREATED_BY="mp" NAME="" CL_ID="-2"/>
+
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1" />
+	<CAMPAIGN_LIBRARY_NODE CLN_ID="-1" NAME="campaign1" CREATED_ON="2010-02-01" CREATED_BY="DBU" ATTACHMENT_LIST_ID="-1" PROJECT_ID="-2"/>
+	<CAMPAIGN CLN_ID="-1" ACTUAL_START_AUTO="TRUE" ACTUAL_END_AUTO="TRUE"  />
+	<CAMPAIGN_LIBRARY_CONTENT CONTENT_ID="-1" LIBRARY_ID="-2" CONTENT_ORDER="0"/>
+	
+	<!-- 	ITERATION 1 -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-11" />
+	<ITERATION ITERATION_ID="-1" NAME="iteration1" CREATED_ON="2010-02-01" CREATED_BY="DBU" ACTUAL_START_AUTO="TRUE" ACTUAL_END_AUTO="TRUE" ATTACHMENT_LIST_ID="-11" />
+	<CAMPAIGN_ITERATION CAMPAIGN_ID="-1" ITERATION_ID="-1" ITERATION_ORDER="0"/>
+	
+		
+	<!-- 	ITERATION 2 -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-16" />
+	<ITERATION ITERATION_ID="-2" NAME="foo" CREATED_ON="2010-02-01" CREATED_BY="DBU" ACTUAL_START_AUTO="TRUE" ACTUAL_END_AUTO="TRUE" ATTACHMENT_LIST_ID="-16"/>
+	<CAMPAIGN_ITERATION CAMPAIGN_ID="-1" ITERATION_ID="-2" ITERATION_ORDER="1"/>
+	
+	<!-- 	TESTSUITE -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-20" />
+	<TEST_SUITE ID="-20" NAME="foo" CREATED_ON="2010-02-01" CREATED_BY="DBU" ATTACHMENT_LIST_ID="-20"/>
+	<ITERATION_TEST_SUITE ITERATION_ID="-2" TEST_SUITE_ID="-20"/>
+	
+</dataset>

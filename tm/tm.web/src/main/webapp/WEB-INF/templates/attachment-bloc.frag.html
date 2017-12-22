@@ -1,0 +1,98 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<!-- common head -->
+<link rel="stylesheet" type="text/css" media="all"
+	href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css"
+	sq:css="squash.core.css" />
+<!-- /common head -->
+<link rel="stylesheet" type="text/css" media="all"
+	href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.blue.css"
+	sq:css="squash.blue.css" />
+</head>
+<body>
+	<div th:remove="all">
+		<!--
+	parameters are :
+
+		attachable : boolean that says whether user has attach right on attachable entity
+		attachableEntity : an attachable entity
+		attachmentSet : the set of attachments to display
+
+ -->
+	</div>
+	<div th:fragment="attachment-bloc">
+
+
+		<div class="sq-tg expand">
+           <div class="tg-head">
+              <h3 th:text="#{label.Attachments}"></h3>
+              <div class="tg-toolbar">
+                <input th:if="${attachable}" id="upload-attachment-button" type="button"
+                      th:value="#{label.UploadAttachment}" th:title="#{label.UploadAttachment}" value="Upload" class="button" />
+                <input th:if="${attachable}" id="manage-attachment-bloc-button"
+                      type="button" th:value="#{label.Organize}" th:title="#{label.OrganizeAttachment}" value="Organize"
+                      class="button" />
+              </div>
+           </div>
+
+
+			<div class="tg-body" id="attachment-panel" >
+				<div id="attachment-container" class="div-attachments" th:with="listId = ${attachableEntity.attachmentList.id}">
+					<div class="div-attachments-item" style="text-align:center;" th:each="attachment : ${attachmentSet}">
+						<div th:class="'attachment-file file-'+${#strings.toLowerCase(attachment.type)}"></div>
+						<span><a th:href="@{/attach-list/__${listId}__/attachments/download/}+'/'+${attachment.id}"
+								 th:text="${#strings.abbreviate(attachment.name, 45)}"
+								target="_blank" class="breakwords"></a>
+						</span>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<div th:if="${attachable}" id="add-attachment-popup-frag"
+			th:include="add-attachment-popup.frag :: add-attachment-popup">ATTACHMENT-POPUP</div>
+
+		<script type="text/javascript" th:inline="javascript">
+			/*<![CDATA[*/
+			require(["common"], function(){
+				require(["jquery", "domReady", "file-upload"], function($, domReady, upload){
+					domReady(function(){
+						upload.initAttachmentsBloc({
+							baseURL : /*[[ @{/attach-list/} + ${attachableEntity.attachmentList.id} + '/attachments' ]]*/ "baseURL",
+							workspace: /*[[ ${workspace}]]*/"zeworkspace"	// TODO : better than a constant
+						});
+					});
+				});
+			});
+
+			/*]]>*/
+		</script>
+
+	</div>
+</body>
+</html>

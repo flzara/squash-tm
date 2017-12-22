@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!-- That changelog will simplify the acl groups, by triming them to what is actually supported by the app as for 0.23.0. -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="tm-1.1.0.01" author="gfouquet">
+		<comment>Corrects status to BLOCKED in EXECUTION table</comment>
+		<update tableName="EXECUTION">
+			<column name="EXECUTION_STATUS" value="BLOCKED" />
+			<where>EXECUTION_STATUS='BLOQUED'</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="tm-1.1.0.02" author="gfouquet">
+		<comment>Corrects status to BLOCKED in EXECUTION_STEP table</comment>
+		<update tableName="EXECUTION_STEP">
+			<column name="EXECUTION_STATUS" value="BLOCKED" />
+			<where>EXECUTION_STATUS='BLOQUED'</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="tm-1.1.0.03" author="gfouquet">
+		<comment>Corrects status to BLOCKED in EXECUTION_STEP table</comment>
+		<update tableName="ITERATION_TEST_PLAN_ITEM">
+			<column name="EXECUTION_STATUS" value="BLOCKED" />
+			<where>EXECUTION_STATUS='BLOQUED'</where>
+		</update>
+	</changeSet>
+		
+	<changeSet id="tm-1.1.0.04" author="gfouquet">
+		<comment>Adds an importance to test cases</comment>
+		<addColumn tableName="TEST_CASE" >
+			<column name="IMPORTANCE" type="VARCHAR(20)" defaultValue="LOW" remarks="The importance of the test case">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>	
+	</changeSet>
+
+	<changeSet id="tm-1.1.0.05" author="gfouquet">
+		<comment>Adds a auto compute importance property to test cases</comment>
+		<addColumn tableName="TEST_CASE" >
+			<column name="IMPORTANCE_AUTO" type="BOOLEAN" defaultValueBoolean="false" remarks="Should the importance be automatically computed">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>	
+	</changeSet>
+	
+	<changeSet id="tm-1.1.0.06" author="gfouquet">
+		<comment>Adds a TM database version number</comment>
+		<insert tableName="CORE_CONFIG">
+			<column name="STR_KEY" value="squashtest.tm.database.version" />
+			<column name="VALUE" value="1.1.0" />
+		</insert>
+	</changeSet>
+
+	<changeSet id="tm-1.1.0.07" author="gfouquet">
+		<comment>A tree node organizes resources. These are stored in the RESOURCE table</comment>
+		
+		<createTable tableName="RESOURCE">
+			<column name="RES_ID" type="BIGINT" autoIncrement="true" remarks="generated surrogate key">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+
+			<column name="NAME" type="VARCHAR(255)" remarks="Resource's name">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="DESCRIPTION" type="CLOB" defaultValue="NULL" remarks="Resource's description" />
+
+			<column name="CREATED_BY" type="VARCHAR(50)" remarks="Who created this requirement's version">
+				<constraints nullable="false" />
+			</column>
+			
+			<column name="CREATED_ON" type="DATETIME" remarks="When this requirement's version was created">
+				<constraints nullable="false" />
+			</column>
+			
+			<column name="LAST_MODIFIED_BY" type="VARCHAR(50)" defaultValue="NULL" remarks="Who modified this requirement's version last" />
+
+			<column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL" remarks="When this requirement's version was last modified" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="tm-1.1.0.08" author="gfouquet">
+		<comment>SIMPLE_RESOURCE stores "concrete" resources with a name and a description</comment>
+		
+		<createTable tableName="SIMPLE_RESOURCE">
+			<column name="RES_ID" type="BIGINT" remarks="shared key with RESOURCE table">
+				<constraints primaryKey="true" primaryKeyName="pk_simple_resource" references="RESOURCE(RES_ID)" nullable="false" foreignKeyName="fk_resource" />
+			</column>
+		</createTable>
+
+		<addColumn tableName="REQUIREMENT_FOLDER">
+			<column name="RES_ID" type="BIGINT" remarks="FK to SIMPLE_RESOURCE table">
+				<constraints references="SIMPLE_RESOURCE(RES_ID)" foreignKeyName="fk_req_folder_simple_resource" nullable="true" />
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="tm-1.1.0.09" author="gfouquet">
+		<comment>Moves requirement folder data into SIMPLE_RESOURCE table</comment>
+		<sql>
+			insert into RESOURCE (RES_ID, NAME, DESCRIPTION, CREATED_BY, CREATED_ON, LAST_MODIFIED_BY, LAST_MODIFIED_ON) 
+			select f.RLN_ID, NAME, DESCRIPTION, CREATED_BY, CREATED_ON, LAST_MODIFIED_BY, LAST_MODIFIED_ON
+			from REQUIREMENT_LIBRARY_NODE n
+			inner join REQUIREMENT_FOLDER f on n.RLN_Id = f.RLN_ID
+			where n.DELETED_ON is null;
+		</sql>
+		<sql>
+			insert into SIMPLE_RESOURCE (RES_ID) 
+			select res.RES_ID
+			from REQUIREMENT_LIBRARY_NODE n
+			inner join REQUIREMENT_FOLDER f on n.RLN_Id = f.RLN_ID
+			inner join RESOURCE res on res.RES_ID = f.RLN_ID
+			where n.DELETED_ON is null;
+		</sql>
+		<sql>
+			update REQUIREMENT_FOLDER 
+			set RES_ID = RLN_ID
+			where exists (select 1 from REQUIREMENT_LIBRARY_NODE where REQUIREMENT_LIBRARY_NODE.RLN_ID = REQUIREMENT_FOLDER.RLN_ID and DELETED_ON is null);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="tm-1.1.0.10" author="gfouquet">
+		<comment>Creates REQUIREMENT_VERSION table in which we store the versions of requirements</comment>
+		
+		<createTable tableName="REQUIREMENT_VERSION">
+			<column name="RES_ID" type="BIGINT" remarks="shared key with RESOURCE table">
+				<constraints primaryKey="true" primaryKeyName="pk_requirement_version" references="RESOURCE(RES_ID)" nullable="false" foreignKeyName="fk_req_version_resource" />
+			</column>
+
+			<column name="REQUIREMENT_ID" type="BIGINT" remarks="FK to the requirement. Should not be null but is nullable because of cyclic association REQ - REQ_VER">
+				<constraints nullable="true" references="REQUIREMENT(RLN_ID)" foreignKeyName="fk_requirement_version_requirement" />
+			</column>
+
+			<column name="REFERENCE" type="VARCHAR(20)" remarks="The requirement's reference" />
+
+			<column name="VERSION_NUMBER" type="INT" defaultValueNumeric="1" remarks="This requirement's version number" />
+
+			<column name="CRITICALITY" type="VARCHAR(50)" defaultValue="UNDEFINED"
+				remarks="Requirement criticality. Althought this field is a variable character, the data will be the text representation of an enumeration">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="REQUIREMENT_STATUS" type="VARCHAR(50)" defaultValue="WORK_IN_PROGRESS">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="ATTACHMENT_LIST_ID" type="BIGINT" remarks="FK to a requirement's list of attachments">
+				<constraints nullable="false" references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" foreignKeyName="fk_requirement_version_attachment_list" />
+			</column>
+		</createTable>
+		
+		<addUniqueConstraint tableName="REQUIREMENT_VERSION" columnNames="REQUIREMENT_ID, VERSION_NUMBER" constraintName="cu_version_of_requirement"/>
+	</changeSet>
+	
+	<changeSet id="tm-1.1.0.11" author="gfouquet">
+		<comment>Migrates requirement data into REQUIREMENT_VERSION table</comment>
+		<sql>
+			insert into RESOURCE 
+				(RES_ID, NAME, DESCRIPTION, CREATED_BY, CREATED_ON, LAST_MODIFIED_BY, LAST_MODIFIED_ON) 
+			select r.RLN_ID, NAME, DESCRIPTION, CREATED_BY, CREATED_ON, LAST_MODIFIED_BY, LAST_MODIFIED_ON
+			from REQUIREMENT_LIBRARY_NODE n
+			inner join REQUIREMENT r on n.RLN_Id = r.RLN_ID
+			where n.DELETED_ON is null;
+		</sql>		
+		<sql>
+			insert into REQUIREMENT_VERSION 
+				(RES_ID, REQUIREMENT_ID, REFERENCE, CRITICALITY, ATTACHMENT_LIST_ID) 
+			select res.RES_ID, r.RLN_ID, REFERENCE, CRITICALITY, ATTACHMENT_LIST_ID
+			from REQUIREMENT_LIBRARY_NODE n
+			inner join REQUIREMENT r on n.RLN_Id = r.RLN_ID
+			inner join RESOURCE res on res.RES_ID = r.RLN_ID
+			where n.DELETED_ON is null;
+		</sql>		
+	</changeSet>
+	
+	<changeSet id="tm-1.1.0.12" author="gfouquet">
+		<comment>Adds the 'latest version' relationship between REQUIREMENT and REQUIREMENT_VERSION tables</comment>
+
+		<addColumn tableName="REQUIREMENT">
+			<column name="CURRENT_VERSION_ID" type="BIGINT"  remarks="FK to REQUIREMENT_VERSION linking to the requirement's latest version. Should not be null but the column is nullable because of cyclic relationship between the tables.">
+				<constraints foreignKeyName="fk_requirement_current_version" references="REQUIREMENT_VERSION(RES_ID)" nullable="true" />		
+        			
+			</column>
+		</addColumn>
+		
+		<sql>
+			update REQUIREMENT r
+			set CURRENT_VERSION_ID = (
+				select RES_ID 
+				from REQUIREMENT_VERSION rv 
+				where rv.REQUIREMENT_ID = r.RLN_ID
+			);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="tm-1.1.0.13" author="gfouquet">
+		<comment>Test Cases now cover Requirements versions. We create a new association table and populate it from TEST_CASE_REQUIREMENT_LINK</comment>
+		<createTable tableName="TEST_CASE_VERIFIED_REQUIREMENT_VERSION">
+			<column name="VERIFIED_REQ_VERSION_ID" type="BIGINT" remarks="FK to the verified requirement">
+				<constraints references="REQUIREMENT_VERSION(RES_ID)" foreignKeyName="fk_verified_req_version" />
+			</column>
+			
+			<column name="VERIFYING_TEST_CASE_ID" type="BIGINT" remarks="FK to the verifying test case">
+				<constraints references="TEST_CASE(TCLN_ID)" foreignKeyName="fk_verifying_test_case" />
+			</column>
+			
+		</createTable>
+		<sql>
+			insert into TEST_CASE_VERIFIED_REQUIREMENT_VERSION (VERIFYING_TEST_CASE_ID, VERIFIED_REQ_VERSION_ID)
+			select TEST_CASE_ID, RES_ID
+			from TEST_CASE_REQUIREMENT_LINK tcrl
+			inner join REQUIREMENT_VERSION rv on rv.REQUIREMENT_ID = tcrl.REQUIREMENT_ID
+		</sql>
+		<addNotNullConstraint tableName="TEST_CASE_VERIFIED_REQUIREMENT_VERSION" columnName="VERIFIED_REQ_VERSION_ID" columnDataType="BIGINT"/>
+		<addNotNullConstraint tableName="TEST_CASE_VERIFIED_REQUIREMENT_VERSION" columnName="VERIFYING_TEST_CASE_ID" columnDataType="BIGINT"/>
+		<addUniqueConstraint tableName="TEST_CASE_VERIFIED_REQUIREMENT_VERSION" columnNames="VERIFIED_REQ_VERSION_ID, VERIFYING_TEST_CASE_ID" constraintName="uc_tc_verifies_req_version"/>
+	</changeSet>
+
+	<changeSet id="tm-1.1.0.14" author="gfouquet">
+		<comment>Trashes the now useless TEST_CASE_REQUIREMENT_LINK table</comment>
+		<dropForeignKeyConstraint baseTableName="TEST_CASE_REQUIREMENT_LINK" constraintName="fk_tc_req_tc"/>
+		<dropForeignKeyConstraint baseTableName="TEST_CASE_REQUIREMENT_LINK" constraintName="fk_tc_req_req"/>
+		<dropTable tableName="TEST_CASE_REQUIREMENT_LINK"/>
+	</changeSet>
+
+	<changeSet id="tm-1.1.0.15" author="bsiri">
+		<comment>This table is the main table of the event logging system, in other words the history of a business entity. As for Squash TM
+		version 1.1.0 and until further notice, we log here requirement modifications only. It may grows to log other entities in the future, ie test cases.
+		Note : the application will fill this table itself, since we don't want triggers in the database.
+		</comment>
+		
+		<createTable tableName="REQUIREMENT_AUDIT_EVENT">
+		
+			<column name="EVENT_ID" type="BIGINT" autoIncrement="true" >
+				<constraints primaryKey="true" nullable="false"/>				
+			</column>
+			
+			<column name="REQ_VERSION_ID" type="BIGINT" remarks="the ID of the target entity. As for 1.1.0 and until further notice, the target is always a requirement version.">
+				<constraints  nullable="false" 
+				foreignKeyName="fk_audit_event_requirement_version" references="REQUIREMENT_VERSION(RES_ID)" />	
+			</column>
+			
+			<column name="EVENT_DATE" type="DATETIME" remarks="the timestamp of the log entry">
+				<constraints nullable="false"/>
+			</column>
+			
+			<column name="AUTHOR" type="java.sql.Types.VARCHAR(255)" remarks="the login of the user who generated the event">
+				<constraints nullable="false"/>
+			</column>
+		
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="tm-1.1.0.16" author="bsiri">
+		<comment>It is a child table of REQUIREMENT_AUDIT_EVENT. This table exists for the sole purpose of qualifying a given event in a creation event, as such its content is empty (the sheer presence
+		of an entry in this table is sufficient)</comment>
+		<createTable tableName="REQUIREMENT_CREATION">
+			<column name="EVENT_ID" type="BIGINT"
+				remarks="primary key, which is also a foreign key to REQUIREMENT_AUDIT_EVENT (they share that key : do not make this table autoincrement it).">
+				<constraints primaryKey="true" nullable="false" primaryKeyName="PK_CREATION_EVENT"
+				foreignKeyName="fk_create_audit" 
+				references="REQUIREMENT_AUDIT_EVENT(EVENT_ID)" />		
+			</column>
+		</createTable>		
+	</changeSet>
+	
+	
+	<changeSet id="tm-1.1.0.17" author="bsiri">
+		<comment>
+			This is a child table of REQUIREMENT_AUDIT_EVENT. This table will log updates on the target entity. Not every operations will be logged. 
+			Note 1 : As for version 1.1.0 and until further notice for the sake of simplicity we log both the former and the new value. It may change in the future.
+			Note 2 : For technical reasons this table exists in two flavors. The twin table is REQUIREMENT_LARGE_PROPERTY_CHANGE. This table will log standard attributes, 
+			while the other one will log blobs. 			
+		</comment>
+		
+		<createTable tableName="REQUIREMENT_PROPERTY_CHANGE">
+			<column name="EVENT_ID" type="BIGINT"
+				remarks="primary key, which is also a foreign key to REQUIREMENT_AUDIT_EVENT (they share that key : do not make this table autoincrement it).">
+				<constraints primaryKey="true" nullable="false" primaryKeyName="PK_PPT_CHANGE"
+				foreignKeyName="fk_PPT_change_audit" references="REQUIREMENT_AUDIT_EVENT(EVENT_ID)" />		
+			</column>
+			
+			<column name="OLD_VALUE" type="java.sql.Types.VARCHAR(100)"  />
+			
+			<column name="NEW_VALUE" type="java.sql.Types.VARCHAR(100)"  />
+			
+			<column name="PROPERTY_NAME" type="java.sql.Types.VARCHAR(100)" />
+		</createTable>
+	
+	</changeSet>
+	
+	<changeSet id="tm-1.1.0.18" author="bsiri">
+		<comment>
+			This is a child table of REQUIREMENT_AUDIT_EVENT. This table will log updates on the target entity. Not every operations will be logged. 
+			Note 1 : As for version 1.1.0 and until further notice for the sake of simplicity we log both the former and the new value. It may change in the future.
+			Note 2 : For technical reasons this table exists in two flavors. The twin table is REQUIREMENT_PROPERTY_CHANGE. This table will log blobs, 
+			while the other one will log standard attributes.			
+		</comment>
+
+		<createTable tableName="REQUIREMENT_LARGE_PROPERTY_CHANGE">
+			<column name="EVENT_ID" type="BIGINT"
+				remarks="primary key, which is also a foreign key to REQUIREMENT_AUDIT_EVENT (they share that key : do not make this table autoincrement it).">
+				<constraints primaryKey="true" nullable="false" primaryKeyName="PK_LARGE_PPT_CHANGE"
+				foreignKeyName="fk_lPPT_change_audit" references="REQUIREMENT_AUDIT_EVENT(EVENT_ID)" />		
+			</column>
+			
+			<column name="OLD_VALUE" type="CLOB" defaultValue="NULL" />
+			
+			<column name="NEW_VALUE" type="CLOB" defaultValue="NULL" />
+			
+			<column name="PROPERTY_NAME" type="java.sql.Types.VARCHAR(100)" />
+		</createTable>
+	
+	</changeSet>
+	
+	<changeSet id="tm-1.1.0.19" author="bsiri">
+		<comment>
+			Will immediately update the tables with the create_events of existing requirements.
+		</comment>
+		<sql>
+			insert into REQUIREMENT_AUDIT_EVENT (REQ_VERSION_ID, EVENT_DATE, AUTHOR) 
+			select rv.RES_ID, CREATED_ON, CREATED_BY  
+			from REQUIREMENT_VERSION rv 
+			inner join RESOURCE r on r.RES_ID = rv.RES_ID
+		</sql>
+		<sql>			
+			insert into REQUIREMENT_CREATION (event_id) select event_id from REQUIREMENT_AUDIT_EVENT;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="tm-1.1.0.20" author="gfouquet">
+		<comment>
+			Remove obsolete columns from REQUIREMENT and REQUIREMENT_LIBRARY_NODE table. 
+			Data is now in REQUIREMENT_VERSION and REQUIREMENT_FOLDER tables.
+		</comment>
+		<dropColumn tableName="REQUIREMENT" columnName="REFERENCE"/>
+		<dropColumn tableName="REQUIREMENT" columnName="CRITICALITY"/>
+		
+		<dropForeignKeyConstraint baseTableName="REQUIREMENT" constraintName="fk_requirement_attachment_list"/>
+		<dropColumn tableName="REQUIREMENT" columnName="ATTACHMENT_LIST_ID"/>
+		
+		<dropColumn tableName="REQUIREMENT_LIBRARY_NODE" columnName="NAME"/>
+		<dropColumn tableName="REQUIREMENT_LIBRARY_NODE" columnName="DESCRIPTION"/>
+	</changeSet>
+
+<!--  ============================= PREREQUISITE FOR TEST-CASE =============================== -->
+	
+	<changeSet id="tm-1.1.0.21" author="fogaillard">
+		<comment>
+			Add Prerequisite collumn to the test_case table
+		</comment>
+		<addColumn tableName="TEST_CASE" >
+			<column name="PREREQUISITE" type="CLOB" defaultValue="NULL" remarks="the prerequisite for a test_case"/>
+		</addColumn>
+	</changeSet>
+	
+<!--  ====================================== TEST SUITE ====================================== -->
+	
+	<changeSet id="tm-1.1.0.22" author="bsiri">
+		<comment>
+			Add the table TEST_SUITE. A TEST_SUITE is basically a view on a subset of ITERATION_TEST_PLAN_ITEMs. 
+		</comment>
+		
+		<createTable tableName="TEST_SUITE">
+			<column name="ID" type="BIGINT" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" primaryKeyName="PK_TEST_SUITE" />
+			</column>
+			<column name="NAME" type="java.sql.Types.VARCHAR(100)" />
+			<column name="DESCRIPTION" type="CLOB" defaultValue="NULL" />			
+			<column name="ATTACHMENT_LIST_ID" type="BIGINT">		
+				<constraints nullable="false" references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" 
+				foreignKeyName="fk_test_suite_attachment_list" />
+			</column>
+			<column name="CREATED_BY" type="VARCHAR(50)" remarks="Who created this test suite">
+				<constraints nullable="false" />
+			</column>
+			<column name="CREATED_ON" type="DATETIME" remarks="When this test suite was created">
+				<constraints nullable="false" />
+			</column>
+			<column name="LAST_MODIFIED_BY" type="VARCHAR(50)" defaultValue="NULL" remarks="Who modified this test suite last" />
+			<column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL" remarks="When this test suite was last modified" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="tm-1.1.0.23" author="bsiri" >
+		<comment>
+			Association table between ITERATION and TEST_SUITE. Like in many other places here, the purpose of this association table is not to model a n-n cardinality between ITERATION and 
+			TEST_SUITE, but 1-n. We thus gain performance at the expense of the model quality.
+		</comment>
+		
+		<createTable tableName="ITERATION_TEST_SUITE">
+			<column name="ITERATION_ID" type="BIGINT">
+				<constraints nullable="false" references="ITERATION(ITERATION_ID)" 
+				foreignKeyName="fk_iteration_test_suite_iteration"/>
+			</column>
+			<column name="TEST_SUITE_ID" type="BIGINT">
+				<constraints nullable="false" references="TEST_SUITE(ID)"
+				foreignKeyName="fk_iteration_test_suite_suite" unique="true"/>
+			</column>
+		</createTable>
+		
+		<createIndex tableName="ITERATION_TEST_SUITE" indexName="dx_iteration_test_suite_iteration">
+			<column name="ITERATION_ID"/>
+		</createIndex>	
+	
+		<createIndex tableName="ITERATION_TEST_SUITE" indexName="dx_iteration_test_suite_suite">
+			<column name="TEST_SUITE_ID"/>
+		</createIndex>				
+	</changeSet>
+	
+	<changeSet id="tm-1.1.0.24" author="bsiri">
+		<comment>
+			Hereby an ITERATION_TEST_PLAN_ITEM shalt reference 0 or 1 TEST_SUITE
+		</comment>
+	
+		<addColumn tableName="ITERATION_TEST_PLAN_ITEM">
+			<column name="TEST_SUITE" type="BIGINT" defaultValue="NULL">
+				<constraints foreignKeyName="fk_itpi_testsuite" nullable="true" references="TEST_SUITE(ID)"/>
+			</column>
+		</addColumn>		
+	</changeSet>
+
+<!--  =========================== PREREQUISITE FOR TEST-CASE EXECUTION ========================== -->
+	
+	<changeSet id="tm-1.1.0.25" author="fogaillard">
+		<comment>
+			Add Prerequisite collumn to the execution table
+		</comment>
+		<addColumn tableName="EXECUTION" >
+			<column name="PREREQUISITE" type="CLOB" defaultValue="NULL" remarks="the prerequisite for a test_case execution"/>
+		</addColumn>
+	</changeSet>
+
+</databaseChangeLog>
+ 

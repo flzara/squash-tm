@@ -1,0 +1,217 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+  <core_party PARTY_ID="1"/>
+  <core_party PARTY_ID="32"/>
+  <core_party PARTY_ID="33"/>
+  <attachment_list ATTACHMENT_LIST_ID="888"/>
+  <attachment_list ATTACHMENT_LIST_ID="893"/>
+  <attachment_list ATTACHMENT_LIST_ID="894"/>
+  <attachment_list ATTACHMENT_LIST_ID="895"/>
+  <attachment_list ATTACHMENT_LIST_ID="896"/>
+  <attachment_list ATTACHMENT_LIST_ID="897"/>
+  <attachment_list ATTACHMENT_LIST_ID="899"/>
+  <attachment_list ATTACHMENT_LIST_ID="900"/>
+  <attachment_list ATTACHMENT_LIST_ID="901"/>
+  <attachment_list ATTACHMENT_LIST_ID="902"/>
+  <attachment_list ATTACHMENT_LIST_ID="903"/>
+  <attachment_list ATTACHMENT_LIST_ID="904"/>
+  <attachment_list ATTACHMENT_LIST_ID="905"/>
+  <attachment_list ATTACHMENT_LIST_ID="906"/>
+  <attachment_list ATTACHMENT_LIST_ID="907"/>
+  <attachment_list ATTACHMENT_LIST_ID="908"/>
+  <attachment_list ATTACHMENT_LIST_ID="909"/>
+  <attachment_list ATTACHMENT_LIST_ID="910"/>
+  <auth_user LOGIN="admin" PASSWORD="d033e22ae348aeb5660fc2140aec35850c4da997" ACTIVE="true"/>
+  <auth_user LOGIN="taserver" PASSWORD="eb0fd24715f33bc94b1754263d1d431422aba649" ACTIVE="true"/>
+  <auth_user LOGIN="User-1" PASSWORD="dcb13237f01f1419f1da2e8d0e387a1f2ad056e6" ACTIVE="true"/>
+  <test_case_library TCL_ID="14" ATTACHMENT_LIST_ID="903"/>
+  <requirement_library RL_ID="14" ATTACHMENT_LIST_ID="902"/>
+  <campaign_library CL_ID="14" ATTACHMENT_LIST_ID="904"/>
+  <info_list INFO_LIST_ID="1" LABEL="infolist.category.default" DESCRIPTION="" CODE="DEF_REQ_CAT" CREATED_BY="system" CREATED_ON="2010-01-01 00:00:00.0" LAST_MODIFIED_BY="system" LAST_MODIFIED_ON="2010-01-01 00:00:00.0"/>
+  <info_list INFO_LIST_ID="2" LABEL="infolist.nature.default" DESCRIPTION="" CODE="DEF_TC_NAT" CREATED_BY="system" CREATED_ON="2010-01-01 00:00:00.0" LAST_MODIFIED_BY="system" LAST_MODIFIED_ON="2010-01-01 00:00:00.0"/>
+  <info_list INFO_LIST_ID="3" LABEL="infolist.type.default" DESCRIPTION="" CODE="DEF_TC_TYP" CREATED_BY="system" CREATED_ON="2010-01-01 00:00:00.0" LAST_MODIFIED_BY="system" LAST_MODIFIED_ON="2010-01-01 00:00:00.0"/>
+  <project PROJECT_ID="14" NAME="Test Project-1" DESCRIPTION="&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam felis ante,&lt;/p&gt;" LABEL="Lorem ipsum dolor sit amet, " ACTIVE="true" CREATED_BY="admin" CREATED_ON="2011-09-30 10:24:47.0" CL_ID="14" TCL_ID="14" RL_ID="14" ATTACHMENT_LIST_ID="901" PROJECT_TYPE="P" REQ_CATEGORIES_LIST="1" TC_NATURES_LIST="2" TC_TYPES_LIST="3"/>
+  <issue_list ISSUE_LIST_ID="310"/>
+  <issue_list ISSUE_LIST_ID="311"/>
+  <issue_list ISSUE_LIST_ID="312"/>
+  <test_case_library_node TCLN_ID="239" DESCRIPTION="" NAME="1 to 10" CREATED_BY="admin" CREATED_ON="2015-03-27 10:03:07.0" LAST_MODIFIED_BY="admin" LAST_MODIFIED_ON="2015-03-27 10:03:20.0" PROJECT_ID="14" ATTACHMENT_LIST_ID="905"/>
+  <test_case_library_node TCLN_ID="240" DESCRIPTION="" NAME="2 to 10" CREATED_BY="admin" CREATED_ON="2015-03-27 10:03:14.0" PROJECT_ID="14" ATTACHMENT_LIST_ID="906"/>
+  <test_case_library_node TCLN_ID="241" DESCRIPTION="" NAME="1 to 5" CREATED_BY="admin" CREATED_ON="2015-03-27 10:03:27.0" PROJECT_ID="14" ATTACHMENT_LIST_ID="907"/>
+  <test_case_library_node TCLN_ID="242" DESCRIPTION="" NAME="3 to 7" CREATED_BY="admin" CREATED_ON="2015-03-27 10:03:31.0" PROJECT_ID="14" ATTACHMENT_LIST_ID="908"/>
+  <test_case_library_node TCLN_ID="243" DESCRIPTION="" NAME="6 to 10" CREATED_BY="admin" CREATED_ON="2015-03-27 10:03:35.0" PROJECT_ID="14" ATTACHMENT_LIST_ID="909"/>
+  <test_case_library_node TCLN_ID="244" DESCRIPTION="" NAME="1 to 8" CREATED_BY="admin" CREATED_ON="2015-03-27 10:03:37.0" PROJECT_ID="14" ATTACHMENT_LIST_ID="910"/>
+  <info_list_item ITEM_ID="1" ITEM_TYPE="SYS" LIST_ID="1" ITEM_INDEX="0" LABEL="requirement.category.CAT_FUNCTIONAL" CODE="CAT_FUNCTIONAL" IS_DEFAULT="true" ICON_NAME="def_cat_functional"/>
+  <info_list_item ITEM_ID="2" ITEM_TYPE="SYS" LIST_ID="1" ITEM_INDEX="1" LABEL="requirement.category.CAT_NON_FUNCTIONAL" CODE="CAT_NON_FUNCTIONAL" IS_DEFAULT="false" ICON_NAME="def_cat_non-functional"/>
+  <info_list_item ITEM_ID="3" ITEM_TYPE="SYS" LIST_ID="1" ITEM_INDEX="2" LABEL="requirement.category.CAT_USE_CASE" CODE="CAT_USE_CASE" IS_DEFAULT="false" ICON_NAME="def_cat_use-case"/>
+  <info_list_item ITEM_ID="4" ITEM_TYPE="SYS" LIST_ID="1" ITEM_INDEX="3" LABEL="requirement.category.CAT_BUSINESS" CODE="CAT_BUSINESS" IS_DEFAULT="false" ICON_NAME="def_cat_business"/>
+  <info_list_item ITEM_ID="5" ITEM_TYPE="SYS" LIST_ID="1" ITEM_INDEX="4" LABEL="requirement.category.CAT_TEST_REQUIREMENT" CODE="CAT_TEST_REQUIREMENT" IS_DEFAULT="false" ICON_NAME="def_cat_test-requirement"/>
+  <info_list_item ITEM_ID="6" ITEM_TYPE="SYS" LIST_ID="1" ITEM_INDEX="5" LABEL="requirement.category.CAT_UNDEFINED" CODE="CAT_UNDEFINED" IS_DEFAULT="false" ICON_NAME="def_cat_undefined"/>
+  <info_list_item ITEM_ID="7" ITEM_TYPE="SYS" LIST_ID="1" ITEM_INDEX="6" LABEL="requirement.category.CAT_ERGONOMIC" CODE="CAT_ERGONOMIC" IS_DEFAULT="false" ICON_NAME="def_cat_ergonomic"/>
+  <info_list_item ITEM_ID="8" ITEM_TYPE="SYS" LIST_ID="1" ITEM_INDEX="7" LABEL="requirement.category.CAT_PERFORMANCE" CODE="CAT_PERFORMANCE" IS_DEFAULT="false" ICON_NAME="def_cat_performance"/>
+  <info_list_item ITEM_ID="9" ITEM_TYPE="SYS" LIST_ID="1" ITEM_INDEX="8" LABEL="requirement.category.CAT_TECHNICAL" CODE="CAT_TECHNICAL" IS_DEFAULT="false" ICON_NAME="def_cat_technical"/>
+  <info_list_item ITEM_ID="10" ITEM_TYPE="SYS" LIST_ID="1" ITEM_INDEX="9" LABEL="requirement.category.CAT_USER_STORY" CODE="CAT_USER_STORY" IS_DEFAULT="false" ICON_NAME="def_cat_user-story"/>
+  <info_list_item ITEM_ID="11" ITEM_TYPE="SYS" LIST_ID="1" ITEM_INDEX="10" LABEL="requirement.category.CAT_SECURITY" CODE="CAT_SECURITY" IS_DEFAULT="false" ICON_NAME="def_cat_security"/>
+  <info_list_item ITEM_ID="12" ITEM_TYPE="SYS" LIST_ID="2" ITEM_INDEX="0" LABEL="test-case.nature.NAT_UNDEFINED" CODE="NAT_UNDEFINED" IS_DEFAULT="true" ICON_NAME="noicon"/>
+  <info_list_item ITEM_ID="13" ITEM_TYPE="SYS" LIST_ID="2" ITEM_INDEX="1" LABEL="test-case.nature.NAT_FUNCTIONAL_TESTING" CODE="NAT_FUNCTIONAL_TESTING" IS_DEFAULT="false" ICON_NAME="noicon"/>
+  <info_list_item ITEM_ID="14" ITEM_TYPE="SYS" LIST_ID="2" ITEM_INDEX="2" LABEL="test-case.nature.NAT_BUSINESS_TESTING" CODE="NAT_BUSINESS_TESTING" IS_DEFAULT="false" ICON_NAME="noicon"/>
+  <info_list_item ITEM_ID="15" ITEM_TYPE="SYS" LIST_ID="2" ITEM_INDEX="3" LABEL="test-case.nature.NAT_USER_TESTING" CODE="NAT_USER_TESTING" IS_DEFAULT="false" ICON_NAME="noicon"/>
+  <info_list_item ITEM_ID="16" ITEM_TYPE="SYS" LIST_ID="2" ITEM_INDEX="4" LABEL="test-case.nature.NAT_NON_FUNCTIONAL_TESTING" CODE="NAT_NON_FUNCTIONAL_TESTING" IS_DEFAULT="false" ICON_NAME="noicon"/>
+  <info_list_item ITEM_ID="17" ITEM_TYPE="SYS" LIST_ID="2" ITEM_INDEX="5" LABEL="test-case.nature.NAT_PERFORMANCE_TESTING" CODE="NAT_PERFORMANCE_TESTING" IS_DEFAULT="false" ICON_NAME="noicon"/>
+  <info_list_item ITEM_ID="18" ITEM_TYPE="SYS" LIST_ID="2" ITEM_INDEX="6" LABEL="test-case.nature.NAT_SECURITY_TESTING" CODE="NAT_SECURITY_TESTING" IS_DEFAULT="false" ICON_NAME="noicon"/>
+  <info_list_item ITEM_ID="19" ITEM_TYPE="SYS" LIST_ID="2" ITEM_INDEX="7" LABEL="test-case.nature.NAT_ATDD" CODE="NAT_ATDD" IS_DEFAULT="false" ICON_NAME="noicon"/>
+  <info_list_item ITEM_ID="20" ITEM_TYPE="SYS" LIST_ID="3" ITEM_INDEX="0" LABEL="test-case.type.TYP_UNDEFINED" CODE="TYP_UNDEFINED" IS_DEFAULT="true" ICON_NAME="noicon"/>
+  <info_list_item ITEM_ID="21" ITEM_TYPE="SYS" LIST_ID="3" ITEM_INDEX="1" LABEL="test-case.type.TYP_COMPLIANCE_TESTING" CODE="TYP_COMPLIANCE_TESTING" IS_DEFAULT="false" ICON_NAME="noicon"/>
+  <info_list_item ITEM_ID="22" ITEM_TYPE="SYS" LIST_ID="3" ITEM_INDEX="2" LABEL="test-case.type.TYP_CORRECTION_TESTING" CODE="TYP_CORRECTION_TESTING" IS_DEFAULT="false" ICON_NAME="noicon"/>
+  <info_list_item ITEM_ID="23" ITEM_TYPE="SYS" LIST_ID="3" ITEM_INDEX="3" LABEL="test-case.type.TYP_EVOLUTION_TESTING" CODE="TYP_EVOLUTION_TESTING" IS_DEFAULT="false" ICON_NAME="noicon"/>
+  <info_list_item ITEM_ID="24" ITEM_TYPE="SYS" LIST_ID="3" ITEM_INDEX="4" LABEL="test-case.type.TYP_REGRESSION_TESTING" CODE="TYP_REGRESSION_TESTING" IS_DEFAULT="false" ICON_NAME="noicon"/>
+  <info_list_item ITEM_ID="25" ITEM_TYPE="SYS" LIST_ID="3" ITEM_INDEX="5" LABEL="test-case.type.TYP_END_TO_END_TESTING" CODE="TYP_END_TO_END_TESTING" IS_DEFAULT="false" ICON_NAME="noicon"/>
+  <info_list_item ITEM_ID="26" ITEM_TYPE="SYS" LIST_ID="3" ITEM_INDEX="6" LABEL="test-case.type.TYP_PARTNER_TESTING" CODE="TYP_PARTNER_TESTING" IS_DEFAULT="false" ICON_NAME="noicon"/>
+  <test_case TCLN_ID="239" VERSION="1" EXECUTION_MODE="MANUAL" IMPORTANCE="LOW" IMPORTANCE_AUTO="false" PREREQUISITE="" REFERENCE="" TC_STATUS="WORK_IN_PROGRESS" TC_NATURE="12" TC_TYPE="20"/>
+  <test_case TCLN_ID="240" VERSION="1" EXECUTION_MODE="MANUAL" IMPORTANCE="LOW" IMPORTANCE_AUTO="false" PREREQUISITE="" REFERENCE="" TC_STATUS="WORK_IN_PROGRESS" TC_NATURE="12" TC_TYPE="20"/>
+  <test_case TCLN_ID="241" VERSION="1" EXECUTION_MODE="MANUAL" IMPORTANCE="LOW" IMPORTANCE_AUTO="false" PREREQUISITE="" REFERENCE="" TC_STATUS="WORK_IN_PROGRESS" TC_NATURE="12" TC_TYPE="20"/>
+  <test_case TCLN_ID="242" VERSION="1" EXECUTION_MODE="MANUAL" IMPORTANCE="LOW" IMPORTANCE_AUTO="false" PREREQUISITE="" REFERENCE="" TC_STATUS="WORK_IN_PROGRESS" TC_NATURE="12" TC_TYPE="20"/>
+  <test_case TCLN_ID="243" VERSION="1" EXECUTION_MODE="MANUAL" IMPORTANCE="LOW" IMPORTANCE_AUTO="false" PREREQUISITE="" REFERENCE="" TC_STATUS="WORK_IN_PROGRESS" TC_NATURE="12" TC_TYPE="20"/>
+  <test_case TCLN_ID="244" VERSION="1" EXECUTION_MODE="MANUAL" IMPORTANCE="LOW" IMPORTANCE_AUTO="false" PREREQUISITE="" REFERENCE="" TC_STATUS="WORK_IN_PROGRESS" TC_NATURE="12" TC_TYPE="20"/>
+  <execution EXECUTION_ID="83" CREATED_BY="User-1" CREATED_ON="2011-09-30 10:37:26.0" LAST_MODIFIED_BY="User-1" LAST_MODIFIED_ON="2011-09-30 10:37:37.0" NAME="Test-Case 1" EXECUTION_MODE="MANUAL" EXECUTION_STATUS="SUCCESS" LAST_EXECUTED_BY="User-1" LAST_EXECUTED_ON="2011-09-30 10:37:37.0" ATTACHMENT_LIST_ID="897" ISSUE_LIST_ID="312" PREREQUISITE="" TC_STATUS="WORK_IN_PROGRESS" IMPORTANCE="LOW" REFERENCE="" TC_DESCRIPTION="&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam felis ante, accumsan quis tincidunt vel, iaculis in purus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Morbi at nisl et est egestas venenatis. Nullam venenatis, justo ac hendrerit auctor, dolor velit adipiscing lacus, sed gravida enim elit dictum lorem. Suspendisse eu lectus ac metus lobortis vulputate at id purus. Proin dapibus commodo velit sit amet aliquet. Fusce cursus arcu vitae diam auctor vulputate. Integer et nunc et ipsum scelerisque dignissim eu ultricies sem. Pellentesque id commodo dui. Duis in vestibulum magna. Sed porta ante id magna semper ac gravida risus dapibus. Fusce eu ante sapien.&lt;/p&gt;" TC_NAT_LABEL="test-case.nature.NAT_UNDEFINED" TC_NAT_CODE="NAT_UNDEFINED" TC_NAT_ICON_NAME="noicon" TC_TYP_LABEL="test-case.type.TYP_UNDEFINED" TC_TYP_CODE="TYP_UNDEFINED" TC_TYP_ICON_NAME="noicon"/>
+  <campaign_library_node CLN_ID="104" DESCRIPTION="&lt;p&gt;Sed eget rhoncus sapien. Nam et pulvinar nisi. In mattis quam eu risus aliquet vel condimentum dui mattis. Ut vitae mi orci. Phasellus suscipit luctus quam non scelerisque. Aliquam orci diam, ultrices vel cursus eget, gravida sed tortor. Maecenas in metus dui, ut rhoncus sem. Do&lt;/p&gt;" NAME="Folder Test I" CREATED_BY="User-1" CREATED_ON="2011-09-30 10:33:45.0" LAST_MODIFIED_ON="2011-09-30 10:35:05.0" LAST_MODIFIED_BY="User-1" PROJECT_ID="14" ATTACHMENT_LIST_ID="899"/>
+  <campaign_library_node CLN_ID="105" DESCRIPTION="&lt;p&gt;Sed eget rhoncus sapien. Nam et pulvinar nisi. In mattis quam eu risus aliquet vel condimentum dui mattis. Ut vitae mi orci. Phasellus suscipit luctus quam non scelerisque. Aliquam orci diam, ultrices vel cursus eget, gravida sed tortor. Maecenas in metus dui, ut rhoncus sem. Do&lt;/p&gt;" NAME="Campaign Test 1" CREATED_BY="User-1" CREATED_ON="2011-09-30 10:34:02.0" LAST_MODIFIED_ON="2011-09-30 10:35:15.0" LAST_MODIFIED_BY="User-1" PROJECT_ID="14" ATTACHMENT_LIST_ID="893"/>
+  <campaign CLN_ID="105" ACTUAL_END_AUTO="true" ACTUAL_START_AUTO="true" SCHEDULED_END_DATE="2011-09-30 00:00:00.0" SCHEDULED_START_DATE="2011-09-01 00:00:00.0"/>
+  <campaign_folder CLN_ID="104"/>
+  <iteration ITERATION_ID="83" DESCRIPTION="&lt;p&gt;Sed eget rhoncus sapien. Nam et pulvinar nisi. In mattis quam eu risus aliquet vel condimentum dui mattis. Ut vitae mi orci. Phasellus suscipit luctus quam non scelerisque. Aliquam orci diam, ultrices vel cursus eget, gravida sed tortor. Maecenas in metus dui, ut rhoncus sem. Do&lt;/p&gt;" NAME="Iteration - 1" CREATED_BY="User-1" CREATED_ON="2011-09-30 10:34:38.0" LAST_MODIFIED_BY="User-1" LAST_MODIFIED_ON="2011-09-30 10:37:17.0" ACTUAL_END_AUTO="false" ACTUAL_START_AUTO="false" SCHEDULED_END_DATE="2011-09-30 00:00:00.0" SCHEDULED_START_DATE="2011-09-01 00:00:00.0" ATTACHMENT_LIST_ID="894"/>
+  <campaign_iteration CAMPAIGN_ID="105" ITERATION_ID="83" ITERATION_ORDER="0"/>
+  <campaign_library_content LIBRARY_ID="14" CONTENT_ID="104" CONTENT_ORDER="0"/>
+  <core_user PARTY_ID="1" LOGIN="admin" FIRST_NAME="" LAST_NAME="Squash Administrator" EMAIL="admin@squashtest.org" ACTIVE="true" CREATED_BY="liquibase" CREATED_ON="2015-03-25 18:14:14.0"/>
+  <core_user PARTY_ID="32" LOGIN="User-1" FIRST_NAME="Charles" LAST_NAME="Dupond" EMAIL="charlesdupond@aaaa@aa" ACTIVE="true" CREATED_BY="admin" CREATED_ON="2011-09-30 10:26:23.0"/>
+  <core_user PARTY_ID="33" LOGIN="taserver" FIRST_NAME="TA" LAST_NAME="Server" EMAIL="no@where" ACTIVE="true" CREATED_BY="admin" CREATED_ON="2011-09-30 10:26:23.0"/>
+  <cln_relationship ANCESTOR_ID="104" DESCENDANT_ID="105" CONTENT_ORDER="0"/>
+  <core_config STR_KEY="feature.milestone.enabled" VALUE="true"/>
+  <core_config STR_KEY="lastindexing.campaign.date"/>
+  <core_config STR_KEY="lastindexing.campaign.version"/>
+  <core_config STR_KEY="lastindexing.requirement.date" VALUE="2015/03/26 10:09"/>
+  <core_config STR_KEY="lastindexing.requirement.version" VALUE="1.12.0"/>
+  <core_config STR_KEY="lastindexing.testcase.date" VALUE="2015/03/26 10:09"/>
+  <core_config STR_KEY="lastindexing.testcase.version" VALUE="1.12.0"/>
+  <core_config STR_KEY="LOGIN_MESSAGE" VALUE="&lt;p&gt;&lt;span style=&quot;color:#ff0000;&quot;&gt;The administrator default login is &lt;strong&gt;admin/admin&lt;/strong&gt; (you can change this password in the &amp;quot;&lt;em&gt;My account (admin)&lt;/em&gt;&amp;quot; menu).&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Go to the &amp;quot;&lt;em&gt;Administration&amp;quot;&lt;/em&gt; menu (in the upper right corner) to create new users and projects, or change this default home message.&lt;/p&gt;&lt;p&gt;&amp;nbsp;&lt;/p&gt;"/>
+  <core_config STR_KEY="squashtest.tm.database.version" VALUE="1.12.0"/>
+  <core_config STR_KEY="uploadfilter.fileExtensions.whitelist" VALUE="txt, doc, xls, ppt, docx, xlsx, pptx, odt, ods, odp, pdf"/>
+  <core_config STR_KEY="uploadfilter.upload.import.sizeLimitInBytes" VALUE="2000000"/>
+  <core_config STR_KEY="uploadfilter.upload.sizeLimitInBytes" VALUE="4000000"/>
+  <core_config STR_KEY="WELCOME_MESSAGE" VALUE="&lt;p&gt;&lt;span style=&quot;color:#ff0000;&quot;&gt;The administrator default login is &lt;strong&gt;admin/admin&lt;/strong&gt; (you can change this password in the &amp;quot;&lt;em&gt;My account (admin)&lt;/em&gt;&amp;quot; menu).&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Go to the &amp;quot;&lt;em&gt;Administration&amp;quot;&lt;/em&gt; menu (in the upper right corner) to create new users and projects, or change this default home message.&lt;/p&gt;&lt;p&gt;&amp;nbsp;&lt;/p&gt;"/>
+  <core_group ID="1" QUALIFIED_NAME="squashtest.authz.group.core.Admin"/>
+  <core_group ID="2" QUALIFIED_NAME="squashtest.authz.group.tm.User"/>
+  <core_group ID="4" QUALIFIED_NAME="squashtest.authz.group.tm.TestAutomationServer"/>
+  <core_group_authority GROUP_ID="1" AUTHORITY="ROLE_ADMIN"/>
+  <core_group_authority GROUP_ID="2" AUTHORITY="ROLE_TM_USER"/>
+  <core_group_authority GROUP_ID="4" AUTHORITY="ROLE_TA_API_CLIENT"/>
+  <core_group_member PARTY_ID="1" GROUP_ID="1"/>
+  <core_group_member PARTY_ID="32" GROUP_ID="2"/>
+  <core_group_member PARTY_ID="33" GROUP_ID="4"/>
+  <disabled_execution_status CL_ID="14" EXECUTION_STATUS="ERROR"/>
+  <disabled_execution_status CL_ID="14" EXECUTION_STATUS="WARNING"/>
+  <disabled_execution_status CL_ID="14" EXECUTION_STATUS="NOT_RUN"/>
+  <disabled_execution_status CL_ID="14" EXECUTION_STATUS="SETTLED"/>
+  <execution_step EXECUTION_STEP_ID="228" EXPECTED_RESULT="&lt;ol&gt;&lt;li&gt;Quisque euismod mi in nunc soda&lt;/li&gt;&lt;li&gt;les ac porta augue viverra. Fusce n&lt;/li&gt;&lt;li&gt;on odio nec magna gravida vehicula&lt;/li&gt;&lt;li&gt;. Donec tincidunt erat justo, ut fringilla&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;velit. Donec dapibus ullamcorper leo, non bibendum quam condi&lt;strong&gt;mentum sit amet. Du&lt;/strong&gt;is cursus dui quis tortor accumsan in pulvinar lectus mattis.&lt;/p&gt;" ACTION="&lt;p&gt;Fusce nec risus augue, at lacinia enim.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Mauris eget arcu sem, eget suscipit dui. Integer vulputate venenatis urna a commodo. Sed elementum tincidunt adipiscing. Nulla o&lt;/li&gt;&lt;li&gt;dio tortor, dapibus sit amet interdum eu,&lt;/li&gt;&lt;li&gt;suscipit quis diam. Phasellus convallis&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;pellentesque lorem, ut volutpat mi tincidunt vitae. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aliquam libero nibh, sollicitud&lt;/p&gt;" EXECUTION_STATUS="SUCCESS" LAST_EXECUTED_BY="User-1" LAST_EXECUTED_ON="2011-09-30 10:37:35.0" CREATED_BY="User-1" CREATED_ON="2011-09-30 10:37:26.0" LAST_MODIFIED_BY="User-1" LAST_MODIFIED_ON="2011-09-30 10:37:35.0" ATTACHMENT_LIST_ID="895" ISSUE_LIST_ID="310"/>
+  <execution_step EXECUTION_STEP_ID="229" EXPECTED_RESULT="&lt;p&gt;Sed eget rhoncus sapien. Nam et pulvinar nisi. In mattis quam eu risus aliquet vel condimentum dui mattis. Ut vitae mi orci.&lt;/p&gt;&lt;p&gt;hasellus suscipit luctus qua&lt;/p&gt;&lt;p&gt;non scelerisque. Aliquam orci diam, ultrices vel cursus eget, gravida sed tortor. Maecenas in metus dui, ut rhoncus sem. Do&lt;/p&gt;" ACTION="&lt;ul&gt;&lt;li&gt;&lt;u&gt;Praesent nec enim id arcu porta fringilla u&lt;/u&gt;&lt;/li&gt;&lt;li&gt;&lt;u&gt;t id nisi. Aenean tempor gravida lectus id co&lt;/u&gt;&lt;/li&gt;&lt;li&gt;&lt;u&gt;mmodo. In vestibulum dictum ligula, nec feug&lt;/u&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;iat lorem lacinia ac. Donec interdum, risus sed hendrerit tempus, est urna commodo odio, quis varius nulla metus non dolor. Curabitur nec arcu enim, sagittis adipiscing enim. Nam vehicula sodales ipsum, sit amet posuere ante hendrerit nec. In consequat feugiat tempor. Suspendisse mass&lt;/p&gt;" EXECUTION_STATUS="SUCCESS" LAST_EXECUTED_BY="User-1" LAST_EXECUTED_ON="2011-09-30 10:37:37.0" CREATED_BY="User-1" CREATED_ON="2011-09-30 10:37:26.0" LAST_MODIFIED_BY="User-1" LAST_MODIFIED_ON="2011-09-30 10:37:37.0" ATTACHMENT_LIST_ID="896" ISSUE_LIST_ID="311"/>
+  <execution_execution_steps EXECUTION_ID="83" EXECUTION_STEP_ID="228" EXECUTION_STEP_ORDER="0"/>
+  <execution_execution_steps EXECUTION_ID="83" EXECUTION_STEP_ID="229" EXECUTION_STEP_ORDER="1"/>
+  <iteration_test_plan_item ITEM_TEST_PLAN_ID="265" EXECUTION_STATUS="SUCCESS" LAST_EXECUTED_BY="User-1" LAST_EXECUTED_ON="2011-09-30 10:37:37.0" LABEL="Test-Case 1" CREATED_BY="User-1" CREATED_ON="2011-09-30 10:37:01.0" LAST_MODIFIED_BY="User-1" LAST_MODIFIED_ON="2011-09-30 10:37:37.0" USER_ID="32"/>
+  <item_test_plan_execution ITEM_TEST_PLAN_ID="265" EXECUTION_ID="83" EXECUTION_ORDER="0"/>
+  <item_test_plan_list ITERATION_ID="83" ITEM_TEST_PLAN_ID="265" ITEM_TEST_PLAN_ORDER="0"/>
+  <milestone MILESTONE_ID="1" LABEL="jalon1" STATUS="IN_PROGRESS" END_DATE="2015-01-01 00:00:00.0" DESCRIPTION="" M_RANGE="GLOBAL" CREATED_BY="admin" CREATED_ON="2015-03-27 10:00:43.0" USER_ID="1"/>
+  <milestone MILESTONE_ID="2" LABEL="jalon2" STATUS="IN_PROGRESS" END_DATE="2015-02-01 00:00:00.0" DESCRIPTION="" M_RANGE="GLOBAL" CREATED_BY="admin" CREATED_ON="2015-03-27 10:00:55.0" USER_ID="1"/>
+  <milestone MILESTONE_ID="3" LABEL="jalon3" STATUS="IN_PROGRESS" END_DATE="2015-03-01 00:00:00.0" DESCRIPTION="" M_RANGE="GLOBAL" CREATED_BY="admin" CREATED_ON="2015-03-27 10:01:04.0" USER_ID="1"/>
+  <milestone MILESTONE_ID="4" LABEL="jalon4" STATUS="IN_PROGRESS" END_DATE="2015-04-01 00:00:00.0" DESCRIPTION="" M_RANGE="GLOBAL" CREATED_BY="admin" CREATED_ON="2015-03-27 10:01:14.0" USER_ID="1"/>
+  <milestone MILESTONE_ID="5" LABEL="jalon5" STATUS="IN_PROGRESS" END_DATE="2015-05-01 00:00:00.0" DESCRIPTION="" M_RANGE="GLOBAL" CREATED_BY="admin" CREATED_ON="2015-03-27 10:01:31.0" USER_ID="1"/>
+  <milestone MILESTONE_ID="6" LABEL="jalon6" STATUS="IN_PROGRESS" END_DATE="2015-06-01 00:00:00.0" DESCRIPTION="" M_RANGE="GLOBAL" CREATED_BY="admin" CREATED_ON="2015-03-27 10:01:38.0" LAST_MODIFIED_BY="admin" LAST_MODIFIED_ON="2015-03-27 10:04:33.0" USER_ID="1"/>
+  <milestone MILESTONE_ID="7" LABEL="jalon7" STATUS="IN_PROGRESS" END_DATE="2015-07-01 00:00:00.0" DESCRIPTION="" M_RANGE="GLOBAL" CREATED_BY="admin" CREATED_ON="2015-03-27 10:01:46.0" USER_ID="1"/>
+  <milestone MILESTONE_ID="8" LABEL="jalon8" STATUS="IN_PROGRESS" END_DATE="2015-08-01 00:00:00.0" DESCRIPTION="" M_RANGE="GLOBAL" CREATED_BY="admin" CREATED_ON="2015-03-27 10:01:55.0" USER_ID="1"/>
+  <milestone MILESTONE_ID="9" LABEL="jalon9" STATUS="IN_PROGRESS" END_DATE="2015-09-01 00:00:00.0" DESCRIPTION="" M_RANGE="GLOBAL" CREATED_BY="admin" CREATED_ON="2015-03-27 10:02:03.0" USER_ID="1"/>
+  <milestone MILESTONE_ID="10" LABEL="jalon10" STATUS="IN_PROGRESS" END_DATE="2015-10-01 00:00:00.0" DESCRIPTION="" M_RANGE="GLOBAL" CREATED_BY="admin" CREATED_ON="2015-03-27 10:02:12.0" USER_ID="1"/>
+  <milestone_binding MILESTONE_BINDING_ID="1" MILESTONE_ID="1" PROJECT_ID="14"/>
+  <milestone_binding MILESTONE_BINDING_ID="2" MILESTONE_ID="2" PROJECT_ID="14"/>
+  <milestone_binding MILESTONE_BINDING_ID="3" MILESTONE_ID="3" PROJECT_ID="14"/>
+  <milestone_binding MILESTONE_BINDING_ID="4" MILESTONE_ID="4" PROJECT_ID="14"/>
+  <milestone_binding MILESTONE_BINDING_ID="5" MILESTONE_ID="5" PROJECT_ID="14"/>
+  <milestone_binding MILESTONE_BINDING_ID="6" MILESTONE_ID="6" PROJECT_ID="14"/>
+  <milestone_binding MILESTONE_BINDING_ID="7" MILESTONE_ID="7" PROJECT_ID="14"/>
+  <milestone_binding MILESTONE_BINDING_ID="8" MILESTONE_ID="8" PROJECT_ID="14"/>
+  <milestone_binding MILESTONE_BINDING_ID="9" MILESTONE_ID="9" PROJECT_ID="14"/>
+  <milestone_binding MILESTONE_BINDING_ID="10" MILESTONE_ID="10" PROJECT_ID="14"/>
+  <milestone_binding_perimeter MILESTONE_BINDING_PERIMETER_ID="1" MILESTONE_ID="1" PROJECT_ID="14"/>
+  <milestone_binding_perimeter MILESTONE_BINDING_PERIMETER_ID="2" MILESTONE_ID="2" PROJECT_ID="14"/>
+  <milestone_binding_perimeter MILESTONE_BINDING_PERIMETER_ID="3" MILESTONE_ID="3" PROJECT_ID="14"/>
+  <milestone_binding_perimeter MILESTONE_BINDING_PERIMETER_ID="4" MILESTONE_ID="4" PROJECT_ID="14"/>
+  <milestone_binding_perimeter MILESTONE_BINDING_PERIMETER_ID="5" MILESTONE_ID="5" PROJECT_ID="14"/>
+  <milestone_binding_perimeter MILESTONE_BINDING_PERIMETER_ID="6" MILESTONE_ID="6" PROJECT_ID="14"/>
+  <milestone_binding_perimeter MILESTONE_BINDING_PERIMETER_ID="7" MILESTONE_ID="7" PROJECT_ID="14"/>
+  <milestone_binding_perimeter MILESTONE_BINDING_PERIMETER_ID="8" MILESTONE_ID="8" PROJECT_ID="14"/>
+  <milestone_binding_perimeter MILESTONE_BINDING_PERIMETER_ID="9" MILESTONE_ID="9" PROJECT_ID="14"/>
+  <milestone_binding_perimeter MILESTONE_BINDING_PERIMETER_ID="10" MILESTONE_ID="10" PROJECT_ID="14"/>
+  <requirement_library_node RLN_ID="254" CREATED_BY="User-1" CREATED_ON="2011-09-30 10:29:33.0" LAST_MODIFIED_BY="User-1" LAST_MODIFIED_ON="2011-09-30 10:35:53.0" PROJECT_ID="14"/>
+  <requirement_library_node RLN_ID="255" CREATED_BY="User-1" CREATED_ON="2011-09-30 10:30:12.0" LAST_MODIFIED_BY="User-1" LAST_MODIFIED_ON="2011-09-30 10:36:18.0" PROJECT_ID="14"/>
+  <requirement RLN_ID="255" />
+  <resource RES_ID="254" NAME="Test Folder 1" DESCRIPTION="&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam felis ante, accumsan quis tincidunt vel, iaculis in purus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Morbi at nisl et est egestas venenatis. Nullam venenatis, justo ac hendrerit auctor, dolor velit adipiscing lacus, sed gravida enim elit dictum lorem. Suspendisse eu lectus ac metus lobortis vulputate at id purus. Proin dapibus commodo velit sit amet aliquet. Fusce cursus arcu vitae diam auctor vulputate. Integer et nunc et ipsum scelerisque dignissim eu ultricies sem. Pellentesque id commodo dui. Duis in vestibulum magna. Sed porta ante id magna semper ac gravida risus dapibus. Fusce eu ante sapien.&lt;/p&gt;" CREATED_BY="User-1" CREATED_ON="2011-09-30 10:29:33.0" LAST_MODIFIED_BY="User-1" LAST_MODIFIED_ON="2011-09-30 10:35:53.0" ATTACHMENT_LIST_ID="900"/>
+  <resource RES_ID="255" NAME="Test Requirement 1" DESCRIPTION="&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam felis ante, accumsan quis tincidunt vel, iaculis in purus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Morbi at nisl et est egestas venenatis. Nullam venenatis, justo ac hendrerit auctor, dolor velit adipiscing lacus, sed gravida enim elit dictum lorem. Suspendisse eu lectus ac metus lobortis vulputate at id purus. Proin dapibus commodo velit sit amet aliquet. Fusce cursus arcu vitae diam auctor vulputate. Integer et nunc et ipsum scelerisque dignissim eu ultricies sem. Pellentesque id commodo dui. Duis in vestibulum magna. Sed porta ante id magna semper ac gravida risus dapibus. Fusce eu ante sapien.&lt;/p&gt;" CREATED_BY="User-1" CREATED_ON="2011-09-30 10:30:12.0" LAST_MODIFIED_BY="User-1" LAST_MODIFIED_ON="2011-09-30 10:36:18.0" ATTACHMENT_LIST_ID="888"/>
+  <requirement_version RES_ID="255" REQUIREMENT_ID="255" REFERENCE="TF1-R1" VERSION_NUMBER="1" CRITICALITY="MAJOR" REQUIREMENT_STATUS="WORK_IN_PROGRESS" CATEGORY="6"/>
+  <milestone_req_version MILESTONE_ID="1" REQ_VERSION_ID="255"/>
+  <milestone_test_case MILESTONE_ID="7" TEST_CASE_ID="239"/>
+  <milestone_test_case MILESTONE_ID="1" TEST_CASE_ID="239"/>
+  <milestone_test_case MILESTONE_ID="3" TEST_CASE_ID="239"/>
+  <milestone_test_case MILESTONE_ID="10" TEST_CASE_ID="239"/>
+  <milestone_test_case MILESTONE_ID="2" TEST_CASE_ID="239"/>
+  <milestone_test_case MILESTONE_ID="5" TEST_CASE_ID="239"/>
+  <milestone_test_case MILESTONE_ID="9" TEST_CASE_ID="239"/>
+  <milestone_test_case MILESTONE_ID="8" TEST_CASE_ID="239"/>
+  <milestone_test_case MILESTONE_ID="4" TEST_CASE_ID="239"/>
+  <milestone_test_case MILESTONE_ID="10" TEST_CASE_ID="240"/>
+  <milestone_test_case MILESTONE_ID="7" TEST_CASE_ID="240"/>
+  <milestone_test_case MILESTONE_ID="2" TEST_CASE_ID="240"/>
+  <milestone_test_case MILESTONE_ID="8" TEST_CASE_ID="240"/>
+  <milestone_test_case MILESTONE_ID="9" TEST_CASE_ID="240"/>
+  <milestone_test_case MILESTONE_ID="3" TEST_CASE_ID="240"/>
+  <milestone_test_case MILESTONE_ID="5" TEST_CASE_ID="240"/>
+  <milestone_test_case MILESTONE_ID="4" TEST_CASE_ID="240"/>
+  <milestone_test_case MILESTONE_ID="1" TEST_CASE_ID="241"/>
+  <milestone_test_case MILESTONE_ID="3" TEST_CASE_ID="241"/>
+  <milestone_test_case MILESTONE_ID="2" TEST_CASE_ID="241"/>
+  <milestone_test_case MILESTONE_ID="4" TEST_CASE_ID="241"/>
+  <milestone_test_case MILESTONE_ID="5" TEST_CASE_ID="241"/>
+  <milestone_test_case MILESTONE_ID="6" TEST_CASE_ID="239"/>
+  <milestone_test_case MILESTONE_ID="6" TEST_CASE_ID="240"/>
+  <milestone_test_case MILESTONE_ID="7" TEST_CASE_ID="242"/>
+  <milestone_test_case MILESTONE_ID="3" TEST_CASE_ID="242"/>
+  <milestone_test_case MILESTONE_ID="5" TEST_CASE_ID="242"/>
+  <milestone_test_case MILESTONE_ID="6" TEST_CASE_ID="242"/>
+  <milestone_test_case MILESTONE_ID="4" TEST_CASE_ID="242"/>
+  <milestone_test_case MILESTONE_ID="9" TEST_CASE_ID="243"/>
+  <milestone_test_case MILESTONE_ID="6" TEST_CASE_ID="243"/>
+  <milestone_test_case MILESTONE_ID="10" TEST_CASE_ID="243"/>
+  <milestone_test_case MILESTONE_ID="7" TEST_CASE_ID="243"/>
+  <milestone_test_case MILESTONE_ID="8" TEST_CASE_ID="243"/>
+  <milestone_test_case MILESTONE_ID="7" TEST_CASE_ID="244"/>
+  <milestone_test_case MILESTONE_ID="6" TEST_CASE_ID="244"/>
+  <milestone_test_case MILESTONE_ID="3" TEST_CASE_ID="244"/>
+  <milestone_test_case MILESTONE_ID="2" TEST_CASE_ID="244"/>
+  <milestone_test_case MILESTONE_ID="4" TEST_CASE_ID="244"/>
+  <milestone_test_case MILESTONE_ID="1" TEST_CASE_ID="244"/>
+  <milestone_test_case MILESTONE_ID="5" TEST_CASE_ID="244"/>
+  <milestone_test_case MILESTONE_ID="8" TEST_CASE_ID="244"/>
+  <requirement_audit_event EVENT_ID="1" REQ_VERSION_ID="255" EVENT_DATE="2011-09-30 10:30:12.0" AUTHOR="User-1"/>
+  <requirement_creation EVENT_ID="1"/>
+  <simple_resource RES_ID="254"/>
+  <requirement_folder RLN_ID="254" RES_ID="254"/>
+  <requirement_library_content LIBRARY_ID="14" CONTENT_ID="254" CONTENT_ORDER="0"/>
+  <requirement_version_coverage REQUIREMENT_VERSION_COVERAGE_ID="2" VERIFIED_REQ_VERSION_ID="255" VERIFYING_TEST_CASE_ID="239"/>
+  <requirement_version_coverage REQUIREMENT_VERSION_COVERAGE_ID="3" VERIFIED_REQ_VERSION_ID="255" VERIFYING_TEST_CASE_ID="240"/>
+  <requirement_version_coverage REQUIREMENT_VERSION_COVERAGE_ID="4" VERIFIED_REQ_VERSION_ID="255" VERIFYING_TEST_CASE_ID="241"/>
+  <requirement_version_coverage REQUIREMENT_VERSION_COVERAGE_ID="5" VERIFIED_REQ_VERSION_ID="255" VERIFYING_TEST_CASE_ID="242"/>
+  <requirement_version_coverage REQUIREMENT_VERSION_COVERAGE_ID="6" VERIFIED_REQ_VERSION_ID="255" VERIFYING_TEST_CASE_ID="243"/>
+  <requirement_version_coverage REQUIREMENT_VERSION_COVERAGE_ID="7" VERIFIED_REQ_VERSION_ID="255" VERIFYING_TEST_CASE_ID="244"/>
+  <rln_relationship ANCESTOR_ID="254" DESCENDANT_ID="255" CONTENT_ORDER="0"/>
+  <test_case_library_content LIBRARY_ID="14" CONTENT_ID="239" CONTENT_ORDER="0"/>
+  <test_case_library_content LIBRARY_ID="14" CONTENT_ID="240" CONTENT_ORDER="1"/>
+  <test_case_library_content LIBRARY_ID="14" CONTENT_ID="241" CONTENT_ORDER="2"/>
+  <test_case_library_content LIBRARY_ID="14" CONTENT_ID="242" CONTENT_ORDER="3"/>
+  <test_case_library_content LIBRARY_ID="14" CONTENT_ID="243" CONTENT_ORDER="4"/>
+  <test_case_library_content LIBRARY_ID="14" CONTENT_ID="244" CONTENT_ORDER="5"/>
+</dataset>

@@ -1,0 +1,285 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" th:remove="tag">
+<head th:remove="all">
+<title th:text="#{workspace.test-case.title}">Espace cas de test</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+
+<link rel="stylesheet" type="text/css" media="all" href="../../../styles/structure.css" />
+<link rel="stylesheet" type="text/css" media="all" href="../../../styles/components.css" />
+<link rel="shortcut icon" type="image/x-icon" media="all" href="../../../images/favicon.ico" />
+<link rel="stylesheet" type="text/css" media="all" href="../../../styles/master.green.css" />
+
+
+
+<script type="text/javascript" src="../../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="../../../js/thymol.js"></script>
+<script type="text/javascript" src="../../../scripts/require.js"></script>
+<script type="text/javascript" src="../../../scripts/common.js"></script>
+
+<script type="text/javascript">
+	var require = require || {};
+	//	require.baseUrl = "../../../scripts";
+</script>
+</head>
+<body th:remove="tag"
+  th:with="isWritable = ${(#authorization.expression('hasRole(''ROLE_ADMIN'')') or sec.hasPermission(testCase , 'WRITE')) and milestoneConf.editable}">
+  <div th:remove="all">
+    <!--
+		This snippet of html describes the template for the test step panel of the tab panel of a test case.
+		Required data :
+			- testCase : the test case bean
+	 -->
+  </div>
+  <div id="parameters-tabs-panel" class="table-tab">
+
+
+    <!-- ==================== parameters table panel =================== -->
+
+    <div id="parameters-panel-container" class="sq-tg expand">
+      <div class="tg-head">
+        <h3 th:text="#{label.parameters}">params</h3>
+        <div class="tg-toolbar">
+           <button id="add-parameter-button" th:if="${isWritable}" class="sq-icon-btn sq-btn btn-sm" title="add" th:title="#{title.addParameter}"
+           value="+"  type="submit" >
+             <span class="ui-icon ui-icon-plus squared-icons">+</span>
+          </button>
+        </div>
+      </div>
+      <div id="parameters-panel" class="tg-body">
+        <table id="parameters-table" class="unstyled-table"
+          th:attr="data-def='datakeys-id=entity-id ,ajaxsource='+@{/test-cases/__${testCase.id}__/parameters}+', pre-sort=1'">
+          <thead>
+            <tr>
+              <th th:attr="data-def='select, map=entity-index'">#</th>
+              <th th:attr="data-def='sortable, map=name, sClass=parameter-name'" th:text="#{label.Name}">Name</th>
+              <th th:attr="data-def='map=description, sClass=parameter-description'" th:text="#{label.Description}">Description</th>
+              <th th:attr="data-def='sortable, map=test-case-name, link='+ @{/test-cases} +'/{tc-id}/info'" th:text="#{test-case.source.label}">Cas de Test</th>
+              <th th:attr="data-def='invisible, map=directly-associated'">directly-associated</th>
+              <th th:attr="data-def='sWidth=2em, map=empty-delete-holder, sClass=delete-button'"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:remove="all">
+              <td>1</td>
+              <td>1</td>
+              <td>param_A</td>
+              <td>TestCaseA</td>
+              <td></td>
+            </tr>
+            <tr th:remove="all">
+              <td>2</td>
+              <td>2</td>
+              <td>param_B</td>
+              <td>TestCaseB</td>
+              <td></td>
+            </tr>
+            <tr th:remove="all">
+              <td>3</td>
+              <td>3</td>
+              <td>param_C</td>
+              <td>TestCaseC</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ==================== /parameters table panel =================== -->
+    <!-- ==================== datasets table panel =================== -->
+
+    <div id="datasets-panel-container" class="sq-tg expand">
+      <div class="tg-head">
+        <h3 th:text="#{label.datasets}"></h3>
+        <div class="tg-toolbar">
+           <button id="add-dataset-button" th:if="${isWritable}" class="sq-icon-btn sq-btn btn-sm" title="add" th:title="#{title.addDataset}"
+           value="+"  type="submit" >
+             <span class="ui-icon ui-icon-plus squared-icons">+</span>
+          </button>
+        </div>
+      </div>
+      <div id="datasets-panel" class="tg-body">
+        <table id="datasets-table" class="unstyled-table">
+          <thead>
+            <tr>
+              <th>id (masked)</th>
+              <th>#</th>
+              <th th:text="#{label.dataset}">Dataset</th>
+              <th th:each="param : ${paramHeaders}" th:text="${param['name']}" th:title="${param['description']}" th:attr="data-id=${param['id']}" class="set-title">param1</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ==================== /datasets table panel =================== -->
+
+    <!-- ==================== POPUPS ==================== -->
+    <!-- ====================parameter popup ==================== -->
+
+     <div id="remove-parameter-confirm-dialog" class="not-displayed popup-dialog" th:title="#{title.removeParameter}">
+      <div th:include="fragments-utils/static-panels :: error-pane" th:with="txtcontent=#{message.parameter.remove.confirm}"></div>
+      <div class="popup-dialog-buttonpane">
+        <input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}" />
+        <input class="cancel" type="button" value="cancel" th:value="#{label.Cancel}" />
+      </div>
+    </div>
+
+    <div id="remove-parameter-used-dialog" class="popup-dialog not-displayed" th:title="#{title.removeParameter}"
+      title="info">
+      <span th:text="#{message.parameter.remove.used}">le paramètre est utilisé, il est impossible de le
+        supprimer</span>
+
+    </div>
+
+    <div id="add-parameter-dialog" class="not-displayed popup-dialog form-horizontal" title="Add Parameter"
+      th:title="#{title.addParameter}">
+      <table class="form-horizontal">
+        <tr class="control-group">
+          <td>
+            <label class="control-label" for="add-parameter-name" th:text="#{label.Name}">Name</label>
+          </td>
+          <td class="controls">
+            <input id="add-parameter-name" name="add-parameter-name" type="text" size="50" maxlength="255" data-def="maininput"/>
+            <span class="help-inline">&nbsp;</span>
+          </td>
+        </tr>
+        <tr class="control-group">
+          <td>
+            <label class="control-label" for="add-parameter-description" th:text="#{label.Description}">Description</label>
+          </td>
+          <td class="controls">
+            <textarea id="add-parameter-description" name="add-parameter-description"></textarea>
+            <span class="help-inline">&nbsp;</span>
+          </td>
+        </tr>
+      </table>
+
+      <div class="popup-dialog-buttonpane">
+     	<input class="confirm" type="button" value="Add Another" th:value="#{label.addAnother}"  data-def="mainbtn, evt=addanother"/>
+        <input class="confirm" type="button" value="Add" th:value="#{label.Add}"  data-def="evt=confirm"/>
+        <input class="cancel" type="button" value="Cancel" th:value="#{label.Close}"  data-def="evt=cancel"/>
+      </div>
+    </div>
+    <!-- ==================== dataset popup ==================== -->
+
+    <div id="remove-dataset-confirm-dialog" class="popup-dialog not-displayed" th:title="#{title.removeDataset}">
+      <div th:include="fragments-utils/static-panels :: error-pane" th:with="txtcontent=#{message.dataset.remove.confirm}"></div>
+      <div class="popup-dialog-buttonpane">
+        <input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}" />
+        <input class="cancel" type="button" value="cancel" th:value="#{label.Cancel}" />
+      </div>
+    </div>
+
+    <div id="add-dataset-dialog" class="control-group not-displayed popup-dialog form-horizontal" title="Add Dataset"
+      th:title="#{title.addDataset}">
+      	<label class="control-label" for="add-dataset-name" th:text="#{label.Name}">Name</label>
+      	<div class="controls">
+        <input id="add-dataset-name" name="add-dataset-name" type="text" size="50" maxlength="255" data-def="maininput"/>
+        <br />
+        <div class="help-inline">&nbsp;</div>
+        </div>
+		<table id="add-dataset-dialog-table" class="unstyled-table" th:attr="data-def='ajaxsource='+@{/test-cases/__${testCase.id}__/parameters}+', pre-sort=1'">
+			<thead>
+				<th data-def="map=entity-index, select">#</th>
+				<th data-def="map=name" th:text="#{label.Name}">name</th>
+				<th data-def="map=description" th:text="#{label.Description}">description</th>
+				<th data-def="map=empty-delete-holder, sClass=add-parameter-input centered" th:text="#{label.Value}">value</th>
+			</thead>
+			<tbody>
+
+			</tbody>
+		</table>
+
+      <div class="popup-dialog-buttonpane">
+     	<input class="confirm" type="button" value="Add Another" th:value="#{label.addAnother}"  data-def="mainbtn, evt=addanother"/>
+        <input class="confirm" type="button" value="Add" th:value="#{label.Add}"  data-def="evt=confirm"/>
+        <input class="cancel" type="button" value="Cancel" th:value="#{label.Close}"  data-def="evt=cancel"/>
+      </div>
+    </div>
+
+
+  </div>
+  <!-- ==================== initialisation ==================== -->
+
+  <script type="text/javascript" th:inline="javascript">
+			/*<![CDATA[*/
+		var squashtm = squashtm || {};
+	  	squashtm.app = squashtm.app || {} ;
+	  	squashtm.app.messages = squashtm.app.messages || {};
+	  	squashtm.app.messages["message.notBlank"] = /*[[ #{message.notBlank} ]]*/ "Value should not be blank";
+	  	squashtm.app.messages["message.parameterInvalidPattern"]= /*[[ #{message.parameterInvalidPattern} ]]*/ "wrong pattern";
+  	require(["common"], function() {
+		require([ "domReady", "test-case-management" ], function(domReady, testCaseManagement) {
+							var settings = {
+								basic : {
+									testCaseUrl : /*[[@{/test-cases/__${testCase.id}__}]]*/"/squash/test-cases/1",
+									testCaseId : /*[[${testCase.id}]]*/1,
+									projectId : /*[[${testCase.project.id}]]*/1,
+									parametersUrl : /*[[@{/parameters}]]*/"/squash/parameters",
+									datasetsUrl : /*[[@{/datasets}]]*/"/squash/datasets",
+									testCaseDatasetsUrl : /*[[@{/test-cases/__${testCase.id}__/datasets}]]*/ "/squash/test-cases/1/datasets",
+									dataTableLanguageUrl : /*[[@{/datatables/messages}]]*/ "@{/datatables/messages}",
+									ckeConfigUrl : /*[[@{/styles/ckeditor/ckeditor-config.js}]]*/"/squash/styles/ckeditor/ckeditor-config.js",
+									indicatorURl : /*[[@{/scripts/jquery/indicator.gif}]]*/"/squash/scripts/jquery/indicator.gif",
+									parameterValuesUrl : /*[[@{/dataset-parameter-values}]]*/"/squash/dataset-parameter-values"
+								},
+
+								language : {
+									cancellabel : /*[[#{label.Cancel}]]*/"Cancel",
+									add : /*[[#{label.Add}]]*/"Add",
+									addAnother : /*[[#{label.addAnother}]]*/"Add another",
+									ckeLang : /*[[#{rich-edit.language.value}]]*/"ph",
+									placeholder : /*[[#{rich-edit.placeholder}]]*/"Click to edit...",
+									submit : /*[[#{rich-edit.button.ok.label}]]*/"submit",
+									edit : /*[[#{label.edit}]]*/"edit",
+									remove : /*[[#{label.Delete}]]*/"Delete",
+									parametersPanelTitle : /*[[#{label.parameters}]]*/"Parameters",
+									datasetsPanelTitle : /*[[#{label.datasets}]]*/"Datasets",
+								},
+
+								datasetsAoColumnDefs : /*[[${datasetsAoColumnDefs}]]*/ {},
+
+								permissions : {
+									isWritable : /*[[${isWritable}]]*/true
+								},
+
+								parameters: {
+									tabIndex: 2
+								}
+							};
+
+				testCaseManagement.initParametersTab(settings);
+		});
+  	});
+	/*]]>*/
+	</script>
+  <!-- ==================== /initialisation ==================== -->
+</body>
+</html>

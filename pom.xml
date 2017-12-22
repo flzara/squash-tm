@@ -1,0 +1,797 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.squashtest.tm</groupId>
+  <artifactId>squash-tm</artifactId>
+  <version>1.17.0.RELEASE</version>
+  <packaging>pom</packaging>
+
+  <name>squash-tm</name>
+  <description>Squash Test Manager - Test repository management application</description>
+
+  <modules>
+    <!-- bom is used almost everywhere, we build it early -->
+    <module>bom</module>
+    <!-- tools are used by the actual app, we build it early -->
+    <module>tools</module>
+    <module>database.h2.fragment</module>
+    <module>database</module>
+    <module>core</module>
+    <module>tm</module>
+    <module>plugins</module>
+  </modules>
+
+  <properties>
+    <!-- aspectj version - should be syncd w/ spring boot version -->
+    <!-- yet we're stuck at 1.8.5 - won't compile with newer versions -->
+    <aspectj.version>1.8.5</aspectj.version>
+    <groovy-eclipse-batch.version>2.4.3-01</groovy-eclipse-batch.version>
+    <groovy-eclipse-compiler.version>2.9.2-01</groovy-eclipse-compiler.version>
+    <!-- groovy version syncd w/ spring boot version -->
+    <groovy.version>2.4.7</groovy.version>
+
+    <jasperreports.version>6.1.1</jasperreports.version>
+    <java.version>1.8</java.version>
+
+    <liquibase.version>2.0.1</liquibase.version>
+
+    <maven-failsafe-plugin.version>2.18.1</maven-failsafe-plugin.version>
+    <maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <spring-boot-maven-plugin.version>1.4.0.RELEASE</spring-boot-maven-plugin.version>
+    <spring.boot.version>1.4.0.RELEASE</spring.boot.version>
+
+    <verbose.compiler>false</verbose.compiler>
+    <wro4j.version>1.7.8</wro4j.version>
+  </properties>
+  <build>
+    <!--
+      This POM should only declare plugin mgt and plugins.
+      It should not declare dependency mgt (they should be in squash-tm-bom)
+      It should not declare dependencies
+      If you need any of these plgins in a submodule, simply declare it in the plugins section without version. You
+      probably don't need to reconfigure the plugin either.
+    -->
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.3</version>
+          <configuration>
+            <!-- Std java compiler plugin is configured to compile groovy using groovy-eclipse-compiler -->
+            <source>${java.version}</source>
+            <target>${java.version}</target>
+            <compilerId>groovy-eclipse-compiler</compilerId>
+          </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.codehaus.groovy</groupId>
+              <artifactId>groovy-eclipse-batch</artifactId>
+              <version>${groovy-eclipse-batch.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.codehaus.groovy</groupId>
+              <artifactId>groovy-eclipse-compiler</artifactId>
+              <version>${groovy-eclipse-compiler.version}</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>aspectj-maven-plugin</artifactId>
+          <version>1.8</version>
+          <configuration>
+            <source>${java.version}</source>
+            <target>${java.version}</target>
+            <complianceLevel>${java.version}</complianceLevel>
+          </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.aspectj</groupId>
+              <artifactId>aspectjtools</artifactId>
+              <version>${aspectj.version}</version>
+            </dependency>
+          </dependencies>
+          <executions>
+            <execution>
+              <goals>
+                <goal>compile</goal>
+                <goal>test-compile</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <!-- Configures groovy sources location -->
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>1.11</version>
+          <executions>
+            <execution>
+              <id>add-source</id>
+              <goals>
+                <goal>add-source</goal>
+              </goals>
+              <phase>generate-sources</phase>
+              <configuration>
+                <sources>
+                  <source>src/main/groovy</source>
+                </sources>
+              </configuration>
+            </execution>
+            <execution>
+              <id>add-test-source</id>
+              <goals>
+                <goal>add-test-source</goal>
+              </goals>
+              <phase>generate-test-sources</phase>
+              <configuration>
+                <sources>
+                  <source>src/test/groovy</source>
+                </sources>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <!-- Mostly the same as surefire, but used for integration tests -->
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>${maven-failsafe-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven-surefire-plugin.version}</version>
+          <configuration>
+            <systemProperties>
+              <property>
+                <name>log4j.configuration</name>
+                <value>test-log4j.properties</value>
+              </property>
+            </systemProperties>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>2.7</version>
+          <configuration>
+            <nonFilteredFileExtensions>
+              <nonFilteredFileExtension>ico</nonFilteredFileExtension>
+              <nonFilteredFileExtension>zip</nonFilteredFileExtension>
+            </nonFilteredFileExtensions>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.liquibase</groupId>
+          <artifactId>liquibase-maven-plugin</artifactId>
+          <version>${liquibase.version}</version>
+          <configuration>
+            <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
+          </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.squashtest.tm</groupId>
+              <artifactId>database.h2.fragment</artifactId>
+              <version>${project.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.liquibase</groupId>
+              <artifactId>liquibase-core</artifactId>
+              <version>${liquibase.version}</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>xml-maven-plugin</artifactId>
+          <version>1.0</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.5.2</version>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-remote-resources-plugin</artifactId>
+          <version>1.5</version>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>2.6</version>
+        </plugin>
+
+        <plugin>
+          <!-- wro4j processes some web assets such as less CSS -->
+          <groupId>ro.isdc.wro4j</groupId>
+          <artifactId>wro4j-maven-plugin</artifactId>
+          <version>${wro4j.version}</version>
+          <dependencies>
+            <dependency>
+              <groupId>ro.isdc.wro4j</groupId>
+              <artifactId>wro4j-extensions</artifactId>
+              <version>${wro4j.version}</version>
+            </dependency>
+            <dependency>
+              <!-- without this, old 1.3 version may be pulled outta nowhere and reports wont compile -->
+              <groupId>xml-apis</groupId>
+              <artifactId>xml-apis</artifactId>
+              <version>1.4.01</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+
+        <plugin>
+          <!--
+            this plugin installs a node which can be used by requirejs maven plugin
+            TODO assess : since frontend plugin also installs node maybe this one is no longer needed
+          -->
+          <groupId>com.github.skwakman.nodejs-maven-plugin</groupId>
+          <artifactId>nodejs-maven-plugin</artifactId>
+          <version>1.0.5-node-0.10.25</version>
+          <configuration>
+            <targetDirectory>${project.build.directory}/nodejs/</targetDirectory>
+          </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>extract</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>com.mysema.maven</groupId>
+          <artifactId>apt-maven-plugin</artifactId>
+          <version>1.1.3</version>
+        </plugin>
+
+        <plugin>
+          <groupId>com.alexnederlof</groupId>
+          <artifactId>jasperreports-plugin</artifactId>
+          <version>1.9</version>
+          <dependencies>
+            <dependency>
+              <!-- required to make sure jr runtime version is in sync with compile-time version -->
+              <groupId>net.sf.jasperreports</groupId>
+              <artifactId>jasperreports</artifactId>
+              <version>${jasperreports.version}</version>
+              <exclusions>
+                <exclusion>
+                  <!-- without this, old 1.3 version may be pulled outta nowhere and warious problems occur -->
+                  <groupId>xml-apis</groupId>
+                  <artifactId>xml-apis</artifactId>
+                </exclusion>
+              </exclusions>
+            </dependency>
+            <dependency>
+              <!-- without this, old 1.3 version may be pulled outta nowhere and reports wont compile -->
+              <groupId>xml-apis</groupId>
+              <artifactId>xml-apis</artifactId>
+              <version>1.4.01</version>
+            </dependency>
+          </dependencies>
+          <executions>
+            <execution>
+              <goals>
+                <goal>jasper</goal>
+              </goals>
+              <phase>process-sources</phase>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId>
+          <version>${spring-boot-maven-plugin.version}</version>
+        </plugin>
+
+        <plugin>
+          <!-- This is used to run groovy scripts during the build (not to compile groovy sources, see maven-compiler-plugin) -->
+          <groupId>org.codehaus.gmaven</groupId>
+          <artifactId>gmaven-plugin</artifactId>
+          <version>1.5</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>axistools-maven-plugin</artifactId>
+          <version>1.4</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>1.4.1</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.jooq</groupId>
+          <artifactId>jooq-codegen-maven</artifactId>
+          <version>3.8.4</version>
+        </plugin>
+
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <!-- This plugin sorts the poms so that they are simpler to manage and merge -->
+        <groupId>com.google.code.sortpom</groupId>
+        <artifactId>maven-sortpom-plugin</artifactId>
+        <version>2.2.1</version>
+        <configuration>
+          <predefinedSortOrder>custom_1</predefinedSortOrder>
+          <lineSeparator>\n</lineSeparator>
+          <encoding>${project.build.sourceEncoding}</encoding>
+          <sortProperties>true</sortProperties>
+          <keepBlankLines>true</keepBlankLines>
+          <sortDependencies>scope, artifactId</sortDependencies>
+          <nrOfIndentSpace>2</nrOfIndentSpace>
+          <expandEmptyElements>false</expandEmptyElements>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>sort</goal>
+            </goals>
+            <phase>verify</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <!-- Checks license headers throughout the project -->
+        <groupId>com.mycila</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <version>2.11</version>
+        <inherited>false</inherited>
+        <configuration>
+          <useDefaultExcludes>true</useDefaultExcludes>
+          <useDefaultMapping>true</useDefaultMapping>
+          <aggregate>true</aggregate>
+          <strictCheck>true</strictCheck>
+          <header>tools/tools-resources/src/main/resources/licenses/header.txt</header>
+
+          <properties>
+            <license.copyrightOwner>${project.organization.name}</license.copyrightOwner>
+          </properties>
+          <excludes>
+            <!-- license files -->
+            <exclude>**/COPYING.*</exclude>
+            <exclude>**/LICENSE.*</exclude>
+            <exclude>**/NOTICE.*</exclude>
+            <exclude>**/README.*</exclude>
+            <exclude>**/COPYING</exclude>
+            <exclude>**/LICENSE</exclude>
+            <exclude>**/NOTICE</exclude>
+            <exclude>**/README</exclude>
+            <exclude>**/*README.*</exclude>
+            <exclude>**/*readme.*</exclude>
+            <exclude>**/README*.*</exclude>
+            <exclude>**/readme*.*</exclude>
+            <exclude>**/banner.txt</exclude>
+            <!-- manifest templates -->
+            <exclude>**/*.mf</exclude>
+            <exclude>**/bnd.bnd</exclude>
+            <!-- resource modules -->
+            <exclude>tools/license-resources/src/main/resources/**/*.*</exclude>
+            <exclude>tools/tools-resources/src/main/resources/**/*.*</exclude>
+            <!-- mercurial files-->
+            <exclude>**/*.orig</exclude>
+            <exclude>**/.hgtags</exclude>
+            <exclude>**/.hgignore</exclude>
+            <exclude>fix-versions.sh</exclude>
+
+            <!-- other IDE / tools files -->
+            <exclude>**/.idea/**/*</exclude>
+            <exclude>**/nbactions.xml</exclude>
+            <exclude>**/nb-configuration.xml</exclude>
+            <exclude>**/.groovy/**/*</exclude>
+            <exclude>**/.profiler/**/*</exclude>
+            <exclude>**/.mvn/**/*</exclude>
+            <exclude>**/*.versionsBackup</exclude>
+            <exclude>**/*.bak</exclude>
+            <exclude>**/*.swp</exclude>
+            <exclude>**/*.log</exclude>
+            <exclude>**/Thumbs.db</exclude>
+            <exclude>**/*.swp</exclude>
+            <exclude>**/.settings/**</exclude>
+            <exclude>**/*.iml</exclude>
+            <exclude>**/*.editorconfig</exclude>
+            <!-- third-party javascript libraries -->
+            <exclude>**/bower_modules/**/*</exclude>
+            <exclude>**/node_modules/**/*</exclude>
+            <exclude>**/node/**/*</exclude>
+            <exclude>**/js/**/*.*</exclude>
+            <exclude>**/scripts/ckeditor/**/*.*</exclude>
+            <exclude>**/scripts/datatables/**/*.*</exclude>
+            <exclude>**/scripts/jquery/**/*.*</exclude>
+            <exclude>**/scripts/jqgrid/**/*.*</exclude>
+            <exclude>**/scripts/jqplot/**/*.*</exclude>
+            <exclude>**/scripts/iesupport/**/*.*</exclude>
+            <exclude>**/scripts/thirdparties/**/*.*</exclude>
+            <exclude>**/scripts/lib/**/*.*</exclude>
+            <exclude>**/scripts/require*.js</exclude>
+            <exclude>**/styles/ckeditor/**/*.*</exclude>
+            <exclude>**/styles/datatables/**/*.*</exclude>
+            <exclude>**/styles/jquery/**/*.*</exclude>
+            <exclude>**/styles/jqgrid/**/*.*</exclude>
+            <exclude>**/styles/jqplot/**/*.*</exclude>
+            <exclude>**/styles/switchButton/*.*</exclude>
+            <exclude>**/styles/**/thymol.js</exclude>
+            <exclude>**/r.js</exclude>
+            <exclude>**/scripts/sinon*.js</exclude>
+            <exclude>**/styles/**/bootstrap*.css</exclude>
+            <exclude>**/pubsub-boot.js</exclude>
+
+            <exclude>**/*.properties</exclude>
+
+            <!-- generated stylesheets -->
+            <exclude>**/styles/**/squash.*.css</exclude>
+            <!-- third-party wslds -->
+            <exclude>**/*.wsdl</exclude>
+            <!-- misc system / ide files -->
+            <exclude>**/build.properties</exclude>
+            <!-- felix configuration files -->
+            <exclude>**/felix.*.properties</exclude>
+            <!-- SQL files used by liquibase, breaks on mysql import when licensed -->
+            <exclude>**/src/test/liquibase/**/*.sql</exclude>
+            <exclude>**/src/main/liquibase/**/*.sql</exclude>
+            <!-- IzPack files -->
+            <exclude>**/izpack/**/*.*</exclude>
+            <!-- m2e generated files -->
+            <exclude>**/pom.properties</exclude>
+            <exclude>**/pom.xml</exclude>
+            <exclude>**/pom.xml.tag</exclude>
+            <exclude>**/pom.xml.versionsBackup</exclude>
+            <!-- webapp resources -->
+            <exclude>**/webapp/images/*</exclude>
+            <!-- jasper files -->
+            <exclude>**/*.jasper</exclude>
+            <!-- test resources -->
+            <exclude>integration-tests/src/it/resources/**</exclude>
+            <exclude>**/*.xlsx</exclude>
+            <!--other -->
+            <exclude>**/new_report.rptdesign</exclude>
+            <!-- generated xml (dev) -->
+            <exclude>**/tm.service/META-INF/**</exclude>
+            <exclude>**/config/META-INF/**</exclude>
+            <!-- jetty config for dev -->
+            <exclude>**/provision/**/etc/jetty.xml</exclude>
+            <exclude>**/provision/**/etc/jetty*.xml</exclude>
+            <exclude>tm/tm.web/scripts/**</exclude>
+            <exclude>tm/tm.web/images/**</exclude>
+            <exclude>tm/tm.web/styles/**</exclude>
+            <!-- excluding node module for jenkins -->
+            <exclude>tm/tm.web/node_module/**</exclude>
+
+          </excludes>
+          <mapping>
+            <tag>DYNASCRIPT_STYLE</tag>
+            <jrxml>XML_STYLE</jrxml>
+          </mapping>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <phase>verify</phase>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  <inceptionYear>2010</inceptionYear>
+  <organization>
+    <name>Henix, henix.fr</name>
+  </organization>
+  <licenses>
+    <license>
+      <name>GNU Lesser General Public License V3</name>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:hg:${project.basedir}</connection>
+    <developerConnection>scm:hg:${project.basedir}</developerConnection>
+    <tag>squash-tm-1.17.0.RELEASE</tag>
+  </scm>
+
+  <repositories>
+    <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>squash-release-repo</id>
+      <url>http://repo.squashtest.org/maven2/releases</url>
+    </repository>
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>squash-snapshot-repo</id>
+      <url>http://repo.squashtest.org/maven2/snapshots</url>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <!--<pluginRepository>-->
+    <!--<releases>-->
+    <!--<enabled>false</enabled>-->
+    <!--</releases>-->
+    <!--<snapshots>-->
+    <!--<enabled>true</enabled>-->
+    <!--</snapshots>-->
+    <!--<id>squashtest-snapshot</id>-->
+    <!--<name>SquashTest snapshot repository</name>-->
+    <!--<url>http://repo.squashtest.org/maven2/snapshots</url>-->
+    <!--</pluginRepository>-->
+  </pluginRepositories>
+
+  <distributionManagement>
+    <repository>
+      <id>squash-release-deploy-repo</id>
+      <name>Squash releases deployment repo</name>
+      <url>${deploy-repo.release.url}</url>
+    </repository>
+    <snapshotRepository>
+      <id>squash-snapshot-deploy-repo</id>
+      <name>Squash snapshot deployment repo</name>
+      <url>${deploy-repo.snapshot.url}</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <profiles>
+    <!-- Default Squash TM dev profile -->
+    <profile>
+      <id>dev</id>
+      <activation>
+        <property>
+          <name>env.type</name>
+          <value>dev</value>
+        </property>
+      </activation>
+      <properties>
+        <verbose.compiler>true</verbose.compiler>
+      </properties>
+    </profile>
+
+    <!-- This profile aims to run acceptance tests without compilation and
+			units tests (if possible) -->
+    <profile>
+      <id>acceptance-tests</id>
+
+      <modules>
+        <module>integration-tests</module>
+      </modules>
+
+      <properties>
+        <skipITs>false</skipITs>
+        <skipTests>true</skipTests>
+      </properties>
+    </profile>
+
+    <profile>
+      <!-- Without this profile, mvn versions:... fails to detect "provision" module. This profile has no other use -->
+      <id>provision</id>
+
+      <modules>
+        <module>provision</module>
+      </modules>
+    </profile>
+
+    <!-- This profile aims to perform a build on the developper's machine before
+			a push. It should not run anything against mysql -->
+    <profile>
+      <id>private-build</id>
+
+      <modules>
+        <module>integration-tests</module>
+      </modules>
+    </profile>
+
+    <profile>
+      <id>eclipse</id>
+      <activation>
+        <file>
+          <exists>${basedir}\.project</exists>
+        </file>
+      </activation>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <!--This plugin's configuration is used to store Eclipse m2e settings
+							only. It has no influence on the Maven build itself. -->
+            <plugin>
+              <groupId>org.eclipse.m2e</groupId>
+              <artifactId>lifecycle-mapping</artifactId>
+              <version>1.0.0</version>
+              <configuration>
+                <lifecycleMappingMetadata>
+                  <pluginExecutions>
+                    <pluginExecution>
+                      <pluginExecutionFilter>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>aspectj-maven-plugin</artifactId>
+                        <versionRange>[1.4,)</versionRange>
+                        <goals>
+                          <goal>test-compile</goal>
+                          <goal>compile</goal>
+                        </goals>
+                      </pluginExecutionFilter>
+                      <action>
+                        <execute />
+                      </action>
+                    </pluginExecution>
+
+                    <pluginExecution>
+                      <pluginExecutionFilter>
+                        <groupId>com.springsource.bundlor</groupId>
+                        <artifactId>com.springsource.bundlor.maven</artifactId>
+                        <versionRange>[1.0.0.RC1,)</versionRange>
+                        <goals>
+                          <goal>bundlor</goal>
+                        </goals>
+                      </pluginExecutionFilter>
+                      <action>
+                        <execute />
+                      </action>
+                    </pluginExecution>
+
+                    <pluginExecution>
+                      <pluginExecutionFilter>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <versionRange>[1.2.0,)</versionRange>
+                        <goals>
+                          <goal>process</goal>
+                        </goals>
+                      </pluginExecutionFilter>
+                      <action>
+                        <execute>
+                          <runOnIncremental>false</runOnIncremental>
+                        </execute>
+                      </action>
+                    </pluginExecution>
+
+                  </pluginExecutions>
+                </lifecycleMappingMetadata>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+
+    <profile>
+      <id>add-windows-hg-hooks</id>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+        <!--<file>-->
+        <!-- mvn appplies OR so criterion below is deactivated -->
+        <!-- <exists>${basedir}\.hg\.sqpreco</exists> -->
+        <!--</file>-->
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.gmaven</groupId>
+            <artifactId>gmaven-plugin</artifactId>
+            <version>1.5</version>
+            <executions>
+              <execution>
+                <id>add-windows-hg-hooks</id>
+                <goals>
+                  <goal>execute</goal>
+                </goals>
+                <phase>process-resources</phase>
+                <inherited>false</inherited>
+                <configuration>
+                  <source>${project.basedir}/src/main/scripts/AddWindowsHgHooks.groovy</source>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <!-- Configuration for sonar / code coverage measurement using jacoco -->
+      <id>code.analysis</id>
+      <activation>
+        <property>
+          <name>code.analysis</name>
+        </property>
+      </activation>
+      <properties>
+        <!--<sonar.groovy.jacoco.itReportPath>${sonar.jacoco.itReportPath}</sonar.groovy.jacoco.itReportPath>-->
+        <!--<sonar.groovy.jacoco.reportPath>${sonar.jacoco.reportPath}</sonar.groovy.jacoco.reportPath>-->
+        <!--<sonar.jacoco.itReportPath>${project.build.directory}/jacoco-integraiton-tests.exec</sonar.jacoco.itReportPath>-->
+        <!--<sonar.jacoco.reportPath>${project.build.directory}/jacoco-unit-tests.exec</sonar.jacoco.reportPath>-->
+      </properties>
+      <build>
+        <plugins>
+          <!--<plugin>-->
+          <!--<groupId>org.apache.maven.plugins</groupId>-->
+          <!--<artifactId>maven-surefire-plugin</artifactId>-->
+          <!--<configuration>-->
+          <!--<argLine>${jacoco.agent.ut.arg}</argLine>-->
+          <!--<properties>-->
+          <!--<property>-->
+          <!--<name>listener</name>-->
+          <!--<value>org.sonar.java.jacoco.JUnitListener</value>-->
+          <!--<testFailureIgnore>true</testFailureIgnore>-->
+          <!--<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>-->
+          <!--</property>-->
+          <!--</properties>-->
+          <!--</configuration>-->
+          <!--</plugin>-->
+
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>0.7.2.201409121644</version>
+            <configuration>
+              <append>true</append>
+            </configuration>
+            <executions>
+              <execution>
+                <id>agent-for-ut</id>
+                <goals>
+                  <goal>prepare-agent</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>agent-for-it</id>
+                <goals>
+                  <goal>prepare-agent-integration</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>jacoco-site</id>
+                <goals>
+                  <goal>report</goal>
+                </goals>
+                <phase>verify</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!--
+This profile forbids the javadoc plugin to fail for linter reasons.
+The proper fix (that is, really documenting parameters and such) must
+wait a bit.
+-->
+    <profile>
+      <id>disable-java8-doclint</id>
+      <activation>
+        <jdk>[1.8,)</jdk>
+      </activation>
+      <properties>
+        <additionalparam>-Xdoclint:none</additionalparam>
+      </properties>
+    </profile>
+
+  </profiles>
+</project>

@@ -1,0 +1,80 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<!-- common head -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" sq:css="squash.core.css" />
+	<!-- /common head -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.blue.css" sq:css="squash.blue.css" />
+</head>
+<body>
+
+	<div th:fragment="add-attachment-popup">
+
+	<div id="add-attachments-dialog" class="popup-dialog not-displayed" th:title="#{dialog.attachment.upload.title}">
+
+
+	<div class="add-attachments-templates not-displayed" style="display:none;">
+		<div class="attachment-item">
+			<input type="file" name="attachment[]" size="40" ></input>
+			<input type="button" th:value="#{dialog.attachment.add.button.remove.label}"></input>
+		</div>
+	</div>
+
+	<div data-def="state=selection">
+		<form class="attachment-upload-form">
+
+		</form>
+	</div>
+
+	<div data-def="state=uploading" class="attachment-upload-uploading centered">
+	 	<h4 	class="attachment-progress-message centered" th:text="#{title.UploadingPleaseWait}"></h4>
+ 		<div 	class="attachment-progressbar"></div>
+ 		<span 	class="attachment-progress-percentage"></span>
+ 	</div>
+
+	<div data-def="state=summary" class="attachment-upload-summary display-table">
+
+	</div>
+
+	<div data-def="state=error" >
+		<span class="attachment-upload-error-message" th:text="#{message.AttachmentUploadSizeExceeded}">
+
+		</span>
+	</div>
+
+	<div class="popup-dialog-buttonpane">
+		<input type="button" th:value="#{label.Upload}" data-def="evt=submit, state=selection, mainbtn=selection"></input>
+		<input type="button" th:value="#{label.Cancel}" data-def="evt=cancel, state=selection uploading, mainbtn=uploading"></input>
+		<input type="button" th:value="#{label.Close}" data-def="evt=done, state=summary error, mainbtn=summary error"></input>
+	</div>
+
+</div>
+
+<div id="dump" class="not-displayed"></div>
+
+
+	</div>
+</body>
+</html>

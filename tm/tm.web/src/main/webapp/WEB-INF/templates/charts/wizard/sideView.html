@@ -1,0 +1,62 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+  <div th:fragment="chart-wizard-side-view"   >
+
+{{#*inline "step"}}
+
+{{#if this.clickable}}
+<a href="#{{this.name}}">
+{{/if}}
+<span id="step-icon-{{this.name}}" class="wizard-step-active" style="min-height: 16px;
+    min-width: 16px; display: block;margin-right: 15px;
+    margin-top: 15px; float:left"></span> 
+    <span id="step-{{this.name}}" style="margin-top: 15px; float: left;
+     {{#if this.clickable}}  
+    text-decoration: underline;
+    {{/if}}
+    ">
+    {{inc @index}}-{{i18n this.name prefix="chart.wizard.creation.step."}}
+    </span>
+    
+ {{#if this.clickable}}  
+</a>
+{{/if}}
+<br />
+<br />
+<br />
+<br />
+{{/inline}}
+
+
+<div style="display : table-row;">
+{{#each attributes.steps}}
+{{> step}}
+{{/each}}
+</div>
+
+			 <div style="display: table-footer-group; ">
+	<span class="illustration-graph" style=" min-height: 100px;min-width: 100px;
+    display: block;   margin-bottom: 40px; margin-left: 10%;"/>		
+			</div> 
+
+ </div>

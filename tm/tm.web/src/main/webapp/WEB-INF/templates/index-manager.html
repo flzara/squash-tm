@@ -1,0 +1,179 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title th:text="#{label.indexAdministration}">Administration des index</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<style th:include="admin/admin-subpage.frag:: subpage-css" th:remove="tag"></style>
+
+<script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
+<script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+
+<script th:src="@{/scripts/pubsub-boot.js}"></script>
+<script type="text/javascript" th:inline="javascript">
+	var squashtm = {};
+	squashtm.app = {
+		contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
+		localizedDateFormat : /*[[ #{squashtm.dateformatShort.datepicker} ]]*/"dd/mm/yy",
+		locale : /*[[ #{squashtm.locale} ]]*/"fr",
+                messages : {}
+	};
+</script>
+<script data-main="../../scripts/index-manager.js" th:attr="data-main=@{/scripts/index-manager.js}"
+  src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
+
+</script>
+
+</head>
+<body>
+  <div id="navigation" th:include="navbar.frag :: navbar('')">NAVBAR</div>
+  <div id="workspace">
+    <div id="workspace-title">
+      <div class="snap-left">
+        <h2 th:text="#{label.administration}" class="admin">Administration</h2>
+      </div>
+      <div class="snap-right">
+        <div class="main-menubar " th:include="menubar.frag :: menubar">MENUBAR</div>
+        <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">NOTIFICATION</div>
+      </div>
+    </div>
+    <div id="sub-page" class="sub-page">
+
+      <div id="sub-page-header" class="sub-page-header">
+
+        <div id="sub-page-title" class="sub-page-title">
+          <h2 th:text="#{title.indexAdministration}">Administration des index</h2>
+        </div>
+
+        <div id="sub-page-buttons" class="sub-page-buttons">
+          <input id="back" type="button" class="sq-btn" th:value="#{label.Back}" value="Retour" />
+
+        </div>
+
+        <div class="unsnap"></div>
+      </div>
+
+      <div id="index-administration-content" class="sub-page-content"
+        th:with="dateformat=#{squashtm.dateformat}">
+
+        <div class="fragment-body unstyled">
+
+          <div align="center">
+            <div class="index-inline-left-block index-warning">
+              <span id="should-reindex-message" th:if="${indexedOnPreviousVersion}"
+                th:text="#{search.index.newversion.message}"></span>
+              <span id="monitor-percentage" class="not-displayed">0 / 0 (0%)</span>
+              <span id="monitor-message" class="not-displayed" th:text="#{search.index.monitor.message}"></span>
+            </div>
+            <div class="index-inline-right-block" align="right">
+              <input type="button" th:value="#{ search.index.indexall.label }" value="Tout Indexer"
+                id="index-all-button" class="button snap-right ui-button ui-widget ui-state-default ui-corner-all" />
+            </div>
+          </div>
+          <div align="center">
+            <div>
+              <div class="index-inline-center-block">
+                <div class="index-block-title" th:text="#{search.index.requirement.label}"></div>
+                <div class="index-info-line">
+                  <span th:text="#{search.index.lastindexing.label}"></span>
+                  <span
+                    th:text="${indexModel.requirementIndexDate} ?
+													${#dates.format(indexModel.requirementIndexDate, dateformat)}+' '+#{search.index.lastindexing.version.label} :
+													'('+#{label.lower.Never}+')'"></span>
+                  <span th:text="${indexModel.requirementIndexVersion}"></span>
+                </div>
+                <div>
+                  <input type="button" th:value="#{ search.index.index.label }" value="Réindexer"
+                    id="requirement-index-button" class="button ui-button ui-widget ui-state-default ui-corner-all" />
+                </div>
+                <div class="index-warning">
+                  <span id="requirement-monitor-percentage" class="not-displayed">0 / 0 (0%)</span>
+                  <span id="requirement-monitor-message" class="not-displayed" th:text="#{search.index.monitor.message}"></span>
+                </div>
+              </div>
+              <div class="index-inline-center-block">
+                <div class="index-block-title" th:text="#{search.index.testcase.label}"></div>
+                <div class="index-info-line">
+                  <span th:text="#{search.index.lastindexing.label}"></span>
+                  <span
+                    th:text="${indexModel.testCaseIndexDate} ?
+													${#dates.format(indexModel.testCaseIndexDate, dateformat)}+' '+#{search.index.lastindexing.version.label} :
+													'('+#{label.lower.Never}+')'"></span>
+                  <span th:text="${indexModel.testcaseIndexVersion}"></span>
+                </div>
+                <div>
+                  <input type="button" th:value="#{ search.index.index.label }" value="Réindexer"
+                    id="testcase-index-button" class="button ui-button ui-widget ui-state-default ui-corner-all" />
+                </div>
+                <div class="index-warning">
+                  <span id="testcase-monitor-percentage" class="not-displayed">0 / 0 (0%)</span>
+                  <span id="testcase-monitor-message" class="not-displayed" th:text="#{search.index.monitor.message}"></span>
+                </div>
+              </div>
+              <div class="index-inline-center-block">
+								<div class="index-block-title" th:text="#{search.index.campaign.label}"></div>
+								<div class="index-info-line">
+									<span th:text="#{search.index.lastindexing.label}"></span>
+									<span th:text="${indexModel.campaignIndexDate} ?
+													${#dates.format(indexModel.campaignIndexDate, dateformat)}+' '+#{search.index.lastindexing.version.label} :
+													'('+#{label.lower.Never}+')'"></span>
+									<span th:text="${indexModel.campaignIndexVersion}"></span>
+								</div>
+								<div>
+									<input type="button" th:value="#{ search.index.index.label }"
+										value="Réindexer" id="campaign-index-button" class="button ui-button ui-widget ui-state-default ui-corner-all" />
+								</div>
+				<div class="index-warning">
+                  <span id="campaign-monitor-percentage" class="not-displayed">0 / 0 (0%)</span>
+                  <span id="campaign-monitor-message" class="not-displayed" th:text="#{search.index.monitor.message}"></span>
+                </div>				
+			  </div>
+
+              <div align="center">
+                <div class="index-inline-left-block" align="left">
+                  <div class="index-message-title" th:text="#{search.index.warning.label}"></div>
+                  <div th:utext="#{search.index.warning.message}"></div>
+                </div>
+                <div class="index-inline-right-block" align="right">
+                  <input type="button" th:value="#{ search.index.refresh.label }" value="Rafraîchir la page"
+                    id="refresh-index-button"
+                    class="button snap-right ui-button ui-widget ui-state-default ui-corner-all" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="confirm-index-all-dialog" class="popup-dialog not-displayed" th:title="#{label.Confirm}">
+      <div th:text="#{message.search.indexAll.warning}"></div>
+      <div class="popup-dialog-buttonpane">
+        <input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}" />
+        <input class="cancel" type="button" value="cancel" th:value="#{label.Cancel}" />
+      </div>
+    </div>
+  </div>
+</body>
+</html>

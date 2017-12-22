@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test-case-export" pageWidth="2850" pageHeight="40" orientation="Landscape" columnWidth="2850" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" resourceBundle="/WEB-INF/messages/tm/messages" whenResourceMissingType="Key" uuid="b106efa6-358c-482f-80ce-e2f433080d08">
+	<property name="ireport.zoom" value="1.0000000000000013"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.text.truncate.at.char" value="Boolean.FALSE"/>
+	<property name="net.sf.jasperreports.export.xls.white.page.background" value="false"/>
+	<style name="table_TH" mode="Opaque" forecolor="#FFFFFF" backcolor="#7DAAD6">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Transparent">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="Table Dataset 1" uuid="1a068dab-0f57-4ad2-954d-a1ba58d65484"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="folderName" class="java.lang.String">
+		<fieldDescription><![CDATA[folderName]]></fieldDescription>
+	</field>
+	<field name="id" class="java.lang.Long">
+		<fieldDescription><![CDATA[id]]></fieldDescription>
+	</field>
+	<field name="reference" class="java.lang.String">
+		<fieldDescription><![CDATA[reference]]></fieldDescription>
+	</field>
+	<field name="name" class="java.lang.String">
+		<fieldDescription><![CDATA[name]]></fieldDescription>
+	</field>
+	<field name="description" class="java.lang.String">
+		<fieldDescription><![CDATA[description]]></fieldDescription>
+	</field>
+	<field name="weight" class="java.lang.Enum">
+		<fieldDescription><![CDATA[weight]]></fieldDescription>
+	</field>
+	<field name="nature" class="java.lang.String">
+		<fieldDescription><![CDATA[nature]]></fieldDescription>
+	</field>
+	<field name="type" class="java.lang.String">
+		<fieldDescription><![CDATA[type]]></fieldDescription>
+	</field>
+	<field name="status" class="java.lang.Enum">
+		<fieldDescription><![CDATA[status]]></fieldDescription>
+	</field>
+	<field name="createdOn" class="java.util.Date">
+		<fieldDescription><![CDATA[createdOn]]></fieldDescription>
+	</field>
+	<field name="createdBy" class="java.lang.String">
+		<fieldDescription><![CDATA[createdBy]]></fieldDescription>
+	</field>
+	<field name="lastModifiedOn" class="java.util.Date">
+		<fieldDescription><![CDATA[lastModifiedOn]]></fieldDescription>
+	</field>
+	<field name="lastModifiedBy" class="java.lang.String">
+		<fieldDescription><![CDATA[lastModifiedBy]]></fieldDescription>
+	</field>
+	<field name="prerequisite" class="java.lang.String">
+		<fieldDescription><![CDATA[prerequisite]]></fieldDescription>
+	</field>
+	<field name="firstAction" class="java.lang.String">
+		<fieldDescription><![CDATA[firstAction]]></fieldDescription>
+	</field>
+	<field name="firstExpectedResult" class="java.lang.String">
+		<fieldDescription><![CDATA[firstExpectedResult]]></fieldDescription>
+	</field>
+	<field name="steps" class="java.util.List">
+		<fieldDescription><![CDATA[steps]]></fieldDescription>
+	</field>
+	<field name="project" class="java.lang.String">
+		<fieldDescription><![CDATA[project]]></fieldDescription>
+	</field>
+	<title>
+		<band height="20" splitType="Prevent">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="c4708a43-2500-4831-b791-b545b733c3d9" style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="170" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PATH"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="da3ce26d-3ef2-49ff-a2a5-58b718dde260" style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="170" y="0" width="170" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ID"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="f87111a4-da1b-465e-a8be-7ddf21788fd9" style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="340" y="0" width="170" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["REFERENCE"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="2384f69b-1883-4934-9623-1762b7ef92f6" style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="510" y="0" width="170" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["LABEL"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="f2059aaf-8471-4b60-aacd-13089b8d77fe" style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="680" y="0" width="170" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["WEIGHT"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="95aa0fcf-78e9-4c32-8f36-da7a6f3037bf" style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="850" y="0" width="170" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["NATURE"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="c9583aa5-f047-4c6c-8f26-9711b71a0b30" style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="1020" y="0" width="170" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["TYPE"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="de486c86-7b78-4232-854d-63ba24f7398e" style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="1190" y="0" width="170" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["STATUS"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="">
+				<reportElement uuid="69fac726-5193-4e5e-a89a-40c6ef1d87b9" style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="1360" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["DESCRIPTION"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="19632c66-5f68-49f4-a4ec-b70d2a62c6d4" style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="1700" y="0" width="170" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CREATED_ON"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="eba9fb83-a2ae-44bb-b693-989b6fe5e309" style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="1870" y="0" width="170" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CREATED_BY"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="">
+				<reportElement uuid="4ece24a6-188f-412f-a591-13553a3ca6fd" style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="1530" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PRE_REQUISITE"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="4f13e573-c319-4464-8c44-32d9c57f0a3a" style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="2550" y="0" width="170" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["EXPECTED_RESULT"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="45065f57-f14e-430d-8cc5-68f3d34887db" style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="2380" y="0" width="170" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ACTION"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="66f383b4-c683-45b3-ab4b-a130e543b89b" style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="2210" y="0" width="170" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["LAST_MODIFIED_BY"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="c85688fd-4ab8-4f89-9f04-e217251bb4bb" style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="2040" y="0" width="170" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["LAST_MODIFIED_ON"]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="20" splitType="Prevent">
+			<textField>
+				<reportElement uuid="136705ff-754b-4d73-b811-184c49f7d413" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="0" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textElement verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[$F{project}+"/"+$F{folderName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="3a801486-d138-4e80-a6b8-b83b2ff10572" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="170" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textElement verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="eae18855-ee1a-4194-960a-402711c7f12d" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="340" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textElement verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[$F{reference}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="b7cd47f8-6226-40fa-8208-e776678c9dee" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="510" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textElement verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="5af32758-ea57-4660-a4f5-520fc34a507d" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="680" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textElement verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[$F{weight}.name()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b82edfd6-8d6f-4eba-ad8d-b6e36e6082ac" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="850" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textElement verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[$F{nature}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="840c18dc-9b4b-467b-9335-3f89f9e48e86" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1020" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textElement verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[$F{type}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="4eb273bb-fcb8-4d88-a22b-f4f8bf13df01" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1190" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textElement verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[$F{status}.name()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="f9c0f59c-f038-4afb-aef7-c93fbf4fc1da" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1360" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textElement verticalAlignment="Top" markup="none"/>
+				<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="1c8b3f97-124b-4ac2-aee1-e7fedf6ecc4e" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1530" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textElement verticalAlignment="Top" markup="none"/>
+				<textFieldExpression><![CDATA[$F{prerequisite}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="d9eb7b4e-1539-425d-b20f-65dcace991f6" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1700" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textElement verticalAlignment="Top" markup="none"/>
+				<textFieldExpression><![CDATA[$F{createdOn}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="f2e11271-b17f-4aff-beec-c9fa6b015cad" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1870" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textElement verticalAlignment="Top" markup="none"/>
+				<textFieldExpression><![CDATA[$F{createdBy}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="bfdecf2e-df19-48db-a09b-cbe1bb23fc47" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="2380" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textElement verticalAlignment="Top" markup="none"/>
+				<textFieldExpression><![CDATA[$F{firstAction}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="ad44c141-431a-44f2-a8c5-05f39c44bb19" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="2550" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textElement verticalAlignment="Top" markup="none"/>
+				<textFieldExpression><![CDATA[$F{firstExpectedResult}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="7a9e8475-87d6-42b2-8a01-1db0117057e6" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="2210" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textElement verticalAlignment="Top" markup="none"/>
+				<textFieldExpression><![CDATA[$F{lastModifiedBy}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="860a0d36-5dc3-4d0f-ace7-17380c834621" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="2040" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textElement verticalAlignment="Top" markup="none"/>
+				<textFieldExpression><![CDATA[$F{lastModifiedOn}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="20" splitType="Prevent">
+			<subreport>
+				<reportElement uuid="08d8be07-0ec2-4965-8d15-f400381bd9b4" stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="0" width="2680" height="20" isRemoveLineWhenBlank="true"/>
+				<subreportParameter name="REPORT_RESOURCE_BUNDLE">
+					<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="id">
+					<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{steps})]]></dataSourceExpression>
+				<subreportExpression><![CDATA["WEB-INF/reports/test-case-export-steps.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

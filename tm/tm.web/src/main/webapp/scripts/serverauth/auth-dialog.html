@@ -1,0 +1,53 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<html>
+<body>
+<div id="login-dialog" data-def="width=300" class="popup-dialog not-displayed" title="{{title}}" >
+
+  <div data-def="error-pane">
+    <span class="error-message"></span>
+  </div>
+
+  <div>
+    <div class="centered">
+      <div class="display-table">
+        <div class="display-table-row">
+          <div class="display-table-cell"><label>{{username}}</label></div>
+          <div class="display-table-cell"><input type="text" id="login-dialog-login" /></div>
+        </div>
+        <div class="display-table-row">
+          <div class="display-table-cell"><label>{{password}}</label></div>
+          <div class="display-table-cell"><input type="password"  id="login-dialog-password"/></div>  
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="popup-dialog-buttonpane">
+    <input type="button" value="{{confirm}}"  data-def="evt=confirm, mainbtn"/>
+    <input type="button" value="{{cancel}}" data-def="evt=cancel"/>
+  </div>  
+</div> 
+
+</body>
+</html>

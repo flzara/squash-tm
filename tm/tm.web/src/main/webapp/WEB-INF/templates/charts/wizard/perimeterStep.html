@@ -1,0 +1,154 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+  <div th:fragment="chart-wizard-perimeter">
+
+<p>
+	<span style="font-weight: bold;" th:text="#{chart.wizard.creation.step.message.perimeter}"></span>
+	<br/>
+	<span th:text="#{chart.wizard.creation.step.sub-message.entity}"></span>
+</p>
+
+
+ <div style="margin-top:4em;">
+  <div>
+    {{!--<![CDATA[--}}
+    <input  type="radio" name="scope-type" class="scope-type" value="DEFAULT"
+            {{#equal this.attributes.scopeType "DEFAULT"}} checked="checked" {{/equal}}
+    />  {{!--]]>--}} <span th:text="#{chart.wizard.perimeter.default}">Current project</span>
+  </div>
+  <div style="margin-top:4em;">
+    {{!--<![CDATA[--}}
+    <input  type="radio" name="scope-type" class="scope-type" value="PROJECTS"
+            {{#equal this.attributes.scopeType "PROJECTS"}} checked="checked" {{/equal}}/>
+    {{!--]]>--}} <span th:text="#{chart.wizard.perimeter.projects}">Custom project</span>
+    <input type="button" class="sq-btn" id="change-perimeter-project-button" th:value="#{label.Choose}" />
+  </div>
+  <div style="margin-top:4em;">
+    {{!--<![CDATA[--}}
+    <input  type="radio" name="scope-type" class="scope-type" value="CUSTOM"
+            {{#equal this.attributes.scopeType "CUSTOM"}} checked="checked" {{/equal}}/> {{!--]]>--}}
+            <span th:text="#{chart.wizard.perimeter.custom}">Custom entities</span>
+            <a id="change-perimeter-button" class="buttonmenu sq-icon-btn buttonmenu-button" role="buttonmenu" >
+        	  <span th:text="#{wizard.perimeter.change}"/>
+            </a>
+
+            <ul id="change-perimeter-menu" class="buttonmenu-menu squash-buttonmenu ui-menu ui-widget  ui-corner-all collapse" role="menu" tabindex="0" style="position: absolute; overflow: hidden; white-space: nowrap; z-index: 3000; width: 113px; display: none;" aria-activedescendant="ui-id-7">
+                  {{#each attributes.perimSelect}}
+                  <li  class="cursor-pointer ui-menu-item perimeter-select" role="presentation" aria-disabled="true">
+                    <a  class="ui-corner-all " tabindex="-1" role="menuitem" name="{{name}}">{{i18n text}}</a>
+                  </li>
+                  {{/each}}
+            </ul>
+    </div>
+</div>
+
+
+<div style="margin-top : 4em;">
+	<span style="font-weight: bold;" id="selected-perim-msg"/>
+	<span style="font-weight: bold;color: #750021;text-decoration: underline" id="selected-perim" />
+
+
+</div>
+
+
+<div id="tree-dialog-container">
+ <div id="tree-dialog" style="height: 200px!important"
+				class="not-displayed popup-dialog search-minimal-height" th:title="#{report.form.tree-picker.dialog.title}" />
+  </div>
+
+  <div id="project-perimeter-popup-container">
+    <div id="project-perimeter-popup"  class="popup-dialog not-displayed" th:title="#{chart.wizard.perimeter.projects}">
+    </div>
+  </div>
+
+ </div>
+
+
+
+
+
+
+<div th:fragment="chart-wizard-tree-popup">
+
+<span id="warning-info-list"  class="red-warning-message" />
+
+ <div class="main">
+  <div id="tree-pane">
+  <div id="tree" class="tree jstree" />
+  <div class="popup-dialog-buttonpane">
+        <input id="tree-popup-confirm" type="button" th:value="#{label.Confirm}" />
+        <input type="button" th:value="#{label.Cancel}" />
+  </div>
+</div>
+</div>
+</div>
+
+<div th:fragment="chart-wizard-project-popup">
+  <div id="dialog-settings-filter-maincontent">
+    <div id="dialog-settings-filter-projectlist" class="project-filter-list dataTables_wrapper">
+      <span class="filter-warning not-displayed" th:text="#{message.projectPicker.warnFilterOn}"></span>
+
+      <table>
+        <thead>
+        <tr>
+          <th width="25px" class="th-check ui-state-default"></th>
+          <th class="th-name ui-state-default" th:text="#{label.Name}">Name</th>
+          <th class="th-type ui-state-default" th:text="#{label.tag}">Tag</th>
+        </tr>
+        </thead>
+        <tbody class="available-fields">
+
+        {{#each this}}
+            <tr>
+               <td class="td-check">
+                 {{!--<![CDATA[--}}
+
+                <input type="checkbox" class="project-checkbox" id="project-perimeter-checkbox-{{id}}" name="project-scope" value="{{id}}" {{#if checked}} checked="checked" {{/if}} />
+
+                 {{!--]]>--}}
+               </td>
+              <td class="project-name">{{name}}</td>
+              <td class="project-label">{{label}}</td>
+             </tr>
+        {{/each}}
+        </tbody>
+      </table>
+    </div>
+    <div id="dialog-settings-filter-controls" class="project-filter-controls">
+      <ul>
+        <li id="dialog-settings-filter-selectall" class="project-picker-selall cursor-pointer"
+            th:text="#{dialog.settings.filter.controls.selectall}">Select all</li>
+        <li id="dialog-settings-filter-deselectall" class="project-picker-deselall cursor-pointer"
+            th:text="#{dialog.settings.filter.controls.deselectall}">Deselect all</li>
+        <li id="dialog-settings-filter-invertselect" class="project-picker-invsel cursor-pointer"
+            th:text="#{dialog.settings.filter.controls.invertselect}">Invert selection</li>
+      </ul>
+    </div>
+    <div class="unsnap not-displayed"></div>
+  </div>
+  <div class="popup-dialog-buttonpane">
+    <input type="button" th:value="#{label.Confirm}"/>
+    <input type="button" th:value="#{label.Cancel}"/>
+  </div>
+</div>
+

@@ -1,0 +1,558 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <!-- DO NOT FORGET TO UPDATE VERSION IN CORE_CONFIG ! -->
+    <changeSet id="tm-1.4.0.00" author="gfouquet">
+        <comment>Adds a TM database version number</comment>
+        <update tableName="CORE_CONFIG">
+            <column name="STR_KEY" value="squashtest.tm.database.version" />
+            <column name="VALUE" value="1.4.0" />
+            <where>STR_KEY = 'squashtest.tm.database.version'</where>
+        </update>
+    </changeSet>
+
+    <changeSet author="gfouquet" id="tm-1.4.0-feat-1109.01">
+        <comment>Creates a table for Custom Fields</comment>
+        <createTable tableName="CUSTOM_FIELD">
+            <column name="CF_ID" type="BIGINT"  autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_custom_field"/>
+            </column>
+	
+            <column name="FIELD_TYPE" type="CHAR(3)" remarks="CF : simple, SSF : multiple-choice">
+                   <constraints nullable="false" />
+            </column>
+
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="LABEL" type="VARCHAR(255)" defaultValue="">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="OPTIONAL" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="DEFAULT_VALUE" type="VARCHAR(255)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="INPUT_TYPE" type="CHAR(30)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="gfouquet" id="tm-1.4.0-feat-1109.02">
+        <comment>Creates a table for Custom Fields Options</comment>
+        <createTable tableName="CUSTOM_FIELD_OPTION">
+            <column name="CF_ID" type="BIGINT">
+                <constraints nullable="false" references="CUSTOM_FIELD(CF_ID)" foreignKeyName="fk_cf_option_cf"/>
+            </column>
+
+            <column name="LABEL" type="VARCHAR(255)">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="POSITION" type="INT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="gfouquet" id="tm-1.4.0-feat-1390.01">
+        <comment>Creates a table for Custom Fields Binding</comment>
+        <createTable tableName="CUSTOM_FIELD_BINDING">
+            <column name="CFB_ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_cfb_option" />
+            </column>
+
+            <column name="CF_ID" type="BIGINT">
+                <constraints nullable="false" references="CUSTOM_FIELD(CF_ID)" foreignKeyName="fk_cfb_cf"/>
+            </column>
+
+            <column name="BOUND_ENTITY" type="VARCHAR(30)">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="BOUND_PROJECT_ID" type="BIGINT">
+                <constraints nullable="false"  references="PROJECT(PROJECT_ID)" foreignKeyName="fk_cfb_bound_project"/>
+            </column>
+
+            <column name="POSITION" type="INT">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+
+        <addUniqueConstraint tableName="CUSTOM_FIELD_BINDING" columnNames="BOUND_PROJECT_ID, BOUND_ENTITY, CF_ID" constraintName="uc_cf_entity_proj_bnd" />
+    </changeSet>
+
+    <changeSet author="gfouquet" id="tm-1.4.0-feat-1390.02">
+        <comment>Creates a table for rendering locations of a bound custom field</comment>
+        <createTable tableName="CUSTOM_FIELD_RENDERING_LOCATION">
+            <column name="CFB_ID" type="BIGINT">
+                <constraints nullable="false" references="CUSTOM_FIELD_BINDING(CFB_ID)" foreignKeyName="fk_cfb_render_loc_cfb"/>
+            </column>
+
+            <column name="RENDERING_LOCATION" type="VARCHAR(30)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+
+	<changeSet id="tm-1.4.0.feat-1513.01" author="mpagnon">
+		<comment>Add property attachment list in library nodes, projects and libraries</comment>
+		<addColumn tableName="TEST_CASE_LIBRARY_NODE">
+			<column name="ATTACHMENT_LIST_ID" type="BIGINT"
+				remarks="clé étrangère vers un ATTACHMENT_LIST, l'entité qui gère les pièces jointes.">
+				<constraints nullable="true"
+					references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" foreignKeyName="fk_tcNode_attachment_list" />
+			</column>
+		</addColumn>
+		<addColumn tableName="CAMPAIGN_LIBRARY_NODE">
+			<column name="ATTACHMENT_LIST_ID" type="BIGINT"
+				remarks="clé étrangère vers un ATTACHMENT_LIST, l'entité qui gère les pièces jointes.">
+				<constraints nullable="true"
+					references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" foreignKeyName="fk_campNode_attachment_list" />
+			</column>
+		</addColumn>
+		<addColumn tableName="RESOURCE">
+			<column name="ATTACHMENT_LIST_ID" type="BIGINT"
+				remarks="clé étrangère vers un ATTACHMENT_LIST, l'entité qui gère les pièces jointes.">
+				<constraints nullable="true"
+					references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" foreignKeyName="fk_resource_attachment_list" />
+			</column>
+		</addColumn>
+		<addColumn tableName="PROJECT">
+			<column name="ATTACHMENT_LIST_ID" type="BIGINT"
+				remarks="clé étrangère vers un ATTACHMENT_LIST, l'entité qui gère les pièces jointes.">
+				<constraints nullable="true"
+					references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" foreignKeyName="fk_project_attachment_list" />
+			</column>
+		</addColumn>
+		<addColumn tableName="REQUIREMENT_LIBRARY">
+			<column name="ATTACHMENT_LIST_ID" type="BIGINT"
+				remarks="clé étrangère vers un ATTACHMENT_LIST, l'entité qui gère les pièces jointes.">
+				<constraints nullable="true"
+					references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" foreignKeyName="fk_reqLib_attachment_list" />
+			</column>
+		</addColumn>
+		<addColumn tableName="TEST_CASE_LIBRARY">
+			<column name="ATTACHMENT_LIST_ID" type="BIGINT"
+				remarks="clé étrangère vers un ATTACHMENT_LIST, l'entité qui gère les pièces jointes.">
+				<constraints nullable="true"
+					references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" foreignKeyName="fk_tcLib_attachment_list" />
+			</column>
+		</addColumn>
+		<addColumn tableName="CAMPAIGN_LIBRARY">
+			<column name="ATTACHMENT_LIST_ID" type="BIGINT"
+				remarks="clé étrangère vers un ATTACHMENT_LIST, l'entité qui gère les pièces jointes.">
+				<constraints nullable="true"
+					references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" foreignKeyName="fk_campLib_attachment_list" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="tm-1.4.0.feat-1513.02" author="mpagnon">
+		<comment>Migrate existing attachment lists</comment>
+		<sql>
+			update TEST_CASE_LIBRARY_NODE
+			set ATTACHMENT_LIST_ID = (select TEST_CASE.ATTACHMENT_LIST_ID from TEST_CASE where TEST_CASE.TCLN_ID = TEST_CASE_LIBRARY_NODE.TCLN_ID);
+		</sql>
+		<sql>
+			update CAMPAIGN_LIBRARY_NODE
+			set ATTACHMENT_LIST_ID = (select CAMPAIGN.ATTACHMENT_LIST_ID from CAMPAIGN where CAMPAIGN.CLN_ID = CAMPAIGN_LIBRARY_NODE.CLN_ID);
+		</sql>
+		<sql>
+			update RESOURCE
+			set ATTACHMENT_LIST_ID = (select REQUIREMENT_VERSION.ATTACHMENT_LIST_ID from REQUIREMENT_VERSION where REQUIREMENT_VERSION.RES_ID = RESOURCE.RES_ID);
+		</sql>
+	</changeSet>
+	<changeSet id="tm-1.4.0.feat-1513.03" author="mpagnon">
+		<comment>Add attachment lists to test_case_folders</comment>
+		<addColumn tableName="ATTACHMENT_LIST" >
+			<column name="TCLN_ID" type="BIGINT" remarks="colonne provisoire pour se rapeller de à qui était destinée la nouvelle attachment_list">
+				<constraints references="TEST_CASE_LIBRARY_NODE(TCLN_ID)" foreignKeyName="fk_tcln"/>
+			</column>
+		</addColumn>
+		<sql>
+			insert into ATTACHMENT_LIST (TCLN_ID)
+			select TEST_CASE_FOLDER.TCLN_ID from TEST_CASE_FOLDER;
+		</sql>
+		<sql>
+			update TEST_CASE_LIBRARY_NODE 
+			set ATTACHMENT_LIST_ID = (select ATTACHMENT_LIST.ATTACHMENT_LIST_ID from ATTACHMENT_LIST where ATTACHMENT_LIST.TCLN_ID = TEST_CASE_LIBRARY_NODE.TCLN_ID)
+			where ATTACHMENT_LIST_ID is null;
+		</sql>
+		<dropForeignKeyConstraint baseTableName="ATTACHMENT_LIST" constraintName="fk_tcln"/>
+		<dropColumn tableName="ATTACHMENT_LIST" columnName="TCLN_ID"/>
+	</changeSet>
+	<changeSet id="tm-1.4.0.feat-1513.04" author="mpagnon">
+		<comment>Add attachment lists to campaign_folders</comment>
+		<addColumn tableName="ATTACHMENT_LIST">
+			<column name="CLN_ID" type="BIGINT"
+				remarks="table provisoire pour se rapeller de à qui était destinée la nouvelle attachment_list">
+				<constraints nullable="true"
+					references="CAMPAIGN_LIBRARY_NODE(CLN_ID)" foreignKeyName="fk_cln"/>
+			</column>
+		</addColumn>
+		<sql>
+			insert into ATTACHMENT_LIST (CLN_ID)
+			select CAMPAIGN_FOLDER.CLN_ID from CAMPAIGN_FOLDER;
+		</sql>
+		<sql>
+			update CAMPAIGN_LIBRARY_NODE 
+			set ATTACHMENT_LIST_ID = (select ATTACHMENT_LIST.ATTACHMENT_LIST_ID from ATTACHMENT_LIST where ATTACHMENT_LIST.CLN_ID = CAMPAIGN_LIBRARY_NODE.CLN_ID)
+			where ATTACHMENT_LIST_ID is null;
+		</sql>
+		<dropForeignKeyConstraint baseTableName="ATTACHMENT_LIST" constraintName="fk_cln"/>
+		<dropColumn tableName="ATTACHMENT_LIST" columnName="CLN_ID"/>
+	</changeSet>
+	<changeSet id="tm-1.4.0.feat-1513.05" author="mpagnon">
+		<comment>Add attachment lists to requirement folders</comment>
+		<addColumn tableName="ATTACHMENT_LIST">
+			<column name="RES_ID" type="BIGINT"
+				remarks="table provisoire pour se rapeller de à qui était destinée la nouvelle attachment_list">
+				<constraints nullable="true"
+					references="RESOURCE(RES_ID)" foreignKeyName="fk_sr"/>
+			</column>
+		</addColumn>
+		<sql>
+			insert into ATTACHMENT_LIST (RES_ID)
+			select SIMPLE_RESOURCE.RES_ID from SIMPLE_RESOURCE;
+		</sql>
+		<sql>
+			update RESOURCE 
+			set ATTACHMENT_LIST_ID = (select ATTACHMENT_LIST.ATTACHMENT_LIST_ID from ATTACHMENT_LIST where ATTACHMENT_LIST.RES_ID = RESOURCE.RES_ID)
+			where ATTACHMENT_LIST_ID is null;
+		</sql>
+		<dropForeignKeyConstraint baseTableName="ATTACHMENT_LIST" constraintName="fk_sr"/>
+		<dropColumn tableName="ATTACHMENT_LIST" columnName="RES_ID"/>
+	</changeSet>
+	<changeSet id="tm-1.4.0.feat-1513.06" author="mpagnon">
+		<comment>Add attachment lists to projects</comment>
+		<addColumn tableName="ATTACHMENT_LIST">
+			<column name="PROJECT_ID" type="BIGINT"
+				remarks="table provisoire pour se rapeller de à qui était destinée la nouvelle attachment_list">
+				<constraints nullable="true"
+					references="PROJECT(PROJECT_ID)" foreignKeyName="fk_project"/>
+			</column>
+		</addColumn>
+		<sql>
+			insert into ATTACHMENT_LIST (PROJECT_ID)
+			select PROJECT.PROJECT_ID from PROJECT;
+		</sql>
+		<sql>
+			update PROJECT 
+			set ATTACHMENT_LIST_ID = (select ATTACHMENT_LIST.ATTACHMENT_LIST_ID from ATTACHMENT_LIST where ATTACHMENT_LIST.PROJECT_ID = PROJECT.PROJECT_ID)
+			where ATTACHMENT_LIST_ID is null;
+		</sql>
+		<dropForeignKeyConstraint baseTableName="ATTACHMENT_LIST" constraintName="fk_project"/>
+		<dropColumn tableName="ATTACHMENT_LIST" columnName="PROJECT_ID"/>
+	</changeSet>
+	<changeSet id="tm-1.4.0.feat-1513.07" author="mpagnon">
+		<comment>Add attachment lists to reqLib</comment>
+		<addColumn tableName="ATTACHMENT_LIST">
+			<column name="RL_ID" type="BIGINT"
+				remarks="table provisoire pour se rapeller de à qui était destinée la nouvelle attachment_list">
+				<constraints nullable="true"
+					references="REQUIREMENT_LIBRARY(RL_ID)" foreignKeyName="fk_rLib"/>
+			</column>
+		</addColumn>
+		<sql>
+			insert into ATTACHMENT_LIST (RL_ID)
+			select REQUIREMENT_LIBRARY.RL_ID from REQUIREMENT_LIBRARY;
+		</sql>
+		<sql>
+			update REQUIREMENT_LIBRARY 
+			set ATTACHMENT_LIST_ID = (select ATTACHMENT_LIST.ATTACHMENT_LIST_ID from ATTACHMENT_LIST where ATTACHMENT_LIST.RL_ID = REQUIREMENT_LIBRARY.RL_ID)
+			where ATTACHMENT_LIST_ID is null;
+		</sql>
+		<dropForeignKeyConstraint baseTableName="ATTACHMENT_LIST" constraintName="fk_rLib"/>
+		<dropColumn tableName="ATTACHMENT_LIST" columnName="RL_ID"/>
+	</changeSet>
+
+	<changeSet id="tm-1.4.0.feat-1513.08" author="mpagnon">
+		<comment>Add attachment lists to test_case_library</comment>
+		<addColumn tableName="ATTACHMENT_LIST">
+			<column name="TCL_ID" type="BIGINT"
+				remarks="table provisoire pour se rapeller de à qui était destinée la nouvelle attachment_list">
+				<constraints nullable="true"
+					references="TEST_CASE_LIBRARY(TCL_ID)" foreignKeyName="fk_tcLib"/>
+			</column>
+		</addColumn>
+		<sql>
+			insert into ATTACHMENT_LIST (TCL_ID)
+			select TEST_CASE_LIBRARY.TCL_ID from TEST_CASE_LIBRARY;
+		</sql>
+		<sql>
+			update TEST_CASE_LIBRARY 
+			set ATTACHMENT_LIST_ID = (select ATTACHMENT_LIST.ATTACHMENT_LIST_ID from ATTACHMENT_LIST where ATTACHMENT_LIST.TCL_ID = TEST_CASE_LIBRARY.TCL_ID)
+			where ATTACHMENT_LIST_ID is null;
+		</sql>
+		<dropForeignKeyConstraint baseTableName="ATTACHMENT_LIST" constraintName="fk_tcLib"/>
+		<dropColumn tableName="ATTACHMENT_LIST" columnName="TCL_ID"/>
+	</changeSet>
+
+	<changeSet id="tm-1.4.0.feat-1513.09" author="mpagnon">
+		<comment>Add attachment lists to campaign libraries</comment>
+		<addColumn tableName="ATTACHMENT_LIST">
+			<column name="CL_ID" type="BIGINT"
+				remarks="table provisoire pour se rapeller de à qui était destinée la nouvelle attachment_list">
+				<constraints nullable="true"
+					references="CAMPAIGN_LIBRARY(CL_ID)" foreignKeyName="fk_cLib"/>
+			</column>
+		</addColumn>
+		<sql>
+			insert into ATTACHMENT_LIST (CL_ID)
+			select CAMPAIGN_LIBRARY.CL_ID from CAMPAIGN_LIBRARY;
+		</sql>
+		<sql>
+			update CAMPAIGN_LIBRARY 
+			set ATTACHMENT_LIST_ID = (select ATTACHMENT_LIST.ATTACHMENT_LIST_ID from ATTACHMENT_LIST where ATTACHMENT_LIST.CL_ID = CAMPAIGN_LIBRARY.CL_ID)
+			where ATTACHMENT_LIST_ID is null;
+		</sql>
+		<dropForeignKeyConstraint baseTableName="ATTACHMENT_LIST" constraintName="fk_cLib"/>
+		<dropColumn tableName="ATTACHMENT_LIST" columnName="CL_ID"/>
+	</changeSet>
+	<changeSet id="tm-1.4.0.feat-1513.010" author="mpagnon">
+		<comment>Make attachment_list_ids new fks not nullable</comment>
+		<addNotNullConstraint tableName="TEST_CASE_LIBRARY_NODE" columnDataType="BIGINT" columnName="ATTACHMENT_LIST_ID"/>
+		<addNotNullConstraint tableName="CAMPAIGN_LIBRARY_NODE" columnDataType="BIGINT" columnName="ATTACHMENT_LIST_ID"/>
+		<addNotNullConstraint tableName="RESOURCE" columnDataType="BIGINT" columnName="ATTACHMENT_LIST_ID"/>
+		<addNotNullConstraint tableName="PROJECT" columnDataType="BIGINT" columnName="ATTACHMENT_LIST_ID"/>
+		<addNotNullConstraint tableName="REQUIREMENT_LIBRARY" columnDataType="BIGINT" columnName="ATTACHMENT_LIST_ID"/>
+		<addNotNullConstraint tableName="CAMPAIGN_LIBRARY" columnDataType="BIGINT" columnName="ATTACHMENT_LIST_ID"/>		
+		<addNotNullConstraint tableName="TEST_CASE_LIBRARY" columnDataType="BIGINT" columnName="ATTACHMENT_LIST_ID"/>
+	</changeSet>
+	<changeSet id="tm-1.4.0.feat-1513.11" author="mpagnon">
+		<comment>Drop previous attachment list ids</comment>
+		<dropForeignKeyConstraint baseTableName="TEST_CASE" constraintName="fk_test_case_attachment_list"/>
+		<dropForeignKeyConstraint baseTableName="CAMPAIGN" constraintName="fk_campaign_attachment_list"/>
+		<dropForeignKeyConstraint baseTableName="REQUIREMENT_VERSION" constraintName="fk_requirement_version_attachment_list"/>
+		
+		<dropColumn tableName="TEST_CASE" columnName="ATTACHMENT_LIST_ID"/>
+		<dropColumn tableName="CAMPAIGN" columnName="ATTACHMENT_LIST_ID"/>
+		<dropColumn tableName="REQUIREMENT_VERSION" columnName="ATTACHMENT_LIST_ID"/>
+	</changeSet>
+	
+	<changeSet id="tm-1.4.0.feat-1392.01" author="bsiri">
+		
+		<comment>
+			The table CUSTOM_FIELD_VALUE holds instances of a CUSTOM_FIELD that are bound to instances of : 
+			test cases, requirement version, campagnes, iterations and test suites. A custom field value is created 
+			when a custom field binding is created or an entity subject to an existing custom field binding is created. 
+			A custom field value is destroyed when the bound entity instance is destroyed or the custom field binding 
+			is destroyed.			
+						
+			Note that in this table the coupling between the custom field value and the bound entity is week : it consists of a pair
+			of Type/ID (BINDABLE_ENTITY_TYPE and BINDABLE_ENTITY_ID) rather than a foreign key to the said entity, nor is true 
+			the opposite ( ie no FK from a test case to a custom field value). 	
+		</comment>
+		
+		<createTable tableName="CUSTOM_FIELD_VALUE">
+		
+			<column name="CFV_ID" type="BIGINT" autoIncrement="true" remarks="technical id">
+				<constraints primaryKey="true" nullable="false" primaryKeyName="pk_custom_field_value"/>
+			</column>
+			
+			<column name="BOUND_ENTITY_ID" type="BIGINT" remarks="the id of the bound entity">
+				<constraints nullable="false"/>
+			</column>  
+			
+			<column name="BOUND_ENTITY_TYPE" type="VARCHAR(30)" remarks="the kind of entity. Note that this information is also contained by the
+																	custom field binding.">
+				<constraints nullable="false"/>													
+			</column>
+		
+			<column name="CFB_ID" type="BIGINT" remarks="the custom field binding that holds all the data">
+				<constraints nullable="false" foreignKeyName="fk_cfv_cf_binding" references="CUSTOM_FIELD_BINDING(CFB_ID)"/>
+			</column>
+		
+			<column name="VALUE" type="VARCHAR(255)" remarks="the value of that particular custom field value"/>
+		
+		</createTable>
+	
+	</changeSet>
+	
+	<changeSet id="tm-1.4.0.feat-1553.00" author="flaurens">
+		<comment>Adds a nature field to test cases</comment>
+		<addColumn tableName="TEST_CASE">
+			<column name="TC_NATURE" type="VARCHAR(30)" defaultValue="UNDEFINED">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="tm-1.4.0.feat-1554.00" author="flaurens">
+		<comment>Adds a type field to test cases</comment>
+		<addColumn tableName="TEST_CASE">
+			<column name="TC_TYPE" type="VARCHAR(30)" defaultValue="UNDEFINED">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="tm-1.4.0.feat-1609.00" author="flaurens">
+		<comment>Adds a status field to test cases</comment>
+		<addColumn tableName="TEST_CASE">
+			<column name="TC_STATUS" type="VARCHAR(30)" defaultValue="WORK_IN_PROGRESS">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+	</changeSet>
+		
+	<changeSet id="tm-1.4.0.feat-1596.00" author="flaurens">
+		<comment>Adds test case related fields to executions for denormalization</comment>
+		<addColumn tableName="EXECUTION">
+			<column name="TC_NATURE" type="VARCHAR(30)" defaultValue="UNDEFINED">
+				<constraints nullable="false"/>
+			</column>
+			<column name="TC_TYPE" type="VARCHAR(30)" defaultValue="UNDEFINED">
+				<constraints nullable="false"/>
+			</column>
+			<column name="TC_STATUS" type="VARCHAR(30)" defaultValue="WORK_IN_PROGRESS">
+				<constraints nullable="false"/>
+			</column>
+			<column name="IMPORTANCE" type="VARCHAR(20)" defaultValue="LOW">
+				<constraints nullable="false"/>
+			</column>
+			<column name="REFERENCE" type="VARCHAR(20)" defaultValue="NULL">
+			</column>
+			<column name="TC_DESCRIPTION" type="CLOB" defaultValue="NULL">
+			</column>
+		</addColumn>
+	</changeSet>
+	
+		<changeSet id="tm-1.4.0.feat-1596.01" author="flaurens">
+			<comment>adds test case information to executions created prior to the changeset tm-1.4.0.feat-1596.00</comment>
+			<sql>
+			create table EXECUTION_TEST_CASE_DATA (TCLN_ID BIGINT, TC_DESCRIPTION TEXT, REFERENCE VARCHAR(20), IMPORTANCE VARCHAR(20), TC_NATURE VARCHAR(30), TC_TYPE VARCHAR(30), TC_STATUS VARCHAR(30));
+			
+			insert into EXECUTION_TEST_CASE_DATA (TCLN_ID, TC_DESCRIPTION, REFERENCE, IMPORTANCE, TC_NATURE, TC_TYPE, TC_STATUS)
+				select
+					tc.tcln_id AS TCLN_ID,
+					tcln.description AS DESCRIPTION,
+					tc.reference AS REFERENCE,
+					tc.importance AS IMPORTANCE,
+					tc.tc_nature AS TCNATURE,
+					tc.tc_type AS TCTYPE,
+					tc.tc_status AS TCSTATUS
+				from TEST_CASE tc
+				join TEST_CASE_LIBRARY_NODE tcln on tcln.tcln_id = tc.tcln_id;
+				
+			</sql>
+		</changeSet>
+		<changeSet id="tm-1.4.0.feat-1596.01-a" author="mpagnon">
+		<preConditions onError="CONTINUE" onFail="CONTINUE"
+			onSqlOutput="TEST">
+			<dbms type="h2" />
+		</preConditions>
+		<sql>
+			update EXECUTION exe
+			set
+			tc_description = (select TC_DESCRIPTION from EXECUTION_TEST_CASE_DATA etcd where
+			etcd.TCLN_ID = exe.TCLN_ID),
+			reference = (select REFERENCE from EXECUTION_TEST_CASE_DATA etcd where
+			etcd.TCLN_ID = exe.TCLN_ID),
+			importance = (select IMPORTANCE from EXECUTION_TEST_CASE_DATA etcd where
+			etcd.TCLN_ID = exe.TCLN_ID),
+			tc_nature = (select TC_NATURE from EXECUTION_TEST_CASE_DATA etcd where
+			etcd.TCLN_ID = exe.TCLN_ID),
+			tc_type = (select TC_TYPE from EXECUTION_TEST_CASE_DATA etcd where
+			etcd.TCLN_ID = exe.TCLN_ID),
+			tc_status = (select TC_STATUS from EXECUTION_TEST_CASE_DATA etcd where
+			etcd.TCLN_ID = exe.TCLN_ID)
+		</sql>
+
+	</changeSet>
+
+	<changeSet id="tm-1.4.0.feat-1596.01-b" author="mpagnon">
+		<preConditions onError="CONTINUE" onFail="CONTINUE"
+			onSqlOutput="TEST">
+			<dbms type="mysql" />
+		</preConditions>
+		<comment>this grammar is not supported by h2 and is more efficient</comment>
+		<sql>
+			UPDATE EXECUTION exe
+			JOIN EXECUTION_TEST_CASE_DATA etcd ON etcd.TCLN_ID = exe.TCLN_ID
+			SET
+			exe.TC_DESCRIPTION=etcd.tc_description,
+			exe.REFERENCE=etcd.reference,
+			exe.IMPORTANCE=etcd.importance,
+			exe.TC_NATURE=etcd.tc_nature,
+			exe.TC_TYPE=etcd.tc_type,
+			exe.TC_STATUS=etcd.tc_status;
+		</sql>
+
+	</changeSet>
+  
+  <changeSet id="tm-1.4.0.feat-1110.01" author="gfouquet">
+    <comment>Adds a type discriminator column on PROJECT</comment>
+    <addColumn tableName="PROJECT">
+      <column name="PROJECT_TYPE" type="CHAR(1)" defaultValue="P" remarks="P: project, T: project template">
+        <constraints nullable="false" />
+      </column>
+    </addColumn>
+  </changeSet>
+  
+  <changeSet id="tm-1.4.0.feat-1393.01" author="mpagnon">
+  <comment>Adds a className for the ProjectTemplate, this is needed so that a project template can hold user's permissions</comment>
+  	<insert tableName="ACL_CLASS">
+			<column name="CLASSNAME" value="org.squashtest.csp.tm.domain.project.ProjectTemplate" />
+		</insert>
+  </changeSet>
+  
+  <changeSet id="tm-1.4.0.feat-1628.01" author="flaurens">
+  
+    <addDefaultValue tableName="REQUIREMENT_VERSION" columnName="REFERENCE" defaultValue=""></addDefaultValue>
+   	<addDefaultValue tableName="TEST_CASE" columnName="REFERENCE" defaultValue=""></addDefaultValue>
+    <addDefaultValue tableName="EXECUTION" columnName="REFERENCE" defaultValue=""></addDefaultValue>
+    
+  	<modifyDataType tableName="REQUIREMENT_VERSION" columnName="REFERENCE" newDataType="VARCHAR(50)" ></modifyDataType>
+  	<modifyDataType tableName="TEST_CASE" columnName="REFERENCE" newDataType="VARCHAR(50)"></modifyDataType>
+  	<modifyDataType tableName="EXECUTION" columnName="REFERENCE" newDataType="VARCHAR(50)"></modifyDataType>		
+  
+  	<!--  adds the default values again because they are lost during the previous operations -->
+    <addDefaultValue tableName="REQUIREMENT_VERSION" columnName="REFERENCE" defaultValue=""></addDefaultValue>
+   	<addDefaultValue tableName="TEST_CASE" columnName="REFERENCE" defaultValue=""></addDefaultValue>
+    <addDefaultValue tableName="EXECUTION" columnName="REFERENCE" defaultValue=""></addDefaultValue>
+
+  </changeSet>
+  <changeSet id="tm-1.4.0.feat-1638.01" author="mpagnon">
+  	<addColumn tableName="CUSTOM_FIELD">
+  	<column name="CODE" defaultValue="" type="VARCHAR(30)"><constraints nullable="false"/></column>
+  	</addColumn>
+  </changeSet>
+    <changeSet id="tm-1.4.0.feat-1638.02" author="mpagnon">
+  	<addColumn tableName="CUSTOM_FIELD_OPTION">
+  	<column name="CODE" defaultValue="" type="VARCHAR(30)"><constraints nullable="false"/></column>
+  	</addColumn>
+  </changeSet>
+  
+</databaseChangeLog>
+ 

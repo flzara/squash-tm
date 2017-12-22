@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+
+	<changeSet id="tm-1.14.1" author="bsiri">
+		<comment>Update TM database version number</comment>
+		<update tableName="CORE_CONFIG">
+			<column name="VALUE" value="1.14.1" />
+			<where>STR_KEY = 'squashtest.tm.database.version'</where>
+		</update>
+	</changeSet>
+
+  
+  <changeSet id="tm-1.14.1-issue-6340-1" author="bsiri">
+        <comment>
+            For the purpose of the cleanup to come, we must activate on delete cascade 
+            between DENORMALIZED_FIELD_OPTION and DENORMALIZED_FIELD_VALUE
+        </comment>
+        
+        <dropForeignKeyConstraint baseTableName="DENORMALIZED_FIELD_OPTION" constraintName="fk_df_option_dfv"/>
+        <addForeignKeyConstraint baseTableName="DENORMALIZED_FIELD_OPTION" baseColumnNames="DFV_ID" 
+                                 referencedTableName="DENORMALIZED_FIELD_VALUE" referencedColumnNames="DFV_ID" 
+                                 onDelete="CASCADE" constraintName="fk_df_option_dfv"/>
+        
+        
+      
+  </changeSet>    
+
+  <changeSet id="tm-1.14.1-issue-6340-2a" author="bsiri" dbms="postgresql">
+      <comment>
+          Fixing the extraneous custom field values (for test cases) and denormalized field values (for executions)
+          for Postgresql.
+          Note about the ordering (in the partition instruction) : I've empirically found that it must be ascending 
+          for table DENORMALIZED_FIELD_VALUE and descending for CUSTOm_FIELD_VALUE because of 
+      </comment>
+      
+      <sql>
+        delete from DENORMALIZED_FIELD_VALUE
+        where DFV_ID in (
+            select DFV_ID from (
+                select DFV_ID, ROW_NUMBER() over (partition by DENORMALIZED_FIELD_HOLDER_ID, DENORMALIZED_FIELD_HOLDER_TYPE, CODE order by DFV_ID) 
+                as RNUM 
+                from DENORMALIZED_FIELD_VALUE
+            ) TODELETE
+            where TODELETE.RNUM > 1
+        );
+          
+        delete from CUSTOM_FIELD_VALUE
+        where CFV_ID in (
+            select CFV_ID from (
+                select CFV_ID, ROW_NUMBER() over (partition by BOUND_ENTITY_ID, BOUND_ENTITY_TYPE, CFB_ID order by CFV_ID desc) 
+                as RNUM 
+                from CUSTOM_FIELD_VALUE
+            ) TODELETE
+            where TODELETE.RNUM > 1	
+        );          
+      </sql>
+      
+  </changeSet>
+  
+
+  <changeSet id="tm-1.14.1-issue-6340-2b" author="bsiri" dbms="mysql,h2">
+      <comment>
+          Fixing the extraneous custom field values (for test cases) and denormalized field values (for executions)
+          for MySQL
+      </comment>
+      
+      <sql>
+        create temporary table DFV_DELETE as 
+        (
+                SELECT MAX( DFV_ID ) as DFV_ID
+                FROM DENORMALIZED_FIELD_VALUE
+                WHERE DENORMALIZED_FIELD_HOLDER_TYPE = 'EXECUTION'
+                GROUP BY DENORMALIZED_FIELD_HOLDER_ID, DENORMALIZED_FIELD_HOLDER_TYPE, CODE
+        ); 
+
+        delete from DENORMALIZED_FIELD_VALUE
+        where DENORMALIZED_FIELD_HOLDER_TYPE = 'EXECUTION' 
+        and DFV_ID not in (
+                select DFV_ID from DFV_DELETE
+        );          
+
+        create temporary table CFV_DELETE as 
+        (
+                SELECT MAX( CFV_ID ) as CFV_ID
+                FROM CUSTOM_FIELD_VALUE
+                WHERE BOUND_ENTITY_TYPE = 'TEST_CASE'
+                GROUP BY BOUND_ENTITY_ID, BOUND_ENTITY_TYPE, CFB_ID
+        ); 
+
+        delete from CUSTOM_FIELD_VALUE
+        where BOUND_ENTITY_TYPE = 'TEST_CASE'
+        and CFV_ID not in (
+                select CFV_ID from CFV_DELETE
+        );
+          
+          
+      </sql>
+      
+  </changeSet>
+
+
+  <changeSet id="tm-1.14.1-issue-6340-3" author="bsiri">
+      <comment>
+         enforcing uniticy on the custom field values and denormalized field values - 
+          if later on there are more double insert let it fail fast
+      </comment>
+      
+      <addUniqueConstraint tableName="DENORMALIZED_FIELD_VALUE" columnNames="DENORMALIZED_FIELD_HOLDER_ID, DENORMALIZED_FIELD_HOLDER_TYPE, CODE" constraintName="u_dfv_id_type_code"/>
+      <addUniqueConstraint tableName="CUSTOM_FIELD_VALUE" columnNames="BOUND_ENTITY_ID, BOUND_ENTITY_TYPE, CFB_ID" constraintName="u_cfv_id_type_binding"/>
+      
+  </changeSet>
+
+</databaseChangeLog>

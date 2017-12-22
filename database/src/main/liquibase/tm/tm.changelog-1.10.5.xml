@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+  <changeSet id="tm-1.10.5" author="mpagnon">
+    <comment>Update TM database version number</comment>
+    <update tableName="CORE_CONFIG">
+      <column name="VALUE" value="1.10.5" />
+      <where>STR_KEY = 'squashtest.tm.database.version'</where>
+    </update>
+  </changeSet>
+
+
+  <changeSet author="mpagnon" id="tm-1.10.5-issue-3860-1">
+    <comment>Removing duplicate values</comment>
+
+    <createTable tableName="CUF_VALUES_TO_SAVE">
+      <column name="id" type="BIGINT"></column>
+    </createTable>
+    <createIndex unique="true" tableName="CUF_VALUES_TO_SAVE" indexName="idx_cuf_values_to_save">
+      <column name="id" type="BIGINT" />
+    </createIndex>
+    <sql>
+      insert into CUF_VALUES_TO_SAVE (id)
+      select min(CFV_ID)
+      from CUSTOM_FIELD_VALUE cfv
+      where cfv.BOUND_ENTITY_TYPE = 'TEST_STEP'
+      group by cfv.BOUND_ENTITY_ID, cfv.CFB_ID;
+    </sql>
+
+    <sql>
+      delete from CUSTOM_FIELD_VALUE
+      where BOUND_ENTITY_TYPE = 'TEST_STEP' and
+      not exists (select 1 from CUF_VALUES_TO_SAVE cfvts where cfvts.id = cfv_id);
+    </sql>
+    <dropIndex tableName="CUF_VALUES_TO_SAVE" indexName="idx_cuf_values_to_save" />
+    <dropTable tableName="CUF_VALUES_TO_SAVE" />
+  </changeSet>
+
+  <changeSet id="tm-1.10.5-issue-3860-3" author="mpagnon">
+    <comment>add missing custom field values </comment>
+    <createTable tableName="STEPS_SHOULD_HAVE_CUF_VALUES">
+      <column name="cuf_binding_id" type="BIGINT"></column>
+      <column name="step_id" type="BIGINT"></column>
+      <column name="default_value" type="VARCHAR(255)"></column>
+      <column name="optional" type="BOOLEAN"></column>
+    </createTable>
+    <sql>
+      insert into STEPS_SHOULD_HAVE_CUF_VALUES (cuf_binding_id , step_id , default_value , optional )
+      select
+      cfb.CFB_ID, ats.TEST_STEP_ID, cf.default_value, cf.optional
+      from ACTION_TEST_STEP ats, TEST_CASE_STEPS tcs,
+      TEST_CASE_LIBRARY_NODE tcln, CUSTOM_FIELD_BINDING cfb, CUSTOM_FIELD cf
+      where ats.TEST_STEP_ID = tcs.STEP_ID
+      and
+      tcln.TCLN_ID = tcs.TEST_CASE_ID
+      and tcln.PROJECT_ID = cfb.BOUND_PROJECT_ID
+      and cfb.CF_ID = cf.CF_ID
+      and cfb.BOUND_ENTITY = 'TEST_STEP'
+      and not exists (
+      select 1
+      from CUSTOM_FIELD_VALUE cfv
+      where cfv.CFB_ID = cfb.CFB_ID
+      and cfv.BOUND_ENTITY_TYPE = 'TEST_STEP'
+      and
+      cfv.BOUND_ENTITY_ID = ats.TEST_STEP_ID
+      );
+    </sql>
+
+    <sql>
+      insert into CUSTOM_FIELD_VALUE ( BOUND_ENTITY_ID, BOUND_ENTITY_TYPE, CFB_ID, VALUE)
+      select sshcv.step_id ,
+      'TEST_STEP', sshcv.cuf_binding_id, ''
+      from STEPS_SHOULD_HAVE_CUF_VALUES sshcv
+      where sshcv.optional = true;
+    </sql>
+
+    <sql>
+      insert into CUSTOM_FIELD_VALUE ( BOUND_ENTITY_ID, BOUND_ENTITY_TYPE, CFB_ID, VALUE)
+      select sshcv.step_id ,
+      'TEST_STEP', sshcv.cuf_binding_id, sshcv.default_value
+      from STEPS_SHOULD_HAVE_CUF_VALUES sshcv
+      where sshcv.optional
+      = false;
+    </sql>
+
+    <dropTable tableName="STEPS_SHOULD_HAVE_CUF_VALUES" />
+
+  </changeSet>
+
+</databaseChangeLog>

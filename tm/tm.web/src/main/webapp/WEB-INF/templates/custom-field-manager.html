@@ -1,0 +1,350 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title th:text="#{squashtm.cuf.title}">Liste des champs personnalisés</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+  <style th:include="admin/admin-subpage.frag :: subpage-css" th:remove="tag"></style>
+
+  <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+  <script type="text/javascript" th:inline="javascript">
+    var squashtm = {};
+    squashtm.app = {
+      contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
+      administration : /*[[ #{/administration} ]]*/"http://localhost:8080/squash/administration",
+    localizedDateFormat : /*[[ #{squashtm.dateformatShort.datepicker} ]]*/"dd/mm/yy",
+    locale : /*[[ #{squashtm.locale} ]]*/"fr",
+      cfTable : {
+        languageUrl : /*[[ @{/datatables/messages} ]]*/"http://localhost:8080/squash/datatables/messages",
+        displayLength : /*[[ ${customFieldsPageSize} ]]*/50,
+        ajaxSource : /*[[ @{/administration/custom-fields} ]]*/"http://localhost:8080/squash/administration/custom-fields",
+        confirmLabel: /*[[ #{label.Confirm} ]]*/ 'Confirmer',
+      cancelLabel: /*[[ #{label.Cancel} ]]*/ 'Annuler',
+      deleteTooltip: /*[[ #{label.Delete} ]]*/ 'Delete',
+      deleteConfirmMessage : /*[[ #{message.customField.remove} ]]*/ 'Remove',
+      deleteConfirmMessageFirst : /*[[ #{message.customField.remove.first} ]]*/ 'Remove',
+      deleteConfirmMessageSecond : /*[[ #{message.customField.remove.second} ]]*/ 'Remove',
+      deleteConfirmMessageThird : /*[[ #{message.customField.remove.third} ]]*/ 'Remove',
+      deleteConfirmMessageFourth : /*[[ #{message.customField.remove.fourth} ]]*/ 'Remove',
+      customFieldUrl : /*[[ @{/custom-fields} ]]*/ "http://localhost:8080/squash/custom-fields",
+      removeCustomField : /*[[ #{label.CustomField.remove} ]]*/ "Remove a custom field",
+
+      },
+    messages: {
+      "message.optionAlreadyDefined": /*[[ #{message.optionAlreadyDefined} ]]*/ "Option is already defined",
+      "message.optionCodeAlreadyDefined": /*[[ #{message.optionCodeAlreadyDefined} ]]*/ "Code is already defined",
+      "message.optionCodeInvalidPattern" : /*[[ #{message.optionCodeInvalidPattern} ]]*/ "Code must have only letters, numbers and under-scores",
+      "message.defaultOptionMandatory": /*[[ #{message.defaultOptionMandatory} ]]*/ "Default option is mandatory when field is not optional",
+      "message.defaultValueMandatory": /*[[ #{message.defaultValueMandatory} ]]*/ "Default value is mandatory when field is not optional",
+      "message.notBlank": /*[[ #{message.notBlank} ]]*/ "Value should not be blank",
+      "message.customFieldTag.add.notValid": /*[[ #{message.customFieldTag.add.notValid} ]]*/ "Tags cannot contain pipe '|'",
+    }
+    };
+  </script>
+  <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
+  <script data-main="../../scripts/custom-field-manager.js" th:attr="data-main=@{/scripts/custom-field-manager.js}"
+    src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
+  </script>
+
+</head>
+<body>
+  <div id="navigation" th:include="navbar.frag :: navbar('')">
+    NAVBAR
+  </div>
+  <div id="workspace">
+    <div id="workspace-title">
+      <div class="snap-left">
+        <h2 th:text="#{label.administration}" class="admin">Administration</h2>
+      </div>
+      <div class="snap-right">
+        <div class="main-menubar " th:include="menubar.frag :: menubar">
+          MENUBAR
+        </div>
+        <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">
+          NOTIFICATION
+        </div>
+      </div>
+    </div>
+    <div id="sub-page" class="sub-page" >
+      <div id="sub-page-header" class="sub-page-header cf">
+        <div id="sub-page-title" class="sub-page-title">
+          <h2 th:text="#{title.CustomFields}">Champs personnalisés de test</h2>
+        </div>
+
+        <div id="sub-page-buttons" class="sub-page-buttons">
+          <input id="back" type="button" th:value="#{label.Back}" class="sq-btn" value="#{ label.Back }"
+            th:onclick="'document.location.href=\''+@{/administration}+'\''" />
+        </div>
+      </div>
+
+      <div id="sub-page-content" class="sub-page-content">
+    <div class="fragment-body unstyled">
+    <div id="cf-table-pane ">
+      <div class="cf">
+        <div class="btn-toolbar right">
+          <a id="add-cf" class="sq-btn" th:title="#{label.CustomField.addOneOrMore}" >
+            <span class="ui-icon ui-icon-plusthick">+</span> <span><th th:text="#{label.Add}">Add a custom field</th></span>
+          </a>
+          <a id="delete-cf" class="sq-btn" th:title="#{label.CustomField.deleteMultiple}" >
+            <span class="ui-icon ui-icon-trash">-</span> <span><th th:text="#{label.Delete}">Delete a custom field</th></span>
+          </a>
+        </div>
+      </div>
+
+      <div>
+        <table id="cf-table" class="unstyled-table">
+          <thead>
+            <tr>
+              <th class="not-displayed">Id</th>
+              <th>#</th>
+              <th th:text="#{label.Name}">Name</th>
+              <th th:text="#{label.Label}">Label</th>
+              <th class="not-displayed">Raw type</th>
+              <th th:text="#{label.inputType}">Type</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="cf, iterStat : ${customFields}" th:object="${cf}">
+              <td th:text="*{id}" class="not-displayed cf-id">1</td>
+              <td th:text="${iterStat.count}">1</td>
+              <td th:text="*{name}">Custom field XX</td>
+              <td th:text="*{label}">Label XX</td>
+              <td th:text="*{inputType}" class="not-displayed raw-input-type">PLAIN_TEXT</td>
+              <td th:text="#{*{inputType.i18nKey}}">Plain text</td>
+              <td class="delete-button"></td>
+            </tr>
+            <tr th:remove="all">
+              <td class="not-displayed cf-id">2</td>
+              <td>2</td>
+              <td>Custom field YY</td>
+              <td>Label YY</td>
+              <td class="not-displayed raw-input-type">DROPDOWN_LIST</td>
+              <td>Dropdown list</td>
+              <td class="delete-button"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+	<div id="delete-cf-popup" class="popup-dialog not-displayed" th:title="#{label.CustomField.remove}">
+		<div class="display-table-row">
+            <div class="display-table-cell warning-cell">
+                <div class="generic-error-signal"></div>
+            </div>
+            <div class="display-table-cell">
+				<span th:text="#{message.customField.remove.dialog}"></span>
+			</div>
+		</div>
+		<div class="popup-dialog-buttonpane">
+			<input type="button" class="sq-btn" th:value="#{label.Confirm}"/>
+			<input type="button" class="sq-btn" th:value="#{label.Cancel}"/>
+		</div>
+	</div>
+
+      <div id="new-cf-pane" class="not-displayed popup-dialog form-horizontal" title="New Custom field"
+        th:title="#{title.newCustomField}">
+        <div class="control-group">
+          <label class="control-label" for="name" th:text="#{label.Name}">Name</label>
+          <div class="controls">
+            <input name="name" class="strprop" value="" size="50" maxlength="255" type="text" data-def="maininput"/>
+            <span class="help-inline">&nbsp;</span>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label" for="label" th:text="#{label.Label}">Label</label>
+          <div class="controls">
+            <input name="label" class="strprop" value="" size="50" maxlength="255" type="text" />
+            <span class="help-inline">&nbsp;</span>
+          </div>
+        </div>
+
+         <div class="control-group">
+          <label class="control-label" for="code" th:text="#{label.code}">Code</label>
+          <div class="controls">
+            <input name="code" class="strprop" value="" size="50" maxlength="30" type="text" />
+            <span class="help-inline">&nbsp;</span>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label" for="inputType" th:text="#{label.inputType}">Type</label>
+          <div class="controls">
+            <select name="inputType" th:remove="all-but-first">
+              <option th:each="type: ${T(org.squashtest.tm.domain.customfield.InputType).values()}"
+                value="PLAIN_TEXT" th:value="${type.name()}" th:text="#{${type.i18nKey}}">Plain Text</option>
+              <option value="CHECKBOX">Checkbox</option>
+              <option value="DROPDOWN_LIST">Dropdown list</option>
+              <option value="DATE_PICKER">Date</option>
+            </select>
+            <span class="help-inline">&nbsp;</span>
+          </div>
+        </div>
+
+        <div id="optional-pane" class="control-group">
+          <label class="control-label" for="optional" th:text="#{label.Optional}">Optional</label>
+          <div class="controls">
+            <input name="optional" value="optional" type="checkbox" />
+            <span class="help-inline">&nbsp;</span>
+          </div>
+        </div>
+
+        <div id="default-value-pane" class="control-group"></div>
+
+        <div class="popup-dialog-buttonpane">
+          <input class="confirm sq-btn" type="button" value="OK" th:value="#{label.addAnother}" data-def="mainbtn, evt=addanother"/>
+          <input class="confirm sq-btn" type="button" value="OK" th:value="#{label.Add}" data-def="evt=validate"/>
+          <input class="cancel sq-btn" type="button" value="Cancel" th:value="#{label.Close}" data-def="evt=cancel"/>
+        </div>
+
+        <script id="PLAIN_TEXT-default-tpl" type="text/x-handlebars-template" th:inline="text">
+          <label class="control-label" for="defaultValue" th:text="#{label.defaultValue}">Default value</label>
+          <div class="controls">
+            <input name="defaultValue" class="strprop" value="" size="50" maxlength="255" type="text" />
+            <span class="help-inline">&nbsp;</span>
+          </div>
+        </script>
+
+        <script id="RICH_TEXT-default-tpl" type="text/x-handlebars-template" th:inline="text">
+         <label class="control-label" for="defaultValue" th:text="#{label.defaultValue}">Default value</label>
+         <div class="controls">
+           <textarea id="defaultValue" name="defaultValue" class="richprop" />
+           <span class="help-inline">&nbsp;</span>
+         </div>
+        </script>
+
+        <script id="CHECKBOX-default-tpl" type="text/x-handlebars-template" th:inline="text">
+          <label class="control-label" for="defaultValue" th:text="#{label.defaultValue}">Default value</label>
+          <div class="controls">
+            <select name="defaultValue" class="optprop">
+              <option value="false" th:text="#{label.False}">False</option>
+              <option value="true" th:text="#{label.True}">True</option>
+            </select>
+            <span class="help-inline">&nbsp;</span>
+          </div>
+      </script>
+
+      <script id="DROPDOWN_LIST-default-tpl" type="text/x-handlebars-template" th:inline="text">
+      <h3 th:text="#{title.optionsDefinition}">Options definition</h3>
+      <div id="new-option-pane">
+      </div>
+
+      <div class="control-group">
+        <span th:remove="all">
+        <!-- class="dataTables_wrapper" : ugly hack to get the desired style. usually, because of table footer, this div is inserted by dataTables. here we have no footer. -->
+        </span>
+        <div class="dataTables_wrapper">
+          <table id="options-table">
+            <thead>
+              <tr>
+                <th th:text="#{label.option}">Option</th>
+                <th th:text="#{label.code}">Code</th>
+                <th style="width: 2em;" th:text="#{label.default}">Default</th>
+                <th style="width: 1.5em;">&nbsp;</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div class="controls">
+          <input name="defaultValue" type="hidden" value="" />
+          <input name="options" type="hidden" value="" />
+          <span class="not-displayed help-inline">&nbsp;</span>
+        </div>
+      </div>
+      </script>
+
+      <script id="new-option-pane-tpl" type="text/x-handlebars-template" th:inline="text">
+      <div class="control-group">
+        <label class="control-label" for="new-option-label" th:text="#{label.newOption}">New option</label>
+        <div class="controls">
+          <input name="new-option-label" type="text" value="" />
+          <span class="not-displayed help-inline">&nbsp;</span>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label" for="new-option-code" th:text="#{label.code}">Code</label>
+        <div class="controls">
+          <input name="new-option-code" type="text" value="" />
+          <span class="not-displayed help-inline">&nbsp;</span>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <input class="add-option sq-btn" type="button" th:value="#{label.addOption}" value="Add an option" />
+      </div>
+      </script>
+
+     <script id="DATE_PICKER-default-tpl" type="text/x-handlebars-template" th:inline="text">
+         <label class="control-label" for="defaultValue" th:text="#{label.defaultValue}">Default value</label>
+    <div class="controls">
+      <input name="defaultValue" id="defaultValue" class="date-hidden dateprop" value="" size="10" maxlength="10" type="text" />
+      <span id="defaultValue-label" style="color:#4297d7;font-weight: bold "></span>
+      <span class="help-inline">&nbsp;</span>
+    </div>
+        </script>
+
+        <script id="TAG-default-tpl" type="text/x-handlebars-template" th:inline="text">
+          <label class="control-label" for="defaultValue" th:text="#{label.defaultValue}">Default value</label>
+          <div class="controls">
+            <ul id="defaultValue" name="defaultValue" class="tagprop" style="margin-left:0;width:367px;border : 1px solid black;" value=""/>
+            <span class="help-inline">&nbsp;</span>
+          </div>
+        </script>
+
+        <script id="NUMERIC-default-tpl" type="text/x-handlebars-template" th:inline="text">
+          <label class="control-label" for="defaultValue" th:text="#{label.defaultValue}">Default value</label>
+          <div class="controls">
+            <input name="defaultValue" class="strprop" value="" size="15" maxlength="15" type="text" />
+            <span class="help-inline">&nbsp;</span>
+          </div>
+        </script>
+        
+        <script id="remove-cell-tpl" type="text/x-handlebars-template" th:inline="text">
+        <a  data-value="{{option}}" th:text="#{label.Delete}">Delete</a>
+      </script>
+
+        <script id="default-cell-tpl" type="text/x-handlebars-template" th:inline="text">
+        {{#if checked}}
+        <input type="checkbox" name="default" value="{{option}}" checked="checked" />
+        {{else}}
+        <input type="checkbox" name="default" value="{{option}}" />
+        {{/if}}
+      </script>
+      </div>
+    </div>
+    </div>
+    </div>
+  </div>
+</body>
+</html>

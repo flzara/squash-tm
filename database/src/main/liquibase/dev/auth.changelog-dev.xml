@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog
+     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+         
+	<changeSet author="gfouquet" id="auth-dev-1">
+		<insert tableName="AUTH_USER">
+			<column name="LOGIN" value="project.manager" />
+			<column name="PASSWORD" value="fadc9463d426cc118ea74ef967d31d36f4acdaed" remarks="Non-hashed password is 'project.manager'" />
+			<column name="ACTIVE" valueBoolean="true" />
+		</insert>
+
+		<insert tableName="AUTH_USER">
+			<column name="LOGIN" value="project.viewer" />
+			<column name="PASSWORD" value="9db75a95ec68ca2358802cdc6780fb3931215b82" remarks="Non-hashed password is 'project.viewer'" />
+			<column name="ACTIVE" valueBoolean="true" />
+		</insert>
+
+		<insert tableName="AUTH_USER">
+			<column name="LOGIN" value="test.editor" />
+			<column name="PASSWORD" value="47430cd8fa3f3d42e677df6878666b0271328eab" remarks="Password is login" />
+			<column name="ACTIVE" valueBoolean="true" />
+		</insert>
+
+		<insert tableName="AUTH_USER">
+			<column name="LOGIN" value="test.runner" />
+			<column name="PASSWORD" value="eb7ae8319a0913632ed30bc268fe8f8cdf3766db" remarks="Password is login" />
+			<column name="ACTIVE" valueBoolean="true" />
+		</insert>
+		<insert tableName="AUTH_USER">
+			<column name="LOGIN" value="test.designer" />
+			<column name="PASSWORD" value="47430cd8fa3f3d42e677df6878666b0271328eab" remarks="Password is test.editor" />
+			<column name="ACTIVE" valueBoolean="true" />
+		</insert>
+		<insert tableName="AUTH_USER">
+			<column name="LOGIN" value="advance.tester" />
+			<column name="PASSWORD" value="1c7a9fd8a756d12d07dae603ae3e10170f2c00fb" remarks="Password is login" />
+			<column name="ACTIVE" valueBoolean="true" />
+		</insert>
+		<insert tableName="AUTH_USER">
+			<column name="LOGIN" value="validator" />
+			<column name="PASSWORD" value="03a182f7f63b4294618bcfeb88cd400aa99a164e" remarks="Password is login" />
+			<column name="ACTIVE" valueBoolean="true" />
+		</insert>
+
+		<insert tableName="AUTH_USER">
+			<column name="LOGIN" value="average.joe" />
+			<column name="PASSWORD" value="2ba9d42698a5bf6c29fec49b98f70e459c976e3e" remarks="Password is login" />
+			<column name="ACTIVE" valueBoolean="true" />
+		</insert>
+	</changeSet>         
+</databaseChangeLog>

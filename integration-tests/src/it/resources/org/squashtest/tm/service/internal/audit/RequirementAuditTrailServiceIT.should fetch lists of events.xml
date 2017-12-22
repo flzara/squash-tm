@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1"/>
+  
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-989"/><REQUIREMENT_LIBRARY ATTACHMENT_LIST_ID="-989" RL_ID="-1"/>
+  <PROJECT PROJECT_ID="-1" ATTACHMENT_LIST_ID="-1" CREATED_ON="2012-01-02" CREATED_BY="DBU" NAME="project"/>
+  
+  <RESOURCE RES_ID="-1" NAME="requirement 1" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="-1"/>
+  <REQUIREMENT_VERSION RES_ID="-1"/>
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="creator 1" RLN_ID="-1" CREATED_ON="2010-02-01" PROJECT_ID="-1"/>
+  <REQUIREMENT RLN_ID="-1" CURRENT_VERSION_ID="-1"/>
+  
+  <RESOURCE RES_ID="-2" NAME="requirement 1" CREATED_ON="2012-01-02" CREATED_BY="DBU"  ATTACHMENT_LIST_ID="-1"/>
+  <REQUIREMENT_VERSION RES_ID="-2"/>
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="creator 2" RLN_ID="-2" CREATED_ON="2010-01-01" PROJECT_ID="-1"/>
+  <REQUIREMENT RLN_ID="-2"/>
+
+  <REQUIREMENT_AUDIT_EVENT AUTHOR="creator 1" EVENT_DATE="2010-02-01" EVENT_ID="-11" REQ_VERSION_ID="-1"/>
+  <REQUIREMENT_CREATION EVENT_ID="-11"/>
+  
+  <REQUIREMENT_AUDIT_EVENT AUTHOR="editor 12" EVENT_DATE="2010-06-03" EVENT_ID="-12" REQ_VERSION_ID="-1"/>
+  <REQUIREMENT_PROPERTY_CHANGE NEW_VALUE="NX-1" PROPERTY_NAME="reference" EVENT_ID="-12"/>
+  
+  <REQUIREMENT_AUDIT_EVENT AUTHOR="EDITOR 13" EVENT_DATE="2010-08-04" EVENT_ID="-13" REQ_VERSION_ID="-1"/>
+  <REQUIREMENT_LARGE_PROPERTY_CHANGE NEW_VALUE="description for requirement 1" PROPERTY_NAME="description" EVENT_ID="-13"/>
+ 
+  <REQUIREMENT_AUDIT_EVENT AUTHOR="EDITOR 11" EVENT_DATE="2010-04-02" EVENT_ID="-14" REQ_VERSION_ID="-1"/>
+  <REQUIREMENT_PROPERTY_CHANGE NEW_VALUE="MAJOR" PROPERTY_NAME="citicality" OLD_VALUE="UNDEFINED" EVENT_ID="-14"/>
+
+  <REQUIREMENT_AUDIT_EVENT AUTHOR="creator 2" EVENT_DATE="2010-01-01" EVENT_ID="-21" REQ_VERSION_ID="-2"/>
+  <REQUIREMENT_CREATION EVENT_ID="-21"/>
+ 
+  <REQUIREMENT_AUDIT_EVENT AUTHOR="editor 22" EVENT_DATE="2010-05-03" EVENT_ID="-22" REQ_VERSION_ID="-2"/>
+  <REQUIREMENT_PROPERTY_CHANGE NEW_VALUE="NX-1" PROPERTY_NAME="reference" EVENT_ID="-22"/>
+
+  <REQUIREMENT_AUDIT_EVENT AUTHOR="editor 24" EVENT_DATE="2010-09-05" EVENT_ID="-23" REQ_VERSION_ID="-2"/>
+  <REQUIREMENT_PROPERTY_CHANGE NEW_VALUE="MAJOR" PROPERTY_NAME="citicality" OLD_VALUE="UNDEFINED" EVENT_ID="-23"/>
+
+  <REQUIREMENT_AUDIT_EVENT AUTHOR="editor 23" EVENT_DATE="2010-07-04" EVENT_ID="-24" REQ_VERSION_ID="-2"/>
+  <REQUIREMENT_LARGE_PROPERTY_CHANGE NEW_VALUE="description for requirement 1" PROPERTY_NAME="description" EVENT_ID="-24"/>
+
+  <REQUIREMENT_AUDIT_EVENT AUTHOR="editor 21" EVENT_DATE="2010-03-02" EVENT_ID="-25" REQ_VERSION_ID="-2"/>
+  <REQUIREMENT_LARGE_PROPERTY_CHANGE NEW_VALUE="description for requirement 1" PROPERTY_NAME="description" EVENT_ID="-25"/>
+</dataset>

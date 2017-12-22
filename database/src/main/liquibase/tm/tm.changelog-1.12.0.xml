@@ -1,0 +1,1058 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+  <changeSet id="tm-1.12.0" author="jsimon">
+    <comment>Update TM database version number</comment>
+    <update tableName="CORE_CONFIG">
+      <column name="VALUE" value="1.12.0" />
+      <where>STR_KEY = 'squashtest.tm.database.version'</where>
+    </update>
+  </changeSet>
+
+  <changeSet author="jsimon" id="tm-1.12.0.feature-3607-1">
+
+    <comment>Table for Milestones</comment>
+    <createTable tableName="MILESTONE">
+
+      <column name="MILESTONE_ID" type="BIGINT" autoIncrement="true" remarks="Primary key">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+
+      <column name="LABEL" type="java.sql.Types.VARCHAR(30)" remarks="Milestone label">
+        <constraints nullable="false" unique="true"/>
+      </column>
+
+      <column name="STATUS" type="java.sql.Types.VARCHAR(30)" remarks="Milestone status">
+      </column>
+
+      <column name="END_DATE" type="DATETIME" remarks="Term date">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="DESCRIPTION" type="CLOB" remarks="Milestone description">
+      </column>
+
+      <column name="M_RANGE" type="java.sql.Types.VARCHAR(30)" remarks="Milestone range">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="CREATED_BY" type="java.sql.Types.VARCHAR(50)" remarks="Name of the milestone creator">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="CREATED_ON" type="DATETIME" remarks="Date of creation.">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="LAST_MODIFIED_BY" type="java.sql.Types.VARCHAR(50)" defaultValue="NULL" remarks="last modified by" />
+
+      <column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL" remarks="Date of last update" />
+
+
+      <column name="USER_ID" type="BIGINT" remarks="the user that own the milestone">
+        <constraints nullable="false" foreignKeyName="fk_milestone_owner" references="CORE_USER(PARTY_ID)" />
+      </column>
+    </createTable>
+
+    <createIndex tableName="MILESTONE" indexName="idx_milestone">
+      <column name="MILESTONE_ID" />
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="jsimon" id="tm-1.12.0.feature-3608-1">
+
+    <comment>Table for MilestoneBinding</comment>
+    <createTable tableName="MILESTONE_BINDING">
+      <column name="MILESTONE_BINDING_ID" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+
+      <column name="MILESTONE_ID" type="BIGINT">
+        <constraints nullable="false" foreignKeyName="FK_MILESTONE_BINDING_MILESTONE" references="MILESTONE(MILESTONE_ID)" />
+      </column>
+
+
+      <column name="PROJECT_ID" type="BIGINT">
+        <constraints nullable="false" foreignKeyName="FK_MILESTONE_BINDING_PROJECT" references="PROJECT(PROJECT_ID)" />
+      </column>
+    </createTable>
+
+  </changeSet>
+
+  <changeSet author="jsimon" id="tm-1.12.0.feature-3609-1">
+
+    <comment>Table for MilestoneBindingPerimeter</comment>
+    <createTable tableName="MILESTONE_BINDING_PERIMETER">
+      <column name="MILESTONE_BINDING_PERIMETER_ID" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+
+      <column name="MILESTONE_ID" type="BIGINT">
+        <constraints nullable="false" foreignKeyName="FK_MILESTONE_BINDING_PERIMETER_MILESTONE" references="MILESTONE(MILESTONE_ID)" />
+      </column>
+
+
+      <column name="PROJECT_ID" type="BIGINT">
+        <constraints nullable="false" foreignKeyName="FK_MILESTONE_BINDING_PERIMETER_PROJECT" references="PROJECT(PROJECT_ID)" />
+      </column>
+    </createTable>
+
+  </changeSet>
+
+
+  <changeSet id="tm-1.12.0.feature-3823-1" author="bsiri">
+    <comment>Creating the values table for multi-valued custom fields, much like CUSTOM_FIELD_OPTION is. 
+  	Note : the DELETE CASCADE on the foreign key is necessary because Hibernate won't do it (as specified, see HHH-5529)</comment>
+
+    <createTable tableName="CUSTOM_FIELD_VALUE_OPTION" remarks="The table.">
+      <column name="CFV_ID" type="BIGINT">
+        <constraints nullable="false" references="CUSTOM_FIELD_VALUE(CFV_ID)" foreignKeyName="fk_cfv_option_cfv"
+          deleteCascade="true" />
+      </column>
+
+      <column name="LABEL" type="VARCHAR(255)">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="POSITION" type="INT">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="tm-1.12.0.feature-3823-2" author="bsiri">
+    <comment>Same table for the denormalized field values</comment>
+    <createTable tableName="DENORMALIZED_FIELD_VALUE_OPTION">
+      <column name="DFV_ID" type="BIGINT">
+        <constraints nullable="false" references="DENORMALIZED_FIELD_VALUE(DFV_ID)" foreignKeyName="fk_dfv_option_dfv"
+          deleteCascade="true" />
+      </column>
+      <column name="LABEL" type="VARCHAR(255)">
+        <constraints nullable="false" />
+      </column>
+      <column name="POSITION" type="INT">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="tm-1.12.0.feature-3823-3" author="bsiri">
+    <comment>tables CUSTOM_FIELD_OPTION and DENORMALIZED_FIELD_OPTION no longer enforce the option position.</comment>
+
+    <dropNotNullConstraint tableName="CUSTOM_FIELD_OPTION" columnDataType="INT" columnName="POSITION" />
+    <dropNotNullConstraint tableName="DENORMALIZED_FIELD_OPTION" columnDataType="INT" columnName="POSITION" />
+
+  </changeSet>
+
+  <changeSet id="tm-1.12.0.issue-4017-1" author="bsiri">
+    <comment>Some columns in REQUIREMENT_PROPERTY_CHANGE are too short compared to what 
+  	they are supposed to store. This changeset makes them bigger.</comment>
+
+    <modifyDataType tableName="REQUIREMENT_PROPERTY_CHANGE" columnName="OLD_VALUE" newDataType="java.sql.Types.VARCHAR(255)" />
+
+    <modifyDataType tableName="REQUIREMENT_PROPERTY_CHANGE" columnName="NEW_VALUE" newDataType="java.sql.Types.VARCHAR(255)" />
+
+  </changeSet>
+
+
+  <changeSet id="tm-1.12.0.feat-4068-1" author="bsiri">
+    <comment>creating the table structure for parameterized list</comment>
+
+		<!-- ======== the INFO_LIST table ========= -->
+
+    <createTable tableName="INFO_LIST">
+
+      <column name="INFO_LIST_ID" type="BIGINT" autoIncrement="true" remarks="the ID">
+        <constraints nullable="false" primaryKey="true" />
+      </column>
+
+      <column name="LABEL" type="VARCHAR(100)"
+        remarks="the label for this list. Would noly be displayed in the administration page as the name  actually displayed to regular uses would depend on the role of that list on a given projet (criticality, nature etc)">
+        <constraints unique="true" />
+      </column>
+
+      <column name="DESCRIPTION" type="TEXT" remarks="a description for that list" />
+
+      <column name="CODE" type="VARCHAR(30)" remarks="a code that helps identifying that list">
+        <constraints nullable="false" unique="true" />
+      </column>
+
+
+      <column name="CREATED_BY" type="VARCHAR(50)" remarks="username of the user who created that list">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="CREATED_ON" type="DATETIME" remarks="the time at when that list was created">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="LAST_MODIFIED_BY" type="VARCHAR(50)" defaultValue="NULL"
+        remarks="username of the last user who modified one of the list attributes" />
+
+      <column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL" remarks="Time when the list was touched last" />
+
+
+    </createTable>
+
+		<!--  index on the code for faster lookup -->
+    <createIndex tableName="INFO_LIST" indexName="idx_info_list_code">
+      <column name="CODE" type="VARCHAR(30)">
+        <constraints nullable="false" unique="true" />
+      </column>
+    </createIndex>
+
+<!--  =========== the INFO_LIST_ITEM table =============== -->
+
+    <createTable tableName="INFO_LIST_ITEM">
+
+      <column name="ITEM_ID" type="BIGINT" remarks="an ID, what did you expect ?" autoIncrement="true">
+        <constraints nullable="true" primaryKey="true" />
+      </column>
+
+      <column name="ITEM_TYPE" type="VARCHAR(3)"
+        remarks="discriminator telling whether this item is user-made or builtin in the app. Pick one of 'USR' or 'SYS'">
+        <constraints nullable="false" />
+      </column>
+
+
+      <column name="LIST_ID" type="BIGINT"
+        remarks="foreign key to the list this item belongs to. Allows 'NULL' for Hibernate to work.">
+        <constraints nullable="true" foreignKeyName="fk_info_item_list" references="INFO_LIST(INFO_LIST_ID)" />
+      </column>
+
+      <column name="ITEM_INDEX" type="java.sql.Types.INTEGER"
+        remarks="the position of that item in the list. Allows 'NULL' for Hibernate to work.">
+        <constraints nullable="true" />
+      </column>
+
+      <column name="LABEL" type="VARCHAR(100)"
+        remarks="a label to be displayed. If the item is builtin this label will be a i18n key, else the label will be displayed verbatim">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="CODE" type="VARCHAR(30)" remarks="a code that helps identifying that item">
+        <constraints nullable="false" unique="true" />
+      </column>
+
+
+      <column name="IS_DEFAULT" type="BOOLEAN" defaultValueBoolean="false"
+        remarks="whether this item is the default item for 
+							its list. Only one item per list should have it true ">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="ICON_NAME" type="VARCHAR(100)" remarks="the identifier of the icon to be displayed">
+        <constraints nullable="true" />
+      </column>
+
+    </createTable>
+
+
+		<!--  index on the code for faster lookup -->
+    <createIndex tableName="INFO_LIST_ITEM" indexName="idx_info_list_item_code">
+      <column name="CODE" type="VARCHAR(30)">
+        <constraints nullable="false" unique="true" />
+      </column>
+    </createIndex>
+
+    <createIndex tableName="INFO_LIST" indexName="idx_info_list_label">
+      <column name="LABEL" type="VARCHAR(100)">
+        <constraints nullable="false" unique="true" />
+      </column>
+    </createIndex>
+
+  </changeSet>
+
+
+  <changeSet id="tm-1.12.0.feat-4068-2" author="bsiri">
+    <comment>Updating the definition of an execution</comment>
+
+    <addColumn tableName="EXECUTION">
+
+      <column name="TC_NAT_LABEL" type="VARCHAR(100)"
+        remarks="a label to be displayed. If the item is builtin this label will be a i18n key, else the label will 
+						be displayed verbatim">
+      </column>
+
+      <column name="TC_NAT_CODE" type="VARCHAR(30)"
+        remarks="a code that helps identifying that item. Note that unlike the original version the values for
+						that column will not be unique." />
+
+      <column name="TC_NAT_ICON_NAME" type="VARCHAR(100)" remarks="the identifier of the icon to be displayed">
+      </column>
+
+      <column name="TC_TYP_LABEL" type="VARCHAR(100)"
+        remarks="a label to be displayed. If the item is builtin this label will be a i18n key, else the label will  be displayed verbatim">
+      </column>
+
+      <column name="TC_TYP_CODE" type="VARCHAR(30)"
+        remarks="a code that helps identifying that item. Note that unlike the original version the values for
+						that column will not be unique." />
+
+      <column name="TC_TYP_ICON_NAME" type="VARCHAR(100)" remarks="the identifier of the icon to be displayed">
+      </column>
+
+    </addColumn>
+
+
+  </changeSet>
+
+
+  <changeSet id="tm-1.12.0.feat-4068-3" author="bsiri">
+
+    <comment>inserting the default lists in the database</comment>
+		
+		
+		<!-- =============== the default categories list ============== -->
+
+    <insert tableName="INFO_LIST">
+      <column name="INFO_LIST_ID" value="1" />
+      <column name="LABEL" value="infolist.category.default" />
+      <column name="DESCRIPTION" value="" />
+      <column name="CODE" value="DEF_REQ_CAT" />
+      <column name="CREATED_BY" value="system" />
+      <column name="CREATED_ON" value="2010-01-01 00:00:00" />
+      <column name="LAST_MODIFIED_BY" value="system" />
+      <column name="LAST_MODIFIED_ON" value="2010-01-01 00:00:00" />
+    </insert>
+
+    <insert tableName="INFO_LIST_ITEM">
+      <column name="ITEM_ID" value="1" />
+      <column name="ITEM_TYPE" value="SYS" />
+      <column name="LIST_ID" value="1" />
+      <column name="ITEM_INDEX" value="0" />
+      <column name="LABEL" value="requirement.category.CAT_FUNCTIONAL" />
+      <column name="CODE" value="CAT_FUNCTIONAL" />
+      <column name="IS_DEFAULT" valueBoolean="false" />
+      <column name="ICON_NAME" value="def_cat_functional" />
+    </insert>
+
+    <insert tableName="INFO_LIST_ITEM">
+      <column name="ITEM_ID" value="2" />
+      <column name="ITEM_TYPE" value="SYS" />
+      <column name="LIST_ID" value="1" />
+      <column name="ITEM_INDEX" value="1" />
+      <column name="LABEL" value="requirement.category.CAT_NON_FUNCTIONAL" />
+      <column name="CODE" value="CAT_NON_FUNCTIONAL" />
+      <column name="IS_DEFAULT" valueBoolean="false" />
+      <column name="ICON_NAME" value="def_cat_non-functional" />
+    </insert>
+
+    <insert tableName="INFO_LIST_ITEM">
+      <column name="ITEM_ID" value="3" />
+      <column name="ITEM_TYPE" value="SYS" />
+      <column name="LIST_ID" value="1" />
+      <column name="ITEM_INDEX" value="2" />
+      <column name="LABEL" value="requirement.category.CAT_USE_CASE" />
+      <column name="CODE" value="CAT_USE_CASE" />
+      <column name="IS_DEFAULT" valueBoolean="false" />
+      <column name="ICON_NAME" value="def_cat_use-case" />
+    </insert>
+
+    <insert tableName="INFO_LIST_ITEM">
+      <column name="ITEM_ID" value="4" />
+      <column name="ITEM_TYPE" value="SYS" />
+      <column name="LIST_ID" value="1" />
+      <column name="ITEM_INDEX" value="3" />
+      <column name="LABEL" value="requirement.category.CAT_BUSINESS" />
+      <column name="CODE" value="CAT_BUSINESS" />
+      <column name="IS_DEFAULT" valueBoolean="false" />
+      <column name="ICON_NAME" value="def_cat_business" />
+    </insert>
+
+    <insert tableName="INFO_LIST_ITEM">
+      <column name="ITEM_ID" value="5" />
+      <column name="ITEM_TYPE" value="SYS" />
+      <column name="LIST_ID" value="1" />
+      <column name="ITEM_INDEX" value="4" />
+      <column name="LABEL" value="requirement.category.CAT_TEST_REQUIREMENT" />
+      <column name="CODE" value="CAT_TEST_REQUIREMENT" />
+      <column name="IS_DEFAULT" valueBoolean="false" />
+      <column name="ICON_NAME" value="def_cat_test-requirement" />
+    </insert>
+
+    <insert tableName="INFO_LIST_ITEM">
+      <column name="ITEM_ID" value="6" />
+      <column name="ITEM_TYPE" value="SYS" />
+      <column name="LIST_ID" value="1" />
+      <column name="ITEM_INDEX" value="5" />
+      <column name="LABEL" value="requirement.category.CAT_UNDEFINED" />
+      <column name="CODE" value="CAT_UNDEFINED" />
+      <column name="IS_DEFAULT" valueBoolean="true" />
+      <column name="ICON_NAME" value="def_cat_undefined" />
+    </insert>
+
+    <insert tableName="INFO_LIST_ITEM">
+      <column name="ITEM_ID" value="7" />
+      <column name="ITEM_TYPE" value="SYS" />
+      <column name="LIST_ID" value="1" />
+      <column name="ITEM_INDEX" value="6" />
+      <column name="LABEL" value="requirement.category.CAT_ERGONOMIC" />
+      <column name="CODE" value="CAT_ERGONOMIC" />
+      <column name="IS_DEFAULT" valueBoolean="false" />
+      <column name="ICON_NAME" value="def_cat_ergonomic" />
+    </insert>
+
+    <insert tableName="INFO_LIST_ITEM">
+      <column name="ITEM_ID" value="8" />
+      <column name="ITEM_TYPE" value="SYS" />
+      <column name="LIST_ID" value="1" />
+      <column name="ITEM_INDEX" value="7" />
+      <column name="LABEL" value="requirement.category.CAT_PERFORMANCE" />
+      <column name="CODE" value="CAT_PERFORMANCE" />
+      <column name="IS_DEFAULT" valueBoolean="false" />
+      <column name="ICON_NAME" value="def_cat_performance" />
+    </insert>
+
+    <insert tableName="INFO_LIST_ITEM">
+      <column name="ITEM_ID" value="9" />
+      <column name="ITEM_TYPE" value="SYS" />
+      <column name="LIST_ID" value="1" />
+      <column name="ITEM_INDEX" value="8" />
+      <column name="LABEL" value="requirement.category.CAT_TECHNICAL" />
+      <column name="CODE" value="CAT_TECHNICAL" />
+      <column name="IS_DEFAULT" valueBoolean="false" />
+      <column name="ICON_NAME" value="def_cat_technical" />
+    </insert>
+
+    <insert tableName="INFO_LIST_ITEM">
+      <column name="ITEM_ID" value="10" />
+      <column name="ITEM_TYPE" value="SYS" />
+      <column name="LIST_ID" value="1" />
+      <column name="ITEM_INDEX" value="9" />
+      <column name="LABEL" value="requirement.category.CAT_USER_STORY" />
+      <column name="CODE" value="CAT_USER_STORY" />
+      <column name="IS_DEFAULT" valueBoolean="false" />
+      <column name="ICON_NAME" value="def_cat_user-story" />
+    </insert>
+
+    <insert tableName="INFO_LIST_ITEM">
+      <column name="ITEM_ID" value="11" />
+      <column name="ITEM_TYPE" value="SYS" />
+      <column name="LIST_ID" value="1" />
+      <column name="ITEM_INDEX" value="10" />
+      <column name="LABEL" value="requirement.category.CAT_SECURITY" />
+      <column name="CODE" value="CAT_SECURITY" />
+      <column name="IS_DEFAULT" valueBoolean="false" />
+      <column name="ICON_NAME" value="def_cat_security" />
+    </insert>
+
+		<!-- =============== the default natures list ============== -->
+
+    <insert tableName="INFO_LIST">
+      <column name="INFO_LIST_ID" value="2" />
+      <column name="LABEL" value="infolist.nature.default" />
+      <column name="DESCRIPTION" value="" />
+      <column name="CODE" value="DEF_TC_NAT" />
+      <column name="CREATED_BY" value="system" />
+      <column name="CREATED_ON" value="2010-01-01 00:00:00" />
+      <column name="LAST_MODIFIED_BY" value="system" />
+      <column name="LAST_MODIFIED_ON" value="2010-01-01 00:00:00" />
+    </insert>
+
+
+    <insert tableName="INFO_LIST_ITEM">
+      <column name="ITEM_ID" value="12" />
+      <column name="ITEM_TYPE" value="SYS" />
+      <column name="LIST_ID" value="2" />
+      <column name="ITEM_INDEX" value="0" />
+      <column name="LABEL" value="test-case.nature.NAT_UNDEFINED" />
+      <column name="CODE" value="NAT_UNDEFINED" />
+      <column name="IS_DEFAULT" valueBoolean="true" />
+      <column name="ICON_NAME" value="noicon" />
+    </insert>
+
+    <insert tableName="INFO_LIST_ITEM">
+      <column name="ITEM_ID" value="13" />
+      <column name="ITEM_TYPE" value="SYS" />
+      <column name="LIST_ID" value="2" />
+      <column name="ITEM_INDEX" value="1" />
+      <column name="LABEL" value="test-case.nature.NAT_FUNCTIONAL_TESTING" />
+      <column name="CODE" value="NAT_FUNCTIONAL_TESTING" />
+      <column name="IS_DEFAULT" valueBoolean="false" />
+      <column name="ICON_NAME" value="noicon" />
+    </insert>
+
+    <insert tableName="INFO_LIST_ITEM">
+      <column name="ITEM_ID" value="14" />
+      <column name="ITEM_TYPE" value="SYS" />
+      <column name="LIST_ID" value="2" />
+      <column name="ITEM_INDEX" value="2" />
+      <column name="LABEL" value="test-case.nature.NAT_BUSINESS_TESTING" />
+      <column name="CODE" value="NAT_BUSINESS_TESTING" />
+      <column name="IS_DEFAULT" valueBoolean="false" />
+      <column name="ICON_NAME" value="noicon" />
+    </insert>
+
+    <insert tableName="INFO_LIST_ITEM">
+      <column name="ITEM_ID" value="15" />
+      <column name="ITEM_TYPE" value="SYS" />
+      <column name="LIST_ID" value="2" />
+      <column name="ITEM_INDEX" value="3" />
+      <column name="LABEL" value="test-case.nature.NAT_USER_TESTING" />
+      <column name="CODE" value="NAT_USER_TESTING" />
+      <column name="IS_DEFAULT" valueBoolean="false" />
+      <column name="ICON_NAME" value="noicon" />
+    </insert>
+
+    <insert tableName="INFO_LIST_ITEM">
+      <column name="ITEM_ID" value="16" />
+      <column name="ITEM_TYPE" value="SYS" />
+      <column name="LIST_ID" value="2" />
+      <column name="ITEM_INDEX" value="4" />
+      <column name="LABEL" value="test-case.nature.NAT_NON_FUNCTIONAL_TESTING" />
+      <column name="CODE" value="NAT_NON_FUNCTIONAL_TESTING" />
+      <column name="IS_DEFAULT" valueBoolean="false" />
+      <column name="ICON_NAME" value="noicon" />
+    </insert>
+
+    <insert tableName="INFO_LIST_ITEM">
+      <column name="ITEM_ID" value="17" />
+      <column name="ITEM_TYPE" value="SYS" />
+      <column name="LIST_ID" value="2" />
+      <column name="ITEM_INDEX" value="5" />
+      <column name="LABEL" value="test-case.nature.NAT_PERFORMANCE_TESTING" />
+      <column name="CODE" value="NAT_PERFORMANCE_TESTING" />
+      <column name="IS_DEFAULT" valueBoolean="false" />
+      <column name="ICON_NAME" value="noicon" />
+    </insert>
+
+    <insert tableName="INFO_LIST_ITEM">
+      <column name="ITEM_ID" value="18" />
+      <column name="ITEM_TYPE" value="SYS" />
+      <column name="LIST_ID" value="2" />
+      <column name="ITEM_INDEX" value="6" />
+      <column name="LABEL" value="test-case.nature.NAT_SECURITY_TESTING" />
+      <column name="CODE" value="NAT_SECURITY_TESTING" />
+      <column name="IS_DEFAULT" valueBoolean="false" />
+      <column name="ICON_NAME" value="noicon" />
+    </insert>
+
+    <insert tableName="INFO_LIST_ITEM">
+      <column name="ITEM_ID" value="19" />
+      <column name="ITEM_TYPE" value="SYS" />
+      <column name="LIST_ID" value="2" />
+      <column name="ITEM_INDEX" value="7" />
+      <column name="LABEL" value="test-case.nature.NAT_ATDD" />
+      <column name="CODE" value="NAT_ATDD" />
+      <column name="IS_DEFAULT" valueBoolean="false" />
+      <column name="ICON_NAME" value="noicon" />
+    </insert>
+
+		<!-- =============== the default types list ============== -->
+
+    <insert tableName="INFO_LIST">
+      <column name="INFO_LIST_ID" value="3" />
+      <column name="LABEL" value="infolist.type.default" />
+      <column name="DESCRIPTION" value="" />
+      <column name="CODE" value="DEF_TC_TYP" />
+      <column name="CREATED_BY" value="system" />
+      <column name="CREATED_ON" value="2010-01-01 00:00:00" />
+      <column name="LAST_MODIFIED_BY" value="system" />
+      <column name="LAST_MODIFIED_ON" value="2010-01-01 00:00:00" />
+    </insert>
+
+    <insert tableName="INFO_LIST_ITEM">
+      <column name="ITEM_ID" value="20" />
+      <column name="ITEM_TYPE" value="SYS" />
+      <column name="LIST_ID" value="3" />
+      <column name="ITEM_INDEX" value="0" />
+      <column name="LABEL" value="test-case.type.TYP_UNDEFINED" />
+      <column name="CODE" value="TYP_UNDEFINED" />
+      <column name="IS_DEFAULT" valueBoolean="true" />
+      <column name="ICON_NAME" value="noicon" />
+    </insert>
+
+    <insert tableName="INFO_LIST_ITEM">
+      <column name="ITEM_ID" value="21" />
+      <column name="ITEM_TYPE" value="SYS" />
+      <column name="LIST_ID" value="3" />
+      <column name="ITEM_INDEX" value="1" />
+      <column name="LABEL" value="test-case.type.TYP_COMPLIANCE_TESTING" />
+      <column name="CODE" value="TYP_COMPLIANCE_TESTING" />
+      <column name="IS_DEFAULT" valueBoolean="false" />
+      <column name="ICON_NAME" value="noicon" />
+    </insert>
+
+    <insert tableName="INFO_LIST_ITEM">
+      <column name="ITEM_ID" value="22" />
+      <column name="ITEM_TYPE" value="SYS" />
+      <column name="LIST_ID" value="3" />
+      <column name="ITEM_INDEX" value="2" />
+      <column name="LABEL" value="test-case.type.TYP_CORRECTION_TESTING" />
+      <column name="CODE" value="TYP_CORRECTION_TESTING" />
+      <column name="IS_DEFAULT" valueBoolean="false" />
+      <column name="ICON_NAME" value="noicon" />
+    </insert>
+
+    <insert tableName="INFO_LIST_ITEM">
+      <column name="ITEM_ID" value="23" />
+      <column name="ITEM_TYPE" value="SYS" />
+      <column name="LIST_ID" value="3" />
+      <column name="ITEM_INDEX" value="3" />
+      <column name="LABEL" value="test-case.type.TYP_EVOLUTION_TESTING" />
+      <column name="CODE" value="TYP_EVOLUTION_TESTING" />
+      <column name="IS_DEFAULT" valueBoolean="false" />
+      <column name="ICON_NAME" value="noicon" />
+    </insert>
+
+    <insert tableName="INFO_LIST_ITEM">
+      <column name="ITEM_ID" value="24" />
+      <column name="ITEM_TYPE" value="SYS" />
+      <column name="LIST_ID" value="3" />
+      <column name="ITEM_INDEX" value="4" />
+      <column name="LABEL" value="test-case.type.TYP_REGRESSION_TESTING" />
+      <column name="CODE" value="TYP_REGRESSION_TESTING" />
+      <column name="IS_DEFAULT" valueBoolean="false" />
+      <column name="ICON_NAME" value="noicon" />
+    </insert>
+
+    <insert tableName="INFO_LIST_ITEM">
+      <column name="ITEM_ID" value="25" />
+      <column name="ITEM_TYPE" value="SYS" />
+      <column name="LIST_ID" value="3" />
+      <column name="ITEM_INDEX" value="5" />
+      <column name="LABEL" value="test-case.type.TYP_END_TO_END_TESTING" />
+      <column name="CODE" value="TYP_END_TO_END_TESTING" />
+      <column name="IS_DEFAULT" valueBoolean="false" />
+      <column name="ICON_NAME" value="noicon" />
+    </insert>
+
+    <insert tableName="INFO_LIST_ITEM">
+      <column name="ITEM_ID" value="26" />
+      <column name="ITEM_TYPE" value="SYS" />
+      <column name="LIST_ID" value="3" />
+      <column name="ITEM_INDEX" value="6" />
+      <column name="LABEL" value="test-case.type.TYP_PARTNER_TESTING" />
+      <column name="CODE" value="TYP_PARTNER_TESTING" />
+      <column name="IS_DEFAULT" valueBoolean="false" />
+      <column name="ICON_NAME" value="noicon" />
+    </insert>
+
+  </changeSet>
+
+  <changeSet id="tm-1.12.0.feat-4068-4" author="bsiri">
+
+    <comment>other structural modifications</comment>
+		
+		<!--  =========== modifications of PROJECT table =============== -->
+
+    <addColumn tableName="PROJECT">
+
+      <column name="REQ_CATEGORIES_LIST" type="BIGINT" defaultValue="1"
+        remarks="foreign key to the requirement categories used in that project">
+        <constraints nullable="false" foreignKeyName="proj_req_categories" references="INFO_LIST(INFO_LIST_ID)" />
+      </column>
+
+
+      <column name="TC_NATURES_LIST" type="BIGINT" defaultValue="2"
+        remarks="foreign key to the test case natures used in that project">
+        <constraints nullable="false" foreignKeyName="proj_tc_natures" references="INFO_LIST(INFO_LIST_ID)" />
+      </column>
+
+
+      <column name="TC_TYPES_LIST" type="BIGINT" defaultValue="3"
+        remarks="foreign key to the test case types used in that project">
+        <constraints nullable="false" foreignKeyName="proj_tc_types" references="INFO_LIST(INFO_LIST_ID)" />
+      </column>
+
+    </addColumn>
+
+  </changeSet>
+
+
+  <changeSet id="tm-1.12.0.feat-4068-6" author="bsiri">
+
+    <comment>migrate the test cases </comment>
+		
+		<!--  ========= migration of the 'nature' column ============= -->
+
+    <renameColumn tableName="TEST_CASE" oldColumnName="TC_NATURE" newColumnName="TC_NATURE_OLD"
+      columnDataType="VARCHAR(30)" />
+
+    <addColumn tableName="TEST_CASE">
+      <column name="TC_NATURE" type="BIGINT" remarks="foreign key to the info list item" defaultValue="12">
+        <constraints nullable="false" foreignKeyName="fk_tc_nature" references="INFO_LIST_ITEM(ITEM_ID)" />
+      </column>
+    </addColumn>
+		
+		<!--  
+		in the following sequence we issue as many 'update' statement as there are nature 
+			to migrate. Indeed not all DB support update with joins and using subqueries would be costly.  -->
+    <sql>
+      update TEST_CASE set TC_NATURE = 12 where TC_NATURE_OLD = 'UNDEFINED';
+      update TEST_CASE set TC_NATURE = 13 where TC_NATURE_OLD = 'FUNCTIONAL_TESTING';
+      update TEST_CASE set TC_NATURE = 14 where TC_NATURE_OLD = 'BUSINESS_TESTING';
+      update TEST_CASE set TC_NATURE = 15 where TC_NATURE_OLD = 'USER_TESTING';
+      update TEST_CASE set TC_NATURE = 16 where TC_NATURE_OLD = 'NON_FUNCTIONAL_TESTING';
+      update TEST_CASE set TC_NATURE = 17 where TC_NATURE_OLD = 'PERFORMANCE_TESTING';
+      update TEST_CASE set TC_NATURE = 18 where TC_NATURE_OLD = 'SECURITY_TESTING';
+      update TEST_CASE set TC_NATURE = 19 where TC_NATURE_OLD = 'ATDD';
+    </sql>
+
+    <dropColumn tableName="TEST_CASE" columnName="TC_NATURE_OLD" />
+	
+		<!--  ========= migration of the 'type' column ============= -->
+
+    <renameColumn tableName="TEST_CASE" oldColumnName="TC_TYPE" newColumnName="TC_TYPE_OLD" columnDataType="VARCHAR(30)" />
+
+    <addColumn tableName="TEST_CASE">
+      <column name="TC_TYPE" type="BIGINT" remarks="foreign key to the info list item" defaultValue="20">
+        <constraints nullable="false" foreignKeyName="fk_tc_type" references="INFO_LIST_ITEM(ITEM_ID)" />
+      </column>
+    </addColumn>
+		
+		<!--  
+		in the following sequence we issue as many 'update' statement as there are types
+			to migrate. Indeed not all DB support update with joins and using subqueries would be costly.  -->
+    <sql>
+      update TEST_CASE set TC_TYPE = 20 where TC_TYPE_OLD = 'UNDEFINED';
+      update TEST_CASE set TC_TYPE = 21 where TC_TYPE_OLD = 'COMPLIANCE_TESTING';
+      update TEST_CASE set TC_TYPE = 22 where TC_TYPE_OLD = 'CORRECTION_TESTING';
+      update TEST_CASE set TC_TYPE = 23 where TC_TYPE_OLD = 'EVOLUTION_TESTING';
+      update TEST_CASE set TC_TYPE = 24 where TC_TYPE_OLD = 'REGRESSION_TESTING';
+      update TEST_CASE set TC_TYPE = 25 where TC_TYPE_OLD = 'END_TO_END_TESTING';
+      update TEST_CASE set TC_TYPE = 26 where TC_TYPE_OLD = 'PARTNER_TESTING';
+    </sql>
+
+    <dropColumn tableName="TEST_CASE" columnName="TC_TYPE_OLD" />
+
+  </changeSet>
+
+
+  <changeSet id="tm-1.12.0.feat-4068-7" author="bsiri">
+
+    <comment>migrate the requirements </comment>
+		
+		<!--  ========= migration of the 'category' column ============= -->
+
+    <renameColumn tableName="REQUIREMENT_VERSION" oldColumnName="CATEGORY" newColumnName="CATEGORY_OLD"
+      columnDataType="VARCHAR(30)" />
+
+    <addColumn tableName="REQUIREMENT_VERSION">
+      <column name="CATEGORY" type="BIGINT" remarks="foreign key to the info list item" defaultValue="1">
+        <constraints nullable="false" foreignKeyName="fk_req_nature" references="INFO_LIST_ITEM(ITEM_ID)" />
+      </column>
+    </addColumn>
+		
+		<!--  
+		in the following sequence we issue as many 'update' statement as there are nature 
+			to migrate. Indeed not all DB support update with joins and using subqueries would be costly.  -->
+    <sql>
+      update REQUIREMENT_VERSION set CATEGORY = 1 where CATEGORY_OLD = 'FUNCTIONAL';
+      update REQUIREMENT_VERSION set CATEGORY = 2 where CATEGORY_OLD = 'NON_FUNCTIONAL';
+      update REQUIREMENT_VERSION set CATEGORY = 3 where CATEGORY_OLD = 'USE_CASE';
+      update REQUIREMENT_VERSION set CATEGORY = 4 where CATEGORY_OLD = 'BUSINESS';
+      update REQUIREMENT_VERSION set CATEGORY = 5 where CATEGORY_OLD = 'TEST_REQUIREMENT';
+      update REQUIREMENT_VERSION set CATEGORY = 6 where CATEGORY_OLD = 'UNDEFINED';
+      update REQUIREMENT_VERSION set CATEGORY = 7 where CATEGORY_OLD = 'ERGONOMIC';
+      update REQUIREMENT_VERSION set CATEGORY = 8 where CATEGORY_OLD = 'PERFORMANCE';
+      update REQUIREMENT_VERSION set CATEGORY = 9 where CATEGORY_OLD = 'TECHNICAL';
+      update REQUIREMENT_VERSION set CATEGORY = 10 where CATEGORY_OLD = 'USER_STORY';
+      update REQUIREMENT_VERSION set CATEGORY = 11 where CATEGORY_OLD = 'SECURITY';
+    </sql>
+
+    <dropColumn tableName="REQUIREMENT_VERSION" columnName="CATEGORY_OLD" />
+
+  </changeSet>
+
+
+  <changeSet id="tm-1.12.0.feat-4068-8" author="bsiri">
+    <comment> migrating the columns from EXECUTION</comment>
+
+    <sql>
+      update EXECUTION
+      set TC_NAT_LABEL = 'test-case.nature.NAT_UNDEFINED',
+      TC_NAT_CODE = 'NAT_UNDEFINED',
+      TC_NAT_ICON_NAME = 'noicon'
+      where TC_NATURE='UNDEFINED';
+
+      update EXECUTION
+      set TC_NAT_LABEL = 'test-case.nature.NAT_FUNCTIONAL_TESTING',
+      TC_NAT_CODE = 'NAT_FUNCTIONAL_TESTING',
+      TC_NAT_ICON_NAME = 'noicon'
+      where TC_NATURE='FUNCTIONAL_TESTING';
+
+      update EXECUTION
+      set TC_NAT_LABEL = 'test-case.nature.NAT_BUSINESS_TESTING',
+      TC_NAT_CODE = 'NAT_BUSINESS_TESTING',
+      TC_NAT_ICON_NAME = 'noicon'
+      where TC_NATURE='BUSINESS_TESTING';
+
+
+      update EXECUTION
+      set TC_NAT_LABEL = 'test-case.nature.NAT_USER_TESTING',
+      TC_NAT_CODE = 'NAT_USER_TESTING',
+      TC_NAT_ICON_NAME = 'noicon'
+      where TC_NATURE='USER_TESTING';
+
+      update EXECUTION
+      set TC_NAT_LABEL = 'test-case.nature.NAT_NON_FUNCTIONAL_TESTING',
+      TC_NAT_CODE = 'NAT_NON_FUNCTIONAL_TESTING',
+      TC_NAT_ICON_NAME = 'noicon'
+      where TC_NATURE='NON_FUNCTIONAL_TESTING';
+
+      update EXECUTION
+      set TC_NAT_LABEL = 'test-case.nature.NAT_PERFORMANCE_TESTING',
+      TC_NAT_CODE = 'NAT_PERFORMANCE_TESTING',
+      TC_NAT_ICON_NAME = 'noicon'
+      where TC_NATURE='PERFORMANCE_TESTING';
+
+      update EXECUTION
+      set TC_NAT_LABEL = 'test-case.nature.NAT_SECURITY_TESTING',
+      TC_NAT_CODE = 'NAT_SECURITY_TESTING',
+      TC_NAT_ICON_NAME = 'noicon'
+      where TC_NATURE='SECURITY_TESTING';
+
+      update EXECUTION
+      set TC_NAT_LABEL = 'test-case.nature.NAT_ATDD',
+      TC_NAT_CODE = 'NAT_ATDD',
+      TC_NAT_ICON_NAME = 'noicon'
+      where TC_NATURE='ATDD';
+
+
+
+
+      update EXECUTION
+      set TC_TYP_LABEL = 'test-case.type.TYP_UNDEFINED',
+      TC_TYP_CODE = 'TYP_UNDEFINED',
+      TC_TYP_ICON_NAME = 'noicon'
+      where TC_TYPE='UNDEFINED';
+
+      update EXECUTION
+      set TC_TYP_LABEL = 'test-case.type.TYP_COMPLIANCE_TESTING',
+      TC_TYP_CODE = 'TYP_COMPLIANCE_TESTING',
+      TC_TYP_ICON_NAME = 'noicon'
+      where TC_TYPE='COMPLIANCE_TESTING';
+
+      update EXECUTION
+      set TC_TYP_LABEL = 'test-case.type.TYP_CORRECTION_TESTING',
+      TC_TYP_CODE = 'TYP_CORRECTION_TESTING',
+      TC_TYP_ICON_NAME = 'noicon'
+      where TC_TYPE='CORRECTION_TESTING';
+
+      update EXECUTION
+      set TC_TYP_LABEL = 'test-case.type.TYP_EVOLUTION_TESTING',
+      TC_TYP_CODE = 'TYP_EVOLUTION_TESTING',
+      TC_TYP_ICON_NAME = 'noicon'
+      where TC_TYPE='EVOLUTION_TESTING';
+
+      update EXECUTION
+      set TC_TYP_LABEL = 'test-case.type.TYP_REGRESSION_TESTING',
+      TC_TYP_CODE = 'TYP_REGRESSION_TESTING',
+      TC_TYP_ICON_NAME = 'noicon'
+      where TC_TYPE='REGRESSION_TESTING';
+
+      update EXECUTION
+      set TC_TYP_LABEL = 'test-case.type.TYP_END_TO_END_TESTING',
+      TC_TYP_CODE = 'TYP_END_TO_END_TESTING',
+      TC_TYP_ICON_NAME = 'noicon'
+      where TC_TYPE='END_TO_END_TESTING';
+
+      update EXECUTION
+      set TC_TYP_LABEL = 'test-case.type.TYP_PARTNER_TESTING',
+      TC_TYP_CODE = 'TYP_PARTNER_TESTING',
+      TC_TYP_ICON_NAME = 'noicon'
+      where TC_TYPE='PARTNER_TESTING';
+
+
+
+    </sql>
+
+    <dropColumn tableName="EXECUTION" columnName="TC_NATURE" />
+    <dropColumn tableName="EXECUTION" columnName="TC_TYPE" />
+  </changeSet>
+
+  <changeSet id="tm-1.12.0.feat-4068-9" author="bsiri" dbms="postgresql">
+    <comment>update the sequences afterward</comment>
+    <sql>
+      SELECT setval('info_list_info_list_id_seq', (SELECT MAX(info_list_id) from info_list));
+      SELECT setval('info_list_item_item_id_seq', (SELECT MAX(item_id) from info_list_item));
+    </sql>
+  </changeSet>
+
+  <changeSet author="flaurens" id="tm-1.12.0.feat-3764-1">
+  <!-- Note : This schema comes from Spring Secutrity OAuth plugin -->
+  <!-- Token columns were originally VARCHAR(256), which cannot be indexed in mysql with a utf-8 collation -->
+  <!-- Yet, default token provider uses a 128 bits UUID generator, so we "safely" truncated col width to 255 -->
+  <!-- Note : Table names are in lowercase. This violates uppercase convention but it is easier to implement -->
+  <!-- than overriding each and every oauth-related queries which are hardcoded in spring-security -->
+    <comment>Tables for OAuth2 Support</comment>
+    <createTable tableName="oauth_client_details">
+      <column name="CLIENT_ID" type="java.sql.Types.VARCHAR(255)">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+      <column name="CLIENT_SECRET" type="java.sql.Types.VARCHAR(255)">
+      </column>
+      <column name="RESOURCE_IDS" type="java.sql.Types.VARCHAR(255)" defaultValue="NULL">
+      </column>
+      <column name="SCOPE" type="java.sql.Types.VARCHAR(255)" defaultValue="location,locationhistory">
+      </column>
+      <column name="AUTHORIZED_GRANT_TYPES" type="java.sql.Types.VARCHAR(255)" defaultValue="password,authorization_code,refresh_token,implicit">
+      </column>
+      <column name="WEB_SERVER_REDIRECT_URI" type="java.sql.Types.VARCHAR(255)" defaultValue="NULL">
+      </column>
+      <column name="AUTHORITIES" type="java.sql.Types.VARCHAR(255)" defaultValue="ROLE_CLIENT, ROLE_TRUSTED_CLIENT">
+      </column>
+      <column name="ACCESS_TOKEN_VALIDITY" type="BIGINT" defaultValue="60">
+      </column>
+      <column name="REFRESH_TOKEN_VALIDITY" type="BIGINT" defaultValue="NULL">
+      </column>
+      <column name="ADDITIONAL_INFORMATION" type="CLOB" defaultValue="NULL">
+      </column>
+      <column name="AUTOAPPROVE" type="java.sql.Types.VARCHAR(255)">
+      </column>
+    </createTable>
+
+    <createTable tableName="oauth_client_token">
+      <column name="TOKEN_ID" type="java.sql.Types.VARCHAR(255)">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+      <column name="TOKEN" type="java.sql.Types.LONGVARBINARY">
+      </column>
+      <column name="AUTHENTICATION_ID" type="java.sql.Types.VARCHAR(255)">
+        <constraints unique="true" />
+      </column>
+      <column name="USER_NAME" type="java.sql.Types.VARCHAR(255)">
+      </column>
+      <column name="CLIENT_ID" type="java.sql.Types.VARCHAR(255)">
+      </column>
+    </createTable>
+
+    <createTable tableName="oauth_access_token">
+      <column name="TOKEN_ID" type="java.sql.Types.VARCHAR(255)">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+      <column name="TOKEN" type="java.sql.Types.LONGVARBINARY">
+      </column>
+      <column name="AUTHENTICATION_ID" type="java.sql.Types.VARCHAR(255)">
+        <constraints unique="true" />
+      </column>
+      <column name="USER_NAME" type="java.sql.Types.VARCHAR(255)">
+      </column>
+      <column name="CLIENT_ID" type="java.sql.Types.VARCHAR(255)">
+      </column>
+      <column name="AUTHENTICATION" type="java.sql.Types.LONGVARBINARY">
+      </column>
+      <column name="REFRESH_TOKEN" type="java.sql.Types.VARCHAR(255)">
+      </column>
+    </createTable>
+
+    <createTable tableName="oauth_refresh_token">
+      <column name="TOKEN_ID" type="java.sql.Types.VARCHAR(255)">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+      <column name="TOKEN" type="java.sql.Types.LONGVARBINARY">
+      </column>
+      <column name="AUTHENTICATION" type="java.sql.Types.LONGVARBINARY">
+      </column>
+    </createTable>
+
+    <createTable tableName="oauth_code">
+      <column name="CODE" type="java.sql.Types.VARCHAR(255)">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+      <column name="AUTHENTICATION" type="java.sql.Types.LONGVARBINARY">
+      </column>
+    </createTable>
+
+    <createTable tableName="oauth_approvals">
+      <column name="USERID" type="java.sql.Types.VARCHAR(255)">
+        <constraints nullable="false" />
+      </column>
+      <column name="CLIENTID" type="java.sql.Types.VARCHAR(255)">
+        <constraints nullable="false" />
+      </column>
+      <column name="SCOPE" type="java.sql.Types.VARCHAR(255)">
+      </column>
+      <column name="STATUS" type="java.sql.Types.VARCHAR(10)">
+      </column>
+      <column name="EXPIRESAT" type="DATETIME">
+      </column>
+      <column name="LASTMODIFIEDAT" type="DATETIME">
+      </column>
+    </createTable>
+
+    <addPrimaryKey columnNames="USERID, CLIENTID" constraintName="PK_OAUTH_APPROVALS" tableName="oauth_approvals" />
+  </changeSet>
+
+  <changeSet id="tm-1.12.0.feat-4171-1" author="jsimon">
+    <insert tableName="CORE_CONFIG">
+      <column name="STR_KEY" value="uploadfilter.fileExtensions.whitelist" />
+      <column name="VALUE" value="txt, doc, xls, ppt, docx, xlsx, pptx, odt, ods, odp, pdf" />
+    </insert>
+    <insert tableName="CORE_CONFIG">
+      <column name="STR_KEY" value="uploadfilter.upload.sizeLimitInBytes" />
+      <column name="VALUE" value="4000000" />
+    </insert>
+    <insert tableName="CORE_CONFIG">
+      <column name="STR_KEY" value="uploadfilter.upload.import.sizeLimitInBytes" />
+      <column name="VALUE" value="2000000" />
+    </insert>
+
+  </changeSet>
+
+  <changeSet id="tm-1.12.0.feat-3611-1" author="bsiri">
+    <comment>
+    		Creating the tables modeling the relationships between milestones and test cases, requirement versions 
+    		and campaigns
+    	</comment>
+
+    <createTable tableName="MILESTONE_TEST_CASE">
+      <column name="MILESTONE_ID" type="BIGINT" remarks="foreign key to table MILESTONE">
+        <constraints nullable="false" foreignKeyName="milestone_tc_milestone" references="MILESTONE(MILESTONE_ID)" />
+      </column>
+
+      <column name="TEST_CASE_ID" type="BIGINT" remarks="foreign key to table TEST_CASE">
+        <constraints nullable="false" foreignKeyName="milestone_tc_tc" references="TEST_CASE(TCLN_ID)" />
+      </column>
+
+    </createTable>
+
+    <createTable tableName="MILESTONE_REQ_VERSION">
+      <column name="MILESTONE_ID" type="BIGINT" remarks="foreign key to table MILESTONE">
+        <constraints nullable="false" foreignKeyName="milestone_rqv_milestone" references="MILESTONE(MILESTONE_ID)" />
+      </column>
+
+      <column name="REQ_VERSION_ID" type="BIGINT" remarks="foreign key to table REQUIREMENT_VERSION">
+        <constraints nullable="false" foreignKeyName="milestone_rqv_rqv" references="REQUIREMENT_VERSION(RES_ID)" />
+      </column>
+    </createTable>
+
+    <createTable tableName="MILESTONE_CAMPAIGN">
+      <column name="MILESTONE_ID" type="BIGINT" remarks="foreign key to table MILESTONE">
+        <constraints nullable="false" foreignKeyName="milestone_camp_milestone" references="MILESTONE(MILESTONE_ID)" />
+      </column>
+
+      <column name="CAMPAIGN_ID" type="BIGINT" remarks="foreign key to table CAMPAIGN">
+        <constraints nullable="false" foreignKeyName="milestone_camp_camp" references="CAMPAIGN(CLN_ID)" />
+      </column>
+    </createTable>
+
+  </changeSet>
+
+</databaseChangeLog>
+

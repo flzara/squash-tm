@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8'  ?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.11.0.dtd">
+
+
+<dataset>
+
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-2"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-3"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-4"/>
+	
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-5"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-6"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-7"/>
+
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-1" CREATED_ON="2011-08-30" CREATED_BY="IT" NAME="tc1" ATTACHMENT_LIST_ID="-1"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-2" CREATED_ON="2011-08-30" CREATED_BY="IT" NAME="tc2" ATTACHMENT_LIST_ID="-2" />
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-3" CREATED_ON="2011-08-30" CREATED_BY="IT" NAME="tc3" ATTACHMENT_LIST_ID="-3"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-4" CREATED_ON="2011-08-30" CREATED_BY="IT" NAME="tc4" ATTACHMENT_LIST_ID="-4" />
+	
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-1" VERSION="1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-2" VERSION="1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-3" VERSION="1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-4" VERSION="1" />	
+	
+	
+	<CAMPAIGN_LIBRARY_NODE CREATED_ON="2011-08-30" CREATED_BY="IT" CLN_ID="-1" NAME="c1" ATTACHMENT_LIST_ID="-5"/>
+	<CAMPAIGN_LIBRARY_NODE CREATED_ON="2011-08-30" CREATED_BY="IT" CLN_ID="-2" NAME="c2" ATTACHMENT_LIST_ID="-6"/>
+	<CAMPAIGN_LIBRARY_NODE CREATED_ON="2011-08-30" CREATED_BY="IT" CLN_ID="-3" NAME="c3" ATTACHMENT_LIST_ID="-7"/>
+	
+	<CAMPAIGN ACTUAL_START_AUTO="false" ACTUAL_END_AUTO="false" CLN_ID="-1" />
+	<CAMPAIGN ACTUAL_START_AUTO="false" ACTUAL_END_AUTO="false" CLN_ID="-2" />
+	<CAMPAIGN ACTUAL_START_AUTO="false" ACTUAL_END_AUTO="false" CLN_ID="-3" />
+
+	<!--  campaign 1 items : 1, 2, 3, 4 -->
+	<CAMPAIGN_TEST_PLAN_ITEM TEST_CASE_ID="-1" CTPI_ID="-11" TEST_PLAN_ORDER="0" CAMPAIGN_ID="-1"/>
+	<CAMPAIGN_TEST_PLAN_ITEM TEST_CASE_ID="-2" CTPI_ID="-12" TEST_PLAN_ORDER="1" CAMPAIGN_ID="-1"/>
+	<CAMPAIGN_TEST_PLAN_ITEM TEST_CASE_ID="-3" CTPI_ID="-13" TEST_PLAN_ORDER="2" CAMPAIGN_ID="-1"/>
+	<CAMPAIGN_TEST_PLAN_ITEM TEST_CASE_ID="-4" CTPI_ID="-14" TEST_PLAN_ORDER="3" CAMPAIGN_ID="-1"/>
+
+	<!--  campaign 2 items : 4, 3, 2, 1 -->	
+	<CAMPAIGN_TEST_PLAN_ITEM TEST_CASE_ID="-1" CTPI_ID="-21" TEST_PLAN_ORDER="3" CAMPAIGN_ID="-2"/>
+	<CAMPAIGN_TEST_PLAN_ITEM TEST_CASE_ID="-2" CTPI_ID="-22" TEST_PLAN_ORDER="2" CAMPAIGN_ID="-2"/>
+	<CAMPAIGN_TEST_PLAN_ITEM TEST_CASE_ID="-3" CTPI_ID="-23" TEST_PLAN_ORDER="1" CAMPAIGN_ID="-2"/>
+	<CAMPAIGN_TEST_PLAN_ITEM TEST_CASE_ID="-4" CTPI_ID="-24" TEST_PLAN_ORDER="0" CAMPAIGN_ID="-2"/>
+	
+	<!--  campaign 3 items : 1, 3, 2, 4 -->	
+	<CAMPAIGN_TEST_PLAN_ITEM TEST_CASE_ID="-1" CTPI_ID="-31" TEST_PLAN_ORDER="1"  CAMPAIGN_ID="-3"/>
+	<CAMPAIGN_TEST_PLAN_ITEM TEST_CASE_ID="-2" CTPI_ID="-32" TEST_PLAN_ORDER="0"  CAMPAIGN_ID="-3"/>
+	<CAMPAIGN_TEST_PLAN_ITEM TEST_CASE_ID="-3" CTPI_ID="-33" TEST_PLAN_ORDER="3"  CAMPAIGN_ID="-3"/>
+	<CAMPAIGN_TEST_PLAN_ITEM TEST_CASE_ID="-4" CTPI_ID="-34" TEST_PLAN_ORDER="2"  CAMPAIGN_ID="-3"/>	
+	
+	<action_test_step/>
+	<call_test_step/>
+	<test_case_library_content/>
+	<test_case_folder/>
+	<tcln_relationship/>
+	<test_case_steps/>
+
+</dataset>

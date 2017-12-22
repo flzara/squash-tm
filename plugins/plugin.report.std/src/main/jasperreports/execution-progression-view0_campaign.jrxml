@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="execution-progression-view0_campaign" pageWidth="736" pageHeight="555" orientation="Landscape" columnWidth="736" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" resourceBundle="/WEB-INF/messages/tm/messages" whenResourceMissingType="Key">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["D:\\bsiri\\helios_workspace\\squashtest-csp\\tm\\org.squashtest.csp.tm.web\\src\\main\\jasperreports\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="project_name" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="totalResult_l2" class="java.util.Map" isForPrompting="false"/>
+	<parameter name="subReportIteration" class="net.sf.jasperreports.engine.JasperReport" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="actualEndDate" class="java.util.Date">
+		<fieldDescription><![CDATA[actualEndDate]]></fieldDescription>
+	</field>
+	<field name="actualStartDate" class="java.util.Date">
+		<fieldDescription><![CDATA[actualStartDate]]></fieldDescription>
+	</field>
+	<field name="name" class="java.lang.String">
+		<fieldDescription><![CDATA[name]]></fieldDescription>
+	</field>
+	<field name="scheduledEndDate" class="java.util.Date">
+		<fieldDescription><![CDATA[scheduledEndDate]]></fieldDescription>
+	</field>
+	<field name="scheduledStartDate" class="java.util.Date">
+		<fieldDescription><![CDATA[scheduledStartDate]]></fieldDescription>
+	</field>
+	<field name="iterations" class="java.util.List">
+		<fieldDescription><![CDATA[iterations]]></fieldDescription>
+	</field>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<printWhenExpression><![CDATA[(($F{iterations}!=null) &&($F{iterations}.size()>0))]]></printWhenExpression>
+			<subreport>
+				<reportElement x="0" y="0" width="736" height="20"/>
+                <subreportParameter  name="REPORT_RESOURCE_BUNDLE">
+                    <subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
+                </subreportParameter>
+				<subreportParameter name="project_name_l2">
+					<subreportParameterExpression><![CDATA[$P{project_name}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="campaign_name_l2">
+					<subreportParameterExpression><![CDATA[$F{name}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="campaign_actstart_l2">
+					<subreportParameterExpression><![CDATA[$F{actualStartDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="campaign_actend_l2">
+					<subreportParameterExpression><![CDATA[$F{actualEndDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="campaign_schedstart_l2">
+					<subreportParameterExpression><![CDATA[$F{scheduledStartDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="totalResult_l3">
+					<subreportParameterExpression><![CDATA[$P{totalResult_l2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="campaign_schedend_l2">
+					<subreportParameterExpression><![CDATA[$F{scheduledEndDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{iterations})]]></dataSourceExpression>
+				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{subReportIteration}]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

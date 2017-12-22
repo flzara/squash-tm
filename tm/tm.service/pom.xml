@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.squashtest.tm</groupId>
+    <artifactId>squash-tm-tm</artifactId>
+    <version>1.17.0.RELEASE</version>
+  </parent>
+
+  <artifactId>tm.service</artifactId>
+  <packaging>jar</packaging>
+  <name>${project.groupId}.${project.artifactId}</name>
+  <description>Squash TM services module - Provides Test management related internal services</description>
+
+  <properties>
+    <dynamicdao.outputdir>${project.build.directory}/generated-resources</dynamicdao.outputdir>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>squash-tm-bom</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-compress</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-dbcp</groupId>
+      <artifactId>commons-dbcp</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-dbcp2</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-validator</groupId>
+      <artifactId>commons-validator</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.aspect</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.bugtracker.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.dynamicmanager</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.foundation</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.testautomation.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>net.sf.ehcache</groupId>
+      <artifactId>ehcache</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+    </dependency>
+
+    <!-- required for logging with log4j2 (no shits) -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-yaml</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+    </dependency>
+    <!-- /no shits -->
+
+    <!-- +++++++++++++++++++++++
+    /LOGGING
+    ++++++++++++++++++++++++++++-->
+
+    <!--
+
+    		TODO : usage deprecated as of TM 1.17. If no bug related to this
+    		library was reported when 1.18 is release, remove this definitely.
+
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>ooxml-schemas</artifactId>
+    </dependency>
+     -->
+
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi-ooxml</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-aop</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-jdbc</artifactId>
+    </dependency>
+
+    <!--
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.17</version>
+      <scope>compile</scope>
+    </dependency>
+-->
+
+    <!-- +++++++++++++++++++++++
+    LOGGING
+    ++++++++++++++++++++++++++++-->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-log4j2</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+
+    <dependency>
+      <!-- not in any relevant spring-boot-starter pom -->
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context-support</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.security.oauth</groupId>
+      <artifactId>spring-security-oauth2</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>tm.domain</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>org.squashtest.tm.tools.unittest</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>spock-test-dependencies</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <build>
+
+    <testSourceDirectory>src/test/groovy</testSourceDirectory>
+    <resources>
+      <resource>
+        <filtering>true</filtering>
+        <directory>${project.basedir}/src/main/resources</directory>
+      </resource>
+    </resources>
+
+    <testResources>
+      <testResource>
+        <filtering>false</filtering>
+        <directory>${project.basedir}/src/test/resources</directory>
+      </testResource>
+    </testResources>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <generatedSourcesDirectory>${project.build.outputDirectory}/META-INF</generatedSourcesDirectory>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <!-- This dependency triggers DynamicManager anotations processing through APT -->
+            <!-- TODO assess if we really need this in tm.domain -->
+            <groupId>org.squashtest.tm</groupId>
+            <artifactId>tools.annotation.processor</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>aspectj-maven-plugin</artifactId>
+        <configuration>
+          <showWeaveInfo>${verbose.compiler}</showWeaveInfo>
+          <verbose>${verbose.compiler}</verbose>
+          <!-- every aspect which should be weaved has to be declared in this file -->
+          <xmlConfigured>weaved-aspects.xml</xmlConfigured>
+          <sources>
+            <source>
+              <basedir>${project.basedir}/src/main/java</basedir>
+              <includes>
+                <include>**/*.java</include>
+              </includes>
+              <excludes>
+                <exclude>**/PreventConcurrentAspect.java</exclude>
+              </excludes>
+            </source>
+          </sources>
+          <aspectLibraries>
+            <aspectLibrary>
+              <groupId>org.squashtest.tm</groupId>
+              <artifactId>core.aspect</artifactId>
+            </aspectLibrary>
+            <aspectLibrary>
+              <!-- For @Configurable. Not sure we need it in this module -->
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-aspects</artifactId>
+            </aspectLibrary>
+            <aspectLibrary>
+              <groupId>org.squashtest.tm</groupId>
+              <artifactId>tm.domain</artifactId>
+            </aspectLibrary>
+          </aspectLibraries>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>eclipse</id>
+      <activation>
+        <file>
+          <exists>${basedir}\.project</exists>
+        </file>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+            <executions>
+              <execution>
+                <!-- copy the generated spring conf files -->
+                <id>copy-dynamic-dao-springcontext-file</id>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <phase>package</phase>
+                <configuration>
+                  <outputDirectory>${basedir}/META-INF/spring/</outputDirectory>
+                  <outputDirectory>${basedir}/META-INF/spring/</outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>${dynamicdao.outputdir}/META-INF/spring</directory>
+                      <includes>
+                        <include>**/*.xml</include>
+                      </includes>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>

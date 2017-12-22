@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<!-- DO NOT FORGET TO UPDATE VERSION IN CORE_CONFIG ! -->
+	<!-- OK BOSS ! -->
+	<changeSet id="tm-1.7.0" author="bsiri">
+		<comment>Update TM database version number</comment>
+		<update tableName="CORE_CONFIG">
+			<column name="VALUE" value="1.7.0" />
+			<where>STR_KEY = 'squashtest.tm.database.version'</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="tm-1.7.0.feat-1107-01" author="bsiri">
+		<comment>Modifying RLN_RELATIONSHIP and RLN_RELATIONSHIP_CLOSURE : requirements can now accept more requirements 
+		(but no folders). Cautious : there is no way to express that a a requirement can only accept requirements as children.</comment>
+
+		<dropForeignKeyConstraint baseTableName="RLN_RELATIONSHIP"
+			constraintName="fk_rln_relationship_ancestor" />
+		<dropForeignKeyConstraint baseTableName="RLN_RELATIONSHIP"
+			constraintName="fk_rln_relationship_descendant" />
+
+		<addForeignKeyConstraint constraintName="fk_rln_relationship_ancestor"
+			baseTableName="RLN_RELATIONSHIP" baseColumnNames="ANCESTOR_ID"
+			referencedTableName="REQUIREMENT_LIBRARY_NODE" referencedColumnNames="RLN_ID" />
+
+		<addForeignKeyConstraint constraintName="fk_rln_relationship_descendant"
+			baseTableName="RLN_RELATIONSHIP" baseColumnNames="DESCENDANT_ID"
+			referencedTableName="REQUIREMENT_LIBRARY_NODE" referencedColumnNames="RLN_ID" />
+
+	</changeSet>
+
+	<changeSet id="tm-1.7.0.feat-1090-01" author="flaurens">
+		<preConditions onError="CONTINUE" onFail="CONTINUE">
+			<sqlCheck expectedResult="0">
+				select count(*) from CORE_CONFIG
+				where STR_KEY = 'lastindexing.requirement.date'
+			</sqlCheck>
+		</preConditions>
+		<comment>adding entries for indexing dates in table core_config</comment>
+		<insert tableName="CORE_CONFIG">
+			<column name="STR_KEY" value="lastindexing.requirement.date" />
+		</insert>
+	</changeSet>
+
+	<changeSet id="tm-1.7.0.feat-1090-02" author="flaurens">
+		<preConditions onError="CONTINUE" onFail="CONTINUE">
+			<sqlCheck expectedResult="0">
+				select count(*) from CORE_CONFIG
+				where STR_KEY = 'lastindexing.testcase.date'
+			</sqlCheck>
+		</preConditions>
+		<comment>adding entries for indexing dates in table core_config</comment>
+		<insert tableName="CORE_CONFIG">
+			<column name="STR_KEY" value="lastindexing.testcase.date" />
+		</insert>
+	</changeSet>
+
+	<changeSet id="tm-1.7.0.feat-1090-03" author="flaurens">
+		<preConditions onError="CONTINUE" onFail="CONTINUE">
+			<sqlCheck expectedResult="0">
+				select count(*) from CORE_CONFIG
+				where STR_KEY = 'lastindexing.campaign.date'
+			</sqlCheck>
+		</preConditions>
+		<comment>adding entries for indexing dates in table core_config</comment>
+		<insert tableName="CORE_CONFIG">
+			<column name="STR_KEY" value="lastindexing.campaign.date" />
+		</insert>
+	</changeSet>
+	
+	<changeSet id="tm-1.7.0.feat-1090-04" author="flaurens">
+		<preConditions onError="CONTINUE" onFail="CONTINUE">
+			<sqlCheck expectedResult="0">
+				select count(*) from CORE_CONFIG
+				where STR_KEY = 'lastindexing.requirement.version'
+			</sqlCheck>
+		</preConditions>
+		<comment>adding entries for indexing versions in table core_config</comment>
+		<insert tableName="CORE_CONFIG">
+			<column name="STR_KEY" value="lastindexing.requirement.version" />
+		</insert>
+	</changeSet>
+	
+	<changeSet id="tm-1.7.0.feat-1090-05" author="flaurens">
+		<preConditions onError="CONTINUE" onFail="CONTINUE">
+			<sqlCheck expectedResult="0">
+				select count(*) from CORE_CONFIG
+				where STR_KEY = 'lastindexing.requirement.testcase'
+			</sqlCheck>
+		</preConditions>
+		<comment>adding entries for indexing versions in table core_config</comment>
+		<insert tableName="CORE_CONFIG">
+			<column name="STR_KEY" value="lastindexing.testcase.version" />
+		</insert>
+	</changeSet>
+	
+	<changeSet id="tm-1.7.0.feat-1090-06" author="flaurens">
+		<preConditions onError="CONTINUE" onFail="CONTINUE">
+			<sqlCheck expectedResult="0">
+				select count(*) from CORE_CONFIG
+				where STR_KEY = 'lastindexing.campaign.version'
+			</sqlCheck>
+		</preConditions>
+		<comment>adding entries for indexing versions in table core_config</comment>
+		<insert tableName="CORE_CONFIG">
+			<column name="STR_KEY" value="lastindexing.campaign.version" />
+		</insert>
+	</changeSet>
+	<changeSet id="tm-1.7.0.feat-2648" author="mpagnon">
+	<comment>add permission EXTENDED_DELETE to Project Manager on Campaign library</comment>
+		<insert tableName="ACL_GROUP_PERMISSION">
+			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.ProjectManager')" />
+			<column name="PERMISSION_MASK" value="2048" />
+			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.campaign.CampaignLibrary')" />
+		</insert>
+		<comment>add permission EXPORT to Test Runner on Requirement library</comment>
+		<insert tableName="ACL_GROUP_PERMISSION">
+			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestRunner')" />
+			<column name="PERMISSION_MASK" value="64" />
+			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.requirement.RequirementLibrary')" />
+		</insert>
+		<comment>add permission EXPORT to Test Runner on Test-case library</comment>
+		<insert tableName="ACL_GROUP_PERMISSION">
+			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestRunner')" />
+			<column name="PERMISSION_MASK" value="64" />
+			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.testcase.TestCaseLibrary')" />
+		</insert>
+		<comment>remove permission WRITE to Advance tester on Campaign library</comment>
+		<delete tableName="ACL_GROUP_PERMISSION">
+			<where>
+				ACL_GROUP_ID = (select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.AdvanceTester')
+				and PERMISSION_MASK = 2
+				and CLASS_ID = (select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.campaign.CampaignLibrary')
+			</where>
+		</delete>
+		<comment>remove permission CREATE to Advance tester on Campaign library</comment>
+		<delete tableName="ACL_GROUP_PERMISSION">
+			<where>
+				ACL_GROUP_ID = (select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.AdvanceTester')
+				and PERMISSION_MASK = 4
+				and CLASS_ID = (select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.campaign.CampaignLibrary')
+			</where>
+		</delete>
+		<comment>remove permission DELETE to Advance tester on Campaign library</comment>
+		<delete tableName="ACL_GROUP_PERMISSION">
+			<where>
+				ACL_GROUP_ID = (select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.AdvanceTester')
+				and PERMISSION_MASK = 8
+				and CLASS_ID = (select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.campaign.CampaignLibrary')
+			</where>
+		</delete>
+		<comment>remove permission LINK to Advance tester on Campaign library</comment>
+		<delete tableName="ACL_GROUP_PERMISSION">
+			<where>
+				ACL_GROUP_ID = (select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.AdvanceTester')
+				and PERMISSION_MASK = 256
+				and CLASS_ID = (select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.campaign.CampaignLibrary')
+			</where>
+		</delete>
+		<comment>add permission EXPORT to Advance tester on Requirement library</comment>
+		<insert tableName="ACL_GROUP_PERMISSION">
+			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.AdvanceTester')" />
+			<column name="PERMISSION_MASK" value="64" />
+			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.requirement.RequirementLibrary')" />
+		</insert>
+		<comment>add permission LINK to Advance tester on Requirement library</comment>
+		<insert tableName="ACL_GROUP_PERMISSION">
+			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.AdvanceTester')" />
+			<column name="PERMISSION_MASK" value="256" />
+			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.requirement.RequirementLibrary')" />
+		</insert>
+		<comment>remove permission ATTACH to Advance tester on Test-case library</comment>
+		<delete tableName="ACL_GROUP_PERMISSION">
+			<where>
+				ACL_GROUP_ID = (select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.AdvanceTester')
+				and PERMISSION_MASK = 1024
+				and CLASS_ID = (select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.testcase.TestCaseLibrary')
+			</where>
+		</delete>
+		<comment>add permission LINK to Advance tester on Test-case library</comment>
+		<insert tableName="ACL_GROUP_PERMISSION">
+			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.AdvanceTester')" />
+			<column name="PERMISSION_MASK" value="256" />
+			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.testcase.TestCaseLibrary')" />
+		</insert>
+		<comment>add permission WRITE to Validator on Requirement library</comment>
+		<insert tableName="ACL_GROUP_PERMISSION">
+			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.Validator')" />
+			<column name="PERMISSION_MASK" value="2" />
+			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.requirement.RequirementLibrary')" />
+		</insert>
+		<comment>add permission ATTACH to Validator on Requirement library</comment>
+		<insert tableName="ACL_GROUP_PERMISSION">
+			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.Validator')" />
+			<column name="PERMISSION_MASK" value="1024" />
+			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.requirement.RequirementLibrary')" />
+		</insert>
+		<comment>add permission WRITE to Validator on Test-case library</comment>
+		<insert tableName="ACL_GROUP_PERMISSION">
+			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.Validator')" />
+			<column name="PERMISSION_MASK" value="2" />
+			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.testcase.TestCaseLibrary')" />
+		</insert>
+		<comment>add permission ATTACH to Validator on Test-case library</comment>
+		<insert tableName="ACL_GROUP_PERMISSION">
+			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.Validator')" />
+			<column name="PERMISSION_MASK" value="1024" />
+			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.testcase.TestCaseLibrary')" />
+		</insert>
+	</changeSet>
+</databaseChangeLog>
+ 

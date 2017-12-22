@@ -1,0 +1,291 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title th:text="#{title.infoListManager}">User lists manager</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+  <style th:include="admin/admin-subpage.frag :: subpage-css" th:remove="tag"></style>
+
+  <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+  <script type="text/javascript" th:inline="javascript">
+    var squashtm = {};
+    squashtm.app = {
+      isAdmin : /*[[ ${sec.hasRole('ROLE_ADMIN')} ]]*/,
+      contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
+      localizedDateFormat : /*[[ #{squashtm.dateformatShort.datepicker} ]]*/"dd/mm/yy",
+      locale : /*[[ #{squashtm.locale} ]]*/"fr",
+    };
+  </script>
+  <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
+  <script data-main="../../scripts/info-list-manager.js" th:attr="data-main=@{/scripts/info-list-manager.js}"
+    src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
+  </script>
+
+  <script id="name-cell-tpl" type="text/x-handlebars-template" th:inline="text">
+  <a href="{{url}}">{{text}}</a>
+  </script>
+
+  <script id="remove-cell-tpl" type="text/x-handlebars-template" th:inline="text">
+  <button data-value="{{value}}" name="{{name}}" class="sq-icon-btn btn-sm" th:title="#{label.Delete}" title="Delete">
+    <span class="ui-icon ui-icon-trash"></span>
+  </button>
+  </script>
+
+  <script id="confirm-remove-tpl" type="text/x-handlebars-template" th:inline="text">
+  <div class='display-table-row'>
+    <div class='display-table-cell warning-cell'>
+      <div class='delete-node-dialog-warning'></div>
+    </div>
+    <div class='display-table-cell'>
+      <span>{{first}}</span>
+      <span class='red-warning-message'>{{second}}</span>
+      <span>{{third}}</span>
+      <span class='bold-warning-message'>{{fourth}}</span>
+      <br/>
+      <span class='red-warning-message'>{{warn-index}}</span>
+    </div>
+  </div>
+  </script>
+
+  <script id="confirm-remove-reindex" type="text/x-handlebars-template" th:inline="text">
+  <div class='display-table-row'>
+    <div class='display-table-cell warning-cell'>
+      <div class='delete-node-dialog-warning'></div>
+    </div>
+    <div class='display-table-cell'>
+      <span class='red-warning-message' th:text="#{dialog.info-list.warning.reindex.after}">I shall reindex</span>
+    </div>
+  </div>
+  </script>
+
+</head>
+<body>
+  <div id="navigation" th:include="navbar.frag :: navbar('')">
+    NAVBAR
+  </div>
+  <div id="workspace">
+    <div id="workspace-title">
+      <div class="snap-left">
+        <h2 th:text="#{label.administration}" class="admin">Administration</h2>
+      </div>
+      <div class="snap-right">
+        <div class="main-menubar " th:include="menubar.frag :: menubar">
+          MENUBAR
+        </div>
+        <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">
+          NOTIFICATION
+        </div>
+      </div>
+    </div>
+
+    <div id="sub-page" class="sub-page" >
+      <div id="sub-page-header" class="sub-page-header cf">
+
+        <div id="sub-page-title" class="sub-page-title">
+            <h2 th:text="#{title.infoListManager}">User lists manager</h2>
+        </div>
+
+        <div id="sub-page-buttons" class="sub-page-buttons">
+          <input id="back" type="button" th:value="#{label.Back}" class="sq-btn" value="#{ label.Back }"
+            th:onclick="'document.location.href=\''+@{/administration}+'\''" />
+        </div>
+      </div>
+
+      <div id="sub-page-content" class="sub-page-content">
+        <div class="fragment-body">
+          <div id="cf-table-pane" class="cf">
+            <div class="btn-toolbar right">
+              <input id="add-item" type="button" class="sq-btn"
+                value="Add an info list" th:value="#{label.infoList.add}"
+                title="Create new" th:title="#{tooltip.infoList.add}"
+                th:attr="data-api-url=@{/info-lists}" />
+              <input id="remove-selected-items" type="button" class="sq-btn"
+                value="Delete selected info lists" th:value="#{label.infoList.remove}"
+                title="Delete selected" th:title="#{tooltip.infoList.remove}" />
+            </div>
+
+            <div>
+              <table id="items-table" class="unstyled-table"
+                th:attr="data-api-url=@{/info-lists}, data-view-url=@{/administration/info-lists}, data-language-url=@{/datatables/language}, data-page-length=${tablePageSize}">
+                <thead>
+                  <tr>
+                    <th class="not-displayed">Id</th>
+                    <th>#</th>
+                    <th th:text="#{label.Name}">Name</th>
+                    <th th:text="#{label.Description}">Description</th>
+                    <th th:text="#{label.defaultValue}">Default value</th>
+                    <th th:text="#{label.code}">Code</th>
+                    <th th:text="#{label.createdOn}">Created on</th>
+                    <th th:text="#{label.createdBy}">Created by</th>
+                    <th th:text="#{label.lastModifiedOn}">Modified on</th>
+                    <th th:text="#{label.lastModifiedBy}">Modified by</th>
+                    <th></th>
+                    <th class="not-displayed">Bound count</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:each="item, iterStat : ${infoLists}" th:object="${item}">
+                    <td th:text="*{id}" class="not-displayed item-id">1</td>
+                    <td th:text="${iterStat.count}">1</td>
+                    <td th:text="*{label}">My Fancy List</td>
+                    <td th:text="*{description}">Shucky Ducky Quack Quack</td>
+                    <td th:text="*{defaultLabel}">Default value</td>
+                    <td th:text="*{code}">code</td>
+                    <td sq:iso-date="*{createdOn}">2014-01-02</td>
+                    <td th:text="*{createdBy}">batman</td>
+                    <td sq:iso-date="*{lastModifiedOn}">2014-01-02</td>
+                    <td th:text="*{lastModifiedBy}">robin</td>
+                    <td class="delete-button">
+                    </td>
+                    <td th:text="*{bound}" class="not-displayed">0</td>
+                  </tr>
+                </tbody>
+              </table>
+              <script type="text/javascript">
+              publish("loaded.itemsTable");
+              </script>
+          </div>
+        </div>
+
+        <div id="new-item-pane" class="not-displayed popup-dialog form-horizontal" title="New User List" th:title="#{title.infoList.new}" th:attr="data-api-url=@{/info-lists}">
+        </div>
+
+          <script id="new-item-pane-tpl" type="text/x-handlebars-template" th:inline="text">
+          <div class="control-group">
+            <label class="control-label" for="label" th:text="#{label.Label}">Label</label>
+            <div class="controls">
+              <input id="label" data-prop="label" value="" size="50" maxlength="255" type="text" />
+              <span class="help-inline">&nbsp;</span>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <label class="control-label" for="description" th:text="#{label.Description}">Description</label>
+            <div class="controls">
+              <textarea id="description" data-prop="description" cols="49" rows="10" ></textarea>
+              <span class="help-inline">&nbsp;</span>
+            </div>
+          </div>
+
+           <div class="control-group">
+            <label class="control-label" for="code" th:text="#{label.code}">Code</label>
+            <div class="controls">
+              <input id="code" data-prop="code" value="" size="50" maxlength="30" type="text" />
+              <span class="help-inline">&nbsp;</span>
+            </div>
+          </div>
+
+          <h3 th:text="#{title.itemDefinition}">Options definition</h3>
+          <div id="new-option-pane">
+          </div>
+
+          <div class="control-group">
+            <label class="control-label" for="options-table" th:text="#{label.item}">Options</label>
+            <div class="controls">
+              <div class="dataTables_wrapper">
+                <table id="options-table">
+                  <thead>
+                    <tr>
+                      <th th:text="#{label.option}">Option</th>
+                      <th th:text="#{label.code}">Code</th>
+                      <th th:text="#{label.icon}">Icon</th>
+                      <th style="width: 2em;" th:text="#{label.default}">Default</th>
+                      <th style="width: 1.5em;">&nbsp;</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
+              </div>
+              <span class="help-inline">&nbsp;</span>
+            </div>
+          </div>
+
+          <div class="popup-dialog-buttonpane">
+            <input class="confirm" type="button" value="OK" th:value="#{label.Add}" />
+            <input class="cancel" type="button" value="Cancel" th:value="#{label.Close}" />
+          </div>
+          </script>
+
+          <script id="new-option-pane-tpl" type="text/x-handlebars-template" th:inline="text">
+            <div class="control-group">
+              <label for="option-label" class="control-label" th:text="#{label.item}">New option</label>
+              <div class="controls">
+                <input id="option-label" type="text" value="" data-prop="label" data-view="option" size="50" maxlength="30"  />
+                <span class="help-inline">&nbsp;</span>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <label for="option-code" class="control-label" th:text="#{label.code}">Code</label>
+              <div class="controls">
+                <input id="option-code" type="text" value="" data-prop="code" data-view="option" size="50" maxlength="30"  />
+                <span class="help-inline">&nbsp;</span>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <label for="sel-opt-icon" class="control-label" th:text="#{label.icon}">Icon</label>
+              <div class="controls">
+                <a id="choose-sel-opt-icon" href="javascript:void(0)" value="choose icon" th:value="#{label.chooseIcon}">
+                  <span id="sel-opt-icon" class="sq-icon" th:attr="data-none=#{label.infoListItems.icon.none}" th:text="#{label.infoListItems.icon.none}">none</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <input id="add-option" class="sq-btn" type="button" th:value="#{label.Add}" value="Add" />
+            </div>
+          </script>
+
+        <script id="default-cell-tpl" type="text/x-handlebars-template" th:inline="text">
+        {{!--<![CDATA[--}}
+        <input type="radio" name="option-default" value="{{option}}" {{checked}} />
+        {{!--]]>--}}
+        </script>
+
+        <script id="icon-cell-tpl" type="text/x-handlebars-template" th:inline="text">
+        <a data-code="{{code}}" href="javascript:void(0)" class="option-icon">
+          <span class="sq-icon sq-icon-{{icon}}" title="{{icon}}"></span>
+        </a>
+        </script>
+
+        <script id="noicon-cell-tpl" type="text/x-handlebars-template" th:inline="text">
+        <a data-code="{{code}}" href="javascript:void(0)" class="option-icon" th:text="#{label.infoListItems.icon.none}">None</a>
+        </script>
+
+        <script id="icon-picker-dialog-tpl" type="text/x-handlebars-template" th:inline="text" th:include="icon-library.frag :: icon-picker-dialog(id='icon-picker-dialog', icons=${icons})">
+        </script>
+
+        <script type="text/javascript">
+        publish("loaded.newItemDialog");
+        </script>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

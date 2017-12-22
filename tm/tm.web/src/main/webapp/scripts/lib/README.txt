@@ -1,0 +1,1 @@
+This folder should contain all third party javascript libraries.

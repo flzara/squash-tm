@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	
+	<!-- =========== ATTACHMENTS =========== -->
+	<changeSet id="tm-1.8.0.issue-2933-101" author="mpagnon">
+		<comment>save attachment_content ids</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select
+			'ATTACHMENT_CONTENT', attach.CONTENT_ID
+			from ATTACHMENT attach,
+			ENTITIES_TO_DELETE etd
+			where etd.NAME = 'ATTACHMENT_LIST'
+			and etd.ID =
+			attach.ATTACHMENT_LIST_ID
+			;
+		</sql>
+
+		<comment>delete attachment</comment>
+		<sql>
+			delete from ATTACHMENT
+			where ATTACHMENT_LIST_ID in (select ID from
+			ENTITIES_TO_DELETE where NAME = 'ATTACHMENT_LIST')
+			;
+		</sql>
+		<comment>delete attachment_content</comment>
+		<sql>
+			delete from ATTACHMENT_CONTENT
+			where ATTACHMENT_CONTENT_ID in
+			(select ID from ENTITIES_TO_DELETE where NAME = 'ATTACHMENT_CONTENT')
+		</sql>
+		<comment>delete attachment_list</comment>
+		<sql>
+			delete from ATTACHMENT_LIST
+			where ATTACHMENT_LIST_ID in (select ID
+			from ENTITIES_TO_DELETE where NAME = 'ATTACHMENT_LIST')
+		</sql>
+	</changeSet>
+	<!-- =========== /ATTACHMENTS =========== -->
+	<!-- =========== CUSTOM FIELDS =========== -->
+	<changeSet id="tm-1.8.0.issue-2933-end-01" author="mpagnon">
+		<comment>delete cuf values</comment>
+		<sql>
+			delete from CUSTOM_FIELD_VALUE
+			where CFV_ID in (select ID from
+			ENTITIES_TO_DELETE where NAME =
+			'CUSTOM_FIELD_VALUE')
+			;
+		</sql>
+	</changeSet>
+	<!-- =========== /CUSTOM FIELDS =========== -->
+
+
+	<!-- =========== DELETE STORING TABLES =========== -->
+	<changeSet id="tm-1.8.0.issue-2933-end-02" author="mpagnon">
+		<comment>delete storage tables</comment>
+		<dropTable tableName="ENTITIES_TO_DELETE" />
+		<dropTable tableName="IS_TO_DELETE" />
+	</changeSet>
+	<!-- =========== /DELETE STORING TABLES =========== -->
+
+
+</databaseChangeLog>
+ 

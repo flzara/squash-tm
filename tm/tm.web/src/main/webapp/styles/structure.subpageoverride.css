@@ -1,0 +1,184 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/* 
+	that file redefines some css styles in structure.css in the case of sub pages.
+	
+	the appliance of this override stylesheet is defined by whether it is included or not. 
+	
+	of course due to the css engine top-down policy, that file must be included after structure.css.  
+*/
+
+/* ---------------------------------------------------------*/
+/* ----->>> sub-page structural styles overrides <<<--------*/
+/* ---------------------------------------------------------*/
+
+.sub-page{
+	bottom : 1.5cm;
+	left : 0.2cm;
+	right : 1.5cm;
+	top : 1.5cm;
+	position : absolute;
+}
+
+.sub-page-content{
+    position: absolute;
+	background-color: #EBEAE5;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 1.1cm;		
+}
+
+.access-denied-page-content{
+	position: absolute;
+	background-color: transparent;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 1.1cm;
+}
+
+.sub-page-content div#tabbed-pane{
+	top : 0.7cm;	
+	margin-left : 5px;
+	margin-right : 5px;
+	margin-bottom : 5px;
+	width : 93%;
+}
+
+.sub-page-content #contextual-content{
+	top : 3px;		
+	bottom : 5px;
+	right : 5px;
+}
+
+.sub-page-content .fragment-header {
+	width : 99.5%;
+}
+
+.sub-page-content .fragment-body{
+	width : 99.5%;		
+}
+
+div.fragment-tabs {
+	top : 90px;	
+}
+
+.sub-page-content #information-content{
+	top :0;	
+}
+
+.sub-page-content #tree{
+	top : 0.5cm;	
+}
+
+.sub-page-content .wizard-tree-picker {
+	display: inline;
+}
+
+.sub-page-content .wizard-navigation-pane {
+    background-color: #EBEAE5;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-top: 1px solid #808080;
+    overflow: visible;
+    text-align: right;
+    position : relative;
+}
+
+
+.wizard-navigation-pane a, .wizard-navigation-pane input {
+    margin: 0.5em;
+}
+
+#wizard-step-pane.fragment-body {
+    height: 95%;
+    overflow: auto;
+    padding-top: 10px;
+    position: relative;
+}
+
+
+.sub-page-content .wizard-alert-pane {
+    bottom: 20px;
+    position: absolute;
+    right: 15px;
+}
+
+.sub-page-header, .sub-page-list-panel, .sub-page-selection-panel {
+	margin-bottom : 10px;
+	background-color : #EBEAE5;
+}
+
+.sub-page-title{
+	float:left;
+	max-width : 70%;
+}
+
+.sub-page-title h2 {
+	font-style : italic;
+	color : slategray;
+	margin : 0.3em;		
+}
+
+.sub-page-buttons{
+	float:right;
+	max-width : 90%;
+	overflow: hidden;
+}
+
+.sub-page-list-panel {
+	padding-top: 8px;
+	padding-left: 8px;
+	padding-bottom: 30px;
+	padding-right: 8px;
+	background-size: cover;
+}
+
+.sub-page-buttons .button, .sub-page-buttons .sq-btn, .sub-page-buttons input{
+	margin-bottom : 0.1em;
+	margin-top : 0.1em;
+	margin-right : 1.5em;
+}
+
+.sub-page-fragment-title {
+	float: left; 
+	height: 3em;
+}
+
+.sub-page-selection-panel #contextual-content {
+ 	position: inherit;
+	top: inherit;
+ 	width: 100%;
+	float: none; 
+}
+
+.sub-page-selection-panel .fragment-body{
+	top: inherit;	
+	position: inherit;	
+ 	padding-left: 8px;
+ 	padding-right: 8px;
+ 	overflow-y: visible; 
+}
+.sub-page-selection-panel #contextual-content .fragment-tabs  div {
+    top:0;
+    position:relative;
+}

@@ -1,0 +1,869 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.squashtest.tm</groupId>
+    <artifactId>squash-tm-tm</artifactId>
+    <version>1.17.0.RELEASE</version>
+  </parent>
+
+  <artifactId>tm.web</artifactId>
+  <packaging>war</packaging>
+  <name>${project.groupId}.${project.artifactId}</name>
+  <description>Squash TM webapp - Provides web frontend</description>
+
+  <properties>
+    <appserver.scope>provided</appserver.scope>
+    <!-- DEfault webdriver for jasmine runner. One can override it -->
+    <jasmine.webdriver.classname>org.openqa.selenium.htmlunit.HtmlUnitDriver</jasmine.webdriver.classname>
+    <jasperreports.outputDir>${project.build.directory}/jasperreports-plugin/reports</jasperreports.outputDir>
+
+    <!-- frontent plugin config - should speed up build in most common cases -->
+    <npm.skip>false</npm.skip>
+
+    <provied.scope>provided</provied.scope>
+
+    <rjs.javascript.optimizedDir>${rjs.outputDirectory}/scripts</rjs.javascript.optimizedDir>
+    <rjs.optimizer>none</rjs.optimizer>
+    <rjs.outputDirectory>${project.build.directory}/rjs</rjs.outputDirectory>
+
+    <skipITs>false</skipITs>
+    <smartsprites.inputDir>src/main/webapp/styles</smartsprites.inputDir>
+
+    <smartsprites.outputDir>${project.build.directory}/smartsprites</smartsprites.outputDir>
+
+    <!-- Default jacoco dont record any coverage data -->
+    <!--<sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>-->
+    <!--<spring-boot-maven-plugin.jvmArguments>-Xmx512M -XX:MaxPermSize=256M -Xdebug-->
+    <!-- -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -Ddebug -Dspring.profiles.active=dev,postgresql,jth_postgresql</spring-boot-maven-plugin.jvmArguments>-->
+
+    <war.css.dir>styles</war.css.dir>
+    <wro4j-spring-boot.dir>${project.build.directory}/wro4j-spring-boot</wro4j-spring-boot.dir>
+
+    <!-- Crap name for a directory. Yet 'wro4j/styles' makes wro4j substitute wrong urls and 'wro4j' is not picked by spring-boot -->
+    <wro4j.css.outputDir>${project.build.directory}/styles</wro4j.css.outputDir>
+    <wro4j.inputDir>${smartsprites.outputDir}</wro4j.inputDir>
+    <wro4j.skip>false</wro4j.skip>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.squashtest.tm</groupId>
+        <artifactId>squash-tm-bom</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <!-- dependency>
+      <groupId>org.beanshell</groupId>
+      <artifactId>bsh</artifactId>
+    </dependency -->
+
+    <dependency>
+      <groupId>commons-fileupload</groupId>
+      <artifactId>commons-fileupload</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.aspect</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.bugtracker.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.foundation</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.report.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.testautomation.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.wizard.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>database.h2.fragment</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-search-orm</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-hibernate5</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>net.sf.jasperreports</groupId>
+      <artifactId>jasperreports</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.glassfish</groupId>
+      <artifactId>javax.el</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.inject</groupId>
+      <artifactId>javax.inject</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.jetty.orbit</groupId>
+      <artifactId>javax.servlet.jsp</artifactId>
+      <exclusions>
+        <exclusion>
+          <!-- When not excluded, there is a signature clash with some other javax.servlet dep -->
+          <groupId>org.eclipse.jetty.orbit</groupId>
+          <artifactId>javax.servlet</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>net.htmlparser.jericho</groupId>
+      <artifactId>jericho-html</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jhades</groupId>
+      <artifactId>jhades</artifactId>
+      <version>1.0.4</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jstl</artifactId>
+    </dependency>
+
+    <!--
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+-->
+
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>net.sourceforge.nekohtml</groupId>
+      <artifactId>nekohtml</artifactId>
+    </dependency>
+
+    <!-- dependency>
+      <groupId>org.objenesis</groupId>
+      <artifactId>objenesis</artifactId>
+    </dependency -->
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>plugin.bugtracker.mantis</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>plugin.report.std</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>plugin.testautomation.jenkins</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-actuator</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-configuration-processor</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-aop</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-hateoas</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-jdbc</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-thymeleaf</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.security.oauth</groupId>
+      <artifactId>spring-security-oauth2</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-taglibs</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.thymeleaf.extras</groupId>
+      <artifactId>thymeleaf-extras-springsecurity4</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>tm.domain</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>tm.service</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.validation</groupId>
+      <artifactId>validation-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>xml-resolver</groupId>
+      <artifactId>xml-resolver</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>org.squashtest.tm.tools.unittest</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>spock-test-dependencies</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-core</artifactId>
+      <scope>${appserver.scope}</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-jasper</artifactId>
+      <scope>${appserver.scope}</scope>
+    </dependency>
+
+  </dependencies>
+  <build>
+
+    <testSourceDirectory>src/test/groovy</testSourceDirectory>
+    <resources>
+      <resource>
+        <filtering>true</filtering>
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>
+
+    <testResources>
+      <testResource>
+        <filtering>false</filtering>
+        <directory>${project.basedir}/src/test/resources</directory>
+      </testResource>
+    </testResources>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>ro.isdc.wro4j</groupId>
+          <artifactId>wro4j-maven-plugin</artifactId>
+        </plugin>
+
+        <plugin>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId>
+          <configuration>
+            <folders>
+              <folder>${rjs.outputDirectory}</folder>
+              <folder>${wro4j-spring-boot.dir}</folder>
+              <folder>target/jasperreports-plugin</folder>
+            </folders>
+            <!--<jvmArguments>${spring-boot-maven-plugin.jvmArguments}</jvmArguments>-->
+            <!--<layout>ZIP</layout>-->
+          </configuration>
+          <!--<dependencies>-->
+          <!--<dependency>-->
+          <!--<groupId>org.springframework</groupId>-->
+          <!--<artifactId>springloaded</artifactId>-->
+          <!--<version>1.2.4.RELEASE</version>-->
+          <!--</dependency>-->
+          <!--</dependencies>-->
+        </plugin>
+        <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>com.alexnederlof</groupId>
+                    <artifactId>jasperreports-plugin</artifactId>
+                    <versionRange>[1.9,)</versionRange>
+                    <goals>
+                      <goal>jasper</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore />
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>com.github.eirslett</groupId>
+          <artifactId>frontend-maven-plugin</artifactId>
+          <version>0.0.29</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <configuration>
+          <rules>
+            <banDuplicateClasses />
+            <findAllDuplicate>true</findAllDuplicate>
+            <requireMavenVersion>
+              <version>3.1.0</version>
+            </requireMavenVersion>
+          </rules>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>extra-enforcer-rules</artifactId>
+            <version>1.0-beta-3</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>com.alexnederlof</groupId>
+        <artifactId>jasperreports-plugin</artifactId>
+        <configuration>
+          <outputDirectory>${jasperreports.outputDir}</outputDirectory>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+          <webResources>
+            <resource>
+              <!-- includes compiled reports -->
+              <directory>${jasperreports.outputDir}</directory>
+              <targetPath>WEB-INF/reports</targetPath>
+            </resource>
+
+            <resource>
+              <!-- includes sprites -->
+              <directory>${project.build.directory}/images</directory>
+              <targetPath>images</targetPath>
+            </resource>
+
+            <resource>
+              <!-- includes processed / minified css -->
+              <directory>${wro4j.css.outputDir}</directory>
+              <targetPath>${war.css.dir}</targetPath>
+            </resource>
+
+            <resource>
+              <!-- includes rjs-optimized javascript -->
+              <directory>${rjs.javascript.optimizedDir}</directory>
+              <targetPath>scripts</targetPath>
+              <filtering>true</filtering>
+            </resource>
+          </webResources>
+          <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
+          <attachClasses>true</attachClasses>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <!-- Adds more source directories to the pom -->
+          <execution>
+            <id>add-integration-test-source</id>
+            <goals>
+              <goal>add-test-source</goal>
+            </goals>
+            <phase>generate-test-sources</phase>
+            <configuration>
+              <sources>
+                <source>src/it/groovy</source>
+              </sources>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>add-integration-test-resource</id>
+            <goals>
+              <goal>add-test-resource</goal>
+            </goals>
+            <phase>generate-test-resources</phase>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>src/it/resources</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>compile-integration-test</id>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+            <phase>pre-integration-test</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+          <!-- We can run ITs and skip unit tests with -DskipTests=true -->
+          <skipTests>${skipITs}</skipTests>
+        </configuration>
+
+        <executions>
+          <execution>
+            <id>integration-tests</id>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+            <phase>integration-test</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-release-plugin</artifactId>
+        <configuration>
+          <releaseProfiles>continuous-integration</releaseProfiles>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>continuous-integration</id>
+      <activation>
+        <property>
+          <name>env.type</name>
+          <value>ci</value>
+        </property>
+      </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.github.eirslett</groupId>
+            <artifactId>frontend-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>install node and npm</id>
+                <goals>
+                  <goal>install-node-and-npm</goal>
+                </goals>
+                <phase>initialize</phase>
+                <configuration>
+                  <nodeVersion>v4.4.1</nodeVersion>
+                  <npmVersion>3.8.3</npmVersion>
+                </configuration>
+              </execution>
+              <execution>
+                <!-- temporary - trying to fix release build -->
+                <id>npm install</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <phase>generate-resources</phase>
+                <configuration>
+                  <arguments>install --no-optional</arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>ro.isdc.wro4j</groupId>
+            <artifactId>wro4j-maven-plugin</artifactId>
+
+            <executions>
+              <execution>
+                <id>jshint</id>
+                <goals>
+                  <goal>jshint</goal>
+                </goals>
+                <configuration>
+                  <targetGroups>squash-js</targetGroups>
+                  <minimize>false</minimize>
+                  <failNever>false</failNever>
+                  <!-- options below should be in sync with .jshintrc except for globals, which cannot be set with wro4j -->
+                  <options>browser=true,
+                    jquery=true,
+                    eqnull=true,
+                    evil=true,
+                    noarg=true,
+                    smarttabs=true,
+                    laxbreak=true,
+                    laxcomma=true,
+                    sub=true,
+                    loopfunc=true,
+                    curly=true</options>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>reports</id>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>ro.isdc.wro4j</groupId>
+            <artifactId>wro4j-maven-plugin</artifactId>
+
+            <executions>
+              <execution>
+                <id>jshint</id>
+                <goals>
+                  <goal>jshint</goal>
+                </goals>
+                <configuration>
+                  <targetGroups>squash-js</targetGroups>
+                  <minimize>false</minimize>
+                  <failNever>true</failNever>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>dev</id>
+      <activation>
+        <property>
+          <name>env.type</name>
+          <value>dev</value>
+        </property>
+      </activation>
+      <properties>
+        <rjs.optimizer>none</rjs.optimizer>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>windows</id>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+      <properties>
+        <node.executable>node.exe</node.executable>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>unix</id>
+      <activation>
+        <os>
+          <family>unix</family>
+        </os>
+      </activation>
+      <properties>
+        <node.executable>node</node.executable>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>intellij</id>
+      <activation>
+        <file>
+          <exists>tm.web.iml</exists>
+        </file>
+      </activation>
+      <properties>
+        <!-- intellij requires that appserver has a runtime scope to start the app -->
+        <appserver.scope>provided</appserver.scope>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>weboptimization</id>
+      <activation>
+        <property>
+          <name>!webopt.skip</name>
+        </property>
+      </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.github.eirslett</groupId>
+            <artifactId>frontend-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>install node and npm</id>
+                <goals>
+                  <goal>install-node-and-npm</goal>
+                </goals>
+                <phase>initialize</phase>
+                <configuration>
+                  <nodeVersion>v4.4.1</nodeVersion>
+                  <npmVersion>3.8.3</npmVersion>
+                  <skip>${npm.skip}</skip>
+                </configuration>
+              </execution>
+              <execution>
+                <id>npm install</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <phase>generate-resources</phase>
+                <configuration>
+                  <!--
+                    IMPORTANT : without - -no-optional, spritesmith pulls optional deps which fail to be properly installed (gmsmith and node-gyp).
+                    This _sometimes_ break the npm install task and as a result breaks the build. The solution is :
+                    1. don't pull opional deps
+                    2. enforce spritesmith's default engine ("pixelsmith" and "pngsmith" dependencies) in package.json because they are declared optional
+
+                    When you have problems, try to delete both ./node_modules and ./node folders and rebuild.
+                  -->
+                  <arguments>install --no-optional</arguments>
+                  <skip>${npm.skip}</skip>
+                </configuration>
+              </execution>
+              <execution>
+                <id>gulp build</id>
+                <goals>
+                  <goal>gulp</goal>
+                </goals>
+                <phase>prepare-package</phase>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>com.github.skwakman.nodejs-maven-plugin</groupId>
+            <artifactId>nodejs-maven-plugin</artifactId>
+          </plugin>
+
+          <plugin>
+            <!-- r.js optimization. can be skipped with -Drequirejs.optimize.skip=true -->
+            <groupId>com.github.bringking</groupId>
+            <artifactId>requirejs-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>optimize</goal>
+                </goals>
+                <phase>prepare-package</phase>
+                <configuration>
+                  <filterConfig>true</filterConfig>
+                  <configFile>src/main/webapp/app.build.js</configFile>
+                  <nodeExecutable>${project.build.directory}/nodejs/${node.executable}</nodeExecutable>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <!-- this profile does stuff when rjs is asked to be skipped -->
+      <id>no-rjs</id>
+      <activation>
+        <property>
+          <name>requirejs.optimize.skip</name>
+        </property>
+      </activation>
+
+      <build>
+        <plugins>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+            <executions>
+              <execution>
+                <!-- when we skip js optimization, build breaks because of missing directory. hence this. -->
+                <id>create-optimized-js-dir</id>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <phase>prepare-package</phase>
+
+                <configuration>
+                  <outputDirectory>${rjs.javascript.optimizedDir}</outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>src/main/assembly</directory>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+  </profiles>
+</project>

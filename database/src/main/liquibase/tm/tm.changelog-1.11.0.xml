@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+  <changeSet id="tm-1.11.0" author="flaurens">
+    <comment>Update TM database version number</comment>
+    <update tableName="CORE_CONFIG">
+      <column name="VALUE" value="1.11.0" />
+      <where>STR_KEY = 'squashtest.tm.database.version'</where>
+    </update>
+  </changeSet>
+
+
+  <changeSet id="tm-1.11.0.feature-3576-1" author="bsiri">
+
+    <comment>
+  		Prepares the table CUSTOM_FIELD for possible default_values of type TEXT.
+  		Also accepts now a new value for the column FIELD_TYPE : RTF (for rich text fields) - no structural changes for that though.
+  	</comment>
+
+    <addColumn tableName="CUSTOM_FIELD">
+      <column name="LARGE_DEFAULT_VALUE" defaultValue="NULL" type="TEXT"
+        remarks="this column is used by rich text cufs. It contains HTML data."></column>
+    </addColumn>
+
+  </changeSet>
+
+
+  <changeSet id="tm-1.11.0.feature-3576-2" author="bsiri">
+
+    <comment>prepares the table CUSTOM_FIELD_VALUE for values of type CLOB, and adds support for inheritance to that end.</comment>
+    <addColumn tableName="CUSTOM_FIELD_VALUE">
+      <column name="LARGE_VALUE" defaultValue="NULL" type="TEXT"
+        remarks="this column is used by rich text cufs. It contains HTML data."></column>
+
+      <column name="FIELD_TYPE" type="VARCHAR(3)" defaultValue="CF" remarks="CF : simple, RTF : rich text field">
+        <constraints nullable="false" />
+      </column>
+    </addColumn>
+
+  </changeSet>
+
+  <changeSet id="tm-1.11.0.feature-3576-3" author="bsiri">
+
+    <comment>
+  		Prepares the table DENORMALIZED_FIELD_VALUE for values of type CLOB, and adds support for inheritance to that end.
+  		Also accepts now a new value for the column FIELD_TYPE : RTF (for rich text fields) - no structural changes for that though.
+  	</comment>
+
+
+    <addColumn tableName="DENORMALIZED_FIELD_VALUE">
+      <column name="LARGE_VALUE" defaultValue="NULL" type="TEXT"
+        remarks="this column is used by rich text cufs. It contains HTML data."></column>
+
+    </addColumn>
+
+  </changeSet>
+
+
+  <changeSet id="tm-1.11.0.feature-3556-4" author="kdrifi">
+    <comment>Cleaning duplicates of column ROLE_USER in table core_group _authority</comment>
+
+    <delete tableName="CORE_GROUP_AUTHORITY">
+      <where>
+        AUTHORITY='ROLE_USER'
+      </where>
+    </delete>
+
+    <delete tableName="CORE_GROUP_AUTHORITY">
+      <where>
+        GROUP_ID = 1
+        and AUTHORITY='ROLE_TM_USER'
+      </where>
+    </delete>
+  </changeSet>
+
+
+  <changeSet id="tm-1.11.0.feature-3577-1" author="mpagnon">
+    <comment>Fix columns with CHAR(X) types to VARCHAR(X) type to avoid blank space filling by Postgresql</comment>
+    <modifyDataType tableName="CUSTOM_FIELD" columnName="INPUT_TYPE" newDataType="VARCHAR(30)" />
+    <modifyDataType tableName="CUSTOM_FIELD" columnName="FIELD_TYPE" newDataType="VARCHAR(3)" />
+    <modifyDataType tableName="DENORMALIZED_FIELD_VALUE" columnName="FIELD_TYPE" newDataType="VARCHAR(3)" />
+    <modifyDataType tableName="DENORMALIZED_FIELD_VALUE" columnName="INPUT_TYPE" newDataType="VARCHAR(30)" />
+
+  </changeSet>
+  <changeSet id="tm-1.11.0.feature-3577-2" author="jsimon" dbms="postgresql">
+    <comment>create function to emulate group concat with separator</comment>
+    <createProcedure>
+      CREATE OR REPLACE
+      FUNCTION group_concat_func(field1 TEXT, field2 TEXT)
+      RETURNS TEXT AS $$
+      BEGIN
+      RETURN
+      COALESCE(field1||','||field2, field2, field1);
+      END;
+      $$ LANGUAGE plpgsql;
+
+      DROP AGGREGATE IF EXISTS group_concat(text);
+      CREATE AGGREGATE group_concat(text) (
+      SFUNC = group_concat_func
+      ,STYPE = text
+      );
+
+    </createProcedure>
+  </changeSet>
+
+
+
+
+
+  <changeSet id="tm-1.9.0.feature-3138-2" author="jsimon">
+    <addNotNullConstraint tableName="CAMPAIGN_LIBRARY_CONTENT" columnName="CONTENT_ORDER"
+      columnDataType="INTEGER" />
+    <addNotNullConstraint tableName="CLN_RELATIONSHIP" columnName="CONTENT_ORDER" columnDataType="INTEGER" />
+  </changeSet>
+
+  <changeSet id="tm-1.9.0.feature-3138-4" author="jsimon">
+    <addNotNullConstraint tableName="RLN_RELATIONSHIP" columnName="CONTENT_ORDER" columnDataType="INTEGER" />
+    <addNotNullConstraint tableName="REQUIREMENT_LIBRARY_CONTENT" columnName="CONTENT_ORDER"
+      columnDataType="INTEGER" />
+  </changeSet>
+
+  <changeSet id="tm-1.9.0.feature-3138-6" author="jsimon">
+    <addNotNullConstraint tableName="TCLN_RELATIONSHIP" columnName="CONTENT_ORDER" columnDataType="INTEGER" />
+    <addNotNullConstraint tableName="TEST_CASE_LIBRARY_CONTENT" columnName="CONTENT_ORDER"
+      columnDataType="INTEGER" />
+  </changeSet>
+
+
+  <!-- The Call steps now drives how the parameters of the called test case will be handled. As of 1.11.0 the following scenarii 
+    are supported : 1 - use a dataset from the called test case : the parameter values from the called test case will be set 
+    according to one of the datasets available in the called test case. 2 - delegate to the caller test case : the parameter 
+    values from the called test case will be set according to one of the datasets available in the caller test case. This may 
+    be overriden if the caller test case is itself called by a third one, which chooses to delegate too. 3 - nothing : neither 
+    of the above, the values will be set at later time. For now, here is how it is implemented : strategy | CALLED_DATASET | 
+    DELEGATE_PARAMETER_VALUE - - - - - - - - + - - - - - - - - - + - - - - - - - - - - - - - 'NOTHING' | NULL | false 'CALLED_DATASET'| 
+    non null | false 'CALLER_DATASET'| NULL | true -->
+
+  <changeSet id="tm-1.11.0.feature-3693-1" author="bsiri">
+    <comment>Adding support for call-step level management of datasets</comment>
+
+    <addColumn tableName="CALL_TEST_STEP">
+
+      <column name="CALLED_DATASET" type="BIGINT" defaultValue="NULL"
+        remarks="A reference to the called dataset (if any). The fk constraint must set null when the dataset is deleted.">
+        <constraints nullable="true" />
+      </column>
+
+      <column name="DELEGATE_PARAMETER_VALUES" type="BOOLEAN" defaultValueBoolean="false"
+        remarks="Says whether the parameters of the called test case must be set by the caller test case or not">
+        <constraints nullable="false" />
+      </column>
+
+    </addColumn>
+
+    <addForeignKeyConstraint constraintName="fk_call_step_dataset" baseTableName="CALL_TEST_STEP"
+      baseColumnNames="CALLED_DATASET" referencedTableName="DATASET" referencedColumnNames="DATASET_ID" onDelete="SET NULL" />
+
+  </changeSet>
+
+  <changeSet id="tm-1.11.0.feature-3693-2" author="bsiri">
+    <comment>For back compatibility, the call steps migrating from an existing DB will now be set to delegate the parameters</comment>
+    <update tableName="CALL_TEST_STEP">
+      <column name="DELEGATE_PARAMETER_VALUES" valueBoolean="true" type="BOOLEAN" />
+    </update>
+  </changeSet>
+
+  <changeSet id="tm-1.11.0.feature-3700-1" author="bsiri">
+    <comment>Items of a campaign test plan can now reference Datasets</comment>
+    <addColumn tableName="CAMPAIGN_TEST_PLAN_ITEM">
+      <column name="DATASET_ID" type="BIGINT"
+        remarks="the dataset the test plan item should use so that new iterations will now use those datasets">
+        <constraints nullable="true" foreignKeyName="fk_camp_test_plan_item_dataset" references="DATASET(DATASET_ID)" />
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="tm-1.11.0.feature-3701-1" author="bsiri">
+    <comment>An execution now remembers which dataset was used (or not). That new column encodes three states : 
+				"" -> no dataset used,
+				somelabel -> the label of the dataset used,
+				null -> the test case had no parameters anyway
+		</comment>
+    <addColumn tableName="EXECUTION">
+      <column name="DATASET_LABEL" type="VARCHAR(255)" remarks="the name of the dataset used">
+        <constraints nullable="true" />
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="tm-1.11.0.issue-3914" author="mpagnon" dbms="postgresql">
+    <preConditions onFail="CONTINUE">
+      <columnExists tableName="test_case" columnName="VERSION" />
+    </preConditions>
+    <comment>for some reason in postgresql generated scripts the column "VERSION" is in uppercase instead of lowercase like all other columns
+    </comment>
+    <renameColumn tableName="test_case" oldColumnName="VERSION" newColumnName="version" />
+  </changeSet>
+</databaseChangeLog>

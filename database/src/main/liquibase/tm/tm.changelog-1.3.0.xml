@@ -1,0 +1,1226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<!-- DO NOT FORGET TO UPDATE VERSION IN CORE_CONFIG ! -->
+	<changeSet id="tm-1.3.0.01" author="gfouquet">
+		<comment>Adds a TM database version number</comment>
+		<update tableName="CORE_CONFIG">
+			<column name="STR_KEY" value="squashtest.tm.database.version" />
+			<column name="VALUE" value="1.3.0" />
+			<where>STR_KEY = 'squashtest.tm.database.version'</where>
+		</update>
+	</changeSet>
+
+
+	<changeSet id="tm-1.3.0.2" author="gfouquet">
+		<comment>
+			Add a default group to users who do not have one (should be users from alpha versions)
+		</comment>
+		<sql>
+			create temporary table GROUPLESS_USERS (USER_ID INTEGER);
+
+			insert
+			into GROUPLESS_USERS (USER_ID)
+			select cu.ID from CORE_USER cu
+			where
+			cu.ID not in (select cgm.USER_ID from CORE_GROUP_MEMBER cgm);
+
+			insert
+			into CORE_GROUP_MEMBER (USER_ID, GROUP_ID)
+			select cu.ID, cg.ID
+			from
+			CORE_USER cu, CORE_GROUP cg
+			where cg.QUALIFIED_NAME =
+			'squashtest.tm.group.User'
+			and cu.ID in (select USER_ID from
+			GROUPLESS_USERS);
+		</sql>
+	</changeSet>
+
+	<!-- =====================Feat. 1112 ===================================================== -->
+
+	<changeSet id="tm-1.3.0-feat-1112.0" author="bsiri">
+		<comment>
+			The following serie of changeset labelled tm-1.3-feat-1112.x implements the closure table
+			modelization for tree-like data	at 
+			http://www.mysqlperformanceblog.com/2011/02/14/moving-subtrees-in-closure-table/, 
+			with a focus on the mysql-specifics shortcomings regarding modifying a table already
+			under modification. 
+			
+			Big kudos to you Bill Karwin ! 
+		</comment>
+
+	</changeSet>
+
+
+
+	<changeSet id="tm-1.3.0-feat-1112.01" author="bsiri">
+
+		<comment>
+			closure table for test case library nodes. Its content is set and modified by four triggers, see 
+			changeset 'tm-1.3-feat-1112.05-mysql' or 'tm-1.3-feat-1112.05-h2'.
+		</comment>
+
+		<createTable tableName="TCLN_RELATIONSHIP_CLOSURE">
+			<column name="ANCESTOR_ID" type="BIGINT"
+				remarks="cle etrangere vers le noeud parent. La relation est parfois d'un noeud vers lui meme.">
+				<constraints nullable="false" foreignKeyName="fk_tcln_relationship_clos_anc"
+					references="TEST_CASE_LIBRARY_NODE(TCLN_ID)" />
+			</column>
+
+			<column name="DESCENDANT_ID" type="BIGINT"
+				remarks="cle etrangere vers l'element fils. La relation est parfois d'un noeud vers lui meme.">
+				<constraints nullable="false" foreignKeyName="fk_tcln_relationship_clos_desc"
+					references="TEST_CASE_LIBRARY_NODE(TCLN_ID)" />
+			</column>
+
+			<column name="DEPTH" type="SMALLINT"
+				remarks="stores how deep is the descendant element nested in the subtree of the ancestor element">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+
+		<createIndex tableName="TCLN_RELATIONSHIP_CLOSURE"
+			indexName="idx_tcln_relationship_clos_desc">
+			<column name="DESCENDANT_ID" />
+		</createIndex>
+
+		<createIndex tableName="TCLN_RELATIONSHIP_CLOSURE"
+			indexName="idx_tcln_relationship_clos_anc">
+			<column name="ANCESTOR_ID" />
+		</createIndex>
+	</changeSet>
+
+
+	<changeSet id="tm-1.3.0-feat-1112.02" author="bsiri">
+
+		<comment>
+			closure table for requirement library nodes. Its content is set and modified by four triggers, see 
+			changeset 'tm-1.3-feat-1112.06-mysql' or 'tm-1.3-feat-1112.06-h2'.
+		</comment>
+
+		<createTable tableName="RLN_RELATIONSHIP_CLOSURE">
+			<column name="ANCESTOR_ID" type="BIGINT"
+				remarks="cle etrangere vers le noeud parent. La relation est parfois d'un noeud vers lui meme.">
+				<constraints nullable="false" foreignKeyName="fk_rln_relationship_clos_anc"
+					references="REQUIREMENT_LIBRARY_NODE(RLN_ID)" />
+			</column>
+
+			<column name="DESCENDANT_ID" type="BIGINT"
+				remarks="cle etrangere vers l'element fils. La relation est parfois d'un noeud vers lui meme.">
+				<constraints nullable="false" foreignKeyName="fk_rln_relationship_clos_desc"
+					references="REQUIREMENT_LIBRARY_NODE(RLN_ID)" />
+			</column>
+
+			<column name="DEPTH" type="SMALLINT"
+				remarks="stores how deep is the descendant element nested in the subtree of the ancestor element">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+
+		<createIndex tableName="RLN_RELATIONSHIP_CLOSURE"
+			indexName="idx_rln_relationship_clos_desc">
+			<column name="DESCENDANT_ID" />
+		</createIndex>
+
+		<createIndex tableName="RLN_RELATIONSHIP_CLOSURE"
+			indexName="idx_rln_relationship_clos_anc">
+			<column name="ANCESTOR_ID" />
+		</createIndex>
+	</changeSet>
+
+
+	<changeSet id="tm-1.3.0-feat-1112.03" author="bsiri">
+
+		<comment>
+			closure table for campaign library nodes. Its content is set and modified by four triggers, see 
+			changeset 'tm-1.3-feat-1112.07-mysql' or 'tm-1.3-feat-1112.07-h2'.
+		</comment>
+
+		<createTable tableName="CLN_RELATIONSHIP_CLOSURE">
+
+			<column name="ANCESTOR_ID" type="BIGINT"
+				remarks="cle etrangere vers le noeud parent. La relation est parfois d'un noeud vers lui meme.">
+				<constraints nullable="false" foreignKeyName="fk_cln_relationship_clos_anc"
+					references="CAMPAIGN_LIBRARY_NODE(CLN_ID)" />
+			</column>
+
+			<column name="DESCENDANT_ID" type="BIGINT"
+				remarks="cle etrangere vers l'element fils. La relation est parfois d'un noeud vers lui meme.">
+				<constraints nullable="false" foreignKeyName="fk_cln_relationship_clos_desc"
+					references="CAMPAIGN_LIBRARY_NODE(CLN_ID)" />
+			</column>
+
+
+			<column name="DEPTH" type="SMALLINT"
+				remarks="stores how deep is the descendant element nested in the subtree of the ancestor element">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+
+		<createIndex tableName="CLN_RELATIONSHIP_CLOSURE"
+			indexName="idx_cln_relationship_clos_desc">
+			<column name="DESCENDANT_ID" />
+		</createIndex>
+
+		<createIndex tableName="CLN_RELATIONSHIP_CLOSURE"
+			indexName="idx_cln_relationship_clos_anc">
+			<column name="ANCESTOR_ID" />
+		</createIndex>
+	</changeSet>
+
+
+	<changeSet id="tm-1.3.0-feat-1112.04" author="bsiri">
+		<comment>
+			first step of the migration : creation of temporary tables in which we will dump 
+			the X_RELATIONSHIP tables, then truncate the later. We will reinsert the data once 
+			the triggers are all set.
+		</comment>
+
+
+		<createTable tableName="TCLN_RELATIONSHIP_TMP">
+			<column name="ANCESTOR_ID" type="BIGINT" />
+			<column name="DESCENDANT_ID" type="BIGINT" />
+		</createTable>
+
+		<createTable tableName="RLN_RELATIONSHIP_TMP">
+			<column name="ANCESTOR_ID" type="BIGINT" />
+			<column name="DESCENDANT_ID" type="BIGINT" />
+		</createTable>
+
+		<createTable tableName="CLN_RELATIONSHIP_TMP">
+			<column name="ANCESTOR_ID" type="BIGINT" />
+			<column name="DESCENDANT_ID" type="BIGINT" />
+		</createTable>
+
+		<sql>
+			insert into TCLN_RELATIONSHIP_TMP
+			select * from TCLN_RELATIONSHIP
+		</sql>
+
+		<sql>
+			insert into RLN_RELATIONSHIP_TMP
+			select * from RLN_RELATIONSHIP
+		</sql>
+
+		<sql>
+			insert into CLN_RELATIONSHIP_TMP
+			select * from CLN_RELATIONSHIP
+		</sql>
+
+		<!-- TODO don't use truncate (supported since sql 2008+ only) -->
+		<sql>delete from TCLN_RELATIONSHIP</sql>
+		<sql>delete from RLN_RELATIONSHIP</sql>
+		<sql>delete from CLN_RELATIONSHIP</sql>
+
+	</changeSet>
+
+
+	<!-- ************** mysql triggers **************** -->
+
+
+	<changeSet id="tm-1.3.0-feat-1112.05-mysql" author="bsiri"
+		dbms="mysql">
+		<comment>mysql-triggers for TCLN_RELATIONSHIP_CLOSURE table</comment>
+
+		<!-- after insertion of a tcl node : create auto reference in the closure 
+			table -->
+		<sql>
+			create trigger ins_tcln_after after insert on
+			TEST_CASE_LIBRARY_NODE
+			for each row insert into
+			TCLN_RELATIONSHIP_CLOSURE values (new.tcln_id, new.tcln_id, 0);		
+		</sql>
+
+
+
+		<!-- before suppression of a tcl node : remove auto reference from the 
+			closure table -->
+		<sql>
+			create trigger del_tcln_before before delete on
+			TEST_CASE_LIBRARY_NODE
+			for each row delete from
+			TCLN_RELATIONSHIP_CLOSURE where ancestor_id=old.tcln_id and
+			descendant_id=old.tcln_id;	
+		</sql>
+
+
+		<!-- when two tcl nodes are attached : attach the subtrees as well. -->
+		<sql>
+			create trigger attach_tcln_after after insert on
+			TCLN_RELATIONSHIP
+			for each row insert into TCLN_RELATIONSHIP_CLOSURE
+			select c1.ancestor_id, c2.descendant_id, c1.depth+c2.depth+1
+			from
+			TCLN_RELATIONSHIP_CLOSURE c1
+			cross join TCLN_RELATIONSHIP_CLOSURE c2
+			where c1.descendant_id = new.ancestor_id
+			and c2.ancestor_id =
+			new.descendant_id;		
+		</sql>
+
+
+		<!-- when two tcl nodes are detached : detach the subtrees as well -->
+		<sql>
+			create trigger detach_tcln_before before delete on
+			TCLN_RELATIONSHIP
+			for each row delete clos1 from
+			TCLN_RELATIONSHIP_CLOSURE clos1
+			join TCLN_RELATIONSHIP_CLOSURE clos2
+			on clos1.descendant_id=clos2.descendant_id
+			left join
+			TCLN_RELATIONSHIP_CLOSURE clos3
+			on clos3.ancestor_id =
+			clos2.ancestor_id
+			and clos3.descendant_id = clos1.ancestor_id
+			where
+			clos2.ancestor_id = old.descendant_id
+			and clos3.ancestor_id is null;
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="tm-1.3.0-feat-1112.06-mysql" author="bsiri"
+		dbms="mysql">
+		<comment>mysql-triggers for RLN_RELATIONSHIP_CLOSURE table</comment>
+
+		<!-- after insertion of a rl node : create auto reference in the closure 
+			table -->
+		<sql>
+			create trigger ins_rln_after after insert on
+			REQUIREMENT_LIBRARY_NODE
+			for each row insert into
+			RLN_RELATIONSHIP_CLOSURE values (new.rln_id, new.rln_id, 0);		
+		</sql>
+
+
+
+		<!-- before suppression of a rl node : remove auto reference from the closure 
+			table -->
+		<sql>
+			create trigger del_rln_before before delete on
+			REQUIREMENT_LIBRARY_NODE
+			for each row delete from
+			RLN_RELATIONSHIP_CLOSURE where ancestor_id=old.rln_id and
+			descendant_id=old.rln_id;	
+		</sql>
+
+
+		<!-- when two rl nodes are attached : attach the subtrees as well. -->
+		<sql>
+			create trigger attach_rln_after after insert on RLN_RELATIONSHIP
+			for each row insert into RLN_RELATIONSHIP_CLOSURE
+			select
+			c1.ancestor_id, c2.descendant_id, c1.depth+c2.depth+1
+			from
+			RLN_RELATIONSHIP_CLOSURE c1
+			cross join RLN_RELATIONSHIP_CLOSURE c2
+			where c1.descendant_id = new.ancestor_id
+			and c2.ancestor_id =
+			new.descendant_id;		
+		</sql>
+
+
+		<!-- when two rl nodes are detached : detach the subtrees as well -->
+		<sql>
+			create trigger detach_rln_before before delete on
+			RLN_RELATIONSHIP
+			for each row delete clos1 
+            from RLN_RELATIONSHIP_CLOSURE clos1
+			
+            join RLN_RELATIONSHIP_CLOSURE clos2
+			on clos1.descendant_id=clos2.descendant_id
+			
+            left join RLN_RELATIONSHIP_CLOSURE clos3
+			on clos3.ancestor_id = clos2.ancestor_id
+			and clos3.descendant_id = clos1.ancestor_id
+			
+            where clos2.ancestor_id = old.descendant_id
+			and clos3.ancestor_id is null;
+		</sql>
+	</changeSet>
+
+	<changeSet id="tm-1.3.0-feat-1112.07-mysql" author="bsiri"
+		dbms="mysql">
+		<comment>mysql-triggers for CLN_RELATIONSHIP_CLOSURE table</comment>
+
+		<!-- after insertion of a cl node : create auto reference in the closure 
+			table -->
+		<sql>
+			create trigger ins_cln_after after insert on
+			CAMPAIGN_LIBRARY_NODE
+			for each row insert into
+			CLN_RELATIONSHIP_CLOSURE values (new.cln_id, new.cln_id, 0);		
+		</sql>
+
+
+
+		<!-- before suppression of a cl node : remove auto reference from the closure 
+			table -->
+		<sql>
+			create trigger del_cln_before before delete on
+			CAMPAIGN_LIBRARY_NODE
+			for each row delete from
+			CLN_RELATIONSHIP_CLOSURE where ancestor_id=old.cln_id and
+			descendant_id=old.cln_id;	
+		</sql>
+
+
+		<!-- when two rl nodes are attached : attach the subtrees as well. -->
+		<sql>
+			create trigger attach_cln_after after insert on CLN_RELATIONSHIP
+			for each row insert into CLN_RELATIONSHIP_CLOSURE
+			select
+			c1.ancestor_id, c2.descendant_id, c1.depth+c2.depth+1
+			from
+			CLN_RELATIONSHIP_CLOSURE c1
+			cross join CLN_RELATIONSHIP_CLOSURE c2
+			where c1.descendant_id = new.ancestor_id
+			and c2.ancestor_id = new.descendant_id;		
+		</sql>
+
+
+		<!-- when two cl nodes are detached : detach the subtrees as well -->
+		<sql>
+			create trigger detach_cln_before before delete on
+			CLN_RELATIONSHIP
+			for each row delete clos1 from
+			CLN_RELATIONSHIP_CLOSURE clos1
+			join CLN_RELATIONSHIP_CLOSURE clos2
+			on
+			clos1.descendant_id=clos2.descendant_id
+			left join
+			CLN_RELATIONSHIP_CLOSURE clos3
+			on clos3.ancestor_id = clos2.ancestor_id
+			and clos3.descendant_id = clos1.ancestor_id
+			where
+			clos2.ancestor_id = old.descendant_id
+			and clos3.ancestor_id is null;
+		</sql>
+	</changeSet>
+
+	<!-- ************** /mysql triggers *************** -->
+
+	<!-- ************** h2 triggers **************** -->
+
+
+	<changeSet id="tm-1.3.0-feat-1112.05-h2" author="bsiri" dbms="h2">
+
+		<comment>h2-triggers for TCLN_RELATIONSHIP_CLOSURE table</comment>
+
+		<!-- after insertion of a tcl node : create auto reference in the closure 
+			table -->
+		<sql>
+			create trigger ins_tcln_after after insert on
+			TEST_CASE_LIBRARY_NODE
+			for each row call
+			"org.squashtest.csp.h2.triggers.TCLNAfterInsert";
+		</sql>
+
+
+
+		<!-- before suppression of a tcl node : remove auto reference from the 
+			closure table -->
+		<sql>
+			create trigger del_tcln_before before delete on
+			TEST_CASE_LIBRARY_NODE
+			for each row call
+			"org.squashtest.csp.h2.triggers.TCLNBeforeDelete";
+		</sql>
+
+
+		<!-- when two tcl nodes are attached : attach the subtrees as well. -->
+		<sql>
+			create trigger attach_tcln_after after insert on
+			TCLN_RELATIONSHIP
+			for each row call
+			"org.squashtest.csp.h2.triggers.TCLNAfterAttach";
+		</sql>
+
+
+		<!-- when two tcl nodes are detached : detach the subtrees as well -->
+		<sql>
+			create trigger detach_tcln_before before delete on
+			TCLN_RELATIONSHIP
+			for each row call
+			"org.squashtest.csp.h2.triggers.TCLNBeforeDetach";
+		</sql>
+
+
+	</changeSet>
+
+
+	<changeSet id="tm-1.3.0-feat-1112.06-h2" author="bsiri" dbms="h2">
+
+		<comment>h2-triggers for RLN_RELATIONSHIP_CLOSURE table</comment>
+
+		<!-- after insertion of a rl node : create auto reference in the closure 
+			table -->
+		<sql>
+			create trigger ins_rln_after after insert on
+			REQUIREMENT_LIBRARY_NODE
+			for each row call
+			"org.squashtest.csp.h2.triggers.RLNAfterInsert";		
+		</sql>
+
+
+
+		<!-- before suppression of a rl node : remove auto reference from the closure 
+			table -->
+		<sql>
+			create trigger del_rln_before before delete on
+			REQUIREMENT_LIBRARY_NODE
+			for each row call
+			"org.squashtest.csp.h2.triggers.RLNBeforeDelete";
+		</sql>
+
+
+		<!-- when two rl nodes are attached : attach the subtrees as well. -->
+		<sql>
+			create trigger attach_rln_after after insert on RLN_RELATIONSHIP
+			for each row call "org.squashtest.csp.h2.triggers.RLNAfterAttach";
+		</sql>
+
+
+		<!-- when two rl nodes are detached : detach the subtrees as well -->
+		<sql>
+			create trigger detach_rln_before before delete on
+			RLN_RELATIONSHIP
+			for each row call
+			"org.squashtest.csp.h2.triggers.RLNBeforeDetach";
+		</sql>
+
+
+	</changeSet>
+
+
+	<changeSet id="tm-1.3.0-feat-1112.07-h2" author="bsiri" dbms="h2">
+
+		<comment>h2-triggers for CLN_RELATIONSHIP_CLOSURE table</comment>
+
+		<!-- after insertion of a cl node : create auto reference in the closure 
+			table -->
+		<sql>
+			create trigger ins_cln_after after insert on
+			CAMPAIGN_LIBRARY_NODE
+			for each row call
+			"org.squashtest.csp.h2.triggers.CLNAfterInsert";		
+		</sql>
+
+
+
+		<!-- before suppression of a cl node : remove auto reference from the closure 
+			table -->
+		<sql>
+			create trigger del_cln_before before delete on
+			CAMPAIGN_LIBRARY_NODE
+			for each row call
+			"org.squashtest.csp.h2.triggers.CLNBeforeDelete";
+		</sql>
+
+
+		<!-- when two cl nodes are attached : attach the subtrees as well. -->
+		<sql>
+			create trigger attach_cln_after after insert on CLN_RELATIONSHIP
+			for each row call "org.squashtest.csp.h2.triggers.CLNAfterAttach";
+		</sql>
+
+
+		<!-- when two cl nodes are detached : detach the subtrees as well -->
+		<sql>
+			create trigger detach_cln_before before delete on
+			CLN_RELATIONSHIP
+			for each row call
+			"org.squashtest.csp.h2.triggers.CLNBeforeDetach";
+		</sql>
+
+
+	</changeSet>
+
+	<!-- ************** /h2 triggers **************** -->
+  
+  
+  <!-- ************** postgresql triggers **************** -->
+<changeSet id="tm-1.3.0-feat-1112.05-postgresql" author="mpagnon"
+    dbms="postgresql">
+    <comment>postgresql-triggers for TCLN_RELATIONSHIP_CLOSURE table</comment>
+
+    <!-- after insertion of a tcl node : create auto reference in the closure table -->
+    <createProcedure>
+      drop trigger if exists ins_tcln_after on TEST_CASE_LIBRARY_NODE;
+      drop function if exists ins_tcln_after();
+      create function ins_tcln_after() returns trigger as $ins_tcln_after$
+      begin
+        insert into TCLN_RELATIONSHIP_CLOSURE
+        values (new.tcln_id, new.tcln_id, 0); 
+        return new;
+      end;
+      $ins_tcln_after$ language plpgsql;
+      
+      create trigger ins_tcln_after after insert on TEST_CASE_LIBRARY_NODE
+      for each row execute procedure ins_tcln_after();
+    
+    </createProcedure>
+
+
+
+    <!-- before suppression of a tcl node : remove auto reference from the closure table -->
+    <createProcedure>
+      drop trigger if exists del_tcln_before on TEST_CASE_LIBRARY_NODE;
+      drop function if exists del_tcln_before();
+      create function del_tcln_before() returns trigger as $del_tcln_before$
+      begin
+        delete from TCLN_RELATIONSHIP_CLOSURE 
+        where ancestor_id=old.tcln_id 
+        and descendant_id=old.tcln_id;  
+        return old;
+      end;
+      $del_tcln_before$ language plpgsql;
+      
+      create trigger del_tcln_before before delete on TEST_CASE_LIBRARY_NODE
+      for each row execute procedure del_tcln_before();
+          
+    </createProcedure>
+
+
+    <!-- when two tcl nodes are attached : attach the subtrees as well. -->
+    <createProcedure>
+      drop trigger if exists attach_tcln_after on TCLN_RELATIONSHIP;
+      drop function if exists attach_tcln_after();
+      create function attach_tcln_after() returns trigger as $attach_tcln_after$
+      begin
+        insert into TCLN_RELATIONSHIP_CLOSURE
+        select c1.ancestor_id, c2.descendant_id, c1.depth + c2.depth + 1
+        from TCLN_RELATIONSHIP_CLOSURE c1
+        cross join TCLN_RELATIONSHIP_CLOSURE c2
+        where c1.descendant_id = new.ancestor_id
+        and c2.ancestor_id = new.descendant_id;   
+        return new;
+      end;
+      $attach_tcln_after$ language plpgsql;
+      
+      create trigger attach_tcln_after after insert on TCLN_RELATIONSHIP
+      for each row execute procedure attach_tcln_after();
+    
+    </createProcedure>
+
+
+    <!-- when two tcl nodes are detached : detach the subtrees as well -->
+    <createProcedure>
+      drop trigger if exists detach_tcln_before on TCLN_RELATIONSHIP;
+      drop function if exists detach_tcln_before();
+      create function detach_tcln_before() returns trigger as $detach_tcln_before$
+      begin
+        delete from TCLN_RELATIONSHIP_CLOSURE 
+        where descendant_id in ( select descendant_id from TCLN_RELATIONSHIP_CLOSURE where ancestor_id = old.descendant_id )
+        and ancestor_id not in ( select descendant_id from TCLN_RELATIONSHIP_CLOSURE where ancestor_id = old.descendant_id )
+        ;
+        return old;
+      
+      end;
+      $detach_tcln_before$ language plpgsql;
+      
+      create trigger detach_tcln_before before delete on TCLN_RELATIONSHIP
+      for each row execute procedure detach_tcln_before();
+    
+    
+    </createProcedure>
+  </changeSet>
+
+
+  <changeSet id="tm-1.3.0-feat-1112.06-postgresql" author="mpagnon"
+    dbms="postgresql">
+    <comment>postgresql-triggers for RLN_RELATIONSHIP_CLOSURE table</comment>
+
+    <!-- after insertion of a rl node : create auto reference in the closure  table -->
+    <createProcedure>
+      drop trigger if exists ins_rln_after on REQUIREMENT_LIBRARY_NODE;
+      drop function if exists ins_rln_after();
+      create function ins_rln_after() returns trigger as $ins_rln_after$
+      begin
+        insert into RLN_RELATIONSHIP_CLOSURE 
+        values (new.rln_id, new.rln_id, 0);
+        return new;
+      end;
+      $ins_rln_after$ language plpgsql;
+      
+      create trigger ins_rln_after after insert on REQUIREMENT_LIBRARY_NODE
+      for each row execute procedure ins_rln_after();
+      
+    </createProcedure>
+
+
+
+    <!-- before suppression of a rl node : remove auto reference from the closure  table -->
+    <createProcedure>
+      drop trigger if exists del_rln_before on REQUIREMENT_LIBRARY_NODE;
+      drop function if exists del_rln_before();
+      create function del_rln_before() returns trigger as $del_rln_before$
+      begin
+        delete from RLN_RELATIONSHIP_CLOSURE 
+        where ancestor_id = old.rln_id 
+        and descendant_id = old.rln_id; 
+        return old;
+      end;
+      $del_rln_before$ language plpgsql;
+      
+      create trigger del_rln_before before delete on REQUIREMENT_LIBRARY_NODE
+      for each row execute procedure del_rln_before();
+    
+    </createProcedure>
+
+
+    <!-- when two rl nodes are attached : attach the subtrees as well. -->
+    <createProcedure>
+      drop trigger if exists attach_rln_after on RLN_RELATIONSHIP;
+      drop function if exists attach_rln_after();
+      create function attach_rln_after() returns trigger as $attach_rln_after$
+      begin
+        insert into RLN_RELATIONSHIP_CLOSURE
+        select c1.ancestor_id, c2.descendant_id, c1.depth + c2.depth + 1
+        from RLN_RELATIONSHIP_CLOSURE c1
+        cross join RLN_RELATIONSHIP_CLOSURE c2
+        where c1.descendant_id = new.ancestor_id
+        and c2.ancestor_id = new.descendant_id;
+        return new;
+      end;
+      $attach_rln_after$ language plpgsql;
+      
+      create trigger attach_rln_after after insert on RLN_RELATIONSHIP
+      for each row execute procedure attach_rln_after();
+      
+    </createProcedure>
+
+
+    <!-- when two rl nodes are detached : detach the subtrees as well -->
+    <createProcedure>
+      drop trigger if exists detach_rln_before on RLN_RELATIONSHIP;
+      drop function if exists detach_rln_before();
+      create function detach_rln_before() returns trigger as $detach_rln_before$
+      begin
+      delete from RLN_RELATIONSHIP_CLOSURE 
+        where descendant_id in ( select descendant_id from RLN_RELATIONSHIP_CLOSURE where ancestor_id = old.descendant_id )
+        and ancestor_id not in ( select descendant_id from RLN_RELATIONSHIP_CLOSURE where ancestor_id = old.descendant_id )
+        ;
+        return old;
+      end;
+      $detach_rln_before$ language plpgsql;
+      
+      create trigger detach_rln_before before delete on RLN_RELATIONSHIP
+      for each row execute procedure detach_rln_before();
+    
+    </createProcedure>
+  </changeSet>
+
+  <changeSet id="tm-1.3.0-feat-1112.07-postgresql" author="mpagnon"
+    dbms="postgresql">
+    <comment>postgresql-triggers for CLN_RELATIONSHIP_CLOSURE table</comment>
+
+    <!-- after insertion of a cl node : create auto reference in the closure table -->
+    <createProcedure>
+      drop trigger if exists ins_cln_after on CAMPAIGN_LIBRARY_NODE;
+      drop function if exists ins_cln_after();
+      create function ins_cln_after() returns trigger as $ins_cln_after$
+      begin
+        insert into CLN_RELATIONSHIP_CLOSURE
+        values (new.cln_id, new.cln_id, 0);
+        return new;
+      end;
+      $ins_cln_after$ language plpgsql;
+      
+      create trigger ins_cln_after after insert on CAMPAIGN_LIBRARY_NODE
+      for each row execute procedure ins_cln_after();
+    
+    </createProcedure>
+
+
+
+    <!-- before suppression of a cl node : remove auto reference from the closure table -->
+    <createProcedure>
+      drop trigger if exists del_cln_before on CAMPAIGN_LIBRARY_NODE;
+      drop function if exists del_cln_before();
+      create function del_cln_before() returns trigger as $del_cln_before$
+      begin
+        delete from CLN_RELATIONSHIP_CLOSURE 
+        where ancestor_id = old.cln_id 
+        and descendant_id = old.cln_id;
+        return old;
+      end;
+      $del_cln_before$ language plpgsql;
+      
+      create trigger del_cln_before before delete on CAMPAIGN_LIBRARY_NODE
+      for each row execute procedure del_cln_before();
+    
+    </createProcedure>
+
+
+    <!-- when two rl nodes are attached : attach the subtrees as well. -->
+    <createProcedure>
+      drop trigger if exists attach_cln_after on CLN_RELATIONSHIP;
+       drop function if exists attach_cln_after();
+      create function attach_cln_after() returns trigger as $attach_cln_after$
+      begin
+        insert into CLN_RELATIONSHIP_CLOSURE
+        select c1.ancestor_id, c2.descendant_id, c1.depth + c2.depth + 1
+        from CLN_RELATIONSHIP_CLOSURE c1
+        cross join CLN_RELATIONSHIP_CLOSURE c2
+        where c1.descendant_id = new.ancestor_id
+        and c2.ancestor_id = new.descendant_id;
+        return new;
+      end;
+      $attach_cln_after$ language plpgsql;
+      
+      create trigger attach_cln_after after insert on CLN_RELATIONSHIP
+      for each row execute procedure attach_cln_after();
+    
+    </createProcedure>
+
+
+    <!-- when two cl nodes are detached : detach the subtrees as well -->
+    <createProcedure>
+      drop trigger if exists detach_cln_before on CLN_RELATIONSHIP;
+      drop function if exists detach_cln_before();
+      create function detach_cln_before() returns trigger as $detach_cln_before$
+      begin
+        delete from CLN_RELATIONSHIP_CLOSURE 
+        where descendant_id in ( select descendant_id from CLN_RELATIONSHIP_CLOSURE where ancestor_id = old.descendant_id )
+        and ancestor_id not in ( select descendant_id from CLN_RELATIONSHIP_CLOSURE where ancestor_id = old.descendant_id )
+        ;
+        return old;
+      end;
+      $detach_cln_before$ language plpgsql;
+      
+      create trigger detach_cln_before before delete on CLN_RELATIONSHIP
+      for each row execute procedure detach_cln_before();
+    
+    </createProcedure>
+  </changeSet>
+
+  <!-- ************** /postgresql triggers *************** -->
+	<changeSet id="tm-1.3.0-feat-1112.08" author="bsiri">
+		<comment>this step is mandatory if we want the next one to work (triggers need the nodes to have self-reference in the closure tables)</comment>
+		<sql>
+			insert into TCLN_RELATIONSHIP_CLOSURE
+			select tcln_id, tcln_id, 0
+			from TEST_CASE_LIBRARY_NODE
+			where deleted_on is null;
+		</sql>
+		<sql>
+			insert into RLN_RELATIONSHIP_CLOSURE
+			select rln_id, rln_id, 0
+			from
+			REQUIREMENT_LIBRARY_NODE
+			where deleted_on is null;
+		</sql>
+		<sql>
+			insert into CLN_RELATIONSHIP_CLOSURE
+			select cln_id, cln_id, 0
+			from
+			CAMPAIGN_LIBRARY_NODE
+			where deleted_on is null;
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="tm-1.3.0-feat-1112.09" author="bsiri">
+		<comment>we can now reinsert our data from the tmp tables and let the triggers do the job</comment>
+
+		<sql>
+			insert into TCLN_RELATIONSHIP
+			select * from TCLN_RELATIONSHIP_TMP
+		</sql>
+
+		<sql>
+			insert into RLN_RELATIONSHIP
+			select * from RLN_RELATIONSHIP_TMP
+		</sql>
+
+		<sql>
+			insert into CLN_RELATIONSHIP
+			select * from CLN_RELATIONSHIP_TMP
+		</sql>
+
+	</changeSet>
+
+	<changeSet id="tm-1.3.0-feat-1112.10" author="bsiri">
+		<comment>If success, we can now drop our temp tables and complete the migration</comment>
+
+		<dropTable tableName="TCLN_RELATIONSHIP_TMP" />
+		<dropTable tableName="RLN_RELATIONSHIP_TMP" />
+		<dropTable tableName="CLN_RELATIONSHIP_TMP" />
+
+	</changeSet>
+
+
+	<!-- ==================/ Feat. 1112 ====================================================== -->
+	<!-- =======================Feat. 1207 =================================================== -->
+	<changeSet id="tm-1.3.0-feat-1209.01" author="mpagnon">
+		<comment>To connect Squash TM to a bugtracker, you must provide the name and the url of the bugtracker. The mantis plugin is shipped with the application
+	 IFRAME_FRIENDLY :tells if the bugtracker page can be accessed through an iframe : if the response header of the bugtracker page has the property [X-Frame-Options = DENY] the answer is false
+	 URL : must point to the base name of the end point. Eg : http://www.yourdomain.com/mantis . Tips : Prefer IPs over localhost and domain names over IPs. If you don't some minor issues may occur when reporting an issue.</comment>
+		<createTable tableName="BUGTRACKER" remarks="stores bugtrackers informations">
+			<column name="BUGTRACKER_ID" type="BIGINT" autoIncrement="true"
+				remarks="primary key, should be auto-generated.">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="NAME" type="java.sql.Types.VARCHAR(50)" remarks="identifies the instance configured.">
+				<constraints nullable="false" />
+			</column>
+			<column name="KIND" type="java.sql.Types.VARCHAR(50)"
+				remarks="tells what kind of connector should be used" defaultValue="mantis">
+				<constraints nullable="false" />
+			</column>
+			<column name="URL" type="java.sql.Types.VARCHAR(255)" remarks="the bugtracker url">
+				<constraints nullable="false" />
+			</column>
+			<column name="IFRAME_FRIENDLY" type="BOOLEAN"
+				remarks="tells if the bugtracker page can be accessed through an iframe"
+				defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<!-- =========================/ Feat. 1207 ============================================= -->
+
+
+	<!-- ======================Feat. 1181 ================================================= -->
+
+	<changeSet id="tm-1.3.0-feat-1181.01" author="bsiri">
+		<comment>creating table TEST_AUTOMATION_SERVER</comment>
+
+		<createTable tableName="TEST_AUTOMATION_SERVER">
+
+			<column name="SERVER_ID" type="BIGINT" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+
+			<column name="BASE_URL" type="java.sql.Types.VARCHAR(255)"
+				remarks="the url of the server">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="LOGIN" type="java.sql.Types.VARCHAR(50)"
+				remarks="the login TM will use">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="PASSWORD" type="java.sql.Types.VARCHAR(255)"
+				remarks="yes, this is a plain clear password in the database. Until we have what it takes to make it better.">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="KIND" type="java.sql.Types.VARCHAR(30)"
+				remarks="the kind of automated test server TM will deal with."
+				defaultValue="jenkins">
+				<constraints nullable="false" />
+			</column>
+
+		</createTable>
+
+		<createIndex tableName="TEST_AUTOMATION_SERVER" indexName="idx_autotest_server">
+			<column name="SERVER_ID" />
+		</createIndex>
+
+		<addUniqueConstraint tableName="TEST_AUTOMATION_SERVER"
+			columnNames="BASE_URL, LOGIN" constraintName="uni_autotest_server" />
+
+	</changeSet>
+
+
+	<changeSet id="tm-1.3.0-feat-1181.02" author="bsiri">
+		<comment>creating table TEST_AUTOMATION_PROJECT</comment>
+
+		<createTable tableName="TEST_AUTOMATION_PROJECT">
+			<column name="PROJECT_ID" type="BIGINT" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+
+			<column name="NAME" type="java.sql.Types.VARCHAR(50)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="SERVER_ID" type="BIGINT"
+				remarks="foreign key to an automated test server">
+				<constraints nullable="true"
+					references="TEST_AUTOMATION_SERVER(SERVER_ID)" foreignKeyName="fk_auto_test_project" />
+			</column>
+
+
+		</createTable>
+
+		<createIndex tableName="TEST_AUTOMATION_PROJECT"
+			indexName="idx_auto_test_project">
+			<column name="PROJECT_ID" />
+		</createIndex>
+
+		<addUniqueConstraint tableName="TEST_AUTOMATION_PROJECT"
+			columnNames="NAME, SERVER_ID" constraintName="uni_autotest_project" />
+
+	</changeSet>
+
+	<changeSet id="tm-1.3.0-feat-1181.03" author="bsiri">
+		<comment>now a PROJECT may or may not have test automation enabled</comment>
+
+		<addColumn tableName="PROJECT">
+			<column name="TEST_AUTOMATION_ENABLED" type="BOOLEAN"
+				defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+
+	</changeSet>
+
+	<changeSet id="tm-1.3.0-feat-1181.04" author="bsiri">
+		<comment>table where TM projects and TA projects are bound to each others</comment>
+
+		<createTable tableName="TM_TA_PROJECTS">
+			<column name="TM_PROJECT_ID" type="BIGINT">
+				<constraints nullable="false" foreignKeyName="fk_tm_ta_projects_tm"
+					references="PROJECT(PROJECT_ID)" />
+			</column>
+
+			<column name="TA_PROJECT_ID" type="BIGINT">
+				<constraints nullable="false" foreignKeyName="fk_tm_ta_projects_ta"
+					references="TEST_AUTOMATION_PROJECT(PROJECT_ID)" />
+			</column>
+		</createTable>
+
+		<addPrimaryKey tableName="TM_TA_PROJECTS" columnNames="TM_PROJECT_ID, TA_PROJECT_ID"
+			constraintName="pk_tm_ta_projects" />
+
+	</changeSet>
+
+	<!-- ==========================/ Feat. 1181 ============================================= -->
+
+	<!-- ==================================Feat. 1194 ======================================= -->
+
+	<changeSet id="tm-1.3.0-feat-1194.01" author="mpagnon">
+		<comment>Bugtracker project represent the project's name in a configured bugtracker</comment>
+
+		<createTable tableName="BUGTRACKER_BINDING">
+			<column name="BUGTRACKER_BINDING_ID" type="BIGINT"
+				autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+
+			<column name="BUGTRACKER_ID" type="BIGINT">
+				<constraints nullable="false" foreignKeyName="FK_BUGTRACKER_BINDING_BUGTRACKER"
+					references="BUGTRACKER(BUGTRACKER_ID)" />
+			</column>
+
+			<column name="PROJECT_NAME" type="java.sql.Types.VARCHAR(255)"
+				remarks="project-name in the bugtracker" />
+				
+			<column name="PROJECT_ID" type="BIGINT">
+				<constraints nullable="false" foreignKeyName="FK_BUGTRACKER_BINDING_PROJECT"
+					references="PROJECT(PROJECT_ID)" />
+			</column>
+		</createTable>
+
+	</changeSet>
+
+	
+	<changeSet id="tm-1.3.0-feat-1194.04" author="mpagnon">
+		<comment>Data migration: add all bugtrackers that had an issue</comment>
+		<sql>insert into BUGTRACKER (NAME, KIND, URL, IFRAME_FRIENDLY)
+			select distinct issues.BT_NAME , 'mantis', 'TO BE DEFINED', true
+			from ISSUE issues;
+	</sql>
+	</changeSet>
+	<changeSet id="tm-1.3.0-feat-1194.05" author="mpagnon">
+		<comment>New foreign key in ISSUE table that points to a BUGTRACKER</comment>
+		<addColumn tableName="ISSUE">
+			<column name="BUGTRACKER_ID" type="BIGINT" remarks="Issue's bugtracker">
+				<constraints nullable="true" references="BUGTRACKER(BUGTRACKER_ID)"
+					foreignKeyName="fk_issue_bugtracker" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="tm-1.3.0-feat-1194.06" author="mpagnon">
+		<comment>Data migration : update issue's bugtracker FK with migrated BTs</comment>
+		<sql>
+			CREATE TABLE ISSUEBT
+			(
+			ISSUEID BIGINT,
+			BTID BIGINT
+			);
+
+			Insert into ISSUEBT (ISSUEID, BTID)
+			select distinct iss.ISSUE_ID,
+			bt.BUGTRACKER_ID
+			from ISSUE as iss, BUGTRACKER as bt
+			where iss.BT_NAME = bt.NAME;
+
+			update ISSUE
+			set BUGTRACKER_ID = (
+				select BTID from ISSUEBT 
+				where ISSUEBT.ISSUEID = ISSUE.ISSUE_ID
+			);
+
+			DROP table ISSUEBT;
+		</sql>
+	</changeSet>
+	<changeSet id="tm-1.3.0-feat-1194.07" author="mpagnon">
+		<comment>Drop of column "BT_NAME" on table issue because it is not used anymore => use of FK to table BUGTRACKER instead</comment>
+		<dropColumn tableName="ISSUE" columnName="BT_NAME" />
+	</changeSet>
+	<changeSet id="tm-1.3.0-feat-1194.08" author="mpagnon">
+		<comment>After Data migration : issue's bugtracker must not be null</comment>
+		<addNotNullConstraint tableName="ISSUE"
+			columnName="BUGTRACKER_ID" columnDataType="BIGINT" />
+	</changeSet>
+	<!-- ========================/ Feat. 1194 ============================================ -->
+
+	<!-- ========================= Feat. 1210 ============================================ -->
+
+	<changeSet id="tm-1.3.0-feat-1210.01" author="bsiri">
+
+		<comment>Creation of the table AUTOMATED_TEST </comment>
+
+		<createTable tableName="AUTOMATED_TEST">
+
+			<column name="TEST_ID" type="BIGINT" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+
+			<column name="NAME" type="java.sql.Types.VARCHAR(255)" />
+
+			<column name="PROJECT_ID" type="BIGINT">
+				<constraints nullable="true" foreignKeyName="fk_automated_test_project"
+					references="TEST_AUTOMATION_PROJECT(PROJECT_ID)" />
+			</column>
+
+		</createTable>
+
+		<addUniqueConstraint tableName="AUTOMATED_TEST"
+			columnNames="NAME, PROJECT_ID" constraintName="uni_auto_test"/>
+
+	</changeSet>
+
+	<changeSet id="tm-1.3.0-feat-1210.02" author="bsiri">
+		<comment>a TEST_CASE can now refer to 0 or 1 AUTOMATED_TEST </comment>
+
+		<addColumn tableName="TEST_CASE">
+			<column name="TA_TEST" type="BIGINT" defaultValue="NULL">
+				<constraints nullable="true" foreignKeyName="fk_test_case_ta_test"
+					references="AUTOMATED_TEST(TEST_ID)" />
+			</column>
+		</addColumn>
+
+	</changeSet>
+
+	<changeSet id="tm-1.3.0-feat-1210.03" author="gfouquet">
+		<comment>Added a role / group for test automation clients</comment>
+
+		<insert tableName="CORE_GROUP">
+			<column name="QUALIFIED_NAME" value="squashtest.authz.group.tm.TestAutomationServer" />
+		</insert>
+
+		<insert tableName="CORE_GROUP_AUTHORITY">
+			<column name="GROUP_ID" valueComputed="(select max(ID) from CORE_GROUP)" />
+			<column name="AUTHORITY" value="ROLE_TA_API_CLIENT" />
+		</insert>
+	</changeSet>
+
+	<!-- ========================/ Feat. 1210 ============================================ -->
+
+	<!-- ========================= Feat. 1211 ============================================ -->
+
+	<changeSet id="tm-1.3.0-feat-1211.01" author="bsiri">
+		<comment> 
+			Creation of the automated suites table. Note that althought its ID is
+			still the primary key, it won't be autogenerated : the system will supply it 
+			along the rest instead.
+			
+			A automated suite groups together a bunch of test automation executions, 
+			which themselves refer to test automation tests. 
+		 </comment>
+	
+		<createTable tableName="AUTOMATED_SUITE">
+			
+			<column name="SUITE_ID" type="java.sql.Types.VARCHAR(50)" >
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+
+	
+		</createTable>
+	
+	</changeSet>
+	
+	<changeSet id="tm-1.3.0-feat-1211.02" author="bsiri" >
+		<comment>
+			Table for the automated executions extender. An automated execution is 
+			an extension to Executions that handles things related to test automation.
+			
+			The correct business model would have been that an automated execution is a specialization of 
+			execution, thus inherited from it. Sadly Hibernates got in the way so we came
+			up with that solution instead. 
+		</comment>
+		
+		<createTable tableName="AUTOMATED_EXECUTION_EXTENDER">
+		
+			<column name="EXTENDER_ID" type="BIGINT" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+		
+		
+			<column name="MASTER_EXECUTION_ID" type="BIGINT" 
+				remarks="foreign key to the Execution it attaches to.">
+				
+				<constraints nullable="false" foreignKeyName="fk_auto_exec_exec" references="EXECUTION(EXECUTION_ID)"/>
+			
+			</column>
+			
+			<column name="TEST_ID" type="BIGINT" remarks="we save that information as soon as the auto execution is created, 
+												because it may change in the future (even if the test case that this execution
+												is linked to stays otherwhise the same)">
+												
+				<constraints nullable="false" foreignKeyName="fk_auto_exec_auto_test" 
+				references="AUTOMATED_TEST(TEST_ID)"/>
+				
+			</column>
+			
+			<column name="RESULT_URL" type="java.sql.Types.VARCHAR(300)" remarks="urls longer than 300 chars should go to hell"/>
+			
+			<column name="SUITE_ID" type="java.sql.Types.VARCHAR(50)" remarks="foreignkey of the suite this execution belongs to">
+				<constraints foreignKeyName="fk_auto_exec_suite" references="AUTOMATED_SUITE(SUITE_ID)"/>
+			</column>
+			
+			<column name="RESULT_SUMMARY" remarks="a short debriefing of a test once it has been 
+						executed, for instance an error message" type="CLOB" defaultValue="null"/>
+		
+		</createTable>
+	
+	</changeSet>
+
+
+	<!-- ========================/ Feat. 1211 ============================================ -->
+</databaseChangeLog>
+ 

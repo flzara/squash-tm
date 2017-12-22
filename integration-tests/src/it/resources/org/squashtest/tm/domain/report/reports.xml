@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.17.0.dtd">
+<dataset>
+
+  <CORE_PARTY PARTY_ID="-1"/>
+  <CORE_USER PARTY_ID="-1" LOGIN="user" CREATED_BY="admin" CREATED_ON="2015-10-05"/>
+  <core_group/>
+  <core_group_authority/>
+  <core_group_member/>
+
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1"/>
+  <PROJECT PROJECT_ID="-1" NAME="project-1" CREATED_BY="admin" CREATED_ON="2017-10-05" ATTACHMENT_LIST_ID="-1"/>
+
+  <CUSTOM_REPORT_LIBRARY CRL_ID="-1"/>
+
+  <REPORT_DEFINITION REPORT_ID="-1" NAME="My report" USER_ID="-1" PROJECT_ID="-1" CREATED_BY="dbunit" CREATED_ON="2017-11-07"/>
+</dataset>

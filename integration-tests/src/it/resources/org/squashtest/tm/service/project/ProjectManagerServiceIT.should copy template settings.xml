@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.13.0.dtd">
+<dataset>
+<CORE_PARTY PARTY_ID="-10"/>
+<CORE_PARTY PARTY_ID="-12"/>
+	<CORE_USER PARTY_ID="-10" LOGIN="batman" LAST_NAME="batman" CREATED_BY="dbu" CREATED_ON="2011-03-19" />
+	<CORE_USER PARTY_ID="-12" LOGIN="robin" LAST_NAME="robin" CREATED_BY="dbu" CREATED_ON="2011-03-19" />
+	
+	<core_group />
+	<core_group_authority />
+	<core_group_member />
+	
+	<ACL_CLASS ID="-1001" CLASSNAME="org.squashtest.tm.domain.project.ProjectTemplate" />
+	<ACL_CLASS ID="-1002" CLASSNAME="org.squashtest.tm.domain.project.Project" />
+	<ACL_CLASS ID="-1003" CLASSNAME="org.squashtest.tm.domain.campaign.CampaignLibrary" />
+	<ACL_CLASS ID="-1004" CLASSNAME="org.squashtest.tm.domain.requirement.RequirementLibrary" />	
+	<ACL_CLASS ID="-1005" CLASSNAME="org.squashtest.tm.domain.testCase.TestCaseLibrary" />
+	
+	<ACL_OBJECT_IDENTITY ID="-1" IDENTITY="-1" CLASS_ID="-1001" />
+	<ACL_OBJECT_IDENTITY ID="-2" IDENTITY="-1" CLASS_ID="-1003" />
+	<ACL_OBJECT_IDENTITY ID="-3" IDENTITY="-1" CLASS_ID="-1004" />
+	<ACL_OBJECT_IDENTITY ID="-4" IDENTITY="-1" CLASS_ID="-1005" />
+	
+	<ACL_GROUP ID="-100" QUALIFIED_NAME="driver" />
+	<ACL_GROUP ID="-200" QUALIFIED_NAME="owner" />
+	
+	
+	
+	<ACL_RESPONSIBILITY_SCOPE_ENTRY OBJECT_IDENTITY_ID="-1" PARTY_ID="-10" ACL_GROUP_ID="-100"/>
+	<ACL_RESPONSIBILITY_SCOPE_ENTRY OBJECT_IDENTITY_ID="-2" PARTY_ID="-10" ACL_GROUP_ID="-100"/>
+	<ACL_RESPONSIBILITY_SCOPE_ENTRY OBJECT_IDENTITY_ID="-3" PARTY_ID="-10" ACL_GROUP_ID="-100"/>
+	<ACL_RESPONSIBILITY_SCOPE_ENTRY OBJECT_IDENTITY_ID="-4" PARTY_ID="-10" ACL_GROUP_ID="-100"/>
+	
+	<ACL_RESPONSIBILITY_SCOPE_ENTRY OBJECT_IDENTITY_ID="-1" PARTY_ID="-12" ACL_GROUP_ID="-200"/>
+	<ACL_RESPONSIBILITY_SCOPE_ENTRY OBJECT_IDENTITY_ID="-2" PARTY_ID="-12" ACL_GROUP_ID="-200"/>
+	<ACL_RESPONSIBILITY_SCOPE_ENTRY OBJECT_IDENTITY_ID="-3" PARTY_ID="-12" ACL_GROUP_ID="-200"/>
+	<ACL_RESPONSIBILITY_SCOPE_ENTRY OBJECT_IDENTITY_ID="-4" PARTY_ID="-12" ACL_GROUP_ID="-200"/>
+	
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-987"/>
+	<TEST_CASE_LIBRARY ATTACHMENT_LIST_ID="-987" TCL_ID="-1"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-988"/>
+	<CAMPAIGN_LIBRARY ATTACHMENT_LIST_ID="-988" CL_ID="-1"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-989"/>
+	<REQUIREMENT_LIBRARY ATTACHMENT_LIST_ID="-989" RL_ID="-1"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-432"/>	
+	
+	
+	<TEST_AUTOMATION_SERVER SERVER_ID="-1" BASE_URL="http://www.url.com" LOGIN="a" PASSWORD="b" KIND="jenkins" CREATED_BY="admin" CREATED_ON="2015-05-16" NAME="rarze"/>
+	
+	<PROJECT PROJECT_ID="-1000" TCL_ID="-1" CL_ID="-1" RL_ID="-1" NAME="foo" CREATED_BY="DBU" CREATED_ON="2010-02-01" ATTACHMENT_LIST_ID="-432" PROJECT_TYPE="T" TA_SERVER_ID="-1"/>
+	
+	<TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-1" TM_PROJECT_ID="-1000"  LABEL="name" REMOTE_NAME="name" SERVER_ID="-1"/>
+	
+	
+	<BUGTRACKER BUGTRACKER_ID="-10" KIND="kind" URL="http://www.url.com" NAME="name" IFRAME_FRIENDLY="FALSE" />
+	<BUGTRACKER BUGTRACKER_ID="-2" KIND="kind2" URL="http://www.url.com" NAME="name2" IFRAME_FRIENDLY="TRUE" />
+	<BUGTRACKER_BINDING BUGTRACKER_BINDING_ID="-11" BUGTRACKER_ID="-10" PROJECT_ID="-1000"/>
+	<BUGTRACKER_PROJECT BUGTRACKER_PROJECT_NAME="project_name" BUGTRACKER_PROJECT_ORDER="1" BUGTRACKER_PROJECT_ID="-11" BUGTRACKER_BINDING_ID="-11"/>
+	<CUSTOM_FIELD CODE="" LABEL="" FIELD_TYPE="CF" NAME="cuf1" INPUT_TYPE="PLAIN_TEXT" CF_ID="-1"/>
+	<CUSTOM_FIELD_BINDING BOUND_ENTITY="TEST_CASE" CFB_ID="-1" POSITION="0" BOUND_PROJECT_ID="-1000" CF_ID="-1"/>
+	
+	<acl_group/>
+	<acl_group_permission />
+	<acl_responsibility_scope_entry/>
+	<project />
+	<test_case_library_node/>
+</dataset>

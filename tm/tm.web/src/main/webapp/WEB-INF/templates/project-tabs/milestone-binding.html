@@ -1,0 +1,282 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<div>
+
+
+ <div id="parameters-panel-container" class="sq-tg expand ">
+
+    <div class="tg-head">
+      <h3 th:text="#{project.milestonetitle}"></h3>
+      <div class="tg-toolbar">
+        <button id="bind-milestone-button" class="sq-icon-btn btn-sm" th:title="#{project.milestone.associate}">
+            <span class="ui-icon ui-icon-plus squared-icons">+</span>
+        </button>
+                  
+        <button id="unbind-milestone-button" class="sq-icon-btn btn-sm" th:title="#{project.milestone.remove}">
+            <span class="ui-icon ui-icon-minus squared-icons">-</span>        
+        </button>      
+                   
+        <input th:if="${!isTemplate}" type="button" id="create-and-bind-milestone-button" th:title="#{project.milestone.create}" th:value="#{label.create}" class="sq-btn btn-sm" />      
+    
+       </div>
+    </div>
+
+      <div id="parameters-panel" class="tg-body" >
+        <table id="binded-milestone-table" class="unstyled-table"
+          th:attr="data-def='datakeys-id=entity-id ,ajaxsource='+@{/milestones-binding/project/__${proj.id}__/milestone(binded)}+', pre-sort=3, filter'">
+          <thead>
+            <tr>
+              <th th:attr="data-def='select, map=index'">#</th>
+              <th th:attr="data-def='sortable, map=label, link='+@{/milestones/{entity-id}/info}+''" th:text="#{label.Milestone}">Milestone</th>
+              <th th:attr="data-def='map=status, sortable'" th:text="#{label.Status}">Status</th>
+              <th th:attr="data-def='sortable, map=endDate'" th:text="#{label.EndDate}">end date</th>
+              <th th:attr="data-def='sortable, map=range'" th:text="#{label.Range}"> range</th>
+              <th th:attr="data-def='map=owner, sortable'" th:text="#{label.Owner}" ></th>
+              <th th:attr="data-def='sortable, map=description'" th:text="#{label.Description}"> description</th>
+              <th th:attr="data-def='map=binded-to-objects, sortable'" th:text="#{label.used}"></th>
+              <th th:attr="data-def='sWidth=2em, map=delete, unbind-button=#unbind-milestone-popup'"></th>
+               
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:remove="all">
+              <td>1</td>
+              <td>1</td>
+              <td>param_A</td>
+              <td>TestCaseA</td>
+              <td></td>
+            </tr>
+            <tr th:remove="all">
+              <td>2</td>
+              <td>2</td>
+              <td>param_B</td>
+              <td>TestCaseB</td>
+              <td></td>
+            </tr>
+            <tr th:remove="all">
+              <td>3</td>
+              <td>3</td>
+              <td>param_C</td>
+              <td>TestCaseC</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div> 
+    
+  
+<div id="bind-milestone-dialog" class="not-displayed popup-dialog" th:title="#{dialog.milestone.bind.milestone}">
+
+<div id="bind-milestone-dialog-tabs" class="ui-tabs" style="border:0">  
+	<ul class="tab-menu ui-tabs-nav ui-corner-all" style="border:0; border-bottom:1px solid black; background:0">
+		<li id="global-milestone-panel" class="ui-state-default ui-corner-top">
+                <a class="ui-tabs-anchor" th:text="#{label.Global}" href="#global-milestone"></a>
+            </li>
+		<li id="personal-milestone-panel" class="ui-state-default ui-corner-top">
+                <a class="ui-tabs-anchor" th:text="#{label.Owned}" th:if="${!isTemplate}" href="#personal-milestone"></a>
+            </li>
+	    <li  id="other-milestone-panel" class="ui-state-default ui-corner-top">
+                <a class="ui-tabs-anchor" th:text="#{label.Other}" th:if="${!isTemplate}" href="#other-milestone"></a>
+            </li>
+	</ul>		
+		
+		<br/>	
+       <div id="global-milestone">
+      		<div>
+              <table id="global-milestone-table" class="unstyled-table"
+                th:attr="data-def='datakeys-id=entity-id, pre-sort=1,  filter, nocleanup'">
+                <thead>
+                  <tr>
+                    <th th:attr="data-def='map=checkbox, checkbox'">#</th>
+                    <th th:attr="data-def='sortable, map=label, link='+@{/milestones/{entity-id}/info}+''" th:text="#{label.Milestone}">Milestone</th>
+                    <th th:attr="data-def='map=status, sortable'" th:text="#{label.Status}">Status</th>
+                    <th th:attr="data-def='sortable, map=endDate'" th:text="#{label.EndDate}">end date</th>
+                    <th th:attr="data-def='sortable, map=range'" th:text="#{label.Range}"> range</th>
+                    <th th:attr="data-def='sortable, map=description'" th:text="#{label.Description}"> description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+      		<ul>			
+      		<li><a  class="checkAll clickable-item" th:text="#{label.selectAllForSelection }"> checkAll</a></li>
+             <li><a  class="uncheckAll clickable-item" th:text="#{label.selectNoneForSelection}"> uncheckAll</a></li>     
+             <li><a  class="invertSelect clickable-item" th:text="#{label.invertSelect}">invertSelect</a></li>
+             </ul>
+      </div> 
+                  
+      <div id="personal-milestone" class="not-displayed">
+    	   <div>
+            <table id="personal-milestone-table" class="unstyled-table"
+              th:attr="data-def='datakeys-id=entity-id, pre-sort=1,  filter'">
+              <thead>
+                <tr>
+                  <th th:attr="data-def='map=checkbox, checkbox'">#</th>
+                  <th th:attr="data-def='sortable, map=label, link='+@{/milestones/{entity-id}/info}+''" th:text="#{label.Milestone}">Milestone</th>
+                  <th th:attr="data-def='map=status'" th:text="#{label.Status}">Status</th>
+                  <th th:attr="data-def='sortable, map=endDate'" th:text="#{label.EndDate}">end date</th>
+                  <th th:attr="data-def='sortable, map=range'" th:text="#{label.Range}"> range</th>
+                  <th th:attr="data-def='sortable, map=description'" th:text="#{label.Description}"> description</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+          <ul>
+    		<li><a  class="checkAll clickable-item" th:text="#{label.selectAllForSelection }"> checkAll</a></li>
+           <li><a  class="uncheckAll clickable-item" th:text="#{label.selectNoneForSelection}"> uncheckAll</a></li>     
+           <li><a  class="invertSelect clickable-item" th:text="#{label.invertSelect}">invertSelect</a></li>
+           </ul>
+           
+      </div>
+      
+      <div id="other-milestone" class="not-displayed">
+    		<div>
+            <table id="other-milestone-table" class="unstyled-table"
+              th:attr="data-def='datakeys-id=entity-id, pre-sort=1, filter'">
+              <thead>
+                <tr>
+                  <th th:attr="data-def='map=checkbox, checkbox'">#</th>
+                  <th th:attr="data-def='sortable, map=label, link='+@{/milestones/{entity-id}/info}+''" th:text="#{label.Milestone}">Milestone</th>
+                  <th th:attr="data-def='map=status, sortable'" th:text="#{label.Status}">Status</th>
+                  <th th:attr="data-def='sortable, map=endDate'" th:text="#{label.EndDate}">end date</th>
+                  <th th:attr="data-def='sortable, map=range'" th:text="#{label.Range}"> range</th>
+                  <th th:attr="data-def='sortable, map=description'" th:text="#{label.Description}"> description</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+          <ul>
+    		<li><a  class="checkAll clickable-item" th:text="#{label.selectAllForSelection }"> checkAll</a></li>
+            <li><a  class="uncheckAll clickable-item" th:text="#{label.selectNoneForSelection}"> uncheckAll</a></li>     
+            <li><a  class="invertSelect clickable-item" th:text="#{label.invertSelect}">invertSelect</a></li>
+          </ul>
+      </div>
+	
+      <div class="popup-dialog-buttonpane">
+        <input type="button" th:value="#{label.Confirm}" data-def="mainbtn,evt=confirm" />
+        <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
+      </div>
+   </div>
+</div>
+
+
+
+<div  id="unbind-milestone-popup" class="popup-dialog not-displayed" th:title="#{dialog.milestone.unbind.milestone.title}">
+		
+		<div class="display-table-row">
+            <div class="display-table-cell warning-cell">
+                <div class="generic-error-signal"></div>
+            </div>
+            <div class="display-table-cell">
+		<span id="warning-unbind-message" th:text="#{dialog.milestone.unbind.milestone.warning.single}"></span>
+			</div>
+		</div>
+	<div class="popup-dialog-buttonpane">
+              <input type="button" th:value="#{label.Confirm}" data-def="mainbtn,evt=confirm" />
+              <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
+            </div>
+	
+	</div>
+
+
+
+  <div id="create-and-bind-milestone-dialog" class="not-displayed popup-dialog" th:title="#{dialog.new-milestone.title}">
+
+     
+       <table>
+          <tr>
+            <td><label for="add-milestone-label" ><span th:text="#{label.Label}"/></label></td>
+            <td><input id="add-milestone-label" type="text" size="30" maxlength="30"/> 
+ <span class="error-message label-error"></span>
+             </td>
+          </tr>
+          <tr>
+            <td><label> <span th:text="#{label.EndDate}"/></label></td>    
+            <td><span id="add-milestone-end-date"> </span> <span class="error-message endDate-error"></span></td>
+         </tr>  
+            
+        
+          <tr>
+            <td>
+               <label for="add-milestone-description">
+               <span th:text="#{label.Description}"/>
+         
+                </label>
+            </td>
+            <td>
+                <textarea id="add-milestone-description" name="add-milestone-description"></textarea>
+            </td>
+          </tr>     
+        </table>  
+       
+      <div class="popup-dialog-buttonpane">
+        <input type="button" th:value="#{label.create}" th:title="#{label.createMilestone}" data-def="mainbtn, evt=confirm"/>
+          <input type="button" th:value="#{label.createAndBind}" th:title="#{label.createAndAssociateMilestone}" data-def="evt=bind"/>
+        <input type="button" th:value="#{label.Cancel}" th:title="#{label.CancelCreation}" data-def="evt=cancel"/>
+      </div>       
+</div>
+
+
+
+
+    </div>
+
+<script type="text/javascript" th:inline="javascript">
+
+/*<![CDATA[*/
+requirejs.config({
+
+	config : {
+		'projects-manager/milestone/milestone-binding' : {
+			urls: {
+				globalMilestones: /*[[@{/milestones-binding/project/__${proj.id}__/milestone(bindable,type='global')}]]*/[],
+			    myMilestones: /*[[@{/milestones-binding/project/__${proj.id}__/milestone(bindable,type='personal')}]]*/[],
+			    otherMilestones: /*[[@{/milestones-binding/project/__${proj.id}__/milestone(bindable,type='other')}]]*/[]
+			
+			},
+			data: {
+                    project: {
+                    	id: /*[[${proj.id}]]*/ 0,
+                    	isTemplate: /*[[${isTemplate}]]*/ false,
+                             }
+				
+			       }
+				           }
+			}
+
+		});
+		
+
+
+require(["common"], function(){
+	require(["projects-manager/milestone/milestone-binding"], function(){});
+});
+/*]]>*/
+
+</script>

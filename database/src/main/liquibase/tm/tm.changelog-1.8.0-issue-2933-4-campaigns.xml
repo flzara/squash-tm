@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	
+	
+	<!-- =========== /CAMPAIGN LIBRARY NODES =========== -->
+	<changeSet id="tm-1.8.0.issue-2933-camp-01" author="mpagnon">
+		<comment>save ids of campaign folders to delete</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'CAMPAIGN_FOLDER',
+			folder.CLN_ID
+			from CAMPAIGN_FOLDER folder
+			where not exists (
+			select 1  from CLN_RELATIONSHIP where DESCENDANT_ID = folder.CLN_ID  UNION
+			select 1  from CAMPAIGN_LIBRARY_CONTENT where CONTENT_ID = folder.CLN_ID 
+			)
+			;
+		</sql>
+		<comment>store info if exist campaign folders to delete</comment>
+		<sql>
+			insert into IS_TO_DELETE
+			(NAME, TOTAL)
+			select 'CAMPAIGN_FOLDER',
+			count(1)
+			from ENTITIES_TO_DELETE
+			where NAME = 'CAMPAIGN_FOLDER'
+			;
+		</sql>
+	</changeSet>
+	<changeSet id="tm-1.8.0.issue-2933-camp-02" author="mpagnon">
+		<comment>save is of children campaign_folders</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'CAMPAIGN_FOLDER', cf.CLN_ID
+			from CAMPAIGN_FOLDER cf, CLN_RELATIONSHIP_CLOSURE crc, ENTITIES_TO_DELETE etd
+			where cf.CLN_ID = crc.DESCENDANT_ID
+			and crc.ANCESTOR_ID = etd.ID
+			and etd.NAME = 'CAMPAIGN_FOLDER'
+			;
+			
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'CAMPAIGN', c.CLN_ID
+			from CAMPAIGN c, CLN_RELATIONSHIP_CLOSURE crc, ENTITIES_TO_DELETE etd
+			where c.CLN_ID = crc.DESCENDANT_ID
+			and crc.ANCESTOR_ID = etd.ID
+			and etd.NAME = 'CAMPAIGN_FOLDER'
+			;
+		</sql>
+		<comment>save ids of attachment_lists</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'ATTACHMENT_LIST', cln.ATTACHMENT_LIST_ID
+			from CAMPAIGN_LIBRARY_NODE cln, ENTITIES_TO_DELETE etd
+			where cln.CLN_ID = etd.ID
+			and etd.NAME in ('CAMPAIGN_FOLDER', 'CAMPAIGN')
+			;
+		</sql>
+		<comment>save if campaign to delete exists</comment>
+		<sql>
+			insert into IS_TO_DELETE
+			(NAME, TOTAL)
+			select 'CAMPAIGN', count(1)
+			from ENTITIES_TO_DELETE etd
+			where etd.NAME = 'CAMPAIGN'	
+			;
+		</sql>
+	</changeSet>
+	<changeSet id="tm-1.8.0.issue-2933-camp-03" author="mpagnon">
+		<comment>save ids of campaign cuf_values</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'CUSTOM_FIELD_VALUE', cfv.CFV_ID
+			from CUSTOM_FIELD_VALUE cfv, ENTITIES_TO_DELETE etd
+			where cfv.BOUND_ENTITY_TYPE = 'CAMPAIGN'
+			and cfv.BOUND_ENTITY_ID = etd.ID
+			and etd.NAME = 'CAMPAIGN'
+			;
+		</sql>
+		<comment>delete campaign_test_plan_item</comment>
+		<sql>
+			delete from CAMPAIGN_TEST_PLAN_ITEM
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'CAMPAIGN' and ID = CAMPAIGN_TEST_PLAN_ITEM.CAMPAIGN_ID)
+			;
+		</sql>
+		<comment>save ids of iterations</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'ITERATION', ci.ITERATION_ID
+			from CAMPAIGN_ITERATION ci, ENTITIES_TO_DELETE etd
+			where etd.NAME = 'CAMPAIGN'
+			and ci.CAMPAIGN_ID = etd.ID
+			;
+		</sql>
+		<comment>save iteration to delete property</comment>
+		<sql>
+			insert into IS_TO_DELETE
+			(NAME, TOTAL)
+			select 'ITERATION', count(1)
+			from ENTITIES_TO_DELETE etd
+			where etd.NAME = 'ITERATION'
+			;
+		</sql>
+	</changeSet>
+	<changeSet id="tm-1.8.0.issue-2933-camp-04" author="mpagnon">
+		<comment>save ids of attachment_list</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'ATTACHMENT_LIST', it.ATTACHMENT_LIST_ID
+			from ITERATION it, ENTITIES_TO_DELETE etd
+			where etd.NAME = 'ITERATION'
+			and etd.ID = it.ITERATION_ID
+			;
+		</sql>
+		<comment>save ids of custom_field_values</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'CUSTOM_FIELD_VALUE', cfv.CFV_ID
+			from CUSTOM_FIELD_VALUE cfv, ENTITIES_TO_DELETE etd
+			where etd.NAME = 'ITERATION'
+			and etd.ID = cfv.BOUND_ENTITY_ID
+			and cfv.BOUND_ENTITY_TYPE = 'ITERATION'
+			;
+		</sql>
+		<comment>save ids of iteration_test_plan_item</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'ITPI', itpl.ITEM_TEST_PLAN_ID
+			from ITEM_TEST_PLAN_LIST itpl, ENTITIES_TO_DELETE etd
+			where etd.NAME = 'ITERATION'
+			and etd.ID = itpl.ITERATION_ID
+			;
+		</sql>
+		<comment>save ids of test_suite</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'TEST_SUITE', its.TEST_SUITE_ID
+			from ITERATION_TEST_SUITE its, ENTITIES_TO_DELETE etd
+			where etd.NAME = 'ITERATION'
+			and etd.ID = its.ITERATION_ID
+			;
+		</sql>
+		<sql>
+			insert into IS_TO_DELETE
+			(NAME, TOTAL)
+			select 'TEST_SUITE', count(1)
+			from ENTITIES_TO_DELETE etd
+			where etd.NAME = 'TEST_SUITE'
+			;
+		</sql>
+		<comment>save if itpi to delete property</comment>
+		<sql>
+			insert into IS_TO_DELETE
+			(NAME, TOTAL)
+			select 'ITPI', count(1)
+			from ENTITIES_TO_DELETE etd
+			where etd.NAME = 'ITPI'
+			;
+		</sql>
+	</changeSet>
+	<changeSet id="tm-1.8.0.issue-2933-camp-05" author="mpagnon">
+		<comment>save ids of execution</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'EXECUTION' , itpe.EXECUTION_ID
+			from ITEM_TEST_PLAN_EXECUTION itpe, ENTITIES_TO_DELETE etd
+			where etd.ID = itpe.ITEM_TEST_PLAN_ID
+			and etd.NAME = 'ITPI'
+			;
+		</sql>
+		<comment>save execution to delete property</comment>
+		<sql>
+			insert into IS_TO_DELETE
+			(NAME, TOTAL)
+			select 'EXECUTION', count(1)
+			from ENTITIES_TO_DELETE etd
+			where etd.NAME = 'EXECUTION'
+			;
+		</sql>
+	</changeSet>
+	<changeSet id="tm-1.8.0.issue-2933-camp-06" author="mpagnon">
+		<comment>save ids of attachment_list</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'ATTACHMENT_LIST', e.ATTACHMENT_LIST_ID
+			from EXECUTION e , ENTITIES_TO_DELETE etd
+			where etd.NAME = 'EXECUTION'
+			and e.EXECUTION_ID = etd.ID
+			;
+		</sql>
+		<comment>save ids of issue_list</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'ISSUE_LIST', e.ISSUE_LIST_ID
+			from EXECUTION e , ENTITIES_TO_DELETE etd
+			where etd.NAME = 'EXECUTION'
+			and e.EXECUTION_ID = etd.ID
+			;
+		</sql>
+		<comment>save ids of automated_execution_extender</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'AUTOMATED_EXECUTION_EXTENDER', aee.EXTENDER_ID
+			from AUTOMATED_EXECUTION_EXTENDER aee, ENTITIES_TO_DELETE etd
+			where etd.NAME = 'EXECUTION'
+			and etd.ID = aee.MASTER_EXECUTION_ID
+			;
+		</sql>
+		<comment>save ids of execution_step</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'EXECUTION_STEP', ees.EXECUTION_STEP_ID
+			from EXECUTION_EXECUTION_STEPS ees, ENTITIES_TO_DELETE etd
+			where etd.NAME = 'EXECUTION'
+			and etd.ID = ees.EXECUTION_ID
+			;
+		</sql>
+		<comment>save if execution step to delete</comment>
+		<sql>
+			insert into IS_TO_DELETE
+			(NAME, TOTAL)
+			select 'EXECUTION_STEP', count(1)
+			from ENTITIES_TO_DELETE etd
+			where etd.NAME = 'EXECUTION_STEP'
+			;
+		</sql>
+	</changeSet>
+	<changeSet id="tm-1.8.0.issue-2933-camp-07" author="mpagnon">
+		<comment>delete automated_execution_extender</comment>
+		<sql>
+			delete from AUTOMATED_EXECUTION_EXTENDER
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'AUTOMATED_EXECUTION_EXTENDER' and ID = AUTOMATED_EXECUTION_EXTENDER.EXTENDER_ID)
+			;
+		</sql>
+		<comment>delete automated_suite where not exist automated_execution_extender linked to it</comment>
+		<sql>
+			delete from AUTOMATED_SUITE
+			where not exists (select 1 from AUTOMATED_EXECUTION_EXTENDER where AUTOMATED_EXECUTION_EXTENDER.SUITE_ID = AUTOMATED_SUITE.SUITE_ID)
+			;
+		</sql>
+	</changeSet>
+
+	<changeSet id="tm-1.8.0.issue-2933-camp-08" author="mpagnon">
+		<comment>save ids of issue_list</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'ISSUE_LIST', es.ISSUE_LIST_ID
+			from EXECUTION_STEP es, ENTITIES_TO_DELETE etd
+			where etd.NAME = 'EXECUTION_STEP'
+			and etd.ID = es.EXECUTION_STEP_ID
+			;
+		</sql>
+		<comment>save ids of attachment_list</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'ATTACHMENT_LIST', es.ATTACHMENT_LIST_ID
+			from EXECUTION_STEP es, ENTITIES_TO_DELETE etd
+			where etd.NAME = 'EXECUTION_STEP'
+			and etd.ID = es.EXECUTION_STEP_ID
+			;
+		</sql>
+		<comment>delete execution steps</comment>
+		<sql>
+			delete from EXECUTION_EXECUTION_STEPS
+			where  exists  (select 1 from ENTITIES_TO_DELETE where NAME = 'EXECUTION' and ID = EXECUTION_EXECUTION_STEPS.EXECUTION_ID)
+			;
+			
+			delete from EXECUTION_STEP
+			where  exists (select 1 from ENTITIES_TO_DELETE where NAME = 'EXECUTION_STEP' and ID = EXECUTION_STEP.EXECUTION_STEP_ID)
+			;
+		</sql>
+	</changeSet>
+	<changeSet id="tm-1.8.0.issue-2933-camp-09" author="mpagnon">
+		<comment>delete executions</comment>
+		<sql>
+			delete from ITEM_TEST_PLAN_EXECUTION
+			where  exists (select 1 from ENTITIES_TO_DELETE where NAME = 'ITPI' and ID = ITEM_TEST_PLAN_EXECUTION.ITEM_TEST_PLAN_ID)
+			;
+		
+			delete from EXECUTION 
+			where  exists (select 1 from ENTITIES_TO_DELETE where NAME = 'EXECUTION' and ID = EXECUTION.EXECUTION_ID)
+			;
+		</sql>
+		<comment>delete issues</comment>
+		<sql>
+			delete from ISSUE
+			where  exists (select 1 from ENTITIES_TO_DELETE where NAME = 'ISSUE_LIST' and ID = ISSUE.ISSUE_LIST_ID)
+			;
+		</sql>
+		<comment>delete issue_lists</comment>
+		<sql>
+			delete from ISSUE_LIST
+			where  exists (select 1 from ENTITIES_TO_DELETE where NAME = 'ISSUE_LIST' and ID = ISSUE_LIST.ISSUE_LIST_ID)
+			;
+		</sql>
+	</changeSet>
+	<changeSet id="tm-1.8.0.issue-2933-camp-10" author="mpagnon">
+		<comment>delete item_test_plan_list</comment>
+		<sql>
+			delete from ITEM_TEST_PLAN_LIST
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME ='ITERATION' and ID = ITEM_TEST_PLAN_LIST.ITERATION_ID)
+			;
+		</sql>
+		<comment>delete test_suite_test_plan_item</comment>
+		<sql>
+			delete from TEST_SUITE_TEST_PLAN_ITEM
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_SUITE' and ID = TEST_SUITE_TEST_PLAN_ITEM.SUITE_ID)
+			;
+		</sql>
+		<comment>delete iteration_test_plan_item</comment>
+		<sql>
+			delete from ITERATION_TEST_PLAN_ITEM
+			where  exists (select 1 from ENTITIES_TO_DELETE where NAME = 'ITPI' and ID = ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID)
+			;
+		</sql>
+	</changeSet>
+	<changeSet id="tm-1.8.0.issue-2933-camp-11" author="mpagnon">
+		<comment>save ids of attachment_list</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'ATTACHMENT_LIST', ts.ATTACHMENT_LIST_ID
+			from TEST_SUITE ts, ENTITIES_TO_DELETE etd
+			where etd.NAME = 'TEST_SUITE'
+			and etd.ID = ts.ID
+			;
+		</sql>
+		<comment>save ids of custom_field_values</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'CUSTOM_FIELD_VALUE', cfv.CFV_ID
+			from CUSTOM_FIELD_VALUE cfv, ENTITIES_TO_DELETE etd
+			where etd.NAME = 'TEST_SUITE'
+			and etd.ID = cfv.BOUND_ENTITY_ID
+			and cfv.BOUND_ENTITY_TYPE = 'TEST_SUITE'
+			;
+		</sql>
+		<comment>delete iteartion_test_suite</comment>
+		<sql>
+			delete from ITERATION_TEST_SUITE
+			where  exists (select 1 from ENTITIES_TO_DELETE where NAME = 'ITERATION' and ID = ITERATION_TEST_SUITE.ITERATION_ID)
+			;
+		</sql>
+		<comment>delete test_suites</comment>
+		<sql>
+			delete from TEST_SUITE
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_SUITE' and ENTITIES_TO_DELETE.ID = TEST_SUITE.ID)
+			;
+		</sql>
+	</changeSet>
+	<changeSet id="tm-1.8.0.issue-2933-camp-12" author="mpagnon">
+		<comment>delete campaign_iteration</comment>
+		<sql>
+			delete from CAMPAIGN_ITERATION
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'CAMPAIGN' and ID = CAMPAIGN_ITERATION.CAMPAIGN_ID)
+			;
+		</sql>
+		<comment>delete iterations</comment>
+		<sql>
+			delete from ITERATION
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'ITERATION' and ID = ITERATION.ITERATION_ID)
+			;
+		</sql>
+	</changeSet>
+	<changeSet id="tm-1.8.0.issue-2933-camp-13" author="mpagnon">
+		<comment>delete cln_relationship</comment>
+		<sql>
+			delete from CLN_RELATIONSHIP
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'CAMPAIGN' and ID = CLN_RELATIONSHIP.DESCENDANT_ID)
+			;
+		</sql>
+		<comment>delete cln_relationship_closure</comment>
+		<sql>
+			delete from CLN_RELATIONSHIP_CLOSURE
+			where  exists (select 1 from ENTITIES_TO_DELETE where NAME = 'CAMPAIGN' and ID = CLN_RELATIONSHIP_CLOSURE.DESCENDANT_ID)
+			;
+		</sql>
+		<comment>delete campaign</comment>
+		<sql>
+			delete from CAMPAIGN
+			where  exists (select 1 from ENTITIES_TO_DELETE where NAME = 'CAMPAIGN' and ID = CAMPAIGN.CLN_ID)
+			;
+		</sql>
+		<comment>delete campaign_library_nodes</comment>
+		<sql>
+			delete from CAMPAIGN_LIBRARY_NODE
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'CAMPAIGN' and ID = CAMPAIGN_LIBRARY_NODE.CLN_ID)
+			;
+		</sql>
+	</changeSet>
+	<changeSet id="tm-1.8.0.issue-2933-camp-14" author="mpagnon">
+		<sql>
+			delete from CLN_RELATIONSHIP
+			where  exists (select 1 from ENTITIES_TO_DELETE where NAME = 'CAMPAIGN_FOLDER' and ID = CLN_RELATIONSHIP.DESCENDANT_ID)
+			;
+		</sql>
+		<comment>delete cln_relationship_closure</comment>
+		<sql>
+			delete from CLN_RELATIONSHIP_CLOSURE
+			where  exists (select 1 from ENTITIES_TO_DELETE where NAME = 'CAMPAIGN_FOLDER' and ID = CLN_RELATIONSHIP_CLOSURE.DESCENDANT_ID)
+			;
+		</sql>
+		<comment>delete campaign folder</comment>
+		<sql>
+			delete from CAMPAIGN_FOLDER
+			where  exists (select 1 from ENTITIES_TO_DELETE where NAME = 'CAMPAIGN_FOLDER' and ID = CAMPAIGN_FOLDER.CLN_ID)
+			;
+		</sql>
+		<comment>delete campaign_library_nodes</comment>
+		<sql>
+			delete from CAMPAIGN_LIBRARY_NODE
+			where  exists (select 1 from ENTITIES_TO_DELETE where NAME = 'CAMPAIGN_FOLDER' and ID = CLN_ID)
+			;
+		</sql>
+	</changeSet>
+
+	<!-- =========== /CAMPAIGN LIBRARY NODES =========== -->
+
+
+
+</databaseChangeLog>
+ 

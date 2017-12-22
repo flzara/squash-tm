@@ -1,0 +1,280 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<title th:text="#{title.print.requirement}">Imprimer l'exigence</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+
+<link rel="stylesheet" type="text/css" media="all"
+	href="../../../../../../../tm/tm.web/src/main/webapp/styles/master.css"
+	sq:css="squash.core.css" />
+
+<link rel="stylesheet" type="text/css" media="all"
+	href="../../../../../../../tm/tm.web/src/main/webapp/styles/print.css"
+	sq:css="squash.print.css" />
+
+<link rel="shortcut icon" type="image/x-icon" media="all"
+	href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico"
+	th:href="@{/images/favicon.ico}" />
+
+
+<script type="text/javascript" th:inline="javascript" th:include="fragments-utils/various-headers :: env-setup"/>
+
+
+<!-- /common head -->
+<script data-main="../../scripts/print.js"
+	th:attr="data-main=@{/scripts/print.js}" src="../../scripts/require.js"
+	th:src="@{/scripts/require-min.js}"></script>
+</head>
+<body>
+
+	<!--=============================================TITLE================================================== -->
+	<div id="test-case-name-div" class="header blue">
+
+		<div style="float: left; height: 100%;">
+			<h2
+				th:text="#{requirement.header.title}+'&nbsp;:&nbsp;'+${requirementVersion.reference}+'-'+${requirementVersion.name}">
+				Requirement : 0001-requirement3</h2>
+		</div>
+		<div class="unsnap"></div>
+	</div>
+	<!-- ==========================================TOOLBAR=================================================== -->
+	<div id="requirement-toolbar" class="toolbar-class ui-corner-all">
+
+		<div
+			th:include="fragments-utils/general-information-panel :: general-information-panel"
+			th:with="auditableEntity=${requirementVersion},entityUrl=@{/requirement-versions/__${requirementVersion.id}__},noscript=${true}"
+			th:remove="tag">CREATED_BY CREATED_ON ...</div>
+
+		<div class="toolbar-button-panel"></div>
+		<div class="unsnap"></div>
+
+	</div>
+
+
+	<div class="body blue">
+		<!-- ===========================================Informations générales ===================================================-->
+
+
+		<div id="informations-tab" class="tab">
+			<h3 th:text="#{requirement.panel.general-informations.title}">Informations
+				Générales</h3>
+			<div class="display-table">
+
+				<div class="display-table-row">
+					<label class="display-table-cell" for="requirement-version-number"
+						th:text="#{requirement-version.version-number.label}">Version
+						number</label>
+					<div class="display-table-cell" id="requirement-version-number"
+						th:text="${ requirementVersion.versionNumber }">1</div>
+				</div>
+
+				<div class="display-table-row">
+					<label class="display-table-cell" for="requirement-version-id">ID</label>
+					<div class="display-table-cell" id="requirement-version-id"
+						th:text="${ requirementVersion.requirement.id }">1</div>
+				</div>
+
+				<div class="display-table-row">
+					<label class="display-table-cell"
+						for="requirement-version-reference" th:text="#{ label.reference }">Reference</label>
+					<div class="display-table-cell" id="requirement-version-reference"
+						th:text="${ requirementVersion.reference }">1</div>
+				</div>
+
+				<div class="display-table-row">
+					<label class="display-table-cell"
+						for="requirement-version-criticality"
+						th:text="#{ requirement.criticality.combo.label }">Criticality</label>
+					<div class="display-table-cell"
+						id="requirement-version-criticality"
+						th:text="#{__${ requirementVersion.criticality.i18nKey }__}">1</div>
+				</div>
+
+				<div class="display-table-row" th:with="catLabel = ${#messages.msgOrNull('__${requirementVersion.category.label}__')}">
+					<label class="display-table-cell"
+						for="requirement-version-category"
+						th:text="#{ requirement.category.combo.label }">Category</label>
+
+                        <div class="display-table-cell" id="requirement-version-category"
+                        th:text="${(catLabel != null) ? catLabel : requirementVersion.category.label}">1</div>
+				</div>
+
+				<div class="display-table-row">
+					<label class="display-table-cell" for="requirement-version-status"
+						th:text="#{ requirement.status.combo.label }">Status</label>
+					<div class="display-table-cell" id="requirement-version-status"
+						th:text="#{__${ requirementVersion.status.i18nKey }__}">1</div>
+				</div>
+
+
+
+				<div th:each="cufValue : ${requirementVersionCufValues}"
+					th:object="${cufValue}" class="display-table-row">
+					<label class="display-table-cell" th:text="*{customField.label}"
+						th:for="'cuf-' + *{customField.id}">cuf1</label>
+					<div class="display-table-cell" th:id="'cuf-' + *{customField.id}">
+						<span th:switch="*{customField.inputType.name()}" th:remove="tag">
+							<span th:remove="tag" th:case="'DATE_PICKER'"
+							th:text="*{valueAsDate == null ? #messages.msg('squashtm.nodata') : #dates.format(valueAsDate ,#messages.msg('squashtm.dateformatShort'))}">12/02/2012</span>
+							<span th:remove="tag" th:case="'CHECKBOX'"
+							th:text="#{label.__*{value}__}">true</span> <span th:remove="tag"
+							th:case="*" th:text="*{value}">value</span>
+						</span>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<!-- ===========================================DESCRIPTION ===================================================-->
+		<div id="description-tab" class="tab">
+			<h3 th:text="#{label.Description}">Description</h3>
+			<div sq:unsafe-html="${requirementVersion.description}">consectetur
+				adipiscing elit. Nullam felis ante, accumsan quis tincidunt vel,
+				iacu lis in purus. Pellentesque habitant morbi tristique senectus et
+				netus et malesuada fames ac turpis egestas. Morbi at nisl et est
+				egestas venenatis . Nullam venenatis, justo ac hendrerit auctor,
+				dolor velit adipiscing lacus, sed gravida enim elit dictum lorem.
+				Suspendisse eu lectus ac metus lo bortis vulputate at id purus.
+				Proin dapibus commodo velit sit amet aliquet. Fusce cursus arcu
+				vitae diam auctor vulputate. Integer et nunc et ipsum scelerisque
+				dignissim eu ultricies sem. Pellentesque id commodo dui. Duis in
+				vestibulum magna. Sed porta ante id magna semper ac gravida risus
+				dapi bus. Fusce eu ante sapien</div>
+		</div>
+
+
+
+
+		<!-- ===========================================TEST CASES ===================================================-->
+
+		<div id="verifying-test-cases-tab" class="tab">
+			<h3 th:text="#{requirement.verifying_test-case.panel.title}">Cas
+				de test verifiant cette exigence</h3>
+
+			<table id="verified-requirements-table" class="greystyle-table">
+				<thead>
+					<tr>
+						<th class="small">#</th>
+						<th th:text="#{label.project}">Project</th>
+						<th th:text="#{label.reference}">Ref</th>
+						<th th:text="#{test-case.name.label}">Cas de test</th>
+						<th th:text="#{label.type}">Type</th>
+
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="verifTC, iterStat : ${verifyingTestCases}"
+						th:object="${verifTC}"
+                        th:with="typLabel = ${#messages.msgOrNull('__${verifTC.type.label}__')}">
+						<td th:text="${iterStat.count}">1</td>
+						<td th:text="*{project.name}">Project B</td>
+						<td th:text="*{reference}">RG-002-03</td>
+						<td th:text="*{name}">Couleurs des banières</td>
+						<td th:text="${(typLabel != null) ? typLabel : verifTC.type.label}">crit</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<!-- ===========================================ATTACHMENTS ===================================================-->
+		<div id="attachment-tab" class="tab">
+			<h3 th:text="#{label.Attachments}">Attachments</h3>
+			<table id="attachment-detail-table"  class="greystyle-table">
+				<thead>
+					<tr>
+						<th class="small">#</th>
+						<th th:text="#{label.Name}">Name</th>
+						<th th:text="#{label.SizeMb}">Size</th>
+						<th th:text="#{label.AddedOn}">Added on</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr
+						th:each="attachment, iterStat: ${requirementVersion.attachmentList.allAttachments}"
+						th:object="${attachment}">
+						<td th:text="${iterStat.count}">1</td>
+						<td th:text="*{name}">nom de la pièce jointe blablabla</td>
+						<td th:text="*{formattedSize}">10</td>
+						<td
+							th:text="*{addedOn == null ? #messages.msg('squashtm.nodata') : #dates.format(addedOn,#messages.msg('squashtm.dateformatShort'))}">12/02/2012</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+ 		<!-- ===========================================HISTORY ===================================================-->
+		<div id="history-tab" class="tab">
+			<h3 th:text="#{title.EditHistory}">Historique des modifications</h3>
+			<table id="requirement-audit-trail-table"  class="greystyle-table">
+			<thead>
+				<tr>
+					<th th:text="#{label.Date}">Date</th>
+					<th th:text="#{label.User}">Utilisateur</th>
+					<th th:text="#{label.Event}">Evenement</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr
+					th:each="atdata, iterStat: ${auditTrailDatas}" th:object="${atdata}">
+					<td th:text="*{['event-date']}">20/10/2013</td>
+					<td th:text="*{['event-author']}">admin</td>
+					<td sq:unsafe-html="*{['event-message']}">Creation</td>
+				</tr>
+			</tbody>
+		</table>
+
+		</div>
+		<!-- ===========================================VERSIONS ===================================================-->
+		<div id="version-tab" class="tab">
+			<h3 th:text="#{label.version}">Version</h3>
+			<table id="versions-table"  class="greystyle-table">
+				<thead>
+					<tr>
+						<th
+							th:text="#{requirement.versions.table.col-header.version-number}"></th>
+						<th th:text="#{requirement.versions.table.col-header.reference}"></th>
+						<th th:text="#{label.Name}"></th>
+						<th th:text="#{requirement.versions.table.col-header.status}"></th>
+						<th th:text="#{requirement.versions.table.col-header.criticality}"></th>
+						<th th:text="#{requirement.versions.table.col-header.category}"></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="siblingVersion : ${siblingVersions}" th:object="${siblingVersion}"
+						th:class="${requirementVersion.id == siblingVersion.id} ? 'selected' : ''"
+                        th:with="catLabel = ${#messages.msgOrNull('__${siblingVersion.category.label}__')}">
+						<td th:text="*{versionNumber}">1</td>
+						<td th:text="*{reference}">0002</td>
+						<td th:text="*{name}">vérification de statistiques</td>
+						<td th:text="#{__*{status.i18nKey}__}"></td>
+						<td th:text="#{__*{criticality.i18nKey}__}"></td>
+						<td th:text="${(catLabel != null) ? catLabel : siblingVersion.category.label}"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</body>
+</html>

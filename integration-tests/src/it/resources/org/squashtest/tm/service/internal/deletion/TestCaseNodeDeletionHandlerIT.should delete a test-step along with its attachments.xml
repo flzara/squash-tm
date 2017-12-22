@@ -1,0 +1,138 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!-- depends on NodeDeletionDao.general.dbsetup.xml -->
+
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+
+	<!-- ============================ attachment lists (unattached to anything) 
+		===================== -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1"/> <!-- FOR FOLDER 1 -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-11" /> <!-- FOR TEST CASE 1 -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-12" /> <!-- FOR TEST CASE 2 -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-111" /> <!-- FOR TEST STEPS OF TEST CASE 1 -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-121" /> <!-- FOR TEST STEPS OF TEST CASE 2 -->
+	
+
+	<!-- ============================ attachment_content ============================================ -->
+
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-111"
+		 /> 		<!-- for test case 1 -->
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-121"
+		 /> 		<!-- for test case 2 -->
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-1111" />		<!-- for test step 1 of test case 1 -->
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-1211"
+		 />		<!-- for test step 1 of test case 2 -->
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-1212"
+		 />		<!-- for test step 1 of test case 2 -->
+
+
+	<!-- ============================ attachments =================================================== -->
+
+	<ATTACHMENT ATTACHMENT_ID="-111" NAME="test case 1 attach 1"
+		TYPE="TXT" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="-111"
+		ATTACHMENT_LIST_ID="-11" />
+	<ATTACHMENT ATTACHMENT_ID="-121" NAME="test case 2 attach 1"
+		TYPE="TXT" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="-121"
+		ATTACHMENT_LIST_ID="-12" />
+	<ATTACHMENT ATTACHMENT_ID="-1111" NAME="test case 1 test step 1 attach 1"
+		TYPE="TXT" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="-1111"
+		ATTACHMENT_LIST_ID="-111" />
+	<ATTACHMENT ATTACHMENT_ID="-1211" NAME="test case 2 test step 1 attach 1"
+		TYPE="TXT" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="-1211"
+		ATTACHMENT_LIST_ID="-121" />
+	<ATTACHMENT ATTACHMENT_ID="-1212" NAME="test case 2 test step 1 attach 2"
+		TYPE="TXT" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="-1212"
+		ATTACHMENT_LIST_ID="-121" />
+
+
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-987"/><TEST_CASE_LIBRARY ATTACHMENT_LIST_ID="-987" TCL_ID="-1"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-989"/><REQUIREMENT_LIBRARY ATTACHMENT_LIST_ID="-989" RL_ID="-1"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-988"/><CAMPAIGN_LIBRARY ATTACHMENT_LIST_ID="-988" CL_ID="-1"/>
+
+	<!-- =============================== one project ================================================ -->
+<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-432"/>
+	<PROJECT PROJECT_ID="-1" NAME="base project" ACTIVE="TRUE"
+		CREATED_BY="IT" CREATED_ON="2011-08-08" CL_ID="-1" RL_ID="-1" TCL_ID="-1" ATTACHMENT_LIST_ID="-432"/>
+
+
+
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-1" NAME="folder1"
+		CREATED_BY="IT" CREATED_ON="2011-08-08" ATTACHMENT_LIST_ID="-1"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-11" NAME="test case 1"
+		CREATED_BY="IT" CREATED_ON="2011-08-08"  ATTACHMENT_LIST_ID="-11"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-12" NAME="test case 2"
+		CREATED_BY="IT" CREATED_ON="2011-08-08" ATTACHMENT_LIST_ID="-12" />
+
+
+	<!-- ============================ test case folder ================================================= -->
+
+	<TEST_CASE_FOLDER TCLN_ID="-1" />
+
+	<!-- ============================ test case ======================================================== -->
+
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-11" VERSION="1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-12" VERSION="1" />
+
+	<!-- ============================ tcln_relationship ================================================ -->
+
+	<TCLN_RELATIONSHIP ANCESTOR_ID="-1" DESCENDANT_ID="-11" CONTENT_ORDER="0"/> <!-- TCFOLDER 1 CONTAINS TC1 -->
+	<TCLN_RELATIONSHIP ANCESTOR_ID="-1" DESCENDANT_ID="-12" CONTENT_ORDER="1" /> <!-- TCFOLDER 1 CONTAINS T2 -->
+
+
+
+	<!-- ============================ test step ======================================================== -->
+
+	<TEST_STEP TEST_STEP_ID="-111" /> <!-- TEST CASE 1 STEP 1 -->
+	<TEST_STEP TEST_STEP_ID="-112" /> <!-- TEST CASE 1 STEP 2 -->
+	<TEST_STEP TEST_STEP_ID="-121" /> <!-- TEST CASE 2 STEP 1 -->
+
+	<!-- ============================ action test step ================================================= -->
+
+	<ACTION_TEST_STEP TEST_STEP_ID="-111" ACTION="test case 1 step 1"
+		ATTACHMENT_LIST_ID="-111" />
+	<ACTION_TEST_STEP TEST_STEP_ID="-121" ACTION="test case 2 step 1"
+		ATTACHMENT_LIST_ID="-121" />
+
+	<!-- ============================ call test step =================================================== -->
+
+	<CALL_TEST_STEP TEST_STEP_ID="-112" CALLED_TEST_CASE_ID="-12" />
+
+	<!-- ============================ test case steps ================================================== -->
+
+	<TEST_CASE_STEPS TEST_CASE_ID="-11" STEP_ID="-111"
+		STEP_ORDER="0" /> <!-- TEST CASE 1 STEP 1 -->
+	<TEST_CASE_STEPS TEST_CASE_ID="-11" STEP_ID="-112"
+		STEP_ORDER="1" /> <!-- TEST CASE 1 STEP 2 -->
+	<TEST_CASE_STEPS TEST_CASE_ID="-12" STEP_ID="-121"
+		STEP_ORDER="0" /> <!-- TEST CASE 2 STEP 1 -->
+
+	<PARAMETER PARAM_ID="-112" NAME="param104" TEST_CASE_ID="-11" DESCRIPTION="param104"/>
+		
+	<DATASET DATASET_ID="-112" NAME="dataset1" TEST_CASE_ID="-11"/>
+	
+	<DATASET_PARAM_VALUE DATASET_PARAM_VALUE_ID="-112" DATASET_ID="-112" PARAM_ID="-112" PARAM_VALUE=""/>
+	
+
+</dataset>

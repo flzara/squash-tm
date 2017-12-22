@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+
+	<!--  campaign library -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-988"/>	
+	<CAMPAIGN_LIBRARY ATTACHMENT_LIST_ID="-988" CL_ID="-1"/>
+
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-8777"/>
+	<PROJECT PROJECT_ID="-1" ATTACHMENT_LIST_ID="-8777" CREATED_ON="2016-04-23" CREATED_BY="DBU" NAME="p1" CL_ID="-1"/>
+	
+	<!-- parent folder -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1"/>
+	<CAMPAIGN_LIBRARY_NODE CLN_ID="-1" NAME="a folder" CREATED_ON="2010-02-01" CREATED_BY="DBU" ATTACHMENT_LIST_ID="-1" PROJECT_ID="-1"/>
+	<CAMPAIGN_FOLDER CLN_ID="-1" />
+	
+	<!--  folder content -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-10" />
+	<CAMPAIGN_LIBRARY_NODE CLN_ID="-10" NAME="campaign 1" DESCRIPTION="the first campaign"  CREATED_ON="2010-02-01" CREATED_BY="DBU" ATTACHMENT_LIST_ID="-10" PROJECT_ID="-1"/>
+	<CAMPAIGN CLN_ID="-10" ACTUAL_START_AUTO="TRUE" ACTUAL_END_AUTO="TRUE"  />
+
+	
+	<!-- relationships -->
+	<CAMPAIGN_LIBRARY_CONTENT LIBRARY_ID="-1" CONTENT_ID="-1" CONTENT_ORDER="0"/>
+	<CLN_RELATIONSHIP ANCESTOR_ID="-1" DESCENDANT_ID="-10" CONTENT_ORDER="0"/>
+	
+	
+</dataset>

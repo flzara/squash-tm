@@ -1,0 +1,266 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<div th:remove="all">
+	<!--
+		This snippet of html describes the template for the test step panel of the tab panel of a test case.
+		Required data :
+			- testCase : the test case bean
+			- stepsData : a list of maps such as build by a TestStepsTableModelBuilder.
+			- cufDefinitions : an array of CustomFieldModel
+            - milestoneConf : an instance of MilestoneFeatureConfiguration
+	 -->
+
+</div>
+
+
+<div id="test-steps-tabs-panel"
+	 class="table-tab"
+   th:with="isWritable = ${(#authorization.expression('hasRole(''ROLE_ADMIN'')') or sec.hasPermission(testCase , 'WRITE')) and milestoneConf.editable} ,
+            isLinkable = ${(#authorization.expression('hasRole(''ROLE_ADMIN'')') or sec.hasPermission(testCase , 'LINK')) and milestoneConf.editable} ,
+            isAttachable = ${(#authorization.expression('hasRole(''ROLE_ADMIN'')') or sec.hasPermission(testCase , 'ATTACH')) and milestoneConf.editable}">
+
+	<!-- ==================== toolbar definition =================== -->
+	<div class="toolbar">
+
+		<span class="group"><button id="collapse-steps-button"
+				class="button test-step-toolbar-button" style="float: left" data-icon="ui-icon-zoomout"  th:text="#{test-case.step.button.collapse.label}"
+				th:title="#{test-case.step.button.collapse.label}">collapse</button>
+		</span>
+
+		<span class="group" th:if="${isWritable}">
+			<button id="add-test-step-button"
+					data-icon="ui-icon-plusthick"
+				    class="button test-step-toolbar-button"
+				    th:text="#{test-case.step.button.add.label}"
+				    th:title="#{test-case.step.button.add.label}">
+				    add a step
+			</button>
+			<a id="add-call-step-button"
+					data-icon="ui-icon-arrowthickstop-1-e"
+					class="button test-step-toolbar-button"
+                    href="javascript:void(0)"
+					th:text="#{test-case.step.button.call.label}"
+					th:title="#{test-case.step.button.call.label}">
+					call a test case
+			</a>
+		</span>
+
+		<span class="group" th:if="${isWritable}">
+			<button id="copy-step"
+					data-icon="ui-icon-clipboard"
+					class="button test-step-toolbar-button"
+					th:text="#{test-case.step.button.copy.label}"
+					th:title="#{test-case.step.button.copy.label}">
+					copy step(s)
+			</button>
+			<button id="paste-step"
+					data-icon="ui-icon-copy"
+					class="button test-step-toolbar-button"
+					th:text="#{test-case.step.button.paste.label}"
+					th:title="#{test-case.step.button.paste.label}">
+					paste step(s)
+			</button>
+		</span>
+
+		<span class="group" th:if="${isWritable}">
+			<button id="delete-all-steps-button"
+					data-icon="ui-icon-trash"
+				     class="button test-step-toolbar-button"
+				     th:text="#{test-case.step.delete.button}"
+				     th:title="#{test-case.step.delete.button}">
+					 remove selected steps
+			</button>
+		</span>
+	</div>
+
+	<!-- ==================== /toolbar definition =================== -->
+
+
+	<!-- ==================== table definition =================== -->
+	<div class="table-tab-wrap jstree-drop" >
+		<table th:id="'test-steps-table-'+${testCase.id}" class="unstyled-table test-steps-table ">
+			<thead>
+				<tr>
+					<th class="not-displayed">id (masked)</th>
+					<th>#</th>
+					<th th:text="#{table.column-header.has-requirement.label}"> </th> <!-- requirements -->
+					<th th:text="#{table.column-header.has-attachment.label}">0</th>
+					<th th:text="#{label.Actions}">Actions</th>
+					<th th:text="#{label.ExpectedResults}">Expected results</th>
+					<th> </th> <!-- browse -->
+					<th> </th> <!-- delete -->
+				</tr>
+			</thead>
+			<tbody>
+	      <!-- eager-loaded through data property of table -->
+			</tbody>
+		</table>
+	</div>
+
+	<!-- ==================== /table definition =================== -->
+
+
+	<!-- ==================== Add Test Step Dialog ==================== -->
+
+	<div id="add-test-step-dialog" class="not-displayed popup-dialog" th:title="#{test-case.step.button.add.label}" th:if="${isWritable}">
+
+		<table id="add-test-step-custom-fields">
+			<!--  populated using ajax -->
+		</table>
+
+		<div class="centered" style="text-align: center; margin-bottom: 2em;">
+			<label style="font-weight: bold;"
+				for="add-test-step-action" th:text="#{label.Actions}">Actions
+			</label>
+			<textarea data-def="isrich, maininput" id="add-test-step-action"></textarea>
+		</div>
+
+		<div class="centered">
+			<label style="font-weight: bold;" for="add-test-step-result"
+				   th:text="#{label.ExpectedResults}"> Expected Results
+			</label>
+			<textarea data-def="isrich" id="add-test-step-result"></textarea>
+		</div>
+
+        <div class="popup-dialog-buttonpane">
+          <input type="button" th:value="#{label.addAnother}" data-def="mainbtn, evt=addandmore" />
+          <input type="button" th:value="#{label.Add}"        data-def="evt=add"      />
+          <input type="button" th:value="#{label.Close}"     data-def="evt=cancel"   />
+        </div>
+
+	</div>
+
+	<!-- ==================== /Add Test Step Dialog ==================== -->
+	<!-- ==================== Remove Test Step Row Dialog ==================== -->
+	<div id="delete-test-step-dialog" class="not-displayed popup-dialog" th:title="#{dialog.delete-step.title}">
+		<div class="display-table-row">
+	           <div class="display-table-cell warning-cell">
+	               <div class="generic-error-signal"></div>
+	           </div>
+	           <div class="display-table-cell">
+				<span data-def="state=single-tp" 	style="font-weight:bold;" th:text="#{dialog.delete-step.message}">remove row ?</span>
+				<span data-def="state=multiple-tp" 	style="font-weight:bold;" th:text="#{dialog.delete-selected-steps.message}">remove all selected ?</span>
+				<span data-def="state=empty-selec" th:text="#{message.EmptyTableSelection}">no selection</span>
+			</div>
+		</div>
+		<div class="popup-dialog-buttonpane">
+			<input type="button" th:value="#{label.Confirm}" data-def="state=single-tp multiple-tp, mainbtn=single-tp multiple-tp, evt=confirm"/>
+			<input type="button" th:value="#{label.Close}" data-def="state=empty-selec, evt=cancel"/>
+      <input type="button" th:value="#{label.Cancel}" data-def="state=single-tp multiple-tp, evt=cancel"/>
+    </div>
+	</div>
+	<!-- ==================== /Remove Test Step Row Dialog ==================== -->
+    <!-- ==================== Pick call step dataset Dialog ==================== -->
+    <div id="pick-call-step-dataset-dialog" class="not-displayed popup-dialog" th:title="#{title.callstepdataset.PickDataset}">
+
+      <div data-def="state=loading" th:include="fragments-utils/static-panels :: custom-please-wait" th:with="height='200px'">
+        please wait
+      </div>
+
+      <div data-def="state=main">
+        <div class="display-table-row">
+          <input type="radio" name="param-mode" value="choice1" class="display-table-cell"/>
+          <div class="display-table-cell">
+            <label th:text="#{label.callstepdataset.PickDatasetAmongAvailable}">choose your dataset</label>
+            <br/>
+            <select id="pick-call-step-dataset-select"></select>
+            <span id="pick-call-step-dataset-nonavailable" class="not-displayed" th:text="#{label.callstepdataset.NoDatasetAvailable}"></span>
+          </div>
+        </div>
+
+        <div class="display-table-row">
+          <input type="radio" name="param-mode" value="choice2" class="display-table-cell"/>
+          <div class="display-table-cell">
+            <label th:text="#{label.callstepdataset.PickNoDataset}">choose none and delegate</label>
+            <br/>
+           <span id="pick-call-step-dataset-consequence" th:attr="data-template=#{label.callstepdataset.PickNoDatasetConsequences}" class="italic"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="popup-dialog-buttonpane">
+          <input type="button" th:value="#{label.Add}" data-def="mainbtn, evt=confirm, state=main"/>
+          <input type="button" th:value="#{label.Close}" data-def="evt=cancel, state=main loading"/>
+      </div>
+    </div>
+    <!-- ==================== /Pick call step dataset Dialog =================== -->
+	<!-- ==================== initialisation ==================== -->
+
+	<script type="text/javascript" th:inline="javascript">
+		/*<![CDATA[*/
+	require([ "common" ], function(common) {
+		require(["domReady", "test-case-management"], function(domReady,testCaseManagement){
+			domReady(function(){
+
+				var settings = {
+					basic : {
+							testCaseUrl : /*[[@{/test-cases/__${testCase.id}__}]]*/"/squash/test-cases/1",
+							testCaseId : /*[[${testCase.id}]]*/1,
+							projectId : /*[[${testCase.project.id}]]*/1,
+							rootContext : /*[[@{/}]]*/"/squash",
+							totalRows : /*[[${#lists.size(testCase.steps)}]]*/57,
+							tableData : /*[[${stepsData}]]*/[],
+                                                        // todo : once we use Thymeleaf 3 we will remove the chabby JSON.parse trick below)
+							cufDefinitions : JSON.parse(/*[[${#workspace.cufdefSerializer(cufDefinitions)}]]*/[])
+					},
+
+					language : {
+						oklabel : /*[[#{label.Yes}]]*/"okay",
+						cancellabel : /*[[#{label.Cancel}]]*/"nope",
+						confirmlabel : /*[[#{label.Confirm}]]*/"confirm",
+						infoTitle : /*[[#{popup.title.info}]]*/"read this",
+						collapseMessage : /*[[#{message.CloseEditingFormsBeforeCollapse}]]*/"please close all your widgets still in edit-mode",
+						btnExpand : /*[[#{test-case.step.button.expand.label}]]*/"expand",
+						btnCollapse : /*[[#{test-case.step.button.collapse.label}]]*/"collapse",
+						errorTitle : /*[[#{popup.title.error}]]*/"wtf",
+						deleteSingleConfirm : /*[[#{dialog.delete-step.message}]]*/"confirm ?",
+						deleteMultipleConfirm : /*[[#{dialog.delete-selected-steps.message}]]*/"Confirm ?",
+						deleteTitle : /*[[#{dialog.delete-step.title}]]*/"delete",
+						noStepSelected : /*[[#{test-case.step.no-selection}]]*/"please select some steps",
+						addStepTitle : /*[[#{test-case.step.button.add.label}]]*/"Add test step",
+						addStep : /*[[#{label.Add}]]*/"add",
+						addAnotherStep : /*[[#{label.addAnother}]]*/"add another",
+						ckeLang : /*[[#{rich-edit.language.value}]]*/"ph",
+						placeholder : /*[[#{rich-edit.placeholder}]]*/"insert something here",
+						submit : /*[[#{rich-edit.button.ok.label}]]*/"submit",
+						requirements : /*[[#{label.requirements}]]*/"requirements",
+						edit : /*[[#{label.edit}]]*/"edit",
+						warnCopy : /*[[#{message.warnCopyToDifferentLibrary}]]*/"warning : you may lose data"
+					},
+
+					permissions :{
+						isWritable : /*[[${isWritable}]]*/true,
+						isLinkable : /*[[${isLinkable}]]*/true,
+						isAttachable : /*[[${isAttachable}]]*/true
+					}
+
+				};
+
+				testCaseManagement.initStepTablePanel(settings);
+			})
+		});
+	});
+		/*]]>*/
+	</script>
+	<!-- ==================== /initialisation ==================== -->
+</div>

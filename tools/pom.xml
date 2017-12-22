@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.squashtest.tm</groupId>
+    <artifactId>squash-tm</artifactId>
+    <version>1.17.0.RELEASE</version>
+  </parent>
+
+  <artifactId>squash-tm-tools</artifactId>
+  <packaging>pom</packaging>
+  <name>squash-tm-tools</name>
+  <description>This module contains components useful for testing or development but which are not part of the application
+    deliverables.</description>
+
+  <modules>
+    <module>org.squashtest.tm.tools.unittest</module>
+    <module>license-resources</module>
+    <module>tools-resources</module>
+    <module>tools.annotation.processor</module>
+    <module>spock-test-dependencies</module>
+  </modules>
+</project>

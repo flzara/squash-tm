@@ -1,0 +1,277 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title th:text="#{title.reqLinkTypeManager}">Requirement links types manager</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+  <style th:include="admin/admin-subpage.frag :: subpage-css" th:remove="tag"></style>
+  <script th:include="fragments-utils/various-headers :: env-setup" th:inline="javascript"></script>
+
+  <script type="text/javascript" th:src="@{/scripts/require-min.js}"></script>
+  <script type="text/javascript" th:src="@{/scripts/common.js}"></script>
+  <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
+
+  <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../scripts/require.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../scripts/common.js"></script>
+
+</head>
+<body>
+  <div id="navigation" th:include="navbar.frag :: navbar('')">
+    NAVBAR
+  </div>
+  <div id="workspace">
+    <div id="workspace-title">
+      <div class="snap-left">
+        <h2 th:text="#{label.administration}" class="admin">Administration</h2>
+      </div>
+      <div class="snap-right">
+        <div class="main-menubar " th:include="menubar.frag :: menubar">
+          MENUBAR
+        </div>
+        <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">
+          NOTIFICATION
+        </div>
+      </div>
+    </div>
+
+    <div id="sub-page" class="sub-page" >
+      <div id="sub-page-header" class="sub-page-header cf">
+
+        <div id="sub-page-title" class="sub-page-title">
+            <h2 th:text="#{title.reqLinkTypeManager}">Requirement link types manager</h2>
+        </div>
+
+        <div id="sub-page-buttons" class="sub-page-buttons">
+          <input id="back" type="button" th:value="#{label.Back}" class="sq-btn" value="#{ label.Back }"
+            th:onclick="'document.location.href=\''+@{/administration}+'\''" />
+        </div>
+      </div>
+
+      <div id="sub-page-content" class="sub-page-content">
+        <div class="fragment-body">
+          <div id="link-types-table-pane" class="cf">
+            <div class="btn-toolbar right">
+              <input id="add-link-type-btn" type="button" class="sq-btn"
+                value="Add a link type" th:value="#{label.reqLinkType.add}"
+                title="Create new" th:title="#{tooltip.reqLinkType.add}"
+                th:attr="data-api-url=@{/requirement-link-types}" />
+              <input id="remove-selected-link-types" type="button" class="sq-btn"
+                value="Delete selected link types" th:value="#{label.reqLinkType.remove}"
+                title="Delete selected" th:title="#{tooltip.reqLinkType.remove}" />
+            </div>
+
+            <div>
+              <table id="requirement-link-types-table" class="unstyled-table"
+                     th:attr="data-def='datakeys-id=type-id,ajaxsource='+@{/administration/requirement-link-types/table}+', pre-sort=1-asc, pagesize=50,
+                     deferloading='+${linkTypesModel.aaData.size()}">
+                <thead>
+                  <tr>
+                    <th data-def="map=type-index, select">#</th>
+                    <th th:text="#{requirement-version.link.type.table.col-header.role1}" data-def="map=type-role1, sortable, sClass=opt-role1">Role 1</th>
+                    <th th:text="#{requirement-version.link.type.table.col-header.role1-code}" data-def="map=type-role1-code, sortable, sClass=opt-code1">Role 1 code</th>
+                    <th th:text="#{requirement-version.link.type.table.col-header.role2}" data-def="map=type-role2, sortable, sClass=opt-role2">Role 2</th>
+                    <th th:text="#{requirement-version.link.type.table.col-header.role2-code}" data-def="map=type-role2-code, sortable, sClass=opt-code2">Code Role 2 code</th>
+                    <th th:text="#{label.default}" data-def="map=type-is-default, radio, sClass=isDefault">Default</th>
+                    <th th:attr="data-def='sWidth=2em, map=empty-delete-holder, sClass=delete-button'"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+
+              <script type="text/javascript">
+                publish("loaded.linkTypesTable");
+              </script>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!--    ====================================POPUPS================================================  -->
+
+  <!-- ADD LINK TYPE POPUP -->
+  <div id="add-link-type-popup" class="not-displayed popup-dialog" th:title="#{label.reqLinkType.add}">
+    <table class="form-horizontal">
+      <tr class="control-group">
+        <td>
+          <label for="add-link-type-popup-role1" class="control-label" th:text="#{requirement-version.link.type.table.col-header.role1}">Role 1</label>
+        </td>
+        <td class="controls">
+          <input id="add-link-type-popup-role1" name="link-type-role1" type="text" maxlength="50" size="50" data-def="maininput" />
+          <span class="help-inline red-warning-message">&nbsp;</span>
+        </td>
+      </tr>
+      <tr class="control-group">
+        <td>
+          <label for="add-link-type-popup-role1-code" class="control-label" th:text="#{requirement-version.link.type.table.col-header.role1-code}">Role 1 Code</label>
+        </td>
+        <td class="controls">
+          <input id="add-link-type-popup-role1-code" name="link-type-role1-code" type="text" maxlength="30" size="50" />
+          <span class="help-inline red-warning-message">&nbsp;</span>
+        </td>
+      </tr>
+      <tr class="control-group">
+        <td>
+          <label for="add-link-type-popup-role2" class="control-label" th:text="#{requirement-version.link.type.table.col-header.role2}">Role 2</label>
+        </td>
+        <td class="controls">
+          <input id="add-link-type-popup-role2" name="link-type-role2" type="text" maxlength="50" size="50" />
+          <span class="help-inline red-warning-message">&nbsp;</span>
+        </td>
+      </tr>
+      <tr class="control-group">
+        <td>
+          <label for="add-link-type-popup-role2-code" class="control-label" th:text="#{requirement-version.link.type.table.col-header.role2-code}">Role 2 Code</label>
+        </td>
+        <td class="controls">
+          <input id="add-link-type-popup-role2-code" name="link-type-role1-code" type="text" maxlength="30" size="50" />
+          <span class="help-inline red-warning-message">&nbsp;</span>
+        </td>
+      </tr>
+      <br/>
+      <span id="add-link-warn" class="red-warning-message"/>
+    </table>
+    <span class="error-message label-error red-warning-message">&nbsp;</span>
+    <div class="popup-dialog-buttonpane">
+      <input type="button" th:value="#{label.addAnother}" data-def="evt=addanother, mainbtn" />
+      <input type="button" th:value="#{label.Add}" data-def="evt=confirm" />
+      <input type="button" th:value="#{label.Close}" data-def="evt=cancel" />
+    </div>
+  </div>
+
+  <!--   CHANGE ROLE POPUP -->
+  <div id="change-type-role-popup" class="not-displayed popup-dialog" th:title="#{requirement-version.link.type.dialog.title.change-role}">
+    <table class="form-horizontal">
+      <tr class="control-group">
+
+        <td>
+          <label for="change-type-role-popup-role" class="control-label" th:text="#{label.Label}">Label</label>
+        </td>
+        <td class="controls">
+          <input id="change-type-role-popup-role" name="info-list-item-label" type="text" maxlength="50" size="50" />
+          <span class="help-inline red-warning-message">&nbsp;</span>
+        </td>
+      </tr>
+    </table>
+
+    <br/>
+
+    <div class="popup-dialog-buttonpane">
+      <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm" />
+      <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel" />
+    </div>
+  </div>
+
+  <!--   CHANGE CODE POPUP -->
+  <div id="change-type-code-popup" class="not-displayed popup-dialog" th:title="#{requirement-version.link.type.dialog.title.change-code}">
+    <table class="form-horizontal">
+      <tr class="control-group">
+
+        <td>
+          <label for="change-type-code-popup-code" class="control-label" th:text="#{label.Label}">Label</label>
+        </td>
+        <td class="controls">
+          <input id="change-type-code-popup-code" name="info-list-item-label" type="text" maxlength="30" size="50" />
+          <span class="help-inline red-warning-message">&nbsp;</span>
+        </td>
+      </tr>
+    </table>
+
+    <br/>
+
+    <div class="popup-dialog-buttonpane">
+      <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm" />
+      <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel" />
+    </div>
+  </div>
+
+  <!--   DELETE LINK TYPE POPUP -->
+  <div id="delete-link-type-popup" class="not-displayed popup-dialog" th:title="#{requirement-version.link.type.dialog.title.delete-type}">
+
+    <span id="delete-link-type-warning" />
+    <br/>
+    <span id="delete-link-type-popup-link-type-id" />
+
+    <div class="popup-dialog-buttonpane">
+      <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm"/>
+      <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
+    </div>
+  </div>
+
+  <!--   MULTIPLE DELETE LINK TYPE POPUP -->
+  <div id="multiple-delete-link-type-popup" class="not-displayed popup-dialog" th:title="#{requirement-version.link.type.dialog.title.delete-types}">
+
+    <span id="multiple-delete-link-type-warning" />
+    <br/>
+    <span id="multiple-delete-link-type-popup-link-type-id" />
+
+    <div class="popup-dialog-buttonpane">
+      <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm"/>
+      <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
+    </div>
+  </div>
+
+  <!--   GENERIC ERROR POPUP  -->
+  <div id="generic-error-dialog" class="not-displayed popup-dialog" th:title="#{popup.title.error}">
+    <div>
+      <div class="display-table-row">
+        <div class="generic-error-main display-table-cell" style="padding-top:20px"></div>
+      </div>
+    </div>
+    <input type="button" th:value="#{label.Ok}"/>
+  </div>
+
+
+  <script type="text/javascript" th:inline="javascript">
+
+/*<![CDATA[*/
+
+requirejs.config({
+  config : {
+    'requirement-link-type/requirement-link-type-manager' : {
+        urls: {},
+      	tableData : /*[[${linkTypesModel}]]*/
+     }
+   }
+});
+
+squashtm.page = squashtm.page || {};
+
+require(["common"], function(){
+    require(["requirement-link-type/requirement-link-type-manager"], function (view) {
+      new view();
+    });
+});
+/*]]>*/
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+	<changeSet id="tm.data-1.7.1-orphan-entities" author="mpagnon" dbms="h2,mysql">
+			<sqlFile path="tm.data-1.7.1-fix-bad-test-datas.sql" relativeToChangelogFile="true" endDelimiter=";"/>
+			<sqlFile path="tm.data-1.7.1-orphan-entities.sql" relativeToChangelogFile="true" endDelimiter=";"/>
+	</changeSet>
+  <changeSet id="tm-data-1.7.1-orphan-entities-postgresql" author="mpagnon" dbms="postgresql">
+    <comment>fix sequence values after insert</comment>
+      <sqlFile path="tm.data-1.7.1-fix-bad-test-datas.sql" relativeToChangelogFile="true" endDelimiter=";"/>
+    <sqlFile path="tm.data-1.7.1-orphan-entities-pg.sql" relativeToChangelogFile="true" endDelimiter=";"/>
+    <sql>
+        SELECT setval('test_step_test_step_id_seq', (SELECT MAX(test_step_id) from test_step));
+        SELECT setval('item_test_plan_item_test_plan_id_seq', (SELECT MAX(item_test_plan_id) from iteration_test_plan_item));
+        SELECT setval('issue_list_issue_list_id_seq', (SELECT MAX(issue_list_id) from issue_list));
+        SELECT setval('attachment_list_attachment_list_id_seq', (SELECT MAX(attachment_list_id) from attachment_list));
+        SELECT setval('attachment_content_attachment_content_id_seq', (SELECT MAX(attachment_content_id) from attachment_content));
+        SELECT setval('attachment_attachment_id_seq', (SELECT MAX(attachment_id) from attachment));
+        SELECT setval('resource_res_id_seq', (SELECT MAX(res_id) from resource));
+        SELECT setval('requirement_library_node_rln_id_seq', (SELECT MAX(rln_id) from requirement_library_node));
+        SELECT setval('requirement_audit_event_event_id_seq', (SELECT MAX(event_id) from requirement_audit_event));
+        SELECT setval('test_case_library_node_tcln_id_seq', (SELECT MAX(tcln_id) from test_case_library_node));
+        SELECT setval('requirement_audit_event_event_id_seq', (SELECT MAX(event_id) from requirement_audit_event));
+        SELECT setval('test_step_test_step_id_seq', (SELECT MAX(test_step_id) from test_step));
+        SELECT setval('dataset_dataset_id_seq', (SELECT MAX(dataset_id) from dataset));
+        SELECT setval('parameter_param_id_seq', (SELECT MAX(param_id) from parameter));
+        SELECT setval('dataset_param_value_dataset_param_value_id_seq', (SELECT MAX(dataset_param_value_id) from dataset_param_value));
+        SELECT setval('requirement_version_coverage_requirement_version_coverage_i_seq', (SELECT MAX(requirement_version_coverage_id) from requirement_version_coverage));
+        SELECT setval('campaign_test_plan_item_ctpi_id_seq', (SELECT MAX(ctpi_id) from campaign_test_plan_item));
+        SELECT setval('campaign_library_node_cln_id_seq', (SELECT MAX(cln_id) from campaign_library_node));
+        SELECT setval('iteration_iteration_id_seq', (SELECT MAX(iteration_id) from iteration));
+        SELECT setval('test_suite_id_seq', (SELECT MAX(id) from test_suite));
+        SELECT setval('execution_execution_id_seq', (SELECT MAX(execution_id) from execution));
+        SELECT setval('automated_test_test_id_seq', (SELECT MAX(test_id) from automated_test));
+        SELECT setval('automated_execution_extender_extender_id_seq', (SELECT MAX(extender_id) from automated_execution_extender));
+        SELECT setval('execution_step_execution_step_id_seq', (SELECT MAX(execution_step_id) from execution_step));
+        SELECT setval('custom_field_binding_cfb_id_seq', (SELECT MAX(cfb_id) from custom_field_binding));
+        SELECT setval('custom_field_value_cfv_id_seq', (SELECT MAX(cfv_id) from custom_field_value));
+        SELECT setval('denormalized_field_value_dfv_id_seq', (SELECT MAX(dfv_id) from denormalized_field_value));
+    </sql>
+    
+    </changeSet>
+</databaseChangeLog>

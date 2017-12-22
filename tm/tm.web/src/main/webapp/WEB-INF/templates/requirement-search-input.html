@@ -1,0 +1,124 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title th:text="#{tabbed_panel.search.pane.new.label}">Test case
+  	search</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <script th:remove="all" type="text/javascript"
+  	src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+  <script type="text/javascript" th:inline="javascript">
+  	var squashtm = {};
+  	squashtm.app = {
+  		contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
+  		localizedDateFormat : /*[[ #{squashtm.dateformatShort.datepicker} ]]*/"dd/mm/yy",
+  		locale : /*[[ #{squashtm.locale} ]]*/"fr",
+  		projectFilterConf : {
+  			url : /*[[ @{/global-filter/filter} ]]*/'/global-filter/filter',
+  			title : /*[[ #{dialog.settings.filter.title} ]]*/'Filtre de projets',
+  			confirmLabel : /*[[ #{label.Confirm} ]]*/'Confirmer',
+  			cancelLabel : /*[[ #{label.Cancel} ]]*/'Annuler',
+  		},
+  		searchFormModel : /*[[ ${formModel} ]]*/ {}
+  	};
+
+  	// copy the project metadata where our modules expect them to be
+  	squashtm.workspace = squashtm.workspace || {};
+  	squashtm.workspace.projects = squashtm.app.searchFormModel.metadata.projects;
+  </script>
+  <!-- common head -->
+  <link rel="stylesheet" type="text/css" media="all"
+  	href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css"
+  	sq:css="squash.core.css" />
+  <link rel="shortcut icon" type="image/x-icon" media="all"
+  	href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico"
+  	th:href="@{/images/favicon.ico}" />
+  <link rel="stylesheet" type="text/css" media="all"
+  	href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.grey.css"
+  	sq:css="squash.blue.css" />
+  <!-- /common head -->
+  <link rel="stylesheet" type="text/css" media="all"
+  	href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.override.css"
+  	sq:css="squash.core.override.css" />
+  <link rel="stylesheet" type="text/css" media="all"
+  	href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.subpageoverride.css"
+  	sq:css="squash.subpage.override.css" />
+  <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
+  <script data-main="../../scripts/advanced-search-input.js"
+    th:attr="data-main=@{/scripts/advanced-search-input.js}"
+    src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
+  </script>
+</head>
+<body>
+	<div id="navigation" th:include="navbar.frag :: navbar('requirement')">NAVBAR</div>
+	<div id="workspace">
+		<div id="workspace-title">
+			<div class="snap-left">
+				<h2 th:text="#{workspace.requirement.title}">Espace exigence</h2>
+			</div>
+			<div class="snap-right">
+				<div class="main-menubar " th:include="menubar.frag :: menubar">
+					MENUBAR</div>
+				<div class="unstyled-notification-pane"
+					th:include="menubar.frag :: notification">NOTIFICATION</div>
+			</div>
+		</div>
+		<div id="sub-page" class="sub-page">
+
+			<div id="sub-page-header"
+				class="sub-page-header">
+
+				<div id="sub-page-title" class="sub-page-title">
+					<h2 th:if="!${associateResult}"
+						th:text="#{title.search.requirement}">Recherche d'exigences</h2>
+					<h2 th:if="${associateResult} and ${searchDomain}!='testcaseViaRequirement'"
+						th:text="#{title.search.requirement.assoc}">Recherche d'exigences</h2>
+					<h2 th:if="${associateResult} and ${searchDomain}=='testcaseViaRequirement'"
+						th:text="#{title.search.testcase.viarequirement.assoc}">Recherche d'exigences</h2>
+				</div>
+
+				<div id="sub-page-buttons" class="sub-page-buttons">
+					<input id="back" type="button" class="sq-btn" onclick="document.location.href=squashtm.workspace.backurl"
+						th:value="#{label.Back}" value="Retour" />
+
+				</div>
+
+				<div class="unsnap"></div>
+			</div>
+
+			<div id="sub-page-content"
+				class="sub-page-content">
+				<div class="fragment-body-without-upper-margin">
+
+					<div id="advanced-search-input-panel" class="search-panel-wrap" th:include="advanced-search-input.frag :: advanced-search-input-panel">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+

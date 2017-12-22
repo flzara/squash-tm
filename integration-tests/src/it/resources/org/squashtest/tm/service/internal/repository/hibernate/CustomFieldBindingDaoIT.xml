@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1"/>
+	
+	<PROJECT PROJECT_ID="-1" NAME="project A" CREATED_BY="dbu" CREATED_ON="2012-10-26"  ATTACHMENT_LIST_ID="-1"/>
+	<PROJECT PROJECT_ID="-2" NAME="project B" CREATED_BY="dbu" CREATED_ON="2012-10-26"  ATTACHMENT_LIST_ID="-1"/>
+
+	<CUSTOM_FIELD CF_ID="-1" FIELD_TYPE="CF" CODE="1" NAME="bob" LABEL="bob label" OPTIONAL="1" DEFAULT_VALUE="default bob" INPUT_TYPE="PLAIN_TEXT"/>
+	<CUSTOM_FIELD CF_ID="-2" FIELD_TYPE="CF" CODE="2" NAME="robert" LABEL="robert label" OPTIONAL="1" DEFAULT_VALUE="default robert" INPUT_TYPE="PLAIN_TEXT"/>
+	<CUSTOM_FIELD CF_ID="-3" FIELD_TYPE="CF" CODE="3" NAME="mike" LABEL="mike label" OPTIONAL="1" DEFAULT_VALUE="default mike" INPUT_TYPE="PLAIN_TEXT"/>
+	<CUSTOM_FIELD CF_ID="-4" FIELD_TYPE="CF" CODE="4" NAME="harry" LABEL="harry label" OPTIONAL="1" DEFAULT_VALUE="default harry" INPUT_TYPE="PLAIN_TEXT"/>
+
+	<!--  binding for project A and TEST_CASE -->
+	<CUSTOM_FIELD_BINDING CFB_ID="-131" BOUND_PROJECT_ID="-1" CF_ID="-3" BOUND_ENTITY="TEST_CASE" POSITION="1"/>
+	<CUSTOM_FIELD_BINDING CFB_ID="-111" BOUND_PROJECT_ID="-1" CF_ID="-1" BOUND_ENTITY="TEST_CASE" POSITION="2"/>
+	<CUSTOM_FIELD_BINDING CFB_ID="-121" BOUND_PROJECT_ID="-1" CF_ID="-2" BOUND_ENTITY="TEST_CASE" POSITION="5"/>
+	
+	<!--  binding for project B and CAMPAIGN -->	
+	<CUSTOM_FIELD_BINDING CFB_ID="-241" BOUND_PROJECT_ID="-2" CF_ID="-4" BOUND_ENTITY="CAMPAIGN" POSITION="1"/>
+	<CUSTOM_FIELD_BINDING CFB_ID="-221" BOUND_PROJECT_ID="-2" CF_ID="-2" BOUND_ENTITY="CAMPAIGN" POSITION="8"/>
+	<CUSTOM_FIELD_BINDING CFB_ID="-211" BOUND_PROJECT_ID="-2" CF_ID="-1" BOUND_ENTITY="CAMPAIGN" POSITION="3"/>
+
+	<!--  binding for project A and ITERATION -->
+	<CUSTOM_FIELD_BINDING CFB_ID="-132" BOUND_PROJECT_ID="-1" CF_ID="-3" BOUND_ENTITY="ITERATION" POSITION="2"/>
+	<CUSTOM_FIELD_BINDING CFB_ID="-112" BOUND_PROJECT_ID="-1" CF_ID="-1" BOUND_ENTITY="ITERATION" POSITION="0"/><!-- POSITION 0 IS USUALLY IMPOSSIBLE BUT OH WELL -->
+	<CUSTOM_FIELD_BINDING CFB_ID="-122" BOUND_PROJECT_ID="-1" CF_ID="-2" BOUND_ENTITY="ITERATION" POSITION="10"/>
+
+</dataset>

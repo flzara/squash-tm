@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+  <changeSet id="tm-1.12.3" author="bsiri">
+    <comment>Update TM database version number</comment>
+    <update tableName="CORE_CONFIG">
+      <column name="VALUE" value="1.12.3" />
+      <where>STR_KEY = 'squashtest.tm.database.version'</where>
+    </update>
+  </changeSet>
+  
+  
+  <!--  ====================================================================================================================================
+  	The following is a fix for #5965, where duplicates in the table maintaining the path from nodes A to B would induce wrong results 
+  	when exporting/importing/reporting on them.
+  ==================================================================================================================================== -->
+   
+ <!--  ====================================================================================================================================
+  	step 1 : fixing the tables. First the batch of modification for mysql, then for postgresql. We don't care of H2 since we don't 
+  	support it as a production-grade database.
+  ==================================================================================================================================== -->
+
+	<!--  A : mysql -->
+	
+	<changeSet id="tm-1.12.3-issue-5965-1-1-mysql" author="bsiri" dbms="mysql">
+		
+		
+		<comment>Fixing data in TCLN_RELATIONSHIP_CLOSURE that need to be</comment>
+	
+		<sql>
+			create table CLOSURECOPY as 
+			select distinct * from TCLN_RELATIONSHIP_CLOSURE
+			group by ancestor_id, descendant_id
+			having count(*) > 1;
+			
+			
+			delete clos
+			from TCLN_RELATIONSHIP_CLOSURE clos
+			inner join CLOSURECOPY cop on (cop.ancestor_id = clos.ancestor_id 
+			and cop.descendant_id = clos.descendant_id
+			and cop.depth = clos.depth);
+			
+			
+			insert into TCLN_RELATIONSHIP_CLOSURE
+			select * from CLOSURECOPY;
+			
+			
+			drop table CLOSURECOPY;
+		</sql>
+	</changeSet>
+	
+	
+	<changeSet id="tm-1.12.3-issue-5965-1-2-mysql" author="bsiri" dbms="mysql">
+	
+		
+		<comment>Fixing data in RLN_RELATIONSHIP_CLOSURE that need to be</comment>
+	
+		<sql>
+			create table CLOSURECOPY as 
+			select distinct * from RLN_RELATIONSHIP_CLOSURE
+			group by ancestor_id, descendant_id
+			having count(*) > 1;
+			
+			
+			delete clos
+			from RLN_RELATIONSHIP_CLOSURE clos
+			inner join CLOSURECOPY cop on (cop.ancestor_id = clos.ancestor_id 
+			and cop.descendant_id = clos.descendant_id
+			and cop.depth = clos.depth);
+			
+			
+			insert into RLN_RELATIONSHIP_CLOSURE
+			select * from CLOSURECOPY;
+			
+			
+			drop table CLOSURECOPY;
+		</sql>
+	</changeSet>
+	
+	
+	<changeSet id="tm-1.12.3-issue-5965-1-3-mysql" author="bsiri" dbms="mysql">
+		
+		
+		<comment>Fixing data in CLN_RELATIONSHIP_CLOSURE that need to be</comment>
+	
+		<sql>
+			create table CLOSURECOPY as 
+			select distinct * from CLN_RELATIONSHIP_CLOSURE
+			group by ancestor_id, descendant_id
+			having count(*) > 1;
+			
+			
+			delete clos
+			from CLN_RELATIONSHIP_CLOSURE clos
+			inner join CLOSURECOPY cop on (cop.ancestor_id = clos.ancestor_id 
+			and cop.descendant_id = clos.descendant_id
+			and cop.depth = clos.depth);
+			
+			
+			insert into CLN_RELATIONSHIP_CLOSURE
+			select * from CLOSURECOPY;
+			
+			
+			drop table CLOSURECOPY;		
+		</sql>
+	</changeSet>
+
+
+	<!--  B : postgresql -->
+	
+	<changeSet id="tm-1.12.3-issue-5965-1-1-postgresql" author="bsiri" dbms="postgresql">
+		
+		
+		<comment>Fixing data in TCLN_RELATIONSHIP_CLOSURE that need to be</comment>
+	
+		<sql>
+			create table CLOSURECOPY as 
+			select distinct * from TCLN_RELATIONSHIP_CLOSURE
+			group by ancestor_id, descendant_id, depth
+			having count(*) > 1;
+			
+			
+			delete 
+			from TCLN_RELATIONSHIP_CLOSURE clos
+			using CLOSURECOPY cop
+			where cop.ancestor_id = clos.ancestor_id 
+			and cop.descendant_id = clos.descendant_id
+			and cop.depth = clos.depth;
+			
+			
+			insert into TCLN_RELATIONSHIP_CLOSURE
+			select * from CLOSURECOPY;
+			
+			
+			drop table CLOSURECOPY;
+		</sql>
+	</changeSet>
+	
+	
+	<changeSet id="tm-1.12.3-issue-5965-1-2-postgresql" author="bsiri" dbms="postgresql">
+	
+		
+		<comment>Fixing data in RLN_RELATIONSHIP_CLOSURE that need to be</comment>
+	
+		<sql>
+			create table CLOSURECOPY as 
+			select distinct * from RLN_RELATIONSHIP_CLOSURE
+			group by ancestor_id, descendant_id, depth
+			having count(*) > 1;
+			
+			
+			delete 
+			from RLN_RELATIONSHIP_CLOSURE clos
+			using CLOSURECOPY cop
+			where cop.ancestor_id = clos.ancestor_id 
+			and cop.descendant_id = clos.descendant_id
+			and cop.depth = clos.depth;
+			
+			
+			insert into RLN_RELATIONSHIP_CLOSURE
+			select * from CLOSURECOPY;
+			
+			
+			drop table CLOSURECOPY;
+		</sql>
+	</changeSet>
+	
+	
+	<changeSet id="tm-1.12.3-issue-5965-1-3-postgresql" author="bsiri" dbms="postgresql">
+		
+		<comment>Fixing data in CLN_RELATIONSHIP_CLOSURE that need to be</comment>
+	
+		<sql>
+			create table CLOSURECOPY as 
+			select distinct * from CLN_RELATIONSHIP_CLOSURE
+			group by ancestor_id, descendant_id, depth
+			having count(*) > 1;
+			
+			
+			delete 
+			from CLN_RELATIONSHIP_CLOSURE clos
+			using CLOSURECOPY cop
+			where cop.ancestor_id = clos.ancestor_id 
+			and cop.descendant_id = clos.descendant_id
+			and cop.depth = clos.depth;
+			
+			
+			insert into CLN_RELATIONSHIP_CLOSURE
+			select * from CLOSURECOPY;
+			
+			
+			drop table CLOSURECOPY;
+		</sql>
+	</changeSet>		
+		
+  <!-- ====================================================================================================================================
+  	step 2 : now we add unique indexes on them to prevent further corruption creeping in (unlikely, but better safe than sorry)
+  ==================================================================================================================================== -->
+	
+	
+	<changeSet id="tm-1.12.3-issue-5965-2-1" author="bsiri">
+		<comment>now we can add the unique constraints on the closure tables</comment>
+	
+ 		<addUniqueConstraint constraintName="uniq_tcln_clos" columnNames="ancestor_id, descendant_id" tableName="TCLN_RELATIONSHIP_CLOSURE" />
+ 		<addUniqueConstraint constraintName="uniq_rln_clos" columnNames="ancestor_id, descendant_id" tableName="RLN_RELATIONSHIP_CLOSURE" />
+ 		<addUniqueConstraint constraintName="uniq_cln_clos" columnNames="ancestor_id, descendant_id" tableName="CLN_RELATIONSHIP_CLOSURE" />
+	
+	</changeSet>	
+	
+	
+		
+  <!-- ====================================================================================================================================
+  	step 3 : redefine the triggers. For now we do so for Mysql only because Postgres has shown no symptom yets.
+  	The goal here is to make the triggers failsafe when inserting that would fire a unique constraint violation. 
+  	Not the best thing to do but the boss said so.
+  	
+  	Note that we redefine only half of the triggers, because the other half does not perform any inserts.
+  ==================================================================================================================================== -->
+	
+	<changeSet id="tm-1.12.3-issue-3-1" author="bsiri" dbms="mysql">
+
+		<comment> redefining some triggers for table TCLN_RELATIONHIP and TEST_CASE_LIBRARY_NODE</comment>
+
+		<sql>
+		
+			drop trigger if exists ins_tcln_after;
+		
+			create trigger ins_tcln_after after insert on
+			TEST_CASE_LIBRARY_NODE
+			for each row insert ignore into
+			TCLN_RELATIONSHIP_CLOSURE values (new.tcln_id, new.tcln_id, 0);			
+		
+		</sql>
+		
+		<sql>
+			drop trigger if exists attach_tcln_after;
+		
+			create trigger attach_tcln_after after insert on
+			TCLN_RELATIONSHIP
+			for each row insert ignore into TCLN_RELATIONSHIP_CLOSURE
+			select c1.ancestor_id, c2.descendant_id, c1.depth+c2.depth+1
+			from
+			TCLN_RELATIONSHIP_CLOSURE c1
+			cross join TCLN_RELATIONSHIP_CLOSURE c2
+			where c1.descendant_id = new.ancestor_id
+			and c2.ancestor_id =
+			new.descendant_id;	
+		
+		</sql>
+	
+	</changeSet>	
+	
+	
+	<changeSet id="tm-1.12.3-issue-3-2" author="bsiri" dbms="mysql">
+
+		<comment> redefining some triggers for table RLN_RELATIONHIP and REQUIREMENT_LIBRARY_NODE</comment>
+		<sql>
+		
+			drop trigger if exists ins_rln_after;
+		
+			create trigger ins_rln_after after insert on
+			REQUIREMENT_LIBRARY_NODE
+			for each row insert ignore into
+			RLN_RELATIONSHIP_CLOSURE values (new.rln_id, new.rln_id, 0);		
+		
+		</sql>
+		
+		<sql>
+			drop trigger if exists attach_rln_after;
+		
+			create trigger attach_rln_after after insert on RLN_RELATIONSHIP
+			for each row insert ignore into RLN_RELATIONSHIP_CLOSURE
+			select
+			c1.ancestor_id, c2.descendant_id, c1.depth+c2.depth+1
+			from
+			RLN_RELATIONSHIP_CLOSURE c1
+			cross join RLN_RELATIONSHIP_CLOSURE c2
+			where c1.descendant_id = new.ancestor_id
+			and c2.ancestor_id =
+			new.descendant_id;	
+		
+		</sql>
+	
+	</changeSet>	
+	
+	
+	<changeSet id="tm-1.12.3-issue-3-3" author="bsiri" dbms="mysql">
+
+
+		<comment> redefining some triggers for table CLN_RELATIONHIP and CAMPAIGN_LIBRARY_NODE</comment>
+		<sql>
+		
+			drop trigger if exists ins_cln_after;
+		
+			create trigger ins_cln_after after insert on
+			CAMPAIGN_LIBRARY_NODE
+			for each row insert ignore into
+			CLN_RELATIONSHIP_CLOSURE values (new.cln_id, new.cln_id, 0);	
+		
+		</sql>
+		
+		<sql>
+			drop trigger if exists attach_cln_after;
+		
+			create trigger attach_cln_after after insert on CLN_RELATIONSHIP
+			for each row insert ignore into CLN_RELATIONSHIP_CLOSURE
+			select
+			c1.ancestor_id, c2.descendant_id, c1.depth+c2.depth+1
+			from
+			CLN_RELATIONSHIP_CLOSURE c1
+			cross join CLN_RELATIONSHIP_CLOSURE c2
+			where c1.descendant_id = new.ancestor_id
+			and c2.ancestor_id = new.descendant_id;		
+		
+		</sql>
+	
+	</changeSet>			
+	
+
+
+</databaseChangeLog>
+

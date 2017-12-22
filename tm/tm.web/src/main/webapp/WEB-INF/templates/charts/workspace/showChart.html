@@ -1,0 +1,124 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<div th:fragment="chart-view">
+	<div id="chart-name-div"
+		class="ui-widget-header ui-corner-all ui-state-default fragment-header">
+		<div id="right-frame-button">
+			<input type="button" class="sq-btn btn-sm" id="toggle-expand-left-frame-button" th:title="#{tooltip.toggleLibraryDisplay}"/>
+		</div>
+		<div style="float: left; height: 100%;" class="small-margin-left">
+			<h2>{{name}}</h2>
+		</div>
+	</div>
+
+	<div id="element-toolbar" class="toolbar-class ui-corner-all">
+		<div class="toolbar-information-panel">
+			<div id="general-information-panel" class="information-panel">
+				<span th:text="#{label.CreatedOn}+'&nbsp;:&nbsp;'">created on </span>
+				{{createdOn}} ({{createdBy}}) <br />
+				<span th:text="#{label.UpdatedOn}+'&nbsp;:&nbsp;'">updated on </span>
+				{{#if lastModifiedBy}} {{lastModifiedOn}} ({{lastModifiedBy}})
+				{{else}} <span th:text="#{label.lower.Never}"></span>
+				{{/if}} <br />
+			</div>
+		</div>
+    {{#if (contains acls.perms 'WRITE')}}
+		<div class="toolbar-button-panel">
+      <input type="button"
+				th:attr="value=#{label.Export},title=#{title.export.chart}"
+				id="export-chart-button" class="sq-btn" />
+			<input type="button"
+				th:attr="value=#{label.Rename},title=#{label.Rename}"
+				id="rename-chart-button" class="sq-btn" />
+			<input type="button"
+				th:attr="value=#{label.Modify},title=#{label.Modify}"
+				id="modify-chart-button" class="sq-btn" />
+		</div>
+    {{/if}}
+		<div class="unsnap"></div>
+	</div>
+
+  <div id="export"></div>
+
+	<div class="sq-tg expand">
+		<div class="tg-head">
+			<h3>
+				<span th:text="#{workspace.custom-report.chart.title}">chart
+					type</span>
+			</h3>
+			<div class="tg-toolbar">
+				<span th:text="#{workspace.custom-report.timestamp.label}">chart
+					type</span> <input id="refresh-btn" type="button" class="sq-btn"
+					role="button"
+					th:attr="value=#{label.Refresh},title=#{label.Refresh}" />
+			</div>
+		</div>
+		<div class="tg-body">
+			<div class="jqplot-target-wrapper">
+				<div id="chart-display-area" class="jqplot-target-wrapper"></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="sq-tg collapse">
+		<div class="tg-head">
+			<h3>
+				<span th:text="#{label.Attributes}">chart type</span>
+			</h3>
+		</div>
+		<div class="tg-body">
+			<div class="display-table">
+				<div class="display-table-row">
+					<label for="chart-perimeter" class="display-table-cell"> <span
+						th:text="#{chart.label.perimeter}">perimetre</span>
+					</label>
+					<div id="chart-perimeter" class="display-table-cell">
+						{{perimeterMessage}}
+					</div>
+				</div>
+				<div class="display-table-row">&nbsp;</div>
+				<div class="display-table-row">
+					<label for="chart-operation" class="display-table-cell"> <span
+						th:text="#{chart.label.operation}">operation</span>
+					</label>
+					<div id="chart-operation" class="display-table-cell">
+						{{#each entityOperation}}
+							{{> entityOperationsTpl}}
+						{{/each}}</div>
+				</div>
+				<div class="display-table-row">&nbsp;</div>
+				<div class="display-table-row">
+					<label for="chart-filter" class="display-table-cell"> <span
+						th:text="#{chart.label.filter}">filtres</span>
+					</label>
+					<div id="chart-filter" class="display-table-cell">
+						<div class="display-table">
+							{{#each entityFilters}}
+								{{>entityFiltersTpl}}
+							{{/each}}</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

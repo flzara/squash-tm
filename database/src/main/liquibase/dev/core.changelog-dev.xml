@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet author="gfouquet" id="core-dev-1">
+		<insert tableName="CORE_USER">
+			<column name="LOGIN" value="project.manager" />
+			<column name="FIRST_NAME" value="Project" />
+			<column name="LAST_NAME" value="de Manager" />
+			<column name="EMAIL" value="unknown" />
+			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP" />
+			<column name="CREATED_BY" value="liquibase" />
+		</insert>
+		<insert tableName="CORE_GROUP_MEMBER">
+			<column name="USER_ID" valueComputed="(select max(ID) from CORE_USER)" />
+			<column name="GROUP_ID" valueComputed="(select cg.ID from CORE_GROUP cg where cg.QUALIFIED_NAME = 'squashtest.authz.group.tm.ProjectManager')" />
+		</insert>
+		<insert tableName="CORE_USER">
+			<column name="LOGIN" value="project.viewer" />
+			<column name="FIRST_NAME" value="Gest"/>
+			<column name="LAST_NAME" value="Viewer" />
+			<column name="EMAIL" value="unknown" />
+			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP" />
+			<column name="CREATED_BY" value="liquibase" />
+		</insert>
+		<insert tableName="CORE_GROUP_MEMBER">
+			<column name="USER_ID" valueComputed="(select max(ID) from CORE_USER)" />
+			<column name="GROUP_ID" valueComputed="(select cg.ID from CORE_GROUP cg where cg.QUALIFIED_NAME = 'squashtest.tm.group.User')" />
+		</insert>
+		<insert tableName="CORE_USER">
+			<column name="LOGIN" value="test.editor" />
+			<column name="LAST_NAME" value="A Test Editor" />
+			<column name="EMAIL" value="unknown" />
+			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP" />
+			<column name="CREATED_BY" value="liquibase" />
+		</insert>
+		<insert tableName="CORE_GROUP_MEMBER">
+			<column name="USER_ID" valueComputed="(select max(ID) from CORE_USER)" />
+			<column name="GROUP_ID" valueComputed="(select cg.ID from CORE_GROUP cg where cg.QUALIFIED_NAME = 'squashtest.tm.group.User')" />
+		</insert>
+		<insert tableName="CORE_USER">
+			<column name="LOGIN" value="test.runner" />
+			<column name="LAST_NAME" value="A Test Runner" />
+			<column name="EMAIL" value="unknown" />
+			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP" />
+			<column name="CREATED_BY" value="liquibase" />
+		</insert>
+		<insert tableName="CORE_GROUP_MEMBER">
+			<column name="USER_ID" valueComputed="(select max(ID) from CORE_USER)" />
+			<column name="GROUP_ID" valueComputed="(select cg.ID from CORE_GROUP cg where cg.QUALIFIED_NAME = 'squashtest.tm.group.User')" />
+		</insert>
+		<insert tableName="CORE_USER">
+			<column name="LOGIN" value="test.designer" />
+			<column name="LAST_NAME" value="A Test Designer" />
+			<column name="EMAIL" value="unknown" />
+			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP" />
+			<column name="CREATED_BY" value="liquibase" />
+		</insert>
+		<insert tableName="CORE_GROUP_MEMBER">
+			<column name="USER_ID" valueComputed="(select max(ID) from CORE_USER)" />
+			<column name="GROUP_ID" valueComputed="(select cg.ID from CORE_GROUP cg where cg.QUALIFIED_NAME = 'squashtest.tm.group.User')" />
+		</insert>
+		<insert tableName="CORE_USER">
+			<column name="LOGIN" value="advance.tester" />
+			<column name="LAST_NAME" value="an advance test runner" />
+			<column name="EMAIL" value="unknown" />
+			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP" />
+			<column name="CREATED_BY" value="liquibase" />
+		</insert>
+		<insert tableName="CORE_GROUP_MEMBER">
+			<column name="USER_ID" valueComputed="(select max(ID) from CORE_USER)" />
+			<column name="GROUP_ID" valueComputed="(select cg.ID from CORE_GROUP cg where cg.QUALIFIED_NAME = 'squashtest.tm.group.User')" />
+		</insert>
+		<insert tableName="CORE_USER">
+			<column name="LOGIN" value="validator" />
+			<column name="LAST_NAME" value="somebody with very few permissions" />
+			<column name="EMAIL" value="unknown" />
+			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP" />
+			<column name="CREATED_BY" value="liquibase" />
+		</insert>
+		<insert tableName="CORE_GROUP_MEMBER">
+			<column name="USER_ID" valueComputed="(select max(ID) from CORE_USER)" />
+			<column name="GROUP_ID" valueComputed="(select cg.ID from CORE_GROUP cg where cg.QUALIFIED_NAME = 'squashtest.tm.group.User')" />
+		</insert>
+		<insert tableName="CORE_USER">
+			<column name="LOGIN" value="average.joe" />
+			<column name="LAST_NAME" value="Somebody w/o permissions" />
+			<column name="EMAIL" value="unknown" />
+			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP" />
+			<column name="CREATED_BY" value="liquibase" />
+		</insert>
+		<insert tableName="CORE_GROUP_MEMBER">
+			<column name="USER_ID" valueComputed="(select max(ID) from CORE_USER)" />
+			<column name="GROUP_ID" valueComputed="(select cg.ID from CORE_GROUP cg where cg.QUALIFIED_NAME = 'squashtest.tm.group.User')" />
+		</insert>
+	</changeSet>
+</databaseChangeLog>

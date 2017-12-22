@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8'  ?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.13.0.dtd">
+<dataset>
+<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-986"/>
+<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-987"/>
+<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-998"/>
+<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-999"/>
+<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-432"/>
+<CAMPAIGN_LIBRARY ATTACHMENT_LIST_ID="-998" CL_ID="-14"/>
+<TEST_CASE_LIBRARY ATTACHMENT_LIST_ID="-987" TCL_ID="-13"/>
+<REQUIREMENT_LIBRARY ATTACHMENT_LIST_ID="-999" RL_ID="-12"/>
+<CUSTOM_REPORT_LIBRARY CRL_ID="-11" ATTACHMENT_LIST_ID="-986"/>
+
+<PROJECT PROJECT_ID="-1" CREATED_ON="2011-08-23" CREATED_BY="DBUnit" NAME="Test" ACTIVE="1" TCL_ID="-13" CL_ID="-14" RL_ID="-12" CRL_ID="-11" ATTACHMENT_LIST_ID="-432"/>
+<LIBRARY_PLUGIN_BINDING PLUGIN_BINDING_ID="-11" LIBRARY_ID="-13" LIBRARY_TYPE="T" PLUGIN_ID="tclib.test.plugin1"/>
+<LIBRARY_PLUGIN_BINDING PLUGIN_BINDING_ID="-12" LIBRARY_ID="-13" LIBRARY_TYPE="T" PLUGIN_ID="tclib.test.plugin2"/>
+<LIBRARY_PLUGIN_BINDING PLUGIN_BINDING_ID="-21" LIBRARY_ID="-12" LIBRARY_TYPE="R" PLUGIN_ID="rlib.test.plugin1"/>
+<LIBRARY_PLUGIN_BINDING PLUGIN_BINDING_ID="-31" LIBRARY_ID="-14" LIBRARY_TYPE="C" PLUGIN_ID="clib.test.plugin1"/>
+<LIBRARY_PLUGIN_BINDING_PROPERTY PLUGIN_BINDING_ID="-31" PLUGIN_BINDING_KEY="name" PLUGIN_BINDING_VALUE="Leffe"/>
+<LIBRARY_PLUGIN_BINDING_PROPERTY PLUGIN_BINDING_ID="-31" PLUGIN_BINDING_KEY="type" PLUGIN_BINDING_VALUE="beer"/>
+<LIBRARY_PLUGIN_BINDING_PROPERTY PLUGIN_BINDING_ID="-31" PLUGIN_BINDING_KEY="when" PLUGIN_BINDING_VALUE="anytime"/>
+
+<CUSTOM_REPORT_LIBRARY_NODE CRLN_ID="-1" NAME="project-1" ENTITY_TYPE="LIBRARY" ENTITY_ID="-11" CRL_ID="-11"/>
+<CRLN_RELATIONSHIP DESCENDANT_ID="-1" CONTENT_ORDER="0"/>
+
+
+<ACL_CLASS ID="-1" CLASSNAME="org.squashtest.tm.domain.project.Project"/>
+<ACL_CLASS ID="-2" CLASSNAME="org.squashtest.tm.domain.requirement.RequirementLibrary"/>
+<ACL_CLASS ID="-3" CLASSNAME="org.squashtest.tm.domain.testcase.TestCaseLibrary"/>
+<ACL_CLASS ID="-4" CLASSNAME="org.squashtest.tm.domain.campaign.CampaignLibrary"/>
+<ACL_OBJECT_IDENTITY IDENTITY="-1" ID="-8" CLASS_ID="-1"/>
+<ACL_OBJECT_IDENTITY IDENTITY="-12" ID="-9" CLASS_ID="-2"/>
+<ACL_OBJECT_IDENTITY IDENTITY="-13" ID="-10" CLASS_ID="-3"/>
+<ACL_OBJECT_IDENTITY IDENTITY="-14" ID="-11" CLASS_ID="-4"/>
+<ACL_GROUP ID="-9" QUALIFIED_NAME="Testeur_Magnifique"/>
+<ACL_GROUP_PERMISSION PERMISSION_MASK="32" PERMISSION_ORDER="1" CLASS_ID="-1" GRANTING="0" ACL_GROUP_ID="-9"/>
+<ACL_GROUP_PERMISSION PERMISSION_MASK="32" PERMISSION_ORDER="1" CLASS_ID="-2" GRANTING="0" ACL_GROUP_ID="-9"/>
+<ACL_GROUP_PERMISSION PERMISSION_MASK="32" PERMISSION_ORDER="1" CLASS_ID="-3" GRANTING="0" ACL_GROUP_ID="-9"/>
+<ACL_GROUP_PERMISSION PERMISSION_MASK="32" PERMISSION_ORDER="1" CLASS_ID="-4" GRANTING="0" ACL_GROUP_ID="-9"/>
+<CORE_PARTY PARTY_ID="-56"/>
+<CORE_USER PARTY_ID="-56" FIRST_NAME="user" EMAIL="adminMail" LOGIN="user" CREATED_ON="2011-08-23" CREATED_BY="admin" LAST_NAME="user" ACTIVE="1"/>
+<ACL_RESPONSIBILITY_SCOPE_ENTRY OBJECT_IDENTITY_ID="-8" ID="-6" PARTY_ID="-56" ACL_GROUP_ID="-9"/>
+<ACL_RESPONSIBILITY_SCOPE_ENTRY OBJECT_IDENTITY_ID="-9" ID="-7" PARTY_ID="-56" ACL_GROUP_ID="-9"/>
+<ACL_RESPONSIBILITY_SCOPE_ENTRY OBJECT_IDENTITY_ID="-10" ID="-8" PARTY_ID="-56" ACL_GROUP_ID="-9"/>
+<ACL_RESPONSIBILITY_SCOPE_ENTRY OBJECT_IDENTITY_ID="-11" ID="-9" PARTY_ID="-56" ACL_GROUP_ID="-9"/>
+<core_group_member />
+</dataset>

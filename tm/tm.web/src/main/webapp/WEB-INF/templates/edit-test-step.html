@@ -1,0 +1,293 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title th:text="#{workspace.test-case.title}">Espace cas de test</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <script th:src="@{/scripts/pubsub-boot.js}"></script>
+  <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+  <script type="text/javascript" th:inline="javascript">
+    var squashtm = {};
+    squashtm.app = {
+      locale: /*[[#{squashtm.locale}]]*/,
+      contextRoot: /*[[ @{/} ]]*/"http://localhost:8080/squash",
+      stepURL: /*[[ @{/test-steps/} + ${testStepView.id} ]]*/ "http://localhost:8080/squash/test-steps/1",
+      isIEO: /*[[ ${isIEO} ]]*/ false,
+      fromExec: /*[[ ${fromExec} ]]*/ false,
+      testStepIndex: /*[[ ${testStep.index} ]]*/ testStep,
+      editTCS: {
+        testStepURL: /*[[ @{/test-steps/}+${testStepView.id} ]]*/ "http://localhost:8080/squash/test-steps/50",
+        hasCUF: /*[[ ${hasCUF} ]]*/false,
+        informationPanelLabel: /*[[#{label.testStep.information}]]*/'Test step informations',
+        testCaseURL:  /*[[ @{/test-cases/}+${testCase.id}]]*/"http://localhost:8080/squash/test-cases/238/steps/add",
+        currentId: /*[[ ${testStepView.id} ]]*/ 1,
+        previousId: /*[[ ${testStepView.previousStep}? ${testStepView.previousStep.id} : -1 ]]*/1,
+        nextId: /*[[ ${testStepView.nextStep}? ${testStepView.nextStep.id} : -1 ]]*/-1,
+        writable: /*[[ ${writable} ]]*/true,
+        localizedDateFormat: /*[[ #{squashtm.dateformatShort.datepicker} ]]*/"dd/mm/yy",
+        // todo : once we use Thymeleaf 3 we will remove the indirect call to jackson + JSON.parse
+        // note : we use jacksonSerializer instead of cufdefSerializer because those are actually
+        cufDefinitions: JSON.parse(/*[[${#workspace.jacksonSerializer(cufDefinitions)}]]*/[])
+
+      }
+    };
+  </script>
+  <script data-main="../../scripts/edit-test-step.js"
+          th:attr="data-main=@{/scripts/edit-test-step.js}" src="../../scripts/require.js"
+          th:src="@{/scripts/require-min.js}">
+
+  </script>
+  <link rel="stylesheet" type="text/css" media="all"
+        href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" sq:css="squash.core.css"/>
+  <link rel="shortcut icon" type="image/x-icon" media="all"
+        href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}"/>
+  <link rel="stylesheet" type="text/css" media="all"
+        href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.green.css" sq:css="squash.green.css"/>
+  <link rel="stylesheet" type="text/css" media="all"
+        href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.override.css"
+        sq:css="squash.core.override.css"/>
+
+  <link rel="stylesheet" type="text/css" media="all"
+        href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.subpageoverride.css"
+        sq:css="squash.subpage.override.css"/>
+</head>
+<body>
+<div id="navigation" th:include="navbar.frag :: navbar('test-case')">NAVBAR</div>
+<div id="workspace">
+  <div id="workspace-title">
+    <div class="snap-left">
+      <h2 th:text="#{workspace.test-case.title }">Espace cas de test</h2>
+    </div>
+    <div class="snap-right">
+      <div class="main-menubar " th:include="menubar.frag :: menubar">MENUBAR</div>
+      <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">NOTIFICATION</div>
+    </div>
+  </div>
+  <div id="sub-page" class="sub-page">
+
+    <div id="sub-page-header" class="sub-page-header">
+
+      <div id="sub-page-title" class="sub-page-title">
+        <h2 th:text="#{title.testStep}">Detail d'étape test</h2>
+      </div>
+
+      <div id="sub-page-buttons" class="sub-page-buttons">
+
+        <input id="close" type="button" th:value=" ${fromExec != null} ? #{ label.return.exec } : #{ label.Close } "
+               value="Close"/>
+
+      </div>
+
+      <div class="unsnap"></div>
+    </div>
+
+    <div id="sub-page-content" class="sub-page-content">
+
+      <div id="information-content">
+        <div id="test-step-name-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
+          <div style="float: left; height: 3em">
+            <h2>
+              <label for="test-case-name-header" th:text="#{test-case.header.title}">Test Case</label>&nbsp;&nbsp;
+              <a id="test-case-name-header" href="#" th:text="${testStepView.testCase.name}">Test Case Name</a>&nbsp;&nbsp;
+              <label for="test-step-number-header" th:text="#{test-step.header.title}">step # </label>
+              <a id="test-step-number-header" href="#"
+                 th:text="${testStepView.order}+'/'+${testStepView.totalNumberOfSteps}">12/13</a>
+            </h2>
+          </div>
+
+          <div style="float: left; height: 3em" class="entity-edit-general-warning"><p
+            th:if="${fromExec} and ${testStepView.isCallStep()}"
+            th:text="#{label.callstep} + ' ' + ${testStepView.callStepName}"/></div>
+
+          <div class="snap-right">
+            <span class="group" th:if="!${fromExec} and ${writable}">
+            <button id="add-test-step-button"
+                    data-icon="ui-icon-plusthick"
+                    class="button test-step-toolbar-button"
+                    th:text="#{test-case.step.button.add.label}"
+                    th:title="#{test-case.step.button.add.label}">
+                  add a step
+            </button>
+            <button id="delete-test-step-button"
+                      data-icon="ui-icon-trash"
+                      class="button test-step-toolbar-button"
+                      th:text="#{test-case.step.delete.label}"
+                      th:title="#{test-case.step.delete.label}">
+					 remove selected steps
+			      </button>
+		      </span >
+            <a th:text="${writable} ? #{ label.previous.saveWarning } : #{ label.previous } "
+                                     href="#" id="previous-test-step-button">Previous</a>
+            <a th:text="${writable} ? #{ label.next.saveWarning }  : #{ label.next }" href="#"
+               id="next-test-step-button">Next</a>
+          </div>
+          <div class="unsnap"></div>
+        </div>
+
+        <div class="fragment-body unstyled">
+          <div style="float: left; width: calc(50% - 1em);" th:if="${requirementVerifier}"
+               id="verified-requirements-bloc-frag"
+               th:include="verified-requirements-bloc.frag :: verified-requirements-bloc">
+            VERIFIED-REQUIREMENT-VERSIONS-BLOC
+          </div>
+
+          <div style=" float: right; width: calc(50% - 1em);" th:if="${testStepView.callStep == null}">
+            <div class="sq-tg expand frozen">
+              <div class="tg-head">
+                <h3>
+                  <a th:text="#{label.testStep.information}">Informations</a>
+                  <span class="small txt-discreet" th:text="'[ID = '"></span>
+                  <span id="test-step-id" class="small txt-discreet" th:text="${testStepView.id}"></span>
+                  <span class="small txt-discreet" th:text="']'"></span>
+
+                </h3>
+                <div class="tg-toolbar">
+                  <input type="button" id="save-test-step-button" class="sq-btn" th:value="#{ label.save }" value="Save"
+                         th:if="(${testStepView.actionStep} or ${hasCUF}) and  ${writable}"></input>
+                </div>
+              </div>
+
+              <div id="test-step-info-panel" class="information-panel tg-body"
+                   th:classappend="${stepIsDelete} ? disabled-transparent : ''">
+                <div id="test-step-infos-table"
+                     th:style="${testStepView.actionStep}? 'width:100%' : ''">
+                  <div class="control-group" th:if="${testStepView.actionStep}"
+                       th:switch="${writable}">
+                    <label for="test-step-action" class="control-label" th:text="#{label.action}"
+                           style="vertical-align:middle">Action</label>
+                    <div th:case="${true}" class=" controls"><textarea class="test-step-attr" name="action"
+                                                                       id="test-step-action"
+                                                                       sq:unsafe-html="${testStepViewAction} ">do this</textarea>
+                      <span class="help-inline">&nbsp;</span><span>&nbsp;</span></div>
+                    <span th:case="${false}" sq:unsafe-html="${testStepViewAction}">do this</span>
+                  </div>
+                  <div class="control-group" th:if="${testStepView.actionStep}"
+                       th:switch="${writable}">
+                    <label for="test-step-expectedResult" class="control-label " th:text="#{label.expectedResult}"
+                           style="vertical-align:middle">Expected result</label>
+                    <div th:case="${true}" class=" controls"><textarea class=" test-step-attr" name="expectedResult"
+                                                                       id="test-step-expectedResult"
+                                                                       sq:unsafe-html="${testStepViewExpectedResult}">see that</textarea>
+                      <span class="help-inline">&nbsp;</span>
+                    </div>
+                    <span th:case="${false}" sq:unsafe-html="${testStepViewExpectedResult}">do this</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div th:if="${attachableEntity}" id="attachment-bloc-frag"
+                 th:include="attachment-bloc.frag :: attachment-bloc">ATTACHMENT-BLOC
+            </div>
+          </div>
+
+          <div style=" float: right; width: calc(100% - 1em);" th:if="${testStepView.callStep}">
+            <div class="sq-tg expand frozen">
+              <div class="tg-head">
+                <h3>
+                  <a th:text="#{label.testStep.information}">Informations</a>
+                  <span class="small txt-discreet" th:text="'[ID = '"></span>
+                  <span id="test-step-id" class="small txt-discreet" th:text="${testStepView.id}"></span>
+                  <span class="small txt-discreet" th:text="']'"></span>
+
+                </h3>
+                <div class="tg-toolbar">
+                  <input type="button" id="save-test-step-button" class="sq-btn" th:value="#{ label.save }" value="Save"
+                         th:if="(${testStepView.actionStep} or ${hasCUF}) and  ${writable}"></input>
+                </div>
+              </div>
+
+              <div id="test-step-info-panel" class="information-panel tg-body"
+                   th:classappend="${stepIsDelete} ? disabled-transparent : ''">
+                <div class="display-table" id="test-step-infos-table"
+                     th:style="${testStepView.actionStep}? 'width:100%' : ''">
+                  <div class="display-table-row" th:if="${testStepView.callStep}">
+                    <label for="test-step-called-test-case" th:text="#{label.calledTestCase}">Called test case</label>
+                    <a id="test-step-called-test-case" th:href="@{/test-cases/} + ${testStepView.callStep.calledTestCase.id}+'/info'"
+                       href="http://localhost:8080/squash/test-cases/1"
+                       th:text="${testStepView.callStep.calledTestCase.reference}+'-'+${testStepView.callStep.calledTestCase.name}">that
+                      one</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div th:if="${attachableEntity}" id="attachment-bloc-frag"
+                 th:include="attachment-bloc.frag :: attachment-bloc">ATTACHMENT-BLOC
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== Add Test Step Dialog ==================== -->
+
+  <div id="add-test-step-dialog" class="not-displayed popup-dialog" th:title="#{test-case.step.button.add.label}" th:if="${writable}">
+
+    <table id="add-test-step-custom-fields">
+      <!--  populated using ajax -->
+    </table>
+
+    <div class="centered" style="text-align: center; margin-bottom: 2em;">
+      <label style="font-weight: bold;"
+             for="add-test-step-action" th:text="#{label.Actions}">Actions
+      </label>
+      <textarea data-def="isrich, maininput" id="add-test-step-action"></textarea>
+    </div>
+
+    <div class="centered">
+      <label style="font-weight: bold;" for="add-test-step-result"
+             th:text="#{label.ExpectedResults}"> Expected Results
+      </label>
+      <textarea data-def="isrich" id="add-test-step-result"></textarea>
+    </div>
+
+    <div class="popup-dialog-buttonpane">
+      <input type="button" th:value="#{label.Add}"        data-def="evt=add"      />
+      <input type="button" th:value="#{label.Close}"     data-def="evt=cancel"   />
+    </div>
+
+  </div>
+
+  <!-- ==================== /Add Test Step Dialog ==================== -->
+
+  <!-- ==================== Remove Test Step Dialog ==================== -->
+  <div id="delete-test-step-dialog" class="not-displayed popup-dialog" th:title="#{dialog.delete-step.title}">
+    <div class="display-table-row">
+      <div class="display-table-cell warning-cell">
+        <div class="generic-error-signal"></div>
+      </div>
+      <div class="display-table-cell">
+        <span data-def="state=single-tp" 	style="font-weight:bold;" th:text="#{dialog.delete-test-step.message}">remove test step ?</span>
+      </div>
+    </div>
+    <div class="popup-dialog-buttonpane">
+      <input type="button" th:value="#{label.Confirm}" data-def="state=single-tp, mainbtn=single-tp, evt=confirm"/>
+      <input type="button" th:value="#{label.Cancel}" data-def="state=single-tp, evt=cancel"/>
+    </div>
+  </div>
+  <!-- ==================== /Remove Test Step Row Dialog ==================== -->
+</div>
+</body>
+</html>

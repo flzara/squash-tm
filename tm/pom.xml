@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.squashtest.tm</groupId>
+    <artifactId>squash-tm</artifactId>
+    <version>1.17.0.RELEASE</version>
+  </parent>
+  <groupId>org.squashtest.tm</groupId>
+  <artifactId>squash-tm-tm</artifactId>
+  <packaging>pom</packaging>
+  <name>squash-tm-tm</name>
+  <description>This module builds the Squash TM webapp</description>
+
+  <modules>
+    <module>tm.domain</module>
+    <module>tm.service</module>
+    <module>tm.web</module>
+  </modules>
+
+  <build>
+    <plugins>
+      <plugin>
+        <!-- Required to add license headers -->
+        <artifactId>maven-remote-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>add-license-to-jar</id>
+            <goals>
+              <goal>process</goal>
+            </goals>
+            <configuration>
+              <resourceBundles>
+                <resourceBundle>org.squashtest.tm:squashtest-license-resources:${project.version}</resourceBundle>
+              </resourceBundles>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

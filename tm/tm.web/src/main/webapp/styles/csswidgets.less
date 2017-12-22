@@ -1,0 +1,337 @@
+@import "features.less";
+
+
+/**
+ * .sq-btn skins a simple button, with text inside it
+ * Those tags which handle the "disabled" attribute are managed using a pseudo-class.
+ * Those who don't (such as <a>) should use the .sq-disabled class along with programmatic disabling
+ *
+ * When one wants to add an icon, it needs to be declared as : <span class"ui-icon ui-icon-name"></span>
+ * When there is no text inside the button, it needs to have the .sq-btn.icon class
+ *
+ * Should produce 28px high buttons
+ */
+.sq-btn {
+	@padding-hz: 1em;
+
+	.ui-button;
+	.sq-widget;
+	.ui-state-default;
+	.ui-corner-all;
+
+	line-height: 1.4em;
+	vertical-align: baseline;
+
+	input& {
+		padding: .4em @padding-hz;
+	}
+
+	button& {
+		padding: .3em @padding-hz;
+	}
+
+	a& {
+		padding: .45em @padding-hz;
+	}
+
+	.ui-icon {
+		display: inline-block;
+		vertical-align: text-bottom;
+		background-image: url(jquery/ui/images/ui-icons_ffffff_256x240.png);
+	}
+
+	&:hover {
+		.ui-state-hover;
+	}
+
+	&:active, &:active:focus, &.active {
+		.ui-state-active;
+	}
+
+	/* .btn-focus marks "focusable" buttons */
+	&.btn-focus:focus {
+		.ui-state-focus;
+	}
+
+	/* disable state. it can be achieved on elemens which cannot be disabled with .disabled */
+	&:disabled, &.disabled {
+		.btn-disabled;
+	}
+
+
+	/**
+	 * Alternatively : set the width and height using the width and height attributes.
+	 */
+	 button&.std-btn {
+	 	padding : 0;
+	 	width : 2.4em;
+	 	height : 2.4em;
+	 }
+
+	/**
+	 * Target height : 23px
+	 */
+	&.btn-sm {
+		font-size: @small-font;
+	}
+	input&.btn-sm {
+		padding-top: .35em;
+		padding-bottom: .35em;
+	}
+	button&.btn-sm {
+		padding-top: .1em;
+		padding-bottom: .2em;
+	}
+	a&.btn-sm {
+		padding-top: .2em;
+		padding-bottom: .3em;
+	}
+
+}
+
+/**
+ * To be used for a button with no text. Should produce a 28 * 28 button.
+ */
+.sq-icon-btn {
+	.sq-btn;
+
+	button& {
+		padding: .35em .2em;
+	}
+
+	a& {
+		padding: .42em .45em;
+	}
+
+	button&.btn-sm {
+		padding-left: 0;
+		padding-right: 0;
+	}
+
+	a&.btn-sm {
+		padding-left: .25em;
+		padding-right: .25em;
+	}
+
+	/**
+	 * Target height : 20px
+	 */
+	&.btn-xs {
+		font-size: 0.7em;
+	}
+	button&.btn-xs {
+		padding: 0;
+	}
+	a&.btn-xs {
+		padding: .1em;
+	}
+}
+
+/**
+ * toggle panel
+ */
+.sq-tg {
+	.ui-helper-reset; // because jq-ui has the habit of breaking shit when widgets are nested
+
+	margin-bottom: 1.5 * @normal-font;
+
+
+	.tg-head {
+		.cf;
+		.ui-state-default;
+
+		// inlined .ui-accordion .ui-accordion-header
+		display: block;
+		cursor: pointer;
+		position: relative;
+		margin-top: 2px;
+		padding: .5em .5em .5em .7em;
+		zoom: 1;
+
+		h3 {
+			.ui-helper-reset;
+
+			display: block;
+			float: left;
+			text-align: left;
+			padding: .1em .7em; // with that, text is more or less vertical-aligned at middle
+			font-size: @normal-font;
+			font-weight: normal;
+		}
+
+		.tg-toolbar {
+			display: block;
+			float: right;
+			text-align: right;
+
+			// meh... we have to redefine buttons height
+			// for them to look good^h^h as before
+			input {
+				.sq-btn;
+			}
+
+			.sq-btn {
+				padding-top: .15em;
+				padding-bottom: .15em;
+				font-size: @small-font;
+			}
+
+		}
+
+		.txt-discreet {
+			color:#DDDDDD !important;
+			font-style: normal;
+		}
+	}
+	&.expand .tg-head {
+		.ui-state-focus;
+		.ui-corner-top;
+
+	}
+	&.collapse .tg-head {
+		.ui-state-active;
+		.ui-corner-all;
+
+		.tg-toolbar .sq-btn, .tg-toolbar .sq-icon-btn {
+		// head buttons should look disabled when panel is collapsed
+		.btn-disabled;
+		}
+	}
+
+	.tg-body {
+		.ui-widget-content;
+		.ui-corner-bottom;
+
+		// inlined .ui-accordion.ui-accordion-content
+		//padding: 1em 2.2em;
+		border-top: 0;
+		overflow: auto;
+		zoom: 1;
+
+		font-size: @normal-font;
+
+		padding: 0.7em;
+		overflow: auto;
+
+	}
+
+	&.collapse .tg-body {
+		display: none;
+
+	}
+}
+/**
+ * Toggle list
+ */
+.sq-tl {
+	/* target height: 12px */
+	.tl-head {
+		cursor: pointer;
+		margin-bottom: 0.4em;
+
+		.tl-state-icon {
+			.ui-icon;
+			display: inline-block;
+			height: 1.2em;
+		}
+	}
+
+	&.expand .tl-head {
+		.tl-state-icon {
+			.ui-icon-triangle-1-s;
+		}
+	}
+
+	&.collapse .tl-head {
+		.tl-state-icon {
+			.ui-icon-triangle-1-e;
+		}
+	}
+
+	.tl-body {
+		margin-top: 0;
+	}
+	&.collapse .tl-body {
+		display: none;
+	}
+}
+/**
+ * PRIVATE STUFF - NOT TO BE USED IN HTML CODE
+ **/
+/* Private "rewrite" of .ui-widget, because there are rules not possible to "mix in" */
+.sq-widget() {
+	.ui-widget;
+
+	.sq-widget { font-size: 1em; }
+
+	input, select, textarea, button {
+		font-family: Verdana, Arial, sans-serif;
+		font-size: 1em;
+	}
+}
+.btn-disabled() {
+	.ui-state-disabled;
+
+	.ui-icon { filter:Alpha(Opacity=35); }
+
+	pointer-events : none;
+
+	opacity : 0.35;
+}
+
+.ui-icon-none {
+	background-position: -160px 0;
+	width: 0px;
+}
+.ui-icon-blank { // does not exist yet in our css
+	background-position: -160px 0;
+}
+
+/*****************************
+ Squash tags
+******************************/
+
+
+ul.squash-tagit {
+
+	background:transparent;
+
+	border:none;
+
+	.create-node-custom-field-row &{ // page dependent, so not a widget rule
+		border : 1px solid lightgray
+	}
+
+	.issue-field-control-holder &{ // page dependent, so not a widget rule
+		display : inline-block;
+		width : 98%;
+		border-color : lightgray;
+		border-width : 1px;
+		border-style : solid;
+	}
+
+	li.ui-widget-content{
+		background-image: none;
+		color: #000000;
+		border-color: #707070;
+		background-color: #D8D8D8;
+	}
+
+	 li.invalid{
+		background-color : red;
+		color : white;
+	}
+
+	li.tagit-new input{
+		background:transparent;
+	}
+}
+
+.ui-autocomplete.ui-menu{
+	max-height : 20em;
+	overflow-y : auto;
+}
+
+div.ui-effects-explode{
+	z-index : 50000;
+}

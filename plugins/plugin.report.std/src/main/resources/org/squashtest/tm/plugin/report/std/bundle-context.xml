@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+  <bean name="squash.tm.plugin.report.std" class="org.squashtest.tm.api.report.ReportPlugin">
+    <property name="reports">
+      <list>
+        <ref bean="executionProgressFollowUp"/>
+        <ref bean="requirementCoverage"/>
+      </list>
+    </property>
+  </bean>
+
+  <!-- EXECUTION PROGRESS FOLLOWUP -->
+  <bean name="executionProgressFollowUp" class="org.squashtest.tm.api.report.BasicReport">
+    <property name="category" value="EXECUTION_PHASE"/>
+    <property name="type" value="PROGRESS_FOLLOWUP"/>
+    <property name="labelKey" value="report.executionprogressfollowup.name"/>
+    <property name="descriptionKey" value="report.executionprogressfollowup.description"/>
+    <property name="views">
+      <list>
+        <bean class="org.squashtest.tm.api.report.jasperreports.JasperReportsView">
+          <property name="labelKey" value="view.title.campaigndashboard"/>
+          <property name="formats" value="pdf,html"/>
+          <property name="query" ref="executionProgressQuery"/>
+          <property name="springView" ref="executionProgression1"/>
+        </bean>
+        <bean class="org.squashtest.tm.api.report.jasperreports.JasperReportsView">
+          <property name="labelKey" value="view.title.listtcbycampaign"/>
+          <property name="formats" value="xls,ods,csv,pdf,html"/>
+          <property name="query" ref="executionProgressQuery"/>
+          <property name="springView" ref="executionProgression2"></property>
+        </bean>
+      </list>
+    </property>
+    <property name="form">
+      <list>
+        <!-- campain selection mode (all / tree) -->
+        <bean class="org.squashtest.tm.api.report.form.RadioButtonsGroup">
+          <property name="name" value="campaignSelectionMode"/>
+          <property name="labelKey" value="report.criteria.panel.campaignlist.selection.label"/>
+          <property name="options">
+            <list>
+              <bean class="org.squashtest.tm.api.report.form.OptionInput">
+                <property name="defaultSelected" value="true"/>
+                <property name="labelKey" value="report.criteria.panel.campaignlist.selection.all.label"/>
+                <property name="value" value="EVERYTHING"/>
+              </bean>
+
+              <bean class="org.squashtest.tm.api.report.form.composite.TreePickerOption">
+                <property name="labelKey" value="report.criteria.panel.campaignlist.selection.selected.label"/>
+                <property name="pickerLabelKey" value="report.criteria.panel.campaignlist.picker.label"/>
+                <property name="pickerName" value="campaignIds"/>
+                <property name="pickedNodeType" value="CAMPAIGN"/>
+              </bean>
+
+              <bean class="org.squashtest.tm.api.report.form.composite.MilestonePickerOption">
+                <property name="labelKey" value="report.criteria.panel.milestone.exprogress.label"/>
+                <property name="pickerLabelKey" value="report.criteria.panel.milestone.exprogress.label"/>
+                <property name="pickerName" value="milestones"/>
+              </bean>
+            </list>
+          </property>
+        </bean>
+        <!-- Scheduled start date picker -->
+        <bean class="org.squashtest.tm.api.report.form.InputsGroup">
+          <property name="labelKey" value="campaign.dateblock.label"/>
+          <property name="inputs">
+            <list>
+              <bean class="org.squashtest.tm.api.report.form.DateInput">
+                <property name="name" value="scheduledStart"/>
+                <property name="labelKey" value="campaign.scheduledStart.label"/>
+              </bean>
+              <!-- actual start date picker -->
+              <bean class="org.squashtest.tm.api.report.form.DateInput">
+                <property name="name" value="actualStart"/>
+                <property name="labelKey" value="campaign.actualStart.label"/>
+              </bean>
+              <!-- Scheduled end date picker -->
+              <bean class="org.squashtest.tm.api.report.form.DateInput">
+                <property name="name" value="scheduledEnd"/>
+                <property name="labelKey" value="campaign.scheduledEnd.label"/>
+              </bean>
+              <!-- actual end date picker -->
+              <bean class="org.squashtest.tm.api.report.form.DateInput">
+                <property name="name" value="actualEnd"/>
+                <property name="labelKey" value="campaign.actualEnd.label"/>
+              </bean>
+            </list>
+          </property>
+        </bean>
+
+
+        <!-- campaign status dropdown -->
+        <bean class="org.squashtest.tm.api.report.form.DropdownList">
+          <property name="name" value="campaignStatus"/>
+          <property name="labelKey" value="campaignStatus.label"/>
+          <property name="options">
+            <list>
+              <bean class="org.squashtest.tm.api.report.form.OptionInput">
+                <property name="value" value="CAMPAIGN_ALL"/>
+                <property name="labelKey" value="report.executionprogression.campaignstatus.CAMPAIGN_ALL"/>
+              </bean>
+              <bean class="org.squashtest.tm.api.report.form.OptionInput">
+                <property name="value" value="CAMPAIGN_RUNNING"/>
+                <property name="labelKey" value="report.executionprogression.campaignstatus.CAMPAIGN_RUNNING"/>
+              </bean>
+              <bean class="org.squashtest.tm.api.report.form.OptionInput">
+                <property name="value" value="CAMPAIGN_OVER"/>
+                <property name="labelKey" value="report.executionprogression.campaignstatus.CAMPAIGN_OVER"/>
+              </bean>
+            </list>
+          </property>
+        </bean>
+      </list>
+    </property>
+  </bean>
+
+  <bean name="executionProgressQuery" class="org.squashtest.tm.plugin.report.std.query.ExecutionProgressQueryAdapter"/>
+
+  <bean name="legacyExecutionProgressQuery" scope="prototype"
+        class="org.squashtest.tm.internal.domain.report.common.hibernate.HibernateExecutionProgressQuery"/>
+
+  <bean id="executionProgression1"
+        class="org.squashtest.tm.api.report.spring.view.jasperreports.JasperReportsExtMultiFormatView">
+    <property name="url" value="classpath:jasperreports/execution-progression.jasper"/>
+    <property name="reportDataKey" value="data"/>
+    <property name="reportFileName" value="Report-execution-progression-overview-{{date:ddMMyyyyHHmm}}"/>
+    <property name="subReportUrls">
+      <map>
+        <entry key="executionProgressionCampaign"
+               value="classpath:jasperreports/execution-progression_campaign.jasper"/>
+        <entry key="executionProgressionIteration"
+               value="classpath:jasperreports/execution-progression_iteration.jasper"/>
+      </map>
+    </property>
+    <property name="exporterParameters">
+      <map>
+        <entry key="net.sf.jasperreports.engine.export.JRHtmlExporterParameter.ZOOM_RATIO">
+          <value type="java.lang.Float">1.4</value>
+        </entry>
+        <entry key="net.sf.jasperreports.engine.export.JRHtmlExporterParameter.HTML_HEADER">
+          <value>
+            &lt;style&gt; table td span {
+            -moz-hyphens: auto;
+            -webkit-hyphens: auto;
+            hyphens: auto;
+            hyphenate: auto;
+            }
+
+            td.columnHeader p {
+            word-break:normal;
+            }
+            &lt;/style&gt;
+          </value>
+        </entry>
+      </map>
+    </property>
+  </bean>
+
+  <bean id="executionProgression2"
+        class="org.squashtest.tm.api.report.spring.view.jasperreports.JasperReportsExtMultiFormatView">
+    <property name="url" value="classpath:jasperreports/execution-progression-view0.jasper"/>
+    <property name="reportDataKey" value="data"/>
+    <property name="reportFileName" value="Report-execution-progression-list-{{date:ddMMyyyyHHmm}}"/>
+    <property name="subReportUrls">
+      <map>
+        <entry key="subReportCampaign" value="classpath:jasperreports/execution-progression-view0_campaign.jasper"/>
+        <entry key="subReportIteration_0"
+               value="classpath:jasperreports/execution-progression-view0_campaign_iterations.jasper"/>
+      </map>
+    </property>
+
+    <property name="exporterParameters">
+      <map>
+        <entry key="net.sf.jasperreports.engine.export.JRHtmlExporterParameter.ZOOM_RATIO">
+          <value type="java.lang.Float">1.4</value>
+        </entry>
+        <entry key="net.sf.jasperreports.engine.export.JRHtmlExporterParameter.HTML_HEADER">
+          <value>
+            &lt;style&gt; table td span {
+            -moz-hyphens: auto;
+            -webkit-hyphens: auto;
+            hyphens: auto;
+            hyphenate: auto;
+            }
+            td.columnHeader p {
+            word-break:normal;
+            }
+            &lt;/style&gt;
+          </value>
+        </entry>
+      </map>
+    </property>
+  </bean>
+
+  <!-- REQUIREMENT COVERAGE -->
+  <bean name="requirementCoverage" class="org.squashtest.tm.api.report.BasicReport">
+    <property name="category" value="PREPARATION_PHASE"/>
+    <property name="type" value="SPECIFICATION_BOOK"/>
+    <property name="labelKey" value="report.report.requirementcoveragebytests.name"/>
+    <property name="descriptionKey" value="report.report.requirementcoveragebytests.description"/>
+    <property name="views">
+      <list>
+        <bean class="org.squashtest.tm.api.report.jasperreports.JasperReportsView">
+          <property name="labelKey" value="report.view.title.requirementcoveragedashboard"/>
+          <property name="formats" value="pdf,html"/>
+          <property name="query" ref="requirementCoverageQuery"/>
+          <property name="springView" ref="requirementCoverage1"/>
+        </bean>
+        <bean class="org.squashtest.tm.api.report.jasperreports.JasperReportsView">
+          <property name="labelKey" value="report.view.title.listreqbyproject"/>
+          <property name="formats" value="xls,ods,csv,pdf,html"/>
+          <property name="query" ref="requirementCoverageQuery"/>
+          <property name="springView" ref="requirementCoverage2"></property>
+        </bean>
+      </list>
+    </property>
+    <property name="form">
+      <list>
+        <bean class="org.squashtest.tm.api.report.form.RadioButtonsGroup">
+          <property name="name" value="selectionMode"/>
+          <property name="labelKey" value="report.coverage.criteria.selectionMode.label"/>
+          <property name="options">
+            <list>
+              <bean class="org.squashtest.tm.api.report.form.composite.ProjectPickerOption">
+                <property name="labelKey" value="report.coverage.criteria.selectionMode.projectPicker.label"/>
+                <property name="pickerName" value="projectIds"/>
+                <property name="pickerLabelKey" value="report.criteria.panel.projectlist.label"/>
+                <property name="defaultSelected" value="true"/>
+              </bean>
+              <bean class="org.squashtest.tm.api.report.form.composite.MilestonePickerOption">
+                <property name="labelKey" value="report.criteria.panel.milestone.label"/>
+                <property name="pickerLabelKey" value="report.criteria.panel.milestone.label"/>
+                <property name="pickerName" value="milestones"/>
+              </bean>
+            </list>
+          </property>
+        </bean>
+
+        <bean class="org.squashtest.tm.api.report.form.RadioButtonsGroup">
+          <property name="name" value="mode"/>
+          <property name="labelKey" value="report.criteria.panel.requirement.version.label"/>
+          <property name="disabledBy" value="milestones-binder"/>
+          <property name="options">
+            <list>
+              <bean class="org.squashtest.tm.api.report.form.OptionInput">
+                <property name="value" value="1"/>
+                <property name="defaultSelected" value="true"/>
+                <property name="labelKey" value="report.criteria.panel.requirement.version.include.all.label"/>
+                <property name="givesAccessTo" value="radio-allversions"/>
+              </bean>
+              <bean class="org.squashtest.tm.api.report.form.OptionInput">
+                <property name="value" value="2"/>
+                <property name="labelKey" value="report.criteria.panel.requirement.version.include.last.label"/>
+                <property name="givesAccessTo" value="radio-lastversion"/>
+              </bean>
+            </list>
+          </property>
+        </bean>
+        <!--  manque l'arbre -->
+      </list>
+    </property>
+  </bean>
+
+  <bean name="requirementCoverageQuery"
+        class="org.squashtest.tm.plugin.report.std.query.RequirementCoverageByTestsQueryAdapter"/>
+
+  <bean name="legacyRequirementCoverageQuery"
+        class="org.squashtest.tm.internal.domain.report.common.hibernate.HibernateRequirementCoverageByTestsQuery"
+        scope="prototype"/>
+
+  <bean id="requirementCoverage1"
+        class="org.squashtest.tm.api.report.spring.view.jasperreports.JasperReportsExtMultiFormatView">
+    <property name="url" value="classpath:jasperreports/requirement-coverage-overview.jasper"/>
+    <property name="reportFileName" value="Report-requirements-coverage-overview-{{date:ddMMyyyyHHmm}}"/>
+    <property name="reportDataKey" value="data"/>
+    <property name="exporterParameters">
+      <map>
+        <entry key="net.sf.jasperreports.engine.export.JRHtmlExporterParameter.ZOOM_RATIO">
+          <value type="java.lang.Float">1.4</value>
+        </entry>
+      </map>
+    </property>
+  </bean>
+
+  <bean id="requirementCoverage2"
+        class="org.squashtest.tm.api.report.spring.view.jasperreports.JasperReportsExtMultiFormatView">
+    <property name="url" value="classpath:jasperreports/requirement-coverage_projects.jasper"/>
+    <property name="reportDataKey" value="data"/>
+    <property name="reportFileName" value="Report-requirements-coverage-list-{{date:ddMMyyyyHHmm}}"/>
+    <property name="subReportUrls">
+      <map>
+        <entry key="subReportParamName" value="classpath:jasperreports/requirement-coverage_requirements.jasper"/>
+      </map>
+    </property>
+    <property name="exporterParameters">
+      <map>
+        <entry key="net.sf.jasperreports.engine.export.JRHtmlExporterParameter.ZOOM_RATIO">
+          <value type="java.lang.Float">1.4</value>
+        </entry>
+        <entry key="net.sf.jasperreports.engine.export.JRHtmlExporterParameter.HTML_HEADER">
+          <value>
+            &lt;style&gt; table td span {
+            -moz-hyphens: auto;
+            -webkit-hyphens: auto;
+            hyphens: auto;
+            hyphenate: auto;
+            }
+            &lt;/style&gt;
+          </value>
+        </entry>
+      </map>
+    </property>
+  </bean>
+
+</beans>

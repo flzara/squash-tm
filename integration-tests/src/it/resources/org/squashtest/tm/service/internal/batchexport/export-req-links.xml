@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!-- 
+	The dataset represents requirement structured as follow :
+	
+	1/ hierarchy : ID-name (versions : id1,id2,id3)
+	
+	°14-Test Project 1 
+		° 254-Test Folder 1
+			° 255-TF1-R1 - Test Requirement 1 (versions : 255)
+			° 256-TF1-R2 - Test Requirement 2 (versions : 256)
+			° 257-TF1-R3 - Test Requirement 3 (versions : 257,258,259)
+		° 258-related to ex3 (versions : 260)
+		° 259-unrelated (versions : 261)
+		
+		
+	2/ links 
+	
+	Test Requirement 1 _ v1 <<< DUPLICATE - DUPLICATE >>> Test Requirement 3 _ v3
+	Test Requirement 1 _ v1 <<< RELATIVE - RELATIVE >>> Test Requirement 3 _ v1
+	Test Requirement 1 _ v1 <<< CHILD - PARENT >>> Test Requirement 2 _ v1 
+	Test Requirement 3 _ v3 <<< PARENT - CHILD >>> related to ex3
+	
+ -->
+
+<dataset>
+  <attachment_list ATTACHMENT_LIST_ID="-555"/>  
+  
+  <test_case_library TCL_ID="-14" ATTACHMENT_LIST_ID="-555"/>
+  <requirement_library RL_ID="-14" ATTACHMENT_LIST_ID="-555"/>
+  <campaign_library CL_ID="-14" ATTACHMENT_LIST_ID="-555"/>
+  <custom_report_library CRL_ID="-14" ATTACHMENT_LIST_ID="-555"/>
+  <project PROJECT_ID="-14" NAME="Test Project-1" DESCRIPTION="&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam felis ante,&lt;/p&gt;" LABEL="Lorem ipsum dolor sit amet, " ACTIVE="true" CREATED_BY="admin" CREATED_ON="2011-09-30 10:24:47.0" CL_ID="-14" TCL_ID="-14" RL_ID="-14" ATTACHMENT_LIST_ID="-555" PROJECT_TYPE="P"  ALLOW_TC_MODIF_DURING_EXEC="false" CRL_ID="-14"/>
+  
+  <!-- a folder -->
+  <resource RES_ID="-254" NAME="Test Folder 1" DESCRIPTION="&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam felis ante, accumsan quis tincidunt vel, iaculis in purus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Morbi at nisl et est egestas venenatis. Nullam venenatis, justo ac hendrerit auctor, dolor velit adipiscing lacus, sed gravida enim elit dictum lorem. Suspendisse eu lectus ac metus lobortis vulputate at id purus. Proin dapibus commodo velit sit amet aliquet. Fusce cursus arcu vitae diam auctor vulputate. Integer et nunc et ipsum scelerisque dignissim eu ultricies sem. Pellentesque id commodo dui. Duis in vestibulum magna. Sed porta ante id magna semper ac gravida risus dapibus. Fusce eu ante sapien.&lt;/p&gt;" CREATED_BY="User-1" CREATED_ON="2011-09-30 10:29:33.0" LAST_MODIFIED_BY="User-1" LAST_MODIFIED_ON="2011-09-30 10:35:53.0" ATTACHMENT_LIST_ID="-555"/> 
+  <simple_resource RES_ID="-254"/>
+  <requirement_library_node RLN_ID="-254" CREATED_BY="User-1" CREATED_ON="2011-09-30 10:29:33.0" LAST_MODIFIED_BY="User-1" LAST_MODIFIED_ON="2011-09-30 10:35:53.0" PROJECT_ID="-14"/>
+  <requirement_folder RLN_ID="-254" RES_ID="-254"/>
+      
+  <!-- requirement versions -->
+  
+  <requirement_library_node RLN_ID="-255" CREATED_BY="User-1" CREATED_ON="2011-09-30 10:30:12.0" LAST_MODIFIED_BY="User-1" LAST_MODIFIED_ON="2011-09-30 10:36:18.0" PROJECT_ID="-14"/>
+  <requirement_library_node RLN_ID="-256" CREATED_BY="admin" CREATED_ON="2017-06-08 10:24:32.0" LAST_MODIFIED_BY="admin" LAST_MODIFIED_ON="2017-06-08 10:24:32.0" PROJECT_ID="-14"/>
+  <requirement_library_node RLN_ID="-257" CREATED_BY="admin" CREATED_ON="2017-06-08 10:31:27.0" LAST_MODIFIED_BY="admin" LAST_MODIFIED_ON="2017-06-08 16:25:11.0" PROJECT_ID="-14"/>
+  <requirement_library_node RLN_ID="-258" CREATED_BY="admin" CREATED_ON="2017-06-08 17:36:38.0" LAST_MODIFIED_BY="admin" LAST_MODIFIED_ON="2017-06-08 17:36:38.0" PROJECT_ID="-14"/>
+  <requirement_library_node RLN_ID="-259" CREATED_BY="admin" CREATED_ON="2017-06-08 17:39:52.0" LAST_MODIFIED_BY="admin" LAST_MODIFIED_ON="2017-06-08 17:39:52.0" PROJECT_ID="-14"/>
+  
+  <requirement RLN_ID="-255" MODE="NATIVE"/>
+  <requirement RLN_ID="-256" MODE="NATIVE"/>
+  <requirement RLN_ID="-257" MODE="NATIVE"/>
+  <requirement RLN_ID="-258" MODE="NATIVE"/>
+  <requirement RLN_ID="-259" MODE="NATIVE"/>  
+  
+  <resource RES_ID="-255" NAME="Test Requirement 1" DESCRIPTION="&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam felis ante, accumsan quis tincidunt vel, iaculis in purus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Morbi at nisl et est egestas venenatis. Nullam venenatis, justo ac hendrerit auctor, dolor velit adipiscing lacus, sed gravida enim elit dictum lorem. Suspendisse eu lectus ac metus lobortis vulputate at id purus. Proin dapibus commodo velit sit amet aliquet. Fusce cursus arcu vitae diam auctor vulputate. Integer et nunc et ipsum scelerisque dignissim eu ultricies sem. Pellentesque id commodo dui. Duis in vestibulum magna. Sed porta ante id magna semper ac gravida risus dapibus. Fusce eu ante sapien.&lt;/p&gt;" CREATED_BY="User-1" CREATED_ON="2011-09-30 10:30:12.0" LAST_MODIFIED_BY="User-1" LAST_MODIFIED_ON="2011-09-30 10:36:18.0" ATTACHMENT_LIST_ID="-555"/>
+  <resource RES_ID="-256" NAME="Test Requirement 2" DESCRIPTION="" CREATED_BY="admin" CREATED_ON="2017-06-08 10:24:32.0" LAST_MODIFIED_BY="admin" LAST_MODIFIED_ON="2017-06-08 10:24:54.0" ATTACHMENT_LIST_ID="-555"/>
+  <resource RES_ID="-257" NAME="Test Requirement 3" DESCRIPTION="" CREATED_BY="admin" CREATED_ON="2017-06-08 10:31:27.0" ATTACHMENT_LIST_ID="-555"/>
+  <resource RES_ID="-258" NAME="Test Requirement 3" DESCRIPTION="" CREATED_BY="admin" CREATED_ON="2017-06-08 16:24:55.0" ATTACHMENT_LIST_ID="-555"/>
+  <resource RES_ID="-259" NAME="Test Requirement 3" DESCRIPTION="" CREATED_BY="admin" CREATED_ON="2017-06-08 16:25:11.0" ATTACHMENT_LIST_ID="-555"/>
+  <resource RES_ID="-260" NAME="related to ex3" DESCRIPTION="" CREATED_BY="admin" CREATED_ON="2017-06-08 17:36:38.0" LAST_MODIFIED_BY="admin" LAST_MODIFIED_ON="2017-06-08 17:37:00.0" ATTACHMENT_LIST_ID="-555"/>
+  <resource RES_ID="-261" NAME="unrelated" DESCRIPTION="" CREATED_BY="admin" CREATED_ON="2017-06-08 17:39:52.0" ATTACHMENT_LIST_ID="-555"/>
+
+  
+  <requirement_version RES_ID="-255" REQUIREMENT_ID="-255" REFERENCE="TF1-R1" VERSION_NUMBER="1" CRITICALITY="MAJOR" REQUIREMENT_STATUS="WORK_IN_PROGRESS" />
+  <requirement_version RES_ID="-256" REQUIREMENT_ID="-256" REFERENCE="TF1-R2" VERSION_NUMBER="1" CRITICALITY="MINOR" REQUIREMENT_STATUS="WORK_IN_PROGRESS" />
+  <requirement_version RES_ID="-257" REQUIREMENT_ID="-257" REFERENCE="TF1-R3" VERSION_NUMBER="1" CRITICALITY="MINOR" REQUIREMENT_STATUS="WORK_IN_PROGRESS" />
+  <requirement_version RES_ID="-258" REQUIREMENT_ID="-257" REFERENCE="TF1-R3" VERSION_NUMBER="2" CRITICALITY="MINOR" REQUIREMENT_STATUS="WORK_IN_PROGRESS" />
+  <requirement_version RES_ID="-259" REQUIREMENT_ID="-257" REFERENCE="TF1-R3" VERSION_NUMBER="3" CRITICALITY="MINOR" REQUIREMENT_STATUS="WORK_IN_PROGRESS" />
+  <requirement_version RES_ID="-260" REQUIREMENT_ID="-258" REFERENCE="" VERSION_NUMBER="1" CRITICALITY="MINOR" REQUIREMENT_STATUS="WORK_IN_PROGRESS" />
+  <requirement_version RES_ID="-261" REQUIREMENT_ID="-259" REFERENCE="" VERSION_NUMBER="1" CRITICALITY="MINOR" REQUIREMENT_STATUS="WORK_IN_PROGRESS" />
+  
+  
+  <!--  node hierarchy -->
+  
+  <requirement_library_content LIBRARY_ID="-14" CONTENT_ID="-254" CONTENT_ORDER="0"/>
+  <requirement_library_content LIBRARY_ID="-14" CONTENT_ID="-258" CONTENT_ORDER="1"/>
+  <requirement_library_content LIBRARY_ID="-14" CONTENT_ID="-259" CONTENT_ORDER="2"/>
+  
+  <rln_relationship ANCESTOR_ID="-254" DESCENDANT_ID="-255" CONTENT_ORDER="0"/>
+  <rln_relationship ANCESTOR_ID="-254" DESCENDANT_ID="-256" CONTENT_ORDER="1"/>
+  <rln_relationship ANCESTOR_ID="-254" DESCENDANT_ID="-257" CONTENT_ORDER="2"/>
+  
+  <!-- the requirement links -->
+  
+  <requirement_version_link_type TYPE_ID="-1" ROLE_1="requirement-version.link.type.related" ROLE_1_CODE="RELATED" ROLE_2="requirement-version.link.type.related" ROLE_2_CODE="RELATED" IS_DEFAULT="true"/>
+  <requirement_version_link_type TYPE_ID="-2" ROLE_1="requirement-version.link.type.parent" ROLE_1_CODE="PARENT" ROLE_2="requirement-version.link.type.child" ROLE_2_CODE="CHILD" IS_DEFAULT="false"/>
+  <requirement_version_link_type TYPE_ID="-3" ROLE_1="requirement-version.link.type.duplicate" ROLE_1_CODE="DUPLICATE" ROLE_2="requirement-version.link.type.duplicate" ROLE_2_CODE="DUPLICATE" IS_DEFAULT="false"/>
+  
+  <requirement_version_link LINK_ID="-1" LINK_TYPE_ID="-2" LINK_DIRECTION="false" REQUIREMENT_VERSION_ID="-256" RELATED_REQUIREMENT_VERSION_ID="-255"/>
+  <requirement_version_link LINK_ID="-2" LINK_TYPE_ID="-2" LINK_DIRECTION="true" REQUIREMENT_VERSION_ID="-255" RELATED_REQUIREMENT_VERSION_ID="-256"/>
+  <requirement_version_link LINK_ID="-3" LINK_TYPE_ID="-1" LINK_DIRECTION="false" REQUIREMENT_VERSION_ID="-255" RELATED_REQUIREMENT_VERSION_ID="-257"/>
+  <requirement_version_link LINK_ID="-4" LINK_TYPE_ID="-1" LINK_DIRECTION="true" REQUIREMENT_VERSION_ID="-257" RELATED_REQUIREMENT_VERSION_ID="-255"/>
+  <requirement_version_link LINK_ID="-7" LINK_TYPE_ID="-3" LINK_DIRECTION="true" REQUIREMENT_VERSION_ID="-259" RELATED_REQUIREMENT_VERSION_ID="-255"/>
+  <requirement_version_link LINK_ID="-8" LINK_TYPE_ID="-3" LINK_DIRECTION="false" REQUIREMENT_VERSION_ID="-255" RELATED_REQUIREMENT_VERSION_ID="-259"/>
+  <requirement_version_link LINK_ID="-9" LINK_TYPE_ID="-2" LINK_DIRECTION="false" REQUIREMENT_VERSION_ID="-259" RELATED_REQUIREMENT_VERSION_ID="-260"/>
+  <requirement_version_link LINK_ID="-10" LINK_TYPE_ID="-2" LINK_DIRECTION="true" REQUIREMENT_VERSION_ID="-260" RELATED_REQUIREMENT_VERSION_ID="-259"/>
+  <requirement_version_link LINK_ID="-13" LINK_TYPE_ID="-3" LINK_DIRECTION="false" REQUIREMENT_VERSION_ID="-261" RELATED_REQUIREMENT_VERSION_ID="-260"/>
+  <requirement_version_link LINK_ID="-14" LINK_TYPE_ID="-3" LINK_DIRECTION="true" REQUIREMENT_VERSION_ID="-260" RELATED_REQUIREMENT_VERSION_ID="-261"/>
+</dataset>

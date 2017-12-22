@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.squashtest.tm</groupId>
+    <artifactId>squash-tm-tm</artifactId>
+    <version>1.17.0.RELEASE</version>
+  </parent>
+
+  <artifactId>tm.domain</artifactId>
+  <name>${project.groupId}.${project.artifactId}</name>
+  <description>Squash TM domain - the business implemented by Squash</description>
+
+  <properties>
+    <!-- Default jacoco dont record any coverage data -->
+    <!--<sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>-->
+    <h2.driver>org.h2.Driver</h2.driver>
+    <h2.url>jdbc:h2:${project.build.directory}/data/squash-tm</h2.url>
+    <master.changelog>src/main/liquibase/global.changelog-master.xml</master.changelog>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>squash-tm-bom</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.aspect</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.bugtracker.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.foundation</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.testautomation.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-search-orm</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.inject</groupId>
+      <artifactId>javax.inject</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jooq</groupId>
+      <artifactId>jooq</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jooq</groupId>
+      <artifactId>jooq-codegen</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jooq</groupId>
+      <artifactId>jooq-meta</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.querydsl</groupId>
+      <artifactId>querydsl-apt</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.querydsl</groupId>
+      <artifactId>querydsl-jpa</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aspects</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-aop</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-acl</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.validation</groupId>
+      <artifactId>validation-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>org.squashtest.tm.tools.unittest</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>spock-test-dependencies</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+
+    <sourceDirectory>src/main/java</sourceDirectory>
+
+    <testSourceDirectory>src/test/groovy</testSourceDirectory>
+
+    <resources>
+      <resource>
+        <filtering>true</filtering>
+        <directory>${project.basedir}/src/main/resources</directory>
+      </resource>
+    </resources>
+
+    <testResources>
+      <testResource>
+        <filtering>false</filtering>
+        <directory>${project.basedir}/src/test/resources</directory>
+      </testResource>
+    </testResources>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <!-- Specify the maven code generator plugin -->
+          <groupId>org.jooq</groupId>
+          <artifactId>jooq-codegen-maven</artifactId>
+
+        </plugin>
+      </plugins>
+
+    </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>add-resource</id>
+            <goals>
+              <goal>add-resource</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>${project.build.directory}/generated-resources</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>add-source</id>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/generated-sources</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <generatedSourcesDirectory>${project.build.directory}/generated-resources/META-INF</generatedSourcesDirectory>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <!-- This dependency triggers DynamicManager anotations processing through APT -->
+            <!-- TODO assess if we really need this in tm.domain -->
+            <groupId>org.squashtest.tm</groupId>
+            <artifactId>tools.annotation.processor</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+
+      <plugin>
+        <groupId>com.mysema.maven</groupId>
+        <artifactId>apt-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>querydsl-qbeans-generation</id>
+            <goals>
+              <goal>process</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>target/generated-sources/java</outputDirectory>
+              <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>aspectj-maven-plugin</artifactId>
+        <configuration>
+          <showWeaveInfo>${verbose.compiler}</showWeaveInfo>
+          <!-- every aspect which should be weaved has to be declared in this file -->
+          <xmlConfigured>weaved-aspects.xml</xmlConfigured>
+          <aspectLibraries>
+            <aspectLibrary>
+              <groupId>org.squashtest.tm</groupId>
+              <artifactId>core.aspect</artifactId>
+            </aspectLibrary>
+            <aspectLibrary>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-aspects</artifactId>
+            </aspectLibrary>
+          </aspectLibraries>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.liquibase</groupId>
+        <artifactId>liquibase-maven-plugin</artifactId>
+        <executions>
+          <!-- Performs full import in MySQL -->
+          <execution>
+            <id>create-h2-database</id>
+            <goals>
+              <goal>update</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <dropFirst>true</dropFirst>
+              <clearCheckSums>true</clearCheckSums>
+              <changeLogFile>${project.basedir}/../../database/${master.changelog}</changeLogFile>
+              <driver>${h2.driver}</driver>
+              <url>${h2.url}</url>
+              <username>sa</username>
+              <password>sa</password>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <!-- Specify the maven code generator plugin -->
+        <groupId>org.jooq</groupId>
+        <artifactId>jooq-codegen-maven</artifactId>
+
+        <!-- Specify the plugin configuration.
+     The configuration format is the same as for the standalone code generator -->
+        <configuration>
+
+          <!-- JDBC connection parameters -->
+          <jdbc>
+            <driver>${h2.driver}</driver>
+            <url>${h2.url}</url>
+            <user>sa</user>
+            <password>sa</password>
+          </jdbc>
+
+          <!-- Generator parameters -->
+          <generator>
+            <name>org.jooq.util.JavaGenerator</name>
+            <database>
+              <name>org.jooq.util.h2.H2Database</name>
+              <includes>.*</includes>
+              <excludes />
+              <schemata>
+                <schema>
+                  <inputSchema>PUBLIC</inputSchema>
+                </schema>
+              </schemata>
+              <outputSchemaToDefault>true</outputSchemaToDefault>
+            </database>
+            <target>
+              <packageName>org.squashtest.tm.jooq.domain</packageName>
+              <directory>target/generated-sources/java</directory>
+            </target>
+          </generator>
+
+        </configuration>
+
+        <!--Manage the plugin's dependency. In our case H2 database-->
+        <dependencies>
+          <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.187</version>
+            <!--<scope>test</scope>-->
+          </dependency>
+        </dependencies>
+
+        <!-- The plugin should hook into the generate goal -->
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+
+      </plugin>
+
+    </plugins>
+
+  </build>
+
+</project>

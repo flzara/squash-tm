@@ -1,0 +1,186 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/* ------------------------------------------*/
+/* ------>>> Custom jstree themes <<<--------*/
+/* ------------------------------------------*/
+
+/**
+ * smartsprites directive :
+ */
+
+ /** sprite: sprites-icons; sprite-image: url('../images/sprites-icons.png'); sprite-layout: vertical */
+
+.ui-squashtest-tree-inactive {	color: black;	background: transparent;	border: none;}
+
+li[rel] a.ui-state-default {	font-weight: bold; }
+li[rel="drive"] > a {	width:88%;	background: #2E2E2E;	-moz-border-radius: 8px; -webkit-border-radius: 8px; border-radius: 8px;	color:white;}
+li[rel="drive"] > a.filter-enabled {	width:88%;	background: #2E2E2E;	-moz-border-radius: 8px; -webkit-border-radius: 8px; border-radius: 8px;	color : #B9121B;}
+li[rel="drive"][editable="false"][executable="false"] > a > .jstree-icon {
+	background-image: url("../images/eye.png"); /** sprite-ref: sprites-icons; */
+	vertical-align : middle;
+}
+li[rel="drive"][editable="false"][executable="true"] > a > .jstree-icon {
+	background-image: url("../images/control_play.png"); /** sprite-ref: sprites-icons; */
+	vertical-align : top;
+}
+li[rel="drive"][editable="false"] > a > .jstree-icon {
+	background-image: url("../images/accept.png"); /** sprite-ref: sprites-icons; */
+	vertical-align : top;
+}
+li[rel="drive"][editable="true"][creatable="false"][deletable="false"]> a > .jstree-icon {
+	background-image: url("../images/pencil.png"); /** sprite-ref: sprites-icons; */
+	vertical-align : middle;
+}
+li[rel="drive"][editable="true"][creatable="true"][deletable="true"] > a > .jstree-icon {
+	background-image: url("../images/star_2.png"); /** sprite-ref: sprites-icons; */
+	vertical-align : top;
+}
+
+
+li[milestones-dont-allow-click="true"] > a { color: gray; }
+li[rel="requirement"][synchronized="true"] > a { color: gray; }
+
+li[editable="false"] a {	color: gray;}
+li[editable="false"] a.jstree-clicked, li[rel="folder"][editable="false"] a.jstree-hovered {	color: #FFFFFF;}
+
+
+
+li[rel="drive"] > a > .jstree-icon{
+	background-image: url("../images/root.png"); /** sprite-ref: sprites-icons; */
+}
+li[rel="folder"] > a > .jstree-icon{
+	background-image: url("../images/Icon_Tree_Folder.png"); /** sprite-ref: sprites-icons; */
+}
+li[rel="test-case"] > a > .jstree-icon{
+	background-image: url("../images/Icon_Tree_TestCase.png");  /** sprite-ref: sprites-icons; */
+}
+
+li[rel="folder"][sync-folder-type="TARGET"][sync-status="FAILURE"] > a > .jstree-icon{
+	background-image: url("../images/Sync_Folder_Failure.png"); /** sprite-ref: sprites-icons; */
+}
+
+
+@import url("testCaseTreeIcons.css");
+
+li[rel="campaign"] > a > .jstree-icon{
+	background-image: url("../images/Icon_Tree_Campaign.png");  /** sprite-ref: sprites-icons; */
+}
+
+li[rel="iteration"] > a > .jstree-icon {
+	background-image: url("../images/Icon_Tree_Iteration.png")
+}
+
+li[rel="test-suite"] > a > .jstree-icon{
+	width: 32px;
+	background-position: left, right;
+}
+
+li[rel="test-suite"][executionstatus="SUCCESS"] > a > .jstree-icon {
+	background-image: url("../images/Icon_Tree_TestSuite.png"), url("../images/Icon_Green.png"); /** sprite-ref: sprites-icons; */
+}
+
+li[rel="test-suite"][executionstatus="UNTESTABLE"] > a > .jstree-icon {
+	background-image: url("../images/Icon_Tree_TestSuite.png"), url("../images/Icon_White.png"); /** sprite-ref: sprites-icons; */
+}
+
+li[rel="test-suite"][executionstatus="BLOCKED"] > a > .jstree-icon {
+	background-image: url("../images/Icon_Tree_TestSuite.png"), url("../images/Icon_Yellow.png"); /** sprite-ref: sprites-icons; */
+}
+
+li[rel="test-suite"][executionstatus="FAILURE"] > a > .jstree-icon {
+	background-image: url("../images/Icon_Tree_TestSuite.png"), url("../images/Icon_Red.png"); /** sprite-ref: sprites-icons; */
+}
+
+li[rel="test-suite"][executionstatus="RUNNING"] > a > .jstree-icon {
+	background-image: url("../images/Icon_Tree_TestSuite.png"), url("../images/Icon_Blue.png"); /** sprite-ref: sprites-icons; */
+}
+
+li[rel="test-suite"][executionstatus="READY"] > a > .jstree-icon {
+	background-image: url("../images/Icon_Tree_TestSuite.png"), url("../images/Icon_Grey.png"); /** sprite-ref: sprites-icons; */
+}
+
+li[rel="test-suite"][executionstatus="SETTLED"] > a > .jstree-icon {
+	background-image: url("../images/Icon_Tree_TestSuite.png"), url("../images/Icon_GreenWhite.png"); /** sprite-ref: sprites-icons; */
+}
+
+li[rel="ta-test"] > a > .jstree-icon {
+	background-image : url("../images/cog.png"); /** sprite-ref: sprites-icons; */
+}
+
+
+div#tree-pane li a.ui-state-default, div#tree-pane li a.ui-state-active{	 border: none;}
+
+
+/*
+ * jsTree squashtest theme 1.0
+ * Supported features: dots/no-dots, icons/no-icons, focused, loading
+ */
+
+.jstree-squashtest li,
+.jstree-squashtest ins { background-image:url("../images/squashtree.png"); background-repeat:no-repeat; background-color:transparent; }
+.jstree-squashtest li { background-position:-90px 0; background-repeat:repeat-y;  }
+.jstree-squashtest li.jstree-last { background:transparent; }
+.jstree-squashtest .jstree-open > ins { background-position:-72px 0; }
+.jstree-squashtest .jstree-closed > ins { background-position:-54px 0; }
+.jstree-squashtest .jstree-leaf > ins { background-position:-36px 0; }
+
+
+.jstree-squashtest a.jstree-loading .jstree-icon {
+	background-position :center center ;
+	background-image:url("../images/throbber.gif")  !important;
+	background-repeat : no-repeat;
+}
+
+.jstree-squashtest.jstree-focused { background:white; }
+
+.jstree-squashtest .jstree-no-dots li,
+.jstree-squashtest .jstree-no-dots .jstree-leaf > ins { background:transparent; }
+.jstree-squashtest .jstree-no-dots .jstree-open > ins { background-position:-18px 0; }
+.jstree-squashtest .jstree-no-dots .jstree-closed > ins { background-position:0 0; }
+
+.jstree-squashtest .jstree-no-icons a .jstree-icon { display:none; }
+
+#vakata-dragged.jstree-squashtest ins { background:transparent !important; }
+#vakata-dragged.jstree-squashtest .jstree-ok {
+	background: url("../images/squashtree.png") -2px -53px no-repeat !important;
+}
+
+#vakata-dragged.jstree-squashtest .jstree-invalid {
+	background :url("../images/squashtree.png") -18px -53px no-repeat !important ;
+}
+
+#jstree-marker.jstree-squashtest {
+	background:url("../images/squashtree.png") -41px -57px no-repeat  !important;
+}
+
+.jstree-squashtest a.jstree-search { color:aqua; }
+
+#vakata-contextmenu.jstree-squashtest-context,
+#vakata-contextmenu.jstree-squashtest-context li ul { background:#f0f0f0; border:1px solid #979797; -moz-box-shadow: 1px 1px 2px #999; -webkit-box-shadow: 1px 1px 2px #999; box-shadow: 1px 1px 2px #999; }
+#vakata-contextmenu.jstree-squashtest-context li { }
+#vakata-contextmenu.jstree-squashtest-context a { color:black; }
+
+#vakata-contextmenu.jstree-squashtest-context li.jstree-contextmenu-disabled a,
+#vakata-contextmenu.jstree-squashtest-context li.jstree-contextmenu-disabled a:hover { color:silver; background:transparent; border:0; padding:1px 4px; }
+#vakata-contextmenu.jstree-squashtest-context li.vakata-separator { background:white; border-top:1px solid #e0e0e0; margin:0; }
+#vakata-contextmenu.jstree-squashtest-context li ul { margin-left:-4px; }
+
+

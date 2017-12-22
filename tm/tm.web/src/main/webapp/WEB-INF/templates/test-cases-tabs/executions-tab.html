@@ -1,0 +1,137 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" th:remove="tag">
+<head th:remove="all">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" />
+	<link rel="shortcut icon" type="image/x-icon" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}"/>
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.blue.css" />
+
+    <script type="text/javascript" th:inline="javascript">
+    /* <![CDATA[ */
+      var squashtm = {};
+      squashtm.app = {};
+      /* ]]> */
+    </script>
+</head>
+<body th:remove="tag">
+	<div id="navigation" th:remove="all">
+		NAVBAR
+	</div>
+
+	<div id="workspace" th:remove="tag">
+		<div id="workspace-title" th:remove="all">
+			<div class="snap-left">
+				<h2 th:text="#{workspace.report.title}">Espace Rapport</h2>
+			</div>
+			<div class="snap-right">
+ 				<div class="main-menubar">
+ 					MENUBAR
+				</div>
+			</div>
+		</div>
+
+		<div id="left-pane" th:remove="all">
+ 		</div>
+
+		<div id="contextual-content" class="no-resizable-contextual-content" th:remove="tag">
+<!-- TAB FRAGMENT-->
+          <div id="execs-pane" class="unstyled">
+  			<table id="execs-table" class="unstyled-table">
+  				<thead>
+  					<tr>
+  						<th class="not-displayed">Id</th>
+  						<th th:text="#{label.project}">Project</th>
+  						<th th:text="#{label.Campaign}">Campaign</th>
+  						<th th:text="#{label.iteration}">Iteration</th>
+  						<th th:text="#{label.execution}">Execution</th>
+  						<th th:text="#{label.execution.mode}">Mode</th>
+  						<th th:text="#{label.testSuite}">Test suite</th>
+  						<th class="not-displayed">Raw status</th>
+  						<th th:text="#{label.execution.status}">Status</th>
+  						<th th:text="#{label.execution.lastRunBy}">Run by</th>
+  						<th th:text="#{label.execution.lastRunOn}">Run on</th>
+  						<th th:text="#{label.Dataset}">Dataset</th>
+  					</tr>
+  				</thead>
+  				<tbody>
+  					<tr th:each="exec : ${execs}" th:object="${exec}">
+  						<td th:text="*{id}" class="not-displayed exec-id">1</td>
+  						<td th:text="*{testPlan.iteration.project.name}">Project XX</td>
+  						<td th:text="*{testPlan.iteration.campaign.name}">Campaign YY</td>
+  						<td th:text="*{testPlan.iteration.name}">Iteration YY</td>
+  						<td class="exec-name"><a href="/executions/1/info" th:href="@{'/executions/'} + *{id}" th:text="*{name} + ' (Exec.#'+ (1+ *{executionOrder}) +')'">Execution ZZ</a></td>
+  						<td th:text="#{*{executionMode.i18nKey}}">Mode ??</td>
+  						<td th:text="*{testPlan.testSuiteNames}">Test Suite AA</td>
+  						<td th:text="*{executionStatus}"  class="not-displayed raw-exec-status">BLOCKED</td>
+  						<td th:text="#{*{executionStatus.i18nKey}}" class="exec-status" >Status ??</td>
+  						<td th:text="*{lastExecutedBy}">Peter Parker</td>
+  						<td th:text="*{lastExecutedOn == null ? #messages.msg('squashtm.nodata') : #dates.format(lastExecutedOn,#messages.msg('squashtm.dateformatShort'))}">01/02/2013</td>
+  						<td th:text="${#strings.isEmpty(exec.datasetLabel) ? '__#{label.noneDS}__' : exec.datasetLabel }">my dataset</td>
+  					</tr>
+  					<tr th:remove="all">
+  						<td class="not-displayed exec-id">1</td>
+  						<td>Project XX</td>
+  						<td>Campaign YY</td>
+  						<td>Iteration YY</td>
+  						<td class="exec-name"><a href="/executions/1/info">Execution ZZ</a></td>
+  						<td>Mode ??</td>
+  						<td>Test Suite AA</td>
+  						<td class="not-displayed raw-exec-status">RUNNING</td>
+  						<td class="exec-status exec-status-label exec-status-running">Status ??</td>
+  						<td>Peter Parker</td>
+  						<td>01/02/2013</td>
+  					</tr>
+  				</tbody>
+  			</table>
+            <script type="text/javascript" th:inline="javascript">
+            /* <![CDATA[ */
+                var squashtm = squashtm || {};
+                squashtm.app = squashtm.app || {};
+                squashtm.app.contextRoot = /*[[ @{/} ]]*/ "../../scripts";
+                squashtm.app.testCaseExecutionsTable = {
+                  languageUrl: /*[[ @{/datatables/messages} ]]*/ "http://localhost:8080/squash/datatables/messages",
+                  displayLength: /*[[ ${executionsPageSize} ]]*/ 50,
+                  ajaxSource: /*[[ @{'/test-cases/' + ${testCaseId} + '/executions'} ]]*/ "http://localhost:8080/squash/test-cases/1/executions",
+                  deferLoading: /*[[ ${#lists.size(execs)} ]]*/ 1
+                };
+                /* ]]> */
+            </script>
+            <script type="text/javascript" th:inline="javascript">
+            /* <![CDATA[ */
+              require([ "common" ], function() {
+                require([ "jquery", "test-case-management/ExecutionsTableController" ], function($, ExecutionsTableController) {
+                  $(function(){
+              	    ExecutionsTableController.init();
+                  });
+                });
+              });
+                /* ]]> */
+            </script>
+  		  </div>
+<!-- /TAB FRAGMENT -->
+  		</div>
+	</div>
+</body>
+</html>

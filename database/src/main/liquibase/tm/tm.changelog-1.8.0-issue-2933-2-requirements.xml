@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<!-- =========== REQUIREMENT LIBRARY NODES =========== -->
+	<changeSet id="tm-1.8.0.issue-2933-req-01" author="mpagnon">
+		
+		<comment>save ids of requirements nodes to delete</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'RLN', rln.RLN_ID
+			from REQUIREMENT_LIBRARY_NODE rln
+			where not exists (
+			select 1 from RLN_RELATIONSHIP  where RLN_RELATIONSHIP.DESCENDANT_ID = rln.RLN_ID UNION
+			select 1 from REQUIREMENT_LIBRARY_CONTENT where REQUIREMENT_LIBRARY_CONTENT.CONTENT_ID = rln.RLN_ID 
+			)
+			;
+			
+		</sql>
+		<comment>store info if exist requirement nodes to delete</comment>
+		<sql>
+			insert into IS_TO_DELETE
+			(NAME, TOTAL)
+			select 'RLN', count(1)
+			from
+			ENTITIES_TO_DELETE where NAME = 'RLN'
+			;
+		</sql>
+		
+	</changeSet>
+
+	<changeSet id="tm-1.8.0.issue-2933-req-02" author="mpagnon">
+		
+		<comment>add ids of children</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select distinct 'RLN',
+			rlnrc.DESCENDANT_ID
+			from RLN_RELATIONSHIP_CLOSURE rlnrc,
+			ENTITIES_TO_DELETE etd
+			where etd.NAME = 'RLN'
+			and etd.ID =
+			rlnrc.ANCESTOR_ID
+			;
+		</sql>
+
+
+		<comment>save ids of resources</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'RESOURCE',
+			rv.RES_ID
+			from REQUIREMENT_VERSION rv , ENTITIES_TO_DELETE etd
+			where
+			etd.ID = rv.REQUIREMENT_ID
+			and etd.NAME = 'RLN'
+			;
+			
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'RESOURCE', rf.RES_ID
+			from REQUIREMENT_FOLDER rf, ENTITIES_TO_DELETE etd
+			where etd.ID = rf.RLN_ID
+			and etd.NAME = 'RLN'
+			;
+		</sql>
+		<comment>save requirement_version_coverages ids</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select
+			'REQUIREMENT_VERSION_COVERAGE', rvc.REQUIREMENT_VERSION_COVERAGE_ID
+			from REQUIREMENT_VERSION_COVERAGE rvc, ENTITIES_TO_DELETE etd
+			where
+			rvc.VERIFIED_REQ_VERSION_ID = etd.ID
+			and etd.NAME = 'RESOURCE'
+			;
+		</sql>
+		<comment>save if requirement_version_coverage to delete</comment>
+		<sql>
+			insert into IS_TO_DELETE
+			(NAME, TOTAL)
+			select
+			'REQUIREMENT_VERSION_COVERAGE', count(1)
+			from ENTITIES_TO_DELETE where
+			NAME = 'REQUIREMENT_VERSION_COVERAGE'
+			;
+		</sql>
+	</changeSet>
+
+	<changeSet id="tm-1.8.0.issue-2933-req-03" author="mpagnon">
+	
+		<comment>delete verifying_steps</comment>
+		<sql>
+			delete from VERIFYING_STEPS
+			where REQUIREMENT_VERSION_COVERAGE_ID
+			in
+			(
+			select ID from ENTITIES_TO_DELETE
+			where NAME =
+			'REQUIREMENT_VERSION_COVERAGE'
+			)
+			;
+		</sql>
+			
+		<comment>delete requirement_version_coverages</comment>
+		<sql>
+			delete from REQUIREMENT_VERSION_COVERAGE
+			where
+			REQUIREMENT_VERSION_COVERAGE_ID in
+			(
+			select ID from ENTITIES_TO_DELETE
+			where NAME =
+			'REQUIREMENT_VERSION_COVERAGE'
+			)
+			;
+		</sql>
+
+	</changeSet>
+
+	<changeSet id="tm-1.8.0.issue-2933-req-04" author="mpagnon">
+		
+		<comment>save ids of requirement_version cufs values to delete</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select
+			'CUSTOM_FIELD_VALUE' , cfv.CFV_ID
+			from CUSTOM_FIELD_VALUE cfv,
+			ENTITIES_TO_DELETE etd
+			where etd.ID = cfv.BOUND_ENTITY_ID
+			and etd.NAME = 'RESOURCE'
+			and cfv.BOUND_ENTITY_TYPE = 'REQUIREMENT_VERSION'
+			;
+		</sql>
+
+		<comment>save ids of attachment_lists</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'ATTACHMENT_LIST',
+			r.ATTACHMENT_LIST_ID
+			from RESOURCE r , ENTITIES_TO_DELETE etd
+			where
+			etd.ID = r.RES_ID
+			and etd.NAME = 'RESOURCE'
+			;
+		</sql>
+		<comment>save ids of requirement_audit_event</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select
+			'REQUIREMENT_AUDIT_EVENT', rae.EVENT_ID
+			from REQUIREMENT_AUDIT_EVENT
+			rae, ENTITIES_TO_DELETE etd
+			where etd.NAME = 'RESOURCE'
+			and etd.ID =
+			rae.REQ_VERSION_ID
+			;
+		</sql>
+		<comment>delete requirement_large_property_change</comment>
+		<sql>
+			delete from REQUIREMENT_LARGE_PROPERTY_CHANGE
+			where EVENT_ID in
+			(select ID from ENTITIES_TO_DELETE where NAME =
+			'REQUIREMENT_AUDIT_EVENT')
+			;
+		</sql>
+		<comment>delete requirement_creation</comment>
+		<sql>
+			delete from REQUIREMENT_CREATION
+			where exists (select 1 from	ENTITIES_TO_DELETE 
+			where NAME = 'REQUIREMENT_AUDIT_EVENT'
+			and ENTITIES_TO_DELETE.ID  = REQUIREMENT_CREATION.EVENT_ID
+			)
+			;
+		</sql>
+		<comment>delete requirement_property_change</comment>
+		<sql>
+			delete from REQUIREMENT_PROPERTY_CHANGE
+			where exists (select 1 
+			from ENTITIES_TO_DELETE where NAME = 'REQUIREMENT_AUDIT_EVENT' and REQUIREMENT_PROPERTY_CHANGE.EVENT_ID = ENTITIES_TO_DELETE.ID )
+			;
+		</sql>
+		<comment>delete requirement_audit_event</comment>
+		<sql>
+			delete from REQUIREMENT_AUDIT_EVENT
+			where exists (select 1
+			from ENTITIES_TO_DELETE where NAME = 'REQUIREMENT_AUDIT_EVENT' and ID = REQUIREMENT_AUDIT_EVENT.EVENT_ID)
+			;
+		</sql>
+		<comment>set current_version to null</comment>
+		<sql>
+			update REQUIREMENT 
+			set CURRENT_VERSION_ID = null
+			where exists  (select 1
+			from ENTITIES_TO_DELETE where NAME = 'RLN' and ID = REQUIREMENT.RLN_ID)
+			;
+		</sql>
+		<comment>delete requirement_version</comment>
+		<sql>
+			delete from REQUIREMENT_VERSION
+			where exists (select 1 from
+			ENTITIES_TO_DELETE where NAME = 'RESOURCE' and ID = REQUIREMENT_VERSION.RES_ID)
+			;
+		</sql>
+
+		<comment>delete rln_relationship</comment>
+		<sql>
+			delete from RLN_RELATIONSHIP
+			where exists (select 1
+			from
+			ENTITIES_TO_DELETE where NAME = 'RLN' and ID = RLN_RELATIONSHIP.DESCENDANT_ID)
+			;
+		</sql>
+		<comment>delete rln_relationship_closure </comment>
+		<sql>
+			delete from RLN_RELATIONSHIP_CLOSURE
+			where  exists
+			(select 1 from
+			ENTITIES_TO_DELETE where NAME = 'RLN' and RLN_RELATIONSHIP_CLOSURE.DESCENDANT_ID = ID)
+			;
+		</sql>
+		<comment>delete requirement_folder</comment>
+		<sql>
+			delete from REQUIREMENT_FOLDER
+			where  exists (select 1 from
+			ENTITIES_TO_DELETE where NAME = 'RLN' and ID = REQUIREMENT_FOLDER.RLN_ID)
+			;
+		</sql>
+		<comment>delete requirement</comment>
+		<sql>
+			delete from REQUIREMENT
+			where  exists (select 1 from
+			ENTITIES_TO_DELETE where NAME = 'RLN' and ID = REQUIREMENT.RLN_ID)
+			;
+		</sql>
+		<comment>delete requirement_library_node</comment>
+		<sql>
+			delete from REQUIREMENT_LIBRARY_NODE
+			where exists (select 1
+			from
+			ENTITIES_TO_DELETE where NAME = 'RLN' and ID = REQUIREMENT_LIBRARY_NODE.RLN_ID)
+			;
+		</sql>
+		<comment>delete simple_resource</comment>
+		<sql>
+			delete from SIMPLE_RESOURCE
+			where exists (select 1 from
+			ENTITIES_TO_DELETE where NAME = 'RESOURCE' and ID = SIMPLE_RESOURCE.RES_ID)
+			;
+		</sql>
+		<comment>delete resources</comment>
+		<sql>
+			delete from RESOURCE
+			where exists (select ID from
+			ENTITIES_TO_DELETE where NAME =
+			'RESOURCE' and RESOURCE.RES_ID = ID)
+			;
+		</sql>
+	</changeSet>
+	<!-- =========== /REQUIREMENT LIBRARY NODES =========== -->
+
+
+
+</databaseChangeLog>

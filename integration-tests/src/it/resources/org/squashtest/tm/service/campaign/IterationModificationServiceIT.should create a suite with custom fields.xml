@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-2" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-3" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-4" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-5" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-6" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-7" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-8" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-9" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-10" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-11" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-12" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1010" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1011" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1020" />
+
+  <PROJECT PROJECT_ID="-1" ATTACHMENT_LIST_ID="-1" CREATED_ON="2012-10-10" CREATED_BY="2012-10-10" NAME="nope" />
+  <CUSTOM_FIELD LABEL="" CODE="" FIELD_TYPE="CF" NAME="" INPUT_TYPE="PLAIN_TEXT" CF_ID="-1" DEFAULT_VALUE="winklepicker" />
+  <CUSTOM_FIELD_BINDING BOUND_ENTITY="TEST_SUITE" CFB_ID="-1" POSITION="0" BOUND_PROJECT_ID="-1" CF_ID="-1"/>
+
+  <CAMPAIGN_LIBRARY_NODE ATTACHMENT_LIST_ID="-1" CREATED_ON="2012-02-01" CREATED_BY="DBU" CLN_ID="-1"
+    NAME="c" PROJECT_ID="-1" />
+  <CAMPAIGN ACTUAL_START_AUTO="false" ACTUAL_END_AUTO="false" CLN_ID="-1" />
+  
+  <!-- ITERATIONS -->
+  <ITERATION NAME="source" ITERATION_ID="-1" ACTUAL_END_AUTO="FALSE" ACTUAL_START_AUTO="FALSE"
+    ACTUAL_START_DATE="2011-01-01" ACTUAL_END_DATE="2011-01-02" SCHEDULED_START_DATE="2011-01-01" SCHEDULED_END_DATE="2011-01-02"
+    CREATED_BY="DBU" CREATED_ON="2010-02-01" ATTACHMENT_LIST_ID="-1" />
+
+  <CAMPAIGN_ITERATION CAMPAIGN_ID="-1" ITERATION_ORDER="0" ITERATION_ID="-1" />
+
+  <!-- 1 TEST CASE WITH 3 TEST STEPS -->
+  <TEST_CASE_LIBRARY_NODE TCLN_ID="-1" NAME="test case 1" CREATED_BY="DBU" CREATED_ON="2010-02-01"
+    ATTACHMENT_LIST_ID="-3" />
+  <TEST_CASE TCLN_ID="-1" VERSION="1" PREREQUISITE="TEST" />
+  <!-- 3 TEST CASE STEP -->
+  <TEST_STEP TEST_STEP_ID="-1" />
+  <ACTION_TEST_STEP TEST_STEP_ID="-1" ACTION="lipsum1" ATTACHMENT_LIST_ID="-5" />
+  <TEST_STEP TEST_STEP_ID="-2" />
+
+  <TEST_CASE_STEPS TEST_CASE_ID="-1" STEP_ID="-1" STEP_ORDER="0" />
+
+  <!-- TEST PLAN OF ITERATION -->
+  <ITERATION_TEST_PLAN_ITEM ITEM_TEST_PLAN_ID="-1" EXECUTION_STATUS="FAILURE" TCLN_ID="-1"
+    CREATED_BY="DBU" CREATED_ON="2011-01-01" />
+  <ITEM_TEST_PLAN_LIST ITERATION_ID="-1" ITEM_TEST_PLAN_ID="-1" ITEM_TEST_PLAN_ORDER="0" />
+  
+  <custom_field_value/>
+  
+</dataset>

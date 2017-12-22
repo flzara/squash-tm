@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet author="gfouquet" id="1">
+		<createTable tableName="CORE_USER">
+			<!-- Defines users - This table is used for authorization (not authentication !) and other Squash-related stuff -->
+			<column name="ID" autoIncrement="true" type="BIGINT">
+				<constraints primaryKey="true" nullable="false" primaryKeyName="PK_CORE_USER" />
+			</column>
+
+			<column name="LOGIN" type="VARCHAR(50)" remarks="The user's login as provided by the authentication system">
+				<constraints nullable="false" unique="true" uniqueConstraintName="CT_UNIQUE_USER_LOGIN" />
+			</column>
+
+			<column name="FIRST_NAME" type="VARCHAR(50)" remarks="The user's first name" defaultValue="">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="LAST_NAME" type="VARCHAR(50)" remarks="The user's last name" defaultValue="">
+				<constraints nullable="false" />
+			</column>
+			
+			<column name="EMAIL" type="VARCHAR(50)" remarks="The user's e-mail" defaultValue="">
+				<constraints nullable="false" />
+			</column>
+			
+			<column name="ACTIVE" type="BOOLEAN" remarks="User is active or not"
+				defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+			
+			<column name="CREATED_BY" type="java.sql.Types.VARCHAR(50)"
+				remarks="nom du createur de cet utilisateur.">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="CREATED_ON" type="DATETIME"
+				remarks="Date de creation de cet utilisateur. Il s'agit de la date de creation de l'entree dans 
+ 				la base, non d'une date metier.">
+				<constraints nullable="false" />
+			</column>
+			<column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL"
+				remarks="Date de derniere mise a jour de cette instance." />
+
+			<column name="LAST_MODIFIED_BY" type="java.sql.Types.VARCHAR(50)"
+				defaultValue="NULL"
+				remarks="Nom du dernier utilisateur ayant mis a jour cet instance." />
+		</createTable>
+
+		<createIndex tableName="CORE_USER" indexName="DX_USER_LOGIN" unique="true">
+			<column name="LOGIN" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet author="gfouquet" id="2">
+		<!-- This changeset creates group handling tables -->
+		<createTable tableName="CORE_GROUP">
+			<!-- Defines user groups -->
+			<column name="ID" autoIncrement="true" type="BIGINT">
+				<constraints primaryKey="true" nullable="false" primaryKeyName="PK_CORE_GROUP" />
+			</column>
+
+			<column name="QUALIFIED_NAME" type="VARCHAR(255)"
+				remarks="Qualified name of the group, both used as a functional key and a localization key. Should be something like 'squashtest.authz.group._app module_._GroupName_'">
+				<constraints nullable="false" unique="true" uniqueConstraintName="CT_UN_GRP_QUAL_NAME" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet author="gfouquet" id="3">
+		<createTable tableName="CORE_GROUP_AUTHORITY">
+			<!-- Defines the authorities for a group. Authorities are "values" of the group i.e. Their lifecycle is bound to the group's 
+				lifecycle. -->
+			<column name="GROUP_ID" type="BIGINT" remarks="Shared key with CORE_GROUP table">
+				<constraints nullable="false" references="CORE_GROUP(ID)" foreignKeyName="FK_GRP_AUTH_GRP" />
+			</column>
+
+			<column name="AUTHORITY" type="VARCHAR(50)" remarks="The authority">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createIndex tableName="CORE_GROUP_AUTHORITY" indexName="DX_GRP_ID" unique="false">
+			<column name="GROUP_ID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet author="gfouquet" id="4">
+		<createTable tableName="CORE_GROUP_MEMBER">
+			<!-- Defines the members of a group. -->
+			<column name="USER_ID" type="BIGINT">
+				<constraints nullable="false" references="CORE_USER(ID)" foreignKeyName="FK_GRP_MEMBER_USR" />
+			</column>
+
+			<column name="GROUP_ID" type="BIGINT">
+				<constraints nullable="false" references="CORE_GROUP(ID)" foreignKeyName="FK_GRP_MEMBER_GRP" />
+			</column>
+		</createTable>
+
+		<createIndex tableName="CORE_GROUP_MEMBER" indexName="DX_GRP_MEMBER" unique="true">
+			<column name="USER_ID" />
+			<column name="GROUP_ID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="5" author="gfouquet">
+		<!-- Populates the groups and adds an administrator -->
+		<insert tableName="CORE_GROUP">
+			<column name="QUALIFIED_NAME" value="squashtest.authz.group.core.Admin" />
+		</insert>
+
+		<insert tableName="CORE_GROUP_AUTHORITY">
+			<column name="GROUP_ID" valueComputed="(select max(ID) from CORE_GROUP)" />
+			<column name="AUTHORITY" value="ROLE_ADMIN" />
+		</insert>
+
+		<insert tableName="CORE_GROUP_AUTHORITY">
+			<column name="GROUP_ID" valueComputed="(select max(ID) from CORE_GROUP)" />
+			<column name="AUTHORITY" value="ROLE_USER" />
+		</insert>
+
+		<insert tableName="CORE_USER">
+			<column name="LOGIN" value="admin" />
+			<column name="LAST_NAME" value="Squash Administrator" />
+			<column name="EMAIL" value="admin@squashtest.org" />
+			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP" />
+			<column name="CREATED_BY" value="liquibase" />
+		</insert>
+
+		<insert tableName="CORE_GROUP_MEMBER">
+			<column name="USER_ID" valueComputed="(select max(ID) from CORE_USER)" />
+			<column name="GROUP_ID" valueComputed="(select max(ID) from CORE_GROUP)" />
+		</insert>
+	</changeSet>
+
+	<changeSet id="7" author="gfouquet">
+		<createTable tableName="ACL_CLASS">
+			<!-- The class of a CORE_ACL_OBJECT_IDENTITY entry to which permissions are granted. -->
+			<column name="ID" autoIncrement="true" type="BIGINT">
+				<constraints primaryKey="true" nullable="false" primaryKeyName="PK_ACL_CLASS" />
+			</column>
+
+			<column name="CLASSNAME" type="VARCHAR(255)" remarks="Fully qualified classname">
+				<constraints nullable="false" unique="true" uniqueConstraintName="CT_UN_CLASSNAME" />
+			</column>
+		</createTable>
+
+		<createIndex tableName="ACL_CLASS" indexName="DX_CLASS_NAME" unique="true">
+			<column name="CLASSNAME" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="8" author="gfouquet">
+		<createTable tableName="ACL_OBJECT_IDENTITY">
+			<!-- References entities to which ACL are applied using their class and entity ID -->
+			<column name="ID" autoIncrement="true" type="BIGINT">
+				<constraints primaryKey="true" nullable="false" primaryKeyName="PK_ACL_OBJECT_ID" />
+			</column>
+
+			<column name="IDENTITY" type="BIGINT" remarks="The id of the target entity">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="CLASS_ID" type="BIGINT" value="FK to the CORE_ACL_CLASS which represents the target entity's class">
+				<constraints nullable="false" foreignKeyName="FK_ACL_OBJ_ID_ACL_CLASS" references="ACL_CLASS(ID)" />
+			</column>
+		</createTable>
+
+		<addUniqueConstraint tableName="ACL_OBJECT_IDENTITY" columnNames="IDENTITY, CLASS_ID" />
+
+		<createIndex tableName="ACL_OBJECT_IDENTITY" indexName="DX_OBJ_ID_IDENTITY" unique="false">
+			<column name="IDENTITY" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet author="gfouquet" id="9">
+		<createTable tableName="ACL_GROUP">
+			<!-- Defines a group of access controls. -->
+			<column name="ID" autoIncrement="true" type="BIGINT">
+				<constraints primaryKey="true" nullable="false" primaryKeyName="PK_ACL_GRP" />
+			</column>
+
+			<column name="QUALIFIED_NAME" type="VARCHAR(255)" remarks="Group's qualified name, both used as a functional key and a localization key. Should be something like 'squashtest.acl.group._app module_._GroupName_'">
+				<constraints nullable="false" unique="true" uniqueConstraintName="CT_UN_ACL_GRP_QUAL_NAME" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet author="gfouquet" id="10">
+		<createTable tableName="ACL_GROUP_PERMISSION">
+			<!-- Defines the perimssions of an ACL group for a certain type of entities -->
+			<column name="ACL_GROUP_ID" type="BIGINT">
+				<constraints nullable="false" references="ACL_GROUP(ID)" foreignKeyName="FK_ACL_GRP_PERMISSION_ACL_GRP" />
+			</column>
+
+			<column name="PERMISSION_MASK" type="INT" defaultValueNumeric="0"
+				remarks="Mask of permissions as defined by spring security">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="CLASS_ID" type="BIGINT" remarks="The class to which the permissions apply">
+				<constraints nullable="false" foreignKeyName="FK_SC_AUTH_ACL_CLASS" references="ACL_CLASS(ID)" />
+			</column>
+
+			<!-- "ORDER" is rejected on MySQL -->
+			<column name="PERMISSION_ORDER" type="INT" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="GRANTING" type="BOOLEAN" defaultValueBoolean="true">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<addPrimaryKey tableName="ACL_GROUP_PERMISSION" columnNames="ACL_GROUP_ID, CLASS_ID, PERMISSION_MASK" constraintName="PK_ACL_GRP_PERMISSION" />
+		
+	</changeSet>
+
+	<changeSet author="gfouquet" id="11">
+		<createTable tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">
+			<!-- Defines the scope of responsibilities of a user, i.e. which group of permissions she has on an entity -->
+			<column name="ID" autoIncrement="true" type="BIGINT">
+				<constraints primaryKey="true" nullable="false" primaryKeyName="PK_RESP_SCOPE_ENTRY" />
+			</column>
+
+			<column name="USER_ID" type="BIGINT">
+				<constraints nullable="false" references="CORE_USER(ID)" foreignKeyName="FK_RESP_SCOPE_USER" />
+			</column>
+
+			<column name="ACL_GROUP_ID" type="BIGINT">
+				<constraints nullable="false" references="ACL_GROUP(ID)" foreignKeyName="FK_RESP_SCOPE_ACL_GRP" />
+			</column>
+
+			<column name="OBJECT_IDENTITY_ID" type="BIGINT">
+				<constraints nullable="false" references="ACL_OBJECT_IDENTITY(ID)" foreignKeyName="FK_RESP_SCOPE_OBJ_ID" />
+			</column>
+		</createTable>
+	</changeSet>
+</databaseChangeLog>

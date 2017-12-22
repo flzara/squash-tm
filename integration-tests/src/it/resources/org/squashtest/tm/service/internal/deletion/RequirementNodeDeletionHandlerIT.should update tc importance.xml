@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!-- 
+	depends on NodeDeletionDao.general.dbsetup.xml
+
+ -->
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+
+	<!--  ============================ attachment lists (unattached to anything) ===================== -->
+			
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-111" /> <!--  FOR REQVERSION 111 OF REQ 11-->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-31" /> <!--  FOR TC 31 -->
+	
+	
+	<!--  ============================ attachment_content ============================================ -->
+
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-111"    /> <!--  FOR REQVERSION 111 OF REQ 11-->
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-31"  /> <!--  FOR TC 31 -->
+	
+	<!--  ============================ attachments =================================================== -->
+	
+	<ATTACHMENT ATTACHMENT_ID="-111"  NAME="reqV 111 attach"  TYPE="txt" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="-111"  ATTACHMENT_LIST_ID="-111"  />
+	<ATTACHMENT ATTACHMENT_ID="-31"  NAME="tc 31 attach"  TYPE="txt" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="-31"  ATTACHMENT_LIST_ID="-31"  />	
+	
+	<!-- =============================== one project ================================================ -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-987"/><TEST_CASE_LIBRARY ATTACHMENT_LIST_ID="-987" TCL_ID="-1"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-989"/><REQUIREMENT_LIBRARY ATTACHMENT_LIST_ID="-989" RL_ID="-1"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-988"/><CAMPAIGN_LIBRARY ATTACHMENT_LIST_ID="-988" CL_ID="-1"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-432"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-800"/>
+	<PROJECT PROJECT_ID="-1" NAME="base project" ACTIVE="TRUE" CREATED_BY="IT" CREATED_ON="2011-08-08" 
+			 CL_ID="-1" RL_ID="-1" TCL_ID="-1" ATTACHMENT_LIST_ID="-432"/>
+	<!-- ============================ REQ======================================================== -->
+
+	<REQUIREMENT_LIBRARY_NODE RLN_ID="-11" CREATED_BY="IT" CREATED_ON="2011-08-08" /> 
+	
+	<REQUIREMENT RLN_ID="-11" />
+	
+	<REQUIREMENT_LIBRARY_NODE RLN_ID="-1" CREATED_BY="IT" CREATED_ON="2011-08-08" /> 
+	<RESOURCE CREATED_BY="admin" RES_ID="-10" CREATED_ON="2016-04-24" ATTACHMENT_LIST_ID="-800" NAME="folder" />
+	<SIMPLE_RESOURCE RES_ID="-10" />
+	<REQUIREMENT_FOLDER RLN_ID="-1" RES_ID="-10"/>
+	
+	<!-- ============================ REQ VERSIONS======================================================== -->
+	<RESOURCE RES_ID="-111" NAME="REQ V 111" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="-111"/>
+	<REQUIREMENT_VERSION RES_ID="-111" REQUIREMENT_ID="-11" VERSION_NUMBER="1" CRITICALITY="CRITICAL" REQUIREMENT_STATUS="APPROVED"/>
+	<!-- ============================ REQ_AUDIT_EVENTS ================================================ -->
+	<REQUIREMENT_AUDIT_EVENT EVENT_ID="-111" REQ_VERSION_ID="-111" EVENT_DATE="2012-01-02" AUTHOR="DBU"/>
+	<REQUIREMENT_CREATION EVENT_ID="-111" />
+	
+	<!-- ============================ TC ================================================ -->
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-31" NAME="TC1" CREATED_ON="2012-01-02" CREATED_BY="DBU" PROJECT_ID="-1" ATTACHMENT_LIST_ID="-31"/>
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-31" VERSION="1" IMPORTANCE="HIGH" IMPORTANCE_AUTO="TRUE" EXECUTION_MODE="MANUAL"/>
+	<!-- ============================ TC / REQUIREMENT================================================ -->
+	<REQUIREMENT_VERSION_COVERAGE VERIFIED_REQ_VERSION_ID="-111" VERIFYING_TEST_CASE_ID="-31"/>
+	<RLN_RELATIONSHIP DESCENDANT_ID="-11" CONTENT_ORDER="0" ANCESTOR_ID="-1"/>
+</dataset>

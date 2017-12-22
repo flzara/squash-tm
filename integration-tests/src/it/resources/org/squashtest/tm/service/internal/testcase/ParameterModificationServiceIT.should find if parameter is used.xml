@@ -1,0 +1,42 @@
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+
+<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1"/>
+
+<!-- A TEST CASE -->
+<TEST_CASE_LIBRARY_NODE ATTACHMENT_LIST_ID="-1" TCLN_ID="-1" CREATED_ON="2012-12-10" CREATED_BY="dbu" NAME="tc1"/>
+<TEST_CASE TCLN_ID="-1" PREREQUISITE="" VERSION="1"/>
+<TEST_STEP TEST_STEP_ID="-1"/>
+
+<!-- WITH ONE ACTION STEP -->
+<ACTION_TEST_STEP TEST_STEP_ID="-1" ACTION="blabla ${parameter1} blab lab '${'bla bla  "/>
+<TEST_CASE_STEPS STEP_ID="-1" TEST_CASE_ID="-1" STEP_ORDER="0"/>
+
+<!-- AND ONE CALL STEP -->
+<TEST_CASE_LIBRARY_NODE ATTACHMENT_LIST_ID="-1" TCLN_ID="-2" CREATED_ON="2013-06-20" CREATED_BY="dbu" NAME=""/>
+<TEST_CASE TCLN_ID="-2" PREREQUISITE="" VERSION="1"/>
+<TEST_STEP TEST_STEP_ID="-2"/>
+<ACTION_TEST_STEP TEST_STEP_ID="-2" ACTION="blablabal ${parameter2}"/>
+<TEST_CASE_STEPS STEP_ID="-2" TEST_CASE_ID="-2" STEP_ORDER="0"/>
+<PARAMETER DESCRIPTION="" TEST_CASE_ID="-2" PARAM_ID="-4" NAME="parameter2"/>
+
+<TEST_STEP TEST_STEP_ID="-3"/>
+<CALL_TEST_STEP TEST_STEP_ID="-3" CALLED_TEST_CASE_ID="-2"/>
+<TEST_CASE_STEPS STEP_ID="-3" TEST_CASE_ID="-1" STEP_ORDER="1"/>
+
+<!-- AND 3 PARAMETERS -->
+<PARAMETER DESCRIPTION="" TEST_CASE_ID="-1" PARAM_ID="-1" NAME="parameter1"/>
+<PARAMETER DESCRIPTION="" TEST_CASE_ID="-1" PARAM_ID="-2" NAME="parameter2"/>
+<PARAMETER DESCRIPTION="" TEST_CASE_ID="-1" PARAM_ID="-3" NAME="parameter3"/>
+
+<attachment_list/>
+<test_case_library_node/>
+<test_case/>
+<action_test_step/>
+<call_test_step/>
+<test_case_steps/>
+<parameter/>
+<Dataset />
+<dataset_param_value/>
+
+</dataset>

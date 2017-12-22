@@ -1,0 +1,89 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<div th:remove="tag">
+<!--
+
+USAGE :
+
+	the next fragment accepts the following variables in its context :
+		- auditableEntity : an object representing the entity we want the general informations. MANDATORY.
+		- entityUrl : rest url of that entity. If set, this component will pull the informations itself from entityUrl/general. Defaults to null.
+		- noscript : boolean. If defined and true, the script tag below won't be included.
+
+DEV NOTES :
+
+	- th:with : the default value for entity is ${auditableEntity.getCreatedBy()}. If the entity is null this will cause an early null pointer exception, just as we need.
+ 	- ripped from general-information-panel.tag
+ -->
+  <!--
+  Feature 6763 - Add a new information 'last connected on'. This is a new panel only for "user" because the panels in "teams" and "user" were the same.
+  -->
+</div>
+
+
+
+<div th:fragment="general-information-panel-user" th:remove="tag">
+	<div class="toolbar-information-panel"
+			th:with="entity = (${auditableEntity}?: ${auditableEntity.createdBy}),
+					 rawDateformat=#{squashtm.dateformat.iso},
+					 displayDateformat=#{squashtm.dateformat},
+					 neverLabel=#{label.lower.Never},
+					 url = ${entityUrl}">
+
+		<div id="general-information-panel" class="information-panel" th:attr="data-def='url='+${url}+', never='+${neverLabel}+', format='+${displayDateformat}">
+
+			<span th:text="#{label.CreatedOn}+'&nbsp;:&nbsp;'">created on </span>
+
+			<span id="created-on">
+				<span class="datetime" th:text="${#dates.format(entity.createdOn, rawDateformat)}">2013-11-25T15:39:00</span>
+				<span class="author"   th:text="${entity.createdBy}">bob</span>
+			</span>
+
+			<br/>
+
+			<span th:text="#{label.UpdatedOn}+'&nbsp;:&nbsp;'">updated on </span>
+			<span  id="last-modified-on">
+				<span class="datetime" th:text="${entity.lastModifiedOn} ? ${#dates.format(entity.lastModifiedOn, rawDateformat)}"></span>
+				<span class="author" th:text="${entity.lastModifiedBy} ? ${entity.lastModifiedBy}"></span>
+			</span>
+
+      <br/>
+
+      <!-- Feature 6763 - Add a new line with the 'last connected on' date  -->
+      <span th:text="#{label.connectedOn}+'&nbsp;:&nbsp;'">last connected on </span>
+      <span  id="last-connected-on">
+				<span class="datetime" th:text="${user.lastConnectedOn} ? ${#dates.format(user.lastConnectedOn, rawDateformat)}"></span>
+			</span>
+
+		</div>
+		<script th:inline="javascript" type="text/javascript" th:unless="${noscript==true}">
+		/*<![CDATA[*/
+		  require(["common"], function(){
+			  require(["jquery", "page-components/general-information-panel"], function($, general){
+				  general.init();
+			  });
+		  });
+		/*]]>*/
+		</script>
+	</div>
+</div>

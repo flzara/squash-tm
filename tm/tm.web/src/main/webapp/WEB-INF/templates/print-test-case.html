@@ -1,0 +1,516 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<title th:text="#{title.print.testCase}">Imprimer cas de test</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+
+<link rel="stylesheet" type="text/css" media="all"
+	href="../../../../../../../tm/tm.web/src/main/webapp/styles/master.css"
+	sq:css="squash.core.css" />
+
+<link rel="stylesheet" type="text/css" media="all"
+	href="../../../../../../../tm/tm.web/src/main/webapp/styles/print.css"
+	sq:css="squash.print.css" />
+
+<link rel="shortcut icon" type="image/x-icon" media="all"
+	href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico"
+	th:href="@{/images/favicon.ico}" />
+
+
+<script type="text/javascript" th:inline="javascript" th:include="fragments-utils/various-headers :: env-setup"/>
+
+<!-- /common head -->
+
+
+<script data-main="../../scripts/print.js"
+  th:attr="data-main=@{/scripts/print.js}" src="../../scripts/require.js"
+  th:src="@{/scripts/require-min.js}"></script>
+</head>
+<body >
+
+	<!--=============================================TITLE================================================== -->
+	<div id="test-case-name-div" class="header green">
+
+		<div style="float: left; height: 100%;">
+			<h2
+				th:text="#{test-case.header.title}+'&nbsp;:&nbsp;'+${testCase.fullName}">
+				TestCase : 0001-testcase3</h2>
+		</div>
+		<div class="unsnap"></div>
+	</div>
+	<!-- ==========================================TOOLBAR=================================================== -->
+	<div id="test-case-toolbar" class="toolbar-class ui-corner-all">
+
+		<div
+			th:include="fragments-utils/general-information-panel :: general-information-panel"
+			th:with="auditableEntity=${testCase},entityUrl=@{/test-cases/__${testCase.id}__},noscript=${true}"
+			th:remove="tag">CREATED_BY CREATED_ON ...</div>
+
+		<div class="toolbar-button-panel"></div>
+		<div class="unsnap"></div>
+
+	</div>
+
+
+	<div class="body green">
+
+
+		<!-- ===========================================DESCRIPTION ===================================================-->
+
+		<div id="description-tab" class="tab">
+			<h3 th:text="#{label.Description}">Description</h3>
+			<div id="test-case-description-table" class="display-table">
+
+				<div class="display-table-row">
+					<label class="display-table-cell" for="test-case-id">ID</label>
+					<div class="display-table-cell" id="test-case-id"
+						th:text="${ testCase.id }">1</div>
+				</div>
+
+				<div class="display-table-row">
+					<label for="test-case-description" class="display-table-cell"
+						th:text="#{label.Description}">Description</label>
+					<div class="display-table-cell" id="test-case-description"
+						sq:unsafe-html="${testCase.description}">lorem ipsum description</div>
+				</div>
+
+				<div class="display-table-row">
+					<label class="display-table-cell" for="test-case-reference"
+						th:text="#{label.reference}">Reference</label>
+					<div class="display-table-cell" id="test-case-reference"
+						th:text="${ testCase.reference }">001</div>
+				</div>
+
+				<div class="display-table-row">
+					<label for="test-case-importance" class="display-table-cell"
+						th:text="#{ test-case.importance.combo.label }">Importance</label>
+					<div class="display-table-cell" id="test-case-importance"
+						th:text="#{__${testCase.Importance.i18nKey}__}">Mineure</div>
+				</div>
+
+				<div class="display-table-row" th:with="natLabel = ${#messages.msgOrNull('__${testCase.nature.label}__')}">
+					<label for="test-case-nature" class="display-table-cell"
+						th:text="#{ test-case.nature.combo.label }">Nature</label>
+					<div class="display-table-cell" id="test-case-nature"
+						th:text="${(natLabel != null) ? natLabel : testCase.nature.label}">Truc tic tac</div>
+				</div>
+
+				<div class="display-table-row" th:with="typLabel = ${#messages.msgOrNull('__${testCase.type.label}__')}">
+					<label for="test-case-type" class="display-table-cell"
+						th:text="#{ test-case.type.combo.label }">Type</label>
+					<div class="display-table-cell" id="test-case-type"
+						th:text="${(typLabel != null) ? typLabel : testCase.type.label}">truc</div>
+				</div>
+
+				<div class="display-table-row">
+					<label for="test-case-status" class="display-table-cell"
+						th:text="#{ test-case.status.combo.label }">Status</label>
+					<div class="display-table-cell" id="test-case-status"
+						th:text="#{ __${testCase.Status.i18nKey}__ }">Approuvé</div>
+				</div>
+
+				<div th:if="${testCase.project.testAutomationEnabled}"
+					class="display-table-row">
+
+					<label class="display-table-cell"
+						th:text="#{test-case.testautomation.section.label}">Script</label>
+					<div th:if="${testCase.automatedTest != null}"
+						class="display-table-cell"
+						th:text="${testCase.automatedTest.fullName}">Test X</div>
+					<div th:unless="${testCase.automatedTest != null}"
+						th:text="#{label.none}">None</div>
+				</div>
+
+        <div th:each="cufValue : ${testCaseCufValues}" th:object="${cufValue}" class="display-table-row">
+          <label class="display-table-cell" th:text="*{customField.label}" th:for="'cuf-' + *{customField.id}">cuf1</label>
+          <div class="display-table-cell" th:id="'cuf-' + *{customField.id}">
+            <span th:switch="*{customField.inputType.name()}" th:remove="tag">
+              <span th:remove="tag" th:case="'DATE_PICKER'"
+                th:text="*{valueAsDate == null ? #messages.msg('squashtm.nodata') : #dates.format(valueAsDate ,#messages.msg('squashtm.dateformatShort'))}">12/02/2012</span>
+              <span th:remove="tag" th:case="'CHECKBOX'" th:text="#{label.__*{value}__}">true</span>
+              <span th:remove="tag" th:case="'RICH_TEXT'" th:utext="*{value}"><span style="test-decoration">RicH</span></span>
+              <span th:remove="tag" th:case="*" th:text="*{value}">value</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+		</div>
+
+<div id="prerequisite-panel" class="panel">
+				<h4 th:text="#{generics.prerequisite.title}">Prerequisite</h4>
+				<p id="test-case-prerequisite" sq:unsafe-html="${testCase.prerequisite}">Lorem ipsum dolor sit amet,
+					consectetur adipiscing elit. Nullam felis ante, accumsan quis
+					tincidunt vel, iacu lis in purus. Pellentesque habitant morbi
+					tristique senectus et netus et malesuada fames ac turpis egestas.
+					Morbi at nisl et est egestas venenatis . Nullam venenatis, justo ac
+					hendrerit auctor, dolor velit adipiscing lacus, sed gravida enim
+					elit dictum lorem. Suspendisse eu lectus ac metus lo bortis
+					vulputate at id purus. Proin dapibus commodo velit sit amet
+					aliquet. Fusce cursus arcu vitae diam auctor vulputate. Integer et
+					nunc et ipsum scelerisque dignissim eu ultricies sem. Pellentesque
+					id commodo dui. Duis in vestibulum magna. Sed porta ante id magna
+					semper ac gravida risus dapi bus. Fusce eu ante sapien.</p>
+			</div>
+
+		<!-- ===========================================STEPS ===================================================-->
+		<div id="step-tab" class="tab">
+			<h3 th:text="#{tabs.label.steps}">Steps</h3>
+
+			<table id="test-steps-table" class="greystyle-table">
+				<thead>
+					<tr>
+						<th class="small">#</th>
+						<th th:text="#{table.column-header.has-attachment.label}">PJ.</th>
+						<th th:text="#{label.requirement.short}">Req.</th>
+						<th th:each="cufModel : ${cufDefinitions}"
+							th:text="${cufModel.label}">cuf</th>
+						<th th:text="#{label.Actions}">Actions</th>
+						<th th:text="#{label.ExpectedResults}">Expected results</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="step : ${stepsData}" th:object="${step}">
+						<td th:text="*{['step-index']}">1</td>
+						<td
+							th:text="*{['step-type'] == 'call' ?  '' : ['nb-attachments']}">0</td>
+						<td
+							th:text="*{['step-type'] == 'call' ?  '' : ['nb-requirements']}">0</td>
+
+                        <td th:each="cufModel : ${cufDefinitions}" th:object="${step['customFields']['__${cufModel['code']}__']}">
+                          <span th:if="${step['step-type'] == 'action'}" th:switch="${cufModel.inputType.enumName}" th:remove="tag">
+                            <span th:remove="tag" th:case="'DATE_PICKER'"
+                              th:text="*{valueAsDate == null ? #messages.msg('squashtm.nodata') : #dates.format(valueAsDate ,#messages.msg('squashtm.dateformatShort'))}">12/02/2012</span>
+                            <span th:remove="tag" th:case="'CHECKBOX'" th:text="#{label.__*{value}__}">true</span> <span
+                              th:remove="tag" th:case="*" th:text="*{value}">value</span>
+                        </span>
+                        </td>
+
+                        <!--  spring EL is a good language but sometimes WTF hits you right in the face -->
+                        <td th:if="*{['step-type'] == 'call'}"
+                             th:with="tcname = *{['call-step-info'].calledTcName},
+                                      dsname = *{
+                                                  ['call-step-info'].paramMode == 'DELEGATE' ? '__#{label.callstepdataset.Delegate}__' :
+                                                  ['call-step-info'].paramMode == 'CALLED_DATASET' ? ['call-step-info'].calledDatasetName :
+                                                  '__#{label.callstepdataset.PickDataset}__'
+                                                }"
+                             colspan="2"
+                             th:text="#{test-case.call-step.action.template(${tcname}, ${dsname})}">Cas de Test : Machin truc chouette</td>
+
+            			<td th:if="*{['step-type'] == 'action'}"
+            				sq:unsafe-html="*{['step-action']}">Lorem ipsum dolor sit amet,
+            				consectetur adipiscing elit. Nullam felis ante, accumsan quis
+            				tincidunt vel, iacu lis in purus. Pellentesque habitant morbi
+            				tristique senectus et netus et malesuada fames ac turpis egestas.
+            				Morbi at nisl et est egestas venenatis . Nullam venenatis, justo
+            				ac hendrerit auctor, dolor velit adipiscing lacus, sed gravida
+            				enim elit dictum lorem. Suspendisse eu lectus ac metus lo bortis
+            				vulputate at id purus. Proin dapibus commodo velit sit amet</td>
+            			<td th:if="*{['step-type'] == 'action'}" sq:unsafe-html="*{['step-result']}">
+            				Morbi at nisl et est egestas venenatis . Nullam venenatis, justo
+            				ac hendrerit auctor, dolor velit adipiscing lacus, sed gravida
+            				enim elit dictum lorem. Suspendisse eu lectus ac metus lo bortis
+            				vulputate at id purus. Proin dapibus commodo velit sit amet</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<!-- ===========================================PARAMETERS ===================================================-->
+		<div id="parameters-tab" class="tab">
+			<h3 th:text="#{label.parameters}">Parameters</h3>
+
+			<table id="parameters-table" class="greystyle-table">
+					<thead>
+						<tr>
+
+							<th class="small">#</th>
+							<th th:text="#{label.Name}">Name</th>
+							<th th:text="#{label.Description}">Description</th>
+							<th th:text="#{test-case.name.label}">Cas de Test</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="paramData , iterStat : ${paramDatas}" th:object="${paramData}"
+                            th:class="*{['directly-associated']}? 'directVerification' : 'indirectVerification'">
+							<td th:text="${iterStat.count}">1</td>
+							<td th:text="*{[name]}">param_1</td>
+							<td sq:unsafe-html="*{[description]}">description</td>
+							<td th:text="*{['test-case-name']}">test case 1 (project 1)</td>
+						</tr>
+					</tbody>
+			</table>
+
+		</div>
+			<!-- ===========================================PARAMETERS ===================================================-->
+
+		<div id="datasets-tab" class="tab">
+			<h3 th:text="#{label.datasets}">Datasets</h3>
+
+			<table id="datasets-table" class="greystyle-table">
+					<thead>
+						<tr>
+							<th class="small">#</th>
+							<th th:text="#{label.Name}">Name</th>
+							<th th:each="paramId : ${paramIds}"
+								th:text="${paramHeadersById['__${paramId}__']}">param1</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="dataset , iterStat : ${datasetsparamValuesById}" >
+							<td th:text="${iterStat.count}">1</td>
+							<td th:text="${dataset[0]}">dataset</td>
+							<td th:each="paramId : ${paramIds}"
+								th:text="${dataset[1]['__${paramId}__']}">param1</td>
+						</tr>
+					</tbody>
+			</table>
+
+		</div>
+
+		<!-- ===========================================REQUIREMENTS ===================================================-->
+
+		<div id="verified-requirement-tab" class="tab">
+			<h3 th:text="#{label.verifiedRequirements.test-cases}">Verified
+				requirements</h3>
+
+			<table id="verified-requirements-table" class="greystyle-table">
+				<thead>
+					<tr>
+						<th class="small">#</th>
+						<th th:text="#{label.project}">Project</th>
+						<th th:text="#{report.requirementexport.id}">Id</th>
+						<th th:text="#{label.Reference}">Ref</th>
+						<th th:text="#{requirement.name.label}">Name</th>
+						<th th:text="#{requirement-version.version-number.label}">Version</th>
+						<th th:text="#{requirement.criticality.label}">Criticality</th>
+						<th th:text="#{requirement.category.label}">Category</th>
+						<th th:text="#{label.test-step.short}">Step</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="verifReq, iterStat : ${verifiedRequirements}"
+						th:object="${verifReq}"
+						th:class="*{directVerification}? 'directVerification' : 'indirectVerification'"
+                        th:with="catLabel = ${#messages.msgOrNull('__${verifReq.category.label}__')}">
+						<td th:text="${iterStat.count}">1</td>
+						<td th:text="*{project.name}">Project B</td>
+						<td th:text="*{id}">3</td>
+						<td th:text="*{reference}">RG-002-03</td>
+						<td th:text="*{name}">Couleurs des banières</td>
+						<td th:text="*{versionNumber}">3</td>
+						<td th:text="#{__*{criticality.i18nKey}__}">crit</td>
+						<td th:text="${(catLabel != null) ? catLabel : verifReq.category.label}">cat</td>
+						<td th:text="${ #sets.isEmpty(verifReq.verifyingSteps) ? '' :
+										#sets.size(verifReq.verifyingSteps) > 1  ? '*' :
+										verifReq.verifyingSteps[0].index + 1}">0</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<!-- ===========================================CALLING TEST CASES ===================================================-->
+		<div id="calling-test-case-tab" class="tab">
+			<h3 th:text="#{test-case.calling-test-cases.panel.title}">Calling
+				test cases</h3>
+			<table id="calling-test-case-table" class="greystyle-table">
+				<thead>
+    				<tr>
+    					<th class="small">#</th>
+    					<th th:text="#{label.project}">project</th>
+    					<th th:text="#{test-case.reference.label}">reference</th>
+    					<th th:text="#{label.Name}">name</th>
+                        <th th:text="#{label.dataset}">dataset</th>
+                        <th th:text="#{label.stepNumber}">step no</th>
+    					<th th:text="#{test-case.calling-test-cases.table.execmode.label}">mode</th>
+    				</tr>
+				</thead>
+				<tbody>
+					<tr th:each="calling, iterStat : ${callingSteps}"
+						th:object="${calling}">
+						<td th:text="${iterStat.count}">1</td>
+						<td th:text="*{testCase.project.name}">ProjectA</td>
+						<td th:text="*{testCase.reference}">TC006</td>
+						<td th:text="*{testCase.name}">Connexion à l'application</td>
+                        <td th:text="*{
+                            calledDataset != null ? calledDataset.name :
+                            delegateParameterValues ? '__#{label.callstepdataset.Delegate}__' :
+                            '__#{label.callstepdataset.PickDataset}__'}">--</td>
+                        <td th:text="${calling.getIndex()+1}">5</td>
+						<td th:text="#{__*{testCase.executionMode.i18nKey}__}">manual</td>
+					</tr>
+				</tbody>
+			</table>
+
+		</div>
+
+		<!-- ===========================================THE LOVELY MILESTONES ========================================-->
+
+		<div id="milestones-tab" class="tab" th:if="${application.milestoneFeatureEnabled}">
+			<h3 th:text="#{label.Milestones}">Milestones</h3>
+			<table id="milestones-detail-table" class="greystyle-table">
+				<thead>
+					<tr>
+				        <th class="small">#</th>
+				        <th th:text="#{label.Label}">label</th>
+				        <th th:text="#{label.Status}">status</th>
+				        <th th:text="#{label.EndDate}">end date</th> 
+				        <th th:text="#{label.Description}">description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<!-- note : the milestone models here are hashmaps : the same than for the datatables -->
+					<tr th:each="m, iterStat: ${milestones}"					
+						th:class="${m['directMember']} ? '' : 'milestone-indirect-membership'">
+						<td th:text="${iterStat.count}">1</td>
+						<td th:text="${m['label']}">the milestone</td>
+						<td th:text="${m['status']}"></td>
+						<td th:text="${m['date']}">12/02/2012</td>
+						<td th:text="${m['description']}">your average milestone</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<!-- ===========================================ATTACHMENTS ===================================================-->
+		<div id="attachment-tab" class="tab">
+			<h3 th:text="#{label.Attachments}">Attachments</h3>
+			<table id="attachment-detail-table" class="greystyle-table">
+				<thead>
+					<tr>
+						<th class="small">#</th>
+						<th th:text="#{label.Name}">Name</th>
+						<th th:text="#{label.SizeMb}">Size</th>
+						<th th:text="#{label.AddedOn}">Added on</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="attachment, iterStat: ${testCase.allAttachments}"
+						th:object="${attachment}">
+						<td th:text="${iterStat.count}">1</td>
+						<td th:text="*{name}">nom de la pièce jointe blablabla</td>
+						<td th:text="*{formattedSize}">10</td>
+						<td
+							th:text="*{addedOn == null ? #messages.msg('squashtm.nodata') : #dates.format(addedOn,#messages.msg('squashtm.dateformatShort'))}">12/02/2012</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<!-- ===========================================EXECUTIONS ===================================================-->
+		<div id="executions-tab" class="tab">
+			<h3 th:text="#{label.executions}">Executions</h3>
+			<table id="execs-table" class="greystyle-table">
+				<thead>
+					<tr>
+						<th class="not-displayed">Id</th>
+						<th th:text="#{label.project}">Project</th>
+						<th th:text="#{label.Campaign}">Campaign</th>
+						<th th:text="#{label.iteration}">Iteration</th>
+						<th th:text="#{label.execution}">Execution</th>
+						<th th:text="#{label.execution.mode}">Mode</th>
+						<th th:text="#{label.testSuite}">Test suite</th>
+						<th class="not-displayed">Raw status</th>
+						<th th:text="#{label.execution.status}">Status</th>
+						<th th:text="#{label.execution.lastRunBy}">Run by</th>
+						<th th:text="#{label.execution.lastRunOn}">Run on</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="exec : ${execs}" th:object="${exec}">
+						<td th:text="*{id}" class="not-displayed exec-id">1</td>
+						<td th:text="*{testPlan.iteration.project.name}">Project XX</td>
+						<td th:text="*{testPlan.iteration.campaign.name}">Campaign YY</td>
+						<td th:text="*{testPlan.iteration.name}">Iteration YY</td>
+						<td th:text="*{name}" class="exec-name">Execution ZZ</td>
+						<td th:text="#{*{executionMode.i18nKey}}">Mode ??</td>
+						<td th:text="*{testPlan.testSuiteNames}">Test Suite AA</td>
+						<td th:text="*{executionStatus}"
+							class="not-displayed raw-exec-status">BLOCKED</td>
+						<td class="exec-status">
+							<span th:classappend="*{'exec-status-label exec-status-' + #strings.toLowerCase(executionStatus)}"
+									th:text="#{*{executionStatus.i18nKey}}">
+								Status??
+							</span>
+						</td>
+						<td th:text="*{lastExecutedBy}">Peter Parker</td>
+						<td
+							th:text="*{lastExecutedOn == null ? #messages.msg('squashtm.nodata') : #dates.format(lastExecutedOn,#messages.msg('squashtm.dateformatShort'))}">01/02/2013</td>
+					</tr>
+					<tr th:remove="all">
+						<td class="not-displayed exec-id">1</td>
+						<td>Project XX</td>
+						<td>Campaign YY</td>
+						<td>Iteration YY</td>
+						<td class="exec-name">Execution ZZ</td>
+						<td>Mode ??</td>
+						<td>Test Suite AA</td>
+						<td class="not-displayed raw-exec-status">RUNNING</td>
+						<td class="exec-status exec-status-label exec-status-running">Status ??</td>
+						<td>Peter Parker</td>
+						<td>01/02/2013</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<div th:if="${testCase.project.bugtrackerConnected}" class="tab">
+			<h3 th:text="#{issue.panel.title}">Anomalies</h3>
+			<div th:switch="${bugTrackerStatus.name()}" th:remove="tag">
+				<div th:case="'BUGTRACKER_NEEDS_CREDENTIALS'"
+					th:text="#{issue.panel.needscredentials.label}">You need to connext
+					to the bugtracker.</div>
+				<table th:case="*" class="greystyle-table">
+					<thead>
+						<tr>
+							<th th:text="${interfaceDescriptor.tableIssueIDHeader}">Id</th>
+							<th th:text="#{bugtracker.project}">Projet BT</th>
+							<th th:text="${interfaceDescriptor.tableSummaryHeader}">Résumé</th>
+							<th th:text="${interfaceDescriptor.tablePriorityHeader}">Priorité</th>
+							<th th:text="${interfaceDescriptor.tableStatusHeader}">Statut</th>
+							<th th:text="${interfaceDescriptor.tableAssigneeHeader}">Assignée
+								à</th>
+							<th
+								th:text="#{test-case.issues.table.column-header.reportedin.label}">Reported
+								in</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="issueOwner : ${issuesOwnerShipList}" th:object="${issueOwner.ownership}">
+							<td th:text="*{issue.id}">1</td>
+							<td th:text="*{issue.project.name}">projetbug</td>
+							<td th:text="*{issue.summary}">erreur 500 à l'ajout d'une anomalie</td>
+							<td th:text="*{issue.priority.name}">high</td>
+							<td th:text="*{issue.status.name}">ouverte</td>
+							<td th:text="*{issue.assignee.name}">charles paul</td>
+							<td sq:unsafe-html="${issueOwner.ownerDesc}">Iteration 3</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>		
+	</div>
+</body>
+</html>

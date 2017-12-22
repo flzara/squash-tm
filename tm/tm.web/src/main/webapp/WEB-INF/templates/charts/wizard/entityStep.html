@@ -1,0 +1,111 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+  <div th:fragment="chart-wizard-entity">
+
+<p>
+	<span style="font-weight: bold;" th:text="#{chart.wizard.creation.step.message.entity}"></span>
+	<br/>
+	<span th:text="#{chart.wizard.creation.step.sub-message.entity}"></span>
+</p>
+
+
+ <div style="margin-top:4em;">
+
+        {{#each attributes.entityTypes}}
+
+        <div style="display:inline-block;  width:32% ">
+
+	        <div style="display: table; height: 50px; width: 100%; margin-bottom: 40px;">
+		     	<div style="display: table-cell; vertical-align:middle;">
+			        {{!--<![CDATA[--}}
+			        <input  id="{{@key}}" type="checkbox" name="entity" value="{{@key}}"
+			        {{#if (contains ../attributes.selectedEntity @key)}} checked="checked" {{/if}}
+			         />
+			        {{!--]]>--}}
+		        </div>
+				<label for="{{@key}}" class="{{this}} ui-helper-reset icon-chart" ></label>
+				<label for="{{@key}}" class="ui-helper-reset" style="display: table-cell; width: 80%; vertical-align: middle;">
+					{{i18n @key prefix="chart.entityType."}}
+				</label>
+			</div>
+        </div>
+       {{/each}}
+
+</div>
+
+
+<div style="margin-top : 4em;">
+	<span style="font-weight: bold;" id="selected-perim-msg"/>
+	<span style="font-weight: bold;color: #750021;text-decoration: underline" id="selected-perim" />
+
+	<a id="change-perimeter-button" class="buttonmenu sq-icon-btn buttonmenu-button" role="buttonmenu">
+        	<span th:text="#{wizard.perimeter.change}"/>
+       </a>
+
+	<ul id="change-perimeter-menu" class="buttonmenu-menu squash-buttonmenu ui-menu ui-widget  ui-corner-all collapse" role="menu" tabindex="0" style="position: absolute; overflow: hidden; white-space: nowrap; z-index: 3000; width: 113px; display: none;" aria-activedescendant="ui-id-7">
+
+            {{#each attributes.perimSelect}}
+	     <li  class="cursor-pointer ui-menu-item perimeter-select" role="presentation" aria-disabled="true">
+	         <a class="ui-corner-all " tabindex="-1" role="menuitem" name="{{name}}">{{i18n text}}</a>
+            </li>
+            {{/each}}
+		<li id="reset-perimeter" class="cursor-pointer ui-menu-item" role="presentation" aria-disabled="true">
+               <a th:text="#{wizard.perimeter.reset}" class="ui-corner-all " tabindex="-1" role="menuitem" ></a>
+          </li>
+       </ul>
+</div>
+
+
+<div id="tree-dialog-container">
+ <div id="tree-dialog" style="height: 200px!important"
+				class="not-displayed popup-dialog search-minimal-height" th:title="#{report.form.tree-picker.dialog.title}" />
+
+
+
+ </div>
+
+ </div>
+
+
+
+
+<div th:fragment="chart-wizard-tree-popup">
+
+ <span id="warning-info-list"  class="red-warning-message" />
+
+ <div class="main">
+       	 	<div id="tree-pane">
+	         <div id="tree" class="tree jstree" />
+	                <div class="popup-dialog-buttonpane">
+        <input type="button" th:value="#{label.Confirm}" />
+        <input type="button" th:value="#{label.Cancel}" />
+      </div>
+</div>
+</div>
+
+
+
+
+
+ </div>
+

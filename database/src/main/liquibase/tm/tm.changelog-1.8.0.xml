@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+
+  <!-- DO NOT FORGET TO UPDATE VERSION IN CORE_CONFIG ! -->
+  <!-- OK BOSS ! -->
+  <changeSet id="tm-1.8.0" author="mpagnon">
+    <comment>Update TM database version number</comment>
+    <update tableName="CORE_CONFIG">
+      <column name="VALUE" value="1.8.0" />
+      <where>STR_KEY = 'squashtest.tm.database.version'</where>
+    </update>
+  </changeSet>
+
+  <changeSet id="tm-1.8.0.feat-2688" author="mpagnon">
+    <comment>add permission READ_UNASSIGNED on Campaign library for all users but TestRunners</comment>
+    <sql>
+      insert into ACL_GROUP_PERMISSION (ACL_GROUP_ID, PERMISSION_MASK, CLASS_ID)
+      select ACL_GROUP.ID, 4096, ACL_CLASS.ID
+      from ACL_GROUP , ACL_CLASS
+      where ACL_GROUP.QUALIFIED_NAME != 'squashtest.acl.group.tm.TestRunner'
+      and ACL_CLASS.CLASSNAME = 'org.squashtest.tm.domain.campaign.CampaignLibrary';
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.8.0.issue-1846-02" author="mpagnon">
+    <comment>Remove the DELETED_ON columns</comment>
+    <dropColumn tableName="CAMPAIGN_LIBRARY_NODE" columnName="DELETED_ON" />
+    <dropColumn tableName="TEST_CASE_LIBRARY_NODE" columnName="DELETED_ON" />
+    <dropColumn tableName="REQUIREMENT_LIBRARY_NODE" columnName="DELETED_ON" />
+    <dropColumn tableName="ITERATION" columnName="DELETED_ON" />
+  </changeSet>
+
+
+  <changeSet author="bsiri" id="tm-1.8.0.issue-3009-01">
+    <comment>
+			As of 1.8.0 anyone that executes a test becomes de facto its assignee. This changeset will update the iteration 
+			test plan items and assign it to the last executor (if any) if it hasn't an assignee already
+		</comment>
+
+    <sql>
+      update ITERATION_TEST_PLAN_ITEM itpi
+      set USER_ID = (select cu.PARTY_ID from CORE_USER cu where cu.LOGIN = itpi.LAST_EXECUTED_BY)
+      where itpi.USER_ID IS NULL
+    </sql>
+
+  </changeSet>
+
+  <changeSet id="core-1.8.0-feat-2699-00" author="bsiri">
+    <comment>actually remove user accounts that were deactivated</comment>
+    <sql>
+
+      delete from CORE_TEAM_MEMBER
+      where USER_ID in (
+      select PARTY_ID from CORE_USER
+      where ACTIVE= false
+      );
+
+      delete from CORE_GROUP_MEMBER
+      where PARTY_ID in (
+      select PARTY_ID from CORE_USER
+      where ACTIVE= false
+      );
+
+      update ITERATION_TEST_PLAN_ITEM SET USER_ID = NULL WHERE USER_ID IN (SELECT PARTY_ID FROM CORE_USER WHERE active = false );
+      update CAMPAIGN_TEST_PLAN_ITEM SET USER_ID = NULL WHERE USER_ID IN (SELECT PARTY_ID FROM CORE_USER WHERE active =
+      false );
+
+      delete from CORE_USER where active = false;
+
+      delete from CORE_PARTY where PARTY_ID not in
+      (select PARTY_ID from CORE_USER)
+      and PARTY_ID not in
+      (select PARTY_ID from CORE_TEAM);
+
+      delete from AUTH_USER where active= false;
+    </sql>
+  </changeSet>
+
+  <changeSet id="core-1.8.0-feat-2699-01" author="bsiri">
+    <comment>the CORE_GROUP squashtest.tm.group.User is now renamed to the normalized squashtest.authz.group.tm.User</comment>
+    <update tableName="CORE_GROUP">
+      <column name="QUALIFIED_NAME" type="varchar(255)" value="squashtest.authz.group.tm.User" />
+      <where>ID = 2</where>
+    </update>
+  </changeSet>
+
+  <changeSet id="core-1.8.0-feat-2699-02" author="bsiri">
+    <comment>the CORE_GROUP squashtest.authz.tm.group.ProjectManager is deleted and the users belonging to that group are now 
+		demoted to squashtest.authz.group.tm.User</comment>
+
+    <update tableName="CORE_GROUP_MEMBER">
+      <column name="GROUP_ID" type="BIGINT" value="2"></column>
+      <where>GROUP_ID = 3</where>
+    </update>
+
+    <delete tableName="CORE_GROUP_AUTHORITY">
+      <where>GROUP_ID = 3</where>
+    </delete>
+
+    <delete tableName="CORE_GROUP">
+      <where>ID = 3</where>
+    </delete>
+  </changeSet>
+
+  <changeSet id="core-1.8.0-feat-2699-03" author="bsiri">
+    <comment>
+			The table CORE_PARY_AUTHORITY stores personal authorities. As for TM 1.8.0 the users and teams now have blanket permissions 
+			(aka authorities) for themselves, not only via core_group membership. However, a user will still belong to one of the CORE_GROUPs and 
+			the personal authorities will stack with the authorities of the group they belong to.
+		</comment>
+
+    <createTable tableName="CORE_PARTY_AUTHORITY">
+
+      <column name="PARTY_ID" type="BIGINT" remarks="The CORE_PARTY ">
+        <constraints nullable="false" references="CORE_PARTY(PARTY_ID)" foreignKeyName="FK_PARTY_AUTHORITY_PARTY" />
+      </column>
+
+      <column name="AUTHORITY" type="VARCHAR(50)" remarks="The authority">
+        <constraints nullable="false" />
+      </column>
+
+    </createTable>
+
+  </changeSet>
+
+
+  <changeSet id="core-1.8.0-feat-2699-04" author="bsiri">
+    <comment>we have now to set the role ROLE_TM_PROJECT_MANAGER to the corresponding users </comment>
+
+    <sql>
+      insert into CORE_PARTY_AUTHORITY(PARTY_ID, AUTHORITY)
+      select distinct cu.PARTY_ID, 'ROLE_TM_PROJECT_MANAGER' from CORE_USER cu
+      where cu.PARTY_ID in (
+      select cu1.PARTY_ID from CORE_USER cu1
+      inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse1 on arse1.PARTY_ID = cu1.PARTY_ID
+      where arse1.ACL_GROUP_ID = 5
+      )
+      or cu.PARTY_ID in (
+      select cu2.PARTY_ID from CORE_USER cu2
+      inner join CORE_TEAM_MEMBER ctm on ctm.USER_ID = cu2.PARTY_ID
+      inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse2 on arse2.PARTY_ID = ctm.TEAM_ID
+      where arse2.ACL_GROUP_ID = 5
+      )
+    </sql>
+
+  </changeSet>
+
+  <changeSet id="tm-1.8.0.issue-2899-1" author="bsiri">
+    <preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST" onFailMessage="Not mysql database">
+        <dbms type="mysql" />
+    </preConditions>
+    <comment>Clean up the database from dead entities that slipped through the deletion routines (mysql, postgresql)</comment>
+    <sql>
+
+      SET foreign_key_checks = 0;
+
+      delete RESOURCE.* , SIMPLE_RESOURCE.*
+      from RESOURCE inner join SIMPLE_RESOURCE on RESOURCE.RES_ID = SIMPLE_RESOURCE.RES_ID
+      where SIMPLE_RESOURCE.RES_ID NOT IN (
+      select RES_ID from REQUIREMENT_FOLDER
+      );
+
+
+
+      delete ATTACHMENT_LIST.*, ATTACHMENT.*, ATTACHMENT_CONTENT.*
+      from ATTACHMENT_LIST
+      left join ATTACHMENT on ATTACHMENT_LIST.ATTACHMENT_LIST_ID = ATTACHMENT.ATTACHMENT_LIST_ID
+      left join ATTACHMENT_CONTENT on ATTACHMENT_CONTENT.ATTACHMENT_CONTENT_ID = ATTACHMENT.CONTENT_ID
+      where ATTACHMENT_LIST.ATTACHMENT_LIST_ID NOT IN(
+      select ATTACHMENT_LIST_ID from ACTION_TEST_STEP UNION
+      select ATTACHMENT_LIST_ID from CAMPAIGN_LIBRARY UNION
+      select ATTACHMENT_LIST_ID from CAMPAIGN_LIBRARY_NODE UNION
+      select ATTACHMENT_LIST_ID from EXECUTION UNION
+      select ATTACHMENT_LIST_ID from EXECUTION_STEP UNION
+      select ATTACHMENT_LIST_ID from ITERATION UNION
+      select ATTACHMENT_LIST_ID from PROJECT UNION
+      select ATTACHMENT_LIST_ID from REQUIREMENT_LIBRARY UNION
+      select ATTACHMENT_LIST_ID from RESOURCE UNION
+      select ATTACHMENT_LIST_ID from TEST_CASE_LIBRARY UNION
+      select ATTACHMENT_LIST_ID from TEST_CASE_LIBRARY_NODE UNION
+      select ATTACHMENT_LIST_ID from TEST_SUITE
+      );
+
+      SET foreign_key_checks = 1;
+
+
+    </sql>
+
+  </changeSet>
+
+  <changeSet id="tm-1.8.0.issue-2899-2" author="bsiri">
+    <preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST" onFailMessage="Not h2 database">
+      <dbms type="h2" />
+    </preConditions>
+    <comment>
+			Clean up the database from dead entities that slipped through the deletion routines (h2). Note :
+			There is no way to perform multi table delete so we must delete the tables one by one. 
+			
+			Since h2 doesn't support multi table delete we must delete the entries one table after the other
+			and this will cost quite a bit.
+			
+		</comment>
+    <sql>
+      SET REFERENTIAL_INTEGRITY FALSE;
+      BEGIN TRANSACTION;
+
+      delete from RESOURCE
+      where RES_ID not in(
+      select RES_ID from REQUIREMENT_FOLDER UNION
+      select RES_ID from REQUIREMENT_VERSION
+      );
+
+      delete from SIMPLE_RESOURCE
+      where RES_ID not in(
+      select RES_ID from RESOURCE
+      );
+
+      delete from ATTACHMENT_LIST
+      where ATTACHMENT_LIST_ID not in (
+      select ATTACHMENT_LIST_ID from ACTION_TEST_STEP UNION
+      select ATTACHMENT_LIST_ID from CAMPAIGN_LIBRARY UNION
+      select ATTACHMENT_LIST_ID from CAMPAIGN_LIBRARY_NODE UNION
+      select ATTACHMENT_LIST_ID from EXECUTION UNION
+      select ATTACHMENT_LIST_ID from EXECUTION_STEP UNION
+      select ATTACHMENT_LIST_ID from ITERATION UNION
+      select ATTACHMENT_LIST_ID from PROJECT UNION
+      select ATTACHMENT_LIST_ID from REQUIREMENT_LIBRARY UNION
+      select ATTACHMENT_LIST_ID from RESOURCE UNION
+      select ATTACHMENT_LIST_ID from TEST_CASE_LIBRARY UNION
+      select ATTACHMENT_LIST_ID from TEST_CASE_LIBRARY_NODE UNION
+      select ATTACHMENT_LIST_ID from TEST_SUITE
+      );
+
+      delete from ATTACHMENT
+      where ATTACHMENT_LIST_ID not in (
+      select ATTACHMENT_LIST_ID from ATTACHMENT_LIST
+      );
+
+      delete from ATTACHMENT_CONTENT
+      where ATTACHMENT_CONTENT_ID not in (
+      select CONTENT_ID from ATTACHMENT
+      );
+
+      COMMIT;
+      SET REFERENTIAL_INTEGRITY TRUE;
+    </sql>
+
+  </changeSet>
+  
+  
+  <changeSet id="tm-1.8.0.issue-2899-2-postgresql" author="mpagnon">
+    <preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST" onFailMessage="Not postgresql database">
+      <dbms type="postgresql" />
+    </preConditions>
+    <comment>
+      Clean up the database from dead entities that slipped through the deletion routines (postgresql).
+      
+    </comment>
+    <sql>
+     
+
+      delete from SIMPLE_RESOURCE
+      where RES_ID not in(
+       select RES_ID from REQUIREMENT_FOLDER
+      );
+
+      delete from RESOURCE
+      where RES_ID not in(
+      select RES_ID from REQUIREMENT_FOLDER UNION
+      select RES_ID from REQUIREMENT_VERSION
+      );
+
+      create table atlid (ID BIGINT NOT NULL);
+      
+      insert into atlid(ID) 
+      select ATTACHMENT_LIST_ID 
+      from ATTACHMENT_LIST 
+      where ATTACHMENT_LIST_ID not in (
+      select ATTACHMENT_LIST_ID from ACTION_TEST_STEP UNION
+      select ATTACHMENT_LIST_ID from CAMPAIGN_LIBRARY UNION
+      select ATTACHMENT_LIST_ID from CAMPAIGN_LIBRARY_NODE UNION
+      select ATTACHMENT_LIST_ID from EXECUTION UNION
+      select ATTACHMENT_LIST_ID from EXECUTION_STEP UNION
+      select ATTACHMENT_LIST_ID from ITERATION UNION
+      select ATTACHMENT_LIST_ID from PROJECT UNION
+      select ATTACHMENT_LIST_ID from REQUIREMENT_LIBRARY UNION
+      select ATTACHMENT_LIST_ID from RESOURCE UNION
+      select ATTACHMENT_LIST_ID from TEST_CASE_LIBRARY UNION
+      select ATTACHMENT_LIST_ID from TEST_CASE_LIBRARY_NODE UNION
+      select ATTACHMENT_LIST_ID from TEST_SUITE
+      );
+
+      delete from ATTACHMENT
+      using atlid
+      where ATTACHMENT_LIST_ID  = atlid.ID ;
+
+      delete from ATTACHMENT_LIST
+      using atlid
+      where ATTACHMENT_LIST_ID  = atlid.ID;
+
+      delete from ATTACHMENT_CONTENT
+      where ATTACHMENT_CONTENT_ID not in (
+      select CONTENT_ID from ATTACHMENT
+      );
+      
+      drop table atlid;
+
+    </sql>
+
+  </changeSet>
+
+
+
+</databaseChangeLog>
+ 

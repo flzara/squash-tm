@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+	<changeSet id="tm-data-0.20.0.01" author="bsiri">
+		<sqlFile path="tm.data-0.20.0.sql" relativeToChangelogFile="true" endDelimiter=";"/>
+	</changeSet>
+  <changeSet id="tm-data-0.20.0.02-postgresql" author="mpagnon" dbms="postgresql">
+  <sql>
+       SELECT setval('acl_class_id_seq', (SELECT MAX(id) from acl_class));
+       SELECT setval('acl_object_identity_id_seq', (SELECT MAX(id) from acl_object_identity));
+       SELECT setval('acl_responsibility_scope_entry_id_seq', (SELECT MAX(id) from acl_responsibility_scope_entry));
+       SELECT setval('campaign_library_cl_id_seq', (SELECT MAX(cl_id) from campaign_library));
+       SELECT setval('core_group_id_seq', (SELECT MAX(id) from core_group));
+       SELECT setval('core_user_id_seq', (SELECT MAX(id) from core_user));
+       SELECT setval('project_project_id_seq', (SELECT MAX(project_id) from project));
+       SELECT setval('requirement_library_rl_id_seq', (SELECT MAX(rl_id) from requirement_library));
+       SELECT setval('test_case_library_tcl_id_seq', (SELECT MAX(tcl_id) from test_case_library));
+  </sql>
+  </changeSet>
+  
+</databaseChangeLog>
+ 

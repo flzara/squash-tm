@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+
+	<changeSet id="tm-1.13.3" author="bsiri">
+		<comment>Update TM database version number</comment>
+		<update tableName="CORE_CONFIG">
+			<column name="VALUE" value="1.13.3" />
+			<where>STR_KEY = 'squashtest.tm.database.version'</where>
+		</update>
+	</changeSet>
+
+	
+	
+	<changeSet id="tm-1.13.3-feature-5265-1" author="bsiri">
+		<comment>
+			making the capacity of plugin configuration items larger
+		</comment>
+		
+		<modifyDataType tableName="LIBRARY_PLUGIN_BINDING_PROPERTY" columnName="PLUGIN_BINDING_VALUE" newDataType="CLOB"/>
+		
+	</changeSet>
+	
+	
+	<changeSet id="tm-1.13.3-feature-5265-2" author="bsiri">
+		<comment>
+			reworking table REQUIREMENT_SYNC_EXTENDER
+		</comment>
+	
+		<addColumn tableName="REQUIREMENT_SYNC_EXTENDER">
+			<column name="REMOTE_FILTER_NAME" type="java.sql.Types.VARCHAR(150)" remarks="name of a filter (not its ID)" >
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>	
+		
+		<dropForeignKeyConstraint baseTableName="REQUIREMENT_SYNC_EXTENDER" constraintName="fk_sync_extender_bugtracker"/>
+		<renameColumn tableName="REQUIREMENT_SYNC_EXTENDER" oldColumnName="BUGTRACKER_ID" newColumnName="SERVER_ID" columnDataType="BIGINT"/>
+		
+		
+		<addForeignKeyConstraint constraintName="fk_sync_extender_server" baseTableName="REQUIREMENT_SYNC_EXTENDER"  baseColumnNames="SERVER_ID" 
+		 referencedTableName="BUGTRACKER" referencedColumnNames="BUGTRACKER_ID" onDelete="CASCADE"/>
+		 
+		<dropForeignKeyConstraint baseTableName="REQUIREMENT_SYNC_EXTENDER" constraintName="fk_sync_extender_requirement"/>
+		 
+		<addForeignKeyConstraint constraintName="fk_sync_extender_requirement" baseTableName="REQUIREMENT_SYNC_EXTENDER"  baseColumnNames="REQUIREMENT_ID" 
+		 referencedTableName="REQUIREMENT" referencedColumnNames="RLN_ID" onDelete="CASCADE"/>
+		
+	</changeSet>
+	
+	<changeSet id="tm-1.13.3-feature-5265-3" author="bsiri">
+		<comment>
+			adding useful indexes
+		</comment>
+		 <createIndex tableName="REQUIREMENT_SYNC_EXTENDER" indexName="idx_sync_remote_req_id" >
+		 	<column name="REMOTE_REQ_ID" />
+		 </createIndex>
+		 
+		 <createIndex tableName="REQUIREMENT_SYNC_EXTENDER" indexName="idx_sync_remote_projfilter" >
+		 	<column name="REMOTE_PROJECT_ID" />
+		 	<column name="REMOTE_FILTER_NAME"/>
+		 </createIndex>
+	</changeSet>
+	
+
+	<changeSet id="tm-1.13.3-feature-5265-4" author="bsiri">
+		
+		<comment>
+			This view maps a requirement library node to its main resource. Some would say 
+			it is redundant with what can be found in tables REQUIREMENT or REQUIREMENT_FOLDER
+			but seriously it makes simple things likes getting the name of a generic 
+			REQUIREMENT_LIBRARY_NODE much simpler. 
+		</comment>
+		<!--  
+			Actually it's much more that a question of simplicity : it's a matter of sanity
+			until we can refactor that part of the model.		
+		-->
+
+		<createView viewName="RLN_RESOURCE">
+			select fold.rln_id as rln_id, fold.res_id as res_id
+			from REQUIREMENT_FOLDER fold 
+			UNION
+			select req.rln_id as rln_id, req.current_version_id as res_id
+			from REQUIREMENT req
+		</createView>
+
+	</changeSet>	
+	
+	<changeSet id="tm-1.13.3-feature-5265-5" author="bsiri">
+	
+		<comment>
+			new requirement audit trail tables for synchronization events
+		</comment>
+		
+		<createTable tableName="SYNC_REQUIREMENT_CREATION">
+			
+			<column name="EVENT_ID" type="BIGINT"
+				remarks="primary key, which is also a foreign key to REQUIREMENT_AUDIT_EVENT (they share that key : do not make this table autoincrement it).">
+				<constraints primaryKey="true" nullable="false" primaryKeyName="PK_SYNC_CREATE"
+				foreignKeyName="fk_sync_create_audit" 
+				references="REQUIREMENT_AUDIT_EVENT(EVENT_ID)" />		
+			</column>
+			
+			<column name="SOURCE" type="java.sql.Types.VARCHAR(255)" remarks="the url of the synchronized requirement at the time of creation">
+				<constraints nullable="false"/>
+			</column>
+			
+		</createTable>
+		
+				
+		<createTable tableName="SYNC_REQUIREMENT_UPDATE">
+			
+			<column name="EVENT_ID" type="BIGINT"
+				remarks="primary key, which is also a foreign key to REQUIREMENT_AUDIT_EVENT (they share that key : do not make this table autoincrement it).">
+				<constraints primaryKey="true" nullable="false" primaryKeyName="PK_SYNC_UPDATE"
+				foreignKeyName="fk_sync_update_audit" 
+				references="REQUIREMENT_AUDIT_EVENT(EVENT_ID)" />		
+			</column>
+			
+			<column name="SOURCE" type="java.sql.Types.VARCHAR(255)" remarks="the url of the synchronized requirement at the time of update">
+				<constraints nullable="false"/>
+			</column>
+			
+		</createTable>
+	
+	</changeSet>
+	
+
+</databaseChangeLog>

@@ -1,0 +1,629 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+ /*
+  * Put there any class definition that aren't related to a specific component of the UI. It's what's the name says : features that
+  * will be applied regardless of the business meaning of the component.
+  */
+
+/**
+ * smartsprites directive :
+ */
+
+ /** sprite: sprites-icons; sprite-image: url('../images/sprites-icons.png'); sprite-layout: vertical */
+
+
+.linkWise:HOVER {
+
+    text-decoration: underline;
+    cursor: pointer;
+}
+.popup-notification {
+	color: #555555;
+	font-size: 0.8em;
+	font-style: italic;
+	margin-top:20px;
+	text-align:right;
+}
+
+
+.error-message {
+	color: #99352B;
+}
+
+.export-requirement-link {
+	bottom: 1px;
+	float: left;
+	position: absolute;
+	text-decoration: none;
+}
+
+.filter-enabled {
+	color: #B9121B;
+}
+
+.std-height {
+	height: 14px;
+}
+
+.gray-text {
+	color: #888888;
+}
+
+/**
+ * .not-visible should be used when you want to hide something and it is not related to FOUC
+ * .unstyled is used by broken, auto-processed, FOUC prevention
+ * .unstyled-table is squash-flavored datatables FOUC prevention
+ * .unstyled-pane can be used for 'manual' fouc prevention on panels
+ */
+.not-visible, .unstyled, .unstyled-table, .unstyled-pane {
+	visibility: hidden;
+}
+
+.centered {
+	text-align: center;
+}
+
+.left-aligned {
+	text-align: left;
+}
+
+.right-aligned {
+	text-align: right;
+}
+
+.v-centered {
+	vertical-align: middle;
+}
+
+.y-scrollable{
+	overflow-y : auto;
+}
+
+.medium-height{
+	max-height : 300px;
+}
+
+.icon {
+	float: left;
+	margin-right: 0.3em;
+}
+
+.snap-left {
+	float: left;
+}
+
+.snap-right {
+	float: right;
+}
+
+.nota-bene{
+	font-style: italic;
+	color : #9D9D9D;
+}
+
+.unsnap {
+	clear: both;
+}
+
+tr td.drag-handle {
+	cursor: pointer;
+}
+
+tr.nodrop td.drag-handle {
+	cursor: n-resize;
+}
+
+
+.smallfonts {
+	font-size: 0.8em;
+}
+
+.space {
+	margin-top: 1.6em;
+}
+
+.aligntop {
+	vertical-align: top;
+}
+
+.no-user-select{
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.loading{
+	background-image : url('../images/ajax-loader.gif');
+	display : inline-block;
+}
+
+.small-loading{
+	background-image : url('../images/ajax-loader-16x16.gif');
+	display : inline-block;
+	height : 16px;
+	width : 16px;
+}
+
+.full-size-hack{
+	position : absolute;
+	top : 0;
+	left : 0;
+	bottom : 0;
+	right : 0;
+}
+
+.waiting-loading{
+	background-color: #EBEAE5;
+	background-position: center center;
+	background-image: url('../images/ajax-loader.gif');
+	background-repeat: no-repeat;
+	background-size : 70px 70px;
+	min-height : 50px;
+	opacity: 0.2;
+	filter: alpha(opacity=20);
+	overflow-y:hidden;
+}
+
+.processing-indicator{
+	background-image: url(../scripts/jquery/indicator.gif);
+	background-repeat : no-repeat;
+	height : 16px;
+	width : 16px;
+	display : inline-block;
+}
+
+.normal-warning-message{
+	font-weight : bold;
+}
+
+.minimal-height{
+	min-height : 50px;
+}
+
+.full-width{
+	width : 100%;
+}
+
+.searched-project {
+	color: white;
+	border: 1px solid #2E2E2E;
+	background: #2E2E2E;
+}
+
+
+.cursor-arrow{
+	cursor : default;
+}
+
+.cursor-pointer{
+	cursor : pointer;
+}
+
+.clickable-item{
+	text-decoration : underline;
+	cursor : pointer;
+}
+
+.icon-helper{
+	cursor : help;
+	background-image: url("../images/icon-help.png"); /** sprite-ref: sprites-icons; */
+	height : 16px;
+	width : 16px;
+	display : inline-block;
+}
+
+.small-margin-left{
+	margin-left : 4px;
+}
+
+span.little-text {
+	font-size: 8px;
+}
+
+th.narrow, td.narrow{
+	width : 2em;
+}
+
+th.double-narrow, td.double-narrow{
+	width : 4em;
+}
+
+th.width-tenperc, td.width-tenperc {
+  width : 10%;
+}
+
+.blue-borders{
+	border : 1px solid #80B2FF;
+}
+
+.std-padding{
+	padding : 0.1em 1em;
+}
+
+.std-margin-top {
+	margin-top : 1em;
+}
+
+.extra-small-margin-top {
+	margin-top : 0.2em;
+}
+
+.std-margin-bottom {
+	margin-bottom : 1em;
+}
+
+/** for sq-icon only : makes them have *almost* the same margins than a checkbox (as defined natively by the browser)**/
+.sq-icon.sq-icon-checkboxmargin {
+	margin : 3px 3px 3px 2px;
+}
+
+.side-panel{
+	display:inline-block;
+	vertical-align : middle;
+}
+
+/** *********** display options ********** */
+
+
+.not-displayed, .date-hidden {
+	display: none;
+}
+
+.display-table {
+	display: table;
+}
+
+.display-search-table {
+	display: flex;
+	float: left;
+	flex-wrap: wrap;
+}
+
+
+.display-table-row,.display-table>div {
+	display: table-row;
+	height: auto;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	text-align: left;
+	line-height: 2;
+	vertical-align: top;
+}
+
+.display-search-table-row,.display-search-table>div {
+	display: -webkit-inline-box;
+	height: auto;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	text-align: left;
+	line-height: 2;
+	vertical-align: top;
+}
+
+
+
+.display-table-cell,.display-table>div>div,.display-table>div>label,.display-table>div>span,.display-table>div>select {
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.display-search-table-cell,.display-search-table>div>div,.display-search-table>div>label,.display-search-table>div>span,.display-search-table>div>select {
+	display: -webkit-box;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+
+.display-table-cell {
+  display: table-cell;
+  padding-left: 10px;
+  padding-right: 10px;
+/*	vertical-align: middle;*/
+}
+
+.display-search-table-cell {
+	vertical-align: middle;
+}
+
+.display-table-cell input[type=checkbox],.display-table>div>div input[type=checkbox] ,.display-table>div>label,.display-table>div>span,
+.display-table>div>select {
+	margin:0;
+}
+
+.display-search-table-cell input[type=checkbox],.display-search-table>div>div input[type=checkbox] ,.display-search-table>div>label,.display-search-table>div>span,
+.display-search-table>div>select {
+	margin:0;
+}
+
+/******************* borders ************************/
+
+.std-border{
+	border : 1px solid black;
+}
+
+.light-border, .std-border.light-border{
+	border-color : lightgrey;
+}
+
+.thick-border-left, .std-border.thick-border-left {
+	border-left-width : 2px;
+}
+
+.thick-border-right, .std-border.thick-border-right {
+	border-right-width : 2px;
+}
+
+.std-border-radius{
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
+	border-radius: 8px;
+}
+
+/*********************** various icons *****************/
+
+
+.icon-entity, .sq-icon {
+	width : 16px;
+	height : 16px;
+	background-repeat : no-repeat;
+	display : inline-block;
+}
+
+.inline-sq-icon{
+	width : 16px;
+	height : 16px;
+	background-repeat : no-repeat;
+	display : inline;
+}
+
+.icon-test-case{
+	background-image : url(../images/Icon_Tree_TestCase.png);	/** sprite-ref: sprites-icons; */
+}
+
+.icon-requirement{
+	background-image : url(../images/Icon_Tree_Requirement.png);	/** sprite-ref: sprites-icons; */
+}
+
+.icon-requirement-off{
+	background-image : url(../images/Icon_Tree_Requirement_off.png);	/** sprite-ref: sprites-icons; */
+}
+
+.icon-campaign{
+	background-image : url(../images/Icon_Tree_Campaign.png);	/** sprite-ref: sprites-icons; */
+}
+
+.icon-iteration{
+	background-image : url(../images/Icon_Tree_Iteration.png);	/** sprite-ref: sprites-icons; */
+}
+
+.icon-folder{
+	background-image : url(../images/Icon_Tree_Folder.png);	/** sprite-ref: sprites-icons; */
+}
+
+.icon-root{
+	background-image : url(../images/root.png);	/** sprite-ref: sprites-icons; */
+}
+
+
+.delete-confirm{
+	background-repeat:no-repeat;
+	background-image:url(../images/messagebox_confirm.png);	/** sprite-ref: sprites-icons; */
+	width : 72px;
+	height : 64px;
+}
+
+.toggle-row-label{
+	padding-left: 10px;
+	cursor : pointer;
+}
+
+.small-down-arrow{
+	background-image:url(../images/arrow_down.png);	/** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+	width: 7px;
+	height : 4px;
+	display : inline-block;
+}
+
+.small-down-white-arrow{
+	background-image:url(../images/white-arrow-down.png);	/** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+	width: 15px;
+	height : 11px;
+	display : inline-block;
+	vertical-align : middle;
+}
+
+.small-right-arrow{
+	background-image :url(../images/arrow_right.png);	/** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+	width: 7px;
+	height : 7px;
+	display : inline-block;
+}
+
+
+.execute-arrow{
+	background-position : center center;
+	background-image : url(../images/execute.png); 	/** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+	width : 20px;
+	height : 20px;
+}
+
+.icon-user-deactivated, .sq-icon.icon-user-deactivated{
+	background-image : url(../images/icon-user-deactivated.png); /** sprite-ref: sprites-icons; */
+}
+
+.icon-user-activated, .sq-icon.icon-user-activated{
+	background-image : url(../images/icon-user-active.png);  /** sprite-ref: sprites-icons; */
+}
+
+.icon-red-cross{
+	background-image : url(../images/red-cross-icon.png);  /** sprite-ref: sprites-icons; */
+}
+
+/* CONSIDER USING .disabled ON .sq-btn OR .sq-icon-btn */
+.disabled-transparent, input:disabled + label{
+	opacity : 0.35;
+	filter:alpha(opacity=35);
+}
+
+/* To get squared icons */
+
+.squared-icons{
+  margin-right: 0.5em;
+  margin-left: 0.5em;
+}
+
+  /* To get icons with a correct size close to text buttons */
+
+.decent-icons{
+  vertical-align: sub;
+  margin: 0.5em 0.3em;
+}
+
+.entity-edit-general-warning{
+	color: #7E0426;
+	text-align: center;
+}
+
+/* ---------------------------------------------------------*/
+/* ---------------->>> Hypenation <<<------------------*/
+/* ---------------------------------------------------------*/
+p {
+    word-break: normal;
+	-moz-hyphens: auto;
+	-webkit-hyphens: auto;
+	hyphens: auto;
+}
+
+
+/* ---------------------------------------------------------*/
+/* ------------------>>> panel format <<<-------------------*/
+/* ---------------------------------------------------------*/
+
+.grey-round-panel{
+	background-color : #E6E6E6;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
+	border-radius: 8px;
+	padding : 0.5em 0.5em;
+}
+
+/* this class should be used along with one of the .icon-chart-* icon definition class */
+.icon-chart {
+	min-height: 40px;
+	min-width: 40px;
+	display: table-cell;
+	width: 15%;
+}
+
+.icon-chart-requirement {
+	background-image : url(../images/Icone_Requirement3.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.icon-chart-test-case {
+	background-image : url(../images/Icone_TestCase2.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.icon-chart-iteration {
+	background-image : url(../images/Icone_iteration.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+.icon-chart-item-test-plan {
+	background-image : url(../images/Icone_TestPlanItem.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.icon-chart-campaign {
+	background-image : url(../images/Icone_Campagne.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.icon-chart-requirement-version {
+	background-image : url(../images/Icone_RequirementVersion.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.icon-chart-execution {
+	background-image : url(../images/Icone_Execution.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.illustration-graph {
+	background-image : url(../images/Illustration_Graph.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.wizard-step-active {
+	background-image : url(../images/Raccourcis_Active_State-26.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.wizard-step-current {
+	background-image : url(../images/Raccourcis_Final_State-26.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.wizard-step-ok {
+	background-image : url(../images/Raccourcis_Ok-26.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.wizard-step-fail {
+	background-image : url(../images/Raccourcis_Error-24.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.chart-BAR {
+	background-image : url(../images/chart_bar.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.chart-COMPARATIVE {
+	background-image : url(../images/chart_comparative.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.chart-CUMULATIVE {
+	background-image : url(../images/chart_cumulative.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.chart-PIE {
+	background-image : url(../images/chart_pie.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+.chart-TREND {
+	background-image : url(../images/chart_trend.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+

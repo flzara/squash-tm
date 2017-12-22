@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+    	
+    <changeSet id="tm-0.19.0.01" author="ramoussou">
+    
+    <comment>We have to set campaign_ID and Test_plan_order to "true" to let hibernate persist new items </comment>
+    	<createTable tableName="CAMPAIGN_TEST_PLAN_ITEM">
+    	
+			<column name="CTPI_ID" type="BIGINT" autoIncrement="true"
+			remarks="clé primaire du test plan. Devrait être autogénérée.">
+				<constraints primaryKey="true" nullable="false" primaryKeyName="PK_CAMPAIGN_TEST_PLAN_ITEM"/>
+			</column>	
+			
+			<column name="CAMPAIGN_ID" type="BIGINT"
+			remarks="cle etrangere vers CAMPAIGN">
+				<constraints nullable="true" references="CAMPAIGN(CLN_ID)"
+				foreignKeyName="fk_camp_tp_campaign"/>
+			</column>
+			
+			<column name="TEST_CASE_ID" type="BIGINT"
+			remarks="cle etrangere vers TEST_CASE">
+				<constraints nullable="false" references="TEST_CASE(TCLN_ID)"
+				foreignKeyName="fk_camp_tp_testcase"/>
+			</column>
+			
+			<column name="USER_ID" type="BIGINT"
+			remarks="Id de l'utilisateur assigné a ce cas de test reférenncé">
+				<constraints nullable="true" references="CORE_USER(ID)"
+				foreignKeyName="fk_camp_tp_user"/>
+			</column>
+			
+			
+    	    <column name="TEST_PLAN_ORDER" type="int"
+			remarks="numéro d'ordre d'une execution dans la liste des test plans d'une itération.">
+				<constraints nullable="true" />
+			</column>
+		</createTable>
+		
+		<createIndex tableName="CAMPAIGN_TEST_PLAN_ITEM" indexName="idx_camptestplan">
+		    <column name="CTPI_ID"/>
+		</createIndex>
+	 </changeSet>
+	 
+	 <changeSet id="tm-0.19.0.02" author="ramoussou">
+	 	<comment>
+	 		Migrates data from unordered campaign test plan table to ordered test plan table. 
+	 		Items which references (soft) deleted test cases and which should not be in the table are not migrated
+	 	</comment>	
+		<sql>
+			insert into CAMPAIGN_TEST_PLAN_ITEM (CAMPAIGN_ID, TEST_CASE_ID) 
+			select tp.CAMPAIGN_ID, tp.TEST_CASE_ID 
+			from CAMPAIGN_TEST_PLAN tp 
+				inner join TEST_CASE_LIBRARY_NODE tc on tc.TCLN_ID = tp.TEST_CASE_ID
+			where tc.DELETED_ON is null
+		</sql>
+	 </changeSet>
+
+	 <changeSet id="tm-0.19.0.03" author="ramoussou">
+		<preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+			<dbms type="h2"/>
+		</preConditions>
+		<comment>Calculate and insert and add Not null constraint on order for Campaign Test Plan For H2</comment>
+		
+		<sql>
+			CREATE TEMPORARY TABLE `MIGRATION_CAMPAIGN_TEST_PLAN` (
+			`TEST_PLAN_ORDER` BIGINT NULL DEFAULT NULL,
+			`CAMPAIGN_ID` BIGINT NULL DEFAULT NULL,
+			`TEST_CASE_ID` BIGINT NULL DEFAULT NULL,
+			`DUMMY` BIGINT NULL DEFAULT NULL
+			);
+			
+			set @rn=-1;
+			set @prevcamp=0;
+			insert into MIGRATION_CAMPAIGN_TEST_PLAN (TEST_PLAN_ORDER, CAMPAIGN_ID, TEST_CASE_ID, DUMMY)
+			select casewhen(@prevcamp = CAMPAIGN_ID, set(@rn, @rn+1), set(@rn, 0)), ctp.CAMPAIGN_ID, ctp.TEST_CASE_ID, set(@prevcamp, CAMPAIGN_ID)
+			from CAMPAIGN_TEST_PLAN_ITEM ctp
+			order by CAMPAIGN_ID;
+			
+			update CAMPAIGN_TEST_PLAN_ITEM citp set TEST_PLAN_ORDER = 
+				(select mctp.TEST_PLAN_ORDER from MIGRATION_CAMPAIGN_TEST_PLAN mctp 
+				where mctp.CAMPAIGN_ID = citp.CAMPAIGN_ID 
+				and mctp.TEST_CASE_ID = citp.TEST_CASE_ID);
+		</sql>
+
+	 </changeSet>
+	
+	 <changeSet id="tm-0.19.0.04" author="ramoussou">
+		<preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+		<dbms type="mysql"/>
+		</preConditions>
+		<comment> Calculate and insert and add Not null constraint on order for Campaign Test Plan for myssql </comment>
+		
+		<sql>
+			CREATE TEMPORARY TABLE `MIGRATION_CAMPAIGN_TEST_PLAN` (
+			`TEST_PLAN_ORDER` BIGINT NULL DEFAULT NULL,
+			`CAMPAIGN_ID` BIGINT NULL DEFAULT NULL,
+			`TEST_CASE_ID` BIGINT NULL DEFAULT NULL,
+			`DUMMY` BIGINT NULL DEFAULT NULL
+			);
+			
+			insert into MIGRATION_CAMPAIGN_TEST_PLAN (TEST_PLAN_ORDER, CAMPAIGN_ID, TEST_CASE_ID, DUMMY)
+			select if(@prevcamp=CAMPAIGN_ID, @rownum:=@rownum+1, @rownum:=0) TEST_PLAN_ORDER, CAMPAIGN_ID, TEST_CASE_ID, (@prevcamp:=CAMPAIGN_ID)
+			from CAMPAIGN_TEST_PLAN_ITEM ctp, (SELECT @rownum:=0) r, (SELECT @prevcamp:=0) c
+			order by CAMPAIGN_ID;
+			
+			update CAMPAIGN_TEST_PLAN_ITEM citp set TEST_PLAN_ORDER = 
+				(select mctp.TEST_PLAN_ORDER from MIGRATION_CAMPAIGN_TEST_PLAN mctp 
+				where mctp.CAMPAIGN_ID = citp.CAMPAIGN_ID 
+				and mctp.TEST_CASE_ID = citp.TEST_CASE_ID);
+		</sql>
+
+	 </changeSet>
+   
+	 <changeSet id="tm-0.19.0.04-postgres" author="mpagnon">
+    <preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+    <dbms type="postgresql"/>
+    </preConditions>
+    <comment> Calculate and insert and add Not null constraint on order for Campaign Test Plan for postgresql </comment>
+     <sql>
+      CREATE  TABLE MIGRATION_CAMPAIGN_TEST_PLAN (
+      TEST_PLAN_ORDER BIGINT NULL DEFAULT NULL,
+      CAMPAIGN_ID BIGINT NULL DEFAULT NULL,
+      TEST_CASE_ID BIGINT NULL DEFAULT NULL
+      );
+      </sql>
+    <createProcedure>
+
+CREATE OR REPLACE FUNCTION testfunction() RETURNS text AS 
+$$
+DECLARE rn integer := 0-1;
+rn2 integer := 0;
+prevcamp bigint := 0;
+r record;
+BEGIN
+FOR r in (select ctp.CAMPAIGN_ID, ctp.TEST_CASE_ID  from CAMPAIGN_TEST_PLAN_ITEM ctp order by CAMPAIGN_ID)
+LOOP
+	IF prevcamp  = r.CAMPAIGN_ID 
+        THEN 
+             rn2 := rn ;
+             rn := rn2 + 1;
+        ELSE rn := 0 ; 
+             prevcamp := r.CAMPAIGN_ID;
+        END IF;
+	  insert into MIGRATION_CAMPAIGN_TEST_PLAN (TEST_PLAN_ORDER, CAMPAIGN_ID, TEST_CASE_ID)
+       select rn, r.CAMPAIGN_ID , r.TEST_CASE_ID  ;
+      
+       
+
+END LOOP;
+return 'ok';
+END
+$$ LANGUAGE plpgsql;
+
+select testfunction();
+DROP FUNCTION TestFunction();
+        </createProcedure>
+        
+    <sql>
+      update CAMPAIGN_TEST_PLAN_ITEM citp set TEST_PLAN_ORDER 
+      = 
+        (select mctp.TEST_PLAN_ORDER from MIGRATION_CAMPAIGN_TEST_PLAN mctp 
+        where mctp.CAMPAIGN_ID = citp.CAMPAIGN_ID 
+        and mctp.TEST_CASE_ID = citp.TEST_CASE_ID);
+        
+        drop table MIGRATION_CAMPAIGN_TEST_PLAN;
+    </sql>
+
+   </changeSet>
+	 <changeSet id="tm-0.19.0.06" author="ramoussou">
+		<comment>Drop table CAMPAIGN_TEST_PLAN</comment>
+		<dropTable tableName="CAMPAIGN_TEST_PLAN"/>
+	 </changeSet>
+	 
+	 
+	  <changeSet id="tm-0.19.0.07" author="ramoussou">
+		<addColumn tableName="ITEM_TEST_PLAN">
+    		<column name="USER_ID" type="BIGINT"
+			remarks="Id de l'utilisateur assigné a ce cas de test reférenncé">
+				<constraints nullable="true" references="CORE_USER(ID)"
+				foreignKeyName="fk_itertestplan_user"/>
+			</column>
+		</addColumn>
+	 </changeSet>
+	 
+</databaseChangeLog>
+ 

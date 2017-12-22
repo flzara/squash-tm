@@ -1,0 +1,82 @@
+/**
+ * WHICH STYLES SHOULD GO IN THIS FILE
+ * ===================================
+ * 
+ * This file should contain "generic" styles which do not define 
+ * a widget, do not reference a specific page of the app and can be applied
+ * to (almost) any element.
+ */
+
+/**
+ * Clearfix - use this on the container of floating elements
+ * see http://nicolasgallagher.com/micro-clearfix-hack/
+ */
+ .cf {
+	&:after , &:before {
+		content: "";
+		display: table;
+	}
+
+	&:after {
+		clear: both;
+	}
+}
+
+.btn-toolbar {
+	display: block;
+	text-align: left;
+	
+	&.left {
+		float: left;
+	}
+	
+	&.right {
+		text-align: right;
+	}
+	
+	&.left ~ &.right {
+		float: right;
+	}
+	
+	.btn-group {
+		display: inline-block;
+		margin: 0;
+		margin-right: 1em;
+		
+		&:last-child {
+			margin-right: 0;
+		} 
+	}
+}
+small, .small {
+	font-size: @small-font;
+}
+
+.verysmall {
+	font-size: @verysmall-font;
+}
+
+.shadow {
+	@shad-offset: 5px;
+	@shad-blur: @shad-offset;
+	@shad-color: #111111;
+	
+	box-shadow: @shad-offset @shad-offset @shad-blur @shad-blur @shad-color;
+}
+
+/**
+ * text variants
+ */
+.txt-success {
+	color: @success-text-color;
+}
+.txt-warn {
+	color: @warning-text-color;
+}
+.txt-error {
+	color: @error-text-color;
+}
+.txt-discreet {
+	color: @discreet-text-color;
+	font-style: italic;
+}

@@ -1,0 +1,517 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<!-- DO NOT FORGET TO UPDATE VERSION IN CORE_CONFIG ! -->
+	<changeSet id="tm-1.5.0.00" author="mpagnon">
+		<comment>Update TM database version number</comment>
+		<update tableName="CORE_CONFIG">
+			<column name="STR_KEY" value="squashtest.tm.database.version" />
+			<column name="VALUE" value="1.5.0" />
+			<where>STR_KEY = 'squashtest.tm.database.version'</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="tm-1.5.0.feat-1596.02" author="bsiri">
+		<preConditions onFail="MARK_RAN">
+			<tableExists tableName="EXECUTION_TEST_CASE_DATA" />
+		</preConditions>
+		<comment>dropping the temp table from changest tm-1.4.0.feat-1596.01</comment>
+		<dropTable tableName="EXECUTION_TEST_CASE_DATA" />
+	</changeSet>
+
+
+
+	<changeSet id="tm-1.5.0.00-issue-1838.01" author="mpagnon">
+		<comment>Update table custom-field-value so that all mandatory cuf have a value</comment>
+		<sql>
+			update CUSTOM_FIELD_VALUE
+			set VALUE = (
+			select cf.DEFAULT_VALUE
+			from CUSTOM_FIELD_BINDING cfb
+			join CUSTOM_FIELD cf on cfb.CF_ID =
+			cf.CF_ID
+			where cfb.CFB_ID = CUSTOM_FIELD_VALUE.CFB_ID
+			)
+			where
+			(CUSTOM_FIELD_VALUE.VALUE is null or
+			LTRIM(RTRIM(CUSTOM_FIELD_VALUE.VALUE)) = '' )
+			and exists (
+			select *
+			from CUSTOM_FIELD_BINDING cfb
+			join CUSTOM_FIELD cf on cfb.CF_ID =
+			cf.CF_ID
+			where cfb.CFB_ID = CUSTOM_FIELD_VALUE.CFB_ID
+			and cf.OPTIONAL =
+			false)
+			;
+		</sql>
+	</changeSet>
+
+	<changeSet id="tm-1.5.0.00-feat-1390.03" author="bsiri">
+		<comment>adding cascade delete on the rendering locations when custom field bindings are removed (prune the orphans)</comment>
+
+		<dropForeignKeyConstraint baseTableName="CUSTOM_FIELD_RENDERING_LOCATION"
+			constraintName="fk_cfb_render_loc_cfb" />
+
+		<addForeignKeyConstraint constraintName="fk_cfb_render_loc_cfb"
+			onDelete="CASCADE" referencedTableName="CUSTOM_FIELD_BINDING"
+			referencedColumnNames="CFB_ID" baseTableName="CUSTOM_FIELD_RENDERING_LOCATION"
+			baseColumnNames="CFB_ID" />
+
+	</changeSet>
+
+	<changeSet id="tm-1.5.0.00-feat-1850.01" author="mpagnon">
+		<comment>The table DENORMALIZED_FIELD_VALUE holds instances of a FIELD that are bound to instances of : 
+			executions, execution-steps	when they are created from test-cases or test-case-steps holding CUSTOM_FIELDS.
+			A "denormalized field value" is destroyed when the "denormalized field holder" instance is destroyed.
+						
+			Note that in this table the coupling between the "denormalized field value" and the "denormalized field holder" is week : it consists of a pair
+			of Type/ID (DENORMALIZED_FIELD_HOLDER_TYPE and DENORMALIZED_FIELD_HOLDER_ID) rather than a foreign key to the said entity, nor is true 
+			the opposite ( ie no FK from an execution to a denormalized field value). 	</comment>
+		<createTable tableName="DENORMALIZED_FIELD_VALUE">
+			<column name="DFV_ID" type="BIGINT" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false"
+					primaryKeyName="pk_denormalized_field" />
+			</column>
+			<column name="CFV_ID" type="BIGINT"
+				remarks="the custom field value where the denormalized field is copied from">
+				<constraints nullable="true"/>
+			</column>
+			<column name="CODE" defaultValue="" type="VARCHAR(30)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DENORMALIZED_FIELD_HOLDER_ID" type="BIGINT"
+				remarks="the id of the denormalized field holder.">
+				<constraints nullable="false" />
+			</column>
+			<column name="DENORMALIZED_FIELD_HOLDER_TYPE" type="VARCHAR(30)"
+				remarks="the kind of entity.">
+				<constraints nullable="false" />
+			</column>
+			<column name="INPUT_TYPE" type="CHAR(30)">
+				<constraints nullable="false" />
+			</column>
+			<column name="LABEL" type="VARCHAR(255)" defaultValue="">
+				<constraints nullable="false" />
+			</column>
+			<column name="POSITION" type="INT">
+				<constraints nullable="true" />
+			</column>
+			<column name="VALUE" type="VARCHAR(255)"
+				remarks="the value of that particular custom field value" />
+		</createTable>
+		
+		
+		<addForeignKeyConstraint constraintName="fk_dfv_cfv_binding"
+			onDelete="CASCADE" referencedTableName="CUSTOM_FIELD_VALUE"
+			referencedColumnNames="CFV_ID" baseTableName="DENORMALIZED_FIELD_VALUE"
+			baseColumnNames="CFV_ID"/>
+			
+	</changeSet>
+
+	<changeSet id="tm-1.5.0.00-feat-1850.02" author="mpagnon">
+		<comment>Create table for denormalized field rendering location</comment>
+		<createTable tableName="DENORMALIZED_FIELD_RENDERING_LOCATION">
+			<column name="DFV_ID" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="RENDERING_LOCATION" type="VARCHAR(30)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+			
+		<addForeignKeyConstraint constraintName="fk_dfb_render_loc_dfb"
+			onDelete="CASCADE" referencedTableName="DENORMALIZED_FIELD_VALUE"
+			referencedColumnNames="DFV_ID" baseTableName="DENORMALIZED_FIELD_RENDERING_LOCATION"
+			baseColumnNames="DFV_ID" />
+
+	</changeSet>
+  	<changeSet id="tm-1.5.0-feat-821" author="gfouquet">
+  		<comment>Change class names in ACL system</comment>
+  		<update tableName="ACL_CLASS">
+  			<column name="CLASSNAME" value="org.squashtest.tm.domain.project.Project" />
+  			<where>
+  				CLASSNAME = 'org.squashtest.csp.tm.domain.project.Project'
+  			</where>
+  		</update>
+  		<update tableName="ACL_CLASS">
+  			<column name="CLASSNAME" value="org.squashtest.tm.domain.requirement.RequirementLibrary" />
+  			<where>
+  				CLASSNAME = 'org.squashtest.csp.tm.domain.requirement.RequirementLibrary'
+  			</where>
+  		</update>
+  		<update tableName="ACL_CLASS">
+  			<column name="CLASSNAME" value="org.squashtest.tm.domain.testcase.TestCaseLibrary" />
+  			<where>
+  				CLASSNAME = 'org.squashtest.csp.tm.domain.testcase.TestCaseLibrary'
+  			</where>
+  		</update>
+  		<update tableName="ACL_CLASS">
+  			<column name="CLASSNAME" value="org.squashtest.tm.domain.campaign.CampaignLibrary" />
+  			<where>
+  				CLASSNAME = 'org.squashtest.csp.tm.domain.campaign.CampaignLibrary'
+  			</where>
+  		</update>  	
+  		<update tableName="ACL_CLASS">
+  			<column name="CLASSNAME" value="org.squashtest.tm.domain.project.ProjectTemplate" />
+  			<where>
+  				CLASSNAME = 'org.squashtest.csp.tm.domain.project.ProjectTemplate'
+  			</where>
+  		</update>
+  	</changeSet>
+
+	<!-- ============================================FEAT 1864========================================= -->
+	<changeSet id="tm-1.5.0.00-feat-1864.01" author="mpagnon">
+		<comment>Create tables CORE_PARTY, CORE_TEAM </comment>
+		<createTable tableName="CORE_PARTY">
+			<column name="PARTY_ID" type="BIGINT" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false"
+					primaryKeyName="pk_party" />
+			</column>
+		</createTable>
+		<createTable tableName="CORE_TEAM">
+			<column name="PARTY_ID" type="BIGINT"
+				remarks="cle primaire, qui est aussi une cle etrangere vers la table PARTY_ID Ne doit donc pas etre autogeneree.">
+				<constraints primaryKey="true" nullable="false"
+					primaryKeyName="pk_team" foreignKeyName="fk_team_party" references="CORE_PARTY(PARTY_ID)" />
+			</column>
+			<column name="NAME" type="VARCHAR(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DESCRIPTION" type="VARCHAR(255)">
+				<constraints nullable="true" />
+			</column>
+			<column name="CREATED_BY" type="java.sql.Types.VARCHAR(50)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="CREATED_ON" type="DATETIME"
+				remarks="Date de creation. Il s'agit de la date de creation de l'entree dans 
+ 				la base, non d'une date metier.">
+				<constraints nullable="false" />
+			</column>
+			<column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL"
+				remarks="Date de derniere mise a jour de cette instance." />
+
+			<column name="LAST_MODIFIED_BY" type="java.sql.Types.VARCHAR(50)"
+				defaultValue="NULL"
+				remarks="Nom du dernier utilisateur ayant mis a jour cet instance." />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="tm-1.5.0.00-feat-1864.02" author="mpagnon">
+		<comment>change name of USER_ID into PARTY_ID in CORE_USER, ACL_RESPONSIBILITY_SCOPE_ENTRY and CORE_GROUP_MEMBER. We need to drop FKs on user first.</comment>
+  <dropForeignKeyConstraint baseTableName="CAMPAIGN_TEST_PLAN_ITEM" constraintName="fk_camp_tp_user" />
+  <dropForeignKeyConstraint baseTableName="ITERATION_TEST_PLAN_ITEM" constraintName="fk_itertestplan_user" />
+  <dropForeignKeyConstraint baseTableName="ACL_RESPONSIBILITY_SCOPE_ENTRY" constraintName="FK_RESP_SCOPE_USER" />
+  <dropForeignKeyConstraint baseTableName="CORE_GROUP_MEMBER" constraintName="FK_GRP_MEMBER_USR" />
+  <renameColumn tableName="CORE_USER" oldColumnName="ID" newColumnName="PARTY_ID" columnDataType="BIGINT" />
+  <renameColumn tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY" oldColumnName="USER_ID" newColumnName="PARTY_ID" columnDataType="BIGINT" />
+  <renameColumn tableName="CORE_GROUP_MEMBER" oldColumnName="USER_ID" newColumnName="PARTY_ID" columnDataType="BIGINT" />
+	</changeSet>
+
+	<changeSet id="tm-1.5.0.00-feat-1864.04" author="mpagnon">
+		<comment>Create a PARTY for each CORE_USER</comment>
+		<sql>
+			insert into CORE_PARTY(PARTY_ID)
+			select PARTY_ID from CORE_USER;
+		</sql>
+	</changeSet>
+    <changeSet id="tm-1.5.0.00-feat-1864.postgresql" author="mpagnon" dbms="postgresql">
+      <comment>Update party sequence after inserts</comment>
+      <sql>
+        SELECT setval('core_party_party_id_seq', (SELECT MAX(party_id) from core_party));
+      </sql>
+    </changeSet>
+
+	<changeSet id="tm-1.5.0.00-feat-1864.05" author="mpagnon">
+		<comment>Replace reference on user with reference on party</comment>
+		<addForeignKeyConstraint constraintName="fk_arse_party"
+			referencedTableName="CORE_PARTY" baseColumnNames="PARTY_ID"
+			baseTableName="ACL_RESPONSIBILITY_SCOPE_ENTRY" referencedColumnNames="PARTY_ID" />
+		<addForeignKeyConstraint constraintName="fk_group_member_party"
+			referencedTableName="CORE_PARTY" baseColumnNames="PARTY_ID" baseTableName="CORE_GROUP_MEMBER"
+			referencedColumnNames="PARTY_ID" />
+	</changeSet>
+
+	<changeSet id="tm-1.5.0.00-feat-1864.06" author="mpagnon">
+		<comment>Remove autoIncrement on core_user pk and add fk on Party table</comment>
+		<dropPrimaryKey tableName="CORE_USER" />
+		<addPrimaryKey tableName="CORE_USER" columnNames="PARTY_ID"
+			constraintName="pk_core_user" />
+		<addForeignKeyConstraint constraintName="fk_core_user_party"
+			referencedTableName="CORE_PARTY" baseColumnNames="PARTY_ID" baseTableName="CORE_USER"
+			referencedColumnNames="PARTY_ID" />
+		<addForeignKeyConstraint baseTableName="CAMPAIGN_TEST_PLAN_ITEM"
+			referencedColumnNames="PARTY_ID" referencedTableName="CORE_USER"
+			baseColumnNames="USER_ID" constraintName="fk_camp_tp_user" />
+		<addForeignKeyConstraint baseTableName="ITERATION_TEST_PLAN_ITEM"
+			referencedColumnNames="PARTY_ID" referencedTableName="CORE_USER"
+			baseColumnNames="USER_ID" constraintName="fk_itertestplan_user" />
+	</changeSet>
+
+	<changeSet id="tm-1.5.0.00-feat-1864.03" author="mpagnon">
+		<comment>create table team member </comment>
+		<createTable tableName="CORE_TEAM_MEMBER">
+			<column name="TEAM_ID" type="BIGINT">
+				<constraints nullable="false" foreignKeyName="fk_team_member_team"
+					references="CORE_TEAM(PARTY_ID)" />
+			</column>
+			<column name="USER_ID" type="BIGINT">
+				<constraints nullable="false" foreignKeyName="fk_team_member_user"
+					references="CORE_USER(PARTY_ID)" />
+			</column>
+		</createTable>
+		<createIndex tableName="CORE_TEAM_MEMBER" indexName="DX_TEAM_MEMBER"
+			unique="true">
+			<column name="TEAM_ID" />
+			<column name="USER_ID" />
+		</createIndex>
+	</changeSet>
+	
+	<!-- ============================================FEAT 1984========================================= -->
+	<changeSet id="tm-1.5.0.00-feat-1984.01" author="flaurens">
+		<comment>create table item_test_plan_test_suite</comment>
+		<createTable tableName="TEST_SUITE_TEST_PLAN_ITEM">
+			<column name="TPI_ID" type="BIGINT">
+				<constraints nullable="false" foreignKeyName="fk_test_suite_test_plan_item_test_plan_item"
+					references="ITERATION_TEST_PLAN_ITEM(ITEM_TEST_PLAN_ID)" />
+			</column>
+			<column name="SUITE_ID" type="BIGINT">
+				<constraints nullable="false" foreignKeyName="fk_test_suite_test_plan_item_test_suite"
+					references="TEST_SUITE(ID)" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="tm-1.5.0.00-feat-1984.02" author="flaurens">
+		<comment>migrate data to table test_suite_test_plan_item</comment>
+		<sql>
+			insert into TEST_SUITE_TEST_PLAN_ITEM (TPI_ID, SUITE_ID)
+			select ITEM_TEST_PLAN_ID, TEST_SUITE from ITERATION_TEST_PLAN_ITEM
+			where TEST_SUITE IS NOT NULL;
+		</sql>
+		 <dropForeignKeyConstraint baseTableName="ITERATION_TEST_PLAN_ITEM" constraintName="fk_itpi_testsuite" />
+		<dropColumn tableName="ITERATION_TEST_PLAN_ITEM" columnName="TEST_SUITE"/>
+	</changeSet>
+	
+	
+	<!--  ============================================ FEAT 1902 ======================================== -->
+	
+	<changeSet id="tm-1.5.0.00-feat-1902.01" author="bsiri">
+		<comment>creating the tables and references for the workspace plugins</comment>
+		
+		<createTable tableName="TEST_CASE_LIBRARY_PLUGINS" >
+			<column name="LIBRARY_ID" type="BIGINT">
+				<constraints nullable="false" references="TEST_CASE_LIBRARY(TCL_ID)" foreignKeyName="fk_plugin_tclib"/>
+			</column>
+			<column name="PLUGIN_ID" type="java.sql.Types.VARCHAR(100)">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		<createTable tableName="REQUIREMENT_LIBRARY_PLUGINS" >
+			<column name="LIBRARY_ID" type="BIGINT">
+				<constraints nullable="false" references="REQUIREMENT_LIBRARY(RL_ID)" foreignKeyName="fk_plugin_rlib"/>
+			</column>
+			<column name="PLUGIN_ID" type="java.sql.Types.VARCHAR(100)">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+		
+		<createTable tableName="CAMPAIGN_LIBRARY_PLUGINS" >
+			<column name="LIBRARY_ID" type="BIGINT">
+				<constraints nullable="false" references="CAMPAIGN_LIBRARY(CL_ID)" foreignKeyName="fk_plugin_clib"/>
+			</column>
+			<column name="PLUGIN_ID" type="java.sql.Types.VARCHAR(100)">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>				
+	</changeSet>
+	
+	<!-- ============================================FEAT 1984========================================= -->
+	<changeSet id="tm-1.5.0.00-feat-1984.03" author="flaurens">
+		<comment>add column for ordering to table TEST_SUITE_TEST_PLAN_ITEM</comment>
+		<addColumn tableName="TEST_SUITE_TEST_PLAN_ITEM">
+		 	<column name="TEST_PLAN_ORDER" type="INT">
+		 		<constraints nullable="true" />
+		 	</column>
+		</addColumn>
+	</changeSet>
+
+<!-- ============================================FEAT 2003========================================= -->
+	<changeSet id="tm-1.5.0.00-feat-2003.01" author="mpagnon">
+		<comment>Action Steps now cover Requirements versions. We need to create a new table that will be an enhancement of the TEST_CASE_VERIFIED_REQUIREMENT_VERSION one.</comment>
+		<comment>We drop the constraint of the old TEST_CASE_VERIFIED_REQUIREMENT_VERSION so that we can create ones with the same names on the new REQUIREMENT_VERSION_COVERAGE table</comment>
+		<dropForeignKeyConstraint baseTableName="TEST_CASE_VERIFIED_REQUIREMENT_VERSION" constraintName="fk_verified_req_version"/>
+		<dropForeignKeyConstraint baseTableName="TEST_CASE_VERIFIED_REQUIREMENT_VERSION" constraintName="fk_verifying_test_case"/>
+		<dropUniqueConstraint tableName="TEST_CASE_VERIFIED_REQUIREMENT_VERSION" constraintName="uc_tc_verifies_req_version"/>
+		<comment>The new table is called  "REQUIREMENT_VERSION_COVERAGE"</comment>
+		<createTable tableName="REQUIREMENT_VERSION_COVERAGE">
+			<column name="REQUIREMENT_VERSION_COVERAGE_ID" autoIncrement="true" remarks="generated surrogate key" type="BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_requirement_version_coverage" />
+			</column>
+			<column name="VERIFIED_REQ_VERSION_ID" type="BIGINT" remarks="FK to the verified requirement version">
+				<constraints references="REQUIREMENT_VERSION(RES_ID)" foreignKeyName="fk_verified_req_version" /></column>
+			<column name="VERIFYING_TEST_CASE_ID" type="BIGINT" remarks="FK to the verifying test case">
+				<constraints references="TEST_CASE(TCLN_ID)" foreignKeyName="fk_verifying_test_case" />
+			</column>
+		</createTable>
+		<addNotNullConstraint tableName="REQUIREMENT_VERSION_COVERAGE" columnName="VERIFIED_REQ_VERSION_ID" columnDataType="BIGINT"/>
+		<addNotNullConstraint tableName="REQUIREMENT_VERSION_COVERAGE" columnName="VERIFYING_TEST_CASE_ID" columnDataType="BIGINT"/>
+		<addUniqueConstraint tableName="REQUIREMENT_VERSION_COVERAGE" columnNames="VERIFIED_REQ_VERSION_ID, VERIFYING_TEST_CASE_ID" constraintName="uc_tc_verifies_req_version"/>
+	</changeSet>
+	<changeSet id="tm-1.5.0.00-feat-2003.02" author="mpagnon">
+		<comment>We migrate datas from TEST_CASE_VERIFIED_REQUIREMENT_VERSION to REQUIREMENT_VERSION_COVERAGE.</comment>
+		<sql>
+			Insert into REQUIREMENT_VERSION_COVERAGE(VERIFIED_REQ_VERSION_ID, VERIFYING_TEST_CASE_ID)
+			select VERIFIED_REQ_VERSION_ID, VERIFYING_TEST_CASE_ID from TEST_CASE_VERIFIED_REQUIREMENT_VERSION;
+		</sql>
+	</changeSet>
+	<changeSet id="tm-1.5.0.00-feat-2003.03" author="mpagnon">
+		<comment>We drop the old TEST_CASE_VERIFIED_REQUIREMENT_VERSION table.</comment>
+		<dropTable tableName="TEST_CASE_VERIFIED_REQUIREMENT_VERSION"/>
+	</changeSet>
+	<changeSet id="tm-1.5.0.00-feat-2003.04" author="mpagnon">
+		<comment>Let's add a table VERIFYING_STEPS to hold the steps that are concerned by the requirement coverage</comment>
+		<createTable tableName="VERIFYING_STEPS">
+			<column name="REQUIREMENT_VERSION_COVERAGE_ID" type="BIGINT" remarks="FK to the concerned requirement-version-coverage">
+				<constraints nullable="false" references="REQUIREMENT_VERSION_COVERAGE(REQUIREMENT_VERSION_COVERAGE_ID)" foreignKeyName="fk_verifying_step_requirement_version_coverage"/>
+			</column>
+			<column name="TEST_STEP_ID" type="BIGINT" remarks="FK to the concerned action test step">
+				<constraints nullable="false" references="ACTION_TEST_STEP(TEST_STEP_ID)" foreignKeyName="fk_verifying_step_action_test_step" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	
+	<changeSet id="tm-1.5.0.00-feat-1966.01" author="bsiri">
+		<preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+		<dbms type="mysql"/>
+		</preConditions>
+		
+		<comment>fixing mysql text data type for Squash schema version 1.4.x and before (see issue 1966). Dev note : it would have been best to use
+		the tag &lt;modifyColumn&gt; instead of raw sql, because the xml could have been efficiently parsed by the dbdoc generator. 
+		However the dbdoc does not tell which datatype the columns anyway (for now), so let us say that the following raw sql is just fine.</comment>
+		
+		<sql>
+			ALTER TABLE TEST_CASE_LIBRARY_NODE MODIFY DESCRIPTION longtext;
+			ALTER TABLE CAMPAIGN_LIBRARY_NODE MODIFY DESCRIPTION longtext;
+			ALTER TABLE ITERATION MODIFY DESCRIPTION longtext;
+			ALTER TABLE TEST_SUITE MODIFY DESCRIPTION longtext;
+			ALTER TABLE PROJECT MODIFY DESCRIPTION longtext;
+			ALTER TABLE TEST_CASE MODIFY PREREQUISITE longtext;
+			ALTER TABLE RESOURCE MODIFY DESCRIPTION longtext;
+			ALTER TABLE REQUIREMENT_LARGE_PROPERTY_CHANGE MODIFY OLD_VALUE longtext;
+			ALTER TABLE REQUIREMENT_LARGE_PROPERTY_CHANGE MODIFY NEW_VALUE longtext;
+			ALTER TABLE EXECUTION MODIFY DESCRIPTION longtext;
+			ALTER TABLE EXECUTION MODIFY PREREQUISITE longtext;
+			ALTER TABLE EXECUTION_STEP MODIFY ACTION longtext;
+			ALTER TABLE EXECUTION_STEP MODIFY EXPECTED_RESULT longtext;
+			ALTER TABLE EXECUTION_STEP MODIFY COMMENT longtext;
+			ALTER TABLE ACTION_TEST_STEP MODIFY ACTION longtext;
+			ALTER TABLE ACTION_TEST_STEP MODIFY EXPECTED_RESULT longtext;		
+		</sql>	
+	</changeSet>
+	
+	
+	<changeSet id="tm-1.5.0.00-issue-2061.01" author="mpagnon">
+		<comment>Because imported test-cases did not have custom-field-values we need to fix the database.</comment>
+		<sql>
+			insert into CUSTOM_FIELD_VALUE (BOUND_ENTITY_ID, BOUND_ENTITY_TYPE, CFB_ID, VALUE)
+			select tc.TCLN_ID, 'TEST_CASE', binding.CFB_ID, cuf.DEFAULT_VALUE
+			from TEST_CASE tc
+			join TEST_CASE_LIBRARY_NODE tcln ON tc.TCLN_ID = tcln.TCLN_ID
+			join PROJECT project ON tcln.PROJECT_ID = project.PROJECT_ID
+			join CUSTOM_FIELD_BINDING binding ON binding.BOUND_PROJECT_ID = project.PROJECT_ID
+			join CUSTOM_FIELD cuf ON binding.CF_ID = cuf.CF_ID
+			where not exists (
+				select * from CUSTOM_FIELD_VALUE val 
+				where val.BOUND_ENTITY_ID = tc.TCLN_ID 
+				and val.BOUND_ENTITY_TYPE='TEST_CASE' 
+				and val.CFB_ID = binding.CFB_ID
+			)
+		</sql>
+	</changeSet>
+	<changeSet id="tm-1.5.0.00-issue-2146.01" author="mpagnon">
+	<comment> This issue is due to null values in database when @NotNull constraint is present in the bean.
+		This changeSet we will make all java @NotNull be present in database</comment>
+		<comment>--------------------REQUIREMENT_PROPERTY_CHANGE----------------------------</comment>
+		<sql>
+			UPDATE REQUIREMENT_PROPERTY_CHANGE
+			SET PROPERTY_NAME = ''
+			WHERE PROPERTY_NAME is null
+		</sql>
+		<addNotNullConstraint tableName="REQUIREMENT_PROPERTY_CHANGE" columnName="PROPERTY_NAME" columnDataType="java.sql.Types.VARCHAR(100)" />
+		<comment>-------------------REQUIREMENT_LARGE_PROPERTY_CHANGE--------------------</comment>
+		<sql>
+			UPDATE REQUIREMENT_LARGE_PROPERTY_CHANGE
+			SET PROPERTY_NAME = ''
+			WHERE PROPERTY_NAME is null
+		</sql>
+		<addNotNullConstraint tableName="REQUIREMENT_LARGE_PROPERTY_CHANGE" columnName="PROPERTY_NAME" columnDataType="java.sql.Types.VARCHAR(100)" />
+		<comment>----------------------EXECUTION--------------------------</comment>
+		<sql>
+			UPDATE EXECUTION
+			SET REFERENCE = ''
+			WHERE REFERENCE is null
+		</sql>
+		<addNotNullConstraint tableName="EXECUTION" columnName="REFERENCE" columnDataType="java.sql.Types.VARCHAR(50)" />
+		<addDefaultValue columnName="REFERENCE" tableName="EXECUTION" defaultValue=""/>
+		<sql>
+			UPDATE EXECUTION
+			SET PREREQUISITE = ''
+			WHERE PREREQUISITE is null
+		</sql>
+		<addNotNullConstraint tableName="EXECUTION" columnName="PREREQUISITE" columnDataType="CLOB" />
+		<comment>-----------------------REQUIREMENT_VERSION-------------------------</comment>
+		<sql>
+			UPDATE REQUIREMENT_VERSION
+			SET REFERENCE = ''
+			WHERE REFERENCE is null
+		</sql>
+		<addNotNullConstraint tableName="REQUIREMENT_VERSION" columnName="REFERENCE" columnDataType="java.sql.Types.VARCHAR(50)" />
+		<addDefaultValue columnName="REFERENCE" tableName="REQUIREMENT_VERSION" defaultValue=""/>
+		<comment>----------------------TEST_CASES-----------------------</comment>
+		<comment>also fix for [Issue 1895]</comment>
+		<sql>
+			UPDATE TEST_CASE
+			SET PREREQUISITE= ''
+			WHERE PREREQUISITE is null
+		</sql>
+		<addNotNullConstraint tableName="TEST_CASE" columnName="PREREQUISITE" columnDataType="CLOB" />
+		<sql>
+			UPDATE TEST_CASE
+			SET REFERENCE = ''
+			WHERE REFERENCE is null
+		</sql>
+		<addNotNullConstraint tableName="TEST_CASE" columnName="REFERENCE" columnDataType="java.sql.Types.VARCHAR(50)" />
+		<addDefaultValue columnName="REFERENCE" tableName="TEST_CASE" defaultValue=""/>		
+	</changeSet>	
+</databaseChangeLog>
+ 

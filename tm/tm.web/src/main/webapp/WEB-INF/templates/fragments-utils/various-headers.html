@@ -1,0 +1,73 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<script th:fragment="env-setup" th:remove="tag">
+/*<![CDATA[*/
+	var require = require || {};
+	require.baseUrl = /*[[@{/scripts}]]*/;     
+           
+	var squashtm = squashtm || {};
+	squashtm.message = squashtm.message || {};
+	
+	squashtm.message.confirm = /*[[#{label.Confirm}]]*/;
+	squashtm.message.cancel = /*[[#{label.Cancel}]]*/;
+	squashtm.message.placeholder =  /*[[#{rich-edit.placeholder}]]*/;
+	squashtm.message.intoTitle = /*[[#{popup.title.info}]]*/;
+	squashtm.message.errorTitle = /*[[#{popup.title.error}]]*/;
+	squashtm.message.locale = /*[[#{squashtm.locale}]]*/;
+	
+	squashtm.app = squashtm.app || {};
+	squashtm.app.contextRoot = /*[[@{/}]]*/;
+	squashtm.app.locale = /*[[#{squashtm.locale}]]*/;
+           
+	
+	// ------------------- prefilled translator cache ---------------------------------------------------- 
+
+	var _langcache = {	
+		'error.generic.label' : /*[[#{error.generic.label}]]*/ "",
+		'execution.execution-status.SETTLED' : /*[[#{execution.execution-status.SETTLED}]]*/ "",
+		'execution.execution-status.UNTESTABLE' : /*[[#{execution.execution-status.UNTESTABLE}]]*/ "",
+		'execution.execution-status.BLOCKED' : /*[[#{execution.execution-status.BLOCKED}]]*/ "",
+		'execution.execution-status.FAILURE' : /*[[#{execution.execution-status.FAILURE}]]*/ "",
+		'execution.execution-status.SETTLED' : /*[[#{execution.execution-status.SETTLED}]]*/ "",
+		'execution.execution-status.SUCCESS' : /*[[#{execution.execution-status.SUCCESS}]]*/ "",
+		'execution.execution-status.RUNNING' : /*[[#{execution.execution-status.RUNNING}]]*/ "",
+		'execution.execution-status.READY' : /*[[#{execution.execution-status.READY}]]*/ "",
+		'execution.execution-status.WARNING' : /*[[#{execution.execution-status.WARNING}]]*/ "",
+		'execution.execution-status.NOT_RUN' : /*[[#{execution.execution-status.NOT_RUN}]]*/ "",
+		'execution.execution-status.NOT_FOUND' : /*[[#{execution.execution-status.NOT_FOUND}]]*/ "",
+		'execution.execution-status.ERROR' : /*[[#{execution.execution-status.ERROR}]]*/ "",
+		'label.Cancel' : /*[[#{label.Cancel}]]*/ "",
+		'label.Ok' : /*[[#{label.Ok}]]*/ "",
+		'label.Confirm' : /*[[#{label.Confirm}]]*/ "",
+		'rich-edit.language.value' : /*[[#{rich-edit.language.value}]]*/ "",
+		'squashtm.locale' : /*[[#{squashtm.locale}]]*/ "",
+		'squashtm.message.infoTitle' : /*[[#{popup.title.info}]]*/ "",
+		'squashtm.dateformat' : /*[[#{squashtm.dateformat}]]*/ "",
+		'squashtm.dateformat.iso' : /*[[#{squashtm.dateformat.iso}]]*/ "",
+		'squashtm.dateformatShort.datepicker' : /*[[#{squashtm.dateformatShort.datepicker}]]*/ ""
+	};
+
+	squashtm.message.cache = _langcache;
+/*]]>*/
+</script>
+

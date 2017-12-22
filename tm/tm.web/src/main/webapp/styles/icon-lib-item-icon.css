@@ -1,0 +1,5848 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/**
+* smartsprites directive :
+*/
+
+/** sprite: sprites-icons; sprite-image: url('../images/sprites-icons.png'); sprite-layout: vertical */
+
+/**
+* defining the raw classes
+*
+*/
+
+
+.sq-icon-accept {
+	background-image : url(../images/icon-lib/accept.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-accept_blue {
+	background-image : url(../images/icon-lib/accept_blue.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-add {
+	background-image : url(../images/icon-lib/add.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-alarm {
+	background-image : url(../images/icon-lib/alarm.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-anchor {
+	background-image : url(../images/icon-lib/anchor.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application {
+	background-image : url(../images/icon-lib/application.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application2 {
+	background-image : url(../images/icon-lib/application2.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_add {
+	background-image : url(../images/icon-lib/application_add.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_cascade {
+	background-image : url(../images/icon-lib/application_cascade.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_delete {
+	background-image : url(../images/icon-lib/application_delete.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_double {
+	background-image : url(../images/icon-lib/application_double.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_edit {
+	background-image : url(../images/icon-lib/application_edit.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_error {
+	background-image : url(../images/icon-lib/application_error.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_form {
+	background-image : url(../images/icon-lib/application_form.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_get {
+	background-image : url(../images/icon-lib/application_get.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_go {
+	background-image : url(../images/icon-lib/application_go.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_home {
+	background-image : url(../images/icon-lib/application_home.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_key {
+	background-image : url(../images/icon-lib/application_key.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_lightning {
+	background-image : url(../images/icon-lib/application_lightning.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_link {
+	background-image : url(../images/icon-lib/application_link.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_osx {
+	background-image : url(../images/icon-lib/application_osx.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_osx_terminal {
+	background-image : url(../images/icon-lib/application_osx_terminal.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_put {
+	background-image : url(../images/icon-lib/application_put.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_side_boxes {
+	background-image : url(../images/icon-lib/application_side_boxes.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_side_contract {
+	background-image : url(../images/icon-lib/application_side_contract.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_side_expand {
+	background-image : url(../images/icon-lib/application_side_expand.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_side_list {
+	background-image : url(../images/icon-lib/application_side_list.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_side_tree {
+	background-image : url(../images/icon-lib/application_side_tree.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_split {
+	background-image : url(../images/icon-lib/application_split.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_tile_horizontal {
+	background-image : url(../images/icon-lib/application_tile_horizontal.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_tile_vertical {
+	background-image : url(../images/icon-lib/application_tile_vertical.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_view_columns {
+	background-image : url(../images/icon-lib/application_view_columns.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_view_detail {
+	background-image : url(../images/icon-lib/application_view_detail.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_view_gallery {
+	background-image : url(../images/icon-lib/application_view_gallery.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_view_icons {
+	background-image : url(../images/icon-lib/application_view_icons.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_view_list {
+	background-image : url(../images/icon-lib/application_view_list.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_view_tile {
+	background-image : url(../images/icon-lib/application_view_tile.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_view_xp {
+	background-image : url(../images/icon-lib/application_view_xp.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-application_view_xp_terminal {
+	background-image : url(../images/icon-lib/application_view_xp_terminal.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-arrow_branch {
+	background-image : url(../images/icon-lib/arrow_branch.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-arrow_divide {
+	background-image : url(../images/icon-lib/arrow_divide.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-arrow_in {
+	background-image : url(../images/icon-lib/arrow_in.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-arrow_inout {
+	background-image : url(../images/icon-lib/arrow_inout.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-arrow_join {
+	background-image : url(../images/icon-lib/arrow_join.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-arrow_left {
+	background-image : url(../images/icon-lib/arrow_left.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-arrow_merge {
+	background-image : url(../images/icon-lib/arrow_merge.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-arrow_out {
+	background-image : url(../images/icon-lib/arrow_out.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-arrow_redo {
+	background-image : url(../images/icon-lib/arrow_redo.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-arrow_refresh {
+	background-image : url(../images/icon-lib/arrow_refresh.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-arrow_right {
+	background-image : url(../images/icon-lib/arrow_right.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-arrow_undo {
+	background-image : url(../images/icon-lib/arrow_undo.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-asterisk_orange {
+	background-image : url(../images/icon-lib/asterisk_orange.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-attach {
+	background-image : url(../images/icon-lib/attach.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-attach_2 {
+	background-image : url(../images/icon-lib/attach_2.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-award_star_gold {
+	background-image : url(../images/icon-lib/award_star_gold.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-bandaid {
+	background-image : url(../images/icon-lib/bandaid.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-basket {
+	background-image : url(../images/icon-lib/basket.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-bell {
+	background-image : url(../images/icon-lib/bell.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-bin_closed {
+	background-image : url(../images/icon-lib/bin_closed.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-blog {
+	background-image : url(../images/icon-lib/blog.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-blueprint {
+	background-image : url(../images/icon-lib/blueprint.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-blueprint_horizontal {
+	background-image : url(../images/icon-lib/blueprint_horizontal.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-bluetooth {
+	background-image : url(../images/icon-lib/bluetooth.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-bomb {
+	background-image : url(../images/icon-lib/bomb.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-book {
+	background-image : url(../images/icon-lib/book.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-bookmark {
+	background-image : url(../images/icon-lib/bookmark.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-bookmark_book {
+	background-image : url(../images/icon-lib/bookmark_book.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-bookmark_book_open {
+	background-image : url(../images/icon-lib/bookmark_book_open.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-bookmark_document {
+	background-image : url(../images/icon-lib/bookmark_document.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-bookmark_folder {
+	background-image : url(../images/icon-lib/bookmark_folder.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-books {
+	background-image : url(../images/icon-lib/books.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-book_addresses {
+	background-image : url(../images/icon-lib/book_addresses.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-book_next {
+	background-image : url(../images/icon-lib/book_next.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-book_open {
+	background-image : url(../images/icon-lib/book_open.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-book_previous {
+	background-image : url(../images/icon-lib/book_previous.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-box {
+	background-image : url(../images/icon-lib/box.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-brick {
+	background-image : url(../images/icon-lib/brick.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-bricks {
+	background-image : url(../images/icon-lib/bricks.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-briefcase {
+	background-image : url(../images/icon-lib/briefcase.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-bug {
+	background-image : url(../images/icon-lib/bug.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-buildings {
+	background-image : url(../images/icon-lib/buildings.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-bullet_add_1 {
+	background-image : url(../images/icon-lib/bullet_add_1.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-bullet_add_2 {
+	background-image : url(../images/icon-lib/bullet_add_2.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-bullet_key {
+	background-image : url(../images/icon-lib/bullet_key.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-cake {
+	background-image : url(../images/icon-lib/cake.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-calculator {
+	background-image : url(../images/icon-lib/calculator.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-calendar_1 {
+	background-image : url(../images/icon-lib/calendar_1.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-calendar_2 {
+	background-image : url(../images/icon-lib/calendar_2.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-camera {
+	background-image : url(../images/icon-lib/camera.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-cancel {
+	background-image : url(../images/icon-lib/cancel.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-car {
+	background-image : url(../images/icon-lib/car.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-cart {
+	background-image : url(../images/icon-lib/cart.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-cd {
+	background-image : url(../images/icon-lib/cd.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-chart_bar {
+	background-image : url(../images/icon-lib/chart_bar.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-chart_curve {
+	background-image : url(../images/icon-lib/chart_curve.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-chart_line {
+	background-image : url(../images/icon-lib/chart_line.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-chart_organisation {
+	background-image : url(../images/icon-lib/chart_organisation.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-chart_pie {
+	background-image : url(../images/icon-lib/chart_pie.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-clipboard_paste_image {
+	background-image : url(../images/icon-lib/clipboard_paste_image.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-clipboard_sign {
+	background-image : url(../images/icon-lib/clipboard_sign.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-clipboard_text {
+	background-image : url(../images/icon-lib/clipboard_text.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-clock {
+	background-image : url(../images/icon-lib/clock.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-cog {
+	background-image : url(../images/icon-lib/cog.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-coins {
+	background-image : url(../images/icon-lib/coins.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-color_swatch_1 {
+	background-image : url(../images/icon-lib/color_swatch_1.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-color_swatch_2 {
+	background-image : url(../images/icon-lib/color_swatch_2.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-comment {
+	background-image : url(../images/icon-lib/comment.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-compass {
+	background-image : url(../images/icon-lib/compass.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-compress {
+	background-image : url(../images/icon-lib/compress.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-computer {
+	background-image : url(../images/icon-lib/computer.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-connect {
+	background-image : url(../images/icon-lib/connect.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-contrast {
+	background-image : url(../images/icon-lib/contrast.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-control_eject {
+	background-image : url(../images/icon-lib/control_eject.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-control_end {
+	background-image : url(../images/icon-lib/control_end.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-control_equalizer {
+	background-image : url(../images/icon-lib/control_equalizer.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-control_fastforward {
+	background-image : url(../images/icon-lib/control_fastforward.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-control_pause {
+	background-image : url(../images/icon-lib/control_pause.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-control_play {
+	background-image : url(../images/icon-lib/control_play.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-control_repeat {
+	background-image : url(../images/icon-lib/control_repeat.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-control_rewind {
+	background-image : url(../images/icon-lib/control_rewind.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-control_start {
+	background-image : url(../images/icon-lib/control_start.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-control_stop {
+	background-image : url(../images/icon-lib/control_stop.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-control_wheel {
+	background-image : url(../images/icon-lib/control_wheel.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-counter {
+	background-image : url(../images/icon-lib/counter.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-counter_count {
+	background-image : url(../images/icon-lib/counter_count.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-counter_count_up {
+	background-image : url(../images/icon-lib/counter_count_up.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-counter_reset {
+	background-image : url(../images/icon-lib/counter_reset.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-counter_stop {
+	background-image : url(../images/icon-lib/counter_stop.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-cross {
+	background-image : url(../images/icon-lib/cross.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-cross_octagon {
+	background-image : url(../images/icon-lib/cross_octagon.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-cross_octagon_fram {
+	background-image : url(../images/icon-lib/cross_octagon_fram.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-cross_shield {
+	background-image : url(../images/icon-lib/cross_shield.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-cross_shield_2 {
+	background-image : url(../images/icon-lib/cross_shield_2.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-crown {
+	background-image : url(../images/icon-lib/crown.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-crown_bronze {
+	background-image : url(../images/icon-lib/crown_bronze.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-crown_silver {
+	background-image : url(../images/icon-lib/crown_silver.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-css {
+	background-image : url(../images/icon-lib/css.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-cursor {
+	background-image : url(../images/icon-lib/cursor.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-cut {
+	background-image : url(../images/icon-lib/cut.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-dashboard {
+	background-image : url(../images/icon-lib/dashboard.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-data {
+	background-image : url(../images/icon-lib/data.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-database {
+	background-image : url(../images/icon-lib/database.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-databases {
+	background-image : url(../images/icon-lib/databases.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-def_cat_business {
+	background-image : url(../images/icon-lib/def_cat_business.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-def_cat_ergonomic {
+	background-image : url(../images/icon-lib/def_cat_ergonomic.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-def_cat_functional {
+	background-image : url(../images/icon-lib/def_cat_functional.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-def_cat_noicon {
+	background-image : url(../images/icon-lib/def_cat_noicon.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-def_cat_non-functional {
+	background-image : url(../images/icon-lib/def_cat_non-functional.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-def_cat_performance {
+	background-image : url(../images/icon-lib/def_cat_performance.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-def_cat_security {
+	background-image : url(../images/icon-lib/def_cat_security.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-def_cat_technic {
+	background-image : url(../images/icon-lib/def_cat_technic.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.sq-icon-def_cat_technical {
+	background-image : url(../images/icon-lib/def_cat_technic.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-def_cat_test-requirement {
+	background-image : url(../images/icon-lib/def_cat_test-requirement.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-def_cat_undefined {
+	background-image : url(../images/icon-lib/def_cat_undefined.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-def_cat_use-case {
+	background-image : url(../images/icon-lib/def_cat_use-case.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-def_cat_user-story {
+	background-image : url(../images/icon-lib/def_cat_user-story.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-delete {
+	background-image : url(../images/icon-lib/delete.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-delivery {
+	background-image : url(../images/icon-lib/delivery.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-desktop {
+	background-image : url(../images/icon-lib/desktop.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-desktop_empty {
+	background-image : url(../images/icon-lib/desktop_empty.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-direction {
+	background-image : url(../images/icon-lib/direction.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-disconnect {
+	background-image : url(../images/icon-lib/disconnect.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-disk {
+	background-image : url(../images/icon-lib/disk.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-doc_access {
+	background-image : url(../images/icon-lib/doc_access.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-doc_break {
+	background-image : url(../images/icon-lib/doc_break.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-doc_convert {
+	background-image : url(../images/icon-lib/doc_convert.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-doc_excel_csv {
+	background-image : url(../images/icon-lib/doc_excel_csv.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-doc_excel_table {
+	background-image : url(../images/icon-lib/doc_excel_table.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-doc_film {
+	background-image : url(../images/icon-lib/doc_film.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-doc_illustrator {
+	background-image : url(../images/icon-lib/doc_illustrator.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-doc_music {
+	background-image : url(../images/icon-lib/doc_music.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-doc_music_playlist {
+	background-image : url(../images/icon-lib/doc_music_playlist.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-doc_offlice {
+	background-image : url(../images/icon-lib/doc_offlice.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-doc_page {
+	background-image : url(../images/icon-lib/doc_page.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-doc_page_previous {
+	background-image : url(../images/icon-lib/doc_page_previous.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-doc_pdf {
+	background-image : url(../images/icon-lib/doc_pdf.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-doc_photoshop {
+	background-image : url(../images/icon-lib/doc_photoshop.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-doc_resize {
+	background-image : url(../images/icon-lib/doc_resize.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-doc_resize_actual {
+	background-image : url(../images/icon-lib/doc_resize_actual.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-doc_shred {
+	background-image : url(../images/icon-lib/doc_shred.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-doc_stand {
+	background-image : url(../images/icon-lib/doc_stand.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-doc_table {
+	background-image : url(../images/icon-lib/doc_table.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-doc_tag {
+	background-image : url(../images/icon-lib/doc_tag.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-doc_text_image {
+	background-image : url(../images/icon-lib/doc_text_image.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-door {
+	background-image : url(../images/icon-lib/door.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-door_in {
+	background-image : url(../images/icon-lib/door_in.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-drawer {
+	background-image : url(../images/icon-lib/drawer.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-drink {
+	background-image : url(../images/icon-lib/drink.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-drink_empty {
+	background-image : url(../images/icon-lib/drink_empty.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-drive {
+	background-image : url(../images/icon-lib/drive.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-drive_burn {
+	background-image : url(../images/icon-lib/drive_burn.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-drive_cd {
+	background-image : url(../images/icon-lib/drive_cd.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-drive_cd_empty {
+	background-image : url(../images/icon-lib/drive_cd_empty.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-drive_delete {
+	background-image : url(../images/icon-lib/drive_delete.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-drive_disk {
+	background-image : url(../images/icon-lib/drive_disk.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-drive_error {
+	background-image : url(../images/icon-lib/drive_error.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-drive_go {
+	background-image : url(../images/icon-lib/drive_go.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-drive_link {
+	background-image : url(../images/icon-lib/drive_link.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-drive_network {
+	background-image : url(../images/icon-lib/drive_network.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-drive_rename {
+	background-image : url(../images/icon-lib/drive_rename.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-dvd {
+	background-image : url(../images/icon-lib/dvd.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-email {
+	background-image : url(../images/icon-lib/email.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-email_open {
+	background-image : url(../images/icon-lib/email_open.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-email_open_image {
+	background-image : url(../images/icon-lib/email_open_image.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-emoticon_evilgrin {
+	background-image : url(../images/icon-lib/emoticon_evilgrin.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-emoticon_grin {
+	background-image : url(../images/icon-lib/emoticon_grin.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-emoticon_happy {
+	background-image : url(../images/icon-lib/emoticon_happy.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-emoticon_smile {
+	background-image : url(../images/icon-lib/emoticon_smile.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-emoticon_surprised {
+	background-image : url(../images/icon-lib/emoticon_surprised.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-emoticon_tongue {
+	background-image : url(../images/icon-lib/emoticon_tongue.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-emoticon_unhappy {
+	background-image : url(../images/icon-lib/emoticon_unhappy.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-emoticon_waii {
+	background-image : url(../images/icon-lib/emoticon_waii.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-emoticon_wink {
+	background-image : url(../images/icon-lib/emoticon_wink.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-envelope {
+	background-image : url(../images/icon-lib/envelope.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-envelope_2 {
+	background-image : url(../images/icon-lib/envelope_2.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-error {
+	background-image : url(../images/icon-lib/error.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-exclamation {
+	background-image : url(../images/icon-lib/exclamation.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-exclamation_octagon_fram {
+	background-image : url(../images/icon-lib/exclamation_octagon_fram.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-eye {
+	background-image : url(../images/icon-lib/eye.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-feed {
+	background-image : url(../images/icon-lib/feed.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-feed_ballon {
+	background-image : url(../images/icon-lib/feed_ballon.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-feed_document {
+	background-image : url(../images/icon-lib/feed_document.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-female {
+	background-image : url(../images/icon-lib/female.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-film {
+	background-image : url(../images/icon-lib/film.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-films {
+	background-image : url(../images/icon-lib/films.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-find {
+	background-image : url(../images/icon-lib/find.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-flag_blue {
+	background-image : url(../images/icon-lib/flag_blue.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-folder {
+	background-image : url(../images/icon-lib/folder.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-font {
+	background-image : url(../images/icon-lib/font.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-funnel {
+	background-image : url(../images/icon-lib/funnel.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-grid {
+	background-image : url(../images/icon-lib/grid.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-grid_dot {
+	background-image : url(../images/icon-lib/grid_dot.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-group {
+	background-image : url(../images/icon-lib/group.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-hammer {
+	background-image : url(../images/icon-lib/hammer.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-hammer_screwdriver {
+	background-image : url(../images/icon-lib/hammer_screwdriver.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-hand {
+	background-image : url(../images/icon-lib/hand.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-hand_point {
+	background-image : url(../images/icon-lib/hand_point.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-heart {
+	background-image : url(../images/icon-lib/heart.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-heart_break {
+	background-image : url(../images/icon-lib/heart_break.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-heart_empty {
+	background-image : url(../images/icon-lib/heart_empty.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-heart_half {
+	background-image : url(../images/icon-lib/heart_half.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-heart_small {
+	background-image : url(../images/icon-lib/heart_small.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-help {
+	background-image : url(../images/icon-lib/help.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-highlighter {
+	background-image : url(../images/icon-lib/highlighter.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-house {
+	background-image : url(../images/icon-lib/house.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-html {
+	background-image : url(../images/icon-lib/html.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-images {
+	background-image : url(../images/icon-lib/images.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-image_1 {
+	background-image : url(../images/icon-lib/image_1.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-image_2 {
+	background-image : url(../images/icon-lib/image_2.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-inbox {
+	background-image : url(../images/icon-lib/inbox.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-ipod {
+	background-image : url(../images/icon-lib/ipod.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-ipod_cast {
+	background-image : url(../images/icon-lib/ipod_cast.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-joystick {
+	background-image : url(../images/icon-lib/joystick.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-key {
+	background-image : url(../images/icon-lib/key.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-keyboard {
+	background-image : url(../images/icon-lib/keyboard.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-layers {
+	background-image : url(../images/icon-lib/layers.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-layer_treansparent {
+	background-image : url(../images/icon-lib/layer_treansparent.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-layout {
+	background-image : url(../images/icon-lib/layout.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-layout_header_footer_3 {
+	background-image : url(../images/icon-lib/layout_header_footer_3.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-layout_header_footer_3_mix {
+	background-image : url(../images/icon-lib/layout_header_footer_3_mix.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-layout_join {
+	background-image : url(../images/icon-lib/layout_join.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-layout_join_vertical {
+	background-image : url(../images/icon-lib/layout_join_vertical.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-layout_select {
+	background-image : url(../images/icon-lib/layout_select.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-layout_select_content {
+	background-image : url(../images/icon-lib/layout_select_content.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-layout_select_footer {
+	background-image : url(../images/icon-lib/layout_select_footer.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-layout_select_sidebar {
+	background-image : url(../images/icon-lib/layout_select_sidebar.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-layout_split {
+	background-image : url(../images/icon-lib/layout_split.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-layout_split_vertical {
+	background-image : url(../images/icon-lib/layout_split_vertical.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-lifebuoy {
+	background-image : url(../images/icon-lib/lifebuoy.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-lightbulb {
+	background-image : url(../images/icon-lib/lightbulb.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-lightbulb_off {
+	background-image : url(../images/icon-lib/lightbulb_off.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-lightning {
+	background-image : url(../images/icon-lib/lightning.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-link {
+	background-image : url(../images/icon-lib/link.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-link_break {
+	background-image : url(../images/icon-lib/link_break.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-lock {
+	background-image : url(../images/icon-lib/lock.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-lock_unlock {
+	background-image : url(../images/icon-lib/lock_unlock.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-magnet {
+	background-image : url(../images/icon-lib/magnet.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-magnifier {
+	background-image : url(../images/icon-lib/magnifier.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-magnifier_zoom_in {
+	background-image : url(../images/icon-lib/magnifier_zoom_in.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-male {
+	background-image : url(../images/icon-lib/male.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-map {
+	background-image : url(../images/icon-lib/map.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-marker {
+	background-image : url(../images/icon-lib/marker.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-medal_bronze_1 {
+	background-image : url(../images/icon-lib/medal_bronze_1.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-medal_gold_1 {
+	background-image : url(../images/icon-lib/medal_gold_1.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-media_player_small_blue {
+	background-image : url(../images/icon-lib/media_player_small_blue.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-microphone {
+	background-image : url(../images/icon-lib/microphone.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-mobile_phone {
+	background-image : url(../images/icon-lib/mobile_phone.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-money {
+	background-image : url(../images/icon-lib/money.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-money_dollar {
+	background-image : url(../images/icon-lib/money_dollar.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-money_euro {
+	background-image : url(../images/icon-lib/money_euro.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-money_pound {
+	background-image : url(../images/icon-lib/money_pound.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-money_yen {
+	background-image : url(../images/icon-lib/money_yen.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-monitor {
+	background-image : url(../images/icon-lib/monitor.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-mouse {
+	background-image : url(../images/icon-lib/mouse.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-music {
+	background-image : url(../images/icon-lib/music.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-music_beam {
+	background-image : url(../images/icon-lib/music_beam.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-neutral {
+	background-image : url(../images/icon-lib/neutral.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-new {
+	background-image : url(../images/icon-lib/new.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-newspaper {
+	background-image : url(../images/icon-lib/newspaper.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-noicon {
+	background-image : url(../images/icon-lib/noicon.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-note {
+	background-image : url(../images/icon-lib/note.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-nuclear {
+	background-image : url(../images/icon-lib/nuclear.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-package {
+	background-image : url(../images/icon-lib/package.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page {
+	background-image : url(../images/icon-lib/page.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_2 {
+	background-image : url(../images/icon-lib/page_2.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_2_copy {
+	background-image : url(../images/icon-lib/page_2_copy.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_code {
+	background-image : url(../images/icon-lib/page_code.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_copy {
+	background-image : url(../images/icon-lib/page_copy.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_excel {
+	background-image : url(../images/icon-lib/page_excel.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_lightning {
+	background-image : url(../images/icon-lib/page_lightning.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_paste {
+	background-image : url(../images/icon-lib/page_paste.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_red {
+	background-image : url(../images/icon-lib/page_red.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_refresh {
+	background-image : url(../images/icon-lib/page_refresh.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_save {
+	background-image : url(../images/icon-lib/page_save.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_cplusplus {
+	background-image : url(../images/icon-lib/page_white_cplusplus.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_csharp {
+	background-image : url(../images/icon-lib/page_white_csharp.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_cup {
+	background-image : url(../images/icon-lib/page_white_cup.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_database {
+	background-image : url(../images/icon-lib/page_white_database.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_delete {
+	background-image : url(../images/icon-lib/page_white_delete.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_dvd {
+	background-image : url(../images/icon-lib/page_white_dvd.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_edit {
+	background-image : url(../images/icon-lib/page_white_edit.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_error {
+	background-image : url(../images/icon-lib/page_white_error.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_excel {
+	background-image : url(../images/icon-lib/page_white_excel.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_find {
+	background-image : url(../images/icon-lib/page_white_find.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_flash {
+	background-image : url(../images/icon-lib/page_white_flash.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_freehand {
+	background-image : url(../images/icon-lib/page_white_freehand.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_gear {
+	background-image : url(../images/icon-lib/page_white_gear.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_get {
+	background-image : url(../images/icon-lib/page_white_get.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_paintbrush {
+	background-image : url(../images/icon-lib/page_white_paintbrush.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_paste {
+	background-image : url(../images/icon-lib/page_white_paste.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_php {
+	background-image : url(../images/icon-lib/page_white_php.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_picture {
+	background-image : url(../images/icon-lib/page_white_picture.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_powerpoint {
+	background-image : url(../images/icon-lib/page_white_powerpoint.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_put {
+	background-image : url(../images/icon-lib/page_white_put.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_ruby {
+	background-image : url(../images/icon-lib/page_white_ruby.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_stack {
+	background-image : url(../images/icon-lib/page_white_stack.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_star {
+	background-image : url(../images/icon-lib/page_white_star.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_swoosh {
+	background-image : url(../images/icon-lib/page_white_swoosh.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_text {
+	background-image : url(../images/icon-lib/page_white_text.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_text_width {
+	background-image : url(../images/icon-lib/page_white_text_width.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_tux {
+	background-image : url(../images/icon-lib/page_white_tux.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_vector {
+	background-image : url(../images/icon-lib/page_white_vector.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_visualstudio {
+	background-image : url(../images/icon-lib/page_white_visualstudio.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_width {
+	background-image : url(../images/icon-lib/page_white_width.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_word {
+	background-image : url(../images/icon-lib/page_white_word.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_world {
+	background-image : url(../images/icon-lib/page_white_world.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_wrench {
+	background-image : url(../images/icon-lib/page_white_wrench.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-page_white_zip {
+	background-image : url(../images/icon-lib/page_white_zip.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-paintbrush {
+	background-image : url(../images/icon-lib/paintbrush.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-paintcan {
+	background-image : url(../images/icon-lib/paintcan.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-palette {
+	background-image : url(../images/icon-lib/palette.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-paper_bag {
+	background-image : url(../images/icon-lib/paper_bag.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-paste_plain {
+	background-image : url(../images/icon-lib/paste_plain.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-paste_word {
+	background-image : url(../images/icon-lib/paste_word.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-pencil {
+	background-image : url(../images/icon-lib/pencil.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-photo {
+	background-image : url(../images/icon-lib/photo.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-photos {
+	background-image : url(../images/icon-lib/photos.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-photo_album {
+	background-image : url(../images/icon-lib/photo_album.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-piano {
+	background-image : url(../images/icon-lib/piano.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-picture {
+	background-image : url(../images/icon-lib/picture.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-pilcrow {
+	background-image : url(../images/icon-lib/pilcrow.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-pill {
+	background-image : url(../images/icon-lib/pill.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-pin {
+	background-image : url(../images/icon-lib/pin.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-pipette {
+	background-image : url(../images/icon-lib/pipette.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-plaing_card {
+	background-image : url(../images/icon-lib/plaing_card.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-plug {
+	background-image : url(../images/icon-lib/plug.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-plugin {
+	background-image : url(../images/icon-lib/plugin.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-printer {
+	background-image : url(../images/icon-lib/printer.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-projection_screen {
+	background-image : url(../images/icon-lib/projection_screen.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-projection_screen_present {
+	background-image : url(../images/icon-lib/projection_screen_present.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-rainbow {
+	background-image : url(../images/icon-lib/rainbow.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-report {
+	background-image : url(../images/icon-lib/report.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-rocket {
+	background-image : url(../images/icon-lib/rocket.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-rosette {
+	background-image : url(../images/icon-lib/rosette.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-rss {
+	background-image : url(../images/icon-lib/rss.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-ruby {
+	background-image : url(../images/icon-lib/ruby.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-ruler_1 {
+	background-image : url(../images/icon-lib/ruler_1.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-ruler_2 {
+	background-image : url(../images/icon-lib/ruler_2.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-ruler_crop {
+	background-image : url(../images/icon-lib/ruler_crop.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-ruler_triangle {
+	background-image : url(../images/icon-lib/ruler_triangle.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-safe {
+	background-image : url(../images/icon-lib/safe.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-script {
+	background-image : url(../images/icon-lib/script.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-selection {
+	background-image : url(../images/icon-lib/selection.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-selection_select {
+	background-image : url(../images/icon-lib/selection_select.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-server {
+	background-image : url(../images/icon-lib/server.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-shading {
+	background-image : url(../images/icon-lib/shading.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-shape_aling_bottom {
+	background-image : url(../images/icon-lib/shape_aling_bottom.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-shape_aling_center {
+	background-image : url(../images/icon-lib/shape_aling_center.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-shape_aling_left {
+	background-image : url(../images/icon-lib/shape_aling_left.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-shape_aling_middle {
+	background-image : url(../images/icon-lib/shape_aling_middle.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-shape_aling_right {
+	background-image : url(../images/icon-lib/shape_aling_right.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-shape_aling_top {
+	background-image : url(../images/icon-lib/shape_aling_top.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-shape_flip_horizontal {
+	background-image : url(../images/icon-lib/shape_flip_horizontal.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-shape_flip_vertical {
+	background-image : url(../images/icon-lib/shape_flip_vertical.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-shape_group {
+	background-image : url(../images/icon-lib/shape_group.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-shape_handles {
+	background-image : url(../images/icon-lib/shape_handles.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-shape_move_back {
+	background-image : url(../images/icon-lib/shape_move_back.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-shape_move_backwards {
+	background-image : url(../images/icon-lib/shape_move_backwards.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-shape_move_forwards {
+	background-image : url(../images/icon-lib/shape_move_forwards.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-shape_move_front {
+	background-image : url(../images/icon-lib/shape_move_front.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-shape_square {
+	background-image : url(../images/icon-lib/shape_square.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-shield {
+	background-image : url(../images/icon-lib/shield.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-sitemap {
+	background-image : url(../images/icon-lib/sitemap.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-slide {
+	background-image : url(../images/icon-lib/slide.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-slides {
+	background-image : url(../images/icon-lib/slides.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-slides_stack {
+	background-image : url(../images/icon-lib/slides_stack.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-smiley_confuse {
+	background-image : url(../images/icon-lib/smiley_confuse.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-smiley_cool {
+	background-image : url(../images/icon-lib/smiley_cool.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-smiley_cry {
+	background-image : url(../images/icon-lib/smiley_cry.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-smiley_fat {
+	background-image : url(../images/icon-lib/smiley_fat.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-smiley_mad {
+	background-image : url(../images/icon-lib/smiley_mad.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-smiley_red {
+	background-image : url(../images/icon-lib/smiley_red.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-smiley_roll {
+	background-image : url(../images/icon-lib/smiley_roll.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-smiley_slim {
+	background-image : url(../images/icon-lib/smiley_slim.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-smiley_yell {
+	background-image : url(../images/icon-lib/smiley_yell.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-socket {
+	background-image : url(../images/icon-lib/socket.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-sockets {
+	background-image : url(../images/icon-lib/sockets.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-sort {
+	background-image : url(../images/icon-lib/sort.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-sort_alphabet {
+	background-image : url(../images/icon-lib/sort_alphabet.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-sort_date {
+	background-image : url(../images/icon-lib/sort_date.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-sort_disable {
+	background-image : url(../images/icon-lib/sort_disable.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-sort_number {
+	background-image : url(../images/icon-lib/sort_number.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-sort_price {
+	background-image : url(../images/icon-lib/sort_price.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-sort_quantity {
+	background-image : url(../images/icon-lib/sort_quantity.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-sort_rating {
+	background-image : url(../images/icon-lib/sort_rating.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-sound {
+	background-image : url(../images/icon-lib/sound.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-sound_note {
+	background-image : url(../images/icon-lib/sound_note.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-spellcheck {
+	background-image : url(../images/icon-lib/spellcheck.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-sport_8ball {
+	background-image : url(../images/icon-lib/sport_8ball.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-sport_basketball {
+	background-image : url(../images/icon-lib/sport_basketball.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-sport_football {
+	background-image : url(../images/icon-lib/sport_football.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-sport_golf {
+	background-image : url(../images/icon-lib/sport_golf.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-sport_raquet {
+	background-image : url(../images/icon-lib/sport_raquet.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-sport_shuttlecock {
+	background-image : url(../images/icon-lib/sport_shuttlecock.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-sport_soccer {
+	background-image : url(../images/icon-lib/sport_soccer.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-sport_tennis {
+	background-image : url(../images/icon-lib/sport_tennis.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-stamp {
+	background-image : url(../images/icon-lib/stamp.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-star_1 {
+	background-image : url(../images/icon-lib/star_1.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-star_2 {
+	background-image : url(../images/icon-lib/star_2.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-status_online {
+	background-image : url(../images/icon-lib/status_online.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-stop {
+	background-image : url(../images/icon-lib/stop.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-style {
+	background-image : url(../images/icon-lib/style.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-sum {
+	background-image : url(../images/icon-lib/sum.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-sum_2 {
+	background-image : url(../images/icon-lib/sum_2.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-switch {
+	background-image : url(../images/icon-lib/switch.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-tab {
+	background-image : url(../images/icon-lib/tab.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-table {
+	background-image : url(../images/icon-lib/table.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-tag {
+	background-image : url(../images/icon-lib/tag.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-tag_blue {
+	background-image : url(../images/icon-lib/tag_blue.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-target {
+	background-image : url(../images/icon-lib/target.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-telephone {
+	background-image : url(../images/icon-lib/telephone.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-television {
+	background-image : url(../images/icon-lib/television.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-textfield {
+	background-image : url(../images/icon-lib/textfield.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-textfield_rename {
+	background-image : url(../images/icon-lib/textfield_rename.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-text_align_center {
+	background-image : url(../images/icon-lib/text_align_center.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-text_align_justify {
+	background-image : url(../images/icon-lib/text_align_justify.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-text_align_left {
+	background-image : url(../images/icon-lib/text_align_left.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-text_align_right {
+	background-image : url(../images/icon-lib/text_align_right.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-text_allcaps {
+	background-image : url(../images/icon-lib/text_allcaps.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-text_bold {
+	background-image : url(../images/icon-lib/text_bold.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-text_columns {
+	background-image : url(../images/icon-lib/text_columns.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-text_dropcaps {
+	background-image : url(../images/icon-lib/text_dropcaps.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-text_heading_1 {
+	background-image : url(../images/icon-lib/text_heading_1.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-text_horizontalrule {
+	background-image : url(../images/icon-lib/text_horizontalrule.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-text_indent {
+	background-image : url(../images/icon-lib/text_indent.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-text_indent_remove {
+	background-image : url(../images/icon-lib/text_indent_remove.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-text_italic {
+	background-image : url(../images/icon-lib/text_italic.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-text_kerning {
+	background-image : url(../images/icon-lib/text_kerning.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-text_letterspacing {
+	background-image : url(../images/icon-lib/text_letterspacing.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-text_letter_omega {
+	background-image : url(../images/icon-lib/text_letter_omega.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-text_linespacing {
+	background-image : url(../images/icon-lib/text_linespacing.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-text_list_bullets {
+	background-image : url(../images/icon-lib/text_list_bullets.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-text_list_numbers {
+	background-image : url(../images/icon-lib/text_list_numbers.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-text_lowercase {
+	background-image : url(../images/icon-lib/text_lowercase.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-text_padding_bottom {
+	background-image : url(../images/icon-lib/text_padding_bottom.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-text_padding_left {
+	background-image : url(../images/icon-lib/text_padding_left.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-text_padding_right {
+	background-image : url(../images/icon-lib/text_padding_right.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-text_padding_top {
+	background-image : url(../images/icon-lib/text_padding_top.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-text_signature {
+	background-image : url(../images/icon-lib/text_signature.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-text_smallcaps {
+	background-image : url(../images/icon-lib/text_smallcaps.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-text_strikethrough {
+	background-image : url(../images/icon-lib/text_strikethrough.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-text_subscript {
+	background-image : url(../images/icon-lib/text_subscript.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-ticket {
+	background-image : url(../images/icon-lib/ticket.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-timeline_marker {
+	background-image : url(../images/icon-lib/timeline_marker.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-traffic {
+	background-image : url(../images/icon-lib/traffic.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-transmit {
+	background-image : url(../images/icon-lib/transmit.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-trophy {
+	background-image : url(../images/icon-lib/trophy.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-trophy_bronze {
+	background-image : url(../images/icon-lib/trophy_bronze.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-trophy_silver {
+	background-image : url(../images/icon-lib/trophy_silver.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-ui_combo_box {
+	background-image : url(../images/icon-lib/ui_combo_box.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-ui_saccordion {
+	background-image : url(../images/icon-lib/ui_saccordion.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-ui_slider_1 {
+	background-image : url(../images/icon-lib/ui_slider_1.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-ui_slider_2 {
+	background-image : url(../images/icon-lib/ui_slider_2.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-ui_tab_bottom {
+	background-image : url(../images/icon-lib/ui_tab_bottom.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-ui_tab_content {
+	background-image : url(../images/icon-lib/ui_tab_content.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-ui_tab_disable {
+	background-image : url(../images/icon-lib/ui_tab_disable.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-ui_tab_side {
+	background-image : url(../images/icon-lib/ui_tab_side.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-ui_text_field_hidden {
+	background-image : url(../images/icon-lib/ui_text_field_hidden.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-ui_text_field_password {
+	background-image : url(../images/icon-lib/ui_text_field_password.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-umbrella {
+	background-image : url(../images/icon-lib/umbrella.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-user {
+	background-image : url(../images/icon-lib/user.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-user_black_female {
+	background-image : url(../images/icon-lib/user_black_female.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-user_business {
+	background-image : url(../images/icon-lib/user_business.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-user_business_boss {
+	background-image : url(../images/icon-lib/user_business_boss.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-user_female {
+	background-image : url(../images/icon-lib/user_female.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-user_silhouette {
+	background-image : url(../images/icon-lib/user_silhouette.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-user_thief {
+	background-image : url(../images/icon-lib/user_thief.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-user_thief_baldie {
+	background-image : url(../images/icon-lib/user_thief_baldie.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-vcard {
+	background-image : url(../images/icon-lib/vcard.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-vector {
+	background-image : url(../images/icon-lib/vector.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-wait {
+	background-image : url(../images/icon-lib/wait.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-wall {
+	background-image : url(../images/icon-lib/wall.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-wall_break {
+	background-image : url(../images/icon-lib/wall_break.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-wall_brick {
+	background-image : url(../images/icon-lib/wall_brick.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-wall_disable {
+	background-image : url(../images/icon-lib/wall_disable.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-wand {
+	background-image : url(../images/icon-lib/wand.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-weather_clouds {
+	background-image : url(../images/icon-lib/weather_clouds.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-weather_cloudy {
+	background-image : url(../images/icon-lib/weather_cloudy.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-weather_lightning {
+	background-image : url(../images/icon-lib/weather_lightning.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-weather_rain {
+	background-image : url(../images/icon-lib/weather_rain.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-weather_snow {
+	background-image : url(../images/icon-lib/weather_snow.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-weather_sun {
+	background-image : url(../images/icon-lib/weather_sun.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-webcam {
+	background-image : url(../images/icon-lib/webcam.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-world {
+	background-image : url(../images/icon-lib/world.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-zone {
+	background-image : url(../images/icon-lib/zone.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-zones {
+	background-image : url(../images/icon-lib/zones.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+.sq-icon-zone_money {
+	background-image : url(../images/icon-lib/zone_money.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
+
+/**
+ * defining the tree classes
+ *
+ */
+
+
+li[rel="requirement"][category-icon="accept"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/accept.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="accept_blue"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/accept_blue.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="add"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/add.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="alarm"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/alarm.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="anchor"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/anchor.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application2"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application2.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_add"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_add.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_cascade"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_cascade.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_delete"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_delete.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_double"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_double.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_edit"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_edit.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_error"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_error.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_form"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_form.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_get"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_get.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_go"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_go.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_home"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_home.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_key"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_key.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_lightning"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_lightning.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_link"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_link.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_osx"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_osx.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_osx_terminal"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_osx_terminal.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_put"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_put.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_side_boxes"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_side_boxes.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_side_contract"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_side_contract.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_side_expand"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_side_expand.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_side_list"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_side_list.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_side_tree"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_side_tree.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_split"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_split.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_tile_horizontal"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_tile_horizontal.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_tile_vertical"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_tile_vertical.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_view_columns"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_view_columns.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_view_detail"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_view_detail.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_view_gallery"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_view_gallery.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_view_icons"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_view_icons.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_view_list"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_view_list.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_view_tile"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_view_tile.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_view_xp"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_view_xp.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="application_view_xp_terminal"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/application_view_xp_terminal.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="arrow_branch"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/arrow_branch.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="arrow_divide"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/arrow_divide.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="arrow_in"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/arrow_in.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="arrow_inout"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/arrow_inout.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="arrow_join"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/arrow_join.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="arrow_left"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/arrow_left.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="arrow_merge"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/arrow_merge.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="arrow_out"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/arrow_out.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="arrow_redo"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/arrow_redo.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="arrow_refresh"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/arrow_refresh.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="arrow_right"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/arrow_right.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="arrow_undo"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/arrow_undo.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="asterisk_orange"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/asterisk_orange.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="attach"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/attach.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="attach_2"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/attach_2.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="award_star_gold"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/award_star_gold.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="bandaid"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/bandaid.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="basket"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/basket.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="bell"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/bell.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="bin_closed"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/bin_closed.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="blog"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/blog.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="blueprint"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/blueprint.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="blueprint_horizontal"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/blueprint_horizontal.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="bluetooth"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/bluetooth.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="bomb"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/bomb.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="book"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/book.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="bookmark"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/bookmark.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="bookmark_book"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/bookmark_book.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="bookmark_book_open"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/bookmark_book_open.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="bookmark_document"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/bookmark_document.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="bookmark_folder"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/bookmark_folder.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="books"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/books.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="book_addresses"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/book_addresses.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="book_next"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/book_next.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="book_open"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/book_open.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="book_previous"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/book_previous.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="box"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/box.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="brick"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/brick.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="bricks"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/bricks.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="briefcase"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/briefcase.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="bug"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/bug.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="buildings"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/buildings.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="bullet_add_1"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/bullet_add_1.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="bullet_add_2"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/bullet_add_2.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="bullet_key"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/bullet_key.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="cake"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/cake.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="calculator"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/calculator.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="calendar_1"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/calendar_1.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="calendar_2"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/calendar_2.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="camera"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/camera.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="cancel"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/cancel.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="car"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/car.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="cart"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/cart.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="cd"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/cd.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="chart_bar"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/chart_bar.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="chart_curve"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/chart_curve.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="chart_line"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/chart_line.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="chart_organisation"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/chart_organisation.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="chart_pie"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/chart_pie.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="clipboard_paste_image"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/clipboard_paste_image.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="clipboard_sign"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/clipboard_sign.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="clipboard_text"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/clipboard_text.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="clock"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/clock.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="cog"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/cog.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="coins"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/coins.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="color_swatch_1"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/color_swatch_1.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="color_swatch_2"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/color_swatch_2.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="comment"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/comment.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="compass"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/compass.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="compress"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/compress.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="computer"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/computer.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="connect"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/connect.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="contrast"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/contrast.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="control_eject"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/control_eject.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="control_end"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/control_end.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="control_equalizer"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/control_equalizer.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="control_fastforward"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/control_fastforward.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="control_pause"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/control_pause.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="control_play"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/control_play.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="control_repeat"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/control_repeat.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="control_rewind"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/control_rewind.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="control_start"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/control_start.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="control_stop"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/control_stop.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="control_wheel"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/control_wheel.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="counter"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/counter.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="counter_count"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/counter_count.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="counter_count_up"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/counter_count_up.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="counter_reset"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/counter_reset.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="counter_stop"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/counter_stop.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="cross"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/cross.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="cross_octagon"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/cross_octagon.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="cross_octagon_fram"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/cross_octagon_fram.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="cross_shield"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/cross_shield.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="cross_shield_2"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/cross_shield_2.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="crown"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/crown.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="crown_bronze"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/crown_bronze.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="crown_silver"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/crown_silver.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="css"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/css.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="cursor"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/cursor.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="cut"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/cut.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="dashboard"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/dashboard.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="data"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/data.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="database"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/database.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="databases"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/databases.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="def_cat_business"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/def_cat_business.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="def_cat_ergonomic"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/def_cat_ergonomic.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="def_cat_functional"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/def_cat_functional.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="def_cat_noicon"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/def_cat_noicon.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="def_cat_non-functional"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/def_cat_non-functional.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="def_cat_performance"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/def_cat_performance.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="def_cat_security"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/def_cat_security.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="def_cat_technic"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/def_cat_technic.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="def_cat_technical"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/def_cat_technic.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="def_cat_test-requirement"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/def_cat_test-requirement.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="def_cat_undefined"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/def_cat_undefined.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="def_cat_use-case"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/def_cat_use-case.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="def_cat_user-story"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/def_cat_user-story.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="delete"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/delete.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="delivery"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/delivery.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="desktop"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/desktop.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="desktop_empty"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/desktop_empty.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="direction"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/direction.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="disconnect"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/disconnect.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="disk"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/disk.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="doc_access"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/doc_access.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="doc_break"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/doc_break.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="doc_convert"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/doc_convert.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="doc_excel_csv"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/doc_excel_csv.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="doc_excel_table"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/doc_excel_table.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="doc_film"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/doc_film.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="doc_illustrator"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/doc_illustrator.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="doc_music"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/doc_music.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="doc_music_playlist"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/doc_music_playlist.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="doc_offlice"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/doc_offlice.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="doc_page"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/doc_page.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="doc_page_previous"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/doc_page_previous.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="doc_pdf"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/doc_pdf.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="doc_photoshop"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/doc_photoshop.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="doc_resize"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/doc_resize.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="doc_resize_actual"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/doc_resize_actual.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="doc_shred"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/doc_shred.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="doc_stand"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/doc_stand.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="doc_table"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/doc_table.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="doc_tag"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/doc_tag.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="doc_text_image"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/doc_text_image.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="door"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/door.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="door_in"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/door_in.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="drawer"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/drawer.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="drink"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/drink.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="drink_empty"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/drink_empty.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="drive"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/drive.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="drive_burn"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/drive_burn.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="drive_cd"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/drive_cd.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="drive_cd_empty"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/drive_cd_empty.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="drive_delete"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/drive_delete.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="drive_disk"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/drive_disk.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="drive_error"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/drive_error.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="drive_go"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/drive_go.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="drive_link"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/drive_link.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="drive_network"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/drive_network.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="drive_rename"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/drive_rename.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="dvd"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/dvd.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="email"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/email.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="email_open"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/email_open.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="email_open_image"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/email_open_image.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="emoticon_evilgrin"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/emoticon_evilgrin.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="emoticon_grin"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/emoticon_grin.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="emoticon_happy"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/emoticon_happy.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="emoticon_smile"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/emoticon_smile.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="emoticon_surprised"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/emoticon_surprised.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="emoticon_tongue"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/emoticon_tongue.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="emoticon_unhappy"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/emoticon_unhappy.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="emoticon_waii"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/emoticon_waii.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="emoticon_wink"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/emoticon_wink.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="envelope"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/envelope.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="envelope_2"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/envelope_2.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="error"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/error.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="exclamation"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/exclamation.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="exclamation_octagon_fram"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/exclamation_octagon_fram.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="eye"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/eye.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="feed"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/feed.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="feed_ballon"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/feed_ballon.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="feed_document"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/feed_document.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="female"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/female.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="film"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/film.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="films"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/films.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="find"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/find.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="flag_blue"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/flag_blue.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="folder"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/folder.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="font"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/font.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="funnel"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/funnel.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="grid"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/grid.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="grid_dot"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/grid_dot.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="group"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/group.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="hammer"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/hammer.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="hammer_screwdriver"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/hammer_screwdriver.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="hand"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/hand.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="hand_point"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/hand_point.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="heart"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/heart.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="heart_break"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/heart_break.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="heart_empty"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/heart_empty.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="heart_half"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/heart_half.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="heart_small"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/heart_small.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="help"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/help.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="highlighter"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/highlighter.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="house"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/house.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="html"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/html.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="images"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/images.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="image_1"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/image_1.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="image_2"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/image_2.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="inbox"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/inbox.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="ipod"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/ipod.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="ipod_cast"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/ipod_cast.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="joystick"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/joystick.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="key"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/key.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="keyboard"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/keyboard.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="layers"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/layers.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="layer_treansparent"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/layer_treansparent.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="layout"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/layout.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="layout_header_footer_3"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/layout_header_footer_3.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="layout_header_footer_3_mix"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/layout_header_footer_3_mix.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="layout_join"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/layout_join.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="layout_join_vertical"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/layout_join_vertical.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="layout_select"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/layout_select.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="layout_select_content"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/layout_select_content.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="layout_select_footer"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/layout_select_footer.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="layout_select_sidebar"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/layout_select_sidebar.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="layout_split"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/layout_split.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="layout_split_vertical"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/layout_split_vertical.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="lifebuoy"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/lifebuoy.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="lightbulb"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/lightbulb.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="lightbulb_off"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/lightbulb_off.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="lightning"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/lightning.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="link"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/link.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="link_break"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/link_break.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="lock"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/lock.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="lock_unlock"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/lock_unlock.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="magnet"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/magnet.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="magnifier"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/magnifier.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="magnifier_zoom_in"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/magnifier_zoom_in.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="male"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/male.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="map"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/map.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="marker"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/marker.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="medal_bronze_1"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/medal_bronze_1.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="medal_gold_1"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/medal_gold_1.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="media_player_small_blue"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/media_player_small_blue.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="microphone"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/microphone.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="mobile_phone"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/mobile_phone.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="money"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/money.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="money_dollar"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/money_dollar.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="money_euro"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/money_euro.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="money_pound"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/money_pound.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="money_yen"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/money_yen.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="monitor"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/monitor.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="mouse"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/mouse.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="music"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/music.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="music_beam"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/music_beam.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="neutral"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/neutral.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="new"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/new.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="newspaper"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/newspaper.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="noicon"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/noicon.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="note"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/note.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="nuclear"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/nuclear.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="package"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/package.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_2"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_2.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_2_copy"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_2_copy.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_code"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_code.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_copy"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_copy.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_excel"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_excel.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_lightning"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_lightning.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_paste"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_paste.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_red"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_red.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_refresh"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_refresh.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_save"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_save.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_cplusplus"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_cplusplus.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_csharp"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_csharp.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_cup"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_cup.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_database"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_database.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_delete"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_delete.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_dvd"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_dvd.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_edit"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_edit.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_error"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_error.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_excel"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_excel.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_find"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_find.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_flash"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_flash.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_freehand"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_freehand.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_gear"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_gear.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_get"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_get.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_paintbrush"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_paintbrush.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_paste"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_paste.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_php"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_php.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_picture"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_picture.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_powerpoint"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_powerpoint.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_put"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_put.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_ruby"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_ruby.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_stack"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_stack.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_star"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_star.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_swoosh"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_swoosh.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_text"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_text.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_text_width"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_text_width.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_tux"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_tux.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_vector"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_vector.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_visualstudio"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_visualstudio.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_width"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_width.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_word"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_word.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_world"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_world.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_wrench"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_wrench.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="page_white_zip"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/page_white_zip.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="paintbrush"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/paintbrush.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="paintcan"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/paintcan.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="palette"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/palette.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="paper_bag"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/paper_bag.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="paste_plain"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/paste_plain.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="paste_word"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/paste_word.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="pencil"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/pencil.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="photo"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/photo.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="photos"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/photos.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="photo_album"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/photo_album.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="piano"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/piano.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="picture"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/picture.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="pilcrow"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/pilcrow.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="pill"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/pill.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="pin"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/pin.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="pipette"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/pipette.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="plaing_card"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/plaing_card.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="plug"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/plug.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="plugin"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/plugin.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="printer"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/printer.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="projection_screen"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/projection_screen.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="projection_screen_present"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/projection_screen_present.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="rainbow"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/rainbow.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="report"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/report.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="rocket"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/rocket.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="rosette"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/rosette.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="rss"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/rss.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="ruby"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/ruby.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="ruler_1"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/ruler_1.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="ruler_2"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/ruler_2.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="ruler_crop"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/ruler_crop.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="ruler_triangle"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/ruler_triangle.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="safe"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/safe.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="script"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/script.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="selection"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/selection.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="selection_select"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/selection_select.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="server"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/server.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="shading"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/shading.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="shape_aling_bottom"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/shape_aling_bottom.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="shape_aling_center"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/shape_aling_center.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="shape_aling_left"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/shape_aling_left.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="shape_aling_middle"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/shape_aling_middle.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="shape_aling_right"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/shape_aling_right.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="shape_aling_top"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/shape_aling_top.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="shape_flip_horizontal"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/shape_flip_horizontal.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="shape_flip_vertical"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/shape_flip_vertical.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="shape_group"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/shape_group.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="shape_handles"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/shape_handles.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="shape_move_back"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/shape_move_back.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="shape_move_backwards"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/shape_move_backwards.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="shape_move_forwards"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/shape_move_forwards.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="shape_move_front"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/shape_move_front.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="shape_square"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/shape_square.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="shield"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/shield.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="sitemap"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/sitemap.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="slide"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/slide.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="slides"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/slides.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="slides_stack"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/slides_stack.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="smiley_confuse"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/smiley_confuse.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="smiley_cool"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/smiley_cool.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="smiley_cry"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/smiley_cry.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="smiley_fat"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/smiley_fat.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="smiley_mad"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/smiley_mad.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="smiley_red"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/smiley_red.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="smiley_roll"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/smiley_roll.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="smiley_slim"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/smiley_slim.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="smiley_yell"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/smiley_yell.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="socket"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/socket.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="sockets"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/sockets.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="sort"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/sort.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="sort_alphabet"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/sort_alphabet.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="sort_date"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/sort_date.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="sort_disable"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/sort_disable.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="sort_number"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/sort_number.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="sort_price"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/sort_price.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="sort_quantity"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/sort_quantity.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="sort_rating"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/sort_rating.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="sound"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/sound.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="sound_note"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/sound_note.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="spellcheck"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/spellcheck.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="sport_8ball"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/sport_8ball.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="sport_basketball"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/sport_basketball.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="sport_football"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/sport_football.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="sport_golf"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/sport_golf.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="sport_raquet"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/sport_raquet.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="sport_shuttlecock"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/sport_shuttlecock.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="sport_soccer"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/sport_soccer.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="sport_tennis"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/sport_tennis.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="stamp"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/stamp.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="star_1"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/star_1.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="star_2"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/star_2.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="status_online"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/status_online.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="stop"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/stop.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="style"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/style.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="sum"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/sum.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="sum_2"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/sum_2.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="switch"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/switch.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="tab"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/tab.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="table"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/table.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="tag"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/tag.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="tag_blue"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/tag_blue.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="target"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/target.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="telephone"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/telephone.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="television"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/television.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="textfield"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/textfield.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="textfield_rename"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/textfield_rename.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="text_align_center"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/text_align_center.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="text_align_justify"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/text_align_justify.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="text_align_left"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/text_align_left.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="text_align_right"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/text_align_right.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="text_allcaps"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/text_allcaps.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="text_bold"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/text_bold.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="text_columns"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/text_columns.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="text_dropcaps"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/text_dropcaps.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="text_heading_1"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/text_heading_1.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="text_horizontalrule"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/text_horizontalrule.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="text_indent"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/text_indent.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="text_indent_remove"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/text_indent_remove.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="text_italic"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/text_italic.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="text_kerning"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/text_kerning.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="text_letterspacing"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/text_letterspacing.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="text_letter_omega"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/text_letter_omega.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="text_linespacing"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/text_linespacing.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="text_list_bullets"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/text_list_bullets.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="text_list_numbers"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/text_list_numbers.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="text_lowercase"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/text_lowercase.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="text_padding_bottom"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/text_padding_bottom.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="text_padding_left"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/text_padding_left.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="text_padding_right"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/text_padding_right.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="text_padding_top"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/text_padding_top.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="text_signature"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/text_signature.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="text_smallcaps"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/text_smallcaps.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="text_strikethrough"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/text_strikethrough.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="text_subscript"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/text_subscript.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="ticket"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/ticket.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="timeline_marker"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/timeline_marker.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="traffic"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/traffic.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="transmit"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/transmit.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="trophy"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/trophy.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="trophy_bronze"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/trophy_bronze.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="trophy_silver"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/trophy_silver.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="ui_combo_box"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/ui_combo_box.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="ui_saccordion"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/ui_saccordion.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="ui_slider_1"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/ui_slider_1.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="ui_slider_2"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/ui_slider_2.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="ui_tab_bottom"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/ui_tab_bottom.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="ui_tab_content"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/ui_tab_content.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="ui_tab_disable"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/ui_tab_disable.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="ui_tab_side"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/ui_tab_side.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="ui_text_field_hidden"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/ui_text_field_hidden.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="ui_text_field_password"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/ui_text_field_password.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="umbrella"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/umbrella.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="user"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/user.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="user_black_female"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/user_black_female.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="user_business"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/user_business.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="user_business_boss"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/user_business_boss.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="user_female"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/user_female.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="user_silhouette"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/user_silhouette.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="user_thief"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/user_thief.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="user_thief_baldie"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/user_thief_baldie.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="vcard"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/vcard.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="vector"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/vector.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="wait"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/wait.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="wall"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/wall.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="wall_break"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/wall_break.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="wall_brick"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/wall_brick.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="wall_disable"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/wall_disable.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="wand"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/wand.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="weather_clouds"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/weather_clouds.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="weather_cloudy"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/weather_cloudy.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="weather_lightning"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/weather_lightning.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="weather_rain"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/weather_rain.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="weather_snow"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/weather_snow.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="weather_sun"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/weather_sun.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="webcam"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/webcam.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="world"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/world.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="zone"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/zone.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="zones"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/zones.png); /** sprite-ref: sprites-icons; */
+}
+
+
+li[rel="requirement"][category-icon="zone_money"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/zone_money.png); /** sprite-ref: sprites-icons; */
+}
+
+li[rel="dashboard"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/reporting_dashboard.png); /** sprite-ref: sprites-icons; */
+}
+
+li[rel="chart"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/reporting_chart.png); /** sprite-ref: sprites-icons; */
+}
+
+li[rel="report"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/reporting_report.png); /** sprite-ref: sprites-icons; */
+}
+
+
+

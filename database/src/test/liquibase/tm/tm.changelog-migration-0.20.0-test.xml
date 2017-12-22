@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="save-attachment-list-0.20.0" author="gfouquet">
+		<comment>We save data from ATTACHMENT_LIST_CONTENT before it is migrated</comment>
+		<sql>
+			CREATE TEMPORARY TABLE OLD_ATT_LIST_CONTENT (
+				AL_ID BIGINT NULL DEFAULT NULL,
+				ATTACHMENT_ID BIGINT NULL DEFAULT NULL
+			)		
+		</sql>
+		<sql>
+			insert into OLD_ATT_LIST_CONTENT (AL_ID, ATTACHMENT_ID) 
+			select AL_ID, ATTACHMENT_ID from ATTACHMENT_LIST_CONTENT
+		</sql>
+	</changeSet>
+
+	<changeSet id="save-issue-list-0.20.0" author="gfouquet">
+		<comment>We save data from ISSUE_LIST_CONTENT before it is migrated</comment>
+		<sql>
+			CREATE TEMPORARY TABLE OLD_ISSUE_LIST_CONTENT (
+				ISSUE_LIST_ID BIGINT NULL DEFAULT NULL,
+				ISSUE_ID BIGINT NULL DEFAULT NULL
+			)		
+		</sql>
+		<sql>
+			insert into OLD_ISSUE_LIST_CONTENT (ISSUE_LIST_ID, ISSUE_ID) 
+			select ISSUE_LIST_ID, ISSUE_ID from ISSUE_LIST_CONTENT
+		</sql>
+	</changeSet>
+
+	<include file="../../../main/liquibase/tm/tm.changelog-0.20.0.xml" relativeToChangelogFile="true" />
+
+	<changeSet id="check-attachment-list-fk-0.20.0" author="gfouquet">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*) from OLD_ATT_LIST_CONTENT o
+				where not exists (
+					select 1 from ATTACHMENT a 
+						where o.AL_ID = a.ATTACHMENT_LIST_ID 
+						and a.ATTACHMENT_ID = o.ATTACHMENT_ID);
+	 		</sqlCheck>
+		</preConditions>
+		<comment>We check that ATTACHMENT_LIST_ID is now a FK of ATTACHMENT</comment>
+	</changeSet>
+
+	<changeSet id="check-issue-list-fk-0.20.0" author="gfouquet">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*) from OLD_ISSUE_LIST_CONTENT o
+				where not exists (
+					select 1 from ISSUE i 
+						where o.ISSUE_LIST_ID = i.ISSUE_LIST_ID 
+						and i.ISSUE_ID = o.ISSUE_ID);
+	 		</sqlCheck>
+		</preConditions>
+		<comment>We check that ISSUE_LIST_ID is now a FK of ISSUE</comment>
+	</changeSet>
+</databaseChangeLog> 

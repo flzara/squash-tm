@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+
+  <!--  ATTACHMENT LIST -->
+
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1" />
+  
+  
+  <!--  PROJECTS  -->
+
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-987"/><TEST_CASE_LIBRARY ATTACHMENT_LIST_ID="-987" TCL_ID="-1"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-989"/><REQUIREMENT_LIBRARY ATTACHMENT_LIST_ID="-989" RL_ID="-1"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-988"/><CAMPAIGN_LIBRARY ATTACHMENT_LIST_ID="-988" CL_ID="-1"/>
+  <PROJECT CREATED_BY="IT" RL_ID="-1" TCL_ID="-1" CREATED_ON="2012-02-17" PROJECT_ID="-1" NAME="Project Ion" ACTIVE="TRUE" CL_ID="-1" ATTACHMENT_LIST_ID="-1"/>
+ 
+ 
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-997"/><TEST_CASE_LIBRARY ATTACHMENT_LIST_ID="-997" TCL_ID="-2"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-999"/><REQUIREMENT_LIBRARY ATTACHMENT_LIST_ID="-999" RL_ID="-2"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-998"/><CAMPAIGN_LIBRARY ATTACHMENT_LIST_ID="-998" CL_ID="-2"/>
+  <PROJECT CREATED_BY="IT" RL_ID="-2" TCL_ID="-2" CREATED_ON="2012-02-17" PROJECT_ID="-2" NAME="Project Ed" ACTIVE="TRUE" CL_ID="-2" ATTACHMENT_LIST_ID="-1"/>
+
+
+
+  <!-- PROJECT 1 NODES -->
+
+  <TEST_CASE_LIBRARY_NODE TCLN_ID="-121" NAME="aaa project Ion folder 1" PROJECT_ID="-1" CREATED_BY="DBU" CREATED_ON="2012-02-17" ATTACHMENT_LIST_ID="-1"/>
+  <TEST_CASE_LIBRARY_NODE TCLN_ID="-111" NAME="bbb project Ion test case 1" PROJECT_ID="-1" CREATED_BY="DBU" CREATED_ON="2012-02-17" ATTACHMENT_LIST_ID="-1"/>
+  <TEST_CASE_LIBRARY_NODE TCLN_ID="-112" NAME="aaa project Ion test case 2" PROJECT_ID="-1" CREATED_BY="DBU" CREATED_ON="2012-02-17" ATTACHMENT_LIST_ID="-1"/>
+  <TEST_CASE_LIBRARY_NODE TCLN_ID="-113" NAME="completely different name" PROJECT_ID="-1" CREATED_BY="DBU" CREATED_ON="2012-02-17" ATTACHMENT_LIST_ID="-1" />
+  
+  <TEST_CASE_FOLDER TCLN_ID="-121" />
+  
+  <TEST_CASE PREREQUISITE="" TCLN_ID="-111" VERSION="1" IMPORTANCE="VERY_HIGH" TC_NATURE="12" TC_TYPE="20"/>
+  <TEST_CASE PREREQUISITE="" TCLN_ID="-112" VERSION="1" IMPORTANCE="MEDIUM" TC_NATURE="12" TC_TYPE="20"/>
+  <TEST_CASE PREREQUISITE="" TCLN_ID="-113" VERSION="1" IMPORTANCE="MEDIUM" TC_NATURE="12" TC_TYPE="20"/>
+  
+  
+  
+  <!-- PROJECT 1 NODES -->
+  
+  <TEST_CASE_LIBRARY_NODE TCLN_ID="-221" NAME="bbb project Ed folder 1" PROJECT_ID="-2" CREATED_BY="DBU" CREATED_ON="2012-02-17" ATTACHMENT_LIST_ID="-1"/>
+  <TEST_CASE_LIBRARY_NODE TCLN_ID="-211" NAME="aaa project Ed test case 1" PROJECT_ID="-2" CREATED_BY="DBU" CREATED_ON="2012-02-17" ATTACHMENT_LIST_ID="-1" />
+  <TEST_CASE_LIBRARY_NODE TCLN_ID="-212" NAME="bbb project Ed test case 2" PROJECT_ID="-2" CREATED_BY="DBU" CREATED_ON="2012-02-17" ATTACHMENT_LIST_ID="-1" />
+  <TEST_CASE_LIBRARY_NODE TCLN_ID="-213" NAME="another completely different name" PROJECT_ID="-2" CREATED_BY="DBU" CREATED_ON="2012-02-17" ATTACHMENT_LIST_ID="-1"/>
+  
+  <TEST_CASE_FOLDER TCLN_ID="-221" />
+  
+  <TEST_CASE PREREQUISITE="" TCLN_ID="-211" VERSION="1" IMPORTANCE="LOW" TC_NATURE="12" TC_TYPE="20"/>
+  <TEST_CASE PREREQUISITE="" TCLN_ID="-212"  VERSION="1" IMPORTANCE="HIGH" TC_NATURE="12" TC_TYPE="20"/>
+  <TEST_CASE PREREQUISITE="" TCLN_ID="-213"   VERSION="1" IMPORTANCE="HIGH" TC_NATURE="12" TC_TYPE="20"/>
+  
+
+</dataset>

@@ -1,0 +1,81 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<div th:remove="tag">
+
+<!--  
+  That file contains some generic panels.
+  
+  Currently the panels available are : 
+
+  1/ small-please-wait : displays the processing indicator + a message at the top. No arguments.
+  2/ large-please-wait : displays the processing indicator + a message at the bottom, the pane will have a height of 300px. No arguments
+  3/ custom-please-wait : same than large please wait but with some customization. Accepts as argument height : string, represents the height (don't forget the unit).
+  4/ warning-pane : will render some text as it would in the generic-warning-dialog. Accepts as argument txtcontent : string, the text to display in  
+  5/ error-pane   : will render some text as it would in the generic-error-dialog. Accepts as argument txtcontent : string, the text to display in  
+  6/ info-pane! will render some text as it would be in the generic-info-dialog. Accepts as argument txtcontent : string, the text to display in
+ -->
+
+</div>
+
+<div th:fragment="small-please-wait">
+  <div class="please-wait-message waiting-loading minimal-height" th:text="#{message.PleaseWait}">zzz</div>
+</div>
+
+<div th:fragment="large-please-wait">
+  <div class="waiting-loading" >
+    <div style="margin-top : 300px;" class="please-wait-message" th:text="#{message.PleaseWait}">zzz</div>
+  </div>
+</div>
+
+<div th:fragment="custom-please-wait">
+  <div class="waiting-loading" >
+    <div class="please-wait-message" th:style="'margin-top : '+${height}+';'" th:text="#{message.PleaseWait}">zzz</div>
+  </div>
+</div>
+
+<div th:fragment="warning-pane">
+   <div class="display-table-row">
+        <div class="display-table-cell warning-cell">
+          <div class="generic-warning-signal"></div>
+        </div>               
+      <div class="generic-warning-main display-table-cell" style="padding-top:20px" th:text="${txtcontent}"></div>
+    </div>
+</div>  
+
+<div th:fragment="error-pane">
+   <div class="display-table-row">
+        <div class="display-table-cell warning-cell">
+          <div class="generic-error-signal"></div>
+        </div>               
+      <div class="generic-error-main display-table-cell" style="padding-top:20px" th:text="${txtcontent}"></div>
+    </div>
+</div> 
+
+<div th:fragment="info-pane">
+   <div class="display-table-row">
+        <div class="display-table-cell warning-cell">
+          <div class="generic-info-signal"></div>
+        </div>               
+      <div class="generic-info-main display-table-cell" style="padding-top:20px" th:text="${txtcontent}"></div>
+    </div>
+</div> 

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.squashtest.tm</groupId>
+    <artifactId>squash-tm</artifactId>
+    <version>1.17.0.RELEASE</version>
+  </parent>
+
+  <groupId>org.squashtest.tm</groupId>
+  <artifactId>squash-tm-core</artifactId>
+  <packaging>pom</packaging>
+  <name>squash-tm-core</name>
+
+  <description>This module regroups Squash TM APIs / SPIs and low level, transversal utilities</description>
+
+  <modules>
+    <module>core.foundation</module>
+    <module>core.api</module>
+    <module>core.aspect</module>
+    <module>core.report.api</module>
+    <module>core.bugtracker.api</module>
+    <module>core.testautomation.api</module>
+    <module>launcher</module>
+    <module>core.dynamicmanager</module>
+    <module>core.wizard.api</module>
+  </modules>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-remote-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>add-license-to-jar</id>
+            <goals>
+              <goal>process</goal>
+            </goals>
+            <configuration>
+              <resourceBundles>
+                <resourceBundle>org.squashtest.tm:squashtest-license-resources:${project.version}</resourceBundle>
+              </resourceBundles>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

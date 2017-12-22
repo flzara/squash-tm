@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+<CORE_PARTY PARTY_ID="-10000100"/>
+	<CORE_USER PARTY_ID="-10000100" LOGIN="jimmy.olsen" LAST_NAME="olsen" FIRST_NAME="jimmy" CREATED_ON="2011-12-23" CREATED_BY="dbunit" ACTIVE="1"/>
+	
+	<ACL_CLASS ID="-10000010" CLASSNAME="newspaper.content.Photo" />
+	<ACL_OBJECT_IDENTITY ID="-10000100" IDENTITY="-1000" CLASS_ID="-10000010" />
+	
+	<ACL_GROUP ID="-10000010" QUALIFIED_NAME="PHOTOGRAPHER" />
+	<ACL_GROUP_PERMISSION ACL_GROUP_ID="-10000010" PERMISSION_MASK="3" CLASS_ID="-10000010" />
+	
+	<ACL_RESPONSIBILITY_SCOPE_ENTRY ID="-10000100" PARTY_ID="-10000100" OBJECT_IDENTITY_ID="-10000100" ACL_GROUP_ID="-10000010" />	
+</dataset>

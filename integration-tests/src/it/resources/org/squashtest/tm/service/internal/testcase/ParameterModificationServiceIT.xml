@@ -1,0 +1,83 @@
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+
+	<!--  dummy attachment list, the same for everyone that need one. -->
+	
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1" />
+
+
+	<!--  test case library nodes ... -->
+
+
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-100" NAME="other bottom test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>		
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-101" NAME="bottom test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>	
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-102" NAME="first test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>	
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-103" NAME="second test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>		
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-104" NAME="third test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>
+	
+	<!-- ... being all test cases -->
+
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-100" VERSION="1" />		
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-101" VERSION="1" />	
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-102" VERSION="1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-103" VERSION="1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-104" VERSION="1" />
+	
+	<!--  ... parameters  -->
+	<PARAMETER PARAM_ID="-10100" NAME="param101" TEST_CASE_ID="-100" DESCRIPTION="param101"/>
+	<PARAMETER PARAM_ID="-10200" NAME="param102" TEST_CASE_ID="-101" DESCRIPTION="param102"/>
+	<PARAMETER PARAM_ID="-10300" NAME="param103" TEST_CASE_ID="-102" DESCRIPTION="param103"/>
+	<PARAMETER PARAM_ID="-10400" NAME="param104" TEST_CASE_ID="-103" DESCRIPTION="param104"/>
+		
+	<!--  test steps... -->
+		
+	<TEST_STEP TEST_STEP_ID="-101" />
+	<TEST_STEP TEST_STEP_ID="-102" />
+	<TEST_STEP TEST_STEP_ID="-103" />		
+	<TEST_STEP TEST_STEP_ID="-104" />
+	<TEST_STEP TEST_STEP_ID="-105" />
+	<TEST_STEP TEST_STEP_ID="-106" />
+	<TEST_STEP TEST_STEP_ID="-107" />
+		
+	<!-- ... action steps -->
+	
+	<ACTION_TEST_STEP TEST_STEP_ID="-101" ACTION="the first action ${parameter} test step"/>
+	<ACTION_TEST_STEP TEST_STEP_ID="-102" ACTION="the second action test step"/>
+	<ACTION_TEST_STEP TEST_STEP_ID="-103" ACTION="the third action test step"/>
+	<ACTION_TEST_STEP TEST_STEP_ID="-104" ACTION="the fourth action test step"/>	
+	
+	<!-- ... call steps -->
+	
+	<CALL_TEST_STEP TEST_STEP_ID="-105" CALLED_TEST_CASE_ID="-102" DELEGATE_PARAMETER_VALUES="true"/>
+	<CALL_TEST_STEP TEST_STEP_ID="-106" CALLED_TEST_CASE_ID="-103" DELEGATE_PARAMETER_VALUES="true"/>
+	<CALL_TEST_STEP TEST_STEP_ID="-107" CALLED_TEST_CASE_ID="-104" DELEGATE_PARAMETER_VALUES="true"/>	
+	
+	<!--  test case steps association -->
+	<TEST_CASE_STEPS TEST_CASE_ID="-100" STEP_ID="-101" STEP_ORDER="0"/>
+	
+	<TEST_CASE_STEPS TEST_CASE_ID="-101" STEP_ID="-102" STEP_ORDER="0"/>	
+	<TEST_CASE_STEPS TEST_CASE_ID="-101" STEP_ID="-105" STEP_ORDER="1"/>
+	
+	<TEST_CASE_STEPS TEST_CASE_ID="-102" STEP_ID="-103" STEP_ORDER="0"/>	
+	<TEST_CASE_STEPS TEST_CASE_ID="-102" STEP_ID="-106" STEP_ORDER="1"/>
+	
+	<TEST_CASE_STEPS TEST_CASE_ID="-103" STEP_ID="-104" STEP_ORDER="0"/>	
+	<TEST_CASE_STEPS TEST_CASE_ID="-103" STEP_ID="-107" STEP_ORDER="1"/>		
+	
+
+	
+	<test_case_library/>
+	<test_case_library_node/>
+	<test_case_folder/>
+	<test_case/>
+	<tcln_relationship/>
+	<tcln_relationship_closure/>
+	<test_case_library_content/>
+	<call_test_step/>
+	<action_test_step/>
+	<test_case_steps/>
+	<parameter/>
+	<Dataset/>
+	<dataset_param_value/>
+	
+</dataset>

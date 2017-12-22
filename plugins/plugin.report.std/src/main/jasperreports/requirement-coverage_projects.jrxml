@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="requirement-coverage_projects" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="/WEB-INF/messages/tm/messages" whenResourceMissingType="Key" uuid="179150fa-10d1-4f51-a76d-87516ba36eee">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="cell" fill="Solid" hAlign="Left" vAlign="Middle" pattern="">
+		<pen lineWidth="1.0" lineColor="#000000"/>
+		<box leftPadding="2">
+			<topPen lineWidth="1.0"/>
+			<leftPen lineWidth="1.0" lineStyle="Solid"/>
+			<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+			<rightPen lineWidth="1.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<style name="cell_left" fill="Solid" hAlign="Left" vAlign="Middle" pattern="">
+		<pen lineWidth="1.0" lineColor="#000000"/>
+		<box>
+			<topPen lineWidth="1.0"/>
+			<leftPen lineWidth="2.0" lineStyle="Solid"/>
+			<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+			<rightPen lineWidth="1.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<style name="cell_right" fill="Solid" hAlign="Left" vAlign="Middle" pattern="">
+		<pen lineWidth="1.0" lineColor="#000000"/>
+		<box>
+			<topPen lineWidth="1.0"/>
+			<leftPen lineWidth="1.0" lineStyle="Solid"/>
+			<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+			<rightPen lineWidth="2.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["D:\\xpetitrenaud\\workspace\\squash\\squashtest-csp\\tm\\org.squashtest.csp.tm.web\\src\\main\\jasperreports\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="subReportParamName" class="net.sf.jasperreports.engine.JasperReport"/>
+	<parameter name="milestoneLabel" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="projectName" class="java.lang.String">
+		<fieldDescription><![CDATA[projectName]]></fieldDescription>
+	</field>
+	<field name="singleRequirementList" class="java.util.List">
+		<fieldDescription><![CDATA[singleRequirementList]]></fieldDescription>
+	</field>
+	<sortField name="projectName"/>
+	<columnHeader>
+		<band height="61" splitType="Stretch">
+			<textField>
+				<reportElement uuid="7cc55b98-4cc8-43e1-8a7a-c46995e5ff8d" style="cell_left" x="0" y="41" width="142" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.projects.label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="44aa3a48-f819-455c-8bc4-6a5b17ea3721" style="cell" x="142" y="41" width="150" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.parent.label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="0835d7da-3576-4024-a0c5-75aee82a5b98" style="cell" x="292" y="41" width="91" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.reference.label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="7a05ee6f-2f4b-431b-8161-8e55bd73da5d" style="cell" x="383" y="41" width="210" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.label.label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="d81f4b19-84e0-4c04-93dd-8ac804be11da" style="cell" x="643" y="41" width="109" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.criticality.label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="68433ca9-9fdb-4f93-a43e-3a906ba53619" style="cell_right" x="752" y="41" width="50" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.associatedtc.label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="a8f58392-4be7-4e3d-85e8-2bdbc2351c30" style="cell" x="593" y="41" width="50" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.version.label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="ff9ce7d5-3756-4d29-9a4c-ff1938e0c431" x="0" y="10" width="232" height="20">
+					<printWhenExpression><![CDATA[($P{milestoneLabel} != null)]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.milestone}+ $P{milestoneLabel}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<subreport>
+				<reportElement uuid="d34df046-aa68-4f7a-bc03-53c51f892dd2" stretchType="RelativeToTallestObject" x="0" y="0" width="802" height="20"/>
+				<subreportParameter name="REPORT_RESOURCE_BUNDLE">
+					<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="projectName">
+					<subreportParameterExpression><![CDATA[$F{projectName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{singleRequirementList})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{subReportParamName}]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="50"/>
+	</columnFooter>
+</jasperReport>

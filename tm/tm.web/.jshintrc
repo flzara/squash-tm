@@ -1,0 +1,17 @@
+{
+	"browser": true,
+	"jquery": true,
+	"eqnull": true,
+	"evil": true,
+	"noarg": true,
+	"smarttabs": true,
+	"laxbreak": true,
+	"laxcomma": true,
+	"sub": true,
+	"loopfunc": true,
+	"curly": true,
+	"globals": {
+		"squashtm": true,
+		"log": false
+	}
+}

@@ -1,0 +1,227 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/************************************
+ * Datatables customization classes *
+ ************************************/
+
+ /** 
+ * smartsprites directive :
+ */
+ 
+ /** sprite: sprites-icons; sprite-image: url('../images/sprites-icons.png'); sprite-layout: vertical */
+ 
+ div.dataTables_wrapper .dataTables_scrollHead{
+ background:none;
+ }
+ 
+div.dataTables_wrapper div.ui-widget-header {
+	background-image: url("jquery/ui/images/ui-bg_highlight-soft_75_cccccc_1x100.png");
+	background-color : #CCCCCC;
+	background-repeat : repeat-x;
+	background-position : 50% 50%;
+	background-attachment : scroll;
+    border: 1px solid #AAAAAA;
+    color: #222222;
+
+}
+
+div.dataTables_wrapper th.ui-state-default, div.dataTables_wrapper td.drag-handle, td.select-handle {
+	/*background: url("jquery/ui/images/ui-bg_glass_75_e6e6e6_1x400.png") repeat-x scroll 50% 50% #E6E6E6;*/
+	background-image : none;
+	background-color : #E6E6E6;
+    border: 1px solid #D3D3D3;
+    color: #555555;
+    font-weight: normal;
+    outline: medium none;
+}
+
+
+div.dataTables_wrapper a.ui-button-icon-only[role="button"] {
+	width:1.5em;
+	height:1.5em;
+}
+
+div.dataTables_wrapper label.ui-icon {
+	/* hack to get centered an empty label with an icon in a 32px column */
+	margin-left: 8px;
+}
+
+
+/**
+ * DATATABLE FOOTER
+ */
+
+div.dataTables_footer{
+	color : #555555;
+	font-style : normal;
+	font-size : 10px;
+	height : 24px;
+	line-height : 24px;
+}
+
+div.dataTables_footer > div {
+	margin-right : 2em;
+	height : 100%;
+	float : left;
+}
+
+div.dataTables_footer select{
+	font-size : 1em;
+}
+
+
+/** pagination got special overrides */
+
+div.dataTables_footer > div.dataTables_paginate{
+	float:right;
+}
+
+.dataTables_paginate span {
+	margin-left:1px;
+	padding-left:1px;
+	margin-right:1px;
+	padding-right:1px;
+	cursor: default;
+	border: 1px solid transparent;
+}
+
+.dataTables_paginate span.paginate_button{
+	border:1px solid transparent;
+    background:none;
+    color  : black;
+    padding :0px !important;
+	cursor:pointer;
+}
+.dataTables_paginate span.paginate_button:HOVER{
+	border-color:black;
+}
+
+.dataTables_paginate span.paginate_button .ui-button-text{
+    padding : 0px;
+	padding-left : 2px;
+	padding-right : 2px;
+}
+
+
+/* that one override the css for the <th> sorting icon class. It actually calls the jquery.blue.css icon sheet*/
+div.DataTables_sort_wrapper > span.ui-icon{
+	float:right;	
+	background-image:url("jquery/ui/images/ui-icons_a8a8a8_256x240.png");	
+}
+
+
+td.has-attachment-cell > a,
+a.table-button{
+	display : block;
+	margin : auto;
+}
+
+a.manage-attachments{
+/*	background-image: url("../images/attachment.png");	 sprite-ref: sprites-icons; */
+    font-weight: normal;
+    color: #fff;
+    background-image: url("../styles/jquery/ui/images/ui-icons_ff01fc_256x240.png");
+    background-position: -240px -112px;
+    font-weight: normal;
+    color: #fff;
+	width : 16px;
+	height : 16px;    
+}
+
+a.edit-pencil{
+/*	background-image: url("../images/pencil.png");	sprite-ref: sprites-icons; */
+    background-image: url("../styles/jquery/ui/images/ui-icons_a8a8a8_256x240.png");
+    background-position: -64px -112px;
+	width : 16px;
+	height : 16px;	
+}
+
+
+.ui-button .ui-icon.table-cell-add,
+a.table-cell-add, 
+a.add-attachments{
+/*	background-image: url("../images/add.png");	 sprite-ref: sprites-icons; */
+	background-image: url("../styles/jquery/ui/images/ui-icons_a8a8a8_256x240.png"); 
+    background-position: -240px -112px;
+	width : 16px;
+	height : 16px;				
+} 
+
+.has-bugs,
+.ui-button .ui-icon.has-bugs {
+	background-image: url("../images/bug.png");	/** sprite-ref: sprites-icons; */
+	width : 16px;
+	height : 16px;
+}
+
+div.dataTables_wrapper td a.delete-execution-table-button[role="button"] {
+	border: medium none;
+}
+
+table.center {
+	text-align: center;
+}
+
+div.dataTables_wrapper th.datatable-filterable.datatable-filtered{
+    margin-bottom: 1em;
+	font-weight:bold;	
+}
+
+thead tr.tp-filtermode-disabled .th_input{
+	display : none;
+}
+
+.default-cursor input, .default-cursor image{
+	cursor: default;
+}
+
+table#requirement-search-result-table tr.nonEditable td.editable{
+    cursor: not-allowed;
+}
+
+table#test-case-search-result-table tr.nonEditable td.editable{
+    cursor: not-allowed;
+}
+
+table tr td.nonEditable{
+	cursor : not-allowed;
+}
+
+/* ******************
+
+test plan execution nested tables
+
+******************* */
+
+ tr.executions-table-header {
+   height:0;
+   line-height:0;
+ } 
+ 
+ table.executions-table tbody td{
+   text-align:left;
+   font-style:italic; 
+   color : #555555;
+ }
+ 
+ table.executions-table tbody td.exec-name{
+   text-decoration: underline;
+ }

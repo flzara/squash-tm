@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+	<changeSet id="tm-0.17.0.01" author="gfouquet">
+		<comment>This table stores "action" tests steps, i.e. steps with an action and expected result, which were formerly stored in TEST_STEP</comment>
+		
+		<createTable tableName="ACTION_TEST_STEP">
+			<column name="TEST_STEP_ID" type="BIGINT" remarks="Shared key with TEST_STEP table">
+				<constraints primaryKey="true" nullable="false" references="TEST_STEP(TEST_STEP_ID)" primaryKeyName="pk_action_step"
+					foreignKeyName="fk_action_step_test_step" />
+			</column>
+			
+			<column name="ACTION" type="CLOB" remarks="The step's action">
+				<constraints nullable="false" />
+			</column>
+			
+			<column name="EXPECTED_RESULT" type="CLOB" defaultValue="NULL" remarks="The step's expected result" />
+			
+			<column name="ATTACHMENT_LIST_ID" type="BIGINT" remarks="clé étrangère vers un ATTACHMENT_LIST, l'entité qui gère les pièces jointes. ">
+				<constraints references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" foreignKeyName="fk_action_test_step_attachment_list" />	
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="tm-0.17.0.02" author="gfouquet">
+		<comment>Data migration from TEST_STEP to ACTION_TEST_STEP</comment>
+		
+		<sql>insert into ACTION_TEST_STEP (TEST_STEP_ID, ACTION, EXPECTED_RESULT, ATTACHMENT_LIST_ID) select TEST_STEP_ID, ACTION, EXPECTED_RESULT, ATTACHMENT_LIST_ID from TEST_STEP</sql>
+	</changeSet>
+	
+	<changeSet id="tm-0.17.0.03" author="gfouquet">
+		<comment>Removes useless comlumns from TEST_STEP</comment>
+		
+		<dropForeignKeyConstraint baseTableName="TEST_STEP" constraintName="fk_test_step__attachment_list"/>
+		<dropColumn tableName="TEST_STEP" columnName="ACTION" />
+		<dropColumn tableName="TEST_STEP" columnName="EXPECTED_RESULT" />
+		<dropColumn tableName="TEST_STEP" columnName="ATTACHMENT_LIST_ID" />
+	</changeSet>
+	
+	<changeSet id="tm-0.17.0.04" author="gfouquet">
+		<comment>This table stores "call" tests steps, i.e. steps which call an entire test case</comment>
+		<createTable tableName="CALL_TEST_STEP">
+			<column name="TEST_STEP_ID" type="BIGINT" remarks="Shared key with TEST_STEP table">
+			
+				<constraints primaryKey="true" nullable="false" references="TEST_STEP(TEST_STEP_ID)" primaryKeyName="pk_call_step"
+					foreignKeyName="fk_call_step_test_step" />
+			</column>
+
+			<column name="CALLED_TEST_CASE_ID" type="BIGINT" remarks="ID of called test case">
+				<constraints nullable="false" references="TEST_CASE(TCLN_ID)" foreignKeyName="fk_call_step_called_test_case" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+</databaseChangeLog>
+ 

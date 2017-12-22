@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+
+<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1"/>
+<TEST_CASE_LIBRARY ATTACHMENT_LIST_ID="-1" TCL_ID="-1"/>
+<PROJECT PROJECT_ID="-1" ATTACHMENT_LIST_ID="-1" CREATED_ON="2012-05-05" CREATED_BY="dbunit" NAME="some project" TCL_ID="-1"/>
+<!-- FOLDER 11 -->
+<TEST_CASE_LIBRARY_NODE ATTACHMENT_LIST_ID="-1" TCLN_ID="-13" CREATED_ON="2012-03-02" CREATED_BY="dbunit" NAME="super folder" PROJECT_ID="-1"/>
+<TEST_CASE_FOLDER TCLN_ID="-13"/>
+<TEST_CASE_LIBRARY_CONTENT CONTENT_ID="-13" LIBRARY_ID="-1" CONTENT_ORDER="0"/>
+<!-- FOLDER 1 -->
+<TEST_CASE_LIBRARY_NODE ATTACHMENT_LIST_ID="-1" TCLN_ID="-1" CREATED_ON="2012-03-02" CREATED_BY="dbunit" NAME="robert" PROJECT_ID="-1"/>
+<TEST_CASE_FOLDER TCLN_ID="-1"/>
+<TCLN_RELATIONSHIP DESCENDANT_ID="-1" ANCESTOR_ID="-13" CONTENT_ORDER="0"/>
+<!-- TEST CASE 10 -->
+<TEST_CASE_LIBRARY_NODE ATTACHMENT_LIST_ID="-1" TCLN_ID="-10" CREATED_ON="2012-11-13" CREATED_BY="dbuni" NAME="test-case10" PROJECT_ID="-1"/>
+<TEST_CASE TCLN_ID="-10" VERSION="1" PREREQUISITE=""/>
+<TCLN_RELATIONSHIP DESCENDANT_ID="-10" ANCESTOR_ID="-1" CONTENT_ORDER="0"/>
+<!-- TEST-CASE 11 -->
+<TEST_CASE_LIBRARY_NODE ATTACHMENT_LIST_ID="-1" TCLN_ID="-11" CREATED_ON="2012-11-13" CREATED_BY="dbunit" NAME="test-case11" PROJECT_ID="-1"/>
+<TEST_CASE TCLN_ID="-11" VERSION="1" PREREQUISITE=""/>
+<TCLN_RELATIONSHIP DESCENDANT_ID="-11" ANCESTOR_ID="-1" CONTENT_ORDER="1"/>
+<!-- FOLDER 2 -->
+<TEST_CASE_LIBRARY_NODE ATTACHMENT_LIST_ID="-1" TCLN_ID="-2" CREATED_ON="2012-03-02" CREATED_BY="dbunit" NAME="another folder" PROJECT_ID="-1"/>
+<TEST_CASE_FOLDER TCLN_ID="-2"/>
+<TEST_CASE_LIBRARY_CONTENT CONTENT_ID="-2" LIBRARY_ID="-1" CONTENT_ORDER="1"/>
+
+<test_case_library_node />
+<test_case_folder/>
+<test_case/>
+</dataset>

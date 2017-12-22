@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+
+	
+    <include file="tm.data-1.9.0-more-automated-tests.xml" relativeToChangelogFile="true" />
+	
+
+	<!-- first, test the dataset -->
+ 
+	<changeSet id="tm-1.10.0.feat-3481-precond-01" author="bsiri">
+		
+		
+		<preConditions>
+			<sqlCheck expectedResult="2">
+				select count(*) from TEST_AUTOMATION_SERVER
+				where server_id in (2, 3);		
+			</sqlCheck>
+	
+			<sqlCheck expectedResult="2">
+				select count(*) from TEST_AUTOMATION_PROJECT
+				where project_id in (2,3);
+			</sqlCheck>
+			<sqlCheck expectedResult="1" >
+				select count(*) from TM_TA_PROJECTS where TM_PROJECT_ID = 1;
+			</sqlCheck> 
+			<sqlCheck expectedResult="3">
+				select count(*) from AUTOMATED_TEST
+				where test_id in (4,5,6);
+			</sqlCheck>
+			<sqlCheck expectedResult="3">
+				select count(*) from TEST_CASE
+				where TCLN_ID in (220, 148, 149)
+				and TA_TEST is not NULL;
+			</sqlCheck>		
+			<sqlCheck expectedResult="3">
+				select count(*) from AUTOMATED_EXECUTION_EXTENDER
+				where extender_id in (4,5,6)
+				and RESULT_URL is not NULL 
+				and TEST_ID is not NULL;
+			</sqlCheck>			 
+		</preConditions>
+	</changeSet>
+
+
+	<!-- ========================================INCLUDE CHANGELOG================================================ -->
+	 <include file="../../../main/liquibase/tm/tm.changelog-1.10.0.xml"
+		relativeToChangelogFile="true" /> 
+	<!-- ========================================================================================================= -->
+	
+	<!-- first check : let's see if the data were cleaned as expected -->
+ 
+	<changeSet id="tm-1.10.0.feat-3481-test-01" author="bsiri">
+		<preConditions>
+		
+			<sqlCheck expectedResult="1">
+				select count(*) from TEST_AUTOMATION_SERVER
+				where server_id = 3;		
+			</sqlCheck>
+			<sqlCheck expectedResult="0">
+				select count(*) from TEST_AUTOMATION_SERVER
+				where server_id = 2;		
+			</sqlCheck>			
+			
+			<sqlCheck expectedResult="1">
+				select count(*) from TEST_AUTOMATION_PROJECT
+				where tm_project_id = 1;
+			</sqlCheck>
+			
+			<sqlCheck expectedResult="1">
+				select count(*) from TEST_AUTOMATION_PROJECT
+				where tm_project_id = 5;
+			</sqlCheck>
+			
+			<sqlCheck expectedResult="2">
+				select count(*) from TEST_AUTOMATION_PROJECT
+				where tm_project_id = 2;
+			</sqlCheck>
+			
+			<sqlCheck expectedResult="4">
+				select count(*) from TEST_AUTOMATION_PROJECT;
+			</sqlCheck>
+						
+			
+			<sqlCheck expectedResult="2">
+				select count(*) from AUTOMATED_TEST
+				where test_id in (5,6);
+			</sqlCheck>
+			
+			<sqlCheck expectedResult="0">
+				select count(*) from AUTOMATED_TEST
+				where test_id = 4;
+			</sqlCheck>			
+			
+			
+			<sqlCheck expectedResult="2">
+				select count(*) from TEST_CASE
+				where tcln_id in (148, 149)
+				and TA_TEST is not NULL;
+			</sqlCheck>	
+			 
+			<sqlCheck expectedResult="0">
+				select count(*) from TEST_CASE
+				where tcln_id = 220
+				and TA_TEST is not NULL;
+			</sqlCheck>				
+				
+				
+			<sqlCheck expectedResult="2">
+				select count(*) from AUTOMATED_EXECUTION_EXTENDER
+				where extender_id in (5,6)
+				and RESULT_URL is not NULL 
+				and TEST_ID is not NULL;
+			</sqlCheck>	
+			
+			<sqlCheck expectedResult="1">
+				select count(*) from AUTOMATED_EXECUTION_EXTENDER
+				where extender_id = 4
+				and RESULT_URL is NULL 
+				and TEST_ID is NULL;
+			</sqlCheck>					
+				
+		</preConditions>		
+	</changeSet>
+	
+	
+	<!--  second check : let's see if the new table are correctly filled -->
+	
+	<changeSet id="tm-1.10.0.feat-3481-test-02" author="bsiri">
+		<preConditions>
+			
+			<sqlCheck expectedResult="1">
+				select count(*) from PROJECT 
+				where PROJECT_ID = 1
+				and TA_SERVER_ID = 3;
+			</sqlCheck>
+			
+			<sqlCheck expectedResult="1">
+				select count(*) from PROJECT 
+				where PROJECT_ID = 5
+				and TA_SERVER_ID = 1;
+			</sqlCheck>
+			
+			<sqlCheck expectedResult="1">
+				select count(*) from PROJECT 
+				where PROJECT_ID = 2
+				and TA_SERVER_ID = 3;
+			</sqlCheck>
+			
+			<sqlCheck expectedResult="1">
+				select count(*) 
+				from TEST_AUTOMATION_SERVER 
+				where server_id = 1
+				and base_url = 'http://localhost:9080/jenkins'
+				and name = 'http://localhost:9080/jenkins-1'
+			</sqlCheck>
+			
+			<sqlCheck expectedResult="1">
+				select count(*) from TEST_AUTOMATION_PROJECT
+				where TM_PROJECT_ID=5
+				and REMOTE_NAME = 'automated_project'
+				and LABEL = 'automated_project-5-1'
+			</sqlCheck>
+			
+			<sqlCheck expectedResult="1">
+				select count(*) from TEST_AUTOMATION_PROJECT
+				where TM_PROJECT_ID=1
+				and REMOTE_NAME = 'new auto project'
+				and LABEL = 'new auto project-1-3'
+			</sqlCheck>
+			
+		</preConditions>	
+	</changeSet>
+
+	<changeSet id="tm-1.10.0.feat-3481-test-3" author="flaurens">
+	<preConditions>
+		<sqlCheck expectedResult="16">
+			select count(suite_id) from AUTOMATED_EXECUTION_EXTENDER
+			where 
+				(suite_id='5' and extender_id=5 and execution_extender_order=0) or
+				(suite_id='5' and extender_id=6 and execution_extender_order=1) or
+				(suite_id='5' and extender_id=7 and execution_extender_order=2) or
+				(suite_id='5' and extender_id=8 and execution_extender_order=3) or
+				(suite_id='5' and extender_id=9 and execution_extender_order=4) or
+				(suite_id='6' and extender_id=10 and execution_extender_order=0) or
+				(suite_id='6' and extender_id=11 and execution_extender_order=1) or
+				(suite_id='7' and extender_id=12 and execution_extender_order=0) or
+				(suite_id='7' and extender_id=13 and execution_extender_order=1) or
+				(suite_id='7' and extender_id=14 and execution_extender_order=2) or
+				(suite_id='7' and extender_id=15 and execution_extender_order=3) or
+				(suite_id='7' and extender_id=16 and execution_extender_order=4) or
+				(suite_id='8' and extender_id=17 and execution_extender_order=0) or
+				(suite_id='8' and extender_id=18 and execution_extender_order=1) or
+				(suite_id='8' and extender_id=19 and execution_extender_order=2) or
+				(suite_id='8' and extender_id=20 and execution_extender_order=3) 
+		</sqlCheck>
+	</preConditions>
+	</changeSet>		
+</databaseChangeLog>

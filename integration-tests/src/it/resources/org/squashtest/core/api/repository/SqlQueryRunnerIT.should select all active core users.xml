@@ -1,0 +1,10 @@
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+    <CORE_PARTY PARTY_ID="-1"/>
+    <CORE_PARTY PARTY_ID="-2"/>
+    <CORE_PARTY PARTY_ID="-3"/>
+	<CORE_USER PARTY_ID="-1" LOGIN="daniel.bryan" FIRST_NAME="daniel" LAST_NAME="bryan" EMAIL="yes@yes.org" ACTIVE="true" CREATED_BY="dbu" CREATED_ON="2012-04-01" />
+	<CORE_USER PARTY_ID="-2" LOGIN="chris.jericho" FIRST_NAME="chris" LAST_NAME="jericho" EMAIL="y2j@y2j.org" ACTIVE="true" CREATED_BY="dbu" CREATED_ON="2012-04-01" />
+	<CORE_USER PARTY_ID="-3" LOGIN="shawn.michaels" FIRST_NAME="shawn" LAST_NAME="michaels" EMAIL="hbk@hbk.org" ACTIVE="false" CREATED_BY="dbu" CREATED_ON="2012-04-01" />
+	<core_group_member/>
+</dataset>

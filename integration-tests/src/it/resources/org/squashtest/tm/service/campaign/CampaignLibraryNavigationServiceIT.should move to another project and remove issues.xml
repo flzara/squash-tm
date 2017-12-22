@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+<!-- Project 1 : 
+Bugtracker 1
+	Campaign folder 1
+	 	Campaign 10
+	 		iteration 1
+	 			iteration test plan item 1
+	 					execution 1
+	 						issue 1
+	 			iteration test plan item 2
+	 			
+	 		iteration 2
+	 			suite 2
+	 	Campaign 11
+		 	iteration 3
+		 		iteration test plan item 3
+	 				execution 2
+	 					execution step 1
+	 						issue 2
+	 						issue 3
+	 					execution step 2
+	 			iteration test plan item 4
+	 		iteration 4
+ 	Project 2:
+ 	Bugtracker 2
+ 		Campaign Folder
+-->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-555"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-988"/>
+	<CAMPAIGN_LIBRARY ATTACHMENT_LIST_ID="-988" CL_ID="-1"/>	
+	<PROJECT PROJECT_ID="-1" ATTACHMENT_LIST_ID="-555" CREATED_ON="2012-02-01" CREATED_BY="DBU" NAME="pro" CL_ID="-1"/>
+	<BUGTRACKER BUGTRACKER_ID="-1" URL="" NAME="" KIND="mantis"/>
+	<BUGTRACKER_BINDING PROJECT_ID="-1" BUGTRACKER_ID="-1" BUGTRACKER_BINDING_ID="-1"/>
+	
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1"/>
+	<CAMPAIGN_LIBRARY CL_ID="-2" ATTACHMENT_LIST_ID="-1"/>
+	<PROJECT PROJECT_ID="-2" ATTACHMENT_LIST_ID="-1" CREATED_ON="2012-06-06" CREATED_BY="dbunit" NAME=""/>
+	<BUGTRACKER BUGTRACKER_ID="-2" URL="" NAME="" KIND="mantis"/>
+	<BUGTRACKER_BINDING PROJECT_ID="-2" BUGTRACKER_ID="-2" BUGTRACKER_BINDING_ID="-2"/>
+	
+	
+	<!-- folder 1-->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-123"/>
+	<CAMPAIGN_LIBRARY_NODE CLN_ID="-1" NAME="a folder"
+		CREATED_ON="2010-02-01" CREATED_BY="DBU" ATTACHMENT_LIST_ID="-123" PROJECT_ID="-1"/>
+	<CAMPAIGN_FOLDER CLN_ID="-1" />
+	<CAMPAIGN_LIBRARY_CONTENT LIBRARY_ID="-1" CONTENT_ID="-1" CONTENT_ORDER="0"/>
+	
+	<!-- campaign 10 -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-10" />
+	<CAMPAIGN_LIBRARY_NODE CLN_ID="-10" NAME="foo"
+		CREATED_ON="2010-02-01" CREATED_BY="DBU" ATTACHMENT_LIST_ID="-10" PROJECT_ID="-1"/>
+	<CAMPAIGN CLN_ID="-10" ACTUAL_START_AUTO="TRUE"
+		ACTUAL_END_AUTO="TRUE"  />
+	<CLN_RELATIONSHIP ANCESTOR_ID="-1" DESCENDANT_ID="-10" CONTENT_ORDER="0"/>
+	
+	<!-- 	iteration 1 -->
+	<ITERATION ACTUAL_START_AUTO="false" CREATED_ON="2012-12-21" CREATED_BY="dbunit" ACTUAL_END_AUTO="false" ITERATION_ID="-1" NAME=""/>
+	<CAMPAIGN_ITERATION CAMPAIGN_ID="-10" ITERATION_ORDER="0" ITERATION_ID="-1"/>
+	
+		<!-- 	itp1 -->
+	<ITERATION_TEST_PLAN_ITEM ITEM_TEST_PLAN_ID="-1" CREATED_ON="2012-02-02" CREATED_BY="dbunit" />
+	<ITEM_TEST_PLAN_LIST ITEM_TEST_PLAN_ORDER="0" ITEM_TEST_PLAN_ID="-1" ITERATION_ID="-1"/>
+	<!-- 	execution 1 -->
+	<ISSUE_LIST ISSUE_LIST_ID="-1"/>
+	<EXECUTION PREREQUISITE="" EXECUTION_ID="-1" CREATED_ON="2012-02-02" CREATED_BY="dbunit" NAME="" ISSUE_LIST_ID="-1"/>
+	<ITEM_TEST_PLAN_EXECUTION EXECUTION_ORDER="0" EXECUTION_ID="-1" ITEM_TEST_PLAN_ID="-1"/>
+	<!-- 	issue 1 -->
+	<ISSUE ISSUE_ID="-1" ISSUE_LIST_ID="-1" BUGTRACKER_ID="-1" REMOTE_ISSUE_ID="-11"/>
+	
+	<!-- 	itp2 -->
+	<ITERATION_TEST_PLAN_ITEM ITEM_TEST_PLAN_ID="-2" CREATED_ON="2012-02-02" CREATED_BY="dbunit"/>
+	<ITEM_TEST_PLAN_LIST ITEM_TEST_PLAN_ORDER="1" ITEM_TEST_PLAN_ID="-2" ITERATION_ID="-1"/>
+		
+	<!-- 	iteration 2 -->
+	<ITERATION ACTUAL_START_AUTO="false" CREATED_ON="2012-12-21" CREATED_BY="dbunit" ACTUAL_END_AUTO="false" ITERATION_ID="-2" NAME=""/>
+	<CAMPAIGN_ITERATION CAMPAIGN_ID="-10" ITERATION_ORDER="1" ITERATION_ID="-2"/>
+	
+	<!-- campaign 11 -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-11" />
+	<CAMPAIGN_LIBRARY_NODE CLN_ID="-11" NAME="bar"
+		CREATED_ON="2010-02-02" CREATED_BY="gte" ATTACHMENT_LIST_ID="-11" PROJECT_ID="-1" />
+	<CAMPAIGN CLN_ID="-11" ACTUAL_START_AUTO="FALSE"
+		ACTUAL_END_AUTO="TRUE" />
+	<CLN_RELATIONSHIP ANCESTOR_ID="-1" DESCENDANT_ID="-11" CONTENT_ORDER="1"/>
+	
+<!-- 	iteration 3 -->
+	<ITERATION ACTUAL_START_AUTO="false" CREATED_ON="2012-12-21" CREATED_BY="dbunit" ACTUAL_END_AUTO="false" ITERATION_ID="-3" NAME=""/>
+	<CAMPAIGN_ITERATION CAMPAIGN_ID="-11" ITERATION_ORDER="0" ITERATION_ID="-3"/>
+	
+<!-- 	itp 3 -->
+	<ITERATION_TEST_PLAN_ITEM ITEM_TEST_PLAN_ID="-3" CREATED_ON="2012-02-02" CREATED_BY="dbunit"/>
+	<ITEM_TEST_PLAN_LIST ITEM_TEST_PLAN_ORDER="0" ITEM_TEST_PLAN_ID="-3" ITERATION_ID="-3"/>
+<!-- 	execution 2 -->
+	<ISSUE_LIST ISSUE_LIST_ID="-2"/>
+	<EXECUTION PREREQUISITE="" EXECUTION_ID="-2" CREATED_ON="2012-02-02" CREATED_BY="dbunit" NAME="" ISSUE_LIST_ID="-2"/>
+	<ITEM_TEST_PLAN_EXECUTION EXECUTION_ORDER="0" EXECUTION_ID="-2" ITEM_TEST_PLAN_ID="-3"/>
+<!-- 	execution step 1 -->
+	<ISSUE_LIST ISSUE_LIST_ID="-21"/>
+	<EXECUTION_STEP ACTION="" CREATED_ON="2012-02-02" CREATED_BY="dbunit" EXECUTION_STEP_ID="-21" ISSUE_LIST_ID="-21"/>
+	<EXECUTION_EXECUTION_STEPS EXECUTION_STEP_ORDER="0" EXECUTION_STEP_ID="-21" EXECUTION_ID="-2"/>
+	<ISSUE ISSUE_ID="-2" ISSUE_LIST_ID="-21" BUGTRACKER_ID="-1" REMOTE_ISSUE_ID="-21"/>
+	<ISSUE ISSUE_ID="-3" ISSUE_LIST_ID="-21" BUGTRACKER_ID="-1" REMOTE_ISSUE_ID="-211"/>
+	
+	
+<!-- 	execution step 2 -->
+	<ISSUE_LIST ISSUE_LIST_ID="-22"/>
+	<EXECUTION_STEP ACTION="" CREATED_ON="2012-12-02" CREATED_BY="dbunit" EXECUTION_STEP_ID="-22"/>
+	<EXECUTION_EXECUTION_STEPS EXECUTION_STEP_ORDER="1" EXECUTION_STEP_ID="-22" EXECUTION_ID="-2"/>
+<!-- 	itp 4 -->
+	<ITERATION_TEST_PLAN_ITEM ITEM_TEST_PLAN_ID="-4" CREATED_ON="2012-02-10" CREATED_BY="dbunit"/>
+	
+<!-- 	iteration 4 -->
+	<ITERATION ACTUAL_START_AUTO="false" CREATED_ON="2012-12-21" CREATED_BY="dbunit" ACTUAL_END_AUTO="false" ITERATION_ID="-4" NAME=""/>
+	<CAMPAIGN_ITERATION CAMPAIGN_ID="-11" ITERATION_ORDER="1" ITERATION_ID="-4"/>
+	
+	<!-- destination folder -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-124"/>
+	<CAMPAIGN_LIBRARY_NODE CLN_ID="-2" NAME="a folder"
+		CREATED_ON="2010-02-01" CREATED_BY="DBU" ATTACHMENT_LIST_ID="-124" PROJECT_ID="-2"/>
+	<CAMPAIGN_FOLDER CLN_ID="-2" />
+	<CAMPAIGN_LIBRARY_CONTENT LIBRARY_ID="-2" CONTENT_ID="-2" CONTENT_ORDER="0"/>
+
+	
+</dataset>

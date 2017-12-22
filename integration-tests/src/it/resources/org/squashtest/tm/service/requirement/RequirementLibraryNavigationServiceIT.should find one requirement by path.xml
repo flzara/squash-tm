@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-999"/><REQUIREMENT_LIBRARY ATTACHMENT_LIST_ID="-999" RL_ID="-20"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-432"/>
+  
+  <PROJECT CREATED_BY="DBU" RL_ID="-20" CREATED_ON="2010-02-01" PROJECT_ID="-50" NAME="projet1" ACTIVE="TRUE" ATTACHMENT_LIST_ID="-432"/>
+  
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-123"/>
+  <RESOURCE CREATED_BY="DBU" CREATED_ON="2012-01-02" RES_ID="-3" NAME="folder" ATTACHMENT_LIST_ID="-123"/>
+  <SIMPLE_RESOURCE RES_ID="-3"/>
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="DBU" RLN_ID="-3" CREATED_ON="2010-02-01" PROJECT_ID="-50"/>
+  <REQUIREMENT_FOLDER RLN_ID="-3" RES_ID="-3"/>
+
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-10"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-15"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-11"/>
+  
+  <RESOURCE RES_ID="-10" NAME="1req" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="-10"/>
+  <REQUIREMENT_VERSION  RES_ID="-10"/>
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="DBU" RLN_ID="-10" CREATED_ON="2010-02-01" PROJECT_ID="-50"/>
+  <REQUIREMENT RLN_ID="-10" CURRENT_VERSION_ID="-10"/>
+
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="DBU" RLN_ID="-100" CREATED_ON="2010-02-01" PROJECT_ID="-50"/>
+  
+  <RESOURCE RES_ID="-200" NAME="req2" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="-15"/>
+  <REQUIREMENT_VERSION  RES_ID="-200"/>
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="DBU" RLN_ID="-200" CREATED_ON="2010-02-01" PROJECT_ID="-50"/>
+  <REQUIREMENT RLN_ID="-200" CURRENT_VERSION_ID="-200"/>
+  
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1234"/>
+  <RESOURCE CREATED_BY="DBU" CREATED_ON="2012-01-02" RES_ID="-100" NAME="subfolder" ATTACHMENT_LIST_ID="-1234"/>
+  <SIMPLE_RESOURCE RES_ID="-100"/>
+  <REQUIREMENT_FOLDER RLN_ID="-100" RES_ID="-100"/>
+
+
+  <RESOURCE RES_ID="-250" NAME="req3" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="-11"/>
+  <REQUIREMENT_VERSION  RES_ID="-250"/>
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="DBU" RLN_ID="-250" CREATED_ON="2010-02-01" PROJECT_ID="-50"/>
+  <REQUIREMENT RLN_ID="-250" CURRENT_VERSION_ID="-250"/>
+
+  <RLN_RELATIONSHIP DESCENDANT_ID="-10" ANCESTOR_ID="-3" CONTENT_ORDER="0"/>
+  <RLN_RELATIONSHIP DESCENDANT_ID="-100" ANCESTOR_ID="-3" CONTENT_ORDER="1"/>
+  <RLN_RELATIONSHIP DESCENDANT_ID="-200" ANCESTOR_ID="-100" CONTENT_ORDER="0"/>
+
+  <REQUIREMENT_LIBRARY_CONTENT CONTENT_ID="-250" LIBRARY_ID="-20" CONTENT_ORDER="0"/>
+  <REQUIREMENT_LIBRARY_CONTENT CONTENT_ID="-3" LIBRARY_ID="-20" CONTENT_ORDER="1"/>
+  
+  <test_case_library_node/>
+  <test_case/>
+  <test_case_folder/>
+  <tcln_relationship/>
+  <test_case_library_content/>
+  <test_step/>
+  <action_test_step/>
+  <call_test_step/>
+  <test_case_steps/>
+  <attachment_content/>
+  <attachment/>
+</dataset>

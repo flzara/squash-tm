@@ -1,0 +1,282 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title th:text="#{label.testAutomationServersList}">Liste des serveurs d'exécution automatisée</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<style th:include="admin/admin-subpage.frag:: subpage-css" th:remove="tag"></style>
+
+<script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
+<script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+<script type="text/javascript" th:inline="javascript">
+	var squashtm = {};
+	squashtm.app = {
+		contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
+		ckeditorSettings : {
+			ckeditor : {
+				customConfig : /*[[ @{/styles/ckeditor/ckeditor-config.js} ]]*/'http://localhost:8080/squash/styles/ckeditor/ckeditor-config.js',
+				language : /*[[#{rich-edit.language.value}]]*/'en'
+			},
+			placeholder : /*[[#{rich-edit.placeholder}]]*/'Click to edit ...',
+			submit : /*[[#{rich-edit.button.ok.label}]]*/'OK',
+			cancel : /*[[#{label.Cancel}]]*/'Cancel',
+			indicator : '<div class="processing-indicator"/>'
+		},
+		messages: {
+			"message.notBlank": /*[[ #{message.notBlank} ]]*/ "Value should not be blank",
+		},
+	};
+</script>
+<script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
+<script data-main="../../scripts/test-automation-servers-manager.js"
+  th:attr="data-main=@{/scripts/test-automation-servers-manager.js}" src="../../scripts/require.js"
+  th:src="@{/scripts/require-min.js}">
+
+</script>
+</head>
+<body>
+  <div id="navigation" th:include="navbar.frag :: navbar('')">NAVBAR</div>
+  <div id="workspace">
+    <div id="workspace-title">
+      <div class="snap-left">
+        <h2 th:text="#{label.administration}" class="admin">Administration</h2>
+      </div>
+      <div class="snap-right">
+        <div class="main-menubar " th:include="menubar.frag :: menubar">MENUBAR</div>
+        <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">NOTIFICATION</div>
+      </div>
+    </div>
+    <div id="sub-page" class="sub-page">
+
+      <div id="sub-page-header" class="sub-page-header">
+
+        <div id="sub-page-title" class="sub-page-title">
+          <h2 th:text="#{title.testAutomationServerManagementWorkspace}">Espace Gestion Serveurs d'Exécution
+            Automatisée</h2>
+        </div>
+
+        <div id="sub-page-buttons" class="sub-page-buttons">
+          <input id="back" type="button" class="sq-btn" th:value="#{label.Back}" value="Retour" />
+
+        </div>
+
+        <div class="unsnap"></div>
+      </div>
+
+      <div id="sub-page-content" class="sub-page-content">
+        <div class="fragment-body unstyled">
+          <div id="test-automation-server-table-pane">
+            <div class="toolbar">
+				<button class="snap-right sq-btn" type="button" value="Delete a test automation server" th:value="#{label.testAutomationServer.delete}"
+	           	th:title="#{label.testAutomationServer.delete}"   id="delete-test-automation-server">
+				<span class="ui-icon ui-icon-trash">-</span><span th:text="#{label.Delete}"/>
+				</button>
+	            <button class="snap-right sq-btn" type="button" value="Add a test automation server" th:value="#{label.testAutomationServer.add}"
+	           	th:title="#{label.testAutomationServer.add}"   id="add-test-automation-server">
+				<span class="ui-icon ui-icon-plus">+</span><span th:text="#{label.Add}"/>
+				</button>
+ 			</div>
+	        <div class="unsnap"></div>
+            <div>
+              <table id="test-automation-server-table"
+                th:attr="data-def='pre-sort=2-asc, pre-filled,  pagesize=50, datakeys-id=entity-id ,ajaxsource='+@{/administration/test-automation-servers}">
+                <thead>
+                  <tr>
+                    <th th:attr="data-def='invisible, map=entity-id'" class="not-displayed">Id</th>
+                    <th th:attr="data-def='select, map=entity-index'">#</th>
+                    <th th:attr="data-def='sortable, map=name, link='+@{/administration/test-automation-servers/{entity-id}}"
+                      th:text="#{label.Name}">Name</th>
+                    <th th:attr="data-def='sortable, map=base-url, link-new-tab={base-url}'" th:text="#{label.Url}">URL</th>
+                    <th th:attr="data-def='sortable, map=created-on'" th:text="#{label.createdOn}">Créé le</th>
+                    <th th:attr="data-def='sortable, map=created-by'" th:text="#{label.createdBy}">Créé par</th>
+                    <th th:attr="data-def='sortable, map=last-modified-on'" th:text="#{label.lastModifiedOn}">Modifié
+                      le</th>
+                    <th th:attr="data-def='sortable, map=last-modified-by'" th:text="#{label.lastModifiedBy}">Modifié
+                      par</th>
+                    <th
+                      th:attr="data-def='delete-button=#remove-test-automation-server-confirm-dialog , map=empty-delete-holder'"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:each="tas, iterStat : ${testAutomationServers}" th:object="${tas}">
+                    <td th:text="*{id}" class="not-displayed">1</td>
+                    <td th:text="${iterStat.count}">1</td>
+                    <td th:text="*{name}">TAS XX</td>
+                    <td th:text="*{baseURL}">Label XX</td>
+                    <td th:text="*{createdOn}">16/05/2014 21:00</td>
+                    <td th:text="*{createdBy}">foo</td>
+                    <td th:text="*{lastModifiedOn}">16/05/2014 21:28</td>
+                    <td th:text="*{lastModifiedBy}">bar</td>
+                    <td></td>
+                  </tr>
+                  <tr th:remove="all">
+                    <td class="not-displayed">1</td>
+                    <td>2</td>
+                    <td>TAS zz</td>
+                    <td>Label zz</td>
+                    <td>16/05/2014 23:00</td>
+                    <td>foo</td>
+                    <td>16/05/2014 23:28</td>
+                    <td>bar</td>
+                    <td class="delete-button"></td>
+                  </tr>
+                </tbody>
+              </table>
+
+            </div>
+          </div>
+          <!-- ==================== POPUPS ==================== -->
+          <!-- ==================== add popup ==================== -->
+          <div id="new-test-automation-server-popup" class="not-displayed popup-dialog form-horizontal"
+            title="New Test Automation Server" th:title="#{title.newTestAutomationServer}">
+            <div>
+            <div class="control-group">
+              <label class="control-label" for="name" th:text="#{label.Name}">Name</label>
+              <div class="controls">
+                <input name="name" class="strprop" value="" size="50" maxlength="50" type="text" data-def="maininput" />
+                <span class="help-inline">&nbsp;</span>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <label class="control-label" for="login" th:text="#{label.Login}">Login</label>
+              <div class="controls">
+                <input name="login" class="strprop" value="" size="50" maxlength="50" type="text" />
+                <span class="help-inline">&nbsp;</span>
+                <span class="error-message login-error"></span>
+              </div>
+            </div>
+            <div class="control-group">
+              <label class="control-label" for="baseUrl" th:text="#{label.Url}">URL</label>
+              <div class="controls">
+                <input name="baseUrl" class="strprop" value="" size="50" maxlength="255" type="text" />
+                <span class="help-inline">&nbsp;</span>
+                <span class="error-message url-error"></span>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <label class="control-label" for="password" th:text="#{label.password}">Password</label>
+              <div class="controls">
+                <input name="password" class="strprop" value="" size="50" maxlength="255" type="password" />
+                <span class="help-inline">&nbsp;</span>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <div class="controls">
+                <label class="afterDisabled checkbox" for="manualSlaveSelection">
+                  <input name="manualSlaveSelection" class="boolprop" value="" type="checkbox" />
+                  <span th:remove="tag" th:text="#{label.isManualSlaveSelection}">Is Manual Slave Selection</span>
+                </label>
+                <span class="help-inline">&nbsp;</span>
+              </div>
+
+            </div>
+            <div class="control-group">
+              <label class="control-label" for="description" th:text="#{label.Description}">Description</label>
+              <div class="controls">
+                <textarea id="tas-description" name="description" class="strprop"></textarea>
+                <span class="help-inline">&nbsp;</span>
+              </div>
+            </div>
+            </div>
+
+            <div class="popup-dialog-buttonpane">
+              <input class="sq-btn" type="button" value="add another" th:value="#{label.addAnother}" data-def="evt=confirm-carry-on , mainbtn" />
+              <input class="sq-btn" type="button" value="add" th:value="#{label.Add}" data-evt="confirm" />
+              <input class="sq-btn" type="button" value="Cancel" th:value="#{label.Close}" data-evt="cancel" />
+            </div>
+          </div>
+
+          <!-- ==================== remove popup ==================== -->
+          <div id="remove-test-automation-server-confirm-dialog" class="popup-dialog not-displayed"
+            th:title="#{title.removeTestAutomationServer}" title="info">
+
+            <div class="display-table-row">
+	            <div class="display-table-cell warning-cell">
+	                <div class="generic-error-signal"></div>
+	            </div>
+	            <div class="display-table-cell">
+				            <!-- _____________CASE 1_______________ -->
+			            <div data-def="state=case1">
+			              <p th:text="#{message.testAutomationServer.remove.confirm}">Confirmez vous la suppression de ce
+			                serveur d'exécution ?</p>
+			            </div>
+			            <!-- _____________CASE 2_______________ -->
+			            <div data-def="state=case2">
+			              <p>
+			                <span th:text="#{message.testAutomationServer.boundToTMProject}">Ce serveur d’exécution est
+			                  associé a au moins un projet TM. </span>
+			                <span th:text="#{message.testAutomationServer.noExecution}">Aucune exécution n’a encore été
+			                  lancée sur ce serveur.</span>
+			              </p>
+			              <p>
+			                <label th:text="#{label.warning}">Attention</label>
+			                <span th:text="#{message.testAutomationServer.noExecution.warning}">les associations des scripts
+			                  TA aux cas de tests des projets TM seront supprimées.</span>
+			              </p>
+			              <p th:text="#{message.testAutomationServer.remove.confirm}">Confirmez vous la suppression de ce
+			                serveur d'exécution ?</p>
+			            </div>
+			            <!-- _____________CASE 3_______________ -->
+			            <div data-def="state=case3">
+			              <p>
+			                <span th:text="#{message.testAutomationServer.boundToTMProject}">Ce serveur d’exécution est
+			                  associé a au moins un projet TM. </span>
+			                <span th:text=" #{message.testAutomationServer.withExecution}">Au moins une exécution a déjà été
+			                  lancée sur ce serveur.</span>
+			              </p>
+			              <p>
+			                <label th:text="#{label.warning}">Attention</label>
+			                <span th:text="#{message.testAutomationServer.withExecution.warning}">les exécutions des cas de
+			                  test automatisés resteront accessibles mais les liens vers les rapports de résultat et d’exécution
+			                  seront supprimés ainsi que l’association des scripts TA aux cas de tests des projets TM.</span>
+			              </p>
+			              <p th:text="#{message.testAutomationServer.remove.confirm}">Confirmez vous la suppression de ce
+			                serveur d'exécution ?</p>
+			            </div>
+			            <!-- _____________Progression_______________ -->
+			            <div data-def="state=progression" th:include="fragments-utils/static-panels :: small-please-wait" >
+			              zzz
+			            </div>
+            	</div>
+			</div>
+            <div class="popup-dialog-buttonpane">
+              <input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}"
+                data-def="evt=confirm,  state=case1, mainbtn" />
+              <input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}"
+                data-def="evt=confirm,  state=case2, mainbtn" />
+              <input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}"
+                data-def="evt=confirm,  state=case3, mainbtn" />
+              <input class="cancel" type="button" value="cancel" th:value="#{label.Cancel}" data-def="evt=cancel" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

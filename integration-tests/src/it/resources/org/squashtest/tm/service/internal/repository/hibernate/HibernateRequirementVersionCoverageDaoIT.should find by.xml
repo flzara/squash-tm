@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-10"/>
+  <RESOURCE RES_ID="-10" NAME="bbbbb" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="-10"/>
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="DBU" RLN_ID="-10" CREATED_ON="2010-02-01"/>
+  <REQUIREMENT_VERSION  RES_ID="-10"/>
+  <REQUIREMENT RLN_ID="-10" CURRENT_VERSION_ID="-10"/>
+  
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-20"/>
+  <RESOURCE RES_ID="-20" NAME="aaaaa" CREATED_ON="2011-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="-20"/>
+  <REQUIREMENT_VERSION  RES_ID="-20"/>
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="DBU" RLN_ID="-20" CREATED_ON="2010-02-01"/>
+  <REQUIREMENT RLN_ID="-20" CURRENT_VERSION_ID="-20"/>
+  
+    <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-30"/>
+  <RESOURCE RES_ID="-30" NAME="aaaaa" CREATED_ON="2011-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="-30"/>
+  <REQUIREMENT_VERSION  RES_ID="-30"/>
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="DBU" RLN_ID="-30" CREATED_ON="2010-02-01"/>
+  <REQUIREMENT RLN_ID="-30" CURRENT_VERSION_ID="-30"/>
+  
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-100"/>
+  <TEST_CASE_LIBRARY_NODE CREATED_BY="DBU" TCLN_ID="-100" CREATED_ON="2011-01-01" NAME="tc 100" ATTACHMENT_LIST_ID="-100"/>
+  <TEST_CASE PREREQUISITE="" TCLN_ID="-100"  VERSION="1"/>
+  
+  <TEST_STEP TEST_STEP_ID="-200"/>
+  <ACTION_TEST_STEP TEST_STEP_ID="-200" ACTION="qsdf"/>
+  <TEST_CASE_STEPS TEST_CASE_ID="-100" STEP_ID="-200" STEP_ORDER="0"/>
+  
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-101"/>
+  <TEST_CASE_LIBRARY_NODE CREATED_BY="DBU" TCLN_ID="-101" CREATED_ON="2011-01-01" NAME="tc 101" ATTACHMENT_LIST_ID="-101"/>
+  <TEST_CASE PREREQUISITE="" TCLN_ID="-101"  VERSION="1"/>
+  
+  <REQUIREMENT_VERSION_COVERAGE REQUIREMENT_VERSION_COVERAGE_ID="-1" VERIFYING_TEST_CASE_ID="-100" VERIFIED_REQ_VERSION_ID="-10"/>
+  
+  <REQUIREMENT_VERSION_COVERAGE REQUIREMENT_VERSION_COVERAGE_ID="-2" VERIFYING_TEST_CASE_ID="-100" VERIFIED_REQ_VERSION_ID="-20"/>
+  <VERIFYING_STEPS REQUIREMENT_VERSION_COVERAGE_ID="-2" TEST_STEP_ID="-200"/>
+  
+  <REQUIREMENT_VERSION_COVERAGE REQUIREMENT_VERSION_COVERAGE_ID="-3" VERIFYING_TEST_CASE_ID="-100" VERIFIED_REQ_VERSION_ID="-30"/>  
+  <VERIFYING_STEPS REQUIREMENT_VERSION_COVERAGE_ID="-3" TEST_STEP_ID="-200"/>
+  
+  <REQUIREMENT_VERSION_COVERAGE REQUIREMENT_VERSION_COVERAGE_ID="-4" VERIFYING_TEST_CASE_ID="-101" VERIFIED_REQ_VERSION_ID="-10"/>  
+</dataset>

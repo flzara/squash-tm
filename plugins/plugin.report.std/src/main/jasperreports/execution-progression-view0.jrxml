@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="execution-progression-view0" pageWidth="776" pageHeight="595" orientation="Landscape" columnWidth="736" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0" resourceBundle="/WEB-INF/messages/tm/messages" whenResourceMissingType="Key">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF" fill="Solid">
+		<box>
+			<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
+			<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
+			<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<subDataset name="Table Dataset 1"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["D:\\bsiri\\helios_workspace\\squashtest-csp\\tm\\org.squashtest.csp.tm.web\\src\\main\\jasperreports\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="subReportCampaign" class="net.sf.jasperreports.engine.JasperReport" isForPrompting="false"/>
+	<parameter name="subReportIteration_0" class="net.sf.jasperreports.engine.JasperReport" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="name" class="java.lang.String">
+		<fieldDescription><![CDATA[name]]></fieldDescription>
+	</field>
+	<field name="campaigns" class="java.util.List">
+		<fieldDescription><![CDATA[campaigns]]></fieldDescription>
+	</field>
+	<sortField name="name"/>
+	<variable name="totalResult_l1" class="java.util.Map" calculation="System">
+		<initialValueExpression><![CDATA[new java.util.HashMap()]]></initialValueExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="45">
+			<componentElement>
+				<reportElement key="table" x="0" y="15" width="736" height="30"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Table Dataset 1">
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource(1)]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="62">
+						<jr:detailCell style="table_TD" height="29" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="62" height="29"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10" isItalic="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.project.label}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="68">
+						<jr:detailCell style="table_TD" height="29" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="68" height="29"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10" isItalic="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.campaign.label}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="46">
+						<property name="&quot;net.sf.jasperreports.export.html.class&quot;" value="&quot;columnHeader&quot;"/>
+						<jr:detailCell style="table_TD" height="29" rowSpan="1">
+							<textField isStretchWithOverflow="true">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="46" height="29"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10" isItalic="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.schedstart.label}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="46">
+						<jr:detailCell style="table_TD" height="29" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="46" height="29"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+									<font size="10" isItalic="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.schedend.label}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="46">
+						<jr:detailCell style="table_TD" height="29" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="46" height="29"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10" isItalic="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.actstart.label}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="46">
+						<jr:detailCell style="table_TD" height="29" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="46" height="29"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10" isItalic="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.actend.label}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="60">
+						<jr:detailCell style="table_TD" height="29" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="60" height="29"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10" isItalic="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.iterationname.label}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="46">
+						<jr:detailCell style="table_TD" height="29" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="46" height="29"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10" isItalic="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.schedstart.label}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="46">
+						<jr:detailCell style="table_TD" height="29" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="46" height="29"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10" isItalic="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.schedend.label}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="46">
+						<jr:detailCell style="table_TD" height="29" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="46" height="29"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10" isItalic="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.actstart.label}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="46">
+						<jr:detailCell style="table_TD" height="29" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="46" height="29"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10" isItalic="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.actend.label}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="68">
+						<jr:detailCell style="table_TD" height="29" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="68" height="29"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10" isItalic="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.testcase.label}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="62">
+						<jr:detailCell style="table_TD" height="29" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="62" height="29"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10" isItalic="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.testsuite.label}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="50">
+						<jr:detailCell style="table_TD" height="29" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="50" height="29"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10" isItalic="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.status.label}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</title>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="736" height="20"/>
+				<subreportParameter name="project_name">
+					<subreportParameterExpression><![CDATA[$F{name}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="REPORT_RESOURCE_BUNDLE">
+					<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="subReportIteration">
+					<subreportParameterExpression><![CDATA[$P{subReportIteration_0}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="totalResult_l2">
+					<subreportParameterExpression><![CDATA[$V{totalResult_l1}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{campaigns})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{subReportCampaign}]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+	<!--  given a campaign -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-10" />
+	<CAMPAIGN_LIBRARY_NODE CLN_ID="-10" NAME="foo" CREATED_ON="2010-02-01" CREATED_BY="DBU" ATTACHMENT_LIST_ID="-10" />
+	<CAMPAIGN CLN_ID="-10" ACTUAL_START_AUTO="TRUE" ACTUAL_END_AUTO="TRUE" />
+
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-988"/><CAMPAIGN_LIBRARY ATTACHMENT_LIST_ID="-988" CL_ID="-1"/>
+	<CAMPAIGN_LIBRARY_CONTENT LIBRARY_ID="-1" CONTENT_ID="-10" CONTENT_ORDER="0"/>
+	
+	<!--  and a test case -->	
+		<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-100" />
+<TEST_CASE_LIBRARY_NODE TCLN_ID="-100" NAME="test case 1" CREATED_BY="DBU" CREATED_ON="2010-02-01" ATTACHMENT_LIST_ID="-100"/>
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-100"  VERSION="1"  />
+
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-987"/><TEST_CASE_LIBRARY ATTACHMENT_LIST_ID="-987" TCL_ID="-1"/>
+	<TEST_CASE_LIBRARY_CONTENT LIBRARY_ID="-1" CONTENT_ID="-100" CONTENT_ORDER="0"/>
+				
+	<!--  and the test case is in the campaign test plan -->
+	<CAMPAIGN_TEST_PLAN_ITEM CAMPAIGN_ID="-10" TEST_CASE_ID="-100" TEST_PLAN_ORDER="0" />
+	
+	
+	<!--  cleanup -->
+	<test_case_folder/>
+	<tcln_relationship/>
+	<project/>
+	
+	<test_step/>
+	<action_test_step/>
+	<call_test_step/>
+	<test_case_steps/>
+</dataset>

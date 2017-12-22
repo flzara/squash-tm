@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-2"/>
+
+	<PROJECT PROJECT_ID="-1" ATTACHMENT_LIST_ID="-1" CREATED_ON="2014-05-15" CREATED_BY="admin" NAME="project 1"/>
+	<PROJECT PROJECT_ID="-2" ATTACHMENT_LIST_ID="-2" CREATED_ON="2014-05-15" CREATED_BY="admin" NAME="project 2"/>
+	
+	<!-- test automation servers  -->
+	
+	<TEST_AUTOMATION_SERVER NAME="Roberto-1" SERVER_ID="-1" BASE_URL="http://www.roberto.com" LOGIN="roberto" PASSWORD="passroberto" KIND="jenkins" CREATED_BY="admin" CREATED_ON="2014-05-15"/>
+	<TEST_AUTOMATION_SERVER NAME="Mike-1"    SERVER_ID="-2" BASE_URL="http://www.mike.com" LOGIN="mike" PASSWORD="passmike" KIND="something-else" CREATED_BY="admin" CREATED_ON="2014-05-15"/>
+	<TEST_AUTOMATION_SERVER NAME="Roberto-2" SERVER_ID="-3" BASE_URL="http://www.roberto.com" LOGIN="roberto_user" PASSWORD="passroberto_user" KIND="jenkins" CREATED_BY="admin" CREATED_ON="2014-05-15"/>
+	
+	<!-- test automation projects -->
+	
+	<TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-11" TM_PROJECT_ID="-1" REMOTE_NAME="roberto1" LABEL="Project Roberto 1" SERVER_ID="-1" />
+	<TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-12" TM_PROJECT_ID="-1" REMOTE_NAME="roberto2" LABEL="Project Roberto 2"  SERVER_ID="-1" />
+	<TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-13" TM_PROJECT_ID="-1" REMOTE_NAME="roberto3" LABEL="Project Roberto 3"  SERVER_ID="-1" />
+	
+	<TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-21" TM_PROJECT_ID="-2"  REMOTE_NAME="mike1" SERVER_ID="-2" LABEL="Project Mike 1"/>
+	<TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-22" TM_PROJECT_ID="-2"  REMOTE_NAME="mike2" SERVER_ID="-2" LABEL="Project Mike 2"/>
+	<TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-23" TM_PROJECT_ID="-2"  REMOTE_NAME="roberto3" SERVER_ID="-2" LABEL="Project RobertMike 3"/>
+	
+		
+	
+</dataset>

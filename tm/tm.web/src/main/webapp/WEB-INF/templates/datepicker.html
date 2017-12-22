@@ -1,0 +1,62 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title th:text="#{workspace.report.title}">Espace rapports</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- common head -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" />
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.blue.css" />
+	<link rel="shortcut icon" type="image/x-icon" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}"/>
+	<!-- common script import -->
+	<!-- jq header -->
+	<script type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
+	<script type="text/javascript" src="../../scripts/lib/jquery/jquery-ui-1.9.0.custom.min.js"></script>
+	<!-- /common script import -->
+	<!-- rich jeditable -->
+	<script type="text/javascript" src="../../scripts/jquery/jquery.jeditable.authored.js"></script>
+	<script type="text/javascript" src="../../scripts/jquery/jquery.jeditable.datepicker.js"></script>
+
+	<script type="text/javascript" th:inline="javascript">
+		$(function() {
+			$('#picker').editable(
+				function(value, settings) {
+				   //  console.log(this);
+				    // console.log(value);
+				     // console.log(settings);
+				     return(value);
+				  }, {
+		        indicator :'<div class="processing-indicator"/>',
+		        type      : 'datepicker',
+		        //submit    : 'OK',
+		    // cancel: "cancel",
+		        tooltip   : "Click to edit..."
+			});
+		});
+	</script>
+</head>
+<body>
+	début<span id="picker" ></span>fin
+</body>
+</html>

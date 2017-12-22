@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+   
+	<include file="tm.data-0.23.0.xml" relativeToChangelogFile="true" />
+	
+	<changeSet id="1.1.0.save-requirement-folders-before-versionning" author="gfouquet">
+		<comment>We save requirement folders data</comment>
+		<sql>
+			CREATE TEMPORARY TABLE OLD_REQ_FOLDER (
+				FOLDER_ID BIGINT NULL DEFAULT NULL,
+				NAME VARCHAR(255) NULL DEFAULT NULL,
+				DESCRIPTION TEXT NULL DEFAULT NULL
+			);		
+		</sql>
+		<sql>
+			insert into OLD_REQ_FOLDER (FOLDER_ID, NAME, DESCRIPTION) 
+			select f.RLN_ID, NAME, DESCRIPTION 
+			from REQUIREMENT_LIBRARY_NODE n 
+			inner join REQUIREMENT_FOLDER f on f.RLN_ID = n.RLN_ID
+			where n.DELETED_ON is null; 
+		</sql>
+	</changeSet>
+	
+	<changeSet id="1.1.0.save-requirements-before-versionning" author="gfouquet">
+		<comment>We save requirement data. Note : there is no status in requirement table at this point</comment>
+		<sql>
+			CREATE TEMPORARY TABLE OLD_REQ (
+				REQUIREMENT_ID BIGINT NULL DEFAULT NULL,
+				NAME VARCHAR(255) NULL DEFAULT NULL,
+				DESCRIPTION TEXT NULL DEFAULT NULL,
+				REFERENCE VARCHAR(20) NULL DEFAULT NULL,
+				CRITICALITY VARCHAR(255) NULL DEFAULT NULL,
+				ATT_LIST_ID BIGINT NULL DEFAULT NULL
+			);		
+		</sql>
+		<sql>
+			insert into OLD_REQ (REQUIREMENT_ID, NAME, DESCRIPTION, REFERENCE, CRITICALITY, ATT_LIST_ID) 
+			select r.RLN_ID, NAME, DESCRIPTION, REFERENCE, CRITICALITY, ATTACHMENT_LIST_ID 
+			from REQUIREMENT_LIBRARY_NODE n 
+			inner join REQUIREMENT r on r.RLN_ID = n.RLN_ID
+			where n.DELETED_ON is null;
+		</sql>
+	</changeSet>
+
+	<changeSet id="1.1.0.save-req-test-case-verif-before-versionning" author="gfouquet">
+		<comment>We save test case verification relationship</comment>
+		<sql>
+			CREATE TEMPORARY TABLE REQUIREMENT_VERIFICATION (
+				REQUIREMENT_ID BIGINT NULL DEFAULT NULL,
+				TEST_CASE_ID BIGINT NULL DEFAULT NULL
+			);		
+		</sql>
+		<sql>
+			insert into REQUIREMENT_VERIFICATION (REQUIREMENT_ID, TEST_CASE_ID) 
+			select REQUIREMENT_ID, TEST_CASE_ID 
+			from TEST_CASE_REQUIREMENT_LINK
+		</sql>
+	</changeSet>
+
+	<include file="../../../main/liquibase/tm/tm.changelog-1.1.0.xml" relativeToChangelogFile="true" />
+	
+  
+      <changeSet id="tm.changelog-1.10.0-test-fix-postgre-seq.xml" author="mpagnon" dbms="postgresql">
+    <comment>fix sequence values </comment>
+    <sql>
+        SELECT setval('resource_res_id_seq', (SELECT MAX(res_id) from resource));
+        SELECT setval('requirement_library_node_rln_id_seq', (SELECT MAX(rln_id) from requirement_library_node));
+        SELECT setval('requirement_audit_event_event_id_seq', (SELECT MAX(event_id) from requirement_audit_event));
+    </sql>
+    
+    </changeSet>
+    
+    
+	<changeSet id="1.1.0.check-no-BLOQUED-in-executions" author="gfouquet">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*) from EXECUTION where EXECUTION_STATUS = 'BLOQUED'
+	 		</sqlCheck>
+		</preConditions>
+		<comment>We check that there there are no more 'BLOQUED' status in Execution table</comment>
+	</changeSet>
+
+	<changeSet id="1.1.0.check-no-BLOQUED-in-execution-steps" author="gfouquet">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*) from EXECUTION_STEP where EXECUTION_STATUS = 'BLOQUED'
+	 		</sqlCheck>
+		</preConditions>
+		<comment>We check that there there are no more 'BLOQUED' status in Execution steps table</comment>
+	</changeSet>
+
+	<changeSet id="1.1.0.check-no-BLOQUED-in-iteration-tpi" author="gfouquet">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*) from ITERATION_TEST_PLAN_ITEM where EXECUTION_STATUS = 'BLOQUED'
+	 		</sqlCheck>
+		</preConditions>
+		<comment>We check that there there are no more 'BLOQUED' status in Iteration test plan item</comment>
+	</changeSet>
+	
+	<changeSet id="1.1.0.check-requirement-folder-data-migrated" author="gfouquet">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from OLD_REQ_FOLDER orf
+				where not exists (
+					select 1  from SIMPLE_RESOURCE sr
+						inner join RESOURCE r on r.RES_ID = sr.RES_ID
+						inner join REQUIREMENT_FOLDER rf on rf.RES_ID = sr.RES_ID
+						where rf.RLN_ID = orf.FOLDER_ID
+						and r.NAME = orf.NAME
+						and r.DESCRIPTION = orf.DESCRIPTION
+				);
+	 		</sqlCheck>
+		</preConditions>
+		<comment>We check folder data was push down to REQUIREMENT_FOLDER table</comment>
+	</changeSet>
+
+	<changeSet id="1.1.0.check-requirement-data-migrated" author="gfouquet">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from OLD_REQ old
+				where not exists (
+					select 1  from REQUIREMENT_VERSION rv
+						inner join RESOURCE res on res.RES_ID = rv.RES_ID
+						where rv.REQUIREMENT_ID = old.REQUIREMENT_ID
+						and res.NAME = old.NAME
+						and res.DESCRIPTION = old.DESCRIPTION
+						and rv.CRITICALITY = old.CRITICALITY
+						and (rv.REFERENCE = old.REFERENCE) or (rv.REFERENCE is null and old.REFERENCE is null)
+						and rv.ATTACHMENT_LIST_ID = old.ATT_LIST_ID
+						and rv.REQUIREMENT_STATUS is not null
+						and rv.VERSION_NUMBER = 1
+				);
+	 		</sqlCheck>
+		</preConditions>
+		<comment>We check requirement data was migrated into REQUIREMENT_VERSION table</comment>
+	</changeSet>
+	
+	<changeSet id="1.1.0.check-requirement-latest-version-was-set" author="gfouquet">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from REQUIREMENT r
+				inner join REQUIREMENT_LIBRARY_NODE n on n.RLN_ID = r.RLN_ID
+				where not exists (
+					select 1  from REQUIREMENT_VERSION rv
+						where rv.RES_ID = r.CURRENT_VERSION_ID
+						and rv.REQUIREMENT_ID = r.RLN_ID
+				)
+				and DELETED_ON is null;
+	 		</sqlCheck>
+		</preConditions>
+		<comment>We check requirement data was migrated into REQUIREMENT_VERSION table</comment>
+	</changeSet>
+
+	<changeSet id="1.1.0.check-requirement-version-verified-by-test-case" author="gfouquet">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from TEST_CASE_VERIFIED_REQUIREMENT_VERSION vrv
+				where not exists (
+					select 1  from REQUIREMENT_VERIFICATION rv
+					inner join REQUIREMENT_VERSION ver on rv.REQUIREMENT_ID = ver.REQUIREMENT_ID
+					where vrv.VERIFIED_REQ_VERSION_ID = ver.RES_ID
+					and vrv.VERIFYING_TEST_CASE_ID = rv.TEST_CASE_ID
+				);
+	 		</sqlCheck>
+		</preConditions>
+		<comment>We check requirement data was migrated into TEST_CASE_VERIFIED_REQUIREMENT_VERSION table</comment>
+	</changeSet>
+
+	<changeSet id="1.1.0.check-import-existing-requirement-event_audit" author="bsiri">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(rae.event_id) - count(r.res_id) from REQUIREMENT_AUDIT_EVENT rae, REQUIREMENT_VERSION r;
+			</sqlCheck>
+		</preConditions>	
+	</changeSet>
+	
+	<changeSet id="1.1.0.check-import-existing-requirement-event_create" author="bsiri">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(rae.event_id) - count(rc.event_id) from REQUIREMENT_AUDIT_EVENT rae, REQUIREMENT_CREATION rc;
+			</sqlCheck>
+		</preConditions>	
+	</changeSet>
+	
+	<changeSet id="1.1.0.imported-event-matches-requirements" author="bsiri">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(r.res_id) - count(r2.res_id)
+				from REQUIREMENT_VERSION r, REQUIREMENT_VERSION r2, RESOURCE res2, REQUIREMENT_AUDIT_EVENT rae
+				where r2.res_id = rae.req_version_id
+				and res2.res_id = r2.res_id
+				and res2.created_on = rae.event_date
+				and res2.created_by = rae.author
+			</sqlCheck>		
+		</preConditions>
+	</changeSet>
+	
+	<changeSet id="1.1.0.create-event-matches-event" author="bsiri">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(rae.event_id) - count(rc.event_id)
+				from REQUIREMENT_AUDIT_EVENT rae, REQUIREMENT_AUDIT_EVENT rae2, REQUIREMENT_CREATION rc
+				where rc.event_id = rae2.event_id
+			</sqlCheck>		
+		</preConditions>
+	
+	</changeSet>
+</databaseChangeLog>

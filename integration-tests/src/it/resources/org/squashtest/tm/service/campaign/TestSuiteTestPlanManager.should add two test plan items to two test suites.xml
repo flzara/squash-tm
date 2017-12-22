@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-2" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-3" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-4" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-5" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-6" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-7" />
+	
+  	<!-- ITERATION 1 -->
+	<ITERATION NAME="iter1" ITERATION_ID="-1" CREATED_BY="DBU" CREATED_ON="2012-02-01" ACTUAL_END_AUTO="0" ACTUAL_START_AUTO="0" ATTACHMENT_LIST_ID="-1" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-432"/>
+	<PROJECT PROJECT_ID="-1" NAME="mon projet" DESCRIPTION="ma description" CREATED_ON="2012-02-09" CREATED_BY="DBU" ATTACHMENT_LIST_ID="-432"/>
+  
+  	<TEST_CASE_LIBRARY_NODE TCLN_ID="-1" DESCRIPTION="ma description" NAME="TCLN" CREATED_ON="2012-02-09" CREATED_BY="DBU" PROJECT_ID="-1" ATTACHMENT_LIST_ID="-3"/>
+  	<TEST_CASE_LIBRARY_NODE TCLN_ID="-2" DESCRIPTION="ma description" NAME="TCLN" CREATED_ON="2012-02-09" CREATED_BY="DBU" PROJECT_ID="-1" ATTACHMENT_LIST_ID="-4"/>
+  	<TEST_CASE_LIBRARY_NODE TCLN_ID="-3" DESCRIPTION="ma description" NAME="TCLN" CREATED_ON="2012-02-09" CREATED_BY="DBU" PROJECT_ID="-1" ATTACHMENT_LIST_ID="-5"/>
+  	<TEST_CASE_LIBRARY_NODE TCLN_ID="-4" DESCRIPTION="ma description" NAME="TCLN" CREATED_ON="2012-02-09" CREATED_BY="DBU" PROJECT_ID="-1" ATTACHMENT_LIST_ID="-6"/>
+	
+  	<TEST_CASE PREREQUISITE="" TCLN_ID="-1" VERSION="1"/>
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-2" VERSION="1"/>
+    <TEST_CASE PREREQUISITE="" TCLN_ID="-3" VERSION="1"/>
+  	<TEST_CASE PREREQUISITE="" TCLN_ID="-4" VERSION="1"/>
+  	
+  	<CAMPAIGN_LIBRARY_NODE CLN_ID="-1" NAME="campagne" CREATED_ON="2012-02-09" CREATED_BY="DBU" PROJECT_ID="-1" ATTACHMENT_LIST_ID="-7"/>
+  
+  	<CAMPAIGN CLN_ID="-1" ACTUAL_END_AUTO="0" ACTUAL_START_AUTO="0"/>
+  
+  	<CAMPAIGN_ITERATION CAMPAIGN_ID="-1" ITERATION_ID="-1" ITERATION_ORDER="0"/>
+
+	<!-- TEST SUITE -->
+	<TEST_SUITE ID="-1" NAME="suite de test 1" DESCRIPTION="ma test suite 1" ATTACHMENT_LIST_ID="-2" CREATED_ON="2012-02-09" CREATED_BY="DBU" />
+	<TEST_SUITE ID="-2" NAME="suite de test 2" DESCRIPTION="ma test suite 2" ATTACHMENT_LIST_ID="-3" CREATED_ON="2012-02-09" CREATED_BY="DBU" />
+		
+	<ITERATION_TEST_SUITE ITERATION_ID="-1" TEST_SUITE_ID="-1" />
+	<ITERATION_TEST_SUITE ITERATION_ID="-1" TEST_SUITE_ID="-2" />
+		
+	<ITERATION_TEST_PLAN_ITEM ITEM_TEST_PLAN_ID="-1" EXECUTION_STATUS="READY" TCLN_ID="-1" LABEL ="Cas de test 1" CREATED_ON="2012-02-09" CREATED_BY="DBU"/>
+  	<ITERATION_TEST_PLAN_ITEM ITEM_TEST_PLAN_ID="-2" EXECUTION_STATUS="READY" TCLN_ID="-2" LABEL ="Cas de test 2" CREATED_ON="2012-02-09" CREATED_BY="DBU"/>
+  	<ITERATION_TEST_PLAN_ITEM ITEM_TEST_PLAN_ID="-3" EXECUTION_STATUS="READY" TCLN_ID="-3" LABEL ="Cas de test 3" CREATED_ON="2012-02-09" CREATED_BY="DBU"/>
+  	<ITERATION_TEST_PLAN_ITEM ITEM_TEST_PLAN_ID="-4" EXECUTION_STATUS="READY" TCLN_ID="-4" LABEL ="Cas de test 4" CREATED_ON="2012-02-09" CREATED_BY="DBU"/>
+
+ 
+ 	<ITEM_TEST_PLAN_LIST ITERATION_ID="-1" ITEM_TEST_PLAN_ID="-1" ITEM_TEST_PLAN_ORDER="0"/>
+  	<ITEM_TEST_PLAN_LIST ITERATION_ID="-1" ITEM_TEST_PLAN_ID="-2" ITEM_TEST_PLAN_ORDER="1"/>
+  	<ITEM_TEST_PLAN_LIST ITERATION_ID="-1" ITEM_TEST_PLAN_ID="-3" ITEM_TEST_PLAN_ORDER="2"/>
+  	<ITEM_TEST_PLAN_LIST ITERATION_ID="-1" ITEM_TEST_PLAN_ID="-4" ITEM_TEST_PLAN_ORDER="3"/> 
+ 
+</dataset>

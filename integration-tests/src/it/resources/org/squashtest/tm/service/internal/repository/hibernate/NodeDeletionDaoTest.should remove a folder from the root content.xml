@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!-- 
+	That file will instanciate a complete set of entity dependencies 
+
+	That file declares only entities, not their relationships (except folder-nodes relationships).
+	
+	Additional datasets will be required to link the entities together (eg, a campaign with an iteration)
+	according to each test specifics.
+
+-->
+
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+
+	<!-- =============================== three libraries ============================================ -->
+	
+	
+
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-987"/><TEST_CASE_LIBRARY ATTACHMENT_LIST_ID="-987" TCL_ID="-1"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-989"/><REQUIREMENT_LIBRARY ATTACHMENT_LIST_ID="-989" RL_ID="-1"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-988"/><CAMPAIGN_LIBRARY ATTACHMENT_LIST_ID="-988" CL_ID="-1"/>
+	
+	<!-- =============================== one project ================================================ -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-40"/>
+	<PROJECT PROJECT_ID="-1" NAME="base project" ACTIVE="TRUE" CREATED_BY="IT" CREATED_ON="2011-08-08" 
+			 CL_ID="-1" RL_ID="-1" TCL_ID="-1" ATTACHMENT_LIST_ID="-40"/>
+
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-13"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-13" NAME="folder 2" CREATED_BY="IT" CREATED_ON="2011-08-08" ATTACHMENT_LIST_ID="-13"/>  
+
+	<TEST_CASE_FOLDER TCLN_ID="-13" />	
+	
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-11"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-11" NAME="folder 1" CREATED_BY="IT" CREATED_ON="2011-08-08" ATTACHMENT_LIST_ID="-11"/>  
+
+	<TEST_CASE_FOLDER TCLN_ID="-11" />	
+
+	
+	<!-- ============================ test case library content =======================================  -->
+	<TEST_CASE_LIBRARY_CONTENT LIBRARY_ID="-1" CONTENT_ID="-11" CONTENT_ORDER="0"/>  <!--  TC LIBRARY 1 CONTAINS TCFOLDER 1 -->
+	<TEST_CASE_LIBRARY_CONTENT LIBRARY_ID="-1" CONTENT_ID="-13" CONTENT_ORDER="1"/>  <!--  TC LIBRARY 1 CONTAINS TCFOLDER 1 -->
+	
+		
+
+</dataset>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

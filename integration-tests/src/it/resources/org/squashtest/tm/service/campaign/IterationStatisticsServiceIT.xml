@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.13.0.dtd">
+<dataset>
+
+
+
+    <!--  CAMPAIGN LIBRARY -->
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-988"/><CAMPAIGN_LIBRARY ATTACHMENT_LIST_ID="-988" CL_ID="-1"/>
+	
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-555"/>
+	<PROJECT PROJECT_ID="-1" ATTACHMENT_LIST_ID="-555" CREATED_ON="2012-02-01" CREATED_BY="DBU" NAME="pro" CL_ID="-1"/>
+	
+	<!-- parent folder -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-123"/>
+	<CAMPAIGN_LIBRARY_NODE CLN_ID="-1" NAME="a folder" CREATED_ON="2010-02-01" CREATED_BY="DBU" ATTACHMENT_LIST_ID="-123"  PROJECT_ID="-1" />
+	<CAMPAIGN_FOLDER CLN_ID="-1" />
+  <CAMPAIGN_LIBRARY_CONTENT CONTENT_ORDER="0" CONTENT_ID="-1" LIBRARY_ID="-1"/>
+	
+	<!--  FOLDER CONTENT -->
+	<!-- SOURCE -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-10" />
+	<CAMPAIGN_LIBRARY_NODE CLN_ID="-10" NAME="foo" CREATED_ON="2010-02-01" CREATED_BY="DBU" ATTACHMENT_LIST_ID="-10"  PROJECT_ID="-1" />
+	<CAMPAIGN CLN_ID="-10" ACTUAL_START_AUTO="TRUE" ACTUAL_END_AUTO="TRUE"  REFERENCE="ref Z"/>
+	<CLN_RELATIONSHIP ANCESTOR_ID="-1" DESCENDANT_ID="-10" CONTENT_ORDER="0"/>
+
+
+
+	<!-- ITERATION 1 -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-12" />
+	<ITERATION NAME="iter - tc1" ITERATION_ID="-1" ACTUAL_END_AUTO="FALSE" ACTUAL_START_AUTO="FALSE"
+		ACTUAL_START_DATE="2011-01-01" ACTUAL_END_DATE="2011-01-02" SCHEDULED_START_DATE="2011-01-01" SCHEDULED_END_DATE="2011-01-02"
+		CREATED_BY="DBU" CREATED_ON="2010-02-01" ATTACHMENT_LIST_ID="-12" REFERENCE="ref A"/>
+	
+
+	
+	<CAMPAIGN_ITERATION CAMPAIGN_ID="-10" ITERATION_ID="-1" ITERATION_ORDER="0" />
+	
+	
+	<TEST_SUITE ATTACHMENT_LIST_ID="-12" CREATED_ON="2011-01-01" CREATED_BY="me" ID="-1" NAME="ts 1" />
+	<ITERATION_TEST_SUITE TEST_SUITE_ID="-1" ITERATION_ID="-1"/>
+	
+	<TEST_SUITE ATTACHMENT_LIST_ID="-12" CREATED_ON="2011-01-01" CREATED_BY="me" ID="-2" NAME="ts 2"/>
+	<ITERATION_TEST_SUITE TEST_SUITE_ID="-2" ITERATION_ID="-1"/>
+	
+	<TEST_SUITE ATTACHMENT_LIST_ID="-12" CREATED_ON="2011-01-01" CREATED_BY="me" ID="-3" NAME="ts 3" />
+	<ITERATION_TEST_SUITE TEST_SUITE_ID="-3" ITERATION_ID="-1"/>
+	
+	<TEST_SUITE ATTACHMENT_LIST_ID="-12" CREATED_ON="2011-01-01" CREATED_BY="me" ID="-4" NAME="ts 4" />
+	<ITERATION_TEST_SUITE TEST_SUITE_ID="-4" ITERATION_ID="-1"/>
+	
+	<TEST_SUITE ATTACHMENT_LIST_ID="-12" CREATED_ON="2011-01-01" CREATED_BY="me" ID="-5" NAME="ts 5" />
+	<ITERATION_TEST_SUITE TEST_SUITE_ID="-5" ITERATION_ID="-1"/>
+	
+</dataset>

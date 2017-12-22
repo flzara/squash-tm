@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-11001" />
+  <CAMPAIGN_LIBRARY CL_ID="-11000" ATTACHMENT_LIST_ID="-11001" />
+
+  <PROJECT PROJECT_ID="-10000" ATTACHMENT_LIST_ID="-11001" CREATED_ON="2012-12-21" CREATED_BY="dbu" NAME="project"
+    CL_ID="-11000" />
+
+	<!-- parent folder -->
+  <CAMPAIGN_LIBRARY_NODE CLN_ID="-1" NAME="a folder" CREATED_ON="2010-02-01" CREATED_BY="DBU"
+    ATTACHMENT_LIST_ID="-11001" PROJECT_ID="-10000" />
+  <CAMPAIGN_FOLDER CLN_ID="-1" />
+  <CAMPAIGN_LIBRARY_CONTENT CONTENT_ID="-1" LIBRARY_ID="-11000" CONTENT_ORDER="0"/>
+ 	
+
+	<!-- FOLDER CONTENT -->
+
+	<!-- SOURCE -->
+  <CAMPAIGN_LIBRARY_NODE CLN_ID="-10" NAME="foo" CREATED_ON="2010-02-01" CREATED_BY="DBU"
+    ATTACHMENT_LIST_ID="-11001" PROJECT_ID="-10000" />
+  <CAMPAIGN CLN_ID="-10" ACTUAL_START_AUTO="TRUE" ACTUAL_END_AUTO="TRUE" />
+  <CLN_RELATIONSHIP ANCESTOR_ID="-1" DESCENDANT_ID="-10" CONTENT_ORDER="0"/>
+
+
+	<!-- TARGET -->
+  <CAMPAIGN_LIBRARY_NODE CLN_ID="-11" NAME="bar" CREATED_ON="2010-02-02" CREATED_BY="GTE"
+    ATTACHMENT_LIST_ID="-11001" PROJECT_ID="-10000" />
+  <CAMPAIGN CLN_ID="-11" ACTUAL_START_AUTO="FALSE" ACTUAL_END_AUTO="TRUE" />
+  <CLN_RELATIONSHIP ANCESTOR_ID="-1" DESCENDANT_ID="-11" CONTENT_ORDER="1"/>
+
+
+	<!-- CAMPAIGN LIBRARY -->
+  <CAMPAIGN_LIBRARY ATTACHMENT_LIST_ID="-11001" CL_ID="-1" />
+  <CAMPAIGN_LIBRARY_CONTENT LIBRARY_ID="-1" CONTENT_ID="-10" CONTENT_ORDER="1"/>
+
+
+	<!-- TESTCASE -->
+  <TEST_CASE_LIBRARY_NODE TCLN_ID="-1" NAME="test case 1" CREATED_BY="DBU" CREATED_ON="2010-02-01"
+    ATTACHMENT_LIST_ID="-11001" />
+  <TEST_CASE PREREQUISITE="" TCLN_ID="-1" VERSION="1" />
+
+	<!-- ITERATION 1 -->
+  <ITERATION NAME="iter - tc1" ITERATION_ID="-10012" ACTUAL_END_AUTO="FALSE" ACTUAL_START_AUTO="FALSE"
+    ACTUAL_START_DATE="2011-01-01" ACTUAL_END_DATE="2011-01-02" SCHEDULED_START_DATE="2011-01-01" SCHEDULED_END_DATE="2011-01-02"
+    CREATED_BY="DBU" CREATED_ON="2010-02-01" ATTACHMENT_LIST_ID="-11001" />
+  <CAMPAIGN_ITERATION CAMPAIGN_ID="-10" ITERATION_ID="-10012" ITERATION_ORDER="0" />
+
+
+	<!-- TEST SUITE OF ITERATION 1 -->
+  <TEST_SUITE ID="-1" NAME="testSuite1" DESCRIPTION="" ATTACHMENT_LIST_ID="-11001" CREATED_ON="2010-02-01"
+    CREATED_BY="" />
+  <ITERATION_TEST_SUITE ITERATION_ID="-10012" TEST_SUITE_ID="-1" />
+  
+
+  	<!-- CUSTOM FIELD 20 -->
+	<CUSTOM_FIELD CF_ID="-20" NAME="MYCUF" CODE="zuzu" LABEL="" INPUT_TYPE="PLAIN_TEXT" FIELD_TYPE="CF" DEFAULT_VALUE="default value"/>
+	<!-- /CUSTOM FIELD 20 -->
+
+	<!-- CUSTOM FIELD BINDING 202 -->
+	<CUSTOM_FIELD_BINDING CFB_ID="-202" CF_ID="-20" BOUND_PROJECT_ID="-10000" BOUND_ENTITY="TEST_SUITE" POSITION="1"/>
+	<!-- /CUSTOM FIELD BINDING 202 -->
+	
+    <!-- CUSTOM FIELD VALUE 42 -->
+	<CUSTOM_FIELD_VALUE CFV_ID="-42" BOUND_ENTITY_ID="-1" CFB_ID="-202" BOUND_ENTITY_TYPE="TEST_SUITE" VALUE="updated value"/>
+	<!-- /CUSTOM FIELD VALUE 42 -->
+ 
+
+</dataset>

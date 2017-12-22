@@ -1,0 +1,1138 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2015 Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+ /**
+ * smartsprites directive :
+ */
+
+ /** sprite: sprites-icons; sprite-image: url('../images/sprites-icons.png'); sprite-layout: vertical */
+
+.popup-label-error {
+	font-size: 12px;
+	color: red;
+	font-weight: bold;
+	text-align: center;
+}
+
+.toolbar-class {
+	width: auto;
+	height: auto;
+	margin-top: 5px;
+	margin-left: 5px;
+	margin-right: 5px;
+	margin-bottom: 5px;
+}
+
+.toolbar-information-panel {
+	font-size: 100% !important;
+	text-align: left;
+	float: left;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	font-size: 100%;
+}
+
+.toolbar-information-panel label {
+	font-style: italic;
+}
+
+.toolbar-button-panel {
+	text-align: right;
+	float: right;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.toolbar .left-buttons {
+	float:left	;
+}
+
+div.toggle-panel>h3 {
+	font-size: 95%;
+	padding-left: 0.7em;
+	padding-right: 0.7em;
+}
+
+div.toggle-panel>h3 a.tg-link {
+	padding-left: 0px;
+}
+
+div.toggle-panel input {
+	padding-top: 0.05em;
+	padding-bottom: 0.05em;
+	margin-top: 0.2em;
+	margin-bottom: 0.2em;
+}
+
+/* we need to override accordion and button default styles when using <a> tags in toggle-panel header */
+div.toggle-panel a.tg-panel-button {
+	padding-top: 0.05em;
+	padding-bottom: 0.05em;
+	padding-left: 1em;
+	padding-right: 1em;
+	margin-top: 0.2em;
+	margin-bottom: 0.2em;
+	display: inline-block;
+}
+
+a.tg-panel-button span.ui-button-text {
+	padding: 0;
+}
+
+/* we override the overflow property with whatever values, as long as
+the div stops displaying a useless scrollbar (that thing autoresize with content anyway)*/
+div.toggle-panel  div.ui-accordion-content {
+	padding: 0.7em 0.7em;
+	overflow: auto;
+}
+
+div.execute-fragment-body div.toggle-panel  div.ui-accordion-content {
+	min-height: 85px;
+}
+
+div.datepicker-panel {
+	text-align: center;
+	margin: auto;
+}
+
+div.datepicker-panel-field {
+	display: inline-block;
+	margin-left: 4em;
+	margin-right: 4em;
+}
+
+div.datepicker-caption {
+	text-align: left;
+	float: left;
+}
+
+div.datepicker-date {
+	text-align: right;
+	float: left;
+}
+
+table.datepicker-table {
+	width: 50%;
+	min-width: 50%;
+	max-width: 80%;
+}
+
+table.datepicker-table td.datepicker-table-col {
+	min-width: 25em;
+	padding-right: 2em;
+}
+
+/*******************************
+	exec statuses - adds background icon
+********************************/
+
+.exec-status-option{
+	padding-left : 20px;
+	background-repeat : no-repeat;
+	background-color : transparent;
+}
+
+.exec-status-label {
+	padding-left: 26px;
+	display: block;
+	background-repeat: no-repeat;
+	height: 16px;
+	line-height: 1.2;
+	white-space: nowrap;
+}
+
+
+.ui-button .ui-icon.exec-status-untestable,
+.sq-btn .ui-icon.exec-status-untestable,
+.exec-status-untestable{
+	background-image: url("../images/Icon_White.png");  /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.ui-button .ui-icon.exec-status-blocked,
+.sq-btn .ui-icon.exec-status-blocked,
+.exec-status-blocked{
+	background-image: url("../images/Icon_Yellow.png");  /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.ui-button .ui-icon.exec-status-success,
+.sq-btn .ui-icon.exec-status-success,
+.exec-status-success{
+	background-image: url("../images/Icon_Green.png");  /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.ui-button .ui-icon.exec-status-failure,
+.sq-btn .ui-icon.exec-status-failure,
+.exec-status-failure {
+	background-image: url("../images/Icon_Red.png");  /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.ui-button .ui-icon.exec-status-running,
+.sq-btn .ui-icon.exec-status-running,
+.exec-status-running {
+	background-image: url("../images/Icon_Blue.png");  /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.ui-button .ui-icon.exec-status-ready,
+.sq-btn .ui-icon.exec-status-ready,
+.exec-status-ready {
+	background-image: url("../images/Icon_Grey.png");  /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.ui-button .ui-icon.exec-status-error,
+.sq-btn .ui-icon.exec-status-error,
+.exec-status-error {
+	background-image: url("../images/Icon_Yellow.png");  /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.ui-button .ui-icon.exec-status-not_run,
+.sq-btn .ui-icon.exec-status-not_run,
+.exec-status-not_run {
+	background-image: url("../images/Icon_Yellow.png");  /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.ui-button .ui-icon.exec-status-not_found,
+.sq-btn .ui-icon.exec-status-not_found,
+.exec-status-not_found {
+	background-image: url("../images/Icon_Yellow.png");  /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.ui-button .ui-icon.exec-status-warning,
+.sq-btn .ui-icon.exec-status-warning,
+.exec-status-warning{
+	background-image: url("../images/Icon_Green.png");  /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.ui-button .ui-icon.exec-status-settled,
+.sq-btn .ui-icon.exec-status-settled,
+.exec-status-settled{
+	background-image: url("../images/Icon_GreenWhite.png");  /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.ui-button .ui-icon.execute-stop,
+.sq-btn .ui-icon.execute-stop {
+	background-image: url("../images/Button_Exec_stop.png");  /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.status-color-ready{
+	background-color : #BDD3FF;
+}
+
+.status-color-running{
+	background-color : #6699FF;
+}
+
+.status-color-success{
+	background-color : #99CC00;
+}
+
+.status-color-settled{
+	background-color : #99FF99;
+}
+
+.status-color-failure{
+	background-color : #FF3300;
+}
+
+.status-color-blocked{
+	background-color : #FFCC00;
+}
+
+.status-color-untestable{
+	background-color : #969696;
+}
+
+.status-color-campaign{
+	background-color : #7B4F93;
+	color : white;
+	font-weight : normal;
+}
+
+.manage-attachment-button {
+	border: 0 none;
+	background: none;
+}
+
+/* the clause display:block is needed for IE. The word-wrap will be rendered on IE8 only if the element have the property hasLayout,
+the display:block trick will implicitly add that property */
+.breakwords {
+	word-wrap: break-word;
+	display: block;
+}
+
+
+.project-filter-controls ul li:hover {
+    text-decoration: underline;
+}
+
+
+.project-filter-controls ul {
+	color : #555555;
+    font-size: smaller;
+    padding-left: 20px;
+}
+.project-picker .filter-warning {
+    color: #FF0000;
+    left: 280px;
+    position: absolute;
+    top: 10px;
+}
+.rpt-projects-crit-result{
+	padding-right : 8px;
+}
+
+/******************************
+	import section
+******************************/
+.confirm-div {
+	margin-bottom: 1em;
+}
+
+.confirm-div span {
+	font-weight: bold;
+}
+
+.confirm-div label {
+	font-size: 1.1em;
+}
+
+/******************************
+	issue section
+*******************************/
+.please-wait-message {
+	font-size: 1.5em;
+	font-weight: bold;
+	vertical-align: center;
+	text-align: center;
+}
+
+.issue-panel-knownissues-displayed {
+	display: block;
+}
+
+.issue-panel-knownissues-notdisplayed {
+	display: none;
+}
+
+div.issue-report-dialog div.combo-options {
+	margin-bottom: 2em;
+}
+
+div.issue-report-dialog div.text-options>div {
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
+
+div.issue-report-dialog div.text-options label {
+	display: block;
+}
+
+div.issue-report-dialog div.text-options textarea {
+	width: 100%;
+	height: 175px;
+}
+
+div.issue-report-dialog span.issue-radio{
+	display: block;
+	margin-bottom: 1em;
+}
+
+span.issue-radio span.issue-radio-label{
+	cursor:pointer;
+}
+
+div.issue-report-dialog div.issue-report-break{
+	display: block;
+	min-height: 2em;
+}
+
+div.issue-panel-container{
+	margin-top : 0.2em;
+	width : 98%;
+}
+
+div.issue-field{
+	line-height : 3;
+}
+
+label.issue-field-label{
+	width : 25%;
+	vertical-align:middle;
+}
+
+div.issue-field-control-wrapper{
+	vertical-align : middle;
+}
+
+span.issue-field-control-holder{
+	width : 74%;
+	line-height : 1em;
+}
+
+span.issue-field-message-holder{
+	display : block;	/* that way it'll be displayed on a new line */
+}
+
+
+/*******************************
+	test suites management
+********************************/
+.main-div-suites>div {
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 1.5em;
+	text-align: center;
+}
+
+.remove-suites-section input[type="button"] {
+	width: 99%;
+}
+
+.main-div-suites .display-suites-section {
+	border: 2px inset gray;
+	height: 300px;
+	overflow: auto;
+}
+
+.remove-suites-section,.create-suites-section,.rename-suites-section {
+	width: 99%;
+}
+
+.display-suites-section  .suite-div {
+	width: 80%;
+	margin-top: 0.5em;
+	margin-left: 0.5em;
+	margin-right: 0.5em;
+	cursor: pointer;
+	text-align: left;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+
+.display-suites-section .suite-div.suite-selected {
+	background-color: #A843E6;
+	color: white;
+	font-weight: bold;
+}
+
+.main-div-suites .manager-control-ready {
+	color: black;
+}
+
+.main-div-suites .manager-control-disabled {
+	color: black;
+}
+
+.main-div-suites input[type="text"] {
+	width: 68%;
+	margin-right: 2%;
+	display: inline-block;
+}
+
+.main-div-suites input[type="button"] {
+	display: inline-block;
+}
+
+/* *****************************
+	test suite menu
+********************************/
+.suite-manager-menu-mainlist {
+	overflow-x: hidden;
+	overflow-y: auto;
+	max-height: 200px;
+}
+
+.suite-manager-menu-input {
+	vertical-align: top;
+	margin-right: 1em;
+}
+
+.suite-manager-menu-button {
+	height: 24px;
+}
+
+
+/* *****************************
+	popupError
+********************************/
+
+
+div.error-overlay{
+	position : absolute;
+	top	:	0;
+	bottom : 0;
+	left : 0;
+	right : 0;
+    z-index: 1000;
+
+	background-color: lightgray;
+	opacity : 0.8;	/* we wont set the filter alpha for IE because it'll mess up the text */
+
+
+}
+
+
+div.error-style{
+    border: 1px solid black;
+    border-radius: 3px 3px 3px 3px;
+    left: 12.5%;
+	top : 40%;
+    max-width: 75%;
+	min-width: 75%;
+	-moz-box-shadow: 5px 5px 5px #111111;
+	-webkit-box-shadow: 5px 5px 5px #111111;
+	box-shadow: 5px 5px 5px #111111;
+	cursor : pointer;
+	text-align : center;
+	opacity : 1.0;/* we wont set the filter alpha for IE because it'll mess up the text */
+
+	position:absolute;
+	background-color:white;
+}
+
+
+div.error-inner{
+	padding : 10px 10px;
+	position:relative;
+}
+.error-hidden-state{
+	display : none;
+}
+
+/*************************************
+	test automation administration
+*************************************/
+
+div.ta-main-div .ta-block{
+	margin-top	: 0.8em;
+	margin-bottom : 0.8em;
+	padding-top	:	0.2em;
+	padding-bottom : 0.2em;
+}
+
+/**
+	popup style
+
+**/
+
+div.ta-projects-bind-maindiv{
+	padding-top : 1em;
+}
+
+
+.ta-project-tm-label.edit-state label {
+    color: #000000;
+    font-style: normal;
+    text-decoration: none;
+}
+
+table.ta-project-bind-listdiv {
+    border-collapse: collapse;
+}
+table.ta-project-bind-listdiv tr.listdiv-item.odd {
+    background-color: #E0E0E0;
+}
+table.ta-project-bind-listdiv tr.listdiv-item.even {
+    background-color: #C0C0C0;
+}
+
+
+/*************************************
+	test automation picker
+**************************************/
+
+.ta-picker-structure-maindiv  > .has-standard-margin{
+	margin : 2em;
+}
+
+.ta-picker-structure-maindiv   .structure-tree{
+	border : none
+}
+
+
+/*******************************
+	information panel / description panel
+********************************/
+.ui-widget-content.information-panel a, .ui-widget-content a.actionLink {
+	color: #555555;
+	font-size: 90%;
+	font-style: italic;
+}
+/*******************************
+	misc
+********************************/
+
+.aligntop {
+	vertical-align: top;
+}
+
+.editable {
+	border: 1px solid transparent;
+}
+
+.editable:HOVER{
+	border: 1px solid #bbbbbb;
+}
+
+.editable.large {
+	width: 100%
+}
+
+.editable form	{
+	display:inline;
+}
+
+.editable form button {
+	line-height:1.2;
+}
+
+.italic{
+	font-style: italic;
+}
+
+.paddingnull	{
+	padding : 0;
+}
+
+td.editable:HOVER {
+	border: 1px solid transparent;
+}
+
+span.span-red {
+	.txt-error();
+}
+
+span.span-bold {
+	font-weight: bold;
+}
+
+span.span-green {
+	.txt-success();
+}
+
+/*******************************
+	REPORT FORM COMPONENTS
+********************************/
+.rpt-date-crit {
+	position: absolute;
+	margin-left: 4px;
+}
+
+#report-criteria-panel li {
+	list-style-type: none;
+	margin-top: 2px;
+	margin-bottom: 2px;
+}
+
+/*******************************
+	search icon
+********************************/
+
+.search-icon-information {
+	background-position : center left;
+	background-image : url("../images/Search_Information.png");  /** sprite-ref: sprites-icons; sprite-alignment: left; */
+	background-color : transparent;
+	background-repeat : no-repeat;
+	padding-left: 20px;
+	height:16px;
+	display: block
+}
+.search-icon-attributes {
+	background-position : center left;
+	background-image: url("../images/Search_Attributes.png");  /** sprite-ref: sprites-icons; sprite-alignment: left; */
+	background-color : transparent;
+	background-repeat : no-repeat;
+	padding-left: 20px;
+	height:16px;
+	display: block
+}
+.search-icon-perimeter {
+	background-position : center left;
+	background-image: url("../images/Search_Perimeter.png");  /** sprite-ref: sprites-icons; sprite-alignment: left; */
+	background-color : transparent;
+	background-repeat : no-repeat;
+	padding-left: 20px;
+	height:16px;
+	display: block
+}
+.search-icon-perimeter-blue {
+	background-position : center left;
+	background-image: url("../images/Search_Perimeter_Blue.png");  /** sprite-ref: sprites-icons; sprite-alignment: left; */
+	background-color : transparent;
+	background-repeat : no-repeat;
+	padding-left: 20px;
+	height:16px;
+	display: block
+}
+.search-icon-associations  {
+	background-position : center left;
+	background-image: url("../images/Search_Associations.png");  /** sprite-ref: sprites-icons; sprite-alignment: left; */
+	background-color : transparent;
+	background-repeat : no-repeat;
+	padding-left: 20px;
+	height:16px;
+	display: block
+}
+.search-icon-content {
+	background-position : center left;
+	background-image: url("../images/Search_Content.png");  /** sprite-ref: sprites-icons; sprite-alignment: left; */
+	background-color : transparent;
+	background-repeat : no-repeat;
+	padding-left: 20px;
+	height:16px;
+	display: block;
+}
+.search-icon-execution {
+	background-position : center left;
+	background-image: url("../images/cog.png");  /** sprite-ref: sprites-icons; sprite-alignment: left; */
+	background-color : transparent;
+	background-repeat : no-repeat;
+	padding-left: 20px;
+	height:16px;
+	display: block;
+}
+.search-icon-history  {
+	background-position : center left;
+	background-image: url("../images/Search_History.png");  /** sprite-ref: sprites-icons; sprite-alignment: left; */
+	background-color : transparent;
+	background-repeat : no-repeat;
+	padding-left: 20px;
+	height:16px;
+	display: block;
+}
+.search-icon-history-blue  {
+	background-position : center left;
+	background-image: url("../images/Search_History_Blue.png");  /** sprite-ref: sprites-icons; sprite-alignment: left; */
+	background-color : transparent;
+	background-repeat : no-repeat;
+	padding-left: 20px;
+	height:16px;
+	display: block
+}
+.search-icon-cuf {
+	background-position : center left;
+	background-image: url("../images/Search_CUF.png");  /** sprite-ref: sprites-icons; sprite-alignment: left; */
+	background-color : transparent;
+	background-repeat : no-repeat;
+	padding-left: 20px;
+	height:16px;
+	display: block
+}
+.search-icon-version {
+	background-position : center left;
+	background-image: url("../images/Search_Version.png");  /** sprite-ref: sprites-icons; sprite-alignment: left; */
+	background-color : transparent;
+	background-repeat : no-repeat;
+	padding-left: 20px;
+	height:16px;
+	display: block
+}
+
+.associated-icon-requirement {
+	background-position : center;
+	background-image: url("../images/tick_blue.png");
+	background-color : transparent;
+	background-repeat : no-repeat;
+	width : 16px;
+	height : 16px;
+	display : inline-block;
+}
+
+.associated-icon-testcase {
+	background-position : center;
+	background-image: url("../images/tick_green.png");
+	background-color : transparent;
+	background-repeat : no-repeat;
+	width : 16px;
+	height : 16px;
+	display : inline-block;
+}
+
+.associated-icon-campaign {
+	background-position : center;
+	background-image: url("../images/tick_purple.png");
+	background-color : transparent;
+	background-repeat : no-repeat;
+	width : 16px;
+	height : 16px;
+	display : inline-block;
+}
+
+/*******************************
+	search table icons - adds background icon
+********************************/
+.search-open-tree {
+	background-position : center;
+	background-image : url("../images/folder_search.png");
+	background-color : transparent;
+	background-repeat : no-repeat;
+	width : 16px;
+	height : 16px;
+	display : inline-block;
+}
+
+/*******************************
+ * test case / execution mode
+ *******************************/
+.exec-mode-automated {
+	background-position : center center;
+	background-image : url("../images/cog.png");
+	background-repeat : no-repeat;
+}
+
+.exec-mode-manual {
+}
+
+.exec-mode-icon{
+	color: transparent;
+	overflow: hidden;
+	min-width: 16px;
+	min-height: 16px;
+	display: inline-block;
+}
+
+/*******************************
+ * Projects
+ *******************************/
+.type-project {
+
+}
+.type-template {
+	background-position : center center;
+	background-image: url("../images/icon_template.png");
+	background-repeat : no-repeat;
+}
+.type-project, .type-template {
+	color: transparent;
+	overflow: hidden;
+	min-width: 16px;
+	min-height: 16px;
+	display: block;
+}
+
+/****************************************
+* MISC
+****************************************/
+
+#executions-auto-infos.display-table {
+	border-collapse : collapse;
+}
+#executions-auto-infos.display-table  .display-table-row{
+	background-color : #E0E0E0;
+	border-bottom : 3px solid white;
+}
+
+/*********************
+ * ATTACHMENT DIALOG
+ *********************/
+#attachment-progress-dialog > div, #attachment-progress-message {
+	text-align: center;
+}
+
+/*********************
+ * NOTIFICATION PANEL
+ *********************/
+.notification-pane {
+	display: inline-block;
+}
+.unstyled-notification-pane {
+	display: none;
+}
+.processing {
+	display: inline-block;
+}
+.not-processing {
+	display: none;
+}
+
+/*****************************************
+ * custom field binding (administration)
+ ****************************************/
+.cuf-binding-popup tbody td{
+	cursor : pointer;
+}
+
+/*
+predefined for future evolutions :
+
+.cuf-binding-popup .component{
+	display : inline-block;
+}
+
+.cuf-binding-popup .component .left-div{
+	width:75%;
+}
+
+.cuf-binding-popup .component .right-div{
+	width:25%;
+}
+*/
+
+/*****************************************
+ * /custom field binding (administration)
+ ****************************************/
+
+.red-warning-message {
+	color: red;
+}
+
+.bold-warning-message {
+	font-weight: bold;
+	padding-top:1em;
+}
+/*****************************************
+ * /step denormalized fields
+ ****************************************/
+
+#denormalized-fields .toggle-panel h3 {
+    display : none;
+}
+
+
+#denormalized-fields .toggle-panel h3 a {
+    color: #555555;
+}
+
+#denormalized-fields-panel {
+    background: none;
+    border: medium none;
+    min-height: 0;
+}
+
+/*****************************************
+ * plots and statistics
+ ****************************************/
+
+
+/*
+ * The rules right below are overrides of the standard jqplot.css.
+ * Note : they are used only when jqplot generates the legend by itself, but as of today this is not the case.
+ * 			In short, they are unused.
+ */
+
+/* override of the default */
+.dashboard-item .jqplot-target {
+	color : black;
+}
+
+/* fix for a bug with pie charts, found on https://bitbucket.org/cleonello/jqplot/issue/489/diameter-of-pie-too-small-not-rendering */
+.dashboard-item table.jqplot-table-legend, .dashboard-item table.jqplot-cursor-legend{
+	width : 33%;
+}
+
+.dashboard-item .jqplot-table-legend-swatch{
+	width : 15px;
+}
+
+.dashboard-item-view .jqplot-data-label{
+	color : black;
+}
+
+/*
+ * The rules defined from now are for our own classes now.
+ */
+.dashboard-item {
+	width : 48%;
+	height : 300px;
+	float : left;
+	border : 1px solid lightgray;
+	margin : 0.5%;
+}
+
+.dashboard-narrow-item {
+	width : 32%;
+	float : left;
+	border : 1px solid lightgray;
+	height : 300px;
+	margin : 0.5%;
+	position: relative;
+}
+
+.dashboard-item-title{
+	text-align : right;
+	margin-right : 1em;
+	margin-top : 0.2em;
+	font-weight : bold;
+	color : #CCCCCC;
+	position : absolute;
+	top : 5px;
+	right : 5px;
+	z-index : 1;
+}
+
+.dashboard-item-view {
+	position : relative;
+	height : 100%;
+	width : 63%;
+	float : left;
+}
+
+
+.dashboard-item-meta{
+	height : 100%;
+	width : 34%;
+	float : right;
+	position : relative;
+}
+
+.dashboard-item-subplot{
+	position: absolute;
+	top: 40px;
+	width: 90%;
+	padding: 5px;
+}
+
+.dashboard-subplot-legend{
+	min-height: 20px;
+	width: 50px;
+	text-align: right;
+	padding-right : 2px;
+	margin-top: 5px;
+	margin-bottom : 5px;
+	margin-left : 2em;
+	font-weight: bold;
+	line-height: 2.0em;
+}
+
+.dashboard-item-legend{
+	position : absolute;
+	bottom : 30px;
+	left : 10px;
+}
+
+.dashboard-legend-sample-color, .dashboard-legend-icon{
+	height : 15px;
+	width : 15px;
+	display : inline-block;
+}
+
+.dashboard-item-legend span{
+	vertical-align : top;
+}
+
+.dashboard-summary{
+	font-size: 1.2em;
+	color: #666666;
+}
+
+.dashboard-figleaf-notready{
+	text-align : center;
+}
+
+.dashboard-figleaf-notready-title{
+	color: #CCCCCC;
+	font-size: 1.5em;
+}
+
+.dashboard-table{
+	text-align : center;
+	border-collapse : collapse;
+}
+
+.dashboard-table thead th, .dashboard-table tbody td{
+	height : 20px;
+	border : 1px solid black;
+}
+
+.dashboard-donut-lvl1 {
+	background-image : url('../images/circle-d1.png');/** sprite-ref: sprites-icons; */
+}
+
+.dashboard-donut-lvl2 {
+	background-image : url('../images/circle-d2.png');/** sprite-ref: sprites-icons; */
+}
+
+.dashboard-donut-lvl3 {
+	background-image : url('../images/circle-d3.png');/** sprite-ref: sprites-icons; */
+}
+
+.dashboard-donut-lvl4 {
+	background-image : url('../images/circle-d4.png');/** sprite-ref: sprites-icons; */
+}
+
+
+/****************************************
+Third party servers authentication credentials management
+****************************************/
+
+.adm-srv-auth {
+	.srv-auth-credentials-section{
+		margin-top : 1em;
+		padding: 1em;
+		margin-bottom: 1em;		
+	}
+	.srv-auth-messagepane{
+		max-width : 500px;
+	}
+	.side-panel.not-displayed{
+		display : none
+	}
+}
+
+
+/****************************************
+ some fixes for the buttonmenu
+****************************************/
+
+.squash-buttonmenu span.ui-button-icon-primary {
+	top: 50%;
+	left: 50%;
+}
+
+/*****************************************
+ * various icons
+ ****************************************/
+
+.ui-icon-wizard {
+	background-image: url("../images/icon_wizard.gif") !important; /** sprite-ref: sprites-icons; */
+	background-repeat: no-repeat;
+	width : 16px;
+	height : 16px;
+	display : inline-block;
+}
+
+.ui-icon-link-dark-e-w {
+	background-image: url("../images/link_on.png") !important; /** sprite-ref: sprites-icons; */
+	background-repeat: no-repeat;
+	width : 16px;
+	height : 16px;
+	display : block;
+	margin: auto;
+}
+
+.ui-icon-link-clear-e-w {
+	background-image: url("../images/link_off.png") !important; /** sprite-ref: sprites-icons; */
+	background-repeat: no-repeat;
+	width : 16px;
+	height : 16px;
+	display : block;
+	margin: auto;
+}

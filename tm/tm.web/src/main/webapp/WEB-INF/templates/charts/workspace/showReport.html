@@ -1,0 +1,62 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<div th:fragment="report-view">
+	<div id="report-title-div"
+		class="ui-widget-header ui-corner-all ui-state-default fragment-header">
+		<div id="right-frame-button">
+			<input type="button" class="sq-btn btn-sm" id="toggle-expand-left-frame-button" th:title="#{tooltip.toggleLibraryDisplay}"/>
+		</div>
+		<div style="float: left; height: 100%;" class="small-margin-left">
+			<h2>{{name}}</h2>
+		</div>
+	</div>
+
+	<div id="element-toolbar" class="toolbar-class ui-corner-all">
+		<div class="toolbar-information-panel">
+			<div id="general-information-panel" class="information-panel">
+				<span th:text="#{label.CreatedOn}+'&nbsp;:&nbsp;'">created on </span>
+				{{createdOn}} ({{createdBy}}) <br />
+				<span th:text="#{label.UpdatedOn}+'&nbsp;:&nbsp;'">updated on </span>
+				{{#if lastModifiedBy}} {{lastModifiedOn}} ({{lastModifiedBy}})
+				{{else}} <span th:text="#{label.lower.Never}"></span>
+				{{/if}} <br />
+			</div>
+		</div>
+    {{#if (contains acls.perms 'WRITE')}}
+		<div class="toolbar-button-panel">
+      <input type="button"
+             th:attr="value=#{report.criteria.panel.button.generate.label},title=#{report.criteria.panel.button.generate.label}"
+             id="generate-report-button" class="sq-btn" />
+			<input type="button"
+				th:attr="value=#{label.Rename},title=#{label.Rename}"
+				id="rename-report-button" class="sq-btn" />
+			<input type="button"
+				th:attr="value=#{label.Modify},title=#{label.Modify}"
+				id="modify-report-button" class="sq-btn" />
+		</div>
+    {{/if}}
+		<div class="unsnap"></div>
+	</div>
+
+  <div id="reportDetail"></div>
+</div>

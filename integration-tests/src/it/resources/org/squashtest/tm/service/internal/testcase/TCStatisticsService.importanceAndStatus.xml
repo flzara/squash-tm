@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-888"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-889"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-891"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-892"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-893"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-894"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-895"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-896"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-897"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-898"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-899"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-900"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-901"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-902"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-903"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-904"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-905"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-906"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-907"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-908"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-909"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-910"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-911"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-912"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-913"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-914"/>
+  <TEST_STEP TEST_STEP_ID="-165"/>
+  <TEST_STEP TEST_STEP_ID="-166"/>
+  <ACTION_TEST_STEP TEST_STEP_ID="-165" ACTION="&lt;p&gt;Fusce nec risus augue, at lacinia enim.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Mauris eget arcu sem, eget suscipit dui. Integer vulputate venenatis urna a commodo. Sed elementum tincidunt adipiscing. Nulla o&lt;/li&gt;&lt;li&gt;dio tortor, dapibus sit amet interdum eu,&lt;/li&gt;&lt;li&gt;suscipit quis diam. Phasellus convallis&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;pellentesque lorem, ut volutpat mi tincidunt vitae. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aliquam libero nibh, sollicitud&lt;/p&gt;" EXPECTED_RESULT="&lt;ol&gt;&lt;li&gt;Quisque euismod mi in nunc soda&lt;/li&gt;&lt;li&gt;les ac porta augue viverra. Fusce n&lt;/li&gt;&lt;li&gt;on odio nec magna gravida vehicula&lt;/li&gt;&lt;li&gt;. Donec tincidunt erat justo, ut fringilla&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;velit. Donec dapibus ullamcorper leo, non bibendum quam condi&lt;strong&gt;mentum sit amet. Du&lt;/strong&gt;is cursus dui quis tortor accumsan in pulvinar lectus mattis.&lt;/p&gt;" ATTACHMENT_LIST_ID="-891"/>
+  <ACTION_TEST_STEP TEST_STEP_ID="-166" ACTION="&lt;ul&gt;&lt;li&gt;&lt;u&gt;Praesent nec enim id arcu porta fringilla u&lt;/u&gt;&lt;/li&gt;&lt;li&gt;&lt;u&gt;t id nisi. Aenean tempor gravida lectus id co&lt;/u&gt;&lt;/li&gt;&lt;li&gt;&lt;u&gt;mmodo. In vestibulum dictum ligula, nec feug&lt;/u&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;iat lorem lacinia ac. Donec interdum, risus sed hendrerit tempus, est urna commodo odio, quis varius nulla metus non dolor. Curabitur nec arcu enim, sagittis adipiscing enim. Nam vehicula sodales ipsum, sit amet posuere ante hendrerit nec. In consequat feugiat tempor. Suspendisse mass&lt;/p&gt;" EXPECTED_RESULT="&lt;p&gt;Sed eget rhoncus sapien. Nam et pulvinar nisi. In mattis quam eu risus aliquet vel condimentum dui mattis. Ut vitae mi orci.&lt;/p&gt;&lt;p&gt;hasellus suscipit luctus qua&lt;/p&gt;&lt;p&gt;non scelerisque. Aliquam orci diam, ultrices vel cursus eget, gravida sed tortor. Maecenas in metus dui, ut rhoncus sem. Do&lt;/p&gt;" ATTACHMENT_LIST_ID="-892"/>
+  <ISSUE_LIST ISSUE_LIST_ID="-310"/>
+  <ISSUE_LIST ISSUE_LIST_ID="-311"/>
+  <ISSUE_LIST ISSUE_LIST_ID="-312"/>
+  <REQUIREMENT_LIBRARY RL_ID="-14" ATTACHMENT_LIST_ID="-902"/>
+  <TEST_CASE_LIBRARY TCL_ID="-14" ATTACHMENT_LIST_ID="-903"/>
+  <CAMPAIGN_LIBRARY CL_ID="-14" ATTACHMENT_LIST_ID="-904"/>
+  <PROJECT PROJECT_ID="-14" NAME="Test Project-1" DESCRIPTION="&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam felis ante,&lt;/p&gt;" LABEL="Lorem ipsum dolor sit amet, " ACTIVE="true" CREATED_BY="admin" CREATED_ON="2011-09-30 10:24:47.0" CL_ID="-14" TCL_ID="-14" RL_ID="-14"  ATTACHMENT_LIST_ID="-901" PROJECT_TYPE="P"/>
+  <TEST_CASE_LIBRARY_NODE TCLN_ID="-237" DESCRIPTION="&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam felis ante, accumsan quis tincidunt vel, iaculis in purus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Morbi at nisl et est egestas venenatis. Nullam venenatis, justo ac hendrerit auctor, dolor velit adipiscing lacus, sed gravida enim elit dictum lorem. Suspendisse eu lectus ac metus lobortis vulputate at id purus. Proin dapibus commodo velit sit amet aliquet. Fusce cursus arcu vitae diam auctor vulputate. Integer et nunc et ipsum scelerisque dignissim eu ultricies sem. Pellentesque id commodo dui. Duis in vestibulum magna. Sed porta ante id magna semper ac gravida risus dapibus. Fusce eu ante sapien.&lt;/p&gt;" NAME="Test Folder  a" CREATED_BY="User-1" CREATED_ON="2011-09-30 10:30:47.0" LAST_MODIFIED_BY="User-1" LAST_MODIFIED_ON="2011-09-30 10:35:38.0" PROJECT_ID="-14" ATTACHMENT_LIST_ID="-898"/>
+  <TEST_CASE_LIBRARY_NODE TCLN_ID="-238" DESCRIPTION="&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam felis ante, accumsan quis tincidunt vel, iaculis in purus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Morbi at nisl et est egestas venenatis. Nullam venenatis, justo ac hendrerit auctor, dolor velit adipiscing lacus, sed gravida enim elit dictum lorem. Suspendisse eu lectus ac metus lobortis vulputate at id purus. Proin dapibus commodo velit sit amet aliquet. Fusce cursus arcu vitae diam auctor vulputate. Integer et nunc et ipsum scelerisque dignissim eu ultricies sem. Pellentesque id commodo dui. Duis in vestibulum magna. Sed porta ante id magna semper ac gravida risus dapibus. Fusce eu ante sapien.&lt;/p&gt;" NAME="wip - veryhigh" CREATED_BY="User-1" CREATED_ON="2011-09-30 10:30:57.0" LAST_MODIFIED_BY="admin" LAST_MODIFIED_ON="2013-07-30 15:25:05.0" PROJECT_ID="-14" ATTACHMENT_LIST_ID="-889"/>
+  <TEST_CASE_LIBRARY_NODE TCLN_ID="-239" DESCRIPTION="" NAME="tbu - low" CREATED_BY="admin" CREATED_ON="2013-07-30 15:25:35.0" LAST_MODIFIED_BY="admin" LAST_MODIFIED_ON="2013-07-30 15:27:53.0" PROJECT_ID="-14" ATTACHMENT_LIST_ID="-905"/>
+  <TEST_CASE_LIBRARY_NODE TCLN_ID="-240" DESCRIPTION="" NAME="approved - medium" CREATED_BY="admin" CREATED_ON="2013-07-30 15:25:52.0" LAST_MODIFIED_BY="admin" LAST_MODIFIED_ON="2013-07-30 15:28:19.0" PROJECT_ID="-14" ATTACHMENT_LIST_ID="-906"/>
+  <TEST_CASE_LIBRARY_NODE TCLN_ID="-241" DESCRIPTION="" NAME="wip - high" CREATED_BY="admin" CREATED_ON="2013-07-30 15:26:08.0" LAST_MODIFIED_BY="admin" LAST_MODIFIED_ON="2013-07-30 15:28:39.0" PROJECT_ID="-14" ATTACHMENT_LIST_ID="-907"/>
+  <TEST_CASE_LIBRARY_NODE TCLN_ID="-242" DESCRIPTION="" NAME="obsolete - veryhigh" CREATED_BY="admin" CREATED_ON="2013-07-30 15:26:23.0" LAST_MODIFIED_BY="admin" LAST_MODIFIED_ON="2013-07-30 15:28:46.0" PROJECT_ID="-14" ATTACHMENT_LIST_ID="-908"/>
+  <TEST_CASE_LIBRARY_NODE TCLN_ID="-243" DESCRIPTION="" NAME="underreview - medium" CREATED_BY="admin" CREATED_ON="2013-07-30 15:26:31.0" LAST_MODIFIED_BY="admin" LAST_MODIFIED_ON="2013-07-30 15:28:55.0" PROJECT_ID="-14" ATTACHMENT_LIST_ID="-909"/>
+  <TEST_CASE_LIBRARY_NODE TCLN_ID="-244" DESCRIPTION="" NAME="tbu - medium" CREATED_BY="admin" CREATED_ON="2013-07-30 15:26:53.0" LAST_MODIFIED_BY="admin" LAST_MODIFIED_ON="2013-07-30 15:29:06.0" PROJECT_ID="-14" ATTACHMENT_LIST_ID="-910"/>
+  <TEST_CASE_LIBRARY_NODE TCLN_ID="-245" DESCRIPTION="" NAME="obsolete - low" CREATED_BY="admin" CREATED_ON="2013-07-30 15:27:15.0" LAST_MODIFIED_BY="admin" LAST_MODIFIED_ON="2013-07-30 15:29:14.0" PROJECT_ID="-14" ATTACHMENT_LIST_ID="-911"/>
+  <TEST_CASE_LIBRARY_NODE TCLN_ID="-246" DESCRIPTION="" NAME="approved - high" CREATED_BY="admin" CREATED_ON="2013-07-30 15:27:41.0" LAST_MODIFIED_BY="admin" LAST_MODIFIED_ON="2013-07-30 15:29:28.0" PROJECT_ID="-14" ATTACHMENT_LIST_ID="-912"/>
+  <TEST_CASE_LIBRARY_NODE TCLN_ID="-247" DESCRIPTION="" NAME="approved - veryhigh" CREATED_BY="admin" CREATED_ON="2013-07-30 15:30:02.0" LAST_MODIFIED_BY="admin" LAST_MODIFIED_ON="2013-07-30 15:30:10.0" PROJECT_ID="-14" ATTACHMENT_LIST_ID="-913"/>
+  <TEST_CASE_LIBRARY_NODE TCLN_ID="-248" DESCRIPTION="" NAME="approved - veryhigh2" CREATED_BY="admin" CREATED_ON="2013-07-30 15:31:10.0" PROJECT_ID="-14" ATTACHMENT_LIST_ID="-914"/>
+  <TEST_CASE TCLN_ID="-238" VERSION="1" EXECUTION_MODE="MANUAL" IMPORTANCE="VERY_HIGH" IMPORTANCE_AUTO="FALSE" PREREQUISITE="" REFERENCE="" TC_NATURE="12" TC_TYPE="20" TC_STATUS="WORK_IN_PROGRESS"/>
+  <TEST_CASE TCLN_ID="-239" VERSION="1" EXECUTION_MODE="MANUAL" IMPORTANCE="LOW" IMPORTANCE_AUTO="FALSE" PREREQUISITE="" REFERENCE="" TC_NATURE="12" TC_TYPE="20" TC_STATUS="TO_BE_UPDATED"/>
+  <TEST_CASE TCLN_ID="-240" VERSION="1" EXECUTION_MODE="MANUAL" IMPORTANCE="MEDIUM" IMPORTANCE_AUTO="FALSE" PREREQUISITE="" REFERENCE="" TC_NATURE="12" TC_TYPE="20" TC_STATUS="APPROVED"/>
+  <TEST_CASE TCLN_ID="-241" VERSION="1" EXECUTION_MODE="MANUAL" IMPORTANCE="HIGH" IMPORTANCE_AUTO="FALSE" PREREQUISITE="" REFERENCE="" TC_NATURE="12" TC_TYPE="20" TC_STATUS="WORK_IN_PROGRESS"/>
+  <TEST_CASE TCLN_ID="-242" VERSION="1" EXECUTION_MODE="MANUAL" IMPORTANCE="VERY_HIGH" IMPORTANCE_AUTO="FALSE" PREREQUISITE="" REFERENCE="" TC_NATURE="12" TC_TYPE="20" TC_STATUS="OBSOLETE"/>
+  <TEST_CASE TCLN_ID="-243" VERSION="1" EXECUTION_MODE="MANUAL" IMPORTANCE="MEDIUM" IMPORTANCE_AUTO="FALSE" PREREQUISITE="" REFERENCE="" TC_NATURE="12" TC_TYPE="20" TC_STATUS="UNDER_REVIEW"/>
+  <TEST_CASE TCLN_ID="-244" VERSION="1" EXECUTION_MODE="MANUAL" IMPORTANCE="MEDIUM" IMPORTANCE_AUTO="FALSE" PREREQUISITE="" REFERENCE="" TC_NATURE="12" TC_TYPE="20" TC_STATUS="TO_BE_UPDATED"/>
+  <TEST_CASE TCLN_ID="-245" VERSION="1" EXECUTION_MODE="MANUAL" IMPORTANCE="LOW" IMPORTANCE_AUTO="FALSE" PREREQUISITE="" REFERENCE="" TC_NATURE="12" TC_TYPE="20" TC_STATUS="OBSOLETE"/>
+  <TEST_CASE TCLN_ID="-246" VERSION="1" EXECUTION_MODE="MANUAL" IMPORTANCE="HIGH" IMPORTANCE_AUTO="FALSE" PREREQUISITE="" REFERENCE="" TC_NATURE="12" TC_TYPE="20" TC_STATUS="APPROVED"/>
+  <TEST_CASE TCLN_ID="-247" VERSION="1" EXECUTION_MODE="MANUAL" IMPORTANCE="VERY_HIGH" IMPORTANCE_AUTO="FALSE" PREREQUISITE="" REFERENCE="" TC_NATURE="12" TC_TYPE="20" TC_STATUS="APPROVED"/>
+  <TEST_CASE TCLN_ID="-248" VERSION="1" EXECUTION_MODE="MANUAL" IMPORTANCE="VERY_HIGH" IMPORTANCE_AUTO="FALSE" PREREQUISITE="" REFERENCE="" TC_NATURE="12" TC_TYPE="20" TC_STATUS="APPROVED"/>
+  <TEST_CASE_FOLDER TCLN_ID="-237"/>
+  <TCLN_RELATIONSHIP ANCESTOR_ID="-237" DESCENDANT_ID="-238" CONTENT_ORDER="0"/>
+  <TCLN_RELATIONSHIP ANCESTOR_ID="-237" DESCENDANT_ID="-239" CONTENT_ORDER="1"/>
+  <TCLN_RELATIONSHIP ANCESTOR_ID="-237" DESCENDANT_ID="-240" CONTENT_ORDER="2"/>
+  <TCLN_RELATIONSHIP ANCESTOR_ID="-237" DESCENDANT_ID="-241" CONTENT_ORDER="3"/>
+  <TCLN_RELATIONSHIP ANCESTOR_ID="-237" DESCENDANT_ID="-242" CONTENT_ORDER="4"/>
+  <TCLN_RELATIONSHIP ANCESTOR_ID="-237" DESCENDANT_ID="-243" CONTENT_ORDER="5"/>
+  <TCLN_RELATIONSHIP ANCESTOR_ID="-237" DESCENDANT_ID="-244" CONTENT_ORDER="6"/>
+  <TCLN_RELATIONSHIP ANCESTOR_ID="-237" DESCENDANT_ID="-245" CONTENT_ORDER="7"/>
+  <TCLN_RELATIONSHIP ANCESTOR_ID="-237" DESCENDANT_ID="-246" CONTENT_ORDER="8"/>
+  <TCLN_RELATIONSHIP ANCESTOR_ID="-237" DESCENDANT_ID="-247" CONTENT_ORDER="9"/>
+  <TCLN_RELATIONSHIP ANCESTOR_ID="-237" DESCENDANT_ID="-248" CONTENT_ORDER="10"/>
+  <TEST_CASE_LIBRARY_CONTENT LIBRARY_ID="-14" CONTENT_ID="-237" CONTENT_ORDER="0"/>
+  <TEST_CASE_STEPS TEST_CASE_ID="-238" STEP_ID="-165" STEP_ORDER="0"/>
+  <TEST_CASE_STEPS TEST_CASE_ID="-238" STEP_ID="-166" STEP_ORDER="1"/>
+</dataset>

@@ -1,0 +1,101 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title th:text="#{workspace.report.title}">Espace rapports</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- common head -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" sq:css="squash.core.css" />
+	<link rel="shortcut icon" type="image/x-icon" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}"/>
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.wine.css" sq:css="squash.wine.css" />
+	<!-- rich jeditable header -->
+    <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+  <script type="text/javascript" th:inline="javascript">
+    /* <![CDATA[ */
+    var squashtm = {};
+    squashtm.app = {
+      locale: /*[[#{squashtm.locale}]]*/,
+      contextRoot: /*[[ @{/} ]]*/"http://localhost:8080/squash",
+      reportWorkspaceConf: {
+        expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>',
+        collapseSidebarLabel: /*[[ #{report.workspace.togglebutton.normal.label} ]]*/ '<<',
+        pluginNamespace : /*[[${pluginNamespace}]]*/
+      }
+    };
+    /* ]]> */
+  </script>
+    <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
+    <script data-main="../../scripts/report-workspace.js" th:attr="data-main=@{/scripts/report-workspace.js}"
+      src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
+</head>
+<body>
+	<div id="navigation" th:include="navbar.frag :: navbar('report')">
+		NAVBAR
+	</div>
+
+	<div id="workspace">
+		<div id="workspace-title">
+			<div class="snap-left">
+        <h2 th:text="${parentId != null} ? #{ workspace.custom-report.title } : #{ workspace.report.title }">Espace Rapport ou Espace Custom Rapport</h2>
+			</div>
+			<div class="snap-right">
+ 				<div class="main-menubar unstyled" th:include="menubar.frag :: menubar">
+ 					MENUBAR
+				</div>
+        <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">
+          NOTIFICATION
+        </div>
+			</div>
+		</div>
+
+			<div id="outer-category-frame " class="left-frame">
+				<div th:each="cat : ${categories}" th:id="${#ids.seq('left-panel')}" class="report-category sq-tg expand">
+                  <div class="tg-head">
+                    <h3 th:text="#{${cat.i18nKey}}"></h3>
+                    <div class="tg-tollbar"></div>
+                  </div>
+                    <div class="tg-body">
+        				<div th:each="rpt : ${reports.get(cat)}" th:id="${parentId != null ? rpt.namespace : #ids.seq('left-panel')}"
+        					data-href="sample-report/0" th:attr="data-href=@{'/reports/' + ${rpt.namespace} + '/panel' + ${parentId != null ? ('/'+ parentId) :''}}"
+        					class="report-item">
+        					<div class="report-item-icon" th:classappend="${rpt.type.iconClass}"></div>
+        					<div class="report-item-text">
+        							<strong class="report-item-name">
+        								<span th:text="${rpt.label}">Sample report</span>
+        							</strong>
+        						<br/>
+        						<span class="report-item-description" th:text="${rpt.description}">Report description</span>
+        					</div>
+        					<div class="unsnap"></div>
+        				</div>
+                    </div>
+				</div>
+			</div>
+
+		<div id="contextual-content" class="no-resizable-contextual-content" th:remove="body">
+		</div>
+	</div>
+</body>
+</html>

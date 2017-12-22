@@ -1,0 +1,118 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+
+	<!--  dummy attachment list, the same for everyone that need one. -->
+	
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1" />
+
+	<!--  some project -->
+	  <PROJECT PROJECT_ID="-20" ATTACHMENT_LIST_ID="-1" CREATED_ON="2014-08-28" CREATED_BY="dbu" NAME="P20" />
+
+	<!--  test case library nodes ... -->
+
+
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-5" NAME="ultra bottom test case" CREATED_BY="IT" CREATED_ON="2014-04-03" ATTACHMENT_LIST_ID="-1" PROJECT_ID="-20"/>		
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-50" NAME="other bottom test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1" PROJECT_ID="-20"/>		
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-100" NAME="bottom test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1" PROJECT_ID="-20"/>	
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-101" NAME="first test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1" PROJECT_ID="-20"/>	
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-102" NAME="second test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1" PROJECT_ID="-20"/>		
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-103" NAME="third test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1" PROJECT_ID="-20"/>
+	
+	
+	<!-- ... being all test cases -->
+
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-5" VERSION="1" />	
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-50" VERSION="1" />		
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-100" VERSION="1" />	
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-101" VERSION="1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-102" VERSION="1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-103" VERSION="1" />
+	
+	
+	<!--  test steps... -->
+		
+	<TEST_STEP TEST_STEP_ID="-101" />
+	<TEST_STEP TEST_STEP_ID="-102" />
+	<TEST_STEP TEST_STEP_ID="-103" />		
+		
+	<TEST_STEP TEST_STEP_ID="-1000" />
+	
+	
+	<TEST_STEP TEST_STEP_ID="-151" />
+	<TEST_STEP TEST_STEP_ID="-152" />
+	<TEST_STEP TEST_STEP_ID="-153" />
+	<TEST_STEP TEST_STEP_ID="-1035" />
+	
+	
+	<TEST_STEP TEST_STEP_ID="-505" />
+	
+	<!-- ... being all call steps -->
+	
+	<CALL_TEST_STEP TEST_STEP_ID="-101" CALLED_TEST_CASE_ID="-100" />
+	<CALL_TEST_STEP TEST_STEP_ID="-102" CALLED_TEST_CASE_ID="-100"/>
+	<CALL_TEST_STEP TEST_STEP_ID="-103" CALLED_TEST_CASE_ID="-100"/>	
+	<CALL_TEST_STEP TEST_STEP_ID="-1035" CALLED_TEST_CASE_ID="-5"/>	
+	
+	<CALL_TEST_STEP TEST_STEP_ID="-151" CALLED_TEST_CASE_ID="-50" />
+	<CALL_TEST_STEP TEST_STEP_ID="-152" CALLED_TEST_CASE_ID="-50"/>
+	<CALL_TEST_STEP TEST_STEP_ID="-153" CALLED_TEST_CASE_ID="-50"/>	
+	
+	<CALL_TEST_STEP TEST_STEP_ID="-505" CALLED_TEST_CASE_ID="-5"/>	
+	
+	<!--  those above are duplicated. The calling test cases will all call the called test case twice. -->
+		
+	<TEST_STEP TEST_STEP_ID="-1010" />
+	<TEST_STEP TEST_STEP_ID="-1020" />
+	<TEST_STEP TEST_STEP_ID="-1030" />	
+	
+	<CALL_TEST_STEP TEST_STEP_ID="-1010" CALLED_TEST_CASE_ID="-100" />
+	<CALL_TEST_STEP TEST_STEP_ID="-1020" CALLED_TEST_CASE_ID="-100"/>
+	<CALL_TEST_STEP TEST_STEP_ID="-1030" CALLED_TEST_CASE_ID="-100"/>	
+	
+	
+	<!--  except for this one -->
+	<ACTION_TEST_STEP TEST_STEP_ID="-1000" ACTION="the one and only action test step"/>
+	
+	
+	<!--  test case steps association -->
+	<TEST_CASE_STEPS TEST_CASE_ID="-101" STEP_ID="-101" STEP_ORDER="1"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="-102" STEP_ID="-102" STEP_ORDER="1"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="-103" STEP_ID="-103" STEP_ORDER="1"/>	
+	
+	<TEST_CASE_STEPS TEST_CASE_ID="-101" STEP_ID="-1010" STEP_ORDER="2"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="-102" STEP_ID="-1020" STEP_ORDER="2"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="-103" STEP_ID="-1030" STEP_ORDER="2"/>	
+	
+	
+	<TEST_CASE_STEPS TEST_CASE_ID="-101" STEP_ID="-151" STEP_ORDER="1"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="-102" STEP_ID="-152" STEP_ORDER="1"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="-103" STEP_ID="-153" STEP_ORDER="1"/>		
+		
+	<TEST_CASE_STEPS TEST_CASE_ID="-101" STEP_ID="-1000" STEP_ORDER="3" />
+	<TEST_CASE_STEPS TEST_CASE_ID="-103" STEP_ID="-1035" STEP_ORDER="3" />
+	
+	<TEST_CASE_STEPS TEST_CASE_ID="-50" STEP_ID="-505" STEP_ORDER="1" />
+	
+</dataset>

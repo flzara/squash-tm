@@ -1,0 +1,805 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	
+
+	<changeSet id="tm-1.8.0.issue-2933-tc-01" author="mpagnon">
+	
+		<comment>save ids of test case folders to delete</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'TEST_CASE_FOLDER', folder.TCLN_ID
+			from TEST_CASE_FOLDER folder
+			where not exists (
+				select 1  from TCLN_RELATIONSHIP where DESCENDANT_ID = folder.TCLN_ID UNION
+				select 1  from TEST_CASE_LIBRARY_CONTENT where CONTENT_ID = folder.TCLN_ID
+			)
+			;
+			
+			
+		</sql>
+		<comment>store info if exist test case folders to delete</comment>
+		<sql>
+			insert into IS_TO_DELETE
+			(NAME, TOTAL)
+			select 'TEST_CASE_FOLDER', count(1)
+			from ENTITIES_TO_DELETE
+			where NAME = 'TEST_CASE_FOLDER'
+			;
+		</sql>
+	</changeSet>
+
+	<!-- =========== FOLDER =========== -->
+	<changeSet id="tm-1.8.0.issue-2933-tc-02" author="mpagnon">
+		
+		<comment>save ids of children test_case_folders</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select distinct 'TEST_CASE_FOLDER', folder.TCLN_ID
+			from TEST_CASE_FOLDER folder, TCLN_RELATIONSHIP_CLOSURE tclnrc, ENTITIES_TO_DELETE etd
+			where etd.NAME = 'TEST_CASE_FOLDER'
+			and etd.ID = tclnrc.ANCESTOR_ID
+			and	tclnrc.DESCENDANT_ID = folder.TCLN_ID
+			;
+		</sql>
+		<comment>save ids of orphan and children test_case</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select distinct 'TEST_CASE', testcase.TCLN_ID
+			from TEST_CASE testcase
+			where not exists (
+				select 1  from TCLN_RELATIONSHIP where DESCENDANT_ID = testcase.TCLN_ID UNION
+				select 1  from TEST_CASE_LIBRARY_CONTENT where CONTENT_ID = testcase.TCLN_ID
+			)
+			;
+			
+			
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select distinct 'TEST_CASE', testcase.TCLN_ID
+			from TEST_CASE testcase, TCLN_RELATIONSHIP_CLOSURE tclnrc, ENTITIES_TO_DELETE etd
+			where etd.NAME = 'TEST_CASE_FOLDER'
+			and etd.ID = tclnrc.ANCESTOR_ID
+			and tclnrc.DESCENDANT_ID = testcase.TCLN_ID
+			;
+		</sql>
+		<comment>save property if exist test case to delete</comment>
+		<sql>
+			insert into IS_TO_DELETE
+			(NAME, TOTAL)
+			select 'TEST_CASE', count(1)
+			from ENTITIES_TO_DELETE etd
+			where etd.NAME = 'TEST_CASE'
+			;
+		</sql>
+		<comment>save ids of attachment_lists</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'ATTACHMENT_LIST', tcln.ATTACHMENT_LIST_ID
+			from TEST_CASE_LIBRARY_NODE tcln , ENTITIES_TO_DELETE etd
+			where tcln.TCLN_ID = etd.ID
+			and etd.NAME in ('TEST_CASE_FOLDER', 'TEST_CASE')
+			;
+		</sql>
+	</changeSet>
+	
+	<!-- =========== TEST_CASE =========== -->
+	<changeSet id="tm-1.8.0.issue-2933-tc-03" author="mpagnon">
+		
+		<comment>empty ids of requirement_version_coverage to delete from requirements deletion</comment>
+		<sql>
+			delete from ENTITIES_TO_DELETE
+			where NAME = 'REQUIREMENT_VERSION_COVERAGE'
+			;
+		</sql>
+		<comment>save ids of requirement_version_coverage</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'REQUIREMENT_VERSION_COVERAGE', rvc.REQUIREMENT_VERSION_COVERAGE_ID
+			from REQUIREMENT_VERSION_COVERAGE rvc, ENTITIES_TO_DELETE etd
+			where rvc.VERIFYING_TEST_CASE_ID = etd.ID
+			and etd.NAME = 'TEST_CASE'
+			;
+		</sql>
+		<comment>save ids of test_case cufs values to delete</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'CUSTOM_FIELD_VALUE', cfv.CFV_ID
+			from CUSTOM_FIELD_VALUE cfv, ENTITIES_TO_DELETE etd
+			where etd.ID = cfv.BOUND_ENTITY_ID
+			and cfv.BOUND_ENTITY_TYPE = 'TEST_CASE'
+			and etd.NAME = 'TEST_CASE'
+			;
+		</sql>
+		<comment>save ids of campaign concerned by campaign_test_plan_item deletion</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'CTPI_CAMPAIGN' , ctpi.CAMPAIGN_ID
+			from CAMPAIGN_TEST_PLAN_ITEM ctpi, ENTITIES_TO_DELETE etd
+			where etd.ID = ctpi.TEST_CASE_ID
+			and etd.NAME = 'TEST_CASE'
+			;
+		</sql>
+		<comment>save all parameter ids</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'PARAMETER', param.PARAM_ID
+			from PARAMETER param, ENTITIES_TO_DELETE etd
+			where etd.ID = param.TEST_CASE_ID
+			and etd.NAME = 'TEST_CASE'
+			;
+		</sql>
+		<comment>save all dataset ids</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'DATASET', ds.DATASET_ID
+			from DATASET ds, ENTITIES_TO_DELETE etd
+			where etd.ID = ds.TEST_CASE_ID
+			and etd.NAME = 'TEST_CASE'
+			;
+		</sql>
+		<comment>save automated_test_ids</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'AUTOMATED_TEST', tc.TA_TEST
+			from TEST_CASE tc, ENTITIES_TO_DELETE etd
+			where etd.ID = tc.TCLN_ID
+			and etd.NAME = 'TEST_CASE'
+			and tc.TA_TEST is not null
+			;
+		</sql>
+		<comment>save test_step ids</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'TEST_STEP', tcs.STEP_ID
+			from TEST_CASE_STEPS tcs, ENTITIES_TO_DELETE etd
+			where etd.ID = tcs.TEST_CASE_ID
+			and etd.NAME = 'TEST_CASE'
+			;
+		</sql>
+		<comment>save ids of test_step calling deleted test cases</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'CALLING_STEP', cts.TEST_STEP_ID
+			from CALL_TEST_STEP cts, ENTITIES_TO_DELETE etd
+			where etd.ID = cts.CALLED_TEST_CASE_ID
+			and etd.NAME = 'TEST_CASE'
+			;
+		</sql>
+		<sql>
+			insert into IS_TO_DELETE
+			(NAME, TOTAL)
+			select 'CALLING_STEP', count(1)
+			from ENTITIES_TO_DELETE etd
+			where etd.NAME = 'CALLING_STEP'
+			;
+		</sql>
+		<comment>set tcln_id to null on execution table</comment>
+		<sql>
+			update EXECUTION
+			set TCLN_ID = null
+			where exists (select 1
+			from ENTITIES_TO_DELETE where NAME = 'TEST_CASE' and ID = EXECUTION.TCLN_ID )
+			;
+		</sql>
+		<comment>set tcln_id to null on iteration_test_plan_item</comment>
+		<sql>
+			update ITERATION_TEST_PLAN_ITEM
+			set TCLN_ID = null
+			where exists (select ID from ENTITIES_TO_DELETE where NAME = 'TEST_CASE' and ID = ITERATION_TEST_PLAN_ITEM.TCLN_ID)
+			;
+		</sql>
+	</changeSet>
+	
+	<!-- =========== REQUIREMENT_VERSION_COVERAGE =========== -->
+	<changeSet id="tm-1.8.0.issue-2933-tc-04" author="mpagnon">
+		
+		<comment>delete verifying_steps</comment>
+		<sql>
+			delete from VERIFYING_STEPS
+			where  exists (
+				select 1 from ENTITIES_TO_DELETE where NAME = 'REQUIREMENT_VERSION_COVERAGE'
+				and REQUIREMENT_VERSION_COVERAGE_ID = ID
+			)
+			;
+		</sql>
+		<sql>
+			delete from REQUIREMENT_VERSION_COVERAGE
+			where  exists (
+				select 1 from ENTITIES_TO_DELETE where NAME = 'REQUIREMENT_VERSION_COVERAGE'
+				and REQUIREMENT_VERSION_COVERAGE.REQUIREMENT_VERSION_COVERAGE_ID = ID
+			)
+			;
+		</sql>
+	</changeSet>
+	
+	<!-- =========== CAMPAIGN_TEST_PLAN_ITEM =========== -->
+	<changeSet id="tm-1.8.0.issue-2933-tc-05-mysql" author="mpagnon">
+		<preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST" onFailMessage="Not mysql ">
+			
+				<dbms type="mysql" />
+				
+		</preConditions>
+		<comment>delete campaign_test_plan_item</comment>
+		<sql>
+			delete from CAMPAIGN_TEST_PLAN_ITEM
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_CASE' and CAMPAIGN_TEST_PLAN_ITEM.TEST_CASE_ID = ID);
+		</sql>
+		<comment>reorder test plan of campaign where deletion of campaign_test_plan_item occurred</comment>
+		<sql>
+			create table CAMPAIGN_TEST_PLAN_ITEM_TEMP(
+			CAMPAIGN_ID BIGINT NOT NULL,
+			CTPI_ID BIGINT NOT NULL,
+			TEST_PLAN_ORDER INT NOT NULL
+			);
+
+			set @rownum:=0;
+			insert into CAMPAIGN_TEST_PLAN_ITEM_TEMP
+			(CAMPAIGN_ID, CTPI_ID, TEST_PLAN_ORDER)
+			select CAMPAIGN_ID, CTPI_ID, @rownum:=@rownum+1 as globindex
+			from CAMPAIGN_TEST_PLAN_ITEM
+			where  exists (
+				select ID from ENTITIES_TO_DELETE where NAME = 'CTPI_CAMPAIGN'and ID = CAMPAIGN_TEST_PLAN_ITEM.CAMPAIGN_ID
+			)
+			group by CAMPAIGN_ID, CTPI_ID, globindex
+			order by TEST_PLAN_ORDER;
+
+			create table CAMPAIGN_TEST_PLAN_ITEM_TEMP2 
+			(
+			CAMPAIGN_ID
+			BIGINT NOT NULL,
+			CTPI_ID BIGINT NOT NULL,
+			TEST_PLAN_ORDER INT NOT NULL
+			);
+			
+			
+			insert into CAMPAIGN_TEST_PLAN_ITEM_TEMP2
+			select * 
+			from CAMPAIGN_TEST_PLAN_ITEM_TEMP;
+
+			update CAMPAIGN_TEST_PLAN_ITEM ctpi
+			set TEST_PLAN_ORDER = (
+				select count( ctpit2.CTPI_ID )
+				from CAMPAIGN_TEST_PLAN_ITEM_TEMP ctpit1,CAMPAIGN_TEST_PLAN_ITEM_TEMP2 ctpit2
+				where ctpit1.CTPI_ID = ctpi.CTPI_ID
+				and ctpit2.CAMPAIGN_ID = ctpit1.CAMPAIGN_ID
+				and ctpit1.TEST_PLAN_ORDER > ctpit2.TEST_PLAN_ORDER
+			)
+			where ctpi.CTPI_ID in (select DISTINCT ctpi3.CTPI_ID from CAMPAIGN_TEST_PLAN_ITEM_TEMP ctpi3);
+
+			drop table CAMPAIGN_TEST_PLAN_ITEM_TEMP;
+			drop table CAMPAIGN_TEST_PLAN_ITEM_TEMP2;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="tm-1.8.0.issue-2933-tc-05-h2" author="mpagnon">
+		<preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST" onFailMessage="Not h2 database ">
+			
+				<dbms type="h2" />
+				
+		</preConditions>
+		<comment>delete campaign_test_plan_item</comment>
+		<sql>
+			delete from CAMPAIGN_TEST_PLAN_ITEM
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_CASE' and CAMPAIGN_TEST_PLAN_ITEM.TEST_CASE_ID = ID);
+		</sql>
+		<comment>reorder test plan of campaign where deletion of campaign_test_plan_item occurred</comment>
+		<sql>
+			create table CAMPAIGN_TEST_PLAN_ITEM_TEMP
+			(
+			CAMPAIGN_ID
+			BIGINT NOT NULL,
+			CTPI_ID BIGINT NOT NULL,
+			TEST_PLAN_ORDER INT NOT NULL
+			);
+
+			set @rn=-1;
+			insert into CAMPAIGN_TEST_PLAN_ITEM_TEMP
+			(CAMPAIGN_ID, CTPI_ID, TEST_PLAN_ORDER)
+			select CAMPAIGN_ID, CTPI_ID, set(@rn, @rn+1) as globindex
+			from CAMPAIGN_TEST_PLAN_ITEM
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'CTPI_CAMPAIGN' and ID = CAMPAIGN_TEST_PLAN_ITEM.CAMPAIGN_ID)
+			group by CAMPAIGN_ID, CTPI_ID, globindex
+			order by TEST_PLAN_ORDER;
+
+			create table CAMPAIGN_TEST_PLAN_ITEM_TEMP2 
+			(
+			CAMPAIGN_ID
+			BIGINT NOT NULL,
+			CTPI_ID BIGINT NOT NULL,
+			TEST_PLAN_ORDER INT NOT NULL
+			);
+			
+			insert into CAMPAIGN_TEST_PLAN_ITEM_TEMP2
+			select * from CAMPAIGN_TEST_PLAN_ITEM_TEMP;
+
+			update CAMPAIGN_TEST_PLAN_ITEM ctpi
+			set TEST_PLAN_ORDER = (
+				select count( ctpit2.CTPI_ID )
+				from CAMPAIGN_TEST_PLAN_ITEM_TEMP ctpit1,CAMPAIGN_TEST_PLAN_ITEM_TEMP2 ctpit2
+				where ctpit1.CTPI_ID = ctpi.CTPI_ID
+				and ctpit2.CAMPAIGN_ID = ctpit1.CAMPAIGN_ID
+				and ctpit1.TEST_PLAN_ORDER > ctpit2.TEST_PLAN_ORDER
+			)
+			where ctpi.CTPI_ID in (select DISTINCT ctpi3.CTPI_ID from CAMPAIGN_TEST_PLAN_ITEM_TEMP ctpi3);
+
+
+			drop table CAMPAIGN_TEST_PLAN_ITEM_TEMP;
+			drop table CAMPAIGN_TEST_PLAN_ITEM_TEMP2;
+		</sql>
+	</changeSet>
+  
+  <changeSet id="tm-1.8.0.issue-2933-tc-05-postgre" author="mpagnon">
+    <preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST" onFailMessage="Not postgre database ">
+      
+        <dbms type="postgresql" />
+        
+    </preConditions>
+    <comment>delete campaign_test_plan_item</comment>
+    <sql>
+      delete from CAMPAIGN_TEST_PLAN_ITEM
+      where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_CASE' and CAMPAIGN_TEST_PLAN_ITEM.TEST_CASE_ID = ID);
+    </sql>
+    <comment>reorder test plan of campaign where deletion of campaign_test_plan_item occurred</comment>
+    <sql>
+      create table CAMPAIGN_TEST_PLAN_ITEM_TEMP
+      (
+      CAMPAIGN_ID
+      BIGINT NOT NULL,
+      CTPI_ID BIGINT NOT NULL,
+      TEST_PLAN_ORDER INT NOT NULL
+      );
+</sql><createProcedure>
+CREATE OR REPLACE FUNCTION orderctpi() RETURNS text AS 
+$$
+DECLARE rn integer := 0-1;
+rn2 integer := 0;
+prevcamp bigint := 0;
+r record;
+BEGIN
+FOR r in (select ctp.CAMPAIGN_ID, ctp.CTPI_ID from CAMPAIGN_TEST_PLAN_ITEM ctp where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'CTPI_CAMPAIGN' and ID = ctp.CAMPAIGN_ID)
+      order by ctp.CAMPAIGN_ID, ctp.TEST_PLAN_ORDER)
+LOOP
+  IF prevcamp  = r.CAMPAIGN_ID 
+        THEN 
+             rn2 := rn ;
+             rn := rn2 + 1;
+        ELSE rn := 0 ; 
+             prevcamp := r.CAMPAIGN_ID;
+        END IF;
+    insert into CAMPAIGN_TEST_PLAN_ITEM_TEMP (TEST_PLAN_ORDER, CAMPAIGN_ID, CTPI_ID)
+       select rn, r.CAMPAIGN_ID , r.CTPI_ID  ;
+      
+       
+
+END LOOP;
+return 'ok';
+END
+$$ LANGUAGE plpgsql;
+
+select orderctpi();
+DROP FUNCTION orderctpi();
+
+</createProcedure>
+<sql>
+      create table CAMPAIGN_TEST_PLAN_ITEM_TEMP2 
+      (
+      CAMPAIGN_ID
+      BIGINT NOT NULL,
+      CTPI_ID BIGINT NOT NULL,
+      TEST_PLAN_ORDER INT NOT NULL
+      );
+      
+      insert into CAMPAIGN_TEST_PLAN_ITEM_TEMP2
+      select * from CAMPAIGN_TEST_PLAN_ITEM_TEMP;
+
+      update CAMPAIGN_TEST_PLAN_ITEM ctpi
+      set TEST_PLAN_ORDER = (
+        select count( ctpit2.CTPI_ID )
+        from CAMPAIGN_TEST_PLAN_ITEM_TEMP ctpit1,CAMPAIGN_TEST_PLAN_ITEM_TEMP2 ctpit2
+        where ctpit1.CTPI_ID = ctpi.CTPI_ID
+        and ctpit2.CAMPAIGN_ID = ctpit1.CAMPAIGN_ID
+        and ctpit1.TEST_PLAN_ORDER > ctpit2.TEST_PLAN_ORDER
+      )
+      where ctpi.CTPI_ID in (select DISTINCT ctpi3.CTPI_ID from CAMPAIGN_TEST_PLAN_ITEM_TEMP ctpi3);
+
+
+      drop table CAMPAIGN_TEST_PLAN_ITEM_TEMP;
+      drop table CAMPAIGN_TEST_PLAN_ITEM_TEMP2;
+    </sql>
+  </changeSet>
+	
+	<!-- =========== DATASET - PARAMETERS =========== -->
+		<changeSet id="tm-1.8.0.issue-2933-tc-06" author="mpagnon">
+		
+		<comment>set dataset to null in referenced entity</comment>
+		<sql>
+			update ITERATION_TEST_PLAN_ITEM 
+			set DATASET_ID = null
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME ='DATASET' and ID = ITERATION_TEST_PLAN_ITEM.DATASET_ID);
+		</sql>
+		<comment>delete dataset_param_value where dataset id</comment>
+		<sql>
+			delete from DATASET_PARAM_VALUE
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'DATASET' and DATASET_PARAM_VALUE.DATASET_ID = ID);
+		</sql>
+		<comment>delete dataset</comment>
+		<sql>
+			delete from DATASET
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'DATASET' and ID = DATASET.DATASET_ID);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="tm-1.8.0.issue-2933-tc-07" author="mpagnon">
+		
+		<comment>delete dataset_param_value where param_id</comment>
+		<sql>
+			delete from DATASET_PARAM_VALUE
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'PARAMETER' and ID = DATASET_PARAM_VALUE.PARAM_ID);
+		</sql>
+		<comment>delete parameters</comment>
+		<sql>
+			delete from PARAMETER
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'PARAMETER' and PARAMETER.PARAM_ID = ID);
+		</sql>
+	</changeSet>
+	
+	<!-- =========== AUTOMATED_TEST =========== -->
+	<changeSet id="tm-1.8.0.issue-2933-tc-08" author="mpagnon">
+		
+		<comment>delete automated_execution_extender</comment>
+		<sql>
+			delete from AUTOMATED_EXECUTION_EXTENDER
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'AUTOMATED_TEST' and AUTOMATED_EXECUTION_EXTENDER.TEST_ID = ID)
+			;
+		</sql>
+		<comment>delete automated_suite where not exist automated_execution_extender linked to it</comment>
+		<sql>
+			delete from AUTOMATED_SUITE
+			where not exists (select 1 from AUTOMATED_EXECUTION_EXTENDER where AUTOMATED_EXECUTION_EXTENDER.SUITE_ID = AUTOMATED_SUITE.SUITE_ID)
+			;
+		</sql>
+	</changeSet>
+	
+	<!-- =========== TEST STEP =========== -->
+	<changeSet id="tm-1.8.0.issue-2933-tc-09" author="mpagnon">
+		
+		<comment>save ids of step cufs values to delete</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'CUSTOM_FIELD_VALUE', cfv.CFV_ID
+			from CUSTOM_FIELD_VALUE cfv, ENTITIES_TO_DELETE etd
+			where etd.ID = cfv.BOUND_ENTITY_ID
+			and cfv.BOUND_ENTITY_TYPE = 'TEST_STEP'
+			and etd.NAME = 'TEST_STEP'
+			;
+		</sql>
+		<comment>set test_step_id to null on execution_step table</comment>
+		<sql>
+			update EXECUTION_STEP
+			set TEST_STEP_ID = null
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_STEP' and ID = EXECUTION_STEP.TEST_STEP_ID)
+			;
+		</sql>
+		<comment>save ids of steps attachment_list</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'ATTACHMENT_LIST', ats.ATTACHMENT_LIST_ID
+			from ACTION_TEST_STEP ats, ENTITIES_TO_DELETE etd
+			where ats.TEST_STEP_ID = etd.ID
+			and etd.NAME = 'TEST_STEP'
+			;
+		</sql>
+		<comment>delete test_case_steps </comment>
+		<sql>
+			delete from TEST_CASE_STEPS
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_CASE' and TEST_CASE_STEPS.TEST_CASE_ID = ID)
+			;
+		</sql>
+		<comment>delete call_step </comment>
+		<sql>delete from CALL_TEST_STEP
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_STEP' and CALL_TEST_STEP.TEST_STEP_ID = ID)
+			;
+		</sql>
+		<comment>delete action_step</comment>
+		<sql>delete from ACTION_TEST_STEP
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_STEP' and ACTION_TEST_STEP.TEST_STEP_ID = ID)
+			;
+		</sql>
+		<comment>delete test step</comment>
+		<sql>delete from TEST_STEP
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_STEP' and TEST_STEP.TEST_STEP_ID = ID)
+			;
+		</sql>
+	</changeSet>
+	
+	<!-- =========== CALLING TEST STEP =========== -->
+	<changeSet id="tm-1.8.0.issue-2933-tc-10" author="mpagnon">
+		
+		<comment>save ids of calling test case</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE
+			(NAME, ID)
+			select 'CALLING_TEST_CASE' , tcs.TEST_CASE_ID
+			from TEST_CASE_STEPS tcs ,	ENTITIES_TO_DELETE etd
+			where tcs.STEP_ID = etd.ID
+			and etd.NAME =	'CALLING_STEP'
+			;
+		</sql>
+		<comment>set null to test_step_id on execution_step</comment>
+		<sql>
+			update EXECUTION_STEP
+			set TEST_STEP_ID = null
+			where TEST_STEP_ID in
+			(select ID from ENTITIES_TO_DELETE where NAME = 'CALLING_STEP')
+			;
+		</sql>
+		<comment>delete test_step and call_test_step</comment>
+		<sql>
+			delete from CALL_TEST_STEP
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'CALLING_STEP' and ID = CALL_TEST_STEP.TEST_STEP_ID)
+			;
+			delete from TEST_CASE_STEPS
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'CALLING_STEP' and ID = TEST_CASE_STEPS.STEP_ID)
+			;
+			delete from TEST_STEP
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'CALLING_STEP' and ID = TEST_STEP.TEST_STEP_ID)
+			;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="tm-1.8.0.issue-2933-tc-11-mysql" author="mpagnon">
+		<preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST" onFailMessage="Not mysql">
+				<dbms type="mysql" />
+		</preConditions>
+		<comment>reorder steps of calling test case</comment>
+		<sql>
+			create table TEST_CASE_STEPS_TEMP(
+			TEST_CASE_ID
+			BIGINT
+			NOT NULL,
+			STEP_ID BIGINT NOT NULL,
+			STEP_ORDER INT NOT NULL
+			);
+
+			set @rownum:=0;
+			insert into TEST_CASE_STEPS_TEMP
+			(TEST_CASE_ID, STEP_ID, STEP_ORDER)
+			select TEST_CASE_ID, STEP_ID, @rownum:=@rownum+1 as globindex
+			from TEST_CASE_STEPS
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'tcs_CAMPAIGN' and ID = TEST_CASE_STEPS.TEST_CASE_ID)
+			group by TEST_CASE_ID, STEP_ID, globindex
+			order by STEP_ORDER;
+
+			create table TEST_CASE_STEPS_TEMP2 (
+			TEST_CASE_ID BIGINT NOT NULL,
+			STEP_ID BIGINT NOT NULL,
+			STEP_ORDER INT NOT NULL
+			);
+			
+			insert into TEST_CASE_STEPS_TEMP2
+			select * from TEST_CASE_STEPS_TEMP;
+
+			update TEST_CASE_STEPS tcs
+			set STEP_ORDER = (
+				select count( tcst2.STEP_ID )
+				from TEST_CASE_STEPS_TEMP tcst1,TEST_CASE_STEPS_TEMP2 tcst2
+				where tcst1.STEP_ID = tcs.STEP_ID
+				and tcst2.TEST_CASE_ID = tcst1.TEST_CASE_ID
+				and tcst1.STEP_ORDER > tcst2.STEP_ORDER
+			)
+			where tcs.STEP_ID in (select DISTINCT tcst3.STEP_ID from TEST_CASE_STEPS_TEMP tcst3);
+
+			drop table TEST_CASE_STEPS_TEMP;
+			drop table TEST_CASE_STEPS_TEMP2;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="tm-1.8.0.issue-2933-tc-11-h2" author="mpagnon">
+		<preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST" onFailMessage="Not h2 ">
+				<dbms type="h2" />
+		</preConditions>
+		<comment>reorder steps of calling test case</comment>
+		<sql>
+			create table TEST_CASE_STEPS_TEMP(
+			TEST_CASE_ID BIGINT NOT NULL,
+			STEP_ID BIGINT NOT NULL,
+			STEP_ORDER INT NOT NULL
+			);
+
+			set @rn=-1;
+			insert into TEST_CASE_STEPS_TEMP
+			(TEST_CASE_ID, STEP_ID, STEP_ORDER)
+			select TEST_CASE_ID, STEP_ID, set(@rn, @rn+1) as globindex
+			from TEST_CASE_STEPS
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'CALLING_TEST_CASE' and TEST_CASE_STEPS.TEST_CASE_ID = ID)
+			group by TEST_CASE_ID, STEP_ID, globindex
+			order by STEP_ORDER;
+
+			create table TEST_CASE_STEPS_TEMP2 (
+			TEST_CASE_ID BIGINT NOT NULL,
+			STEP_ID BIGINT NOT NULL,
+			STEP_ORDER INT NOT NULL
+			);
+			insert into TEST_CASE_STEPS_TEMP2
+			select * from
+			TEST_CASE_STEPS_TEMP;
+
+			update TEST_CASE_STEPS tcs
+			set STEP_ORDER = (
+				select count( tcst2.STEP_ID )
+				from TEST_CASE_STEPS_TEMP tcst1,TEST_CASE_STEPS_TEMP2 tcst2
+				where tcst1.STEP_ID = tcs.STEP_ID
+				and tcst2.TEST_CASE_ID = tcst1.TEST_CASE_ID
+				and tcst1.STEP_ORDER > tcst2.STEP_ORDER
+			)
+ 			where tcs.STEP_ID in (select DISTINCT tcst3.STEP_ID from TEST_CASE_STEPS_TEMP tcst3);
+
+			drop table TEST_CASE_STEPS_TEMP;
+			drop table TEST_CASE_STEPS_TEMP2;
+		</sql>
+	</changeSet>
+  
+  <changeSet id="tm-1.8.0.issue-2933-tc-11-postgresql" author="mpagnon">
+    <preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST" onFailMessage="Not postgresql ">
+        <dbms type="postgresql" />
+    </preConditions>
+    <comment>reorder steps of calling test case</comment>
+    <sql>
+      create table TEST_CASE_STEPS_TEMP(
+      TEST_CASE_ID BIGINT NOT NULL,
+      STEP_ID BIGINT NOT NULL,
+      STEP_ORDER INT NOT NULL
+      );
+    </sql>
+    <createProcedure>
+      
+      CREATE OR REPLACE FUNCTION orderstep() RETURNS text AS 
+      $$
+      DECLARE rn integer := 0-1;
+      rn2 integer := 0;
+      prevtest bigint := 0;
+      r record;
+      BEGIN
+      FOR r in (select tcs.TEST_CASE_ID, tcs.STEP_ID from TEST_CASE_STEPS tcs
+            where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'CALLING_TEST_CASE' and tcs.TEST_CASE_ID = ID )
+            order by tcs.TEST_CASE_ID, tcs.STEP_ORDER )
+      LOOP
+              IF prevtest  = r.TEST_CASE_ID 
+              THEN 
+                   rn2 := rn ;
+                   rn := rn2 + 1;
+              ELSE rn := 0 ; 
+                   prevtest := r.TEST_CASE_ID;
+              END IF;
+          insert into TEST_CASE_STEPS_TEMP (STEP_ORDER, TEST_CASE_ID , STEP_ID )
+             select rn, r.TEST_CASE_ID , r.STEP_ID  ;
+      
+      END LOOP;
+      return 'ok';
+      END
+      $$ LANGUAGE plpgsql;
+      
+      select orderstep();
+      DROP FUNCTION orderstep();
+
+   </createProcedure>
+   <sql>
+      create table TEST_CASE_STEPS_TEMP2 (
+      TEST_CASE_ID BIGINT NOT NULL,
+      STEP_ID BIGINT NOT NULL,
+      STEP_ORDER INT NOT NULL
+      );
+      insert into TEST_CASE_STEPS_TEMP2
+      select * from
+      TEST_CASE_STEPS_TEMP;
+
+      update TEST_CASE_STEPS tcs
+      set STEP_ORDER = (
+        select count( tcst2.STEP_ID )
+        from TEST_CASE_STEPS_TEMP tcst1,TEST_CASE_STEPS_TEMP2 tcst2
+        where tcst1.STEP_ID = tcs.STEP_ID
+        and tcst2.TEST_CASE_ID = tcst1.TEST_CASE_ID
+        and tcst1.STEP_ORDER > tcst2.STEP_ORDER
+      )
+      where tcs.STEP_ID in (select DISTINCT tcst3.STEP_ID from TEST_CASE_STEPS_TEMP tcst3);
+
+      drop table TEST_CASE_STEPS_TEMP;
+      drop table TEST_CASE_STEPS_TEMP2;
+    </sql>
+  </changeSet>
+	
+	
+	<!-- =========== TEST CASE =========== -->
+	<changeSet id="tm-1.8.0.issue-2933-tc-12" author="mpagnon">
+		
+		<comment>delete tcln_relationship_closure for test case</comment>
+		<sql>
+			delete from TCLN_RELATIONSHIP_CLOSURE 
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_CASE' and ID = TCLN_RELATIONSHIP_CLOSURE.DESCENDANT_ID);
+		</sql>
+		<comment>delete tcln_relationship for test case </comment>
+		<sql>
+			delete from TCLN_RELATIONSHIP
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_CASE' and ID = TCLN_RELATIONSHIP.DESCENDANT_ID);
+		</sql>
+		<comment>delete test_cases</comment>
+		<sql>
+			delete from TEST_CASE
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_CASE' and ID = TEST_CASE.TCLN_ID)
+			;
+		</sql>
+		<comment>delete test_case_library_node</comment>
+		<sql>
+			delete from TEST_CASE_LIBRARY_NODE 
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_CASE' and ID = TEST_CASE_LIBRARY_NODE.TCLN_ID);
+		</sql>
+	</changeSet>
+	
+	<!-- =========== FOLDER =========== -->
+	<changeSet id="tm-1.8.0.issue-2933-tc-13" author="mpagnon">
+		
+		<comment>delete tcln_relationship_closure for test case folder</comment>		
+		<sql>
+			delete from TCLN_RELATIONSHIP_CLOSURE 
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_CASE_FOLDER' and ID = TCLN_RELATIONSHIP_CLOSURE.DESCENDANT_ID);
+		</sql>
+		<comment>delete tcln_relationship for test case folder</comment>
+		<sql>
+			delete from TCLN_RELATIONSHIP
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_CASE_FOLDER' and ID = TCLN_RELATIONSHIP.DESCENDANT_ID);
+		</sql>
+		<comment>delete test_case_folder</comment>
+		<sql>
+			delete from TEST_CASE_FOLDER
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_CASE_FOLDER' and ID = TEST_CASE_FOLDER.TCLN_ID);
+		</sql>
+		<comment>delete test_case_library_node</comment>
+		<sql>
+			delete from TEST_CASE_LIBRARY_NODE 
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_CASE_FOLDER' and ID = TEST_CASE_LIBRARY_NODE.TCLN_ID);
+		</sql>
+	</changeSet>
+
+
+
+</databaseChangeLog>
+ 

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.squashtest.tm</groupId>
+    <artifactId>squash-tm-tools</artifactId>
+    <version>1.17.0.RELEASE</version>
+  </parent>
+  <groupId>org.squashtest.tm</groupId>
+  <artifactId>squashtest-tools-resources</artifactId>
+  <packaging>jar</packaging>
+
+  <description>Resources needed by Squash's dev / build tools</description>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-remote-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>bundle</goal>
+            </goals>
+            <configuration>
+              <includes>
+                <include>**/*.txt</include>
+                <include>**/*.xml</include>
+                <include>**/*.prefs</include>
+                <include>**/*.vm</include>
+                <include>**/.sq*</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <!-- There are no tests -->
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

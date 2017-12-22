@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!-- That changelog will simplify the acl groups, by triming them to what is actually supported by the app as for 0.23.0. -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="tm-0.23.0.01" author="bsiri">
+		<comment>remove ProjectManager and TestRunner from the ACL permission table</comment>
+		<sql>
+			delete from ACL_GROUP_PERMISSION where ACL_GROUP_ID in 
+			(select id from ACL_GROUP where qualified_name='squashtest.acl.group.tm.ProjectManager' 
+			or qualified_name='squashtest.acl.group.tm.TestRunner');
+		</sql>
+	</changeSet>
+
+	<changeSet id="tm-0.23.0.02" author="bsiri">
+		<comment>all users that were ProjectManager or TestRunner on anything are now TestEditor</comment>
+		<sql>
+			update ACL_RESPONSIBILITY_SCOPE_ENTRY
+			set ACL_GROUP_ID = (select id from ACL_GROUP where qualified_name='squashtest.acl.group.tm.TestEditor')
+			where ACL_GROUP_ID in (select id from ACL_GROUP where qualified_name='squashtest.acl.group.tm.ProjectManager' 
+									or qualified_name='squashtest.acl.group.tm.TestRunner');			
+		</sql>
+	</changeSet>
+	
+	<changeSet id="tm-0.23.0.03" author="bsiri">
+		<comment>remove ProjectManager and TestRunner from the existing acl groups</comment>
+		<sql>
+			delete from ACL_GROUP
+			where qualified_name='squashtest.acl.group.tm.ProjectManager' 
+			or qualified_name='squashtest.acl.group.tm.TestRunner';			
+		</sql>
+	</changeSet>	
+
+</databaseChangeLog>
+ 

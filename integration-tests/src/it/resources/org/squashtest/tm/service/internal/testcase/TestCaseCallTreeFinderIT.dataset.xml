@@ -1,0 +1,163 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2013 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!--  
+	that dataset describes the following initial conditions :
+
+1) a call tree like the following : 
+	
+		- all the test cases are in the same project, at the root of the library.
+		- 'top test case' will call 'first level 1' and 'second level 1'
+		- 'first level 1' will call 'second level 1' 1 time and 'second level 2' 2 times
+		- 'second level 1' will call 'third level 1'
+		- 'second level 2' will call 'third level 2'
+		- the third level test cases call no one.
+		
+	the ids for the test cases follow the given template : id = <level index><test case index>. For instance 'second level 1' have id 21.
+	the ids for the test steps equals the ids of the called test case.
+	
+2) test case of id 10 is added : it will be our guinea pig (about call step insertion and whatnots).
+
+3) three test cases pointing to a particular one :
+
+	- first test case (101) -> bottom test case (100)
+	- second test case (102) -> bottom test case (100)
+	- third test case (103) -> bottom test case (100)
+	
+	the ids for the test steps equals the ids of the calling test case.
+	
+
+
+
+ -->
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+
+	<!--  dummy attachment list, the same for everyone that need one. -->
+	
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1" />
+
+
+	<!--  the test case library nodes -->
+
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-1" NAME="top test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-11" NAME="first level 1" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-21" NAME="second level 1" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-22" NAME="second level 2" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-31" NAME="third level 1" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-32" NAME="third level 2" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>
+	
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-10" NAME="guinea pig" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>	
+	
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-100" NAME="bottom test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>	
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-101" NAME="first test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>	
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-102" NAME="second test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>		
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-103" NAME="third test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>		
+	
+	<!--  the test cases now -->
+	
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-1"  VERSION="1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-11" VERSION="1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-21" VERSION="1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-22" VERSION="1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-31" VERSION="1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-32" VERSION="1" />
+	
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-10" VERSION="1" />
+	
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-100" VERSION="1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-101" VERSION="1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-102" VERSION="1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-103" VERSION="1" />
+	
+	<!--  the test steps -->
+	
+	<TEST_STEP TEST_STEP_ID="-11" />
+	<TEST_STEP TEST_STEP_ID="-131" />
+	<TEST_STEP TEST_STEP_ID="-21" />
+	<TEST_STEP TEST_STEP_ID="-221" />
+	<TEST_STEP TEST_STEP_ID="-222" />
+	<TEST_STEP TEST_STEP_ID="-31" />
+	<TEST_STEP TEST_STEP_ID="-32" />
+	
+	<TEST_STEP TEST_STEP_ID="-101" />
+	<TEST_STEP TEST_STEP_ID="-102" />
+	<TEST_STEP TEST_STEP_ID="-103" />	
+	
+	<TEST_STEP TEST_STEP_ID="-1000" /> <!--  that one is an action test step, so that we can test Hibernate cast -->
+	
+	
+	<!--  the call test steps -->
+	
+	<CALL_TEST_STEP TEST_STEP_ID="-11" CALLED_TEST_CASE_ID="-11"/>
+	<CALL_TEST_STEP TEST_STEP_ID="-131" CALLED_TEST_CASE_ID="-31"/>
+	<CALL_TEST_STEP TEST_STEP_ID="-21" CALLED_TEST_CASE_ID="-21"/>
+	<CALL_TEST_STEP TEST_STEP_ID="-221" CALLED_TEST_CASE_ID="-22"/>
+	<CALL_TEST_STEP TEST_STEP_ID="-222" CALLED_TEST_CASE_ID="-22"/>
+	<CALL_TEST_STEP TEST_STEP_ID="-31" CALLED_TEST_CASE_ID="-31"/>
+	<CALL_TEST_STEP TEST_STEP_ID="-32" CALLED_TEST_CASE_ID="-32"/>
+	
+	<CALL_TEST_STEP TEST_STEP_ID="-101" CALLED_TEST_CASE_ID="-100" />
+	<CALL_TEST_STEP TEST_STEP_ID="-102" CALLED_TEST_CASE_ID="-100"/>
+	<CALL_TEST_STEP TEST_STEP_ID="-103" CALLED_TEST_CASE_ID="-100"/>		
+	
+	<!--  the only one action test step -->
+	<ACTION_TEST_STEP TEST_STEP_ID="-1000" ACTION="the one and only action test step"/>
+	
+	
+	<!--  associate them to the test cases -->
+	
+	<TEST_CASE_STEPS TEST_CASE_ID="-1" STEP_ID="-11" STEP_ORDER="1"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="-1" STEP_ID="-131" STEP_ORDER="2"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="-11" STEP_ID="-21" STEP_ORDER="1"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="-11" STEP_ID="-221" STEP_ORDER="2"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="-11" STEP_ID="-222" STEP_ORDER="3"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="-21" STEP_ID="-31" STEP_ORDER="1"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="-22" STEP_ID="-32" STEP_ORDER="1"/>
+	
+	<TEST_CASE_STEPS TEST_CASE_ID="-101" STEP_ID="-101" STEP_ORDER="1"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="-102" STEP_ID="-102" STEP_ORDER="1"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="-103" STEP_ID="-103" STEP_ORDER="1"/>	
+	
+	<TEST_CASE_STEPS TEST_CASE_ID="-101" STEP_ID="-1000" STEP_ORDER="2" />
+	
+	
+	
+	<!--  cleanup of previously entered data -->
+	
+	<attachment_list/>
+	<test_case_library_node/>
+	<test_case_folder/>
+	<test_case/>
+	<tcln_relationship/>
+	<test_case_library_content/>	
+	<test_step/>
+	<action_test_step/>
+	<call_test_step/>
+	<test_case_steps/>
+	
+	<parameter/>
+	<Dataset/>
+	<dataset_param_value/>
+
+</dataset>

@@ -1,0 +1,48 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<div th:fragment="chart-wizard-preview">
+<div class="display-table">
+		<div class="display-table-row control-group">
+          <label th:text="#{label.Name}" class="display-table-cell control-label" for="name">
+          </label>
+        <div class="controls display-table-cell">
+          <input id="chart-name" name="name" type="text" maxlength="255" data-prop="name" data-object="chartDefinition"/>
+          <span class="help-inline">&nbsp;</span>
+		</div>
+      </div>
+</div>
+
+<!-- <input name="name" type="text" id="chart-name" value="{{attributes.name}}" />
+<span class="help-inline">&nbsp;</span> -->
+<br />
+<br />
+<br />
+  <div>
+        <div id="chart-display-area" style="width:100%; height:600px;background-color:white" />
+   <div>
+
+
+  </div>
+</div>
+
+</div>

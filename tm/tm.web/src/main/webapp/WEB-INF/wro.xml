@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<groups xmlns="http://www.isdc.ro/wro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.isdc.ro/wro wro.xsd">
+
+  <group name="squash-js">
+    <js>/scripts/app/**.js</js>
+    <js>/scripts/bugtracker/**.js</js>
+    <js>/scripts/dashboard/**.js</js>
+    <js>/scripts/camp-workspace/**.js</js>
+    <js>/scripts/campaign-management/**.js</js>
+    <js>/scripts/contextual-content-handlers/**.js</js>
+    <js>/scripts/custom-field-binding/**.js</js>
+    <js>/scripts/custom-field-editor/**.js</js>
+    <js>/scripts/custom-field-values/**.js</js>
+    <js>/scripts/dashboard/**.js</js>
+    <js>/scripts/datepicker/**.js</js>
+    <js>/scripts/file-upload/**.js</js>
+    <js>/scripts/iteration-management/**.js</js>
+    <js>/scripts/project/**.js</js>
+    <js>/scripts/tc-workspace/**.js</js>
+    <js>/scripts/req-workspace/**.js</js>
+    <js>/scripts/execution-processing/**.js</js>
+    <js>/scripts/projects-manager/**.js</js>
+    <js>/scripts/search/**.js</js>
+    <js>/scripts/squash/**.js</js>
+    <js>/scripts/squashtest/**.js</js>
+    <js>/scripts/team-editor/**.js</js>
+    <js>/scripts/teams-manager/**.js</js>
+    <js>/scripts/test-case-management/**.js</js>
+    <js>/scripts/test-step-editor/**.js</js>
+    <js>/scripts/test-suite-management/**.js</js>
+    <js>/scripts/tree/**.js</js>
+    <js>/scripts/user-editor/**.js</js>
+    <js>/scripts/users-manager/**.js</js>
+    <js>/scripts/verified-requirements/**.js</js>
+    <js>/scripts/workspace/**.js</js>
+    <js>/scripts/common.js</js>
+    <js>/scripts/custom-field-manager.js</js>
+    <js>/scripts/custom-field-modification.js</js>
+    <js>/scripts/edit-test-step.js</js>
+    <js>/scripts/jquery-includes.js</js>
+    <js>/scripts/main-template.js</js>
+    <js>/scripts/print.js</js>
+    <js>/scripts/requirement-search-result.js</js>
+    <js>/scripts/requirement-workspace.js</js>
+    <js>/scripts/team-modification.js</js>
+    <js>/scripts/test-case-search-result.js</js>
+    <js>/scripts/test-automation-servers-manager.js</js>
+    <js>/scripts/user-modification.js</js>
+  </group>
+
+	<!-- This group is used to produce squash's core css ie non-themed css -->
+  <group name="squash.core">
+    <css>/styles/structure.css</css>
+    <css>/styles/ckeditor.override.css</css>
+     <css>/styles/bootstrap.override.css</css>
+		<!-- squashtree is loaded through ajax by jstree <css>/styles/squashtree.css</css> -->
+  </group>
+
+	<!-- These groups produce squash's various themed css -->
+  <group name="squash.blue">
+    <css>/styles/master.blue.less</css>
+  </group>
+  <group name="squash.green">
+    <css>/styles/master.green.css</css>
+  </group>
+  <group name="squash.grey">
+    <css>/styles/master.grey.css</css>
+  </group>
+  <group name="squash.purple">
+    <css>/styles/master.purple.css</css>
+  </group>
+  <group name="squash.wine">
+    <css>/styles/master.wine.css</css>
+  </group>
+  <group name="squash.blue.green">
+    <css>/styles/master.blue-green.css</css>
+  </group>
+  <group name="squash.green.blue">
+    <css>/styles/master.green-blue.css</css>
+  </group>
+
+	<!-- Groups of non concatenable css -->
+  <group name="squash.tree">
+    <css>/styles/squashtree.css</css>
+  </group>
+  <group name="squash.core.override">
+    <css>/styles/structure.override.css</css>
+  </group>
+  <group name="squash.subpage.override">
+    <css>/styles/structure.subpageoverride.css</css>
+  </group>
+  <group name="squash.print">
+    <css>/styles/master.css</css>
+    <css>/styles/print.css</css>
+  </group>
+
+	<!-- This group is used to lint stylesheets -->
+  <group name="csslint">
+    <css minimize="false">/styles/**/*.css</css>
+  </group>
+
+</groups>

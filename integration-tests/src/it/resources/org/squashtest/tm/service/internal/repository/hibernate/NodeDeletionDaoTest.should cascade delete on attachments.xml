@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!-- 
+	depends on NodeDeletionDao.general.dbsetup.xml
+
+ -->
+
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+
+
+	<!--  ============================    attachment_content ======================================== -->
+
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-111"  /> 		<!--  for test case 1 -->
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-121"  /> 		<!--  for test case 2 -->
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-1111"  />		<!--  for test step 1 of test case 1 -->
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-1211"  />		<!--  for test step 1 of test case 2 -->
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-1212"  />		<!--  for test step 1 of test case 2 -->
+	
+
+	
+	<!--  ============================ attachment lists (unattached to anything) ===================== -->
+	
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-2" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-3" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-4" />
+	
+	
+	
+	<!--  ============================ attachments ==================================================== -->
+	
+	
+	<ATTACHMENT ATTACHMENT_ID="-111" NAME="test case 1 attach 1" TYPE="txt" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="-111" ATTACHMENT_LIST_ID="-1"/>
+	<ATTACHMENT ATTACHMENT_ID="-121" NAME="test case 2 attach 1" TYPE="txt" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="-121" ATTACHMENT_LIST_ID="-2"/>
+	<ATTACHMENT ATTACHMENT_ID="-1111" NAME="test case 1 test step 1 attach 1" TYPE="txt" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="-1111" ATTACHMENT_LIST_ID="-3"/>
+	<ATTACHMENT ATTACHMENT_ID="-1211" NAME="test case 2 test step 1 attach 1" TYPE="txt" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="-1211" ATTACHMENT_LIST_ID="-4"/>
+	<ATTACHMENT ATTACHMENT_ID="-1212" NAME="test case 2 test step 1 attach 2" TYPE="txt" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="-1212" ATTACHMENT_LIST_ID="-4"/>	
+
+
+</dataset>

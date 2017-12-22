@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<include file="tm.data-1.4.1.xml" relativeToChangelogFile="true" />
+	<changeSet id="tm-1.5.0.issue-1838-test-00" author="mpagnon">
+		<comment>We save data from CUSTOM_FIELD_VALUE that should not change</comment>
+		<sql>
+			create table TEMP_CUF_VALUES (
+			ID BIGINT,
+			VALUE
+			VARCHAR(255)
+			);
+		</sql>
+		<comment>We save data of optional custom fields</comment>
+
+		<sql>
+			insert into TEMP_CUF_VALUES(ID, VALUE)
+			select cfv.CFV_ID,
+			cfv.VALUE from CUSTOM_FIELD_VALUE cfv
+			join CUSTOM_FIELD_BINDING cfb on
+			cfb.CFB_ID = cfv.CFB_ID
+			join CUSTOM_FIELD cf on cf.CF_ID = cfb.CF_ID
+			where cf.OPTIONAL = true;
+		</sql>
+		<comment>We save data of mandatory but valorized custom fields</comment>
+
+		<sql>
+			insert into TEMP_CUF_VALUES(ID, VALUE)
+			select cfv.CFV_ID,
+			cfv.VALUE from CUSTOM_FIELD_VALUE cfv
+			join CUSTOM_FIELD_BINDING cfb on
+			cfb.CFB_ID = cfv.CFB_ID
+			join CUSTOM_FIELD cf on cf.CF_ID = cfb.CF_ID
+			where cf.OPTIONAL = false
+			and cfv.VALUE is not NULL
+			and
+			LTRIM(RTRIM(cfv.VALUE)) != ''
+		</sql>
+	</changeSet>
+	<changeSet id="tm-1.5.0.feat-1864-test-00" author="mpagnon">
+		<comment>We save data from ACL_RESPONSIBILITY_SCOPE_ENTRY in temporary table</comment>
+		<sql>
+			create table TEMP_ARSE_INFOS (
+			ID BIGINT,
+			USER_ID BIGINT
+			);
+		</sql>
+		<comment>We save data of arse</comment>
+
+		<sql>
+			insert into TEMP_ARSE_INFOS(ID, USER_ID)
+			select arse.ID ,
+			arse.USER_ID from ACL_RESPONSIBILITY_SCOPE_ENTRY arse;
+		</sql>
+
+		<comment>We save data from ACL_RESPONSIBILITY_SCOPE_ENTRY in temporary table</comment>
+		<sql>
+			create table TEMP_CGRPM_INFOS (
+			GROUP_ID BIGINT,
+			USER_ID BIGINT
+			);
+		</sql>
+		<comment>We save data of core_group_member</comment>
+
+		<sql>
+			insert into TEMP_CGRPM_INFOS(GROUP_ID, USER_ID)
+			select
+			CGRPM.GROUP_ID , CGRPM.USER_ID from CORE_GROUP_MEMBER CGRPM;
+		</sql>
+
+	</changeSet>
+	<changeSet id="tm-1.5.0-feat-2003-test-a" author="mpagnon">
+	<comment>We save the data from the table TEST_CASE_VERIFIED_REQUIREMENT_VERSION</comment>
+	<createTable tableName="TEMP_VERIFIED">		
+			<column name="VERIFIED_REQ_VERSION_ID" type="BIGINT" />				
+			<column name="VERIFYING_TEST_CASE_ID" type="BIGINT"  />
+		</createTable>
+		<sql>
+			Insert into TEMP_VERIFIED(VERIFIED_REQ_VERSION_ID, VERIFYING_TEST_CASE_ID)
+			select VERIFIED_REQ_VERSION_ID, VERIFYING_TEST_CASE_ID from TEST_CASE_VERIFIED_REQUIREMENT_VERSION;
+		</sql>
+	</changeSet>
+	<!-- ========================================INCLUDE CHANGELOG================================================ -->
+	<include file="../../../main/liquibase/tm/tm.changelog-1.5.0.xml"
+		relativeToChangelogFile="true" />
+	<!-- ========================================================================================================= -->
+	<changeSet id="tm-1.5.0.issue-1838-test-01" author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from
+				CUSTOM_FIELD_VALUE cfv
+				join CUSTOM_FIELD_BINDING cfb on cfb.CFB_ID =
+				cfv.CFB_ID
+				join CUSTOM_FIELD cf on cf.CF_ID = cfb.CF_ID
+				where
+				(cfv.VALUE is null or LTRIM(RTRIM(cfv.VALUE)) = '')
+				and cf.OPTIONAL =
+				false
+			</sqlCheck>
+		</preConditions>
+		<comment>We check that all mandatory cuf values are not null or equal to ""</comment>
+	</changeSet>
+
+
+	<changeSet id="1.5.0.issue-1838-test-02" author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from
+				CUSTOM_FIELD_VALUE cfv, TEMP_CUF_VALUES tcv
+				where cfv.CFV_ID = tcv.ID
+				and cfv.VALUE != tcv.VALUE
+			</sqlCheck>
+		</preConditions>
+		<comment>We check that optional cuf values and mandatory but valorized cuf values did not change</comment>
+		<sql>
+			drop table TEMP_CUF_VALUES;
+		</sql>
+	</changeSet>
+	<!--================================== FEAT 1864=================================== -->
+	<changeSet id="tm-1.5.0.feat-1864-test-01" author="mpagnon">
+		<preConditions>
+  		<or>
+            <and>
+                <tableExists tableName="CORE_PARTY" />
+    			<columnExists tableName="CORE_PARTY" columnName="PARTY_ID" />
+    			<primaryKeyExists primaryKeyName="pk_party" tableName="CORE_PARTY"/>
+            </and>
+            <and>
+              <dbms type="postgresql"/>
+              <tableExists tableName="core_party" />
+              <columnExists tableName="core_party" columnName="party_id" />
+              <primaryKeyExists primaryKeyName="pk_party" tableName="core_party"/>
+            </and>
+          </or>
+		</preConditions>
+	</changeSet>
+	
+	<changeSet id="tm-1.5.0.feat-1864-test-02" author="mpagnon">
+		<preConditions>
+            <or>
+            <and>
+            <tableExists tableName="CORE_TEAM" />
+			<columnExists tableName="CORE_TEAM" columnName="PARTY_ID" />
+			<primaryKeyExists primaryKeyName="pk_team" tableName="CORE_TEAM" />
+			<columnExists tableName="CORE_TEAM" columnName="NAME" />
+			<columnExists tableName="CORE_TEAM" columnName="DESCRIPTION" />
+			<columnExists tableName="CORE_TEAM" columnName="CREATED_BY" />
+			<columnExists tableName="CORE_TEAM" columnName="CREATED_ON" />
+			<columnExists tableName="CORE_TEAM" columnName="LAST_MODIFIED_BY" />
+			<columnExists tableName="CORE_TEAM" columnName="LAST_MODIFIED_ON" />
+       </and>
+            <and>
+              <dbms type="postgresql"/>
+              <tableExists tableName="core_team" />
+      <columnExists tableName="core_team" columnName="party_id" />
+      <primaryKeyExists primaryKeyName="pk_team" tableName="core_team" />
+      <columnExists tableName="core_team" columnName="name" />
+      <columnExists tableName="core_team" columnName="description" />
+      <columnExists tableName="core_team" columnName="created_by" />
+      <columnExists tableName="core_team" columnName="created_on" />
+      <columnExists tableName="core_team" columnName="last_modified_by" />
+      <columnExists tableName="core_team" columnName="last_modified_on" />
+              </and>
+              </or>
+		</preConditions>
+	</changeSet>
+	
+	<changeSet id="tm-1.5.0.feat-1864-test-03" author="mpagnon">
+		<preConditions>
+			<or>
+            <and>
+            <tableExists tableName="CORE_TEAM_MEMBER" />
+			<columnExists tableName="CORE_TEAM_MEMBER" columnName="USER_ID" />
+			<columnExists tableName="CORE_TEAM_MEMBER" columnName="TEAM_ID" />
+       </and>
+            <and>
+              <dbms type="postgresql"/>
+              <tableExists tableName="core_team_member" />
+      <columnExists tableName="core_team_member" columnName="user_id" />
+      <columnExists tableName="core_team_member" columnName="team_id" />
+              </and>
+              </or>
+		</preConditions>
+	</changeSet>
+	
+	<changeSet id="tm-1.5.0.feat-1864-test-04" author="mpagnon">
+		<preConditions>
+			<or>
+            <and><columnExists tableName="CORE_USER" columnName="PARTY_ID" />
+			<primaryKeyExists primaryKeyName="pk_core_user" tableName="CORE_USER"/>
+       </and>
+            <and>
+              <dbms type="postgresql"/>
+              <columnExists tableName="core_user" columnName="party_id" />
+      <primaryKeyExists primaryKeyName="pk_core_user" tableName="core_user"/>
+              </and>
+              </or>
+		</preConditions>
+	</changeSet>
+	
+	<changeSet id="tm-1.5.0.feat-1864-test-05" author="mpagnon">
+		<preConditions>
+			<or>
+            <and><columnExists tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY"
+				columnName="PARTY_ID" />
+         </and>
+            <and>
+              <dbms type="postgresql"/>
+              <columnExists tableName="acl_responsibility_scope_entry"
+        columnName="party_id" />
+              </and>
+              </or>
+		</preConditions>
+	</changeSet>
+	
+	<changeSet id="tm-1.5.0.feat-1864-test-06" author="mpagnon">
+		<preConditions>
+			<or>
+            <and><columnExists tableName="CORE_GROUP_MEMBER" columnName="PARTY_ID" />
+       </and>
+            <and>
+              <dbms type="postgresql"/>
+              <columnExists tableName="core_group_member" columnName="party_id" />
+              </and>
+              </or>
+		</preConditions>
+	</changeSet>
+	
+	<changeSet id="tm-1.5.0.feat-1864-test-07" author="mpagnon">
+		<preConditions>
+			<or>
+            <and><not>
+				<columnExists tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY"
+					columnName="USER_ID" />
+				<columnExists tableName="CORE_GROUP_MEMBER" columnName="USER_ID" />
+			</not>
+       </and>
+            <and>
+              <dbms type="postgresql"/>
+              <not>
+        <columnExists tableName="acl_responsibility_scope_entry"
+          columnName="user_id" />
+        <columnExists tableName="core_group_member" columnName="user_id" />
+      </not>
+              </and>
+              </or>
+		</preConditions>
+	</changeSet>
+	
+	<changeSet id="tm-1.5.0.feat-1864-test-09" author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from
+				TEMP_CGRPM_INFOS temp
+				where not exists (
+				select * from
+				CORE_GROUP_MEMBER cgm, CORE_USER cu
+				where cgm.GROUP_ID =
+				temp.GROUP_ID
+				and temp.USER_ID = cu.PARTY_ID
+				and cu.PARTY_ID = cgm.PARTY_ID
+				)
+			</sqlCheck>
+		</preConditions>
+		<comment>We check that every CORE_GROUP_MEMBER entry has a rightfull PARTY_ID</comment>
+	</changeSet>
+
+	<changeSet id="tm-1.5.0.feat-1864-test-10" author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from TEMP_ARSE_INFOS
+				temp
+				where not exists (
+				select * from ACL_RESPONSIBILITY_SCOPE_ENTRY
+				arse, CORE_USER cu
+				where arse.ID = temp.ID
+				and temp.USER_ID = cu.PARTY_ID
+				and cu.PARTY_ID = arse.PARTY_ID
+				)
+			</sqlCheck>
+		</preConditions>
+		<comment>We check that every ACL_RESPONSIBILITY_SCOPE_ENTRY entry has a rightfull PARTY_ID</comment>
+	</changeSet>
+
+	<changeSet id="tm-1.5.0.feat-1864-test-w" author="mpagnon">
+		<sql>
+			drop table TEMP_ARSE_INFOS;
+		</sql>
+		<sql>
+			drop table TEMP_CGRPM_INFOS;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="tm-1.5.0-feat-2003-test-00" author="mpagnon">
+		<preConditions>
+			<or>
+            <and><tableExists tableName="REQUIREMENT_VERSION_COVERAGE" />
+			<tableExists tableName="VERIFYING_STEPS"/>
+			<primaryKeyExists tableName="REQUIREMENT_VERSION_COVERAGE" primaryKeyName="requirement_version_coverage_id"/>
+			<not>
+				<tableExists tableName="TEST_CASE_VERIFIED_REQUIREMENT_VERSION" />
+			</not>			
+       </and>
+            <and>
+              <dbms type="postgresql"/>
+              </and>
+              </or>
+		</preConditions>
+	</changeSet>
+	<changeSet id="tm-1.5.0-feat-2003-test-01" author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from TEMP_VERIFIED
+				temp
+				where not exists(
+				select * from REQUIREMENT_VERSION_COVERAGE rvc
+				where rvc.VERIFIED_REQ_VERSION_ID = temp.VERIFIED_REQ_VERSION_ID
+				and rvc.VERIFYING_TEST_CASE_ID = temp.VERIFYING_TEST_CASE_ID)
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+	<changeSet id="tm-1.5.0-feat-2003-test-02" author="mpagnon">
+		<dropTable tableName="TEMP_VERIFIED"/>
+	</changeSet>
+	<changeSet id="tm-1.5.0-issue-1895-test-01" author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from TEST_CASE
+				where PREREQUISITE is null
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+	
+	<changeSet id="tm-1.5.0-issue-2061-test-01" author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select  count(*)
+				from TEST_CASE tc
+				join TEST_CASE_LIBRARY_NODE tcln ON tc.TCLN_ID = tcln.TCLN_ID
+				join PROJECT project ON tcln.PROJECT_ID = project.PROJECT_ID
+				join CUSTOM_FIELD_BINDING binding ON binding.BOUND_PROJECT_ID = project.PROJECT_ID
+				join CUSTOM_FIELD cuf ON binding.CF_ID = cuf.CF_ID
+				where not exists (
+					select * from CUSTOM_FIELD_VALUE val 
+					where val.BOUND_ENTITY_ID = tc.TCLN_ID 
+					and val.BOUND_ENTITY_TYPE='TEST_CASE' 
+					and val.CFB_ID = binding.CFB_ID
+				)
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+</databaseChangeLog>

@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!-- 
+	Feat 3481 : 
+	
+	This changeset does the following :
+	
+	1/ Clean dead informations (because nothing allowed the deletion of dead TA projects etc)
+	2/ The table TM_TA_PROJECTS becomes TEST_AUTOMATION_PROJECT (!) and inherits from the foreign keys pointing 
+		from and to it. The former table TEST_AUTOMATION_PROJECT is ditched.
+	3/ Columns added to several tables and their values filled with default values.
+
+ -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+  <changeSet id="tm-1.10.0" author="bsiri">
+    <comment>Update TM database version number</comment>
+    <update tableName="CORE_CONFIG">
+      <column name="VALUE" value="1.10.0" />
+      <where>STR_KEY = 'squashtest.tm.database.version'</where>
+    </update>
+  </changeSet>
+  
+  
+  		
+	
+	<changeSet id="tm-1.10.0.feature-3481-1" author="bsiri">
+		<comment>before the cleanup, we need to relax some constraints</comment>
+	
+		<dropNotNullConstraint tableName="AUTOMATED_EXECUTION_EXTENDER" columnName="TEST_ID" columnDataType="BIGINT"/>
+	
+	</changeSet>
+  
+  	<changeSet id="tm-1.10.0.feature-3481-2" author="bsiri">
+  		<comment>cleaning up unused entities</comment>
+  	
+  		<!-- find the unused projects -->
+  		<sql>
+  			create temporary table UNUSED_TA_PROJECT as 
+  			(
+  				select taproj.project_id as project_id
+  				from TEST_AUTOMATION_PROJECT taproj 
+  				where taproj.project_id not in (
+  					select ta_project_id from TM_TA_PROJECTS
+  				)
+  			);  		
+  		</sql>
+  		
+  		
+  		<!-- remove any script, project and server and nullify their reference in automated tests if they belong to the unused projects -->
+  		<sql>
+  			update AUTOMATED_EXECUTION_EXTENDER extender
+  			set result_url = null,
+  				test_id = null
+  			where extender.test_id in (
+  				select tatest.test_id 
+  				from  AUTOMATED_TEST tatest 
+  				inner join UNUSED_TA_PROJECT unused on tatest.project_id = unused.project_id 
+  			);
+  		</sql>
+  		
+  		<sql>
+  			update TEST_CASE tc 
+  			set ta_test = null
+  			where tc.ta_test in (
+  				select tatest.test_id 
+  				from AUTOMATED_TEST tatest 
+  				inner join UNUSED_TA_PROJECT unused on tatest.project_id = unused.project_id 
+  			);	
+  		</sql>
+  	
+  		<sql>
+			delete from AUTOMATED_TEST  
+			where project_id in (
+				select unused.project_id from UNUSED_TA_PROJECT unused
+			);			
+  		</sql>
+  		
+  		<sql>
+  			delete from TEST_AUTOMATION_PROJECT 
+  			where project_id in (
+  				select p.project_id from UNUSED_TA_PROJECT p
+  			);
+  		</sql>
+  		
+  		<sql>
+  			delete from TEST_AUTOMATION_SERVER 
+  			where server_id not in (
+  				select distinct taproj.server_id 
+  				from TM_TA_PROJECTS binding 
+  				inner join TEST_AUTOMATION_PROJECT taproj on binding.ta_project_id = taproj.project_id 
+  			);
+  		</sql>
+  		
+  		
+  		<!-- drop the temp table (yes, even if its a temp table) -->
+  		<sql>
+  			drop table UNUSED_TA_PROJECT;
+  		</sql>
+  	
+  	</changeSet>
+
+	<changeSet id="tm-1.10.0.feature-3481-3" author="bsiri">
+		<comment>The test automation servers are now 'auditable' (dates and authors of creation/modification are recorded) and has 
+		several other attributes</comment>
+		<addColumn tableName="TEST_AUTOMATION_SERVER">
+			
+			<!-- this column is not nullable and must be unique but the constraints will be added after the migration -->
+			<column name="NAME" type="VARCHAR(50)" remarks="The name of the server"/>
+			
+			<column name="DESCRIPTION" type="CLOB"	remarks="A description for the server. Since its of type 'CLOB' it might not be so short after all." ></column> 	
+			
+			<column name="CREATED_BY" type="VARCHAR(50)" defaultValue="(nobody)"  remarks="Who created this test automation server">
+				<constraints nullable="true" />
+			</column>
+			
+			<!-- this column is not nullable but the constraint will be added after the migration -->
+			<column name="CREATED_ON" type="DATETIME" remarks="When was created that server">
+				<constraints nullable="true" />
+			</column>
+			
+			<column name="LAST_MODIFIED_BY" type="VARCHAR(50)" defaultValue="NULL" remarks="Author of last edition" />
+
+			<column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL" remarks="Last date of edition" />
+						
+			<column name="MANUAL_SLAVE_SELECTION" type="BOOLEAN" defaultValueBoolean="false" 
+			remarks="Should the user select which slave will run the tests (if there are some) ?">
+				<constraints nullable="false"/>
+			</column>
+			
+		</addColumn>	
+		
+		<!--  sets a default value for the server name -->
+		<sql>
+			update TEST_AUTOMATION_SERVER
+			set name = concat_ws('-', base_url, server_id);
+		</sql>
+		
+		<sql>
+			update TEST_AUTOMATION_SERVER
+			set CREATED_ON = NOW();
+		</sql>
+		
+		<!--  now add the missing not null constraints -->
+		<addNotNullConstraint tableName="TEST_AUTOMATION_SERVER" columnName="NAME" columnDataType="VARCHAR(50)"/>
+		<addUniqueConstraint  tableName="TEST_AUTOMATION_SERVER" columnNames="NAME" />
+		<addNotNullConstraint tableName="TEST_AUTOMATION_SERVER" columnName="CREATED_ON" columnDataType="DATETIME"/>
+		
+	</changeSet>
+	
+	<changeSet id="tm-1.10.0.feature-3481-4" author="bsiri">
+		
+		<comment>
+			The associative table TM_TA_PROJECTS is totally re-purposed as TEST_AUTOMATION_PROJECT 
+			(and the former table is ditched). 
+		</comment>
+	
+	
+		<!-- creates the table -->
+		<createTable tableName="PROTO_TEST_AUTOMATION_PROJECT">
+			
+			<column name="TA_PROJECT_ID" type="BIGINT" remarks="the primary key" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			
+			<column name="TM_PROJECT_ID" type="BIGINT" remarks="the reference to the TM project">
+				<constraints nullable="false" foreignKeyName="fk_ta_project_tm_project" references="PROJECT(PROJECT_ID)"/>
+			</column>
+				
+			<column name="LABEL" type="VARCHAR(50)" remarks="the (friendly) alias for that TA project ">
+				<constraints nullable="false"/>
+			</column>
+			
+			<column name="REMOTE_NAME" type="VARCHAR(50)" remarks="the (real) name of the remote test automation project">
+				<constraints nullable="false"/>
+			</column>
+		
+			<column name="SERVER_ID" type="BIGINT"
+				remarks="foreign key to the automated test server">
+				<constraints nullable="false"
+					references="TEST_AUTOMATION_SERVER(SERVER_ID)" foreignKeyName="fk_ta_project_ta_server" />
+			</column>
+			
+			<column name="EXECUTION_ENVIRONMENTS" type="VARCHAR(255)" remarks="the list of approved slaves servers"
+				defaultValue="">
+				<constraints nullable="false"/>	
+			</column>
+			
+			<column name="FORMER_ID" type="BIGINT" remarks="the former primary key" >
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		
+		<!-- insert the data -->
+		<sql>
+			insert into PROTO_TEST_AUTOMATION_PROJECT(TM_PROJECT_ID, LABEL, REMOTE_NAME, SERVER_ID, FORMER_ID) 
+			select binding.tm_project_id, 
+				   concat_ws('-', proj.name, binding.tm_project_id, binding.ta_project_id),
+				   proj.name,
+				   proj.server_id, 
+				   proj.project_id
+			from TM_TA_PROJECTS binding
+			inner join TEST_AUTOMATION_PROJECT proj on binding.ta_project_id = proj.project_id;		
+		</sql>
+		
+		<!-- drop the table TM_TA_PROJECTS -->
+		<dropTable tableName="TM_TA_PROJECTS"/>
+		
+		<!-- drop the constraints pointing to TEST_AUTOMATION_PROJECT -->
+		<dropForeignKeyConstraint constraintName="fk_automated_test_project" baseTableName="AUTOMATED_TEST"  />
+
+		<!-- drop the table TEST_AUTOMATION_PROJECT -->
+		<dropTable tableName="TEST_AUTOMATION_PROJECT"/>
+
+	
+		<!-- all hail the new table TEST_AUTOMATION_PROJECT ! -->
+		<renameTable oldTableName="PROTO_TEST_AUTOMATION_PROJECT" newTableName="TEST_AUTOMATION_PROJECT" />
+
+		<!-- Rebinds automated tests to the right ta project id -->
+		<sql>
+			update AUTOMATED_TEST  
+			set PROJECT_ID = (
+				select tap.TA_PROJECT_ID 
+				from TEST_AUTOMATION_PROJECT tap
+                  inner join TEST_CASE_LIBRARY_NODE tcln on tcln.PROJECT_ID = tap.TM_PROJECT_ID
+                  inner join TEST_CASE tc on tc.TCLN_ID = tcln.TCLN_ID
+				where PROJECT_ID = tap.FORMER_ID
+				  and TEST_ID = tc.TA_TEST
+				group by tc.TA_TEST, tap.TA_PROJECT_ID 
+			);
+		</sql>
+		
+		<!-- drops the now useless former_id column -->
+		<dropColumn tableName="TEST_AUTOMATION_PROJECT" columnName="FORMER_ID" />
+
+		<!-- reinstatiate the foreign keys to the new table -->
+		<addForeignKeyConstraint constraintName="fk_automated_test_project" 
+				baseTableName="AUTOMATED_TEST" baseColumnNames="PROJECT_ID" 
+				referencedTableName="TEST_AUTOMATION_PROJECT" referencedColumnNames="TA_PROJECT_ID"/>
+		
+		<addUniqueConstraint tableName="TEST_AUTOMATION_PROJECT" columnNames="TM_PROJECT_ID, REMOTE_NAME, SERVER_ID" constraintName="uniq_tm_ta_project_job"/>
+		<addUniqueConstraint tableName="TEST_AUTOMATION_PROJECT" columnNames="TM_PROJECT_ID, LABEL" constraintName="uniq_tm_ta_project_label"/>
+
+	</changeSet>
+	
+	
+	<changeSet id="tm-1.10.0.feature-3481-5" author="bsiri">
+		<comment>A TM project is now hard-bound to a TA server</comment>
+		
+		<addColumn tableName="PROJECT">
+			<column name="TA_SERVER_ID" type="BIGINT" remarks="the reference to the test automation server">
+				<constraints nullable="true" foreignKeyName="tm_project_ta_server" references="TEST_AUTOMATION_SERVER(SERVER_ID)"/>
+			</column> 
+		</addColumn>
+		
+		<!--  the column above is as useful for such predicate thus renders this column obsolete-->
+		<dropColumn tableName="PROJECT" columnName="TEST_AUTOMATION_ENABLED"/>
+		
+	</changeSet>
+
+	
+	<changeSet id="tm-1.10.0.feature-3481-6" author="bsiri">
+		<comment>migrating existing data to the new schema</comment>
+		<!-- 
+			sets the TA server bound to this project. Note : in the (extremely rare) case where a TM project
+			is bound to multiple TA project hosted by multiple TA server, only one will be picked up. 
+		-->
+		<sql>
+			update PROJECT 
+			set ta_server_id = (
+				select max(server.server_id) 
+				from TEST_AUTOMATION_SERVER server 
+				inner join TEST_AUTOMATION_PROJECT taproj on server.server_id = taproj.server_id
+				where taproj.tm_project_id = project_id
+			);					
+		</sql>
+		
+		
+	</changeSet>
+
+  <changeSet id="tm-1.10.0.feature-3481-6" author="gfouquet">
+    <addColumn tableName="AUTOMATED_EXECUTION_EXTENDER">
+      <column name="NODE_NAME" type="VARCHAR(50)" defaultValue="" remarks="Name of the node which ran the test"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="tm-1.10.0.feature-3481-7" author="flaurens">
+    <addColumn tableName="AUTOMATED_EXECUTION_EXTENDER">
+      <column name="EXECUTION_EXTENDER_ORDER" type="BIGINT" remarks="order of automated executions extenders within an automated suite">
+      	<constraints nullable="true" />
+      </column>
+    </addColumn>
+  </changeSet>
+  	
+    <changeSet id="tm-1.10.0.feature-3481-8" author="flaurens">
+    <preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+      <dbms type="mysql" />
+    </preConditions>
+    <comment>Creating default order which is identical with the alphabetical order</comment>
+    <sql>
+            create table TEMP_EXECUTION_EXTENDER_ORDER(
+	        EXECUTION_EXTENDER_ORDER BIGINT NOT NULL, 
+	        SUITE_ID BIGINT NOT NULL, 
+	        EXTENDER_ID BIGINT NOT NULL, 
+	        DUMMY BIGINT NOT NULL
+	      );
+
+	 	insert into TEMP_EXECUTION_EXTENDER_ORDER (EXECUTION_EXTENDER_ORDER, SUITE_ID, EXTENDER_ID, DUMMY)
+	      select 
+	        if(@prevtcs=SUITE_ID, @rownum:=@rownum+1, @rownum:=0) as RANK,
+	        clnr.SUITE_ID, 
+	        clnr.EXTENDER_ID, 
+	        (@prevtcs:=SUITE_ID)
+	      from ( 
+	      	select cr.SUITE_ID, cr.EXTENDER_ID
+	      	from AUTOMATED_EXECUTION_EXTENDER cr
+	        order by cr.SUITE_ID, cr.EXTENDER_ID
+	       ) as clnr,
+	        (SELECT @rownum:=0) r, 
+	        (SELECT @prevtcs:=0) s;
+  
+	      update AUTOMATED_EXECUTION_EXTENDER
+	      set EXECUTION_EXTENDER_ORDER = (
+	        select TEMP_EXECUTION_EXTENDER_ORDER.EXECUTION_EXTENDER_ORDER
+	        from TEMP_EXECUTION_EXTENDER_ORDER
+	        where TEMP_EXECUTION_EXTENDER_ORDER.SUITE_ID = AUTOMATED_EXECUTION_EXTENDER.SUITE_ID
+	          and TEMP_EXECUTION_EXTENDER_ORDER.EXTENDER_ID = AUTOMATED_EXECUTION_EXTENDER.EXTENDER_ID
+	      );
+           
+	     drop table TEMP_EXECUTION_EXTENDER_ORDER;
+    </sql>
+    </changeSet>
+
+    <changeSet id="tm-1.10.0.feature-3481-9" author="flaurens">
+    <preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+      <dbms type="h2" />
+    </preConditions>
+    <comment>Creating default order which is identical with the alphabetical order</comment>
+    <sql>
+            create table TEMP_EXECUTION_EXTENDER_ORDER(
+	        EXECUTION_EXTENDER_ORDER BIGINT NOT NULL, 
+	        SUITE_ID BIGINT NOT NULL, 
+	        EXTENDER_ID BIGINT NOT NULL, 
+	        DUMMY BIGINT NOT NULL
+	      );
+
+			set @rn=-1;
+			set @prevsuite=0;
+			insert into TEMP_EXECUTION_EXTENDER_ORDER ( EXECUTION_EXTENDER_ORDER, SUITE_ID, EXTENDER_ID, DUMMY)
+			select casewhen(@prevsuite = SUITE_ID, set(@rn, @rn+1),
+			set(@rn, 0)) EXECUTION_EXTENDER_ORDER, SUITE_ID, EXTENDER_ID, set(@prevsuite, SUITE_ID)
+			from ( 
+	      	select cr.SUITE_ID, cr.EXTENDER_ID
+	      	from AUTOMATED_EXECUTION_EXTENDER cr
+	        order by cr.SUITE_ID, cr.EXTENDER_ID
+	       	);
+	       	    
+	      update AUTOMATED_EXECUTION_EXTENDER
+	      set EXECUTION_EXTENDER_ORDER = (
+	        select TEMP_EXECUTION_EXTENDER_ORDER.EXECUTION_EXTENDER_ORDER
+	        from TEMP_EXECUTION_EXTENDER_ORDER
+	        where TEMP_EXECUTION_EXTENDER_ORDER.SUITE_ID = AUTOMATED_EXECUTION_EXTENDER.SUITE_ID
+	          and TEMP_EXECUTION_EXTENDER_ORDER.EXTENDER_ID = AUTOMATED_EXECUTION_EXTENDER.EXTENDER_ID
+	      );
+      
+
+    </sql>
+    </changeSet>
+    
+    
+    <changeSet id="tm-1.10.0.feature-3481-postgresql" author="mpagnon">
+    <preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+      <dbms type="postgresql" />
+    </preConditions>
+    <comment>Creating default order which is identical with the alphabetical order</comment>
+    <sql>
+            create table TEMP_EXECUTION_EXTENDER_ORDER(
+          EXECUTION_EXTENDER_ORDER BIGINT NOT NULL, 
+          SUITE_ID TEXT NOT NULL, 
+          EXTENDER_ID BIGINT NOT NULL
+        );
+        </sql>
+        <createProcedure>
+        
+        CREATE OR REPLACE FUNCTION orderExecExtender() RETURNS text AS 
+        $$
+        DECLARE rn integer := 0-1;
+        rn2 integer := 0;
+        prevSuite text := '';
+        r record;
+        BEGIN
+        FOR r in (select cr.SUITE_ID, cr.EXTENDER_ID from AUTOMATED_EXECUTION_EXTENDER cr order by cr.SUITE_ID, cr.EXTENDER_ID)
+        LOOP
+          IF prevSuite  = r.SUITE_ID 
+                THEN 
+                     rn2 := rn ;
+                     rn := rn2 + 1;
+                ELSE rn := 0 ; 
+                     prevSuite := r.SUITE_ID;
+                END IF;
+            insert into TEMP_EXECUTION_EXTENDER_ORDER ( EXECUTION_EXTENDER_ORDER, SUITE_ID, EXTENDER_ID)
+               select rn, r.SUITE_ID , r.EXTENDER_ID  ;
+              
+               
+        
+        END LOOP;
+        return 'ok';
+        END
+        $$ LANGUAGE plpgsql;
+        
+        select orderExecExtender();
+        DROP FUNCTION orderExecExtender();
+        
+        </createProcedure>
+       <sql>
+       
+        update AUTOMATED_EXECUTION_EXTENDER
+        set EXECUTION_EXTENDER_ORDER = (
+          select TEMP_EXECUTION_EXTENDER_ORDER.EXECUTION_EXTENDER_ORDER
+          from TEMP_EXECUTION_EXTENDER_ORDER
+          where TEMP_EXECUTION_EXTENDER_ORDER.SUITE_ID = AUTOMATED_EXECUTION_EXTENDER.SUITE_ID
+            and TEMP_EXECUTION_EXTENDER_ORDER.EXTENDER_ID = AUTOMATED_EXECUTION_EXTENDER.EXTENDER_ID
+        );
+
+    </sql>
+    </changeSet>
+</databaseChangeLog>

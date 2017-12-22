@@ -1,0 +1,53 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/************************************
+ * Datatables customization classes *
+ ************************************/
+
+tr.even {
+	background-color: #F1F3F7;
+}
+tr.odd {
+	background-color: #E2E6EF;
+}
+
+tr.ui-state-row-selected, tr.even.row_selected td, tr.odd.row_selected td {
+    background-color:#962E4A;
+    color: black;
+}
+
+tr.ui-state-row-selected a{ 
+	color: black !important; 
+}
+
+div.dataTables_wrapper tr.ui-state-highlight{
+	background-image:none;
+	background-color:#E8B4C2;
+	color:black;
+}
+
+tr.ui-state-highlight span.ui-icon, a.ui-state-default span.ui-icon {
+	background-image:url("jquery/ui/images/ui-icons_ffffff_256x240.png");
+}
+
+
+
+

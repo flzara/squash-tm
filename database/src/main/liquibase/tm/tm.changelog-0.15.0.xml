@@ -1,0 +1,1554 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!--  ============================================================================================================== 
+	tm.changelog-0.14.0.xml , definition of the database for Squash TM v0.14.0
+	
+	@author bsiri
+================================================================================================================ -->
+
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+
+
+
+  <changeSet id="tm-0.14.0.01" author="bsiri">
+    <comment>This table maintains the mapping between an issue in Squash and an 
+			issue in the remote bugtracker</comment>
+
+    <createTable tableName="ISSUE">
+			<!--  "-->
+
+      <column name="ISSUE_ID" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+
+      <column name="REMOTE_ISSUE_ID" type="java.sql.Types.VARCHAR(255)"
+        remarks="considering the different types
+			a bugtracker may use for its own primary keys, we use here a varchar type as it is generic enough">
+        <constraints nullable="false" />
+      </column>
+
+    </createTable>
+
+
+    <createIndex tableName="ISSUE" indexName="idx_issue">
+      <column name="ISSUE_ID" />
+    </createIndex>
+
+  </changeSet>
+
+
+  <changeSet id="tm-0.14.0.02" author="bsiri">
+    <comment>each Squash entity that may be attached to one or several bugs will be given an issue list. This table will maintain that list, an entry means that some entity refering to it have several.</comment>
+    <createTable tableName="ISSUE_LIST">
+      <column name="ISSUE_LIST_ID" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+    </createTable>
+
+    <createIndex tableName="ISSUE_LIST" indexName="idx_issue_list">
+      <column name="ISSUE_LIST_ID" />
+    </createIndex>
+
+  </changeSet>
+
+  <changeSet id="tm-0.14.0.03" author="bsiri">
+    <comment>This table will map one issue_list to (0,several) issues</comment>
+    <createTable tableName="ISSUE_LIST_CONTENT">
+      <column name="ISSUE_LIST_ID" type="BIGINT" remarks="fk to the issue list">
+        <constraints nullable="false" references="ISSUE_LIST(ISSUE_LIST_ID)" foreignKeyName="fk_list_issue_list" />
+      </column>
+
+      <column name="ISSUE_ID" type="BIGINT" remarks="fk to an issue">
+        <constraints nullable="false" references="ISSUE(ISSUE_ID)" foreignKeyName="fk_list_issue_issue" />
+      </column>
+
+    </createTable>
+  </changeSet>
+
+
+
+  <changeSet id="tm-0.14.0.04" author="bsiri" dbms="h2,mysql">
+    <comment>Cette table contient le contenu d'une pièce jointe, dont les meta infos sont stockees dans la 
+			table ATTACHMENT. La relation entre les deux tables est 1-1</comment>
+    <createTable tableName="ATTACHMENT_CONTENT">
+		<!-- remarks="" -->
+
+      <column name="ATTACHMENT_CONTENT_ID" type="BIGINT" autoIncrement="true"
+        remarks="clé primaire du contenu de la piece jointe. Devrait être autogénérée.">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+
+
+      <column name="STREAM_CONTENT" type="BLOB" defaultValue="NULL" remarks="Le contenu de la piece jointe." />
+
+    </createTable>
+  </changeSet>
+
+  <changeSet id="tm-0.14.0.04-pg" author="gfouquet" dbms="postgresql">
+    <comment>Cette table contient le contenu d'une pièce jointe, dont les meta infos sont stockees dans la 
+      table ATTACHMENT. La relation entre les deux tables est 1-1</comment>
+    <createTable tableName="ATTACHMENT_CONTENT">
+      <column name="ATTACHMENT_CONTENT_ID" type="BIGINT" autoIncrement="true"
+        remarks="clé primaire du contenu de la piece jointe. Devrait être autogénérée.">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+
+      <column name="STREAM_CONTENT" type="OID" defaultValue="NULL" remarks="Le contenu de la piece jointe." />
+    </createTable>
+  </changeSet>
+
+  <changeSet id="tm-0.14.0.05" author="bsiri">
+
+
+    <comment>Cette table stockera les pieces jointes. La piece elle même est un blob stocke a part dans
+					la table ATTACHMENT_CONTENT. La relation entre les deux tables est 1-1</comment>
+    <createTable tableName="ATTACHMENT">
+
+      <column name="ATTACHMENT_ID" type="BIGINT" autoIncrement="true"
+        remarks="clé primaire de la piece jointe. Devrait être autogénérée.">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+
+      <column name="NAME" type="java.sql.Types.VARCHAR(255)" remarks="nom de la piece jointe">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="TYPE" type="java.sql.Types.VARCHAR(10)"
+        remarks="type de la piece jointe. Cette information pourrait etre trivialement deduite du nom de fichier">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="SIZE" type="BIGINT"
+        remarks="taille de la piece jointe en octet. Cette information est déterminée au moment de l'upload et doit etre fournie a la base
+				dès sa création">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="ADDED_ON" type="DATETIME" remarks="Date de l'ajout de la piece jointe.">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="CONTENT_ID" type="BIGINT" remarks="cle etrangere vers la table ATTACHMENT_CONTENT">
+        <constraints references="ATTACHMENT_CONTENT(ATTACHMENT_CONTENT_ID)" foreignKeyName="fk_attachment_content" />
+      </column>
+
+
+    </createTable>
+
+    <createIndex tableName="ATTACHMENT" indexName="idx_attachment">
+      <column name="ATTACHMENT_ID" />
+    </createIndex>
+
+  </changeSet>
+
+
+
+  <changeSet id="tm-0.14.0.06" author="bsiri">
+    <comment>Cette table matérialise une liste d'ATTACHMENT. Bien qu'elle ne contienne que sa clé primaire, 
+			sa raison d'exister est, au niveau de l'application, de fournir 'd'un point de vue technique) 
+			une entité indépendante des entités métier auquel on rajoute les pièces jointes (d'un point de vue métier).</comment>
+    <createTable tableName="ATTACHMENT_LIST">
+		<!-- remarks="" -->
+
+      <column name="ATTACHMENT_LIST_ID" type="BIGINT" autoIncrement="true" remarks="clé primaire, devrait être autogénérée.">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+
+    </createTable>
+
+
+  </changeSet>
+
+  <changeSet id="tm-0.14.0.07" author="bsiri">
+    <comment>Table d'association entre un cas de test et ses pieces jointes</comment>
+    <createTable tableName="ATTACHMENT_LIST_CONTENT">
+      <column name="AL_ID" type="BIGINT" remarks="clé étrangère vers ATTACHMENT_LIST.">
+        <constraints nullable="false" foreignKeyName="fk_list_attachment_list" references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" />
+      </column>
+      <column name="ATTACHMENT_ID" type="BIGINT" remarks="clé étrangère vers la table ATTACHMENT">
+
+        <constraints nullable="false" references="ATTACHMENT(ATTACHMENT_ID)" foreignKeyName="fk_list_attachment_attachment" />
+      </column>
+
+    </createTable>
+  </changeSet>
+
+
+
+
+
+  <changeSet author="ramoussou" id="tm-0.14.0.08">
+
+    <comment>Table representant les projets englobants les libraries d'entite que nous utilisons.</comment>
+    <createTable tableName="PROJECT">
+
+      <column name="PROJECT_ID" type="BIGINT" autoIncrement="true" remarks="cle primaire de la table">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+
+
+      <column name="NAME" type="java.sql.Types.VARCHAR(255)" remarks="nom du projet">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="DESCRIPTION" type="CLOB" remarks="description du projet">
+      </column>
+
+      <column name="LABEL" type="java.sql.Types.VARCHAR(255)" remarks="Label du projet">
+      </column>
+
+      <column name="ACTIVE" type="BOOLEAN" remarks="si le projet est actif ou non" defaultValueBoolean="true">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="CREATED_BY" type="java.sql.Types.VARCHAR(50)" remarks="nom du createur du projet.">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="CREATED_ON" type="DATETIME"
+        remarks="Date de creation de ce projet. Il s'agit de la date de creation de l'entree dans la base, non d'une date metier.">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="LAST_MODIFIED_BY" type="java.sql.Types.VARCHAR(50)" defaultValue="NULL"
+        remarks="Nom du dernier utilisateur ayant mis a jour cet instance." />
+
+      <column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL"
+        remarks="Date de derniere mise a jour de cette instance." />
+
+      <column name="CL_ID" type="BIGINT" remarks="cle etrangere de la table campaign-Library">
+      </column>
+
+      <column name="TCL_ID" type="BIGINT" remarks="cle etrangere de la table TESTCASE-Library">
+      </column>
+
+      <column name="RL_ID" type="BIGINT" remarks="cle etrangere de la table REQUIREMENT-Library">
+      </column>
+
+    </createTable>
+
+
+    <createIndex tableName="PROJECT" indexName="idx_project">
+      <column name="PROJECT_ID" />
+    </createIndex>
+
+
+
+  </changeSet>
+
+
+  <changeSet id="tm-0.14.0.09" author="bsiri">
+    <comment>Cette table gere les bibliotheques de cas de test. Une bibliotheque de cas de test peut contenir plusieurs 
+		repertoires et/ou cas de test, ces deux entites etant regroupees sous l'appellation generique d'element de bibliotheque 
+		de cas de test (test case library nodes).</comment>
+
+    <createTable tableName="TEST_CASE_LIBRARY">
+		<!-- remarks="" -->
+      <column name="TCL_ID" type="BIGINT" autoIncrement="true" remarks="cle primaire autogeneree">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="PK_TEST_CASE_LIBRARY" />
+      </column>
+
+      <column name="PROJECT_ID" type="BIGINT" remarks="cle etrangere de la table Project">
+        <constraints references="PROJECT(PROJECT_ID)" foreignKeyName="fk_tcl_project" />
+      </column>
+    </createTable>
+
+    <createIndex tableName="TEST_CASE_LIBRARY" indexName="idx_test_case_library">
+      <column name="TCL_ID" />
+    </createIndex>
+
+
+
+  </changeSet>
+
+
+  <changeSet id="tm-0.14.0.10" author="bsiri">
+    <comment>Cette table gere les bibliotheques d'exigences. Une bibliotheque d'exigences peut contenir plusieurs repertoires 
+				et/ou exigences, ces deux entites etant regroupees sous l'appellation generique d'element de bibliotheque d'exigences (requirement 
+				library nodes).</comment>
+    <createTable tableName="REQUIREMENT_LIBRARY">
+			<!-- remarks="" -->
+
+      <column name="RL_ID" type="BIGINT" autoIncrement="true" remarks="cle primaire autogeneree">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+
+      <column name="PROJECT_ID" type="BIGINT" remarks="cle etrangere de la table Project">
+        <constraints references="PROJECT(PROJECT_ID)" foreignKeyName="fk_rl_project" />
+      </column>
+    </createTable>
+
+    <createIndex tableName="REQUIREMENT_LIBRARY" indexName="idx_requirement_library">
+      <column name="RL_ID" />
+    </createIndex>
+
+
+  </changeSet>
+
+
+  <changeSet id="tm-0.14.0.11" author="bsiri">
+    <comment>Cette table gere les bibliotheques de campagnes. Une bibliotheque 
+		de campagnes peut contenir plusieurs repertoires et/ou campagnes, ces deux 
+		entites etant regroupees sous l'appellation generique d'element de bibliotheque 
+		de campagnes (campaign library nodes).</comment>
+    <createTable tableName="CAMPAIGN_LIBRARY">
+			<!-- remarks="" -->
+
+      <column name="CL_ID" type="BIGINT" autoIncrement="true" remarks="cle primaire autogeneree">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="PK_CAMPAIGN_LIBRARY" />
+      </column>
+
+      <column name="PROJECT_ID" type="BIGINT" remarks="cle etrangere de la table Project">
+        <constraints references="PROJECT(PROJECT_ID)" foreignKeyName="fk_cl_project" />
+      </column>
+    </createTable>
+
+
+    <createIndex tableName="CAMPAIGN_LIBRARY" indexName="idx_campaign_library">
+      <column name="CL_ID" />
+    </createIndex>
+
+
+
+  </changeSet>
+
+
+  <changeSet id="tm-0.14.0.12" author="ramoussou">
+
+    <addForeignKeyConstraint constraintName="fk_project_cl" baseTableName="PROJECT"
+      baseColumnNames="CL_ID" referencedTableName="CAMPAIGN_LIBRARY" referencedColumnNames="CL_ID" />
+
+    <addForeignKeyConstraint constraintName="fk_project_tcl" baseTableName="PROJECT"
+      baseColumnNames="TCL_ID" referencedTableName="TEST_CASE_LIBRARY" referencedColumnNames="TCL_ID" />
+
+    <addForeignKeyConstraint constraintName="fk_project_rl" baseTableName="PROJECT"
+      baseColumnNames="RL_ID" referencedTableName="REQUIREMENT_LIBRARY" referencedColumnNames="RL_ID" />
+
+
+
+  </changeSet>
+
+
+
+  <changeSet id="tm-0.14.0.13" author="bsiri">
+
+    <comment>Cette table represente un element (generique) faisant partie d'une bibliotheque de cas de test. Cet element 
+		generique peut representer soit un repertoire, soit un cas de test. Pour cette raison, que l'utilisateur cree l'un ou 
+		l'autre cette table sera necessairement alimentee, et contiendra la cle primaire de l'element en question.
+		Toutefois le type reel de l'element cas de test ou repertoire) n'est pas renseigne, il est necessaire de rechercher 
+		si la cle est referencee dans la table TEST_CASE_FOLDER ou TEST_CASE pour determiner si cet element releve de l'un ou l'autre.</comment>
+    <createTable tableName="TEST_CASE_LIBRARY_NODE">
+		<!-- remarks="" -->
+
+      <column name="TCLN_ID" type="BIGINT" autoIncrement="true" remarks="cle primaire autogeneree.">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+      <column name="DELETED_ON" type="DATETIME" defaultValue="NULL"
+        remarks="drapeau indiquant si l'element est actif (NULL) ou logiquement supprime (not NULL)." />
+
+      <column name="DESCRIPTION" type="CLOB" defaultValue="NULL"
+        remarks="Une description associee a cet element. Devrait etre un champ texte long ou un clob." />
+
+      <column name="NAME" type="java.sql.Types.VARCHAR(255)" remarks="Le nom/label de l'element en question.">
+        <constraints nullable="false" />
+      </column>
+      <column name="CREATED_BY" type="java.sql.Types.VARCHAR(50)" remarks="nom du createur de ce cas de test.">
+        <constraints nullable="false" />
+      </column>
+      <column name="CREATED_ON" type="DATETIME"
+        remarks="Date de creation de ce cas de test. Il s'agit de la date de creation de l'entree dans la base, non d'une date metier.">
+        <constraints nullable="false" />
+      </column>
+      <column name="LAST_MODIFIED_BY" type="java.sql.Types.VARCHAR(50)" defaultValue="NULL"
+        remarks="Nom du dernier utilisateur ayant mis a jour cet instance." />
+      <column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL"
+        remarks="Date de derniere mise a jour de cette instance." />
+
+      <column name="PROJECT_ID" type="BIGINT" remarks="FK to the Project to which belongs this resource">
+        <constraints nullable="true" references="PROJECT(PROJECT_ID)" foreignKeyName="fk_tcln_project" />
+      </column>
+    </createTable>
+
+
+  </changeSet>
+
+
+
+
+  <changeSet id="tm-0.14.0.14" author="bsiri">
+    <comment>Cette table represente un element (generique) faisant partie d'une bibliotheque d'exigences. Cet element 
+				generique peut representer soit un repertoire, soit une exigence. Pour cette raison, que l'utilisateur cree l'un ou l'autre 
+				cette table sera necessairement alimentee, et contiendra la cle primaire de l'element en question. Toutefois le type reel 
+				de l'element (exigence ou repertoire) n'est pas renseigne, il est necessaire de rechercher si la cle est referencee dans 
+				la table REQUIREMENT_FOLDER ou REQUIREMENT pour determiner si cet element releve de l'un ou l'autre.</comment>
+    <createTable tableName="REQUIREMENT_LIBRARY_NODE">
+
+      <column name="RLN_ID" type="BIGINT" autoIncrement="true" remarks="cle primaire autogeneree">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+      <column name="DELETED_ON" type="DATETIME" defaultValue="NULL"
+        remarks="drapeau indiquant si l'element est actif (NULL) ou logiquement supprime (not NULL)." />
+
+      <column name="DESCRIPTION" type="CLOB" defaultValue="NULL"
+        remarks="Une description associee a cet element. Devrait etre un champ texte long ou un clob." />
+
+      <column name="NAME" type="java.sql.Types.VARCHAR(255)" remarks="Le nom/label de l'element en question.">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="CREATED_BY" type="java.sql.Types.VARCHAR(50)" remarks="nom du createur de ce cas de test.">
+        <constraints nullable="false" />
+      </column>
+      <column name="CREATED_ON" type="DATETIME"
+        remarks="Date de creation de cette exigence. Il s'agit de la date de creation de l'entree dans la base, non d'une date metier.">
+        <constraints nullable="false" />
+      </column>
+      <column name="LAST_MODIFIED_BY" type="java.sql.Types.VARCHAR(50)" defaultValue="NULL"
+        remarks="Nom du dernier utilisateur ayant mis a jour cet instance." />
+
+      <column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL"
+        remarks="Date de derniere mise a jour de cette instance." />
+
+      <column name="PROJECT_ID" type="BIGINT" remarks="FK to the Project to which belongs this resource">
+        <constraints nullable="true" references="PROJECT(PROJECT_ID)" foreignKeyName="fk_rln_project" />
+      </column>
+    </createTable>
+
+
+
+  </changeSet>
+
+
+  <changeSet author="bsiri" id="tm-0.14.0.15">
+
+    <comment>Cette table represente un element (generique) faisant partie 
+				d'une bibliotheque de campagne. Cet element generique peut representer soit 
+				un repertoire, soit une campagne. Pour cette raison, que l'utilisateur cree 
+				l'un ou l'autre cette table sera necessairement alimentee, et contiendra 
+				la cle primaire de l'element en question. Toutefois le type reel de l'element 
+				(campagne ou repertoire) n'est pas renseigne, il est necessaire de rechercher 
+				si la cle est referencee dans la table CAMPAIGN_FOLDER ou CAMPAIGN pour determiner 
+				si cet element releve de l'un ou l'autre.</comment>
+    <createTable tableName="CAMPAIGN_LIBRARY_NODE">
+
+
+
+      <column name="CLN_ID" type="BIGINT" autoIncrement="true" remarks="cle primaire autogeneree">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+
+      <column name="DELETED_ON" type="DATETIME" defaultValue="NULL"
+        remarks="drapeau indiquant si l'element est actif (NULL) ou logiquement supprime (not NULL)." />
+
+      <column name="DESCRIPTION" type="CLOB" defaultValue="NULL"
+        remarks="Une description associee a cet element. Devrait etre un champ texte long ou un clob." />
+
+      <column name="NAME" type="java.sql.Types.VARCHAR(255)" remarks="Le nom/label de l'element en question.">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="CREATED_BY" type="java.sql.Types.VARCHAR(50)" remarks="nom du createur de cette campagne.">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="CREATED_ON" type="DATETIME"
+        remarks="Date de creation de cette campagne. Il s'agit de la date de creation de l'entree dans 
+ 		la base, non d'une date metier.">
+        <constraints nullable="false" />
+      </column>
+      <column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL"
+        remarks="Date de derniere mise a jour de cette instance." />
+
+      <column name="LAST_MODIFIED_BY" type="java.sql.Types.VARCHAR(50)" defaultValue="NULL"
+        remarks="Nom du dernier utilisateur ayant mis a jour cet instance." />
+
+      <column name="PROJECT_ID" type="BIGINT" remarks="FK to the Project to which belongs this resource"
+        defaultValue="NULL">
+        <constraints references="PROJECT(PROJECT_ID)" foreignKeyName="fk_cln_project" />
+      </column>
+    </createTable>
+  </changeSet>
+
+
+
+
+  <changeSet id="tm-0.14.0.16" author="bsiri">
+
+    <comment>Cette table gere les cas de test proprement dits. Une entree dans cette table indique que l'element reference dans la table TEST_CASE_LIBRARY_NODE par la cle primaire (egalement cle etrangere) est de type cas de test.</comment>
+    <createTable tableName="TEST_CASE">
+
+      <column name="TCLN_ID" type="BIGINT"
+        remarks="cle primaire, qui est aussi une cle etrangere vers la table TEST_CASE_LIBRARY_NODE. Ne doit donc pas etre autogeneree.">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="PK_TEST_CASSE" foreignKeyName="fk_test_case_test_case_node"
+          references="TEST_CASE_LIBRARY_NODE(TCLN_ID)" />
+      </column>
+
+
+      <column name="VERSION" type="int" remarks="Le numero de version de ce cas de test">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="EXECUTION_MODE" type="java.sql.Types.VARCHAR(255)" defaultValue="NULL"
+        remarks="Mode d'execution du test case. Bien que ce champs soit caractere variable, les donnees reelles seront la representation texte d'un type enumere." />
+
+      <column name="ATTACHMENT_LIST_ID" type="BIGINT"
+        remarks="clé étrangère vers un ATTACHMENT_LIST, l'entité qui gère les pièces jointes. ">
+        <constraints nullable="false" references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" foreignKeyName="fk_test_case_attachment_list" />
+      </column>
+
+    </createTable>
+
+    <createIndex tableName="TEST_CASE" indexName="idx_test_case">
+      <column name="TCLN_ID" />
+    </createIndex>
+
+
+  </changeSet>
+
+  <changeSet id="tm-0.14.0.17" author="bsiri">
+    <comment>Cette table est rudimentaire. La cle primaire est simplement une cle etrangere vers la table TEST_CASE_LIBRARY_NODE (relation qualifiante). 
+		Une entree dans cette table indique que l'element indexe par cette cle est de type repertoire.</comment>
+    <createTable tableName="TEST_CASE_FOLDER">
+		<!-- remarks="" -->
+      <column name="TCLN_ID" type="BIGINT"
+        remarks="cle primaire, qui est une cle etrangere vers la table CAMPAIGN_LIBRARY_NODE. Ne doit donc pas etre autogeneree.">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="PK_TEST_CASE_FOLDER" foreignKeyName="fk_folder_test_case_node"
+          references="TEST_CASE_LIBRARY_NODE(TCLN_ID)" />
+      </column>
+    </createTable>
+
+    <createIndex tableName="TEST_CASE_FOLDER" indexName="idx_tc_folder">
+      <column name="TCLN_ID" />
+    </createIndex>
+
+
+
+  </changeSet>
+
+
+
+  <changeSet id="tm-0.14.0.18" author="bsiri">
+    <comment>Cette table associe les bibliotheques de cas de test a leur contenu (elements de bibliotheques de cas de test). 
+		Le contenu d'une bibliotheque de cas de test est arborescent et est represente suivant un patron composite 
+		(voire TEST_CASE_LIBRARY_NODE, TEST_CASE_FOLDER, TEST_CASE). Par defaut la presente table peut contenir uniquement 
+		les references vers les elements fils directs; on peut aussi mettre en relation une bibliotheque de cas de test avec 
+		n'importe quel element de son contenu (quelque soit sa profondeur hierarchique) pour des raisons d'optimisation.</comment>
+    <createTable tableName="TEST_CASE_LIBRARY_CONTENT">
+
+      <column name="LIBRARY_ID" type="BIGINT" remarks="cle etrangere vers une bibliotheque de cas de test.">
+        <constraints nullable="false" foreignKeyName="fk_test_case_lib_content_lib" references="TEST_CASE_LIBRARY(TCL_ID)" />
+      </column>
+
+      <column name="CONTENT_ID" type="BIGINT" remarks="cle etrangere vers un noeud de la bibliotheque de cas de test.">
+        <constraints nullable="false" unique="true" foreignKeyName="fk_test_case_lib_content_content"
+          references="TEST_CASE_LIBRARY_NODE(TCLN_ID)" />
+      </column>
+
+    </createTable>
+
+    <createIndex tableName="TEST_CASE_LIBRARY_CONTENT" indexName="idx_test_case_lib_content_content">
+      <column name="CONTENT_ID" />
+    </createIndex>
+
+    <createIndex tableName="TEST_CASE_LIBRARY_CONTENT" indexName="idx_test_case_lib_content_lib">
+      <column name="LIBRARY_ID" />
+    </createIndex>
+
+
+
+  </changeSet>
+
+
+  <changeSet id="tm-0.14.0.19" author="bsiri">
+    <comment>Cette table gere la hierarchie entre elements d'une bibliotheque de cas de test, associant un element fils a 
+		un repertoire parent (si non NULL) ou eventuellement aucun (NULL, dans le cas ou l'element est a la racine de la bibliotheque 
+		de cas de test).</comment>
+    <createTable tableName="TCLN_RELATIONSHIP">
+      <column name="ANCESTOR_ID" type="BIGINT"
+        remarks="cle etrangere vers le repertoire parent (il s'agit necessairement d'un repertoire).">
+        <constraints nullable="false" foreignKeyName="fk_tcln_relationship_ancestor" references="TEST_CASE_FOLDER(TCLN_ID)" />
+      </column>
+
+      <column name="DESCENDANT_ID" type="BIGINT" remarks="cle etrangere vers l'element fils. ">
+        <constraints nullable="false" unique="true" foreignKeyName="fk_tcln_relationship_descendant"
+          references="TEST_CASE_LIBRARY_NODE(TCLN_ID)" />
+      </column>
+
+    </createTable>
+
+
+
+    <createIndex tableName="TCLN_RELATIONSHIP" indexName="idx_tcln_relationship_descendant">
+      <column name="DESCENDANT_ID" />
+    </createIndex>
+
+    <createIndex tableName="TCLN_RELATIONSHIP" indexName="idx_tcln_relationship_ancestor">
+      <column name="ANCESTOR_ID" />
+    </createIndex>
+
+
+  </changeSet>
+
+
+
+  <changeSet id="tm-0.14.0.20" author="bsiri">
+
+    <comment>Cette table gere les campagnes proprement dites. Une entree 
+				dans cette table indique que l'element reference dans la table CAMPAIGN_LIBRARY_NODE 
+				par la cle primaire (egalement cle etrangere) est de type campagne.</comment>
+    <createTable tableName="CAMPAIGN">
+			<!-- remarks="" -->
+      <column name="CLN_ID" type="BIGINT">
+        <constraints primaryKey="true" nullable="false" references="CAMPAIGN_LIBRARY_NODE(CLN_ID)"
+          foreignKeyName="FK_CAMPAIGN_CL_NODE" primaryKeyName="PK_CAMPAIGN" />
+      </column>
+      <column name="ACTUAL_END_AUTO" type="BOOLEAN"
+        remarks="Drapeau indiquant si l'utilisateur a choisit une determination automatique de la date de depart effective ou non.">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="ACTUAL_END_DATE" type="DATETIME" defaultValue="NULL"
+        remarks="Date de fin effective (reelle) de la campagne." />
+
+      <column name="ACTUAL_START_AUTO" type="BOOLEAN"
+        remarks="Drapeau indiquant si l'utilisateur a choisit une determination automatique de la date de fin effective ou non.">
+        <constraints nullable="false" />
+      </column>
+      <column name="ACTUAL_START_DATE" type="DATETIME" defaultValue="NULL"
+        remarks="Date de depar effective (reelle) de la campagne." />
+
+      <column name="SCHEDULED_END_DATE" type="DATETIME" defaultValue="NULL" remarks="Date planifiee de fin de la campagne." />
+
+      <column name="SCHEDULED_START_DATE" type="DATETIME" defaultValue="NULL" remarks="Date planifiee de debut de la campagne." />
+
+      <column name="ATTACHMENT_LIST_ID" type="BIGINT"
+        remarks="clé étrangère vers un ATTACHMENT_LIST, l'entité qui gère les pièces jointes. ">
+        <constraints references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" foreignKeyName="fk_campaign_attachment_list" />
+
+      </column>
+
+
+
+    </createTable>
+  </changeSet>
+
+
+  <changeSet id="tm-0.14.0.21" author="bsiri">
+    <comment>Cette table est rudimentaire. La cle primaire est simplement 
+				une cle etrangere vers la table CAMPAIGN_LIBRARY_NODE (relation qualifiante). 
+				Une entree dans cette table indique que l'element indexe par cette cle est 
+				de type repertoire.</comment>
+    <createTable tableName="CAMPAIGN_FOLDER">
+			<!-- remarks="" -->
+      <column name="CLN_ID" type="BIGINT"
+        remarks="cle primaire, qui est une cle etrangere vers la table CAMPAIGN_LIBRARY_NODE. Ne doit donc pas etre autogeneree.">
+        <constraints primaryKey="true" nullable="false" references="CAMPAIGN_LIBRARY_NODE(CLN_ID)"
+          foreignKeyName="FK_CAMPAIGN_FOLDER_CL_NODE" primaryKeyName="PK_CAMPAIGN_FOLDER" />
+      </column>
+    </createTable>
+  </changeSet>
+
+
+
+  <changeSet id="tm-0.14.0.22" author="bsiri">
+    <comment>Cette table gere les bibliotheques de campagnes. Une bibliotheque 
+				de campagnes peut contenir plusieurs repertoires et/ou campagnes, ces deux 
+				entites etant regroupees sous l'appellation generique d'element de bibliotheque 
+				de campagnes (campaign library nodes).</comment>
+    <createTable tableName="CAMPAIGN_LIBRARY_CONTENT">
+			<!-- remarks="" -->
+
+      <column name="LIBRARY_ID" type="BIGINT" remarks="cle etrangere vers une bibliotheque de campagnes.">
+        <constraints nullable="false" references="CAMPAIGN_LIBRARY(CL_ID)" foreignKeyName="fk_cl_content_lib" />
+      </column>
+
+      <column name="CONTENT_ID" type="BIGINT" remarks="cle etrangere vers un noeud de la bibliotheque de campagnes.">
+        <constraints nullable="false" unique="true" references="CAMPAIGN_LIBRARY_NODE(CLN_ID)"
+          foreignKeyName="fk_cl_content_content" />
+      </column>
+    </createTable>
+
+    <createIndex unique="true" tableName="CAMPAIGN_LIBRARY_CONTENT" indexName="dx_cl_content_cl_node">
+      <column name="CONTENT_ID" />
+    </createIndex>
+
+    <createIndex tableName="CAMPAIGN_LIBRARY_CONTENT" indexName="dx_cl_content_campaign_lib">
+      <column name="LIBRARY_ID" />
+    </createIndex>
+
+  </changeSet>
+
+
+  <changeSet id="tm-0.14.0.23" author="bsiri">
+    <comment>Cette table gere la hierarchie entre elements d'une bibliotheque 
+				de campagne, associant un element fils a un repertoire parent (si non NULL) 
+				ou eventuellement aucun (NULL, dans le cas ou l'element est a la racine de 
+				la bibliotheque de campagne).</comment>
+    <createTable tableName="CLN_RELATIONSHIP">
+			<!-- remarks="" -->
+      <column name="ANCESTOR_ID" type="BIGINT"
+        remarks="cle etrangere vers le repertoire parent (il s'agit necessairement d'un repertoire).">
+        <constraints nullable="false" references="CAMPAIGN_FOLDER(CLN_ID)" foreignKeyName="fk_cln_relationship_ancestor" />
+      </column>
+      <column name="DESCENDANT_ID" type="BIGINT" remarks="cle etrangere vers l'element fils.">
+        <constraints nullable="false" unique="true" references="CAMPAIGN_LIBRARY_NODE(CLN_ID)"
+          foreignKeyName="idx_cln_relationship_descendant" />
+      </column>
+    </createTable>
+
+    <createIndex tableName="CLN_RELATIONSHIP" indexName="dx_cln_relationship_descendant">
+      <column name="DESCENDANT_ID" />
+    </createIndex>
+
+    <createIndex tableName="CLN_RELATIONSHIP" indexName="dx_cln_relationship_ancestor">
+      <column name="ANCESTOR_ID" />
+    </createIndex>
+
+
+
+  </changeSet>
+
+  <changeSet id="tm-0.14.0.24" author="bsiri">
+    <comment></comment>
+    <createTable tableName="ITERATION">
+
+      <column name="ITERATION_ID" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+
+      <column name="DELETED_ON" type="DATETIME" defaultValue="NULL" />
+
+      <column name="DESCRIPTION" type="CLOB" defaultValue="NULL" />
+
+      <column name="NAME" type="java.sql.Types.VARCHAR(255)">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="CREATED_BY" type="java.sql.Types.VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="CREATED_ON" type="DATETIME">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="LAST_MODIFIED_BY" type="java.sql.Types.VARCHAR(50)" defaultValue="NULL" />
+
+      <column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL" />
+
+      <column name="ACTUAL_END_AUTO" type="BOOLEAN">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="ACTUAL_END_DATE" type="DATETIME" defaultValue="NULL" />
+
+      <column name="ACTUAL_START_AUTO" type="BOOLEAN">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="ACTUAL_START_DATE" type="DATETIME" defaultValue="NULL" />
+
+      <column name="SCHEDULED_END_DATE" type="DATETIME" defaultValue="NULL" />
+
+      <column name="SCHEDULED_START_DATE" type="DATETIME" defaultValue="NULL" />
+
+      <column name="ATTACHMENT_LIST_ID" type="BIGINT"
+        remarks="clé étrangère vers un ATTACHMENT_LIST, l'entité qui gère les pièces jointes. ">
+        <constraints references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" foreignKeyName="fk_iteration__attachment_list" />
+      </column>
+
+    </createTable>
+  </changeSet>
+
+
+  <changeSet id="tm-0.14.0.25" author="bsiri">
+    <comment></comment>
+    <createTable tableName="CAMPAIGN_ITERATION">
+      <column name="CAMPAIGN_ID" type="BIGINT">
+        <constraints nullable="false" foreignKeyName="fk_camp_iter_campaign" references="CAMPAIGN(CLN_ID)" />
+      </column>
+
+      <column name="ITERATION_ID" type="BIGINT">
+        <constraints nullable="false" foreignKeyName="fk_camp_iter_iteration" references="ITERATION(ITERATION_ID)" />
+      </column>
+
+      <column name="ITERATION_ORDER" type="INT">
+        <constraints nullable="false" />
+      </column>
+
+    </createTable>
+
+  </changeSet>
+
+
+
+
+
+
+  <changeSet id="tm-0.14.0.26" author="bsiri">
+
+    <comment>Cette table gere les pas de test d'un cas de test.</comment>
+    <createTable tableName="TEST_STEP">
+		<!-- remarks="" -->
+      <column name="TEST_STEP_ID" type="BIGINT" autoIncrement="true" remarks="cle primaire autogeneree.">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+
+      <column name="EXPECTED_RESULT" type="CLOB" defaultValue="NULL" remarks="le resultat attendu de l'action effectuee." />
+      <column name="ACTION" type="CLOB" remarks="action a realiser dans ce pas de test.">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="ATTACHMENT_LIST_ID" type="BIGINT"
+        remarks="clé étrangère vers un ATTACHMENT_LIST, l'entité qui gère les pièces jointes. ">
+        <constraints references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" foreignKeyName="fk_test_step__attachment_list" />
+      </column>
+
+    </createTable>
+
+
+  </changeSet>
+
+  <changeSet id="tm-0.14.0.27" author="bsiri">
+
+    <comment>Cette table associe un cas de test a ses pas de test. Meme si virtuellement la relation entre un cas de 
+		test et sa liste de pas de test est 1..*, cette table d'association existe pour ajouter un attribut d'ordre (la 
+		liste des pas de test est ordonnee). La cle primaire est ici composite, et ne doit pas etre autogeneree.</comment>
+    <createTable tableName="TEST_CASE_STEPS">
+
+      <column name="TEST_CASE_ID" type="BIGINT" remarks="cle etrangere vers TEST_CASE.">
+        <constraints nullable="false" foreignKeyName="fk_tc_steps_tc" references="TEST_CASE(TCLN_ID)" />
+      </column>
+
+      <column name="STEP_ID" type="BIGINT" remarks="cle etrangere vers la table TEST_STEP.">
+        <constraints nullable="false" foreignKeyName="fk_tc_steps_step" references="TEST_STEP(TEST_STEP_ID)" />
+      </column>
+
+      <column name="STEP_ORDER" type="int"
+        remarks="numero d'ordre d'un pas de test dans la liste des pas de test d'un cas de test.">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <createIndex tableName="TEST_CASE_STEPS" indexName="idx_tc_steps_step">
+      <column name="STEP_ID" />
+    </createIndex>
+
+    <createIndex tableName="TEST_CASE_STEPS" indexName="idx_tc_steps_tc">
+      <column name="TEST_CASE_ID" />
+    </createIndex>
+
+  </changeSet>
+
+
+  <changeSet id="tm-0.14.0.28" author="xpr">
+    <comment></comment>
+    <createTable tableName="PROJECT_FILTER">
+			<!-- library folder -->
+      <column name="PROJECT_FILTER_ID" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="PK_PROJECT_FILTER" />
+      </column>
+      <column name="ACTIVATED" type="BOOLEAN" remarks="filter activated yes or no" defaultValueBoolean="false">
+        <constraints nullable="false" />
+      </column>
+      <column name="USER_LOGIN" type="java.sql.Types.VARCHAR(255)" remarks="unique user login">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <createIndex tableName="PROJECT_FILTER" indexName="DX_UN_PROJECT_FILTER_USER">
+      <column name="USER_LOGIN" />
+    </createIndex>
+
+  </changeSet>
+
+  <changeSet id="tm-0.14.0.29" author="xpr">
+		<!-- association table -->
+    <comment></comment>
+    <createTable tableName="PROJECT_FILTER_ENTRY">
+			<!-- association between filter and project. The primary key is composite -->
+      <column name="PROJECT_ID" type="BIGINT" remarks="foreign key to project">
+        <constraints nullable="false" references="PROJECT(PROJECT_ID)" foreignKeyName="FK_PROJ_FILTER_ENTRY_PROJ" />
+      </column>
+      <column name="FILTER_ID" type="BIGINT" remarks="foreign key to filter">
+        <constraints nullable="false" references="PROJECT_FILTER(PROJECT_FILTER_ID)" foreignKeyName="FK_PROJ_FILTER_ENTRY_PROJ_FILTER" />
+      </column>
+    </createTable>
+
+
+    <addPrimaryKey tableName="PROJECT_FILTER_ENTRY" columnNames="PROJECT_ID, FILTER_ID" constraintName="PK_PROJ_FILTER_ENTRY" />
+
+    <createIndex tableName="PROJECT_FILTER_ENTRY" indexName="dx_pfp_project">
+      <column name="PROJECT_ID" />
+    </createIndex>
+
+    <createIndex tableName="PROJECT_FILTER_ENTRY" indexName="dx_pfp_filter">
+      <column name="FILTER_ID" />
+    </createIndex>
+
+  </changeSet>
+
+
+
+  <changeSet id="tm-0.14.0.30" author="bsiri">
+    <comment>Cette table gere les exigences proprement dites. Une entree dans cette table indique que l'element reference 
+				dans la table REQUIREMENT_LIBRARY_NODE par la cle primaire (egalement cle etrangere) est de type exigence.</comment>
+    <createTable tableName="REQUIREMENT">
+
+      <column name="RLN_ID" type="BIGINT"
+        remarks="cle primaire, qui est aussi une cle etrangere vers la table REQUIREMENT_LIBRARY_NODE. Ne doit donc pas etre autogeneree.">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="PK_REQUIREMENT" foreignKeyName="fk_requirement_requirement_node"
+          references="REQUIREMENT_LIBRARY_NODE(RLN_ID)" />
+
+      </column>
+
+      <column name="REFERENCE" type="java.sql.Types.VARCHAR(20)" remarks="Identifiant de l'exigence" />
+
+      <column name="CRITICALITY" type="java.sql.Types.VARCHAR(255)"
+        remarks="Requirement criticality. Althought this field is a variable character, the data will be the text representation of an enumeration"
+        defaultValue="UNDEFINED">
+        <constraints nullable="false" />
+      </column>
+
+
+      <column name="ATTACHMENT_LIST_ID" type="BIGINT"
+        remarks="clé étrangère vers un ATTACHMENT_LIST, l'entité qui gère les pièces jointes. ">
+        <constraints nullable="false" references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" foreignKeyName="fk_requirement_attachment_list" />
+      </column>
+
+
+    </createTable>
+
+    <createIndex tableName="REQUIREMENT" indexName="idx_requirement">
+      <column name="RLN_ID" />
+    </createIndex>
+
+
+
+  </changeSet>
+
+  <changeSet id="tm-0.14.0.31" author="bsiri">
+    <comment>Cette table est rudimentaire. La cle primaire est simplement une cle etrangere vers la table REQUIREMENT_LIBRARY_NODE 
+				(relation qualifiante). Une entree dans cette table indique que l'element indexe par cette cle est de type repertoire.</comment>
+    <createTable tableName="REQUIREMENT_FOLDER">
+
+      <column name="RLN_ID" type="BIGINT"
+        remarks="cle primaire, qui est une cle etrangere vers la table REQUIREMENT_LIBRARY_NODE. Ne doit donc pas etre autogeneree.">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="PK_REQUIREMENT_FOLDER"
+          foreignKeyName="fk_folder_requirement_node" references="REQUIREMENT_LIBRARY_NODE(RLN_ID)" />
+      </column>
+
+    </createTable>
+
+    <createIndex tableName="REQUIREMENT_FOLDER" indexName="idx_req_folder">
+      <column name="RLN_ID" />
+    </createIndex>
+
+
+  </changeSet>
+
+
+
+  <changeSet id="tm-0.14.0.32" author="bsiri">
+    <comment>Cette table associe les bibliotheques d'exigences a leur contenu (elements de bibliotheques d'exigence). 
+		Le contenu d'une bibliotheque d'exigence est arborescent et est represente suivant un patron composite (voire REQUIREMENT_LIBRARY_NODE, 
+		REQUIREMENT_FOLDER, REQUIREMENT). Par defaut la presente table peut contenir uniquement les references vers les elements 
+		fils directs; on peut aussi mettre en relation une bibliotheque d'exigence avec n'importe quel element de son contenu (quelque 
+		soit sa profondeur hierarchique) pour des raisons d'optimisation.</comment>
+
+    <createTable tableName="REQUIREMENT_LIBRARY_CONTENT">
+			<!-- remarks="" -->
+      <column name="LIBRARY_ID" type="BIGINT" remarks="cle etrangere vers une bibliotheque d'exigence.">
+        <constraints nullable="false" foreignKeyName="fk_requirement_lib_content_lib" references="REQUIREMENT_LIBRARY(RL_ID)" />
+      </column>
+
+      <column name="CONTENT_ID" type="BIGINT" remarks="cle etrangere vers un noeud de la bibliotheque d'exigences.">
+        <constraints nullable="false" unique="true" foreignKeyName="fk_requirement_lib_content_content"
+          references="REQUIREMENT_LIBRARY_NODE(RLN_ID)" />
+      </column>
+
+    </createTable>
+
+    <createIndex tableName="REQUIREMENT_LIBRARY_CONTENT" indexName="idx_requirement_lib_content_content">
+      <column name="CONTENT_ID" />
+    </createIndex>
+
+
+    <createIndex tableName="REQUIREMENT_LIBRARY_CONTENT" indexName="idx_requirement_lib_content_lib">
+      <column name="LIBRARY_ID" />
+    </createIndex>
+
+  </changeSet>
+
+  <changeSet id="tm-0.14.0.33" author="bsiri">
+    <comment>Cette table gere la hierarchie entre elements d'une bibliotheque d'exigences, associant un element fils 
+				a un repertoire parent.</comment>
+    <createTable tableName="RLN_RELATIONSHIP">
+
+      <column name="ANCESTOR_ID" type="BIGINT"
+        remarks="cle etrangere vers le repertoire parent (il s'agit necessairement d'un repertoire).">
+        <constraints nullable="false" foreignKeyName="fk_rln_relationship_ancestor" references="REQUIREMENT_FOLDER(RLN_ID)" />
+      </column>
+      <column name="DESCENDANT_ID" type="BIGINT" remarks="cle etrangere vers l'element fils.">
+        <constraints nullable="false" unique="true" foreignKeyName="fk_rln_relationship_descendant"
+          references="REQUIREMENT_LIBRARY_NODE(RLN_ID)" />
+
+      </column>
+    </createTable>
+
+    <createIndex tableName="RLN_RELATIONSHIP" indexName="idx_rln_relationship_descendant">
+      <column name="DESCENDANT_ID" />
+    </createIndex>
+
+    <createIndex tableName="RLN_RELATIONSHIP" indexName="idx_rln_relationship_ancestor">
+      <column name="ANCESTOR_ID" />
+    </createIndex>
+  </changeSet>
+
+
+
+
+
+  <changeSet id="tm-0.14.0.34" author="bsiri">
+    <comment>Cette table associe un cas de test avec une liste d'execution. Elle conserve également
+		en mémoire le status d'execution, qui devra sera mis à jour au fur et à mesure qu'une execution 
+		est ajoutée ou exécutée.</comment>
+    <createTable tableName="ITEM_TEST_PLAN">
+      <column name="ITEM_TEST_PLAN_ID" type="BIGINT" autoIncrement="true"
+        remarks="clé primaire du test plan. Devrait être autogénérée.">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="PK_ITEM_TEST_PLAN" />
+      </column>
+
+      <column name="EXECUTION_STATUS" type="java.sql.Types.VARCHAR(255)" defaultValue="NULL"
+        remarks="Status d'execution de ce plan de test. Bien que ce champs soit caractère variable, les données réelles 
+			seront la représentation texte d'un type énuméré. Sera recalculé en fonction du status de 
+			sa derniere execution" />
+
+      <column name="LAST_EXECUTED_BY" type="java.sql.Types.VARCHAR(255)" defaultValue="NULL"
+        remarks="Nom du dernier utilisateur ayant execute cet instance." />
+
+      <column name="LAST_EXECUTED_ON" type="DATETIME" defaultValue="NULL"
+        remarks="Date de derniere execution de cette instance." />
+
+
+      <column name="TCLN_ID" type="BIGINT" remarks="Clé étrangère vers le cas de test référencé">
+        <constraints references="TEST_CASE(TCLN_ID)" foreignKeyName="fk_itertestplan_test_case" />
+      </column>
+
+
+      <column name="LABEL" type="java.sql.Types.VARCHAR(255)" remarks="Le label (duplicata du nom du cas de test) du test plan">
+
+      </column>
+			
+			
+			
+			 <!--  Auditable support -->
+      <column name="CREATED_BY" type="java.sql.Types.VARCHAR(50)" remarks="nom du créateur du testplan">
+        <constraints nullable="false" />
+      </column>
+      <column name="CREATED_ON" type="DATETIME"
+        remarks="Date de création du test plan. Il s'agit de la date de création de l'entrée dans la base, non d'une date métier.">
+        <constraints nullable="false" />
+      </column>
+      <column name="LAST_MODIFIED_BY" type="java.sql.Types.VARCHAR(50)" defaultValue="NULL"
+        remarks="Nom du dernier utilisateur ayant mis à jour cet instance." />
+
+      <column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL"
+        remarks="Date de dernière mise à jour de cette instance." />
+
+
+    </createTable>
+
+    <createIndex tableName="ITEM_TEST_PLAN" indexName="idx_itertestplan">
+      <column name="ITEM_TEST_PLAN_ID" />
+    </createIndex>
+
+
+  </changeSet>
+
+
+  <changeSet id="tm-0.14.0.35" author="bsiri">
+    <comment>Cette table associe une iteration a ses test plans. Même si virtuellement la relation entre une iteration
+		 et sa liste de test plans est 1..*, cette table d'association existe pour ajouter un attribut d'ordre (la 
+		liste des test plans est ordonnée). La clé primaire est ici composite, et ne doit pas être autogénérée.</comment>
+    <createTable tableName="ITEM_TEST_PLAN_LIST">
+
+      <column name="ITERATION_ID" type="BIGINT" remarks="clé étrangère vers ITERATION.">
+        <constraints nullable="false" foreignKeyName="fk_item_test_plan_iteration" references="ITERATION(ITERATION_ID)" />
+
+      </column>
+
+      <column name="ITEM_TEST_PLAN_ID" type="BIGINT" remarks="clé étrangère vers la table ITEM_TEST_PLAN">
+
+        <constraints nullable="false" foreignKeyName="fk_ITEM_TESTplan_testplan" references="ITEM_TEST_PLAN(ITEM_TEST_PLAN_ID)" />
+      </column>
+
+      <column name="ITEM_TEST_PLAN_ORDER" type="int"
+        remarks="numéro d'ordre d'une execution dans la liste des test plans d'une itération.">
+        <constraints nullable="false" />
+      </column>
+
+    </createTable>
+
+    <createIndex tableName="ITEM_TEST_PLAN_LIST" indexName="idx_ITEM_TESTplan_iteration">
+      <column name="ITERATION_ID" />
+    </createIndex>
+
+
+    <createIndex tableName="ITEM_TEST_PLAN_LIST" indexName="idx_ITEM_TESTplan_testplan">
+      <column name="ITEM_TEST_PLAN_ID" />
+    </createIndex>
+
+  </changeSet>
+
+
+
+  <changeSet id="tm-0.14.0.36" author="bsiri">
+    <comment>Table des executions. Une execution correspond à un cas de test, et ses pas d'execution (voir EXECUTION_STEP) correspondent
+		à des pas de test. Pour assurer un contrôle sur les modifications de l'entité source une référence est gardée vers le 
+		cas de test source (de même que EXECUTION_STEP garde une référence vers le TEST_STEP correspondant, même si les données sont 
+		dans les faits dupliqués).</comment>
+    <createTable tableName="EXECUTION">
+
+      <column name="EXECUTION_ID" type="BIGINT" autoIncrement="true"
+        remarks="clé primaire de l'execution. Devrait être autogénérée.">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="PK_EXECUTION" />
+
+      </column>
+
+      <column name="TCLN_ID" type="BIGINT"
+        remarks="Clé étrangère vers le cas de test référencé. Cette information est redondante puisque 
+				il s'agit toujours du même que celui du test plan, cependant cette information ne devant
+				jamais évoluer il n'y a pas de risque à dénormaliser">
+        <constraints references="TEST_CASE(TCLN_ID)" foreignKeyName="fk_execution_test_case" />
+      </column>
+
+      <column name="CREATED_BY" type="java.sql.Types.VARCHAR(50)" remarks="nom du créateur de l'execution.">
+        <constraints nullable="false" />
+      </column>
+      <column name="CREATED_ON" type="DATETIME"
+        remarks="Date de création de cette execution. Il s'agit de la date de création de l'entrée dans la base, non d'une date métier.">
+        <constraints nullable="false" />
+      </column>
+      <column name="LAST_MODIFIED_BY" type="java.sql.Types.VARCHAR(50)" defaultValue="NULL"
+        remarks="Nom du dernier utilisateur ayant mis à jour cet instance." />
+
+      <column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL"
+        remarks="Date de dernière mise à jour de cette instance." />	
+
+			<!--  nameSupport -->
+      <column name="DESCRIPTION" type="CLOB" defaultValue="NULL"
+        remarks="Une description associée à cet élément. Devrait être un champ texte long ou un clob." />
+
+      <column name="NAME" type="java.sql.Types.VARCHAR(255)" remarks="Le nom/label de l'élément en question.">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="EXECUTION_MODE" type="java.sql.Types.VARCHAR(255)" defaultValue="NULL"
+        remarks="Mode d'execution de cette execution. Bien que ce champs soit caractère variable, les données réelles 
+			seront la représentation texte d'un type énuméré. C'est une copie du mode d'execution du cas de test référencé." />
+
+      <column name="EXECUTION_STATUS" type="java.sql.Types.VARCHAR(255)" defaultValue="NULL"
+        remarks="Status d'execution de ce plan de test. Bien que ce champs soit caractère variable, les données réelles 
+			seront la représentation texte d'un type énuméré. Sera recalculé en fonction du status de 
+			sa derniere execution" />
+
+      <column name="LAST_EXECUTED_BY" type="java.sql.Types.VARCHAR(255)" defaultValue="NULL"
+        remarks="Nom du dernier utilisateur ayant execute cet instance." />
+
+      <column name="LAST_EXECUTED_ON" type="DATETIME" defaultValue="NULL"
+        remarks="Date de derniere execution de cette instance." />
+
+
+      <column name="ATTACHMENT_LIST_ID" type="BIGINT"
+        remarks="clé étrangère vers un ATTACHMENT_LIST, l'entité qui gère les pièces jointes. ">
+        <constraints references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" foreignKeyName="fk_execution_attachment_list" />
+      </column>
+
+      <column name="ISSUE_LIST_ID" type="BIGINT"
+        remarks="clé étrangère vers un ISSUE_LIST, l'entité qui gère les listes d'issues. ">
+
+        <constraints nullable="false" references="ISSUE_LIST(ISSUE_LIST_ID)" foreignKeyName="fk_execution_issue_list" />
+      </column>
+
+    </createTable>
+
+
+    <createIndex tableName="EXECUTION" indexName="idx_execution">
+      <column name="EXECUTION_ID" />
+    </createIndex>
+
+  </changeSet>
+
+
+  <changeSet id="tm-0.14.0.37" author="bsiri">
+    <comment>Associe les executions aux test plans</comment>
+    <createTable tableName="ITEM_TEST_PLAN_EXECUTION">
+
+      <column name="ITEM_TEST_PLAN_ID" type="BIGINT" remarks="clé étrangère vers ITEM_TEST_PLAN.">
+        <constraints nullable="false" references="ITEM_TEST_PLAN(ITEM_TEST_PLAN_ID)" foreignKeyName="fk_testplan_exec_testplan" />
+      </column>
+
+      <column name="EXECUTION_ID" type="BIGINT" remarks="clé étrangère vers la table EXECUTION">
+
+        <constraints nullable="false" references="EXECUTION(EXECUTION_ID)" foreignKeyName="fk_testplan_exec_exec" />
+      </column>
+
+      <column name="EXECUTION_ORDER" type="int"
+        remarks="numéro d'ordre d'une execution dans la liste des test plans d'une itération.">
+        <constraints nullable="false" />
+      </column>
+
+
+    </createTable>
+
+
+    <createIndex tableName="ITEM_TEST_PLAN_EXECUTION" indexName="idx_testplan_exec_testplan">
+      <column name="ITEM_TEST_PLAN_ID" />
+    </createIndex>
+
+
+    <createIndex tableName="ITEM_TEST_PLAN_EXECUTION" indexName="idx_testplan_exec_exec">
+      <column name="EXECUTION_ID" />
+    </createIndex>
+
+
+  </changeSet>
+
+
+  <changeSet id="tm-0.14.0.38" author="bsiri">
+    <comment>Cette table gère les pas d'execution d'une execution. Voir la table EXECUTION pour plus de détails.</comment>
+    <createTable tableName="EXECUTION_STEP">
+      <column name="EXECUTION_STEP_ID" type="BIGINT" autoIncrement="true" remarks="clé primaire autogénérée.">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+
+      <column name="EXPECTED_RESULT" type="CLOB" defaultValue="NULL" remarks="le résultat attendu de l'action effectuée." />
+
+      <column name="ACTION" type="CLOB" remarks="action à réaliser dans ce pas d'execution.">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="EXECUTION_STATUS" type="java.sql.Types.VARCHAR(255)" defaultValue="NULL"
+        remarks="Status de l'execution de ce pas d'execution. Bien que ce champs soit caractère variable, les données réelles 
+			seront la représentation texte d'un type énuméré." />
+
+      <column name="LAST_EXECUTED_BY" type="java.sql.Types.VARCHAR(255)" defaultValue="NULL"
+        remarks="Nom du dernier utilisateur ayant execute cet instance." />
+
+      <column name="LAST_EXECUTED_ON" type="DATETIME" defaultValue="NULL"
+        remarks="Date de derniere execution de cette instance." />
+
+      <column name="COMMENT" type="CLOB" remarks="commentaire libre du recetteur.">
+      </column>
+
+      <column name="TEST_STEP_ID" type="BIGINT" remarks="Clé étrangère vers le pas de test référencé">
+        <constraints references="TEST_STEP(TEST_STEP_ID)" foreignKeyName="fk_executionstep_teststep" />
+      </column>		
+			
+			<!--  Auditable support -->
+      <column name="CREATED_BY" type="java.sql.Types.VARCHAR(50)" remarks="nom du créateur du pas d'execution.">
+        <constraints nullable="false" />
+      </column>
+      <column name="CREATED_ON" type="DATETIME"
+        remarks="Date de création de ce pas d'execution. Il s'agit de la date de création de l'entrée dans la base, non d'une date métier.">
+        <constraints nullable="false" />
+      </column>
+      <column name="LAST_MODIFIED_BY" type="java.sql.Types.VARCHAR(50)" defaultValue="NULL"
+        remarks="Nom du dernier utilisateur ayant mis à jour cet instance." />
+
+      <column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL"
+        remarks="Date de dernière mise à jour de cette instance." />
+
+      <column name="ATTACHMENT_LIST_ID" type="BIGINT"
+        remarks="clé étrangère vers un ATTACHMENT_LIST, l'entité qui gère les pièces jointes. ">
+        <constraints references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" foreignKeyName="fk_execution_step__attachment_list" />
+      </column>
+
+      <column name="ISSUE_LIST_ID" type="BIGINT"
+        remarks="clé étrangère vers un ISSUE_LIST, l'entité qui gère les listes d'issues. ">
+        <constraints nullable="false" references="ISSUE_LIST(ISSUE_LIST_ID)" foreignKeyName="fk_execution_step_issue_list" />
+      </column>
+
+    </createTable>
+
+    <createIndex tableName="EXECUTION_STEP" indexName="idx_executionstep">
+      <column name="EXECUTION_STEP_ID" />
+    </createIndex>
+
+
+  </changeSet>
+
+  <changeSet id="tm-0.14.0.39" author="bsiri">
+    <comment>Cette table associe une executions à ses pas d'execution. Même si virtuellement la relation entre une execution
+		 et sa liste de pas d'execution est 1..*, cette table d'association existe pour ajouter un attribut d'ordre (la 
+		liste des pas executions est ordonnée). La clé primaire est ici composite, et ne doit pas être autogénérée.</comment>
+    <createTable tableName="EXECUTION_EXECUTION_STEPS">
+		<!-- remarks="" -->
+
+      <column name="EXECUTION_ID" type="BIGINT" remarks="clé étrangère vers la table EXECUTION.">
+        <constraints nullable="false" references="EXECUTION(EXECUTION_ID)" foreignKeyName="fk_exec_exec_step_exec" />
+      </column>
+
+      <column name="EXECUTION_STEP_ID" type="BIGINT" remarks="clé étrangère vers EXECUTION_STEP">
+        <constraints nullable="false" references="EXECUTION_STEP(EXECUTION_STEP_ID)" foreignKeyName="fk_exec_exec_step_exec_step" />
+      </column>
+
+      <column name="EXECUTION_STEP_ORDER" type="int"
+        remarks="numéro d'ordre d'un pas d'execution dans la liste des pas d'executions d'une execution.">
+        <constraints nullable="false" />
+      </column>
+
+
+
+
+    </createTable>
+
+    <createIndex tableName="EXECUTION_EXECUTION_STEPS" indexName="idx_exec_exec_step_exec">
+      <column name="EXECUTION_ID" />
+    </createIndex>
+
+
+    <createIndex tableName="EXECUTION_EXECUTION_STEPS" indexName="idx_exec_exec_step_exec_step">
+      <column name="EXECUTION_STEP_ID" />
+    </createIndex>
+
+
+  </changeSet>
+
+
+  <changeSet author="bsiri" id="tm-0.14.0.40">
+
+    <comment>Cette table gere les associations entre cas de test et exigences. 
+				La cle primaire est composite et ne doit pas etre autogeneree.
+		</comment>
+
+    <createTable tableName="TEST_CASE_REQUIREMENT_LINK">
+      <column name="TEST_CASE_ID" type="BIGINT" remarks="cle etrangere vers TEST_CASE">
+        <constraints nullable="false" foreignKeyName="fk_tc_req_tc" references="TEST_CASE(TCLN_ID)" />
+      </column>
+      <column name="REQUIREMENT_ID" type="BIGINT" remarks="cle etrangere vers REQUIREMENT">
+        <constraints nullable="false" foreignKeyName="fk_tc_req_req" references="REQUIREMENT(RLN_ID)" />
+      </column>
+    </createTable>
+
+
+    <addPrimaryKey tableName="TEST_CASE_REQUIREMENT_LINK" columnNames="TEST_CASE_ID,REQUIREMENT_ID"
+      constraintName="pk_tc_req_link" />
+
+
+    <createIndex tableName="TEST_CASE_REQUIREMENT_LINK" indexName="idx_tc_req_tc">
+      <column name="TEST_CASE_ID" />
+    </createIndex>
+
+
+    <createIndex tableName="TEST_CASE_REQUIREMENT_LINK" indexName="idx_tc_req_req">
+      <column name="REQUIREMENT_ID" />
+    </createIndex>
+
+  </changeSet>
+
+  <changeSet author="adurand" id="tm-0.14.0.41">
+
+    <comment>Cette table gere les associations entre les campagnes et les cas de test (= les plans de test des campagnes).La cle primaire est composite et ne doit pas etre autogeneree.
+		</comment>
+    <createTable tableName="CAMPAIGN_TEST_PLAN">
+		<!-- remarks=" " -->
+
+      <column name="CAMPAIGN_ID" type="BIGINT" remarks="cle etrangere vers CAMPAIGN">
+        <constraints nullable="false" references="CAMPAIGN(CLN_ID)" foreignKeyName="fk_camp_tp_camp" />
+      </column>
+      <column name="TEST_CASE_ID" type="BIGINT" remarks="cle etrangere vers TEST_CASE">
+        <constraints nullable="false" references="TEST_CASE(TCLN_ID)" foreignKeyName="fk_camp_tp_tc" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="CAMPAIGN_TEST_PLAN" columnNames="CAMPAIGN_ID,TEST_CASE_ID" constraintName="pk_camp_tp" />
+
+
+    <createIndex tableName="CAMPAIGN_TEST_PLAN" indexName="idx_camp_tp_camp">
+      <column name="CAMPAIGN_ID" />
+    </createIndex>
+
+
+  </changeSet>   
+
+
+<!-- ==================================================== FINE TUNING SECTION ==================================================== -->
+
+
+<!-- 
+
+	the first of the following changeSets will fix the wrong blob datatypes generated by liquibase. By default the BLOB datatype is replaced by VARLONGBINARY.
+	This datatype "works" but objects are kept in memory, using a horrendous amount of resources when storing actual blobs.
+	
+	Liquibase <property> tag fails too , as <property name="blob.type" value="BLOB"/> will be reprocessed in turn into a 
+	VARLONGBINARY.
+	
+	Hence this bit of SQL.
+
+	the second one is used to extend the size of attachments from 65Ko to 16Mo for mysql
+
+ -->
+  <changeSet author="bsiri" id="tm-0.14.0.42">
+    <preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+      <dbms type="h2" />
+    </preConditions>
+    <sql>
+      alter table ATTACHMENT_CONTENT alter column STREAM_CONTENT BLOB;
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-0.14.0.43" author="xpr">
+    <preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+      <dbms type="mysql" />
+    </preConditions>
+    <sql>
+      alter table ATTACHMENT_CONTENT modify column STREAM_CONTENT MEDIUMBLOB;
+    </sql>
+  </changeSet>
+
+<!-- ================================================== TEST DATA INSERTION """""""""""""""""""""""""""""""""""""""""""""""""" -->
+
+
+
+  <changeSet id="tm-0.14.0.44" author="gfouquet">
+
+
+    <insert tableName="CORE_GROUP_AUTHORITY">
+      <column name="GROUP_ID" valueComputed="(select ID from CORE_GROUP where QUALIFIED_NAME='squashtest.authz.group.core.Admin')" />
+      <column name="AUTHORITY" value="ROLE_TM_USER" />
+    </insert>
+    <insert tableName="CORE_GROUP">
+      <column name="QUALIFIED_NAME" value="squashtest.tm.group.User" />
+    </insert>
+
+    <insert tableName="CORE_GROUP_AUTHORITY">
+      <column name="GROUP_ID" valueComputed="(select max(ID) from CORE_GROUP)" />
+      <column name="AUTHORITY" value="ROLE_TM_USER" />
+    </insert>
+    <insert tableName="CORE_GROUP">
+      <column name="QUALIFIED_NAME" value="squashtest.authz.group.tm.ProjectManager" />
+    </insert>
+
+    <insert tableName="CORE_GROUP_AUTHORITY">
+      <column name="GROUP_ID" valueComputed="(select max(ID) from CORE_GROUP)" />
+      <column name="AUTHORITY" value="ROLE_TM_USER" />
+      <column name="AUTHORITY" value="ROLE_TM_PROJECT_MANAGER" />
+    </insert>
+    <insert tableName="ACL_CLASS">
+      <column name="CLASSNAME" value="org.squashtest.csp.tm.domain.project.Project" />
+    </insert>
+    <insert tableName="ACL_GROUP">
+      <column name="QUALIFIED_NAME" value="squashtest.acl.group.tm.ProjectManager" />
+    </insert>
+
+    <insert tableName="ACL_GROUP_PERMISSION">
+      <column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.ProjectManager')" />
+      <column name="PERMISSION_MASK" value="15" />
+      <column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.project.Project')" />
+    </insert>
+    <insert tableName="ACL_GROUP_PERMISSION">
+      <column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.ProjectManager')" />
+      <column name="PERMISSION_MASK" value="1" />
+      <column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.project.Project')" />
+    </insert>
+    <insert tableName="ACL_GROUP_PERMISSION">
+      <column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.ProjectManager')" />
+      <column name="PERMISSION_MASK" value="2" />
+      <column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.project.Project')" />
+    </insert>
+    <insert tableName="ACL_GROUP_PERMISSION">
+      <column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.ProjectManager')" />
+      <column name="PERMISSION_MASK" value="4" />
+      <column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.project.Project')" />
+    </insert>
+    <insert tableName="ACL_GROUP_PERMISSION">
+      <column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.ProjectManager')" />
+      <column name="PERMISSION_MASK" value="8" />
+      <column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.project.Project')" />
+    </insert>
+    <insert tableName="ACL_GROUP">
+      <column name="QUALIFIED_NAME" value="squashtest.acl.group.tm.TestEditor" />
+    </insert>
+
+    <insert tableName="ACL_GROUP_PERMISSION">
+      <column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestEditor')" />
+      <column name="PERMISSION_MASK" value="15" />
+      <column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.project.Project')" />
+    </insert>
+    <insert tableName="ACL_GROUP_PERMISSION">
+      <column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestEditor')" />
+      <column name="PERMISSION_MASK" value="1" />
+      <column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.project.Project')" />
+    </insert>
+    <insert tableName="ACL_GROUP_PERMISSION">
+      <column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestEditor')" />
+      <column name="PERMISSION_MASK" value="2" />
+      <column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.project.Project')" />
+    </insert>
+    <insert tableName="ACL_GROUP_PERMISSION">
+      <column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestEditor')" />
+      <column name="PERMISSION_MASK" value="4" />
+      <column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.project.Project')" />
+    </insert>
+    <insert tableName="ACL_GROUP_PERMISSION">
+      <column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestEditor')" />
+      <column name="PERMISSION_MASK" value="8" />
+      <column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.project.Project')" />
+    </insert>
+    <insert tableName="ACL_GROUP">
+      <column name="QUALIFIED_NAME" value="squashtest.acl.group.tm.TestRunner" />
+    </insert>
+
+    <insert tableName="ACL_GROUP_PERMISSION">
+      <column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestRunner')" />
+      <column name="PERMISSION_MASK" value="1" />
+      <column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.project.Project')" />
+    </insert>
+  </changeSet>
+
+  <changeSet id="tm-0.14.0.45" author="gfouquet">
+		<!-- Adds TM Project Viewer ACL group -->
+    <insert tableName="ACL_GROUP">
+      <column name="QUALIFIED_NAME" value="squashtest.acl.group.tm.ProjectViewer" />
+    </insert>
+
+    <insert tableName="ACL_GROUP_PERMISSION">
+      <column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.ProjectViewer')" />
+      <column name="PERMISSION_MASK" value="1" />
+      <column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.project.Project')" />
+    </insert>
+  </changeSet>
+
+
+
+
+
+</databaseChangeLog>
+ 

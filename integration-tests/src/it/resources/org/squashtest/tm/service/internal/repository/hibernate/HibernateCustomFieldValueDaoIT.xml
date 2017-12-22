@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.11.0.dtd">
+
+<dataset>
+	<!--  general setup -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1"/>
+	
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-987"/><TEST_CASE_LIBRARY ATTACHMENT_LIST_ID="-987" TCL_ID="-1"/>
+	<PROJECT PROJECT_ID="-1" ATTACHMENT_LIST_ID="-1" CREATED_ON="2012-10-05" CREATED_BY="admin" NAME="project-1"/>
+	
+	<!-- test cases definition -->
+	<TEST_CASE_LIBRARY_NODE ATTACHMENT_LIST_ID="-1" TCLN_ID="-111" CREATED_ON="2012-10-05" CREATED_BY="admin" NAME="test case 1" PROJECT_ID="-1"/>
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-111" VERSION="1"/>	
+	<TEST_CASE_LIBRARY_CONTENT CONTENT_ID="-111" LIBRARY_ID="-1" CONTENT_ORDER="0"/>
+
+	<TEST_CASE_LIBRARY_NODE ATTACHMENT_LIST_ID="-1" TCLN_ID="-112" CREATED_ON="2012-10-05" CREATED_BY="admin" NAME="test case 2"  PROJECT_ID="-1"/>
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-112" VERSION="1"/>	
+	<TEST_CASE_LIBRARY_CONTENT CONTENT_ID="-112" LIBRARY_ID="-1" CONTENT_ORDER="1"/>	
+
+	<!-- custom fields definition -->
+	<CUSTOM_FIELD CODE="aa" LABEL="aa" FIELD_TYPE="CF" NAME="Accreditation" INPUT_TYPE="PLAIN_TEXT" CF_ID="-1" OPTIONAL="true" DEFAULT_VALUE="NOSEC"/>
+	<CUSTOM_FIELD CODE="dd" LABEL="dd" FIELD_TYPE="CF" NAME="public" INPUT_TYPE="CHECKBOX" CF_ID="-2" OPTIONAL="false" DEFAULT_VALUE="false"/>
+	
+	<!--  binding  -->
+	<CUSTOM_FIELD_BINDING BOUND_ENTITY="TEST_CASE" CFB_ID="-111" POSITION="1" CF_ID="-1" BOUND_PROJECT_ID="-1"/>
+	<CUSTOM_FIELD_BINDING BOUND_ENTITY="TEST_CASE" CFB_ID="-112" POSITION="2" CF_ID="-2" BOUND_PROJECT_ID="-1"/>
+	
+	<!--  values -->	
+	<CUSTOM_FIELD_VALUE BOUND_ENTITY_ID="-111" CFV_ID="-1111" BOUND_ENTITY_TYPE="TEST_CASE" CFB_ID="-111" VALUE=""/>
+	<CUSTOM_FIELD_VALUE BOUND_ENTITY_ID="-111" CFV_ID="-1112" BOUND_ENTITY_TYPE="TEST_CASE" CFB_ID="-112" VALUE="true"/>
+	
+	<CUSTOM_FIELD_VALUE BOUND_ENTITY_ID="-112" CFV_ID="-1121" BOUND_ENTITY_TYPE="TEST_CASE" CFB_ID="-111" VALUE="SEC-2"/>
+	<CUSTOM_FIELD_VALUE BOUND_ENTITY_ID="-112" CFV_ID="-1122" BOUND_ENTITY_TYPE="TEST_CASE" CFB_ID="-112" VALUE="false"/>
+	
+	
+	<!--  that test case doesn't have its custom fields yet -->
+	<TEST_CASE_LIBRARY_NODE ATTACHMENT_LIST_ID="-1" TCLN_ID="-113" CREATED_ON="2012-10-05" CREATED_BY="admin" NAME="test case 3" PROJECT_ID="-1"/>
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-113" VERSION="1" />	
+	<TEST_CASE_LIBRARY_CONTENT CONTENT_ID="-113" LIBRARY_ID="-1" CONTENT_ORDER="2"/>
+
+</dataset>

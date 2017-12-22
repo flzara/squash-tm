@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<!-- DO NOT FORGET TO UPDATE VERSION IN CORE_CONFIG ! -->
+	<changeSet id="tm-1.6.0" author="mpagnon">
+		<comment>Update TM database version number</comment>
+		<update tableName="CORE_CONFIG">
+			<column name="VALUE" value="1.6.0" />
+			<where>STR_KEY = 'squashtest.tm.database.version'</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="tm-1.6.0.issue-2334-01" author="flaurens">
+		<comment>Change type of column description in table core_team</comment>
+		
+		<!-- create temporary table -->
+		<createTable tableName="CORE_TEAM_TEMP">
+			<column name="ID" type="BIGINT" defaultValue="NULL"></column>
+			<column name="DESCRIPTION" type="CLOB" defaultValue="NULL"></column>
+		</createTable>
+
+		<sql>
+			insert into CORE_TEAM_TEMP (ID, DESCRIPTION)
+			select PARTY_ID, DESCRIPTION from CORE_TEAM
+		</sql>
+		
+		<!-- change column type -->
+		<dropColumn tableName="CORE_TEAM" columnName="DESCRIPTION"/>
+		<addColumn tableName="CORE_TEAM">
+			<column name="DESCRIPTION" type="CLOB" defaultValue="NULL"/>
+		</addColumn>
+	
+		<!-- insert data -->
+		<sql>
+			update CORE_TEAM ct
+            set DESCRIPTION = (select ctt.DESCRIPTION
+                               from CORE_TEAM_TEMP ctt
+                               where ctt.ID = ct.PARTY_ID)
+		</sql>
+		
+		
+    	<!-- drop temporary table -->
+		<dropTable tableName="CORE_TEAM_TEMP"/>
+		
+	</changeSet>
+
+
+
+	<changeSet id="tm-1.6.0.feat-1101-01" author="mpagnon">
+		<comment>Add table to handle test cases PARAMETERS</comment>
+		<createTable tableName="PARAMETER">
+			<column name="PARAM_ID" type="BIGINT" autoIncrement="true"
+				remarks="the PARAMETER primary key">
+				<constraints primaryKey="true" nullable="false"
+					primaryKeyName="pk_parameter" />
+			</column>
+			<column name="NAME" type="VARCHAR(255)" defaultValue=""
+				remarks="the parameter name, should be unique among parameters of the same test case">
+				<constraints nullable="false" />
+			</column>
+			<column name="TEST_CASE_ID" type="BIGINT"
+				remarks="the test case where the parameter is declared">
+				<constraints nullable="false" foreignKeyName="fk_parameter_test_case"
+					references="TEST_CASE(TCLN_ID)" />
+			</column>
+			<column name="DESCRIPTION" type="CLOB"
+				remarks="the description of the parameter">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addUniqueConstraint tableName="PARAMETER"
+			columnNames="NAME,TEST_CASE_ID" />
+	</changeSet>
+
+	<changeSet id="tm-1.6.0.feat-1101-02" author="mpagnon">
+		<comment>Add tables to handle test cases DATASETS</comment>
+		<createTable tableName="DATASET">
+			<column name="DATASET_ID" type="BIGINT" autoIncrement="true"
+				remarks="the DATASET primary key">
+				<constraints primaryKey="true" nullable="false"
+					primaryKeyName="pk_dataset" />
+			</column>
+			<column name="NAME" type="VARCHAR(255)" defaultValue=""
+				remarks="the dataset name, should be unique among parameters of the same test case">
+				<constraints nullable="false" />
+			</column>
+			<column name="TEST_CASE_ID" type="BIGINT"
+				remarks="the test case where the parameter is declared">
+				<constraints nullable="false" foreignKeyName="fk_dataset_test_case"
+					references="TEST_CASE(TCLN_ID)" />
+			</column>
+		</createTable>
+		<addUniqueConstraint tableName="DATASET"
+			columnNames="NAME,TEST_CASE_ID" />
+		<createTable tableName="DATASET_PARAM_VALUE">
+			<column name="DATASET_PARAM_VALUE_ID" type="BIGINT"
+				autoIncrement="true" remarks="the DATASET_PARAM_VALUE primary key">
+				<constraints primaryKey="true" nullable="false"
+					primaryKeyName="pk_dataset_param_value" />
+			</column>
+			<column name="DATASET_ID" type="BIGINT"
+				remarks="the dataset holding the value for the parameter">
+				<constraints nullable="false" foreignKeyName="fk_dataset_param_value_dataset"
+					references="DATASET(DATASET_ID)" />
+			</column>
+			<column name="PARAM_ID" type="BIGINT"
+				remarks="the parameter to set the value of">
+				<constraints nullable="false" foreignKeyName="fk_dataset_param_value_param"
+					references="PARAMETER(PARAM_ID)" />
+			</column>
+			<column name="PARAM_VALUE" type="VARCHAR(255)" defaultValue=""
+				remarks="the value for the parameter in the dataset">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addUniqueConstraint tableName="DATASET_PARAM_VALUE"
+			columnNames="DATASET_ID,PARAM_ID" />
+	</changeSet>
+	<changeSet id="tm-1.6.0.feat-1128-01" author="mpagnon">
+		<comment>Add column to bind a test plan item to a DATASET</comment>
+		<addColumn tableName="ITERATION_TEST_PLAN_ITEM">
+			<column name="DATASET_ID" type="BIGINT"
+				remarks="the dataset the test plan item should use to replace the parameters in new execution steps">
+				<constraints nullable="true"
+					foreignKeyName="fk_iteration_test_plan_item_dataset" references="DATASET(DATASET_ID)" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="tm-1.6.0.issue-2203-01" author="flaurens">
+		<comment>remove inactive users from all teams</comment>
+		<sql>
+			delete from CORE_TEAM_MEMBER
+			where USER_ID in (select cu.PARTY_ID 
+			                  from CORE_USER cu
+			                  where cu.ACTIVE = false)
+		</sql>
+	</changeSet>
+	<changeSet id="tm-1.6.0.issue-2203-02" author="flaurens">
+		<comment>remove core rights of inactive users</comment>
+		<sql>
+			delete from CORE_GROUP_MEMBER
+			where PARTY_ID in (select cu.PARTY_ID 
+			                   from CORE_USER cu
+			                   where cu.ACTIVE = false)
+		</sql>
+	</changeSet>
+	<changeSet id="tm-1.6.0.issue-2203-03" author="flaurens">
+		<comment>remove acl rights of inactive users</comment>
+		<sql>
+			delete from ACL_RESPONSIBILITY_SCOPE_ENTRY
+			where PARTY_ID in (select cu.PARTY_ID 
+			                   from CORE_USER cu
+			                   where cu.ACTIVE = false)
+		</sql>
+	</changeSet>
+	
+	<changeSet id="tm-1.6.0.issue-2454-01" author="bsiri">
+		<preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+			<dbms type="mysql"/>	
+		</preConditions>
+		<comment>cleaning test suite test plan ordering : some collections have non-contiguous elements. This 
+		is due to issue #2454, because of shortcomings in the code in charge of deleting test cases and dependent 
+		entities.
+			It looks pretty much like tm-1.5.0.issue-2261-01 (in the 1.5.1 changelog), except we're not dealing with order = null.
+			
+			Note : this script might already have been executed if at some point Squash 1.5.2 was used.
+		</comment>
+		<sql>
+			<![CDATA[
+			-- ------------------------------------------------------------------------------
+			-- create the temporary tables
+			-- ------------------------------------------------------------------------------
+			
+			create table TEMP_DISCONTINUOUS_SUITE_ITEM(ITEM_ID BIGINT NOT NULL, SUITE_ID BIGINT NOT NULL);						
+			create table TEMP_CONTINUOUS_SUITE_ITEM(ITEM_ID BIGINT NOT NULL, SUITE_ID BIGINT NOT NULL, TP_ORDER INT NOT NULL, DUMMY BIGINT NOT NULL);
+			
+			-- ------------------------------------------------------------------------------
+			-- gather the data that need migration
+			-- ------------------------------------------------------------------------------
+						
+			insert into TEMP_DISCONTINUOUS_SUITE_ITEM (SUITE_ID, ITEM_ID) 
+			select tstpitem.suite_id, tstpitem.tpi_id 
+			from TEST_SUITE_TEST_PLAN_ITEM tstpitem
+			order by tstpitem.suite_id,  tstpitem.test_plan_order;
+			
+			-- ------------------------------------------------------------------------------
+			-- Code for mysql database to find continuous orders for test suite test plan.
+			-- Then we compute continuous orders for test-suite test plan items
+			-- ------------------------------------------------------------------------------
+			
+			insert into TEMP_CONTINUOUS_SUITE_ITEM ( TP_ORDER, SUITE_ID, ITEM_ID, DUMMY)
+			select if(@prevsuite=SUITE_ID, 
+					  @rownum:=@rownum+1, 
+				      @rownum:=0)
+			TP_ORDER, SUITE_ID, ITEM_ID, (@prevsuite:=SUITE_ID)
+			from
+			TEMP_DISCONTINUOUS_SUITE_ITEM tdsi, (SELECT @rownum:=0) r, (SELECT @prevsuite:=0) s
+			order by SUITE_ID, TP_ORDER;			
+		
+			-- ------------------------------------------------------------------------------
+			-- And finally we set the right orders in the concerned table without forgetting to delete the help tables.
+			-- ------------------------------------------------------------------------------
+			
+			update TEST_SUITE_TEST_PLAN_ITEM
+			set TEST_PLAN_ORDER = 
+				(select TEMP_CONTINUOUS_SUITE_ITEM.TP_ORDER
+				from  TEMP_CONTINUOUS_SUITE_ITEM
+				where TEMP_CONTINUOUS_SUITE_ITEM.SUITE_ID = TEST_SUITE_TEST_PLAN_ITEM.SUITE_ID
+				and TEST_SUITE_TEST_PLAN_ITEM.TPI_ID = TEMP_CONTINUOUS_SUITE_ITEM.ITEM_ID)
+			where 
+				SUITE_ID in (
+					select distinct tcsi2.SUITE_ID from TEMP_CONTINUOUS_SUITE_ITEM tcsi2
+				);
+			
+			-- ------------------------------------------------------------------------------
+			-- drop the temp tables
+			-- ------------------------------------------------------------------------------
+			
+			drop table TEMP_DISCONTINUOUS_SUITE_ITEM;
+			drop table TEMP_CONTINUOUS_SUITE_ITEM;
+
+			]]>
+		</sql>		
+	</changeSet>	
+	
+	<changeSet id="tm-1.6.0.issue-2454-02" author="bsiri">
+		<preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+			<dbms type="h2"/>	
+		</preConditions>
+		<comment> cleaning test suite test plan ordering : some collections have non-contiguous elements. This 
+		is due to issue #2454, because of shortcomings in the code in charge of deleting test cases and dependent 
+		entities.
+			It looks pretty much like tm-1.5.0.issue-2261-01 (in the 1.5.1 changelog), except we're not dealing with order = null.
+			
+			Note : this script might already have been executed if at some point Squash 1.5.2 was used.</comment>
+		
+		<sql>
+			<![CDATA[
+			-- ------------------------------------------------------------------------------
+			-- create the temporary tables
+			-- ------------------------------------------------------------------------------
+			
+			create table TEMP_DISCONTINUOUS_SUITE_ITEM(ITEM_ID BIGINT NOT NULL, SUITE_ID BIGINT NOT NULL);						
+			create table TEMP_CONTINUOUS_SUITE_ITEM(ITEM_ID BIGINT NOT NULL, SUITE_ID BIGINT NOT NULL, TP_ORDER INT NOT NULL, DUMMY BIGINT NOT NULL);
+			
+			-- ------------------------------------------------------------------------------
+			-- gather the data that need migration
+			-- ------------------------------------------------------------------------------
+						
+			insert into TEMP_DISCONTINUOUS_SUITE_ITEM (SUITE_ID, ITEM_ID) 
+			select tstpitem.suite_id, tstpitem.tpi_id 
+			from TEST_SUITE_TEST_PLAN_ITEM tstpitem
+			order by tstpitem.suite_id,  tstpitem.test_plan_order;
+				
+
+			-- ------------------------------------------------------------------------------
+			-- Code for h2 database to find continuous orders for test suite test plan.
+			-- Then we compute continuous orders for test-suite test plan items
+			-- ------------------------------------------------------------------------------
+			
+			set @rn=-1;
+			set @prevsuite=0;
+			insert into TEMP_CONTINUOUS_SUITE_ITEM ( TP_ORDER, SUITE_ID, ITEM_ID,
+			DUMMY)
+			select casewhen(@prevsuite = SUITE_ID, set(@rn, @rn+1),
+			set(@rn, 0)) TP_ORDER, SUITE_ID, ITEM_ID, set(@prevsuite, SUITE_ID)
+			from
+			TEMP_DISCONTINUOUS_SUITE_ITEM tdsi
+			order by SUITE_ID, TP_ORDER;		
+		
+			-- ------------------------------------------------------------------------------
+			-- And finally we set the right orders in the concerned table without forgetting to delete the help tables.
+			-- ------------------------------------------------------------------------------
+			
+			update TEST_SUITE_TEST_PLAN_ITEM
+			set TEST_PLAN_ORDER = 
+				(select TEMP_CONTINUOUS_SUITE_ITEM.TP_ORDER
+				from  TEMP_CONTINUOUS_SUITE_ITEM
+				where TEMP_CONTINUOUS_SUITE_ITEM.SUITE_ID = TEST_SUITE_TEST_PLAN_ITEM.SUITE_ID
+				and TEST_SUITE_TEST_PLAN_ITEM.TPI_ID = TEMP_CONTINUOUS_SUITE_ITEM.ITEM_ID)
+			where 
+				SUITE_ID in (
+					select distinct tcsi2.SUITE_ID from TEMP_CONTINUOUS_SUITE_ITEM tcsi2
+				);
+			
+			-- ------------------------------------------------------------------------------
+			-- drop the temp tables
+			-- ------------------------------------------------------------------------------
+			
+			drop table TEMP_DISCONTINUOUS_SUITE_ITEM;
+			drop table TEMP_CONTINUOUS_SUITE_ITEM;
+
+			]]>
+		</sql>
+	</changeSet>			
+	
+    <changeSet id="tm-1.6.0.issue-2454-02-postgresql" author="mpagnon" >
+   <preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+    <dbms type="postgresql" />
+    </preConditions>
+    <comment> cleaning test suite test plan ordering : some collections have non-contiguous elements. This 
+		is due to issue #2454, because of shortcomings in the code in charge of deleting test cases and dependent 
+		entities.
+			It looks pretty much like tm-1.5.0.issue-2261-01 (in the 1.5.1 changelog), except we're not dealing with order = null.
+			
+			Note : this script might already have been executed if at some point Squash 1.5.2 was used.</comment>
+    
+    <sql>
+      
+      
+      create table TEMP_DISCONTINUOUS_SUITE_ITEM(
+      ITEM_ID BIGINT NOT NULL, 
+      SUITE_ID BIGINT NOT NULL);        
+          
+      create table TEMP_CONTINUOUS_SUITE_ITEM(
+      ITEM_ID BIGINT NOT NULL,
+       SUITE_ID BIGINT NOT NULL, 
+       TP_ORDER INT NOT NULL);
+      
+      insert into TEMP_DISCONTINUOUS_SUITE_ITEM (SUITE_ID, ITEM_ID) 
+      select tstpitem.suite_id, tstpitem.tpi_id 
+      from TEST_SUITE_TEST_PLAN_ITEM tstpitem
+      ;
+        
+</sql>
+<createProcedure>
+        
+        CREATE OR REPLACE FUNCTION ordersuites() RETURNS text AS 
+        $$
+        DECLARE rn integer := 0-1;
+        rn2 integer := 0;
+        prevsuite bigint := 0;
+        r record;
+        BEGIN
+        FOR r in (select tdsi.SUITE_ID, tdsi.ITEM_ID from TEMP_DISCONTINUOUS_SUITE_ITEM tdsi order by tdsi.SUITE_ID, tdsi.ITEM_ID)
+        LOOP
+              IF prevsuite  = r.SUITE_ID 
+                THEN 
+                     rn2 := rn ;
+                     rn := rn2 + 1;
+                ELSE rn := 0 ; 
+                     prevsuite := r.SUITE_ID;
+              END IF;
+           insert into TEMP_CONTINUOUS_SUITE_ITEM (TP_ORDER, SUITE_ID, ITEM_ID)
+               select rn, r.SUITE_ID , r.ITEM_ID  ;
+              
+               
+        
+        END LOOP;
+        return 'ok';
+        END
+        $$ LANGUAGE plpgsql;
+        
+        select ordersuites();
+        drop function ordersuites();  
+    </createProcedure>
+    <sql>
+    
+      
+      update TEST_SUITE_TEST_PLAN_ITEM tstpi
+      set TEST_PLAN_ORDER = 
+        (select tcsi.TP_ORDER
+        from  TEMP_CONTINUOUS_SUITE_ITEM tcsi
+        where tcsi.SUITE_ID = tstpi.SUITE_ID
+        and tstpi.TPI_ID = tcsi.ITEM_ID)
+      ;
+      
+     
+      drop table TEMP_DISCONTINUOUS_SUITE_ITEM;
+      drop table TEMP_CONTINUOUS_SUITE_ITEM;
+
+      
+    </sql>
+  </changeSet>      
+  
+	
+	<changeSet id="tm-1.6.0.issue-2474-01" author="bsiri">
+		<comment>fixes the action test steps having no custom fields when copied from one project to another. Works for both mysql and h2.</comment>
+		<sql>
+			insert into CUSTOM_FIELD_VALUE(bound_entity_id, bound_entity_type, cfb_id, value)
+			select ats.test_step_id, 'TEST_STEP',  cfb.cfb_id, cf.default_value
+			from ACTION_TEST_STEP ats
+			inner join TEST_CASE_STEPS tcs on ats.test_step_id = tcs.step_id
+			inner join TEST_CASE_LIBRARY_NODE tcln on tcs.test_case_id = tcln.tcln_id
+			inner join CUSTOM_FIELD_BINDING cfb on tcln.project_id = cfb.bound_project_id
+			inner join CUSTOM_FIELD cf on cfb.cf_id = cf.cf_id
+			where cfb.bound_entity = 'TEST_STEP'
+			and ats.test_step_id not in (
+				select cfv2.bound_entity_id
+				from CUSTOM_FIELD_VALUE cfv2
+				inner join CUSTOM_FIELD_BINDING cfb2 on cfv2.cfb_id = cfb2.cfb_id
+				where cfb2.bound_entity = 'TEST_STEP'
+				and cfb2.bound_project_id = cfb.bound_project_id
+			);		
+		</sql>	
+	</changeSet>
+	
+	<changeSet id="tm-1.6.0.issue-2485-01" author="flaurens">
+		<comment>replaces fk-constraint which wrongly cascades the deletion of denormalized field values</comment>
+		<dropForeignKeyConstraint baseTableName="DENORMALIZED_FIELD_VALUE" constraintName="fk_dfv_cfv_binding"/> 
+	
+		<addForeignKeyConstraint constraintName="fk_dfv_cfv_binding"
+			onDelete="SET NULL" referencedTableName="CUSTOM_FIELD_VALUE"
+			referencedColumnNames="CFV_ID" baseTableName="DENORMALIZED_FIELD_VALUE"
+			baseColumnNames="CFV_ID"/>
+	</changeSet>
+	
+	<changeSet id="tm-1.6.0.issue-2536-01" author="flaurens">
+		<comment>giving testrunners reading rights on projects</comment>
+		<insert tableName="ACL_GROUP_PERMISSION">
+			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestRunner')" />
+			<column name="PERMISSION_MASK" value="1" />
+ 			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.project.Project')" />
+		</insert>
+	</changeSet>
+
+</databaseChangeLog>
+ 

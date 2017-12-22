@@ -1,0 +1,88 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<div th:fragment="chart-wizard-axis">
+
+
+
+{{#*inline "filter"}}
+
+<div style="display: table-column; width: 20%;float:left">
+{{#equal this.columnType "CUF"}}
+{{cuf-label this}}
+{{else}}
+{{i18n this.label prefix="chart.column."}}
+{{/equal}}
+</div>
+<select id="operations-operation-select-{{id}}" class="operations-operation-select" name="{{id}}" style="display: table-column; width: 120px;float:left">
+{{#each  operations}}
+
+   {{!--<![CDATA[--}}
+<option value="{{this}}"
+{{#equal this "NONE"}} selected="selected" {{/equal}}
+{{#equal this "BY_DAY"}} selected="selected" {{/equal}}
+ >
+    {{i18n this prefix="chart.operation."}}
+</option>
+ {{!--]]>--}}
+{{/each}}
+</select>
+<br class="unsnap"/>
+{{/inline}}
+
+<span style="font-weight: bold;" th:text="#{chart.wizard.creation.step.message.axis}"/>
+<br />
+<span  th:utext="#{chart.wizard.creation.step.sub-message.axis}"/>
+<br />
+<br />
+<span  th:utext="#{chart.wizard.creation.step.sub-message.axis.sum}"/>
+<br />
+<span  th:utext="#{chart.wizard.creation.step.sub-message.axis.count}"/>
+<br />
+<span  th:utext="#{chart.wizard.creation.step.sub-message.axis.aggregate}"/>
+<br />
+<br />
+{{#each attributes.computedColumnsPrototypes}}
+
+  {{#if (contains ../attributes.selectedEntity @key)}}
+  <div class="sq-tg expand">
+ <div class="tg-head">
+{{i18n @key prefix='chart.entityType.'}}
+</div>
+
+<div class="tg-body">
+
+{{#each  this}}
+{{#if (or (contains this.role "AXIS") (contains this.role "MEASURE"))}}
+{{#if (contains ../../attributes.selectedAttributes id)}}
+{{> filter  operations=(intersect (union (lookup ../../attributes.columnRoles "MEASURE") (lookup ../../attributes.columnRoles "AXIS"))(lookup ../../attributes.dataTypes dataType)) data=../../attributes}}
+{{/if}}
+{{/if}}
+{{/each}}
+
+ </div>
+  </div>
+ {{/if}}
+{{/each}}
+
+
+</div>

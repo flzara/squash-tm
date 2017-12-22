@@ -1,0 +1,631 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="execution-progression_campaign" pageWidth="736" pageHeight="555" orientation="Landscape" columnWidth="736" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" resourceBundle="/WEB-INF/messages/tm/messages" whenResourceMissingType="Key">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+			<topPen lineWidth="0.0"/>
+			<leftPen lineWidth="0.0"/>
+			<bottomPen lineWidth="0.0"/>
+			<rightPen lineWidth="0.0"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#77132E">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+			<topPen lineWidth="0.0"/>
+			<leftPen lineWidth="0.0"/>
+			<bottomPen lineWidth="0.0"/>
+			<rightPen lineWidth="0.0"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="0.5" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="0.12" lineColor="#999999"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<topPen lineWidth="1.0" lineColor="#000000"/>
+			<bottomPen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="styleIterSchedStart">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[($F{scheduledStartDate}.compareTo($P{campaign_schedstart}))==0]]></conditionExpression>
+			<style forecolor="#999999"/>
+		</conditionalStyle>
+	</style>
+	<style name="styleIterSchedEnd">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[($F{scheduledEndDate}.compareTo($P{campaign_schedend}))==0]]></conditionExpression>
+			<style forecolor="#999999"/>
+		</conditionalStyle>
+	</style>
+	<style name="styleIterActStart">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[($F{actualStartDate}.compareTo($P{campaign_actstart}))==0]]></conditionExpression>
+			<style forecolor="#999999"/>
+		</conditionalStyle>
+	</style>
+	<style name="styleIterActEnd">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[($F{actualEndDate}.compareTo($P{campaign_actend}))==0]]></conditionExpression>
+			<style forecolor="#999999"/>
+		</conditionalStyle>
+	</style>
+	<subDataset name="IterationDataSet">
+		<parameter name="campaign_name" class="java.lang.String" isForPrompting="false"/>
+		<parameter name="campaign_schedstart" class="java.util.Date" isForPrompting="false"/>
+		<parameter name="campaign_schedend" class="java.util.Date" isForPrompting="false"/>
+		<parameter name="campaign_actstart" class="java.util.Date" isForPrompting="false"/>
+		<parameter name="campaign_actend" class="java.util.Date" isForPrompting="false"/>
+		<parameter name="campaign_total" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="campaign_status" class="java.lang.Enum" isForPrompting="false"/>
+		<parameter name="campaign_iCountStatusSuccess" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="campaign_iCountStatusReady" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="campaign_iCountStatusRunning" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="campaign_iCountStatusUntestable" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="campaign_iCountStatusBloqued" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="campaign_iCountStatusSettled" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="campaign_iCountStatusFailure" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="campaign_fPercentageStatusReady" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="campaign_fPercentageStatusSuccess" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="campaign_fPercentageStatusBloqued" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="campaign_fPercentageStatusRunning" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="campaign_fPercentageStatusUntestable" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="campaign_fPercentageStatusFailure" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="campaign_fPercentageStatusSettled" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="campaign_allowsSettled" class="java.lang.Boolean" isForPrompting="false"/>
+		<parameter name="campaign_allowsUntestable" class="java.lang.Boolean" isForPrompting="false"/>		
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="actualEndDate" class="java.util.Date">
+			<fieldDescription><![CDATA[actualEndDate]]></fieldDescription>
+		</field>
+		<field name="actualStartDate" class="java.util.Date">
+			<fieldDescription><![CDATA[actualStartDate]]></fieldDescription>
+		</field>
+		<field name="fPercentageStatusReady" class="java.lang.Float">
+			<fieldDescription><![CDATA[fPercentageStatusReady]]></fieldDescription>
+		</field>
+		<field name="numberTestCase" class="java.lang.Integer">
+			<fieldDescription><![CDATA[numberTestCase]]></fieldDescription>
+		</field>
+		<field name="fPercentageStatusSuccess" class="java.lang.Float">
+			<fieldDescription><![CDATA[fPercentageStatusSuccess]]></fieldDescription>
+		</field>
+		<field name="iCountStatusFailure" class="java.lang.Integer">
+			<fieldDescription><![CDATA[iCountStatusFailure]]></fieldDescription>
+		</field>
+		<field name="iCountStatusSettled" class="java.lang.Integer">
+			<fieldDescription><![CDATA[iCountStatusSettled]]></fieldDescription>
+		</field>
+		<field name="fPercentageProgress" class="java.lang.Float">
+			<fieldDescription><![CDATA[fPercentageProgress]]></fieldDescription>
+		</field>
+		<field name="fPercentageStatusBloqued" class="java.lang.Float">
+			<fieldDescription><![CDATA[fPercentageStatusBloqued]]></fieldDescription>
+		</field>
+		<field name="fPercentageStatusRunning" class="java.lang.Float">
+			<fieldDescription><![CDATA[fPercentageStatusRunning]]></fieldDescription>
+		</field>
+		<field name="fPercentageStatusUntestable" class="java.lang.Float">
+			<fieldDescription><![CDATA[fPercentageStatusUntestable]]></fieldDescription>
+		</field>
+		<field name="fPercentageStatusFailure" class="java.lang.Float">
+			<fieldDescription><![CDATA[fPercentageStatusFailure]]></fieldDescription>
+		</field>
+		<field name="iCountStatusSuccess" class="java.lang.Integer">
+			<fieldDescription><![CDATA[iCountStatusSuccess]]></fieldDescription>
+		</field>
+		<field name="iCountStatusReady" class="java.lang.Integer">
+			<fieldDescription><![CDATA[iCountStatusReady]]></fieldDescription>
+		</field>
+		<field name="iCountStatusBloqued" class="java.lang.Integer">
+			<fieldDescription><![CDATA[iCountStatusBloqued]]></fieldDescription>
+		</field>
+		<field name="iCountStatusRunning" class="java.lang.Integer">
+			<fieldDescription><![CDATA[iCountStatusRunning]]></fieldDescription>
+		</field>
+		<field name="iCountStatusUntestable" class="java.lang.Integer">
+			<fieldDescription><![CDATA[iCountStatusUntestable]]></fieldDescription>
+		</field>
+		<field name="name" class="java.lang.String">
+			<fieldDescription><![CDATA[name]]></fieldDescription>
+		</field>
+		<field name="scheduledEndDate" class="java.util.Date">
+			<fieldDescription><![CDATA[scheduledEndDate]]></fieldDescription>
+		</field>
+		<field name="scheduledStartDate" class="java.util.Date">
+			<fieldDescription><![CDATA[scheduledStartDate]]></fieldDescription>
+		</field>
+		<field name="allowsSettled" class="java.lang.Boolean">
+			<fieldDescription><![CDATA[allowsSettled]]></fieldDescription>
+		</field>
+		<field name="allowsUntestable" class="java.lang.Boolean">
+			<fieldDescription><![CDATA[allowsUntestable]]></fieldDescription>
+		</field>		
+	</subDataset>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Documents and Settings\\bsiri\\Mes documents\\reports\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="executionProgressionIteration" class="net.sf.jasperreports.engine.JasperReport" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="name" class="java.lang.String">
+		<fieldDescription><![CDATA[name]]></fieldDescription>
+	</field>
+	<field name="iterations" class="java.util.List">
+		<fieldDescription><![CDATA[iterations]]></fieldDescription>
+	</field>
+	<field name="actualEndDate" class="java.util.Date">
+		<fieldDescription><![CDATA[actualEndDate]]></fieldDescription>
+	</field>
+	<field name="actualStartDate" class="java.util.Date">
+		<fieldDescription><![CDATA[actualStartDate]]></fieldDescription>
+	</field>
+	<field name="scheduledEndDate" class="java.util.Date">
+		<fieldDescription><![CDATA[scheduledEndDate]]></fieldDescription>
+	</field>
+	<field name="scheduledStartDate" class="java.util.Date">
+		<fieldDescription><![CDATA[scheduledStartDate]]></fieldDescription>
+	</field>
+	<field name="numberTestCase" class="java.lang.Integer">
+		<fieldDescription><![CDATA[numberTestCase]]></fieldDescription>
+	</field>
+	<field name="status" class="java.lang.Enum">
+		<fieldDescription><![CDATA[status]]></fieldDescription>
+	</field>
+	<field name="iCountStatusSuccess" class="java.lang.Integer">
+		<fieldDescription><![CDATA[iCountStatusSuccess]]></fieldDescription>
+	</field>
+	<field name="iCountStatusReady" class="java.lang.Integer">
+		<fieldDescription><![CDATA[iCountStatusReady]]></fieldDescription>
+	</field>
+	<field name="iCountStatusRunning" class="java.lang.Integer">
+		<fieldDescription><![CDATA[iCountStatusRunning]]></fieldDescription>
+	</field>
+	<field name="iCountStatusUntestable" class="java.lang.Integer">
+		<fieldDescription><![CDATA[iCountStatusUntestable]]></fieldDescription>
+	</field>
+	<field name="iCountStatusSettled" class="java.lang.Integer">
+		<fieldDescription><![CDATA[iCountStatusSettled]]></fieldDescription>
+	</field>
+	<field name="iCountStatusBloqued" class="java.lang.Integer">
+		<fieldDescription><![CDATA[iCountStatusBloqued]]></fieldDescription>
+	</field>
+	<field name="iCountStatusFailure" class="java.lang.Integer">
+		<fieldDescription><![CDATA[iCountStatusFailure]]></fieldDescription>
+	</field>
+	<field name="fPercentageStatusReady" class="java.lang.Float">
+		<fieldDescription><![CDATA[fPercentageStatusReady]]></fieldDescription>
+	</field>
+	<field name="fPercentageStatusSuccess" class="java.lang.Float">
+		<fieldDescription><![CDATA[fPercentageStatusSuccess]]></fieldDescription>
+	</field>
+	<field name="fPercentageStatusBloqued" class="java.lang.Float">
+		<fieldDescription><![CDATA[fPercentageStatusBloqued]]></fieldDescription>
+	</field>
+	<field name="fPercentageStatusRunning" class="java.lang.Float">
+		<fieldDescription><![CDATA[fPercentageStatusRunning]]></fieldDescription>
+	</field>
+	<field name="fPercentageStatusUntestable" class="java.lang.Float">
+		<fieldDescription><![CDATA[fPercentageStatusUntestable]]></fieldDescription>
+	</field>
+	<field name="fPercentageStatusSettled" class="java.lang.Float">
+		<fieldDescription><![CDATA[fPercentageStatusSettled]]></fieldDescription>
+	</field>
+	<field name="fPercentageStatusFailure" class="java.lang.Float">
+		<fieldDescription><![CDATA[fPercentageStatusFailure]]></fieldDescription>
+	</field>
+	<field name="allowsSettled" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[allowsSettled]]></fieldDescription>
+	</field>
+	<field name="allowsUntestable" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[allowsUntestable]]></fieldDescription>
+	</field>
+	<detail>
+		<band height="20">
+			<componentElement>
+				<reportElement key="table" style="table" stretchType="RelativeToBandHeight" x="0" y="0" width="736" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[(($F{iterations}!=null) &&($F{iterations}.size()>0))]]></printWhenExpression>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="IterationDataSet">
+						<datasetParameter name="campaign_name">
+							<datasetParameterExpression><![CDATA[$F{name}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_schedstart">
+							<datasetParameterExpression><![CDATA[$F{scheduledStartDate}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_schedend">
+							<datasetParameterExpression><![CDATA[$F{scheduledEndDate}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_actstart">
+							<datasetParameterExpression><![CDATA[$F{actualStartDate}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_actend">
+							<datasetParameterExpression><![CDATA[$F{actualEndDate}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_total">
+							<datasetParameterExpression><![CDATA[$F{numberTestCase}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_status">
+							<datasetParameterExpression><![CDATA[$F{status}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_iCountStatusSuccess">
+							<datasetParameterExpression><![CDATA[$F{iCountStatusSuccess}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_iCountStatusReady">
+							<datasetParameterExpression><![CDATA[$F{iCountStatusReady}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_iCountStatusRunning">
+							<datasetParameterExpression><![CDATA[$F{iCountStatusRunning}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_iCountStatusUntestable">
+							<datasetParameterExpression><![CDATA[$F{iCountStatusUntestable}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_iCountStatusBloqued">
+							<datasetParameterExpression><![CDATA[$F{iCountStatusBloqued}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_iCountStatusFailure">
+							<datasetParameterExpression><![CDATA[$F{iCountStatusFailure}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_iCountStatusSettled">
+							<datasetParameterExpression><![CDATA[$F{iCountStatusSettled}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_fPercentageStatusReady">
+							<datasetParameterExpression><![CDATA[$F{fPercentageStatusReady}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_fPercentageStatusSuccess">
+							<datasetParameterExpression><![CDATA[$F{fPercentageStatusSuccess}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_fPercentageStatusBloqued">
+							<datasetParameterExpression><![CDATA[$F{fPercentageStatusBloqued}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_fPercentageStatusRunning">
+							<datasetParameterExpression><![CDATA[$F{fPercentageStatusRunning}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_fPercentageStatusUntestable">
+							<datasetParameterExpression><![CDATA[$F{fPercentageStatusUntestable}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_fPercentageStatusFailure">
+							<datasetParameterExpression><![CDATA[$F{fPercentageStatusFailure}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_fPercentageStatusSettled">
+							<datasetParameterExpression><![CDATA[$F{fPercentageStatusSettled}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_allowsSettled">
+							<datasetParameterExpression><![CDATA[$F{allowsSettled}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_allowsUntestable">
+							<datasetParameterExpression><![CDATA[$F{allowsUntestable}]]></datasetParameterExpression>
+						</datasetParameter>
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{iterations})]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="113">
+						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="113" height="20">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement verticalAlignment="Middle">
+									<font size="9" isBold="true"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA["Cpg : "+$P{campaign_name}]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="55">
+						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true" pattern="">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="55" height="20">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="true"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[($P{campaign_schedstart}==null) ? $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{campaign_schedstart})]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="55">
+						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true" pattern="">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="55" height="20">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="true"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[($P{campaign_schedend}==null) ? $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{campaign_schedend})]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="55">
+						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="55" height="20">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="true"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[($P{campaign_actstart}==null) ? $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{campaign_actstart})]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="55">
+						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true" pattern="">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="55" height="20">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="true"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[($P{campaign_actend}==null) ? $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{campaign_actend})]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="41">
+						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="20">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{campaign_iCountStatusReady}]]></textFieldExpression>
+							</textField>
+							<textField isStretchWithOverflow="true" pattern="#,##0 %">
+								<reportElement stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="20" forecolor="#999999">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Justified" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression class="java.lang.Float"><![CDATA[$P{campaign_fPercentageStatusReady}]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="41">
+						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="20">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{campaign_iCountStatusRunning}]]></textFieldExpression>
+							</textField>
+							<textField isStretchWithOverflow="true" pattern="#,##0 %">
+								<reportElement stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="20" forecolor="#999999">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Justified" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression class="java.lang.Float"><![CDATA[$P{campaign_fPercentageStatusRunning}]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="41">
+						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="20">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{campaign_allowsUntestable} ? $P{campaign_iCountStatusUntestable} : new String("")]]></textFieldExpression>
+							</textField>
+							<textField isStretchWithOverflow="true" pattern="#,##0 %">
+								<reportElement stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="20" forecolor="#999999">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Justified" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression class="java.lang.Float"><![CDATA[$P{campaign_allowsUntestable} ? $P{campaign_fPercentageStatusUntestable} : new String("")]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="41">
+						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="20">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{campaign_iCountStatusBloqued}]]></textFieldExpression>
+							</textField>
+							<textField isStretchWithOverflow="true" pattern="#,##0 %">
+								<reportElement stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="20" forecolor="#999999">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Justified" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression class="java.lang.Float"><![CDATA[$P{campaign_fPercentageStatusBloqued}]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="41">
+						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="20" forecolor="#FB3333">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{campaign_iCountStatusFailure}]]></textFieldExpression>
+							</textField>
+							<textField isStretchWithOverflow="true" pattern="#,##0 %">
+								<reportElement stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="20" forecolor="#999999">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Justified" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression class="java.lang.Float"><![CDATA[$P{campaign_fPercentageStatusFailure}]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="41">
+						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="20" forecolor="#009900">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{campaign_iCountStatusSuccess}]]></textFieldExpression>
+							</textField>
+							<textField isStretchWithOverflow="true" pattern="#,##0 %">
+								<reportElement stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="20" forecolor="#999999">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Justified" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression class="java.lang.Float"><![CDATA[$P{campaign_fPercentageStatusSuccess}]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="41">
+						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="20" forecolor="#009900">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{campaign_allowsSettled} ? $P{campaign_iCountStatusSettled} : new String("")]]></textFieldExpression>
+							</textField>
+							<textField isStretchWithOverflow="true" pattern="#,##0 %">
+								<reportElement stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="20" forecolor="#999999">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Justified" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression class="java.lang.Float"><![CDATA[$P{campaign_allowsSettled} ? $P{campaign_fPercentageStatusSettled} : new String("")]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
+					</jr:column>					
+					<jr:column width="51">
+						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="50" height="20">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="true"/>
+								</textElement>
+								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{campaign_total}]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="63">
+						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="63" height="20">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="true"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[($P{campaign_status}.toString()=="CAMPAIGN_RUNNING") ? $R{report.executionprogression.campaignstatus.CAMPAIGN_RUNNING} : $R{report.executionprogression.campaignstatus.CAMPAIGN_OVER}]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+		<band height="20">
+			<subreport>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="736" height="20" isRemoveLineWhenBlank="true"/>
+				<subreportParameter name="REPORT_RESOURCE_BUNDLE">
+					<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{iterations})]]></dataSourceExpression>
+				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{executionProgressionIteration}]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

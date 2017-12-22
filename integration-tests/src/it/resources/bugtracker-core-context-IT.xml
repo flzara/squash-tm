@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2013 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+	  	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+	">
+		
+	<util:properties location="classpath:bugtracker.properties" id="squashtest.tm.bugtracker.config" />
+
+	<context:component-scan base-package="org.squashtest.csp.tm.internal" />
+	
+	
+	<bean id="bugTrackersService" 
+		class="org.squashtest.csp.core.bugtracker.service.BugTrackersServiceImpl" >
+			<property name="bugTrackerConnectorFactory" ref="squashtest.core.bugtracker.BugTrackerConnectorFactory"/>
+	</bean>
+
+	<bean id="bugTracker"
+		class="org.squashtest.csp.core.bugtracker.service.PropertiesBugTrackerFactoryBean">
+		<property name="bugTrackerProperties" ref="squashtest.tm.bugtracker.config" />
+	</bean>
+
+		
+	<bean id="squashtest.core.bugtracker.MantisConnectorProvider"
+		class="org.squashtest.csp.core.bugtracker.mantis.MantisConnectorProvider" >
+	</bean> 
+	
+	<bean id="squashtest.core.bugtracker.BugTrackerConnectorFactory" 
+	class="org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory">
+		<property name="providerByKind">
+			<map>
+				<!--  set a different one for JIRA when needed -->
+				<entry key="mantis" value-ref="squashtest.core.bugtracker.MantisConnectorProvider"/>
+			</map>
+		</property>		
+	</bean>
+	
+	
+	<bean id="squashtest.core.bugtracker.BugTrackerContextHolder"
+		class="org.squashtest.csp.core.bugtracker.service.ThreadLocalBugTrackerContextHolder" />
+
+	
+	
+	<!--   internationalization stuffs -->
+	
+	<bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename" value="mantis-bugmessages"/>
+	</bean>
+	
+	<bean id="squashtest.core.bugtracker.BugTrackerInterfaceDescriptor"
+			class="org.squashtest.csp.core.bugtracker.mantis.MantisInterfaceDescriptor">
+			<property name="messageSource" ref="messageSource"/>
+	</bean>
+	
+	<bean id="squashtest.core.bugtracker.BugTrackerExceptionConverter"
+			class="org.squashtest.csp.core.bugtracker.mantis.MantisExceptionConverter">
+			<property name="messageSource" ref="messageSource"/>
+	</bean>
+	
+	
+	
+	
+</beans>

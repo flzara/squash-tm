@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+     
+	<changeSet id="1.2.0.check-all-project-have-their-libraries"
+		author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from PROJECT project
+				where project.PROJECT_ID not in (
+				select project2.PROJECT_ID
+				from PROJECT project2
+				where project2.RL_ID is not null
+				and project2.TCL_ID is not null
+				and project2.CL_ID is not null);
+	 		</sqlCheck>
+		</preConditions>
+		<comment>We check that all project have their libraries</comment>
+	</changeSet>
+
+	<changeSet id="1.2.0.check-all-libraries-have-their-project"
+		author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from REQUIREMENT_LIBRARY RL
+				where RL.RL_ID not in (
+				select P.RL_ID
+				from PROJECT P
+				);
+	 		</sqlCheck>
+		</preConditions>
+		<comment>We check that all requirement libraries have their project</comment>
+	</changeSet>
+	<changeSet id="tm-1.2.0.Update-existing-data" author="mpagnon">
+		<comment>Existing Data Update for ACL_OBJECT_IDENTITY / REQUIREMENT_LIBRARY</comment>
+		<sql>insert into ACL_OBJECT_IDENTITY (IDENTITY, CLASS_ID)
+			select
+			project.PROJECT_ID, ac.ID
+			from PROJECT project , ACL_OBJECT_IDENTITY
+			aoi, ACL_CLASS ac
+			where aoi.CLASS_ID = ac.ID
+			and ac.CLASSNAME = 'org.squashtest.csp.tm.domain.project.Project'
+			and
+			project.PROJECT_ID not in (
+			select project2.PROJECT_ID
+			from PROJECT project2 , ACL_OBJECT_IDENTITY aoi2, ACL_CLASS ac2
+			where project2.PROJECT_ID = aoi2.IDENTITY
+			and aoi2.CLASS_ID = ac2.ID
+			and ac2.CLASSNAME = 'org.squashtest.csp.tm.domain.project.Project' );
+		</sql>
+	</changeSet>
+	<changeSet id="1.2.0.check-all-project-are-listed-in-acl-object-identity"
+		author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from PROJECT project
+				where project.PROJECT_ID not in (
+				select aoi.IDENTITY
+				from ACL_OBJECT_IDENTITY aoi, ACL_CLASS aclclass
+				where aoi.CLASS_ID = aclclass.ID
+				and aclclass.CLASSNAME =
+				'org.squashtest.csp.tm.domain.project.Project');
+	 		</sqlCheck>
+		</preConditions>
+		<comment>We check that all project are listed in acl-object-identity</comment>
+	</changeSet>
+	<!-- ========================================================================================================================== -->
+	<!-- ___________________________________________________________INCLUDE CHANGELOG_______________________________________ -->
+	<include file="../../../main/liquibase/tm/tm.changelog-1.2.0.xml"
+		relativeToChangelogFile="true" />
+	<!-- =========================================================================================================================== -->
+
+	<changeSet id="1.2.0.check-acl-Class-added" author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="3">
+				select count(*)
+				from ACL_CLASS ac
+				where ac.CLASSNAME in
+				('org.squashtest.csp.tm.domain.requirement.RequirementLibrary',
+				'org.squashtest.csp.tm.domain.testcase.TestCaseLibrary',
+				'org.squashtest.csp.tm.domain.campaign.CampaignLibrary');
+	 		</sqlCheck>
+		</preConditions>
+		<comment>We check that acl_class have been added</comment>
+	</changeSet>
+	<changeSet id="1.2.0.check-all-aoi-created-for-requirementLib"
+		author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(rl.RL_ID)
+				from REQUIREMENT_LIBRARY rl
+				where rl.RL_ID not in (
+				select aoi.IDENTITY from ACL_OBJECT_IDENTITY aoi, ACL_CLASS ac
+				where aoi.CLASS_ID = ac.ID
+				and ac.CLASSNAME =
+				'org.squashtest.csp.tm.domain.requirement.RequirementLibrary');
+			</sqlCheck>
+		</preConditions>
+		<comment>We check that all requirement_library have their acl-object-identity</comment>
+	</changeSet>
+	<changeSet id="1.2.0.check-all-aoi-created-for-testCaseLib"
+		author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(tcl.TCL_ID)
+				from TEST_CASE_LIBRARY tcl
+				where tcl.TCL_ID not in (
+				select aoi.IDENTITY
+				from ACL_OBJECT_IDENTITY aoi, ACL_CLASS ac
+				where aoi.CLASS_ID = ac.ID
+				and ac.CLASSNAME =
+				'org.squashtest.csp.tm.domain.testcase.TestCaseLibrary');
+		 		</sqlCheck>
+		</preConditions>
+		<comment>We check that all test_case_library have their acl-object-identity</comment>
+	</changeSet>
+	<changeSet id="1.2.0.check-all-aoi-created-for-campaignLib"
+		author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(cl.CL_ID)
+				from CAMPAIGN_LIBRARY cl
+				where cl.CL_ID not in (
+				select aoi.IDENTITY
+				from ACL_OBJECT_IDENTITY aoi, ACL_CLASS ac
+				where aoi.CLASS_ID = ac.ID
+				and ac.CLASSNAME =
+				'org.squashtest.csp.tm.domain.campaign.CampaignLibrary');
+		 		</sqlCheck>
+		</preConditions>
+		<comment>We check that all campaign_library have their acl-object-identity</comment>
+	</changeSet>
+	<changeSet id="1.2.0.check-all-arse-created-for-requirementLib"
+		author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(arseProject.ID)
+				from ACL_RESPONSIBILITY_SCOPE_ENTRY arseProject, ACL_OBJECT_IDENTITY
+				aoiProject, ACL_CLASS aclclassProject, PROJECT project
+				where aclclassProject.CLASSNAME =
+				'org.squashtest.csp.tm.domain.project.Project'
+				and aclclassProject.ID = aoiProject.CLASS_ID
+				and arseProject.OBJECT_IDENTITY_ID = aoiProject.ID
+				and project.PROJECT_ID = aoiProject.IDENTITY
+				and arseProject.USER_ID not in (
+				select arseLibrary.USER_ID
+				from ACL_RESPONSIBILITY_SCOPE_ENTRY arseLibrary, ACL_OBJECT_IDENTITY
+				aoiLibrary, ACL_CLASS aclclassLibrary
+				where aclclassLibrary.CLASSNAME =
+				'org.squashtest.csp.tm.domain.requirement.RequirementLibrary'
+				and aclclassLibrary.ID = aoiLibrary.CLASS_ID
+				and arseLibrary.OBJECT_IDENTITY_ID = aoiLibrary.ID
+				and arseProject.ACL_GROUP_ID = arseLibrary.ACL_GROUP_ID
+				and project.RL_ID = aoiLibrary.IDENTITY);
+				</sqlCheck>
+		</preConditions>
+		<comment>We check that all user that have a responsibility in a project have the same in the associated requirement library</comment>
+	</changeSet>
+	<changeSet id="1.2.0.check-all-arse-created-for-test-case-Lib"
+		author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(arseProject.ID)
+				from ACL_RESPONSIBILITY_SCOPE_ENTRY arseProject, ACL_OBJECT_IDENTITY
+				aoiProject, ACL_CLASS aclclassProject, PROJECT project
+				where aclclassProject.CLASSNAME =
+				'org.squashtest.csp.tm.domain.project.Project'
+				and aclclassProject.ID = aoiProject.CLASS_ID
+				and arseProject.OBJECT_IDENTITY_ID = aoiProject.ID
+				and project.PROJECT_ID = aoiProject.IDENTITY
+				and arseProject.USER_ID not in (
+				select arseLibrary.USER_ID
+				from ACL_RESPONSIBILITY_SCOPE_ENTRY arseLibrary, ACL_OBJECT_IDENTITY
+				aoiLibrary, ACL_CLASS aclclassLibrary
+				where aclclassLibrary.CLASSNAME =
+				'org.squashtest.csp.tm.domain.testcase.TestCaseLibrary'
+				and aclclassLibrary.ID = aoiLibrary.CLASS_ID
+				and arseLibrary.OBJECT_IDENTITY_ID = aoiLibrary.ID
+				and arseProject.ACL_GROUP_ID = arseLibrary.ACL_GROUP_ID
+				and project.TCL_ID = aoiLibrary.IDENTITY);
+				</sqlCheck>
+		</preConditions>
+		<comment>We check that all user that have a responsibility in a project have the same in the associated test case library</comment>
+	</changeSet>
+	<changeSet id="1.2.0.check-all-arse-created-for-campaign-Lib"
+		author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(arseProject.ID)
+				from ACL_RESPONSIBILITY_SCOPE_ENTRY arseProject, ACL_OBJECT_IDENTITY
+				aoiProject, ACL_CLASS aclclassProject, PROJECT project
+				where aclclassProject.CLASSNAME =
+				'org.squashtest.csp.tm.domain.project.Project'
+				and aclclassProject.ID = aoiProject.CLASS_ID
+				and arseProject.OBJECT_IDENTITY_ID = aoiProject.ID
+				and project.PROJECT_ID = aoiProject.IDENTITY
+				and arseProject.USER_ID not in (
+				select arseLibrary.USER_ID
+				from ACL_RESPONSIBILITY_SCOPE_ENTRY arseLibrary, ACL_OBJECT_IDENTITY
+				aoiLibrary, ACL_CLASS aclclassLibrary
+				where aclclassLibrary.CLASSNAME =
+				'org.squashtest.csp.tm.domain.campaign.CampaignLibrary'
+				and aclclassLibrary.ID = aoiLibrary.CLASS_ID
+				and arseLibrary.OBJECT_IDENTITY_ID = aoiLibrary.ID
+				and arseProject.ACL_GROUP_ID = arseLibrary.ACL_GROUP_ID
+				and project.CL_ID = aoiLibrary.IDENTITY);
+				</sqlCheck>
+		</preConditions>
+		<comment>We check that all user that have a responsibility in a project have the same in the associated campaign library</comment>
+	</changeSet>
+</databaseChangeLog>

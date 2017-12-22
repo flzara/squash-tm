@@ -1,0 +1,992 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="/WEB-INF/messages/tm/messages" whenResourceMissingType="Key" uuid="362545ed-0159-4d75-9b14-3d31afb06401">
+	<property name="ireport.zoom" value="1.2100000000000077"/>
+	<property name="ireport.x" value="34"/>
+	<property name="ireport.y" value="0"/>
+	<style name="cartouche" mode="Opaque" forecolor="#FFFFFF" backcolor="#77132E" fill="Solid">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{projectName}.equalsIgnoreCase( "TOTAL" )]]></conditionExpression>
+			<style mode="Opaque" forecolor="#000000" backcolor="#FFFFFF" fill="Solid"/>
+		</conditionalStyle>
+	</style>
+	<style name="bgBlue">
+		<box>
+			<bottomPen lineWidth="1.5" lineColor="#999999"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{projectName}.equalsIgnoreCase( "TOTAL" )]]></conditionExpression>
+			<style mode="Opaque" forecolor="#000000" backcolor="#99CCFF">
+				<box>
+					<bottomPen lineWidth="2.0" lineStyle="Double"/>
+				</box>
+			</style>
+		</conditionalStyle>
+	</style>
+	<style name="bgBlue_sup">
+		<box>
+			<bottomPen lineWidth="1.5" lineColor="#999999"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{projectName}.equalsIgnoreCase( "TOTAL" )]]></conditionExpression>
+			<style mode="Opaque" forecolor="#000000" backcolor="#99CCFF">
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="1.25" lineColor="#000000"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+			</style>
+		</conditionalStyle>
+	</style>
+	<parameter name="milestoneLabel" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="projectName" class="java.lang.String">
+		<fieldDescription><![CDATA[projectName]]></fieldDescription>
+	</field>
+	<field name="totalRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[totalRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="globalRequirementCoverage" class="java.lang.Byte">
+		<fieldDescription><![CDATA[globalRequirementCoverage]]></fieldDescription>
+	</field>
+	<field name="criticalRequirementCoverage" class="java.lang.Byte">
+		<fieldDescription><![CDATA[criticalRequirementCoverage]]></fieldDescription>
+	</field>
+	<field name="criticalRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[criticalRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="majorRequirementCoverage" class="java.lang.Byte">
+		<fieldDescription><![CDATA[majorRequirementCoverage]]></fieldDescription>
+	</field>
+	<field name="majorRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[majorRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="minorRequirementCoverage" class="java.lang.Byte">
+		<fieldDescription><![CDATA[minorRequirementCoverage]]></fieldDescription>
+	</field>
+	<field name="minorRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[minorRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="undefinedRequirementCoverage" class="java.lang.Byte">
+		<fieldDescription><![CDATA[undefinedRequirementCoverage]]></fieldDescription>
+	</field>
+	<field name="undefinedRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[undefinedRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="criticalVerifiedRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[criticalVerifiedRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="majorVerifiedRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[majorVerifiedRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="minorVerifiedRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[minorVerifiedRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="undefinedVerifiedRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[undefinedVerifiedRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="totalVerifiedRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[totalVerifiedRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="workInProgressCriticalRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[workInProgressCriticalRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="workInProgressMajorRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[workInProgressMajorRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="workInProgressMinorRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[workInProgressMinorRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="workInProgressUndefinedRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[workInProgressUndefinedRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="workInProgressCriticalVerifiedRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[workInProgressCriticalVerifiedRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="workInProgressMajorVerifiedRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[workInProgressMajorVerifiedRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="workInProgressMinorVerifiedRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[workInProgressMinorVerifiedRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="workInProgressUndefinedVerifiedRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[workInProgressUndefinedVerifiedRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="workInProgressTotalVerifiedRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[workInProgressTotalVerifiedRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="workInProgressTotalRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[workInProgressTotalRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="underReviewCriticalRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[underReviewCriticalRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="underReviewMajorRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[underReviewMajorRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="underReviewMinorRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[underReviewMinorRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="underReviewUndefinedRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[underReviewUndefinedRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="underReviewCriticalVerifiedRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[underReviewCriticalVerifiedRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="underReviewMajorVerifiedRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[underReviewMajorVerifiedRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="underReviewMinorVerifiedRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[underReviewMinorVerifiedRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="underReviewUndefinedVerifiedRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[underReviewUndefinedVerifiedRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="underReviewTotalVerifiedRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[underReviewTotalVerifiedRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="underReviewTotalRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[underReviewTotalRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="approvedCriticalRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[approvedCriticalRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="approvedMajorRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[approvedMajorRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="approvedMinorRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[approvedMinorRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="approvedUndefinedRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[approvedUndefinedRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="approvedCriticalVerifiedRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[approvedCriticalVerifiedRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="approvedMajorVerifiedRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[approvedMajorVerifiedRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="approvedMinorVerifiedRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[approvedMinorVerifiedRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="approvedUndefinedVerifiedRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[approvedUndefinedVerifiedRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="approvedTotalVerifiedRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[approvedTotalVerifiedRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="approvedTotalRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[approvedTotalRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="obsoleteCriticalRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[obsoleteCriticalRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="obsoleteMajorRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[obsoleteMajorRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="obsoleteMinorRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[obsoleteMinorRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="obsoleteUndefinedRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[obsoleteUndefinedRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="obsoleteCriticalVerifiedRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[obsoleteCriticalVerifiedRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="obsoleteMajorVerifiedRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[obsoleteMajorVerifiedRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="obsoleteMinorVerifiedRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[obsoleteMinorVerifiedRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="obsoleteUndefinedVerifiedRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[obsoleteUndefinedVerifiedRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="obsoleteTotalVerifiedRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[obsoleteTotalVerifiedRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="obsoleteTotalRequirementNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[obsoleteTotalRequirementNumber]]></fieldDescription>
+	</field>
+	<field name="workInProgressGlobalRequirementCoverage" class="java.lang.Byte">
+		<fieldDescription><![CDATA[workInProgressGlobalRequirementCoverage]]></fieldDescription>
+	</field>
+	<field name="workInProgressCriticalRequirementCoverage" class="java.lang.Byte">
+		<fieldDescription><![CDATA[workInProgressCriticalRequirementCoverage]]></fieldDescription>
+	</field>
+	<field name="workInProgressMajorRequirementCoverage" class="java.lang.Byte">
+		<fieldDescription><![CDATA[workInProgressMajorRequirementCoverage]]></fieldDescription>
+	</field>
+	<field name="workInProgressMinorRequirementCoverage" class="java.lang.Byte">
+		<fieldDescription><![CDATA[workInProgressMinorRequirementCoverage]]></fieldDescription>
+	</field>
+	<field name="workInProgressUndefinedRequirementCoverage" class="java.lang.Byte">
+		<fieldDescription><![CDATA[workInProgressUndefinedRequirementCoverage]]></fieldDescription>
+	</field>
+	<field name="underReviewGlobalRequirementCoverage" class="java.lang.Byte">
+		<fieldDescription><![CDATA[underReviewGlobalRequirementCoverage]]></fieldDescription>
+	</field>
+	<field name="underReviewCriticalRequirementCoverage" class="java.lang.Byte">
+		<fieldDescription><![CDATA[underReviewCriticalRequirementCoverage]]></fieldDescription>
+	</field>
+	<field name="underReviewMajorRequirementCoverage" class="java.lang.Byte">
+		<fieldDescription><![CDATA[underReviewMajorRequirementCoverage]]></fieldDescription>
+	</field>
+	<field name="underReviewMinorRequirementCoverage" class="java.lang.Byte">
+		<fieldDescription><![CDATA[underReviewMinorRequirementCoverage]]></fieldDescription>
+	</field>
+	<field name="underReviewUndefinedRequirementCoverage" class="java.lang.Byte">
+		<fieldDescription><![CDATA[underReviewUndefinedRequirementCoverage]]></fieldDescription>
+	</field>
+	<field name="approvedGlobalRequirementCoverage" class="java.lang.Byte">
+		<fieldDescription><![CDATA[approvedGlobalRequirementCoverage]]></fieldDescription>
+	</field>
+	<field name="approvedCriticalRequirementCoverage" class="java.lang.Byte">
+		<fieldDescription><![CDATA[approvedCriticalRequirementCoverage]]></fieldDescription>
+	</field>
+	<field name="approvedMajorRequirementCoverage" class="java.lang.Byte">
+		<fieldDescription><![CDATA[approvedMajorRequirementCoverage]]></fieldDescription>
+	</field>
+	<field name="approvedMinorRequirementCoverage" class="java.lang.Byte">
+		<fieldDescription><![CDATA[approvedMinorRequirementCoverage]]></fieldDescription>
+	</field>
+	<field name="approvedUndefinedRequirementCoverage" class="java.lang.Byte">
+		<fieldDescription><![CDATA[approvedUndefinedRequirementCoverage]]></fieldDescription>
+	</field>
+	<field name="obsoleteGlobalRequirementCoverage" class="java.lang.Byte">
+		<fieldDescription><![CDATA[obsoleteGlobalRequirementCoverage]]></fieldDescription>
+	</field>
+	<field name="obsoleteCriticalRequirementCoverage" class="java.lang.Byte">
+		<fieldDescription><![CDATA[obsoleteCriticalRequirementCoverage]]></fieldDescription>
+	</field>
+	<field name="obsoleteMajorRequirementCoverage" class="java.lang.Byte">
+		<fieldDescription><![CDATA[obsoleteMajorRequirementCoverage]]></fieldDescription>
+	</field>
+	<field name="obsoleteMinorRequirementCoverage" class="java.lang.Byte">
+		<fieldDescription><![CDATA[obsoleteMinorRequirementCoverage]]></fieldDescription>
+	</field>
+	<field name="obsoleteUndefinedRequirementCoverage" class="java.lang.Byte">
+		<fieldDescription><![CDATA[obsoleteUndefinedRequirementCoverage]]></fieldDescription>
+	</field>
+	<sortField name="projectName"/>
+	<columnHeader>
+		<band height="50">
+			<line>
+				<reportElement uuid="41a65aec-f7d7-43f4-9abd-8b6f6d56b2bd" x="268" y="28" width="85" height="1"/>
+			</line>
+			<line>
+				<reportElement uuid="c69d5d1e-db51-4ee6-befd-bb05493a6305" x="376" y="28" width="339" height="1"/>
+			</line>
+			<textField>
+				<reportElement uuid="09df4b0f-6a6a-40c0-91b6-a8398580645a" x="-1" y="30" width="230" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.projects.label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="953f8551-f593-4c72-8543-8de995e9b1a8" x="269" y="8" width="84" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.global.label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="db2cda12-1503-4af5-8d34-5ac94b6275ff" x="376" y="8" width="340" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.bycriticality.label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="7706e5e8-1ada-4f5e-ba8b-ef882b8345d7" x="268" y="30" width="86" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.global.total.label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="c3403945-2fc0-4ece-b36d-d3e274c1286b" x="376" y="30" width="85" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.bycriticality.critical.label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="7bd04468-c58d-4615-b018-75d8a041a7be" x="461" y="30" width="85" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.bycriticality.major.label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="d4abc9a5-98c3-4597-aad5-8b30d5d39462" x="546" y="30" width="85" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.bycriticality.minor.label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="78ca123e-018d-4e7b-960c-79c60e0fa7a8" x="631" y="30" width="85" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.bycriticality.undefined.label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="29bd33cf-4194-490f-bdbf-683e09867cde" x="-1" y="9" width="232" height="20">
+					<printWhenExpression><![CDATA[($P{milestoneLabel} != null)]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.milestone}+ $P{milestoneLabel}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="226" splitType="Stretch">
+			<textField>
+				<reportElement uuid="2e9769b9-743c-4f94-85dd-fae16e36a4aa" style="bgBlue" x="1" y="200" width="135" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.projects.coverage.label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="85e0c409-c68b-4ae0-824d-8a067e9837ba" style="bgBlue" x="136" y="200" width="95" height="20"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.projects.coverage.precision.label}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement uuid="ee12edcb-dae2-4d9f-90e1-d081b97fe100" style="cartouche" mode="Opaque" x="0" y="0" width="230" height="20"/>
+				<box leftPadding="4"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{projectName}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement uuid="1f25f2ae-7f6f-4dd4-bf51-31886d32ff9e" style="bgBlue_sup" x="268" y="180" width="85" height="20" forecolor="#003366"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{totalRequirementNumber}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0">
+				<reportElement uuid="8664e254-3526-4169-840b-f530e8dbf0ff" style="bgBlue" x="268" y="200" width="45" height="20" forecolor="#003366"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{globalRequirementCoverage} + " %"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="3274f7d6-e9b5-4be7-98ac-dcc568b48bf2" style="bgBlue" x="313" y="200" width="40" height="20" forecolor="#666666"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isBold="true" isItalic="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(" + $F{totalVerifiedRequirementNumber} + " / " + $F{totalRequirementNumber} + ")"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="244a2e45-40d1-43f6-b23c-739ea9e7fea8" style="bgBlue_sup" x="376" y="180" width="85" height="20" forecolor="#000000"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{criticalRequirementNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b4fc9766-dec8-49dd-909e-ea03bcf26c2b" style="bgBlue_sup" x="461" y="180" width="85" height="20" forecolor="#000000"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{majorRequirementNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="1565caea-cb02-467e-b1aa-c07b639a2ec9" style="bgBlue_sup" x="546" y="180" width="85" height="20" forecolor="#000000"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{minorRequirementNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="9e711bd5-ddff-4ace-bc31-75636999ecf1" style="bgBlue_sup" x="631" y="180" width="85" height="20" forecolor="#000000"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{undefinedRequirementNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="3d9b5ce9-dadb-44fe-bc4e-d34b5a844a8d" style="bgBlue" x="376" y="200" width="45" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{criticalRequirementCoverage} + " %"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="994932bc-d381-4cc2-8455-6489f1f728bb" style="bgBlue" x="461" y="200" width="45" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{majorRequirementCoverage} + " %"]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement uuid="5c9d9541-f49d-4966-b9d3-5fdf8ac7284e" style="cartouche" mode="Opaque" x="268" y="0" width="85" height="20"/>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="49ca0faf-b154-47d4-8cec-a07c8632c42b" style="cartouche" mode="Opaque" x="376" y="0" width="340" height="20"/>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement uuid="a2f3d991-767b-4cd7-b554-d2923de4cbda" style="bgBlue_sup" x="1" y="180" width="230" height="20"/>
+				<box rightPadding="4"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.projects.totalnumber.label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="ce2b145c-0ece-450d-a042-f041ba2db6c7" style="bgBlue" x="421" y="200" width="40" height="20" forecolor="#666666"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isBold="true" isItalic="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(" + $F{criticalVerifiedRequirementNumber} + " / " + $F{criticalRequirementNumber} + ")"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="4db1b7ec-eec6-4207-a953-be6cf922b669" style="bgBlue" x="506" y="200" width="40" height="20" forecolor="#666666"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isBold="true" isItalic="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(" + $F{majorVerifiedRequirementNumber} + " / " + $F{majorRequirementNumber} + ")"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="d6207c3b-a54b-49b0-9816-d88ae3e670ed" style="bgBlue" x="676" y="200" width="40" height="20" forecolor="#666666"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isBold="true" isItalic="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(" + $F{undefinedVerifiedRequirementNumber} + " / " + $F{undefinedRequirementNumber} + ")"]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement uuid="ff417f47-4662-4802-8cb3-7300a6b16403" style="bgBlue_sup" x="268" y="140" width="85" height="20" forecolor="#003366"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{obsoleteTotalRequirementNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="618de8f3-bf19-43d3-b2c5-cec904fddc72" style="bgBlue_sup" x="83" y="100" width="148" height="20"/>
+				<box rightPadding="4"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.projects.totalnumber.total.label}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement uuid="52c5c5cd-5b59-4e2b-bd8e-3743105428d0" style="bgBlue_sup" x="268" y="100" width="85" height="20" forecolor="#003366"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{approvedTotalRequirementNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="69d8fff7-99c9-43aa-9129-1c46a4721548" style="bgBlue_sup" x="83" y="60" width="148" height="20"/>
+				<box rightPadding="4"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.projects.totalnumber.total.label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="a3296059-bb32-4d51-b433-0013185c6e22" style="bgBlue_sup" x="83" y="20" width="148" height="20"/>
+				<box rightPadding="4"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.projects.totalnumber.total.label}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement uuid="caa439a0-f323-458a-ae81-a5794f60361f" style="bgBlue_sup" x="268" y="60" width="85" height="20" forecolor="#003366"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{underReviewTotalRequirementNumber}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement uuid="f72fd3ce-a378-45aa-bf32-e76d252da967" style="bgBlue_sup" x="268" y="20" width="85" height="20" forecolor="#003366"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{workInProgressTotalRequirementNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="e45e857b-5254-4dec-8dfe-99ccefd6a51e" style="bgBlue_sup" x="376" y="140" width="85" height="20" forecolor="#000000"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{obsoleteCriticalRequirementNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="cd21930f-4b39-42fe-bf5d-fe6be7d7106c" style="bgBlue_sup" x="376" y="100" width="85" height="20" forecolor="#000000"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{approvedCriticalRequirementNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="376fb33f-bbd6-435b-aa7c-6314f79fdf07" style="bgBlue_sup" x="376" y="60" width="85" height="20" forecolor="#000000"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{underReviewCriticalRequirementNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="413a0439-ee1b-4329-8057-d17fc2a92cf2" style="bgBlue_sup" x="376" y="20" width="85" height="20" forecolor="#000000"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{workInProgressCriticalRequirementNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="ca1565f9-eabd-463e-b859-28934d009b44" style="bgBlue_sup" x="461" y="140" width="85" height="20" forecolor="#000000"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{obsoleteMajorRequirementNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="95141321-cab0-4c0b-b4a9-42190dcbb46a" style="bgBlue_sup" x="461" y="100" width="85" height="20" forecolor="#000000"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{approvedMajorRequirementNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="d6d6ef7d-81a7-4b8b-8dd5-913e17a0748d" style="bgBlue_sup" x="461" y="60" width="85" height="20" forecolor="#000000"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{underReviewMajorRequirementNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="63f4f5d3-7189-4de8-95dd-5d7448f788f7" style="bgBlue_sup" x="461" y="20" width="85" height="20" forecolor="#000000"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{workInProgressMajorRequirementNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="6aaab27e-9dbd-40e2-8a52-c87bf2e017f3" style="bgBlue_sup" x="546" y="140" width="85" height="20" forecolor="#000000"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{obsoleteMinorRequirementNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="362b1d54-2800-4cf8-826e-80aa8af05f82" style="bgBlue_sup" x="546" y="60" width="85" height="20" forecolor="#000000"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{underReviewMinorRequirementNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="97d2dc84-9c12-46cc-9bd8-3c0882c4ba7a" style="bgBlue_sup" x="546" y="20" width="85" height="20" forecolor="#000000"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{workInProgressMinorRequirementNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="6bd6027a-8971-43bd-8dbf-0a26baf618c8" style="bgBlue_sup" x="631" y="140" width="85" height="20" forecolor="#000000"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{obsoleteUndefinedRequirementNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b092d6e4-f70a-4f69-9913-8e6b38707a1b" style="bgBlue_sup" x="631" y="100" width="85" height="20" forecolor="#000000"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{approvedUndefinedRequirementNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="ba61b056-1cbe-4c86-8a5d-e3df5ec49735" style="bgBlue_sup" x="631" y="60" width="85" height="20" forecolor="#000000"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{underReviewUndefinedRequirementNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="aa0add5b-da78-46fa-91d4-d2706d15c3a8" style="bgBlue_sup" x="631" y="20" width="85" height="20" forecolor="#000000"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{workInProgressUndefinedRequirementNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="1d2eebd0-438d-4f59-8214-673e9e500d8a" style="bgBlue" x="83" y="40" width="148" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.projects.coverage.label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="67098f72-83c3-4c60-a8ed-88db7778368e" style="bgBlue_sup" x="1" y="20" width="82" height="40"/>
+				<box rightPadding="4"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.projects.totalnumber.work.in.progress.label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="0dd3700b-21f4-438a-b4b9-26825797a0ae" style="bgBlue" x="421" y="40" width="40" height="20" forecolor="#666666"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isItalic="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(" + $F{workInProgressCriticalVerifiedRequirementNumber} + " / " + $F{workInProgressCriticalRequirementNumber} + ")"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="286dc20c-b205-4f97-a57c-d27791595199" style="bgBlue" x="461" y="40" width="45" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{workInProgressMajorRequirementCoverage} + " %"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="7f77251b-add2-45ee-baf0-d60b07226479" style="bgBlue" x="313" y="40" width="40" height="20" forecolor="#666666"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isItalic="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(" + $F{workInProgressTotalVerifiedRequirementNumber} + " / " + $F{workInProgressTotalRequirementNumber} + ")"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="3a5de687-c246-4a2d-bbb4-a4f9b0563659" style="bgBlue" x="506" y="40" width="40" height="20" forecolor="#666666"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isItalic="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(" + $F{workInProgressMajorVerifiedRequirementNumber} + " / " + $F{workInProgressMajorRequirementNumber} + ")"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b58a0e5b-580c-4756-b8ad-2fd700979b12" style="bgBlue" x="376" y="40" width="45" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{workInProgressCriticalRequirementCoverage} + " %"]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0">
+				<reportElement uuid="1a7af4c3-2cca-493b-8007-ff95b3f42ab0" style="bgBlue" x="268" y="40" width="45" height="20" forecolor="#003366"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{workInProgressGlobalRequirementCoverage} + " %"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="ba9eeed1-086f-4278-8de1-c8bb9371a77f" style="bgBlue" x="376" y="80" width="45" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{underReviewCriticalRequirementCoverage} + " %"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="10e82d3b-c708-49d9-8f68-4083e4187517" style="bgBlue" x="83" y="80" width="148" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.projects.coverage.label}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="1e1551ba-0756-4a74-8575-2221e61aadc8" style="bgBlue" x="313" y="80" width="40" height="20" forecolor="#666666"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isItalic="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(" + $F{underReviewTotalVerifiedRequirementNumber} + " / " + $F{underReviewTotalRequirementNumber} + ")"]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0">
+				<reportElement uuid="b061b0cb-7e7a-4fd7-a6b0-a46c24f81148" style="bgBlue" x="268" y="80" width="45" height="20" forecolor="#003366"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{underReviewGlobalRequirementCoverage} + " %"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="33d8581c-5b7d-4b42-8d7d-ee88aaa6e648" style="bgBlue" x="421" y="80" width="40" height="20" forecolor="#666666"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isItalic="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(" + $F{underReviewCriticalVerifiedRequirementNumber} + " / " + $F{underReviewCriticalRequirementNumber} + ")"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="e646e822-0b4b-484d-92d8-908da162cd59" style="bgBlue" x="631" y="80" width="45" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{underReviewUndefinedRequirementCoverage} + " %"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="9ab3a062-c6ac-4794-9140-c28f68046639" style="bgBlue" x="506" y="80" width="40" height="20" forecolor="#666666"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isItalic="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(" + $F{underReviewMajorVerifiedRequirementNumber} + " / " + $F{underReviewMajorRequirementNumber} + ")"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="6a5927ee-a126-40cb-bda6-bd64dbe66272" style="bgBlue" x="461" y="80" width="45" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{underReviewMajorRequirementCoverage} + " %"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="8c70c20f-0a82-4ba4-a759-238fd3e6d0a2" style="bgBlue_sup" x="1" y="60" width="82" height="40"/>
+				<box rightPadding="4"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.projects.totalnumber.under.review.label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="ae72121a-2eb1-4200-add1-669e87afc2b0" style="bgBlue" x="376" y="120" width="45" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{approvedCriticalRequirementCoverage} + " %"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="1e2d7a7c-d74b-4fd4-92c2-832c512f4f26" style="bgBlue" x="546" y="120" width="45" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{approvedMinorRequirementCoverage} + " %"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="73f3b5e6-18e8-40e5-a0f0-40ab6765013f" style="bgBlue" x="421" y="120" width="40" height="20" forecolor="#666666"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isItalic="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(" + $F{approvedCriticalVerifiedRequirementNumber} + " / " + $F{approvedCriticalRequirementNumber} + ")"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="42800d67-adea-4baf-ab4f-945d12e1d986" style="bgBlue" x="83" y="120" width="148" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.projects.coverage.label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="45ec0e8c-69ea-4c94-8077-17174430f575" style="bgBlue" x="461" y="120" width="45" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{approvedMajorRequirementCoverage} + " %"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="8826ff62-ed96-496f-a57e-e14b647e3c81" style="bgBlue" x="506" y="120" width="40" height="20" forecolor="#666666"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isItalic="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(" + $F{approvedMajorVerifiedRequirementNumber} + " / " + $F{approvedMajorRequirementNumber} + ")"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="35d24c6d-7b77-46b9-8be8-c6fc576e1d1a" style="bgBlue" x="313" y="120" width="40" height="20" forecolor="#666666"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isItalic="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(" + $F{approvedTotalVerifiedRequirementNumber} + " / " + $F{approvedTotalRequirementNumber} + ")"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="bb6502cf-56d4-43aa-9db5-957af88854fe" style="bgBlue" x="631" y="120" width="45" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{approvedUndefinedRequirementCoverage} + " %"]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0">
+				<reportElement uuid="f9fb207d-39cf-4fae-aeac-50f7a5aec7f5" style="bgBlue" x="268" y="120" width="45" height="20" forecolor="#003366"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{approvedGlobalRequirementCoverage} + " %"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="5fa5bc6e-2370-4e52-8778-e0bbd5e6e235" style="bgBlue_sup" x="1" y="100" width="82" height="40"/>
+				<box rightPadding="4"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.projects.totalnumber.approved.label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="4334e343-f93b-4e6b-8eb0-940b064a7060" style="bgBlue" x="313" y="160" width="40" height="20" forecolor="#666666"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isItalic="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(" + $F{obsoleteTotalVerifiedRequirementNumber} + " / " + $F{obsoleteTotalRequirementNumber} + ")"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="dc1ae41c-c5c9-4ab8-ab0d-b94bab38f573" style="bgBlue" x="461" y="160" width="45" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{obsoleteMajorRequirementCoverage} + " %"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="6e62607f-c506-4275-ad1a-90665c8c9196" style="bgBlue" x="506" y="160" width="40" height="20" forecolor="#666666"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isItalic="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(" + $F{obsoleteMajorVerifiedRequirementNumber} + " / " + $F{obsoleteMajorRequirementNumber} + ")"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b3b27165-ba68-4f4c-be17-af4ea408e384" style="bgBlue" x="83" y="160" width="148" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.projects.coverage.label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="d2ca0a44-eab6-486f-9d6d-761b5ea2e2e7" style="bgBlue" x="591" y="160" width="40" height="20" forecolor="#666666"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isItalic="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(" + $F{obsoleteMinorVerifiedRequirementNumber} + " / " + $F{obsoleteMinorRequirementNumber} + ")"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="ad59b851-1e3b-466f-a0d0-ceb4af8eeb7a" style="bgBlue" x="421" y="160" width="40" height="20" forecolor="#666666"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isItalic="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(" + $F{obsoleteCriticalVerifiedRequirementNumber} + " / " + $F{obsoleteCriticalRequirementNumber} + ")"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="ea1393f0-31cd-49fb-825e-e0140b1f7e25" style="bgBlue" x="631" y="160" width="45" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{obsoleteUndefinedRequirementCoverage} + " %"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="424e4112-ad83-49cd-bbe2-447bb15c69c2" style="bgBlue" x="376" y="160" width="45" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{obsoleteCriticalRequirementCoverage} + " %"]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0">
+				<reportElement uuid="bedd633c-2a96-4085-a1e1-5d3545200b79" style="bgBlue" x="268" y="160" width="45" height="20" forecolor="#003366"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{obsoleteGlobalRequirementCoverage} + " %"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="864452b3-66a7-4285-ab6e-591030fabaae" style="bgBlue_sup" x="83" y="140" width="148" height="20"/>
+				<box rightPadding="4"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.projects.totalnumber.total.label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="1aded119-3efb-4b7a-b88c-7555981c70de" style="bgBlue" x="631" y="200" width="45" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{undefinedRequirementCoverage} + " %"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="40acdc40-15ae-4630-99f4-72fd80010010" style="bgBlue" x="676" y="40" width="40" height="20" forecolor="#666666"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isItalic="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(" + $F{workInProgressUndefinedVerifiedRequirementNumber} + " / " + $F{workInProgressUndefinedRequirementNumber} + ")"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="36bd9902-a58b-4dc6-a8e3-62619328f7eb" style="bgBlue" x="631" y="40" width="45" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{workInProgressUndefinedRequirementCoverage} + " %"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="52bd5bc8-73c7-44ca-ba2b-367ef05e0070" style="bgBlue" x="546" y="80" width="45" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{underReviewMinorRequirementCoverage} + " %"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="509f0a6b-4bcf-4470-b5a3-e0bcf5cd2f73" style="bgBlue" x="546" y="160" width="45" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{obsoleteMinorRequirementCoverage} + " %"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="547cd1c6-59e0-4be2-b976-f5e81523574a" style="bgBlue" x="546" y="200" width="45" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{minorRequirementCoverage} + " %"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="bb88f258-2ee1-4752-909a-0c1106df92e2" style="bgBlue_sup" x="546" y="100" width="85" height="20" forecolor="#000000"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{approvedMinorRequirementNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="653f5490-f995-40cd-99d2-87a69e99df65" style="bgBlue" x="591" y="40" width="40" height="20" forecolor="#666666"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isItalic="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(" + $F{workInProgressMinorVerifiedRequirementNumber} + " / " + $F{workInProgressMinorRequirementNumber} + ")"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b5da4e48-a142-47cb-960a-9ce327051c49" style="bgBlue" x="591" y="120" width="40" height="20" forecolor="#666666"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isItalic="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(" + $F{approvedMinorVerifiedRequirementNumber} + " / " + $F{approvedMinorRequirementNumber} + ")"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="f2ac098d-bb9d-4fb4-b639-18dee0a48274" style="bgBlue" x="676" y="80" width="40" height="20" forecolor="#666666"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isItalic="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(" + $F{underReviewUndefinedVerifiedRequirementNumber} + " / " + $F{underReviewUndefinedRequirementNumber} + ")"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="bdb0feec-7d83-4002-bf63-859a0412c9c8" style="bgBlue" x="676" y="120" width="40" height="20" forecolor="#666666"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isItalic="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(" + $F{approvedUndefinedVerifiedRequirementNumber} + " / " + $F{approvedUndefinedRequirementNumber} + ")"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="16e52b49-95e1-4976-9417-e3dc409aef09" style="bgBlue" x="676" y="160" width="40" height="20" forecolor="#666666"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isItalic="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(" + $F{obsoleteUndefinedVerifiedRequirementNumber} + " / " + $F{obsoleteUndefinedRequirementNumber} + ")"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="4b1840ac-6282-4ebe-9e01-26e781a6689f" style="bgBlue_sup" x="1" y="140" width="82" height="40"/>
+				<box rightPadding="4"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.projects.totalnumber.obsolete.label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="783f9f96-f2e6-4781-a16a-e5cecbabbabb" style="bgBlue" x="546" y="40" width="45" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{workInProgressMinorRequirementCoverage} + " %"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="8c40a215-2220-4d55-ab2a-565e5965cbe5" style="bgBlue" x="591" y="80" width="40" height="20" forecolor="#666666"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isItalic="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(" + $F{underReviewMinorVerifiedRequirementNumber} + " / " + $F{underReviewMinorRequirementNumber} + ")"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b16c935a-cb53-4110-a1ee-080bb69f8db3" style="bgBlue" x="591" y="200" width="40" height="20" forecolor="#666666"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isBold="true" isItalic="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(" + $F{minorVerifiedRequirementNumber} + " / " + $F{minorRequirementNumber} + ")"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="50"/>
+	</columnFooter>
+</jasperReport>

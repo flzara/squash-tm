@@ -1,0 +1,153 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/* 
+	that file redefines some css styles in structure.css in the case of sub pages.
+	
+	the appliance of this override stylesheet is defined by whether it is included or not. 
+	
+	of course due to the css engine top-down policy, that file must be included after structure.css.  
+*/
+
+/* ---------------------------------------------------------*/
+/* --->>> slight style redefinition for a few pages <<<-----*/
+/* ---------------------------------------------------------*/
+
+html, body{
+	background-image : none;
+	background-color: #393834;	
+}
+
+#navigation{
+	background-image : none;	
+}
+
+div.main-menubar a {
+	color: lightgray;
+}
+
+#advanced-search-input-form-panel-column1.test-case div.search-toggle-panel {
+	padding-bottom : 1em;
+	padding-right : 2em;
+	padding-left : 2em;
+	float: left;
+}
+
+#advanced-search-input-form-panel-column1.requirement div.search-toggle-panel {
+    padding-bottom : 1em;
+    padding-right : 2em;
+    padding-left : 2em;   
+    float: left;
+}
+
+#advanced-search-input-form-panel-column1.testcaseViaRequirement div.search-toggle-panel {
+    padding-bottom : 1em;
+    padding-right : 2em;
+    padding-left : 2em;   	
+    float: left;
+
+}
+
+#advanced-search-input-form-panel-column1 div.search-toggle-panel:last-child {
+	padding-bottom : 0px;
+}
+
+#advanced-search-input-form-panel-column1.test-case div.search-perimeter-toggle-panel {
+	padding-bottom : 1em;
+	padding-right : 2em;
+	padding-left : 2em;
+	float: left;
+
+}
+
+#advanced-search-input-form-panel-column1.requirement div.search-perimeter-toggle-panel {
+    padding-bottom : 1em;
+    padding-right : 2em;
+    padding-left : 2em;   
+    float: left;  
+
+}
+
+#advanced-search-input-form-panel-column1.testcaseViaRequirement div.search-perimeter-toggle-panel {
+    padding-bottom : 1em;
+    padding-right : 2em;
+    padding-left : 2em;   	
+    float: left; 
+}
+
+#advanced-search-input-form-panel-column1 div.search-perimeter-toggle-panel:last-child {
+	padding-bottom : 0px;
+	float: left;
+}
+
+#advanced-search-input-form-panel-column1.test-case div.search-informations-toggle-panel {
+	padding-bottom : 1em;
+	padding-right : 2em;
+	padding-left : 2em;
+	float: left;
+
+}
+
+#advanced-search-input-form-panel-column1.requirement div.search-informations-toggle-panel {
+    padding-bottom : 1em;
+    padding-right : 2em;
+    padding-left : 2em;   
+    float: left;
+
+}
+
+#advanced-search-input-form-panel-column1.testcaseViaRequirement div.search-informations-toggle-panel {
+    padding-bottom : 1em;
+    padding-right : 2em;
+    padding-left : 2em;   	 
+    float: left;
+
+}
+
+#advanced-search-input-form-panel-column1 div.search-informations-toggle-panel:last-child {
+	padding-bottom : 0px;
+	float: left;
+}
+
+#advanced-search-input-form-panel-column2.requirement div.search-toggle-panel {
+	padding-bottom : 10px;
+}
+
+#advanced-search-input-form-panel-column2.test-case div.search-toggle-panel {
+	padding-bottom : 46px;
+}
+
+#advanced-search-input-form-panel-column2.testcaseViaRequirement div.search-toggle-panel {
+	padding-bottom : 10px;
+}
+
+#advanced-search-input-form-panel-column2 div.search-toggle-panel:last-child {
+	padding-bottom : 0px;
+}
+
+#advanced-search-input-form-panel-column3 div.search-toggle-panel {
+	padding-bottom : 10px;
+}
+
+
+#advanced-search-input-form-panel-column3 div.search-toggle-panel:last-child {
+	padding-bottom : 0px;
+}
+

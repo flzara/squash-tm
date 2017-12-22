@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="requirement-coverage_requirements" pageWidth="842" pageHeight="589" orientation="Landscape" columnWidth="842" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" resourceBundle="/WEB-INF/messages/tm/messages" whenResourceMissingType="Key" uuid="ed57bdf4-8ef0-4423-9f65-10512952005c">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="cell" fill="Solid" hAlign="Left" vAlign="Middle" pattern="">
+		<pen lineWidth="1.0" lineColor="#000000"/>
+		<box leftPadding="2">
+			<topPen lineWidth="1.0"/>
+			<leftPen lineWidth="1.0" lineStyle="Solid"/>
+			<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+			<rightPen lineWidth="1.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<style name="cell_left" fill="Solid" hAlign="Left" vAlign="Middle" pattern="">
+		<pen lineWidth="1.0" lineColor="#000000"/>
+		<box>
+			<topPen lineWidth="1.0"/>
+			<leftPen lineWidth="2.0" lineStyle="Solid"/>
+			<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+			<rightPen lineWidth="1.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<style name="cell_right" fill="Solid" hAlign="Left" vAlign="Middle" pattern="">
+		<pen lineWidth="1.0" lineColor="#000000"/>
+		<box>
+			<topPen lineWidth="1.0"/>
+			<leftPen lineWidth="1.0" lineStyle="Solid"/>
+			<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+			<rightPen lineWidth="2.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<subDataset name="Table Dataset 1" uuid="4f539cb2-dcb2-4d18-8bee-59b706ccfd38"/>
+	<parameter name="projectName" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="associatedTestCaseNumber" class="java.lang.Integer">
+		<fieldDescription><![CDATA[associatedTestCaseNumber]]></fieldDescription>
+	</field>
+	<field name="criticality" class="java.lang.Enum">
+		<fieldDescription><![CDATA[criticality]]></fieldDescription>
+	</field>
+	<field name="label" class="java.lang.String">
+		<fieldDescription><![CDATA[label]]></fieldDescription>
+	</field>
+	<field name="reference" class="java.lang.String">
+		<fieldDescription><![CDATA[reference]]></fieldDescription>
+	</field>
+	<field name="versionNumber" class="java.lang.Integer">
+		<fieldDescription><![CDATA[versionNumber]]></fieldDescription>
+	</field>
+	<field name="parent" class="java.lang.String"/>
+	<detail>
+		<band height="20">
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="c3c592e5-e075-4cf4-948e-c78b99be8caf" style="cell" stretchType="RelativeToBandHeight" x="142" y="0" width="150" height="20">
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{parent}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="57687cd7-4311-4925-91a4-ccf57dd99a7b" style="cell" stretchType="RelativeToBandHeight" x="292" y="0" width="91" height="20">
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{reference}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="00395a97-fd3d-43d7-9f51-272093562d18" style="cell" stretchType="RelativeToBandHeight" x="383" y="0" width="210" height="20">
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{label}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="9caed73e-3a33-4b26-b221-42f0ab9b610e" style="cell" stretchType="RelativeToBandHeight" x="643" y="0" width="109" height="20">
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[($F{criticality}.toString() == "CRITICAL") ? $R{report.requirementcoverage.main.criticality.critical.label} :
+($F{criticality}.toString() == "MAJOR") ? $R{report.requirementcoverage.main.criticality.major.label} :
+($F{criticality}.toString() == "MINOR") ? $R{report.requirementcoverage.main.criticality.minor.label} :
+$R{report.requirementcoverage.main.criticality.undefined.label}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="ef9e7130-8f14-4116-bba7-22c9d3c06ea4" style="cell_right" stretchType="RelativeToBandHeight" x="752" y="0" width="50" height="20">
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{associatedTestCaseNumber}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="da0531e4-3cdc-4b52-8048-2e21c88a27ea" style="cell_left" stretchType="RelativeToBandHeight" x="0" y="0" width="142" height="20">
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{projectName}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="7bf6a7e4-c8cb-486a-9bb0-f113fe4da31a" style="cell" stretchType="RelativeToBandHeight" x="593" y="0" width="50" height="20">
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{versionNumber}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

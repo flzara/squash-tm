@@ -1,0 +1,916 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="execution-progression_iteration" pageWidth="736" pageHeight="555" orientation="Landscape" columnWidth="736" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" resourceBundle="/WEB-INF/messages/tm/messages" whenResourceMissingType="Key" uuid="1fdb86e0-6368-46a5-afc8-ab45c5c7220f">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+			<topPen lineWidth="0.0"/>
+			<leftPen lineWidth="0.0"/>
+			<bottomPen lineWidth="0.0"/>
+			<rightPen lineWidth="0.0"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#77132E">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+			<topPen lineWidth="0.0"/>
+			<leftPen lineWidth="0.0"/>
+			<bottomPen lineWidth="0.0"/>
+			<rightPen lineWidth="0.0"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="0.5" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<pen lineWidth="0.0" lineStyle="Double" lineColor="#FFFFFF"/>
+		<box>
+			<topPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="0.12" lineColor="#999999"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<pen lineStyle="Double" lineColor="#FFFFFF"/>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<pen lineColor="#FFFFFF"/>
+		<box>
+			<bottomPen lineStyle="Dashed" lineColor="#999999"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<pen lineColor="#FFFFFF"/>
+	</style>
+	<style name="table 1_TD" mode="Transparent" backcolor="#FFFFFF">
+		<pen lineColor="#FFFFFF"/>
+		<box>
+			<bottomPen lineWidth="0.5" lineStyle="Dashed" lineColor="#999999"/>
+		</box>
+	</style>
+	<style name="styleIterSchedStart">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[($F{scheduledStartDate}.compareTo($P{iteration_schedstart}))==0]]></conditionExpression>
+			<style forecolor="#999999"/>
+		</conditionalStyle>
+	</style>
+	<style name="styleIterSchedEnd">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[($F{scheduledEndDate}.compareTo($P{iteration_schedend}))==0]]></conditionExpression>
+			<style forecolor="#999999"/>
+		</conditionalStyle>
+	</style>
+	<style name="styleIterActStart">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[($F{actualStartDate}.compareTo($P{iteration_actstart}))==0]]></conditionExpression>
+			<style forecolor="#999999"/>
+		</conditionalStyle>
+	</style>
+	<style name="styleIterActEnd">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[($F{actualEndDate}.compareTo($P{iteration_actend}))==0]]></conditionExpression>
+			<style forecolor="#999999"/>
+		</conditionalStyle>
+	</style>
+	<subDataset name="IterationDataSet" whenResourceMissingType="Empty" uuid="54b8053f-cffe-46cb-9074-c6f133f1b2ea">
+		<parameter name="iteration_name" class="java.lang.String" isForPrompting="false"/>
+		<parameter name="iteration_schedstart" class="java.util.Date" isForPrompting="false"/>
+		<parameter name="iteration_schedend" class="java.util.Date" isForPrompting="false"/>
+		<parameter name="iteration_actstart" class="java.util.Date" isForPrompting="false"/>
+		<parameter name="iteration_actend" class="java.util.Date" isForPrompting="false"/>
+		<parameter name="iteration_numberTestCase" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="iteration_status" class="java.lang.Enum" isForPrompting="false"/>
+		<parameter name="iteration_iCountStatusSuccess" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="iteration_iCountStatusReady" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="iteration_iCountStatusUntestable" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="iteration_iCountStatusRunning" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="iteration_iCountStatusBloqued" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="iteration_iCountStatusFailure" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="iteration_iCountStatusSettled" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="iteration_fPercentageStatusReady" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="iteration_fPercentageStatusSuccess" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="iteration_fPercentageStatusBloqued" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="iteration_fPercentageStatusRunning" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="iteration_fPercentageStatusSettled" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="iteration_fPercentageStatusUntestable" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="iteration_fPercentageStatusFailure" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="iteration_fPercentageProgress" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="iteration_number" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="iteration_allowsSettled" class="java.lang.Boolean" isForPrompting="false"/>
+		<parameter name="iteration_allowsUntestable" class="java.lang.Boolean" isForPrompting="false"/>
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="fPercentageStatusReady" class="java.lang.Float">
+			<fieldDescription><![CDATA[fPercentageStatusReady]]></fieldDescription>
+		</field>
+		<field name="numberTestCase" class="java.lang.Integer">
+			<fieldDescription><![CDATA[numberTestCase]]></fieldDescription>
+		</field>
+		<field name="fPercentageStatusSuccess" class="java.lang.Float">
+			<fieldDescription><![CDATA[fPercentageStatusSuccess]]></fieldDescription>
+		</field>
+		<field name="iCountStatusFailure" class="java.lang.Integer">
+			<fieldDescription><![CDATA[iCountStatusFailure]]></fieldDescription>
+		</field>
+		<field name="fPercentageProgress" class="java.lang.Float">
+			<fieldDescription><![CDATA[fPercentageProgress]]></fieldDescription>
+		</field>
+		<field name="fPercentageStatusBloqued" class="java.lang.Float">
+			<fieldDescription><![CDATA[fPercentageStatusBloqued]]></fieldDescription>
+		</field>
+		<field name="fPercentageStatusRunning" class="java.lang.Float">
+			<fieldDescription><![CDATA[fPercentageStatusRunning]]></fieldDescription>
+		</field>
+		<field name="fPercentageStatusUntestable" class="java.lang.Float">
+			<fieldDescription><![CDATA[fPercentageStatusUntestable]]></fieldDescription>
+		</field>
+		<field name="fPercentageStatusSettled" class="java.lang.Float">
+			<fieldDescription><![CDATA[fPercentageStatusSettled]]></fieldDescription>
+		</field>
+		<field name="fPercentageStatusFailure" class="java.lang.Float">
+			<fieldDescription><![CDATA[fPercentageStatusFailure]]></fieldDescription>
+		</field>
+		<field name="iCountStatusSuccess" class="java.lang.Integer">
+			<fieldDescription><![CDATA[iCountStatusSuccess]]></fieldDescription>
+		</field>
+		<field name="iCountStatusSettled" class="java.lang.Integer">
+			<fieldDescription><![CDATA[iCountStatusSettled]]></fieldDescription>
+		</field>
+		<field name="iCountStatusReady" class="java.lang.Integer">
+			<fieldDescription><![CDATA[iCountStatusReady]]></fieldDescription>
+		</field>
+		<field name="iCountStatusBloqued" class="java.lang.Integer">
+			<fieldDescription><![CDATA[iCountStatusBloqued]]></fieldDescription>
+		</field>
+		<field name="iCountStatusRunning" class="java.lang.Integer">
+			<fieldDescription><![CDATA[iCountStatusRunning]]></fieldDescription>
+		</field>
+		<field name="iCountStatusUntestable" class="java.lang.Integer">
+			<fieldDescription><![CDATA[iCountStatusUntestable]]></fieldDescription>
+		</field>
+		<field name="name" class="java.lang.String">
+			<fieldDescription><![CDATA[name]]></fieldDescription>
+		</field>
+		<field name="allowsSettled" class="java.lang.Boolean">
+			<fieldDescription><![CDATA[allowsSettled]]></fieldDescription>
+		</field>
+		<field name="allowsUntestable" class="java.lang.Boolean">
+			<fieldDescription><![CDATA[allowsUntestable]]></fieldDescription>
+		</field>
+	</subDataset>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Documents and Settings\\bsiri\\Mes documents\\reports\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="name" class="java.lang.String">
+		<fieldDescription><![CDATA[name]]></fieldDescription>
+	</field>
+	<field name="testSuites" class="java.util.List">
+		<fieldDescription><![CDATA[testSuites]]></fieldDescription>
+	</field>
+	<field name="actualEndDate" class="java.util.Date">
+		<fieldDescription><![CDATA[actualEndDate]]></fieldDescription>
+	</field>
+	<field name="actualStartDate" class="java.util.Date">
+		<fieldDescription><![CDATA[actualStartDate]]></fieldDescription>
+	</field>
+	<field name="scheduledEndDate" class="java.util.Date">
+		<fieldDescription><![CDATA[scheduledEndDate]]></fieldDescription>
+	</field>
+	<field name="scheduledStartDate" class="java.util.Date">
+		<fieldDescription><![CDATA[scheduledStartDate]]></fieldDescription>
+	</field>
+	<field name="numberTestCase" class="java.lang.Integer">
+		<fieldDescription><![CDATA[numberTestCase]]></fieldDescription>
+	</field>
+	<field name="status" class="java.lang.Enum">
+		<fieldDescription><![CDATA[status]]></fieldDescription>
+	</field>
+	<field name="iCountStatusSuccess" class="java.lang.Integer">
+		<fieldDescription><![CDATA[iCountStatusSuccess]]></fieldDescription>
+	</field>
+	<field name="iCountStatusReady" class="java.lang.Integer">
+		<fieldDescription><![CDATA[iCountStatusReady]]></fieldDescription>
+	</field>
+	<field name="iCountStatusRunning" class="java.lang.Integer">
+		<fieldDescription><![CDATA[iCountStatusRunning]]></fieldDescription>
+	</field>
+	<field name="iCountStatusUntestable" class="java.lang.Integer">
+		<fieldDescription><![CDATA[iCountStatusUntestable]]></fieldDescription>
+	</field>
+	<field name="iCountStatusBloqued" class="java.lang.Integer">
+		<fieldDescription><![CDATA[iCountStatusBloqued]]></fieldDescription>
+	</field>
+	<field name="iCountStatusFailure" class="java.lang.Integer">
+		<fieldDescription><![CDATA[iCountStatusFailure]]></fieldDescription>
+	</field>
+	<field name="iCountStatusSettled" class="java.lang.Integer">
+		<fieldDescription><![CDATA[iCountStatusSettled]]></fieldDescription>
+	</field>
+	<field name="fPercentageStatusReady" class="java.lang.Float">
+		<fieldDescription><![CDATA[fPercentageStatusReady]]></fieldDescription>
+	</field>
+	<field name="fPercentageStatusSuccess" class="java.lang.Float">
+		<fieldDescription><![CDATA[fPercentageStatusSuccess]]></fieldDescription>
+	</field>
+	<field name="fPercentageStatusBloqued" class="java.lang.Float">
+		<fieldDescription><![CDATA[fPercentageStatusBloqued]]></fieldDescription>
+	</field>
+	<field name="fPercentageStatusRunning" class="java.lang.Float">
+		<fieldDescription><![CDATA[fPercentageStatusRunning]]></fieldDescription>
+	</field>
+	<field name="fPercentageStatusSettled" class="java.lang.Float">
+		<fieldDescription><![CDATA[fPercentageStatusSettled]]></fieldDescription>
+	</field>
+	<field name="fPercentageStatusUntestable" class="java.lang.Float">
+		<fieldDescription><![CDATA[fPercentageStatusUntestable]]></fieldDescription>
+	</field>
+	<field name="fPercentageStatusFailure" class="java.lang.Float">
+		<fieldDescription><![CDATA[fPercentageStatusFailure]]></fieldDescription>
+	</field>
+	<field name="fPercentageProgress" class="java.lang.Float">
+		<fieldDescription><![CDATA[fPercentageProgress]]></fieldDescription>
+	</field>
+	<field name="allowsSettled" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[allowsSettled]]></fieldDescription>
+	</field>
+	<field name="allowsUntestable" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[allowsUntestable]]></fieldDescription>
+	</field>
+	<detail>
+		<band height="20">
+			<componentElement>
+				<reportElement uuid="6161a853-7511-40a8-b277-432ec6ca06e7" key="table" style="table" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="736" height="20" isRemoveLineWhenBlank="true"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="IterationDataSet" uuid="03ca796c-e406-4aae-b9c9-167361be7d94">
+						<datasetParameter name="iteration_name">
+							<datasetParameterExpression><![CDATA[$F{name}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iteration_schedstart">
+							<datasetParameterExpression><![CDATA[$F{scheduledStartDate}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iteration_schedend">
+							<datasetParameterExpression><![CDATA[$F{scheduledEndDate}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iteration_actstart">
+							<datasetParameterExpression><![CDATA[$F{actualStartDate}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iteration_actend">
+							<datasetParameterExpression><![CDATA[$F{actualEndDate}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iteration_numberTestCase">
+							<datasetParameterExpression><![CDATA[$F{numberTestCase}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iteration_status">
+							<datasetParameterExpression><![CDATA[$F{status}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iteration_iCountStatusSuccess">
+							<datasetParameterExpression><![CDATA[$F{iCountStatusSuccess}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iteration_iCountStatusReady">
+							<datasetParameterExpression><![CDATA[$F{iCountStatusReady}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iteration_iCountStatusRunning">
+							<datasetParameterExpression><![CDATA[$F{iCountStatusRunning}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iteration_iCountStatusUntestable">
+							<datasetParameterExpression><![CDATA[$F{iCountStatusUntestable}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iteration_iCountStatusBloqued">
+							<datasetParameterExpression><![CDATA[$F{iCountStatusBloqued}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iteration_iCountStatusFailure">
+							<datasetParameterExpression><![CDATA[$F{iCountStatusFailure}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iteration_iCountStatusSettled">
+							<datasetParameterExpression><![CDATA[$F{iCountStatusSettled}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iteration_fPercentageStatusReady">
+							<datasetParameterExpression><![CDATA[$F{fPercentageStatusReady}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iteration_fPercentageStatusSuccess">
+							<datasetParameterExpression><![CDATA[$F{fPercentageStatusSuccess}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iteration_fPercentageStatusBloqued">
+							<datasetParameterExpression><![CDATA[$F{fPercentageStatusBloqued}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iteration_fPercentageStatusRunning">
+							<datasetParameterExpression><![CDATA[$F{fPercentageStatusRunning}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iteration_fPercentageStatusUntestable">
+							<datasetParameterExpression><![CDATA[$F{fPercentageStatusUntestable}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iteration_fPercentageStatusFailure">
+							<datasetParameterExpression><![CDATA[$F{fPercentageStatusFailure}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iteration_fPercentageStatusSettled">
+							<datasetParameterExpression><![CDATA[$F{fPercentageStatusSettled}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iteration_fPercentageProgress">
+							<datasetParameterExpression><![CDATA[$F{fPercentageProgress}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iteration_number">
+							<datasetParameterExpression><![CDATA[$V{REPORT_COUNT}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iteration_allowsSettled">
+							<datasetParameterExpression><![CDATA[$F{allowsSettled}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iteration_allowsUntestable">
+							<datasetParameterExpression><![CDATA[$F{allowsUntestable}]]></datasetParameterExpression>
+						</datasetParameter>
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource(1)]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="113" uuid="568b2edf-f61a-4fd5-8ef8-41665e716086">
+						<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true">
+								<reportElement uuid="806a37a2-121f-41c9-ace3-65c1bb57271c" stretchType="RelativeToBandHeight" x="0" y="0" width="113" height="20">
+									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement verticalAlignment="Middle">
+									<font size="9" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA["It # "+$P{iteration_number}+" - "+$P{iteration_name}]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="55" uuid="73b39582-d77f-4f66-b321-2289de92d229">
+						<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true" pattern="">
+								<reportElement uuid="83f6b4a2-8061-458e-8d79-6cdff22c2f43" stretchType="RelativeToBandHeight" x="0" y="0" width="55" height="20">
+									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[($P{iteration_schedstart}==null) ? $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{iteration_schedstart})]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="55" uuid="3f23afa6-3764-4986-be07-d900265e5ed9">
+						<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true" pattern="">
+								<reportElement uuid="26b6f63b-ec34-42f6-8c34-03316e03b5f9" stretchType="RelativeToBandHeight" x="0" y="0" width="55" height="20">
+									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[($P{iteration_schedend}==null) ? $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{iteration_schedend})]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="55" uuid="9beae28e-5469-4ef8-b29f-27f1c8c33f3d">
+						<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+								<reportElement uuid="256e20f2-8775-4f79-895e-b0d2d4d09d8a" stretchType="RelativeToBandHeight" x="0" y="0" width="55" height="20">
+									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[($P{iteration_actstart}==null) ? $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{iteration_actstart})]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="55" uuid="b3764bee-52a6-4477-a73b-44e5dcc1dae8">
+						<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true" pattern="">
+								<reportElement uuid="319371bb-190a-4e3e-b824-16a96f279657" stretchType="RelativeToBandHeight" x="0" y="0" width="55" height="20">
+									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[($P{iteration_actend}==null) ? $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{iteration_actend})]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="41" uuid="baa9b0b2-09d4-442c-b2de-1ebc313d72bd">
+						<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true">
+								<reportElement uuid="dafad8db-f370-4bee-8037-1409a0ebc670" stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="20">
+									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{iteration_iCountStatusReady}]]></textFieldExpression>
+							</textField>
+							<textField isStretchWithOverflow="true" pattern="#,##0 %">
+								<reportElement uuid="5e45c286-74e5-4d2b-a345-cbb83863313a" stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="20" forecolor="#999999">
+									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Justified" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{iteration_fPercentageStatusReady}]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="41" uuid="2b39cefe-71df-43e4-85ea-fd54cc7562a2">
+						<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true">
+								<reportElement uuid="ae3c0745-3f18-48c7-b00b-61b66631553a" stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="20">
+									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{iteration_iCountStatusRunning}]]></textFieldExpression>
+							</textField>
+							<textField isStretchWithOverflow="true" pattern="#,##0 %">
+								<reportElement uuid="3b74802c-ec48-47d9-a37a-38965ec42e56" stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="20" forecolor="#999999">
+									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Justified" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{iteration_fPercentageStatusRunning}]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="41" uuid="b3b85627-86ca-45d9-a30b-93ad721d3179">
+						<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true">
+								<reportElement uuid="e2fcb743-4a13-44ce-9ff3-1d9fa4d02f5b" stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="20">
+									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{iteration_allowsUntestable} ? $P{iteration_iCountStatusUntestable} : new String("")]]></textFieldExpression>
+							</textField>
+							<textField isStretchWithOverflow="true" pattern="#,##0 %">
+								<reportElement uuid="66ffa203-6504-4172-bf82-9dc57c9c6487" stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="20" forecolor="#999999">
+									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Justified" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{iteration_allowsUntestable} ? $P{iteration_fPercentageStatusUntestable} : new String("")]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="41" uuid="349f66e0-0f77-4706-8f6a-bf6ee31799de">
+						<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true">
+								<reportElement uuid="20159ba7-ea54-4c5a-8372-79c479be2c44" stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="20">
+									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{iteration_iCountStatusBloqued}]]></textFieldExpression>
+							</textField>
+							<textField isStretchWithOverflow="true" pattern="#,##0 %">
+								<reportElement uuid="a487678d-ae7c-4d4d-99c8-5a9482d61cdc" stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="20" forecolor="#999999">
+									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Justified" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{iteration_fPercentageStatusBloqued}]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="41" uuid="a8fe60e7-a14d-4f0a-be04-f54c84296e7c">
+						<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true">
+								<reportElement uuid="be2be2c7-0762-4e44-885e-09314df8dd08" stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="20" forecolor="#FB3333">
+									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{iteration_iCountStatusFailure}]]></textFieldExpression>
+							</textField>
+							<textField isStretchWithOverflow="true" pattern="#,##0 %">
+								<reportElement uuid="f52fa403-396a-4282-9b5a-75cbdf2513af" stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="20" forecolor="#999999">
+									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Justified" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{iteration_fPercentageStatusFailure}]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="41" uuid="d8b758c0-f7c7-48ae-9233-35a4ab73e652">
+						<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true">
+								<reportElement uuid="48937fc1-25a3-4d78-9cb1-bd90156a327b" stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="20" forecolor="#009900">
+									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{iteration_iCountStatusSuccess}]]></textFieldExpression>
+							</textField>
+							<textField isStretchWithOverflow="true" pattern="#,##0 %">
+								<reportElement uuid="73e96de6-0760-4cd6-b7bd-8d2e6c10ae85" stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="20" forecolor="#999999">
+									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Justified" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{iteration_fPercentageStatusSuccess}]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="41" uuid="d8b758c0-f7c7-48ae-9233-35a4ab73e652">
+						<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true">
+								<reportElement uuid="48937fc1-25a3-4d78-9cb1-bd90156a327b" stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="20" forecolor="#009900">
+									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{iteration_allowsSettled} ? $P{iteration_iCountStatusSettled} : new String("")]]></textFieldExpression>
+							</textField>
+							<textField isStretchWithOverflow="true" pattern="#,##0 %">
+								<reportElement uuid="73e96de6-0760-4cd6-b7bd-8d2e6c10ae85" stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="20" forecolor="#999999">
+									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Justified" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{iteration_allowsSettled} ? $P{iteration_fPercentageStatusSettled} : new String("")]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="50" uuid="e3a11fcb-bed6-45eb-82f8-5f3d4dbbdc40">
+						<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true">
+								<reportElement uuid="d9fe8ebe-74a5-4534-a911-713bbe12eea1" stretchType="RelativeToBandHeight" x="0" y="0" width="50" height="20">
+									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{iteration_numberTestCase}]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="63" uuid="3cdf4b6b-1771-4b78-8509-738152e06359">
+						<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true" pattern="#,##0 %">
+								<reportElement uuid="4a9c0564-041d-4fcb-94c4-4203886ed4a6" stretchType="RelativeToBandHeight" x="0" y="0" width="63" height="20">
+									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA[($P{iteration_fPercentageProgress}==null ? 0.0f : $P{iteration_fPercentageProgress})]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+		<band height="18">
+			<componentElement>
+				<reportElement uuid="4457024b-f4af-4e78-8759-a05662c6f3c9" key="table" style="table 1" stretchType="RelativeToBandHeight" mode="Transparent" x="44" y="0" width="683" height="18" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[(($F{testSuites}!=null) &&($F{testSuites}.size()>0))]]></printWhenExpression>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="IterationDataSet" uuid="3d0c02de-ca05-4f22-bafa-b9d0c5a79b0f">
+						<datasetParameter name="iteration_allowsUntestable">
+							<datasetParameterExpression><![CDATA[$F{allowsUntestable}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iteration_allowsSettled">
+							<datasetParameterExpression><![CDATA[$F{allowsSettled}]]></datasetParameterExpression>
+						</datasetParameter>
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{testSuites})]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="289" uuid="7722fdda-555d-4a6f-9687-c77eedf8fc23">
+						<jr:columnHeader style="table 1_TH" height="0" rowSpan="1">
+							<box>
+								<pen lineColor="#FFFFFF"/>
+								<topPen lineColor="#FFFFFF"/>
+								<leftPen lineColor="#FFFFFF"/>
+								<bottomPen lineColor="#FFFFFF"/>
+								<rightPen lineColor="#FFFFFF"/>
+							</box>
+						</jr:columnHeader>
+						<jr:detailCell style="table 1_TD" height="18" rowSpan="1">
+							<textField isStretchWithOverflow="true" pattern="">
+								<reportElement uuid="c153a7d8-9d6b-48be-8055-a94e51cd0983" stretchType="RelativeToBandHeight" x="0" y="0" width="289" height="18" forecolor="#666666">
+									<property name="net.sf.jasperreports.print.keep.full.text" value=""/>
+								</reportElement>
+								<textElement verticalAlignment="Middle">
+									<font size="9" isBold="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA["Suite : "+$F{name}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="41" uuid="7da6bbaa-5a65-4610-8ad6-bd9fd0b6c271">
+						<jr:columnHeader style="table 1_TH" height="0" rowSpan="1">
+							<box>
+								<pen lineColor="#FFFFFF"/>
+								<topPen lineColor="#FFFFFF"/>
+								<leftPen lineColor="#FFFFFF"/>
+								<bottomPen lineColor="#FFFFFF"/>
+								<rightPen lineColor="#FFFFFF"/>
+							</box>
+						</jr:columnHeader>
+						<jr:detailCell style="table 1_TD" height="18" rowSpan="1">
+							<textField pattern="">
+								<reportElement uuid="c3150180-12be-40ed-9345-9ee737ead702" stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="18" forecolor="#666666">
+									<property name="net.sf.jasperreports.print.keep.full.text" value=""/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{iCountStatusReady}]]></textFieldExpression>
+							</textField>
+							<textField pattern="#,##0 %">
+								<reportElement uuid="16f7c36d-1dc7-4504-b15c-e9143c82a75d" stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="18" forecolor="#999999">
+									<property name="net.sf.jasperreports.print.keep.full.text" value=""/>
+								</reportElement>
+								<textElement textAlignment="Justified" verticalAlignment="Middle">
+									<font size="7" isBold="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{fPercentageStatusReady}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="41" uuid="b5976ab9-bd13-4134-9e60-6b18347ec5d5">
+						<jr:columnHeader style="table 1_TH" height="0" rowSpan="1">
+							<box>
+								<pen lineColor="#FFFFFF"/>
+								<topPen lineColor="#FFFFFF"/>
+								<leftPen lineColor="#FFFFFF"/>
+								<bottomPen lineColor="#FFFFFF"/>
+								<rightPen lineColor="#FFFFFF"/>
+							</box>
+						</jr:columnHeader>
+						<jr:detailCell style="table 1_TD" height="18" rowSpan="1">
+							<textField pattern="">
+								<reportElement uuid="f0b06687-243f-473c-a2cf-58ad60fce8dc" stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="18" forecolor="#666666">
+									<property name="net.sf.jasperreports.print.keep.full.text" value=""/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{iCountStatusRunning}]]></textFieldExpression>
+							</textField>
+							<textField pattern="#,##0 %">
+								<reportElement uuid="dbad6c8e-0131-4b6d-9812-0918d7c89240" stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="18" forecolor="#999999">
+									<property name="net.sf.jasperreports.print.keep.full.text" value=""/>
+								</reportElement>
+								<textElement textAlignment="Justified" verticalAlignment="Middle">
+									<font size="7" isBold="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{fPercentageStatusRunning}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="41" uuid="72356672-8fbf-4af6-83ad-940035d0231c">
+						<jr:columnHeader style="table 1_TH" height="0" rowSpan="1">
+							<box>
+								<pen lineColor="#FFFFFF"/>
+								<topPen lineColor="#FFFFFF"/>
+								<leftPen lineColor="#FFFFFF"/>
+								<bottomPen lineColor="#FFFFFF"/>
+								<rightPen lineColor="#FFFFFF"/>
+							</box>
+						</jr:columnHeader>
+						<jr:detailCell style="table 1_TD" height="18" rowSpan="1">
+							<textField pattern="">
+								<reportElement uuid="694228a1-2247-41bc-b5e9-6247f0d1b6db" stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="18" forecolor="#666666">
+									<property name="net.sf.jasperreports.print.keep.full.text" value=""/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{iteration_allowsUntestable} ? $F{iCountStatusUntestable} : new String("")]]></textFieldExpression>
+							</textField>
+							<textField pattern="#,##0 %">
+								<reportElement uuid="270e01e4-a6ff-4d3a-9cd0-33c3f4e56563" stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="18" forecolor="#999999">
+									<property name="net.sf.jasperreports.print.keep.full.text" value=""/>
+								</reportElement>
+								<textElement textAlignment="Justified" verticalAlignment="Middle">
+									<font size="7" isBold="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{iteration_allowsUntestable} ?$F{fPercentageStatusUntestable} : new String("")]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="41" uuid="c38cedd9-2a3b-4825-9b00-6b98810206ee">
+						<jr:columnHeader style="table 1_TH" height="0" rowSpan="1">
+							<box>
+								<pen lineColor="#FFFFFF"/>
+								<topPen lineColor="#FFFFFF"/>
+								<leftPen lineColor="#FFFFFF"/>
+								<bottomPen lineColor="#FFFFFF"/>
+								<rightPen lineColor="#FFFFFF"/>
+							</box>
+						</jr:columnHeader>
+						<jr:detailCell style="table 1_TD" height="18" rowSpan="1">
+							<textField pattern="">
+								<reportElement uuid="6a05bbf0-2c1f-4138-b05a-78b1690f2576" stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="18" forecolor="#666666">
+									<property name="net.sf.jasperreports.print.keep.full.text" value=""/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{iCountStatusBloqued}]]></textFieldExpression>
+							</textField>
+							<textField pattern="#,##0 %">
+								<reportElement uuid="885e6215-fe35-42b6-8680-c6308674d340" stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="18" forecolor="#999999">
+									<property name="net.sf.jasperreports.print.keep.full.text" value=""/>
+								</reportElement>
+								<textElement textAlignment="Justified" verticalAlignment="Middle">
+									<font size="7" isBold="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{fPercentageStatusBloqued}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="41" uuid="447795bc-48f6-4078-a3f5-b9c3857ce0b7">
+						<jr:columnHeader style="table 1_TH" height="0" rowSpan="1">
+							<box>
+								<pen lineColor="#FFFFFF"/>
+								<topPen lineColor="#FFFFFF"/>
+								<leftPen lineColor="#FFFFFF"/>
+								<bottomPen lineColor="#FFFFFF"/>
+								<rightPen lineColor="#FFFFFF"/>
+							</box>
+						</jr:columnHeader>
+						<jr:detailCell style="table 1_TD" height="18" rowSpan="1">
+							<textField pattern="">
+								<reportElement uuid="3c119370-6d47-493d-b8a0-1f9fc49a7e5f" stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="18" forecolor="#FE6565">
+									<property name="net.sf.jasperreports.print.keep.full.text" value=""/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{iCountStatusFailure}]]></textFieldExpression>
+							</textField>
+							<textField pattern="#,##0 %">
+								<reportElement uuid="00d207b3-2075-4485-a3ee-cd73efd233ef" stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="18" forecolor="#999999">
+									<property name="net.sf.jasperreports.print.keep.full.text" value=""/>
+								</reportElement>
+								<textElement textAlignment="Justified" verticalAlignment="Middle">
+									<font size="7" isBold="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{fPercentageStatusFailure}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="41" uuid="eb25a90b-7ed6-42e6-9cab-f3ae62334571">
+						<jr:columnHeader style="table 1_TH" height="0" rowSpan="1">
+							<box>
+								<pen lineColor="#FFFFFF"/>
+								<topPen lineColor="#FFFFFF"/>
+								<leftPen lineColor="#FFFFFF"/>
+								<bottomPen lineColor="#FFFFFF"/>
+								<rightPen lineColor="#FFFFFF"/>
+							</box>
+						</jr:columnHeader>
+						<jr:detailCell style="table 1_TD" height="18" rowSpan="1">
+							<textField pattern="">
+								<reportElement uuid="8eafc89a-804e-4abd-9e92-03bd2cfff5ba" stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="18" forecolor="#61BE61">
+									<property name="net.sf.jasperreports.print.keep.full.text" value=""/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{iCountStatusSuccess}]]></textFieldExpression>
+							</textField>
+							<textField pattern="#,##0 %">
+								<reportElement uuid="e123d68f-e86a-48ba-bc6e-1d61730c8456" stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="18" forecolor="#999999">
+									<property name="net.sf.jasperreports.print.keep.full.text" value=""/>
+								</reportElement>
+								<textElement textAlignment="Justified" verticalAlignment="Middle">
+									<font size="7" isBold="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{fPercentageStatusSuccess}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="41" uuid="eb25a90b-7ed6-42e6-9cab-f3ae62334571">
+						<jr:columnHeader style="table 1_TH" height="0" rowSpan="1">
+							<box>
+								<pen lineColor="#FFFFFF"/>
+								<topPen lineColor="#FFFFFF"/>
+								<leftPen lineColor="#FFFFFF"/>
+								<bottomPen lineColor="#FFFFFF"/>
+								<rightPen lineColor="#FFFFFF"/>
+							</box>
+						</jr:columnHeader>
+						<jr:detailCell style="table 1_TD" height="18" rowSpan="1">
+							<textField pattern="">
+								<reportElement uuid="8eafc89a-804e-4abd-9e92-03bd2cfff5ba" stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="18" forecolor="#61BE61">
+									<property name="net.sf.jasperreports.print.keep.full.text" value=""/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{iteration_allowsSettled} ? $F{iCountStatusSettled} : new String("")]]></textFieldExpression>
+							</textField>
+							<textField pattern="#,##0 %">
+								<reportElement uuid="e123d68f-e86a-48ba-bc6e-1d61730c8456" stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="18" forecolor="#999999">
+									<property name="net.sf.jasperreports.print.keep.full.text" value=""/>
+								</reportElement>
+								<textElement textAlignment="Justified" verticalAlignment="Middle">
+									<font size="7" isBold="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{iteration_allowsSettled} ? $F{fPercentageStatusSettled} : new String("")]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="50" uuid="4abdb15d-7050-4b8e-920f-704a00e99881">
+						<jr:columnHeader style="table 1_TH" height="0" rowSpan="1">
+							<box>
+								<pen lineColor="#FFFFFF"/>
+								<topPen lineColor="#FFFFFF"/>
+								<leftPen lineColor="#FFFFFF"/>
+								<bottomPen lineColor="#FFFFFF"/>
+								<rightPen lineColor="#FFFFFF"/>
+							</box>
+						</jr:columnHeader>
+						<jr:detailCell style="table 1_TD" height="18" rowSpan="1">
+							<textField pattern="">
+								<reportElement uuid="ff607702-2933-4dc9-b474-40a8137e2c52" stretchType="RelativeToBandHeight" x="0" y="0" width="50" height="18" forecolor="#666666">
+									<property name="net.sf.jasperreports.print.keep.full.text" value=""/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{numberTestCase}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="63" uuid="b22e7f45-cceb-44ba-8b3c-32b65abf107e">
+						<jr:columnHeader style="table 1_TH" height="0" rowSpan="1">
+							<box>
+								<pen lineColor="#FFFFFF"/>
+								<topPen lineColor="#FFFFFF"/>
+								<leftPen lineColor="#FFFFFF"/>
+								<bottomPen lineColor="#FFFFFF"/>
+								<rightPen lineColor="#FFFFFF"/>
+							</box>
+						</jr:columnHeader>
+						<jr:detailCell style="table 1_TD" height="18" rowSpan="1">
+							<textField pattern="#,##0 %" isBlankWhenNull="true">
+								<reportElement uuid="6681c21d-8b14-4893-8c33-70a0d0af19d2" stretchType="RelativeToBandHeight" x="0" y="0" width="63" height="18" forecolor="#666666">
+									<property name="net.sf.jasperreports.print.keep.full.text" value=""/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA[($F{fPercentageProgress}==null ? 0.0f : $F{fPercentageProgress})]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</detail>
+</jasperReport>

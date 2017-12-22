@@ -1,0 +1,270 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <!-- common head -->
+  <link rel="stylesheet" type="text/css" media="all"
+        href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" sq:css="squash.core.css"/>
+  <!-- /common head -->
+  <link rel="stylesheet" type="text/css" media="all"
+        href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.blue.css" sq:css="squash.blue.css"/>
+</head>
+<body>
+<div th:remove="all">
+  <!--  if want to use it for test steps too, use __${requirementVerifier.type}__
+  parameters are :
+
+      linkable : boolean that says whether user has link right on requirementVerifier entity
+      requirementVerifier : a requirement verifier entity
+      container : if of dom container that will hold the table events
+
+-->
+</div>
+
+<div id="verified-requirements-bloc-frag" th:fragment="verified-requirements-bloc">
+  <script type="text/javascript" th:inline="javascript">
+    if (!squashtm) {
+      var squashtm = {};
+    }
+    if (!squashtm.app) {
+      squashtm.app = {
+        locale: /*[[#{squashtm.locale}]]*/,
+        contextRoot: /*[[ @{/} ]]*/"http://localhost:8080/squash",
+      };
+    }
+    squashtm.app.verifiedRequirementsBlocSettings = {
+      linkable: /*[[ ${linkable} ]]*/ true,
+      containerId: /*[[ ${containerId} ]]*/ "verified-requirements-bloc-frag",
+      url: /*[[ @{/test-cases/__${requirementVerifier.verifier.id}__/verified-requirement-versions} ]]*/'http://localhost:8080/squash/test-cases/1/verified-requirements',
+      stepUrl: /*[[ @{/test-steps/__${requirementVerifier.verifyingStep.id}__/verified-requirement-versions} ]]*/'http://localhost:8080/squash/test-steps/1/verified-requirements'
+    };
+    squashtm.app.verifiedRequirementsTableSettings = {
+      containerId: /*[[ ${containerId} ]]*/ "verified-requirements-bloc-frag",
+      linkable: /*[[ ${linkable} ]]*/ true,
+      url: /*[[ @{/test-cases/__${requirementVerifier.verifier.id}__/verified-requirement-versions} ]]*/'http://localhost:8080/squash/test-cases/1/verified-requirements',
+      stepUrl: /*[[ @{/test-steps/__${requirementVerifier.verifyingStep.id}__/verified-requirement-versions} ]]*/'http://localhost:8080/squash/test-steps/1/verified-requirements',
+      messages: {
+        cancel: /*[[ #{label.Cancel} ]]*/ "cancel",
+        ok: /*[[ #{rich-edit.button.ok.label} ]]*/ "ok",
+        remove: /*[[#{label.Delete}]]*/ "Delete",
+      },
+    };
+  </script>
+  <script th:remove="all">
+    require(["common"], function (common) {
+      require(["jquery", "domReady", "./verified-requirements/TestStepVerifiedRequirementsPanel"], function ($, domReady, TestStepVerifiedRequirementsPanel) {
+        domReady(function () {
+
+          new TestStepVerifiedRequirementsPanel();
+
+        });
+      });
+    });
+  </script>
+
+  <div
+    style="float: left; width: calc(100% - 2em);  padding-left: 1em; padding-right: 1em; padding-bottom: 1em; margin-top: 0.2em; margin-bottom: 1.65em; border:solid thin black; background: #ecedec;"
+    class="ui-corner-all">
+    <div>
+      <h3 th:inline="text">
+        [[#{label.characteristic.selectedRequirement}]]
+      </h3>
+    </div>
+
+    <div style="float: left; width: calc(50% - 1em);" class="sq-tg expand">
+      <div class="tg-head" style="background: #c1c1c1;">
+        <h3 th:inline="text">
+          [[#{requirement.panel.general-informations.title.selectedRequirement}]]
+          <span id="requirement-version-id" class="small txt-discreet"></span>
+        </h3>
+      </div>
+
+      <div class="tg-body" style="background: #EBEAE5;">
+        <div class="display-table-row" style="display: flex; float: left; flex-wrap: wrap;  width: 40%">
+          <label class="display-table-cell" for="requirement-version-versionNumber"
+                 th:text="#{requirement-version.version-number.label}">Version
+            number</label>
+          <div class="display-table-cell" id="requirement-version-versionNumber">
+          </div>
+        </div>
+        <div class="display-table-row" style="display: flex; float: left; flex-wrap: wrap;  width: 60%">
+          <label class="display-table-cell" for="requirement-version-status"
+                 th:text="#{ requirement.status.combo.label }">Status</label>
+          <div class="display-table-cell" id="requirement-version-status">
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div style="float: right; width: calc(50% - 1em);" class="sq-tg expand">
+      <div class="tg-head" style="background: #c1c1c1;">
+        <h3 th:text="#{label.Attributes.selectedRequirement}">Attributs</h3>
+      </div>
+      <div class="tg-body" style="background: #EBEAE5;">
+        <div class="display-table-row" style="display: flex; float: left; flex-wrap: wrap; width: 45%">
+          <label class="display-table-cell"
+                 for="requirement-version-criticality"
+                 th:text="#{ requirement.criticality.combo.label }">Criticality</label>
+          <div class="display-table-cell"
+               id="requirement-version-criticality">
+          </div>
+        </div>
+        <div class="display-table-row" style="display: flex; float: left; flex-wrap: wrap;  width: 55%;">
+          <label class="display-table-cell"
+                 for="requirement-version-category" th:text="#{ requirement.category.combo.label }">
+            Category</label>
+
+          <div class="display-table-cell" th:inline="text">
+            <span id="requirement-version-category-icon"></span>
+            <span id="requirement-version-category">
+          </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="float: left; width: calc(100%); margin-bottom: 0em;" class="sq-tg expand">
+      <div class="tg-head" style="background: #c1c1c1;">
+        <h3 th:text="#{label.Description.selectedRequirement}">Description</h3>
+      </div>
+      <div id="requirement-version-description"
+           style="height: 25vh; padding-left: 1%;  padding-right: 1%; background: #EBEAE5;" class="tg-body">
+      </div>
+    </div>
+  </div>
+
+
+  <div style="float: left;  width: calc(100%);" class="sq-tg expand">
+    <div class="tg-head">
+      <h3>
+        <a th:text="#{label.associatedRequirements.test-case}">Associated requirements</a>
+      </h3>
+      <div class="tg-toolbar">
+        <button th:if="${linkable}" id="add-verified-requirements-button" class="sq-icon-btn btn-sm"
+                th:title="#{label.associateRequirements}">
+          <span class="ui-icon ui-icon-plus squared-icons">+</span>
+        </button>
+        <button th:if="${linkable}" id="remove-associated-requirements-button" class="sq-icon-btn btn-sm"
+                th:title="#{label.desassociationRequirements}">
+          <span class="ui-icon ui-icon-minus squared-icons">-</span>
+        </button>
+        <ul id="remove-verified-requirements-menu" class="not-displayed">
+          <li id="remove-verified-requirements-button" class="cursor-pointer">
+            <a th:text="#{label.removeRequirementsAssociation.test-cases}">Remove from test-case</a>
+          </li>
+          <li id="remove-verified-requirements-from-step-button" class="ui-state-disable cursor-pointer">
+            <a th:text="#{label.removeRequirementsAssociation.test-steps}">Remove from step</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div id="verified-requirements-panel"
+         th:attr="data-init-open=${! requirementVerifier.verifier.verifiedRequirementVersions.empty}" class="tg-body">
+      <table id="verified-requirements-table"
+             th:attr="data-def='pre-filled, datakeys-id=entity-id, ajaxsource='+@{/test-steps/__${requirementVerifier.verifyingStep.id}__/verified-requirement-versions/}">
+        <thead>
+        <tr>
+          <th th:attr="data-def='select, map=entity-index'">#</th>
+          <th th:attr="data-def='sClass=link-checkbox, map=empty-link-checkbox, center, narrow'">&nbsp;</th>
+          <th th:attr="data-def='sortable, map=project'" th:text="#{label.project}">Project</th>
+          <th th:attr="data-def='sortable, map=reference'" th:text="#{label.Reference}">Reference</th>
+          <th th:attr="data-def='sortable, map=name, link='+@{/requirement-versions/{entity-id}/info}"
+              th:text="#{requirement.name.label}">Name
+          </th>
+          <th th:attr="data-def='sortable, map=criticality'" th:text="#{requirement.criticality.label}">Critical</th>
+          <th th:attr="data-def='invisible, sortable, map=entity-id'" th:text="#{label.versionId}">Id (masked)</th>
+          <th th:if="${milestoneConf.milestoneDatesColumnVisible} == true"
+              data-def="invisible, sortable, map=milestone-dates" th:text="#{label.Milestone}"></th>
+          <th th:attr="data-def='invisible, sortable, sClass=versionNumber, map=versionNumber'"
+              th:text="#{requirement-version.version-number.label}">Version#
+          </th>
+          <th th:attr="data-def='invisible, map=criticality-level'">criticality level(masked)</th>
+          <th th:attr="data-def='invisible, sortable, map=category'" th:text="#{requirement.category.label}">
+            Functional
+          </th>
+          <th th:attr="data-def='invisible, unbind-button, map=empty-delete-holder, center, narrow'">&nbsp;(masked)</th>
+          <th th:attr="data-def='invisible, map=status'">status(masked)</th>
+          <th th:attr="data-def='invisible, map=status-level'">status(masked)</th>
+          <th th:attr="data-def='invisible, map=verifiedByStep'">verifiedByStep(masked)</th>
+          <th th:attr="data-def='invisible, map=description'">description(masked)</th>
+          <th th:attr="data-def='invisible, map=category-icon'">category-icon(masked)</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="coverage, iterStat : ${requirementVerifier.coverages}"
+            th:with="catLabel = ${#messages.msgOrNull('__${coverage.version.category.label}__')}">
+          <td th:text="${iterStat.count}">1</td>
+          <td></td>
+          <td th:text="${coverage.version.requirement.project.name}">project</td>
+          <td th:text="${coverage.version.reference}">ref 1</td>
+          <td th:text="${coverage.version.name}">name 1</td>
+          <td th:text="#{__${coverage.version.criticality.i18nKey}__}">Criticality</td>
+          <td th:text="${coverage.version.id}">1221</td>
+          <td th:if="${milestoneConf.milestoneDatesColumnVisible} == true" th:text="${coverage.milestoneTimeInterval}">
+            Milestone Dates Interval
+          </td>
+          <td th:text="${coverage.version.versionNumber}">3</td>
+          <td th:text="${coverage.version.criticality.level}">0</td>
+          <td th:text="${(catLabel != null) ? catLabel : coverage.version.category.label}">Category</td>
+          <td class="unbind-button"></td>
+          <td th:text="#{__${coverage.version.status.i18nKey}__}">OBSOLETE</td>
+          <td th:text="${coverage.version.status.level}">0</td>
+          <td th:text="${coverage.verifiedByStep}">true</td>
+          <td th:utext="${coverage.version.description}">description</td>
+          <td th:text="${coverage.version.category.iconName}">CategoryIconName</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="remove-verified-requirement-version-dialog" class="popup-dialog not-displayed" th:title="#{label.Confirm}">
+    <div th:text="#{dialog.remove-requirement-version-association.message}"></div>
+    <div class="popup-dialog-buttonpane">
+      <input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}"/>
+      <input class="cancel" type="button" value="cancel" th:value="#{label.Cancel}"/>
+    </div>
+  </div>
+
+  <div id="remove-verified-requirement-version-from-step-dialog" class="popup-dialog not-displayed"
+       th:title="#{label.Confirm}">
+    <div th:text="#{message.remove-requirement-version.step}"></div>
+    <div class="popup-dialog-buttonpane">
+      <input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}"/>
+      <input class="cancel" type="button" value="cancel" th:value="#{label.Cancel}"/>
+    </div>
+  </div>
+
+  <div id="remove-obsolete-verified-requirement-version-dialog" class="popup-dialog not-displayed"
+       th:title="#{dialog.obsolete.requirement.version.removal.confirm.title}">
+    <div th:text="#{dialog.remove-requirement-version-association.message}"></div>
+    <div class="popup-dialog-buttonpane">
+      <input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}"/>
+      <input class="cancel" type="button" value="cancel" th:value="#{label.Cancel}"/>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

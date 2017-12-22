@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.12.0.dtd">
+<dataset>
+  <CORE_CONFIG STR_KEY="feature.milestone.enabled" VALUE="true"/>
+  <CORE_PARTY PARTY_ID="-1"/>
+  <CORE_PARTY PARTY_ID="-2"/>
+  <CORE_PARTY PARTY_ID="-3"/>
+  <CORE_USER LOGIN="admin" CREATED_ON="2014-10-10" CREATED_BY="me" PARTY_ID="-1" ACTIVE="1"/>
+  <CORE_USER LOGIN="chef" CREATED_ON="2014-10-10" CREATED_BY="me" PARTY_ID="-2" ACTIVE="1"/>
+  <CORE_USER LOGIN="chef2" CREATED_ON="2014-10-10" CREATED_BY="me" PARTY_ID="-3" ACTIVE="1"/>
+  <core_group />
+  <core_group_authority />
+  <core_group_member />
+
+  <MILESTONE MILESTONE_ID="-1" USER_ID="-1" CREATED_ON="2014-10-10" CREATED_BY="me" M_RANGE="GLOBAL" STATUS="PLANNED" LABEL="My milestone" END_DATE="2014-10-10"/>
+  <MILESTONE MILESTONE_ID="-2" USER_ID="-1" CREATED_ON="2014-10-10" CREATED_BY="me" M_RANGE="GLOBAL" STATUS="IN_PROGRESS" LABEL="My milestone 2" END_DATE="2014-10-11"/>
+  <MILESTONE MILESTONE_ID="-3" USER_ID="-1" CREATED_ON="2014-10-10" CREATED_BY="me" M_RANGE="GLOBAL" STATUS="IN_PROGRESS" LABEL="My milestone 3" END_DATE="2014-10-12"/>
+  <MILESTONE MILESTONE_ID="-4" USER_ID="-2" CREATED_ON="2014-10-10" CREATED_BY="me" M_RANGE="GLOBAL" STATUS="LOCKED" LABEL="My milestone 4" END_DATE="2014-10-13"/>
+
+
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1"/>
+  <REQUIREMENT_LIBRARY RL_ID="-1" ATTACHMENT_LIST_ID="-1"/>
+  <TEST_CASE_LIBRARY ATTACHMENT_LIST_ID="-1" TCL_ID="-1"/>
+  <REQUIREMENT_LIBRARY RL_ID="-2" ATTACHMENT_LIST_ID="-1"/>
+  <TEST_CASE_LIBRARY ATTACHMENT_LIST_ID="-1" TCL_ID="-2"/>
+
+  <PROJECT PROJECT_ID="-1" ATTACHMENT_LIST_ID="-1" CREATED_ON="2013-11-18" CREATED_BY="lol" NAME="Projet1" RL_ID="-1" TCL_ID="-1"/>
+  <PROJECT PROJECT_ID="-2" ATTACHMENT_LIST_ID="-1" CREATED_ON="2013-11-18" CREATED_BY="lol" NAME="Proj/et1" RL_ID="-2" TCL_ID="-2"/>
+
+  <MILESTONE_BINDING PROJECT_ID="-1" MILESTONE_ID="-1"/>
+  <MILESTONE_BINDING PROJECT_ID="-1" MILESTONE_ID="-2"/>
+  <MILESTONE_BINDING PROJECT_ID="-1" MILESTONE_ID="-3"/>
+  <MILESTONE_BINDING PROJECT_ID="-1" MILESTONE_ID="-4"/>
+
+
+
+  <resource/>
+  <simple_resource/>
+  <requirement_version/>
+  <requirement_library_node/>
+  <requirement/>
+  <requirement_folder/>
+
+</dataset>

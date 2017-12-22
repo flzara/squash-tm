@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+
+<!-- Test case 10 with one action step containing 'string to find' in action step -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-10" />
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-10" NAME="foo1" CREATED_ON="2011-01-01" CREATED_BY="DBU" ATTACHMENT_LIST_ID="-10" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-10" VERSION="1" />
+	
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-100" />
+	<TEST_STEP TEST_STEP_ID="-100" />
+	<ACTION_TEST_STEP TEST_STEP_ID="-100" ACTION="do string to find stuff" ATTACHMENT_LIST_ID="-100" />
+	<TEST_CASE_STEPS TEST_CASE_ID="-10" STEP_ID="-100" STEP_ORDER="0" /> 
+
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-200" />
+	<TEST_STEP TEST_STEP_ID="-200" />
+	<ACTION_TEST_STEP TEST_STEP_ID="-200" ACTION="do stuff" ATTACHMENT_LIST_ID="-200" />
+	<TEST_CASE_STEPS TEST_CASE_ID="-10" STEP_ID="-200" STEP_ORDER="1" /> 
+	
+<!-- Test case 20 with one step containing 'string to find' in expected result -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-20" />
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-20" NAME="foo2" CREATED_ON="2011-01-01" CREATED_BY="DBU" ATTACHMENT_LIST_ID="-20" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-20" VERSION="1" />
+
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-300" />
+	<TEST_STEP TEST_STEP_ID="-300" />
+	<ACTION_TEST_STEP TEST_STEP_ID="-300" ACTION="do stuff" EXPECTED_RESULT="string to find expect that" ATTACHMENT_LIST_ID="-300" />
+	<TEST_CASE_STEPS TEST_CASE_ID="-20" STEP_ID="-300" STEP_ORDER="0" /> 
+
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-400" />
+	<TEST_STEP TEST_STEP_ID="-400" />
+	<ACTION_TEST_STEP TEST_STEP_ID="-400" ACTION="do stuff" ATTACHMENT_LIST_ID="-400" />
+	<TEST_CASE_STEPS TEST_CASE_ID="-20" STEP_ID="-400" STEP_ORDER="1" /> 
+	
+	<!-- Test case 30 with no step containing 'string to find' -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-30" />
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-30" NAME="foo3" CREATED_ON="2011-01-01" CREATED_BY="DBU" ATTACHMENT_LIST_ID="-30" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-30" VERSION="1" />
+
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-500" />
+	<TEST_STEP TEST_STEP_ID="-500" />
+	<ACTION_TEST_STEP TEST_STEP_ID="-500" ACTION="do stuff" ATTACHMENT_LIST_ID="-500" />
+	<TEST_CASE_STEPS TEST_CASE_ID="-30" STEP_ID="-500" STEP_ORDER="0" /> 
+
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-600" />
+	<TEST_STEP TEST_STEP_ID="-600" />
+	<ACTION_TEST_STEP TEST_STEP_ID="-600" ACTION="do stuff" ATTACHMENT_LIST_ID="-600" />
+	<TEST_CASE_STEPS TEST_CASE_ID="-30" STEP_ID="-600" STEP_ORDER="1" /> 
+	
+	<!-- Test case 40 with one step containing 'string to find' in action and a call step -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-40" />
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-40" NAME="foo4" CREATED_ON="2011-01-01" CREATED_BY="DBU" ATTACHMENT_LIST_ID="-40" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-40" VERSION="1" />
+
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-700" />
+	<TEST_STEP TEST_STEP_ID="-700" />
+	<ACTION_TEST_STEP TEST_STEP_ID="-700" ACTION="do stuffstring to find" ATTACHMENT_LIST_ID="-700" />
+	<TEST_CASE_STEPS TEST_CASE_ID="-40" STEP_ID="-700" STEP_ORDER="0" /> 
+
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-800" />
+	<TEST_STEP TEST_STEP_ID="-800" />
+	<CALL_TEST_STEP TEST_STEP_ID="-800" CALLED_TEST_CASE_ID="-10"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="-40" STEP_ID="-800" STEP_ORDER="1" /> 
+	
+	<!-- Test case 50 with no step -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-50" />
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-50" NAME="foo5" CREATED_ON="2011-01-01" CREATED_BY="DBU" ATTACHMENT_LIST_ID="-50" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-50" VERSION="1" />
+
+	
+</dataset>

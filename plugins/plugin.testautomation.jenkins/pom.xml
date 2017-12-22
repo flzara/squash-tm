@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.squashtest.tm</groupId>
+    <artifactId>squash-tm-plugins</artifactId>
+    <version>1.17.0.RELEASE</version>
+  </parent>
+
+  <artifactId>plugin.testautomation.jenkins</artifactId>
+  <name>${project.groupId}.${project.artifactId}</name>
+  <description>Squash TM Connector for Squash TA on Jenkins</description>
+
+  <properties>
+    <skipITs>false</skipITs>
+    <squash.dependencies.version>${project.version}</squash.dependencies.version>
+    <stubTaServer.webapp.path>target/${project.artifactId}-${project.version}</stubTaServer.webapp.path>
+    <stubTaServer.webapp.port>9292</stubTaServer.webapp.port>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.squashtest.tm</groupId>
+        <artifactId>squash-tm-bom</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.testautomation.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>tm.domain</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>tm.service</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!--
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <scope>test</scope>
+    </dependency>
+	-->
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>spock-test-dependencies</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+
+    <testSourceDirectory>src/test/groovy</testSourceDirectory>
+    <resources>
+      <resource>
+        <directory>${project.basedir}/src/main/resources</directory>
+      </resource>
+    </resources>
+
+    <pluginManagement>
+      <plugins>
+        <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <versionRange>[2.1,)</versionRange>
+                    <goals>
+                      <goal>unpack</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <execute>
+                      <runOnIncremental>false</runOnIncremental>
+                    </execute>
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>add-integration-test-source</id>
+            <goals>
+              <goal>add-test-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>src/it/groovy</source>
+              </sources>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>add-integration-test-resource</id>
+            <goals>
+              <goal>add-test-resource</goal>
+            </goals>
+            <phase>generate-test-resources</phase>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>src/it/resources</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>compile-integration-test</id>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+            <phase>pre-integration-test</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+          <!-- We can run ITs and skip unit tests with -DskipTests=true -->
+          <skipTests>${skipITs}</skipTests>
+        </configuration>
+
+        <executions>
+          <execution>
+            <id>integration-tests</id>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+            <phase>integration-test</phase>
+            <configuration>
+              <systemPropertyVariables>
+                <stubTaServer.webapp.port>${stubTaServer.webapp.port}</stubTaServer.webapp.port>
+              </systemPropertyVariables>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.4</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>pre-integration-test</phase>
+            <configuration>
+              <tasks>
+                <echo message="Create document base for IT's tomcat" />
+                <mkdir dir="${stubTaServer.webapp.path}" />
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.tomcat.maven</groupId>
+        <artifactId>tomcat7-maven-plugin</artifactId>
+        <version>2.2</version>
+        <executions>
+          <execution>
+            <id>start-stub-ta</id>
+            <!-- start stub ta server before ITs -->
+            <goals>
+              <goal>run-war-only</goal>
+            </goals>
+            <phase>pre-integration-test</phase>
+            <configuration>
+              <skip>${skipITs}</skip>
+              <ignorePackaging>true</ignorePackaging>
+              <path>/foo</path>
+              <warDirectory>${stubTaServer.webapp.path}</warDirectory>
+              <port>${stubTaServer.webapp.port}</port>
+              <fork>true</fork>
+              <webapps>
+                <webapp>
+                  <groupId>org.squashtest.ta.test</groupId>
+                  <artifactId>stub-ta-server</artifactId>
+                  <version>1.0.1</version>
+                  <type>war</type>
+                  <asWebapp>true</asWebapp>
+                </webapp>
+              </webapps>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>shutdown-stub-ta</id>
+            <!-- kills stub ta server after ITs -->
+            <goals>
+              <goal>shutdown</goal>
+            </goals>
+            <phase>post-integration-test</phase>
+            <configuration>
+              <skip>${skipITs}</skip>
+              <path>/foo</path>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- ====== /INTEGRATION TESTS ====== -->
+    </plugins>
+  </build>
+  <repositories>
+    <repository>
+      <id>squashtest-release</id>
+      <name>SquashTest release repository</name>
+      <url>http://repo.squashtest.org/maven2/releases</url>
+    </repository>
+  </repositories>
+</project>

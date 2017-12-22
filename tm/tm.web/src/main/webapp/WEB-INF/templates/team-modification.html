@@ -1,0 +1,383 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<title th:text="#{workspace.user.team.title}">Espace detail équipe</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<style th:include="admin/admin-subpage.frag:: subpage-css" th:remove="tag"></style>
+
+<script th:src="@{/scripts/pubsub-boot.js}"></script>
+<script th:remove="all" type="text/javascript"
+	src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
+<script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+<script type="text/javascript" th:inline="javascript">
+	var squashtm = {};
+	squashtm.app = {
+		locale : /*[[#{squashtm.locale}]]*/,
+		contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
+		teamMod : {
+			teamUrl : /*[[ @{/administration/teams/__${team.id}__} ]]*/"http://localhost:8080/administration/teams/1",
+			richEditPlaceHolder : /*[[#{rich-edit.placeholder}]]*/'(Click to edit ...)',
+			richEditLanguageValue : /*[[#{rich-edit.language.value}]]*/'fr',
+			richEditsubmitLabel : /*[[#{rich-edit.button.ok.label}]]*/'submit',
+			confirmLabel : /*[[#{label.Confirm}]]*/'Confirm',
+			okLabel : /*[[ #{label.Ok} ]]*/'Ok',
+			cancelLabel : /*[[ #{label.Cancel} ]]*/'Cancel',
+			ckeditorLang : /*[[#{rich-edit.language.value}]]*/'en',
+			renameLabel : /*[[#{label.Rename}]]*/'Rename',
+			renameTeamTitle : /*[[#{title.renameTeam}]]*/'Rename Team',
+			descriptionPanelLabel : /*[[#{label.Description}]]*/'Desc',
+			membersPanelLabel : /*[[#{label.Members}]]*/'Teammates',
+			permissionPanelLabel : /*[[ #{user.project-rights.title.label} ]]*/ "Permissions",
+			permissionsPanelTitle : /*[[ #{user.project-rights.title.label} ]]*/ "Permissions",
+			addPermissionField : /*[[ #{title.AddHabilitation} ]]*/ "Add a permission",
+			removePermissionField : /*[[ #{title.RemovePermission} ]]*/ "Remove a permission",
+			addMemberField : /*[[ #{title.AddMember} ]]*/ "Add a member",
+			removeMemberField : /*[[ #{title.RemoveMember} ]]*/ "Remove a member",
+			message :{
+				addPermissionPopupTitle : /*[[#{title.AddHabilitation}]]*/ 'add permission',
+				error : /*[[ #{popup.title.error} ]]*/ "Error",
+				empty : /*[[ #{message.AllProjectsAlreadyLinkedToUser} ]]*/ "tous les projets sont liés à l'utilisateur",
+				permissionsPanelTitle : /*[[ #{user.project-rights.title.label} ]]*/ "Permissions",
+				addLabel : /*[[#{label.Add}]]*/ "add",
+				cancelLabel : /*[[ #{label.Cancel} ]]*/ 'Cancel'
+			},
+			permission : {
+				url : {
+						table : /*[[ @{'/administration/teams/'+${team.id}+'/permissions'} ]]*/ "/administration/teams/1/permissions",
+						popup : /*[[ @{'/administration/teams/'+${team.id}+'/permission-popup'} ]]*/ "/administration/teams/1/permission-popup",
+						add : /*[[ @{'/administration/teams/'+${team.id}+'/add-permission'} ]]*/ "/administration/teams/1/add-permission",
+						remove : /*[[ @{'/administration/teams/'+${team.id}+'/remove-permission'} ]]*/ "/administration/teams/1/remove-permission",
+					}
+			}
+		}
+	};
+</script>
+<script data-main="../../scripts/team-modification.js"
+	th:attr="data-main=@{/scripts/team-modification.js}"
+	src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
+
+</script>
+
+</head>
+<body>
+	<div id="navigation" th:include="navbar.frag :: navbar('')">NAVBAR</div>
+	<div id="workspace">
+		<div id="workspace-title">
+			<div class="snap-left">
+				<h2 th:text="#{label.administration}" class="admin">Administration</h2>
+			</div>
+			<div class="snap-right">
+				<div class="main-menubar " th:include="menubar.frag :: menubar">MENUBAR</div>
+				<div class="unstyled-notification-pane"
+					th:include="menubar.frag :: notification">NOTIFICATION</div>
+			</div>
+		</div>
+		<div id="sub-page" class="sub-page">
+
+			<div id="sub-page-header"
+				class="sub-page-header">
+
+				<div id="sub-page-title" class="sub-page-title">
+					<h2 th:text="#{workspace.user.team.title}">Espace detail équipe</h2>
+				</div>
+
+				<div id="sub-page-buttons" class="sub-page-buttons">
+
+					<input id="back" type="button" th:value="#{ label.Back }" class="sq-btn"
+						value="Back" />
+
+				</div>
+
+				<div class="unsnap"></div>
+			</div>
+
+			<div id="sub-page-content"
+				class="sub-page-content">
+
+				<div id="information-content">
+					<div id="team-name-div"
+						class="ui-widget-header ui-corner-all ui-state-default fragment-header">
+						<div class="sub-page-fragment-title">
+							<h2>
+								<label for="team-name-header" th:text="#{label.team}">Team</label>
+								<a id="team-name-header" href="#" th:text="${team.name}">Testeur</a>
+							</h2>
+						</div>
+						<div class="snap-right"></div>
+						<div class="unsnap"></div>
+					</div>
+
+					<div class="fragment-body unstyled">
+						<div id="team-toolbar" class="toolbar-class ui-corner-all ">
+
+
+							<div
+								th:include="fragments-utils/general-information-panel :: general-information-panel"
+								th:with="auditableEntity=${team},entityUrl=@{/administration/teams/__${team.id}__}"
+								th:remove="tag"></div>
+
+							<div class="toolbar-button-panel">
+								<input type="button" th:value="#{ label.Rename }" th:title="#{ label.Rename }" value="Rename"
+									id="rename-team-button" class="button" /> <input type="button"
+									th:value="#{ label.Delete }" th:title="#{ label.deleteTeam }"  value="Delete"
+									id="delete-team-button" class="button" />
+							</div>
+						</div>
+						<br /> <br />
+
+						<div class="sq-tg expand">
+                            <div class="tg-head">
+                              <h3 th:text="#{label.Description}"></h3>
+                            </div>
+							<div id="team-description-panel" class="description-panel tg-body">
+								<div id="team-description" sq:unsafe-html="${team.description}">Description</div>
+							</div>
+						</div>
+
+				<!-- ============================================ Permissions ======================================= -->
+
+						<div id="permissions" class="sq-tg expand">
+                          <div class="tg-head">
+                            <h3 th:text="#{user.project-rights.title.label}"></h3>
+                            <div class="tg-toolbar">
+                              <button id="add-permission-button" class="sq-icon-btn btn-sm" type="submit" th:title="#{title.AddHabilitation}">
+                                <span class="ui-icon ui-icon-plus squared-icons">+</span>
+                              </button>
+                              <button id="remove-permission-button" class="sq-icon-btn btn-sm" type="submit" th:title="#{title.RemovePermission}">
+                                <span class="ui-icon ui-icon-minus squared-icons">-</span>
+                              </button>
+                            </div>
+                          </div>
+							<div id="project-permission-panel" class="tg-body">
+								<table id="permission-table"
+									th:attr="data-def='filter, pre-sort=1-asc, datakeys-id=project-id ,ajaxsource='+@{/administration/teams/__${team.id}__/permissions}">
+									<thead>
+										<tr>
+											<th th:attr="data-def='select, map=project-index'">#</th>
+
+											<th	th:attr="data-def='sortable, map=project-name, filter, link='+@{/administration/projects/{project-id}/info}"
+												th:text="#{projects.label}">user</th>
+
+											<th	th:attr="data-def='sortable, map=empty-permission-list-holder, sClass=permission-select'"
+												th:text="#{project.permission.table.profile.label}">user</th>
+
+											<th	th:attr="data-def='unbind-button, map=empty-delete-holder'"></th>
+										</tr>
+									</thead>
+									<tbody>
+										<!-- TODO make this prefilled but beware for [Issue 2281] -->
+									</tbody>
+								</table>
+								<div id="permission-table-templates" class="not-displayed">
+									<select class="permission-list">
+										<option th:each="permission : ${permissionList}"
+											th:value="${permission.qualifiedName}"
+											th:text="#{'user.project-rights.'+${permission.simpleName}+'.label'}">
+										</option>
+									</select>
+								</div>
+							</div>
+						</div>
+
+				<!-- ========================================= Members ============================================= -->
+
+						<div class="sq-tg expand">
+                            <div class="tg-head">
+                              <h3 th:text="#{label.Members}"></h3>
+                              <div class="tg-toolbar">
+                                <button id="add-member-button" class="sq-icon-btn btn-sm" type="submit" th:title="#{title.AddMember}" >
+                                  <span class="ui-icon ui-icon-plus squared-icons">+</span>
+                                </button>
+                                <button id="remove-members-button" class="sq-icon-btn btn-sm" type="submit" th:title="#{title.RemoveMember}" >
+                                  <span class="ui-icon ui-icon-minus squared-icons">-</span>
+                                </button>
+                              </div>
+                            </div>
+
+							<div id="members-panel" class="tg-body">
+
+								<table id="members-table"
+									th:attr="data-def='filter, pre-sort=1-asc, datakeys-id=user-id , pagesize=50, ajaxsource='+@{/administration/teams/__${team.id}__/members}">
+									<thead>
+										<tr>
+											<th th:attr="data-def='select, map=user-index'">#</th>
+											<th	th:attr="data-def='sortable, map=user-name, filter, link='+@{/administration/users/{user-id}/info}"
+												th:text="#{label.User}">user</th>
+
+											<th	th:attr="data-def='unbind-button=#remove-members-dialog, map=empty-delete-holder'"></th>
+										</tr>
+									</thead>
+									<tbody>
+<!-- TODO make this prefilled but beware for [Issue 2281] -->
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+
+
+						<div id="rename-team-popup" class="not-displayed popup-dialog" th:title="#{title.renameTeam}">
+							<label for="rename-team-input" th:text="#{ label.Rename }">Rename</label>
+							<input type="text" id="rename-team-input" maxlength="50"
+								size="50" /> <br /> <span class="error-message name-error"></span>
+                            <div class="popup-dialog-buttonpane">
+                              <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm" />
+                              <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
+                            </div>
+						</div>
+
+
+						<div id="delete-warning-pane" class="not-displayed popup-dialog"
+							title="Delete" th:title="#{label.Delete}">
+							<div class="display-table-row">
+            					<div class="display-table-cell warning-cell">
+                					<div class="generic-error-signal"></div>
+            					</div>
+            					<div class="display-table-cell">
+									<span th:text="#{message.team.remove.first}"/>
+									<span class="red-warning-message" th:text="#{message.team.remove.second}"/>
+									<span th:text="#{message.team.remove.third}"/>
+									<span class="bold-warning-message" th:text="#{message.team.remove.fourth}"/>
+								</div>
+							</div>
+							<div class="popup-dialog-buttonpane">
+								<input class="confirm" type="button" value="Proceed"
+									th:value="#{label.Confirm}" /> <input class="cancel"
+									type="button" value="Cancel" th:value="#{label.Cancel}" />
+							</div>
+						</div>
+
+
+						<div id="remove-members-dialog" class="popup-dialog not-displayed"	th:title="#{title.RemoveMember}">
+
+							<div th:text="#{message.team.remove.user}">roundhouse-kick
+								selected users to oblivion ?</div>
+							<div th:text="#{message.permissions.confirm}"></div>
+							<div class="popup-dialog-buttonpane">
+								<input class="confirm" type="button" value="confirm"
+									th:value="#{label.Confirm}" /> <input class="cancel"
+									type="button" value="cancel" th:value="#{label.Cancel}" />
+							</div>
+						</div>
+
+						<div id="no-selected-users" class="popup-dialog not-displayed"
+							th:title="#{popup.title.info}" title="Info">
+							<span th:text="#{message.NoMemberSelected}"></span>
+						</div>
+
+						<div id="no-selected-permissions" class="popup-dialog not-displayed"
+							th:title="#{popup.title.info}" title="Info">
+							<span th:text="#{message.NoMemberSelected}"></span>
+						</div>
+
+						<div id="invalid-user" class="popup-dialog not-displayed"
+							th:title="#{popup.title.info}" title="Info">
+							<span th:text="#{message.InvalidMemberSelected}"></span>
+						</div>
+
+						<div id="add-member-dialog" class="not-displayed popup-dialog"
+							title="Add Member" th:title="#{title.AddMember}">
+							<div class="main">
+								<label for="add-members-input" th:text="#{label.User}">which
+									one </label> <input type="text" id="add-member-input" />
+							</div>
+							<div class="wait" th:include="fragments-utils/static-panels :: small-please-wait" >
+                                zzz
+                            </div>
+							<div class="no-more-users"
+								th:text="#{message.AllUsersAlreadyLinkedToTeam}">no more
+								users to bind</div>
+							<div class="no-selected-users"
+								th:text="#{message.NoMemberSelected}"></div>
+							<div class="invalid-user"
+								th:text="#{message.InvalidMemberSelected}"></div>
+							<div class="popup-dialog-buttonpane">
+								<input class="confirm" type="button" value="confirm"
+									th:value="#{label.Confirm}" /> <input class="cancel"
+									type="button" value="cancel" th:value="#{label.Cancel}" />
+							</div>
+						</div>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--    ====================================POPUPS======================================================  -->
+
+	<div id="remove-permission-dialog" class="popup-dialog not-displayed" th:title="#{title.RemovePermissions}">
+		<div th:text="#{message.permissions.remove.permission}"></div>
+		<div th:text="#{message.permissions.confirm}"></div>
+		<div class="popup-dialog-buttonpane">
+			<input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}" />
+			<input class="cancel" type="button"	value="cancel" th:value="#{label.Cancel}" />
+		</div>
+	</div>
+
+	<div id="add-permission-dialog" class="not-displayed popup-dialog"
+		title="AddPermission" th:title="#{title.AddHabilitation}">
+		<div class="main">
+			<table id="add-permission-dialog-table">
+				<tr>
+					<td><label th:text="#{label.project}"></label></td>
+					<td><select id="project-input">
+							<option th:each="myproject : ${myprojectList}"
+								th:value="${myproject.id}" th:id="${myproject.name}"
+								th:text="${myproject.name}">Nom</option>
+					</select></td>
+				</tr>
+
+				<tr>
+					<td><label th:text="#{label.Permission}"></label></td>
+					<td><select id="permission-input">
+							<option th:each="permission : ${permissionList}"
+								th:value="${permission.qualifiedName}"
+								th:id="${permission.simpleName}"
+								th:text="#{'user.project-rights.'+${permission.simpleName}+'.label'}">
+							</option>
+					</select></td>
+				</tr>
+			</table>
+		</div>
+
+		<div class="wait" th:include="fragments-utils/static-panels :: small-please-wait" >
+              zzz
+        </div>
+
+		<div class="no-more-projects"
+			th:text="#{message.AllProjectsAlreadyLinkedToUser}">no more teams to bind
+		</div>
+
+		<div class="popup-dialog-buttonpane">
+			<input class="confirm" type="button" value="confirm"
+				th:value="#{label.Confirm}" /> <input class="cancel" type="button"
+				value="cancel" th:value="#{label.Cancel}" />
+		</div>
+	</div>
+</body>
+</html>

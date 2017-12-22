@@ -1,0 +1,212 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2013 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!--  
+	that dataset describes the following initial conditions :
+
+1) a call tree like the following : 
+	
+		- all the test cases are in the same project, at the root of the library.
+		- 'top test case' will call 'first level 1'
+		- 'first level 1' will call 'second level 1' and 'second level 2'
+		- 'second level 1' will call 'third level 1'
+		- 'second level 2' will call 'third level 2'
+		- the third level test cases call no one.
+		
+	the ids for the test cases follow the given template : id = <level index><test case index>. For instance 'second level 1' have id 21.
+	the ids for the test steps equals the ids of the called test case.
+	
+2) test case of id 10 is added : it will be our guinea pig (about call step insertion and whatnots).
+
+3) three test cases pointing to a particular one :
+
+	- first test case (101) -> bottom test case (100)
+	- second test case (102) -> bottom test case (100)
+	- third test case (103) -> bottom test case (100)
+	
+	the ids for the test steps equals the ids of the calling test case.
+	
+4) Parameters and datasets
+
+This table declares which test case own which datasets and parameters
+
+	TCLN_ID		|	PARAM_IDS		|	DS_IDS
+	============+===================+==============
+	21			|	211, 212		|	211, 212
+	22			|	221				|	221, 222
+	31			|	311, 312, 313	|	(none)
+	32			|	321				|	321
+	1			|	(none)			|	1
+	
+	
+5) initial call step assignation modes
+
+	This table says how the testcases handle the parameters downstream. Some inherits 
+	them, while some other call a test case with one of its own datasets.
+
+	CALLEE_ID	|	CALLED_ID	|	CALLED_DS_ID	|	DELEGATE	|	COMMENT
+	============+===============+===================+===============+===================
+	1			|	11			|	NULL			|	true		|	delegation mode
+	11			|	21			|	212				|	false		|	call DS mode
+	11			|	22			|	NULL			|	true		|	delegation mode
+	21			|	31			|	NULL			|	false		|	nothing mode
+	22			|	32			|	NULL			|	true		|	delegation mode
+	
+
+ -->
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+
+	<!--  dummy attachment list, the same for everyone that need one. -->
+	
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1" />
+
+
+	<!--  the test case library nodes -->
+
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-1" NAME="top test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-11" NAME="first level 1" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-21" NAME="second level 1" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-22" NAME="second level 2" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-31" NAME="third level 1" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-32" NAME="third level 2" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>
+	
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-10" NAME="guinea pig" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>	
+	
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-100" NAME="bottom test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>	
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-101" NAME="first test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>	
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-102" NAME="second test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>		
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-103" NAME="third test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>		
+	
+	<!--  the test cases now -->
+	
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-1"  VERSION="1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-11" VERSION="1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-21" VERSION="1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-22" VERSION="1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-31" VERSION="1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-32" VERSION="1" />
+	
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-10" VERSION="1" />
+	
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-100" VERSION="1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-101" VERSION="1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-102" VERSION="1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-103" VERSION="1" />
+	
+	
+	<!--  the parameters -->
+	
+	<PARAMETER DESCRIPTION="" TEST_CASE_ID="-21" PARAM_ID="-211" NAME="param 211"/>
+	<PARAMETER DESCRIPTION="" TEST_CASE_ID="-21" PARAM_ID="-212" NAME="param 212"/>
+	<PARAMETER DESCRIPTION="" TEST_CASE_ID="-22" PARAM_ID="-221" NAME="param 221"/>
+	<PARAMETER DESCRIPTION="" TEST_CASE_ID="-31" PARAM_ID="-311" NAME="param 311"/>
+	<PARAMETER DESCRIPTION="" TEST_CASE_ID="-31" PARAM_ID="-312" NAME="param 312"/>
+	<PARAMETER DESCRIPTION="" TEST_CASE_ID="-31" PARAM_ID="-313" NAME="param 313"/>
+	<PARAMETER DESCRIPTION="" TEST_CASE_ID="-32" PARAM_ID="-321" NAME="param 321"/>
+	
+	<!-- the datasets -->
+	
+	<DATASET TEST_CASE_ID="-21" DATASET_ID="-211" NAME="ds 211"/>
+	<DATASET TEST_CASE_ID="-21" DATASET_ID="-212" NAME="ds 212"/>
+	<DATASET TEST_CASE_ID="-22" DATASET_ID="-221" NAME="ds 221"/>
+	<DATASET TEST_CASE_ID="-22" DATASET_ID="-222" NAME="ds 222"/>
+	<DATASET TEST_CASE_ID="-32" DATASET_ID="-321" NAME="ds 321"/>
+	<DATASET TEST_CASE_ID="-1"  DATASET_ID="-1"   NAME="ds 1"/>
+	
+	<!--  dataset param values (including the inherited ones) -->
+	
+	<!-- params for datasets of test case 21 -->
+	<DATASET_PARAM_VALUE DATASET_PARAM_VALUE_ID="-2111" DATASET_ID="-211" PARAM_ID="-211" PARAM_VALUE="own param 211" />
+	<DATASET_PARAM_VALUE DATASET_PARAM_VALUE_ID="-2112" DATASET_ID="-211" PARAM_ID="-212" PARAM_VALUE="own param 212" />
+	<DATASET_PARAM_VALUE DATASET_PARAM_VALUE_ID="-2121" DATASET_ID="-212" PARAM_ID="-211" PARAM_VALUE="own param 211" />
+	<DATASET_PARAM_VALUE DATASET_PARAM_VALUE_ID="-2122" DATASET_ID="-212" PARAM_ID="-212" PARAM_VALUE="own param 212" />
+	
+	
+	<!-- params for datasets of test case 22 -->
+	<DATASET_PARAM_VALUE DATASET_PARAM_VALUE_ID="-2211" DATASET_ID="-221" PARAM_ID="-221" PARAM_VALUE="own param 221" />
+	<DATASET_PARAM_VALUE DATASET_PARAM_VALUE_ID="-2212" DATASET_ID="-221" PARAM_ID="-321" PARAM_VALUE="inherits from 32 -> 321" />
+	<DATASET_PARAM_VALUE DATASET_PARAM_VALUE_ID="-2221" DATASET_ID="-222" PARAM_ID="-221" PARAM_VALUE="own param 221" />
+	<DATASET_PARAM_VALUE DATASET_PARAM_VALUE_ID="-2222" DATASET_ID="-222" PARAM_ID="-321" PARAM_VALUE="inherits from 32 -> 321" />
+	
+	<!--  params for datasets of test case 32 -->
+	<DATASET_PARAM_VALUE DATASET_PARAM_VALUE_ID="-3211" DATASET_ID="-321" PARAM_ID="-321" PARAM_VALUE="own param 321" />
+	
+	<!--  params for dataset of test case 1 -->
+	<DATASET_PARAM_VALUE DATASET_PARAM_VALUE_ID="-11" DATASET_ID="-1" PARAM_ID="-321" PARAM_VALUE="inherits from 32 -> 321" />
+	<DATASET_PARAM_VALUE DATASET_PARAM_VALUE_ID="-12" DATASET_ID="-1" PARAM_ID="-221" PARAM_VALUE="inherits from 22 -> 221" />
+	
+	<!--  the test steps -->
+	
+	<TEST_STEP TEST_STEP_ID="-11" />
+	<TEST_STEP TEST_STEP_ID="-21" />
+	<TEST_STEP TEST_STEP_ID="-22" />
+	<TEST_STEP TEST_STEP_ID="-31" />
+	<TEST_STEP TEST_STEP_ID="-32" />
+	
+	<TEST_STEP TEST_STEP_ID="-101" />
+	<TEST_STEP TEST_STEP_ID="-102" />
+	<TEST_STEP TEST_STEP_ID="-103" />	
+	
+	<TEST_STEP TEST_STEP_ID="-1000" /> <!--  that one is an action test step, so that we can test Hibernate cast -->
+	
+	
+	<!--  the call test steps -->
+	
+	<CALL_TEST_STEP TEST_STEP_ID="-11" CALLED_TEST_CASE_ID="-11" DELEGATE_PARAMETER_VALUES="true"/>
+	<CALL_TEST_STEP TEST_STEP_ID="-21" CALLED_TEST_CASE_ID="-21" CALLED_DATASET="-212"  DELEGATE_PARAMETER_VALUES="false"/>
+	<CALL_TEST_STEP TEST_STEP_ID="-22" CALLED_TEST_CASE_ID="-22" DELEGATE_PARAMETER_VALUES="true"/>
+	<CALL_TEST_STEP TEST_STEP_ID="-31" CALLED_TEST_CASE_ID="-31" DELEGATE_PARAMETER_VALUES="false"/>
+	<CALL_TEST_STEP TEST_STEP_ID="-32" CALLED_TEST_CASE_ID="-32" DELEGATE_PARAMETER_VALUES="true"/>
+	
+	<CALL_TEST_STEP TEST_STEP_ID="-101" CALLED_TEST_CASE_ID="-100" DELEGATE_PARAMETER_VALUES="false"/>
+	<CALL_TEST_STEP TEST_STEP_ID="-102" CALLED_TEST_CASE_ID="-100" DELEGATE_PARAMETER_VALUES="false"/>
+	<CALL_TEST_STEP TEST_STEP_ID="-103" CALLED_TEST_CASE_ID="-100" DELEGATE_PARAMETER_VALUES="false"/>		
+	
+	<!--  the only one action test step -->
+	<ACTION_TEST_STEP TEST_STEP_ID="-1000" ACTION="the one and only action test step"/>
+	
+	
+	<!--  associate them to the test cases -->
+	
+	<TEST_CASE_STEPS TEST_CASE_ID="-1" STEP_ID="-11" STEP_ORDER="1"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="-11" STEP_ID="-21" STEP_ORDER="1"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="-11" STEP_ID="-22" STEP_ORDER="2"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="-21" STEP_ID="-31" STEP_ORDER="1"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="-22" STEP_ID="-32" STEP_ORDER="1"/>
+	
+	<TEST_CASE_STEPS TEST_CASE_ID="-101" STEP_ID="-101" STEP_ORDER="1"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="-102" STEP_ID="-102" STEP_ORDER="1"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="-103" STEP_ID="-103" STEP_ORDER="1"/>	
+	
+	<TEST_CASE_STEPS TEST_CASE_ID="-101" STEP_ID="-1000" STEP_ORDER="2" />
+	
+	
+	
+	<!--  cleanup of previously entered data -->
+	
+	<test_case_folder/>
+	<tcln_relationship/>
+	<test_case_library_content/>
+
+</dataset>
