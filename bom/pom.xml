@@ -139,36 +139,36 @@
         <version>${jasperreports.version}</version>
 
         <exclusions>
-          <!-- 
-        		Some dependencies of Jasperreports are a mess (not jasper reports itself 
-        		though) : itext and castor-xml. Their own dependencies must also be 
-        		managed here. 
+          <!--
+        		Some dependencies of Jasperreports are a mess (not jasper reports itself
+        		though) : itext and castor-xml. Their own dependencies must also be
+        		managed here.
         	 -->
 
           <exclusion>
-            <!-- 
-          	pulled by itext. The bouncycastle jars have changed groupid 
+            <!--
+          	pulled by itext. The bouncycastle jars have changed groupid
           	from "bouncycastle" to "org.bouncycastle", furthermore they also
           	changed their versioning convention from 'majorminor' to 'major.minor'.
           	The artifact ids are however left unchanged.
-          	
-          	The itext pom states that artifacts "bcmail-jdk14", "bcprov-jdk14" and 
-          	"bctsp-jdk14", all from groupid "bouncycastle", are used. However 
-          	for some reason, Maven actually resolves "bctsp-jdk14" with groupid 
-          	"org.bouncycastle", that itself pulls the other two with the name 
-          	groupid, leading to double inclusion of those jars (no name conflict 
+
+          	The itext pom states that artifacts "bcmail-jdk14", "bcprov-jdk14" and
+          	"bctsp-jdk14", all from groupid "bouncycastle", are used. However
+          	for some reason, Maven actually resolves "bctsp-jdk14" with groupid
+          	"org.bouncycastle", that itself pulls the other two with the name
+          	groupid, leading to double inclusion of those jars (no name conflict
           	though because the different versioning convention made their name different
           	too). And of course they are binary equals, but at least it doesn't induce
           	Heisenbugs when the classes are laoded.
-          	
-          	Because of that, we must manually remove "bouncycastle:bcprov-jdk14" and 
-          	"bouncycastle:bcmail-jdk14" and let "org.bouncycastle:bcstp-jdk14" pull 
+
+          	Because of that, we must manually remove "bouncycastle:bcprov-jdk14" and
+          	"bouncycastle:bcmail-jdk14" and let "org.bouncycastle:bcstp-jdk14" pull
           	the other two with the same groupid.
-          	
-          	This is of course hazardous because no one really knows why 
-          	"org.bouncycastle:bctsp-jdk14" is resolved instead of 
-          	"bouncycastle:bctsp-jdk14" and that might break one day. 
-          	
+
+          	This is of course hazardous because no one really knows why
+          	"org.bouncycastle:bctsp-jdk14" is resolved instead of
+          	"bouncycastle:bctsp-jdk14" and that might break one day.
+
           	Maven drives me nuts.
           	-->
             <groupId>bouncycastle</groupId>
@@ -182,11 +182,11 @@
           </exclusion>
 
           <exclusion>
-            <!-- 
-          		I could argue how castor-xml pulls both 
-          		stax:stax-api:1.0.1 and javax:xml:stream:stax-api:1.0-2 
-          		but since stax-api is now part of java rt since 1.6 
-          		we just remove both altogether.          	
+            <!--
+          		I could argue how castor-xml pulls both
+          		stax:stax-api:1.0.1 and javax:xml:stream:stax-api:1.0-2
+          		but since stax-api is now part of java rt since 1.6
+          		we just remove both altogether.
           	 -->
             <groupId>*</groupId>
             <artifactId>stax-api</artifactId>
@@ -216,6 +216,13 @@
         <version>${jericho-html.version}</version>
       </dependency>
 
+      <!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
+      <dependency>
+        <groupId>org.jsoup</groupId>
+        <artifactId>jsoup</artifactId>
+        <version>1.7.2</version>
+      </dependency>
+
       <dependency>
         <groupId>net.sourceforge.nekohtml</groupId>
         <artifactId>nekohtml</artifactId>
@@ -229,9 +236,9 @@
       </dependency>
 
       <dependency>
-        <!-- 
-      		TODO : usage deprecated as of TM 1.17. The actual dependency is effectively removed. 
-      		If no bug was reported related to this library when 1.18 is release, remove this 
+        <!--
+      		TODO : usage deprecated as of TM 1.17. The actual dependency is effectively removed.
+      		If no bug was reported related to this library when 1.18 is release, remove this
       		from the bom.
       	-->
         <groupId>org.objenesis</groupId>
@@ -240,9 +247,9 @@
       </dependency>
 
       <dependency>
-        <!-- 
-      		TODO : usage deprecated as of TM 1.17. The actual dependency is effectively removed. 
-      		If no bug was reported related to this library when 1.18 is release, remove this 
+        <!--
+      		TODO : usage deprecated as of TM 1.17. The actual dependency is effectively removed.
+      		If no bug was reported related to this library when 1.18 is release, remove this
       		from the bom.
       	-->
         <groupId>org.apache.poi</groupId>
