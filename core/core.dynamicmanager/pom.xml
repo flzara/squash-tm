@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm-core</artifactId>
-    <version>1.18.0.IT1-SNAPSHOT</version>
+    <version>1.17.1.RC1-SNAPSHOT</version>
   </parent>
   <artifactId>core.dynamicmanager</artifactId>
   <packaging>jar</packaging>
