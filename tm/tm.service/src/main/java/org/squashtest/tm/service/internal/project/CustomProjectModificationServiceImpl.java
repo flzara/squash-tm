@@ -129,4 +129,10 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 		return findAllReadableIds(currentUser);
 	}
+
+	@Override
+	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
+	public List<Project> findAllOrderedByName() {
+		return projectDao.findAllByOrderByName();
+	}
 }
