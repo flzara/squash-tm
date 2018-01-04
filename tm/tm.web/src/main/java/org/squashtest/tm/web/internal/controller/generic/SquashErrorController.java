@@ -21,11 +21,13 @@
 package org.squashtest.tm.web.internal.controller.generic;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.web.ErrorAttributes;
 import org.springframework.boot.autoconfigure.web.ErrorController;
 import org.springframework.stereotype.Controller;
@@ -42,52 +44,61 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @Controller
 public class SquashErrorController implements ErrorController {
 
-    private static final String PATH = "/error";
-    
-    @Inject
-    private ErrorAttributes errorAttributes;
+	@Value("${squash.stack.trace.enabled}")
+	private Boolean stackTraceEnabled;
 
-    /*
-     * This method will be called when any non handled exception occurs. But we cannot just rethrow that exception : 
-     * quis custodiet ipsos custodes? There is no other error handler after this one. 
-     * 
+	private static final String PATH = "/error";
+
+	@Inject
+	private ErrorAttributes errorAttributes;
+
+	/*
+	 * This method will be called when any non handled exception occurs. But we cannot just rethrow that exception :
+     * quis custodiet ipsos custodes? There is no other error handler after this one.
+     *
      *   So we must manually handle the job of printing the exception.
-     * 
+     *
      */
-    @RequestMapping(value = PATH)
-    public String error(HttpServletRequest request, HttpServletResponse response, Model model) throws Throwable{
-        
-    	Map<String ,Object> errors = getErrorAttributes(request);
-    	
-    	model.addAllAttributes(errors);
-    	model.addAttribute("code", response.getStatus());
-    	
-    	return "page/error";
-    	
-    	
-    }
-    
-    @RequestMapping(value = PATH, produces={"application/json", "application/*+json"})
-    @ResponseBody
-    public Map<String,Object> errorJson(HttpServletRequest request, HttpServletResponse response, Model model) throws Throwable{
-        
-    	return getErrorAttributes(request);
-    	
-    }
-    
+	@RequestMapping(value = PATH)
+	public String error(HttpServletRequest request, HttpServletResponse response, Model model) throws Throwable {
 
-    @Override
-    public String getErrorPath() {
-        return PATH;
-    }
+		Map<String, Object> errors = getErrorAttributes(request);
 
-    private Map<String, Object> getErrorAttributes(HttpServletRequest request) {
-        RequestAttributes requestAttributes = new ServletRequestAttributes(request);
-        return errorAttributes.getErrorAttributes(requestAttributes, true);
-    }
-    
+		model.addAllAttributes(errors);
+		model.addAttribute("code", response.getStatus());
+
+		return "page/error";
+
+	}
+
+	@RequestMapping(value = PATH, produces = {"application/json", "application/*+json"})
+	@ResponseBody
+	public Map<String, Object> errorJson(HttpServletRequest request, HttpServletResponse response, Model model) throws Throwable {
+
+		return getErrorAttributes(request);
+
+	}
+
+	@Override
+	public String getErrorPath() {
+		return PATH;
+	}
+
+	private Map<String, Object> getErrorAttributes(HttpServletRequest request) {
+		RequestAttributes requestAttributes = new ServletRequestAttributes(request);
+		Map<String, Object> result = errorAttributes.getErrorAttributes(requestAttributes, true);
+
+		if (!stackTraceEnabled) {
+			result = result.entrySet().stream()
+				.filter(map -> map.getKey().equals("status") || map.getKey().equals("error"))
+				.collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+		}
+
+		return result;
+	}
+
     /*
-     * for reminder here is how you can fetch the exception
+	 * for reminder here is how you can fetch the exception
     private Throwable getError(HttpServletRequest request){
     	RequestAttributes requestAttributes = new ServletRequestAttributes(request);
     	return (Throwable)requestAttributes.getAttribute("javax.servlet.error.exception", RequestAttributes.SCOPE_REQUEST);
