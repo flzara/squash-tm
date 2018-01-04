@@ -25,6 +25,10 @@
 <head>
 <title th:text="#{squashtm}">Squash</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <!-- default header name is X-CSRF-TOKEN -->
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <!-- ... -->
 <!-- common head -->
 <link rel="stylesheet" type="text/css" media="all"
   href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" sq:css="squash.core.css" />
@@ -190,6 +194,9 @@
 								{{#each nodes}}
 								<input type="hidden" name="{{this.type}}" value="{{this.id}}" />
 								{{/each}}
+                  <input type="hidden"
+                         th:name="${_csrf.parameterName}"
+                         th:value="${_csrf.token}"/>
 							</form>
     						</script>
                 <div id="start-ws-wizard-container" class="not-displayed"></div>
@@ -448,6 +455,9 @@
                     <label th:text="#{dialog.import-excel.test-case.filetype.message}">tc filetype</label>
                   </div>
                   <div class="display-table-cell">
+                    <input type="hidden"
+                           th:name="${_csrf.parameterName}"
+                           th:value="${_csrf.token}"/>
                     <input type="file" name="archive" size="20"
                       accept="application/vnd.ms-excel,application/vnd.ms-excel.sheet.macroEnabled.12, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
                   </div>
@@ -458,22 +468,28 @@
              	 </div>
               </div>
             </div>
+
           </form>
 
         </div>
       </div>
 
       <div data-def="state=confirm">
+
         <div class="confirm-div">
           <label class="confirm-label" th:text="#{dialog.import.file.confirm}">import file confirm</label>
           <span class="confirm-span confirm-file"></span>
         </div>
+        <input type="hidden"
+               th:name="${_csrf.parameterName}"
+               th:value="${_csrf.token}"/>
         <div class="confirm-div import-project-confirm not-displayed" th:with="libs=${editableLibraries}">
           <label class="confirm-label" th:text="#{dialog.import.project.confirm}">import project confirm</label>
           <span class="confirm-span confirm-project" th:text="${(not libs.isEmpty()) ? libs[0].project.name : ''}"></span>
         </div>
 
         <div th:text="#{dialog.import.confirm.message}">import confirm message</div>
+
       </div>
       <div data-def="state=progression">
         <div class="waiting-loading centered minimal-height">

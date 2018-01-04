@@ -26,7 +26,10 @@
 <head>
 <title th:text="#{title.print.requirement}">Imprimer l'exigence</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <!-- default header name is X-CSRF-TOKEN -->
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <!-- ... -->
 
 <link rel="stylesheet" type="text/css" media="all"
 	href="../../../../../../../tm/tm.web/src/main/webapp/styles/master.css"

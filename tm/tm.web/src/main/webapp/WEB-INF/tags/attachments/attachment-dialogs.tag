@@ -21,7 +21,7 @@
 
 --%>
 <%@ tag description="Popup allowing to upload files some files" body-content="empty" %>
-	
+
 
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
@@ -54,7 +54,7 @@
 	<div class="popup-dialog-buttonpane">
 		<input type="button" value="${confirmLabel}"/>
 		<input type="button" value="${cancelLabel}"/>
-	</div>	
+	</div>
 </div>
 
 
@@ -70,8 +70,10 @@
 
 	<div data-def="state=selection">
 		<form class="attachment-upload-form">
-		
-		</form>	
+			<input type="hidden"
+				   th:name="${_csrf.parameterName}"
+				   th:value="${_csrf.token}"/>
+		</form>
 	</div>
 
 	<div data-def="state=uploading" class="attachment-upload-uploading centered">
@@ -79,11 +81,11 @@
  		<div 	class="attachment-progressbar"></div>
  		<span 	class="attachment-progress-percentage"></span>
  	</div>
-	
+
 	<div data-def="state=summary" class="attachment-upload-summary display-table">
-	
+
 	</div>
-	
+
 	<div data-def="state=error" >
 		<span class="attachment-upload-error-message">
 			<f:message key="message.AttachmentUploadSizeExceeded"/>
@@ -99,6 +101,5 @@
 </div>
 
 <div id="dump" class="not-displayed"></div>
- 
 
- 
+

@@ -26,6 +26,10 @@
   <title th:text="#{tabbed_panel.search.pane.result.label}">Test Case Result</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
   <!-- common head -->
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <!-- default header name is X-CSRF-TOKEN -->
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <!-- ... -->
   <link rel="stylesheet" type="text/css" media="all"
     href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" sq:css="squash.core.css" />
   <link rel="shortcut icon" type="image/x-icon" media="all"
@@ -50,7 +54,7 @@
       title: /*[[ #{dialog.settings.filter.title} ]]*/ 'Filtre de projets',
       confirmLabel: /*[[ #{label.Confirm} ]]*/ 'Confirmer',
       cancelLabel: /*[[ #{label.Cancel} ]]*/ 'Annuler',
-    },   
+    },
      requirementSearchResultConf: {
     	 messages : {
     		 nonEditableTooltip : /*[[ #{tooltips.nonEditable}]]*/ 'non editable'
@@ -281,15 +285,15 @@
 						type="button" value="cancel" th:value="#{label.Cancel}" />
 				</div>
 			</div>
-			
+
 			 <!--  ================= EXPORT REQ POPUP =======================  -->
 
 		    <div class="export-requirement-dialog popup-dialog not-displayed" th:title="#{label.Export}"
 		      th:attr="data-def='nameprefix='+#{label.lower.dash.exportRequirements}+', dateformat='+#{export.dateformat}"
 		      data-def="nameprefix=nameprefix, dateformat=dd_MM_yyyy">
-		
+
 		      <div data-def="state=main">
-		
+
 		        <div class="display-table" style="width: 100%">
 		          <div style="display: table-column-group">
 		            <div style="display: table-column"></div>
@@ -301,25 +305,25 @@
 		              <input type="text" id="export-name-input" style="width: 100%" />
 		            </div>
 		          </div>
-		  
+
 		        </div>
-		
+
 		        <div class="std-margin-top">
 		          <input type="checkbox" id="export-keepRteFormat" checked="checked" />
 		          <span th:text="#{test-case.export.dialog.keeprteformat}"> keep rte format </span>
 		          <div class="nota-bene" th:text="#{test-case.export.dialog.keeprteformat.description}"></div>
 		        </div>
 		      </div>
-		
+
 		      <div class="popup-dialog-buttonpane">
 		        <input type="button" th:value="#{label.Export}" value="export" data-def="evt=confirm" />
 		        <input type="button" th:value="#{label.Close}" value="cancel"
-		          data-def="evt=cancel" />  
+		          data-def="evt=cancel" />
 		      </div>
-		      
+
 		    </div>
-		
-		
+
+
 		    <!--  ================= /EXPORT REQ POPUP ======================= -->
 			</div>
       </div>

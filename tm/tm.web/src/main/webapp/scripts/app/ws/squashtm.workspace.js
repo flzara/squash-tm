@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "app/pubsub", "app/ws/squashtm.navbar", "project-filter/ProjectFilter",
-		"app/ws/squashtm.notification", "app/ws/squashtm.ajaxspinner", "squash.session-pinger", "workspace.breadcrumb" ], 
+		"app/ws/squashtm.notification", "app/ws/squashtm.ajaxspinner", "squash.session-pinger", "workspace.breadcrumb" ],
 		function($, ps, NavBar, ProjectFilter, notification, spinner, SSP) {
 
 	ps.subscribe("load.navBar", NavBar.init);
@@ -37,7 +37,15 @@ define([ "jquery", "app/pubsub", "app/ws/squashtm.navbar", "project-filter/Proje
 		$(".unstyled").fadeIn("fast", function() {
 			$(this).removeClass("unstyled");
 		});
-		
+
+		//init the csrf token inclusion for post request
+		$.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+			console.log("Including csrf token")
+			var token = $("meta[name='_csrf']").attr("content");
+			var header = $("meta[name='_csrf_header']").attr("content");
+			jqXHR.setRequestHeader(header, token);
+		});
+
 	}
 
 	return {

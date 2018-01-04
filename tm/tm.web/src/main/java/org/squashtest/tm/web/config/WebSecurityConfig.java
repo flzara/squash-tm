@@ -60,8 +60,8 @@ import org.squashtest.tm.web.internal.filter.HtmlSanitizationFilter;
  */
 @Configuration
 public class WebSecurityConfig {
-	
-	
+
+
 
 	/**
 	 * Defines a global internal (dao based) authentication manager. This is the default authentication manager.
@@ -86,19 +86,17 @@ public class WebSecurityConfig {
 	@Configuration
 	@Order(10)
 	public static class SquashTAWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
-		
+
 		/**
 		 * part of the fix for [Issue #6900]
 		 */
 		@Value("${squash.security.basic.token-charset}")
 		private String basicAuthCharset = "ISO-8859-1";
-		
+
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 			// @formatter:off
 			http
-				.csrf().disable()
-
 				.antMatcher("/automated-executions/**")
 					.authorizeRequests()
 						.anyRequest().access("hasRole('ROLE_TA_API_CLIENT')")
@@ -112,14 +110,14 @@ public class WebSecurityConfig {
 	@Configuration
 	@Order(20)
 	public static class ApiWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
-		
+
 		/**
 		 * part of the fix for [Issue #6900]
 		 */
 		@Value("${squash.security.basic.token-charset}")
 		private String basicAuthCharset = "ISO-8859-1";
-		
-		
+
+
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 			// @formatter:off
@@ -179,8 +177,6 @@ public class WebSecurityConfig {
 			// @formatter:off
 			http
 				// When CSRF is on, a CSRF token is to be included in any POST/PUT/DELETE/PATCH request. This would require massive changes, so it's deactivated for now.
-				.csrf().disable()
-
 				.headers()
 				.defaultsDisabled()
 				// w/o cache control, some browser's cache policy is too aggressive
@@ -237,33 +233,33 @@ public class WebSecurityConfig {
 			//@formatter:on
 		}
 	}
-	
-	
+
+
 	/**
 	 * [Issue #6900]
-	 * 
-	 * The base64-encoded token for basic auth has a charset too. Spring Sec expects it to be UTF-8 but many people around expects it 
-	 * to be Latin-1 (iso-8859-1). This configurer allows to configure the desired encoding. 
-	 * 
-	 * 
+	 *
+	 * The base64-encoded token for basic auth has a charset too. Spring Sec expects it to be UTF-8 but many people around expects it
+	 * to be Latin-1 (iso-8859-1). This configurer allows to configure the desired encoding.
+	 *
+	 *
 	 * @author bsiri
 	 *
 	 */
 	private static final class BasicAuthCharsetConfigurer implements ObjectPostProcessor<BasicAuthenticationFilter>{
-		
+
 		private final String charset;
 
 		public BasicAuthCharsetConfigurer(String charset) {
 			super();
 			this.charset = charset;
 		}
-		
+
 		@Override
 		public <O extends BasicAuthenticationFilter> O postProcess(O object) {
 			object.setCredentialsCharset(charset);
 			return object;
 		}
-		
+
 	}
 }
 
