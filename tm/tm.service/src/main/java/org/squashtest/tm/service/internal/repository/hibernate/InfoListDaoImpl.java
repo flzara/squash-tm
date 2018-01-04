@@ -20,17 +20,25 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.SystemInfoListCode;
 import org.squashtest.tm.service.internal.repository.CustomInfoListDao;
+import org.squashtest.tm.service.internal.repository.InfoListDao;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 @Repository
 public class InfoListDaoImpl implements CustomInfoListDao {
+
+	@Inject
+	//must have lazy loading to inject the generated dao into custom one, to avoid circular dep. Maybe because of entity manger also injected here ?
+	@Lazy
+	private InfoListDao infoListDao;
 
 	@PersistenceContext
 	private EntityManager em;
@@ -44,18 +52,12 @@ public class InfoListDaoImpl implements CustomInfoListDao {
 
 	@Override
 	public void unbindFromProject(long infoListId) {
-		InfoList defaultReqCatList = findByCode(SystemInfoListCode.REQUIREMENT_CATEGORY.getCode());
+		InfoList defaultReqCatList = infoListDao.findByCode(SystemInfoListCode.REQUIREMENT_CATEGORY.getCode());
 		execUpdateQuery(infoListId, "infoList.project.setReqCatListToDefault", defaultReqCatList);
-		InfoList defaultTcNatList = findByCode(SystemInfoListCode.TEST_CASE_NATURE.getCode());
+		InfoList defaultTcNatList = infoListDao.findByCode(SystemInfoListCode.TEST_CASE_NATURE.getCode());
 		execUpdateQuery(infoListId, "infoList.project.setTcNatListToDefault", defaultTcNatList);
-		InfoList defaultTcTypeList = findByCode(SystemInfoListCode.TEST_CASE_TYPE.getCode());
+		InfoList defaultTcTypeList = infoListDao.findByCode(SystemInfoListCode.TEST_CASE_TYPE.getCode());
 		execUpdateQuery(infoListId, "infoList.project.setTcTypeListToDefault", defaultTcTypeList);
-	}
-
-	private InfoList findByCode(String code) {
-		return (InfoList) em.createNamedQuery("InfoList.findByCode")
-			.setParameter("code", code)
-			.getSingleResult();
 	}
 
 	private void execUpdateQuery(long infoListId, String queryName, Object defaultParam) {
@@ -65,4 +67,4 @@ public class InfoListDaoImpl implements CustomInfoListDao {
 		query.executeUpdate();
 	}
 
-	}
+}

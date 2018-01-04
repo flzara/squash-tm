@@ -877,7 +877,7 @@
 
 
    //InfoList
-	@NamedQuery(name = "InfoList.findByCode", query = "from InfoList where code = :code"),
+//	@NamedQuery(name = "InfoList.findByCode", query = "from InfoList where code = :code"),
 	@NamedQuery(name = "infoList.findProjectUsingInfoList", query ="from Project p where p.requirementCategories.id = :id or p.testCaseNatures.id = :id or p.testCaseTypes.id = :id"),
 	@NamedQuery(name = "InfoList.findAllOrdered", query = "from InfoList order by label"),
 	@NamedQuery(name = "InfoList.findAllBound", query = "from InfoList il where  exists (from Project p where p.requirementCategories = il or p.testCaseNatures = il or p.testCaseTypes = il)"),

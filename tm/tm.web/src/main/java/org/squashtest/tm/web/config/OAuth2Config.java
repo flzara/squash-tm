@@ -22,6 +22,7 @@ package org.squashtest.tm.web.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
@@ -48,16 +49,19 @@ import static org.springframework.security.config.http.SessionCreationPolicy.NEV
  */
 @Configuration
 public class OAuth2Config {
-	
-	private static final String OAUTH_SUBPATH = "/whatever"; 
-	
-	
+
+	private static final String OAUTH_SUBPATH = "/whatever";
+
+
 	public static class AuthenticationServerConfig extends AuthorizationServerConfigurerAdapter {
 		@Inject
 		private
 		DataSource dataSource;
 
 		@Inject
+		// Spring team seems to have added some constructor dependency somewhere between 1.4.0 and 1.4.7, witch lead to a circular reference
+		// So we delay the loading of AuthenticationManager after spring container start
+		@Lazy
 		private AuthenticationManager authenticationManager;
 
 		@Override

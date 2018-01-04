@@ -44,7 +44,7 @@
     <querydsl.version>4.1.2</querydsl.version>
     <spock.version>1.1-groovy-2.4</spock.version>
     <spring-security-oauth2.version>2.0.10.RELEASE</spring-security-oauth2.version>
-    <spring-security.version>4.0.4.RELEASE</spring-security.version>
+    <spring-security.version>4.1.4.RELEASE</spring-security.version>
     <thymeleaf-extras-springsecurity4.version>2.1.2.RELEASE</thymeleaf-extras-springsecurity4.version>
     <tomcat.version>8.0.23</tomcat.version>
     <unitils.version>3.4.2</unitils.version>

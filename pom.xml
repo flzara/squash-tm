@@ -40,8 +40,8 @@
     <maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <spring-boot-maven-plugin.version>1.4.0.RELEASE</spring-boot-maven-plugin.version>
-    <spring.boot.version>1.4.0.RELEASE</spring.boot.version>
+    <spring-boot-maven-plugin.version>1.4.7.RELEASE</spring-boot-maven-plugin.version>
+    <spring.boot.version>1.4.7.RELEASE</spring.boot.version>
 
     <verbose.compiler>false</verbose.compiler>
     <wro4j.version>1.7.8</wro4j.version>
