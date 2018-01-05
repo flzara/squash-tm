@@ -23,7 +23,7 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org"
+	xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
 	th:with=
 	   "titleWindow = ${execution.datasetLabel != null AND execution.datasetLabel != ''} ?
 	   		#{title.ExecutionPopupPreviewWithDataset(${execution.executionOrder + 1}, ${execution.name}, ${execution.datasetLabel})}

@@ -70,9 +70,6 @@
 
 	<div data-def="state=selection">
 		<form class="attachment-upload-form">
-			<input type="hidden"
-				   th:name="${_csrf.parameterName}"
-				   th:value="${_csrf.token}"/>
 		</form>
 	</div>
 

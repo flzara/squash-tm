@@ -28,11 +28,20 @@ define(
 	["jquery", "squash.attributeparser", "handlebars", "jquery.squash.formdialog",
 		"./jquery.squash.multi-fileupload"],
 	function ($, attrparser, Handlebars) {
+		"use strict";
+		//init the csrf token inclusion for post request
+		$.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+			console.log("Including csrf token")
+			var token = $("meta[name='_csrf']").attr("content");
+			var header = $("meta[name='_csrf_header']").attr("content");
+			jqXHR.setRequestHeader(header, token);
+		});
 
 		if (($.squash !== undefined) && ($.squash.attachmentsDialog !== undefined)) {
 			// plugin already loaded
 			return;
 		}
+
 
 		$.widget("squash.attachmentsDialog", $.squash.formDialog, {
 
@@ -156,7 +165,7 @@ define(
 					var formData = new FormData();
 
 					if (attach.length > 2) {
-						for (i = 1; i < attach.length - 1; i++) {
+						for (var i = 1; i < attach.length - 1; i++) {
 							var file = attach[i].files[0];
 							formData.append("attachment[]", file);
 						}
@@ -170,6 +179,9 @@ define(
 								}
 							}
 						};
+						var token = $("meta[name='_csrf']").attr("content");
+						var header = $("meta[name='_csrf_header']").attr("content");
+						xhr.setRequestHeader(header, token);
 						xhr.send(formData);
 					} else { //no attach
 
