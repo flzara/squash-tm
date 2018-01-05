@@ -38,7 +38,7 @@
 <c:url var="milestoneUrl"             value="/administration/milestones" />
 <c:url var="reqLinkTypeUrl"           value="/administration/requirement-link-types" />
 <c:url var="configUrl"                value="/administration/config" />
-
+<c:url var="logfileUrl"               value="/administration/log-file" />
 
 <layout:info-page-layout titleKey="label.administration">
   <jsp:attribute name="head">
@@ -191,6 +191,11 @@
             <a href="${ configUrl }" class="unstyledLink ">
               <span id="config-admin" class="admin-section-icon admin-config-icon-small"></span>
               <span class="admin-section-label"><f:message key="label.ModifyConfig" /></span>
+            </a>
+
+            <a href="${ logfileUrl }" class="unstyledLink ">
+              <span id="logfile-admin" class="admin-section-icon admin-logfile-icon-small"></span>
+              <span class="admin-section-label"><f:message key="label.DownloadLogfile" /></span>
             </a>
           </sec:authorize>
         </div>

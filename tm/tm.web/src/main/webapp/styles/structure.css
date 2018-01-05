@@ -1458,6 +1458,10 @@ div.information-panel p {
 	background-image :url(../images/Button_Config_small.png); /** sprite-ref: sprites-icons; */
 }
 
+.admin-logfile-icon-small{
+	background-image :url(../images/Button_Log_small.png);
+}
+
 #admin-link-pane  span.admin-section-label {
 	position:absolute;
 	z-index:5;
