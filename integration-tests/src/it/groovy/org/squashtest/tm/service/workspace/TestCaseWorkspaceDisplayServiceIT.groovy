@@ -71,8 +71,8 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 
 		where:
 		readableProjectIds   || expectedLibrariesIds | expectedProjectsNames | expectedLibraryFullId
-		[]                   || [] | [] | []
-		[-1L, -2L, -3L, -4L] || [-1L, -20L, -3L] | ["foo", "bar", "baz"] | ["TestCaseLibrary-1", "TestCaseLibrary-20", "TestCaseLibrary-3"]
+		[]                   || []                   | []                    | []
+		[-1L, -2L, -3L, -4L] || [-1L, -20L, -3L]     | ["foo", "bar", "baz"] | ["TestCaseLibrary-1", "TestCaseLibrary-20", "TestCaseLibrary-3"]
 	}
 
 	@DataSet("WorkspaceDisplayService.sandbox.xml")
@@ -89,8 +89,8 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 
 		where:
 		readableProjectIds   || expectedLibrariesIds | expectedProjectsNames | expectedLibraryFullId
-		[]                   || [] | [] | []
-		[-1L, -2L, -3L, -4L] || [-1L, -20L] | ["foo", "bar"] | ["TestCaseLibrary-1", "TestCaseLibrary-20"]
+		[]                   || []                   | []                    | []
+		[-1L, -2L, -3L, -4L] || [-1L, -20L]          | ["foo", "bar"]        | ["TestCaseLibrary-1", "TestCaseLibrary-20"]
 	}
 
 	@DataSet("WorkspaceDisplayService.sandbox.no.filter.xml")
@@ -187,46 +187,6 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 
 	}
 
-
-	@DataSet("WorkspaceDisplayService.sandbox.xml")
-	def "should find projects models"() {
-		given:
-		UserDto user = new UserDto("robert", -2L, [-100L, -300L], false)
-
-		when:
-		def jsonProjects = testCaseWorkspaceDisplayService.findAllProjects([-1L, -2L, -3L, -4L], user)
-
-		then:
-		jsonProjects.size() == 3
-		jsonProjects.collect { it.name }.sort() == ["bar", "baz", "foo"]
-
-		def jsonProject1 = jsonProjects.getAt(2)
-		jsonProject1.getId() == -1L
-		jsonProject1.getName().equals("foo")
-		jsonProject1.getRequirementCategories().id == -1L
-		jsonProject1.getTestCaseNatures().id == -2L
-		jsonProject1.getTestCaseTypes().id == -4L
-
-		def customFieldBindings = jsonProject1.getCustomFieldBindings()
-		customFieldBindings.size() == 8
-		def customFieldBindingModels = customFieldBindings.get("REQUIREMENT_VERSION")
-		customFieldBindingModels.size() == 2
-		customFieldBindingModels.collect { it.id }.sort() == [-3L, -2L]
-		customFieldBindingModels.collect { it.customField.id }.sort() == [-3L, -1L]
-		customFieldBindingModels.collect { it.customField.name }.sort() == ["Liste 2", "Lot"]
-
-		def customFieldBindingModels2 = customFieldBindings.get("TEST_STEP")
-		customFieldBindingModels2.size() == 2
-		customFieldBindingModels2.collect { it.customField.id }.sort() == [-3L, -1L]
-		def customFieldBindingModel = customFieldBindingModels2.get(0)
-		customFieldBindingModel.getRenderingLocations().size() == 2
-		customFieldBindingModel.getRenderingLocations().collect { it.enumName }.sort() == ["STEP_TABLE", "TEST_PLAN"]
-
-		def jsonMilestones = jsonProject1.getMilestones()
-		jsonMilestones.size() == 3
-		jsonMilestones.collect { it.label }.sort() == ["My milestone", "My milestone 2", "My milestone 3"]
-	}
-
 	@DataSet("TestCaseDisplayService.sandbox.xml")
 	def "should build test Case libraries with all their children"() {
 
@@ -248,7 +208,7 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 
 		def libraryFatherChildrenMultiMap = testCaseWorkspaceDisplayService.getLibraryFatherChildrenMultiMap(expansionCandidates, childrenIds, new HashSet<Long>(), -9000L)
 		def libraryNodeFatherChildrenMultiMap = testCaseWorkspaceDisplayService.getLibraryNodeFatherChildrenMultiMap(expansionCandidates, childrenIds, new HashSet<Long>(), -9000L)
-		def libraryChildrenMap = testCaseWorkspaceDisplayService.getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser,new HashMap<Long, List<Long>>(), new ArrayList<Long>(), -9000L)
+		def libraryChildrenMap = testCaseWorkspaceDisplayService.getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser, new HashMap<Long, List<Long>>(), new ArrayList<Long>(), -9000L)
 		def jsTreeNodes = testCaseWorkspaceDisplayService.doFindLibraries(readableProjectIds, currentUser)
 		testCaseWorkspaceDisplayService.buildHierarchy(jsTreeNodes, libraryFatherChildrenMultiMap, libraryNodeFatherChildrenMultiMap, libraryChildrenMap, -9000L)
 

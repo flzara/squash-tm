@@ -222,37 +222,7 @@ class CampaignWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		jsTreeNodes.get(-19L).getAttr().get("wizards") == [] as Set
 	}
 
-	@DataSet("CampaignWorkspaceDisplayService.sandbox.xml")
-	def "should find projects models"() {
-		given:
-		UserDto user = new UserDto("robert", -2L, [-100L, -300L], false)
 
-		when:
-		def jsonProjects = campaignWorkspaceDisplayService.findAllProjects([-14L, -15L, -16L, -19L, -21L], user)
-
-		then:
-		jsonProjects.size() == 4
-		jsonProjects.collect { it.name }.sort() == ["Projet 1", "Projet 2", "Projet 5", "Test Project-1"]
-
-		def jsonProject15 = jsonProjects.getAt(2)
-		jsonProject15.getId() == -15L
-		jsonProject15.getName().equals("Projet 1")
-		jsonProject15.getRequirementCategories().id == -1L
-		jsonProject15.getTestCaseNatures().id == -2L
-		jsonProject15.getTestCaseTypes().id == -3L
-
-		def customFieldBindings = jsonProject15.getCustomFieldBindings()
-		customFieldBindings.size() == 8
-		def customFieldBindingModels = customFieldBindings.get("CAMPAIGN")
-		customFieldBindingModels.size() == 3
-		customFieldBindingModels.collect { it.id }.sort() == [-3L, -2L, -1L]
-		customFieldBindingModels.collect { it.customField.id }.sort() == [-3L, -2L, -1L]
-		customFieldBindingModels.collect { it.customField.name }.sort() == ["Liste", "Liste 2", "Lot"]
-
-		def jsonMilestones = jsonProject15.getMilestones()
-		jsonMilestones.size() == 2
-		jsonMilestones.collect { it.label }.sort() == ["Jalon 1", "Jalon 2"]
-	}
 
 	@DataSet("CampaignWorkspaceDisplayService.sandbox.xml")
 	def "should build requirement libraries with all their children"() {

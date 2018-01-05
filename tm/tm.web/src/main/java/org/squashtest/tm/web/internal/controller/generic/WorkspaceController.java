@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.generic;
 
-import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.Predicate;
@@ -151,7 +150,7 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 		populateModel(model, locale);
 
 		// also add meta data about projects
-		Collection<JsonProject> jsProjects = workspaceDisplayService().findAllProjects(projectIds, currentUser);
+		Collection<JsonProject> jsProjects = projectFinder.findAllProjects(projectIds, currentUser);
 
 		model.addAttribute("projects", jsProjects);
 		// milestones
@@ -246,7 +245,7 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	 * As squash TM 1.15, user preference are small so we pass all the object to the client.
 	 * If user pref become a too big map, please do add-hoc implementation of this method in subclass of this controller
 	 *
-	 * @return Map<String,String> All user preferences
+	 * @return Map<String , String> All user preferences
 	 */
 	protected Map<String, String> getWorkspaceUserPref() {
 		return partyPreferenceService.findPreferencesForCurrentUser();

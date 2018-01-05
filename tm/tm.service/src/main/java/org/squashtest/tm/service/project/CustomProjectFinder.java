@@ -20,15 +20,17 @@
  */
 package org.squashtest.tm.service.project;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
-import java.util.List;
-
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.internal.dto.UserDto;
+import org.squashtest.tm.service.internal.dto.json.JsonProject;
+
+import java.util.Collection;
+import java.util.List;
+
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 /**
  * @author mpagnon
@@ -55,6 +57,8 @@ public interface CustomProjectFinder {
 	 */
 	List<Long> findAllReadableIds();
 
-
 	List<Project> findAllOrderedByName();
+
+	Collection<JsonProject> findAllProjects(List<Long> readableProjectIds, UserDto currentUser);
+
 }

@@ -20,17 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.customreport;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,20 +40,22 @@ import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.customreport.CustomReportWorkspaceService;
 import org.squashtest.tm.service.infolist.InfoListModelService;
 import org.squashtest.tm.service.internal.dto.UserDto;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
+import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
+import org.squashtest.tm.service.internal.dto.json.JsonProject;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneModelService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.user.UserAccountService;
-import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.service.workspace.WorkspaceHelperService;
 import org.squashtest.tm.web.internal.helper.I18nLevelEnumInfolistHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.CustomReportTreeNodeBuilder;
-import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
-import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 
-import java.util.Optional;
-import org.squashtest.tm.service.internal.dto.json.JsonProject;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
+import java.util.*;
 
 /**
  * This controller is dedicated to the initial page of Custom Reports
@@ -104,11 +95,6 @@ public class CustomReportWorkspaceController {
 	protected UserAccountService userAccountService;
 
 	@Inject
-	@Named("customReportWorkspaceDisplayService")
-	private WorkspaceDisplayService workspaceDisplayService;
-
-
-	@Inject
 	private WorkspaceHelperService workspaceHelperService;
 
 	@Inject
@@ -123,8 +109,8 @@ public class CustomReportWorkspaceController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale,
-			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
-			@CookieValue(value = "jstree_select", required = false, defaultValue = "") String elementId) {
+								@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
+								@CookieValue(value = "jstree_select", required = false, defaultValue = "") String elementId) {
 
 		List<CustomReportLibraryNode> libraries = workspaceService.findRootNodes();
 
@@ -156,19 +142,20 @@ public class CustomReportWorkspaceController {
 
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 		List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
-		Collection<JsonProject> projects = workspaceDisplayService.findAllProjects(readableProjectIds, currentUser);
+		Collection<JsonProject> projects =
+			projectFinder.findAllProjects(readableProjectIds, currentUser);
 
 		model.addAttribute("projects", projects);
 
 
 		//defaults lists and enums levels
 		model.addAttribute("defaultInfoLists", infoListModelService.findSystemInfoListItemLabels());
-		model.addAttribute("testCaseImportance", i18nLevelEnumInfolistHelper.getI18nLevelEnum(TestCaseImportance.class,locale));
-		model.addAttribute("testCaseStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(TestCaseStatus.class,locale));
-		model.addAttribute("requirementStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(RequirementStatus.class,locale));
-		model.addAttribute("requirementCriticality", i18nLevelEnumInfolistHelper.getI18nLevelEnum(RequirementCriticality.class,locale));
+		model.addAttribute("testCaseImportance", i18nLevelEnumInfolistHelper.getI18nLevelEnum(TestCaseImportance.class, locale));
+		model.addAttribute("testCaseStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(TestCaseStatus.class, locale));
+		model.addAttribute("requirementStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(RequirementStatus.class, locale));
+		model.addAttribute("requirementCriticality", i18nLevelEnumInfolistHelper.getI18nLevelEnum(RequirementCriticality.class, locale));
 		model.addAttribute("executionStatus",
-				i18nLevelEnumInfolistHelper.getI18nLevelEnum(ExecutionStatus.class, locale));
+			i18nLevelEnumInfolistHelper.getI18nLevelEnum(ExecutionStatus.class, locale));
 
 		model.addAttribute("projectFilter", workspaceHelperService.findFilterModel(currentUser, readableProjectIds));
 		model.addAttribute("bugtrackers", bugTrackerFinderService.findDistinctBugTrackersForProjects(readableProjectIds));
@@ -201,15 +188,15 @@ public class CustomReportWorkspaceController {
 		return WorkspaceType.CUSTOM_REPORT_WORKSPACE;
 	}
 
-	private Long convertCookieId(String cookieValue){
+	private Long convertCookieId(String cookieValue) {
 		String[] cookieSplits = cookieValue.split(cookieDelimiter);
-		if (cookieSplits.length>0) {
-			return Long.parseLong(cookieSplits[cookieSplits.length-1]);
+		if (cookieSplits.length > 0) {
+			return Long.parseLong(cookieSplits[cookieSplits.length - 1]);
 		}
 		return Long.parseLong(cookieValue);
 	}
 
-	private Set<Long> convertCookieIds(String[] cookieValues){
+	private Set<Long> convertCookieIds(String[] cookieValues) {
 		Set<Long> nodeIdToOpen = new HashSet<>();
 		for (String value : cookieValues) {
 			try {

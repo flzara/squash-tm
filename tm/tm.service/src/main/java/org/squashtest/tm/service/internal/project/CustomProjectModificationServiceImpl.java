@@ -20,14 +20,7 @@
  */
 package org.squashtest.tm.service.internal.project;
 
-import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-
+import org.jooq.DSLContext;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -35,14 +28,31 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
-import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
+import org.squashtest.tm.service.customfield.CustomFieldModelService;
+import org.squashtest.tm.service.infolist.InfoListModelService;
+import org.squashtest.tm.service.internal.dto.CustomFieldBindingModel;
+import org.squashtest.tm.service.internal.dto.UserDto;
+import org.squashtest.tm.service.internal.dto.json.JsonInfoList;
+import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
+import org.squashtest.tm.service.internal.dto.json.JsonProject;
 import org.squashtest.tm.service.internal.repository.*;
+import org.squashtest.tm.service.milestone.MilestoneModelService;
 import org.squashtest.tm.service.project.CustomProjectModificationService;
 import org.squashtest.tm.service.project.GenericProjectCopyParameter;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.UserAccountService;
+
+import javax.inject.Inject;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static org.squashtest.tm.domain.project.Project.PROJECT_TYPE;
+import static org.squashtest.tm.jooq.domain.Tables.PROJECT;
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 /**
  * @author mpagnon
@@ -50,26 +60,39 @@ import org.squashtest.tm.service.user.UserAccountService;
 @Service("CustomProjectModificationService")
 @Transactional
 public class CustomProjectModificationServiceImpl implements CustomProjectModificationService {
+
 	@Inject
 	private ProjectDeletionHandler projectDeletionHandler;
+
 	@Inject
 	private ProjectTemplateDao projectTemplateDao;
+
 	@Inject
 	private GenericProjectManagerService genericProjectManager;
+
 	@Inject
 	private ProjectDao projectDao;
+
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
+
 	@Inject
 	private GenericProjectDao genericProjectDao;
+
 	@Inject
 	protected UserAccountService userAccountService;
 
 	@Inject
-	private UserDao userDao;
+	private DSLContext DSL;
 
 	@Inject
-	private TeamDao teamDao;
+	private MilestoneModelService milestoneModelService;
+
+	@Inject
+	private CustomFieldModelService customFieldModelService;
+
+	@Inject
+	private InfoListModelService infoListModelService;
 
 
 	@Override
@@ -134,5 +157,62 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	public List<Project> findAllOrderedByName() {
 		return projectDao.findAllByOrderByName();
+	}
+
+	@Override
+	public Collection<JsonProject> findAllProjects(List<Long> readableProjectIds, UserDto currentUser) {
+		Map<Long, JsonProject> jsonProjects = doFindAllProjects(readableProjectIds);
+		return jsonProjects.values();
+	}
+
+	protected Map<Long, JsonProject> doFindAllProjects(List<Long> readableProjectIds) {
+		// As projects are objects with complex relationship we pre fetch some of the relation to avoid unnecessary joins or requests, and unnecessary conversion in DTO after fetch
+		// We do that only on collaborators witch should not be too numerous versus the number of projects
+		// good candidate for this pre fetch are infolists, custom fields (not bindings), milestones...
+ 		Map<Long, JsonInfoList> infoListMap = infoListModelService.findUsedInfoList(readableProjectIds);
+
+		Map<Long, JsonProject> jsonProjectMap = findJsonProjects(readableProjectIds, infoListMap);
+
+		// Now we retrieve the bindings for projects, injecting cuf inside
+		Map<Long, Map<String, List<CustomFieldBindingModel>>> customFieldsBindingsByProject = customFieldModelService.findCustomFieldsBindingsByProject(readableProjectIds);
+
+		// We find the milestone bindings and provide projects with them
+		Map<Long, List<JsonMilestone>> milestoneByProjectId = milestoneModelService.findMilestoneByProject(readableProjectIds);
+
+		// We provide the projects with their bindings and milestones
+		jsonProjectMap.forEach((projectId, jsonProject) -> {
+			if (customFieldsBindingsByProject.containsKey(projectId)) {
+				Map<String, List<CustomFieldBindingModel>> bindingsByEntityType = customFieldsBindingsByProject.get(projectId);
+				jsonProject.setCustomFieldBindings(bindingsByEntityType);
+			}
+
+			if (milestoneByProjectId.containsKey(projectId)) {
+				List<JsonMilestone> jsonMilestone = milestoneByProjectId.get(projectId);
+				jsonProject.setMilestones(new HashSet<>(jsonMilestone));
+			}
+		});
+
+		return jsonProjectMap;
+	}
+
+	private Map<Long, JsonProject> findJsonProjects(List<Long> readableProjectIds, Map<Long, JsonInfoList> infoListMap) {
+		return DSL.select(PROJECT.PROJECT_ID, PROJECT.NAME, PROJECT.REQ_CATEGORIES_LIST, PROJECT.TC_NATURES_LIST, PROJECT.TC_TYPES_LIST)
+			.from(PROJECT)
+			.where(PROJECT.PROJECT_ID.in(readableProjectIds)).and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE))
+			.orderBy(PROJECT.PROJECT_ID)
+			.stream()
+			.map(r -> {
+				Long projectId = r.get(PROJECT.PROJECT_ID);
+				JsonProject jsonProject = new JsonProject(projectId, r.get(PROJECT.NAME));
+				jsonProject.setRequirementCategories(infoListMap.get(r.get(PROJECT.REQ_CATEGORIES_LIST)));
+				jsonProject.setTestCaseNatures(infoListMap.get(r.get(PROJECT.TC_NATURES_LIST)));
+				jsonProject.setTestCaseTypes(infoListMap.get(r.get(PROJECT.TC_TYPES_LIST)));
+				return jsonProject;
+
+			}).collect(Collectors.toMap(JsonProject::getId, Function.identity(),
+				(u, v) -> {
+					throw new IllegalStateException(String.format("Duplicate key %s", u));
+				},
+				LinkedHashMap::new));
 	}
 }

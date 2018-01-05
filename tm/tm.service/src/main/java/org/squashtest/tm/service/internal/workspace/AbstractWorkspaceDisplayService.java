@@ -34,20 +34,15 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.project.ProjectResource;
-import org.squashtest.tm.service.customfield.CustomFieldModelService;
-import org.squashtest.tm.service.infolist.InfoListModelService;
-import org.squashtest.tm.service.internal.dto.CustomFieldBindingModel;
 import org.squashtest.tm.service.internal.dto.PermissionWithMask;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
 import org.squashtest.tm.service.internal.dto.json.JsonInfoList;
-import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.service.internal.dto.json.JsonProject;
 import org.squashtest.tm.service.internal.helper.HyphenedStringHelper;
 import org.squashtest.tm.service.internal.repository.hibernate.HibernateEntityDao;
 import org.squashtest.tm.service.internal.repository.hibernate.HibernateRequirementDao;
-import org.squashtest.tm.service.milestone.MilestoneModelService;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 
 import javax.inject.Inject;
@@ -67,16 +62,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	private MessageSource messageSource;
 
 	@Inject
-	DSLContext DSL;
-
-	@Inject
-	private MilestoneModelService milestoneModelService;
-
-	@Inject
-	private CustomFieldModelService customFieldModelService;
-
-	@Inject
-	private InfoListModelService infoListModelService;
+	private DSLContext DSL;
 
 	@Inject
 	private HibernateRequirementDao hibernateRequirementDao;
@@ -168,66 +154,9 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				LinkedHashMap::new));
 	}
 
-	@Override
-	public Collection<JsonProject> findAllProjects(List<Long> readableProjectIds, UserDto currentUser) {
-		Map<Long, JsonProject> jsonProjects = doFindAllProjects(readableProjectIds);
-		return jsonProjects.values();
-	}
-
 	public Collection<JsonProject> findAllEmptyProjects(List<Long> readableProjectIds) {
 		Map<Long, JsonProject> jsonProjects = findEmptyJsonProjects(readableProjectIds);
 		return jsonProjects.values();
-	}
-
-	protected Map<Long, JsonProject> doFindAllProjects(List<Long> readableProjectIds) {
-		// As projects are objects with complex relationship we pre fetch some of the relation to avoid unnecessary joins or requests, and unnecessary conversion in DTO after fetch
-		// We do that only on collaborators witch should not be too numerous versus the number of projects
-		// good candidate for this pre fetch are infolists, custom fields (not bindings), milestones...
-		Map<Long, JsonInfoList> infoListMap = infoListModelService.findUsedInfoList(readableProjectIds);
-
-		Map<Long, JsonProject> jsonProjectMap = findJsonProjects(readableProjectIds, infoListMap);
-
-		// Now we retrieve the bindings for projects, injecting cuf inside
-		Map<Long, Map<String, List<CustomFieldBindingModel>>> customFieldsBindingsByProject = customFieldModelService.findCustomFieldsBindingsByProject(readableProjectIds);
-
-		// We find the milestone bindings and provide projects with them
-		Map<Long, List<JsonMilestone>> milestoneByProjectId = milestoneModelService.findMilestoneByProject(readableProjectIds);
-
-		// We provide the projects with their bindings and milestones
-		jsonProjectMap.forEach((projectId, jsonProject) -> {
-			if (customFieldsBindingsByProject.containsKey(projectId)) {
-				Map<String, List<CustomFieldBindingModel>> bindingsByEntityType = customFieldsBindingsByProject.get(projectId);
-				jsonProject.setCustomFieldBindings(bindingsByEntityType);
-			}
-
-			if (milestoneByProjectId.containsKey(projectId)) {
-				List<JsonMilestone> jsonMilestone = milestoneByProjectId.get(projectId);
-				jsonProject.setMilestones(new HashSet<>(jsonMilestone));
-			}
-		});
-
-		return jsonProjectMap;
-	}
-
-	private Map<Long, JsonProject> findJsonProjects(List<Long> readableProjectIds, Map<Long, JsonInfoList> infoListMap) {
-		return DSL.select(PROJECT.PROJECT_ID, PROJECT.NAME, PROJECT.REQ_CATEGORIES_LIST, PROJECT.TC_NATURES_LIST, PROJECT.TC_TYPES_LIST)
-			.from(PROJECT)
-			.where(PROJECT.PROJECT_ID.in(readableProjectIds)).and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE))
-			.orderBy(PROJECT.PROJECT_ID)
-			.stream()
-			.map(r -> {
-				Long projectId = r.get(PROJECT.PROJECT_ID);
-				JsonProject jsonProject = new JsonProject(projectId, r.get(PROJECT.NAME));
-				jsonProject.setRequirementCategories(infoListMap.get(r.get(PROJECT.REQ_CATEGORIES_LIST)));
-				jsonProject.setTestCaseNatures(infoListMap.get(r.get(PROJECT.TC_NATURES_LIST)));
-				jsonProject.setTestCaseTypes(infoListMap.get(r.get(PROJECT.TC_TYPES_LIST)));
-				return jsonProject;
-
-			}).collect(Collectors.toMap(JsonProject::getId, Function.identity(),
-				(u, v) -> {
-					throw new IllegalStateException(String.format("Duplicate key %s", u));
-				},
-				LinkedHashMap::new));
 	}
 
 	public Collection<JsTreeNode> getNodeContent(Long entityId, UserDto currentUser, String entityClass, Long activeMilestoneId) {
@@ -306,8 +235,6 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	}
 
 
-
-
 	public void findPermissionMap(UserDto currentUser, Map<Long, JsTreeNode> jsTreeNodes) {
 		Set<Long> libraryIds = jsTreeNodes.keySet();
 
@@ -363,7 +290,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				.fetch()
 				.stream()
 				.forEach(r ->
-						result.put(r.get(selectLibraryContentLibraryId()), r.get(selectLibraryContentContentId()))
+					result.put(r.get(selectLibraryContentLibraryId()), r.get(selectLibraryContentContentId()))
 				);
 		}
 		if (!NO_ACTIVE_MILESTONE_ID.equals(activeMilestoneId)) {
@@ -395,7 +322,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				.fetch()
 				.stream()
 				.forEach(r ->
-						result.put(r.get(selectLNRelationshipAncestorId()), r.get(selectLNRelationshipDescendantId()))
+					result.put(r.get(selectLNRelationshipAncestorId()), r.get(selectLNRelationshipDescendantId()))
 				);
 		}
 		childrenIds.addAll(result.keySet());
@@ -559,7 +486,11 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 			.stream()
 			.collect(Collectors.groupingBy(r -> r.get(getProjectLibraryColumn()), mapping(r -> r.get(LIBRARY_PLUGIN_BINDING.PLUGIN_ID), toSet())));
 
-		pluginByLibraryId.forEach((libId, pluginIds) -> {if (jsTreeNodes.get(libId) != null) {jsTreeNodes.get(libId).addAttr("wizards", pluginIds);}});
+		pluginByLibraryId.forEach((libId, pluginIds) -> {
+			if (jsTreeNodes.get(libId) != null) {
+				jsTreeNodes.get(libId).addAttr("wizards", pluginIds);
+			}
+		});
 	}
 
 	private List<Long> getMilestonesModifiable() {

@@ -89,7 +89,7 @@ class TestCasesWorkspaceControllerTest extends NodeBuildingSpecification {
 		Project project = Mock()
 		library.project >> project
 		testCaseWorkspaceDisplayService.findAllLibraries(_,_) >> [library]
-		testCaseWorkspaceDisplayService.findAllProjects(_,_) >> []
+		projFinder.findAllProjects(_,_) >> []
 		def model = Mock(Model)
 		def modelMap = ["rootModel" : new ArrayList<JsTreeNode>()]
 		model.asMap() >> modelMap
