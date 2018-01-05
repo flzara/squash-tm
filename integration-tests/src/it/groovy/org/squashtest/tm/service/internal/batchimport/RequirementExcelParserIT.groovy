@@ -116,8 +116,8 @@ class RequirementExcelParserIT extends DbunitServiceSpecification{
 		results*.milestones == [["Milestone 1", "Milestone 2"], ["Milestone 1"], []]
 		results*.customFields == [
 			[cuf4:"", cuf2:"false", cuf5:"", cuf3:"", cuf6:"", cuf1:"1"],
-			[cuf4:"<p><strong>aze</strong></p>\n", cuf2:"true", cuf5:"2015-07-14", cuf3:"2", cuf6:"ah|hi|oh", cuf1:"1"],
-			[cuf4:"<p><strong>aze</strong></p>\n", cuf2:"false", cuf5:"2015-07-14", cuf3:"1", cuf6:"ah|hi", cuf1:"1"]
+			[cuf4:"<p><strong>aze</strong></p>", cuf2:"true", cuf5:"2015-07-14", cuf3:"2", cuf6:"ah|hi|oh", cuf1:"1"],
+			[cuf4:"<p><strong>aze</strong></p>", cuf2:"false", cuf5:"2015-07-14", cuf3:"1", cuf6:"ah|hi", cuf1:"1"]
 		]
 
 		results*.requirementVersion.reference == ["1", "1", "1"]

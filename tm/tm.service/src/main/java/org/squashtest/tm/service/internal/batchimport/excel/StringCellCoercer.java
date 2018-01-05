@@ -20,7 +20,10 @@
  */
 package org.squashtest.tm.service.internal.batchimport.excel;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 
 /**
  * Coerces a plain string cell to a string
@@ -48,7 +51,11 @@ public final class StringCellCoercer extends TypeBasedCellValueCoercer<String> i
 	 */
 	@Override
 	protected String coerceStringCell(Cell cell) {
-		return cell.getStringCellValue();
+		String value = cell.getStringCellValue();
+		if (StringUtils.isNotBlank(value)) {
+			return Jsoup.clean(value, Whitelist.basicWithImages());
+		}
+		return value;
 	}
 
 	/**
@@ -58,8 +65,6 @@ public final class StringCellCoercer extends TypeBasedCellValueCoercer<String> i
 	protected String coerceNumericCell(Cell cell) {
 		return String.valueOf(cell.getNumericCellValue());
 	}
-
-
 
 
 }
