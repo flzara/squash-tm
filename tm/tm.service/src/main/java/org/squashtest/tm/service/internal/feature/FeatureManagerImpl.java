@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.feature;
 
 import static org.squashtest.tm.service.configuration.ConfigurationService.Properties.CASE_INSENSITIVE_LOGIN_FEATURE_ENABLED;
 import static org.squashtest.tm.service.configuration.ConfigurationService.Properties.MILESTONE_FEATURE_ENABLED;
+import static org.squashtest.tm.service.configuration.ConfigurationService.Properties.STACK_TRACE_FEATURE_ENABLED;
 
 import javax.inject.Inject;
 
@@ -68,6 +69,10 @@ public class FeatureManagerImpl implements FeatureManager {
 			case CASE_INSENSITIVE_LOGIN:
 				enabled = configuration.getBoolean(CASE_INSENSITIVE_LOGIN_FEATURE_ENABLED);
 				break;
+
+			case STACK_TRACE:
+				enabled = configuration.getBoolean(STACK_TRACE_FEATURE_ENABLED);
+				break;
 			default:
 				throw new IllegalArgumentException("I don't know feature '" + feature
 					+ "'. I am unable to tell if it's enabled or not");
@@ -94,6 +99,10 @@ public class FeatureManagerImpl implements FeatureManager {
 				setCaseInsensitiveLoginFeatureEnabled(enabled);
 				break;
 
+			case STACK_TRACE:
+				setStackTraceFeatureEnabled(enabled);
+				break;
+
 			default:
 				throw new IllegalArgumentException("I don't know feature '" + feature
 					+ "'. I am unable to switch its enabled status to " + enabled);
@@ -106,6 +115,11 @@ public class FeatureManagerImpl implements FeatureManager {
 	private void setCaseInsensitiveLoginFeatureEnabled(boolean enabled) {
 		// TODO check if possible
 		configuration.set(CASE_INSENSITIVE_LOGIN_FEATURE_ENABLED, enabled);
+	}
+
+	private void setStackTraceFeatureEnabled(boolean enabled) {
+		// TODO check if possible
+		configuration.set(STACK_TRACE_FEATURE_ENABLED, enabled);
 	}
 
 	private void setMilestoneFeatureEnabled(boolean enabled) {

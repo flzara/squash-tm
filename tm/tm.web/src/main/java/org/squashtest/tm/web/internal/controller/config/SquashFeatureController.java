@@ -87,4 +87,12 @@ public class SquashFeatureController {
 	public void setCaseInsensitiveLoginFeature(@RequestParam("enabled") boolean enabled) {
 		featureManager.setEnabled(Feature.CASE_INSENSITIVE_LOGIN, enabled);
 	}
+
+	@RequestMapping(value = "/stack-trace", method = RequestMethod.POST, params = "enabled")
+	@ResponseBody
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@Secured("ROLE_ADMIN")
+	public void setStackTraceFeature(@RequestParam("enabled") boolean enabled) {
+		featureManager.setEnabled(Feature.STACK_TRACE, enabled);
+	}
 }

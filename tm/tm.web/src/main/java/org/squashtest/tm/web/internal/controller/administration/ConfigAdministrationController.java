@@ -31,6 +31,9 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.provider.ClientAlreadyExistsException;
@@ -53,17 +56,22 @@ import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.security.OAuth2ClientService;
 import org.squashtest.tm.service.user.UserManagerService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 
 @Controller
 @RequestMapping("administration/config")
 public class ConfigAdministrationController {
 
-    private static final String WHITE_LIST = "uploadfilter.fileExtensions.whitelist";
+	private static final Logger LOGGER = LoggerFactory.getLogger(ConfigAdministrationController.class);
+
+	private static final String WHITE_LIST = "uploadfilter.fileExtensions.whitelist";
     private static final String UPLOAD_SIZE_LIMIT = ConfigurationService.Properties.UPLOAD_SIZE_LIMIT;
     private static final String IMPORT_SIZE_LIMIT = "uploadfilter.upload.import.sizeLimitInBytes";
-    @Inject
+
+	@Value("${squashtm.stack.trace.control.panel.visible:true}")
+	private Boolean stackTracePanel;
+
+	@Inject
     private ConfigurationService configService;
 
     @Inject
@@ -77,7 +85,6 @@ public class ConfigAdministrationController {
 
     @Inject
     private UserManagerService userManager;
-
 
 	@Inject
 	private ApplicationEventPublisher eventPublisher;
@@ -94,7 +101,6 @@ public class ConfigAdministrationController {
         sendUpdateEvent();
     }
 
-
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView administration() {
         ModelAndView mav = new ModelAndView("page/administration/config");
@@ -106,7 +112,10 @@ public class ConfigAdministrationController {
         mav.addObject("caseInsensitiveLogin", features.isEnabled(Feature.CASE_INSENSITIVE_LOGIN));
         mav.addObject("duplicateLogins", userManager.findAllDuplicateLogins());
 
-        return mav;
+		mav.addObject("shouldDisplayStackTraceControlPanel", stackTracePanel);
+		mav.addObject("stackTrace", features.isEnabled(Feature.STACK_TRACE));
+
+		return mav;
     }
 
     @RequestMapping(method = RequestMethod.POST, params = {"id=whiteList", VALUE})
@@ -132,7 +141,6 @@ public class ConfigAdministrationController {
         sendUpdateEvent();
         return newUploadImportSizeLimit;
     }
-
 
     private void sendUpdateEvent() {
 		ConfigUpdateEvent event = new ConfigUpdateEvent("");

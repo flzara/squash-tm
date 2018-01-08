@@ -140,16 +140,19 @@ define(["jquery", "app/lnf/Forms", "squash.translator", "jquery.squash.messagedi
 	function handleGenericResponseError(request) {
 		var handle = function () {
 
-			if (request.responseText) {
-
-				showError(translator.get('message.exception.generic'));
-
-			} else {
+			if (request.getResponseHeader('Stack-Trace') === "enable") {
 
 				var popup = window.open('about:blank', 'error_details',
 					'resizable=yes, scrollbars=yes, status=no, menubar=no, toolbar=no, dialog=yes, location=no');
-				popup.document.write(JSON.stringify(request));
 
+				if (request.responseText) {
+					popup.document.write(request.responseText);
+				} else {
+					popup.document.write(JSON.stringify(request));
+				}
+
+			} else {
+				showError(translator.get('message.exception.generic'));
 			}
 		};
 

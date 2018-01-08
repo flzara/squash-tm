@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -36,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.squashtest.tm.service.feature.FeatureManager;
 
 /*
  *https://gist.github.com/jonikarppinen/662c38fb57a23de61c8b
@@ -44,8 +46,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @Controller
 public class SquashErrorController implements ErrorController {
 
-	@Value("${squash.stack.trace.enabled}")
-	private Boolean stackTraceEnabled;
+	@Inject
+	private FeatureManager featureManager;
 
 	private static final String PATH = "/error";
 
@@ -62,7 +64,7 @@ public class SquashErrorController implements ErrorController {
 	@RequestMapping(value = PATH)
 	public String error(HttpServletRequest request, HttpServletResponse response, Model model) throws Throwable {
 
-		Map<String, Object> errors = getErrorAttributes(request);
+		Map<String, Object> errors = getErrorAttributes(request, response);
 
 		model.addAllAttributes(errors);
 		model.addAttribute("code", response.getStatus());
@@ -74,8 +76,7 @@ public class SquashErrorController implements ErrorController {
 	@RequestMapping(value = PATH, produces = {"application/json", "application/*+json"})
 	@ResponseBody
 	public Map<String, Object> errorJson(HttpServletRequest request, HttpServletResponse response, Model model) throws Throwable {
-
-		return getErrorAttributes(request);
+		return getErrorAttributes(request, response);
 
 	}
 
@@ -84,11 +85,13 @@ public class SquashErrorController implements ErrorController {
 		return PATH;
 	}
 
-	private Map<String, Object> getErrorAttributes(HttpServletRequest request) {
+	private Map<String, Object> getErrorAttributes(HttpServletRequest request, HttpServletResponse response) {
 		RequestAttributes requestAttributes = new ServletRequestAttributes(request);
 		Map<String, Object> result = errorAttributes.getErrorAttributes(requestAttributes, true);
 
-		if (!stackTraceEnabled) {
+		if (featureManager.isEnabled(FeatureManager.Feature.STACK_TRACE)) {
+			response.setHeader("Stack-Trace", "enable");
+		} else {
 			result = result.entrySet().stream()
 				.filter(map -> map.getKey().equals("status") || map.getKey().equals("error"))
 				.collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));

@@ -48,6 +48,32 @@ require(["common"], function() {
 					onChangeCase.running = false;
 				}).done(function() { onChangeCase.running = false; });
 			});
+
+
+
+			$("#stack-trace").switchButton({
+				on_label: msg.get("label.Activate"),
+				off_label: msg.get("label.Deactivate")
+
+			});
+
+			$(document).on("change", "#stack-trace", function onChangeCase(event) {
+				if (!!onChangeCase.running) {
+					return;
+				}
+				onChangeCase.running = true;
+
+				var enabled = $(event.currentTarget).prop("checked");
+
+				$.ajax({
+					url: squashtm.appRoot + "/features/stack-trace",
+					method: "post",
+					data: { enabled: enabled }
+				}).fail(function() {
+					$(event.currentTarget).switchButton("option", "checked", !enabled);
+					onChangeCase.running = false;
+				}).done(function() { onChangeCase.running = false; });
+			});
 		});
 	});
 });
