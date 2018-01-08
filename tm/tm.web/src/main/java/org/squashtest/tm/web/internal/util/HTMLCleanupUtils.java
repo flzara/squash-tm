@@ -20,13 +20,12 @@
  */
 package org.squashtest.tm.web.internal.util;
 
-import net.htmlparser.jericho.HTMLElementName;
-import net.htmlparser.jericho.OutputDocument;
 import net.htmlparser.jericho.Renderer;
 import net.htmlparser.jericho.Segment;
 import net.htmlparser.jericho.Source;
-import net.htmlparser.jericho.Tag;
-
+import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 import org.springframework.web.util.HtmlUtils;
 
 public final class HTMLCleanupUtils {
@@ -58,21 +57,12 @@ public final class HTMLCleanupUtils {
 		return HtmlUtils.htmlEscape(unescaped);
 	}
 
-	/* naive implementation, needs numerous improvements */
+	//[JTH 2018-01-05] Replacing naive implementation with library... should be better for XSS prevention
 	public static String stripJavascript(String html){
-
-		String fixedHtml = html!=null ? html : "";
-
-		Source source = new Source(fixedHtml);
-		OutputDocument output = new OutputDocument(source);
-
-		for (Tag tag : source.getAllStartTags()){
-			if (tag.getName().equals(HTMLElementName.SCRIPT)){
-				output.remove(tag.getElement());
-			}
+		if(StringUtils.isNotBlank(html)){
+			return Jsoup.clean(html, Whitelist.relaxed());
 		}
-
-		return output.toString();
+		return StringUtils.EMPTY;
 	}
 
 	public static String getBriefText(String text, int maxLength){

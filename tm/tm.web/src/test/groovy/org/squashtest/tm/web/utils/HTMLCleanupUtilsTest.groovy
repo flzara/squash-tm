@@ -28,99 +28,106 @@ import spock.lang.Specification;
 
 
 public class HTMLCleanupUtilsTest extends Specification {
-	
+
 	def "should remove all html tags"(){
-		
+
 		given :
 			def dirtyString = "<p>first paragraph</p><p><ul><li>secondParagraph</li></ul></p>";
 			def stripped = "first paragraph\r\n\r\n    * secondParagraph"
 		when :
 			def result = HTMLCleanupUtils.htmlToText(dirtyString);
-		
-		
+
+
 		then :
 			result == stripped
-		
+
 	}
-	
+
 	def "should gracfully handle null arguments when removing html tags"(){
 		given :
 			String dirtyString= null;
-		
+
 		when :
 			def result = HTMLCleanupUtils.htmlToText(dirtyString);
-		
+
 		then :
 			result == "";
 	}
-		
-	def "should escape html"(){	
-	
+
+	def "should escape html"(){
+
 		given :
 			def dirtyString = "<p style=\"color:green\"><div><ul><li>line1</li><li>line2</li>toto</div></p>";
 			def escaped = "&lt;p style=&quot;color:green&quot;&gt;&lt;div&gt;&lt;ul&gt;&lt;li&gt;line1&lt;/li&gt;&lt;li&gt;line2&lt;/li&gt;toto&lt;/div&gt;&lt;/p&gt;"
 
-		
+
 		when :
 			def result = HTMLCleanupUtils.forceHtmlEscape(dirtyString);
-		
+
 		then :
 			result==escaped
-		
+
 	}
-	
+
 	def "should not escape html twice" (){
 		given :
 		def dirtyString = "&lt;p style=&quot;color:green&quot;&gt;&lt;div&gt;&lt;ul&gt;&lt;li&gt;line1&lt;/li&gt;&lt;li&gt;line2&lt;/li&gt;toto&lt;/div&gt;&lt;/p&gt;"
 
 		def escaped = "&lt;p style=&quot;color:green&quot;&gt;&lt;div&gt;&lt;ul&gt;&lt;li&gt;line1&lt;/li&gt;&lt;li&gt;line2&lt;/li&gt;toto&lt;/div&gt;&lt;/p&gt;"
 
-		
+
 		when :
 			def result = HTMLCleanupUtils.forceHtmlEscape(dirtyString);
-		
+
 		then :
 			result==escaped
-		
+
 	}
-	
+
 	def "should gracfully handle null arguments when escaping html"(){
 		given :
 			String dirtyString= null;
-		
+
 		when :
 			def result = HTMLCleanupUtils.forceHtmlEscape(dirtyString);
-		
+
 		then :
 			result == "";
 	}
-	
-	def "should strip javascript tags"(){
-		
-		given :
-			def dirtyString = "<p style=\"color:green\"><div><ul><li>line1</li><li>line2</li>toto</div><script "+
-							  "type=\"text/javascript\">alert('naive xss');</script></p>";
-			def stripped = "<p style=\"color:green\"><div><ul><li>line1</li><li>line2</li>toto</div></p>"
 
-		
+	def "should strip javascript tags"(){
+
+		given :
+			def dirtyString = "<p><div><ul><li>line1</li><li>line2</li>toto</div><script "+
+							  "type=\"text/javascript\">alert('naive xss');</script></p>";
+			def stripped = "<p></p>\n" +
+				"<div>\n" +
+				" <ul>\n" +
+				"  <li>line1</li>\n" +
+				"  <li>line2</li>toto\n" +
+				" </ul>\n" +
+				"</div>\n" +
+				"<p></p>"
+
+
 		when :
 			def result = HTMLCleanupUtils.stripJavascript(dirtyString);
-		
+
 		then :
 			result==stripped
-			
+
 	}
 
-	
+
 	def "should gracfully handle null arguments when stripping javascript"(){
 		given :
 			String dirtyString= null;
-		
+
 		when :
 			def result = HTMLCleanupUtils.stripJavascript(dirtyString);
-		
+
 		then :
 			result == "";
 	}
-	
+
 }

@@ -128,11 +128,15 @@ public class HtmlSanitizationFilter implements Filter {
 		private boolean mustBeSecured(HttpServletRequest request) {
 			String contentType = request.getContentType();
 			boolean contentTypeSayCheck = false;
+			String method = request.getMethod();
+			boolean requestTypeSayCheck = HttpMethod.POST.matches(method) || HttpMethod.PATCH.matches(method) || HttpMethod.PUT.matches(method);
+
 			if (contentType != null) {
 				List<MediaType> mediaTypes = MediaType.parseMediaTypes(contentType);
 				contentTypeSayCheck = mediaTypes.contains(MediaType.APPLICATION_JSON) || mediaTypes.contains(MediaType.APPLICATION_JSON_UTF8);
 			}
-			return HttpMethod.POST.matches(request.getMethod()) && request.getContentLength() > 0 && contentTypeSayCheck;
+
+			return requestTypeSayCheck && request.getContentLength() > 0 && contentTypeSayCheck;
 		}
 
 		@Override
@@ -258,12 +262,12 @@ public class HtmlSanitizationFilter implements Filter {
 			String unsecuredContent = CharStreams.toString(new BufferedReader(new InputStreamReader(inputStream, request.getCharacterEncoding())));
 			ObjectMapper mapper = new ObjectMapper();
 			JsonNode node = mapper.readTree(unsecuredContent);
-			sanitizeJsonObjectNode((ObjectNode) node); //NOSONAR first node of a json payload is always an object node...
+			sanitizeJsonObjectNode((ObjectNode) node); //NOSONAR first node of a json payload should always be an object node.
 			String securedContent = node.toString();
 			securedStream = new ByteArrayInputStream(securedContent.getBytes(request.getCharacterEncoding()));
 		}
 
-		private void sanitizeJsonObjectNode(ObjectNode node) {
+		private static void sanitizeJsonObjectNode(ObjectNode node) {
 			Iterator<Map.Entry<String, JsonNode>> childIterators = node.fields();
 			while (childIterators.hasNext()) {
 				Map.Entry<String, JsonNode> child = childIterators.next();
@@ -271,17 +275,17 @@ public class HtmlSanitizationFilter implements Filter {
 				JsonNodeType childNodeType = childValue.getNodeType();
 				switch (childNodeType) {
 					case STRING:
-						String securedContent = Jsoup.clean(childValue.asText(""), Whitelist.basicWithImages());
+						String securedContent = HTMLCleanupUtils.stripJavascript(childValue.asText(""));
 						node.set(child.getKey(), new TextNode(securedContent));
 						break;
 					case ARRAY:
 						if (childValue.size() > 0) {
-							sanitizeJsonArrayNode((ArrayNode) child);//NOSONAR Jackson said it's an Array node ...
+							sanitizeJsonArrayNode((ArrayNode) childValue);//NOSONAR Jackson said it's an Array node ...
 						}
 						break;
 					case OBJECT:
 						if (childValue.size() > 0) {
-							sanitizeJsonObjectNode((ObjectNode) child); //NOSONAR Jackson said it's an Object node ...
+							sanitizeJsonObjectNode((ObjectNode) childValue); //NOSONAR Jackson said it's an Object node ...
 						}
 						break;
 					default:
@@ -290,13 +294,13 @@ public class HtmlSanitizationFilter implements Filter {
 			}
 		}
 
-		private void sanitizeJsonArrayNode(ArrayNode arrayNode) {
+		private static void sanitizeJsonArrayNode(ArrayNode arrayNode) {
 			for (int i = 0; i < arrayNode.size(); i++) {
 				JsonNode childNode = arrayNode.get(i);
 				JsonNodeType childNodeType = childNode.getNodeType();
 				switch (childNodeType) {
 					case STRING:
-						String securedContent = Jsoup.clean(childNode.asText(""), Whitelist.basicWithImages());
+						String securedContent = HTMLCleanupUtils.stripJavascript(childNode.asText(""));
 						arrayNode.set(i, new TextNode(securedContent));
 						break;
 					case ARRAY:
