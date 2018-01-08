@@ -1,25 +1,26 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Squashtest platform.
+ * Copyright (C) Henix, henix.fr
+ * <p>
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ * <p>
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * this software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.web.internal.controller.customreport;
 
+import org.apache.commons.collections.MultiMap;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,7 @@ import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.customreport.CustomReportWorkspaceService;
 import org.squashtest.tm.service.infolist.InfoListModelService;
+import org.squashtest.tm.service.internal.customreport.CustomReportWorkspaceDisplayService;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
@@ -49,6 +51,7 @@ import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.workspace.WorkspaceHelperService;
 import org.squashtest.tm.web.internal.helper.I18nLevelEnumInfolistHelper;
+import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.CustomReportTreeNodeBuilder;
 
@@ -100,6 +103,8 @@ public class CustomReportWorkspaceController {
 	@Inject
 	private BugTrackerFinderService bugTrackerFinderService;
 
+	@Inject
+	private CustomReportWorkspaceDisplayService customReportWorkspaceDisplayService;
 
 	@Inject
 	private MilestoneModelService milestoneModelService;
@@ -128,6 +133,10 @@ public class CustomReportWorkspaceController {
 			JsTreeNode treeNode = builderProvider.get().buildWithOpenedNodes(crl, nodeIdToOpen);
 			rootNodes.add(treeNode);
 		}
+		UserDto currentUser = userAccountService.findCurrentUserDto();
+		List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
+
+//		rootNodes.addAll(customReportWorkspaceDisplayService.findAllLibraries(readableProjectIds, currentUser, mapIdsByType(openedNodes)));
 
 		model.addAttribute("rootModel", rootNodes);
 
@@ -140,8 +149,6 @@ public class CustomReportWorkspaceController {
 			model.addAttribute("activeMilestone", jsMilestone);
 		}
 
-		UserDto currentUser = userAccountService.findCurrentUserDto();
-		List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
 		Collection<JsonProject> projects =
 			projectFinder.findAllProjects(readableProjectIds, currentUser);
 
@@ -206,6 +213,10 @@ public class CustomReportWorkspaceController {
 			}
 		}
 		return nodeIdToOpen;
+	}
+
+	protected MultiMap mapIdsByType(String[] openedNodes) {
+		return JsTreeHelper.mapIdsByType(openedNodes);
 	}
 
 }
