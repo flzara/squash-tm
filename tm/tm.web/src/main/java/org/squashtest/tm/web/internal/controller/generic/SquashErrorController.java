@@ -46,6 +46,9 @@ import org.squashtest.tm.service.feature.FeatureManager;
 @Controller
 public class SquashErrorController implements ErrorController {
 
+	@Value("${squashtm.stack.trace.control.panel.visible:true}")
+	private Boolean stackTracePanel;
+
 	@Inject
 	private FeatureManager featureManager;
 
@@ -89,7 +92,7 @@ public class SquashErrorController implements ErrorController {
 		RequestAttributes requestAttributes = new ServletRequestAttributes(request);
 		Map<String, Object> result = errorAttributes.getErrorAttributes(requestAttributes, true);
 
-		if (featureManager.isEnabled(FeatureManager.Feature.STACK_TRACE)) {
+		if (featureManager.isEnabled(FeatureManager.Feature.STACK_TRACE) && stackTracePanel) {
 			response.setHeader("Stack-Trace", "enable");
 		} else {
 			result = result.entrySet().stream()

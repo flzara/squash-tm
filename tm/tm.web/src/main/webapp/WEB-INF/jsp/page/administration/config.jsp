@@ -190,7 +190,7 @@
     <c:if test="${ shouldDisplayStackTraceControlPanel }">
       <div id="stack-trace-config-panel" class="sq-tg expand">
         <div class="tg-head">
-          <h3><f:message key="title.stacktraceActivation"/></h3>
+          <h3><f:message key="title.display.error.detail"/></h3>
         </div>
         <div class="tg-body">
           <div class="controls">
