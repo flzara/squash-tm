@@ -70,7 +70,7 @@ define(["is", "jquery", "backbone", "squash.configmanager", "workspace.routing",
 					var data = {
 						name: $("#report-name").val(),
 						description: $("#report-description").val(),
-						parameters: JSON.stringify(this.model.toJSON()),
+						parameters: JSON.stringify(this.model.toJSON())
 					};
 
 					var targetUrl;

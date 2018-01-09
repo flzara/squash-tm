@@ -41,19 +41,19 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 		cancelLabel : "Cancel"
 	};
 
-	var formState = {
+	var formerState = {
 		restore: function() {
 			var stored = sessionStorage[config.reportUrl + "-formerState"];
 			var reportDef = config.reportDef;
-			if(reportDef !== null & reportDef !== undefined){
+			if(reportDef !== null && reportDef !== undefined){
 
 				var currentNamespace = config.reportUrl.split(/[/]+/).pop();
 				var storedNamespace = JSON.parse(reportDef).pluginNamespace;
 
 				if(currentNamespace.localeCompare(storedNamespace) === 0){
 
-					var parmeters = JSON.parse(reportDef).parameters;
-					return  JSON.parse(parmeters);
+					var parameters = JSON.parse(reportDef).parameters;
+					return  JSON.parse(parameters.replace(/&quot;/g,'"'));
 
 				}
 			}
@@ -143,10 +143,10 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 
 
 		if (formModel.hasBoundary()) {
-			formState.save();
+			formerState.save();
 
 			// collapses the form
-			$("#report-criteria-panel.expand .tg-head").click();
+			$("#report-criteria-panel").click();
 
 			var tabPanel = $("#view-tabed-panel");
 
@@ -206,7 +206,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 		config = $.extend(config, settings);
 
 		formModel = new FormModel();
-		criteriaPanel = new ReportCriteriaPanel({el: "#report-criteria-panel", model: formModel }, { formerState: formState.restore(), config: config });
+		criteriaPanel = new ReportCriteriaPanel({el: "#report-criteria-panel", model: formModel }, { formerState: formerState.restore(), config: config });
 		reportInfomationPanel = new ReportInformationPanel({el: "#report-information-panel", model: formModel }, config);
 
 		initViewTabs();

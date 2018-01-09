@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.service.internal.dto.CustomFieldModel;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
@@ -78,7 +79,7 @@ public final class JsonHelper {
 		IOException {
 		TypeReference<HashMap<String, Object>> typeRef = new TypeReference<HashMap<String, Object>>() {
 		};
-		return INSTANCE.objectMapper.readValue(json, typeRef);
+		return INSTANCE.objectMapper.readValue(HtmlUtils.htmlUnescape(json), typeRef);
 	}
 
 
