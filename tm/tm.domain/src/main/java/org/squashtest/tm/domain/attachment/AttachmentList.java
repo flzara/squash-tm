@@ -45,8 +45,7 @@ public class AttachmentList implements Identified{
 	@SequenceGenerator(name = "attachment_list_attachment_list_id_seq", sequenceName = "attachment_list_attachment_list_id_seq", allocationSize = 1)
 	private Long id;
 
-	@OneToMany(cascade = { CascadeType.ALL })
-	@JoinColumn(name = "ATTACHMENT_LIST_ID", nullable = false, updatable = false)
+	@OneToMany(mappedBy = "attachmentList", cascade = { CascadeType.ALL })
 	private final Set<Attachment> attachments = new HashSet<>();
 
 	@Override

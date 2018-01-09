@@ -152,7 +152,7 @@
           <c:if test="${ adminStats.databaseSize != 0 }">
             <div>
               <div>
-                <label><f:message key="label.database" /></label><span>${ adminStats.databaseSize } <f:message key="label.database.unit" /></span>
+                <label><f:message key="label.database.size" /></label><span>${ adminStats.databaseSize } <f:message key="label.database.unit" /></span>
               </div>
             </div>
           </c:if>

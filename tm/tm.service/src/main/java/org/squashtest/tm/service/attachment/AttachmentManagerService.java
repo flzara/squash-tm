@@ -33,11 +33,11 @@ public interface AttachmentManagerService extends AttachmentFinderService {
 	 * @param rawAttachment
 	 * @return the ID of the newly created Attachment
 	 */
-	Long addAttachment(long attachmentListId, RawAttachment rawAttachment);
+	Long addAttachment(long attachmentListId, RawAttachment rawAttachment) throws IOException;
 
-	void removeAttachmentFromList(long attachmentListId, long attachmentId);
+	void removeAttachmentFromList(long attachmentListId, long attachmentId) throws IOException;
 
-	void removeListOfAttachments(long attachmentListId, List<Long> attachmentIds);
+	void removeListOfAttachments(long attachmentListId, List<Long> attachmentIds) throws IOException;
 
 	void renameAttachment(long attachmentId, String newName);
 

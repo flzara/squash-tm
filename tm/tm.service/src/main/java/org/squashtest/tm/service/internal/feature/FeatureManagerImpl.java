@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.service.internal.feature;
 
-import static org.squashtest.tm.service.configuration.ConfigurationService.Properties.CASE_INSENSITIVE_LOGIN_FEATURE_ENABLED;
-import static org.squashtest.tm.service.configuration.ConfigurationService.Properties.MILESTONE_FEATURE_ENABLED;
-import static org.squashtest.tm.service.configuration.ConfigurationService.Properties.STACK_TRACE_FEATURE_ENABLED;
-
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -34,6 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.milestone.MilestoneManagerService;
+
+import static org.squashtest.tm.service.configuration.ConfigurationService.Properties.*;
 
 /**
  * @author Gregory Fouquet
@@ -73,6 +71,11 @@ public class FeatureManagerImpl implements FeatureManager {
 			case STACK_TRACE:
 				enabled = configuration.getBoolean(STACK_TRACE_FEATURE_ENABLED);
 				break;
+
+			case FILE_REPOSITORY:
+				enabled = configuration.getBoolean(FILE_REPOSITORY_FEATURE_ENABLED);
+				break;
+
 			default:
 				throw new IllegalArgumentException("I don't know feature '" + feature
 					+ "'. I am unable to tell if it's enabled or not");
@@ -103,10 +106,18 @@ public class FeatureManagerImpl implements FeatureManager {
 				setStackTraceFeatureEnabled(enabled);
 				break;
 
+			case FILE_REPOSITORY:
+				setFileRepositoryFeatureEnabled(enabled);
+				break;
+
 			default:
 				throw new IllegalArgumentException("I don't know feature '" + feature
 					+ "'. I am unable to switch its enabled status to " + enabled);
 		}
+	}
+
+	private void setFileRepositoryFeatureEnabled(boolean enabled) {
+		configuration.set(FILE_REPOSITORY_FEATURE_ENABLED, enabled);
 	}
 
 	/**

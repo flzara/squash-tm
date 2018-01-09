@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.attachment;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -103,7 +104,7 @@ public class AttachmentManagerController {
 
 	@RequestMapping(value = "/{attachmentIds}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public void removeAttachment(@PathVariable long attachListId, @PathVariable("attachmentIds") List<Long> ids) {
+	public void removeAttachment(@PathVariable long attachListId, @PathVariable("attachmentIds") List<Long> ids) throws IOException {
 		attachmentManagerService.removeListOfAttachments(attachListId, ids);
 	}
 

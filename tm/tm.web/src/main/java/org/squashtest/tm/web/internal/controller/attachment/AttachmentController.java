@@ -48,6 +48,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
+import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.web.internal.fileupload.UploadContentFilterUtil;
 import org.squashtest.tm.web.internal.fileupload.UploadSummary;
 

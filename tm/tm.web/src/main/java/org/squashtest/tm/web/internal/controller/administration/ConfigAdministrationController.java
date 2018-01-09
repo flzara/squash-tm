@@ -114,6 +114,7 @@ public class ConfigAdministrationController {
 
 		mav.addObject("shouldDisplayStackTraceControlPanel", stackTracePanel);
 		mav.addObject("stackTrace", features.isEnabled(Feature.STACK_TRACE));
+		mav.addObject("fileRepository", features.isEnabled(Feature.FILE_REPOSITORY));
 
 		return mav;
     }

@@ -74,6 +74,23 @@
       </div>
 
       <div class="tg-body">
+
+        <div id="storage-mode" class="display-table">
+          <div class="display-table-row">
+            <div class="display-table-cell">
+              <label for="toggle-storage-checkbox" class="display-table-cell" style="vertical-align:bottom">
+                <f:message key="label.storage.mode" />
+              </label>
+            </div>
+
+            <div class="display-table-cell">
+              <c:set var="checked" value="${ fileRepository ? 'checked=checked' : '' }"/>
+              <input id="toggle-storage-checkbox" type="checkbox" ${checked}  style="vertical-align:bottom"/>
+            </div>
+          </div>
+
+        </div>
+
         <div id="config-table" class="display-table">
           <div class="display-table-row">
             <label for="whiteList" class="display-table-cell"><f:message key="label.whiteList"/></label>
@@ -98,6 +115,9 @@
           </div>
           <span><f:message key="label.uploadSize.warning"/></span>
         </div>
+
+
+
       </div>
     </div>
 

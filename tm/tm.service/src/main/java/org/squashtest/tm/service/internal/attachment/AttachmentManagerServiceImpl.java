@@ -31,6 +31,7 @@ import java.util.ListIterator;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -48,6 +49,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
 import org.squashtest.tm.service.attachment.RawAttachment;
+import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.internal.repository.AttachmentDao;
 import org.squashtest.tm.service.internal.repository.AttachmentListDao;
 
@@ -83,20 +85,25 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	@Inject
 	private IndexationService indexationService;
 
-	@Override
-	public Long addAttachment(long attachmentListId, RawAttachment rawAttachment) {
-		AttachmentContent content = new AttachmentContent();
+	@Inject
+	private FeatureManager featureManager;
 
-		Blob blob = currentSession().getLobHelper().createBlob(rawAttachment.getStream(),
-				rawAttachment.getSizeInBytes());
-		content.setContent(blob);
-		currentSession().persist(content);
+	@Inject
+	private DatabaseAttachmentRepository databaseAttachmentRepository;
+
+	@Inject
+	private FileSystemAttachmentRepository filesystemAttachmentRepository;
+
+
+	@Override
+	public Long addAttachment(long attachmentListId, RawAttachment rawAttachment) throws IOException {
+		AttachmentContent content = getAttachmentRepository().createContent(rawAttachment, attachmentListId);
 
 		Attachment attachment = new Attachment();
 
 		AttachmentList list = attachmentListDao.findOne(attachmentListId);
 		list.addAttachment(attachment);
-
+		attachment.setAttachmentList(list);
 		attachment.setContent(content);
 		attachment.setAddedOn(new Date());
 		attachment.setName(rawAttachment.getName());
@@ -123,8 +130,11 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 		}
 	}
 
-	private Session currentSession() throws HibernateException {
-		return em.unwrap(Session.class);
+	private AttachmentRepository getAttachmentRepository(){
+		if(featureManager.isEnabled(FeatureManager.Feature.FILE_REPOSITORY)){
+			return filesystemAttachmentRepository;
+		}
+		return databaseAttachmentRepository;
 	}
 
 	@Override
@@ -142,18 +152,20 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	}
 
 	@Override
-	public void removeAttachmentFromList(long attachmentListId, long attachmentId) {
+	public void removeAttachmentFromList(long attachmentListId, long attachmentId) throws IOException {
 		AttachmentList list = attachmentListDao.findOne(attachmentListId);
 		Attachment attachment = attachmentDao.findOne(attachmentId);
 
 		list.removeAttachment(attachment);
 		attachmentDao.removeAttachment(attachment.getId());
 
+		getAttachmentRepository().removeContent(attachmentId);
+
 		reindexBoundEntities(attachmentListId);
 	}
 
 	@Override
-	public void removeListOfAttachments(long attachmentListId, List<Long> attachmentIds) {
+	public void removeListOfAttachments(long attachmentListId, List<Long> attachmentIds) throws IOException {
 
 		Iterator<Attachment> iterAttach = attachmentListDao.findOne(attachmentListId).getAllAttachments().iterator();
 
@@ -166,6 +178,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 				if (id.equals(att.getId())) {
 					iterAttach.remove();
 					iterIds.remove();
+					getAttachmentRepository().removeContent(att.getId());
 					attachmentDao.removeAttachment(att.getId());
 					break;
 				}
@@ -203,11 +216,11 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 
 	/**
 	 * @see org.squashtest.tm.service.attachment.AttachmentManagerService#writeContent(long,
-	 *      javax.servlet.ServletOutputStream)
+	 *      OutputStream)
 	 */
 	@Override
 	public void writeContent(long attachmentId, OutputStream outStream) throws IOException {
-		InputStream is = findById(attachmentId).getContent().getStream();
+		InputStream is = getAttachmentRepository().getContentStream(attachmentId);
 
 		int readByte;
 

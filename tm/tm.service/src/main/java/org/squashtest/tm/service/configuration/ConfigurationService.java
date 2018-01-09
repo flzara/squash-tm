@@ -28,6 +28,7 @@ public interface ConfigurationService {
 		String MILESTONE_FEATURE_ENABLED = "feature.milestone.enabled";
 		String CASE_INSENSITIVE_LOGIN_FEATURE_ENABLED = "feature.caseInsensitiveLogin.enabled";
 		String STACK_TRACE_FEATURE_ENABLED = "feature.stackTrace.enabled";
+		String FILE_REPOSITORY_FEATURE_ENABLED = "feature.fileRepository.enabled";
 		String UPLOAD_SIZE_LIMIT = "uploadfilter.upload.sizeLimitInBytes";
 		String UPLOAD_EXTENSIONS_WHITELIST = "uploadfilter.fileExtensions.whitelist";
 		String IMPORT_SIZE_LIMIT = "uploadfilter.upload.import.sizeLimitInBytes";

@@ -23,18 +23,7 @@ package org.squashtest.tm.domain.attachment;
 import java.util.Date;
 import java.util.Locale;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -57,8 +46,8 @@ public class Attachment implements Identified {
 
 	/** attachment size in bytes */
         /*
-        * The name of the attribute slightly differs from the name of the DB column because it allows Hibernate to 
-        * desambiguate 'size' as a method of a collection (such as AttachmentList.attachments.size()) from 'size' as 
+        * The name of the attribute slightly differs from the name of the DB column because it allows Hibernate to
+        * desambiguate 'size' as a method of a collection (such as AttachmentList.attachments.size()) from 'size' as
         * a property (such as Attachment.size)
         */
         @Column(name = "SIZE")
@@ -67,6 +56,10 @@ public class Attachment implements Identified {
 	@OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE, CascadeType.DETACH })
 	@JoinColumn(name = "CONTENT_ID")
 	private AttachmentContent content;
+
+	@ManyToOne
+	@JoinColumn(name = "ATTACHMENT_LIST_ID", nullable = false, updatable = false)
+	private AttachmentList attachmentList;
 
 	public Attachment() {
 		super();
@@ -179,6 +172,14 @@ public class Attachment implements Identified {
 	public String getFormattedSize(Locale locale) {
 		Float megaSize = contentSize / MEGA_BYTE;
 		return String.format(locale, "%.2f", megaSize);
+	}
+
+	public AttachmentList getAttachmentList() {
+		return attachmentList;
+	}
+
+	public void setAttachmentList(AttachmentList attachmentList) {
+		this.attachmentList = attachmentList;
 	}
 
 	/**

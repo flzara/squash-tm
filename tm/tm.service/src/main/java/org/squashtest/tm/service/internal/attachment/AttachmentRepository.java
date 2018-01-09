@@ -18,25 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.feature;
+package org.squashtest.tm.service.internal.attachment;
 
-/**
- *
- * Facade for Squash TM feature management
- *
- * @author Gregory Fouquet
- *
- */
-public interface FeatureManager {
-	// @formatter:off
-	public enum Feature {
-		MILESTONE,
-		CASE_INSENSITIVE_LOGIN,
-		STACK_TRACE,
-		FILE_REPOSITORY
-	}
-	// @formatter:on
-	boolean isEnabled(Feature feature);
+import org.squashtest.tm.domain.attachment.AttachmentContent;
+import org.squashtest.tm.service.attachment.RawAttachment;
 
-	void setEnabled(Feature feature, boolean enabled);
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+
+public interface AttachmentRepository {
+
+	AttachmentContent createContent(RawAttachment rawAttachment, long attachmentListId) throws IOException;
+
+	InputStream getContentStream(Long attachmentId) throws FileNotFoundException;
+
+	void removeContent(long attachmentId) throws IOException;
 }

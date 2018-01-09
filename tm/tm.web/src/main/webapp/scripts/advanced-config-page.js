@@ -23,7 +23,7 @@ require(["common"], function() {
 			function($, msg) {
 		"use strict";
 
-		msg.load(["label.insensitive", "label.sensitive"]);
+		msg.load(["label.insensitive", "label.sensitive", "label.Activate", "label.Deactivate", "label.filesystem", "label.database"]);
 
 		$(function() {
 			$("#case-insensitive-login").switchButton({
@@ -54,7 +54,11 @@ require(["common"], function() {
 			$("#stack-trace").switchButton({
 				on_label: msg.get("label.Activate"),
 				off_label: msg.get("label.Deactivate")
+			});
 
+			$("#toggle-storage-checkbox").switchButton({
+				on_label: msg.get("label.filesystem"),
+				off_label: msg.get("label.database")
 			});
 
 			$(document).on("change", "#stack-trace", function onChangeCase(event) {
@@ -74,6 +78,26 @@ require(["common"], function() {
 					onChangeCase.running = false;
 				}).done(function() { onChangeCase.running = false; });
 			});
+
+			$(document).on("change", "#toggle-storage-checkbox", function onChangeCase(event) {
+				if (!!onChangeCase.running) {
+					return;
+				}
+				onChangeCase.running = true;
+
+				var enabled = $(event.currentTarget).prop("checked");
+
+				$.ajax({
+					url: squashtm.appRoot + "/features/file-repository",
+					method: "post",
+					data: { enabled: enabled }
+				}).fail(function() {
+					$(event.currentTarget).switchButton("option", "checked", !enabled);
+					onChangeCase.running = false;
+				}).done(function() { onChangeCase.running = false; });
+			});
+
+
 		});
 	});
 });
