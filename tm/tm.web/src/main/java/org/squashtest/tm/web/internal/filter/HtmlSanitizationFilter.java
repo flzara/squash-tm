@@ -88,7 +88,7 @@ public class HtmlSanitizationFilter implements Filter {
 
 		int i = 0;
 		for (String string : orig) {
-			aString[i++] = HTMLCleanupUtils.stripJavascript(string);
+			aString[i++] = HTMLCleanupUtils.stripJavascriptForRequestParameters(string);
 		}
 
 		return aString;

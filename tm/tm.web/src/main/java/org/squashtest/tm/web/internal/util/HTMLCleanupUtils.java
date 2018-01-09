@@ -50,9 +50,7 @@ public final class HTMLCleanupUtils {
 
 	/* note : Unescape is idempotent when applied on unescaped data. We use that trick to prevent double html encoding*/
 	public static String forceHtmlEscape(String html){
-
 		String fixedHtml = html!=null ? html : "";
-
 		String unescaped = HtmlUtils.htmlUnescape(fixedHtml);
 		return HtmlUtils.htmlEscape(unescaped);
 	}
@@ -61,6 +59,16 @@ public final class HTMLCleanupUtils {
 	public static String stripJavascript(String html){
 		if(StringUtils.isNotBlank(html)){
 			return Jsoup.clean(html, Whitelist.relaxed());
+		}
+		return StringUtils.EMPTY;
+	}
+
+	public static String stripJavascriptForRequestParameters(String html){
+		if(StringUtils.isNotBlank(html)){
+			String cleaned = Jsoup.clean(html, Whitelist.relaxed());
+			// We need to unescape here as JSoup escape json characters and make subsequent parsing crash
+			// There is a little performance hit but it's safer to use JSoup than a custom solution.
+			return HtmlUtils.htmlUnescape(cleaned);
 		}
 		return StringUtils.EMPTY;
 	}
