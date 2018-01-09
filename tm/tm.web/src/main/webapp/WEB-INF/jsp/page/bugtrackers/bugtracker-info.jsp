@@ -55,7 +55,7 @@
 		<f:message var="backButtonLabel" key="label.Back" />
 		<input type="button" class="button" value="${backButtonLabel}" onClick="document.location.href='${admBugtrackerUrl}'"/>
 	</jsp:attribute>
-	
+
 	<jsp:attribute name="informationContent">
 
 		<div id="bugtracker-name-div"
@@ -83,8 +83,8 @@
 				<div class="toolbar-button-panel">
 					<f:message var="rename" key="rename" />
 					<input type="button" value="${ rename }" id="rename-bugtracker-button" class="sq-btn" />
-					
-					<f:message var="delete" key='project.button.delete.label' />    			
+
+					<f:message var="delete" key='project.button.delete.label' />
 	    			<input type="button" value="${ delete }" id="delete-bugtracker-button" class="sq-btn" />
 				</div>
 			</div>
@@ -98,7 +98,7 @@
 
 				<jsp:attribute name="body">
 					<div id="bugtracker-description-table" class="display-table">
-						
+
 						<div class="display-table-row">
 							<label for="bugtracker-kind" class="display-table-cell">
 							<f:message key="label.Kind" />
@@ -106,14 +106,14 @@
 							<div class="display-table-cell" id="bugtracker-kind">${ bugtracker.kind }</div>
 							<comp:select-jeditable componentId="bugtracker-kind" jsonData="${bugtrackerKinds}" targetUrl="${bugtrackerUrl}" />
 						</div>
-						
+
 						<div class="display-table-row">
 							<label for="bugtracker-url" class="display-table-cell">
 							<f:message key="label.Url" />
 							</label>
 							<div class="display-table-cell editable text-editable" data-def="url=${bugtrackerUrl}" id="bugtracker-url">${ bugtracker.url }</div>
 						</div>
-						
+
 						<div class="display-table-row">
 							<label for="bugtracker-iframeFriendly" class="display-table-cell">
 							<f:message key="label.DisplaysInIframe" />
@@ -129,45 +129,45 @@
 
 
 						<%-- ==================== authentication panel ===================== --%>
-						
+
 						<%-- all the variable states necessary for the pre-rendering --%>
 						<c:set var="credSectionEnabling" value="${(authConf.authPolicy == 'USER') ? 'disabled-transparent' : ''}"/>
 						<c:set var="credsSectionVisibility" 	value="${(not empty authConf.failureMessage) ? 'not-displayed' : ''}" />
 						<c:set var="policyAppAvailable" value="${(not empty authConf.failureMessage) ? 'disabled=disabled' : ''}"/>
-						<c:set var="policyUsr" 			value="${(authConf.authPolicy == 'USER') ? 'checked=\"checked\"' : ''}"/>						
+						<c:set var="policyUsr" 			value="${(authConf.authPolicy == 'USER') ? 'checked=\"checked\"' : ''}"/>
 						<c:set var="policyApp" 			value="${(authConf.authPolicy == 'APP_LEVEL') ? 'checked=\"checked\"' : ''}"/>
-						
+
 						<c:set var="failureVisibility" 	value="${(empty authConf.failureMessage) ? 'not-displayed' : ''}" />
 						<c:set var="warningVisibility" 	value="${(empty authConf.warningMessage) ? 'not-displayed' : ''}" />
-						
-						<f:message var="labelSuccess" key="bugtracker.admin.messages.success"/>										
+
+						<f:message var="labelSuccess" key="bugtracker.admin.messages.success"/>
 						<f:message var="testLabel" key="label.test"/>
 						<f:message var="saveLabel" key="label.save"/>
-																		
-						<div id="bugtracker-auth" class="adm-srv-auth display-table-row ">	
-							
+
+						<div id="bugtracker-auth" class="adm-srv-auth display-table-row ">
+
 							<label class="display-table-cell"><f:message key="bugtracker.admin.policy.title"/></label>
-							
-							<div class="display-table-cell">
-								
+
+							<div class="display-table-cell" style="padding-left: 5px;">
+
 								<div>
 									<input id="bt-auth-policy-user" 	type="radio" name="bt-auth-policy" value="user" ${policyUsr}>
-									<label for="bt-auth-policy-user" class="vertical-align:middle;"><f:message key="bugtracker.admin.policy.users"/></label>								
+									<label for="bt-auth-policy-user" class="vertical-align:middle;"><f:message key="bugtracker.admin.policy.users"/></label>
 								</div>
-								
+
 								<div>
 									<input id="bt-auth-policy-application" type="radio" name="bt-auth-policy" value="application" ${policyApp} ${policyAppAvailable}>
 									<label for="bt-auth-policy-application" class="vertical-align:middle;"><f:message key="bugtracker.admin.policy.app"/></label>
 								</div>
-								
-								<div>
-									<div id="bt-auth-creds-main" 
-										class="srv-auth-credentials-section side-panel std-border std-border-radius 
+
+								<div style="padding-left: 5px;">
+									<div id="bt-auth-creds-main"
+										class="srv-auth-credentials-section side-panel std-border std-border-radius
 												${credSectionEnabling} ${credsSectionVisibility}">
-									
+
 
 										<label for="bt-auth-proto"><f:message key="bugtracker.admin.protocol.label"/></label>
-										
+
 										<select id="bt-auth-proto" >
 											<c:forEach items="${authConf.availableProtos}" var="protocol">
 											<option value="${protocol}" ${(authConf.selectedProto == protocol) ? 'selected' : ''} >
@@ -175,48 +175,48 @@
 											</option>
 											</c:forEach>
 										</select>
-										
+
 										<div id="bt-auth-cred-template">
-										<%-- populated by javascript --%>						
-										</div>
-	
-										<div id="bt-auth-creds-buttonpane" class="centered" style="position:relative">
-											<input type="button" class="sq-btn" id="bt-auth-test" value="${testLabel}"/>
-											<input type="button" class="sq-btn" id="bt-auth-save" value="${saveLabel}"/>	
+										<%-- populated by javascript --%>
 										</div>
 
-										
+										<div id="bt-auth-creds-buttonpane" class="centered" style="position:relative">
+											<input type="button" class="sq-btn" id="bt-auth-test" value="${testLabel}"/>
+											<input type="button" class="sq-btn" id="bt-auth-save" value="${saveLabel}"/>
+										</div>
+
+
 									</div>
-								
+
 									<div id="bt-auth-main-messagezone" class="side-panel srv-auth-messagepane ${credSectionEnabling}">
-										
+
 										<div id="bt-auth-failure" class="std-border std-border-radius ${failureVisibility}">
 											<comp:notification-pane type="warning" txtcontent="${authConf.failureMessage}"/>
 										</div>
-										
+
 										<div id="bt-auth-warning" class="${warningVisibility}">
 											<comp:notification-pane type="warning" txtcontent="${authConf.warningMessage}"/>
 										</div>
-										
+
 										<div id="bt-auth-info" class="not-displayed">
 											<comp:notification-pane type="info" txtcontent="${labelSuccess}"/>
-										</div>							
+										</div>
 									</div>
-								
+
 						   		</div>
-	
-								
+
+
 							</div>
 						</div>
-						
+
 						<%-- ==================== /authentication panel ===================== --%>
-						
+
 					</div>
 				</jsp:attribute>
 			</comp:toggle-panel>
-			
+
 			<%-----------------------------------END INFORMATION PANEL -----------------------------------------------%>
-			
+
 			</div>
 		<%---------------------------------------------------------------END  BODY -----------------------------------------------%>
 	</jsp:attribute>
@@ -268,11 +268,11 @@
 		 'bugtracker-manager/bugtracker-info': {
 			 backUrl : "${admBugtrackerUrl}",
 			 btUrl : "${bugtrackerUrl}",
-			 authConf : ${json:serialize(authConf)}			 
+			 authConf : ${json:serialize(authConf)}
 		 }
-	 } 
+	 }
   });
-  
+
   require(['common'], function(){
 	  require(['bugtracker-manager/bugtracker-info']);
   })
