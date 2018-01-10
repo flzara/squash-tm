@@ -131,6 +131,8 @@ public interface CustomReportLibraryNodeService {
 	 */
 	List<Long> findAncestorIds(Long nodeId);
 
+	List<Object[]> findAncestor(Long nodeId);
+
 	/**
 	 * Find the {@link CustomReportLibraryNode} linked to a {@link TreeEntity}.
 	 * @param treeEntity

@@ -1,22 +1,22 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Squashtest platform.
+ * Copyright (C) Henix, henix.fr
+ * <p>
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ * <p>
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * this software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.web.internal.controller.customreport;
 
@@ -58,6 +58,7 @@ import org.squashtest.tm.web.internal.model.builder.CustomReportTreeNodeBuilder;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
+import java.math.BigInteger;
 import java.util.*;
 
 /**
@@ -77,10 +78,6 @@ public class CustomReportWorkspaceController {
 
 	@Inject
 	private CustomReportLibraryNodeService customReportLibraryNodeService;
-
-	@Inject
-	@Named("customReport.nodeBuilder")
-	private Provider<CustomReportTreeNodeBuilder> builderProvider;
 
 	@Inject
 	private I18nLevelEnumInfolistHelper i18nLevelEnumInfolistHelper;
@@ -117,26 +114,19 @@ public class CustomReportWorkspaceController {
 								@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
 								@CookieValue(value = "jstree_select", required = false, defaultValue = "") String elementId) {
 
-		List<CustomReportLibraryNode> libraries = workspaceService.findRootNodes();
-
-		Set<Long> nodeIdToOpen = new HashSet<>();
-		nodeIdToOpen.addAll(convertCookieIds(openedNodes));
+		Set<String> nodeToOpen = new HashSet<>(Arrays.asList(openedNodes));
 		//Every node above selected node should be opened and it should be not necessary to get ancestors.
 		//But we have corner cases like when we create a new chart in different screen...
 		if (StringUtils.isNotBlank(elementId)) {
-			nodeIdToOpen.addAll(findAncestorsOfselectedNode(elementId));
+			nodeToOpen.addAll(findAncestorsOfselectedNode(elementId));
 		}
 
 		List<JsTreeNode> rootNodes = new ArrayList<>();
 
-//		for (CustomReportLibraryNode crl : libraries) {
-//			JsTreeNode treeNode = builderProvider.get().buildWithOpenedNodes(crl, nodeIdToOpen);
-//			rootNodes.add(treeNode);
-//		}
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 		List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
 
-		rootNodes.addAll(customReportWorkspaceDisplayService.findAllLibraries(readableProjectIds, currentUser, mapIdsByType(openedNodes)));
+		rootNodes.addAll(customReportWorkspaceDisplayService.findAllLibraries(readableProjectIds, currentUser, mapIdsByType(nodeToOpen.toArray(new String[nodeToOpen.size()]))));
 
 		model.addAttribute("rootModel", rootNodes);
 
@@ -154,7 +144,6 @@ public class CustomReportWorkspaceController {
 
 		model.addAttribute("projects", projects);
 
-
 		//defaults lists and enums levels
 		model.addAttribute("defaultInfoLists", infoListModelService.findSystemInfoListItemLabels());
 		model.addAttribute("testCaseImportance", i18nLevelEnumInfolistHelper.getI18nLevelEnum(TestCaseImportance.class, locale));
@@ -170,18 +159,27 @@ public class CustomReportWorkspaceController {
 		return getWorkspaceViewName();
 	}
 
-	private Collection<Long> findAncestorsOfselectedNode(String elementId) {
-		List<Long> ancestorIds = new ArrayList<>();
+	private Collection<String> findAncestorsOfselectedNode(String elementId) {
+		List<String> ancestors = new ArrayList<>();
 		try {
 			Long nodeId = convertCookieId(elementId);
-			ancestorIds = customReportLibraryNodeService.findAncestorIds(nodeId);
 			//The selected node isn't opened by default (it can be a leaf node !).
 			//So it will be open ONLY if he's also in open node cookies.
-			ancestorIds.remove(nodeId);
+
+			customReportLibraryNodeService.findAncestor(nodeId)
+				.stream()
+				.filter(node -> !node[0].equals(BigInteger.valueOf(nodeId)))
+				.forEach(node -> {
+					if (node[1].equals("LIBRARY")) {
+						ancestors.add("#CustomReportLibrary-" + node[0]);
+					} else {
+						ancestors.add("#CustomReportFolder-" + node[0]);
+					}
+				});
 		} catch (NumberFormatException e) {
 			LOGGER.error("Error on parsing js_open cookie. Workspace will be shown with closed tree");
 		}
-		return ancestorIds;
+		return ancestors;
 	}
 
 	protected String getWorkspaceViewName() {

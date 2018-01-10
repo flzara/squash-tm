@@ -191,6 +191,11 @@ public class CustomReportLibraryNodeServiceImpl implements
 	}
 
 	@Override
+	public List<Object[]> findAncestor(Long nodeId) {
+		return customReportLibraryNodeDao.findAncestor(nodeId);
+	}
+
+	@Override
 	public CustomReportLibraryNode findNodeFromEntity(TreeEntity treeEntity) {
 		return customReportLibraryNodeDao.findNodeFromEntity(treeEntity);
 	}

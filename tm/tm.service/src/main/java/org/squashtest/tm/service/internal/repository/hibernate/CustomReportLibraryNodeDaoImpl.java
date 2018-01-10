@@ -79,6 +79,22 @@ public class CustomReportLibraryNodeDaoImpl implements CustomCustomReportLibrary
 		return query.getResultList();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Object[]> findAncestor(Long nodeId) {
+		Query query = em.createNativeQuery("SELECT " +
+			"crln_relationship_closure.ANCESTOR_ID, " +
+			"custom_report_library_node.ENTITY_TYPE " +
+			"FROM " +
+			"crln_relationship_closure " +
+			"LEFT JOIN " +
+			"custom_report_library_node ON crln_relationship_closure.ANCESTOR_ID = custom_report_library_node.CRLN_ID "  +
+			"WHERE " +
+			"crln_relationship_closure.DESCENDANT_ID = :id");
+		query.setParameter("id",nodeId);
+		return query.getResultList();
+	}
+
 	@Override
 	public List<Long> findAllFirstLevelDescendantIds(Long nodeId) {
 		List<Long> ids = new ArrayList<>();

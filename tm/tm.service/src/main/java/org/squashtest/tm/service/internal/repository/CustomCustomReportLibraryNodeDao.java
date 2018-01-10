@@ -33,6 +33,7 @@ public interface CustomCustomReportLibraryNodeDao {
 	List<Long> findAllFirstLevelDescendantIds(Long nodeId);
 	List<Long> findAllFirstLevelDescendantIds(List<Long> nodesIds);
 	List<Long> findAncestorIds(Long nodeId);
+	List<Object[]> findAncestor(Long nodeId);
 	List<CustomReportLibraryNode> findAllConcreteLibraries();
 	List<CustomReportLibraryNode> findAllConcreteLibraries(List<Long> projectIds);
 	CustomReportLibraryNode findNodeFromEntity(TreeEntity treeEntity);
