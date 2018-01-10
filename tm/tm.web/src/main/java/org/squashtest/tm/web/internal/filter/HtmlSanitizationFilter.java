@@ -262,9 +262,23 @@ public class HtmlSanitizationFilter implements Filter {
 			String unsecuredContent = CharStreams.toString(new BufferedReader(new InputStreamReader(inputStream, request.getCharacterEncoding())));
 			ObjectMapper mapper = new ObjectMapper();
 			JsonNode node = mapper.readTree(unsecuredContent);
-			sanitizeJsonObjectNode((ObjectNode) node); //NOSONAR first node of a json payload should always be an object node.
+			sanitizeJsonNode(node);
 			String securedContent = node.toString();
 			securedStream = new ByteArrayInputStream(securedContent.getBytes(request.getCharacterEncoding()));
+		}
+
+		private static void sanitizeJsonNode(JsonNode node) {
+			JsonNodeType nodeType = node.getNodeType();
+			switch (nodeType) {
+				case OBJECT:
+					sanitizeJsonObjectNode((ObjectNode) node);
+					break;
+				case ARRAY:
+					sanitizeJsonArrayNode((ArrayNode) node);
+					break;
+				default:
+					break;
+			}
 		}
 
 		private static void sanitizeJsonObjectNode(ObjectNode node) {

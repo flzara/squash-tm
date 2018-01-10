@@ -35,7 +35,7 @@ class SafeServletInputStreamWrapperTest extends Specification{
 		JsonNode node = mapper.readTree(input);
 
 		when :
-		HtmlSanitizationFilter.SafeServletInputStreamWrapper.sanitizeJsonObjectNode((ObjectNode) node)
+		HtmlSanitizationFilter.SafeServletInputStreamWrapper.sanitizeJsonNode(node)
 
 		then :
 		node.toString() == output
@@ -54,7 +54,7 @@ class SafeServletInputStreamWrapperTest extends Specification{
 		JsonNode node = mapper.readTree(input);
 
 		when :
-		HtmlSanitizationFilter.SafeServletInputStreamWrapper.sanitizeJsonObjectNode((ObjectNode) node)
+		HtmlSanitizationFilter.SafeServletInputStreamWrapper.sanitizeJsonNode(node)
 
 		then :
 		node.toString() == output
@@ -76,17 +76,20 @@ class SafeServletInputStreamWrapperTest extends Specification{
 		JsonNode node = mapper.readTree(input);
 
 		when :
-		HtmlSanitizationFilter.SafeServletInputStreamWrapper.sanitizeJsonObjectNode((ObjectNode) node)
+		HtmlSanitizationFilter.SafeServletInputStreamWrapper.sanitizeJsonNode(node)
 
 		then :
 		node.toString() == output
 
 		where :
 		input 																															|| output
+		"""[]"""																														||"""[]"""
 		"""{"obj":[]}"""																												||"""{"obj":[]}"""
 		"""{"obj":["string","toto"]}"""																									||"""{"obj":["string","toto"]}"""
 		"""{"obj":["string","toto<script>alert(1)</script>"]}"""																		||"""{"obj":["string","toto"]}"""
 		"""{"obj":["string","toto<script>alert(1)</script>","string","titi<script>alert(1)</script>"]}"""								||"""{"obj":["string","toto","string","titi"]}"""
+		"""["string","toto<script>alert(1)</script>","string","titi<script>alert(1)</script>"]"""										||"""["string","toto","string","titi"]"""
+		"""["string",{"obj1":{"key":"toto<script>alert(1)</script>"}},"string","titi<script>alert(1)</script>"]"""						||"""["string",{"obj1":{"key":"toto"}},"string","titi"]"""
 	}
 
 
@@ -97,7 +100,7 @@ class SafeServletInputStreamWrapperTest extends Specification{
 		JsonNode node = mapper.readTree(input);
 
 		when :
-		HtmlSanitizationFilter.SafeServletInputStreamWrapper.sanitizeJsonObjectNode((ObjectNode) node)
+		HtmlSanitizationFilter.SafeServletInputStreamWrapper.sanitizeJsonNode(node)
 
 		then :
 		node.toString() == output
@@ -106,4 +109,6 @@ class SafeServletInputStreamWrapperTest extends Specification{
 		input 																																												|| output
 		"""{"obj":["string","toto"],"str":"toto<script>alert(1)</script>","array":[{"sobj1":{"str":"titi<script>alert(1)</script>"}},{"sobj1":{"str":"tutu<script>alert(1)</script>"}}]}"""	||"""{"obj":["string","toto"],"str":"toto","array":[{"sobj1":{"str":"titi"}},{"sobj1":{"str":"tutu"}}]}"""
 	}
+
+
 }
