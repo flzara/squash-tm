@@ -36,21 +36,21 @@ import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
 import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
+import org.squashtest.tm.jooq.domain.tables.CoreUser;
 import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
-import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
-import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.project.ProjectFinder;
-import org.squashtest.tm.service.project.ProjectManagerService;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.user.UserAccountService;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import static org.squashtest.tm.jooq.domain.Tables.*;
 
 @Service("squashtest.tm.service.CampaignAdvancedSearchService")
@@ -104,8 +104,10 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	}
 
 	private List<String> findUsersWhoCanAccessProject(List<Long> projectIds) {
-		List<String> list = findPartyPermissionsBeanByProject(projectIds);
-		return list;
+		List<Long> partyIds = findPartyIdsCanAccessProject(projectIds);
+		List<String> userLogins = findUserLoginsByPartyIds(partyIds);
+
+		return userLogins;
 	}
 
 	protected Query searchIterationTestPlanItemQuery(AdvancedSearchModel model, FullTextEntityManager ftem) {
@@ -118,7 +120,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		/* Building main Lucene Query with this main model */
 		Query luceneQuery = buildCoreLuceneQuery(qb, model);
 		/* If requested, add milestones criteria with the copied model */
-		if(shouldSearchByMilestones(modelCopy)) {
+		if (shouldSearchByMilestones(modelCopy)) {
 			luceneQuery = addAggregatedMilestonesCriteria(luceneQuery, qb, modelCopy);
 		}
 		return luceneQuery;
@@ -130,7 +132,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 		/* Find the milestones ids. */
 		List<String> strMilestoneIds =
-				((AdvancedSearchListFieldModel) modelCopy.getFields().get("milestones.id")).getValues();
+			((AdvancedSearchListFieldModel) modelCopy.getFields().get("milestones.id")).getValues();
 		List<Long> milestoneIds = new ArrayList<>(strMilestoneIds.size());
 		for (String str : strMilestoneIds) {
 			milestoneIds.add(Long.valueOf(str));
@@ -139,12 +141,12 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		/* Find the ItereationTestPlanItems ids. */
 		List<Long> lItpiIds = iterationTestPlanDao.findAllForMilestones(milestoneIds);
 		List<String> itpiIds = new ArrayList<>(lItpiIds.size());
-		for(Long l : lItpiIds) {
+		for (Long l : lItpiIds) {
 			itpiIds.add(l.toString());
 		}
 
 		/* Fake Id to find no result via Lucene if no Itpi found */
-		if(itpiIds.isEmpty()) {
+		if (itpiIds.isEmpty()) {
 			itpiIds.add(FAKE_ITPI_ID);
 		}
 
@@ -156,7 +158,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 	@Override
 	public PagedCollectionHolder<List<IterationTestPlanItem>> searchForIterationTestPlanItem(AdvancedSearchModel searchModel,
-		PagingAndMultiSorting paging, Locale locale) {
+																							 PagingAndMultiSorting paging, Locale locale) {
 
 
 		FullTextEntityManager ftSession = Search.getFullTextEntityManager(entityManager);
@@ -245,28 +247,44 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		return result;
 	}
 
-	public List<String> findPartyPermissionsBeanByProject(List<Long> projectIds) {
+	private List<Long> findPartyIdsCanAccessProject(List<Long> projectIds) {
 
-		List<String> list = new ArrayList<>();
-		List<String> result = DSL
-			.select(CORE_USER.LOGIN)
-			.from(CORE_USER)
-			.join(CORE_PARTY).on(CORE_USER.PARTY_ID.eq(CORE_PARTY.PARTY_ID))
-			.join(CORE_GROUP_MEMBER).on(CORE_GROUP_MEMBER.PARTY_ID.eq(CORE_USER.PARTY_ID))
-			.join(ACL_RESPONSIBILITY_SCOPE_ENTRY).on(ACL_RESPONSIBILITY_SCOPE_ENTRY.PARTY_ID.eq(CORE_GROUP_MEMBER.PARTY_ID))
+		List<Long> result = DSL
+			.select(CORE_PARTY.PARTY_ID)
+			.from(CORE_PARTY)
+			.join(ACL_RESPONSIBILITY_SCOPE_ENTRY).on(ACL_RESPONSIBILITY_SCOPE_ENTRY.PARTY_ID.eq(CORE_PARTY.PARTY_ID))
 			.join(ACL_OBJECT_IDENTITY).on(ACL_OBJECT_IDENTITY.ID.eq(ACL_RESPONSIBILITY_SCOPE_ENTRY.OBJECT_IDENTITY_ID))
 			.join(ACL_GROUP_PERMISSION).on(ACL_RESPONSIBILITY_SCOPE_ENTRY.ACL_GROUP_ID.eq(ACL_GROUP_PERMISSION.ACL_GROUP_ID))
 			.join(ACL_CLASS).on(ACL_GROUP_PERMISSION.CLASS_ID.eq(ACL_CLASS.ID).and(ACL_CLASS.CLASSNAME.eq("org.squashtest.tm.domain.project.Project")))
 
 			.where(ACL_OBJECT_IDENTITY.IDENTITY.in(projectIds))
+			.groupBy(CORE_PARTY.PARTY_ID)
+			.fetch(CORE_PARTY.PARTY_ID, Long.class);
+
+		return result;
+	}
+
+	private List<String> findUserLoginsByPartyIds(List<Long> partyIds) {
+		List<String> usersSolo = DSL
+			.select(CORE_USER.LOGIN)
+			.from(CORE_USER)
+			.join(CORE_PARTY).on(CORE_PARTY.PARTY_ID.eq(CORE_USER.PARTY_ID))
+			.where(CORE_PARTY.PARTY_ID.in(partyIds))
+			.groupBy(CORE_USER.PARTY_ID)
 			.fetch(CORE_USER.LOGIN, String.class);
 
-		for(String r : result){
-			if(!list.contains(r)){
-				list.add((r));
-			}
-		}
-		return list;
+		List<String> usersInTeam = DSL
+			.select(CORE_USER.LOGIN)
+			.from(CORE_USER)
+			.join(CORE_TEAM_MEMBER).on(CORE_TEAM_MEMBER.USER_ID.eq(CORE_USER.PARTY_ID))
+			.join(CORE_PARTY).on(CORE_TEAM_MEMBER.TEAM_ID.eq(CORE_PARTY.PARTY_ID))
+			.where(CORE_PARTY.PARTY_ID.in(partyIds))
+			.groupBy(CORE_USER.PARTY_ID)
+			.fetch(CORE_USER.LOGIN, String.class);
+
+		List<String> result = Stream.concat(usersSolo.stream(), usersInTeam.stream()).distinct()
+			.collect(Collectors.toList());
+		return result;
 	}
 
 }
