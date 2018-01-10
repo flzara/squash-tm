@@ -48,7 +48,8 @@
 
 	<div data-def="state=selection">
 		<form class="attachment-upload-form">
-		</form>
+      <input type="hidden" id= "csrf-token" th:name="${_csrf.parameterName}" th:content="${_csrf.token}" />
+    </form>
 	</div>
 
 	<div data-def="state=uploading" class="attachment-upload-uploading centered">

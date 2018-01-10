@@ -22,7 +22,11 @@ require(["common"], function() {
 	require(["jquery", "squash.translator", "app/ws/squashtm.workspace", "client-manager/client-manager", "jquery.switchButton"],
 			function($, msg) {
 		"use strict";
-
+				$.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+					var token = $("meta[name='_csrf']").attr("content");
+					var header = $("meta[name='_csrf_header']").attr("content");
+					jqXHR.setRequestHeader(header, token);
+				});
 		msg.load(["label.insensitive", "label.sensitive"]);
 
 		$(function() {

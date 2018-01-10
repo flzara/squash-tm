@@ -22,7 +22,11 @@ define(["jquery", "backbone", "underscore", "handlebars", "./IconSelectDialog", 
 		"info-list-manager/InfoListOptionModel", "app/squash.backbone.validation", "app/squash.wreqr.init", "jquery.squash.formdialog"],
 	function ($, Backbone, _, Handlebars, IconSelectDialog, translator, routing, Forms, InfoListOptionModel, Validation, squashtm) {
 		"use strict";
-
+		$.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+			var token = $("meta[name='_csrf']").attr("content");
+			var header = $("meta[name='_csrf_header']").attr("content");
+			jqXHR.setRequestHeader(header, token);
+		});
 		translator.load(["label.infoListItems.icon.none",
 			"message.optionCodeAlreadyDefined"]);
 
@@ -118,18 +122,18 @@ define(["jquery", "backbone", "underscore", "handlebars", "./IconSelectDialog", 
 					});
 				}
 			},
-			
+
 			confirmAndReset: function (event) {
 				var self = this;
 				var url = routing.buildURL('info-list.items', this.model.listId);
-				
+
 				if(this.validate(event)){
 					var params = {
 							"label": this.model.label,
 							"code": this.model.code,
 							"iconName": this.model.icon || "noicon"
 					};
-					
+
 					$.ajax({
 						url: url,
 						type: 'POST',

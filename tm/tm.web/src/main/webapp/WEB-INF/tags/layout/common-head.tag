@@ -22,4 +22,8 @@
 --%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <link type="image/x-icon" rel="shortcut icon" href="${ pageContext.servletContext.contextPath }/images/favicon.ico"/>
+<meta name="_csrf" content="${_csrf.token}"/>
+<!-- default header name is X-CSRF-TOKEN -->
+<meta name="_csrf_header" content="${_csrf.headerName}"/>
+<!-- ... -->
 <comp:sq-css name="squash.core.css" />

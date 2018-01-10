@@ -198,7 +198,9 @@
 								{{#each nodes}}
 								<input type="hidden" name="{{this.type}}" value="{{this.id}}" />
 								{{/each}}
-							</form>
+                <input type="hidden" id= "csrf-token" th:name="${_csrf.parameterName}" th:content="${_csrf.token}" />
+
+                </form>
     						</script>
                 <div id="start-ws-wizard-container" class="not-displayed"></div>
               </div>

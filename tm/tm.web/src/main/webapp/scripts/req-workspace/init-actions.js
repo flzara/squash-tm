@@ -22,7 +22,11 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
         "workspace.tree-node-copier", "workspace.tree-event-handler", "workspace.sessionStorage","user-account/user-prefs"],
         function($, zetree, rules, ctxcontent, eventBus, translator, copier, treehandler, storage,userPrefs){
 
-
+					$.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+						var token = $("meta[name='_csrf']").attr("content");
+						var header = $("meta[name='_csrf_header']").attr("content");
+						jqXHR.setRequestHeader(header, token);
+					});
 	function showError(messageName){
 
 		var messages = translator.get({

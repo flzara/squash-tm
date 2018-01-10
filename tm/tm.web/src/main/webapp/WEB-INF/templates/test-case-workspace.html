@@ -428,7 +428,6 @@
         <div>
           <form th:action="@{/test-cases/importer}" action="http://localhost:8008/squash/test-cases/importer"
             method="POST" enctype="multipart/form-data" class="display-table">
-            <input type="hidden" id= "csrf-token" th:name="${_csrf.parameterName}" th:content="${_csrf.token}" />
             <div class="std-padding std-margin-top">
 
               <div class="grey-round-panel snap-left" style="width: 43%;">
