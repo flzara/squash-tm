@@ -173,7 +173,12 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 			// FIXME ain't there a way to query for count instead of querying twice the whole resultset ?
 			countAll = hibQuery.getResultList().size();
-			result = hibQuery.setFirstResult(sorting.getFirstItemIndex()).setMaxResults(sorting.getPageSize()).getResultList();
+
+			if (!sorting.shouldDisplayAll()){
+				hibQuery.setFirstResult(sorting.getFirstItemIndex()).setMaxResults(sorting.getPageSize());
+			}
+			result = hibQuery.getResultList();
+
 		}
 		return new PagingBackedPagedCollectionHolder<>(sorting, countAll, result);
 	}

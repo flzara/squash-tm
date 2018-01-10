@@ -154,7 +154,8 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 							"bVisible" : false,
 							"bSortable" : false
 						} ],
-						"sDom" : 'ft<"dataTables_footer"lip>'
+						"sDom" : 'ft<"dataTables_footer"lip>',
+						"aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, translator.get('label.All')]]
 					};
 
 				squashConf = {
@@ -271,7 +272,8 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 							"bVisible" : false,
 							"bSortable" : false
 						} ],
-						"sDom" : 'ft<"dataTables_footer"lip>'
+						"sDom" : 'ft<"dataTables_footer"lip>',
+						"aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, translator.get('label.All')]]
 					};
 
 				squashConf = {
