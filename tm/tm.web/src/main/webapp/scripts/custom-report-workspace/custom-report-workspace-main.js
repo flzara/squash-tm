@@ -19,43 +19,50 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(['squash.translator', 'tree', './cr-treemenu', './init-actions',
-        'squash/squash.tree-page-resizer', 'app/ws/squashtm.toggleworkspace', './popups/init-all'],
-    function (translator, tree, treemenu, actions, resizer, ToggleWorkspace, popups) {
-        "use strict";
+		'squash/squash.tree-page-resizer', 'app/ws/squashtm.toggleworkspace', './popups/init-all'],
+	function (translator, tree, treemenu, actions, resizer, ToggleWorkspace, popups) {
+		"use strict";
+        
+		function resizeLeftPanel() {
+			$("#tree-panel-left").css('width', localStorage.getItem("leftWidth"));
+			var pos = parseInt(localStorage.getItem("leftWidth")) + 10;
+			$("#contextual-content").css('left', pos + "px");
+		}
 
-        function initResizer() {
-            var conf = {
-                leftSelector: "#tree-panel-left",
-                rightSelector: "#contextual-content"
-            };
-            resizer.init(conf);
-        }
+		function initResizer() {
+			var conf = {
+				leftSelector: "#tree-panel-left",
+				rightSelector: "#contextual-content"
+			};
+			resizer.init(conf);
+		}
 
-        function initTabbedPane() {
-            $("#tabbed-pane").tabs();
-        }
+		function initTabbedPane() {
+			$("#tabbed-pane").tabs();
+		}
 
-        function initI18n() {
-            translator.load({
-                "date-format": "squashtm.dateformat",
-                "label-never": "label.lower.Never"
-            });
-        }
+		function initI18n() {
+			translator.load({
+				"date-format": "squashtm.dateformat",
+				"label-never": "label.lower.Never"
+			});
+		}
 
-        function init(settings) {
-            initI18n();
-            initResizer();
-            initTabbedPane();
-            ToggleWorkspace.init(settings.toggleWS);
-            tree.initCustomReportWorkspaceTree(settings.tree);
-            treemenu.init(settings.treemenu);
-            popups.init();
-            actions.init();
-        }
+		function init(settings) {
+			initI18n();
+			resizeLeftPanel();
+			initResizer();
+			initTabbedPane();
+			ToggleWorkspace.init(settings.toggleWS);
+			tree.initCustomReportWorkspaceTree(settings.tree);
+			treemenu.init(settings.treemenu);
+			popups.init();
+			actions.init();
+		}
 
 
-        return {
-            init: init
-        };
+		return {
+			init: init
+		};
 
-    });
+	});
