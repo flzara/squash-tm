@@ -129,14 +129,14 @@ public class CustomReportWorkspaceController {
 
 		List<JsTreeNode> rootNodes = new ArrayList<>();
 
-		for (CustomReportLibraryNode crl : libraries) {
-			JsTreeNode treeNode = builderProvider.get().buildWithOpenedNodes(crl, nodeIdToOpen);
-			rootNodes.add(treeNode);
-		}
+//		for (CustomReportLibraryNode crl : libraries) {
+//			JsTreeNode treeNode = builderProvider.get().buildWithOpenedNodes(crl, nodeIdToOpen);
+//			rootNodes.add(treeNode);
+//		}
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 		List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
 
-//		rootNodes.addAll(customReportWorkspaceDisplayService.findAllLibraries(readableProjectIds, currentUser, mapIdsByType(openedNodes)));
+		rootNodes.addAll(customReportWorkspaceDisplayService.findAllLibraries(readableProjectIds, currentUser, mapIdsByType(openedNodes)));
 
 		model.addAttribute("rootModel", rootNodes);
 

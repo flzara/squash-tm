@@ -64,25 +64,6 @@ public class CustomReportTreeNodeBuilder {
 		this.permissionEvaluationService = permissionEvaluationService;
 	}
 
-	/**
-	 * Build a {@link JsTreeNode} from a {@link CustomReportLibraryNode} with it's descendants builded inside if node is opened. Will also open and retrieve descendant at layer n+1
-	 * if one descendant at layer n is also in opened list.
-	 * @param crln
-	 * @return
-	 */
-	public JsTreeNode buildWithOpenedNodes(CustomReportLibraryNode crln,Set<Long> openedNodeIds){
-		JsTreeNode builtNode = build(crln);
-		if (openedNodeIds.contains(crln.getId())) {
-			List<TreeLibraryNode> children = crln.getChildren();
-			for (TreeLibraryNode child : children) {
-				JsTreeNode childJsTreeNode = buildWithOpenedNodes((CustomReportLibraryNode) child, openedNodeIds);//NOSONAR cast is safe, we have the child of a crln
-				builtNode.getChildren().add(childJsTreeNode);
-			}
-		setNodeOpen(builtNode);
-		}
-		return builtNode;
-	}
-
 	public JsTreeNode build(CustomReportLibraryNode crln){
 		JsTreeNode builtNode = new JsTreeNode();
 		builtNode.setTitle(crln.getName());
@@ -183,10 +164,6 @@ public class CustomReportTreeNodeBuilder {
 
 	private void setNodeLeaf(JsTreeNode builtNode){
 		builtNode.setState(State.leaf);
-	}
-
-	private void setNodeOpen(JsTreeNode builtNode){
-		builtNode.setState(State.open);
 	}
 
 	private void setNodeHTMLId(JsTreeNode builtNode, String id){

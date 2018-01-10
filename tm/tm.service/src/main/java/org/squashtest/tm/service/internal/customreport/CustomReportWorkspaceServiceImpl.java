@@ -70,11 +70,6 @@ public class CustomReportWorkspaceServiceImpl implements
 	}
 
 	@Override
-	public List<TreeLibraryNode> findContent(Long libraryId) {
-		return crlnDao.findChildren(libraryId);
-	}
-
-	@Override
 	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	public List<CustomReportLibraryNode> findRootNodes() {
 		ProjectFilter projectFilter = projectFilterModificationService.findProjectFilterByUserLogin();

@@ -31,14 +31,14 @@ import org.squashtest.tm.domain.tree.TreeLibraryNode;
 public interface CustomReportWorkspaceService {
 	/**
 	 * Returns all the CustomReportLibrary
-	 * 
+	 *
 	 * @return
 	 */
 	List<CustomReportLibrary> findAllLibraries();
-	
+
 	/**
 	 * Returns all CustomReportLibrary that the user may edit.
-	 * 
+	 *
 	 * @return
 	 */
 
@@ -46,17 +46,16 @@ public interface CustomReportWorkspaceService {
 
 	/**
 	 * Returns all CustomReportLibrary that the user may import to.
-	 * 
+	 *
 	 * @return
 	 */
 	List<CustomReportLibrary> findAllImportableLibraries();
-	
+
 	/**
 	 * Find content for a {@link CustomReportLibrary} given it's id
 	 * @param libraryId
 	 * @return
 	 */
-	List<TreeLibraryNode> findContent(Long libraryId);
-	
+
 	List<CustomReportLibraryNode> findRootNodes();
 }

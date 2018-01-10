@@ -53,10 +53,10 @@ import static org.squashtest.tm.jooq.domain.Tables.*;
 public class CustomReportWorkspaceDisplayService {
 
 	@Inject
-	private DSLContext DSL;
+	DSLContext DSL;
 
 	@Inject
-	private PermissionEvaluationService permissionEvaluationService;
+	PermissionEvaluationService permissionEvaluationService;
 
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
 	private static final Permission[] NODE_PERMISSIONS = {WRITE, CREATE, DELETE, EXECUTE, EXPORT};
@@ -80,6 +80,22 @@ public class CustomReportWorkspaceDisplayService {
 
 	}
 
+	public Collection<JsTreeNode> getNodeContent(Long nodeId) {
+		Set<Long> childrenIds = new HashSet<>();
+
+		MultiMap libraryFatherChildrenMultiMap = new MultiValueMap();
+		MultiMap libraryNodeFatherChildrenMultiMap = new MultiValueMap();
+
+		MultiMap expansionCandidates = new MultiValueMap();
+		expansionCandidates.put(new Object(), nodeId);    //the fisrt attribute doesn't matter, the two first multimap aren't used in this method
+
+		getFatherChildrenMultiMaps(expansionCandidates, childrenIds, libraryFatherChildrenMultiMap, libraryNodeFatherChildrenMultiMap);
+
+		Map<Long, JsTreeNode> libraryChildrenMap = getLibraryChildrenMap(childrenIds);
+
+		return libraryChildrenMap.values();
+	}
+
 	private void getFatherChildrenMultiMaps(MultiMap expansionCandidates, Set<Long> childrenIds,
 											MultiMap libraryFatherChildrenMultiMap, MultiMap libraryNodeFatherChildrenMultiMap) {
 		List<Long> openedLibraries = new ArrayList<>(expansionCandidates.values());
@@ -91,7 +107,7 @@ public class CustomReportWorkspaceDisplayService {
 				.orderBy(selectLibraryNodeRelationshipContentOrder())
 				.fetch()
 				.forEach(r -> {
-						if (((List<Long>) expansionCandidates.get(getLibraryClassName())).contains(r.get(selectLibraryNodeRelationshipAncestorId()))) {
+						if (expansionCandidates.get(getLibraryClassName()) != null && ((List<Long>) expansionCandidates.get(getLibraryClassName())).contains(r.get(selectLibraryNodeRelationshipAncestorId()))) {
 							libraryFatherChildrenMultiMap.put(r.get(selectLibraryNodeRelationshipAncestorId()), r.get(selectLibraryNodeRelationshipDescendantId()));
 						} else {
 							libraryNodeFatherChildrenMultiMap.put(r.get(selectLibraryNodeRelationshipAncestorId()), r.get(selectLibraryNodeRelationshipDescendantId()));
@@ -221,7 +237,7 @@ public class CustomReportWorkspaceDisplayService {
 		builtNode.addAttr("milestone-creatable-deletable", "true");
 		builtNode.addAttr("milestone-editable", "true");
 
-		doPermissionCheck(builtNode, new CustomReportLibraryNode());
+		doPermissionCheck(builtNode, new org.squashtest.tm.domain.customreport.CustomReportLibraryNode());
 
 		//A visitor would be elegant here and allow interface type development but we don't want hibernate to fetch each linked entity
 		//for each node and we don't want subclass for each node type. sooooo the good old switch on enumerated type will do the job...
@@ -282,7 +298,7 @@ public class CustomReportWorkspaceDisplayService {
 		setNodeHTMLId(builtNode, "CustomReportDashboard-" + nodeId);
 		setNodeRel(builtNode, "dashboard");
 		setNodeResType(builtNode, "custom-report-dashboard");
-		setStateForNodeContainer(builtNode, iterationCount);
+		setNodeLeaf(builtNode);
 	}
 
 
@@ -314,7 +330,7 @@ public class CustomReportWorkspaceDisplayService {
 		}
 	}
 
-	private void doPermissionCheck(JsTreeNode builtNode, CustomReportLibraryNode crln) {
+	private void doPermissionCheck(JsTreeNode builtNode, org.squashtest.tm.domain.customreport.CustomReportLibraryNode crln) {
 		Map<String, Boolean> permByName = permissionEvaluationService.hasRoleOrPermissionsOnObject(ROLE_ADMIN, PERM_NAMES, crln);
 		for (Permission perm : NODE_PERMISSIONS) {
 			builtNode.addAttr(perm.getQuality(), permByName.get(perm.name()).toString());

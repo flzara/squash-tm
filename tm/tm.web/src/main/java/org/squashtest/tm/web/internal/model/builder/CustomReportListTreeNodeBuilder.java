@@ -60,23 +60,4 @@ public class CustomReportListTreeNodeBuilder {
 		return builtNodes;
 	}
 
-	/**
-	 * Build a list of {@link JsTreeNode} from a list of {@link CustomReportLibraryNode}. Will also
-	 * build children if needed by looking inside openedNodesIds if a builded node is open. il a node is open,
-	 * his children must be retrieved and converted in {@link JsTreeNode}.
-	 * @param nodes
-	 * @param openedNodesIds
-	 * @return
-	 */
-	public List<JsTreeNode> buildWithOpenedNodes(List<TreeLibraryNode> nodes, Set<Long> openedNodesIds){
-		List<JsTreeNode> builtNodes =new ArrayList<>();
-
-		for (TreeLibraryNode tln : nodes) {
-			CustomReportTreeNodeBuilder builder = builderProvider.get();
-			builtNodes.add(builder.buildWithOpenedNodes((CustomReportLibraryNode) tln,openedNodesIds));//NOSONAR cast is safe
-		}
-		return builtNodes;
-	}
-
-
 }
