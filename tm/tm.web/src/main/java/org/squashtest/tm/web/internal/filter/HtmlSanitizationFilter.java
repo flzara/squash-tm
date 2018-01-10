@@ -88,7 +88,7 @@ public class HtmlSanitizationFilter implements Filter {
 
 		int i = 0;
 		for (String string : orig) {
-			aString[i++] = HTMLCleanupUtils.stripJavascriptForRequestParameters(string);
+			aString[i++] = HTMLCleanupUtils.stripJavascript(string);
 		}
 
 		return aString;
@@ -117,7 +117,7 @@ public class HtmlSanitizationFilter implements Filter {
 		/**
 		 * To be eligible to json sanitation a request must :
 		 * <ul>
-		 * <li>Be a POST Request</li>
+		 * <li>Be a POST/PUT/PATCH Request</li>
 		 * <li>Have a content with length > 0</li>
 		 * <li>Declare Json Media Type</li>
 		 * </ul>

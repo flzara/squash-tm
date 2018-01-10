@@ -55,18 +55,11 @@ public final class HTMLCleanupUtils {
 		return HtmlUtils.htmlEscape(unescaped);
 	}
 
-	//[JTH 2018-01-05] Replacing naive implementation with library... should be better for XSS prevention
 	public static String stripJavascript(String html){
 		if(StringUtils.isNotBlank(html)){
-			return Jsoup.clean(html, Whitelist.relaxed());
-		}
-		return StringUtils.EMPTY;
-	}
-
-	public static String stripJavascriptForRequestParameters(String html){
-		if(StringUtils.isNotBlank(html)){
 			String cleaned = Jsoup.clean(html, Whitelist.relaxed());
-			// We need to unescape here as JSoup escape json characters and make subsequent parsing crash
+			// We need to unescape here as JSoup escape json characters and make subsequent use of JSON crash
+			// For html content we should escape before persistence
 			// There is a little performance hit but it's safer to use JSoup than a custom solution.
 			return HtmlUtils.htmlUnescape(cleaned);
 		}
