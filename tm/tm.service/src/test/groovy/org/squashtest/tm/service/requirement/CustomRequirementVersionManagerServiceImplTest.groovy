@@ -18,8 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.requirement;
+package org.squashtest.tm.service.requirement
 
+import org.squashtest.tm.domain.attachment.AttachmentList
+import org.squashtest.tm.service.attachment.AttachmentManagerService;
 
 import javax.persistence.EntityManager;
 
@@ -43,6 +45,7 @@ class CustomRequirementVersionManagerServiceImplTest extends Specification {
 	PrivateCustomFieldValueService customFieldService = Mock()
 	IndexationService indexationService = Mock()
 	LinkedRequirementVersionManagerService requirementLinkService = Mock()
+	AttachmentManagerService attachmentManagerService = Mock()
 
 	def setup() {
 		service.requirementVersionDao = requirementVersionDao
@@ -52,6 +55,7 @@ class CustomRequirementVersionManagerServiceImplTest extends Specification {
 		em.unwrap(_) >> currentSession
 		service.customFieldValueService = customFieldService
 		service.requirementLinkService = requirementLinkService
+		service.attachmentManagerService = attachmentManagerService
 
 	}
 
@@ -62,7 +66,10 @@ class CustomRequirementVersionManagerServiceImplTest extends Specification {
 
 		and:
 		RequirementVersion newVersion = Mock()
+		AttachmentList attachmentList = Mock()
 		req.currentVersion >> newVersion
+		newVersion.getAttachmentList() >> attachmentList
+		attachmentList.getAllAttachments() >> []
 
 		when:
 		service.createNewVersion(10L, false,false)

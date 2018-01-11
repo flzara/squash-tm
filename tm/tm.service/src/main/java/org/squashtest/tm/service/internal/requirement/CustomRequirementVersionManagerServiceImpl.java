@@ -32,6 +32,7 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -44,6 +45,7 @@ import org.squashtest.tm.domain.requirement.RequirementVersion.PropertiesSetter;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
+import org.squashtest.tm.service.attachment.AttachmentManagerService;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
@@ -107,6 +109,9 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	@Inject
 	private PermissionEvaluationService permService;
 
+	@Inject
+	AttachmentManagerService attachmentManagerService;
+
 	@PersistenceContext
 	private EntityManager em;
 
@@ -117,7 +122,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 
 	@Override
 	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'READ')"
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public Requirement findRequirementById(long requirementId) {
 		return requirementVersionDao.findRequirementById(requirementId);
 	}
@@ -130,27 +135,30 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 
 	@Override
 	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'CREATE')"
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public void createNewVersion(long requirementId, boolean inheritReqLinks, boolean inheritTestcasesReqLinks) {
 		Requirement req = requirementVersionDao.findRequirementById(requirementId);
 		RequirementVersion previousVersion = req.getCurrentVersion();
 
 		req.increaseVersion();
 		em.persist(req.getCurrentVersion());
-		RequirementVersion newVersion = req.getCurrentVersion();
+		RequirementVersion newVersion = copyAttachmentsForNewVersions(req);
+
 		indexationService.reindexRequirementVersions(req.getRequirementVersions());
 		customFieldValueService.copyCustomFieldValues(previousVersion, newVersion);
-		if(inheritReqLinks) {
+		if (inheritReqLinks) {
 			requirementLinkService.copyRequirementVersionLinks(previousVersion, newVersion);
 		}
-		if(inheritTestcasesReqLinks){
+		if (inheritTestcasesReqLinks) {
 			requirementLinkService.postponeTestCaseToNewRequirementVersion(previousVersion, newVersion);
 		}
 	}
 
+
+
 	@Override
 	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'CREATE')"
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public void createNewVersion(long requirementId, Collection<Long> milestoneIds, boolean inheritReqLinks, boolean inheritTestcasesReqLinks) {
 
 		createNewVersion(requirementId, inheritReqLinks, inheritTestcasesReqLinks);
@@ -172,18 +180,18 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE')"
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public void changeCriticality(long requirementVersionId, RequirementCriticality criticality) {
 		RequirementVersion requirementVersion = requirementVersionDao.findOne(requirementVersionId);
 		RequirementCriticality oldCriticality = requirementVersion.getCriticality();
 		requirementVersion.setCriticality(criticality);
 		testCaseImportanceManagerService.changeImportanceIfRequirementCriticalityChanged(requirementVersionId,
-				oldCriticality);
+			oldCriticality);
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE')"
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public void rename(long requirementVersionId, String newName) {
 		RequirementVersion v = requirementVersionDao.findOne(requirementVersionId);
 
@@ -198,7 +206,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 		 */
 
 		// Requirement name can not be modified when its status is approved or obsolete.
-		if(v.isModifiable()){
+		if (v.isModifiable()) {
 			v.setName(newName.trim());
 		} else {
 			throw new IllegalRequirementModificationException();
@@ -212,7 +220,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'READ')"
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	@Transactional(readOnly = true)
 	public Page<RequirementVersion> findAllByRequirement(long requirementId, Pageable pageable) {
 		Page<RequirementVersion> page = requirementVersionDao.findAllByRequirementId(requirementId, pageable);
@@ -221,15 +229,15 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 
 	@Override
 	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'READ')"
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public List<RequirementVersion> findAllByRequirement(long requirementId) {
-        Pageable pageable = new PageRequest(0, Integer.MAX_VALUE, Sort.Direction.DESC, "versionNumber");
+		Pageable pageable = new PageRequest(0, Integer.MAX_VALUE, Sort.Direction.DESC, "versionNumber");
 		return findAllByRequirement(requirementId, pageable).getContent();
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE')"
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public void changeCategory(long requirementVersionId, String categoryCode) {
 		RequirementVersion version = requirementVersionDao.findOne(requirementVersionId);
 		InfoListItem category = infoListItemService.findByCode(categoryCode);
@@ -249,21 +257,21 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 		List<RequirementVersion> versions = requirementVersionDao.findAll(requirementVersionIds);
 
 		InfoListItem category = null;
-		if (update.hasCategoryDefined()){
+		if (update.hasCategoryDefined()) {
 			category = infoListItemService.findByCode(update.getCategory());
 		}
 
 
-		for (RequirementVersion rv : versions){
+		for (RequirementVersion rv : versions) {
 			try {
 				// security check
 				SecurityCheckableObject check = new SecurityCheckableObject(rv, "WRITE");
 				PermissionsUtils.checkPermission(permService, check);
 
 				PropertiesSetter ps = rv.getPropertySetter();
-				
+
 				// update category if needed
-				if (update.hasCategoryDefined()){
+				if (update.hasCategoryDefined()) {
 					if (infoListItemService.isCategoryConsistent(rv.getProject().getId(), update.getCategory())) {
 						ps.setCategory(category);
 					} else {
@@ -272,17 +280,16 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 				}
 
 				// update status if needed
-				if (update.hasStatusDefined()){
+				if (update.hasStatusDefined()) {
 					ps.setStatus(update.getStatus());
 				}
 
 				// update criticality if needed
-				if (update.hasCriticalityDefined()){
+				if (update.hasCriticalityDefined()) {
 					ps.setCriticality(update.getCriticality());
 				}
 
-			}
-			catch(Exception ex){
+			} catch (Exception ex) {
 				// lots of legitimate business exception could happen so I won't log them here
 				failures.add(rv.getId());
 			}
@@ -295,7 +302,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	@Override
 	@Transactional(readOnly = true)
 	@PreAuthorize("hasPermission(#versionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'READ')"
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public Collection<Milestone> findAllMilestones(long versionId) {
 		return milestoneManager.findMilestonesForRequirementVersion(versionId);
 	}
@@ -303,21 +310,21 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	@Override
 	@Transactional(readOnly = true)
 	@PreAuthorize("hasPermission(#versionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'READ')"
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public Collection<Milestone> findAssociableMilestones(long versionId) {
 		return milestoneManager.findAssociableMilestonesToRequirementVersion(versionId);
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#versionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE')"
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public void bindMilestones(long versionId, Collection<Long> milestoneIds) {
 		milestoneManager.bindRequirementVersionToMilestones(versionId, milestoneIds);
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#versionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE')"
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public void unbindMilestones(long versionId, Collection<Long> milestoneIds) {
 		milestoneManager.unbindRequirementVersionFromMilestones(versionId, milestoneIds);
 	}
@@ -346,7 +353,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 			public boolean evaluate(Object milestone) {
 
 				return ((Milestone) milestone).getStatus() != MilestoneStatus.LOCKED
-						&& ((Milestone) milestone).getStatus() != MilestoneStatus.PLANNED;
+					&& ((Milestone) milestone).getStatus() != MilestoneStatus.PLANNED;
 			}
 		});
 	}
@@ -404,9 +411,9 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 
 	@Override
 	public Long findReqVersionIdByRequirementAndVersionNumber(
-			long requirementId, Integer versionNumber) {
-		RequirementVersion requirementVersion = requirementVersionDao.findByRequirementIdAndVersionNumber(requirementId,versionNumber);
-		if (requirementVersion!=null) {
+		long requirementId, Integer versionNumber) {
+		RequirementVersion requirementVersion = requirementVersionDao.findByRequirementIdAndVersionNumber(requirementId, versionNumber);
+		if (requirementVersion != null) {
 			return requirementVersion.getId();
 		}
 		return null;
@@ -415,10 +422,19 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 
 	@Override
 	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'READ')"
-			+ OR_HAS_ROLE_ADMIN)
-	public RequirementVersion findByRequirementIdAndVersionNumber(long requirementId, int versionNumber){
-		return requirementVersionDao.findByRequirementIdAndVersionNumber(requirementId,versionNumber);
+		+ OR_HAS_ROLE_ADMIN)
+	public RequirementVersion findByRequirementIdAndVersionNumber(long requirementId, int versionNumber) {
+		return requirementVersionDao.findByRequirementIdAndVersionNumber(requirementId, versionNumber);
 	}
 
+	//As Squash 1.18, for file repositories we need to copy the attachment by service call.
+	//Model is not able to handle file manipulation by itself...
+	private RequirementVersion copyAttachmentsForNewVersions(Requirement req) {
+		RequirementVersion newVersion = req.getCurrentVersion();
+		for (Attachment attachment : newVersion.getAttachmentList().getAllAttachments()) {
+			attachmentManagerService.copyContent(attachment);
+		}
+		return newVersion;
+	}
 
 }
