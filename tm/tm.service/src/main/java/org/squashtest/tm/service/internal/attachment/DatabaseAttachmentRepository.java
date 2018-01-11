@@ -34,7 +34,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.sql.Blob;
 
-@Component
+@Component("databaseAttachmentRepository")
 public class DatabaseAttachmentRepository implements AttachmentRepository {
 
 	@PersistenceContext
@@ -59,6 +59,11 @@ public class DatabaseAttachmentRepository implements AttachmentRepository {
 	@Override
 	public void removeContent(long attachmentId) {
 		//NOOP Hibernate took care of deleting the blob
+	}
+
+	@Override
+	public void copyContent(Attachment copy) {
+		//NOOP Hibernate took care of copy the blob
 	}
 
 	private Session currentSession() throws HibernateException {

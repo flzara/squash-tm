@@ -41,7 +41,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+@Component("fileSystemAttachmentRepository")
 public class FileSystemAttachmentRepository implements AttachmentRepository {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemAttachmentRepository.class);
@@ -75,11 +75,23 @@ public class FileSystemAttachmentRepository implements AttachmentRepository {
 		return new FileInputStream(path);
 	}
 
+	/**
+	 * Calculate the file path for an attachment.
+	 * The path is defined as : the attachment list id / attachment CONTENT id
+	 * The attachment list id is padded to 12 chars to have a for level hierarchy
+	 * ex : For an attachment list id of 9856 and a CONTENT ID of 56897 path will be
+	 * /000/000/009/856/56897
+	 * @param attachmentId the ATTACHMENT ID, the method will take care to find the content id for generating path
+	 * @return the path as specified above
+	 */
 	private String getAttachmentPath(Long attachmentId) {
 		Attachment attachment = attachmentDao.findOne(attachmentId);
 		Long attachmentListId = attachment.getAttachmentList().getId();
 		String folderPath = findFolderPath(attachmentListId);
 		Long contentId = attachment.getContent().getId();
+		if (contentId == null) {
+			throw new IllegalArgumentException("Content id is null. Not able to generate path for content of attachment : " + attachment.toString());
+		}
 		return folderPath + contentId;
 	}
 
@@ -87,6 +99,19 @@ public class FileSystemAttachmentRepository implements AttachmentRepository {
 	public void removeContent(long attachmentId) throws IOException {
 		String path = getAttachmentPath(attachmentId);
 		Files.delete(Paths.get(path));
+	}
+
+	@Override
+	public void copyContent(Attachment copy) {
+		Long sourceId = copy.getAttachmentToCopyId();
+		String sourcePath = getAttachmentPath(sourceId);
+		String copyPath = getAttachmentPath(copy.getId());
+		try {
+			FileUtils.copyFile(new File(sourcePath), new File(copyPath));
+		} catch (IOException e) {
+			LOGGER.error("Unable to copy " + sourcePath + " to " + copyPath);
+			throw new RuntimeException(e);
+		}
 	}
 
 	private String findFolderPath(long attachmentListId) {

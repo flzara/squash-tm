@@ -31,12 +31,14 @@ import java.util.ListIterator;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -89,10 +91,12 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	private FeatureManager featureManager;
 
 	@Inject
-	private DatabaseAttachmentRepository databaseAttachmentRepository;
+	@Named("databaseAttachmentRepository")
+	private AttachmentRepository databaseAttachmentRepository;
 
 	@Inject
-	private FileSystemAttachmentRepository filesystemAttachmentRepository;
+	@Named("fileSystemAttachmentRepository")
+	private AttachmentRepository filesystemAttachmentRepository;
 
 
 	@Override
@@ -103,7 +107,6 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 
 		AttachmentList list = attachmentListDao.findOne(attachmentListId);
 		list.addAttachment(attachment);
-		attachment.setAttachmentList(list);
 		attachment.setContent(content);
 		attachment.setAddedOn(new Date());
 		attachment.setName(rawAttachment.getName());
@@ -234,4 +237,8 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 
 	}
 
+	@Override
+	public void copyContent(Attachment attachment) {
+		getAttachmentRepository().copyContent(attachment);
+	}
 }

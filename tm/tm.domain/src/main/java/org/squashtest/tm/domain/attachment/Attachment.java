@@ -61,6 +61,11 @@ public class Attachment implements Identified {
 	@JoinColumn(name = "ATTACHMENT_LIST_ID", nullable = false, updatable = false)
 	private AttachmentList attachmentList;
 
+	//Attribute added in 1.18 for handling copy of attachments in a file repository
+	//Used for copy files and be able to locate each attachment copy and it's origins
+	@Transient
+	private Long attachmentToCopyId;
+
 	public Attachment() {
 		super();
 	}
@@ -182,6 +187,14 @@ public class Attachment implements Identified {
 		this.attachmentList = attachmentList;
 	}
 
+	public Long getAttachmentToCopyId() {
+		return attachmentToCopyId;
+	}
+
+	public void setAttachmentToCopyId(Long attachmentToCopyId) {
+		this.attachmentToCopyId = attachmentToCopyId;
+	}
+
 	/**
 	 * will perform a deep copy of this Attachment. All attributes will be duplicated including the content.
 	 *
@@ -195,6 +208,7 @@ public class Attachment implements Identified {
 		clone.setSize(this.getSize());
 		clone.setType(this.getType());
 		clone.setAddedOn(new Date());
+		clone.setAttachmentToCopyId(this.getId());
 		if (this.getContent() != null) {
 			clone.setContent(this.getContent().hardCopy());
 		}

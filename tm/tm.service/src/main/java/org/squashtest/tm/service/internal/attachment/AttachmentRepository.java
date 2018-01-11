@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.attachment;
 
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentContent;
 import org.squashtest.tm.service.attachment.RawAttachment;
 
@@ -27,6 +29,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+@Transactional
 public interface AttachmentRepository {
 
 	AttachmentContent createContent(RawAttachment rawAttachment, long attachmentListId) throws IOException;
@@ -34,4 +37,6 @@ public interface AttachmentRepository {
 	InputStream getContentStream(Long attachmentId) throws FileNotFoundException;
 
 	void removeContent(long attachmentId) throws IOException;
+
+	void copyContent(Attachment copy);
 }

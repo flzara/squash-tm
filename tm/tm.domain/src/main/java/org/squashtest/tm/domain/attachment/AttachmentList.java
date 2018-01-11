@@ -54,6 +54,7 @@ public class AttachmentList implements Identified{
 	}
 
 	public void addAttachment(Attachment attachment) {
+		attachment.setAttachmentList(this);
 		attachments.add(attachment);
 	}
 

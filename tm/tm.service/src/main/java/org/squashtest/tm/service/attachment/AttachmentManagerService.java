@@ -25,6 +25,7 @@ import java.io.OutputStream;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.attachment.Attachment;
 
 @Transactional
 public interface AttachmentManagerService extends AttachmentFinderService {
@@ -48,4 +49,13 @@ public interface AttachmentManagerService extends AttachmentFinderService {
 	 * @throws IOException
 	 */
 	void writeContent(long attachmentId, OutputStream os) throws IOException;
+
+	/**
+	 * Copy content. Should only be used in case of file repository.
+	 * Our nice rich domain model should do the copy when needed if database repo
+	 * but in case of file repository we need service to do the stuff so....
+	 * @param attachment the COPY not the source !!!. The source id is embedded as @Transient attribute in the attachment by the model at copy time.
+	 *                   See {@link Attachment#attachmentToCopyId}
+	 */
+	void copyContent(Attachment attachment);
 }
