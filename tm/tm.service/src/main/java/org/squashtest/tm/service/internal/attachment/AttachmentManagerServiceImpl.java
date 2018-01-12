@@ -24,11 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Blob;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
+import java.util.*;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -127,14 +123,14 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 		}
 
 		RequirementVersion requirementVersion = attachmentListDao
-				.findAssociatedRequirementVersionIfExists(attachmentListId);
+			.findAssociatedRequirementVersionIfExists(attachmentListId);
 		if (requirementVersion != null) {
 			indexationService.reindexRequirementVersion(requirementVersion.getId());
 		}
 	}
 
-	private AttachmentRepository getAttachmentRepository(){
-		if(featureManager.isEnabled(FeatureManager.Feature.FILE_REPOSITORY)){
+	private AttachmentRepository getAttachmentRepository() {
+		if (featureManager.isEnabled(FeatureManager.Feature.FILE_REPOSITORY)) {
 			return filesystemAttachmentRepository;
 		}
 		return databaseAttachmentRepository;
@@ -245,5 +241,12 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	@Override
 	public void cleanContent(List<Long> attachmentListIds) {
 		getAttachmentRepository().deleteContent(attachmentListIds);
+	}
+
+	@Override
+	public void cleanContent(AttachmentHolder attachmentHolder) {
+		if (attachmentHolder != null) {
+			cleanContent(Collections.singletonList(attachmentHolder.getAttachmentList().getId()));
+		}
 	}
 }

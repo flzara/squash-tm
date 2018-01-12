@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.attachment.Attachment;
+import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 
 @Transactional
@@ -67,4 +68,6 @@ public interface AttachmentManagerService extends AttachmentFinderService {
 	 * @param attachmentListIds Ids of the attachments list to delete
 	 */
 	void cleanContent(List<Long> attachmentListIds);
+
+	void cleanContent(AttachmentHolder attachmentHolder);
 }

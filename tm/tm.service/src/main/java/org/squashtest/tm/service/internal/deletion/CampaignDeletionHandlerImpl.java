@@ -21,17 +21,20 @@
 package org.squashtest.tm.service.internal.deletion;
 
 import java.util.Optional;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.campaign.*;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
+import org.squashtest.tm.service.attachment.AttachmentManagerService;
 import org.squashtest.tm.service.campaign.CustomTestSuiteModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.deletion.*;
@@ -89,6 +92,9 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 	@Inject
 	private CustomTestSuiteModificationService customTestSuiteModificationService;
+
+	@Inject
+	private AttachmentManagerService attachmentManagerService;
 
 
 	@Override
@@ -467,6 +473,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 			customValueService.deleteAllCustomFieldValues(testSuite);
 
+			attachmentManagerService.cleanContent(testSuite);
 			deletionDao.removeEntity(testSuite);
 		}
 
@@ -488,6 +495,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 			customTestSuiteModificationService.updateExecutionStatus(testSuite);
 		}
 
+		attachmentManagerService.cleanContent(execution);
 		deletionDao.removeEntity(execution);
 	}
 
@@ -540,6 +548,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 			customValueService.deleteAllCustomFieldValues(iteration);
 
+			attachmentManagerService.cleanContent(iteration);
 			deletionDao.removeEntity(iteration);
 		}
 	}
@@ -670,6 +679,12 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 			iterationTestPlanManagerService.removeTestPlanFromIteration(id);
 		}
 
+	}
+
+	private void cleanAttachmentContent(AttachmentHolder attachmentHolder) {
+		if (attachmentHolder != null) {
+			attachmentManagerService.cleanContent(Collections.singletonList(attachmentHolder.getAttachmentList().getId()));
+		}
 	}
 
 }

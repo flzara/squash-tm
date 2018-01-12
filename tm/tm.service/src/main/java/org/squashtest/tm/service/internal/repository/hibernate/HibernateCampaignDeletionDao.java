@@ -27,9 +27,11 @@ import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
+import org.squashtest.tm.service.attachment.AttachmentManagerService;
 import org.squashtest.tm.service.internal.repository.CampaignDeletionDao;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
 
+import javax.inject.Inject;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +40,8 @@ import java.util.List;
 public class HibernateCampaignDeletionDao extends HibernateDeletionDao
 implements CampaignDeletionDao {
 
-
+	@Inject
+	private AttachmentManagerService attachmentManagerService;
 
 	@Override
 	public void removeEntities(List<Long> entityIds) {
@@ -52,7 +55,9 @@ implements CampaignDeletionDao {
 
 				removeEntityFromParentFolderIfExists(entityId, node);
 
+
 				if(node != null){
+					attachmentManagerService.cleanContent(node);
 					entityManager().remove(node);
 					entityManager().flush();
 				}
