@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -36,12 +37,16 @@ import org.hibernate.type.LongType;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentContent;
 import org.squashtest.tm.domain.attachment.AttachmentList;
+import org.squashtest.tm.service.attachment.AttachmentManagerService;
 import org.squashtest.tm.service.internal.repository.DeletionDao;
 
 public abstract class HibernateDeletionDao implements DeletionDao {
 
 	@PersistenceContext
 	private EntityManager em;
+
+	@Inject
+	private AttachmentManagerService attachmentManagerService;
 
 	/**
 	 * @deprecated use an entity manager instead
@@ -85,6 +90,7 @@ public abstract class HibernateDeletionDao implements DeletionDao {
 
 		executeDeleteNamedQuery("attachment.deleteAttachmentLists", "listIds", attachmentListIds);
 
+		attachmentManagerService.cleanContent(attachmentListIds);
 	}
 
 	private static final class CellTableTransformer implements Transformer {
@@ -131,7 +137,7 @@ public abstract class HibernateDeletionDao implements DeletionDao {
 		//End [Issue 1456]
 
 		removeEntity(list);
-
+		attachmentManagerService.cleanContent(Collections.singletonList(list.getId()));
 	}
 
 	@Override

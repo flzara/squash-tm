@@ -462,11 +462,6 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 		deletionDao.removeEntity(step);
 	}
 
-
-
-
-
-
 	private DeletableIds findSeparateIds(List<Long> ids){
 		List<Long>[] separatedIds = deletionDao.separateFolderFromTestCaseIds(ids);
 		return new DeletableIds(separatedIds[0], separatedIds[1]);

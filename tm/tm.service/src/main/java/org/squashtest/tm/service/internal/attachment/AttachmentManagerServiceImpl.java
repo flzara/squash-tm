@@ -241,4 +241,9 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	public void copyContent(Attachment attachment) {
 		getAttachmentRepository().copyContent(attachment);
 	}
+
+	@Override
+	public void cleanContent(List<Long> attachmentListIds) {
+		getAttachmentRepository().deleteContent(attachmentListIds);
+	}
 }

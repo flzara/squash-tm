@@ -114,6 +114,30 @@ public class FileSystemAttachmentRepository implements AttachmentRepository {
 		}
 	}
 
+	@Override
+	public void deleteContent(List<Long> attachmentListIds) {
+		for (Long attachmentListId : attachmentListIds) {
+			String folderPath = findFolderPath(attachmentListId);
+			File folder = new File(folderPath);
+			try {
+				FileUtils.cleanDirectory(folder);
+				Files.deleteIfExists(Paths.get(folderPath));
+			} catch (IOException e) {
+				LOGGER.error("Unable to deletet " + folderPath);
+				throw new RuntimeException(e);
+			}
+		}
+	}
+
+	/**
+	 * Calculate the folder path for an attachment list.
+	 * The path is defined as : the attachment list id.
+	 * The attachment list id is padded to 12 chars to have a for level hierarchy
+	 * ex : For an attachment list id of 9856 folder path will be
+	 * /000/000/009/856
+	 * @param attachmentListId the attachment list ID
+	 * @return the path as specified above
+	 */
 	private String findFolderPath(long attachmentListId) {
 		String id = String.valueOf(attachmentListId);
 		String paddedId = StringUtils.leftPad(id, 12, "0");

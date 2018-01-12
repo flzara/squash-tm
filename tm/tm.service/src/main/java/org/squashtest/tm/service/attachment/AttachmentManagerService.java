@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.attachment.Attachment;
+import org.squashtest.tm.domain.attachment.AttachmentList;
 
 @Transactional
 public interface AttachmentManagerService extends AttachmentFinderService {
@@ -58,4 +59,12 @@ public interface AttachmentManagerService extends AttachmentFinderService {
 	 *                   See {@link Attachment#attachmentToCopyId}
 	 */
 	void copyContent(Attachment attachment);
+
+	/**
+	 * Remove the EXTERNAL content of an list of {@link AttachmentList}. It DO NOT REMOVE DATA FROM DATABASE
+	 * It's a noop for intern storage, hibernate clean blobs automatically.
+	 * However, for file system storage we need to do it manually...
+	 * @param attachmentListIds Ids of the attachments list to delete
+	 */
+	void cleanContent(List<Long> attachmentListIds);
 }

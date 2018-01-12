@@ -28,6 +28,7 @@ import org.squashtest.tm.service.attachment.RawAttachment;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 @Transactional
 public interface AttachmentRepository {
@@ -39,4 +40,6 @@ public interface AttachmentRepository {
 	void removeContent(long attachmentId) throws IOException;
 
 	void copyContent(Attachment copy);
+
+	void deleteContent(List<Long> attachmentListIds);
 }
