@@ -117,7 +117,7 @@ define(["jquery", "underscore", "./abstractCustomReportChart", "jqplot-pie"], fu
 
 		_getFullConf : function(pieserie){
 			return {
-				labels : [ "100% ("+pieserie.total+")" ],
+				labels : [ "100% ("+pieserie.total+")" ]
 				//colors : [ this.colorscheme[pieserie.nonzeroindex]]
 			};
 		},

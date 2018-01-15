@@ -23,7 +23,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView"],
 	"use strict";
 
 	var axisStepView = AbstractStepView.extend({
-		
+
 		initialize : function(data, wizrouter) {
 			this.tmpl = "#axis-step-tpl";
 			this.model = data;
@@ -32,99 +32,100 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView"],
 			this.reloadData();
 
 		},
-		
-	
-		
+
+
+
 		reloadData : function() {
-			
+
 			var operations = this.model.get("operations");
-			
+
 			_.each(operations, function (op){
-				
-				$("#operations-operation-select-"+ op.column.id).val(op.operation); 
-				
+
+				$("#operations-operation-select-"+ op.column.id).val(op.operation);
+
 			});
-			
+
 		},
-		
-		
+
+
 		updateModel : function() {
-			
+
 			var ids = _.pluck($(".operations-operation-select"), "name");
-			
+
 			var operations = this.getVals(ids);
-			
-			
+
+
 			// #5761
-			
+
 			var axes = this.updateColumnsForRole('axis', operations);
 			var measures = this.updateColumnsForRole('measures', operations);
-			
-			
+
+
 
 			this.model.set({
 				operations : operations,
 				axis : axes,
 				measures : measures
-			}); 
-			
+			});
+
 		},
-		
+
 		getVals : function (ids) {
-		
+
 			var self = this;
-			
+
 			return _.map(ids, function(id){
-				return {column : self.findColumnById(id),
-					operation : $("#operations-operation-select-" + id).val() ,
+				return {
+					column : self.findColumnById(id),
+					operation : $("#operations-operation-select-" + id).val()
 				};
 			});
-			
-			
+
+
 		},
-		
+
 		findColumnById : function (id){
 			return _.chain(this.model.get("computedColumnsPrototypes"))
 			.values()
 			.flatten()
 			.find(function(col){return col.id == id; })
-			.value();		
+			.value();
 		},
 
-		
+
 		/* *************************************************
-		 * 
+		 *
 		 * #5761 : must ensure that the content of attributes 'axis' and 'measures' are
 		 * adjusted according to what operations the user applied to the columns
-		 * 
+		 *
 		 * *************************************************/
-		
+
 		// 'role' should be 'axis' or 'measures'
 		updateColumnsForRole : function(role, columns){
 			var operations = this.model.get('columnRoles')[(role === 'axis') ? 'AXIS' : 'MEASURE'];
-			
+
 			// find which columns define an operation compatible with the role and copy them
 			// with a default label
 			var newCols = _.chain(columns)
 							.filter(function(col){ return _.contains(operations , col.operation); })
 							.map(function(col){ return _.extend({label : ""}, col); })
 							.value();
-			
+
 			// get the old columns for that role
 			var oldCols = this.model.get(role);
-			
-			// the updated columns for that role are the new columns, updated with label if any where defined prior to this 
+
+			// the updated columns for that role are the new columns, updated with label if any where defined prior to this
 			var updatedCols = _.chain(newCols)
 								.each(function(col){
 									var label = _.chain(oldCols).find(function(co){return co.column.id === col.column.id}).result('label').value() || "";
 									col.label = label;
 								})
 								.value();
-			
+
 			return updatedCols;
 		}
-		
-		
+
+
 	});
 
 	return axisStepView;

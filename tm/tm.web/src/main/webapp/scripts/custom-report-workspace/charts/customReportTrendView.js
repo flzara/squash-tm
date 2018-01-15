@@ -102,8 +102,7 @@ define(["jquery", "./abstractCustomReportChart",
             },
             min:0,
             label : this.getYAxisLabel(),
-            labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-
+            labelRenderer: $.jqplot.CanvasAxisLabelRenderer
           }
 				}
 			});

@@ -28,7 +28,7 @@ define(['jquery', 'tree', '../permissions-rules', 'jquery.squash.formdialog'], f
 
 		var dialog = $("#export-chart-dialog").formDialog({
 						minHeight: minHeight,
-						minWidth : minWidth,
+						minWidth : minWidth
 		});
 
 		// Added to cancel the open if no rights

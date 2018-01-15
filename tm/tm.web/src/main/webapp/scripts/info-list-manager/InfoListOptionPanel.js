@@ -52,7 +52,7 @@ define([ "underscore", "app/BindView", "handlebars", "backbone.validation", "squ
 
 		events : {
 			"click #add-option" : "onClickAdd",
-			"click #choose-sel-opt-icon": "onClickChooseIcon",
+			"click #choose-sel-opt-icon": "onClickChooseIcon"
 		},
 
 		initialize : function() {

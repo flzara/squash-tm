@@ -54,17 +54,17 @@ define([ "jquery", "backbone", "handlebars", "app/ws/squashtm.notification", "un
 		},
 		open : function() {
 			var self = this;
-			
+
 			/* If the user is Admin, we don't ask for credentials */
 			this.$el.formDialog('setState', 'pleasewait');
 			if(this.isAdmin) {
 				$.ajax({
 					url : self.projecUrl + "/available-ta-projects",
-					type : "get",
+					type : "get"
 				}).done(self.buildAndDisplayProjectList)
 				 .fail(self.manageFatalError);
 			/* Else, we use the credentials. */
-			} else {			
+			} else {
 				var authDialog = $('#add-ta-projects-login-dialog');
 				var login = authDialog.data('login');
 				var password = authDialog.data('password');
@@ -201,7 +201,7 @@ define([ "jquery", "backbone", "handlebars", "app/ws/squashtm.notification", "un
 			// event listening
 			this.listenTo(self.parentPanel.popups.confirmChangePopup, "confirmChangeServerPopup.confirm.success",
 					self.onChangeServerConfirmed);
-			
+
 			/* -- These listeners are disabled since we don't use the updateProject flag anymore --
 			// refresh popup on delete project
 				this.listenTo(self.parentPanel.popups.unbindPopup, "unbindTAProjectPopup.confirm.success", function() {

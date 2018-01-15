@@ -33,11 +33,11 @@ define([ "jquery", "underscore", "backbone", "handlebars", "app/lnf/Forms", "./N
 			this.configureCKEs();
 
 			// tried the more convenient `this.listenTo` but it generates errors in jq event processing
-			
-			// Issue 4954 bis : this hack will ensure the buttons still work despite the odd 
-			// dialog lifecycle 
+
+			// Issue 4954 bis : this hack will ensure the buttons still work despite the odd
+			// dialog lifecycle
 			this.$el.off("formdialogconfirm formdialogcancel formdialogclose formdialogconfirm-carry-on");
-			
+
 			this.$el.on("formdialogconfirm", this.onConfirm);
 			this.$el.on("formdialogcancel", this.onCancel);
 			this.$el.on("formdialogclose", this.onCancel);
@@ -49,7 +49,7 @@ define([ "jquery", "underscore", "backbone", "handlebars", "app/lnf/Forms", "./N
 				autoOpen : true
 			});
 
-		}, 
+		},
 
 		render: function() {
 			Forms.form(this.$el).clearState();
@@ -73,7 +73,7 @@ define([ "jquery", "underscore", "backbone", "handlebars", "app/lnf/Forms", "./N
 			if(this.$el.data().formDialog !== undefined) {
 				this.$el.formDialog("focusMainInput");
 			}
-			
+
 			return this;
 		},
 
@@ -88,7 +88,7 @@ define([ "jquery", "underscore", "backbone", "handlebars", "app/lnf/Forms", "./N
 			"click input:checkbox" : "changeBoolProp",
 			"confirmdialogcancel" : "cancel",
 			"confirmdialogvalidate" : "validate",
-			"confirmdialogconfirm" : "confirm",
+			"confirmdialogconfirm" : "confirm"
 		},
 
 		changeStrProp : function(event) {
@@ -97,19 +97,19 @@ define([ "jquery", "underscore", "backbone", "handlebars", "app/lnf/Forms", "./N
 		},
 
 		changeBoolProp : function(event) {
-			var cbox = event.target; 
+			var cbox = event.target;
 			this.model.set(cbox.name, cbox.checked);
 		},
 
 		onCancel : function(event) {
-			
+
 			this.trigger("newtestautomationserver.cancel");
 			this.cleanup();
 		},
 
 		onConfirm : function(event) {
-		
-			if (this.validate(event)) { 
+
+			if (this.validate(event)) {
 				this.trigger("newtestautomationserver.confirm");
 			}
 			this.cleanup();
@@ -156,7 +156,7 @@ define([ "jquery", "underscore", "backbone", "handlebars", "app/lnf/Forms", "./N
 			var self = this;
 			var textareas = this.$el.find("textarea"),
 				ckconf = confman.getStdCkeditor();
-			
+
 			textareas.each(function() {
 				$(this).ckeditor(function() {
 				}, ckconf);

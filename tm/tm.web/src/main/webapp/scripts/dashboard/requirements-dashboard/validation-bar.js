@@ -27,12 +27,12 @@
 define(["dashboard/basic-objects/bar-view", "squash.translator"], function(BarView, translator) {
 
 	return BarView.extend({
-		
+
 		getSeries : function() {
 
 			var seriesArray = this._getCompleteSeriesArray();
 			var series = this._selectNotEmptySeries(seriesArray);
-			
+
 			if(series.length > 0) {
 				series = this._computeRatioSeriesAndLabels(series);
 			}
@@ -47,7 +47,7 @@ define(["dashboard/basic-objects/bar-view", "squash.translator"], function(BarVi
 			return this.model.get('validationStatistics');
 		},
 		_getCompleteSeriesArray: function() {
-			
+
 			var stats = this._getCompleteStats();
 			return [[stats.conclusiveUndefined, stats.inconclusiveUndefined, stats.undefinedUndefined],
 			        [stats.conclusiveMinor, stats.inconclusiveMinor, stats.undefinedMinor],
@@ -72,22 +72,22 @@ define(["dashboard/basic-objects/bar-view", "squash.translator"], function(BarVi
 				var inconclusiveCount = series[i][1];
 				var undefinedCount = series[i][2];
 				var totalCount = conclusiveCount + inconclusiveCount + undefinedCount;
-				
+
 				var conclusiveRatio = conclusiveCount / totalCount * 100;
 				var inconclusiveRatio = inconclusiveCount / totalCount * 100;
 				var undefinedRatio = undefinedCount / totalCount * 100;
-				
-				ratioSeries[0].push([i+1, 
-				                     conclusiveRatio, 
-				                     conclusiveCount !==0 ? "<div style='font-size:14px;text-align:center;'>" + conclusiveRatio.toFixed() + " %<br/>(" + conclusiveCount + "/" + totalCount + ")</div>" 
+
+				ratioSeries[0].push([i+1,
+				                     conclusiveRatio,
+				                     conclusiveCount !==0 ? "<div style='font-size:14px;text-align:center;'>" + conclusiveRatio.toFixed() + " %<br/>(" + conclusiveCount + "/" + totalCount + ")</div>"
 				                    		 : ""]);
-				ratioSeries[1].push([i+1, 
-				                     inconclusiveRatio, 
-				                     inconclusiveCount !==0 ? "<div style='font-size:14px;text-align:center;'>" + inconclusiveRatio.toFixed() + " %<br/>(" + inconclusiveCount + "/" + totalCount + ")</div>" 
+				ratioSeries[1].push([i+1,
+				                     inconclusiveRatio,
+				                     inconclusiveCount !==0 ? "<div style='font-size:14px;text-align:center;'>" + inconclusiveRatio.toFixed() + " %<br/>(" + inconclusiveCount + "/" + totalCount + ")</div>"
 				                    		 : ""]);
-				ratioSeries[2].push([i+1, 
-				                     undefinedRatio, 
-				                     undefinedCount !==0 ? "<div style='font-size:14px;text-align:center;'>" + undefinedRatio.toFixed() + " %<br/>(" + undefinedCount + "/" + totalCount + ")</div>" 
+				ratioSeries[2].push([i+1,
+				                     undefinedRatio,
+				                     undefinedCount !==0 ? "<div style='font-size:14px;text-align:center;'>" + undefinedRatio.toFixed() + " %<br/>(" + undefinedCount + "/" + totalCount + ")</div>"
 				                    		 : ""]);
 			}
 			return ratioSeries;
@@ -96,11 +96,11 @@ define(["dashboard/basic-objects/bar-view", "squash.translator"], function(BarVi
 			var possibleCategories = [translator.get("requirement.criticality.UNDEFINED"),
 			                          translator.get("requirement.criticality.MINOR"),
 			                          translator.get("requirement.criticality.MAJOR"),
-			                          translator.get("requirement.criticality.CRITICAL")];  
+			                          translator.get("requirement.criticality.CRITICAL")];
 			var categories = [];
-			
+
 			var seriesArray = this._getCompleteSeriesArray();
-			
+
 			for(var i=0, length=seriesArray.length; i < length; i++) {
 				var conclusiveCount = seriesArray[i][0];
 				var inconclusiveCount = seriesArray[i][1];
@@ -111,7 +111,7 @@ define(["dashboard/basic-objects/bar-view", "squash.translator"], function(BarVi
 				}
 			}
 			return categories;
-		},
+		}
 	});
-	
+
 });

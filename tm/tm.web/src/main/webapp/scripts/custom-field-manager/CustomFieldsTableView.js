@@ -150,7 +150,7 @@ define(
 
 				$.ajax({
 					type : 'DELETE',
-					url : urlDelete ,
+					url : urlDelete
 				}).done(function() {
 					tableCf.refresh();
 				});

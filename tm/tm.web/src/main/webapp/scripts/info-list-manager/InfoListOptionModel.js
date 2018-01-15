@@ -69,7 +69,7 @@ define([ "backbone", "squash.translator", "../app/squash.backbone.validation", "
 				notBlank : true,
 				maxLength : 30,
 				fn : isCodeUnique
-			},
+			}
 		}
 	});
 });

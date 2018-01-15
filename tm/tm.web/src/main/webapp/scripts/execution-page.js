@@ -340,7 +340,7 @@ define(['module', 'jquery', 'app/pubsub', 'squash.basicwidgets', 'app/ws/squasht
 			deldialog.on('formdialogconfirm', function () {
 				$.ajax({
 					url: executionURL,
-					type: 'DELETE',
+					type: 'DELETE'
 				}).success(function () {
 					deldialog.formDialog('close');
 					history.back();

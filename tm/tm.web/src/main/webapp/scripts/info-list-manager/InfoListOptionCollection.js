@@ -67,6 +67,6 @@ define([ "backbone", "underscore", "jquery" ], function(Backbone, _, $) {
 			return this.every(function(option) {
 				return option.get("label") !== label;
 			});
-		},
+		}
 	});
 });

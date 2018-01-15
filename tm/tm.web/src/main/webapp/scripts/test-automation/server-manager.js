@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-require([ "common", ], function() {
+require([ "common" ], function() {
 
 	require([ "jquery", "app/pubsub", "jeditable.simpleJEditable", "squash.configmanager", "app/ws/squashtm.workspace",
 			"jquery.squash.togglepanel", "jquery.squash.formdialog", "jquery.squash.jedpassword",
@@ -118,7 +118,7 @@ require([ "common", ], function() {
 			});
 
 
-			
+
 		}
 
 		function initEnd() {

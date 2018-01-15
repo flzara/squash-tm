@@ -39,8 +39,8 @@ define(["underscore","backbone","squash.translator","handlebars"],
 			var source = $("#tpl-show-library").html();
 			var template = Handlebars.compile(source);
 			this.$el.append(template(this.model.toJSON()));
-			
-		},
+
+		}
 
   });
 

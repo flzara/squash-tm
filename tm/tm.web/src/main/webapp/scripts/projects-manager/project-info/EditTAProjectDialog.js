@@ -39,8 +39,8 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 				errors.label = "message.notBlank";
 			}
 			return errors;
-		}, 
-		
+		},
+
 		urlRoot  : squashtm.app.contextRoot + "/test-automation-projects/"
 
 	});
@@ -49,7 +49,7 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 		el : "#ta-project-edit-popup",
 
 		initialize : function(conf) {
-			
+
 			this.isAdmin = conf.isAdmin;
 			this.projecUrl = conf.tmProjectURL;
 			this.$el.formDialog();
@@ -57,7 +57,7 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 			this.showErrorMessage = $.proxy(this._showErrorMessage, this);
 			this.manageFatalError = $.proxy(this._manageFatalError, this);
 			this.updateComboDatasAndOpen = $.proxy(this._updateComboDatasAndOpen, this);
-			
+
 		},
 
 		events : {
@@ -105,7 +105,7 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 					self.trigger("edittestautomationproject.confirm.error");
 				},
 				success : function() {
-					self.trigger("edittestautomationproject.confirm.success");					
+					self.trigger("edittestautomationproject.confirm.success");
 					self.$el.formDialog("close");
 
 				}
@@ -120,22 +120,22 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 			var password = authDialog.data('password');
 			var taProjectId = self.$el.data('projectId');
 			var taProject = self.$el.data('taProject');
-			
+
 			this.$el.formDialog("setState", "pleasewait");
 			this.$el.formDialog("open");
-			
+
 			this.taProjectId = taProjectId;
 			this.model = new TAProjectModel(taProject);
-			
+
 			// populate inputs
 			this.$el.find("input[name=label]").val(taProject.label);
 			this.$el.find("input[name=slaves]").val(taProject.slaves);
-			
+
 			/* If the user is Admin, we don't ask for credentials */
 			if(this.isAdmin) {
 				$.ajax({
 					url : this.projecUrl + "/available-ta-projects",
-					type : "GET",
+					type : "GET"
 				}).done(self.updateComboDatasAndOpen)
 				  .fail(self.manageFatalError);
 			/* Else, we use the credentials. */

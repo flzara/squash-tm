@@ -18,7 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./abstractStepView", "squash.configmanager", "squash.translator", "jeditable.datepicker", "jquery.squash.togglepanel",],
+define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./abstractStepView", "squash.configmanager",
+				"squash.translator", "jeditable.datepicker", "jquery.squash.togglepanel"],
 	function($, backbone, _, Handlebars, AbstractStepView, confman, translator) {
 	"use strict";
 

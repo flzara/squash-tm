@@ -59,7 +59,7 @@ define([ "jquery", "backbone", "app/util/StringUtil" ], function($, Backbone, St
 			}
 
 			return errors;
-		},
+		}
 
 	});
 	return NewTestAutomationServerModel;

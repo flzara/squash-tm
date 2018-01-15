@@ -30,8 +30,8 @@
 		function backToExec() {
 
 			$.ajax({
-			method: 'POST',
-			url : routing.buildURL('execution.update-from-tc', config.execId),
+				method: 'POST',
+				url : routing.buildURL('execution.update-from-tc', config.execId)
 			}).success(function(id){
 				var runnerUrl = routing.buildURL('executions.runner', id);
 				execHelper.start(runnerUrl, isIEO);

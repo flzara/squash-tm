@@ -129,7 +129,7 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 			rename: function () {
 				var wreqr = squashtm.app.wreqr;
 				wreqr.trigger("renameNode");
-			},
+			}
 
 		});
 

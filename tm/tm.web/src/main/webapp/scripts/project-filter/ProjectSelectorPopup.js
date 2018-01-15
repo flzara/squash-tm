@@ -22,11 +22,11 @@
  * projectSelecteor JQuery ui widget with a client side templating. The render method has to provide an HTML markup compatible with the thymeleaf template (project-picker.frag.html)
  * as the AbstractProjectFilterPopup use it in it's original form.'
  */
- define(["./AbstractProjectFilterPopup", "handlebars",],
+ define(["./AbstractProjectFilterPopup", "handlebars"],
 		function(AbstractProjectFilterPopup, Handlebars) {
 
 	var ProjectSelectorPopup = AbstractProjectFilterPopup.extend({
-	
+
 		initialize :function(options){
 			var self = this;
 			this.options = options;
@@ -44,17 +44,17 @@
 			}
 			return this;
 		},
-		
+
 		confirm : function(){
 			this.$el.find("table tbody tr").each(function() {
 				var $checkbox = $(this).find(".project-checkbox");
 				var checked = $checkbox.is(":checked");
 				$checkbox.data("previous-checked", checked);
-				
+
 			});
 			this.trigger("projectPopup.confirm");
 		}
 	});
-	
+
 	return ProjectSelectorPopup;
 });

@@ -42,7 +42,7 @@ define(
 					}
 				}
 			};
-			
+
 			var oLanguage = messages.get({
 				'sLengthMenu' : 'generics.datatable.lengthMenu',
 				'sZeroRecords' : 'generics.datatable.zeroRecords',
@@ -170,7 +170,7 @@ define(
 					initOptionsTable(this);
 
 					this.dialog = this.$el.confirmDialog({
-						autoOpen : true,
+						autoOpen : true
 //						close : function() {
 //							self.cancel.call(self);
 //						}
@@ -195,7 +195,7 @@ define(
 					CKEDITOR.instances["description"].on('change', function(){
 						$("#description").trigger('change');
 					});*/
-					
+
 					$wrapper.html(this.$el);
 
 					return this.renderItemPanel();

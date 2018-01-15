@@ -234,7 +234,7 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 
 				$.ajax({
 					type : "DELETE",
-					url : opts.url + "/" + suiteId,
+					url : opts.url + "/" + suiteId
 				});
 
 				this.close();

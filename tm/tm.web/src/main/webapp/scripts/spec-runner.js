@@ -25,7 +25,7 @@ require([ "common", "require" ], function(common) {
 	"specs/squashtable/ColDefsBuilderSpec",
 	"specs/app/BindViewSpec",
 	"specs/info-list-manager/InfoListModelSpec",
-	"specs/info-list-manager/InfoListOptionModelSpec",
+	"specs/info-list-manager/InfoListOptionModelSpec"
 	];
 
 	// expands require config for jasmine usage
