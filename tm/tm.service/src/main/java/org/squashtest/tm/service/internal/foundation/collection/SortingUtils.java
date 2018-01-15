@@ -62,6 +62,8 @@ public final class SortingUtils {
 			case DESCENDING:
 				criteria.addOrder(Order.desc(sorting.getSortedAttribute()).nulls(NullPrecedence.LAST));
 				break;
+			default:
+				break;
 			}
 		}
 	}
