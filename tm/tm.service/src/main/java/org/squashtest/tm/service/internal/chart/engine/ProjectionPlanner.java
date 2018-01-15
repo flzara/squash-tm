@@ -135,6 +135,8 @@ class ProjectionPlanner {
 			Expression<?> select1 = Expressions.constant(1);
 			selection.add(select1);
 			break;
+		default:
+			break;
 		}
 
 
@@ -197,6 +199,8 @@ class ProjectionPlanner {
 					break;
 				case NONE :
 					expr = utils.createAsSelect(col);
+					break;
+				default:
 					break;
 				}
 			}

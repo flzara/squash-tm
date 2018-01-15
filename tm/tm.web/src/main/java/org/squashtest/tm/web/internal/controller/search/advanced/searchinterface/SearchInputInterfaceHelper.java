@@ -231,8 +231,9 @@ public class SearchInputInterfaceHelper {
 				model.getFields().add(multiSelectFieldConvertToSearchInputFieldModel(multiSelectField));
 				break;
 
-			case RICH_TEXT:
-				break; // not supported for now
+			case RICH_TEXT: // not supported for now
+			default:
+				break;
 			}
 
 		}

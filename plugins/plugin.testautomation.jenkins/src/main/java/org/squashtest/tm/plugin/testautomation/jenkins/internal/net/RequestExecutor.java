@@ -77,6 +77,8 @@ public class RequestExecutor {
 			case SC_UNAUTHORIZED:
 			case SC_PROXY_AUTHENTICATION_REQUIRED:
 				throw new AccessDenied();
+			default:
+				break;
 		}
 	}
 

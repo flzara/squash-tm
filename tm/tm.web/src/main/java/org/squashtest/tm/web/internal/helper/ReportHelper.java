@@ -236,6 +236,8 @@ public class ReportHelper {
 				targetIds.forEach(o -> names.add(o.toString()));
 				attributes.put(TAGS, names);
 				break;
+			default:
+				break;
 		}
 	}
 

@@ -433,6 +433,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 			case LOW: result.setPercentageLow(howmany.intValue()); break;
 			case MEDIUM: result.setPercentageMedium(howmany.intValue()); break;
 			case VERY_HIGH: result.setPercentageVeryHigh(howmany.intValue()); break;
+			default: break;
 			}
 		}
 
@@ -454,6 +455,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 			case LOW: result.addNbLow(status, howmany.intValue()); break;
 			case MEDIUM: result.addNbMedium(status, howmany.intValue()); break;
 			case VERY_HIGH: result.addNbVeryHigh(status, howmany.intValue()); break;
+			default: break;
 			}
 		}
 

@@ -97,6 +97,8 @@ public class MilestoneAwareChartQuery implements IChartQuery{
 			case CAMPAIGN:
 				columnPrototype = columnPrototypeDao.findByLabel("CAMPAIGN_MILESTONE_ID");
 				break;
+			default:
+				break;
 		}
 		filter.setColumn(columnPrototype);
 		filter.setOperation(Operation.EQUALS);

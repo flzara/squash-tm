@@ -205,7 +205,8 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 			case UNDER_REVIEW:
 				stats.setUnderReview(cardinality);
 				break;
-
+			default:
+				break;
 			}
 		}
 

@@ -272,6 +272,8 @@ class QueryPlanner {
 			case LEFT_JOIN :
 				query.leftJoin(join, dest);
 				break;
+			default:
+				break;
 			}
 		}
 	}

@@ -106,6 +106,7 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 			case LOW: result.setPercentageLow(howmany.intValue()); break;
 			case MEDIUM: result.setPercentageMedium(howmany.intValue()); break;
 			case VERY_HIGH: result.setPercentageVeryHigh(howmany.intValue()); break;
+			default: break;
 			}
 		}
 
@@ -134,6 +135,7 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 			case LOW: result.addNbLow(status, howmany.intValue()); break;
 			case MEDIUM: result.addNbMedium(status, howmany.intValue()); break;
 			case VERY_HIGH: result.addNbVeryHigh(status, howmany.intValue()); break;
+			default: break;
 			}
 		}
 
@@ -251,6 +253,7 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 		case LOW: newStatistics.addNbLow(howmany.intValue()); break;
 		case MEDIUM: newStatistics.addNbMedium(howmany.intValue()); break;
 		case VERY_HIGH: newStatistics.addNbVeryHigh(howmany.intValue()); break;
+		default: break;
 		}
 	}
 

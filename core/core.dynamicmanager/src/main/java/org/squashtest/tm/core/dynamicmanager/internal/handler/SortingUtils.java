@@ -27,9 +27,9 @@ import org.squashtest.tm.core.foundation.collection.Sorting;
 
 /**
  * Utility class to apply sorting to a Hibernate query.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 final class SortingUtils {
 	private SortingUtils() {
@@ -38,7 +38,7 @@ final class SortingUtils {
 
 	/**
 	 * Adds sorting to a Criteria query.
-	 * 
+	 *
 	 * @param criteria
 	 * @param sorting
 	 */
@@ -50,12 +50,14 @@ final class SortingUtils {
 		case DESCENDING:
 			criteria.addOrder(Order.desc(sorting.getSortedAttribute()));
 			break;
+		default:
+			break;
 		}
 	}
 
 	/**
 	 * Adds "order by" clause to a hql buffer.
-	 * 
+	 *
 	 * @param hql
 	 * @param sorting
 	 */
@@ -63,7 +65,7 @@ final class SortingUtils {
 		if (StringUtils.isBlank(sorting.getSortedAttribute())) {
 			return;
 		}
-		
+
 		hql.append(" order by ").append(sorting.getSortedAttribute());
 
 		switch (sorting.getSortOrder()) {
@@ -72,6 +74,8 @@ final class SortingUtils {
 			break;
 		case DESCENDING:
 			hql.append(" desc");
+			break;
+		default:
 			break;
 		}
 	}
