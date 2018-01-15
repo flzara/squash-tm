@@ -23,8 +23,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
-	
-	
+
+
 <%@ taglib prefix="dashboard" tagdir="/WEB-INF/tags/dashboard" %>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
@@ -38,11 +38,14 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 			
-		
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="_csrf" content="${_csrf.token}"/>
+    <!-- default header name is X-CSRF-TOKEN -->
+    <meta name="_csrf_header" content="${_csrf.headerName}"/>
+    <!-- ... -->
 		<link type="image/x-icon" rel="shortcut icon" href="${ pageContext.servletContext.contextPath }/images/favicon.ico"/>
 		<comp:sq-css name="squash.core.css" />
-    
+
 <c:if test="${not empty printmode and printmode}">
         <comp:sq-css name="squash.print.css" />
 </c:if>
@@ -59,13 +62,13 @@
 		<script type="text/javascript" src="${pageContext.servletContext.contextPath}/scripts/require-min.js"></script>
 
 	</head>
-	
+
 	<body >
 
 		<div class="fragment-body">
 		  <jsp:include page="/WEB-INF/jsp/fragment/campaigns/campaign-milestone-dashboard.jsp" />
 		</div>
 
-	
+
 	</body>
 </html>

@@ -23,6 +23,12 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
 		function(module, $, backbone, _, basic, SimpleJEditable, routing, translator, Forms, StringUtils) {
 	"use strict";
 
+	$.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+				var token = $("meta[name='_csrf']").attr("content");
+				var header = $("meta[name='_csrf_header']").attr("content");
+				jqXHR.setRequestHeader(header, token);
+	});
+
 	var config = module.config();
 
 	//translator.load([]);

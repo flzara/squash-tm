@@ -123,6 +123,7 @@
  *
  */
 define([ 'jquery', "underscore", 'squash.attributeparser', 'squash.configmanager', 'jqueryui', './jquery.squash.squashbutton', 'squashtest/jquery.squash.popuperror' ], function($, _, attrparser, confman) {
+//init the csrf token inclusion for post request
 
 	if (($.squash !== undefined) && ($.squash.formDialog !== undefined)) {
 		// plugin already loaded
@@ -268,7 +269,7 @@ define([ 'jquery', "underscore", 'squash.attributeparser', 'squash.configmanager
 
 			// creates the widget
 			self._super();
-			
+
 			// now read and apply dom conf from the content
 			this._readDomConf();
 
@@ -319,10 +320,10 @@ define([ 'jquery', "underscore", 'squash.attributeparser', 'squash.configmanager
 			});
 
 			this.focusMainInput();
-			
+
 			this._trigger('cleanup');
 		},
-		
+
 		focusMainInput : function() {
 			var maininput = this.options._maininput;
 			if(maininput !== undefined) {
@@ -339,7 +340,7 @@ define([ 'jquery', "underscore", 'squash.attributeparser', 'squash.configmanager
 				}
 			}
 		},
-		
+
 		_createButtons : function() {
 
 			// ripped from jquery-ui 1.8.13. It might change some day, be careful.
@@ -411,12 +412,12 @@ define([ 'jquery', "underscore", 'squash.attributeparser', 'squash.configmanager
 		}
 
 	});
-	
+
 	$.squash.formDialog.domconf = {
 		'nocleanup': function($elt, value){
 			this.options.nocleanup = true;
 		},
-		
+
 		'isrich' : function($elt, value) {
 			var randomKey = Math.random().toString().substring(3,6);
 			this.options._richeditors[randomKey]=$elt;
@@ -436,7 +437,7 @@ define([ 'jquery', "underscore", 'squash.attributeparser', 'squash.configmanager
 				}
 			}
 		},
-		
+
 		'maininput' : function($elt, value) {
 			if(value === true) {
 				this.options._maininput = $elt;

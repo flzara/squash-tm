@@ -21,6 +21,12 @@
 define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "app/ws/squashtm.notification", 'squash.translator',
          "jquery.squash", "jqueryui",	"jquery.squash.togglepanel", "squashtable", "jquery.squash.oneshotdialog",
 		"jquery.squash.messagedialog", "jquery.squash.confirmdialog" ], function($, Backbone, _, StringUtil, notification, translator) {
+
+	$.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+		var token = $("meta[name='_csrf']").attr("content");
+		var header = $("meta[name='_csrf_header']").attr("content");
+		jqXHR.setRequestHeader(header, token);
+	});
 	var teamMod = squashtm.app.teamMod;
 	var TeamPermissionPanel = Backbone.View.extend({
 		el : "#permissions",
@@ -70,17 +76,17 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "app/ws/squa
 				}
 			});
 		},
-		
+
 		configurePopups : function() {
 			this.configureAddPermissionDialog();
 			this.configureRemovePermissionDialog();
 		},
-		
+
 		configureButtons : function() {
 			this.$("#add-permission-button").on('click', $.proxy(this.openAddPermission, this));
 			this.$("#remove-permission-button").on('click', $.proxy(this.confirmRemovePermission, this));
 		},
-		
+
 		confirmRemovePermission : function(event) {
 			var hasPermission = ($("#permission-table").squashTable().getSelectedIds().length > 0);
 			if (hasPermission) {
@@ -89,11 +95,11 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "app/ws/squa
 				notification.showError(translator.get('message.NoPermissionSelected'));
 			}
 		},
-		
+
 		configureNoPermissionSelectedDialog : function() {
 			this.noPermissionSelectedDialog = this.$("#no-selected-permissions").messageDialog();
 		},
-		
+
 		openAddPermission : function() {
 			this.addPermissionDialog.confirmDialog('open');
 		},

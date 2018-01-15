@@ -45,7 +45,11 @@
  */
 define([ "jquery", "underscore",  "app/ws/squashtm.notification", "squash.translator" ,"jquery.squash.formdialog", "jform" ], function($, _, WTF, translator) {
 			"use strict";
-
+	$.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+		var token = $("meta[name='_csrf']").attr("content");
+		var header = $("meta[name='_csrf_header']").attr("content");
+		jqXHR.setRequestHeader(header, token);
+	});
 			if (($.squash !== undefined) && ($.squash.importDialog !== undefined)) {
 				// plugin already loaded
 				return;

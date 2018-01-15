@@ -21,11 +21,14 @@
 
 -->
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
 <title th:text="#{label.indexAdministration}">Administration des index</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <!-- default header name is X-CSRF-TOKEN -->
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <!-- ... -->
 <style th:include="admin/admin-subpage.frag:: subpage-css" th:remove="tag"></style>
 
 <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
@@ -148,7 +151,7 @@
 				<div class="index-warning">
                   <span id="campaign-monitor-percentage" class="not-displayed">0 / 0 (0%)</span>
                   <span id="campaign-monitor-message" class="not-displayed" th:text="#{search.index.monitor.message}"></span>
-                </div>				
+                </div>
 			  </div>
 
               <div align="center">

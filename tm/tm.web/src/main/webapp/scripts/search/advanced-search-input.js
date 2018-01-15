@@ -26,6 +26,13 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
 		"jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, translator, notification, _, projects) {
 
+	// Prefiling all the request
+	$.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+		var token = $("meta[name='_csrf']").attr("content");
+		var header = $("meta[name='_csrf_header']").attr("content");
+		jqXHR.setRequestHeader(header, token);
+	});
+
 	function fieldValue(fieldType, value) {
 		if (!value) {
 			var text = $(this.element.children()[0]).val();
@@ -68,9 +75,6 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 			return fieldValue.call(this,"SINGLE", value);
 		}
 	});
-
-
-
 
 
 	var TestCaseSearchInputPanel = Backbone.View.extend({

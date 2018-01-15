@@ -21,10 +21,13 @@
 
 -->
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
 <title th:text="#{squashtm}">Squash</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <!-- default header name is X-CSRF-TOKEN -->
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 <!-- common head -->
 <link rel="stylesheet" type="text/css" media="all"
   href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" sq:css="squash.core.css" />
@@ -187,7 +190,7 @@
                 <script id="start-ws-wizard-form-template" type="text/x-handlebars-template">
 								<form id="start-ws-wizard-form" action="{{url}}" method="post">
 								{{#each nodes}}
-								<input type="hidden" name="{{this.type}}" value="{{this.id}}" />
+                  <input type="hidden" id= "csrf-token" th:name="${_csrf.parameterName}" th:content="${_csrf.token}" />
 								{{/each}}
 							</form>
     						</script>
@@ -425,7 +428,6 @@
         <div>
           <form th:action="@{/test-cases/importer}" action="http://localhost:8008/squash/test-cases/importer"
             method="POST" enctype="multipart/form-data" class="display-table">
-
             <div class="std-padding std-margin-top">
 
               <div class="grey-round-panel snap-left" style="width: 43%;">

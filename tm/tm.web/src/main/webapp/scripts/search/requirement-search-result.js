@@ -28,6 +28,8 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 		function($, Backbone, _, StringUtil, routing, eventBus, RequirementSearchResultTable,
 				translator, notification, projects, milestoneMassModif,reqExport) {
 
+
+
 	var RequirementSearchResultPanel = Backbone.View.extend({
 
 		expanded : false,
@@ -159,14 +161,18 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 		},
 
 		modifySearch : function(){
+			var token = $("meta[name='_csrf']").attr("content");
 			if(this.isAssociation){
 				this.post(squashtm.app.contextRoot + "advanced-search?searchDomain=requirement&id="+this.associationId+"&associateResultWithType="+this.associationType, {
-					searchModel : JSON.stringify(this.model)
+				searchModel : JSON.stringify(this.model),
+					_csrf : token
 				});
 			} else {
 				this.post(squashtm.app.contextRoot + "advanced-search?searchDomain=requirement", {
-					searchModel : JSON.stringify(this.model)
-				});
+					searchModel : JSON.stringify(this.model),
+						_csrf : token
+				}
+				);
 			}
 		},
 
@@ -176,6 +182,8 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 			temp.method="POST";
 			temp.style.display="none";
 			temp.acceptCharset="UTF-8";
+
+
 			for(var x in PARAMS) {
 				var opt=document.createElement("textarea");
 				opt.name=x;

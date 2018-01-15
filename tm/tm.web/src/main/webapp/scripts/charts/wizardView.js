@@ -23,7 +23,7 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./peri
 
 	"use strict";
 
-	
+
 
 	var validation =
 		[{
@@ -189,7 +189,7 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./peri
 			this.resetView();
 			this.currentView = new View(this.model, wizrouter);
 			this.showSideView();
-			
+
 
 		},
 

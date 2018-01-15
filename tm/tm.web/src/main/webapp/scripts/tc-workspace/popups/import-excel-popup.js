@@ -22,6 +22,8 @@ define([ "jquery", "tree", "handlebars", "underscore", "workspace/workspace.impo
 	"use strict";
 
 	var recapBuilder = {};
+	var token = $("meta[name='_csrf']").attr("content");
+
 	/**
 	 * builds recap for zip import
 	 *
@@ -121,6 +123,7 @@ define([ "jquery", "tree", "handlebars", "underscore", "workspace/workspace.impo
 			this.doSubmit({
 				urlPostfix : "/" + this.importType,
 				queryParams : {
+					_csrf : token,
 					"dry-run" : true
 				}
 			});
@@ -129,7 +132,10 @@ define([ "jquery", "tree", "handlebars", "underscore", "workspace/workspace.impo
 		submit : function() {
 			this.setState("progression");
 			this.doSubmit({
-				urlPostfix : "/" + this.importType
+				urlPostfix : "/" + this.importType,
+				queryParams : {
+					_csrf : token,
+				}
 			});
 		}
 
