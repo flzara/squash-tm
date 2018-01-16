@@ -612,6 +612,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 			denormalizedFieldValueService.deleteAllDenormalizedFieldValues(step);
 			customValueService.deleteAllCustomFieldValues(step);
+			attachmentManagerService.cleanContent(step);
 			deletionDao.removeEntity(step);
 		}
 
@@ -680,11 +681,4 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		}
 
 	}
-
-	private void cleanAttachmentContent(AttachmentHolder attachmentHolder) {
-		if (attachmentHolder != null) {
-			attachmentManagerService.cleanContent(Collections.singletonList(attachmentHolder.getAttachmentList().getId()));
-		}
-	}
-
 }

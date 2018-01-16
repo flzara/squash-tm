@@ -38,6 +38,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentContent;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
@@ -65,6 +66,7 @@ import org.squashtest.tm.service.internal.repository.AttachmentListDao;
  *
  */
 @Service("squashtest.tm.service.AttachmentManagerService")
+@Transactional
 public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	/**
 	 *
@@ -245,7 +247,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 
 	@Override
 	public void cleanContent(AttachmentHolder attachmentHolder) {
-		if (attachmentHolder != null) {
+		if (attachmentHolder != null && attachmentHolder.getAttachmentList()!= null) {
 			cleanContent(Collections.singletonList(attachmentHolder.getAttachmentList().getId()));
 		}
 	}

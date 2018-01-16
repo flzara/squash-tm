@@ -136,8 +136,8 @@ public abstract class HibernateDeletionDao implements DeletionDao {
 		flush();
 		//End [Issue 1456]
 
-		removeEntity(list);
 		attachmentManagerService.cleanContent(Collections.singletonList(list.getId()));
+		removeEntity(list);
 	}
 
 	@Override

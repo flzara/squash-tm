@@ -21,6 +21,7 @@
 package org.squashtest.it.config
 
 import org.spockframework.mock.MockNature
+import org.squashtest.tm.service.attachment.AttachmentManagerService
 import spock.mock.DetachedMockFactory
 
 import javax.validation.ValidatorFactory
@@ -61,4 +62,11 @@ class RepositorySpecConfig {
 	static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
 		return new PropertySourcesPlaceholderConfigurer();
 	}
+
+	@Bean
+	@Primary
+	AttachmentManagerService attachmentManegerService() {
+		new DetachedMockFactory().createMock("attachmentManagerService", AttachmentManagerService, MockNature.MOCK, [:])
+	}
+
 }
