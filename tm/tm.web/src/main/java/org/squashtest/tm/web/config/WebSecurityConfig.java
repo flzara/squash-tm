@@ -122,6 +122,7 @@ public class WebSecurityConfig {
 		protected void configure(HttpSecurity http) throws Exception {
 			// @formatter:off
 			http
+				.csrf().disable()
 				.antMatcher("/api/**")
 					.authorizeRequests()
 						.anyRequest()
