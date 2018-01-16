@@ -25,6 +25,7 @@ import net.htmlparser.jericho.Segment;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.safety.Whitelist;
 import org.springframework.web.util.HtmlUtils;
 
@@ -55,9 +56,12 @@ public final class HTMLCleanupUtils {
 		return HtmlUtils.htmlEscape(unescaped);
 	}
 
-	public static String stripJavascript(String html){
-		if(StringUtils.isNotBlank(html)){
-			String cleaned = Jsoup.clean(html, Whitelist.relaxed());
+	public static String stripJavascript(String json){
+		if(StringUtils.isNotBlank(json)){
+			Document.OutputSettings outputSettings = new Document.OutputSettings();
+			outputSettings.prettyPrint(false);
+			outputSettings.outline(false);
+			String cleaned = Jsoup.clean(json,"", Whitelist.relaxed(), outputSettings);
 			// We need to unescape here as JSoup escape json characters and make subsequent use of JSON crash
 			// For html content we should escape before persistence
 			// There is a little performance hit but it's safer to use JSoup than a custom solution.

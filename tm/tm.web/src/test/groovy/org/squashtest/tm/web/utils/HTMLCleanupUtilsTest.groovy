@@ -100,14 +100,7 @@ public class HTMLCleanupUtilsTest extends Specification {
 		given :
 			def dirtyString = "<p><div><ul><li>line1</li><li>line2</li>toto</div><script "+
 							  "type=\"text/javascript\">alert('naive xss');</script></p>";
-			def stripped = "<p></p>\n" +
-				"<div>\n" +
-				" <ul>\n" +
-				"  <li>line1</li>\n" +
-				"  <li>line2</li>toto\n" +
-				" </ul>\n" +
-				"</div>\n" +
-				"<p></p>"
+			def stripped = "<p></p><div><ul><li>line1</li><li>line2</li>toto</ul></div><p></p>"
 
 
 		when :

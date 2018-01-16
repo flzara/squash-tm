@@ -43,6 +43,10 @@ class SafeServletInputStreamWrapperTest extends Specification{
 		where :
 		input 																									|| output
 		"""{"string":"toto"}"""																					||"""{"string":"toto"}"""
+		"""{"string":"to    to"}"""																				||"""{"string":"to    to"}"""
+		"""{"string":"a   bb  to"}"""																			||"""{"string":"a   bb  to"}"""
+		"""{"string":"é   &&  àà"}"""																			||"""{"string":"é   &&  àà"}"""
+		"""{"string":"é&àç^_è-|{#?,:!abcedef§"}"""																||"""{"string":"é&àç^_è-|{#?,:!abcedef§"}"""
 		"""{"string":"toto<script>alert(1)</script>"}"""														||"""{"string":"toto"}"""
 		"""{"key1":"toto<script>alert(1)</script>","key2":"tutu<script>alert(1)</script>"}"""					||"""{"key1":"toto","key2":"tutu"}"""
 	}
