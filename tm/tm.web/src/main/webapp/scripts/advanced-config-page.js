@@ -27,7 +27,7 @@ require(["common"], function() {
 					var header = $("meta[name='_csrf_header']").attr("content");
 					jqXHR.setRequestHeader(header, token);
 				});
-		msg.load(["label.insensitive", "label.sensitive"]);
+				msg.load(["label.insensitive", "label.sensitive", "label.Activate", "label.Deactivate", "label.filesystem", "label.database"]);
 
 		$(function() {
 			$("#case-insensitive-login").switchButton({
