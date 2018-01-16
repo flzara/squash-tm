@@ -22,7 +22,6 @@ define([ "backbone", "jquery", "handlebars", "underscore", "jquery.squash.onesho
 	function(Backbone, $, Handlebars, _, confirm, msg) {
 		"use strict";
 		$.ajaxPrefilter(function (options, originalOptions, jqXHR) {
-			console.log("Including csrf token")
 			var token = $("meta[name='_csrf']").attr("content");
 			var header = $("meta[name='_csrf_header']").attr("content");
 			jqXHR.setRequestHeader(header, token);
