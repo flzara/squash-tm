@@ -186,7 +186,7 @@ define(
 				this.$el.DataTable(tableConfig);
 			},
 
-			events:
+			events: {
 				"click button[name='list-delete']": "onClickListDelete",
 				"click td.select-handle": "onClickSelectHandle",
 				"draw.dt": "onDrawTable",
