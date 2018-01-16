@@ -136,7 +136,8 @@ public class HtmlSanitizationFilter implements Filter {
 				contentTypeSayCheck = mediaTypes.contains(MediaType.APPLICATION_JSON) || mediaTypes.contains(MediaType.APPLICATION_JSON_UTF8);
 			}
 
-			return requestTypeSayCheck && request.getContentLength() > 0 && contentTypeSayCheck;
+//			return requestTypeSayCheck && request.getContentLength() > 0 && contentTypeSayCheck;
+			return false;
 		}
 
 		@Override

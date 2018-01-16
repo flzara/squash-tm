@@ -51,11 +51,7 @@ public final class StringCellCoercer extends TypeBasedCellValueCoercer<String> i
 	 */
 	@Override
 	protected String coerceStringCell(Cell cell) {
-		String value = cell.getStringCellValue();
-		if (StringUtils.isNotBlank(value)) {
-			return Jsoup.clean(value, Whitelist.basicWithImages());
-		}
-		return value;
+		return cell.getStringCellValue();
 	}
 
 	/**
