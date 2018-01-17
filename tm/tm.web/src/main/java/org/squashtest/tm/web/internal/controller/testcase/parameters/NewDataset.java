@@ -26,15 +26,17 @@ import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.testcase.ParameterFinder;
 
+import java.util.Arrays;
+
 /**
  * @author mpagnon
- * 
+ *
  */
 public class NewDataset extends Dataset {
 	private Object[][] paramValues;
 
 	public NewDataset() {
-		
+
 	}
 
 	public Dataset createTransientEntity(TestCase testCase, ParameterFinder parameterFinder) {
@@ -53,8 +55,12 @@ public class NewDataset extends Dataset {
 	}
 
 	public void setParamValues(Object[][] paramValues) {
-		this.paramValues = paramValues;
+		if(paramValues == null) {
+			this.paramValues = null;
+		} else {
+			this.paramValues = Arrays.copyOf(paramValues, paramValues.length);
+		}
 	}
-	
+
 
 }

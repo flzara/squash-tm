@@ -20,25 +20,27 @@
  */
 package org.squashtest.tm.bugtracker.advanceddomain;
 
+import java.util.Arrays;
+
 public class Field {
 
 	private String id;
-	
+
 	private String label;
-	
+
 	private FieldValue[] possibleValues = new FieldValue[0];
-	
+
 	private Rendering rendering;
 
 	public Field(){
 		super();
 	}
-	
+
 	public Field(String id, String label){
 		this.id = id;
 		this.label = label;
 	}
-	
+
 	public String getId() {
 		return id;
 	}
@@ -60,7 +62,11 @@ public class Field {
 	}
 
 	public void setPossibleValues(FieldValue[] possibleValues) {
-		this.possibleValues = possibleValues;
+		if(possibleValues == null) {
+			this.possibleValues = null;
+		} else {
+			this.possibleValues = Arrays.copyOf(possibleValues, possibleValues.length);
+		}
 	}
 
 	public Rendering getRendering() {
@@ -70,5 +76,5 @@ public class Field {
 	public void setRendering(Rendering rendering) {
 		this.rendering = rendering;
 	}
-	
+
 }

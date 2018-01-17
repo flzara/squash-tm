@@ -21,6 +21,8 @@
 package org.squashtest.tm.service.importer;
 
 import javax.validation.constraints.NotNull;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 
 public class LogEntry implements Comparable<LogEntry> {
 	private Integer line;
@@ -101,11 +103,19 @@ public class LogEntry implements Comparable<LogEntry> {
 	@Deprecated
 	public LogEntry(Target target, ImportStatus status, String i18nError, Object[] errorArgs) {
 		this(target, status, i18nError);
-		this.errorArgs = errorArgs;
+		setErrorArgsPrivately(errorArgs);
 	}
 
 	public Object[] getErrorArgs() {
 		return errorArgs;
+	}
+
+	private void setErrorArgsPrivately(Object[] errorArgsParam) {
+		if(errorArgsParam == null) {
+			this.errorArgs = null;
+		} else {
+			this.errorArgs = Arrays.copyOf(errorArgsParam, errorArgsParam.length);
+		}
 	}
 
 	public void setErrorArgs(Object... errorArgs) {

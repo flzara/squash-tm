@@ -27,6 +27,8 @@ import org.squashtest.tm.bugtracker.definition.RemoteStatus;
 import org.squashtest.tm.bugtracker.definition.RemoteUser;
 import org.squashtest.tm.bugtracker.definition.RemoteVersion;
 
+import java.util.Arrays;
+
 
 /**
  * A FieldValue represents, well, a value. This class is kind of stuff-what-you-can-in-there because the following may happen :
@@ -51,8 +53,8 @@ import org.squashtest.tm.bugtracker.definition.RemoteVersion;
  * 	<li>typename : a metadata which states what type of data it is. Content is free, can be used by widget extensions deployed in Squash, or otherwise may help to convert a FieldValue to a desired specific domain entity</li>
  * 	<li>scalar : if the fieldvalue is a simpletype, let scalar be its value</li>
  * 	<li>composite : if there are multiple value for a value, let composite be this value</li>
- *      <li>custom : optional. For anything that doesn't fit in the above. 
- *          It exists merely for non-basic widgets deployed via a widget extension and which would need 
+ *      <li>custom : optional. For anything that doesn't fit in the above.
+ *          It exists merely for non-basic widgets deployed via a widget extension and which would need
  *          to convey some extra data. Most of the case you can just ignore it.
  *      </li>
  * </ul>
@@ -110,7 +112,11 @@ public class FieldValue implements RemotePriority, RemoteVersion, RemoteCategory
 	}
 
 	public void setComposite(FieldValue[] composite) {
-		this.composite = composite;
+		if(composite == null) {
+			this.composite = null;
+		} else {
+			this.composite = Arrays.copyOf(composite, composite.length);
+		}
 	}
 
 

@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.api.report.jasperreports;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,7 +65,11 @@ public final class JasperReportsView extends Labelled implements ReportView, Ini
 	 *            the formats to set
 	 */
 	public void setFormats(String[] formats) {
-		this.formats = formats;
+		if(formats == null) {
+			this.formats = null;
+		} else {
+			this.formats = Arrays.copyOf(formats, formats.length);
+		}
 	}
 
 	/**

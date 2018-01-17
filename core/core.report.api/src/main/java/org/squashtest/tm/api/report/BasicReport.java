@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.api.report;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import org.springframework.beans.factory.InitializingBean;
@@ -31,10 +32,10 @@ import org.squashtest.tm.core.foundation.i18n.Labelled;
 
 /**
  * Basic implementation od a {@link Report}. This class should be used in report plugins to describe reports.
- * 
+ *
  * @author bsiri
  * @author Gregory Fouquet
- * 
+ *
  */
 public class BasicReport extends Labelled implements Report, InitializingBean {
 	private StandardReportCategory category = StandardReportCategory.VARIOUS;
@@ -98,7 +99,11 @@ public class BasicReport extends Labelled implements Report, InitializingBean {
 	 *            the views to set
 	 */
 	public void setViews(ReportView[] views) {
-		this.views = views;
+		if(views == null ) {
+			this.views = null;
+		} else {
+			this.views = Arrays.copyOf(views, views.length);
+		}
 	}
 
 	/**
@@ -130,7 +135,11 @@ public class BasicReport extends Labelled implements Report, InitializingBean {
 	 *            the form to set
 	 */
 	public void setForm(Input[] form) {
-		this.form = form;
+		if(form == null) {
+			this.form = null;
+		} else {
+			this.form = Arrays.copyOf(form, form.length);
+		}
 	}
 
 	/**

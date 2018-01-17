@@ -21,14 +21,16 @@
 package org.squashtest.tm.bugtracker.advanceddomain;
 
 
+import java.util.Arrays;
+
 public class Rendering {
 
 	private String[] operations = new String[0];
-	
+
 	private InputType inputType;
-	
+
 	private boolean required=false;
-	
+
 
 	public Rendering(){
 		super();
@@ -36,7 +38,7 @@ public class Rendering {
 
 	public Rendering(String[] operations, InputType inputType, boolean required) {
 		super();
-		this.operations = operations;
+		setOperationsPrivately(operations);
 		this.inputType = inputType;
 		this.required = required;
 	}
@@ -45,8 +47,16 @@ public class Rendering {
 		return operations;
 	}
 
-	public void setOperations(String[] operations) {
-		this.operations = operations;
+	private void setOperationsPrivately(String[] operationsParam) {
+		if(operationsParam == null) {
+			this.operations = null;
+		} else {
+			this.operations = Arrays.copyOf(operationsParam, operationsParam.length);
+		}
+	}
+
+	public void setOperations(String[] operationsParam) {
+		setOperationsPrivately(operationsParam);
 	}
 
 
@@ -65,5 +75,5 @@ public class Rendering {
 	public void setRequired(boolean required) {
 		this.required = required;
 	}
-	
+
 }

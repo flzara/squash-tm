@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.api.report.docxtemplater;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,7 +51,11 @@ public class DocxTemplaterView extends Labelled implements ReportView, Initializ
 	 *            the formats to set
 	 */
 	public void setFormats(String[] formats) {
-		this.formats = formats;
+		if(formats == null) {
+			this.formats = null;
+		} else {
+			this.formats = Arrays.copyOf(formats, formats.length);
+		}
 	}
 
 	/**

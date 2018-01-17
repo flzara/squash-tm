@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.controller.testautomation;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
@@ -31,9 +32,9 @@ import org.squashtest.tm.service.testautomation.model.TestAutomationProjectConte
 
 /**
  * json-friendly version of {@link TestAutomationProjectContent}.
- * 
+ *
  * @author bsiri
- * 
+ *
  */
 public class TestAutomationProjectContentModel {
 
@@ -54,7 +55,11 @@ public class TestAutomationProjectContentModel {
 	}
 
 	public void setTests(AutomatedTestModel[] tests) {
-		this.tests = tests;
+		if(tests == null) {
+			this.tests = null;
+		} else {
+			this.tests = Arrays.copyOf(tests, tests.length);
+		}
 	}
 
 	public boolean isOrderGuaranteed() {
@@ -127,7 +132,11 @@ public class TestAutomationProjectContentModel {
 		}
 
 		public void setNodes(String[] nodes) {
-			this.nodes = nodes;
+			if(nodes == null) {
+				this.nodes = null;
+			} else {
+				this.nodes = Arrays.copyOf(nodes, nodes.length);
+			}
 		}
 
 		public TestAutomationServerModel getServer() {
