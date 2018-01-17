@@ -38,6 +38,7 @@ import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.exception.customfield.CodeDoesNotMatchesPatternException;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.infolist.InfoListModelService;
 import org.squashtest.tm.service.internal.dto.UserDto;
@@ -132,7 +133,8 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 				entityReference = EntityReference.fromString(elementEntityReference);
 				nodesToOpen = getNodeParentsInWorkspace(entityReference);
 				model.addAttribute("selectedNode", getTreeElementIdInWorkspace(entityReference));
-			} catch (RuntimeException e) {
+				// WARNING! it was previously catching all RunTimeExceptions, if it throws new ones, add them in the catch
+			} catch (CodeDoesNotMatchesPatternException | IllegalArgumentException e) {
 				LOGGER.warn("Error during conversion of the 'workspace-prefs' cookie to an EntityReference.");
 			}
 		}
@@ -245,7 +247,7 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	 * As squash TM 1.15, user preference are small so we pass all the object to the client.
 	 * If user pref become a too big map, please do add-hoc implementation of this method in subclass of this controller
 	 *
-	 * @return Map<String , String> All user preferences
+	 * @return Map<String   ,   String> All user preferences
 	 */
 	protected Map<String, String> getWorkspaceUserPref() {
 		return partyPreferenceService.findPreferencesForCurrentUser();

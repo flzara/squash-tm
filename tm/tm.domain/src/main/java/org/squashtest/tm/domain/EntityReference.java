@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain;
 
 import org.squashtest.tm.core.foundation.lang.Assert;
+import org.squashtest.tm.exception.customfield.CodeDoesNotMatchesPatternException;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -77,7 +78,7 @@ public class EntityReference {
 	 * group 2 is its id
 	 */
 
-	public static EntityReference fromString(String asString) {
+	public static EntityReference fromString(String asString) throws CodeDoesNotMatchesPatternException, IllegalArgumentException {
 		Pattern p = Pattern.compile("(.+)-(\\d+)");
 		Matcher m = p.matcher(asString);
 
@@ -88,7 +89,7 @@ public class EntityReference {
 			EntityType etype = EntityType.valueOf(type.toUpperCase());
 			return new EntityReference(etype, id);
 		} else {
-			throw new RuntimeException();
+			throw new CodeDoesNotMatchesPatternException();
 		}
 	}
 

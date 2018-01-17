@@ -192,8 +192,8 @@ class RequirementFacility extends EntityFacilitySupport {
 			instruction.setRequirementVersion(newVersion);
 
 			LOGGER.debug(EXCEL_ERR_PREFIX + "Created Requirement version \t'" + target + "'");
-
-		} catch (Exception ex) {
+			// WARNING! it was previously catching all Exceptions, if it throws new ones, add them in the catch
+		} catch (IllegalStateException | UnsupportedOperationException | ClassCastException | IllegalArgumentException ex) {
 			train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 				new Object[]{ex.getClass().getName()}));
 			validator.getModel().setNotExists(target);
@@ -211,7 +211,6 @@ class RequirementFacility extends EntityFacilitySupport {
 	 * Must create all the node above the requirement that doesn't exists.
 	 * As specified in 5085 all new nodes above the requirement will be treated as folder
 	 * 2 . Create the requirement version :
-	 *
 	 */
 	private RequirementVersion doCreateRequirementVersion(
 		RequirementVersionInstruction instruction) {
@@ -306,7 +305,7 @@ class RequirementFacility extends EntityFacilitySupport {
 
 
 	private void moveNodesToLibrary(Long requirementLibrairyId, Long[] longs,
-		Integer order) {
+									Integer order) {
 		if (order != null && order > 0) {
 			reqLibNavigationService.moveNodesToLibrary(requirementLibrairyId, longs, order);
 		}
@@ -336,7 +335,6 @@ class RequirementFacility extends EntityFacilitySupport {
 	 * It has been checked and modified if needed by validator
 	 * The proccess of creating a new version directly at required position and with correct attributes
 	 * is fairly complex, so we follow normal flow in squash TM : create a new requirement version and modify it after
-	 *
 	 */
 	private RequirementVersion doAddingNewVersionToRequirement(
 		RequirementVersionInstruction instruction, Long reqId) {
@@ -366,7 +364,7 @@ class RequirementFacility extends EntityFacilitySupport {
 	 * will let horrible things appends if this list isn't up to date
 	 */
 	private void bindRequirementVersionToMilestones(RequirementVersion requirementVersionPersisted,
-		List<Long> boundMilestonesIds) {
+													List<Long> boundMilestonesIds) {
 		List<RequirementVersion> allVersion = requirementVersionPersisted.getRequirement().getRequirementVersions();
 		Set<Milestone> milestoneBinded = new HashSet<>();
 		Set<Long> milestoneBindedId = new HashSet<>();
@@ -435,7 +433,7 @@ class RequirementFacility extends EntityFacilitySupport {
 	}
 
 	private void doUpdateRequirementMetadata(AuditableMixin requirementVersion,
-		AuditableMixin persistedVersion) {
+											 AuditableMixin persistedVersion) {
 		persistedVersion.setCreatedBy(requirementVersion.getCreatedBy());
 		persistedVersion.setCreatedOn(requirementVersion.getCreatedOn());
 	}
@@ -456,7 +454,7 @@ class RequirementFacility extends EntityFacilitySupport {
 	}
 
 	private void updateRequirementVersionRoutine(LogTrain train,
-		RequirementVersionInstruction instruction) {
+												 RequirementVersionInstruction instruction) {
 
 		RequirementVersion reqVersion = instruction.getRequirementVersion();
 		Map<String, String> cufValues = instruction.getCustomFields();
@@ -476,8 +474,8 @@ class RequirementFacility extends EntityFacilitySupport {
 			validator.getModel().bindMilestonesToRequirementVersion(target, instruction.getMilestones());
 
 			LOGGER.debug(EXCEL_ERR_PREFIX + "Updated Requirement Version \t'" + target + "'");
-
-		} catch (Exception ex) {
+			// WARNING! it was previously catching all Exceptions, if it throws new ones, add them in the catch
+		} catch (IllegalStateException | UnsupportedOperationException | ClassCastException | IllegalArgumentException ex) {
 			train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 				new Object[]{ex.getClass().getName()}));
 			validator.getModel().setNotExists(target);
@@ -488,7 +486,7 @@ class RequirementFacility extends EntityFacilitySupport {
 
 	public LogTrain createRequirementLink(RequirementLinkInstruction instr) {
 		LogTrain train = validator.createRequirementLink(instr);
-		if (! train.hasCriticalErrors()){
+		if (!train.hasCriticalErrors()) {
 			createOrUpdateLink(instr, train);
 		}
 		return train;
@@ -496,7 +494,7 @@ class RequirementFacility extends EntityFacilitySupport {
 
 	public LogTrain updateRequirementLink(RequirementLinkInstruction instr) {
 		LogTrain train = validator.updateRequirementLink(instr);
-		if (! train.hasCriticalErrors()){
+		if (!train.hasCriticalErrors()) {
 			createOrUpdateLink(instr, train);
 		}
 		return train;
@@ -504,7 +502,7 @@ class RequirementFacility extends EntityFacilitySupport {
 
 	public LogTrain deleteRequirementLink(RequirementLinkInstruction instr) {
 		LogTrain train = validator.deleteRequirementLink(instr);
-		if (! train.hasCriticalErrors()){
+		if (!train.hasCriticalErrors()) {
 			long sourceId = findVersionIdByTarget(instr.getTarget().getSourceVersion());
 			long destId = findVersionIdByTarget(instr.getTarget().getDestVersion());
 			reqlinkService.removeLinkedRequirementVersionsFromRequirementVersion(sourceId, Arrays.asList(destId));
@@ -512,38 +510,36 @@ class RequirementFacility extends EntityFacilitySupport {
 		return train;
 	}
 
-	private void createOrUpdateLink(RequirementLinkInstruction instr, LogTrain train){
+	private void createOrUpdateLink(RequirementLinkInstruction instr, LogTrain train) {
 
 		long sourceId = findVersionIdByTarget(instr.getTarget().getSourceVersion());
 		long destId = findVersionIdByTarget(instr.getTarget().getDestVersion());
 
 		String destRole = instr.getRelationRole();
-		if (StringUtils.isBlank(destRole)){
+		if (StringUtils.isBlank(destRole)) {
 			destRole = reqlinkTypeDao.getDefaultRequirementVersionLinkType().getRole2Code();
 		}
 
-		try{
+		try {
 			reqlinkService.addOrUpdateRequirementLink(sourceId, destId, destRole);
-		}
-		catch(SameRequirementLinkedRequirementVersionException ex){
+		} catch (SameRequirementLinkedRequirementVersionException ex) {
 			train.addEntry(LogEntry
-							.failure()
-							.forTarget(instr.getTarget())
-							.withMessage(Messages.ERROR_REQ_LINK_SAME_VERSION)
-							.build());
+				.failure()
+				.forTarget(instr.getTarget())
+				.withMessage(Messages.ERROR_REQ_LINK_SAME_VERSION)
+				.build());
 			LOGGER.debug(ex.getMessage(), ex);
-		}
-		catch(UnlinkableLinkedRequirementVersionException ex){
+		} catch (UnlinkableLinkedRequirementVersionException ex) {
 			train.addEntry(LogEntry
-					.failure()
-					.forTarget(instr.getTarget())
-					.withMessage(Messages.ERROR_REQ_LINK_NOT_LINKABLE)
-					.build());
+				.failure()
+				.forTarget(instr.getTarget())
+				.withMessage(Messages.ERROR_REQ_LINK_NOT_LINKABLE)
+				.build());
 			LOGGER.debug(ex.getMessage(), ex);
 		}
 	}
 
-	private long findVersionIdByTarget(RequirementVersionTarget versTarget){
+	private long findVersionIdByTarget(RequirementVersionTarget versTarget) {
 		Long reqId = validator.getModel().getRequirementId(versTarget);
 		return requirementVersionManagerService.findReqVersionIdByRequirementAndVersionNumber(reqId, versTarget.getVersion());
 	}
@@ -599,7 +595,7 @@ class RequirementFacility extends EntityFacilitySupport {
 	}
 
 	private void updateRequirementVersionToMilestones(boolean corruptedMilestones, RequirementVersion requirementVersionPersisted,
-		List<Long> boundMilestonesIds) {
+													  List<Long> boundMilestonesIds) {
 		if (!corruptedMilestones) {
 			bindRequirementVersionToMilestones(requirementVersionPersisted, boundMilestonesIds);
 		}
@@ -644,7 +640,6 @@ class RequirementFacility extends EntityFacilitySupport {
 
 	/**
 	 * for all other stuffs that need to be done afterward
-	 *
 	 */
 	public void postprocess(List<Instruction<?>> instructions) {
 		if (postProcessHandler != null) {

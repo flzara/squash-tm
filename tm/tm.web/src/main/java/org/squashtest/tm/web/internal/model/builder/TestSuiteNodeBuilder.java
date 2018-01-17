@@ -40,6 +40,7 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
@@ -82,14 +83,13 @@ public class TestSuiteNodeBuilder extends GenericJsTreeNodeBuilder<TestSuite, Te
 		String localizedStatus = internationalizationHelper.internationalize(status, locale);
 		String[] args = {localizedStatus};
 		String tooltip = internationalizationHelper.getMessage("label.tree.testSuite.tooltip", args, status, locale);
-		String description;
-		try {
+		String description = "";
+		// WARNING! removed a try{...}catch(Exception e)
+		if (model.getFirstPlannedTestCase() != null && StringUtils.isNotBlank(model.getFirstPlannedTestCase().getDescription())) {
 			description = HTMLCleanupUtils.htmlToText(model.getFirstPlannedTestCase().getDescription());
 			if (description.length() > 30) {
 				description = description.substring(0, 30) + "...";
 			}
-		} catch (Exception e) {
-			description = "";
 		}
 		node.addAttr("title", tooltip + "\n" + description);
 

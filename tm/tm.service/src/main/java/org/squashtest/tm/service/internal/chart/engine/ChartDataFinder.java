@@ -29,6 +29,7 @@ import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -298,7 +299,7 @@ import com.querydsl.core.Tuple;
  *
  */
 @Component
-@SuppressWarnings(value={"rawtypes", "unchecked"})
+@SuppressWarnings(value = {"rawtypes", "unchecked"})
 public class ChartDataFinder {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ChartDataFinder.class);
@@ -312,15 +313,15 @@ public class ChartDataFinder {
 	@Inject
 	Provider<ScopePlanner> scopePlannerProvider;
 
-	@Transactional(readOnly=true)
-	public ChartSeries findData(ChartDefinition definition, List<EntityReference> dynamicScope, Long dashboardId, Long milestoneId, Workspace workspace){
+	@Transactional(readOnly = true)
+	public ChartSeries findData(ChartDefinition definition, List<EntityReference> dynamicScope, Long dashboardId, Long milestoneId, Workspace workspace) {
 
 		ChartQuery chartQuery = definition.getQuery();
 		DetailedChartQuery enhancedDefinition;
-		if(milestoneId != null && workspace!=null && Workspace.isWorkspaceMilestoneFilterable(workspace)){
-			IChartQuery milestoneAwareChartQuery = new MilestoneAwareChartQuery(chartQuery,milestoneId,workspace);
+		if (milestoneId != null && workspace != null && Workspace.isWorkspaceMilestoneFilterable(workspace)) {
+			IChartQuery milestoneAwareChartQuery = new MilestoneAwareChartQuery(chartQuery, milestoneId, workspace);
 			enhancedDefinition = new DetailedChartQuery(milestoneAwareChartQuery);
-		}else{
+		} else {
 			enhancedDefinition = new DetailedChartQuery(chartQuery);
 		}
 
@@ -335,21 +336,22 @@ public class ChartDataFinder {
 		scopePlanner.setChartQuery(enhancedDefinition);
 		scopePlanner.setHibernateQuery(detachedQuery);
 		// *********** override the chart scope if needed ************************
-		scopePlanner.setDynamicScope(definition,dynamicScope,dashboardId);
+		scopePlanner.setDynamicScope(definition, dynamicScope, dashboardId);
 		scopePlanner.appendScope();
 
 		// ******************* step 3 : run the query *************************
 
-		ExtendedHibernateQuery finalQuery = (ExtendedHibernateQuery)detachedQuery.clone(em.unwrap(Session.class));
+		ExtendedHibernateQuery finalQuery = (ExtendedHibernateQuery) detachedQuery.clone(em.unwrap(Session.class));
 
-		try{
+		try {
 			List<Tuple> tuples = finalQuery.fetch();
 
 			// ****************** step 6 : convert the data *********************
 
 			return makeSeries(enhancedDefinition, tuples);
 		}
-		catch(Exception ex){
+		// WARNING! it was previously catching all Exceptions, if it throws new ones, add them in the catch
+		catch (HibernateException ex) {
 			LOGGER.error("attempted to execute a chart query and failed : ");
 			LOGGER.error(finalQuery.toString());
 			throw new RuntimeException(ex);
@@ -358,8 +360,7 @@ public class ChartDataFinder {
 	}
 
 
-
-	private ChartSeries makeSeries(DetailedChartQuery definition, List<Tuple> tuples){
+	private ChartSeries makeSeries(DetailedChartQuery definition, List<Tuple> tuples) {
 
 		List<Object[]> abscissa = new ArrayList<>();
 
@@ -369,31 +370,31 @@ public class ChartDataFinder {
 
 		List[] series = new List[measize];
 
-		for (int me=0; me < measize; me++){
+		for (int me = 0; me < measize; me++) {
 			series[me] = new ArrayList<>(tuples.size());
 		}
 
 		// now (double) loop, lets hope the volume of data is not too large
-		for (Tuple tuple : tuples){
+		for (Tuple tuple : tuples) {
 			// create the entry for the abscissa
 			Object[] axis = new Object[axsize];
-			for (int ax = 0; ax < axsize; ax++){
+			for (int ax = 0; ax < axsize; ax++) {
 				axis[ax] = tuple.get(ax, Object.class);
 			}
 			abscissa.add(axis);
 
 			// create the entries for the series
-			for (int m = 0; m < measize; m++){
-				Object v = tuple.get(m+axsize, Object.class);
+			for (int m = 0; m < measize; m++) {
+				Object v = tuple.get(m + axsize, Object.class);
 				series[m].add(v);
 			}
 		}
 
 		// now build the serie
 		ChartSeries chartSeries = new ChartSeries();
-		postProcessAbsciss(abscissa, chartSeries,definition);
+		postProcessAbsciss(abscissa, chartSeries, definition);
 
-		for (int m=0; m < measize; m++){
+		for (int m = 0; m < measize; m++) {
 			MeasureColumn measure = definition.getMeasures().get(m);
 			chartSeries.addSerie(measure.getLabel(), series[m]);
 		}
@@ -412,10 +413,10 @@ public class ChartDataFinder {
 	/**
 	 * As 1.13.3 we only need to postprocess infolist items. If another fancy business rule appears,
 	 * change the if to switch, and branch other absciss post process here
-     */
+	 */
 	private void postProcessColumn(List<Object[]> abscissa, List<AxisColumn> columns, int i) {
-		AxisColumn axisColumn =  columns.get(i);
-		if (axisColumn.getDataType() == DataType.INFO_LIST_ITEM){
+		AxisColumn axisColumn = columns.get(i);
+		if (axisColumn.getDataType() == DataType.INFO_LIST_ITEM) {
 			postProcessInfoListItem(abscissa, i);
 		}
 	}
@@ -424,13 +425,13 @@ public class ChartDataFinder {
 	 * [Issue 6047] When one the axis is INFOLIST_ITEM.LABEL we must adapt the absciss. The sql generator engine make a request like
 	 * select count(*), CODE from INFOLIST_ITEM group by CODE, and we want the label :
 	 * with i18n support if the INFOLIST_ITEM is in default system list
-     */
+	 */
 	private void postProcessInfoListItem(List<Object[]> abscissa, int i) {
 		for (Object[] obj : abscissa) {
-            String code = obj[i].toString();
-            InfoListItem infoListItem = infoListItemDao.findByCode(code);
-            obj[i] = infoListItem.getLabel();
-        }
+			String code = obj[i].toString();
+			InfoListItem infoListItem = infoListItemDao.findByCode(code);
+			obj[i] = infoListItem.getLabel();
+		}
 	}
 
 

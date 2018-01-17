@@ -86,7 +86,7 @@ public final class SquashUnsafeHtmlAttrProcessor extends AbstractChildrenModifie
 
 		} catch (final TemplateEngineException e) {
 			throw e; // NOSONAR we wanna catch any exception but TemplateEngineException
-		} catch (final Exception e) {
+		} catch (final Exception e) { // NOSONAR
 			throw new TemplateProcessingException("An error happened during parsing of unsafe html: \""
 					+ element.getAttributeValue(attributeName) + "\"", e);
 		}

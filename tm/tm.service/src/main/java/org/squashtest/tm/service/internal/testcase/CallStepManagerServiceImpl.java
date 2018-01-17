@@ -57,7 +57,7 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 
 	@Inject
 	private TestStepDao testStepDao;
-	
+
 	@Inject
 	private TestCaseLibraryNodeDao testCaseLibraryNodeDao;
 
@@ -69,14 +69,14 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 
 	@Inject
 	private DatasetModificationService datasetModificationService;
-	
+
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
 
 	@Override
 	@PreAuthorize("(hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') "
-			+ "and hasPermission(#calledTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')) "
-			+ OR_HAS_ROLE_ADMIN)
+		+ "and hasPermission(#calledTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')) "
+		+ OR_HAS_ROLE_ADMIN)
 	public void addCallTestStep(long parentTestCaseId, long calledTestCaseId) {
 
 		checkAddCallTestStep(parentTestCaseId, calledTestCaseId);
@@ -97,47 +97,46 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 		 */
 		testCaseImportanceManagerService.changeImportanceIfCallStepAddedToTestCases(calledTestCase, parentTestCase);
 	}
-	
-	
-	
+
+
 	@Override
-	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') " 
-			
-			+ OR_HAS_ROLE_ADMIN)
+	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') "
+
+		+ OR_HAS_ROLE_ADMIN)
 	public void addCallTestSteps(long parentTestCaseId, List<Long> calledTestCaseIds) {
-		
+
 		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
-		
+
 		List<TestCaseLibraryNode> nodes = testCaseLibraryNodeDao.findAllByIds(calledTestCaseIds);
-		
+
 		// check READ on each of those nodes
 		// Throws AccessDenied if cannot read one of them
-		for (TestCaseLibraryNode node : nodes){
+		for (TestCaseLibraryNode node : nodes) {
 			PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(node, "READ"));
 		}
-		
+
 		List<TestCase> testCases = new TestCaseNodeWalker().walk(nodes);
-		
+
 		for (TestCase testCase : testCases) {
 
 			checkAddCallTestStep(parentTestCaseId, testCase.getId());
-			
+
 			TestCase calledTestCase = testCaseDao.findById(testCase.getId());
-			
+
 			CallTestStep newStep = new CallTestStep();
 			newStep.setCalledTestCase(calledTestCase);
 			testStepDao.persist(newStep);
 
-			parentTestCase. addStep(newStep);
-			
+			parentTestCase.addStep(newStep);
+
 			testCaseImportanceManagerService.changeImportanceIfCallStepAddedToTestCases(calledTestCase, parentTestCase);
 		}
-		
+
 	}
 
 	@Override
 	public void addCallTestStep(long parentTestCaseId, long calledTestCaseId,
-			int index) {
+								int index) {
 
 		checkAddCallTestStep(parentTestCaseId, calledTestCaseId);
 
@@ -149,15 +148,14 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 
 		testStepDao.persist(newStep);
 
-		parentTestCase.addStep(index,newStep);
+		parentTestCase.addStep(index, newStep);
 
 		testCaseImportanceManagerService.changeImportanceIfCallStepAddedToTestCases(calledTestCase, parentTestCase);
 
 	}
-	
-	
 
-	private void checkAddCallTestStep(long parentTestCaseId, long calledTestCaseId){
+
+	private void checkAddCallTestStep(long parentTestCaseId, long calledTestCaseId) {
 		if (parentTestCaseId == calledTestCaseId) {
 			throw new CyclicStepCallException();
 		}
@@ -172,7 +170,7 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')"
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public TestCase findTestCase(long testCaseId) {
 		return testCaseDao.findById(testCaseId);
 	}
@@ -207,7 +205,7 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 
 	@Override
 	@PreAuthorize("hasPermission(#destinationTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')" + OR_HAS_ROLE_ADMIN)
-	public void checkForCyclicStepCallBeforePaste(Long destinationTestCaseId, Long calledTestCaseId) {
+	public void checkForCyclicStepCallBeforePaste(Long destinationTestCaseId, Long calledTestCaseId) throws CyclicStepCallException {
 
 		// 1> check that first called test cases are not the destination one.
 		if (calledTestCaseId.equals(destinationTestCaseId)) {
@@ -259,39 +257,35 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 		CallTestStep step = (CallTestStep) testStepDao.findById(callStepId);
 		Long callerId = step.getTestCase().getId();
 
-		switch(mode){
-		case NOTHING :
-			step.setCalledDataset(null);
-			step.setDelegateParameterValues(false);
-			break;
+		switch (mode) {
+			case NOTHING:
+				step.setCalledDataset(null);
+				step.setDelegateParameterValues(false);
+				break;
 
-		case DELEGATE :
-			step.setCalledDataset(null);
-			step.setDelegateParameterValues(true);
-			break;
+			case DELEGATE:
+				step.setCalledDataset(null);
+				step.setDelegateParameterValues(true);
+				break;
 
-		case CALLED_DATASET :
-			if (datasetId == null){
-				throw new IllegalArgumentException("attempted to bind no dataset (datasetid is null) to a call step, yet the parameter assignation mode is 'CALLED_DATASET'");
-			}
+			case CALLED_DATASET:
+				if (datasetId == null) {
+					throw new IllegalArgumentException("attempted to bind no dataset (datasetid is null) to a call step, yet the parameter assignation mode is 'CALLED_DATASET'");
+				}
 
-			Dataset ds = datasetModificationService.findById(datasetId);
-			step.setCalledDataset(ds);
-			step.setDelegateParameterValues(false);
-			break;
+				Dataset ds = datasetModificationService.findById(datasetId);
+				step.setCalledDataset(ds);
+				step.setDelegateParameterValues(false);
+				break;
 
-		default :
-			throw new IllegalArgumentException("ParameterAssignationMode '"+mode+"' is not handled here, please find a dev and make him do the job");
+			default:
+				throw new IllegalArgumentException("ParameterAssignationMode '" + mode + "' is not handled here, please find a dev and make him do the job");
 
 		}
 
 		datasetModificationService.cascadeDatasetsUpdate(callerId);
 
 	}
-
-	
-
-
 
 
 }
