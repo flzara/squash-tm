@@ -50,12 +50,12 @@ public class TestCaseTarget implements Target, WithPath {
 
 	public TestCaseTarget(String path) {
 		super();
-		setPath(path);
+		setPathPrivately(path);
 	}
 
 	public TestCaseTarget(String path, Integer order) {
 		super();
-		setPath(path);
+		setPathPrivately(path);
 		this.order = order;
 	}
 
@@ -70,9 +70,14 @@ public class TestCaseTarget implements Target, WithPath {
 	}
 
 	public void setPath(String path) {
+		setPathPrivately(path);
+	}
+
+	// Sonar: avoiding to use Overridable methods in constructor
+	private void setPathPrivately(String pathParam) {
 		//Issue 5480.
 		//We must trim the path to avoid nasty null pointer exception
-		String sanitizedPath = path.trim();
+		String sanitizedPath = pathParam.trim();
 		this.path = PathUtils.cleanMultipleSlashes(sanitizedPath);
 	}
 

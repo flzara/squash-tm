@@ -239,7 +239,7 @@ DenormalizedFieldHolder, BoundEntity {
 	}
 
 	public Execution(TestCase testCase, Dataset dataset) {
-		fillParameterMap(dataset);
+		fillParameterMapPrivately(dataset);
 		setReferencedTestCase(testCase);
 		populateSteps(dataset);
 		populateAttachments();
@@ -333,7 +333,7 @@ DenormalizedFieldHolder, BoundEntity {
 		}
 
 		nullSafeSetTestCaseData(testCase);
-		setImportance(testCase.getImportance());
+		setImportancePrivately(testCase.getImportance());
 
 		setStatus(testCase.getStatus());
 
@@ -364,8 +364,12 @@ DenormalizedFieldHolder, BoundEntity {
 
 
 	public void fillParameterMap(Dataset dataset){
-		if(dataset != null){
-			for(DatasetParamValue param : dataset.getParameterValues()){
+		fillParameterMapPrivately(dataset);
+	}
+
+	private void fillParameterMapPrivately(Dataset datasetParam) {
+		if(datasetParam != null){
+			for(DatasetParamValue param : datasetParam.getParameterValues()){
 				String key = param.getParameter().getName();
 				String value = param.getParamValue();
 				this.dataset.put(key, value);
@@ -480,7 +484,11 @@ DenormalizedFieldHolder, BoundEntity {
 	}
 
 	public void setImportance(@NotNull TestCaseImportance importance) {
-		this.importance = importance;
+		setImportancePrivately(importance);
+	}
+
+	private void setImportancePrivately(@NotNull TestCaseImportance importanceParam) {
+		this.importance = importanceParam;
 	}
 
 	public DenormalizedNature getNature() {

@@ -39,14 +39,12 @@ public class SimpleWindow extends JFrame {
 	private static final String MESSAGE_STRING = "Squash is starting, please wait...";
 	private static final String TITLE = "Squash Launcher";
 
-	public SimpleWindow ()
- {
+	public SimpleWindow () {
 		super();
 		build();
 	}
 
-	private JPanel buildContent ()
- {
+	private JPanel buildContent () {
 		// Panels...
 		JPanel panel = new JPanel();
 		JPanel panelHeader = new JPanel();
@@ -90,8 +88,7 @@ public class SimpleWindow extends JFrame {
 		return panel;
 	}
 
-	public void build ()
- {
+	private void build () {
 		setTitle(WINDOW_TITLE);
 		setSize(400, 300);
 		setLocationRelativeTo(null);

@@ -58,7 +58,7 @@ public class JsonMilestone {
 		super();
 		this.id = id;
 		this.label = label;
-		this.setStatus(status);
+		this.setStatusPrivately(status);
 		this.range = range;
 		this.endDate = endDate;
 		this.ownerLogin = ownerLogin;
@@ -85,6 +85,10 @@ public class JsonMilestone {
 	}
 
 	public void setStatus(MilestoneStatus status) {
+		setStatusPrivately(status);
+	}
+
+	private void setStatusPrivately(MilestoneStatus status) {
 		this.status = status;
 		this.canCreateDelete = status.isAllowObjectCreateAndDelete();
 		this.canEdit = status.isAllowObjectModification();
