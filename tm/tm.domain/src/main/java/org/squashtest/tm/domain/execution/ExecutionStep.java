@@ -132,7 +132,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	}
 
 	public ExecutionStep(ActionTestStep testStep, Dataset dataset) {
-		fillParameterMap(dataset);
+		fillParameterMapPrivately(dataset);
 		testStep.accept(this);
 		referencedTestStep = testStep;
 		for (Attachment actionStepAttach : testStep.getAllAttachments()) {
@@ -141,7 +141,11 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 		}
 	}
 
-	public void fillParameterMap(Dataset dataset){
+	public void fillParameterMap(Dataset dataset) {
+		fillParameterMapPrivately(dataset);
+	}
+
+	private void fillParameterMapPrivately(Dataset dataset) {
 		if(dataset != null){
 			for(DatasetParamValue param : dataset.getParameterValues()){
 				String key = param.getParameter().getName();

@@ -124,7 +124,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 		 * prevent the requirement from having more than
 		 * one version if this requirement is synchronized
 		 */
-		if (!versions.isEmpty() && isSynchronized()) {
+		if (!versions.isEmpty() && isSynchronizedPrivately()) {
 			throw new IllegalRequirementVersionCreationException();
 		}
 		// else we can add the version normally
@@ -552,6 +552,10 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	}
 
 	public boolean isSynchronized() {
+		return isSynchronizedPrivately();
+	}
+
+	private boolean isSynchronizedPrivately() {
 		return this.mode == ManagementMode.SYNCHRONIZED && syncExtender != null;
 	}
 

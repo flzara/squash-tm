@@ -335,7 +335,7 @@ DenormalizedFieldHolder, BoundEntity {
 		nullSafeSetTestCaseData(testCase);
 		setImportancePrivately(testCase.getImportance());
 
-		setStatus(testCase.getStatus());
+		setStatusPrivately(testCase.getStatus());
 
 		// the nature and type now
 		InfoListItem nature = testCase.getNature();
@@ -512,6 +512,10 @@ DenormalizedFieldHolder, BoundEntity {
 	}
 
 	public void setStatus(@NotNull TestCaseStatus status) {
+		setStatusPrivately(status);
+	}
+
+	private void setStatusPrivately(@NotNull TestCaseStatus status) {
 		this.status = status;
 	}
 

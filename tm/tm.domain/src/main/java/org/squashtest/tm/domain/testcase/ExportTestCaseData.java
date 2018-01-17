@@ -116,7 +116,8 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 	public void setFirstAction(String firstAction) {
 		doSetFirstAction(firstAction);
 	}
-	public void doSetFirstAction(String firstAction){
+
+	private void doSetFirstAction(String firstAction){
 		if(firstAction != null){
 			this.firstAction = firstAction;
 		}

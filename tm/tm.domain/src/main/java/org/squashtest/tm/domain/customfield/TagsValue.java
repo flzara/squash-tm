@@ -54,7 +54,7 @@ public class TagsValue extends CustomFieldValue implements MultiValuedCustomFiel
 
 	@Override
 	public void setValues(List<String> values) {
-		CustomField cuf = doGetCustomField();
+		CustomField cuf = getCustomField();
 		if(cuf != null) {
 			/* Issue #6834 */
 			if(!cuf.isOptional() && values.isEmpty()) {

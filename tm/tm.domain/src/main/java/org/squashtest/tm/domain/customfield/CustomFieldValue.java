@@ -119,7 +119,7 @@ public class CustomFieldValue implements Identified, SingleValuedCustomFieldValu
 		return doGetCustomField();
 	}
 
-	protected CustomField doGetCustomField() {
+	private CustomField doGetCustomField() {
 		if (binding != null) {
 			return binding.getCustomField();
 		}

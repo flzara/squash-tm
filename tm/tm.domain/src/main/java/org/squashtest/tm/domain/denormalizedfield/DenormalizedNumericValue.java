@@ -51,7 +51,7 @@ public class DenormalizedNumericValue extends DenormalizedFieldValue {
 		this.inputType = cuf.getInputType();
 		this.label = cuf.getLabel();
 		this.value = customFieldValue.getValue();
-		setNumericValue();
+		setNumericValuePrivately();
 		this.position = customFieldValue.getBinding().getPosition();
 		this.renderingLocations = customFieldValue.getBinding().copyRenderingLocations();
 		this.denormalizedFieldHolderId = denormalizedFieldHolderId;
@@ -67,6 +67,10 @@ public class DenormalizedNumericValue extends DenormalizedFieldValue {
 	}
 
 	public void setNumericValue() {
+		setNumericValuePrivately();
+	}
+
+	private void setNumericValuePrivately() {
 		if(StringUtils.isBlank(this.value)){
 			this.numericValue  = null;
 		}else {
