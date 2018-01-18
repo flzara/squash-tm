@@ -50,23 +50,6 @@ class CampaignWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 	@Inject
 	CampaignWorkspaceDisplayService campaignWorkspaceDisplayService
 
-	private HibernateCampaignFolderDao hibernateCampaignFolderDao
-
-	private HibernateCampaignDao hibernateCampaignDao
-
-	private HibernateIterationDao hibernateIterationDao
-
-
-	def setup() {
-		hibernateCampaignFolderDao = Mock()
-		hibernateCampaignDao = Mock()
-		hibernateIterationDao = Mock()
-
-		campaignWorkspaceDisplayService.hibernateCampaignFolderDao = hibernateCampaignFolderDao
-		campaignWorkspaceDisplayService.hibernateCampaignDao = hibernateCampaignDao
-		campaignWorkspaceDisplayService.hibernateIterationDao = hibernateIterationDao
-	}
-
 	private HashMap<Long, JsTreeNode> initEmptyJsTreeNodes() {
 		Map<Long, JsTreeNode> jsTreeNodes = new HashMap<>()
 		jsTreeNodes.put(-14L, new JsTreeNode())
@@ -305,7 +288,6 @@ class CampaignWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 
 		UserDto currentUser = new UserDto("robert", -2L, [-100L, -300L], false)
 
-
 		when:
 
 		def nodes = campaignWorkspaceDisplayService.getNodeContent(-14L, currentUser, "library", -9000L)
@@ -324,11 +306,6 @@ class CampaignWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		given:
 
 		UserDto currentUser = new UserDto("robert", -2L, [-100L, -300L], false)
-		CampaignFolder camp = Mock()
-		Library lib = Mock()
-		lib.id >> -15L
-		camp.library >> lib
-		campaignWorkspaceDisplayService.hibernateCampaignFolderDao.findById(-104L) >> camp
 
 		when:
 
@@ -348,11 +325,6 @@ class CampaignWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		given:
 
 		UserDto currentUser = new UserDto("robert", -2L, [-100L, -300L], false)
-		Campaign camp = Mock()
-		Library lib = Mock()
-		lib.id >> -15L
-		camp.library >> lib
-		campaignWorkspaceDisplayService.hibernateCampaignDao.findById(-105L) >> camp
 
 		when:
 
@@ -372,11 +344,6 @@ class CampaignWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		given:
 
 		UserDto currentUser = new UserDto("robert", -2L, [-100L, -300L], false)
-		Iteration iter = Mock()
-		CampaignLibrary lib = Mock()
-		lib.id >> -15L
-		iter.campaignLibrary >> lib
-		campaignWorkspaceDisplayService.hibernateIterationDao.findById(-83L) >> iter
 
 		when:
 

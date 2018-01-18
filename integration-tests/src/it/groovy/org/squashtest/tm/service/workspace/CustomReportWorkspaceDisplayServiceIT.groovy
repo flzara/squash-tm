@@ -96,7 +96,7 @@ class CustomReportWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		when:
 
 		customReportWorkspaceDisplayService.getFatherChildrenMultiMaps(expansionCandidates, childrenIds, libraryFatherChildrenMultiMap, libraryNodeFatherChildrenMultiMap)
-		def libraryChildrenMap = customReportWorkspaceDisplayService.getLibraryChildrenMap(childrenIds)
+		def libraryChildrenMap = customReportWorkspaceDisplayService.getLibraryChildrenMap(childrenIds, currentUser)
 		def jsTreeNodes = customReportWorkspaceDisplayService.doFindLibraries(readableProjectIds, currentUser)
 		customReportWorkspaceDisplayService.buildHierarchy(jsTreeNodes, libraryFatherChildrenMultiMap, libraryNodeFatherChildrenMultiMap, libraryChildrenMap)
 
@@ -138,9 +138,13 @@ class CustomReportWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 	@DataSet("CustomReportWorkspaceDisplayService.sandbox.xml")
 	def "should get a custom report library children"() {
 
+		given:
+
+		UserDto currentUser = new UserDto("robert", -2L, [-100L, -300L], false)
+
 		when:
 
-		def nodes = customReportWorkspaceDisplayService.getNodeContent(-1L)
+		def nodes = customReportWorkspaceDisplayService.getNodeContent(-1L, currentUser)
 
 		then:
 
