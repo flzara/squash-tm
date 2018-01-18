@@ -41,7 +41,6 @@ public class NumericCustomFieldValue extends CustomFieldValue {
 	@Override
 	public void setValue(String value){
 		CustomField field = getCustomField();
-		BigDecimal numericValue;
 		if (field != null && !field.isOptional() && StringUtils.isBlank(value)){
 			throw new MandatoryCufException(this);
 		}

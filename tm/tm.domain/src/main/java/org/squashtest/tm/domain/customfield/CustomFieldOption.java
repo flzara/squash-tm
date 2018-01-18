@@ -54,10 +54,10 @@ public class CustomFieldOption {
 		// when no code is supplied we need to create it.
 		// To do so we md5-hash it then truncate to 30 characters because we
 		// don't care anyway.
-		String code = DigestUtils.md5DigestAsHex(label.getBytes());
+		String generatedCode = DigestUtils.md5DigestAsHex(label.getBytes());
 
 		this.label = label;
-		this.code = code.substring(0,30);
+		this.code = generatedCode.substring(0,30);
 	}
 
 	/**

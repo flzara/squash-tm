@@ -102,11 +102,11 @@ public class CUFBridge extends SessionFieldBridge implements ParameterizedBridge
 
 		for (CustomFieldValue cufValue : cufValues) {
 
-			InputType inputType = cufValue.getBinding().getCustomField().getInputType();
+			InputType type = cufValue.getBinding().getCustomField().getInputType();
 			String code = cufValue.getBinding().getCustomField().getCode();
 			String val = null;
 
-			switch (inputType) {
+			switch (type) {
 				case DATE_PICKER:
 					// TODO quick fix for #6031. Refactor that ugly crap !
 					Date date = coerceToDate(cufValue);
@@ -126,7 +126,7 @@ public class CUFBridge extends SessionFieldBridge implements ParameterizedBridge
 			}
 
 			// TODO use the correct API
-			if (StringUtils.isNotBlank(val) && inputType == InputType.NUMERIC) {
+			if (StringUtils.isNotBlank(val) && type == InputType.NUMERIC) {
 				/* Issue #6431: Impossible Cast because hibernate returned a proxy CustomFieldValue */
 				/*
 				* NumericCustomFieldValue numericCustomFieldValue = (NumericCustomFieldValue) cufValue;//NOSONAR it's a numeric cuf, cast is safe

@@ -324,7 +324,7 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	}
 
 	private List<TreeLibraryNode> getSiblings() {
-		TreeLibraryNode parent = getParent();
-		return parent.getChildren();
+		TreeLibraryNode parentNode = getParent();
+		return parentNode.getChildren();
 	}
 }
