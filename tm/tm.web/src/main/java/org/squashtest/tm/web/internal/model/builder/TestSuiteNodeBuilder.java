@@ -41,10 +41,13 @@
 package org.squashtest.tm.web.internal.model.builder;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.exception.execution.EmptyTestSuiteTestPlanException;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -57,6 +60,8 @@ import java.util.Locale;
 @Component
 @Scope("prototype")
 public class TestSuiteNodeBuilder extends GenericJsTreeNodeBuilder<TestSuite, TestSuiteNodeBuilder> {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteNodeBuilder.class);
 
 	protected InternationalizationHelper internationalizationHelper;
 
@@ -84,12 +89,16 @@ public class TestSuiteNodeBuilder extends GenericJsTreeNodeBuilder<TestSuite, Te
 		String[] args = {localizedStatus};
 		String tooltip = internationalizationHelper.getMessage("label.tree.testSuite.tooltip", args, status, locale);
 		String description = "";
-		// WARNING! removed a try{...}catch(Exception e)
-		if (model.getFirstPlannedTestCase() != null && StringUtils.isNotBlank(model.getFirstPlannedTestCase().getDescription())) {
-			description = HTMLCleanupUtils.htmlToText(model.getFirstPlannedTestCase().getDescription());
-			if (description.length() > 30) {
-				description = description.substring(0, 30) + "...";
+		try {
+			if (model.getFirstPlannedTestCase() != null && StringUtils.isNotBlank(model.getFirstPlannedTestCase().getDescription())) {
+				description = HTMLCleanupUtils.htmlToText(model.getFirstPlannedTestCase().getDescription());
+				if (description.length() > 30) {
+					description = description.substring(0, 30) + "...";
+				}
 			}
+		} catch(EmptyTestSuiteTestPlanException e) {
+			LOGGER.debug("The test plan of this test suite is empty. Setting empty tooltip.", e);
+			description = "";
 		}
 		node.addAttr("title", tooltip + "\n" + description);
 

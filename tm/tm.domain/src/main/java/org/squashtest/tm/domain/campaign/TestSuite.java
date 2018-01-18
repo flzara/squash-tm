@@ -201,7 +201,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 		return result;
 	}
 
-	public IterationTestPlanItem getFirstTestPlanItem() {
+	public IterationTestPlanItem getFirstTestPlanItem() throws EmptyTestSuiteTestPlanException {
 		for (IterationTestPlanItem item : this.getTestPlan()) {
 			return item;
 		}
@@ -209,9 +209,13 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 		throw new EmptyTestSuiteTestPlanException(this);
 	}
 
-	public TestCase getFirstPlannedTestCase() {
-		IterationTestPlanItem itpi = getFirstTestPlanItem();
-		return itpi.getReferencedTestCase();
+	public TestCase getFirstPlannedTestCase() throws EmptyTestSuiteTestPlanException {
+		try {
+			IterationTestPlanItem itpi = getFirstTestPlanItem();
+			return itpi.getReferencedTestCase();
+		} catch(EmptyTestSuiteTestPlanException e) {
+			throw e;
+		}
 	}
 
 	public IterationTestPlanItem getFirstTestPlanItem(String testerLogin) {
