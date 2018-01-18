@@ -389,5 +389,4 @@ class CampaignWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		nodes.collect { it.getTitle() }.sort() == ["Test Suite 1"]
 		nodes.collect { it.getState() }.sort() == ["leaf"]
 	}
-
 }
