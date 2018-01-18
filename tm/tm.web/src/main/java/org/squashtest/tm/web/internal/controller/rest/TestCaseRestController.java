@@ -93,7 +93,7 @@ public class TestCaseRestController {
 
 	private List<TestStep> findTestSteps(Long id){
 
-		List<TestStep> testSteps = new ArrayList<>();
+		List<TestStep> testSteps;
 
 		try {
 			testSteps = this.testCaseFinder.findStepsByTestCaseId(id);
