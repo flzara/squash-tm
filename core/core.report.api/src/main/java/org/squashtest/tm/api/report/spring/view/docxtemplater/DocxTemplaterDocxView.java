@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.api.report.spring.view.docxtemplater;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
@@ -35,7 +34,9 @@ import org.springframework.util.Assert;
 import org.springframework.web.servlet.view.AbstractView;
 
 
-public class DocxTemplaterDocxView extends AbstractView {
+
+
+public class DocxTemplaterDocxView extends AbstractView{
 
 
 	private String[] templatePath = new String[0];
@@ -51,7 +52,8 @@ public class DocxTemplaterDocxView extends AbstractView {
 				Assert.hasText(basename, "templatePath must not be empty");
 				this.templatePath[i] = basename.trim();
 			}
-		} else {
+		}
+		else {
 			this.templatePath = new String[0];
 		}
 	}
@@ -59,11 +61,11 @@ public class DocxTemplaterDocxView extends AbstractView {
 	@Override
 	protected boolean generatesDownloadContent() {
 		return true;
-	}
+	};
 
 	@Override
 	protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request,
-										   HttpServletResponse response) {
+			HttpServletResponse response) throws Exception {
 
 
 		for (String aTemplatePath : templatePath) {
@@ -76,11 +78,9 @@ public class DocxTemplaterDocxView extends AbstractView {
 				response.flushBuffer();
 				inputStream.close();
 				break;
-				// WARNING! it was previously catching all Exceptions, if it throws new ones, add them in the catch
-			} catch (IOException e) {
-				LOGGER.debug("file doesn't exist" + resource.getFilename(), e);
+			} catch (Exception e) {
+				LOGGER.debug("file don't exist" + resource.getFilename(), e);
 			}
-
 
 		}
 	}

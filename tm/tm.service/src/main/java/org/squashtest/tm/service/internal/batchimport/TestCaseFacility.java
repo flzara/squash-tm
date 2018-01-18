@@ -25,8 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.Sizes;
+import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -96,8 +96,7 @@ public class TestCaseFacility extends EntityFacilitySupport {
 
 			LOGGER.debug(EXCEL_ERR_PREFIX + "Created Test Case \t'" + target + "'");
 
-			// WARNING! it was previously catching all Exceptions, if it throws new ones, add them in the catch
-		} catch (UnsupportedOperationException | ClassCastException | IllegalArgumentException ex) {
+		} catch (Exception ex) {
 			train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 				new Object[]{ex.getClass().getName()}));
 			validator.getModel().setNotExists(target);
@@ -116,12 +115,12 @@ public class TestCaseFacility extends EntityFacilitySupport {
 
 		InfoListItem nature = testCase.getNature();
 		if (nature != null && !listItemFinderService.isNatureConsistent(projectStatus.getId(), nature.getCode())) {
-			testCase.setNature(listItemFinderService.findDefaultTestCaseNature(projectStatus.getId()));
+				testCase.setNature(listItemFinderService.findDefaultTestCaseNature(projectStatus.getId()));
 		}
 
 		InfoListItem type = testCase.getType();
 		if (type != null && !listItemFinderService.isTypeConsistent(projectStatus.getId(), type.getCode())) {
-			testCase.setType(listItemFinderService.findDefaultTestCaseType(projectStatus.getId()));
+				testCase.setType(listItemFinderService.findDefaultTestCaseType(projectStatus.getId()));
 		}
 
 	}
@@ -213,8 +212,8 @@ public class TestCaseFacility extends EntityFacilitySupport {
 					doUpdateTestcase(instr);
 
 					LOGGER.debug(EXCEL_ERR_PREFIX + "Updated Test Case \t'" + target + "'");
-					// WARNING! it was previously catching all Exceptions, if it throws new ones, add them in the catch
-				} catch (UnsupportedOperationException | ClassCastException | IllegalArgumentException ex) {
+
+				} catch (Exception ex) {
 					train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[]{ex.getClass().getName()}));
 					LOGGER.error(EXCEL_ERR_PREFIX + "unexpected error while updating " + target + " : ", ex);
@@ -243,19 +242,19 @@ public class TestCaseFacility extends EntityFacilitySupport {
 		if (validator.areMilestoneValid(instr)) {
 			rebindMilestones(instr, orig);
 		}
-
+		
 
 		/*
-		 * Issue #6968 : Because renaming / changing the ref of a test case triggers an immediate reindexation
-		 * of the related ITPIs (and the test case itself by the way). In the process the session attached to
-		 * the persistent collection of the milestones is killed, not sure why, thus triggering the
+		 * Issue #6968 : Because renaming / changing the ref of a test case triggers an immediate reindexation 
+		 * of the related ITPIs (and the test case itself by the way). In the process the session attached to 
+		 * the persistent collection of the milestones is killed, not sure why, thus triggering the 
 		 * lazy exception.
-		 *
-		 *  The hack to prevent this is to make sure the indexation happens last, which here can be done
+		 * 
+		 *  The hack to prevent this is to make sure the indexation happens last, which here can be done 
 		 *  by updating the core attributes to the last position.
 		 */
 		// update the test case core attributes last
-
+		
 		doUpdateTestCaseCoreAttributes(testCase, orig);
 
 		// move the test case if its index says it has to move
@@ -333,8 +332,8 @@ public class TestCaseFacility extends EntityFacilitySupport {
 				validator.getModel().setDeleted(target);
 
 				LOGGER.debug(EXCEL_ERR_PREFIX + "Deleted Test Case \t'" + target + "'");
-				// WARNING! it was previously catching all Exceptions, if it throws new ones, add them in the catch
-			} catch (UnsupportedOperationException | ClassCastException | IllegalArgumentException | IllegalStateException ex) {
+
+			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 					new Object[]{ex.getClass().getName()}));
 

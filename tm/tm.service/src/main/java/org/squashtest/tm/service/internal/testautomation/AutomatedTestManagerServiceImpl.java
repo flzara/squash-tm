@@ -24,9 +24,7 @@ import static org.springframework.transaction.annotation.Propagation.SUPPORTS;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import javax.inject.Inject;
 
@@ -66,7 +64,7 @@ public class AutomatedTestManagerServiceImpl implements UnsecuredAutomatedTestMa
 	private TestAutomationTaskExecutor executor;
 
 	@Inject
-	@Transactional(propagation = SUPPORTS) // Injection method should not trigger a tx but should not care either
+    @Transactional(propagation = SUPPORTS) // Injection method should not trigger a tx but should not care either
 	public void setAsyncTaskExecutor(AsyncTaskExecutor executor) {
 		this.executor = new TestAutomationTaskExecutor(executor);
 	}
@@ -134,12 +132,11 @@ public class AutomatedTestManagerServiceImpl implements UnsecuredAutomatedTestMa
 
 		for (FetchTestListFuture future : futures) {
 
-			TestAutomationProjectContent projectContent = null;
 			try {
-				projectContent = future.get(timeoutMillis, TimeUnit.MILLISECONDS);
-				// WARNING! it was previously catching all Exceptions, if it throws new ones, add them in the catch
-			} catch (InterruptedException | ExecutionException | TimeoutException e) {
+				TestAutomationProjectContent projectContent = future.get(timeoutMillis, TimeUnit.MILLISECONDS);
 				results.add(projectContent);
+			} catch (Exception ex) {
+				results.add(future.getTask().buildFailedResult(ex));
 			}
 		}
 

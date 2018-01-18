@@ -62,22 +62,22 @@ public class BugTrackerModificationController {
 
 	@Inject
 	private BugTrackerModificationService bugtrackerModificationService;
-
+	
 	@Inject
 	private InternationalizationHelper i18nHelper;
 
 	@Inject
 	private BugTrackerFinderService bugtrackerFinder;
-
-
-
+	
+	
+	
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
 	public ModelAndView getProjectInfos(@PathVariable long bugtrackerId, Locale locale) {
 
 		BugTracker bugTracker = bugtrackerFinder.findById(bugtrackerId);
 		String jsonBugtrackerKinds = findJsonBugTrackerKinds();
 		BugtrackerCredentialsManagementBean authBean = makeAuthBean(bugTracker, locale);
-
+		
 		ModelAndView mav = new ModelAndView("page/bugtrackers/bugtracker-info");
 		mav.addObject("bugtracker", bugTracker);
 		mav.addObject("bugtrackerKinds", jsonBugtrackerKinds);
@@ -85,7 +85,7 @@ public class BugTrackerModificationController {
 		return mav;
 	}
 
-
+	
 
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	@ResponseBody
@@ -134,17 +134,17 @@ public class BugTrackerModificationController {
 
 		return kind;
 	}
-
-
+	
+	
 	// **************************** credentials management ******************************
-
+	
 	@RequestMapping(method = RequestMethod.POST, params = {"id=bugtracker-auth-policy", VALUE})
 	@ResponseBody
 	public void changeAuthPolicy(@RequestParam(VALUE) AuthenticationPolicy policy, @PathVariable(BUGTRACKER_ID) long bugtrackerId){
 		bugtrackerModificationService.changeAuthenticationPolicy(bugtrackerId, policy);
 	}
-
-
+	
+	
 	@RequestMapping(value= "/credentials/validator", method = RequestMethod.POST, consumes="application/json")
 	@ResponseBody
 	public void testCredentials(@PathVariable(BUGTRACKER_ID) long bugtrackerId ,@RequestBody Credentials credentials){
@@ -154,17 +154,17 @@ public class BugTrackerModificationController {
 		 */
 		bugtrackerModificationService.testCredentials(bugtrackerId, credentials);
 	}
-
+	
 	@RequestMapping(value = "/credentials", method = RequestMethod.POST, consumes="application/json")
 	@ResponseBody
 	public void storeCredentials(@PathVariable(BUGTRACKER_ID) long bugtrackerId ,@RequestBody Credentials credentials){
 		bugtrackerModificationService.storeCredentials(bugtrackerId, credentials);
 	}
-
-
+	
+	
 	// ********************** more private stuffs ******************
-
-
+	
+	
 	private String findJsonBugTrackerKinds() {
 		Set<String> bugtrackerKinds = bugtrackerFinder.findBugTrackerKinds();
 		Map<String, String> mapKinds = new HashMap<>(bugtrackerKinds.size());
@@ -173,26 +173,26 @@ public class BugTrackerModificationController {
 		}
 		return JsonHelper.serialize(mapKinds);
 	}
-
-
+	
+	
 	private BugtrackerCredentialsManagementBean makeAuthBean(BugTracker bugTracker, Locale locale){
 		AuthenticationProtocol[] availableProtos = bugtrackerModificationService.getSupportedProtocols(bugTracker);
 		BugtrackerCredentialsManagementBean bean = new BugtrackerCredentialsManagementBean();
-
-		// defaults
+		
+		// defaults 
 		bean.setAuthPolicy(bugTracker.getAuthenticationPolicy());
 		bean.setSelectedProto(AuthenticationProtocol.BASIC_AUTH);
 		bean.setAvailableProtos(Arrays.asList(availableProtos));
-
+		
 		// now check against the credentials
 		try{
 			Credentials credentials = bugtrackerModificationService.findCredentials(bugTracker.getId());
-
+			
 			if (credentials != null){
 				bean.setSelectedProto(credentials.getImplementedProtocol());
 				bean.setCredentials(credentials);
 			}
-
+			
 		}
 		// no encryption key : blocking error, internationalizable
 		catch(MissingEncryptionKeyException ex){
@@ -205,30 +205,29 @@ public class BugTrackerModificationController {
 			bean.setWarningMessage(msg);
 		}
 		// other exceptions are treated as non blocking, non internationalizable errors
-		// WARNING! it was previously catching all Exceptions, if it throws new ones, add them in the catch
-		catch(UnsupportedOperationException | ClassCastException | IllegalArgumentException | IllegalStateException ex){
+		catch(Exception ex){
 			LOGGER.error(ex.getMessage(), ex);
 			bean.setWarningMessage(ex.getMessage());
 		}
-
+		
 		return bean;
-
+		
 	}
-
-
-
+	
+	
+	
 	public static final class BugtrackerCredentialsManagementBean{
-
+		
 		// if those Strings remains to null it is a good thing
 		private String failureMessage = null;
 		private String warningMessage = null;
-
+		
 		// the rest is used if the above is null
 		private AuthenticationPolicy authPolicy;
 		private List<AuthenticationProtocol> availableProtos;
-		private AuthenticationProtocol selectedProto;
+		private AuthenticationProtocol selectedProto; 
 		private Credentials credentials;
-
+		
 		public AuthenticationPolicy getAuthPolicy() {
 			return authPolicy;
 		}
@@ -265,11 +264,11 @@ public class BugTrackerModificationController {
 		public void setWarningMessage(String warningMessage) {
 			this.warningMessage = warningMessage;
 		}
-
-
-
-
+		
+		
+		
+		
 	}
-
+	
 
 }

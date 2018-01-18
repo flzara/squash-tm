@@ -70,8 +70,8 @@ public class SquashFeatureController {
 			try {
 				featureManager.setEnabled(Feature.MILESTONE, enabled);
 				applicationScope.setAttribute(SquashConfigContextExposer.MILESTONE_FEATURE_ENABLED_CONTEXT_ATTR, enabled);
-				// WARNING! it was previously catching all Exceptions, if it throws new ones, add them in the catch
-			} catch (UnsupportedOperationException | ClassCastException | IllegalArgumentException | IllegalStateException ex) {
+
+			} catch (RuntimeException ex) {
 				// exception occurred : we rollback the app state
 				applicationScope.setAttribute(SquashConfigContextExposer.MILESTONE_FEATURE_ENABLED_CONTEXT_ATTR, prevState);
 				throw ex;

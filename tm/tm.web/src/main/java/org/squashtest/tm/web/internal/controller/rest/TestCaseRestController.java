@@ -20,20 +20,24 @@
  */
 package org.squashtest.tm.web.internal.controller.rest;
 
-import org.hibernate.HibernateException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.service.testcase.TestStepFinder;
 import org.squashtest.tm.web.internal.model.rest.RestTestCase;
 import org.squashtest.tm.web.internal.model.rest.RestTestStep;
-
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 @RequestMapping("/api/testcase")
@@ -46,8 +50,10 @@ public class TestCaseRestController {
 	private TestStepFinder testStepFinder;
 
 	/**
+	 *
 	 * @deprecated consider using
-	 * {@link org.squashtest.tm.web.exception.ResourceNotFoundException}
+	 *             {@link org.squashtest.tm.web.exception.ResourceNotFoundException}
+	 *
 	 */
 	@Deprecated
 	@ResponseStatus(value = HttpStatus.NOT_FOUND)
@@ -64,30 +70,28 @@ public class TestCaseRestController {
 		}
 	}
 
-	private TestCase findTestCase(Long id) {
+	private TestCase findTestCase(Long id){
 
 		TestCase testCase = null;
 
 		try {
 			testCase = this.testCaseFinder.findById(id);
-			// WARNING! it was previously catching all RunTimeExceptions, if it throws new ones, add them in the catch
-		} catch (HibernateException e) {
+		} catch (RuntimeException e) {
 
-			//weird, intellij says that the try doesn't throw any InvocationTargetException
-			if (e.getCause().getClass().equals(java.lang.reflect.InvocationTargetException.class)) {
+			if(e.getCause().getClass().equals(java.lang.reflect.InvocationTargetException.class)) {
 				throw new ResourceNotFoundException(e);
 			}
 		}
 
 
-		if (testCase == null) {
+		if(testCase == null){
 			throw new ResourceNotFoundException();
 		}
 
 		return testCase;
 	}
 
-	private List<TestStep> findTestSteps(Long id) {
+	private List<TestStep> findTestSteps(Long id){
 
 		List<TestStep> testSteps = new ArrayList<>();
 

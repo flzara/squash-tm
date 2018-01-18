@@ -58,34 +58,34 @@ public class IssueDaoImpl implements CustomIssueDao {
 	private static final Logger LOGGER = LoggerFactory.getLogger(IssueDaoImpl.class);
 
 	private static final String SELECT_ISSUES_INTRO =
-		"select Issue from Issue Issue ";
+			"select Issue from Issue Issue ";
 
 
 	private static final String SELECT_ISSUES_OUTRO =
-		"and Issue.bugtracker.id in (" +
-			"select bt.id " +
-			"from ExecutionStep estep " +
-			"inner join estep.execution exec " +
-			"inner join exec.testPlan tp " +
-			"inner join tp.iteration it " +
-			"inner join it.campaign cp " +
-			"inner join cp.project proj " +
-			"inner join proj.bugtrackerBinding binding " +
-			"inner join binding.bugtracker bt " +
-			"where estep.id in (:executionStepsIds) " +
-			") ";
+			"and Issue.bugtracker.id in (" +
+					"select bt.id " +
+					"from ExecutionStep estep " +
+					"inner join estep.execution exec " +
+					"inner join exec.testPlan tp " +
+					"inner join tp.iteration it " +
+					"inner join it.campaign cp " +
+					"inner join cp.project proj " +
+					"inner join proj.bugtrackerBinding binding " +
+					"inner join binding.bugtracker bt " +
+					"where estep.id in (:executionStepsIds) " +
+					") ";
 
 	private static final String WHERE_CLAUSE_FOR_ISSUES_FROM_EXEC_AND_EXEC_STEP =
-		// ------------------------------------Where issues is from the given
-		// Executions
-		"where (" +
-			"Issue.id in ( " +
-			"select isExec.id " +
-			"from Execution exec " +
-			"inner join exec.issueList ile " +
-			"inner join ile.issues isExec " +
+			// ------------------------------------Where issues is from the given
+			// Executions
+			"where (" +
+			"Issue.id in ( "+
+			"select isExec.id "+
+			"from Execution exec "+
+			"inner join exec.issueList ile "+
+			"inner join ile.issues isExec "+
 			"where exec.id in (:executionsIds) " +
-			") " +
+			") "+
 			"or Issue.id in (" +
 			"select isStep.id " +
 			"from ExecutionStep estep " +
@@ -112,15 +112,15 @@ public class IssueDaoImpl implements CustomIssueDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Issue> findSortedIssuesFromIssuesLists(final Collection<Long> issueListIds,
-													   final PagingAndSorting sorter, Long bugtrackerId) {
+			final PagingAndSorting sorter, Long bugtrackerId) {
 
 		if (issueListIds.isEmpty()) {
 			return Collections.emptyList();
 		}
 
 		Criteria crit = entityManager.unwrap(Session.class).createCriteria(Issue.class, "Issue")
-			.add(Restrictions.in("Issue.issueList.id", issueListIds))
-			.add(Restrictions.eq("Issue.bugtracker.id", bugtrackerId));
+				.add(Restrictions.in("Issue.issueList.id", issueListIds))
+				.add(Restrictions.eq("Issue.bugtracker.id", bugtrackerId));
 
 		SortingUtils.addOrder(crit, sorter);
 		PagingUtils.addPaging(crit, sorter);
@@ -135,7 +135,7 @@ public class IssueDaoImpl implements CustomIssueDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Issue> findSortedIssuesFromExecutionAndExecutionSteps(List<Long> executionsIds,
-																	  List<Long> executionStepsIds, PagingAndSorting sorter) {
+			List<Long> executionStepsIds, PagingAndSorting sorter) {
 		if (!executionsIds.isEmpty() && !executionStepsIds.isEmpty()) {
 
 			String queryString = SELECT_ISSUES_INTRO + WHERE_CLAUSE_FOR_ISSUES_FROM_EXEC_AND_EXEC_STEP + SELECT_ISSUES_OUTRO;
@@ -194,8 +194,8 @@ public class IssueDaoImpl implements CustomIssueDao {
 				ExecutionStep step = findExecutionStepByIssue(id);
 
 				if (step.getExecution() != null) {
-					testCase = step.getExecution().getReferencedTestCase();
-				}
+				testCase = step.getExecution().getReferencedTestCase();
+			}
 
 			} catch (NoResultException ex) {
 				// NOOP - not too sure if this can happen, former hibernate based code would return null in this case
@@ -206,8 +206,8 @@ public class IssueDaoImpl implements CustomIssueDao {
 		return testCase;
 	}
 
-	@Override
-	public Execution findExecutionRelatedToIssue(long id) {
+    @Override
+    public Execution findExecutionRelatedToIssue(long id) {
 		Execution exec = null;
 
 		try {
@@ -218,17 +218,16 @@ public class IssueDaoImpl implements CustomIssueDao {
 				ExecutionStep step = findExecutionStepByIssue(id);
 
 				if (step.getExecution() != null) {
-					exec = step.getExecution();
-				}
-				// WARNING! it was previously catching all Exceptions, if it throws new ones, add them in the catch
-			} catch (NoResultException ex) {
+        		 exec = step.getExecution();
+        	 }
+			} catch (Exception ex) {
 				// NOOP - not too sure if this can happen, former hibernate based code would return null in this case
 				LOGGER.warn("Could not find execution step for issue id {}", id, ex);
-			}
+         }
 		}
 
-		return exec;
-	}
+         return exec;
+    }
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -246,7 +245,7 @@ public class IssueDaoImpl implements CustomIssueDao {
 			.selectFrom(QIssue.issue)
 			.where(
 				QIssue.issue.bugtracker.eq(bugtracker)
-					.and(QIssue.issue.remoteIssueId.eq(remoteid))
+				.and(QIssue.issue.remoteIssueId.eq(remoteid))
 			).fetch();
 	}
 
@@ -259,7 +258,7 @@ public class IssueDaoImpl implements CustomIssueDao {
 		PagingUtils.addPaging(query, sorter);
 
 		return query.list();
-	}
+}
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -270,7 +269,7 @@ public class IssueDaoImpl implements CustomIssueDao {
 		PagingUtils.addPaging(query, sorter);
 
 		return query.list();
-	}
+}
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -332,7 +331,7 @@ public class IssueDaoImpl implements CustomIssueDao {
 		PagingUtils.addPaging(query, sorter);
 
 		return query.list();
-	}
+}
 
 	@Override
 	public List<Pair<ExecutionStep, Issue>> findAllExecutionStepIssuePairsByExecution(Execution execution, PagingAndSorting sorter) {

@@ -77,8 +77,7 @@ public class JasperReportsService {
 		}
 		try{
 			return exporterClass.newInstance();
-			// WARNING! it was previously catching all RunTimeExceptions, if it throws new ones, add them in the catch
-		}catch(IllegalAccessException|InstantiationException e){
+		}catch(Exception e){
 			throw new RuntimeException(e);
 		}
 
@@ -115,6 +114,7 @@ public class JasperReportsService {
 			exporter.exportReport();
 
 			return new FileInputStream(reportFile);
+
 		}catch(IOException | JRException ioe){
 			throw new RuntimeException(ioe);
 		}

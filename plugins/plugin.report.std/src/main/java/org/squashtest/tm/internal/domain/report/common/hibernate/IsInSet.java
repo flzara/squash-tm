@@ -69,9 +69,8 @@ public abstract class IsInSet<T extends Number> extends ReportCriterion {
 
 		Object[] rawParameters = getParameters();
 
-		if (rawParameters == null || rawParameters.length == 0) {
-			return null;
-		}
+		if (rawParameters == null || rawParameters.length == 0){
+			return null;}
 		try {
 			List<Object> typedValues = new LinkedList<>();
 
@@ -81,8 +80,7 @@ public abstract class IsInSet<T extends Number> extends ReportCriterion {
 
 			return typedValues;
 
-			// WARNING! it was previously catching all Exceptions, if it throws new ones, add them in the catch
-		} catch (IllegalArgumentException e) {
+		} catch (Exception e) {
 			throw new IllegalArgumentException(this.getClass().getSimpleName() + " : cannot cast values to Long", e);
 		}
 

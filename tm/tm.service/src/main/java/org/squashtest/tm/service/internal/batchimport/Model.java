@@ -193,6 +193,7 @@ public class Model {
 
 	/**
 	 * caches the requirement link roles
+	 *
 	 */
 	private Set<String> requirementLinkRoles;
 
@@ -470,7 +471,7 @@ public class Model {
 	 * check needs to be done beforehand.
 	 */
 	public void updateCallStepTarget(TestStepTarget step,
-									 TestCaseTarget newTarget, CallStepParamsInfo paramInfo) throws IllegalArgumentException {
+									 TestCaseTarget newTarget, CallStepParamsInfo paramInfo) {
 
 		if (!stepExists(step)) {
 			throw new IllegalArgumentException(
@@ -498,7 +499,7 @@ public class Model {
 
 	}
 
-	public void remove(TestStepTarget target) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException {
+	public void remove(TestStepTarget target) {
 
 		if (!stepExists(target)) {
 			throw new IllegalArgumentException(
@@ -848,7 +849,7 @@ public class Model {
 	private void loadRequirement(RequirementTarget target) {
 		Long reqId;
 		if (target.isSynchronized()) {
-			// this if mean, if we have a synced requirement with JIRA Req or Redmine Req plugin, witch do not use RemoteSynchronisation objects
+		// this if mean, if we have a synced requirement with JIRA Req or Redmine Req plugin, witch do not use RemoteSynchronisation objects
 			if (target.getRemoteSynchronisationId() == null) {
 				LOGGER.debug("ReqImport - looking for synchronized requirement key : '{}'", target.getRemoteKey());
 				reqId = reqFinderService.findNodeIdByRemoteKey(target.getRemoteKey(), target.getProject());

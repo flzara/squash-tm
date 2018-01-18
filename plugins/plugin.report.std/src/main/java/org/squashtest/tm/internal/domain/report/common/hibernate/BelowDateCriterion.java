@@ -34,15 +34,15 @@ import org.squashtest.tm.internal.domain.report.query.hibernate.ReportCriterion;
  * this ReportCriterion is exactly wysiwyg
  *
  */
-public class BelowDateCriterion extends ReportCriterion {
+public class BelowDateCriterion extends ReportCriterion{
 
-	public BelowDateCriterion() {
+	public BelowDateCriterion(){
 
 		setOperator(QueryOperator.COMPARATOR_LT);
 		setParamClass(Date.class);
 	}
 
-	public BelowDateCriterion(String criterionName, String attributePath) {
+	public BelowDateCriterion(String criterionName, String attributePath){
 		this();
 		setCriterionName(criterionName);
 		setAttributePath(attributePath);
@@ -50,11 +50,9 @@ public class BelowDateCriterion extends ReportCriterion {
 	}
 
 
-	private Date makeDate() throws IllegalArgumentException {
+	private Date makeDate() throws ParseException{
 		Object[] values = getParameters();
-		if (values.length != 1) {
-			throw new IllegalArgumentException("Criterion of type " + this.getClass().getSimpleName() + " cannot have more than one argument");
-		}
+		if (values.length!=1){ throw new IllegalArgumentException("Criterion of type "+this.getClass().getSimpleName()+" cannot have more than one argument");}
 		Date date = (Date) values[0];
 
 		Calendar calendar = GregorianCalendar.getInstance();
@@ -70,19 +68,17 @@ public class BelowDateCriterion extends ReportCriterion {
 
 	@Override
 	public Criterion makeCriterion() {
-		Criterion result;
+		try{
+			Criterion result = null;
 
-		Date arg;
-		try {
-			arg = makeDate();
-			// WARNING! it was previously catching all Exceptions, if it throws new ones, add them in the catch
-		} catch (IllegalArgumentException e) {
+			Date arg = makeDate();
+
+			result= Restrictions.lt(getAttributePath(), arg );
+
+			return result;
+		}catch(Exception e){
 			return null;
 		}
-
-		result = Restrictions.lt(getAttributePath(), arg);
-
-		return result;
 	}
 
 }

@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.internal.domain.report.common.hibernate;
 
-import org.hibernate.HibernateException;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
@@ -99,8 +98,7 @@ public class IsRunningCampaignCriterion extends ReportCriterion {
 
 			}
 			return result;
-			// WARNING! it was previously catching all Exceptions, if it throws new ones, add them in the catch
-		}catch(IllegalArgumentException|HibernateException| ClassCastException e){
+		}catch(Exception e){
 			return null;
 		}
 	}

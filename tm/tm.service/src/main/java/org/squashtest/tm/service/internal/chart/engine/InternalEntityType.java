@@ -236,8 +236,7 @@ enum InternalEntityType {
 		try{
 			return InternalEntityType.valueOf(name);
 		}
-		// WARNING! it was previously catching all Exceptions, if it throws new ones, add them in the catch
-		catch(IllegalArgumentException  ex){
+		catch(Exception ex){
 			throw new IllegalArgumentException("Unimplemented : cannot convert type '"+domainType+"' to a corresponding internal type", ex);
 		}
 

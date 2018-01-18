@@ -47,7 +47,6 @@ import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
-import org.squashtest.tm.exception.CyclicStepCallException;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageInstruction;
@@ -114,12 +113,12 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 	@Inject
 	private TestCaseFacility testCaseFacility;
 
-
-	// the following attributes shadow the same attributes defined in EntityFacilitySupport
-	// here we can inject prototype-scoped instances and configure the RequirementFacility and TestCaseFacility with them.
+        
+    // the following attributes shadow the same attributes defined in EntityFacilitySupport
+    // here we can inject prototype-scoped instances and configure the RequirementFacility and TestCaseFacility with them.
 	@Inject
 	private CustomFieldTransator customFieldTransator;
-
+        
 	@Inject
 	private ValidationFacility validator;
 
@@ -181,7 +180,7 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 
 	@Override
 	public LogTrain addCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase,
-								CallStepParamsInfo paramInfo, ActionTestStep actionStepBackup) {
+		CallStepParamsInfo paramInfo, ActionTestStep actionStepBackup) {
 
 		LogTrain train = validator.addCallStep(target, testStep, calledTestCase, paramInfo, actionStepBackup);
 
@@ -232,7 +231,7 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 
 	@Override
 	public LogTrain updateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase,
-								   CallStepParamsInfo paramInfo, ActionTestStep actionStepBackup) {
+		CallStepParamsInfo paramInfo, ActionTestStep actionStepBackup) {
 
 		LogTrain train = validator.updateCallStep(target, testStep, calledTestCase, paramInfo, actionStepBackup);
 
@@ -242,8 +241,7 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 				validator.getModel().updateCallStepTarget(target, calledTestCase, paramInfo);
 
 				LOGGER.debug(EXCEL_ERR_PREFIX + "Created Call Step \t'" + target + "' -> '" + calledTestCase + "'");
-				// WARNING! it was previously catching all Exceptions, if it throws new ones, add them in the catch
-			} catch (IllegalArgumentException | CyclicStepCallException ex) {
+			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 					new Object[]{ex.getClass().getName()}));
 				LOGGER.error(EXCEL_ERR_PREFIX + "unexpected error while updating step " + target + " : ", ex);
@@ -264,8 +262,8 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 				validator.getModel().remove(target);
 
 				LOGGER.debug(EXCEL_ERR_PREFIX + "Deleted Step \t'" + target + "'");
-				// WARNING! it was previously catching all Exceptions, if it throws new ones, add them in the catch
-			} catch (IllegalArgumentException | UnsupportedOperationException | IndexOutOfBoundsException ex) {
+
+			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 					new Object[]{ex.getClass().getName()}));
 				LOGGER.error(EXCEL_ERR_PREFIX + "unexpected error while deleting step " + target + " : ", ex);
@@ -286,8 +284,7 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 				validator.getModel().addParameter(target);
 
 				LOGGER.debug(EXCEL_ERR_PREFIX + "Created Parameter \t'" + target + "'");
-				// WARNING! it was previously catching all Exceptions, if it throws new ones, add them in the catch
-			} catch (UnsupportedOperationException | ClassCastException | IllegalArgumentException | IllegalStateException ex) {
+			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 					new Object[]{ex.getClass().getName()}));
 				LOGGER.error(EXCEL_ERR_PREFIX + "unexpected error while adding parameter " + target + " : ", ex);
@@ -309,8 +306,7 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 				// Double-insertion proof.
 
 				LOGGER.debug(EXCEL_ERR_PREFIX + "Updated Parameter \t'" + target + "'");
-				// WARNING! it was previously catching all Exceptions, if it throws new ones, add them in the catch
-			} catch (UnsupportedOperationException | ClassCastException | IllegalArgumentException | IllegalStateException ex) {
+			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 					new Object[]{ex.getClass().getName()}));
 				LOGGER.error(EXCEL_ERR_PREFIX + "unexpected error while updating parameter " + target + " : ", ex);
@@ -331,8 +327,7 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 				validator.getModel().removeParameter(target);
 
 				LOGGER.debug(EXCEL_ERR_PREFIX + "Deleted Parameter \t'" + target + "'");
-				// WARNING! it was previously catching all Exceptions, if it throws new ones, add them in the catch
-			} catch (IllegalArgumentException | ClassCastException | UnsupportedOperationException ex) {
+			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 					new Object[]{ex.getClass().getName()}));
 
@@ -345,7 +340,7 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 
 	@Override
 	public LogTrain failsafeUpdateParameterValue(DatasetTarget dataset, ParameterTarget param, String value,
-												 boolean isUpdate) {
+		boolean isUpdate) {
 
 		LogTrain train = validator.failsafeUpdateParameterValue(dataset, param, value, isUpdate);
 
@@ -354,10 +349,10 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 				doFailsafeUpdateParameterValue(dataset, param, value);
 
 				validator.getModel().addDataset(dataset);
+
 				LOGGER.debug(EXCEL_ERR_PREFIX + "Updated Param Value for param \t'" + param + "' in dataset '"
 					+ dataset + "'");
-				// WARNING! it was previously catching all Exceptions, if it throws new ones, add them in the catch
-			} catch (UnsupportedOperationException | ClassCastException | IllegalArgumentException ex) {
+			} catch (Exception ex) {
 				train.addEntry(new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 					new Object[]{ex.getClass().getName()}));
 				LOGGER.error(EXCEL_ERR_PREFIX + "unexpected error while setting parameter " + param + " in dataset "
@@ -380,8 +375,8 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 				validator.getModel().addDataset(dataset);
 
 				LOGGER.debug(EXCEL_ERR_PREFIX + "Created Dataset '" + dataset + "'");
-// WARNING! it was previously catching all Exceptions, if it throws new ones, add them in the catch
-			} catch (UnsupportedOperationException | ClassCastException | IllegalArgumentException ex) {
+
+			} catch (Exception ex) {
 				train.addEntry(new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 					new Object[]{ex.getClass().getName()}));
 				LOGGER.error(EXCEL_ERR_PREFIX + "unexpected error while creating dataset " + dataset + " : ", ex);
@@ -403,8 +398,8 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 				validator.getModel().removeDataset(dataset);
 
 				LOGGER.debug(EXCEL_ERR_PREFIX + "Deleted Dataset '" + dataset + "'");
-// WARNING! it was previously catching all Exceptions, if it throws new ones, add them in the catch
-			} catch (UnsupportedOperationException | ClassCastException | IllegalArgumentException ex) {
+
+			} catch (Exception ex) {
 				train.addEntry(new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 					new Object[]{ex.getClass().getName()}));
 				LOGGER.error(EXCEL_ERR_PREFIX + "unexpected error while deleting dataset " + dataset + " : ", ex);
@@ -434,18 +429,20 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 	public LogTrain createRequirementLink(RequirementLinkInstruction instr) {
 		return requirementFacility.createRequirementLink(instr);
 	}
-
+	
 	@Override
 	public LogTrain updateRequirementLink(RequirementLinkInstruction instr) {
 		return requirementFacility.updateRequirementLink(instr);
 	}
-
+	
 	@Override
 	public LogTrain deleteRequirementLink(RequirementLinkInstruction instr) {
 		return requirementFacility.deleteRequirementLink(instr);
 	}
-
-
+	
+	
+	
+	
 	/**
 	 * for all other stuffs that need to be done afterward
 	 */
@@ -468,7 +465,7 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 		// move it if the index was specified. Perf optim : don't move it if already in the good place
 		Integer index = target.getIndex();
 		if (index != null && index >= 0 && index < tc.getSteps().size()
-			&& tc.getPositionOfStep(testStep.getId()) != index) {
+				&& tc.getPositionOfStep(testStep.getId()) != index) {
 			testcaseModificationService.changeTestStepsPosition(tc.getId(), index, Collections.singletonList(testStep.getId()));
 		}
 
@@ -515,7 +512,7 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 
 	}
 
-	private void doUpdateCallStep(TestStepTarget target, TestCaseTarget calledTestCase, CallStepParamsInfo paramInfo) throws CyclicStepCallException {
+	private void doUpdateCallStep(TestStepTarget target, TestCaseTarget calledTestCase, CallStepParamsInfo paramInfo) {
 
 		// update the step
 		TestStep actualStep = validator.getModel().getStep(target);
@@ -694,10 +691,10 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 		this.initializeCustomFieldTransator(customFieldTransator);
 		testCaseFacility.initializeCustomFieldTransator(customFieldTransator);
 		requirementFacility.initializeCustomFieldTransator(customFieldTransator);
-
-		this.initializeValidator(validator);
-		testCaseFacility.initializeValidator(validator);
-		requirementFacility.initializeValidator(validator);
+                
+        this.initializeValidator(validator);
+        testCaseFacility.initializeValidator(validator);
+        requirementFacility.initializeValidator(validator);
 	}
 
 }

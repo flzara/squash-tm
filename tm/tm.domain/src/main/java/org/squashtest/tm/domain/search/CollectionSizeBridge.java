@@ -145,8 +145,7 @@ public class CollectionSizeBridge implements StringBridge {
 
 				LOGGER.debug("collection size was found using criteria");
 			}
-			// WARNING! it was previously catching all Exceptions, if it throws new ones, add them in the catch
-			catch(HibernateException ex){
+			catch(Exception ex){
 
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("something has gone wrong : ",ex);
@@ -198,8 +197,7 @@ public class CollectionSizeBridge implements StringBridge {
 			return count.intValue();
 
 		}
-		// WARNING! it was previously catching all Exceptions, if it throws new ones, add them in the catch
-		catch(HibernateException ex){
+		catch(Exception ex){
 
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug("the fallback has gone wrong too", ex);

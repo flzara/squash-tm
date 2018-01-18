@@ -288,10 +288,9 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 				if (update.hasCriticalityDefined()) {
 					ps.setCriticality(update.getCriticality());
 				}
-				// WARNING! it was previously catching all Exceptions, if it throws new ones, add them in the catch
-			} catch (UnsupportedOperationException | ClassCastException | IllegalArgumentException | IllegalStateException ex) {
+
+			} catch (Exception ex) {
 				// lots of legitimate business exception could happen so I won't log them here
-				// [Sonar] nope, bad idea...
 				failures.add(rv.getId());
 			}
 		}
