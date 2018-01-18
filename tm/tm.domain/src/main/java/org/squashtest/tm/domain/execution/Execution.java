@@ -338,11 +338,11 @@ DenormalizedFieldHolder, BoundEntity {
 		setStatusPrivately(testCase.getStatus());
 
 		// the nature and type now
-		InfoListItem nature = testCase.getNature();
-		this.nature = new DenormalizedNature(nature.getLabel(), nature.getCode(), nature.getIconName());
+		InfoListItem natureToDenormalize = testCase.getNature();
+		this.nature = new DenormalizedNature(natureToDenormalize.getLabel(), natureToDenormalize.getCode(), natureToDenormalize.getIconName());
 
-		InfoListItem type = testCase.getType();
-		this.type = new DenormalizedType(type.getLabel(), type.getCode(), type.getIconName());
+		InfoListItem typeToDenormalize = testCase.getType();
+		this.type = new DenormalizedType(typeToDenormalize.getLabel(), typeToDenormalize.getCode(), typeToDenormalize.getIconName());
 
 	}
 

@@ -32,8 +32,10 @@ import java.util.Collections;
 
 @WebComponent
 public class ExportPluginManagerImpl implements ExportPluginManager {
+
 	@Autowired(required = false)
 	private Collection<ExportPlugin> plugins = Collections.emptyList();
+
 	private final MultiValueMap pluginsByWorkspace = new MultiValueMap();
 
 	@PostConstruct
@@ -43,14 +45,13 @@ public class ExportPluginManagerImpl implements ExportPluginManager {
 		}
 	}
 
-
 	@Override
 	@SuppressWarnings("unchecked")
 	public Collection<ExportPlugin> findAllByWorkspace(WorkspaceType workspace) {
-		Collection<ExportPlugin> plugins = pluginsByWorkspace.getCollection(workspace);
-		if (plugins == null) {
-			plugins = Collections.emptySet();
+		Collection<ExportPlugin> allPlugins = pluginsByWorkspace.getCollection(workspace);
+		if (allPlugins == null) {
+			allPlugins = Collections.emptySet();
 		}
-		return Collections.unmodifiableCollection(plugins);
+		return Collections.unmodifiableCollection(allPlugins);
 	}
 }

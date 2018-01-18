@@ -97,11 +97,11 @@ public class JsonChartInstance {
 
         this.projectScope = instance.getDefinition().getProjectScope();
 
-		ChartSeries series = instance.getSeries();
+		ChartSeries chartSeries = instance.getSeries();
 
-		this.abscissa = series.getAbscissa();
+		this.abscissa = chartSeries.getAbscissa();
 
-		this.series = series.getSeries();
+		this.series = chartSeries.getSeries();
 
 	}
 

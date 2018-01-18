@@ -50,7 +50,7 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager {
 
 	/**
 	 * List of known wizards
-	 * @Inject does not allow optional values but we may have no wizard. The simplest way is to us e@Autowired with
+	 * @Inject does not allow optional values but we may have no wizard. The simplest way is to use @Autowired with
 	 * an empty list as the default.
 	 */
 	@Autowired(required = false)
@@ -110,12 +110,12 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager {
 	@Override
 	public Collection<WorkspaceWizard> findEnabledWizards(long projectId, WorkspaceType workspace) {
 
-		Collection<WorkspaceWizard> wizards = findAllByWorkspace(workspace);
+		Collection<WorkspaceWizard> allWizards = findAllByWorkspace(workspace);
 		Collection<String> enabledWizardIds = findEnabledWizardIds(projectId, workspace);
 
 		Predicate predicate = new BelongsToList(enabledWizardIds);
 
-		return filterWizards(wizards, predicate);
+		return filterWizards(allWizards, predicate);
 	}
 
 	private Collection<WorkspaceWizard> filterWizards(Collection<WorkspaceWizard> wizards, Predicate predicate) {
@@ -141,12 +141,12 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager {
 
 	@Override
 	public Collection<WorkspaceWizard> findDisabledWizards(long projectId, WorkspaceType workspace) {
-		Collection<WorkspaceWizard> wizards = findAllByWorkspace(workspace);
+		Collection<WorkspaceWizard> allWizards = findAllByWorkspace(workspace);
 		Collection<String> enabledWizardIds = findEnabledWizardIds(projectId, workspace);
 
 		Predicate predicate = new AbsentFromList(enabledWizardIds);
 
-		return filterWizards(wizards, predicate);
+		return filterWizards(allWizards, predicate);
 
 	}
 

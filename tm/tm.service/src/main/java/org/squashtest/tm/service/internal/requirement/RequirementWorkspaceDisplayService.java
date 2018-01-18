@@ -380,14 +380,14 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 
 	@Override
 	protected Set<Long> findLNByMilestoneId(Long activeMilestoneId) {
-		List<Long> reqsDontAllowClick = findReqsWithChildrenLinkedToActiveMilestone(activeMilestoneId);
+		List<Long> reqsWhichDontAllowClick = findReqsWithChildrenLinkedToActiveMilestone(activeMilestoneId);
 		return new HashSet<>(DSL.select(REQUIREMENT_VERSION.REQUIREMENT_ID)
 			.from(MILESTONE_REQ_VERSION)
 			.leftJoin(REQUIREMENT_VERSION).on(MILESTONE_REQ_VERSION.REQ_VERSION_ID.eq(REQUIREMENT_VERSION.RES_ID))
 			.leftJoin(REQUIREMENT).on(REQUIREMENT_VERSION.REQUIREMENT_ID.eq(REQUIREMENT.RLN_ID))
 			.where(MILESTONE_REQ_VERSION.MILESTONE_ID.eq(activeMilestoneId))
 			.union(DSL.select(REQUIREMENT_FOLDER.RLN_ID).from(REQUIREMENT_FOLDER))
-			.union(DSL.select(REQUIREMENT.RLN_ID).from(REQUIREMENT).where(REQUIREMENT.RLN_ID.in(reqsDontAllowClick)))
+			.union(DSL.select(REQUIREMENT.RLN_ID).from(REQUIREMENT).where(REQUIREMENT.RLN_ID.in(reqsWhichDontAllowClick)))
 			.fetch(REQUIREMENT_VERSION.REQUIREMENT_ID, Long.class));
 	}
 
