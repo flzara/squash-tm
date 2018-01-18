@@ -22,6 +22,8 @@ package org.squashtest.tm.service.internal.attachment;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.attachment.Attachment;
@@ -36,6 +38,7 @@ import java.sql.Blob;
 import java.util.List;
 
 @Component("databaseAttachmentRepository")
+@ConditionalOnProperty(name = "squashtm.feature.file.repository", havingValue = "false", matchIfMissing = true)
 public class DatabaseAttachmentRepository implements AttachmentRepository {
 
 	@PersistenceContext

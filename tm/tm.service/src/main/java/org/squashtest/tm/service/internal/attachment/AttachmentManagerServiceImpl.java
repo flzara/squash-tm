@@ -23,18 +23,13 @@ package org.squashtest.tm.service.internal.attachment;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.sql.Blob;
 import java.util.*;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -86,16 +81,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	private IndexationService indexationService;
 
 	@Inject
-	private FeatureManager featureManager;
-
-	@Inject
-	@Named("databaseAttachmentRepository")
-	private AttachmentRepository databaseAttachmentRepository;
-
-	@Inject
-	@Named("fileSystemAttachmentRepository")
-	private AttachmentRepository filesystemAttachmentRepository;
-
+	private AttachmentRepository attachmentRepository;
 
 	@Override
 	public Long addAttachment(long attachmentListId, RawAttachment rawAttachment) throws IOException {
@@ -132,10 +118,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	}
 
 	private AttachmentRepository getAttachmentRepository() {
-		if (featureManager.isEnabled(FeatureManager.Feature.FILE_REPOSITORY)) {
-			return filesystemAttachmentRepository;
-		}
-		return databaseAttachmentRepository;
+		return attachmentRepository;
 	}
 
 	@Override

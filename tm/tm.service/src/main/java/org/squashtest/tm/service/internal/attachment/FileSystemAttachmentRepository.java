@@ -24,6 +24,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.attachment.Attachment;
@@ -42,6 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component("fileSystemAttachmentRepository")
+@ConditionalOnProperty(name = "squashtm.feature.file.repository", havingValue = "true")
 public class FileSystemAttachmentRepository implements AttachmentRepository {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemAttachmentRepository.class);
@@ -55,7 +57,8 @@ public class FileSystemAttachmentRepository implements AttachmentRepository {
 	@Inject
 	private AttachmentDao attachmentDao;
 
-	private String repoPath;
+	@Inject
+	private AttachmentStorageModeConfigurer storageConfigurer;
 
 	@Override
 	public AttachmentContent createContent(RawAttachment rawAttachment, long attachmentListId) throws IOException {
@@ -123,7 +126,7 @@ public class FileSystemAttachmentRepository implements AttachmentRepository {
 				FileUtils.cleanDirectory(folder);
 				Files.deleteIfExists(Paths.get(folderPath));
 			} catch (IOException e) {
-				LOGGER.error("Unable to deletet " + folderPath);
+				LOGGER.error("Unable to delete " + folderPath);
 				throw new RuntimeException(e);
 			}
 		}
@@ -147,14 +150,7 @@ public class FileSystemAttachmentRepository implements AttachmentRepository {
 		parts.add(paddedId.substring(6, 9));
 		parts.add(paddedId.substring(9, 12));
 		String path = StringUtils.join(parts, "/");
-		path = repoPath + path;
+		path = storageConfigurer.getRepoPath() + path;
 		return StringUtils.appendIfMissing(path, "/");
-	}
-
-	@PostConstruct
-	public void init(){
-		repoPath = env.getRequiredProperty("squash.path.file.repository");
-		repoPath = StringUtils.appendIfMissing(repoPath, "/");
-		LOGGER.info("Squash File Repository configured to : " + repoPath);
 	}
 }
