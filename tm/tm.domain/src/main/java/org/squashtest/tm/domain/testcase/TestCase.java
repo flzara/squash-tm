@@ -567,7 +567,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 											RequirementVersion version) throws RequirementAlreadyVerifiedException {
 		Requirement req = version.getRequirement();
 		for (RequirementVersionCoverage coverage : this.requirementVersionCoverages) {
-			if (coverage != requirementVersionCoverage) {
+			if (!coverage.equals(requirementVersionCoverage)) {
 				RequirementVersion verified = coverage.getVerifiedRequirementVersion();
 				if (verified != null && req.equals(verified.getRequirement())) {
 					throw new RequirementAlreadyVerifiedException(version, this);
