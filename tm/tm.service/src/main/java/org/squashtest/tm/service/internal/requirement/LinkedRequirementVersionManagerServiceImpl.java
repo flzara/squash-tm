@@ -313,7 +313,7 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 
 	@Override
 	public void checkIfSameRequirement(RequirementVersion reqVersion, RequirementVersion relatedReqVersion) {
-			if (reqVersion.getRequirement().getId() == relatedReqVersion.getRequirement().getId()) {
+			if (reqVersion.getRequirement().getId().equals(relatedReqVersion.getRequirement().getId())) {
 				throw new SameRequirementLinkedRequirementVersionException();
 			}
 		};
