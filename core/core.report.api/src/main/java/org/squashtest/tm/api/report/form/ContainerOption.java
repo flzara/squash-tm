@@ -34,15 +34,17 @@ import org.apache.commons.lang3.StringUtils;
  *
  */
 public class ContainerOption<I extends Input> extends OptionInput {
+
 	private I content;
 
-	/**
-	 *
-	 */
 	public ContainerOption() {
 		super();
 	}
 
+	public ContainerOption(I content, String value) {
+		super(value);
+		this.content = content;
+	}
 	/**
 	 * @return the content
 	 */

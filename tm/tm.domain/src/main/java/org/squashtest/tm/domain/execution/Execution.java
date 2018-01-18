@@ -229,10 +229,10 @@ DenormalizedFieldHolder, BoundEntity {
 	}
 
 	/**
-	 * Creates an execution for the test case references by the given tess plan item. Should be used by
+	 * Creates an execution for the given test case. Should be used by
 	 * {@link IterationTestPlanItem} only.
 	 *
-	 * @param testPlanItem
+	 * @param testCase
 	 */
 	public Execution(TestCase testCase) {
 		this(testCase, null);
@@ -352,13 +352,13 @@ DenormalizedFieldHolder, BoundEntity {
 		// safety belt.
 
 		String pr = testCase.getPrerequisite();
-		setPrerequisite(pr == null ? "" : valueParams(pr));
+		doSetPrerequisite(pr == null ? "" : valueParams(pr));
 
 		pr = testCase.getReference();
-		setReference(pr == null ? "" : pr);
+		doSetReference(pr == null ? "" : pr);
 
 		pr = testCase.getDescription();
-		setTcdescription(pr == null ? "" : pr);
+		doSetTcDescription(pr == null ? "" : pr);
 
 	}
 
@@ -468,6 +468,10 @@ DenormalizedFieldHolder, BoundEntity {
 	 *            the prerequisite to set
 	 */
 	public void setPrerequisite(@NotNull String prerequisite) {
+		doSetPrerequisite(prerequisite);
+	}
+
+	private void doSetPrerequisite(@NotNull String prerequisite) {
 		this.prerequisite = prerequisite;
 	}
 
@@ -476,6 +480,10 @@ DenormalizedFieldHolder, BoundEntity {
 	}
 
 	public void setReference(String reference) {
+		doSetReference(reference);
+	}
+
+	private void doSetReference(String reference) {
 		this.reference = reference;
 	}
 
@@ -524,7 +532,11 @@ DenormalizedFieldHolder, BoundEntity {
 	}
 
 	public void setTcdescription(String tcdescription) {
-		this.tcdescription = tcdescription;
+		doSetTcDescription(tcdescription);
+	}
+
+	private void doSetTcDescription(String tcDescription) {
+		this.tcdescription = tcDescription;
 	}
 
 	private void addStep(@NotNull ExecutionStep step) {

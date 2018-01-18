@@ -27,14 +27,24 @@ import org.squashtest.tm.core.foundation.i18n.Labelled;
  *
  */
 public class OptionInput extends Labelled {
+
 	private String name;
 	private String value = "";
 	private boolean defaultSelected = false;
 	private String givesAccessTo = "none";
+
 	/**
 	 * please read {@link BasicInput#disabledBy}
 	 */
 	private String disabledBy;
+
+	public OptionInput() {
+		super();
+	}
+
+	public OptionInput(String value) {
+		this.value = value;
+	}
 
 	/**
 	 *

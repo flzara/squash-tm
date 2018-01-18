@@ -28,9 +28,7 @@ public class TagPickerOption  extends ContainerOption<TagPicker>  {
 
 
 	public TagPickerOption(){
-		super();
-		super.setContent(new TagPicker());
-		super.setValue(InputType.TAG_PICKER.name());
+		super(new TagPicker(), InputType.TAG_PICKER.name());
 	}
 
 	/**
@@ -66,7 +64,7 @@ public class TagPickerOption  extends ContainerOption<TagPicker>  {
 
 	/**
 	 * This is the value of the container option. It is automatically set to a sensible "MILESTONE_PICKER" value
-	 * 
+	 *
 	 * @see org.squashtest.tm.api.report.form.OptionInput#setValue(java.lang.String)
 	 */
 	@Override
@@ -74,7 +72,7 @@ public class TagPickerOption  extends ContainerOption<TagPicker>  {
 		// overriden for doc only
 		super.setValue(value);
 	}
-	
+
 	/**
 	 * @param pickerLabelKey
 	 *            the pickerLabelKey to set
@@ -82,13 +80,13 @@ public class TagPickerOption  extends ContainerOption<TagPicker>  {
 	public void setPickerLabelKey(String pickerLabelKey) {
 		getContent().setLabelKey(pickerLabelKey);
 	}
-	
+
 	public void setPickerBoundEntity(String boundEntity){
 		getContent().setBoundEntity(boundEntity);
 	}
-	
+
 	public String getPickerBoundEntity(){
 		return getContent().getBoundEntity();
 	}
-	
+
 }

@@ -28,9 +28,7 @@ public class MilestonePickerOption  extends ContainerOption<MilestonePicker>  {
 
 
 	public MilestonePickerOption(){
-		super();
-		super.setContent(new MilestonePicker());
-		super.setValue(InputType.MILESTONE_PICKER.name());
+		super(new MilestonePicker(), InputType.MILESTONE_PICKER.name());
 	}
 
 	/**
@@ -66,7 +64,7 @@ public class MilestonePickerOption  extends ContainerOption<MilestonePicker>  {
 
 	/**
 	 * This is the value of the container option. It is automatically set to a sensible "MILESTONE_PICKER" value
-	 * 
+	 *
 	 * @see org.squashtest.tm.api.report.form.OptionInput#setValue(java.lang.String)
 	 */
 	@Override

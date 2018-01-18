@@ -26,18 +26,16 @@ import org.squashtest.tm.api.report.form.ProjectPicker;
 
 /**
  * Composite input : project picker inside an option. Rem : it can also be configured by hand.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class ProjectPickerOption extends ContainerOption<ProjectPicker> {
 	/**
-	 * 
+	 *
 	 */
 	public ProjectPickerOption() {
-		super();
-		super.setContent(new ProjectPicker());
-		super.setValue(InputType.PROJECT_PICKER.name());
+		super(new ProjectPicker(), InputType.PROJECT_PICKER.name());
 	}
 
 	/**
@@ -73,7 +71,7 @@ public class ProjectPickerOption extends ContainerOption<ProjectPicker> {
 
 	/**
 	 * This is the value of the container option. It is automatically set to a sensible "PROJECT_PICKER" value
-	 * 
+	 *
 	 * @see org.squashtest.tm.api.report.form.OptionInput#setValue(java.lang.String)
 	 */
 	@Override

@@ -27,19 +27,17 @@ import org.squashtest.tm.api.report.form.TreePicker;
 
 /**
  * Option containint a Tree Picker. Can also be configured by hand.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class TreePickerOption extends ContainerOption<TreePicker> {
 
 	/**
-	 * 
+	 *
 	 */
 	public TreePickerOption() {
-		super();
-		super.setContent(new TreePicker());
-		super.setValue(InputType.TREE_PICKER.name());
+		super(new TreePicker(), InputType.TREE_PICKER.name());
 	}
 
 	/**
@@ -53,7 +51,7 @@ public class TreePickerOption extends ContainerOption<TreePicker> {
 
 	/**
 	 * This is the value of the container option. It is automatically set to a sensible "TREE_PICKER" value
-	 * 
+	 *
 	 * @see org.squashtest.tm.api.report.form.OptionInput#setValue(java.lang.String)
 	 */
 	@Override
