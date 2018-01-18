@@ -32,8 +32,7 @@ public interface FeatureManager {
 	public enum Feature {
 		MILESTONE,
 		CASE_INSENSITIVE_LOGIN,
-		STACK_TRACE,
-		FILE_REPOSITORY
+		STACK_TRACE
 	}
 	// @formatter:on
 	boolean isEnabled(Feature feature);

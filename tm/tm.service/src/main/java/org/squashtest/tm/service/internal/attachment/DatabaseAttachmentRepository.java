@@ -72,7 +72,7 @@ public class DatabaseAttachmentRepository implements AttachmentRepository {
 
 	@Override
 	public void deleteContent(List<Long> attachmentListIds) {
-
+		//NOOP Hibernate took care of deleting all lists contents
 	}
 
 	private Session currentSession() throws HibernateException {

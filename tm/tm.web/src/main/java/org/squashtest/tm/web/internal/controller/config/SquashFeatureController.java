@@ -95,12 +95,4 @@ public class SquashFeatureController {
 	public void setStackTraceFeature(@RequestParam("enabled") boolean enabled) {
 		featureManager.setEnabled(Feature.STACK_TRACE, enabled);
 	}
-
-	@RequestMapping(value = "/file-repository", method = RequestMethod.POST, params = "enabled")
-	@ResponseBody
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@Secured("ROLE_ADMIN")
-	public void setFileRepositoryFeature(@RequestParam("enabled") boolean enabled) {
-		featureManager.setEnabled(Feature.FILE_REPOSITORY, enabled);
-	}
 }

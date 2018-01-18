@@ -71,10 +71,6 @@ public class ConfigAdministrationController {
 	@Value("${squashtm.stack.trace.control.panel.visible:false}")
 	private Boolean stackTracePanel;
 
-	//by default you cannot enable file repository without a sys admin change the config file of squash tm
-	@Value("${squashtm.feature.file.repository:false}")
-	private Boolean showFileRepositoryPanel;
-
 	@Inject
     private ConfigurationService configService;
 
@@ -118,8 +114,6 @@ public class ConfigAdministrationController {
 
 		mav.addObject("shouldDisplayStackTraceControlPanel", stackTracePanel);
 		mav.addObject("stackTrace", features.isEnabled(Feature.STACK_TRACE));
-		mav.addObject("fileRepository", features.isEnabled(Feature.FILE_REPOSITORY));
-		mav.addObject("shouldDisplayFileRepositoryControlPanel", showFileRepositoryPanel);
 
 		return mav;
     }

@@ -78,26 +78,6 @@ public class FileSystemAttachmentRepository implements AttachmentRepository {
 		return new FileInputStream(path);
 	}
 
-	/**
-	 * Calculate the file path for an attachment.
-	 * The path is defined as : the attachment list id / attachment CONTENT id
-	 * The attachment list id is padded to 12 chars to have a for level hierarchy
-	 * ex : For an attachment list id of 9856 and a CONTENT ID of 56897 path will be
-	 * /000/000/009/856/56897
-	 * @param attachmentId the ATTACHMENT ID, the method will take care to find the content id for generating path
-	 * @return the path as specified above
-	 */
-	private String getAttachmentPath(Long attachmentId) {
-		Attachment attachment = attachmentDao.findOne(attachmentId);
-		Long attachmentListId = attachment.getAttachmentList().getId();
-		String folderPath = findFolderPath(attachmentListId);
-		Long contentId = attachment.getContent().getId();
-		if (contentId == null) {
-			throw new IllegalArgumentException("Content id is null. Not able to generate path for content of attachment : " + attachment.toString());
-		}
-		return folderPath + contentId;
-	}
-
 	@Override
 	public void removeContent(long attachmentId) throws IOException {
 		String path = getAttachmentPath(attachmentId);
@@ -130,6 +110,27 @@ public class FileSystemAttachmentRepository implements AttachmentRepository {
 				throw new RuntimeException(e);
 			}
 		}
+	}
+
+
+	/**
+	 * Calculate the file path for an attachment.
+	 * The path is defined as : the attachment list id / attachment CONTENT id
+	 * The attachment list id is padded to 12 chars to have a for level hierarchy
+	 * ex : For an attachment list id of 9856 and a CONTENT ID of 56897 path will be
+	 * /000/000/009/856/56897
+	 * @param attachmentId the ATTACHMENT ID, the method will take care to find the content id for generating path
+	 * @return the path as specified above
+	 */
+	private String getAttachmentPath(Long attachmentId) {
+		Attachment attachment = attachmentDao.findOne(attachmentId);
+		Long attachmentListId = attachment.getAttachmentList().getId();
+		String folderPath = findFolderPath(attachmentListId);
+		Long contentId = attachment.getContent().getId();
+		if (contentId == null) {
+			throw new IllegalArgumentException("Content id is null. Not able to generate path for content of attachment : " + attachment.toString());
+		}
+		return folderPath + contentId;
 	}
 
 	/**

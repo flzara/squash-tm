@@ -74,23 +74,6 @@
       </div>
 
       <div class="tg-body">
-        <c:if test="${ shouldDisplayFileRepositoryControlPanel }">
-        <div id="storage-mode" class="display-table">
-          <div class="display-table-row">
-            <div class="display-table-cell">
-              <label for="toggle-storage-checkbox" class="display-table-cell" style="vertical-align:bottom">
-                <f:message key="label.storage.mode"/>
-              </label>
-            </div>
-
-            <div class="display-table-cell">
-              <c:set var="checked" value="${ fileRepository ? 'checked=checked' : '' }"/>
-              <input id="toggle-storage-checkbox" type="checkbox" ${checked} style="vertical-align:bottom"/>
-            </div>
-          </div>
-
-        </div>
-        </c:if>
 
         <div id="config-table" class="display-table">
           <div class="display-table-row">
