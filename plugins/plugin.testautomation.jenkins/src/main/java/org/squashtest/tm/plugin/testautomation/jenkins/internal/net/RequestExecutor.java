@@ -58,7 +58,7 @@ public class RequestExecutor {
 			return handler.handleResponse(resp);
 		} catch (AccessDenied ex) {
 			throw new AccessDenied(
-				"Test automation - jenkins : operation rejected the operation because of wrong credentials"); // NOSONAR no need for actual call stack
+				"Test automation - jenkins : operation rejected the operation because of wrong credentials", ex);
 		} catch (IOException ex) {
 			throw new ServerConnectionFailed(
 				"Test automation - jenkins : could not connect to server due to technical error : ", ex);

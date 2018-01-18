@@ -104,9 +104,9 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 
 		try {
 			return jsonParser.readJobListFromJson(response);
-		} catch (UnreadableResponseException ex) {// NOSONAR (GRF) call stack broken on purpose, i guess
+		} catch (UnreadableResponseException ex) {
 			throw new UnreadableResponseException("Test automation - jenkins : server '" + server
-				+ "' returned malformed response : ", ex.getCause()); // NOSONAR (GRF) call stack broken on purpose, i guess
+				+ "' returned malformed response : ", ex);
 		}
 
 	}

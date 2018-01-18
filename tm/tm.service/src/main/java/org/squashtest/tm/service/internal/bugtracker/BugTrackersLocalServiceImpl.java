@@ -209,7 +209,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		} catch (TimeoutException timex) {
 			throw new BugTrackerRemoteException(timex);
 		} catch (InterruptedException | ExecutionException e) {
-			throw new BugTrackerRemoteException(e.getCause());
+			throw new BugTrackerRemoteException(e);
 		}
 
 	}

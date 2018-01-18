@@ -99,7 +99,7 @@ public class TestCaseRestController {
 			testSteps = this.testCaseFinder.findStepsByTestCaseId(id);
 		} catch (java.lang.RuntimeException e) {
 			if (e.getCause().getClass().equals(java.lang.reflect.InvocationTargetException.class)) {
-				throw new ResourceNotFoundException();
+				throw new ResourceNotFoundException(e);
 			} else {
 				throw e;
 			}
