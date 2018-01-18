@@ -372,6 +372,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 	private Map<Long, String> getTestSuiteDescriptionList() {
 		Field<String> description = org.jooq.impl.DSL.coalesce(TCLN.DESCRIPTION, "");
+
 		return DSL.selectDistinct(TS.ID, description)
 			.from(TS)
 			.leftJoin(TSTPI).on(TS.ID.eq(TSTPI.SUITE_ID))
@@ -380,7 +381,8 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.where(TSTPI.TEST_PLAN_ORDER.eq(0))
 			.fetch()
 			.stream()
-			.collect(Collectors.toMap(r-> r.get(TS.ID), r-> r.get(description)));
+			//prevent conflict when hibernate indexed lists are corrupted, by selecting always the first one...
+			.collect(Collectors.toMap(r-> r.get(TS.ID), r-> r.get(description), (String u, String v) -> u));
 	}
 
 	private String removeHtmlForDescription(String html) {
