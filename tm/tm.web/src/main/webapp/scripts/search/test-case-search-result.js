@@ -357,7 +357,6 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.r
 			loadCombos("importance-combo");
 			loadCombos("status-combo");
 
-
 			addModifyResultDialog.on('change', ':checkbox', function(evt) {
 				var cbx = $(evt.currentTarget),
 					state = cbx.prop('checked'),
@@ -368,7 +367,6 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.r
 					var selectAlter = cbx.parent().siblings().find('select');
 					selectAlter.prop('disabled', !state);
 					document.getElementById("importanceAuto").disabled=!state;
-					console.log(cbx.prop('checked'));
 				}
 				if(cbx.context.id ==='importanceAuto'  ){
 					select = cbx.parent().siblings().last().find('select');
@@ -390,15 +388,15 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.r
 				var columns = ["importance","status","type","nature"];
 				var importanceAuto = $('#importanceAuto').prop('checked');
 				var index = 0;
-
+				var urlPOST;
 				for(index=0; index<columns.length; index++){
 					if($("#"+columns[index]+"-checkbox").prop('checked')){
 						self.updateDisplayedValueInColumn(table, columns[index]);
 						var value = $("#"+columns[index]+"-combo").find('option:selected').val();
 						for(var i=0; i<ids.length; i++){
-							if(columns[index]=="importance") {
-								if (importanceAuto == true) {
-									var urlPOST = squashtm.app.contextRoot + "/test-cases/" + ids[i] + "/importanceAuto";
+							if(columns[index]==="importance") {
+								if (importanceAuto === true) {
+									urlPOST = squashtm.app.contextRoot + "/test-cases/" + ids[i] + "/importanceAuto";
 									$.post(urlPOST, {
 										importanceAuto: importanceAuto
 									});
@@ -412,7 +410,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.r
 									});
 								}
 							}else{
-								var urlPOST = squashtm.app.contextRoot + "/test-cases/" + ids[i];
+								urlPOST = squashtm.app.contextRoot + "/test-cases/" + ids[i];
 								$.post(urlPOST, {
 									value : value,
 									id : "test-case-"+columns[index]
