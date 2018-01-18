@@ -357,12 +357,28 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.r
 			loadCombos("importance-combo");
 			loadCombos("status-combo");
 
-			addModifyResultDialog.on('change', ':checkbox', function(evt){
+
+			addModifyResultDialog.on('change', ':checkbox', function(evt) {
 				var cbx = $(evt.currentTarget),
 					state = cbx.prop('checked'),
-					select = cbx.parent().siblings().last().find('select');
+					importanceAuto,
+					select;
 
-				select.prop('disabled', !state);
+				if(cbx.context.id ==='importance-checkbox'  ){
+					var selectAlter = cbx.parent().siblings().find('select');
+					selectAlter.prop('disabled', !state);
+					document.getElementById("importanceAuto").disabled=!state;
+					console.log(cbx.prop('checked'));
+				}
+				if(cbx.context.id ==='importanceAuto'  ){
+					select = cbx.parent().siblings().last().find('select');
+					importanceAuto = state;
+					select.prop('disabled', state);
+				}
+			else  {
+					select = cbx.parent().siblings().last().find('select');
+					select.prop('disabled', !state);
+			}
 			});
 
 
@@ -372,6 +388,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.r
 				var table = $('#test-case-search-result-table').dataTable();
 				var ids = self.getIdsOfEditableSelectedTableRowList(table);
 				var columns = ["importance","status","type","nature"];
+				var importanceAuto = $('#importanceAuto').prop('checked');
 				var index = 0;
 
 				for(index=0; index<columns.length; index++){
@@ -379,11 +396,29 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.r
 						self.updateDisplayedValueInColumn(table, columns[index]);
 						var value = $("#"+columns[index]+"-combo").find('option:selected').val();
 						for(var i=0; i<ids.length; i++){
-							var urlPOST = squashtm.app.contextRoot + "/test-cases/" + ids[i];
-							$.post(urlPOST, {
-								value : value,
-								id : "test-case-"+columns[index]
-							});
+							if(columns[index]=="importance") {
+								if (importanceAuto == true) {
+									var urlPOST = squashtm.app.contextRoot + "/test-cases/" + ids[i] + "/importanceAuto";
+									$.post(urlPOST, {
+										importanceAuto: importanceAuto
+									});
+								} else {
+									$.post(squashtm.app.contextRoot + "/test-cases/" + ids[i], {
+										value : value,
+										id : "test-case-"+columns[index]
+									});
+									$.post(squashtm.app.contextRoot + "/test-cases/" + ids[i] + "/importanceAuto", {
+										importanceAuto: importanceAuto
+									});
+								}
+							}else{
+								var urlPOST = squashtm.app.contextRoot + "/test-cases/" + ids[i];
+								$.post(urlPOST, {
+									value : value,
+									id : "test-case-"+columns[index]
+								}
+							);
+							}
 						}
 					}
 				}

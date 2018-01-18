@@ -288,12 +288,17 @@
             <table id="modify-search-result-dialog-table">
               <tr>
                 <td>
-                  <input id="importance-checkbox" type="checkbox"></input>
+                  <input id="importance-checkbox" type="checkbox" ></input>
                 </td>
                 <td>
                   <label th:text="#{test-case.importance.label}"></label>
                 </td>
                 <td id="importance-combo"></td>
+                <td>
+
+                  <input id="importanceAuto"  type="checkbox" disabled="true" style="text-align: left;"></input>
+                  <label  class="afterDisabled">auto</label>
+                </td>
               </tr>
               <tr>
                 <td>
