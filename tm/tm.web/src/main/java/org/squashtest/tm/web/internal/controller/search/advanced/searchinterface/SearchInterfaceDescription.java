@@ -298,9 +298,9 @@ public abstract class SearchInterfaceDescription {
 		Collections.sort(milestones, (p1, p2) -> p1.getLabel().compareTo(p2.getLabel()));
 
 		for (JsonMilestone milestone : milestones){
-			Integer integer = new Integer(String.valueOf(milestone.getId()));
+			String milestoneIdString = String.valueOf(milestone.getId());
 			if (milestone.getStatus() != MilestoneStatus.PLANNED){
-				labelField.addPossibleValue(optionBuilder.label(milestone.getLabel()).optionKey(integer.toString()).build());
+				labelField.addPossibleValue(optionBuilder.label(milestone.getLabel()).optionKey(milestoneIdString).build());
 			}
 		}
 
