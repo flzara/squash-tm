@@ -119,6 +119,8 @@ tm/tm.web/src/main/resources/config/application-jth.properties
 tm/tm.web/src/main/resources/config/application-zya_mysql.properties
 tm/tm.web/src/main/resources/config/application-bfl_postgresql.properties
 tm/tm.web/src/main/resources/config/application-bfl_mysql.properties
+tm/tm.web/src/main/resources/config/application-cho_postgresql.properties
+tm/tm.web/src/main/resources/config/application-cho.properties
 syntax: regexp
 ^plugins/plugin\.testautomation\.jenkins/META-INF$
 syntax: regexp

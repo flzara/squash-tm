@@ -35,7 +35,9 @@ import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.customreport.CustomReportWorkspaceService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.internal.customreport.CustomReportWorkspaceDisplayService;
+import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
+import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.builder.CustomReportListTreeNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.CustomReportTreeNodeBuilder;
@@ -80,6 +82,9 @@ public class CustomReportNavigationController {
 	@Named("customReport.nodeBuilder")
 	private Provider<CustomReportTreeNodeBuilder> builderProvider;
 
+	@Inject
+	private UserAccountService userAccountService;
+
 	public static final Logger LOGGER = LoggerFactory.getLogger(CustomReportNavigationController.class);
 
 	//----- CREATE NODE METHODS -----
@@ -117,19 +122,20 @@ public class CustomReportNavigationController {
 	@ResponseBody
 	@RequestMapping(value = "/drives/{nodeId}/content", method = RequestMethod.GET)
 	public List<JsTreeNode> getRootContentTreeModel(@PathVariable long nodeId) {
-		return new ArrayList<>(customReportWorkspaceDisplayService.getNodeContent(nodeId));
+		return getNodeContent(nodeId);
+
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/folders/{nodeId}/content", method = RequestMethod.GET)
 	public List<JsTreeNode> getFolderContentTreeModel(@PathVariable long nodeId) {
-		return new ArrayList<>(customReportWorkspaceDisplayService.getNodeContent(nodeId));
+		return getNodeContent(nodeId);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/dashboard/{nodeId}/content", method = RequestMethod.GET)
 	public List<JsTreeNode> getDashboardContentTreeModel(@PathVariable long nodeId) {
-		return new ArrayList<>(customReportWorkspaceDisplayService.getNodeContent(nodeId));
+		return getNodeContent(nodeId);
 	}
 
 	//-------------- COPY-NODES ------------------------------
@@ -218,6 +224,11 @@ public class CustomReportNavigationController {
 		List<TreeLibraryNode> nodeList;
 		nodeList = customReportLibraryNodeService.copyNodes(Arrays.asList(nodeIds), destinationId);
 		return listBuilder.build(nodeList);
+	}
+
+	private List<JsTreeNode> getNodeContent(Long nodeId) {
+		UserDto currentUser = userAccountService.findCurrentUserDto();
+		return new ArrayList<>(customReportWorkspaceDisplayService.getNodeContent(nodeId, currentUser));
 	}
 
 

@@ -32,8 +32,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.api.security.acls.Permission;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
+import org.squashtest.tm.domain.project.ProjectResource;
 import org.squashtest.tm.jooq.domain.tables.CrlnRelationship;
 import org.squashtest.tm.jooq.domain.tables.CustomReportLibraryNode;
+import org.squashtest.tm.service.internal.dto.PermissionWithMask;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -43,10 +45,14 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toList;
 import static org.jooq.impl.DSL.count;
 import static org.squashtest.tm.api.security.acls.Permission.*;
 import static org.squashtest.tm.domain.project.Project.PROJECT_TYPE;
 import static org.squashtest.tm.jooq.domain.Tables.*;
+import static org.squashtest.tm.service.internal.dto.PermissionWithMask.findByMask;
 
 @Service("customReportWorkspaceDisplayService")
 @Transactional(readOnly = true)
@@ -73,25 +79,34 @@ public class CustomReportWorkspaceDisplayService {
 
 		getFatherChildrenMultiMaps(expansionCandidates, childrenIds, libraryFatherChildrenMultiMap, libraryNodeFatherChildrenMultiMap);
 
-		Map<Long, JsTreeNode> libraryChildrenMap = getLibraryChildrenMap(childrenIds);
+		Map<Long, JsTreeNode> libraryChildrenMap = getLibraryChildrenMap(childrenIds, currentUser);
 		Map<Long, JsTreeNode> jsTreeNodes = doFindLibraries(readableProjectIds, currentUser);
 		buildHierarchy(jsTreeNodes, libraryFatherChildrenMultiMap, libraryNodeFatherChildrenMultiMap, libraryChildrenMap);
+
+		if (currentUser.isNotAdmin()) {
+			findPermissionMap(currentUser, jsTreeNodes);
+		}
+
 		return jsTreeNodes.values();
 
 	}
 
-	public Collection<JsTreeNode> getNodeContent(Long nodeId) {
+	public Collection<JsTreeNode> getNodeContent(Long nodeId, UserDto currentUser) {
 		Set<Long> childrenIds = new HashSet<>();
 
 		MultiMap libraryFatherChildrenMultiMap = new MultiValueMap();
 		MultiMap libraryNodeFatherChildrenMultiMap = new MultiValueMap();
 
 		MultiMap expansionCandidates = new MultiValueMap();
-		expansionCandidates.put(new Object(), nodeId);    //the fisrt attribute doesn't matter, the two first multimap aren't used in this method
+		expansionCandidates.put(new Object(), nodeId);
 
 		getFatherChildrenMultiMaps(expansionCandidates, childrenIds, libraryFatherChildrenMultiMap, libraryNodeFatherChildrenMultiMap);
 
-		Map<Long, JsTreeNode> libraryChildrenMap = getLibraryChildrenMap(childrenIds);
+		Map<Long, JsTreeNode> libraryChildrenMap = getLibraryChildrenMap(childrenIds, currentUser);
+
+		if (currentUser.isNotAdmin()) {
+			findNodeChildrenPermissionMap(currentUser, libraryChildrenMap, nodeId);
+		}
 
 		return libraryChildrenMap.values();
 	}
@@ -104,10 +119,11 @@ public class CustomReportWorkspaceDisplayService {
 				selectLibraryNodeRelationshipDescendantId())
 				.from(getLibraryNodeRelationshipTable())
 				.where(selectLibraryNodeRelationshipAncestorId().in(openedLibraries))
+				.groupBy(selectLibraryNodeRelationshipAncestorId(), selectLibraryNodeRelationshipDescendantId(), selectLibraryNodeRelationshipContentOrder())
 				.orderBy(selectLibraryNodeRelationshipContentOrder())
 				.fetch()
 				.forEach(r -> {
-						if (expansionCandidates.get(getLibraryClassName()) != null && ((List<Long>) expansionCandidates.get(getLibraryClassName())).contains(r.get(selectLibraryNodeRelationshipAncestorId()))) {
+						if (expansionCandidates.get(getLibrarySimpleClassName()) != null && ((List<Long>) expansionCandidates.get(getLibrarySimpleClassName())).contains(r.get(selectLibraryNodeRelationshipAncestorId()))) {
 							libraryFatherChildrenMultiMap.put(r.get(selectLibraryNodeRelationshipAncestorId()), r.get(selectLibraryNodeRelationshipDescendantId()));
 						} else {
 							libraryNodeFatherChildrenMultiMap.put(r.get(selectLibraryNodeRelationshipAncestorId()), r.get(selectLibraryNodeRelationshipDescendantId()));
@@ -120,7 +136,7 @@ public class CustomReportWorkspaceDisplayService {
 
 	}
 
-	private Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds) {
+	private Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, UserDto currentUser) {
 		if (childrenIds.isEmpty()) {
 			return new HashMap<>();
 		}
@@ -134,10 +150,10 @@ public class CustomReportWorkspaceDisplayService {
 			.from(CRLN)
 			.leftJoin(CRLNR).on(CRLN.CRLN_ID.eq(CRLNR.ANCESTOR_ID))
 			.where(CRLN.CRLN_ID.in(childrenIds))
-			.groupBy(CRLN.CRLN_ID)
+			.groupBy(CRLN.CRLN_ID, CRLN.NAME, CRLN.ENTITY_TYPE, CRLNR.ANCESTOR_ID)
 			.fetch()
 			.stream()
-			.map(r -> build(r.get(CRLN.CRLN_ID), r.get(CRLN.NAME), r.get(CRLN.ENTITY_TYPE), r.get("ITERATION_COUNT", Integer.class)))
+			.map(r -> build(r.get(CRLN.CRLN_ID), r.get(CRLN.NAME), r.get(CRLN.ENTITY_TYPE), r.get("ITERATION_COUNT", Integer.class), currentUser))
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
 
 	}
@@ -160,10 +176,10 @@ public class CustomReportWorkspaceDisplayService {
 			.where(PROJECT.PROJECT_ID.in(filteredProjectIds))
 			.and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE))
 			.and(selectLibraryNodeLibraryNodeEntityType().eq("LIBRARY"))
-			.groupBy(selectLibraryNodeLibraryId())
+			.groupBy(selectLibraryNodeLibraryId(), selectLibraryNodeLibraryNodeId(), selectLibraryNodeLibraryNodeName(), selectLibraryNodeRelationshipAncestorId())
 			.fetch()
 			.stream()
-			.map(r -> build(r.get(selectLibraryNodeLibraryNodeId()), r.get(selectLibraryNodeLibraryNodeName()), "LIBRARY", r.get("COUNT_CHILD", Integer.class)))
+			.map(r -> build(r.get(selectLibraryNodeLibraryNodeId()), r.get(selectLibraryNodeLibraryNodeName()), "LIBRARY", r.get("COUNT_CHILD", Integer.class), currentUser))
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity(),
 				(u, v) -> {
 					throw new IllegalStateException(String.format("Duplicate key %s", u));
@@ -227,7 +243,7 @@ public class CustomReportWorkspaceDisplayService {
 		return record1.get(PROJECT_FILTER.ACTIVATED);
 	}
 
-	public JsTreeNode build(Long nodeId, String nodeName, String nodeType, Integer iterationCount) {
+	public JsTreeNode build(Long nodeId, String nodeName, String nodeType, Integer iterationCount, UserDto currentUser) {
 		JsTreeNode builtNode = new JsTreeNode();
 		builtNode.setTitle(nodeName);
 		builtNode.addAttr("resId", nodeId);
@@ -237,7 +253,11 @@ public class CustomReportWorkspaceDisplayService {
 		builtNode.addAttr("milestone-creatable-deletable", "true");
 		builtNode.addAttr("milestone-editable", "true");
 
-		doPermissionCheck(builtNode, new org.squashtest.tm.domain.customreport.CustomReportLibraryNode());
+		//permissions set to false by default except for admin which have rights by definition
+		EnumSet<PermissionWithMask> permissions = EnumSet.allOf(PermissionWithMask.class);
+		for (PermissionWithMask permission : permissions) {
+			builtNode.addAttr(permission.getQuality(), String.valueOf(currentUser.isAdmin()));
+		}
 
 		//A visitor would be elegant here and allow interface type development but we don't want hibernate to fetch each linked entity
 		//for each node and we don't want subclass for each node type. sooooo the good old switch on enumerated type will do the job...
@@ -257,7 +277,7 @@ public class CustomReportWorkspaceDisplayService {
 				doReportBuild(builtNode, nodeId);
 				break;
 			case DASHBOARD:
-				doDashboardBuild(builtNode, nodeId, iterationCount);
+				doDashboardBuild(builtNode, nodeId);
 				break;
 			default:
 				throw new UnsupportedOperationException("The node builder isn't implemented for node of type : " + entityType);
@@ -294,13 +314,71 @@ public class CustomReportWorkspaceDisplayService {
 		setNodeLeaf(builtNode);
 	}
 
-	private void doDashboardBuild(JsTreeNode builtNode, Long nodeId, Integer iterationCount) {
+	private void doDashboardBuild(JsTreeNode builtNode, Long nodeId) {
 		setNodeHTMLId(builtNode, "CustomReportDashboard-" + nodeId);
 		setNodeRel(builtNode, "dashboard");
 		setNodeResType(builtNode, "custom-report-dashboard");
 		setNodeLeaf(builtNode);
 	}
 
+	public void findPermissionMap(UserDto currentUser, Map<Long, JsTreeNode> jsTreeNodes) {
+		Set<Long> libraryIds = jsTreeNodes.keySet();
+
+		DSL
+			.selectDistinct(selectLibraryNodeLibraryNodeId(), ACL_GROUP_PERMISSION.PERMISSION_MASK)
+			.from(getLibraryNodeTable())
+			.join(PROJECT).on(getProjectLibraryColumn().eq(selectLibraryNodeLibraryId()))
+			.join(ACL_OBJECT_IDENTITY).on(ACL_OBJECT_IDENTITY.IDENTITY.eq(selectLibraryNodeLibraryId()))
+			.join(ACL_RESPONSIBILITY_SCOPE_ENTRY).on(ACL_OBJECT_IDENTITY.ID.eq(ACL_RESPONSIBILITY_SCOPE_ENTRY.OBJECT_IDENTITY_ID))
+			.join(ACL_GROUP_PERMISSION).on(ACL_RESPONSIBILITY_SCOPE_ENTRY.ACL_GROUP_ID.eq(ACL_GROUP_PERMISSION.ACL_GROUP_ID))
+			.join(ACL_CLASS).on(ACL_GROUP_PERMISSION.CLASS_ID.eq(ACL_CLASS.ID).and(ACL_CLASS.CLASSNAME.eq(getLibraryClassName())))
+			.where(ACL_RESPONSIBILITY_SCOPE_ENTRY.PARTY_ID.in(currentUser.getPartyIds())).and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE)).and(selectLibraryNodeLibraryNodeId().in(libraryIds))
+			.fetch()
+			.stream()
+			.collect(groupingBy(
+				r -> r.getValue(selectLibraryNodeLibraryNodeId()),
+				mapping(
+					r -> r.getValue(ACL_GROUP_PERMISSION.PERMISSION_MASK),
+					toList()
+				)
+			)).forEach((Long nodeId, List<Integer> masks) -> {
+			JsTreeNode node = jsTreeNodes.get(nodeId);
+			givePermissions(node, masks);
+		});
+	}
+
+	protected void findNodeChildrenPermissionMap(UserDto currentUser, Map<Long, JsTreeNode> libraryChildrenMap, Long nodeId) {
+		List<Integer> masks = DSL
+			.selectDistinct(ACL_GROUP_PERMISSION.PERMISSION_MASK)
+			.from(getLibraryNodeTable())
+			.join(PROJECT).on(getProjectLibraryColumn().eq(selectLibraryNodeLibraryId()))
+			.join(ACL_OBJECT_IDENTITY).on(ACL_OBJECT_IDENTITY.IDENTITY.eq(selectLibraryNodeLibraryId()))
+			.join(ACL_RESPONSIBILITY_SCOPE_ENTRY).on(ACL_OBJECT_IDENTITY.ID.eq(ACL_RESPONSIBILITY_SCOPE_ENTRY.OBJECT_IDENTITY_ID))
+			.join(ACL_GROUP_PERMISSION).on(ACL_RESPONSIBILITY_SCOPE_ENTRY.ACL_GROUP_ID.eq(ACL_GROUP_PERMISSION.ACL_GROUP_ID))
+			.join(ACL_CLASS).on(ACL_GROUP_PERMISSION.CLASS_ID.eq(ACL_CLASS.ID).and(ACL_CLASS.CLASSNAME.eq(getLibraryClassName())))
+			.where(ACL_RESPONSIBILITY_SCOPE_ENTRY.PARTY_ID.in(currentUser.getPartyIds())).and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE)).and(selectLibraryNodeLibraryNodeId().in(nodeId))
+			.fetch(ACL_GROUP_PERMISSION.PERMISSION_MASK, Integer.class);
+
+		for (JsTreeNode node : libraryChildrenMap.values()) {
+			givePermissions(node, masks);
+		}
+	}
+
+	private void givePermissions(JsTreeNode node, List<Integer> masks) {
+		for (Integer mask : masks) {
+			PermissionWithMask permission = findByMask(mask);
+			if (permission != null) {
+				node.addAttr(permission.getQuality(), String.valueOf(true));
+			}
+		}
+
+		if (!CollectionUtils.isEmpty(node.getChildren())) {
+			for (JsTreeNode child : node.getChildren()) {
+				givePermissions(child, masks);
+			}
+		}
+
+	}
 
 	private void setNodeRel(JsTreeNode builtNode, String rel) {
 		builtNode.addAttr("rel", rel);
@@ -337,8 +415,12 @@ public class CustomReportWorkspaceDisplayService {
 		}
 	}
 
-	private Object getLibraryClassName() {
+	private String getLibrarySimpleClassName() {
 		return CustomReportLibrary.class.getSimpleName();
+	}
+
+	private String getLibraryClassName() {
+		return CustomReportLibrary.class.getName();
 	}
 
 	private TableLike<?> getLibraryNodeRelationshipTable() {
@@ -377,5 +459,7 @@ public class CustomReportWorkspaceDisplayService {
 		return CRLN.CRLN_ID;
 	}
 
-
+	protected Field<Long> getProjectLibraryColumn() {
+		return PROJECT.CRL_ID;
+	}
 }
