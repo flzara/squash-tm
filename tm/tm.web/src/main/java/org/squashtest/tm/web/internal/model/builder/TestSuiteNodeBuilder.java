@@ -40,6 +40,7 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
@@ -87,7 +88,7 @@ public class TestSuiteNodeBuilder extends GenericJsTreeNodeBuilder<TestSuite, Te
 		String localizedStatus = internationalizationHelper.internationalize(status, locale);
 		String[] args = {localizedStatus};
 		String tooltip = internationalizationHelper.getMessage("label.tree.testSuite.tooltip", args, status, locale);
-		String description;
+		String description = "";
 		try {
 			if (model.getFirstPlannedTestCase() != null && StringUtils.isNotBlank(model.getFirstPlannedTestCase().getDescription())) {
 				description = HTMLCleanupUtils.htmlToText(model.getFirstPlannedTestCase().getDescription());
@@ -95,7 +96,7 @@ public class TestSuiteNodeBuilder extends GenericJsTreeNodeBuilder<TestSuite, Te
 					description = description.substring(0, 30) + "...";
 				}
 			}
-		} catch(EmptyTestSuiteTestPlanException e) {
+		} catch (EmptyTestSuiteTestPlanException e) {
 			LOGGER.debug("The test plan of this test suite is empty. Setting empty tooltip.", e);
 			description = "";
 		}
