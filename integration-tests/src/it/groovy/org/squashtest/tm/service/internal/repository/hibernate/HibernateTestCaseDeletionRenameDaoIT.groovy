@@ -43,7 +43,7 @@ import javax.inject.Inject
 @NotThreadSafe
 @UnitilsSupport
 @Transactional
-class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
+class HibernateTestCaseDeletionRenameDaoIT extends DbunitDaoSpecification{
 
 	@Inject
 	private TestCaseDeletionDao deletionDao;
