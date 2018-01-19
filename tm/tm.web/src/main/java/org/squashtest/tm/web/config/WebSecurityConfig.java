@@ -45,6 +45,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.HttpPutFormContentFilter;
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManager;
 import org.squashtest.tm.web.internal.filter.HtmlSanitizationFilter;
@@ -151,6 +152,7 @@ public class WebSecurityConfig {
 					.and()
 						.logout()
 						.permitAll()
+						.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
 						.invalidateHttpSession(true)
 						.logoutSuccessUrl("/");
 			// @formatter:on
@@ -224,6 +226,7 @@ public class WebSecurityConfig {
 				.and()
 					.logout()
 						.permitAll()
+						.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
 						.invalidateHttpSession(true)
 						.logoutSuccessUrl("/")
 
