@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.api.report.spring.view.docxtemplater;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
@@ -78,8 +79,9 @@ public class DocxTemplaterDocxView extends AbstractView{
 				response.flushBuffer();
 				inputStream.close();
 				break;
-			} catch (Exception e) {
-				LOGGER.debug("file don't exist" + resource.getFilename(), e);
+				// WARNING!! it previously caught all Exceptions
+			} catch (IOException e) {
+				LOGGER.debug("file doesn't exist" + resource.getFilename(), e);
 			}
 
 		}

@@ -21,7 +21,9 @@
 package org.squashtest.tm.web.internal.controller.search.advanced;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.Optional;
+
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -37,6 +39,7 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
+import org.squashtest.tm.exception.customfield.CodeDoesNotMatchesPatternException;
 import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.internal.dto.UserDto;
@@ -136,7 +139,8 @@ public class CampaignSearchController extends GlobalSearchController {
 				EntityReference entityReference = EntityReference.fromString(elementEntityReference.toUpperCase());
 				nodesToOpen = getNodeParentsInWorkspace(entityReference);
 				model.addAttribute("selectedNode", getTreeElementIdInWorkspace(entityReference.getId()));
-			} catch (RuntimeException e) {
+				// WARNING! it was previously catching all Exceptions
+			} catch (CodeDoesNotMatchesPatternException | IllegalArgumentException e) {
 				LOGGER.warn("Error during conversion of the 'workspace-prefs' cookie to an EntityReference.");
 			}
 		}

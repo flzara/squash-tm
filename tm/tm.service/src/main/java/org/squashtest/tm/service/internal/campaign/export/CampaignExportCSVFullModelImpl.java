@@ -723,25 +723,22 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 
 		private String formatStepRequirements() {
 			String res;
-			try {
-				if (execStep != null && execStep.getReferencedTestStep() != null) {
-					/*
-					 * should fix the mapping of execution steps -> action step : an execution step cannot reference a
-					 * call step by design. For now we'll just downcast the TestStep instance.
-					 */
-					ActionTestStep aStep = (ActionTestStep) execStep.getReferencedTestStep();
-					res = Integer.toString(aStep.getRequirementVersionCoverages().size());
-				} else if (actionTestStep != null) {
+			// WARNING !! removed try{...}catch(NPE)
+			if (execStep != null && execStep.getReferencedTestStep() != null && ((ActionTestStep) execStep.getReferencedTestStep()).getRequirementVersionCoverages() != null) {
+				/*
+				 * should fix the mapping of execution steps -> action step : an execution step cannot reference a
+				 * call step by design. For now we'll just downcast the TestStep instance.
+				 */
+				ActionTestStep aStep = (ActionTestStep) execStep.getReferencedTestStep();
+				res = Integer.toString(aStep.getRequirementVersionCoverages().size());
+			} else if (actionTestStep != null && actionTestStep.getRequirementVersionCoverages() != null) {
 
-					res = Integer.toString(actionTestStep.getRequirementVersionCoverages().size());
+				res = Integer.toString(actionTestStep.getRequirementVersionCoverages().size());
 
-				} else {
-					res = "?";
-				}
-
-			} catch (NullPointerException npe) {
+			} else {
 				res = "?";
 			}
+
 
 			return res;
 		}
@@ -802,7 +799,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 						actionTestStep = actiontestSteps.get(actionTestStepIndex);
 						execStep = null;
 						foundNextStep = true;
-					/* Issue 6351: We also have to import ITPI without any Test Step. */
+						/* Issue 6351: We also have to import ITPI without any Test Step. */
 					} else if (actionTestStepSize == 0) {
 						actionTestStep = null;
 						execStep = null;

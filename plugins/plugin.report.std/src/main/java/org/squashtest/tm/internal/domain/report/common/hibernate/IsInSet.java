@@ -79,8 +79,8 @@ public abstract class IsInSet<T extends Number> extends ReportCriterion {
 			}
 
 			return typedValues;
-
-		} catch (Exception e) {
+			// WARNING!! it previously caught all Exceptions
+		} catch (IllegalArgumentException e) {
 			throw new IllegalArgumentException(this.getClass().getSimpleName() + " : cannot cast values to Long", e);
 		}
 

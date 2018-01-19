@@ -42,42 +42,43 @@ import java.util.Set;
 @Service("squashtest.tm.service.JasperReportsService")
 public class JasperReportsService {
 
-	private final Map<String,Class<? extends JRExporter>> exporterMaps = new HashMap<>();
+	private final Map<String, Class<? extends JRExporter>> exporterMaps = new HashMap<>();
 
 	//todo : make it Spring configurable instead.
-	public JasperReportsService(){
+	public JasperReportsService() {
 		registerFormat("csv", JRCsvExporter.class);
 		registerFormat("xls", JRXlsExporter.class);
 	}
 
 
-	public Set<String> getSupportedformats(){
+	public Set<String> getSupportedformats() {
 		return exporterMaps.keySet();
 	}
 
 
-	public boolean isSupported(String format){
+	public boolean isSupported(String format) {
 		return exporterMaps.keySet().contains(format);
 	}
 
 
-	private void registerFormat(String format, Class<? extends JRExporter> jrExporterClass){
-		if (isSupported(format)){
+	private void registerFormat(String format, Class<? extends JRExporter> jrExporterClass) {
+		if (isSupported(format)) {
 			Class<?> clazz = exporterMaps.get(format);
-			throw new AlreadyMappedException("the format "+format+" is already mapped to "+clazz.getName());
+			throw new AlreadyMappedException("the format " + format + " is already mapped to " + clazz.getName());
 		}
 		exporterMaps.put(format, jrExporterClass);
 	}
 
 
-	private JRExporter getExporter(String format){
+	private JRExporter getExporter(String format) {
 		Class<? extends JRExporter> exporterClass = exporterMaps.get(format);
-		if (exporterClass==null) {
-			throw new UnsupportedFormatException("no exporter defined for "+format);
+		if (exporterClass == null) {
+			throw new UnsupportedFormatException("no exporter defined for " + format);
 		}
-		try{
+		try {
 			return exporterClass.newInstance();
-		}catch(Exception e){
+			// WARNING! it was previously catching all Exceptions
+		} catch (IllegalAccessException | ExceptionInInitializerError | SecurityException | InstantiationException e) {
 			throw new RuntimeException(e);
 		}
 
@@ -95,8 +96,8 @@ public class JasperReportsService {
 	 */
 	@SuppressWarnings("rawtypes")
 	public InputStream getReportAsStream(InputStream jasperStream, String format, Collection<?> dataSource,
-			Map reportParameter, Map<JRExporterParameter, Object> exportParameter){
-		try{
+										 Map reportParameter, Map<JRExporterParameter, Object> exportParameter) {
+		try {
 			JRExporter exporter = getExporter(format);
 
 			//create the jasper print
@@ -104,7 +105,7 @@ public class JasperReportsService {
 			JasperPrint jPrint = JasperFillManager.fillReport(jasperStream, reportParameter, jasperDataSource);
 
 			//export it
-			File reportFile = File.createTempFile("export",format);
+			File reportFile = File.createTempFile("export", format);
 			reportFile.deleteOnExit();
 			FileOutputStream reportOut = new FileOutputStream(reportFile);
 
@@ -115,7 +116,7 @@ public class JasperReportsService {
 
 			return new FileInputStream(reportFile);
 
-		}catch(IOException | JRException ioe){
+		} catch (IOException | JRException ioe) {
 			throw new RuntimeException(ioe);
 		}
 

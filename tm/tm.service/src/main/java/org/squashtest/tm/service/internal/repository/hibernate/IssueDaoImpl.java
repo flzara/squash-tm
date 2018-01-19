@@ -220,7 +220,8 @@ public class IssueDaoImpl implements CustomIssueDao {
 				if (step.getExecution() != null) {
         		 exec = step.getExecution();
         	 }
-			} catch (Exception ex) {
+        	 // WARNING! it was previously catching all Exceptions
+			} catch (NoResultException ex) {
 				// NOOP - not too sure if this can happen, former hibernate based code would return null in this case
 				LOGGER.warn("Could not find execution step for issue id {}", id, ex);
          }
