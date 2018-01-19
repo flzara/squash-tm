@@ -53,7 +53,11 @@ public class BasicAuthenticationCredentials implements Credentials {
 	public BasicAuthenticationCredentials(String login, char[] password) {
 		super();
 		this.username = login;
-		this.password = password;
+		if(password == null) {
+			this.password = null;
+		} else {
+			this.password = Arrays.copyOf(password, password.length);
+		}
 	}
 
 	public String getUsername() {
@@ -69,7 +73,11 @@ public class BasicAuthenticationCredentials implements Credentials {
 	}
 
 	public void setPassword(char[] password) {
-		this.password = password;
+		if(password == null) {
+			this.password = null;
+		} else {
+			this.password = Arrays.copyOf(password, password.length);
+		}
 	}
 
 	/**

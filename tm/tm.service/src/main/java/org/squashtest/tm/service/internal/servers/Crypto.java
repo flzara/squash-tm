@@ -82,7 +82,11 @@ class Crypto {
 
 
     public Crypto(char[] keyPassword){
-        this.keyPassword = keyPassword;
+    	if(keyPassword == null) {
+    		this.keyPassword = null;
+		} else {
+			this.keyPassword = Arrays.copyOf(keyPassword, keyPassword.length);
+		}
     }
 
     public int getVersion(){
@@ -307,10 +311,21 @@ class Crypto {
         private byte[] encryptedBytes;
 
         EncryptionBytes(byte[] salt, byte[] iv, byte[] encryptedBytes) {
-            this.salt = salt;
-            this.iv = iv;
-            this.encryptedBytes = encryptedBytes;
+        	this.salt = copyArrayOrReturnNull(salt);
+        	this.iv = copyArrayOrReturnNull(iv);
+        	this.encryptedBytes = copyArrayOrReturnNull(encryptedBytes);
         }
+
+		/**
+		 * Same method as java.util.Arrays#copyof,
+		 * but returns null if array parameter is null. */
+		private byte[] copyArrayOrReturnNull(byte[] arrayToCopy) {
+			if(arrayToCopy == null) {
+				return null;
+			} else {
+				return Arrays.copyOf(arrayToCopy, arrayToCopy.length);
+			}
+		}
 
         byte[] getSalt() {
             return salt;
