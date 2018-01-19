@@ -40,10 +40,10 @@ public class CallTestStep extends TestStep {
 	private TestCase calledTestCase;
 
 	@ManyToOne
-	@JoinColumn(name="CALLED_DATASET")
+	@JoinColumn(name = "CALLED_DATASET")
 	private Dataset calledDataset;
 
-	@Column(name="DELEGATE_PARAMETER_VALUES")
+	@Column(name = "DELEGATE_PARAMETER_VALUES")
 	private boolean delegateParameterValues = false;
 
 	@Override
@@ -70,14 +70,13 @@ public class CallTestStep extends TestStep {
 	}
 
 
-
 	public Dataset getCalledDataset() {
 		return calledDataset;
 	}
 
 	public void setCalledDataset(Dataset calledDataset) {
 
-		if (calledDataset != null && ! calledTestCase.getDatasets().contains(calledDataset)){
+		if (calledDataset != null && !calledTestCase.getDatasets().contains(calledDataset)) {
 			throw new IllegalArgumentException("attempted to bind to a call step a dataset that doesn't belong to the called test case");
 		}
 		this.calledDataset = calledDataset;
@@ -91,11 +90,10 @@ public class CallTestStep extends TestStep {
 		this.delegateParameterValues = delegateParameterValues;
 	}
 
-	public ParameterAssignationMode getParameterAssignationMode(){
-		if (calledDataset != null){
+	public ParameterAssignationMode getParameterAssignationMode() {
+		if (calledDataset != null) {
 			return ParameterAssignationMode.CALLED_DATASET;
-		}
-		else if (delegateParameterValues){
+		} else if (delegateParameterValues) {
 			return ParameterAssignationMode.DELEGATE;
 		} else {
 			return ParameterAssignationMode.NOTHING;
@@ -104,18 +102,25 @@ public class CallTestStep extends TestStep {
 
 
 	@Override
-	public List<ExecutionStep> createExecutionSteps(Dataset dataset){
+	public List<ExecutionStep> createExecutionSteps(Dataset dataset) {
 
 		List<TestStep> testSteps = this.getCalledTestCase().getSteps();
 		List<ExecutionStep> returnList = new ArrayList<>(testSteps.size());
 
 
 		Dataset effective;
-		switch(getParameterAssignationMode()){
-		case CALLED_DATASET : effective = calledDataset; break;
-		case DELEGATE : effective = dataset; break;
-		case NOTHING : effective = null;break;
-		default : effective = dataset;
+		switch (getParameterAssignationMode()) {
+			case CALLED_DATASET:
+				effective = calledDataset;
+				break;
+			case DELEGATE:
+				effective = dataset;
+				break;
+			case NOTHING:
+				effective = null;
+				break;
+			default:
+				effective = dataset;
 		}
 
 

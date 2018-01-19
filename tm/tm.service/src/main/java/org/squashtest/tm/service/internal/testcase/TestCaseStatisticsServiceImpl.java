@@ -48,7 +48,7 @@ import org.squashtest.tm.service.testcase.TestCaseStatisticsService;
 public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService {
 
 	private static final Logger LOGGER = LoggerFactory
-			.getLogger(TestCaseStatisticsService.class);
+		.getLogger(TestCaseStatisticsService.class);
 
 	/*
 	 * This query cannot be expressed in hql because the CASE construct doesn't
@@ -57,39 +57,39 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 	 * See definition of sct.sizeclass in the CASE WHEN construct.
 	 */
 	private static final String SQL_SIZE_STATISTICS = "select sct.sizeclass, count(sct.sizeclass) as count "
-			+ "from "
-			+ "(select case "
-			+ "	when count(tcs.step_id) = 0 then 0 "
-			+ "	when count(tcs.step_id) < 11 then 1 "
-			+ "	when count(tcs.step_id) < 21 then 2 "
-			+ "	else 3 "
-			+ " end as sizeclass "
-			+ "from TEST_CASE tc "
-			+ "left outer join TEST_CASE_STEPS tcs on tc.tcln_id = tcs.test_case_id "
-			+ "where tc.tcln_id in (:testCaseIds) "
-			+ "group by tc.tcln_id ) as sct " + "group by sct.sizeclass";
+		+ "from "
+		+ "(select case "
+		+ "	when count(tcs.step_id) = 0 then 0 "
+		+ "	when count(tcs.step_id) < 11 then 1 "
+		+ "	when count(tcs.step_id) < 21 then 2 "
+		+ "	else 3 "
+		+ " end as sizeclass "
+		+ "from TEST_CASE tc "
+		+ "left outer join TEST_CASE_STEPS tcs on tc.tcln_id = tcs.test_case_id "
+		+ "where tc.tcln_id in (:testCaseIds) "
+		+ "group by tc.tcln_id ) as sct " + "group by sct.sizeclass";
 
 	/*
 	 * Same problem here. See definition of coverage.sizeclass in the CASE WHEN.
 	 */
 	private static final String SQL_BOUND_REQS_STATISTICS = "select coverage.sizeclass, count(coverage.sizeclass) as count "
-			+ "from "
-			+ "(select case "
-			+ "	when count(cov.requirement_version_coverage_id) = 0 then 0 "
-			+ "	when count(cov.requirement_version_coverage_id) = 1 then 1 "
-			+ "	else 2 "
-			+ " end as sizeclass "
-			+ "from TEST_CASE tc "
-			+ "left outer join REQUIREMENT_VERSION_COVERAGE cov on tc.tcln_id = cov.verifying_test_case_id "
-			+ "where tc.tcln_id in (:testCaseIds) "
-			+ "group by tc.tcln_id ) as coverage " + "group by coverage.sizeclass";
+		+ "from "
+		+ "(select case "
+		+ "	when count(cov.requirement_version_coverage_id) = 0 then 0 "
+		+ "	when count(cov.requirement_version_coverage_id) = 1 then 1 "
+		+ "	else 2 "
+		+ " end as sizeclass "
+		+ "from TEST_CASE tc "
+		+ "left outer join REQUIREMENT_VERSION_COVERAGE cov on tc.tcln_id = cov.verifying_test_case_id "
+		+ "where tc.tcln_id in (:testCaseIds) "
+		+ "group by tc.tcln_id ) as coverage " + "group by coverage.sizeclass";
 
 	@PersistenceContext
 	private EntityManager em;
 
 	@Override
 	public TestCaseBoundRequirementsStatistics gatherBoundRequirementStatistics(
-			Collection<Long> testCaseIds) {
+		Collection<Long> testCaseIds) {
 
 		if (testCaseIds.isEmpty()) {
 			return new TestCaseBoundRequirementsStatistics();
@@ -104,17 +104,24 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 
 		Integer sizeClass;
 		Integer count;
-		for(Object[] tuple : tuples){
+		for (Object[] tuple : tuples) {
 
-			sizeClass= (Integer)tuple[0];
-			count = ((BigInteger)tuple[1]).intValue();
+			sizeClass = (Integer) tuple[0];
+			count = ((BigInteger) tuple[1]).intValue();
 
-			switch(sizeClass){
-				case 0 : stats.setZeroRequirements(count); break;
-				case 1 : stats.setOneRequirement(count); break;
-				case 2 : stats.setManyRequirements(count); break;
-				default : throw new IllegalArgumentException("TestCaseStatisticsServiceImpl#gatherBoundRequirementStatistics : "+
-													 "there should not be a sizeclass <0 or >2. It's a bug.");
+			switch (sizeClass) {
+				case 0:
+					stats.setZeroRequirements(count);
+					break;
+				case 1:
+					stats.setOneRequirement(count);
+					break;
+				case 2:
+					stats.setManyRequirements(count);
+					break;
+				default:
+					throw new IllegalArgumentException("TestCaseStatisticsServiceImpl#gatherBoundRequirementStatistics : " +
+						"there should not be a sizeclass <0 or >2. It's a bug.");
 
 			}
 		}
@@ -125,14 +132,14 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 
 	@Override
 	public TestCaseImportanceStatistics gatherTestCaseImportanceStatistics(
-			Collection<Long> testCaseIds) {
+		Collection<Long> testCaseIds) {
 
 		if (testCaseIds.isEmpty()) {
 			return new TestCaseImportanceStatistics();
 		}
 
 		Query query = em.createNamedQuery(
-				"TestCaseStatistics.importanceStatistics");
+			"TestCaseStatistics.importanceStatistics");
 		query.setParameter("testCaseIds", testCaseIds);
 
 		List<Object[]> tuples = query.getResultList();
@@ -143,23 +150,23 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 		TestCaseImportance importance;
 		Integer cardinality;
 		for (Object[] tuple : tuples) {
-			importance = (TestCaseImportance)tuple[0];
+			importance = (TestCaseImportance) tuple[0];
 			cardinality = ((Long) tuple[1]).intValue();
 			switch (importance) {
-			case VERY_HIGH:
-				stats.setVeryHigh(cardinality);
-				break;
-			case HIGH:
-				stats.setHigh(cardinality);
-				break;
-			case MEDIUM:
-				stats.setMedium(cardinality);
-				break;
-			case LOW:
-				stats.setLow(cardinality);
-				break;
-			default:
-				LOGGER.warn("TestCaseStatisticsService cannot handle the following TestCaseImportance value : '"
+				case VERY_HIGH:
+					stats.setVeryHigh(cardinality);
+					break;
+				case HIGH:
+					stats.setHigh(cardinality);
+					break;
+				case MEDIUM:
+					stats.setMedium(cardinality);
+					break;
+				case LOW:
+					stats.setLow(cardinality);
+					break;
+				default:
+					LOGGER.warn("TestCaseStatisticsService cannot handle the following TestCaseImportance value : '"
 						+ (String) tuple[0] + "'");
 			}
 		}
@@ -169,14 +176,14 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 
 	@Override
 	public TestCaseStatusesStatistics gatherTestCaseStatusesStatistics(
-			Collection<Long> testCaseIds) {
+		Collection<Long> testCaseIds) {
 
 		if (testCaseIds.isEmpty()) {
 			return new TestCaseStatusesStatistics();
 		}
 
 		Query query = em.createNamedQuery(
-				"TestCaseStatistics.statusesStatistics");
+			"TestCaseStatistics.statusesStatistics");
 		query.setParameter("testCaseIds", testCaseIds);
 
 		List<Object[]> tuples = query.getResultList();
@@ -187,26 +194,26 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 		TestCaseStatus status;
 		Integer cardinality;
 		for (Object[] tuple : tuples) {
-			status = (TestCaseStatus)tuple[0];
+			status = (TestCaseStatus) tuple[0];
 			cardinality = ((Long) tuple[1]).intValue();
 			switch (status) {
-			case WORK_IN_PROGRESS:
-				stats.setWorkInProgress(cardinality);
-				break;
-			case APPROVED:
-				stats.setApproved(cardinality);
-				break;
-			case OBSOLETE:
-				stats.setObsolete(cardinality);
-				break;
-			case TO_BE_UPDATED:
-				stats.setToBeUpdated(cardinality);
-				break;
-			case UNDER_REVIEW:
-				stats.setUnderReview(cardinality);
-				break;
-			default:
-				break;
+				case WORK_IN_PROGRESS:
+					stats.setWorkInProgress(cardinality);
+					break;
+				case APPROVED:
+					stats.setApproved(cardinality);
+					break;
+				case OBSOLETE:
+					stats.setObsolete(cardinality);
+					break;
+				case TO_BE_UPDATED:
+					stats.setToBeUpdated(cardinality);
+					break;
+				case UNDER_REVIEW:
+					stats.setUnderReview(cardinality);
+					break;
+				default:
+					break;
 			}
 		}
 
@@ -215,7 +222,7 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 
 	@Override
 	public TestCaseSizeStatistics gatherTestCaseSizeStatistics(
-			Collection<Long> testCaseIds) {
+		Collection<Long> testCaseIds) {
 
 		if (testCaseIds.isEmpty()) {
 			return new TestCaseSizeStatistics();
@@ -230,18 +237,27 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 
 		Integer sizeClass;
 		Integer count;
-		for(Object[] tuple : tuples){
+		for (Object[] tuple : tuples) {
 
-			sizeClass= (Integer)tuple[0];
-			count = ((BigInteger)tuple[1]).intValue();
+			sizeClass = (Integer) tuple[0];
+			count = ((BigInteger) tuple[1]).intValue();
 
-			switch(sizeClass){
-				case 0 : stats.setZeroSteps(count); break;
-				case 1 : stats.setBetween0And10Steps(count); break;
-				case 2 : stats.setBetween11And20Steps(count); break;
-				case 3 : stats.setAbove20Steps(count); break;
-				default : throw new IllegalArgumentException("TestCaseStatisticsServiceImpl#gatherTestCaseSizeStatistics : "+
-													 "there should not be a sizeclass <0 or >3. It's a bug.");
+			switch (sizeClass) {
+				case 0:
+					stats.setZeroSteps(count);
+					break;
+				case 1:
+					stats.setBetween0And10Steps(count);
+					break;
+				case 2:
+					stats.setBetween11And20Steps(count);
+					break;
+				case 3:
+					stats.setAbove20Steps(count);
+					break;
+				default:
+					throw new IllegalArgumentException("TestCaseStatisticsServiceImpl#gatherTestCaseSizeStatistics : " +
+						"there should not be a sizeclass <0 or >3. It's a bug.");
 
 			}
 		}
@@ -252,7 +268,7 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 
 	@Override
 	public TestCaseStatisticsBundle gatherTestCaseStatisticsBundle(
-			Collection<Long> testCaseIds) {
+		Collection<Long> testCaseIds) {
 
 		TestCaseBoundRequirementsStatistics reqs = gatherBoundRequirementStatistics(testCaseIds);
 		TestCaseImportanceStatistics imp = gatherTestCaseImportanceStatistics(testCaseIds);

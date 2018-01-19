@@ -48,9 +48,9 @@ import org.squashtest.tm.service.statistics.iteration.IterationProgressionStatis
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
 import org.squashtest.tm.service.statistics.iteration.TestSuiteTestInventoryStatistics;
 
-@Transactional(readOnly=true)
+@Transactional(readOnly = true)
 @Service("IterationStatisticsService")
-public class IterationStatisticsServiceImpl implements IterationStatisticsService{
+public class IterationStatisticsServiceImpl implements IterationStatisticsService {
 
 	private static final String PERM_CAN_READ_CAMPAIGN = "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ') ";
 	private static final String PERM_CAN_READ_ITERATION = "hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') ";
@@ -61,10 +61,9 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 	private EntityManager em;
 
 
-
 	@Override
 	@PreAuthorize(PERM_CAN_READ_ITERATION + OR_HAS_ROLE_ADMIN)
-	public CampaignTestCaseStatusStatistics gatherIterationTestCaseStatusStatistics(long iterationId){
+	public CampaignTestCaseStatusStatistics gatherIterationTestCaseStatusStatistics(long iterationId) {
 
 		CampaignTestCaseStatusStatistics result = new CampaignTestCaseStatusStatistics();
 
@@ -73,10 +72,10 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 		query.setParameter(ID, iterationId);
 		List<Object[]> res = query.list();
 
-		for (Object[] tuple : res){
+		for (Object[] tuple : res) {
 
-			ExecutionStatus status = (ExecutionStatus)tuple[0];
-			Long howmany = (Long)tuple[1];
+			ExecutionStatus status = (ExecutionStatus) tuple[0];
+			Long howmany = (Long) tuple[1];
 
 			result.addNumber(howmany.intValue(), status.getCanonicalStatus());
 
@@ -87,7 +86,7 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 
 	@Override
 	@PreAuthorize(PERM_CAN_READ_ITERATION + OR_HAS_ROLE_ADMIN)
-	public CampaignNonExecutedTestCaseImportanceStatistics gatherIterationNonExecutedTestCaseImportanceStatistics(long iterationId){
+	public CampaignNonExecutedTestCaseImportanceStatistics gatherIterationNonExecutedTestCaseImportanceStatistics(long iterationId) {
 
 		CampaignNonExecutedTestCaseImportanceStatistics result = new CampaignNonExecutedTestCaseImportanceStatistics();
 
@@ -96,17 +95,26 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 		query.setParameter(ID, iterationId);
 		List<Object[]> res = query.list();
 
-		for (Object[] tuple : res){
+		for (Object[] tuple : res) {
 
-			TestCaseImportance importance = (TestCaseImportance)tuple[0];
-			Long howmany = (Long)tuple[1];
+			TestCaseImportance importance = (TestCaseImportance) tuple[0];
+			Long howmany = (Long) tuple[1];
 
-			switch(importance){
-			case HIGH: result.setPercentageHigh(howmany.intValue()); break;
-			case LOW: result.setPercentageLow(howmany.intValue()); break;
-			case MEDIUM: result.setPercentageMedium(howmany.intValue()); break;
-			case VERY_HIGH: result.setPercentageVeryHigh(howmany.intValue()); break;
-			default: break;
+			switch (importance) {
+				case HIGH:
+					result.setPercentageHigh(howmany.intValue());
+					break;
+				case LOW:
+					result.setPercentageLow(howmany.intValue());
+					break;
+				case MEDIUM:
+					result.setPercentageMedium(howmany.intValue());
+					break;
+				case VERY_HIGH:
+					result.setPercentageVeryHigh(howmany.intValue());
+					break;
+				default:
+					break;
 			}
 		}
 
@@ -124,24 +132,32 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 		query.setParameter(ID, iterationId);
 		List<Object[]> res = query.list();
 
-		for (Object[] tuple : res){
+		for (Object[] tuple : res) {
 
-			TestCaseImportance importance = (TestCaseImportance)tuple[0];
-			ExecutionStatus status = (ExecutionStatus)tuple[1];
-			Long howmany = (Long)tuple[2];
+			TestCaseImportance importance = (TestCaseImportance) tuple[0];
+			ExecutionStatus status = (ExecutionStatus) tuple[1];
+			Long howmany = (Long) tuple[2];
 
-			switch(importance){
-			case HIGH: result.addNbHigh(status, howmany.intValue()); break;
-			case LOW: result.addNbLow(status, howmany.intValue()); break;
-			case MEDIUM: result.addNbMedium(status, howmany.intValue()); break;
-			case VERY_HIGH: result.addNbVeryHigh(status, howmany.intValue()); break;
-			default: break;
+			switch (importance) {
+				case HIGH:
+					result.addNbHigh(status, howmany.intValue());
+					break;
+				case LOW:
+					result.addNbLow(status, howmany.intValue());
+					break;
+				case MEDIUM:
+					result.addNbMedium(status, howmany.intValue());
+					break;
+				case VERY_HIGH:
+					result.addNbVeryHigh(status, howmany.intValue());
+					break;
+				default:
+					break;
 			}
 		}
 
 		return result;
 	}
-
 
 
 	/*
@@ -183,8 +199,8 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 		List<Object[]> reres = requery.list();
 
 		// merge the second list into the first. The first element of the tuple must be set to '--' - see the reason in IterationStatistics.testSuiteStatistics-testsLeftover
-		for (Object[] retuple : reres){
-			retuple[0]=null;
+		for (Object[] retuple : reres) {
+			retuple[0] = null;
 			res.add(retuple);
 		}
 
@@ -194,14 +210,14 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 		TestSuiteTestInventoryStatistics newStatistics = new TestSuiteTestInventoryStatistics();
 		String previousSuiteName = "";
 
-		for (Object[] tuple : res){
+		for (Object[] tuple : res) {
 
 			// basic information on the test suite : we always want them.
-			String suiteName = (String)tuple[0];
-			Date scheduledStart = (Date)tuple[4];
-			Date scheduledEnd = (Date)tuple[5];
+			String suiteName = (String) tuple[0];
+			Date scheduledStart = (Date) tuple[4];
+			Date scheduledEnd = (Date) tuple[5];
 
-			if(! sameSuite(previousSuiteName, suiteName)){
+			if (!sameSuite(previousSuiteName, suiteName)) {
 				newStatistics = new TestSuiteTestInventoryStatistics();
 				newStatistics.setTestsuiteName(suiteName);
 				newStatistics.setScheduledStart(scheduledStart);
@@ -219,11 +235,11 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 			 * 2/ (importance == null) because means that those test cases were deleted
 			 *
 			 */
-			ExecutionStatus status = (ExecutionStatus)tuple[1];
-			TestCaseImportance importance = (TestCaseImportance)tuple[2];
-			Long howmany = (Long)tuple[3];
+			ExecutionStatus status = (ExecutionStatus) tuple[1];
+			TestCaseImportance importance = (TestCaseImportance) tuple[2];
+			Long howmany = (Long) tuple[3];
 
-			if (status == null || importance == null){
+			if (status == null || importance == null) {
 				continue;
 			}
 
@@ -232,7 +248,7 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 			 */
 			newStatistics.addNumber(howmany.intValue(), status.getCanonicalStatus());
 
-			if(status == ExecutionStatus.RUNNING || status == ExecutionStatus.READY){
+			if (status == ExecutionStatus.RUNNING || status == ExecutionStatus.READY) {
 				addImportance(newStatistics, importance, howmany);
 
 			}
@@ -242,18 +258,27 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 		return result;
 	}
 
-	private boolean sameSuite(String name1, String name2){
-		return  name1 == null && name2 == null ||
+	private boolean sameSuite(String name1, String name2) {
+		return name1 == null && name2 == null ||
 			name1 != null && name1.equals(name2);
 	}
 
-	private void addImportance(TestSuiteTestInventoryStatistics newStatistics, TestCaseImportance importance, Long howmany){
-		switch(importance){
-		case HIGH: newStatistics.addNbHigh(howmany.intValue()); break;
-		case LOW: newStatistics.addNbLow(howmany.intValue()); break;
-		case MEDIUM: newStatistics.addNbMedium(howmany.intValue()); break;
-		case VERY_HIGH: newStatistics.addNbVeryHigh(howmany.intValue()); break;
-		default: break;
+	private void addImportance(TestSuiteTestInventoryStatistics newStatistics, TestCaseImportance importance, Long howmany) {
+		switch (importance) {
+			case HIGH:
+				newStatistics.addNbHigh(howmany.intValue());
+				break;
+			case LOW:
+				newStatistics.addNbLow(howmany.intValue());
+				break;
+			case MEDIUM:
+				newStatistics.addNbMedium(howmany.intValue());
+				break;
+			case VERY_HIGH:
+				newStatistics.addNbVeryHigh(howmany.intValue());
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -292,7 +317,7 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 		requery.setParameterList("nonterminalStatuses", ExecutionStatus.getNonTerminatedStatusSet());
 		List<Date> executionHistory = requery.list();
 
-		try{
+		try {
 			progression.setScheduledIteration(scheduledIteration);
 			ScheduledIteration.checkIterationDatesAreSet(scheduledIteration);
 
@@ -300,9 +325,9 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 
 			// actual executions
 			progression.computeCumulativeTestPerDate(executionHistory);
-		} catch(IllegalArgumentException ex){
-			if (LOGGER.isInfoEnabled()){
-				LOGGER.info("CampaignStatistics : could not generate iteration progression statistics for iteration "+ iterationId+" : some dates are wrong");
+		} catch (IllegalArgumentException ex) {
+			if (LOGGER.isInfoEnabled()) {
+				LOGGER.info("CampaignStatistics : could not generate iteration progression statistics for iteration " + iterationId + " : some dates are wrong");
 			}
 			progression.addi18nErrorMessage(ex.getMessage());
 		}
@@ -310,7 +335,7 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 		return progression;
 	}
 
-	private Session getCurrentSession(){
+	private Session getCurrentSession() {
 		return em.unwrap(Session.class);
 	}
 }

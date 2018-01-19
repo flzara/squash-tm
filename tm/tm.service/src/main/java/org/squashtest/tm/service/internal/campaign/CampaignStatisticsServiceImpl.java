@@ -59,9 +59,9 @@ import org.squashtest.tm.service.statistics.campaign.ScheduledIteration;
 
 import java.util.Optional;
 
-@Transactional(readOnly=true)
+@Transactional(readOnly = true)
 @Service("CampaignStatisticsService")
-public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
+public class CampaignStatisticsServiceImpl implements CampaignStatisticsService {
 
 	private static final String PERM_CAN_READ_CAMPAIGN = "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ') ";
 
@@ -193,7 +193,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 	 * @return
 	 */
 	@Override
-	public CampaignTestCaseStatusStatistics gatherTestCaseStatusStatistics(List<Long> campaignIds){
+	public CampaignTestCaseStatusStatistics gatherTestCaseStatusStatistics(List<Long> campaignIds) {
 
 		List<Object[]> tuples = fetchCommonTuples("CampaignStatistics.globaltestinventory", campaignIds);
 
@@ -208,7 +208,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 	 * @return
 	 */
 	@Override
-	public CampaignTestCaseSuccessRateStatistics gatherTestCaseSuccessRateStatistics(List<Long> campaignIds){
+	public CampaignTestCaseSuccessRateStatistics gatherTestCaseSuccessRateStatistics(List<Long> campaignIds) {
 		List<Object[]> tuples = fetchCommonTuples("CampaignStatistics.successRate", campaignIds);
 
 		return processTestCaseSuccessRateStatistics(tuples);
@@ -221,7 +221,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 	 * @return
 	 */
 	@Override
-	public CampaignNonExecutedTestCaseImportanceStatistics gatherNonExecutedTestCaseImportanceStatistics(List<Long> campaignIds){
+	public CampaignNonExecutedTestCaseImportanceStatistics gatherNonExecutedTestCaseImportanceStatistics(List<Long> campaignIds) {
 		List<Object[]> tuples = fetchCommonTuples("CampaignStatistics.nonexecutedTestcaseImportance", campaignIds);
 
 		return processNonExecutedTestCaseImportance(tuples);
@@ -247,10 +247,10 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 		requery.setParameter("nonterminalStatuses", ExecutionStatus.getNonTerminatedStatusSet());
 		List<Date> executionHistory = requery.getResultList();
 
-		try{
+		try {
 
 			// scheduled iterations
-			progression.setScheduledIterations(scheduledIterations);	//we want them in any case
+			progression.setScheduledIterations(scheduledIterations);    //we want them in any case
 			ScheduledIteration.checkIterationsDatesIntegrity(scheduledIterations);
 
 			progression.computeSchedule();
@@ -259,9 +259,9 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 			progression.computeCumulativeTestPerDate(executionHistory);
 
 
-		}catch(IllegalArgumentException ex){
-			if (LOGGER.isInfoEnabled()){
-				LOGGER.info("CampaignStatistics : could not generate campaign progression statistics for campaign "+campaignId+" : some iterations scheduled dates are wrong");
+		} catch (IllegalArgumentException ex) {
+			if (LOGGER.isInfoEnabled()) {
+				LOGGER.info("CampaignStatistics : could not generate campaign progression statistics for campaign " + campaignId + " : some iterations scheduled dates are wrong");
 			}
 			progression.addi18nErrorMessage(ex.getMessage());
 		}
@@ -305,8 +305,8 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 
 		List<Object[]> tuples = Collections.emptyList();
 		if (!campaignIds.isEmpty()) {
-		Query query = em.createNamedQuery("CampaignFolderStatistics.testinventory");
-		query.setParameter("campaignIds", campaignIds);
+			Query query = em.createNamedQuery("CampaignFolderStatistics.testinventory");
+			query.setParameter("campaignIds", campaignIds);
 			tuples = query.getResultList();
 		}
 		return processCampaignTestInventory(tuples);
@@ -316,20 +316,19 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 	/* *********************** processing code ***************************** */
 
 
-
 	/**
 	 * Execute a named query that accepts as argument a parameter of type List&lt;Long&gt; named "campaignIds", and that
 	 * returns a list of tuples (namely Object[])
 	 *
 	 * @return
 	 */
-	private List<Object[]> fetchCommonTuples(String queryName, List<Long> campaignIds){
+	private List<Object[]> fetchCommonTuples(String queryName, List<Long> campaignIds) {
 
 		List<Object[]> res = Collections.emptyList();
 
 		if (!campaignIds.isEmpty()) {
-		Query query = em.createNamedQuery(queryName);
-		query.setParameter("campaignIds", campaignIds);
+			Query query = em.createNamedQuery(queryName);
+			query.setParameter("campaignIds", campaignIds);
 			res = query.getResultList();
 		}
 
@@ -346,10 +345,10 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 
 		List<IterationTestInventoryStatistics> result = new LinkedList<>();
 
-		for (Object[] tuple : res){
-			Long id = (Long)tuple[0];
+		for (Object[] tuple : res) {
+			Long id = (Long) tuple[0];
 
-			if (! id.equals(currentId)){
+			if (!id.equals(currentId)) {
 				String name = (String) tuple[1];
 				newStatistics = new IterationTestInventoryStatistics();
 				newStatistics.setIterationName(name);
@@ -357,18 +356,20 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 				currentId = id;
 			}
 
-			ExecutionStatus status = (ExecutionStatus)tuple[2];
-			Long howmany = (Long)tuple[3];
+			ExecutionStatus status = (ExecutionStatus) tuple[2];
+			Long howmany = (Long) tuple[3];
 
-			if (status == null){
-				continue;	// status == null iif the test plan is empty
+			if (status == null) {
+				continue;    // status == null iif the test plan is empty
 			}
 			newStatistics.setNumber(howmany.intValue(), status);
 
 
 		}
 		return result;
-	};
+	}
+
+	;
 
 	// copy-pasta of processIterationCampaignTestInventory. Java 8, where are you
 	// when I need you ?
@@ -382,10 +383,10 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 
 		List<CampaignTestInventoryStatistics> result = new LinkedList<>();
 
-		for (Object[] tuple : res){
-			Long id = (Long)tuple[0];
+		for (Object[] tuple : res) {
+			Long id = (Long) tuple[0];
 
-			if (! id.equals(currentId)){
+			if (!id.equals(currentId)) {
 				String name = (String) tuple[1];
 				newStatistics = new CampaignTestInventoryStatistics();
 				newStatistics.setCampaignName(name);
@@ -393,26 +394,28 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 				currentId = id;
 			}
 
-			ExecutionStatus status = (ExecutionStatus)tuple[2];
-			Long howmany = (Long)tuple[3];
+			ExecutionStatus status = (ExecutionStatus) tuple[2];
+			Long howmany = (Long) tuple[3];
 
-			if (status == null){
-				continue;	// status == null iif the test plan is empty
+			if (status == null) {
+				continue;    // status == null iif the test plan is empty
 			}
 			newStatistics.setNumber(howmany.intValue(), status);
 
 
 		}
 		return result;
-	};
+	}
+
+	;
 
 	private CampaignTestCaseStatusStatistics processTestCaseStatusStatistics(List<Object[]> tuples) {
 		CampaignTestCaseStatusStatistics result = new CampaignTestCaseStatusStatistics();
 
-		for (Object[] tuple : tuples){
+		for (Object[] tuple : tuples) {
 
-			ExecutionStatus status = (ExecutionStatus)tuple[0];
-			Long howmany = (Long)tuple[1];
+			ExecutionStatus status = (ExecutionStatus) tuple[0];
+			Long howmany = (Long) tuple[1];
 
 			result.addNumber(howmany.intValue(), status.getCanonicalStatus());
 		}
@@ -423,17 +426,26 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 	private CampaignNonExecutedTestCaseImportanceStatistics processNonExecutedTestCaseImportance(List<Object[]> tuples) {
 		CampaignNonExecutedTestCaseImportanceStatistics result = new CampaignNonExecutedTestCaseImportanceStatistics();
 
-		for (Object[] tuple : tuples){
+		for (Object[] tuple : tuples) {
 
-			TestCaseImportance importance = (TestCaseImportance)tuple[0];
-			Long howmany = (Long)tuple[1];
+			TestCaseImportance importance = (TestCaseImportance) tuple[0];
+			Long howmany = (Long) tuple[1];
 
-			switch(importance){
-			case HIGH: result.setPercentageHigh(howmany.intValue()); break;
-			case LOW: result.setPercentageLow(howmany.intValue()); break;
-			case MEDIUM: result.setPercentageMedium(howmany.intValue()); break;
-			case VERY_HIGH: result.setPercentageVeryHigh(howmany.intValue()); break;
-			default: break;
+			switch (importance) {
+				case HIGH:
+					result.setPercentageHigh(howmany.intValue());
+					break;
+				case LOW:
+					result.setPercentageLow(howmany.intValue());
+					break;
+				case MEDIUM:
+					result.setPercentageMedium(howmany.intValue());
+					break;
+				case VERY_HIGH:
+					result.setPercentageVeryHigh(howmany.intValue());
+					break;
+				default:
+					break;
 			}
 		}
 
@@ -444,25 +456,32 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 	private CampaignTestCaseSuccessRateStatistics processTestCaseSuccessRateStatistics(List<Object[]> tuples) {
 		CampaignTestCaseSuccessRateStatistics result = new CampaignTestCaseSuccessRateStatistics();
 
-		for (Object[] tuple : tuples){
+		for (Object[] tuple : tuples) {
 
-			TestCaseImportance importance = (TestCaseImportance)tuple[0];
-			ExecutionStatus status = (ExecutionStatus)tuple[1];
-			Long howmany = (Long)tuple[2];
+			TestCaseImportance importance = (TestCaseImportance) tuple[0];
+			ExecutionStatus status = (ExecutionStatus) tuple[1];
+			Long howmany = (Long) tuple[2];
 
-			switch(importance){
-			case HIGH: result.addNbHigh(status, howmany.intValue()); break;
-			case LOW: result.addNbLow(status, howmany.intValue()); break;
-			case MEDIUM: result.addNbMedium(status, howmany.intValue()); break;
-			case VERY_HIGH: result.addNbVeryHigh(status, howmany.intValue()); break;
-			default: break;
+			switch (importance) {
+				case HIGH:
+					result.addNbHigh(status, howmany.intValue());
+					break;
+				case LOW:
+					result.addNbLow(status, howmany.intValue());
+					break;
+				case MEDIUM:
+					result.addNbMedium(status, howmany.intValue());
+					break;
+				case VERY_HIGH:
+					result.addNbVeryHigh(status, howmany.intValue());
+					break;
+				default:
+					break;
 			}
 		}
 
 		return result;
 	}
-
-
 
 
 }
