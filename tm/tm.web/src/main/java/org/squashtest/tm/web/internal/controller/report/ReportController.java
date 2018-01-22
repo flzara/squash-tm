@@ -282,10 +282,17 @@ public class ReportController {
 		tempFile.deleteOnExit();
 		byte decoded[] = base64Decoding(b64);
 
-		FileOutputStream fos = new FileOutputStream(tempFile);
-		fos.write(decoded);
-		fos.close();
-
+		FileOutputStream fos = null;
+		try {
+			fos = new FileOutputStream(tempFile);
+			fos.write(decoded);
+		} catch(IOException ex) {
+			LOGGER.error(ex.getMessage(), ex);
+		} finally {
+			if(fos != null) {
+				fos.close();
+			}
+		}
 
 		InputStream in = new BufferedInputStream(new FileInputStream(tempFile));
 
