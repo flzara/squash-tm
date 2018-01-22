@@ -26,8 +26,10 @@ import org.squashtest.tm.service.attachment.RawAttachment;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
+
+// XSS OK
 public class UploadedData implements RawAttachment {
 	private final InputStream stream;
 	private final String name;

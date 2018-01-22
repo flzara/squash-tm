@@ -107,8 +107,8 @@ public class HttpRequestFactory {
 		URIBuilder uriBuilder = uriBuilder(server);
 		return concatPath(uriBuilder, API_URI);
 	}
-	
-	private URIBuilder concatPath(URIBuilder builder, String path){
+
+	private URIBuilder concatPath(URIBuilder builder, String path) {
 		return builder.setPath(builder.getPath() + path);
 	}
 

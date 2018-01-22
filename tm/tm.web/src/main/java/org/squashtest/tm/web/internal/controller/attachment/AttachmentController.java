@@ -46,12 +46,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.web.internal.fileupload.UploadContentFilterUtil;
 import org.squashtest.tm.web.internal.fileupload.UploadSummary;
 
+// XSS OK
 @Controller
 @RequestMapping("/attach-list/{attachListId}/attachments")
 public class AttachmentController {
@@ -118,12 +120,12 @@ public class AttachmentController {
 			// file type checking
 			boolean shouldProceed = filterUtil.isTypeAllowed(upload);
 			if (!shouldProceed) {
-				summary.add(new UploadSummary(upload.getName(), getUploadSummary(STR_UPLOAD_STATUS_WRONGFILETYPE, locale),
+				summary.add(new UploadSummary(HtmlUtils.htmlEscape(upload.getName()), getUploadSummary(STR_UPLOAD_STATUS_WRONGFILETYPE, locale),
 						UploadSummary.INT_UPLOAD_STATUS_WRONGFILETYPE));
 			} else {
 				attachmentManagerService.addAttachment(attachListId, upload);
 
-				summary.add(new UploadSummary(upload.getName(), getUploadSummary(STR_UPLOAD_STATUS_OK, locale),
+				summary.add(new UploadSummary(HtmlUtils.htmlEscape(upload.getName()), getUploadSummary(STR_UPLOAD_STATUS_OK, locale),
 						UploadSummary.INT_UPLOAD_STATUS_OK));
 			}
 		}
@@ -165,7 +167,7 @@ public class AttachmentController {
 		try {
 			Attachment attachment = attachmentManagerService.findAttachment(attachmentId);
 			response.setContentType("application/octet-stream");
-			response.setHeader("Content-Disposition", "attachment; filename=" + attachment.getName().replace(" ", "_"));
+			response.setHeader("Content-Disposition", "attachment; filename=" + HtmlUtils.htmlEscape(attachment.getName().replace(" ", "_")));
 
 			ServletOutputStream outStream = response.getOutputStream();
 

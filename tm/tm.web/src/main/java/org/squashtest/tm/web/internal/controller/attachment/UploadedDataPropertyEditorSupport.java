@@ -27,6 +27,7 @@ import java.io.InputStream;
 
 import org.springframework.web.multipart.MultipartFile;
 
+// XSS OK
 public class UploadedDataPropertyEditorSupport extends PropertyEditorSupport {
 	/**
 	 *

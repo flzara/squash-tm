@@ -26,18 +26,20 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 
-public class AttachmentsTableModelHelper extends DataTableModelBuilder<Attachment>{
+// XSS OK
+public class AttachmentsTableModelHelper extends DataTableModelBuilder<Attachment> {
 
 	private InternationalizationHelper i18nHelper;
 	private Locale locale;
 	private static final int INT_MAX_FILENAME_LENGTH = 50;
 
-	public AttachmentsTableModelHelper(InternationalizationHelper i18nHelper){
+	public AttachmentsTableModelHelper(InternationalizationHelper i18nHelper) {
 		this.i18nHelper = i18nHelper;
 		this.locale = LocaleContextHolder.getLocale();
 	}
@@ -49,24 +51,24 @@ public class AttachmentsTableModelHelper extends DataTableModelBuilder<Attachmen
 
 		result.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 		result.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
-		result.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, item.getName());
-		result.put("hyphenated-name", hyphenateFilename(item.getName()));
-		result.put("size",item.getFormattedSize(locale));
-		result.put("added-on",localizedDate(item.getAddedOn(),locale));
+		result.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, HtmlUtils.htmlEscape(item.getName()));
+		result.put("hyphenated-name", HtmlUtils.htmlEscape(hyphenateFilename(item.getName())));
+		result.put("size", item.getFormattedSize(locale));
+		result.put("added-on", localizedDate(item.getAddedOn(), locale));
 		result.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, null);
 
 		return result;
 	}
 
-	private String localizedDate(Date date, Locale locale){
+	private String localizedDate(Date date, Locale locale) {
 		return i18nHelper.localizeDate(date, locale);
 
 	}
 
-	private String hyphenateFilename(String longName){
+	private String hyphenateFilename(String longName) {
 		String newName = longName;
-		if (longName.length() > INT_MAX_FILENAME_LENGTH){
-			newName = longName.substring(0, INT_MAX_FILENAME_LENGTH-3)+"...";
+		if (longName.length() > INT_MAX_FILENAME_LENGTH) {
+			newName = longName.substring(0, INT_MAX_FILENAME_LENGTH - 3) + "...";
 		}
 		return newName;
 	}

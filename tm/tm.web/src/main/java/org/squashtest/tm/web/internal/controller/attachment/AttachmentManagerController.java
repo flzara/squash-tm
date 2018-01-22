@@ -20,20 +20,11 @@
  */
 package org.squashtest.tm.web.internal.controller.attachment;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
@@ -46,6 +37,11 @@ import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
+import javax.inject.Inject;
+import java.io.IOException;
+import java.util.List;
+
+// XSS OK
 @Controller
 @RequestMapping("/attach-list/{attachListId}/attachments")
 public class AttachmentManagerController {
@@ -64,10 +60,10 @@ public class AttachmentManagerController {
 
 	@SuppressWarnings("rawtypes")
 	private final DatatableMapper attachmentMapper = new NameBasedMapper()
-	.mapAttribute("item-id", "name" , Attachment.class)
-	.mapAttribute("hyphenated-name", "name", Attachment.class)
-	.mapAttribute("size", "contentSize", Attachment.class)
-	.mapAttribute("added-on", "addedOn", Attachment.class);
+		.mapAttribute("item-id", "name", Attachment.class)
+		.mapAttribute("hyphenated-name", "name", Attachment.class)
+		.mapAttribute("size", "contentSize", Attachment.class)
+		.mapAttribute("added-on", "addedOn", Attachment.class);
 
 
 
@@ -75,10 +71,9 @@ public class AttachmentManagerController {
 	/* ********************** data display *********************************** */
 
 
-
 	@RequestMapping(value = "/manager", method = RequestMethod.GET)
 	public ModelAndView showAttachmentManager(@PathVariable(ATTACH_LIST_ID) long attachListId,
-			@RequestParam("workspace") String workspace, @RequestParam(value = "open",required = false, defaultValue = "false") boolean openNewWindow) {
+											  @RequestParam("workspace") String workspace, @RequestParam(value = "open", required = false, defaultValue = "false") boolean openNewWindow) {
 
 		ModelAndView mav = new ModelAndView("page/attachments/attachment-manager");
 		mav.addObject("workspace", workspace);
@@ -92,10 +87,9 @@ public class AttachmentManagerController {
 
 	@ResponseBody
 	@RequestMapping(value = "/details", method = RequestMethod.GET)
-	public
-	DataTableModel displayAttachmentDetails(@PathVariable(ATTACH_LIST_ID) long attachListId, final DataTableDrawParameters params) {
-            Pageable pageable = SpringPagination.pageable(params, attachmentMapper);
-            return attachmentModelHelper.findPagedAttachments(attachListId, pageable, params.getsEcho());
+	public DataTableModel displayAttachmentDetails(@PathVariable(ATTACH_LIST_ID) long attachListId, final DataTableDrawParameters params) {
+		Pageable pageable = SpringPagination.pageable(params, attachmentMapper);
+		return attachmentModelHelper.findPagedAttachments(attachListId, pageable, params.getsEcho());
 
 	}
 
@@ -111,7 +105,7 @@ public class AttachmentManagerController {
 	/* ******************************* modify *********************************** */
 
 
-	@RequestMapping(value="/{attachmentId}/name",method = RequestMethod.POST, params = { RequestParams.NAME })
+	@RequestMapping(value = "/{attachmentId}/name", method = RequestMethod.POST, params = {RequestParams.NAME})
 	@ResponseBody
 	public Object renameAttachment(@PathVariable long attachmentId, @RequestParam(RequestParams.NAME) String newName) {
 

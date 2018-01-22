@@ -25,7 +25,7 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="stru" uri="http://org.squashtest.tm/taglib/string-utils" %>
-
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <%@ attribute name="attachmentSet" type="java.util.Set" description="Set of attachments" %>
 <%@ attribute name="attachListId" type="java.lang.Long" description="id of the attachment list" %>
@@ -35,8 +35,8 @@
 
 <%@ tag language="java"  pageEncoding="utf-8"%>
 <%--
-	@params 
-	
+	@params
+
 	attachmentSet : set of attachments
 
  --%>
@@ -47,7 +47,7 @@
 <c:forEach var="attachment" items="${attachmentSet}">
 	<div class="div-attachments-item" style="text-align:center;" >
 		<div class="attachment-file file-${fn:toLowerCase(attachment.type)}"></div>
-		<span><a  href="${dlUrl}/${attachment.id}" target="_blank" class="breakwords" >${stru:truncateAndEllipse(attachment.name, 45)}</a></span> 
+		<span><a  href="${dlUrl}/${attachment.id}" target="_blank" class="breakwords"><c:out value="${stru:truncateAndEllipse(attachment.name, 45)}"/></a></span>
 	</div>
 </c:forEach>
 
