@@ -59,7 +59,8 @@ public class CustomFieldModelIdTypeResolver extends TypeIdResolverBase implement
 	@Override
 	public String idFromBaseType(){
 		// FIXME (GRF) code below always issues a NPE yet I don't know what we should do
-		return idFromValueAndType(null, baseType.getRawClass());
+		// return idFromValueAndType(null, baseType.getRawClass());
+		return null; // For sonar.
 	}
 
 	@Override
