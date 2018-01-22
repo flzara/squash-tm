@@ -83,7 +83,6 @@ public class BugTrackerAdministrationController {
 	public ModelAndView showBugtrackers() {
 		Set<String> bugtrackerKinds = bugTrackerManagerService.findBugTrackerKinds();
 		ModelAndView mav = new ModelAndView("page/bugtrackers/show-bugtrackers");
-		mav.addObject("bugtrackers", bugTrackerManagerService.findAll());
 		mav.addObject("bugtrackerKinds", bugtrackerKinds);
 		return mav;
 	}
