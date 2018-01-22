@@ -58,15 +58,21 @@ public class LogfileController {
 
 	private void writeContent(File logfile, OutputStream outStream) throws IOException {
 
-		FileInputStream fis = new FileInputStream(logfile);
-		int readByte;
-		do {
-			readByte = fis.read();
-			if (readByte != -1) {
-				outStream.write(readByte);
+		FileInputStream fis = null;
+		try {
+			fis = new FileInputStream(logfile);
+			int readByte;
+			do {
+				readByte = fis.read();
+				if (readByte != -1) {
+					outStream.write(readByte);
+				}
+			} while (readByte != -1);
+		} finally {
+			if(fis != null) {
+				fis.close();
 			}
-		} while (readByte != -1);
-		fis.close();
+		}
 
 	}
 }
