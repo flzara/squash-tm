@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -158,10 +159,12 @@ class ExcelExporter {
 	public ExcelExporter(FeatureManager featureManager, MessageSource messageSource) {
 		super();
 		milestonesEnabled = featureManager.isEnabled(Feature.MILESTONE);
+	}
 
+	@PostConstruct // So these methods are not called directly by constructor
+	public void init() {
 		createWorkbook();
 		createHeaders();
-
 	}
 
 	void setMessageSource(MessageSource messageSource) {
