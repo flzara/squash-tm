@@ -68,11 +68,12 @@ public class BugTrackerAdministrationController {
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
 	public void createBugTracker(@Valid @ModelAttribute("add-bugtracker") BugTracker bugtracker) {
-
-		LOGGER.info("name " + bugtracker.getName());
-		LOGGER.info("kind " + bugtracker.getKind());
-		LOGGER.info("iframe " + bugtracker.isIframeFriendly());
-		LOGGER.info("url " + bugtracker.getUrl());
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("name " + bugtracker.getName());
+			LOGGER.debug("kind " + bugtracker.getKind());
+			LOGGER.debug("iframe " + bugtracker.isIframeFriendly());
+			LOGGER.debug("url " + bugtracker.getUrl());
+		}
 		bugTrackerManagerService.addBugTracker(bugtracker);
 
 	}
