@@ -31,13 +31,13 @@ import org.springframework.web.util.HtmlUtils;
 
 public final class HTMLCleanupUtils {
 
-	private HTMLCleanupUtils(){
+	private HTMLCleanupUtils() {
 
 	}
 
-	public static String htmlToText(String html){
+	public static String htmlToText(String html) {
 
-		String fixedHtml = html!=null ? html : "";
+		String fixedHtml = html != null ? html : "";
 
 		String replacedHtml = fixedHtml.replaceFirst("\n", "");
 
@@ -50,18 +50,18 @@ public final class HTMLCleanupUtils {
 	}
 
 	/* note : Unescape is idempotent when applied on unescaped data. We use that trick to prevent double html encoding*/
-	public static String forceHtmlEscape(String html){
-		String fixedHtml = html!=null ? html : "";
+	public static String forceHtmlEscape(String html) {
+		String fixedHtml = html != null ? html : "";
 		String unescaped = HtmlUtils.htmlUnescape(fixedHtml);
 		return HtmlUtils.htmlEscape(unescaped);
 	}
 
-	public static String stripJavascript(String json){
-		if(StringUtils.isNotBlank(json)){
+	public static String stripJavascript(String json) {
+		if (StringUtils.isNotBlank(json)) {
 			Document.OutputSettings outputSettings = new Document.OutputSettings();
 			outputSettings.prettyPrint(false);
 			outputSettings.outline(false);
-			String cleaned = Jsoup.clean(json,"", Whitelist.relaxed(), outputSettings);
+			String cleaned = Jsoup.clean(json, "", Whitelist.relaxed(), outputSettings);
 			// We need to unescape here as JSoup escape json characters and make subsequent use of JSON crash
 			// For html content we should escape before persistence
 			// There is a little performance hit but it's safer to use JSoup than a custom solution.
@@ -70,12 +70,22 @@ public final class HTMLCleanupUtils {
 		return StringUtils.EMPTY;
 	}
 
-	public static String getBriefText(String text, int maxLength){
+	public static String getBriefText(String text, int maxLength) {
 		text = htmlToText(text);
-		if (text.length() > maxLength){
-			text = text.substring(0, maxLength-3) + "...";
+		if (text.length() > maxLength) {
+			text = text.substring(0, maxLength - 3) + "...";
 		}
 		return text;
+	}
+
+	public static String cleanHtml(String unsecureHtml) {
+		if (StringUtils.isNotBlank(unsecureHtml)) {
+			Document.OutputSettings outputSettings = new Document.OutputSettings();
+			outputSettings.prettyPrint(false);
+			outputSettings.outline(false);
+			return Jsoup.clean(unsecureHtml, "", Whitelist.relaxed(), outputSettings);
+		}
+		return StringUtils.EMPTY;
 	}
 
 }
