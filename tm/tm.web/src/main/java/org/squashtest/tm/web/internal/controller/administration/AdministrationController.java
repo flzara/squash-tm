@@ -29,11 +29,12 @@ import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.AdministrationStatistics;
 import org.squashtest.tm.service.user.AdministrationService;
 
+//XSS ok 2018-01-19 JTH
 @Controller
 public class AdministrationController {
 	@Inject
 	private AdministrationService administrationService;
-	
+
 	@Value("${info.app.version}")
     private String sqTMversion;
 
