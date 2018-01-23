@@ -24,51 +24,51 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
+<%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments" %>
+<%@ taglib prefix="hu" uri="http://org.squashtest.tm/taglib/html-utils" %>
 
 <?xml version="1.0" encoding="utf-8" ?>
-<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8" %>
 <%---------------------------- Test Case Header ------------------------------%>
 
 
-
 <c:if test="${empty editable}">
-	<c:set var="editable" value="${ false }" /> 
-	<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ library }">
-		<c:set var="editable" value="${ true }" /> 
-	</authz:authorized>
+  <c:set var="editable" value="${ false }"/>
+  <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ library }">
+    <c:set var="editable" value="${ true }"/>
+  </authz:authorized>
 </c:if>
 
-<div class="ui-widget-header ui-corner-all ui-state-default fragment-header" >
- <div id="right-frame-button">
-    <f:message var="toggleLibraryTooltip" key="tooltip.toggleLibraryDisplay" />
-	<input type="button" class="sq-btn btn-sm" id="toggle-expand-left-frame-button" title="${toggleLibraryTooltip}"/>
+<div class="ui-widget-header ui-corner-all ui-state-default fragment-header">
+  <div id="right-frame-button">
+    <f:message var="toggleLibraryTooltip" key="tooltip.toggleLibraryDisplay"/>
+    <input type="button" class="sq-btn btn-sm" id="toggle-expand-left-frame-button" title="${toggleLibraryTooltip}"/>
   </div>
-<h2><a id="library-name" href="#"><c:out
-	value="${ library.project.name }" escapeXml="true" /></a></h2>
+  <h2><a id="library-name" href="#"><c:out value="${ library.project.name }" escapeXml="true"/></a></h2>
 
 </div>
 
 <div class="fragment-body">
 
-<comp:toggle-panel id="library-description-panel" titleKey="label.Description" open="true">
+  <comp:toggle-panel id="library-description-panel" titleKey="label.Description" open="true">
 
 	<jsp:attribute name="body">
-		<div id="library-description" >${ library.project.description }</div>
+		<div id="library-description">${hu:clean( library.project["description"] )}</div>
 	</jsp:attribute>
-</comp:toggle-panel> 
-<at:attachment-bloc editable="${ editable }" workspaceName="${ workspaceName }" attachListId="${ library.attachmentList.id}" attachmentSet="${attachments}"/>
+  </comp:toggle-panel>
+  <at:attachment-bloc editable="${ editable }" workspaceName="${ workspaceName }"
+                      attachListId="${ library.attachmentList.id}" attachmentSet="${attachments}"/>
 
-<script type="text/javascript">
-require(["common"], function() {
-	require(["jquery", "file-upload", "squash.basicwidgets"], function($, upload, basic){
-			$(function(){
-			basic.init();
-			});
-		});
-});
-	
-</script>
+  <script type="text/javascript">
+    require(["common"], function () {
+      require(["jquery", "file-upload", "squash.basicwidgets"], function ($, upload, basic) {
+        $(function () {
+          basic.init();
+        });
+      });
+    });
+
+  </script>
 </div>
 
 

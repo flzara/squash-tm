@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.model.json;
 
 import java.util.Date;
 
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 
@@ -31,7 +32,7 @@ public class JsonGeneralInfo {
 	private String createdBy;
 	private String modifiedOn;
 	private String modifiedBy;
-	
+
 	public JsonGeneralInfo(String createdOn, String createdBy,
 			String modifiedOn, String modifiedBy) {
 		super();
@@ -40,7 +41,7 @@ public class JsonGeneralInfo {
 		this.modifiedOn = modifiedOn;
 		this.modifiedBy = modifiedBy;
 	}
-	
+
 	public JsonGeneralInfo(Date createdOn, String createdBy,
 			Date modifiedOn, String modifedBy){
 		super();
@@ -49,13 +50,13 @@ public class JsonGeneralInfo {
 		this.modifiedOn = DateUtils.formatIso8601DateTime(modifiedOn);
 		this.modifiedBy = modifedBy;
 	}
-	
+
 	public JsonGeneralInfo(AuditableMixin mixin){
 		super();
 		this.createdOn = DateUtils.formatIso8601DateTime(mixin.getCreatedOn());
-		this.createdBy = mixin.getCreatedBy();
+		this.createdBy = HtmlUtils.htmlEscape(mixin.getCreatedBy());
 		this.modifiedOn = DateUtils.formatIso8601DateTime(mixin.getLastModifiedOn());
-		this.modifiedBy = mixin.getLastModifiedBy();		
+		this.modifiedBy =  HtmlUtils.htmlEscape(mixin.getLastModifiedBy());
 	}
 
 	public String getCreatedOn() {
@@ -74,6 +75,6 @@ public class JsonGeneralInfo {
 		return modifiedBy;
 	}
 
-	
-	
+
+
 }

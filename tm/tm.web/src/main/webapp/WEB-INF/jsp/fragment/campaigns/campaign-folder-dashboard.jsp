@@ -22,47 +22,47 @@
 --%>
 <?xml version="1.0" encoding="utf-8" ?>
 <%@ page language="java" contentType="text/html; charset=utf-8"
-	pageEncoding="utf-8"%>
-	
-	
+         pageEncoding="utf-8" %>
+
+
 <%@ taglib prefix="dashboard" tagdir="/WEB-INF/tags/dashboard" %>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
-<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
-<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
+<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <?xml version="1.0" encoding="utf-8" contentType="text/html; charset=utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 
-<c:url var="folderStatisticsUrl" value="/campaign-folders/${folder.id}/dashboard-statistics" />
-<c:url var="folderStatisticsPrintUrl" value="/campaign-folders/${folder.id}/dashboard?printmode=true" />
+<c:url var="folderStatisticsUrl" value="/campaign-folders/${folder.id}/dashboard-statistics"/>
+<c:url var="folderStatisticsPrintUrl" value="/campaign-folders/${folder.id}/dashboard?printmode=true"/>
 
 
 <div class="ui-widget-header ui-state-default ui-corner-all fragment-header purple">
-	<h2><span>${folder.name}</span></h2>			
+  <h2><span><c:out value="${folder.name}"/></span></h2>
 </div>
 
 <div class="fragment-body">
-	<dashboard:campaign-folder-dashboard-panel url="${folderStatisticsUrl}" 
-                                                  printUrl="${folderStatisticsPrintUrl}" 
-                                                  printmode="${printmode}" 
-                                                  allowsSettled="${allowsSettled}" 
-                                                  allowsUntestable="${allowsUntestable}" />
+  <dashboard:campaign-folder-dashboard-panel url="${folderStatisticsUrl}"
+                                             printUrl="${folderStatisticsPrintUrl}"
+                                             printmode="${printmode}"
+                                             allowsSettled="${allowsSettled}"
+                                             allowsUntestable="${allowsUntestable}"/>
 </div>
 
 <script type="text/javascript">
 
-	require(["common"], function(){
-		require(["domReady","campaign-folder-management"], function(domReady, campmanager){
-			domReady(function(){
-				campmanager.initDashboardPanel({
-					master : '#dashboard-master',
-					model : ${json:serialize(dashboardModel)}
-				});	
-			});
-		});
-	});
+  require(["common"], function () {
+    require(["domReady", "campaign-folder-management"], function (domReady, campmanager) {
+      domReady(function () {
+        campmanager.initDashboardPanel({
+          master: '#dashboard-master',
+          model: ${json:serialize(dashboardModel)}
+        });
+      });
+    });
+  });
 
 </script>

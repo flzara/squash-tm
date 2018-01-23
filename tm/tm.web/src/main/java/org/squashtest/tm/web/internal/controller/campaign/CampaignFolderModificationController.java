@@ -41,8 +41,9 @@ import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.FolderModificationController;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 
+// XSS OK
 @Controller
-@RequestMapping("/campaign-folders/{"+RequestParams.FOLDER_ID+"}")
+@RequestMapping("/campaign-folders/{" + RequestParams.FOLDER_ID + "}")
 public class CampaignFolderModificationController extends FolderModificationController<CampaignFolder> {
 
 
@@ -67,7 +68,8 @@ public class CampaignFolderModificationController extends FolderModificationCont
 		return folderModificationService;
 	}
 
-	@Inject @Named("squashtest.tm.service.CampaignFolderModificationService")
+	@Inject
+	@Named("squashtest.tm.service.CampaignFolderModificationService")
 	public final void setFolderModificationService(FolderModificationService<CampaignFolder> folderModificationService) {
 		this.folderModificationService = folderModificationService;
 	}
@@ -99,19 +101,18 @@ public class CampaignFolderModificationController extends FolderModificationCont
 	// URL should have been /statistics, but that was already used by another method in this controller
 	@ResponseBody
 	@RequestMapping(value = "/dashboard-statistics", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
-	public
- ManyCampaignStatisticsBundle getStatisticsAsJson(
-			@PathVariable(RequestParams.FOLDER_ID) long folderId) {
+	public ManyCampaignStatisticsBundle getStatisticsAsJson(
+		@PathVariable(RequestParams.FOLDER_ID) long folderId) {
 		return campaignModificationService.gatherFolderStatisticsBundle(folderId);
 	}
 
-	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML, params="printmode")
+	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML, params = "printmode")
 	public ModelAndView getDashboard(
-			Model model,
-			@PathVariable(RequestParams.FOLDER_ID) long folderId,
-			@RequestParam(value="printmode", defaultValue="false") Boolean printmode) {
+		Model model,
+		@PathVariable(RequestParams.FOLDER_ID) long folderId,
+		@RequestParam(value = "printmode", defaultValue = "false") Boolean printmode) {
 
-		CampaignFolder folder= folderModificationService.findFolder(folderId);
+		CampaignFolder folder = folderModificationService.findFolder(folderId);
 
 		ManyCampaignStatisticsBundle bundle = campaignModificationService.gatherFolderStatisticsBundle(folderId);
 
@@ -126,18 +127,18 @@ public class CampaignFolderModificationController extends FolderModificationCont
 
 	}
 
-	private void populateOptionalExecutionStatuses(CampaignFolder folder, Model model){
+	private void populateOptionalExecutionStatuses(CampaignFolder folder, Model model) {
 		model.addAttribute("allowsSettled",
-				folder.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
+			folder.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
 		model.addAttribute("allowsUntestable",
-				folder.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
+			folder.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
 	}
 
-	private void populateOptionalExecutionStatuses(CampaignFolder folder, ModelAndView model){
+	private void populateOptionalExecutionStatuses(CampaignFolder folder, ModelAndView model) {
 		model.addObject("allowsSettled",
-				folder.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
+			folder.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
 		model.addObject("allowsUntestable",
-				folder.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
+			folder.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
 	}
 
 }

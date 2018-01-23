@@ -78,6 +78,8 @@ import java.util.*;
  *
  * @author Gregory Fouquet
  */
+
+// XSS OK
 @Controller
 @RequestMapping(value = "/campaign-browser")
 public class CampaignLibraryNavigationController extends
@@ -308,8 +310,6 @@ public class CampaignLibraryNavigationController extends
 	@ResponseBody
 	@RequestMapping(value = "/campaigns/{campaignId}/content", method = RequestMethod.GET)
 	public List<JsTreeNode> getCampaignIterationsTreeModel(@PathVariable long campaignId) {
-//		List<Iteration> iterations = campaignLibraryNavigationService.findIterationsByCampaignId(campaignId);
-//		return createCampaignIterationsModel(iterations);
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 		Collection<JsTreeNode> nodes = workspaceDisplayService().getCampaignNodeContent(campaignId, currentUser, "Campaign");
 		return new ArrayList<>(nodes);
@@ -318,8 +318,6 @@ public class CampaignLibraryNavigationController extends
 	@ResponseBody
 	@RequestMapping(value = "/iterations/{resourceId}/content", method = RequestMethod.GET)
 	public List<JsTreeNode> getIterationTestSuitesTreeModel(@PathVariable("resourceId") long iterationId) {
-//		List<TestSuite> testSuites = campaignLibraryNavigationService.findIterationContent(iterationId);
-//		return createIterationTestSuitesModel(testSuites);
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 		Collection<JsTreeNode> nodes = workspaceDisplayService().getCampaignNodeContent(iterationId, currentUser, "Iteration");
 		return new ArrayList<>(nodes);

@@ -40,6 +40,8 @@ import javax.inject.Provider;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -90,6 +92,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
 import org.squashtest.tm.web.internal.model.json.JsonIteration;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 @Controller
 @RequestMapping("/campaigns/{campaignId}")
@@ -228,7 +231,7 @@ public class CampaignModificationController {
 		Map<String, String> jsonUsers = new LinkedHashMap<>(usersList.size());
 		jsonUsers.put(User.NO_USER_ID.toString(), unassignedLabel);
 		for (User user : usersList) {
-			jsonUsers.put(user.getId().toString(), user.getLogin());
+			jsonUsers.put(user.getId().toString(), HtmlUtils.htmlEscape(user.getLogin()));
 		}
 
 		return jsonUsers;
@@ -266,8 +269,10 @@ public class CampaignModificationController {
 	public String updateDescription(@RequestParam(VALUE) String newDescription, @PathVariable long campaignId) {
 
 		campaignModService.changeDescription(campaignId, newDescription);
-		LOGGER.trace("Campaign " + campaignId + ": updated description to " + newDescription);
-		return newDescription;
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Campaign " + campaignId + ": updated description to " + newDescription);
+		}
+		return HTMLCleanupUtils.cleanHtml(newDescription);
 	}
 
 
@@ -276,7 +281,9 @@ public class CampaignModificationController {
 	public String updateReference(@RequestParam(VALUE) String newReference, @PathVariable long campaignId) {
 
 		campaignModService.changeReference(campaignId, newReference);
-		LOGGER.trace("Campaign " + campaignId + ": updated reference to " + newReference);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Campaign " + campaignId + ": updated reference to " + newReference);
+		}
 		return HtmlUtils.htmlEscape(newReference);
 	}
 
@@ -291,8 +298,9 @@ public class CampaignModificationController {
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, params = {"newName"})
 	public Object rename(@RequestParam("newName") String newName, @PathVariable long campaignId) {
-		LOGGER.info("Renaming Campaign " + campaignId + " as " + newName);
-
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Renaming Campaign " + campaignId + " as " + newName);
+		}
 		campaignModService.rename(campaignId, newName);
 		return new RenameModel(newName);
 

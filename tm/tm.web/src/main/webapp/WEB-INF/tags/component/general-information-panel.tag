@@ -32,25 +32,25 @@
 <f:message var="neverLabel" key="label.lower.Never"/>
 
 <div id="general-information-panel" class="information-panel" data-def="url=${entityUrl}, never=${neverLabel}, format=${displayDateFormat}">
-			
+
 	<span ><f:message key="label.CreatedOn" />&nbsp;:&nbsp;</span>
-	
+
 	<span id="created-on">
-		<span class="datetime"><f:formatDate value="${ auditableEntity.createdOn }" pattern="${rawDateFormat}" timeZone="UTC"/></span> 
-		<span class="author">${ auditableEntity.createdBy }</span>
+		<span class="datetime"><f:formatDate value="${ auditableEntity.createdOn }" pattern="${rawDateFormat}" timeZone="UTC"/></span>
+		<span class="author"><c:out value="${ auditableEntity.createdBy }"/></span>
 	</span>
-	
+
 	<br />
-	
+
 	<span><f:message key="label.UpdatedOn" />&nbsp;:&nbsp;</span>
-		
-	<span id="last-modified-on">	
-		<span class="datetime"><f:formatDate value="${ auditableEntity.lastModifiedOn }" pattern="${rawDateFormat}"  timeZone="UTC"/></span> 
-		<span class="author">${ auditableEntity.lastModifiedBy }</span>
+
+	<span id="last-modified-on">
+		<span class="datetime"><f:formatDate value="${ auditableEntity.lastModifiedOn }" pattern="${rawDateFormat}"  timeZone="UTC"/></span>
+		<span class="author"><c:out value="${ auditableEntity.lastModifiedBy }"/></span>
 	</span>
-	
+
 	<br />
-	
+
 </div>
 	<script type="text/javascript">
 	require(["common"], function() {

@@ -21,43 +21,27 @@
 package org.squashtest.tm.service.internal.campaign;
 
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.campaign.CampaignStatisticsService;
-import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
-import org.squashtest.tm.service.statistics.campaign.CampaignNonExecutedTestCaseImportanceStatistics;
-import org.squashtest.tm.service.statistics.campaign.CampaignProgressionStatistics;
-import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
-import org.squashtest.tm.service.statistics.campaign.CampaignTestCaseStatusStatistics;
-import org.squashtest.tm.service.statistics.campaign.CampaignTestCaseSuccessRateStatistics;
-import org.squashtest.tm.service.statistics.campaign.CampaignTestInventoryStatistics;
-import org.squashtest.tm.service.statistics.campaign.IterationTestInventoryStatistics;
-import org.squashtest.tm.service.statistics.campaign.ManyCampaignStatisticsBundle;
-import org.squashtest.tm.service.statistics.campaign.ScheduledIteration;
+import org.squashtest.tm.service.statistics.campaign.*;
 
-import java.util.Optional;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.util.*;
+
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Transactional(readOnly = true)
 @Service("CampaignStatisticsService")
@@ -387,7 +371,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService 
 			Long id = (Long) tuple[0];
 
 			if (!id.equals(currentId)) {
-				String name = (String) tuple[1];
+				String name = HtmlUtils.htmlEscape((String) tuple[1]);
 				newStatistics = new CampaignTestInventoryStatistics();
 				newStatistics.setCampaignName(name);
 				result.add(newStatistics);
@@ -398,7 +382,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService 
 			Long howmany = (Long) tuple[3];
 
 			if (status == null) {
-				continue;    // status == null iif the test plan is empty
+				continue;    // status == null if the test plan is empty
 			}
 			newStatistics.setNumber(howmany.intValue(), status);
 

@@ -38,6 +38,7 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.SpringPagination;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import javax.inject.Inject;
 import java.util.Locale;
@@ -87,8 +88,8 @@ public class RequirementAuditTrailController {
 		return RequirementLargePropertyChange.builder()
 			.setSource(event.getRequirementVersion())
 			.setModifiedProperty(event.getPropertyName())
-			.setOldValue(Jsoup.clean(event.getOldValue(), Whitelist.relaxed()))
-			.setNewValue(Jsoup.clean(event.getNewValue(), Whitelist.relaxed()))
+			.setOldValue(HTMLCleanupUtils.cleanHtml(event.getOldValue()))
+			.setNewValue(HTMLCleanupUtils.cleanHtml(event.getNewValue()))
 			.setAuthor(event.getAuthor())
 			.build();
 	}

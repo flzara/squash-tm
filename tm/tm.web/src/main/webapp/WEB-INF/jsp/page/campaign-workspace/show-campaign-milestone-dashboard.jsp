@@ -22,14 +22,14 @@
 --%>
 <?xml version="1.0" encoding="utf-8" ?>
 <%@ page language="java" contentType="text/html; charset=utf-8"
-	pageEncoding="utf-8"%>
+         pageEncoding="utf-8" %>
 
 
 <%@ taglib prefix="dashboard" tagdir="/WEB-INF/tags/dashboard" %>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
-<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
-<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
+<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <?xml version="1.0" encoding="utf-8" contentType="text/html; charset=utf-8" ?>
@@ -37,38 +37,38 @@
 
 
 <html xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="_csrf" content="${_csrf.token}"/>
-    <!-- default header name is X-CSRF-TOKEN -->
-    <meta name="_csrf_header" content="${_csrf.headerName}"/>
-    <!-- ... -->
-		<link type="image/x-icon" rel="shortcut icon" href="${ pageContext.servletContext.contextPath }/images/favicon.ico"/>
-		<comp:sq-css name="squash.core.css" />
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <meta name="_csrf" content="${_csrf.token}"/>
+  <!-- default header name is X-CSRF-TOKEN -->
+  <meta name="_csrf_header" content="${_csrf.headerName}"/>
+  <!-- ... -->
+  <link type="image/x-icon" rel="shortcut icon" href="${ pageContext.servletContext.contextPath }/images/favicon.ico"/>
+  <comp:sq-css name="squash.core.css"/>
 
-<c:if test="${not empty printmode and printmode}">
-        <comp:sq-css name="squash.print.css" />
-</c:if>
-		<script type="text/javascript">
-		var require = require || {};
-		require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";
-		var squashtm = {};
-		squashtm.app = {
-			contextRoot: "${pageContext.servletContext.contextPath}",
-			locale : "<f:message key='squashtm.locale'/>"
-		}
-		<layout:_common-lang/>
-		</script>
-		<script type="text/javascript" src="${pageContext.servletContext.contextPath}/scripts/require-min.js"></script>
+  <c:if test="${not empty printmode and printmode}">
+    <comp:sq-css name="squash.print.css"/>
+  </c:if>
+  <script type="text/javascript">
+    var require = require || {};
+    require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";
+    var squashtm = {};
+    squashtm.app = {
+      contextRoot: "${pageContext.servletContext.contextPath}",
+      locale: "<f:message key='squashtm.locale'/>"
+    };
+    <layout:_common-lang/>
+  </script>
+  <script type="text/javascript" src="${pageContext.servletContext.contextPath}/scripts/require-min.js"></script>
 
-	</head>
+</head>
 
-	<body >
+<body>
 
-		<div class="fragment-body">
-		  <jsp:include page="/WEB-INF/jsp/fragment/campaigns/campaign-milestone-dashboard.jsp" />
-		</div>
+<div class="fragment-body">
+  <jsp:include page="/WEB-INF/jsp/fragment/campaigns/campaign-milestone-dashboard.jsp"/>
+</div>
 
 
-	</body>
+</body>
 </html>

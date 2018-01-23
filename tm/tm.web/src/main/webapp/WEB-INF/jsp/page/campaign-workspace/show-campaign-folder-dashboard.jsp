@@ -56,7 +56,7 @@
 		squashtm.app = {
 			contextRoot: "${pageContext.servletContext.contextPath}",
 			locale : "<f:message key='squashtm.locale'/>"
-		}
+		};
 		<layout:_common-lang/>
 		</script>
 		<script type="text/javascript" src="${pageContext.servletContext.contextPath}/scripts/require-min.js"></script>

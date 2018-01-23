@@ -32,6 +32,7 @@
 <%@ taglib prefix="dashboard" tagdir="/WEB-INF/tags/dashboard"%>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json"%>
 <%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues"%>
+<%@ taglib prefix="hu" uri="http://org.squashtest.tm/taglib/html-utils" %>
 
 <f:message var="squashlocale" key="squashtm.locale" />
 <f:message var="iterationPlanningTitle" key="campaigns.planning.iterations.scheduled_dates" />
@@ -216,12 +217,12 @@
         <jsp:attribute name="body">
               <div class="display-table-row">
                 <label class="display-table-cell" for="campaign-reference"><f:message key="label.Reference" /></label>
-                <div class="display-table-cell" id="campaign-reference">${ campaign.reference }</div>
+                <div class="display-table-cell" id="campaign-reference"><c:out value="${ campaign.reference }"/></div>
               </div>
 
               <div class="display-table-row">
                 <label for="campaign-description" class="display-table-cell"><f:message key="label.Description" /></label>
-		        <div id="campaign-description" ${descrRichAttributes}>${ campaign.description }</div>
+		        <div id="campaign-description" ${descrRichAttributes}>${hu:clean(campaign["description"])}</div>
               </div>
 
             <div class="display-table-row">

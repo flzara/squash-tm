@@ -34,6 +34,7 @@ import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 
+// XSS OK
 @Controller
 @RequestMapping("/campaign-libraries/{libraryId}")
 public class CampaignLibraryModificationController {

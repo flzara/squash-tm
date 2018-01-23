@@ -244,7 +244,7 @@
 								<td class="std-border light-border">{{this.[6]}}</td>
 								<td class="${allowsUntestable ? 'std-border light-border' : 'std-border light-border not-displayed' }">{{this.[7]}}</td>
 								<td class="std-border light-border" style="font-weight:bold;">{{this.[8]}}</td>
-								<td class="std-border light-border"style="font-weight:bold;">{{this.[9]}}</td>
+								<td class="std-border light-border" style="font-weight:bold;">{{this.[9]}}</td>
 							</tr>
 						</tbody>
 					</table>

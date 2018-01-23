@@ -21,69 +21,69 @@
 
 --%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
-<%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
+<%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments" %>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
-<%@ taglib prefix="dashboard" tagdir="/WEB-INF/tags/dashboard"%>
+<%@ taglib prefix="dashboard" tagdir="/WEB-INF/tags/dashboard" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 
 <?xml version="1.0" encoding="utf-8" ?>
-<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8" %>
 
 <s:url var="statsUrl" value="/campaign-browser/dashboard-milestones-statistics"/>
 <s:url var="printUrl" value="/campaign-browser/dashboard-milestones?printmode=true"/>
 
-<f:message var="dateFormat" key="squashtm.dateformat" />
+<f:message var="dateFormat" key="squashtm.dateformat"/>
 
 
 <div class="ui-widget-header ui-state-default ui-corner-all fragment-header purple">
-	<h2><span><f:message key="label.Milestone"/>  ${milestone.label} </span></h2>
+  <h2><span><f:message key="label.Milestone"/>  <c:out value="${milestone.label}"/> </span></h2>
 </div>
 
 <div class="fragment-body">
-<%-- statistics panel --%>
-  	<c:if test="${shouldShowDashboard}">
-        <dashboard:favorite-dashboard />
-    </c:if>
+  <%-- statistics panel --%>
+  <c:if test="${shouldShowDashboard}">
+    <dashboard:favorite-dashboard/>
+  </c:if>
 
-    <c:if test="${not shouldShowDashboard}">
-    			<dashboard:campaign-milestones-dashboard-panel
-            url="${statsUrl}"
-            printUrl="${printUrl}"
-            printmode="${printmode}"
-            allowsSettled="${allowsSettled}"
-            allowsUntestable="${allowsUntestable}" />
-    </c:if>
+  <c:if test="${not shouldShowDashboard}">
+    <dashboard:campaign-milestones-dashboard-panel
+      url="${statsUrl}"
+      printUrl="${printUrl}"
+      printmode="${printmode}"
+      allowsSettled="${allowsSettled}"
+      allowsUntestable="${allowsUntestable}"/>
+  </c:if>
 </div>
 
 <script type="text/javascript">
 
-	require(["common"], function(){
-		require(["domReady","campaign-management","favorite-dashboard"], function(domReady, campmanager, favoriteMain){
-			domReady(function(){
+  require(["common"], function () {
+    require(["domReady", "campaign-management", "favorite-dashboard"], function (domReady, campmanager, favoriteMain) {
+      domReady(function () {
 
-			var shouldShowDashboard = ${shouldShowDashboard};
+        var shouldShowDashboard = ${shouldShowDashboard};
 
 
-    //init the default dashboard
-      if(shouldShowDashboard){
-        squashtm.workspace.canShowFavoriteDashboard = ${canShowDashboard};
-        squashtm.workspace.shouldShowFavoriteDashboard = shouldShowDashboard;
+        //init the default dashboard
+        if (shouldShowDashboard) {
+          squashtm.workspace.canShowFavoriteDashboard = ${canShowDashboard};
+          squashtm.workspace.shouldShowFavoriteDashboard = shouldShowDashboard;
 
-        var options = {};
-        options.isMilestoneDashboard = ${isMilestoneDashboard};
+          var options = {};
+          options.isMilestoneDashboard = ${isMilestoneDashboard};
 
-        favoriteMain.init(options);
-      } else {
-				campmanager.initDashboardPanel({
-					master : '#dashboard-master',
-					model : ${json:serialize(dashboardModel)}
-				});
-				}
-			});
-		});
-	});
+          favoriteMain.init(options);
+        } else {
+          campmanager.initDashboardPanel({
+            master: '#dashboard-master',
+            model: ${json:serialize(dashboardModel)}
+          });
+        }
+      });
+    });
+  });
 
 </script>
