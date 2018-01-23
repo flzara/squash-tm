@@ -34,6 +34,7 @@ import javax.inject.Inject;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
@@ -90,8 +91,10 @@ public class WorkspaceHelperServiceImpl implements WorkspaceHelperService {
 			filterModel.setEnabled(false);
 			selectedProjectIds = projectIds;
 		} else {
-			filterModel = filterModels.keySet().iterator().next();
-			selectedProjectIds = filterModels.get(filterModel);
+			Set<Map.Entry<FilterModel, List<Long>>> filterModelEntries = filterModels.entrySet();
+			Map.Entry<FilterModel, List<Long>> filterModelEntry = filterModelEntries.iterator().next();
+			filterModel = filterModelEntry.getKey();
+			selectedProjectIds = filterModelEntry.getValue();
 		}
 
 		//fetch the necessary data for all readable projects
