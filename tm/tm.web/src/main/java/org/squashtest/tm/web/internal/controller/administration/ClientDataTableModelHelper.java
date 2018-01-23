@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.security.oauth2.provider.ClientDetails;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 
@@ -66,7 +67,7 @@ public class ClientDataTableModelHelper  extends DataTableModelBuilder<ClientDet
 		Map<String, Object> row = new HashMap<>(3);
 		row.put("entity-id", item.getClientId());
 		row.put("index", getCurrentIndex() +1);
-		row.put("name", item.getClientId());
+		row.put("name", HtmlUtils.htmlEscape(item.getClientId()));
 		row.put("secret", item.getClientSecret());
 		row.put("redirect_uri", formatRegisteredRedirectUri(item.getRegisteredRedirectUri()));
 		row.put("delete", "");

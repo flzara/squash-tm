@@ -23,6 +23,7 @@ package org.squashtest.tm.web.internal.controller.administration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.Pagings;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.InputType;
@@ -43,9 +44,9 @@ import org.springframework.data.domain.Pageable;
 
 /**
  * Controller for the Custom Fields management pages.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Controller
 @RequestMapping("/administration/custom-fields")
@@ -78,7 +79,7 @@ public final class CustomFieldAdministrationController {
 
 	/**
 	 * Shows the custom fields manager.
-	 * 
+	 *
 	 * @param model
 	 * @return
 	 */
@@ -102,7 +103,7 @@ public final class CustomFieldAdministrationController {
 
 	/**
 	 * Return the DataTableModel to display the table of all custom fields.
-	 * 
+	 *
 	 * @param params
 	 *            the {@link DataTableDrawParameters} for the custom field table
 	 * @param locale
@@ -121,7 +122,7 @@ public final class CustomFieldAdministrationController {
 
 	/**
 	 * Will help to create the {@link DataTableModel} to fill the data-table of custom fields
-	 * 
+	 *
 	 */
 	private class CustomFieldDataTableModelHelper extends DataTableModelBuilder<CustomField> {
 		private Locale locale;
@@ -137,8 +138,8 @@ public final class CustomFieldAdministrationController {
 
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
-			res.put(NAME, item.getName());
-			res.put(LABEL, item.getLabel());
+			res.put(NAME, HtmlUtils.htmlEscape(item.getName()));
+			res.put(LABEL, HtmlUtils.htmlEscape(item.getLabel()));
 			res.put("raw-input-type", item.getInputType().name());
 			res.put("input-type", messageSource.internationalize(item.getInputType().getI18nKey(), locale));
 			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
@@ -150,7 +151,7 @@ public final class CustomFieldAdministrationController {
 	@ResponseBody
 	@Deprecated
 	/**
-	 * 
+	 *
 	 * @param customFieldId
 	 * @deprecated use CustomFieldController#deleteCustomField instead
 	 */
