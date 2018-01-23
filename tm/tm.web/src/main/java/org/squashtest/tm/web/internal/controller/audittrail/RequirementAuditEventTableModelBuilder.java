@@ -20,29 +20,21 @@
  */
 package org.squashtest.tm.web.internal.controller.audittrail;
 
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
-import org.squashtest.tm.domain.event.RequirementAuditEvent;
-import org.squashtest.tm.domain.event.RequirementAuditEventVisitor;
-import org.squashtest.tm.domain.event.RequirementCreation;
-import org.squashtest.tm.domain.event.RequirementLargePropertyChange;
-import org.squashtest.tm.domain.event.RequirementPropertyChange;
-import org.squashtest.tm.domain.event.RequirementVersionModification;
-import org.squashtest.tm.domain.event.SyncRequirementCreation;
-import org.squashtest.tm.domain.event.SyncRequirementUpdate;
+import org.squashtest.tm.domain.event.*;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
+
+import javax.validation.constraints.NotNull;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Builder for datatable model showing {@link RequirementAuditEvent} objects. Not threadsafe, should be discarded after
@@ -52,7 +44,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
  *
  */
 public class RequirementAuditEventTableModelBuilder extends DataTableModelBuilder<RequirementAuditEvent> implements
-		RequirementAuditEventVisitor {
+	RequirementAuditEventVisitor {
 	/**
 	 * The locale to use to format the labels.
 	 */
@@ -95,23 +87,23 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelBuilde
 		String message = i18nHelper.internationalize("label.Creation", locale);
 		populateCurrentItemData(message, "creation", event);
 	}
-	
-	
+
+
 	@Override
 	public void visit(SyncRequirementCreation event) {
 		String message = i18nHelper.internationalize("label.CreationBySynchronization", locale);
 		populateCurrentItemData(message, "sync-creation", event);
 		currentItemData.put("event-meta", event.getSource());
-		
+
 	}
-	
+
 	@Override
 	public void visit(SyncRequirementUpdate event) {
 		String message = i18nHelper.internationalize("label.UpdateBySynchronization", locale);
-		populateCurrentItemData(message, "sync-update", event);		
+		populateCurrentItemData(message, "sync-update", event);
 		currentItemData.put("event-meta", event.getSource());
 	}
-	
+
 
 	/**
 	 * @see org.squashtest.tm.domain.event.RequirementAuditEventVisitor#visit(org.squashtest.tm.domain.event.RequirementPropertyChange)
@@ -131,17 +123,15 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelBuilde
 
 	private Object[] buildMessageArgs(RequirementPropertyChange event) {
 		Object[] args;
-		
+
 		if (propertyIsEnumeratedAndInternationalizable(event)) {
 			args = buildMessageArgsForI18nableEnumProperty(event);
-		}
-		else if (propertyIsInfolist(event)){
+		} else if (propertyIsInfolist(event)) {
 			args = buildMessageArgsForI18ableInfoListProperty(event);
+		} else {
+			args = buildMessageArgsForStringProperty(event);
 		}
-		else{
-			args = buildMessageArgsForStringProperty(event); 
-		}
-		
+
 		return args;
 	}
 
@@ -151,17 +141,17 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelBuilde
 
 		return Enum.class.isAssignableFrom(fieldType) && Internationalizable.class.isAssignableFrom(fieldType);
 	}
-	
-	private boolean propertyIsInfolist(RequirementPropertyChange event){
+
+	private boolean propertyIsInfolist(RequirementPropertyChange event) {
 		Field field = ReflectionUtils.findField(RequirementVersion.class, event.getPropertyName());
 		Class<?> fieldType = field.getType();
 
 		return InfoListItem.class.isAssignableFrom(fieldType);
-		
+
 	}
 
 	private Object[] buildMessageArgsForStringProperty(RequirementPropertyChange event) {
-		return new Object[] { event.getOldValue(), event.getNewValue() };
+		return new Object[]{event.getOldValue(), event.getNewValue()};
 	}
 
 	private Object[] buildMessageArgsForI18nableEnumProperty(RequirementPropertyChange event) {
@@ -171,16 +161,16 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelBuilde
 		String oldValueLabel = retrieveEnumI18ndLabel(enumType, event.getOldValue());
 		String newValueLabel = retrieveEnumI18ndLabel(enumType, event.getNewValue());
 
-		return new Object[] { oldValueLabel, newValueLabel };
+		return new Object[]{oldValueLabel, newValueLabel};
 	}
-	
-	
+
+
 	/*
-	 * Unfortunately there is no way to tell which subtype of InfoListItem is being processed there : 
-	 * the SystemListItem is i18nable while the UserListItem is not. So let's hope for the best : 
+	 * Unfortunately there is no way to tell which subtype of InfoListItem is being processed there :
+	 * the SystemListItem is i18nable while the UserListItem is not. So let's hope for the best :
 	 * the i18nhelper should return the key itself if not found in the messagesource
 	 */
-	private Object[]  buildMessageArgsForI18ableInfoListProperty(RequirementPropertyChange event){
+	private Object[] buildMessageArgsForI18ableInfoListProperty(RequirementPropertyChange event) {
 
 		return new Object[]{
 			i18nHelper.getMessage(event.getOldValue(), null, event.getOldValue(), locale),
@@ -188,7 +178,7 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelBuilde
 		};
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	private String retrieveEnumI18ndLabel(Class enumType, String stringValue) {
 		Internationalizable enumValue = (Internationalizable) Enum.valueOf(enumType, stringValue);
 		return i18nHelper.internationalize(enumValue, locale);

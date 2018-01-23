@@ -20,16 +20,15 @@
  */
 package org.squashtest.tm.web.internal.controller.audittrail;
 
-import java.util.Locale;
-
-import javax.inject.Inject;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.event.ChangedProperty;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.tm.domain.event.RequirementLargePropertyChange;
@@ -40,19 +39,22 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.SpringPagination;
 
+import javax.inject.Inject;
+import java.util.Locale;
+
 /**
  * This controller handles requests related to a requirement's audit trail (ie its collection of
  * {@link RequirementAuditEvent})
- * 
+ *
  * @author Gregory Fouquet
- * 
  */
+// XSS OK
 @Controller
 @RequestMapping("/audit-trail/requirement-versions")
 public class RequirementAuditTrailController {
 	@Inject
 	private RequirementAuditTrailService auditTrailService;
-	
+
 	@Inject
 	private InternationalizationHelper i18nHelper;
 
@@ -60,23 +62,34 @@ public class RequirementAuditTrailController {
 	@RequestMapping(value = "{requirementVersionId}/events-table", params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getEventsTableModel(@PathVariable long requirementVersionId, DataTableDrawParameters drawParams,
-			Locale locale) {
-            
-            Pageable pageable = SpringPagination.pageable(drawParams);
-            
-            Page<RequirementAuditEvent> auditTrail = auditTrailService
-                            .findAllByRequirementVersionIdOrderedByDate(requirementVersionId, pageable);
+											  Locale locale) {
 
-            RequirementAuditEventTableModelBuilder builder = new RequirementAuditEventTableModelBuilder(locale,
-                            i18nHelper);
+		Pageable pageable = SpringPagination.pageable(drawParams);
 
-            return builder.buildDataModel(auditTrail, drawParams.getsEcho());
+		Page<RequirementAuditEvent> auditTrail = auditTrailService
+			.findAllByRequirementVersionIdOrderedByDate(requirementVersionId, pageable);
+
+		RequirementAuditEventTableModelBuilder builder = new RequirementAuditEventTableModelBuilder(locale,
+			i18nHelper);
+
+		return builder.buildDataModel(auditTrail, drawParams.getsEcho());
 	}
-	
-	@RequestMapping(value="fat-prop-change-events/{eventId}") @ResponseBody
+
+	@RequestMapping(value = "fat-prop-change-events/{eventId}")
+	@ResponseBody
 	public ChangedProperty getLargePropertyChangeEvent(@PathVariable long eventId) {
 		final RequirementLargePropertyChange event = auditTrailService.findLargePropertyChangeById(eventId);
-		
-		return new ChangedPropertyJsonDecorator(event);
+
+		return new ChangedPropertyJsonDecorator(escapeRLPC(event));
+	}
+
+	private RequirementLargePropertyChange escapeRLPC(RequirementLargePropertyChange event) {
+		return RequirementLargePropertyChange.builder()
+			.setSource(event.getRequirementVersion())
+			.setModifiedProperty(event.getPropertyName())
+			.setOldValue(Jsoup.clean(event.getOldValue(), Whitelist.relaxed()))
+			.setNewValue(Jsoup.clean(event.getNewValue(), Whitelist.relaxed()))
+			.setAuthor(event.getAuthor())
+			.build();
 	}
 }

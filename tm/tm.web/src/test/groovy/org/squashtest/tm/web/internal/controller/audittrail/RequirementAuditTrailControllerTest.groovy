@@ -24,6 +24,7 @@ import org.springframework.context.MessageSource
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.domain.event.RequirementCreation
 import org.squashtest.tm.domain.event.RequirementLargePropertyChange
+import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.service.audit.RequirementAuditTrailService
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters
@@ -58,26 +59,30 @@ class RequirementAuditTrailControllerTest extends Specification {
 		requirementAuditTrailService.findAllByRequirementVersionIdOrderedByDate(10L, _) >> page
 
 		when:
-		DataTableModel model =  controller.getEventsTableModel(10L, drawParams, locale)
+		DataTableModel model = controller.getEventsTableModel(10L, drawParams, locale)
 
 		then:
 		model.aaData.size() == 1
 	}
+
 	def "should return an audit event"() {
 		given:
 		RequirementLargePropertyChange event = Mock()
+		RequirementVersion requirementVersion = Mock()
+		event.requirementVersion >> requirementVersion
 		event.propertyName >> "shoe size"
 		event.oldValue >> "10.5"
-		event.newValue >> "13"
+		event.newValue >> "13<script>kill_squash.exe<script/>"
+		event.author >> "bob"
 		requirementAuditTrailService.findLargePropertyChangeById(10L) >> event
 
 		when:
-		def res =  controller.getLargePropertyChangeEvent(10L)
+		def res = controller.getLargePropertyChangeEvent(10L)
 
 		then:
 		res
 		res.propertyName == event.propertyName
 		res.oldValue == event.oldValue
-		res.newValue == event.newValue
+		res.newValue == "13"
 	}
 }

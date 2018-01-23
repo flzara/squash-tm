@@ -20,17 +20,19 @@
  */
 package org.squashtest.tm.web.internal.controller.audittrail;
 
-import javax.validation.constraints.NotNull;
-
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.squashtest.tm.domain.event.ChangedProperty;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * Decorates a {@link ChangedProperty} so that it can be serialized using Jackson.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
+
+// XSS OK
 public class ChangedPropertyJsonDecorator implements ChangedProperty {
 	/**
 	 * @param changedProperty
