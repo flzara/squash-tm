@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.internal.controller.administration;
 
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.requirement.RequirementVersionLinkType;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
@@ -45,9 +46,9 @@ class RequirementLinkTypesTableModelHelper extends DataTableModelBuilder<Require
 
 		row.put("type-id", type.getId().toString());
 		row.put("type-index", Long.toString(getCurrentIndex()));
-		row.put("type-role1", formatRole(type.getRole1()));
+		row.put("type-role1", HtmlUtils.htmlEscape(formatRole(type.getRole1())));
 		row.put("type-role1-code", type.getRole1Code());
-		row.put("type-role2", formatRole(type.getRole2()));
+		row.put("type-role2", HtmlUtils.htmlEscape(formatRole(type.getRole2())));
 		row.put("type-role2-code", type.getRole2Code());
 		row.put("type-is-default", Boolean.toString(type.isDefault()));
 		row.put("empty-delete-holder", null);

@@ -97,15 +97,15 @@ public class UserAdministrationController extends PartyControllerSupport {
 	private AuthenticationProviderContext authenticationProviderContext;
 
 	private DatatableMapper<String> userMapper = new NameBasedMapper(10).map("user-id", "id")
-			.map("user-active", "active").map("user-login", "login").map("user-group", "group")
-			.map("user-firstname", "firstName").map("user-lastname", "lastName").map("user-email", "email")
-			.map("user-created-on", "audit.createdOn").map("user-created-by", "audit.createdBy")
-			.map("user-modified-on", "audit.lastModifiedOn").map("user-modified-by", "audit.lastModifiedBy")
-			.map("user-connected-on", "lastConnectedOn");
+		.map("user-active", "active").map("user-login", "login").map("user-group", "group")
+		.map("user-firstname", "firstName").map("user-lastname", "lastName").map("user-email", "email")
+		.map("user-created-on", "audit.createdOn").map("user-created-by", "audit.createdBy")
+		.map("user-modified-on", "audit.lastModifiedOn").map("user-modified-by", "audit.lastModifiedBy")
+		.map("user-connected-on", "lastConnectedOn");
 
 	private DatatableMapper<String> permissionMapper = new NameBasedMapper(2).mapAttribute(
-			DataTableModelConstants.PROJECT_NAME_KEY, "project.name", ProjectPermission.class).mapAttribute(
-					"permission-name", "permissionGroup.qualifiedName", ProjectPermission.class);
+		DataTableModelConstants.PROJECT_NAME_KEY, "project.name", ProjectPermission.class).mapAttribute(
+		"permission-name", "permissionGroup.qualifiedName", ProjectPermission.class);
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public ModelAndView getUserList(Locale locale) {
@@ -123,7 +123,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 		mav.addObject("userList", model.getAaData());
 
 		PagedCollectionHolder<List<Team>> teams = teamFinderService.findAllFiltered(TEAMS_DEFAULT_PAGING,
-				TEAMS_DEFAULT_FILTERING);
+			TEAMS_DEFAULT_FILTERING);
 		mav.addObject("pagedTeams", teams);
 		mav.addObject("teamsPageSize", TEAMS_DEFAULT_PAGING.getPageSize());
 		return mav;
@@ -131,10 +131,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 
 	@ResponseBody
 	@RequestMapping(value = "/table", params = RequestParams.S_ECHO_PARAM, method = RequestMethod.GET)
-	public
-	DataTableModel getTable(final DataTableDrawParameters params, final Locale locale) {
-		LOGGER.trace("getTable called ");
-
+	public DataTableModel getTable(final DataTableDrawParameters params, final Locale locale) {
 		DataTableSorting sorting = createSorting(params, userMapper);
 		Filtering filtering = new DataTableFiltering(params);
 
@@ -150,35 +147,33 @@ public class UserAdministrationController extends PartyControllerSupport {
 
 	@ResponseBody
 	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "password")
-	public
-	void addUser(@ModelAttribute("add-user") @Valid UserForm userForm) {
+	public void addUser(@ModelAttribute("add-user") @Valid UserForm userForm) {
 		if (!currentProviderFeatures().isManagedPassword()) {
 			adminService.addUser(userForm.getUser(), userForm.getGroupId(), userForm.getPassword());
 
 		} else {
 			// If this happens, it's either a bug or a forged request
 			LOGGER.warn(
-					"Received a password while passwords are managed by auth provider. This is either a bug or a forged request. User form : {}",
-					ToStringBuilder.reflectionToString(userForm));
+				"Received a password while passwords are managed by auth provider. This is either a bug or a forged request. User form : {}",
+				ToStringBuilder.reflectionToString(userForm));
 			throw new IllegalArgumentException(
-					"Received a password while passwords are managed by auth provider. This is either a bug or a forged request.");
+				"Received a password while passwords are managed by auth provider. This is either a bug or a forged request.");
 		}
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "noPassword")
-	public
-	void addUserWithoutCredentials(@ModelAttribute("add-user") @Valid UserForm userForm) {
+	public void addUserWithoutCredentials(@ModelAttribute("add-user") @Valid UserForm userForm) {
 		if (currentProviderFeatures().isManagedPassword()) {
 			adminService.createUserWithoutCredentials(userForm.getUser(), userForm.getGroupId());
 
 		} else {
 			// If this happens, it's either a bug or a forged request
 			LOGGER.warn(
-					"Received no password while passwords are managed by Squash. This is either a bug or a forged request. User form : {}",
-					ToStringBuilder.reflectionToString(userForm));
+				"Received no password while passwords are managed by Squash. This is either a bug or a forged request. User form : {}",
+				ToStringBuilder.reflectionToString(userForm));
 			throw new IllegalArgumentException(
-					"Received no password while passwords are managed by Squash. This is either a bug or a forged request.");
+				"Received no password while passwords are managed by Squash. This is either a bug or a forged request.");
 		}
 	}
 
@@ -189,22 +184,19 @@ public class UserAdministrationController extends PartyControllerSupport {
 
 	@ResponseBody
 	@RequestMapping(value = USER_URLS + "/deactivate", method = RequestMethod.POST)
-	public
-	void deactivateUsers(@PathVariable("userIds") List<Long> userIds) {
+	public void deactivateUsers(@PathVariable("userIds") List<Long> userIds) {
 		adminService.deactivateUsers(userIds);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = USER_URLS + "/activate", method = RequestMethod.POST)
-	public
-	void activateUsers(@PathVariable("userIds") List<Long> userIds) {
+	public void activateUsers(@PathVariable("userIds") List<Long> userIds) {
 		adminService.activateUsers(userIds);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = USER_URLS, method = RequestMethod.DELETE)
-	public
-	void deleteUsers(@PathVariable("userIds") List<Long> userIds) {
+	public void deleteUsers(@PathVariable("userIds") List<Long> userIds) {
 		adminService.deleteUsers(userIds);
 	}
 
@@ -219,7 +211,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 		List<UsersGroup> usersGroupList = adminService.findAllUsersGroupOrderedByQualifiedName();
 
 		List<?> permissionModel = createPermissionTableModel(userId, new DefaultPagingAndSorting(),
-				DefaultFiltering.NO_FILTERING, "").getAaData();
+			DefaultFiltering.NO_FILTERING, "").getAaData();
 
 		List<PermissionGroupModel> pgm = getPermissionGroupModels();
 		List<ProjectModel> pm = getProjectModels(userId);
@@ -235,12 +227,11 @@ public class UserAdministrationController extends PartyControllerSupport {
 
 	@ResponseBody
 	@RequestMapping(value = USER_URL + "/change-group", method = RequestMethod.POST)
-	public
-	void changeUserGroup(@PathVariable long userId, @RequestParam long groupId) {
+	public void changeUserGroup(@PathVariable long userId, @RequestParam long groupId) {
 		adminService.setUserGroupAuthority(userId, groupId);
 	}
 
-	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = { "id=user-login", VALUE }, produces = "text/plain;charset=UTF-8")
+	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = {"id=user-login", VALUE}, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String updateLogin(@ModelAttribute @Valid UserLoginForm userLoginform, @PathVariable long userId) {
 		String userLogin = userLoginform.getValue();
@@ -248,21 +239,21 @@ public class UserAdministrationController extends PartyControllerSupport {
 		return HtmlUtils.htmlEscape(userLogin);
 	}
 
-	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = { "id=user-first-name", VALUE }, produces = "text/plain;charset=UTF-8")
+	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = {"id=user-first-name", VALUE}, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String updateFirstName(@RequestParam(VALUE) String firstName, @PathVariable long userId) {
 		adminService.modifyUserFirstName(userId, firstName);
 		return HtmlUtils.htmlEscape(firstName);
 	}
 
-	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = { "id=user-last-name", VALUE }, produces = "text/plain;charset=UTF-8")
+	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = {"id=user-last-name", VALUE}, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String updateLastName(@RequestParam(VALUE) String lastName, @PathVariable long userId) {
 		adminService.modifyUserLastName(userId, lastName);
 		return HtmlUtils.htmlEscape(lastName);
 	}
 
-	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = { "id=user-email", VALUE }, produces = "text/plain;charset=UTF-8")
+	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = {"id=user-email", VALUE}, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String updateEmail(@RequestParam(VALUE) String email, @PathVariable long userId) {
 		adminService.modifyUserEmail(userId, email);
@@ -290,16 +281,14 @@ public class UserAdministrationController extends PartyControllerSupport {
 	// *********************************************************************************
 	@ResponseBody
 	@RequestMapping(value = USER_URL + "/add-permission", method = RequestMethod.POST)
-	public
-	void addNewPermission(@RequestParam("project") long projectId, @PathVariable long userId,
-			@RequestParam String permission) {
+	public void addNewPermission(@RequestParam("project") long projectId, @PathVariable long userId,
+								 @RequestParam String permission) {
 		permissionService.addNewPermissionToProject(userId, projectId, permission);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = USER_URL + "/remove-permission", method = RequestMethod.POST)
-	public
-	void removePermission(@RequestParam("project") List<Long> projectIds, @PathVariable(USER_ID) long userId) {
+	public void removePermission(@RequestParam("project") List<Long> projectIds, @PathVariable(USER_ID) long userId) {
 		for (Long projectId : projectIds) {
 			permissionService.removeProjectPermission(userId, projectId);
 		}
@@ -307,15 +296,13 @@ public class UserAdministrationController extends PartyControllerSupport {
 
 	@ResponseBody
 	@RequestMapping(value = USER_URL + "/permission-popup", method = RequestMethod.GET)
-	public
-	Map<String, Object> getPermissionPopup(@PathVariable(USER_ID) long userId) {
+	public Map<String, Object> getPermissionPopup(@PathVariable(USER_ID) long userId) {
 		return createPermissionPopupModel(userId);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = USER_URL + "/permissions", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
-	public
-	DataTableModel getPermissionTableModel(DataTableDrawParameters params, @PathVariable(USER_ID) long userId) {
+	public DataTableModel getPermissionTableModel(DataTableDrawParameters params, @PathVariable(USER_ID) long userId) {
 		PagingAndSorting paging = new DataTableSorting(params, permissionMapper);
 		Filtering filtering = new DataTableFiltering(params);
 		return createPermissionTableModel(userId, paging, filtering, params.getsEcho());
@@ -365,7 +352,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 				group = "";
 			} else {
 				group = messageSource.internationalize("user.account.group." + item.getGroup().getQualifiedName()
-						+ ".label", locale);
+					+ ".label", locale);
 				if (group == null) {
 					group = item.getGroup().getSimpleName();
 				}
@@ -377,9 +364,9 @@ public class UserAdministrationController extends PartyControllerSupport {
 			result.put("user-index", getCurrentIndex());
 			result.put("user-login", item.getLogin());
 			result.put("user-group", group);
-			result.put("user-firstname", item.getFirstName());
-			result.put("user-lastname", item.getLastName());
-			result.put("user-email", item.getEmail());
+			result.put("user-firstname", HtmlUtils.htmlEscape(item.getFirstName()));
+			result.put("user-lastname", HtmlUtils.htmlEscape(item.getLastName()));
+			result.put("user-email", HtmlUtils.htmlEscape(item.getEmail()));
 			// Could be done with a SimpleDateFormat but substring works very well.
 			result.put("user-created-on", formatDate(newP.getCreatedOn(), locale).substring(0, 10));
 			result.put("user-created-by", formatString(newP.getCreatedBy(), locale));

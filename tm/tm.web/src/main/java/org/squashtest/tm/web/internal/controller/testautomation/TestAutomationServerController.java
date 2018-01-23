@@ -40,7 +40,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.tm.core.foundation.lang.UrlUtils;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
-import org.squashtest.tm.web.internal.controller.administration.NewTestAutomationServer;
 import org.squashtest.tm.web.internal.helper.JEditablePostParams;
 import org.squashtest.tm.web.internal.model.testautomation.TAUsageStatus;
 

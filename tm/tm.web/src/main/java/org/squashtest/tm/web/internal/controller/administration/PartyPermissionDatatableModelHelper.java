@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.users.ActivePartyDetector;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
@@ -52,7 +53,7 @@ public class PartyPermissionDatatableModelHelper extends DataTableModelBuilder<P
 
 		result.put("party-id", party.getId());
 		result.put("party-active", active);
-		result.put("party-name", party.getName());
+		result.put("party-name", HtmlUtils.htmlEscape(party.getName()));
 		result.put("party-index", getCurrentIndex());
 		result.put("permission-group", group);
 		result.put("party-type", messageSource.internationalize("label." + party.getType().toLowerCase(), locale));

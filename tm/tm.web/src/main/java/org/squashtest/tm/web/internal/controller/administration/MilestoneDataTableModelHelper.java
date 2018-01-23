@@ -35,6 +35,7 @@ import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.service.milestone.MilestoneManagerService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 public class MilestoneDataTableModelHelper  extends DataTableModelBuilder<Milestone> {
 
@@ -83,7 +84,7 @@ public class MilestoneDataTableModelHelper  extends DataTableModelBuilder<Milest
 		row.put("index", getCurrentIndex() + 1);
 		row.put("label", HtmlUtils.htmlEscape(item.getLabel()));
 		row.put("nbOfProjects", item.getNbOfBindedProject());
-		row.put("description", Jsoup.clean(item.getDescription(), Whitelist.relaxed()));
+		row.put("description", HTMLCleanupUtils.cleanHtml(item.getDescription()));
 		row.put("range", i18nRange(item.getRange()));
 		row.put("owner", HtmlUtils.htmlEscape(ownerToPrint(item)));
 		row.put("status", i18nStatus(item.getStatus()));

@@ -57,22 +57,23 @@
 
   <jsp:attribute name="body">
     <div class="ta-main-div">
-      	
-      	<%-- =================================== server block =============================================================== --%>	
-      
+
+      	<%-- =================================== server block =============================================================== --%>
+
       <fieldset class="ta-server-block ta-block">
         <legend>
           <f:message key="label.executionServer" />
         </legend>
-        
-        <div id="selected-ta-server-span" class="std-margin-top std-margin-bottom">${(not empty project.testAutomationServer) ? project.testAutomationServer.name : noServerLabel }</div>
-      
-      </fieldset> 
-      <%-- =================================== /server block =============================================================== --%>	
-      
-      
+
+		  <c:set var="serverName" value="${(not empty project.testAutomationServer) ? project.testAutomationServer.name : noServerLabel }" />
+        <div id="selected-ta-server-span" class="std-margin-top std-margin-bottom"><c:out value="${serverName}" escapeXml="true" /></div>
+
+      </fieldset>
+      <%-- =================================== /server block =============================================================== --%>
+
+
       <%-- =================================== projects block =============================================================== --%>
-      
+
       <f:message var="addTAProjectLabel" key="title.associateJob"  />
       <c:if test="${ empty project.testAutomationServer}">
       <c:set var="dispayedJobBlock" value="display: none"/>
@@ -84,8 +85,8 @@
             <span class="ui-icon ui-icon-plus squared-icons"></span>
           </button>
         </legend>
-        
-        
+
+
         <table id="ta-projects-table" class="ta-projects-table"
           data-def="ajaxsource=${localProjectsURL}, hover, deferloading=${fn:length(project.testAutomationProjects)}">
           <thead>
@@ -112,8 +113,8 @@
               <td>${taproj.id}</td>
               <td>${taproj.slaves}</td>
               <td>${status.index +1}</td>
-              <td>${taproj.label}</td>
-              <td>${taproj.jobName}</td>
+              <td><c:out value="${taproj.label}" escapeXml="true" /></td>
+              <td><c:out value="${taproj.jobName}" escapeXml="true" /></td>
               <td>${jobUrls[taproj.jobName]}</td>
               <td> </td>
               <td> </td>
@@ -123,8 +124,8 @@
         </table>
         <br />
       </fieldset>
-      <%-- =================================== /projects block =============================================================== --%>	
-    	
+      <%-- =================================== /projects block =============================================================== --%>
+
     </div>
   </jsp:attribute>
 </comp:toggle-panel>
@@ -134,7 +135,7 @@
 <%-- ================================================
 
 	Change TA server confirmation popup
-	
+
 
  ================================================= --%>
 
@@ -204,20 +205,20 @@
         </div>
         <div class="display-table-row">
           <div class="display-table-cell"><label><f:message key="label.password" /></label></div>
-          <div class="display-table-cell"><input type="password"  id="login-dialog-password"/></div>  
+          <div class="display-table-cell"><input type="password"  id="login-dialog-password"/></div>
         </div>
       </div>
     </div>
   </div>
-  
+
   <div class="popup-dialog-buttonpane">
     <input type="button" value="${confirmLabel}"  data-def="evt=confirm, mainbtn"/>
     <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
-  </div>  
-</div> 
+  </div>
+</div>
 
 <%-- ================================================
-	Add Project Popup. 
+	Add Project Popup.
 ================================================= --%>
 
 
@@ -264,7 +265,7 @@
 </div>
 
 <%-- ================================================
-  Project edit popup. 
+  Project edit popup.
 ================================================= --%>
 <f:message var="editTAProjectTitle" key="title.editTAProject" />
 <div id="ta-project-edit-popup" class="not-displayed popup-dialog form-horizontal" title="${editTAProjectTitle }">
@@ -341,7 +342,7 @@
   </script>
   <script id="remove-message-tpl-case2" type="text/x-handlebars-template">
   <f:message key="message.testAutomationBinding.removeExecutedJob" />
-  </script>  
+  </script>
   <!-- _____________Buttons_______________ -->
   <div class="popup-dialog-buttonpane">
     <input class="confirm" type="button" value="${confirmLabel}" data-def="evt=confirm,  state=case1, mainbtn=case1" />
@@ -364,29 +365,29 @@ require(["common"], function() {
       squashtm.app.messages["message.project.bindJob.duplicatelabels"] = "${duplicateTMLabel}";
       squashtm.app.messages["message.project.bindJob.noneChecked"] = "${checkOneJob}";
       $(function(){
-      
+
         var automationSettings = {
         	isAdmin: ${isAdmin},
           tmProjectURL : "${projectUrl}",
           availableServers: ${json:serialize(availableTAServers)},
           TAServerId : ${(empty project.testAutomationServer) ? 0 : project.testAutomationServer.id}
         };
-  
+
         automationBlock.init(automationSettings);
       });
 
   });
 });
 
-	
 
-	
 
-	
 
-	
 
-	
 
-	
+
+
+
+
+
+
 </script>

@@ -29,7 +29,7 @@
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform" %>
-
+<%@ taglib prefix="hu" uri="http://org.squashtest.tm/taglib/html-utils" %>
 
 <%@ taglib prefix="sec"
 	uri="http://www.springframework.org/security/tags"%>
@@ -181,13 +181,13 @@
 							<label for="project-label" class="display-table-cell">
 							<f:message key="label.tag" />
 							</label>
-							<div class="display-table-cell editable text-editable" data-def="url=${projectUrl}, maxlength=255" id="project-label">${ adminproject.project.label }</div>
+							<div class="display-table-cell editable text-editable" data-def="url=${projectUrl}, maxlength=255" id="project-label"><c:out value="${ adminproject.project.label }" escapeXml="true" /></div>
 						</div>
 						<div class="display-table-row">
 							<label for="project-description" class="display-table-cell">
 							<f:message key="label.Description" />
 							</label>
-							<div class="display-table-cell editable rich-editable" data-def="url=${projectUrl}" id="project-description">${ adminproject.project.description }</div>
+							<div class="display-table-cell editable rich-editable" data-def="url=${projectUrl}" id="project-description">${hu:clean(adminproject.project.description) }</div>
 						</div>
 						<%-- 	Waiting for implementation of deactivation	<comp:project-active adminproject="${ adminproject }"/> --%>
 					</div>
@@ -215,7 +215,7 @@
 											<f:message key="project.bugtracker.name.undefined" />
 										</c:when>
 										<c:otherwise>
-											${ adminproject.project.bugtrackerBinding.bugtracker.name }
+											<c:out value="${ adminproject.project.bugtrackerBinding.bugtracker.name }" escapeXml="true" />
 										</c:otherwise>
 									</c:choose>
 								</div>

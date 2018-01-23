@@ -107,7 +107,7 @@
       <tr>
         <td class="project-id">${ project.id }</td>
         <td class="button-cell select-handle centered">${ status.index + 1}</td>
-        <td class="name">${ project.name }</td>
+        <td class="name"><c:out value="${ project.name }" escapeXml="true" /></td>
         <c:choose>
         <c:when test="${ pu:isTemplate(project) }">
         <td class="raw-type">template</td>
@@ -118,7 +118,7 @@
         <td class="icon-cell type-project" title="<f:message key='label.project' />">&nbsp</td>
         </c:otherwise>
         </c:choose>
-        <td>${ project.label }</td>
+        <td><c:out value="${ project.label }" escapeXml="true" /></td>
         <td><f:message key="squashtm.yesno.${ project.active }" /></td>
         <td><comp:date value="${ project.createdOn }" /></td>
         <td><comp:user value="${ project.createdBy }" /></td>
