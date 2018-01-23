@@ -191,9 +191,10 @@ public class CustomReportWorkspaceDisplayService {
 		// First we iterate over the libraries and give them their children
 		boolean openedLibrary = false;
 
-		for (Long parentKey : (Set<Long>) fatherChildrenLibrary.keySet()) {
+		for (Map.Entry<Long, List<Long>> parentChildrenEntry : (Set<Map.Entry>) fatherChildrenLibrary.entrySet()) {
+			Long parentKey = parentChildrenEntry.getKey();
 			if (jsTreeNodes.containsKey(parentKey)) {
-				for (Long childKey : (ArrayList<Long>) fatherChildrenLibrary.get(parentKey)) {
+				for (Long childKey : parentChildrenEntry.getValue()) {
 					jsTreeNodes.get(parentKey).addChild(allChildren.get(childKey));
 					openedLibrary = true;
 				}

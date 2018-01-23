@@ -39,66 +39,66 @@ import org.squashtest.tm.web.internal.exceptionresolver.HandlerMaxUploadSizeExce
 /**
  * <p>Will redirect a request to a specific MultipartResolver, with specific settings, with respect to the matched URL. This chain is
  * completely dumb and will pick the first match it finds, or the default if none was found.</p>
- * 
+ *
  * @author bsiri
  *
  */
 public class MultipartResolverDispatcher extends CommonsMultipartResolver {
-	
+
 	private SquashMultipartResolver defaultResolver;
-	
+
 	private Map<String, SquashMultipartResolver> resolverMap;
-        
+
         private ConfigurationService confService;
-	
+
 	public void setResolverMap(Map<String, SquashMultipartResolver> chain){
 		this.resolverMap = chain;
 	}
-	
+
 	public void setDefaultResolver(SquashMultipartResolver defaultResolver){
 		this.defaultResolver = defaultResolver;
 	}
-	
+
 	@Override
-	public MultipartHttpServletRequest resolveMultipart(HttpServletRequest request) throws MultipartException {	
-            
+	public MultipartHttpServletRequest resolveMultipart(HttpServletRequest request) throws MultipartException {
+
             String target = request.getRequestURI();
 
-            for (String matcher : resolverMap.keySet()){
-                    if (target.matches(matcher)){
-                            return resolverMap.get(matcher).resolveMultipart(request);
-                    }
-            }
+            for(Map.Entry<String, SquashMultipartResolver> resolverEntry : resolverMap.entrySet()) {
+            	if(target.matches(resolverEntry.getKey())) {
+            		return resolverEntry.getValue().resolveMultipart(request);
+				}
+			}
 
             //else
             return defaultResolver.resolveMultipart(request);
 	}
-        
+
         /*
-        * Because the resolvers in resolverMap aren't known to Spring, they can't listen to ApplicationEvents 
-        * directly. This class being the main entry point to the application and multipart résolution, 
+        * Because the resolvers in resolverMap aren't known to Spring, they can't listen to ApplicationEvents
+        * directly. This class being the main entry point to the application and multipart resolution,
         * it is its job to listen to those events and pass them down to the others.
         */
         @EventListener
         public void onContextReady(ContextRefreshedEvent event) {
             if (confService == null) {
                     confService = ((ContextRefreshedEvent) event).getApplicationContext()
-                                    .getBean(ConfigurationService.class);                    
-                
+                                    .getBean(ConfigurationService.class);
+
                     for (SquashMultipartResolver resolver : resolverMap.values()){
                         resolver.setConfigurationService(confService);
                         resolver.updateConfig();
                     }
             }
-           
+
         }
-        
+
         @EventListener
         public void onConfigChange(ConfigUpdateEvent update){
             for (SquashMultipartResolver resolver : resolverMap.values()){
                resolver.updateConfig();
             }
         }
-	
-	
+
+
 }
