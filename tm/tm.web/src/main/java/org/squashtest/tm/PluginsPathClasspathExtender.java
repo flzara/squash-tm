@@ -119,24 +119,25 @@ public class PluginsPathClasspathExtender implements SpringApplicationRunListene
 			}
 		});
 
-		URL[] pluginsUrls = new URL[plugins.length];
+		if(plugins != null) {
+			URL[] pluginsUrls = new URL[plugins.length];
 
-		for (int i = 0; i < plugins.length; i++) {
-			try {
-				URL pluginUrl = plugins[i].toURI().toURL();
-				pluginsUrls[i] = pluginUrl;
-				LOGGER.info("Jar '{}' will be added to classpath", pluginUrl);
+			for (int i = 0; i < plugins.length; i++) {
+				try {
+					URL pluginUrl = plugins[i].toURI().toURL();
+					pluginsUrls[i] = pluginUrl;
+					LOGGER.info("Jar '{}' will be added to classpath", pluginUrl);
 
-			} catch (MalformedURLException e) {
-				// I guess this should not happen because URL is built from an existing file
-				LOGGER.warn("Plugin file '{}' could not be converted into a URL", plugins[i], e);
+				} catch (MalformedURLException e) {
+					// I guess this should not happen because URL is built from an existing file
+					LOGGER.warn("Plugin file '{}' could not be converted into a URL", plugins[i], e);
+				}
 			}
+
+			ClassLoader extendedClassloader = new URLClassLoader(pluginsUrls, context.getClassLoader());
+			((DefaultResourceLoader) context).setClassLoader(extendedClassloader);
+			LOGGER.info("Classpath was extended with the content of plugins folder");
 		}
-
-
-		ClassLoader extendedClassloader = new URLClassLoader(pluginsUrls, context.getClassLoader());
-		((DefaultResourceLoader) context).setClassLoader(extendedClassloader);
-		LOGGER.info("Classpath was extended with the content of plugins folder");
 
 	}
 
