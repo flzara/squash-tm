@@ -21,13 +21,16 @@
 package org.squashtest.tm.web.internal.controller.administration;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.inject.Inject;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.Arrays;
 
 @Controller
 @RequestMapping("/administration/log-file")
@@ -36,13 +39,16 @@ public class LogfileController {
 	@Value("${logging.path}")
 	private String loggingPath;
 
+	@Inject
+	private Environment environment;
+
 	@RequestMapping(method = RequestMethod.GET)
 	public void downloadLogfile(HttpServletResponse response) {
 		try {
-			// dev
-			File logfile = new File(loggingPath + "/spring.log");
-			if(!logfile.exists()) {
-				// prod
+			File logfile;
+			if (Arrays.asList(environment.getActiveProfiles()).contains("dev")) {
+				logfile = new File(loggingPath + "/spring.log");
+			} else {
 				logfile = new File(loggingPath + "/squash-tm.log");
 			}
 			response.setContentType("application/octet-stream");
