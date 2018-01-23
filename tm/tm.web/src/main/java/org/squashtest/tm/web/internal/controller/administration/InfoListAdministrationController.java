@@ -49,9 +49,9 @@ import org.squashtest.tm.web.internal.util.IconLibrary;
 
 /**
  * Controller for rendering info list management pages
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Controller
 @RequestMapping("/administration/info-lists")
@@ -68,7 +68,7 @@ public class InfoListAdministrationController {
 
 	/**
 	 * Shows the custom fields manager.
-	 * 
+	 *
 	 * @param model
 	 * @return
 	 */
@@ -85,7 +85,7 @@ public class InfoListAdministrationController {
 	@RequestMapping(method = RequestMethod.GET, params = "_", headers = AcceptHeaders.CONTENT_JSON)
 	@ResponseBody
 	public DataTable10Model<IsBoundInfoListAdapter> getTableModel(@RequestParam("_") String echo,
-			final DataTableDrawParameters params, final Locale locale) {
+																  final DataTableDrawParameters params, final Locale locale) {
 		DataTableModel<IsBoundInfoListAdapter> model = new DataTableModel<>(echo);
 		model.setAaData(infoListFinder.findAllWithBoundInfo());
 		return DataTable10ModelAdaptor.adapt(model);
@@ -98,10 +98,12 @@ public class InfoListAdministrationController {
 		model.addAttribute("infoList", list);
 		model.addAttribute("itemListIcons", IconLibrary.getIconNames());
 
-		LOGGER.debug("id " + list.getId());
-		LOGGER.debug("label " + list.getLabel());
-		LOGGER.debug("code " + list.getCode());
-		LOGGER.debug("description " + list.getDescription());
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("id " + list.getId());
+			LOGGER.debug("label " + list.getLabel());
+			LOGGER.debug("code " + list.getCode());
+			LOGGER.debug("description " + list.getDescription());
+		}
 
 		return "info-list-modification.html";
 	}

@@ -24,6 +24,9 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
@@ -78,11 +81,11 @@ public class MilestoneDataTableModelHelper  extends DataTableModelBuilder<Milest
 		final AuditableMixin auditable = (AuditableMixin) item;
 		row.put("entity-id", item.getId());
 		row.put("index", getCurrentIndex() + 1);
-		row.put("label", item.getLabel());
+		row.put("label", HtmlUtils.htmlEscape(item.getLabel()));
 		row.put("nbOfProjects", item.getNbOfBindedProject());
-		row.put("description", item.getDescription());
+		row.put("description", Jsoup.clean(item.getDescription(), Whitelist.relaxed()));
 		row.put("range", i18nRange(item.getRange()));
-		row.put("owner", ownerToPrint(item));
+		row.put("owner", HtmlUtils.htmlEscape(ownerToPrint(item)));
 		row.put("status", i18nStatus(item.getStatus()));
 		// Issue 5065 There we check if milestone is binded to the current project, don't care about the others
 		Boolean isBoundToThisProject = false;
@@ -103,7 +106,7 @@ public class MilestoneDataTableModelHelper  extends DataTableModelBuilder<Milest
 		return row;
 	}
 
-	private Object ownerToPrint(Milestone item) {
+	private String ownerToPrint(Milestone item) {
 		String owner = null;
 		if (item.getRange() == MilestoneRange.GLOBAL){
 			owner = messageSource.internationalize("label.milestone.global.owner", locale);

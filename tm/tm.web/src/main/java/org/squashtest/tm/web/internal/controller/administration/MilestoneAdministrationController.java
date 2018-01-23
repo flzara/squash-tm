@@ -83,11 +83,14 @@ public class MilestoneAdministrationController {
 
 		setRange(milestone);
 		setPerimeter(milestone);
-		LOGGER.info("description " + milestone.getDescription());
-		LOGGER.info("label " + milestone.getLabel());
-		LOGGER.info("range " + milestone.getRange());
-		LOGGER.info("status " + milestone.getStatus());
-		LOGGER.info("end date " + milestone.getEndDate());
+
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("description " + milestone.getDescription());
+			LOGGER.debug("label " + milestone.getLabel());
+			LOGGER.debug("range " + milestone.getRange());
+			LOGGER.debug("status " + milestone.getStatus());
+			LOGGER.debug("end date " + milestone.getEndDate());
+		}
 		milestoneManager.addMilestone(milestone);
 		return milestone.getId();
 	}
