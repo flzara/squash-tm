@@ -43,6 +43,8 @@ import java.util.Map;
  * @author Grégory Fouquet
  * @since 1.13.0.RC10
  */
+
+// XSS OK - bflessel
 @RestController
 @RequestMapping("acls")
 public class AclsController {

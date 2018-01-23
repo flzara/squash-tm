@@ -33,7 +33,7 @@ import org.squashtest.tm.domain.servers.AuthenticationStatus;
 import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 
-
+// XSS OK - bflessel
 @Controller
 @RequestMapping("/servers")
 public class ThirdPartyServersAuthenticationController {

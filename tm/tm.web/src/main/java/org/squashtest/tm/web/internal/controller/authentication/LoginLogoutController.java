@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 
+// XSS OK
 @Controller
 public class LoginLogoutController {
 

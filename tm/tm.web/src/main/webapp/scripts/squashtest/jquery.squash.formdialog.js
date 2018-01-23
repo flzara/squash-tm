@@ -124,6 +124,11 @@
  */
 define([ 'jquery', "underscore", 'squash.attributeparser', 'squash.configmanager', 'jqueryui', './jquery.squash.squashbutton', 'squashtest/jquery.squash.popuperror' ], function($, _, attrparser, confman) {
 //init the csrf token inclusion for post request
+	$.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+		var token = $("meta[name='_csrf']").attr("content");
+		var header = $("meta[name='_csrf_header']").attr("content");
+		jqXHR.setRequestHeader(header, token);
+	});
 
 	if (($.squash !== undefined) && ($.squash.formDialog !== undefined)) {
 		// plugin already loaded

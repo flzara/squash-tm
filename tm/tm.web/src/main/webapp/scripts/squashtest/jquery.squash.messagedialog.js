@@ -20,6 +20,11 @@
  */
 define(["jquery", "squash.translator"],
 			function($, translator) {
+				$.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+					var token = $("meta[name='_csrf']").attr("content");
+					var header = $("meta[name='_csrf_header']").attr("content");
+					jqXHR.setRequestHeader(header, token);
+				});
 	if ($.squash !== undefined && $.squash.messageDialog !== undefined) {
 		// already loaded -> bail out
 		return;
@@ -164,7 +169,7 @@ define(["jquery", "squash.translator"],
 
 		return deferred.promise();
 	};
-	
+
 	/**
 	 * Adds functions in the $.squash namespace
 	 */
@@ -181,7 +186,7 @@ define(["jquery", "squash.translator"],
 		 */
 		openMessage : function(title, htmlMessage, size) {
 			var dialog = $('<div></div>');
-						
+
 			dialog.attr('title', title);
 
 			dialog.append('<div class="centered" style="margin-top:15px;">'+htmlMessage+'</div>');
@@ -197,5 +202,5 @@ define(["jquery", "squash.translator"],
 			return dialog.openMessage(size);
 		}
 	});
-	
+
 });

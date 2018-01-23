@@ -41,6 +41,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
@@ -53,6 +54,7 @@ import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 
+// XSS OK - bflessel
 @Controller
 @RequestMapping("/bugtracker/{bugtrackerId}")
 public class BugTrackerModificationController {
@@ -62,22 +64,21 @@ public class BugTrackerModificationController {
 
 	@Inject
 	private BugTrackerModificationService bugtrackerModificationService;
-	
+
 	@Inject
 	private InternationalizationHelper i18nHelper;
 
 	@Inject
 	private BugTrackerFinderService bugtrackerFinder;
-	
-	
-	
+
+
+
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
 	public ModelAndView getProjectInfos(@PathVariable long bugtrackerId, Locale locale) {
 
 		BugTracker bugTracker = bugtrackerFinder.findById(bugtrackerId);
 		String jsonBugtrackerKinds = findJsonBugTrackerKinds();
 		BugtrackerCredentialsManagementBean authBean = makeAuthBean(bugTracker, locale);
-		
 		ModelAndView mav = new ModelAndView("page/bugtrackers/bugtracker-info");
 		mav.addObject("bugtracker", bugTracker);
 		mav.addObject("bugtrackerKinds", jsonBugtrackerKinds);
@@ -85,11 +86,12 @@ public class BugTrackerModificationController {
 		return mav;
 	}
 
-	
+
 
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	@ResponseBody
 	public Object changeName(@PathVariable long bugtrackerId, @RequestParam String newName) {
+		newName = HtmlUtils.htmlEscape(newName);
 		bugtrackerModificationService.changeName(bugtrackerId, newName);
 		LOGGER.debug("BugTracker modification : change bugtracker {} name = {}", bugtrackerId, newName);
 		return new RenameModel(newName);
@@ -98,6 +100,7 @@ public class BugTrackerModificationController {
 	@RequestMapping(method = RequestMethod.POST, params = { "id=bugtracker-url", VALUE })
 	@ResponseBody
 	public String changeUrl(@PathVariable long bugtrackerId, @RequestParam(VALUE) String newUrl) {
+		newUrl = HtmlUtils.htmlEscape(newUrl);
 		bugtrackerModificationService.changeUrl(bugtrackerId, newUrl);
 		LOGGER.debug("BugTracker modification : change bugtracker {} url = {}", bugtrackerId, newUrl);
 		return newUrl;
@@ -131,20 +134,19 @@ public class BugTrackerModificationController {
 	public String changeKind(@RequestParam(VALUE) String kind, @PathVariable long bugtrackerId) {
 		LOGGER.debug("BugTracker modification : change bugtracker {} kind = {}", bugtrackerId, kind);
 		bugtrackerModificationService.changeKind(bugtrackerId, kind);
-
-		return kind;
+		return HtmlUtils.htmlEscape(kind);
 	}
-	
-	
+
+
 	// **************************** credentials management ******************************
-	
+
 	@RequestMapping(method = RequestMethod.POST, params = {"id=bugtracker-auth-policy", VALUE})
 	@ResponseBody
 	public void changeAuthPolicy(@RequestParam(VALUE) AuthenticationPolicy policy, @PathVariable(BUGTRACKER_ID) long bugtrackerId){
 		bugtrackerModificationService.changeAuthenticationPolicy(bugtrackerId, policy);
 	}
-	
-	
+
+
 	@RequestMapping(value= "/credentials/validator", method = RequestMethod.POST, consumes="application/json")
 	@ResponseBody
 	public void testCredentials(@PathVariable(BUGTRACKER_ID) long bugtrackerId ,@RequestBody Credentials credentials){
@@ -154,45 +156,46 @@ public class BugTrackerModificationController {
 		 */
 		bugtrackerModificationService.testCredentials(bugtrackerId, credentials);
 	}
-	
+
 	@RequestMapping(value = "/credentials", method = RequestMethod.POST, consumes="application/json")
 	@ResponseBody
 	public void storeCredentials(@PathVariable(BUGTRACKER_ID) long bugtrackerId ,@RequestBody Credentials credentials){
 		bugtrackerModificationService.storeCredentials(bugtrackerId, credentials);
 	}
-	
-	
+
+
 	// ********************** more private stuffs ******************
-	
-	
+
+
 	private String findJsonBugTrackerKinds() {
 		Set<String> bugtrackerKinds = bugtrackerFinder.findBugTrackerKinds();
 		Map<String, String> mapKinds = new HashMap<>(bugtrackerKinds.size());
 		for (String kind : bugtrackerKinds) {
+			kind = HtmlUtils.htmlEscape(kind);
 			mapKinds.put(kind, kind);
 		}
 		return JsonHelper.serialize(mapKinds);
 	}
-	
-	
+
+
 	private BugtrackerCredentialsManagementBean makeAuthBean(BugTracker bugTracker, Locale locale){
 		AuthenticationProtocol[] availableProtos = bugtrackerModificationService.getSupportedProtocols(bugTracker);
 		BugtrackerCredentialsManagementBean bean = new BugtrackerCredentialsManagementBean();
-		
-		// defaults 
+
+		// defaults
 		bean.setAuthPolicy(bugTracker.getAuthenticationPolicy());
 		bean.setSelectedProto(AuthenticationProtocol.BASIC_AUTH);
 		bean.setAvailableProtos(Arrays.asList(availableProtos));
-		
+
 		// now check against the credentials
 		try{
 			Credentials credentials = bugtrackerModificationService.findCredentials(bugTracker.getId());
-			
+
 			if (credentials != null){
 				bean.setSelectedProto(credentials.getImplementedProtocol());
 				bean.setCredentials(credentials);
 			}
-			
+
 		}
 		// no encryption key : blocking error, internationalizable
 		catch(MissingEncryptionKeyException ex){
@@ -209,25 +212,25 @@ public class BugTrackerModificationController {
 			LOGGER.error(ex.getMessage(), ex);
 			bean.setWarningMessage(ex.getMessage());
 		}
-		
+
 		return bean;
-		
+
 	}
-	
-	
-	
+
+
+
 	public static final class BugtrackerCredentialsManagementBean{
-		
+
 		// if those Strings remains to null it is a good thing
 		private String failureMessage = null;
 		private String warningMessage = null;
-		
+
 		// the rest is used if the above is null
 		private AuthenticationPolicy authPolicy;
 		private List<AuthenticationProtocol> availableProtos;
-		private AuthenticationProtocol selectedProto; 
+		private AuthenticationProtocol selectedProto;
 		private Credentials credentials;
-		
+
 		public AuthenticationPolicy getAuthPolicy() {
 			return authPolicy;
 		}
@@ -264,11 +267,11 @@ public class BugTrackerModificationController {
 		public void setWarningMessage(String warningMessage) {
 			this.warningMessage = warningMessage;
 		}
-		
-		
-		
-		
+
+
+
+
 	}
-	
+
 
 }

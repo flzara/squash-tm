@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 
+// XSS OK - bflessel
 public class HttpSessionRequestCacheWithExceptions extends
 HttpSessionRequestCache {
 

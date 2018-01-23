@@ -35,8 +35,8 @@
 <%@ attribute name="projectNames" required="false"
   description="names of the remote project (hosted on the bugtracker)"%>
 
-  
-  
+
+
 <%@ tag language="java" pageEncoding="utf-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -54,24 +54,24 @@
 <%--
  this is not a full form dialog, although it could use some of its features.
  --%>
- 
+
  <div>
 <div id="${id}" class="not-displayed popup-dialog" title="${bugreportTitle}">
   <div class="issue-report-dialog">
-  
+
     <div class="pleasewait" >
-      <comp:waiting-pane/>    
+      <comp:waiting-pane/>
     </div>
-    <div class="content"> 
-  
+    <div class="content">
+
       <div class="issue-report-error">
         <comp:error-message forField="bugtracker" />
       </div>
-          
-      
+
+
         <div id="project-selector" style="float:right"></div>
-        
-        
+
+
         <div class="attach-issue">
           <span class="issue-radio">
             <input type="radio" name="add-issue-mode" class="attach-radio"
@@ -80,26 +80,26 @@
                   key="dialog.issue.radio.attach.label" /></span> <!--  I don't want a <label> here because of the default style -->
           </span>
         </div>
-      
- 
+
+
         <span class="issue-radio">
           <input type="radio" class="report-radio" name="add-issue-mode"  value="report" />
           <span class="issue-radio-label">
             <f:message key="dialog.issue.radio.new.label" />
-          </span>        
+          </span>
          </span>
-           
-         
-           <script id="project-selector-tpl" type="text/x-handlebars-template">         
+
+
+           <script id="project-selector-tpl" type="text/x-handlebars-template">
                <select>
                 {{#each options}}
-                  <option value="{{this.code}}">{{this.value}}</option>
+                  <option value="{{this.code}}"><c:out value="{{this.value}}"></c:out></option>
                 {{/each}}
                 </select>
            </script>
         <div id="issue-create"></div>
         <div id="issue-search"></div>
-     
+
     </div>
   </div>
 
@@ -114,19 +114,19 @@
 require( ["common"], function(){
 		require(["jquery","bugtracker/bugtracker-panel"], function($){
 	$(function(){
-			 
-			var conf = {					
+
+			var conf = {
 				searchUrl : "${remoteIssues}",
 				bugTrackerId : "${bugTrackerId}",
 				labels : ${ json:serialize(interfaceDescriptor) },
 				currentProjectId : ${projectId},
 				projectNames : ${projectNames}
 			};
-			
-			
-			squashtm.bugReportPopup = $("#${id}").btOslcIssueDialog(conf);	
-			
-		});	
+
+
+			squashtm.bugReportPopup = $("#${id}").btOslcIssueDialog(conf);
+
+		});
 	});
 });
 </script>

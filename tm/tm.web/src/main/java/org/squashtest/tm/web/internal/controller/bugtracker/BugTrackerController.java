@@ -28,6 +28,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
@@ -157,7 +158,7 @@ public class BugTrackerController {
 	public ModelAndView showWorkspace(@PathVariable Long bugtrackerId) {
 		BugTracker bugTracker = bugTrackerManagerService.findById(bugtrackerId);
 		ModelAndView mav = new ModelAndView("page/bugtrackers/bugtracker-workspace");
-		mav.addObject("bugtrackerUrl", bugTracker.getUrl());
+		mav.addObject("bugtrackerUrl", HtmlUtils.htmlEscape(bugTracker.getUrl()));
 		return mav;
 	}
 
@@ -185,6 +186,11 @@ public class BugTrackerController {
 			@RequestParam(value = "useDelegatePopup", required = false, defaultValue = "false") Boolean useParentPopup) {
 
 		ExecutionStep step = executionFinder.findExecutionStepById(stepId);
+
+		step.setComment(HtmlUtils.htmlEscape(step.getComment()));
+		step.setAction(HtmlUtils.htmlEscape(step.getAction()));
+		step.setLastExecutedBy(HtmlUtils.htmlEscape(step.getLastExecutedBy()));
+
 		ModelAndView mav = makeIssuePanel(step, EXECUTION_STEP_TYPE, locale, panelStyle, step.getProject());
 		mav.addObject("useParentContextPopup", useParentPopup);
 
@@ -939,7 +945,7 @@ public class BugTrackerController {
 
 	private PagedCollectionHolder<List<RequirementVersionIssueOwnership<RemoteIssueDecorator>>> makeEmptyIssueDecoratorCollectionHolderForRequirement(
 		String entityName, Long entityId, Exception cause, PagingAndSorting paging) {
-		LOGGER.trace("BugTrackerController : fetching known issues for  " + entityName + " " + entityId
+		LOGGER.trace("BugTrackerController : fetching known issues for  " + HtmlUtils.htmlEscape(entityName) + " " + entityId
 			+ " failed, exception : ", cause);
 		List<RequirementVersionIssueOwnership<RemoteIssueDecorator>> emptyList = new LinkedList<>();
 		return new PagingBackedPagedCollectionHolder<>(paging, 0, emptyList);
@@ -947,7 +953,7 @@ public class BugTrackerController {
 
 	private PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> makeEmptyIssueDecoratorCollectionHolder(
 			String entityName, Long entityId, Exception cause, PagingAndSorting paging) {
-		LOGGER.trace("BugTrackerController : fetching known issues for  " + entityName + " " + entityId
+		LOGGER.trace("BugTrackerController : fetching known issues for  " + HtmlUtils.htmlEscape(entityName) + " " + entityId
 				+ " failed, exception : ", cause);
 		List<IssueOwnership<RemoteIssueDecorator>> emptyList = new LinkedList<>();
 		return new PagingBackedPagedCollectionHolder<>(paging, 0, emptyList);

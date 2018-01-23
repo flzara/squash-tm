@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.service.security.OAuth2ClientService;
 
+// XSS OK - bflessel
 @Controller
 @SessionAttributes("authorizationRequest")
 public class OauthController {

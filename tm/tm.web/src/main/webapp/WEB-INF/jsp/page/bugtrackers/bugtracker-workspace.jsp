@@ -23,4 +23,5 @@
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+
 <layout:iframe-layout  resourceName="bugtracker" iframeUrl="${ bugtrackerUrl }"></layout:iframe-layout>

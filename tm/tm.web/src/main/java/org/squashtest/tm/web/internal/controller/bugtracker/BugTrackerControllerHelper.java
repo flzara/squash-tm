@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemotePriority;
 import org.squashtest.tm.bugtracker.definition.RemoteStatus;
@@ -49,7 +50,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
-
+// XSS OK - bflessel
 @Component
 public final class BugTrackerControllerHelper {
 
@@ -106,7 +107,7 @@ public final class BugTrackerControllerHelper {
 				break;
 			}
 		}
-		return builder.toString();
+		return HtmlUtils.htmlEscape(builder.toString());
 	}
 
 	private static void appendStepTitle(Locale locale, MessageSource messageSource, int totalStepNumber,
@@ -138,7 +139,7 @@ public final class BugTrackerControllerHelper {
 		appendTestCaseDesc(execution.getReferencedTestCase(), description, locale, messageSource);
 		appendExecutionDesc(description, locale, messageSource, executionUrl);
 		appendDescHeader(description, locale, messageSource);
-		return description.toString();
+		return HtmlUtils.htmlEscape(description.toString());
 	}
 
 	/**
@@ -161,7 +162,7 @@ public final class BugTrackerControllerHelper {
 		appendExecutionDesc(description, locale, messageSource, executionUrl);
 		appendStepDesc(step, description, locale, messageSource);
 		appendDescHeader(description, locale, messageSource);
-		return description.toString();
+		return HtmlUtils.htmlEscape(description.toString());
 	}
 
 	/**
@@ -180,7 +181,7 @@ public final class BugTrackerControllerHelper {
 			.append("/executions/")
 			.append(execution.getId());
 		// formatter:on
-		return requestUrl.toString();
+		return HtmlUtils.htmlEscape(requestUrl.toString());
 	}
 
 	private static void appendDescHeader(StringBuilder description, Locale locale, MessageSource messageSource) {
@@ -306,22 +307,22 @@ public final class BugTrackerControllerHelper {
 
 			RemoteIssue issue = ownership.getIssue();
 			RequirementVersion requirementVersion = ownership.getRequirementVersion();
-			String strUrl = service.getIssueUrl(ownership.getIssue().getId(), ownership.getOwner().getBugTracker()).toExternalForm();
+			String strUrl = HtmlUtils.htmlEscape(service.getIssueUrl(ownership.getIssue().getId(), ownership.getOwner().getBugTracker()).toExternalForm());
 			String ownerName = nameBuilder.buildName(ownership.getOwner());
 			String ownerPath = nameBuilder.buildURLPath(ownership.getOwner());
-			String reqRef = requirementVersion.getReference();
+			String reqRef = HtmlUtils.htmlEscape(requirementVersion.getReference());
 			String reqId = String.valueOf(requirementVersion.getRequirement().getId());
 			String reqVersionId = String.valueOf(requirementVersion.getId());
 
 			result.put("issue-url", strUrl);
 			result.put("issue-id", issue.getId());
-			result.put("issue-summary", issue.getSummary());
+			result.put("issue-summary", HtmlUtils.htmlEscape(issue.getSummary()));
 			result.put("issue-priority", findPriority(issue));
 			result.put("issue-status", findStatus(issue));
 			result.put("issue-assignee", findAssignee(issue));
 			result.put("issue-owner", ownerName);
 			result.put("issue-owner-url", ownerPath);
-			result.put("BtProject", issue.getProject().getName());
+			result.put("BtProject", HtmlUtils.htmlEscape(issue.getProject().getName()));
 			result.put("requirement-reference", reqRef);
 			result.put("requirement-id", reqId);
 			result.put("current-version-id", reqVersionId);
@@ -359,20 +360,20 @@ public final class BugTrackerControllerHelper {
 			Map<String, String> result = new HashMap<>();
 
 			RemoteIssue issue = ownership.getIssue();
-			String strUrl = service.getIssueUrl(ownership.getIssue().getId(),
-				ownership.getOwner().getBugTracker()).toExternalForm();
+			String strUrl = HtmlUtils.htmlEscape(service.getIssueUrl(ownership.getIssue().getId(),
+				ownership.getOwner().getBugTracker()).toExternalForm());
 			String ownerName = nameBuilder.buildName(ownership.getOwner());
 			String ownerPath = nameBuilder.buildURLPath(ownership.getOwner());
 
 			result.put("issue-url", strUrl);
 			result.put("issue-id", issue.getId());
-			result.put("issue-summary", issue.getSummary());
+			result.put("issue-summary", HtmlUtils.htmlEscape(issue.getSummary()));
 			result.put("issue-priority", findPriority(issue));
 			result.put("issue-status", findStatus(issue));
 			result.put("issue-assignee", findAssignee(issue));
 			result.put("issue-owner", ownerName);
 			result.put("issue-owner-url", ownerPath);
-			result.put("BtProject", issue.getProject().getName());
+			result.put("BtProject", HtmlUtils.htmlEscape(issue.getProject().getName()));
 
 			return result;
 
@@ -409,19 +410,19 @@ public final class BugTrackerControllerHelper {
 			RemoteIssue issue = ownership.getIssue();
 			Map<String, Object> row = new HashMap<>();
 
-			String url = service.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
-				.toExternalForm();
+			String url = HtmlUtils.htmlEscape(service.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
+				.toExternalForm());
 			String issueOwner = nameBuilder.buildName(ownership.getOwner());
 
 			row.put("url", url);
 			row.put("remote-id", issue.getId());
-			row.put("summary", issue.getSummary());
+			row.put("summary", HtmlUtils.htmlEscape(issue.getSummary()));
 			row.put("priority", findPriority(issue));
 			row.put("status", findStatus(issue));
 			row.put("assignee", findAssignee(issue));
 			row.put("execution", issueOwner);
 			row.put("execution-id", ownership.getExecution().getId());
-			row.put("BtProject", issue.getProject().getName());
+			row.put("BtProject", HtmlUtils.htmlEscape(issue.getProject().getName()));
 			return row;
 		}
 	}
@@ -457,18 +458,18 @@ public final class BugTrackerControllerHelper {
 			Map<String, Object> result = new HashMap<>();
 
 			result.put("issue-url",
-				service.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
-					.toExternalForm());
+				HtmlUtils.htmlEscape(service.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
+					.toExternalForm()));
 
 			result.put("remote-id", issue.getId());
-			result.put("summary", issue.getSummary());
+			result.put("summary", HtmlUtils.htmlEscape(issue.getSummary()));
 			result.put("priority", findPriority(issue));
 			result.put("status", findStatus(issue));
 			result.put("assignee", findAssignee(issue));
 			result.put("owner", nameBuilder.buildName(ownership.getOwner()));
 			result.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, "");
 			result.put("local-id", issue.getIssueId());
-			result.put("BtProject", issue.getProject().getName());
+			result.put("BtProject", HtmlUtils.htmlEscape(issue.getProject().getName()));
 			return result;
 		}
 	}
@@ -496,15 +497,15 @@ public final class BugTrackerControllerHelper {
 			Map<String, Object> result = new HashMap<>();
 
 			result.put("issue-url",
-				service.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
-					.toExternalForm());
+				HtmlUtils.htmlEscape(service.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
+					.toExternalForm()));
 
 			result.put("remote-id", issue.getId());
-			result.put("summary", issue.getSummary());
+			result.put("summary", HtmlUtils.htmlEscape(issue.getSummary()));
 			result.put("priority", findPriority(issue));
 			result.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, "");
 			result.put("local-id", issue.getIssueId());
-			result.put("BtProject", issue.getProject().getName());
+			result.put("BtProject", HtmlUtils.htmlEscape(issue.getProject().getName()));
 			return result;
 		}
 	}
@@ -518,7 +519,7 @@ public final class BugTrackerControllerHelper {
 		if (remoteUser != null) {
 			assignee = remoteUser.getName();
 		}
-		return assignee;
+		return HtmlUtils.htmlEscape(assignee);
 	}
 
 	private static String findStatus(RemoteIssue issue) {
@@ -527,7 +528,7 @@ public final class BugTrackerControllerHelper {
 		if (remoteStatus != null) {
 			status = remoteStatus.getName();
 		}
-		return status;
+		return HtmlUtils.htmlEscape(status);
 	}
 
 	private static String findPriority(RemoteIssue issue) {
@@ -536,7 +537,7 @@ public final class BugTrackerControllerHelper {
 		if (remotePriority != null) {
 			priority = remotePriority.getName();
 		}
-		return priority;
+		return HtmlUtils.htmlEscape(priority);
 	}
 
 	/* ********** name builders *****************
@@ -595,7 +596,7 @@ public final class BugTrackerControllerHelper {
 				name = buildExecName(exec);
 			}
 
-			return name;
+			return HtmlUtils.htmlEscape(name);
 		}
 
 		@Override
@@ -603,8 +604,8 @@ public final class BugTrackerControllerHelper {
 
 			Execution exec = bugged instanceof ExecutionStep ? ((ExecutionStep) bugged).getExecution()
 				: (Execution) bugged;
-
-			return "/executions/" + exec.getId();
+			String path = "/executions/" + exec.getId();
+			return HtmlUtils.htmlEscape(path);
 		}
 
 		abstract String buildStepName(ExecutionStep executionStep);
@@ -697,14 +698,14 @@ public final class BugTrackerControllerHelper {
 
 	private static String findTestSuiteNameList(Execution execution) {
 		List<TestSuite> buggedSuites = execution.getTestPlan().getTestSuites();
-		return TestSuiteHelper.buildEllipsedSuiteNameList(buggedSuites, 20);
+		return HtmlUtils.htmlEscape(TestSuiteHelper.buildEllipsedSuiteNameList(buggedSuites, 20));
 	}
 
 	private static String findIterationName(Execution execution) {
 		Iteration iteration = execution.getTestPlan().getIteration();
 		String iterationName = "";
 		if (iteration != null) {
-			iterationName = iteration.getName();
+			iterationName = HtmlUtils.htmlEscape(iteration.getName());
 		}
 		return iterationName;
 	}
