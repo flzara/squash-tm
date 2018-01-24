@@ -112,26 +112,32 @@ public class CollectionSizeBridge implements StringBridge {
 
      */
 
+	private void checkIfCollectionIsAbstractPersistentCollection(Collection<?> collection) {
+		if(!(collection instanceof AbstractPersistentCollection)) {
+			throw new IllegalArgumentException("The collection is not an AbstractPersistentCollection: " + collection.getClass());
+		}
+	}
 
-	private String handleHibernateCollection(Collection<?> collection){
+	private String handleHibernateCollection(Collection<?> collection) {
 
 		Integer count = null;
 
-		AbstractPersistentCollection hibCollection = (AbstractPersistentCollection)collection;
+		checkIfCollectionIsAbstractPersistentCollection(collection);
+		AbstractPersistentCollection hibCollection = (AbstractPersistentCollection) collection;
 
-		if (LOGGER.isDebugEnabled()){
-			LOGGER.debug("Indexing a Hibernate persistent collection, role is : " +hibCollection.getRole());
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Indexing a Hibernate persistent collection, role is : " + hibCollection.getRole());
 		}
 
 		// method 1
-		if (Hibernate.isInitialized(collection)){
+		if (Hibernate.isInitialized(collection)) {
 			LOGGER.debug("the collection was initialized already, returning the size is fine");
 			count = collection.size();
 		}
 
 
 		// method 2
-		else if (hasLiveSession(hibCollection)){
+		else if (hasLiveSession(hibCollection)) {
 
 			LOGGER.debug("the session is live and reusable, attempting to query the size from it.");
 
@@ -178,6 +184,7 @@ public class CollectionSizeBridge implements StringBridge {
 		Session session = null;
 		Transaction tx = null;
 
+		checkIfCollectionIsAbstractPersistentCollection(collection);
 		AbstractPersistentCollection hibCollection = (AbstractPersistentCollection)collection;
 
 		try{
@@ -248,6 +255,8 @@ public class CollectionSizeBridge implements StringBridge {
 
 
 	private Integer countUsingCriteria(Collection<?> collection) {
+
+		checkIfCollectionIsAbstractPersistentCollection(collection);
 		AbstractPersistentCollection hibCollection = (AbstractPersistentCollection) collection;
 
 		// we require the session that created the collection
