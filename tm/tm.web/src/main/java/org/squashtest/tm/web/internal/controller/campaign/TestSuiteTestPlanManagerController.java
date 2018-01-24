@@ -111,10 +111,10 @@ public class TestSuiteTestPlanManagerController {
 	private WorkspaceDisplayService testCaseWorkspaceDisplayService;
 
 	@Inject
-	protected UserAccountService userAccountService;
+	private UserAccountService userAccountService;
 
 	@Inject
-	protected MilestoneModelService milestoneModelService;
+	private MilestoneModelService milestoneModelService;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteModificationController.class);
 

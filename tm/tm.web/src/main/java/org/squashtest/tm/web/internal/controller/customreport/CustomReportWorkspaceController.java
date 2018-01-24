@@ -89,10 +89,10 @@ public class CustomReportWorkspaceController {
 	private ActiveMilestoneHolder activeMilestoneHolder;
 
 	@Inject
-	protected ProjectFinder projectFinder;
+	private ProjectFinder projectFinder;
 
 	@Inject
-	protected UserAccountService userAccountService;
+	private UserAccountService userAccountService;
 
 	@Inject
 	private WorkspaceHelperService workspaceHelperService;

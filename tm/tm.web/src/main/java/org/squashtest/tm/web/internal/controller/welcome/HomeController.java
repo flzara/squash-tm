@@ -58,10 +58,10 @@ public class HomeController {
 	private AdministrationService administrationService;
 
 	@Inject
-	protected ProjectFinder projectFinder;
+	private ProjectFinder projectFinder;
 
 	@Inject
-	protected BugTrackerFinderService  bugtrackerService;
+	private BugTrackerFinderService  bugtrackerService;
 
 	@Inject
 	private PartyPreferenceService partyPreferenceService;

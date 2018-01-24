@@ -50,10 +50,10 @@ import org.squashtest.tm.web.internal.model.json.JsonCustomReportGridElement;
 public class CustomReportChartBindingController {
 
 	@Inject
-	CustomReportLibraryNodeService crlnservice;
+	private CustomReportLibraryNodeService crlnservice;
 
 	@Inject
-	CustomReportDashboardService dashboardService;
+	private CustomReportDashboardService dashboardService;
 
 	@Inject
 	@Named("customReport.chartBindingBuilder")

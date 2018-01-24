@@ -114,10 +114,14 @@ public class VerifyingTestCaseManagerController {
 	private WorkspaceDisplayService testCaseWorkspaceDisplayService;
 
 	@Inject
-	protected UserAccountService userAccountService;
+	private UserAccountService userAccountService;
+
+	public void setUserAccountService(UserAccountService userAccountService) {
+		this.userAccountService = userAccountService;
+	}
 
 	@Inject
-	protected MilestoneModelService milestoneModelService;
+	private MilestoneModelService milestoneModelService;
 
 	private static final String campaign_name = "Campaign";
 	private static final String iteration_name = "Iteration";
