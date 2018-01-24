@@ -218,7 +218,8 @@ public class SearchInputInterfaceHelper {
 				CustomFieldModelFactory.MultiSelectFieldModel multiSelectFieldModel = (CustomFieldModelFactory.MultiSelectFieldModel)customField;
 				MultiSelectField multiSelectField = new MultiSelectField();
 				multiSelectField.setCode(multiSelectFieldModel.getCode());
-				multiSelectField.setDefaultValue(multiSelectFieldModel.getDefaultValue().toString());
+				// Sonar: here #getDefaultValue() returns an array. This line is adding a wrong possible option value.
+				// multiSelectField.setDefaultValue(multiSelectFieldModel.getDefaultValue().toString());
 				multiSelectField.setLabel(multiSelectFieldModel.getLabel());
 				multiSelectField.setName(multiSelectFieldModel.getName());
 				multiSelectField.setOptional(multiSelectFieldModel.isOptional());
