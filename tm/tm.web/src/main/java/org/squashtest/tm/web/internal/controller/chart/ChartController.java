@@ -83,7 +83,7 @@ public class ChartController {
 	private CustomFieldBindingModificationService cufBindingService;
 
 	@Inject
-	protected JsonProjectBuilder jsonProjectBuilder;
+	private JsonProjectBuilder jsonProjectBuilder;
 
 
 	@RequestMapping(method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)

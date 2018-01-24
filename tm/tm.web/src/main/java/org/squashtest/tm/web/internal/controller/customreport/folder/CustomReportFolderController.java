@@ -36,7 +36,7 @@ import org.squashtest.tm.service.customreport.CustomReportFolderService;
 public class CustomReportFolderController {
 
 	@Inject
-	CustomReportFolderService crfService;
+	private CustomReportFolderService crfService;
 
 	//--- CHANGE DESCRIPTION ---
 

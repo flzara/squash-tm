@@ -48,8 +48,10 @@ import java.util.Map;
 @RestController
 @RequestMapping("acls")
 public class AclsController {
+
 	public static class Acl {
-		public final Collection<String> perms;
+
+		private final Collection<String> perms;
 
 		public Acl(@NotNull Collection<String> perms) {
 			this.perms = perms;

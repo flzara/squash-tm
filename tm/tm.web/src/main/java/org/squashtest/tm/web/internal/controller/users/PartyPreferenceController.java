@@ -38,7 +38,7 @@ import javax.validation.Valid;
 public class PartyPreferenceController {
 
 	@Inject
-	PartyPreferenceService partyPreferenceService;
+	private PartyPreferenceService partyPreferenceService;
 
 	@RequestMapping(value="/update", method= RequestMethod.POST)
 	@ResponseBody

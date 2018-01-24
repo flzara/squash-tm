@@ -78,7 +78,7 @@ public class CampaignSearchController extends GlobalSearchController {
 	private MilestoneMembershipFinder milestoneMembershipFinder;
 
 	@Inject
-	protected UserAccountService userAccountService;
+	private UserAccountService userAccountService;
 
 	@Inject
 	private CampaignLibraryNavigationService campaignLibraryNavigationService;

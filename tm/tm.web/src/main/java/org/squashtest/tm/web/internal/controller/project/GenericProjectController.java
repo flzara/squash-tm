@@ -432,7 +432,8 @@ public class GenericProjectController {
 	// ********************** private classes ***************************
 
 	private static final class TestAutomationTableModel extends DataTableModelBuilder<TestAutomationProject> {
-		Map<String, URL> jobUrls;
+
+		private Map<String, URL> jobUrls;
 
 		public TestAutomationTableModel(Map<String, URL> jobUrls) {
 			this.jobUrls = jobUrls;

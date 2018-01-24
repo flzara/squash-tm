@@ -73,12 +73,13 @@ public class UserAccountController {
 	private AuthenticationProviderContext authenticationProviderContext;
 
 	@Inject
-	PartyPreferenceService partyPreferenceService;
+	private PartyPreferenceService partyPreferenceService;
 
 	@Inject
 	public void setProjectsPermissionFinderService(ProjectsPermissionFinder permissionFinder) {
 		this.permissionFinder = permissionFinder;
 	}
+
 	@Inject
 	public void setUserAccountService(UserAccountService service){
 		this.userService=service;
