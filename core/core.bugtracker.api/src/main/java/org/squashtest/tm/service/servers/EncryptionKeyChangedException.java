@@ -36,8 +36,8 @@ public class EncryptionKeyChangedException extends ActionException {
 												 "if the change was unintentional or 2/ reconfigure the stored credentials.";
 
 
-	public EncryptionKeyChangedException() {
-		super(STD_ERR_MSG);
+	public EncryptionKeyChangedException(Throwable ex) {
+		super(STD_ERR_MSG, ex);
 	}
 
 	@Override

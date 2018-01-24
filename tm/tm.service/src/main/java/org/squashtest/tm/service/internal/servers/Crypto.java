@@ -271,7 +271,7 @@ class Crypto {
         try {
             return cipher.doFinal(encrypted);
         } catch (IllegalBlockSizeException | BadPaddingException ex) {
-            throw new EncryptionKeyChangedException();
+            throw new EncryptionKeyChangedException(ex);
         }
     }
 

@@ -139,9 +139,9 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 
 	}
 
-	
-	
-	
+
+
+
 	@Override
 	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
 	public Credentials findCredentials(long serverId) {
@@ -184,7 +184,7 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 			 * failure on deserialization. Let's try to investigate and refine the error.
 			 */
 			LOGGER.debug(ex.getMessage(), ex);
-			throw investigateDeserializationError(strDecrypt);
+			throw investigateDeserializationError(strDecrypt, ex);
 		}
 		finally{
 			crypto.dispose();
@@ -207,7 +207,7 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 
 	// ***************** private boilerplate *********************
 
-	private RuntimeException investigateDeserializationError(String failedDeser){
+	private RuntimeException investigateDeserializationError(String failedDeser, Throwable cause){
 
 		try {
 			/*
@@ -216,13 +216,13 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 			Map<String, ?> asMap = objectMapper.readValue(failedDeser, Map.class);
 			String clazz = (String)asMap.get(JACKSON_TYPE_ID_ATTR);
 
-			return new RuntimeException("missing implementation for credential type '"+clazz+"', or that type does not implement '"+Credentials.class.getName()+"'");
+			return new RuntimeException("missing implementation for credential type '"+clazz+"', or that type does not implement '"+Credentials.class.getName()+"'", cause);
 		}
 		catch (IOException e) {
 			/**
 			 * Woa, definitely not json. Most probably the encryption key changed.
 			 */
-			return new EncryptionKeyChangedException();
+			return new EncryptionKeyChangedException(e);
 		}
 
 	}
@@ -243,7 +243,7 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 	abstract class CredentialsMixin {
 		@JsonIgnore
 		abstract AuthenticationProtocol getImplementedProtocol();
-		
+
 	}
 
 
