@@ -116,7 +116,7 @@ public class TestCaseSearchController extends GlobalSearchController {
 								 @RequestParam(required = false, defaultValue = "") String associateResultWithType,
 								 @RequestParam(required = false, defaultValue = "") Long id, Locale locale) {
 
-		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+		Optional<Milestone> activeMilestone = getActiveMilestoneHolder().getActiveMilestone();
 		initModel(model, associateResultWithType, id, locale, TESTCASE,activeMilestone);
 		return  "test-case-search-input.html";
 	}
@@ -126,7 +126,7 @@ public class TestCaseSearchController extends GlobalSearchController {
 	public String showTestCaseViaRequirementSearchPage(Model model,
 								 @RequestParam(required = false, defaultValue = "") String associateResultWithType,
 								 @RequestParam(required = false, defaultValue = "") Long id, Locale locale) {
-		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+		Optional<Milestone> activeMilestone = getActiveMilestoneHolder().getActiveMilestone();
 		initModel(model, associateResultWithType, id, locale, TESTCASE_VIA_REQUIREMENT,activeMilestone);
 		return  "requirement-search-input.html";
 	}
@@ -156,7 +156,7 @@ public class TestCaseSearchController extends GlobalSearchController {
 	@RequestMapping(value = RESULTS, params = TESTCASE)
 	public String getTestCaseSearchResultPage(Model model, @RequestParam String searchModel,
 											  @RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
-		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+		Optional<Milestone> activeMilestone = getActiveMilestoneHolder().getActiveMilestone();
 		initResultModel(model,searchModel, associateResultWithType, id, TESTCASE,activeMilestone);
 		return "test-case-search-result.html";
 	}
@@ -164,7 +164,7 @@ public class TestCaseSearchController extends GlobalSearchController {
 	@RequestMapping(value = RESULTS, params = TESTCASE_VIA_REQUIREMENT)
 	public String getTestCaseViaRequirementSearchResultPage(Model model, @RequestParam String searchModel,
 											  @RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
-		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+		Optional<Milestone> activeMilestone = getActiveMilestoneHolder().getActiveMilestone();
 		initResultModel(model,searchModel, associateResultWithType, id, TESTCASE_VIA_REQUIREMENT,activeMilestone);
 		return "test-case-search-result.html";
 	}
@@ -195,7 +195,7 @@ public class TestCaseSearchController extends GlobalSearchController {
 			ids = getIdsOfTestCasesAssociatedWithObjects(associateResultWithType, id);
 		}
 
-		return new TestCaseSearchResultDataTableModelBuilder(locale, messageSource, permissionService, iterationService,
+		return new TestCaseSearchResultDataTableModelBuilder(locale, getMessageSource(), getPermissionService(), iterationService,
 			isInAssociationContext, ids).buildDataModel(holder, params.getsEcho());
 	}
 
@@ -224,7 +224,7 @@ public class TestCaseSearchController extends GlobalSearchController {
 			ids = getIdsOfTestCasesAssociatedWithObjects(associateResultWithType, id);
 		}
 
-		return new TestCaseSearchResultDataTableModelBuilder(locale, messageSource, permissionService, iterationService,
+		return new TestCaseSearchResultDataTableModelBuilder(locale, getMessageSource(), getPermissionService(), iterationService,
 			isInAssociationContext, ids).buildDataModel(holder, params.getsEcho());
 	}
 

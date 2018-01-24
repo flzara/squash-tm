@@ -77,37 +77,77 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	private WorkspaceWizardManager workspaceWizardManager;
 
 	@Inject
-	protected InternationalizationHelper i18nHelper;
+	private InternationalizationHelper i18nHelper;
 
 	@Inject
-	protected ProjectFinder projectFinder;
+	private ProjectFinder projectFinder;
+
+	public void setProjectFinder(ProjectFinder projectFinder) {
+		this.projectFinder = projectFinder;
+	}
 
 	@Inject
-	protected JsonProjectBuilder jsonProjectBuilder;
+	private JsonProjectBuilder jsonProjectBuilder;
+
+	public void setJsonProjectBuilder(JsonProjectBuilder jsonProjectBuilder) {
+		this.jsonProjectBuilder = jsonProjectBuilder;
+	}
 
 	@Inject
-	protected ActiveMilestoneHolder activeMilestoneHolder;
+	private ActiveMilestoneHolder activeMilestoneHolder;
+
+	public void setActiveMilestoneHolder(ActiveMilestoneHolder activeMilestoneHolder) {
+		this.activeMilestoneHolder = activeMilestoneHolder;
+	}
 
 	@Inject
-	protected PartyPreferenceService partyPreferenceService;
+	private PartyPreferenceService partyPreferenceService;
+
+	public void setPartyPreferenceService(PartyPreferenceService partyPreferenceService) {
+		this.partyPreferenceService = partyPreferenceService;
+	}
 
 	@Inject
-	protected I18nLevelEnumInfolistHelper i18nLevelEnumInfolistHelper;
+	private I18nLevelEnumInfolistHelper i18nLevelEnumInfolistHelper;
+
+	public void setI18nLevelEnumInfolistHelper(I18nLevelEnumInfolistHelper i18nLevelEnumInfolistHelper) {
+		this.i18nLevelEnumInfolistHelper = i18nLevelEnumInfolistHelper;
+	}
 
 	@Inject
-	protected UserAccountService userAccountService;
+	private UserAccountService userAccountService;
+
+	public void setUserAccountService(UserAccountService userAccountService) {
+		this.userAccountService = userAccountService;
+	}
 
 	@Inject
-	protected WorkspaceHelperService workspaceHelperService;
+	private WorkspaceHelperService workspaceHelperService;
+
+	public void setWorkspaceHelperService(WorkspaceHelperService workspaceHelperService) {
+		this.workspaceHelperService = workspaceHelperService;
+	}
 
 	@Inject
-	protected BugTrackerFinderService bugTrackerFinderService;
+	private BugTrackerFinderService bugTrackerFinderService;
+
+	public void setBugTrackerFinderService(BugTrackerFinderService bugTrackerFinderService) {
+		this.bugTrackerFinderService = bugTrackerFinderService;
+	}
 
 	@Inject
-	protected MilestoneModelService milestoneModelService;
+	private MilestoneModelService milestoneModelService;
+
+	public void setMilestoneModelService(MilestoneModelService milestoneModelService) {
+		this.milestoneModelService = milestoneModelService;
+	}
 
 	@Inject
-	protected InfoListModelService infoListModelService;
+	private InfoListModelService infoListModelService;
+
+	public void setInfoListModelService(InfoListModelService infoListModelService) {
+		this.infoListModelService = infoListModelService;
+	}
 
 	/**
 	 * Shows a workspace.

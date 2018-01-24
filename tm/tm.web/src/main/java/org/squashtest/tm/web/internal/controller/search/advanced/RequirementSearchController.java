@@ -92,7 +92,7 @@ public class RequirementSearchController extends GlobalSearchController {
 	public String getRequirementSearchResultPage(Model model, @RequestParam String searchModel,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
 
-		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+		Optional<Milestone> activeMilestone = getActiveMilestoneHolder().getActiveMilestone();
 		initResultModel(model, searchModel, associateResultWithType, id, REQUIREMENT,activeMilestone);
 		return "requirement-search-result.html";
 	}
@@ -103,7 +103,7 @@ public class RequirementSearchController extends GlobalSearchController {
 										 @RequestParam(required = false, defaultValue = "") String associateResultWithType,
 										 @RequestParam(required = false, defaultValue = "") Long id, Locale locale) {
 
-		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+		Optional<Milestone> activeMilestone = getActiveMilestoneHolder().getActiveMilestone();
 		initModel(model, associateResultWithType, id, locale, REQUIREMENT,activeMilestone);
 		return  "requirement-search-input.html";
 	}
@@ -134,7 +134,7 @@ public class RequirementSearchController extends GlobalSearchController {
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, requirementSearchResultMapper);
 
 		PagedCollectionHolder<List<RequirementVersion>> holder = requirementVersionAdvancedSearchService
-			.searchForRequirementVersions(searchModel, paging, messageSource, locale);
+			.searchForRequirementVersions(searchModel, paging, getMessageSource(), locale);
 
 		boolean isInAssociationContext = isInAssociationContext(associateResultWithType);
 
@@ -144,7 +144,7 @@ public class RequirementSearchController extends GlobalSearchController {
 			ids = getIdsOfRequirementsAssociatedWithObjects(associateResultWithType, id);
 		}
 
-		return new RequirementSearchResultDataTableModelBuilder(locale, messageSource, permissionService,
+		return new RequirementSearchResultDataTableModelBuilder(locale, getMessageSource(), getPermissionService(),
 			isInAssociationContext, ids).buildDataModel(holder, params.getsEcho());
 	}
 

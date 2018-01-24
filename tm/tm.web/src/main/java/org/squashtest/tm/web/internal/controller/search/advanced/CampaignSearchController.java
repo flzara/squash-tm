@@ -105,7 +105,7 @@ public class CampaignSearchController extends GlobalSearchController {
 	@RequestMapping(value = RESULTS, params = CAMPAIGN)
 	public String getCampaignSearchResultPage(Model model, @RequestParam String searchModel,
 											  @RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
-		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+		Optional<Milestone> activeMilestone = getActiveMilestoneHolder().getActiveMilestone();
 		initResultModel(model, searchModel, associateResultWithType, id, CAMPAIGN, activeMilestone);
 		return "campaign-search-result.html";
 
@@ -148,11 +148,11 @@ public class CampaignSearchController extends GlobalSearchController {
 		MultiMap expansionCandidates = mapIdsByType(nodesToOpen);
 
 
-		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+		Optional<Milestone> activeMilestone = getActiveMilestoneHolder().getActiveMilestone();
 		initModel(model, associateResultWithType, id, locale, CAMPAIGN, activeMilestone);
 		List<Long> projectIds = campaignAdvancedSearchService.findAllReadablesId();
 		UserDto user = userAccountService.findCurrentUserDto();
-		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
+		Optional<Long> activeMilestoneId = getActiveMilestoneHolder().getActiveMilestoneId();
 		Collection<JsTreeNode> rootNodes = workspaceDisplayService().findAllLibraries(projectIds, user, expansionCandidates, activeMilestoneId.get());
 
 		boolean isCampaignAvailable = true;
@@ -186,7 +186,7 @@ public class CampaignSearchController extends GlobalSearchController {
 		PagedCollectionHolder<List<IterationTestPlanItem>> holder =
 			campaignAdvancedSearchService.searchForIterationTestPlanItem(searchModel, paging, locale);
 
-		return new CampaignSearchResultDataTableModelBuilder(locale, messageSource, permissionService)
+		return new CampaignSearchResultDataTableModelBuilder(locale, getMessageSource(), getPermissionService())
 			.buildDataModel(holder, params.getsEcho());
 	}
 

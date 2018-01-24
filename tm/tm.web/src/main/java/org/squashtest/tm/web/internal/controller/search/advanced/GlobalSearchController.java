@@ -55,19 +55,31 @@ public abstract class GlobalSearchController {
 	private SearchInputInterfaceHelper searchInputInterfaceHelper;
 
 	@Inject
-	protected InternationalizationHelper messageSource;
+	private InternationalizationHelper messageSource;
+
+	public InternationalizationHelper getMessageSource() {
+		return messageSource;
+	}
 
 	@Inject
-	protected PermissionEvaluationService permissionService;
+	private PermissionEvaluationService permissionService;
+
+	public PermissionEvaluationService getPermissionService() {
+		return permissionService;
+	}
 
 	@Inject
-	protected ActiveMilestoneHolder activeMilestoneHolder;
+	private ActiveMilestoneHolder activeMilestoneHolder;
+
+	public ActiveMilestoneHolder getActiveMilestoneHolder() {
+		return activeMilestoneHolder;
+	}
 
 	@Inject
 	private CampaignAdvancedSearchService campaignAdvancedSearchService;
 
 	@Inject
-	protected UserAccountService userAccountService;
+	private UserAccountService userAccountService;
 
 	@Inject
 	private ProjectFinder projectFinder;
@@ -89,7 +101,6 @@ public abstract class GlobalSearchController {
 	protected static final String TESTCASE_VIA_REQUIREMENT = "testcaseViaRequirement";
 	protected static final String RESULTS = "/results";
 	protected static final String TABLE = "/table";
-	protected static final String INPUT = "/input";
 
 	protected Map<String, FormModelBuilder> formModelBuilder = new HashMap<>();
 
