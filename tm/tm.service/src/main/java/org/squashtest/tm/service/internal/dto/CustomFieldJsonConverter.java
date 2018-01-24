@@ -217,8 +217,7 @@ public class CustomFieldJsonConverter {
 		model.setBinding(bindingModel);
 
 		// the value depends on the actual subtype
-		// TODO expression below is either false or can be rewritten as an instanceof
-		if (DenormalizedMultiSelectField.class.isAssignableFrom(value.getClass())) {
+		if (value instanceof DenormalizedMultiSelectField) {
 			model.setOptionValues(((DenormalizedMultiSelectField) value).getValues());
 		}
 		else if (DenormalizedNumericValue.class.isAssignableFrom(value.getClass())) {
