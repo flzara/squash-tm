@@ -96,9 +96,9 @@ class StoredCredentialsManagerImplTest extends Specification{
 
 		given :
 			def str = '{"@class":"unknown.credentials.Implementation","username":"bob"}'
-
+			def cause = new Exception()
 		when :
-			def ex = manager.investigateDeserializationError(str)
+			def ex = manager.investigateDeserializationError(str, cause)
 
 		then :
 			ex instanceof RuntimeException
@@ -111,9 +111,9 @@ class StoredCredentialsManagerImplTest extends Specification{
 
 		given :
 		def str = '0165584eddf6zer54ggf68h4fr6ty48ret'
-
+		def cause = new Exception()
 		when :
-		def ex = manager.investigateDeserializationError(str)
+		def ex = manager.investigateDeserializationError(str, cause)
 
 		then :
 		ex instanceof EncryptionKeyChangedException
