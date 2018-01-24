@@ -29,7 +29,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.service.configuration.ConfigurationService;
-import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 // XSS OK
 @Controller
@@ -45,7 +44,7 @@ public class LoginLogoutController {
 	@RequestMapping("/login")
 	public String login(Model model) {
 		String welcomeMessage = configService.findConfiguration(LOGIN_MESSAGE);
-		model.addAttribute("welcomeMessage", HTMLCleanupUtils.cleanHtml(welcomeMessage));
+		model.addAttribute("welcomeMessage", HtmlUtils.htmlEscape(welcomeMessage));
 		model.addAttribute("version", version);
 		return "page/authentication/login";
 	}

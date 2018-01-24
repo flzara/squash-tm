@@ -23,7 +23,6 @@ package org.squashtest.tm.web.internal.controller.customfield;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
@@ -39,13 +38,12 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTablePaging;
-import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-// XSS OK - bflessel
+
 @Controller
 @RequestMapping("/custom-fields-binding")
 public class CustomFieldBindingController {
@@ -60,9 +58,6 @@ public class CustomFieldBindingController {
 
     @Inject
     private CustomFieldJsonConverter converter;
-
-    @Inject
-	private CustomFieldBindingManagerController manager;
 
     @RequestMapping(method = RequestMethod.GET, params = {RequestParams.PROJECT_ID, "!bindableEntity"}, headers = AcceptHeaders.CONTENT_JSON)
     @ResponseBody
@@ -97,7 +92,7 @@ public class CustomFieldBindingController {
         List<CustomField> fields = new ArrayList<>(bindings.size());
 
         for (CustomFieldBinding binding : bindings) {
-        	fields.add(binding.getCustomField());
+            fields.add(binding.getCustomField());
         }
 
         return fieldToJson(fields);
@@ -173,10 +168,9 @@ public class CustomFieldBindingController {
     // ********************** private stuffs *********************
 
     private List<CustomFieldBindingModel> bindingToJson(List<CustomFieldBinding> bindings) {
-		List<CustomFieldBinding> resultSet= new LinkedList<>();
-		List<CustomFieldBindingModel> result = new LinkedList<>();
-		resultSet = manager.sanitizeHtml(bindings);
-        for (CustomFieldBinding binding : resultSet) {
+        List<CustomFieldBindingModel> result = new LinkedList<>();
+
+        for (CustomFieldBinding binding : bindings) {
             CustomFieldBindingModel model = converter.toJson(binding);
             result.add(model);
         }
@@ -188,10 +182,6 @@ public class CustomFieldBindingController {
         List<CustomFieldModel> result = new LinkedList<>();
 
         for (CustomField field : fields) {
-        	field.setCode(HtmlUtils.htmlEscape(field.getCode()));
-        	field.setName(HtmlUtils.htmlEscape(field.getName());
-        	field.setDefaultValue(HTMLCleanupUtils.cleanHtml(field.getDefaultValue()));
-        	field.setLabel(HtmlUtils.htmlEscape(field.getLabel()));
             CustomFieldModel model = converter.toJson(field);
             result.add(model);
         }

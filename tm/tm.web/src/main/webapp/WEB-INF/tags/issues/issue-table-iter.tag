@@ -54,12 +54,12 @@
 <table id="issue-table" data-def="datakeys-id=issue-id, pre-sort=0-desc">
 	<thead>
 		<tr>
-			<th data-def="select, map=issue-id, link-new-tab={issue-url}, sWidth=2.5em, sortable"><c:out value="${interfaceDescriptor.tableIssueIDHeader}"></c:out></c:out></th>
+			<th data-def="select, map=issue-id, link-new-tab={issue-url}, sWidth=2.5em, sortable">${interfaceDescriptor.tableIssueIDHeader}</th>
 			<th data-def="map=BtProject"><f:message key="bugtracker.project"/></th>
-			<th data-def="map=issue-summary"><c:out value="${interfaceDescriptor.tableSummaryHeader}"></c:out></th>
-			<th data-def="map=issue-priority"><c:out value="${interfaceDescriptor.tablePriorityHeader}"></c:out></th>
-			<th data-def="map=issue-status"><c:out value="${interfaceDescriptor.tableStatusHeader}"></c:out></th>
-			<th data-def="map=issue-assignee"><c:out value="${interfaceDescriptor.tableAssigneeHeader}"></c:out></th>
+			<th data-def="map=issue-summary">${interfaceDescriptor.tableSummaryHeader}</th>
+			<th data-def="map=issue-priority">${interfaceDescriptor.tablePriorityHeader}</th>
+			<th data-def="map=issue-status">${interfaceDescriptor.tableStatusHeader}</th>
+			<th data-def="map=issue-assignee">${interfaceDescriptor.tableAssigneeHeader}</th>
 			<th data-def="map=issue-owner"><f:message key="iteration.issues.table.column-header.reportedin.label" /></th>
 		</tr>
 	</thead>

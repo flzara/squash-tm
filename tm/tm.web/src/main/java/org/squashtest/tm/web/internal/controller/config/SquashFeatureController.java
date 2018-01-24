@@ -37,8 +37,6 @@ import javax.servlet.ServletContext;
  * @author Gregory Fouquet
  *
  */
-
-// XSS OK - bflessel
 @Controller
 @RequestMapping("/features")
 public class SquashFeatureController {
