@@ -675,7 +675,7 @@ public class Model {
 	 * ParameterTarget from the test cases being called directly or indirectly
 	 * by this test case, not just the one owner by the test case (unlike
 	 * getOwnParameters). Parameters from downstream test cases will be included
-	 * iif they are inherited in some ways.
+	 * if they are inherited in some ways.
 	 */
 	public Collection<ParameterTarget> getAllParameters(TestCaseTarget testCase) {
 
@@ -714,9 +714,9 @@ public class Model {
 			for (InternalStepModel step : steps) {
 				if (step.type == StepType.CALL
 					&& step.calledTC.equals(child.getKey())
-					&& step.getDeleguates()
+					&& step.getDeleguates()) {
 					// FIXME calledTC is not a Node so there's probably a bug here
-					&& !processed.contains(step.calledTC)) {
+					//&& !processed.contains(step.calledTC)) {
 					processing.add(child);
 				}
 			}
