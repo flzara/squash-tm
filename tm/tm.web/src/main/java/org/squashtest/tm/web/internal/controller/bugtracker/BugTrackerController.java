@@ -72,6 +72,7 @@ import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 import oslcdomain.OslcIssue;
 
 import javax.inject.Inject;
@@ -89,6 +90,7 @@ import java.util.*;
  * @author bsiri
  *
  */
+// XSS OK - bflessel
 @Controller
 @RequestMapping("/bugtracker")
 public class BugTrackerController {
@@ -182,14 +184,10 @@ public class BugTrackerController {
 	 */
 	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}", method = RequestMethod.GET)
 	public ModelAndView getExecStepIssuePanel(@PathVariable Long stepId, Locale locale,
-			@RequestParam(value = STYLE_ARG, required = false, defaultValue = STYLE_TOGGLE) String panelStyle,
-			@RequestParam(value = "useDelegatePopup", required = false, defaultValue = "false") Boolean useParentPopup) {
+											  @RequestParam(value = STYLE_ARG, required = false, defaultValue = STYLE_TOGGLE) String panelStyle,
+											  @RequestParam(value = "useDelegatePopup", required = false, defaultValue = "false") Boolean useParentPopup) {
 
 		ExecutionStep step = executionFinder.findExecutionStepById(stepId);
-
-		step.setComment(HtmlUtils.htmlEscape(step.getComment()));
-		step.setAction(HtmlUtils.htmlEscape(step.getAction()));
-		step.setLastExecutedBy(HtmlUtils.htmlEscape(step.getLastExecutedBy()));
 
 		ModelAndView mav = makeIssuePanel(step, EXECUTION_STEP_TYPE, locale, panelStyle, step.getProject());
 		mav.addObject("useParentContextPopup", useParentPopup);
@@ -224,11 +222,11 @@ public class BugTrackerController {
 
 	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}/new-issue", method = RequestMethod.GET)
 	@ResponseBody
-	public RemoteIssue getExecStepReportStub(@PathVariable Long stepId, Locale locale, HttpServletRequest request, @RequestParam(value="project-name", required=true) String projectName) {
+	public RemoteIssue getExecStepReportStub(@PathVariable Long stepId, Locale locale, HttpServletRequest request, @RequestParam(value = "project-name", required = true) String projectName) {
 
 		ExecutionStep step = executionFinder.findExecutionStepById(stepId);
 
-		String executionUrl = BugTrackerControllerHelper.buildExecutionUrl(request, step.getExecution());
+		String executionUrl = HtmlUtils.htmlEscape(BugTrackerControllerHelper.buildExecutionUrl(request, step.getExecution()));
 
 		return makeReportIssueModel(step, locale, executionUrl, projectName);
 	}
@@ -257,7 +255,7 @@ public class BugTrackerController {
 	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}/new-advanced-issue", method = RequestMethod.POST)
 	@ResponseBody
 	public Object postExecStepAdvancedIssueReport(@PathVariable("stepId") Long stepId,
-			@RequestBody AdvancedIssue jsonIssue) {
+												  @RequestBody AdvancedIssue jsonIssue) {
 		LOGGER.trace("BugTrackerController: posting a new issue for execution-step " + stepId);
 
 		IssueDetector entity = executionFinder.findExecutionStepById(stepId);
@@ -300,7 +298,7 @@ public class BugTrackerController {
 	 */
 	@RequestMapping(value = EXECUTION_TYPE + "/{execId}", method = RequestMethod.GET)
 	public ModelAndView getExecIssuePanel(@PathVariable Long execId, Locale locale,
-			@RequestParam(value = STYLE_ARG, required = false, defaultValue = STYLE_TOGGLE) String panelStyle) {
+										  @RequestParam(value = STYLE_ARG, required = false, defaultValue = STYLE_TOGGLE) String panelStyle) {
 
 		Execution bugged = executionFinder.findById(execId);
 		ModelAndView mav = makeIssuePanel(bugged, EXECUTION_TYPE, locale, panelStyle, bugged.getProject());
@@ -321,7 +319,7 @@ public class BugTrackerController {
 	@ResponseBody
 	@RequestMapping(value = EXECUTION_TYPE + "/{execId}/known-issues", method = RequestMethod.GET)
 	public DataTableModel getExecKnownIssuesData(@PathVariable("execId") Long execId,
-			final DataTableDrawParameters params) {
+												 final DataTableDrawParameters params) {
 
 		PagingAndSorting sorter = new IssueCollectionSorting(params);
 
@@ -334,7 +332,7 @@ public class BugTrackerController {
 	 */
 	@RequestMapping(value = EXECUTION_TYPE + "/{execId}/new-issue")
 	@ResponseBody
-	public RemoteIssue getExecReportStub(@PathVariable Long execId, Locale locale, HttpServletRequest request, @RequestParam(value="project-name", required=true) String projectName) {
+	public RemoteIssue getExecReportStub(@PathVariable Long execId, Locale locale, HttpServletRequest request, @RequestParam(value = "project-name", required = true) String projectName) {
 		Execution execution = executionFinder.findById(execId);
 		String executionUrl = BugTrackerControllerHelper.buildExecutionUrl(request, execution);
 		return makeReportIssueModel(execution, locale, executionUrl, projectName);
@@ -363,7 +361,7 @@ public class BugTrackerController {
 	@RequestMapping(value = EXECUTION_TYPE + "/{execId}/new-advanced-issue", method = RequestMethod.POST)
 	@ResponseBody
 	public Object postExecAdvancedIssueReport(@PathVariable("execId") Long execId,
-			@RequestBody AdvancedIssue jsonIssue) {
+											  @RequestBody AdvancedIssue jsonIssue) {
 		LOGGER.trace("BugTrackerController: posting a new issue for execution-step " + execId);
 
 		Execution entity = executionFinder.findById(execId);
@@ -406,7 +404,7 @@ public class BugTrackerController {
 	 */
 	@RequestMapping(value = REQUIREMENT_VERSION_TYPE + "/{rvId}/{panelSource}", method = RequestMethod.GET)
 	public ModelAndView getRequirementWorkspaceIssuePanel(@PathVariable("rvId") Long rvId, Locale locale, @RequestParam(value = STYLE_ARG, required = false, defaultValue = STYLE_TOGGLE) String panelStyle,
-															@PathVariable("panelSource") String panelSource) {
+														  @PathVariable("panelSource") String panelSource) {
 
 		RequirementVersion requirementVersion = requirementVersionManager.findById(rvId);
 
@@ -429,7 +427,7 @@ public class BugTrackerController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = REQUIREMENT_VERSION_TYPE + "/{rvId}/known-issues/{panelSource}", method = RequestMethod.GET)
-	public DataTableModel getRequirementVersionKnownIssuesData(@PathVariable("rvId") Long rvId, final DataTableDrawParameters params,  @PathVariable("panelSource") String panelSource) {
+	public DataTableModel getRequirementVersionKnownIssuesData(@PathVariable("rvId") Long rvId, final DataTableDrawParameters params, @PathVariable("panelSource") String panelSource) {
 
 		PagingAndSorting sorter = new IssueCollectionSorting(params);
 
@@ -452,7 +450,7 @@ public class BugTrackerController {
 	 */
 	@RequestMapping(value = TEST_CASE_TYPE + "/{tcId}", method = RequestMethod.GET)
 	public ModelAndView getTestCaseIssuePanel(@PathVariable Long tcId, Locale locale,
-			@RequestParam(value = STYLE_ARG, required = false, defaultValue = STYLE_TOGGLE) String panelStyle) {
+											  @RequestParam(value = STYLE_ARG, required = false, defaultValue = STYLE_TOGGLE) String panelStyle) {
 
 		TestCase testCase = testCaseFinder.findById(tcId);
 
@@ -475,7 +473,7 @@ public class BugTrackerController {
 	@ResponseBody
 	@RequestMapping(value = TEST_CASE_TYPE + "/{tcId}/known-issues", method = RequestMethod.GET)
 	public DataTableModel getTestCaseKnownIssuesData(@PathVariable("tcId") Long tcId,
-			final DataTableDrawParameters params) {
+													 final DataTableDrawParameters params) {
 
 		PagingAndSorting sorter = new IssueCollectionSorting(params);
 
@@ -496,7 +494,7 @@ public class BugTrackerController {
 	 */
 	@RequestMapping(value = ITERATION_TYPE + "/{iterId}", method = RequestMethod.GET)
 	public ModelAndView getIterationIssuePanel(@PathVariable Long iterId, Locale locale,
-			@RequestParam(value = STYLE_ARG, required = false, defaultValue = STYLE_TOGGLE) String panelStyle) {
+											   @RequestParam(value = STYLE_ARG, required = false, defaultValue = STYLE_TOGGLE) String panelStyle) {
 
 		Iteration iteration = iterationFinder.findById(iterId);
 		ModelAndView mav = makeIssuePanel(iteration, ITERATION_TYPE, locale, panelStyle, iteration.getProject());
@@ -517,7 +515,7 @@ public class BugTrackerController {
 	@ResponseBody
 	@RequestMapping(value = ITERATION_TYPE + "/{iterId}/known-issues", method = RequestMethod.GET)
 	public DataTableModel getIterationKnownIssuesData(@PathVariable("iterId") Long iterId,
-			final DataTableDrawParameters params) {
+													  final DataTableDrawParameters params) {
 
 		PagingAndSorting sorter = new IssueCollectionSorting(params);
 
@@ -538,7 +536,7 @@ public class BugTrackerController {
 	 */
 	@RequestMapping(value = CAMPAIGN_TYPE + "/{campId}", method = RequestMethod.GET)
 	public ModelAndView getCampaignIssuePanel(@PathVariable Long campId, Locale locale,
-			@RequestParam(value = STYLE_ARG, required = false, defaultValue = STYLE_TOGGLE) String panelStyle) {
+											  @RequestParam(value = STYLE_ARG, required = false, defaultValue = STYLE_TOGGLE) String panelStyle) {
 
 		Campaign campaign = campaignFinder.findById(campId);
 		ModelAndView mav = makeIssuePanel(campaign, CAMPAIGN_TYPE, locale, panelStyle, campaign.getProject());
@@ -558,7 +556,7 @@ public class BugTrackerController {
 	@ResponseBody
 	@RequestMapping(value = CAMPAIGN_TYPE + "/{campId}/known-issues", method = RequestMethod.GET)
 	public DataTableModel getCampaignKnownIssuesData(@PathVariable("campId") Long campId,
-			final DataTableDrawParameters params) {
+													 final DataTableDrawParameters params) {
 
 		PagingAndSorting sorter = new IssueCollectionSorting(params);
 
@@ -578,11 +576,11 @@ public class BugTrackerController {
 	 */
 	@RequestMapping(value = TEST_SUITE_TYPE + "/{testSuiteId}", method = RequestMethod.GET)
 	public ModelAndView getTestSuiteIssuePanel(@PathVariable Long testSuiteId, Locale locale,
-			@RequestParam(value = STYLE_ARG, required = false, defaultValue = STYLE_TOGGLE) String panelStyle) {
+											   @RequestParam(value = STYLE_ARG, required = false, defaultValue = STYLE_TOGGLE) String panelStyle) {
 
 		TestSuite testSuite = testSuiteFinder.findById(testSuiteId);
 		ModelAndView mav = makeIssuePanel(testSuite, TEST_SUITE_TYPE, locale, panelStyle,
-				testSuite.getIteration().getProject());
+			testSuite.getIteration().getProject());
 
 		/*
 		 * issue 4178 eagerly fetch the row entries if the user is authenticated (we need the table to be shipped along
@@ -625,12 +623,12 @@ public class BugTrackerController {
 	 */
 	@RequestMapping(value = CAMPAIGN_FOLDER_TYPE + "/{campaignFolderId}", method = RequestMethod.GET)
 	public ModelAndView getCampaignFolderIssuePanel(@PathVariable("campaignFolderId") Long campaignFolderId,
-			Locale locale,
-			@RequestParam(value = STYLE_ARG, required = false, defaultValue = STYLE_TOGGLE) String panelStyle) {
+													Locale locale,
+													@RequestParam(value = STYLE_ARG, required = false, defaultValue = STYLE_TOGGLE) String panelStyle) {
 
 		CampaignFolder campaignFolder = clnService.findFolder(campaignFolderId);
 		ModelAndView mav = makeIssuePanel(campaignFolder, CAMPAIGN_FOLDER_TYPE, locale, panelStyle,
-				campaignFolder.getProject());
+			campaignFolder.getProject());
 
 		/*
 		 * issue 4178 eagerly fetch the row entries if the user is authenticated (we need the table to be shipped along
@@ -670,11 +668,11 @@ public class BugTrackerController {
 		return getKnownIssuesData(entityType, entityId, pas, "0");
 	}
 
-	@RequestMapping(value = "/find-issue/{remoteKey}", method = RequestMethod.GET, params = { BUGTRACKER_ID })
+	@RequestMapping(value = "/find-issue/{remoteKey}", method = RequestMethod.GET, params = {BUGTRACKER_ID})
 	@ResponseBody
 	public RemoteIssue findIssue(@PathVariable("remoteKey") String remoteKey,
-			@RequestParam(BUGTRACKER_ID) long bugTrackerId, @RequestParam("projectNames[]") List<String> projectNames,
-			Locale locale) {
+								 @RequestParam(BUGTRACKER_ID) long bugTrackerId, @RequestParam("projectNames[]") List<String> projectNames,
+								 Locale locale) {
 		BugTracker bugTracker = bugTrackerManagerService.findById(bugTrackerId);
 		RemoteIssue issue = bugTrackersLocalService.getIssue(remoteKey, bugTracker);
 
@@ -686,7 +684,7 @@ public class BugTrackerController {
 		// we should modify API to do that correctly but no time for this in 1.13
 		if (!projectNames.contains(projectName) && StringUtils.isNotEmpty(projectName)) {
 			throw new BugTrackerRemoteException(
-					messageSource.internationalize("bugtracker.issue.notfoundinprojects", locale), new Throwable());
+				messageSource.internationalize("bugtracker.issue.notfoundinprojects", locale), new Throwable());
 		}
 
 		return bugTrackersLocalService.getIssue(remoteKey, bugTracker);
@@ -742,7 +740,7 @@ public class BugTrackerController {
 				attachment.getStreamContent().close();
 			} catch (IOException ex) {
 				LOGGER.warn("issue attachments : could not close stream for " + attachment.getName()
-						+ ", this is non fatal anyway", ex);
+					+ ", this is non fatal anyway", ex);
 			}
 		}
 
@@ -758,17 +756,17 @@ public class BugTrackerController {
 	/* ********* generates a json model for an issue ******* */
 
 	private RemoteIssue makeReportIssueModel(Execution exec, Locale locale, String executionUrl, String projectName) {
-		String defaultDescription = BugTrackerControllerHelper.getDefaultDescription(exec, locale, messageSource,
-				executionUrl);
+		String defaultDescription = HTMLCleanupUtils.cleanHtml(BugTrackerControllerHelper.getDefaultDescription(exec, locale, messageSource,
+			executionUrl));
 		return makeReportIssueModel(exec, defaultDescription, projectName);
 	}
 
 	private RemoteIssue makeReportIssueModel(ExecutionStep step, Locale locale, String executionUrl,
-			String projectName) {
-		String defaultDescription = BugTrackerControllerHelper.getDefaultDescription(step, locale, messageSource,
-				executionUrl);
+											 String projectName) {
+		String defaultDescription = HTMLCleanupUtils.cleanHtml(BugTrackerControllerHelper.getDefaultDescription(step, locale, messageSource,
+			executionUrl));
 		String defaultAdditionalInformations = BugTrackerControllerHelper.getDefaultAdditionalInformations(step, locale,
-				messageSource);
+			messageSource);
 		return makeReportIssueModel(step, defaultDescription, locale, projectName);
 	}
 
@@ -796,7 +794,7 @@ public class BugTrackerController {
 	 * If the bugtracker isn'st defined no panel will be sent at all.
 	 */
 	private ModelAndView makeIssuePanel(Identified entity, String type, Locale locale, String panelStyle,
-			Project project) {
+										Project project) {
 		if (project.isBugtrackerConnected()) {
 			AuthenticationStatus status = checkStatus(project.getId());
 			// JSON STATUS TODO
@@ -839,13 +837,12 @@ public class BugTrackerController {
 
 	/* ******************************* private methods ********************************************** */
 
-	private DataTableModel getKnownIssuesDataForRequirementVersion(String entityType, Long id, String panelSource,PagingAndSorting paging, String sEcho) {
+	private DataTableModel getKnownIssuesDataForRequirementVersion(String entityType, Long id, String panelSource, PagingAndSorting paging, String sEcho) {
 
 		PagedCollectionHolder<List<RequirementVersionIssueOwnership<RemoteIssueDecorator>>> filteredCollection;
 		try {
 			filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipForRequirmentVersion(id, panelSource, paging);
-		}
-		catch (BugTrackerNoCredentialsException | NullArgumentException exception) {
+		} catch (BugTrackerNoCredentialsException | NullArgumentException exception) {
 			filteredCollection = makeEmptyIssueDecoratorCollectionHolderForRequirement(entityType, id, exception, paging);
 		}
 
@@ -858,34 +855,34 @@ public class BugTrackerController {
 
 		try {
 			switch (entityType) {
-			case TEST_CASE_TYPE:
-				filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipForTestCase(id, paging);
-				break;
-			case CAMPAIGN_FOLDER_TYPE:
-				filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipForCampaignFolder(id, paging);
-				break;
-			case CAMPAIGN_TYPE:
-				filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipsForCampaign(id, paging);
-				break;
-			case ITERATION_TYPE:
-				filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipForIteration(id, paging);
-				break;
-			case TEST_SUITE_TYPE:
-				filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipsForTestSuite(id, paging);
-				break;
-			case EXECUTION_TYPE:
-				filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipsforExecution(id, paging);
-				break;
-			case EXECUTION_STEP_TYPE:
-				filteredCollection = bugTrackersLocalService.findSortedIssueOwnerShipsForExecutionStep(id, paging);
-				break;
-			default:
-				String error = "BugTrackerController : cannot fetch issues for unknown entity type '" + entityType
+				case TEST_CASE_TYPE:
+					filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipForTestCase(id, paging);
+					break;
+				case CAMPAIGN_FOLDER_TYPE:
+					filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipForCampaignFolder(id, paging);
+					break;
+				case CAMPAIGN_TYPE:
+					filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipsForCampaign(id, paging);
+					break;
+				case ITERATION_TYPE:
+					filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipForIteration(id, paging);
+					break;
+				case TEST_SUITE_TYPE:
+					filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipsForTestSuite(id, paging);
+					break;
+				case EXECUTION_TYPE:
+					filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipsforExecution(id, paging);
+					break;
+				case EXECUTION_STEP_TYPE:
+					filteredCollection = bugTrackersLocalService.findSortedIssueOwnerShipsForExecutionStep(id, paging);
+					break;
+				default:
+					String error = "BugTrackerController : cannot fetch issues for unknown entity type '" + entityType
 						+ "'";
-				if (LOGGER.isErrorEnabled()) {
-					LOGGER.error(error);
-				}
-				throw new IllegalArgumentException(error);
+					if (LOGGER.isErrorEnabled()) {
+						LOGGER.error(error);
+					}
+					throw new IllegalArgumentException(error);
 			}
 		}
 		// no credentials exception are okay, the rest is to be treated as usual
@@ -952,9 +949,9 @@ public class BugTrackerController {
 	}
 
 	private PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> makeEmptyIssueDecoratorCollectionHolder(
-			String entityName, Long entityId, Exception cause, PagingAndSorting paging) {
+		String entityName, Long entityId, Exception cause, PagingAndSorting paging) {
 		LOGGER.trace("BugTrackerController : fetching known issues for  " + HtmlUtils.htmlEscape(entityName) + " " + entityId
-				+ " failed, exception : ", cause);
+			+ " failed, exception : ", cause);
 		List<IssueOwnership<RemoteIssueDecorator>> emptyList = new LinkedList<>();
 		return new PagingBackedPagedCollectionHolder<>(paging, 0, emptyList);
 	}

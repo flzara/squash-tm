@@ -34,6 +34,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
@@ -122,6 +123,12 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 			BindableEntity entity, Paging paging) {
 
 		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForProjectAndEntity(projectId, entity, paging);
+		for(CustomFieldBinding binding : bindings){
+			binding.getCustomField().setCode(HtmlUtils.htmlEscape(binding.getCustomField().getCode()));
+			binding.getCustomField().setName(HtmlUtils.htmlEscape(binding.getCustomField().getName());
+			binding.getCustomField().setDefaultValue(HTMLCleanupUtils.cleanHtml(binding.getCustomField().getDefaultValue()));
+			binding.getCustomField().setLabel(HtmlUtils.htmlEscape(binding.getCustomField().getLabel()));
+		}
 		Long count = customFieldBindingDao.countAllForProjectAndEntity(projectId, entity);
 
 		return new PagingBackedPagedCollectionHolder<>(paging, count, bindings);
