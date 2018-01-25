@@ -45,8 +45,9 @@ import com.querydsl.jpa.hibernate.HibernateQuery;
 
 @Repository
 public class HibernateRequirementDao extends HibernateEntityDao<Requirement> implements RequirementDao {
-	private static final Map<VerificationCriterion, Criterion> HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION = new EnumMap<>(
-			VerificationCriterion.class);
+
+	private static final Map<VerificationCriterion, Criterion> HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION =
+		new EnumMap<>(VerificationCriterion.class);
 
 	static {
 		HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION.put(VerificationCriterion.ANY, null); // yeah, it's a null.
@@ -55,9 +56,12 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 				Restrictions.isNotEmpty("res.requirementVersionCoverages"));
 		HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION.put(VerificationCriterion.SHOULD_NOT_BE_VERIFIED,
 				Restrictions.isEmpty("res.requirementVersionCoverages"));
-
 	}
+
+	private static final String REQUIREMENT_IDS = "requirementIds";
+	private static final String NODE_IDS = "nodeIds";
 	private static final String RES_NAME = "res.name";
+
 	private static final String FIND_ALL_FOR_LIBRARY_QUERY = "select distinct requirment.RLN_ID"
 			+ " from REQUIREMENT requirment" + " where requirment.RLN_ID in (" + " select dRequirement.RLN_ID"
 			+ " from REQUIREMENT dRequirement"
@@ -96,7 +100,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 
 		@Override
 		public void setQueryParameters(Query query) {
-			query.setParameterList("requirementIds", requirementIds);
+			query.setParameterList(REQUIREMENT_IDS, requirementIds);
 		}
 	}
 
@@ -159,7 +163,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	@SuppressWarnings("unchecked")
 	private List<Long> findRequirementParents(List<Long> params) {
 		Query query = currentSession().getNamedQuery("requirement.findRequirementParentIds");
-		query.setParameterList("nodeIds", params);
+		query.setParameterList(NODE_IDS, params);
 		return query.list();
 
 	}
@@ -168,7 +172,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	@Override
 	public List<Long> findDescendantRequirementIds(Collection<Long> params) {
 		Query query = currentSession().getNamedQuery("requirement.findRequirementDescendantIds");
-		query.setParameterList("nodeIds", params);
+		query.setParameterList(NODE_IDS, params);
 		return query.list();
 	}
 
@@ -317,7 +321,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	public List<RequirementVersion> findVersionsForAll(List<Long> requirementIds) {
 		if (!requirementIds.isEmpty()) {
 			Query query = currentSession().getNamedQuery("requirement.findVersionsForAll");
-			query.setParameterList("requirementIds", requirementIds, LongType.INSTANCE);
+			query.setParameterList(REQUIREMENT_IDS, requirementIds, LongType.INSTANCE);
 			return query.list();
 		} else {
 			return Collections.emptyList();
@@ -369,7 +373,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	public List<Long> findNonBoundRequirement(Collection<Long> nodeIds, Long milestoneId) {
 		if (! nodeIds.isEmpty()){
 			Query q = currentSession().getNamedQuery("requirement.findNonBoundRequirement");
-			q.setParameterList("nodeIds", nodeIds, LongType.INSTANCE);
+			q.setParameterList(NODE_IDS, nodeIds, LongType.INSTANCE);
 			q.setParameter("milestoneId", milestoneId);
 			return q.list();
 		}
@@ -382,7 +386,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	public List<Long> filterRequirementHavingManyVersions(Collection<Long> requirementIds) {
 		if (! requirementIds.isEmpty()){
 			Query q = currentSession().getNamedQuery("requirement.findRequirementHavingManyVersions");
-			q.setParameterList("requirementIds", requirementIds, LongType.INSTANCE);
+			q.setParameterList(REQUIREMENT_IDS, requirementIds, LongType.INSTANCE);
 			return q.list();
 		}
 		else{
@@ -406,7 +410,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	public List<Long> findAllRequirementsIdsByNodes(Collection<Long> nodeIds) {
 		if (! nodeIds.isEmpty()){
 			Query q = currentSession().getNamedQuery("requirement.findAllRequirementIdsByNodesId");
-			q.setParameterList("nodeIds", nodeIds, LongType.INSTANCE);
+			q.setParameterList(NODE_IDS, nodeIds, LongType.INSTANCE);
 			return q.list();
 		}
 		else{
@@ -419,7 +423,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 			List<Long> requirementIds) {
 		if (! requirementIds.isEmpty()){
 			Query q = currentSession().getNamedQuery("requirement.findVersionsIdsForAll");
-			q.setParameterList("requirementIds", requirementIds, LongType.INSTANCE);
+			q.setParameterList(REQUIREMENT_IDS, requirementIds, LongType.INSTANCE);
 			return q.list();
 		}
 		else{

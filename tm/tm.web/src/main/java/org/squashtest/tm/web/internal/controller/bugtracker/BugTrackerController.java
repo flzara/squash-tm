@@ -133,6 +133,8 @@ public class BugTrackerController {
 	static final String CAMPAIGN_FOLDER_TYPE = "campaign-folder";
 	static final String REQUIREMENT_VERSION_TYPE = "requirement-version";
 
+	private static final String STEP_ID = "stepId";
+	private static final String EXEC_ID = "execId";
 	private static final String BUGTRACKER_ID = "bugTrackerId";
 	private static final String EMPTY_BUGTRACKER_MAV = "fragment/bugtracker/bugtracker-panel-empty";
 
@@ -142,6 +144,7 @@ public class BugTrackerController {
 	private static final String MODEL_TABLE_ENTRIES = "tableEntries";
 	private static final String MODEL_BUG_TRACKER_STATUS = "bugTrackerStatus";
 
+	private static final String POSTING_NEW_ISSUE_MESSAGE = "BugTrackerController: posting a new issue for execution-step ";
 
 	@InitBinder
 	public void initBinder(ServletRequestDataBinder binder) throws ServletException {
@@ -208,7 +211,7 @@ public class BugTrackerController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}/known-issues", method = RequestMethod.GET)
-	public DataTableModel getExecStepKnownIssuesData(@PathVariable("stepId") Long stepId,
+	public DataTableModel getExecStepKnownIssuesData(@PathVariable(STEP_ID) Long stepId,
 													 final DataTableDrawParameters params) {
 
 		PagingAndSorting sorter = new IssueCollectionSorting(params);
@@ -239,8 +242,8 @@ public class BugTrackerController {
 	 */
 	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}/new-issue", method = RequestMethod.POST)
 	@ResponseBody
-	public Object postExecStepIssueReport(@PathVariable("stepId") Long stepId, @RequestBody BTIssue jsonIssue) {
-		LOGGER.trace("BugTrackerController: posting a new issue for execution-step " + stepId);
+	public Object postExecStepIssueReport(@PathVariable(STEP_ID) Long stepId, @RequestBody BTIssue jsonIssue) {
+		LOGGER.trace(POSTING_NEW_ISSUE_MESSAGE + stepId);
 
 		IssueDetector entity = executionFinder.findExecutionStepById(stepId);
 
@@ -256,9 +259,9 @@ public class BugTrackerController {
 	 */
 	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}/new-advanced-issue", method = RequestMethod.POST)
 	@ResponseBody
-	public Object postExecStepAdvancedIssueReport(@PathVariable("stepId") Long stepId,
+	public Object postExecStepAdvancedIssueReport(@PathVariable(STEP_ID) Long stepId,
 			@RequestBody AdvancedIssue jsonIssue) {
-		LOGGER.trace("BugTrackerController: posting a new issue for execution-step " + stepId);
+		LOGGER.trace(POSTING_NEW_ISSUE_MESSAGE + stepId);
 
 		IssueDetector entity = executionFinder.findExecutionStepById(stepId);
 
@@ -274,8 +277,8 @@ public class BugTrackerController {
 	 */
 	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}/new-oslc-issue", method = RequestMethod.POST)
 	@ResponseBody
-	public Object postExecStepIssueReport(@PathVariable("stepId") Long stepId, @RequestBody String issueId) {
-		LOGGER.trace("BugTrackerController: posting a new issue for execution-step " + stepId);
+	public Object postExecStepIssueReport(@PathVariable(STEP_ID) Long stepId, @RequestBody String issueId) {
+		LOGGER.trace(POSTING_NEW_ISSUE_MESSAGE + stepId);
 
 		IssueDetector entity = executionFinder.findExecutionStepById(stepId);
 
@@ -320,7 +323,7 @@ public class BugTrackerController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = EXECUTION_TYPE + "/{execId}/known-issues", method = RequestMethod.GET)
-	public DataTableModel getExecKnownIssuesData(@PathVariable("execId") Long execId,
+	public DataTableModel getExecKnownIssuesData(@PathVariable(EXEC_ID) Long execId,
 			final DataTableDrawParameters params) {
 
 		PagingAndSorting sorter = new IssueCollectionSorting(params);
@@ -345,8 +348,8 @@ public class BugTrackerController {
 	 */
 	@RequestMapping(value = EXECUTION_TYPE + "/{execId}/new-issue", method = RequestMethod.POST)
 	@ResponseBody
-	public Object postExecIssueReport(@PathVariable("execId") Long execId, @RequestBody BTIssue jsonIssue) {
-		LOGGER.trace("BugTrackerController: posting a new issue for execution-step " + execId);
+	public Object postExecIssueReport(@PathVariable(EXEC_ID) Long execId, @RequestBody BTIssue jsonIssue) {
+		LOGGER.trace(POSTING_NEW_ISSUE_MESSAGE + execId);
 
 		Execution entity = executionFinder.findById(execId);
 
@@ -362,9 +365,9 @@ public class BugTrackerController {
 	 */
 	@RequestMapping(value = EXECUTION_TYPE + "/{execId}/new-advanced-issue", method = RequestMethod.POST)
 	@ResponseBody
-	public Object postExecAdvancedIssueReport(@PathVariable("execId") Long execId,
+	public Object postExecAdvancedIssueReport(@PathVariable(EXEC_ID) Long execId,
 			@RequestBody AdvancedIssue jsonIssue) {
-		LOGGER.trace("BugTrackerController: posting a new issue for execution-step " + execId);
+		LOGGER.trace(POSTING_NEW_ISSUE_MESSAGE + execId);
 
 		Execution entity = executionFinder.findById(execId);
 
@@ -380,7 +383,7 @@ public class BugTrackerController {
 	 */
 	@RequestMapping(value = EXECUTION_TYPE + "/{execId}/new-oslc-issue", method = RequestMethod.POST)
 	@ResponseBody
-	public Object postExecIssueReport(@PathVariable("execId") Long execId, @RequestBody String issueId) {
+	public Object postExecIssueReport(@PathVariable(EXEC_ID) Long execId, @RequestBody String issueId) {
 		LOGGER.trace("BugTrackerController: posting a new issue for execution " + execId);
 
 		Execution entity = executionFinder.findById(execId);

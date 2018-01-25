@@ -171,6 +171,11 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 			+ "Where Selection1.criticality = (:criticality) "
 			+ "And Selection1.status In (:validationStatus)";
 
+	private static final String UNDEFINED = "UNDEFINED";
+	private static final String MINOR = "MINOR";
+	private static final String MAJOR = "MAJOR";
+	private static final String CRITICAL = "CRITICAL";
+
 	private static String reqParamName = "requirementIds";
 	private static String critPramName = "criticality";
 	private static String validationStatusParamName = "validationStatus";
@@ -376,19 +381,19 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 			total = ((BigInteger) tuple[2]).intValue();
 
 			switch (criticality) {
-				case "UNDEFINED":
+				case UNDEFINED:
 					stats.setUndefined(count);
 					stats.setTotalUndefined(total);
 					break;
-				case "MINOR":
+				case MINOR:
 					stats.setMinor(count);
 					stats.setTotalMinor(total);
 					break;
-				case "MAJOR":
+				case MAJOR:
 					stats.setMajor(count);
 					stats.setTotalMajor(total);
 					break;
-				case "CRITICAL":
+				case CRITICAL:
 					stats.setCritical(count);
 					stats.setTotalCritical(total);
 					break;
@@ -464,16 +469,16 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 
 	private void determineUndefinedValidationCount(RequirementValidationStatistics stats, String requirementCriticality, Integer count) {
 		switch (requirementCriticality) {
-			case "UNDEFINED":
+			case UNDEFINED:
 				stats.setUndefinedUndefined(stats.getUndefinedUndefined() + count);
 				break;
-			case "MINOR":
+			case MINOR:
 				stats.setUndefinedMinor(stats.getUndefinedMinor() + count);
 				break;
-			case "MAJOR":
+			case MAJOR:
 				stats.setUndefinedMajor(stats.getUndefinedMajor() + count);
 				break;
-			case "CRITICAL":
+			case CRITICAL:
 				stats.setUndefinedCritical(stats.getUndefinedCritical() + count);
 				break;
 			default:
@@ -485,16 +490,16 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 
 	private void determineInconclusiveValidationCount(RequirementValidationStatistics stats, String requirementCriticality, Integer count) {
 		switch (requirementCriticality) {
-			case "UNDEFINED":
+			case UNDEFINED:
 				stats.setInconclusiveUndefined(count);
 				break;
-			case "MINOR":
+			case MINOR:
 				stats.setInconclusiveMinor(count);
 				break;
-			case "MAJOR":
+			case MAJOR:
 				stats.setInconclusiveMajor(count);
 				break;
-			case "CRITICAL":
+			case CRITICAL:
 				stats.setInconclusiveCritical(count);
 				break;
 			default:
@@ -506,16 +511,16 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 
 	private void determineConclusiveValidationCount(RequirementValidationStatistics stats, String requirementCriticality, Integer count) {
 		switch (requirementCriticality) {
-			case "UNDEFINED":
+			case UNDEFINED:
 				stats.setConclusiveUndefined(count);
 				break;
-			case "MINOR":
+			case MINOR:
 				stats.setConclusiveMinor(count);
 				break;
-			case "MAJOR":
+			case MAJOR:
 				stats.setConclusiveMajor(count);
 				break;
-			case "CRITICAL":
+			case CRITICAL:
 				stats.setConclusiveCritical(count);
 				break;
 			default:
