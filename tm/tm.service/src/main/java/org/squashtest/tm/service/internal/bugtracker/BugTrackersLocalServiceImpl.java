@@ -54,6 +54,7 @@ import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.bugtracker.RequirementVersionIssueOwnership;
 import org.squashtest.tm.service.internal.repository.*;
+import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
@@ -67,6 +68,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.READ_CAMPAIGN;
+import static org.squashtest.tm.service.security.Authorizations.READ_CAMPAIGN_OR_ROLE_ADMIN;
 
 @Service("squashtest.tm.service.BugTrackersLocalService")
 public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
@@ -359,10 +362,10 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#campId, 'org.squashtest.tm.domain.campaign.Campaign' ,'READ')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(READ_CAMPAIGN_OR_ROLE_ADMIN)
 	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsForCampaign(
-		Long campId, PagingAndSorting sorter) {
-		return issueFinder("campaignIssueFinder").findSorted(campId, sorter);
+		Long campaignId, PagingAndSorting sorter) {
+		return issueFinder("campaignIssueFinder").findSorted(campaignId, sorter);
 	}
 
 	@Override

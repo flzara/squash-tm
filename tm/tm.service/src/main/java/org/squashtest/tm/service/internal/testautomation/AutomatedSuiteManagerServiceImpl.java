@@ -51,6 +51,7 @@ import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService;
 import org.squashtest.tm.service.internal.repository.*;
+import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
@@ -68,6 +69,8 @@ import java.net.URL;
 import java.util.*;
 import java.util.Map.Entry;
 
+import static org.squashtest.tm.service.security.Authorizations.EXECUTE_ITERATION_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.EXECUTE_TS_OR_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Transactional
@@ -148,7 +151,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#createFromIterationTestPlan(long)
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'EXECUTE')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(EXECUTE_ITERATION_OR_ROLE_ADMIN)
 	public AutomatedSuite createFromIterationTestPlan(long iterationId) {
 		Iteration iteration = iterationDao.findById(iterationId);
 		List<IterationTestPlanItem> items = iteration.getTestPlans();
@@ -160,7 +163,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#createFromTestSuiteTestPlan(long)
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'EXECUTE')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(EXECUTE_TS_OR_ROLE_ADMIN)
 	public AutomatedSuite createFromTestSuiteTestPlan(long testSuiteId) {
 		TestSuite suite = testSuiteDao.findOne(testSuiteId);
 		List<IterationTestPlanItem> items = suite.getTestPlan();

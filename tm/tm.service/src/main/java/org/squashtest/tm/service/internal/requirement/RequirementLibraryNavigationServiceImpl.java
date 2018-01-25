@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -104,11 +102,14 @@ import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.service.requirement.RequirementStatisticsService;
+import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.statistics.requirement.RequirementStatisticsBundle;
 
 import java.util.Optional;
+
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @SuppressWarnings("rawtypes")
 @Service("squashtest.tm.service.RequirementLibraryNavigationService")
@@ -335,8 +336,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.requirement.RequirementFolder' , 'CREATE') "
-		+ OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(CREATE_REQFOLDER_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType=RequirementLibraryNode.class)
 	public Requirement addRequirementToRequirementFolder(@Id long folderId, @NotNull NewRequirementVersionDto firstVersion, List<Long> milestoneIds) {
 		RequirementFolder folder = requirementFolderDao.findById(folderId);
@@ -359,8 +359,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.requirement.RequirementFolder' , 'CREATE') "
-		+ OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(CREATE_REQFOLDER_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType=RequirementLibraryNode.class)
 	public Requirement addRequirementToRequirementFolder(@Id long folderId, @NotNull Requirement requirement, List<Long> milestoneIds) {
 		RequirementFolder folder = requirementFolderDao.findById(folderId);
@@ -379,8 +378,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement' , 'CREATE') "
-		+ OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(CREATE_REQUIREMENT_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType=RequirementLibraryNode.class)
 	public Requirement addRequirementToRequirement(@Id long requirementId, @NotNull NewRequirementVersionDto newRequirement, List<Long> milestoneIds) {
 
@@ -401,8 +399,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement' , 'CREATE') "
-		+ OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(CREATE_REQUIREMENT_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType=RequirementLibraryNode.class)
 	public Requirement addRequirementToRequirement(@Id long requirementId, @NotNull Requirement newRequirement, List<Long> milestoneIds) {
 
@@ -906,10 +903,9 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 
 	@Override
-	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.requirement.RequirementLibraryNode', 'READ')"
-			+ OR_HAS_ROLE_ADMIN)
-	public List<String> findNamesInNodeStartingWith(long folderId, String nameStart) {
-		return requirementFolderDao.findNamesInNodeStartingWith(folderId, nameStart);
+	@PreAuthorize(READ_REQ_LIBRARY_NODE_OR_ROLE_ADMIN)
+	public List<String> findNamesInNodeStartingWith(long reqNodeId, String nameStart) {
+		return requirementFolderDao.findNamesInNodeStartingWith(reqNodeId, nameStart);
 	}
 
 	@Override

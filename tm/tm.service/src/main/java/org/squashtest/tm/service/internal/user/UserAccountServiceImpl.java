@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.user;
 
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.ROLE_ADMIN;
 
 import java.util.*;
 
@@ -45,7 +46,6 @@ import org.squashtest.tm.service.internal.repository.TeamDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.project.CustomGenericProjectManager;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
-import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.UserAuthenticationService;
 import org.squashtest.tm.service.security.UserContextService;
@@ -150,7 +150,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	public UserDto findCurrentUserDto() {
 		String username = UserContextHolder.getUsername();
 		Long userId = userDao.findUserId(username);
-		boolean isAdmin = permissionEvaluationService.hasRole(Authorizations.ROLE_ADMIN);
+		boolean isAdmin = permissionEvaluationService.hasRole(ROLE_ADMIN);
 
 
 		//1 We must merge team id with user id.
@@ -241,7 +241,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	private void checkPermissions(User user) {
 		String currentLogin = userContextService.getUsername();
 
-		if (!user.getLogin().equals(currentLogin) && !userContextService.hasRole("ROLE_ADMIN")) {
+		if (!user.getLogin().equals(currentLogin) && !userContextService.hasRole(ROLE_ADMIN)) {
 			throw new AccessDeniedException("Access is denied");
 		}
 	}

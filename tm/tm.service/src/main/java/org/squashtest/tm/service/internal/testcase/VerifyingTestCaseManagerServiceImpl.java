@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
+import static org.squashtest.tm.service.security.Authorizations.LINK_REQVERSION_OR_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 import java.util.ArrayList;
@@ -59,6 +60,7 @@ import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
+import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 
@@ -96,7 +98,7 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'LINK')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(LINK_REQVERSION_OR_ROLE_ADMIN)
 	public Map<String, Collection<?>> addVerifyingTestCasesToRequirementVersion(List<Long> testCasesIds,
 			long requirementVersionId) {
 		// nodes are returned unsorted
@@ -145,7 +147,7 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'LINK')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(LINK_REQVERSION_OR_ROLE_ADMIN)
 	public void removeVerifyingTestCasesFromRequirementVersion(List<Long> testCasesIds, long requirementVersionId) {
 
 		List<TestCase> testCases = testCaseDao.findAllByIds(testCasesIds);
@@ -167,7 +169,7 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'LINK')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(LINK_REQVERSION_OR_ROLE_ADMIN)
 	public void removeVerifyingTestCaseFromRequirementVersion(long testCaseId, long requirementVersionId) {
 		RequirementVersionCoverage coverage = requirementVersionCoverageDao.byRequirementVersionAndTestCase(
 				requirementVersionId, testCaseId);

@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.internal.milestone;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
 import java.util.Collection;
 import java.util.List;
 
@@ -38,22 +36,12 @@ import org.squashtest.tm.service.internal.repository.MilestoneDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
+import org.squashtest.tm.service.security.Authorizations;
+
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.MilestoneMembershipManager")
 public class MilestoneMembershipManagerImpl implements MilestoneMembershipManager {
-
-	private static final String READ_TC = "hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')";
-	private static final String WRITE_TC = "hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')";
-
-	private static final String READ_REQVERSION = "hasPermission(#versionId, 'org.squashtest.tm.domain.requirement.RequirementVersion' , 'READ')";
-	private static final String WRITE_REQVERSION = "hasPermission(#versionId, 'org.squashtest.tm.domain.requirement.RequirementVersion' , 'WRITE')";
-
-	private static final String READ_CAMPAIGN = "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' , 'READ')";
-	private static final String WRITE_CAMPAIGN = "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' , 'WRITE')";
-
-	private static final String READ_ITERATION = "hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration' , 'READ')";
-
-	private static final String READ_TESTSUITE = "hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite' , 'READ')";
 
 	@Inject
 	private TestCaseDao testCaseDao;
@@ -69,7 +57,7 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 	private MilestoneDao milestoneDao;
 
 	@Override
-	@PreAuthorize(WRITE_TC + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public void bindTestCaseToMilestones(long testCaseId, Collection<Long> milestoneIds) {
 		TestCase tc = testCaseDao.findById(testCaseId);
 		Collection<Milestone> milestones = milestoneDao.findAll(milestoneIds);
@@ -80,7 +68,7 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 	}
 
 	@Override
-	@PreAuthorize(WRITE_TC + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public void unbindTestCaseFromMilestones(long testCaseId, Collection<Long> milestoneIds) {
 		TestCase tc = testCaseDao.findById(testCaseId);
 		for (Long milestoneId : milestoneIds) {
@@ -131,25 +119,25 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 	}
 
 	@Override
-	@PreAuthorize(READ_TC + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(READ_TC_OR_ROLE_ADMIN)
 	public Collection<Milestone> findAllMilestonesForTestCase(long testCaseId) {
 		return milestoneDao.findAllMilestonesForTestCase(testCaseId);
 	}
 
 	@Override
-	@PreAuthorize(READ_TC + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(READ_TC_OR_ROLE_ADMIN)
 	public boolean isTestCaseMilestoneDeletable(long testCaseId) {
 		return milestoneDao.isTestCaseMilestoneDeletable(testCaseId);
 	}
 
 	@Override
-	@PreAuthorize(READ_TC + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(READ_TC_OR_ROLE_ADMIN)
 	public boolean isTestCaseMilestoneModifiable(long testCaseId) {
 		return milestoneDao.isTestCaseMilestoneModifiable(testCaseId);
 	}
 
 	@Override
-	@PreAuthorize(READ_TC + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(READ_TC_OR_ROLE_ADMIN)
 	public Collection<Milestone> findAssociableMilestonesToTestCase(long testCaseId) {
 		return milestoneDao.findAssociableMilestonesForTestCase(testCaseId);
 	}

@@ -80,7 +80,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.*;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
  * @author Gregory Fouquet
@@ -90,9 +90,6 @@ import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMI
 public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModificationService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomTestCaseModificationServiceImpl.class);
-	private static final String WRITE_TC_OR_ROLE_ADMIN = "hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN;
-	private static final String WRITE_PARENT_TC_OR_ROLE_ADMIN = "hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN;
-	private static final String READ_TC_OR_ROLE_ADMIN = "hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')" + OR_HAS_ROLE_ADMIN;
 
 	@Inject
 	private TestCaseDao testCaseDao;

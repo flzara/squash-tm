@@ -24,6 +24,7 @@ import static org.squashtest.tm.service.internal.batchimport.Existence.EXISTS;
 import static org.squashtest.tm.service.internal.batchimport.Existence.TO_BE_CREATED;
 import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_MILESTONE;
 import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_NUM;
+import static org.squashtest.tm.service.security.Authorizations.MILESTONE_FEAT_ENABLED;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -167,7 +168,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	@Inject
 	private UserDao userDao;
 
-	@Value("#{" + Authorizations.MILESTONE_FEAT_ENABLED + "}")
+	@Value("#{" + MILESTONE_FEAT_ENABLED + "}")
 	private boolean milestonesEnabled;
 
 	@Inject

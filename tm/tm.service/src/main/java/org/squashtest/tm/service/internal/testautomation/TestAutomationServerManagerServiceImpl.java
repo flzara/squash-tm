@@ -38,6 +38,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
 
 @Transactional
@@ -57,7 +58,7 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	}
 
 	@Override
-	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	/**
 	 * @see TestAutomationServerManagerService#persist(TestAutomationServer)
 	 */
@@ -97,14 +98,14 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	 * @see TestAutomationServerManagerService#deleteServer(long)
 	 */
 	@Override
-	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deleteServer(long serverId) {
 		projectDao.deleteAllHostedProjects(serverId);
 		serverDao.deleteServer(serverId);
 	}
 
 	@Override
-	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deleteServer(List<Long> serverIds) {
 		for (Long id : serverIds) {
 			projectDao.deleteAllHostedProjects(id);
@@ -126,7 +127,7 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	}
 
 	@Override
-	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void changeURL(long serverId, URL url) {
 
 		TestAutomationServer server = serverDao.findOne(serverId);
@@ -136,7 +137,7 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	}
 
 	@Override
-	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void changeName(long serverId, String newName) {
 		TestAutomationServer server = serverDao.findOne(serverId);
 		if (newName.equals(server.getName())) {
@@ -151,7 +152,7 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	}
 
 	@Override
-	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void changeLogin(long serverId, String login) {
 		TestAutomationServer server = serverDao.findOne(serverId);
 		checkNoConflicts(server, login);
@@ -159,21 +160,21 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	}
 
 	@Override
-	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void changePassword(long serverId, String password) {
 		TestAutomationServer server = serverDao.findOne(serverId);
 		server.setPassword(password);
 	}
 
 	@Override
-	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void changeDescription(long serverId, String description) {
 		TestAutomationServer server = serverDao.findOne(serverId);
 		server.setDescription(description);
 	}
 
 	@Override
-	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void changeManualSlaveSelection(long serverId, boolean manualSlaveSelection) {
 		TestAutomationServer server = serverDao.findOne(serverId);
 		server.setManualSlaveSelection(manualSlaveSelection);

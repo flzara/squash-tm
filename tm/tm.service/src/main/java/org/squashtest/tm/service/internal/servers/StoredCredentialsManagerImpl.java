@@ -48,6 +48,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+
 @Transactional
 @Service
 public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
@@ -90,7 +92,7 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 	}
 
 	@Override
-    @PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
+    @PreAuthorize(HAS_ROLE_ADMIN)
 	public void storeCredentials(long serverId, Credentials credentials) {
 
 		if (! isSecretConfigured()){
@@ -143,7 +145,7 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 
 
 	@Override
-	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public Credentials findCredentials(long serverId) {
 		return unsecuredFindCredentials(serverId);
 	}
@@ -193,7 +195,7 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 	}
 
 	@Override
-	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deleteCredentials(long serverId) {
 		try {
 			StoredCredentials sc = (StoredCredentials) em.createNamedQuery("StoredCredentials.findByServerId")

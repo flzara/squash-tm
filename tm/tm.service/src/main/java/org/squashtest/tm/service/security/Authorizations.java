@@ -27,6 +27,8 @@ package org.squashtest.tm.service.security;
  *
  */
 public final class Authorizations {
+
+	/* ADMIN */
 	public static final String READ = "READ";
 
 	public static final String ROLE_ADMIN = "ROLE_ADMIN";
@@ -35,11 +37,67 @@ public final class Authorizations {
 
 	public static final String OR_HAS_ROLE_ADMIN = " or hasRole('ROLE_ADMIN')";
 
-	public static final String MILESTONE_FEAT_ENABLED = "@featureManager.isEnabled('MILESTONE')";
-
 	public static final String HAS_ROLE_ADMIN_OR_PROJECT_MANAGER = "hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')";
 
 	public static final String OR_HAS_ROLE_ADMIN_OR_PROJECT_MANAGER = " or (hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER'))";
+
+	/* MILESTONES */
+	public static final String MILESTONE_FEAT_ENABLED = "@featureManager.isEnabled('MILESTONE')";
+
+	/* REQUIREMENT LIBRARY NODE */
+	public static final String READ_REQ_LIBRARY_NODE_OR_ROLE_ADMIN = "hasPermission(#reqNodeId, 'org.squashtest.tm.domain.requirement.RequirementLibraryNode', 'READ')"
+		+ OR_HAS_ROLE_ADMIN;
+
+	/* REQUIREMENT FOLDERS */
+	public static final String CREATE_REQFOLDER_OR_ROLE_ADMIN = "hasPermission(#folderId, 'org.squashtest.tm.domain.requirement.RequirementFolder' , 'CREATE') "
+		+ OR_HAS_ROLE_ADMIN;
+
+	/* REQUIREMENTS */
+	public static final String READ_REQUIREMENT_OR_ROLE_ADMIN = "hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'READ')" + OR_HAS_ROLE_ADMIN;
+
+	public static final String CREATE_REQUIREMENT_OR_ROLE_ADMIN = "hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'CREATE')" + OR_HAS_ROLE_ADMIN;
+
+	/* REQUIREMENT VERSIONS */
+	public static final String READ_REQVERSION = "hasPermission(#versionId, 'org.squashtest.tm.domain.requirement.RequirementVersion' , 'READ')";
+
+	public static final String WRITE_REQVERSION = "hasPermission(#versionId, 'org.squashtest.tm.domain.requirement.RequirementVersion' , 'WRITE')";
+
+	public static final String WRITE_REQVERSION_OR_ROLE_ADMIN = "hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE')" + OR_HAS_ROLE_ADMIN;
+
+	public static final String LINK_REQVERSION_OR_ROLE_ADMIN = "hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'LINK')" + OR_HAS_ROLE_ADMIN;
+
+	/* TEST CASES*/
+	public static final String READ_TC = "hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')";
+
+	public static final String WRITE_TC = "hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')";
+
+	public static final String READ_TC_OR_ROLE_ADMIN = READ_TC + OR_HAS_ROLE_ADMIN;
+
+	public static final String WRITE_TC_OR_ROLE_ADMIN = WRITE_TC + OR_HAS_ROLE_ADMIN;
+
+	public static final String WRITE_PARENT_TC_OR_ROLE_ADMIN = "hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN;
+
+	/* ITERATIONS */
+	public static final String READ_ITERATION = "hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration' , 'READ')";
+
+	public static final String EXECUTE_ITERATION_OR_ROLE_ADMIN = "hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'EXECUTE')" + OR_HAS_ROLE_ADMIN;
+
+	/* TEST SUITES */
+	public static final String READ_TESTSUITE = "hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite' , 'READ')";
+
+	public static final String EXECUTE_TS_OR_ROLE_ADMIN = "hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'EXECUTE')" + OR_HAS_ROLE_ADMIN;
+
+	/* CAMPAIGNS*/
+	public static final String READ_CAMPAIGN = "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' , 'READ')";
+
+	public static final String WRITE_CAMPAIGN = "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' , 'WRITE')";
+
+	public static final String READ_CAMPAIGN_OR_ROLE_ADMIN = READ_CAMPAIGN + OR_HAS_ROLE_ADMIN;
+
+	/* EXECUTIONS */
+
+
+
 
 	private Authorizations() {
 		super();

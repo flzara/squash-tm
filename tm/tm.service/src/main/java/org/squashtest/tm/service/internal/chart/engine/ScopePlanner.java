@@ -50,6 +50,8 @@ import javax.persistence.PersistenceContext;
 import java.util.*;
 
 import static org.squashtest.tm.domain.EntityType.*;
+import static org.squashtest.tm.service.security.Authorizations.READ;
+import static org.squashtest.tm.service.security.Authorizations.ROLE_ADMIN;
 
 /**
  * <p>
@@ -748,8 +750,6 @@ class ScopePlanner {
 			CLASS_NAME_BY_ENTITY.put(ITERATION, "org.squashtest.tm.domain.campaign.Iteration");
 		}
 
-		private static final String READ = Authorizations.READ;
-		private static final String ROLE_ADMIN = Authorizations.ROLE_ADMIN;
 		private final PermissionEvaluationService permissionService;
 		private final EntityManager em;
 

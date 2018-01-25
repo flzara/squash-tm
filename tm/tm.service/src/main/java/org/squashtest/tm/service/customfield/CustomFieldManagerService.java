@@ -26,16 +26,17 @@ import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.service.security.Authorizations;
 
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+
 /**
  * Facade service for custom fields management.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Transactional
 @DynamicManager(name = "squashtest.tm.service.CustomFieldManagerService", entity = CustomField.class)
 public interface CustomFieldManagerService extends CustomCustomFieldManagerService, CustomFieldFinderService {
-	String HAS_ROLE_ADMIN = Authorizations.HAS_ROLE_ADMIN;
 
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeLabel(long customFieldId, String label);
