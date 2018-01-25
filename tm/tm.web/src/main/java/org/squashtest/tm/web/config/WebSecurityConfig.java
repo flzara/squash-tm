@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
@@ -77,6 +78,7 @@ public class WebSecurityConfig {
 		private SquashUserDetailsManager squashUserDetailsManager;
 
 		@Inject
+		@Lazy
 		private PasswordEncoder passwordEncoder;
 
 		@Override
