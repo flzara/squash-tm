@@ -413,10 +413,9 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 
 
 	@Override
-	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'READ')"
-		+ OR_HAS_ROLE_ADMIN)
-	public RequirementVersion findByRequirementIdAndVersionNumber(long requirementId, int versionNumber) {
-		return requirementVersionDao.findByRequirementIdAndVersionNumber(requirementId, versionNumber);
+	@PreAuthorize(READ_REQVERSION_OR_ROLE_ADMIN)
+	public RequirementVersion findByRequirementIdAndVersionNumber(long requirementVersionId, int versionNumber) {
+		return requirementVersionDao.findByRequirementIdAndVersionNumber(requirementVersionId, versionNumber);
 	}
 
 	//As Squash 1.18, for file repositories we need to copy the attachment by service call.

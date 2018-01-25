@@ -57,7 +57,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.squashtest.tm.service.security.Authorizations.LINK_REQVERSION_OR_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.READ_REQVERSION_OR_ROLE_ADMIN;
 
 @Service("squashtest.tm.service.LinkedRequirementVersionManagerService")
 @Transactional
@@ -83,8 +85,7 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
 
 	@Override
-	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'READ')" +
-		OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(READ_REQVERSION_OR_ROLE_ADMIN)
 	public PagedCollectionHolder<List<LinkedRequirementVersion>>
 		findAllByRequirementVersion(long requirementVersionId, PagingAndSorting pagingAndSorting) {
 
@@ -103,8 +104,7 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'LINK')" +
-		OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(LINK_REQVERSION_OR_ROLE_ADMIN)
 	public void removeLinkedRequirementVersionsFromRequirementVersion(
 		long requirementVersionId, List<Long> requirementVersionIdsToUnlink) {
 
@@ -201,8 +201,7 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 
 
 	@Override
-	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'LINK')" +
-		OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(LINK_REQVERSION_OR_ROLE_ADMIN)
 	public void updateLinkTypeAndDirection(
 		long requirementVersionId, long relatedReqNodeId, boolean isRelatedIdANodeId,
 		long linkTypeId, boolean linkDirection) {

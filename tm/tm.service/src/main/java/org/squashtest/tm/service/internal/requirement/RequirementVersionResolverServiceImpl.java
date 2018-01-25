@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.requirement;
 
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.READ_REQUIREMENT_OR_ROLE_ADMIN;
 
 import javax.inject.Inject;
 
@@ -39,10 +40,9 @@ public class RequirementVersionResolverServiceImpl implements RequirementVersion
 	private RequirementVersionDao versionDao;
 
 
-
 	@Override
 	@Transactional(readOnly = true)
-	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'READ')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(READ_REQUIREMENT_OR_ROLE_ADMIN)
 	public RequirementVersion resolveByRequirementId(long requirementId) {
 		return versionDao.findByRequirementIdAndMilestone(requirementId);
 	}
