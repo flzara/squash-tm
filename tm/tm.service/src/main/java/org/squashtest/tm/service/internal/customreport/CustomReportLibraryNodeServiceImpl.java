@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.customreport;
 
+import static org.squashtest.tm.service.security.Authorizations.CREATE_CUR_LIB_NODE_OR_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 import java.util.ArrayList;
@@ -48,6 +49,7 @@ import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao;
+import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
@@ -177,8 +179,7 @@ public class CustomReportLibraryNodeServiceImpl implements
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#nodeId, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'CREATE') "
-			+ OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(CREATE_CUR_LIB_NODE_OR_ROLE_ADMIN)
 	public void renameNode(Long nodeId, String newName)
 			throws DuplicateNameException {
 		CustomReportLibraryNode crln = customReportLibraryNodeDao.findOne(nodeId);

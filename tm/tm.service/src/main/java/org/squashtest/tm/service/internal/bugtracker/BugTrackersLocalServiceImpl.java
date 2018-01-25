@@ -67,9 +67,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-import static org.squashtest.tm.service.security.Authorizations.READ_CAMPAIGN;
-import static org.squashtest.tm.service.security.Authorizations.READ_CAMPAIGN_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.BugTrackersLocalService")
 public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
@@ -318,26 +316,26 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	/* ------------------------ExecutionStep--------------------------------------- */
 	@Override
-	@PreAuthorize("hasPermission(#stepId, 'org.squashtest.tm.domain.execution.ExecutionStep', 'READ')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(READ_EXECSTEP_OR_ROLE_ADMIN)
 	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnerShipsForExecutionStep(
-		Long stepId, PagingAndSorting sorter) {
-		return issueFinder("executionStepIssueFinder").findSorted(stepId, sorter);
+		Long executionStepId, PagingAndSorting sorter) {
+		return issueFinder("executionStepIssueFinder").findSorted(executionStepId, sorter);
 
 	}
 
 
 	/* ------------------------Execution--------------------------------------- */
 	@Override
-	@PreAuthorize("hasPermission(#execId, 'org.squashtest.tm.domain.execution.Execution', 'READ')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(READ_EXECUTION_OR_ROLE_ADMIN)
 	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsforExecution(
-		Long execId, PagingAndSorting sorter) {
+		Long executionId, PagingAndSorting sorter) {
 		// FIXME : SHOULD RETURN EXECS AND STEPS PAIRS !
-		return issueFinder("executionIssueFinder").findSorted(execId, sorter);
+		return issueFinder("executionIssueFinder").findSorted(executionId, sorter);
 	}
 
 	/* ------------------------TestSuite--------------------------------------- */
 	@Override
-	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'READ')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(READ_TS_OR_ROLE_ADMIN)
 	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsForTestSuite(
 		Long testSuiteId, PagingAndSorting sorter) {
 		return issueFinder("testSuiteIssueFinder").findSorted(testSuiteId, sorter);
@@ -346,10 +344,10 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	/* ------------------------Iteration--------------------------------------- */
 
 	@Override
-	@PreAuthorize("hasPermission(#iterId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(READ_ITERATION_OR_ROLE_ADMIN)
 	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForIteration(
-		Long iterId, PagingAndSorting sorter) {
-		return issueFinder("iterationIssueFinder").findSorted(iterId, sorter);
+		Long iterationId, PagingAndSorting sorter) {
+		return issueFinder("iterationIssueFinder").findSorted(iterationId, sorter);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -369,10 +367,10 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#cfId, 'org.squashtest.tm.domain.campaign.CampaignFolder', 'READ')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(READ_CAMPFOLDER_OR_ROLE_ADMIN)
 	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForCampaignFolder(
-		Long cfId, PagingAndSorting sorter) {
-		return issueFinder("campaignFolderIssueFinder").findSorted(cfId, sorter);
+		Long campFolderId, PagingAndSorting sorter) {
+		return issueFinder("campaignFolderIssueFinder").findSorted(campFolderId, sorter);
 	}
 
 	@Override
