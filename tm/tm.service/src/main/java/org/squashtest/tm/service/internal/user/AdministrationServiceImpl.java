@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.user;
 
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 import java.text.ParseException;
@@ -158,8 +159,6 @@ public class AdministrationServiceImpl implements AdministrationService {
 	}
 
 	/* ********************** proper admin section ******************* */
-
-	private static final String IS_ADMIN_OR_MANAGER = "hasRole('ROLE_TM_PROJECT_MANAGER')" + OR_HAS_ROLE_ADMIN;
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
@@ -485,7 +484,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	}
 
 	@Override
-	@PreAuthorize(IS_ADMIN_OR_MANAGER)
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public List<User> findAllAdminOrManager() {
 		return userDao.findAllAdminOrManager();
 	}

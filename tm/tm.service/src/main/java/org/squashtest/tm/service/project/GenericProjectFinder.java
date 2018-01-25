@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.project;
 
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 import java.util.List;
@@ -44,13 +45,13 @@ public interface GenericProjectFinder extends CustomGenericProjectFinder{
 	/**
 	 * Will find all Projects and Templates to which the user has management access to and return them ordered according to the given params.
 	 *
-	 * @param filter the {@link PagingAndSorting} that holds order and paging params
+	 * @param pagingAndSorting the {@link PagingAndSorting} that holds order and paging params
 	 * @return a {@link PagedCollectionHolder} containing all projects the user has management access to, ordered according to the given params.
 	 *
 	 * @deprecated apparently no longer used w/o explanation
 	 */
 	@Deprecated
-	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	PagedCollectionHolder<List<GenericProject>> findSortedProjects(PagingAndSorting pagingAndSorting);
 
 	GenericProject findById(long projectId);

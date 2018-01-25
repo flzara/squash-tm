@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.customfield;
 
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 import java.util.LinkedList;
@@ -128,7 +129,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	// TODO add check for permission MANAGEMENT on the project id
 	public void addNewCustomFieldBinding(long projectId, BindableEntity entity, long customFieldId,
 			CustomFieldBinding newBinding) {
@@ -137,21 +138,21 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public void addRenderingLocation(long bindingId, RenderingLocation location) {
 		CustomFieldBinding binding = customFieldBindingDao.findById(bindingId);
 		binding.addRenderingLocation(location);
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public void removeRenderingLocation(long bindingId, RenderingLocation location) {
 		CustomFieldBinding binding = customFieldBindingDao.findById(bindingId);
 		binding.removeRenderingLocation(location);
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public void removeCustomFieldBindings(List<Long> bindingIds) {
 		customValueService.cascadeCustomFieldValuesDeletion(bindingIds);
 		customFieldBindingDao.removeCustomFieldBindings(bindingIds);
@@ -160,7 +161,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 
 	@SuppressWarnings("unchecked")
 	@Override
-	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	// TODO add check for permission MANAGEMENT on the project id
 	public void removeCustomFieldBindings(Long projectId) {
 		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForGenericProject(projectId);
@@ -172,7 +173,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	 * @see CustomFieldBindingModificationService#copyCustomFieldsSettingsFromTemplate(Project, ProjectTemplate)
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public void moveCustomFieldbindings(List<Long> bindingIds, int newIndex) {
 
 		if (!bindingIds.isEmpty()) {
