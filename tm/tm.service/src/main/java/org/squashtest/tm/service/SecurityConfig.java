@@ -42,6 +42,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Role;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
@@ -220,6 +221,7 @@ public class SecurityConfig {
 
 	@Bean
     @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+	@Order(0)
 	public PasswordEncoder shaPasswordEncoder() {
 		return new ShaPasswordEncoder();
 	}
