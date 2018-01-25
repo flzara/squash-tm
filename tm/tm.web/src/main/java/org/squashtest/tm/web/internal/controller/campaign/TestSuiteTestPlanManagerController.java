@@ -20,13 +20,13 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
-import java.util.Optional;
 import org.apache.commons.collections.MultiMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
@@ -34,7 +34,6 @@ import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -55,7 +54,6 @@ import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JeditableComboHelper;
-import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.datatable.*;
 import org.squashtest.tm.web.internal.model.jquery.TestPlanAssignableUser;
 import org.squashtest.tm.web.internal.model.json.JsonIterationTestPlanItem;
@@ -69,7 +67,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- *
  * @author R.A
  * @authored bsiri
  */
@@ -123,7 +120,7 @@ public class TestSuiteTestPlanManagerController {
 
 	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
 		.map("entity-index", "index(IterationTestPlanItem)")
-			// index is a special case which means : no sorting.
+		// index is a special case which means : no sorting.
 		.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, NAME, Project.class).mapAttribute(REFERENCE, REFERENCE, TestCase.class)
 		.mapAttribute("tc-name", NAME, TestCase.class).mapAttribute(IMPORTANCE, IMPORTANCE, TestCase.class)
 		.mapAttribute("dataset.selected.name", NAME, Dataset.class)
@@ -143,12 +140,11 @@ public class TestSuiteTestPlanManagerController {
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan-manager", method = RequestMethod.GET)
 	public ModelAndView showManager(@PathVariable(TEST_SUITE_ID) long suiteId,
 									@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
-
-		LOGGER.debug("show test suite test plan manager for test suite #{}", suiteId);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("show test suite test plan manager for test suite #{}", suiteId);
+		}
 		TestSuite testSuite = testSuiteTestPlanManagerService.findTestSuite(suiteId);
 
-//		List<TestCaseLibrary> linkableLibraries = iterationTestPlanManagerService.findLinkableTestCaseLibraries();
-//		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes);
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(testSuite);
 
 		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
@@ -167,25 +163,6 @@ public class TestSuiteTestPlanManagerController {
 		mav.addObject("milestoneConf", milestoneConf);
 
 		return mav;
-	}
-
-	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries,
-														  String[] openedNodes) {
-
-		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
-
-		DriveNodeBuilder<TestCaseLibraryNode> dNodeBuilder = driveNodeBuilder.get();
-
-		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
-
-		if (activeMilestone.isPresent()) {
-			dNodeBuilder.filterByMilestone(activeMilestone.get());
-		}
-
-		JsTreeNodeListBuilder<TestCaseLibrary> listBuilder = new JsTreeNodeListBuilder<>(
-			driveNodeBuilder.get());
-
-		return listBuilder.expand(expansionCandidates).setModel(linkableLibraries).build();
 	}
 
 	@ResponseBody
@@ -328,7 +305,9 @@ public class TestSuiteTestPlanManagerController {
 	@ResponseBody
 	@RequestMapping(value = TEST_PLAN_IDS_URL_MAPPING, method = RequestMethod.POST, params = {STATUS})
 	public JsonIterationTestPlanItem setTestPlanItemStatus(@PathVariable("testPlanIds") List<Long> testPlanIds, @RequestParam(STATUS) String status) {
-		LOGGER.debug("change status test plan items to {}", status);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("change status test plan items to {}", status);
+		}
 		List<IterationTestPlanItem> itpis = iterationTestPlanManagerService.forceExecutionStatus(testPlanIds, status);
 		return createJsonITPI(itpis.get(0));
 	}
@@ -389,9 +368,9 @@ public class TestSuiteTestPlanManagerController {
 		return new JsonIterationTestPlanItem(
 			item.getId(),
 			item.getExecutionStatus(),
-			name,
+			HtmlUtils.htmlEscape(name),
 			item.getLastExecutedOn(),
-			item.getLastExecutedBy(),
+			HtmlUtils.htmlEscape(item.getLastExecutedBy()),
 			item.getUser(),
 			item.isTestCaseDeleted(),
 			item.isAutomated()

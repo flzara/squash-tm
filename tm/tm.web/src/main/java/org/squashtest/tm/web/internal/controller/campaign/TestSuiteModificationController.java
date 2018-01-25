@@ -27,6 +27,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
@@ -49,6 +50,7 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -56,6 +58,7 @@ import java.util.*;
 
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
+// XSS OK
 @Controller
 @RequestMapping("/test-suites/{suiteId}")
 public class TestSuiteModificationController {
@@ -130,9 +133,9 @@ public class TestSuiteModificationController {
 		model.addAttribute("attachmentsModel", attachmentsModel);
 		model.addAttribute("assignableUsers", assignableUsers);
 		model.addAttribute("allowsSettled",
-				testSuite.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
+			testSuite.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
 		model.addAttribute("allowsUntestable",
-				testSuite.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
+			testSuite.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
 		model.addAttribute("weights", weights);
 		model.addAttribute("modes", getModes());
 		model.addAttribute("statuses", getStatuses(testSuite.getProject().getId()));
@@ -142,13 +145,12 @@ public class TestSuiteModificationController {
 	/**
 	 * Will fetch the active {@link ExecutionStatus} for the project matching the given id
 	 *
-	 * @param projectId
-	 *            : the id of the concerned {@link Project}
+	 * @param projectId : the id of the concerned {@link Project}
 	 * @return a map representing the active statuses for the given project with :
-	 *         <ul>
-	 *         <li>key: the status name</li>
-	 *         <li>value: the status internationalized label</li>
-	 *         </ul>
+	 * <ul>
+	 * <li>key: the status name</li>
+	 * <li>value: the status internationalized label</li>
+	 * </ul>
 	 */
 	private Map<String, String> getStatuses(long projectId) {
 		Locale locale = LocaleContextHolder.getLocale();
@@ -201,9 +203,9 @@ public class TestSuiteModificationController {
 		ModelAndView mav = new ModelAndView("fragment/generics/statistics-fragment");
 		mav.addObject("statisticsEntity", testSuiteStats);
 		mav.addObject("allowsSettled", testSuite.getProject().getCampaignLibrary()
-				.allowsStatus(ExecutionStatus.SETTLED));
+			.allowsStatus(ExecutionStatus.SETTLED));
 		mav.addObject("allowsUntestable",
-				testSuite.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
+			testSuite.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
 
 		return mav;
 	}
@@ -221,13 +223,15 @@ public class TestSuiteModificationController {
 		return mav;
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=test-suite-description", VALUE })
+	@RequestMapping(method = RequestMethod.POST, params = {"id=test-suite-description", VALUE})
 	@ResponseBody
 	public String updateDescription(@RequestParam(VALUE) String newDescription, @PathVariable("suiteId") long suiteId) {
 
 		service.changeDescription(suiteId, newDescription);
-		LOGGER.trace("Test-suite " + suiteId + ": updated description to " + newDescription);
-		return newDescription;
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Test-suite " + suiteId + ": updated description to " + newDescription);
+		}
+		return HTMLCleanupUtils.cleanHtml(newDescription);
 
 	}
 
@@ -248,29 +252,28 @@ public class TestSuiteModificationController {
 
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
+	@RequestMapping(method = RequestMethod.POST, params = {"newName"})
 	@ResponseBody
 	public Object rename(@RequestParam("newName") String newName,
 						 @PathVariable("suiteId") long suiteId) {
-
-		LOGGER.info("TestSuiteModificationController : renaming " + suiteId + " as " + newName);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("TestSuiteModificationController : renaming " + suiteId + " as " + newName);
+		}
 		service.rename(suiteId, newName);
-		return new RenameModel(newName);
+		return new RenameModel(HtmlUtils.htmlEscape(newName));
 
 	}
 
 	// that method is redundant but don't remove it yet.
 	@ResponseBody
 	@RequestMapping(value = "/rename", method = RequestMethod.POST, params = RequestParams.NAME)
-	public
-	Map<String, String> renameTestSuite(@PathVariable("suiteId") Long suiteId, @RequestParam(RequestParams.NAME) String name) {
+	public Map<String, String> renameTestSuite(@PathVariable("suiteId") Long suiteId, @RequestParam(RequestParams.NAME) String name) {
 		service.rename(suiteId, name);
 		Map<String, String> result = new HashMap<>();
 		result.put("id", suiteId.toString());
-		result.put(NAME, name);
+		result.put(NAME, HtmlUtils.htmlEscape(name));
 		return result;
 	}
-
 
 
 	// ******************** other stuffs ********************

@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.testcase.Dataset;
@@ -41,6 +35,9 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.json.JsonDataset;
 
+import java.util.*;
+
+//XSS OK
 final class CampaignTestPlanTableModelHelper extends DataTableModelBuilder<IndexedCampaignTestPlanItem> {
 
 	private Locale locale;
@@ -103,19 +100,18 @@ final class CampaignTestPlanTableModelHelper extends DataTableModelBuilder<Index
 	 *
 	 * you can just tell SONAR to stfu.
 	 */
-	private DatasetInfos makeDatasetInfo(CampaignTestPlanItem item){	// NOSONAR copy pasta blahblahblah.
-		if (item.getReferencedTestCase().getDatasets().isEmpty()){
+	private DatasetInfos makeDatasetInfo(CampaignTestPlanItem item) {    // NOSONAR copy pasta blahblahblah.
+		if (item.getReferencedTestCase().getDatasets().isEmpty()) {
 			return DatasetInfos.EMPTY_INFOS;
-		}
-		else{
+		} else {
 
 			Dataset selected = item.getReferencedDataset();
 			Collection<Dataset> available = item.getReferencedTestCase().getDatasets();
 
 			JsonDataset jsonSelected = convert(selected);
-			Collection<JsonDataset> jsonAvailable = new ArrayList<>(available.size()+1);
-			jsonAvailable.add(convert(null));	// that one corresponds to dataset 'None'
-			for (Dataset ds : available){
+			Collection<JsonDataset> jsonAvailable = new ArrayList<>(available.size() + 1);
+			jsonAvailable.add(convert(null));    // that one corresponds to dataset 'None'
+			for (Dataset ds : available) {
 				jsonAvailable.add(convert(ds));
 			}
 
@@ -124,12 +120,12 @@ final class CampaignTestPlanTableModelHelper extends DataTableModelBuilder<Index
 	}
 
 
-	private JsonDataset convert(Dataset ds){
+	private JsonDataset convert(Dataset ds) {
 		JsonDataset jsds = new JsonDataset();
-		if (ds == null){
+		if (ds == null) {
 			jsds.setName(messageSource.internationalize("label.noneDSEscaped", locale));
 			jsds.setId(JeditableComboHelper.coerceIntoComboId(null));
-		}else{
+		} else {
 			jsds.setName(HtmlUtils.htmlEscape(ds.getName()));
 			jsds.setId(JeditableComboHelper.coerceIntoComboId(ds.getId()));
 		}

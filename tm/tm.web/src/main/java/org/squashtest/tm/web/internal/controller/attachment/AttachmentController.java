@@ -20,38 +20,27 @@
  */
 package org.squashtest.tm.web.internal.controller.attachment;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.ServletRequestDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
-import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.web.internal.fileupload.UploadContentFilterUtil;
 import org.squashtest.tm.web.internal.fileupload.UploadSummary;
+
+import javax.inject.Inject;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.*;
 
 // XSS OK
 @Controller
@@ -93,11 +82,11 @@ public class AttachmentController {
 
 
 	// for IE (again), post from the regular popup : needs to return the response wrapped in some html
-	@RequestMapping(value = UPLOAD_URL, method = RequestMethod.POST, produces="text/html")
-	public String uploadAttachmentAsHtml(@RequestParam("attachment[]") List<UploadedData> attachments, @PathVariable long attachListId, Locale locale, Model model) throws IOException{
+	@RequestMapping(value = UPLOAD_URL, method = RequestMethod.POST, produces = "text/html")
+	public String uploadAttachmentAsHtml(@RequestParam("attachment[]") List<UploadedData> attachments, @PathVariable long attachListId, Locale locale, Model model) throws IOException {
 		List<UploadedData> nonEmpty = removeEmptyData(attachments);
 		List<UploadSummary> summaries = uploadAttachmentAsJson(nonEmpty, attachListId, locale);
-		model.addAttribute("summary" , summaries);
+		model.addAttribute("summary", summaries);
 		return "fragment/import/upload-summary";
 	}
 
@@ -106,10 +95,10 @@ public class AttachmentController {
 
 
 	// uploads the file themselves and build the upload summary on the fly
-	@RequestMapping(value = UPLOAD_URL, method = RequestMethod.POST, produces="application/json")
+	@RequestMapping(value = UPLOAD_URL, method = RequestMethod.POST, produces = "application/json")
 	@ResponseBody
 	public List<UploadSummary> uploadAttachmentAsJson(@RequestParam("attachment[]") List<UploadedData> attachments, @PathVariable long attachListId, Locale locale)
-			throws IOException {
+		throws IOException {
 
 		List<UploadSummary> summary = new LinkedList<>();
 
@@ -121,12 +110,12 @@ public class AttachmentController {
 			boolean shouldProceed = filterUtil.isTypeAllowed(upload);
 			if (!shouldProceed) {
 				summary.add(new UploadSummary(HtmlUtils.htmlEscape(upload.getName()), getUploadSummary(STR_UPLOAD_STATUS_WRONGFILETYPE, locale),
-						UploadSummary.INT_UPLOAD_STATUS_WRONGFILETYPE));
+					UploadSummary.INT_UPLOAD_STATUS_WRONGFILETYPE));
 			} else {
 				attachmentManagerService.addAttachment(attachListId, upload);
 
 				summary.add(new UploadSummary(HtmlUtils.htmlEscape(upload.getName()), getUploadSummary(STR_UPLOAD_STATUS_OK, locale),
-						UploadSummary.INT_UPLOAD_STATUS_OK));
+					UploadSummary.INT_UPLOAD_STATUS_OK));
 			}
 		}
 
@@ -147,10 +136,10 @@ public class AttachmentController {
 		return summary;
 	}
 
-	private List<UploadedData> removeEmptyData(List<UploadedData> all){
+	private List<UploadedData> removeEmptyData(List<UploadedData> all) {
 		List<UploadedData> nonEmpty = new ArrayList<>();
-		for (UploadedData dat : all){
-			if (dat.getSizeInBytes() > 0){
+		for (UploadedData dat : all) {
+			if (dat.getSizeInBytes() > 0) {
 				nonEmpty.add(dat);
 			}
 		}
@@ -161,13 +150,12 @@ public class AttachmentController {
 
 	@ResponseBody
 	@RequestMapping(value = "/download/{attachemendId}", method = RequestMethod.GET)
-	public
-	void downloadAttachment(@PathVariable("attachemendId") long attachmentId, HttpServletResponse response) {
+	public void downloadAttachment(@PathVariable("attachemendId") long attachmentId, HttpServletResponse response) {
 
 		try {
 			Attachment attachment = attachmentManagerService.findAttachment(attachmentId);
 			response.setContentType("application/octet-stream");
-			response.setHeader("Content-Disposition", "attachment; filename=" + HtmlUtils.htmlEscape(attachment.getName().replace(" ", "_")));
+			response.setHeader("Content-Disposition", "attachment; filename=" + attachment.getName().replace(" ", "_"));
 
 			ServletOutputStream outStream = response.getOutputStream();
 

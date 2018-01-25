@@ -20,14 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.IdentifiedUtil;
@@ -44,6 +36,8 @@ import org.squashtest.tm.web.internal.model.builder.JeditableComboHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.json.JsonDataset;
+
+import java.util.*;
 
 class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTestPlanItem> {
 
@@ -70,10 +64,10 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 
 		//assigne
 		//String assigneeLogin = formatString(item.getLastExecutedBy(), locale); commented because of 3009
-		String assigneeLogin = formatString(null, locale);	// we want the "null" login before checking if there is an actual assignee
+		String assigneeLogin = formatString(null, locale);    // we want the "null" login before checking if there is an actual assignee
 		Long assigneeId = User.NO_USER_ID;
 		User assignee = item.getUser();
-		if  (assignee  != null) {
+		if (assignee != null) {
 			assigneeId = assignee.getId();
 			assigneeLogin = assignee.getLogin();
 		}
@@ -97,19 +91,19 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 			projectName = item.getReferencedTestCase().getProject().getName();
 			testCaseName = item.getReferencedTestCase().getName();
 			tcId = item.getReferencedTestCase().getId();
-			if(item.getReferencedTestCase().getReference().isEmpty()){
+			if (item.getReferencedTestCase().getReference().isEmpty()) {
 				reference = formatNoData(locale);
-			}else{
+			} else {
 				reference = item.getReferencedTestCase().getReference();
 			}
-			importance 		= messageSource.internationalizeAbbreviation(item.getReferencedTestCase().getImportance(), locale);
-			milestoneDates 	= MilestoneModelUtils.timeIntervalToString(item.getReferencedTestCase().getMilestones(), messageSource, locale);
+			importance = messageSource.internationalizeAbbreviation(item.getReferencedTestCase().getImportance(), locale);
+			milestoneDates = MilestoneModelUtils.timeIntervalToString(item.getReferencedTestCase().getMilestones(), messageSource, locale);
 			milestoneLabels = MilestoneModelUtils.milestoneLabelsOrderByDate(item.getReferencedTestCase().getMilestones());
 		}
 
 
 		//dataset
-		DatasetInfos dsIndos = makeDatasetInfo (item);
+		DatasetInfos dsIndos = makeDatasetInfo(item);
 
 		// test suite name
 		String testSuiteNameList;
@@ -121,7 +115,7 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 			testSuiteNameListTot = formatNoData(locale);
 			testSuiteIdsList = Collections.emptyList();
 		} else {
-			testSuiteNameList = HtmlUtils.htmlEscape(TestSuiteHelper.buildEllipsedSuiteNameList(item.getTestSuites(), 20));
+			testSuiteNameList = TestSuiteHelper.buildEllipsedSuiteNameList(item.getTestSuites(), 20);
 			testSuiteNameListTot = TestSuiteHelper.buildSuiteNameList(item.getTestSuites());
 			testSuiteIdsList = IdentifiedUtil.extractIds(item.getTestSuites());
 		}
@@ -147,19 +141,19 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		// now stuff the map
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, index);
-		res.put(DataTableModelConstants.PROJECT_NAME_KEY, projectName);
-		res.put("reference", reference);
+		res.put(DataTableModelConstants.PROJECT_NAME_KEY, HtmlUtils.htmlEscape(projectName));
+		res.put("reference", HtmlUtils.htmlEscape(reference));
 		res.put("tc-id", tcId);
-		res.put("tc-name", testCaseName);
+		res.put("tc-name", HtmlUtils.htmlEscape(testCaseName));
 		res.put("importance", importance);
-		res.put("suite", testSuiteNameList);
-		res.put("suitesTot", testSuiteNameListTot);
+		res.put("suite", HtmlUtils.htmlEscape(testSuiteNameList));
+		res.put("suitesTot", HtmlUtils.htmlEscape(testSuiteNameListTot));
 		res.put("suiteIds", testSuiteIdsList);
-		res.put("status",item.getExecutionStatus().getCanonicalStatus());	// as of issue 2956, we now restrict the status to the canonical status only
+		res.put("status", item.getExecutionStatus().getCanonicalStatus());    // as of issue 2956, we now restrict the status to the canonical status only
 		res.put("assignee-id", assigneeId);
-		res.put("assignee-login", assigneeLogin);
+		res.put("assignee-login", HtmlUtils.htmlEscape(assigneeLogin));
 		res.put("last-exec-on", DateUtils.formatIso8601DateTime(item.getLastExecutedOn()));
-		res.put("exec-exists", lastExec!=null);
+		res.put("exec-exists", lastExec != null);
 		res.put("is-tc-deleted", item.isTestCaseDeleted());
 		res.put("succesPercent", succesPercent + " %");
 		res.put(DataTableModelConstants.DEFAULT_EMPTY_EXECUTE_HOLDER_KEY, " ");
@@ -167,21 +161,21 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		res.put("exec-mode", automationMode);
 		res.put("milestone-dates", milestoneDates);
 		res.put("dataset", dsIndos);
-		res.put("milestone-labels", milestoneLabels);
+		res.put("milestone-labels", HtmlUtils.htmlEscape(milestoneLabels));
 
 		return res;
 	}
 
 	/* **************** other private stufs ********************** */
 
-	public static final class DatasetInfos{
+	public static final class DatasetInfos {
 
 		static {
 			JsonDataset emptyDs = new JsonDataset();
 			emptyDs.setId(JeditableComboHelper.coerceIntoComboId(null));
 			emptyDs.setName("-");
 
-			EMPTY_INFOS = new DatasetInfos(emptyDs, Collections.<JsonDataset> emptyList());
+			EMPTY_INFOS = new DatasetInfos(emptyDs, Collections.<JsonDataset>emptyList());
 		}
 
 		public static final DatasetInfos EMPTY_INFOS;
@@ -189,7 +183,7 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		private JsonDataset selected;
 		private Collection<JsonDataset> available;
 
-		DatasetInfos(JsonDataset selected, Collection<JsonDataset> available){
+		DatasetInfos(JsonDataset selected, Collection<JsonDataset> available) {
 			this.selected = selected;
 			this.available = available;
 		}
@@ -206,19 +200,18 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 
 	/* ***************** data formatter *************************** */
 
-	private DatasetInfos makeDatasetInfo(IterationTestPlanItem item){
-		if (item.isTestCaseDeleted() || item.getReferencedTestCase().getDatasets().isEmpty()){
+	private DatasetInfos makeDatasetInfo(IterationTestPlanItem item) {
+		if (item.isTestCaseDeleted() || item.getReferencedTestCase().getDatasets().isEmpty()) {
 			return DatasetInfos.EMPTY_INFOS;
-		}
-		else{
+		} else {
 
 			Dataset selected = item.getReferencedDataset();
 			Collection<Dataset> available = item.getReferencedTestCase().getDatasets();
 
 			JsonDataset jsonSelected = convert(selected);
-			Collection<JsonDataset> jsonAvailable = new ArrayList<>(available.size()+1);
-			jsonAvailable.add(convert(null));	// that one corresponds to dataset 'None'
-			for (Dataset ds : available){
+			Collection<JsonDataset> jsonAvailable = new ArrayList<>(available.size() + 1);
+			jsonAvailable.add(convert(null));    // that one corresponds to dataset 'None'
+			for (Dataset ds : available) {
 				jsonAvailable.add(convert(ds));
 			}
 
@@ -227,13 +220,13 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 	}
 
 
-	private JsonDataset convert(Dataset ds){
+	private JsonDataset convert(Dataset ds) {
 		JsonDataset jsds = new JsonDataset();
-		if (ds == null){
+		if (ds == null) {
 			jsds.setName(messageSource.internationalize("label.noneDSEscaped", locale));
 			jsds.setId(JeditableComboHelper.coerceIntoComboId(null));
-		}else{
-			jsds.setName(ds.getName());
+		} else {
+			jsds.setName(HtmlUtils.htmlEscape(ds.getName()));
 			jsds.setId(JeditableComboHelper.coerceIntoComboId(ds.getId()));
 		}
 		return jsds;

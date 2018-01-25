@@ -28,9 +28,10 @@ import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilde
 
 import javax.inject.Inject;
 
+// XSS OK
 @Component
 @Scope("prototype")
-public class CampaignStatusJeditableComboDataBuilder  extends EnumJeditableComboDataBuilder<CampaignStatus, CampaignStatusJeditableComboDataBuilder> {
+public class CampaignStatusJeditableComboDataBuilder extends EnumJeditableComboDataBuilder<CampaignStatus, CampaignStatusJeditableComboDataBuilder> {
 
 	public CampaignStatusJeditableComboDataBuilder() {
 		super();

@@ -20,46 +20,28 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
-import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.validation.Valid;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.audit.AuditableMixin;
-import org.squashtest.tm.domain.campaign.*;
+import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.campaign.IterationStatus;
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.service.campaign.*;
+import org.squashtest.tm.service.campaign.IterationModificationService;
+import org.squashtest.tm.service.campaign.IterationTestPlanFinder;
+import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.deletion.OperationReport;
@@ -78,7 +60,17 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.jquery.TestSuiteModel;
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.validation.Valid;
+import java.io.Serializable;
+import java.util.*;
+
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
+
+// XSS OK
 @Controller
 @RequestMapping("/iterations/{iterationId}")
 public class IterationModificationController {
@@ -269,8 +261,10 @@ public class IterationModificationController {
 	public String updateDescription(@RequestParam(VALUE) String newDescription, @PathVariable long iterationId) {
 
 		iterationModService.changeDescription(iterationId, newDescription);
-		LOGGER.trace("Iteration " + iterationId + ": updated description to " + newDescription);
-		return newDescription;
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Iteration " + iterationId + ": updated description to " + newDescription);
+		}
+		return HTMLCleanupUtils.cleanHtml(newDescription);
 
 	}
 
@@ -285,7 +279,7 @@ public class IterationModificationController {
 	}
 
 	@ResponseBody
-	@RequestMapping(method = RequestMethod.POST, params = { "id=iteration-status", VALUE })
+	@RequestMapping(method = RequestMethod.POST, params = {"id=iteration-status", VALUE})
 	public String changeStatus(@PathVariable long iterationId, @RequestParam(VALUE) IterationStatus status) {
 		iterationModService.changeStatus(iterationId, status);
 		return formatStatus(status);
@@ -295,8 +289,9 @@ public class IterationModificationController {
 	@ResponseBody
 	public Object rename(@RequestParam("newName") String newName,
 						 @PathVariable long iterationId) {
-
-		LOGGER.info("IterationModificationController : renaming {} as {}", iterationId, newName);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("IterationModificationController : renaming {} as {}", iterationId, newName);
+		}
 		iterationModService.rename(iterationId, newName);
 		return new RenameModel(newName);
 
@@ -479,7 +474,7 @@ public class IterationModificationController {
 		iterationModService.addTestSuite(iterationId, suite);
 		Map<String, String> res = new HashMap<>();
 		res.put("id", suite.getId().toString());
-		res.put(NAME, suite.getName());
+		res.put(NAME, HtmlUtils.htmlEscape(suite.getName()));
 		return res;
 	}
 
@@ -489,7 +484,7 @@ public class IterationModificationController {
 		Collection<TestSuite> testSuites = iterationModService.findAllTestSuites(iterationId);
 		List<TestSuiteModel> result = new ArrayList<>();
 		for (TestSuite testSuite : testSuites) {
-			TestSuiteModel model = new TestSuiteModel(testSuite.getId(), testSuite.getName());
+			TestSuiteModel model = new TestSuiteModel(testSuite.getId(), HtmlUtils.htmlEscape(testSuite.getName()));
 			result.add(model);
 		}
 		return result;

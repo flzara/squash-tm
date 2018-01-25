@@ -25,10 +25,12 @@ import org.squashtest.tm.api.security.acls.AccessRule;
 
 /**
  * Data structure for (wizard) menu items
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
+
+// XSS OK
 public class MenuItem {
 	private String id;
 	private String label;
@@ -97,7 +99,7 @@ public class MenuItem {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public MenuItem() {
 		super();

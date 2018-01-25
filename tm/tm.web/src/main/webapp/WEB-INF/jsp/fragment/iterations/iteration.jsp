@@ -33,6 +33,7 @@
 <%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform" %>
 <%@ taglib prefix="dashboard" tagdir="/WEB-INF/tags/dashboard" %>
 <%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues" %>
+<%@ taglib prefix="hu" uri="http://org.squashtest.tm/taglib/html-utils" %>
 
 <f:message var="squashlocale" key="squashtm.locale"/>
 
@@ -238,14 +239,14 @@
               <div class="display-table-row">
                 <label for="iteration-reference" class="display-table-cell"><f:message key="label.Reference"/></label>
 
-                <div class="display-table-cell" id="iteration-reference">${ iteration.reference }</div>
+                <div class="display-table-cell" id="iteration-reference"><c:out value="${ iteration.reference }"/></div>
               </div>
 
               <div class="display-table-row">
                 <label for="iteration-description" class="display-table-cell"><f:message
                   key="label.Description"/></label>
 
-                <div id="iteration-description" ${descrRicheditAttributes}>${ iteration.description }</div>
+                <div id="iteration-description" ${descrRicheditAttributes}>${hu:clean(iteration["description"])}</div>
               </div>
 
             <div class="display-table-row">

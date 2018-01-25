@@ -20,10 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.validation.Errors;
@@ -34,8 +31,11 @@ import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.service.internal.dto.RawValueModel;
 import org.squashtest.tm.service.internal.dto.RawValueModel.RawValueModelMap;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
+// XSS OK
 public class IterationFormModel {
 	/**
 	 * Note : the following validation annotations are never called, a custom validator will be invoked for this.
@@ -55,8 +55,6 @@ public class IterationFormModel {
 	/*@NotNull
 	@NotEmpty*/
 	private RawValueModelMap customFields = new RawValueModelMap();
-
-
 
 
 	public boolean isCopyTestPlan() {
@@ -98,8 +96,6 @@ public class IterationFormModel {
 	}
 
 
-
-
 	public RawValueModelMap getCustomFields() {
 		return customFields;
 	}
@@ -110,8 +106,8 @@ public class IterationFormModel {
 	}
 
 
-	public Iteration getIteration(){
-		Iteration newIteration= new Iteration();
+	public Iteration getIteration() {
+		Iteration newIteration = new Iteration();
 		newIteration.setName(name);
 		newIteration.setDescription(description);
 		newIteration.setReference(reference);
@@ -119,24 +115,22 @@ public class IterationFormModel {
 	}
 
 	@JsonIgnore
-	public Map<Long, RawValue> getCufs(){
+	public Map<Long, RawValue> getCufs() {
 		Map<Long, RawValue> cufs = new HashMap<>(customFields.size());
-		for (Entry<Long, RawValueModel> entry : customFields.entrySet()){
+		for (Entry<Long, RawValueModel> entry : customFields.entrySet()) {
 			cufs.put(entry.getKey(), entry.getValue().toRawValue());
 		}
 		return cufs;
 	}
 
 
-
 	public static class IterationFormModelValidator implements Validator {
 
 		private MessageSource messageSource;
 
-		public void setMessageSource(MessageSource messageSource){
+		public void setMessageSource(MessageSource messageSource) {
 			this.messageSource = messageSource;
 		}
-
 
 
 		public IterationFormModelValidator(MessageSource messageSource) {
@@ -159,10 +153,10 @@ public class IterationFormModel {
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "message.notBlank", notBlank);
 
 
-			for (Entry<Long, RawValueModel> entry : model.getCustomFields().entrySet()){
+			for (Entry<Long, RawValueModel> entry : model.getCustomFields().entrySet()) {
 				RawValueModel value = entry.getValue();
-				if (value.isEmpty()){
-					errors.rejectValue("customFields["+entry.getKey()+"]", "message.notBlank", notBlank);
+				if (value.isEmpty()) {
+					errors.rejectValue("customFields[" + entry.getKey() + "]", "message.notBlank", notBlank);
 				}
 			}
 

@@ -24,11 +24,13 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 public class MilestoneTableModelHelper extends DataTableModelBuilder<Milestone> {
 
@@ -57,9 +59,9 @@ public class MilestoneTableModelHelper extends DataTableModelBuilder<Milestone> 
 		row.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 		row.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 		row.put("status", status);
-		row.put("label", item.getLabel());
+		row.put("label", HtmlUtils.htmlEscape(item.getLabel()));
 		row.put("date", date);
-		row.put("description", item.getDescription());
+		row.put("description", HTMLCleanupUtils.cleanHtml(item.getDescription()));
 		row.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, null);
 		row.put("isStatusAllowUnbind", item.getStatus().isAllowObjectModification());
 		return row;

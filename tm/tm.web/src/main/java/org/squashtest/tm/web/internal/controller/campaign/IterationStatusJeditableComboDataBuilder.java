@@ -28,6 +28,7 @@ import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilde
 
 import javax.inject.Inject;
 
+// XSS OK
 @Component
 @Scope("prototype")
 public class IterationStatusJeditableComboDataBuilder extends EnumJeditableComboDataBuilder<IterationStatus, IterationStatusJeditableComboDataBuilder> {

@@ -132,7 +132,7 @@
   config.customFields = {url: "${customFieldsValuesURL}"};
   config.testSuiteURL = "${testSuiteUrl}";
   config.testSuiteExecutionStatus = "${testSuite.executionStatus}";
-  config.testSuiteExecutionStatusCombo= ${json:serialize (statuses)};
+  config.testSuiteExecutionStatusCombo = ${json:serialize (statuses)};
   config.api = {
     copy: "${duplicateTestSuiteUrl}"
   };
@@ -234,7 +234,7 @@
           <div class="display-table-row">
             <label for="test-suite-description" class="display-table-cell"><f:message key="label.Description"/></label>
 
-            <div id="test-suite-description" ${descrRicheditAttributes}>${ testSuite.description }</div>
+            <div id="test-suite-description" ${descrRicheditAttributes}>${hu:clean(testSuite["description"])  }</div>
           </div>
 
           <div class="display-table-row">
@@ -247,8 +247,9 @@
           </div>
 
           <div class="display-table-row">
-            <label for="test-suite-progress-status" class="display-table-cell"><f:message key="test-suite.progress_status.label" /></label>
-            <span id="test-suite-progress-status"><f:message key="${ statistics.status.i18nKey }" /></span>
+            <label for="test-suite-progress-status" class="display-table-cell"><f:message
+              key="test-suite.progress_status.label"/></label>
+            <span id="test-suite-progress-status"><f:message key="${ statistics.status.i18nKey }"/></span>
           </div>
 
 			</jsp:attribute>
@@ -339,7 +340,7 @@
   <c:if test="${ creatable }">
     <div id="confirm-duplicate-test-suite-dialog" class="not-displayed popup-dialog"
          title="<f:message key="title.DuplicateTestSuite" />">
-      <strong><f:message key="message.DuplicateTestSuite"/> "${testSuite.name}" ?</strong>
+      <strong><f:message key="message.DuplicateTestSuite"/> <c:out value="\"${testSuite.name}\""/> ?</strong>
       <input type="button" value="<f:message key='label.Confirm' />"/>
       <input type="button" value="<f:message key='label.Cancel' />"/>
     </div>

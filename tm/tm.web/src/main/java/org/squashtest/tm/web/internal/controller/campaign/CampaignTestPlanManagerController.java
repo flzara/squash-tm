@@ -20,30 +20,14 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
-
 import org.apache.commons.collections.MultiMap;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.campaign.Campaign;
-import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -53,7 +37,7 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService;
 import org.squashtest.tm.service.campaign.IndexedCampaignTestPlanItem;
 import org.squashtest.tm.service.internal.dto.UserDto;
-import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneModelService;
 import org.squashtest.tm.service.user.UserAccountService;
@@ -65,22 +49,22 @@ import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JeditableComboHelper;
-import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
-import org.squashtest.tm.web.internal.model.datatable.DataTableColumnFiltering;
-import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
-import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
+import org.squashtest.tm.web.internal.model.datatable.*;
 import org.squashtest.tm.web.internal.model.jquery.TestPlanAssignableUser;
-import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
-import java.util.Optional;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Agnes Durand
  */
+
+// XS OK
 @Controller
 public class CampaignTestPlanManagerController {
 
@@ -129,10 +113,7 @@ public class CampaignTestPlanManagerController {
 
 
 		Campaign campaign = testPlanManager.findCampaign(campaignId);
-//		List<TestCaseLibrary> linkableLibraries = testPlanManager.findLinkableTestCaseLibraries();
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(campaign);
-
-//		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes);
 
 		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
 		UserDto currentUser = userAccountService.findCurrentUserDto();
@@ -179,25 +160,6 @@ public class CampaignTestPlanManagerController {
 	public void removeItemsFromTestPlan(@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId,
 										@PathVariable("testPlanIds") List<Long> itemsIds) {
 		testPlanManager.removeTestPlanItems(campaignId, itemsIds);
-	}
-
-
-	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries,
-														  String[] openedNodes) {
-		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
-
-		DriveNodeBuilder<TestCaseLibraryNode> dNodeBuilder = driveNodeBuilder.get();
-
-		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
-
-		if (activeMilestone.isPresent()) {
-			dNodeBuilder.filterByMilestone(activeMilestone.get());
-		}
-
-		JsTreeNodeListBuilder<TestCaseLibrary> listBuilder = new JsTreeNodeListBuilder<>(dNodeBuilder);
-
-
-		return listBuilder.expand(expansionCandidates).setModel(linkableLibraries).build();
 	}
 
 	@ResponseBody

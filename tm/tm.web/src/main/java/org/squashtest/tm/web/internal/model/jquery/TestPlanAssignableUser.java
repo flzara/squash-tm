@@ -20,13 +20,14 @@
  */
 package org.squashtest.tm.web.internal.model.jquery;
 
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.users.User;
 
 public class TestPlanAssignableUser {
 	private String id;
 	private String login;
-	
-	
+
+
 	public String getId() {
 		return id;
 	}
@@ -39,19 +40,19 @@ public class TestPlanAssignableUser {
 	public void setLogin(String login) {
 		this.login = login;
 	}
-	
+
 	public TestPlanAssignableUser(){
 		super();
 	}
-	
+
 	public TestPlanAssignableUser(User user){
 		this.id=user.getId().toString();
-		this.login=user.getLogin();
+		this.login= HtmlUtils.htmlEscape(user.getLogin());
 	}
-	
+
 	public TestPlanAssignableUser(String id, String login){
 		this.id=id;
-		this.login=login;
+		this.login=HtmlUtils.htmlEscape(login);
 	}
-	
+
 }

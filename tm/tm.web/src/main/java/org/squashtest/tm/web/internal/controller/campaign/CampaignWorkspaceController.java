@@ -40,6 +40,7 @@ import javax.inject.Provider;
 import java.util.List;
 import java.util.Locale;
 
+// XSS OK
 @Controller
 @RequestMapping("/campaign-workspace")
 public class CampaignWorkspaceController extends WorkspaceController<CampaignLibraryNode> {
