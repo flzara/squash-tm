@@ -51,16 +51,19 @@ import org.squashtest.tm.service.library.LibraryNavigationService;
 
 /**
  * Service for navigation in a TestCase library use case.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public interface TestCaseLibraryNavigationService extends
 LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, TestCaseLibraryFinderService {
 
+	String DESTINATION_ID = "destinationId";
+	String TARGET_ID = "targetId";
+
 	/**
 	 * Adds a TestCase to the root of the library. The custom fields will be created with their default value.
-	 * 
+	 *
 	 * @param libraryId
 	 * @param testCase
 	 * @param position if non-null and non-negative, the test case will be inserted at that index.
@@ -73,7 +76,7 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 	 * Adds a TestCase to the root of the Library, and its initial custom field values. The initial custom field values
 	 * are passed as a Map<Long, String>, that maps the id of the {@link CustomField} to the values of the corresponding {@link CustomFieldValue}.
 	 * Read that last sentence again.
-	 * 
+	 *
 	 * @param libraryId
 	 * @param testCase
 	 * @param customFieldValues
@@ -87,7 +90,7 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 
 	/**
 	 * Adds a TestCase to a folder. The custom fields will be created with their default value.
-	 * 
+	 *
 	 * @param libraryId
 	 * @param testCase
 	 * @param position if non-null and non-negative, the test case will be inserted at that index.
@@ -100,7 +103,7 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 	 * Adds a TestCase to a folder, and its initial custom field values. The initial custom field values
 	 * are passed as a Map<Long, String>, that maps the id of the {@link CustomField} to the values of the corresponding {@link CustomFieldValue}.
 	 * Read that last sentence again.
-	 * 
+	 *
 	 * @param libraryId
 	 * @param testCase
 	 * @param customFieldValues Map&lt;String, String||String[]&gt;
@@ -114,7 +117,7 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 	/**
 	 * given a well formed path (starting with /project), creates a folder at this position if the user is allowed to.
 	 * If a folder already exists in that place, creates nothing and returns its id instead.
-	 * 
+	 *
 	 * @param folderpath
 	 * @return the id of that folder
 	 */
@@ -123,7 +126,7 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 	/**
 	 * Accepts a stream to a .zip file containing regular folders or excel files and nothing else. Will convert the test
 	 * cases from excel to squash.
-	 * 
+	 *
 	 * @param archiveStream
 	 * @param libraryId
 	 *            the identifier of the library we are importing test cases into.
@@ -139,7 +142,7 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 	 * for any invalid informations it contains. It does not proceed to an actual import. Note that the structure of that
 	 * excel file is totally different that the one contained in the zip archive consumed by
 	 * {@link #importZipTestCase(InputStream, long, String)}
-	 * 
+	 *
 	 * @param excelFile
 	 * @return
 	 */
@@ -152,7 +155,7 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 	 * Note that the structure of that
 	 * excel file is totally different that the one contained in the zip archive consumed by
 	 * {@link #importZipTestCase(InputStream, long, String)}
-	 * 
+	 *
 	 * @param excelFile
 	 * @return
 	 */
@@ -164,7 +167,7 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 	/**
 	 * Will find all test cases in the library and node ids supplied in arguments, and return their
 	 * information as a list of {@linkplain ExportTestCaseData}
-	 * 
+	 *
 	 * @param nodesIds
 	 *            ids of {@linkplain TestCaseLibraryNode}
 	 * @return a list of {@linkplain ExportTestCaseData}
@@ -174,33 +177,33 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 	/**
 	 * <p>Will export a selection of test cases as an Excel 2003 (.xls) spreadsheet.
 	 * The selection consists of :</p>
-	 * 
+	 *
 	 *  <ul>
 	 *  	<li>zero to several libraries</li>
 	 *  	<li>zero to several nodes</li>
 	 *  </ul>
-	 * 
+	 *
 	 *  <p>Last, if the selection have some call steps, the called test case can be included in the export
 	 *  if the parameter includeCalledTests is set to true.</p>
-	 * 
+	 *
 	 * @param libraryIds
 	 * @param nodeIds
 	 * @param includeCalledTests
 	 * @return
 	 */
 	File exportTestCaseAsExcel(List<Long> libraryIds, List<Long> nodeIds, boolean includeCalledTests, boolean keepRteFormat, MessageSource messageSource);
-	
+
 	/**
 	 * <p>Will export a selection of test cases as an Excel 2003 (.xls) spreadsheet.
 	 * The selection consists of :</p>
-	 * 
+	 *
 	 *  <ul>
 	 *  	<li>zero to several nodes</li>
 	 *  </ul>
-	 * 
+	 *
 	 *  <p>Last, if the selection have some call steps, the called test case can be included in the export
 	 *  if the parameter includeCalledTests is set to true.</p>
-	 * 
+	 *
 	 * @param nodeIds
 	 * @param includeCalledTests
 	 * @return
@@ -218,57 +221,57 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 	public List<Long> findAllTestCasesLibraryForMilestone(Milestone activeMilestone);
 
 	public List<Long> findAllTestCasesLibraryNodeForMilestone(Milestone activeMilestone);
-	
-	
+
+
 	//####################### PREVENT CONCURENCY OVERRIDES #########################//
-	
+
 	@Override
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="destinationId")},
+			simplesLocks={@PreventConcurrent(entityType = TestCaseLibraryNode.class, paramName= DESTINATION_ID)},
 			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="sourceNodesIds", coercer=TCLNAndParentIdsCoercerForArray.class),
 							@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName="sourceNodesIds", coercer=TestCaseLibraryIdsCoercerForArray.class)}
 			)
-	public List<TestCaseLibraryNode> copyNodesToFolder(@Id("destinationId") long destinationId, @Ids("sourceNodesIds") Long[] sourceNodesIds);
+	public List<TestCaseLibraryNode> copyNodesToFolder(@Id(DESTINATION_ID) long destinationId, @Ids("sourceNodesIds") Long[] sourceNodesIds);
 
 	@Override
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType = TestCaseLibrary.class, paramName="destinationId")},
-			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="targetId", coercer=TCLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName="targetId", coercer=TestCaseLibraryIdsCoercerForArray.class)}
+			simplesLocks={@PreventConcurrent(entityType = TestCaseLibrary.class, paramName= DESTINATION_ID)},
+			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName= TARGET_ID, coercer=TCLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName= TARGET_ID, coercer=TestCaseLibraryIdsCoercerForArray.class)}
 			)
-	public List<TestCaseLibraryNode> copyNodesToLibrary(@Id("destinationId") long destinationId, @Ids("targetId") Long[] targetId);
+	public List<TestCaseLibraryNode> copyNodesToLibrary(@Id(DESTINATION_ID) long destinationId, @Ids(TARGET_ID) Long[] targetId);
 
 	@Override
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="destinationId")},
-			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="targetId", coercer=TCLNAndParentIdsCoercerForArray.class),
-							@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName="targetId", coercer=TestCaseLibraryIdsCoercerForArray.class)}
+			simplesLocks={@PreventConcurrent(entityType = TestCaseLibraryNode.class, paramName= DESTINATION_ID)},
+			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName= TARGET_ID, coercer=TCLNAndParentIdsCoercerForArray.class),
+							@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName= TARGET_ID, coercer=TestCaseLibraryIdsCoercerForArray.class)}
 			)
-	public void moveNodesToFolder(@Id("destinationId") long destinationId, @Ids("targetId") Long[] targetId);
+	public void moveNodesToFolder(@Id(DESTINATION_ID) long destinationId, @Ids(TARGET_ID) Long[] targetId);
 
 	@Override
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType = TestCaseLibrary.class, paramName="destinationId")},
-			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="targetId", coercer=TCLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName="targetId", coercer=TestCaseLibraryIdsCoercerForArray.class)}
+			simplesLocks={@PreventConcurrent(entityType = TestCaseLibrary.class, paramName= DESTINATION_ID)},
+			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName= TARGET_ID, coercer=TCLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName= TARGET_ID, coercer=TestCaseLibraryIdsCoercerForArray.class)}
 			)
-	void moveNodesToLibrary(@Id("destinationId") long destinationId, @Ids("targetId") Long[] targetId);
+	void moveNodesToLibrary(@Id(DESTINATION_ID) long destinationId, @Ids(TARGET_ID) Long[] targetId);
 
 	@Override
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="destinationId")},
-			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="targetId", coercer=TCLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName="targetId", coercer=TestCaseLibraryIdsCoercerForArray.class)}
+			simplesLocks={@PreventConcurrent(entityType = TestCaseLibraryNode.class, paramName= DESTINATION_ID)},
+			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName= TARGET_ID, coercer=TCLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName= TARGET_ID, coercer=TestCaseLibraryIdsCoercerForArray.class)}
 			)
-	void moveNodesToFolder(@Id("destinationId") long destinationId, @Ids("targetId") Long[] targetId, int position);
+	void moveNodesToFolder(@Id(DESTINATION_ID) long destinationId, @Ids(TARGET_ID) Long[] targetId, int position);
 
 	@Override
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType = TestCaseLibrary.class, paramName="destinationId")},
-			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="targetId", coercer=TCLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName="targetId", coercer=TestCaseLibraryIdsCoercerForArray.class)}
+			simplesLocks={@PreventConcurrent(entityType = TestCaseLibrary.class, paramName= DESTINATION_ID)},
+			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName= TARGET_ID, coercer=TCLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName= TARGET_ID, coercer=TestCaseLibraryIdsCoercerForArray.class)}
 			)
-	void moveNodesToLibrary(@Id("destinationId") long destinationId, @Ids("targetId") Long[] targetId, int position);
+	void moveNodesToLibrary(@Id(DESTINATION_ID) long destinationId, @Ids(TARGET_ID) Long[] targetId, int position);
 
 	@Override
 	@PreventConcurrents(
@@ -276,6 +279,6 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 					@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName="targetIds", coercer=TestCaseLibraryIdsCoercerForList.class)}
 			)
 	OperationReport deleteNodes(@Ids("targetIds") List<Long> targetIds);
-	
+
 	//####################### /PREVENT CONCURENCY OVERRIDES #########################//
 }

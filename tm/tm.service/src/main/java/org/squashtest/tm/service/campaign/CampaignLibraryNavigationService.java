@@ -52,6 +52,9 @@ import org.squashtest.tm.service.library.LibraryNavigationService;
 public interface CampaignLibraryNavigationService extends
 LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, CampaignLibraryFinderService {
 
+	String DESTINATION_ID = "destinationId";
+	String TARGET_ID = "targetId";
+
 	/**
 	 * Adds a Campaign to the root of the library. The custom fields will be created with their default value.
 	 *
@@ -95,8 +98,8 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 	@PreventConcurrent(entityType = CampaignLibraryNode.class)
 	void addCampaignToCampaignFolder(@Id long folderId, Campaign campaign, Map<Long, RawValue> customFieldValues);
 
-	@PreventConcurrent(entityType=CampaignLibraryNode.class,paramName="destinationId")
-	void moveIterationsWithinCampaign(@Id("destinationId")long destinationId, Long[] nodeIds, int position);
+	@PreventConcurrent(entityType=CampaignLibraryNode.class,paramName= DESTINATION_ID)
+	void moveIterationsWithinCampaign(@Id(DESTINATION_ID)long destinationId, Long[] nodeIds, int position);
 
 	/**
 	 * Adds a new iteration to a campaign. Returns the index of the new iteration.
@@ -194,51 +197,51 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 
 	@Override
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=CampaignLibraryNode.class,paramName="destinationId")},
+			simplesLocks={@PreventConcurrent(entityType=CampaignLibraryNode.class,paramName= DESTINATION_ID)},
 			batchsLocks={@BatchPreventConcurrent(entityType=CampaignLibrary.class, paramName="sourceNodesIds",coercer=CampaignLibraryIdsCoercerForArray.class),
 					@BatchPreventConcurrent(entityType=CampaignLibraryNode.class, paramName="sourceNodesIds",coercer=CLNAndParentIdsCoercerForArray.class)}
 			)
-	List<CampaignLibraryNode> copyNodesToFolder(@Id("destinationId") long destinationId,@Ids("sourceNodesIds") Long[] sourceNodesIds);
+	List<CampaignLibraryNode> copyNodesToFolder(@Id(DESTINATION_ID) long destinationId, @Ids("sourceNodesIds") Long[] sourceNodesIds);
 
 	@Override
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=CampaignLibrary.class,paramName="destinationId")},
-			batchsLocks={@BatchPreventConcurrent(entityType=CampaignLibrary.class, paramName="targetId",coercer=CampaignLibraryIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=CampaignLibraryNode.class, paramName="targetId",coercer=CLNAndParentIdsCoercerForArray.class)}
+			simplesLocks={@PreventConcurrent(entityType=CampaignLibrary.class,paramName= DESTINATION_ID)},
+			batchsLocks={@BatchPreventConcurrent(entityType=CampaignLibrary.class, paramName= TARGET_ID,coercer=CampaignLibraryIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType=CampaignLibraryNode.class, paramName= TARGET_ID,coercer=CLNAndParentIdsCoercerForArray.class)}
 			)
-	List<CampaignLibraryNode> copyNodesToLibrary(@Id("destinationId") long destinationId,@Ids("targetId") Long[] targetId);
+	List<CampaignLibraryNode> copyNodesToLibrary(@Id(DESTINATION_ID) long destinationId, @Ids(TARGET_ID) Long[] targetId);
 
 	@Override
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=CampaignLibraryNode.class,paramName="destinationId")},
-			batchsLocks={@BatchPreventConcurrent(entityType=CampaignLibrary.class, paramName="targetId",coercer=CampaignLibraryIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=CampaignLibraryNode.class, paramName="targetId",coercer=CLNAndParentIdsCoercerForArray.class)}
+			simplesLocks={@PreventConcurrent(entityType=CampaignLibraryNode.class,paramName= DESTINATION_ID)},
+			batchsLocks={@BatchPreventConcurrent(entityType=CampaignLibrary.class, paramName= TARGET_ID,coercer=CampaignLibraryIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType=CampaignLibraryNode.class, paramName= TARGET_ID,coercer=CLNAndParentIdsCoercerForArray.class)}
 			)
-	void moveNodesToFolder(@Id("destinationId") long destinationId,@Ids("targetId") Long[] targetId);
+	void moveNodesToFolder(@Id(DESTINATION_ID) long destinationId, @Ids(TARGET_ID) Long[] targetId);
 
 	@Override
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=CampaignLibraryNode.class,paramName="destinationId")},
-			batchsLocks={@BatchPreventConcurrent(entityType=CampaignLibrary.class, paramName="targetId",coercer=CampaignLibraryIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=CampaignLibraryNode.class, paramName="targetId",coercer=CLNAndParentIdsCoercerForArray.class)}
+			simplesLocks={@PreventConcurrent(entityType=CampaignLibraryNode.class,paramName= DESTINATION_ID)},
+			batchsLocks={@BatchPreventConcurrent(entityType=CampaignLibrary.class, paramName= TARGET_ID,coercer=CampaignLibraryIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType=CampaignLibraryNode.class, paramName= TARGET_ID,coercer=CLNAndParentIdsCoercerForArray.class)}
 			)
-	void moveNodesToFolder(@Id("destinationId") long destinationId,@Ids("targetId") Long[] targetId, int position);
+	void moveNodesToFolder(@Id(DESTINATION_ID) long destinationId, @Ids(TARGET_ID) Long[] targetId, int position);
 
 	@Override
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=CampaignLibrary.class,paramName="destinationId")},
-			batchsLocks={@BatchPreventConcurrent(entityType=CampaignLibrary.class, paramName="targetId",coercer=CampaignLibraryIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=CampaignLibraryNode.class, paramName="targetId",coercer=CLNAndParentIdsCoercerForArray.class)}
+			simplesLocks={@PreventConcurrent(entityType=CampaignLibrary.class,paramName= DESTINATION_ID)},
+			batchsLocks={@BatchPreventConcurrent(entityType=CampaignLibrary.class, paramName= TARGET_ID,coercer=CampaignLibraryIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType=CampaignLibraryNode.class, paramName= TARGET_ID,coercer=CLNAndParentIdsCoercerForArray.class)}
 			)
-	void moveNodesToLibrary(@Id("destinationId") long destinationId,@Ids("targetId") Long[] targetId);
+	void moveNodesToLibrary(@Id(DESTINATION_ID) long destinationId, @Ids(TARGET_ID) Long[] targetId);
 
 	@Override
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=CampaignLibrary.class,paramName="destinationId")},
-			batchsLocks={@BatchPreventConcurrent(entityType=CampaignLibrary.class, paramName="targetId",coercer=CampaignLibraryIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=CampaignLibraryNode.class, paramName="targetId",coercer=CLNAndParentIdsCoercerForArray.class)}
+			simplesLocks={@PreventConcurrent(entityType=CampaignLibrary.class,paramName= DESTINATION_ID)},
+			batchsLocks={@BatchPreventConcurrent(entityType=CampaignLibrary.class, paramName= TARGET_ID,coercer=CampaignLibraryIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType=CampaignLibraryNode.class, paramName= TARGET_ID,coercer=CLNAndParentIdsCoercerForArray.class)}
 			)
-	void moveNodesToLibrary(@Id("destinationId") long destinationId,@Ids("targetId") Long[] targetId, int position);
+	void moveNodesToLibrary(@Id(DESTINATION_ID) long destinationId, @Ids(TARGET_ID) Long[] targetId, int position);
 
 	@Override
 	@PreventConcurrents(
