@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
@@ -68,6 +69,7 @@ public class WebSecurityConfig {
 	 * Defines a global internal (dao based) authentication manager. This is the default authentication manager.
 	 */
 	@Configuration
+	@DependsOn("shaPasswordEncoder")
 	@ConditionalOnProperty(name = "authentication.provider", matchIfMissing = true, havingValue = "internal")
 	@Order(0) // WebSecurityConfigurerAdapter default order is 100, we need to init this before
 	public static class InternalAuthenticationConfig extends GlobalAuthenticationConfigurerAdapter {

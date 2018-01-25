@@ -21,7 +21,6 @@
 package org.squashtest.tm.service.internal.repository.hibernate;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sun.org.apache.xml.internal.serializer.utils.AttList;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.requirement.QRequirementVersion;
