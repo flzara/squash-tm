@@ -56,6 +56,9 @@ import static org.squashtest.tm.jooq.domain.Tables.*;
 @Transactional(readOnly = true)
 public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplayService {
 
+	private static final String COUNT_CHILD = "COUNT_CHILD";
+	private static final String RES_ID = "resId";
+
 	@Inject
 	DSLContext DSL;
 
@@ -103,7 +106,7 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 
 	private Map<Long, JsTreeNode> fetchAndBuildRequirementFoldersJsTreeNode(UserDto currentUser, RequirementLibraryNodeDistribution nodeDistribution) {
 		//fetch requirement folders
-		return DSL.select(RF.RLN_ID, RES.NAME, count(RLNR.ANCESTOR_ID).as("COUNT_CHILD")
+		return DSL.select(RF.RLN_ID, RES.NAME, count(RLNR.ANCESTOR_ID).as(COUNT_CHILD)
 			, REQUIREMENT_FOLDER_SYNC_EXTENDER.TYPE, REQUIREMENT_FOLDER_SYNC_EXTENDER.REMOTE_FOLDER_STATUS
 			, REMOTE_SYNCHRONISATION.LAST_SYNC_STATUS)
 			.from(RF)
@@ -118,12 +121,12 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 			.map(r -> {
 				String lastRemoteSyncStatus = r.get(REMOTE_SYNCHRONISATION.LAST_SYNC_STATUS);
 				if (lastRemoteSyncStatus != null) {
-					return buildSynchronisedFolder(r.get(RLN.RLN_ID), r.get(RES.NAME), "requirement-folders", r.get(REMOTE_SYNCHRONISATION.LAST_SYNC_STATUS), r.get(REQUIREMENT_FOLDER_SYNC_EXTENDER.TYPE), r.get("COUNT_CHILD", Integer.class), currentUser);
+					return buildSynchronisedFolder(r.get(RLN.RLN_ID), r.get(RES.NAME), "requirement-folders", r.get(REMOTE_SYNCHRONISATION.LAST_SYNC_STATUS), r.get(REQUIREMENT_FOLDER_SYNC_EXTENDER.TYPE), r.get(COUNT_CHILD, Integer.class), currentUser);
 				} else {
-					return buildFolder(r.get(RLN.RLN_ID), r.get(RES.NAME), "requirement-folders", r.get("COUNT_CHILD", Integer.class), currentUser);
+					return buildFolder(r.get(RLN.RLN_ID), r.get(RES.NAME), "requirement-folders", r.get(COUNT_CHILD, Integer.class), currentUser);
 				}
 			})
-			.collect(Collectors.toMap(jsTreeNode -> (Long) jsTreeNode.getAttr().get("resId"), Function.identity()));
+			.collect(Collectors.toMap(jsTreeNode -> (Long) jsTreeNode.getAttr().get(RES_ID), Function.identity()));
 	}
 
 	private JsTreeNode buildSynchronisedFolder(Long id, String name, String resType, String syncStatus, String syncFolderType, int childCount, UserDto currentUser) {
@@ -141,7 +144,7 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 			RES.NAME,
 			RV.REFERENCE, RV.REQUIREMENT_STATUS,
 			ILI.ICON_NAME,
-			count(RLNR.ANCESTOR_ID).as("COUNT_CHILD"))
+			count(RLNR.ANCESTOR_ID).as(COUNT_CHILD))
 			.from(REQ)
 			.innerJoin(RES).on(RES.RES_ID.eq(REQ.CURRENT_VERSION_ID))
 			.innerJoin(RV).on(RES.RES_ID.eq(RV.RES_ID))
@@ -154,7 +157,7 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 			.map(r -> {
 				return buildRequirementJsTreeNode(currentUser, allMilestonesForReqs, milestonesModifiable, activeMilestoneId, r);
 			})
-			.collect(Collectors.toMap(jsTreeNode -> (Long) jsTreeNode.getAttr().get("resId"), Function.identity()));
+			.collect(Collectors.toMap(jsTreeNode -> (Long) jsTreeNode.getAttr().get(RES_ID), Function.identity()));
 	}
 
 	private JsTreeNode buildRequirementJsTreeNode(UserDto currentUser, Map<Long, List<Long>> allMilestonesForReqs, List<Long> milestonesModifiable, Long activeMilestoneId, Record7<Long, String, String, String, String, String, Integer> r) {
@@ -168,7 +171,7 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 			iconName = "def_cat_noicon";
 		}
 		return buildRequirement(id, r.get(RES.NAME), "requirements", r.get(RV.REFERENCE),
-			r.get(REQ.MODE), iconName, isReqVersionModifiable, r.get("COUNT_CHILD", Integer.class),
+			r.get(REQ.MODE), iconName, isReqVersionModifiable, r.get(COUNT_CHILD, Integer.class),
 			currentUser, milestonesNumber, isMilestoneModifiable, isReqDontAllowClick, activeMilestoneId);
 	}
 
@@ -178,7 +181,7 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 			RES.NAME,
 			RV.REFERENCE, RV.REQUIREMENT_STATUS,
 			ILI.ICON_NAME,
-			count(RLNR.ANCESTOR_ID).as("COUNT_CHILD"))
+			count(RLNR.ANCESTOR_ID).as(COUNT_CHILD))
 			.from(REQ)
 			.innerJoin(RV).on(RV.REQUIREMENT_ID.eq(REQ.RLN_ID))
 			.innerJoin(MRV).on(MRV.REQ_VERSION_ID.eq(RV.RES_ID))
@@ -193,7 +196,7 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 			.map(r -> {
 				return buildRequirementJsTreeNode(currentUser, allMilestonesForReqs, milestonesModifiable, activeMilestoneId, r);
 			})
-			.collect(Collectors.toMap(jsTreeNode -> (Long) jsTreeNode.getAttr().get("resId"), Function.identity()));
+			.collect(Collectors.toMap(jsTreeNode -> (Long) jsTreeNode.getAttr().get(RES_ID), Function.identity()));
 	}
 
 	private RequirementLibraryNodeDistribution getRepartition(Set<Long> childrenIds) {
@@ -221,7 +224,7 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 										String isMilestoneModifiable, boolean isReqDontAllowClick, Long activeMilestoneId) {
 		Map<String, Object> attr = new HashMap<>();
 		State state;
-		attr.put("resId", id);
+		attr.put(RES_ID, id);
 		attr.put("resType", restype);
 		attr.put("name", name);
 		attr.put("id", "Requirement-" + id);
@@ -393,7 +396,7 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 
 	@Override
 	protected boolean passesMilestoneFilter(JsTreeNode node, Long activeMilestoneId) {
-		return (node != null && (NO_ACTIVE_MILESTONE_ID.equals(activeMilestoneId) || node.getAttr().get("rel").equals("folder") || nodeHasActiveMilestone(nodeLinkedToMilestone, (Long) node.getAttr().get("resId")) || reqsDontAllowClick.contains(node.getAttr().get("resId"))));
+		return (node != null && (NO_ACTIVE_MILESTONE_ID.equals(activeMilestoneId) || node.getAttr().get("rel").equals("folder") || nodeHasActiveMilestone(nodeLinkedToMilestone, (Long) node.getAttr().get(RES_ID)) || reqsDontAllowClick.contains(node.getAttr().get(RES_ID))));
 	}
 
 	@Override

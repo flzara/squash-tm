@@ -91,6 +91,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomTestCaseModificationServiceImpl.class);
 	private static final String WRITE_TC_OR_ROLE_ADMIN = "hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN;
+	private static final String WRITE_PARENT_TC_OR_ROLE_ADMIN = "hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN;
 	private static final String READ_TC_OR_ROLE_ADMIN = "hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')" + OR_HAS_ROLE_ADMIN;
 
 	@Inject
@@ -147,7 +148,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	/* *************** TestCase section ***************************** */
 
 	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public void rename(long testCaseId, String newName) throws DuplicateNameException {
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		testCaseManagementService.renameNode(testCaseId, newName);
@@ -160,7 +161,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public void changeReference(long testCaseId, String reference) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		testCase.setReference(reference);
@@ -173,7 +174,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public void changeImportance(long testCaseId, TestCaseImportance importance) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		testCase.setImportance(importance);
@@ -189,7 +190,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(READ_TC_OR_ROLE_ADMIN)
 	@Transactional(readOnly = true)
 	public List<TestStep> findStepsByTestCaseId(long testCaseId) {
 
@@ -200,7 +201,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	/* *************** TestStep section ***************************** */
 
 	@Override
-	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
 	public ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep) {
 		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
@@ -215,7 +216,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
 	public ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep, int index) {
 		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
@@ -230,7 +231,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
 	public ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep,
 											Map<Long, RawValue> customFieldValues) {
@@ -242,7 +243,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
 	public ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep,
 											Map<Long, RawValue> customFieldValues, int index) {
@@ -345,7 +346,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(READ_TC_OR_ROLE_ADMIN)
 	@Transactional(readOnly = true)
 	public PagedCollectionHolder<List<TestStep>> findStepsByTestCaseIdFiltered(long testCaseId, Paging paging) {
 		List<TestStep> list = testCaseDao.findAllStepsByIdFiltered(testCaseId, paging);
