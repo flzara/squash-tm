@@ -29,6 +29,7 @@ import javax.inject.Named;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -44,7 +45,9 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 	@Inject
 	@Named("squashtest.core.security.JdbcUserDetailsManager")
 	private SquashUserDetailsManager userManager;
+
 	@Inject
+	@Lazy
 	private PasswordEncoder encoder;
 
 	private Object salt = null;

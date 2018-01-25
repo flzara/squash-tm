@@ -69,8 +69,6 @@ import javax.inject.Inject;
 @DependsOn(TransactionManagementConfigUtils.TRANSACTION_ASPECT_BEAN_NAME)
 public class TmServiceConfig {
 	@Inject
-	private PasswordEncoder passwordEncoder;
-	@Inject
 	private TestCaseLibraryDao testCaseLibraryDao;
 	@Inject
 	private RequirementLibraryDao requirementLibraryDao;

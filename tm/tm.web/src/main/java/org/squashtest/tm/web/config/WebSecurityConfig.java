@@ -70,7 +70,6 @@ public class WebSecurityConfig {
 	 * Defines a global internal (dao based) authentication manager. This is the default authentication manager.
 	 */
 	@Configuration
-	@DependsOn("shaPasswordEncoder")
 	@ConditionalOnProperty(name = "authentication.provider", matchIfMissing = true, havingValue = "internal")
 	@Order(0) // WebSecurityConfigurerAdapter default order is 100, we need to init this before
 	public static class InternalAuthenticationConfig extends GlobalAuthenticationConfigurerAdapter {
@@ -78,7 +77,6 @@ public class WebSecurityConfig {
 		private SquashUserDetailsManager squashUserDetailsManager;
 
 		@Inject
-		@Lazy
 		private PasswordEncoder passwordEncoder;
 
 		@Override
