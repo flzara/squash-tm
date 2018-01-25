@@ -285,8 +285,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.requirement.RequirementLibrary' , 'CREATE') "
-		+ OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(CREATE_REQLIBRARY_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType=RequirementLibrary.class)
 	public Requirement addRequirementToRequirementLibrary(@Id long libraryId, @NotNull NewRequirementVersionDto newVersion, List<Long> milestoneIds) {
 		RequirementLibrary library = requirementLibraryDao.findById(libraryId);
@@ -312,8 +311,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.requirement.RequirementLibrary' , 'CREATE') "
-		+ OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(CREATE_REQLIBRARY_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType=RequirementLibrary.class)
 	public Requirement addRequirementToRequirementLibrary(@Id long libraryId, @NotNull Requirement requirement, List<Long> milestoneIds) {
 		RequirementLibrary library = requirementLibraryDao.findById(libraryId);
@@ -482,8 +480,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement' , 'READ') "
-		+ OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(READ_REQUIREMENT_OR_ROLE_ADMIN)
 	public List<Requirement> findChildrenRequirements(long requirementId) {
 		return requirementDao.findChildrenRequirements(requirementId);
 	}

@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -74,12 +72,15 @@ import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
+import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 
 import java.util.Optional;
+
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.VerifiedRequirementsManagerService")
 @Transactional
@@ -255,8 +256,7 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	 * (non-Javadoc)
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')"
-		+ OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(READ_TC_OR_ROLE_ADMIN)
 	public PagedCollectionHolder<List<VerifiedRequirement>> findAllDirectlyVerifiedRequirementsByTestCaseId(
 		long testCaseId, PagingAndSorting pagingAndSorting) {
 		List<RequirementVersionCoverage> reqVersionCoverages = requirementVersionCoverageDao
@@ -323,13 +323,11 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep' , 'LINK')"
-		+ OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(LINK_TESTSTEP_OR_ROLE_ADMIN)
 	public Collection<VerifiedRequirementException> addVerifiedRequirementsToTestStep(
-List<Long> requirementsIds,
-			long testStepId) {
-		List<RequirementVersion> requirementVersions = findRequirementVersions(
-requirementsIds);
+		List<Long> requirementsIds, long testStepId) {
+
+		List<RequirementVersion> requirementVersions = findRequirementVersions(requirementsIds);
 		// init rejections
 		Collection<VerifiedRequirementException> rejections = new ArrayList<>();
 		// check if list not empty
@@ -399,12 +397,10 @@ requirementsIds);
 	}
 
 	/**
-	 * @see VerifiedRequirementsManagerService#addVerifiedRequirementVersionToTestStep(long,
-	 *      long);
+	 * @see VerifiedRequirementsManagerService#addVerifiedRequirementVersionToTestStep(long, long);
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep' , 'LINK') and hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion' , 'LINK')"
-		+ OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(LINK_TESTSTEP + " and " + LINK_REQVERSION + OR_HAS_ROLE_ADMIN)
 	public Collection<VerifiedRequirementException> addVerifiedRequirementVersionToTestStep(
 		long requirementVersionId, long testStepId) {
 		ActionTestStep step = testStepDao.findActionTestStepById(testStepId);
@@ -590,8 +586,7 @@ List<Long> requirementsIds) {
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion' , 'READ')"
-		+ OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(READ_REQVERSION_OR_ROLE_ADMIN)
 	public void findCoverageStat(Long requirementVersionId, List<Long> iterationsIds, RequirementCoverageStat stats) {
 
 		RequirementVersion mainVersion = requirementVersionDao.findOne(requirementVersionId);

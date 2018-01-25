@@ -374,28 +374,28 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#rvId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'READ')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(READ_REQVERSION_OR_ROLE_ADMIN)
 	public PagedCollectionHolder<List<RequirementVersionIssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForRequirmentVersion(
-		 Long rvId, String panelSource, PagingAndSorting sorter) {
-		return requirementVersionIssueFinder.findSorted(rvId, panelSource, sorter);
+		 Long requirementVersionId, String panelSource, PagingAndSorting sorter) {
+		return requirementVersionIssueFinder.findSorted(requirementVersionId, panelSource, sorter);
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#tcId, 'org.squashtest.tm.domain.testcase.TestCase', 'READ')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(READ_TC_OR_ROLE_ADMIN)
 	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForTestCase(
-		Long tcId, PagingAndSorting sorter) {
-		return issueFinder("testCaseIssueFinder").findSorted(tcId, sorter);
+		Long testCaseId, PagingAndSorting sorter) {
+		return issueFinder("testCaseIssueFinder").findSorted(testCaseId, sorter);
 	}
 
 
 	@Override
-	@PreAuthorize("hasPermission(#tcId, 'org.squashtest.tm.domain.testcase.TestCase', 'READ')" + OR_HAS_ROLE_ADMIN)
-	public List<IssueOwnership<RemoteIssueDecorator>> findIssueOwnershipForTestCase(long tcId) {
+	@PreAuthorize(READ_TC_OR_ROLE_ADMIN)
+	public List<IssueOwnership<RemoteIssueDecorator>> findIssueOwnershipForTestCase(long testCaseId) {
 
 		// create filtredCollection of IssueOwnership<BTIssue>
 		DefaultPagingAndSorting sorter = new DefaultPagingAndSorting("Issue.id", true);
 
-		return findSortedIssueOwnershipForTestCase(tcId, sorter).getPagedItems();
+		return findSortedIssueOwnershipForTestCase(testCaseId, sorter).getPagedItems();
 	}
 
 

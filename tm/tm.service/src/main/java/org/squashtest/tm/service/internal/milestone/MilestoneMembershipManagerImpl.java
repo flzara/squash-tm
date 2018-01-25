@@ -148,14 +148,14 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 
 	@Override
 	@PreAuthorize(READ_REQVERSION_OR_ROLE_ADMIN)
-	public Collection<Milestone> findAssociableMilestonesToRequirementVersion(long versionId) {
-		return milestoneDao.findAssociableMilestonesForRequirementVersion(versionId);
+	public Collection<Milestone> findAssociableMilestonesToRequirementVersion(long requirementVersionId) {
+		return milestoneDao.findAssociableMilestonesForRequirementVersion(requirementVersionId);
 	}
 
 	@Override
 	@PreAuthorize(READ_REQVERSION_OR_ROLE_ADMIN)
-	public Collection<Milestone> findMilestonesForRequirementVersion(long versionId) {
-		return milestoneDao.findMilestonesForRequirementVersion(versionId);
+	public Collection<Milestone> findMilestonesForRequirementVersion(long requirementVersionId) {
+		return milestoneDao.findMilestonesForRequirementVersion(requirementVersionId);
 	}
 
 	@Override
