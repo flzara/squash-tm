@@ -20,14 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.generic;
 
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.web.ErrorAttributes;
 import org.springframework.boot.autoconfigure.web.ErrorController;
@@ -39,10 +31,17 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.squashtest.tm.service.feature.FeatureManager;
 
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 /*
  *https://gist.github.com/jonikarppinen/662c38fb57a23de61c8b
  */
 
+// XSS OK
 @Controller
 public class SquashErrorController implements ErrorController {
 
@@ -59,11 +58,11 @@ public class SquashErrorController implements ErrorController {
 
 	/*
 	 * This method will be called when any non handled exception occurs. But we cannot just rethrow that exception :
-     * quis custodiet ipsos custodes? There is no other error handler after this one.
-     *
-     *   So we must manually handle the job of printing the exception.
-     *
-     */
+	 * quis custodiet ipsos custodes? There is no other error handler after this one.
+	 *
+	 *   So we must manually handle the job of printing the exception.
+	 *
+	 */
 	@RequestMapping(value = PATH)
 	public String error(HttpServletRequest request, HttpServletResponse response, Model model) throws Throwable {
 

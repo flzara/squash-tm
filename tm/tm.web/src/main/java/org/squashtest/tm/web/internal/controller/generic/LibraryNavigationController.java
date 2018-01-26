@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.generic;
 
-import java.util.Optional;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.export.JRCsvExporterParameter;
@@ -66,6 +65,8 @@ import java.util.*;
  * @param <NODE>
  * @author Gregory Fouquet
  */
+
+// XSS OK
 public abstract class LibraryNavigationController<LIBRARY extends Library<? extends NODE>, FOLDER extends Folder<? extends NODE>, NODE extends LibraryNode> {
 	/**
 	 * Should return a library navigation service.
@@ -102,8 +103,6 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	@ResponseBody
 	@RequestMapping(value = "/drives/{libraryId}/content", method = RequestMethod.GET)
 	public final List<JsTreeNode> getRootContentTreeModel(@PathVariable long libraryId) {
-//		List<NODE> nodes = getLibraryNavigationService().findLibraryRootContent(libraryId);
-//		return createJsTreeModel(nodes);
 		Long activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId().get();
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 		Collection<JsTreeNode> nodes = workspaceDisplayService().getNodeContent(libraryId, currentUser, "library", activeMilestoneId);
@@ -150,8 +149,6 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	@ResponseBody
 	@RequestMapping(value = "/folders/{folderId}/content", method = RequestMethod.GET)
 	public final List<JsTreeNode> getFolderContentTreeModel(@PathVariable long folderId) {
-		//List<NODE> nodes = getLibraryNavigationService().findFolderContent(folderId);
-		//return createJsTreeModel(nodes);
 		Long activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId().get();
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 		Collection<JsTreeNode> nodes = workspaceDisplayService().getNodeContent(folderId, currentUser, "folder", activeMilestoneId);

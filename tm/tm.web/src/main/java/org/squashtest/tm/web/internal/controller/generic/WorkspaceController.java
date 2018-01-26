@@ -69,6 +69,7 @@ import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
+// XSS OK
 public abstract class WorkspaceController<LN extends LibraryNode> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(WorkspaceController.class);
 
@@ -247,7 +248,7 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	 * As squash TM 1.15, user preference are small so we pass all the object to the client.
 	 * If user pref become a too big map, please do add-hoc implementation of this method in subclass of this controller
 	 *
-	 * @return Map<String   ,   String> All user preferences
+	 * @return Map<String       ,       String> All user preferences
 	 */
 	protected Map<String, String> getWorkspaceUserPref() {
 		return partyPreferenceService.findPreferencesForCurrentUser();

@@ -27,9 +27,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+// XSS OK
 @Controller
 public class SessionPingController {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(ObjectAccessController.class);
 
 	@RequestMapping(value = "/ping", method = RequestMethod.GET)

@@ -20,14 +20,17 @@
  */
 package org.squashtest.tm.web.internal.controller.generic;
 
+import org.squashtest.tm.web.internal.controller.widget.AoColumnDef;
+
 import java.util.List;
 
-import org.squashtest.tm.web.internal.controller.widget.AoColumnDef;
 /**
  * Help creates the list of objects representing aoColumnDefs to give to the DataTable jquery plugin.
  * @author mpagnon
  *
  */
+
+// XSS OK
 public class DataTableColumnDefHelper {
 	protected void addATargets(List<AoColumnDef> columns2) {
 		for (int i = 0; i < columns2.size(); i++) {

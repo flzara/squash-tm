@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.generic;
 
-import java.security.Principal;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -40,6 +34,11 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.web.internal.interceptor.openedentity.OpenedEntities;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.security.Principal;
 
 @Controller
 public class ObjectAccessController {
@@ -66,18 +65,21 @@ public class ObjectAccessController {
 		String contextKey = Campaign.class.getSimpleName();
 		removeViewForObject(id, request, contextKey);
 	}
+
 	@RequestMapping(value = "/iterations/{id}/opened-entity", method = RequestMethod.DELETE)
 	@ResponseBody
 	public void leaveIteration(@PathVariable("id") Long id, HttpServletRequest request) {
 		String contextKey = Iteration.class.getSimpleName();
 		removeViewForObject(id, request, contextKey);
 	}
+
 	@RequestMapping(value = "/test-suites/{id}/opened-entity", method = RequestMethod.DELETE)
 	@ResponseBody
 	public void leaveTestSuite(@PathVariable("id") Long id, HttpServletRequest request) {
 		String contextKey = TestSuite.class.getSimpleName();
 		removeViewForObject(id, request, contextKey);
 	}
+
 	@RequestMapping(value = "/executions/{id}/opened-entity", method = RequestMethod.DELETE)
 	@ResponseBody
 	public void leaveExecution(@PathVariable("id") Long id, HttpServletRequest request) {
@@ -91,11 +93,11 @@ public class ObjectAccessController {
 		if (session != null) {
 			ServletContext context = request.getSession().getServletContext();
 			if (context != null && user != null) {
-				LOGGER.debug("context = "+context);
-				LOGGER.debug("leave "+contextKey+" #" + id);
-								LOGGER.debug(user.getName());
+				LOGGER.debug("context = " + context);
+				LOGGER.debug("leave " + contextKey + " #" + id);
+				LOGGER.debug(user.getName());
 				OpenedEntities openedEnities = (OpenedEntities) context.getAttribute(contextKey);
-				if(openedEnities != null){
+				if (openedEnities != null) {
 					openedEnities.removeView(user.getName(), id);
 				}
 			}

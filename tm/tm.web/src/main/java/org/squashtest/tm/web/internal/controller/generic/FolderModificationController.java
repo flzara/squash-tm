@@ -20,26 +20,23 @@
  */
 package org.squashtest.tm.web.internal.controller.generic;
 
-import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
-
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.library.FolderModificationService;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Set;
+
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 public abstract class FolderModificationController<FOLDER extends Folder<?>> {
 
@@ -50,12 +47,12 @@ public abstract class FolderModificationController<FOLDER extends Folder<?>> {
 	protected CustomReportDashboardService customReportDashboardService;
 
 	@RequestMapping(method = RequestMethod.GET)
-	public  ModelAndView showFolder(@PathVariable long folderId, HttpServletRequest request) {
+	public ModelAndView showFolder(@PathVariable long folderId, HttpServletRequest request) {
 		FOLDER folder = getFolderModificationService().findFolder(folderId);
 
 		ModelAndView mav = new ModelAndView("fragment/generics/edit-folder");
 		mav.addObject("folder", folder);
-		mav.addObject("updateUrl", getUpdateUrl(request.getServletPath()  + StringUtils.defaultString(request.getPathInfo())));
+		mav.addObject("updateUrl", getUpdateUrl(request.getServletPath() + StringUtils.defaultString(request.getPathInfo())));
 		mav.addObject("workspaceName", getWorkspaceName());
 		mav.addObject("attachments", findAttachments(folder));
 
@@ -64,25 +61,25 @@ public abstract class FolderModificationController<FOLDER extends Folder<?>> {
 		boolean shouldShowDashboard = customReportDashboardService.shouldShowFavoriteDashboardInWorkspace(workspace);
 		boolean canShowDashboard = customReportDashboardService.canShowDashboardInWorkspace(workspace);
 
-		mav.addObject("shouldShowDashboard",shouldShowDashboard);
+		mav.addObject("shouldShowDashboard", shouldShowDashboard);
 		mav.addObject("canShowDashboard", canShowDashboard);
 
 		return mav;
 	}
 
 	protected abstract FolderModificationService<FOLDER> getFolderModificationService();
+
 	protected abstract String getWorkspaceName();
 
 
 	//might look like a bit of overhead but our class is now testable.
-	protected Set<Attachment> findAttachments(FOLDER folder){
+	protected Set<Attachment> findAttachments(FOLDER folder) {
 		return attachmentsHelper.findAttachments(folder);
 	}
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.DELETE)
-	public
-	String removeFolder(@PathVariable long folderId) {
+	public String removeFolder(@PathVariable long folderId) {
 
 		getFolderModificationService().removeFolder(folderId);
 		return "ok";
@@ -91,21 +88,19 @@ public abstract class FolderModificationController<FOLDER extends Folder<?>> {
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, params = {"newName"})
-	public
-	Object renameFolder(@RequestParam("newName") String newName,
-						@PathVariable long folderId) {
+	public Object renameFolder(@RequestParam("newName") String newName,
+							   @PathVariable long folderId) {
 
 		getFolderModificationService().renameFolder(folderId, newName);
-		return new RenameModel(newName);
+		return new RenameModel(HtmlUtils.htmlEscape(newName));
 
 	}
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, params = {"id", VALUE})
-	public
-	String updateDescription(@PathVariable long folderId, @RequestParam(VALUE) String newDescription) {
+	public String updateDescription(@PathVariable long folderId, @RequestParam(VALUE) String newDescription) {
 		getFolderModificationService().updateFolderDescription(folderId, newDescription);
-		return newDescription;
+		return HTMLCleanupUtils.cleanHtml(newDescription);
 	}
 
 	/***
