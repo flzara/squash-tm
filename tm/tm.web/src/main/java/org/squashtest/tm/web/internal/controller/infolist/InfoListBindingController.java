@@ -31,25 +31,26 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.service.infolist.InfoListBindingManagerService;
 import org.squashtest.tm.web.internal.helper.JEditablePostParams;
 
+//XSS OK
 @Controller
 @RequestMapping("/info-list-binding")
 public class InfoListBindingController {
 
 	@Inject
 	private InfoListBindingManagerService service;
-	
+
 	@RequestMapping(value="/project/{projectId}/category", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
 	@ResponseBody
 	public void bindCategoryToProject(@PathVariable Long projectId, @RequestParam(JEditablePostParams.VALUE) Long infoListId) {
 		service.bindListToProjectReqCategory(infoListId, projectId);
 	}
-	
+
 	@RequestMapping(value="/project/{projectId}/nature", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
 	@ResponseBody
 	public void bindNatureToProject(@PathVariable Long projectId, @RequestParam(JEditablePostParams.VALUE) Long infoListId) {
 		service.bindListToProjectTcNature(infoListId, projectId);
 	}
-	
+
 	@RequestMapping(value="/project/{projectId}/type", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
 	@ResponseBody
 	public void bindTypeToProject(@PathVariable Long projectId, @RequestParam(JEditablePostParams.VALUE) Long infoListId) {

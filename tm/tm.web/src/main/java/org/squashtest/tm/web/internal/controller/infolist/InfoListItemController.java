@@ -20,26 +20,22 @@
  */
 package org.squashtest.tm.web.internal.controller.infolist;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.service.infolist.InfoListItemManagerService;
+import org.squashtest.tm.service.internal.dto.json.JsonInfoListItem;
 import org.squashtest.tm.web.exception.ResourceNotFoundException;
 import org.squashtest.tm.web.internal.helper.JEditablePostParams;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.model.builder.JsonInfoListBuilder;
-import org.squashtest.tm.service.internal.dto.json.JsonInfoListItem;
 import org.squashtest.tm.web.internal.util.IconLibrary;
 
+import javax.inject.Inject;
+import java.util.List;
+
+// XSS OK
 @Controller
 @RequestMapping("/info-list-items")
 public class InfoListItemController {
@@ -49,29 +45,29 @@ public class InfoListItemController {
 	@Inject
 	private JsonInfoListBuilder jsonBuilder;
 
-	@RequestMapping(value = "/{infoListItemId}", method = RequestMethod.POST, params = { "id=info-list-item-label",
-			JEditablePostParams.VALUE })
+	@RequestMapping(value = "/{infoListItemId}", method = RequestMethod.POST, params = {"id=info-list-item-label",
+		JEditablePostParams.VALUE})
 	@ResponseBody
 	public String changeLabel(@PathVariable Long infoListItemId, @RequestParam(JEditablePostParams.VALUE) String label) {
 		listItemManager.changeLabel(infoListItemId, label);
 		return HtmlUtils.htmlEscape(label);
 	}
 
-	@RequestMapping(value = "/{infoListItemId}", method = RequestMethod.POST, params = { "id=info-list-item-code",
-			JEditablePostParams.VALUE })
+	@RequestMapping(value = "/{infoListItemId}", method = RequestMethod.POST, params = {"id=info-list-item-code",
+		JEditablePostParams.VALUE})
 	@ResponseBody
 	public String changeCode(@PathVariable Long infoListItemId, @RequestParam(JEditablePostParams.VALUE) String code) {
 		listItemManager.changeCode(infoListItemId, code);
 		return HtmlUtils.htmlEscape(code);
 	}
 
-	@RequestMapping(value = "/{infoListItemId}", method = RequestMethod.POST, params = { "id=info-list-item-default" })
+	@RequestMapping(value = "/{infoListItemId}", method = RequestMethod.POST, params = {"id=info-list-item-default"})
 	@ResponseBody
 	public void changeDefault(@PathVariable Long infoListItemId) {
 		listItemManager.changeDefault(infoListItemId);
 	}
 
-	@RequestMapping(value = "/{infoListItemId}", method = RequestMethod.POST, params = { "id=info-list-item-icon" })
+	@RequestMapping(value = "/{infoListItemId}", method = RequestMethod.POST, params = {"id=info-list-item-icon"})
 	@ResponseBody
 	public void changeIcon(@PathVariable Long infoListItemId, @RequestParam(JEditablePostParams.VALUE) String icon) {
 		listItemManager.changeIcon(infoListItemId, icon);
@@ -84,7 +80,7 @@ public class InfoListItemController {
 		return listItemManager.isUsed(infoListItemId);
 	}
 
-	@RequestMapping(value="/code/{code}", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
+	@RequestMapping(value = "/code/{code}", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	@ResponseBody
 	public JsonInfoListItem getItemByCode(@PathVariable String code) {
 		InfoListItem item = listItemManager.findByCode(code);

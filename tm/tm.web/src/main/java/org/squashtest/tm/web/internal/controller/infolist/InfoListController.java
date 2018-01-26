@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.swing.text.html.HTML;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -56,6 +58,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.service.internal.dto.json.JsonInfoListItem;
 
+// XSS OK
 @Controller
 @RequestMapping("/info-lists")
 public class InfoListController {
@@ -141,9 +144,14 @@ public class InfoListController {
 	@RequestMapping(value = "/items/code/{code}", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON, params = "format=exists")
 	@ResponseBody
 	public Map<String, Object> doesItemExist(@PathVariable String code) {
-		InfoListItem item = infoListItemManager.findByCode(code);
-
+		InfoListItem item = null;
 		Map<String, Object> res = new HashMap<>(1);
+		try {
+			item = infoListItemManager.findByCode(code);
+		} catch (NoResultException e) {
+			res.put("exists", false);
+		}
+
 		res.put("exists", item != null);
 
 		return res;
@@ -203,7 +211,7 @@ public class InfoListController {
 	@RequestMapping(value = "/{infoListId}/isUsed", method = RequestMethod.GET)
 	@ResponseBody
 	public boolean isUsed(@PathVariable long infoListId) {
-		return infoListManager.isUsedByOneOrMoreProject(infoListId);
+		 return infoListManager.isUsedByOneOrMoreProject(infoListId);
 	}
 
 	@RequestMapping(value = "/{infoListIds}", method = RequestMethod.DELETE)
@@ -246,8 +254,8 @@ public class InfoListController {
 			data.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 			data.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex() + 1);
 			data.put("default", item.isDefault());
-			data.put("label", item.getLabel());
-			data.put("code", item.getCode());
+			data.put("label", HtmlUtils.htmlEscape(item.getLabel()));
+			data.put("code", HtmlUtils.htmlEscape(item.getCode()));
 			data.put("iconName", item.getIconName());
 			data.put(DataTableModelConstants.DEFAULT_EMPTY_ICON_HOLDER_KEY, "");
 			data.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");

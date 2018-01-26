@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.SystemInfoListCode;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -40,16 +41,17 @@ import org.squashtest.tm.service.project.GenericProjectFinder;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
+//XSS OK
 @Controller
 @RequestMapping("administration/projects/{projectId}/infoList-binding")
 public class InfoListBindingManagerController {
 
 	@Inject
 	private GenericProjectFinder projectService;
-	
+
 	@Inject
 	private InfoListFinderService infoListService;
-	
+
 	@Inject
 	private InternationalizationHelper i18n;
 
@@ -61,8 +63,8 @@ public class InfoListBindingManagerController {
 		List<InfoList> infoLists = infoListService.findAllUserLists();
 		mav.addObject("proj", project);
 		mav.addObject("category", buildCategoryData(infoLists, locale));
-		mav.addObject("nature",buildNatureData(infoLists, locale));
-		mav.addObject("type",buildTypeData(infoLists, locale));
+		mav.addObject("nature", buildNatureData(infoLists, locale));
+		mav.addObject("type", buildTypeData(infoLists, locale));
 		return mav;
 	}
 
@@ -80,16 +82,16 @@ public class InfoListBindingManagerController {
 		InfoList defaultList = infoListService.findByCode(SystemInfoListCode.REQUIREMENT_CATEGORY.getCode());
 		return buildComboData(infoLists, locale, defaultList);
 	}
-	
-	private String buildComboData(List<InfoList> infoLists, Locale locale, InfoList defaultList){
+
+	private String buildComboData(List<InfoList> infoLists, Locale locale, InfoList defaultList) {
 		Map<String, String> result = new LinkedHashMap<>();
 		//Add _ before the id so jeditable doesn't reorder our list
 		result.put("_" + defaultList.getId().toString(), i18n.internationalize(defaultList.getLabel(), locale));
-		for (InfoList list : infoLists){
+		for (InfoList list : infoLists) {
 			//Add _ before the id so jeditable doesn't reorder our list
-			result.put("_" +list.getId().toString(), list.getLabel());
+			result.put("_" + list.getId().toString(), HtmlUtils.htmlEscape(list.getLabel()));
 		}
-		return 	JsonHelper.marshall(result);	
+		return JsonHelper.marshall(result);
 	}
 
 }
