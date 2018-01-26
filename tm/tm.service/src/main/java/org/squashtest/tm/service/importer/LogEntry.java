@@ -159,6 +159,28 @@ public class LogEntry implements Comparable<LogEntry> {
 		}
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		LogEntry logEntry = (LogEntry) o;
+
+		if (!line.equals(logEntry.line)) return false;
+		if (status != logEntry.status) return false;
+		if (!i18nError.equals(logEntry.i18nError)) return false;
+		return Arrays.deepEquals(errorArgs, logEntry.errorArgs);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = line.hashCode();
+		result = 31 * result + status.hashCode();
+		result = 31 * result + i18nError.hashCode();
+		result = 31 * result + Arrays.hashCode(errorArgs);
+		return result;
+	}
+
 	public Integer getLine() {
 		return line;
 	}
