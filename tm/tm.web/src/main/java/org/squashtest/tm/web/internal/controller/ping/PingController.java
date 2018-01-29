@@ -20,28 +20,29 @@
  */
 package org.squashtest.tm.web.internal.controller.ping;
 
-import java.util.HashMap;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.HashMap;
+
+//XSS OK
 @Controller
 public class PingController {
-    @RequestMapping(value = "/isSquashAlive", method=RequestMethod.GET, produces={"application/json"})
-    @ResponseBody
-    Object ping(){  
-        HashMap<String, String> result = new HashMap<>();
-        result.put("isAlive", "true");
-        
-        return result;
-    }
-    
-    @RequestMapping(value = "/isSquashAlive", method=RequestMethod.GET)
-    @ResponseBody
-    Object pingHTML(){    
-        return "Squash is Alive!";
-    }
-    
+	@RequestMapping(value = "/isSquashAlive", method = RequestMethod.GET, produces = {"application/json"})
+	@ResponseBody
+	Object ping() {
+		HashMap<String, String> result = new HashMap<>();
+		result.put("isAlive", "true");
+
+		return result;
+	}
+
+	@RequestMapping(value = "/isSquashAlive", method = RequestMethod.GET)
+	@ResponseBody
+	Object pingHTML() {
+		return "Squash is Alive!";
+	}
+
 }
