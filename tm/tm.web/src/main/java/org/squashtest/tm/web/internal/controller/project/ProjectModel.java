@@ -22,33 +22,35 @@ package org.squashtest.tm.web.internal.controller.project;
 
 import org.squashtest.tm.domain.project.GenericProject;
 
-
-
+// XSS OK
 public class ProjectModel {
 
 	private Long id;
 	private String name;
-	
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public Long getId() {
 		return id;
 	}
+
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
+
 	public ProjectModel(Long id, String name) {
 		super();
 		this.id = id;
 		this.name = name;
 	}
-	
-	public ProjectModel(GenericProject project){
+
+	public ProjectModel(GenericProject project) {
 		super();
 		this.id = project.getId();
 		this.name = project.getName();

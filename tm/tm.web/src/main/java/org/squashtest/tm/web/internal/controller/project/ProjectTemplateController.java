@@ -20,20 +20,11 @@
  */
 package org.squashtest.tm.web.internal.controller.project;
 
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.validation.Valid;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponents;
 import org.squashtest.tm.domain.NamedReference;
@@ -44,6 +35,11 @@ import org.squashtest.tm.service.project.ProjectTemplateManagerService;
 import org.squashtest.tm.web.internal.model.json.JsonTemplateFromProject;
 import org.squashtest.tm.web.internal.model.json.JsonUrl;
 
+import javax.inject.Inject;
+import javax.validation.Valid;
+import java.util.List;
+
+// XSS OK
 @Controller
 @RequestMapping("/project-templates")
 public class ProjectTemplateController {
@@ -65,11 +61,10 @@ public class ProjectTemplateController {
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
-	public
-	JsonUrl createTemplateFromProject(@Valid @RequestBody JsonTemplateFromProject jsonTemplateFromProject) {
+	public JsonUrl createTemplateFromProject(@Valid @RequestBody JsonTemplateFromProject jsonTemplateFromProject) {
 		try {
 			projectTemplateManagerService.addTemplateFromProject(jsonTemplateFromProject.getProjectTemplate(),
-					jsonTemplateFromProject.getTemplateId(), jsonTemplateFromProject.getParams());
+				jsonTemplateFromProject.getTemplateId(), jsonTemplateFromProject.getParams());
 		} catch (NameAlreadyInUseException ex) {
 			ex.setObjectName("add-template-from-project");
 			throw ex;
@@ -77,9 +72,9 @@ public class ProjectTemplateController {
 		return getUrlToProjectInfoPage(jsonTemplateFromProject.getProjectTemplate());
 	}
 
-	private JsonUrl getUrlToProjectInfoPage(GenericProject project){
+	private JsonUrl getUrlToProjectInfoPage(GenericProject project) {
 		UriComponents uri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/administration/projects/{id}/info")
-				.buildAndExpand(project.getId());
+			.buildAndExpand(project.getId());
 		return new JsonUrl(uri.toString());
 	}
 }

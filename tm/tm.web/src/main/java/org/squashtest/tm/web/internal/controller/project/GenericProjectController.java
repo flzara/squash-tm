@@ -20,43 +20,18 @@
  */
 package org.squashtest.tm.web.internal.controller.project;
 
-import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
-
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.validation.Valid;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.HtmlUtils;
 import org.springframework.web.util.UriComponents;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
-import org.squashtest.tm.core.foundation.collection.Filtering;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.*;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -77,24 +52,27 @@ import org.squashtest.tm.web.internal.helper.JEditablePostParams;
 import org.squashtest.tm.web.internal.helper.ProjectHelper;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
-import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
-import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
+import org.squashtest.tm.web.internal.model.datatable.*;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
 import org.squashtest.tm.web.internal.model.json.JsonUrl;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 import org.squashtest.tm.web.internal.plugins.manager.wizard.WorkspaceWizardManager;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+
+import javax.inject.Inject;
+import javax.validation.Valid;
+import java.net.URL;
+import java.util.*;
+
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 /**
  * @author Gregory Fouquet
- *
  */
+
+// XSS OK
 @Controller
 @RequestMapping("/generic-projects")
 public class GenericProjectController {
@@ -118,30 +96,29 @@ public class GenericProjectController {
 	private TaskExecutor taskExecutor;
 	private static final Logger LOGGER = LoggerFactory.getLogger(GenericProjectController.class);
 
-	private static final String PROJECT_ID_URL = "/{"+RequestParams.PROJECT_ID+"}";
+	private static final String PROJECT_ID_URL = "/{" + RequestParams.PROJECT_ID + "}";
 	private static final String PROJECT_BUGTRACKER_NAME_UNDEFINED = "project.bugtracker.name.undefined";
 
 	private static final String VALUES = "values[]";
 
 	private DatatableMapper<String> allProjectsMapper = new NameBasedMapper(9)
-	.map(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "name")
-	.map("label", "label")
-	.map("active", "active")
-	.map(DataTableModelConstants.DEFAULT_CREATED_ON_KEY, DataTableModelConstants.DEFAULT_CREATED_ON_VALUE)
-	.map(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, DataTableModelConstants.DEFAULT_CREATED_BY_VALUE)
-	.map("last-mod-on",DataTableModelConstants.DEFAULT_LAST_MODIFIED_ON_VALUE)
-	.map("last-mod-by", DataTableModelConstants.DEFAULT_LAST_MODIFIED_BY_VALUE)
-	.map("habilitation","habilitation")
-	.map("bugtracker","bugtracker")
-	.map("automation","automation");
+		.map(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "name")
+		.map("label", "label")
+		.map("active", "active")
+		.map(DataTableModelConstants.DEFAULT_CREATED_ON_KEY, DataTableModelConstants.DEFAULT_CREATED_ON_VALUE)
+		.map(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, DataTableModelConstants.DEFAULT_CREATED_BY_VALUE)
+		.map("last-mod-on", DataTableModelConstants.DEFAULT_LAST_MODIFIED_ON_VALUE)
+		.map("last-mod-by", DataTableModelConstants.DEFAULT_LAST_MODIFIED_BY_VALUE)
+		.map("habilitation", "habilitation")
+		.map("bugtracker", "bugtracker")
+		.map("automation", "automation");
 	private DatatableMapper<String> partyPermissionMapper = new NameBasedMapper(5).map("party-index", "index")
-			.map("party-id", "id").map("party-name", "name").map("party-type", "type")
-			.map("permission-group.qualifiedName", "qualifiedName");
+		.map("party-id", "id").map("party-name", "name").map("party-type", "type")
+		.map("permission-group.qualifiedName", "qualifiedName");
 
 	@ResponseBody
 	@RequestMapping(value = "", params = RequestParams.S_ECHO_PARAM, method = RequestMethod.GET)
-	public
-	DataTableModel getProjectsTableModel(final DataTableDrawParameters params, final Locale locale) {
+	public DataTableModel getProjectsTableModel(final DataTableDrawParameters params, final Locale locale) {
 
 		final PagingAndMultiSorting sorter = new DataTableMultiSorting(params, allProjectsMapper);
 		Filtering filtering = new DataTableFiltering(params);
@@ -154,8 +131,7 @@ public class GenericProjectController {
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
-	public
-	void createNewProject(@Valid @RequestBody Project project) {
+	public void createNewProject(@Valid @RequestBody Project project) {
 		try {
 			projectManager.persist(project);
 		} catch (NameAlreadyInUseException ex) {
@@ -178,32 +154,36 @@ public class GenericProjectController {
 	}
 
 
-	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = { "id=project-label", VALUE }, produces = "text/plain;charset=UTF-8")
+	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = {"id=project-label", VALUE}, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String changeLabel(@RequestParam(VALUE) String projectLabel, @PathVariable long projectId) {
 		projectManager.changeLabel(projectId, projectLabel);
-		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace("project " + projectId + ": updated label to " + projectLabel);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("project " + projectId + ": updated label to " + projectLabel);
 		}
 		return HtmlUtils.htmlEscape(projectLabel);
 	}
 
-	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = { "newName" })
+	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = {"newName"})
 	@ResponseBody
 	public Object changeName(@PathVariable long projectId, @RequestParam String newName) {
 
 		projectManager.changeName(projectId, newName);
-		LOGGER.info("Project modification : renaming {} as {}", projectId, newName);
-		return new RenameModel(newName);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Project modification : renaming {} as {}", projectId, newName);
+		}
+		return new RenameModel(HtmlUtils.htmlEscape(newName));
 	}
 
-	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = { "isActive" })
+	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = {"isActive"})
 	@ResponseBody
 	public Active changeActive(@PathVariable long projectId,
 							   @RequestParam boolean isActive) {
 
 		projectManager.changeActive(projectId, isActive);
-		LOGGER.info("Project modification : change project {} is active = {}", projectId, isActive);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Project modification : change project {} is active = {}", projectId, isActive);
+		}
 		return new Active(isActive);
 	}
 
@@ -220,14 +200,16 @@ public class GenericProjectController {
 		}
 	}
 
-	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = { "id=project-bugtracker", VALUE })
+	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = {"id=project-bugtracker", VALUE})
 	@ResponseBody
 	public String changeBugtracker(@RequestParam(VALUE) Long bugtrackerId, @PathVariable long projectId, Locale locale) {
 		String toReturn;
 		if (bugtrackerId > 0) {
-			toReturn = bugtrackerFinderService.findBugtrackerName(bugtrackerId);
+			toReturn = HtmlUtils.htmlEscape(bugtrackerFinderService.findBugtrackerName(bugtrackerId));
 			projectManager.changeBugTracker(projectId, bugtrackerId);
-			LOGGER.debug("Project {} : bugtracker changed, new value : {}", projectId, bugtrackerId);
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Project {} : bugtracker changed, new value : {}", projectId, bugtrackerId);
+			}
 		} else {
 			toReturn = messageSource.internationalize(PROJECT_BUGTRACKER_NAME_UNDEFINED, locale);
 			projectManager.removeBugTracker(projectId);
@@ -236,7 +218,7 @@ public class GenericProjectController {
 	}
 
 	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = {
-			"id=project-bugtracker-project-name", VALUES })
+		"id=project-bugtracker-project-name", VALUES})
 	@ResponseBody
 	public List<String> changeBugtrackerProjectName(@RequestParam(VALUES) List<String> projectBugTrackerNames,
 													@PathVariable long projectId) {
@@ -244,14 +226,14 @@ public class GenericProjectController {
 		return projectBugTrackerNames;
 	}
 
-	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = { "id=project-description", VALUE })
+	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = {"id=project-description", VALUE})
 	@ResponseBody
 	public String changeDescription(@RequestParam(VALUE) String projectDescription, @PathVariable long projectId) {
 		projectManager.changeDescription(projectId, projectDescription);
-		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace("project " + projectId + ": updated description to " + projectDescription);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("project " + projectId + ": updated description to " + projectDescription);
 		}
-		return projectDescription;
+		return HTMLCleanupUtils.cleanHtml(projectDescription);
 	}
 
 	@RequestMapping(value = PROJECT_ID_URL + "/bugtracker/projectName", method = RequestMethod.GET)
@@ -283,7 +265,7 @@ public class GenericProjectController {
 	@ResponseBody
 	public String getDescription(@PathVariable long projectId) {
 		GenericProject genericProject = projectManager.findById(projectId);
-		return genericProject.getDescription();
+		return HTMLCleanupUtils.cleanHtml(genericProject.getDescription());
 	}
 
 	// ********************************** Permission Popup *******************************
@@ -297,8 +279,8 @@ public class GenericProjectController {
 		List<Map<String, Object>> partiesModel = new ArrayList<>(partyList.size());
 		for (Party p : partyList) {
 			Map<String, Object> newModel = new HashMap<>();
-			newModel.put("label", p.getName());
-			newModel.put(JEditablePostParams.VALUE, p.getName());
+			newModel.put("label", HtmlUtils.htmlEscape(p.getName()));
+			newModel.put(JEditablePostParams.VALUE, HtmlUtils.htmlEscape(p.getName()));
 			newModel.put("id", p.getId());
 			partiesModel.add(newModel);
 		}
@@ -309,9 +291,8 @@ public class GenericProjectController {
 
 	@ResponseBody
 	@RequestMapping(value = PROJECT_ID_URL + "/parties/{partyId}/permissions/{permission}", method = RequestMethod.PUT)
-	public
-	void addNewPermissionWithPartyId(@PathVariable long partyId, @PathVariable long projectId,
-			@PathVariable String permission) {
+	public void addNewPermissionWithPartyId(@PathVariable long partyId, @PathVariable long projectId,
+											@PathVariable String permission) {
 
 		Party party = projectManager.findPartyById(partyId);
 
@@ -328,29 +309,27 @@ public class GenericProjectController {
 	@RequestMapping(value = PROJECT_ID_URL + "/party-permissions", method = RequestMethod.GET)
 	@ResponseBody
 	public DataTableModel getPartyPermissionTable(DataTableDrawParameters params,
-			@PathVariable(RequestParams.PROJECT_ID) long projectId, final Locale locale) {
+												  @PathVariable(RequestParams.PROJECT_ID) long projectId, final Locale locale) {
 
 		PagingAndSorting sorting = new DataTableSorting(params, partyPermissionMapper);
 		Filtering filtering = new DataTableFiltering(params);
 
 		PagedCollectionHolder<List<PartyProjectPermissionsBean>> partyPermissions = projectManager
-				.findPartyPermissionsBeanByProject(sorting, filtering, projectId);
+			.findPartyPermissionsBeanByProject(sorting, filtering, projectId);
 
 		return new PartyPermissionDatatableModelHelper(locale, messageSource).buildDataModel(partyPermissions,
-				params.getsEcho());
+			params.getsEcho());
 	}
 
 	@ResponseBody
 	@RequestMapping(value = PROJECT_ID_URL + "/parties/{partyId}/permissions/{permission}", method = RequestMethod.POST)
-	public
-	void addNewPartyPermission(@PathVariable long partyId, @PathVariable long projectId, @PathVariable String permission) {
+	public void addNewPartyPermission(@PathVariable long partyId, @PathVariable long projectId, @PathVariable String permission) {
 		projectManager.addNewPermissionToProject(partyId, projectId, permission);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = PROJECT_ID_URL + "/parties/{partyId}/permissions", method = RequestMethod.DELETE)
-	public
-	void removePartyPermission(@PathVariable long partyId, @PathVariable long projectId) {
+	public void removePartyPermission(@PathVariable long partyId, @PathVariable long projectId) {
 		projectManager.removeProjectPermission(partyId, projectId);
 	}
 
@@ -359,7 +338,7 @@ public class GenericProjectController {
 	@RequestMapping(value = PROJECT_ID_URL + "/test-automation-server", method = RequestMethod.POST, params = "serverId")
 	@ResponseBody
 	public Long bindTestAutomationServer(@PathVariable(RequestParams.PROJECT_ID) long projectId,
-			@RequestParam("serverId") long serverId) {
+										 @RequestParam("serverId") long serverId) {
 		Long finalServerId = serverId == 0 ? null : serverId;
 		projectManager.bindTestAutomationServer(projectId, finalServerId);
 		return serverId;
@@ -392,19 +371,19 @@ public class GenericProjectController {
 		projectManager.unbindTestAutomationProject(projectId, taProjectId);
 	}
 
-	@RequestMapping(value = PROJECT_ID_URL+"/available-ta-projects", method = RequestMethod.GET, params = {"login", "password"})
+	@RequestMapping(value = PROJECT_ID_URL + "/available-ta-projects", method = RequestMethod.GET, params = {"login", "password"})
 	@ResponseBody
 	public Collection<TestAutomationProject> getAvailableTAProjectsWithCredentials(
-			@RequestParam("login") String login, @RequestParam("password") String password, @PathVariable long projectId)
-			throws BindException {
+		@RequestParam("login") String login, @RequestParam("password") String password, @PathVariable long projectId)
+		throws BindException {
 		return projectManager.findAllAvailableTaProjectsWithCredentials(projectId, login, password);
 
 	}
 
-	@RequestMapping(value = PROJECT_ID_URL+"/available-ta-projects", method = RequestMethod.GET)
+	@RequestMapping(value = PROJECT_ID_URL + "/available-ta-projects", method = RequestMethod.GET)
 	@ResponseBody
 	public Collection<TestAutomationProject> getAvailableTAProjects(@PathVariable long projectId)
-			throws BindException {
+		throws BindException {
 		return projectManager.findAllAvailableTaProjects(projectId);
 
 	}
@@ -426,7 +405,6 @@ public class GenericProjectController {
 	}
 
 
-
 	// ********************** other stuffs *****************************
 
 	// ********************** private classes ***************************
@@ -438,15 +416,16 @@ public class GenericProjectController {
 		public TestAutomationTableModel(Map<String, URL> jobUrls) {
 			this.jobUrls = jobUrls;
 		}
+
 		@Override
 		protected Map<String, ?> buildItemData(TestAutomationProject item) {
 			Map<String, Object> res = new HashMap<>();
 
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
-			res.put("label", item.getLabel());
-			res.put("jobName", item.getJobName());
-			res.put("slaves", item.getSlaves());
+			res.put("label", HtmlUtils.htmlEscape(item.getLabel()));
+			res.put("jobName", HtmlUtils.htmlEscape(item.getJobName()));
+			res.put("slaves", HtmlUtils.htmlEscape(item.getSlaves()));
 			res.put("url", jobUrls.get(item.getJobName()));
 			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			res.put(DataTableModelConstants.DEFAULT_EMPTY_EDIT_HOLDER_KEY, " ");
@@ -474,31 +453,33 @@ public class GenericProjectController {
 			final AuditableMixin auditable = (AuditableMixin) project;
 			data.put("project-id", project.getId());
 			data.put("index", getCurrentIndex());
-			data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, project.getName());
+			data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, HtmlUtils.htmlEscape(project.getName()));
 			data.put("active", messageSource.internationalizeYesNo(project.isActive(), locale));
-			data.put("label", project.getLabel());
+			data.put("label", HtmlUtils.htmlEscape(project.getLabel()));
 			data.put(DataTableModelConstants.DEFAULT_CREATED_ON_KEY, messageSource.localizeDate(auditable.getCreatedOn(), locale));
-			data.put(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, auditable.getCreatedBy());
+			data.put(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, HtmlUtils.htmlEscape(auditable.getCreatedBy()));
 			data.put("last-mod-on", messageSource.localizeDate(auditable.getLastModifiedOn(), locale));
-			data.put("last-mod-by", auditable.getLastModifiedBy());
+			data.put("last-mod-by", HtmlUtils.htmlEscape(auditable.getLastModifiedBy()));
 			data.put("raw-type", ProjectHelper.isTemplate(project) ? "template" : "project");
 			data.put("type", "&nbsp;");
-			data.put("habilitation", messageSource.internationalizeYesNo(hasPermissions(project),locale));
+			data.put("habilitation", messageSource.internationalizeYesNo(hasPermissions(project), locale));
 			data.put("bugtracker", getBugtrackerKind(project));
-			data.put("automation",  messageSource.internationalizeYesNo(project.isTestAutomationEnabled(), locale));
+			data.put("automation", messageSource.internationalizeYesNo(project.isTestAutomationEnabled(), locale));
 			return data;
 		}
-		private boolean hasPermissions(final GenericProject project){
+
+		private boolean hasPermissions(final GenericProject project) {
 			boolean hasPermissions = true;
-			if (projectManager.findPartyPermissionsBeansByProject(project.getId()).isEmpty()){
+			if (projectManager.findPartyPermissionsBeansByProject(project.getId()).isEmpty()) {
 				hasPermissions = false;
 			}
 			return hasPermissions;
 		}
-		private String getBugtrackerKind(final GenericProject project){
+
+		private String getBugtrackerKind(final GenericProject project) {
 
 			String bugtrackerKind;
-			if (project.isBugtrackerConnected()){
+			if (project.isBugtrackerConnected()) {
 				bugtrackerKind = project.getBugtrackerBinding().getBugtracker().getKind();
 			} else {
 				bugtrackerKind = messageSource.noData(locale);
@@ -540,7 +521,7 @@ public class GenericProjectController {
 	@RequestMapping(value = PROJECT_ID_URL + "/execution-status/{executionStatus}", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<String, Object> getStatusPopup(@PathVariable long projectId, @PathVariable String executionStatus,
-			final Locale locale) {
+											  final Locale locale) {
 		Set<ExecutionStatus> statuses = projectManager.enabledExecutionStatuses(projectId);
 		ExecutionStatus status = ExecutionStatus.valueOf(executionStatus);
 		statuses.remove(status);
@@ -555,7 +536,7 @@ public class GenericProjectController {
 	@RequestMapping(value = PROJECT_ID_URL + "/replace-execution-status", method = RequestMethod.POST)
 	@ResponseBody
 	public void replaceStatusWithinProject(@PathVariable long projectId, @RequestParam String sourceExecutionStatus,
-			@RequestParam String targetExecutionStatus) {
+										   @RequestParam String targetExecutionStatus) {
 		ExecutionStatus source = ExecutionStatus.valueOf(sourceExecutionStatus);
 		ExecutionStatus target = ExecutionStatus.valueOf(targetExecutionStatus);
 		Runnable replacer = new AsynchronousReplaceExecutionStatus(projectId, source, target);
@@ -569,7 +550,7 @@ public class GenericProjectController {
 		private ExecutionStatus targetExecutionStatus;
 
 		public AsynchronousReplaceExecutionStatus(Long projectId, ExecutionStatus sourceExecutionStatus,
-				ExecutionStatus targetExecutionStatus) {
+												  ExecutionStatus targetExecutionStatus) {
 			super();
 			this.projectId = projectId;
 			this.sourceExecutionStatus = sourceExecutionStatus;
@@ -582,9 +563,9 @@ public class GenericProjectController {
 		}
 	}
 
-	private JsonUrl getUrlToProjectInfoPage(GenericProject project){
+	private JsonUrl getUrlToProjectInfoPage(GenericProject project) {
 		UriComponents uri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/administration/projects/{id}/info")
-				.buildAndExpand(project.getId());
+			.buildAndExpand(project.getId());
 		return new JsonUrl(uri.toString());
 	}
 }

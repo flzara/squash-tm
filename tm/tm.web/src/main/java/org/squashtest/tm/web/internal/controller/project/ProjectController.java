@@ -20,27 +20,22 @@
  */
 package org.squashtest.tm.web.internal.controller.project;
 
-import java.text.MessageFormat;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.validation.Valid;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.service.project.ProjectManagerService;
 import org.squashtest.tm.web.internal.model.json.JsonProjectFromTemplate;
 
+import javax.inject.Inject;
+import javax.validation.Valid;
+import java.text.MessageFormat;
+import java.util.Map;
+
+// XSS OK
 @Controller
 @RequestMapping("/projects")
 public class ProjectController {
@@ -55,13 +50,14 @@ public class ProjectController {
 	@ResponseBody
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(value = "/{projectId}", method = RequestMethod.PUT)
-	public
-	void coerceTemplateIntoProject(@RequestBody Map<String, Object> payload, @PathVariable long projectId) {
-		LOGGER.trace("PUTting project/{} with payload {}", projectId, payload);
+	public void coerceTemplateIntoProject(@RequestBody Map<String, Object> payload, @PathVariable long projectId) {
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("PUTting project/{} with payload {}", projectId, payload);
+		}
 		if (payload.get("templateId").equals(projectId)) {
 			throw new IllegalArgumentException(MessageFormat.format(
-					"Cannot coerce ProjectTemplate into Project : project id {0} is not the same as template id {1}",
-					projectId, payload.get("templateId")));
+				"Cannot coerce ProjectTemplate into Project : project id {0} is not the same as template id {1}",
+				projectId, payload.get("templateId")));
 		}
 
 		genericProjectManager.coerceTemplateIntoProject(projectId);
@@ -70,14 +66,12 @@ public class ProjectController {
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
-	public
-	void createProjectFromTemplate(@Valid @RequestBody JsonProjectFromTemplate jsonProjectFromTemplate) {
+	public void createProjectFromTemplate(@Valid @RequestBody JsonProjectFromTemplate jsonProjectFromTemplate) {
 		try {
 			if (jsonProjectFromTemplate.isFromTemplate()) {
 				projectManager.addProjectFromtemplate(jsonProjectFromTemplate.getProject(),
-						jsonProjectFromTemplate.getTemplateId(), jsonProjectFromTemplate.getParams());
-			}
-			else {
+					jsonProjectFromTemplate.getTemplateId(), jsonProjectFromTemplate.getParams());
+			} else {
 				genericProjectManager.persist(jsonProjectFromTemplate.getProject());
 			}
 		} catch (NameAlreadyInUseException ex) {

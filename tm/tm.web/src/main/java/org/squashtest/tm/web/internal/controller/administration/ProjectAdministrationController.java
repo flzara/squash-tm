@@ -40,6 +40,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.api.plugin.EntityReference;
 import org.squashtest.tm.api.plugin.EntityType;
@@ -165,7 +166,7 @@ public class ProjectAdministrationController {
 	private Map<Long, String> createComboDataForBugtracker(Locale locale) {
 		Map<Long, String> comboDataMap = new HashMap<>();
 		for (BugTracker b : bugtrackerFinderService.findAll()) {
-			comboDataMap.put(b.getId(), b.getName());
+			comboDataMap.put(b.getId(), HtmlUtils.htmlEscape(b.getName()));
 		}
 		comboDataMap.put(-1L, internationalizationHelper.internationalize(PROJECT_BUGTRACKER_NAME_UNDEFINED, locale));
 		return comboDataMap;

@@ -22,7 +22,7 @@ package org.squashtest.tm.web.internal.controller.project;
 
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 
-
+// XSS OK
 public class ProjectPluginModel {
 
 	private int index;
@@ -36,30 +36,39 @@ public class ProjectPluginModel {
 	public int getIndex() {
 		return index;
 	}
+
 	public void setIndex(int index) {
 		this.index = index;
 	}
+
 	public boolean isEnabled() {
 		return enabled;
 	}
+
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
+
 	public String getId() {
 		return id;
 	}
+
 	public void setId(String id) {
 		this.id = id;
 	}
+
 	public String getType() {
 		return type;
 	}
+
 	public void setType(String type) {
 		this.type = type;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -67,6 +76,7 @@ public class ProjectPluginModel {
 	public String getStatus() {
 		return status;
 	}
+
 	public void setStatus(String status) {
 		this.status = status;
 	}
@@ -74,18 +84,19 @@ public class ProjectPluginModel {
 	public String getConfigUrl() {
 		return configUrl;
 	}
+
 	public void setConfigUrl(String configUrl) {
 		this.configUrl = configUrl;
 	}
 
-	public ProjectPluginModel(){
+	public ProjectPluginModel() {
 		super();
 	}
 
-	public ProjectPluginModel(WorkspaceWizard plugin){
+	public ProjectPluginModel(WorkspaceWizard plugin) {
 		super();
 		this.id = plugin.getId();
-		this.type=plugin.getType();
+		this.type = plugin.getType();
 		this.name = plugin.getName();
 	}
 
