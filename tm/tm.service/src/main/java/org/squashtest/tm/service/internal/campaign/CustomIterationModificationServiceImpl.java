@@ -76,7 +76,9 @@ import static org.squashtest.tm.service.security.Authorizations.*;
 @Transactional
 public class CustomIterationModificationServiceImpl implements CustomIterationModificationService,
 	IterationTestPlanManager {
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomIterationModificationServiceImpl.class);
+	private static final String ITERATION_ID = "iterationId";
 
 	@Inject
 	private CampaignDao campaignDao;
@@ -276,10 +278,10 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Override
 	@PreAuthorize(CREATE_ITERATION_OR_ROLE_ADMIN)
 	@PreventConcurrents(
-		simplesLocks = {@PreventConcurrent(entityType = Iteration.class, paramName = "iterationId"),
+		simplesLocks = {@PreventConcurrent(entityType = Iteration.class, paramName = ITERATION_ID),
 			@PreventConcurrent(entityType = Iteration.class, paramName = "testSuiteId", coercer = TestSuiteToIterationCoercerForUniqueId.class)}
 	)
-	public TestSuite copyPasteTestSuiteToIteration(@Id("testSuiteId") long testSuiteId, @Id("iterationId") long iterationId) {
+	public TestSuite copyPasteTestSuiteToIteration(@Id("testSuiteId") long testSuiteId, @Id(ITERATION_ID) long iterationId) {
 		return createCopyToIterationStrategy().pasteNodes(iterationId, Arrays.asList(testSuiteId)).get(0);
 	}
 
@@ -293,9 +295,9 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Override
 	@PreAuthorize(CREATE_ITERATION_OR_ROLE_ADMIN)
 	@PreventConcurrents(
-		simplesLocks = {@PreventConcurrent(entityType = Iteration.class, paramName = "iterationId")},
+		simplesLocks = {@PreventConcurrent(entityType = Iteration.class, paramName = ITERATION_ID)},
 		batchsLocks = {@BatchPreventConcurrent(entityType = Iteration.class, paramName = "testSuiteIds", coercer = TestSuiteToIterationCoercerForArray.class)})
-	public List<TestSuite> copyPasteTestSuitesToIteration(@Ids("testSuiteIds") Long[] testSuiteIds, @Id("iterationId") long iterationId) {
+	public List<TestSuite> copyPasteTestSuitesToIteration(@Ids("testSuiteIds") Long[] testSuiteIds, @Id(ITERATION_ID) long iterationId) {
 		return createCopyToIterationStrategy().pasteNodes(iterationId, Arrays.asList(testSuiteIds));
 	}
 

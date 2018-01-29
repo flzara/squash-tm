@@ -50,6 +50,8 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 	private static final Logger LOGGER = LoggerFactory
 		.getLogger(TestCaseStatisticsService.class);
 
+	private static final String TEST_CASE_IDS = "testCaseIds";
+
 	/*
 	 * This query cannot be expressed in hql because the CASE construct doesn't
 	 * support multiple WHEN.
@@ -96,7 +98,7 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 		}
 
 		Query query = em.createNativeQuery(SQL_BOUND_REQS_STATISTICS);
-		query.setParameter("testCaseIds", testCaseIds);
+		query.setParameter(TEST_CASE_IDS, testCaseIds);
 
 		List<Object[]> tuples = query.getResultList();
 
@@ -140,7 +142,7 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 
 		Query query = em.createNamedQuery(
 			"TestCaseStatistics.importanceStatistics");
-		query.setParameter("testCaseIds", testCaseIds);
+		query.setParameter(TEST_CASE_IDS, testCaseIds);
 
 		List<Object[]> tuples = query.getResultList();
 
@@ -184,7 +186,7 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 
 		Query query = em.createNamedQuery(
 			"TestCaseStatistics.statusesStatistics");
-		query.setParameter("testCaseIds", testCaseIds);
+		query.setParameter(TEST_CASE_IDS, testCaseIds);
 
 		List<Object[]> tuples = query.getResultList();
 
@@ -229,7 +231,7 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 		}
 
 		Query query = em.createNativeQuery(SQL_SIZE_STATISTICS);
-		query.setParameter("testCaseIds", testCaseIds);
+		query.setParameter(TEST_CASE_IDS, testCaseIds);
 
 		List<Object[]> tuples = query.getResultList();
 

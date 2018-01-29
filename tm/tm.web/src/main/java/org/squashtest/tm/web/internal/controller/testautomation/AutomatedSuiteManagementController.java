@@ -53,27 +53,29 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 @RequestMapping("/automated-suites")
 public class AutomatedSuiteManagementController {
 
+	private static final String SLASH_NEW = "/new";
+
 	@Inject
 	private InternationalizationHelper messageSource;
 
 	@Inject
 	private AutomatedSuiteManagerService service;
 
-	@RequestMapping(value = "/new", method = RequestMethod.POST, params = { ITERATION_ID, "!testPlanItemsIds[]" }, produces = APPLICATION_JSON)
+	@RequestMapping(value = SLASH_NEW, method = RequestMethod.POST, params = { ITERATION_ID, "!testPlanItemsIds[]" }, produces = APPLICATION_JSON)
 	@ResponseBody
 	public AutomatedSuiteDetails createNewAutomatedSuiteForIteration(@RequestParam(ITERATION_ID) long iterationId) {
 		AutomatedSuite suite = service.createFromIterationTestPlan(iterationId);
 		return toProjectContentModel(suite);
 	}
 
-	@RequestMapping(value = "/new", method = RequestMethod.POST, params = { TEST_SUITE_ID, "!testPlanItemsIds[]" }, produces = APPLICATION_JSON)
+	@RequestMapping(value = SLASH_NEW, method = RequestMethod.POST, params = { TEST_SUITE_ID, "!testPlanItemsIds[]" }, produces = APPLICATION_JSON)
 	@ResponseBody
 	public AutomatedSuiteDetails createNewAutomatedSuiteForTestSuite(@RequestParam(TEST_SUITE_ID) long testSuiteId) {
 		AutomatedSuite suite = service.createFromTestSuiteTestPlan(testSuiteId);
 		return toProjectContentModel(suite);
 	}
 
-	@RequestMapping(value = "/new", method = RequestMethod.POST, params = { TEST_PLAN_ITEMS_IDS, ITERATION_ID }, produces = APPLICATION_JSON)
+	@RequestMapping(value = SLASH_NEW, method = RequestMethod.POST, params = { TEST_PLAN_ITEMS_IDS, ITERATION_ID }, produces = APPLICATION_JSON)
 	@ResponseBody
 	public AutomatedSuiteDetails createNewAutomatedSuiteForIterationItems(
 			@RequestParam("testPlanItemsIds[]") List<Long> testPlanIds, @RequestParam(ITERATION_ID) long iterationId) {
@@ -85,7 +87,7 @@ public class AutomatedSuiteManagementController {
 		return toProjectContentModel(suite);
 	}
 
-	@RequestMapping(value = "/new", method = RequestMethod.POST, params = { TEST_PLAN_ITEMS_IDS, TEST_SUITE_ID }, produces = APPLICATION_JSON)
+	@RequestMapping(value = SLASH_NEW, method = RequestMethod.POST, params = { TEST_PLAN_ITEMS_IDS, TEST_SUITE_ID }, produces = APPLICATION_JSON)
 	@ResponseBody
 	public AutomatedSuiteDetails createNewAutomatedSuiteForTestSuiteItems(
 			@RequestParam("testPlanItemsIds[]") List<Long> testPlanIds, @RequestParam("testSuiteId") long testSuiteId) {
@@ -105,10 +107,10 @@ public class AutomatedSuiteManagementController {
 
 		/*
 		 * ROUGH CODE ALERT
-		 * 
+		 *
 		 * As you noticed the type of 'rawConf' in the signature is 'Collection<Map>'
 		 * instead of 'Collection<SuiteExecutionConfiguration>'.
-		 * 
+		 *
 		 * This is because Jackson wouldn't deserialized a collection to the right content type because of type erasure.
 		 * So we manually convert the content that was serialized as a Map, to SuiteExecutionConfiguration
 		 */

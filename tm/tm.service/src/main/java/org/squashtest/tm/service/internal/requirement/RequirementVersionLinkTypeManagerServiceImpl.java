@@ -41,6 +41,8 @@ import java.util.Map;
 @Service("squashtest.tm.service.RequirementVersionLinkTypeManagerService")
 public class RequirementVersionLinkTypeManagerServiceImpl implements RequirementVersionLinkTypeManagerService {
 
+	public static final String ARE_CODES_AND_ROLES_CONSISTENT = "areCodesAndRolesConsistent";
+
 	@Inject
 	private RequirementVersionLinkTypeDao linkTypeDao;
 
@@ -93,7 +95,7 @@ public class RequirementVersionLinkTypeManagerServiceImpl implements Requirement
 			linkType.setRole1(newRole1);
 		}
 
-		result.put("areCodesAndRolesConsistent", areCodesAndRolesConsistent);
+		result.put(ARE_CODES_AND_ROLES_CONSISTENT, areCodesAndRolesConsistent);
 		return result;
 	}
 
@@ -106,7 +108,7 @@ public class RequirementVersionLinkTypeManagerServiceImpl implements Requirement
 		copy.setRole2(newRole2);
 
 		Boolean areCodesAndRolesConsistent = areCodesAndRolesConsistent(copy);
-		result.put("areCodesAndRolesConsistent", areCodesAndRolesConsistent);
+		result.put(ARE_CODES_AND_ROLES_CONSISTENT, areCodesAndRolesConsistent);
 
 		if(areCodesAndRolesConsistent) {
 			linkType.setRole2(newRole2);
@@ -124,7 +126,7 @@ public class RequirementVersionLinkTypeManagerServiceImpl implements Requirement
 		copy.setRole1Code(newCode1);
 
 		Boolean areCodesAndRolesConsistent = areCodesAndRolesConsistent(copy);
-		result.put("areCodesAndRolesConsistent", areCodesAndRolesConsistent);
+		result.put(ARE_CODES_AND_ROLES_CONSISTENT, areCodesAndRolesConsistent);
 
 		if(!linkTypeDao.doesCodeAlreadyExist(newCode1, linkTypeId)
 			&& areCodesAndRolesConsistent) {
@@ -143,7 +145,7 @@ public class RequirementVersionLinkTypeManagerServiceImpl implements Requirement
 		copy.setRole2Code(newCode2);
 
 		Boolean areCodesAndRolesConsistent = areCodesAndRolesConsistent(copy);
-		result.put("areCodesAndRolesConsistent", areCodesAndRolesConsistent);
+		result.put(ARE_CODES_AND_ROLES_CONSISTENT, areCodesAndRolesConsistent);
 
 		if(!linkTypeDao.doesCodeAlreadyExist(newCode2, linkTypeId)
 			&& areCodesAndRolesConsistent) {
