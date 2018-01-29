@@ -41,7 +41,7 @@ import java.util.Map;
 @Service("squashtest.tm.service.RequirementVersionLinkTypeManagerService")
 public class RequirementVersionLinkTypeManagerServiceImpl implements RequirementVersionLinkTypeManagerService {
 
-	public static final String ARE_CODES_AND_ROLES_CONSISTENT = "areCodesAndRolesConsistent";
+	private static final String ARE_CODES_AND_ROLES_CONSISTENT = "areCodesAndRolesConsistent";
 
 	@Inject
 	private RequirementVersionLinkTypeDao linkTypeDao;

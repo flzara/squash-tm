@@ -75,6 +75,8 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	private static final String LINK_ITERATION_OR_ROLE_ADMIN =
 		"hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'LINK')" + OR_HAS_ROLE_ADMIN;
 
+	private static final String ITERATION_ID = "iterationId";
+
 	@Inject
 	private TestCaseLibraryDao testCaseLibraryDao;
 
@@ -172,7 +174,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Override
 	@PreAuthorize(LINK_ITERATION_OR_ROLE_ADMIN)
-	@PreventConcurrent(entityType = Iteration.class, paramName = "iterationId")
+	@PreventConcurrent(entityType = Iteration.class, paramName = ITERATION_ID)
 	public void addTestCasesToIteration(final List<Long> objectsIds, @Id long iterationId) {
 
 		Iteration iteration = iterationDao.findById(iterationId);
@@ -182,7 +184,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Override
 	@PreAuthorize(LINK_ITERATION_OR_ROLE_ADMIN)
-	@PreventConcurrent(entityType = Iteration.class, paramName = "iterationId")
+	@PreventConcurrent(entityType = Iteration.class, paramName = ITERATION_ID)
 	public void addTestCaseToIteration(Long testcaseId, Long datasetId, @Id long iterationId) {
 		Iteration iteration = iterationDao.findById(iterationId);
 
@@ -243,7 +245,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		indexationService.reindexTestCase(testCase.getId());
 	}
 
-	@PreventConcurrent(entityType = Iteration.class, paramName = "iterationId")
+	@PreventConcurrent(entityType = Iteration.class, paramName = ITERATION_ID)
 	@Override
 	public void copyTestPlanItems(List<Long> iterationTestPlanIds, @Id long iterationId) {
 		List<IterationTestPlanItem> itpis = findTestPlanItems(iterationTestPlanIds);
@@ -260,7 +262,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Override
 	@PreAuthorize(LINK_ITERATION_OR_ROLE_ADMIN)
-	@PreventConcurrent(entityType = Iteration.class, paramName = "iterationId")
+	@PreventConcurrent(entityType = Iteration.class, paramName = ITERATION_ID)
 	public void addTestPlanToIteration(List<IterationTestPlanItem> testPlan, @Id long iterationId) {
 		Iteration iteration = iterationDao.findById(iterationId);
 		for (IterationTestPlanItem itp : testPlan) {
@@ -297,7 +299,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Override
 	@PreAuthorize(LINK_ITERATION_OR_ROLE_ADMIN)
-	@PreventConcurrent(entityType = Iteration.class, paramName = "iterationId")
+	@PreventConcurrent(entityType = Iteration.class, paramName = ITERATION_ID)
 	public boolean removeTestPlansFromIteration(List<Long> testPlanIds, @Id long iterationId) {
 		Iteration it = iterationDao.findById(iterationId);
 

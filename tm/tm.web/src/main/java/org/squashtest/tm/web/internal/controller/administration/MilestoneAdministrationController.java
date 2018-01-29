@@ -54,6 +54,8 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 
+import static org.squashtest.tm.service.security.Authorizations.ROLE_ADMIN;
+
 @Controller
 @RequestMapping("administration/milestones")
 public class MilestoneAdministrationController {
@@ -96,7 +98,7 @@ public class MilestoneAdministrationController {
 	}
 
 	private void setRange(Milestone milestone){
-		if (permissionEvaluationService.hasRole("ROLE_ADMIN")) {
+		if (permissionEvaluationService.hasRole(ROLE_ADMIN)) {
 			milestone.setRange(MilestoneRange.GLOBAL);
 		} else {
 			milestone.setRange(MilestoneRange.RESTRICTED);
@@ -104,7 +106,7 @@ public class MilestoneAdministrationController {
 	}
 
 	private void setPerimeter(Milestone milestone){
-		if (!permissionEvaluationService.hasRole("ROLE_ADMIN")) {
+		if (!permissionEvaluationService.hasRole(ROLE_ADMIN)) {
 			List<GenericProject> projects = projectFinder.findAllICanManage();
 			milestone.addProjectsToPerimeter(projects);
 		}
@@ -122,7 +124,7 @@ public class MilestoneAdministrationController {
 		mav.addObject("milestoneStatus", statusComboDataBuilderProvider.get().useLocale(locale).buildMap());
 		mav.addObject("editableMilestoneIds", milestoneManager.findAllIdsOfEditableMilestone());
 		mav.addObject("currentUser", StringEscapeUtils.escapeEcmaScript(userService.findCurrentUser().getName()));
-		mav.addObject("isAdmin", permissionEvaluationService.hasRole("ROLE_ADMIN"));
+		mav.addObject("isAdmin", permissionEvaluationService.hasRole(ROLE_ADMIN));
 		mav.addObject("milestoneCloneStatus",  cloneStatusComboDataBuilderProvider.get().useLocale(locale).buildMap());
 
 		return mav;
@@ -145,7 +147,7 @@ public class MilestoneAdministrationController {
 	@RequestMapping(value = "/{motherId}/clone", method = RequestMethod.POST)
 	public long cloneMilestone(@Valid @ModelAttribute("new-milestone") Milestone milestone, @RequestParam boolean bindToRequirements, @RequestParam boolean bindToTestCases, @PathVariable("motherId") long motherId) {
 
-		if (permissionEvaluationService.hasRole("ROLE_ADMIN")) {
+		if (permissionEvaluationService.hasRole(ROLE_ADMIN)) {
 			//keep range for admin user
 			milestone.setRange(milestoneManager.findById(motherId).getRange());
 		} else {

@@ -62,7 +62,10 @@ import java.util.*;
 @RequestMapping("/test-case-browser")
 public class TestCaseLibraryNavigationController extends
 	LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode> {
+
 	public static final Logger LOGGER = LoggerFactory.getLogger(TestCaseLibraryNavigationController.class);
+
+	private static final String APPLICATION_SLASH_OCTET_STREAM = "application/octet-stream";
 
 	@Inject
 	private Provider<TestCaseLibraryTreeNodeBuilder> testCaseLibraryTreeNodeBuilder;
@@ -180,7 +183,7 @@ public class TestCaseLibraryNavigationController extends
 		return listBuilder.setModel(linkableLibraries).build();
 	}
 
-	@RequestMapping(value = "/content/csv", produces = "application/octet-stream", method = RequestMethod.GET, params = {
+	@RequestMapping(value = "/content/csv", produces = APPLICATION_SLASH_OCTET_STREAM, method = RequestMethod.GET, params = {
 		FILENAME, LIBRARIES, NODES, CALLS, RequestParams.RTEFORMAT})
 	@ResponseBody
 	public void exportAsCsv(Locale locale, @RequestParam(FILENAME) String filename,
@@ -188,7 +191,7 @@ public class TestCaseLibraryNavigationController extends
 							@RequestParam(CALLS) Boolean includeCalledTests, @RequestParam(RequestParams.RTEFORMAT) Boolean keepRteFormat,
 							HttpServletResponse response) throws FileNotFoundException {
 
-		response.setContentType("application/octet-stream");
+		response.setContentType(APPLICATION_SLASH_OCTET_STREAM);
 		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".xls");
 
 		List<ExportTestCaseData> dataSource = testCaseLibraryNavigationService.findTestCasesToExport(libraryIds,
@@ -202,7 +205,7 @@ public class TestCaseLibraryNavigationController extends
 		printExport(dataSource, filename, JASPER_EXPORT_FILE, response, locale, "csv", keepRteFormat);
 	}
 
-	@RequestMapping(value = "/content/xls", produces = "application/octet-stream", method = RequestMethod.GET, params = {
+	@RequestMapping(value = "/content/xls", produces = APPLICATION_SLASH_OCTET_STREAM, method = RequestMethod.GET, params = {
 		FILENAME, LIBRARIES, NODES, CALLS, RequestParams.RTEFORMAT})
 	@ResponseBody
 	public FileSystemResource exportAsExcel(@RequestParam(FILENAME) String filename,
@@ -210,7 +213,7 @@ public class TestCaseLibraryNavigationController extends
 											@RequestParam(CALLS) Boolean includeCalledTests, @RequestParam(RequestParams.RTEFORMAT) Boolean keepRteFormat,
 											HttpServletResponse response) throws FileNotFoundException {
 
-		response.setContentType("application/octet-stream");
+		response.setContentType(APPLICATION_SLASH_OCTET_STREAM);
 		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".xls");
 
 		File export = testCaseLibraryNavigationService.exportTestCaseAsExcel(libraryIds, nodeIds, includeCalledTests,
@@ -219,14 +222,14 @@ public class TestCaseLibraryNavigationController extends
 
 	}
 
-	@RequestMapping(value = "/searchExports", produces = "application/octet-stream", method = RequestMethod.GET, params = {
+	@RequestMapping(value = "/searchExports", produces = APPLICATION_SLASH_OCTET_STREAM, method = RequestMethod.GET, params = {
 		FILENAME, NODES, CALLS, RequestParams.RTEFORMAT})
 	@ResponseBody
 	public FileSystemResource searchExportAsExcel(@RequestParam(FILENAME) String filename,
 												  @RequestParam(NODES) List<Long> nodeIds, @RequestParam(CALLS) Boolean includeCalledTests, @RequestParam(RequestParams.RTEFORMAT) Boolean keepRteFormat,
 												  HttpServletResponse response) throws FileNotFoundException {
 
-		response.setContentType("application/octet-stream");
+		response.setContentType(APPLICATION_SLASH_OCTET_STREAM);
 		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".xls");
 
 		File export = testCaseLibraryNavigationService.searchExportTestCaseAsExcel(nodeIds, includeCalledTests,

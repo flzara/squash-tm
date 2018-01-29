@@ -235,13 +235,13 @@ public class IterationModificationController {
 	//URL should have been /statistics, but that was already used by another method in this controller
 	@ResponseBody
 	@RequestMapping(value = "/dashboard-statistics", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
-	public IterationStatisticsBundle getStatisticsAsJson(@PathVariable("iterationId") long iterationId) {
+	public IterationStatisticsBundle getStatisticsAsJson(@PathVariable(ITERATION_ID_KEY) long iterationId) {
 
 		return iterationModService.gatherIterationStatisticsBundle(iterationId);
 	}
 
 	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML)
-	public ModelAndView getDashboard(Model model, @PathVariable("iterationId") long iterationId) {
+	public ModelAndView getDashboard(Model model, @PathVariable(ITERATION_ID_KEY) long iterationId) {
 
 		Iteration iteration = iterationModService.findById(iterationId);
 		IterationStatisticsBundle bundle = iterationModService.gatherIterationStatisticsBundle(iterationId);
@@ -443,7 +443,7 @@ public class IterationModificationController {
 	 * TODO : should that method be in IterationTestPlanManagerController ?
 	 */
 	@RequestMapping(value = "/test-plan/{itemId}/executions", method = RequestMethod.GET)
-	public ModelAndView getExecutionsForTestPlan(@PathVariable("iterationId") long iterationId,
+	public ModelAndView getExecutionsForTestPlan(@PathVariable(ITERATION_ID_KEY) long iterationId,
 												 @PathVariable("itemId") long itemId) {
 
 		List<Execution> executionList = iterationModService.findExecutionsByTestPlan(iterationId,
