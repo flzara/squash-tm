@@ -71,6 +71,7 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 	 */
 	private static final String TEST_CASE_ID_PARAM_NAME = "testCaseId";
 	private static final String TEST_CASE_IDS_PARAM_NAME = "testCaseIds";
+	private static final String TEST_CASES_IDS = "testCasesIds";
 
 
 	private static final String FIND_DESCENDANT_QUERY = "select DESCENDANT_ID from TCLN_RELATIONSHIP where ANCESTOR_ID in (:list)";
@@ -159,7 +160,7 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 
 		@Override
 		public void setQueryParameters(Query query) {
-			query.setParameterList("testCasesIds", testCasesIds);
+			query.setParameterList(TEST_CASES_IDS, testCasesIds);
 		}
 	}
 
@@ -212,7 +213,7 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 	@Override
 	public List<Long> findTestCasesHavingCaller(Collection<Long> testCasesIds) {
 		Query query = currentSession().getNamedQuery("testCase.findTestCasesHavingCaller");
-		query.setParameterList("testCasesIds", testCasesIds);
+		query.setParameterList(TEST_CASES_IDS, testCasesIds);
 		return query.list();
 	}
 
@@ -220,7 +221,7 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 	@Override
 	public List<Long> findAllTestCasesIdsCalledByTestCases(Collection<Long> testCasesIds) {
 		Query query = currentSession().getNamedQuery("testCase.findAllTestCasesIdsCalledByTestCases");
-		query.setParameterList("testCasesIds", testCasesIds);
+		query.setParameterList(TEST_CASES_IDS, testCasesIds);
 		return query.list();
 	}
 
@@ -231,7 +232,7 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 			return Collections.emptyList();
 		}
 		Query query = currentSession().getNamedQuery("testCase.findAllTestCasesIdsCallingTestCases");
-		query.setParameterList("testCasesIds", testCasesIds);
+		query.setParameterList(TEST_CASES_IDS, testCasesIds);
 		return query.list();
 	}
 

@@ -88,6 +88,8 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	private Map<Long, JsTreeNode> iterationMap = new HashMap<>();
 	private Map<Long, JsTreeNode> testSuiteMap = new HashMap<>();
 
+	private static final String ITERATION_COUNT = "ITERATION_COUNT";
+	private static final String RES_ID = "resId";
 
 	@Override
 	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates, UserDto currentUser, Map<Long, List<Long>> allMilestonesForLN, List<Long> milestonesModifiable, Long activeMilestoneId) {
@@ -100,7 +102,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		Map<Long, JsTreeNode> result = DSL.select(CLN.CLN_ID,
 				CLN.NAME,
 				C.REFERENCE,
-				count(CI.CAMPAIGN_ID).as("ITERATION_COUNT"),
+				count(CI.CAMPAIGN_ID).as(ITERATION_COUNT),
 				MC.MILESTONE_ID,
 				M.STATUS)
 			.from(CLN)
@@ -114,9 +116,9 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.stream()
 			.map(r ->{
 				boolean isMilestoneModifiable = isMilestoneModifiable(r.get(M.STATUS,String.class));
-				return buildCampaign(r.get(CLN.CLN_ID), r.get(CLN.NAME), "campaigns", r.get(C.REFERENCE), r.get("ITERATION_COUNT", Integer.class), currentUser, r.get(MC.MILESTONE_ID), isMilestoneModifiable);
+				return buildCampaign(r.get(CLN.CLN_ID), r.get(CLN.NAME), "campaigns", r.get(C.REFERENCE), r.get(ITERATION_COUNT, Integer.class), currentUser, r.get(MC.MILESTONE_ID), isMilestoneModifiable);
 			})
-			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
+			.collect(Collectors.toMap(node -> (Long) node.getAttr().get(RES_ID), Function.identity()));
 
 		Map<Long, JsTreeNode> collect = DSL.select(CLN.CLN_ID, CLN.NAME, count(CLNR.ANCESTOR_ID).as("CHILD_COUNT"))
 			.from(CLN)
@@ -127,7 +129,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.fetch()
 			.stream()
 			.map(r -> buildFolder(r.get(CLN.CLN_ID), r.get(CLN.NAME), "campaign-folders", r.get("CHILD_COUNT", Integer.class), currentUser))
-			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
+			.collect(Collectors.toMap(node -> (Long) node.getAttr().get(RES_ID), Function.identity()));
 
 		result.putAll(collect);
 		return result;
@@ -180,7 +182,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	private JsTreeNode buildCampaign(Long campaignId, String name, String restype, String reference, int iterationCount, UserDto currentUser, Long milestone, boolean isMilestoneModifiable) {
 		Map<String, Object> attr = new HashMap<>();
 
-		attr.put("resId", campaignId);
+		attr.put(RES_ID, campaignId);
 		attr.put("resType", restype);
 		attr.put("name", name);
 		attr.put("id", "Campaign-" + campaignId);
@@ -219,7 +221,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		Map<String, Object> attr = new HashMap<>();
 		JsTreeNode.State state;
 
-		attr.put("resId", id);
+		attr.put(RES_ID, id);
 		attr.put("resType", "iterations");
 		attr.put("name", name);
 		attr.put("id", "Iteration-" + id);
@@ -244,7 +246,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	private JsTreeNode buildTestSuite(Long id, String name, String executionStatus, String description, UserDto currentUser, Long milestone, String isMilestoneModifiable) {
 		Map<String, Object> attr = new HashMap<>();
 
-		attr.put("resId", id);
+		attr.put(RES_ID, id);
 		attr.put("name", name);
 		attr.put("id", "TestSuite-" + id);
 		attr.put("executionstatus", executionStatus);
@@ -317,7 +319,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 				IT.NAME,
 				IT.REFERENCE,
 				CI.ITERATION_ORDER,
-				count(ITS.ITERATION_ID).as("ITERATION_COUNT"),
+				count(ITS.ITERATION_ID).as(ITERATION_COUNT),
 				MC.MILESTONE_ID,
 				M.STATUS
 			)
@@ -332,11 +334,11 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.stream()
 			.map(r -> {
 				boolean milestoneModifiable = isMilestoneModifiable(r.get(M.STATUS));
-				boolean hasContent = r.get("ITERATION_COUNT",Integer.class) > 0;
+				boolean hasContent = r.get(ITERATION_COUNT,Integer.class) > 0;
 				return buildIteration(r.get(IT.ITERATION_ID), r.get(IT.NAME), r.get(IT.REFERENCE),
 					r.get(CI.ITERATION_ORDER), hasContent, currentUser, r.get(MC.MILESTONE_ID), String.valueOf(milestoneModifiable));
 			})
-			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
+			.collect(Collectors.toMap(node -> (Long) node.getAttr().get(RES_ID), Function.identity()));
 	}
 
 	private Map<Long, JsTreeNode> getIterationChildren(MultiMap fatherChildrenEntity, UserDto currentUser, Map<Long, String> testSuiteDescriptions) {
@@ -362,7 +364,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 				boolean milestoneModifiable = isMilestoneModifiable(r.get(M.STATUS));
 				return buildTestSuite(r.get(TS.ID), r.get(TS.NAME), r.get(TS.EXECUTION_STATUS), description, currentUser, r.get(MC.MILESTONE_ID), String.valueOf(milestoneModifiable));
 			})
-			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
+			.collect(Collectors.toMap(node -> (Long) node.getAttr().get(RES_ID), Function.identity()));
 	}
 
 	private String getTSDescription(Map<Long, String> testSuiteDescriptions, Long id) {
@@ -492,7 +494,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 	@Override
 	protected boolean passesMilestoneFilter(JsTreeNode node, Long activeMilestoneId) {
-		return (node != null && (NO_ACTIVE_MILESTONE_ID.equals(activeMilestoneId) || node.getAttr().get("rel").equals("folder") || nodeHasActiveMilestone(nodeLinkedToMilestone, (Long) node.getAttr().get("resId"))));
+		return (node != null && (NO_ACTIVE_MILESTONE_ID.equals(activeMilestoneId) || node.getAttr().get("rel").equals("folder") || nodeHasActiveMilestone(nodeLinkedToMilestone, (Long) node.getAttr().get(RES_ID))));
 	}
 
 	@Override
