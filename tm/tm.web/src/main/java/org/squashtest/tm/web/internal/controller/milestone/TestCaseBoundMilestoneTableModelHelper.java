@@ -20,20 +20,22 @@
  */
 package org.squashtest.tm.web.internal.controller.milestone;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+// XSS OK
 public class TestCaseBoundMilestoneTableModelHelper extends DataTableModelBuilder<MetaMilestone> {
 
 	private InternationalizationHelper i18nHelper;
 	private Locale locale;
-
 
 
 	public TestCaseBoundMilestoneTableModelHelper(InternationalizationHelper i18nHelper, Locale locale) {
@@ -41,7 +43,6 @@ public class TestCaseBoundMilestoneTableModelHelper extends DataTableModelBuilde
 		this.i18nHelper = i18nHelper;
 		this.locale = locale;
 	}
-
 
 
 	@Override
@@ -56,16 +57,16 @@ public class TestCaseBoundMilestoneTableModelHelper extends DataTableModelBuilde
 		row.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 		row.put("directMember", item.isDirectMembership());
 		row.put("status", status);
-		row.put("label", item.getLabel());
+		row.put("label", HtmlUtils.htmlEscape(item.getLabel()));
 		row.put("date", date);
-		row.put("description", item.getDescription());
+		row.put("description", HTMLCleanupUtils.cleanHtml(item.getDescription()));
 		row.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, null);
 		row.put("isStatusAllowUnbind", item.isStatusAllowUnbind());
 
 		return row;
 	}
 
-	private String formatStatus(MilestoneStatus status){
+	private String formatStatus(MilestoneStatus status) {
 		return i18nHelper.internationalize(status, locale);
 	}
 

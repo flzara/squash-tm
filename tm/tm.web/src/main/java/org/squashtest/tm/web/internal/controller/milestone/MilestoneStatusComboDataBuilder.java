@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.milestone;
 
-import javax.inject.Inject;
-
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.LevelComparator;
@@ -29,9 +27,12 @@ import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
 
+import javax.inject.Inject;
+
+// XSS OK
 @Component
 @Scope("prototype")
-public class MilestoneStatusComboDataBuilder extends EnumJeditableComboDataBuilder<MilestoneStatus, MilestoneStatusComboDataBuilder>{
+public class MilestoneStatusComboDataBuilder extends EnumJeditableComboDataBuilder<MilestoneStatus, MilestoneStatusComboDataBuilder> {
 	public MilestoneStatusComboDataBuilder() {
 		super();
 		setModel(MilestoneStatus.values());

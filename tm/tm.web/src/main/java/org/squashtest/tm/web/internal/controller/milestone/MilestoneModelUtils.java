@@ -20,26 +20,21 @@
  */
 package org.squashtest.tm.web.internal.controller.milestone;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Set;
-
 import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
+import java.util.*;
+
+// XSS OK
 public final class MilestoneModelUtils {
 
 	protected static final String SEPARATOR = ", ";
 
-	public static String timeIntervalToString(Collection<Milestone> milestones, InternationalizationHelper i18nHelper, Locale locale){
+	public static String timeIntervalToString(Collection<Milestone> milestones, InternationalizationHelper i18nHelper, Locale locale) {
 
-		if (milestones.isEmpty()){
+		if (milestones.isEmpty()) {
 			return "--";
 		}
 
@@ -58,9 +53,9 @@ public final class MilestoneModelUtils {
 
 		String strMindate = i18nHelper.localizeShortDate(minDate, locale);
 		String strMaxdate = i18nHelper.localizeShortDate(maxDate, locale);
-		if(!strMaxdate.equals(strMindate)) {
+		if (!strMaxdate.equals(strMindate)) {
 			return strMindate + " - " + strMaxdate;
-		}else{
+		} else {
 			return strMaxdate;
 		}
 	}
@@ -76,13 +71,14 @@ public final class MilestoneModelUtils {
 			}
 		});
 
-		CollectionUtils.forAllDo(liste, new Closure(){
+		CollectionUtils.forAllDo(liste, new Closure() {
 			@Override
 			public void execute(Object input) {
 				Milestone m = (Milestone) input;
 				sb.append(m.getLabel());
 				sb.append(SEPARATOR);
-			}});
+			}
+		});
 
 		sb.delete(Math.max(sb.length() - SEPARATOR.length(), 0), sb.length());
 		return sb.toString();

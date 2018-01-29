@@ -54,6 +54,7 @@ import java.util.Optional;
  * @author bsiri
  *
  */
+// XSS OK
 @Component
 public class MilestoneUIConfigurationService {
 

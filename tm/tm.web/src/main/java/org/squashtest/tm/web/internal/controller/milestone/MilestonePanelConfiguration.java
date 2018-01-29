@@ -26,10 +26,11 @@ import java.util.Map;
 
 /**
  * see documentation of this in scripts/milestones/milestone-panel.js
- * 
+ *
  * @author bsiri
  *
  */
+// XSS OK
 public class MilestonePanelConfiguration {
 
 	private String rootPath;
@@ -41,11 +42,11 @@ public class MilestonePanelConfiguration {
 	private List<?> currentModel;
 
 	private boolean editable;
-	
+
 	private boolean milestoneInProject;
 
 	// whether you can select more than one milestone in the bind-milestone popup
-	private boolean multilines=true;
+	private boolean multilines = true;
 
 	public String getRootPath() {
 		return rootPath;

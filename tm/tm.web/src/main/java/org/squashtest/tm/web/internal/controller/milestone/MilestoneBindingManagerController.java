@@ -20,11 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.milestone;
 
-import java.util.Locale;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,25 +29,30 @@ import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.service.project.GenericProjectFinder;
 import org.squashtest.tm.web.internal.helper.ProjectHelper;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
+import java.util.Locale;
+
+// XSS OK
 @Controller
 @RequestMapping("administration/projects/{projectId}/milestone-binding")
 public class MilestoneBindingManagerController {
 
 	@Inject
 	private GenericProjectFinder service;
-	
+
 	@Inject
 	private Provider<MilestoneStatusComboDataBuilder> statusComboDataBuilderProvider;
-	
+
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getManager(@PathVariable("projectId") Long projectId, Locale locale){
-		
+	public ModelAndView getManager(@PathVariable("projectId") Long projectId, Locale locale) {
+
 		ModelAndView mav = new ModelAndView("project-tabs/milestone-binding.html");
-        GenericProject project = service.findById(projectId);
+		GenericProject project = service.findById(projectId);
 		mav.addObject("proj", project);
 		mav.addObject("isTemplate", ProjectHelper.isTemplate(project));
 		mav.addObject("milestoneStatus", statusComboDataBuilderProvider.get().useLocale(locale).buildMap());
 		return mav;
 	}
-	
+
 }

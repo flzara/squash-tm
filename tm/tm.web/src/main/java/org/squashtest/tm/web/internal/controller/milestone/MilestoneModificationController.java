@@ -20,27 +20,14 @@
  */
 package org.squashtest.tm.web.internal.controller.milestone;
 
-import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
@@ -52,7 +39,18 @@ import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
+
+// XSS OK
 @Controller
 @RequestMapping("/milestones/{milestoneId}")
 public class MilestoneModificationController {
@@ -61,7 +59,7 @@ public class MilestoneModificationController {
 	private MilestoneManagerService milestoneManager;
 
 	@Inject
-	private  AdministrationService adminManager;
+	private AdministrationService adminManager;
 
 	@Inject
 	private UserAccountService userService;
@@ -99,42 +97,48 @@ public class MilestoneModificationController {
 	private Object buildMarshalledUserMap(List<User> activeUsersOrderedByLogin) {
 
 		HashMap<String, String> map = new HashMap<>();
-		for (User user : activeUsersOrderedByLogin){
-			map.put(user.getLogin(), user.getName());
+		for (User user : activeUsersOrderedByLogin) {
+			map.put(HtmlUtils.htmlEscape(user.getLogin()), HtmlUtils.htmlEscape(user.getName()));
 		}
 
-		return 	JsonHelper.serialize(map);
+		return JsonHelper.serialize(map);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=milestone-description", VALUE })
+	@RequestMapping(method = RequestMethod.POST, params = {"id=milestone-description", VALUE})
 	@ResponseBody
 	public String changeDescription(@PathVariable long milestoneId, @RequestParam(VALUE) String newDescription) {
 		milestoneManager.verifyCanEditMilestone(milestoneId);
 		milestoneManager.changeDescription(milestoneId, newDescription);
-		LOGGER.debug("Milestone modification : change milestone {} description = {}", milestoneId, newDescription);
-		return  newDescription;
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Milestone modification : change milestone {} description = {}", milestoneId, newDescription);
+		}
+		return HTMLCleanupUtils.cleanHtml(newDescription);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=milestone-status", VALUE })
+	@RequestMapping(method = RequestMethod.POST, params = {"id=milestone-status", VALUE})
 	@ResponseBody
 	public String changeStatus(@PathVariable long milestoneId, @RequestParam(VALUE) MilestoneStatus newStatus, Locale locale) {
 		milestoneManager.verifyCanEditMilestone(milestoneId);
 		milestoneManager.changeStatus(milestoneId, newStatus);
-		LOGGER.debug("Milestone modification : change milestone {} Status = {}", milestoneId, newStatus);
-		return  formatStatus(locale, newStatus);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Milestone modification : change milestone {} Status = {}", milestoneId, newStatus);
+		}
+		return formatStatus(locale, newStatus);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=milestone-range", VALUE })
+	@RequestMapping(method = RequestMethod.POST, params = {"id=milestone-range", VALUE})
 	@ResponseBody
 	public String changeRange(@PathVariable long milestoneId, @RequestParam(VALUE) MilestoneRange newRange, Locale locale) {
 		milestoneManager.verifyCanEditMilestoneRange();
 		milestoneManager.changeRange(milestoneId, newRange);
-		LOGGER.debug("Milestone modification : change milestone {} Range = {}", milestoneId, newRange);
-		return  formatRange(locale, newRange);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Milestone modification : change milestone {} Range = {}", milestoneId, newRange);
+		}
+		return formatRange(locale, newRange);
 	}
 
 
-	private String formatStatus(Locale locale, MilestoneStatus status){
+	private String formatStatus(Locale locale, MilestoneStatus status) {
 		return levelLabelFormatterProvider.get().useLocale(locale).formatLabel(status);
 	}
 
@@ -143,44 +147,49 @@ public class MilestoneModificationController {
 	}
 
 
-
-	@RequestMapping(method = RequestMethod.POST, params = { "newEndDate" })
+	@RequestMapping(method = RequestMethod.POST, params = {"newEndDate"})
 	@ResponseBody
 	public Date changeEndDate(@PathVariable long milestoneId, @RequestParam @DateTimeFormat(pattern = "yy-MM-dd") Date newEndDate) {
 		milestoneManager.verifyCanEditMilestone(milestoneId);
 		milestoneManager.changeEndDate(milestoneId, newEndDate);
-		LOGGER.debug("Milestone modification : change milestone {} end date = {}", milestoneId, newEndDate);
-		return  newEndDate;
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Milestone modification : change milestone {} end date = {}", milestoneId, newEndDate);
+		}
+		return newEndDate;
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=milestone-owner", VALUE })
+	@RequestMapping(method = RequestMethod.POST, params = {"id=milestone-owner", VALUE})
 	@ResponseBody
 	public String changeOwner(@PathVariable long milestoneId, @RequestParam(VALUE) String login) {
 		User newOwner = adminManager.findByLogin(login);
 		milestoneManager.verifyCanEditMilestone(milestoneId);
 		milestoneManager.changeOwner(milestoneId, newOwner);
-		LOGGER.debug("Milestone modification : change milestone {} owner = {}", milestoneId, newOwner);
-		return  newOwner.getName();
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Milestone modification : change milestone {} owner = {}", milestoneId, newOwner);
+		}
+		return newOwner.getName();
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
+	@RequestMapping(method = RequestMethod.POST, params = {"newName"})
 	@ResponseBody
 	public Object changeName(@PathVariable long milestoneId, @RequestParam String newName) {
 		milestoneManager.verifyCanEditMilestone(milestoneId);
 		milestoneManager.changeLabel(milestoneId, newName);
-		LOGGER.debug("Milestone modification : change milestone {} label = {}", milestoneId, newName);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Milestone modification : change milestone {} label = {}", milestoneId, newName);
+		}
 		return new RenameModel(newName);
 	}
 
 
-	@RequestMapping(method = RequestMethod.GET,  params = { "isBoundToTemplate" })
+	@RequestMapping(method = RequestMethod.GET, params = {"isBoundToTemplate"})
 	@ResponseBody
 	public boolean isBoundToATemplate(@PathVariable long milestoneId) {
 
 		return milestoneManager.isBoundToATemplate(milestoneId);
 	}
 
-	@RequestMapping(method = RequestMethod.GET,  params = { "isBoundToAtleastOneObject" })
+	@RequestMapping(method = RequestMethod.GET, params = {"isBoundToAtleastOneObject"})
 	@ResponseBody
 	public boolean isBoundToAtleastOneObject(@PathVariable long milestoneId) {
 

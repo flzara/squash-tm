@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.web.internal.controller.milestone;
 
+import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 
 
 /**
@@ -34,6 +34,8 @@ import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
  * @author bsiri
  *
  */
+
+// XSS OK
 public class MilestoneFeatureConfiguration {
 
 	/**
@@ -72,18 +74,18 @@ public class MilestoneFeatureConfiguration {
 	private JsonMilestone activeMilestone;
 
 
-	public MilestoneFeatureConfiguration(){
+	public MilestoneFeatureConfiguration() {
 		super();
 	}
 
-	public MilestoneFeatureConfiguration(boolean enabled){
+	public MilestoneFeatureConfiguration(boolean enabled) {
 		super();
 		this.globallyEnabled = false;
 	}
 
 
 	public MilestoneFeatureConfiguration(boolean globallyEnabled, boolean userEnabled, boolean milestoneLocked,
-			int totalMilestones, Map<String, String> identity, JsonMilestone activeMilestone) {
+										 int totalMilestones, Map<String, String> identity, JsonMilestone activeMilestone) {
 		super();
 		this.globallyEnabled = globallyEnabled;
 		this.userEnabled = userEnabled;
@@ -98,9 +100,9 @@ public class MilestoneFeatureConfiguration {
 	}
 
 
-        public boolean isNormalMode(){
-            return ! globallyEnabled;
-        }
+	public boolean isNormalMode() {
+		return !globallyEnabled;
+	}
 
 
 	public void setGloballyEnabled(boolean globallyEnabled) {
@@ -156,11 +158,9 @@ public class MilestoneFeatureConfiguration {
 	}
 
 
-
 	public JsonMilestone getActiveMilestone() {
 		return activeMilestone;
 	}
-
 
 
 	public void setActiveMilestone(JsonMilestone activeMilestone) {
@@ -169,36 +169,36 @@ public class MilestoneFeatureConfiguration {
 
 	// *********** meta predicates **************
 
-	public boolean isDisplayTab(){
+	public boolean isDisplayTab() {
 		return globallyEnabled;
 	}
 
-	public boolean isMessagesEnabled(){
+	public boolean isMessagesEnabled() {
 		return globallyEnabled;
 	}
 
-	public boolean isLocked(){
+	public boolean isLocked() {
 		return milestoneLocked;
 	}
 
-	public boolean isMultipleBindings(){
+	public boolean isMultipleBindings() {
 		return totalMilestones > 1;
 	}
 
-	public boolean isEditable(){
-		return ! isLocked();
+	public boolean isEditable() {
+		return !isLocked();
 	}
 
-        public boolean isActiveMilestoneCreatable(){
-            return (activeMilestone != null) ? activeMilestone.isCanCreateDelete() : true;
-        }
+	public boolean isActiveMilestoneCreatable() {
+		return (activeMilestone != null) ? activeMilestone.isCanCreateDelete() : true;
+	}
 
-	public boolean isMilestoneDatesColumnVisible(){
+	public boolean isMilestoneDatesColumnVisible() {
 		return globallyEnabled;
 	}
 
 	// this method is an alias of the other
-	public boolean isShowLockMessage(){
+	public boolean isShowLockMessage() {
 		return isMessagesEnabled() && isLocked();
 	}
 
@@ -219,7 +219,7 @@ public class MilestoneFeatureConfiguration {
 	 * returns false -> no such message is ever displayed
 	 * regardless of what the user is doing
 	 */
-	public boolean isShowMultipleBindingMessage(){
+	public boolean isShowMultipleBindingMessage() {
 		return isMessagesEnabled() && userEnabled && isEditable();
 	}
 

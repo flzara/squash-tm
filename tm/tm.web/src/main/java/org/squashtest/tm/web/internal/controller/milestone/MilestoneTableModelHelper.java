@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.milestone;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
@@ -32,6 +28,11 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+// XSS OK
 public class MilestoneTableModelHelper extends DataTableModelBuilder<Milestone> {
 
 
@@ -39,13 +40,11 @@ public class MilestoneTableModelHelper extends DataTableModelBuilder<Milestone> 
 	private Locale locale;
 
 
-
 	public MilestoneTableModelHelper(InternationalizationHelper i18nHelper, Locale locale) {
 		super();
 		this.i18nHelper = i18nHelper;
 		this.locale = locale;
 	}
-
 
 
 	@Override
@@ -67,7 +66,7 @@ public class MilestoneTableModelHelper extends DataTableModelBuilder<Milestone> 
 		return row;
 	}
 
-	private String formatStatus(MilestoneStatus status){
+	private String formatStatus(MilestoneStatus status) {
 		return i18nHelper.internationalize(status, locale);
 	}
 

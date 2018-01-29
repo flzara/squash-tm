@@ -25,6 +25,7 @@ import java.util.Date;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
 
+// XSS OK
 public class MetaMilestone{
 
 	private Milestone milestone;

@@ -20,18 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.milestone;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
@@ -48,6 +36,11 @@ import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
+import java.util.*;
+
+// XSS OK
 @Controller
 @RequestMapping("/milestones")
 public class MilestoneController {
@@ -70,18 +63,18 @@ public class MilestoneController {
 		return statusComboDataBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
 
-	@RequestMapping(params="selectable", method = RequestMethod.GET)
+	@RequestMapping(params = "selectable", method = RequestMethod.GET)
 	@ResponseBody
-	public DataTableModel<Milestone> findUserSelectableMilestones(){
+	public DataTableModel<Milestone> findUserSelectableMilestones() {
 
 		List<Milestone> milestones = milestoneFinder.findAllVisibleToCurrentUser();
 
 		//checking global project filter and filter milestone who aren't binded to at least one project in filter
 		ProjectFilter projectFilter = projectFilterService.findProjectFilterByUserLogin();
 		if (projectFilter.isEnabled()) {
-			 Collection<Milestone> milestonesCollection = CollectionUtils.retainAll(milestones, getMilestoneFromProjectFilter(projectFilter));
-			 milestones = new ArrayList<>(0);
-			 milestones.addAll(milestonesCollection);
+			Collection<Milestone> milestonesCollection = CollectionUtils.retainAll(milestones, getMilestoneFromProjectFilter(projectFilter));
+			milestones = new ArrayList<>(0);
+			milestones.addAll(milestonesCollection);
 		}
 
 		// they must be initially sorted by date descending
@@ -104,7 +97,7 @@ public class MilestoneController {
 
 	//--------------------------------- PRIVATE STUFF ---------------------------------//
 
-	private Set<Milestone> getMilestoneFromProjectFilter(ProjectFilter projectFilter){
+	private Set<Milestone> getMilestoneFromProjectFilter(ProjectFilter projectFilter) {
 		HashSet<Milestone> milestoneFiltered = new HashSet<>();
 
 		List<Project> projects = projectFilter.getProjects();

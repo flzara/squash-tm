@@ -25,6 +25,7 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
+<%@ taglib prefix="hu" uri="http://org.squashtest.tm/taglib/html-utils" %>
 
 <%@ page language="java" contentType="text/html; charset=utf-8"
   pageEncoding="utf-8"%>
@@ -182,10 +183,10 @@
               </label>
               <c:choose>
                   <c:when test="${ canEdit }">
-              <div class="display-table-cell editable rich-editable" data-def="url=${milestoneUrl}" id="milestone-description">${ milestone.description }</div>
+              <div class="display-table-cell editable rich-editable" data-def="url=${milestoneUrl}" id="milestone-description">${ hu:clean(milestone["description"]) }</div>
                  </c:when>
              <c:otherwise>
-            <div class="display-table-cell">  ${ milestone.description } </div>
+            <div class="display-table-cell">  ${hu:clean(milestone["description"])} </div>
                           </c:otherwise>
             </c:choose>
             </div>

@@ -86,7 +86,7 @@ public class MilestoneDataTableModelHelper  extends DataTableModelBuilder<Milest
 		row.put("nbOfProjects", item.getNbOfBindedProject());
 		row.put("description", HTMLCleanupUtils.cleanHtml(item.getDescription()));
 		row.put("range", i18nRange(item.getRange()));
-		row.put("owner", HtmlUtils.htmlEscape(ownerToPrint(item)));
+		row.put("owner", ownerToPrint(item));
 		row.put("status", i18nStatus(item.getStatus()));
 		// Issue 5065 There we check if milestone is binded to the current project, don't care about the others
 		Boolean isBoundToThisProject = false;
@@ -112,7 +112,7 @@ public class MilestoneDataTableModelHelper  extends DataTableModelBuilder<Milest
 		if (item.getRange() == MilestoneRange.GLOBAL){
 			owner = messageSource.internationalize("label.milestone.global.owner", locale);
 		} else {
-			owner = item.getOwner().getName();
+			owner = HtmlUtils.htmlEscape(item.getOwner().getName());
 		}
 		return owner;
 	}

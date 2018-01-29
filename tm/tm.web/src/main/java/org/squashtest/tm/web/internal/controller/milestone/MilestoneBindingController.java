@@ -20,20 +20,9 @@
  */
 package org.squashtest.tm.web.internal.controller.milestone;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.service.milestone.MilestoneBindingManagerService;
@@ -48,6 +37,10 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 
+import javax.inject.Inject;
+import java.util.*;
+
+// XSS OK
 @Controller
 @RequestMapping("/milestones-binding")
 public class MilestoneBindingController {
@@ -68,30 +61,30 @@ public class MilestoneBindingController {
 	@Inject
 	private PermissionEvaluationService permissionEvaluator;
 
-	@RequestMapping(value = "/project/{projectId}/milestone", method = RequestMethod.POST, params = { IDS })
+	@RequestMapping(value = "/project/{projectId}/milestone", method = RequestMethod.POST, params = {IDS})
 	@ResponseBody
 	public void bindMilestonesToProject(@PathVariable Long projectId, @RequestParam(IDS) List<Long> milestoneIds) {
 		service.bindMilestonesToProject(milestoneIds, projectId);
 	}
 
-	@RequestMapping(value = "/milestone/{milestoneId}/project", method = RequestMethod.POST, params = { IDS })
+	@RequestMapping(value = "/milestone/{milestoneId}/project", method = RequestMethod.POST, params = {IDS})
 	@ResponseBody
 	public void bindProjectsToMilestone(@PathVariable Long milestoneId, @RequestParam(IDS) List<Long> projectIds) {
 		service.bindProjectsToMilestone(projectIds, milestoneId);
 	}
 
-	@RequestMapping(value = "/project/{projectId}/milestone", method = RequestMethod.POST, params = { IDS,
-	"bindObjects" })
+	@RequestMapping(value = "/project/{projectId}/milestone", method = RequestMethod.POST, params = {IDS,
+		"bindObjects"})
 	@ResponseBody
 	public void bindMilestonesToProjectAndBindObject(@PathVariable Long projectId,
-			@RequestParam(IDS) List<Long> milestoneIds) {
+													 @RequestParam(IDS) List<Long> milestoneIds) {
 		service.bindMilestonesToProjectAndBindObject(projectId, milestoneIds);
 	}
 
 	@RequestMapping(value = "/project/{projectId}/milestone/{milestoneIds}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public void unbindMilestoneFromProject(@PathVariable(RequestParams.PROJECT_ID) Long projectId,
-			@PathVariable("milestoneIds") List<Long> milestoneIds) {
+										   @PathVariable("milestoneIds") List<Long> milestoneIds) {
 		service.unbindMilestonesFromProject(milestoneIds, projectId);
 	}
 
@@ -104,18 +97,18 @@ public class MilestoneBindingController {
 	@RequestMapping(value = "/milestone/{milestoneId}/project/{projectIds}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public void unbindProjectFromMilestone(@PathVariable("milestoneId") Long milestoneId,
-			@PathVariable("projectIds") List<Long> projectIds) {
+										   @PathVariable("projectIds") List<Long> projectIds) {
 		service.unbindProjectsFromMilestone(projectIds, milestoneId);
 	}
 
 	@RequestMapping(value = "/milestone/{milestoneId}/project/{projectIds}/keep-in-perimeter", method = RequestMethod.DELETE)
 	@ResponseBody
 	public void unbindProjectFromMilestoneKeepInPerimeter(@PathVariable("milestoneId") Long milestoneId,
-			@PathVariable("projectIds") List<Long> projectIds) {
+														  @PathVariable("projectIds") List<Long> projectIds) {
 		service.unbindProjectsFromMilestoneKeepInPerimeter(projectIds, milestoneId);
 	}
 
-	@RequestMapping(value = "/milestone/{milestoneId}/project", method = RequestMethod.GET, params = { BINDABLE })
+	@RequestMapping(value = "/milestone/{milestoneId}/project", method = RequestMethod.GET, params = {BINDABLE})
 	@ResponseBody
 	public DataTableModel getBindableProjectForMilestoneTableModel(@PathVariable Long milestoneId, final Locale locale) {
 		Milestone milestone = milestoneService.findById(milestoneId);
@@ -142,17 +135,17 @@ public class MilestoneBindingController {
 		return model;
 	}
 
-	@RequestMapping(value = "/project/{projectId}/milestone", method = RequestMethod.GET, params = { BINDABLE, "type" })
+	@RequestMapping(value = "/project/{projectId}/milestone", method = RequestMethod.GET, params = {BINDABLE, "type"})
 	@ResponseBody
 	public DataTableModel getBindableMilestoneForProjectTableModel(@PathVariable Long projectId, final Locale locale,
-			@RequestParam("type") String type) {
+																   @RequestParam("type") String type) {
 
 		Collection<Milestone> data = service.getAllBindableMilestoneForProject(projectId, type);
 
 		return buildMilestoneTableModel(data, locale, projectId);
 	}
 
-	@RequestMapping(value = "/project/{projectId}/milestone", method = RequestMethod.GET, params = { BINDED })
+	@RequestMapping(value = "/project/{projectId}/milestone", method = RequestMethod.GET, params = {BINDED})
 	@ResponseBody
 	public DataTableModel getBindedMilestoneForProjectTableModel(@PathVariable Long projectId, final Locale locale) {
 
@@ -161,10 +154,10 @@ public class MilestoneBindingController {
 		return buildMilestoneTableModel(data, locale, projectId);
 	}
 
-	@RequestMapping(value = "/milestone/{milestoneId}/project", method = RequestMethod.GET, params = { BINDED })
+	@RequestMapping(value = "/milestone/{milestoneId}/project", method = RequestMethod.GET, params = {BINDED})
 	@ResponseBody
 	public DataTableModel getBindedOrPerimeterProjectForMilestoneTableModel(@PathVariable Long milestoneId,
-			final Locale locale) {
+																			final Locale locale) {
 		Milestone milestone = milestoneService.findById(milestoneId);
 		Collection<GenericProject> data = service.getAllProjectForMilestone(milestoneId);
 		return buildProjectTableModel(data, milestone, locale);
@@ -189,13 +182,13 @@ public class MilestoneBindingController {
 			data.put("type", "&nbsp;");
 			data.put("raw-type", ProjectHelper.isTemplate(project) ? "template" : "project");
 			data.put("checkbox", " ");
-			data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, project.getName());
-			data.put("label", project.getLabel());
+			data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, HtmlUtils.htmlEscape(project.getName()));
+			data.put("label", HtmlUtils.htmlEscape(project.getLabel()));
 			data.put("binded", messageSource.internationalizeYesNo(project.isBoundToMilestone(milestone), locale));
 			data.put(
-					"isUsed",
-					messageSource.internationalizeYesNo(
-							milestoneService.isMilestoneBoundToOneObjectOfProject(milestone, project), locale));
+				"isUsed",
+				messageSource.internationalizeYesNo(
+					milestoneService.isMilestoneBoundToOneObjectOfProject(milestone, project), locale));
 			data.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			data.put("link", permissionEvaluator.hasRoleOrPermissionOnObject("ROLE_ADMIN", "MANAGEMENT", project));
 			return data;
