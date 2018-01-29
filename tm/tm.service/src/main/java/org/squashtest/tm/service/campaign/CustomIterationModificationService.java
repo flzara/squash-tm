@@ -46,6 +46,8 @@ import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
  */
 public interface CustomIterationModificationService extends IterationFinder {
 
+	String ITERATION_ID = "iterationId";
+
 	/**
 	 * Adds an iteration to the list of iterations of a campaign.
 	 *
@@ -100,11 +102,11 @@ public interface CustomIterationModificationService extends IterationFinder {
 	 * @return the copy of the test suite
 	 */
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=Iteration.class,paramName="iterationId"),
+			simplesLocks={@PreventConcurrent(entityType=Iteration.class,paramName= ITERATION_ID),
 					@PreventConcurrent(entityType=Iteration.class,paramName="testSuiteId",coercer=TestSuiteToIterationCoercerForUniqueId.class)
 				}
 			)
-	TestSuite copyPasteTestSuiteToIteration(@Id("testSuiteId")long testSuiteId, @Id("iterationId") long iterationId);
+	TestSuite copyPasteTestSuiteToIteration(@Id("testSuiteId")long testSuiteId, @Id(ITERATION_ID) long iterationId);
 
 	/**
 	 * <p>
@@ -119,10 +121,10 @@ public interface CustomIterationModificationService extends IterationFinder {
 	 * @return the list containing all the copies of the test suites
 	 */
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=Iteration.class,paramName="iterationId")},
+			simplesLocks={@PreventConcurrent(entityType=Iteration.class,paramName= ITERATION_ID)},
 			batchsLocks={@BatchPreventConcurrent(entityType=Iteration.class,paramName="testSuiteIds",coercer=TestSuiteToIterationCoercerForArray.class)}
 			)
-	List<TestSuite> copyPasteTestSuitesToIteration(@Ids("testSuiteIds") Long[] testSuiteIds,@Id("iterationId") long iterationId);
+	List<TestSuite> copyPasteTestSuitesToIteration(@Ids("testSuiteIds") Long[] testSuiteIds,@Id(ITERATION_ID) long iterationId);
 
 	IterationStatisticsBundle gatherIterationStatisticsBundle(long iterationId);
 

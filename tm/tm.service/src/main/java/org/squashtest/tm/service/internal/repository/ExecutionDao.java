@@ -34,17 +34,19 @@ import java.util.List;
 
 public interface ExecutionDao extends JpaRepository<Execution, Long>, CustomExecutionDao {
 
+	String EXECUTION_ID = "executionId";
+
 	@Query
-	List<ExecutionStep> findSteps(@Param("executionId") long executionId);
+	List<ExecutionStep> findSteps(@Param(EXECUTION_ID) long executionId);
 
 	@Query
 	List<ExecutionStep> findStepsForAllExecutions(@Param("executionIds") Collection<Long> executionIds);
 
 	@Query
-	List<ActionTestStep> findOriginalSteps(@Param("executionId") long executionId);
+	List<ActionTestStep> findOriginalSteps(@Param(EXECUTION_ID) long executionId);
 
 	@Query
-	List<Long> findOriginalStepIds(@Param("executionId") long executionId);
+	List<Long> findOriginalStepIds(@Param(EXECUTION_ID) long executionId);
 
 	@Query
 	long countStatus(@Param("execId") long executionId, @Param("status") ExecutionStatus status);
@@ -65,7 +67,7 @@ public interface ExecutionDao extends JpaRepository<Execution, Long>, CustomExec
 
 	// ************* /special execution status deactivation section ***************
 	@Query
-	long countSteps(@Param("executionId") long executionId);
+	long countSteps(@Param(EXECUTION_ID) long executionId);
 
 	/**
 	 * Returns the count of executions which ran a given test case.

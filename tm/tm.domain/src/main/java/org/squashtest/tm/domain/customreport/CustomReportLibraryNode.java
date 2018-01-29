@@ -62,8 +62,10 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 @Table(name="CUSTOM_REPORT_LIBRARY_NODE")
 public class CustomReportLibraryNode  implements TreeLibraryNode {
 
+	private static final String CRLN_ID = "CRLN_ID";
+
 	@Id
-	@Column(name = "CRLN_ID")
+	@Column(name = CRLN_ID)
 	@GeneratedValue(strategy=GenerationType.AUTO, generator="custom_report_library_node_crln_id_seq")
 	@SequenceGenerator(name="custom_report_library_node_crln_id_seq", sequenceName="custom_report_library_node_crln_id_seq", allocationSize = 1)
 	private Long id;
@@ -99,14 +101,14 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	private String name;
 
 	@JoinTable(name="CRLN_RELATIONSHIP",
-			joinColumns={@JoinColumn(name="DESCENDANT_ID", referencedColumnName="CRLN_ID", insertable=false, updatable=false)},
-			inverseJoinColumns={@JoinColumn(name="ANCESTOR_ID", referencedColumnName="CRLN_ID", insertable=false, updatable=false)})
+			joinColumns={@JoinColumn(name="DESCENDANT_ID", referencedColumnName= CRLN_ID, insertable=false, updatable=false)},
+			inverseJoinColumns={@JoinColumn(name="ANCESTOR_ID", referencedColumnName= CRLN_ID, insertable=false, updatable=false)})
 	@ManyToOne(fetch = FetchType.LAZY,targetEntity=CustomReportLibraryNode.class)
 	private TreeLibraryNode parent;
 
 	@JoinTable(name="CRLN_RELATIONSHIP",
-			joinColumns={@JoinColumn(name="ANCESTOR_ID", referencedColumnName="CRLN_ID")},
-			inverseJoinColumns={@JoinColumn(name="DESCENDANT_ID", referencedColumnName="CRLN_ID")})
+			joinColumns={@JoinColumn(name="ANCESTOR_ID", referencedColumnName= CRLN_ID)},
+			inverseJoinColumns={@JoinColumn(name="DESCENDANT_ID", referencedColumnName= CRLN_ID)})
 	@OneToMany(cascade={ CascadeType.ALL },fetch = FetchType.LAZY,
 			targetEntity=CustomReportLibraryNode.class)
 	@IndexColumn(name="CONTENT_ORDER")

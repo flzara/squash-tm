@@ -80,6 +80,8 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 public class Execution implements AttachmentHolder, IssueDetector, Identified, HasExecutionStatus,
 DenormalizedFieldHolder, BoundEntity {
 
+	private static final String EXECUTION_ID = "EXECUTION_ID";
+
 	static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
 
 	public static final String NO_DATASET_USED_LABEL = "";
@@ -88,6 +90,8 @@ DenormalizedFieldHolder, BoundEntity {
 	private static final String PARAM_SUFFIX = "\\Q}\\E";
 	private static final String PARAM_PATTERN = PARAM_PREFIX + "([A-Za-z0-9_-]{1,255})" + PARAM_SUFFIX;
 	private static final String NO_PARAM = "&lt;no_value&gt;";
+
+
 	static {
 		Set<ExecutionStatus> set = new HashSet<>();
 		set.add(ExecutionStatus.SUCCESS);
@@ -101,7 +105,7 @@ DenormalizedFieldHolder, BoundEntity {
 	}
 
 	@Id
-	@Column(name = "EXECUTION_ID")
+	@Column(name = EXECUTION_ID)
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "execution_execution_id_seq")
 	@SequenceGenerator(name = "execution_execution_id_seq", sequenceName = "execution_execution_id_seq", allocationSize = 1)
 	private Long id;
@@ -155,7 +159,7 @@ DenormalizedFieldHolder, BoundEntity {
 
 	// TODO rename as testPlanItem
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinTable(name = "ITEM_TEST_PLAN_EXECUTION", joinColumns = @JoinColumn(name = "EXECUTION_ID", insertable = false, updatable = false), inverseJoinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID", insertable = false, updatable = false))
+	@JoinTable(name = "ITEM_TEST_PLAN_EXECUTION", joinColumns = @JoinColumn(name = EXECUTION_ID, insertable = false, updatable = false), inverseJoinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID", insertable = false, updatable = false))
 	private IterationTestPlanItem testPlan;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -165,7 +169,7 @@ DenormalizedFieldHolder, BoundEntity {
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@OrderColumn(name = "EXECUTION_STEP_ORDER")
-	@JoinTable(name = "EXECUTION_EXECUTION_STEPS", joinColumns = @JoinColumn(name = "EXECUTION_ID"), inverseJoinColumns = @JoinColumn(name = "EXECUTION_STEP_ID"))
+	@JoinTable(name = "EXECUTION_EXECUTION_STEPS", joinColumns = @JoinColumn(name = EXECUTION_ID), inverseJoinColumns = @JoinColumn(name = "EXECUTION_STEP_ID"))
 	private final List<ExecutionStep> steps = new ArrayList<>();
 
 	@Formula("(select ITEM_TEST_PLAN_EXECUTION.EXECUTION_ORDER from ITEM_TEST_PLAN_EXECUTION where ITEM_TEST_PLAN_EXECUTION.EXECUTION_ID = EXECUTION_ID)")
@@ -208,7 +212,7 @@ DenormalizedFieldHolder, BoundEntity {
 
 	@OneToMany(fetch=FetchType.LAZY)
 	@JoinTable(name="EXECUTION_ISSUES_CLOSURE",
-	joinColumns=@JoinColumn(name="EXECUTION_ID", insertable=false, updatable=false ),
+	joinColumns=@JoinColumn(name= EXECUTION_ID, insertable=false, updatable=false ),
 	inverseJoinColumns = @JoinColumn(name="ISSUE_ID"))
 	@Persister(impl = ReadOnlyCollectionPersister.class)
 	@Immutable

@@ -40,6 +40,9 @@ import javax.servlet.ServletContext;
 @Controller
 @RequestMapping("/features")
 public class SquashFeatureController {
+
+	private static final String ENABLED = "enabled";
+
 	/**
 	 * This "monitor" should be synchronized when performing changes on the app
 	 * scope to emulate transactions. Consider using something higher level from
@@ -56,11 +59,11 @@ public class SquashFeatureController {
 	@Inject
 	private ServletContext applicationScope;
 
-	@RequestMapping(value = "/milestones", method = RequestMethod.POST, params = "enabled")
+	@RequestMapping(value = "/milestones", method = RequestMethod.POST, params = ENABLED)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@Secured("ROLE_ADMIN")
-	public void setMilestonesFeature(@RequestParam("enabled") boolean enabled) {
+	public void setMilestonesFeature(@RequestParam(ENABLED) boolean enabled) {
 		synchronized (monitor) {
 			Object prevState = applicationScope.getAttribute(SquashConfigContextExposer.MILESTONE_FEATURE_ENABLED_CONTEXT_ATTR);
 			// nobody should be able to use the feature while it is being turned
@@ -80,19 +83,19 @@ public class SquashFeatureController {
 
 	}
 
-	@RequestMapping(value = "/case-insensitive-login", method = RequestMethod.POST, params = "enabled")
+	@RequestMapping(value = "/case-insensitive-login", method = RequestMethod.POST, params = ENABLED)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@Secured("ROLE_ADMIN")
-	public void setCaseInsensitiveLoginFeature(@RequestParam("enabled") boolean enabled) {
+	public void setCaseInsensitiveLoginFeature(@RequestParam(ENABLED) boolean enabled) {
 		featureManager.setEnabled(Feature.CASE_INSENSITIVE_LOGIN, enabled);
 	}
 
-	@RequestMapping(value = "/stack-trace", method = RequestMethod.POST, params = "enabled")
+	@RequestMapping(value = "/stack-trace", method = RequestMethod.POST, params = ENABLED)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@Secured("ROLE_ADMIN")
-	public void setStackTraceFeature(@RequestParam("enabled") boolean enabled) {
+	public void setStackTraceFeature(@RequestParam(ENABLED) boolean enabled) {
 		featureManager.setEnabled(Feature.STACK_TRACE, enabled);
 	}
 }
