@@ -177,7 +177,7 @@ public class CustomFieldController {
 	@ResponseBody
 	public String changeCode(@PathVariable long customFieldId, @RequestParam(JEditablePostParams.VALUE) String code) {
 		customFieldManager.changeCode(customFieldId, code);
-		return code;
+		return HtmlUtils.htmlEscape(code);
 	}
 
 	/**
@@ -378,7 +378,7 @@ public class CustomFieldController {
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 			res.put("opt-label", item.getLabel());
 			res.put("opt-code", item.getCode());
-			res.put("opt-default", "<input type='checkbox' name='default' value='" + item.getLabel() + "'" + checked
+			res.put("opt-default", "<input type='checkbox' name='default' value='" +  HtmlUtils.htmlEscape(item.getLabel()) + "'" + checked
 					+ "/>");
 			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			return res;

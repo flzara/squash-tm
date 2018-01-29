@@ -19,9 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(
-		[ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app/lnf/Forms", "squash.configmanager",
+		[ "jquery","underscore", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app/lnf/Forms", "squash.configmanager",
 		  "./NewCustomFieldModel", "jquery.squash.formdialog", "datepicker/jquery.squash.datepicker-locales", "jquery.squash.tagit" ],
-	function($, Backbone, Handlebars, SD, Forms, confman, NewCustomFieldModel) {
+	function($, _, Backbone, Handlebars, SD, Forms, confman, NewCustomFieldModel) {
 		"use strict";
 		/**
 		 * Validates model and sets error messages accordingly
@@ -125,7 +125,7 @@ define(
 				});
 				this.$("input:checkbox[name='optional']").get()[0].checked = model.get("optional");
 				this.$("select[name='inputType']").val(model.get("inputType"));
-				
+
 				if(this.$el.data().formDialog !== undefined) {
 					this.$el.formDialog("focusMainInput");
 				}
@@ -209,7 +209,7 @@ define(
 
 			changeStrProp : function(event) {
 				var textbox = event.target;
-				this.model.set(textbox.name, textbox.value);
+				this.model.set(_.escape(textbox.name), _.escape(textbox.value));
 				var value = textbox.value;
 				this.model.set(name, value);
 			},
@@ -375,7 +375,7 @@ define(
 
 				try {
 					this.model.addOption([ $label.val(), $code.val() ]);
-					this.optionsTable.dataTable().fnAddData([ $label.val(), $code.val(), false, "" ]);
+					this.optionsTable.dataTable().fnAddData([ _.escape($label.val()), $code.val(), false, "" ]);
 					this.renderNewOptionPane();
 				} catch (ex) {
 					if (ex.name === "ValidationException") {

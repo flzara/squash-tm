@@ -249,7 +249,6 @@
 			</jsp:attribute>
 		</comp:toggle-panel>
 
-
 		<div id="execute-evaluation">
 
 			<div id="execute-evaluation-leftside">
@@ -259,7 +258,6 @@
 						<div id="execution-comment"  class="editable rich-editable load-links-right-frame"
                         data-def="url=${executeComment}">
                           ${hu:clean(executionStep.comment)}
-
                         </div>
 					</jsp:attribute>
 				</comp:toggle-panel>

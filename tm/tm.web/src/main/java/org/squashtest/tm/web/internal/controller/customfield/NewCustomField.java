@@ -107,6 +107,7 @@ public class NewCustomField extends CustomField {
 	 * @return the options
 	 */
 	public String[][] getOptions() {
+
 		return options;
 	}
 

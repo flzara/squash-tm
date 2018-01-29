@@ -68,13 +68,13 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms", "app/ws/squashtm.n
 				res = false;
 				event.preventDefault();
 				var errormsg = notification.getErrorMessage(jqXHR);
-				Forms.input(self.$("#" + inputId)).setState("error", errormsg);		
+				Forms.input(self.$("#" + inputId)).setState("error", errormsg);
 			});
 			$('#options-table').squashTable().refresh();
 			this._resetForm();
 			return res;
 		},
-		
+
 		validate : function(event) {
 			var res = true;
 			this.populateModel();
@@ -93,9 +93,9 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms", "app/ws/squashtm.n
 				res = false;
 				event.preventDefault();
 				var errormsg = notification.getErrorMessage(jqXHR);
-				Forms.input(self.$("#" + inputId)).setState("error", errormsg);		
+				Forms.input(self.$("#" + inputId)).setState("error", errormsg);
 			});
-			$('#options-table').squashTable().refresh(); 
+			$('#options-table').squashTable().refresh();
 			this.$el.formDialog("close");
 			return res;
 		},
@@ -109,7 +109,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms", "app/ws/squashtm.n
 				this.$el.formDialog("focusMainInput");
 			}
 		},
-		 
+
 		cleanup : function() {
 			this.$el.addClass("not-displayed");
 			Forms.form(this.$el).clearState();

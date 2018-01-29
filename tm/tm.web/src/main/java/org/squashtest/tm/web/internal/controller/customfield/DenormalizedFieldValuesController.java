@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
@@ -42,6 +43,7 @@ import org.squashtest.tm.service.internal.dto.CustomFieldValueModel;
 import org.squashtest.tm.service.internal.dto.RawValueModel;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
+//XSS ok bflessel
 @Controller
 @RequestMapping("/denormalized-fields/values")
 public class DenormalizedFieldValuesController {
@@ -71,6 +73,7 @@ public class DenormalizedFieldValuesController {
 
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.POST, consumes="application/json")
+	@RequestMapping(value = "/{id}", method = RequestMethod.POST, consumes = "application/json")
 	@ResponseBody
 	public void updateDenormalizedValue(@PathVariable long id, @RequestBody RawValueModel value) {
 		denormalizedFieldValueFinder.changeValue(id, value.toRawValue());
@@ -89,7 +92,23 @@ public class DenormalizedFieldValuesController {
 			}
 			models.add(model);
 		}
-
 		return models;
+	}
+
+	public CustomFieldValueModel sanitizeCustomFieldValueModel(CustomFieldValueModel model) {
+		if(model.getBoundEntityType().getFriendlyName()!= null) {
+			model.getBoundEntityType().setFriendlyName(HtmlUtils.htmlEscape(model.getBoundEntityType().getFriendlyName()));
+		}
+		List<String> optionvalues = new ArrayList<>();
+		if (!(model.getOptionValues() == null)) {
+			for (String optionValue : model.getOptionValues()) {
+				optionvalues.add(HTMLCleanupUtils.cleanHtml(optionValue));
+			}
+
+		model.getOptionValues().clear();
+		model.setOptionValues(optionvalues);
+		}
+		model.setValue(HtmlUtils.htmlEscape(model.getValue()));
+		return model;
 	}
 }

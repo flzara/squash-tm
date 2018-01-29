@@ -57,7 +57,7 @@
 
       },
     messages: {
-      "message.optionAlreadyDefined": /*[[ #{message.optionAlreadyDefined} ]]*/ "Option is already defined",
+      "message.optionAlreadyDefined": /*[[  #{message.optionAlreadyDefined}  ]]*/ "Option is already defined",
       "message.optionCodeAlreadyDefined": /*[[ #{message.optionCodeAlreadyDefined} ]]*/ "Code is already defined",
       "message.optionCodeInvalidPattern" : /*[[ #{message.optionCodeInvalidPattern} ]]*/ "Code must have only letters, numbers and under-scores",
       "message.defaultOptionMandatory": /*[[ #{message.defaultOptionMandatory} ]]*/ "Default option is mandatory when field is not optional",
@@ -141,12 +141,12 @@
               <td class="delete-button"></td>
             </tr>
             <tr th:remove="all">
-              <td class="not-displayed cf-id">2</td>
-              <td>2</td>
-              <td>Custom field YY</td>
-              <td>Label YY</td>
-              <td class="not-displayed raw-input-type">DROPDOWN_LIST</td>
-              <td>Dropdown list</td>
+              <td th:text="" class="not-displayed cf-id">2</td>
+              <td th:text="" >2</td>
+              <td th:text="" >Custom field YY</td>
+              <td th:text="" >Label YY</td>
+              <td th:text=""  class="not-displayed raw-input-type">DROPDOWN_LIST</td>
+              <td th:text="" >Dropdown list</td>
               <td class="delete-button"></td>
             </tr>
           </tbody>
@@ -175,7 +175,7 @@
           <label class="control-label" for="name" th:text="#{label.Name}">Name</label>
           <div class="controls">
             <input name="name" class="strprop" value="" size="50" maxlength="255" type="text" data-def="maininput"/>
-            <span class="help-inline">&nbsp;</span>
+            <span class="help-inline"></span>
           </div>
         </div>
 
@@ -183,7 +183,7 @@
           <label class="control-label" for="label" th:text="#{label.Label}">Label</label>
           <div class="controls">
             <input name="label" class="strprop" value="" size="50" maxlength="255" type="text" />
-            <span class="help-inline">&nbsp;</span>
+             <span class="help-inline">&nbsp;</span>
           </div>
         </div>
 
@@ -191,7 +191,7 @@
           <label class="control-label" for="code" th:text="#{label.code}">Code</label>
           <div class="controls">
             <input name="code" class="strprop" value="" size="50" maxlength="30" type="text" />
-            <span class="help-inline">&nbsp;</span>
+             <span class="help-inline">&nbsp;</span>
           </div>
         </div>
 
@@ -237,7 +237,7 @@
          <label class="control-label" for="defaultValue" th:text="#{label.defaultValue}">Default value</label>
          <div class="controls">
            <textarea id="defaultValue" name="defaultValue" class="richprop" />
-           <span class="help-inline">&nbsp;</span>
+          <span class="help-inline">&nbsp;</span>
          </div>
         </script>
 
@@ -291,7 +291,7 @@
         <label class="control-label" for="new-option-label" th:text="#{label.newOption}">New option</label>
         <div class="controls">
           <input name="new-option-label" type="text" value="" />
-          <span class="not-displayed help-inline">&nbsp;</span>
+          <span class="not-displayed help-inline" >&nbsp;</span>
         </div>
       </div>
 
