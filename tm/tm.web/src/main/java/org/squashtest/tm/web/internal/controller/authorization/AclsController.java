@@ -51,6 +51,10 @@ public class AclsController {
 
 	public static class Acl {
 
+		public Collection<String> getPerms() {
+			return perms;
+		}
+
 		private final Collection<String> perms;
 
 		public Acl(@NotNull Collection<String> perms) {
