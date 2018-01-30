@@ -79,7 +79,7 @@ public class AboveDateCriterion extends ReportCriterion {
 
 			return result;
 			// WARNING!! it previously caught all Exceptions
-		} catch (IllegalArgumentException e) {
+		} catch (IllegalArgumentException|ClassCastException e) {
 			return null;
 		}
 	}

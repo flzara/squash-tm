@@ -23,9 +23,14 @@ package org.squashtest.tm.web.internal.model.json;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.squashtest.tm.web.internal.model.serializer.CleanedStringSerializer;
 
 @JsonAutoDetect
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class CustomReportFolderMixin {
-	
+
+	@JsonSerialize(using = CleanedStringSerializer.class)
+	private String description;
+
 }

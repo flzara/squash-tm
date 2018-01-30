@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.service.customreport.CustomReportFolderService;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 @Controller
 public class CustomReportFolderController {
@@ -45,6 +46,6 @@ public class CustomReportFolderController {
 		public
 		String updateDescription(@PathVariable long folderId, @RequestParam(VALUE) String newDescription) {
 			crfService.updateDescription(folderId, newDescription);
-			return newDescription;
+			return HTMLCleanupUtils.cleanHtml(newDescription);
 		}
 }

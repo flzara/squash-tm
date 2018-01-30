@@ -20,91 +20,91 @@
  */
 define(["is", "jquery", "backbone", "squash.configmanager", "workspace.routing", "./ReportCriteriaPanel", "jqueryui"],
 	function (is, $, backbone, confman, router, ReportCriteriaPanel) {
-	"use strict";
+		"use strict";
 
-	var reportInfomationPanel = Backbone.View.extend({
+		var reportInfomationPanel = Backbone.View.extend({
 
-			// el: "#report-information-panel",
+				// el: "#report-information-panel",
 
-			initialize: function (attributes, config) {
-				this.config = config;
-				this.initText();
+				initialize: function (attributes, config) {
+					this.config = config;
+					this.initText();
 
-			},
+				},
 
-			events: {
-				"click #save": "save"
-			},
+				events: {
+					"click #save": "save"
+				},
 
-			initText: function () {
+				initText: function () {
 
-				$("#report-description").ckeditor(function () {
-				}, confman.getStdCkeditor());
+					$("#report-description").ckeditor(function () {
+					}, confman.getStdCkeditor());
 
-				if (this.isModify()) {
-					var reportDef = JSON.parse(this.config.reportDef);
-					$("#report-name").val(reportDef.name);
-					$("#report-description").val(reportDef.description);
-
-					$("#report-desc").html(reportDef.description);
-				}
-			},
-
-			getCookiePath: function () {
-				var path = router.buildURL("custom-report-base");
-				if (is.ie() || is.firefox()) {
-					path = path + "/";
-				}
-				return path;
-			},
-
-			isModify: function () {
-				var reportDef = this.config.reportDef;
-				return (reportDef !== null & reportDef !== undefined);
-			},
-
-			save: function () {
-				if (this.model.hasBoundary()) {
-
-					var path = this.getCookiePath();
-					var data = {
-						name: $("#report-name").val(),
-						description: $("#report-description").val(),
-						parameters: JSON.stringify(this.model.toJSON())
-					};
-
-					var targetUrl;
 					if (this.isModify()) {
-						targetUrl = this.config.reportUrl + "/panel/content/update/" + this.config.parentId;
+						var reportDef = JSON.parse(this.config.reportDef);
+						$("#report-name").val(reportDef.name);
+						$("#report-description").val(reportDef.description);
+
+						$("#report-desc").html(this.config.reportDefDescription);
+					}
+				},
+
+				getCookiePath: function () {
+					var path = router.buildURL("custom-report-base");
+					if (is.ie() || is.firefox()) {
+						path = path + "/";
+					}
+					return path;
+				},
+
+				isModify: function () {
+					var reportDef = this.config.reportDef;
+					return (reportDef !== null & reportDef !== undefined);
+				},
+
+				save: function () {
+					if (this.model.hasBoundary()) {
+
+						var path = this.getCookiePath();
+						var data = {
+							name: $("#report-name").val(),
+							description: $("#report-description").val(),
+							parameters: JSON.stringify(this.model.toJSON())
+						};
+
+						var targetUrl;
+						if (this.isModify()) {
+							targetUrl = this.config.reportUrl + "/panel/content/update/" + this.config.parentId;
+						} else {
+							targetUrl = this.config.reportUrl + "/panel/content/new-report/" + this.config.parentId;
+						}
+
+						$.ajax({
+							type: "POST",
+							url: targetUrl,
+							contentType: "application/json",
+							data: JSON.stringify(data)
+						}).done(function (id) {
+							var nodeToSelect = "CustomReportReport-" + id;
+							$.cookie("jstree_select", nodeToSelect, {path: path});
+							window.location.href = router.buildURL("custom-report-report-redirect", id);
+						});
+
 					} else {
-						targetUrl = this.config.reportUrl + "/panel/content/new-report/" + this.config.parentId;
+
+						var invalidPerimeterDialog = $("#invalid-perimeter").messageDialog();
+						invalidPerimeterDialog.messageDialog("open");
+
 					}
 
-					$.ajax({
-						type: "POST",
-						url: targetUrl,
-						contentType: "application/json",
-						data: JSON.stringify(data)
-					}).done(function (id) {
-						var nodeToSelect = "CustomReportReport-" + id;
-						$.cookie("jstree_select", nodeToSelect, {path: path});
-						window.location.href = router.buildURL("custom-report-report-redirect", id);
-					});
-
-				} else {
-
-					var invalidPerimeterDialog = $("#invalid-perimeter").messageDialog();
-					invalidPerimeterDialog.messageDialog("open");
 
 				}
 
 
-			}
+			})
+		;
 
+		return reportInfomationPanel;
 
-		})
-	;
-
-	return reportInfomationPanel;
-
-});
+	});

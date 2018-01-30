@@ -25,15 +25,17 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.squashtest.tm.web.internal.model.serializer.CleanedStringSerializer;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @JsonAutoDetect(fieldVisibility=Visibility.NONE, getterVisibility=Visibility.NONE)
 public abstract class GenericProjectMixin {
-	
+
 	@JsonProperty
 	private Long id;
 
-	@JsonProperty
+	@JsonSerialize(using = CleanedStringSerializer.class)
 	private String description;
 
 	@JsonProperty
@@ -44,5 +46,5 @@ public abstract class GenericProjectMixin {
 
 	@JsonProperty
 	private boolean active;
-	
+
 }

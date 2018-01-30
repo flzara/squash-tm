@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.report;
 
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -32,9 +30,11 @@ import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportNodeType;
 import org.squashtest.tm.domain.report.ReportDefinition;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
-import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.report.ReportsRegistry;
 
+import javax.inject.Inject;
+
+// XSS OK
 @Controller
 @RequestMapping("/report-workspace")
 public class ReportWorkspaceController {
@@ -65,7 +65,7 @@ public class ReportWorkspaceController {
 		return "report-workspace.html";
 	}
 
-	private void populateModelWithReportsRegistry(Model model){
+	private void populateModelWithReportsRegistry(Model model) {
 		model.addAttribute("categories", reportsRegistry.getSortedCategories());
 		model.addAttribute("reports", reportsRegistry.getSortedReportsByCategory());
 	}

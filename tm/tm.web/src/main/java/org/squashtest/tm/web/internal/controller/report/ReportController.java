@@ -20,23 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.report;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.zip.GZIPInputStream;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.lowagie.text.pdf.codec.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.io.IOUtils;
@@ -63,24 +47,33 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.report.ReportDefinition;
 import org.squashtest.tm.service.customfield.CustomFieldManagerService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
+import org.squashtest.tm.service.internal.dto.FilterModel;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.report.ReportModificationService;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
-import org.squashtest.tm.service.internal.dto.FilterModel;
 import org.squashtest.tm.web.internal.helper.ReportHelper;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.report.ReportsRegistry;
 import org.squashtest.tm.web.internal.report.criteria.ConciseFormToCriteriaConverter;
 import org.squashtest.tm.web.internal.report.criteria.FormToCriteriaConverter;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
-import com.lowagie.text.pdf.codec.Base64;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 
 /**
  * @author Gregory Fouquet
  *
  */
+// XSS OK
 @Controller
 @RequestMapping("/reports/{namespace}")
 public class ReportController {
@@ -125,7 +118,7 @@ public class ReportController {
 	@ResponseBody
 	@RequestMapping(value = "/panel/content/update/{id}", method = RequestMethod.POST, consumes = ContentTypes.APPLICATION_JSON)
 	public String updateReportDefinition(@PathVariable String namespace, @RequestBody ReportDefinition definition,
-										@PathVariable("id") long id) {
+										 @PathVariable("id") long id) {
 		ReportDefinition oldDef = customReportLibraryNodeService.findReportDefinitionByNodeId(id);
 		definition.setPluginNamespace(namespace);
 		definition.setOwner(userService.findCurrentUser());
@@ -153,7 +146,7 @@ public class ReportController {
 
 	@RequestMapping(value = "/panel/{parentId}", method = RequestMethod.GET)
 	public String showReportPanelInCustomReport(@PathVariable String namespace, Model model,
-												@PathVariable("parentId") long parentId, Locale locale) throws IOException{
+												@PathVariable("parentId") long parentId, Locale locale) throws IOException {
 		populateModel(namespace, model);
 
 		model.addAttribute("parentId", parentId);
@@ -163,11 +156,12 @@ public class ReportController {
 		if (crln.getEntityType().getTypeName().equals(CustomReportNodeType.REPORT_NAME)) {
 			ReportDefinition def = (ReportDefinition) crln.getEntity();
 			model.addAttribute("reportDef", JsonHelper.serialize(def));
+			model.addAttribute("reportDefDescription", HTMLCleanupUtils.cleanHtml(def.getDescription()));
 
 			Map<String, Object> form = JsonHelper.deserialize(def.getParameters());
 			Report report = reportsRegistry.findReport(namespace);
 			List<Project> projects = projectFinder.findAllOrderedByName();
-			if(def.getPluginNamespace().equalsIgnoreCase(namespace)){
+			if (def.getPluginNamespace().equalsIgnoreCase(namespace)) {
 				Map<String, Criteria> crit = new ConciseFormToCriteriaConverter(report, projects).convert(form);
 				model.addAttribute("reportAttributes", reportHelper.getAttributesForReport(report, crit));
 			}
@@ -205,10 +199,10 @@ public class ReportController {
 	 * @deprecated since #3762 #getReportView should be called by gui
 	 */
 	@Deprecated
-	@RequestMapping(value = "/views/{viewIndex}/formats/{format}", method = RequestMethod.GET, params = { "parameters" })
+	@RequestMapping(value = "/views/{viewIndex}/formats/{format}", method = RequestMethod.GET, params = {"parameters"})
 	public ModelAndView generateReportViewUsingGet(@PathVariable String namespace,
-			@PathVariable int viewIndex, @PathVariable String format, @RequestParam("parameters") String parameters)
-					throws IOException {
+												   @PathVariable int viewIndex, @PathVariable String format, @RequestParam("parameters") String parameters)
+		throws IOException {
 		Map<String, Object> form = JsonHelper.deserialize(parameters);
 		Map<String, Criteria> crit = new FormToCriteriaConverter().convert(form);
 
@@ -219,10 +213,10 @@ public class ReportController {
 	}
 
 
-	@RequestMapping(value = "/views/{viewIndex}/formats/{format}", method = RequestMethod.GET, params = { "json" })
+	@RequestMapping(value = "/views/{viewIndex}/formats/{format}", method = RequestMethod.GET, params = {"json"})
 	public ModelAndView getReportView(@PathVariable String namespace,
-			@PathVariable int viewIndex, @PathVariable String format, @RequestParam("json") String parameters)
-					throws IOException {
+									  @PathVariable int viewIndex, @PathVariable String format, @RequestParam("json") String parameters)
+		throws IOException {
 		Map<String, Object> form = JsonHelper.deserialize(parameters);
 		Report report = reportsRegistry.findReport(namespace);
 		List<Project> projects = projectFinder.findAllOrderedByName();
@@ -230,13 +224,13 @@ public class ReportController {
 
 
 		ModelAndView mav;
-		if ("docx".equals(format)){
-			Map<String,Object> model = report.buildModelAndView(viewIndex, format, crit).getModel();
+		if ("docx".equals(format)) {
+			Map<String, Object> model = report.buildModelAndView(viewIndex, format, crit).getModel();
 			mav = new ModelAndView("docx.html");
 			mav.addObject("model", model.get("data"));
 			mav.addObject("html", model.get("html"));
 			mav.addObject("fileName", model.get("fileName"));
-			mav.addObject("namespace",namespace);
+			mav.addObject("namespace", namespace);
 			mav.addObject("viewIndx", viewIndex);
 		} else {
 			mav = report.buildModelAndView(viewIndex, format, crit);
@@ -248,7 +242,7 @@ public class ReportController {
 
 
 	@RequestMapping(value = "/views/{viewIndex}/docxtemplate", method = RequestMethod.GET)
-	public void getTemplate(@PathVariable String namespace, @PathVariable int viewIndex, HttpServletRequest request, HttpServletResponse response) throws Exception{
+	public void getTemplate(@PathVariable String namespace, @PathVariable int viewIndex, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		Report report = reportsRegistry.findReport(namespace);
 		report.getViews()[viewIndex].getSpringView().render(null, request, response);
@@ -256,10 +250,8 @@ public class ReportController {
 	}
 
 
-
-
 	public static byte[] decompress(byte[] str) throws IOException {
-		byte[] buf = new byte[str.length*10];
+		byte[] buf = new byte[str.length * 10];
 		GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(str));
 		int len;
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -274,9 +266,8 @@ public class ReportController {
 	}
 
 
-
 	@RequestMapping(value = "/ie9", method = RequestMethod.POST)
-	public void ie9Sucks(HttpServletResponse response, @RequestParam("b64") String b64, @RequestParam("fileName") String fileName) throws IOException{
+	public void ie9Sucks(HttpServletResponse response, @RequestParam("b64") String b64, @RequestParam("fileName") String fileName) throws IOException {
 
 		final File tempFile = File.createTempFile(fileName, ".tmp");
 		tempFile.deleteOnExit();
@@ -286,10 +277,10 @@ public class ReportController {
 		try {
 			fos = new FileOutputStream(tempFile);
 			fos.write(decoded);
-		} catch(IOException ex) {
+		} catch (IOException ex) {
 			LOGGER.error(ex.getMessage(), ex);
 		} finally {
-			if(fos != null) {
+			if (fos != null) {
 				fos.close();
 			}
 		}
@@ -297,7 +288,7 @@ public class ReportController {
 		InputStream in = new BufferedInputStream(new FileInputStream(tempFile));
 
 		response.setContentType("application/octet-stream");
-		response.setHeader("Content-Disposition", "attachment; filename="+fileName+".docx");
+		response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".docx");
 		IOUtils.copy(in, response.getOutputStream());
 		response.flushBuffer();
 		in.close();
@@ -307,33 +298,33 @@ public class ReportController {
 	// TODO : make it work for the regular tagpicker. Currently it only
 	// works for radiobutton-grouped-pickers.
 	// Also lots of wtf because on the rush
-	private void populateTagsIfRequired(Report report, Model model){
+	private void populateTagsIfRequired(Report report, Model model) {
 		// also supply the list of available tags if the tag picker is used
-		for (Input input : report.getForm()){
-			if (input.getType() == InputType.RADIO_BUTTONS_GROUP){
-				RadioButtonsGroup container = (RadioButtonsGroup)input;
-				for (OptionInput opt : container.getOptions()){
-					if (opt instanceof TagPickerOption){
-						String entityType = ((TagPickerOption)opt).getPickerBoundEntity();
+		for (Input input : report.getForm()) {
+			if (input.getType() == InputType.RADIO_BUTTONS_GROUP) {
+				RadioButtonsGroup container = (RadioButtonsGroup) input;
+				for (OptionInput opt : container.getOptions()) {
+					if (opt instanceof TagPickerOption) {
+						String entityType = ((TagPickerOption) opt).getPickerBoundEntity();
 						List<String> availableTags = getPossibleTagValues(entityType);
-						if (availableTags.isEmpty()){
+						if (availableTags.isEmpty()) {
 							availableTags = null;
 						}
 						model.addAttribute("availableTags", availableTags);
-						return; 	// OOOOh !
+						return;    // OOOOh !
 					}
 				}
 			}
 		}
 	}
 
-	public List<String> getPossibleTagValues(String boundEntity){
+	public List<String> getPossibleTagValues(String boundEntity) {
 
 		List<Long> projectIds = (List<Long>) CollectionUtils.collect(projectFinder.findAllOrderedByName(), new Transformer() {
 
 			@Override
 			public Object transform(Object input) {
-				return 	((GenericProject) input).getId();
+				return ((GenericProject) input).getId();
 			}
 		});
 
