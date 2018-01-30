@@ -36,7 +36,8 @@ define(
 
 			if (validationErrors !== null) {
 				for (var key in validationErrors) {
-					Forms.input(view.$("[name='" + key + "']")).setState("error",
+					var keyEscaped = "<th th:text=\"" + key + "\"></th>";
+					Forms.input(view.$("[name='" + keyEscaped +"']")).setState("error",
 							validationErrors[key]);
 				}
 
@@ -209,6 +210,8 @@ define(
 			changeStrProp : function(event) {
 				var textbox = event.target;
 				this.model.set(textbox.name, textbox.value);
+				var value = textbox.value;
+				this.model.set(name, value);
 			},
 
 			changeDateProp : function(event) {

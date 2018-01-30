@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
- *conf : 
+ *conf :
  *  {
  *      projectId : the projectId,
  *      bindableEntity : the bindable entity type,
@@ -28,10 +28,10 @@
  *      title : title of that popup,
  *      oklabel : localized label for 'ok',
  *      cancellabel : localized label for 'cancel',
- *      
+ *
  *  }
- * 
- * 
+ *
+ *
  */
 define([ "require", "./models", "app/util/ButtonUtil", "jquery.squash", "jquery.squash.formdialog"], function(require, Model, ButtonUtil) {
 
@@ -39,11 +39,11 @@ define([ "require", "./models", "app/util/ButtonUtil", "jquery.squash", "jquery.
 
 		// save the reference now, before the DOM is moved around
 		var popup = $(settings.selector);
-		
+
 		popup.formDialog();
-		
+
 		popup.on('formdialogconfirm', submit);
-		
+
 		popup.on('formdialogcancel', function(){
 			popup.formDialog('close');
 		});
@@ -110,9 +110,9 @@ define([ "require", "./models", "app/util/ButtonUtil", "jquery.squash", "jquery.
 		};
 
 		var reload = function() {
-			
+
 			popup.formDialog('setState', 'pleasewait');
-			
+
 			$.ajax({
 				type : 'GET',
 				dataType : 'json',
@@ -128,9 +128,9 @@ define([ "require", "./models", "app/util/ButtonUtil", "jquery.squash", "jquery.
 		var makePayload = function() {
 			return table.find("tbody.available-fields input:checked").parent("td").map(function() {
 				return Model.newBinding(
-						settings.projectId, 
-						this.id, 
-						settings.bindableEntity, 
+						settings.projectId,
+						this.id,
+						settings.bindableEntity,
 						$(this).data('type'));
 			}).get();
 
@@ -138,7 +138,7 @@ define([ "require", "./models", "app/util/ButtonUtil", "jquery.squash", "jquery.
 
 		function submit(event) {
 			popup.formDialog('setState', 'pleasewait');
-			
+
 			ButtonUtil.disable($(event.target));
 			var payload = makePayload();
 			if (payload.length === 0) {

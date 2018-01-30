@@ -23,6 +23,7 @@ package org.squashtest.tm.web.internal.controller.customfield;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
@@ -38,6 +39,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTablePaging;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -198,6 +200,9 @@ public class CustomFieldBindingController {
         @Override
         public Object buildItemData(CustomFieldBinding item) {
             return converter.toJson(item);
+			custom.getCustomField().setLabel(HtmlUtils.htmlEscape(custom.getCustomField().getLabel()));
+			custom.getCustomField().setName(HtmlUtils.htmlEscape(custom.getCustomField().getName()));
+			return custom;
         }
     }
 

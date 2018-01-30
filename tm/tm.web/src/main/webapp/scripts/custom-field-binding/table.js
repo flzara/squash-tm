@@ -26,17 +26,17 @@
  *      getUrl : the ajaxSource (native),
  *      deleteUrl : the url where to send DELETE request,
  *      moveUrl : the url where to notify that rows have been reordered
- *      editUrl : the url where to put or delete that a location has changed 
+ *      editUrl : the url where to put or delete that a location has changed
  *      deferLoading : the iDeferLoading (native),
  *      oklabel : text for the ok button,
  *      cancellabel : text for the cancel button,
- *      renderingLocations : an array of RenderingLocation. These are the ones supported by the BindableEntity this table is treating.  
+ *      renderingLocations : an array of RenderingLocation. These are the ones supported by the BindableEntity this table is treating.
  *  }
  */
 
 define(
-		[ "jquery", "squashtable" ],
-		function($) {
+		[ "jquery", "underscore", "squashtable" ],
+		function($, _) {
 
 			return function(settings) {
 
@@ -50,7 +50,7 @@ define(
 				 * to be a map, mapping a location to a boolean (true | false), -
 				 * while the server actually returns an array, containing only
 				 * the locations used (and disabled locations aren't returned)
-				 * 
+				 *
 				 * To cope with that we must customize the way the datatable and
 				 * the server talk and make the data compatible.
 				 */
@@ -69,7 +69,7 @@ define(
 							for (count = 0; count < dataLength; count++) {
 								var data = allData.aaData[count];
 
-								var actualLocations = $.map(data.renderingLocations, namecollect); 
+								var actualLocations = $.map(data.renderingLocations, namecollect);
 
 								var result = {}, i = 0, max = renderingLocations.length;
 
@@ -81,7 +81,7 @@ define(
 								data.renderingLocations = result;
 							}
 							// now we can invoke the original callback
-							fnCallback(allData, textStatus, jqXHR); 
+							fnCallback(allData, textStatus, jqXHR);
 						}
 					});
 				};
@@ -112,7 +112,7 @@ define(
 						var row = cell.parent('tr').get(0);
 						var colPosition = table.fnGetPosition(this)[2];
 						// see the definition of aoColumnDefs regarding the offset (-3)
-						var locationName = settings.renderingLocations[colPosition - 3]; 
+						var locationName = _.escape(settings.renderingLocations[colPosition - 3]);
 
 						var checkbx = $('<input type="checkbox" />');
 						checkbx.data('location-name', locationName);
