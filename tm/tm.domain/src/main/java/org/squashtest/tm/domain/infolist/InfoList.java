@@ -47,7 +47,7 @@ import org.squashtest.tm.validation.constraint.UniqueItems;
 
 @Entity
 @Auditable
-public class InfoList implements Comparable<InfoList>, Identified {
+public class InfoList implements Identified {
 
 	@Id
 	@Column(name = "INFO_LIST_ID")
@@ -187,19 +187,6 @@ public class InfoList implements Comparable<InfoList>, Identified {
 
 	public void addItems(int newIndex, List<InfoListItem> addedItems) {
 		items.addAll(newIndex, addedItems);
-	}
-
-	// XXX seriously two lists would be the same if they have
-	// the same label ?
-	// answer : not recommended but legal. yet not too sure in this very case
-	@Override
-	public int compareTo(InfoList infoList) {
-
-		if (this.label != null && infoList.label != null) {
-			return this.label.compareToIgnoreCase(infoList.label);
-		}
-		// FIXME srsly a null label compares to a non-null label
-		return 0;
 	}
 
 }
