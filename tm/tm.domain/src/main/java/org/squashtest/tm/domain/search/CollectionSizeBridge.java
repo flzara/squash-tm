@@ -112,8 +112,10 @@ public class CollectionSizeBridge implements StringBridge {
 
      */
 
-	private void checkIfCollectionIsAbstractPersistentCollection(Collection<?> collection) {
-		if(!(collection instanceof AbstractPersistentCollection)) {
+	private AbstractPersistentCollection downCastCollection(Collection<?> collection) {
+		if(AbstractPersistentCollection.class.isAssignableFrom(collection.getClass())) {
+			return (AbstractPersistentCollection) collection;
+		} else {
 			throw new IllegalArgumentException("The collection is not an AbstractPersistentCollection: " + collection.getClass());
 		}
 	}
@@ -122,8 +124,7 @@ public class CollectionSizeBridge implements StringBridge {
 
 		Integer count = null;
 
-		checkIfCollectionIsAbstractPersistentCollection(collection);
-		AbstractPersistentCollection hibCollection = (AbstractPersistentCollection) collection;
+		AbstractPersistentCollection hibCollection = downCastCollection(collection);
 
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Indexing a Hibernate persistent collection, role is : " + hibCollection.getRole());
@@ -184,8 +185,7 @@ public class CollectionSizeBridge implements StringBridge {
 		Session session = null;
 		Transaction tx = null;
 
-		checkIfCollectionIsAbstractPersistentCollection(collection);
-		AbstractPersistentCollection hibCollection = (AbstractPersistentCollection)collection;
+		AbstractPersistentCollection hibCollection = downCastCollection(collection);
 
 		try{
 
@@ -256,8 +256,7 @@ public class CollectionSizeBridge implements StringBridge {
 
 	private Integer countUsingCriteria(Collection<?> collection) {
 
-		checkIfCollectionIsAbstractPersistentCollection(collection);
-		AbstractPersistentCollection hibCollection = (AbstractPersistentCollection) collection;
+		AbstractPersistentCollection hibCollection = downCastCollection(collection);
 
 		// we require the session that created the collection
 		Session session = getLiveSession(hibCollection);
