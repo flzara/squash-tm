@@ -49,7 +49,7 @@
   	 <div class="icon iconmargin menubarmargintop"><span class="ui-icon  ui-icon-volume-off rotateright"></span></div>
  	 <a id="menu-project-filter-link" style=" margin-top: 3px" href="#" class="${filterLabelClass}">${filterLabelText}</a>
 	</div>
-		
+
 <sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
   <div>
     <div class="icon"><span class="ui-icon ui-icon-wrench"></span></div>
@@ -88,7 +88,7 @@
   <div id="dialog-settings-filter-maincontent">
     <div id="dialog-settings-filter-projectlist" class="project-filter-list dataTables_wrapper">
      <span class="filter-warning not-displayed" ><f:message key="message.projectPicker.warnFilterOn"/></span>
-         
+
       <table>
         <thead>
           <tr>
@@ -109,8 +109,8 @@
                 <input type="checkbox" class="project-checkbox" id="project-checkbox-${item[0]}" value="${item[0]}"
                   data-previous-checked="${item[2]}" ${checkedClause} />
               </td>
-              <td class="project-name">${item[1]}</td>
-              <td class="project-label">${item[3]}</td>
+              <td class="project-name"><c:out value="${item[1]}"/></td>
+              <td class="project-label"><c:out value="${item[3]}"/></td>
             </tr>
           </c:forEach>
         </tbody>

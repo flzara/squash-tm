@@ -20,23 +20,18 @@
  */
 package org.squashtest.tm.web.internal.controller.projectfilter;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
-import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.internal.dto.FilterModel;
+import org.squashtest.tm.service.project.ProjectFilterModificationService;
+
+import javax.inject.Inject;
+import java.util.LinkedList;
+import java.util.List;
 
 /*
  *
@@ -61,8 +56,7 @@ public class ProjectFilterController {
 
 	@ResponseBody
 	@RequestMapping(value = "/filter", method = RequestMethod.GET)
-	public
-	FilterModel getProjects() {
+	public FilterModel getProjects() {
 
 		ProjectFilter filter = projectFilterService.findProjectFilterByUserLogin();
 		List<Project> allProjects = projectFilterService.getAllProjects();
@@ -83,8 +77,7 @@ public class ProjectFilterController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/filter", method = RequestMethod.POST)
-	public
-	void updateProjectFilter(@RequestBody ProjectFilterModel projectFilterModel) {
+	public void updateProjectFilter(@RequestBody ProjectFilterModel projectFilterModel) {
 		List<Long> ids;
 		if (projectFilterModel == null) {
 			ids = new LinkedList<>(); // create an empty list instead
@@ -92,7 +85,9 @@ public class ProjectFilterController {
 			ids = projectFilterModel.getProjectIds();
 		}
 
-		LOGGER.trace("UserPreferenceController : {} projects selected", ids.size());
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("UserPreferenceController : {} projects selected", ids.size());
+		}
 		projectFilterService.saveOrUpdateProjectFilter(ids, true);
 
 	}
@@ -111,16 +106,16 @@ public class ProjectFilterController {
 
 	@ResponseBody
 	@RequestMapping(value = "/filter-status", params = "isEnabled", method = RequestMethod.POST)
-	public
-	void setProjectFilterStatus(@RequestParam("isEnabled") boolean isEnabled) {
-		LOGGER.trace("UserPreferenceController : filter enabled to " + isEnabled);
+	public void setProjectFilterStatus(@RequestParam("isEnabled") boolean isEnabled) {
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("UserPreferenceController : filter enabled to " + isEnabled);
+		}
 		projectFilterService.updateProjectFilterStatus(isEnabled);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/filter-status", method = RequestMethod.GET)
-	public
-	FilterModel getProjectFilterStatus() {
+	public FilterModel getProjectFilterStatus() {
 		ProjectFilter filter = projectFilterService.findProjectFilterByUserLogin();
 		FilterModel model = new FilterModel();
 		model.setEnabled(filter.getActivated());

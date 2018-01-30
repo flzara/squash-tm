@@ -26,34 +26,34 @@
 	<tlib-version>1.0</tlib-version>
 	<short-name>workspace-utils</short-name>
 	<uri>http://org.squashtest.tm/taglib/workspace-utils</uri>
-	
+
 	<function>
 		<name>getVisibleBugtrackers</name>
-		<function-class>org.squashtest.tm.web.internal.helper.WorkspaceHelper</function-class>	
-		<function-signature>java.util.Collection getVisibleBugtrackers(javax.servlet.ServletContext)</function-signature>	
+		<function-class>org.squashtest.tm.web.internal.helper.WorkspaceHelper</function-class>
+		<function-signature>java.util.Collection getVisibleBugtrackers(javax.servlet.ServletContext)</function-signature>
 	</function>
-	
+
 	<function>
 		<name>getExportPlugins</name>
-		<function-class>org.squashtest.tm.web.internal.helper.WorkspaceHelper</function-class>	
-		<function-signature>java.util.Collection getExportPlugins(javax.servlet.ServletContext, java.lang.String)</function-signature>	
+		<function-class>org.squashtest.tm.web.internal.helper.WorkspaceHelper</function-class>
+		<function-signature>java.util.Collection getExportPlugins(javax.servlet.ServletContext, java.lang.String)</function-signature>
 	</function>
-		
+
 	<function>
 		<name>getWizardPlugins</name>
-		<function-class>org.squashtest.tm.web.internal.helper.WorkspaceHelper</function-class>	
-		<function-signature>java.util.Collection getWizardPlugins(javax.servlet.ServletContext, java.lang.String)</function-signature>	
+		<function-class>org.squashtest.tm.web.internal.helper.WorkspaceHelper</function-class>
+		<function-signature>java.util.Collection getWizardPlugins(javax.servlet.ServletContext, java.lang.String)</function-signature>
 	</function>
-	
+
 	<function>
 		<name>getAutomatedJobURL</name>
-		<function-class>org.squashtest.tm.web.internal.helper.WorkspaceHelper</function-class>	
-		<function-signature>java.net.URL getAutomatedJobURL(javax.servlet.ServletContext, java.lang.Long)</function-signature>	
+		<function-class>org.squashtest.tm.web.internal.helper.WorkspaceHelper</function-class>
+		<function-signature>java.net.URL getAutomatedJobURL(javax.servlet.ServletContext, java.lang.Long)</function-signature>
 	</function>
-	
+
 	<function>
 		<name>getProjectFilter</name>
-		<function-class>org.squashtest.tm.web.internal.helper.WorkspaceHelper</function-class>	
-		<function-signature>org.squashtest.tm.web.internal.model.jquery.FilterModel getProjectFilter(javax.servlet.ServletContext)</function-signature>	
+		<function-class>org.squashtest.tm.web.internal.helper.WorkspaceHelper</function-class>
+		<function-signature>org.squashtest.tm.service.internal.dto.FilterModel getProjectFilter(javax.servlet.ServletContext)</function-signature>
 	</function>
-</taglib>  
+</taglib>
