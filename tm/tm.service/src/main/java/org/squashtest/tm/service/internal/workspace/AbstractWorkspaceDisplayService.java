@@ -58,6 +58,8 @@ import static org.squashtest.tm.service.internal.dto.PermissionWithMask.findByMa
 
 public abstract class AbstractWorkspaceDisplayService implements WorkspaceDisplayService {
 
+	private static final String RES_ID = "resId";
+
 	@Inject
 	private MessageSource messageSource;
 
@@ -130,7 +132,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				Map<String, Object> attr = new HashMap<>();
 				State state;
 				Long libraryId = r.get(selectLibraryId(), Long.class);
-				attr.put("resId", libraryId);
+				attr.put(RES_ID, libraryId);
 				attr.put("resType", getResType());
 				attr.put("rel", getRel());
 				attr.put("name", r.get(PROJECT.NAME));
@@ -147,7 +149,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 				return buildNode(r.get(PROJECT.NAME), state, attr, currentUser, NODE_WITHOUT_MILESTONES_ATTRIBUTE, "true");
 			})
-			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity(),
+			.collect(Collectors.toMap(node -> (Long) node.getAttr().get(RES_ID), Function.identity(),
 				(u, v) -> {
 					throw new IllegalStateException(String.format("Duplicate key %s", u));
 				},
@@ -360,7 +362,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		Map<String, Object> attr = new HashMap<>();
 		State state;
 
-		attr.put("resId", id);
+		attr.put(RES_ID, id);
 		attr.put("resType", restype);
 		attr.put("name", name);
 		attr.put("id", getFolderName() + "-" + id);
@@ -421,8 +423,8 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		// Then we iterate over the entities and give them their children
 		boolean openedEntity = false;
 		for (JsTreeNode jsTreeNodeChild : children) {
-			if (fatherChildrenEntity.containsKey(jsTreeNodeChild.getAttr().get("resId"))) {
-				for (Long childKey : (ArrayList<Long>) fatherChildrenEntity.get(jsTreeNodeChild.getAttr().get("resId"))) {
+			if (fatherChildrenEntity.containsKey(jsTreeNodeChild.getAttr().get(RES_ID))) {
+				for (Long childKey : (ArrayList<Long>) fatherChildrenEntity.get(jsTreeNodeChild.getAttr().get(RES_ID))) {
 					if (passesMilestoneFilter(allChildren.get(childKey), activeMilestoneId)) {
 						jsTreeNodeChild.addChild(allChildren.get(childKey));
 						openedEntity = true;

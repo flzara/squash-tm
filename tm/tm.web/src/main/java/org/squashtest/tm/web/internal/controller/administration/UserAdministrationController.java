@@ -76,6 +76,7 @@ import org.squashtest.tm.web.internal.security.authentication.AuthenticationProv
 @RequestMapping("/administration/users")
 public class UserAdministrationController extends PartyControllerSupport {
 
+	private static final String TEXT_PLAIN_CHARSET_UTF_8 = "text/plain;charset=UTF-8";
 	private static final String USER_ID = "userId";
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserAdministrationController.class);
 	private static final String USER_URL = "/{userId}";
@@ -83,6 +84,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 
 	private static final PagingAndSorting TEAMS_DEFAULT_PAGING = new DefaultPagingAndSorting("name");
 	private static final Filtering TEAMS_DEFAULT_FILTERING = DefaultFiltering.NO_FILTERING;
+
 
 	@Inject
 	private AdministrationService adminService;
@@ -231,7 +233,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 		adminService.setUserGroupAuthority(userId, groupId);
 	}
 
-	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = {"id=user-login", VALUE}, produces = "text/plain;charset=UTF-8")
+	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = {"id=user-login", VALUE}, produces = TEXT_PLAIN_CHARSET_UTF_8)
 	@ResponseBody
 	public String updateLogin(@ModelAttribute @Valid UserLoginForm userLoginform, @PathVariable long userId) {
 		String userLogin = userLoginform.getValue();
@@ -239,21 +241,21 @@ public class UserAdministrationController extends PartyControllerSupport {
 		return HtmlUtils.htmlEscape(userLogin);
 	}
 
-	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = {"id=user-first-name", VALUE}, produces = "text/plain;charset=UTF-8")
+	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = {"id=user-first-name", VALUE}, produces = TEXT_PLAIN_CHARSET_UTF_8)
 	@ResponseBody
 	public String updateFirstName(@RequestParam(VALUE) String firstName, @PathVariable long userId) {
 		adminService.modifyUserFirstName(userId, firstName);
 		return HtmlUtils.htmlEscape(firstName);
 	}
 
-	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = {"id=user-last-name", VALUE}, produces = "text/plain;charset=UTF-8")
+	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = {"id=user-last-name", VALUE}, produces = TEXT_PLAIN_CHARSET_UTF_8)
 	@ResponseBody
 	public String updateLastName(@RequestParam(VALUE) String lastName, @PathVariable long userId) {
 		adminService.modifyUserLastName(userId, lastName);
 		return HtmlUtils.htmlEscape(lastName);
 	}
 
-	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = {"id=user-email", VALUE}, produces = "text/plain;charset=UTF-8")
+	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = {"id=user-email", VALUE}, produces = TEXT_PLAIN_CHARSET_UTF_8)
 	@ResponseBody
 	public String updateEmail(@RequestParam(VALUE) String email, @PathVariable long userId) {
 		adminService.modifyUserEmail(userId, email);

@@ -38,6 +38,10 @@ import org.squashtest.tm.domain.users.User;
 @Transactional
 @DynamicManager(name = "squashtest.tm.service.MilestoneManagerService", entity = Milestone.class)
 public interface MilestoneManagerService extends CustomMilestoneManager {
+
+	String NAMES = "names";
+	String STATUS = "status";
+
 	@PreAuthorize(MILESTONE_FEAT_ENABLED)
 	void changeDescription(long milestoneId, String newDescription);
 
@@ -60,7 +64,7 @@ public interface MilestoneManagerService extends CustomMilestoneManager {
 	 * @param names
 	 * @return
 	 */
-	List<String> findExistingNames(@QueryParam("names") Collection<String> names);
+	List<String> findExistingNames(@QueryParam(NAMES) Collection<String> names);
 
 	/**
 	 * Given a collection of milestone names, returns the names of
@@ -69,8 +73,8 @@ public interface MilestoneManagerService extends CustomMilestoneManager {
 	 * @param names
 	 * @return
 	 */
-	List<String> findInProgressExistingNames(@QueryParam("names") Collection<String> names);
-	
+	List<String> findInProgressExistingNames(@QueryParam(NAMES) Collection<String> names);
+
 	/**
 	 * Given a collection of milestone names, returns the names of
 	 * the milestones which are bindable
@@ -78,13 +82,13 @@ public interface MilestoneManagerService extends CustomMilestoneManager {
 	 * @param names
 	 * @return
 	 */
-	List<String> findBindableExistingNames(@QueryParam("names") Collection<String> names, @QueryParam("status") List<MilestoneStatus> status);
+	List<String> findBindableExistingNames(@QueryParam(NAMES) Collection<String> names, @QueryParam(STATUS) List<MilestoneStatus> status);
 
 	/**
 	 * @param names
 	 * @param status
 	 * @return
 	 */
-	List<Milestone> findAllByNamesAndStatus(@QueryParam("names") Collection<String> names, @QueryParam("status") MilestoneStatus status);
+	List<Milestone> findAllByNamesAndStatus(@QueryParam(NAMES) Collection<String> names, @QueryParam(STATUS) MilestoneStatus status);
 
 }
