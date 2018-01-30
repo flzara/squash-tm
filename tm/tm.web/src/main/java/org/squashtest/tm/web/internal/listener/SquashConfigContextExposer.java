@@ -46,8 +46,8 @@ public class SquashConfigContextExposer implements ServletContextListener, Appli
 	 */
 	public static final String MILESTONE_FEATURE_ENABLED_CONTEXT_ATTR = "milestoneFeatureEnabled";
 
-	private ServletContextEvent sce;
-	private boolean contextReady = false;
+	volatile private ServletContextEvent sce;
+	volatile private boolean contextReady = false;
 
 	@Inject
 	private ConfigurationService configurationService;
