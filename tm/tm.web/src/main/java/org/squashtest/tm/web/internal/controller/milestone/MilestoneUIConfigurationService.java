@@ -58,6 +58,9 @@ import java.util.Optional;
 @Component
 public class MilestoneUIConfigurationService {
 
+	private static final String RES_TYPE = "restype";
+	private static final String RES_ID = "resid";
+
 	@Inject
 	MilestoneFinderService milestoneFinder;
 
@@ -185,36 +188,36 @@ public class MilestoneUIConfigurationService {
 
 	private Map<String, String> createIdentity(TestCase testCase) {
 		Map<String, String> identity = new HashMap<>();
-		identity.put("restype", "test-cases");
-		identity.put("resid", testCase.getId().toString());
+		identity.put(RES_TYPE, "test-cases");
+		identity.put(RES_ID, testCase.getId().toString());
 		return identity;
 	}
 
 	private Map<String, String> createIdentity(Campaign campaign) {
 		Map<String, String> identity = new HashMap<>();
-		identity.put("restype", "campaigns");
-		identity.put("resid", campaign.getId().toString());
+		identity.put(RES_TYPE, "campaigns");
+		identity.put(RES_ID, campaign.getId().toString());
 		return identity;
 	}
 
 	private Map<String, String> createIdentity(RequirementVersion version) {
 		Map<String, String> identity = new HashMap<>();
-		identity.put("restype", "requirements");
-		identity.put("resid", version.getRequirement().getId().toString());
+		identity.put(RES_TYPE, "requirements");
+		identity.put(RES_ID, version.getRequirement().getId().toString());
 		return identity;
 	}
 
 	private Map<String, String> createIdentity(Iteration iteration) {
 		Map<String, String> identity = new HashMap<>();
-		identity.put("restype", "iterations");
-		identity.put("resid", iteration.getId().toString());
+		identity.put(RES_TYPE, "iterations");
+		identity.put(RES_ID, iteration.getId().toString());
 		return identity;
 	}
 
 	private Map<String, String> createIdentity(TestSuite testSuite) {
 		Map<String, String> identity = new HashMap<>();
-		identity.put("restype", "test-suites");
-		identity.put("resid", testSuite.getId().toString());
+		identity.put(RES_TYPE, "test-suites");
+		identity.put(RES_ID, testSuite.getId().toString());
 		return identity;
 	}
 }

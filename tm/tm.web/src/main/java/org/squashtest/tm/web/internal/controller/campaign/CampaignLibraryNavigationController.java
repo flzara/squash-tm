@@ -88,6 +88,7 @@ public class CampaignLibraryNavigationController extends
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignLibraryNavigationController.class);
 
 	private static final String REMOVE_FROM_ITER = "remove_from_iter";
+	private static final String NODE_IDS = "nodeIds[]";
 
 	/**
 	 * This PermissionEvaluationService should only be used when batch-creating iteration tree nodes from the same campaign,
@@ -470,8 +471,8 @@ public class CampaignLibraryNavigationController extends
 
 	@ResponseBody
 	@RequestMapping(value = "/campaigns/{campaignId}/iterations/new", method = RequestMethod.POST, params = {
-		"nodeIds[]", "next-iteration-index"})
-	public List<JsTreeNode> copyIterations(@RequestParam("nodeIds[]") Long[] nodeIds,
+		NODE_IDS, "next-iteration-index"})
+	public List<JsTreeNode> copyIterations(@RequestParam(NODE_IDS) Long[] nodeIds,
 										   @PathVariable(RequestParams.CAMPAIGN_ID) long campaignId,
 										   @RequestParam("next-iteration-index") int nextIterationIndex) {
 
@@ -481,8 +482,8 @@ public class CampaignLibraryNavigationController extends
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/iterations/{iterationId}/test-suites/new", method = RequestMethod.POST, params = {"nodeIds[]"})
-	public List<JsTreeNode> copyTestSuites(@RequestParam("nodeIds[]") Long[] nodeIds,
+	@RequestMapping(value = "/iterations/{iterationId}/test-suites/new", method = RequestMethod.POST, params = {NODE_IDS})
+	public List<JsTreeNode> copyTestSuites(@RequestParam(NODE_IDS) Long[] nodeIds,
 										   @PathVariable("iterationId") long iterationId) {
 
 		List<TestSuite> testSuiteList;

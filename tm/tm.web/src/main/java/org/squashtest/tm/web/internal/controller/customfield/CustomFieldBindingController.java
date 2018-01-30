@@ -48,12 +48,9 @@ import java.util.List;
 @RequestMapping("/custom-fields-binding")
 public class CustomFieldBindingController {
 
-    /**
-     *
-     */
+	private static final String BINDABLE_ENTITY = "bindableEntity";
 
-
-    @Inject
+	@Inject
     private CustomFieldBindingModificationService service;
 
     @Inject
@@ -69,10 +66,10 @@ public class CustomFieldBindingController {
 
     }
 
-    @RequestMapping(method = RequestMethod.GET, params = {RequestParams.PROJECT_ID, "bindableEntity", "!sEcho"}, headers = AcceptHeaders.CONTENT_JSON)
+    @RequestMapping(method = RequestMethod.GET, params = {RequestParams.PROJECT_ID, BINDABLE_ENTITY, "!sEcho"}, headers = AcceptHeaders.CONTENT_JSON)
     @ResponseBody
     public List<CustomFieldBindingModel> findAllCustomFieldsForProject(@RequestParam(RequestParams.PROJECT_ID) Long projectId,
-                                                                       @RequestParam("bindableEntity") BindableEntity bindableEntity) {
+                                                                       @RequestParam(BINDABLE_ENTITY) BindableEntity bindableEntity) {
 
         List<CustomFieldBinding> bindings = service.findCustomFieldsForProjectAndEntity(projectId, bindableEntity);
 
@@ -81,10 +78,10 @@ public class CustomFieldBindingController {
     }
 
 
-    @RequestMapping(method = RequestMethod.GET, params = {RequestParams.PROJECT_ID, "bindableEntity", "!sEcho", "optional=false"}, produces = "application/json")
+    @RequestMapping(method = RequestMethod.GET, params = {RequestParams.PROJECT_ID, BINDABLE_ENTITY, "!sEcho", "optional=false"}, produces = "application/json")
     @ResponseBody
     public List<CustomFieldModel> findJsonRequiredAtCreationTime(@RequestParam(RequestParams.PROJECT_ID) Long projectId,
-                                                                 @RequestParam("bindableEntity") BindableEntity bindableEntity, Model model) {
+																 @RequestParam(BINDABLE_ENTITY) BindableEntity bindableEntity, Model model) {
 
         List<CustomFieldBinding> bindings = service.findCustomFieldsForProjectAndEntity(projectId, bindableEntity);
         model.addAttribute("bindings", bindings);
@@ -99,10 +96,10 @@ public class CustomFieldBindingController {
 
     }
 
-    @RequestMapping(method = RequestMethod.GET, params = {RequestParams.PROJECT_ID, "bindableEntity", RequestParams.S_ECHO_PARAM})
+    @RequestMapping(method = RequestMethod.GET, params = {RequestParams.PROJECT_ID, BINDABLE_ENTITY, RequestParams.S_ECHO_PARAM})
     @ResponseBody
     public DataTableModel findAllCustomFieldsTableForProject(@RequestParam(RequestParams.PROJECT_ID) Long projectId,
-                                                             @RequestParam("bindableEntity") BindableEntity bindableEntity, DataTableDrawParameters params) {
+															 @RequestParam(BINDABLE_ENTITY) BindableEntity bindableEntity, DataTableDrawParameters params) {
 
         DataTablePaging paging = new DataTablePaging(params);
 
@@ -120,10 +117,10 @@ public class CustomFieldBindingController {
         service.removeCustomFieldBindings(bindingIds);
     }
 
-    @RequestMapping(value = "/available", method = RequestMethod.GET, params = {RequestParams.PROJECT_ID, "bindableEntity"}, headers = AcceptHeaders.CONTENT_JSON)
+    @RequestMapping(value = "/available", method = RequestMethod.GET, params = {RequestParams.PROJECT_ID, BINDABLE_ENTITY}, headers = AcceptHeaders.CONTENT_JSON)
     @ResponseBody
     public List<CustomFieldModel> findAllAvailableCustomFieldsForProjectAndEntity(
-            @RequestParam(RequestParams.PROJECT_ID) Long projectId, @RequestParam("bindableEntity") BindableEntity bindableEntity) {
+            @RequestParam(RequestParams.PROJECT_ID) Long projectId, @RequestParam(BINDABLE_ENTITY) BindableEntity bindableEntity) {
 
         List<CustomField> fields = service.findAvailableCustomFields(projectId, bindableEntity);
         return fieldToJson(fields);

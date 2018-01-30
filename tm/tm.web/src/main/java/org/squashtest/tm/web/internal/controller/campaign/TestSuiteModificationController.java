@@ -67,6 +67,7 @@ public class TestSuiteModificationController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteModificationController.class);
 
 	private static final String NAME = "name";
+	private static final String SUITE_ID = "suiteId";
 
 	@Inject
 	private TestSuiteModificationService service;
@@ -101,7 +102,7 @@ public class TestSuiteModificationController {
 
 	// will return the fragment only
 	@RequestMapping(method = RequestMethod.GET)
-	public String showTestSuite(Model model, @PathVariable("suiteId") long suiteId) {
+	public String showTestSuite(Model model, @PathVariable(SUITE_ID) long suiteId) {
 
 		populateTestSuiteModel(model, suiteId);
 		return "fragment/test-suites/test-suite";
@@ -109,7 +110,7 @@ public class TestSuiteModificationController {
 
 	// will return the iteration in a full page
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
-	public String showTestSuiteInfo(Model model, @PathVariable("suiteId") long suiteId) {
+	public String showTestSuiteInfo(Model model, @PathVariable(SUITE_ID) long suiteId) {
 
 		populateTestSuiteModel(model, suiteId);
 		return "page/campaign-workspace/show-test-suite";
@@ -189,14 +190,14 @@ public class TestSuiteModificationController {
 
 	@RequestMapping(value = "/general", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	@ResponseBody
-	public JsonGeneralInfo refreshGeneralInfos(@PathVariable("suiteId") long suiteId) {
+	public JsonGeneralInfo refreshGeneralInfos(@PathVariable(SUITE_ID) long suiteId) {
 		TestSuite testSuite = service.findById(suiteId);
 		return new JsonGeneralInfo((AuditableMixin) testSuite);
 
 	}
 
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
-	public ModelAndView refreshStats(@PathVariable("suiteId") long suiteId) {
+	public ModelAndView refreshStats(@PathVariable(SUITE_ID) long suiteId) {
 
 		TestPlanStatistics testSuiteStats = service.findTestSuiteStatistics(suiteId);
 		TestSuite testSuite = service.findById(suiteId);
@@ -211,7 +212,7 @@ public class TestSuiteModificationController {
 	}
 
 	@RequestMapping(value = "/exec-button", method = RequestMethod.GET)
-	public ModelAndView refreshExecButton(@PathVariable("suiteId") long suiteId) {
+	public ModelAndView refreshExecButton(@PathVariable(SUITE_ID) long suiteId) {
 
 		TestPlanStatistics testSuiteStats = service.findTestSuiteStatistics(suiteId);
 
@@ -225,7 +226,7 @@ public class TestSuiteModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = {"id=test-suite-description", VALUE})
 	@ResponseBody
-	public String updateDescription(@RequestParam(VALUE) String newDescription, @PathVariable("suiteId") long suiteId) {
+	public String updateDescription(@RequestParam(VALUE) String newDescription, @PathVariable(SUITE_ID) long suiteId) {
 
 		service.changeDescription(suiteId, newDescription);
 		if (LOGGER.isDebugEnabled()) {
@@ -255,7 +256,7 @@ public class TestSuiteModificationController {
 	@RequestMapping(method = RequestMethod.POST, params = {"newName"})
 	@ResponseBody
 	public Object rename(@RequestParam("newName") String newName,
-						 @PathVariable("suiteId") long suiteId) {
+						 @PathVariable(SUITE_ID) long suiteId) {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("TestSuiteModificationController : renaming " + suiteId + " as " + newName);
 		}
@@ -267,7 +268,7 @@ public class TestSuiteModificationController {
 	// that method is redundant but don't remove it yet.
 	@ResponseBody
 	@RequestMapping(value = "/rename", method = RequestMethod.POST, params = RequestParams.NAME)
-	public Map<String, String> renameTestSuite(@PathVariable("suiteId") Long suiteId, @RequestParam(RequestParams.NAME) String name) {
+	public Map<String, String> renameTestSuite(@PathVariable(SUITE_ID) Long suiteId, @RequestParam(RequestParams.NAME) String name) {
 		service.rename(suiteId, name);
 		Map<String, String> result = new HashMap<>();
 		result.put("id", suiteId.toString());

@@ -80,6 +80,7 @@ public class IterationTestPlanManagerController {
 	private static final String TESTCASES_IDS_REQUEST_PARAM = "testCasesIds[]";
 
 	private static final String ITPI_IDS_REQUEST_PARAM = "itpiIds[]";
+	private static final String STATUS = "status";
 
 	@Inject
 	private IterationTestPlanManagerService iterationTestPlanManagerService;
@@ -119,7 +120,7 @@ public class IterationTestPlanManagerController {
 		.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, "name", Project.class).mapAttribute("reference", "reference", TestCase.class)
 		.mapAttribute("tc-name", "name", TestCase.class).mapAttribute("importance", "importance", TestCase.class)
 		.mapAttribute("dataset.selected.name", "name", Dataset.class)
-		.mapAttribute("status", "executionStatus", IterationTestPlanItem.class)
+		.mapAttribute(STATUS, "executionStatus", IterationTestPlanItem.class)
 		.mapAttribute("assignee-login", "login", User.class)
 		.mapAttribute("last-exec-on", "lastExecutedOn", IterationTestPlanItem.class)
 		.mapAttribute("exec-mode", "automatedTest", TestCase.class)
@@ -284,18 +285,18 @@ public class IterationTestPlanManagerController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanIds}", method = RequestMethod.POST, params = {"status"})
+	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanIds}", method = RequestMethod.POST, params = {STATUS})
 	public JsonIterationTestPlanItem editStatusOfIterationTestPlanItems(@PathVariable("testPlanIds") List<Long> testPlanIds,
-																		@RequestParam("status") String status) {
+																		@RequestParam(STATUS) String status) {
 		List<IterationTestPlanItem> itpis = iterationTestPlanManagerService.forceExecutionStatus(testPlanIds, status);
 		return createJsonITPI(itpis.get(0));
 
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/iterations/test-plan/{testPlanIds}", method = RequestMethod.POST, params = {"status"})
+	@RequestMapping(value = "/iterations/test-plan/{testPlanIds}", method = RequestMethod.POST, params = {STATUS})
 	public void editIterationTestPlanItemsStatus(@PathVariable("testPlanIds") List<Long> testPlanIds,
-												 @RequestParam("status") String status) {
+												 @RequestParam(STATUS) String status) {
 		iterationTestPlanManagerService.forceExecutionStatus(testPlanIds, status);
 	}
 
