@@ -113,7 +113,7 @@ public class CollectionSizeBridge implements StringBridge {
      */
 
 	private AbstractPersistentCollection downCastCollection(Collection<?> collection) {
-		if(AbstractPersistentCollection.class.isAssignableFrom(collection.getClass())) {
+		if(collection == null || AbstractPersistentCollection.class.isAssignableFrom(collection.getClass())) {
 			return (AbstractPersistentCollection) collection;
 		} else {
 			throw new IllegalArgumentException("The collection is not an AbstractPersistentCollection: " + collection.getClass());
