@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -34,13 +30,18 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+// XSS OK
 class VerifyingTestCasesTableModelHelper extends DataTableModelBuilder<TestCase> {
 
 	private InternationalizationHelper helper;
 	private Locale locale = LocaleContextHolder.getLocale();
 	private static final int INT_MAX_DESCRIPTION_LENGTH = 50;
 
-	public VerifyingTestCasesTableModelHelper(InternationalizationHelper helper){
+	public VerifyingTestCasesTableModelHelper(InternationalizationHelper helper) {
 		this.helper = helper;
 	}
 
@@ -53,9 +54,9 @@ class VerifyingTestCasesTableModelHelper extends DataTableModelBuilder<TestCase>
 
 		row.put("tc-id", tc.getId().toString());
 		row.put("tc-index", Long.toString(getCurrentIndex()));
-		row.put(DataTableModelConstants.PROJECT_NAME_KEY, tc.getProject().getName());
-		row.put("tc-reference", tc.getReference());
-		row.put("tc-name", tc.getName());
+		row.put(DataTableModelConstants.PROJECT_NAME_KEY, HtmlUtils.htmlEscape(tc.getProject().getName()));
+		row.put("tc-reference", HtmlUtils.htmlEscape(tc.getReference()));
+		row.put("tc-name", HtmlUtils.htmlEscape(tc.getName()));
 		row.put("tc-type", type);
 		row.put("milestone-dates", MilestoneModelUtils.timeIntervalToString(tc.getMilestones(), helper, locale));
 		row.put("empty-delete-holder", null);

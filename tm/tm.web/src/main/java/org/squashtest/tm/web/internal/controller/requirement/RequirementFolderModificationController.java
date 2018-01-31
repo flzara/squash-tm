@@ -33,10 +33,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
+//XSS OK
 @Controller
 @RequestMapping("/requirement-folders/{folderId}")
 public class RequirementFolderModificationController extends FolderModificationController<RequirementFolder> {
-	
+
 	private FolderModificationService<RequirementFolder> folderModificationService;
 
 	@Override
@@ -44,7 +45,8 @@ public class RequirementFolderModificationController extends FolderModificationC
 		return folderModificationService;
 	}
 
-	@Inject @Named("squashtest.tm.service.RequirementFolderModificationService")
+	@Inject
+	@Named("squashtest.tm.service.RequirementFolderModificationService")
 	public final void setFolderModificationService(FolderModificationService<RequirementFolder> folderModificationService) {
 		this.folderModificationService = folderModificationService;
 	}
@@ -53,15 +55,15 @@ public class RequirementFolderModificationController extends FolderModificationC
 	protected String getWorkspaceName() {
 		return "requirement";
 	}
-	
+
 	@Override
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showFolder(@PathVariable long folderId, HttpServletRequest request) {
 
 		ModelAndView mav = super.showFolder(folderId, request);
-		
+
 		mav.setViewName("fragment/requirements/requirement-folder");
-		
+
 		return mav;
 	}
 

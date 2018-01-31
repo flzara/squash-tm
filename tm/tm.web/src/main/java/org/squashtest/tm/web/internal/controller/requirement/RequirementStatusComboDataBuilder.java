@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
-import javax.inject.Inject;
-
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.LevelComparator;
@@ -29,12 +27,16 @@ import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
 
+import javax.inject.Inject;
+
 /**
  * Jeditable combo data builder which model is {@link RequirementStatus}
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
+
+// XSS OK
 @Component
 @Scope("prototype")
 public class RequirementStatusComboDataBuilder extends EnumJeditableComboDataBuilder<RequirementStatus, RequirementStatusComboDataBuilder> {
@@ -60,7 +62,7 @@ public class RequirementStatusComboDataBuilder extends EnumJeditableComboDataBui
 		if (selected != null && selected.getDisabledStatus().contains(item)) {
 			defaultKey = "disabled." + defaultKey;
 		}
-		
+
 		return defaultKey;
 	}
 }

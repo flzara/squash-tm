@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.internal.controller.requirement;
 
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.requirement.LinkedRequirementVersion;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneModelUtils;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -32,13 +33,14 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+// XSS OK
 class LinkedRequirementVersionsTableModelHelper extends DataTableModelBuilder<LinkedRequirementVersion> {
 
 	private InternationalizationHelper helper;
 	private Locale locale = LocaleContextHolder.getLocale();
 	private static final int INT_MAX_DESCRIPTION_LENGTH = 50;
 
-	public LinkedRequirementVersionsTableModelHelper(InternationalizationHelper helper){
+	public LinkedRequirementVersionsTableModelHelper(InternationalizationHelper helper) {
 		this.helper = helper;
 	}
 
@@ -51,14 +53,14 @@ class LinkedRequirementVersionsTableModelHelper extends DataTableModelBuilder<Li
 		row.put("rv-index", Long.toString(getCurrentIndex()));
 		row.put(DataTableModelConstants.PROJECT_NAME_KEY, rv.getProject().getName());
 		row.put("rv-reference", rv.getReference());
-		row.put("rv-name", rv.getName());
+		row.put("rv-name", HtmlUtils.htmlEscape(rv.getName()));
 		row.put("rv-version", Integer.toString(rv.getVersionNumber()));
 		row.put("rv-role", formatRole(rv.getRole()));
 		row.put("milestone-dates", MilestoneModelUtils.timeIntervalToString(rv.getMilestones(), helper, locale));
 		row.put("empty-edit-holder", null);
 		row.put("empty-delete-holder", null);
 		row.put("milestone", MilestoneModelUtils.milestoneLabelsOrderByDate(rv.getMilestones()));
-		row.put("rv-description", HTMLCleanupUtils.getBriefText(rv.getDescription(), INT_MAX_DESCRIPTION_LENGTH));
+		row.put("rv-description", HTMLCleanupUtils.getCleanedBriefText(rv.getDescription(), INT_MAX_DESCRIPTION_LENGTH));
 
 		return row;
 	}

@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
-import java.util.Optional;
 import org.apache.commons.collections.MultiMap;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -61,6 +61,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -69,9 +70,10 @@ import java.util.*;
 
 /**
  * Controller for the management of Requirement Versions linked to other Requirement Versions.
- *
+ * <p>
  * Created by jlor on 11/05/2017.
  */
+// XSS OK
 @Controller
 @RequestMapping("/requirement-versions/{requirementVersionId}/linked-requirement-versions")
 public class LinkedRequirementVersionsManagerController {
@@ -231,7 +233,7 @@ public class LinkedRequirementVersionsManagerController {
 
 	@ResponseBody
 	@RequestMapping(value = "/{relatedId}", method = RequestMethod.POST, params = {"isRelatedIdANodeId", "reqVersionLinkTypeId", "reqVersionLinkTypeDirection"})
-	public void updateLinkTypeAndDirection (
+	public void updateLinkTypeAndDirection(
 		@PathVariable("requirementVersionId") long requirementVersionId,
 		@PathVariable("relatedId") long paramRelatedId,
 		@RequestParam("isRelatedIdANodeId") boolean isRelatedIdANodeId,
@@ -246,21 +248,21 @@ public class LinkedRequirementVersionsManagerController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/{relatedId}", params = {"isRelatedIdANodeId"},method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
+	@RequestMapping(value = "/{relatedId}", params = {"isRelatedIdANodeId"}, method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	public Map<String, String> getRequirementVersionInformation(@PathVariable long relatedId, @RequestParam("isRelatedIdANodeId") boolean isRelatedIdANodeId) {
 
 		Map<String, String> versionInfosMap = new HashMap<>();
 
 		RequirementVersion latestVersion;
-		if(isRelatedIdANodeId) {
+		if (isRelatedIdANodeId) {
 			// If the relatedId is a node's one, we have to get the corresponding latest version.
 			Requirement selectedRequirement = requirementFinder.findRequirement(relatedId);
 			latestVersion = selectedRequirement.findLastNonObsoleteVersion();
 		} else {
 			latestVersion = requirementVersionFinder.findById(relatedId);
 		}
-		versionInfosMap.put("versionName", latestVersion.getName());
-		versionInfosMap.put("versionDescription", latestVersion.getDescription());
+		versionInfosMap.put("versionName", HtmlUtils.htmlEscape(latestVersion.getName()));
+		versionInfosMap.put("versionDescription", HTMLCleanupUtils.cleanHtml(latestVersion.getDescription()));
 
 		return versionInfosMap;
 	}
@@ -277,7 +279,7 @@ public class LinkedRequirementVersionsManagerController {
 
 	private List<RequirementVersionLinkType> internationalizeLinkTypesRoles(List<RequirementVersionLinkType> listToInternationalize, Locale locale) {
 		List<RequirementVersionLinkType> internationalizedList = new ArrayList<>();
-		for(RequirementVersionLinkType typeToCopy : listToInternationalize) {
+		for (RequirementVersionLinkType typeToCopy : listToInternationalize) {
 			RequirementVersionLinkType internationalizedCopy = typeToCopy.createCopy();
 			internationalizedCopy.setRole1(i18nHelper.getMessage(
 				internationalizedCopy.getRole1(), null, internationalizedCopy.getRole1(), locale));

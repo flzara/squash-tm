@@ -20,11 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement.importer;
 
-import java.io.File;
-import java.io.IOException;
-
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -41,6 +36,11 @@ import org.squashtest.tm.web.importer.ImportHelper;
 import org.squashtest.tm.web.internal.controller.testcase.importer.ImportFormatFailure;
 import org.squashtest.tm.web.internal.controller.testcase.importer.RequirementImportLogHelper;
 
+import javax.inject.Inject;
+import java.io.File;
+import java.io.IOException;
+
+// XSS OK
 @Controller
 @RequestMapping("/requirements/importer")
 public class RequirementImportController {
@@ -63,7 +63,7 @@ public class RequirementImportController {
 	@RequestMapping(value = "/xls", method = RequestMethod.POST, params = "dry-run")
 	public ModelAndView dryRunExcelWorkbook(@RequestParam("archive") MultipartFile uploadedFile, WebRequest request) {
 		LOGGER.debug("Req-Import" + "In controller, DRY RUN");
-		return importWorkbook(uploadedFile, request, new Command<File, ImportLog>(){
+		return importWorkbook(uploadedFile, request, new Command<File, ImportLog>() {
 				@Override
 				public ImportLog execute(File xls) {
 					return requirementLibraryNavigationService.simulateImportExcelRequirement(xls);
@@ -75,7 +75,7 @@ public class RequirementImportController {
 	@RequestMapping(value = "/xls", params = "!dry-run", method = RequestMethod.POST)
 	public ModelAndView importExcelWorkbook(@RequestParam("archive") MultipartFile uploadedFile, WebRequest request) {
 		LOGGER.debug("Req-Import" + "In controller, RUN");
-		return importWorkbook(uploadedFile, request, new Command<File, ImportLog>(){
+		return importWorkbook(uploadedFile, request, new Command<File, ImportLog>() {
 				@Override
 				public ImportLog execute(File xls) {
 					return requirementLibraryNavigationService.importExcelRequirement(xls);
@@ -86,13 +86,13 @@ public class RequirementImportController {
 
 	//A factoriser avec l'import de TC ?
 	private ModelAndView importWorkbook(MultipartFile uploadedFile, WebRequest request,
-			Command<File, ImportLog> callback) {
+										Command<File, ImportLog> callback) {
 		ModelAndView mav = new ModelAndView("fragment/import/import-summary");
 
 		File xls = null;
 
 		try {
-			xls = importHelper.multipartToImportFile(uploadedFile,"requirement-import-", ".xls");
+			xls = importHelper.multipartToImportFile(uploadedFile, "requirement-import-", ".xls");
 			ImportLog summary = callback.execute(xls); // TODO parser may throw ex we should handle
 			summary.recompute(); // why is it here ? shouldnt it be in service ?
 			generateImportLog(request, summary);
@@ -100,12 +100,10 @@ public class RequirementImportController {
 
 		} catch (IOException e) {
 			LOGGER.error("An exception prevented processing of requirement import file", e);
-		}
-		catch (TemplateMismatchException tme){
+		} catch (TemplateMismatchException tme) {
 			ImportFormatFailure importFormatFailure = new ImportFormatFailure(tme);
 			mav.addObject("summary", importFormatFailure);
-		}
- finally {
+		} finally {
 			if (xls != null) {
 				xls.deleteOnExit();
 			}

@@ -78,6 +78,14 @@ public final class HTMLCleanupUtils {
 		return text;
 	}
 
+	public static String getCleanedBriefText(String text, int maxLength) {
+		text = htmlToText(cleanHtml(text));
+		if (text.length() > maxLength) {
+			text = text.substring(0, maxLength - 3) + "...";
+		}
+		return text;
+	}
+
 	public static String cleanHtml(String unsecureHtml) {
 		if (StringUtils.isNotBlank(unsecureHtml)) {
 			Document.OutputSettings outputSettings = new Document.OutputSettings();

@@ -65,31 +65,31 @@ public class RequirementVersionLinkTypeController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = LINK_TYPE_ID_MAPPING, method = RequestMethod.POST, params = { "id=requirement-link-type-default" })
+	@RequestMapping(value = LINK_TYPE_ID_MAPPING, method = RequestMethod.POST, params = {"id=requirement-link-type-default"})
 	public void changeDefault(@PathVariable Long linkTypeId) {
 		linkTypeManagerService.changeDefault(linkTypeId);
 	}
 
 	@ResponseBody
-	@RequestMapping(value = LINK_TYPE_ID_MAPPING, method = RequestMethod.POST, params = { "id=requirement-link-type-role1", VALUE})
+	@RequestMapping(value = LINK_TYPE_ID_MAPPING, method = RequestMethod.POST, params = {"id=requirement-link-type-role1", VALUE})
 	public Map<String, Boolean> changeRole1(@PathVariable Long linkTypeId, @RequestParam(VALUE) String newRole1) {
 		return linkTypeManagerService.changeRole1(linkTypeId, newRole1);
 	}
 
 	@ResponseBody
-	@RequestMapping(value = LINK_TYPE_ID_MAPPING, method = RequestMethod.POST, params = { "id=requirement-link-type-role2", VALUE})
+	@RequestMapping(value = LINK_TYPE_ID_MAPPING, method = RequestMethod.POST, params = {"id=requirement-link-type-role2", VALUE})
 	public Map<String, Boolean> changeRole2(@PathVariable Long linkTypeId, @RequestParam(VALUE) String newRole2) {
 		return linkTypeManagerService.changeRole2(linkTypeId, newRole2);
 	}
 
 	@ResponseBody
-	@RequestMapping(value = LINK_TYPE_ID_MAPPING, method = RequestMethod.POST, params = { "id=requirement-link-type-code1", VALUE})
+	@RequestMapping(value = LINK_TYPE_ID_MAPPING, method = RequestMethod.POST, params = {"id=requirement-link-type-code1", VALUE})
 	public Map<String, Boolean> changeCode1(@PathVariable Long linkTypeId, @RequestParam(VALUE) String newCode1) {
 		return linkTypeManagerService.changeCode1(linkTypeId, newCode1);
 	}
 
 	@ResponseBody
-	@RequestMapping(value = LINK_TYPE_ID_MAPPING, method = RequestMethod.POST, params = { "id=requirement-link-type-code2", VALUE})
+	@RequestMapping(value = LINK_TYPE_ID_MAPPING, method = RequestMethod.POST, params = {"id=requirement-link-type-code2", VALUE})
 	public Map<String, Boolean> changeCode2(@PathVariable Long linkTypeId, @RequestParam(VALUE) String codeRole2) {
 		return linkTypeManagerService.changeCode2(linkTypeId, codeRole2);
 	}
@@ -126,13 +126,13 @@ public class RequirementVersionLinkTypeController {
 
 	@ResponseBody
 	@RequestMapping(value = "/{linkTypeIdsToDelete}", method = RequestMethod.DELETE)
-	public void deleteLinkTypes (@PathVariable List<Long> linkTypeIdsToDelete) {
+	public void deleteLinkTypes(@PathVariable List<Long> linkTypeIdsToDelete) {
 		linkTypeManagerService.deleteLinkTypes(linkTypeIdsToDelete);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/{linkTypesIdsToCheck}", method = RequestMethod.GET, params = {"id=doesContainDefault"})
-	public Map<String, Object> doesLinkTypesContainDefault (@PathVariable List<Long> linkTypesIdsToCheck) {
+	public Map<String, Object> doesLinkTypesContainDefault(@PathVariable List<Long> linkTypesIdsToCheck) {
 		Map<String, Object> resultMap = new HashedMap(1);
 		resultMap.put("containsDefault", linkTypeManagerService.doesContainDefault(linkTypesIdsToCheck));
 		return resultMap;

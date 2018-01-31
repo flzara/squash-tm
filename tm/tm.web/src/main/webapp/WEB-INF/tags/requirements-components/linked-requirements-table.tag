@@ -100,7 +100,7 @@
       <table id="involved-req-versions" style="table-layout: fixed;">
       	<tr>
       		<td style="width: 45%; overflow: hidden; float: left; word-wrap: break-word;">
-				<span style="font-weight: bold; float: left;">${requirementVersion.name}</span>
+				<span style="font-weight: bold; float: left;"><c:out value="${requirementVersion.name}"/> </span>
       		</td>
       		<td style="width: 45%; overflow: hidden; float: right;">
       			<span id="relatedRequirementName" style="font-weight: bold; float: right;">${{relatedRequirement.name}}</span>

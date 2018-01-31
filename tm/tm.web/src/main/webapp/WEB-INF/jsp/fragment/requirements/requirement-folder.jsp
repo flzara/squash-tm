@@ -27,6 +27,7 @@
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="dashboard" tagdir="/WEB-INF/tags/dashboard"%>
+<%@ taglib prefix="hu" uri="http://org.squashtest.tm/taglib/html-utils" %>
 
 <?xml version="1.0" encoding="utf-8" ?>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
@@ -83,7 +84,7 @@
 
 	<comp:toggle-panel id="folder-description-panel" titleKey="label.Description"  open="true">
 		<jsp:attribute name="body">
-			<div id="folder-description" ${descrRicheditAttributes}>${ folder.description }</div>
+			<div id="folder-description" ${descrRicheditAttributes}>${hu:clean(folder["description"])}</div>
 		</jsp:attribute>
 	</comp:toggle-panel>
 

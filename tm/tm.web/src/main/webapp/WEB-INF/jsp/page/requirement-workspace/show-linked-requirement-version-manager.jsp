@@ -77,7 +77,7 @@
   </jsp:attribute>
 
   <jsp:attribute name="subPageTitle">
-    <h2>${requirementVersion.name}&nbsp;:&nbsp;<f:message key="squashtm.library.linked-requirement-versions.title" /></h2>
+    <h2><c:out value="${requirementVersion.name}"/>&nbsp;:&nbsp;<f:message key="squashtm.library.linked-requirement-versions.title" /></h2>
   </jsp:attribute>
 
   <jsp:attribute name="subPageButtons">

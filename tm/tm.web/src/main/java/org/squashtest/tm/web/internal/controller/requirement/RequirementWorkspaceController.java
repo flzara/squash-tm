@@ -40,6 +40,7 @@ import javax.inject.Provider;
 import java.util.List;
 import java.util.Locale;
 
+// XSS OK
 @Controller
 @RequestMapping("/requirement-workspace")
 public class RequirementWorkspaceController extends WorkspaceController<RequirementLibraryNode<?>> {

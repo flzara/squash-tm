@@ -33,61 +33,61 @@
 <c:url var="requirementUrl" value="/requirements/${ requirement.id }" />
 <c:url var="verifyingTestCasesUrl" value="/requirement-versions/${ requirementVersion.id }/verifying-test-cases" />
 
-<layout:tree-picker-layout  workspaceTitleKey="workspace.requirement.title" 
+<layout:tree-picker-layout  workspaceTitleKey="workspace.requirement.title"
               highlightedWorkspace="requirement"
-              linkable="test-case" 
+              linkable="test-case"
               isSubPaged="true"
               main="verifying-test-case-manager">
-              
+
   <jsp:attribute name="head">
     <comp:sq-css name="squash.blue.css" />
-    <script type="text/javascript">	
+    <script type="text/javascript">
       var squashtm = squashtm || {};
-      squashtm.bindingsManager = { 
+      squashtm.bindingsManager = {
     		  bindingsUrl: "${verifyingTestCasesUrl}",
     		  model : ${json:serialize(verifyingTestCaseModel.aaData)}
    	  };
     </script>
   </jsp:attribute>
-  
+
   <jsp:attribute name="tree">
     <tree:linkables-tree workspaceType="test-case" elementType="requirement" elementId="${requirementVersion.id}" id="linkable-test-cases-tree" rootModel="${ linkableLibrariesModel }" />
   </jsp:attribute>
-  
-  <jsp:attribute name="tableTitlePane">    
-      <div class="snap-left" style="height:100%;">      
+
+  <jsp:attribute name="tableTitlePane">
+      <div class="snap-left" style="height:100%;">
         <h2>
           <f:message var="title" key="requirement.verifying_test-case.panel.title"/>
           <span>${title}</span>
         </h2>
-      </div>  
+      </div>
       <div class="unsnap"></div>
   </jsp:attribute>
   <jsp:attribute name="tablePane">
     <comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ requirementUrl }" />
-    
-    <reqs:verifying-test-cases-table 
-            editable="true" 
-            model="${verifyingTestCaseModel}" 
-            requirementVersion="${requirementVersion}" 
+
+    <reqs:verifying-test-cases-table
+            editable="true"
+            model="${verifyingTestCaseModel}"
+            requirementVersion="${requirementVersion}"
             batchRemoveButtonId="none"
             milestoneConf="${milestoneConf}"/>
-        
+
     <div id="add-summary-dialog" class="not-displayed" title="<f:message key='requirement-version.verifying-test-case.add-summary-dialog.title' />">
       <ul><li>summary message here</li></ul>
     </div>
   </jsp:attribute>
 
   <jsp:attribute name="subPageTitle">
-    <h2>${requirementVersion.name}&nbsp;:&nbsp;<f:message key="squashtm.library.verifying-test-cases.title" /></h2>
+    <h2><c:out value="${requirementVersion.name}"/>&nbsp;:&nbsp;<f:message key="squashtm.library.verifying-test-cases.title" /></h2>
   </jsp:attribute>
-  
+
   <jsp:attribute name="subPageButtons">
     <f:message var="backButtonLabel" key="label.Back" />
-    <input type="button" class="button" value="${backButtonLabel}" onClick="document.location.href='${backUrl}'"/>  
-  </jsp:attribute>  
-  
-  
+    <input type="button" class="button" value="${backButtonLabel}" onClick="document.location.href='${backUrl}'"/>
+  </jsp:attribute>
+
+
   <jsp:attribute name="foot">
   </jsp:attribute>
 </layout:tree-picker-layout>

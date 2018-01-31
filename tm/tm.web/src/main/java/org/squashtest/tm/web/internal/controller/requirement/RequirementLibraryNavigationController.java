@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
-import java.util.Optional;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -37,7 +36,6 @@ import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationExcepti
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.library.LibraryNavigationService;
-import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.service.requirement.RequirementStatisticsService;
 import org.squashtest.tm.service.statistics.requirement.RequirementStatisticsBundle;
@@ -58,13 +56,15 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Controller which processes requests related to navigation in a {@link RequirementLibrary}.
  *
  * @author Gregory Fouquet
- *
  */
+
+// XSS OK
 @SuppressWarnings("rawtypes")
 @Controller
 @RequestMapping(value = "/requirement-browser")
@@ -212,8 +212,6 @@ public class RequirementLibraryNavigationController extends
 	@RequestMapping(value = "/requirements/{requirementId}/content", method = RequestMethod.GET)
 	public List<JsTreeNode> getChildrenRequirementsTreeModel(
 		@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId) {
-//			List<Requirement> requirements = requirementLibraryNavigationService.findChildrenRequirements(requirementId);
-//			return createChildrenRequirementsModel(requirements);
 		Long activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId().get();
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 		Collection<JsTreeNode> nodes = workspaceDisplayService().getNodeContent(requirementId, currentUser, "Requirement", activeMilestoneId);
@@ -270,18 +268,6 @@ public class RequirementLibraryNavigationController extends
 	/*
 	 * ********************************** private stuffs *******************************
 	 */
-
-//	@SuppressWarnings("unchecked")
-//	private List<JsTreeNode> createChildrenRequirementsModel(List<? extends RequirementLibraryNode> requirements) {
-//
-//		RequirementLibraryTreeNodeBuilder nodeBuilder = requirementLibraryTreeNodeBuilder.get();
-//
-//
-//		JsTreeNodeListBuilder<RequirementLibraryNode> listBuilder = new JsTreeNodeListBuilder<>(
-//			applyActiveMilestoneFilter(nodeBuilder));
-//
-//		return listBuilder.setModel((List<RequirementLibraryNode>) requirements).build();
-//	}
 
 	@ResponseBody
 	@RequestMapping(value = "/drives", method = RequestMethod.GET, params = {"linkables"})

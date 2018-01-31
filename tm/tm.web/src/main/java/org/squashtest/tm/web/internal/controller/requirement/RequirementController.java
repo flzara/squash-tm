@@ -20,16 +20,16 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
-import java.util.Locale;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
+import java.util.Locale;
+
+// XSS OK
 @Controller
 @RequestMapping("/requirements")
 public class RequirementController {
@@ -43,7 +43,7 @@ public class RequirementController {
 	@RequestMapping(value = "/criticality-combo-data", method = RequestMethod.GET)
 	@ResponseBody
 	public Object buildImportanceComboData(Locale locale) {
-		return  criticalityComboBuilderProvider.get().useLocale(locale).buildMap();
+		return criticalityComboBuilderProvider.get().useLocale(locale).buildMap();
 	}
 
 	@RequestMapping(value = "/status-combo-data", method = RequestMethod.GET)

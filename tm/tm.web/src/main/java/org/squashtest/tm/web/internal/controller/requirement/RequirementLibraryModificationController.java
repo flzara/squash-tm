@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
-import java.util.Set;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +32,10 @@ import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 
+import javax.inject.Inject;
+import java.util.Set;
+
+// XSS OK
 @Controller
 @RequestMapping("/requirement-libraries/{libraryId}")
 public class RequirementLibraryModificationController {
@@ -64,7 +64,7 @@ public class RequirementLibraryModificationController {
 		boolean shouldShowDashboard = customReportDashboardService.shouldShowFavoriteDashboardInWorkspace(Workspace.REQUIREMENT);
 		boolean canShowDashboard = customReportDashboardService.canShowDashboardInWorkspace(Workspace.REQUIREMENT);
 
-		mav.addObject("shouldShowDashboard",shouldShowDashboard);
+		mav.addObject("shouldShowDashboard", shouldShowDashboard);
 		mav.addObject("canShowDashboard", canShowDashboard);
 
 		return mav;

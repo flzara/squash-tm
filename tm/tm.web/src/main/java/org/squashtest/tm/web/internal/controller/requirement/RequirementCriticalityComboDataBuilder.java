@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
-import javax.inject.Inject;
-
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.LevelComparator;
@@ -29,16 +27,19 @@ import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
 
+import javax.inject.Inject;
+
 /**
  * Jeditable combo data builder which model is {@link RequirementCriticality}
- * 
+ *
  * @author Gregory Fouquet, bsiri
- * 
+ *
  */
+// XSS OK
 @Component
 @Scope("prototype")
 public class RequirementCriticalityComboDataBuilder extends
-		EnumJeditableComboDataBuilder<RequirementCriticality, RequirementCriticalityComboDataBuilder> {
+	EnumJeditableComboDataBuilder<RequirementCriticality, RequirementCriticalityComboDataBuilder> {
 	public RequirementCriticalityComboDataBuilder() {
 		super();
 		setModel(RequirementCriticality.values());

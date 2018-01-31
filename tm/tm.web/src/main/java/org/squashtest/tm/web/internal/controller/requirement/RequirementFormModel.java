@@ -20,11 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.validation.Errors;
@@ -36,8 +32,12 @@ import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.service.internal.dto.RawValueModel;
 import org.squashtest.tm.service.internal.dto.RawValueModel.RawValueModelMap;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 
+// XSS OK
 public class RequirementFormModel {
 
 	/*
@@ -58,74 +58,59 @@ public class RequirementFormModel {
 
 	private RawValueModelMap customFields;
 
-
-
-
 	public String getName() {
 		return name;
 	}
-
 
 	public void setName(String name) {
 		this.name = name;
 	}
 
-
 	public String getDescription() {
 		return description;
 	}
-
 
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
-
 	public RequirementCriticality getCriticality() {
 		return criticality;
 	}
-
 
 	public void setCriticality(RequirementCriticality criticality) {
 		this.criticality = criticality;
 	}
 
-
 	public String getCategory() {
 		return category;
 	}
-
 
 	public void setCategory(String category) {
 		this.category = category;
 	}
 
-
 	public String getReference() {
 		return reference;
 	}
-
 
 	public void setReference(String reference) {
 		this.reference = reference;
 	}
 
-
 	public RawValueModelMap getCustomFields() {
 		return customFields;
 	}
-
 
 	public void setCustomFields(RawValueModelMap customFields) {
 		this.customFields = customFields;
 	}
 
-
 	/*
 	 * Check out what does NewRequirementVersionDto and laugh
 	 */
 	@JsonIgnore
-	public NewRequirementVersionDto toDTO(){
+	public NewRequirementVersionDto toDTO() {
 		NewRequirementVersionDto dto = new NewRequirementVersionDto();
 
 		dto.setName(name);
@@ -136,7 +121,7 @@ public class RequirementFormModel {
 
 
 		Map<Long, RawValue> cufs = new HashMap<>(customFields.size());
-		for (Entry<Long, RawValueModel> entry : customFields.entrySet()){
+		for (Entry<Long, RawValueModel> entry : customFields.entrySet()) {
 			cufs.put(entry.getKey(), entry.getValue().toRawValue());
 		}
 		dto.setCustomFields(cufs);
@@ -144,8 +129,7 @@ public class RequirementFormModel {
 		return dto;
 	}
 
-
-	public static class RequirementFormModelValidator implements Validator{
+	public static class RequirementFormModelValidator implements Validator {
 
 		/**
 		 *
@@ -163,15 +147,10 @@ public class RequirementFormModel {
 		}
 
 
-
-
 		public RequirementFormModelValidator(MessageSource messageSource) {
 			super();
 			this.messageSource = messageSource;
 		}
-
-
-
 
 		@Override
 		public boolean supports(Class<?> clazz) {
@@ -188,30 +167,29 @@ public class RequirementFormModel {
 
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", MESSAGE_NOT_BLANK, notBlank);
 
-			if (model.criticality==null){
+			if (model.criticality == null) {
 				errors.rejectValue("criticality", MESSAGE_NOT_BLANK, notBlank);
 			}
 
-			if (model.category==null){
+			if (model.category == null) {
 				errors.rejectValue("category", MESSAGE_NOT_BLANK, notBlank);
 			}
 
-			if (model.reference != null && model.reference.length()>50){
+			if (model.reference != null && model.reference.length() > 50) {
 				errors.rejectValue("reference", MESSAGE_LENGTH_MAX, lengthMax);
 			}
 
 
-			for (Entry<Long, RawValueModel> entry : model.getCustomFields().entrySet()){
+			for (Entry<Long, RawValueModel> entry : model.getCustomFields().entrySet()) {
 				RawValueModel value = entry.getValue();
-				if (value.isEmpty()){
-					errors.rejectValue("customFields["+entry.getKey()+"]", "message.notBlank", notBlank);
+				if (value.isEmpty()) {
+					errors.rejectValue("customFields[" + entry.getKey() + "]", "message.notBlank", notBlank);
 				}
 			}
 
 		}
 
 	}
-
 
 
 }
