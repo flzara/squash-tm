@@ -35,6 +35,7 @@ import org.squashtest.tm.service.internal.dto.RawValueModel;
 import org.squashtest.tm.service.internal.dto.RawValueModel.RawValueModelMap;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 
 public class ActionStepFormModel {
@@ -89,8 +90,8 @@ public class ActionStepFormModel {
 
 	public ActionTestStep getActionTestStep(){
 		ActionTestStep newStep = new ActionTestStep();
-		newStep.setAction(action);
-		newStep.setExpectedResult(expectedResult);
+		newStep.setAction(HTMLCleanupUtils.cleanHtml(action));
+		newStep.setExpectedResult(HTMLCleanupUtils.cleanHtml(expectedResult));
 		return newStep;
 	}
 

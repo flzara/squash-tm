@@ -44,28 +44,30 @@
 
 
 <head>
-	<layout:common-head />		
+	<layout:common-head />
 	<comp:sq-css name="squash.purple.css" />
 	<layout:_common-script-import highlightedWorkspace="" />
-   
-   
+
+
     <script type="text/javascript">
-    
+
     requirejs.config({
         config : {
           'oer-main-page' : ${json:serialize(config)}
         }
       });
-    
-    require(["common"], function(){   
+
+    require(["common"], function(){
       require(["oer-main-page"], function(){})
     });
-  
+
   </script>
-  
-  <%-- Wizard initialization --%> 
+
+  <%-- Wizard initialization --%>
   <comp:init-wizards workspace="campaign"/>
-  
+  <meta name="_csrf" content="${_csrf.token}"/>
+  <!-- default header name is X-CSRF-TOKEN -->
+  <meta name="_csrf_header" content="${_csrf.headerName}"/>
 </head>
 
 
@@ -77,16 +79,16 @@
 		</iframe>
 	</div>
 
-	
+
 	<div id="ieo-right-panel">
 		<iframe id="iframe-right" name="frameright" class="ieo-frame" >
 		</iframe>
 	</div>
-	
+
 <script type="text/javascript">
-publish("reload.oer.panelsready");  
+publish("reload.oer.panelsready");
 </script>
-	
+
 	<%-- structure of the toolbox --%>
   <f:message var="stopTitle"            key="execute.header.button.stop.title" />
   <f:message var="untestableLabel"      key="execute.header.button.untestable.title" />
@@ -97,9 +99,9 @@ publish("reload.oer.panelsready");
   <f:message var="previousTitle"        key="execute.header.button.previous.title" />
   <f:message var="nextTitle"            key="execute.header.button.next.title" />
   <f:message  var="nextTestCaseTitle" key="execute.header.button.next-test-case.title" />
-  
-	<div id="ieo-control" class="ui-state-active not-displayed">		
-		<table >		
+
+	<div id="ieo-control" class="ui-state-active not-displayed">
+		<table >
 			<tr>
 				<td class="left-aligned">
                   <button class="sq-btn ui-button stop-execution" title="${stopTitle}">
@@ -108,7 +110,7 @@ publish("reload.oer.panelsready");
                 </td>
 				<td class="right-aligned">
 					<label id="evaluation-label-status"><f:message key="execute.header.status.label" /></label>
-					<comp:execution-status-combo name="executionStatus" id="step-status-combo" allowsUntestable="${config.allowsUntestable}" 
+					<comp:execution-status-combo name="executionStatus" id="step-status-combo" allowsUntestable="${config.allowsUntestable}"
                                                   allowsSettled="${config.allowsSettled}" selected="${config.currentStepStatus }"/>
 					<c:if test="${config.allowsUntestable}">
 						<button class="sq-btn ui-button step-untestable" title="${untestableLabel}">
@@ -130,12 +132,12 @@ publish("reload.oer.panelsready");
 					<span class="step-paging"></span>
 					<button class="sq-btn ui-button execute-previous-step" title="${prevTitle}" >
                       <span class="ui-icon ui-icon-triangle-1-w"></span>
-                    </button>	
+                    </button>
 					<button class="sq-btn ui-button execute-next-step" title="${nextTitle}">
                       <span class="ui-icon ui-icon-triangle-1-e"></span>
                     </button>
 				</td>
-				<td class="centered not-displayed execute-next-test-case-panel">					
+				<td class="centered not-displayed execute-next-test-case-panel">
 					<button class="sq-btn ui-button execute-next-test-case" title="${ nextTestCaseTitle }" >
                       <span class="ui-icon ui-icon-seek-next"></span>
                     </button>
@@ -148,11 +150,11 @@ publish("reload.oer.panelsready");
 			</tr>
 		</table>
 	</div>
-	
+
  <script type="text/javascript">
  publish("reload.oer.control");
  </script>
-	
+
 	<%-- Popup to enter the url we want the right panel to be filled with --%>
     <f:message var="openurlTitle" key="execution.IEO.address.bar.label"/>
     <f:message var="gotoLabel" key="execution.IEO.address.go.to.button" />
@@ -160,41 +162,41 @@ publish("reload.oer.panelsready");
           title="${openurlTitle}" >
         <label><f:message key="execution.execute.IEO.address.label" /></label>
         <input id="address-input" type="text" size="50" /><br/>
-        
+
         <div class="popup-dialog-buttonpane">
           <input type="button" value="${gotoLabel}" data-def="mainbtn, evt=confirm"/>
         </div>
-                 
+
     </div>
-        
+
 <script type="text/javascript">
 publish("reload.oer.urldialog");
 </script>
 
-	
+
 	<c:if test="${not empty bugTracker and not isOslc}">
-	<is:issue-add-popup 
-  id="issue-report-dialog" 
-  interfaceDescriptor="${interfaceDescriptor}"  
+	<is:issue-add-popup
+  id="issue-report-dialog"
+  interfaceDescriptor="${interfaceDescriptor}"
   bugTrackerId="${bugTracker.id}"
   projectId="${projectId}"
-  projectNames="${projectNames}"/>		
+  projectNames="${projectNames}"/>
 	</c:if>
 
-	
+
 <c:if test="${not empty bugTracker and isOslc}">
 	<is:issue-add-popup-oslc id="issue-report-dialog"
-		interfaceDescriptor="${interfaceDescriptor}"  
-        bugTrackerId="${bugTracker.id}" 
-        projectId="${projectId}" 
+		interfaceDescriptor="${interfaceDescriptor}"
+        bugTrackerId="${bugTracker.id}"
+        projectId="${projectId}"
         projectNames="${projectNames}"/>
-</c:if>	
-	
-	
-  <%-- 
+</c:if>
+
+
+  <%--
    Here we define a generic error dialog, much like in the notification system
-   used in every other pages. The thing is there is no notification section 
-   in the OER so we have to insert a copycat of that dialog here 
+   used in every other pages. The thing is there is no notification section
+   in the OER so we have to insert a copycat of that dialog here
    so that the js module squashtm.notification can use it seamlessly.
    --%>
 	<f:message var="errorTitle" key="popup.title.error"/>
@@ -206,14 +208,14 @@ publish("reload.oer.urldialog");
 	        </div>
 	      </div>
 	  </div>
-	  <input type="button" value="${okLabel}"/>  
+	  <input type="button" value="${okLabel}"/>
 	</div>
 
 <script type="text/javascript">
 publish("reload.oer.genericerrordialog");
 publish("reload.oer.complete");
 </script>
-	
+
 
 </body>
 </html>

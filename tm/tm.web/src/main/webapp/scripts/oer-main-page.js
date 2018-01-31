@@ -29,7 +29,6 @@ define(["module",
         "jquery.squash.messagedialog"],
 		function(module, pubsub, $, resizer, Manager){
 
-
 	// ************* events subscription *********
 
 	pubsub.subscribe("reload.oer.panelsready", initPanels);
