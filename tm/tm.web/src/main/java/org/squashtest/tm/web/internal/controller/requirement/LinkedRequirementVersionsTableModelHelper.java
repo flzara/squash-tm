@@ -51,8 +51,8 @@ class LinkedRequirementVersionsTableModelHelper extends DataTableModelBuilder<Li
 
 		row.put("rv-id", rv.getId().toString());
 		row.put("rv-index", Long.toString(getCurrentIndex()));
-		row.put(DataTableModelConstants.PROJECT_NAME_KEY, rv.getProject().getName());
-		row.put("rv-reference", rv.getReference());
+		row.put(DataTableModelConstants.PROJECT_NAME_KEY, HtmlUtils.htmlEscape(rv.getProject().getName()));
+		row.put("rv-reference", HtmlUtils.htmlEscape(rv.getReference()));
 		row.put("rv-name", HtmlUtils.htmlEscape(rv.getName()));
 		row.put("rv-version", Integer.toString(rv.getVersionNumber()));
 		row.put("rv-role", formatRole(rv.getRole()));

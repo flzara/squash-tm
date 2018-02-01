@@ -20,25 +20,21 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.requirement.RequirementVersionResolverService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 
+import javax.inject.Inject;
+
 
 /**
  * This class will resolve which version of a requirement the user wants to browse according to whether he uses milestones mode or not.
  */
-
+// XSS OK
 @Controller
 @RequestMapping("/requirements/{requirementId}")
 public class RequirementVersionResolverController {
@@ -55,7 +51,7 @@ public class RequirementVersionResolverController {
 	public String resolveRequirementInfo(@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId) {
 
 		RequirementVersion version = versionResolver.resolveByRequirementId(requirementId);
-		return "redirect:/requirement-versions/"+version.getId()+"/info";
+		return "redirect:/requirement-versions/" + version.getId() + "/info";
 
 	}
 
@@ -63,9 +59,8 @@ public class RequirementVersionResolverController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String resolveRequirement(@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId) {
 		RequirementVersion version = versionResolver.resolveByRequirementId(requirementId);
-		return "redirect:/requirement-versions/"+version.getId();
+		return "redirect:/requirement-versions/" + version.getId();
 	}
-
 
 
 	/*
@@ -82,15 +77,14 @@ public class RequirementVersionResolverController {
 	 */
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, params = {"newName"})
-	public
- Object rename(@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId,
-			@RequestParam("newName") String newName) {
+	public Object rename(@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId,
+						 @RequestParam("newName") String newName) {
 
 		RequirementVersion version = versionResolver.resolveByRequirementId(requirementId);
 
 		requirementVersionManager.rename(version.getId(), newName);
 
-		return new  RenameModel(newName);
+		return new RenameModel(newName);
 	}
 
 }

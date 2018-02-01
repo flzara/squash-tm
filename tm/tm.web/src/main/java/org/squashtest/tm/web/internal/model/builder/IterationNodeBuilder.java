@@ -20,17 +20,17 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
+
+import javax.inject.Inject;
+import java.util.List;
 
 @Component
 @Scope("prototype")
@@ -50,9 +50,9 @@ public class IterationNodeBuilder extends GenericJsTreeNodeBuilder<Iteration, It
 	@Override
 	protected JsTreeNode doBuild(JsTreeNode node, Iteration model) {
 
-		node.addAttr("name", model.getName());
-		node.addAttr("reference", model.getReference());
-		node.setTitle(model.getFullName());
+		node.addAttr("name", HtmlUtils.htmlEscape(model.getName()));
+		node.addAttr("reference", HtmlUtils.htmlEscape(model.getReference()));
+		node.setTitle(HtmlUtils.htmlEscape(model.getFullName()));
 
 		node.addAttr("rel", "iteration");
 		node.addAttr("resId", String.valueOf(model.getId()));
@@ -77,7 +77,7 @@ public class IterationNodeBuilder extends GenericJsTreeNodeBuilder<Iteration, It
 	protected void doAddChildren(JsTreeNode node, Iteration model) {
 		if (model.hasContent()) {
 
-			TestSuiteNodeBuilder childrenBuilder = new TestSuiteNodeBuilder(permissionEvaluationService,internationalizationHelper);
+			TestSuiteNodeBuilder childrenBuilder = new TestSuiteNodeBuilder(permissionEvaluationService, internationalizationHelper);
 
 			List<JsTreeNode> children = new JsTreeNodeListBuilder<>(childrenBuilder)
 				.expand(getExpansionCandidates())

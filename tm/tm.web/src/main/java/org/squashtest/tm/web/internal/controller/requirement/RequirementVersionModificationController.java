@@ -20,21 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
-import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -66,6 +51,7 @@ import org.squashtest.tm.service.audit.RequirementAuditTrailService;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
+import org.squashtest.tm.service.internal.dto.json.JsonInfoList;
 import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerService;
 import org.squashtest.tm.service.requirement.RequirementBulkUpdate;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
@@ -85,14 +71,21 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
-import org.squashtest.tm.service.internal.dto.json.JsonInfoList;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import java.util.*;
+
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 /**
  * Controller which receives requirement version management related requests.
  *
  * @author Gregory Fouquet
- *
  */
+
+// XSS OK
 @Controller
 @RequestMapping("/requirement-versions/{requirementVersionId}")
 public class RequirementVersionModificationController {
@@ -164,32 +157,31 @@ public class RequirementVersionModificationController {
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, params = {"id=requirement-description", VALUE}, produces = "text/plain;charset=UTF-8")
-	public
-	String changeDescription(@PathVariable long requirementVersionId, @RequestParam(VALUE) String newDescription) {
+	public String changeDescription(@PathVariable long requirementVersionId, @RequestParam(VALUE) String newDescription) {
 		requirementVersionManager.changeDescription(requirementVersionId, newDescription);
-		return newDescription;
+		return HTMLCleanupUtils.cleanHtml(newDescription);
 
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-criticality", VALUE })
+	@RequestMapping(method = RequestMethod.POST, params = {"id=requirement-criticality", VALUE})
 	@ResponseBody
 	public String changeCriticality(@PathVariable long requirementVersionId,
-			@RequestParam(VALUE) RequirementCriticality criticality, Locale locale) {
+									@RequestParam(VALUE) RequirementCriticality criticality, Locale locale) {
 		requirementVersionManager.changeCriticality(requirementVersionId, criticality);
 		return internationalize(criticality, locale);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-category", VALUE })
+	@RequestMapping(method = RequestMethod.POST, params = {"id=requirement-category", VALUE})
 	@ResponseBody
 	public String changeCategory(@PathVariable long requirementVersionId,
-			@RequestParam(VALUE) String categoryCode, Locale locale) {
+								 @RequestParam(VALUE) String categoryCode, Locale locale) {
 		requirementVersionManager.changeCategory(requirementVersionId, categoryCode);
 		InfoListItem category = infoListItemService.findByCode(categoryCode);
 		return formatInfoItem(category, locale);
 
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-status", VALUE })
+	@RequestMapping(method = RequestMethod.POST, params = {"id=requirement-status", VALUE})
 	@ResponseBody
 	public String changeStatus(@PathVariable long requirementVersionId, @RequestParam(VALUE) String value, Locale locale) {
 		RequirementStatus status = RequirementStatus.valueOf(value);
@@ -197,7 +189,7 @@ public class RequirementVersionModificationController {
 		return internationalize(status, locale);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-reference", VALUE }, produces = "text/plain;charset=UTF-8")
+	@RequestMapping(method = RequestMethod.POST, params = {"id=requirement-reference", VALUE}, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	String changeReference(@PathVariable long requirementVersionId, @RequestParam(VALUE) String requirementReference) {
 		requirementVersionManager.changeReference(requirementVersionId, requirementReference.trim());
@@ -206,8 +198,8 @@ public class RequirementVersionModificationController {
 
 	@RequestMapping(value = "/bulk-update", method = RequestMethod.POST, consumes = "application/json")
 	@ResponseBody
-	// here we use the path variable as a list, instead of a single id
-	void bulkUpdate(@PathVariable("requirementVersionId") List<Long> requirementId, @RequestBody RequirementBulkUpdate bulkUpdate){
+		// here we use the path variable as a list, instead of a single id
+	void bulkUpdate(@PathVariable("requirementVersionId") List<Long> requirementId, @RequestBody RequirementBulkUpdate bulkUpdate) {
 		requirementVersionManager.bulkUpdate(requirementId, bulkUpdate);
 	}
 
@@ -247,7 +239,7 @@ public class RequirementVersionModificationController {
 	}
 
 	private void addSynchronizedAttributes(Model model, RequirementVersion requirementVersion, Locale locale) {
-		if (requirementVersion.getRequirement().isSynchronized()){
+		if (requirementVersion.getRequirement().isSynchronized()) {
 			RequirementSyncExtender syncExtender = requirementVersion.getRequirement().getSyncExtender();
 			model.addAttribute("requirementURL", syncExtender.getRemoteUrl());
 			addSyncStatus(model, syncExtender, locale);
@@ -256,22 +248,22 @@ public class RequirementVersionModificationController {
 
 	private void addSyncStatus(Model model, RequirementSyncExtender syncExtender, Locale locale) {
 		RemoteSynchronisation remoteSynchronisation = syncExtender.getRemoteSynchronisation();
-		if(remoteSynchronisation != null){
+		if (remoteSynchronisation != null) {
 			//we used the last sync status and not sync status because we don't want to show running status to end users
 			SynchronisationStatus status = remoteSynchronisation.getLastSynchronisationStatus();
 			String i18nStatus = i18nHelper.internationalize("label." + status.getI18nKey(), locale);
 			model.addAttribute("remoteSynchronisationStatus", i18nStatus);
-        }
+		}
 	}
 
-	private DataTableModel getVerifyingTCModel(RequirementVersion version){
+	private DataTableModel getVerifyingTCModel(RequirementVersion version) {
 		PagedCollectionHolder<List<TestCase>> holder = verifyingTestCaseManager.findAllByRequirementVersion(
-				version.getId(), new DefaultPagingAndSorting("Project.name"));
+			version.getId(), new DefaultPagingAndSorting("Project.name"));
 
 		return new VerifyingTestCasesTableModelHelper(i18nHelper).buildDataModel(holder, "0");
 	}
 
-	private DataTableModel getLinkedReqVersionsModel(RequirementVersion version){
+	private DataTableModel getLinkedReqVersionsModel(RequirementVersion version) {
 		PagedCollectionHolder<List<LinkedRequirementVersion>> holder = linkedReqVersionManager.findAllByRequirementVersion(
 			version.getId(), new DefaultPagingAndSorting("Project.name"));
 
@@ -289,11 +281,11 @@ public class RequirementVersionModificationController {
 
 	}
 
-	@RequestMapping(value = "/general", method = RequestMethod.GET, produces=ContentTypes.APPLICATION_JSON)
+	@RequestMapping(value = "/general", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	@ResponseBody
-	public JsonGeneralInfo refreshGeneralInfos(@PathVariable long requirementVersionId){
+	public JsonGeneralInfo refreshGeneralInfos(@PathVariable long requirementVersionId) {
 		RequirementVersion version = requirementVersionManager.findById(requirementVersionId);
-		return new JsonGeneralInfo((AuditableMixin)version);
+		return new JsonGeneralInfo((AuditableMixin) version);
 
 	}
 
@@ -304,14 +296,13 @@ public class RequirementVersionModificationController {
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, params = {"newName"})
-	public
-	Object rename(@PathVariable long requirementVersionId, @RequestParam("newName") String newName) {
+	public Object rename(@PathVariable long requirementVersionId, @RequestParam("newName") String newName) {
 		requirementVersionManager.rename(requirementVersionId, newName);
-		return new  RenameModel(newName);
+		return new RenameModel(newName);
 	}
 
 	// that one performs the same operation than #rename, but some jeditables like it more that way
-	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-name", VALUE })
+	@RequestMapping(method = RequestMethod.POST, params = {"id=requirement-name", VALUE})
 	@ResponseBody
 	public String changeName(@PathVariable long requirementVersionId, @RequestParam(VALUE) String value, Locale locale) {
 		requirementVersionManager.rename(requirementVersionId, value);
@@ -319,17 +310,16 @@ public class RequirementVersionModificationController {
 	}
 
 
-	private DataTableModel getEventsTableModel(RequirementVersion requirementVersion){
-            Pageable pageable = new PageRequest(0, SpringPaginationUtils.DEFAULT_SIZE, Direction.DESC, "date");
-            Page<RequirementAuditEvent> auditTrail = auditTrailService
-                            .findAllByRequirementVersionIdOrderedByDate(requirementVersion.getId(), pageable);
+	private DataTableModel getEventsTableModel(RequirementVersion requirementVersion) {
+		Pageable pageable = new PageRequest(0, SpringPaginationUtils.DEFAULT_SIZE, Direction.DESC, "date");
+		Page<RequirementAuditEvent> auditTrail = auditTrailService
+			.findAllByRequirementVersionIdOrderedByDate(requirementVersion.getId(), pageable);
 
-            RequirementAuditEventTableModelBuilder builder = new RequirementAuditEventTableModelBuilder(LocaleContextHolder.getLocale(), i18nHelper);
+		RequirementAuditEventTableModelBuilder builder = new RequirementAuditEventTableModelBuilder(LocaleContextHolder.getLocale(), i18nHelper);
 
-            return builder.buildDataModel(auditTrail, "");
+		return builder.buildDataModel(auditTrail, "");
 
 	}
-
 
 
 	/**
@@ -340,11 +330,10 @@ public class RequirementVersionModificationController {
 	 * Versions having an {@link RequirementStatus#OBSOLETE} status are not included in the result.<br>
 	 * Last map entry is key= "selected", value = id of concerned requirement.
 	 *
-	 * @param requirementVersionId
-	 *            : the id of the concerned requirement version.
+	 * @param requirementVersionId : the id of the concerned requirement version.
 	 * @return a {@link Map} with key = "id" and value ="versionNumber (versionStatus)", <br>
-	 *         obsolete versions excluded, <br>
-	 *         last entry is key="selected", value= id of concerned requirement.
+	 * obsolete versions excluded, <br>
+	 * last entry is key="selected", value= id of concerned requirement.
 	 */
 	@RequestMapping(value = "/version-numbers", method = RequestMethod.GET)
 	@ResponseBody
@@ -384,22 +373,20 @@ public class RequirementVersionModificationController {
 	 * Comparator for RequieredVersions
 	 *
 	 * @author FOG
-	 *
 	 */
 	public static class MyRequirementVersionsDecOrder implements Comparator<RequirementVersion> {
 
 		@Override
 		public int compare(RequirementVersion rV1, RequirementVersion rV2) {
 			return rV1.getVersionNumber() > rV2.getVersionNumber() ? -1 : rV1.getVersionNumber() == rV2
-					.getVersionNumber() ? 0 : 1;
+				.getVersionNumber() ? 0 : 1;
 		}
 	}
 
 	private RequirementAuditTrailService auditTrailService;
 
 	/**
-	 * @param auditTrailService
-	 *            the auditTrailService to set
+	 * @param auditTrailService the auditTrailService to set
 	 */
 	@Inject
 	public void setAuditTrailService(RequirementAuditTrailService auditTrailService) {
@@ -407,7 +394,7 @@ public class RequirementVersionModificationController {
 	}
 
 	private String formatInfoItem(InfoListItem nature, Locale locale) {
-		return  i18nHelper.getMessage(nature.getLabel(), null, nature.getLabel(), locale);
+		return i18nHelper.getMessage(nature.getLabel(), null, nature.getLabel(), locale);
 	}
 
 
@@ -427,12 +414,12 @@ public class RequirementVersionModificationController {
 		mav.addObject("verifyingTestCases", verifyingTC);
 		// =================VERSIONS
 		List<RequirementVersion> versions = requirementVersionManager.findAllByRequirement(version.getRequirement()
-				.getId());
+			.getId());
 		mav.addObject("siblingVersions", versions);
 		// =================AUDIT TRAIL
 		Page<RequirementAuditEvent> auditTrail = auditTrailService.findAllByRequirementVersionIdOrderedByDate(requirementVersionId);
 
-		RequirementAuditEventTableModelBuilder builder = new RequirementAuditEventTableModelBuilder(locale,	i18nHelper);
+		RequirementAuditEventTableModelBuilder builder = new RequirementAuditEventTableModelBuilder(locale, i18nHelper);
 
 		DataTableModel auditTrailModel = builder.buildDataModel(auditTrail, "1");
 		mav.addObject("auditTrailDatas", auditTrailModel.getAaData());
@@ -445,52 +432,52 @@ public class RequirementVersionModificationController {
 	 *
 	 ********************************************************************** */
 
-	@RequestMapping(value = "/milestones", method=RequestMethod.GET)
+	@RequestMapping(value = "/milestones", method = RequestMethod.GET)
 	@ResponseBody
-	public DataTableModel getBoundMilestones(@PathVariable("requirementVersionId") long requirementVersionId, DataTableDrawParameters params){
+	public DataTableModel getBoundMilestones(@PathVariable("requirementVersionId") long requirementVersionId, DataTableDrawParameters params) {
 
 		Collection<Milestone> allMilestones = requirementVersionManager.findAllMilestones(requirementVersionId);
 
 		return buildMilestoneModel(new ArrayList<>(allMilestones), params.getsEcho());
 	}
 
-	@RequestMapping(value = "/milestones/{milestoneIds}", method=RequestMethod.POST)
+	@RequestMapping(value = "/milestones/{milestoneIds}", method = RequestMethod.POST)
 	@ResponseBody
-	public void bindMilestones(@PathVariable("requirementVersionId") long requirementVersionId, @PathVariable("milestoneIds") List<Long> milestoneIds){
+	public void bindMilestones(@PathVariable("requirementVersionId") long requirementVersionId, @PathVariable("milestoneIds") List<Long> milestoneIds) {
 
 		requirementVersionManager.bindMilestones(requirementVersionId, milestoneIds);
 	}
 
-	@RequestMapping(value = "/milestones/{milestoneIds}", method=RequestMethod.DELETE)
+	@RequestMapping(value = "/milestones/{milestoneIds}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public void unbindMilestones(@PathVariable("requirementVersionId") long requirementVersionId, @PathVariable("milestoneIds") List<Long> milestoneIds){
+	public void unbindMilestones(@PathVariable("requirementVersionId") long requirementVersionId, @PathVariable("milestoneIds") List<Long> milestoneIds) {
 
 		requirementVersionManager.unbindMilestones(requirementVersionId, milestoneIds);
 	}
 
-	@RequestMapping(value = "/milestones/associables", method=RequestMethod.GET)
+	@RequestMapping(value = "/milestones/associables", method = RequestMethod.GET)
 	@ResponseBody
-	public DataTableModel getNotYetBoundMilestones(@PathVariable("requirementVersionId") long requirementVersionId, DataTableDrawParameters params){
+	public DataTableModel getNotYetBoundMilestones(@PathVariable("requirementVersionId") long requirementVersionId, DataTableDrawParameters params) {
 		Collection<Milestone> notBoundMilestones = requirementVersionManager.findAssociableMilestones(requirementVersionId);
-		return buildMilestoneModel(new ArrayList<>(notBoundMilestones),params.getsEcho());
+		return buildMilestoneModel(new ArrayList<>(notBoundMilestones), params.getsEcho());
 	}
 
 
-	@RequestMapping(value = "/milestones/panel", method=RequestMethod.GET)
-	public String getMilestonesPanel(@PathVariable("requirementVersionId") Long requirementVersionId, Model model){
+	@RequestMapping(value = "/milestones/panel", method = RequestMethod.GET)
+	public String getMilestonesPanel(@PathVariable("requirementVersionId") Long requirementVersionId, Model model) {
 
 		MilestonePanelConfiguration conf = new MilestonePanelConfiguration();
 		RequirementVersion version = requirementVersionManager.findById(requirementVersionId);
 
 		// build the needed data
 		Collection<Milestone> allMilestones = requirementVersionManager.findAllMilestones(requirementVersionId);
-		List<?> currentModel = buildMilestoneModel(new ArrayList<>(allMilestones),  "0").getAaData();
+		List<?> currentModel = buildMilestoneModel(new ArrayList<>(allMilestones), "0").getAaData();
 
 		Map<String, String> identity = new HashMap<>();
 		identity.put("restype", "requirements");
 		identity.put("resid", version.getRequirement().getId().toString());
 
-		String rootPath = "/requirement-versions/"+requirementVersionId.toString();
+		String rootPath = "/requirement-versions/" + requirementVersionId.toString();
 
 		Boolean editable = permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "LINK", version);
 
@@ -498,7 +485,7 @@ public class RequirementVersionModificationController {
 		CollectionUtils.filter(mil, new Predicate() {
 			@Override
 			public boolean evaluate(Object milestone) {
-				return ((Milestone)milestone).getStatus().isBindableToObject();
+				return ((Milestone) milestone).getStatus().isBindableToObject();
 			}
 		});
 		Boolean isMilestoneInProject = !mil.isEmpty();
@@ -517,7 +504,7 @@ public class RequirementVersionModificationController {
 
 	}
 
-	private DataTableModel buildMilestoneModel(List<Milestone> milestones, String sEcho){
+	private DataTableModel buildMilestoneModel(List<Milestone> milestones, String sEcho) {
 
 
 		PagedCollectionHolder<List<Milestone>> collectionHolder =

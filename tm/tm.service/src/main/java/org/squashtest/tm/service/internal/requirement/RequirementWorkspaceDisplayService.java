@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.requirement.*;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.synchronisation.SynchronisationStatus;
@@ -224,6 +225,10 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 										String isMilestoneModifiable, boolean isReqDontAllowClick, Long activeMilestoneId) {
 		Map<String, Object> attr = new HashMap<>();
 		State state;
+
+		name = HtmlUtils.htmlEscape(name);
+		reference = HtmlUtils.htmlEscape(reference);
+
 		attr.put(RES_ID, id);
 		attr.put("resType", restype);
 		attr.put("name", name);

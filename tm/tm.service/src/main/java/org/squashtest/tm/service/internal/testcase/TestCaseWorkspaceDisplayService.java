@@ -28,6 +28,7 @@ import org.jooq.TableField;
 import org.jooq.TableLike;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryPluginBinding;
 import org.squashtest.tm.jooq.domain.tables.*;
@@ -126,6 +127,9 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		Boolean isreqcovered = coverageCount > 0 ||
 			verifiedRequirementsManagerService.testCaseHasUndirectRequirementCoverage(id);
 		boolean hasStep = stepCount > 0;
+
+		name = HtmlUtils.htmlEscape(name);
+		reference = HtmlUtils.htmlEscape(reference);
 
 		attr.put("resId", id);
 		attr.put("resType", restype);

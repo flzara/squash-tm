@@ -100,22 +100,22 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 
 		Map<Long, JsTreeNode> result = DSL.select(CLN.CLN_ID,
-				CLN.NAME,
-				C.REFERENCE,
-				count(CI.CAMPAIGN_ID).as(ITERATION_COUNT),
-				MC.MILESTONE_ID,
-				M.STATUS)
+			CLN.NAME,
+			C.REFERENCE,
+			count(CI.CAMPAIGN_ID).as(ITERATION_COUNT),
+			MC.MILESTONE_ID,
+			M.STATUS)
 			.from(CLN)
 			.innerJoin(C).on(CLN.CLN_ID.eq(C.CLN_ID))
 			.leftJoin(CI).on(CLN.CLN_ID.eq(CI.CAMPAIGN_ID))
 			.leftJoin(MC).on(CLN.CLN_ID.eq(MC.CAMPAIGN_ID))
 			.leftJoin(M).on(MC.MILESTONE_ID.eq(M.MILESTONE_ID))
 			.where(CLN.CLN_ID.in(nodeDistribution.getCampaignIds()))
-			.groupBy(CLN.CLN_ID,CLN.NAME,C.REFERENCE,CI.CAMPAIGN_ID,MC.MILESTONE_ID,M.STATUS)
+			.groupBy(CLN.CLN_ID, CLN.NAME, C.REFERENCE, CI.CAMPAIGN_ID, MC.MILESTONE_ID, M.STATUS)
 			.fetch()
 			.stream()
-			.map(r ->{
-				boolean isMilestoneModifiable = isMilestoneModifiable(r.get(M.STATUS,String.class));
+			.map(r -> {
+				boolean isMilestoneModifiable = isMilestoneModifiable(r.get(M.STATUS, String.class));
 				return buildCampaign(r.get(CLN.CLN_ID), r.get(CLN.NAME), "campaigns", r.get(C.REFERENCE), r.get(ITERATION_COUNT, Integer.class), currentUser, r.get(MC.MILESTONE_ID), isMilestoneModifiable);
 			})
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get(RES_ID), Function.identity()));
@@ -125,7 +125,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.innerJoin(CF).on(CF.CLN_ID.eq(CLN.CLN_ID))
 			.leftJoin(CLNR).on(CLNR.ANCESTOR_ID.eq(CLN.CLN_ID))
 			.where(CLN.CLN_ID.in(nodeDistribution.getCampaignFolderIds()))
-			.groupBy(CLN.CLN_ID, CLN.NAME,CLNR.ANCESTOR_ID)
+			.groupBy(CLN.CLN_ID, CLN.NAME, CLNR.ANCESTOR_ID)
 			.fetch()
 			.stream()
 			.map(r -> buildFolder(r.get(CLN.CLN_ID), r.get(CLN.NAME), "campaign-folders", r.get("CHILD_COUNT", Integer.class), currentUser))
@@ -182,6 +182,9 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	private JsTreeNode buildCampaign(Long campaignId, String name, String restype, String reference, int iterationCount, UserDto currentUser, Long milestone, boolean isMilestoneModifiable) {
 		Map<String, Object> attr = new HashMap<>();
 
+		name = HtmlUtils.htmlEscape(name);
+		reference = HtmlUtils.htmlEscape(reference);
+
 		attr.put(RES_ID, campaignId);
 		attr.put("resType", restype);
 		attr.put("name", name);
@@ -198,7 +201,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		JsTreeNode campaign = buildNode(title, null, attr, currentUser, milestonesNumber, String.valueOf(isMilestoneModifiable));
 
 		// Messy but still simpler than GOT's genealogy
-		if (iterationCount == 0 ) {
+		if (iterationCount == 0) {
 			campaign.setState(State.leaf);
 		} else if (campaignFatherChildrenMultimap.containsKey(campaignId)) {
 			campaign.setState(State.open);
@@ -220,6 +223,9 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	private JsTreeNode buildIteration(Long id, String name, String reference, Integer iterationOrder, boolean hasContent, UserDto currentUser, Long milestone, String isMilestoneModifiable) {
 		Map<String, Object> attr = new HashMap<>();
 		JsTreeNode.State state;
+
+		name = HtmlUtils.htmlEscape(name);
+		reference = HtmlUtils.htmlEscape(reference);
 
 		attr.put(RES_ID, id);
 		attr.put("resType", "iterations");
@@ -245,6 +251,8 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 	private JsTreeNode buildTestSuite(Long id, String name, String executionStatus, String description, UserDto currentUser, Long milestone, String isMilestoneModifiable) {
 		Map<String, Object> attr = new HashMap<>();
+
+		name = HtmlUtils.htmlEscape(name);
 
 		attr.put(RES_ID, id);
 		attr.put("name", name);
@@ -306,7 +314,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 				.orderBy(orderColumn)
 				.fetch()
 				.forEach(r ->
-						result.put(r.get(fatherColumn), r.get(childColumn))
+					result.put(r.get(fatherColumn), r.get(childColumn))
 				);
 		}
 		return result;
@@ -334,7 +342,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.stream()
 			.map(r -> {
 				boolean milestoneModifiable = isMilestoneModifiable(r.get(M.STATUS));
-				boolean hasContent = r.get(ITERATION_COUNT,Integer.class) > 0;
+				boolean hasContent = r.get(ITERATION_COUNT, Integer.class) > 0;
 				return buildIteration(r.get(IT.ITERATION_ID), r.get(IT.NAME), r.get(IT.REFERENCE),
 					r.get(CI.ITERATION_ORDER), hasContent, currentUser, r.get(MC.MILESTONE_ID), String.valueOf(milestoneModifiable));
 			})
@@ -384,7 +392,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.fetch()
 			.stream()
 			//prevent conflict when hibernate indexed lists are corrupted, by selecting always the first one...
-			.collect(Collectors.toMap(r-> r.get(TS.ID), r-> r.get(description), (String u, String v) -> u));
+			.collect(Collectors.toMap(r -> r.get(TS.ID), r -> r.get(description), (String u, String v) -> u));
 	}
 
 	private String removeHtmlForDescription(String html) {

@@ -20,24 +20,20 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.requirement.Requirement;
-import org.squashtest.tm.domain.requirement.RequirementFolder;
-import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
-import org.squashtest.tm.domain.requirement.RequirementLibraryNodeVisitor;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.requirement.*;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
-import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.List;
 
 @SuppressWarnings("rawtypes")
 @Component
@@ -79,16 +75,16 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 			RequirementVersion version = milestoneFilter == null ? requirement.getCurrentVersion() : requirement.findByMilestone(milestoneFilter);
 
 			//version can be null if it not in the current milestone but on of his child is.
-			if (version == null){
+			if (version == null) {
 				version = requirement.getCurrentVersion();
 				builtNode.addAttr("milestones-dont-allow-click", "true");
 			}
 
 
 			// the name and title, usually treated as a common attributes, must be overriden in this case
-			builtNode.addAttr("name", version.getName());
-			builtNode.addAttr("reference", version.getReference());
-			builtNode.setTitle(version.getFullName());
+			builtNode.addAttr("name", HtmlUtils.htmlEscape(version.getName()));
+			builtNode.addAttr("reference", HtmlUtils.htmlEscape(version.getReference()));
+			builtNode.setTitle(HtmlUtils.htmlEscape(version.getFullName()));
 
 			// for-display instructions
 			addLeafAttributes("requirement", "requirements");
@@ -98,7 +94,7 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 
 			// spec 4553
 			String iconName = version.getCategory().getIconName();
-			if (InfoListItem.NO_ICON.equals(iconName)){
+			if (InfoListItem.NO_ICON.equals(iconName)) {
 				iconName = "def_cat_noicon";
 			}
 			builtNode.addAttr("category-icon", iconName);
@@ -109,21 +105,21 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 			builtNode.addAttr("milestone-editable", version.doMilestonesAllowEdition().toString());
 
 			//synchronized requirements
-			if (requirement.isSynchronized()){
+			if (requirement.isSynchronized()) {
 				builtNode.addAttr("synchronized", "true");
 			}
 
-			if (version.isModifiable()){
-				builtNode.addAttr("req-version-modifiable","true");
+			if (version.isModifiable()) {
+				builtNode.addAttr("req-version-modifiable", "true");
 			}
 
 		}
 
 	}
 
-	private int totalMilestones(Requirement requirement){
-		int count=0;
-		for (RequirementVersion v : requirement.getRequirementVersions()){
+	private int totalMilestones(Requirement requirement) {
+		int count = 0;
+		for (RequirementVersion v : requirement.getRequirementVersions()) {
 			count += v.getMilestones().size();
 		}
 		return count;
@@ -158,44 +154,41 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 			Collection<RequirementLibraryNode<?>> content = container.getOrderedContent();
 
 			List<JsTreeNode> children = new JsTreeNodeListBuilder<RequirementLibraryNode<?>>(childrenBuilder)
-					.expand(getExpansionCandidates())
-					.setModel(content)
-					.build();
+				.expand(getExpansionCandidates())
+				.setModel(content)
+				.build();
 
 			builtNode.setChildren(children);
 
 			// because of the milestoneFilter it may happen that the children collection ends up empty.
 			// in that case we must set the state of the node accordingly
-			State state =  children.isEmpty() ? State.leaf : State.open;
+			State state = children.isEmpty() ? State.leaf : State.open;
 			builtNode.setState(state);
 		}
 	}
 
 
-
 	@Override
 	protected boolean passesMilestoneFilter() {
-		if (milestoneFilter != null){
+		if (milestoneFilter != null) {
 			return new MilestoneFilter(milestoneFilter).isValid(node);
-		}
-		else{
+		} else {
 			return true;
 		}
 	}
 
 
-
-	private static final class MilestoneFilter implements RequirementLibraryNodeVisitor{
+	private static final class MilestoneFilter implements RequirementLibraryNodeVisitor {
 
 		private Milestone milestone;
 		private boolean isValid;
 
 
-		private MilestoneFilter(Milestone milestone){
+		private MilestoneFilter(Milestone milestone) {
 			this.milestone = milestone;
 		}
 
-		public boolean isValid(RequirementLibraryNode node){
+		public boolean isValid(RequirementLibraryNode node) {
 			isValid = false;
 			node.accept(this);
 			return isValid;

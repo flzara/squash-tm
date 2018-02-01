@@ -46,6 +46,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.exception.execution.EmptyTestSuiteTestPlanException;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
@@ -77,8 +78,8 @@ public class TestSuiteNodeBuilder extends GenericJsTreeNodeBuilder<TestSuite, Te
 		node.addAttr("resId", String.valueOf(model.getId()));
 		node.addAttr("resType", "test-suites");
 		node.setState(State.leaf);
-		node.setTitle(model.getName());
-		node.addAttr("name", model.getName());
+		node.setTitle(HtmlUtils.htmlEscape(model.getName()));
+		node.addAttr("name", HtmlUtils.htmlEscape(model.getName()));
 		node.addAttr("id", model.getClass().getSimpleName() + '-' + model.getId());
 		node.addAttr("executionStatus", model.getExecutionStatus().toString());
 
@@ -91,7 +92,7 @@ public class TestSuiteNodeBuilder extends GenericJsTreeNodeBuilder<TestSuite, Te
 		String description = "";
 		try {
 			if (model.getFirstPlannedTestCase() != null && StringUtils.isNotBlank(model.getFirstPlannedTestCase().getDescription())) {
-				description = HTMLCleanupUtils.htmlToText(model.getFirstPlannedTestCase().getDescription());
+				description = HTMLCleanupUtils.htmlToText(HtmlUtils.htmlEscape(model.getFirstPlannedTestCase().getDescription()));
 				if (description.length() > 30) {
 					description = description.substring(0, 30) + "...";
 				}

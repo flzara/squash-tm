@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
-import java.util.Optional;
 import org.apache.commons.collections.MultiMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,18 +68,16 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * Controller for verified requirements management page.
  *
  * @author Gregory Fouquet
- *
  */
+
+// XSS OK
 @Controller
 public class VerifyingTestCaseManagerController {
 
@@ -135,28 +132,26 @@ public class VerifyingTestCaseManagerController {
 	 * So we use a named-base with column indexes as names.
 	 */
 	private final DatatableMapper<String> verifyingTcMapper = new NameBasedMapper(6)
-	.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, "name", Project.class)
-	.mapAttribute("tc-reference", "reference", TestCase.class)
-	.mapAttribute("tc-name", "name", TestCase.class)
-	.mapAttribute("tc-type", "executionMode", TestCase.class)
-	.map("milestone-dates", "endDate");
+		.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, "name", Project.class)
+		.mapAttribute("tc-reference", "reference", TestCase.class)
+		.mapAttribute("tc-name", "name", TestCase.class)
+		.mapAttribute("tc-type", "executionMode", TestCase.class)
+		.map("milestone-dates", "endDate");
 
 
 	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases/manager", method = RequestMethod.GET)
 	public String showManager(@PathVariable long requirementVersionId, Model model,
-			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
+							  @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
 
 		RequirementVersion requirementVersion = requirementVersionFinder.findById(requirementVersionId);
-//		List<TestCaseLibrary> linkableLibraries = verifyingTestCaseManager.findLinkableTestCaseLibraries();
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(requirementVersion);
 
-//		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes);
 
 		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 
 		List<Long> linkableRequirementLibraryIds = verifyingTestCaseManager.findLinkableTestCaseLibraries().stream()
-			.map(TestCaseLibrary::getId ).collect(Collectors.toList());
+			.map(TestCaseLibrary::getId).collect(Collectors.toList());
 		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
 		Collection<JsTreeNode> linkableLibrariesModel = testCaseWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, activeMilestoneId.get());
 
@@ -174,7 +169,7 @@ public class VerifyingTestCaseManagerController {
 	}
 
 	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries,
-			String[] openedNodes) {
+														  String[] openedNodes) {
 		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
 
 		DriveNodeBuilder<TestCaseLibraryNode> nodeBuilder = driveNodeBuilder.get();
@@ -186,23 +181,22 @@ public class VerifyingTestCaseManagerController {
 		}
 
 		return new JsTreeNodeListBuilder<TestCaseLibrary>(nodeBuilder)
-				.expand(expansionCandidates)
-				.setModel(linkableLibraries)
-				.build();
+			.expand(expansionCandidates)
+			.setModel(linkableLibraries)
+			.build();
 
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases/{testCaseIds}", method = RequestMethod.POST)
 	@SuppressWarnings("unchecked")
-	public
-	Map<String, Object> addVerifyingTestCasesToRequirement(@PathVariable("testCaseIds") List<Long> testCasesIds, @PathVariable long requirementVersionId) {
+	public Map<String, Object> addVerifyingTestCasesToRequirement(@PathVariable("testCaseIds") List<Long> testCasesIds, @PathVariable long requirementVersionId) {
 		Map<String, Collection<?>> rejectionsAndIds =
-				verifyingTestCaseManager.addVerifyingTestCasesToRequirementVersion(testCasesIds, requirementVersionId);
+			verifyingTestCaseManager.addVerifyingTestCasesToRequirementVersion(testCasesIds, requirementVersionId);
 		Collection<VerifiedRequirementException> rejections = (Collection<VerifiedRequirementException>) rejectionsAndIds.get(VerifyingTestCaseManagerService.REJECTION_KEY);
 		Collection<Long> ids = (Collection<Long>) rejectionsAndIds.get(VerifyingTestCaseManagerService.IDS_KEY);
-		Map<String, Object>  result = buildSummary(rejections);
-		result.put("linkedIds" , ids);
+		Map<String, Object> result = buildSummary(rejections);
+		result.put("linkedIds", ids);
 		return result;
 	}
 
@@ -212,18 +206,16 @@ public class VerifyingTestCaseManagerController {
 
 	@ResponseBody
 	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases/{testCaseIds}", method = RequestMethod.DELETE)
-	public
-	void removeVerifyingTestCaseFromRequirement(@PathVariable("requirementVersionId") long requirementVersionId,
-			@PathVariable("testCaseIds") List<Long> testCaseIds ) {
+	public void removeVerifyingTestCaseFromRequirement(@PathVariable("requirementVersionId") long requirementVersionId,
+													   @PathVariable("testCaseIds") List<Long> testCaseIds) {
 		verifyingTestCaseManager.removeVerifyingTestCasesFromRequirementVersion(testCaseIds, requirementVersionId);
 	}
 
 
 	@ResponseBody
 	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases/table", params = RequestParams.S_ECHO_PARAM)
-	public
-	DataTableModel getVerifiedTestCasesTableModel(@PathVariable long requirementVersionId,
-			DataTableDrawParameters params) {
+	public DataTableModel getVerifiedTestCasesTableModel(@PathVariable long requirementVersionId,
+														 DataTableDrawParameters params) {
 
 		PagingAndSorting filter = new DataTableSorting(params, verifyingTcMapper);
 
@@ -232,9 +224,9 @@ public class VerifyingTestCaseManagerController {
 	}
 
 	@SuppressWarnings("rawtypes")
-	protected DataTableModel buildVerifyingTestCaseModel(long requirementVersionId, PagingAndSorting pas, String sEcho){
+	protected DataTableModel buildVerifyingTestCaseModel(long requirementVersionId, PagingAndSorting pas, String sEcho) {
 		PagedCollectionHolder<List<TestCase>> holder = verifyingTestCaseManager.findAllByRequirementVersion(
-				requirementVersionId, pas);
+			requirementVersionId, pas);
 
 		return new VerifyingTestCasesTableModelHelper(i18nHelper).buildDataModel(holder, sEcho);
 	}
@@ -242,9 +234,8 @@ public class VerifyingTestCaseManagerController {
 	@ResponseBody
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/coverage-stats", method = RequestMethod.GET, params = {"perimeter"})
-	public
- RequirementCoverageStat getCoverageStat(@PathVariable long requirementVersionId,
-			@RequestParam String perimeter) {
+	public RequirementCoverageStat getCoverageStat(@PathVariable long requirementVersionId,
+												   @RequestParam String perimeter) {
 
 		MultiMap mapIdsByType = JsTreeHelper.mapIdsByType(new String[]{perimeter});
 		List<Long> iterationIds = new ArrayList<>();
@@ -254,12 +245,12 @@ public class VerifyingTestCaseManagerController {
 			List<Long> ids = (List<Long>) mapIdsByType.get(campaign_name);
 			try {
 				//Only one selected node for v1.13...
- 				Campaign campaign = campaignModificationService.findCampaigWithExistenceCheck(ids.get(0));
- 				if(campaign != null) {
- 					iterationIds.addAll(getIterationsIdsForCampagain(campaign));
- 				} else {
- 					stat.setCorruptedPerimeter(true);
- 				}
+				Campaign campaign = campaignModificationService.findCampaigWithExistenceCheck(ids.get(0));
+				if (campaign != null) {
+					iterationIds.addAll(getIterationsIdsForCampagain(campaign));
+				} else {
+					stat.setCorruptedPerimeter(true);
+				}
 			} catch (IdentityUnavailableException e) {
 				LOGGER.debug("Unavailable Identity", e);
 				stat.setCorruptedPerimeter(true);
@@ -274,7 +265,7 @@ public class VerifyingTestCaseManagerController {
 	}
 
 	private List<Long> getIterationsIdsForCampagain(
-			Campaign campaign) {
+		Campaign campaign) {
 		List<Long> iterationIds = new ArrayList<>();
 		for (Iteration it : campaign.getIterations()) {
 			iterationIds.add(it.getId());

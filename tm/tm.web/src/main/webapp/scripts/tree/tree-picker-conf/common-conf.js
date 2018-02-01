@@ -53,6 +53,7 @@ define(function () {
 				},
 
 				core: {
+					"html_titles"	: true,
 					animation: 0
 				},
 

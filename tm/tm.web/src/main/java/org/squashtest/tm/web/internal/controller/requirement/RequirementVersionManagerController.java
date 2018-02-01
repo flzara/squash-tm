@@ -20,23 +20,17 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.SpringPaginationUtils;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -58,20 +52,15 @@ import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurat
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.JsonInfoListBuilder;
-import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
-import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
+import org.squashtest.tm.web.internal.model.datatable.*;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
-import java.util.Optional;
-import org.squashtest.tm.core.foundation.collection.SpringPaginationUtils;
-import org.squashtest.tm.web.internal.model.datatable.SpringPagination;
+import javax.inject.Inject;
+import javax.inject.Provider;
+import java.util.*;
 
+// XSS OK
 @Controller
 @RequestMapping("/requirements/{requirementId}/versions")
 public class RequirementVersionManagerController {
@@ -113,33 +102,29 @@ public class RequirementVersionManagerController {
 
 
 	private final DatatableMapper<String> versionMapper = new NameBasedMapper()
-	.map("version-number", "versionNumber")
-	.map("reference", "reference")
-	.map(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "name")
-	.map("status", "status")
-	.map("criticality", "criticality")
-	.map("category", "category");
-
-
+		.map("version-number", "versionNumber")
+		.map("reference", "reference")
+		.map(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "name")
+		.map("status", "status")
+		.map("criticality", "criticality")
+		.map("category", "category");
 
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST, params = {"inheritReqLinks", "inheritTestcasesReqLinks"})
 	@ResponseBody
-	public void createNewVersion(@PathVariable long requirementId, @RequestParam("inheritReqLinks") boolean inheritReqLinks,  @RequestParam("inheritTestcasesReqLinks") boolean inheritTestcasesReqLinks) {
+	public void createNewVersion(@PathVariable long requirementId, @RequestParam("inheritReqLinks") boolean inheritReqLinks, @RequestParam("inheritTestcasesReqLinks") boolean inheritTestcasesReqLinks) {
 
-            Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
-            if (activeMilestone.isPresent()) {
-                // milestone mode creation
-                ArrayList<Long> milestoneIds = new ArrayList<>();
-                milestoneIds.add(activeMilestone.get().getId());
-                versionService.createNewVersion(requirementId, milestoneIds, inheritReqLinks, inheritTestcasesReqLinks);
-            }else{
-                // normal mode creation
-                versionService.createNewVersion(requirementId, inheritReqLinks, inheritTestcasesReqLinks);
-            }
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+		if (activeMilestone.isPresent()) {
+			// milestone mode creation
+			ArrayList<Long> milestoneIds = new ArrayList<>();
+			milestoneIds.add(activeMilestone.get().getId());
+			versionService.createNewVersion(requirementId, milestoneIds, inheritReqLinks, inheritTestcasesReqLinks);
+		} else {
+			// normal mode creation
+			versionService.createNewVersion(requirementId, inheritReqLinks, inheritTestcasesReqLinks);
+		}
 	}
-
-
 
 
 	@RequestMapping(value = "/manager")
@@ -150,7 +135,7 @@ public class RequirementVersionManagerController {
 		PagedCollectionHolder<List<RequirementVersion>> holder = new SinglePageCollectionHolder<>(req.getUnmodifiableVersions());
 
 		DataTableModel tableModel = new RequirementVersionDataTableModel(locale, levelFormatterProvider, i18nHelper).buildDataModel(holder,
-				"0");
+			"0");
 
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(req.getCurrentVersion());
 
@@ -174,39 +159,37 @@ public class RequirementVersionManagerController {
 	@RequestMapping(value = "/table", params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getRequirementVersionsTableModel(@PathVariable long requirementId,
-			DataTableDrawParameters params, final Locale locale) {
-                Pageable pageable = SpringPagination.pageable(params, versionMapper);
+														   DataTableDrawParameters params, final Locale locale) {
+		Pageable pageable = SpringPagination.pageable(params, versionMapper);
 
 		Page<RequirementVersion> page = versionService.findAllByRequirement(requirementId, pageable);
 
 		return new RequirementVersionDataTableModel(locale, levelFormatterProvider, i18nHelper).buildDataModel(page,
-				params.getsEcho());
+			params.getsEcho());
 	}
-
-
 
 
 	private String buildMarshalledCriticalities(Locale locale) {
 		return criticalityComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
 
-	private DataTableModel getVerifyingTCModel(RequirementVersion version){
+	private DataTableModel getVerifyingTCModel(RequirementVersion version) {
 		PagedCollectionHolder<List<TestCase>> holder = verifyingTestCaseManager.findAllByRequirementVersion(
-				version.getId(), new DefaultPagingAndSorting("Project.name"));
+			version.getId(), new DefaultPagingAndSorting("Project.name"));
 
 		return new VerifyingTestCasesTableModelHelper(i18nHelper).buildDataModel(holder, "0");
 	}
 
-	private DataTableModel getLinkedReqVersionsModel(RequirementVersion version){
+	private DataTableModel getLinkedReqVersionsModel(RequirementVersion version) {
 		PagedCollectionHolder<List<LinkedRequirementVersion>> holder = linkedRequirementsManager.findAllByRequirementVersion(
 			version.getId(), new DefaultPagingAndSorting("Project.name"));
 
 		return new LinkedRequirementVersionsTableModelHelper(i18nHelper).buildDataModel(holder, "0");
 	}
 
-	private DataTableModel getEventsTableModel(Requirement requirement){
+	private DataTableModel getEventsTableModel(Requirement requirement) {
 		Page<RequirementAuditEvent> auditTrail = auditTrailService
-				.findAllByRequirementVersionIdOrderedByDate(requirement.getCurrentVersion().getId(), SpringPaginationUtils.defaultPaging("date"));
+			.findAllByRequirementVersionIdOrderedByDate(requirement.getCurrentVersion().getId(), SpringPaginationUtils.defaultPaging("date"));
 
 		RequirementAuditEventTableModelBuilder builder = new RequirementAuditEventTableModelBuilder(LocaleContextHolder.getLocale(), i18nHelper);
 
@@ -215,9 +198,8 @@ public class RequirementVersionManagerController {
 	}
 
 
-
 	private static String internationalize(Level level, Locale locale,
-			Provider<LevelLabelFormatter> levelFormatterProvider) {
+										   Provider<LevelLabelFormatter> levelFormatterProvider) {
 		return levelFormatterProvider.get().useLocale(locale).formatLabel(level);
 	}
 
@@ -240,12 +222,12 @@ public class RequirementVersionManagerController {
 
 			row.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, version.getId());
 			row.put("version-number", version.getVersionNumber());
-			row.put("reference", version.getReference());
-			row.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, version.getName());
+			row.put("reference", HtmlUtils.htmlEscape(version.getReference()));
+			row.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, HtmlUtils.htmlEscape(version.getName()));
 			row.put("status", internationalize(version.getStatus(), locale, levelFormatterProvider));
 			row.put("criticality", internationalize(version.getCriticality(), locale, levelFormatterProvider));
-			row.put("category", i18nHelper.getMessage(version.getCategory().getLabel(), null, version.getCategory().getLabel(), locale)  );
-			row.put("milestone-dates", MilestoneModelUtils.timeIntervalToString(version.getMilestones(),i18nHelper, locale));
+			row.put("category", i18nHelper.getMessage(version.getCategory().getLabel(), null, version.getCategory().getLabel(), locale));
+			row.put("milestone-dates", MilestoneModelUtils.timeIntervalToString(version.getMilestones(), i18nHelper, locale));
 			row.put("milestone", MilestoneModelUtils.milestoneLabelsOrderByDate(version.getMilestones()));
 			return row;
 

@@ -37,6 +37,7 @@ import java.util.Map;
 /**
  * Created by jlor on 14/06/2017.
  */
+// XSS OK
 @Controller
 @RequestMapping("/requirement-link-type")
 public class RequirementVersionLinkTypeController {

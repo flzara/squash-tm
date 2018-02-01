@@ -29,10 +29,10 @@ import org.jooq.Record1;
 import org.jooq.TableLike;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.api.security.acls.Permission;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
-import org.squashtest.tm.domain.project.ProjectResource;
 import org.squashtest.tm.jooq.domain.tables.CrlnRelationship;
 import org.squashtest.tm.jooq.domain.tables.CustomReportLibraryNode;
 import org.squashtest.tm.service.internal.dto.PermissionWithMask;
@@ -45,9 +45,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.mapping;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 import static org.jooq.impl.DSL.count;
 import static org.squashtest.tm.api.security.acls.Permission.*;
 import static org.squashtest.tm.domain.project.Project.PROJECT_TYPE;
@@ -245,6 +243,9 @@ public class CustomReportWorkspaceDisplayService {
 	}
 
 	public JsTreeNode build(Long nodeId, String nodeName, String nodeType, Integer iterationCount, UserDto currentUser) {
+
+		nodeName = HtmlUtils.htmlEscape(nodeName);
+
 		JsTreeNode builtNode = new JsTreeNode();
 		builtNode.setTitle(nodeName);
 		builtNode.addAttr("resId", nodeId);

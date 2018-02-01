@@ -20,11 +20,12 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.squashtest.tm.domain.library.LibraryNode;
-import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 /**
  * Superclass which builds a {@link JsTreeNode} from a LibraryNode.
@@ -88,11 +89,10 @@ public abstract class LibraryTreeNodeBuilder<LN extends LibraryNode> extends Gen
 		this.builtNode = builtNode;
 		this.node = model;
 
-		if (passesMilestoneFilter()){
+		if (passesMilestoneFilter()) {
 			addCommonAttributes();
 			addCustomAttributes(node, builtNode);
-		}
-		else{
+		} else {
 			this.builtNode = null;
 		}
 
@@ -101,7 +101,7 @@ public abstract class LibraryTreeNodeBuilder<LN extends LibraryNode> extends Gen
 	}
 
 	protected void addCommonAttributes() {
-		String name = node.getName();
+		String name = HtmlUtils.htmlEscape(node.getName());
 		builtNode.setTitle(name);
 		builtNode.addAttr("name", name);
 		builtNode.addAttr("resId", String.valueOf(node.getId()));

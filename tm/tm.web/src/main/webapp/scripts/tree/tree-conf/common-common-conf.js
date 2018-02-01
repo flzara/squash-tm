@@ -41,6 +41,7 @@ define(["jquery", 'workspace.event-bus'], function ($, eventBus) {
 			},
 
 			"core": {
+				"html_titles"	: true,
 				"animation": 0
 			},
 

@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.model.builder;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
@@ -69,14 +70,13 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 		public void visit(Campaign campaign) {
 
 			// name and title
-			builtNode.addAttr("name", campaign.getName());
-			builtNode.addAttr("reference", campaign.getReference());
-			builtNode.setTitle(campaign.getFullName());
+			builtNode.addAttr("name", HtmlUtils.htmlEscape(campaign.getName()));
+			builtNode.addAttr("reference", HtmlUtils.htmlEscape(campaign.getReference()));
+			builtNode.setTitle(HtmlUtils.htmlEscape(campaign.getFullName()));
 
 			// other attributes
 			builtNode.addAttr("rel", "campaign");
 			builtNode.addAttr("resType", "campaigns");
-			builtNode.addAttr("reference", campaign.getReference());
 			State state = campaign.hasIterations() ? State.closed : State.leaf;
 			builtNode.setState(state);
 
@@ -109,7 +109,7 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 			if (visited.hasContent()) {
 				builtNode.setState(State.open);
 
-				IterationNodeBuilder childrenBuilder = new IterationNodeBuilder(permissionEvaluationService,internationalizationHelper);
+				IterationNodeBuilder childrenBuilder = new IterationNodeBuilder(permissionEvaluationService, internationalizationHelper);
 
 				List<JsTreeNode> children = new JsTreeNodeListBuilder<>(childrenBuilder)
 					.expand(getExpansionCandidates())
@@ -127,7 +127,7 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 		public void visit(CampaignFolder visited) {
 			if (visited.hasContent()) {
 
-				CampaignLibraryTreeNodeBuilder childrenBuilder = new CampaignLibraryTreeNodeBuilder(permissionEvaluationService,internationalizationHelper);
+				CampaignLibraryTreeNodeBuilder childrenBuilder = new CampaignLibraryTreeNodeBuilder(permissionEvaluationService, internationalizationHelper);
 				childrenBuilder.filterByMilestone(milestoneFilter);
 
 

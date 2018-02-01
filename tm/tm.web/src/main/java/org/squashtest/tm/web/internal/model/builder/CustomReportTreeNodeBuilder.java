@@ -32,6 +32,7 @@ import java.util.Set;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.api.security.acls.Permission;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
@@ -66,9 +67,9 @@ public class CustomReportTreeNodeBuilder {
 
 	public JsTreeNode build(CustomReportLibraryNode crln){
 		JsTreeNode builtNode = new JsTreeNode();
-		builtNode.setTitle(crln.getName());
+		builtNode.setTitle(HtmlUtils.htmlEscape(crln.getName()));
 		builtNode.addAttr("resId", String.valueOf(crln.getId()));
-		builtNode.addAttr("name", crln.getName());
+		builtNode.addAttr("name", HtmlUtils.htmlEscape(crln.getName()));
 
 		//No milestone for custom report tree in first version so yes for all perm
 		builtNode.addAttr("milestone-creatable-deletable", "true");

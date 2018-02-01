@@ -32,13 +32,13 @@ import org.jooq.Record1;
 import org.jooq.TableLike;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.project.ProjectResource;
 import org.squashtest.tm.service.internal.dto.PermissionWithMask;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
-import org.squashtest.tm.service.internal.dto.json.JsonInfoList;
 import org.squashtest.tm.service.internal.dto.json.JsonProject;
 import org.squashtest.tm.service.internal.helper.HyphenedStringHelper;
 import org.squashtest.tm.service.internal.repository.hibernate.HibernateEntityDao;
@@ -147,7 +147,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 					state = State.leaf;
 				}
 
-				return buildNode(r.get(PROJECT.NAME), state, attr, currentUser, NODE_WITHOUT_MILESTONES_ATTRIBUTE, "true");
+				return buildNode(HtmlUtils.htmlEscape(r.get(PROJECT.NAME)), state, attr, currentUser, NODE_WITHOUT_MILESTONES_ATTRIBUTE, "true");
 			})
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get(RES_ID), Function.identity(),
 				(u, v) -> {
@@ -362,6 +362,8 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		Map<String, Object> attr = new HashMap<>();
 		State state;
 
+		name = HtmlUtils.htmlEscape(name);
+
 		attr.put(RES_ID, id);
 		attr.put("resType", restype);
 		attr.put("name", name);
@@ -402,7 +404,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		// First we iterate over the libraries and give them their children
 		boolean openedLibrary = false;
 
-		for (Map.Entry<Long, List<Long>> parentChildrenEntry :  (Set<Map.Entry>) fatherChildrenLibrary.entrySet()) {
+		for (Map.Entry<Long, List<Long>> parentChildrenEntry : (Set<Map.Entry>) fatherChildrenLibrary.entrySet()) {
 			Long parentKey = parentChildrenEntry.getKey();
 			if (jsTreeNodes.containsKey(parentKey)) {
 				for (Long childKey : parentChildrenEntry.getValue()) {

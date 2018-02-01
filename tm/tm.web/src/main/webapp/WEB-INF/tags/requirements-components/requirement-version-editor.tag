@@ -37,6 +37,7 @@
 <%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform" %>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 <%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues"%>
+<%@ taglib prefix="hu" uri="http://org.squashtest.tm/taglib/html-utils" %>
 
 
 <s:url var="requirementUrl" value="/requirement-versions/${ requirementVersion.id }"/>
@@ -296,7 +297,7 @@
 			<comp:toggle-panel id="requirement-description-panel" titleKey="label.Description" open="true">
         <jsp:attribute name="body">
 					<div
-						id="requirement-description" ${descrRicheditAttributes}>${ requirementVersion.description }</div>
+						id="requirement-description" ${descrRicheditAttributes}>${hu:clean(requirementVersion.description)}</div>
 		</jsp:attribute>
 			</comp:toggle-panel>
 

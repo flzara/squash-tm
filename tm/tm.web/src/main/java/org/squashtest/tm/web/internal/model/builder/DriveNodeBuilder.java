@@ -20,14 +20,15 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.api.security.acls.Permission;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
-import org.squashtest.tm.service.security.PermissionEvaluationService;
-import org.squashtest.tm.service.internal.helper.HyphenedStringHelper;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
+import org.squashtest.tm.service.internal.helper.HyphenedStringHelper;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 import javax.inject.Provider;
 import java.util.List;
@@ -44,7 +45,7 @@ public class DriveNodeBuilder<LN extends LibraryNode> extends
 
 
 	public DriveNodeBuilder(PermissionEvaluationService permissionEvaluationService,
-	                        Provider<? extends LibraryTreeNodeBuilder<LN>> childrenBuilderProvider) {
+							Provider<? extends LibraryTreeNodeBuilder<LN>> childrenBuilderProvider) {
 		super(permissionEvaluationService);
 		this.childrenBuilderProvider = childrenBuilderProvider;
 	}
@@ -66,10 +67,10 @@ public class DriveNodeBuilder<LN extends LibraryNode> extends
 		node.addAttr("resId", String.valueOf(model.getId()));
 		node.addAttr("resType", buildResourceType(model.getClassSimpleName()));
 		node.setState(model.hasContent() ? State.closed : State.leaf);
-		node.setTitle(model.getProject().getName());
+		node.setTitle(HtmlUtils.htmlEscape(model.getProject().getName()));
 		node.addAttr("name", model.getClassSimpleName());
 		node.addAttr("id", model.getClassSimpleName() + '-' + model.getId());
-		node.addAttr("title", model.getProject().getLabel());
+		node.addAttr("title", HtmlUtils.htmlEscape(model.getProject().getLabel()));
 		node.addAttr("project", model.getProject().getId());
 		node.addAttr("wizards", model.getEnabledPlugins());
 

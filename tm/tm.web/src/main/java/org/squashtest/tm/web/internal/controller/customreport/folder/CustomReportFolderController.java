@@ -20,19 +20,16 @@
  */
 package org.squashtest.tm.web.internal.controller.customreport.folder;
 
-import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.service.customreport.CustomReportFolderService;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
+import javax.inject.Inject;
+
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
+
+// XSS OK
 @Controller
 public class CustomReportFolderController {
 
@@ -41,11 +38,10 @@ public class CustomReportFolderController {
 
 	//--- CHANGE DESCRIPTION ---
 
-		@ResponseBody
-		@RequestMapping(method = RequestMethod.POST, value = "custom-report-workspace/description/{folderId}", params = {"id=folder-description", VALUE})
-		public
-		String updateDescription(@PathVariable long folderId, @RequestParam(VALUE) String newDescription) {
-			crfService.updateDescription(folderId, newDescription);
-			return HTMLCleanupUtils.cleanHtml(newDescription);
-		}
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.POST, value = "custom-report-workspace/description/{folderId}", params = {"id=folder-description", VALUE})
+	public String updateDescription(@PathVariable long folderId, @RequestParam(VALUE) String newDescription) {
+		crfService.updateDescription(folderId, newDescription);
+		return HTMLCleanupUtils.cleanHtml(newDescription);
+	}
 }
