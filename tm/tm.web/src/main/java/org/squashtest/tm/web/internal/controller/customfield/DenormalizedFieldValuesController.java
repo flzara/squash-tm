@@ -71,8 +71,6 @@ public class DenormalizedFieldValuesController {
 
 	}
 
-
-	@RequestMapping(value = "/{id}", method = RequestMethod.POST, consumes="application/json")
 	@RequestMapping(value = "/{id}", method = RequestMethod.POST, consumes = "application/json")
 	@ResponseBody
 	public void updateDenormalizedValue(@PathVariable long id, @RequestBody RawValueModel value) {

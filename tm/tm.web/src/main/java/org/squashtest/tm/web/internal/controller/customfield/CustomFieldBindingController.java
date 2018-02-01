@@ -200,9 +200,6 @@ public class CustomFieldBindingController {
         @Override
         public Object buildItemData(CustomFieldBinding item) {
             return converter.toJson(item);
-			custom.getCustomField().setLabel(HtmlUtils.htmlEscape(custom.getCustomField().getLabel()));
-			custom.getCustomField().setName(HtmlUtils.htmlEscape(custom.getCustomField().getName()));
-			return custom;
         }
     }
 
