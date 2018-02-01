@@ -21,7 +21,7 @@
 package org.squashtest.tm.web.internal.controller.execution;
 
 import org.squashtest.tm.domain.execution.ExecutionStep;
-
+//XSS ok bflessel
 public class StepState {
 
 	private long currentStepId;

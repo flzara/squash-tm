@@ -190,9 +190,9 @@ public class BugTrackerController {
 
 		ExecutionStep step = executionFinder.findExecutionStepById(stepId);
 
-		step.setComment(HtmlUtils.htmlEscape(step.getComment()));
-		step.setAction(HtmlUtils.htmlEscape(step.getAction()));
-		step.setLastExecutedBy(HtmlUtils.htmlEscape(step.getLastExecutedBy()));
+//		step.setComment(HtmlUtils.htmlEscape(step.getComment()));
+//		step.setAction(HtmlUtils.htmlEscape(step.getAction()));
+//		step.setLastExecutedBy(HtmlUtils.htmlEscape(step.getLastExecutedBy()));
 
 		ModelAndView mav = makeIssuePanel(step, EXECUTION_STEP_TYPE, locale, panelStyle, step.getProject());
 		mav.addObject("useParentContextPopup", useParentPopup);

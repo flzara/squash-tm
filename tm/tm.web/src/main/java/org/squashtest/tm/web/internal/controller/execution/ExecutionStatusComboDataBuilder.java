@@ -34,10 +34,11 @@ import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilde
 
 /**
  * Jeditable combo data builder which model is {@link ExecutionStatus}
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
+//XSS ok bflessel
 @Component
 @Scope("prototype")
 public class ExecutionStatusComboDataBuilder extends

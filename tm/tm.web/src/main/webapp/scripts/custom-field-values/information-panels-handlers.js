@@ -26,7 +26,7 @@
  * can edit or not
  *
  */
-define(["jquery", "handlebars", "./lib/cuf-values-utils","jqueryui", "./lib/jquery.staticCustomfield", "./lib/jquery.jeditableCustomfield"], 
+define(["jquery", "handlebars", "./lib/cuf-values-utils","jqueryui", "./lib/jquery.staticCustomfield", "./lib/jquery.jeditableCustomfield"],
 		function($, handlebars, utils){
 	"use strict";
 
@@ -39,23 +39,23 @@ define(["jquery", "handlebars", "./lib/cuf-values-utils","jqueryui", "./lib/jque
 		'<div class="display-table-row control-group">' +
 			'<label class="display-table-cell v-centered">{{cuflabel this}}</label>' +
 			'<div class="display-table-cell controls">' +
-			
+
 			'{{#ifequals binding.customField.itype "RICH_TEXT"}}' +
-			
+
 				'<span id="{{cufid this}}" class="{{cufclass this}}" data-value-id="{{id}}">{{{value}}}</span>' +
-			
+
 			'{{else}} {{#ifequals binding.customField.itype "TAG"}}' +
-			
+
 				'<ul id="{{cufid this}}" class="{{cufclass this}}" data-value-id="{{id}}" style="margin:0;line-height:normal;">'+
 				'{{#each optionValues}}' +
-					'<li>{{this}}</li>' +
+					'<li><c:out value="{{this}}" /> </li>' +
 				'{{/each}}' +
 				'</ul>' +
-			
+
 			'{{else}}' +
-			
+
 				'<span id="{{cufid this}}" class="{{cufclass this}}" data-value-id="{{id}}">{{value}}</span>' +
-			
+
 			'{{/ifequals}} {{/ifequals}}' +
 			'</div>' +
 		'</div>' +
@@ -69,11 +69,11 @@ define(["jquery", "handlebars", "./lib/cuf-values-utils","jqueryui", "./lib/jque
 		init : function(containerSelector, cufValues, mode) {
 
 		var html = template(cufValues);
-	
+
 		var container = $(containerSelector);
 
 		container.append(html);
-	
+
 		// quick css hack to fix the TAGs disproportionate height
 		container.find('ul.custom-field, ul.denormalized-custom-field').parent().css('line-height', '0');
 
@@ -86,15 +86,24 @@ define(["jquery", "handlebars", "./lib/cuf-values-utils","jqueryui", "./lib/jque
 
 			switch (mode) {
 			case "static":
+				cufValue.binding.customField.options.label.forEach(function(element){
+					element = _.escape(element);
+			});
 				elt.staticCustomfield(cufValue.binding.customField);
 				break;
 
 			case "editable":
+				cufValue.binding.customField.options.forEach(function(element){
+					element.label = _.escape(element.label);
+				});
 				elt.editableCustomfield(cufValue.binding.customField);
 				elt.parent().addClass('editable');
 				break;
 
 			case "jeditable":
+				for (var i = 0; i < cufValue.binding.customField.options.length; i++) {
+					cufValue.binding.customField.options[i] = _.escape(cufValue.binding.customField.options[i]);
+				}
 				elt.jeditableCustomfield(cufValue.binding.customField, cufValue.id);
 				elt.parent().addClass('editable');
 				break;

@@ -40,7 +40,8 @@ import org.squashtest.tm.service.campaign.CustomIterationModificationService;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.model.json.JsonStepInfo;
-
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+//XSS ok bflessel
 @Controller
 @RequestMapping("/execute/{executionId}")
 public class ExecutionProcessingController {
@@ -165,7 +166,7 @@ public class ExecutionProcessingController {
 	public String updateComment(@RequestParam(VALUE) String newComment, @PathVariable long stepId) {
 		executionProcService.setExecutionStepComment(stepId, newComment);
 		LOGGER.trace("ExecutionStep {}: updated comment to {}", stepId,  newComment);
-		return newComment;
+		return HTMLCleanupUtils.cleanHtml(newComment);
 	}
 
 	@RequestMapping(value = "/step/{stepId}", method = RequestMethod.POST, params = "executionStatus")

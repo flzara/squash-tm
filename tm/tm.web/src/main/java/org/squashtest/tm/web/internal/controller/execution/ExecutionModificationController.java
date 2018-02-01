@@ -82,7 +82,8 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTablePaging;
 import org.squashtest.tm.web.internal.model.json.JsonExecutionInfo;
-
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+//XSS ok bflessel
 @Controller
 @RequestMapping("/executions/{executionId}")
 public class ExecutionModificationController {
@@ -316,7 +317,7 @@ public class ExecutionModificationController {
 	String updateStepComment(@PathVariable Long stepId, @RequestParam(VALUE) String newComment) {
 		executionModService.setExecutionStepComment(stepId, newComment);
 		LOGGER.trace("ExecutionModificationController : updated comment for step " + stepId);
-		return newComment;
+		return HTMLCleanupUtils.cleanHtml(newComment);
 	}
 
 	@RequestMapping(value = "/steps/{stepId}/status", method = RequestMethod.GET)
@@ -336,7 +337,7 @@ public class ExecutionModificationController {
 
 		executionModService.setExecutionDescription(executionId, newDescription);
 		LOGGER.trace("Execution " + executionId + ": updated description to " + newDescription);
-		return newDescription;
+		return HTMLCleanupUtils.cleanHtml(newDescription);
 
 	}
 
@@ -346,7 +347,7 @@ public class ExecutionModificationController {
 
 		executionModService.setExecutionDescription(executionId, newDescription);
 		LOGGER.trace("Execution " + executionId + ": updated description to " + newDescription);
-		return newDescription;
+		return HTMLCleanupUtils.cleanHtml(newDescription);
 
 	}
 

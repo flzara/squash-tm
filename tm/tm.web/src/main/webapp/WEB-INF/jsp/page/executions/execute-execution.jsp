@@ -33,6 +33,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues" %>
 <%@ taglib prefix="wu" uri="http://org.squashtest.tm/taglib/workspace-utils" %>
+<%@ taglib prefix="hu" uri="http://org.squashtest.tm/taglib/html-utils" %>
 
 <s:url var="attachmentsURL" value="/attach-list/${executionStep.attachmentList.id}/attachments"/>
 <s:url var="btEntityUrl" value="/bugtracker/execution-step/${executionStep.id}"/>
@@ -268,7 +269,7 @@
                          titleKey="execute.panel.action.title"
                          open="true">
 					<jsp:attribute name="body">
-						<div id="execution-action">${executionStep.action}</div>
+						<div id="execution-action">${hu:clean(executionStep.action)} </div>
 					</jsp:attribute>
       </comp:toggle-panel>
 
@@ -276,7 +277,7 @@
                          titleKey="execute.panel.expected-result.title"
                          open="true">
 					<jsp:attribute name="body">
-						<div id="execution-expected-result">${executionStep.expectedResult}</div>
+						<div id="execution-expected-result">${hu:clean(executionStep.expectedResult)} </div>
 					</jsp:attribute>
       </comp:toggle-panel>
 
@@ -291,7 +292,7 @@
                              titleKey="execute.panel.comment.title"
                              open="true">
 							<jsp:attribute name="body">
-								<div id="execution-comment" ${descrRicheditAttributes}>${executionStep.comment}</div>
+								<div id="execution-comment" ${descrRicheditAttributes}>${hu:clean(executionStep.comment)} </div>
 							</jsp:attribute>
           </comp:toggle-panel>
         </div>

@@ -22,8 +22,9 @@ package org.squashtest.tm.web.internal.controller.execution;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
+//XSS ok bflessel
 final class ExecutionRunnerViewName {
 
 	public static final String PROLOGUE_STEP = "execute-execution-preview.html";
@@ -31,7 +32,7 @@ final class ExecutionRunnerViewName {
 	public static final String CLASSIC_STEP = "page/executions/execute-execution";
 
 	/**
-	 * 
+	 *
 	 */
 	private ExecutionRunnerViewName() {
 		super();

@@ -48,7 +48,8 @@ import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
-
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+//XSS ok bflessel
 /**
  * Helper class for Controllers which need to show classic and optimized execution runners.
  *
@@ -259,9 +260,9 @@ public class ExecutionRunnerControllerHelper {
 		String completeTestMessage = messageSource.getMessage(COMPLETED_STEP_MESSAGE, null, locale);
 		String completeSuiteMessage = messageSource.getMessage(COMPLETED_SUITE_MESSAGE, null, locale);
 
-		state.setCompleteTitle(popupTitle);
-		state.setCompleteTestMessage(completeTestMessage);
-		state.setCompleteSuiteMessage(completeSuiteMessage);
+		state.setCompleteTitle(HTMLCleanupUtils.cleanHtml(popupTitle));
+		state.setCompleteTestMessage(HTMLCleanupUtils.cleanHtml(completeTestMessage));
+		state.setCompleteSuiteMessage(HTMLCleanupUtils.cleanHtml(completeSuiteMessage));
 	}
 
 	// ************************ private stuff **************************

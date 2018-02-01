@@ -31,6 +31,7 @@ import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import java.text.ParseException;
 import java.util.*;
@@ -64,11 +65,11 @@ class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionS
 
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, item.getExecutionStepOrder() + 1);
-		res.put("action", item.getAction());
-		res.put("expected", item.getExpectedResult());
+		res.put("action", HTMLCleanupUtils.cleanHtml(item.getAction()));
+		res.put("expected", HTMLCleanupUtils.cleanHtml(item.getExpectedResult()));
 		res.put("last-exec-on", formatDate(item.getLastExecutedOn(), locale));
 		res.put("last-exec-by", item.getLastExecutedBy());
-		res.put("comment", item.getComment());
+		res.put("comment", HTMLCleanupUtils.cleanHtml(item.getComment()));
 		res.put("bug-list", ExecutionModificationController.createBugList(item));
 		res.put("bug-button", "");
 		res.put(DataTableModelConstants.DEFAULT_NB_ATTACH_KEY, item.getAttachmentList().size());

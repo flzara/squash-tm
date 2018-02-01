@@ -279,10 +279,10 @@ define([ "jquery", "underscore", "ckeditor",  "squash.configmanager", "./cuf-val
 			this.each(function(idx, elt){
 
 				var $this = $(elt);
-
 				// save the configuration
 				$this.data("cufdef", def);
-
+				def.name= _.escape(def.name);
+				def.label= _.escape(def.label);
 				widg = widgets[def.inputType.enumName];
 				widg._build($this, def);
 
@@ -293,6 +293,8 @@ define([ "jquery", "underscore", "ckeditor",  "squash.configmanager", "./cuf-val
 		else if (arguments.length === 1 && arguments[0] === "value") {
 			def = this.data('cufdef');
 			widg = widgets[def.inputType.enumName];
+			def.name= _.escape(def.name);
+			def.label= _.escape(def.label);
 			return widg._get(this, def);
 		}
 

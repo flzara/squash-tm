@@ -32,7 +32,7 @@
 <%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues" %>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
+<%@ taglib prefix="hu" uri="http://org.squashtest.tm/taglib/html-utils" %>
 
 <c:url var="executionUrl" value="/executions/${execution.id}"/>
 <s:url var="attachmentsUrl" value="/attach-list/${execution.attachmentList.id}/attachments"/>
@@ -242,11 +242,11 @@
 
   <comp:toggle-panel id="execution-prerequisite-panel"
                      titleKey="generics.prerequisite.title"
-                     open="${ not empty execution.prerequisite }">
+                     open="${ not empty hu:clean(execution.prerequisite) }">
 		<jsp:attribute name="body">
 		<div id="execution-prerequisite-table" class="display-table">
       <div class="display-table-row">
-        <div class="display-table-cell">${ execution.prerequisite }</div>
+        <div class="display-table-cell">${ hu:clean(execution.prerequisite) }</div>
       </div>
     </div>
 	</jsp:attribute>

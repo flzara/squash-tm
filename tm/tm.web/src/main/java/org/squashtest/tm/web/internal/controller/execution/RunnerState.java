@@ -21,7 +21,7 @@
 package org.squashtest.tm.web.internal.controller.execution;
 
 import org.squashtest.tm.domain.execution.ExecutionStatus;
-
+//XSS ok b
 public class RunnerState {
 	private boolean isLastTestCase;
 	private boolean isOptimized;
@@ -47,7 +47,7 @@ public class RunnerState {
 	private Long testSuiteId;
 	private Long testPlanItemId;
 
-	
+
 	public boolean isAllowsUntestable() {
 		return allowsUntestable;
 	}

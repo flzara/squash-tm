@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.customfield;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,6 +40,7 @@ import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
 import org.squashtest.tm.service.internal.dto.CustomFieldValueModel;
 import org.squashtest.tm.service.internal.dto.RawValueModel;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 @Controller
 @RequestMapping("/denormalized-fields/values")
@@ -76,9 +78,15 @@ public class DenormalizedFieldValuesController {
 
 	private List<CustomFieldValueModel> valuesToJson(List<DenormalizedFieldValue> values) {
 		List<CustomFieldValueModel> models = new LinkedList<>();
-
+		List<String> escapedValues = new ArrayList<>();
 		for (DenormalizedFieldValue value : values) {
 			CustomFieldValueModel model = converter.toJson(value);
+			if(model.getOptionValues()!= null) {
+				for (String string : model.getOptionValues()) {
+					escapedValues.add(HTMLCleanupUtils.cleanHtml(string));
+					}
+			model.setOptionValues(escapedValues);
+			}
 			models.add(model);
 		}
 

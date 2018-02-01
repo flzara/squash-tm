@@ -32,6 +32,7 @@
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues"%>
+<%@ taglib prefix="hu" uri="http://org.squashtest.tm/taglib/html-utils" %>
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 
 
@@ -238,13 +239,13 @@
 
 		<comp:toggle-panel id="execution-action-panel" titleKey="execute.panel.action.title"  open="true">
 			<jsp:attribute name="body">
-				<div id="execution-action" class="load-links-right-frame">${executionStep.action}</div>
+				<div id="execution-action" class="load-links-right-frame">${hu:clean(executionStep.action)} </div>
 			</jsp:attribute>
 		</comp:toggle-panel>
 
 		<comp:toggle-panel id="execution-expected-result-panel" titleKey="execute.panel.expected-result.title"  open="true">
 			<jsp:attribute name="body">
-				<div id="execution-expected-result" class="load-links-right-frame">${executionStep.expectedResult}</div>
+				<div id="execution-expected-result" class="load-links-right-frame">${hu:clean(executionStep.expectedResult)} </div>
 			</jsp:attribute>
 		</comp:toggle-panel>
 
@@ -257,7 +258,7 @@
 					<jsp:attribute name="body">
 						<div id="execution-comment"  class="editable rich-editable load-links-right-frame"
                         data-def="url=${executeComment}">
-                          ${executionStep.comment}
+                          ${hu:clean(executionStep.comment)}
 
                         </div>
 					</jsp:attribute>

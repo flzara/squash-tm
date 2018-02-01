@@ -52,12 +52,14 @@ import org.squashtest.tm.service.campaign.TestSuiteFinder;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.model.json.JsonStepInfo;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 /**
  *
  * @author Gregory Fouquet
  *
  */
+//XSS ok bflessel
 @Controller
 @RequestMapping("/test-suites/{testSuiteId}/test-plan")
 public class TestSuiteExecutionRunnerController {
@@ -383,7 +385,7 @@ public class TestSuiteExecutionRunnerController {
 			VALUE })
 	@ResponseBody
 	public String changeComment(@RequestParam(VALUE) String newComment, @PathVariable long stepId) {
-		return executionProcessingController.updateComment(newComment, stepId);
+		return HTMLCleanupUtils.cleanHtml(executionProcessingController.updateComment(newComment, stepId));
 	}
 
 	/**

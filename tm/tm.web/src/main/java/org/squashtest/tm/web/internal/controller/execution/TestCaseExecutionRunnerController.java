@@ -43,6 +43,7 @@ import org.squashtest.tm.web.internal.helper.JsonHelper;
  * @author Gregory Fouquet
  *
  */
+//XSS ok Bflessel
 @Controller
 @RequestMapping("/executions/{executionId}/runner")
 public class TestCaseExecutionRunnerController {

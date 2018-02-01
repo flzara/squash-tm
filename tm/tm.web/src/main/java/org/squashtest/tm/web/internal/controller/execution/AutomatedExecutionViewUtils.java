@@ -32,6 +32,7 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 public final class AutomatedExecutionViewUtils {
 	private AutomatedExecutionViewUtils() {
@@ -71,7 +72,7 @@ public final class AutomatedExecutionViewUtils {
 		ExecutionAutoView execView = new ExecutionAutoView();
 
 		execView.id = autoExec.getExecution().getId();
-		execView.name = autoExec.getExecution().getName();
+		execView.name = HTMLCleanupUtils.cleanHtml(autoExec.getExecution().getName());
 		execView.status = autoExec.getExecution().getExecutionStatus();
 		execView.localizedStatus = htmlEscapedLocalizedStatus;
 		execView.automatedProject = autoExec.getAutomatedProject().getLabel();
