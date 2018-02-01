@@ -65,7 +65,7 @@ class BugTrackerControllerHelperTest extends spock.lang.Specification {
 		def result = BugTrackerControllerHelper.getDefaultDescription(execution, locale, messageSource, executionUrl)
 
 		then:
-		result == "# Test Case: [Reference] test case name\n# Execution: url\n\n# Issue description :\n"
+		result == "# Test Case: [Reference] test case name\n# Execution: url\n\n# Issue description :-~"
 	}
 
 	def "should get default description for execution step"(){
@@ -93,7 +93,7 @@ class BugTrackerControllerHelperTest extends spock.lang.Specification {
 		def result = BugTrackerControllerHelper.getDefaultDescription (step, locale, messageSource, executionUrl)
 
 		then:
-		result == "# Test Case: [Reference] test case name\n# Execution: url\n# Concerned Step: 1/5\n\n# Issue description :\n"
+		result == "# Test Case: [Reference] test case name\n# Execution: url\n# Concerned Step: 1/5\n\n# Issue description :-~"
 	}
 
 	def "should get default comment for execution step"(){
