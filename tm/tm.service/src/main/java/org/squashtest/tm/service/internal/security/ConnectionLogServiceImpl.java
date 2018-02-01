@@ -33,6 +33,9 @@ import org.squashtest.tm.service.security.UserContextService;
 import javax.inject.Inject;
 import java.util.Date;
 
+/**
+ * @author aguilhem
+ */
 @Service("squashtest.tm.service.ConnectionLogService")
 @Transactional
 public class ConnectionLogServiceImpl implements ConnectionLogService {
@@ -40,32 +43,28 @@ public class ConnectionLogServiceImpl implements ConnectionLogService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionLogServiceImpl.class);
 
 	@Inject
-	private UserContextService userContextService;
-
-	@Inject
 	private ConnectionLogDao dao;
 
 	@Override
-	public void addSuccessfulConnectionLog() {
-		ConnectionLog connectionLog = initConnectionLog();
+	public void addSuccessfulConnectionLog(String login) {
+		ConnectionLog connectionLog = initConnectionLog(login);
 		connectionLog.setSuccess(true);
 		dao.persist(connectionLog);
 
 	}
 
 	@Override
-	public void addFailConnectionLog() {
-		ConnectionLog connectionLog = initConnectionLog();
+	public void addFailedConnectionLog(String login) {
+		ConnectionLog connectionLog = initConnectionLog(login);
+		connectionLog.setSuccess(false);
 		dao.persist(connectionLog);
 	}
 
 	@Override
-	public ConnectionLog initConnectionLog() {
-		String login = userContextService.getUsername();
+	public ConnectionLog initConnectionLog(String login) {
 		ConnectionLog connectionLog = new ConnectionLog();
 		connectionLog.setLogin(login);
 		connectionLog.setConnectionDate(new Date());
-		System.out.println(connectionLog.getSuccess());
 		return connectionLog;
 	}
 }

@@ -22,9 +22,12 @@ package org.squashtest.tm.service.security;
 
 import org.squashtest.tm.domain.users.ConnectionLog;
 
+/**
+ * @author aguilhem
+ */
 public interface ConnectionLogService {
 
-	void addSuccessfulConnectionLog();
-	void addFailConnectionLog();
-	ConnectionLog initConnectionLog();
+	void addSuccessfulConnectionLog(String login);
+	void addFailedConnectionLog(String login);
+	ConnectionLog initConnectionLog(String login);
 }

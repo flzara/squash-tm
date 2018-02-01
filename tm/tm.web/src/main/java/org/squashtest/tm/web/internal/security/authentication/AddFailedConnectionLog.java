@@ -21,26 +21,27 @@
 package org.squashtest.tm.web.internal.security.authentication;
 
 import org.springframework.context.ApplicationListener;
-import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
+import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.service.security.ConnectionLogService;
 
 import javax.inject.Inject;
 
 /**
- * "addSuccessfulConnectionLog()" is called if authentication is success in order to register the connection attempt in database.
+ * "addFailedConnectionLog()" is called if authentication is failed and login not empty in order to register the connection attempt in database.
  *
  * @author aguilhem
  */
 @Component
-public class AddSuccessfulConnectionLog implements ApplicationListener<InteractiveAuthenticationSuccessEvent> {
+public class AddFailedConnectionLog implements ApplicationListener<AuthenticationFailureBadCredentialsEvent> {
 
 	@Inject
 	private ConnectionLogService connectionLogService;
-
 	@Override
-	public void onApplicationEvent(InteractiveAuthenticationSuccessEvent interactiveAuthenticationSuccessEvent) {
-		String login = interactiveAuthenticationSuccessEvent.getAuthentication().getName();
-		connectionLogService.addSuccessfulConnectionLog(login);
+	public void onApplicationEvent(AuthenticationFailureBadCredentialsEvent authenticationFailureBadCredentialsEvent) {
+		String login = authenticationFailureBadCredentialsEvent.getAuthentication().getName();
+		if(!login.isEmpty()){
+			connectionLogService.addFailedConnectionLog(login);
+		}
 	}
 }

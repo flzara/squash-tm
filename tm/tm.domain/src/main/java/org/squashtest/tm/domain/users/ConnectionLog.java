@@ -41,11 +41,11 @@ public class ConnectionLog {
 	@Column(name = "CONNECTION_DATE")
 	@Temporal(TemporalType.TIMESTAMP)
 	@NotNull
-	private Date connectionDate = new Date();
+	private Date connectionDate;
 
 	@Column(name = "SUCCESS")
 	@NotNull
-	private Boolean success = false;
+	private Boolean success;
 
 	public Long getId() {
 		return id;

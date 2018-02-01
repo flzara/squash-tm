@@ -24,6 +24,9 @@ import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.users.ConnectionLog;
 import org.squashtest.tm.service.internal.repository.ConnectionLogDao;
 
+/**
+ * @author aguilhem
+ */
 @Repository
 public class HibernateConnectionLogDao extends HibernateEntityDao<ConnectionLog> implements ConnectionLogDao {
 }

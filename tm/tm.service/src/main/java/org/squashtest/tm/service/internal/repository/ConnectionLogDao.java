@@ -22,5 +22,8 @@ package org.squashtest.tm.service.internal.repository;
 
 import org.squashtest.tm.domain.users.ConnectionLog;
 
+/**
+ * @author aguilhem
+ */
 public interface ConnectionLogDao extends EntityDao<ConnectionLog> {
 }
