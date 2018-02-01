@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
-
+//XSS ok blfessel
 @Controller
 @RequestMapping("/advanced-search")
 public class AdvancedSearchIndexingController {

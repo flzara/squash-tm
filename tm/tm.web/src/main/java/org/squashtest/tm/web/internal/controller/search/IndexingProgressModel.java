@@ -28,7 +28,7 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.IndexMonitor;
 import org.squashtest.tm.domain.testcase.TestCase;
 
-
+//XSS bflessel ok
 public class IndexingProgressModel {
 
 

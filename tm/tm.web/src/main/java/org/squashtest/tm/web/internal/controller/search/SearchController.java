@@ -35,7 +35,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.service.library.SearchService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
-
+//XSS ok Bflessel
 @Controller
 @RequestMapping("/search")
 public class SearchController {

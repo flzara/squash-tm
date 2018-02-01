@@ -53,6 +53,7 @@ import org.squashtest.tm.service.servers.MissingEncryptionKeyException;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 // XSS OK - bflessel
 @Controller
@@ -91,7 +92,6 @@ public class BugTrackerModificationController {
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	@ResponseBody
 	public Object changeName(@PathVariable long bugtrackerId, @RequestParam String newName) {
-		newName = HtmlUtils.htmlEscape(newName);
 		bugtrackerModificationService.changeName(bugtrackerId, newName);
 		LOGGER.debug("BugTracker modification : change bugtracker {} name = {}", bugtrackerId, newName);
 		return new RenameModel(newName);
@@ -100,10 +100,9 @@ public class BugTrackerModificationController {
 	@RequestMapping(method = RequestMethod.POST, params = { "id=bugtracker-url", VALUE })
 	@ResponseBody
 	public String changeUrl(@PathVariable long bugtrackerId, @RequestParam(VALUE) String newUrl) {
-		newUrl = HtmlUtils.htmlEscape(newUrl);
 		bugtrackerModificationService.changeUrl(bugtrackerId, newUrl);
 		LOGGER.debug("BugTracker modification : change bugtracker {} url = {}", bugtrackerId, newUrl);
-		return newUrl;
+		return HTMLCleanupUtils.cleanHtml(newUrl);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "isIframeFriendly" })
@@ -134,7 +133,7 @@ public class BugTrackerModificationController {
 	public String changeKind(@RequestParam(VALUE) String kind, @PathVariable long bugtrackerId) {
 		LOGGER.debug("BugTracker modification : change bugtracker {} kind = {}", bugtrackerId, kind);
 		bugtrackerModificationService.changeKind(bugtrackerId, kind);
-		return HtmlUtils.htmlEscape(kind);
+		return HTMLCleanupUtils.cleanHtml(kind);
 	}
 
 
@@ -171,7 +170,7 @@ public class BugTrackerModificationController {
 		Set<String> bugtrackerKinds = bugtrackerFinder.findBugTrackerKinds();
 		Map<String, String> mapKinds = new HashMap<>(bugtrackerKinds.size());
 		for (String kind : bugtrackerKinds) {
-			kind = HtmlUtils.htmlEscape(kind);
+			kind = HTMLCleanupUtils.cleanHtml(kind);
 			mapKinds.put(kind, kind);
 		}
 		return JsonHelper.serialize(mapKinds);

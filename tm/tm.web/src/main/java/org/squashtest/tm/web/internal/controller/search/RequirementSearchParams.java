@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.search;
 
+//XSS ok bflessel
 public class RequirementSearchParams {
 	private String name;
 	private String reference;

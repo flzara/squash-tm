@@ -72,6 +72,7 @@ import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 import oslcdomain.OslcIssue;
 
 import javax.inject.Inject;
@@ -161,7 +162,7 @@ public class BugTrackerController {
 	public ModelAndView showWorkspace(@PathVariable Long bugtrackerId) {
 		BugTracker bugTracker = bugTrackerManagerService.findById(bugtrackerId);
 		ModelAndView mav = new ModelAndView("page/bugtrackers/bugtracker-workspace");
-		mav.addObject("bugtrackerUrl", HtmlUtils.htmlEscape(bugTracker.getUrl()));
+		mav.addObject("bugtrackerUrl", HTMLCleanupUtils.cleanHtml(bugTracker.getUrl()));
 		return mav;
 	}
 
