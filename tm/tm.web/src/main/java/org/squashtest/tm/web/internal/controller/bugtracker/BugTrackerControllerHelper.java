@@ -142,7 +142,7 @@ public final class BugTrackerControllerHelper {
 		appendTestCaseDesc(execution.getReferencedTestCase(), description, locale, messageSource);
 		appendExecutionDesc(description, locale, messageSource, executionUrl);
 		appendDescHeader(description, locale, messageSource);
-		return HTMLCleanupUtils.cleanHtml(description.toString());
+		return description.toString();
 	}
 
 	/**
@@ -165,7 +165,7 @@ public final class BugTrackerControllerHelper {
 		appendExecutionDesc(description, locale, messageSource, executionUrl);
 		appendStepDesc(step, description, locale, messageSource);
 		appendDescHeader(description, locale, messageSource);
-		return HTMLCleanupUtils.cleanHtml(description.toString());
+		return description.toString();
 	}
 
 	/**
@@ -219,9 +219,9 @@ public final class BugTrackerControllerHelper {
 			description.append("# ");
 			description.append(messageSource.getMessage("issue.default.description.testCase", null, locale));
 			description.append(": [");
-			description.append(testCase.getReference());
+			description.append(HTMLCleanupUtils.cleanHtml(testCase.getReference()));
 			description.append("] ");
-			description.append(testCase.getName());
+			description.append(HTMLCleanupUtils.cleanHtml(testCase.getName()));
 			description.append("\n");
 		}
 	}

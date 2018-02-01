@@ -86,16 +86,13 @@ define(["jquery", "handlebars", "./lib/cuf-values-utils","jqueryui", "./lib/jque
 
 			switch (mode) {
 			case "static":
-				cufValue.binding.customField.options.label.forEach(function(element){
-					element = _.escape(element);
-			});
 				elt.staticCustomfield(cufValue.binding.customField);
 				break;
 
 			case "editable":
-				cufValue.binding.customField.options.forEach(function(element){
-					element.label = _.escape(element.label);
-				});
+				for (var i = 0; i < cufValue.binding.customField.options.length; i++) {
+					cufValue.binding.customField.options[i] = _.escape(cufValue.binding.customField.options[i]);
+				}
 				elt.editableCustomfield(cufValue.binding.customField);
 				elt.parent().addClass('editable');
 				break;

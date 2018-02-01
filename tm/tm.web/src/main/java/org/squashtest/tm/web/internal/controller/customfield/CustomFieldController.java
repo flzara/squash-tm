@@ -65,6 +65,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 /**
  * Controller for the Custom Fields resources.
@@ -333,7 +334,7 @@ public class CustomFieldController {
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void removeOption(@PathVariable long customFieldId, @PathVariable String optionLabel) {
-		customFieldManager.removeOption(customFieldId, optionLabel);
+		customFieldManager.removeOption(customFieldId, HtmlUtils.htmlUnescape(optionLabel));
 	}
 
 	/**
