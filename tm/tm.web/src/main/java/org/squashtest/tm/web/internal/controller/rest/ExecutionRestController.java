@@ -20,11 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.rest;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,6 +33,11 @@ import org.squashtest.tm.web.exception.ResourceNotFoundException;
 import org.squashtest.tm.web.internal.model.rest.RestExecution;
 import org.squashtest.tm.web.internal.model.rest.RestExecutionStep;
 
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+
+// XSS OK
 @Controller
 @RequestMapping("/api/execution")
 public class ExecutionRestController {
@@ -52,7 +52,7 @@ public class ExecutionRestController {
 
 		Execution execution = null;
 
-		if(executionFinder.exists(id)){
+		if (executionFinder.exists(id)) {
 			execution = executionFinder.findById(id);
 		}
 

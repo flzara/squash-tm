@@ -20,11 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.rest;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +29,11 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.web.internal.model.rest.RestExecutionStub;
 
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
+// XSS OK
 @Controller
 @RequestMapping("/api/bugtracker")
 public class BugtrackerRestController {
@@ -42,12 +41,12 @@ public class BugtrackerRestController {
 	@Inject
 	private BugTrackersLocalService bugTrackersLocalService;
 
-	@RequestMapping(value = "/{name}/issue/{remoteid}/executions", method = RequestMethod.GET, produces="application/json")
+	@RequestMapping(value = "/{name}/issue/{remoteid}/executions", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public List<RestExecutionStub> getExecutionsByRemotedId(@PathVariable String name, @PathVariable String remoteid) {
 		List<Execution> executions = bugTrackersLocalService.findExecutionsByRemoteIssue(remoteid, name);
 		List<RestExecutionStub> restExecutions = new ArrayList<>(executions.size());
-		for(Execution execution : executions){
+		for (Execution execution : executions) {
 			restExecutions.add(new RestExecutionStub(execution));
 		}
 		return restExecutions;
