@@ -62,7 +62,12 @@ define(["jquery", "handlebars", "./lib/cuf-values-utils","jqueryui", "./lib/jque
 		'{{/each}}'
 		);
 
-
+	var escapeCustomFieldOptions = function(cufValue) {
+		for (var i = 0; i < cufValue.binding.customField.options.length; i++) {
+    	cufValue.binding.customField.options[i].label = _.escape(cufValue.binding.customField.options[i].label);
+    	cufValue.binding.customField.options[i].code = _.escape(cufValue.binding.customField.options[i].code);
+    }
+	};
 
 	return {
 
@@ -90,17 +95,13 @@ define(["jquery", "handlebars", "./lib/cuf-values-utils","jqueryui", "./lib/jque
 				break;
 
 			case "editable":
-				for (var i = 0; i < cufValue.binding.customField.options.length; i++) {
-					cufValue.binding.customField.options[i] = _.escape(cufValue.binding.customField.options[i]);
-				}
+				escapeCustomFieldOptions(cufValue);
 				elt.editableCustomfield(cufValue.binding.customField);
 				elt.parent().addClass('editable');
 				break;
 
 			case "jeditable":
-				for (var i = 0; i < cufValue.binding.customField.options.length; i++) {
-					cufValue.binding.customField.options[i] = _.escape(cufValue.binding.customField.options[i]);
-				}
+				escapeCustomFieldOptions(cufValue);
 				elt.jeditableCustomfield(cufValue.binding.customField, cufValue.id);
 				elt.parent().addClass('editable');
 				break;
