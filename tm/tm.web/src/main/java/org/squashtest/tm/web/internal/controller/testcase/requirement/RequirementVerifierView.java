@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.requirement;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
@@ -33,6 +27,9 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneModelUtils;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
+import java.util.*;
+
+// XSS OK
 public class RequirementVerifierView {
 	private TestCase verifier;
 	private ActionTestStep verifyingStep;
@@ -52,7 +49,7 @@ public class RequirementVerifierView {
 		type = "test-step";
 	}
 
-	public RequirementVerifierView(ActionTestStep verifyingStep,InternationalizationHelper internationalizationHelper,Locale locale) {
+	public RequirementVerifierView(ActionTestStep verifyingStep, InternationalizationHelper internationalizationHelper, Locale locale) {
 		this.verifier = verifyingStep.getTestCase();
 		this.verifyingStep = verifyingStep;
 		this.internationalizationHelper = internationalizationHelper;
@@ -84,37 +81,35 @@ public class RequirementVerifierView {
 		this.verifyingStep = verifyingStep;
 	}
 
-	public List<RequirementVersionCoverageView> getCoverages(){
+	public List<RequirementVersionCoverageView> getCoverages() {
 		List<RequirementVersionCoverageView> coverages = new ArrayList<>(0);
-		for(RequirementVersionCoverage rc : verifier.getRequirementVersionCoverages()){
+		for (RequirementVersionCoverage rc : verifier.getRequirementVersionCoverages()) {
 			RequirementVersionCoverageView coverage = new RequirementVersionCoverageView(rc, verifyingStep);
 			coverage.calculateMilestoneTimeInterval(internationalizationHelper, locale);
 			coverages.add(coverage);
 		}
 
 		Collections.sort(coverages, new Comparator<RequirementVersionCoverageView>() {
-	        @Override
-	        public int compare(RequirementVersionCoverageView  view1, RequirementVersionCoverageView view2)
-	        {
-	            return  view1.version.getName().compareToIgnoreCase(view2.version.getName());
-	        }
-	    });
+			@Override
+			public int compare(RequirementVersionCoverageView view1, RequirementVersionCoverageView view2) {
+				return view1.version.getName().compareToIgnoreCase(view2.version.getName());
+			}
+		});
 
 		return coverages;
 	}
 
 
-
-	public static final class RequirementVersionCoverageView{
+	public static final class RequirementVersionCoverageView {
 		private RequirementVersion version;
 		private String milestoneTimeInterval;
 		private boolean verifiedByStep = false;
 
 		public RequirementVersionCoverageView(RequirementVersionCoverage rc, ActionTestStep step) {
 			this.version = rc.getVerifiedRequirementVersion();
-			if(step != null){
-				for(ActionTestStep verifyingStep : rc.getVerifyingSteps()){
-					if(step.getId().equals(verifyingStep.getId())){
+			if (step != null) {
+				for (ActionTestStep verifyingStep : rc.getVerifyingSteps()) {
+					if (step.getId().equals(verifyingStep.getId())) {
 						verifiedByStep = true;
 						break;
 					}
@@ -122,8 +117,8 @@ public class RequirementVerifierView {
 			}
 		}
 
-		public void calculateMilestoneTimeInterval(InternationalizationHelper internationalizationHelper, Locale locale){
-			milestoneTimeInterval = MilestoneModelUtils.timeIntervalToString(version.getMilestones(),internationalizationHelper,locale);
+		public void calculateMilestoneTimeInterval(InternationalizationHelper internationalizationHelper, Locale locale) {
+			milestoneTimeInterval = MilestoneModelUtils.timeIntervalToString(version.getMilestones(), internationalizationHelper, locale);
 		}
 
 		public RequirementVersion getVersion() {

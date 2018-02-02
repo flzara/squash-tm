@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
@@ -37,7 +36,6 @@ import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.*;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.library.LibraryNavigationService;
-import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
@@ -58,6 +56,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
+//XSS OK
 @Controller
 @RequestMapping("/test-case-browser")
 public class TestCaseLibraryNavigationController extends

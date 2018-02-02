@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,20 +31,28 @@ import org.squashtest.tm.service.library.FolderModificationService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
 import org.squashtest.tm.web.internal.controller.generic.FolderModificationController;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+
+// XSS OK
 @Controller
 @RequestMapping("/test-case-folders/{folderId}")
 public class TestCaseFolderModificationController extends FolderModificationController<TestCaseFolder> {
 
 	private FolderModificationService<TestCaseFolder> folderModificationService;
 
-	@Inject private TestCaseLibraryFinderService libraryFinderService;
+	@Inject
+	private TestCaseLibraryFinderService libraryFinderService;
 
 	@Override
 	protected FolderModificationService<TestCaseFolder> getFolderModificationService() {
 		return folderModificationService;
 	}
 
-	@Inject @Named("squashtest.tm.service.TestCaseFolderModificationService")
+	@Inject
+	@Named("squashtest.tm.service.TestCaseFolderModificationService")
 	public final void setFolderModificationService(FolderModificationService<TestCaseFolder> folderModificationService) {
 		this.folderModificationService = folderModificationService;
 	}
@@ -72,9 +74,9 @@ public class TestCaseFolderModificationController extends FolderModificationCont
 		return mav;
 	}
 
-	@RequestMapping(value="/test/{ids}", method = RequestMethod.GET)
+	@RequestMapping(value = "/test/{ids}", method = RequestMethod.GET)
 	@ResponseBody
-	public List<String> getPath(@PathVariable("ids") List<Long> ids){
+	public List<String> getPath(@PathVariable("ids") List<Long> ids) {
 		return libraryFinderService.getPathsAsString(ids);
 	}
 

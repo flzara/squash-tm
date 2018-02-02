@@ -27,6 +27,7 @@
 <%@ taglib prefix="dashboard" tagdir="/WEB-INF/tags/dashboard"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="hu" uri="http://org.squashtest.tm/taglib/html-utils" %>
 
 <?xml version="1.0" encoding="utf-8" ?>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
@@ -70,7 +71,7 @@
 	<%-- description panel --%>
 	<comp:toggle-panel id="library-description-panel" titleKey="label.Description"  open="true">
 		<jsp:attribute name="body">
-			<div id="library-description" >${ library.project.description }</div>
+			<div id="library-description" >${hu:clean(library.project.description)}</div>
 		</jsp:attribute>
 	</comp:toggle-panel>
 

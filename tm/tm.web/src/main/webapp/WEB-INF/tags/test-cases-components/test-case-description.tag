@@ -26,6 +26,7 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="tc" tagdir="/WEB-INF/tags/test-cases-components"%>
+<%@ taglib prefix="hu" uri="http://org.squashtest.tm/taglib/html-utils" %>
 
 
 <%@ attribute name="testCase" required="true" type="java.lang.Object"  description="the testcase" %>
@@ -54,7 +55,7 @@
 
 		<div class="display-table-row">
 			<label for="test-case-description" class="display-table-cell"><f:message key="label.Description" /></label>
-			<div class="display-table-cell" id="test-case-description">${ testCase.description }</div>
+			<div class="display-table-cell" id="test-case-description">${hu:clean(testCase.description)}</div>
 		</div>
 
 

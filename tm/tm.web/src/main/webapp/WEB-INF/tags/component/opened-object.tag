@@ -20,32 +20,34 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ tag body-content="empty" description="Displays message if other user is viewing the same object and send a request when the user leaves the page" %>
+<%@ tag body-content="empty"
+		description="Displays message if other user is viewing the same object and send a request when the user leaves the page" %>
 <%@ attribute name="objectUrl" required="true" %>
-<%@ attribute name="otherViewers" required="true" type="java.lang.Boolean"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ attribute name="otherViewers" required="true" type="java.lang.Boolean" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 
-<c:if test="${ otherViewers }"> 
-<div class="entity-edit-general-warning"><p><f:message key="squashtm.generic.opened-object.quit.message"/></p></div>
+<c:if test="${ otherViewers }">
+	<div class="entity-edit-general-warning"><p><f:message key="squashtm.generic.opened-object.quit.message"/></p></div>
 </c:if>
 
 <script>
-require(["common"], function() {
-	require(["jquery","workspace.event-bus"], function($, eventBus){
-    	function releaseEntity (){
-    		 $.ajax({
-    				type : 'DELETE',
-    				url : '${objectUrl}'+'/opened-entity',
-    				async : false
-    		});
-    	}
-		window.onbeforeunload = releaseEntity;
-		
-		$(function(){		
-			eventBus.onContextual('contextualcontent.clear', releaseEntity);
+	require(["common"], function () {
+		require(["jquery", "workspace.event-bus"], function ($, eventBus) {
+			function releaseEntity() {
+				$.ajax({
+					type: 'DELETE',
+					url: '${objectUrl}' + '/opened-entity',
+					async: false
+				});
+			}
+
+			window.onbeforeunload = releaseEntity;
+
+			$(function () {
+				eventBus.onContextual('contextualcontent.clear', releaseEntity);
+			});
 		});
 	});
-});
 </script>

@@ -30,10 +30,12 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 /**
  * @author Gregory Fouquet
@@ -105,13 +107,13 @@ public class JsonTestCaseBuilder {
 	private JsonTestCase build(TestCase tc) {
 		JsonTestCase res = new JsonTestCase();
 		res.setId(tc.getId());
-		res.setName(tc.getName());
-		res.setRef(tc.getReference());
+		res.setName(HtmlUtils.htmlEscape(tc.getName()));
+		res.setRef(HtmlUtils.htmlEscape(tc.getReference()));
 		res.setProject(projectBuilder.toSimpleJson(tc.getProject()));
 		res.setType(buildType(tc.getType()));
 
 		if (extended){
-			res.setDescription(tc.getDescription());
+			res.setDescription(HTMLCleanupUtils.cleanHtml(tc.getDescription()));
 		}
 
 		return res;

@@ -30,7 +30,7 @@
 
 <%--
 	parameters :
-	
+
 		- testCase : the test case at the calling-side of the call step the user will design in this interface.
 		- rootModel : the initial nodes loaded in the tree
 
@@ -53,24 +53,24 @@
 		<comp:sq-css name="squash.green.css" />
 		<script type="text/javascript">
 		require([ "common" ], function() {
-			require([ "domReady", "jquery" ], function(domReady, $) { 
+			require([ "domReady", "jquery" ], function(domReady, $) {
 
 			domReady(function(){
 				$("#call-step-associate-button").click(associationAction);
 			});
-			
+
 
 			function associationAction(){
 				var calledId = getSelectedId();
-				
+
 				if (calledId.length != 1){
 					$.squash.openMessage("<f:message key='popup.title.error' />", "${noSelectionError}");
 					return;
 				}
-				
+
 				var param = {'called-test-case' : calledId};
-				
-				<%-- 
+
+				<%--
 					we need that post to be a json just to trigger business exception handlers server side (if an exception occurs).
 					also we'll receive the said exception as a json object, which is always cool.
 				--%>
@@ -78,12 +78,12 @@
 					<%-- the variable squashtm.workspace.backurl is set by the js module workspace.breadcrumb --%>
 					document.location.href=squashtm.workspace.backurl;
 				});
-	
-				
-			}		
-			
+
+
+			}
+
 			function getSelectedId(){
-				
+
 				var tab =  [];
 				var selected = $( "#tabbed-pane" ).tabs('option', 'selected');
 				var tree = $("#tree-pane .tree");
@@ -94,40 +94,40 @@
 						}
 					});
 				}
-				
+
 				if (selected == 1){
 					tab = findIdsOfSelectedSearchRow();
 				}
 				return tab;
-				
+
 			}
 
-			
+
 			});
 		});
-			
+
 		</script>
-		
+
 	</jsp:attribute>
 
 	<jsp:attribute name="titlePane">
-		<h2><f:message key="workspace.test-case.title" /></h2>	
+		<h2><f:message key="workspace.test-case.title" /></h2>
 	</jsp:attribute>
-	
+
 	<jsp:attribute name="subPageTitle">
-		<h2>${testCase.name}&nbsp;:&nbsp;<f:message key="subpage.test-case.callstep.title" /></h2>	
+		<h2><c:out value="${testCase.name}"/>&nbsp;:&nbsp;<f:message key="subpage.test-case.callstep.title" /></h2>
 	</jsp:attribute>
-	
+
 	<jsp:attribute name="subPageButtons">
 		<f:message var="associateButtonLabel" key="subpage.test-case.callstep.button.call.label" />
 		<input id="call-step-associate-button" type="button" class="button" value="${associateButtonLabel}" />
 		<f:message var="backButtonLabel" key="label.Back" />
         <%-- this button uses back navigation thanks to the js module workspace.breadcrumb that is called implicitly --%>
-		<input id="back" type="button" class="button" value="${backButtonLabel}" onclick="document.location.href=squashtm.workspace.backurl"/> 
-	</jsp:attribute>	
+		<input id="back" type="button" class="button" value="${backButtonLabel}" onclick="document.location.href=squashtm.workspace.backurl"/>
+	</jsp:attribute>
 
 	<jsp:attribute name="tree">
-		<tree:call-step-tree rootModel="${rootModel}"/>	
+		<tree:call-step-tree rootModel="${rootModel}"/>
 	</jsp:attribute>
 
 	<jsp:attribute name="contextualContent">

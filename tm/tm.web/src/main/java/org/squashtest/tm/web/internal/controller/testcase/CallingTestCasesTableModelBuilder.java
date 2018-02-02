@@ -20,11 +20,8 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -32,6 +29,11 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+//XSS OK
 class CallingTestCasesTableModelBuilder extends DataTableModelBuilder<CallTestStep> {
 
 	private InternationalizationHelper i18nHelper;
@@ -39,7 +41,7 @@ class CallingTestCasesTableModelBuilder extends DataTableModelBuilder<CallTestSt
 	private static final int INT_MAX_DESCRIPTION_LENGTH = 50;
 
 
-	CallingTestCasesTableModelBuilder(InternationalizationHelper i18nHelper){
+	CallingTestCasesTableModelBuilder(InternationalizationHelper i18nHelper) {
 		this.i18nHelper = i18nHelper;
 	}
 
@@ -55,32 +57,32 @@ class CallingTestCasesTableModelBuilder extends DataTableModelBuilder<CallTestSt
 
 		row.put("tc-id", Long.toString(caller.getId()));
 		row.put("tc-index", Long.toString(getCurrentIndex()));
-		row.put(DataTableModelConstants.PROJECT_NAME_KEY, caller.getProject().getName());
-		row.put("tc-reference", caller.getReference());
-		row.put("tc-name", caller.getName());
+		row.put(DataTableModelConstants.PROJECT_NAME_KEY, HtmlUtils.htmlEscape(caller.getProject().getName()));
+		row.put("tc-reference", HtmlUtils.htmlEscape(caller.getReference()));
+		row.put("tc-name", HtmlUtils.htmlEscape(caller.getName()));
 		row.put("tc-mode", executionMode);
-		row.put("ds-name", dsName);
-		row.put("step-no", step.getIndex()+1);
-		row.put("tc-description", HTMLCleanupUtils.getBriefText(caller.getDescription(), INT_MAX_DESCRIPTION_LENGTH));
+		row.put("ds-name", HtmlUtils.htmlEscape(dsName));
+		row.put("step-no", step.getIndex() + 1);
+		row.put("tc-description", HTMLCleanupUtils.getCleanedBriefText(caller.getDescription(), INT_MAX_DESCRIPTION_LENGTH));
 
 		return row;
 
 	}
 
-	protected String findDatasetName(CallTestStep step){
+	protected String findDatasetName(CallTestStep step) {
 		String name;
-		switch (step.getParameterAssignationMode()){
-		case NOTHING :
-			name = "--";
-			break;
-		case DELEGATE :
-			name = i18nHelper.getMessage("label.callstepdataset.Delegate", null, "label.callstepdataset.Delegate", locale);
-			break;
-		case CALLED_DATASET :
-			name = step.getCalledDataset().getName();
-			break;
-		default :
-			throw new IllegalArgumentException("the ParameterAssignationMode '"+step.getParameterAssignationMode()+"' is not supported");
+		switch (step.getParameterAssignationMode()) {
+			case NOTHING:
+				name = "--";
+				break;
+			case DELEGATE:
+				name = i18nHelper.getMessage("label.callstepdataset.Delegate", null, "label.callstepdataset.Delegate", locale);
+				break;
+			case CALLED_DATASET:
+				name = step.getCalledDataset().getName();
+				break;
+			default:
+				throw new IllegalArgumentException("the ParameterAssignationMode '" + step.getParameterAssignationMode() + "' is not supported");
 		}
 
 		return name;

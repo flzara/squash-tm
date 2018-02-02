@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.requirement;
 
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,12 +27,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 
+import javax.inject.Inject;
+
 /**
  * Controller which processes requests related to links between Requirement and Test-Case
  *
  * @author mpagnon
- *
  */
+// XSS OK
 @Controller
 @RequestMapping(value = "/requirement-version-coverage")
 public class RequirementVersionCoverageController {
@@ -45,9 +45,8 @@ public class RequirementVersionCoverageController {
 
 	@ResponseBody
 	@RequestMapping(value = "{requirementVersionCoverageId}", method = RequestMethod.DELETE)
-	public
-	void removeVerifiedRequirementVersionFromTestCase(@PathVariable long requirementVersionId,
-			@PathVariable long testCaseId) {
+	public void removeVerifiedRequirementVersionFromTestCase(@PathVariable long requirementVersionId,
+															 @PathVariable long testCaseId) {
 		verifiedRequirementsManagerService.removeVerifiedRequirementVersionFromTestCase(requirementVersionId, testCaseId);
 
 	}

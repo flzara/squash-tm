@@ -20,11 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.validation.Errors;
@@ -35,8 +31,12 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.dto.RawValueModel;
 import org.squashtest.tm.service.internal.dto.RawValueModel.RawValueModelMap;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 
+// XSS OK
 public class TestCaseFormModel {
 	/**
 	 * Note : the following validation annotations are never called, a custom validator will be invoked for this.
@@ -49,7 +49,6 @@ public class TestCaseFormModel {
 
 	private String reference;
 	private String description;
-
 
 
 	/*@NotNull
@@ -84,8 +83,6 @@ public class TestCaseFormModel {
 	}
 
 
-
-
 	public RawValueModelMap getCustomFields() {
 		return customFields;
 	}
@@ -96,7 +93,7 @@ public class TestCaseFormModel {
 	}
 
 
-	public TestCase getTestCase(){
+	public TestCase getTestCase() {
 		TestCase newTC = new TestCase();
 		newTC.setName(name);
 		newTC.setDescription(description);
@@ -105,25 +102,24 @@ public class TestCaseFormModel {
 	}
 
 	@JsonIgnore
-	public Map<Long, RawValue> getCufs(){
+	public Map<Long, RawValue> getCufs() {
 		Map<Long, RawValue> cufs = new HashMap<>(customFields.size());
-		for (Entry<Long, RawValueModel> entry : customFields.entrySet()){
+		for (Entry<Long, RawValueModel> entry : customFields.entrySet()) {
 			cufs.put(entry.getKey(), entry.getValue().toRawValue());
 		}
 		return cufs;
 	}
 
 
-
 	public static class TestCaseFormModelValidator implements Validator {
 
 		private MessageSource messageSource;
 
-		public TestCaseFormModelValidator(MessageSource messageSource){
+		public TestCaseFormModelValidator(MessageSource messageSource) {
 			this.messageSource = messageSource;
 		}
 
-		public void setMessageSource(MessageSource messageSource){
+		public void setMessageSource(MessageSource messageSource) {
 			this.messageSource = messageSource;
 		}
 
@@ -143,14 +139,14 @@ public class TestCaseFormModel {
 
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "message.notBlank", notBlank);
 
-			if (model.reference != null && model.reference.length()>50){
+			if (model.reference != null && model.reference.length() > 50) {
 				errors.rejectValue("reference", "message.lengthMax", lengthMax);
 			}
 
-			for (Entry<Long, RawValueModel> entry : model.getCustomFields().entrySet()){
+			for (Entry<Long, RawValueModel> entry : model.getCustomFields().entrySet()) {
 				RawValueModel value = entry.getValue();
-				if (value.isEmpty()){
-					errors.rejectValue("customFields["+entry.getKey()+"]", "message.notBlank", notBlank);
+				if (value.isEmpty()) {
+					errors.rejectValue("customFields[" + entry.getKey() + "]", "message.notBlank", notBlank);
 				}
 			}
 

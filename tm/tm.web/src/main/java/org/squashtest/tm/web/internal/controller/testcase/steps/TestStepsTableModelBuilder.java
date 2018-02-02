@@ -40,6 +40,7 @@ import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.service.internal.dto.NumericCufHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 /**
  * Builds a DataTable model for TestSteps table.
@@ -82,8 +83,8 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 		item.put("step-id", visited.getId());
 		item.put("step-index", getCurrentIndex());
 		item.put("attach-list-id", visited.getAttachmentList().getId());
-		item.put("step-action", visited.getAction());
-		item.put("step-result", visited.getExpectedResult());
+		item.put("step-action", HTMLCleanupUtils.cleanHtml(visited.getAction()));
+		item.put("step-result", HTMLCleanupUtils.cleanHtml(visited.getExpectedResult()));
 		item.put("nb-attachments", visited.getAttachmentList().size());
 		item.put("step-type", "action");
 		item.put("call-step-info", null);

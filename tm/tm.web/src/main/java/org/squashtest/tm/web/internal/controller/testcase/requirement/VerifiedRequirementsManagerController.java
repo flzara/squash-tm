@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.requirement;
 
-import java.util.Optional;
 import org.apache.commons.collections.MultiMap;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -78,6 +78,7 @@ import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
  *
  * @author Gregory Fouquet
  */
+// XSS OK
 @Controller
 public class VerifiedRequirementsManagerController {
 	private static final String REQUIREMENTS_IDS = "requirementsIds[]";
@@ -139,7 +140,6 @@ public class VerifiedRequirementsManagerController {
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
 		PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(testCase, "LINK"));
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(testCase);
-//		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(openedNodes);
 
 		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
 		UserDto currentUser = userAccountService.findCurrentUserDto();
@@ -355,9 +355,9 @@ public class VerifiedRequirementsManagerController {
 			Map<String, Object> res = new HashMap<>();
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
-			res.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, item.getName());
-			res.put("project", item.getProject().getName());
-			res.put("reference", item.getReference());
+			res.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, HtmlUtils.htmlEscape(item.getName()));
+			res.put("project", HtmlUtils.htmlEscape(item.getProject().getName()));
+			res.put("reference", HtmlUtils.htmlEscape(item.getReference()));
 			res.put("versionNumber", item.getVersionNumber());
 			res.put("criticality",
 				internationalizationHelper.internationalize(item.getCriticality(), locale));
@@ -366,9 +366,9 @@ public class VerifiedRequirementsManagerController {
 			res.put("milestone-dates", MilestoneModelUtils.timeIntervalToString(item.getMilestones(), internationalizationHelper, locale));
 			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			res.put("milestone", MilestoneModelUtils.milestoneLabelsOrderByDate(item.getMilestones()));
-			res.put("short-description", HTMLCleanupUtils.getBriefText(item.getDescription(), INT_MAX_DESCRIPTION_LENGTH));
-			res.put("description", item.getDescription());
-			res.put("category-icon", item.getCategory().getIconName());
+			res.put("short-description", HTMLCleanupUtils.getCleanedBriefText(item.getDescription(), INT_MAX_DESCRIPTION_LENGTH));
+			res.put("description", HtmlUtils.htmlEscape(item.getDescription()));
+			res.put("category-icon", HtmlUtils.htmlEscape(item.getCategory().getIconName()));
 			res.put("criticality-level", item.getCriticality().getLevel());
 			res.put("status-level", item.getStatus().getLevel());
 			return res;

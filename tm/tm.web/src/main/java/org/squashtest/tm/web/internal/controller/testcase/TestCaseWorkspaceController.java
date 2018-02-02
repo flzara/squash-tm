@@ -38,8 +38,10 @@ import org.squashtest.tm.web.internal.model.rest.RestLibrary;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
 
+// XSS OK
 @Controller
 @RequestMapping("/test-case-workspace")
 public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLibraryNode> {

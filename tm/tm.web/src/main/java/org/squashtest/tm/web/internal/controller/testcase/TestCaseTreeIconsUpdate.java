@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.controller.testcase;
 
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 
+// XSS OK
 public class TestCaseTreeIconsUpdate {
 	private long id;
 	private String isreqcovered = "same";
@@ -33,29 +34,35 @@ public class TestCaseTreeIconsUpdate {
 		doSetReq(isreqcovered);
 		doSetImportance(importance);
 	}
+
 	public TestCaseTreeIconsUpdate(long id, TestCaseImportance importance) {
 		super();
 		this.id = id;
 		doSetImportance(importance);
 	}
 
-	public TestCaseTreeIconsUpdate(long id ,boolean isreqcovered) {
+	public TestCaseTreeIconsUpdate(long id, boolean isreqcovered) {
 		super();
 		this.id = id;
 		doSetReq(isreqcovered);
 	}
+
 	public long getId() {
 		return id;
 	}
+
 	public String getIsreqcovered() {
 		return isreqcovered;
 	}
+
 	private void doSetReq(boolean isreqcovered) {
-		this.isreqcovered  = String.valueOf(isreqcovered);
+		this.isreqcovered = String.valueOf(isreqcovered);
 	}
+
 	public String getImportance() {
 		return importance;
 	}
+
 	private void doSetImportance(TestCaseImportance importance) {
 		this.importance = importance.toString().toLowerCase();
 	}

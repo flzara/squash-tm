@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.dto.json;
 
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.internal.dto.CustomFieldBindingModel;
 
@@ -58,7 +59,7 @@ public class JsonProject {
 		JsonProject res = new JsonProject();
 		res.id = project.getId();
 		res.uri = "/projects/" + res.id;
-		res.name = project.getName();
+		res.name = HtmlUtils.htmlEscape(project.getName());
 		return res;
 	}
 

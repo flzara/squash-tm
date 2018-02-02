@@ -38,8 +38,8 @@ import java.util.Map.Entry;
 
 /**
  * @author Gregory Fouquet, mpagnon
- *
  */
+// XSS OK
 @RequestMapping("/test-cases")
 @Controller
 public class TestCaseController {
@@ -72,15 +72,12 @@ public class TestCaseController {
 	/**
 	 * Fetches and returns a list of json test cases from their ids
 	 *
-	 * @param testCaseIds
-	 *            non null list of test cases ids.
+	 * @param testCaseIds non null list of test cases ids.
 	 * @return
-	 *
 	 */
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET, params = IDS, headers = AcceptHeaders.CONTENT_JSON)
-	public
-	List<JsonTestCase> getJsonTestCases(@RequestParam(IDS) List<Long> testCaseIds, Locale locale) {
+	public List<JsonTestCase> getJsonTestCases(@RequestParam(IDS) List<Long> testCaseIds, Locale locale) {
 		List<TestCase> testCases = finder.findAllByIds(testCaseIds);
 		return builder.get().locale(locale).entities(testCases).toJson();
 	}
@@ -88,15 +85,12 @@ public class TestCaseController {
 	/**
 	 * Fetches and returns a list of json test cases from their containers
 	 *
-	 * @param foldersIds
-	 *            non null list of folders ids.
+	 * @param foldersIds non null list of folders ids.
 	 * @return
-	 *
 	 */
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET, params = FOLDER_IDS, headers = AcceptHeaders.CONTENT_JSON)
-	public
-	List<JsonTestCase> getJsonTestCasesFromFolders(@RequestParam(FOLDER_IDS) List<Long> folderIds, Locale locale) {
+	public List<JsonTestCase> getJsonTestCasesFromFolders(@RequestParam(FOLDER_IDS) List<Long> folderIds, Locale locale) {
 		return buildJsonTestCasesFromAncestorIds(folderIds, locale);
 	}
 
@@ -115,9 +109,8 @@ public class TestCaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET, params = {IDS, FOLDER_IDS}, headers = AcceptHeaders.CONTENT_JSON)
-	public
-	List<JsonTestCase> getJsonTestCases(@RequestParam(IDS) List<Long> testCaseIds,
-										@RequestParam(FOLDER_IDS) List<Long> folderIds, Locale locale) {
+	public List<JsonTestCase> getJsonTestCases(@RequestParam(IDS) List<Long> testCaseIds,
+											   @RequestParam(FOLDER_IDS) List<Long> folderIds, Locale locale) {
 		List<Long> consolidatedIds = new ArrayList<>(testCaseIds.size() + folderIds.size());
 		consolidatedIds.addAll(testCaseIds);
 		consolidatedIds.addAll(folderIds);
@@ -127,14 +120,12 @@ public class TestCaseController {
 
 	/**
 	 * @see ...\scripts\workspace\workspace.tree-event-handler.js Request when a tree node has it's requirement property
-	 *      updated, the importance and requirement property of the calling test cases must be updated to.
-	 *
+	 * updated, the importance and requirement property of the calling test cases must be updated to.
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/tree-infos", method = RequestMethod.POST)
 	@SuppressWarnings("unchecked")
-	public
-	List<TestCaseTreeIconsUpdate> getTestCaseTreeInfosToUpdate(@RequestBody Map<String, Object> form) {
+	public List<TestCaseTreeIconsUpdate> getTestCaseTreeInfosToUpdate(@RequestBody Map<String, Object> form) {
 		// get form content
 		Map<String, String> updatedIdsAndOldReqString = (Map<String, String>) form.get("updatedIdsAndOldReq");
 		Map<Long, Boolean> updatedIdsAndOldReq = transformToLongBooleanMap(updatedIdsAndOldReqString);

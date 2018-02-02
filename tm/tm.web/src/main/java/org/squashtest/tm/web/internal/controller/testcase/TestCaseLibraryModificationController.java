@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
-import java.util.Set;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +32,10 @@ import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 
+import javax.inject.Inject;
+import java.util.Set;
+
+// XSS ok
 @Controller
 @RequestMapping("/test-case-libraries/{libraryId}")
 public class TestCaseLibraryModificationController {
@@ -64,14 +64,14 @@ public class TestCaseLibraryModificationController {
 		boolean shouldShowDashboard = customReportDashboardService.shouldShowFavoriteDashboardInWorkspace(Workspace.TEST_CASE);
 		boolean canShowDashboard = customReportDashboardService.canShowDashboardInWorkspace(Workspace.TEST_CASE);
 
-		mav.addObject("shouldShowDashboard",shouldShowDashboard);
+		mav.addObject("shouldShowDashboard", shouldShowDashboard);
 		mav.addObject("canShowDashboard", canShowDashboard);
 
 		return mav;
 	}
 
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
-	public final ModelAndView showTestCaseLibraryInfo(@PathVariable long libraryId){
+	public final ModelAndView showTestCaseLibraryInfo(@PathVariable long libraryId) {
 		TestCaseLibrary lib = service.findLibrary(libraryId);
 
 		ModelAndView mav = new ModelAndView("page/test-case-workspace/show-test-case-library");

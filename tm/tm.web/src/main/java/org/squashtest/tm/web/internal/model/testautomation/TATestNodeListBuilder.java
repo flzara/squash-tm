@@ -26,6 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
@@ -70,7 +71,7 @@ public class TATestNodeListBuilder {
 
 		while (iterator.hasNext()) {
 
-			String name = iterator.next();
+			String name = HtmlUtils.htmlEscape(iterator.next());
 			current = parent.findChild(name);
 
 			if (current == null) {
@@ -149,10 +150,10 @@ public class TATestNodeListBuilder {
 
 		attr.setId(project.getId().toString());
 		attr.setRel("drive");
-		attr.setName(project.getLabel());
+		attr.setName(HtmlUtils.htmlEscape(project.getLabel()));
 		attr.setRestype("ta-project");
 
-		data.setTitle(project.getLabel());
+		data.setTitle(HtmlUtils.htmlEscape(project.getLabel()));
 
 		node.setAttr(attr);
 		node.setData(data);

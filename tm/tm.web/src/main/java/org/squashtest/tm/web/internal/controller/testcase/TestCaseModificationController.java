@@ -87,6 +87,7 @@ import org.squashtest.tm.web.internal.model.json.JsonTestCase;
 import org.squashtest.tm.web.internal.model.json.JsonTestCaseBuilder;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -304,7 +305,7 @@ public class TestCaseModificationController {
 			LOGGER.trace(TEST_CASE_ + testCaseId + ": updated description to " + testCaseDescription);
 		}
 
-		return testCaseDescription;
+		return HTMLCleanupUtils.cleanHtml(testCaseDescription);
 	}
 
 
@@ -419,7 +420,7 @@ public class TestCaseModificationController {
 
 		testCaseModificationService.addParametersFromPrerequisite(testCaseId);
 
-		return testCasePrerequisite;
+		return HTMLCleanupUtils.cleanHtml(testCasePrerequisite);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = {"newName"})

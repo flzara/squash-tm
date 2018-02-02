@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
-import javax.inject.Inject;
-
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.LevelComparator;
@@ -29,12 +27,15 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
 
+import javax.inject.Inject;
+
 /**
  * Jeditable combo data builder which model is {@link TestCaseImportance}
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
+// XSS OK
 @Component
 @Scope("prototype")
 public class TestCaseImportanceJeditableComboDataBuilder extends EnumJeditableComboDataBuilder<TestCaseImportance, TestCaseImportanceJeditableComboDataBuilder> {

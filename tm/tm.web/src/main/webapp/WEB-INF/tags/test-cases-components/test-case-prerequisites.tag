@@ -25,15 +25,16 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
+<%@ taglib prefix="hu" uri="http://org.squashtest.tm/taglib/html-utils" %>
 
 <%@ attribute name="testCase" required="true" type="java.lang.Object"  description="the testcase" %>
 
-<comp:toggle-panel id="test-case-prerequisite-panel" titleKey="generics.prerequisite.title" 
+<comp:toggle-panel id="test-case-prerequisite-panel" titleKey="generics.prerequisite.title"
 				   open="${ not empty testCase.prerequisite }">
 	<jsp:attribute name="body">
 		<div id="test-case-prerequisite-table" class="display-table">
 			<div class="display-table-row">
-				<div class="display-table-cell" id="test-case-prerequisite">${ testCase.prerequisite }</div>
+				<div class="display-table-cell" id="test-case-prerequisite">${hu:clean(testCase.prerequisite) }</div>
 			</div>
 		</div>
 	</jsp:attribute>

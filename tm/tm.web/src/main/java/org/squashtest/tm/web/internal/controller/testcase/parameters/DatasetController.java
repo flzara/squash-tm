@@ -65,7 +65,7 @@ public class DatasetController {
 	@ResponseBody
 	public String changeName(@PathVariable long datasetId, @RequestParam(VALUE) String value) {
 		datasetModificationService.changeName(datasetId, value);
-		return HtmlUtils.htmlEscape(value);
+		return value;
 	}
 
 

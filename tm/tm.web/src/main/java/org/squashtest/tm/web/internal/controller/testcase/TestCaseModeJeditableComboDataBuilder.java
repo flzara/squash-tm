@@ -20,14 +20,15 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
-import javax.inject.Inject;
-
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter;
 import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
 
+import javax.inject.Inject;
+
+// XSS OK
 @Component
 @Scope("prototype")
 public class TestCaseModeJeditableComboDataBuilder extends EnumJeditableComboDataBuilder<TestCaseExecutionMode, TestCaseModeJeditableComboDataBuilder> {
