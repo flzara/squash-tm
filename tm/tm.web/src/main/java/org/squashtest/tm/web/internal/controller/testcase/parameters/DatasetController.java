@@ -20,30 +20,27 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.parameters;
 
-import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.service.testcase.DatasetModificationService;
 
+import javax.inject.Inject;
+
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
+
 /**
  * @author mpagnon
- * 
+ *
  */
+// XSS OK
 @RequestMapping("/datasets")
 @Controller
 public class DatasetController {
 
 	private static final String DATASET_ID_URL = "/{datasetId}";
-	
+
 	@Inject
 	private DatasetModificationService datasetModificationService;
 
@@ -56,20 +53,20 @@ public class DatasetController {
 	public void deleteDataset(@PathVariable long datasetId) {
 		datasetModificationService.removeById(datasetId);
 	}
-	
+
 	/**
 	 * Will change the name of the {@link Dataset} of the given id with the given value
-	 * 
+	 *
 	 * @param datasetId : id of the concerned Dataset
 	 * @param value : value for the new name
 	 * @return
 	 */
-	@RequestMapping(value= DATASET_ID_URL+"/name", method = RequestMethod.POST, params = {VALUE}, produces = "text/plain;charset=UTF-8")
+	@RequestMapping(value = DATASET_ID_URL + "/name", method = RequestMethod.POST, params = {VALUE}, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
-	public String changeName(@PathVariable long datasetId, @RequestParam(VALUE) String value){
+	public String changeName(@PathVariable long datasetId, @RequestParam(VALUE) String value) {
 		datasetModificationService.changeName(datasetId, value);
-		 return  HtmlUtils.htmlEscape(value);
+		return HtmlUtils.htmlEscape(value);
 	}
-	
-	
+
+
 }

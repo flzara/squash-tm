@@ -32,6 +32,7 @@ import java.util.Arrays;
  * @author mpagnon
  *
  */
+// XSS OK
 public class NewDataset extends Dataset {
 	private Object[][] paramValues;
 
@@ -40,9 +41,9 @@ public class NewDataset extends Dataset {
 	}
 
 	public Dataset createTransientEntity(TestCase testCase, ParameterFinder parameterFinder) {
-		Dataset dataset =  new Dataset();
+		Dataset dataset = new Dataset();
 		dataset.setName(getName());
-		for(Object[] paramValue : paramValues) {
+		for (Object[] paramValue : paramValues) {
 			Number intParam = (Number) paramValue[0];
 			Parameter parameter = parameterFinder.findById(intParam.longValue());
 			new DatasetParamValue(parameter, dataset, (String) paramValue[1]);
@@ -55,7 +56,7 @@ public class NewDataset extends Dataset {
 	}
 
 	public void setParamValues(Object[][] paramValues) {
-		if(paramValues == null) {
+		if (paramValues == null) {
 			this.paramValues = null;
 		} else {
 			this.paramValues = Arrays.copyOf(paramValues, paramValues.length);

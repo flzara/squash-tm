@@ -20,14 +20,8 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.parameters;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import org.springframework.context.MessageSource;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.Parameter;
@@ -36,12 +30,14 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
+import java.util.*;
+
 /**
  * Helps create the datas (for the jQuery DataTable) for the parameters table in the test case view.
  *
  * @author mpagnon
- *
  */
+// XSS OK
 public final class ParametersModelHelper extends DataTableModelBuilder<Parameter> {
 
 	private long ownerId;
@@ -66,8 +62,8 @@ public final class ParametersModelHelper extends DataTableModelBuilder<Parameter
 
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
-		res.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, ParametersModelHelper.buildParameterName(item, ownerId, messageSource, locale));
-		res.put("description", item.getDescription());
+		res.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, HtmlUtils.htmlEscape(ParametersModelHelper.buildParameterName(item, ownerId, messageSource, locale)));
+		res.put("description", HTMLCleanupUtils.cleanHtml(item.getDescription()));
 		res.put("test-case-name", testCaseName);
 		res.put("tc-id", tcId);
 		res.put("directly-associated", isDirectParam);
@@ -93,7 +89,7 @@ public final class ParametersModelHelper extends DataTableModelBuilder<Parameter
 	 * @return
 	 */
 	public static String buildTestCaseName(Parameter item, boolean isDirectParam) {
-		if(isDirectParam){
+		if (isDirectParam) {
 			return "";
 		}
 		TestCase testCase = item.getTestCase();
@@ -102,32 +98,27 @@ public final class ParametersModelHelper extends DataTableModelBuilder<Parameter
 		if (!testCase.getReference().isEmpty()) {
 			testCaseName = testCase.getReference() + '-' + testCaseName;
 		}
-		return testCaseName;
+		return HtmlUtils.htmlEscape(testCaseName);
 	}
 
 
 	/**
 	 * Returns the list of column headers names, descriptions and ids for parameters in the Datasets table ordered by parameter name.
 	 *
-	 *
-	 * @param testCaseId
-	 *            : the concerned test case id
-	 * @param locale
-	 *            : the browser's locale
-	 * @param directAndCalledParameters
-	 *            : the list of parameters directly associated or associated through call steps
-	 * @param messageSource
-	 *            : the message source to internationalize suffix
+	 * @param testCaseId                : the concerned test case id
+	 * @param locale                    : the browser's locale
+	 * @param directAndCalledParameters : the list of parameters directly associated or associated through call steps
+	 * @param messageSource             : the message source to internationalize suffix
 	 * @return
 	 */
 	public static List<HashMap<String, String>> findDatasetParamHeaders(long testCaseId, final Locale locale,
-			List<Parameter> directAndCalledParameters, MessageSource messageSource) {
+																		List<Parameter> directAndCalledParameters, MessageSource messageSource) {
 		Collections.sort(directAndCalledParameters, new ParameterNameComparator(SortOrder.ASCENDING));
 		List<HashMap<String, String>> result = new ArrayList<>(directAndCalledParameters.size());
 		for (Parameter param : directAndCalledParameters) {
 			HashMap<String, String> map = new HashMap<>();
-			map.put("name",  ParametersModelHelper.buildParameterName(param, testCaseId, messageSource, locale));
-			map.put("description",  HTMLCleanupUtils.htmlToText(param.getDescription()));
+			map.put("name", ParametersModelHelper.buildParameterName(param, testCaseId, messageSource, locale));
+			map.put("description", HTMLCleanupUtils.htmlToText(param.getDescription()));
 			map.put("id", param.getId().toString());
 			result.add(map);
 		}

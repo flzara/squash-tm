@@ -20,30 +20,32 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.parameters;
 
+import org.springframework.context.MessageSource;
+import org.springframework.web.util.HtmlUtils;
+import org.squashtest.tm.domain.testcase.Parameter;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import org.springframework.context.MessageSource;
-import org.squashtest.tm.domain.testcase.Parameter;
 
 /**
  * Simple bean to pass information in ajax without all associated objects (param>testcase>steps etc)
  * @author mpagnon
  *
  */
+// XSS OK
 public class SimpleParameter {
 	private long id;
 	private String name = "";
-	private long testCaseId ;
+	private long testCaseId;
 
 	public SimpleParameter(long id, String name, long testCaseId) {
 		this.id = id;
 		this.name = name;
 		this.testCaseId = testCaseId;
 	}
-	
-	public SimpleParameter(Parameter parameter){
+
+	public SimpleParameter(Parameter parameter) {
 		this(parameter.getId(), parameter.getName(), parameter.getTestCase().getId());
 	}
 
@@ -62,31 +64,31 @@ public class SimpleParameter {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	public void setTestCaseId(long testCaseId){
+
+	public void setTestCaseId(long testCaseId) {
 		this.testCaseId = testCaseId;
 	}
 
 	public long getTestCaseId() {
 		return testCaseId;
 	}
-	
+
 	/**
 	 * Converts the given list of {@link Parameter} into a list of {@link SimpleParameter}
 	 * @param parameters : the list of Parameter to convert
-	 * @param ownerId2 
-	 * @param messageSource2 
-	 * @param locale2 
+	 * @param ownerId2
+	 * @param messageSource2
+	 * @param locale2
 	 * @return a list of SimpleParameter representing the given list of Parameter
 	 */
-	public static List<SimpleParameter> convertToSimpleParameters(List<Parameter> parameters, Long ownerId2, MessageSource messageSource2, Locale locale2){
+	public static List<SimpleParameter> convertToSimpleParameters(List<Parameter> parameters, Long ownerId2, MessageSource messageSource2, Locale locale2) {
 		List<SimpleParameter> result = new ArrayList<>(parameters.size());
-		for(Parameter param : parameters){
-			String newName = ParametersModelHelper.buildParameterName(param, ownerId2, messageSource2, locale2);
-			
+		for (Parameter param : parameters) {
+			String newName = HtmlUtils.htmlEscape(ParametersModelHelper.buildParameterName(param, ownerId2, messageSource2, locale2));
+
 			SimpleParameter simpleParameter = new SimpleParameter(param);
 			simpleParameter.setName(newName);
-			result.add(simpleParameter);			
+			result.add(simpleParameter);
 		}
 		return result;
 	}

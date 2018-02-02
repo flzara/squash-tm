@@ -20,37 +20,36 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.parameters;
 
-import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.HtmlUtils;
+import org.squashtest.tm.domain.testcase.Parameter;
+import org.squashtest.tm.service.testcase.ParameterModificationService;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import javax.inject.Inject;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.squashtest.tm.domain.testcase.Parameter;
-import org.squashtest.tm.service.testcase.ParameterModificationService;
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 /**
  * Controller to handle requests on parameters regardless of their test case
- * 
+ *
  * @author mpagnon
- * 
+ *
  */
+// XSS OK
 @RequestMapping("/parameters")
 @Controller
 public class ParameterController {
 
 	private static final String PARAMETER_ID_URL = "/{parameterId}";
-	
+
 	@Inject
 	private ParameterModificationService parameterModificationService;
 
 	/**
 	 * returns whether the {@link Parameter} is used in a ActionTestStep of it's TestCase
-	 * 
+	 *
 	 * @param parameterId
 	 * @return
 	 */
@@ -69,32 +68,32 @@ public class ParameterController {
 	public void deleteParameter(@PathVariable long parameterId) {
 		parameterModificationService.removeById(parameterId);
 	}
-	
+
 	/**
 	 * Will change the name of the {@link Parameter} of the given id with the given value
-	 * 
+	 *
 	 * @param parameterId : id of the concerned Parameter
 	 * @param value : value for the new name
 	 * @return
 	 */
-	@RequestMapping(value= PARAMETER_ID_URL+"/name", method = RequestMethod.POST, params = {VALUE})
+	@RequestMapping(value = PARAMETER_ID_URL + "/name", method = RequestMethod.POST, params = {VALUE})
 	@ResponseBody
-	public String changeName(@PathVariable long parameterId, @RequestParam(VALUE) String value){
+	public String changeName(@PathVariable long parameterId, @RequestParam(VALUE) String value) {
 		parameterModificationService.changeName(parameterId, value);
-		 return value;
+		return HtmlUtils.htmlEscape(value);
 	}
-	
+
 	/**
 	 * Will change the description of the {@link Parameter} of the given id with the given value
-	 * 
+	 *
 	 * @param parameterId : id of the concerned Parameter
 	 * @param value : value for the new description
 	 * @return
 	 */
-	@RequestMapping(value= PARAMETER_ID_URL+"/description", method = RequestMethod.POST, params = {VALUE})
+	@RequestMapping(value = PARAMETER_ID_URL + "/description", method = RequestMethod.POST, params = {VALUE})
 	@ResponseBody
-	public String changeDescription(@PathVariable long parameterId, @RequestParam(VALUE) String value){
+	public String changeDescription(@PathVariable long parameterId, @RequestParam(VALUE) String value) {
 		parameterModificationService.changeDescription(parameterId, value);
-		return value;
+		return HTMLCleanupUtils.cleanHtml(value);
 	}
 }

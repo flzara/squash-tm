@@ -91,7 +91,7 @@ public final class HTMLCleanupUtils {
 			Document.OutputSettings outputSettings = new Document.OutputSettings();
 			outputSettings.prettyPrint(false);
 			outputSettings.outline(false);
-			return Jsoup.clean(unsecureHtml, "", Whitelist.relaxed(), outputSettings);
+			return Jsoup.clean(unsecureHtml, "", Whitelist.relaxed().addAttributes("p", "style"), outputSettings);
 		}
 		return StringUtils.EMPTY;
 	}

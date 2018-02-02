@@ -20,21 +20,21 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.parameters;
 
-import java.io.Serializable;
-import java.util.Comparator;
-
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.testcase.Parameter;
+
+import java.io.Serializable;
+import java.util.Comparator;
 
 /**
  * Will compare {@link Parameter} on their name in the given {@link SortOrder}
  *
  * @author mpagnon
- *
  */
+// XSS OK
 @SuppressWarnings("serial")
 public final class ParameterNameComparator implements Comparator<Parameter>,
-		Serializable {
+	Serializable {
 
 	private SortOrder sortOrder;
 
