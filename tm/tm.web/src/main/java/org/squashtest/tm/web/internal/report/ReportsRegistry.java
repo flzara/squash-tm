@@ -49,6 +49,8 @@ public class ReportsRegistry {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReportsRegistry.class);
 
+	private static final String UNCHECKED = "unchecked";
+
 	private final MultiValueMap reportsByCategory = new MultiValueMap();
 	private final Map<ReportIdentifier, IdentifiedReportDecorator> reportByIdentifier = new ConcurrentHashMap<>();
 
@@ -88,7 +90,7 @@ public class ReportsRegistry {
 	}
 
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	public Set<StandardReportCategory> getCategories() {
 		return reportsByCategory.keySet();
 	}
@@ -100,18 +102,18 @@ public class ReportsRegistry {
 		return sortedCategories;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	public Collection<IdentifiedReportDecorator> findReports(StandardReportCategory category) {
 		Collection<IdentifiedReportDecorator> res = (Collection<IdentifiedReportDecorator>) reportsByCategory.get(category);
 		return res == null ? Collections.<IdentifiedReportDecorator>emptyList() : res;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	public Map<StandardReportCategory, Collection<BasicReport>> getReportsByCategory() {
 		return reportsByCategory;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	public Map<StandardReportCategory, Collection<BasicReport>> getSortedReportsByCategory() {
 
 		Map<StandardReportCategory, Collection<BasicReport>> sortedMap = new HashMap<>(reportsByCategory.size());

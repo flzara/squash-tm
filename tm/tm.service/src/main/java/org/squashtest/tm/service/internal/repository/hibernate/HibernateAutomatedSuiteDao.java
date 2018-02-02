@@ -42,6 +42,8 @@ import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
 @Repository
 public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 
+	private static final String UNCHECKED = "unchecked";
+
 	@PersistenceContext
 	private EntityManager em;
 
@@ -70,14 +72,14 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 		return em.getReference(AutomatedSuite.class, id);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<AutomatedSuite> findAll() {
 		Query query = em.createNamedQuery("automatedSuite.findAll");
 		return query.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<AutomatedSuite> findAllByIds(Collection<String> ids) {
 		if (ids.isEmpty()) {
@@ -89,7 +91,7 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public Collection<AutomatedExecutionExtender> findAllExtenders(String suiteId) {
 		Query query = em.createNamedQuery("automatedSuite.findAllExtenders");
@@ -112,7 +114,7 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 		return findAllExtendersByStatus(suiteId, ExecutionStatus.getTerminatedStatusSet());
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public Collection<AutomatedExecutionExtender> findAllExtendersByStatus(final String suiteId,
 			final Collection<ExecutionStatus> statusList) {

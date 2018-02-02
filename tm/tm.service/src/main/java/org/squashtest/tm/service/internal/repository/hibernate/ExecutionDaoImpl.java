@@ -48,6 +48,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ExecutionDaoImpl implements CustomExecutionDao {
+
 	private static final String TEST_CASE = "TestCase";
 	private static final String TEST_SUITE = "TestSuite";
 	private static final String EXECUTION = "Execution";
@@ -61,6 +62,7 @@ public class ExecutionDaoImpl implements CustomExecutionDao {
 	private static final String ITERATION_CAMPAIGN = "Iteration.campaign";
 	private static final String EXECUTION_STATUS = "executionStatus";
 	private static final String STATUS = "status";
+	private static final String UNCHECKED = "unchecked";
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -147,7 +149,7 @@ public class ExecutionDaoImpl implements CustomExecutionDao {
 
 	// ************** special execution status deactivation section ***************
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<ExecutionStep> findAllExecutionStepsWithStatus(Long projectId, ExecutionStatus executionStatus) {
 
@@ -162,7 +164,7 @@ public class ExecutionDaoImpl implements CustomExecutionDao {
 		return crit.list();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<IterationTestPlanItem> findAllIterationTestPlanItemsWithStatus(Long projectId, ExecutionStatus executionStatus) {
 
@@ -221,7 +223,7 @@ public class ExecutionDaoImpl implements CustomExecutionDao {
 		return issueDetectors;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<Execution> findAllByTestCaseIdOrderByRunDate(long testCaseId, Paging paging) {
 		Query query = entityManager.createNamedQuery("execution.findAllByTestCaseIdOrderByRunDate");
@@ -231,7 +233,7 @@ public class ExecutionDaoImpl implements CustomExecutionDao {
 		return query.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<Execution> findAllByTestCaseId(long testCaseId, PagingAndSorting pas) {
 		Criteria crit = entityManager.unwrap(Session.class).createCriteria(Execution.class, EXECUTION)

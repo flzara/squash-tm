@@ -42,10 +42,12 @@ import static org.squashtest.tm.jooq.domain.Tables.*;
 public class HibernateTestCaseLibraryNodeDao extends HibernateEntityDao<TestCaseLibraryNode> implements
 TestCaseLibraryNodeDao {
 
+	private static final String UNCHECKED = "unchecked";
+
 	@Inject
 	private DSLContext DSL;
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<String> getParentsName(long entityId) {
 		Query query = currentSession().getNamedQuery("TestCasePathEdge.findSortedParentNames");
@@ -53,7 +55,7 @@ TestCaseLibraryNodeDao {
 		return query.list();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<Long> getParentsIds(long entityId) {
 		Query query = currentSession().getNamedQuery("TestCasePathEdge.findSortedParentIds");
@@ -75,7 +77,7 @@ TestCaseLibraryNodeDao {
 		return Arrays.asList(toReturn);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<Long> findNodeIdsByPath(List<String> paths) {
 		//we will make a select with jooq, flushing session as hibernate would do if the request was made in hql
@@ -133,7 +135,7 @@ TestCaseLibraryNodeDao {
 	 *
 	 * @see org.squashtest.tm.service.internal.repository.LibraryNodeDao#findNodeIdByPath(java.lang.String)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public Long findNodeIdByPath(String path) {
 		return findNodeIdsByPath(Arrays.asList(path)).get(0);

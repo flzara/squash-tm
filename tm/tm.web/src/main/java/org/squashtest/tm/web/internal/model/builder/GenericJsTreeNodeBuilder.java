@@ -46,9 +46,12 @@ import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
  */
 public abstract class GenericJsTreeNodeBuilder<MODEL extends Identified, BUILDER extends JsTreeNodeBuilder<MODEL, BUILDER>>
 implements JsTreeNodeBuilder<MODEL, BUILDER> {
+
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
 	private static final Permission[] NODE_PERMISSIONS = { WRITE, CREATE, DELETE, EXECUTE, EXPORT };
 	private static final String[] PERM_NAMES = {WRITE.name(), CREATE.name(), DELETE.name(), EXECUTE.name(), EXPORT.name()};
+
+	private static final String UNCHECKED = "unchecked";
 
 	protected final PermissionEvaluationService permissionEvaluationService;
 
@@ -74,7 +77,7 @@ implements JsTreeNodeBuilder<MODEL, BUILDER> {
 	 * @see org.squashtest.tm.web.internal.model.builder.JsTreeNodeBuilder#setModel(MODEL)
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	public final BUILDER setModel(MODEL model) {
 		this.model = model;
 		return (BUILDER) this;
@@ -163,7 +166,7 @@ implements JsTreeNodeBuilder<MODEL, BUILDER> {
 	/**
 	 * @see org.squashtest.tm.web.internal.model.builder.JsTreeNodeBuilder#expand(org.apache.commons.collections.MultiMap)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public BUILDER expand(MultiMap expansionCandidates) {
 		this.expansionCandidates = expansionCandidates;
@@ -185,7 +188,7 @@ implements JsTreeNodeBuilder<MODEL, BUILDER> {
 		return permissionEvaluationService;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public BUILDER setIndex(int index) {
 		this.index = index;
@@ -193,7 +196,7 @@ implements JsTreeNodeBuilder<MODEL, BUILDER> {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	public BUILDER filterByMilestone(Milestone milestone) {
 		this.milestoneFilter = milestone;
 		return (BUILDER) this;

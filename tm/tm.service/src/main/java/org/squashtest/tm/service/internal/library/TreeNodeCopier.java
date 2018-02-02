@@ -57,6 +57,10 @@ import java.util.Map.Entry;
 @Component
 @Scope("prototype")
 public class TreeNodeCopier implements NodeVisitor, PasteOperation {
+
+	private static final String UNCHECKED = "unchecked";
+	private static final String RAWTYPES = "rawtypes";
+
 	@Inject
 	private RequirementDao requirementDao;
 	@Inject
@@ -132,7 +136,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 		return projectSource != null && projectDestination != null && !projectSource.getId().equals(projectDestination.getId());
 	}
 
-	@SuppressWarnings({"unchecked", "rawtypes"})
+	@SuppressWarnings({UNCHECKED, RAWTYPES})
 	public void visit(Folder source, FolderDao dao) {
 		Folder<?> copyFolder = (Folder<?>) source.createCopy();
 		persistCopy(copyFolder, dao, Sizes.NAME_MAX);
@@ -321,7 +325,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 	}
 
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	private <T extends TreeNode> void persistCopy(T copyParam, EntityDao<T> dao, int nameMaxSize) {
 		renameIfNeeded((Copiable) copyParam, nameMaxSize);
 		dao.persist(copyParam);
@@ -329,7 +333,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 		this.copy = copyParam;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	private <T extends TreeNode> void persistCopy(T copyParam, JpaRepository<T, Long> dao, int nameMaxSize) {
 		renameIfNeeded((Copiable) copyParam, nameMaxSize);
 		dao.save(copyParam);
@@ -337,7 +341,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 		this.copy = copyParam;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	private void persistTestCase(TestCase testCase) {
 		renameIfNeeded(testCase, Sizes.NAME_MAX);
 		testCaseDao.persistTestCaseAndSteps(testCase);
@@ -345,7 +349,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 		this.copy = testCase;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	private void persitIteration(Iteration copyParam) {
 		renameIfNeeded(copyParam, Sizes.NAME_MAX);
 		iterationDao.persistIterationAndTestPlan(copyParam);

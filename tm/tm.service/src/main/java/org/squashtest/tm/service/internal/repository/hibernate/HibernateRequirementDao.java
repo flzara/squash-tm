@@ -49,6 +49,8 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	private static final Map<VerificationCriterion, Criterion> HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION =
 		new EnumMap<>(VerificationCriterion.class);
 
+	private static final String UNCHECKED = "unchecked";
+
 	static {
 		HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION.put(VerificationCriterion.ANY, null); // yeah, it's a null.
 
@@ -160,7 +162,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		return formatExportResult(rootReqs, listObject);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	private List<Long> findRequirementParents(List<Long> params) {
 		Query query = currentSession().getNamedQuery("requirement.findRequirementParentIds");
 		query.setParameterList(NODE_IDS, params);
@@ -168,7 +170,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<Long> findDescendantRequirementIds(Collection<Long> params) {
 		Query query = currentSession().getNamedQuery("requirement.findRequirementDescendantIds");
@@ -282,7 +284,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 
 	/* ----------------------------------------------------/EXPORT METHODS----------------------------------------- */
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<RequirementCriticality> findDistinctRequirementsCriticalitiesVerifiedByTestCases(Set<Long> testCasesIds) {
 		if (!testCasesIds.isEmpty()) {
@@ -295,7 +297,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<RequirementCriticality> findDistinctRequirementsCriticalities(List<Long> requirementVersionsIds) {
 		if (!requirementVersionsIds.isEmpty()) {
@@ -307,7 +309,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<RequirementVersion> findVersions(Long requirementId) {
 		Query query = currentSession().getNamedQuery("requirement.findVersions");
@@ -316,7 +318,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<RequirementVersion> findVersionsForAll(List<Long> requirementIds) {
 		if (!requirementIds.isEmpty()) {
@@ -329,7 +331,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<Long> findAllRequirementsIdsByLibrary(long libraryId) {
 		Session session = currentSession();

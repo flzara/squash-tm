@@ -67,6 +67,8 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignExportCSVModel.class);
 
+	private static final String UNCHECKED = "unchecked";
+
 	@Inject
 	private CustomFieldHelperService cufHelperService;
 
@@ -446,7 +448,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 
 		}
 
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings(UNCHECKED)
 		private void populateExecutionCUFRowData(List<CellImpl> dataCells) {
 			Execution exe = exec;
 			if (exe != null) {
@@ -460,7 +462,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 			}
 		}
 
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings(UNCHECKED)
 		private void populateExecutionDenormalizedCUFRowData(List<CellImpl> dataCells) {
 			Execution exe = exec;
 			if (exe != null) {
@@ -474,7 +476,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 			}
 		}
 
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings(UNCHECKED)
 		private void populateExecutionStepCUFRowData(List<CellImpl> dataCells) {
 			ExecutionStep eStep = execStep;
 			if (eStep != null) {
@@ -487,7 +489,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 			}
 		}
 
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings(UNCHECKED)
 		private void populateExecutionStepDenormalizedCUFRowData(List<CellImpl> dataCells) {
 			ExecutionStep eStep = execStep;
 			if (eStep != null) {
@@ -501,7 +503,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 			}
 		}
 
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings(UNCHECKED)
 		private void populateTestCaseCUFRowData(List<CellImpl> dataCells) {
 
 			if (cachedItpcellReady) {
@@ -522,7 +524,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 			}
 		}
 
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings(UNCHECKED)
 		private void populateIterationCUFRowData(List<CellImpl> dataCells) {
 			Collection<CustomFieldValue> iValues = (Collection<CustomFieldValue>) iterCUFValues.get(iteration.getId());
 			for (CustomField model : iterCUFModel) {

@@ -97,6 +97,9 @@ import org.squashtest.tm.service.internal.batchimport.requirement.excel.Requirem
 public class ExcelWorkbookParser {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelWorkbookParser.class);
 
+	private static final String RAWTYPES = "rawtypes";
+	private static final String UNCHECKED = "unchecked";
+
 	@Inject
 	@Value("${uploadfilter.upload.import.maxLinesPerSheetForExcelImport:100}")
 	private int maxLines;
@@ -183,7 +186,7 @@ public class ExcelWorkbookParser {
 			}
 
 		});
-		
+
 		instructionBuilderFactoryByWorksheet.put(REQUIREMENT_LINKS_SHEET, new Factory<RequirementLinksSheetColumn>(){
 			@Override
 			public InstructionBuilder<?, ?> create(WorksheetDef<RequirementLinksSheetColumn> wd) {
@@ -242,7 +245,7 @@ public class ExcelWorkbookParser {
 		case COVERAGE_SHEET:
 			target = new CoverageTarget();
 			break;
-			
+
 		case REQUIREMENT_LINKS_SHEET :
 			target = new RequirementLinkTarget();
 			break;
@@ -274,7 +277,7 @@ public class ExcelWorkbookParser {
 		return this;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({RAWTYPES, UNCHECKED})
 	private void processWorksheet(WorksheetDef<?> worksheetDef) {
 		LOGGER.debug("Processing worksheet {}", worksheetDef.getWorksheetType());
 
@@ -307,55 +310,55 @@ public class ExcelWorkbookParser {
 		return this;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({UNCHECKED, RAWTYPES})
 	public List<TestCaseInstruction> getTestCaseInstructions() {
 		return (List) instructionsByWorksheet.get(TEST_CASES_SHEET); // useless (List) cast required for compiler not to
 		// whine
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({UNCHECKED, RAWTYPES})
 	public List<StepInstruction> getTestStepInstructions() {
 		return (List) instructionsByWorksheet.get(STEPS_SHEET); // useless (List) cast required for compiler not to
 		// whine
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({UNCHECKED, RAWTYPES})
 	public List<ParameterInstruction> getParameterInstructions() {
 		return (List) instructionsByWorksheet.get(PARAMETERS_SHEET); // useless (List) cast required for compiler not to
 		// whine
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({UNCHECKED, RAWTYPES})
 	public List<DatasetParamValueInstruction> getDatasetInstructions() {
 		return (List) instructionsByWorksheet.get(DATASETS_SHEET); // useless (List) cast required for compiler not to
 		// whine
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({UNCHECKED, RAWTYPES})
 	public List<DatasetParamValueInstruction> getDatasetParamValuesInstructions() {
 		return (List) instructionsByWorksheet.get(DATASET_PARAM_VALUES_SHEET); // useless (List) cast required for compiler not to
 		// whine
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({UNCHECKED, RAWTYPES})
 	public List<RequirementVersionInstruction> getRequirementVersionInstructions(){
 		return (List) instructionsByWorksheet.get(REQUIREMENT_SHEET);// useless (List) cast required for compiler not to
 		// whine
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({UNCHECKED, RAWTYPES})
 	public List<RequirementVersionInstruction> getCoverageInstructions() {
 		return (List) instructionsByWorksheet.get(COVERAGE_SHEET);// useless (List) cast required for compiler not to
 		// whine
 	}
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+
+	@SuppressWarnings({UNCHECKED, RAWTYPES})
 	public List<RequirementLinkInstruction> getRequirementLinkgsInstruction() {
 		return (List) instructionsByWorksheet.get(REQUIREMENT_LINKS_SHEET);// useless (List) cast required for compiler not to
 		// whine
 	}
-	
-	
+
+
 	public boolean isEmpty(Row row) {
 		boolean isEmpty = true;
 
@@ -373,8 +376,8 @@ public class ExcelWorkbookParser {
 
 		return isEmpty;
 	}
-	
-	
+
+
 
 
 	/**

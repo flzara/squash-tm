@@ -83,6 +83,8 @@ import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
 public class Model {
 
 
+	private static final String UNCHECKED = "unchecked";
+
 	@PersistenceContext
 	private EntityManager em;
 
@@ -781,7 +783,7 @@ public class Model {
 	// ************************* CUFS accessors
 	// *************************************
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	public Collection<CustomField> getTestCaseCufs(TestCaseTarget target) {
 		if (!testCaseStatusByTarget.containsKey(target)) {
 			mainInitTestCase(target);
@@ -798,7 +800,7 @@ public class Model {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	public Collection<CustomField> getRequirementVersionCufs(
 		RequirementVersionTarget target) {
 		// if requirement version is unknown in model (ie in req tree),
@@ -818,7 +820,7 @@ public class Model {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	public Collection<CustomField> getTestStepCufs(TestStepTarget target) {
 		TestCaseTarget tc = target.getTestCase();
 
@@ -1259,14 +1261,14 @@ public class Model {
 		return PathUtils.extractProjectNames(paths);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	private <TARGET extends Target> List<String> collectPaths(
 		List<TARGET> targets) {
 		return (List<String>) CollectionUtils.collect(targets,
 			PathCollector.INSTANCE, new ArrayList<String>(targets.size()));
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	private List<String> collectRequirementPaths(
 		List<RequirementVersionTarget> targets) {
 		return (List<String>) CollectionUtils.collect(targets,
@@ -1274,7 +1276,7 @@ public class Model {
 				targets.size()));
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	private List<Project> loadProjects(List<String> names) {
 		List<String> unescapedNames = PathUtils.unescapePathPartSlashes(names);
 		Query q = em.createNamedQuery(
@@ -1283,7 +1285,7 @@ public class Model {
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	private List<InternalStepModel> loadStepsModel(Long tcId) {
 		Query query = em.createNamedQuery(
 			"testStep.findBasicInfosByTcId");
@@ -1314,7 +1316,7 @@ public class Model {
 	 * All references are supposed to exist in the database that's foul play but
 	 * saves more bloat
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	private void swapNameForPath(
 		Collection<SimpleNode<NamedReference>> references) {
 
@@ -1378,7 +1380,7 @@ public class Model {
 			super();
 		}
 
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings(UNCHECKED)
 		@Override
 		public Long transform(Object input) {
 			return ((SimpleNode<NamedReference>) input).getKey().getId();

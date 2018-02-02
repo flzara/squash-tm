@@ -66,6 +66,9 @@ public class ConciseFormToCriteriaConverter {
 	private static final String EXP_VALUE = "value";
 	private static final String EXP_SEL = "selected";
 
+	private static final String UNCHECKED = "unchecked";
+	private static final String RAWTYPES = "rawtypes";
+
 	private final FormToCriteriaConverter delegate = new FormToCriteriaConverter();
 	private final Map<String, Input> flattenedInputByName = new HashMap<>();
 	private final List<Project> projects;
@@ -97,7 +100,7 @@ public class ConciseFormToCriteriaConverter {
 
 	}
 
-	@SuppressWarnings({"unchecked", "rawtypes"})
+	@SuppressWarnings({UNCHECKED, RAWTYPES})
 	private void populateExpandedInput(String inputName, Object inputValue, Map<String, Object> expandedForm) {
 		Map concise = (Map) inputValue;
 		InputType type = InputType.valueOf((String) concise.get(CON_TYPE));
@@ -107,25 +110,25 @@ public class ConciseFormToCriteriaConverter {
 		switch (type) { // NOSONAR
 			case TEXT:
 			case PASSWORD:
-			case DATE: 
+			case DATE:
 				expanded = expendedSingleInput(concise);
 				break;
-		
+
 			case CHECKBOX:
 				expanded = expandedCheckbox(concise);
 				break;
-			
-			
+
+
 			case RADIO_BUTTONS_GROUP:
 				expanded = expandedRadioButtonGroup(inputName, concise);
 				break;
 
-			
+
 			case DROPDOWN_LIST:
 				expanded = expandedDropdownList(inputName, concise);
 				break;
 
-			
+
 			case CHECKBOXES_GROUP:
 				expanded = expandedCheckboxesGroup(inputName, concise);
 				break;
@@ -135,7 +138,7 @@ public class ConciseFormToCriteriaConverter {
 				expanded = expandedProjectPicker(concise);
 				break;
 
-			
+
 			case TREE_PICKER:
 				Collection<Map> selNodes = (Collection<Map>) concise.get(CON_VAL);
 				if (selNodes.isEmpty()) {
@@ -150,7 +153,7 @@ public class ConciseFormToCriteriaConverter {
 				expanded = expandedPickerList(concise);
 				break;
 
-			
+
 			default:
 				// NOOP
 				break;
@@ -158,7 +161,7 @@ public class ConciseFormToCriteriaConverter {
 
 		expandedForm.put(inputName, expanded);
 	}
-	
+
 	private List<Object> expandedPickerList(Map concise) {
 		Collection values = (Collection) concise.get(CON_VAL);
 
@@ -169,14 +172,14 @@ public class ConciseFormToCriteriaConverter {
 		mMap.put(EXP_VALUE, values);
 
 		expandedModel.add(mMap);
-		
+
 		return expandedModel;
 	}
 
 	private List expendedTreePicker(Map concise) {
 
 		Collection<Map> selNodes = (Collection<Map>) concise.get(CON_VAL);
-		
+
 		List exp = new ArrayList();
 
 		for (Map node : selNodes) {
@@ -197,7 +200,7 @@ public class ConciseFormToCriteriaConverter {
 		return exp;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	private Map expandedCheckbox(Map concise) {
 		Map exp = new HashMap();
 		exp.put(EXP_TYPE, concise.get(CON_TYPE));
@@ -206,7 +209,7 @@ public class ConciseFormToCriteriaConverter {
 		return exp;
 	}
 
-	@SuppressWarnings({"rawtypes", "unchecked"})
+	@SuppressWarnings({RAWTYPES, UNCHECKED})
 	private List expandedProjectPicker(Map concise) {
 		List exp = new ArrayList();
 		Collection selVals = (Collection) concise.get(CON_VAL);
@@ -222,7 +225,7 @@ public class ConciseFormToCriteriaConverter {
 		return exp;
 	}
 
-	@SuppressWarnings({"rawtypes", "unchecked"})
+	@SuppressWarnings({RAWTYPES, UNCHECKED})
 	private List expandedRadioButtonGroup(String inputName, Map concise) {
 		RadioButtonsGroup reportInput = (RadioButtonsGroup) flattenedInputByName.get(inputName);
 		List exp = new ArrayList();
@@ -239,7 +242,7 @@ public class ConciseFormToCriteriaConverter {
 		return exp;
 	}
 
-	@SuppressWarnings({"rawtypes", "unchecked"})
+	@SuppressWarnings({RAWTYPES, UNCHECKED})
 	private List expandedDropdownList(String inputName, Map concise) {
 		DropdownList reportInput = (DropdownList) flattenedInputByName.get(inputName);
 		List exp = new ArrayList();
@@ -256,7 +259,7 @@ public class ConciseFormToCriteriaConverter {
 		return exp;
 	}
 
-	@SuppressWarnings({"rawtypes", "unchecked"})
+	@SuppressWarnings({RAWTYPES, UNCHECKED})
 	private List expandedCheckboxesGroup(String inputName, Map concise) {
 		CheckboxesGroup reportInput = (CheckboxesGroup) flattenedInputByName.get(inputName);
 		List exp = new ArrayList();

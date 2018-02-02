@@ -51,6 +51,7 @@ import static org.squashtest.tm.jooq.domain.Tables.MILESTONE_BINDING;
 import java.util.*;
 
 public class MilestoneDaoImpl implements CustomMilestoneDao {
+
 	private static final String CAMPAIGN_ID = "campaignId";
 	private static final String VERSION_ID = "versionId";
 	private static final String VALID_STATUS = "validStatus";
@@ -60,15 +61,16 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 	private static final String PROJECT_ID = "projectId";
 	private static final Logger LOGGER = LoggerFactory.getLogger(MilestoneDaoImpl.class);
 	private static final int BATCH_UPDATE_SIZE = 50;
+	private static final String UNCHECKED = "unchecked";
 
 	@PersistenceContext
 	private EntityManager entityManager;
-	
+
 	@Inject
 	private DSLContext DSL;
-	
 
-	@SuppressWarnings("unchecked")
+
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public Collection<Milestone> findAssociableMilestonesForTestCase(long testCaseId) {
 		Query query = entityManager.createNamedQuery("milestone.findAssociableMilestonesForTestCase");
@@ -76,8 +78,8 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 		query.setParameter(VALID_STATUS, MilestoneStatus.getAllStatusAllowingObjectBind());
 		return query.getResultList();
 	}
-	
-	
+
+
 
 	@Override
 	public List<Long> findAllMilestoneIds() {
@@ -90,8 +92,8 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 
 	@Override
 	public List<Long> findMilestoneIdsForUsers(Collection<Long> partyIds) {
-		
-		
+
+
 		return DSL.selectDistinct(MILESTONE_BINDING.MILESTONE_ID)
 				.from(ACL_RESPONSIBILITY_SCOPE_ENTRY)
 					.join(ACL_OBJECT_IDENTITY).on(ACL_OBJECT_IDENTITY.ID.eq(ACL_RESPONSIBILITY_SCOPE_ENTRY.OBJECT_IDENTITY_ID))
@@ -104,7 +106,7 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 
 
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public Collection<Milestone> findAllMilestonesForTestCase(long testCaseId) {
 
@@ -149,7 +151,7 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 		return ids.contains(testCaseId);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public Collection<Milestone> findAssociableMilestonesForRequirementVersion(long versionId) {
 		Query q = entityManager.createNamedQuery("milestone.findAssociableMilestonesForRequirementVersion");
@@ -158,7 +160,7 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public Collection<Milestone> findAssociableMilestonesForCampaign(long campaignId) {
 		Query q = entityManager.createNamedQuery("milestone.findAssociableMilestonesForCampaign");
@@ -332,12 +334,12 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 		// flush remaining items
 		flushAndClearSession(session, fullTextEntityManager);
 	}
-	
+
 	private void flushAndClearSession(Session session, FullTextEntityManager fullTextEntityManager) {
 		session.flush();
 		fullTextEntityManager.flushToIndexes();
 		fullTextEntityManager.clear();
-		
+
 	}
 
 	@Override

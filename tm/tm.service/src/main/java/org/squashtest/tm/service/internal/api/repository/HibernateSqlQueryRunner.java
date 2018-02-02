@@ -40,9 +40,11 @@ import org.squashtest.tm.api.repository.SqlQueryRunner;
 public class HibernateSqlQueryRunner implements SqlQueryRunner {
 
 
+	private static final String UNCHECKED = "unchecked";
+	
 	private static final QueryExecution<Query> EXECUTE_LIST = new QueryExecution<Query>() {
 		@Override
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings(UNCHECKED)
 		public <R> R executeQuery(Query query) {
 			return (R) query.list();
 		}
@@ -50,7 +52,7 @@ public class HibernateSqlQueryRunner implements SqlQueryRunner {
 
 	private static final QueryExecution<Query> EXECUTE_SINGLE = new QueryExecution<Query>() {
 		@Override
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings(UNCHECKED)
 		public <R> R executeQuery(Query query) {
 			return (R) query.uniqueResult();
 		}
@@ -93,7 +95,7 @@ public class HibernateSqlQueryRunner implements SqlQueryRunner {
 	/**
 	 * @see org.squashtest.tm.api.repository.SqlQueryRunner#executeUniqueSelect(java.lang.String)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public <T> T executeUniqueSelect(String selectQuery) {
 		return (T) executeQuery(selectQuery, EXECUTE_SINGLE);
@@ -102,7 +104,7 @@ public class HibernateSqlQueryRunner implements SqlQueryRunner {
 	/**
 	 * @see org.squashtest.tm.api.repository.SqlQueryRunner#executeSelect(java.lang.String, java.util.Map)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public <T> List<T> executeSelect(String selectQuery, Map<String, ?> namedParameters) {
 		return (List<T>) executeQuery(selectQuery, new NamedParamsListExecution(namedParameters));
@@ -111,7 +113,7 @@ public class HibernateSqlQueryRunner implements SqlQueryRunner {
 	/**
 	 * @see org.squashtest.tm.api.repository.SqlQueryRunner#executeUniqueSelect(java.lang.String, java.util.Map)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public <T> T executeUniqueSelect(String selectQuery, Map<String, ?> namedParameters) {
 		return (T) executeQuery(selectQuery, new NamedParamsUniqueResultExecution(namedParameters));

@@ -55,11 +55,13 @@ import java.util.Collections;
 import java.util.List;
 
 public class IssueDaoImpl implements CustomIssueDao {
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(IssueDaoImpl.class);
+
+	private static final String UNCHECKED = "unchecked";
 
 	private static final String SELECT_ISSUES_INTRO =
 			"select Issue from Issue Issue ";
-
 
 	private static final String SELECT_ISSUES_OUTRO =
 			"and Issue.bugtracker.id in (" +
@@ -99,7 +101,7 @@ public class IssueDaoImpl implements CustomIssueDao {
 	private EntityManager entityManager;
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	public List<Pair<Execution, Issue>> findAllExecutionIssuePairsByCampaign(Campaign campaign, PagingAndSorting sorter) {
 		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue) from Execution ex join ex.testPlan tp join tp.iteration i join i.campaign c join ex.issues Issue where c = :camp", sorter);
 
@@ -109,7 +111,7 @@ public class IssueDaoImpl implements CustomIssueDao {
 		return query.list();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<Issue> findSortedIssuesFromIssuesLists(final Collection<Long> issueListIds,
 			final PagingAndSorting sorter, Long bugtrackerId) {
@@ -132,7 +134,7 @@ public class IssueDaoImpl implements CustomIssueDao {
 	/**
 	 * @see {@linkplain IssueDao#findSortedIssuesFromExecutionAndExecutionSteps(List, List, PagingAndSorting)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<Issue> findSortedIssuesFromExecutionAndExecutionSteps(List<Long> executionsIds,
 			List<Long> executionStepsIds, PagingAndSorting sorter) {
@@ -230,7 +232,7 @@ public class IssueDaoImpl implements CustomIssueDao {
          return exec;
     }
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<Issue> getAllIssueFromBugTrackerId(Long bugtrackerId) {
 		return new JPAQueryFactory(entityManager)
@@ -240,7 +242,7 @@ public class IssueDaoImpl implements CustomIssueDao {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	public List<Issue> findIssueListByRemoteIssue(String remoteid, BugTracker bugtracker) {
 		return new JPAQueryFactory(entityManager)
 			.selectFrom(QIssue.issue)
@@ -251,7 +253,7 @@ public class IssueDaoImpl implements CustomIssueDao {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	public List<Pair<Execution, Issue>> findAllDeclaredExecutionIssuePairsByExecution(Execution execution, PagingAndSorting sorter) {
 		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue) from Execution ex join ex.issueList il join il.issues Issue where ex = :execution", sorter);
 
@@ -262,7 +264,7 @@ public class IssueDaoImpl implements CustomIssueDao {
 }
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	public List<Pair<Execution, Issue>> findAllExecutionIssuePairsByIteration(Iteration iteration, PagingAndSorting sorter) {
 		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue) from Execution ex join ex.testPlan tp join tp.iteration i join ex.issues Issue where i = :iteration", sorter);
 
@@ -273,7 +275,7 @@ public class IssueDaoImpl implements CustomIssueDao {
 }
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	public List<Pair<Execution, Issue>> findAllExecutionIssuePairsByTestSuite(TestSuite testSuite, PagingAndSorting sorter) {
 		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue) from TestSuite ts join ts.testPlan tp join tp.executions ex join ex.issues Issue where ts = :testSuite", sorter);
 
@@ -284,7 +286,7 @@ public class IssueDaoImpl implements CustomIssueDao {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	public List<Pair<Execution, Issue>> findAllExecutionIssuePairsByCampaignFolder(CampaignFolder folder, PagingAndSorting sorter) {
 		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue) from Execution ex join ex.issues Issue where ex.testPlan.iteration.campaign.id in (select cpe.descendantId from CampaignPathEdge cpe where cpe.ancestorId = :folderId)", sorter);
 
@@ -295,7 +297,7 @@ public class IssueDaoImpl implements CustomIssueDao {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	public List<Pair<Execution, Issue>> findAllExecutionIssuePairsByTestCase(TestCase testCase, PagingAndSorting sorter) {
 		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue) from Execution ex join ex.issues Issue join ex.testPlan tp join tp.referencedTestCase tc where tc = :testCase", sorter);
 
@@ -306,7 +308,7 @@ public class IssueDaoImpl implements CustomIssueDao {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	public List<RequirementIssueSupport> findAllExecutionIssuePairsByRequirementVersions(List<RequirementVersion> requirementVersions, PagingAndSorting sorter) {
 		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.RequirementIssueSupport(rv, ex, Issue) " +
 			"from Execution ex " +

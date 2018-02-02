@@ -72,7 +72,7 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 	private static final String TEST_CASE_ID_PARAM_NAME = "testCaseId";
 	private static final String TEST_CASE_IDS_PARAM_NAME = "testCaseIds";
 	private static final String TEST_CASES_IDS = "testCasesIds";
-
+	private static final String UNCHECKED = "unchecked";
 
 	private static final String FIND_DESCENDANT_QUERY = "select DESCENDANT_ID from TCLN_RELATIONSHIP where ANCESTOR_ID in (:list)";
 
@@ -209,7 +209,7 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 		return (TestCase) query.uniqueResult();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<Long> findTestCasesHavingCaller(Collection<Long> testCasesIds) {
 		Query query = currentSession().getNamedQuery("testCase.findTestCasesHavingCaller");
@@ -217,7 +217,7 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 		return query.list();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<Long> findAllTestCasesIdsCalledByTestCases(Collection<Long> testCasesIds) {
 		Query query = currentSession().getNamedQuery("testCase.findAllTestCasesIdsCalledByTestCases");
@@ -225,7 +225,7 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 		return query.list();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<Long> findAllTestCasesIdsCallingTestCases(List<Long> testCasesIds) {
 		if(testCasesIds.isEmpty()){
@@ -237,7 +237,7 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	public List<TestCase> findAllCallingTestCases(final long testCaseId, final PagingAndSorting sorting) {
 		String orderBy = "";
 
@@ -256,7 +256,7 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<TestCase> findAllCallingTestCases(long calleeId) {
 		Query query = currentSession().createQuery(FIND_ALL_CALLING_TEST_CASE_MAIN_HQL);
@@ -266,7 +266,7 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	public List<CallTestStep> findAllCallingTestSteps(long testCaseId, PagingAndSorting sorting) {
 		String orderBy = "";
 
@@ -285,7 +285,7 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	public List<CallTestStep> findAllCallingTestSteps(long testCaseId) {
 
 		// TODO : maybe move this to package-info.java along the other queries if
@@ -298,7 +298,7 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 		return query.list();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	private List<NamedReference> findTestCaseDetails(Collection<Long> ids){
 		if (ids.isEmpty()){
 			return Collections.emptyList();
@@ -378,7 +378,7 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 
 
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<Long> findCalledTestCaseOfCallSteps(List<Long> testStepsIds) {
 		Query query = currentSession().getNamedQuery("testCase.findCalledTestCaseOfCallSteps");
@@ -405,7 +405,7 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 	 *
 	 * See #createEffectiveSorting(Sorting sorting), just below
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<TestCase> findAllByVerifiedRequirementVersion(long verifiedId, PagingAndSorting sorting) {
 
@@ -537,7 +537,7 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<TestCase> findUnsortedAllByVerifiedRequirementVersion(long requirementVersionId) {
 		Query query = currentSession().getNamedQuery("testCase.findUnsortedAllByVerifiedRequirementVersion");
@@ -647,7 +647,7 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<Long> findAllTestCaseIdsByNodeIds(Collection<Long> nodeIds) {
 		if (nodeIds.isEmpty()){

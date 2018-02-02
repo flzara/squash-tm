@@ -37,6 +37,8 @@ import java.util.List;
 
 public class CustomReportLibraryNodeDaoImpl implements CustomCustomReportLibraryNodeDao {
 
+	private static final String UNCHECKED = "unchecked";
+
 	@PersistenceContext
 	EntityManager em;
 
@@ -46,7 +48,7 @@ public class CustomReportLibraryNodeDaoImpl implements CustomCustomReportLibrary
 		return node.getChildren();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<Long> findAllDescendantIds(List<Long> nodesIds) {
 		Query query = em.createNamedQuery("CustomReportLibraryNodePathEdge.findAllDescendantIds");
@@ -54,7 +56,7 @@ public class CustomReportLibraryNodeDaoImpl implements CustomCustomReportLibrary
 		return query.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<CustomReportLibraryNode> findAllDescendants(List<Long> nodesIds) {
 		Query query = em.createNamedQuery("CustomReportLibraryNodePathEdge.findAllDescendant");
@@ -63,7 +65,7 @@ public class CustomReportLibraryNodeDaoImpl implements CustomCustomReportLibrary
 	}
 
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<Long> findAllFirstLevelDescendantIds(List<Long> nodesIds) {
 		Query query = em.createNamedQuery("CustomReportLibraryNodePathEdge.findAllFirstLevelDescendantIds");
@@ -71,7 +73,7 @@ public class CustomReportLibraryNodeDaoImpl implements CustomCustomReportLibrary
 		return query.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<Long> findAncestorIds(Long nodeId) {
 		Query query = em.createNamedQuery("CustomReportLibraryNodePathEdge.findAllAncestorIds");
@@ -79,7 +81,7 @@ public class CustomReportLibraryNodeDaoImpl implements CustomCustomReportLibrary
 		return query.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<Object[]> findAncestor(Long nodeId) {
 		Query query = em.createNativeQuery("SELECT " +
