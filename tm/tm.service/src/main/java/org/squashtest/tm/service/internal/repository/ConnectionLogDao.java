@@ -20,10 +20,12 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.squashtest.tm.domain.users.ConnectionLog;
 
 /**
  * @author aguilhem
  */
-public interface ConnectionLogDao extends EntityDao<ConnectionLog> {
+public interface ConnectionLogDao extends JpaRepository<ConnectionLog,Long> {
+
 }

@@ -26,9 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.users.ConnectionLog;
 import org.squashtest.tm.service.internal.repository.ConnectionLogDao;
-import org.squashtest.tm.service.internal.user.UserAccountServiceImpl;
 import org.squashtest.tm.service.security.ConnectionLogService;
-import org.squashtest.tm.service.security.UserContextService;
 
 import javax.inject.Inject;
 import java.util.Date;
@@ -47,24 +45,19 @@ public class ConnectionLogServiceImpl implements ConnectionLogService {
 
 	@Override
 	public void addSuccessfulConnectionLog(String login) {
-		ConnectionLog connectionLog = initConnectionLog(login);
-		connectionLog.setSuccess(true);
-		dao.persist(connectionLog);
-
+		initConnectionLog(login,true);
 	}
 
 	@Override
 	public void addFailedConnectionLog(String login) {
-		ConnectionLog connectionLog = initConnectionLog(login);
-		connectionLog.setSuccess(false);
-		dao.persist(connectionLog);
+		initConnectionLog(login,false);
 	}
 
-	@Override
-	public ConnectionLog initConnectionLog(String login) {
+	private void initConnectionLog(String login, boolean success) {
 		ConnectionLog connectionLog = new ConnectionLog();
 		connectionLog.setLogin(login);
 		connectionLog.setConnectionDate(new Date());
-		return connectionLog;
+		connectionLog.setSuccess(success);
+		dao.save(connectionLog);
 	}
 }
