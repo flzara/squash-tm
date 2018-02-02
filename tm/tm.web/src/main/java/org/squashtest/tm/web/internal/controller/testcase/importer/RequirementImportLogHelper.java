@@ -20,14 +20,15 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.importer;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.service.importer.EntityType;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+// XSS OK
 @Component
 public class RequirementImportLogHelper extends ImportLogHelper {
 

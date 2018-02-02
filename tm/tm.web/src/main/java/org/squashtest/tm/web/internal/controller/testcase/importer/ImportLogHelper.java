@@ -20,19 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.importer;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -48,6 +35,15 @@ import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.*;
+import java.util.Map.Entry;
+
+// XSS OK
 @Component
 public abstract class ImportLogHelper {
 
@@ -100,22 +96,22 @@ public abstract class ImportLogHelper {
 	private void writeEntriesForLog(Collection<LogEntry> entries, Sheet sheet, Locale locale) {
 		int rownum = 1;
 		for (LogEntry entry : entries) {
-            Row row = sheet.createRow(rownum++);
-            int cellnum = 0;
-            Cell cell = row.createCell(cellnum++);
-            writeValueToCell(cell, entry.getLine());
-            cell = row.createCell(cellnum++);
-            writeValueToCell(cell, entry.getStatus().shortName());
+			Row row = sheet.createRow(rownum++);
+			int cellnum = 0;
+			Cell cell = row.createCell(cellnum++);
+			writeValueToCell(cell, entry.getLine());
+			cell = row.createCell(cellnum++);
+			writeValueToCell(cell, entry.getStatus().shortName());
 
-            cell = row.createCell(cellnum++);
-            if (entry.getI18nError() != null) {
-                writeValueToCell(cell, messageSource.getMessage(entry.getI18nError(), entry.getErrorArgs(), locale));
-            }
-            cell = row.createCell(cellnum++);
-            if (entry.getI18nImpact() != null) {
-                writeValueToCell(cell, messageSource.getMessage(entry.getI18nImpact(), entry.getImpactArgs(), locale));
-            }
-        }
+			cell = row.createCell(cellnum++);
+			if (entry.getI18nError() != null) {
+				writeValueToCell(cell, messageSource.getMessage(entry.getI18nError(), entry.getErrorArgs(), locale));
+			}
+			cell = row.createCell(cellnum++);
+			if (entry.getI18nImpact() != null) {
+				writeValueToCell(cell, messageSource.getMessage(entry.getI18nImpact(), entry.getImpactArgs(), locale));
+			}
+		}
 	}
 
 	private void writeEntriesForEmptyLog(Sheet sheet, Locale locale) {

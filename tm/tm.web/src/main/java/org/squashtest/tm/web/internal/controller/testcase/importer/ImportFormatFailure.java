@@ -20,15 +20,15 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.importer;
 
+import org.squashtest.tm.service.batchimport.excel.ColumnMismatch;
+import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException;
+import org.squashtest.tm.service.batchimport.excel.WorksheetFormatStatus;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import org.squashtest.tm.service.batchimport.excel.ColumnMismatch;
-import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException;
-import org.squashtest.tm.service.batchimport.excel.WorksheetFormatStatus;
 
 /**
  * Holds references to {@link ColumnMismatch} and build String list of concerned columns for each mismatch type. <br/>
@@ -37,6 +37,7 @@ import org.squashtest.tm.service.batchimport.excel.WorksheetFormatStatus;
  * @author mpagnon
  *
  */
+// XSS OK
 public class ImportFormatFailure {
 	private Map<ColumnMismatch, Set<String>> mismatches = new HashMap<>();
 

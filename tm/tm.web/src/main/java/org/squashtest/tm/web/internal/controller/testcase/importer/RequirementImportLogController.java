@@ -20,11 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.importer;
 
-import java.io.File;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
@@ -34,10 +29,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+
 /**
  * @author Gregory Fouquet
  *
  */
+// XSS OK
 @Controller
 @RequestMapping("/requirement/import-logs")
 public class RequirementImportLogController {
@@ -50,7 +50,7 @@ public class RequirementImportLogController {
 	@ResponseBody
 	@RequestMapping(value = "/{filename:.+}", method = RequestMethod.GET)
 	public FileSystemResource getExcelImportLog(@PathVariable String filename,
-			HttpServletResponse response) {
+												HttpServletResponse response) {
 		File logFile = logHelper.fetchLogFile(filename);
 		response.setContentType("application/octet-stream");
 		response.setHeader("Content-Disposition", "attachment; filename=" + logHelper.logFilename(filename));

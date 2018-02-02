@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.importer;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -42,10 +36,16 @@ import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.web.importer.ImportHelper;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 
+import javax.inject.Inject;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+
 /**
  * @author Gregory Fouquet
  *
  */
+// XSS OK
 @Controller
 @RequestMapping("/test-cases/importer")
 public class TestCaseImportController {
@@ -82,8 +82,8 @@ public class TestCaseImportController {
 	 */
 	@RequestMapping(value = "/zip", method = RequestMethod.POST, produces = "text/html")
 	public ModelAndView importZippedTestCases(@RequestParam("archive") MultipartFile archive,
-			@RequestParam(RequestParams.PROJECT_ID) long projectId, @RequestParam("zipEncoding") String zipEncoding)
-					throws IOException {
+											  @RequestParam(RequestParams.PROJECT_ID) long projectId, @RequestParam("zipEncoding") String zipEncoding)
+		throws IOException {
 
 		InputStream stream = archive.getInputStream();
 		ModelAndView mav = new ModelAndView("fragment/import/import-summary");
@@ -108,7 +108,9 @@ public class TestCaseImportController {
 	 */
 	@RequestMapping(value = "/xls", method = RequestMethod.POST, params = "dry-run")
 	public ModelAndView dryRunExcelWorkbook(@RequestParam("archive") MultipartFile uploadedFile, WebRequest request) {
-		LOGGER.debug("dryRunExcelWorkbook");
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("dryRunExcelWorkbook");
+		}
 		return importWorkbook(uploadedFile, request, new Command<File, ImportLog>() {
 			@Override
 			public ImportLog execute(File xls) {
@@ -118,13 +120,13 @@ public class TestCaseImportController {
 	}
 
 	private ModelAndView importWorkbook(MultipartFile uploadedFile, WebRequest request,
-			Command<File, ImportLog> callback) {
+										Command<File, ImportLog> callback) {
 		ModelAndView mav = new ModelAndView("fragment/import/import-summary");
 
 		File xls = null;
 
 		try {
-			xls = importHelper.multipartToImportFile(uploadedFile,"test-case-import-", ".xls");
+			xls = importHelper.multipartToImportFile(uploadedFile, "test-case-import-", ".xls");
 			ImportLog summary = callback.execute(xls); // TODO parser may throw ex we should handle
 			summary.recompute(); // TODO why is it here ? shouldnt it be in service ?
 			generateImportLog(request, summary);
@@ -133,12 +135,10 @@ public class TestCaseImportController {
 		} catch (IOException e) {
 			LOGGER.error("An exception prevented processing of test-case import file", e);
 
-		}
-		catch (TemplateMismatchException tme){
+		} catch (TemplateMismatchException tme) {
 			ImportFormatFailure importFormatFailure = new ImportFormatFailure(tme);
 			mav.addObject("summary", importFormatFailure);
-		}
- finally {
+		} finally {
 			if (xls != null) {
 				xls.deleteOnExit();
 			}

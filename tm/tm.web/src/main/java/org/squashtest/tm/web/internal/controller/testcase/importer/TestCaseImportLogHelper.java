@@ -20,15 +20,15 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.importer;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.service.importer.EntityType;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+// XSS Ok
 @Component
 public class TestCaseImportLogHelper extends ImportLogHelper {
 
@@ -50,17 +50,17 @@ public class TestCaseImportLogHelper extends ImportLogHelper {
 	@Override
 	protected String getImportLogPrefix() {
 		return IMPORT_LOG_PREFIX;
-		}
+	}
 
 	@Override
 	protected Logger getLogger() {
 		return LOGGER;
-		}
+	}
 
 	@Override
 	protected Map<String, EntityType> getEntityTypeByTab() {
 		return ENTITY_BY_TAB;
-		}
+	}
 
 
 }
