@@ -99,20 +99,14 @@ import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 @Controller
 @RequestMapping("/test-cases/{testCaseId}")
 public class TestCaseModificationController {
-	/**
-	 *
-	 */
-	private static final String TEST_CASE = "testCase";
-	private static final String OPTIMIZED = "optimized";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseModificationController.class);
 
-	/**
-	 *
-	 */
 	private static final String NAME = "name";
-
-	private static final String TEST_CASE_ = "test case "; // NOSONAR generated name
+	private static final String OPTIMIZED = "optimized";
+	private static final String TEST_CASE = "testCase";
+	private static final String TEST_SPACE_CASE = "test case ";
+	private static final String TEST_CASE_ID = "testCaseId";
 
 	private final DatatableMapper<String> referencingTestCaseMapper = new NameBasedMapper(6)
 		.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, NAME, Project.class)
@@ -274,14 +268,14 @@ public class TestCaseModificationController {
 
 	@RequestMapping(value = "/nature-combo-data", method = RequestMethod.GET)
 	@ResponseBody
-	public JsonInfoList buildNatureComboData(@PathVariable("testCaseId") Long testCaseId) {
+	public JsonInfoList buildNatureComboData(@PathVariable(TEST_CASE_ID) Long testCaseId) {
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
 		return infoListBuilder.toJson(testCase.getProject().getTestCaseNatures());
 	}
 
 	@RequestMapping(value = "/type-combo-data", method = RequestMethod.GET)
 	@ResponseBody
-	public JsonInfoList buildTypeComboData(@PathVariable("testCaseId") Long testCaseId) {
+	public JsonInfoList buildTypeComboData(@PathVariable(TEST_CASE_ID) Long testCaseId) {
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
 		return infoListBuilder.toJson(testCase.getProject().getTestCaseTypes());
 	}
@@ -302,7 +296,7 @@ public class TestCaseModificationController {
 
 		testCaseModificationService.changeDescription(testCaseId, testCaseDescription);
 		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace(TEST_CASE_ + testCaseId + ": updated description to " + testCaseDescription);
+			LOGGER.trace(TEST_SPACE_CASE + testCaseId + ": updated description to " + testCaseDescription);
 		}
 
 		return HTMLCleanupUtils.cleanHtml(testCaseDescription);
@@ -311,7 +305,7 @@ public class TestCaseModificationController {
 
 	@ResponseBody
 	@RequestMapping(value = "/new-version", method = RequestMethod.GET)
-	public JsonTestCase getNewVersionTemplate(@PathVariable("testCaseId") Long testCaseId) {
+	public JsonTestCase getNewVersionTemplate(@PathVariable(TEST_CASE_ID) Long testCaseId) {
 
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
 
@@ -326,7 +320,7 @@ public class TestCaseModificationController {
 
 	@ResponseBody
 	@RequestMapping(value = "/new-version", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	public JsonTestCase createNewVersion(@PathVariable("testCaseId") Long originalId, @RequestBody TestCase newVersionData) {
+	public JsonTestCase createNewVersion(@PathVariable(TEST_CASE_ID) Long originalId, @RequestBody TestCase newVersionData) {
 
 		TestCase newTestCase = testCaseModificationService.addNewTestCaseVersion(originalId, newVersionData);
 
@@ -346,7 +340,7 @@ public class TestCaseModificationController {
 		testCaseReference = testCaseReference.substring(0, Math.min(testCaseReference.length(), 50));
 		testCaseModificationService.changeReference(testCaseId, testCaseReference);
 		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace(TEST_CASE_ + testCaseId + ": updated reference to " + testCaseReference);
+			LOGGER.trace(TEST_SPACE_CASE + testCaseId + ": updated reference to " + testCaseReference);
 		}
 
 		return HtmlUtils.htmlEscape(testCaseReference);
@@ -415,7 +409,7 @@ public class TestCaseModificationController {
 
 		testCaseModificationService.changePrerequisite(testCaseId, testCasePrerequisite);
 		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace(TEST_CASE_ + testCaseId + ": updated prerequisite to " + testCasePrerequisite);
+			LOGGER.trace(TEST_SPACE_CASE + testCaseId + ": updated prerequisite to " + testCasePrerequisite);
 		}
 
 		testCaseModificationService.addParametersFromPrerequisite(testCaseId);

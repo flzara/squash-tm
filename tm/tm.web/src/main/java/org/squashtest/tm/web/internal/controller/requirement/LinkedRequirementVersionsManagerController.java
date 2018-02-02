@@ -70,13 +70,18 @@ import java.util.*;
 
 /**
  * Controller for the management of Requirement Versions linked to other Requirement Versions.
- * <p>
+ *
  * Created by jlor on 11/05/2017.
  */
 // XSS OK
 @Controller
 @RequestMapping("/requirement-versions/{requirementVersionId}/linked-requirement-versions")
 public class LinkedRequirementVersionsManagerController {
+
+	private static final String IS_RELATED_ID_A_NODE_ID = "isRelatedIdANodeId";
+	private static final String REQ_VERSION_LINK_TYPE_ID = "reqVersionLinkTypeId";
+	private static final String REQ_VERSION_LINK_TYPE_DIRECTION = "reqVersionLinkTypeDirection";
+	private static final String REQUIREMENT_VERSION_ID = "requirementVersionId";
 
 	@Inject
 	private InternationalizationHelper i18nHelper;
@@ -212,7 +217,7 @@ public class LinkedRequirementVersionsManagerController {
 	@ResponseBody
 	@RequestMapping(value = "/{requirementNodesIds}", method = RequestMethod.POST)
 	public Map<String, Object> addDefaultLinkWithVersionIdAndNodeId(
-		@PathVariable("requirementVersionId") long requirementVersionId,
+		@PathVariable(REQUIREMENT_VERSION_ID) long requirementVersionId,
 		@PathVariable("requirementNodesIds") List<Long> requirementNodesIds) {
 
 		Collection<LinkedRequirementVersionException> rejections =
@@ -232,13 +237,13 @@ public class LinkedRequirementVersionsManagerController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/{relatedId}", method = RequestMethod.POST, params = {"isRelatedIdANodeId", "reqVersionLinkTypeId", "reqVersionLinkTypeDirection"})
+	@RequestMapping(value = "/{relatedId}", method = RequestMethod.POST, params = {IS_RELATED_ID_A_NODE_ID, REQ_VERSION_LINK_TYPE_ID, REQ_VERSION_LINK_TYPE_DIRECTION})
 	public void updateLinkTypeAndDirection(
-		@PathVariable("requirementVersionId") long requirementVersionId,
+		@PathVariable(REQUIREMENT_VERSION_ID) long requirementVersionId,
 		@PathVariable("relatedId") long paramRelatedId,
-		@RequestParam("isRelatedIdANodeId") boolean isRelatedIdANodeId,
-		@RequestParam("reqVersionLinkTypeId") long reqVersionLinkTypeId,
-		@RequestParam("reqVersionLinkTypeDirection") boolean reqVersionLinkTypeDirection) {
+		@RequestParam(IS_RELATED_ID_A_NODE_ID) boolean isRelatedIdANodeId,
+		@RequestParam(REQ_VERSION_LINK_TYPE_ID) long reqVersionLinkTypeId,
+		@RequestParam(REQ_VERSION_LINK_TYPE_DIRECTION) boolean reqVersionLinkTypeDirection) {
 
 		long relatedId = paramRelatedId;
 
@@ -248,8 +253,8 @@ public class LinkedRequirementVersionsManagerController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/{relatedId}", params = {"isRelatedIdANodeId"}, method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
-	public Map<String, String> getRequirementVersionInformation(@PathVariable long relatedId, @RequestParam("isRelatedIdANodeId") boolean isRelatedIdANodeId) {
+	@RequestMapping(value = "/{relatedId}", params = {IS_RELATED_ID_A_NODE_ID}, method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
+	public Map<String, String> getRequirementVersionInformation(@PathVariable long relatedId, @RequestParam(IS_RELATED_ID_A_NODE_ID) boolean isRelatedIdANodeId) {
 
 		Map<String, String> versionInfosMap = new HashMap<>();
 

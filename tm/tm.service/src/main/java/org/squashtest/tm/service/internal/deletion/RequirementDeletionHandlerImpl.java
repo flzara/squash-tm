@@ -68,6 +68,7 @@ AbstractNodeDeletionHandler<RequirementLibraryNode, RequirementFolder> implement
 RequirementNodeDeletionHandler {
 
 	private static final String REQUIREMENTS_TYPE = "requirements";
+	private static final String REQUIREMENT = "requirement";
 
 	@Inject
 	private RequirementFolderDao folderDao;
@@ -470,7 +471,7 @@ RequirementNodeDeletionHandler {
 			testCaseImportanceManager.changeImportanceAfterRequirementDeletion();
 
 			// fill the report
-			report.addRemoved(ids, "requirement");
+			report.addRemoved(ids, REQUIREMENT);
 
 			deletionDao.flush();
 
@@ -502,7 +503,7 @@ RequirementNodeDeletionHandler {
 			// notify the test cases
 			testCaseImportanceManager.changeImportanceAfterRequirementDeletion();
 
-			report.addRemoved(requirementIds, "requirement");
+			report.addRemoved(requirementIds, REQUIREMENT);
 
 			deletionDao.flush();
 
@@ -523,7 +524,7 @@ RequirementNodeDeletionHandler {
 
 			deletionDao.unbindFromMilestone(unbindableRequirements, getActiveMilestoneId());
 
-			report.addRemoved(requirementIds, "requirement");
+			report.addRemoved(requirementIds, REQUIREMENT);
 
 			deletionDao.flush();
 		}
@@ -639,11 +640,11 @@ RequirementNodeDeletionHandler {
 			// log the renaming operation if happened.
 			if (needsRenaming) {
 				child.setName(name);
-				report.addRenamed("requirement", child.getId(), name);
+				report.addRenamed(REQUIREMENT, child.getId(), name);
 			}
 
 			// log the movement operation.
-			movedNodesLog.add(new Node(child.getId(), "requirement"));
+			movedNodesLog.add(new Node(child.getId(), REQUIREMENT));
 
 		}
 
@@ -664,7 +665,7 @@ RequirementNodeDeletionHandler {
 			strtype = "folder";
 			break;
 		default:
-			strtype = "requirement";
+			strtype = REQUIREMENT;
 			break;
 		}
 

@@ -176,9 +176,12 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 	private static final String MAJOR = "MAJOR";
 	private static final String CRITICAL = "CRITICAL";
 
-	private static String reqParamName = "requirementIds";
-	private static String critPramName = "criticality";
-	private static String validationStatusParamName = "validationStatus";
+	private static final String CRITICALITY_ERROR_MESSAGE =
+		"RequirementStatisticsService cannot handle the following RequirementCriticality value : ";
+
+	private static final String REQUIREMENT_IDS = "requirementIds";
+	private static final String CRITICALITY = "criticality";
+	private static final String VALIDATION_STATUS = "validationStatus";
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -195,7 +198,7 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 		}
 
 		Query query = entityManager.createNativeQuery(SQL_BOUND_TCS_STATISTICS);
-		query.setParameter(reqParamName, requirementIds);
+		query.setParameter(REQUIREMENT_IDS, requirementIds);
 
 		List<Object[]> tuples = query.getResultList();
 
@@ -237,7 +240,7 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 
 		Query query = entityManager.createNamedQuery(
 			"RequirementStatistics.criticalityStatistics");
-		query.setParameter(reqParamName, requirementIds);
+		query.setParameter(REQUIREMENT_IDS, requirementIds);
 
 		List<Object[]> tuples = query.getResultList();
 
@@ -263,9 +266,7 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 					stats.setCritical(cardinality);
 					break;
 				default:
-					throw new IllegalArgumentException(
-						"RequirementStatisticsService cannot handle the following RequirementCriticality value : '"
-							+ tuple[0] + "'");
+					throw new IllegalArgumentException(CRITICALITY_ERROR_MESSAGE + tuple[0]);
 			}
 		}
 
@@ -281,7 +282,7 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 		}
 		Query query = entityManager.createNamedQuery(
 			"RequirementStatistics.statusesStatistics");
-		query.setParameter(reqParamName, requirementIds);
+		query.setParameter(REQUIREMENT_IDS, requirementIds);
 
 		List<Object[]> tuples = query.getResultList();
 
@@ -325,7 +326,7 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 
 
 		Query query = entityManager.createNativeQuery(SQL_BOUND_DESC_STATISTICS);
-		query.setParameter(reqParamName, requirementIds);
+		query.setParameter(REQUIREMENT_IDS, requirementIds);
 
 		List<Object[]> tuples = query.getResultList();
 
@@ -364,7 +365,7 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 		}
 
 		Query query = entityManager.createNativeQuery(SQL_COVERAGE_STATISTICS);
-		query.setParameter(reqParamName, requirementIds);
+		query.setParameter(REQUIREMENT_IDS, requirementIds);
 
 		List<Object[]> tuples = query.getResultList();
 
@@ -398,9 +399,7 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 					stats.setTotalCritical(total);
 					break;
 				default:
-					throw new IllegalArgumentException(
-						"RequirmentStatisticsService cannot handle the following RequirementCriticality value : '"
-							+ tuple[0] + "'");
+					throw new IllegalArgumentException(CRITICALITY_ERROR_MESSAGE + tuple[0]);
 			}
 		}
 
@@ -415,7 +414,7 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 		}
 
 		Query query = entityManager.createNativeQuery(SQL_VALIDATION_STATISTICS);
-		query.setParameter(reqParamName, requirementIds);
+		query.setParameter(REQUIREMENT_IDS, requirementIds);
 
 		List<Object[]> tuples = query.getResultList();
 
@@ -482,9 +481,7 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 				stats.setUndefinedCritical(stats.getUndefinedCritical() + count);
 				break;
 			default:
-				throw new IllegalArgumentException(
-					"RequirementStatisticsService cannot handle the following RequirementCriticality value : '"
-						+ requirementCriticality + "'");
+				throw new IllegalArgumentException(CRITICALITY_ERROR_MESSAGE + requirementCriticality);
 		}
 	}
 
@@ -503,9 +500,7 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 				stats.setInconclusiveCritical(count);
 				break;
 			default:
-				throw new IllegalArgumentException(
-					"RequirementStatisticsService cannot handle the following RequirementCriticality value : '"
-						+ requirementCriticality + "'");
+				throw new IllegalArgumentException(CRITICALITY_ERROR_MESSAGE + requirementCriticality);
 		}
 	}
 
@@ -524,9 +519,7 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 				stats.setConclusiveCritical(count);
 				break;
 			default:
-				throw new IllegalArgumentException(
-					"RequirementStatisticsService cannot handle the following RequirementCriticality value : '"
-						+ requirementCriticality + "'");
+				throw new IllegalArgumentException(CRITICALITY_ERROR_MESSAGE + requirementCriticality);
 		}
 		return;
 	}
@@ -552,9 +545,9 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 			return new ArrayList<>();
 		}
 		Query query = entityManager.createNativeQuery(SQL_REQUIREMENTS_IDS_FROM_VALIDATION);
-		query.setParameter(reqParamName, requirementIds);
-		query.setParameter(critPramName, criticality.toString());
-		query.setParameter(validationStatusParamName, validationStatus);
+		query.setParameter(REQUIREMENT_IDS, requirementIds);
+		query.setParameter(CRITICALITY, criticality.toString());
+		query.setParameter(VALIDATION_STATUS, validationStatus);
 
 		List<BigInteger> bigIntIdsList = query.getResultList();
 		List<Long> reqIdsList = new ArrayList<>(bigIntIdsList.size());

@@ -98,7 +98,7 @@ public interface CustomFieldValueDao extends JpaRepository<CustomFieldValue, Lon
 	@Query
 	@Modifying
 	@Transactional
-	void deleteAllForEntity(@Param("entityId") Long entityId, @Param("entityType") BindableEntity entity);
+	void deleteAllForEntity(@Param("entityId") Long entityId, @Param(ENTITY_TYPE) BindableEntity entity);
 
 
 	/**
@@ -117,7 +117,7 @@ public interface CustomFieldValueDao extends JpaRepository<CustomFieldValue, Lon
 	 * order specified in their respective {@link CustomFieldBinding}.
 	 */
 	@Query
-	List<CustomFieldValue> findAllCustomValues(@Param("entityId") long entityId, @Param("entityType") BindableEntity entityType);
+	List<CustomFieldValue> findAllCustomValues(@Param("entityId") long entityId, @Param(ENTITY_TYPE) BindableEntity entityType);
 
 
 	/**
@@ -177,7 +177,7 @@ public interface CustomFieldValueDao extends JpaRepository<CustomFieldValue, Lon
 
 
 	@Query
-	List<CustomFieldValue> findAllForEntityAndRenderingLocation(@Param("entityId") long entityId, @Param("entityType") BindableEntity entityType, @Param("location") RenderingLocation renderingLocation);
+	List<CustomFieldValue> findAllForEntityAndRenderingLocation(@Param("entityId") long entityId, @Param(ENTITY_TYPE) BindableEntity entityType, @Param("location") RenderingLocation renderingLocation);
 
 	@Query
 	@EmptyCollectionGuard

@@ -164,7 +164,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'LINK') " + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(HAS_LINK_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
 	public void reorderTestPlan(long suiteId, MultiSorting newSorting) {
 
 		Paging noPaging = Pagings.NO_PAGING;
@@ -181,7 +181,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'LINK') " + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(HAS_LINK_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestSuite.class, paramName = "suiteId")
 	public void addTestCasesToIterationAndTestSuite(List<Long> testCaseIds, @Id long suiteId) {
 
@@ -197,7 +197,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'LINK') " + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(HAS_LINK_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestSuite.class, paramName = "suiteId")
 	public void detachTestPlanFromTestSuite(List<Long> testPlanIds, @Id long suiteId) {
 
@@ -214,7 +214,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'LINK') " + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(HAS_LINK_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestSuite.class, paramName = "suiteId")
 	public boolean detachTestPlanFromTestSuiteAndRemoveFromIteration(List<Long> testPlanIds, @Id long suiteId) {
 		TestSuite testSuite = testSuiteDao.findOne(suiteId);

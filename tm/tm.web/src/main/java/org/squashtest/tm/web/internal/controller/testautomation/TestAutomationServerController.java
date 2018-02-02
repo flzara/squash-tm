@@ -47,13 +47,15 @@ import org.squashtest.tm.web.internal.model.testautomation.TAUsageStatus;
 @RequestMapping("/test-automation-servers")
 public class TestAutomationServerController {
 
+	private static final String SERVER_ID = "serverId";
+
 	@Inject
 	private TestAutomationServerManagerService service;
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestAutomationServerController.class);
 
 	@RequestMapping(value = "/{serverId}/name", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
 	@ResponseBody
-	public String changeName(@PathVariable("serverId") long serverId,
+	public String changeName(@PathVariable(SERVER_ID) long serverId,
 			@RequestParam(JEditablePostParams.VALUE) String newName) {
 		LOGGER.info("Change name for test automation server of id #{}", serverId);
 		service.changeName(serverId, newName);
@@ -62,7 +64,7 @@ public class TestAutomationServerController {
 
 	@RequestMapping(value = "/{serverId}/description", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
 	@ResponseBody
-	public String changeDescription(@PathVariable("serverId") long serverId,
+	public String changeDescription(@PathVariable(SERVER_ID) long serverId,
 			@RequestParam(JEditablePostParams.VALUE) String newDescription) {
 		LOGGER.info("Change description for test automation server of id #{}", serverId);
 		service.changeDescription(serverId, newDescription);
@@ -71,7 +73,7 @@ public class TestAutomationServerController {
 
 	@RequestMapping(value = "/{serverId}/baseURL", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
 	@ResponseBody
-	public String changeURL(@PathVariable("serverId") long serverId, @RequestParam(JEditablePostParams.VALUE) String newURL) {
+	public String changeURL(@PathVariable(SERVER_ID) long serverId, @RequestParam(JEditablePostParams.VALUE) String newURL) {
 		URL url = UrlUtils.toUrl(newURL);
 		service.changeURL(serverId, url);
 		return newURL;
@@ -79,7 +81,7 @@ public class TestAutomationServerController {
 
 	@RequestMapping(value = "/{serverId}/login", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
 	@ResponseBody
-	public String changeLogin(@PathVariable("serverId") long serverId,
+	public String changeLogin(@PathVariable(SERVER_ID) long serverId,
 			@RequestParam(JEditablePostParams.VALUE) String newLogin) {
 		LOGGER.info("Change login for test automation server of id #{}", serverId);
 		service.changeLogin(serverId, newLogin);
@@ -88,7 +90,7 @@ public class TestAutomationServerController {
 
 	@RequestMapping(value = "/{serverId}/password", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
 	@ResponseBody
-	public String changePassword(@PathVariable("serverId") long serverId,
+	public String changePassword(@PathVariable(SERVER_ID) long serverId,
 			@RequestParam(JEditablePostParams.VALUE) String newPassword) {
 		LOGGER.info("Change password for test automation server of id #{}", serverId);
 		service.changePassword(serverId, newPassword);
@@ -97,7 +99,7 @@ public class TestAutomationServerController {
 
 	@RequestMapping(value = "/{serverId}/manualSelection", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
 	@ResponseBody
-	public Boolean changeManualSelection(@PathVariable("serverId") long serverId,
+	public Boolean changeManualSelection(@PathVariable(SERVER_ID) long serverId,
 			@RequestParam(JEditablePostParams.VALUE) Boolean manualSelection) {
 		LOGGER.info("Change manual slave selection for test automation server of id #{}", serverId);
 		service.changeManualSlaveSelection(serverId, manualSelection);

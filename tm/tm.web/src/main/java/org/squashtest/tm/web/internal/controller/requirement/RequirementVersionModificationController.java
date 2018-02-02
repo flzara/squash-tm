@@ -89,6 +89,9 @@ import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 @Controller
 @RequestMapping("/requirement-versions/{requirementVersionId}")
 public class RequirementVersionModificationController {
+
+	private static final String REQUIREMENT_VERSION_ID = "requirementVersionId";
+
 	@Inject
 	private Provider<RequirementCriticalityComboDataBuilder> criticalityComboBuilderProvider;
 
@@ -199,7 +202,7 @@ public class RequirementVersionModificationController {
 	@RequestMapping(value = "/bulk-update", method = RequestMethod.POST, consumes = "application/json")
 	@ResponseBody
 		// here we use the path variable as a list, instead of a single id
-	void bulkUpdate(@PathVariable("requirementVersionId") List<Long> requirementId, @RequestBody RequirementBulkUpdate bulkUpdate) {
+	void bulkUpdate(@PathVariable(REQUIREMENT_VERSION_ID) List<Long> requirementId, @RequestBody RequirementBulkUpdate bulkUpdate) {
 		requirementVersionManager.bulkUpdate(requirementId, bulkUpdate);
 	}
 
@@ -434,7 +437,7 @@ public class RequirementVersionModificationController {
 
 	@RequestMapping(value = "/milestones", method = RequestMethod.GET)
 	@ResponseBody
-	public DataTableModel getBoundMilestones(@PathVariable("requirementVersionId") long requirementVersionId, DataTableDrawParameters params) {
+	public DataTableModel getBoundMilestones(@PathVariable(REQUIREMENT_VERSION_ID) long requirementVersionId, DataTableDrawParameters params) {
 
 		Collection<Milestone> allMilestones = requirementVersionManager.findAllMilestones(requirementVersionId);
 
@@ -443,28 +446,28 @@ public class RequirementVersionModificationController {
 
 	@RequestMapping(value = "/milestones/{milestoneIds}", method = RequestMethod.POST)
 	@ResponseBody
-	public void bindMilestones(@PathVariable("requirementVersionId") long requirementVersionId, @PathVariable("milestoneIds") List<Long> milestoneIds) {
+	public void bindMilestones(@PathVariable(REQUIREMENT_VERSION_ID) long requirementVersionId, @PathVariable("milestoneIds") List<Long> milestoneIds) {
 
 		requirementVersionManager.bindMilestones(requirementVersionId, milestoneIds);
 	}
 
 	@RequestMapping(value = "/milestones/{milestoneIds}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public void unbindMilestones(@PathVariable("requirementVersionId") long requirementVersionId, @PathVariable("milestoneIds") List<Long> milestoneIds) {
+	public void unbindMilestones(@PathVariable(REQUIREMENT_VERSION_ID) long requirementVersionId, @PathVariable("milestoneIds") List<Long> milestoneIds) {
 
 		requirementVersionManager.unbindMilestones(requirementVersionId, milestoneIds);
 	}
 
 	@RequestMapping(value = "/milestones/associables", method = RequestMethod.GET)
 	@ResponseBody
-	public DataTableModel getNotYetBoundMilestones(@PathVariable("requirementVersionId") long requirementVersionId, DataTableDrawParameters params) {
+	public DataTableModel getNotYetBoundMilestones(@PathVariable(REQUIREMENT_VERSION_ID) long requirementVersionId, DataTableDrawParameters params) {
 		Collection<Milestone> notBoundMilestones = requirementVersionManager.findAssociableMilestones(requirementVersionId);
 		return buildMilestoneModel(new ArrayList<>(notBoundMilestones), params.getsEcho());
 	}
 
 
 	@RequestMapping(value = "/milestones/panel", method = RequestMethod.GET)
-	public String getMilestonesPanel(@PathVariable("requirementVersionId") Long requirementVersionId, Model model) {
+	public String getMilestonesPanel(@PathVariable(REQUIREMENT_VERSION_ID) Long requirementVersionId, Model model) {
 
 		MilestonePanelConfiguration conf = new MilestonePanelConfiguration();
 		RequirementVersion version = requirementVersionManager.findById(requirementVersionId);

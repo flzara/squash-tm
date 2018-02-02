@@ -55,6 +55,8 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	implements CampaignNodeDeletionHandler {
 
 	private static final String CAMPAIGNS_TYPE = "campaigns";
+	private static final String EXTENDED_DELETE = "EXTENDED_DELETE";
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignDeletionHandlerImpl.class);
 
 	@Inject
@@ -173,7 +175,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 			if (campaignDao.countRunningOrDoneExecutions(campaign.getId()) > 0) {
 
 				try {
-					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(campaign, "EXTENDED_DELETE"));
+					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(campaign, EXTENDED_DELETE));
 
 					//The user is allowed to delete the campaign but must be warned
 					report = new NotDeletableCampaignsPreviewReport();
@@ -207,7 +209,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 			if (iterationDao.countRunningOrDoneExecutions(iteration.getId()) > 0) {
 
 				try {
-					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(iteration, "EXTENDED_DELETE"));
+					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(iteration, EXTENDED_DELETE));
 
 					//The user is allowed to delete the iteration but must be warned
 					report = new NotDeletableCampaignsPreviewReport();
@@ -260,7 +262,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 			if (containExecutedTc(suite)) {
 				try {
 					PermissionsUtils.checkPermission(permissionEvaluationService,
-						new SecurityCheckableObject(suite, "EXTENDED_DELETE"));
+						new SecurityCheckableObject(suite, EXTENDED_DELETE));
 
 					// The user is allowed to delete the test suite but must be warned
 					report = new NotDeletableCampaignsPreviewReport();
@@ -324,7 +326,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 			if (campaignDao.countRunningOrDoneExecutions(campaign.getId()) > 0) {
 				try {
-					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(campaign, "EXTENDED_DELETE"));
+					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(campaign, EXTENDED_DELETE));
 				} catch (AccessDeniedException exception) { // NOSONAR : this exception is part of the nominal use case
 					lockedNodes.add(campaign.getId());
 				}
@@ -433,7 +435,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 			if (iterationDao.countRunningOrDoneExecutions(iteration.getId()) > 0) {
 
 				try {
-					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(iteration, "EXTENDED_DELETE"));
+					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(iteration, EXTENDED_DELETE));
 					registerIterationDeletion(iteration, iterationsToBeDeleted, deletedTargetIds);
 				} catch (AccessDeniedException exception) { // NOSONAR : this exception is part of the nominal use case
 					// Apparently, we don't wanna do anything, not even log something.
