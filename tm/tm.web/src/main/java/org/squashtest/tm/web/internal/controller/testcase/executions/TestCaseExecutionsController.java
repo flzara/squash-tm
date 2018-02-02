@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.executions;
 
-import java.util.List;
-import java.util.Locale;
-
-import javax.inject.Inject;
-
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,42 +45,43 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Locale;
+
+// XSS OK
 @Controller
 @RequestMapping("/test-cases/{testCaseId}/executions")
 public class TestCaseExecutionsController {
 	/**
-	 * 
+	 *
 	 */
 	private static final String NAME = "name";
 
-
 	private final DatatableMapper<String> execsTableMapper = new NameBasedMapper()
-	.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, NAME, Project.class)
-	.mapAttribute("campaign-name", NAME, Campaign.class)
-	.mapAttribute("iteration-name", NAME, Iteration.class)
-	.mapAttribute("exec-name", NAME, Execution.class)
-	.mapAttribute("exec-mode", "executionMode", Execution.class)
-	.mapAttribute("test-suite-name", NAME, TestSuite.class)
-	.mapAttribute("exec-status", "executionStatus", Execution.class)
-	.mapAttribute("last-exec-by", "lastExecutedBy", Execution.class)
-	.mapAttribute("last-exec-on", "lastExecutedOn", Execution.class)
-	.mapAttribute("dataset", "datasetLabel", Execution.class);
-
+		.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, NAME, Project.class)
+		.mapAttribute("campaign-name", NAME, Campaign.class)
+		.mapAttribute("iteration-name", NAME, Iteration.class)
+		.mapAttribute("exec-name", NAME, Execution.class)
+		.mapAttribute("exec-mode", "executionMode", Execution.class)
+		.mapAttribute("test-suite-name", NAME, TestSuite.class)
+		.mapAttribute("exec-status", "executionStatus", Execution.class)
+		.mapAttribute("last-exec-by", "lastExecutedBy", Execution.class)
+		.mapAttribute("last-exec-on", "lastExecutedOn", Execution.class)
+		.mapAttribute("dataset", "datasetLabel", Execution.class);
 
 	private ExecutionFinder executionFinder;
 
 	@Inject
 	private InternationalizationHelper internationalizationHelper;
 
-
-
 	/**
 	 * Returns the
-	 * 
+	 *
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping( method = RequestMethod.GET, params = "tab")
+	@RequestMapping(method = RequestMethod.GET, params = "tab")
 	public String getExecutionsTab(@PathVariable long testCaseId, Model model) {
 		Paging paging = Pagings.DEFAULT_PAGING;
 
@@ -100,24 +95,23 @@ public class TestCaseExecutionsController {
 	}
 
 	/**
-	 * @param executionFinder
-	 *            the executionFinder to set
+	 * @param executionFinder the executionFinder to set
 	 */
 	@Inject
 	public void setExecutionFinder(ExecutionFinder executionFinder) {
 		this.executionFinder = executionFinder;
 	}
 
-	@RequestMapping( params = RequestParams.S_ECHO_PARAM)
+	@RequestMapping(params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getExecutionsTableModel(@PathVariable long testCaseId, DataTableDrawParameters params,
-			Locale locale) {
+												  Locale locale) {
 		PagingAndSorting pas = createPagingAndSorting(params);
 
 		PagedCollectionHolder<List<Execution>> executions = executionFinder.findAllByTestCaseId(testCaseId, pas);
 
 		return new ExecutionsTableModelBuilder(locale, internationalizationHelper).buildDataModel(executions,
-				params.getsEcho());
+			params.getsEcho());
 	}
 
 	private PagingAndSorting createPagingAndSorting(DataTableDrawParameters params) {

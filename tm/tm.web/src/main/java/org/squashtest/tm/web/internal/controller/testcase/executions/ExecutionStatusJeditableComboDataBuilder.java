@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.executions;
 
-import java.util.Set;
-
-import javax.inject.Inject;
-
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
@@ -31,10 +27,14 @@ import org.squashtest.tm.service.project.CustomGenericProjectManager;
 import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter;
 import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
 
+import javax.inject.Inject;
+import java.util.Set;
+
+// XSS OK
 @Component
 @Scope("prototype")
 public class ExecutionStatusJeditableComboDataBuilder extends
-		EnumJeditableComboDataBuilder<ExecutionStatus, ExecutionStatusJeditableComboDataBuilder> {
+	EnumJeditableComboDataBuilder<ExecutionStatus, ExecutionStatusJeditableComboDataBuilder> {
 	@Inject
 	private CustomGenericProjectManager projectManager;
 

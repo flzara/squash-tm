@@ -20,15 +20,10 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.executions;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
@@ -39,14 +34,19 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 
+import javax.validation.constraints.NotNull;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
 /**
  * Builder of {@link DataTableModel} for the table of a test case's executions.
- * 
+ *
  * @author Gregory Fouquet
- * 
  */
+// XSS OK
 /* package-private */class ExecutionsTableModelBuilder extends
-DataTableModelBuilder<Execution> {
+	DataTableModelBuilder<Execution> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExecutionsTableModelBuilder.class);
 	/**
@@ -59,7 +59,7 @@ DataTableModelBuilder<Execution> {
 	private final InternationalizationHelper i18nHelper;
 
 	public ExecutionsTableModelBuilder(@NotNull Locale locale,
-			@NotNull InternationalizationHelper i18nHelper) {
+									   @NotNull InternationalizationHelper i18nHelper) {
 		super();
 		this.locale = locale;
 		this.i18nHelper = i18nHelper;
@@ -72,18 +72,18 @@ DataTableModelBuilder<Execution> {
 
 		Map<String, Object> data = new HashMap<>(12);
 
-		data.put("exec-id", 		item.getId());
-		data.put(DataTableModelConstants.PROJECT_NAME_KEY, 	iteration.getProject().getName());
-		data.put("campaign-name", 	iteration.getCampaign().getName());
-		data.put("iteration-name", 	iteration.getName());
-		data.put("exec-name", item.getName() + " (Exec.#" + (1 + item.getExecutionOrder()) + ")");
-		data.put("exec-mode", 		translate(item.getExecutionMode()));
-		data.put("test-suite-name", testSuiteNameList(testPlanItem));
+		data.put("exec-id", item.getId());
+		data.put(DataTableModelConstants.PROJECT_NAME_KEY, HtmlUtils.htmlEscape(iteration.getProject().getName()));
+		data.put("campaign-name", HtmlUtils.htmlEscape(iteration.getCampaign().getName()));
+		data.put("iteration-name", HtmlUtils.htmlEscape(iteration.getName()));
+		data.put("exec-name", HtmlUtils.htmlEscape(item.getName()) + " (Exec.#" + (1 + item.getExecutionOrder()) + ")");
+		data.put("exec-mode", translate(item.getExecutionMode()));
+		data.put("test-suite-name", HtmlUtils.htmlEscape(testSuiteNameList(testPlanItem)));
 		data.put("raw-exec-status", item.getExecutionStatus().name());
-		data.put("exec-status", 	translate(item.getExecutionStatus()));
-		data.put("last-exec-by", 	item.getLastExecutedBy());
-		data.put("last-exec-on",	i18nHelper.localizeShortDate(item.getLastExecutedOn(), locale));
-		data.put("dataset", 		formatDatasetName(item));
+		data.put("exec-status", translate(item.getExecutionStatus()));
+		data.put("last-exec-by", HtmlUtils.htmlEscape(item.getLastExecutedBy()));
+		data.put("last-exec-on", i18nHelper.localizeShortDate(item.getLastExecutedOn(), locale));
+		data.put("dataset", HtmlUtils.htmlEscape(formatDatasetName(item)));
 
 		return data;
 	}
@@ -92,19 +92,18 @@ DataTableModelBuilder<Execution> {
 		return TestSuiteHelper.buildEllipsedSuiteNameList(item.getTestSuites(), 20);
 	}
 
-	private String formatDatasetName(Execution exec){
+	private String formatDatasetName(Execution exec) {
 
 		String dsLabel = exec.getDatasetLabel();
-		if (! StringUtils.isBlank(dsLabel)){
+		if (!StringUtils.isBlank(dsLabel)) {
 			return dsLabel;
-		}
-		else{
+		} else {
 			return i18nHelper.internationalize("label.noneDS", locale);
 		}
 
 	}
 
-	private String translate(Internationalizable i18nable ){
+	private String translate(Internationalizable i18nable) {
 		return i18nHelper.internationalize(i18nable, locale);
 	}
 
