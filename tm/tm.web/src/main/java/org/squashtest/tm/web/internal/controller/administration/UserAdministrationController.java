@@ -52,10 +52,12 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.project.ProjectPermission;
+import org.squashtest.tm.domain.users.ConnectionLog;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
 import org.squashtest.tm.service.user.AdministrationService;
+import org.squashtest.tm.service.user.ConnectionLogFinderService;
 import org.squashtest.tm.service.user.TeamFinderService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.project.ProjectModel;
@@ -85,12 +87,17 @@ public class UserAdministrationController extends PartyControllerSupport {
 	private static final PagingAndSorting TEAMS_DEFAULT_PAGING = new DefaultPagingAndSorting("name");
 	private static final Filtering TEAMS_DEFAULT_FILTERING = DefaultFiltering.NO_FILTERING;
 
+	private static final PagingAndSorting CONNECTIONS_DEFAULT_PAGING = new DefaultPagingAndSorting("login");
+
 
 	@Inject
 	private AdministrationService adminService;
 
 	@Inject
 	private TeamFinderService teamFinderService;
+
+	@Inject
+	private ConnectionLogFinderService connectionLogFinderService;
 
 	@Inject
 	private InternationalizationHelper messageSource;
@@ -128,6 +135,10 @@ public class UserAdministrationController extends PartyControllerSupport {
 			TEAMS_DEFAULT_FILTERING);
 		mav.addObject("pagedTeams", teams);
 		mav.addObject("teamsPageSize", TEAMS_DEFAULT_PAGING.getPageSize());
+
+		PagedCollectionHolder<List<ConnectionLog>> connectionLogs = connectionLogFinderService.findAllFiltered(CONNECTIONS_DEFAULT_PAGING, TEAMS_DEFAULT_FILTERING);
+		mav.addObject("pagedConnectionLogs", connectionLogs);
+		mav.addObject("connectionsPageSize", CONNECTIONS_DEFAULT_PAGING.getPageSize());
 		return mav;
 	}
 
