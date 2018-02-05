@@ -30,6 +30,7 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="connections" tagdir="/WEB-INF/tags/connections-components"%>
 
 <s:url var="rootContext" value="/" />
 <s:url var="baseUrl" value="/administration/users"/>
@@ -99,6 +100,7 @@
       <ul class="tab-menu">
         <li><a href="#users-table-pane"><f:message key="label.users"/></a></li>
         <li><a href="#team-table-pane"><f:message key="label.teams"/></a></li>
+        <li><a href="#connection-table-pane"><f:message key="label.connectionHistory"/></a></li>
       </ul>
       <div id="users-table-pane" class="table-tab">
         <!-- z-index fix needed for button pane because it would be partially shadowed by the table filter input otherwise -->
@@ -152,6 +154,8 @@
       </div><%-- /div#users-table-pane --%>
 
       <teams:teams-table-tab />
+
+      <connections:connections-table-tab/>
 
 
   </div><%-- /div.fragment-body.fragment-tabs --%>

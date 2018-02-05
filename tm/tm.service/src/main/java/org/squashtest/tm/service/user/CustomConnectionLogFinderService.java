@@ -18,14 +18,19 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.service.user;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.squashtest.tm.core.foundation.collection.Filtering;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.users.ConnectionLog;
+
+import java.util.List;
 
 /**
  * @author aguilhem
  */
-public interface ConnectionLogDao extends JpaRepository<ConnectionLog,Long>, CustomConnectionLogDao {
+public interface CustomConnectionLogFinderService {
 
+	PagedCollectionHolder<List<ConnectionLog>> findAllFiltered(PagingAndSorting paging, Filtering filtering);
 }

@@ -18,14 +18,22 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.service.user;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.domain.users.ConnectionLog;
 
+import java.util.List;
+
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+
 /**
+ * {@link ConnectionLog} retrieval methods
  * @author aguilhem
  */
-public interface ConnectionLogDao extends JpaRepository<ConnectionLog,Long>, CustomConnectionLogDao {
-
+@Transactional(readOnly = true)
+public interface ConnectionLogFinderService extends CustomConnectionLogFinderService {
+	List<ConnectionLog> findAll();
 }
