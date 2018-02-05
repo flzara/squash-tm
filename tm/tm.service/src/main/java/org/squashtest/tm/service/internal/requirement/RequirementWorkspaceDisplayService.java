@@ -58,7 +58,6 @@ import static org.squashtest.tm.jooq.domain.Tables.*;
 public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplayService {
 
 	private static final String COUNT_CHILD = "COUNT_CHILD";
-	private static final String RES_ID = "resId";
 
 	@Inject
 	DSLContext DSL;

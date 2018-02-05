@@ -95,7 +95,7 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.fetch()
 			.stream()
 			.map(r -> buildFolder(r.get(TCLN.TCLN_ID), r.get(TCLN.NAME), "test-case-folders", r.get("CHILD_COUNT", Integer.class), currentUser))
-			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
+			.collect(Collectors.toMap(node -> (Long) node.getAttr().get(RES_ID), Function.identity()));
 	}
 
 	private Map<Long, JsTreeNode> buildTestCaseJsTreeNode(UserDto currentUser, Map<Long, List<Long>> allMilestonesForTCs, List<Long> milestonesModifiable, TestCaseLibraryNodeDistribution nodeDistribution) {
@@ -118,7 +118,7 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 				String isMilestoneModifiable = isMilestoneModifiable(allMilestonesForTCs, milestonesModifiable, r.get(TCLN.TCLN_ID));
 				return buildTestCase(r.get(TCLN.TCLN_ID), r.get(TCLN.NAME), "test-cases", r.get(TC.REFERENCE),
 					r.get(TC.IMPORTANCE), r.get(TC.TC_STATUS), r.get("STEP_COUNT", Integer.class), r.get("COVERAGE_COUNT", Integer.class), currentUser, milestonesNumber, isMilestoneModifiable);
-			}).collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
+			}).collect(Collectors.toMap(node -> (Long) node.getAttr().get(RES_ID), Function.identity()));
 	}
 
 	private JsTreeNode buildTestCase(Long id, String name, String restype, String reference, String importance, String status,
@@ -131,7 +131,7 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		name = HtmlUtils.htmlEscape(name);
 		reference = HtmlUtils.htmlEscape(reference);
 
-		attr.put("resId", id);
+		attr.put(RES_ID, id);
 		attr.put("resType", restype);
 		attr.put("name", name);
 		attr.put("id", "TestCase-" + id);
@@ -330,7 +330,7 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 	@Override
 	protected boolean passesMilestoneFilter(JsTreeNode node, Long activeMilestoneId) {
-		return (node != null && (NO_ACTIVE_MILESTONE_ID.equals(activeMilestoneId) || node.getAttr().get("rel").equals("folder") || nodeHasActiveMilestone(nodeLinkedToMilestone, (Long) node.getAttr().get("resId"))));
+		return (node != null && (NO_ACTIVE_MILESTONE_ID.equals(activeMilestoneId) || node.getAttr().get("rel").equals("folder") || nodeHasActiveMilestone(nodeLinkedToMilestone, (Long) node.getAttr().get(RES_ID))));
 	}
 
 	@Override

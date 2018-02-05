@@ -58,7 +58,7 @@ import static org.squashtest.tm.service.internal.dto.PermissionWithMask.findByMa
 
 public abstract class AbstractWorkspaceDisplayService implements WorkspaceDisplayService {
 
-	private static final String RES_ID = "resId";
+	protected static final String RES_ID = "resId";
 
 	@Inject
 	private MessageSource messageSource;

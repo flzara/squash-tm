@@ -65,7 +65,6 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
-import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 /**
  * Controller for the Custom Fields resources.
@@ -82,6 +81,7 @@ public class CustomFieldController {
 
 	private static final String CUSTOM_FIELD = "customField";
 	private static final String NUMERIC_CUSTOM_FIELD_VALUE = "numericCustomFieldValue";
+	private static final String CUSTOM_FIELD_ID_MAPPING = "/{customFieldId}";
 
 	@Inject
 	private CustomFieldManagerService customFieldManager;
@@ -115,7 +115,7 @@ public class CustomFieldController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value = "/{customFieldId}", method = RequestMethod.GET)
+	@RequestMapping(value = CUSTOM_FIELD_ID_MAPPING, method = RequestMethod.GET)
 	public String showCustomFieldModificationPage(@PathVariable Long customFieldId, Model model) {
 		CustomField customField = customFieldManager.findById(customFieldId);
 
@@ -158,7 +158,7 @@ public class CustomFieldController {
 	 *            the new label
 	 * @return
 	 */
-	@RequestMapping(value = "/{customFieldId}", method = RequestMethod.POST, params = { "id=cuf-label", JEditablePostParams.VALUE }, produces = "text/plain;charset=UTF-8")
+	@RequestMapping(value = CUSTOM_FIELD_ID_MAPPING, method = RequestMethod.POST, params = { "id=cuf-label", JEditablePostParams.VALUE }, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String changeLabel(@PathVariable long customFieldId, @RequestParam(JEditablePostParams.VALUE) String label) {
 		customFieldManager.changeLabel(customFieldId, label);
@@ -174,7 +174,7 @@ public class CustomFieldController {
 	 *            the new code
 	 * @return
 	 */
-	@RequestMapping(value = "/{customFieldId}", method = RequestMethod.POST, params = { "id=cuf-code", JEditablePostParams.VALUE })
+	@RequestMapping(value = CUSTOM_FIELD_ID_MAPPING, method = RequestMethod.POST, params = { "id=cuf-code", JEditablePostParams.VALUE })
 	@ResponseBody
 	public String changeCode(@PathVariable long customFieldId, @RequestParam(JEditablePostParams.VALUE) String code) {
 		customFieldManager.changeCode(customFieldId, code);
@@ -225,7 +225,7 @@ public class CustomFieldController {
 	 *
 	 * @return defaultValue
 	 */
-	@RequestMapping(value = "/{customFieldId}", method = RequestMethod.POST, params = { "id=cuf-default-value", JEditablePostParams.VALUE })
+	@RequestMapping(value = CUSTOM_FIELD_ID_MAPPING, method = RequestMethod.POST, params = { "id=cuf-default-value", JEditablePostParams.VALUE })
 	@ResponseBody
 	public String changeDefaultValueJedit(@PathVariable long customFieldId, @RequestParam(JEditablePostParams.VALUE) String defaultValue,
 			Locale locale) {

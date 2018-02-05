@@ -51,8 +51,10 @@ import java.util.*;
 @Indexed
 public class Milestone implements Identified {
 
+	private static final String MILESTONE_ID = "MILESTONE_ID";
+
 	@Id
-	@Column(name = "MILESTONE_ID")
+	@Column(name = MILESTONE_ID)
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "milestone_milestone_id_seq")
 	@SequenceGenerator(name = "milestone_milestone_id_seq", sequenceName = "milestone_milestone_id_seq", allocationSize = 1)
 	private Long id;
@@ -80,11 +82,11 @@ public class Milestone implements Identified {
 	private Date endDate;
 
 	@ManyToMany(cascade=CascadeType.DETACH)
-	@JoinTable(name = "MILESTONE_BINDING", joinColumns = @JoinColumn(name = "MILESTONE_ID"), inverseJoinColumns = @JoinColumn(name = "PROJECT_ID"))
+	@JoinTable(name = "MILESTONE_BINDING", joinColumns = @JoinColumn(name = MILESTONE_ID), inverseJoinColumns = @JoinColumn(name = "PROJECT_ID"))
 	private Set<GenericProject> projects = new HashSet<>();
 
 	@ManyToMany(cascade=CascadeType.DETACH)
-	@JoinTable(name = "MILESTONE_BINDING_PERIMETER", joinColumns = @JoinColumn(name = "MILESTONE_ID"), inverseJoinColumns = @JoinColumn(name = "PROJECT_ID"))
+	@JoinTable(name = "MILESTONE_BINDING_PERIMETER", joinColumns = @JoinColumn(name = MILESTONE_ID), inverseJoinColumns = @JoinColumn(name = "PROJECT_ID"))
 	private Set<GenericProject> perimeter = new HashSet<>();
 
 	@JoinColumn(name = "USER_ID")
@@ -93,17 +95,17 @@ public class Milestone implements Identified {
 
 	@Deprecated
 	@ManyToMany(fetch = FetchType.LAZY, cascade=CascadeType.DETACH)
-	@JoinTable(name = "MILESTONE_TEST_CASE", joinColumns = @JoinColumn(name = "MILESTONE_ID"), inverseJoinColumns = @JoinColumn(name = "TEST_CASE_ID"))
+	@JoinTable(name = "MILESTONE_TEST_CASE", joinColumns = @JoinColumn(name = MILESTONE_ID), inverseJoinColumns = @JoinColumn(name = "TEST_CASE_ID"))
 	private Set<TestCase> testCases = new HashSet<>();
 
 	@Deprecated
 	@ManyToMany(fetch = FetchType.LAZY, cascade=CascadeType.DETACH)
-	@JoinTable(name = "MILESTONE_REQ_VERSION", joinColumns = @JoinColumn(name = "MILESTONE_ID"), inverseJoinColumns = @JoinColumn(name = "REQ_VERSION_ID"))
+	@JoinTable(name = "MILESTONE_REQ_VERSION", joinColumns = @JoinColumn(name = MILESTONE_ID), inverseJoinColumns = @JoinColumn(name = "REQ_VERSION_ID"))
 	private Set<RequirementVersion> requirementVersions = new HashSet<>();
 
 	@Deprecated
 	@ManyToMany(fetch = FetchType.LAZY, cascade=CascadeType.DETACH)
-	@JoinTable(name = "MILESTONE_CAMPAIGN", joinColumns = @JoinColumn(name = "MILESTONE_ID"), inverseJoinColumns = @JoinColumn(name = "CAMPAIGN_ID"))
+	@JoinTable(name = "MILESTONE_CAMPAIGN", joinColumns = @JoinColumn(name = MILESTONE_ID), inverseJoinColumns = @JoinColumn(name = "CAMPAIGN_ID"))
 	private Set<Campaign> campaigns = new HashSet<>();
 
 	public List<GenericProject> getPerimeter() {

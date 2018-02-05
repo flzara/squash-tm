@@ -63,6 +63,8 @@ import org.squashtest.tm.service.internal.dto.json.JsonInfoListItem;
 @RequestMapping("/info-lists")
 public class InfoListController {
 
+	private static final String EXISTS = "exists";
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(InfoListController.class);
 
 	@Inject
@@ -129,7 +131,7 @@ public class InfoListController {
 		}
 
 		Map<String, Object> res = new HashMap<>(1);
-		res.put("exists", found != null);
+		res.put(EXISTS, found != null);
 
 		return res;
 	}
@@ -149,10 +151,10 @@ public class InfoListController {
 		try {
 			item = infoListItemManager.findByCode(code);
 		} catch (NoResultException e) {
-			res.put("exists", false);
+			res.put(EXISTS, false);
 		}
 
-		res.put("exists", item != null);
+		res.put(EXISTS, item != null);
 
 		return res;
 	}
@@ -184,7 +186,7 @@ public class InfoListController {
 			InfoList item = infoListManager.findByUniqueProperty(prop, value);
 
 			Map<String, Object> res = new HashMap<>(1);
-			res.put("exists", item != null);
+			res.put(EXISTS, item != null);
 
 			return res;
 		}

@@ -56,6 +56,8 @@ import static org.squashtest.tm.service.internal.dto.PermissionWithMask.findByMa
 @Transactional(readOnly = true)
 public class CustomReportWorkspaceDisplayService {
 
+	private static final String RES_ID = "resId";
+
 	@Inject
 	DSLContext DSL;
 
@@ -152,7 +154,7 @@ public class CustomReportWorkspaceDisplayService {
 			.fetch()
 			.stream()
 			.map(r -> build(r.get(CRLN.CRLN_ID), r.get(CRLN.NAME), r.get(CRLN.ENTITY_TYPE), r.get("ITERATION_COUNT", Integer.class), currentUser))
-			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
+			.collect(Collectors.toMap(node -> (Long) node.getAttr().get(RES_ID), Function.identity()));
 
 	}
 
@@ -178,7 +180,7 @@ public class CustomReportWorkspaceDisplayService {
 			.fetch()
 			.stream()
 			.map(r -> build(r.get(selectLibraryNodeLibraryNodeId()), r.get(selectLibraryNodeLibraryNodeName()), "LIBRARY", r.get("COUNT_CHILD", Integer.class), currentUser))
-			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity(),
+			.collect(Collectors.toMap(node -> (Long) node.getAttr().get(RES_ID), Function.identity(),
 				(u, v) -> {
 					throw new IllegalStateException(String.format("Duplicate key %s", u));
 				},
@@ -208,8 +210,8 @@ public class CustomReportWorkspaceDisplayService {
 		// Then we iterate over the entities and give them their children
 		boolean openedEntity = false;
 		for (JsTreeNode jsTreeNodeChild : children) {
-			if (fatherChildrenEntity.containsKey(jsTreeNodeChild.getAttr().get("resId"))) {
-				for (Long childKey : (ArrayList<Long>) fatherChildrenEntity.get(jsTreeNodeChild.getAttr().get("resId"))) {
+			if (fatherChildrenEntity.containsKey(jsTreeNodeChild.getAttr().get(RES_ID))) {
+				for (Long childKey : (ArrayList<Long>) fatherChildrenEntity.get(jsTreeNodeChild.getAttr().get(RES_ID))) {
 					jsTreeNodeChild.addChild(allChildren.get(childKey));
 					openedEntity = true;
 				}
@@ -248,7 +250,7 @@ public class CustomReportWorkspaceDisplayService {
 
 		JsTreeNode builtNode = new JsTreeNode();
 		builtNode.setTitle(nodeName);
-		builtNode.addAttr("resId", nodeId);
+		builtNode.addAttr(RES_ID, nodeId);
 		builtNode.addAttr("name", nodeName);
 
 		//No milestone for custom report tree in first version so yes for all perm

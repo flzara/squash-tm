@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.customreport;
 
 import static org.squashtest.tm.service.security.Authorizations.CREATE_CUR_LIB_NODE_OR_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.READ_CUR_LIBRARY_NODE;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,6 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.hibernate.Session;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -83,8 +83,7 @@ public class CustomReportLibraryNodeServiceImpl implements
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#treeNodeId, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'READ') "
-			+ OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(READ_CUR_LIBRARY_NODE + OR_HAS_ROLE_ADMIN)
 	@Transactional(readOnly = true)
 	public CustomReportLibrary findLibraryByTreeNodeId(Long treeNodeId) {
 		TreeEntity entity = findEntityAndCheckType(treeNodeId, CustomReportTreeDefinition.LIBRARY);
@@ -100,8 +99,7 @@ public class CustomReportLibraryNodeServiceImpl implements
 
 
 	@Override
-	@PreAuthorize("hasPermission(#treeNodeId, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'READ') "
-			+ OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(READ_CUR_LIBRARY_NODE + OR_HAS_ROLE_ADMIN)
 	@Transactional(readOnly = true)
 	public CustomReportFolder findFolderByTreeNodeId(Long treeNodeId) {
 		TreeEntity entity = findEntityAndCheckType(treeNodeId, CustomReportTreeDefinition.FOLDER);
@@ -109,8 +107,7 @@ public class CustomReportLibraryNodeServiceImpl implements
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#treeNodeId, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'READ') "
-			+ OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(READ_CUR_LIBRARY_NODE + OR_HAS_ROLE_ADMIN)
 	@Transactional(readOnly = true)
 	public ChartDefinition findChartDefinitionByNodeId(Long treeNodeId) {
 		TreeEntity entity = findEntityAndCheckType(treeNodeId, CustomReportTreeDefinition.CHART);
@@ -118,8 +115,7 @@ public class CustomReportLibraryNodeServiceImpl implements
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#treeNodeId, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'READ') "
-		+ OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(READ_CUR_LIBRARY_NODE + OR_HAS_ROLE_ADMIN)
 	@Transactional(readOnly = true)
 	public ReportDefinition findReportDefinitionByNodeId(Long treeNodeId) {
 		TreeEntity entity = findEntityAndCheckType(treeNodeId, CustomReportTreeDefinition.REPORT);
@@ -127,8 +123,7 @@ public class CustomReportLibraryNodeServiceImpl implements
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#treeNodeId, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'READ') "
-			+ OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(READ_CUR_LIBRARY_NODE + OR_HAS_ROLE_ADMIN)
 	@Transactional(readOnly = true)
 	public CustomReportDashboard findCustomReportDashboardById(Long treeNodeId) {
 		TreeEntity entity = findEntityAndCheckType(treeNodeId, CustomReportTreeDefinition.DASHBOARD);

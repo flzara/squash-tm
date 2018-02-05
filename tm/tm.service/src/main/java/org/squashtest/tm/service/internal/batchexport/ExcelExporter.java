@@ -76,12 +76,15 @@ class ExcelExporter {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelExporter.class);
 
+	private static final String DATA_EXCEED_MAX_CELL_SIZE_MESSAGE = "' : some data exceed the maximum size of an excel cell";
+
 	private static final String DS_SHEET = TemplateWorksheet.DATASETS_SHEET.sheetName;
 	private static final String PRM_SHEET = TemplateWorksheet.PARAMETERS_SHEET.sheetName;
 	private static final String ST_SHEET = TemplateWorksheet.STEPS_SHEET.sheetName;
 	protected static final String TC_SHEET = TemplateWorksheet.TEST_CASES_SHEET.sheetName;
 
 	private static final String COV_SHEET = TemplateWorksheet.COVERAGE_SHEET.sheetName;
+
 	// that map will remember which column index is
 	private Map<String, Integer> cufColumnsByCode = new HashMap<>();
 
@@ -274,7 +277,7 @@ class ExcelExporter {
 
 			} catch (IllegalArgumentException wtf) {
 				if (LOGGER.isWarnEnabled()){
-					LOGGER.warn("cannot export content for test case '"+tcm.getId()+"' : some data exceed the maximum size of an excel cell");
+					LOGGER.warn("cannot export content for test case '"+tcm.getId()+ DATA_EXCEED_MAX_CELL_SIZE_MESSAGE);
 				}
 				if (LOGGER.isTraceEnabled()){
 					LOGGER.trace("",wtf);
@@ -323,7 +326,7 @@ class ExcelExporter {
 				appendCustomFields(r, "TC_STEP_CUF_", tsm.getCufs());
 			} catch (IllegalArgumentException wtf) {
 				if (LOGGER.isWarnEnabled()){
-					LOGGER.warn("cannot export content for test step '"+tsm.getId()+"' : some data exceed the maximum size of an excel cell");
+					LOGGER.warn("cannot export content for test step '"+tsm.getId()+ DATA_EXCEED_MAX_CELL_SIZE_MESSAGE);
 				}
 				if (LOGGER.isTraceEnabled()){
 					LOGGER.trace("",wtf);
@@ -361,7 +364,7 @@ class ExcelExporter {
 			} catch (IllegalArgumentException wtf) {
 
 				if (LOGGER.isWarnEnabled()){
-					LOGGER.warn("cannot export content for parameter '"+pm.getId()+"' : some data exceed the maximum size of an excel cell");
+					LOGGER.warn("cannot export content for parameter '"+pm.getId()+ DATA_EXCEED_MAX_CELL_SIZE_MESSAGE);
 				}
 				if (LOGGER.isTraceEnabled()){
 					LOGGER.trace("",wtf);
@@ -401,7 +404,7 @@ class ExcelExporter {
 				r.createCell(cIdx++).setCellValue(dm.getParamValue());
 			} catch (IllegalArgumentException wtf) {
 				if (LOGGER.isWarnEnabled()){
-					LOGGER.warn("cannot export content for dataset '"+dm.getId()+"' : some data exceed the maximum size of an excel cell");
+					LOGGER.warn("cannot export content for dataset '"+dm.getId()+ DATA_EXCEED_MAX_CELL_SIZE_MESSAGE);
 				}
 				if (LOGGER.isTraceEnabled()){
 					LOGGER.trace("",wtf);

@@ -32,7 +32,7 @@ public final class Authorizations {
 
 	public static final String READ = "READ";
 	public static final String ROLE_ADMIN = "ROLE_ADMIN";
-	
+
 	public static final String HAS_ROLE_ADMIN = "hasRole('ROLE_ADMIN')";
 	public static final String OR_HAS_ROLE_ADMIN = " or hasRole('ROLE_ADMIN')";
 
@@ -153,9 +153,10 @@ public final class Authorizations {
 
 	/* -- CUSTOM REPORT LIBRARY NODE -- */
 
-	public static final String CREATE_CUR_LIBRARY = "hasPermission(#nodeId, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'CREATE') ";
-	public static final String CREATE_CUR_LIB_NODE_OR_ROLE_ADMIN = CREATE_CUR_LIBRARY + OR_HAS_ROLE_ADMIN;
+	public static final String CREATE_CUR_LIBRARY_NODE = "hasPermission(#nodeId, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'CREATE') ";
+	public static final String CREATE_CUR_LIB_NODE_OR_ROLE_ADMIN = CREATE_CUR_LIBRARY_NODE + OR_HAS_ROLE_ADMIN;
 
+	public static final String READ_CUR_LIBRARY_NODE = "hasPermission(#treeNodeId, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'READ') ";
 
 
 	private Authorizations() {

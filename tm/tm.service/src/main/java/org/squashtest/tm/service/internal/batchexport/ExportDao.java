@@ -53,6 +53,8 @@ import org.squashtest.tm.service.internal.repository.hibernate.EasyConstructorRe
 public class ExportDao {
 
 
+	private static final String TEST_CASE_IDS = "testCaseIds";
+
 	@PersistenceContext
 	private EntityManager em;
 
@@ -65,11 +67,11 @@ public class ExportDao {
 
 
 	public RequirementExportModel findAllRequirementModel(List<Long> versionIds){
-	
-		RequirementExportModel model = new RequirementExportModel();		
-		
+
+		RequirementExportModel model = new RequirementExportModel();
+
 		List<RequirementModel> requirementsModel = findRequirementModel(versionIds);
-		List<CoverageModel> coverageModels = findRequirementVersionCoverageModel(versionIds);		
+		List<CoverageModel> coverageModels = findRequirementVersionCoverageModel(versionIds);
 		List<RequirementLinkModel> linkModels = findRequirementLinksModel(versionIds);
 
 		setPathForCoverage(coverageModels);
@@ -77,7 +79,7 @@ public class ExportDao {
 		model.setCoverages(coverageModels);
 		model.setRequirementsModels(requirementsModel);
 		model.setReqLinks(linkModels);
-		
+
 		return model;
 	}
 
@@ -114,7 +116,7 @@ public class ExportDao {
 
 
 	private List<CoverageModel> findTestCaseCoverageModel(List<Long> tcIds) {
-		return loadModels("testCase.excelExportCoverage", tcIds, "testCaseIds", CoverageModel.class);
+		return loadModels("testCase.excelExportCoverage", tcIds, TEST_CASE_IDS, CoverageModel.class);
 	}
 
 
@@ -126,14 +128,14 @@ public class ExportDao {
 
 
 		// get the models
-		buffer = loadModels("testCase.excelExportDataFromFolder", tclnIds, "testCaseIds", TestCaseModel.class);
+		buffer = loadModels("testCase.excelExportDataFromFolder", tclnIds, TEST_CASE_IDS, TestCaseModel.class);
 		models.addAll(buffer);
 
-		buffer = loadModels("testCase.excelExportDataFromLibrary", tclnIds,"testCaseIds", TestCaseModel.class);
+		buffer = loadModels("testCase.excelExportDataFromLibrary", tclnIds, TEST_CASE_IDS, TestCaseModel.class);
 		models.addAll(buffer);
 
 		//get the cufs
-		List<CustomField> cufModels = loadModels("testCase.excelExportCUF", tclnIds, "testCaseIds",CustomField.class);
+		List<CustomField> cufModels = loadModels("testCase.excelExportCUF", tclnIds, TEST_CASE_IDS,CustomField.class);
 
 		// add them to the test case models
 		for (TestCaseModel model : models){
@@ -162,14 +164,14 @@ public class ExportDao {
 		List<TestStepModel> buffer;
 
 
-		buffer = loadModels("testStep.excelExportActionSteps", tcIds, "testCaseIds", TestStepModel.class);
+		buffer = loadModels("testStep.excelExportActionSteps", tcIds, TEST_CASE_IDS, TestStepModel.class);
 		models.addAll(buffer);
 
-		buffer = loadModels("testStep.excelExportCallSteps", tcIds, "testCaseIds", TestStepModel.class);
+		buffer = loadModels("testStep.excelExportCallSteps", tcIds, TEST_CASE_IDS, TestStepModel.class);
 		models.addAll(buffer);
 
 		//get the cufs
-		List<CustomField> cufModels = loadModels("testStep.excelExportCUF", tcIds, "testCaseIds", CustomField.class);
+		List<CustomField> cufModels = loadModels("testStep.excelExportCUF", tcIds, TEST_CASE_IDS, CustomField.class);
 
 		// add them to the test case models
 		for (TestStepModel model : models){
@@ -191,13 +193,13 @@ public class ExportDao {
 	}
 
 	private List<ParameterModel> findParametersModel(List<Long> tcIds){
-		return loadModels("parameter.excelExport", tcIds, "testCaseIds", ParameterModel.class);
+		return loadModels("parameter.excelExport", tcIds, TEST_CASE_IDS, ParameterModel.class);
 	}
 
 
 	private List<DatasetModel> findDatasetsModel(List<Long> tcIds){
 
-		return loadModels("dataset.excelExport", tcIds, "testCaseIds", DatasetModel.class);
+		return loadModels("dataset.excelExport", tcIds, TEST_CASE_IDS, DatasetModel.class);
 	}
 
 
@@ -211,21 +213,21 @@ public class ExportDao {
 	private List<CoverageModel> findRequirementVersionCoverageModel(List<Long> versionIds) {
 		return loadModels("requirementVersion.excelExportCoverage", versionIds, "versionIds", CoverageModel.class);
 	}
-	
+
 	private List<RequirementLinkModel> findRequirementLinksModel(List<Long> versionIds){
 		// get the models
 		List<RequirementLinkModel> models = loadModels("requirementVersion.excelExportRequirementLinks", versionIds, "versionIds", RequirementLinkModel.class);
-		
+
 		/*
 		 * more complex part : computing the pathes. The steps are the following :
 		 * - gather all the requirement ids involved
 		 * - gather the paths for all these requirements and map them by id
-		 * - for each model, assign the paths. 
+		 * - for each model, assign the paths.
 		 */
 		List<Long> reqIds = gatherRequirementIdsFromLinkModels(models);
 		Map<Long, String> pathById = gatherRequirementPaths(reqIds);
 		assignPaths(models, pathById);
-		
+
 		return models;
 	}
 
@@ -300,7 +302,7 @@ public class ExportDao {
 
 
 	}
-	
+
 	private List<Long> gatherRequirementIdsFromLinkModels(List<RequirementLinkModel> models){
 		Set<Long> ids = new HashSet<>(models.size());
 		for (RequirementLinkModel model : models){
@@ -309,20 +311,20 @@ public class ExportDao {
 		}
 		return new ArrayList<>(ids);
 	}
-	
+
 	private Map<Long, String> gatherRequirementPaths(List<Long> requirementIds){
-		
+
 		int nbReqs = requirementIds.size();
-		
+
 		List<String> pathes = pathService.buildRequirementsPaths(requirementIds);
 		Map<Long, String> pathById = new HashMap<>(nbReqs);
 		for (int i=0; i < nbReqs; i++){
 			pathById.put(requirementIds.get(i), pathes.get(i));
 		}
-		
+
 		return pathById;
 	}
-	
+
 	private void assignPaths(List<RequirementLinkModel> models, Map<Long, String> pathById){
 		for (RequirementLinkModel model : models){
 			String reqPath = pathById.get(model.getReqId());
@@ -362,5 +364,5 @@ public class ExportDao {
 		return q.list();
 	}
 
-	
+
 }

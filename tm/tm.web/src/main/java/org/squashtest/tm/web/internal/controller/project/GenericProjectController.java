@@ -77,6 +77,8 @@ import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 @RequestMapping("/generic-projects")
 public class GenericProjectController {
 
+	private static final String LABEL = "label";
+
 	@Inject
 	private InternationalizationHelper messageSource;
 
@@ -103,7 +105,7 @@ public class GenericProjectController {
 
 	private DatatableMapper<String> allProjectsMapper = new NameBasedMapper(9)
 		.map(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "name")
-		.map("label", "label")
+		.map(LABEL, LABEL)
 		.map("active", "active")
 		.map(DataTableModelConstants.DEFAULT_CREATED_ON_KEY, DataTableModelConstants.DEFAULT_CREATED_ON_VALUE)
 		.map(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, DataTableModelConstants.DEFAULT_CREATED_BY_VALUE)
@@ -279,7 +281,7 @@ public class GenericProjectController {
 		List<Map<String, Object>> partiesModel = new ArrayList<>(partyList.size());
 		for (Party p : partyList) {
 			Map<String, Object> newModel = new HashMap<>();
-			newModel.put("label", HtmlUtils.htmlEscape(p.getName()));
+			newModel.put(LABEL, HtmlUtils.htmlEscape(p.getName()));
 			newModel.put(JEditablePostParams.VALUE, HtmlUtils.htmlEscape(p.getName()));
 			newModel.put("id", p.getId());
 			partiesModel.add(newModel);
@@ -423,7 +425,7 @@ public class GenericProjectController {
 
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
-			res.put("label", HtmlUtils.htmlEscape(item.getLabel()));
+			res.put(LABEL, HtmlUtils.htmlEscape(item.getLabel()));
 			res.put("jobName", HtmlUtils.htmlEscape(item.getJobName()));
 			res.put("slaves", HtmlUtils.htmlEscape(item.getSlaves()));
 			res.put("url", jobUrls.get(item.getJobName()));
@@ -455,7 +457,7 @@ public class GenericProjectController {
 			data.put("index", getCurrentIndex());
 			data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, HtmlUtils.htmlEscape(project.getName()));
 			data.put("active", messageSource.internationalizeYesNo(project.isActive(), locale));
-			data.put("label", HtmlUtils.htmlEscape(project.getLabel()));
+			data.put(LABEL, HtmlUtils.htmlEscape(project.getLabel()));
 			data.put(DataTableModelConstants.DEFAULT_CREATED_ON_KEY, messageSource.localizeDate(auditable.getCreatedOn(), locale));
 			data.put(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, HtmlUtils.htmlEscape(auditable.getCreatedBy()));
 			data.put("last-mod-on", messageSource.localizeDate(auditable.getLastModifiedOn(), locale));

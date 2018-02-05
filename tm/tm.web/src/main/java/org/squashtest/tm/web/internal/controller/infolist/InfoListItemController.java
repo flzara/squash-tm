@@ -40,12 +40,14 @@ import java.util.List;
 @RequestMapping("/info-list-items")
 public class InfoListItemController {
 
+	private static final String INFO_LIST_ITEM_ID_MAPPING = "/{infoListItemId}";
+
 	@Inject
 	private InfoListItemManagerService listItemManager;
 	@Inject
 	private JsonInfoListBuilder jsonBuilder;
 
-	@RequestMapping(value = "/{infoListItemId}", method = RequestMethod.POST, params = {"id=info-list-item-label",
+	@RequestMapping(value = INFO_LIST_ITEM_ID_MAPPING, method = RequestMethod.POST, params = {"id=info-list-item-label",
 		JEditablePostParams.VALUE})
 	@ResponseBody
 	public String changeLabel(@PathVariable Long infoListItemId, @RequestParam(JEditablePostParams.VALUE) String label) {
@@ -53,7 +55,7 @@ public class InfoListItemController {
 		return HtmlUtils.htmlEscape(label);
 	}
 
-	@RequestMapping(value = "/{infoListItemId}", method = RequestMethod.POST, params = {"id=info-list-item-code",
+	@RequestMapping(value = INFO_LIST_ITEM_ID_MAPPING, method = RequestMethod.POST, params = {"id=info-list-item-code",
 		JEditablePostParams.VALUE})
 	@ResponseBody
 	public String changeCode(@PathVariable Long infoListItemId, @RequestParam(JEditablePostParams.VALUE) String code) {
@@ -61,13 +63,13 @@ public class InfoListItemController {
 		return HtmlUtils.htmlEscape(code);
 	}
 
-	@RequestMapping(value = "/{infoListItemId}", method = RequestMethod.POST, params = {"id=info-list-item-default"})
+	@RequestMapping(value = INFO_LIST_ITEM_ID_MAPPING, method = RequestMethod.POST, params = {"id=info-list-item-default"})
 	@ResponseBody
 	public void changeDefault(@PathVariable Long infoListItemId) {
 		listItemManager.changeDefault(infoListItemId);
 	}
 
-	@RequestMapping(value = "/{infoListItemId}", method = RequestMethod.POST, params = {"id=info-list-item-icon"})
+	@RequestMapping(value = INFO_LIST_ITEM_ID_MAPPING, method = RequestMethod.POST, params = {"id=info-list-item-icon"})
 	@ResponseBody
 	public void changeIcon(@PathVariable Long infoListItemId, @RequestParam(JEditablePostParams.VALUE) String icon) {
 		listItemManager.changeIcon(infoListItemId, icon);
