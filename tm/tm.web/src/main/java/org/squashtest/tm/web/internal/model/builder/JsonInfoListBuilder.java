@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.infolist.DenormalizedInfoListItem;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
@@ -47,10 +48,10 @@ public class JsonInfoListBuilder {
 		JsonInfoList res = new JsonInfoList();
 
 		res.setId(list.getId());
-		res.setCode(list.getCode());
+		res.setCode(HtmlUtils.htmlEscape(list.getCode()));
 		res.setUri("todo");
-		res.setLabel(list.getLabel());
-		res.setDescription(list.getDescription());
+		res.setLabel(HtmlUtils.htmlEscape(list.getLabel()));
+		res.setDescription(HtmlUtils.htmlEscape(list.getDescription()));
 
 		List<JsonInfoListItem> items = new ArrayList<>(list.getItems().size());
 		for (InfoListItem item : list.getItems()){
@@ -69,14 +70,14 @@ public class JsonInfoListBuilder {
 		JsonInfoListItem res = new JsonInfoListItem();
 		res.setId(item.getId());
 		res.setUri("todo");
-		res.setCode(item.getCode());
-		res.setLabel(item.getLabel());
+		res.setCode(HtmlUtils.htmlEscape(item.getCode()));
+		res.setLabel(HtmlUtils.htmlEscape(item.getLabel()));
 		res.setDefault(item.isDefault());
 		res.setIconName(item.getIconName());
 		res.setDenormalized(false);
 		// TODO : something less sloppy once we have time for something better
 		res.setSystem(SystemListItem.class.isAssignableFrom(item.getClass()));
-		res.setFriendlyLabel(messageSource.getMessage(res.getLabel(), null, res.getLabel(), LocaleContextHolder.getLocale()));
+		res.setFriendlyLabel(HtmlUtils.htmlEscape(messageSource.getMessage(res.getLabel(), null, res.getLabel(), LocaleContextHolder.getLocale())));
 		return res;
 	}
 

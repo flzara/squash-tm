@@ -361,7 +361,7 @@ public class VerifiedRequirementsManagerController {
 			res.put("versionNumber", item.getVersionNumber());
 			res.put("criticality",
 				internationalizationHelper.internationalize(item.getCriticality(), locale));
-			res.put("category", internationalizationHelper.getMessage(item.getCategory().getLabel(), null, item.getCategory().getLabel(), locale));
+			res.put("category", HtmlUtils.htmlEscape(internationalizationHelper.getMessage(item.getCategory().getLabel(), null, item.getCategory().getLabel(), locale)));
 			res.put("status", internationalizationHelper.internationalize(item.getStatus(), locale));
 			res.put("milestone-dates", MilestoneModelUtils.timeIntervalToString(item.getMilestones(), internationalizationHelper, locale));
 			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");

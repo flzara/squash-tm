@@ -27,6 +27,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.service.infolist.InfoListModelService;
 import org.squashtest.tm.service.internal.dto.json.JsonInfoList;
 import org.squashtest.tm.service.internal.dto.json.JsonInfoListItem;
@@ -38,9 +39,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.squashtest.tm.domain.infolist.SystemListItem.SYSTEM_INFO_LIST_IDENTIFIER;
-import static org.squashtest.tm.jooq.domain.Tables.INFO_LIST;
-import static org.squashtest.tm.jooq.domain.Tables.INFO_LIST_ITEM;
-import static org.squashtest.tm.jooq.domain.Tables.PROJECT;
+import static org.squashtest.tm.jooq.domain.Tables.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -96,21 +95,20 @@ public class InfoListModelServiceImpl implements InfoListModelService {
 		Function<Record, JsonInfoListItem> infoListItemTransformer = getInfoListItemTransformer();
 
 
-
-		return StreamUtils.<Record,JsonInfoList, JsonInfoListItem>performJoinAggregateIntoMap(infolistTransformer, infoListItemTransformer, (JsonInfoList jsonInfoList, List<JsonInfoListItem> items) -> jsonInfoList.setItems(items), result);
+		return StreamUtils.<Record, JsonInfoList, JsonInfoListItem>performJoinAggregateIntoMap(infolistTransformer, infoListItemTransformer, (JsonInfoList jsonInfoList, List<JsonInfoListItem> items) -> jsonInfoList.setItems(items), result);
 	}
 
 	private Function<Record, JsonInfoListItem> getInfoListItemTransformer() {
 		return r -> {
 			JsonInfoListItem jsonInfoListItem = new JsonInfoListItem();
 			jsonInfoListItem.setId(r.get(INFO_LIST_ITEM.ITEM_ID));
-			jsonInfoListItem.setCode(r.get(INFO_LIST_ITEM.CODE));
-			jsonInfoListItem.setLabel(r.get(INFO_LIST_ITEM.LABEL));
+			jsonInfoListItem.setCode(HtmlUtils.htmlEscape(r.get(INFO_LIST_ITEM.CODE)));
+			jsonInfoListItem.setLabel(HtmlUtils.htmlEscape(r.get(INFO_LIST_ITEM.LABEL)));
 			jsonInfoListItem.setIconName(r.get(INFO_LIST_ITEM.ICON_NAME));
 			jsonInfoListItem.setDefault(r.get(INFO_LIST_ITEM.IS_DEFAULT));
 			jsonInfoListItem.setSystem(r.get(INFO_LIST_ITEM.ITEM_TYPE).equals(SYSTEM_INFO_LIST_IDENTIFIER));
 			jsonInfoListItem.setDenormalized(false);
-			jsonInfoListItem.setFriendlyLabel(messageSource.getMessage(r.get(INFO_LIST_ITEM.LABEL), null, r.get(INFO_LIST_ITEM.LABEL), LocaleContextHolder.getLocale()));
+			jsonInfoListItem.setFriendlyLabel(HtmlUtils.htmlEscape(messageSource.getMessage(r.get(INFO_LIST_ITEM.LABEL), null, r.get(INFO_LIST_ITEM.LABEL), LocaleContextHolder.getLocale())));
 			jsonInfoListItem.setUri("todo");
 			return jsonInfoListItem;
 		};
@@ -119,9 +117,9 @@ public class InfoListModelServiceImpl implements InfoListModelService {
 	private Function<Record, JsonInfoList> getInfoListTransformer() {
 		return r -> {
 			Long id = r.get(INFO_LIST.INFO_LIST_ID);
-			String code = r.get(INFO_LIST.CODE);
-			String label = r.get(INFO_LIST.LABEL);
-			String description = r.get(INFO_LIST.DESCRIPTION);
+			String code = HtmlUtils.htmlEscape(r.get(INFO_LIST.CODE));
+			String label = HtmlUtils.htmlEscape(r.get(INFO_LIST.LABEL));
+			String description = HtmlUtils.htmlEscape(r.get(INFO_LIST.DESCRIPTION));
 			return new JsonInfoList(id, "todo", code, label, description);
 		};
 	}

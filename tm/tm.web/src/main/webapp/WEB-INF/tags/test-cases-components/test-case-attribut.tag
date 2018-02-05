@@ -40,7 +40,7 @@
 <comp:toggle-panel id="test-case-attribut-panel"
 				titleKey="label.Attributes"
 				   open="true">
-				   
+
 	<jsp:attribute name="body">
 	<div id="test-case-attribut-table"  class="display-table">
 <div class="display-table-row">
@@ -52,25 +52,25 @@
 				</c:if>
 			</div>
 		</div>
-		
+
 		<div class="display-table-row">
 			<label for="test-case-nature" class="display-table-cell"><f:message key="test-case.nature.combo.label" /></label>
 			<div class="display-table-cell">
-			  <span id="test-case-nature-icon" style="vertical-align:middle" class="sq-icon sq-icon-${testCase.nature.iconName}"></span>  
+			  <span id="test-case-nature-icon" style="vertical-align:middle" class="sq-icon sq-icon-${testCase.nature.iconName}"></span>
               <span id="test-case-nature"><s:message code="${testCase.nature.label}" text="${testCase.nature.label}" htmlEscape="true"/></span>
 			</div>
 		</div>
-		
+
 		<div class="display-table-row">
 			<label for="test-case-type" class="display-table-cell">
 				<f:message key="test-case.type.combo.label" />
 			</label>
 			<div class="display-table-cell">
-			  <span id="test-case-type-icon" style="vertical-align : middle;" class="sq-icon  sq-icon-${testCase.type.iconName}"></span>  
+			  <span id="test-case-type-icon" style="vertical-align : middle;" class="sq-icon  sq-icon-${testCase.type.iconName}"></span>
               <span id="test-case-type"><s:message code="${testCase.type.label}" text="${testCase.type.label}" htmlEscape="true"/></span>
 			</div>
 		</div>
-		
+
 		</div>
 	</jsp:attribute>
 </comp:toggle-panel>
