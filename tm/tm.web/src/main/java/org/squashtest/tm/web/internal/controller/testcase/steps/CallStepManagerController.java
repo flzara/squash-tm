@@ -20,28 +20,24 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.steps;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
-
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
-import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
+import java.util.ArrayList;
+import java.util.List;
+
+// XSS OK
 @Controller
 public class CallStepManagerController {
 
@@ -74,9 +70,9 @@ public class CallStepManagerController {
 	@RequestMapping(value = "/test-cases/{callingTestCaseId}/called-test-cases", method = RequestMethod.POST, params = "called-test-case[]")
 	@ResponseBody
 	public void addCallTestStep(@PathVariable("callingTestCaseId") long callingTestCaseId,
-			@RequestParam("called-test-case[]") List<Long> calledTestCaseIds) {
+								@RequestParam("called-test-case[]") List<Long> calledTestCaseIds) {
 
-			callStepManagerService.addCallTestSteps(callingTestCaseId, calledTestCaseIds);
+		callStepManagerService.addCallTestSteps(callingTestCaseId, calledTestCaseIds);
 
 	}
 

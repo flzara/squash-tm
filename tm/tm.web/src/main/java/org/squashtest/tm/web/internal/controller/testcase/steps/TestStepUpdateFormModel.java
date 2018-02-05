@@ -20,16 +20,16 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.steps;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.service.internal.dto.RawValueModel;
 import org.squashtest.tm.service.internal.dto.RawValueModel.RawValueModelMap;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
+// XSS OK
 public class TestStepUpdateFormModel {
 
 	private String action;
@@ -54,7 +54,6 @@ public class TestStepUpdateFormModel {
 	}
 
 
-
 	public RawValueModelMap getCufValues() {
 		return cufValues;
 	}
@@ -64,9 +63,9 @@ public class TestStepUpdateFormModel {
 	}
 
 	@JsonIgnore
-	public Map<Long, RawValue> getCufs(){
+	public Map<Long, RawValue> getCufs() {
 		Map<Long, RawValue> cufs = new HashMap<>(cufValues.size());
-		for (Entry<Long, RawValueModel> entry : cufValues.entrySet()){
+		for (Entry<Long, RawValueModel> entry : cufValues.entrySet()) {
 			cufs.put(entry.getKey(), entry.getValue().toRawValue());
 		}
 		return cufs;

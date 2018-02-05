@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.web.thymeleaf.processor.attr;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.thymeleaf.Arguments;
@@ -35,13 +33,14 @@ import org.thymeleaf.processor.attr.AbstractChildrenModifierAttrProcessor;
 import org.thymeleaf.standard.expression.StandardExpressionProcessor;
 import org.thymeleaf.templatemode.ITemplateModeHandler;
 
+import java.util.List;
+
 /**
  * This processor processes "unsafe-html" attributes. The attribute value is expected to be a potentially unbalanced
  * html fragment. This processor uses the LEGACYHTML5 parser to balance the html fragment and then replace this
  * element's inner html by this balanced html fragment.
  *
  * @author Gregory Fouquet
- *
  */
 public final class SquashUnsafeHtmlAttrProcessor extends AbstractChildrenModifierAttrProcessor implements IProcessor {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SquashUnsafeHtmlAttrProcessor.class);
@@ -57,16 +56,15 @@ public final class SquashUnsafeHtmlAttrProcessor extends AbstractChildrenModifie
 	 * Returns the html attribute of the processed argument parsed using the legacy html5 (tag balancing) parser.
 	 *
 	 * @see org.thymeleaf.processor.attr.AbstractTextChildModifierAttrProcessor#getText(org.thymeleaf.Arguments,
-	 *      org.thymeleaf.dom.Element, java.lang.String)
+	 * org.thymeleaf.dom.Element, java.lang.String)
 	 */
 	@Override
 	protected List<Node> getModifiedChildren(final Arguments arguments, final Element element,
-			final String attributeName) {
+											 final String attributeName) {
 		final String attributeValue = element.getAttributeValue(attributeName);
 		LOGGER.trace("Will process attribute value {} of element {}", attributeValue, element);
 
 		final Object fragment = StandardExpressionProcessor.processExpression(arguments, attributeValue);
-
 
 		try {
 			final Configuration configuration = arguments.getConfiguration();
@@ -74,7 +72,7 @@ public final class SquashUnsafeHtmlAttrProcessor extends AbstractChildrenModifie
 
 			String string = fragment == null ? "" : fragment.toString();
 			List<Node> parsedFragment = templateModeHandler.getTemplateParser().parseFragment(configuration,
-					string);
+				string);
 
 			// we cannot lookup the template repository because it is backed by the main template parser. yet the
 			// fragment should change quite frequently.
@@ -88,7 +86,7 @@ public final class SquashUnsafeHtmlAttrProcessor extends AbstractChildrenModifie
 			throw e; // NOSONAR we wanna catch any exception but TemplateEngineException
 		} catch (final Exception e) {
 			throw new TemplateProcessingException("An error happened during parsing of unsafe html: \""
-					+ element.getAttributeValue(attributeName) + "\"", e);
+				+ element.getAttributeValue(attributeName) + "\"", e);
 		}
 
 	}

@@ -21,7 +21,8 @@
 
 -->
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
   <meta name="_csrf" th:content="${_csrf.token}"/>
   <!-- default header name is X-CSRF-TOKEN -->
@@ -216,7 +217,8 @@
         </thead>
         <tbody>
         <tr th:each="coverage, iterStat : ${requirementVerifier.coverages}"
-            th:with="catLabel = ${#messages.msgOrNull('__${coverage.version.category.label}__')}">
+            th:with="catLabel = ${#messages.msgOrNull('__${coverage.version.category.label}__')},
+             escapedDescription=${#strings.escapeXml('__${coverage.version.description}__')}">
           <td th:text="${iterStat.count}">1</td>
           <td></td>
           <td th:text="${coverage.version.requirement.project.name}">project</td>
@@ -234,7 +236,7 @@
           <td th:text="#{__${coverage.version.status.i18nKey}__}">OBSOLETE</td>
           <td th:text="${coverage.version.status.level}">0</td>
           <td th:text="${coverage.verifiedByStep}">true</td>
-          <td th:utext="${coverage.version.description}">description</td>
+          <td sq:unsafe-html="${escapedDescription}">description</td>
           <td th:text="${coverage.version.category.iconName}">CategoryIconName</td>
         </tr>
         </tbody>

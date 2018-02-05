@@ -24,6 +24,7 @@ import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 
+// XSS OK
 public class AbstractTestStepView<T> {
 	protected long id;
 	protected TestCase testCase;

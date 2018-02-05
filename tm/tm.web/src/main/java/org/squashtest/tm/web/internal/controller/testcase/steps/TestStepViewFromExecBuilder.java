@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.steps;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
@@ -32,7 +28,11 @@ import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
+// XSS OK
 class TestStepViewFromExecBuilder implements TestStepVisitor {
 	private TestStepViewFromExec testStepView;
 	private ExecutionStep execStep;

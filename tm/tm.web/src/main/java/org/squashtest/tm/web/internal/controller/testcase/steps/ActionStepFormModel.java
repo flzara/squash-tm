@@ -20,11 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.steps;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.validation.Errors;
@@ -33,15 +29,18 @@ import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.service.internal.dto.RawValueModel;
 import org.squashtest.tm.service.internal.dto.RawValueModel.RawValueModelMap;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 
+// XSS OK
 public class ActionStepFormModel {
-	private String action="";
+	private String action = "";
 
-	private String expectedResult="";
+	private String expectedResult = "";
 
 	private RawValueModelMap customFields = new RawValueModelMap();
 
@@ -80,22 +79,22 @@ public class ActionStepFormModel {
 	}
 
 	@JsonIgnore
-	public Map<Long, RawValue> getCufs(){
+	public Map<Long, RawValue> getCufs() {
 		Map<Long, RawValue> cufs = new HashMap<>(customFields.size());
-		for (Entry<Long, RawValueModel> entry : customFields.entrySet()){
+		for (Entry<Long, RawValueModel> entry : customFields.entrySet()) {
 			cufs.put(entry.getKey(), entry.getValue().toRawValue());
 		}
 		return cufs;
 	}
 
-	public ActionTestStep getActionTestStep(){
+	public ActionTestStep getActionTestStep() {
 		ActionTestStep newStep = new ActionTestStep();
 		newStep.setAction(HTMLCleanupUtils.cleanHtml(action));
 		newStep.setExpectedResult(HTMLCleanupUtils.cleanHtml(expectedResult));
 		return newStep;
 	}
 
-	public static class ActionStepFormModelValidator implements Validator{
+	public static class ActionStepFormModelValidator implements Validator {
 
 		private MessageSource messageSource;
 
@@ -117,14 +116,14 @@ public class ActionStepFormModel {
 		@Override
 		public void validate(Object target, Errors errors) {
 			Locale locale = LocaleContextHolder.getLocale();
-			String notBlank = messageSource.getMessage("message.notBlank",null, locale);
+			String notBlank = messageSource.getMessage("message.notBlank", null, locale);
 
 			ActionStepFormModel model = (ActionStepFormModel) target;
 
-			for (Entry<Long, RawValueModel> entry : model.getCustomFields().entrySet()){
+			for (Entry<Long, RawValueModel> entry : model.getCustomFields().entrySet()) {
 				RawValueModel value = entry.getValue();
-				if (value.isEmpty()){
-					errors.rejectValue("customFields["+entry.getKey()+"]", "message.notBlank", notBlank);
+				if (value.isEmpty()) {
+					errors.rejectValue("customFields[" + entry.getKey() + "]", "message.notBlank", notBlank);
 				}
 			}
 

@@ -20,16 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.steps;
 
-import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -37,12 +27,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.customfield.CustomField;
@@ -56,6 +41,8 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
+import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
+import org.squashtest.tm.service.internal.dto.CustomFieldModel;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -64,12 +51,20 @@ import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurat
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseModificationController;
 import org.squashtest.tm.web.internal.controller.testcase.steps.ActionStepFormModel.ActionStepFormModelValidator;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
-import org.squashtest.tm.service.internal.dto.CustomFieldModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTablePaging;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
+
+// XSS OK
 @Controller
 @RequestMapping("/test-cases/{testCaseId}/steps")
 public class TestCaseTestStepsController {
@@ -112,7 +107,7 @@ public class TestCaseTestStepsController {
 
 		// the custom fields definitions
 		CustomFieldHelper<ActionTestStep> helper = cufHelperService.newStepsHelper(steps, testCase.getProject())
-				.setRenderingLocations(RenderingLocation.STEP_TABLE).restrictToCommonFields();
+			.setRenderingLocations(RenderingLocation.STEP_TABLE).restrictToCommonFields();
 
 		List<CustomFieldModel> cufDefinitions = convertToJsonCustomField(helper.getCustomFieldConfiguration());
 		List<CustomFieldValue> cufValues = helper.getCustomFieldValues();
@@ -147,13 +142,13 @@ public class TestCaseTestStepsController {
 		Paging filter = new DataTablePaging(params);
 
 		PagedCollectionHolder<List<TestStep>> holder = testCaseModificationService.findStepsByTestCaseIdFiltered(
-				testCaseId, filter);
+			testCaseId, filter);
 		Project project = testCaseModificationService.findById(testCaseId).getProject();
 		// cufs
 		CustomFieldHelper<ActionTestStep> helper = cufHelperService
-				.newStepsHelper(holder.getPagedItems(), project)
-				.setRenderingLocations(RenderingLocation.STEP_TABLE)
-				.restrictToCommonFields();
+			.newStepsHelper(holder.getPagedItems(), project)
+			.setRenderingLocations(RenderingLocation.STEP_TABLE)
+			.restrictToCommonFields();
 
 		List<CustomFieldValue> cufValues = helper.getCustomFieldValues();
 
@@ -164,16 +159,16 @@ public class TestCaseTestStepsController {
 
 	}
 
-	@RequestMapping(value = "/add", method = RequestMethod.POST,  consumes="application/json")
+	@RequestMapping(value = "/add", method = RequestMethod.POST, consumes = "application/json")
 	@ResponseBody
 	public Long addActionTestStep(@RequestBody ActionStepFormModel stepModel,
-			@PathVariable long testCaseId) throws BindException {
+								  @PathVariable long testCaseId) throws BindException {
 
 		BindingResult validation = new BeanPropertyBindingResult(stepModel, "add-test-step");
 		ActionStepFormModelValidator validator = new ActionStepFormModelValidator(internationalizationHelper);
 		validator.validate(stepModel, validation);
 
-		if (validation.hasErrors()){
+		if (validation.hasErrors()) {
 			throw new BindException(validation);
 		}
 
@@ -184,20 +179,20 @@ public class TestCaseTestStepsController {
 
 		ActionTestStep addActionTestStep;
 
-		if (index!=0) {
-			addActionTestStep = testCaseModificationService.addActionTestStep(testCaseId, step, customFieldValues,index);
+		if (index != 0) {
+			addActionTestStep = testCaseModificationService.addActionTestStep(testCaseId, step, customFieldValues, index);
 		} else {
 			addActionTestStep = testCaseModificationService.addActionTestStep(testCaseId, step, customFieldValues);
 		}
 		LOGGER.trace(TEST_CASE_ + testCaseId + ": step added, action : " + step.getAction() + ", expected result : "
-				+ step.getExpectedResult());
+			+ step.getExpectedResult());
 		return addActionTestStep.getId();
 	}
 
-	@RequestMapping(value = "/paste", method = RequestMethod.POST, params = { COPIED_STEP_ID_PARAM })
+	@RequestMapping(value = "/paste", method = RequestMethod.POST, params = {COPIED_STEP_ID_PARAM})
 	@ResponseBody
 	public boolean pasteStep(@RequestParam(COPIED_STEP_ID_PARAM) List<Long> copiedStepIds,
-			@RequestParam(value = "idPosition", required = true) long idPosition, @PathVariable long testCaseId) {
+							 @RequestParam(value = "idPosition", required = true) long idPosition, @PathVariable long testCaseId) {
 
 		callStepManager.checkForCyclicStepCallBeforePaste(testCaseId, copiedStepIds);
 		return testCaseModificationService.pasteCopiedTestSteps(testCaseId, idPosition, copiedStepIds);
@@ -205,10 +200,10 @@ public class TestCaseTestStepsController {
 	}
 
 
-	@RequestMapping(value = "/paste-last-index", method = RequestMethod.POST, params = { COPIED_STEP_ID_PARAM })
+	@RequestMapping(value = "/paste-last-index", method = RequestMethod.POST, params = {COPIED_STEP_ID_PARAM})
 	@ResponseBody
 	public boolean pasteStepLastIndex(@RequestParam(COPIED_STEP_ID_PARAM) List<Long> copiedStepIds,
-			@PathVariable long testCaseId) {
+									  @PathVariable long testCaseId) {
 
 		callStepManager.checkForCyclicStepCallBeforePaste(testCaseId, copiedStepIds);
 		return testCaseModificationService.pasteCopiedTestStepToLastIndex(testCaseId, copiedStepIds);
@@ -224,10 +219,10 @@ public class TestCaseTestStepsController {
 
 	}
 
-	@RequestMapping(value = "/move", method = RequestMethod.POST, params = { "newIndex", "itemIds[]" })
+	@RequestMapping(value = "/move", method = RequestMethod.POST, params = {"newIndex", "itemIds[]"})
 	@ResponseBody
 	public void changeStepsIndex(@RequestParam("itemIds[]") List<Long> itemIds, @RequestParam("newIndex") int newIndex,
-			@PathVariable long testCaseId) {
+								 @PathVariable long testCaseId) {
 
 		testCaseModificationService.changeTestStepsPosition(testCaseId, newIndex, itemIds);
 
@@ -240,28 +235,28 @@ public class TestCaseTestStepsController {
 		return teststeps.size();
 	}
 
-	@RequestMapping(value = "/{stepId}/action", method = RequestMethod.POST, params = { "id", VALUE }, produces = "text/plain;charset=UTF-8")
+	@RequestMapping(value = "/{stepId}/action", method = RequestMethod.POST, params = {"id", VALUE}, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String changeStepAction(@PathVariable long stepId, @RequestParam(VALUE) String newAction) {
 		testCaseModificationService.updateTestStepAction(stepId, newAction);
 		LOGGER.trace("TestCaseModificationController : updated action for step {}", stepId);
-		return newAction;
+		return HTMLCleanupUtils.cleanHtml(newAction);
 	}
 
-	@RequestMapping(value = "/{stepId}/result", method = RequestMethod.POST, params = { "id", VALUE }, produces = "text/plain;charset=UTF-8")
+	@RequestMapping(value = "/{stepId}/result", method = RequestMethod.POST, params = {"id", VALUE}, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String changeStepDescription(@PathVariable long stepId, @RequestParam(VALUE) String newResult) {
 		testCaseModificationService.updateTestStepExpectedResult(stepId, newResult);
 		LOGGER.trace("TestCaseModificationController : updated action for step {}", stepId);
-		return newResult;
+		return HTMLCleanupUtils.cleanHtml(newResult);
 	}
 
 
-	@RequestMapping(value = "{stepId}/parameter-assignation-mode", method = RequestMethod.POST, params = {"mode","datasetId"})
+	@RequestMapping(value = "{stepId}/parameter-assignation-mode", method = RequestMethod.POST, params = {"mode", "datasetId"})
 	@ResponseBody
 	public void changeParameterAssignationMode(@PathVariable("stepId") Long stepId,
-			@RequestParam(value="mode", required=true) ParameterAssignationMode mode,
-			@RequestParam(value="datasetId", required=false) Long datasetId){
+											   @RequestParam(value = "mode", required = true) ParameterAssignationMode mode,
+											   @RequestParam(value = "datasetId", required = false) Long datasetId) {
 
 		callStepManager.setParameterAssignationMode(stepId, mode, datasetId);
 

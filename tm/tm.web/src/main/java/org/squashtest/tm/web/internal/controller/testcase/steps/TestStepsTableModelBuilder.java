@@ -20,27 +20,19 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.steps;
 
-import java.text.ParseException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.MultiValuedCustomFieldValue;
 import org.squashtest.tm.domain.customfield.NumericCustomFieldValue;
-import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.CallTestStep;
-import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
-import org.squashtest.tm.domain.testcase.TestStep;
-import org.squashtest.tm.domain.testcase.TestStepVisitor;
+import org.squashtest.tm.domain.testcase.*;
 import org.squashtest.tm.service.internal.dto.NumericCufHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+
+import java.text.ParseException;
+import java.util.*;
 
 /**
  * Builds a DataTable model for TestSteps table.
@@ -48,6 +40,7 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
  * @author Gregory Fouquet
  *
  */
+// XSS OK
 public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> implements TestStepVisitor {
 	/**
 	 *
@@ -162,14 +155,12 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 		}
 
 		public void setValue(Object value) {
-			if (List.class.isAssignableFrom(value.getClass())){
+			if (List.class.isAssignableFrom(value.getClass())) {
 				this.values = (List<String>) value;
-			}
-			else if (String.class.isAssignableFrom(value.getClass())){
-				this.value = (String)value;
-			}
-			else{
-				throw new IllegalArgumentException("type '"+value.getClass()+"' not supported");
+			} else if (String.class.isAssignableFrom(value.getClass())) {
+				this.value = (String) value;
+			} else {
+				throw new IllegalArgumentException("type '" + value.getClass() + "' not supported");
 			}
 		}
 
@@ -199,12 +190,10 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 			this.id = value.getId();
 
 			if (MultiValuedCustomFieldValue.class.isAssignableFrom(value.getClass())) {
-				this.values = ((MultiValuedCustomFieldValue)value).getValues();
-			}
-			else if(NumericCustomFieldValue.class.isAssignableFrom(value.getClass())){
+				this.values = ((MultiValuedCustomFieldValue) value).getValues();
+			} else if (NumericCustomFieldValue.class.isAssignableFrom(value.getClass())) {
 				this.value = NumericCufHelper.formatOutputNumericCufValue(value.getValue());
-			}
-			else{
+			} else {
 				this.value = value.getValue();
 			}
 		}
@@ -230,7 +219,7 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 	}
 
 
-	public static final class CallStepInfo{
+	public static final class CallStepInfo {
 
 		private Long calledTcId;
 		private String calledTcName;
@@ -240,13 +229,13 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 
 		private String paramMode;
 
-		CallStepInfo(CallTestStep step){
+		CallStepInfo(CallTestStep step) {
 			this.calledTcId = step.getCalledTestCase().getId();
 			this.calledTcName = step.getCalledTestCase().getName();
 
 			this.paramMode = step.getParameterAssignationMode().toString();
 
-			if (step.getParameterAssignationMode() == ParameterAssignationMode.CALLED_DATASET){
+			if (step.getParameterAssignationMode() == ParameterAssignationMode.CALLED_DATASET) {
 				this.calledDatasetId = step.getCalledDataset().getId();
 				this.calledDatasetName = step.getCalledDataset().getName();
 			}

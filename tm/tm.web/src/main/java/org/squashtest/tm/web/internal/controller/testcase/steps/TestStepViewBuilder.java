@@ -31,13 +31,14 @@ import org.squashtest.tm.domain.testcase.TestStepVisitor;
  * @author Gregory Fouquet
  *
  */
+// XSS OK
 class TestStepViewBuilder implements TestStepVisitor {
 	private TestStepView testStepView;
 
 	public TestStepViewBuilder() {
 	}
 
-	
+
 	public TestStepView buildTestStepView(TestStep item) {
 		item.accept(this);
 		return testStepView;
@@ -58,7 +59,5 @@ class TestStepViewBuilder implements TestStepVisitor {
 
 	}
 
-		
-	
 
 }

@@ -20,27 +20,13 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.steps;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
@@ -48,6 +34,8 @@ import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.execution.ExecutionFinder;
+import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
+import org.squashtest.tm.service.internal.dto.CustomFieldValueModel;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.TestStepModificationService;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
@@ -55,9 +43,11 @@ import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfi
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.controller.testcase.requirement.RequirementVerifierView;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
-import org.squashtest.tm.service.internal.dto.CustomFieldValueModel;
 
+import javax.inject.Inject;
+import java.util.*;
+
+// XSS OK
 @Controller
 @RequestMapping("/test-steps/{testStepId}")
 public class TestStepController {
@@ -72,7 +62,6 @@ public class TestStepController {
 
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
-
 
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentHelper;
@@ -92,8 +81,7 @@ public class TestStepController {
 	/**
 	 * Shows the step modification page.
 	 *
-	 * @param testStepId
-	 *            the id of the step to show
+	 * @param testStepId the id of the step to show
 	 * @param model
 	 * @return
 	 */
@@ -110,10 +98,10 @@ public class TestStepController {
 	}
 
 	private void generateTestStepInfo(Model model, AbstractTestStepView<?> testStepView,
-			TestStep testStep) {
+									  TestStep testStep) {
 		Locale locale = LocaleContextHolder.getLocale();
 		model.addAttribute("testStepView", testStepView);
-		if(testStepView.actionStep != null){
+		if (testStepView.actionStep != null) {
 			model.addAttribute("testStepViewAction", HtmlUtils.htmlEscape(testStepView.actionStep.getAction()));
 			model.addAttribute("testStepViewExpectedResult", HtmlUtils.htmlEscape(testStepView.actionStep.getExpectedResult()));
 		}
@@ -151,10 +139,10 @@ public class TestStepController {
 
 			// cufs
 			values = cufValueFinder.findAllCustomFieldValues(testStepView.getActionStep().getBoundEntityId(),
-					testStepView.getActionStep().getBoundEntityType());
+				testStepView.getActionStep().getBoundEntityType());
 			hasCUF = cufValueFinder.hasCustomFields(testStepView.getActionStep());
 			// verified requirements
-			RequirementVerifierView requirementVerifierView = new RequirementVerifierView(testStepView.getActionStep(),internationalizationHelper,locale);
+			RequirementVerifierView requirementVerifierView = new RequirementVerifierView(testStepView.getActionStep(), internationalizationHelper, locale);
 			model.addAttribute("requirementVerifier", requirementVerifierView);
 
 		} else {
@@ -163,22 +151,18 @@ public class TestStepController {
 
 
 		List<CustomFieldValueModel> cufModels = new ArrayList<>(values.size());
-		for (CustomFieldValue value : values){
+		for (CustomFieldValue value : values) {
 			cufModels.add(cufJsonConverter.toJson(value));
 		}
 		model.addAttribute("cufDefinitions", cufModels);
 
 		model.addAttribute("hasCUF", hasCUF);
-
-
-
 	}
 
 	@RequestMapping(value = "/from-exec", method = RequestMethod.GET, params = OPTIMIZED)
 	public String showStepInfosFromExec(@PathVariable("testStepId") int execStepId,
- Model model,
-			@RequestParam(OPTIMIZED) boolean optimized) {
-
+										Model model,
+										@RequestParam(OPTIMIZED) boolean optimized) {
 
 		ExecutionStep execStep = executionService.findExecutionStepById(execStepId);
 		TestStep testStep = execStep.getReferencedTestStep();
@@ -188,7 +172,7 @@ public class TestStepController {
 			generateTestStepInfo(model, testStepView, testStep);
 		} else {
 			model.addAttribute("testStepView", testStepView);
-			if(testStepView.actionStep != null){
+			if (testStepView.actionStep != null) {
 				model.addAttribute("testStepViewAction", HtmlUtils.htmlEscape(testStepView.actionStep.getAction()));
 				model.addAttribute("testStepViewExpectedResult", HtmlUtils.htmlEscape(testStepView.actionStep.getExpectedResult()));
 			}
@@ -207,7 +191,7 @@ public class TestStepController {
 	 * @param testStepId
 	 * @param testStepModel
 	 */
-	@RequestMapping(method = RequestMethod.POST, headers = { "Content-Type=application/json" })
+	@RequestMapping(method = RequestMethod.POST, headers = {"Content-Type=application/json"})
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void updateStep(@PathVariable Long testStepId, @RequestBody TestStepUpdateFormModel testStepModel) {

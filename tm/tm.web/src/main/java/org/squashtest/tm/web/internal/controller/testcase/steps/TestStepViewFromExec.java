@@ -20,15 +20,16 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.steps;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 
+import java.util.ArrayList;
+import java.util.List;
+
+// XSS OK
 public class TestStepViewFromExec extends AbstractTestStepView<ExecutionStep> {
 
 	public static final Predicate NOT_DELETED = new Predicate() {
@@ -99,7 +100,6 @@ public class TestStepViewFromExec extends AbstractTestStepView<ExecutionStep> {
 		removeDeletedSteps(execSteps);
 		return execSteps;
 	}
-
 
 
 	private void removeDeletedSteps(List<ExecutionStep> allSteps) {
