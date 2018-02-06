@@ -189,6 +189,21 @@
 							</label>
 							<div class="display-table-cell editable rich-editable" data-def="url=${projectUrl}" id="project-description">${hu:clean(adminproject.project.description) }</div>
 						</div>
+						<div class="display-table-row">
+              <label for="project-template" class="display-table-cell">
+            	  <f:message key="label.associatedTemplate" />
+            	</label>
+            	<div class="display-table-cell" id="project-template">
+            	  <c:choose>
+            	    <c:when test="${ adminproject.project.template != null }">
+            	      ${ hu:clean(adminproject.project.template.name) }
+            	    </c:when>
+            	    <c:otherwise>
+            	      <f:message key="label.none" />
+            	    </c:otherwise>
+            	  </c:choose>
+            	</div>
+            </div>
 						<%-- 	Waiting for implementation of deactivation	<comp:project-active adminproject="${ adminproject }"/> --%>
 					</div>
 				</jsp:attribute>
