@@ -53,7 +53,10 @@ import java.util.Locale;
  */
 @Controller
 public class CustomReportController {
+
 	public static final Logger LOGGER = LoggerFactory.getLogger(CustomReportController.class);
+
+	private static final String NEW_NAME = "newName";
 
 	@Inject
 	private CustomReportLibraryNodeService customReportLibraryNodeService;
@@ -118,25 +121,25 @@ public class CustomReportController {
 
 	//---- RENAME ----
 
-	@RequestMapping(method = RequestMethod.POST, value="custom-report-folders/{nodeId}",params = { "newName" })
+	@RequestMapping(method = RequestMethod.POST, value="custom-report-folders/{nodeId}",params = {NEW_NAME})
 	@ResponseBody
 	public RenameModel renameCRF(@PathVariable long nodeId, @RequestParam String newName) {
 		return renameNode(nodeId, newName);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value="custom-report-dashboard/{nodeId}",params = { "newName" })
+	@RequestMapping(method = RequestMethod.POST, value="custom-report-dashboard/{nodeId}",params = {NEW_NAME})
 	@ResponseBody
 	public RenameModel renameCRD(@PathVariable long nodeId, @RequestParam String newName) {
 		return renameNode(nodeId, newName);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value="custom-report-chart/{nodeId}",params = { "newName" })
+	@RequestMapping(method = RequestMethod.POST, value="custom-report-chart/{nodeId}",params = {NEW_NAME})
 	@ResponseBody
 	public RenameModel renameChartDefinition(@PathVariable long nodeId, @RequestParam String newName) {
 		return renameNode(nodeId, newName);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value="custom-report-report/{nodeId}",params = { "newName" })
+	@RequestMapping(method = RequestMethod.POST, value="custom-report-report/{nodeId}",params = {NEW_NAME})
 	@ResponseBody
 	public RenameModel renameReportDefinition(@PathVariable long nodeId, @RequestParam String newName) {
 		return renameNode(nodeId, newName);

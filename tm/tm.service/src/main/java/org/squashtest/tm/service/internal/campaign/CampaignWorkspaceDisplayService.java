@@ -35,6 +35,7 @@ import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryPluginBinding;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
+import org.squashtest.tm.jooq.domain.Tables;
 import org.squashtest.tm.jooq.domain.tables.*;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
@@ -69,7 +70,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	@Inject
 	HibernateIterationDao hibernateIterationDao;
 
-	private Campaign C = CAMPAIGN.as("C");
+	private Campaign C = Tables.CAMPAIGN.as("C");
 	private CampaignLibraryNode CLN = CAMPAIGN_LIBRARY_NODE.as("CLN");
 	private CampaignFolder CF = CAMPAIGN_FOLDER.as("CF");
 	private ClnRelationship CLNR = CLN_RELATIONSHIP.as("CLNR");
@@ -88,8 +89,10 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	private Map<Long, JsTreeNode> iterationMap = new HashMap<>();
 	private Map<Long, JsTreeNode> testSuiteMap = new HashMap<>();
 
+	private static final String CAMPAIGN = "Campaign";
 	private static final String ITERATION_COUNT = "ITERATION_COUNT";
 	private static final String RES_ID = "resId";
+	private static final String REL = "rel";
 
 	@Override
 	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates, UserDto currentUser, Map<Long, List<Long>> allMilestonesForLN, List<Long> milestonesModifiable, Long activeMilestoneId) {
@@ -146,9 +149,9 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		childrenIds.remove(entityId);
 
 		Map<Long, JsTreeNode> libraryChildrenMap =
-			(entityClass.equals("Campaign") ? getCampaignChildren(entityFatherChildrenMultimap, currentUser) : getIterationChildren(entityFatherChildrenMultimap, currentUser, testSuiteDescriptions));
+			(entityClass.equals(CAMPAIGN) ? getCampaignChildren(entityFatherChildrenMultimap, currentUser) : getIterationChildren(entityFatherChildrenMultimap, currentUser, testSuiteDescriptions));
 
-		libraryId = entityClass.equals("Campaign") ? hibernateCampaignDao.findById(entityId).getLibrary().getId() : hibernateIterationDao.findById(entityId).getCampaignLibrary().getId();
+		libraryId = entityClass.equals(CAMPAIGN) ? hibernateCampaignDao.findById(entityId).getLibrary().getId() : hibernateIterationDao.findById(entityId).getCampaignLibrary().getId();
 
 		if (currentUser.isNotAdmin()) {
 			findNodeChildrenPermissionMap(currentUser, libraryChildrenMap, libraryId);
@@ -189,7 +192,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		attr.put("resType", restype);
 		attr.put("name", name);
 		attr.put("id", "Campaign-" + campaignId);
-		attr.put("rel", "campaign");
+		attr.put(REL, "campaign");
 
 		String title = name;
 		if (!StringUtils.isEmpty(reference)) {
@@ -231,7 +234,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		attr.put("resType", "iterations");
 		attr.put("name", name);
 		attr.put("id", "Iteration-" + id);
-		attr.put("rel", "iteration");
+		attr.put(REL, "iteration");
 		attr.put("iterationIndex", String.valueOf(iterationOrder + 1));
 		if (hasContent) {
 			state = State.closed;
@@ -259,7 +262,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		attr.put("id", "TestSuite-" + id);
 		attr.put("executionstatus", executionStatus);
 		attr.put("resType", "test-suites");
-		attr.put("rel", "test-suite");
+		attr.put(REL, "test-suite");
 		//build tooltip
 		String[] args = {getMessage("execution.execution-status." + executionStatus)};
 		String tooltip = getMessage("label.tree.testSuite.tooltip", args);
@@ -273,7 +276,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	// We must fetch them separately, because they might have identical ids
 	private void getCampaignHierarchy(UserDto currentUser, MultiMap expansionCandidates) {
 		//first: iterations, get father-children relation, fetch them and add them to the campaigns
-		campaignFatherChildrenMultimap = getFatherChildrenLibraryNode("Campaign", expansionCandidates);
+		campaignFatherChildrenMultimap = getFatherChildrenLibraryNode(CAMPAIGN, expansionCandidates);
 		iterationMap = getCampaignChildren(campaignFatherChildrenMultimap, currentUser);
 		//second test suites, get father-children relation, fetch them and add them  to  the iterations
 		iterationFatherChildrenMultiMap = getFatherChildrenLibraryNode("Iteration", expansionCandidates);
@@ -290,7 +293,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		TableField<?, ?> orderColumn;
 		TableLike<?> table;
 
-		if (resType.equals("Campaign")) {
+		if (resType.equals(CAMPAIGN)) {
 			table = CI;
 			fatherColumn = CI.CAMPAIGN_ID;
 			childColumn = CI.ITERATION_ID;
@@ -423,7 +426,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 	@Override
 	protected String getNodeName() {
-		return "Campaign";
+		return CAMPAIGN;
 	}
 
 	@Override
@@ -502,7 +505,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 	@Override
 	protected boolean passesMilestoneFilter(JsTreeNode node, Long activeMilestoneId) {
-		return (node != null && (NO_ACTIVE_MILESTONE_ID.equals(activeMilestoneId) || node.getAttr().get("rel").equals("folder") || nodeHasActiveMilestone(nodeLinkedToMilestone, (Long) node.getAttr().get(RES_ID))));
+		return (node != null && (NO_ACTIVE_MILESTONE_ID.equals(activeMilestoneId) || node.getAttr().get(REL).equals("folder") || nodeHasActiveMilestone(nodeLinkedToMilestone, (Long) node.getAttr().get(RES_ID))));
 	}
 
 	@Override

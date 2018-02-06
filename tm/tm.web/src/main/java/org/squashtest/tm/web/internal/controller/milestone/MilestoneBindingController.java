@@ -48,6 +48,7 @@ public class MilestoneBindingController {
 	private static final String IDS = "Ids[]";
 	private static final String BINDED = "binded";
 	private static final String BINDABLE = "bindable";
+	private static final String PROJECT_PROJECT_ID_MILESTONE_MAPPING = "/project/{projectId}/milestone";
 
 	@Inject
 	private InternationalizationHelper messageSource;
@@ -61,7 +62,7 @@ public class MilestoneBindingController {
 	@Inject
 	private PermissionEvaluationService permissionEvaluator;
 
-	@RequestMapping(value = "/project/{projectId}/milestone", method = RequestMethod.POST, params = {IDS})
+	@RequestMapping(value = PROJECT_PROJECT_ID_MILESTONE_MAPPING, method = RequestMethod.POST, params = {IDS})
 	@ResponseBody
 	public void bindMilestonesToProject(@PathVariable Long projectId, @RequestParam(IDS) List<Long> milestoneIds) {
 		service.bindMilestonesToProject(milestoneIds, projectId);
@@ -73,7 +74,7 @@ public class MilestoneBindingController {
 		service.bindProjectsToMilestone(projectIds, milestoneId);
 	}
 
-	@RequestMapping(value = "/project/{projectId}/milestone", method = RequestMethod.POST, params = {IDS,
+	@RequestMapping(value = PROJECT_PROJECT_ID_MILESTONE_MAPPING, method = RequestMethod.POST, params = {IDS,
 		"bindObjects"})
 	@ResponseBody
 	public void bindMilestonesToProjectAndBindObject(@PathVariable Long projectId,
@@ -135,7 +136,7 @@ public class MilestoneBindingController {
 		return model;
 	}
 
-	@RequestMapping(value = "/project/{projectId}/milestone", method = RequestMethod.GET, params = {BINDABLE, "type"})
+	@RequestMapping(value = PROJECT_PROJECT_ID_MILESTONE_MAPPING, method = RequestMethod.GET, params = {BINDABLE, "type"})
 	@ResponseBody
 	public DataTableModel getBindableMilestoneForProjectTableModel(@PathVariable Long projectId, final Locale locale,
 																   @RequestParam("type") String type) {
@@ -145,7 +146,7 @@ public class MilestoneBindingController {
 		return buildMilestoneTableModel(data, locale, projectId);
 	}
 
-	@RequestMapping(value = "/project/{projectId}/milestone", method = RequestMethod.GET, params = {BINDED})
+	@RequestMapping(value = PROJECT_PROJECT_ID_MILESTONE_MAPPING, method = RequestMethod.GET, params = {BINDED})
 	@ResponseBody
 	public DataTableModel getBindedMilestoneForProjectTableModel(@PathVariable Long projectId, final Locale locale) {
 
