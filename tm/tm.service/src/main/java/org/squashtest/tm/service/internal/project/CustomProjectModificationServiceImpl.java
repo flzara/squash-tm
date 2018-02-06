@@ -115,6 +115,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 		genericProjectManager.persist(newProject);
 
 		ProjectTemplate projectTemplate = projectTemplateDao.findOne(templateId);
+		newProject.setTemplate(projectTemplate);
 		genericProjectManager.synchronizeGenericProject(newProject, projectTemplate, params);
 
 		return newProject;

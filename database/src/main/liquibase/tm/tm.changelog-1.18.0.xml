@@ -50,4 +50,15 @@
     </createTable>
   </changeSet>
 
+  <changeSet id="tm-1.18.0-project-template-link" author="jlor">
+    <comment>Adding a column to keep the link between a Project and a Project Template</comment>
+    <addColumn tableName="PROJECT">
+      <column name="TEMPLATE_ID" type="bigint">
+        <constraints nullable="true"
+                     foreignKeyName="fk_project_template_id"
+                     references="PROJECT(PROJECT_ID)" />
+      </column>
+    </addColumn>
+  </changeSet>
+
 </databaseChangeLog>

@@ -20,8 +20,7 @@
  */
 package org.squashtest.tm.domain.project;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import javax.persistence.*;
 
 import org.hibernate.search.annotations.Indexed;
 
@@ -33,6 +32,18 @@ import static org.squashtest.tm.domain.project.Project.PROJECT_TYPE;
 public class Project extends GenericProject {
 
 	public static final String PROJECT_TYPE = "P";
+
+	@JoinColumn(name = "TEMPLATE_ID")
+	@ManyToOne(fetch = FetchType.LAZY)
+	private ProjectTemplate template;
+
+	public ProjectTemplate getTemplate() {
+		return template;
+	}
+
+	public void setTemplate(ProjectTemplate template) {
+		this.template = template;
+	}
 
 	public Project() {
 		super();
