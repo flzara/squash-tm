@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.widget;
 
+//XSS OK
 public class AoColumnDef {
 	private boolean bVisible;
 	private boolean bSortable;
@@ -52,14 +53,14 @@ public class AoColumnDef {
 		return mDataProp;
 	}
 
-	public AoColumnDef(boolean bVisible, boolean bSortable, String sClass, String sWidth, 
-			String mDataProp) {
+	public AoColumnDef(boolean bVisible, boolean bSortable, String sClass, String sWidth,
+					   String mDataProp) {
 		super();
 		this.bVisible = bVisible;
 		this.bSortable = bSortable;
 		this.sClass = sClass;
 		this.sWidth = sWidth;
-		
+
 		this.mDataProp = mDataProp;
 	}
 
@@ -86,6 +87,6 @@ public class AoColumnDef {
 	public void setmDataProp(String mDataProp) {
 		this.mDataProp = mDataProp;
 	}
-	
+
 
 }

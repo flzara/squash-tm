@@ -22,8 +22,9 @@ package org.squashtest.tm.web.internal.controller;
 
 /**
  * Constants to be used as request param names.
- * 
+ *
  */
+//XSS OK
 public final class RequestParams {
 
 	/**
@@ -55,7 +56,7 @@ public final class RequestParams {
 	public static final String TEST_SUITE_ID = "testSuiteId";
 	public static final String TEST_PLAN_ITEMS_IDS = "testPlanItemsIds[]";
 
-	public static final String REQUIREMENT_ID ="requirementId";
+	public static final String REQUIREMENT_ID = "requirementId";
 	public static final String RTEFORMAT = "keep-rte-format";
 	public static final String PROJECT_ID = "projectId";
 	public static final String NAME = "name";
@@ -64,10 +65,9 @@ public final class RequestParams {
 	public static final String CAMPAIGN_ID = "campaignId";
 	public static final String EXECUTION_ID = "executionId";
 
-	
 
 	private RequestParams() {
 		super();
 	}
-	
+
 }

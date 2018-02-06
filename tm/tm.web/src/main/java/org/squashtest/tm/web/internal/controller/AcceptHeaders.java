@@ -25,8 +25,9 @@ import org.squashtest.tm.web.internal.http.RequestHeaders;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
+// XSS OK
 public final class AcceptHeaders {
 	private AcceptHeaders() {
 		super();

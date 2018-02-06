@@ -20,21 +20,21 @@
  */
 package org.squashtest.tm.web.internal.controller.widget;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.inject.Inject;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
 /**
  * @author Gregory Fouquet
  *
  */
+// XSS OK
 @Controller
 public class DataTablesController {
 	@Inject
@@ -63,9 +63,9 @@ public class DataTablesController {
 	public Map<String, Object> getInternationalizedMessages(Locale paramLocale) {
 
 		/* Issue #6782:
-		* The messages were loaded only once, even if the Locale was changed.
-		* We now compare if the Locale has changed since the previous loading
-		* and reload messages if it is the case. */
+		 * The messages were loaded only once, even if the Locale was changed.
+		 * We now compare if the Locale has changed since the previous loading
+		 * and reload messages if it is the case. */
 
 		if (legacyMessages == null || !locale.equals(paramLocale)) {
 
@@ -73,12 +73,12 @@ public class DataTablesController {
 
 			legacyMessages = new HashMap<>();
 
-			legacyMessages.put("sLengthMenu", messageSource.getMessage("generics.datatable.lengthMenu",null, paramLocale));
-			legacyMessages.put("sZeroRecords", messageSource.getMessage("generics.datatable.zeroRecords",null, paramLocale));
-			legacyMessages.put("sInfo", messageSource.getMessage("generics.datatable.info",null, paramLocale));
-			legacyMessages.put("sInfoEmpty", messageSource.getMessage("generics.datatable.infoEmpty",null, paramLocale));
-			legacyMessages.put("sInfoFiltered", messageSource.getMessage("generics.datatable.infoFiltered",null, paramLocale));
-			legacyMessages.put("sSearch", messageSource.getMessage("generics.datatable.search",null, paramLocale));
+			legacyMessages.put("sLengthMenu", messageSource.getMessage("generics.datatable.lengthMenu", null, paramLocale));
+			legacyMessages.put("sZeroRecords", messageSource.getMessage("generics.datatable.zeroRecords", null, paramLocale));
+			legacyMessages.put("sInfo", messageSource.getMessage("generics.datatable.info", null, paramLocale));
+			legacyMessages.put("sInfoEmpty", messageSource.getMessage("generics.datatable.infoEmpty", null, paramLocale));
+			legacyMessages.put("sInfoFiltered", messageSource.getMessage("generics.datatable.infoFiltered", null, paramLocale));
+			legacyMessages.put("sSearch", messageSource.getMessage("generics.datatable.search", null, paramLocale));
 
 			Map<String, Object> pagination = new HashMap<>();
 			legacyMessages.put("oPaginate", pagination);
