@@ -57,7 +57,7 @@
 				<li>
 					<c:url var="btUrl" 			value="${bugtracker.iframeFriendly ? '/bugtracker/'.concat(bugtracker.id.toString()).concat('/workspace') : bugtracker.URL}"/>
 					<c:set var="targetClause" 	value="${bugtracker.iframeFriendly ? 'target=\"_blank\"' : '' }"/>
-					<a id="bugtracker-${bugtracker.id }" href="${btUrl}" ${targetClause}>${bugtracker.name}</a>
+					<a id="bugtracker-${bugtracker.id }" href="${btUrl}" ${targetClause}><c:out value="${bugtracker.name}"/></a>
 				</li>
 			</c:forEach>
 			</ul>

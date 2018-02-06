@@ -26,6 +26,7 @@
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="hu" uri="http://org.squashtest.tm/taglib/html-utils" %>
 
 <s:url var="administrationUrl" value="/administration" />
 
@@ -37,30 +38,30 @@
 	<jsp:attribute  name="head">
 		<comp:sq-css name="squash.grey.css" />
 	</jsp:attribute>
-	
+
 	<jsp:attribute name="titlePane">
-		<h2 class="admin"><f:message key="label.administration" /></h2>	
+		<h2 class="admin"><f:message key="label.administration" /></h2>
 	</jsp:attribute>
-		
+
 	<jsp:attribute name="subPageTitle">
 		<h2><f:message key="label.ConsultModifyWelcomeMessage" /></h2>
 	</jsp:attribute>
-	
+
 	<jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" class="button" value="${backButtonLabel}" onClick="document.location.href= '${administrationUrl}'"/>	
-	
+		<input type="button" class="button" value="${backButtonLabel}" onClick="document.location.href= '${administrationUrl}'"/>
+
 	</jsp:attribute>
-	
-	<jsp:attribute name="footer">	
-		
+
+	<jsp:attribute name="footer">
+
 	</jsp:attribute>
-	
+
 	<jsp:attribute name="informationContent">
-		<div id="welcome-page-content" class="admin-message-page-content">        
-			<span id="welcome-message" class="editable rich-editable" 
-                  data-def="url=${editWelcomeUrl}, rows=auto, cols=auto, ckeditor.customConfig=${editLoginButtonsConf}"  >${welcomeMessage}</span>
+		<div id="welcome-page-content" class="admin-message-page-content">
+			<span id="welcome-message" class="editable rich-editable"
+                  data-def="url=${editWelcomeUrl}, rows=auto, cols=auto, ckeditor.customConfig=${editLoginButtonsConf}"  >${hu:clean(welcomeMessage)}</span>
 		</div>
 	</jsp:attribute>
-	
+
 </layout:info-page-layout>
