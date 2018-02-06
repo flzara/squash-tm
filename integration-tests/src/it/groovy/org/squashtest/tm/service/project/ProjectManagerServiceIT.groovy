@@ -43,7 +43,7 @@ class ProjectManagerServiceIT extends DbunitServiceSpecification {
 		given : "a new project to persit"
 		Project project = new Project();
 		project.setName("name");
-		
+
 		and:"a conf object"
 		GenericProjectCopyParameter params = new GenericProjectCopyParameter()
 		params.setCopyPermissions(true)
@@ -54,7 +54,7 @@ class ProjectManagerServiceIT extends DbunitServiceSpecification {
 		params.setCopyMilestone(false)
 
 		when :
-		service.addProjectFromtemplate(project, -1000L, params)
+		service.addProjectFromTemplate(project, -1000L, params)
 
 		then:
 		project.isTestAutomationEnabled() == true
