@@ -35,7 +35,6 @@
           <th class="datatable-filterable"><f:message key="label.Login" /></th>
           <th class="datatable-filterable"><f:message key="label.connectionDate" /></th>
           <th class="datatable-filterable"><f:message key="label.successful"/></th>
-          <th>&nbsp;</th>
         </tr>
       </thead>
       <tbody>
@@ -46,7 +45,6 @@
           <td>${ connection.login }</td>
           <td><comp:date value="${ connection.connectionDate }" /></td>
           <td>${ connection.success }</td>
-          <td>&nbsp;</td>
         </tr>
         </c:forEach>
         <%-- Will be populated through ajax --%>

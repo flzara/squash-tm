@@ -57,9 +57,10 @@ public class ConnectionController {
 	private ConnectionLogFinderService service;
 
 	private DatatableMapper<String> connectionsMapper = new NameBasedMapper(9)
+		.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, "id", ConnectionLog.class)
 		.mapAttribute("login", "login", ConnectionLog.class)
-		.mapAttribute("connectionDate", "connectionDate", ConnectionLog.class)
-		.mapAttribute("success", "success", ConnectionLog.class);
+		.mapAttribute("connection-date", "connectionDate", ConnectionLog.class)
+		.mapAttribute("successful", "success", ConnectionLog.class);
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionController.class);
 
@@ -100,7 +101,6 @@ public class ConnectionController {
 			res.put("login", item.getLogin());
 			res.put("connection-date", messageSource.localizeDate(item.getConnectionDate(), locale));
 			res.put("successful", item.getSuccess());
-			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			return res;
 		}
 	}

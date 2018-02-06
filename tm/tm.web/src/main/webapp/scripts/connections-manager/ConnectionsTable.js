@@ -30,7 +30,7 @@ define([ "jquery", "backbone", "squashtable", "jqueryui" ], function($, Backbone
 				"sAjaxSource" : squashtm.app.contextRoot + "/administration/connections",
 				"bDeferRender" : true,
 				"bFilter" : true,
-				"aaSorting" : [ [ 3, "asc" ] ],
+				"aaSorting" : [ [ 0, "asc" ] ],
 				"aoColumnDefs" : [ {
 					"bVisible" : false,
 					"bSortable" : false,
