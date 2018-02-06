@@ -27,26 +27,26 @@ import org.squashtest.tm.exception.NameAlreadyInUseException;
 
 /**
  * Project modification services which cannot be dynamically generated.
- * 
+ *
  * @author mpagnon
- * 
+ *
  */
 public interface CustomProjectModificationService extends CustomProjectFinder {
 	/**
 	 * Will persist the new {@linkplain Project} and add settings copied from a given {@linkplain ProjectTemplate}.
-	 * 
+	 *
 	 * @param newProject : the new {@link Project} entity to persist
 	 * @param templateId : the id of the {@link ProjectTemplate} to copy the settings from
-	 * @param params : conf object containing the following params : 
+	 * @param params : conf object containing the following params :
 	 *  copyAssignedUsers : whether to copy the Template's assigned Users or not
 	 *  copyCustomFieldsSettings : whether to copy the Template's CustomFields settings or not
 	 *  copyBugtrackerSettings : whether to copy the Template's bug-tracker settings or not
 	 *  copyTestAutomationSettings : whether to copy the Template's automation settings or not
 	 *  copyInfolists : whether to use the Template's custom categories/natures/types
-	 *  copyMilestone 
+	 *  copyMilestone
 	 * @return the persisted new {@link Project}
 	 */
-	Project addProjectFromtemplate(Project newProject, long templateId, GenericProjectCopyParameter params) throws NameAlreadyInUseException;
+	Project addProjectFromTemplate(Project newProject, long templateId, GenericProjectCopyParameter params) throws NameAlreadyInUseException;
 
 	void deleteProject(long projectId);
 
