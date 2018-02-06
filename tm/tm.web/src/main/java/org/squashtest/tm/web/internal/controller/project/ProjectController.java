@@ -69,7 +69,7 @@ public class ProjectController {
 	public void createProjectFromTemplate(@Valid @RequestBody JsonProjectFromTemplate jsonProjectFromTemplate) {
 		try {
 			if (jsonProjectFromTemplate.isFromTemplate()) {
-				projectManager.addProjectFromtemplate(jsonProjectFromTemplate.getProject(),
+				projectManager.addProjectFromTemplate(jsonProjectFromTemplate.getProject(),
 					jsonProjectFromTemplate.getTemplateId(), jsonProjectFromTemplate.getParams());
 			} else {
 				genericProjectManager.persist(jsonProjectFromTemplate.getProject());

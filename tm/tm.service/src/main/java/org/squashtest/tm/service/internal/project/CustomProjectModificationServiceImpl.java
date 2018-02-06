@@ -109,9 +109,9 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	}
 
 	@Override
-	public Project addProjectFromtemplate(Project newProject, long templateId,
-										  GenericProjectCopyParameter params)
+	public Project addProjectFromTemplate(Project newProject, long templateId, GenericProjectCopyParameter params)
 		throws NameAlreadyInUseException {
+
 		genericProjectManager.persist(newProject);
 
 		ProjectTemplate projectTemplate = projectTemplateDao.findOne(templateId);

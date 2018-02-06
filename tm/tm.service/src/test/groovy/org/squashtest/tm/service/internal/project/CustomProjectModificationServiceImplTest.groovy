@@ -22,16 +22,11 @@ package org.squashtest.tm.service.internal.project
 
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding
-import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.project.ProjectTemplate
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
-import org.squashtest.tm.exception.NameAlreadyInUseException;
-import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService
-import org.squashtest.tm.service.internal.project.CustomProjectModificationServiceImpl
 import org.squashtest.tm.service.internal.repository.ProjectTemplateDao
 import org.squashtest.tm.service.project.GenericProjectManagerService
-import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.project.GenericProjectCopyParameter;
 
 import spock.lang.Specification
@@ -79,7 +74,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 		params.setCopyMilestone(false)
 
 		when:
-		service.addProjectFromtemplate(project, 1L, params)
+		service.addProjectFromTemplate(project, 1L, params)
 
 		then:
 		1* genericProjectManagerService.synchronizeGenericProject(project, template, params);

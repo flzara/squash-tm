@@ -48,7 +48,7 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	 *
 	 * @param pagingAndSorting
 	 *            the {@link PagingAndSorting} that holds order and paging params
-	 * @param filter
+	 * @param filtering
 	 *            the filter to apply on the result
 	 * @return a {@link PagedCollectionHolder} containing all projects the user has management access to, ordered
 	 *         according to the given params.
@@ -91,8 +91,8 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	/**
 	 * Will bind the TM project to a TA project. Will persist it if necessary.
 	 *
-	 * @param TMprojectId
-	 * @param TAproject
+	 * @param tmProjectId
+	 * @param taProject
 	 */
 	void bindTestAutomationProject(long tmProjectId, TestAutomationProject taProject);
 
