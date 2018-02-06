@@ -184,26 +184,28 @@ class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionS
 	protected static class CustomFieldValueTableModel {
 		private static final Logger LOGGER = LoggerFactory.getLogger(ExecutionStepDataTableModelHelper.CustomFieldValueTableModel.class);
 
+		private static final String UNUSED = "unused";
+
 		private String value;
 		private List<String> values;
 		private Long id;
 
-		@SuppressWarnings("unused")
+		@SuppressWarnings(UNUSED)
 		public Object getValue() {
 			return value != null ? value : values;
 		}
 
-		@SuppressWarnings("unused")
+		@SuppressWarnings(UNUSED)
 		public Long getId() {
 			return id;
 		}
 
-		@SuppressWarnings("unused")
+		@SuppressWarnings(UNUSED)
 		public CustomFieldValueTableModel() {
 			super();
 		}
 
-		@SuppressWarnings("unused")
+		@SuppressWarnings(UNUSED)
 		public Date getValueAsDate() {
 			try {
 				return DateUtils.parseIso8601Date(value);

@@ -40,9 +40,12 @@ import org.squashtest.tm.service.internal.repository.GenericDao;
  *
  */
 public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYPE> {
+
+	private static final String UNCHECKED = "unchecked";
+
 	protected final Class<ENTITY_TYPE> entityType;
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	public HibernateDao() {
 		super();
 		ParameterizedType type = (ParameterizedType) getClass().getGenericSuperclass();
@@ -92,7 +95,7 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 		entityManager.flush();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	protected /*final*/ ENTITY_TYPE getEntity(long objectId) {
 		return entityManager.find(entityType, objectId);
 	}
@@ -108,7 +111,7 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 	 * @param queryName
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	protected /*final*/ <R> List<R> executeListNamedQuery(String queryName) {
 		return entityManager.createNamedQuery(queryName).getResultList();
 	}
@@ -121,7 +124,7 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 	 * @param setParams
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Deprecated
 	protected /*final*/ <R> List<R> executeListNamedQuery(String queryName, SetQueryParametersCallback setParams) {
 		Session session = currentSession();
@@ -143,7 +146,7 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 	 *            collection filter used to restrict the number of results.
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	protected /*final*/ <R> List<R> executeListNamedQuery(@NotNull String queryName, @NotNull Object queryParam,
 		@NotNull Paging filter) {
 		javax.persistence.Query q = entityManager.createNamedQuery(queryName);
@@ -169,14 +172,14 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 	 *            value of the parameter, should not be null
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	protected /*final*/ <R> R executeEntityNamedQuery(String queryName, String paramName, Object paramValue) {
 		return (R) entityManager.createNamedQuery(queryName)
 			.setParameter(paramName, paramValue)
 			.getSingleResult();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Deprecated
 	protected /*final*/ <R> R executeEntityNamedQuery(String queryName, SetQueryParametersCallback setParams) {
 		Query q = currentSession().getNamedQuery(queryName);
@@ -184,7 +187,7 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 		return (R) q.uniqueResult();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	protected /*final*/ <R> R executeEntityNamedQuery(String queryName) {
 		return (R) entityManager.createNamedQuery(queryName).getSingleResult();
 	}

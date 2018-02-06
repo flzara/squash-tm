@@ -80,6 +80,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	 * because Hibernate would not call those columns as we asked it to.
 	 */
 	private static final Collection<String> HQL_NO_GROUP_BY_COLUMNS = Arrays.asList("suitenames", "endDate");
+
 	/**
 	 * HQL query which looks up the whole iteration test plan
 	 */
@@ -92,7 +93,9 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 
 
 	private static final Map<String, Map<String, String>> VALUE_DEPENDENT_FILTER_CLAUSES = new HashMap<>();
+
 	private static final String VDFC_DEFAULT_KEY = "VDFC_DEFAULT_KEY";
+	private static final String UNCHECKED = "unchecked";
 
 	static {
 		Map<String, String> modeDataMap = new HashMap<>(2);
@@ -161,7 +164,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	 * Note : as long as the relation between Campaign and Iteration is OneToMany, there will be either 0 either 1
 	 * results, no more.
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	private Campaign findCampaignByIterationId(Long iterationId) {
 		Session session = currentSession();
 
@@ -231,7 +234,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	public TestPlanStatistics getIterationStatistics(long iterationId) {
 		List<Object[]> result = findAllByIterationId("iteration.countStatuses", iterationId);
 
@@ -345,7 +348,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	}
 
 	// this method will use one or another strategy to fetch its data depending on what the user is requesting.
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	private List<Object[]> findIndexedTestPlanData(final long iterationId, PagingAndMultiSorting sorting,
 												   Filtering filtering, ColumnFiltering columnFiltering) {
 
@@ -397,7 +400,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 		return query.getResultList().size();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<TestCaseExecutionStatus> findExecStatusForIterationsAndTestCases(List<Long> testCasesIds, List<Long> iterationsIds) {
 
@@ -418,7 +421,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 		return formatedResult;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<Long> findVerifiedTcIdsInIterations(List<Long> testCasesIds, List<Long> iterationIds) {
 		return findAllByTestCasesAndIterations("iteration.findVerifiedTcIdsInIterations", testCasesIds, iterationIds);
@@ -435,13 +438,13 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 			.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public List<Long> findVerifiedTcIdsInIterationsWithExecution(List<Long> tcIds, List<Long> iterationsIds) {
 		return findAllByTestCasesAndIterations("iteration.findVerifiedAndExecutedTcIdsInIterations", tcIds, iterationsIds);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	@Override
 	public MultiMap findVerifiedITPI(List<Long> tcIds, List<Long> iterationsIds) {
 		List<Object[]> itpis = findAllByTestCasesAndIterations("iteration.findITPIByTestCaseGroupByStatus", tcIds, iterationsIds);
