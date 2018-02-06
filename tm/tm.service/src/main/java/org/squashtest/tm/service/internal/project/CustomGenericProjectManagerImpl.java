@@ -428,7 +428,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		return availableTaProjects;
 	}
 	/**
-	 * @see CustomGenericProjectFinder#findAllAvailableTaProjects(long, String, String)
+	 * @see CustomGenericProjectFinder#findAllAvailableTaProjectsWithCredentials(long, String, String)
 	 */
 	@Override
 	public Collection<TestAutomationProject> findAllAvailableTaProjectsWithCredentials(long projectId, String login, String password) {
@@ -441,7 +441,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		TestAutomationServer transientServer = server.createCopy();
 		transientServer.setLogin(login);
 		transientServer.setPassword(password);
-		
+
 		Collection<TestAutomationProject> availableTaProjects = taProjectService.listProjectsOnServer(transientServer);
 		Collection<String> alreadyBoundProjectsJobNames = genericProjectDao.findBoundTestAutomationProjectJobNames(projectId);
 		Iterator<TestAutomationProject> it = availableTaProjects.iterator();
@@ -453,7 +453,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		}
 		return availableTaProjects;
 	}
-	
+
 
 	// ********************************** bugtracker section
 	// *************************************
