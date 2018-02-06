@@ -20,29 +20,24 @@
  */
 package org.squashtest.tm.web.internal.controller.testautomation;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.core.foundation.lang.UrlUtils;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
 import org.squashtest.tm.web.internal.helper.JEditablePostParams;
 import org.squashtest.tm.web.internal.model.testautomation.TAUsageStatus;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
+import javax.inject.Inject;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+// XSS OK
 @Controller
 @RequestMapping("/test-automation-servers")
 public class TestAutomationServerController {
@@ -56,20 +51,24 @@ public class TestAutomationServerController {
 	@RequestMapping(value = "/{serverId}/name", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
 	@ResponseBody
 	public String changeName(@PathVariable(SERVER_ID) long serverId,
-			@RequestParam(JEditablePostParams.VALUE) String newName) {
-		LOGGER.info("Change name for test automation server of id #{}", serverId);
+							 @RequestParam(JEditablePostParams.VALUE) String newName) {
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Change name for test automation server of id #{}", serverId);
+		}
 		service.changeName(serverId, newName);
 		return newName;
 	}
 
 	@RequestMapping(value = "/{serverId}/description", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
 	@ResponseBody
-	public String changeDescription(@PathVariable(SERVER_ID) long serverId,
-			@RequestParam(JEditablePostParams.VALUE) String newDescription) {
-		LOGGER.info("Change description for test automation server of id #{}", serverId);
+	public String changeDescription(@PathVariable(SERVER_ID) long serverId, @RequestParam(JEditablePostParams.VALUE) String newDescription) {
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Change description for test automation server of id #{}", serverId);
+		}
 		service.changeDescription(serverId, newDescription);
-		return newDescription;
+		return HTMLCleanupUtils.cleanHtml(newDescription);
 	}
+
 
 	@RequestMapping(value = "/{serverId}/baseURL", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
 	@ResponseBody
@@ -82,8 +81,10 @@ public class TestAutomationServerController {
 	@RequestMapping(value = "/{serverId}/login", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
 	@ResponseBody
 	public String changeLogin(@PathVariable(SERVER_ID) long serverId,
-			@RequestParam(JEditablePostParams.VALUE) String newLogin) {
-		LOGGER.info("Change login for test automation server of id #{}", serverId);
+							  @RequestParam(JEditablePostParams.VALUE) String newLogin) {
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Change login for test automation server of id #{}", serverId);
+		}
 		service.changeLogin(serverId, newLogin);
 		return newLogin;
 	}
@@ -91,8 +92,10 @@ public class TestAutomationServerController {
 	@RequestMapping(value = "/{serverId}/password", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
 	@ResponseBody
 	public String changePassword(@PathVariable(SERVER_ID) long serverId,
-			@RequestParam(JEditablePostParams.VALUE) String newPassword) {
-		LOGGER.info("Change password for test automation server of id #{}", serverId);
+								 @RequestParam(JEditablePostParams.VALUE) String newPassword) {
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Change password for test automation server of id #{}", serverId);
+		}
 		service.changePassword(serverId, newPassword);
 		return newPassword;
 	}
@@ -100,8 +103,10 @@ public class TestAutomationServerController {
 	@RequestMapping(value = "/{serverId}/manualSelection", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
 	@ResponseBody
 	public Boolean changeManualSelection(@PathVariable(SERVER_ID) long serverId,
-			@RequestParam(JEditablePostParams.VALUE) Boolean manualSelection) {
-		LOGGER.info("Change manual slave selection for test automation server of id #{}", serverId);
+										 @RequestParam(JEditablePostParams.VALUE) Boolean manualSelection) {
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Change manual slave selection for test automation server of id #{}", serverId);
+		}
 		service.changeManualSlaveSelection(serverId, manualSelection);
 		return manualSelection;
 	}
@@ -109,7 +114,9 @@ public class TestAutomationServerController {
 	@RequestMapping(value = "/{serverId}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public void deleteTestAutomationServer(@PathVariable List<Long> serverId) {
-		LOGGER.info("Delete test automation server of id #{}", serverId);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Delete test automation server of id #{}", serverId);
+		}
 		service.deleteServer(serverId);
 	}
 
@@ -118,8 +125,8 @@ public class TestAutomationServerController {
 	@ResponseBody
 	public void createNew(@RequestBody NewTestAutomationServer server) {
 
-		if (LOGGER.isInfoEnabled()) { // w/o this test string rep is always build
-			LOGGER.info("Add new Test automation server : {}", ToStringBuilder.reflectionToString(server));
+		if (LOGGER.isDebugEnabled()) { // w/o this test string rep is always build
+			LOGGER.debug("Add new Test automation server : {}", ToStringBuilder.reflectionToString(server));
 		}
 
 		service.persist(server.createTransientEntity());
@@ -128,7 +135,9 @@ public class TestAutomationServerController {
 	@RequestMapping(value = "/{serverId}/usage-status", method = RequestMethod.GET)
 	@ResponseBody
 	public TAUsageStatus getTestAutomationUsageStatus(@PathVariable List<Long> serverId) {
-		LOGGER.info("Delete test automation server of id #{}", serverId);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Delete test automation server of id #{}", serverId);
+		}
 		List<TAUsageStatus> liste = new ArrayList<>();
 		for (Long id : serverId) {
 			boolean hasBoundProject = service.hasBoundProjects(id);
@@ -146,7 +155,6 @@ public class TestAutomationServerController {
 
 		return tABoolean;
 	}
-
 
 
 }

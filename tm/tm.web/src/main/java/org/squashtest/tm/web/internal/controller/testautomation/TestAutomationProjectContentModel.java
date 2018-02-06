@@ -20,15 +20,15 @@
  */
 package org.squashtest.tm.web.internal.controller.testautomation;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * json-friendly version of {@link TestAutomationProjectContent}.
@@ -36,11 +36,12 @@ import org.squashtest.tm.service.testautomation.model.TestAutomationProjectConte
  * @author bsiri
  *
  */
+// XSS OK
 public class TestAutomationProjectContentModel {
 
 	private TestAutomationProjectModel project;
 	private AutomatedTestModel[] tests;
-	private boolean orderGuaranteed ;
+	private boolean orderGuaranteed;
 
 	public TestAutomationProjectModel getProject() {
 		return project;
@@ -55,7 +56,7 @@ public class TestAutomationProjectContentModel {
 	}
 
 	public void setTests(AutomatedTestModel[] tests) {
-		if(tests == null) {
+		if (tests == null) {
 			this.tests = null;
 		} else {
 			this.tests = Arrays.copyOf(tests, tests.length);
@@ -70,18 +71,18 @@ public class TestAutomationProjectContentModel {
 		this.orderGuaranteed = orderGuaranteed;
 	}
 
-	public TestAutomationProjectContentModel(TestAutomationProjectContent content){
+	public TestAutomationProjectContentModel(TestAutomationProjectContent content) {
 		this.project = new TestAutomationProjectModel(content.getProject());
 		this.orderGuaranteed = content.isOrderGuaranteed();
 		Collection<AutomatedTestModel> tmodels = new ArrayList<>(content.getTests().size());
-		for (AutomatedTest test : content.getTests()){
+		for (AutomatedTest test : content.getTests()) {
 			tmodels.add(new AutomatedTestModel(test));
 		}
 		tests = tmodels.toArray(new AutomatedTestModel[tmodels.size()]);
 	}
 
 
-	public static final class TestAutomationProjectModel{
+	public static final class TestAutomationProjectModel {
 		private Long id;
 		private String jobName;
 		private String label;
@@ -89,16 +90,16 @@ public class TestAutomationProjectContentModel {
 		private TestAutomationServerModel server;
 
 
-		public TestAutomationProjectModel(TestAutomationProject project){
+		public TestAutomationProjectModel(TestAutomationProject project) {
 			this.id = project.getId();
 			this.jobName = project.getJobName();
 			this.label = project.getLabel();
 			this.nodes = project.getSlaves()
-					.trim()
-					.replaceAll("\\s*;\\s*", ";")
-					.split(";");
+				.trim()
+				.replaceAll("\\s*;\\s*", ";")
+				.split(";");
 
-			if (project.getServer() != null){
+			if (project.getServer() != null) {
 				this.server = new TestAutomationServerModel(project.getServer());
 			}
 		}
@@ -132,7 +133,7 @@ public class TestAutomationProjectContentModel {
 		}
 
 		public void setNodes(String[] nodes) {
-			if(nodes == null) {
+			if (nodes == null) {
 				this.nodes = null;
 			} else {
 				this.nodes = Arrays.copyOf(nodes, nodes.length);

@@ -20,24 +20,22 @@
  */
 package org.squashtest.tm.web.internal.controller.testautomation;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.apache.commons.lang.StringUtils;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.exception.WrongUrlException;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 /**
  * @author mpagnon
- *
  */
+// XSS OK
 public class NewTestAutomationServer extends TestAutomationServer {
 	private String baseUrl;
 
-
-
 	public TestAutomationServer createTransientEntity() {
-		TestAutomationServer res  = new TestAutomationServer();
+		TestAutomationServer res = new TestAutomationServer();
 		res.setBaseURL(getBaseURLAsURL());
 		res.setName(getName());
 		res.setDescription(getDescription());
@@ -47,7 +45,6 @@ public class NewTestAutomationServer extends TestAutomationServer {
 		return res;
 	}
 
-
 	public void setBaseUrl(String baseUrl) {
 		this.baseUrl = baseUrl;
 	}
@@ -55,6 +52,7 @@ public class NewTestAutomationServer extends TestAutomationServer {
 	public String getBaseUrl() {
 		return baseUrl;
 	}
+
 	private URL getBaseURLAsURL() {
 		try {
 			return new URL(baseUrl);
@@ -65,7 +63,7 @@ public class NewTestAutomationServer extends TestAutomationServer {
 
 	@Override
 	public String toString() {
-		if (StringUtils.isNotBlank(baseUrl)){
+		if (StringUtils.isNotBlank(baseUrl)) {
 			return baseUrl;
 		}
 		return super.toString();

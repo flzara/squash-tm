@@ -20,24 +20,20 @@
  */
 package org.squashtest.tm.web.internal.controller.testautomation;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.exception.DomainException;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService;
 import org.squashtest.tm.web.internal.model.testautomation.TAUsageStatus;
 
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+
+// XSS OK
 @Controller
 @RequestMapping("/test-automation-projects")
 public class TestAutomationProjectController {
@@ -52,26 +48,32 @@ public class TestAutomationProjectController {
 	@RequestMapping(value = PROJECT_ID, method = RequestMethod.DELETE)
 	@ResponseBody
 	public void deleteTestAutomationProject(@PathVariable long projectId) {
-		LOGGER.info("Delete test automation project of id #{}", projectId);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Delete test automation project of id #{}", projectId);
+		}
 		service.deleteProject(projectId);
 	}
 
 	@RequestMapping(value = PROJECT_ID, method = RequestMethod.PUT)
 	@ResponseBody
 	public void editTestAutomationProject(@PathVariable long projectId, @RequestBody TestAutomationProject newValues) {
-		LOGGER.info("Edit test automation project of id #{}", projectId);
-		try{
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Edit test automation project of id #{}", projectId);
+		}
+		try {
 			service.editProject(projectId, newValues);
-		}catch(DomainException de){
+		} catch (DomainException de) {
 			de.setObjectName("ta-project");
 			throw de;
 		}
 	}
 
-	@RequestMapping(value = PROJECT_ID+"/usage-status", method = RequestMethod.GET)
+	@RequestMapping(value = PROJECT_ID + "/usage-status", method = RequestMethod.GET)
 	@ResponseBody
 	public TAUsageStatus getTestAutomationUsageStatus(@PathVariable List<Long> projectId) {
-		LOGGER.info("Delete test automation server of id #{}", projectId);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Delete test automation server of id #{}", projectId);
+		}
 		List<TAUsageStatus> liste = new ArrayList<>();
 		for (Long id : projectId) {
 			boolean hasExecutedTests = service.hasExecutedTests(id);
@@ -88,7 +90,5 @@ public class TestAutomationProjectController {
 
 		return tABoolean;
 	}
-
-
 
 }

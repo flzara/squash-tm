@@ -21,8 +21,6 @@
 package org.squashtest.tm.web.internal.controller.testautomation;
 
 
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,8 +28,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
+import javax.inject.Inject;
 
+// XSS OK
 @Controller
 @RequestMapping("/administration/test-automation-servers/{serverId}")
 public class TestAutomationServerModificationAdminController {
@@ -41,12 +42,13 @@ public class TestAutomationServerModificationAdminController {
 	private TestAutomationServerManagerService service;
 
 
-	@RequestMapping(method=RequestMethod.GET)
-	public String showTAServer(@PathVariable("serverId") long serverId, Model model){
+	@RequestMapping(method = RequestMethod.GET)
+	public String showTAServer(@PathVariable("serverId") long serverId, Model model) {
 
 		TestAutomationServer server = service.findById(serverId);
 
 		model.addAttribute("server", server);
+		model.addAttribute("serverDescription", HTMLCleanupUtils.cleanHtml(server.getDescription()));
 
 		return "test-automation/server-modification.html";
 

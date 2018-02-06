@@ -71,7 +71,7 @@ public class TATestNodeListBuilder {
 
 		while (iterator.hasNext()) {
 
-			String name = HtmlUtils.htmlEscape(iterator.next());
+			String name =iterator.next();
 			current = parent.findChild(name);
 
 			if (current == null) {
@@ -150,10 +150,10 @@ public class TATestNodeListBuilder {
 
 		attr.setId(project.getId().toString());
 		attr.setRel("drive");
-		attr.setName(HtmlUtils.htmlEscape(project.getLabel()));
+		attr.setName(project.getLabel());
 		attr.setRestype("ta-project");
 
-		data.setTitle(HtmlUtils.htmlEscape(project.getLabel()));
+		data.setTitle(project.getLabel());
 
 		node.setAttr(attr);
 		node.setData(data);

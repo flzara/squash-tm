@@ -246,10 +246,10 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 					}
 					var authDialog = $("#add-ta-projects-login-dialog").formDialog();
 					authDialog.formDialog('open');
-					
+
 					/* Unbind formdialogconfirm in order not to have multiple bound events. */
 					authDialog.off('formdialogconfirm');
-					
+
 					authDialog.on('formdialogconfirm', function() {
 						var login = $("#login-dialog-login").val();
 					    var password = $("#login-dialog-password").val();
@@ -257,7 +257,7 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 						authDialog.formDialog('close');
 					    self._checkWhichPopupWasCalledAndOpenIt();
 					});
-					
+
 					authDialog.on('formdialogcancel', function() {
 						authDialog.formDialog('close');
 					});
@@ -272,13 +272,13 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 					/* Else, it is the add button that was pressed. */
 					} else {
 						self.openBindPopup();
-					} 
+					}
 				},
 				_isAuthenticated: function() {
 					var authDialog = $("#add-ta-projects-login-dialog");
 					var login = authDialog.data('login');
 					var password = authDialog.data('password');
-					return (!!login && !!password); 
+					return (!!login && !!password);
 				},
 				_refreshTable : function(){
 					this.table.refresh();
