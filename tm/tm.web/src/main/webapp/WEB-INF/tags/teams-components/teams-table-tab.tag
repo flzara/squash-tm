@@ -25,6 +25,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
+<%@ taglib prefix="hu" uri="http://org.squashtest.tm/taglib/html-utils" %>
+
 <div id="team-table-pane" class="table-tab" >
   <div class="toolbar">
     <button id="new-team-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary squash-button-initialized" title="<f:message key='label.addTeam' />">
@@ -55,13 +57,13 @@
         <tr>
           <td class="not-displayed">${ team.id }</td>
           <td >${ teamStat.index + 1 }</td>
-          <td>${ team.name }</td>
-          <td>${ team.description }</td>
+          <td><c:out value="${ team.name }" /> </td>
+          <td>${hu:clean( team.description) }" </td>
           <td>${ fn:length(team.members) }</td>
           <td><comp:date value="${ team.createdOn }" /></td>
-          <td>${ team.createdBy }</td>
+          <td><c:out value="${ team.createdBy }" /> </td>
           <td><comp:date value="${ team.lastModifiedOn }" noValueKey="label.lower.Never" /></td>
-          <td>${ team.lastModifiedBy }</td>
+          <td><c:out value="${ team.lastModifiedBy }" /> </td>
           <td>&nbsp;</td>
         </tr>
         </c:forEach>

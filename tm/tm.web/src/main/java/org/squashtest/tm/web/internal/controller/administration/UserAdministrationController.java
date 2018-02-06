@@ -127,7 +127,6 @@ public class UserAdministrationController extends PartyControllerSupport {
 		Filtering filter = DefaultFiltering.NO_FILTERING;
 
 		DataTableModel model = getTableModel(paging, filter, "noneed", locale);
-
 		mav.addObject("usersGroupList", list);
 		mav.addObject("userList", model.getAaData());
 
@@ -375,7 +374,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 			result.put("user-id", item.getId());
 			result.put("user-active", item.getActive());
 			result.put("user-index", getCurrentIndex());
-			result.put("user-login", item.getLogin());
+			result.put("user-login", HtmlUtils.htmlEscape(item.getLogin()));
 			result.put("user-group", group);
 			result.put("user-firstname", HtmlUtils.htmlEscape(item.getFirstName()));
 			result.put("user-lastname", HtmlUtils.htmlEscape(item.getLastName()));

@@ -25,6 +25,7 @@ import javax.validation.constraints.NotNull;
 /**
  * Created by jthebault on 11/10/2016.
  */
+//XSS bflessel ok
 public class PartyPreferenceModel {
 
 	@NotNull

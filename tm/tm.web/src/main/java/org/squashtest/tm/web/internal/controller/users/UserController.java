@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -56,14 +57,15 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 /**
  * @author mpagnon
- * 
+ *
  */
+//XSS ok bflessel
 @Controller
 @RequestMapping("/users")
 public class UserController {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final String USER_ID = "userId";
 
@@ -154,7 +156,7 @@ public class UserController {
 			Map<String, Object> res = new HashMap<>();
 			res.put("team-id", item.getId());
 			res.put("team-index", getCurrentIndex());
-			res.put("team-name", item.getName());
+			res.put("team-name", HtmlUtils.htmlEscape(item.getName()));
 			res.put("empty-delete-holder", null);
 			return res;
 		}

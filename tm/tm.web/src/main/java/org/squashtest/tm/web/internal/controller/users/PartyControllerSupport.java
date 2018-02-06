@@ -32,6 +32,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -51,6 +52,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
  * @author Gregory Fouquet
  *
  */
+//XSS ok bflessel
 public abstract class PartyControllerSupport {
 	protected ProjectsPermissionManagementService permissionService;
 
@@ -141,10 +143,10 @@ public abstract class PartyControllerSupport {
 			Map<String, Object> res = new HashMap<>();
 			res.put("project-id", item.getProject().getId());
 			res.put("project-index", getCurrentIndex());
-			res.put(DataTableModelConstants.PROJECT_NAME_KEY, item.getProject().getName());
+			res.put(DataTableModelConstants.PROJECT_NAME_KEY, HtmlUtils.htmlEscape(item.getProject().getName()));
 			res.put("permission-id", item.getPermissionGroup().getId());
-			res.put("permission-name", item.getPermissionGroup().getQualifiedName());
-			res.put("permission-simplename", item.getPermissionGroup().getSimpleName());
+			res.put("permission-name", HtmlUtils.htmlEscape(item.getPermissionGroup().getQualifiedName()));
+			res.put("permission-simplename", HtmlUtils.htmlEscape(item.getPermissionGroup().getSimpleName()));
 			res.put("permission-displayname",
 					messageSource.getMessage("user.project-rights." + item.getPermissionGroup().getSimpleName()
 							+ ".label", null, locale));

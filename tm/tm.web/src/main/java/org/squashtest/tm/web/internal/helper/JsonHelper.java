@@ -25,9 +25,12 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.service.internal.dto.CustomFieldModel;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import javax.inject.Inject;
@@ -102,4 +105,16 @@ public final class JsonHelper {
 	public static Map<String, Object> unmarshall(String json) throws IOException {
 		return deserialize(json);
 	}
+
+	public static String serializeWithoutToken(Object value) throws JsonMarshallerException {
+		try {
+			String valueEscaped = Jsoup.clean(HtmlUtils.htmlUnescape(INSTANCE.objectMapper.writeValueAsString(value)), Whitelist.none());
+			String unescapeValue = HtmlUtils.htmlUnescape(valueEscaped);
+			String result = unescapeValue.replace(";","");
+			return result;
+		} catch (IOException e) {
+			throw new JsonMarshallerException(e);
+		}
+	}
+
 }

@@ -33,6 +33,7 @@ import javax.validation.Valid;
 /**
  * Created by jthebault on 11/10/2016.
  */
+//XSS ok bflessel
 @Controller
 @RequestMapping("/user-prefs")
 public class PartyPreferenceController {

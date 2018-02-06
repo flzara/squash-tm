@@ -21,14 +21,14 @@
 package org.squashtest.tm.web.internal.controller.users;
 
 import org.squashtest.tm.security.acls.PermissionGroup;
-
+//XSS bflesse
 public class PermissionGroupModel {
 
 	private long id;
 	private String qualifiedName;
 	private String simpleName;
 	private String displayName;
-	
+
 	public long getId() {
 		return id;
 	}
@@ -55,9 +55,9 @@ public class PermissionGroupModel {
 	}
 
 	public PermissionGroupModel(){
-		
+
 	}
-	
+
 	public PermissionGroupModel(PermissionGroup permissionGroup){
 		super();
 		this.id = permissionGroup.getId();

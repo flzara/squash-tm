@@ -88,7 +88,7 @@ define(["jquery", "handlebars", "./lib/cuf-values-utils","jqueryui", "./lib/jque
 					: "#cuf-value-" + cufValue.id;
 
 			var elt = container.find(selector);
-
+			var i;
 			switch (mode) {
 			case "static":
 				elt.staticCustomfield(cufValue.binding.customField);

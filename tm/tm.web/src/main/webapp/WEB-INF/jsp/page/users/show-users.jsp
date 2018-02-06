@@ -37,7 +37,7 @@
 <s:url var="userInfoUrl" value="/administration/users/{user-id}/info" />
 <s:url var="tableModelUrl" value="/administration/users/table" />
 
-<c:set var="tableModel"     value="${json:serialize(userList)}"/>
+<c:set var="tableModel"     value="${json:serializeWithoutToken(userList)}"/>
 <c:set var="tableModelLength"   value="${fn:length(tableModel)}" />
 
 

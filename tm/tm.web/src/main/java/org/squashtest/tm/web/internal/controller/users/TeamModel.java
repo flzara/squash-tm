@@ -26,6 +26,7 @@ import org.squashtest.tm.domain.users.Team;
  * @author mpagnon
  *
  */
+//XSS ok bflessel
 public class TeamModel {
 	private Long id;
 	private String name;

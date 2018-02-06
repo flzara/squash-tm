@@ -45,6 +45,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.Filtering;
@@ -299,13 +300,13 @@ public class TeamController extends PartyControllerSupport {
 			Map<String, Object> res = new HashMap<>();
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
-			res.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, item.getName());
-			res.put("description", item.getDescription());
+			res.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, HtmlUtils.htmlEscape(item.getName()));
+			res.put("description", HtmlUtils.htmlEscape(item.getDescription()));
 			res.put("nb-associated-users", item.getMembers().size());
 			res.put(DataTableModelConstants.DEFAULT_CREATED_ON_KEY, messageSource.localizeDate(auditable.getCreatedOn(), locale));
-			res.put(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, auditable.getCreatedBy());
+			res.put(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, HtmlUtils.htmlEscape(auditable.getCreatedBy()));
 			res.put("last-mod-on", messageSource.localizeDate(auditable.getLastModifiedOn(), locale));
-			res.put("last-mod-by", auditable.getLastModifiedBy());
+			res.put("last-mod-by", HtmlUtils.htmlEscape(auditable.getLastModifiedBy()));
 			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			return res;
 		}
@@ -322,7 +323,7 @@ public class TeamController extends PartyControllerSupport {
 			res.put("user-id", item.getId());
 			res.put("user-active", item.getActive());
 			res.put("user-index", getCurrentIndex());
-			res.put("user-name", item.getFirstName() + " " + item.getLastName() + " (" + item.getLogin() + ")");
+			res.put("user-name", HtmlUtils.htmlEscape(item.getFirstName()) + " " + HtmlUtils.htmlEscape(item.getLastName()) + " (" + HtmlUtils.htmlEscape(item.getLogin()) + ")");
 			res.put("empty-delete-holder", null);
 			return res;
 		}

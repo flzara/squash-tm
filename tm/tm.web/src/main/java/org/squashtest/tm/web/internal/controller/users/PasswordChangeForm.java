@@ -25,10 +25,11 @@ import javax.validation.constraints.Size;
 
 /**
  * Form bean for password change.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
+//XSS bflessel ok
 public class PasswordChangeForm {
 	@NotNull
 	private String oldPassword;

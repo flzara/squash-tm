@@ -54,7 +54,7 @@ import org.squashtest.tm.web.internal.security.authentication.AuthenticationProv
 
 import java.util.Optional;
 
-
+//XSS ok bflessel
 @Controller
 @RequestMapping("/user-account")
 public class UserAccountController {
