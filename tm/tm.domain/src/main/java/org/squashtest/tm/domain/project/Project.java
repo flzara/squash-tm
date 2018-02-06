@@ -33,18 +33,6 @@ public class Project extends GenericProject {
 
 	public static final String PROJECT_TYPE = "P";
 
-	@JoinColumn(name = "TEMPLATE_ID")
-	@ManyToOne(fetch = FetchType.LAZY)
-	private ProjectTemplate template;
-
-	public ProjectTemplate getTemplate() {
-		return template;
-	}
-
-	public void setTemplate(ProjectTemplate template) {
-		this.template = template;
-	}
-
 	public Project() {
 		super();
 	}

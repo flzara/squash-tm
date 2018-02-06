@@ -105,6 +105,10 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 
 	private boolean active = true;
 
+	@JoinColumn(name = "TEMPLATE_ID")
+	@ManyToOne(fetch = FetchType.LAZY)
+	private ProjectTemplate template;
+
 	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	@JoinColumn(name = "TCL_ID")
 	private TestCaseLibrary testCaseLibrary;
@@ -135,7 +139,6 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	@JoinColumn(name = "ATTACHMENT_LIST_ID", updatable = false)
 	private final AttachmentList attachmentList = new AttachmentList();
 
-
 	// the so-called information lists
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="REQ_CATEGORIES_LIST")
@@ -148,7 +151,6 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="TC_TYPES_LIST")
 	private InfoList testCaseTypes;
-
 
 	@ManyToMany(mappedBy = "projects")
 	private Set<Milestone> milestones = new HashSet<>();
@@ -457,6 +459,13 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 
 	public boolean allowTcModifDuringExec() {
 		return this.allowTcModifDuringExec;
+	}
+
+	public ProjectTemplate getTemplate() {
+		return template;
+	}
+	public void setTemplate(ProjectTemplate template) {
+		this.template = template;
 	}
 
 }
