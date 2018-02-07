@@ -116,6 +116,11 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 
 		ProjectTemplate projectTemplate = projectTemplateDao.findOne(templateId);
 		newProject.setTemplate(projectTemplate);
+
+		params.setCopyCUF(true);
+		params.setCopyInfolists(true);
+		params.setCopyAllowTcModifFromExec(true);
+
 		genericProjectManager.synchronizeGenericProject(newProject, projectTemplate, params);
 
 		return newProject;
