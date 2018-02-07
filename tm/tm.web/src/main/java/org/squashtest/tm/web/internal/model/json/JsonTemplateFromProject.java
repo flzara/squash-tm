@@ -135,4 +135,11 @@ public class JsonTemplateFromProject {
 	public void setParams(GenericProjectCopyParameter params) {
 		this.params = params;
 	}
+
+	public boolean isCopyOptionalExecStatuses() {
+		return params.isCopyOptionalExecStatuses();
+	}
+	public void setCopyOptionalExecStatuses(boolean copyOptionalExecStatuses) {
+		params.setCopyOptionalExecStatuses(copyOptionalExecStatuses);
+	}
 }

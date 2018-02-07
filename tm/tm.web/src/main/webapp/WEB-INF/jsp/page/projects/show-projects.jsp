@@ -293,9 +293,12 @@
           <input id="add-template-from-project-copyMilestone" name="add-template-from-project-copyMilestone" type="checkbox" data-prop="copyMilestone"/>
           <label class=" afterDisabled" for="add-template-from-project-copyMilestone"><f:message key="label.copyMilestone" /></label>
           <br/>
-	  <input id="add-template-from-project-copyAllowTcModifFromExec" name="add-template-from-project-copyAllowTcModifFromExec" type="checkbox" data-prop="copyAllowTcModifFromExec"/>
-         <label class=" afterDisabled" for="add-template-from-project-copyAllowTcModifFromExec"><f:message key="label.copyAllowTcModifFromExec" /></label>
-         </td>
+	        <input id="add-template-from-project-copyAllowTcModifFromExec" name="add-template-from-project-copyAllowTcModifFromExec" type="checkbox" data-prop="copyAllowTcModifFromExec"/>
+          <label class=" afterDisabled" for="add-template-from-project-copyAllowTcModifFromExec"><f:message key="label.copyAllowTcModifFromExec" /></label>
+          <br/>
+          <input id="copyOptionalExecStatuses" name="copyOptionalExecStatuses" type="checkbox" data-prop="copyOptionalExecStatuses"/>
+          <label class=" afterDisabled" for="copyOptionalExecStatuses"><f:message key="label.copyOptionalExecStatuses" /></label>
+          </td>
 
  </td>
       </table>
