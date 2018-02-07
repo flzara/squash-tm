@@ -23,17 +23,18 @@ define([ "jquery", "backbone", "underscore", "squash.translator", "app/util/Stri
 	"use strict";
 	return Backbone.Model.extend({
 		defaults : {
-			name : "",
-			templateId : "0",
+			name: "",
+			templateId: "0",
       label : "",
-			fromTemplate : false,
-			copyPermissions :true,
-			copyCUF:true,
+			fromTemplate: false,
+			copyPermissions: true,
+			copyCUF: true,
 			copyBugtrackerBinding: true,
 			copyAutomatedProjects: true,
-			copyInfolists:true,
-			copyMilestone:true,
-			copyAllowTcModifFromExec:true
+			copyInfolists: true,
+			copyMilestone: true,
+			copyAllowTcModifFromExec: true,
+			copyOptionalExecStatuses: true
 		},
 		url : router.buildURL("project.new")
 	});

@@ -890,6 +890,19 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		target.setTestCaseTypes(source.getTestCaseTypes());
 	}
 
+	private void copyExecutionStatuses(GenericProject target, GenericProject source) {
+
+		Set<ExecutionStatus> enabledStatuses = enabledExecutionStatuses(source.getId());
+		Set<ExecutionStatus> disabledStatuses = disabledExecutionStatuses(source.getId());
+
+		for(ExecutionStatus execStatusToEnable : enabledStatuses) {
+			enableExecutionStatus(target.getId(), execStatusToEnable);
+		}
+		for(ExecutionStatus execStatusToDisable : disabledStatuses) {
+			disableExecutionStatus(target.getId(), execStatusToDisable);
+		}
+	}
+
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	@Override
 	public GenericProject synchronizeGenericProject(GenericProject target,
@@ -913,9 +926,11 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		if (params.isCopyMilestone()) {
 			copyMilestone(target, source);
 		}
-
 		if (params.isCopyAllowTcModifFromExec()) {
 			target.setAllowTcModifDuringExec(source.allowTcModifDuringExec());
+		}
+		if(params.isCopyOptionalExecStatuses()) {
+			copyExecutionStatuses(target, source);
 		}
 
 		return target;

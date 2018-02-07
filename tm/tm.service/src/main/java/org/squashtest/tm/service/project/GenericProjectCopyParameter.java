@@ -34,6 +34,7 @@ public class GenericProjectCopyParameter {
 	private boolean copyInfolists;
 	private boolean copyMilestone;
 	private boolean copyAllowTcModifFromExec;
+	private boolean copyOptionalExecStatuses;
 
 	public GenericProjectCopyParameter() {
 		//default constructor
@@ -54,37 +55,41 @@ public class GenericProjectCopyParameter {
 	}
 
 
-
 	public boolean isCopyPermissions() {
 		return copyPermissions;
 	}
 	public void setCopyPermissions(boolean copyPermissions) {
 		this.copyPermissions = copyPermissions;
 	}
+
 	public boolean isCopyCUF() {
 		return copyCUF;
 	}
 	public void setCopyCUF(boolean copyCUF) {
 		this.copyCUF = copyCUF;
 	}
+
 	public boolean isCopyBugtrackerBinding() {
 		return copyBugtrackerBinding;
 	}
 	public void setCopyBugtrackerBinding(boolean copyBugtrackerBinding) {
 		this.copyBugtrackerBinding = copyBugtrackerBinding;
 	}
+
 	public boolean isCopyAutomatedProjects() {
 		return copyAutomatedProjects;
 	}
 	public void setCopyAutomatedProjects(boolean copyAutomatedProjects) {
 		this.copyAutomatedProjects = copyAutomatedProjects;
 	}
+
 	public boolean isCopyInfolists() {
 		return copyInfolists;
 	}
 	public void setCopyInfolists(boolean copyInfolists) {
 		this.copyInfolists = copyInfolists;
 	}
+
 	public boolean isCopyMilestone() {
 		return copyMilestone;
 	}
@@ -95,8 +100,15 @@ public class GenericProjectCopyParameter {
 	public boolean isCopyAllowTcModifFromExec() {
 		return copyAllowTcModifFromExec;
 	}
-
 	public void setCopyAllowTcModifFromExec(boolean copyAllowTcModifFromExec) {
 		this.copyAllowTcModifFromExec = copyAllowTcModifFromExec;
 	}
+
+	public boolean isCopyOptionalExecStatuses() {
+		return copyOptionalExecStatuses;
+	}
+	public void setCopyOptionalExecStatuses(boolean copyOptionalExecStatuses) {
+		this.copyOptionalExecStatuses = copyOptionalExecStatuses;
+	}
+
 }

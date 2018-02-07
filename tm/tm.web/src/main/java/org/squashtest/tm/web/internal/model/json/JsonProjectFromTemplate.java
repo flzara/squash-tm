@@ -125,7 +125,6 @@ public class JsonProjectFromTemplate {
 	public GenericProjectCopyParameter getParams() {
 		return params;
 	}
-
 	public void setParams(GenericProjectCopyParameter params) {
 		this.params = params;
 	}
@@ -133,7 +132,6 @@ public class JsonProjectFromTemplate {
 	public boolean isFromTemplate() {
 		return fromTemplate;
 	}
-
 	public void setFromTemplate(boolean fromTemplate) {
 		this.fromTemplate = fromTemplate;
 	}
@@ -141,8 +139,14 @@ public class JsonProjectFromTemplate {
 	public boolean isCopyAllowTcModifFromExec() {
 		return params.isCopyAllowTcModifFromExec();
 	}
-
 	public void setCopyAllowTcModifFromExec(boolean copyAllowTcModifFromExec) {
 		params.setCopyAllowTcModifFromExec(copyAllowTcModifFromExec);
+	}
+
+	public boolean isCopyOptionalExecStatuses() {
+		return params.isCopyOptionalExecStatuses();
+	}
+	public void setCopyOptionalExecStatuses(boolean copyOptionalExecStatuses) {
+		params.setCopyOptionalExecStatuses(copyOptionalExecStatuses);
 	}
 }
