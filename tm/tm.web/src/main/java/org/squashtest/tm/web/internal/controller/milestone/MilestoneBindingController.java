@@ -184,7 +184,7 @@ public class MilestoneBindingController {
 			data.put("raw-type", ProjectHelper.isTemplate(project) ? "template" : "project");
 			data.put("checkbox", " ");
 			data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, HtmlUtils.htmlEscape(project.getName()));
-			data.put("label", HtmlUtils.htmlEscape(project.getLabel()));
+			data.put("label", project.getLabel());
 			data.put("binded", messageSource.internationalizeYesNo(project.isBoundToMilestone(milestone), locale));
 			data.put(
 				"isUsed",

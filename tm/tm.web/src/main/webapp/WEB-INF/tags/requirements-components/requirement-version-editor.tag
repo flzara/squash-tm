@@ -240,7 +240,7 @@
 				<div class="display-table-row">
 					<label class="display-table-cell" for="requirement-reference"><f:message
 						key="label.Reference"/></label>
-					<div id="requirement-reference">${ requirementVersion.reference }</div>
+					<div id="requirement-reference"><c:out value="${ requirementVersion.reference }"/></div>
 				</div>
 
 				<div class="display-table-row">

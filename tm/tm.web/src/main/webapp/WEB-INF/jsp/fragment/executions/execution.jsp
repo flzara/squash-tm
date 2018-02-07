@@ -159,7 +159,7 @@
       </div>
       <div class="display-table-row">
         <label class="display-table-cell" for="testcase-description"><f:message key="label.Description"/></label>
-        <div id="testcase-description" class="display-table-cell">${ execution.tcdescription }</div>
+        <div id="testcase-description" class="display-table-cell">${hu:clean(execution.tcdescription)}</div>
       </div>
 
 

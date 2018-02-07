@@ -109,7 +109,7 @@ $(function(){
 		--%>
 		var initData = [
 						<c:forEach var="suite" items="${iteration.testSuites}" varStatus="status">
-							{ id : '${suite.id}', name : '${fn:replace(suite.name, "'", "\\'")}' }<c:if test="${not status.last}">,</c:if>
+							{ id : '${suite.id}', name : '${fn:escapeXml(fn:replace(suite.name, "'", "\\'"))}' }<c:if test="${not status.last}">,</c:if>
 						</c:forEach>
 					];
 
@@ -153,7 +153,7 @@ $(function(){
 
 		//now we can make reappear
 		$("#manage-test-suites-popup .main-div-suites").removeClass("not-displayed");
-		
+
 		/* Enhancement #6754 - press 'enter' to add a test suite when the focus is on the inputText */
 		$("#ts-popup-text").keyup(function(event) {
 			if (event.keyCode == 13) {

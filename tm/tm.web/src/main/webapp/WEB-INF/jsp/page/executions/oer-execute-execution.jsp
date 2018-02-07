@@ -207,9 +207,9 @@
 				</c:if>
 				<td>
 					<h3 id="ieo-execution-title" class="ellipsis" >
-						${ executionStep.execution.name }
+						<c:out value="${ executionStep.execution.name }"/>
 						<c:if test="${execution.datasetLabel != null && execution.datasetLabel != ''}">
-							- ${execution.datasetLabel}
+							- <c:out value="${execution.datasetLabel}"/>
 						</c:if>
 					</h3>
 				</td>

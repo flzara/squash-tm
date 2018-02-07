@@ -30,6 +30,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
@@ -38,6 +39,8 @@ import org.squashtest.tm.exception.NoBugTrackerBindingException;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author Gregory Fouquet
@@ -93,10 +96,14 @@ public class TestCaseExecutionRunnerController {
 			Project project = executionProcessingService.findExecution(executionId).getProject();
 			BugTracker bugtracker = project.findBugTracker();
 			BugTrackerInterfaceDescriptor descriptor = bugTrackersLocalService.getInterfaceDescriptor(bugtracker);
+			String projectNames = JsonHelper.serialize(project.getBugtrackerBinding().getProjectNames()
+				.stream()
+				.map(name-> HtmlUtils.htmlEscape(name))
+				.collect(toList()));
 			model.addAttribute("interfaceDescriptor", descriptor);
 			model.addAttribute("bugTracker", bugtracker);
 			model.addAttribute("projectId", project.getId());
-			model.addAttribute("projectNames", JsonHelper.serialize(project.getBugtrackerBinding().getProjectNames()));
+			model.addAttribute("projectNames", projectNames);
 			model.addAttribute("isOslc", btFactory.isOslcConnector(bugtracker.getKind()));
 		}
 		catch(NoBugTrackerBindingException ex){ // NOSONAR : this exception is part of the nominal use case

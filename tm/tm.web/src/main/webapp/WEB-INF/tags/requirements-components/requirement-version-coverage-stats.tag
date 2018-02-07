@@ -46,9 +46,9 @@
 <%-- ======================== /VARIABLES & URLS ============================ --%>
 
 <div id="coverage-stat">
-	
+
 	<div id="table-rates"></div>
-	 
+
 	<div id="dialog-select-perimeter-wrapper"></div>
 </div>
 
@@ -64,7 +64,7 @@
 					<a id="change-perimeter-button" href="#"><f:message key="requirement.rate.perimeter.corrupted" /></a>
 				{{else}}
 					{{#if hasPerimeter}}
-						<a id="change-perimeter-button" href="#">{{perimeterName}}</a>
+						<a id="change-perimeter-button" href="#">{{{perimeterName}}}</a>
 					{{else}}
 						<a id="change-perimeter-button" href="#"><f:message key="requirement.rate.perimeter.no" /></a>
 					{{/if}}
@@ -84,11 +84,11 @@
 			{{#if isAncestor}}
 			<div class="display-table-cell">
 				(<f:message key="requirement.rate.global" /> {{coverage.requirementVersionGlobalRate}} %,
-				<f:message key="requirement.rate.child" /> {{coverage.requirementVersionChildrenRate}} %) 
+				<f:message key="requirement.rate.child" /> {{coverage.requirementVersionChildrenRate}} %)
 			</div>
 			{{/if}}
 		</div>
-		
+
 		{{#if hasPerimeter}}
 		<div class="display-table-row">
 			<label class="display-table-cell">
@@ -123,7 +123,7 @@
 </script>
 
 <script type="text/x-handlebars-template" id="tpl-show-perimeter">
-	
+
 </script>
 
 <script type="text/x-handlebars-template" id="tpl-dialog-select-perimeter">

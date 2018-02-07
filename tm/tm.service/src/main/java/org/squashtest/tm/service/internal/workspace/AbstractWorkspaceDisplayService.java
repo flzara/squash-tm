@@ -137,7 +137,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				attr.put("rel", getRel());
 				attr.put("name", HtmlUtils.htmlEscape(r.get(PROJECT.NAME)));
 				attr.put("id", getClassName() + '-' + libraryId);
-				attr.put("title", HtmlUtils.htmlEscape(r.get(PROJECT.LABEL)));
+				attr.put("title", r.get(PROJECT.LABEL));
 				attr.put("project", r.get(PROJECT.PROJECT_ID));
 
 				Integer countChild = r.get("COUNT_CHILD", Integer.class);
