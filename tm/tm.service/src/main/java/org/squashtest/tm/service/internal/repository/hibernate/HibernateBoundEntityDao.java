@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import static java.util.stream.Collectors.toList;
 import static org.squashtest.tm.domain.customfield.BindableEntity.CAMPAIGN;
 import static org.squashtest.tm.domain.customfield.BindableEntity.EXECUTION;
 import static org.squashtest.tm.domain.customfield.BindableEntity.EXECUTION_STEP;
@@ -31,29 +32,30 @@ import static org.squashtest.tm.domain.customfield.BindableEntity.TEST_SUITE;
 
 import java.util.*;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
-import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customfield.BoundEntity;
-import org.squashtest.tm.domain.customfield.CustomFieldBinding;
-import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.*;
+import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.internal.repository.BoundEntityDao;
+import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
 
 @Repository
 public class HibernateBoundEntityDao implements BoundEntityDao {
 
-	private static final String TEST_CASE_QUERY_NAME = "BoundEntityDao.findAllTestCasesForProject";
-	private static final String REQUIREMENT_QUERY_NAME = "BoundEntityDao.findAllReqVersionsForProject";
-	private static final String CAMPAIGN_QUERY_NAME = "BoundEntityDao.findAllCampaignsForProject";
-	private static final String ITERATION_QUERY_NAME = "BoundEntityDao.findAllIterationsForProject";
-	private static final String TEST_SUITE_QUERY_NAME = "BoundEntityDao.findAllTestSuitesForProject";
-	private static final String TEST_STEP_QUERY_NAME = "BoundEntityDao.findAllTestStepsForProject";
-	private static final String EXECUTION_QUERY_NAME = "BoundEntityDao.findAllExecutionsForProject";
-	private static final String EXECUTION_STEP_QUERY_NAME = "BoundEntityDao.findAllExecutionStepsForProject";
+	private static final String TEST_CASE_QUERY_NAME = "BoundEntityDao.findAllTestCasesIdsForProject";
+	private static final String REQUIREMENT_QUERY_NAME = "BoundEntityDao.findAllReqVersionsIdsForProject";
+	private static final String CAMPAIGN_QUERY_NAME = "BoundEntityDao.findAllCampaignsIdsForProject";
+	private static final String ITERATION_QUERY_NAME = "BoundEntityDao.findAllIterationsIdsForProject";
+	private static final String TEST_SUITE_QUERY_NAME = "BoundEntityDao.findAllTestSuitesIdsForProject";
+	private static final String TEST_STEP_QUERY_NAME = "BoundEntityDao.findAllTestStepsIdsForProject";
+	private static final String EXECUTION_QUERY_NAME = "BoundEntityDao.findAllExecutionsIdsForProject";
+	private static final String EXECUTION_STEP_QUERY_NAME = "BoundEntityDao.findAllExecutionStepsIdsForProject";
 
 	private static final Map<BindableEntity, String> BOUND_ENTITIES_IN_PROJECT_QUERY;
 
@@ -74,16 +76,29 @@ public class HibernateBoundEntityDao implements BoundEntityDao {
 	@PersistenceContext
 	private EntityManager em;
 
+	@Inject
+	private GenericProjectDao genericProjectDao;
+
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<BoundEntity> findAllForBinding(CustomFieldBinding customFieldBinding) {
+
+		if(genericProjectDao.isProjectTemplate(customFieldBinding.getBoundProject().getId())){
+			return new ArrayList<>();
+		}
+
 		BindableEntity boundType = customFieldBinding.getBoundEntity();
+		Project boundProject = (Project) customFieldBinding.getBoundProject();
 		String queryName = BOUND_ENTITIES_IN_PROJECT_QUERY.get(boundType);
 		Query q = em.createNamedQuery(queryName);
-		q.setParameter(ParameterNames.PROJECT_ID, customFieldBinding.getBoundProject().getId());
+		q.setParameter(ParameterNames.PROJECT_ID, boundProject.getId());
 
-		return q.getResultList();
+		List<Long> entityIds = q.getResultList();
+
+		return entityIds.stream()
+			.map(entityId -> new BoundEntityImpl(entityId, boundType, boundProject))
+			.collect(toList());
 	}
 
 

@@ -108,8 +108,8 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 			}
 		});
 
-		bindingService.removeCustomFieldBindings(projectId);
 		milestoneBindingManager.unbindAllMilestonesFromProject(project);
+		bindingService.removeCustomFieldBindings(projectId);
 
 
 		doDeleteProject(projectId);

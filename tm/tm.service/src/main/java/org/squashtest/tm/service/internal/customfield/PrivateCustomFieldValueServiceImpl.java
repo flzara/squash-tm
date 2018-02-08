@@ -30,6 +30,8 @@ import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.MultiValueMap;
@@ -54,14 +56,18 @@ import org.squashtest.tm.service.internal.repository.CustomFieldValueDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao.CustomFieldValuesPair;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
+import static java.util.stream.Collectors.*;
+
 @Service("squashtest.tm.service.CustomFieldValueManagerService")
 @Transactional
 public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldValueService {
 
-	@Inject @Named("defaultEditionStatusStrategy")
+	@Inject
+	@Named("defaultEditionStatusStrategy")
 	private ValueEditionStatusStrategy defaultEditionStatusStrategy;
 
-	@Inject @Named("requirementBoundEditionStatusStrategy")
+	@Inject
+	@Named("requirementBoundEditionStatusStrategy")
 	private ValueEditionStatusStrategy requirementBoundEditionStatusStrategy;
 
 	@Inject
@@ -78,6 +84,9 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 	@Inject
 	private IndexationService indexationService;
+
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	public void setPermissionService(PermissionEvaluationService permissionService) {
 		this.permissionService = permissionService;
@@ -103,7 +112,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 			throw new AccessDeniedException("Access is denied");
 		}
 		return customFieldValueDao
-				.findAllCustomValues(boundEntity.getBoundEntityId(), boundEntity.getBoundEntityType());
+			.findAllCustomValues(boundEntity.getBoundEntityId(), boundEntity.getBoundEntityType());
 	}
 
 	@Override
@@ -142,7 +151,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	// same : no sec, a gesture of mercy for the database
 	@Override
 	public List<CustomFieldValue> findAllCustomFieldValues(Collection<? extends BoundEntity> boundEntities,
-			Collection<CustomField> restrictedToThoseCustomfields) {
+														   Collection<CustomField> restrictedToThoseCustomfields) {
 
 		// first, because the entities might be of different kind we must segregate them.
 		Map<BindableEntity, List<Long>> compositeIds = breakEntitiesIntoCompositeIds(boundEntities);
@@ -153,7 +162,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		for (Entry<BindableEntity, List<Long>> entry : compositeIds.entrySet()) {
 
 			result.addAll(customFieldValueDao.batchedRestrictedFindAllCustomValuesFor(entry.getValue(), entry.getKey(),
-					restrictedToThoseCustomfields));
+				restrictedToThoseCustomfields));
 
 		}
 
@@ -163,19 +172,24 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 	@Override
 	public void cascadeCustomFieldValuesCreation(CustomFieldBinding binding) {
-
 		List<BoundEntity> boundEntities = boundEntityDao.findAllForBinding(binding);
 
 		for (BoundEntity entity : boundEntities) {
 			CustomFieldValue value = binding.createNewValue();
 			value.setBoundEntity(entity);
 			customFieldValueDao.save(value);
-			if (BindableEntity.TEST_CASE == entity.getBoundEntityType()) {
-				indexationService.reindexTestCase(entity.getBoundEntityId());
-			}
-			if (BindableEntity.REQUIREMENT_VERSION == entity.getBoundEntityType()) {
-				indexationService.reindexRequirementVersion(entity.getBoundEntityId());
-			}
+		}
+
+		reindexAfterCufBindingModification(binding, boundEntities);
+	}
+
+	private void reindexAfterCufBindingModification(CustomFieldBinding binding, List<BoundEntity> boundEntities) {
+		if (BindableEntity.TEST_CASE == binding.getBoundEntity()) {
+			List<Long> tcIds = boundEntities.stream().map(BoundEntity::getBoundEntityId).collect(toList());
+			indexationService.batchReindexTc(tcIds);
+		} else if (BindableEntity.REQUIREMENT_VERSION == binding.getBoundEntity()) {
+			List<Long> reqVersionIds = boundEntities.stream().map(BoundEntity::getBoundEntityId).collect(toList());
+			indexationService.batchReindexReqVersion(reqVersionIds);
 		}
 	}
 
@@ -188,29 +202,31 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	public void cascadeCustomFieldValuesDeletion(List<Long> customFieldBindingIds) {
 
 		List<CustomFieldValue> allValues = customFieldValueDao.findAllCustomValuesOfBindings(customFieldBindingIds);
-		for (CustomFieldValue value : allValues) {
-			BoundEntity boundEntity = boundEntityDao.findBoundEntity(value);
-			if(boundEntity != null){
-				switch(boundEntity.getBoundEntityType()){
-				case TEST_CASE :
-					indexationService.reindexTestCase(boundEntity.getBoundEntityId());
-					break;
-				case REQUIREMENT_VERSION :
-					indexationService.reindexRequirementVersion(boundEntity.getBoundEntityId());
-					break;
-				default:
-					break;
-				}
-			}
-		}
-		deleteCustomFieldValues(allValues);
 
+		Map<BindableEntity, List<Long>> entityIdByType = allValues.stream()
+			.collect(
+				groupingBy(CustomFieldValue::getBoundEntityType,
+					mapping(
+						CustomFieldValue::getBoundEntityId, toList()
+					)));
+
+		deleteCustomFieldValues(allValues);
+		entityManager.flush();
+		entityManager.clear();
+
+		if (entityIdByType.containsKey(BindableEntity.TEST_CASE)) {
+			indexationService.batchReindexTc(entityIdByType.get(BindableEntity.TEST_CASE));
+		}
+
+		if (entityIdByType.containsKey(BindableEntity.REQUIREMENT_VERSION)) {
+			indexationService.batchReindexReqVersion(entityIdByType.get(BindableEntity.REQUIREMENT_VERSION));
+		}
 	}
 
 	@Override
 	public void createAllCustomFieldValues(BoundEntity entity, Project project) {
 
-		if(project == null){
+		if (project == null) {
 			project = entity.getProject();
 		}
 
@@ -226,7 +242,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		 * and hope it makes it faster. Best should be to get rid of it completely.
 		 ************************************************************************************************* */
 		List<CustomFieldBinding> whatIsAlreadyBound =
-				customFieldBindingDao.findEffectiveBindingsForEntity(entity.getBoundEntityId(), entity.getBoundEntityType());
+			customFieldBindingDao.findEffectiveBindingsForEntity(entity.getBoundEntityId(), entity.getBoundEntityType());
 
 		bindings.removeAll(whatIsAlreadyBound);
 
@@ -251,14 +267,14 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	@Override
 	public void createAllCustomFieldValues(Collection<? extends BoundEntity> entities, Project p) {
 
-		if (entities.isEmpty()){
+		if (entities.isEmpty()) {
 			return;
 		}
 
 		BoundEntity firstEntity = entities.iterator().next();
 
 		Project project = p;
-		if (p == null){
+		if (p == null) {
 			project = firstEntity.getProject();
 		}
 
@@ -279,18 +295,18 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		/* **** /[Issue 3808]  ************/
 
 		// main loop
-		for (BoundEntity entity : entities){
+		for (BoundEntity entity : entities) {
 
 			Collection<CustomFieldBinding> toBeBound = bindings;
 
 			Collection<CustomFieldBinding> effectiveBindings =
-					bindingPerEntities.getCollection(entity.getBoundEntityId());
+				bindingPerEntities.getCollection(entity.getBoundEntityId());
 
-			if (effectiveBindings != null){
+			if (effectiveBindings != null) {
 				toBeBound = CollectionUtils.subtract(bindings, effectiveBindings);
 			}
 
-			for (CustomFieldBinding toBind : toBeBound){
+			for (CustomFieldBinding toBind : toBeBound) {
 				CustomFieldValue value = toBind.createNewValue();
 				value.setBoundEntity(entity);
 				customFieldValueDao.save(value);
@@ -308,7 +324,6 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	}
 
 
-
 	@Override
 	public void deleteAllCustomFieldValues(BoundEntity entity) {
 		customFieldValueDao.deleteAllForEntity(entity.getBoundEntityId(), entity.getBoundEntityType());
@@ -323,7 +338,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	public void copyCustomFieldValues(BoundEntity source, BoundEntity recipient) {
 
 		List<CustomFieldValue> sourceValues = customFieldValueDao.findAllCustomValues(source.getBoundEntityId(),
-				source.getBoundEntityType());
+			source.getBoundEntityType());
 
 
 		for (CustomFieldValue value : sourceValues) {
@@ -336,7 +351,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 	/**
 	 * @see org.squashtest.tm.service.customfield.CustomFieldValueFinderService#areValuesEditable(long,
-	 *      org.squashtest.tm.domain.customfield.BindableEntity)
+	 * org.squashtest.tm.domain.customfield.BindableEntity)
 	 */
 	@Override
 	public boolean areValuesEditable(long boundEntityId, BindableEntity bindableEntity) {
@@ -355,12 +370,12 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	 */
 	@Override
 	public void copyCustomFieldValues(Map<Long, BoundEntity> copiedEntityBySourceId, BindableEntity bindableEntityType) {
-		Set<Long> sourceEntitiesIds =  copiedEntityBySourceId.keySet();
+		Set<Long> sourceEntitiesIds = copiedEntityBySourceId.keySet();
 		List<CustomFieldValue> sourceValues = customFieldValueDao.batchedFindAllCustomValuesFor(sourceEntitiesIds,
-				bindableEntityType);
+			bindableEntityType);
 
 
-		for(CustomFieldValue cufSource : sourceValues){
+		for (CustomFieldValue cufSource : sourceValues) {
 			BoundEntity targetCopy = copiedEntityBySourceId.get(cufSource.getBoundEntityId());
 			CustomFieldValue copy = cufSource.copy();
 			copy.setBoundEntity(targetCopy);
@@ -369,11 +384,12 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 
 	}
+
 	@Override
 	public void copyCustomFieldValuesContent(BoundEntity source, BoundEntity recipient) {
 
 		List<CustomFieldValuesPair> pairs = customFieldValueDao.findPairedCustomFieldValues(
-				source.getBoundEntityType(), source.getBoundEntityId(), recipient.getBoundEntityId());
+			source.getBoundEntityType(), source.getBoundEntityId(), recipient.getBoundEntityId());
 
 		for (CustomFieldValuesPair pair : pairs) {
 			pair.copyContent();
@@ -405,9 +421,9 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 	// This method is just here to use the @CacheResult annotation
 	@CacheResult(type = CachableType.CUSTOM_FIELD)
-	private List<CustomFieldBinding> optimizedFindCustomField(BoundEntity entity){
+	private List<CustomFieldBinding> optimizedFindCustomField(BoundEntity entity) {
 		return customFieldBindingDao.findAllForProjectAndEntity(entity
-				.getProject().getId(), entity.getBoundEntityType());
+			.getProject().getId(), entity.getBoundEntityType());
 	}
 
 	// This method is just here to use the @CacheResult annotation
@@ -421,7 +437,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	public void migrateCustomFieldValues(BoundEntity entity) {
 
 		List<CustomFieldValue> valuesToUpdate = customFieldValueDao.findAllCustomValues(entity.getBoundEntityId(),
-				entity.getBoundEntityType());
+			entity.getBoundEntityType());
 		if (entity.getProject() != null) {
 			List<CustomFieldBinding> projectBindings = optimizedFindCustomField(entity);
 
@@ -458,13 +474,10 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	}
 
 
-
-
-
 	// *********************** private convenience methods ********************
 
 	private Map<BindableEntity, List<Long>> breakEntitiesIntoCompositeIds(
-			Collection<? extends BoundEntity> boundEntities) {
+		Collection<? extends BoundEntity> boundEntities) {
 
 		Map<BindableEntity, List<Long>> segregatedEntities = new EnumMap<>(BindableEntity.class);
 
@@ -495,15 +508,14 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		List<Object[]> whatIsAlreadyBound = customFieldBindingDao.findEffectiveBindingsForEntities(entityIds, type);
 
 		MultiValueMap bindingsPerEntity = new MultiValueMap();
-		for (Object[] tuple : whatIsAlreadyBound){
-			Long entityId = (Long)tuple[0];
-			CustomFieldBinding binding = (CustomFieldBinding)tuple[1];
+		for (Object[] tuple : whatIsAlreadyBound) {
+			Long entityId = (Long) tuple[0];
+			CustomFieldBinding binding = (CustomFieldBinding) tuple[1];
 			bindingsPerEntity.put(entityId, binding);
 		}
 
 		return bindingsPerEntity;
 	}
-
 
 
 	/**
@@ -512,10 +524,10 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	 */
 	private ValueEditionStatusStrategy editableStrategy(BindableEntity bindableEntity) {
 		switch (bindableEntity) {
-		case REQUIREMENT_VERSION:
-			return requirementBoundEditionStatusStrategy;
-		default:
-			return defaultEditionStatusStrategy;
+			case REQUIREMENT_VERSION:
+				return requirementBoundEditionStatusStrategy;
+			default:
+				return defaultEditionStatusStrategy;
 		}
 	}
 

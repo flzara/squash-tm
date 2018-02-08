@@ -133,7 +133,9 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	public void addNewCustomFieldBinding(long projectId, BindableEntity entity, long customFieldId,
 			CustomFieldBinding newBinding) {
 		createBinding(projectId, entity, customFieldId, newBinding);
-		customValueService.cascadeCustomFieldValuesCreation(newBinding);
+		if(! genericProjectDao.isProjectTemplate(projectId)){
+			customValueService.cascadeCustomFieldValuesCreation(newBinding);
+		}
 	}
 
 	@Override
