@@ -228,4 +228,6 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 
 	GenericProject synchronizeGenericProject(GenericProject target,
 			GenericProject source, GenericProjectCopyParameter params);
+
+	void disassociateFromTemplate(long projectId);
 }

@@ -273,6 +273,13 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	}
 
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public void disassociateFromTemplate(long projectId) {
+		GenericProject genericProject = genericProjectDao.findOne(projectId);
+		genericProject.setTemplate(null);
+	}
+
+	@Override
 	@PreAuthorize("hasPermission(#projectId, 'org.squashtest.tm.domain.project.Project' , 'MANAGEMENT')"
 			+ " or hasPermission(#projectId, 'org.squashtest.tm.domain.project.ProjectTemplate' , 'MANAGEMENT')"
 			+ OR_HAS_ROLE_ADMIN)

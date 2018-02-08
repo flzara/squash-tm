@@ -43,6 +43,9 @@
 <f:message var="cancelLabel"      key="label.Cancel" />
 <f:message var="closeLabel"          key="label.Close" />
 <f:message var="renameLabel"      key="label.Rename" />
+<f:message var="associateTemplateLabel" key="label.AssociateTemplate"/>
+<f:message var="disassociateTemplateLabel" key="label.DisassociateTemplate"/>
+<f:message var="disassociateDialogTitle" key="dialog.disassociate-template.title" />
 
 
 <s:url var="projectUrl" value="/generic-projects/{projectId}">
@@ -124,33 +127,57 @@
 				</div>
 
 				<div class="toolbar-button-panel">
-<sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
-<c:if test="${ adminproject.template }">
-                    <button   id="coerce" class="sq-btn" data-template-id="${ adminproject.id }" >
-                  <f:message key='label.coerceTemplateIntoProject' />
+
+          <sec:authorize access="hasRole('ROLE_ADMIN')">
+
+            <c:if test="${ !adminproject.template }">
+              <c:choose>
+                <c:when test="${ adminproject.project.template == null }">
+                  <button id="associate-template-btn" title="${ associateTemplateLabel }" class="sq-btn">
+                    <f:message key="label.AssociateTemplate"/>
                   </button>
-                    <div id="coerce-warning-dialog" title="<f:message key="title.coerceTemplateIntoProject" />" class="alert not-displayed">
-                      <f:message key="message.coerceTemplateIntoProject" />
-                      <input type="button" value="<f:message key='label.Confirm' />" />
-                      <input type="button" value="<f:message key='label.Cancel' />" />
-                    </div>
-</c:if>
-					<f:message var="rename" key="project.button.rename.label" />
-					<button   value="${ rename }" id="rename-project-button" title="<f:message key='project.button.renameproject.label' />"
-								class="sq-btn" >
+                </c:when>
+                <c:otherwise>
+                  <button id="disassociate-template-btn" title="${ disassociateTemplateLabel }" class="sq-btn">
+                    <f:message key="label.DisassociateTemplate"/>
+                  </button>
+                </c:otherwise>
+              </c:choose>
+            </c:if>
+
+          </sec:authorize>
+
+          <sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
+
+            <c:if test="${ adminproject.template }">
+              <button   id="coerce" class="sq-btn" data-template-id="${ adminproject.id }" >
+                <f:message key='label.coerceTemplateIntoProject' />
+              </button>
+              <div id="coerce-warning-dialog" title="<f:message key="title.coerceTemplateIntoProject" />" class="alert not-displayed">
+                <f:message key="message.coerceTemplateIntoProject" />
+                <input type="button" value="<f:message key='label.Confirm' />" />
+                <input type="button" value="<f:message key='label.Cancel' />" />
+              </div>
+            </c:if>
+
+					  <f:message var="rename" key="project.button.rename.label" />
+					  <button   value="${ rename }" id="rename-project-button" title="<f:message key='project.button.renameproject.label' />" class="sq-btn" >
 								<f:message key="project.button.renameproject.label" />
-								</button>
-</sec:authorize>
-<sec:authorize access="hasRole('ROLE_ADMIN')">
-    				<f:message var="delete" key='project.button.delete.label' />
+						</button>
 
- 					<%-------------------------- Trash appear but too much padding.   ------------------------%>
+          </sec:authorize>
+
+          <sec:authorize access="hasRole('ROLE_ADMIN')">
+            <f:message var="delete" key='project.button.delete.label' />
+
+ 					  <%-------------------------- Trash appear but too much padding.   ------------------------%>
     				<button id="delete-project-button" ${ delete }  class="sq-btn"  title="<f:message key='project.button.deleteproject.label' />" >
-        			   <span class="ui-icon ui-icon-trash">-</span>&nbsp;<f:message key="label.Delete" />
-      				</button>
+    				  <span class="ui-icon ui-icon-trash">-</span>&nbsp;<f:message key="label.Delete" />
+    				</button>
+          </sec:authorize>
 
-</sec:authorize>
 				</div>
+
 				<div class="unsnap"></div>
 			</div>
 			<%-------------------------------------------------------------END INFO + Toolbar ---------------%>
@@ -189,21 +216,23 @@
 							</label>
 							<div class="display-table-cell editable rich-editable" data-def="url=${projectUrl}" id="project-description">${hu:clean(adminproject.project.description) }</div>
 						</div>
-						<div class="display-table-row">
-              <label for="project-template" class="display-table-cell">
-            	  <f:message key="label.associatedTemplate" />
-            	</label>
-            	<div class="display-table-cell" id="project-template">
-            	  <c:choose>
-            	    <c:when test="${ adminproject.project.template != null }">
-            	      ${ hu:clean(adminproject.project.template.name) }
-            	    </c:when>
-            	    <c:otherwise>
-            	      <f:message key="label.none" />
-            	    </c:otherwise>
-            	  </c:choose>
-            	</div>
-            </div>
+						<c:if test="${ !adminproject.template }">
+						  <div class="display-table-row">
+                <label for="project-template" class="display-table-cell">
+            	    <f:message key="label.associatedTemplate" />
+            	  </label>
+                <div class="display-table-cell" id="project-template">
+                  <c:choose>
+                    <c:when test="${ adminproject.project.template != null }">
+                      ${ hu:clean(adminproject.project.template.name) }
+                    </c:when>
+                    <c:otherwise>
+                      <f:message key="squashtm.nodata" />
+                    </c:otherwise>
+                  </c:choose>
+                </div>
+              </div>
+            </c:if>
 						<%-- 	Waiting for implementation of deactivation	<comp:project-active adminproject="${ adminproject }"/> --%>
 					</div>
 				</jsp:attribute>
@@ -501,6 +530,22 @@
 </sec:authorize>
 
 <!-- ------------------------------------END RENAME POPUP------------------------------------------------------- -->
+<!-- ------------------------------------------- DISASSOCIATE POPUP -------------------------------------------- -->
+<sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
+
+  <div id="disassociate-project-dialog" class="popup-dialog not-displayed" title="${disassociateDialogTitle}">
+    <div class="dissociate-project-dialog-content">
+    	<f:message key="dialog.disassociate-template.message" />
+    </div>
+    <div class="popup-dialog-buttonpane">
+      <input type="button" value="${confirmLabel}" data-def="evt=confirm, mainbtn" />
+      <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
+    </div>
+  </div>
+
+</sec:authorize>
+<!-- ------------------------------------------ END DISASSOCIATE POPUP ----------------------------------------- -->
+
 <script type="text/javascript">
 /* popup renaming success handler */
 
@@ -786,6 +831,30 @@ require(["common"], function() {
 			renameDialog.formDialog('open');
 		});
 
+    // Disassociate Popup
+    var disassociateDialog = $('#disassociate-project-dialog');
+    //var templateNameField = $('#project-template');
+
+    disassociateDialog.formDialog();
+
+    disassociateDialog.on('formdialogconfirm', function() {
+      $.ajax({
+      type : 'DELETE',
+      url : '${projectUrl}/disassociate-template'
+      })
+      .success(function() {
+        disassociateDialog.formDialog('close');
+        location.reload();
+      });
+    });
+
+    disassociateDialog.on('formdialogcancel', function() {
+      disassociateDialog.formDialog('close');
+    });
+
+    $('#disassociate-template-btn').on('click', function() {
+      disassociateDialog.formDialog('open');
+    });
 
 		// permissions popup
 		var permpopup = $("#add-permission-dialog");

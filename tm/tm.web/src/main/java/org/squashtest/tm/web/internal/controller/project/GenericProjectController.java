@@ -177,6 +177,22 @@ public class GenericProjectController {
 		return new RenameModel(HtmlUtils.htmlEscape(newName));
 	}
 
+	/*@RequestMapping(value = PROJECT_ID_URL + "/associate-template", method = RequestMethod.POST)
+	@ResponseBody
+	public void associateTemplate(@PathVariable long projectId, @RequestParam String templateId) {
+		Long tempID = Long.parseLong(templateId);
+		projectManager.associateTemplate(projectId, tempID);
+		LOGGER.info("Project modification : associating {} with template {}", projectId, templateId);
+	}*/
+
+	@RequestMapping(value = PROJECT_ID_URL + "/disassociate-template", method = RequestMethod.DELETE)
+	@ResponseBody
+	public void disassociateTemplate(@PathVariable long projectId) {
+		projectManager.disassociateFromTemplate(projectId);
+		LOGGER.info("Disassociating project of ID {} from its template.", projectId);
+	}
+
+
 	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = {"isActive"})
 	@ResponseBody
 	public Active changeActive(@PathVariable long projectId,
