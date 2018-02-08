@@ -55,11 +55,13 @@ define(["handlebars","jquery.squash.bindviewformdialog","./NewProjectFromTemplat
 		inactivateCheckBox : function(){
 			this.$el.find("input:checkbox").prop("disabled",true);
 			this.$el.find("input:checkbox").prop("checked",true);
+			this.$el.find("#copyMessage").addClass("disabled-transparent");
 		},
 
 		activateCheckBox : function(){
 			this.$el.find("input:checkbox").prop("disabled",false);
 			this.$el.find("input:checkbox").prop("checked",true);
+			this.$el.find("#copyMessage").removeClass("disabled-transparent");
 		},
 
 		changeTemplateSelection : function(event){
