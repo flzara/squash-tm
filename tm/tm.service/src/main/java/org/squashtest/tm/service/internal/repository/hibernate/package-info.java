@@ -736,6 +736,18 @@
 	@NamedQuery(name = "BoundEntityDao.findAllTestStepsForProject", query = "select ts from TestCase tc join tc.steps ts where tc.project.id = :projectId and ts.class = ActionTestStep"),
 	@NamedQuery(name = "BoundEntityDao.findAllExecutionsForProject", query = "select exec from Execution exec join exec.testPlan tp join tp.iteration i join i.campaign c where c.project.id = :projectId"),
 	@NamedQuery(name = "BoundEntityDao.findAllExecutionStepsForProject", query = "select execst from ExecutionStep execst join execst.execution exe join exe.testPlan tp join tp.iteration i join i.campaign c where c.project.id = :projectId"),
+
+	//same as above but selecting only ids, to prevent fetching all columns
+	@NamedQuery(name = "BoundEntityDao.findAllTestCasesIdsForProject", query = "select tc.id from TestCase tc where tc.project.id = :projectId"),
+	@NamedQuery(name = "BoundEntityDao.findAllReqVersionsIdsForProject", query = "select rv.id from RequirementVersion rv join rv.requirement r where r.project.id = :projectId"),
+	@NamedQuery(name = "BoundEntityDao.findAllCampaignsIdsForProject", query = "select c.id from Campaign c where c.project.id = :projectId"),
+	@NamedQuery(name = "BoundEntityDao.findAllIterationsIdsForProject", query = "select i.id from Iteration i join i.campaign c where c.project.id = :projectId"),
+	@NamedQuery(name = "BoundEntityDao.findAllTestSuitesIdsForProject", query = "select ts.id from TestSuite ts join ts.iteration i join i.campaign c where c.project.id = :projectId"),
+	@NamedQuery(name = "BoundEntityDao.findAllTestStepsIdsForProject", query = "select ts.id from TestCase tc join tc.steps ts where tc.project.id = :projectId and ts.class = ActionTestStep"),
+	@NamedQuery(name = "BoundEntityDao.findAllExecutionsIdsForProject", query = "select exec.id from Execution exec join exec.testPlan tp join tp.iteration i join i.campaign c where c.project.id = :projectId"),
+	@NamedQuery(name = "BoundEntityDao.findAllExecutionStepsIdsForProject", query = "select execst.id from ExecutionStep execst join execst.execution exe join exe.testPlan tp join tp.iteration i join i.campaign c where c.project.id = :projectId"),
+
+
 	@NamedQuery(name = "BoundEntityDao.hasCustomFields", query = "select count(cfv) from CustomFieldValue cfv where cfv.boundEntityId = :boundEntityId and cfv.boundEntityType = :boundEntityType"),
 
 	//Administration
