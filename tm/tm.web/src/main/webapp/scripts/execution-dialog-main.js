@@ -69,20 +69,21 @@ define(['module',
     var ie = ua.indexOf('trident');
     var firefox = ua.indexOf('firefox');
     var chrome = ua.indexOf('chrome');
-    var opera = ua.indexOf('opr');
+    var edge = ua.indexOf('edge');
 		if (firefox > -1 || ie > -1) {
 			cbox.css("height", "20px");
 		}
 		// to center the cbox for Firefox
 		if (firefox > -1) {
 			cbox.css("position", "relative").css("top", "3px");
-		}
-		// differences of 1px between navigators for "previous" and "next" buttons div...
-		if (firefox > -1 || chrome > -1) {
 			$("#execution-previous-next").css("top", "-3px");
 		}
-		if (opera > -1) {
+		// differences of 1px between navigators for "previous" and "next" buttons div...
+		if (chrome > -1) {
 			$("#execution-previous-next").css("top", "-1px");
+		}
+		if (edge > -1) {
+			$("#execution-previous-next").css("top", "-2px");
 		}
 
 		var lang = translator.get({
