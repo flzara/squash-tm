@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.user;
 
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -32,5 +33,5 @@ import java.util.List;
  */
 public interface CustomConnectionLogFinderService {
 
-	PagedCollectionHolder<List<ConnectionLog>> findAllFiltered(PagingAndSorting paging, Filtering filtering);
+	PagedCollectionHolder<List<ConnectionLog>> findAllFiltered(PagingAndSorting paging, Filtering filtering, ColumnFiltering columnFiltering);
 }

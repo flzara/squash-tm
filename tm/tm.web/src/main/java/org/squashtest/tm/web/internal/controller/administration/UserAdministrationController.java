@@ -45,11 +45,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
-import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
-import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.Filtering;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.*;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.project.ProjectPermission;
 import org.squashtest.tm.domain.users.ConnectionLog;
@@ -86,6 +82,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 
 	private static final PagingAndSorting TEAMS_DEFAULT_PAGING = new DefaultPagingAndSorting("name");
 	private static final Filtering TEAMS_DEFAULT_FILTERING = DefaultFiltering.NO_FILTERING;
+	private static final ColumnFiltering CONNECTION_COLUMN_DEFAULT_FILTERING = DefaultColumnFiltering.NO_FILTERING;
 
 	private static final PagingAndSorting CONNECTIONS_DEFAULT_PAGING = new DefaultPagingAndSorting("id");
 
@@ -135,7 +132,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 		mav.addObject("pagedTeams", teams);
 		mav.addObject("teamsPageSize", TEAMS_DEFAULT_PAGING.getPageSize());
 
-		PagedCollectionHolder<List<ConnectionLog>> connectionLogs = connectionLogFinderService.findAllFiltered(CONNECTIONS_DEFAULT_PAGING, TEAMS_DEFAULT_FILTERING);
+		PagedCollectionHolder<List<ConnectionLog>> connectionLogs = connectionLogFinderService.findAllFiltered(CONNECTIONS_DEFAULT_PAGING, TEAMS_DEFAULT_FILTERING, CONNECTION_COLUMN_DEFAULT_FILTERING);
 		mav.addObject("pagedConnectionLogs", connectionLogs);
 		mav.addObject("connectionsPageSize", CONNECTIONS_DEFAULT_PAGING.getPageSize());
 		return mav;

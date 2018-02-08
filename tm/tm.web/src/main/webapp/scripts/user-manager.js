@@ -19,13 +19,13 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function() {
-	require([ "jquery", "app/ws/squashtm.workspace", "users-manager/user-list", "teams-manager/TeamsManager", "connections-manager/ConnectionsTable" ], function($, WS, userAdmin, TeamsManager, ConnectionsTable) {
+	require([ "jquery", "app/ws/squashtm.workspace", "users-manager/user-list", "teams-manager/TeamsManager", "connections-manager/ConnectionsManager", "jquery.squash.rangedatepicker"], function($, WS, userAdmin, TeamsManager, ConnectionsManager, rangedatepicker) {
 		$(function() {
 			WS.init();
 			userAdmin.initUserListPage(window.squashtm.app.teamsManager.settings);
 			new TeamsManager();
-			new ConnectionsTable();
+			new ConnectionsManager();
+      rangedatepicker.init();
 		});
-
 	});
 });

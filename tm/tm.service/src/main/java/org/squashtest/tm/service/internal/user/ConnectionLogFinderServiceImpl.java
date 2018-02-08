@@ -22,10 +22,7 @@ package org.squashtest.tm.service.internal.user;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.core.foundation.collection.Filtering;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.*;
 import org.squashtest.tm.domain.users.ConnectionLog;
 import org.squashtest.tm.service.internal.repository.ConnectionLogDao;
 import org.squashtest.tm.service.user.ConnectionLogFinderService;
@@ -51,11 +48,11 @@ public class ConnectionLogFinderServiceImpl implements ConnectionLogFinderServic
 	}
 
 	@Override
-	public PagedCollectionHolder<List<ConnectionLog>> findAllFiltered(PagingAndSorting paging, Filtering filtering) {
+	public PagedCollectionHolder<List<ConnectionLog>> findAllFiltered(PagingAndSorting paging, Filtering filtering, ColumnFiltering columnFiltering) {
 
-		List<ConnectionLog> connectionLogs = connectionLogDao.findSortedConnections(paging, filtering);
+		List<ConnectionLog> connectionLogs = connectionLogDao.findSortedConnections(paging, filtering, columnFiltering);
 
-		Long count = connectionLogDao.count();
+		Long count = Integer.toUnsignedLong(connectionLogs.size());
 
 		return new PagingBackedPagedCollectionHolder<>(paging, count, connectionLogs);
 	}

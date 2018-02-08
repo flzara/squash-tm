@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.users.ConnectionLog;
@@ -30,5 +31,5 @@ import java.util.List;
  * @author aguilhem
  */
 public interface CustomConnectionLogDao {
-	List<ConnectionLog> findSortedConnections(PagingAndSorting paging, Filtering filtering);
+	List<ConnectionLog> findSortedConnections(PagingAndSorting paging, Filtering filtering, ColumnFiltering columnFiltering);
 }

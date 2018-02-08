@@ -26,6 +26,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -77,8 +78,9 @@ public class ConnectionController {
 
 		PagingAndSorting paging = new DataTableSorting(params, connectionsMapper);
 		Filtering filtering = new DataTableFiltering(params);
+		ColumnFiltering columnFiltering = new DataTableColumnFiltering(params);
 
-		PagedCollectionHolder<List<ConnectionLog>> holder = service.findAllFiltered(paging, filtering);
+		PagedCollectionHolder<List<ConnectionLog>> holder = service.findAllFiltered(paging, filtering, columnFiltering);
 
 		return new ConnectionLogsDataTableModelHelper(locale, messageSource).buildDataModel(holder, params.getsEcho());
 	}
