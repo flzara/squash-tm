@@ -484,7 +484,7 @@ public class IterationModificationController {
 		Collection<TestSuite> testSuites = iterationModService.findAllTestSuites(iterationId);
 		List<TestSuiteModel> result = new ArrayList<>();
 		for (TestSuite testSuite : testSuites) {
-			TestSuiteModel model = new TestSuiteModel(testSuite.getId(), HtmlUtils.htmlEscape(testSuite.getName()));
+			TestSuiteModel model = new TestSuiteModel(testSuite.getId(),testSuite.getName());
 			result.add(model);
 		}
 		return result;

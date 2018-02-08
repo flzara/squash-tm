@@ -59,7 +59,7 @@ class LinkedRequirementVersionsTableModelHelper extends DataTableModelBuilder<Li
 		row.put("milestone-dates", MilestoneModelUtils.timeIntervalToString(rv.getMilestones(), helper, locale));
 		row.put("empty-edit-holder", null);
 		row.put("empty-delete-holder", null);
-		row.put("milestone", MilestoneModelUtils.milestoneLabelsOrderByDate(rv.getMilestones()));
+		row.put("milestone", HtmlUtils.htmlEscape(MilestoneModelUtils.milestoneLabelsOrderByDate(rv.getMilestones())));
 		row.put("rv-description", HTMLCleanupUtils.getCleanedBriefText(rv.getDescription(), INT_MAX_DESCRIPTION_LENGTH));
 
 		return row;

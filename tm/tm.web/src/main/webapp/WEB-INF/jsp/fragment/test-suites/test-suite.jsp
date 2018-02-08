@@ -33,6 +33,7 @@
 <%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform" %>
 <%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues" %>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
+<%@ taglib prefix="hu" uri="http://org.squashtest.tm/taglib/html-utils" %>
 
 
 <f:message var="squashlocale" key="squashtm.locale"/>

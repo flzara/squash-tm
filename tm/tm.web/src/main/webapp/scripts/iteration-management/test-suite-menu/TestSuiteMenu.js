@@ -112,7 +112,7 @@ define([ "jquery", "underscore", "app/ws/squashtm.notification", "squash.transla
 				'for' : 'menu-suite-' + json.id,
 				'class' : 'afterDisabled'
 			});
-			label.text(json.name);
+			label.text(_.unescape(json.name));
 			node.append(label);
 			return node;
 		}, this);

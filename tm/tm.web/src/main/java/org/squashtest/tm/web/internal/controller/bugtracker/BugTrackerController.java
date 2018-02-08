@@ -82,6 +82,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
+import static java.util.stream.Collectors.toList;
+
 /**
  *
  * Note : as of 1.13 the questions regarding authentications has been moved to
@@ -808,6 +810,10 @@ public class BugTrackerController {
 			BugTracker bugtracker = project.findBugTracker();
 			BugTrackerInterfaceDescriptor descriptor = bugTrackersLocalService.getInterfaceDescriptor(bugtracker);
 			descriptor.setLocale(locale);
+			String projectNames = JsonHelper.serialize(project.getBugtrackerBinding().getProjectNames()
+				.stream()
+				.map(name-> HtmlUtils.htmlEscape(name))
+				.collect(toList()));
 			ModelAndView mav = new ModelAndView("fragment/bugtracker/bugtracker-panel-content");
 			mav.addObject("entity", entity);
 			mav.addObject("entityType", type);
@@ -816,7 +822,7 @@ public class BugTrackerController {
 			mav.addObject(MODEL_BUG_TRACKER_STATUS, status);
 			mav.addObject("project", project);
 			mav.addObject("bugTracker", bugtracker);
-			mav.addObject("projectNames", JsonHelper.serialize(project.getBugtrackerBinding().getProjectNames()));
+			mav.addObject("projectNames", projectNames);
 			mav.addObject("projectId", project.getId());
 			mav.addObject("delete", "");
 			mav.addObject("isOslc", btFactory.isOslcConnector(bugtracker.getKind()));

@@ -182,7 +182,7 @@ public class TestSuiteModificationController {
 
 		jsonUsers.put(User.NO_USER_ID.toString(), unassignedLabel);
 		for (User user : usersList) {
-			jsonUsers.put(user.getId().toString(), user.getLogin());
+			jsonUsers.put(user.getId().toString(),HtmlUtils.htmlEscape( user.getLogin()));
 		}
 
 		return jsonUsers;
