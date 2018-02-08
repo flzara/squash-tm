@@ -209,9 +209,8 @@ define(
 
 			changeStrProp : function(event) {
 				var textbox = event.target;
-				this.model.set(_.escape(textbox.name), _.escape(textbox.value));
-				var value = textbox.value;
-				this.model.set(name, value);
+				this.model.set(textbox.name, textbox.value);
+
 			},
 
 			changeDateProp : function(event) {
@@ -374,8 +373,10 @@ define(
 				var $code = this.$("input[name='new-option-code']");
 
 				try {
-					this.model.addOption([ $label.val(), $code.val() ]);
-					this.optionsTable.dataTable().fnAddData([ _.escape($label.val()), $code.val(), false, "" ]);
+					var label = _.escape($label.val());
+					var code = _.escape($code.val());
+					this.model.addOption([label,code ]);
+					this.optionsTable.dataTable().fnAddData([ label, code, false, "" ]);
 					this.renderNewOptionPane();
 				} catch (ex) {
 					if (ex.name === "ValidationException") {
