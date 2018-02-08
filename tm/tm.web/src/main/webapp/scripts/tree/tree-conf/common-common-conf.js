@@ -22,11 +22,12 @@
 define(["jquery", 'workspace.event-bus'], function ($, eventBus) {
 
 	"use strict";
+
 	/**
 	 *
 	 * @param settings {model: json, baseURL: string, selecteNode: string}
 	 * @returns {{plugins: string[], json_data: {data: *, ajax: {url: json_data.ajax."url"}}, core: {animation: number}, ui: {disable_selecting_children: boolean, select_multiple_modifier: string, select_range_modifier: string, select_prev_on_delete: boolean}, hotkeys: {del: hotkeys."del", f2: hotkeys."f2", ctrl+c: hotkeys."ctrl+c", ctrl+v: hotkeys."ctrl+v", up: boolean, ctrl+up: boolean, shift+up: boolean, down: boolean, ctrl+down: boolean, shift+down: boolean, left: boolean, ctrl+left: boolean, shift+left: boolean, right: boolean, ctrl+right: boolean, shift+right: boolean, space: boolean, ctrl+space: boolean, shift+space: boolean}, themes: {theme: string, dots: boolean, icons: boolean, url: string}, squash: {rootUrl: string, opened: *}, conditionalselect: conditionalselect}}
-     */
+	 */
 	function commonCommonConf(settings) {
 		return {
 			"plugins": ["json_data", "ui", "types", "hotkeys", "dnd", "cookies", "themes", "squash", "workspace_tree", 'conditionalselect'],

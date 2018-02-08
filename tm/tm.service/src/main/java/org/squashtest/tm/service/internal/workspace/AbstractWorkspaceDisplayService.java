@@ -137,7 +137,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				attr.put("rel", getRel());
 				attr.put("name", HtmlUtils.htmlEscape(r.get(PROJECT.NAME)));
 				attr.put("id", getClassName() + '-' + libraryId);
-				attr.put("title", HtmlUtils.htmlEscape(r.get(PROJECT.LABEL)));
+				attr.put("title",removeHtmlForDescription(r.get(PROJECT.LABEL)));
 				attr.put("project", r.get(PROJECT.PROJECT_ID));
 
 				Integer countChild = r.get("COUNT_CHILD", Integer.class);
@@ -154,6 +154,16 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 					throw new IllegalStateException(String.format("Duplicate key %s", u));
 				},
 				LinkedHashMap::new));
+	}
+
+	public String removeHtmlForDescription(String html) {
+		if (StringUtils.isBlank(html)) {
+			return "";
+		}
+		String description = "<html>" + html + "</html>";
+		description = description.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", "");
+		description = HtmlUtils.htmlUnescape(description);
+		return (description.length() > 30) ? description.substring(0, 30) + "..." : description;
 	}
 
 	public Collection<JsonProject> findAllEmptyProjects(List<Long> readableProjectIds) {

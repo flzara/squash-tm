@@ -151,11 +151,11 @@
 				<div class="display-table">
 					<div class="user-account-unmodifiable-field display-table-row">
 						<label><f:message key="label.Name"/></label>
-						<div class="display-table-cell"><span>${user.firstName } ${user.lastName}</span></div>
+						<div class="display-table-cell"><span><c:out value="${user.firstName } ${user.lastName}"/></span></div>
 					</div>
 					<div class="display-table-row">
 						<label ><f:message key="label.Email"/></label>
-						<div id="user-account-email" class="display-table-cell editable text-editable" data-def="url=${userAccountUrl}, width=200"><span id="user-account-email">${user.email}</span></div>
+						<div id="user-account-email" class="display-table-cell editable text-editable" data-def="url=${userAccountUrl}, width=200"><span id="user-account-email"><c:out value="${user.email}"/></span></div>
 					</div>
 					<div class="display-table-row">
 						<label ><f:message key="label.Group"/></label>

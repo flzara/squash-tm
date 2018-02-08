@@ -76,7 +76,7 @@ public class RequirementSearchResultDataTableModelBuilder extends DataTableModel
 
 		final AuditableMixin auditable = (AuditableMixin) item;
 		Map<String, Object> res = new HashMap<>();
-		res.put(DataTableModelConstants.PROJECT_NAME_KEY, item.getProject().getName());
+		res.put(DataTableModelConstants.PROJECT_NAME_KEY, HtmlUtils.htmlEscape(item.getProject().getName()));
 		res.put("project-id", item.getProject().getId());
 		if (isInAssociationContext()) {
 			res.put("empty-is-associated-holder", " ");
@@ -96,8 +96,8 @@ public class RequirementSearchResultDataTableModelBuilder extends DataTableModel
 		res.put("requirement-version-nb", item.getRequirement().getRequirementVersions().size());
 		res.put("requirement-testcase-nb", item.getVerifyingTestCases().size());
 		res.put("requirement-attachment-nb", item.getAttachmentList().size());
-		res.put("requirement-created-by", formatUsername(auditable.getCreatedBy()));
-		res.put("requirement-modified-by", formatUsername(auditable.getLastModifiedBy()));
+		res.put("requirement-created-by", HtmlUtils.htmlEscape(formatUsername(auditable.getCreatedBy())));
+		res.put("requirement-modified-by", HtmlUtils.htmlEscape(formatUsername(auditable.getLastModifiedBy())));
 		res.put("empty-openinterface2-holder", " ");
 		res.put("empty-opentree-holder", " ");
 		return res;

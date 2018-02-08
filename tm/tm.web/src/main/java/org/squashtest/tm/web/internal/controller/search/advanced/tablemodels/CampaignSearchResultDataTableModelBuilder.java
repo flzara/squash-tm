@@ -73,7 +73,7 @@ public class CampaignSearchResultDataTableModelBuilder extends DataTableModelBui
 		res.put("itpi-mode", formatMode(item.getExecutionMode(), locale));
 		res.put("itpi-testsuites", item.getTestSuiteNames());
 		res.put("itpi-status", formatExecutionStatus(item.getExecutionStatus(), locale));
-		res.put("itpi-executed-by", formatUsername(item.getLastExecutedBy()));
+		res.put("itpi-executed-by", HtmlUtils.htmlEscape(formatUsername(item.getLastExecutedBy())));
 		res.put("itpi-executed-on", formatDateItem(item));
 		res.put("itpi-datasets", formatDatasetsItem(item));
 		res.put("empty-opentree-holder", " ");

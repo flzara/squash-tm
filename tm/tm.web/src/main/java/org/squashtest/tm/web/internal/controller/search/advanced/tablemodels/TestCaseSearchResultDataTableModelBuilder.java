@@ -77,7 +77,7 @@ public class TestCaseSearchResultDataTableModelBuilder extends DataTableModelBui
 	public Map<String, Object> buildItemData(TestCase item) {
 		final AuditableMixin auditable = (AuditableMixin) item;
 		Map<String, Object> res = new HashMap<>();
-		res.put(DataTableModelConstants.PROJECT_NAME_KEY, item.getProject().getName());
+		res.put(DataTableModelConstants.PROJECT_NAME_KEY, HtmlUtils.htmlEscape(item.getProject().getName()));
 		res.put("project-id", item.getProject().getId());
 		if (isInAssociationContext()) {
 			res.put("empty-is-associated-holder", " ");
@@ -90,16 +90,16 @@ public class TestCaseSearchResultDataTableModelBuilder extends DataTableModelBui
 		res.put("editable", isTestCaseEditable(item));
 		res.put("test-case-weight", formatImportance(item.getImportance(), locale));
 		res.put("test-case-weight-auto", item.getImportanceAuto());
-		res.put("test-case-nature", formatInfoItem(item.getNature(), locale));
-		res.put("test-case-type", formatInfoItem(item.getType(), locale));
+		res.put("test-case-nature", HtmlUtils.htmlEscape(formatInfoItem(item.getNature(), locale)));
+		res.put("test-case-type", HtmlUtils.htmlEscape(formatInfoItem(item.getType(), locale)));
 		res.put("test-case-status", formatStatus(item.getStatus(), locale));
 		res.put("test-case-milestone-nb", item.getMilestones().size());
 		res.put("test-case-requirement-nb", item.getVerifiedRequirementVersions().size());
 		res.put("test-case-teststep-nb", item.getSteps().size());
 		res.put("test-case-iteration-nb", iterationService.findIterationContainingTestCase(item.getId()).size());
 		res.put("test-case-attachment-nb", item.getAllAttachments().size());
-		res.put("test-case-created-by", formatUsername(auditable.getCreatedBy()));
-		res.put("test-case-modified-by", formatUsername(auditable.getLastModifiedBy()));
+		res.put("test-case-created-by", HtmlUtils.htmlEscape(formatUsername(auditable.getCreatedBy())));
+		res.put("test-case-modified-by", HtmlUtils.htmlEscape(formatUsername(auditable.getLastModifiedBy())));
 		res.put("empty-openinterface2-holder", " ");
 		res.put("empty-opentree-holder", " ");
 		return res;

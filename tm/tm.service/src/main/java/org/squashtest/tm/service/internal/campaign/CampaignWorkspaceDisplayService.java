@@ -23,7 +23,6 @@ package org.squashtest.tm.service.internal.campaign;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.map.MultiValueMap;
-import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.DSLContext;
 import org.jooq.Field;
@@ -34,7 +33,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryPluginBinding;
-import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.jooq.domain.Tables;
 import org.squashtest.tm.jooq.domain.tables.*;
 import org.squashtest.tm.service.internal.dto.UserDto;
@@ -396,16 +394,6 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.stream()
 			//prevent conflict when hibernate indexed lists are corrupted, by selecting always the first one...
 			.collect(Collectors.toMap(r -> r.get(TS.ID), r -> r.get(description), (String u, String v) -> u));
-	}
-
-	private String removeHtmlForDescription(String html) {
-		if (StringUtils.isBlank(html)) {
-			return "";
-		}
-		String description = "<html>" + html + "</html>";
-		description = description.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", "");
-		description = HtmlUtils.htmlUnescape(description);
-		return (description.length() > 30) ? description.substring(0, 30) + "..." : description;
 	}
 
 	private Integer getMilestoneNumber(Long milestone) {

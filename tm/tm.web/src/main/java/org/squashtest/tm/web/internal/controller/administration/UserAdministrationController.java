@@ -381,9 +381,9 @@ public class UserAdministrationController extends PartyControllerSupport {
 			result.put("user-email", HtmlUtils.htmlEscape(item.getEmail()));
 			// Could be done with a SimpleDateFormat but substring works very well.
 			result.put("user-created-on", formatDate(newP.getCreatedOn(), locale).substring(0, 10));
-			result.put("user-created-by", formatString(newP.getCreatedBy(), locale));
+			result.put("user-created-by", HtmlUtils.htmlEscape(formatString(newP.getCreatedBy(), locale)));
 			result.put("user-modified-on", formatDate(newP.getLastModifiedOn(), locale));
-			result.put("user-modified-by", formatString(newP.getLastModifiedBy(), locale));
+			result.put("user-modified-by", HtmlUtils.htmlEscape(formatString(newP.getLastModifiedBy(), locale)));
 			// Feature 6763 - Add 'last connected on' column
 			result.put("user-connected-on", formatDate(item.getLastConnectedOn(), locale));
 			result.put("empty-delete-holder", null);

@@ -47,9 +47,9 @@ class RequirementLinkTypesTableModelHelper extends DataTableModelBuilder<Require
 		row.put("type-id", type.getId().toString());
 		row.put("type-index", Long.toString(getCurrentIndex()));
 		row.put("type-role1", HtmlUtils.htmlEscape(formatRole(type.getRole1())));
-		row.put("type-role1-code", type.getRole1Code());
+		row.put("type-role1-code", HtmlUtils.htmlEscape(type.getRole1Code()));
 		row.put("type-role2", HtmlUtils.htmlEscape(formatRole(type.getRole2())));
-		row.put("type-role2-code", type.getRole2Code());
+		row.put("type-role2-code", HtmlUtils.htmlEscape(type.getRole2Code()));
 		row.put("type-is-default", Boolean.toString(type.isDefault()));
 		row.put("empty-delete-holder", null);
 
