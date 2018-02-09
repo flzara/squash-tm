@@ -65,15 +65,15 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 	@Inject
 	HibernateRequirementFolderDao hibernateRequirementFolderDao;
 
-	private RequirementLibraryNode RLN = REQUIREMENT_LIBRARY_NODE.as("RLN");
-	private RequirementFolder RF = REQUIREMENT_FOLDER.as("RF");
-	private Requirement REQ = REQUIREMENT.as("REQ");
-	private RequirementVersion RV = REQUIREMENT_VERSION.as("RV");
-	private RlnRelationship RLNR = RLN_RELATIONSHIP.as("RLNR");
-	private RlnRelationshipClosure RLNRC = RLN_RELATIONSHIP_CLOSURE.as("RLNRC");
-	private Resource RES = RESOURCE.as("RES");
-	private InfoListItem ILI = INFO_LIST_ITEM.as("ILI");
-	private MilestoneReqVersion MRV = MILESTONE_REQ_VERSION.as("MRV");
+	private static final RequirementLibraryNode RLN = REQUIREMENT_LIBRARY_NODE.as("RLN");
+	private static final RequirementFolder RF = REQUIREMENT_FOLDER.as("RF");
+	private static final Requirement REQ = REQUIREMENT.as("REQ");
+	private static final RequirementVersion RV = REQUIREMENT_VERSION.as("RV");
+	private static final RlnRelationship RLNR = RLN_RELATIONSHIP.as("RLNR");
+	private static final RlnRelationshipClosure RLNRC = RLN_RELATIONSHIP_CLOSURE.as("RLNRC");
+	private static final Resource RES = RESOURCE.as("RES");
+	private static final InfoListItem ILI = INFO_LIST_ITEM.as("ILI");
+	private static final MilestoneReqVersion MRV = MILESTONE_REQ_VERSION.as("MRV");
 
 	private List<Long> reqsDontAllowClick = new ArrayList<>();
 

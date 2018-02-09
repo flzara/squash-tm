@@ -68,19 +68,19 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	@Inject
 	HibernateIterationDao hibernateIterationDao;
 
-	private Campaign C = Tables.CAMPAIGN.as("C");
-	private CampaignLibraryNode CLN = CAMPAIGN_LIBRARY_NODE.as("CLN");
-	private CampaignFolder CF = CAMPAIGN_FOLDER.as("CF");
-	private ClnRelationship CLNR = CLN_RELATIONSHIP.as("CLNR");
-	private CampaignIteration CI = CAMPAIGN_ITERATION.as("CI");
-	private MilestoneCampaign MC = MILESTONE_CAMPAIGN.as("MC");
-	private Milestone M = MILESTONE.as("M");
-	private IterationTestSuite ITS = ITERATION_TEST_SUITE.as("ITS");
-	private Iteration IT = ITERATION.as("IT");
-	private TestSuite TS = TEST_SUITE.as("TS");
-	private TestSuiteTestPlanItem TSTPI = TEST_SUITE_TEST_PLAN_ITEM.as("TSTPI");
-	private IterationTestPlanItem ITPI = ITERATION_TEST_PLAN_ITEM.as("ITPI");
-	private TestCaseLibraryNode TCLN = TEST_CASE_LIBRARY_NODE.as("TCLN");
+	private static final Campaign C = Tables.CAMPAIGN.as("C");
+	private static final CampaignLibraryNode CLN = CAMPAIGN_LIBRARY_NODE.as("CLN");
+	private static final CampaignFolder CF = CAMPAIGN_FOLDER.as("CF");
+	private static final ClnRelationship CLNR = CLN_RELATIONSHIP.as("CLNR");
+	private static final CampaignIteration CI = CAMPAIGN_ITERATION.as("CI");
+	private static final MilestoneCampaign MC = MILESTONE_CAMPAIGN.as("MC");
+	private static final Milestone M = MILESTONE.as("M");
+	private static final IterationTestSuite ITS = ITERATION_TEST_SUITE.as("ITS");
+	private static final Iteration IT = ITERATION.as("IT");
+	private static final TestSuite TS = TEST_SUITE.as("TS");
+	private static final TestSuiteTestPlanItem TSTPI = TEST_SUITE_TEST_PLAN_ITEM.as("TSTPI");
+	private static final IterationTestPlanItem ITPI = ITERATION_TEST_PLAN_ITEM.as("ITPI");
+	private static final TestCaseLibraryNode TCLN = TEST_CASE_LIBRARY_NODE.as("TCLN");
 
 	private MultiMap campaignFatherChildrenMultimap = new MultiValueMap();
 	private MultiMap iterationFatherChildrenMultiMap = new MultiValueMap();

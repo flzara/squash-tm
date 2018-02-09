@@ -68,8 +68,8 @@ public class CustomReportWorkspaceDisplayService {
 	private static final Permission[] NODE_PERMISSIONS = {WRITE, CREATE, DELETE, EXECUTE, EXPORT};
 	private static final String[] PERM_NAMES = {WRITE.name(), CREATE.name(), DELETE.name(), EXECUTE.name(), EXPORT.name()};
 
-	private CustomReportLibraryNode CRLN = CUSTOM_REPORT_LIBRARY_NODE.as("CRLN");
-	private CrlnRelationship CRLNR = CRLN_RELATIONSHIP.as("CRLNR");
+	private static final CustomReportLibraryNode CRLN = CUSTOM_REPORT_LIBRARY_NODE.as("CRLN");
+	private static final CrlnRelationship CRLNR = CRLN_RELATIONSHIP.as("CRLNR");
 
 	public Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser, MultiMap expansionCandidates) {
 		Set<Long> childrenIds = new HashSet<>();

@@ -62,14 +62,14 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	@Inject
 	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
 
-	private TestCaseLibraryNode TCLN = TEST_CASE_LIBRARY_NODE.as("TCLN");
-	private TestCaseFolder TCF = TEST_CASE_FOLDER.as("TCF");
-	private TestCase TC = TEST_CASE.as("TC");
-	private RequirementVersionCoverage RVC = REQUIREMENT_VERSION_COVERAGE.as("RVC");
-	private TestCaseSteps TCS = TEST_CASE_STEPS.as("TCS");
-	private TclnRelationship TCLNR = TCLN_RELATIONSHIP.as("TCLNR");
-	private Milestone M = MILESTONE.as("M");
-	private MilestoneTestCase MTC = MILESTONE_TEST_CASE.as("MTC");
+	private static final TestCaseLibraryNode TCLN = TEST_CASE_LIBRARY_NODE.as("TCLN");
+	private static final TestCaseFolder TCF = TEST_CASE_FOLDER.as("TCF");
+	private static final TestCase TC = TEST_CASE.as("TC");
+	private static final RequirementVersionCoverage RVC = REQUIREMENT_VERSION_COVERAGE.as("RVC");
+	private static final TestCaseSteps TCS = TEST_CASE_STEPS.as("TCS");
+	private static final TclnRelationship TCLNR = TCLN_RELATIONSHIP.as("TCLNR");
+	private static final Milestone M = MILESTONE.as("M");
+	private static final MilestoneTestCase MTC = MILESTONE_TEST_CASE.as("MTC");
 
 	@Override
 	//TODO add milestones
