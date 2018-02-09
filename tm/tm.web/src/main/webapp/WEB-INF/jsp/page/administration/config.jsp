@@ -215,11 +215,6 @@
       <div class="tg-body">
         <div>
           <div class="control-group">
-            <!--
-            <label class="control-label" for="case-insensitive-login">
-            	<f:message key="message.caseInsensitiveLogins" />
-            </label>
-            -->
             <div class="controls">
               <c:if test="${ empty duplicateLogins }">
               <c:set var="checked" value="${ caseInsensitiveLogin ? 'checked=checked' : '' }"/>
