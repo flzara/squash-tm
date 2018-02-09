@@ -30,7 +30,9 @@ import java.util.*;
 // XSS OK
 public final class MilestoneModelUtils {
 
-	protected static final String SEPARATOR = ", ";
+	private static final String SEPARATOR = ", ";
+
+	private MilestoneModelUtils() {}
 
 	public static String timeIntervalToString(Collection<Milestone> milestones, InternationalizationHelper i18nHelper, Locale locale) {
 

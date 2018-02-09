@@ -33,7 +33,9 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.mapping;
 import static org.squashtest.tm.core.foundation.lang.NullFilterListCollector.toNullFilteredList;
 
-public class StreamUtils {
+public final class StreamUtils {
+
+	private StreamUtils() {}
 
 	public static <I extends Record, K, V> List<K>  performJoinAggregate(Function<I,K> leftTupleTransformer,
 																			   Function<I,V> rightTupleTransformer,

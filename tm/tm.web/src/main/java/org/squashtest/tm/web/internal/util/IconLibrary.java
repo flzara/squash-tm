@@ -19,11 +19,13 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.web.internal.util;
+
  import java.util.Arrays;
  import java.util.List;
 
- public class IconLibrary {
-	private static List<String> ICON_NAMES = Arrays.asList("sq-icon-accept", "sq-icon-accept_blue", "sq-icon-add",
+public final class IconLibrary {
+
+	private static final List<String> ICON_NAMES = Arrays.asList("sq-icon-accept", "sq-icon-accept_blue", "sq-icon-add",
 			"sq-icon-alarm", "sq-icon-anchor", "sq-icon-application", "sq-icon-application2",
 			"sq-icon-application_add", "sq-icon-application_cascade", "sq-icon-application_delete",
 			"sq-icon-application_double", "sq-icon-application_edit", "sq-icon-application_error",
@@ -152,7 +154,10 @@ package org.squashtest.tm.web.internal.util;
 			"sq-icon-wall_disable", "sq-icon-wand", "sq-icon-weather_clouds", "sq-icon-weather_cloudy",
 			"sq-icon-weather_lightning", "sq-icon-weather_rain", "sq-icon-weather_snow", "sq-icon-weather_sun",
 			"sq-icon-webcam", "sq-icon-world", "sq-icon-zone", "sq-icon-zones", "sq-icon-zone_money");
-public static List<String> getIconNames() {
-return ICON_NAMES;
-}
+
+	private IconLibrary() {}
+
+	public static List<String> getIconNames() {
+		return ICON_NAMES;
+	}
 }

@@ -30,19 +30,21 @@ import com.querydsl.core.types.dsl.StringPath;
 
 /**
  * Adds the non standard groupConcat() function to string paths.
- * 
+ *
  * See {@link ExtOps} and {@link SessionFactoryEnhancer} for more about for more about
  * about this.
- * 
- * 
+ *
+ *
  * @author bsiri
  *
  */
-public class QueryDslExtensions {
+public final class QueryDslExtensions {
+
+	private QueryDslExtensions() {}
 
 	/**
 	 * The simple, no arg implementation.
-	 * 
+	 *
 	 * @param string
 	 * @return
 	 */
@@ -53,7 +55,7 @@ public class QueryDslExtensions {
 
 	/**
 	 * Same, and precises on which column (attribute path) it should be ordered
-	 * 
+	 *
 	 */
 
 	@QueryDelegate(String.class)
@@ -64,7 +66,7 @@ public class QueryDslExtensions {
 
 	/**
 	 * Same, and precises on which column (attribute path) and how it should be ordered
-	 * 
+	 *
 	 */
 
 	@QueryDelegate(String.class)

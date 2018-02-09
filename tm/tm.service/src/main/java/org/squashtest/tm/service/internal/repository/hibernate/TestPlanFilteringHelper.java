@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import org.hibernate.type.StringType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
@@ -80,6 +79,8 @@ final class TestPlanFilteringHelper {
 	public static final String HQL_INDEXED_TEST_PLAN_USER_FILTER = "and IterationTestPlanItem.user.id = :userFilter ";
 	public static final String HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER = "and IterationTestPlanItem.user is null ";
 	public static final String HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER = "and IterationTestPlanItem.lastExecutedOn between :startDate and :endDate ";
+
+	private TestPlanFilteringHelper() {}
 
 	private static final Map<String, String> SIMPLE_FILTER_CLAUSES;
 	static {
@@ -183,7 +184,4 @@ final class TestPlanFilteringHelper {
 		}
 	}
 
-	public TestPlanFilteringHelper() {
-		super();
-	}
 }
