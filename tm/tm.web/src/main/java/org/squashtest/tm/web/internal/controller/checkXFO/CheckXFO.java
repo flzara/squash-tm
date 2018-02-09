@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-public class IntermediateNameBeforeChangingToPascalCase {
+public class CheckXFO {
 
     @ResponseBody
 	@RequestMapping(value = "/checkXFO", method = RequestMethod.POST, params = "URL")
