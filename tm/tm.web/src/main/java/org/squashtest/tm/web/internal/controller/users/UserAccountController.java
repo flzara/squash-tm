@@ -102,7 +102,7 @@ public class UserAccountController {
 		Boolean test;
 		if(bugtrackerMode==null){
 			test=true;
-		}else if (bugtrackerMode=="Automatic"){
+		}else if ("Automatic".equals(bugtrackerMode)){
 			test=true;
 		}else{
 			test=false;
