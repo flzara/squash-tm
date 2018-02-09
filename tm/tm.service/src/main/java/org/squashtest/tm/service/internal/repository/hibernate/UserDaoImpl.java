@@ -47,7 +47,7 @@ import static org.squashtest.tm.jooq.domain.Tables.CORE_USER;
 
 public class UserDaoImpl implements CustomUserDao {
 
-	private static String FIND_ALL_MANAGER_AND_ADMIN = "SELECT  member.PARTY_ID FROM  CORE_GROUP_MEMBER member inner join CORE_GROUP_AUTHORITY cga on cga.GROUP_ID=member.GROUP_ID WHERE cga.AUTHORITY = 'ROLE_ADMIN' UNION Select auth.PARTY_ID From  CORE_PARTY_AUTHORITY auth where auth.AUTHORITY = 'ROLE_TM_PROJECT_MANAGER'";
+	private static final String FIND_ALL_MANAGER_AND_ADMIN = "SELECT  member.PARTY_ID FROM  CORE_GROUP_MEMBER member inner join CORE_GROUP_AUTHORITY cga on cga.GROUP_ID=member.GROUP_ID WHERE cga.AUTHORITY = 'ROLE_ADMIN' UNION Select auth.PARTY_ID From  CORE_PARTY_AUTHORITY auth where auth.AUTHORITY = 'ROLE_TM_PROJECT_MANAGER'";
 
 	@PersistenceContext
 	private EntityManager entityManager;
