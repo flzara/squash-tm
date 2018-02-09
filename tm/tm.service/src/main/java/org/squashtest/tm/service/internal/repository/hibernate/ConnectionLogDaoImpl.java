@@ -48,7 +48,9 @@ public class ConnectionLogDaoImpl implements CustomConnectionLogDao {
 	private static final String HQL_FIND_CONNECTION_LOGS_BASE = "from ConnectionLog ConnectionLog ";
 
 	private static final String HQL_FIND_CONNECTION_LOGS_FILTER_BY_LOGIN = "where ConnectionLog.login like :loginFilter ";
-	private static final String HQL_FIND_CONNECTION_LOGS_FILTER_BY_DATE = "and ConnectionLog.connectionDate between :startDate and :endDate ";
+	private static final String HQL_FIND_CONNECTION_LOGS_FILTER_BY_DATE = "ConnectionLog.connectionDate between :startDate and :endDate ";
+	private static final String HQL_WHERE = "where ";
+	private static final String HQL_AND = "and ";
 
 	private static final String CONNECTION_DATE_DATA = "connection-date";
 	private static final String START_DATE = "startDate";
@@ -62,12 +64,15 @@ public class ConnectionLogDaoImpl implements CustomConnectionLogDao {
 	public List<ConnectionLog> findSortedConnections(PagingAndSorting paging, Filtering filtering, ColumnFiltering columnFiltering) {
 
 		StringBuilder sQuery = new StringBuilder(HQL_FIND_CONNECTION_LOGS_BASE);
+		String dateFilterBeginningWord = HQL_WHERE;
 
 		if(filtering.isDefined()) {
 			sQuery.append(HQL_FIND_CONNECTION_LOGS_FILTER_BY_LOGIN);
+			dateFilterBeginningWord = HQL_AND;
 		}
 
 		if(columnFiltering.isDefined()){
+			sQuery.append(dateFilterBeginningWord);
 			sQuery.append(HQL_FIND_CONNECTION_LOGS_FILTER_BY_DATE);
 		}
 
