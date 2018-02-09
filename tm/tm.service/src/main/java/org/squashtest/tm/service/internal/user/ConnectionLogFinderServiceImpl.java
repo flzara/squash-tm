@@ -52,7 +52,7 @@ public class ConnectionLogFinderServiceImpl implements ConnectionLogFinderServic
 
 		List<ConnectionLog> connectionLogs = connectionLogDao.findSortedConnections(paging, filtering, columnFiltering);
 
-		Long count = Integer.toUnsignedLong(connectionLogs.size());
+		Long count = connectionLogDao.count();
 
 		return new PagingBackedPagedCollectionHolder<>(paging, count, connectionLogs);
 	}

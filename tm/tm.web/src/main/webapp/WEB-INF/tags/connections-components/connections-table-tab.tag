@@ -33,8 +33,8 @@
           <th class="not-displayed">Id(masked)</th>
           <th>#</th>
           <th class="datatable-filterable"><f:message key="label.Login" /></th>
-          <th class="datatable-filterable"><f:message key="label.connectionDate" /></th>
-          <th class="datatable-filterable"><f:message key="label.successful"/></th>
+          <th><f:message key="label.connectionDate" /></th>
+          <th><f:message key="label.successful"/></th>
         </tr>
       </thead>
       <tbody>
