@@ -45,7 +45,6 @@ public class JsonTemplateFromProject {
 	public String getLabel() {
 		return projectTemplate.getLabel();
 	}
-
 	public void setLabel(String label) {
 		projectTemplate.setLabel(label);
 	}
@@ -53,7 +52,6 @@ public class JsonTemplateFromProject {
 	public String getDescription() {
 		return projectTemplate.getDescription();
 	}
-
 	public void setDescription(String description) {
 		projectTemplate.setDescription(description);
 	}
@@ -62,7 +60,6 @@ public class JsonTemplateFromProject {
 	public String getName() {
 		return projectTemplate.getName();
 	}
-
 	public void setName(String name) {
 		projectTemplate.setName(name.trim());
 	}
@@ -70,7 +67,6 @@ public class JsonTemplateFromProject {
 	public ProjectTemplate getProjectTemplate() {
 		return projectTemplate;
 	}
-
 	public void setProjectTemplate(ProjectTemplate projectTemplate) {
 		this.projectTemplate = projectTemplate;
 	}
@@ -78,7 +74,6 @@ public class JsonTemplateFromProject {
 	public long getTemplateId() {
 		return templateId;
 	}
-
 	public void setTemplateId(long templateId) {
 		this.templateId = templateId;
 	}
@@ -89,30 +84,35 @@ public class JsonTemplateFromProject {
 	public void setCopyPermissions(boolean copyPermissions) {
 		params.setCopyPermissions(copyPermissions);
 	}
+
 	public boolean isCopyCUF() {
 		return params.isCopyCUF();
 	}
 	public void setCopyCUF(boolean copyCUF) {
 		params.setCopyCUF(copyCUF);
 	}
+
 	public boolean isCopyBugtrackerBinding() {
 		return params.isCopyBugtrackerBinding();
 	}
 	public void setCopyBugtrackerBinding(boolean copyBugtrackerBinding) {
 		params.setCopyBugtrackerBinding(copyBugtrackerBinding);
 	}
+
 	public boolean isCopyAutomatedProjects() {
 		return params.isCopyAutomatedProjects();
 	}
 	public void setCopyAutomatedProjects(boolean copyAutomatedProjects) {
 		params.setCopyAutomatedProjects(copyAutomatedProjects);
 	}
+
 	public boolean isCopyInfolists() {
 		return params.isCopyInfolists();
 	}
 	public void setCopyInfolists(boolean copyInfolists) {
 		params.setCopyInfolists(copyInfolists);
 	}
+
 	public boolean isCopyMilestone() {
 		return params.isCopyMilestone();
 	}
@@ -123,7 +123,6 @@ public class JsonTemplateFromProject {
 	public boolean isCopyAllowTcModifFromExec() {
 		return params.isCopyAllowTcModifFromExec();
 	}
-
 	public void setCopyAllowTcModifFromExec(boolean copyAllowTcModifFromExec) {
 		params.setCopyAllowTcModifFromExec(copyAllowTcModifFromExec);
 	}
@@ -131,7 +130,6 @@ public class JsonTemplateFromProject {
 	public GenericProjectCopyParameter getParams() {
 		return params;
 	}
-
 	public void setParams(GenericProjectCopyParameter params) {
 		this.params = params;
 	}
@@ -141,5 +139,12 @@ public class JsonTemplateFromProject {
 	}
 	public void setCopyOptionalExecStatuses(boolean copyOptionalExecStatuses) {
 		params.setCopyOptionalExecStatuses(copyOptionalExecStatuses);
+	}
+
+	public boolean isCopyPlugins() {
+		return params.isCopyPlugins();
+	}
+	public void setCopyPlugins(boolean copyPlugins) {
+		params.setCopyPlugins(copyPlugins);
 	}
 }
