@@ -197,10 +197,13 @@
       </td>
       <td>
       <!--        CHECKBOXES -->
+        <input id="keepTemplateBinding" name="keepTemplateBinding" type="checkbox" data-prop="keepTemplateBinding"/>
+        <label class=" afterDisabled" for="keepTemplateBinding"><f:message key="label.keepTemplateBinding" /></label>
+        <br/>
         <input id="copyPermissions" name="copyPermissions" type="checkbox" data-prop="copyPermissions"/>
         <label class=" afterDisabled" for="copyPermissions"><f:message key="label.copyPermissions" /></label>
         <br/>
-        <input id="copyCUF"  name="copyCUF" type="checkbox" data-prop="copyCUF"/>
+        <input id="copyCUF"  name="copyCUF" type="checkbox" data-prop="copyCUF" disabled="disabled"/>
         <label class=" afterDisabled" for="copyCUF"><f:message key="label.copyCUF" /></label>
         <br/>
         <input id="copyBugtrackerBinding" name="copyBugtrackerBinding" type="checkbox" data-prop="copyBugtrackerBinding"/>
@@ -209,16 +212,16 @@
         <input id="copyAutomatedProjects" name="copyAutomatedProjects" type="checkbox" data-prop="copyAutomatedProjects"/>
         <label class=" afterDisabled" for="copyAutomatedProjects"><f:message key="label.copyAutomatedProjects" /></label>
         <br/>
-        <input id="copyInfolists" name="copyInfolists" type="checkbox" data-prop="copyInfolists"/>
+        <input id="copyInfolists" name="copyInfolists" type="checkbox" data-prop="copyInfolists" disabled="disabled"/>
         <label class=" afterDisabled" for="copyInfolists"><f:message key="label.copyInfolists" /></label>
         <br/>
         <input id="copyMilestone" name="copyMilestone" type="checkbox" data-prop="copyMilestone"/>
         <label class=" afterDisabled" for="copyMilestone"><f:message key="label.copyMilestone" /></label>
  		    <br/>
-		    <input id="copyAllowTcModifFromExec" name="copyAllowTcModifFromExec" type="checkbox" data-prop="copyAllowTcModifFromExec"/>
+		    <input id="copyAllowTcModifFromExec" name="copyAllowTcModifFromExec" type="checkbox" data-prop="copyAllowTcModifFromExec" disabled="disabled"/>
         <label class=" afterDisabled" for="copyAllowTcModifFromExec"><f:message key="label.copyAllowTcModifFromExec" /></label>
         <br/>
-        <input id="copyOptionalExecStatuses" name="copyOptionalExecStatuses" type="checkbox" data-prop="copyOptionalExecStatuses"/>
+        <input id="copyOptionalExecStatuses" name="copyOptionalExecStatuses" type="checkbox" data-prop="copyOptionalExecStatuses" disabled="disabled"/>
         <label class=" afterDisabled" for="copyOptionalExecStatuses"><f:message key="label.copyOptionalExecStatuses" /></label>
         <br/>
         <input id="copyPlugins" name="copyPlugins" type="checkbox" data-prop="copyPlugins"/>

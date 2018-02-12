@@ -18,12 +18,15 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["handlebars","jquery.squash.bindviewformdialog","./NewProjectFromTemplateDialogModel","squash.translator"],
-		function(Handlebars,BindViewFormDialog, NewProjectFromTemplateDialogModel, translator) {
+define(["handlebars", "underscore", "jquery.squash.bindviewformdialog","./NewProjectFromTemplateDialogModel","squash.translator"],
+		function(Handlebars, _, BindViewFormDialog, NewProjectFromTemplateDialogModel, translator) {
+
 	var View = BindViewFormDialog.extend({
 		el : "#add-project-from-template-dialog-tpl",
 		popupSelector : "#add-project-from-template-dialog",
 		model : new NewProjectFromTemplateDialogModel(),
+
+		paramsToCopyIfKeepTemplate: ["copyCUF", "copyInfolists", "copyAllowTcModifFromExec", "copyOptionalExecStatuses"],
 
 		initialize : function(){
 			this.inactivateCheckBox();
@@ -39,7 +42,8 @@ define(["handlebars","jquery.squash.bindviewformdialog","./NewProjectFromTemplat
 		},
 
 		events : {
-			"change #add-project-from-template-template" : "changeTemplateSelection"
+			"change #add-project-from-template-template" : "changeTemplateSelection",
+			"click #keepTemplateBinding" : "changeKeepTemplateBinding"
 		},
 
 		_fetchTemplateList : function(){
@@ -68,7 +72,36 @@ define(["handlebars","jquery.squash.bindviewformdialog","./NewProjectFromTemplat
 				this.model.set({fromTemplate : false});
 			} else {
 				this.activateCheckBox();
+				this.checkAndDisableForKeepTemplate();
 				this.model.set({fromTemplate : true});
+			}
+		},
+
+		checkAndDisableForKeepTemplate: function() {
+			var self = this;
+			_.each(self.paramsToCopyIfKeepTemplate, function(elementId) {
+				var paramCheckbox = self.$el.find("#"+elementId);
+				paramCheckbox.prop("checked", true);
+				paramCheckbox.prop("disabled", true);
+			});
+		},
+
+		disableForKeepTemplate: function() {
+			var self = this;
+			_.each(self.paramsToCopyIfKeepTemplate, function(elementId) {
+				var paramCheckbox = self.$el.find("#"+elementId);
+				paramCheckbox.prop("disabled", false);
+			});
+		},
+
+		changeKeepTemplateBinding : function(event) {
+			var self = this;
+			var keepTemplateCheckbox = $("#keepTemplateBinding");
+			var selected = keepTemplateCheckbox.is(':checked');
+			if(selected) {
+				self.checkAndDisableForKeepTemplate();
+			} else {
+				self.disableForKeepTemplate();
 			}
 		},
 

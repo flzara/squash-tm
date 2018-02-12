@@ -31,11 +31,8 @@ import org.squashtest.tm.service.project.GenericProjectCopyParameter;
 public class JsonProjectFromTemplate {
 
 	private Project project;
-
 	private long templateId;
-
 	private GenericProjectCopyParameter params;
-
 	private boolean fromTemplate;
 
 	public JsonProjectFromTemplate() {
@@ -78,6 +75,13 @@ public class JsonProjectFromTemplate {
 	}
 	public void setTemplateId(long templateId) {
 		this.templateId = templateId;
+	}
+
+	public boolean isKeepTemplateBinding() {
+		return params.isKeepTemplateBinding();
+	}
+	public void setKeepTemplateBinding(boolean keepTemplateBinding) {
+		params.setKeepTemplateBinding(keepTemplateBinding);
 	}
 
 	public boolean isCopyPermissions() {

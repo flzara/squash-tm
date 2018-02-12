@@ -27,6 +27,7 @@ package org.squashtest.tm.service.project;
  */
 public class GenericProjectCopyParameter {
 
+	private boolean keepTemplateBinding;
 	private boolean copyPermissions;
 	private boolean copyCUF;
 	private boolean copyBugtrackerBinding;
@@ -41,20 +42,12 @@ public class GenericProjectCopyParameter {
 		//default constructor
 	}
 
-
-	public GenericProjectCopyParameter(boolean copyPermissions,
-			boolean copyCUF, boolean copyBugtrackerBinding,
-			boolean copyAutomatedProjects, boolean copyInfolists,
-			boolean copyMilestone, boolean copyAllowTcModifFromExec) {
-		this.copyPermissions = copyPermissions;
-		this.copyCUF = copyCUF;
-		this.copyBugtrackerBinding = copyBugtrackerBinding;
-		this.copyAutomatedProjects = copyAutomatedProjects;
-		this.copyInfolists = copyInfolists;
-		this.copyMilestone = copyMilestone;
-		this.copyAllowTcModifFromExec = copyAllowTcModifFromExec;
+	public boolean isKeepTemplateBinding() {
+		return keepTemplateBinding;
 	}
-
+	public void setKeepTemplateBinding(boolean keepTemplateBinding) {
+		this.keepTemplateBinding = keepTemplateBinding;
+	}
 
 	public boolean isCopyPermissions() {
 		return copyPermissions;

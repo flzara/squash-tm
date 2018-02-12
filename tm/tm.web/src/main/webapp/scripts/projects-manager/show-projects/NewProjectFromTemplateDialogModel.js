@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "squash.translator", "app/util/StringUtil","workspace.routing"], function($, Backbone, _,
-		messages, StringUtil, router) {
+define([ "jquery", "backbone", "underscore", "squash.translator", "app/util/StringUtil","workspace.routing"],
+	function($, Backbone, _, messages, StringUtil, router) {
 	"use strict";
 	return Backbone.Model.extend({
 		defaults : {
@@ -27,6 +27,7 @@ define([ "jquery", "backbone", "underscore", "squash.translator", "app/util/Stri
 			templateId: "0",
       label : "",
 			fromTemplate: false,
+			keepTemplateBinding: true,
 			copyPermissions: true,
 			copyCUF: true,
 			copyBugtrackerBinding: true,
