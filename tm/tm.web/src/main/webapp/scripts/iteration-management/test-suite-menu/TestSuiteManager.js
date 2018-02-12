@@ -23,10 +23,10 @@
  *
  */
 
-define([ 'jquery', 'jquery.squash.oneshotdialog', 
-         'jqueryui', 'jquery.squash.squashbutton',
-         'jquery.squash.formdialog'
-         ], function($, oneshot) {
+define(['jquery', 'jquery.squash.oneshotdialog',
+	'jqueryui', 'jquery.squash.squashbutton',
+	'jquery.squash.formdialog'
+], function ($, oneshot) {
 
 	function TestSuiteManagerControl(settings) {
 
@@ -45,7 +45,7 @@ define([ 'jquery', 'jquery.squash.oneshotdialog',
 
 		var oldVal = this.input.val;
 
-		this.input.val = function() {
+		this.input.val = function () {
 			if (arguments.length > 0) {
 				oldVal.apply(this, arguments);
 				updateBtn();
@@ -56,13 +56,13 @@ define([ 'jquery', 'jquery.squash.oneshotdialog',
 
 		/* ************** public *********** */
 
-		this.reset = function() {
+		this.reset = function () {
 			defaultState();
 			this.input.addClass('manager-control-ready');
 			this.input.removeClass('manager-control-disabled');
 		};
 
-		this.deactivate = function() {
+		this.deactivate = function () {
 			defaultState();
 			this.input.prop('disabled', true);
 			this.input.removeClass('manager-control-ready');
@@ -70,27 +70,27 @@ define([ 'jquery', 'jquery.squash.oneshotdialog',
 			this.button.squashButton("disable");
 		};
 
-		this.setText = function(text) {
+		this.setText = function (text) {
 			this.input.val(text);
 		};
 
 		/* ************* private ******** */
 
-		var defaultState = $.proxy(function() {
+		var defaultState = $.proxy(function () {
 			this.input.prop('disabled', false);
 			this.button.squashButton("enable");
 			this.input.val("");
 		}, self);
 
-		var editState = $.proxy(function() {
+		var editState = $.proxy(function () {
 			this.input.removeClass('manager-control-ready');
 		}, self);
 
 		/* ************* handlers ******** */
 
-		this.button.click(function() {
+		this.button.click(function () {
 			if (self.confirmMessage && self.confirmTitle) {
-				oneshot.show(self.confirmTitle, self.confirmMessage).done(function() {
+				oneshot.show(self.confirmTitle, self.confirmMessage).done(function () {
 					self.action();
 				});
 			} else {
@@ -101,7 +101,7 @@ define([ 'jquery', 'jquery.squash.oneshotdialog',
 		// we're in competition here with the default 'enter' event
 		// bound to the
 		// close button
-		this.input.keypress(function(evt) {
+		this.input.keypress(function (evt) {
 			self.manager.instance.find('.error-message').html('');
 			if (evt.which == '13') {
 				evt.stopImmediatePropagation();
@@ -112,9 +112,9 @@ define([ 'jquery', 'jquery.squash.oneshotdialog',
 			}
 		});
 
-		var updateBtn = function() {
+		var updateBtn = function () {
 			var button = self.button;
-			if (!self.input.val().length ) {
+			if (!self.input.val().length) {
 				button.squashButton("disable");
 			} else {
 				button.squashButton("enable");
@@ -122,7 +122,7 @@ define([ 'jquery', 'jquery.squash.oneshotdialog',
 		};
 
 		// that one is better than change()
-		this.input.keyup(function(evt) {
+		this.input.keyup(function (evt) {
 			updateBtn();
 		});
 
@@ -131,9 +131,9 @@ define([ 'jquery', 'jquery.squash.oneshotdialog',
 	}
 
 	/*
-	 * 
+	 *
 	 * The view displays and manage the test suites (known here as items)
-	 * 
+	 *
 	 */
 	function TestSuiteManagerView(settings) {
 
@@ -147,18 +147,18 @@ define([ 'jquery', 'jquery.squash.oneshotdialog',
 
 		/* ****** private ********* */
 
-		var getAllItems = $.proxy(function() {
+		var getAllItems = $.proxy(function () {
 			return $('.suite-div', this.panel);
 		}, this);
 
-		var appendItem = $.proxy(function(data) {
+		var appendItem = $.proxy(function (data) {
 
 			var newSuite = $("<div/>", {
-				'class' : 'suite-div ui-corner-all'
+				'class': 'suite-div ui-corner-all'
 			});
 			var spanSuite = $("<span/>", {
-				'data-suite-id' : data.id,
-				'text' : data.name
+				'data-suite-id': data.id,
+				'text': unescape(data.name)
 			});
 
 			newSuite.append(spanSuite);
@@ -166,10 +166,10 @@ define([ 'jquery', 'jquery.squash.oneshotdialog',
 
 		}, self);
 
-		var sortSuiteList = $.proxy(function() {
+		var sortSuiteList = $.proxy(function () {
 			var allSuites = $('.suite-div', this.panel);
 
-			var sorted = allSuites.sort(function(a, b) {
+			var sorted = allSuites.sort(function (a, b) {
 				var textA = getItemDomText(a);
 				var textB = getItemDomText(b);
 				return (textA < textB) ? -1 : 1;
@@ -178,7 +178,7 @@ define([ 'jquery', 'jquery.squash.oneshotdialog',
 			this.panel.append(sorted);
 		}, self);
 
-		var getItemDomId = function(elt) {
+		var getItemDomId = function (elt) {
 			if (elt.firstElementChild !== undefined) {
 				return elt.firstElementChild.getAttribute('data-suite-id');
 			} else {
@@ -186,7 +186,7 @@ define([ 'jquery', 'jquery.squash.oneshotdialog',
 			}
 		};
 
-		var getItemDomText = function(elt) {
+		var getItemDomText = function (elt) {
 			if (elt.firstElementChild !== undefined) {
 				return elt.firstElementChild.textContent;
 			} else {
@@ -194,18 +194,23 @@ define([ 'jquery', 'jquery.squash.oneshotdialog',
 			}
 		};
 
+		const unescape = function (unsafeHtml) {
+			var txt = document.createElement("textarea");
+			txt.innerHTML = unsafeHtml;
+			return txt.value;
+		};
 		/* ********* public *********** */
 
-		this.getSelectedIds = function() {
-			var ids = this.getSelected().find('span').collect(function(elt) {
+		this.getSelectedIds = function () {
+			var ids = this.getSelected().find('span').collect(function (elt) {
 				return elt.getAttribute('data-suite-id');
 			});
 			return ids;
 		};
 
-		this.selectItems = function(selected) {
-			getAllItems().each(function(i, elt) {
-				for ( var j = 0; j < selected.length; j++) {
+		this.selectItems = function (selected) {
+			getAllItems().each(function (i, elt) {
+				for (var j = 0; j < selected.length; j++) {
 					var id = getItemDomId(elt);
 					if (selected[j] == id) {
 						$(elt).addClass("suite-selected ui-widget-header ui-state-default");
@@ -214,16 +219,16 @@ define([ 'jquery', 'jquery.squash.oneshotdialog',
 			});
 		};
 
-		this.getSelected = function() {
+		this.getSelected = function () {
 			return getAllItems().filter('.suite-selected');
 		};
 
-		this.deselectAllItems = function() {
+		this.deselectAllItems = function () {
 			getAllItems().removeClass("suite-selected ui-widget-header ui-state-default");
 		};
-		
 
-		this.redraw = function(evt_name) {
+
+		this.redraw = function (evt_name) {
 
 			// save state
 			var selected = this.getSelectedIds();
@@ -232,7 +237,7 @@ define([ 'jquery', 'jquery.squash.oneshotdialog',
 			var modelData = this.model.getData();
 			this.panel.empty();
 
-			for ( var i in modelData) {
+			for (var i in modelData) {
 				appendItem(modelData[i]);
 			}
 
@@ -242,12 +247,11 @@ define([ 'jquery', 'jquery.squash.oneshotdialog',
 			this.selectItems(selected);
 
 			this.manager.updatePopupState();
-		
+
 		};
 
-		
-		
-		this.panel.delegate('.suite-div', 'click', function() {
+
+		this.panel.delegate('.suite-div', 'click', function () {
 			if (!self.manager.ctrlPressed) {
 				self.deselectAllItems();
 			}
@@ -260,53 +264,52 @@ define([ 'jquery', 'jquery.squash.oneshotdialog',
 	function TestSuiteManager(settings) {
 
 		var self = this;
-		
-		
+
+
 		// ****** main dialog initialization ******
-		
+
 		var thismanager = this;
-		
+
 		var maindialog = settings.dialog;
-		maindialog.formDialog({width : 400});
-		
-		maindialog.on('formdialogopen', function(){
+		maindialog.formDialog({width: 400});
+
+		maindialog.on('formdialogopen', function () {
 			thismanager.resetAll();
 		});
-		
-		maindialog.on('formdialogclosemanager', function(){
+
+		maindialog.on('formdialogclosemanager', function () {
 			maindialog.formDialog('close');
 		});
-		
-		$("#manage-test-suites-button").on('click', function(){
+
+		$("#manage-test-suites-button").on('click', function () {
 			maindialog.formDialog('open');
 		});
-		
-		
+
 
 		/*
 		 * **************** public state management methods ********************
 		 */
 
-		this.updatePopupState = function() {
+		this.updatePopupState = function () {
 
 			var allItems = this.view.getSelected();
 
 			switch (allItems.size()) {
-			case 0:
-				this.rename.control.deactivate();
-				this.remove.button.squashButton("disable");
-				this.rename.control.button.squashButton("disable");
-				break;
-			case 1:
-				this.rename.control.reset();
-				var itemText = allItems.eq(0).find('span').text();
-				this.rename.control.setText(itemText);
-				this.remove.button.squashButton("enable");
-				this.rename.control.button.squashButton("enable");
-				break;
-			default:
-				this.rename.control.deactivate();
-				break;
+				case 0:
+					this.rename.control.deactivate();
+					this.remove.button.squashButton("disable");
+					this.rename.control.button.squashButton("disable");
+					break;
+				case 1:
+					this.rename.control.reset();
+					var itemText = allItems.eq(0).find('span').text();
+					this.rename.control.setText(itemText);
+					this.remove.button.squashButton("enable");
+					this.rename.control.button.squashButton("enable");
+					break;
+				default:
+					this.rename.control.deactivate();
+					break;
 			}
 
 		};
@@ -315,10 +318,10 @@ define([ 'jquery', 'jquery.squash.oneshotdialog',
 
 		/* ----- suite creation ------- */
 
-		var postNewSuite = $.proxy(function() {
+		var postNewSuite = $.proxy(function () {
 			var name = this.create.control.input.val();
 
-			this.model.postNew(name).success(function() {
+			this.model.postNew(name).success(function () {
 				self.create.control.reset();
 			});
 
@@ -326,21 +329,21 @@ define([ 'jquery', 'jquery.squash.oneshotdialog',
 
 		/* ------- suite renaming -------- */
 
-		var postRenameSuite = $.proxy(function() {
+		var postRenameSuite = $.proxy(function () {
 
 			var suiteId = this.view.getSelectedIds()[0];
 			var newName = this.rename.control.input.val();
 
 			this.model.postRename({
-				id : suiteId,
-				name : newName
+				id: suiteId,
+				name: newName
 			});
 
 		}, self);
 
 		/* ------- suites removing -------- */
 
-		var postRemoveSuites = $.proxy(function() {
+		var postRemoveSuites = $.proxy(function () {
 
 			var toSend = {};
 			toSend['ids[]'] = this.view.getSelectedIds();
@@ -351,28 +354,27 @@ define([ 'jquery', 'jquery.squash.oneshotdialog',
 
 		/* ------- bind ctrl ------------ */
 
-		var bindCtrl = $.proxy(function() {
+		var bindCtrl = $.proxy(function () {
 			var jqDoc = $(document);
-			jqDoc.keydown(function(evt) {
+			jqDoc.keydown(function (evt) {
 				if (evt.which == 17) {
 					self.ctrlPressed = true;
 				}
 			});
 
-			jqDoc.keyup(function(evt) {
+			jqDoc.keyup(function (evt) {
 				if (evt.which != 17) {
 					self.ctrlPressed = false;
 				}
 			});
 		}, self);
-		
-	
+
 
 		/* ******************** init code ****************************** */
 
 
 		// executed every time the popup opens
-		this.resetAll = function() {
+		this.resetAll = function () {
 			this.view.deselectAllItems();
 			this.create.control.reset();
 			this.updatePopupState();
@@ -390,32 +392,32 @@ define([ 'jquery', 'jquery.squash.oneshotdialog',
 		this.remove.button = $(".remove-suites-section input", this.instance);
 
 		var createControlSettings = {
-			manager : this,
-			panel : $(".create-suites-section", this.instance),
-			action : postNewSuite
+			manager: this,
+			panel: $(".create-suites-section", this.instance),
+			action: postNewSuite
 		};
 
 		var renameControlSettings = {
-			manager : this,
-			panel : this.rename.panel = $(".rename-suites-section", this.instance),
-			action : postRenameSuite
+			manager: this,
+			panel: this.rename.panel = $(".rename-suites-section", this.instance),
+			action: postRenameSuite
 		};
 
 		/*
 		 * the remove control settings is special in the sense that it has no text input, just a button
 		 */
 		var removeControlSettings = {
-			manager : this,
-			confirmMessage : settings.deleteConfirmMessage,
-			confirmTitle : settings.deleteConfirmTitle,
-			panel : this.remove.panel = $(".remove-suites-section", this.instance),
-			action : postRemoveSuites
+			manager: this,
+			confirmMessage: settings.deleteConfirmMessage,
+			confirmTitle: settings.deleteConfirmTitle,
+			panel: this.remove.panel = $(".remove-suites-section", this.instance),
+			action: postRemoveSuites
 		};
 
 		var viewSettings = {
-			manager : this,
-			model : settings.model,
-			panel : $(".display-suites-section", this.instance)
+			manager: this,
+			model: settings.model,
+			panel: $(".display-suites-section", this.instance)
 		};
 
 		this.create.control = new TestSuiteManagerControl(createControlSettings);

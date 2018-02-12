@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "underscore", "app/ws/squashtm.notification", "squash.translator", "workspace.event-bus",
-         "jquery.squash.messagedialog", "jqueryui" ], function($, _, notification, translator,eventBus) {
+define(["jquery", "underscore", "app/ws/squashtm.notification", "squash.translator", "workspace.event-bus",
+	"jquery.squash.messagedialog", "jqueryui"], function ($, _, notification, translator, eventBus) {
 
 	function TestSuiteMenuNewStatuses() {
 
@@ -28,33 +28,31 @@ define([ "jquery", "underscore", "app/ws/squashtm.notification", "squash.transla
 		this.initiallyNotChecked = [];
 		this.uncheckedIds = [];
 
-		this.getChecked = function() {
+		this.getChecked = function () {
 			return this.checkedIds;
 		};
 
-		this.getUnchecked = function() {
+		this.getUnchecked = function () {
 			return this.uncheckedIds;
 		};
 
-		this.reset = function(checked, notChecked) {
+		this.reset = function (checked, notChecked) {
 			this.intiallyChecked = checked;
 			this.initiallyNotChecked = notChecked;
 			this.checkedIds = [];
 			this.uncheckedIds = [];
 		};
 
-		this.change = function(id, checked) {
+		this.change = function (id, checked) {
 			if (checked) {
-				this.unChekedIds = _.reject(this.unChekedIds, function(
-						unchekedId) {
+				this.unChekedIds = _.reject(this.unChekedIds, function (unchekedId) {
 					return unchekedId === id;
 				});
 				if (!_.contains(this.initiallyChecked, id)) {
 					this.checkedIds.push(id);
 				}
 			} else {
-				this.checkedIds = _.reject(this.checkedIds, function(
-						checkedId) {
+				this.checkedIds = _.reject(this.checkedIds, function (checkedId) {
 					return checkedId === id;
 				});
 				if (!_.contains(this.initiallyNotChecked, id)) {
@@ -63,7 +61,7 @@ define([ "jquery", "underscore", "app/ws/squashtm.notification", "squash.transla
 			}
 		};
 
-		this.add = function(id) {
+		this.add = function (id) {
 			this.initiallyNotChecked.push(id);
 			this.checkedIds.push(id);
 		};
@@ -73,17 +71,17 @@ define([ "jquery", "underscore", "app/ws/squashtm.notification", "squash.transla
 	function initWidgets() {
 
 		$("#manage-test-suites-buttonmenu").buttonmenu({
-			anchor : 'right',
-			'no-auto-hide' : true
+			anchor: 'right',
+			'no-auto-hide': true
 		});
 
 		$("#suite-manager-menu-ok-button, #suite-manager-menu-cancel-button")
-				.button();
+			.button();
 
 		$("#suite-manager-menu-button").squashButton({
-			'text' : false,
-			icons : {
-				primary : 'ui-icon-circle-plus'
+			'text': false,
+			icons: {
+				primary: 'ui-icon-circle-plus'
 			}
 		});
 
@@ -97,27 +95,33 @@ define([ "jquery", "underscore", "app/ws/squashtm.notification", "squash.transla
 
 		var self = this;
 
-		var makeItem = $.proxy(function(json) {
+		var makeItem = $.proxy(function (json) {
 			var node = $("<li/>", {
-				'class' : 'suite-item'
+				'class': 'suite-item'
 			});
 			var checkbox = $("<input/>", {
-				'data-suite-id' : json.id,
-				'id' : 'menu-suite-' + json.id,
-				'type' : 'checkbox',
-				'name' : 'menu-suite-item'
+				'data-suite-id': json.id,
+				'id': 'menu-suite-' + json.id,
+				'type': 'checkbox',
+				'name': 'menu-suite-item'
 			});
 			node.append(checkbox);
 			var label = $("<label/>", {
-				'for' : 'menu-suite-' + json.id,
-				'class' : 'afterDisabled'
+				'for': 'menu-suite-' + json.id,
+				'class': 'afterDisabled'
 			});
-			label.text(_.unescape(json.name));
+			label.text(unescape(json.name));
 			node.append(label);
 			return node;
 		}, this);
 
-		var getItemDomText = function(elt) {
+		const unescape = function (unsafeHtml) {
+			var txt = document.createElement("textarea");
+			txt.innerHTML = unsafeHtml;
+			return txt.value;
+		};
+
+		var getItemDomText = function (elt) {
 			if (elt.firstElementChild !== undefined) {
 				return elt.firstElementChild.textContent;
 			} else {
@@ -125,15 +129,15 @@ define([ "jquery", "underscore", "app/ws/squashtm.notification", "squash.transla
 			}
 		};
 
-		var getSpanDomId = function(elt) {
+		var getSpanDomId = function (elt) {
 			return elt.getAttribute('value');
 		};
 
-		var getItemId = function(jqElt) {
+		var getItemId = function (jqElt) {
 			return $('span', jqElt).data('suite-id');
 		};
 
-		var initializeContent = $.proxy(function(evt) {
+		var initializeContent = $.proxy(function (evt) {
 			var self = this;
 			// if a suite has just been added it is not necessary to reload all. Especially since we want to keep the
 			// changes the user has made on the menu and that he has not yet validated.
@@ -143,7 +147,7 @@ define([ "jquery", "underscore", "app/ws/squashtm.notification", "squash.transla
 				menuItems.detach();
 				//add new suite to items
 				var suite = _.where(this.model.data, {
-					name : $.trim(self.lastAdded)
+					name: $.trim(self.lastAdded)
 				})[0];
 				var suiteItem = makeItem(suite);
 				suiteItem.find("input:checkbox").attr("checked", "checked");
@@ -164,7 +168,7 @@ define([ "jquery", "underscore", "app/ws/squashtm.notification", "squash.transla
 			var model = this.model.getData();
 			var items = [];
 
-			for ( var i in model) {
+			for (var i in model) {
 				var node = makeItem(model[i]);
 				items.push(node);
 			}
@@ -178,37 +182,37 @@ define([ "jquery", "underscore", "app/ws/squashtm.notification", "squash.transla
 
 		}, this);
 
-		var sortItems = function(items){
-			return Array.prototype.sort.call(items, function(a, b) {
+		var sortItems = function (items) {
+			return Array.prototype.sort.call(items, function (a, b) {
 				var textA = $(a).text();
 				var textB = $(b).text();
 				return (textA < textB) ? -1 : 1;
 			});
 		};
-		var getCheckboxes = $.proxy(function() {
+		var getCheckboxes = $.proxy(function () {
 			return this.menu.find('input[name="menu-suite-item"]');
 		}, this);
 
-		var getCheckboxBySuiteId = $.proxy(function(id) {
+		var getCheckboxBySuiteId = $.proxy(function (id) {
 			return this.menu.find('input#menu-suite-' + id);
 		}, this);
 
-		var getDatatableSelected = $.proxy(function() {
+		var getDatatableSelected = $.proxy(function () {
 			return $(this.datatableSelector).squashTable()
-					.getSelectedIds();
+				.getSelectedIds();
 		}, this);
 
 		/*
 		 * **************************** public ******************************
 		 */
 
-		this.redraw = function(evt) {
+		this.redraw = function (evt) {
 			initializeContent(evt);
 		};
 
 		/* *********************** handlers ***************** */
 
-		var addSuiteToMenuContent = $.proxy(function(evt) {
+		var addSuiteToMenuContent = $.proxy(function (evt) {
 			this.testSuiteNewStatuses.add(evt.newSuite.id);
 			var item = makeItem(evt.newSuite);
 			item.find("input").attr("checked", "checked");
@@ -216,70 +220,70 @@ define([ "jquery", "underscore", "app/ws/squashtm.notification", "squash.transla
 			this.menu.find('.suite-manager-controls').before(item);
 		}, this);
 
-		var addSuite = $.proxy(function() {
+		var addSuite = $.proxy(function () {
 			var self = this;
 			var name = $('#suite-manager-menu-input').val();
 			self.lastAdded = name;
-			self.model.postNew(name).fail(function(json) {
+			self.model.postNew(name).fail(function (json) {
 				self.lastAdded = undefined;
 			});
 		}, this);
 
 		// -------- binding -------------
 
-		var bindCheckboxes = $.proxy(function(evt) {
+		var bindCheckboxes = $.proxy(function (evt) {
 			var self = this;
 			this.menu.delegate('input:checkbox', 'change',
-					function(evt) {
-						var checkbx = $(evt.currentTarget);
-						self.testSuiteNewStatuses.change(checkbx
-								.data('suite-id'), checkbx
-								.is(":checked"));
+				function (evt) {
+					var checkbx = $(evt.currentTarget);
+					self.testSuiteNewStatuses.change(checkbx
+						.data('suite-id'), checkbx
+						.is(":checked"));
 
+				});
+		}, this);
+
+		var bindOkButton = $.proxy(function () {
+			var self = this;
+			$('#suite-manager-menu-ok-button').on('click', function (evt) {
+				if (!self.testPlanItemIds.length) {
+					notification.showError(translator.get('message.suite.menu.emptySelection'));
+				} else {
+					var toSend = {};
+					var checkedSuiteIds = self.testSuiteNewStatuses.getChecked();
+					var uncheckedSuiteIds = self.testSuiteNewStatuses.getUnchecked();
+					if (uncheckedSuiteIds.length > 0 || checkedSuiteIds.length > 0) {
+						toSend['bound-test-suites'] = checkedSuiteIds;
+						toSend['unbound-test-suites'] = uncheckedSuiteIds;
+						toSend['test-plan-items'] = self.testPlanItemIds;
+						self.model.postBindChanged(toSend).success(function () {
+							self.menucontrol.buttonmenu('close');
+						});
+					} else {
+						self.menucontrol.buttonmenu('close');
+					}
+					eventBus.trigger('iteration.new-test-suite');
+				}
 			});
 		}, this);
 
-		var bindOkButton = $.proxy(function() {
-				var self = this;
-				$('#suite-manager-menu-ok-button').on('click',function(evt) {
-						if (!self.testPlanItemIds.length) {
-							notification.showError(translator.get('message.suite.menu.emptySelection'));
-						} else {
-							var toSend = {};
-							var checkedSuiteIds = self.testSuiteNewStatuses.getChecked();
-							var uncheckedSuiteIds = self.testSuiteNewStatuses.getUnchecked();
-							if (uncheckedSuiteIds.length > 0 || checkedSuiteIds.length > 0) {
-								toSend['bound-test-suites'] = checkedSuiteIds;
-								toSend['unbound-test-suites'] = uncheckedSuiteIds;
-								toSend['test-plan-items'] = self.testPlanItemIds;
-								self.model.postBindChanged(toSend).success(function() {
-										self.menucontrol.buttonmenu('close');
-								});
-							}else{
-								self.menucontrol.buttonmenu('close');
-							}
-							eventBus.trigger('iteration.new-test-suite');
-						}
-					});
-			}, this);
-
-		var bindCancelButton = $.proxy(function() {
+		var bindCancelButton = $.proxy(function () {
 			var self = this;
 			$('#suite-manager-menu-cancel-button').on('click',
-					function(evt) {
-						self.menucontrol.buttonmenu('close');
-					});
+				function (evt) {
+					self.menucontrol.buttonmenu('close');
+				});
 		}, this);
 
-		var bindAddButton = $.proxy(function() {
-			$('#suite-manager-menu-button').on('click', function(evt) {
+		var bindAddButton = $.proxy(function () {
+			$('#suite-manager-menu-button').on('click', function (evt) {
 				addSuite();
 			});
 		}, this);
 
-		var bindInput = $.proxy(function() {
+		var bindInput = $.proxy(function () {
 			var input = $('#suite-manager-menu-input');
-			input.on('keydown', function(evt) {
+			input.on('keydown', function (evt) {
 				if (evt.which == '8') {
 					evt.stopImmediatePropagation();
 					// backspace will navigate to previous page if not canceled here
@@ -291,63 +295,63 @@ define([ "jquery", "underscore", "app/ws/squashtm.notification", "squash.transla
 			});
 		}, this);
 
-		var bindShowMenuButton = $.proxy(function() {
-				var self = this;
-				$("#manage-test-suites-buttonmenu").on('click',function(evt) {
-					$("#manage-test-suites-menu .error-message").text('');
-					self.testPlanItemIds = getDatatableSelected();
-					if (!self.testPlanItemIds.length) {
-						// no item selected: close menu and warn
-						self.menucontrol.buttonmenu('close');
-						evt.stopImmediatePropagation();
-						notification.showError(translator.get('message.EmptyExecPlanSelection'));
+		var bindShowMenuButton = $.proxy(function () {
+			var self = this;
+			$("#manage-test-suites-buttonmenu").on('click', function (evt) {
+				$("#manage-test-suites-menu .error-message").text('');
+				self.testPlanItemIds = getDatatableSelected();
+				if (!self.testPlanItemIds.length) {
+					// no item selected: close menu and warn
+					self.menucontrol.buttonmenu('close');
+					evt.stopImmediatePropagation();
+					notification.showError(translator.get('message.EmptyExecPlanSelection'));
 
-					} else {
-						var suites = self.model.getData();
+				} else {
+					var suites = self.model.getData();
 
-						// get item ids by suite id
-						var itemIdsBySuite = {};
-						_.each(suites,function(suite) {
-								itemIdsBySuite[suite.id] = [];
-							});
+					// get item ids by suite id
+					var itemIdsBySuite = {};
+					_.each(suites, function (suite) {
+						itemIdsBySuite[suite.id] = [];
+					});
 
-						_.each(self.testPlanItemIds,function(itemId) {
-								var itemSuiteIds = $(self.datatableSelector).squashTable().getDataById(itemId)["suiteIds"];
-								_.each(itemSuiteIds,function(itemSuiteId) {
-										itemIdsBySuite[itemSuiteId].push(itemId);
-									});
-							});
+					_.each(self.testPlanItemIds, function (itemId) {
+						var itemSuiteIds = $(self.datatableSelector).squashTable().getDataById(itemId)["suiteIds"];
+						_.each(itemSuiteIds, function (itemSuiteId) {
+							itemIdsBySuite[itemSuiteId].push(itemId);
+						});
+					});
 
-						// compute statuses and update checkboxes
-						var suiteStatuses = {};
-						var unboundIds = [];
-						var boundIds = [];
-						getCheckboxes().prop('indeterminate',false); // reset the checkboxes
-						_.each(itemIdsBySuite,function(itemIds, suiteId) {
-								var status;
-								var checkbox = getCheckboxBySuiteId(suiteId);
-								if (itemIds.length == self.testPlanItemIds.length) {
-									status = "checked";
-									boundIds.push(suiteId);
-									checkbox.prop('checked',true);
-								} else if (itemIds.length === 0) {
-									status = "unchecked";
-									unboundIds.push(suiteId);
-									checkbox.prop('checked',false);
-								} else {
-									status = "undefined";
-									checkbox.prop("indeterminate",true);
-								}
-								suiteStatuses[suiteId] = status;
-							});
+					// compute statuses and update checkboxes
+					var suiteStatuses = {};
+					var unboundIds = [];
+					var boundIds = [];
+					getCheckboxes().prop('indeterminate', false); // reset the checkboxes
+					_.each(itemIdsBySuite, function (itemIds, suiteId) {
+						var status;
+						var checkbox = getCheckboxBySuiteId(suiteId);
+						if (itemIds.length == self.testPlanItemIds.length) {
+							status = "checked";
+							boundIds.push(suiteId);
+							checkbox.prop('checked', true);
+						} else if (itemIds.length === 0) {
+							status = "unchecked";
+							unboundIds.push(suiteId);
+							checkbox.prop('checked', false);
+						} else {
+							status = "undefined";
+							checkbox.prop("indeterminate", true);
+						}
+						suiteStatuses[suiteId] = status;
+					});
 
-						self.testSuiteNewStatuses.reset(boundIds, unboundIds); // reset the model
-						$("#suite-manager-menu-input").val(""); // reset the input field
-					}
-				});
-			}, this);
+					self.testSuiteNewStatuses.reset(boundIds, unboundIds); // reset the model
+					$("#suite-manager-menu-input").val(""); // reset the input field
+				}
+			});
+		}, this);
 
-		var initHandlerBinding = $.proxy(function() {
+		var initHandlerBinding = $.proxy(function () {
 			bindShowMenuButton();
 			bindAddButton();
 			bindInput();

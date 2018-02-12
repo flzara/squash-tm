@@ -82,10 +82,15 @@ define(["jquery", "milestone-manager/milestone-activation", "squash.attributepar
 				checkbox.siblings('.switch-button-background').css({position: 'relative', top: '5px'});
 
 				// ****** init the label ***********************
+				const unescape = function (unsafeHtml) {
+					var txt = document.createElement("textarea");
+					txt.innerHTML = unsafeHtml;
+					return txt.value;
+				};
 
 				var currMilestone = milestoneDao.getActiveMilestone();
 				if (currMilestone.label !== "") {
-					label.text(_.unescape(currMilestone.label));
+					label.text(unescape(currMilestone.label));
 				}
 
 				function labelClick() {
@@ -133,7 +138,7 @@ define(["jquery", "milestone-manager/milestone-activation", "squash.attributepar
 					};
 
 					milestoneDao.setActiveMilestone(newMilestone);
-					label.text(_.unescape(lbl));
+					label.text(unescape(lbl));
 				});
 
 				// disable the whole thing if no active milestone

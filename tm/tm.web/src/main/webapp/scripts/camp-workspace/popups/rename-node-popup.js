@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'tree', 'workspace.event-bus', '../permissions-rules','underscore', 'jquery.squash.formdialog'],
-		function($, zetree, eventBus, rules,_){
+define(['jquery', 'tree', 'workspace.event-bus', '../permissions-rules', 'jquery.squash.formdialog'],
+		function($, zetree, eventBus, rules){
 
 	function warnMilestones(node){
 		var nbmilestones = parseInt(node.attr('milestones'), 10);
@@ -40,6 +40,12 @@ define(['jquery', 'tree', 'workspace.event-bus', '../permissions-rules','undersc
 		dialog.on('formdialogopen', function(){
 			var node = tree.jstree('get_selected');
 
+			const unescape = function (unsafeHtml) {
+				var txt = document.createElement("textarea");
+				txt.innerHTML = unsafeHtml;
+				return txt.value;
+			};
+
 			if (! rules.canRename(node)){
 				var errorState;
 				switch (rules.whyCantRename(node)){
@@ -54,7 +60,7 @@ define(['jquery', 'tree', 'workspace.event-bus', '../permissions-rules','undersc
 				warnMilestones(node);
 				dialog.formDialog('setState','confirm');
 				var name = node.getName();
-				dialog.find("#rename-tree-node-text").val(_.unescape(name));
+				dialog.find("#rename-tree-node-text").val(unescape(name));
 			}
 		});
 

@@ -148,8 +148,14 @@ define(
 				});
 
 				var editLink = SquashTable.renderer($("#name-cell-tpl").html())(function(data, type, row) {
-					return { url:  self.viewUrl + "/" + row.id, text: _.unescape(data) };
+					return { url:  self.viewUrl + "/" + row.id, text: unescape(data) };
 				});
+
+				const unescape = function (unsafeHtml) {
+					var txt = document.createElement("textarea");
+					txt.innerHTML = unsafeHtml;
+					return txt.value;
+				};
 
 				var colDefs = SquashTable.colDefs()
 					.hidden(0, "id")

@@ -155,7 +155,7 @@
 		<div id="execution-information-table" class="display-table">
       <div class="display-table-row">
         <label class="display-table-cell" for="testcase-reference"><f:message key="test-case.reference.label"/></label>
-        <div id="testcase-reference" class="display-table-cell">${ execution.reference }</div>
+        <div id="testcase-reference" class="display-table-cell"><c:out value="${ execution.reference }"/> </div>
       </div>
       <div class="display-table-row">
         <label class="display-table-cell" for="testcase-description"><f:message key="label.Description"/></label>
