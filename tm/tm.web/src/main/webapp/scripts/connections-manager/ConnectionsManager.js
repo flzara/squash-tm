@@ -19,19 +19,20 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "./ConnectionsTable", "jqueryui", "squashtable"], function($, Backbone, ConnectionsTable) {
+  var language = window.squashtm.app.connectionsManager.settings.language;
 	var View = Backbone.View.extend({
 		el : "#connection-table-pane",
 
 		initialize : function() {
 			this.connectionsTable = new ConnectionsTable();
 			this.$(".table-tab-wrap").prepend("<span class='rangedatepicker th_input '>"
-                                        + "<label>Date</label>"
+                                        + "<label>"+language.dates+"</label>"
                                         + "<input class='rangedatepicker-input' readonly='readonly'/>"
                                         + "<div class='rangedatepicker-div' style='position:absolute;top:auto;left:auto;z-index:1;'></div>"
                                         + "<input id='date_filter_input' type='hidden' class='rangedatepicker-hidden-input filter_input'/>"
                                       + "</span>"
                                       + "<span>"
-      			                            + "<label> Login</label>"
+      			                            + "<label> "+language.login+"</label>"
                                         + "<input id='login_filter_input'/>"
                                       + "</span>");
 		},

@@ -44,7 +44,12 @@
           <td >${ teamStat.index + 1 }</td>
           <td>${ connection.login }</td>
           <td><comp:date value="${ connection.connectionDate }" /></td>
-          <td>${ connection.success }</td>
+          <c:if test="${connection.success}">
+            <td><f:message key="label.Yes" /></td>
+          </c:if>
+          <c:if test="${!connection.success}">
+            <td><f:message key="label.No" /></td>
+          </c:if>
         </tr>
         </c:forEach>
         <%-- Will be populated through ajax --%>

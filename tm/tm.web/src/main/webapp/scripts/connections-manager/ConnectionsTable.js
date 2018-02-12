@@ -19,7 +19,6 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "squashtable", "jqueryui"], function($, Backbone) {
-
 	var View = Backbone.View.extend({
 		el : "#connections-table",
 		initialize : function() {
@@ -54,6 +53,16 @@ define([ "jquery", "backbone", "squashtable", "jqueryui"], function($, Backbone)
 				}, {
 					"aTargets" : [ 4 ],
 					"mDataProp" : "successful",
+					"mRender": function (data, type, full){
+						var response = data;
+						var language = window.squashtm.app.connectionsManager.settings.language;
+					  if(data===true){
+              response = language.yes;
+					  } else if (data===false){
+					    response = language.no;
+					  }
+					  return response;
+					},
 					"bSortable" : true
 				} ],
 				"sDom" : 't<"dataTables_footer"lp>'
