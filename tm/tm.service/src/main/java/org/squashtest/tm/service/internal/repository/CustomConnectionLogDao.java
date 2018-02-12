@@ -31,5 +31,5 @@ import java.util.List;
  * @author aguilhem
  */
 public interface CustomConnectionLogDao {
-	List<ConnectionLog> findSortedConnections(PagingAndSorting paging, Filtering filtering, ColumnFiltering columnFiltering);
+	List<ConnectionLog> findSortedConnections(PagingAndSorting paging, ColumnFiltering columnFiltering);
 }

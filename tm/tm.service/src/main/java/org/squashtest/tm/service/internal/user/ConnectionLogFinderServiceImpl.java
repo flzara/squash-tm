@@ -48,9 +48,9 @@ public class ConnectionLogFinderServiceImpl implements ConnectionLogFinderServic
 	}
 
 	@Override
-	public PagedCollectionHolder<List<ConnectionLog>> findAllFiltered(PagingAndSorting paging, Filtering filtering, ColumnFiltering columnFiltering) {
+	public PagedCollectionHolder<List<ConnectionLog>> findAllFiltered(PagingAndSorting paging, ColumnFiltering columnFiltering) {
 
-		List<ConnectionLog> connectionLogs = connectionLogDao.findSortedConnections(paging, filtering, columnFiltering);
+		List<ConnectionLog> connectionLogs = connectionLogDao.findSortedConnections(paging, columnFiltering);
 
 		Long count = connectionLogDao.count();
 

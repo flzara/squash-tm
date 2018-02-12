@@ -53,6 +53,7 @@ public class ConnectionLogDaoImpl implements CustomConnectionLogDao {
 	private static final String HQL_AND = "and ";
 
 	private static final String CONNECTION_DATE_DATA = "connection-date";
+	private static final String LOGIN_DATA = "login";
 	private static final String START_DATE = "startDate";
 	private static final String END_DATE = "endDate";
 	private static final String LOGIN = "loginFilter";
@@ -61,31 +62,37 @@ public class ConnectionLogDaoImpl implements CustomConnectionLogDao {
 	private EntityManager entityManager;
 
 	@Override
-	public List<ConnectionLog> findSortedConnections(PagingAndSorting paging, Filtering filtering, ColumnFiltering columnFiltering) {
+	public List<ConnectionLog> findSortedConnections(PagingAndSorting paging, ColumnFiltering columnFiltering) {
 
 		StringBuilder sQuery = new StringBuilder(HQL_FIND_CONNECTION_LOGS_BASE);
-		String dateFilterBeginningWord = HQL_WHERE;
-
-		if(filtering.isDefined()) {
-			sQuery.append(HQL_FIND_CONNECTION_LOGS_FILTER_BY_LOGIN);
-			dateFilterBeginningWord = HQL_AND;
-		}
+		String login="";
+		String dates="";
+		String dateFilterRequestBeginningWord;
 
 		if(columnFiltering.isDefined()){
-			sQuery.append(dateFilterBeginningWord);
-			sQuery.append(HQL_FIND_CONNECTION_LOGS_FILTER_BY_DATE);
+			login = columnFiltering.getFilter(LOGIN_DATA);
+			dates = columnFiltering.getFilter(CONNECTION_DATE_DATA);
+			dateFilterRequestBeginningWord = HQL_WHERE;
+			if(!login.isEmpty()){
+				sQuery.append(HQL_FIND_CONNECTION_LOGS_FILTER_BY_LOGIN);
+				dateFilterRequestBeginningWord = HQL_AND;
+			}
+			if(!dates.isEmpty()){
+				sQuery.append(dateFilterRequestBeginningWord);
+				sQuery.append(HQL_FIND_CONNECTION_LOGS_FILTER_BY_DATE);
+			}
+
 		}
 
 		SortingUtils.addOrder(sQuery, paging);
 
 		Query hQuery = entityManager.createQuery(sQuery.toString());
 
-		if(filtering.isDefined()) {
-			hQuery.setParameter(LOGIN, "%" + filtering.getFilter() + "%");
+		if(!login.isEmpty()){
+			hQuery.setParameter(LOGIN, "%" + login + "%");
 		}
-
-		if(columnFiltering.isDefined()){
-			setQueryStartAndEndDateParameters(columnFiltering, hQuery);
+		if(!dates.isEmpty()){
+			setQueryStartAndEndDateParameters(dates, hQuery);
 		}
 
 		JpaPagingUtils.addPaging(hQuery, paging);
@@ -94,10 +101,10 @@ public class ConnectionLogDaoImpl implements CustomConnectionLogDao {
 
 	}
 
-	private void setQueryStartAndEndDateParameters(ColumnFiltering columnFiltering, Query query){
-		String dates = columnFiltering.getFilter(CONNECTION_DATE_DATA);
+	private void setQueryStartAndEndDateParameters(String dates, Query query){
 		Date startDate = null;
 		Date endDate = null;
+
 
 		if (dates.contains("-")) {
 			String[] dateArray = dates.split("-");

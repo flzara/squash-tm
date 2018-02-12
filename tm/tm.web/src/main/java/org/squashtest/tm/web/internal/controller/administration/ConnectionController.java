@@ -77,10 +77,9 @@ public class ConnectionController {
 	public DataTableModel getTableModel(final DataTableDrawParameters params, final Locale locale) {
 
 		PagingAndSorting paging = new DataTableSorting(params, connectionsMapper);
-		Filtering filtering = new DataTableFiltering(params);
 		ColumnFiltering columnFiltering = new DataTableColumnFiltering(params);
 
-		PagedCollectionHolder<List<ConnectionLog>> holder = service.findAllFiltered(paging, filtering, columnFiltering);
+		PagedCollectionHolder<List<ConnectionLog>> holder = service.findAllFiltered(paging, columnFiltering);
 
 		return new ConnectionLogsDataTableModelHelper(locale, messageSource).buildDataModel(holder, params.getsEcho());
 	}

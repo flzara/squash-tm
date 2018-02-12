@@ -33,5 +33,5 @@ import java.util.List;
  */
 public interface CustomConnectionLogFinderService {
 
-	PagedCollectionHolder<List<ConnectionLog>> findAllFiltered(PagingAndSorting paging, Filtering filtering, ColumnFiltering columnFiltering);
+	PagedCollectionHolder<List<ConnectionLog>> findAllFiltered(PagingAndSorting paging, ColumnFiltering columnFiltering);
 }

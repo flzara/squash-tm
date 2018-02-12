@@ -56,7 +56,7 @@ define([ "jquery", "backbone", "squashtable", "jqueryui"], function($, Backbone)
 					"mDataProp" : "successful",
 					"bSortable" : true
 				} ],
-				"sDom" : 'ft<"dataTables_footer"lp>'
+				"sDom" : 't<"dataTables_footer"lp>'
 			}, squashConf = {
 				enableHover : true
 			};

@@ -132,7 +132,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 		mav.addObject("pagedTeams", teams);
 		mav.addObject("teamsPageSize", TEAMS_DEFAULT_PAGING.getPageSize());
 
-		PagedCollectionHolder<List<ConnectionLog>> connectionLogs = connectionLogFinderService.findAllFiltered(CONNECTIONS_DEFAULT_PAGING, TEAMS_DEFAULT_FILTERING, CONNECTION_COLUMN_DEFAULT_FILTERING);
+		PagedCollectionHolder<List<ConnectionLog>> connectionLogs = connectionLogFinderService.findAllFiltered(CONNECTIONS_DEFAULT_PAGING, CONNECTION_COLUMN_DEFAULT_FILTERING);
 		mav.addObject("pagedConnectionLogs", connectionLogs);
 		mav.addObject("connectionsPageSize", CONNECTIONS_DEFAULT_PAGING.getPageSize());
 		return mav;
