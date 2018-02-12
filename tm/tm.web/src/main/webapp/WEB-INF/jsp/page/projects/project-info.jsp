@@ -204,23 +204,12 @@
 
 				<jsp:attribute name="body">
 					<div id="project-description-table" class="display-table">
-						<div class="display-table-row">
-							<label for="project-label" class="display-table-cell">
-							<f:message key="label.tag" />
-							</label>
-							<div class="display-table-cell editable text-editable" data-def="url=${projectUrl}, maxlength=255" id="project-label"><c:out value="${ adminproject.project.label }" escapeXml="true" /></div>
-						</div>
-						<div class="display-table-row">
-							<label for="project-description" class="display-table-cell">
-							<f:message key="label.Description" />
-							</label>
-							<div class="display-table-cell editable rich-editable" data-def="url=${projectUrl}" id="project-description">${hu:clean(adminproject.project.description) }</div>
-						</div>
-						<c:if test="${ !adminproject.template }">
-						  <div class="display-table-row">
+
+					  <c:if test="${ !adminproject.template }">
+              <div class="display-table-row">
                 <label for="project-template" class="display-table-cell">
-            	    <f:message key="label.associatedTemplate" />
-            	  </label>
+                  <f:message key="label.associatedTemplate" />
+                </label>
                 <div class="display-table-cell" id="project-template">
                   <c:choose>
                     <c:when test="${ adminproject.project.template != null }">
@@ -233,6 +222,21 @@
                 </div>
               </div>
             </c:if>
+
+						<div class="display-table-row">
+							<label for="project-label" class="display-table-cell">
+							<f:message key="label.tag" />
+							</label>
+							<div class="display-table-cell editable text-editable" data-def="url=${projectUrl}, maxlength=255" id="project-label"><c:out value="${ adminproject.project.label }" escapeXml="true" /></div>
+						</div>
+
+						<div class="display-table-row">
+							<label for="project-description" class="display-table-cell">
+							<f:message key="label.Description" />
+							</label>
+							<div class="display-table-cell editable rich-editable" data-def="url=${projectUrl}" id="project-description">${hu:clean(adminproject.project.description) }</div>
+						</div>
+
 						<%-- 	Waiting for implementation of deactivation	<comp:project-active adminproject="${ adminproject }"/> --%>
 					</div>
 				</jsp:attribute>
