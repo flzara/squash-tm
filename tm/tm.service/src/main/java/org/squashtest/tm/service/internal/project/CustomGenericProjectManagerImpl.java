@@ -910,6 +910,20 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		}
 	}
 
+	private void copyPlugins(GenericProject target, GenericProject source) {
+		/* Passer par WorkspaceWizardManager pour aussi désactiver ?
+		* -> A Tester. */
+		for(String pluginId : source.getRequirementLibrary().getEnabledPlugins()) {
+			target.getRequirementLibrary().enablePlugin(pluginId);
+		}
+		for(String pluginId : source.getTestCaseLibrary().getEnabledPlugins()) {
+			target.getTestCaseLibrary().enablePlugin(pluginId);
+		}
+		for(String pluginId : source.getCampaignLibrary().getEnabledPlugins()) {
+			target.getCampaignLibrary().enablePlugin(pluginId);
+		}
+	}
+
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	@Override
 	public GenericProject synchronizeGenericProject(GenericProject target,
@@ -938,6 +952,9 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		}
 		if(params.isCopyOptionalExecStatuses()) {
 			copyExecutionStatuses(target, source);
+		}
+		if(params.isCopyPlugins()) {
+			copyPlugins(target, source);
 		}
 
 		return target;

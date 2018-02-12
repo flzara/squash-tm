@@ -34,7 +34,8 @@ define([ "jquery", "backbone", "underscore", "squash.translator", "app/util/Stri
 			copyInfolists: true,
 			copyMilestone: true,
 			copyAllowTcModifFromExec: true,
-			copyOptionalExecStatuses: true
+			copyOptionalExecStatuses: true,
+			copyPlugins: true
 		},
 		url : router.buildURL("project.new")
 	});

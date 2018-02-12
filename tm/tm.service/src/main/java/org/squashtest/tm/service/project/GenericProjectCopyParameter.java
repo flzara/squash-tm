@@ -35,6 +35,7 @@ public class GenericProjectCopyParameter {
 	private boolean copyMilestone;
 	private boolean copyAllowTcModifFromExec;
 	private boolean copyOptionalExecStatuses;
+	private boolean copyPlugins;
 
 	public GenericProjectCopyParameter() {
 		//default constructor
@@ -111,4 +112,10 @@ public class GenericProjectCopyParameter {
 		this.copyOptionalExecStatuses = copyOptionalExecStatuses;
 	}
 
+	public boolean isCopyPlugins() {
+		return copyPlugins;
+	}
+	public void setCopyPlugins(boolean copyPlugins) {
+		this.copyPlugins = copyPlugins;
+	}
 }
