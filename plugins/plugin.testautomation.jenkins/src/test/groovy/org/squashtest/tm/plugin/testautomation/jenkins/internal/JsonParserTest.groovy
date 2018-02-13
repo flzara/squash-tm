@@ -29,36 +29,49 @@ import spock.lang.Specification
 class JsonParserTest extends Specification {
 
 	 JsonParser parser;
-	 
+
 	 def setup(){
 		 parser = new JsonParser();
-	 } 
-	
-	 
+	 }
+
+
 	 def "should return a collection of projects"(){
-		 
+
 		 given :
-		 	def json ='{"jobs":[{"name":"bob","color":"bob"},{"name":"mike","color":"mike"},{"name":"robert","color":"robert"}]}'
-		 
-		 when : 
+		 	def json ='{"jobs":[{"fullName":"bob","color":"bob"},{"fullName":"mike","color":"mike"},{"fullName":"robert","color":"robert"}]}'
+
+		 when :
 		 	def res = parser.readJobListFromJson(json)
-		 
+
 		 then :
 		 	res.collect{it.name} == ["bob", "mike", "robert"]
 	 }
 
 	 def "should return a collection of projects excluding the disabled one"(){
-		 
+
 		 given :
-			 def json ='{"jobs":[{"name":"bob","color":"'+JsonParser.DISABLED_COLOR_STRING+'"},{"name":"mike","color":"mike"},{"name":"robert","color":"robert"}]}'
-		 
+			 def json ='{"jobs":[{"fullName":"bob","color":"'+JsonParser.DISABLED_COLOR_STRING+'"},{"fullName":"mike","color":"mike"},{"fullName":"robert","color":"robert"}]}'
+
 		 when :
 			 def res = parser.readJobListFromJson(json)
-		 
+
 		 then :
 			 res.collect{it.name} == ["mike", "robert"]
 	 }
 
+
+
+	def "should return a flattened collection of jobs"(){
+
+		given :
+		def json ='{"jobs":[{"fullName":"bob","color":"bob","jobs":[{"fullName":"bob/bibi","color":"bob"}]},{"fullName":"mike","color":"mike","jobs":[]},{"fullName":"robert","color":"robert"}]}'
+
+		when :
+		def res = parser.readJobListFromJson(json)
+
+		then :
+		res.collect{it.name} == ["bob/bibi", "mike", "robert"]
+	}
 
 
 }

@@ -22,6 +22,7 @@ package org.squashtest.tm.plugin.testautomation.jenkins.beans;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class JobList {
 
@@ -29,6 +30,24 @@ public class JobList {
 
 	public Collection<Job> getJobs() {
 		return jobs;
+	}
+
+	public void flattenJobList(){
+		List<Job> flatJobList = new ArrayList<>();
+		findSubJobs(flatJobList, jobs);
+		this.jobs = flatJobList;
+	}
+
+	private void findSubJobs(List<Job> flatJobList, Collection<Job> treeJobList) {
+		for (Job job : treeJobList) {
+			Collection<Job> subJobs = job.getJobs();
+			if(subJobs.isEmpty()){
+				flatJobList.add(job);
+			}
+			else {
+				findSubJobs(flatJobList, subJobs);
+			}
+		}
 	}
 
 	public void setJobs(Collection<Job> jobs) {

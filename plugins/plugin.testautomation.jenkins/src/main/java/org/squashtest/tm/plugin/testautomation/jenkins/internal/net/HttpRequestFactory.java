@@ -44,6 +44,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import static org.squashtest.tm.plugin.testautomation.jenkins.TestAutomationJenkinsConnector.getJobSubPath;
+
 /**
  * TODO Crudely migrated from httpclient 3 to httpclient 4. Test coverage was mostly null so when it breaks,
  * write some tests. Or use RestTemplate.
@@ -62,8 +64,10 @@ public class HttpRequestFactory {
 	public static final String MULTIPART_BUILDFILENAME = "file0";
 	public static final String MULTIPART_JENKINSARGS = "json";
 
+	public static final String JOB_PARAM = "jobs[fullName,color]";
+
 	private static final NameValuePair[] JOB_LIST_QUERY = new NameValuePair[]{
-		new BasicNameValuePair(TREE, "jobs[name,color]")
+		new BasicNameValuePair(TREE, buildFolderPathQueryParameter())
 	};
 
 	private static final NameValuePair[] QUEUED_BUILDS_QUERY = new NameValuePair[]{
@@ -81,6 +85,7 @@ public class HttpRequestFactory {
 	private static final NameValuePair[] BUILD_RESULT_QUERY = new NameValuePair[]{
 		new BasicNameValuePair(TREE, "suites[name,cases[name,status]]")
 	};
+
 
 	private final JsonParser jsonParser = new JsonParser();
 
@@ -183,7 +188,7 @@ public class HttpRequestFactory {
 	public HttpGet newGetBuildsForProject(TestAutomationProject project) {
 		TestAutomationServer server = project.getServer();
 		URIBuilder builder = uriBuilder(server);
-		concatPath(builder, JOB_PATH + project.getJobName() + API_URI);
+		concatPath(builder, getJobSubPath(project) + API_URI);
 		builder.setParameters(EXISTING_BUILDS_QUERY);
 		return new HttpGet(build(builder));
 
@@ -192,7 +197,7 @@ public class HttpRequestFactory {
 	public HttpGet newGetBuild(TestAutomationProject project, int buildId) {
 		TestAutomationServer server = project.getServer();
 		URIBuilder builder = uriBuilder(server);
-		concatPath(builder, JOB_PATH + project.getJobName() + '/' + buildId + '/' + API_URI);
+		concatPath(builder, getJobSubPath(project) + '/' + buildId + '/' + API_URI);
 		builder.setParameters(SINGLE_BUILD_QUERY);
 		return new HttpGet(build(builder));
 	}
@@ -200,7 +205,7 @@ public class HttpRequestFactory {
 	public HttpGet newGetBuildResults(TestAutomationProject project, int buildId) {
 		TestAutomationServer server = project.getServer();
 		URIBuilder builder = uriBuilder(server);
-		concatPath(builder, JOB_PATH + project.getJobName() + '/' + buildId + "/testReport/" + API_URI);
+		concatPath(builder, getJobSubPath(project) + '/' + buildId + "/testReport/" + API_URI);
 		builder.setParameters(BUILD_RESULT_QUERY);
 		return new HttpGet(build(builder));
 	}
@@ -208,7 +213,7 @@ public class HttpRequestFactory {
 	public HttpGet newGetJsonTestList(TestAutomationProject project) {
 		TestAutomationServer server = project.getServer();
 		URIBuilder builder = uriBuilder(server);
-		concatPath(builder, JOB_PATH + project.getJobName() + "/Test_list/testTree.json");
+		concatPath(builder, getJobSubPath(project) + "/Test_list/testTree.json");
 		return new HttpGet(build(builder));
 	}
 
@@ -219,7 +224,7 @@ public class HttpRequestFactory {
 		String relativePath = toRelativePath(test);
 		TestAutomationServer server = project.getServer();
 		URIBuilder builder = uriBuilder(server);
-		concatPath(builder, JOB_PATH + project.getJobName() + "/" + buildID + "/testReport/" + relativePath);
+		concatPath(builder, getJobSubPath(project) + "/" + buildID + "/testReport/" + relativePath);
 		return builder.toString();
 
 	}
@@ -227,7 +232,7 @@ public class HttpRequestFactory {
 	protected HttpPost newStartBuild(TestAutomationProject project, ParameterArray params) {
 		TestAutomationServer server = project.getServer();
 		URIBuilder builder = uriBuilder(server);
-		concatPath(builder, JOB_PATH + project.getJobName() + "/build");
+		concatPath(builder, getJobSubPath(project) + "/build");
 
 		String jsonParam = jsonParser.toJson(params);
 
@@ -268,6 +273,16 @@ public class HttpRequestFactory {
 
 		return name;
 
+	}
+
+	private static String buildFolderPathQueryParameter() {
+		StringBuilder sb = new StringBuilder(JOB_PARAM);
+		int depht = 10;
+		for (int i = 0; i < depht; i++) {
+			int insertIndex = sb.indexOf("]");
+			sb.insert(insertIndex, "," + JOB_PARAM);
+		}
+		return sb.toString();
 	}
 
 	private static class CallbackURLProvider {

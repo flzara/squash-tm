@@ -55,6 +55,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static org.squashtest.tm.plugin.testautomation.jenkins.TestAutomationJenkinsConnector.getJobSubPath;
+
 /**
  * This class configure and execute a unique HTTP request.
  * This case is simple enough, we don't need to watch a full build.
@@ -173,18 +175,17 @@ public class StartTestExecution {
 
 	private URI createUrl(TestAutomationProject project) {
             TestAutomationServer server = project.getServer();
-            try{
+		String jobSubPath = getJobSubPath(project);
+		try{
                 URI base = new URI(server.getBaseURL().toString());
                 return new URIBuilder(base)
-                            .setPath(base.getPath()+"/job/"+project.getJobName()+"/build")
+                            .setPath(base.getPath()+ jobSubPath +"/build")
                             .build();
             }
             catch(URISyntaxException use){
-                if (LOGGER.isErrorEnabled()){
-                    LOGGER.error("cannot execute build '"+project.getJobName()+"', hosted on server '"+
-                            server.getBaseURL()+
-                            "' due to URI syntax exception. Is the server URL correct ?");
-                }
+            	LOGGER.error("cannot execute build for job {} hosted on server {}. Job Sub path is {}. due to URI syntax exception. Is the server URL correct ?",
+					project.getJobName(), project.getServer().getBaseURL(), jobSubPath
+				);
                 throw new RuntimeException(use);
             }
 	}

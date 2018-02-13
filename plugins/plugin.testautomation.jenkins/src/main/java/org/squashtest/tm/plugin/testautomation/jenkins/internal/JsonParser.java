@@ -56,6 +56,7 @@ public class JsonParser {
 		try {
 
 			JobList list = objMapper.readValue(json, JobList.class);
+			list.flattenJobList();
 
 			JobList filteredList = filterDisabledJobs(list);
 
@@ -124,7 +125,7 @@ public class JsonParser {
 		Collection<TestAutomationProject> projects = new ArrayList<>();
 
 		for (Job job : jobList.getJobs()){
-			projects.add(new TestAutomationProject(job.getName()));
+			projects.add(new TestAutomationProject(job.getFullName()));
 		}
 
 		return projects;

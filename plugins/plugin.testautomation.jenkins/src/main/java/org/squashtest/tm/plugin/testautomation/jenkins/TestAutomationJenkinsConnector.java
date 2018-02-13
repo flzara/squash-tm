@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.slf4j.Logger;
@@ -123,7 +124,8 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 
 		// if the file isn't available we regenerate the file
 		catch (Exception ex) {// NOSONAR the exception is handled
-
+			LOGGER.error("Error while fetching job list for project {}.",project);
+			LOGGER.error(ex.toString());
 			CloseableHttpClient client = clientProvider.getClientFor(project.getServer());
 
 			FetchTestListBuildProcessor processor = new FetchTestListBuildProcessor();
@@ -200,8 +202,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 	 */
 	@Override
 	public URL findTestAutomationProjectURL(TestAutomationProject testAutomationProject) {
-		TestAutomationServer server = testAutomationProject.getServer();
-		String projectUrl = server.getBaseURL().toString() + "/job/" + testAutomationProject.getJobName();
+		String projectUrl = getJobPath(testAutomationProject);
 		try {
 			return new URL(projectUrl);
 		} catch (MalformedURLException e) {
@@ -227,6 +228,20 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 		}
 		return true;
 	}
+
+	public static String getJobPath(TestAutomationProject testAutomationProject) {
+		TestAutomationServer server = testAutomationProject.getServer();
+		String baseUrl = server.getBaseURL().toString();
+		String jobName = getJobSubPath(testAutomationProject);
+		return baseUrl + jobName;
+	}
+
+	public static String getJobSubPath(TestAutomationProject testAutomationProject) {
+		String jobName = StringUtils.prependIfMissing(testAutomationProject.getJobName(),"/");
+		jobName = jobName.replace("/","/job/");
+		return jobName;
+	}
+
 
 	public class TestAutomationProjectMalformedURLException extends RuntimeException {
 

@@ -34,7 +34,7 @@ import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 
 /**
- * Build definition i.e. all the informtion required to run a bunch of automated tests from the same squash ta project
+ * Build definition i.e. all the information required to run a bunch of automated tests from the same squash ta project
  * (i.e. the same jenkins job)
  *
  * @author Gregory Fouquet
