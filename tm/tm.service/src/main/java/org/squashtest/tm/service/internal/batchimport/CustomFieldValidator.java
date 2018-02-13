@@ -181,6 +181,20 @@ class CustomFieldValidator {
 		return error;
 	}
 
+	/*
+	 * XXX potential bug here :
+	 * 
+	 * 1/ formatInputNumericCufValue replace any comma "," with a dot "." as the decimal separator
+	 *  (for english languages) in the input
+	 *  
+	 * 2/ BigDecimalValidator validates the modified value with respect to the Locale of the machine
+	 * 
+	 *  It entails that it could fail if the Locale is non US. Fortunately it happens 
+	 *  that the startup script enforce the usage of -Duser.language=en so in effect this code still 
+	 *  works in standard Squash instance, but it could fail if that system property is set to 
+	 *  another locale.
+	 * 
+	 */
 	private CustomFieldError validateNumericCustomField(String inputValue) {
 		String formattedInputValue = NumericCufHelper.formatInputNumericCufValue(inputValue);
 		BigDecimalValidator validator = BigDecimalValidator.getInstance();
