@@ -25,16 +25,6 @@ define([ "jquery", "backbone", "./ConnectionsTable", "jqueryui", "squashtable"],
 
 		initialize : function() {
 			this.connectionsTable = new ConnectionsTable();
-			this.$(".table-tab-wrap").prepend("<span class='rangedatepicker th_input '>"
-                                        + "<label>"+language.dates+"</label>"
-                                        + "<input class='rangedatepicker-input' readonly='readonly'/>"
-                                        + "<div class='rangedatepicker-div' style='position:absolute;top:auto;left:auto;z-index:1;'></div>"
-                                        + "<input id='date_filter_input' type='hidden' class='rangedatepicker-hidden-input filter_input'/>"
-                                      + "</span>"
-                                      + "<span>"
-      			                            + "<label> "+language.login+"</label>"
-                                        + "<input id='login_filter_input'/>"
-                                      + "</span>");
 		},
 
 		events : {

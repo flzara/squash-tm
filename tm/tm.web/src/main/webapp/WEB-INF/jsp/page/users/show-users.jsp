@@ -50,11 +50,6 @@
 <f:message var="differentConfirmation" key="user.account.newpass.differ.error"/>
 <f:message var="okLabel" key="label.Confirm"/>
 
-<f:message var="datesLabel" key="label.Dates"/>
-<f:message var="loginLabel" key="label.Login"/>
-<f:message var="yesLabel" key="label.Yes"/>
-<f:message var="noLabel" key="label.No"/>
-
 
 <layout:info-page-layout titleKey="workspace.user.title" isSubPaged="true" main="user-manager" >
   <jsp:attribute  name="head">

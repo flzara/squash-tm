@@ -26,7 +26,24 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <div id="connection-table-pane" class="table-tab" >
+  <div class="btn-toolbar right" style="z-index:1;">
+    <button id="add-user-button" class="sq-icon-btn btn-sm"
+      title="<f:message key="title.export.connectionHistory" />" >
+      <span class="ui-button-text">&nbsp;<f:message key="label.Export" />&nbsp;</span>
+    </button>
+  </div>
   <div class="table-tab-wrap">
+    <span class="ui-icon ui-icon-search"></span>
+    <span class="rangedatepicker th_input">
+      <label><f:message key="label.Dates"/></label>
+      <input class="rangedatepicker-input" readonly="readonly"/>
+      <div class="rangedatepicker-div" style="position:absolute;top:auto;left:auto;z-index:1;"></div>
+      <input id="date_filter_input" type="hidden" class="rangedatepicker-hidden-input filter_input"/>
+    </span>
+    <span>
+      <label><f:message key="label.Login"/></label>
+      <input id="login_filter_input"/>
+    </span>
     <table id="connections-table" data-def="deferloading=${ pagedConnectionLogs.totalNumberOfItems }, pagesize=${ connectionsPageSize }" class="unstyled-table">
       <thead>
         <tr>
