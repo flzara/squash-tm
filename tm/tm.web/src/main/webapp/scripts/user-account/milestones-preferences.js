@@ -19,9 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(["jquery", "milestone-manager/milestone-activation", "squash.attributeparser",
-		"workspace.routing", "workspace.event-bus", "underscore", "jquery.switchButton",
+		"workspace.routing", "workspace.event-bus", "app/util/StringUtil", "jquery.switchButton",
 		"milestones/jquery.squash.milestoneDialog"],
-	function ($, milestoneDao, attrparser, routing, eventBus, _) {
+	function ($, milestoneDao, attrparser, routing, eventBus, StringUtil) {
 
 		return {
 			init: function () {
@@ -82,15 +82,10 @@ define(["jquery", "milestone-manager/milestone-activation", "squash.attributepar
 				checkbox.siblings('.switch-button-background').css({position: 'relative', top: '5px'});
 
 				// ****** init the label ***********************
-				const unescape = function (unsafeHtml) {
-					var txt = document.createElement("textarea");
-					txt.innerHTML = unsafeHtml;
-					return txt.value;
-				};
 
 				var currMilestone = milestoneDao.getActiveMilestone();
 				if (currMilestone.label !== "") {
-					label.text(unescape(currMilestone.label));
+					label.text(StringUtil.unescape(currMilestone.label));
 				}
 
 				function labelClick() {
@@ -138,7 +133,7 @@ define(["jquery", "milestone-manager/milestone-activation", "squash.attributepar
 					};
 
 					milestoneDao.setActiveMilestone(newMilestone);
-					label.text(unescape(lbl));
+					label.text(StringUtil.unescape(lbl));
 				});
 
 				// disable the whole thing if no active milestone

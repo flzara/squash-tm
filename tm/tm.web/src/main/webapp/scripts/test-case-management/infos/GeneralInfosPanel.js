@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.configmanager", "jeditable.simpleJEditable", "jeditable.selectJEditable",
-         "jeditable.selectJEditableAuto", "jquery.squash.jeditable"],
-		function($, Backbone, _ , eventBus, confman, SimpleJEditable, SelectJEditable, SelectJEditableAuto) {
+         "jeditable.selectJEditableAuto", "jquery.squash.jeditable", "app/util/StringUtil"],
+		function($, Backbone, _ , eventBus, confman, SimpleJEditable, SelectJEditable, SelectJEditableAuto,StringUtil) {
 
 			var GeneralInfosPanel = Backbone.View.extend({
 
@@ -187,7 +187,7 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.conf
 
 				_unescapeData : function (data){
 					for(var property in data ){
-						data[property]= _.unescape(data[property]);
+						data[property]= StringUtil.unescape(data[property]);
 					}
 					return data;
 				}

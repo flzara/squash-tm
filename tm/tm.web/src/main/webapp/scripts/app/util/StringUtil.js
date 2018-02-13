@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery" ], function($) {
+define(["jquery"], function ($) {
 	function isBlank(val) {
 		// IE8 does not not compute the regex "^\s*$" properly, hence the "trim"
 		return (!val) || $.trim(val) === "";
@@ -31,10 +31,11 @@ define([ "jquery" ], function($) {
 	function parseAssignation(atom) {
 		var members = atom.split('=');
 		return {
-			name : members[0],
-			value : (members.length > 1) ? $.trim(members[1]) : 'true'
+			name: members[0],
+			value: (members.length > 1) ? $.trim(members[1]) : 'true'
 		};
 	}
+
 	function parseSequence(seq) {
 		var result = [];
 		var statements = seq.split(/\s*,\s*/);
@@ -49,59 +50,72 @@ define([ "jquery" ], function($) {
 		return result;
 	}
 
-	function getParsedSequenceAttribute(parsedSequence, key){
-		for(var k=0; k<parsedSequence.length; k++){
-			if(parsedSequence[k].name == key){
+	function getParsedSequenceAttribute(parsedSequence, key) {
+		for (var k = 0; k < parsedSequence.length; k++) {
+			if (parsedSequence[k].name == key) {
 				return parsedSequence[k].value;
 			}
 		}
 	}
 
-	function coerceToBoolean(toparse){
+	function coerceToBoolean(toparse) {
 
-		if (toparse === undefined || toparse === null){
+		if (toparse === undefined || toparse === null) {
 			return false;
 		}
 
 		var result;
 		var type = (typeof toparse);
 
-		switch(type){
-		case "boolean" :
-			result = toparse;
-			break;
+		switch (type) {
+			case "boolean" :
+				result = toparse;
+				break;
 
-		case "number" :
-			result = (toparse !== 0);
-			break;
+			case "number" :
+				result = (toparse !== 0);
+				break;
 
-		case "string" :
-			var lower = $.trim(toparse.toLowerCase());
-			switch(lower){
-			case "true" : result = true; break;
-			case "false" : result = false; break;
-			case "" : result = false; break;
-			default :
-				var isnum = Number(lower);
-				if (! isNaN(isnum)){
-					result = coerceToBoolean(lower);
+			case "string" :
+				var lower = $.trim(toparse.toLowerCase());
+				switch (lower) {
+					case "true" :
+						result = true;
+						break;
+					case "false" :
+						result = false;
+						break;
+					case "" :
+						result = false;
+						break;
+					default :
+						var isnum = Number(lower);
+						if (!isNaN(isnum)) {
+							result = coerceToBoolean(lower);
+						}
+						else {
+							// non-blank, non-number and non-stringified booleans are arbitrarily considered true
+							result = true;
+						}
 				}
-				else{
-					// non-blank, non-number and non-stringified booleans are arbitrarily considered true
-					result = true;
-				}
-			}
 		}
 
 		return result;
 
 	}
 
+	function unescape(unsafeHtml) {
+		var txt = document.createElement("textarea");
+		txt.innerHTML = unsafeHtml;
+		return txt.value;
+	}
+
 	return {
-		isBlank : isBlank,
-		isEmpty : isEmpty,
-		parseSequence : parseSequence,
-		getParsedSequenceAttribute :getParsedSequenceAttribute,
-		coerceToBoolean : coerceToBoolean
+		isBlank: isBlank,
+		isEmpty: isEmpty,
+		parseSequence: parseSequence,
+		getParsedSequenceAttribute: getParsedSequenceAttribute,
+		coerceToBoolean: coerceToBoolean,
+		unescape: unescape
 	};
 });

@@ -23,10 +23,10 @@
  *
  */
 
-define(['jquery', 'jquery.squash.oneshotdialog',
+define(['jquery', 'jquery.squash.oneshotdialog', "app/util/StringUtil",
 	'jqueryui', 'jquery.squash.squashbutton',
 	'jquery.squash.formdialog'
-], function ($, oneshot) {
+], function ($, oneshot,StringUtil) {
 
 	function TestSuiteManagerControl(settings) {
 
@@ -158,7 +158,7 @@ define(['jquery', 'jquery.squash.oneshotdialog',
 			});
 			var spanSuite = $("<span/>", {
 				'data-suite-id': data.id,
-				'text': unescape(data.name)
+				'text': StringUtil.unescape(data.name)
 			});
 
 			newSuite.append(spanSuite);
@@ -194,11 +194,6 @@ define(['jquery', 'jquery.squash.oneshotdialog',
 			}
 		};
 
-		const unescape = function (unsafeHtml) {
-			var txt = document.createElement("textarea");
-			txt.innerHTML = unsafeHtml;
-			return txt.value;
-		};
 		/* ********* public *********** */
 
 		this.getSelectedIds = function () {

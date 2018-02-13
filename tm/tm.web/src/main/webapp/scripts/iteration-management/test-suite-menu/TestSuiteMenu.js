@@ -19,7 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(["jquery", "underscore", "app/ws/squashtm.notification", "squash.translator", "workspace.event-bus",
-	"jquery.squash.messagedialog", "jqueryui"], function ($, _, notification, translator, eventBus) {
+		"app/util/StringUtil", "jquery.squash.messagedialog", "jqueryui"],
+	function ($, _, notification, translator, eventBus,StringUtil) {
 
 	function TestSuiteMenuNewStatuses() {
 
@@ -110,16 +111,10 @@ define(["jquery", "underscore", "app/ws/squashtm.notification", "squash.translat
 				'for': 'menu-suite-' + json.id,
 				'class': 'afterDisabled'
 			});
-			label.text(unescape(json.name));
+			label.text(StringUtil.unescape(json.name));
 			node.append(label);
 			return node;
 		}, this);
-
-		const unescape = function (unsafeHtml) {
-			var txt = document.createElement("textarea");
-			txt.innerHTML = unsafeHtml;
-			return txt.value;
-		};
 
 		var getItemDomText = function (elt) {
 			if (elt.firstElementChild !== undefined) {

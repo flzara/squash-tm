@@ -3,10 +3,10 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 		"custom-field-values", "squash.configmanager", "jeditable.simpleJEditable", "app/ws/squashtm.notification",
 		"workspace.routing", "squash.translator", "file-upload", "milestones/entity-milestone-count-notifier",
 		"app/squash.wreqr.init", "verifying-test-cases/VerifyingTestCasesPanel", "req-workspace/linked-requirements-panel", "req-workspace/requirement-coverage-stat-view",
-		"bugtracker/bugtracker-panel", "underscore", "jquery.squash.confirmdialog", "jquery.squash.formdialog"],
+		"bugtracker/bugtracker-panel", "app/util/StringUtil", "jquery.squash.confirmdialog", "jquery.squash.formdialog"],
 	function (module, $, pubsub, basicwidg, WS, contentHandlers, eventBus, Frag,
 						cufvalues, confman, SimpleJEditable, notification, routing, translator, upload, milestoneNotifier,
-						squash, VerifyingTestCasesPanel, LinkedRequirementsPanel, CoveverageStatView, bugtrackerPanel, _) {
+						squash, VerifyingTestCasesPanel, LinkedRequirementsPanel, CoveverageStatView, bugtrackerPanel, StringUtil) {
 
 		// event subscription
 		pubsub.subscribe('reload.requirement.toolbar', initToolbar);
@@ -71,7 +71,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 
 		function unescapeData(data) {
 			for (var property in data) {
-				data[property] = _.unescape(data[property]);
+				data[property] = StringUtil.unescape(data[property]);
 			}
 			return data;
 		}

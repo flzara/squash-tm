@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(['module', "jquery", "handlebars", "squash.translator", "squash.basicwidgets", "jeditable.selectJEditable",
-	"squash.configmanager", "workspace.routing", "underscore", "jquery.squash.formdialog", "jeditable.datepicker",
-	"squashtable", "jquery.squash.confirmdialog"], function (module, $, Handlebars, translator, basic, SelectJEditable, confman, routing, _) {
+	"squash.configmanager", "workspace.routing", "app/util/StringUtil", "jquery.squash.formdialog", "jeditable.datepicker",
+	"squashtable", "jquery.squash.confirmdialog"], function (module, $, Handlebars, translator, basic, SelectJEditable, confman, routing, StringUtil) {
 
 	var config = module.config();
 
@@ -686,7 +686,7 @@ define(['module', "jquery", "handlebars", "squash.translator", "squash.basicwidg
 		var projectLinkTpl = Handlebars.compile("<a href='" + $table.data("projectUrl") + "'>{{name}}</a>");
 		var projectLinkRenderer = function (data, type, row) {
 			if (type === "display" && row.link === true) {
-				return projectLinkTpl({name: _.unescape(data), "entity-id": row["entity-id"]});
+				return projectLinkTpl({name: StringUtil.unescape(data), "entity-id": row["entity-id"]});
 			}
 			return data;
 		};
