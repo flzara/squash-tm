@@ -304,11 +304,11 @@
           <br/>
           <input id="copyOptionalExecStatuses" name="copyOptionalExecStatuses" type="checkbox" data-prop="copyOptionalExecStatuses"/>
           <label class=" afterDisabled" for="copyOptionalExecStatuses"><f:message key="label.copyOptionalExecStatuses" /></label>
-          </td>
           <br/>
           <input id="copyPlugins" name="copyPlugins" type="checkbox" data-prop="copyPlugins"/>
           <label class=" afterDisabled" for="copyPlugins"><f:message key="label.copyPlugins" /></label>
-      </td>
+          <br/>
+        </td>
       </table>
 
     <div class="popup-dialog-buttonpane">
