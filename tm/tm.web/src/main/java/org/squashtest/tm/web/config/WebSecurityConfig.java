@@ -100,6 +100,8 @@ public class WebSecurityConfig {
 		protected void configure(HttpSecurity http) throws Exception {
 			// @formatter:off
 			http
+				//NO CSRF for these URL. They must be used by Jenkins to post execution results in Squash TM.
+				.csrf().disable()
 				.antMatcher("/automated-executions/**")
 					.authorizeRequests()
 						.anyRequest().access("hasRole('ROLE_TA_API_CLIENT')")
@@ -180,7 +182,6 @@ public class WebSecurityConfig {
 		protected void configure(HttpSecurity http) throws Exception {
 			// @formatter:off
 			http
-				// When CSRF is on, a CSRF token is to be included in any POST/PUT/DELETE/PATCH request. This would require massive changes, so it's deactivated for now.
 				.headers()
 				.defaultsDisabled()
 				// w/o cache control, some browser's cache policy is too aggressive
