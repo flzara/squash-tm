@@ -70,6 +70,7 @@ class NumericCustomFieldValueTest extends Specification{
 		"-8996"			| _
 		"0"				| _
 		"-0"			| _
+		"1,2345E3"		| _
 	}
 
 	@Unroll
@@ -93,5 +94,16 @@ class NumericCustomFieldValueTest extends Specification{
 		"-8996"			| "-8996"
 		"0"				| "0"
 		"-0"			| "0"
+	}
+
+	def "should store the value using the plain notation instead of the scientific one"(){
+
+		when :
+		def num = new NumericCustomFieldValue()
+		num.setValue("1,23456E4")
+
+		then :
+		num.value == "12345.6"
+
 	}
 }
