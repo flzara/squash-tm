@@ -50,6 +50,9 @@
 <f:message var="differentConfirmation" key="user.account.newpass.differ.error"/>
 <f:message var="okLabel" key="label.Confirm"/>
 
+<f:message var="yesLabel" key="label.Yes"/>
+<f:message var="noLabel" key="label.No"/>
+
 
 <layout:info-page-layout titleKey="workspace.user.title" isSubPaged="true" main="user-manager" >
   <jsp:attribute  name="head">
@@ -90,9 +93,7 @@
             settings : {
                 language : {
                   yes : "${yesLabel}",
-                  no : "${noLabel}",
-                  login : "${loginLabel}",
-                  dates : "${datesLabel}"
+                  no : "${noLabel}"
                 }
               }
             }

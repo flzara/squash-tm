@@ -18,18 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "./ConnectionsTable", "jqueryui", "squashtable"], function($, Backbone, ConnectionsTable) {
+define([ "jquery", "backbone", "./ConnectionsTable", "./export-history-popup", "jqueryui", "squashtable", "jquery.squash.formdialog"], function($, Backbone, ConnectionsTable, popup) {
   var language = window.squashtm.app.connectionsManager.settings.language;
 	var View = Backbone.View.extend({
 		el : "#connection-table-pane",
 
 		initialize : function() {
+		  popup.init();
 			this.connectionsTable = new ConnectionsTable();
 		},
 
 		events : {
 		  "change .filter_input" : "applyDateFilter",
-		  "keyup #login_filter_input" : "applyLoginFilter"
+		  "keyup #login_filter_input" : "applyLoginFilter",
+		  "click #export-history-button" : "openExportDialog"
 		},
 
 		applyDateFilter : function(event) {
@@ -40,11 +42,15 @@ define([ "jquery", "backbone", "./ConnectionsTable", "jqueryui", "squashtable"],
 		},
 
 		applyLoginFilter : function(event) {
-    		  var loginData = $("#login_filter_input").val();
-    		  var table = this.connectionsTable.$el.squashTable();
-    		  table.fnSettings().aoPreSearchCols[2].sSearch = loginData;
-          table.fnDraw(true);
-    		}
+      var loginData = $("#login_filter_input").val();
+    	var table = this.connectionsTable.$el.squashTable();
+    	table.fnSettings().aoPreSearchCols[2].sSearch = loginData;
+      table.fnDraw(true);
+    },
+
+    openExportDialog : function(event) {
+      $("#export-connection-history-dialog").exportDialog("open");
+    }
 	});
 	return View;
 });

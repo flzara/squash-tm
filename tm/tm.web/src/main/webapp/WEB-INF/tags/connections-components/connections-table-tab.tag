@@ -27,8 +27,8 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <div id="connection-table-pane" class="table-tab" >
   <div class="btn-toolbar right" style="z-index:1;">
-    <button id="add-user-button" class="sq-icon-btn btn-sm"
-      title="<f:message key="title.export.connectionHistory" />" >
+    <button id="export-history-button" class="sq-icon-btn btn-sm"
+      title="<f:message key='title.export.connectionHistory' />" >
       <span class="ui-button-text">&nbsp;<f:message key="label.Export" />&nbsp;</span>
     </button>
   </div>
@@ -73,4 +73,36 @@
       </tbody>
     </table>
   </div>
-</div><%-- /div#team-table-pane --%>
+</div><%-- /div#connection-table-pane --%>
+
+<!--  ================= EXPORT HISTORY POPUP =======================  -->
+
+    <div id="export-connection-history-dialog" class="popup-dialog not-displayed"
+      data-def="nameprefix=<f:message key='label.lower.dash.exportConnectionHistory' />, dateformat=<f:message key='export.dateformat' />" title="<f:message key='title.export.connectionHistory' />">
+
+      <div data-def="state=main">
+
+        <div class="display-table" style="width: 100%">
+          <div style="display: table-column-group">
+            <div style="display: table-column"></div>
+            <div style="display: table-column; width: 70%"></div>
+          </div>
+          <div class="display-table-row">
+            <label><f:message key="requirement.export.dialog.filename"/> </label>
+            <div class="display-table-cell">
+              <input type="text" id="export-name-input" style="width: 100%" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="popup-dialog-buttonpane">
+        <input type="button" value="<f:message key='label.Export' />" data-def="evt=confirm, mainbtn=main, state=main" />
+        <input type="button" value="<f:message key='label.Close' />"
+          data-def="evt=cancel, mainbtn=crossproerror, mainbtn=nonodeserror, state=main" />
+      </div>
+
+    </div>
+
+
+<!--  ================= /EXPORT HISTORY POPUP ======================= -->
