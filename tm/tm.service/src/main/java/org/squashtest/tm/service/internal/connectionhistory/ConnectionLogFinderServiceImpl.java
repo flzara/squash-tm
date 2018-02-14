@@ -18,14 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.user;
+package org.squashtest.tm.service.internal.connectionhistory;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.core.foundation.collection.*;
 import org.squashtest.tm.domain.users.ConnectionLog;
 import org.squashtest.tm.service.internal.repository.ConnectionLogDao;
-import org.squashtest.tm.service.user.ConnectionLogFinderService;
+import org.squashtest.tm.service.connectionhistory.ConnectionLogFinderService;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;

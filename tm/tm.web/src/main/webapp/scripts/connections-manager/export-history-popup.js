@@ -54,13 +54,13 @@ define(['jquery',
 
 		//REQUIREMENT EXPORT URL
 		_createUrl : function(name, loginFilter, dateFilter){
+		  var table = $("#connections-table").squashTable();
+		  //Drawing to be sure that oAjaxData exist (not the case if no filtering or sorting before export)
+		  table.fnDraw();
 			var url = squashtm.app.contextRoot + '/administration/connections/exports';
 
-			var params = {
-				'filename' : name,
-				'login-filter' : loginFilter,
-				'date-filter' : dateFilter
-			};
+			var params = table.fnSettings().oAjaxData;
+			params["filename"] = name;
 
 			return url+"?"+$.param(params);
 

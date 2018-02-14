@@ -22,16 +22,19 @@ package org.squashtest.tm.web.internal.controller.administration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
-import org.squashtest.tm.core.foundation.collection.Filtering;
+import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.users.ConnectionLog;
-import org.squashtest.tm.service.user.ConnectionLogFinderService;
+import org.squashtest.tm.service.connectionhistory.ConnectionLogExportService;
+import org.squashtest.tm.service.connectionhistory.ConnectionLogFinderService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.*;
@@ -39,6 +42,8 @@ import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -51,11 +56,15 @@ import java.util.Map;
 @RequestMapping("/administration/connections")
 public class ConnectionController {
 
+	private static final String FILENAME = "filename";
+
 	@Inject
 	protected InternationalizationHelper messageSource;
 
 	@Inject
-	private ConnectionLogFinderService service;
+	private ConnectionLogFinderService connectionLogFinderServiceservice;
+	@Inject
+	private ConnectionLogExportService connectionLogExportService;
 
 	private DatatableMapper<String> connectionsMapper = new NameBasedMapper(9)
 		.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, "id", ConnectionLog.class)
@@ -79,9 +88,31 @@ public class ConnectionController {
 		PagingAndSorting paging = new DataTableSorting(params, connectionsMapper);
 		ColumnFiltering columnFiltering = new DataTableColumnFiltering(params);
 
-		PagedCollectionHolder<List<ConnectionLog>> holder = service.findAllFiltered(paging, columnFiltering);
+		PagedCollectionHolder<List<ConnectionLog>> holder = connectionLogFinderServiceservice.findAllFiltered(paging, columnFiltering);
 
 		return new ConnectionLogsDataTableModelHelper(locale, messageSource).buildDataModel(holder, params.getsEcho());
+	}
+
+	/**
+	 * Return a csv file with chosen connection logs.
+	 * @param filename the desired name for csv file
+	 * @param params the {@link DataTableDrawParameters} for the connection logs table
+	 * @param response the html response to be send
+	 * @return the csv file with filtered {@link ConnectionLog} infos.
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/exports", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
+	public FileSystemResource exportConnectionHistoryExcel(@RequestParam(FILENAME) String filename,
+													 final DataTableDrawParameters params, HttpServletResponse response) {
+
+		ColumnFiltering columnFiltering = new DataTableColumnFiltering(params);
+
+		response.setContentType("application/octet-stream");
+		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".csv");
+
+		File export = connectionLogExportService.exportConnectionLogsToCsv(columnFiltering);
+
+		return new FileSystemResource(export);
 	}
 
 

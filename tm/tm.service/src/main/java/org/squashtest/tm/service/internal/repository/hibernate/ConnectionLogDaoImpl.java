@@ -24,6 +24,7 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
+import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
@@ -99,6 +100,13 @@ public class ConnectionLogDaoImpl implements CustomConnectionLogDao {
 
 		return hQuery.getResultList();
 
+	}
+
+	@Override
+	public List<ConnectionLog> findFilteredConnections(ColumnFiltering columnFiltering) {
+		DefaultPagingAndSorting sorting = new DefaultPagingAndSorting();
+		sorting.setShouldDisplayAll(true);
+		return findSortedConnections(sorting, columnFiltering);
 	}
 
 	private void setQueryStartAndEndDateParameters(String dates, Query query){

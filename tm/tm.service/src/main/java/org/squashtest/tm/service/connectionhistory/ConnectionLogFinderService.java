@@ -18,19 +18,18 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.service.connectionhistory;
 
-import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
-import org.squashtest.tm.core.foundation.collection.Filtering;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.users.ConnectionLog;
 
 import java.util.List;
 
 /**
+ * {@link ConnectionLog} retrieval methods
  * @author aguilhem
  */
-public interface CustomConnectionLogDao {
-	List<ConnectionLog> findSortedConnections(PagingAndSorting paging, ColumnFiltering columnFiltering);
-	List<ConnectionLog> findFilteredConnections(ColumnFiltering columnFiltering);
+@Transactional(readOnly = true)
+public interface ConnectionLogFinderService extends CustomConnectionLogFinderService {
+	List<ConnectionLog> findAll();
 }

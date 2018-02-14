@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.user;
+package org.squashtest.tm.service.connectionhistory;
 
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.Filtering;

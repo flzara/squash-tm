@@ -53,7 +53,7 @@ import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
 import org.squashtest.tm.service.user.AdministrationService;
-import org.squashtest.tm.service.user.ConnectionLogFinderService;
+import org.squashtest.tm.service.connectionhistory.ConnectionLogFinderService;
 import org.squashtest.tm.service.user.TeamFinderService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.project.ProjectModel;
