@@ -49,6 +49,7 @@ import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.Pagings;
+import org.squashtest.tm.domain.NamedReference;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.AdministrableProject;
@@ -58,6 +59,7 @@ import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.project.GenericProjectFinder;
+import org.squashtest.tm.service.project.ProjectTemplateFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectFinderService;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
@@ -83,6 +85,8 @@ public class ProjectAdministrationController {
 	private PermissionEvaluationService permissionEvaluationService;
 	@Inject
 	private GenericProjectFinder projectFinder;
+	@Inject
+	private ProjectTemplateFinder templateFinder;
 	@Inject
 	private BugTrackerFinderService bugtrackerFinderService;
 	@Inject
@@ -145,11 +149,15 @@ public class ProjectAdministrationController {
 		allowedStatuses.put(ExecutionStatus.SETTLED.toString(), cl.allowsStatus(ExecutionStatus.SETTLED));
 		allowedStatuses.put(ExecutionStatus.UNTESTABLE.toString(), cl.allowsStatus(ExecutionStatus.UNTESTABLE));
 
+		// list of templates
+		List<NamedReference> templatesList = templateFinder.findAllReferences();
+
 		// populating model
 		ModelAndView mav = new ModelAndView("page/projects/project-info");
 		mav.addObject("isAdmin", permissionEvaluationService.hasRole("ROLE_ADMIN"));
 		mav.addObject("jobUrls", jobUrls);
 		mav.addObject("adminproject", adminProject);
+		mav.addObject("templatesList", templatesList);
 		mav.addObject("availableTAServers", availableTAServers);
 		mav.addObject("bugtrackersList", JsonHelper.serialize(comboDataMap));
 		mav.addObject("bugtrackersListEmpty", comboDataMap.size() == 1);

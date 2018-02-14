@@ -699,7 +699,7 @@
 	@NamedQuery(name = "CustomFieldBinding.findAllAlike", query = "select cfb2 from CustomFieldBinding cfb1, CustomFieldBinding cfb2 where cfb1.id = ?1 and cfb1.boundProject = cfb2.boundProject and cfb1.boundEntity = cfb2.boundEntity order by cfb2.position"),
 	@NamedQuery(name = "CustomFieldBinding.findEffectiveBindingsForEntity", query = "select cfb from CustomFieldValue cfv inner join cfv.binding cfb where cfv.boundEntityId = :entityId and cfv.boundEntityType = :entityType "),
 	@NamedQuery(name = "CustomFieldBinding.findEffectiveBindingsForEntities", query = "select cfv.boundEntityId, cfb from CustomFieldValue cfv inner join cfv.binding cfb where cfv.boundEntityId in (:entityIds) and cfv.boundEntityType = :entityType "),
-
+	@NamedQuery(name = "CustomFieldBinding.cufBindingAlreadyExists", query = "select count(*) from CustomFieldBinding cfb where cfb.customField.id = :cufId and cfb.boundEntity = :boundEntity and cfb.boundProject.id = :projectId"),
 
 
 	//CustomFieldValue

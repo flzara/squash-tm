@@ -177,13 +177,12 @@ public class GenericProjectController {
 		return new RenameModel(HtmlUtils.htmlEscape(newName));
 	}
 
-	/*@RequestMapping(value = PROJECT_ID_URL + "/associate-template", method = RequestMethod.POST)
+	@RequestMapping(value = PROJECT_ID_URL + "/associate-template", method = RequestMethod.POST)
 	@ResponseBody
-	public void associateTemplate(@PathVariable long projectId, @RequestParam String templateId) {
-		Long tempID = Long.parseLong(templateId);
-		projectManager.associateTemplate(projectId, tempID);
+	public void associateTemplate(@PathVariable long projectId, @RequestParam long templateId) {
+		projectManager.associateToTemplate(projectId, templateId);
 		LOGGER.info("Project modification : associating {} with template {}", projectId, templateId);
-	}*/
+	}
 
 	@RequestMapping(value = PROJECT_ID_URL + "/disassociate-template", method = RequestMethod.DELETE)
 	@ResponseBody

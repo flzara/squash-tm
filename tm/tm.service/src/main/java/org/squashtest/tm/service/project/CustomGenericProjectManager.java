@@ -20,11 +20,6 @@
  */
 package org.squashtest.tm.service.project;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.collection.Filtering;
@@ -33,9 +28,16 @@ import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.project.ProjectTemplate;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Gregory Fouquet
@@ -229,5 +231,14 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	GenericProject synchronizeGenericProject(GenericProject target,
 			GenericProject source, GenericProjectCopyParameter params);
 
+	/**
+	 * Copy the CustomFields, InfoLists, OptionalExecStatuses, ExecParams from Template to the Project. */
+	GenericProject synchronizeProjectFromTemplate(Project target, ProjectTemplate source);
+
 	void disassociateFromTemplate(long projectId);
+
+	/**
+	 * Associates the given {@link Project} with the given {@link ProjectTemplate}.
+	 * This action implies copying CustomFields, InfoLists, ExeParams and ExecStatuses from the Template. */
+	void associateToTemplate(long projectId, long templateId);
 }

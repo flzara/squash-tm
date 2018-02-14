@@ -83,6 +83,16 @@ public class CustomFieldBindingDaoImpl extends HibernateEntityDao<CustomFieldBin
 		return q.getResultList();
 	}
 
+	@Override
+	public boolean cufBindingAlreadyExists(long projectId, BindableEntity entity, long cufId) {
+		Query q = entityManager.createNamedQuery("CustomFieldBinding.cufBindingAlreadyExists");
+		q.setParameter("cufId", cufId);
+		q.setParameter("boundEntity", entity);
+		q.setParameter("projectId", projectId);
+		Long numberOfLines = (Long) q.getSingleResult();
+		return numberOfLines > 0;
+	}
+
 
 	@Override
 	public void removeCustomFieldBindings(List<Long> bindingIds) {

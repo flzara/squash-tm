@@ -44,6 +44,7 @@
 <f:message var="closeLabel"          key="label.Close" />
 <f:message var="renameLabel"      key="label.Rename" />
 <f:message var="associateTemplateLabel" key="label.AssociateTemplate"/>
+<f:message var="associateDialogTitle" key="dialog.associate-template.title" />
 <f:message var="disassociateTemplateLabel" key="label.DisassociateTemplate"/>
 <f:message var="disassociateDialogTitle" key="dialog.disassociate-template.title" />
 
@@ -534,10 +535,47 @@
 </sec:authorize>
 
 <!-- ------------------------------------END RENAME POPUP------------------------------------------------------- -->
+<!-- --------------------------------------------- ASSOCIATE POPUP --------------------------------------------- -->
+<sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_TM_PROJECT_TEMPLATE_MANAGER') or hasRole('ROLE_ADMIN')">
+
+  <div id="associate-template-dialog" class="popup-dialog not-displayed" title="${associateDialogTitle}">
+    <div>
+      <div class="display-table-row">
+        <div class="display-table-cell warning-cell">
+          <div class="generic-error-signal"></div>
+        </div>
+        <div class="display-table-cell">
+            <f:message key="dialog.associate-template.text1" />
+        </div>
+      </div>
+      <br/><br/>
+      <f:message key="dialog.associate-template.text2"/>
+      <br/><br/>
+      <c:forEach items="${templatesList}" var="template" varStatus="varStatus">
+      <input type="radio" id="${template.id}" value="${template.id}" name="associate-template-input"
+        ${varStatus.first ? 'checked="checked"' : ''} />
+      <label for="${template.id}">${template.name}</label>
+      <br/>
+      </c:forEach>
+
+      <!-- Error message if no selection -->
+      <div data-def="state=noselect">
+        <span class='red-warning-message'><f:message key="error.associate.noTemplateSelected"/></span>
+      </div>
+    </div>
+
+    <div class="popup-dialog-buttonpane">
+      <input type="button" value="${confirmLabel}" data-def="evt=confirm, mainbtn" />
+      <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
+    </div>
+  </div>
+
+</sec:authorize>
+
 <!-- ------------------------------------------- DISASSOCIATE POPUP -------------------------------------------- -->
 <sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
 
-  <div id="disassociate-project-dialog" class="popup-dialog not-displayed" title="${disassociateDialogTitle}">
+  <div id="disassociate-template-dialog" class="popup-dialog not-displayed" title="${disassociateDialogTitle}">
     <div class="dissociate-project-dialog-content">
     	<f:message key="dialog.disassociate-template.message" />
     </div>
@@ -835,10 +873,37 @@ require(["common"], function() {
 			renameDialog.formDialog('open');
 		});
 
-    // Disassociate Popup
-    var disassociateDialog = $('#disassociate-project-dialog');
-    //var templateNameField = $('#project-template');
+    // Associate Popup
+    var associateDialog = $('#associate-template-dialog');
+    associateDialog.formDialog();
 
+    associateDialog.on('formdialogconfirm', function() {
+      var templateId = $('input[name=associate-template-input]:checked').val();
+      if(templateId == undefined) {
+        associateDialog.formDialog('setState', 'noselect');
+      } else {
+        $.ajax({
+          type: 'POST',
+          url: '${projectUrl}/associate-template',
+          data: {templateId: templateId}
+        }).success(function() {
+          associateDialog.formDialog('close');
+          location.reload();
+        });
+      }
+    });
+
+    associateDialog.on('formdialogcancel', function() {
+      associateDialog.formDialog('close');
+    });
+
+    $('#associate-template-btn').on('click', function() {
+      associateDialog.formDialog('setState', 'default');
+      associateDialog.formDialog('open');
+    });
+
+    // Disassociate Popup
+    var disassociateDialog = $('#disassociate-template-dialog');
     disassociateDialog.formDialog();
 
     disassociateDialog.on('formdialogconfirm', function() {

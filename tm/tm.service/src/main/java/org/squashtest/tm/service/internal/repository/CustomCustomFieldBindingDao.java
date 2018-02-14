@@ -32,4 +32,5 @@ public interface CustomCustomFieldBindingDao {
 
 	List<CustomFieldBinding> findAllForProjectAndEntity(long projectId, BindableEntity boundEntity, Paging paging);
 
+	boolean cufBindingAlreadyExists(long projectId, BindableEntity entity, long customFieldId);
 }

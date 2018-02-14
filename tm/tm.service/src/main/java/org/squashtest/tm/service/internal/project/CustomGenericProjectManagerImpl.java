@@ -91,12 +91,7 @@ import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.service.infolist.InfoListFinderService;
-import org.squashtest.tm.service.internal.repository.BugTrackerBindingDao;
-import org.squashtest.tm.service.internal.repository.BugTrackerDao;
-import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao;
-import org.squashtest.tm.service.internal.repository.ExecutionDao;
-import org.squashtest.tm.service.internal.repository.GenericProjectDao;
-import org.squashtest.tm.service.internal.repository.PartyDao;
+import org.squashtest.tm.service.internal.repository.*;
 import org.squashtest.tm.service.milestone.MilestoneBindingManagerService;
 import org.squashtest.tm.service.project.CustomGenericProjectFinder;
 import org.squashtest.tm.service.project.CustomGenericProjectManager;
@@ -113,7 +108,10 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	@Inject
 	private GenericProjectDao genericProjectDao;
-
+	@Inject
+	private ProjectDao projectDao;
+	@Inject
+	private ProjectTemplateDao templateDao;
 	@Inject
 	private BugTrackerBindingDao bugTrackerBindingDao;
 	@Inject
@@ -270,6 +268,15 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public void deleteProject(long projectId) {
 		projectDeletionHandler.deleteProject(projectId);
+	}
+
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public void associateToTemplate(long projectId, long templateId) {
+		Project project = projectDao.findOne(projectId);
+		ProjectTemplate template = templateDao.findOne(templateId);
+		project.setTemplate(template);
+		synchronizeProjectFromTemplate(project, template);
 	}
 
 	@Override
@@ -960,6 +967,15 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		return target;
 	}
 
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	@Override
+	public GenericProject synchronizeProjectFromTemplate(Project target, ProjectTemplate source) {
+		copyCustomFieldsSettings(target, source);
+		copyInfolists(target, source);
+		target.setAllowTcModifDuringExec(source.allowTcModifDuringExec());
+		copyExecutionStatuses(target, source);
+		return target;
+	}
 
 	@Override
 	public void changeBugTrackerProjectName(long projectId, List<String> projectBugTrackerNames) {
