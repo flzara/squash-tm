@@ -20,14 +20,27 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.beans;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
 public class Job {
 
-	private String fullName = "undefined";
-	private String color = "undefined";
+	public static final String UNDEFINED = "undefined";
+
+	private String name = UNDEFINED;
+	private String fullName = UNDEFINED;
+	private String color = UNDEFINED;
 	private Collection<Job> jobs = new ArrayList<>();
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	public String getFullName() {
 		return fullName;
@@ -53,5 +66,8 @@ public class Job {
 		this.jobs = jobs;
 	}
 
+	public boolean hasFullName() {
+		return !StringUtils.isBlank(this.fullName) && !this.fullName.equals(UNDEFINED);
 
+	}
 }

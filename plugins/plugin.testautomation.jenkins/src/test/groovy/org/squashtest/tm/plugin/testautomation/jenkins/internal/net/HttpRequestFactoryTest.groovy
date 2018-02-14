@@ -43,7 +43,7 @@ class HttpRequestFactoryTest extends Specification {
 		def method = factory.newGetJobsMethod(server)
 
 		then :
-		method.getURI().toString() == """http://ci.jruby.org/server/api/json?tree=jobs%5BfullName%2Ccolor%2Cjobs%5BfullName%2Ccolor%2Cjobs%5BfullName%2Ccolor%2Cjobs%5BfullName%2Ccolor%2Cjobs%5BfullName%2Ccolor%2Cjobs%5BfullName%2Ccolor%2Cjobs%5BfullName%2Ccolor%2Cjobs%5BfullName%2Ccolor%2Cjobs%5BfullName%2Ccolor%2Cjobs%5BfullName%2Ccolor%2Cjobs%5BfullName%2Ccolor%5D%5D%5D%5D%5D%5D%5D%5D%5D%5D%5D"""
+		method.getURI().toString() == """http://ci.jruby.org/server/api/json?tree=jobs%5BfullName%2Ccolor%2Cname%2Cjobs%5BfullName%2Ccolor%2Cjobs%5BfullName%2Ccolor%2Cjobs%5BfullName%2Ccolor%2Cjobs%5BfullName%2Ccolor%2Cjobs%5BfullName%2Ccolor%2Cjobs%5BfullName%2Ccolor%2Cjobs%5BfullName%2Ccolor%2Cjobs%5BfullName%2Ccolor%2Cjobs%5BfullName%2Ccolor%2Cjobs%5BfullName%2Ccolor%5D%5D%5D%5D%5D%5D%5D%5D%5D%5D%5D"""
 	}
 
 	def "should create the result path for tests being at the root of the project"(){
@@ -76,7 +76,7 @@ class HttpRequestFactoryTest extends Specification {
 		then:
 		//ugly tree path in jenkins to say go to the 10th sub level
 		//could not use depth=10 because it fetch so much data that jenkins says out of memory in heap space. And so much data will take forever to pass in network...
-		path == "jobs[fullName,color,jobs[fullName,color,jobs[fullName,color,jobs[fullName,color,jobs[fullName,color,jobs[fullName,color,jobs[fullName,color,jobs[fullName,color,jobs[fullName,color,jobs[fullName,color,jobs[fullName,color]]]]]]]]]]]"
+		path == "jobs[fullName,color,name,jobs[fullName,color,jobs[fullName,color,jobs[fullName,color,jobs[fullName,color,jobs[fullName,color,jobs[fullName,color,jobs[fullName,color,jobs[fullName,color,jobs[fullName,color,jobs[fullName,color]]]]]]]]]]]"
 	}
 }
 

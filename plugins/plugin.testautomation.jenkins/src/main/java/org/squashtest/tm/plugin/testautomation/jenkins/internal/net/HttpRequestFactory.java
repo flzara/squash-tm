@@ -65,6 +65,7 @@ public class HttpRequestFactory {
 	public static final String MULTIPART_JENKINSARGS = "json";
 
 	public static final String JOB_PARAM = "jobs[fullName,color]";
+	public static final String JOB_PARAM_WITH_NAME = "jobs[fullName,color,name]";
 
 	private static final NameValuePair[] JOB_LIST_QUERY = new NameValuePair[]{
 		new BasicNameValuePair(TREE, buildFolderPathQueryParameter())
@@ -276,9 +277,9 @@ public class HttpRequestFactory {
 	}
 
 	private static String buildFolderPathQueryParameter() {
-		StringBuilder sb = new StringBuilder(JOB_PARAM);
-		int depht = 10;
-		for (int i = 0; i < depht; i++) {
+		StringBuilder sb = new StringBuilder(JOB_PARAM_WITH_NAME);
+		int depth = 10;
+		for (int i = 0; i < depth; i++) {
 			int insertIndex = sb.indexOf("]");
 			sb.insert(insertIndex, "," + JOB_PARAM);
 		}

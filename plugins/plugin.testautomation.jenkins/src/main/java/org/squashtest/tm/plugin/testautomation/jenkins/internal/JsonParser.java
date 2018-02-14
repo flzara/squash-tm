@@ -25,6 +25,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,12 +47,12 @@ public class JsonParser {
 
 	private ObjectMapper objMapper = new ObjectMapper();
 
-        public JsonParser(){
-            super();
-            objMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        }
+	public JsonParser() {
+		super();
+		objMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+	}
 
-	public Collection<TestAutomationProject> readJobListFromJson(String json){
+	public Collection<TestAutomationProject> readJobListFromJson(String json) {
 
 		try {
 
@@ -62,45 +63,42 @@ public class JsonParser {
 
 			return toProjectList(filteredList);
 
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new UnreadableResponseException(e);
 		}
 
 	}
 
 
-	public ItemList getQueuedListFromJson(String json){
+	public ItemList getQueuedListFromJson(String json) {
 		return safeReadValue(json, ItemList.class);
 	}
 
-	public BuildList getBuildListFromJson(String json){
+	public BuildList getBuildListFromJson(String json) {
 		return safeReadValue(json, BuildList.class);
 	}
 
-	public TestListElement getTestListFromJson(String json){
+	public TestListElement getTestListFromJson(String json) {
 		return safeReadValue(json, TestListElement.class);
 	}
 
-	public Build getBuildFromJson(String json){
+	public Build getBuildFromJson(String json) {
 		return safeReadValue(json, Build.class);
 	}
 
-	public String toJson(Object object){
+	public String toJson(Object object) {
 		try {
 			return objMapper.writeValueAsString(object);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new TestAutomationException("TestAutomationConnector : internal error, could not generate json", e);
 		}
 	}
 
-	protected <R> R safeReadValue(String json, Class<R> clazz){
+	protected <R> R safeReadValue(String json, Class<R> clazz) {
 
 		try {
 			return objMapper.readValue(json, clazz);
-		}
-		catch (JsonParseException | JsonMappingException e) {
+		} catch (JsonParseException | JsonMappingException e) {
 			throw new UnreadableResponseException("TestAutomationConnector : the response from the server couldn't be treated", e);
 		} catch (IOException e) {
 			throw new UnreadableResponseException("TestAutomationConnector : internal error :", e);
@@ -109,10 +107,10 @@ public class JsonParser {
 	}
 
 
-	protected JobList filterDisabledJobs(JobList fullList){
+	protected JobList filterDisabledJobs(JobList fullList) {
 		JobList newJobList = new JobList();
-		for (Job job : fullList.getJobs()){
-			if (! job.getColor().equals(DISABLED_COLOR_STRING)){
+		for (Job job : fullList.getJobs()) {
+			if (!job.getColor().equals(DISABLED_COLOR_STRING)) {
 				newJobList.getJobs().add(job);
 			}
 		}
@@ -120,12 +118,13 @@ public class JsonParser {
 	}
 
 
-	protected Collection<TestAutomationProject> toProjectList(JobList jobList){
+	protected Collection<TestAutomationProject> toProjectList(JobList jobList) {
 
 		Collection<TestAutomationProject> projects = new ArrayList<>();
 
-		for (Job job : jobList.getJobs()){
-			projects.add(new TestAutomationProject(job.getFullName()));
+		for (Job job : jobList.getJobs()) {
+			String name = job.hasFullName() ? job.getFullName() : job.getName();
+			projects.add(new TestAutomationProject(name));
 		}
 
 		return projects;
