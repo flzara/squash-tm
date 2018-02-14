@@ -21,7 +21,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="execution-progression" pageWidth="776" pageHeight="595" orientation="Landscape" columnWidth="736" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="/WEB-INF/messages/tm/messages" whenResourceMissingType="Key" uuid="1266b777-3fbe-4cb1-82e8-d0103e9bd968">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="execution-progression" pageWidth="836" pageHeight="595" orientation="Landscape" columnWidth="736" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="/WEB-INF/messages/tm/messages" whenResourceMissingType="Key" uuid="1266b777-3fbe-4cb1-82e8-d0103e9bd968">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -390,23 +390,23 @@
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
 						</jr:column>
 					</jr:columnGroup>
-					<jr:columnGroup width="287" uuid="ee744272-dd47-442a-99a7-dcafe1668a52">
+					<jr:columnGroup width="357" uuid="ee744272-dd47-442a-99a7-dcafe1668a52">
 						<jr:columnHeader height="30" rowSpan="1">
 							<box>
 								<bottomPen lineWidth="1.0"/>
 							</box>
 							<textField>
-								<reportElement uuid="936433ec-1c36-48aa-8b26-96a2def0da8a" x="0" y="0" width="287" height="30"/>
+								<reportElement uuid="936433ec-1c36-48aa-8b26-96a2def0da8a" x="0" y="0" width="357" height="30"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="9" isBold="true"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$R{report.executionprogression.main.header.status.label}]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
-						<jr:column width="41" uuid="8ab50309-1635-462d-8af7-ad85369eab84">
+						<jr:column width="51" uuid="8ab50309-1635-462d-8af7-ad85369eab84">
 							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
 								<textField isStretchWithOverflow="true">
-									<reportElement uuid="b2bd0f69-b0d4-40eb-8390-7f26f833f6e9" stretchType="RelativeToTallestObject" x="0" y="0" width="41" height="20">
+									<reportElement uuid="b2bd0f69-b0d4-40eb-8390-7f26f833f6e9" stretchType="RelativeToTallestObject" x="0" y="0" width="51" height="20">
 										<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 									</reportElement>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -417,10 +417,10 @@
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
 						</jr:column>
-						<jr:column width="41" uuid="a2b8a56b-9906-4994-85df-9313281f8a48">
+						<jr:column width="51" uuid="a2b8a56b-9906-4994-85df-9313281f8a48">
 							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
 								<textField isStretchWithOverflow="true">
-									<reportElement uuid="ee3985e0-998c-4e02-8f20-64d4db6ec92b" stretchType="RelativeToTallestObject" x="0" y="0" width="41" height="20">
+									<reportElement uuid="ee3985e0-998c-4e02-8f20-64d4db6ec92b" stretchType="RelativeToTallestObject" x="0" y="0" width="51" height="20">
 										<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 									</reportElement>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -431,10 +431,10 @@
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
 						</jr:column>
-						<jr:column width="41" uuid="4acfe9f6-5a95-4974-a30e-d014a155f7b3">
+						<jr:column width="51" uuid="4acfe9f6-5a95-4974-a30e-d014a155f7b3">
 							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
 								<textField isStretchWithOverflow="true">
-									<reportElement uuid="29260a59-bd08-4e9b-af7d-294a6e4fac08" stretchType="RelativeToTallestObject" x="0" y="0" width="41" height="20">
+									<reportElement uuid="29260a59-bd08-4e9b-af7d-294a6e4fac08" stretchType="RelativeToTallestObject" x="0" y="0" width="51" height="20">
 										<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 									</reportElement>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -445,10 +445,10 @@
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
 						</jr:column>
-						<jr:column width="41" uuid="caec1157-860c-409a-a69e-a9f603abed35">
+						<jr:column width="51" uuid="caec1157-860c-409a-a69e-a9f603abed35">
 							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
 								<textField isStretchWithOverflow="true">
-									<reportElement uuid="8a317d13-2b41-4d6d-a2e8-e8ca0b0b4ebc" stretchType="RelativeToTallestObject" x="0" y="0" width="41" height="20">
+									<reportElement uuid="8a317d13-2b41-4d6d-a2e8-e8ca0b0b4ebc" stretchType="RelativeToTallestObject" x="0" y="0" width="51" height="20">
 										<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 									</reportElement>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -459,10 +459,10 @@
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
 						</jr:column>
-						<jr:column width="41" uuid="3d9d6568-8692-4b2f-8702-e82b04ebd830">
+						<jr:column width="51" uuid="3d9d6568-8692-4b2f-8702-e82b04ebd830">
 							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
 								<textField isStretchWithOverflow="true">
-									<reportElement uuid="f6133469-8a30-44ab-83a4-6de8720f9bdc" stretchType="RelativeToTallestObject" x="0" y="0" width="41" height="20" forecolor="#FF3333">
+									<reportElement uuid="f6133469-8a30-44ab-83a4-6de8720f9bdc" stretchType="RelativeToTallestObject" x="0" y="0" width="51" height="20" forecolor="#FF3333">
 										<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 									</reportElement>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -473,10 +473,10 @@
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
 						</jr:column>
-						<jr:column width="41" uuid="a442d3b0-5e84-4e0d-b7d5-8bf9bcc4a15e">
+						<jr:column width="51" uuid="a442d3b0-5e84-4e0d-b7d5-8bf9bcc4a15e">
 							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
 								<textField isStretchWithOverflow="true">
-									<reportElement uuid="470d0ef7-fb12-4d58-9068-8475e072c2c7" stretchType="RelativeToTallestObject" x="0" y="0" width="41" height="20" forecolor="#009900">
+									<reportElement uuid="470d0ef7-fb12-4d58-9068-8475e072c2c7" stretchType="RelativeToTallestObject" x="0" y="0" width="51" height="20" forecolor="#009900">
 										<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 									</reportElement>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -487,10 +487,10 @@
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
 						</jr:column>
-						<jr:column width="41" uuid="70073d9c-d6c7-445c-9a46-22043b73e55c">
+						<jr:column width="51" uuid="70073d9c-d6c7-445c-9a46-22043b73e55c">
 							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
 								<textField isStretchWithOverflow="true">
-									<reportElement uuid="0fceb7a0-328d-4ffc-812d-07c6bb4413c8" stretchType="RelativeToTallestObject" x="0" y="0" width="41" height="20" forecolor="#009900">
+									<reportElement uuid="0fceb7a0-328d-4ffc-812d-07c6bb4413c8" stretchType="RelativeToTallestObject" x="0" y="0" width="51" height="20" forecolor="#009900">
 										<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 									</reportElement>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -637,18 +637,18 @@
 							<jr:detailCell height="0" rowSpan="1"/>
 						</jr:column>
 					</jr:columnGroup>
-					<jr:columnGroup width="287" uuid="98f35878-0f42-47c3-abf4-966b431263dd">
-						<jr:column width="41" uuid="2675e806-0120-49ea-b439-c95325fb0c0d">
+					<jr:columnGroup width="357" uuid="98f35878-0f42-47c3-abf4-966b431263dd">
+						<jr:column width="51" uuid="2675e806-0120-49ea-b439-c95325fb0c0d">
 							<jr:columnHeader height="19" rowSpan="1">
 								<textField>
-									<reportElement uuid="81ca596b-aa69-482f-bdf7-916bebe8cd46" mode="Opaque" x="0" y="0" width="20" height="19" forecolor="#FFFFFF" backcolor="#77132E"/>
+									<reportElement uuid="81ca596b-aa69-482f-bdf7-916bebe8cd46" mode="Opaque" x="0" y="0" width="30" height="19" forecolor="#FFFFFF" backcolor="#77132E"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font size="9" isItalic="true"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$P{iCountStatusReady}]]></textFieldExpression>
 								</textField>
 								<textField pattern="#,##0 %">
-									<reportElement uuid="fd01f8da-a13b-405d-ab93-977afbce80cf" mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999" backcolor="#77132E"/>
+									<reportElement uuid="fd01f8da-a13b-405d-ab93-977afbce80cf" mode="Opaque" x="30" y="0" width="21" height="19" forecolor="#999999" backcolor="#77132E"/>
 									<textElement verticalAlignment="Middle">
 										<font size="7"/>
 									</textElement>
@@ -657,17 +657,17 @@
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
 						</jr:column>
-						<jr:column width="41" uuid="e0f50c99-f403-4abb-9c48-982054d85813">
+						<jr:column width="51" uuid="e0f50c99-f403-4abb-9c48-982054d85813">
 							<jr:columnHeader height="19" rowSpan="1">
 								<textField>
-									<reportElement uuid="b10a8c0c-52b6-4b6d-8601-062f02835fda" mode="Opaque" x="0" y="0" width="20" height="19" forecolor="#FFFFFF" backcolor="#77132E"/>
+									<reportElement uuid="b10a8c0c-52b6-4b6d-8601-062f02835fda" mode="Opaque" x="0" y="0" width="30" height="19" forecolor="#FFFFFF" backcolor="#77132E"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font size="9" isItalic="true"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$P{iCountStatusRunning}]]></textFieldExpression>
 								</textField>
 								<textField pattern="#,##0 %">
-									<reportElement uuid="404d8ab7-1ab2-423a-b8b0-1148e11f651d" mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999" backcolor="#77132E"/>
+									<reportElement uuid="404d8ab7-1ab2-423a-b8b0-1148e11f651d" mode="Opaque" x="30" y="0" width="21" height="19" forecolor="#999999" backcolor="#77132E"/>
 									<textElement verticalAlignment="Middle">
 										<font size="7"/>
 									</textElement>
@@ -676,17 +676,17 @@
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
 						</jr:column>
-						<jr:column width="41" uuid="8ee946f7-2b24-4317-8b35-8a065008cd2a">
+						<jr:column width="51" uuid="8ee946f7-2b24-4317-8b35-8a065008cd2a">
 							<jr:columnHeader height="19" rowSpan="1">
 								<textField>
-									<reportElement uuid="32545d99-dea9-4b17-9f03-bc782fa6c531" mode="Opaque" x="0" y="0" width="20" height="19" forecolor="#FFFFFF" backcolor="#77132E"/>
+									<reportElement uuid="32545d99-dea9-4b17-9f03-bc782fa6c531" mode="Opaque" x="0" y="0" width="30" height="19" forecolor="#FFFFFF" backcolor="#77132E"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font size="9" isItalic="true"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$P{allowsUntestable} ? $P{iCountStatusUntestable}.toString() : new String("")]]></textFieldExpression>
 								</textField>
 								<textField pattern="#,##0 %">
-									<reportElement uuid="ea37a943-747e-44fa-bddd-92f42b7bbddb" mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999" backcolor="#77132E"/>
+									<reportElement uuid="ea37a943-747e-44fa-bddd-92f42b7bbddb" mode="Opaque" x="30" y="0" width="21" height="19" forecolor="#999999" backcolor="#77132E"/>
 									<textElement verticalAlignment="Middle">
 										<font size="7"/>
 									</textElement>
@@ -695,17 +695,17 @@
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
 						</jr:column>
-						<jr:column width="41" uuid="29509219-7d73-4028-b48f-c4731b8e4d4f">
+						<jr:column width="51" uuid="29509219-7d73-4028-b48f-c4731b8e4d4f">
 							<jr:columnHeader height="19" rowSpan="1">
 								<textField>
-									<reportElement uuid="38a40201-bf85-40c5-bbb9-122cf901a712" mode="Opaque" x="0" y="0" width="20" height="19" forecolor="#FFFFFF" backcolor="#77132E"/>
+									<reportElement uuid="38a40201-bf85-40c5-bbb9-122cf901a712" mode="Opaque" x="0" y="0" width="30" height="19" forecolor="#FFFFFF" backcolor="#77132E"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font size="9" isItalic="true"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$P{iCountStatusBloqued}]]></textFieldExpression>
 								</textField>
 								<textField pattern="#,##0 %">
-									<reportElement uuid="3d3a3673-58dc-4d85-9bf7-42a8080d7e34" mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999" backcolor="#77132E"/>
+									<reportElement uuid="3d3a3673-58dc-4d85-9bf7-42a8080d7e34" mode="Opaque" x="30" y="0" width="21" height="19" forecolor="#999999" backcolor="#77132E"/>
 									<textElement verticalAlignment="Middle">
 										<font size="7"/>
 									</textElement>
@@ -714,17 +714,17 @@
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
 						</jr:column>
-						<jr:column width="41" uuid="4c1a7600-a838-477d-a054-a5ac99930097">
+						<jr:column width="51" uuid="4c1a7600-a838-477d-a054-a5ac99930097">
 							<jr:columnHeader height="19" rowSpan="1">
 								<textField>
-									<reportElement uuid="d6181dfb-6056-424c-8c6e-e29c53bd6119" mode="Opaque" x="0" y="0" width="20" height="19" forecolor="#FF3333" backcolor="#77132E"/>
+									<reportElement uuid="d6181dfb-6056-424c-8c6e-e29c53bd6119" mode="Opaque" x="0" y="0" width="30" height="19" forecolor="#FF3333" backcolor="#77132E"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font size="9" isItalic="true"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$P{iCountStatusFailure}]]></textFieldExpression>
 								</textField>
 								<textField pattern="#,##0 %">
-									<reportElement uuid="af72b126-8476-4fa8-9eec-75918dbc4a83" mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999" backcolor="#77132E"/>
+									<reportElement uuid="af72b126-8476-4fa8-9eec-75918dbc4a83" mode="Opaque" x="30" y="0" width="21" height="19" forecolor="#999999" backcolor="#77132E"/>
 									<textElement verticalAlignment="Middle">
 										<font size="7"/>
 									</textElement>
@@ -733,17 +733,17 @@
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
 						</jr:column>
-						<jr:column width="41" uuid="7119b7eb-c73f-453d-a44c-4c79b54e94f9">
+						<jr:column width="51" uuid="7119b7eb-c73f-453d-a44c-4c79b54e94f9">
 							<jr:columnHeader height="19" rowSpan="1">
 								<textField>
-									<reportElement uuid="7df5334c-2058-4ee3-bfa6-f7f37091eea1" mode="Opaque" x="0" y="0" width="20" height="19" forecolor="#009900" backcolor="#77132E"/>
+									<reportElement uuid="7df5334c-2058-4ee3-bfa6-f7f37091eea1" mode="Opaque" x="0" y="0" width="30" height="19" forecolor="#009900" backcolor="#77132E"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font size="9" isItalic="true"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$P{iCountStatusSuccess}]]></textFieldExpression>
 								</textField>
 								<textField pattern="#,##0 %">
-									<reportElement uuid="97417448-58d5-439a-8b70-94cfc8ebc9d5" mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999" backcolor="#77132E"/>
+									<reportElement uuid="97417448-58d5-439a-8b70-94cfc8ebc9d5" mode="Opaque" x="30" y="0" width="21" height="19" forecolor="#999999" backcolor="#77132E"/>
 									<textElement verticalAlignment="Middle">
 										<font size="7"/>
 									</textElement>
@@ -752,17 +752,17 @@
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
 						</jr:column>
-						<jr:column width="41" uuid="a8a36426-95f0-4069-91b0-ed84415d0df4">
+						<jr:column width="51" uuid="a8a36426-95f0-4069-91b0-ed84415d0df4">
 							<jr:columnHeader height="19" rowSpan="1">
 								<textField>
-									<reportElement uuid="5adada3d-96ef-4004-bff3-c02b3a5e404e" mode="Opaque" x="0" y="0" width="20" height="19" forecolor="#009900" backcolor="#77132E"/>
+									<reportElement uuid="5adada3d-96ef-4004-bff3-c02b3a5e404e" mode="Opaque" x="0" y="0" width="30" height="19" forecolor="#009900" backcolor="#77132E"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font size="9" isItalic="true"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$P{allowsSettled} ? $P{iCountStatusSettled}.toString() : new String("")]]></textFieldExpression>
 								</textField>
 								<textField pattern="#,##0 %">
-									<reportElement uuid="8116bed8-5d48-49b7-819e-78159fd8d60a" mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999" backcolor="#77132E"/>
+									<reportElement uuid="8116bed8-5d48-49b7-819e-78159fd8d60a" mode="Opaque" x="30" y="0" width="21" height="19" forecolor="#999999" backcolor="#77132E"/>
 									<textElement verticalAlignment="Middle">
 										<font size="7"/>
 									</textElement>
@@ -805,7 +805,7 @@
 	<lastPageFooter>
 		<band height="74">
 			<componentElement>
-				<reportElement uuid="659fb009-073a-43df-a963-443f97fa3b1e" key="table 3" x="0" y="50" width="736" height="20"/>
+				<reportElement uuid="659fb009-073a-43df-a963-443f97fa3b1e" key="table 3" x="0" y="50" width="756" height="20"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="Total_Dataset" uuid="5fd5d654-5339-4319-b3c6-472df615f6e1">
 						<datasetParameter name="allowsSettled">
@@ -852,17 +852,17 @@
 						</jr:columnHeader>
 						<jr:detailCell height="0" rowSpan="1"/>
 					</jr:column>
-					<jr:column width="41" uuid="9fb636c4-aef1-4c78-ae17-ac3f3892c94e">
+					<jr:column width="51" uuid="9fb636c4-aef1-4c78-ae17-ac3f3892c94e">
 						<jr:columnHeader height="20" rowSpan="1">
 							<textField>
-								<reportElement uuid="f1d98214-e8c2-42bd-a087-31e79aa14b69" x="0" y="0" width="20" height="20"/>
+								<reportElement uuid="f1d98214-e8c2-42bd-a087-31e79aa14b69" x="0" y="0" width="30" height="20"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="9"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$P{iCountStatusReady}]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0 %">
-								<reportElement uuid="69ce59cb-a0f8-4f98-9e25-1248d2e91d5a" mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999"/>
+								<reportElement uuid="69ce59cb-a0f8-4f98-9e25-1248d2e91d5a" mode="Opaque" x="30" y="0" width="21" height="19" forecolor="#999999"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="7"/>
 								</textElement>
@@ -871,17 +871,17 @@
 						</jr:columnHeader>
 						<jr:detailCell height="0" rowSpan="1"/>
 					</jr:column>
-					<jr:column width="41" uuid="2daddb2c-a0de-4b23-8e1a-9c63ece28d08">
+					<jr:column width="51" uuid="2daddb2c-a0de-4b23-8e1a-9c63ece28d08">
 						<jr:columnHeader height="20" rowSpan="1">
 							<textField>
-								<reportElement uuid="4f6b8d84-239a-4792-afd4-eeef4c66c599" x="0" y="0" width="20" height="20"/>
+								<reportElement uuid="4f6b8d84-239a-4792-afd4-eeef4c66c599" x="0" y="0" width="30" height="20"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="9"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$P{iCountStatusRunning}]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0 %">
-								<reportElement uuid="ce59bb95-b04c-4cda-8fef-eed9624fe715" mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999"/>
+								<reportElement uuid="ce59bb95-b04c-4cda-8fef-eed9624fe715" mode="Opaque" x="30" y="0" width="21" height="19" forecolor="#999999"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="7"/>
 								</textElement>
@@ -890,17 +890,17 @@
 						</jr:columnHeader>
 						<jr:detailCell height="0" rowSpan="1"/>
 					</jr:column>
-					<jr:column width="41" uuid="f55a6a78-bc80-4c1a-913b-7ca28f835be4">
+					<jr:column width="51" uuid="f55a6a78-bc80-4c1a-913b-7ca28f835be4">
 						<jr:columnHeader height="20" rowSpan="1">
 							<textField>
-								<reportElement uuid="f52a6348-96d1-41a3-9d4b-4edc354c897d" x="0" y="0" width="20" height="20"/>
+								<reportElement uuid="f52a6348-96d1-41a3-9d4b-4edc354c897d" x="0" y="0" width="30" height="20"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="9"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$P{allowsUntestable} ? $P{iCountStatusUntestable}.toString() : new String("")]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0 %">
-								<reportElement uuid="88a5eb86-0204-4246-83f3-a749a3a8ea63" mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999"/>
+								<reportElement uuid="88a5eb86-0204-4246-83f3-a749a3a8ea63" mode="Opaque" x="30" y="0" width="21" height="19" forecolor="#999999"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="7"/>
 								</textElement>
@@ -909,17 +909,17 @@
 						</jr:columnHeader>
 						<jr:detailCell height="0" rowSpan="1"/>
 					</jr:column>
-					<jr:column width="41" uuid="8438a47f-e09f-4f16-8212-f2e81d9e4397">
+					<jr:column width="51" uuid="8438a47f-e09f-4f16-8212-f2e81d9e4397">
 						<jr:columnHeader height="20" rowSpan="1">
 							<textField>
-								<reportElement uuid="586a58ee-3e35-4a69-b866-8d9be51c691e" x="0" y="0" width="20" height="20"/>
+								<reportElement uuid="586a58ee-3e35-4a69-b866-8d9be51c691e" x="0" y="0" width="30" height="20"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="9"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$P{iCountStatusBloqued}]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0 %">
-								<reportElement uuid="1336a189-eda8-4b54-8c6e-7eb83dfe4a8e" mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999"/>
+								<reportElement uuid="1336a189-eda8-4b54-8c6e-7eb83dfe4a8e" mode="Opaque" x="30" y="0" width="21" height="19" forecolor="#999999"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="7"/>
 								</textElement>
@@ -928,17 +928,17 @@
 						</jr:columnHeader>
 						<jr:detailCell height="0" rowSpan="1"/>
 					</jr:column>
-					<jr:column width="41" uuid="55264851-0628-4073-bc99-5b7701de8257">
+					<jr:column width="51" uuid="55264851-0628-4073-bc99-5b7701de8257">
 						<jr:columnHeader height="20" rowSpan="1">
 							<textField>
-								<reportElement uuid="c60e633c-f450-4540-b6d2-d16bb19927f8" mode="Transparent" x="0" y="0" width="20" height="20" forecolor="#FF3333" backcolor="#FFFFFF"/>
+								<reportElement uuid="c60e633c-f450-4540-b6d2-d16bb19927f8" mode="Transparent" x="0" y="0" width="30" height="20" forecolor="#FF3333" backcolor="#FFFFFF"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="9"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$P{iCountStatusFailure}]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0 %">
-								<reportElement uuid="e6443713-9a2d-4db1-ab64-9153ae91a7ee" mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999"/>
+								<reportElement uuid="e6443713-9a2d-4db1-ab64-9153ae91a7ee" mode="Opaque" x="30" y="0" width="21" height="19" forecolor="#999999"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="7"/>
 								</textElement>
@@ -947,17 +947,17 @@
 						</jr:columnHeader>
 						<jr:detailCell height="0" rowSpan="1"/>
 					</jr:column>
-					<jr:column width="41" uuid="a55b1799-0caa-4e90-94c8-02871536db85">
+					<jr:column width="51" uuid="a55b1799-0caa-4e90-94c8-02871536db85">
 						<jr:columnHeader height="20" rowSpan="1">
 							<textField>
-								<reportElement uuid="7de9e440-3acc-48d3-8d1f-2a1fae24b419" x="0" y="0" width="20" height="20" forecolor="#009900"/>
+								<reportElement uuid="7de9e440-3acc-48d3-8d1f-2a1fae24b419" x="0" y="0" width="30" height="20" forecolor="#009900"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="9"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$P{iCountStatusSuccess}]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0 %">
-								<reportElement uuid="de3ffbcf-3663-4a43-9431-e79b392df435" mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999"/>
+								<reportElement uuid="de3ffbcf-3663-4a43-9431-e79b392df435" mode="Opaque" x="30" y="0" width="21" height="19" forecolor="#999999"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="7"/>
 								</textElement>
@@ -966,17 +966,17 @@
 						</jr:columnHeader>
 						<jr:detailCell height="0" rowSpan="1"/>
 					</jr:column>
-					<jr:column width="41" uuid="4cad1051-2580-42a3-bdc0-8afbd319d3fa">
+					<jr:column width="51" uuid="4cad1051-2580-42a3-bdc0-8afbd319d3fa">
 						<jr:columnHeader height="20" rowSpan="1">
 							<textField>
-								<reportElement uuid="b693ed0e-b5ff-4d46-aad6-615f8b0d49bf" x="0" y="0" width="20" height="20" forecolor="#009900"/>
+								<reportElement uuid="b693ed0e-b5ff-4d46-aad6-615f8b0d49bf" x="0" y="0" width="30" height="20" forecolor="#009900"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="9"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$P{allowsSettled} ? $P{iCountStatusSettled}.toString() : new String("")]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0 %">
-								<reportElement uuid="18cd73a8-5be5-4a92-bcea-d829aa7051f6" mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999"/>
+								<reportElement uuid="18cd73a8-5be5-4a92-bcea-d829aa7051f6" mode="Opaque" x="30" y="0" width="21" height="19" forecolor="#999999"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="7"/>
 								</textElement>
@@ -1030,23 +1030,23 @@
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
 						</jr:column>
 					</jr:columnGroup>
-					<jr:columnGroup width="287" uuid="3902ba17-1ba1-473b-a491-603f2cdb4b1e">
+					<jr:columnGroup width="357" uuid="3902ba17-1ba1-473b-a491-603f2cdb4b1e">
 						<jr:columnHeader height="30" rowSpan="1">
 							<box>
 								<bottomPen lineWidth="1.0"/>
 							</box>
 							<textField>
-								<reportElement uuid="fb8abcd4-5e87-4452-8d9b-9a698a825aba" x="0" y="0" width="287" height="30"/>
+								<reportElement uuid="fb8abcd4-5e87-4452-8d9b-9a698a825aba" x="0" y="0" width="357" height="30"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="9" isBold="true"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$R{report.executionprogression.main.header.status.label}]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
-						<jr:column width="41" uuid="87378bdd-88c4-4b4d-a855-ba23df535213">
+						<jr:column width="51" uuid="87378bdd-88c4-4b4d-a855-ba23df535213">
 							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
 								<textField>
-									<reportElement uuid="8338fad2-cc74-4dba-b6b4-9569f696e90d" x="0" y="0" width="41" height="20"/>
+									<reportElement uuid="8338fad2-cc74-4dba-b6b4-9569f696e90d" x="0" y="0" width="51" height="20"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font size="9" isItalic="true"/>
 									</textElement>
@@ -1055,10 +1055,10 @@
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
 						</jr:column>
-						<jr:column width="41" uuid="12da8506-2c6a-48c1-a462-6784beff604a">
+						<jr:column width="51" uuid="12da8506-2c6a-48c1-a462-6784beff604a">
 							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
 								<textField>
-									<reportElement uuid="589bc04a-0533-4585-97b5-0962411fe003" x="0" y="0" width="41" height="20"/>
+									<reportElement uuid="589bc04a-0533-4585-97b5-0962411fe003" x="0" y="0" width="51" height="20"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font size="9" isItalic="true"/>
 									</textElement>
@@ -1067,10 +1067,10 @@
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
 						</jr:column>
-						<jr:column width="41" uuid="a84fb546-de3c-4817-b23e-b6200e66f07b">
+						<jr:column width="51" uuid="a84fb546-de3c-4817-b23e-b6200e66f07b">
 							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
 								<textField>
-									<reportElement uuid="6b260f17-bcb1-4f7a-8d39-646b1c6d5209" x="0" y="0" width="41" height="20"/>
+									<reportElement uuid="6b260f17-bcb1-4f7a-8d39-646b1c6d5209" x="0" y="0" width="51" height="20"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font size="9" isItalic="true"/>
 									</textElement>
@@ -1079,10 +1079,10 @@
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
 						</jr:column>
-						<jr:column width="41" uuid="0feaab9c-731d-4c96-8f9c-a658a9a0f49c">
+						<jr:column width="51" uuid="0feaab9c-731d-4c96-8f9c-a658a9a0f49c">
 							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
 								<textField>
-									<reportElement uuid="14288923-4f62-4ba6-b4b6-37eb10040a83" x="0" y="0" width="41" height="20"/>
+									<reportElement uuid="14288923-4f62-4ba6-b4b6-37eb10040a83" x="0" y="0" width="51" height="20"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font size="9" isItalic="true"/>
 									</textElement>
@@ -1091,10 +1091,10 @@
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
 						</jr:column>
-						<jr:column width="41" uuid="8ae3722f-de54-4869-89bf-698f006559ce">
+						<jr:column width="51" uuid="8ae3722f-de54-4869-89bf-698f006559ce">
 							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
 								<textField>
-									<reportElement uuid="8592618e-04df-44a9-86d5-8c1eb744928c" x="0" y="0" width="41" height="20" forecolor="#FF3333"/>
+									<reportElement uuid="8592618e-04df-44a9-86d5-8c1eb744928c" x="0" y="0" width="51" height="20" forecolor="#FF3333"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font size="9" isItalic="true"/>
 									</textElement>
@@ -1103,10 +1103,10 @@
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
 						</jr:column>
-						<jr:column width="41" uuid="df74b031-6ee5-4cf9-aed2-084c061f3932">
+						<jr:column width="51" uuid="df74b031-6ee5-4cf9-aed2-084c061f3932">
 							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
 								<textField>
-									<reportElement uuid="90d196b5-f9ed-41d7-8d65-6c8503ac504f" x="0" y="0" width="41" height="20" forecolor="#009900"/>
+									<reportElement uuid="90d196b5-f9ed-41d7-8d65-6c8503ac504f" x="0" y="0" width="51" height="20" forecolor="#009900"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font size="9" isItalic="true"/>
 									</textElement>
@@ -1115,10 +1115,10 @@
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
 						</jr:column>
-						<jr:column width="41" uuid="e6e843fb-87a4-4fc5-bc1c-e5331e5588b9">
+						<jr:column width="51" uuid="e6e843fb-87a4-4fc5-bc1c-e5331e5588b9">
 							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
 								<textField>
-									<reportElement uuid="597cca88-1c81-4056-bb27-40dadff144d3" x="0" y="0" width="41" height="20" forecolor="#009900"/>
+									<reportElement uuid="597cca88-1c81-4056-bb27-40dadff144d3" x="0" y="0" width="51" height="20" forecolor="#009900"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font size="9" isItalic="true"/>
 									</textElement>

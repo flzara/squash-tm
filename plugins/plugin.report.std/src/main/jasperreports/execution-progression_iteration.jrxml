@@ -419,10 +419,10 @@
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
 					</jr:column>
-					<jr:column width="41" uuid="baa9b0b2-09d4-442c-b2de-1ebc313d72bd">
+					<jr:column width="51" uuid="baa9b0b2-09d4-442c-b2de-1ebc313d72bd">
 						<jr:columnHeader style="table_TD" height="20" rowSpan="1">
 							<textField isStretchWithOverflow="true">
-								<reportElement uuid="dafad8db-f370-4bee-8037-1409a0ebc670" stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="20">
+								<reportElement uuid="dafad8db-f370-4bee-8037-1409a0ebc670" stretchType="RelativeToBandHeight" x="0" y="0" width="30" height="20">
 									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 								</reportElement>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -431,7 +431,7 @@
 								<textFieldExpression><![CDATA[$P{iteration_iCountStatusReady}]]></textFieldExpression>
 							</textField>
 							<textField isStretchWithOverflow="true" pattern="#,##0 %">
-								<reportElement uuid="5e45c286-74e5-4d2b-a345-cbb83863313a" stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="20" forecolor="#999999">
+								<reportElement uuid="5e45c286-74e5-4d2b-a345-cbb83863313a" stretchType="RelativeToBandHeight" x="30" y="0" width="21" height="20" forecolor="#999999">
 									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 								</reportElement>
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
@@ -442,10 +442,10 @@
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
 					</jr:column>
-					<jr:column width="41" uuid="2b39cefe-71df-43e4-85ea-fd54cc7562a2">
+					<jr:column width="51" uuid="2b39cefe-71df-43e4-85ea-fd54cc7562a2">
 						<jr:columnHeader style="table_TD" height="20" rowSpan="1">
 							<textField isStretchWithOverflow="true">
-								<reportElement uuid="ae3c0745-3f18-48c7-b00b-61b66631553a" stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="20">
+								<reportElement uuid="ae3c0745-3f18-48c7-b00b-61b66631553a" stretchType="RelativeToBandHeight" x="0" y="0" width="30" height="20">
 									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 								</reportElement>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -454,7 +454,7 @@
 								<textFieldExpression><![CDATA[$P{iteration_iCountStatusRunning}]]></textFieldExpression>
 							</textField>
 							<textField isStretchWithOverflow="true" pattern="#,##0 %">
-								<reportElement uuid="3b74802c-ec48-47d9-a37a-38965ec42e56" stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="20" forecolor="#999999">
+								<reportElement uuid="3b74802c-ec48-47d9-a37a-38965ec42e56" stretchType="RelativeToBandHeight" x="30" y="0" width="21" height="20" forecolor="#999999">
 									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 								</reportElement>
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
@@ -465,10 +465,10 @@
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
 					</jr:column>
-					<jr:column width="41" uuid="b3b85627-86ca-45d9-a30b-93ad721d3179">
+					<jr:column width="51" uuid="b3b85627-86ca-45d9-a30b-93ad721d3179">
 						<jr:columnHeader style="table_TD" height="20" rowSpan="1">
 							<textField isStretchWithOverflow="true">
-								<reportElement uuid="e2fcb743-4a13-44ce-9ff3-1d9fa4d02f5b" stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="20">
+								<reportElement uuid="e2fcb743-4a13-44ce-9ff3-1d9fa4d02f5b" stretchType="RelativeToBandHeight" x="0" y="0" width="30" height="20">
 									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 								</reportElement>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -477,7 +477,7 @@
 								<textFieldExpression><![CDATA[$P{iteration_allowsUntestable} ? $P{iteration_iCountStatusUntestable} : new String("")]]></textFieldExpression>
 							</textField>
 							<textField isStretchWithOverflow="true" pattern="#,##0 %">
-								<reportElement uuid="66ffa203-6504-4172-bf82-9dc57c9c6487" stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="20" forecolor="#999999">
+								<reportElement uuid="66ffa203-6504-4172-bf82-9dc57c9c6487" stretchType="RelativeToBandHeight" x="30" y="0" width="21" height="20" forecolor="#999999">
 									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 								</reportElement>
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
@@ -488,10 +488,10 @@
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
 					</jr:column>
-					<jr:column width="41" uuid="349f66e0-0f77-4706-8f6a-bf6ee31799de">
+					<jr:column width="51" uuid="349f66e0-0f77-4706-8f6a-bf6ee31799de">
 						<jr:columnHeader style="table_TD" height="20" rowSpan="1">
 							<textField isStretchWithOverflow="true">
-								<reportElement uuid="20159ba7-ea54-4c5a-8372-79c479be2c44" stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="20">
+								<reportElement uuid="20159ba7-ea54-4c5a-8372-79c479be2c44" stretchType="RelativeToBandHeight" x="0" y="0" width="30" height="20">
 									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 								</reportElement>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -500,7 +500,7 @@
 								<textFieldExpression><![CDATA[$P{iteration_iCountStatusBloqued}]]></textFieldExpression>
 							</textField>
 							<textField isStretchWithOverflow="true" pattern="#,##0 %">
-								<reportElement uuid="a487678d-ae7c-4d4d-99c8-5a9482d61cdc" stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="20" forecolor="#999999">
+								<reportElement uuid="a487678d-ae7c-4d4d-99c8-5a9482d61cdc" stretchType="RelativeToBandHeight" x="30" y="0" width="21" height="20" forecolor="#999999">
 									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 								</reportElement>
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
@@ -511,10 +511,10 @@
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
 					</jr:column>
-					<jr:column width="41" uuid="a8fe60e7-a14d-4f0a-be04-f54c84296e7c">
+					<jr:column width="51" uuid="a8fe60e7-a14d-4f0a-be04-f54c84296e7c">
 						<jr:columnHeader style="table_TD" height="20" rowSpan="1">
 							<textField isStretchWithOverflow="true">
-								<reportElement uuid="be2be2c7-0762-4e44-885e-09314df8dd08" stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="20" forecolor="#FB3333">
+								<reportElement uuid="be2be2c7-0762-4e44-885e-09314df8dd08" stretchType="RelativeToBandHeight" x="0" y="0" width="30" height="20" forecolor="#FB3333">
 									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 								</reportElement>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -523,7 +523,7 @@
 								<textFieldExpression><![CDATA[$P{iteration_iCountStatusFailure}]]></textFieldExpression>
 							</textField>
 							<textField isStretchWithOverflow="true" pattern="#,##0 %">
-								<reportElement uuid="f52fa403-396a-4282-9b5a-75cbdf2513af" stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="20" forecolor="#999999">
+								<reportElement uuid="f52fa403-396a-4282-9b5a-75cbdf2513af" stretchType="RelativeToBandHeight" x="30" y="0" width="21" height="20" forecolor="#999999">
 									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 								</reportElement>
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
@@ -534,10 +534,10 @@
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
 					</jr:column>
-					<jr:column width="41" uuid="d8b758c0-f7c7-48ae-9233-35a4ab73e652">
+					<jr:column width="51" uuid="d8b758c0-f7c7-48ae-9233-35a4ab73e652">
 						<jr:columnHeader style="table_TD" height="20" rowSpan="1">
 							<textField isStretchWithOverflow="true">
-								<reportElement uuid="48937fc1-25a3-4d78-9cb1-bd90156a327b" stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="20" forecolor="#009900">
+								<reportElement uuid="48937fc1-25a3-4d78-9cb1-bd90156a327b" stretchType="RelativeToBandHeight" x="0" y="0" width="30" height="20" forecolor="#009900">
 									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 								</reportElement>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -546,7 +546,7 @@
 								<textFieldExpression><![CDATA[$P{iteration_iCountStatusSuccess}]]></textFieldExpression>
 							</textField>
 							<textField isStretchWithOverflow="true" pattern="#,##0 %">
-								<reportElement uuid="73e96de6-0760-4cd6-b7bd-8d2e6c10ae85" stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="20" forecolor="#999999">
+								<reportElement uuid="73e96de6-0760-4cd6-b7bd-8d2e6c10ae85" stretchType="RelativeToBandHeight" x="30" y="0" width="21" height="20" forecolor="#999999">
 									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 								</reportElement>
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
@@ -557,10 +557,10 @@
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
 					</jr:column>
-					<jr:column width="41" uuid="d8b758c0-f7c7-48ae-9233-35a4ab73e652">
+					<jr:column width="51" uuid="d8b758c0-f7c7-48ae-9233-35a4ab73e652">
 						<jr:columnHeader style="table_TD" height="20" rowSpan="1">
 							<textField isStretchWithOverflow="true">
-								<reportElement uuid="48937fc1-25a3-4d78-9cb1-bd90156a327b" stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="20" forecolor="#009900">
+								<reportElement uuid="48937fc1-25a3-4d78-9cb1-bd90156a327b" stretchType="RelativeToBandHeight" x="0" y="0" width="30" height="20" forecolor="#009900">
 									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 								</reportElement>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -569,7 +569,7 @@
 								<textFieldExpression><![CDATA[$P{iteration_allowsSettled} ? $P{iteration_iCountStatusSettled} : new String("")]]></textFieldExpression>
 							</textField>
 							<textField isStretchWithOverflow="true" pattern="#,##0 %">
-								<reportElement uuid="73e96de6-0760-4cd6-b7bd-8d2e6c10ae85" stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="20" forecolor="#999999">
+								<reportElement uuid="73e96de6-0760-4cd6-b7bd-8d2e6c10ae85" stretchType="RelativeToBandHeight" x="30" y="0" width="21" height="20" forecolor="#999999">
 									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 								</reportElement>
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
