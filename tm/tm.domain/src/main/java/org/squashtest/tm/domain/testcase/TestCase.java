@@ -51,6 +51,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.*;
 
+import static javax.persistence.FetchType.LAZY;
 import static org.squashtest.tm.domain.testcase.TestCaseImportance.LOW;
 
 import org.squashtest.tm.domain.testcase.Parameter;
@@ -158,7 +159,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@NotNull
 	private Boolean importanceAuto = Boolean.FALSE;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "TA_TEST")
 	private AutomatedTest automatedTest;
 
@@ -167,6 +168,9 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@ManyToMany
 	@JoinTable(name = "MILESTONE_TEST_CASE", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "MILESTONE_ID"))
 	private Set<Milestone> milestones = new HashSet<>();
+
+	@OneToOne(mappedBy = "testCase", optional = true, fetch = LAZY, cascade = CascadeType.ALL)
+	private ScriptedTestCaseExtender scriptedTestCaseExtender;
 
 	// *************************** CODE *************************************
 
@@ -840,14 +844,32 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		return Milestone.allowsEdition(getAllMilestones());
 	}
 
-	;
-
 	/**
 	 * @param ms
 	 */
 	public void bindAllMilsetones(List<Milestone> ms) {
 		milestones.addAll(ms);
 
+	}
+
+	//*********************** SCRIPTED TEST CASE SECTION ************************//
+
+
+	public ScriptedTestCaseExtender getScriptedTestCaseExtender() {
+		return scriptedTestCaseExtender;
+	}
+
+	public void setScriptedTestCaseExtender(ScriptedTestCaseExtender scriptedTestCaseExtender) {
+		this.scriptedTestCaseExtender = scriptedTestCaseExtender;
+	}
+
+	public boolean isScripted(){
+		return this.scriptedTestCaseExtender != null;
+	}
+
+	public void extendWithScript(String kind){
+		ScriptedTestCaseExtender scriptedTestCaseExtender = new ScriptedTestCaseExtender(this, kind);
+		this.setScriptedTestCaseExtender(scriptedTestCaseExtender);
 	}
 
 }

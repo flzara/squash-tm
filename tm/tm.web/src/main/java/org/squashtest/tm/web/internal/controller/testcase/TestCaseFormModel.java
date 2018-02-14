@@ -21,12 +21,16 @@
 package org.squashtest.tm.web.internal.controller.testcase;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.lang3.EnumUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import org.squashtest.tm.domain.customfield.RawValue;
+import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
+import org.squashtest.tm.domain.testcase.ScriptedTestCaseKind;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.dto.RawValueModel;
 import org.squashtest.tm.service.internal.dto.RawValueModel.RawValueModelMap;
@@ -49,6 +53,8 @@ public class TestCaseFormModel {
 
 	private String reference;
 	private String description;
+
+	private String scriptKind;
 
 
 	/*@NotNull
@@ -82,11 +88,17 @@ public class TestCaseFormModel {
 		this.description = description;
 	}
 
-
 	public RawValueModelMap getCustomFields() {
 		return customFields;
 	}
 
+	public String getScriptKind() {
+		return scriptKind;
+	}
+
+	public void setScriptKind(String scriptKind) {
+		this.scriptKind = scriptKind;
+	}
 
 	public void setCustomFields(RawValueModelMap customFields) {
 		this.customFields = customFields;
@@ -98,6 +110,9 @@ public class TestCaseFormModel {
 		newTC.setName(name);
 		newTC.setDescription(description);
 		newTC.setReference(reference);
+		if (StringUtils.isNotBlank(scriptKind)) {
+			newTC.extendWithScript(scriptKind);
+		}
 		return newTC;
 	}
 
