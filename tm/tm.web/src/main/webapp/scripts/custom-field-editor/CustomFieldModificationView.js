@@ -19,10 +19,10 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
-	"jeditable.simpleJEditable", "jeditable.selectJEditable", "app/util/StringUtil", "app/lnf/Forms", 
-	"jquery.squash.oneshotdialog", "squash.configmanager", "app/ws/squashtm.notification", "squash.translator", 
+	"jeditable.simpleJEditable", "jeditable.selectJEditable", "app/util/StringUtil", "app/lnf/Forms",
+	"jquery.squash.oneshotdialog", "squash.configmanager", "app/ws/squashtm.notification", "squash.translator",
 	"jquery.squash", "jqueryui",
-	"jquery.squash.togglepanel", "squashtable", "jquery.squash.confirmdialog", "jeditable.datepicker", 
+	"jquery.squash.togglepanel", "squashtable", "jquery.squash.confirmdialog", "jeditable.datepicker",
 	"jquery.squash.formdialog", "jquery.squash.tagit"  ],
 	function($, NewCustomFieldOptionDialog, Backbone, _, SimpleJEditable,SelectJEditable, StringUtil, Forms, oneshot, confman, notification, translator) {
 		var cfMod = squashtm.app.cfMod;
@@ -169,7 +169,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 				}
 				var uncheckSelector = ".is-default>input:checkbox" + (checkbox.checked ? "[value!='" + option + "']" : "");
 
-				
+
 				$.ajax({
 					url : cfMod.customFieldUrl + "/defaultValue",
 					type : 'POST',
@@ -183,7 +183,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 				});
 			},
 
-			
+
 			openRenameOptionPopup : function(event) {
 				var self = this;
 				var labelCell = event.currentTarget;
@@ -219,7 +219,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 						"#rename-cuf-option-previous").text();
 				var newValue = self.renameCufOptionPopup.find(
 						"#rename-cuf-option-label").val();
-				
+
 				if (newValue.trim() === ""){
 					// Error
 					var errormsg = translator.get("squashtm.domain.exception.option.pattern");
@@ -232,7 +232,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 						'value' : newValue
 					},
 					dataType : "json",
-					url : cfMod.optionsTable.ajaxSource	+ "/" + previousValue + "/label"
+					url : cfMod.optionsTable.ajaxSource	+ "/" + _.unescape(previousValue) + "/label"
 				}).done(function(data) {
 					self.optionsTable.refresh();
 					self.renameCufOptionPopup.formDialog('close');
@@ -276,7 +276,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 					this.makeDefaultSimpleJEditable();
 					$("#cuf-default-value").click(
 							self.disableOptionalChange);
-				} 
+				}
 				else if (this.inputType === "CHECKBOX") {
 					this.makeDefaultSelectJEditable();
 					$("#cuf-default-value").click(
@@ -340,7 +340,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 					var postDateFormat = $.datepicker.ATOM;
 					var date = $.datepicker.parseDate(cfMod.dateFormat, localizedDate);
 					var postDate = $.datepicker.formatDate(postDateFormat, date);
-				
+
 					return $.ajax({
 						url : cfMod.customFieldUrl + "/defaultValue",
 						type : 'POST',
@@ -352,10 +352,10 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 					.fail(function(){
 						$("#cuf-default-value").text(revert);
 					});
-					
+
 				};
 
-				
+
 				// make editable
 				datepick.editable(postfn, {
 					type : 'datepicker',
@@ -367,65 +367,65 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 					}
 				});
 
-				
+
 			},
-			
+
 			makeDefaultTagsEditable : function(){
 				var ul = this.$("#cuf-default-value"),
 					self = this;
-				
+
 				var conf = confman.getStdTagit();
 				ul.squashTagit(conf);
-				
+
 				ul.on('squashtagitaftertagadded squashtagitaftertagremoved', function(event, ui){
 					// Contrary to Custom Field Values, the default value of a Custom Field
 					// is stored as a semicolumn separated string instead of a collection of labels.
-					
+
 					if (! ul.squashTagit("validate", event, ui)){
 						return;
 					}
-					
+
 					var values = ul.squashTagit('assignedTags').join('|');
 					$.ajax({
 						url : cfMod.customFieldUrl + '/defaultValue',
 						type : 'post',
 						data : {
 							'id' : 'cuf-default-value',
-							'value' : values 
+							'value' : values
 						}
 					});
 				});
-				
+
 			},
-			
+
 			makeDefaultRichTextEditable : function(){
-				
+
 				var area = this.$("#cuf-default-value"),
 					self = this;
-				
+
 				var conf = confman.getJeditableCkeditor();
 				conf.onsubmit = function(settings, ed){
 					var cked = CKEDITOR.instances[$("textarea", ed).attr('id')];
 					return self._validate(cked.getData());
 				};
 				conf.name = "value";
-				
+
 				area.editable(cfMod.customFieldUrl + "/defaultValue",conf);
-				
+
 			},
-			
+
 			// accepts a string or the editor itself
 			_validate : function(arg){
-				var value = (typeof arg === "string") ? arg : $(arg).val().value; 
+				var value = (typeof arg === "string") ? arg : $(arg).val().value;
 				var validated = true;
-				
+
 				if (this.isFieldMandatory()	&& StringUtil.isBlank(value)) {
 					notification.showError(cfMod.defaultValueMandatoryMessage);
 					validated = false;
-				}	
+				}
 				return validated;
 			},
-			
+
 			disableOptionalChange : function() {
 				$("#cf-optional").attr("disabled", true);
 			},
@@ -467,25 +467,25 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 			},
 
 			configureRenamePopup : function() {
-				
+
 				var dialog = $("#rename-cuf-popup");
-				
+
 				dialog.formDialog();
-				
+
 				dialog.on('formdialogconfirm', this.renameCuf);
-				
+
 				dialog.on('formdialogcancel', this.closePopup);
-				
+
 				dialog.on('formdialogopen', function(event, ui) {
 					var name = $.trim($('#cuf-name-header').text());
 					$("#rename-cuf-input").val($.trim(name));
-				});	
-		
+				});
+
 				$("#rename-cuf-button").on('click', function(){
 					dialog.formDialog('open');
 				});
-				
-	
+
+
 
 			},
 
@@ -499,7 +499,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 				var onerror = function(settings, original, xhr) {
 					xhr.errorIsHandled = true;
 					var errormsg = notification.getErrorMessage(xhr);
-					Forms.input(self.$("#" + inputId)).setState("error", errormsg);					
+					Forms.input(self.$("#" + inputId)).setState("error", errormsg);
 					return ($.editable.types[settings.type].reset || $.editable.types.defaults.reset).apply(this, arguments);
 				};
 
@@ -647,19 +647,19 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 					return;
 				}
 				var self = this;
-				
-				
+
+
 				var dialog = $("#rename-cuf-option-popup");
 				this.renameCufOptionPopup = dialog;
-				
+
 				dialog.formDialog();
-				
+
 				dialog.on('formdialogconfirm', function(){
 					self.renameOption.call(self);
 				});
-				
+
 				dialog.on('formdialogcancel', this.closePopup);
-				
+
 				$("#rename-cuf-option-popup").on('click', function(){
 					dialog.formDialog('open');
 				});
@@ -671,22 +671,22 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 				}
 
 				var self = this;
-				
-				
+
+
 				var dialog = $("#change-cuf-option-code-popup");
 				this.changeOptionCodePopup = dialog;
-				
+
 				dialog.formDialog();
 				dialog.on('formdialogconfirm', function(){
 					self.changeOptionCode.call(self);
 				});
-				
+
 				dialog.on('formdialogcancel', this.closePopup);
-				
+
 				$("#change-cuf-option-code-popup").on('click', function(){
 					dialog.formDialog('open');
 				});
-				
+
 			}
 
 	});

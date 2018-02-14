@@ -34,9 +34,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.HtmlUtils;
+import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
+import org.squashtest.tm.service.internal.dto.CustomFieldModelFactory;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
 import org.squashtest.tm.service.internal.dto.CustomFieldValueModel;
@@ -57,6 +59,9 @@ public class DenormalizedFieldValuesController {
 
 	@Inject
 	private CustomFieldJsonConverter converter;
+
+	@Inject
+	private CustomFieldValuesController cufController;
 
 
 	@RequestMapping(method = RequestMethod.GET, params = { DENORMALIZED_FIELD_HOLDER_ID, DENORMALIZED_FIELD_HOLDER_TYPE }, headers = AcceptHeaders.CONTENT_JSON)
@@ -79,34 +84,13 @@ public class DenormalizedFieldValuesController {
 
 	private List<CustomFieldValueModel> valuesToJson(List<DenormalizedFieldValue> values) {
 		List<CustomFieldValueModel> models = new LinkedList<>();
-		List<String> escapedValues = new ArrayList<>();
 		for (DenormalizedFieldValue value : values) {
 			CustomFieldValueModel model = converter.toJson(value);
-			if(model.getOptionValues()!= null) {
-				for (String string : model.getOptionValues()) {
-					escapedValues.add(HTMLCleanupUtils.cleanHtml(string));
-					}
-			model.setOptionValues(escapedValues);
+			if(model.getBinding().getCustomField().getInputType().equals(InputType.DROPDOWN_LIST)) {
+				cufController.escapeOptions(model);
 			}
 			models.add(model);
 		}
 		return models;
-	}
-
-	public CustomFieldValueModel sanitizeCustomFieldValueModel(CustomFieldValueModel model) {
-		if(model.getBoundEntityType().getFriendlyName()!= null) {
-			model.getBoundEntityType().setFriendlyName(HtmlUtils.htmlEscape(model.getBoundEntityType().getFriendlyName()));
-		}
-		List<String> optionvalues = new ArrayList<>();
-		if (!(model.getOptionValues() == null)) {
-			for (String optionValue : model.getOptionValues()) {
-				optionvalues.add(HTMLCleanupUtils.cleanHtml(optionValue));
-			}
-
-		model.getOptionValues().clear();
-		model.setOptionValues(optionvalues);
-		}
-		model.setValue(HtmlUtils.htmlEscape(model.getValue()));
-		return model;
 	}
 }

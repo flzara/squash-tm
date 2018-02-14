@@ -48,7 +48,7 @@ define(["jquery", "handlebars", "./lib/cuf-values-utils","jqueryui", "./lib/jque
 
 				'<ul id="{{cufid this}}" class="{{cufclass this}}" data-value-id="{{id}}" style="margin:0;line-height:normal;">'+
 				'{{#each optionValues}}' +
-					'<li><c:out value="{{this}}" /> </li>' +
+					'<li>{{this}} </li>' +
 				'{{/each}}' +
 				'</ul>' +
 
@@ -56,17 +56,19 @@ define(["jquery", "handlebars", "./lib/cuf-values-utils","jqueryui", "./lib/jque
 
 				'<span id="{{cufid this}}" class="{{cufclass this}}" data-value-id="{{id}}">{{value}}</span>' +
 
-			'{{/ifequals}} {{/ifequals}}' +
+			'{{/ifequals}} {{/ifequals}} ' +
 			'</div>' +
 		'</div>' +
 		'{{/each}}'
 		);
 
 	var escapeCustomFieldOptions = function(cufValue) {
-		for (var i = 0; i < cufValue.binding.customField.options.length; i++) {
-    	cufValue.binding.customField.options[i].label = _.escape(cufValue.binding.customField.options[i].label);
-    	cufValue.binding.customField.options[i].code = _.escape(cufValue.binding.customField.options[i].code);
-    }
+		if(cufValue.binding.itype =="DROPDOWN_LIST") {
+			for (var i = 0; i < cufValue.binding.customField.options.length; i++) {
+				cufValue.binding.customField.options[i].label = _.unescape(cufValue.binding.customField.options[i].label);
+				cufValue.binding.customField.options[i].code = _.unescape(cufValue.binding.customField.options[i].code);
+			}
+		}
 	};
 
 	return {
@@ -95,7 +97,6 @@ define(["jquery", "handlebars", "./lib/cuf-values-utils","jqueryui", "./lib/jque
 				break;
 
 			case "editable":
-				escapeCustomFieldOptions(cufValue);
 				elt.editableCustomfield(cufValue.binding.customField);
 				elt.parent().addClass('editable');
 				break;

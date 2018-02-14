@@ -40,7 +40,7 @@ define(
 			 *
 			 * ***************************************************************************************************/
 
-			function buildPostFunction(idOrURLOrPostfunction, postProcess, isDenormalized) {
+			function buildPostFunction(idOrURLOrPostfunction, postProcess, isDenormalized, type) {
 
 				var postProcessFn = postProcess || function(value) {
 					return value;
@@ -99,9 +99,16 @@ define(
 				}
 
 				return function(value, settings) {
-					var data = postProcessFn(value, settings);
-					postFunction.call(this, data);
-					return value;
+
+						var data = postProcessFn(value, settings);
+						postFunction.call(this, data);
+					if(type == "RICH_TEXT") {
+						return value;
+					} else {
+						return _.escape(value);
+					}
+
+
 				};
 
 			}
@@ -142,7 +149,7 @@ define(
 							value);
 				};
 
-				var postFunction = buildPostFunction(idOrURLOrPostfunction,	postProcess, cufDefinition.denormalized);
+				var postFunction = buildPostFunction(idOrURLOrPostfunction,	postProcess, cufDefinition.denormalized,"DATE_PICKER" );
 
 				elts.editable(postFunction, conf);
 
@@ -153,8 +160,6 @@ define(
 				if (elts.length === 0){
 					return;
 				}
-
-
 
 				utils.addEmptyValueToDropdownlistIfOptional(cufDefinitions);
 
@@ -184,7 +189,7 @@ define(
 					conf.data = prepareSelectData(
 							cufDefinitions.options, selected);
 
-					var postFunction = buildPostFunction(idOrURLOrPostfunction, undefined, cufDefinitions.denormalized);
+					var postFunction = buildPostFunction(idOrURLOrPostfunction, undefined, cufDefinitions.denormalized,"DROPDOWN_LIST" );
 
 					jqThis.editable(postFunction, conf);
 
@@ -199,7 +204,7 @@ define(
 
 				_bindEmptyMandatoryCufErrorHandler(cufDefinition, conf, 'plainText', true);
 
-				var postFunction = buildPostFunction(idOrURLOrPostfunction, undefined, cufDefinition.denormalized);
+				var postFunction = buildPostFunction(idOrURLOrPostfunction, undefined, cufDefinition.denormalized, "PLAIN_TEXT");
 
 				elts.editable(postFunction, conf);
 
@@ -212,7 +217,7 @@ define(
 					return;
 				}
 
-				var postFunction = buildPostFunction(idOrURLOrPostfunction, undefined, cufDefinition.denormalized);
+				var postFunction = buildPostFunction(idOrURLOrPostfunction, undefined, cufDefinition.denormalized, "CHECKBOX");
 
 				var clickFn = function() {
 					var jqThis = $(this);
@@ -251,7 +256,7 @@ define(
 					return;
 				}
 
-				var postFunction = buildPostFunction(idOrURLOrPostfunction, undefined, cufDefinition.denormalized);
+				var postFunction = buildPostFunction(idOrURLOrPostfunction, undefined, cufDefinition.denormalized, "RICH_TEXT");
 
 				var conf = confman.getJeditableCkeditor();
 
@@ -272,7 +277,7 @@ define(
 					return;
 				}
 
-				var postFunction = buildPostFunction(idOrURLOrPostfunction, undefined, cufDefinition.denormalized);
+				var postFunction = buildPostFunction(idOrURLOrPostfunction, undefined, cufDefinition.denormalized, "TAG");
 
 				var conf = confman.getStdTagit();
 

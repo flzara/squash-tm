@@ -65,6 +65,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 /**
  * Controller for the Custom Fields resources.
@@ -234,6 +235,10 @@ public class CustomFieldController {
 		String toReturn = defaultValue;
 		if (customField.getInputType() == InputType.CHECKBOX) {
 			toReturn = messageSource.getMessage("label." + defaultValue, null, locale);
+//		} else if(customField.getInputType() == InputType.RICH_TEXT){
+//			toReturn = HTMLCleanupUtils.cleanHtml(toReturn);
+//		}else if(customField.getInputType() == InputType.PLAIN_TEXT){
+//			toReturn = HtmlUtils.htmlEscape(toReturn);
 		}
 		return toReturn;
 	}
@@ -250,7 +255,9 @@ public class CustomFieldController {
 	@ResponseBody
 	public String changeDefaultValue(@PathVariable long customFieldId, @RequestParam(JEditablePostParams.VALUE) String defaultValue) {
 		customFieldManager.changeDefaultValue(customFieldId, defaultValue);
-		return defaultValue;
+		CustomField customField = customFieldManager.findById(customFieldId);
+		String toReturn = defaultValue;
+		return toReturn;
 	}
 
 	/**
@@ -377,8 +384,8 @@ public class CustomFieldController {
 				checked = " checked='checked' ";
 			}
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
-			res.put("opt-label", item.getLabel());
-			res.put("opt-code", item.getCode());
+			res.put("opt-label", HtmlUtils.htmlEscape(item.getLabel()));
+			res.put("opt-code", HtmlUtils.htmlEscape(item.getCode()));
 			res.put("opt-default", "<input type='checkbox' name='default' value='" +  HtmlUtils.htmlEscape(item.getLabel()) + "'" + checked
 					+ "/>");
 			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
