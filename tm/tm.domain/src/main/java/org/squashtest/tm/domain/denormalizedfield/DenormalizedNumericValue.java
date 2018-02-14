@@ -75,6 +75,7 @@ public class DenormalizedNumericValue extends DenormalizedFieldValue {
 			this.numericValue  = null;
 		}else {
 			//reformating the "," separator to a "." so whe can handle the two main forms of numeric separators
+			// XXX see comment on CustomFieldValidator#validateNumericCustomField about potential bug with non-anglosaxon locales
 			String formattedDefaultValue = this.value.replace(",", ".");
 			BigDecimal bigDecimal = new BigDecimal(formattedDefaultValue);
 			this.numericValue = bigDecimal;

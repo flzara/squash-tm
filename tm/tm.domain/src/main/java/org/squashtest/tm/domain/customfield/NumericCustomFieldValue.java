@@ -27,6 +27,7 @@ import org.squashtest.tm.exception.customfield.WrongCufNumericFormatException;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import java.math.BigDecimal;
+import java.util.Locale;
 
 /**
  * Created by jthebault on 20/07/2016.
@@ -52,10 +53,11 @@ public class NumericCustomFieldValue extends CustomFieldValue {
 		else {
 			try {
 				//reformating the "," separator to a "." so whe can handle the two main forms of numeric separators
-				String formattedValue = value.replace(",",".");
-				this.numericValue  = new BigDecimal(formattedValue);
+				// XXX see comment on CustomFieldValidator#validateNumericCustomField about potential bug with non-anglosaxon locales
+				String normalizedValue = value.replace(",",".");
+				this.numericValue  = new BigDecimal(normalizedValue);
 				//we also persist the value as a string, some operations like export will be a lot easier
-				this.value = this.numericValue.toString();
+				this.value = this.numericValue.toPlainString();
 			} catch (NumberFormatException nfe) {
 				throw new WrongCufNumericFormatException(nfe);
 			}
@@ -89,4 +91,5 @@ public class NumericCustomFieldValue extends CustomFieldValue {
 	public RawValue asRawValue() {
 		return new RawValue(value);
 	}
+
 }
