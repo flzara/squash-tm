@@ -30,7 +30,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 /**
- * @author Gregory Fouquet
+ * @author Julien Thebault
  */
 @Entity
 @Table(name = "SCRIPTED_TC_EXTENDER")

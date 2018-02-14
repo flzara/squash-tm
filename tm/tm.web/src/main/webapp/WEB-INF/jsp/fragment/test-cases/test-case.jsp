@@ -55,11 +55,11 @@ require(["common"], function() {
 <c:url var="automationUrl"					value="/test-cases/${testCase.id}/test-automation" />
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
-<%-- 
+<%--
 	if no variable 'editable' was provided in the context, we'll set one according to the authorization the user
-	was granted for that object. 
-  
-    Also if there is an active milestone that prevent modification, 
+	was granted for that object.
+
+    Also if there is an active milestone that prevent modification,
     all permissions shall remain to false.
 --%>
 
@@ -69,8 +69,6 @@ require(["common"], function() {
 <c:set var="attachable"         value="${false}" />
 <c:set var="deletable"          value="${false}" />
 <c:set var="linkable"           value="${false}" />
-
-
 
 <%-- permission 'linkable' is not subject to the milestone statuses, ACL only --%>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK"
@@ -110,6 +108,23 @@ require(["common"], function() {
 
 </c:if>
 
+<%-- ----------------------------------- Variables ----------------------------------------------%>
+
+<c:set var="scripted"           value="${testCase.isScripted()}" />
+<style type="text/css" media="screen">
+  body {
+    overflow: hidden;
+  }
+  #tc-script-editor {
+    margin: 0;
+    position: absolute;
+    top: 35px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+</style>
+
 <%---------------------------- Test Case Header ------------------------------%>
 
 <tc:test-case-header testCase="${testCase}" />
@@ -117,8 +132,8 @@ require(["common"], function() {
 
 <%---------------------------- Test Case Informations ------------------------------%>
 
-<tc:test-case-toolbar testCase="${testCase}" isInfoPage="${param.isInfoPage}" otherViewers="${otherViewers}"   
-					  moreThanReadOnly="${moreThanReadOnly}"  writable="${writable}" 
+<tc:test-case-toolbar testCase="${testCase}" isInfoPage="${param.isInfoPage}" otherViewers="${otherViewers}"
+					  moreThanReadOnly="${moreThanReadOnly}"  writable="${writable}"
                       milestoneConf="${milestoneConf}"/>
 
 <%-- --------------------------------------- Test Case body --------------------------------------- --%>
@@ -131,6 +146,11 @@ require(["common"], function() {
 		<li>
 			<a href="#tab-tc-informations"><f:message key="tabs.label.information" /></a>
 		</li>
+    <c:if test="${scripted}">
+    <li>
+      <a href="#tab-tc-script-editor">SCRIPT</a>
+    </li>
+    </c:if>
 		<li>
 			<a href="${stepTabUrl}"><f:message key="tabs.label.steps" /></a>
 		</li>
@@ -146,7 +166,7 @@ require(["common"], function() {
 			<a href="#tabs-tc-attachments"><f:message key="label.Attachments" />
 			<c:if test="${testCase.attachmentList.notEmpty}">
 				<span class="hasAttach">!</span>
-			</c:if> 
+			</c:if>
 			</a>
 		</li>
 		<li>
@@ -159,19 +179,19 @@ require(["common"], function() {
         </li>
 </c:if>
 	</ul>
-	
-		
+
+
 
 	<div id="tab-tc-informations">
-			
+
 		<%-- ------------------------- Description Panel ------------------------- --%>
-	
-		<tc:test-case-description 	testCase="${testCase}" 
+
+		<tc:test-case-description 	testCase="${testCase}"
 									testCaseImportanceLabel="${testCaseImportanceLabel}"
 									writable="${writable}"/>
-		
+
 		<tc:test-case-attribut testCase="${testCase}" writable="${writable}" testCaseImportanceLabel="${testCaseImportanceLabel}" />
-	
+
 
 		<%----------------------------------- Prerequisites -----------------------------------------------%>
 
@@ -189,20 +209,41 @@ require(["common"], function() {
 
 
 	</div>
-	
+
 	<%-- ------------------------- /Description Panel ------------------------- --%>
-	<%------------------------------ Attachments  ---------------------------------------------%>	
-	
+
+      <%------------------------------ Script Editor  ---------------------------------------------%>
+    <c:if test="${scripted}">
+      <div id="tab-tc-script-editor">
+      <%-- ==================== toolbar definition ===================--%>
+      <div class="toolbar">
+      <span class="group">
+        <button id="save-tc-script-button"
+                data-icon="ui-icon-plusthick"
+                class="button test-step-toolbar-button">
+              SAVE IT !!!!
+        </button>
+      </span>
+      </div>
+
+        <div id="tc-script-editor"></div>
+      </div>
+    </c:if>
+
+      <%------------------------------ /Script Editor  ---------------------------------------------%>
+
+	<%------------------------------ Attachments  ---------------------------------------------%>
+
 	<at:attachment-tab tabId="tabs-tc-attachments"  entity="${ testCase }"  editable="${ attachable }" tableModel="${attachmentsModel}"/>
-	
+
 	<%------------------------------ /Attachments  ---------------------------------------------%>
 
-    <%-- ----------------------- bugtracker (if present)----------------------------------------%> 
+    <%-- ----------------------- bugtracker (if present)----------------------------------------%>
 <c:if test="${testCase.project.bugtrackerConnected}">
         <issues:butracker-panel entity="${testCase}"/>
 </c:if>
 
-    <%-- ----------------------- /bugtracker (if present)----------------------------------------%> 
+    <%-- ----------------------- /bugtracker (if present)----------------------------------------%>
 
 </div>
 </csst:jq-tab>
@@ -212,14 +253,14 @@ require(["common"], function() {
 <tc:test-case-popups writable="${writable}" milestoneConf="${milestoneConf}"/>
 
 <%-- ===================================== /popups =============================== --%>
-		
+
 
 <%-- ===================================== INIT =============================== --%>
 
 <script type="text/javascript" th:inline="javascript">
 	/*<![CDATA[*/
 	var squashtm = squashtm || {};
-  	squashtm.app = squashtm.app || {} ;	 
+  	squashtm.app = squashtm.app || {} ;
     require([ "common" ], function() {
         require([ "jquery", "test-case-management", "workspace.event-bus" ],
 			function($, testCaseManagement, eventBus) {
@@ -234,30 +275,34 @@ require(["common"], function() {
 						writable : ${writable},
 						testCaseImportanceComboJson : ${testCaseImportanceComboJson},
 						testCaseNatures : ${json:serialize(testCaseNatures)},
-						testCaseTypes : ${json:serialize(testCaseTypes)},		
-						testCaseStatusComboJson : ${testCaseStatusComboJson},					
+						testCaseTypes : ${json:serialize(testCaseTypes)},
+						testCaseStatusComboJson : ${testCaseStatusComboJson},
 						importanceAuto : ${testCase.importanceAuto},
 						testCaseId : ${testCase.id},
 						callingTestCases : ${json:serialize(callingTestCasesModel.aaData)},
 						hasCufs : ${hasCUF},
 						hasBugtracker : ${testCase.project.bugtrackerConnected},
-						isAutomated : ${testCase.project.testAutomationEnabled}
+						isAutomated : ${testCase.project.testAutomationEnabled},
+            isScripted : ${scripted}
 						<c:if test="${not empty milestoneConf.activeMilestone}">
 						,milestone : ${json:serialize(milestoneConf.activeMilestone)}
 						</c:if>
 					};
-					
+
 				$(function() {
 					testCaseManagement.initStructure(settings);
 					testCaseManagement.initInfosTab(settings);
+					if(settings.isScripted){
+            testCaseManagement.initScriptEditorTab(settings);
+          }
 				});
-				
+
 				<c:if test="${param.isInfoPage}">
-				<c:url var="newversionUrl" value="/test-cases/{id}/info"/>				
+				<c:url var="newversionUrl" value="/test-cases/{id}/info"/>
     			eventBus.on('test-case.new-version', function(evt, version){
     				var url =  "${newversionUrl}".replace('{id}', version.id);
     				document.location.href = url;
-    			});				
+    			});
 				</c:if>
 			});
     });
