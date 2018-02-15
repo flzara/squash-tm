@@ -18,16 +18,40 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore","ace/ace"],function ($, Backbone, _ ,ace) {
+define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing"], function ($, Backbone, _, ace, urlBuilder) {
 	var ScriptEditorTab = Backbone.View.extend({
 
 		el: "#tab-tc-script-editor",
 
-		initialize : function(options) {
+		//This view is initialized in test-case.jsp, the server model is directly injected in the page.
+		initialize: function (options) {
+			var serverModel = options.settings;
 			var editor = ace.edit("tc-script-editor");
 			editor.setTheme("ace/theme/twilight");
 			editor.session.setMode("ace/mode/gherkin");
+			this.editor = editor;
+
+			this._initializeModel(serverModel);
+		},
+
+		_initializeModel: function (options) {
+			var ScriptedTestCseModel = Backbone.Model.extend({
+				urlRoot: urlBuilder.buildURL("testcases.scripted", options.testCaseId)
+			});
+
+			this.model = new ScriptedTestCseModel();
+		},
+
+		events: {
+			"click #tc-script-save-button": "saveScript"
+		},
+
+		saveScript: function () {
+			var tcScript = this.editor.session.getValue();
+			this.model.set('script', tcScript);
+			this.model.save();
 		}
+
 	});
 
 	return ScriptEditorTab;

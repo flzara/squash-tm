@@ -218,7 +218,7 @@ require(["common"], function() {
       <%-- ==================== toolbar definition ===================--%>
       <div class="toolbar">
       <span class="group">
-        <button id="save-tc-script-button"
+        <button id="tc-script-save-button"
                 data-icon="ui-icon-plusthick"
                 class="button test-step-toolbar-button">
               SAVE IT !!!!
