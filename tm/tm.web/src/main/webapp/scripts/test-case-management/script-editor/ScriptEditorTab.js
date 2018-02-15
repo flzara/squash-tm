@@ -26,12 +26,16 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing"], fun
 		//This view is initialized in test-case.jsp, the server model is directly injected in the page.
 		initialize: function (options) {
 			var serverModel = options.settings;
+			this._initializeEditor(serverModel);
+			this._initializeModel(serverModel);
+		},
+
+		_initializeEditor: function (serverModel) {
 			var editor = ace.edit("tc-script-editor");
 			editor.setTheme("ace/theme/twilight");
 			editor.session.setMode("ace/mode/gherkin");
+			editor.session.setValue(serverModel.scriptExender.script)
 			this.editor = editor;
-
-			this._initializeModel(serverModel);
 		},
 
 		_initializeModel: function (options) {

@@ -284,6 +284,9 @@ require(["common"], function() {
 						hasBugtracker : ${testCase.project.bugtrackerConnected},
 						isAutomated : ${testCase.project.testAutomationEnabled},
             isScripted : ${scripted}
+            <c:if test="${scripted}">
+            ,scriptExender : ${json:serialize(testCase.scriptedTestCaseExtender)}
+            </c:if>
 						<c:if test="${not empty milestoneConf.activeMilestone}">
 						,milestone : ${json:serialize(milestoneConf.activeMilestone)}
 						</c:if>
