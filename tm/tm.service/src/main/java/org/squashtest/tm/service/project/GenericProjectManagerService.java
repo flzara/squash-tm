@@ -50,8 +50,4 @@ public interface GenericProjectManagerService extends CustomGenericProjectManage
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeActive(long projectId, boolean isActive);
 
-	@PreAuthorize(ADMIN_OR_PROJECT_MANAGER)
-	void changeAllowTcModifDuringExec(long projectId, boolean active);
-
-
 }

@@ -581,7 +581,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		checkManageProjectOrAdmin(project);
 		project.getCampaignLibrary().enableStatus(executionStatus);
 		if(ProjectHelper.isTemplate(project)) {
-			Collection<Project> boundProjects = templateDao.findAllBoundProjects(projectId);
+			Collection<Project> boundProjects = projectDao.findAllBoundToTemplate(projectId);
 			for(Project boundProject : boundProjects) {
 				boundProject.getCampaignLibrary().enableStatus(executionStatus);
 			}
@@ -595,7 +595,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		project.getCampaignLibrary().disableStatus(executionStatus);
 		/* If the GenericProject is a Template, propagate modification to bound Projects. */
 		if(ProjectHelper.isTemplate(project)) {
-			Collection<Project> boundProjects = templateDao.findAllBoundProjects(projectId);
+			Collection<Project> boundProjects = projectDao.findAllBoundToTemplate(projectId);
 			for(Project boundProject : boundProjects) {
 				boundProject.getCampaignLibrary().disableStatus(executionStatus);
 			}

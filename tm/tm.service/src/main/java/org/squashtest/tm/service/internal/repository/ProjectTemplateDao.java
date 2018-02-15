@@ -40,6 +40,4 @@ public interface ProjectTemplateDao extends JpaRepository<ProjectTemplate, Long>
 	@Modifying
 	void propagateAllowTcModifDuringExec(@Param("templateId") long templateId, @Param("active") boolean active);
 
-	@Query
-	Collection<Project> findAllBoundProjects(@Param("templateId") long templateId);
 }
