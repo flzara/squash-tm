@@ -989,4 +989,13 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	}
 
+	@Override
+	public void changeAllowTcModifDuringExec(long projectId, boolean active) {
+		GenericProject genericProject = genericProjectDao.findOne(projectId);
+		genericProject.setAllowTcModifDuringExec(active);
+		/* If project is a Template, propagate on all the projects. */
+		if(ProjectHelper.isTemplate(genericProject)) {
+			// For all the bound Projects, setAllowTcModifDuringExec(active)
+		}
+	}
 }

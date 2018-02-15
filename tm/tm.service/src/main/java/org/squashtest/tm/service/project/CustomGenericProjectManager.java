@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.project;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.collection.Filtering;
@@ -38,6 +39,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static org.squashtest.tm.service.project.GenericProjectManagerService.ADMIN_OR_PROJECT_MANAGER;
 
 /**
  * @author Gregory Fouquet
@@ -241,4 +244,7 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	 * Associates the given {@link Project} with the given {@link ProjectTemplate}.
 	 * This action implies copying CustomFields, InfoLists, ExeParams and ExecStatuses from the Template. */
 	void associateToTemplate(long projectId, long templateId);
+
+	@PreAuthorize(ADMIN_OR_PROJECT_MANAGER)
+	void changeAllowTcModifDuringExec(long projectId, boolean active);
 }

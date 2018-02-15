@@ -28,7 +28,7 @@
 	<uri>http://org.squashtest.tm/taglib/project-utils</uri>
 	<function>
 		<name>isTemplate</name>
-		<function-class>org.squashtest.tm.web.internal.helper.ProjectHelper</function-class>
+		<function-class>org.squashtest.tm.service.internal.project.ProjectHelper</function-class>
 		<function-signature>boolean isTemplate(org.squashtest.tm.domain.project.GenericProject)</function-signature>
 	</function>
-</taglib>  
+</taglib>

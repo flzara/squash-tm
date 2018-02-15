@@ -49,7 +49,7 @@ import org.squashtest.tm.service.testautomation.TestAutomationProjectFinderServi
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.administration.PartyPermissionDatatableModelHelper;
 import org.squashtest.tm.web.internal.helper.JEditablePostParams;
-import org.squashtest.tm.web.internal.helper.ProjectHelper;
+import org.squashtest.tm.service.internal.project.ProjectHelper;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.*;

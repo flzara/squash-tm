@@ -31,7 +31,7 @@ import org.squashtest.tm.service.project.GenericProjectFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.administration.MilestoneDataTableModelHelper;
-import org.squashtest.tm.web.internal.helper.ProjectHelper;
+import org.squashtest.tm.service.internal.project.ProjectHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
