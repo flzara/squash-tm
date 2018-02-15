@@ -57,6 +57,13 @@ import java.util.Map;
 public class ConnectionController {
 
 	private static final String FILENAME = "filename";
+	private static final String LOGIN = "login";
+	private static final String ID = "id";
+	private static final String CONNECTION_DATE_KEY = "connection-date";
+	private static final String CONNECTION_DATE_ATTRIBUTE = "connectionDate";
+	private static final String SUCCESS_KEY = "successful";
+	private static final String SUCCESS_ATTRIBUTE = "success";
+
 
 	@Inject
 	protected InternationalizationHelper messageSource;
@@ -67,10 +74,10 @@ public class ConnectionController {
 	private ConnectionLogExportService connectionLogExportService;
 
 	private DatatableMapper<String> connectionsMapper = new NameBasedMapper(9)
-		.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, "id", ConnectionLog.class)
-		.mapAttribute("login", "login", ConnectionLog.class)
-		.mapAttribute("connection-date", "connectionDate", ConnectionLog.class)
-		.mapAttribute("successful", "success", ConnectionLog.class);
+		.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, ID, ConnectionLog.class)
+		.mapAttribute(LOGIN, LOGIN, ConnectionLog.class)
+		.mapAttribute(CONNECTION_DATE_KEY, CONNECTION_DATE_ATTRIBUTE, ConnectionLog.class)
+		.mapAttribute(SUCCESS_KEY, SUCCESS_ATTRIBUTE, ConnectionLog.class);
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionController.class);
 
@@ -130,9 +137,9 @@ public class ConnectionController {
 			Map<String, Object> res = new HashMap<>();
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
-			res.put("login", item.getLogin());
-			res.put("connection-date", messageSource.localizeDate(item.getConnectionDate(), locale));
-			res.put("successful", item.getSuccess());
+			res.put(LOGIN, item.getLogin());
+			res.put(CONNECTION_DATE_KEY, messageSource.localizeDate(item.getConnectionDate(), locale));
+			res.put(SUCCESS_KEY, item.getSuccess());
 			return res;
 		}
 	}

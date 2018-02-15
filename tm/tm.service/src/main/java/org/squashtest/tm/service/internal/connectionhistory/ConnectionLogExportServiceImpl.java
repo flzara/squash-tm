@@ -25,8 +25,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.domain.campaign.export.CampaignExportCSVModel;
 import org.squashtest.tm.domain.users.ConnectionLog;
 import org.squashtest.tm.service.connectionhistory.ConnectionLogExportService;
 import org.squashtest.tm.service.internal.repository.ConnectionLogDao;
@@ -35,10 +33,8 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Iterator;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -79,19 +75,15 @@ public class ConnectionLogExportServiceImpl implements ConnectionLogExportServic
 
 			PrintWriter finalWriter = writer;
 			list.stream().forEach(connectionLog -> {
-				StringJoiner joiner = new StringJoiner(";");
-				joiner.add(connectionLog.getId().toString())
-					  .add(connectionLog.getLogin())
-					  .add(connectionLog.getConnectionDate().toString())
-					  .add(connectionLog.getSuccess().toString());
-				finalWriter.write(joiner.toString()+"\n");
+				String line = buildLine(connectionLog);
+				finalWriter.write(line+"\n");
 			});
 
 			writer.close();
 
 			return file;
 		} catch (IOException e) {
-			LOGGER.error("campaign export : I/O failure while creating the temporary file : " + e.getMessage());
+			LOGGER.error("connection history export : I/O failure while creating the temporary file : " + e.getMessage());
 			throw new RuntimeException(e);
 		} finally {
 			if (writer != null) {
@@ -103,6 +95,15 @@ public class ConnectionLogExportServiceImpl implements ConnectionLogExportServic
 	private String getColumnTitles(){
 		StringJoiner joiner = new StringJoiner(";");
 		joiner.add(ID_COLUMN).add(LOGIN_COLUMN).add(CONNECTION_DATE_COLUMN).add(SUCCESS_COLUMN);
+		return joiner.toString();
+	}
+
+	private String buildLine(ConnectionLog connectionLog){
+		StringJoiner joiner = new StringJoiner(";");
+		joiner.add(connectionLog.getId().toString())
+			.add(connectionLog.getLogin())
+			.add(connectionLog.getConnectionDate().toString())
+			.add(connectionLog.getSuccess().toString());
 		return joiner.toString();
 	}
 }
