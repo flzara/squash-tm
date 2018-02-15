@@ -91,7 +91,7 @@
 	      <ul class="not-displayed width:130px;" style="max-height: 12.8em;">
 	        <li th:each="bugtracker : ${bugtrackers}" >
 	          <a th:id="'bugtracker-'+${bugtracker.id}" th:href="${bugtracker.iframeFriendly} ? @{/bugtracker/}+${bugtracker.id}+'/workspace' : ${bugtracker.URL}"
-	                                th:target="${bugtracker.iframeFriendly} ? '_blank' : ''"
+	                                th:target="${bugtracker.iframeFriendly} ? '' : '_blank'"
 	                                th:text="${bugtracker.name}">mantis</a>
 	        </li>
 	      </ul>
