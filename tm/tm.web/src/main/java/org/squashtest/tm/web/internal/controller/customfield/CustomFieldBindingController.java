@@ -138,18 +138,8 @@ public class CustomFieldBindingController {
 
     @RequestMapping(value = "/new-batch", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    public void createNewBinding(@RequestBody CustomFieldBindingModel[] bindingModels) {
-        // TODO not atomic, push down a level
-        for (CustomFieldBindingModel model : bindingModels) {
-
-            CustomFieldBinding newBinding = new CustomFieldBinding();
-            long projectId = model.getProjectId();
-            long fieldId = model.getCustomField().getId();
-            BindableEntity entity = model.getBoundEntity().toDomain();
-
-            service.addNewCustomFieldBinding(projectId, entity, fieldId, newBinding);
-
-        }
+    public void createNewBindings(@RequestBody CustomFieldBindingModel[] bindingModels) {
+ 		service.createNewBindings(bindingModels);
     }
 
     @RequestMapping(value = "/{bindingId}/renderingLocations/{location}", method = RequestMethod.PUT)

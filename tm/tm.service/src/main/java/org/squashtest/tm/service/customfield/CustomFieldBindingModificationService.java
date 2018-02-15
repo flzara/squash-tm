@@ -21,39 +21,47 @@
 package org.squashtest.tm.service.customfield;
 
 import java.util.List;
+import java.util.Set;
 
+import org.springframework.web.bind.annotation.RequestBody;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.service.internal.dto.CustomFieldBindingModel;
 
 /**
  * An interface for services around {@link CustomField}. The user calling the following methods must have a role 'admin'
  * or 'project manager'.
- * 
- * 
+ *
+ *
  * @author bsiri
- * 
+ *
  */
 public interface CustomFieldBindingModificationService extends CustomFieldBindingFinderService {
 
 	/**
-	 * Will attach a {@link CustomField} to a {@link Project}. The details and conditions of that binding is described
-	 * in the {@link CustomFieldBinding} newBinding. The new binding will be inserted last.
-	 * 
+	 * Creates all the {@link CustomFieldBinding} defined in the given Array of {@link CustomFieldBindingModel}.
+	 * @param bindingModels The Array of CustomFieldBindingModels to create.
+	 */
+	void createNewBindings(@RequestBody CustomFieldBindingModel[] bindingModels);
+
+	/**
+	 * Will attach a {@link CustomField} to a {@link Project}.
+	 *
 	 * @param projectId
 	 * @param customFieldId
 	 * @param entity
-	 * @param newBinding
+	 * @param locations
 	 */
 	void addNewCustomFieldBinding(long projectId, BindableEntity entity, long customFieldId,
-			CustomFieldBinding newBinding);
+								  Set<RenderingLocation> locations);
 
 	/**
 	 * Add a rendering location to a custom field binding
-	 * 
+	 *
 	 * @param bindingId
 	 * @param location
 	 */
@@ -61,7 +69,7 @@ public interface CustomFieldBindingModificationService extends CustomFieldBindin
 
 	/**
 	 * Remove the rendering location from a custom field binding
-	 * 
+	 *
 	 * @param bindingId
 	 * @param location
 	 */
@@ -69,13 +77,13 @@ public interface CustomFieldBindingModificationService extends CustomFieldBindin
 
 	/**
 	 * removes a batch of custom field bindings using their ids.
-	 * 
+	 *
 	 */
 	void removeCustomFieldBindings(List<Long> bindingIds);
 
 	/**
 	 * removes all the custom field bindings defined for a project.
-	 * 
+	 *
 	 * @param projectId
 	 *            the id of the project
 	 */
@@ -85,7 +93,7 @@ public interface CustomFieldBindingModificationService extends CustomFieldBindin
 	 * Given a list of {@link CustomFieldBinding}s, will reorder them with respect to their project and bound entity.
 	 * This method assumes that they all bind the same entity to the same project. If the input list mixes binding for
 	 * different projects and/or entities, unexpected behavior may occur.
-	 * 
+	 *
 	 * @param bindingIds
 	 * @param newIndex
 	 */
@@ -93,7 +101,7 @@ public interface CustomFieldBindingModificationService extends CustomFieldBindin
 
 	/**
 	 * Will copy the custom field bindings of the template and apply them to the project.
-	 * 
+	 *
 	 * @param target
 	 * @param source
 	 */

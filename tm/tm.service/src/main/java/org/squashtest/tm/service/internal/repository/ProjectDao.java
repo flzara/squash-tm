@@ -40,4 +40,7 @@ public interface ProjectDao extends CustomProjectDao, JpaRepository<Project,Long
 
 	@Query
 	Collection<Project> findAllBoundToTemplate(@Param("templateId") long templateId);
+
+	@Query
+	Collection<Long> findAllIdsBoundToTemplate(@Param("templateId") long templateId);
 }

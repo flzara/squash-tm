@@ -514,6 +514,7 @@
 	@NamedQuery(name = "Project.findAllUsersWhoModifiedRequirementVersions", query = "select distinct rv.audit.lastModifiedBy from RequirementVersion rv join rv.requirement r join r.project p where p.id in :projectIds order by rv.audit.lastModifiedBy asc"),
 	@NamedQuery(name = "Project.findAllAuthorizedUsersForProject", query = "select distinct c.audit from Campaign c join c.project p where p.id in :projectIds"),
 	@NamedQuery(name = "Project.findAllBoundToTemplate", query = "from Project p where p.template.id = :templateId"),
+	@NamedQuery(name = "Project.findAllIdsBoundToTemplate", query = "select p.id from Project p where p.template.id = :templateId"),
 
 	//Attachement et al
 	@NamedQuery(name = "attachment.getAttachmentAndContentIdsFromList", query = "select attachment.id, content.id from AttachmentList list join list.attachments attachment join attachment.content content where list.id in (:listIds) group by attachment.id, content.id"),

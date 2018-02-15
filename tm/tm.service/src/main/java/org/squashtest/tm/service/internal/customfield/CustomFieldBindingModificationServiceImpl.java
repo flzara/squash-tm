@@ -28,22 +28,28 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.customfield.*;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding.PositionAwareBindingList;
 import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.event.CreateCustomFieldBindingEvent;
 import org.squashtest.tm.event.DeleteCustomFieldBindingEvent;
 import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService;
+import org.squashtest.tm.service.internal.dto.CustomFieldBindingModel;
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
+import org.squashtest.tm.service.internal.repository.ProjectDao;
 
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
@@ -65,6 +71,9 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 
 	@Inject
 	private GenericProjectDao genericProjectDao;
+
+	@Inject
+	private ProjectDao projectDao;
 
 	@Inject
 	private ApplicationEventPublisher eventPublisher;
@@ -126,14 +135,44 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
+	public void createNewBindings(CustomFieldBindingModel[] bindingModels) {
+
+		for (CustomFieldBindingModel model : bindingModels) {
+
+			long projectId = model.getProjectId();
+			long fieldId = model.getCustomField().getId();
+			BindableEntity entity = model.getBoundEntity().toDomain();
+
+			addNewCustomFieldBinding(projectId, entity, fieldId, null);
+
+			/* Modifications propagation to bound Projects if the GenericProject is a Template. */
+			if(genericProjectDao.isProjectTemplate(projectId)) {
+				propagateCufBindingCreationToBoundProjects(projectId, entity, fieldId);
+			}
+		}
+	}
+
+	private void propagateCufBindingCreationToBoundProjects(long templateId, BindableEntity entity, long cufId) {
+		Collection<Long> boundProjectsIds = projectDao.findAllIdsBoundToTemplate(templateId);
+		for(Long boundProjectId : boundProjectsIds) {
+			if(!customFieldBindingDao.cufBindingAlreadyExists(boundProjectId, entity, cufId)) {
+				addNewCustomFieldBinding(boundProjectId, entity, cufId, null);
+			}
+		}
+	}
+
+
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	// TODO add check for permission MANAGEMENT on the project id
 	public void addNewCustomFieldBinding(long projectId, BindableEntity entity, long customFieldId,
-										 CustomFieldBinding newBinding) {
+										 Set<RenderingLocation> locations) {
 
-			createBinding(projectId, entity, customFieldId, newBinding);
-			if (!genericProjectDao.isProjectTemplate(projectId)) {
-				customValueService.cascadeCustomFieldValuesCreation(newBinding);
-			}
+		CustomFieldBinding newBinding = new CustomFieldBinding();
+		createBinding(projectId, entity, customFieldId, newBinding, locations);
+		if (!genericProjectDao.isProjectTemplate(projectId)) {
+			customValueService.cascadeCustomFieldValuesCreation(newBinding);
+		}
 	}
 
 	@Override
@@ -185,9 +224,10 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 
 	}
 
-	private void createBinding(long projectId, BindableEntity entity, long customFieldId, CustomFieldBinding newBinding) {
+	private void createBinding(long projectId, BindableEntity entity, long customFieldId, CustomFieldBinding newBinding,
+		Set<RenderingLocation> locations) {
 
-			GenericProject project = genericProjectDao.findById(projectId);
+			GenericProject project = genericProjectDao.findOne(projectId);
 			CustomField field = customFieldDao.findById(customFieldId);
 			Long newIndex = customFieldBindingDao.countAllForProjectAndEntity(projectId, entity) + 1;
 
@@ -195,6 +235,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 			newBinding.setBoundEntity(entity);
 			newBinding.setCustomField(field);
 			newBinding.setPosition(newIndex.intValue());
+			if(locations != null) { newBinding.setRenderingLocations(locations); }
 
 			customFieldBindingDao.save(newBinding);
 			eventPublisher.publishEvent(new CreateCustomFieldBindingEvent(newBinding));
@@ -206,15 +247,16 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void copyCustomFieldsSettingsFromTemplate(GenericProject target, GenericProject source) {
+
 		List<CustomFieldBinding> templateCutomFieldBindings = findCustomFieldsForGenericProject(source.getId());
 		for (CustomFieldBinding templateCustomFieldBinding : templateCutomFieldBindings) {
 			long projectId = target.getId();
 			BindableEntity entity = templateCustomFieldBinding.getBoundEntity();
 			long customFieldId = templateCustomFieldBinding.getCustomField().getId();
+
 			if (!customFieldBindingDao.cufBindingAlreadyExists(projectId, entity, customFieldId)) {
-				CustomFieldBinding newBinding = new CustomFieldBinding();
-				newBinding.setRenderingLocations(templateCustomFieldBinding.copyRenderingLocations());
-				addNewCustomFieldBinding(projectId, entity, customFieldId, newBinding);
+				Set<RenderingLocation> locations = templateCustomFieldBinding.copyRenderingLocations();
+				addNewCustomFieldBinding(projectId, entity, customFieldId, locations);
 			}
 		}
 
