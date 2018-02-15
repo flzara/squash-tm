@@ -263,7 +263,7 @@ public class RequirementVersionModificationController {
 		PagedCollectionHolder<List<TestCase>> holder = verifyingTestCaseManager.findAllByRequirementVersion(
 			version.getId(), new DefaultPagingAndSorting("Project.name"));
 
-		return new VerifyingTestCasesTableModelHelper(i18nHelper).buildDataModel(holder, "0");
+		return new VerifyingTestCasesTableModelHelper(i18nHelper, permissionService).buildDataModel(holder, "0");
 	}
 
 	private DataTableModel getLinkedReqVersionsModel(RequirementVersion version) {

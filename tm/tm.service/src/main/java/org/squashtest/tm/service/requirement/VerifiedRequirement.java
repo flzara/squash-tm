@@ -62,7 +62,7 @@ public class VerifiedRequirement {
 		this.directVerification = directlyVerified;
 	}
 
-	private RequirementVersion getVerifiedRequirementVersion(){
+	public RequirementVersion getVerifiedRequirementVersion(){
 		return this.verifiedRequirementVersion;
 	}
 

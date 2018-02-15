@@ -262,6 +262,7 @@
  * 			beforeNavigate : function(row, data). A function that will be executed before navigation. Arguments will be the
  *  						row, and the data for this row, of the clicked element. 'this' will be the table.. If this function returns false,
  *  						the navigation will be aborted.
+ *  		condition : function(row, data){return data["shouldlink"];}
  *		}]
  *
  *	}
@@ -1193,20 +1194,36 @@ define(["jquery",
 
 		for (var i = 0; i < linksConf.list.length; i++) {
 			var linkConf = linksConf.list[i];
+			
 			// 1. build link
 			var link = $('<a></a>');
 			if (linkConf.isOpenInTab) {
 				link.attr('target', '_blank');
 			}
 
-			// 2. select required td and wrap their thext with the built link
+			// 2. select required td and wrap their text with the built link
 			var cellSelector = (!!linkConf.targetClass) ?
 			"td." + linkConf.targetClass :
 			'td:nth-child(' + linkConf.target + ')';
 
 			var cells = self.find('>tbody ' + cellSelector);
 
-			cells.contents().filter(cellFilter).wrap(link);
+			cells.filter(function(){
+					// check against the condition of the binding (if defined)
+					var condOK = true;
+					if (!! linkConf.condition){
+						var row = this.parentNode;
+						var data = self.fnGetData(row);
+						condOK = linkConf.condition(row, data);
+					}
+					return condOK;					
+				})
+				// get the content of the remaining cells
+				.contents()
+				// retain only those that are text nodes
+				.filter(cellFilter)
+				// wrap the content with the link
+				.wrap(link);
 
 			// 3. add it to cells
 			$.each(cells, cellProcessor);
@@ -2008,6 +2025,18 @@ define(["jquery",
 						targetClass: cls
 					});
 				},
+				'link-if-readable' : function(conf, value){
+					var cls = 'link-' + Math.random().toString().substr(2, 3);
+					conf.current.sClass += ' ' + cls;
+					conf.squash.bindLinks = conf.squash.bindLinks || {
+						list: []
+					};
+					conf.squash.bindLinks.list.push({
+						url: value,
+						targetClass: cls,
+						condition : function(row, data){return data['readable']}
+					});	
+				},
 				'link-new-tab': function (conf, value) {
 					var cls = 'link-' + Math.random().toString().substr(2, 3);
 					conf.current.sClass += ' ' + cls;
@@ -2020,7 +2049,7 @@ define(["jquery",
 						isOpenInTab: true
 					});
 				},
-				// 'link-cookie' requires that a column definition 'link' or 'link-new-tab' was defined beforehand
+				// 'link-cookie' requires that a column definition 'link', 'link-new-tab' or 'link-if-readable' was defined beforehand
 				// if so, 'link-cookie' will set the defined cookie before navigation occurs.
 				'link-cookie': function (conf, value) {
 

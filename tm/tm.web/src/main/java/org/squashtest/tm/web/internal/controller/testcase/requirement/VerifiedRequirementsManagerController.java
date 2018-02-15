@@ -25,7 +25,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -53,7 +52,6 @@ import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
-import org.squashtest.tm.web.internal.controller.milestone.MilestoneModelUtils;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.helper.VerifiedRequirementActionSummaryBuilder;
@@ -63,7 +61,7 @@ import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.datatable.*;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
-import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+import org.squashtest.tm.web.internal.controller.testcase.requirement.VerifiedRequirementsDataTableModelHelper.*;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -121,6 +119,10 @@ public class VerifiedRequirementsManagerController {
 
 	@Inject
 	protected MilestoneModelService milestoneModelService;
+	
+	@Inject
+	protected PermissionEvaluationService permService;
+	
 
 	private DatatableMapper<String> verifiedRequirementVersionsMapper = new NameBasedMapper(8)
 		.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, "id", RequirementVersion.class)
@@ -282,26 +284,12 @@ public class VerifiedRequirementsManagerController {
 		PagedCollectionHolder<List<VerifiedRequirement>> holder = verifiedRequirementsManagerService
 			.findAllVerifiedRequirementsByTestCaseId(testCaseId, pas);
 
-		return new TestCaseWithCalledStepsVerifiedRequirementsDataTableModelHelper(locale, internationalizationHelper)
+		return new TestCaseWithCalledStepsVerifiedRequirementsDataTableModelHelper(locale, internationalizationHelper, permissionService)
 			.buildDataModel(holder, params.getsEcho());
 
 	}
 
-	private static final class TestCaseWithCalledStepsVerifiedRequirementsDataTableModelHelper extends
-		TestCaseVerifiedRequirementsDataTableModelHelper {
 
-		public TestCaseWithCalledStepsVerifiedRequirementsDataTableModelHelper(Locale locale,
-																			   InternationalizationHelper internationalizationHelper) {
-			super(locale, internationalizationHelper);
-		}
-
-		@Override
-		public Map<String, Object> buildItemData(VerifiedRequirement item) {
-			Map<String, Object> resMap = super.buildItemData(item);
-			resMap.put("directlyVerified", item.isDirectVerification());
-			return resMap;
-		}
-	}
 
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
@@ -314,7 +302,7 @@ public class VerifiedRequirementsManagerController {
 		PagedCollectionHolder<List<VerifiedRequirement>> holder = verifiedRequirementsManagerService
 			.findAllDirectlyVerifiedRequirementsByTestCaseId(testCaseId, pagingAndSorting);
 
-		return new TestCaseVerifiedRequirementsDataTableModelHelper(locale, internationalizationHelper).buildDataModel(
+		return new TestCaseVerifiedRequirementsDataTableModelHelper(locale, internationalizationHelper, permissionService).buildDataModel(
 			holder, params.getsEcho());
 	}
 
@@ -335,98 +323,9 @@ public class VerifiedRequirementsManagerController {
 			.findAllDirectlyVerifiedRequirementsByTestStepId(testStepId, paging);
 
 		TestCase testCase = testCaseModificationService.findTestCaseFromStep(testStepId);
-		return new TestStepVerifiedRequirementsDataTableModelHelper(locale, internationalizationHelper, testStepId, testCase).buildDataModel(holder, params.getsEcho());
+		return new TestStepVerifiedRequirementsDataTableModelHelper(locale, internationalizationHelper, permissionService, testStepId, testCase).buildDataModel(holder, params.getsEcho());
 	}
 
-	private static class VerifiedRequirementsDataTableModelHelper
-		extends DataTableModelBuilder<VerifiedRequirement> { // NOSONAR no, it should not be declared final because it has subclasses in this very file
-		private InternationalizationHelper internationalizationHelper;
-		private Locale locale;
-		private static final int INT_MAX_DESCRIPTION_LENGTH = 50;
 
-		private VerifiedRequirementsDataTableModelHelper(Locale locale,
-														 InternationalizationHelper internationalizationHelper) {
-			this.locale = locale;
-			this.internationalizationHelper = internationalizationHelper;
-		}
-
-		@Override
-		public Map<String, Object> buildItemData(VerifiedRequirement item) {
-			Map<String, Object> res = new HashMap<>();
-			res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
-			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
-			res.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, HtmlUtils.htmlEscape(item.getName()));
-			res.put("project", HtmlUtils.htmlEscape(item.getProject().getName()));
-			res.put("reference", HtmlUtils.htmlEscape(item.getReference()));
-			res.put("versionNumber", item.getVersionNumber());
-			res.put("criticality",
-				internationalizationHelper.internationalize(item.getCriticality(), locale));
-			res.put("category", HtmlUtils.htmlEscape(internationalizationHelper.getMessage(item.getCategory().getLabel(), null, item.getCategory().getLabel(), locale)));
-			res.put("status", internationalizationHelper.internationalize(item.getStatus(), locale));
-			res.put("milestone-dates", MilestoneModelUtils.timeIntervalToString(item.getMilestones(), internationalizationHelper, locale));
-			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
-			res.put("milestone", MilestoneModelUtils.milestoneLabelsOrderByDate(item.getMilestones()));
-			res.put("short-description", HTMLCleanupUtils.getCleanedBriefText(item.getDescription(), INT_MAX_DESCRIPTION_LENGTH));
-			res.put("description", HtmlUtils.htmlEscape(item.getDescription()));
-			res.put("category-icon", HtmlUtils.htmlEscape(item.getCategory().getIconName()));
-			res.put("criticality-level", item.getCriticality().getLevel());
-			res.put("status-level", item.getStatus().getLevel());
-			return res;
-		}
-	}
-
-	private static class TestCaseVerifiedRequirementsDataTableModelHelper extends
-		VerifiedRequirementsDataTableModelHelper {
-
-		private TestCaseVerifiedRequirementsDataTableModelHelper(Locale locale,
-																 InternationalizationHelper internationalizationHelper) {
-			super(locale, internationalizationHelper);
-		}
-
-		@Override
-		public Map<String, Object> buildItemData(VerifiedRequirement item) {
-			Map<String, Object> res = super.buildItemData(item);
-			res.put("verifyingSteps", getVerifyingSteps(item));
-			return res;
-		}
-
-		private String getVerifyingSteps(VerifiedRequirement item) {
-			String result = "";
-			Set<ActionTestStep> steps = item.getVerifyingSteps();
-			if (!steps.isEmpty()) {
-				if (steps.size() == 1) {
-					ActionTestStep step = steps.iterator().next();
-					result = "<span class='verifyingStep' dataId='" + step.getId() + "'>" + (step.getIndex() + 1)
-						+ "</span>";
-				} else {
-					result = "&#42;";
-				}
-			}
-			return result;
-		}
-	}
-
-	private static final class TestStepVerifiedRequirementsDataTableModelHelper extends
-		VerifiedRequirementsDataTableModelHelper {
-		private long stepId;
-		private TestCase testCase;
-
-		private TestStepVerifiedRequirementsDataTableModelHelper(Locale locale,
-																 InternationalizationHelper internationalizationHelper, long stepId, TestCase testCase) {
-			super(locale, internationalizationHelper);
-			this.stepId = stepId;
-			this.testCase = testCase;
-		}
-
-		@Override
-		public Map<String, Object> buildItemData(VerifiedRequirement item) {
-			Map<String, Object> res = super.buildItemData(item);
-			item.withVerifyingStepsFrom(testCase);
-			res.put("verifiedByStep", item.hasStepAsVerifying(stepId));
-			res.put("empty-link-checkbox", "");
-			return res;
-		}
-
-	}
 
 }

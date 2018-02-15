@@ -47,6 +47,7 @@ import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneModelService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
@@ -109,6 +110,9 @@ public class VerifyingTestCaseManagerController {
 	@Inject
 	@Named("testCaseWorkspaceDisplayService")
 	private WorkspaceDisplayService testCaseWorkspaceDisplayService;
+	
+	@Inject
+	private PermissionEvaluationService permService;
 
 	@Inject
 	private UserAccountService userAccountService;
@@ -228,7 +232,7 @@ public class VerifyingTestCaseManagerController {
 		PagedCollectionHolder<List<TestCase>> holder = verifyingTestCaseManager.findAllByRequirementVersion(
 			requirementVersionId, pas);
 
-		return new VerifyingTestCasesTableModelHelper(i18nHelper).buildDataModel(holder, sEcho);
+		return new VerifyingTestCasesTableModelHelper(i18nHelper, permService).buildDataModel(holder, sEcho);
 	}
 
 	@ResponseBody

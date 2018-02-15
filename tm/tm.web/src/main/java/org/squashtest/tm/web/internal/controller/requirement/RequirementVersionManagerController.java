@@ -43,6 +43,7 @@ import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.audittrail.RequirementAuditEventTableModelBuilder;
@@ -99,6 +100,10 @@ public class RequirementVersionManagerController {
 
 	@Inject
 	private ActiveMilestoneHolder activeMilestoneHolder;
+
+	@Inject
+	private PermissionEvaluationService permService;
+
 
 
 	private final DatatableMapper<String> versionMapper = new NameBasedMapper()
@@ -177,7 +182,7 @@ public class RequirementVersionManagerController {
 		PagedCollectionHolder<List<TestCase>> holder = verifyingTestCaseManager.findAllByRequirementVersion(
 			version.getId(), new DefaultPagingAndSorting("Project.name"));
 
-		return new VerifyingTestCasesTableModelHelper(i18nHelper).buildDataModel(holder, "0");
+		return new VerifyingTestCasesTableModelHelper(i18nHelper, permService).buildDataModel(holder, "0");
 	}
 
 	private DataTableModel getLinkedReqVersionsModel(RequirementVersion version) {

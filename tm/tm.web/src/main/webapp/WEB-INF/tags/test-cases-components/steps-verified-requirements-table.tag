@@ -90,7 +90,7 @@
 			<th data-def="sortable, map=milestone-dates"><f:message key="label.Milestone"/></th>
 		</c:if>
 		<th data-def="sortable, map=reference"><f:message key="label.Reference"/></th>
-		<th data-def="sortable, map=name, link=${requirementVersionsUrl}/{entity-id}/info"><f:message
+		<th data-def="sortable, map=name, link-if-readable=${requirementVersionsUrl}/{entity-id}/info"><f:message
 			key="requirement.name.label"/></th>
 		<th data-def="sClass=versionNumber, sortable, map=versionNumber"><f:message
 			key="requirement-version.version-number.label"/></th>

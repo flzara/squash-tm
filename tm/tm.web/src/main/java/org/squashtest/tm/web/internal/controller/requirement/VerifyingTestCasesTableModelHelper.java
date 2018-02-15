@@ -24,6 +24,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneModelUtils;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
@@ -39,10 +40,12 @@ class VerifyingTestCasesTableModelHelper extends DataTableModelBuilder<TestCase>
 
 	private InternationalizationHelper helper;
 	private Locale locale = LocaleContextHolder.getLocale();
+	private PermissionEvaluationService permService;
 	private static final int INT_MAX_DESCRIPTION_LENGTH = 50;
 
-	public VerifyingTestCasesTableModelHelper(InternationalizationHelper helper) {
+	public VerifyingTestCasesTableModelHelper(InternationalizationHelper helper, PermissionEvaluationService permService) {
 		this.helper = helper;
+		this.permService = permService;
 	}
 
 	@Override
@@ -50,7 +53,7 @@ class VerifyingTestCasesTableModelHelper extends DataTableModelBuilder<TestCase>
 
 		String type = formatExecutionMode(tc.getExecutionMode());
 
-		Map<String, String> row = new HashMap<>(7);
+		Map<String, Object> row = new HashMap<>(7);
 
 		row.put("tc-id", tc.getId().toString());
 		row.put("tc-index", Long.toString(getCurrentIndex()));
@@ -62,6 +65,7 @@ class VerifyingTestCasesTableModelHelper extends DataTableModelBuilder<TestCase>
 		row.put("empty-delete-holder", null);
 		row.put("milestone", MilestoneModelUtils.milestoneLabelsOrderByDate(tc.getMilestones()));
 		row.put("tc-description", HTMLCleanupUtils.getBriefText(tc.getDescription(), INT_MAX_DESCRIPTION_LENGTH));
+		row.put("readable", permService.canRead(tc));
 
 		return row;
 	}
