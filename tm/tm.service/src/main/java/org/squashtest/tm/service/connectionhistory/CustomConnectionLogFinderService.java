@@ -32,6 +32,11 @@ import java.util.List;
  * @author aguilhem
  */
 public interface CustomConnectionLogFinderService {
-
+	/**
+	 * Find {@link ConnectionLog} based on filtering and paging the result list
+	 * @param paging the {@link PagingAndSorting} to apply
+	 * @param columnFiltering the {@link ColumnFiltering} to apply
+	 * @return a {@link PagedCollectionHolder} of {@link ConnectionLog} with the adequate paging and sorting
+	 */
 	PagedCollectionHolder<List<ConnectionLog>> findAllFiltered(PagingAndSorting paging, ColumnFiltering columnFiltering);
 }

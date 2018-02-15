@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.security;
+package org.squashtest.tm.service.internal.connectionhistory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.users.ConnectionLog;
 import org.squashtest.tm.service.internal.repository.ConnectionLogDao;
-import org.squashtest.tm.service.security.ConnectionLogService;
+import org.squashtest.tm.service.connectionhistory.ConnectionLogService;
 
 import javax.inject.Inject;
 import java.util.Date;
@@ -44,20 +44,27 @@ public class ConnectionLogServiceImpl implements ConnectionLogService {
 	private ConnectionLogDao dao;
 
 	@Override
-	public void addSuccessfulConnectionLog(String login) {
-		initConnectionLog(login,true);
+	public ConnectionLog addSuccessfulConnectionLog(String login) {
+		return initConnectionLog(login,true);
 	}
 
 	@Override
-	public void addFailedConnectionLog(String login) {
-		initConnectionLog(login,false);
+	public ConnectionLog addFailedConnectionLog(String login) {
+		return initConnectionLog(login,false);
 	}
 
-	private void initConnectionLog(String login, boolean success) {
+	/**
+	 * Initiate and persist a {@link ConnectionLog}
+	 * @param login the login to set for the {@link ConnectionLog}
+	 * @param success the success status of the {@link ConnectionLog}
+	 * @return the {@link ConnectionLog} persisted without the id
+	 */
+	private ConnectionLog initConnectionLog(String login, boolean success) {
 		ConnectionLog connectionLog = new ConnectionLog();
 		connectionLog.setLogin(login);
 		connectionLog.setConnectionDate(new Date());
 		connectionLog.setSuccess(success);
 		dao.save(connectionLog);
+		return connectionLog;
 	}
 }

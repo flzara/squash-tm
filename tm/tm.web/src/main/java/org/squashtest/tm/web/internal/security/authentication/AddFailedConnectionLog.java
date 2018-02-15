@@ -23,7 +23,7 @@ package org.squashtest.tm.web.internal.security.authentication;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.service.security.ConnectionLogService;
+import org.squashtest.tm.service.connectionhistory.ConnectionLogService;
 
 import javax.inject.Inject;
 

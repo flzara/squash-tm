@@ -18,13 +18,24 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.security;
+package org.squashtest.tm.service.connectionhistory;
+
+import org.squashtest.tm.domain.users.ConnectionLog;
 
 /**
  * @author aguilhem
  */
 public interface ConnectionLogService {
-
-	void addSuccessfulConnectionLog(String login);
-	void addFailedConnectionLog(String login);
+	/**
+	 * Persist a {@link ConnectionLog} with success status in database
+	 * @param login the login use for the connection attempt
+	 * @return the {@link ConnectionLog} persisted without the id
+	 */
+	ConnectionLog addSuccessfulConnectionLog(String login);
+	/**
+	 * Persist a {@link ConnectionLog} with failed status in database
+	 * @param login the login use for the connection attempt
+	 * @return the {@link ConnectionLog} persisted without the id
+	 */
+	ConnectionLog addFailedConnectionLog(String login);
 }

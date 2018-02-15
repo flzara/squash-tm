@@ -29,5 +29,11 @@ import java.io.File;
  * @author aguilhem
  */
 public interface ConnectionLogExportService {
+
+	/**
+	 * Create a file with connection log data based on a filtering
+	 * @param filtering the {@link ColumnFiltering} to apply for {@link org.squashtest.tm.domain.users.ConnectionLog} search
+	 * @return a {@link File} with requested {@link org.squashtest.tm.domain.users.ConnectionLog}
+	 */
 	File exportConnectionLogsToCsv(ColumnFiltering filtering);
 }

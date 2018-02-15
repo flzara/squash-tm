@@ -74,4 +74,8 @@ public class ConnectionLog {
 	public void setSuccess(Boolean success) {
 		this.success = success;
 	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 }

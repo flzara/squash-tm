@@ -68,13 +68,12 @@ public class ConnectionLogExportServiceImpl implements ConnectionLogExportServic
 			file = File.createTempFile("export-connection-history", "tmp");
 			file.deleteOnExit();
 
-
 			writer = new PrintWriter(file);
 
-			writer.write(getColumnTitles() + "\n");
+			writer.write(buildLine(ID_COLUMN, LOGIN_COLUMN, CONNECTION_DATE_COLUMN, SUCCESS_COLUMN) + "\n");
 
 			PrintWriter finalWriter = writer;
-			list.stream().forEach(connectionLog -> {
+			list.forEach(connectionLog -> {
 				String line = buildLine(connectionLog);
 				finalWriter.write(line+"\n");
 			});
@@ -92,18 +91,16 @@ public class ConnectionLogExportServiceImpl implements ConnectionLogExportServic
 		}
 	}
 
-	private String getColumnTitles(){
+	private String buildLine(String idColumnValue, String loginColumnValue, String connectionDateColumnValue, String successColumnValue){
 		StringJoiner joiner = new StringJoiner(";");
-		joiner.add(ID_COLUMN).add(LOGIN_COLUMN).add(CONNECTION_DATE_COLUMN).add(SUCCESS_COLUMN);
+		joiner.add(idColumnValue).add(loginColumnValue).add(connectionDateColumnValue).add(successColumnValue);
 		return joiner.toString();
 	}
 
 	private String buildLine(ConnectionLog connectionLog){
-		StringJoiner joiner = new StringJoiner(";");
-		joiner.add(connectionLog.getId().toString())
-			.add(connectionLog.getLogin())
-			.add(connectionLog.getConnectionDate().toString())
-			.add(connectionLog.getSuccess().toString());
-		return joiner.toString();
+		return buildLine(connectionLog.getId().toString(),
+			connectionLog.getLogin(),
+			connectionLog.getConnectionDate().toString(),
+			connectionLog.getSuccess().toString());
 	}
 }
