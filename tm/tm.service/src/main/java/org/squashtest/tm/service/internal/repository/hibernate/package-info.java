@@ -496,6 +496,10 @@
 	@NamedQuery(name = "GenericProject.findTestAutomationServer", query = "select p.testAutomationServer from GenericProject p where p.id = :projectId"),
 	@NamedQuery(name = "GenericProject.findBoundTestAutomationProjectLabels", query = "select tap.label from GenericProject p join p.testAutomationProjects tap where p.id = :projectId"),
 
+	// Project Template
+	@NamedQuery(name = "ProjectTemplate.propagateAllowTcModifDuringExec", query = "update GenericProject set allowTcModifDuringExec = :active where template.id = :templateId"),
+	@NamedQuery(name = "ProjectTemplate.findAllBoundProjects", query = "from Project p where p.template.id = :templateId"),
+
 	//Project
 	@NamedQuery(name = "Project.findAllByName", query = "from Project where name in (:names)"),
 	@NamedQuery(name = "Project.findAllOrderedByName", query = "from Project fetch all properties order by name"),

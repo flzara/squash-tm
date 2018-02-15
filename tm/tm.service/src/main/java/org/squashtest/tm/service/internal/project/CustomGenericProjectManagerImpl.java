@@ -577,16 +577,29 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	@Override
 	public void enableExecutionStatus(long projectId, ExecutionStatus executionStatus) {
-		GenericProject project = genericProjectDao.findById(projectId);
+		GenericProject project = genericProjectDao.findOne(projectId);
 		checkManageProjectOrAdmin(project);
 		project.getCampaignLibrary().enableStatus(executionStatus);
+		if(ProjectHelper.isTemplate(project)) {
+			Collection<Project> boundProjects = templateDao.findAllBoundProjects(projectId);
+			for(Project boundProject : boundProjects) {
+				boundProject.getCampaignLibrary().enableStatus(executionStatus);
+			}
+		}
 	}
 
 	@Override
 	public void disableExecutionStatus(long projectId, ExecutionStatus executionStatus) {
-		GenericProject project = genericProjectDao.findById(projectId);
+		GenericProject project = genericProjectDao.findOne(projectId);
 		checkManageProjectOrAdmin(project);
 		project.getCampaignLibrary().disableStatus(executionStatus);
+		/* If the GenericProject is a Template, propagate modification to bound Projects. */
+		if(ProjectHelper.isTemplate(project)) {
+			Collection<Project> boundProjects = templateDao.findAllBoundProjects(projectId);
+			for(Project boundProject : boundProjects) {
+				boundProject.getCampaignLibrary().disableStatus(executionStatus);
+			}
+		}
 	}
 
 	@Override
@@ -846,9 +859,6 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		node.setName(newName);
 	}
 
-
-
-
 	private void copyMilestone(GenericProject target, GenericProject source) {
 
 		List<Milestone> milestones = getOnlyBindableMilestones(source.getMilestones());
@@ -859,9 +869,6 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 			milestone.addProjectToPerimeter(target);
 		}
 	}
-
-
-
 
 	private List<Milestone> getOnlyBindableMilestones(List<Milestone> milestones) {
 		List<Milestone> bindableMilestones = new ArrayList<>();
@@ -993,9 +1000,9 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	public void changeAllowTcModifDuringExec(long projectId, boolean active) {
 		GenericProject genericProject = genericProjectDao.findOne(projectId);
 		genericProject.setAllowTcModifDuringExec(active);
-		/* If project is a Template, propagate on all the projects. */
+		/* If project is a Template, propagate on all the bound projects. */
 		if(ProjectHelper.isTemplate(genericProject)) {
-			// For all the bound Projects, setAllowTcModifDuringExec(active)
+			templateDao.propagateAllowTcModifDuringExec(projectId, active);
 		}
 	}
 }
