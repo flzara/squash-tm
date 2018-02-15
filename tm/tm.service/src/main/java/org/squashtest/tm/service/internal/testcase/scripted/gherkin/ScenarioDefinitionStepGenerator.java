@@ -18,26 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.testcase;
+package org.squashtest.tm.service.internal.testcase.scripted.gherkin;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
-import org.squashtest.tm.service.internal.repository.ScriptedTestCaseExtenderDao;
-import org.squashtest.tm.service.testcase.ScriptedTestCaseService;
+public class ScenarioDefinitionStepGenerator {
 
-import javax.inject.Inject;
-
-@Service
-@Transactional
-public class ScriptedTestCaseServiceImpl implements ScriptedTestCaseService {
-
-	@Inject
-	private ScriptedTestCaseExtenderDao scriptedTestCaseExtenderDao;
-
-	@Override
-	public void updateTcScript(Long testCaseId, String script) {
-		ScriptedTestCaseExtender scriptExtender = scriptedTestCaseExtenderDao.findByTestCase_Id(testCaseId);
-		scriptExtender.setScript(script);
-	}
 }

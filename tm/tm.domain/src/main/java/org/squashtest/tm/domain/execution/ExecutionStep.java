@@ -122,8 +122,9 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 
 	/**
 	 * Hibernate needs this.
+	 * And we need this in scripted executions
 	 */
-	protected ExecutionStep() {
+	public ExecutionStep() {
 		super();
 	}
 

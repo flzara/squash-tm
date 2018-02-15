@@ -18,26 +18,26 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.testcase.scripted;
+package org.squashtest.tm.service.internal.testcase.scripted;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
+import org.squashtest.tm.service.internal.repository.ScriptedTestCaseExtenderDao;
 import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseService;
-import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 
 import javax.inject.Inject;
 
-@RequestMapping("/test-cases/{testCaseId}")
-@Controller
-public class ScriptedTestCaseController {
+@Service
+@Transactional
+public class ScriptedTestCaseServiceImpl implements ScriptedTestCaseService {
 
 	@Inject
-	private ScriptedTestCaseService scriptedTestCaseService;
+	private ScriptedTestCaseExtenderDao scriptedTestCaseExtenderDao;
 
-	@ResponseBody
-	@RequestMapping(path = "/scripted",method = RequestMethod.POST, headers = AcceptHeaders.CONTENT_JSON)
-	public ScriptedTestCaseModel updateTcScript(@PathVariable Long testCaseId, @RequestBody ScriptedTestCaseModel scriptedTestCaseModel) {
-		scriptedTestCaseService.updateTcScript(testCaseId,scriptedTestCaseModel.getScript());
-		return scriptedTestCaseModel;
+	@Override
+	public void updateTcScript(Long testCaseId, String script) {
+		ScriptedTestCaseExtender scriptExtender = scriptedTestCaseExtenderDao.findByTestCase_Id(testCaseId);
+		scriptExtender.setScript(script);
 	}
 }

@@ -48,6 +48,7 @@ import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.internal.campaign.coercers.TestSuiteToIterationCoercerForArray;
 import org.squashtest.tm.service.internal.campaign.coercers.TestSuiteToIterationCoercerForList;
 import org.squashtest.tm.service.internal.campaign.coercers.TestSuiteToIterationCoercerForUniqueId;
+import org.squashtest.tm.service.internal.campaign.scripted.ScriptedTestCaseExecutionHelper;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService;
 import org.squashtest.tm.service.internal.library.PasteStrategy;
@@ -131,6 +132,10 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Inject
 	private CustomTestSuiteModificationService customTestSuiteModificationService;
+
+	@Inject
+	private ScriptedTestCaseExecutionHelper scriptedTestCaseExecutionHelper;
+
 	@Override
 	@PreventConcurrent(entityType = CampaignLibraryNode.class)
 	@PreAuthorize(CREATE_CAMPAIGN_OR_ROLE_ADMIN)
@@ -341,7 +346,17 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	private void operationsAfterAddingExec(IterationTestPlanItem item, Execution execution) {
 		createCustomFieldsForExecutionAndExecutionSteps(execution);
 		createDenormalizedFieldsForExecutionAndExecutionSteps(execution);
+		if (execution.getReferencedTestCase().isScripted()) {
+			createExecutionStepsForScriptedTestCase(execution);
+		}
 		indexationService.reindexTestCase(item.getReferencedTestCase().getId());
+	}
+
+	//This method is responsible for create execution steps by parsing the script
+	//For a standard test case we do that job directly in model but for scripted test case we can't
+	//the model mustn't have a parser as dependency, and we don't want to hack the original tests case by detaching him from hibernate session and add virtual steps
+	private void createExecutionStepsForScriptedTestCase(Execution execution) {
+		scriptedTestCaseExecutionHelper.createExecutionStepsForScriptedTestCase(execution);
 	}
 
 	private void createCustomFieldsForExecutionAndExecutionSteps(Execution execution) {

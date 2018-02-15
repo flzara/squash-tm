@@ -18,26 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.testcase.scripted;
+package org.squashtest.tm.service.testcase.scripted;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseService;
-import org.squashtest.tm.web.internal.controller.AcceptHeaders;
+import org.squashtest.tm.domain.execution.Execution;
 
-import javax.inject.Inject;
-
-@RequestMapping("/test-cases/{testCaseId}")
-@Controller
-public class ScriptedTestCaseController {
-
-	@Inject
-	private ScriptedTestCaseService scriptedTestCaseService;
-
-	@ResponseBody
-	@RequestMapping(path = "/scripted",method = RequestMethod.POST, headers = AcceptHeaders.CONTENT_JSON)
-	public ScriptedTestCaseModel updateTcScript(@PathVariable Long testCaseId, @RequestBody ScriptedTestCaseModel scriptedTestCaseModel) {
-		scriptedTestCaseService.updateTcScript(testCaseId,scriptedTestCaseModel.getScript());
-		return scriptedTestCaseModel;
-	}
+public interface ScriptedTestCaseParser {
+	void populateExecution(Execution execution);
 }

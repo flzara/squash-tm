@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.testcase;
+package org.squashtest.tm.service.testcase.scripted;
 
 import org.springframework.transaction.annotation.Transactional;
 
