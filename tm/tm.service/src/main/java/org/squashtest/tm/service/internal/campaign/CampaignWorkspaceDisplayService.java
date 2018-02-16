@@ -397,7 +397,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	}
 
 	private Integer getMilestoneNumber(Long milestone) {
-		return (milestone == null) ? NODE_WITHOUT_MILESTONE : 1;
+		return (milestone == null) ? NODE_WITHOUT_MILESTONE : new Integer(1);
 	}
 
 	// *************************************** send stuff to abstract workspace ***************************************

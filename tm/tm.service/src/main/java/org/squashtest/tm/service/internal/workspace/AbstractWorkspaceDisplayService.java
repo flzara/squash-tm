@@ -72,7 +72,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	protected static final String MILESTONE_STATUS_IN_PROGRESS = "IN_PROGRESS";
 	protected static final String MILESTONE_STATUS_FINISHED = "FINISHED";
 	protected static final Integer NODE_WITHOUT_MILESTONES_ATTRIBUTE = -1;
-	protected static final Integer NODE_WITHOUT_MILESTONE = 0;
+	protected static final Integer NODE_WITHOUT_MILESTONE = new Integer(0);
 	protected static final Long NO_ACTIVE_MILESTONE_ID = -9000L;
 	protected Set<Long> nodeLinkedToMilestone = new HashSet<>();
 

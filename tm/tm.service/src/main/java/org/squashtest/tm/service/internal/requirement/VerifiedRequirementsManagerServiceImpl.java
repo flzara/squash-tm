@@ -680,8 +680,9 @@ List<Long> requirementsIds) {
 		Map<ExecutionStatus, Long> mergedStatusMap = new EnumMap<>(ExecutionStatus.class);
 		EnumSet<ExecutionStatus> allStatus = EnumSet.allOf(ExecutionStatus.class);
 		for (ExecutionStatus executionStatus : allStatus) {
-			Long mainCount = mainStatusMap.get(executionStatus) == null ? 0l : mainStatusMap.get(executionStatus);
-			Long descendantCount = descendantStatusMap.get(executionStatus) == null ? 0l : descendantStatusMap.get(executionStatus);
+
+			Long mainCount = mainStatusMap.get(executionStatus) == null ? new Long(0L) : mainStatusMap.get(executionStatus);
+			Long descendantCount = descendantStatusMap.get(executionStatus) == null ? new Long(0L) : descendantStatusMap.get(executionStatus);
 			Long totalCount = mainCount + descendantCount;
 			mergedStatusMap.put(executionStatus, totalCount);
 		}
