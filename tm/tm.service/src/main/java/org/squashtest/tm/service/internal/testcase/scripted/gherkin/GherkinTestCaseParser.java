@@ -64,17 +64,17 @@ public class GherkinTestCaseParser implements ScriptedTestCaseParser {
 		for (ScenarioDefinition scenarioDefinition : scenarioDefinitions) {
 			ExecutionStep executionStep = new ExecutionStep();
 			StringBuilder sb = new StringBuilder();
-			//fuck... i don't see any means to avoid this ugly instance of
-			//can't use visitor because cannot change Gherking Parser Source code, and haven't right to fork them...
+			//Sigh... i don't see any means to avoid this ugly instanceof
+			//Can't use visitor because cannot change Gherking Parser source code, and haven't right to fork it...
 			if(scenarioDefinition instanceof Scenario){
 				Scenario scenario = (Scenario) scenarioDefinition;
-				sb.append(createScenarioLine(scenarioDefinition));
+				appendScenarioLine(scenarioDefinition,sb);
 				if(background != null){
 					includeBackground(background,sb);
 				}
 				List<Step> steps = scenario.getSteps();
 				for (Step step : steps) {
-					sb.append(createStepLine(step));
+					appendStepLine(step, sb);
 				}
 
 			} else if(scenarioDefinition instanceof ScenarioOutline){
@@ -89,16 +89,25 @@ public class GherkinTestCaseParser implements ScriptedTestCaseParser {
 	private void includeBackground(Background background, StringBuilder sb) {
 		List<Step> steps = background.getSteps();
 		for (Step step : steps) {
-			sb.append(createStepLine(step));
+			appendStepLine(step, sb);
 		}
 	}
 
-	private String createStepLine(Step step) {
-		return step.getKeyword() + step.getText() + "</br>";
+	private void appendStepLine(Step step, StringBuilder sb) {
+		sb.append(step.getKeyword());
+		sb.append(step.getText());
+		appendLineBreak(sb);
 	}
 
-	private String createScenarioLine(ScenarioDefinition scenarioDefinition) {
-		return scenarioDefinition.getKeyword() + scenarioDefinition.getName() + "</br></br>";
+	private void appendScenarioLine(ScenarioDefinition scenarioDefinition, StringBuilder sb) {
+		sb.append(scenarioDefinition.getKeyword());
+		sb.append(scenarioDefinition.getName());
+		appendLineBreak(sb);
 	}
+
+	private void appendLineBreak(StringBuilder sb) {
+		sb.append("</br>");
+	}
+
 
 }
