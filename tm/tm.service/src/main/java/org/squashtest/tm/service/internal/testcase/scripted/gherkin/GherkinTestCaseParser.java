@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.testcase.scripted.gherkin;
 import gherkin.AstBuilder;
 import gherkin.Parser;
 import gherkin.ast.*;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.execution.Execution;
@@ -31,7 +32,13 @@ import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseParser;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class GherkinTestCaseParser implements ScriptedTestCaseParser {
 
@@ -48,7 +55,7 @@ public class GherkinTestCaseParser implements ScriptedTestCaseParser {
 		GherkinDocument gherkinDocument = parser.parse(scriptExtender.getScript());
 		List<ScenarioDefinition> scenarioDefinitions = gherkinDocument.getFeature().getChildren();
 
-		if(scenarioDefinitions.isEmpty()){
+		if (scenarioDefinitions.isEmpty()) {
 			return;
 		}
 
@@ -56,34 +63,79 @@ public class GherkinTestCaseParser implements ScriptedTestCaseParser {
 		ScenarioDefinition potentialBackground = scenarioDefinitions.get(0);
 		Background background = null;
 
-		if(potentialBackground instanceof Background){
+		if (potentialBackground instanceof Background) {
 			background = (Background) potentialBackground;
 		}
 
 		//now let's do the scenarios
 		for (ScenarioDefinition scenarioDefinition : scenarioDefinitions) {
-			ExecutionStep executionStep = new ExecutionStep();
-			StringBuilder sb = new StringBuilder();
 			//Sigh... i don't see any means to avoid this ugly instanceof
-			//Can't use visitor because cannot change Gherking Parser source code, and haven't right to fork it...
-			if(scenarioDefinition instanceof Scenario){
+			//Can't use visitor because cannot change Gherking Parser source code to add accept method, and haven't right to fork ...
+			if (scenarioDefinition instanceof Scenario) {
+				StringBuilder sb = new StringBuilder();
 				Scenario scenario = (Scenario) scenarioDefinition;
-				appendScenarioLine(scenarioDefinition,sb);
-				if(background != null){
-					includeBackground(background,sb);
+				appendScenarioLine(scenarioDefinition, sb);
+				if (background != null) {
+					includeBackground(background, sb);
 				}
 				List<Step> steps = scenario.getSteps();
 				for (Step step : steps) {
 					appendStepLine(step, sb);
 				}
 
-			} else if(scenarioDefinition instanceof ScenarioOutline){
+				ExecutionStep executionStep = new ExecutionStep();
+				executionStep.setAction(sb.toString());
+				execution.getSteps().add(executionStep);
 
+			} else if (scenarioDefinition instanceof ScenarioOutline) {
+				ScenarioOutline scenario = (ScenarioOutline) scenarioDefinition;
+				List<Examples> examples = scenario.getExamples();
+
+				for (Examples example : examples) {
+					int count = example.getTableBody().size();
+					List<String> headers = example.getTableHeader().getCells().stream().map(TableCell::getValue).collect(Collectors.toList());
+					int nbColumn = headers.size();
+					List<Step> steps = scenario.getSteps();
+					for (int i = 0; i < count; i++) {
+						StringBuilder sb = new StringBuilder();
+						appendScenarioLine(scenarioDefinition, sb);
+						if (background != null) {
+							includeBackground(background, sb);
+						}
+						List<String> valuesForThisLine = example.getTableBody().get(i).getCells().stream().map(TableCell::getValue).collect(Collectors.toList());
+						Map<String, String> valueByHeader = new HashMap<>();
+						IntStream.range(0, nbColumn).forEach(j -> valueByHeader.put(headers.get(j), valuesForThisLine.get(j)));
+						for (Step step : steps) {
+							appendStepLine(step, valueByHeader, sb);
+						}
+						ExecutionStep executionStep = new ExecutionStep();
+						executionStep.setAction(sb.toString());
+						execution.getSteps().add(executionStep);
+					}
+				}
 			}
-
-			executionStep.setAction(sb.toString());
-			execution.getSteps().add(executionStep);
 		}
+	}
+
+	private void appendStepLine(Step step, Map<String, String> valueByHeader, StringBuilder sb) {
+		sb.append(step.getKeyword());
+		String text = step.getText();
+
+		//now substitute each <param> by it's value, if not found inject a placeholder
+		Pattern p = Pattern.compile("<[.*?[^>]]*>");
+		Matcher m = p.matcher(text);
+		while (m.find()) {
+			String token = m.group();
+			String header = token.substring(1, token.length() - 1);
+			String value = valueByHeader.get(header);
+			if(StringUtils.isBlank(value)){
+				value = "<NO_DATA>";
+			}
+			text = text.replace(token, value);
+		}
+
+		sb.append(text);
+		appendLineBreak(sb);
 	}
 
 	private void includeBackground(Background background, StringBuilder sb) {
