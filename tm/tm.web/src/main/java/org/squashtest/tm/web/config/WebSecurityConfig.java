@@ -33,8 +33,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
@@ -50,7 +48,6 @@ import org.springframework.security.web.context.SecurityContextPersistenceFilter
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.HttpPutFormContentFilter;
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManager;
-import org.squashtest.tm.web.internal.filter.HtmlSanitizationFilter;
 
 /**
  * This configures Spring Security
@@ -234,8 +231,7 @@ public class WebSecurityConfig {
 						.logoutSuccessUrl("/")
 
 				.and()
-				.addFilterAfter(new HttpPutFormContentFilter(), SecurityContextPersistenceFilter.class)
-				.addFilterAfter(new HtmlSanitizationFilter(), SecurityContextPersistenceFilter.class);
+				.addFilterAfter(new HttpPutFormContentFilter(), SecurityContextPersistenceFilter.class);
 			//@formatter:on
 		}
 	}
