@@ -72,51 +72,98 @@ public class GherkinTestCaseParser implements ScriptedTestCaseParser {
 			//Sigh... i don't see any means to avoid this ugly instanceof
 			//Can't use visitor because cannot change Gherking Parser source code to add accept method, and haven't right to fork ...
 			if (scenarioDefinition instanceof Scenario) {
-				StringBuilder sb = new StringBuilder();
-				Scenario scenario = (Scenario) scenarioDefinition;
-				appendScenarioLine(scenarioDefinition, sb);
-				if (background != null) {
-					includeBackground(background, sb);
-				}
-				List<Step> steps = scenario.getSteps();
-				for (Step step : steps) {
-					appendStepLine(step, sb);
-				}
-
-				ExecutionStep executionStep = new ExecutionStep();
-				executionStep.setAction(sb.toString());
-				execution.getSteps().add(executionStep);
+				appendScenarioStep(execution, background, scenarioDefinition);
 
 			} else if (scenarioDefinition instanceof ScenarioOutline) {
-				ScenarioOutline scenario = (ScenarioOutline) scenarioDefinition;
-				List<Examples> examples = scenario.getExamples();
-
-				for (Examples example : examples) {
-					int count = example.getTableBody().size();
-					List<String> headers = example.getTableHeader().getCells().stream().map(TableCell::getValue).collect(Collectors.toList());
-					int nbColumn = headers.size();
-					List<Step> steps = scenario.getSteps();
-					for (int i = 0; i < count; i++) {
-						StringBuilder sb = new StringBuilder();
-						appendScenarioLine(scenarioDefinition, sb);
-						if (background != null) {
-							includeBackground(background, sb);
-						}
-						List<String> valuesForThisLine = example.getTableBody().get(i).getCells().stream().map(TableCell::getValue).collect(Collectors.toList());
-						Map<String, String> valueByHeader = new HashMap<>();
-						IntStream.range(0, nbColumn).forEach(j -> valueByHeader.put(headers.get(j), valuesForThisLine.get(j)));
-						for (Step step : steps) {
-							appendStepLine(step, valueByHeader, sb);
-						}
-						ExecutionStep executionStep = new ExecutionStep();
-						executionStep.setAction(sb.toString());
-						execution.getSteps().add(executionStep);
-					}
-				}
+				appendScenarioOutilineStep(execution, background, scenarioDefinition);
 			}
 		}
 	}
 
+	private void appendScenarioStep(Execution execution, Background background, ScenarioDefinition scenarioDefinition) {
+		StringBuilder sb = new StringBuilder();
+		Scenario scenario = (Scenario) scenarioDefinition;
+		appendScenarioLine(scenarioDefinition, sb);
+		if (background != null) {
+			includeBackground(background, sb);
+		}
+		List<Step> steps = scenario.getSteps();
+		for (Step step : steps) {
+			appendStepLine(step, sb);
+		}
+
+		appendExecutionStep(execution, sb);
+	}
+
+	private void appendScenarioOutilineStep(Execution execution, Background background, ScenarioDefinition scenarioDefinition) {
+		ScenarioOutline scenario = (ScenarioOutline) scenarioDefinition;
+		List<Examples> examples = scenario.getExamples();
+
+		for (Examples example : examples) {
+			appendExample(execution, background, scenario, example);
+        }
+	}
+
+	private void appendExample(Execution execution, Background background, ScenarioOutline scenario, Examples example) {
+		int count = example.getTableBody().size();
+		List<String> headers = getExampleHeaders(example);
+		int nbColumn = headers.size();
+		List<Step> steps = scenario.getSteps();
+		for (int i = 0; i < count; i++) {
+            StringBuilder sb = new StringBuilder();
+            appendScenarioLine(scenario, sb);
+            if (background != null) {
+                includeBackground(background, sb);
+            }
+            List<String> valuesForThisLine = getExampleLineValue(example, i);
+            Map<String, String> valueByHeader = new HashMap<>();
+            IntStream.range(0, nbColumn).forEach(j -> valueByHeader.put(headers.get(j), valuesForThisLine.get(j)));
+            for (Step step : steps) {
+                appendStepLine(step, valueByHeader, sb);
+            }
+			appendExecutionStep(execution, sb);
+        }
+	}
+
+	private void appendExecutionStep(Execution execution, StringBuilder sb) {
+		ExecutionStep executionStep = new ExecutionStep();
+		executionStep.setAction(sb.toString());
+		execution.getSteps().add(executionStep);
+	}
+
+	private List<String> getExampleLineValue(Examples example, int i) {
+		return example.getTableBody().get(i).getCells().stream().map(TableCell::getValue).collect(Collectors.toList());
+	}
+
+	private List<String> getExampleHeaders(Examples example) {
+		return example.getTableHeader().getCells().stream().map(TableCell::getValue).collect(Collectors.toList());
+	}
+
+	private void includeBackground(Background background, StringBuilder sb) {
+		List<Step> steps = background.getSteps();
+		for (Step step : steps) {
+			appendStepLine(step, sb);
+		}
+	}
+
+	private void appendStepLine(Step step, StringBuilder sb) {
+		sb.append(step.getKeyword());
+		sb.append(step.getText());
+		appendLineBreak(sb);
+	}
+
+	private void appendScenarioLine(ScenarioDefinition scenarioDefinition, StringBuilder sb) {
+		sb.append(scenarioDefinition.getKeyword());
+		sb.append(scenarioDefinition.getName());
+		appendLineBreak(sb);
+		appendLineBreak(sb);
+	}
+
+	private void appendLineBreak(StringBuilder sb) {
+		sb.append("</br>");
+	}
+
+	//this method append steps lines in scenario outline mode (ie with dataset so we must do param substitution)
 	private void appendStepLine(Step step, Map<String, String> valueByHeader, StringBuilder sb) {
 		sb.append(step.getKeyword());
 		String text = step.getText();
@@ -137,29 +184,5 @@ public class GherkinTestCaseParser implements ScriptedTestCaseParser {
 		sb.append(text);
 		appendLineBreak(sb);
 	}
-
-	private void includeBackground(Background background, StringBuilder sb) {
-		List<Step> steps = background.getSteps();
-		for (Step step : steps) {
-			appendStepLine(step, sb);
-		}
-	}
-
-	private void appendStepLine(Step step, StringBuilder sb) {
-		sb.append(step.getKeyword());
-		sb.append(step.getText());
-		appendLineBreak(sb);
-	}
-
-	private void appendScenarioLine(ScenarioDefinition scenarioDefinition, StringBuilder sb) {
-		sb.append(scenarioDefinition.getKeyword());
-		sb.append(scenarioDefinition.getName());
-		appendLineBreak(sb);
-	}
-
-	private void appendLineBreak(StringBuilder sb) {
-		sb.append("</br>");
-	}
-
 
 }
