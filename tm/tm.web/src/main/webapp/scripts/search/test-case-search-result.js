@@ -360,7 +360,6 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.r
 			addModifyResultDialog.on('change', ':checkbox', function(evt) {
 				var cbx = $(evt.currentTarget),
 					state = cbx.prop('checked'),
-					importanceAuto,
 					select;
 
 				if(cbx.context.id ==='importance-checkbox'  ){
@@ -370,7 +369,6 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.r
 				}
 				if(cbx.context.id ==='importanceAuto'  ){
 					select = cbx.parent().siblings().last().find('select');
-					importanceAuto = state;
 					select.prop('disabled', state);
 				}
 			else  {

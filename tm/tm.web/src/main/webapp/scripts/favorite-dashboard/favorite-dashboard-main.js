@@ -21,10 +21,8 @@
 define(["./favorite-dashboard-view"], function(FavoriteDashboardView) {
     'use strict';
 
-    var dashboardView; 
-
     function init(options) {
-      dashboardView = new FavoriteDashboardView (options);
+      new FavoriteDashboardView (options);
     }
 
     return {init:init};

@@ -21,13 +21,11 @@
 define(['./home-main-view'],
     function (mainView) {
         "use strict";
-        
-        var homeMainView;
-         
+
          function init() {
-             homeMainView = new mainView();
+         		new mainView();
          }
-         
+
          return {
              init : init
          };

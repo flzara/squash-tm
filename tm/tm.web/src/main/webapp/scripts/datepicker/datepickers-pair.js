@@ -19,15 +19,13 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(["jquery", "squash.translator", 'squash.dateutils', "jquery.squash.datepicker"], function($, translator, dateutils) {
-	
+
 	return {
 		init: function(conf) {
-			var myStartDatePicker;
-			var myEndDatePicker;
 
 			var dateFormatShort = translator.get('squashtm.dateformatShort');
 			var dateFormatTimePicker = translator.get("squashtm.dateformatShort.datepicker");
-			
+
 			var startControls ={
 					datepick : $('#scheduled-start'),
 					datelabel : $('#scheduled-start-label')
@@ -84,9 +82,9 @@ define(["jquery", "squash.translator", 'squash.dateutils', "jquery.squash.datepi
 			};
 			startParams.validator = startValidator;
 			endParams.validator = endValidator;
-			
-			myStartDatePicker = new SquashDatePicker(startControls, startParams);
-			myEndDatePicker = new SquashDatePicker(endControls, endParams);
+
+			new SquashDatePicker(startControls, startParams);
+			new SquashDatePicker(endControls, endParams);
 
 		}
 	};

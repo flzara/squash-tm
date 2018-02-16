@@ -591,16 +591,6 @@ define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "w
 	// **********************************
 
 	function callTestCase(settings) {
-		var $table = $(".test-steps-table");
-		var stepIdSelected = $table.squashTable().getSelectedIds();
-		var stepTargetIndex = 0;
-
-		//now selecting the last selected row in squashTable and retrieve index
-		if (stepIdSelected !== undefined && stepIdSelected !== null && stepIdSelected.length > 0) {
-			var idTargetStep = stepIdSelected[stepIdSelected.length - 1];
-			stepTargetIndex = $table.squashTable().getDataById(idTargetStep)["step-index"];
-		}
-
 		//redirect to level 2 interface Calling Test Case with proper url formatting
 		var ctxUrl = settings.basic.testCaseUrl;
 		document.location.href = ctxUrl + "/called-test-cases/manager";

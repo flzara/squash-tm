@@ -69,7 +69,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 	};
 
 	var selectedTab = false;
-	var formModel, criteriaPanel, reportInfomationPanel;
+	var formModel;
 
 	function resetState() {
 		selectedTab = false;
@@ -206,8 +206,8 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 		config = $.extend(config, settings);
 
 		formModel = new FormModel();
-		criteriaPanel = new ReportCriteriaPanel({el: "#report-criteria-panel", model: formModel }, { formerState: formerState.restore(), config: config });
-		reportInfomationPanel = new ReportInformationPanel({el: "#report-information-panel", model: formModel }, config);
+		new ReportCriteriaPanel({el: "#report-criteria-panel", model: formModel }, { formerState: formerState.restore(), config: config });
+		new ReportInformationPanel({el: "#report-information-panel", model: formModel }, config);
 
 		initViewTabs();
 
