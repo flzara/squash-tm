@@ -605,9 +605,7 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 				// a singlevalued field is empty if the property 'value' is empty,
 				// a multivalued field is empty if the property 'values' is null.
 				//
-				if ( field.value !== undefined && field.value !== "" ){
-					hasCriteria = true;
-				} else if (field.values !== undefined && field.values !== null){
+				if ((field.value !== undefined && field.value !== "") || (field.values !== undefined && field.values !== null)) {
 					hasCriteria = true;
 				}
 			});

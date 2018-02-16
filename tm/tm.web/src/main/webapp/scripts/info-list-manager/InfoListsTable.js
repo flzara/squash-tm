@@ -295,8 +295,6 @@ define(
 					toggleSelection($tr);
 				} else if (c & !s) {
 					addToSelection($tr);
-				} else if (!c & s) {
-					growSelection($tr);
 				} else {
 					growSelection($tr);
 				}

@@ -153,6 +153,7 @@ define(
 					break;
 
 				case "PLAIN_TEXT":
+				case "NUMERIC":
 					this.renderOptional(true);
 					break;
 
@@ -171,9 +172,6 @@ define(
 				case "TAG" :
 					this.renderOptional(true);
 					this.renderTagList();
-					break;
-				case "NUMERIC":
-					this.renderOptional(true);
 					break;
 				}
 				this._resize();

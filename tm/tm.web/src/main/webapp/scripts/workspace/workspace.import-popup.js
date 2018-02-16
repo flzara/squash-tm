@@ -199,15 +199,10 @@ define([ "jquery", "underscore",  "app/ws/squashtm.notification", "squash.transl
 								self.errMaxSize(json.maxUploadError.maxSize);
 								self.setState("error-size");
 							} else {
-								if (json.status && json.status == "Format KO") {
+								if ((json.status && json.status == "Format KO") || (json.actionValidationError)) {
 									self.createFormatErrorsSummary(json);
 									self.setState("error-format");
 								}
-								else if (json.actionValidationError) {
-									self.createFormatErrorsSummary(json);
-									self.setState("error-format");
-								}
-
 								else {
 									self.createSummary(json);
 									if(!!params.queryParams){

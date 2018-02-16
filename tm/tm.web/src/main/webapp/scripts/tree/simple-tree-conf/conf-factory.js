@@ -46,11 +46,9 @@ define(["jquery", "./common-conf", "./simp-testcase-conf"], function ($, genComm
 			var specificConf;
 
 			switch (settings.workspace) {
-				case 'test-case'  :
-					specificConf = genTC.generate(settings);
-					break;
-				case 'requirement'  :
-				case 'campaign'    :
+				case 'requirement':
+				case 'test-case':
+				case 'campaign':
 					specificConf = genTC.generate(settings);
 					break;
 			}

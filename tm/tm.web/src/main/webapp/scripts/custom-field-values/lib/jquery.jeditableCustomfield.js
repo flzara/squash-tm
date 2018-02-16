@@ -408,11 +408,11 @@ define(
 				switch(type){
 				case "DATE_PICKER" : initAsDatePicker(this, cufDefinition, idOrURLOrPostfunction); break;
 				case "DROPDOWN_LIST" : initAsList(this, cufDefinition, idOrURLOrPostfunction); break;
-				case "PLAIN_TEXT" : initAsPlainText(this, cufDefinition, idOrURLOrPostfunction); break;
+				case "PLAIN_TEXT" :
+				case "NUMERIC" : initAsPlainText(this, cufDefinition, idOrURLOrPostfunction); break;
 				case "CHECKBOX" : initAsCheckbox(this, cufDefinition, idOrURLOrPostfunction); break;
 				case "RICH_TEXT" : initAsRichtext(this, cufDefinition, idOrURLOrPostfunction); break;
 				case "TAG" : initAsTag(this, cufDefinition, idOrURLOrPostfunction); break;
-				case "NUMERIC" : initAsPlainText(this, cufDefinition, idOrURLOrPostfunction); break;
 				default : throw "don't know cuf type "+type;
 
 				}

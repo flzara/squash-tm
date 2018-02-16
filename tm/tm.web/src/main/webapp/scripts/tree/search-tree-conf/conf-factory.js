@@ -27,14 +27,12 @@ define(["jquery", "./common-conf", "../workspace-tree-conf/w-campaign-conf"], fu
 			var specificConf;
 
 			switch (settings.workspace) {
-				case 'test-case':
-					break;
 				case 'requirement':
+				case 'test-case':
+				case 'custom-report':
 					break;
 				case 'campaign':
 					specificConf = genCamp.generate(settings);
-					break;
-				case 'custom-report':
 					break;
 			}
 

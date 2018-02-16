@@ -23,7 +23,7 @@
  *
  * This grid renderer let your customize further the grid lines per axis, and adds the linedash feature (for OSes that support it).
  * This extra configuration is nested in the axes.[axis].tickOptions item :
- * 
+ *
  *  gridStyle : {
  *		lineDash : line dash configuration for the grid(see cavans API),
  *		strokeStyle : the css color spec for the grid
@@ -32,8 +32,8 @@
  *		lineDash : line dash configuration for the tick mark (see cavans API),
  *		strokeStyle : the css color spec for the tick mark
  *  }
- * 
- * 
+ *
+ *
  */
 define([ "jquery", "jqplot-core" ], function($) {
 
@@ -51,7 +51,7 @@ define([ "jquery", "jqplot-core" ], function($) {
 		this._ctx = this._elem.get(0).getContext("2d");
 		var ctx = this._ctx;
 		var pos, t, axis, ticks, j, points;
-		
+
 		/*
 		 * BEGIN modification
 		 */
@@ -65,7 +65,7 @@ define([ "jquery", "jqplot-core" ], function($) {
 		/*
 		 * END modification
 		 */
-		
+
 		var axes = this._axes;
 		// Add the grid onto the grid canvas. This is the bottom most layer.
 		ctx.save();
@@ -96,13 +96,11 @@ define([ "jquery", "jqplot-core" ], function($) {
 					}
 					switch (name) {
 					case 'xaxis':
+					case 'x2axis':
 						drawLine(this._left, this._bottom, this._right, this._bottom, bopts);
 						break;
 					case 'yaxis':
 						drawLine(this._left, this._bottom, this._left, this._top, bopts);
-						break;
-					case 'x2axis':
-						drawLine(this._left, this._bottom, this._right, this._bottom, bopts);
 						break;
 					case 'y2axis':
 						drawLine(this._right, this._bottom, this._right, this._top, bopts);
@@ -176,7 +174,7 @@ define([ "jquery", "jqplot-core" ], function($) {
 								drawLine(this._right, pos, this._left, pos);
 								unoverrideCtx(ctx);
 							}
-							
+
 							// draw the mark
 							if (t.showMark &&
 									t.mark &&
@@ -217,7 +215,7 @@ define([ "jquery", "jqplot-core" ], function($) {
 									strokeStyle : axis.borderColor
 								});
 								unoverrideCtx(ctx);
-								
+
 							}
 							break;
 
@@ -463,46 +461,46 @@ define([ "jquery", "jqplot-core" ], function($) {
 		ctx = null;
 		axes = null;
 	};
-	
-	
+
+
 	/*
 	 * ADDITIONAL FUNCTIONS HERE
-	 * 
+	 *
 	 */
-	
+
 	function overrideCtx(ctx, style){
-		
+
 		if (style === undefined){
 			return;
 		}
-		
+
 		var saveStyle = {
 			strokeStyle : ctx.strokeStyle,
 			lineDash : ctx.getLineDash()
 		};
-		
+
 		if (!! style.lineDash){
 			ctx.setLineDash(style.lineDash);
 		}
-		
+
 		if (!! style.strokeStyle){
 			ctx.strokeStyle = style.strokeStyle;
 		}
-		
+
 		ctx._save = saveStyle;
 	}
-	
+
 	function unoverrideCtx(ctx){
-		
+
 		var saveStyle=ctx._save;
-		
+
 		if (saveStyle === undefined){
 			return;
 		}
-		
+
 		ctx.setLineDash(saveStyle.lineDash);
 		ctx.strokeStyle = saveStyle.strokeStyle;
-		
+
 		delete ctx._save;
 	}
 
