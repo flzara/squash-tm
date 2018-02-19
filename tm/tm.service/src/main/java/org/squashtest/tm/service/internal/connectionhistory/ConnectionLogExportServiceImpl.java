@@ -31,7 +31,6 @@ import org.squashtest.tm.service.internal.repository.ConnectionLogDao;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;

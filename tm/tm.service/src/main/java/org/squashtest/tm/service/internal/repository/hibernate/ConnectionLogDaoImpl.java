@@ -21,21 +21,22 @@
 
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
-import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.Filtering;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.*;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.users.ConnectionLog;
-import org.squashtest.tm.service.internal.foundation.collection.JpaPagingUtils;
+import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomConnectionLogDao;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -46,18 +47,10 @@ import java.util.List;
 public class ConnectionLogDaoImpl implements CustomConnectionLogDao {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionLogDaoImpl.class);
 
-	private static final String HQL_FIND_CONNECTION_LOGS_BASE = "from ConnectionLog ConnectionLog ";
-
-	private static final String HQL_FIND_CONNECTION_LOGS_FILTER_BY_LOGIN = "where ConnectionLog.login like :loginFilter ";
-	private static final String HQL_FIND_CONNECTION_LOGS_FILTER_BY_DATE = "ConnectionLog.connectionDate between :startDate and :endDate ";
-	private static final String HQL_WHERE = "where ";
-	private static final String HQL_AND = "and ";
-
 	private static final String CONNECTION_DATE_DATA = "connection-date";
 	private static final String LOGIN_DATA = "login";
-	private static final String START_DATE = "startDate";
-	private static final String END_DATE = "endDate";
-	private static final String LOGIN = "loginFilter";
+	private static final String CONNECTION_DATE_COLUMN = "connectionDate";
+
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -65,40 +58,27 @@ public class ConnectionLogDaoImpl implements CustomConnectionLogDao {
 	@Override
 	public List<ConnectionLog> findSortedConnections(PagingAndSorting paging, ColumnFiltering columnFiltering) {
 
-		StringBuilder sQuery = new StringBuilder(HQL_FIND_CONNECTION_LOGS_BASE);
-		String login="";
-		String dates="";
-		String dateFilterRequestBeginningWord;
+		Session session = entityManager.unwrap(Session.class);
+
+		Criteria criteria = session.createCriteria(ConnectionLog.class, "ConnectionLog");
 
 		if(columnFiltering.isDefined()){
-			login = columnFiltering.getFilter(LOGIN_DATA);
-			dates = columnFiltering.getFilter(CONNECTION_DATE_DATA);
-			dateFilterRequestBeginningWord = HQL_WHERE;
+			String login = columnFiltering.getFilter(LOGIN_DATA);
+			String dates = columnFiltering.getFilter(CONNECTION_DATE_DATA);
 			if(!login.isEmpty()){
-				sQuery.append(HQL_FIND_CONNECTION_LOGS_FILTER_BY_LOGIN);
-				dateFilterRequestBeginningWord = HQL_AND;
+				criteria.add(Restrictions.like(LOGIN_DATA, login, MatchMode.ANYWHERE));
 			}
 			if(!dates.isEmpty()){
-				sQuery.append(dateFilterRequestBeginningWord);
-				sQuery.append(HQL_FIND_CONNECTION_LOGS_FILTER_BY_DATE);
+				setQueryStartAndEndDateParameterQuery(dates, criteria);
 			}
 
 		}
 
-		SortingUtils.addOrder(sQuery, paging);
+		SortingUtils.addOrder(criteria, paging);
 
-		Query hQuery = entityManager.createQuery(sQuery.toString());
+		PagingUtils.addPaging(criteria, paging);
 
-		if(!login.isEmpty()){
-			hQuery.setParameter(LOGIN, "%" + login + "%");
-		}
-		if(!dates.isEmpty()){
-			setQueryStartAndEndDateParameters(dates, hQuery);
-		}
-
-		JpaPagingUtils.addPaging(hQuery, paging);
-
-		return hQuery.getResultList();
+		return criteria.list();
 
 	}
 
@@ -109,7 +89,7 @@ public class ConnectionLogDaoImpl implements CustomConnectionLogDao {
 		return findSortedConnections(sorting, columnFiltering);
 	}
 
-	private void setQueryStartAndEndDateParameters(String dates, Query query){
+	private void setQueryStartAndEndDateParameterQuery(String dates, Criteria criteria){
 		Date startDate = null;
 		Date endDate = null;
 
@@ -132,7 +112,6 @@ public class ConnectionLogDaoImpl implements CustomConnectionLogDao {
 			}
 
 		}
-		query.setParameter(START_DATE, startDate);
-		query.setParameter(END_DATE, endDate);
+		criteria.add(Restrictions.between(CONNECTION_DATE_COLUMN, startDate, endDate));
 	}
 }

@@ -73,7 +73,7 @@ class ConnectionLogFinderServiceIT extends DbunitServiceSpecification {
 		where :
 		start | pageSize | sortAttr          | sortOrder  | filterDefined | loginFilter | dateFilter   | expected
 		0     | 5        | "login"           | ASCENDING  | false         | ""          | ""           | ["FIVE", "FOUR", "ONE", "THREE", "TWO"]
-		0     | 5        | "connection_date" | DESCENDING | false         | ""          | ""           | ["FIVE", "FOUR", "THREE", "TWO", "ONE"]
+		0     | 5        | "connectionDate" | DESCENDING | false         | ""          | ""           | ["FIVE", "FOUR", "THREE", "TWO", "ONE"]
 		0     | 2        | "login"           | ASCENDING  | false         | ""          | ""           | ["FIVE", "FOUR"]
 		0     | 2        | "login"           | ASCENDING  | true          | "T"         | ""           | ["THREE", "TWO"]
 		0     | 1        | "login"           | ASCENDING  | true          | ""          | "25/12/2017" | ["ONE"]
