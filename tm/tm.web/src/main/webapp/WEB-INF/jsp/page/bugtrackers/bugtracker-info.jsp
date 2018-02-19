@@ -141,6 +141,7 @@
 						<c:set var="warningVisibility" 	value="${(empty authConf.warningMessage) ? 'not-displayed' : ''}" />
 
 						<f:message var="labelSuccess" key="bugtracker.admin.messages.success"/>
+						<f:message var="labelSaveSuccess" key="bugtracker.admin.messages.save.success"/>
 						<f:message var="testLabel" key="label.test"/>
 						<f:message var="saveLabel" key="label.save"/>
 
@@ -201,6 +202,10 @@
 										<div id="bt-auth-info" class="not-displayed">
 											<comp:notification-pane type="info" txtcontent="${labelSuccess}"/>
 										</div>
+
+                    <div id="bt-auth-save-info" class="not-displayed">
+                      <comp:notification-pane type="info" txtcontent="${labelSaveSuccess}"/>
+                    </div>
 									</div>
 
 						   		</div>
