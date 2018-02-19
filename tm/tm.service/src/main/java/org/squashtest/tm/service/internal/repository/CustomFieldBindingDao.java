@@ -48,6 +48,18 @@ public interface CustomFieldBindingDao extends JpaRepository<CustomFieldBinding,
 	@Query
 	List<CustomFieldBinding> findAllForProjectAndEntity(@Param("projectId") long projectId, @Param("entityType") BindableEntity boundEntity);
 
+	/**
+	 * Given CustomFieldBinding ids from GenericProjects, finds for each of them
+	 * the ids of the corresponding CustomFieldBindings (i.e. with the same BindableEntity and the same CustomField)
+	 * in all the Projects bound to these GenericProjects.<br/>
+	 * If CustomFieldBinding ids are from a simple Project, nothing will be fetched.<br/>
+	 * <strong>The fetched CustomFieldBinding ids included in the given ids in parameters are not included in the
+	 * returned list.</strong><br/>
+	 * This is used to propagate CustomFieldBinding modifications from the Template to its bound Projects.
+	 * */
+	@Query
+	List<Long> findEquivalentBindingsForBoundProjects(@Param("cufBindingIds") List<Long> cufBindingIds);
+
 	List<CustomFieldBinding> findAllByCustomFieldIdOrderByPositionAsc(long customFieldId);
 
 	@Query

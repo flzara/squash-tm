@@ -705,7 +705,7 @@
 	@NamedQuery(name = "CustomFieldBinding.findEffectiveBindingsForEntity", query = "select cfb from CustomFieldValue cfv inner join cfv.binding cfb where cfv.boundEntityId = :entityId and cfv.boundEntityType = :entityType "),
 	@NamedQuery(name = "CustomFieldBinding.findEffectiveBindingsForEntities", query = "select cfv.boundEntityId, cfb from CustomFieldValue cfv inner join cfv.binding cfb where cfv.boundEntityId in (:entityIds) and cfv.boundEntityType = :entityType "),
 	@NamedQuery(name = "CustomFieldBinding.cufBindingAlreadyExists", query = "select count(*) from CustomFieldBinding cfb where cfb.customField.id = :cufId and cfb.boundEntity = :boundEntity and cfb.boundProject.id = :projectId"),
-
+	@NamedQuery(name = "CustomFieldBinding.findEquivalentBindingsForBoundProjects", query = "select equivalent_cfb.id from CustomFieldBinding original_cfb, CustomFieldBinding equivalent_cfb where original_cfb.boundEntity = equivalent_cfb.boundEntity and original_cfb.customField.id = equivalent_cfb.customField.id and original_cfb.id in (:cufBindingIds) and equivalent_cfb.id not in (:cufBindingIds) and equivalent_cfb.boundProject.template.id = original_cfb.boundProject.id"),
 
 	//CustomFieldValue
 	@NamedQuery(name = "CustomFieldValue.findBoundEntityId", query = "select cfv.boundEntityId from CustomFieldValue cfv where cfv.id = :customFieldValueId"),

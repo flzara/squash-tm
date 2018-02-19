@@ -34,64 +34,64 @@ import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
 /**
  * That interface is called so because it should remain private to this bundle. The reason is that the methods will not
  * be secured.
- * 
+ *
  * @author bsiri
- * 
+ *
  */
 public interface PrivateCustomFieldValueService extends CustomFieldValueManagerService {
 
 	/**
 	 * Will create a custom field value for all the entities affected by the given binding
-	 * 
+	 *
 	 * @param binding
 	 */
 	void cascadeCustomFieldValuesCreation(CustomFieldBinding binding);
 
 	/**
 	 * Will remove the custom field values corresponding to the given binding
-	 * 
+	 *
 	 * @param binding
 	 */
 	void cascadeCustomFieldValuesDeletion(CustomFieldBinding binding);
 
 	/**
 	 * Will remove the custom field values corresponding to the bindings, given their ids.
-	 * 
-	 * @param binding
+	 *
+	 * @param customFieldBindingIds
 	 */
 	void cascadeCustomFieldValuesDeletion(List<Long> customFieldBindingIds);
 
 	/**
 	 * Will create all the custom field values for one entity.
-	 * 
+	 *
 	 * @param entity
 	 * @param project
 	 *            . If null, the project of the given entity will be used.
 	 */
 	void createAllCustomFieldValues(BoundEntity entity, Project project);
 
-	
+
 	/**
-	 * batched version of {@link #createAllCustomFieldValues(BoundEntity, Project)}. 
-	 * The entities are assumed to be all of the same concrete class and of the 
+	 * batched version of {@link #createAllCustomFieldValues(BoundEntity, Project)}.
+	 * The entities are assumed to be all of the same concrete class and of the
 	 * same project.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param entities
 	 * @param project
 	 */
 	void createAllCustomFieldValues(Collection<? extends BoundEntity> entities, Project project);
-	
+
 	/**
 	 * will delete all the custom field vales for one entity
-	 * 
+	 *
 	 * @param entity
 	 */
 	void deleteAllCustomFieldValues(BoundEntity entity);
 
 	/**
 	 * Will delete all the custom field values for multiple BoundEntities
-	 * 
+	 *
 	 * @param entityType
 	 *            the BindableEntity that all of the BoundEntity must share
 	 * @param entityIds
@@ -101,7 +101,7 @@ public interface PrivateCustomFieldValueService extends CustomFieldValueManagerS
 
 	/**
 	 * Will copy the custom field values from an entity to another entity, creating them in the process
-	 * 
+	 *
 	 * @param source : the {@link BoundEntity} from witch the cuf are copied
 	 * @param recipient : the BoundEntity
 	 */
@@ -109,7 +109,7 @@ public interface PrivateCustomFieldValueService extends CustomFieldValueManagerS
 
 	/**
 	 * *Will copy the custom field values from entities to others, creating them in the process
-	 * 
+	 *
 	 * @param copiedEntityBySource
 	 *            : a Map with
 	 *            <ul>
@@ -124,8 +124,8 @@ public interface PrivateCustomFieldValueService extends CustomFieldValueManagerS
 	/**
 	 * Will copy the custom field values from an entity to another entity. It assumes that the custom field values
 	 * already exists for both, and will simply invoke {@link CustomFieldValue#setValue(String)} from one to the other.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param source
 	 * @param dest
 	 */
@@ -141,15 +141,15 @@ public interface PrivateCustomFieldValueService extends CustomFieldValueManagerS
 	 * found,</li>
 	 * <li>delete the custom field values from the former project.</li>
 	 * <ol>
-	 * 
-	 * 
+	 *
+	 *
 	 * @param entity
 	 */
 	void migrateCustomFieldValues(BoundEntity entity);
 
 	/**
 	 * Same as {@link #migrateCustomFieldValues(BoundEntity)}, batched version.
-	 * 
+	 *
 	 * @param entities
 	 */
 	void migrateCustomFieldValues(Collection<BoundEntity> entities);

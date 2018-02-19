@@ -46,10 +46,7 @@ import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 
 import javax.inject.Inject;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
@@ -192,8 +189,14 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public void removeCustomFieldBindings(List<Long> bindingIds) {
-		customValueService.cascadeCustomFieldValuesDeletion(bindingIds);
-		customFieldBindingDao.removeCustomFieldBindings(bindingIds);
+
+		/* If the given bindings are removed from a ProjectTemplate, we have to propagate the deletion to the
+		* equivalent bindings in the bound Projects. */
+		List<Long> bindingIdsToRemove = new ArrayList<>(bindingIds);
+		bindingIdsToRemove.addAll(customFieldBindingDao.findEquivalentBindingsForBoundProjects(bindingIds));
+
+		customValueService.cascadeCustomFieldValuesDeletion(bindingIdsToRemove);
+		customFieldBindingDao.removeCustomFieldBindings(bindingIdsToRemove);
 		eventPublisher.publishEvent(new DeleteCustomFieldBindingEvent(bindingIds));
 	}
 
