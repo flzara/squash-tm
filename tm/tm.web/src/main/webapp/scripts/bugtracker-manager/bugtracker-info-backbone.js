@@ -80,7 +80,8 @@ per se. The implementation varies according to the selected authentication proto
   * main div : #bt-auth-creds-messagezone
   * the failure notification : #bt-auth-failure
   * warning notification : #bt-auth-warning
-  * success notification : #bt-auth-success
+  * test success notification : #bt-auth-success
+  * save success notification : #bt-auth-save-success
 
 Failure are for unrecoverable errors while warnings are for other less fatal errors.
 
