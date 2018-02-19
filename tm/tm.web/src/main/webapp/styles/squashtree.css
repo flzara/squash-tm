@@ -57,7 +57,7 @@ li[rel="drive"][editable="true"][creatable="true"][deletable="true"] > a > .jstr
 
 li[milestones-dont-allow-click="true"] > a { color: gray; }
 li[rel="requirement"][synchronized="true"] > a { color: gray; }
-li[rel="requirement"][synchronized="true"] > a.jstree-clicked { color: #c5c5c5; }
+li[rel="requirement"][synchronized="true"] a.jstree-clicked { color: #c5c5c5; }
 
 li[editable="false"] a {	color: gray;}
 li[editable="false"] a.jstree-clicked, li[rel="folder"][editable="false"] a.jstree-hovered {	color: #FFFFFF;}
