@@ -70,14 +70,6 @@ public final class HTMLCleanupUtils {
 		return StringUtils.EMPTY;
 	}
 
-	public static String getBriefText(String text, int maxLength) {
-		text = htmlToText(text);
-		if (text.length() > maxLength) {
-			text = text.substring(0, maxLength - 3) + "...";
-		}
-		return text;
-	}
-
 	public static String getCleanedBriefText(String text, int maxLength) {
 		text = htmlToText(cleanHtml(text));
 		if (text.length() > maxLength) {
@@ -91,7 +83,12 @@ public final class HTMLCleanupUtils {
 			Document.OutputSettings outputSettings = new Document.OutputSettings();
 			outputSettings.prettyPrint(false);
 			outputSettings.outline(false);
-			return Jsoup.clean(unsecureHtml, "", Whitelist.relaxed().addAttributes("p", "style"), outputSettings);
+			return Jsoup.clean(unsecureHtml, "", Whitelist.relaxed()
+					.addProtocols("img", "src", "http", "https", "data", "cid")
+					.addAttributes("p", "style")
+					.addAttributes("span", "style")
+					.addAttributes("li", "style")
+				, outputSettings);
 		}
 		return StringUtils.EMPTY;
 	}
