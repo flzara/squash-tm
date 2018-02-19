@@ -37,6 +37,7 @@ import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.SystemInfoListCode;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.service.infolist.InfoListFinderService;
+import org.squashtest.tm.service.internal.project.ProjectHelper;
 import org.squashtest.tm.service.project.GenericProjectFinder;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -62,6 +63,7 @@ public class InfoListBindingManagerController {
 		GenericProject project = projectService.findById(projectId);
 		List<InfoList> infoLists = infoListService.findAllUserLists();
 		mav.addObject("proj", project);
+		mav.addObject("isTemplate", ProjectHelper.isTemplate(project));
 		mav.addObject("category", buildCategoryData(infoLists, locale));
 		mav.addObject("nature", buildNatureData(infoLists, locale));
 		mav.addObject("type", buildTypeData(infoLists, locale));

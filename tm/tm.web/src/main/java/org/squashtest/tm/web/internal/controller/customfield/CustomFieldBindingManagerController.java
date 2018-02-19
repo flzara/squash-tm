@@ -33,7 +33,10 @@ import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
+import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
+import org.squashtest.tm.service.internal.project.ProjectHelper;
+import org.squashtest.tm.service.project.GenericProjectFinder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 
 
@@ -43,7 +46,8 @@ public class CustomFieldBindingManagerController {
 
 	@Inject
 	private CustomFieldBindingFinderService service;
-
+	@Inject
+	private GenericProjectFinder projectService;
 
 	private static final int DEFAULT_PAGE_SIZE = 10;
 
@@ -51,6 +55,7 @@ public class CustomFieldBindingManagerController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getManager(@PathVariable(RequestParams.PROJECT_ID) Long projectId){
 
+		GenericProject project = projectService.findById(projectId);
 		List<CustomField> customFields = service.findAvailableCustomFields();
 		ModelAndView mav;
 
@@ -77,6 +82,7 @@ public class CustomFieldBindingManagerController {
 			mav.addObject("executionStepBindings", executionStepBindings);
 
 			mav.addObject("projectIdentifier", projectId);
+			mav.addObject("isTemplate", ProjectHelper.isTemplate(project));
 		}
 		else {
 			mav = new ModelAndView("fragment/project/project-no-cuf-exists");

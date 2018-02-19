@@ -291,7 +291,7 @@
 					</thead>
 					<tbody class="available-fields">
 						<tr th:remove="all">
-							<td class="td-check" data-id="5"><input type="checkbox" th:text="" /></td>
+							<td class="td-check" data-id="5"><input type="checkbox"/></td>
 							<c:out><td class="td-name">text-field 5</td></c:out>
 							<td class="td-type">text field</td>
 							<td class="td-optional">yes</td>
@@ -307,7 +307,9 @@
 					</tbody>
 				</table>
 			</div>
-      
+      <br/>
+      <span th:if="${isTemplate}" th:text="#{message.customfieldbinding.bind.message.warningForTemplate}"></span>
+
             <div class="popup-dialog-buttonpane">
               <input type="button" th:value="#{label.Confirm}" data-def="state=select, mainbtn=select, evt=confirm" />
               <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel, mainbtn=pleasewait"/>
@@ -320,12 +322,15 @@
 			<div class='display-table-cell warning-cell'>
 			<div class='generic-error-signal'></div></div>
 			<div class='display-table-cell'>
-			<div th:text="#{message.customfieldbinding.unbind.message.first }"></div>
-			<span class='red-warning-message' th:text="#{message.customfieldbinding.unbind.message.second2 }"></span>
-			<span class='red-warning-message' th:text="#{message.customfieldbinding.unbind.message.third }"></span>
-			<span class='bold-warning-message'>
-			<div th:text="#{message.customfieldbinding.unbind.message.fourth }"></div>
-			</span></div></div>
+        <div th:text="#{message.customfieldbinding.unbind.message.first }"></div>
+        <span class='red-warning-message' th:text="#{message.customfieldbinding.unbind.message.second2 }"></span>
+        <span class='red-warning-message' th:text="#{message.customfieldbinding.unbind.message.third }"></span><br/>
+        <span th:if="${isTemplate}" class='red-warning-message' th:text="#{message.customfieldbinding.unbind.message.warningForTemplate}"></span>
+        <span class='bold-warning-message'>
+          <div th:text="#{message.customfieldbinding.unbind.message.fourth }"></div>
+        </span>
+      </div>
+      </div>
 
 			<div class="popup-dialog-buttonpane">
 			  <input type="button" th:value="#{label.Confirm}" data-def="mainbtn,evt=confirm" />
