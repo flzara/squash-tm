@@ -76,8 +76,8 @@ public class BugTracker {
 	@Enumerated(EnumType.STRING)
 	@Column(name="AUTH_POLICY")
 	private AuthenticationPolicy authenticationPolicy = AuthenticationPolicy.USER;
-	
-	
+
+
 	private boolean iframeFriendly;
 
 
@@ -174,4 +174,14 @@ public class BugTracker {
 		}
 	}
 
+	@Override
+	public String toString() {
+		final StringBuffer sb = new StringBuffer("BugTracker{");
+		sb.append("id=").append(id);
+		sb.append(", name='").append(name).append('\'');
+		sb.append(", url='").append(url).append('\'');
+		sb.append(", kind='").append(kind).append('\'');
+		sb.append('}');
+		return sb.toString();
+	}
 }

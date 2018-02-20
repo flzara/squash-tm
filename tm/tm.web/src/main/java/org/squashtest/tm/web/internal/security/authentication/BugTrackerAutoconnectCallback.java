@@ -160,7 +160,7 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 							newContext.setCredentials(bugTracker, credentials);
 						}
 					} catch (BugTrackerRemoteException ex) {
-						LOGGER.info("BugTrackerAutoconnectCallback : Failed to connect user '{}' to the bugtracker {} with the supplied credentials. User will have to connect manually.", user, bugTracker.getName());
+						LOGGER.info("BugTrackerAutoconnectCallback : Failed to connect user '{}' to the bugtracker {} with the supplied credentials. User will have to connect manually.", user, bugTracker);
 						LOGGER.debug("BugTrackerAutoconnectCallback : Bugtracker autoconnector threw this exception : {}", ex.getMessage(), ex);
 					}
 				}
