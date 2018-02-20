@@ -84,10 +84,15 @@ public final class HTMLCleanupUtils {
 			outputSettings.prettyPrint(false);
 			outputSettings.outline(false);
 			return Jsoup.clean(unsecureHtml, "", Whitelist.relaxed()
-					.addProtocols("img", "src", "http", "https", "data", "cid")
-					.addAttributes("p", "style")
-					.addAttributes("span", "style")
-					.addAttributes("li", "style")
+					.addAttributes("a", "accesskey", "charset", "class", "dir", "lang", "name", "rel", "style", "tabindex", "target", "type")
+					.addProtocols("img", "src", "cid", "data", "http", "https")
+					.addAttributes("img", "class", "dir", "lang", "longdesc", "style")
+					.addAttributes("li", "class", "style")
+					.addAttributes("p", "class", "style")
+					.addAttributes("span", "class", "style")
+					.addAttributes("table", "align", "border", "cellpadding", "cellspacing", "class", "dir", "style")
+					.addAttributes("ul", "class", "style")
+					.addAttributes("ol", "class", "style")
 				, outputSettings);
 		}
 		return StringUtils.EMPTY;
