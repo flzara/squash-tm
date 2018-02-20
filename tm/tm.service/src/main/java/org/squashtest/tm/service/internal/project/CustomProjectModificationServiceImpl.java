@@ -117,7 +117,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 		ProjectTemplate projectTemplate = projectTemplateDao.findOne(templateId);
 		if(params.isKeepTemplateBinding()) {
 			newProject.setTemplate(projectTemplate);
-			setParamsConsistent(params);
+			makeParamsConsistent(params);
 		}
 
 		genericProjectManager.synchronizeGenericProject(newProject, projectTemplate, params);
@@ -126,7 +126,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	}
 
 	/* If binding with Template is kept, some parameters must be copied. */
-	private void setParamsConsistent(GenericProjectCopyParameter params) {
+	private void makeParamsConsistent(GenericProjectCopyParameter params) {
 		params.setCopyCUF(true);
 		params.setCopyInfolists(true);
 		params.setCopyAllowTcModifFromExec(true);

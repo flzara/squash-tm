@@ -32,52 +32,99 @@ import org.squashtest.tm.service.project.GenericProjectCopyParameter;
 import spock.lang.Specification
 
 class CustomProjectModificationServiceImplTest extends Specification {
+
 	CustomProjectModificationServiceImpl service = new CustomProjectModificationServiceImpl()
+
 	ProjectTemplateDao projectTemplateDao = Mock()
 	GenericProjectManagerService genericProjectManagerService = Mock()
 
-	def setup()
-	{
+	def setup() {
 		service.projectTemplateDao = projectTemplateDao
 		service.genericProjectManager = genericProjectManagerService
 	}
 
-	def "should add projet and copy all settings from template"(){
-		given: "a template project"
-		ProjectTemplate template = Mock()
-		template.isTestAutomationEnabled() >> Boolean.TRUE
+	def "Should add a Projet, bind it to the Template and copy all the settings from it"() {
+
+		given: "The Template"
+
+		ProjectTemplate template = new ProjectTemplate()
+
+		and: "The Project"
+
+		Project project = new Project()
+
+		and:"The Conf Object"
+
+		GenericProjectCopyParameter params = new GenericProjectCopyParameter()
+
+		params.setKeepTemplateBinding(true)
+
+		params.setCopyCUF(false)
+		params.setCopyInfolists(false)
+		params.setCopyAllowTcModifFromExec(false)
+		params.setCopyOptionalExecStatuses(false)
+
+		and:
+
 		projectTemplateDao.findOne(1L) >> template
 
-		TestAutomationProject automationProject = Mock()
-		TestAutomationProject automationCopy = Mock()
-		automationProject.createCopy() >> automationCopy
-		template.getTestAutomationProjects() >> [automationProject]
-
-		template.isBugtrackerConnected() >> true
-		BugTrackerBinding binding = Mock()
-		template.getBugtrackerBinding() >> binding
-		BugTracker bugtracker = Mock()
-		binding.getBugtracker() >> bugtracker
-
-		and: "a project"
-		Project project = Mock()
-		project.getId()>> 2L
-		project.getClass()>> Project.class
-
-		and:"a conf object"
-		GenericProjectCopyParameter params = new GenericProjectCopyParameter()
-		params.setCopyPermissions(true)
-		params.setCopyCUF(true)
-		params.setCopyBugtrackerBinding(true)
-		params.setCopyAutomatedProjects(true)
-		params.setCopyInfolists(false)
-		params.setCopyMilestone(false)
-
 		when:
+
 		service.addProjectFromTemplate(project, 1L, params)
 
 		then:
-		1* genericProjectManagerService.synchronizeGenericProject(project, template, params);
+
+		1 * genericProjectManagerService.persist(project)
+		1 * genericProjectManagerService.synchronizeGenericProject(project, template, params);
+
+		project.getTemplate() == template
+
+		params.isCopyCUF() == true
+		params.isCopyInfolists() == true
+		params.isCopyAllowTcModifFromExec() == true
+		params.isCopyOptionalExecStatuses() == true
+	}
+
+	def "Should add a Projet and copy all the settings from the Template"() {
+
+		given: "The Template"
+
+		ProjectTemplate template = new ProjectTemplate()
+
+		and: "The Project"
+
+		Project project = new Project()
+
+		and:"The Conf Object"
+
+		GenericProjectCopyParameter params = new GenericProjectCopyParameter()
+
+		params.setKeepTemplateBinding(false)
+
+		params.setCopyCUF(false)
+		params.setCopyInfolists(false)
+		params.setCopyAllowTcModifFromExec(false)
+		params.setCopyOptionalExecStatuses(false)
+
+		and:
+
+		projectTemplateDao.findOne(1L) >> template
+
+		when:
+
+		service.addProjectFromTemplate(project, 1L, params)
+
+		then:
+
+		1 * genericProjectManagerService.persist(project)
+		1 * genericProjectManagerService.synchronizeGenericProject(project, template, params);
+
+		project.getTemplate() == null
+
+		params.isCopyCUF() == false
+		params.isCopyInfolists() == false
+		params.isCopyAllowTcModifFromExec() == false
+		params.isCopyOptionalExecStatuses() == false
 	}
 
 }
