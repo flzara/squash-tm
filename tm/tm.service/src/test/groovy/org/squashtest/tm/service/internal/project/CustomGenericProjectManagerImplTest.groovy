@@ -314,4 +314,25 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		1* project.setTestCaseTypes(_);
 		0* project.setAllowTcModifDuringExec(_)
 	}
+
+	def "#disassociateFromTemplate - Should disassociate Project from a Template"() {
+
+		given:
+
+		Project project = new Project()
+		ProjectTemplate template = new ProjectTemplate()
+		project.setTemplate(template)
+
+		and:
+
+		genericProjectDao.findOne(_) >> project
+
+		when:
+
+		manager.disassociateFromTemplate(1L)
+
+		then:
+
+		project.getTemplate() == null
+	}
 }
