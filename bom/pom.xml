@@ -27,6 +27,7 @@
     <commons-lang3.version>3.3.2</commons-lang3.version>
     <commons-validator.version>1.5.1</commons-validator.version>
     <ehcache.version>2.10.2.2.21</ehcache.version>
+    <gherkin-jvm-deps.version>1.0.4</gherkin-jvm-deps.version>
     <gherkin.version>5.0.0</gherkin.version>
     <guava.version>18.0</guava.version>
     <h2.version>1.4.187</h2.version>
@@ -114,6 +115,12 @@
         <groupId>io.cucumber</groupId>
         <artifactId>gherkin</artifactId>
         <version>${gherkin.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>io.cucumber</groupId>
+        <artifactId>gherkin-jvm-deps</artifactId>
+        <version>${gherkin-jvm-deps.version}</version>
       </dependency>
 
       <dependency>

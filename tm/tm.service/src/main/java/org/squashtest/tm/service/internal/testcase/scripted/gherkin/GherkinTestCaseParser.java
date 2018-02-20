@@ -43,6 +43,8 @@ import java.util.stream.IntStream;
 public class GherkinTestCaseParser implements ScriptedTestCaseParser {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(GherkinTestCaseParser.class);
+	public static final String STEP_KEYWORD_CLASS_NAME = "step-keyword";
+	public static final String SCENARIO_KEYWORD_CLASS_NAME = "scenario-keyword";
 
 	@Override
 	public void populateExecution(Execution execution) {
@@ -147,14 +149,28 @@ public class GherkinTestCaseParser implements ScriptedTestCaseParser {
 	}
 
 	private void appendStepLine(Step step, StringBuilder sb) {
-		sb.append(step.getKeyword());
+		String keyword = step.getKeyword();
+		appendClassSpan(sb, keyword, STEP_KEYWORD_CLASS_NAME);
 		sb.append(step.getText());
 		appendLineBreak(sb);
 	}
 
+	private void appendClassSpan(StringBuilder sb, String keyword, String cssClass) {
+		sb.append("<span class='")
+			.append(cssClass)
+			.append("'>")
+			.append(StringUtils.appendIfMissing(keyword," "))
+			.append("</span>");
+	}
+
 	private void appendScenarioLine(ScenarioDefinition scenarioDefinition, StringBuilder sb) {
-		sb.append(scenarioDefinition.getKeyword());
+		String keyword = scenarioDefinition.getKeyword();
+		appendClassSpan(sb,keyword, SCENARIO_KEYWORD_CLASS_NAME);
 		sb.append(scenarioDefinition.getName());
+		appendBlankLine(sb);
+	}
+
+	private void appendBlankLine(StringBuilder sb) {
 		appendLineBreak(sb);
 		appendLineBreak(sb);
 	}
@@ -165,7 +181,7 @@ public class GherkinTestCaseParser implements ScriptedTestCaseParser {
 
 	//this method append steps lines in scenario outline mode (ie with dataset so we must do param substitution)
 	private void appendStepLine(Step step, Map<String, String> valueByHeader, StringBuilder sb) {
-		sb.append(step.getKeyword());
+		appendClassSpan(sb,step.getKeyword(), STEP_KEYWORD_CLASS_NAME);
 		String text = step.getText();
 
 		//now substitute each <param> by it's value, if not found inject a placeholder
