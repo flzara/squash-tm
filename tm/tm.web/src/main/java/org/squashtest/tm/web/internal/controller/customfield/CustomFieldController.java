@@ -235,10 +235,6 @@ public class CustomFieldController {
 		String toReturn = defaultValue;
 		if (customField.getInputType() == InputType.CHECKBOX) {
 			toReturn = messageSource.getMessage("label." + defaultValue, null, locale);
-//		} else if(customField.getInputType() == InputType.RICH_TEXT){
-//			toReturn = HTMLCleanupUtils.cleanHtml(toReturn);
-//		}else if(customField.getInputType() == InputType.PLAIN_TEXT){
-//			toReturn = HtmlUtils.htmlEscape(toReturn);
 		}
 		return toReturn;
 	}

@@ -86,9 +86,7 @@ public class DenormalizedFieldValuesController {
 		List<CustomFieldValueModel> models = new LinkedList<>();
 		for (DenormalizedFieldValue value : values) {
 			CustomFieldValueModel model = converter.toJson(value);
-			if(model.getBinding().getCustomField().getInputType().equals(InputType.DROPDOWN_LIST)) {
-				cufController.escapeOptions(model);
-			}
+
 			models.add(model);
 		}
 		return models;

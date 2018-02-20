@@ -33,6 +33,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
+import org.squashtest.tm.service.internal.dto.CustomFieldValueModel;
 import org.squashtest.tm.web.internal.model.json.*;
 
 /**
@@ -65,5 +66,6 @@ public class SquashModule extends SimpleModule {
 		context.setMixInAnnotations(User.class, UserMixin.class);
 		context.setMixInAnnotations(BugTracker.class, BugTrackerMixin.class);
 		context.setMixInAnnotations(Credentials.class, CredentialsMixin.class);
+		context.setMixInAnnotations(CustomFieldValueModel.class, CustomFieldValueModelMixin.class);
 	}
 }

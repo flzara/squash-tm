@@ -33,10 +33,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
 import org.squashtest.tm.service.internal.dto.*;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
@@ -82,29 +80,6 @@ public class CustomFieldValuesController {
 
 		for (CustomFieldValue value : values) {
 			CustomFieldValueModel model = converter.toJson(value);
-
-			if(value.getCustomField().getInputType().equals(InputType.RICH_TEXT)){
-				String valueModel = HtmlUtils.htmlUnescape(model.getValue());
-				valueModel = HtmlUtils.htmlUnescape(valueModel);
-				String valueModelStripped = HTMLCleanupUtils.stripJavascript(valueModel);
-				valueModelStripped = HTMLCleanupUtils.stripJavascript(valueModelStripped);
-				model.setValue(HtmlUtils.htmlUnescape(valueModelStripped));
-			}
-			if(value.getCustomField().getInputType().equals(InputType.PLAIN_TEXT)){
-				String valueModel =HTMLCleanupUtils.stripJavascript(model.getValue());
-					model.setValue(HtmlUtils.htmlUnescape(valueModel));
-			}
-			if(value.getBinding().getCustomField().getInputType().equals(InputType.DROPDOWN_LIST)) {
-				escapeOptions(model);
-			}
-
-			if(model.getOptionValues()!= null) {
-				for (String string : model.getOptionValues()) {
-					String escaped = HtmlUtils.htmlEscape(string);
-					escapedValues.add(HtmlUtils.htmlUnescape(escaped));
-				}
-				model.setOptionValues(escapedValues);
-			}
 			models.add(model);
 		}
 
