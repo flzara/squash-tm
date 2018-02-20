@@ -43,7 +43,7 @@ class CustomFieldBindingModificationServiceIT extends DbunitServiceSpecification
 	def "when creating a new custom field binding, should cascade the create of cuf values for concerned entities"(){
 
 		when :
-		service.addNewCustomFieldBinding(-1L, BindableEntity.TEST_CASE, -3L, new CustomFieldBinding())
+		service.addNewCustomFieldBinding(-1L, BindableEntity.TEST_CASE, -3L, null)
 		def customFields = listQuery("from CustomFieldValue")
 
 
