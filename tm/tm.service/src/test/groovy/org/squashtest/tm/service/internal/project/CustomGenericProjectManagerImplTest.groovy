@@ -18,7 +18,11 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.project;
+package org.squashtest.tm.service.internal.project
+
+import org.squashtest.tm.domain.campaign.CampaignLibrary
+import org.squashtest.tm.domain.execution.ExecutionStatus
+import org.squashtest.tm.domain.project.GenericProject;
 
 import javax.persistence.EntityManager;
 
@@ -50,7 +54,9 @@ import spock.lang.Specification
  *
  */
 class CustomGenericProjectManagerImplTest extends Specification {
+
 	CustomGenericProjectManagerImpl manager = new CustomGenericProjectManagerImpl()
+
 	EntityManager em = Mock()
 	Session session = Mock()
 	ObjectIdentityService objectIdentityService = Mock()
@@ -108,7 +114,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 	def "should not change project's name to name in use"() {
 		given:
 		Project project = new Project()
-		genericProjectDao.findById(10L) >> project
+		genericProjectDao.findOne(10L) >> project
 
 		and:
 		genericProjectDao.countByName("HASHTAG NAME CLASH") >> 1L
@@ -123,7 +129,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 	def "should change a project's name to its own name"() {
 		given:
 		Project project = new Project(name: "HASHTAG NO NAME CLASH")
-		genericProjectDao.findById(10L) >> project
+		genericProjectDao.findOne(10L) >> project
 
 		and:
 		genericProjectDao.countByName("HASHTAG NO NAME CLASH") >> 1L
@@ -139,7 +145,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		given:
 		Project project = new Project()
 		CustomReportLibrary crl = new CustomReportLibrary()
-		genericProjectDao.findById(10L) >> project
+		genericProjectDao.findOne(10L) >> project
 		project.getCustomReportLibrary() >> crl
 		customReportLibraryNodeDao.findNodeFromEntity(_) >> new CustomReportLibraryNode()
 
@@ -152,14 +158,18 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		then:
 		notThrown NameAlreadyInUseException
 	}
-	
-	def "should add projet and copy all settings from template except milestones"(){
+
+	def "should add projet and copy all settings from template except milestones"() {
+
 		given: "a template project"
+
 		ProjectTemplate template = Mock()
 		Project project = Mock()
+
 		template.isTestAutomationEnabled() >> Boolean.TRUE
-		genericProjectDao.findById(1L) >> template
-		genericProjectDao.findById(2L) >> project
+
+		genericProjectDao.findOne(1L) >> template
+		genericProjectDao.findOne(2L) >> project
 		permissionEvaluationService.hasRoleOrPermissionOnObject(_,_,_) >> true
 
 		TestAutomationProject automationProject = Mock()
@@ -176,12 +186,14 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		binding.getBugtracker() >> bugtracker
 
 		and: "a project"
+
 		project.getId()>> 2L
 		project.getClass()>> Project.class
 		project.getTestAutomationServer() >> testAutomationServer
-		
-		
+
+
 		and:"a conf object"
+
 		GenericProjectCopyParameter params = new GenericProjectCopyParameter()
 		params.setCopyPermissions(true)
 		params.setCopyCUF(true)
@@ -189,11 +201,16 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		params.setCopyAutomatedProjects(true)
 		params.setCopyInfolists(true)
 		params.setCopyMilestone(false)
+		params.setCopyAllowTcModifFromExec(true)
+		params.setCopyOptionalExecStatuses(false)
+		params.setCopyPlugins(false)
 
 		when:
+
 		manager.synchronizeGenericProject(project, template, params)
 
 		then:
+
 		1* permissionsManager.copyAssignedUsers(project,template)
 		1* project.setBugtrackerBinding(_)
 		1* customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate(project, template)
@@ -201,15 +218,16 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		1* project.setRequirementCategories(_);
 		1* project.setTestCaseNatures(_);
 		1* project.setTestCaseTypes(_);
+		1* project.setAllowTcModifDuringExec(_)
 	}
-	
-	def "should add projet and copy all settings but custom fields binging from template"(){
+
+	def "should add projet and copy all settings but custom fields binding from template"(){
 		given: "a template project"
 		ProjectTemplate template = Mock()
 		Project project = Mock()
 		template.isTestAutomationEnabled() >> Boolean.TRUE
-		genericProjectDao.findById(1L) >> template
-		genericProjectDao.findById(2L) >> project
+		genericProjectDao.findOne(1L) >> template
+		genericProjectDao.findOne(2L) >> project
 		permissionEvaluationService.hasRoleOrPermissionOnObject(_,_,_) >> true
 
 		TestAutomationProject automationProject = Mock()
@@ -239,6 +257,9 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		params.setCopyAutomatedProjects(true)
 		params.setCopyInfolists(true)
 		params.setCopyMilestone(false)
+		params.setCopyAllowTcModifFromExec(true)
+		params.setCopyOptionalExecStatuses(false)
+		params.setCopyPlugins(false)
 
 		when:
 		manager.synchronizeGenericProject(project, template, params)
@@ -251,15 +272,16 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		1* project.setRequirementCategories(_);
 		1* project.setTestCaseNatures(_);
 		1* project.setTestCaseTypes(_);
+		1* project.setAllowTcModifDuringExec(_)
 	}
-	
+
 	def "should add projet and copy only infolists"(){
 		given: "a template project"
 		ProjectTemplate template = Mock()
 		Project project = Mock()
 		template.isTestAutomationEnabled() >> Boolean.TRUE
-		genericProjectDao.findById(1L) >> template
-		genericProjectDao.findById(2L) >> project
+		genericProjectDao.findOne(1L) >> template
+		genericProjectDao.findOne(2L) >> project
 		permissionEvaluationService.hasRoleOrPermissionOnObject(_,_,_) >> true
 
 		and: "a project"
@@ -275,6 +297,9 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		params.setCopyAutomatedProjects(false)
 		params.setCopyInfolists(true)
 		params.setCopyMilestone(false)
+		params.setCopyAllowTcModifFromExec(false)
+		params.setCopyOptionalExecStatuses(false)
+		params.setCopyPlugins(false)
 
 		when:
 		manager.synchronizeGenericProject(project, template, params)
@@ -287,5 +312,6 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		1* project.setRequirementCategories(_);
 		1* project.setTestCaseNatures(_);
 		1* project.setTestCaseTypes(_);
+		0* project.setAllowTcModifDuringExec(_)
 	}
 }
