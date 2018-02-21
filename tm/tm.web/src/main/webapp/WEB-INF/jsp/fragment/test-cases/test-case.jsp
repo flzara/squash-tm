@@ -20,39 +20,39 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
-<%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
-<%@ taglib prefix="tc" tagdir="/WEB-INF/tags/test-cases-components"%>
-<%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
+<%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments" %>
+<%@ taglib prefix="tc" tagdir="/WEB-INF/tags/test-cases-components" %>
+<%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues" %>
 <%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform" %>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
 <?xml version="1.0" encoding="utf-8" ?>
 <%@ page language="java" contentType="text/html; charset=utf-8"
-	pageEncoding="utf-8"%>
+         pageEncoding="utf-8" %>
 
 
 <f:message key="tabs.label.issues" var="tabIssueLabel"/>
 
 <%-- used for copy/paste of steps --%>
 <script>
-require(["common"], function() {
-	require(["jquery.cookie"]);
-})
+  require(["common"], function () {
+    require(["jquery.cookie"]);
+  })
 </script>
 
 <%------------------------------------- URLs ----------------------------------------------%>
 
 
-<c:url var="testCaseUrl" 					value="/test-cases/${testCase.id}"/>
-<c:url var="executionsTabUrl"				value="/test-cases/${testCase.id}/executions?tab="/>
-<c:url var="stepTabUrl"						value="/test-cases/${testCase.id}/steps/panel" />
-<c:url var="importanceAutoUrl" 				value="/test-cases/${testCase.id}/importanceAuto"/>
-<c:url var="customFieldsValuesURL" 			value="/custom-fields/values" />
-<c:url var="btEntityUrl" 					value="/bugtracker/test-case/${testCase.id}"/>
-<c:url var="automationUrl"					value="/test-cases/${testCase.id}/test-automation" />
+<c:url var="testCaseUrl" value="/test-cases/${testCase.id}"/>
+<c:url var="executionsTabUrl" value="/test-cases/${testCase.id}/executions?tab="/>
+<c:url var="stepTabUrl" value="/test-cases/${testCase.id}/steps/panel"/>
+<c:url var="importanceAutoUrl" value="/test-cases/${testCase.id}/importanceAuto"/>
+<c:url var="customFieldsValuesURL" value="/custom-fields/values"/>
+<c:url var="btEntityUrl" value="/bugtracker/test-case/${testCase.id}"/>
+<c:url var="automationUrl" value="/test-cases/${testCase.id}/test-automation"/>
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <%--
@@ -64,57 +64,58 @@ require(["common"], function() {
 --%>
 
 
-<c:set var="writable"           value="${false}"/>
-<c:set var="moreThanReadOnly"   value="${false}" />
-<c:set var="attachable"         value="${false}" />
-<c:set var="deletable"          value="${false}" />
-<c:set var="linkable"           value="${false}" />
+<c:set var="writable" value="${false}"/>
+<c:set var="moreThanReadOnly" value="${false}"/>
+<c:set var="attachable" value="${false}"/>
+<c:set var="deletable" value="${false}"/>
+<c:set var="linkable" value="${false}"/>
 
 <%-- permission 'linkable' is not subject to the milestone statuses, ACL only --%>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK"
-  domainObject="${ testCase }">
-  <c:set var="linkable" value="${ true }" />
+                  domainObject="${ testCase }">
+  <c:set var="linkable" value="${ true }"/>
 </authz:authorized>
 
 <%-- other permissions. ACL should be evaluated only if the milestone statuses allows it.  --%>
 <c:if test="${not milestoneConf.locked}">
 
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE"
-	domainObject="${ testCase }">
-	<c:set var="writable" value="${ true }" />
-	<c:set var="moreThanReadOnly" value="${ true }" />
-</authz:authorized>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH"
-	domainObject="${ testCase }">
-	<c:set var="attachable" value="${ true }" />
-	<c:set var="moreThanReadOnly" value="${ true }" />
-</authz:authorized>
+  <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE"
+                    domainObject="${ testCase }">
+    <c:set var="writable" value="${ true }"/>
+    <c:set var="moreThanReadOnly" value="${ true }"/>
+  </authz:authorized>
+  <authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH"
+                    domainObject="${ testCase }">
+    <c:set var="attachable" value="${ true }"/>
+    <c:set var="moreThanReadOnly" value="${ true }"/>
+  </authz:authorized>
 
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE"
-	domainObject="${ testCase }">
-	<c:set var="moreThanReadOnly" value="${ true }" />
-</authz:authorized>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE"
-	domainObject="${ testCase }">
-	<c:set var="creatable" value="${true }" />
-	<c:set var="moreThanReadOnly" value="${ true }" />
-</authz:authorized>
-<c:set var="linkable" value="${false }"/>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK"
-	domainObject="${ testCase }">
-	<c:set var="linkable" value="${ true }" />
-	<c:set var="moreThanReadOnly" value="${ true }" />
-</authz:authorized>
+  <authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE"
+                    domainObject="${ testCase }">
+    <c:set var="moreThanReadOnly" value="${ true }"/>
+  </authz:authorized>
+  <authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE"
+                    domainObject="${ testCase }">
+    <c:set var="creatable" value="${true }"/>
+    <c:set var="moreThanReadOnly" value="${ true }"/>
+  </authz:authorized>
+  <c:set var="linkable" value="${false }"/>
+  <authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK"
+                    domainObject="${ testCase }">
+    <c:set var="linkable" value="${ true }"/>
+    <c:set var="moreThanReadOnly" value="${ true }"/>
+  </authz:authorized>
 
 </c:if>
 
 <%-- ----------------------------------- Variables ----------------------------------------------%>
 
-<c:set var="scripted"           value="${testCase.isScripted()}" />
+<c:set var="scripted" value="${testCase.isScripted()}"/>
 <style type="text/css" media="screen">
   body {
     overflow: hidden;
   }
+
   #tc-script-editor {
     margin: 0;
     position: absolute;
@@ -127,96 +128,101 @@ require(["common"], function() {
 
 <%---------------------------- Test Case Header ------------------------------%>
 
-<tc:test-case-header testCase="${testCase}" />
+<tc:test-case-header testCase="${testCase}"/>
 
 
 <%---------------------------- Test Case Informations ------------------------------%>
 
 <tc:test-case-toolbar testCase="${testCase}" isInfoPage="${param.isInfoPage}" otherViewers="${otherViewers}"
-					  moreThanReadOnly="${moreThanReadOnly}"  writable="${writable}"
+                      moreThanReadOnly="${moreThanReadOnly}" writable="${writable}"
                       milestoneConf="${milestoneConf}"/>
 
 <%-- --------------------------------------- Test Case body --------------------------------------- --%>
 
-<csst:jq-tab >
-<div class="fragment-tabs fragment-body">
+<csst:jq-tab>
+  <div class="fragment-tabs fragment-body">
 
-	<%--  ------------------ main tab panel --------------------------------- --%>
-	<ul class="tab-menu">
-		<li>
-			<a href="#tab-tc-informations"><f:message key="tabs.label.information" /></a>
-		</li>
-    <c:if test="${scripted}">
-    <li>
-      <a href="#tab-tc-script-editor">SCRIPT</a>
-    </li>
-    </c:if>
-		<li>
-			<a href="${stepTabUrl}"><f:message key="tabs.label.steps" /></a>
-		</li>
-		<li>
-			<a href="${testCaseUrl}/parameters/panel"><f:message key="label.parameters" /></a>
-		</li>
-        <c:if test="${milestoneConf.displayTab}">
+      <%--  ------------------ main tab panel --------------------------------- --%>
+    <ul class="tab-menu">
+      <li>
+        <a href="#tab-tc-informations"><f:message key="tabs.label.information"/></a>
+      </li>
+      <c:choose>
+        <c:when test="${scripted}">
+          <li>
+            <a href="#tab-tc-script-editor">SCRIPT</a>
+          </li>
+        </c:when>
+        <c:otherwise>
+          <li>
+            <a href="${stepTabUrl}"><f:message key="tabs.label.steps"/></a>
+          </li>
+          <li>
+            <a href="${testCaseUrl}/parameters/panel"><f:message key="label.parameters"/></a>
+          </li>
+        </c:otherwise>
+      </c:choose>
+      <c:if test="${milestoneConf.displayTab}">
         <li>
-            <a href="${testCaseUrl}/milestones/panel"><f:message key="tabs.label.milestone"/></a>
+          <a href="${testCaseUrl}/milestones/panel"><f:message key="tabs.label.milestone"/></a>
         </li>
-        </c:if>
-		<li>
-			<a href="#tabs-tc-attachments"><f:message key="label.Attachments" />
-			<c:if test="${testCase.attachmentList.notEmpty}">
-				<span class="hasAttach">!</span>
-			</c:if>
-			</a>
-		</li>
-		<li>
-			<a href="${executionsTabUrl}"><f:message key="label.executions" /> </a>
-		</li>
-<c:if test="${testCase.project.bugtrackerConnected}">
+      </c:if>
+      <li>
+        <a href="#tabs-tc-attachments"><f:message key="label.Attachments"/>
+          <c:if test="${testCase.attachmentList.notEmpty}">
+            <span class="hasAttach">!</span>
+          </c:if>
+        </a>
+      </li>
+      <li>
+        <a href="${executionsTabUrl}"><f:message key="label.executions"/> </a>
+      </li>
+      <c:if test="${testCase.project.bugtrackerConnected}">
         <li>
-          <%-- div#bugtracker-section-main-div is declared in tagfile issues:bugtracker-panel.tag --%>
+            <%-- div#bugtracker-section-main-div is declared in tagfile issues:bugtracker-panel.tag --%>
           <a href="#bugtracker-section-main-div"><f:message key="tabs.label.issues"/></a>
         </li>
-</c:if>
-	</ul>
+      </c:if>
+    </ul>
 
 
+    <div id="tab-tc-informations">
 
-	<div id="tab-tc-informations">
+        <%-- ------------------------- Description Panel ------------------------- --%>
 
-		<%-- ------------------------- Description Panel ------------------------- --%>
+      <tc:test-case-description testCase="${testCase}"
+                                testCaseImportanceLabel="${testCaseImportanceLabel}"
+                                writable="${writable}"/>
 
-		<tc:test-case-description 	testCase="${testCase}"
-									testCaseImportanceLabel="${testCaseImportanceLabel}"
-									writable="${writable}"/>
-
-		<tc:test-case-attribut testCase="${testCase}" writable="${writable}" testCaseImportanceLabel="${testCaseImportanceLabel}" />
-
-
-		<%----------------------------------- Prerequisites -----------------------------------------------%>
-
-		<tc:test-case-prerequisites testCase="${testCase}" />
+      <tc:test-case-attribut testCase="${testCase}" writable="${writable}"
+                             testCaseImportanceLabel="${testCaseImportanceLabel}"/>
 
 
-		<%--------------------------- Verified Requirements section ------------------------------------%>
+        <%----------------------------------- Prerequisites -----------------------------------------------%>
 
-		<tc:test-case-verified-requirement-bloc linkable="${ linkable }" testCase="${testCase}"  containerId="contextual-content" milestoneConf="${milestoneConf}"/>
-
-
-		<%--------------------------- calling test case section ------------------------------------%>
-
-		<tc:calling-test-cases-panel testCase="${testCase}"/>
+      <tc:test-case-prerequisites testCase="${testCase}"/>
 
 
-	</div>
+        <%--------------------------- Verified Requirements section ------------------------------------%>
 
-	<%-- ------------------------- /Description Panel ------------------------- --%>
+      <tc:test-case-verified-requirement-bloc linkable="${ linkable }" testCase="${testCase}"
+                                              containerId="contextual-content" milestoneConf="${milestoneConf}"/>
+
+
+        <%--------------------------- calling test case section ------------------------------------%>
+
+      <tc:calling-test-cases-panel testCase="${testCase}"/>
+
+
+    </div>
+
+      <%-- ------------------------- /Description Panel ------------------------- --%>
 
       <%------------------------------ Script Editor  ---------------------------------------------%>
     <c:if test="${scripted}">
       <div id="tab-tc-script-editor">
-      <%-- ==================== toolbar definition ===================--%>
-      <div class="toolbar">
+          <%-- ==================== toolbar definition ===================--%>
+        <div class="toolbar">
       <span class="group">
         <button id="tc-script-save-button"
                 data-icon="ui-icon-plusthick"
@@ -224,7 +230,7 @@ require(["common"], function() {
               SAVE IT !!!!
         </button>
       </span>
-      </div>
+        </div>
 
         <div id="tc-script-editor"></div>
       </div>
@@ -232,20 +238,21 @@ require(["common"], function() {
 
       <%------------------------------ /Script Editor  ---------------------------------------------%>
 
-	<%------------------------------ Attachments  ---------------------------------------------%>
+      <%------------------------------ Attachments  ---------------------------------------------%>
 
-	<at:attachment-tab tabId="tabs-tc-attachments"  entity="${ testCase }"  editable="${ attachable }" tableModel="${attachmentsModel}"/>
+    <at:attachment-tab tabId="tabs-tc-attachments" entity="${ testCase }" editable="${ attachable }"
+                       tableModel="${attachmentsModel}"/>
 
-	<%------------------------------ /Attachments  ---------------------------------------------%>
+      <%------------------------------ /Attachments  ---------------------------------------------%>
 
-    <%-- ----------------------- bugtracker (if present)----------------------------------------%>
-<c:if test="${testCase.project.bugtrackerConnected}">
-        <issues:butracker-panel entity="${testCase}"/>
-</c:if>
+      <%-- ----------------------- bugtracker (if present)----------------------------------------%>
+    <c:if test="${testCase.project.bugtrackerConnected}">
+      <issues:butracker-panel entity="${testCase}"/>
+    </c:if>
 
-    <%-- ----------------------- /bugtracker (if present)----------------------------------------%>
+      <%-- ----------------------- /bugtracker (if present)----------------------------------------%>
 
-</div>
+  </div>
 </csst:jq-tab>
 
 <%-- ===================================== popups =============================== --%>
@@ -258,57 +265,57 @@ require(["common"], function() {
 <%-- ===================================== INIT =============================== --%>
 
 <script type="text/javascript" th:inline="javascript">
-	/*<![CDATA[*/
-	var squashtm = squashtm || {};
-  	squashtm.app = squashtm.app || {} ;
-    require([ "common" ], function() {
-        require([ "jquery", "test-case-management", "workspace.event-bus" ],
-			function($, testCaseManagement, eventBus) {
-					var settings = {
-						urls : {
-							testCaseUrl : "${testCaseUrl}",
-							importanceAutoUrl : "${importanceAutoUrl}",
-							cufValuesUrl : "${customFieldsValuesURL}?boundEntityId=${testCase.boundEntityId}&boundEntityType=${testCase.boundEntityType}",
-							bugtrackerUrl : "${btEntityUrl}",
-							automationUrl : "${automationUrl}"
-						},
-						writable : ${writable},
-						testCaseImportanceComboJson : ${testCaseImportanceComboJson},
-						testCaseNatures : ${json:serialize(testCaseNatures)},
-						testCaseTypes : ${json:serialize(testCaseTypes)},
-						testCaseStatusComboJson : ${testCaseStatusComboJson},
-						importanceAuto : ${testCase.importanceAuto},
-						testCaseId : ${testCase.id},
-						callingTestCases : ${json:serialize(callingTestCasesModel.aaData)},
-						hasCufs : ${hasCUF},
-						hasBugtracker : ${testCase.project.bugtrackerConnected},
-						isAutomated : ${testCase.project.testAutomationEnabled},
-            isScripted : ${scripted}
-            <c:if test="${scripted}">
-            ,scriptExender : ${json:serialize(testCase.scriptedTestCaseExtender)}
-            </c:if>
-						<c:if test="${not empty milestoneConf.activeMilestone}">
-						,milestone : ${json:serialize(milestoneConf.activeMilestone)}
-						</c:if>
-					};
+  /*<![CDATA[*/
+  var squashtm = squashtm || {};
+  squashtm.app = squashtm.app || {};
+  require(["common"], function () {
+    require(["jquery", "test-case-management", "workspace.event-bus"],
+      function ($, testCaseManagement, eventBus) {
+        var settings = {
+          urls: {
+            testCaseUrl: "${testCaseUrl}",
+            importanceAutoUrl: "${importanceAutoUrl}",
+            cufValuesUrl: "${customFieldsValuesURL}?boundEntityId=${testCase.boundEntityId}&boundEntityType=${testCase.boundEntityType}",
+            bugtrackerUrl: "${btEntityUrl}",
+            automationUrl: "${automationUrl}"
+          },
+          writable: ${writable},
+          testCaseImportanceComboJson: ${testCaseImportanceComboJson},
+          testCaseNatures: ${json:serialize(testCaseNatures)},
+          testCaseTypes: ${json:serialize(testCaseTypes)},
+          testCaseStatusComboJson: ${testCaseStatusComboJson},
+          importanceAuto: ${testCase.importanceAuto},
+          testCaseId: ${testCase.id},
+          callingTestCases: ${json:serialize(callingTestCasesModel.aaData)},
+          hasCufs: ${hasCUF},
+          hasBugtracker: ${testCase.project.bugtrackerConnected},
+          isAutomated: ${testCase.project.testAutomationEnabled},
+          isScripted: ${scripted}
+          <c:if test="${scripted}">
+          , scriptExender: ${json:serialize(testCase.scriptedTestCaseExtender)}
+          </c:if>
+          <c:if test="${not empty milestoneConf.activeMilestone}">
+          , milestone: ${json:serialize(milestoneConf.activeMilestone)}
+          </c:if>
+        };
 
-				$(function() {
-					testCaseManagement.initStructure(settings);
-					testCaseManagement.initInfosTab(settings);
-					if(settings.isScripted){
+        $(function () {
+          testCaseManagement.initStructure(settings);
+          testCaseManagement.initInfosTab(settings);
+          if (settings.isScripted) {
             testCaseManagement.initScriptEditorTab(settings);
           }
-				});
+        });
 
-				<c:if test="${param.isInfoPage}">
-				<c:url var="newversionUrl" value="/test-cases/{id}/info"/>
-    			eventBus.on('test-case.new-version', function(evt, version){
-    				var url =  "${newversionUrl}".replace('{id}', version.id);
-    				document.location.href = url;
-    			});
-				</c:if>
-			});
-    });
-	/*]]>*/
+        <c:if test="${param.isInfoPage}">
+        <c:url var="newversionUrl" value="/test-cases/{id}/info"/>
+        eventBus.on('test-case.new-version', function (evt, version) {
+          var url = "${newversionUrl}".replace('{id}', version.id);
+          document.location.href = url;
+        });
+        </c:if>
+      });
+  });
+  /*]]>*/
 </script>
 
