@@ -211,14 +211,15 @@
 
         <%--------------------------- calling test case section ------------------------------------%>
 
-      <tc:calling-test-cases-panel testCase="${testCase}"/>
-
+          <c:if test="${!scripted}">
+            <tc:calling-test-cases-panel testCase="${testCase}"/>
+          </c:if>
 
     </div>
 
       <%-- ------------------------- /Description Panel ------------------------- --%>
 
-      <%------------------------------ Script Editor  ---------------------------------------------%>
+      <%------------------------------ Script Editor Only for scripted test case ---------------------------------------------%>
     <c:if test="${scripted}">
       <div id="tab-tc-script-editor">
           <%-- ==================== toolbar definition ===================--%>
