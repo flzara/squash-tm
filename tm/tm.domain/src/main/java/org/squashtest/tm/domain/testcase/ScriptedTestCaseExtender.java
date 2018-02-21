@@ -112,5 +112,12 @@ public class ScriptedTestCaseExtender {
 	}
 
 
+	public ScriptedTestCaseExtender createCopy() {
+		ScriptedTestCaseExtender copy = new ScriptedTestCaseExtender();
+		copy.setScript(this.getScript());
+		copy.setKind(this.getKind());
+		return copy;
+	}
+
 }
 

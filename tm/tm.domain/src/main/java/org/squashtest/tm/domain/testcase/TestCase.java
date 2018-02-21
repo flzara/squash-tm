@@ -293,6 +293,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		copy.addCopiesOfSteps(this);
 		copy.addCopiesOfAttachments(this);
 		copy.addCopiesOfParametersAndDatasets(this);
+		copy.addCopyOfScript(this);
 		copy.notifyAssociatedWithProject(this.getProject());
 		copy.bindSameMilestones(this);
 		if (this.automatedTest != null) {
@@ -333,6 +334,14 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 				String datasetParamValueCopyParamValue = datasetParamValue.getParamValue();
 				new DatasetParamValue(datasetParamValueCopyParam, datasetCopy, datasetParamValueCopyParamValue);
 			}
+		}
+	}
+
+	private void addCopyOfScript(TestCase source){
+		if(source.isScripted()){
+			ScriptedTestCaseExtender copy = source.getScriptedTestCaseExtender().createCopy();
+			copy.setTestCase(this);
+			this.setScriptedTestCaseExtender(copy);
 		}
 	}
 
