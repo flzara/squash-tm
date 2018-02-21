@@ -39,6 +39,10 @@
 <s:url var="btEntityUrl" value="/bugtracker/execution-step/${executionStep.id}"/>
 
 
+<c:set var="scripted" value="${execution.isScripted()}"/>
+<c:set var="actionPanelTitle" value="${scripted ? execute.panel.script.title : execute.panel.action.title}"/>
+
+
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 
 
@@ -289,14 +293,18 @@
           publish("reload.executedialog.cufs");
         </script>
       </c:if>
+
+
+
       <comp:toggle-panel id="execution-action-panel"
-                         titleKey="execute.panel.action.title"
+                         titleKey="${actionPanelTitle}"
                          open="true">
 					<jsp:attribute name="body">
 						<div id="execution-action">${hu:clean(executionStep.action)} </div>
 					</jsp:attribute>
       </comp:toggle-panel>
 
+      <c:if test="${!execution.isScripted()}">
       <comp:toggle-panel id="execution-expected-result-panel"
                          titleKey="execute.panel.expected-result.title"
                          open="true">
@@ -304,6 +312,7 @@
 						<div id="execution-expected-result">${hu:clean(executionStep.expectedResult)} </div>
 					</jsp:attribute>
       </comp:toggle-panel>
+      </c:if>
 
       <div id="execute-evaluation">
 
