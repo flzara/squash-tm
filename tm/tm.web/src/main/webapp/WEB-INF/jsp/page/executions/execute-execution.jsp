@@ -40,7 +40,7 @@
 
 
 <c:set var="scripted" value="${execution.isScripted()}"/>
-<c:set var="actionPanelTitle" value="${scripted ? execute.panel.script.title : execute.panel.action.title}"/>
+<c:set var="actionPanelTitle" value="${scripted ? 'execute.panel.script.title' : 'execute.panel.action.title'}"/>
 
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
@@ -301,6 +301,7 @@
                          open="true">
 					<jsp:attribute name="body">
 						<div id="execution-action">${hu:clean(executionStep.action)} </div>
+            <div>test : ${actionPanelTitle}</div>
 					</jsp:attribute>
       </comp:toggle-panel>
 

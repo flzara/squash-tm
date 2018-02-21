@@ -25,7 +25,6 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
-<%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp" %>
 <%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
@@ -33,6 +32,12 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues"%>
 <%@ taglib prefix="hu" uri="http://org.squashtest.tm/taglib/html-utils" %>
+
+
+<c:set var="scripted" value="${execution.isScripted()}"/>
+<c:set var="actionPanelTitle" value="${scripted ? 'execute.panel.script.title' : 'execute.panel.action.title'}"/>
+
+
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 
 
@@ -249,17 +254,20 @@
           </comp:toggle-panel>
         </c:if>
 
-		<comp:toggle-panel id="execution-action-panel" titleKey="execute.panel.action.title"  open="true">
+		<comp:toggle-panel id="execution-action-panel" titleKey="${actionPanelTitle}"  open="true">
 			<jsp:attribute name="body">
 				<div id="execution-action" class="load-links-right-frame">${hu:clean(executionStep.action)} </div>
+        <div>test : ${actionPanelTitle}</div>
 			</jsp:attribute>
 		</comp:toggle-panel>
 
+    <c:if test="${!execution.isScripted()}">
 		<comp:toggle-panel id="execution-expected-result-panel" titleKey="execute.panel.expected-result.title"  open="true">
 			<jsp:attribute name="body">
 				<div id="execution-expected-result" class="load-links-right-frame">${hu:clean(executionStep.expectedResult)} </div>
 			</jsp:attribute>
 		</comp:toggle-panel>
+    </c:if>
 
 		<div id="execute-evaluation">
 
