@@ -26,13 +26,18 @@ import org.springframework.util.ReflectionUtils
 import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.CustomFieldBinding
+import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.project.ProjectTemplate
 import org.squashtest.tm.service.internal.customfield.CustomFieldBindingModificationServiceImpl
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
+import org.squashtest.tm.service.internal.dto.BindableEntityModel
+import org.squashtest.tm.service.internal.dto.CustomFieldBindingModel
+import org.squashtest.tm.service.internal.dto.CustomFieldModel
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao
 import org.squashtest.tm.service.internal.repository.CustomFieldDao
 import org.squashtest.tm.service.internal.repository.GenericProjectDao
+import org.squashtest.tm.service.internal.repository.ProjectDao
 import spock.lang.IgnoreIf
 import spock.lang.Specification
 
@@ -43,6 +48,7 @@ class CustomFieldBindingModificationServiceImplTest extends Specification {
 	CustomFieldDao customFieldDao = Mock()
 	CustomFieldBindingDao customFieldBindingDao = Mock()
 	GenericProjectDao genericProjectDao = Mock()
+	ProjectDao projectDao = Mock()
 
 	PrivateCustomFieldValueService customValueService = Mock()
 	ApplicationEventPublisher eventPublisher = Mock()
@@ -51,6 +57,7 @@ class CustomFieldBindingModificationServiceImplTest extends Specification {
 		service.customFieldDao = customFieldDao
 		service.customFieldBindingDao = customFieldBindingDao
 		service.genericProjectDao = genericProjectDao
+		service.projectDao = projectDao
 
 		service.customValueService = customValueService
 
@@ -170,5 +177,137 @@ class CustomFieldBindingModificationServiceImplTest extends Specification {
 		1 * customValueService.cascadeCustomFieldValuesCreation(_)
 
 	}
-	
+
+	def "#createNewBindings - Should create some CustomFieldBindings"() {
+
+		given: "2 CustomField Models"
+
+		BindableEntityModel entity01 = Mock()
+		BindableEntity entity1 = Mock()
+		entity01.toDomain() >> entity1
+
+		CustomFieldModel cuf01 = Mock()
+		cuf01.getId() >> 1L
+
+		CustomFieldBindingModel cufModel1 = Mock()
+		cufModel1.getProjectId() >> 404L
+		cufModel1.getCustomField() >> cuf01
+		cufModel1.getBoundEntity() >> entity01
+
+
+		BindableEntityModel entity02 = Mock()
+		BindableEntity entity2 = Mock()
+		entity02.toDomain() >> entity2
+
+		CustomFieldModel cuf02 = Mock()
+		cuf02.getId() >> 2L
+
+		CustomFieldBindingModel cufModel2 = Mock()
+		cufModel2.getProjectId() >> 404L
+		cufModel2.getCustomField() >> cuf02
+		cufModel2.getBoundEntity() >> entity02
+
+		CustomFieldBindingModel[] bindingModels = [cufModel1, cufModel2]
+
+		and: "2 real CustomFields and 1 Project"
+
+		GenericProject project = Mock()
+		CustomField cuf1 = Mock()
+		CustomField cuf2 = Mock()
+
+		and:
+
+		genericProjectDao.findOne(404) >> project
+		customFieldDao.findById(1L) >> cuf1
+		customFieldDao.findById(2L) >> cuf2
+		customFieldBindingDao.countAllForProjectAndEntity(404L, _) >> 2L
+
+		and:
+
+		genericProjectDao.isProjectTemplate(_) >> false
+
+		when:
+
+		service.createNewBindings(bindingModels)
+
+		then:
+
+		2 * customFieldBindingDao.save(_)
+		2 * eventPublisher.publishEvent(_)
+	}
+
+	def "#createNewBindings - Should create CustomFieldBindings on Template and propagate it to the bound Project"() {
+
+		given: "2 CustomField Models"
+
+		BindableEntityModel entity01 = Mock()
+		BindableEntity entity1 = Mock()
+		entity01.toDomain() >> entity1
+
+		CustomFieldModel cuf01 = Mock()
+		cuf01.getId() >> 1L
+
+		CustomFieldBindingModel cufModel1 = Mock()
+		cufModel1.getProjectId() >> 404L
+		cufModel1.getCustomField() >> cuf01
+		cufModel1.getBoundEntity() >> entity01
+
+
+		BindableEntityModel entity02 = Mock()
+		BindableEntity entity2 = Mock()
+		entity02.toDomain() >> entity2
+
+		CustomFieldModel cuf02 = Mock()
+		cuf02.getId() >> 2L
+
+		CustomFieldBindingModel cufModel2 = Mock()
+		cufModel2.getProjectId() >> 404L
+		cufModel2.getCustomField() >> cuf02
+		cufModel2.getBoundEntity() >> entity02
+
+		CustomFieldBindingModel[] bindingModels = [cufModel1, cufModel2]
+
+		and: "2 real CustomFields and 1 Project"
+
+		ProjectTemplate template = Mock()
+		Project project = Mock()
+		CustomField cuf1 = Mock()
+		CustomField cuf2 = Mock()
+
+		/* --== Template part ==-- */
+		and:
+
+		genericProjectDao.findOne(404L) >> template
+		customFieldDao.findById(1L) >> cuf1
+		customFieldDao.findById(2L) >> cuf2
+		customFieldBindingDao.countAllForProjectAndEntity(404L, _) >> 1
+
+		and:
+
+		genericProjectDao.isProjectTemplate(404L) >> true
+		/* --== Project part ==--*/
+		and:
+
+		projectDao.findAllIdsBoundToTemplate(404L) >> [42L]
+		customFieldBindingDao.cufBindingAlreadyExists(42, _, _) >>> [true, false]
+
+		genericProjectDao.findOne(42L) >> project
+		customFieldDao.findById(2l) >> cuf2
+		customFieldBindingDao.countAllForProjectAndEntity(42L, _) >> 1
+
+		genericProjectDao.isProjectTemplate(42L) >> false
+
+		when:
+
+		service.createNewBindings(bindingModels)
+
+		then:
+
+		2 * customFieldBindingDao.save(_)
+		2 * eventPublisher.publishEvent(_)
+
+		1 * customFieldBindingDao.save(_)
+		1 * eventPublisher.publishEvent(_)
+		1 * customValueService.cascadeCustomFieldValuesCreation(_)
+	}
 }
