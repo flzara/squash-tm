@@ -19,7 +19,6 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "./ConnectionsTable", "./export-history-popup", "jqueryui", "squashtable", "jquery.squash.formdialog"], function($, Backbone, ConnectionsTable, popup) {
-  var language = window.squashtm.app.connectionsManager.settings.language;
 	var View = Backbone.View.extend({
 		el : "#connection-table-pane",
 
