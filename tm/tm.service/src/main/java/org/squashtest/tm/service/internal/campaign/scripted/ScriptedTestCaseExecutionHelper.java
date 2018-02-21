@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.campaign.scripted;
 
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ScriptedExecutionExtender;
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseParser;
@@ -43,6 +44,11 @@ public class ScriptedTestCaseExecutionHelper {
 		if(referencedTestCase == null || !referencedTestCase.isScripted()){
 			return;
 		}
+
+		//creating execution extender
+		execution.createScriptedExtender();
+
+		//now we must do the step creation and everything that depend on script
 		//first we retrieve the good parser
 		ScriptedTestCaseExtender scriptExtender = referencedTestCase.getScriptedTestCaseExtender();
 		ScriptedTestCaseParser testCaseParser = parserFactory.apply(scriptExtender);

@@ -34,7 +34,6 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name = "SCRIPTED_TC_EXTENDER")
-@PrimaryKeyJoinColumn(name = "SCRIPTED_TC_EXTENDER_ID")
 public class ScriptedTestCaseExtender {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ScriptedTestCaseExtender.class);
 	private static final String CLASS_NAME = "org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender";
