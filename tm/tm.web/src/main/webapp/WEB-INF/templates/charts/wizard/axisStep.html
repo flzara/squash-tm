@@ -72,12 +72,16 @@
 <div class="tg-body">
 
 {{#each  this}}
-{{#if (or (contains this.role "AXIS") (contains this.role "MEASURE"))}}
-{{#if (contains ../../attributes.selectedAttributes id)}}
-{{> filter  operations=(intersect (union (lookup ../../attributes.columnRoles "MEASURE") (lookup ../../attributes.columnRoles "AXIS"))(lookup ../../attributes.dataTypes dataType)) data=../../attributes}}
-{{/if}}
-{{/if}}
+  {{#if (or (contains this.role "AXIS") (contains this.role "MEASURE"))}}
+    {{#if (contains ../../attributes.selectedAttributes id)}}
+      {{> filter  operations=(intersect (union (lookup ../../attributes.columnRoles "MEASURE") (lookup ../../attributes.columnRoles "AXIS"))(lookup ../../attributes.dataTypes dataType)) data=../../attributes}}
+    {{/if}}
+  {{/if}}
 {{/each}}
+
+  {{#equal ../attributes.operations.length 0 }}
+    <span th:utext="#{chart.wizard.creation.step.no-operation}"/>
+  {{/equal}}
 
  </div>
   </div>
