@@ -26,6 +26,7 @@ import org.springframework.context.annotation.Scope;
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseKind;
 import org.squashtest.tm.service.internal.testcase.scripted.gherkin.GherkinTestCaseParser;
+import org.squashtest.tm.service.internal.testcase.scripted.gherkin.GherkinStepGenerator;
 import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseParser;
 
 import java.util.function.Function;
@@ -47,10 +48,16 @@ public class ScriptedExecutionConfiguration {
 		ScriptedTestCaseKind kind = extender.getKind();
 		switch (kind) {
 			case GHERKIN:
-				return new GherkinTestCaseParser();
+				return new GherkinTestCaseParser(gherkinStepGenerator());
 			default:
 				throw new IllegalArgumentException("No pasrser defined for script of kind : " + kind.name());
 		}
+	}
+
+	@Bean
+	@Scope(value = "prototype")
+	public GherkinStepGenerator gherkinStepGenerator(){
+		return new GherkinStepGenerator();
 	}
 
 }

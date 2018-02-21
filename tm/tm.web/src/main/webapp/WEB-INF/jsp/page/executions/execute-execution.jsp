@@ -301,7 +301,6 @@
                          open="true">
 					<jsp:attribute name="body">
 						<div id="execution-action">${hu:clean(executionStep.action)} </div>
-            <div>test : ${actionPanelTitle}</div>
 					</jsp:attribute>
       </comp:toggle-panel>
 

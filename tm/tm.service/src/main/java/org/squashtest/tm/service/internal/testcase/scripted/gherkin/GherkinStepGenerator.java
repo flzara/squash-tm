@@ -1,0 +1,251 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.squashtest.tm.service.internal.testcase.scripted.gherkin;
+
+import gherkin.GherkinDialect;
+import gherkin.GherkinDialectProvider;
+import gherkin.ast.*;
+import org.apache.commons.lang3.StringUtils;
+import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStep;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+public class GherkinStepGenerator {
+
+	private static final String STEP_KEYWORD_CLASS_NAME = "step-keyword";
+	private static final String SCENARIO_KEYWORD_CLASS_NAME = "scenario-keyword";
+	private static final String SCENARIO_DESCRIPTION_CLASS_NAME = "scenario-description";
+
+	private GherkinDialectProvider dialectProvider = new GherkinDialectProvider();
+
+
+	private GherkinDialect dialect;
+
+	public void populateExecution(Execution execution, GherkinDocument gherkinDocument) {
+		Feature feature = gherkinDocument.getFeature();
+		initDialect(feature);
+
+		List<ScenarioDefinition> scenarioDefinitions = feature.getChildren();
+		if (scenarioDefinitions.isEmpty()) {
+			return;
+		}
+
+		//first, we get the first item of scenario definition witch could be the background
+		ScenarioDefinition potentialBackground = scenarioDefinitions.get(0);
+		Background background = null;
+		if (potentialBackground instanceof Background) {
+			background = (Background) potentialBackground;
+		}
+
+		//now let's do the scenarios
+		for (ScenarioDefinition scenarioDefinition : scenarioDefinitions) {
+			//Sigh... i don't see any means to avoid this ugly instanceof
+			//Can't use visitor because cannot change Gherking Parser source code to add accept method, and haven't right to fork ...
+			if (scenarioDefinition instanceof Scenario) {
+				appendScenarioStep(execution, background, scenarioDefinition);
+
+			} else if (scenarioDefinition instanceof ScenarioOutline) {
+				appendScenarioOutilineStep(execution, background, scenarioDefinition);
+			}
+		}
+	}
+
+	private void initDialect(Feature feature) {
+		String language = feature.getLanguage();
+
+		if (StringUtils.isNotBlank(language)) {
+			dialect = dialectProvider.getDialect(language, null);
+		} else {
+			dialect = dialectProvider.getDefaultDialect();
+		}
+	}
+
+	private void appendScenarioStep(Execution execution, Background background, ScenarioDefinition scenarioDefinition) {
+		StringBuilder sb = new StringBuilder();
+		Scenario scenario = (Scenario) scenarioDefinition;
+		appendScenarioLine(scenarioDefinition, sb);
+		if (background != null) {
+			includeBackground(background, sb);
+		}
+		List<Step> steps = scenario.getSteps();
+		for (Step step : steps) {
+			appendStepLine(step, sb);
+		}
+
+		appendExecutionStep(execution, sb);
+	}
+
+	private void appendScenarioOutilineStep(Execution execution, Background background, ScenarioDefinition scenarioDefinition) {
+		ScenarioOutline scenario = (ScenarioOutline) scenarioDefinition;
+		List<Examples> examples = scenario.getExamples();
+
+		for (Examples example : examples) {
+			appendExample(execution, background, scenario, example);
+		}
+	}
+
+	private void appendExample(Execution execution, Background background, ScenarioOutline scenario, Examples example) {
+		int count = example.getTableBody().size();
+		List<String> headers = getExampleHeaders(example);
+		int nbColumn = headers.size();
+		List<Step> steps = scenario.getSteps();
+		for (int i = 0; i < count; i++) {
+			StringBuilder sb = new StringBuilder();
+			appendScenarioLine(scenario, sb);
+			if (background != null) {
+				includeBackground(background, sb);
+			}
+			List<String> valuesForThisLine = getExampleLineValue(example, i);
+			Map<String, String> valueByHeader = new HashMap<>();
+			IntStream.range(0, nbColumn).forEach(j -> valueByHeader.put(headers.get(j), valuesForThisLine.get(j)));
+			for (Step step : steps) {
+				appendStepLine(step, valueByHeader, sb);
+			}
+			appendExecutionStep(execution, sb);
+		}
+	}
+
+	private void appendExecutionStep(Execution execution, StringBuilder sb) {
+		ExecutionStep executionStep = new ExecutionStep();
+		executionStep.setAction(sb.toString());
+		execution.getSteps().add(executionStep);
+	}
+
+	private List<String> getExampleLineValue(Examples example, int i) {
+		return example.getTableBody().get(i).getCells().stream().map(TableCell::getValue).collect(Collectors.toList());
+	}
+
+	private List<String> getExampleHeaders(Examples example) {
+		return example.getTableHeader().getCells().stream().map(TableCell::getValue).collect(Collectors.toList());
+	}
+
+	private void includeBackground(Background background, StringBuilder sb) {
+		List<Step> steps = background.getSteps();
+		for (Step step : steps) {
+			appendStepLine(step, sb);
+		}
+	}
+
+	private void appendStepLine(Step step, StringBuilder sb) {
+		appendStepKeyword(step, sb);
+		sb.append(step.getText());
+		appendLineBreak(sb);
+		appendArgument(step, sb);
+	}
+
+	private void appendArgument(Step step, StringBuilder sb) {
+		Node argument = step.getArgument();
+
+		if (argument == null) {
+			return;
+		}
+
+		appendLineBreak(sb);
+		if (argument instanceof DocString) {
+			DocString docString = (DocString) argument;
+			appendClassSpan(sb, docString.getContent(), SCENARIO_DESCRIPTION_CLASS_NAME);
+		} else if(argument instanceof DataTable){
+			DataTable dataTable = (DataTable) argument;
+			sb.append("<table>");
+			for (TableRow tableRow : dataTable.getRows()) {
+				sb.append("<tr>");
+				for (TableCell tableCell : tableRow.getCells()) {
+					sb.append("<td>");
+					sb.append(tableCell.getValue());
+					sb.append("</td>");
+				}
+				sb.append("</tr>");
+			}
+			sb.append("</table>");
+			appendLineBreak(sb);
+		}
+	}
+
+	private void appendClassSpan(StringBuilder sb, String text, String cssClass) {
+		if (StringUtils.isNotBlank(text)) {
+			sb.append("<span class='")
+				.append(cssClass)
+				.append("'>")
+				.append(StringUtils.appendIfMissing(text, " "))
+				.append("</span>");
+		}
+	}
+
+	private void appendScenarioLine(ScenarioDefinition scenarioDefinition, StringBuilder sb) {
+		String keyword = scenarioDefinition.getKeyword();
+		appendClassSpan(sb, keyword, SCENARIO_KEYWORD_CLASS_NAME);
+		sb.append(scenarioDefinition.getName());
+		appendLineBreak(sb);
+		appendClassSpan(sb, scenarioDefinition.getDescription(), SCENARIO_DESCRIPTION_CLASS_NAME);
+		appendBlankLine(sb);
+	}
+
+	private void appendBlankLine(StringBuilder sb) {
+		appendLineBreak(sb);
+		appendLineBreak(sb);
+	}
+
+	private void appendLineBreak(StringBuilder sb) {
+		sb.append("</br>");
+	}
+
+	//this method append steps lines in scenario outline mode (ie with dataset so we must do param substitution)
+	private void appendStepLine(Step step, Map<String, String> valueByHeader, StringBuilder sb) {
+		appendStepKeyword(step, sb);
+		String text = step.getText();
+
+		//now substitute each <param> by it's value, if not found inject a placeholder
+		Pattern p = Pattern.compile("<[.*?[^>]]*>");
+		Matcher m = p.matcher(text);
+		while (m.find()) {
+			String token = m.group();
+			String header = token.substring(1, token.length() - 1);
+			String value = valueByHeader.get(header);
+			if (StringUtils.isBlank(value)) {
+				value = "<NO_DATA>";
+			}
+			text = text.replace(token, value);
+		}
+
+		sb.append(text);
+		appendLineBreak(sb);
+	}
+
+	private void appendStepKeyword(Step step, StringBuilder sb) {
+		String keyword = step.getKeyword();
+		if (!isContinuousKeyword(keyword)){
+			appendLineBreak(sb);
+		}
+		appendClassSpan(sb, keyword, STEP_KEYWORD_CLASS_NAME);
+	}
+
+	private boolean isContinuousKeyword(String keyword) {
+		return dialect.getAndKeywords().contains(keyword) || dialect.getButKeywords().contains(keyword);
+	}
+
+}

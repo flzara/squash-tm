@@ -23,6 +23,10 @@
 	font-size: 105%;
 }
 
+.scenario-description {
+	font-style: italic;
+}
+
 .step-keyword {
 	font-weight: bold;
 }
