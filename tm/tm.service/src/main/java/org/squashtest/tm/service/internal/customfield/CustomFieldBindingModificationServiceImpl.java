@@ -251,8 +251,8 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void copyCustomFieldsSettingsFromTemplate(GenericProject target, GenericProject source) {
 
-		List<CustomFieldBinding> templateCutomFieldBindings = findCustomFieldsForGenericProject(source.getId());
-		for (CustomFieldBinding templateCustomFieldBinding : templateCutomFieldBindings) {
+		List<CustomFieldBinding> templateCustomFieldBindings = findCustomFieldsForGenericProject(source.getId());
+		for (CustomFieldBinding templateCustomFieldBinding : templateCustomFieldBindings) {
 			long projectId = target.getId();
 			BindableEntity entity = templateCustomFieldBinding.getBoundEntity();
 			long customFieldId = templateCustomFieldBinding.getCustomField().getId();
@@ -262,7 +262,5 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 				addNewCustomFieldBinding(projectId, entity, customFieldId, locations);
 			}
 		}
-
 	}
-
 }

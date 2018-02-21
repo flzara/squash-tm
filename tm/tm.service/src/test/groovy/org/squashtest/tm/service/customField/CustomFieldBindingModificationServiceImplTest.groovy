@@ -39,9 +39,11 @@ import spock.lang.Specification
 class CustomFieldBindingModificationServiceImplTest extends Specification {
 
 	CustomFieldBindingModificationServiceImpl service = new CustomFieldBindingModificationServiceImpl()
+
 	CustomFieldDao customFieldDao = Mock()
 	CustomFieldBindingDao customFieldBindingDao = Mock()
 	GenericProjectDao genericProjectDao = Mock()
+
 	PrivateCustomFieldValueService customValueService = Mock()
 	ApplicationEventPublisher eventPublisher = Mock()
 
@@ -49,39 +51,124 @@ class CustomFieldBindingModificationServiceImplTest extends Specification {
 		service.customFieldDao = customFieldDao
 		service.customFieldBindingDao = customFieldBindingDao
 		service.genericProjectDao = genericProjectDao
+
 		service.customValueService = customValueService
+
 		service.eventPublisher = eventPublisher
 	}
 
 
-	def "should copy paste cuf binding from template"() {
-		given: "a project"
+	def "#copyCustomFieldsSettingsFromTemplate - Should copy paste all cuf binding from template"() {
+
+		given: "The Project"
+
 		Project project = Mock()
 		project.getId() >> 3L
-		genericProjectDao.findById(3L) >> project
-		and: "a template"
+
+		and:
+
+		genericProjectDao.findOne(3L) >> project
+
+		and: "The Template"
+
 		ProjectTemplate template = Mock()
 		template.getId() >> 2L
+
+		and: "Some CustomFieldsBindings"
+
 		CustomField cuf = Mock()
 		cuf.getId() >> 4L
+
 		customFieldDao.findById(4L) >> cuf
+
 		BindableEntity entity1 = Mock()
-		customFieldBindingDao.countAllForProjectAndEntity(3L, entity1) >> 1
 		BindableEntity entity2 = Mock()
-		customFieldBindingDao.countAllForProjectAndEntity(3L, entity2) >> 2
+
 		CustomFieldBinding binding1 = Mock()
+		CustomFieldBinding binding2 = Mock()
+
 		binding1.getBoundEntity() >> entity1
 		binding1.getCustomField() >> cuf
-		CustomFieldBinding binding2 = Mock()
+
 		binding2.getBoundEntity() >> entity2
 		binding2.getCustomField() >> cuf
+
 		List<CustomFieldBinding> bindings = [binding1, binding2]
+
+		and:
+
 		customFieldBindingDao.findAllForGenericProject(2L) >> bindings
 
+		genericProjectDao.isProjectTemplate(3L) >> false
+
+		customFieldBindingDao.cufBindingAlreadyExists(3L, _, 4L) >> false
+
+		customFieldBindingDao.countAllForProjectAndEntity(3L, entity1) >> 1
+		customFieldBindingDao.countAllForProjectAndEntity(3L, entity2) >> 2
+
 		when:
+
 		service.copyCustomFieldsSettingsFromTemplate(project, template)
+
 		then:
+
 		2 * customFieldBindingDao.save(_)
 		2 * customValueService.cascadeCustomFieldValuesCreation(_)
+
 	}
+
+	def "#copyCustomFieldsSettingsFromTemplate - Should only copy one cuf binding from template"() {
+
+		given: "The Template"
+
+		ProjectTemplate template = Mock()
+		template.getId() >> 1L
+
+		and: "The Project"
+
+		Project project = Mock()
+		project.getId() >> 2L
+
+		and: "Some CustomFieldBindings"
+
+		CustomField cuf = Mock()
+		cuf.getId() >> 4L
+
+		BindableEntity entity1 = Mock()
+		BindableEntity entity2 = Mock()
+
+		CustomFieldBinding binding1 = Mock()
+		CustomFieldBinding binding2 = Mock()
+
+		binding1.getBoundEntity() >> entity1
+		binding1.getCustomField() >> cuf
+
+		binding2.getBoundEntity() >> entity2
+		binding2.getCustomField() >> cuf
+
+		List<CustomFieldBinding> bindings = [binding1, binding2]
+
+		and:
+
+		customFieldBindingDao.findAllForGenericProject(1L) >> bindings
+
+		customFieldBindingDao.cufBindingAlreadyExists(2L, (BindableEntity) _, 4L) >>> [true, false]
+
+		genericProjectDao.findOne(2L) >> project
+		customFieldDao.findById(4L) >> cuf
+		customFieldBindingDao.countAllForProjectAndEntity(2L, entity2) >> 1L
+
+		genericProjectDao.isProjectTemplate(2L) >> false
+
+		when:
+
+		service.copyCustomFieldsSettingsFromTemplate(project, template)
+
+		then:
+
+		1 * customFieldBindingDao.save(_)
+		1 * customValueService.cascadeCustomFieldValuesCreation(_)
+
+	}
+	
 }
