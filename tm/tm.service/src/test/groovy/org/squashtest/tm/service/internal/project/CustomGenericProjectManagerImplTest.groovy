@@ -404,4 +404,60 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		project.getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED)
 		!project.getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE)
 	}
+
+	def "#enableExecutionStatus - Should enable an ExecutionStatus in a Project"() {
+
+		given:
+
+		Project project = new Project()
+		CampaignLibrary library = new CampaignLibrary()
+		Set<ExecutionStatus> disabledStatuses = [ExecutionStatus.UNTESTABLE]
+		library.setDisabledStatuses(disabledStatuses)
+		project.setCampaignLibrary(library)
+
+		and:
+
+		genericProjectDao.findOne(44L) >> project
+
+		when:
+
+		manager.enableExecutionStatus(44L, ExecutionStatus.UNTESTABLE)
+
+		then:
+
+		library.allowsStatus(ExecutionStatus.UNTESTABLE)
+
+	}
+
+	def "#enableExecutionStatus - Should enable an ExecutionStatus in a Project and propagate it to Template"() {
+
+		given:
+
+		ProjectTemplate template = new ProjectTemplate()
+		CampaignLibrary templateLibrary = new CampaignLibrary()
+		Set<ExecutionStatus> disabledTemplateStatuses = [ExecutionStatus.UNTESTABLE]
+		templateLibrary.setDisabledStatuses(disabledTemplateStatuses)
+		template.setCampaignLibrary(templateLibrary)
+
+		Project project = new Project()
+		CampaignLibrary projectLibrary = new CampaignLibrary()
+		Set<ExecutionStatus> disabledProjectStatuses = [ExecutionStatus.UNTESTABLE]
+		projectLibrary.setDisabledStatuses(disabledProjectStatuses)
+		project.setCampaignLibrary(projectLibrary)
+
+		and:
+
+		genericProjectDao.findOne(404L) >> template
+		projectDao.findAllBoundToTemplate(404L) >> [project]
+
+		when:
+
+		manager.enableExecutionStatus(404L, ExecutionStatus.UNTESTABLE)
+
+		then:
+
+		templateLibrary.allowsStatus(ExecutionStatus.UNTESTABLE)
+		projectLibrary.allowsStatus(ExecutionStatus.UNTESTABLE)
+
+	}
 }
