@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.controller.execution;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.MultiValuedCustomFieldValue;
@@ -220,18 +221,32 @@ class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionS
 			this.id = value.getId();
 
 			if (MultiValuedCustomFieldValue.class.isAssignableFrom(value.getClass())) {
-				this.values = ((MultiValuedCustomFieldValue) value).getValues();
+				List<String> rawValues = ((MultiValuedCustomFieldValue) value).getValues();
+				List<String> escapedValues = new ArrayList<>();
+				if(rawValues != null) {
+					for (String rawValue : rawValues) {
+						escapedValues.add(HtmlUtils.htmlEscape(rawValue));
+					}
+				}
+				this.values = escapedValues;
 			} else {
-				this.value = value.getValue();
+				this.value = HtmlUtils.htmlEscape(value.getValue());
 			}
 		}
 
 		private CustomFieldValueTableModel(DenormalizedFieldValue value) {
 			this.id = value.getId();
 			if (DenormalizedMultiSelectField.class.isAssignableFrom(value.getClass())) {
-				this.values = ((DenormalizedMultiSelectField) value).getValues();
+				List<String> rawValues = ((DenormalizedMultiSelectField) value).getValues();
+				List<String> escapedValues = new ArrayList<>();
+				if(rawValues != null) {
+					for (String rawValue : rawValues) {
+						escapedValues.add(HtmlUtils.htmlEscape(rawValue));
+					}
+				}
+				this.values = escapedValues;
 			} else {
-				this.value = value.getValue();
+				this.value = HtmlUtils.htmlEscape(value.getValue());
 			}
 		}
 	}

@@ -20,12 +20,8 @@
  */
 package org.squashtest.tm.web.internal.controller.customfield;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
+import java.util.*;
 import javax.inject.Inject;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,7 +34,6 @@ import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
 import org.squashtest.tm.service.internal.dto.*;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
-import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 @Controller
 @RequestMapping("/custom-fields/values")
@@ -54,11 +49,10 @@ public class CustomFieldValuesController {
 	private CustomFieldJsonConverter converter;
 
 
-
-	@RequestMapping(method = RequestMethod.GET, params = { BOUND_ENTITY_ID, BOUND_ENTITY_TYPE }, headers = AcceptHeaders.CONTENT_JSON)
+	@RequestMapping(method = RequestMethod.GET, params = {BOUND_ENTITY_ID, BOUND_ENTITY_TYPE}, headers = AcceptHeaders.CONTENT_JSON)
 	@ResponseBody
 	public List<CustomFieldValueModel> getCustomFieldValuesForEntity(@RequestParam(BOUND_ENTITY_ID) long id,
-			@RequestParam(BOUND_ENTITY_TYPE) BindableEntity entityType) {
+																	 @RequestParam(BOUND_ENTITY_TYPE) BindableEntity entityType) {
 
 		List<CustomFieldValue> values = managerService.findAllCustomFieldValues(id, entityType);
 
@@ -67,7 +61,7 @@ public class CustomFieldValuesController {
 	}
 
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.POST, consumes="application/json")
+	@RequestMapping(value = "/{id}", method = RequestMethod.POST, consumes = "application/json")
 	@ResponseBody
 	public void updateCustomValue(@PathVariable long id, @RequestBody RawValueModel value) {
 		managerService.changeValue(id, value.toRawValue());
@@ -76,29 +70,10 @@ public class CustomFieldValuesController {
 
 	private List<CustomFieldValueModel> valuesToJson(List<CustomFieldValue> values) {
 		List<CustomFieldValueModel> models = new LinkedList<>();
-		List<String> escapedValues = new ArrayList<>();
-
 		for (CustomFieldValue value : values) {
-			CustomFieldValueModel model = converter.toJson(value);
-			models.add(model);
+			models.add(converter.toJson(value));
 		}
 
 		return models;
 	}
-	public void escapeOptions(CustomFieldValueModel model) {
-		List<CustomFieldModelFactory.CustomFieldOptionModel> options = new ArrayList<CustomFieldModelFactory.CustomFieldOptionModel>();
-		CustomFieldModelFactory.SingleSelectFieldModel singleField = (CustomFieldModelFactory.SingleSelectFieldModel) model.getBinding().getCustomField();
-		for(CustomFieldModelFactory.CustomFieldOptionModel option : ((CustomFieldModelFactory.SingleSelectFieldModel) model.getBinding().getCustomField()).getOptions()){
-			String label = HTMLCleanupUtils.stripJavascript(option.getLabel());
-			option.setLabel(label);
-			String code = HTMLCleanupUtils.stripJavascript(option.getCode());
-			option.setCode(code);
-			options.add(option);
-		}
-		singleField.setOptions(options);
-		model.getBinding().setCustomField(singleField);
-	}
-
-
-
 }

@@ -26,37 +26,50 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.customfield.InputType;
+import org.squashtest.tm.service.internal.dto.CustomFieldModel;
+import org.squashtest.tm.service.internal.dto.CustomFieldModelFactory;
 import org.squashtest.tm.service.internal.dto.CustomFieldValueModel;
+import org.squashtest.tm.web.internal.controller.customfield.CustomFieldValuesController;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
+import javax.inject.Inject;
 import java.io.IOException;
 
 public class CleanCustomFieldValueSerializer extends JsonSerializer<String> {
+
+	@Inject
+	private CustomFieldValuesController cufController;
 
 	@Override
 	public void serialize(String s, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException, JsonProcessingException {
 
 		Object target = jsonGenerator.getCurrentValue();
-
 		if (CustomFieldValueModel.class.isAssignableFrom(target.getClass())) {
 			CustomFieldValueModel model = (CustomFieldValueModel) target;
 			String input = model.getBinding().getCustomField().getInputType().getEnumName();
-			if (input.equals(InputType.RICH_TEXT.name())) {
-				String valueModel = HtmlUtils.htmlUnescape(s);
-				String valueModelStripped = HTMLCleanupUtils.stripJavascript(valueModel);
-				s = HtmlUtils.htmlUnescape(valueModelStripped);
-			}
-			if (input.equals(InputType.PLAIN_TEXT.name())) {
-				String valueModel = HtmlUtils.htmlUnescape(s);
-				valueModel = HTMLCleanupUtils.stripJavascript(valueModel);
-				s = HtmlUtils.htmlUnescape(valueModel);
-
-			} else {
-				String valueModel = HtmlUtils.htmlUnescape(s);
-				valueModel = HtmlUtils.htmlEscape(valueModel);
-				s = HtmlUtils.htmlUnescape(valueModel);
-			}
-			jsonGenerator.writeString(s);
+			s = cleanCustomFieldValue(s, input);
+		} else if (CustomFieldModelFactory.SingleValuedCustomFieldModel.class.isAssignableFrom(target.getClass())){
+			CustomFieldModelFactory.SingleValuedCustomFieldModel model = (CustomFieldModelFactory.SingleValuedCustomFieldModel) target;
+			String input = model.getInputType().getEnumName();
+			s = cleanCustomFieldValue(s,input);
 		}
+		jsonGenerator.writeString(s);
+
 	}
+
+	public String cleanCustomFieldValue(String s, String input) {
+		if (input.equals(InputType.RICH_TEXT.name())) {
+			String valueModel = HtmlUtils.htmlUnescape(s);
+			s = HTMLCleanupUtils.cleanHtml(valueModel);
+		} else if (input.equals(InputType.PLAIN_TEXT.name())) {
+			String valueModel = HtmlUtils.htmlUnescape(s);
+			s = HTMLCleanupUtils.stripJavascript(valueModel);
+		} else {
+			String valueModel = HtmlUtils.htmlUnescape(s);
+			valueModel = HtmlUtils.htmlEscape(valueModel);
+			s = HtmlUtils.htmlUnescape(valueModel);
+		}
+		return s;
+	}
+
 }

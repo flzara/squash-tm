@@ -22,22 +22,26 @@ package org.squashtest.tm.web.internal.model.json;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.squashtest.tm.service.internal.dto.CustomFieldBindingModel;
-import org.squashtest.tm.web.internal.model.serializer.CleanCustomFieldValueSerializer;
-import org.squashtest.tm.web.internal.model.serializer.CleanedUnescapedStringSerializer;
-import org.squashtest.tm.web.internal.model.serializer.HtmlEscapeCustomFielOptionsSerializer;
+import org.squashtest.tm.service.internal.dto.CustomFieldModelFactory;
+import org.squashtest.tm.web.internal.model.serializer.HtmlEscapeCustomFielOptionSerializer;
+import org.squashtest.tm.web.internal.model.serializer.HtmlEscapeSerializer;
 
 import java.util.List;
+import java.util.Set;
 
 @JsonAutoDetect
-public class CustomFieldValueModelMixin {
+public class SingleValuedCustomFieldModelMixin {
+	@JsonSerialize(using = HtmlEscapeSerializer.class)
+	private String name;
 
-	// for custom fields having only one value
-	@JsonSerialize(using = CleanCustomFieldValueSerializer.class)
-	private String value;
+	@JsonSerialize(using = HtmlEscapeSerializer.class)
+	private String label;
 
-	// for custom fields having multiple simultaneous values
-	@JsonSerialize(contentUsing = CleanedUnescapedStringSerializer.class)
-	private List<String> optionValues;
+	@JsonSerialize(using = HtmlEscapeSerializer.class)
+	private String code;
+
+	@JsonSerialize(using = HtmlEscapeSerializer.class)
+	private String defaultValue;
+
 
 }

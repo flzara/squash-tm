@@ -24,36 +24,29 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import org.springframework.web.util.HtmlUtils;
+import org.squashtest.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.tm.domain.customfield.InputType;
-import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
 import org.squashtest.tm.service.internal.dto.CustomFieldBindingModel;
 import org.squashtest.tm.service.internal.dto.CustomFieldModelFactory;
 import org.squashtest.tm.service.internal.dto.CustomFieldValueModel;
 import org.squashtest.tm.web.internal.controller.customfield.CustomFieldValuesController;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
-import org.unbescape.html.HtmlEscape;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-public class HtmlEscapeCustomFielOptionsSerializer extends JsonSerializer<CustomFieldBindingModel> {
+public class HtmlEscapeCustomFielOptionSerializer extends JsonSerializer<CustomFieldModelFactory.CustomFieldOptionModel> {
 
 	@Inject
 	private CustomFieldValuesController cufController;
 
 	@Override
-	public void serialize(CustomFieldBindingModel customFieldBindingModel, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException, JsonProcessingException {
+	public void serialize(CustomFieldModelFactory.CustomFieldOptionModel option, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException, JsonProcessingException {
 		Object target = jsonGenerator.getCurrentValue();
-			if (CustomFieldValueModel.class.isAssignableFrom(target.getClass())) {
-			CustomFieldValueModel model = (CustomFieldValueModel) target;
-			if (model.getBinding().getCustomField().getInputType().equals(InputType.DROPDOWN_LIST)) {
-
-			}
-			jsonGenerator.writeObject(model.getBinding());
-
-		}
+		String label = HTMLCleanupUtils.stripJavascript(option.getLabel());
+		option.setLabel(label);
+		String code = HTMLCleanupUtils.stripJavascript(option.getCode());
+		option.setCode(code);
+		jsonGenerator.writeObject(option);
 	}
 }
