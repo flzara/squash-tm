@@ -22,7 +22,10 @@ package org.squashtest.tm.service.internal.project
 
 import org.squashtest.tm.domain.campaign.CampaignLibrary
 import org.squashtest.tm.domain.execution.ExecutionStatus
-import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.infolist.InfoList
+import org.squashtest.tm.domain.project.GenericProject
+import org.squashtest.tm.service.internal.repository.ProjectDao
+import org.squashtest.tm.service.internal.repository.ProjectTemplateDao;
 
 import javax.persistence.EntityManager;
 
@@ -59,26 +62,35 @@ class CustomGenericProjectManagerImplTest extends Specification {
 
 	EntityManager em = Mock()
 	Session session = Mock()
-	ObjectIdentityService objectIdentityService = Mock()
+
 	GenericProjectDao genericProjectDao = Mock()
+	ProjectDao projectDao = Mock()
+	ProjectTemplateDao templateDao = Mock()
+	CustomReportLibraryNodeDao customReportLibraryNodeDao = Mock()
+
+	ObjectIdentityService objectIdentityService = Mock()
 	InfoListFinderService infoListService = Mock()
 	ProjectsPermissionManagementService permissionsManager = Mock()
 	CustomFieldBindingModificationService customFieldBindingModificationService = Mock()
 	PermissionEvaluationService permissionEvaluationService = Mock()
 	TestAutomationProjectManagerService taProjectService = Mock()
-	CustomReportLibraryNodeDao customReportLibraryNodeDao = Mock()
 
 	def setup() {
 		manager.em = em
 		em.unwrap(_) >> session
-		manager.objectIdentityService = Mock(ObjectIdentityService)
+
 		manager.genericProjectDao = genericProjectDao
+		manager.customReportLibraryNodeDao = customReportLibraryNodeDao
+		manager.templateDao = templateDao
+		manager.projectDao = projectDao
+
+		manager.objectIdentityService = Mock(ObjectIdentityService)
 		manager.infoListService = infoListService
 		manager.permissionsManager = permissionsManager
 		manager.customFieldBindingModificationService = customFieldBindingModificationService
 		manager.permissionEvaluationService = permissionEvaluationService
 		manager.taProjectService = taProjectService
-		manager.customReportLibraryNodeDao = customReportLibraryNodeDao
+
 	}
 
 	def "should not persist project with name in use"() {
@@ -315,7 +327,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		0* project.setAllowTcModifDuringExec(_)
 	}
 
-	def "#disassociateFromTemplate - Should disassociate Project from a Template"() {
+	def "#disassociateFromTemplate - Should disassociate a Project from a Template"() {
 
 		given:
 
@@ -334,5 +346,62 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		then:
 
 		project.getTemplate() == null
+	}
+
+	def "#associateToTemplate - Should associate a persisted Project to a Template"() {
+
+		given:
+
+		Project project = Mock(Project)
+		project.getId() >> 1L
+		ProjectTemplate template = Mock(ProjectTemplate);
+		template.getId() >> 2L
+
+		InfoList categoryList = Mock()
+		InfoList natureList = Mock()
+		InfoList typeList = Mock()
+
+		template.getRequirementCategories() >> categoryList
+		template.getTestCaseNatures() >> natureList
+		template.getTestCaseTypes() >> typeList
+
+		template.allowTcModifDuringExec() >> true
+
+		CampaignLibrary templateLibrary = new CampaignLibrary()
+		templateLibrary.enableStatus(ExecutionStatus.SETTLED)
+		templateLibrary.disableStatus(ExecutionStatus.UNTESTABLE)
+
+		CampaignLibrary projectLibrary = new CampaignLibrary()
+		projectLibrary.disableStatus(ExecutionStatus.SETTLED)
+		projectLibrary.enableStatus(ExecutionStatus.UNTESTABLE)
+
+		template.getCampaignLibrary() >> templateLibrary
+		project.getCampaignLibrary() >> projectLibrary
+
+		and:
+
+		projectDao.findOne(_) >> project
+		templateDao.findOne(_) >> template
+		genericProjectDao.findOne(1L) >> project
+		genericProjectDao.findOne(2L) >> template
+
+		when:
+
+		manager.associateToTemplate(1L, 2L)
+
+		then:
+
+		1 * project.setTemplate(template)
+
+		1 * customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate(project, template)
+
+		1 * project.setRequirementCategories(categoryList)
+		1 * project.setTestCaseNatures(natureList)
+		1 * project.setTestCaseTypes(typeList)
+
+		1 * project.setAllowTcModifDuringExec(true)
+
+		project.getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED)
+		!project.getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE)
 	}
 }
