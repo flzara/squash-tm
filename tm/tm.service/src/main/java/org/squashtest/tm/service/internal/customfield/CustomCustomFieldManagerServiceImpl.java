@@ -26,6 +26,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.customfield.*;
 import org.squashtest.tm.event.ChangeCustomFieldCodeEvent;
 import org.squashtest.tm.exception.DuplicateNameException;
@@ -125,7 +126,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	private void checkDuplicateName(CustomField newCustomField) {
 		CustomField nameDuplicate = customFieldDao.findByName(newCustomField.getName());
 		if (nameDuplicate != null) {
-			throw new NameAlreadyInUseException("CustomField", newCustomField.getName());
+			throw new NameAlreadyInUseException("CustomField", HtmlUtils.htmlEscape(newCustomField.getName()));
 		}
 	}
 

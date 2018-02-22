@@ -36,8 +36,7 @@ define(
 
 			if (validationErrors !== null) {
 				for (var key in validationErrors) {
-					var keyEscaped = "<th th:text=\"" + key + "\"></th>";
-					Forms.input(view.$("[name='" + keyEscaped +"']")).setState("error",
+					Forms.input(view.$("[name='" + key +"']")).setState("error",
 							validationErrors[key]);
 				}
 
