@@ -310,4 +310,25 @@ class CustomFieldBindingModificationServiceImplTest extends Specification {
 		1 * eventPublisher.publishEvent(_)
 		1 * customValueService.cascadeCustomFieldValuesCreation(_)
 	}
+
+	def "#removeCustomFieldBindings - Should delete some CustomFieldBindings"() {
+
+		given:
+
+		List<Long> bindingIds = [7L, 19L, 32L, 42L]
+
+		and:
+
+		customFieldBindingDao.findEquivalentBindingsForBoundProjects(_) >> [9L, 52L, 90L, 44L]
+
+		when:
+
+		service.removeCustomFieldBindings(bindingIds)
+
+		then:
+
+		1 * customValueService.cascadeCustomFieldValuesDeletion(_)
+		1 * customFieldBindingDao.removeCustomFieldBindings(_)
+		1 * eventPublisher.publishEvent(_)
+	}
 }
