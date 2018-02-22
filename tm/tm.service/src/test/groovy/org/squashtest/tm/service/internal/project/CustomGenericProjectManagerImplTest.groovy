@@ -514,4 +514,61 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		!projectLibrary.allowsStatus(ExecutionStatus.UNTESTABLE)
 
 	}
+
+	def "#changeAllowTcModifDuringExec - Should change TC-Modif-During-Exec parameter in a Project"() {
+
+		given:
+
+		Project project = new Project()
+		project.setAllowTcModifDuringExec(false)
+
+		and:
+
+		genericProjectDao.findOne(404L) >> project
+
+		when:
+
+		manager.changeAllowTcModifDuringExec(404L, true)
+
+		then:
+
+		project.allowTcModifDuringExec()
+
+	}
+
+	def "#changeAllowTcModifDuringExec - Should change TC-Modif-During-Exec parameter in a Template and propagate it to its bound Projects"() {
+
+		given:
+
+		ProjectTemplate template = new ProjectTemplate()
+		template.setAllowTcModifDuringExec(false)
+
+		Project project1 = new Project()
+		Project project2 = new Project()
+		project1.setAllowTcModifDuringExec(false)
+		project2.setAllowTcModifDuringExec(false)
+
+		and:
+
+		genericProjectDao.findOne(404L) >> template
+		templateDao.propagateAllowTcModifDuringExec(404L, true) >> {
+			args ->
+				if(args[1]) {
+					project1.setAllowTcModifDuringExec(true)
+					project2.setAllowTcModifDuringExec(true)
+				}
+		}
+
+		when:
+
+		manager.changeAllowTcModifDuringExec(404L, true)
+
+		then:
+
+		template.allowTcModifDuringExec()
+		project1.allowTcModifDuringExec()
+		project2.allowTcModifDuringExec()
+
+
+	}
 }
