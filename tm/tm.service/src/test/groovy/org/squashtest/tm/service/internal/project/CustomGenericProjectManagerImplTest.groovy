@@ -426,10 +426,9 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		then:
 
 		library.allowsStatus(ExecutionStatus.UNTESTABLE)
-
 	}
 
-	def "#enableExecutionStatus - Should enable an ExecutionStatus in a Project and propagate it to Template"() {
+	def "#enableExecutionStatus - Should enable an ExecutionStatus in a Template and propagate it to its bound Project"() {
 
 		given:
 
@@ -458,6 +457,61 @@ class CustomGenericProjectManagerImplTest extends Specification {
 
 		templateLibrary.allowsStatus(ExecutionStatus.UNTESTABLE)
 		projectLibrary.allowsStatus(ExecutionStatus.UNTESTABLE)
+
+	}
+
+	def "#disableExecutionStatus - Should disable an ExecutionStatus in a Project"() {
+
+		given:
+
+		Project project = new Project()
+		CampaignLibrary library = new CampaignLibrary()
+		Set<ExecutionStatus> disabledStatuses = []
+		library.setDisabledStatuses(disabledStatuses)
+		project.setCampaignLibrary(library)
+
+		and:
+
+		genericProjectDao.findOne(404L) >> project
+
+		when:
+
+		manager.disableExecutionStatus(404L, ExecutionStatus.UNTESTABLE)
+
+		then:
+
+		!library.allowsStatus(ExecutionStatus.UNTESTABLE)
+	}
+
+	def "#disableExecutionStatus - Should disable an ExecutionStatus in a Template and propagate it to its bound Project"() {
+
+		given:
+
+		ProjectTemplate template = new ProjectTemplate()
+		CampaignLibrary templateLibrary = new CampaignLibrary()
+		Set<ExecutionStatus> disabledTemplateStatuses = []
+		templateLibrary.setDisabledStatuses(disabledTemplateStatuses)
+		template.setCampaignLibrary(templateLibrary)
+
+		Project project = new Project()
+		CampaignLibrary projectLibrary = new CampaignLibrary()
+		Set<ExecutionStatus> disabledProjectStatuses = []
+		projectLibrary.setDisabledStatuses(disabledProjectStatuses)
+		project.setCampaignLibrary(projectLibrary)
+
+		and:
+
+		genericProjectDao.findOne(404L) >> template
+		projectDao.findAllBoundToTemplate(404L) >> [project]
+
+		when:
+
+		manager.disableExecutionStatus(404L, ExecutionStatus.UNTESTABLE)
+
+		then:
+
+		!templateLibrary.allowsStatus(ExecutionStatus.UNTESTABLE)
+		!projectLibrary.allowsStatus(ExecutionStatus.UNTESTABLE)
 
 	}
 }
