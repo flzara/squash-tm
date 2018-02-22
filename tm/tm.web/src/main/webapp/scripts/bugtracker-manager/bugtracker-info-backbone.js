@@ -256,6 +256,7 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 		$failPane : null,
 		$warnPane : null,
 		$succPane : null,
+		$saveSuccPane : null,
 
 
 		initialize : function(){
