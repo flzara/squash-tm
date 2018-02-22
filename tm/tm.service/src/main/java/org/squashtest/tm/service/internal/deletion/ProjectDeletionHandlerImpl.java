@@ -49,6 +49,7 @@ import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.library.NodeDeletionHandler;
 import org.squashtest.tm.service.internal.project.ProjectDeletionHandler;
+import org.squashtest.tm.service.internal.project.ProjectHelper;
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
@@ -94,7 +95,7 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 
 	@Override
 	public void deleteProject(long projectId) {
-		GenericProject project = genericProjectDao.findById(projectId);
+		GenericProject project = genericProjectDao.findOne(projectId);
 
 		project.accept(new ProjectVisitor() {
 			@Override
@@ -111,6 +112,9 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 		milestoneBindingManager.unbindAllMilestonesFromProject(project);
 		bindingService.removeCustomFieldBindings(projectId);
 
+		if(ProjectHelper.isTemplate(project)) {
+			projectDao.unbindAllFromTemplate(project.getId());
+		}
 
 		doDeleteProject(projectId);
 
@@ -128,7 +132,7 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 
 	private void doDeleteProject(long projectId) {
 		LOGGER.debug("The project #" + projectId + " is being deleted");
-		GenericProject project = genericProjectDao.findById(projectId);
+		GenericProject project = genericProjectDao.findOne(projectId);
 
 		CampaignLibrary campaignLibrary = project.getCampaignLibrary();
 		deleteLibraryContent(campaignLibrary, campaignDeletionHandler);

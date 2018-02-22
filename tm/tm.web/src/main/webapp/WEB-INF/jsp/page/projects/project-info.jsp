@@ -1058,10 +1058,10 @@ require(["common"], function() {
 
 	<sec:authorize access=" hasRole('ROLE_ADMIN')">
 	$(function() {
-		function deleteProject(){
+		function deleteProject() {
 		<c:if test="${adminproject.deletable}">
 			oneshot.show('dialog.delete-project.title',
-			"<div class='display-table-row'><div class='display-table-cell warning-cell'><div class='generic-error-signal'></div></div><div class='display-table-cell'><f:message key='message.project.remove.first'/><span class='red-warning-message'> <f:message key='message.project.remove.second'/> </span><f:message key='message.project.remove.third'/><span class='bold-warning-message'> <f:message key='message.project.remove.fourth'/> </span></div></div>"
+        "<div class='display-table-row'><div class='display-table-cell warning-cell'><div class='generic-error-signal'></div></div><div class='display-table-cell'><f:message key='message.project.remove.first'/><span class='red-warning-message'> <f:message key='message.project.remove.second'/> </span><f:message key='message.project.remove.third'/></br><c:if test="${adminproject.template}"><span><f:message key='message.project.remove.warningForTemplate'/></span><br/></c:if><span class='bold-warning-message'><f:message key='message.project.remove.fourth'/></span></div></div>"
 			).done(function(){
 				requestProjectDeletion().done(deleteProjectSuccess);
 			});
