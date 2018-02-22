@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.customfield;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
@@ -193,11 +194,13 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 		/* If the given bindings are removed from a ProjectTemplate, we have to propagate the deletion to the
 		* equivalent bindings in the bound Projects. */
 		List<Long> bindingIdsToRemove = new ArrayList<>(bindingIds);
-		bindingIdsToRemove.addAll(customFieldBindingDao.findEquivalentBindingsForBoundProjects(bindingIds));
+		if(!bindingIdsToRemove.isEmpty()) {
+			bindingIdsToRemove.addAll(customFieldBindingDao.findEquivalentBindingsForBoundProjects(bindingIds));
 
-		customValueService.cascadeCustomFieldValuesDeletion(bindingIdsToRemove);
-		customFieldBindingDao.removeCustomFieldBindings(bindingIdsToRemove);
-		eventPublisher.publishEvent(new DeleteCustomFieldBindingEvent(bindingIds));
+			customValueService.cascadeCustomFieldValuesDeletion(bindingIdsToRemove);
+			customFieldBindingDao.removeCustomFieldBindings(bindingIdsToRemove);
+			eventPublisher.publishEvent(new DeleteCustomFieldBindingEvent(bindingIds));
+		}
 	}
 
 	@SuppressWarnings("unchecked")
