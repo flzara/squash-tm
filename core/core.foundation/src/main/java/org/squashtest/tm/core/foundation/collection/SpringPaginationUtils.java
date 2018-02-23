@@ -32,7 +32,7 @@ import org.springframework.data.domain.Sort.Direction;
  * his toolbox bridge the gap between our old messy API and
  * the Pageable API from Spring
  */
-public class SpringPaginationUtils {
+public final class SpringPaginationUtils {
 
     public static final int DEFAULT_SIZE = 50;
 

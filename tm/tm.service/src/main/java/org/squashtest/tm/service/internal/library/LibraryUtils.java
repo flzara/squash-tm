@@ -68,7 +68,7 @@ public final class LibraryUtils {
 		String buildResult(int index, String baseName);
 	}
 
-	private static class SimpleTokenHelper implements TokenHelper{
+	private final static class SimpleTokenHelper implements TokenHelper{
 		private String token;
 
 		private SimpleTokenHelper(String token){

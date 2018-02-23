@@ -121,7 +121,7 @@ public class TestAutomationServerManagementAdminController {
 	/**
 	 * Will help to create the {@link DataTableModel} to fill the data-table of test automation servers
 	 */
-	private class TestAutomationServerDataTableModelHelper extends DataTableModelBuilder<TestAutomationServer> {
+	private final class TestAutomationServerDataTableModelHelper extends DataTableModelBuilder<TestAutomationServer> {
 		private Locale locale;
 
 		private TestAutomationServerDataTableModelHelper(Locale locale) {

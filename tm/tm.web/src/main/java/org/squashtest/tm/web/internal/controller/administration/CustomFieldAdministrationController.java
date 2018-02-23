@@ -124,7 +124,8 @@ public final class CustomFieldAdministrationController {
 	 * Will help to create the {@link DataTableModel} to fill the data-table of custom fields
 	 *
 	 */
-	private class CustomFieldDataTableModelHelper extends DataTableModelBuilder<CustomField> {
+	private final class CustomFieldDataTableModelHelper extends DataTableModelBuilder<CustomField> {
+
 		private Locale locale;
 
 		private CustomFieldDataTableModelHelper(Locale locale) {

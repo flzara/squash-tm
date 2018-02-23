@@ -32,7 +32,7 @@ import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 
-public class LevelEnumHelper {
+public final class LevelEnumHelper {
 
 	private LevelEnumHelper() {
 

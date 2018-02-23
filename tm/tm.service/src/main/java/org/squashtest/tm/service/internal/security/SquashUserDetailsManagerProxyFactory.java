@@ -61,7 +61,8 @@ public class SquashUserDetailsManagerProxyFactory implements FactoryBean<SquashU
 		this.features = features;
 	}
 
-	private static class ManagerDelegator implements InvocationHandler {
+	private final static class ManagerDelegator implements InvocationHandler {
+
 		private final SquashUserDetailsManagerProxyFactory context;
 
 		private ManagerDelegator(SquashUserDetailsManagerProxyFactory context) {

@@ -29,19 +29,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Decorator for a {@link DataTable10Model} which can be used to send back a server error message.
- * 
- * 
+ *
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
-public class DataTable10ErrorModel implements DataTable10Model {
+public final class DataTable10ErrorModel implements DataTable10Model {
 	@JsonIgnore
 	private final DataTable10Model decorated;
 	private final String error;
 
 	/**
 	 * Decorates a {@link DataTable10Model} with an error message.
-	 * 
+	 *
 	 * @param decorated
 	 * @param errorMessage
 	 * @return
@@ -51,7 +51,7 @@ public class DataTable10ErrorModel implements DataTable10Model {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param decorated
 	 * @param errorMessage
 	 * @see #decorate(DataTable10Model, String)

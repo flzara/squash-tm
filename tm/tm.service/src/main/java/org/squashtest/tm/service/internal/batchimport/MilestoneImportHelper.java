@@ -47,7 +47,7 @@ public class MilestoneImportHelper {
 	 * @author Gregory Fouquet
 	 *
 	 */
-	public static class Partition {
+	public final static class Partition {
 		/**
 		 * Collection of items which passed the partitioning criteria
 		 */
@@ -93,7 +93,7 @@ public class MilestoneImportHelper {
 		if (names.isEmpty()) {
 			return EMPTY_PARTITION;
 		}
-		
+
 		List<MilestoneStatus> bindableStatus = MilestoneStatus.getAllStatusAllowingObjectBind();
 
 		List<String> bindable = milestoneFinder.findBindableExistingNames(names, bindableStatus);
@@ -115,7 +115,7 @@ public class MilestoneImportHelper {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * @param milestones
 	 * @return

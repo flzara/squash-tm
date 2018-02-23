@@ -51,7 +51,8 @@ public class DatabaseBackedObjectIdentityGeneratorStrategy implements ObjectIden
 	 *
 	 */
 	@SuppressWarnings("serial")
-	private static class UnknownObjectIdentity implements ObjectIdentity {
+	private final static class UnknownObjectIdentity implements ObjectIdentity {
+
 		private final String type;
 
 		private UnknownObjectIdentity(String type) {

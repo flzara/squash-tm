@@ -29,7 +29,7 @@ import java.util.Locale;
 /**
  * Created by jthebault on 25/07/2016.
  */
-public class NumericCufHelper {
+public final class NumericCufHelper {
 
 	/**
 	 * Utility class with only static methods...

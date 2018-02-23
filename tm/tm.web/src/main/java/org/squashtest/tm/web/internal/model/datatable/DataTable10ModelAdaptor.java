@@ -30,7 +30,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Gregory Fouquet
  *
  */
-public class DataTable10ModelAdaptor<T> implements DataTable10Model<T> {
+public final class DataTable10ModelAdaptor<T> implements DataTable10Model<T> {
+
 	private final DataTableModel<T> adapted;
 
 	/**

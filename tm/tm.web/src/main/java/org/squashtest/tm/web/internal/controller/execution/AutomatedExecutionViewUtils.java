@@ -35,6 +35,7 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 public final class AutomatedExecutionViewUtils {
+
 	private AutomatedExecutionViewUtils() {
 		super();
 	}
@@ -119,7 +120,8 @@ public final class AutomatedExecutionViewUtils {
 
 	}
 
-	public static class ExecutionAutoView {
+	public final static class ExecutionAutoView {
+
 		private Long id;
 		private String name;
 		private ExecutionStatus status;

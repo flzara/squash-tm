@@ -83,7 +83,7 @@ import org.hibernate.type.Type;
  * @author bsiri
  *
  */
-public class HibernateDialectExtensions {
+public final class HibernateDialectExtensions {
 
 	public static final String FN_NAME_GROUP_CONCAT = "group_concat";
 	public static final String FN_NAME_WEEK = "week";
@@ -100,8 +100,8 @@ public class HibernateDialectExtensions {
         super();
     }
 
-	
-	
+
+
 	public static enum FnSupport {
 		GROUP_CONCAT,
 		STR_AGG,
@@ -113,23 +113,23 @@ public class HibernateDialectExtensions {
             extensions.put(FN_NAME_GROUP_CONCAT, new GroupConcatFunction(FN_NAME_GROUP_CONCAT, StringType.INSTANCE));
             return extensions;
         }
-        
+
         public static Map<String, StandardSQLFunction> getH2DialectExtensions(){
             Map<String, StandardSQLFunction> extensions = getCommonExtensions();
             extensions.put(FN_NAME_GROUP_CONCAT, new GroupConcatFunction(FN_NAME_GROUP_CONCAT, StringType.INSTANCE));
             return extensions;
         }
-        
+
         public static Map<String, StandardSQLFunction> getPostgresDialectExtensions(){
             Map<String, StandardSQLFunction> extensions = getCommonExtensions();
             extensions.put(FN_NAME_GROUP_CONCAT, new StringAggFunction(FN_NAME_GROUP_CONCAT, StringType.INSTANCE));
             extensions.put(FN_NAME_WEEK, new ExtractWeek(FN_NAME_WEEK, IntegerType.INSTANCE));
             return extensions;
         }
-        
-        
-        
-        
+
+
+
+
         private static Map<String, StandardSQLFunction> getCommonExtensions(){
             Map<String, StandardSQLFunction> extensions = new HashMap<>();
             extensions.put(FN_NAME_SUM, new StandardSQLFunction("sum"));
@@ -139,7 +139,7 @@ public class HibernateDialectExtensions {
             extensions.put(FN_NAME_CNT, new SCountDistinctFunction());
             return extensions;
         }
-                
+
 
 
 

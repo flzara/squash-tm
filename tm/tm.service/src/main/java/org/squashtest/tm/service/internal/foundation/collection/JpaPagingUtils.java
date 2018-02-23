@@ -40,7 +40,7 @@ import javax.persistence.Query;
  * @author Gregory Fouquet
  * @since x.y.z  04/08/16
  */
-public class JpaPagingUtils {
+public final class JpaPagingUtils {
 	private JpaPagingUtils() {
 		super();
 	}

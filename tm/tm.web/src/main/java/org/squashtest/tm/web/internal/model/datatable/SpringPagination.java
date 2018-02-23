@@ -38,7 +38,7 @@ import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
  *
  * @author bsiri
  */
-public class SpringPagination {
+public final class SpringPagination {
 
     private SpringPagination(){
         super();
