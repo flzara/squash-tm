@@ -37,6 +37,7 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService;
@@ -240,6 +241,11 @@ public class ExecutionRunnerControllerHelper {
 		String currentStepUrl = contextPath + "/" + MessageFormat.format(CURRENT_STEP_URL_PATTERN, executionId);
 
 		state.setBaseStepUrl(currentStepUrl);
+		// Issue 7137 - setting null to the referencedTestcaseId attribute when the test case is deleted
+		Execution execution = executionProcessingService.findExecution(executionId);
+		TestCase tc = execution.getReferencedTestCase();
+		Long tcId = tc != null ? tc.getId() : null;
+		state.setReferencedTestCaseId(tcId);
 
 		state.setCurrentExecutionId(executionId);
 		state.setCurrentStepId(step.getId());

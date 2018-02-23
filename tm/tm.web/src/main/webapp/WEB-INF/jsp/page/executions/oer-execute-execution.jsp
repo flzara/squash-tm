@@ -125,24 +125,13 @@
 
 				$("#execute-previous-button").button({
 					'text' : false,
+					'disabled': ${ executionStep.executionStepOrder == 0 and executionStep.referencedTestStep == null },
 					icons : {
 						primary : 'ui-icon-triangle-1-w'
 					}
 				}).click(function(){
-				  if (${executionStep.referencedTestStep != null}) {
-				    parent.squashtm.ieomanager.navigatePrevious();
-				  } else {
-				    if (${executionStep.executionStepOrder > 0}) {
-              parent.squashtm.ieomanager.navigatePrevious();
-            }
-          }
+				  parent.squashtm.ieomanager.navigatePrevious();
 				});
-
-				if (${executionStep.executionStepOrder == 0 && executionStep.referencedTestStep == null}) {
-				$("#execute-previous-button").button({
-				  'disabled': true
-				});
-				}
 
 				$("#execute-stop-button").button({
 					'text': false,

@@ -23,9 +23,9 @@
  * next.
  */
 
-define([ "jquery", "module", "app/util/ComponentUtil", 
+define([ "jquery", "module", "app/util/ComponentUtil",
          "app/util/ButtonUtil",
-         "jquery.cookie", "jqueryui" ], 
+         "jquery.cookie", "jqueryui" ],
 		function($, module, ComponentUtil, buttonUtil) {
 
 	$.widget("squash.ieoControl", {
@@ -82,11 +82,11 @@ define([ "jquery", "module", "app/util/ComponentUtil",
 			cbox.val(status);
 			this._updateComboIcon();
 		},
-		
+
 		setUntestable : function(){
 			this.setStatus('UNTESTABLE');
 		},
-		
+
 		setBlocked : function(){
 			this.setStatus('BLOCKED');
 		},
@@ -130,11 +130,11 @@ define([ "jquery", "module", "app/util/ComponentUtil",
 		getStopButton : function() {
 			return this.element.find('.stop-execution');
 		},
-		
+
 		getUntestableButton : function(){
 			return this.element.find('.step-untestable');
 		},
-		
+
 		getBlockedButton : function(){
 			return this.element.find('.step-blocked');
 		},
@@ -171,6 +171,12 @@ define([ "jquery", "module", "app/util/ComponentUtil",
 			return ((state.testSuiteMode) && (!state.lastTestCase) && (this._isLastStep()));
 		},
 
+		_disableNavigatePrevious : function() {
+			var state = this._getState();
+			var isTestCaseDeletedAtStepOne = state.referencedTestCaseId == null && state.currentStepIndex == 1;
+			return (this._isPrologue() || isTestCaseDeletedAtStepOne);
+		},
+
 		_isLastStep : function() {
 			var state = this._getState();
 			return (state.currentStepIndex === state.lastStepIndex);
@@ -180,6 +186,7 @@ define([ "jquery", "module", "app/util/ComponentUtil",
 			var state = this._getState();
 			return (state.currentStepIndex === state.firstStepIndex);
 		},
+
 
 		// ************************ update methods
 		// ********************
@@ -234,13 +241,13 @@ define([ "jquery", "module", "app/util/ComponentUtil",
 		_updateButtons : function() {
 
 			var changeState = (this._isLastStep()) ? buttonUtil["disable"] : buttonUtil["enable"];
-			
+
 			changeState(this.getNextStepButton());
 
-			changeState = (this._isPrologue()) ? buttonUtil["disable"] : buttonUtil["enable"];
-			
+			changeState = (this._disableNavigatePrevious()) ? buttonUtil["disable"] : buttonUtil["enable"];
+
 			changeState(this.getPreviousStepButton());
-			
+
 			changeState(this.getUntestableButton());
 			changeState(this.getBlockedButton());
 			changeState(this.getSuccessButton());
@@ -251,7 +258,7 @@ define([ "jquery", "module", "app/util/ComponentUtil",
 			} else {
 				this.element.find('.execute-next-test-case-panel').hide();
 			}
-			
+
 			changeState = (this._canNavigateNextTestCase()) ? buttonUtil['enable'] : buttonUtil['disable'];
 			changeState(this.getNextTestCaseButton());
 

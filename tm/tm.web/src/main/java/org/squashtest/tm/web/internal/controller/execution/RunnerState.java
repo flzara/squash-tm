@@ -46,6 +46,8 @@ public class RunnerState {
 	private String completeSuiteMessage;
 	private Long testSuiteId;
 	private Long testPlanItemId;
+	// Issue 7137 - added execution's referenced test case id attribute to know if this test case is deleted
+	private Long referencedTestCaseId;
 
 
 	public boolean isAllowsUntestable() {
@@ -178,6 +180,14 @@ public class RunnerState {
 
 	public void setOptimized(boolean isOptimized) {
 		this.isOptimized = isOptimized;
+	}
+
+	public Long getReferencedTestCaseId() {
+		return referencedTestCaseId;
+	}
+
+	public void setReferencedTestCaseId(Long referencedTestCaseId) {
+		this.referencedTestCaseId = referencedTestCaseId;
 	}
 
 	/**

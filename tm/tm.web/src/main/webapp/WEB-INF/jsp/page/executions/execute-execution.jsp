@@ -78,12 +78,9 @@
         <c:when test="${executionStep.first && executionStep.referencedTestStep != null}">
           <s:url var="executePrevious" value="${ currentStepsUrl }/prologue?optimized=${param.optimized}"/>
         </c:when>
-        <c:when test="${executionStep.first && executionstep.referencedTestStep == null && stIndex == 0 }">
-
-        </c:when>
-        <c:otherwise>
+        <c:when test="${!executionStep.first && !(executionStep.referencedTestStep == null && stIndex == 0) }">
           <s:url var="executePrevious" value="${ currentStepsUrl }/index/${stIndex-1}?optimized=${param.optimized}"/>
-        </c:otherwise>
+        </c:when>
       </c:choose>
 
       <s:url var="executeThis" value="${ currentStepsUrl }/index/${stIndex}?optimized=${param.optimized}"/>
@@ -97,22 +94,7 @@
 
     <body class="execute-html-body">
 
-	<script type="text/javascript">
-	require(["common"], function() {
-		require(["jquery", "squash.basicwidgets",
 
-		         "jqueryui"], function($, basicwidg){
-			$(function(){
-				if (${executionStep.executionStepOrder == 0 && executionStep.referencedTestStep == null}) {
-          $("#execute-previous-button").button({
-            'disabled': true
-          });
-          $("#execute-previous-button").removeClass("ui-button-text-only");
-				}
-			});
-		});
-	});
-  </script>
 
 
     <script type="text/javascript">
@@ -131,6 +113,7 @@
               stepId: ${executionStep.id},
               execId: ${execution.id},
               id: ${executionStep.id},
+              isTestCaseDeletedAtStepOne: ${stIndex == 0 and executionStep.referencedTestStep == null},
               index: ${stIndex},
               status: "${executionStep.executionStatus}",
               isFirst: ${executionStep.first},
@@ -194,7 +177,7 @@
           </td>
           <td id="execution-previous-next" style="position: relative; top: -2px" class="centered">
             <button id="execute-previous-button" class="sq-btn std-btn ui-button control-button"
-                    title="${previousTitle}">
+                    ${stIndex == 0 and executionStep.referencedTestStep == null ? 'disabled="disabled"' : ''} title="${previousTitle}">
               <span class="ui-icon ui-icon-triangle-1-w"></span>
             </button>
   				<span id="execute-header-numbers-label">
