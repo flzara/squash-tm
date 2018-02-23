@@ -124,8 +124,8 @@ define(["jquery", "milestone-manager/milestone-activation", "squash.attributepar
 
 					// we must find the label of the milestone from the table
 					var row = table.find('input:checked').parents('tr');
-					var data = table.fnGetData(row);
-					var lbl = data['label'];
+					var dataFromTable = table.fnGetData(row);
+					var lbl = dataFromTable['label'];
 
 					var newMilestone = {
 						id: id,

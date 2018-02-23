@@ -202,17 +202,17 @@ define(['module',
 		var config = module.config();
 
 		if (config.basic.hasCufs){
-			var cufurl =  routing.buildURL('customfield.values.get', config.basic.id, 'EXECUTION_STEP'),
-				mode = (config.permissions.editable) ? 'jeditable' : 'static';
+			var cufurl =  routing.buildURL('customfield.values.get', config.basic.id, 'EXECUTION_STEP');
+			var	mode = (config.permissions.editable) ? 'jeditable' : 'static';
 			$.getJSON(cufurl)
 			.success(function(jsonCufs){
 				cufValues.infoSupport.init("#cuf-information-table", jsonCufs, mode);
 			});
 		}
 
-		if (config.basic.hasDenormCufs){
-			var denocufurl =  routing.buildURL('denormalizefield.values.get', config.basic.id, 'EXECUTION_STEP'),
-				mode = (config.permissions.editable) ? 'jeditable' : 'static';
+		if (config.basic.hasDenormCufs) {
+			var denocufurl = routing.buildURL('denormalizefield.values.get',config.basic.id, 'EXECUTION_STEP');
+			var mode = (config.permissions.editable) ? 'jeditable' : 'static';
 			$.getJSON(denocufurl)
 			.success(function(denojsonCufs){
 				cufValues.infoSupport.init("#dfv-information-table", denojsonCufs, mode);

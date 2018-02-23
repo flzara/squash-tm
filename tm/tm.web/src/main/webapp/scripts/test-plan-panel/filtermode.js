@@ -384,18 +384,15 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 		 */
 		this.isFiltering = function(arg){
 
-			if (arg === undefined){
+			var filterNotDef;
+			if (arg === undefined) {
 				return this.active;
-			}
-
-			else if (_.isNumber(arg)){
-				var filterNotDef = strUtils.isBlank(table.squashTable().fnSettings().aoPreSearchCols[arg].sSearch);
+			} else if (_.isNumber(arg)) {
+				filterNotDef = strUtils.isBlank(table.squashTable().fnSettings().aoPreSearchCols[arg].sSearch);
 				return this.active && (! filterNotDef);
-			}
-
-			else {
+			} else {
 				var idx = table.squashTable().getColumnIndexByName(arg);
-				var filterNotDef = strUtils.isBlank(table.squashTable().fnSettings().aoPreSearchCols[idx].sSearch);
+				filterNotDef = strUtils.isBlank(table.squashTable().fnSettings().aoPreSearchCols[idx].sSearch);
 				return this.active && (! filterNotDef);
 			}
 		};
