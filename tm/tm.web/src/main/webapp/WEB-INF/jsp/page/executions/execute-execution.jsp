@@ -198,6 +198,7 @@
                         title="${ nextTestCaseTitle }">
                   <span class="ui-button-icon-primary ui-icon ui-icon-seek-next"></span>
                 </button>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
               </form>
             </td>
           </c:if>
