@@ -83,7 +83,7 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 	}
 
 
-	public SearchInputPanelModel createRequirementAttributePanel(Locale locale,UserDto currentUser,List<Long> readableProjectIds,Collection<JsonProject> jsProjects) {
+	public SearchInputPanelModel createRequirementAttributePanel(Locale locale, Collection<JsonProject> jsProjects) {
 		SearchInputPanelModel panel = new SearchInputPanelModel();
 		panel.setTitle(getMessageSource().internationalize("search.testcase.attributes.panel.title", locale));
 		panel.setOpen(true);
@@ -99,7 +99,7 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 				.useLocale(locale).build();
 		criticalityField.addPossibleValues(importanceOptions);
 
-		SearchInputFieldModel categoryField = buildCategoryFieldModel(locale,currentUser,readableProjectIds,jsProjects);
+		SearchInputFieldModel categoryField = buildCategoryFieldModel(locale, jsProjects);
 		panel.addField(categoryField);
 
 		SearchInputFieldModel statusField = new SearchInputFieldModel("status", getMessageSource().internationalize(
@@ -257,8 +257,7 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 				.build(jsProjects);
 	}
 
-	private SearchInputFieldModel buildCategoryFieldModel(Locale locale,UserDto currentUser,List<Long> readableProjectIds,Collection<JsonProject> jsProjects){
-
+	private SearchInputFieldModel buildCategoryFieldModel(Locale locale, Collection<JsonProject> jsProjects) {
 
 		SearchInputFieldModel categoryField = new SearchInputFieldModel("category", getMessageSource().internationalize(
 				"requirement.category.label", locale), MULTICASCADEFLAT);

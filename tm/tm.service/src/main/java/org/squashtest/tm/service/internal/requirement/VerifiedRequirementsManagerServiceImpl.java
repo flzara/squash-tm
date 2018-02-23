@@ -592,7 +592,7 @@ List<Long> requirementsIds) {
 		RequirementVersion mainVersion = requirementVersionDao.findOne(requirementVersionId);
 		Requirement mainRequirement = mainVersion.getRequirement();
 		List<RequirementVersion> descendants = findValidDescendants(mainRequirement);
-		findCoverageRate(mainRequirement, mainVersion, descendants, stats);
+		findCoverageRate(mainVersion, descendants, stats);
 		//if we have a valid perimeter (ie iteration(s)), we'll have to calculate verification and validation rates
 		if (!iterationsIds.isEmpty()) {
 			checkPerimeter(iterationsIds, stats);
@@ -997,7 +997,7 @@ List<Long> requirementsIds) {
 
 	}
 
-	private void findCoverageRate(Requirement mainRequirement, RequirementVersion mainVersion,
+	private void findCoverageRate(RequirementVersion mainVersion,
 								  List<RequirementVersion> descendants, RequirementCoverageStat stats) {
 
 		Rate coverageRate = new Rate();

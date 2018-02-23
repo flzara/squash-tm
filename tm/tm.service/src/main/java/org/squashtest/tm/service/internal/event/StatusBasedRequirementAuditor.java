@@ -66,7 +66,7 @@ public class StatusBasedRequirementAuditor implements RequirementAuditor,
 	}
 
 	private void logEvent(RequirementCreation event) {
-		LOGGER.trace("Requirement was created");
+		LOGGER.trace("Requirement was created", event);
 	}
 
 	@Override

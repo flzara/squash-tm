@@ -66,7 +66,9 @@ public class SearchInputInterfaceHelper {
 	@Inject
 	private CampaignAdvancedSearchService campaignAdvancedSearchService;
 
-	public SearchInputInterfaceModel getRequirementSearchInputInterfaceModel(Locale locale, boolean isMilestoneMode,UserDto currentUser,List<Long> readableProjectIds,Collection<JsonProject> jsProjects) {
+	public SearchInputInterfaceModel getRequirementSearchInputInterfaceModel(
+		Locale locale, boolean isMilestoneMode, List<Long> readableProjectIds,
+		Collection<JsonProject> jsProjects) {
 
 		SearchInputInterfaceModel model = new SearchInputInterfaceModel();
 
@@ -80,7 +82,7 @@ public class SearchInputInterfaceHelper {
 		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementHistoryPanel(locale,readableProjectIds));
 
 		// Attributes
-		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementAttributePanel(locale,currentUser,readableProjectIds, jsProjects));
+		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementAttributePanel(locale, jsProjects));
 
 		// Milestones
 		if (!isMilestoneMode && featureManager.isEnabled(FeatureManager.Feature.MILESTONE)) {
