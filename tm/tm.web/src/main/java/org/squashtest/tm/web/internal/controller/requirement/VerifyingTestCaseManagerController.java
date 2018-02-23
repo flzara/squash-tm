@@ -110,7 +110,7 @@ public class VerifyingTestCaseManagerController {
 	@Inject
 	@Named("testCaseWorkspaceDisplayService")
 	private WorkspaceDisplayService testCaseWorkspaceDisplayService;
-	
+
 	@Inject
 	private PermissionEvaluationService permService;
 
@@ -170,25 +170,6 @@ public class VerifyingTestCaseManagerController {
 		model.addAttribute("milestoneConf", milestoneConf);
 
 		return "page/requirement-workspace/show-verifying-testcase-manager";
-	}
-
-	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries,
-														  String[] openedNodes) {
-		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
-
-		DriveNodeBuilder<TestCaseLibraryNode> nodeBuilder = driveNodeBuilder.get();
-
-		Optional<Milestone> milestone = activeMilestoneHolder.getActiveMilestone();
-
-		if (milestone.isPresent()) {
-			nodeBuilder.filterByMilestone(milestone.get());
-		}
-
-		return new JsTreeNodeListBuilder<TestCaseLibrary>(nodeBuilder)
-			.expand(expansionCandidates)
-			.setModel(linkableLibraries)
-			.build();
-
 	}
 
 	@ResponseBody

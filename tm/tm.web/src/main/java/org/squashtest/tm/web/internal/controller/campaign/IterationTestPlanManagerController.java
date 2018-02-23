@@ -238,25 +238,6 @@ public class IterationTestPlanManagerController {
 		return iterationTestPlanManagerService.removeTestPlansFromIteration(testPlanItemsIds, iterationId);
 	}
 
-	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries,
-														  String[] openedNodes) {
-
-
-		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
-
-		DriveNodeBuilder<TestCaseLibraryNode> dNodeBuilder = driveNodeBuilder.get();
-
-		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
-		if (activeMilestone.isPresent()) {
-			dNodeBuilder.filterByMilestone(activeMilestone.get());
-		}
-
-		JsTreeNodeListBuilder<TestCaseLibrary> listBuilder = new JsTreeNodeListBuilder<>(
-			driveNodeBuilder.get());
-
-		return listBuilder.expand(expansionCandidates).setModel(linkableLibraries).build();
-	}
-
 	@ResponseBody
 	@RequestMapping(value = "/iterations/{iterationId}/assignable-users", method = RequestMethod.GET)
 	public List<TestPlanAssignableUser> getAssignUserForIterationTestPlanItem(@PathVariable long iterationId,

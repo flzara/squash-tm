@@ -759,19 +759,7 @@ class QuerydslToolbox {
 		return makePath(clazz, alias, attributeType, attribute);
 
 	}
-
-	// returns the path to the ID of the entity
-	private PathBuilder idPath(ColumnPrototypeInstance column) {
-
-		InternalEntityType type = InternalEntityType.fromSpecializedType(column.getSpecializedType());
-
-		String alias = getQName(type);
-		Class<?> clazz = type.getClass();
-
-		return makePath(clazz, alias, Long.class, "id");
-	}
-
-
+	
 	List<Expression<?>> makeOperands(Operation operation, DataType type, List<String> values) {
 		try {
 

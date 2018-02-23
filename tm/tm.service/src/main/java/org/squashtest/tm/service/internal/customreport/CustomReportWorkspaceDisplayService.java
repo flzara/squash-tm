@@ -412,13 +412,6 @@ public class CustomReportWorkspaceDisplayService {
 		}
 	}
 
-	private void doPermissionCheck(JsTreeNode builtNode, org.squashtest.tm.domain.customreport.CustomReportLibraryNode crln) {
-		Map<String, Boolean> permByName = permissionEvaluationService.hasRoleOrPermissionsOnObject(ROLE_ADMIN, PERM_NAMES, crln);
-		for (Permission perm : NODE_PERMISSIONS) {
-			builtNode.addAttr(perm.getQuality(), permByName.get(perm.name()).toString());
-		}
-	}
-
 	private String getLibrarySimpleClassName() {
 		return CustomReportLibrary.class.getSimpleName();
 	}

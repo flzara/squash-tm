@@ -201,18 +201,6 @@ public class CustomReportWorkspaceController {
 		return Long.parseLong(cookieValue);
 	}
 
-	private Set<Long> convertCookieIds(String[] cookieValues) {
-		Set<Long> nodeIdToOpen = new HashSet<>();
-		for (String value : cookieValues) {
-			try {
-				nodeIdToOpen.add(convertCookieId(value));
-			} catch (NumberFormatException e) {
-				LOGGER.error("Error on parsing js_open cookie. Workspace will be shown with closed tree");
-			}
-		}
-		return nodeIdToOpen;
-	}
-
 	protected MultiMap mapIdsByType(String[] openedNodes) {
 		return JsTreeHelper.mapIdsByType(openedNodes);
 	}

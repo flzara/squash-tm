@@ -166,7 +166,6 @@ public class LinkedRequirementVersionsManagerController {
 		RequirementVersion requirementVersion = requirementVersionFinder.findById(requirementVersionId);
 		PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(requirementVersion, "LINK"));
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(requirementVersion);
-//		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(openedNodes);
 
 		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
 		UserDto currentUser = userAccountService.findCurrentUserDto();
@@ -192,26 +191,6 @@ public class LinkedRequirementVersionsManagerController {
 			linkedReqVersionManager.findAllByRequirementVersion(requirementVersionId, pas);
 
 		return new LinkedRequirementVersionsTableModelHelper(i18nHelper).buildDataModel(holder, sEcho);
-	}
-
-	private List<JsTreeNode> createLinkableLibrariesModel(String[] openedNodes) {
-		List<RequirementLibrary> linkableLibraries = requirementLibraryFinder.findLinkableRequirementLibraries();
-
-		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
-
-		DriveNodeBuilder<RequirementLibraryNode> nodeBuilder = driveNodeBuilder.get();
-
-		Optional<Milestone> milestone = activeMilestoneHolder.getActiveMilestone();
-
-		if (milestone.isPresent()) {
-			nodeBuilder.filterByMilestone(milestone.get());
-		}
-
-		return new JsTreeNodeListBuilder<RequirementLibrary>(nodeBuilder)
-			.expand(expansionCandidates)
-			.setModel(linkableLibraries)
-			.build();
-
 	}
 
 	@ResponseBody
