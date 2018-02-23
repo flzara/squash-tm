@@ -20,6 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE html>
 <html>
 <body>
 	<div class="combo-options">
@@ -50,7 +51,7 @@
 						{{else}}
 						<option value="{{this.id}}">{{this.name}}</option>
 						{{/if}}
-						{{/each}}						
+						{{/each}}
 					</select>
 				</div>
 			</div>
@@ -67,7 +68,7 @@
 						{{else}}
 						<option value="{{this.id}}">{{this.name}}</option>
 						{{/if}}
-						{{/each}}	
+						{{/each}}
 					</select>
 				</div>
 				<div class="display-table-cell">
@@ -81,7 +82,7 @@
 						{{else}}
 						<option value="{{this.id}}">{{this.name}}</option>
 						{{/if}}
-						{{/each}}						
+						{{/each}}
 					</select>
 
 				</div>
@@ -91,7 +92,7 @@
 
 	<div class="text-options">
 		<div>
-			<label>{{labels.reportSummaryLabel}}</label> 
+			<label>{{labels.reportSummaryLabel}}</label>
 			<input type="text" class="summary-text" name="summary"
 					maxlength="128" style="width: 100%" value="{{issue.summary}}"/>
 		</div>
