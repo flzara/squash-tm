@@ -23,6 +23,8 @@ package org.squashtest.tm.web.internal.model.json;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.squashtest.tm.service.internal.dto.CustomFieldModelFactory;
+import org.squashtest.tm.web.internal.model.serializer.CleanCustomFieldValueSerializer;
+import org.squashtest.tm.web.internal.model.serializer.CleanedUnescapedStringSerializer;
 import org.squashtest.tm.web.internal.model.serializer.HtmlEscapeCustomFielOptionSerializer;
 import org.squashtest.tm.web.internal.model.serializer.HtmlEscapeSerializer;
 
@@ -34,13 +36,13 @@ public class SingleValuedCustomFieldModelMixin {
 	@JsonSerialize(using = HtmlEscapeSerializer.class)
 	private String name;
 
-	@JsonSerialize(using = HtmlEscapeSerializer.class)
+	@JsonSerialize(using = CleanedUnescapedStringSerializer.class)
 	private String label;
 
 	@JsonSerialize(using = HtmlEscapeSerializer.class)
 	private String code;
 
-	@JsonSerialize(using = HtmlEscapeSerializer.class)
+	@JsonSerialize(using = CleanCustomFieldValueSerializer.class)
 	private String defaultValue;
 
 

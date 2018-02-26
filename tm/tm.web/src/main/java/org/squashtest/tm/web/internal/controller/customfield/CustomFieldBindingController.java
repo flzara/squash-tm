@@ -200,8 +200,8 @@ public class CustomFieldBindingController {
         @Override
         public Object buildItemData(CustomFieldBinding item) {
             CustomFieldBindingModel json = converter.toJson(item);
-			json.getCustomField().setName(HtmlUtils.htmlEscape(json.getCustomField().getName()));
-			json.getCustomField().setLabel(HtmlUtils.htmlEscape(json.getCustomField().getLabel()));
+			json.getCustomField().setName(json.getCustomField().getName());
+			json.getCustomField().setLabel(json.getCustomField().getLabel());
 
         	return json;
 

@@ -24,6 +24,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.service.internal.dto.CustomFieldBindingModel;
@@ -43,10 +44,11 @@ public class HtmlEscapeCustomFielOptionSerializer extends JsonSerializer<CustomF
 	@Override
 	public void serialize(CustomFieldModelFactory.CustomFieldOptionModel option, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException, JsonProcessingException {
 		Object target = jsonGenerator.getCurrentValue();
-		String label = HTMLCleanupUtils.stripJavascript(option.getLabel());
-		option.setLabel(label);
-		String code = HTMLCleanupUtils.stripJavascript(option.getCode());
-		option.setCode(code);
+
+		String label = HtmlUtils.htmlUnescape(option.getLabel());
+		option.setLabel(HTMLCleanupUtils.stripJavascript(label));
+		String code =  HtmlUtils.htmlUnescape(option.getCode());
+		option.setCode(HTMLCleanupUtils.stripJavascript(code));
 		jsonGenerator.writeObject(option);
 	}
 }

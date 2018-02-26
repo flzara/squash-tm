@@ -43,6 +43,7 @@ public class HtmlEscapeSerializer extends StdSerializer<String> {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("CLEANING STRING {}", s);
 		}
+		s=HtmlUtils.htmlUnescape(s);
 		String cleaned = HtmlUtils.htmlEscape(s);
 		jsonGenerator.writeString(cleaned);
 		if (LOGGER.isDebugEnabled()) {

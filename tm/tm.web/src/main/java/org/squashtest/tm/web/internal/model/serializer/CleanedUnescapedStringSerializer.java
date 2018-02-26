@@ -43,6 +43,7 @@ public class CleanedUnescapedStringSerializer extends StdSerializer<String> {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("CLEANING STRING {}", s);
 		}
+		s = HtmlUtils.htmlUnescape(s);
 		String cleaned = HTMLCleanupUtils.cleanHtml(s);
 		jsonGenerator.writeString(HtmlUtils.htmlUnescape(cleaned));
 		if (LOGGER.isDebugEnabled()) {

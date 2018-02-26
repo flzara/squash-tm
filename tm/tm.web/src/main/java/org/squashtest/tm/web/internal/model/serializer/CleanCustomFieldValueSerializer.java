@@ -37,9 +37,6 @@ import java.io.IOException;
 
 public class CleanCustomFieldValueSerializer extends JsonSerializer<String> {
 
-	@Inject
-	private CustomFieldValuesController cufController;
-
 	@Override
 	public void serialize(String s, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException, JsonProcessingException {
 
@@ -61,9 +58,14 @@ public class CleanCustomFieldValueSerializer extends JsonSerializer<String> {
 		if (input.equals(InputType.RICH_TEXT.name())) {
 			String valueModel = HtmlUtils.htmlUnescape(s);
 			s = HTMLCleanupUtils.cleanHtml(valueModel);
+			s = HTMLCleanupUtils.cleanHtml(s);
+
 		} else if (input.equals(InputType.PLAIN_TEXT.name())) {
 			String valueModel = HtmlUtils.htmlUnescape(s);
 			s = HTMLCleanupUtils.stripJavascript(valueModel);
+			s = HTMLCleanupUtils.stripJavascript(s);
+
+
 		} else {
 			String valueModel = HtmlUtils.htmlUnescape(s);
 			valueModel = HtmlUtils.htmlEscape(valueModel);

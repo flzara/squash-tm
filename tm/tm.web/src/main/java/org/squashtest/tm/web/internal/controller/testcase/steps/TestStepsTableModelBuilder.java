@@ -190,11 +190,17 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 			this.id = value.getId();
 
 			if (MultiValuedCustomFieldValue.class.isAssignableFrom(value.getClass())) {
-				this.values = ((MultiValuedCustomFieldValue) value).getValues();
+				List<String> escapedValues = new ArrayList<>();
+				List<String> rawValues = ((MultiValuedCustomFieldValue) value).getValues();
+				if(rawValues!=null)
+				for(String string : rawValues){
+					escapedValues.add(HTMLCleanupUtils.cleanHtml(string));
+				}
+				this.values = escapedValues;
 			} else if (NumericCustomFieldValue.class.isAssignableFrom(value.getClass())) {
 				this.value = NumericCufHelper.formatOutputNumericCufValue(value.getValue());
 			} else {
-				this.value = value.getValue();
+				this.value = HTMLCleanupUtils.cleanHtml(value.getValue());
 			}
 		}
 
