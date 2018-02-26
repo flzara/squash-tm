@@ -66,6 +66,11 @@ define(['module', 'jquery', 'app/pubsub', 'squash.basicwidgets', 'app/ws/squasht
 
 			}
 
+			if (config.isTestCaseDeleted) {
+				$("#execute-execution-button").prop('disabled', true);
+				$("#ieo-execution-button").prop('disabled', true);
+			}
+
 			var runnerUrl = routing.buildURL('executions.runner', config.basic.executionId);
 			var dryRunStart = function () {
 				return $.ajax({

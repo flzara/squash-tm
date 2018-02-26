@@ -67,6 +67,7 @@
       'execution-page': {
         basic: {
           executionId: ${execution.id},
+          isTestCaseDeleted: ${referencedTc == null},
           automated: ${automated},
           hasBugtracker: ${execution.project.bugtrackerConnected},
           stepstable: {

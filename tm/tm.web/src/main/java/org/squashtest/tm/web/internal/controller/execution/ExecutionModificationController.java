@@ -51,12 +51,12 @@ import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
@@ -64,10 +64,8 @@ import org.squashtest.tm.service.customfield.DenormalizedFieldHelper;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
-import org.squashtest.tm.service.internal.dto.CustomFieldModelFactory;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
-import org.squashtest.tm.web.internal.controller.customfield.CustomFieldValuesController;
 import org.squashtest.tm.web.internal.controller.generic.DataTableColumnDefHelper;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
@@ -142,6 +140,9 @@ public class ExecutionModificationController {
 
 		// execution properties
 		Execution execution = executionModService.findAndInitExecution(executionId);
+		// 7137 - adding the referenced test case in order to know if it is deleted, might be useful so not a boolean
+		TestCase referencedTc = execution.getReferencedTestCase();
+
 		int rank = executionModService.findExecutionRank(executionId);
 		LOGGER.trace("ExecutionModService : getting execution {}, rank {}", executionId, rank);
 
@@ -166,6 +167,7 @@ public class ExecutionModificationController {
 
 		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-execution");
 		mav.addObject("execution", execution);
+		mav.addObject("referencedTestCase", referencedTc);
 		mav.addObject("executionRank", rank + 1);
 		mav.addObject("attachmentSet", attachmentHelper.findAttachments(execution));
 
