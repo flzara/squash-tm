@@ -32,8 +32,10 @@
 		};
 
 		var startResumeClassic = function(runnerUrl) {
+			var token = $("meta[name='_csrf']").attr("content");
 			var data = {
-				'optimized' : 'false'
+				'optimized' : 'false',
+				_csrf: token
 			};
 			var winDef = {
 				name : "classicExecutionRunner",
