@@ -49,6 +49,11 @@ define(['module', 'jquery', 'app/pubsub', 'squash.basicwidgets', 'app/ws/squasht
 			// the info panel
 			infopanel.init();
 
+			var btnlang = translator.get({
+					resume: 'execution.execute.resume.button.label',
+					resumeOER: 'execution.execute.IEO.resume.button.label'
+			});
+
 			// the execute-execution button
 			squashtm.execution.updateBtnlabelFromTable = function () {
 
@@ -56,17 +61,12 @@ define(['module', 'jquery', 'app/pubsub', 'squash.basicwidgets', 'app/ws/squasht
 				// 99.9% of the time we want the btn to display "resume" when statuses are updated
 				// because an execution rarely walks back to 'ready' status, so I'll be lazy here
 
-				var btnlang = translator.get({
-					resume: 'execution.execute.resume.button.label',
-					resumeOER: 'execution.execute.IEO.resume.button.label'
-				});
-
 				$("#execute-execution-button").val(btnlang.resume);
 				$("#ieo-execution-button").val(btnlang.resumeOER);
 
 			}
 
-			if (config.isTestCaseDeleted) {
+			if (config.basic.isTestCaseDeleted && $("#execute-execution-button").val() != btnlang.resume) {
 				$("#execute-execution-button").prop('disabled', true);
 				$("#ieo-execution-button").prop('disabled', true);
 			}

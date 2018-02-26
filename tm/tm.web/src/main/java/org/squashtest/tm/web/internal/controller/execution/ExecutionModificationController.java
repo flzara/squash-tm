@@ -167,7 +167,7 @@ public class ExecutionModificationController {
 
 		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-execution");
 		mav.addObject("execution", execution);
-		mav.addObject("referencedTestCase", referencedTc);
+		mav.addObject("referencedTc", referencedTc);
 		mav.addObject("executionRank", rank + 1);
 		mav.addObject("attachmentSet", attachmentHelper.findAttachments(execution));
 
