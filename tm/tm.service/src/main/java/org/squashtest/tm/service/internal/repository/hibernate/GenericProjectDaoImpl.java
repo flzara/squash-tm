@@ -52,25 +52,25 @@ public class GenericProjectDaoImpl implements CustomGenericProjectDao {
 
 	/**
 	 * @return the coerced project
-	 * @see org.squashtest.tm.service.internal.repository.CustomGenericProjectDao.squashtest.tm.service.internal.repository.CustomGenericProjectDao#coerceTemplateIntoProject(long)
+	 * @see org.squashtest.tm.service.internal.repository.CustomGenericProjectDao#coerceProjectIntoTemplate(long) (long)
 	 */
 	@Override
-	public Project coerceTemplateIntoProject(long templateId) {
+	public ProjectTemplate coerceProjectIntoTemplate(long projectId) {
 		Session session = getCurrentSession();
 
-		ProjectTemplate template = (ProjectTemplate)session.load(ProjectTemplate.class, templateId);
+		Project project = (Project)session.load(Project.class, projectId);
 		session.flush();
-		session.evict(template);
+		session.evict(project);
 
-		SQLQuery query = session.createSQLQuery("update PROJECT set PROJECT_TYPE = 'P' where PROJECT_ID = :id");
-		query.setParameter("id", templateId);
+		SQLQuery query = session.createSQLQuery("update PROJECT set PROJECT_TYPE = 'T' where PROJECT_ID = :id");
+		query.setParameter("id", projectId);
 		final int changedRows = query.executeUpdate();
 		if (changedRows != 1) {
 			throw new HibernateException("Expected 1 changed row but got " + changedRows + " instead");
 		}
 		session.flush();
 
-		return (Project) session.load(Project.class, templateId);
+		return (ProjectTemplate) session.load(ProjectTemplate.class, projectId);
 	}
 
 	@Override

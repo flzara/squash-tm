@@ -31,13 +31,11 @@
 <%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform" %>
 <%@ taglib prefix="hu" uri="http://org.squashtest.tm/taglib/html-utils" %>
 
-<%@ taglib prefix="sec"
-	uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 
-<%@ page language="java" contentType="text/html; charset=utf-8"
-	pageEncoding="utf-8"%>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+
 <%------------------------------------- URLs et back button ----------------------------------------------%>
-
 
 <f:message var="confirmLabel"     key="label.Confirm" />
 <f:message var="cancelLabel"      key="label.Cancel" />
@@ -150,12 +148,12 @@
 
           <sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
 
-            <c:if test="${ adminproject.template }">
+            <c:if test="${ !adminproject.template }">
               <button   id="coerce" class="sq-btn" data-template-id="${ adminproject.id }" >
-                <f:message key='label.coerceTemplateIntoProject' />
+                <f:message key='label.coerceProjectIntoTemplate' />
               </button>
-              <div id="coerce-warning-dialog" title="<f:message key="title.coerceTemplateIntoProject" />" class="alert not-displayed">
-                <f:message key="message.coerceTemplateIntoProject" />
+              <div id="coerce-warning-dialog" title="<f:message key="title.coerceProjectIntoTemplate" />" class="alert not-displayed">
+                <f:message key="message.coerceProjectIntoTemplate" />
                 <input type="button" value="<f:message key='label.Confirm' />" />
                 <input type="button" value="<f:message key='label.Cancel' />" />
               </div>
@@ -596,6 +594,8 @@ var squashtm = squashtm || {};
 squashtm.app = squashtm.app || {} ;
 squashtm.app.messages = squashtm.app.messages || {} ;
 squashtm.app.messages["message.notBlank"] =  "<f:message key='message.notBlank' />";
+var adminproject = {};
+adminproject.isDeletable = ${adminproject.deletable};
 
 require(["common"], function() {
 
@@ -679,7 +679,7 @@ require(["common"], function() {
 						data.forEach(function(val){
 							$tag.squashTagit("createTag", val, "", true);
 						});
-						});
+					});
 	}
 
 	function sendBugTrackerTag(tags){

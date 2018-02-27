@@ -21,7 +21,7 @@
 /**
  * This is a template for a backbone module
  */
-define([ "jquery", "backbone", "handlebars", "jquery.squash.confirmdialog" ], function($, Backbone, Handlebars) {
+define([ "jquery", "backbone", "handlebars", "squash.translator", "jquery.squash.confirmdialog"], function($, Backbone, Handlebars, translator) {
 	function proceedTemplateCoertion(templateId) {
 		return function() {
 			$.ajax({
@@ -57,9 +57,15 @@ define([ "jquery", "backbone", "handlebars", "jquery.squash.confirmdialog" ], fu
 		},
 
 		confirmTemplateCoertion : function(event) {
-			var dom = event.source, button = $(dom), templateId = button.data("template-id");
+			var dom = event.source,
+					button = $(dom),
+					templateId = button.data("template-id");
+			if(adminproject.isDeletable) {
+				this.coerceDialog.confirmDialog("open");
+			} else {
+				$.squash.openMessage(translator.get("popup.title.info"), translator.get("project.delete.cannot.exception"));
+			}
 
-			this.coerceDialog.confirmDialog("open");
 		}
 	});
 

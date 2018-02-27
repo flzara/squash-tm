@@ -68,9 +68,9 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 
 	/**
 	 *
-	 * @param templateId
+	 * @param projectId
 	 */
-	void coerceTemplateIntoProject(long templateId);
+	void coerceProjectIntoTemplate(long projectId);
 
 	/************************************************************************************************/
 	void deleteProject(long projectId);

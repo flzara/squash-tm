@@ -33,7 +33,7 @@ import org.squashtest.tm.service.security.acls.jdbc.ManageableAclService;
 @Service("squashtest.core.security.ObjectIdentityService")
 @Transactional
 public class ObjectIdentityServiceImpl implements ObjectIdentityService {
-	
+
 	@Inject
 	@Named("squashtest.core.security.AclService")
 	private ManageableAclService aclService;
@@ -45,9 +45,6 @@ public class ObjectIdentityServiceImpl implements ObjectIdentityService {
 		aclService.createObjectIdentity(objectIdentity);
 	}
 
-	/**
-	 * @see org.squashtest.tm.service.security.ObjectIdentityService#removeObjectIdentity(long, java.lang.Class)
-	 */
 	@Override
 	public void removeObjectIdentity(long entityId, Class<?> entityType) {
 		ObjectIdentity objectIdentity =  new ObjectIdentityImpl(entityType, entityId);

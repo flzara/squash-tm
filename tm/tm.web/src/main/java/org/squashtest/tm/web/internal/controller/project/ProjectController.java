@@ -50,17 +50,17 @@ public class ProjectController {
 	@ResponseBody
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(value = "/{projectId}", method = RequestMethod.PUT)
-	public void coerceTemplateIntoProject(@RequestBody Map<String, Object> payload, @PathVariable long projectId) {
+	public void coerceProjectIntoTemplate(@RequestBody Map<String, Object> payload, @PathVariable long projectId) {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("PUTting project/{} with payload {}", projectId, payload);
 		}
-		if (payload.get("templateId").equals(projectId)) {
+		long payloadProjectId = (int) payload.get("templateId");
+		if (payloadProjectId != projectId) {
 			throw new IllegalArgumentException(MessageFormat.format(
-				"Cannot coerce ProjectTemplate into Project : project id {0} is not the same as template id {1}",
-				projectId, payload.get("templateId")));
+				"Cannot coerce Project into ProjectTemplate : project id {0} is not the same as template id {1}",
+				projectId, payloadProjectId));
 		}
-
-		genericProjectManager.coerceTemplateIntoProject(projectId);
+		genericProjectManager.coerceProjectIntoTemplate(projectId);
 	}
 
 	@ResponseBody

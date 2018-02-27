@@ -288,25 +288,16 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		return partyDao.findAll(idList);
 	}
 
-	/**
-	 * @see ProjectsPermissionManagementService#copyAssignedUsersFromTemplate(Project, ProjectTemplate)
-	 */
-	@Override
-	public void copyAssignedUsersFromTemplate(Project newProject, ProjectTemplate projectTemplate) {
-		long templateId = projectTemplate.getId();
-		copyAssignedUsersFromTemplate(newProject, templateId);
-	}
-
-	private List<PartyProjectPermissionsBean> findPartyPermissionsBeanByProjectTemplate(long projectId, Class<?> genericClass) {
-		return findPartyPermissionBeanByProjectOfGivenType(projectId, genericClass);
+	private List<PartyProjectPermissionsBean> findPartyPermissionsBeanByProjectTemplate(long genericProjectId, Class<?> genericClass) {
+		return findPartyPermissionBeanByProjectOfGivenType(genericProjectId, genericClass);
 	}
 
 	// clearly suboptimal, on the other hand this method is seldomely invoked
-	private List<PartyProjectPermissionsBean> findPartyPermissionBeanByProjectOfGivenType(long projectId,
+	private List<PartyProjectPermissionsBean> findPartyPermissionBeanByProjectOfGivenType(long genericProjectId,
 		Class<?> projectType) {
 		List<PartyProjectPermissionsBean> newResult = new ArrayList<>();
 
-		List<Object[]> result = aclService.retrievePartyAndAclGroupNameFromIdentityAndClass(projectId, projectType);
+		List<Object[]> result = aclService.retrievePartyAndAclGroupNameFromIdentityAndClass(genericProjectId, projectType);
 		for (Object[] objects : result) {
 			Party party = partyDao.findOne((Long) objects[0]);
 			newResult.add(new PartyProjectPermissionsBean(party, (PermissionGroup) objects[1]));
@@ -341,15 +332,10 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 	}
 
-	/**
-	 * @see org.squashtest.tm.service.project.ProjectsPermissionManagementService#copyAssignedUsersFromTemplate(org.squashtest.tm.domain.project.Project,
-	 *      long)
-	 */
 	@Override
-	public void copyAssignedUsersFromTemplate(Project project, long templateId) {
-		List<PartyProjectPermissionsBean> templatePartyPermissions = findPartyPermissionsBeanByProjectTemplate(templateId, ProjectTemplate.class);
-
-		addPermissionsToProject(templatePartyPermissions, project);
+	public void copyAssignedUsersFromProjectToTemplate(ProjectTemplate template, long projectId) {
+		List<PartyProjectPermissionsBean> projectPartyPermissions = findPartyPermissionsBeanByProjectTemplate(projectId, Project.class);
+		addPermissionsToProject(projectPartyPermissions, template);
 	}
 
 	@Override
@@ -358,12 +344,9 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		copyAssignedUsers(target, sourceId);
 	}
 
-	/**
-	 * @see org.squashtest.tm.service.project.ProjectsPermissionManagementService#removeAllPermissionsFromProjectTemplate(long)
-	 */
 	@Override
-	public void removeAllPermissionsFromProjectTemplate(long templateId) {
-		ObjectIdentity projectRef = new ObjectIdentityImpl(ProjectTemplate.class, templateId);
+	public void removeAllPermissionsFromProject(long projectId) {
+		ObjectIdentity projectRef = new ObjectIdentityImpl(Project.class, projectId);
 		aclService.removeAllResponsibilities(projectRef);
 	}
 
@@ -405,10 +388,10 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		addPermissionsToProject(templatePartyPermissions, targetProject);
 	}
 
-	private void addPermissionsToProject(List<PartyProjectPermissionsBean> partyPermissions, GenericProject project) {
+	private void addPermissionsToProject(List<PartyProjectPermissionsBean> partyPermissions, GenericProject genericProject) {
 		for (PartyProjectPermissionsBean partyPermission : partyPermissions) {
 			long userId = partyPermission.getParty().getId();
-			long projectId = project.getId();
+			long projectId = genericProject.getId();
 			String permissionName = partyPermission.getPermissionGroup().getQualifiedName();
 			addNewPermissionToProject(userId, projectId, permissionName);
 		}

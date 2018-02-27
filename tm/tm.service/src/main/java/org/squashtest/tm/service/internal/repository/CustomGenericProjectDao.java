@@ -25,6 +25,7 @@ import java.util.List;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.project.ProjectTemplate;
 
 /**
  * @author Gregory Fouquet
@@ -32,13 +33,13 @@ import org.squashtest.tm.domain.project.Project;
  */
 public interface CustomGenericProjectDao {
 	/**
-	 * Coerces the template of given id into a projet. This method evicts the template from the session cache, yet it
-	 * should not be invoked when the template is loaded.
+	 * Coerces the Project of given id into a ProjectTemplate. This method evicts the Project from the session cache,
+	 * yet it should not be invoked when the template is loaded.
 	 *
 	 * @param templateId
 	 * @return the coerced project.
 	 */
-	Project coerceTemplateIntoProject(long templateId);
+	ProjectTemplate coerceProjectIntoTemplate(long templateId);
 
 
 

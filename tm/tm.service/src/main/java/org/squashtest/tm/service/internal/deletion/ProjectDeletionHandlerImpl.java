@@ -121,32 +121,24 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 	}
 
 	@Override
-	public void checkProjectContainsOnlyFolders(Project project) {
-		Long nonFolder = projectDao.countNonFoldersInProject(project.getId());
-		LOGGER.debug("The project #{} contains {} non folder library nodes", project.getId(), nonFolder);
+	public void checkProjectContainsOnlyFolders(long projectId){
+		Long nonFolder = projectDao.countNonFoldersInProject(projectId);
+		LOGGER.debug("The project #{} contains {} non folder library nodes", projectId, nonFolder);
 		if (nonFolder > 0L) {
 			throw new CannotDeleteProjectException("non-folders are found in the project");
 		}
+	}
 
+	@Override
+	public void checkProjectContainsOnlyFolders(Project project) {
+		checkProjectContainsOnlyFolders(project.getId());
 	}
 
 	private void doDeleteProject(long projectId) {
 		LOGGER.debug("The project #" + projectId + " is being deleted");
 		GenericProject project = genericProjectDao.findOne(projectId);
 
-		CampaignLibrary campaignLibrary = project.getCampaignLibrary();
-		deleteLibraryContent(campaignLibrary, campaignDeletionHandler);
-
-		TestCaseLibrary testCaseLibrary = project.getTestCaseLibrary();
-		deleteLibraryContent(testCaseLibrary, testCaseDeletionHandker);
-
-		RequirementLibrary requirementLibrary = project.getRequirementLibrary();
-		deleteLibraryContent(requirementLibrary, requirementDeletionHandler);
-
-		//deleting the node associated to custom report library
-		CustomReportLibrary customReportLibrary = project.getCustomReportLibrary();
-		deleteCustomReportLibraryContent(customReportLibrary);
-
+		deleteAllLibrariesContent(project);
 
 		em.unwrap(Session.class).evict(project);
 		project = genericProjectDao.findById(projectId);
@@ -164,6 +156,21 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 
 		removeACLsForProjectAndLibraries(project);
 		genericProjectDao.delete(project);
+	}
+
+	@Override
+	public void deleteAllLibrariesContent(GenericProject genericProject) {
+		CampaignLibrary campaignLibrary = genericProject.getCampaignLibrary();
+		deleteLibraryContent(campaignLibrary, campaignDeletionHandler);
+
+		TestCaseLibrary testCaseLibrary = genericProject.getTestCaseLibrary();
+		deleteLibraryContent(testCaseLibrary, testCaseDeletionHandker);
+
+		RequirementLibrary requirementLibrary = genericProject.getRequirementLibrary();
+		deleteLibraryContent(requirementLibrary, requirementDeletionHandler);
+
+		CustomReportLibrary customReportLibrary = genericProject.getCustomReportLibrary();
+		deleteCustomReportLibraryContent(customReportLibrary);
 	}
 
 	private void deleteCustomReportLibraryContent(CustomReportLibrary customReportLibrary) {
@@ -218,7 +225,8 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 		});
 	}
 
-	private void removeProjectFromFilters(Project project) {
+	@Override
+	public void removeProjectFromFilters(Project project) {
 		List<ProjectFilter> projectFilters = projectFilterDao.findByProjectsId(project.getId());
 		for (ProjectFilter projectFilter : projectFilters) {
 			projectFilter.removeProject(project);

@@ -20,12 +20,13 @@
  */
 package org.squashtest.tm.service.internal.project;
 
+import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 
 /**
- * 
+ *
  * @author mpagnon
- * 
+ *
  */
 public interface ProjectDeletionHandler {
 	/**
@@ -38,4 +39,10 @@ public interface ProjectDeletionHandler {
 	 * @param project
 	 */
 	void checkProjectContainsOnlyFolders(Project project);
+
+	void checkProjectContainsOnlyFolders(long projectId);
+
+	void deleteAllLibrariesContent(GenericProject genericProject);
+
+	void removeProjectFromFilters(Project project);
 }

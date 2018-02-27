@@ -32,35 +32,23 @@ public interface ProjectsPermissionManagementService extends ProjectsPermissionF
 
 	@Override
 	void removeProjectPermission(long userId, long projectId);
-	
-	/**
-	 * Will copy all user permissions of template and apply them to the project and it's libraries.
-	 * 
-	 * @param project
-	 *            : the {@link Project} to copy the permissions to
-	 * @param projectTemplate
-	 *            : the {@link ProjectTemplate} to copy the permissions from
-	 */
-	void copyAssignedUsersFromTemplate(Project project, ProjectTemplate projectTemplate);
 
 	/**
-	 * Same as {@link #copyAssignedUsersFromTemplate(Project, ProjectTemplate)} using the template's id
-	 * 
-	 * @see #copyAssignedUsersFromTemplate(Project, ProjectTemplate)
-	 * @param project
-	 * @param templateId
+	 * Will copy all user permissions of template and apply them to the project and it's libraries.
+	 * @param template
+	 * @param projectId
 	 */
-	void copyAssignedUsersFromTemplate(Project project, long templateId);
+	void copyAssignedUsersFromProjectToTemplate(ProjectTemplate template, long projectId);
 
 	/**
 	 * Removes all the permissions from the given template (not its libraries).
-	 * 
-	 * @param templateId
+	 *
+	 * @param projectId
 	 */
-	void removeAllPermissionsFromProjectTemplate(long templateId);
+	void removeAllPermissionsFromProject(long projectId);
 	/**
 	 * Removes all the permissions from the given object.
-	 * 
+	 *
 	 * @param clazz : the object's class
 	 * @param id : the object's id
 	 */
@@ -70,7 +58,7 @@ public interface ProjectsPermissionManagementService extends ProjectsPermissionF
 
 	/**
 	 * Will copy all user permissions of source generic project and apply them to the target generic project and it's libraries.
-	 * 
+	 *
 	 * @param target
 	 *            : the {@link GenericProject} to copy the permissions to
 	 * @param source

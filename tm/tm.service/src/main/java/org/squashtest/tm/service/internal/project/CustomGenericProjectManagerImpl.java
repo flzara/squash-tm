@@ -250,18 +250,22 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		project.setTestCaseTypes(defaultTypes);
 	}
 
-	/**
-	 * @see org.squashtest.tm.service.project.CustomGenericProjectManager#coerceTemplateIntoProject(long)
-	 */
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
-	public void coerceTemplateIntoProject(long templateId) {
-		Project project = genericProjectDao.coerceTemplateIntoProject(templateId);
+	public void coerceProjectIntoTemplate(long projectId) {
 
-		objectIdentityService.addObjectIdentity(templateId, Project.class);
-		permissionsManager.copyAssignedUsersFromTemplate(project, templateId);
-		permissionsManager.removeAllPermissionsFromProjectTemplate(templateId);
-		objectIdentityService.removeObjectIdentity(templateId, ProjectTemplate.class);
+		Project project = projectDao.findOne(projectId);
+
+		projectDeletionHandler.checkProjectContainsOnlyFolders(projectId);
+		projectDeletionHandler.deleteAllLibrariesContent(project);
+		projectDeletionHandler.removeProjectFromFilters(project);
+
+		ProjectTemplate template = genericProjectDao.coerceProjectIntoTemplate(projectId);
+
+		objectIdentityService.addObjectIdentity(projectId, ProjectTemplate.class);
+		permissionsManager.copyAssignedUsersFromProjectToTemplate(template, projectId);
+		permissionsManager.removeAllPermissionsFromProject(projectId);
+		objectIdentityService.removeObjectIdentity(projectId, Project.class);
 	}
 
 	@Override
