@@ -153,7 +153,7 @@
         <h3 th:text="#{label.Description.selectedRequirement}">Description</h3>
       </div>
       <div id="requirement-version-description"
-           style="height: 25vh; padding-left: 1%;  padding-right: 1%; background: #EBEAE5;" class="tg-body">
+           style="height: 25vh; padding-left: 1%;  padding-right: 1%; background: #EBEAE5;" class="tg-body" disabled="true">
       </div>
     </div>
   </div>
@@ -217,8 +217,7 @@
         </thead>
         <tbody>
         <tr th:each="coverage, iterStat : ${requirementVerifier.coverages}"
-            th:with="catLabel = ${#messages.msgOrNull('__${coverage.version.category.label}__')},
-             escapedDescription=${#strings.escapeXml('__${coverage.version.description}__')}">
+            th:with="catLabel = ${#messages.msgOrNull('__${coverage.version.category.label}__')}">
           <td th:text="${iterStat.count}">1</td>
           <td></td>
           <td th:text="${coverage.version.requirement.project.name}">project</td>
@@ -236,7 +235,7 @@
           <td th:text="#{__${coverage.version.status.i18nKey}__}">OBSOLETE</td>
           <td th:text="${coverage.version.status.level}">0</td>
           <td th:text="${coverage.verifiedByStep}">true</td>
-          <td sq:unsafe-html="${escapedDescription}">description</td>
+          <td sq:unsafe-html="${coverage.version.description}">description</td>
           <td th:text="${coverage.version.category.iconName}">CategoryIconName</td>
         </tr>
         </tbody>

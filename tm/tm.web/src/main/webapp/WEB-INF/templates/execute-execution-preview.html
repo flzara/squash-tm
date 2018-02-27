@@ -147,7 +147,7 @@ documentation :
 
               <label class="display-table-cell" th:text="#{label.Description}">description</label>
 
-              <div id="testcase-description" class="display-table-cell" th:with="escapedDescription=${#strings.escapeXml(execution.tcdescription)}" sq:unsafe-html="${escapedDescription}">
+              <div id="testcase-description" class="display-table-cell"  sq:unsafe-html="${execution.tcdescription}">
 
                 <p th:remove="all">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
                   laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae
@@ -232,7 +232,7 @@ documentation :
         <div id="execute-prerequisite-panel" class="tg-body is-contextual load-links-right-frame" >
     			<div class="display-table">
     			<div class="display-table-row">
-    				<div class="display-table-cell" th:with="escapedPrerequisite=${#strings.escapeXml(execution.prerequisite)}" sq:unsafe-html="${escapedPrerequisite}">
+    				<div class="display-table-cell" sq:unsafe-html="${execution.prerequisite}">
     					<p th:remove="all">
     						consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam
     						quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam,

@@ -22,6 +22,7 @@ package org.squashtest.tm.web.thymeleaf.processor.attr;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.Configuration;
 import org.thymeleaf.dom.Element;
@@ -64,7 +65,7 @@ public final class SquashUnsafeHtmlAttrProcessor extends AbstractChildrenModifie
 		final String attributeValue = element.getAttributeValue(attributeName);
 		LOGGER.trace("Will process attribute value {} of element {}", attributeValue, element);
 
-		final Object fragment = StandardExpressionProcessor.processExpression(arguments, attributeValue);
+		final Object fragment = HTMLCleanupUtils.cleanHtml((String) StandardExpressionProcessor.processExpression(arguments, attributeValue));
 
 		try {
 			final Configuration configuration = arguments.getConfiguration();

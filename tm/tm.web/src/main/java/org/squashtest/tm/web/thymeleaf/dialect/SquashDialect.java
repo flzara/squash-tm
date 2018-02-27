@@ -20,13 +20,6 @@
  */
 package org.squashtest.tm.web.thymeleaf.dialect;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.ServletContext;
-
 import org.squashtest.tm.annotation.WebComponent;
 import org.squashtest.tm.web.thymeleaf.processor.attr.SquashCssAttrProcessor;
 import org.squashtest.tm.web.thymeleaf.processor.attr.SquashIso8601DateAttrProcessor;
@@ -38,11 +31,16 @@ import org.thymeleaf.dialect.AbstractDialect;
 import org.thymeleaf.dialect.IExpressionEnhancingDialect;
 import org.thymeleaf.processor.IProcessor;
 
+import javax.servlet.ServletContext;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Squash dialect for Thmymeleaf
  *
  * @author Gregory Fouquet
- *
  */
 @WebComponent("thymeleaf.dialect.squash")
 public class SquashDialect extends AbstractDialect implements IExpressionEnhancingDialect {
@@ -81,11 +79,11 @@ public class SquashDialect extends AbstractDialect implements IExpressionEnhanci
 	public Map<String, Object> getAdditionalExpressionObjects(IProcessingContext processingContext) {
 		final IContext context = processingContext.getContext();
 		final IWebContext webContext =
-			context instanceof IWebContext? (IWebContext)context : null;
+			context instanceof IWebContext ? (IWebContext) context : null;
 
 		final Map<String, Object> extensions = new HashMap<>(1);
 
-		if (webContext != null){
+		if (webContext != null) {
 			final ServletContext servletContext = webContext.getServletContext();
 			final WorkspaceHelper wHelper = new WorkspaceHelper(servletContext);
 
@@ -96,7 +94,6 @@ public class SquashDialect extends AbstractDialect implements IExpressionEnhanci
 		return extensions;
 
 	}
-
 
 
 }
