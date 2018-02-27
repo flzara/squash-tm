@@ -468,4 +468,8 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 		this.template = template;
 	}
 
+	public boolean isBoundToTemplate() {
+		return template != null;
+	}
+
 }

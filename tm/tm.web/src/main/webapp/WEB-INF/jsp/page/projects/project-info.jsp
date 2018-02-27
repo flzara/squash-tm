@@ -332,29 +332,27 @@
 
 
 			<%----------------------------------------EXEC OPTIONS PANEL----------------------------------------------------%>
+
 			<f:message var="active" key="label.active" />
 			<f:message var="inactive" key="label.inactive" />
+
 			<comp:toggle-panel id="exec-option-panel" titleKey="label.execution.option" open="true">
 				<jsp:attribute name="body">
-
-				<div id="project-exec-option-table" class="display-table">
-						<div class="display-table-row">
-							<div class="display-table-cell">
-								<label for="toggle-EXECUTION-checkbox" class="display-table-cell" style="vertical-align:bottom">
-									<f:message key="label.execution.modification" />
-								</label>
-							</div>
-
-							<div class="display-table-cell">
-	                  			<input id="toggle-EXECUTION-checkbox" type="checkbox"
-	                  				data-def="width=35, on_label=${inactive}, off_label=${active}, checked=${!allowTcModifDuringExec}" style="display: none;"/>
-	                  		</div>
-						</div>
-
-				</div>
+          <div id="project-exec-option-table" class="display-table">
+              <div class="display-table-row">
+                <div class="display-table-cell">
+                  <label for="toggle-EXECUTION-checkbox" class="display-table-cell" style="vertical-align:bottom">
+                    <f:message key="label.execution.modification" />
+                  </label>
+                </div>
+                <div class="display-table-cell">
+                  <input id="toggle-EXECUTION-checkbox" type="checkbox" data-def="width=35, on_label=${inactive},
+                         off_label=${active}, checked=${!allowTcModifDuringExec}" style="display: none;" />
+                </div>
+              </div>
+          </div>
 				</jsp:attribute>
-		    </comp:toggle-panel>
-
+		  </comp:toggle-panel>
 
 			<%----------------------------------------END EXEC OPTIONS PANEL----------------------------------------------------%>
 
@@ -596,6 +594,7 @@ squashtm.app.messages = squashtm.app.messages || {} ;
 squashtm.app.messages["message.notBlank"] =  "<f:message key='message.notBlank' />";
 var adminproject = {};
 adminproject.isDeletable = ${adminproject.deletable};
+adminproject.isBound = ${adminproject.project.template != null};
 
 require(["common"], function() {
 
@@ -625,7 +624,7 @@ require(["common"], function() {
 	      </c:if>
 	}
 
-	function initBugtrackerProjectEditable(){
+	function initBugtrackerProjectEditable() {
 
 	$('#project-bugtracker').editable( "${projectUrl}", {
 	      type: 'select',
@@ -640,7 +639,8 @@ require(["common"], function() {
 
 	}
 
-	function initBugTrackerTag(){
+	function initBugTrackerTag() {
+
 		var tagconf = confman.getStdTagit();
 		var $tag = $("#project-bugtracker-project-name");
 
@@ -663,7 +663,7 @@ require(["common"], function() {
 		});
 
 
-		$tag.on('squashtagitaftertagadded squashtagitaftertagremoved', function(event, ui){
+		$tag.on('squashtagitaftertagadded squashtagitaftertagremoved', function(event, ui) {
 
 			if (!ui.duringInitialization) {
 			if (! $tag.squashTagit("validate", event, ui)){
@@ -673,24 +673,31 @@ require(["common"], function() {
 			}
 		});
 
-		$.ajax({type: 'GET',
-			url: "${projectUrl}/bugtracker/projectName"}).done(
-					function(data){
-						data.forEach(function(val){
+		$.ajax({type: 'GET', url: "${projectUrl}/bugtracker/projectName"}).done(
+					function(data) {
+						data.forEach(function(val) {
 							$tag.squashTagit("createTag", val, "", true);
 						});
 					});
+	  }
+
+    function sendBugTrackerTag(tags){
+      $.ajax({type: 'POST',
+        url: "${projectUrl}",
+        data : {id:"project-bugtracker-project-name",
+          values:tags}
+    });
 	}
 
-	function sendBugTrackerTag(tags){
-		$.ajax({type: 'POST',
-			url: "${projectUrl}",
-			data : {id:"project-bugtracker-project-name",
-				values:tags}
-	});
-
-
-	}
+  function toggleIfParameterIsEnabled(toggleFunction, parameter) {
+    if(!adminproject.isBound) {
+      toggleFunction(parameter);
+    } else {
+      // Why is it working ?
+      $.squash.openMessage("<f:message key='title.project.lockedParameter'/>",
+                           "<f:message key='message.project.lockedParameter'/>").resolve();
+    }
+  }
 
 	$(function() {
 
@@ -699,25 +706,25 @@ require(["common"], function() {
 		 		configureActivation("SETTLED");
 		 		configureActivation("EXECUTION");
 
-		 		$("#toggle-EXECUTION-checkbox").change(function(){
-		 			toogleExec();
+		 		$("#toggle-EXECUTION-checkbox").change(function() {
+		 		  toggleIfParameterIsEnabled(toggleExec);
 		 		});
 
-		 		$("#toggle-UNTESTABLE-checkbox").change(function(){
-		 			toggleStatusActivation("UNTESTABLE");
+		 		$("#toggle-UNTESTABLE-checkbox").change(function() {
+		 		  toggleIfParameterIsEnabled(toggleStatusActivation, "UNTESTABLE");
 		 		});
-		 		$("#toggle-SETTLED-checkbox").change(function(){
-		 			toggleStatusActivation("SETTLED");
+		 		$("#toggle-SETTLED-checkbox").change(function() {
+		 		  toggleIfParameterIsEnabled(toggleStatusActivation, "SETTLED");
 		 		});
 
 		 		initBugtrackerProjectEditable();
 		 		if (${adminproject.project.bugtrackerConnected}) {
-		 		initBugTrackerTag();
+		 		  initBugTrackerTag();
 		 		}
 		 		new ProjectToolbar();
 	});
 
-	function toogleExec(){
+	function toggleExec(){
 		var shouldActivate = ! $("#toggle-EXECUTION-checkbox").prop('checked');
 
 			$.ajax({

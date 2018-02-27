@@ -24,6 +24,7 @@ import org.squashtest.tm.domain.campaign.CampaignLibrary
 import org.squashtest.tm.domain.execution.ExecutionStatus
 import org.squashtest.tm.domain.infolist.InfoList
 import org.squashtest.tm.domain.project.GenericProject
+import org.squashtest.tm.exception.project.LockedParameterException
 import org.squashtest.tm.service.internal.repository.ProjectDao
 import org.squashtest.tm.service.internal.repository.ProjectTemplateDao;
 
@@ -428,6 +429,32 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		library.allowsStatus(ExecutionStatus.UNTESTABLE)
 	}
 
+	def "#enableExecutionStatus - Should not enable an ExecutionStatus because the Project is bound to a Template"() {
+
+		given:
+
+		ProjectTemplate template = new ProjectTemplate()
+
+		Project project = new Project()
+		project.setTemplate(template)
+		CampaignLibrary library = new CampaignLibrary()
+		Set<ExecutionStatus> disabledStatuses = [ExecutionStatus.UNTESTABLE]
+		library.setDisabledStatuses(disabledStatuses)
+		project.setCampaignLibrary(library)
+
+		and:
+
+		genericProjectDao.findOne(44L) >> project
+
+		when:
+
+		manager.enableExecutionStatus(44L, ExecutionStatus.UNTESTABLE)
+
+		then:
+
+		thrown LockedParameterException
+	}
+
 	def "#enableExecutionStatus - Should enable an ExecutionStatus in a Template and propagate it to its bound Project"() {
 
 		given:
@@ -483,6 +510,32 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		!library.allowsStatus(ExecutionStatus.UNTESTABLE)
 	}
 
+	def "#disableExecutionStatus - Should not disable an ExecutionStatus because the Project is bound to a Template"() {
+
+		given:
+
+		ProjectTemplate template = new ProjectTemplate()
+
+		Project project = new Project()
+		project.setTemplate(template)
+		CampaignLibrary library = new CampaignLibrary()
+		Set<ExecutionStatus> disabledStatuses = []
+		library.setDisabledStatuses(disabledStatuses)
+		project.setCampaignLibrary(library)
+
+		and:
+
+		genericProjectDao.findOne(404L) >> project
+
+		when:
+
+		manager.disableExecutionStatus(404L, ExecutionStatus.UNTESTABLE)
+
+		then:
+
+		thrown LockedParameterException
+	}
+
 	def "#disableExecutionStatus - Should disable an ExecutionStatus in a Template and propagate it to its bound Project"() {
 
 		given:
@@ -533,6 +586,30 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		then:
 
 		project.allowTcModifDuringExec()
+
+	}
+
+	def "#changeAllowTcModifDuringExec - Should not change TC-Modif-During-Exec parameter because the Project is bound to a Template"() {
+
+		given:
+
+		ProjectTemplate template = new ProjectTemplate()
+
+		Project project = new Project()
+		project.setAllowTcModifDuringExec(false)
+		project.setTemplate(template)
+
+		and:
+
+		genericProjectDao.findOne(404L) >> project
+
+		when:
+
+		manager.changeAllowTcModifDuringExec(404L, true)
+
+		then:
+
+		thrown LockedParameterException
 
 	}
 

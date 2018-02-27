@@ -86,6 +86,7 @@ import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.exception.CompositeDomainException;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.exception.UnknownEntityException;
+import org.squashtest.tm.exception.project.LockedParameterException;
 import org.squashtest.tm.exception.testautomation.DuplicateTMLabelException;
 import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService;
@@ -582,27 +583,37 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@Override
 	public void enableExecutionStatus(long projectId, ExecutionStatus executionStatus) {
 		GenericProject project = genericProjectDao.findOne(projectId);
-		checkManageProjectOrAdmin(project);
-		project.getCampaignLibrary().enableStatus(executionStatus);
-		if(ProjectHelper.isTemplate(project)) {
-			Collection<Project> boundProjects = projectDao.findAllBoundToTemplate(projectId);
-			for(Project boundProject : boundProjects) {
-				boundProject.getCampaignLibrary().enableStatus(executionStatus);
+		// Parameter is locked if it is a bound Project
+		if(!project.isBoundToTemplate()) {
+			checkManageProjectOrAdmin(project);
+			project.getCampaignLibrary().enableStatus(executionStatus);
+			if (ProjectHelper.isTemplate(project)) {
+				Collection<Project> boundProjects = projectDao.findAllBoundToTemplate(projectId);
+				for (Project boundProject : boundProjects) {
+					boundProject.getCampaignLibrary().enableStatus(executionStatus);
+				}
 			}
+		} else {
+			throw new LockedParameterException();
 		}
 	}
 
 	@Override
 	public void disableExecutionStatus(long projectId, ExecutionStatus executionStatus) {
 		GenericProject project = genericProjectDao.findOne(projectId);
-		checkManageProjectOrAdmin(project);
-		project.getCampaignLibrary().disableStatus(executionStatus);
-		/* If the GenericProject is a Template, propagate modification to bound Projects. */
-		if(ProjectHelper.isTemplate(project)) {
-			Collection<Project> boundProjects = projectDao.findAllBoundToTemplate(projectId);
-			for(Project boundProject : boundProjects) {
-				boundProject.getCampaignLibrary().disableStatus(executionStatus);
+		// Parameter is locked if the Project is bound to a Template
+		if(!project.isBoundToTemplate()) {
+			checkManageProjectOrAdmin(project);
+			project.getCampaignLibrary().disableStatus(executionStatus);
+			/* If the GenericProject is a Template, propagate modification to bound Projects. */
+			if (ProjectHelper.isTemplate(project)) {
+				Collection<Project> boundProjects = projectDao.findAllBoundToTemplate(projectId);
+				for (Project boundProject : boundProjects) {
+					boundProject.getCampaignLibrary().disableStatus(executionStatus);
+				}
 			}
+		} else {
+			throw new LockedParameterException();
 		}
 	}
 
@@ -1003,10 +1014,14 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@Override
 	public void changeAllowTcModifDuringExec(long projectId, boolean active) {
 		GenericProject genericProject = genericProjectDao.findOne(projectId);
-		genericProject.setAllowTcModifDuringExec(active);
-		/* If project is a Template, propagate on all the bound projects. */
-		if(ProjectHelper.isTemplate(genericProject)) {
-			templateDao.propagateAllowTcModifDuringExec(projectId, active);
+		if(!genericProject.isBoundToTemplate()) {
+			genericProject.setAllowTcModifDuringExec(active);
+			/* If project is a Template, propagate on all the bound projects. */
+			if (ProjectHelper.isTemplate(genericProject)) {
+				templateDao.propagateAllowTcModifDuringExec(projectId, active);
+			}
+		} else {
+			throw new LockedParameterException();
 		}
 	}
 }
