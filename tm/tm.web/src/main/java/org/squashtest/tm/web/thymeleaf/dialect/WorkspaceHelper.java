@@ -45,6 +45,8 @@ import java.util.Collection;
  */
 public class WorkspaceHelper {
 
+	public static final String HELPER_NAME = "workspace";
+
 	private final ServletContext servletContext;
 
 	public WorkspaceHelper(final ServletContext servletContext) {

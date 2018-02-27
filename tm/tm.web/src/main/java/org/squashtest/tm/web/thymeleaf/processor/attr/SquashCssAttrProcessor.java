@@ -23,13 +23,20 @@ package org.squashtest.tm.web.thymeleaf.processor.attr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.web.internal.context.ServletContextParameters;
-import org.thymeleaf.Arguments;
 import org.thymeleaf.context.IContext;
+import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.context.IWebContext;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.processor.attr.AbstractSingleAttributeModifierAttrProcessor;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
-import org.thymeleaf.util.PrefixUtils;
+import org.thymeleaf.engine.AttributeName;
+import org.thymeleaf.engine.AttributeNames;
+import org.thymeleaf.model.IProcessableElementTag;
+import org.thymeleaf.processor.element.AbstractAttributeTagProcessor;
+import org.thymeleaf.processor.element.IElementTagProcessor;
+import org.thymeleaf.processor.element.IElementTagStructureHandler;
+import org.thymeleaf.standard.expression.IStandardExpression;
+import org.thymeleaf.standard.expression.IStandardExpressionParser;
+import org.thymeleaf.standard.expression.StandardExpressions;
+import org.thymeleaf.templatemode.TemplateMode;
+import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.*;
 
 /**
  * Processes <code>sq:css</code> attributes. Attribute value is expected to be the unqualified name of a stylesheet
@@ -39,8 +46,13 @@ import org.thymeleaf.util.PrefixUtils;
  * @author Gregory Fouquet
  *
  */
-public class SquashCssAttrProcessor extends AbstractSingleAttributeModifierAttrProcessor {
+public class SquashCssAttrProcessor extends AbstractAttributeTagProcessor implements IElementTagProcessor{
 	private static final Logger LOGGER = LoggerFactory.getLogger(SquashCssAttrProcessor.class);
+
+
+	private static final String SQ_CSS = "css";
+	private static final String HREF = "href";
+	private static final int PRECEDENCE = 1300;
 
 	/**
 	 * Partial path starting with a '/' and matching the current squash tm version.
@@ -48,54 +60,44 @@ public class SquashCssAttrProcessor extends AbstractSingleAttributeModifierAttrP
 	private String versionPathToken;
 
 	/**
-	 * Creates a priocessor for the <code>css</code> attribute
+	 * Creates a processor for the <code>css</code> attribute
 	 */
-	public SquashCssAttrProcessor() {
-		super("css");
+	public SquashCssAttrProcessor(String dialectPrefix) {
+		super(
+			TemplateMode.TEXT,
+			dialectPrefix,
+			MATCH_ANY_TAG,
+			NO_TAG_PREFIX,
+			SQ_CSS,
+			REQUIRE_BOTH_DIALECT_PREFIX_AND_ATTRIBUTE,
+			PRECEDENCE,
+			REMOVE_PSEUDO_ATTRIBUTE_WHEN_PROCESSED
+		);
 	}
 
-	/**
-	 * @see org.thymeleaf.processor.attr.AbstractSingleAttributeModifierAttrProcessor#getTargetAttributeName(org.thymeleaf.Arguments,
-	 *      org.thymeleaf.dom.Element, java.lang.String)
-	 */
+
 	@Override
-	protected String getTargetAttributeName(Arguments arguments, Element element, String attributeName) {
-		return PrefixUtils.getUnprefixed("href");
-	}
+	protected void doProcess(ITemplateContext context, IProcessableElementTag tag, AttributeName attributeName, String attributeValue, IElementTagStructureHandler structureHandler) {
 
-	/**
-	 * @see org.thymeleaf.processor.attr.AbstractAttributeModifierAttrProcessor#getModificationType(org.thymeleaf.Arguments,
-	 *      org.thymeleaf.dom.Element, java.lang.String, java.lang.String)
-	 */
-	@Override
-	protected ModificationType getModificationType(Arguments arguments, Element element, String attributeName,
-	                                               String newAttributeName) {
-		return ModificationType.SUBSTITUTION;
-	}
+		// resolve the URL
+		final IStandardExpressionParser parser = StandardExpressions.getExpressionParser(context.getConfiguration());
 
-	/**
-	 * @see org.thymeleaf.processor.attr.AbstractAttributeModifierAttrProcessor#removeAttributeIfEmpty(org.thymeleaf.Arguments,
-	 *      org.thymeleaf.dom.Element, java.lang.String, java.lang.String)
-	 */
-	@Override
-	protected boolean removeAttributeIfEmpty(Arguments arguments, Element element, String attributeName,
-	                                         String newAttributeName) {
-		return false;
-	}
+		final String cssUrlExpression = "@{" + attributeValue + "}";
+		LOGGER.debug("Stylesheet named '{}' will be resolved using the expression '{}'", attributeValue,
+			cssUrlExpression);
 
-	/**
-	 * @see org.thymeleaf.processor.AbstractProcessor#getPrecedence()
-	 */
-	@Override
-	public int getPrecedence() {
-		// after StandardSingleNonRemovableAttributeModifierAttrProcessor
-		return 1300;
-	}
+		final String toEvaluate = "@{/styles" + getVersionPathToken(context) + '/' + attributeValue + "}";
+		final IStandardExpression expression = parser.parseExpression(context, toEvaluate);
+		final String evaluatedUrl = (String)expression.execute(context);
 
-	/**
-	 * @see org.thymeleaf.processor.attr.AbstractSingleAttributeModifierAttrProcessor#getTargetAttributeValue(org.thymeleaf.Arguments,
-	 *      org.thymeleaf.dom.Element, java.lang.String)
-	 */
+		LOGGER.trace("Stylesheet resolved to url '{}'", evaluatedUrl);
+
+		// now set the href with it
+		AttributeName attrHref = AttributeNames.forHTMLName(HREF);
+		structureHandler.replaceAttribute(attributeName, HREF, evaluatedUrl);
+
+	}
+/*
 	@Override
 	protected String getTargetAttributeValue(Arguments arguments, Element element, String attributeName) {
 		final String attributeValue = element.getAttributeValue(attributeName);
@@ -113,7 +115,7 @@ public class SquashCssAttrProcessor extends AbstractSingleAttributeModifierAttrP
 
 		return result == null ? "" : result.toString();
 	}
-
+*/
 	/**
 	 * @return
 	 */
@@ -133,13 +135,5 @@ public class SquashCssAttrProcessor extends AbstractSingleAttributeModifierAttrP
 		}
 	}
 
-	/**
-	 * @see org.thymeleaf.processor.attr.AbstractAttributeModifierAttrProcessor#recomputeProcessorsAfterExecution(org.thymeleaf.Arguments,
-	 *      org.thymeleaf.dom.Element, java.lang.String)
-	 */
-	@Override
-	protected boolean recomputeProcessorsAfterExecution(Arguments arguments, Element element, String attributeName) {
-		return false;
-	}
 
 }

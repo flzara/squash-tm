@@ -20,50 +20,82 @@
  */
 /*
  * =============================================================================
- * 
+ *
  *   Copyright (c) 2011-2014, The THYMELEAF team (http://www.thymeleaf.org)
- * 
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
- * 
+ *
  * =============================================================================
  */
 package org.squashtest.tm.web.thymeleaf.processor.attr;
 
-import org.thymeleaf.Arguments;
-import org.thymeleaf.Configuration;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.processor.attr.AbstractTextChildModifierAttrProcessor;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.thymeleaf.context.ITemplateContext;
+import org.thymeleaf.engine.AttributeName;
+import org.thymeleaf.model.IProcessableElementTag;
+import org.thymeleaf.processor.element.AbstractAttributeTagProcessor;
+import org.thymeleaf.processor.element.IElementTagProcessor;
+import org.thymeleaf.processor.element.IElementTagStructureHandler;
 import org.thymeleaf.standard.expression.IStandardExpression;
 import org.thymeleaf.standard.expression.IStandardExpressionParser;
 import org.thymeleaf.standard.expression.StandardExpressions;
+import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.util.DateUtils;
+import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.*;
 
 /**
  * Processes <code>sq:ts</code> attributes. The attribute value has to be an expression which resolves to
  * <code>java.util.Date</code>. The content of this element is replaced by the corresponding ISO 8601 timestamp
- * 
+ *
  * This processor takes precedence over <code>th:text</code>
- * 
- * 
+ *
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
-public class SquashIso8601DateAttrProcessor extends AbstractTextChildModifierAttrProcessor {
+public class SquashIso8601DateAttrProcessor extends AbstractAttributeTagProcessor implements IElementTagProcessor {
 
-	public SquashIso8601DateAttrProcessor() {
-		super("iso-date");
+	private static final int PRECEDENCE = 1000;
+	private static final String SQ_TIMESTAMP = "ts";
+
+	public SquashIso8601DateAttrProcessor(String dialectPrefix) {
+		//super("iso-date");
+		super(
+			TemplateMode.TEXT,
+			dialectPrefix,
+			MATCH_ANY_TAG,
+			NO_TAG_PREFIX,
+			SQ_TIMESTAMP,
+			REQUIRE_BOTH_DIALECT_PREFIX_AND_ATTRIBUTE,
+			PRECEDENCE,
+			REMOVE_PSEUDO_ATTRIBUTE_WHEN_PROCESSED
+		);
 	}
 
+
+	@Override
+	protected void doProcess(ITemplateContext context, IProcessableElementTag tag, AttributeName attributeName, String attributeValue, IElementTagStructureHandler structureHandler) {
+
+		final IStandardExpressionParser parser = StandardExpressions.getExpressionParser(context.getConfiguration());
+		final IStandardExpression expression = parser.parseExpression(context, attributeValue);
+		final Object parsed = expression.execute(context);
+
+		String asString = parsed == null ? "" : DateUtils.formatISO(parsed);
+
+		structureHandler.setBody(asString, false);
+
+	}
+/*
 	@Override
 	protected final String getText(final Arguments arguments, final Element element, final String attributeName) {
 
@@ -79,15 +111,6 @@ public class SquashIso8601DateAttrProcessor extends AbstractTextChildModifierAtt
 
 		return result == null ? "" : DateUtils.formatISO(result);
 
-	}
-
-	/**
-	 * @see org.thymeleaf.processor.AbstractProcessor#getPrecedence()
-	 */
-	@Override
-	public int getPrecedence() {
-		// less precedence than th:text so that this one is processed last
-		return 1000;
-	}
+	}*/
 
 }

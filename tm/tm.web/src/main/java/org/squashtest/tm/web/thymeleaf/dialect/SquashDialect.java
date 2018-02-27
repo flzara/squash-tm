@@ -20,79 +20,104 @@
  */
 package org.squashtest.tm.web.thymeleaf.dialect;
 
+import java.util.HashSet;
+import java.util.Set;
+
+
 import org.squashtest.tm.annotation.WebComponent;
 import org.squashtest.tm.web.thymeleaf.processor.attr.SquashCssAttrProcessor;
 import org.squashtest.tm.web.thymeleaf.processor.attr.SquashIso8601DateAttrProcessor;
-import org.squashtest.tm.web.thymeleaf.processor.attr.SquashUnsafeHtmlAttrProcessor;
-import org.thymeleaf.context.IContext;
-import org.thymeleaf.context.IProcessingContext;
+import org.thymeleaf.context.IExpressionContext;
 import org.thymeleaf.context.IWebContext;
-import org.thymeleaf.dialect.AbstractDialect;
-import org.thymeleaf.dialect.IExpressionEnhancingDialect;
+import org.thymeleaf.dialect.AbstractProcessorDialect;
+import org.thymeleaf.dialect.IExpressionObjectDialect;
+import org.thymeleaf.dialect.IProcessorDialect;
+import org.thymeleaf.expression.IExpressionObjectFactory;
 import org.thymeleaf.processor.IProcessor;
 
 import javax.servlet.ServletContext;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Squash dialect for Thmymeleaf
  *
  * @author Gregory Fouquet
+ * @author bsiri
+ *
  */
-@WebComponent("thymeleaf.dialect.squash")
-public class SquashDialect extends AbstractDialect implements IExpressionEnhancingDialect {
+@WebComponent("thymeleaf.dialect.squashdialect")
+public class SquashDialect extends AbstractProcessorDialect implements IProcessorDialect, IExpressionObjectDialect{
 
-	/**
-	 * @see org.thymeleaf.dialect.IDialect#getPrefix()
-	 */
-	@Override
-	public String getPrefix() {
-		return "sq";
+	public static final String SQUASH_DIALECT = "SquashDialect";
+	public static final String PREFIX = "sq";
+	public static final int PRECEDENCE = 1200;
+	private static final ExpressionObjectFactory EXPRESSION_OBJECT_FACTORY = new ExpressionObjectFactory();
+
+	public SquashDialect() {
+		super(SQUASH_DIALECT, PREFIX, PRECEDENCE);
 	}
 
-	/**
-	 * @see org.thymeleaf.dialect.IDialect#isLenient()
-	 */
-	@Override
-	public boolean isLenient() {
-		return false;
-	}
 
 	/**
-	 * @see org.thymeleaf.dialect.IDialect#getProcessors()
+	 * @see org.thymeleaf.dialect.IProcessorDialect#getProcessors(String)
 	 */
 	@Override
-	public Set<IProcessor> getProcessors() {
+	public Set<IProcessor> getProcessors(String dialectPrefix) {
 		Set<IProcessor> processors = new HashSet<>(3);
-		processors.add(new SquashUnsafeHtmlAttrProcessor());
-		processors.add(new SquashCssAttrProcessor());
-		processors.add(new SquashIso8601DateAttrProcessor());
+		// TODO : is that one obsolete ?
+		//processors.add(new SquashUnsafeHtmlAttrProcessor());
+
+		processors.add(new SquashCssAttrProcessor(dialectPrefix));
+		processors.add(new SquashIso8601DateAttrProcessor(dialectPrefix));
 		return processors;
 	}
 
-
-	/* partly ripped from SpringSecutiryDialect*/
 	@Override
-	public Map<String, Object> getAdditionalExpressionObjects(IProcessingContext processingContext) {
-		final IContext context = processingContext.getContext();
-		final IWebContext webContext =
-			context instanceof IWebContext ? (IWebContext) context : null;
+	public IExpressionObjectFactory getExpressionObjectFactory() {
+		return EXPRESSION_OBJECT_FACTORY;
+	}
 
-		final Map<String, Object> extensions = new HashMap<>(1);
 
-		if (webContext != null) {
-			final ServletContext servletContext = webContext.getServletContext();
-			final WorkspaceHelper wHelper = new WorkspaceHelper(servletContext);
 
-			extensions.put("workspace", wHelper);
 
+	private static final class ExpressionObjectFactory implements IExpressionObjectFactory{
+
+		private static final Set<String> HELPERS;
+		static {
+			HELPERS = new HashSet<>();
+			HELPERS.add(WorkspaceHelper.HELPER_NAME);
 		}
 
-		return extensions;
+		@Override
+		public Set<String> getAllExpressionObjectNames() {
+			return HELPERS;
+		}
 
+
+		/*
+			Partly ripped from SpringSecurityDialect
+		 	For now, no test on the expressionObjectName because we only have "workspace"
+		*/
+		@Override
+		public Object buildObject(IExpressionContext context, String expressionObjectName) {
+
+			Object result = null;
+
+			if (context instanceof IWebContext){
+				IWebContext webContext = (IWebContext)context;
+				ServletContext servletContext = webContext.getServletContext();
+				result = new WorkspaceHelper(servletContext);
+			}
+
+			return result;
+		}
+
+		/*
+		 For now, no test on the expressionObjectName because we only have "workspace"
+		 */
+		@Override
+		public boolean isCacheable(String expressionObjectName) {
+			return false;
+		}
 	}
 
 

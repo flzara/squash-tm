@@ -25,6 +25,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,9 +44,8 @@ import org.squashtest.tm.web.internal.filter.MultipartFilterExceptionAware;
 import org.squashtest.tm.web.internal.filter.UserConcurrentRequestLockFilter;
 import org.squashtest.tm.web.internal.listener.HttpSessionLifecycleLogger;
 import org.squashtest.tm.web.internal.listener.OpenedEntitiesLifecycleListener;
-import org.thymeleaf.spring4.resourceresolver.SpringResourceResourceResolver;
+import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
-import org.thymeleaf.templateresolver.TemplateResolver;
 
 import javax.inject.Inject;
 import javax.servlet.DispatcherType;
@@ -65,8 +65,8 @@ import static org.springframework.util.StringUtils.trimAllWhitespace;
 @Configuration
 public class SquashServletConfig {
 
-        private static final String IMPORTER_REGEX = ".*/importer/.*";
-        private static final String UPLOAD_REGEX = ".*/attachments/upload.*";
+    private static final String IMPORTER_REGEX = ".*/importer/.*";
+    private static final String UPLOAD_REGEX = ".*/attachments/upload.*";
 
 
 	@Inject
@@ -104,7 +104,7 @@ public class SquashServletConfig {
 	 *
 	 * @return thymeleaf template resolver for fragments
 	 */
-	@Bean(name = "thymeleaf.templateResolver.fragment")
+	/*@Bean(name = "thymeleaf.templateResolver.fragment")
 	public ITemplateResolver fragmentTemplateResolver(SpringResourceResourceResolver resourceResolver) {
 		TemplateResolver res = new TemplateResolver();
 		res.setResourceResolver(resourceResolver);
@@ -126,8 +126,32 @@ public class SquashServletConfig {
 		res.setCharacterEncoding(thymeleafProperties.getEncoding().name());
 		res.setCacheable(thymeleafProperties.isCache());
 		return res;
+	}*/
+
+
+	@Bean(name = "thymeleaf.templateResolver.fragment")
+	public ITemplateResolver fragmentTemplateResolver(ApplicationContext context) {
+		SpringResourceTemplateResolver res = new SpringResourceTemplateResolver();
+		res.setApplicationContext(context);
+		res.setPrefix(thymeleafProperties.getPrefix());
+		res.setSuffix(".html");
+		res.setTemplateMode(thymeleafProperties.getMode());
+		res.setCharacterEncoding(thymeleafProperties.getEncoding().name());
+		res.setCacheable(thymeleafProperties.isCache());
+		return res;
 	}
 
+	@Bean(name = "thymeleaf.templateResolver.plugins")
+	public ITemplateResolver thymeleafClasspathTemplateResolver(ApplicationContext context) {
+		SpringResourceTemplateResolver res = new SpringResourceTemplateResolver();
+		res.setApplicationContext(context);
+		res.setPrefix("classpath:/templates/");
+		res.setSuffix("");
+		res.setTemplateMode(thymeleafProperties.getMode());
+		res.setCharacterEncoding(thymeleafProperties.getEncoding().name());
+		res.setCacheable(thymeleafProperties.isCache());
+		return res;
+	}
 
 	@Bean
 	@Role(BeanDefinition.ROLE_SUPPORT)
@@ -157,12 +181,12 @@ public class SquashServletConfig {
 		return bean;
 	}
 
-        @Bean
-        public FilterRegistrationBean multipartFilterRegistrationBean() {
-            final MultipartFilterExceptionAware multipartFilter = new MultipartFilterExceptionAware();
-            final FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean(multipartFilter);
-            return filterRegistrationBean;
-        }
+    @Bean
+    public FilterRegistrationBean multipartFilterRegistrationBean() {
+        final MultipartFilterExceptionAware multipartFilter = new MultipartFilterExceptionAware();
+        final FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean(multipartFilter);
+        return filterRegistrationBean;
+    }
 
 	@Bean
 	@Order(1)
