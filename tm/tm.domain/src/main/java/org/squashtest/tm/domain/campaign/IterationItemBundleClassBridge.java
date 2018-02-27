@@ -48,7 +48,7 @@ public class IterationItemBundleClassBridge implements FieldBridge{
 	public static final String FIELD_TC_ID 				= "referencedTestCase.id";
 	public static final String FIELD_TC_NAME 			= "referencedTestCase.name";
 	public static final String FIELD_TC_REFERENCE 		= "referencedTestCase.reference";
-
+	public static final String FIELD_TC_IMPORTANCE		= "referencedTestCase.importance";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(IterationItemBundleClassBridge.class);
 
@@ -77,16 +77,16 @@ public class IterationItemBundleClassBridge implements FieldBridge{
 		}
 
 		TestCase tc = item.getReferencedTestCase();
-
-		// note : not indexing testcase id as a LongField because result is weird
+		String importance = tc.getImportance().getLevel()+"-"+tc.getImportance().toString();
+			// note : not indexing testcase id as a LongField because result is weird
 		Field tcId = new StringField(FIELD_TC_ID, tc.getId().toString(), Field.Store.YES);
 		Field tcName = new StringField(FIELD_TC_NAME, tc.getName().toLowerCase(), Field.Store.YES);
 		Field tcRef = new StringField(FIELD_TC_REFERENCE, tc.getReference().toLowerCase(), Field.Store.YES);
-
+		Field tcImportance = new StringField(FIELD_TC_IMPORTANCE, importance, Field.Store.YES);
 		document.add(tcId);
 		document.add(tcName);
 		document.add(tcRef);
-
+		document.add(tcImportance);
 	}
 
 
