@@ -54,6 +54,11 @@ define(['module', 'jquery', 'app/pubsub', 'squash.basicwidgets', 'app/ws/squasht
 					resumeOER: 'execution.execute.IEO.resume.button.label'
 			});
 
+			if (config.basic.isTestCaseDeleted && $("#execute-execution-button").val() != btnlang.resume) {
+				$("#execute-execution-button").prop('disabled', true);
+				$("#ieo-execution-button").prop('disabled', true);
+			}
+
 			// the execute-execution button
 			squashtm.execution.updateBtnlabelFromTable = function () {
 
@@ -63,13 +68,12 @@ define(['module', 'jquery', 'app/pubsub', 'squash.basicwidgets', 'app/ws/squasht
 
 				$("#execute-execution-button").val(btnlang.resume);
 				$("#ieo-execution-button").val(btnlang.resumeOER);
+				$("#execute-execution-button").prop('disabled', false);
+        $("#ieo-execution-button").prop('disabled', false);
 
 			}
 
-			if (config.basic.isTestCaseDeleted && $("#execute-execution-button").val() != btnlang.resume) {
-				$("#execute-execution-button").prop('disabled', true);
-				$("#ieo-execution-button").prop('disabled', true);
-			}
+
 
 			var runnerUrl = routing.buildURL('executions.runner', config.basic.executionId);
 			var dryRunStart = function () {
