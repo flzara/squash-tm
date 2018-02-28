@@ -27,6 +27,7 @@ import java.util.Set;
 import org.squashtest.tm.annotation.WebComponent;
 import org.squashtest.tm.web.thymeleaf.processor.attr.SquashCssAttrProcessor;
 import org.squashtest.tm.web.thymeleaf.processor.attr.SquashIso8601DateAttrProcessor;
+import org.squashtest.tm.web.thymeleaf.processor.attr.SquashUnsafeHtmlAttrProcessor;
 import org.thymeleaf.context.IExpressionContext;
 import org.thymeleaf.context.IWebContext;
 import org.thymeleaf.dialect.AbstractProcessorDialect;
@@ -64,7 +65,7 @@ public class SquashDialect extends AbstractProcessorDialect implements IProcesso
 	public Set<IProcessor> getProcessors(String dialectPrefix) {
 		Set<IProcessor> processors = new HashSet<>(3);
 		// TODO : is that one obsolete ?
-		//processors.add(new SquashUnsafeHtmlAttrProcessor());
+		processors.add(new SquashUnsafeHtmlAttrProcessor(dialectPrefix));
 
 		processors.add(new SquashCssAttrProcessor(dialectPrefix));
 		processors.add(new SquashIso8601DateAttrProcessor(dialectPrefix));
@@ -94,8 +95,9 @@ public class SquashDialect extends AbstractProcessorDialect implements IProcesso
 
 
 		/*
-			Partly ripped from SpringSecurityDialect
-		 	For now, no test on the expressionObjectName because we only have "workspace"
+			1/ Partly ripped from SpringSecurityDialect
+		 	
+		 	2/ For now, no test on the expressionObjectName because we only have "workspace"
 		*/
 		@Override
 		public Object buildObject(IExpressionContext context, String expressionObjectName) {

@@ -20,6 +20,11 @@
  */
 package org.squashtest.tm.web.thymeleaf.processor.attr;
 
+import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.MATCH_ANY_TAG;
+import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.NO_TAG_PREFIX;
+import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.REMOVE_PSEUDO_ATTRIBUTE_WHEN_PROCESSED;
+import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.REQUIRE_BOTH_DIALECT_PREFIX_AND_ATTRIBUTE;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.web.internal.context.ServletContextParameters;
@@ -27,7 +32,6 @@ import org.thymeleaf.context.IContext;
 import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.context.IWebContext;
 import org.thymeleaf.engine.AttributeName;
-import org.thymeleaf.engine.AttributeNames;
 import org.thymeleaf.model.IProcessableElementTag;
 import org.thymeleaf.processor.element.AbstractAttributeTagProcessor;
 import org.thymeleaf.processor.element.IElementTagProcessor;
@@ -36,7 +40,6 @@ import org.thymeleaf.standard.expression.IStandardExpression;
 import org.thymeleaf.standard.expression.IStandardExpressionParser;
 import org.thymeleaf.standard.expression.StandardExpressions;
 import org.thymeleaf.templatemode.TemplateMode;
-import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.*;
 
 /**
  * Processes <code>sq:css</code> attributes. Attribute value is expected to be the unqualified name of a stylesheet
@@ -64,7 +67,7 @@ public class SquashCssAttrProcessor extends AbstractAttributeTagProcessor implem
 	 */
 	public SquashCssAttrProcessor(String dialectPrefix) {
 		super(
-			TemplateMode.TEXT,
+			TemplateMode.HTML,
 			dialectPrefix,
 			MATCH_ANY_TAG,
 			NO_TAG_PREFIX,
@@ -93,29 +96,10 @@ public class SquashCssAttrProcessor extends AbstractAttributeTagProcessor implem
 		LOGGER.trace("Stylesheet resolved to url '{}'", evaluatedUrl);
 
 		// now set the href with it
-		AttributeName attrHref = AttributeNames.forHTMLName(HREF);
-		structureHandler.replaceAttribute(attributeName, HREF, evaluatedUrl);
+		structureHandler.setAttribute(HREF, evaluatedUrl);
 
 	}
-/*
-	@Override
-	protected String getTargetAttributeValue(Arguments arguments, Element element, String attributeName) {
-		final String attributeValue = element.getAttributeValue(attributeName);
 
-		IContext context = arguments.getContext();
-		initSquashVersion(context);
-
-		final String cssUrlExpression = "@{" + attributeValue + "}";
-		LOGGER.debug("Stylesheet named '{}' will be resolved using the expression '{}'", attributeValue,
-			cssUrlExpression);
-
-		final Object result = StandardExpressionProcessor.processExpression(arguments, "@{/styles"
-			+ getVersionPathToken(context) + '/' + attributeValue + "}");
-		LOGGER.trace("Stylesheet resolved to url '{}'", result);
-
-		return result == null ? "" : result.toString();
-	}
-*/
 	/**
 	 * @return
 	 */

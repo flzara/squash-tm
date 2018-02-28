@@ -32,6 +32,12 @@
 
     <smartsprites.outputDir>${project.build.directory}/smartsprites</smartsprites.outputDir>
 
+    <!-- THYMELEAF STACK VERSION OVERRIDE  -->
+
+    <thymeleaf.version>3.0.3.RELEASE</thymeleaf.version>
+    <ultraq.thymeleaf.version>2.2.2</ultraq.thymeleaf.version>
+    <springsecurity.thymeleaf.version>3.0.2.RELEASE</springsecurity.thymeleaf.version>
+
     <!-- Default jacoco dont record any coverage data -->
     <!--<sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>-->
     <!--<spring-boot-maven-plugin.jvmArguments>-Xmx512M -XX:MaxPermSize=256M -Xdebug-->
@@ -44,6 +50,7 @@
     <wro4j.css.outputDir>${project.build.directory}/styles</wro4j.css.outputDir>
     <wro4j.inputDir>${smartsprites.outputDir}</wro4j.inputDir>
     <wro4j.skip>false</wro4j.skip>
+
   </properties>
 
   <dependencyManagement>
@@ -305,24 +312,34 @@
       <artifactId>spring-security-taglibs</artifactId>
     </dependency>
 
+    <!-- THYMELEAF STACK VERSION OVERRIDE -->
+
+
     <dependency>
       <groupId>org.thymeleaf</groupId>
       <artifactId>thymeleaf</artifactId>
-      <version>3.0.3.RELEASE</version>
+      <version>${thymeleaf.version}</version>
     </dependency>
 
-    <!-- those two go in pair -->
     <dependency>
       <groupId>org.thymeleaf.extras</groupId>
       <artifactId>thymeleaf-extras-springsecurity4</artifactId>
-      <version>3.0.2.RELEASE</version>
+      <version>${springsecurity.thymeleaf.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>nz.net.ultraq.thymeleaf</groupId>
+      <artifactId>thymeleaf-layout-dialect</artifactId>
+      <version>${ultraq.thymeleaf.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.thymeleaf</groupId>
       <artifactId>thymeleaf-spring4</artifactId>
-      <version>3.0.3.RELEASE</version>
+      <version>${thymeleaf.version}</version>
     </dependency>
+
+    <!-- /THYMELEAF STACK VERSION OVERRIDE -->
 
     <dependency>
       <groupId>${project.groupId}</groupId>

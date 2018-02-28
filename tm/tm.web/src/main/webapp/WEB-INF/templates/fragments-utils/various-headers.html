@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<script th:fragment="env-setup" th:remove="tag">
+<script th:fragment="env-setup" th:remove="tag" th:inline="javascript">
 /*<![CDATA[*/
 	var require = require || {};
 	require.baseUrl = /*[[@{/scripts}]]*/;     

@@ -66,12 +66,11 @@ import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.*;
 public class SquashIso8601DateAttrProcessor extends AbstractAttributeTagProcessor implements IElementTagProcessor {
 
 	private static final int PRECEDENCE = 1000;
-	private static final String SQ_TIMESTAMP = "ts";
+	private static final String SQ_TIMESTAMP = "iso-date";
 
 	public SquashIso8601DateAttrProcessor(String dialectPrefix) {
-		//super("iso-date");
 		super(
-			TemplateMode.TEXT,
+			TemplateMode.HTML,
 			dialectPrefix,
 			MATCH_ANY_TAG,
 			NO_TAG_PREFIX,
@@ -95,22 +94,5 @@ public class SquashIso8601DateAttrProcessor extends AbstractAttributeTagProcesso
 		structureHandler.setBody(asString, false);
 
 	}
-/*
-	@Override
-	protected final String getText(final Arguments arguments, final Element element, final String attributeName) {
-
-		final String attributeValue = element.getAttributeValue(attributeName);
-
-		final Configuration configuration = arguments.getConfiguration();
-		final IStandardExpressionParser expressionParser = StandardExpressions.getExpressionParser(configuration);
-
-		final IStandardExpression expression = expressionParser.parseExpression(configuration, arguments,
-				attributeValue);
-
-		final Object result = expression.execute(configuration, arguments);
-
-		return result == null ? "" : DateUtils.formatISO(result);
-
-	}*/
 
 }
