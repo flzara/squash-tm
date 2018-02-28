@@ -21,7 +21,6 @@
 package org.squashtest.tm.service.importer;
 
 import javax.validation.constraints.NotNull;
-import java.lang.reflect.Array;
 import java.util.Arrays;
 
 public class LogEntry implements Comparable<LogEntry> {
@@ -83,9 +82,10 @@ public class LogEntry implements Comparable<LogEntry> {
 
 	/**
 	 * Use this when you don't statically know what the status is. Otherwise, consider LogEntry#failure() or LogEntry#warning()
+	 *
 	 * @param status
 	 * @return
-     */
+	 */
 	public static Builder status(@NotNull ImportStatus status) {
 		return new Builder(status);
 	}
@@ -111,7 +111,7 @@ public class LogEntry implements Comparable<LogEntry> {
 	}
 
 	private void setErrorArgsPrivately(Object[] errorArgsParam) {
-		if(errorArgsParam == null) {
+		if (errorArgsParam == null) {
 			this.errorArgs = null;
 		} else {
 			this.errorArgs = Arrays.copyOf(errorArgsParam, errorArgsParam.length);
@@ -134,10 +134,9 @@ public class LogEntry implements Comparable<LogEntry> {
 	public int compareTo(LogEntry o) {
 		if (!line.equals(o.line)) {
 			return line - o.line;
-		} else if (status != o.getStatus()){
+		} else if (status != o.getStatus()) {
 			return status.getLevel() - o.getStatus().getLevel();
-		}
-		else{
+		} else {
 			// even when two instances have strictly same content we don't want to consider them equal.
 			// note that returning -1 is not an ideal solution because it violates the Comparable contract
 			// x.compareTo(y) == - y.compareTo(x) but it's good enough here
@@ -172,12 +171,13 @@ public class LogEntry implements Comparable<LogEntry> {
 		return Arrays.deepEquals(errorArgs, logEntry.errorArgs);
 	}
 
+	// if the LogEntry status is OK, the i18nError and errorArgs are null so the hash return a NPE
 	@Override
 	public int hashCode() {
 		int result = line.hashCode();
 		result = 31 * result + status.hashCode();
-		result = 31 * result + i18nError.hashCode();
-		result = 31 * result + Arrays.hashCode(errorArgs);
+		result = 31 * result + (i18nError != null ? i18nError.hashCode() : 0);
+		result = 31 * result + (errorArgs != null ? Arrays.hashCode(errorArgs) : 0);
 		return result;
 	}
 
