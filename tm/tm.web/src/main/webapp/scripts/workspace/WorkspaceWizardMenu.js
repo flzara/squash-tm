@@ -105,7 +105,7 @@ define([ "jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil"
 		 */
 		_checkSelectionMode : function(selectedNodes, accessRule) {
 			var res;
-			switch (accessRule.selectionMode['$name']) {
+			switch (accessRule.selectionMode) {
 			case "SINGLE_SELECTION":
 				res = selectedNodes.length === 1;
 				break;
@@ -134,7 +134,7 @@ define([ "jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil"
 
 		_nodeMatchesRule : function(node, rule) {
 			var $node = $(node).treeNode();
-			return $node.isAuthorized(rule.permission['$name']) && $node.is(":" + rule.nodeType['$name'].toLowerCase());
+			return $node.isAuthorized(rule.permission) && $node.is(":" + rule.nodeType.toLowerCase());
 		},
 
 		/**
