@@ -45,8 +45,14 @@
     <spock.version>1.1-groovy-2.4</spock.version>
     <spring-security-oauth2.version>2.0.14.RELEASE</spring-security-oauth2.version>
     <spring-security.version>4.1.4.RELEASE</spring-security.version>
-    <thymeleaf-extras-springsecurity4.version>2.1.2.RELEASE</thymeleaf-extras-springsecurity4.version>
+    <thymeleaf-extras-springsecurity4.version>3.0.2.RELEASE</thymeleaf-extras-springsecurity4.version>
+    <thymeleaf-layout-dialect.version>2.2.2</thymeleaf-layout-dialect.version>
+
+    <!-- THYMELEAF STACK VERSION OVERRIDE (see https://docs.spring.io/spring-boot/docs/1.4.7.RELEASE/reference/htmlsingle/#howto-use-thymeleaf-3) -->
+    <thymeleaf.version>3.0.3.RELEASE</thymeleaf.version>
+    <!-- /THYMELEAF STACK VERSION OVERRIDE  -->
     <tomcat.version>8.0.23</tomcat.version>
+
     <unitils.version>3.4.2</unitils.version>
     <validation-api.version>1.1.0.Final</validation-api.version>
     <xml-resolver.version>1.2</xml-resolver.version>
@@ -357,6 +363,8 @@
         <version>${spring.boot.version}</version>
       </dependency>
 
+      <!-- /THYMELEAF STACK VERSION OVERRIDE -->
+
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-web</artifactId>
@@ -375,10 +383,29 @@
         <version>${spring-security.version}</version>
       </dependency>
 
+      <!-- THYMELEAF STACK VERSION OVERRIDE -->
+      <dependency>
+        <groupId>org.thymeleaf</groupId>
+        <artifactId>thymeleaf</artifactId>
+        <version>${thymeleaf.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>org.thymeleaf.extras</groupId>
         <artifactId>thymeleaf-extras-springsecurity4</artifactId>
         <version>${thymeleaf-extras-springsecurity4.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>nz.net.ultraq.thymeleaf</groupId>
+        <artifactId>thymeleaf-layout-dialect</artifactId>
+        <version>${thymeleaf-layout-dialect.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.thymeleaf</groupId>
+        <artifactId>thymeleaf-spring4</artifactId>
+        <version>${thymeleaf.version}</version>
       </dependency>
 
       <dependency>

@@ -24,6 +24,7 @@ import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.MATCH_ANY
 import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.NO_TAG_PREFIX;
 import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.REMOVE_PSEUDO_ATTRIBUTE_WHEN_PROCESSED;
 import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.REQUIRE_BOTH_DIALECT_PREFIX_AND_ATTRIBUTE;
+import static org.squashtest.tm.web.internal.util.HTMLCleanupUtils.cleanHtml;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,6 @@ import org.thymeleaf.standard.expression.IStandardExpression;
 import org.thymeleaf.standard.expression.IStandardExpressionParser;
 import org.thymeleaf.standard.expression.StandardExpressions;
 import org.thymeleaf.templatemode.TemplateMode;
-
 
 
 
@@ -98,7 +98,7 @@ public final class SquashUnsafeHtmlAttrProcessor extends AbstractAttributeTagPro
 		final IStandardExpression expression = parser.parseExpression(context, attributeValue);
 
 		final Object html = expression.execute(context);
-		final String htmlString = html == null ? "" : html.toString();
+		final String htmlString = html == null ? "" : cleanHtml(html.toString());
 
 		
 		final TemplateModel parsed = configuration.getTemplateManager().parseString(
