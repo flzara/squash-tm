@@ -76,10 +76,15 @@ public interface CustomFieldBindingModificationService extends CustomFieldBindin
 	void removeRenderingLocation(long bindingId, RenderingLocation location);
 
 	/**
-	 * removes a batch of custom field bindings using their ids.
+	 * Check User permissions and if Project is not bound to a Template.
+	 * Then removes a batch of custom field bindings using their ids.
 	 *
 	 */
 	void removeCustomFieldBindings(List<Long> bindingIds);
+
+	/**
+	* Removes a batch of custom field bindings using their ids. */
+	void doRemoveCustomFieldBindings(List<Long> bindingIds);
 
 	/**
 	 * removes all the custom field bindings defined for a project.

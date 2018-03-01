@@ -163,14 +163,16 @@ define(
 					aoColumnDefs.push(columnDef);
 				}
 
-				aoColumnDefs.push({
-					'bSortable' : false,
-					'bVisible' : true,
-					'aTargets' : [ 3 + arrayLength ],
-					'mDataProp' : null,
-					'sWidth' : '2em',
-					'sClass' : 'unbind-button centered'
-				});
+				if(settings.areBindingsModifiable) {
+					aoColumnDefs.push({
+						'bSortable' : false,
+						'bVisible' : true,
+						'aTargets' : [ 3 + arrayLength ],
+						'mDataProp' : null,
+						'sWidth' : '2em',
+						'sClass' : 'unbind-button centered'
+					});
+				}
 
 				// **************************** rest of the table initialization
 				// ******************************

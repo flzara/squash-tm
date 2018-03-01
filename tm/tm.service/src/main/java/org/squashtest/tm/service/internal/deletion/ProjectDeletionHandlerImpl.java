@@ -109,12 +109,13 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 			}
 		});
 
-		milestoneBindingManager.unbindAllMilestonesFromProject(project);
-		bindingService.removeCustomFieldBindings(projectId);
-
+		// This must be done before removing the cufBindings to avoid deletion cascading
 		if(ProjectHelper.isTemplate(project)) {
 			projectDao.unbindAllFromTemplate(project.getId());
 		}
+
+		milestoneBindingManager.unbindAllMilestonesFromProject(project);
+		bindingService.removeCustomFieldBindings(projectId);
 
 		doDeleteProject(projectId);
 

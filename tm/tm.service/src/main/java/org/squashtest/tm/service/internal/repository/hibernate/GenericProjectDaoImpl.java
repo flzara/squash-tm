@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -62,7 +63,7 @@ public class GenericProjectDaoImpl implements CustomGenericProjectDao {
 		session.flush();
 		session.evict(project);
 
-		SQLQuery query = session.createSQLQuery("update PROJECT set PROJECT_TYPE = 'T' where PROJECT_ID = :id");
+		SQLQuery query = session.createSQLQuery("update PROJECT set PROJECT_TYPE = 'T',  TEMPLATE_ID = null where PROJECT_ID = :id");
 		query.setParameter("id", projectId);
 		final int changedRows = query.executeUpdate();
 		if (changedRows != 1) {
@@ -82,6 +83,22 @@ public class GenericProjectDaoImpl implements CustomGenericProjectDao {
 		String type = (String) query.getSingleResult();
 
 		return "T".equals(type);
+	}
+
+	@Override
+	public boolean isBoundToATemplate(long genericProjectId) {
+		Query query = em.createNamedQuery("GenericProject.findBoundTemplateId");
+		query.setParameter(ParameterNames.PROJECT_ID, genericProjectId);
+		List<Long> templateIdss = query.getResultList();
+		return !templateIdss.isEmpty();
+	}
+
+	@Override
+	public boolean oneIsBoundToABoundProject(Collection<Long> bindingIds) {
+		Query query = em.createNamedQuery("GenericProject.findBoundTemplateIdsFromBindingIds");
+		query.setParameter("bindingIds", bindingIds);
+		List<Long> templateIds = query.getResultList();
+		return !templateIds.isEmpty();
 	}
 
 	/**

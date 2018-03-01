@@ -179,7 +179,8 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	// ***************************** status management *************************
 
 	/**
-	 * Enables an execution status for a project
+	 * Check User permissions and check if the parameter can be modified.
+	 * Then enables an execution status for a project.
 	 *
 	 * @param projectId
 	 * @param executionStatus
@@ -187,12 +188,24 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	void enableExecutionStatus(long projectId, ExecutionStatus executionStatus);
 
 	/**
-	 * Disables an execution status for a project
+	 * Enabled an execution status for a project.*/
+	void doEnableExecutionStatus(GenericProject genericProject, ExecutionStatus executionStatus);
+
+	/**
+	 * Check the action can be done, check permission.
+	 * Then disables an execution status for a project.
 	 *
 	 * @param projectId
 	 * @param executionStatus
 	 */
 	void disableExecutionStatus(long projectId, ExecutionStatus executionStatus);
+
+	/**
+	 * Disables and execution status for a project.
+	 * @param genericProject
+	 * @param executionStatus
+	 */
+	void doDisableExecutionStatus(GenericProject genericProject, ExecutionStatus executionStatus);
 
 	/**
 	 * Returns the list of enabled execution statuses given a project.

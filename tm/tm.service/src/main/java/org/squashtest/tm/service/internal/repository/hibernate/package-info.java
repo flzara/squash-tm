@@ -480,7 +480,6 @@
 
 	@NamedQuery(name ="Execution.removeDfv", query= "delete from DenormalizedFieldValue dfv where dfv.id = :dfvId"),
 
-
 	//ExecutionStep
 	@NamedQuery(name = "executionStep.findParentNode", query = "select execution from Execution as execution join execution.steps exSteps where exSteps.id= :childId "),
 	@NamedQuery(name = "executionStep.countAllStatus", query = "select count(step) from ExecutionStep step where step.executionStatus = :status and step.execution.testPlan.iteration.campaign.project.id = :projectId"),
@@ -495,6 +494,9 @@
 	@NamedQuery(name = "GenericProject.countByName", query = "select count(p) from GenericProject p where p.name = ?1"),
 	@NamedQuery(name = "GenericProject.findTestAutomationServer", query = "select p.testAutomationServer from GenericProject p where p.id = :projectId"),
 	@NamedQuery(name = "GenericProject.findBoundTestAutomationProjectLabels", query = "select tap.label from GenericProject p join p.testAutomationProjects tap where p.id = :projectId"),
+	@NamedQuery(name = "GenericProject.findBoundTemplateId", query = "select t.id from GenericProject p join p.template t where p.id = :projectId"),
+	@NamedQuery(name = "GenericProject.findBoundTemplateIdsFromBindingIds", query = "select t.id from CustomFieldBinding cfb join cfb.boundProject p join p.template t where cfb.id in (:bindingIds)"),
+
 
 	// Project Template
 	@NamedQuery(name = "ProjectTemplate.propagateAllowTcModifDuringExec", query = "update GenericProject set allowTcModifDuringExec = :active where template.id = :templateId"),

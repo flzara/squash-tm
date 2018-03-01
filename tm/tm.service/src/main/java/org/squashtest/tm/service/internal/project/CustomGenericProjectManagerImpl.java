@@ -582,19 +582,24 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	@Override
 	public void enableExecutionStatus(long projectId, ExecutionStatus executionStatus) {
-		GenericProject project = genericProjectDao.findOne(projectId);
+		GenericProject genericProject = genericProjectDao.findOne(projectId);
+		checkManageProjectOrAdmin(genericProject);
 		// Parameter is locked if it is a bound Project
-		if(!project.isBoundToTemplate()) {
-			checkManageProjectOrAdmin(project);
-			project.getCampaignLibrary().enableStatus(executionStatus);
-			if (ProjectHelper.isTemplate(project)) {
-				Collection<Project> boundProjects = projectDao.findAllBoundToTemplate(projectId);
-				for (Project boundProject : boundProjects) {
-					boundProject.getCampaignLibrary().enableStatus(executionStatus);
-				}
-			}
-		} else {
+		if(genericProject.isBoundToTemplate()) {
 			throw new LockedParameterException();
+		}
+		doEnableExecutionStatus(genericProject, executionStatus);
+	}
+
+	@Override
+	public void doEnableExecutionStatus(GenericProject genericProject, ExecutionStatus executionStatus) {
+		genericProject.getCampaignLibrary().enableStatus(executionStatus);
+		if (genericProjectDao.isProjectTemplate(genericProject.getId())) {
+			/* TODO: Optimize with a request. */
+			Collection<Project> boundProjects = projectDao.findAllBoundToTemplate(genericProject.getId());
+			for (Project boundProject : boundProjects) {
+				boundProject.getCampaignLibrary().enableStatus(executionStatus);
+			}
 		}
 	}
 
@@ -602,18 +607,22 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	public void disableExecutionStatus(long projectId, ExecutionStatus executionStatus) {
 		GenericProject project = genericProjectDao.findOne(projectId);
 		// Parameter is locked if the Project is bound to a Template
-		if(!project.isBoundToTemplate()) {
-			checkManageProjectOrAdmin(project);
-			project.getCampaignLibrary().disableStatus(executionStatus);
-			/* If the GenericProject is a Template, propagate modification to bound Projects. */
-			if (ProjectHelper.isTemplate(project)) {
-				Collection<Project> boundProjects = projectDao.findAllBoundToTemplate(projectId);
-				for (Project boundProject : boundProjects) {
-					boundProject.getCampaignLibrary().disableStatus(executionStatus);
-				}
-			}
-		} else {
+		if(project.isBoundToTemplate()) {
 			throw new LockedParameterException();
+		}
+		checkManageProjectOrAdmin(project);
+		doDisableExecutionStatus(project, executionStatus);
+	}
+
+	@Override
+	public void doDisableExecutionStatus(GenericProject genericProject, ExecutionStatus executionStatus) {
+		genericProject.getCampaignLibrary().disableStatus(executionStatus);
+		/* If the GenericProject is a Template, propagate modification to bound Projects. */
+		if (genericProjectDao.isProjectTemplate(genericProject.getId())) {
+			Collection<Project> boundProjects = projectDao.findAllBoundToTemplate(genericProject.getId());
+			for (Project boundProject : boundProjects) {
+				boundProject.getCampaignLibrary().disableStatus(executionStatus);
+			}
 		}
 	}
 
@@ -932,10 +941,10 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		Set<ExecutionStatus> disabledStatuses = disabledExecutionStatuses(source.getId());
 
 		for(ExecutionStatus execStatusToEnable : enabledStatuses) {
-			enableExecutionStatus(target.getId(), execStatusToEnable);
+			doEnableExecutionStatus(target, execStatusToEnable);
 		}
 		for(ExecutionStatus execStatusToDisable : disabledStatuses) {
-			disableExecutionStatus(target.getId(), execStatusToDisable);
+			doDisableExecutionStatus(target, execStatusToDisable);
 		}
 	}
 

@@ -410,15 +410,17 @@ class CustomGenericProjectManagerImplTest extends Specification {
 
 		given:
 
-		Project project = new Project()
+		Project project = Mock()
+		project.getId() >> 44L
 		CampaignLibrary library = new CampaignLibrary()
 		Set<ExecutionStatus> disabledStatuses = [ExecutionStatus.UNTESTABLE]
 		library.setDisabledStatuses(disabledStatuses)
-		project.setCampaignLibrary(library)
+		project.getCampaignLibrary() >> library
 
 		and:
 
 		genericProjectDao.findOne(44L) >> project
+		genericProjectDao.isProjectTemplate(44L) >> false
 
 		when:
 
@@ -459,11 +461,12 @@ class CustomGenericProjectManagerImplTest extends Specification {
 
 		given:
 
-		ProjectTemplate template = new ProjectTemplate()
+		ProjectTemplate template = Mock(ProjectTemplate)
+		template.getId() >> 404L
 		CampaignLibrary templateLibrary = new CampaignLibrary()
 		Set<ExecutionStatus> disabledTemplateStatuses = [ExecutionStatus.UNTESTABLE]
 		templateLibrary.setDisabledStatuses(disabledTemplateStatuses)
-		template.setCampaignLibrary(templateLibrary)
+		template.getCampaignLibrary() >> templateLibrary
 
 		Project project = new Project()
 		CampaignLibrary projectLibrary = new CampaignLibrary()
@@ -474,6 +477,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		and:
 
 		genericProjectDao.findOne(404L) >> template
+		genericProjectDao.isProjectTemplate(404L) >> true
 		projectDao.findAllBoundToTemplate(404L) >> [project]
 
 		when:
@@ -491,15 +495,17 @@ class CustomGenericProjectManagerImplTest extends Specification {
 
 		given:
 
-		Project project = new Project()
+		Project project = Mock()
+		project.getId() >> 404L
 		CampaignLibrary library = new CampaignLibrary()
 		Set<ExecutionStatus> disabledStatuses = []
 		library.setDisabledStatuses(disabledStatuses)
-		project.setCampaignLibrary(library)
+		project.getCampaignLibrary() >> library
 
 		and:
 
 		genericProjectDao.findOne(404L) >> project
+		genericProjectDao.isProjectTemplate(404L) >> false
 
 		when:
 
@@ -540,11 +546,12 @@ class CustomGenericProjectManagerImplTest extends Specification {
 
 		given:
 
-		ProjectTemplate template = new ProjectTemplate()
+		ProjectTemplate template = Mock()
+		template.getId() >> 404L
 		CampaignLibrary templateLibrary = new CampaignLibrary()
 		Set<ExecutionStatus> disabledTemplateStatuses = []
 		templateLibrary.setDisabledStatuses(disabledTemplateStatuses)
-		template.setCampaignLibrary(templateLibrary)
+		template.getCampaignLibrary() >> templateLibrary
 
 		Project project = new Project()
 		CampaignLibrary projectLibrary = new CampaignLibrary()
@@ -555,6 +562,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		and:
 
 		genericProjectDao.findOne(404L) >> template
+		genericProjectDao.isProjectTemplate(404L) >> true
 		projectDao.findAllBoundToTemplate(404L) >> [project]
 
 		when:

@@ -25,7 +25,8 @@ define([ "require", "./panel", "./table", "./popup", "./popupDelete" ], function
 		return {
 			'selector' : settings.mainSelector + " .cuf-binding-panel",
 			'initiallyOpen' : true,
-			'title' : settings.panelTitle
+			'title' : settings.panelTitle,
+			areBindingsModifiable : settings.areBindingsModifiable,
 		};
 	}
 
@@ -47,7 +48,7 @@ define([ "require", "./panel", "./table", "./popup", "./popupDelete" ], function
 	function getTableEditURL(settings) {
 		return settings.baseURL;
 	}
-	
+
 	function getPopupDeleteBindingSelector(settings){
 		//get the delete popup id before the selector becomes invalid because JQuery popup moved to the end of page
 		//Mantis 4962
@@ -57,6 +58,7 @@ define([ "require", "./panel", "./table", "./popup", "./popupDelete" ], function
 	function getTableConf(settings) {
 		return {
 			selector : settings.mainSelector + " .cuf-binding-table",
+			areBindingsModifiable : settings.areBindingsModifiable,
 			languageUrl : settings.tableLanguageUrl,
 			getUrl : getTableGetURL(settings),
 			deleteUrl : getTableDeleteURL(settings),
@@ -98,7 +100,7 @@ define([ "require", "./panel", "./table", "./popup", "./popupDelete" ], function
 			cancellabel : settings.cancellabel
 		};
 	}
-	
+
 	function getPopupDeleteConf(settings) {
 		return {
 			projectId : settings.projectId,
@@ -124,22 +126,22 @@ define([ "require", "./panel", "./table", "./popup", "./popupDelete" ], function
 		this.table = new Table(tableConf);
 
 		var popupConf = getPopupConf(settings);
-		this.popup = new Popup(popupConf);	
-		
+		this.popup = new Popup(popupConf);
+
 		this.panel.getButton().setPopup(this.popup);
 		this.popup.addPostSuccessListener({
 			update : function() {
 				self.table.refresh();
 			}
 		});
-		
-		
+
+
 		var popupDeleteConf = getPopupDeleteConf(settings);
 		this.popupDelete = new PopupDelete(popupDeleteConf);
-	
+
 		this.panel.getButtonDelete().setPopup(this.popupDelete);
-	
+
 	};
-		
+
 
 });

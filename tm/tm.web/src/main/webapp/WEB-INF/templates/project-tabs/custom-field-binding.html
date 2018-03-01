@@ -100,6 +100,7 @@
 
 	    		general : {
 		    		projectId : /*[[${projectIdentifier}]]*/10,
+		    		areBindingsModifiable : /*[[${!isBoundToTemplate}]]*/true,
 		    		tableLanguageUrl: /*[[ @{/datatables/messages} ]]*/ "http://localhost:8080/squash/datatables/messages",
 		        	baseURL: /*[[ @{/custom-fields-binding} ]]*/ "http://localhost:8080/squash/custom-fields-binding",
 		        	oklabel : /*[[ #{label.Confirm} ]]*/ "ouaiche",
@@ -236,7 +237,7 @@
 
 							<th th:each="location : ${availableLocations}" th:text="#{__${location.getI18nKey()}__}"></th>
 
-							<th> </th>
+							<th th:if="${!isBoundToTemplate}"> </th>
 
 						</tr>
 					</thead>
@@ -249,7 +250,7 @@
 							<td th:each="location : ${availableLocations}" th:text="${#sets.contains(binding.renderingLocations, location)}">
 							</td>
 
-							<td> </td>
+							<td th:if="${!isBoundToTemplate}"> </td>
 
 						</tr>
 						<tr th:remove="all">

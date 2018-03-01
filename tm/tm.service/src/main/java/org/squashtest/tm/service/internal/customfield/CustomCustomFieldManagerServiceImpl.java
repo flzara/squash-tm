@@ -83,13 +83,14 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	@Override
 	public void deleteCustomField(long customFieldId) {
 		CustomField customField = customFieldDao.findById(customFieldId);
+		/* TODO: Wow */
 		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllByCustomFieldIdOrderByPositionAsc(customFieldId);
 		List<Long> bindingIds = new ArrayList<>();
 		for (CustomFieldBinding binding : bindings) {
 			bindingIds.add(binding.getId());
 		}
 		if (!bindingIds.isEmpty()) {
-			customFieldBindingModificationService.removeCustomFieldBindings(bindingIds);
+			customFieldBindingModificationService.doRemoveCustomFieldBindings(bindingIds);
 		}
 		customFieldDao.delete(customField);
 	}

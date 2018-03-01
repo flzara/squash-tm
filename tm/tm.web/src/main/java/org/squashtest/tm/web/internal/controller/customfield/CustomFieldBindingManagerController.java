@@ -83,6 +83,7 @@ public class CustomFieldBindingManagerController {
 
 			mav.addObject("projectIdentifier", projectId);
 			mav.addObject("isTemplate", ProjectHelper.isTemplate(project));
+			mav.addObject("isBoundToTemplate", project.isBoundToTemplate());
 		}
 		else {
 			mav = new ModelAndView("fragment/project/project-no-cuf-exists");

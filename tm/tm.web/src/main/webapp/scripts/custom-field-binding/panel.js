@@ -30,32 +30,41 @@ define([ "jquery", "app/ws/squashtm.notification", "squash.translator", "jquery.
 
 		button.setPopup = function(popup) {
 			button.click(function() {
-			popup.formDialog("open");
+				if(settings.areBindingsModifiable) {
+					popup.formDialog("open");
+				} else {
+					$.squash.openMessage(
+						translator.get('title.project.lockedParameter'),
+						translator.get('message.project.lockedParameter'));
+				}
 			});
 		};
 
 		instance.getButton = function() {
 			return button;
 		};
-		
+
 		instance.getButtonDelete = function() {
 			return buttonDelete;
 		};
-		
-			buttonDelete.setPopup = function(popupDelete) {
+
+		buttonDelete.setPopup = function(popupDelete) {
 			buttonDelete.click(function() {
-				
-				var table = instance.find('.cuf-binding-table');
-				
-				var hasPermission = (table.squashTable().getSelectedIds().length > 0);
-			if (hasPermission) {
-				panel = instance.find('.cuf-binding-table').closest('.sq-tg');
-				popupDelete.formDialog("open");
-			}
-		 else {
-			 notification.showError(translator.get('message.NoCUFSelected'));
-		 }
-			
+				if(settings.areBindingsModifiable) {
+					var table = instance.find('.cuf-binding-table');
+
+					var hasPermission = (table.squashTable().getSelectedIds().length > 0);
+					if (hasPermission) {
+						panel = instance.find('.cuf-binding-table').closest('.sq-tg');
+						popupDelete.formDialog("open");
+					} else {
+						notification.showError(translator.get('message.NoCUFSelected'));
+					}
+        } else {
+					$.squash.openMessage(
+          	translator.get('title.project.lockedParameter'),
+          	translator.get('message.project.lockedParameter'));
+				}
 			});
 		};
 

@@ -29,6 +29,7 @@ import org.squashtest.tm.domain.customfield.CustomFieldBinding
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.project.ProjectTemplate
+import org.squashtest.tm.exception.project.LockedParameterException
 import org.squashtest.tm.service.internal.customfield.CustomFieldBindingModificationServiceImpl
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
 import org.squashtest.tm.service.internal.dto.BindableEntityModel
@@ -182,6 +183,7 @@ class CustomFieldBindingModificationServiceImplTest extends Specification {
 
 		given: "2 CustomField Models"
 
+
 		BindableEntityModel entity01 = Mock()
 		BindableEntity entity1 = Mock()
 		entity01.toDomain() >> entity1
@@ -212,11 +214,13 @@ class CustomFieldBindingModificationServiceImplTest extends Specification {
 		and: "2 real CustomFields and 1 Project"
 
 		GenericProject project = Mock()
+		project.getId() >> 404L
 		CustomField cuf1 = Mock()
 		CustomField cuf2 = Mock()
 
 		and:
 
+		genericProjectDao.isBoundToATemplate(404L) >> false
 		genericProjectDao.findOne(404) >> project
 		customFieldDao.findById(1L) >> cuf1
 		customFieldDao.findById(2L) >> cuf2
@@ -234,6 +238,51 @@ class CustomFieldBindingModificationServiceImplTest extends Specification {
 
 		2 * customFieldBindingDao.save(_)
 		2 * eventPublisher.publishEvent(_)
+	}
+
+	def "#createNewBindings - Should not create some CustomFieldBindings because the Project is bound to a Template"() {
+
+		given: "2 CustomField Models"
+
+
+		BindableEntityModel entity01 = Mock()
+		BindableEntity entity1 = Mock()
+		entity01.toDomain() >> entity1
+
+		CustomFieldModel cuf01 = Mock()
+		cuf01.getId() >> 1L
+
+		CustomFieldBindingModel cufModel1 = Mock()
+		cufModel1.getProjectId() >> 404L
+		cufModel1.getCustomField() >> cuf01
+		cufModel1.getBoundEntity() >> entity01
+
+
+		BindableEntityModel entity02 = Mock()
+		BindableEntity entity2 = Mock()
+		entity02.toDomain() >> entity2
+
+		CustomFieldModel cuf02 = Mock()
+		cuf02.getId() >> 2L
+
+		CustomFieldBindingModel cufModel2 = Mock()
+		cufModel2.getProjectId() >> 404L
+		cufModel2.getCustomField() >> cuf02
+		cufModel2.getBoundEntity() >> entity02
+
+		CustomFieldBindingModel[] bindingModels = [cufModel1, cufModel2]
+
+		and:
+
+		genericProjectDao.isBoundToATemplate(404L) >> true
+
+		when:
+
+		service.createNewBindings(bindingModels)
+
+		then:
+
+		thrown LockedParameterException
 	}
 
 	def "#createNewBindings - Should create CustomFieldBindings on Template and propagate it to the bound Project"() {
@@ -270,13 +319,16 @@ class CustomFieldBindingModificationServiceImplTest extends Specification {
 		and: "2 real CustomFields and 1 Project"
 
 		ProjectTemplate template = Mock()
+		template.getId() >> 404L
 		Project project = Mock()
+		project.getId() >> 42L
 		CustomField cuf1 = Mock()
 		CustomField cuf2 = Mock()
 
 		/* --== Template part ==-- */
 		and:
 
+		genericProjectDao.isBoundToATemplate(404L) >> false
 		genericProjectDao.findOne(404L) >> template
 		customFieldDao.findById(1L) >> cuf1
 		customFieldDao.findById(2L) >> cuf2
@@ -319,6 +371,7 @@ class CustomFieldBindingModificationServiceImplTest extends Specification {
 
 		and:
 
+		genericProjectDao.oneIsBoundToABoundProject(_) >> false
 		customFieldBindingDao.findEquivalentBindingsForBoundProjects(_) >> [9L, 52L, 90L, 44L]
 
 		when:
@@ -330,5 +383,24 @@ class CustomFieldBindingModificationServiceImplTest extends Specification {
 		1 * customValueService.cascadeCustomFieldValuesDeletion(_)
 		1 * customFieldBindingDao.removeCustomFieldBindings(_)
 		1 * eventPublisher.publishEvent(_)
+	}
+
+	def "#removeCustomFieldBindings - Should not delete some CustomFieldBindings because one Project implied is bound to a Template"() {
+
+		given:
+
+		List<Long> bindingIds = [7L, 19L, 32L, 42L]
+
+		and:
+
+		genericProjectDao.oneIsBoundToABoundProject(_) >> true
+
+		when:
+
+		service.removeCustomFieldBindings(bindingIds)
+
+		then:
+
+		thrown LockedParameterException
 	}
 }
