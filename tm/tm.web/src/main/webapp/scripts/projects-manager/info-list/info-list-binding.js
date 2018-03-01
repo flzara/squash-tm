@@ -19,51 +19,49 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ 'module', "jquery", "squash.basicwidgets", "jeditable.selectJEditable", "workspace.routing",
-		"jquery.squash.formdialog" ], function(module, $, basic, SelectJEditable, routing) {
+	"squash.translator", "jquery.squash.formdialog" ],
+	function(module, $, basic, SelectJEditable, routing, translator) {
 
 	var config = module.config();
 
 	basic.init();
-	
+
 	var changeListDialog = $("#change-list-popup");
 
 	changeListDialog.formDialog();
-	
+
 	var changeListDialogAfter = $("#change-list-popup-after");
 
 	changeListDialogAfter.formDialog();
-	
-	
+
 	changeListDialog.on('formdialogcancel', function() {
 		var $this = $(this);
-		var selectJEdit = $this.data('selectJEdit');	
+		var selectJEdit = $this.data('selectJEdit');
 		$(selectJEdit.component).text(selectJEdit.settings.jeditableSettings.oldValue);
 		changeListDialog.formDialog('close');
 	});
-	
+
 	changeListDialog.on('formdialogconfirm', function() {
-		
+
 		var $this = $(this);
 		var projectId = $this.data('projectId');
 		var listId = $this.data('infoListId');
 		var infoListType = $this.data('infoListType');
 		var url = routing.buildURL('info-list.bind-to-project', projectId, infoListType);
 		var selectJEdit = $this.data('selectJEdit');
-	
+
 		$.ajax({
 			url : url,
 			type : 'POST',
 			data : {value:listId}
 		}).success(function() {
 			selectJEdit.settings.jeditableSettings.oldValue = selectJEdit.component.text();
-		});	
-	
+		});
+
         changeListDialog.formDialog('close');
         changeListDialogAfter.formDialog('open');
 	});
-	
 
-	
 	changeListDialogAfter.on('formdialogcancel', function() {
 		changeListDialogAfter.formDialog('close');
 	});
@@ -71,10 +69,7 @@ define([ 'module', "jquery", "squash.basicwidgets", "jeditable.selectJEditable",
 	changeListDialogAfter.on('formdialogconfirm', function() {
 		document.location.href=  squashtm.app.contextRoot + "/administration/indexes";
 	});
-	
 
-	
-	
 	var submitFn = function (value, settings, self){
 		changeListDialog.data("projectId", config.data.project.id);
 		changeListDialog.data("infoListType", settings.infoListType);
@@ -84,40 +79,61 @@ define([ 'module', "jquery", "squash.basicwidgets", "jeditable.selectJEditable",
 	    var val = JSON.parse(settings.data);
         return val[value];
 	};
-	
-	var categoryEditable = new SelectJEditable(
-     {
-		target : function(value, settings) {return submitFn(value, settings,categoryEditable);}, 
-		componentId : "info-list-category",
-		jeditableSettings : {
-			data : config.data.lists.category,
-			infoListType: 'category',
-			oldValue: $("#info-list-category").text()
-		}
-	});
-	
-	var typeEditable = new SelectJEditable(
-		     {
-				target : function(value, settings) {return submitFn(value, settings,typeEditable);}, 
-				componentId : "info-list-type",
-				jeditableSettings : {
-					data : config.data.lists.type,
-					infoListType: 'type',
-					oldValue: $("#info-list-type").text()
-				}
-			});
-	
-	
-	var natureEditable = new SelectJEditable(
-		     {
-				target :  function(value, settings) {return submitFn(value, settings,natureEditable);}, 
-				componentId : "info-list-nature",
-				jeditableSettings : {
-					data : config.data.lists.nature,
-					infoListType: 'nature',
-					oldValue: $("#info-list-nature").text()
-				}
-			});
-	
-	
+
+		var categoryEditable = new SelectJEditable(
+			 {
+			target : function(value, settings) {return submitFn(value, settings,categoryEditable);},
+			componentId : "info-list-category",
+			jeditableSettings : {
+				data : config.data.lists.category,
+				infoListType: 'category',
+				oldValue: $("#info-list-category").text()
+			}
+		});
+
+		var typeEditable = new SelectJEditable(
+					 {
+					target : function(value, settings) {return submitFn(value, settings,typeEditable);},
+					componentId : "info-list-type",
+					jeditableSettings : {
+						data : config.data.lists.type,
+						infoListType: 'type',
+						oldValue: $("#info-list-type").text()
+					}
+				});
+
+		var natureEditable = new SelectJEditable(
+					 {
+					target :  function(value, settings) {return submitFn(value, settings,natureEditable);},
+					componentId : "info-list-nature",
+					jeditableSettings : {
+						data : config.data.lists.nature,
+						infoListType: 'nature',
+						oldValue: $("#info-list-nature").text()
+					}
+				});
+
+	/* If Project is bound to a Template, infoLists can't be modified. */
+	if(!config.data.project.infoListsAreModifiable) {
+
+		displayLockedParameterDialog = function() {
+			$.squash.openMessage(
+      	translator.get('title.project.lockedParameter'),
+        translator.get('message.project.lockedParameter'));
+		};
+
+		var categoryList = $("#info-list-category");
+		var typeList = $("#info-list-type");
+		var natureList = $("#info-list-nature");
+
+		categoryList.editable("disable");
+		typeList.editable("disable");
+		natureList.editable("disable");
+
+		categoryList.on("click", displayLockedParameterDialog);
+		typeList.on("click", displayLockedParameterDialog);
+		natureList.on("click", displayLockedParameterDialog);
+
+	}
+
 });

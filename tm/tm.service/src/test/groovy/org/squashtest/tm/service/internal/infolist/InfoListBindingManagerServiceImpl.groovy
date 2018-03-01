@@ -23,7 +23,8 @@ package org.squashtest.tm.service.internal.infolist
 import org.squashtest.tm.domain.infolist.InfoList
 import org.squashtest.tm.domain.infolist.InfoListItem
 import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.domain.project.ProjectTemplate;
+import org.squashtest.tm.domain.project.ProjectTemplate
+import org.squashtest.tm.exception.project.LockedParameterException;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao
 import org.squashtest.tm.service.internal.repository.InfoListDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
@@ -66,6 +67,32 @@ public class InfoListBindingManagerServiceImplTest extends Specification {
 
 		project.getRequirementCategories() == infoList
 		1 * infoListDao.setDefaultCategoryForProject(404L, defaultItem)
+	}
+
+	def "#bindListToProjectReqCategory - Should not bind ReqCategory InfoList beacause the Project is bound to a Template"() {
+
+		given:
+
+		ProjectTemplate template = new ProjectTemplate()
+		Project project = new Project()
+		project.setTemplate(template)
+
+		InfoList infoList = Mock()
+		InfoListItem defaultItem = Mock()
+		infoList.getDefaultItem() >> defaultItem
+
+		and:
+
+		genericProjectDao.findOne(404L) >> project
+		infoListDao.findOne(7331L) >> infoList
+
+		when:
+
+		manager.bindListToProjectReqCategory(7331L, 404L)
+
+		then:
+
+		thrown LockedParameterException
 	}
 
 	def "#bindListToProjectReqCategory - Should bind ReqCategory InfoList to a Template and propagate it to its bound Projects"() {
@@ -132,6 +159,32 @@ public class InfoListBindingManagerServiceImplTest extends Specification {
 		1 * infoListDao.setDefaultNatureForProject(404L, defaultItem)
 	}
 
+	def "#bindListToProjectTcNature - Should not bind TcNatureInfoList because Project is bound to a Template"() {
+
+		given:
+
+		ProjectTemplate template = new ProjectTemplate()
+		Project project = new Project()
+		project.setTemplate(template)
+
+		InfoList infoList = Mock()
+		InfoListItem defaultItem = Mock()
+		infoList.getDefaultItem() >> defaultItem
+
+		and:
+
+		genericProjectDao.findOne(404L) >> project
+		infoListDao.findOne(7331L) >> infoList
+
+		when:
+
+		manager.bindListToProjectTcNature(7331L, 404L)
+
+		then:
+
+		thrown LockedParameterException
+	}
+
 	def "#bindListToProjectTcNature - Should bind TcNatureInfoList InfoList to a Template and propagate it to its bound Projects"() {
 
 		given:
@@ -171,7 +224,6 @@ public class InfoListBindingManagerServiceImplTest extends Specification {
 	}
 
 
-
 	def "#bindListToProjectTcType - Should bind TcTypeInfoList to a Project"() {
 
 		given:
@@ -195,6 +247,32 @@ public class InfoListBindingManagerServiceImplTest extends Specification {
 
 		project.getTestCaseTypes() == infoList
 		1 * infoListDao.setDefaultTypeForProject(404L, defaultItem)
+	}
+
+	def "#bindListToProjectTcType - Should not bind TcTypeInfoList because Project is bound to a Template"() {
+
+		given:
+
+		ProjectTemplate template = new ProjectTemplate()
+		Project project = new Project()
+		project.setTemplate(template)
+
+		InfoList infoList = Mock()
+		InfoListItem defaultItem = Mock()
+		infoList.getDefaultItem() >> defaultItem
+
+		and:
+
+		genericProjectDao.findOne(404L) >> project
+		infoListDao.findOne(7331L) >> infoList
+
+		when:
+
+		manager.bindListToProjectTcType(7331L, 404L)
+
+		then:
+
+		thrown LockedParameterException
 	}
 
 	def "#bindListToProjectTcType - Should bind TcTypeInfoList InfoList to a Template and propagate it to its bound Projects"() {

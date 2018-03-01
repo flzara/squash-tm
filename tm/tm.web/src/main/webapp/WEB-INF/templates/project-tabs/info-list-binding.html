@@ -21,96 +21,99 @@
 
 -->
 <div xmlns:th="http://www.w3.org/1999/xhtml">
- <div id="parameters-panel-container" class="sq-tg expand ">
-      <div class="tg-head">
-        <h3 th:text="#{tabs.label.infoList}"></h3>
-      </div>
-      <div id="parameters-panel" class="tg-body" th:title="#{tabs.label.infoList}">
-    	<div class="display-table" id="info-list-binding-table">
 
-          <div class="display-table-row controls control-group">
-          <label for="info-list-category" class="control-label display-table-cell" th:text="#{label.info-list.category}">Requirement
-            workspace - Category</label>
+  <div id="parameters-panel-container" class="sq-tg expand ">
+    <div class="tg-head">
+      <h3 th:text="#{tabs.label.infoList}"></h3>
+    </div>
+    <div id="parameters-panel" class="tg-body" th:title="#{tabs.label.infoList}">
+      <div class="display-table" id="info-list-binding-table">
+        <div class="display-table-row controls control-group">
+          <label for="info-list-category" class="control-label display-table-cell" th:text="#{label.info-list.category}">
+            Requirement workspace - Category
+          </label>
           <div id="info-list-category" class="display-table-cell"
-            th:text="${#messages.msgOrNull('__${proj.requirementCategories.label}__')} ?:${proj.requirementCategories.label}">category</div>
-        </div>
-
-    		     <div class="display-table-row controls control-group">
-    	      <label for="info-list-nature" class="control-label display-table-cell" th:text="#{label.info-list.nature}">Test case workspace - Nature</label>
-    	<div id="info-list-nature" class="display-table-cell" th:text="${#messages.msgOrNull('__${proj.testCaseNatures.label}__')} ?: ${proj.testCaseNatures.label}">nature</div>
-    			</div>
-
-    		  <div class="display-table-row controls control-group">
-    		      <label for="info-list-type" class="control-label display-table-cell" th:text="#{label.info-list.type}">Test case workspace -Type</label>
-    	<div id="info-list-type" class="display-table-cell" th:text="${#messages.msgOrNull('__${proj.testCaseTypes.label}__')} ?: ${proj.testCaseTypes.label}">type</div>
-    			</div>
-
-
+               th:text="${#messages.msgOrNull('__${proj.requirementCategories.label}__')} ?:${proj.requirementCategories.label}">
+            category
           </div>
+        </div>
+        <div class="display-table-row controls control-group">
+          <label for="info-list-nature" class="control-label display-table-cell" th:text="#{label.info-list.nature}">
+            Test case workspace - Nature
+          </label>
+          <div id="info-list-nature" class="display-table-cell"
+               th:text="${#messages.msgOrNull('__${proj.testCaseNatures.label}__')} ?: ${proj.testCaseNatures.label}">
+            nature
+          </div>
+        </div>
+        <div class="display-table-row controls control-group">
+          <label for="info-list-type" class="control-label display-table-cell" th:text="#{label.info-list.type}">
+            Test case workspace - Type
+          </label>
+          <div id="info-list-type" class="display-table-cell"
+               th:text="${#messages.msgOrNull('__${proj.testCaseTypes.label}__')} ?: ${proj.testCaseTypes.label}">
+            type
+          </div>
+        </div>
       </div>
     </div>
-    </div>
+  </div>
 
-  <div id="change-list-popup" class="popup-dialog not-displayed" th:title="#{dialog.project.info-list.change.title}">
+</div>
 
-		<div class="display-table-row">
-      <span id="warning-message" th:text="#{dialog.project.info-list.change}"></span><br/>
-      <span th:if="${isTemplate}" class="red-warning-message" th:text="#{dialog.project.info-list.change.warningForTemplate}"></span><br/>
-      <span class="red-warning-message" id="warning-index" th:text="#{dialog.info-list.warning.reindex.before}"></span>
-    </div>
+<div id="change-list-popup" class="popup-dialog not-displayed" th:title="#{dialog.project.info-list.change.title}">
 
-	<div class="popup-dialog-buttonpane">
-              <input type="button" th:value="#{label.Confirm}" data-def="mainbtn,evt=confirm" />
-              <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
-            </div>
-	</div>
+  <div class="display-table-row">
+    <span id="warning-message" th:text="#{dialog.project.info-list.change}"></span>
+    <br/>
+    <span th:if="${isTemplate}" class="red-warning-message" th:text="#{dialog.project.info-list.change.warningForTemplate}"></span>
+    <br/>
+    <span class="red-warning-message" id="warning-index" th:text="#{dialog.info-list.warning.reindex.before}"></span>
+  </div>
+  <div class="popup-dialog-buttonpane">
+    <input type="button" th:value="#{label.Confirm}" data-def="mainbtn,evt=confirm" />
+    <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
+  </div>
 
+</div>
 
- <div id="change-list-popup-after" class="popup-dialog not-displayed" th:title="#{dialog.project.info-list.change.title}">
+<div id="change-list-popup-after" class="popup-dialog not-displayed" th:title="#{dialog.project.info-list.change.title}">
 
-		<div class="display-table-row">
+  <div class="display-table-row">
+    <span class="red-warning-message" id="warning-index-after" th:text="#{dialog.info-list.warning.reindex.after}"></span>
+  </div>
+  <div class="popup-dialog-buttonpane">
+    <input th:if="${sec.hasRole('ROLE_ADMIN')}" type="button" th:value="#{label.GotoIndex}" data-def="evt=confirm" />
+    <input type="button" th:value="#{label.Close}" data-def="mainbtn, evt=cancel"/>
+  </div>
 
-<span class="red-warning-message" id="warning-index-after" th:text="#{dialog.info-list.warning.reindex.after}"></span>
-	</div>
-	         <div class="popup-dialog-buttonpane">
-              <input th:if="${sec.hasRole('ROLE_ADMIN')}" type="button" th:value="#{label.GotoIndex}" data-def="evt=confirm" />
-              <input type="button" th:value="#{label.Close}" data-def="mainbtn, evt=cancel"/>
-            </div>
-	</div>
-
-
-
+</div>
 
 <script type="text/javascript" th:inline="javascript">
-
 /*<![CDATA[*/
-requirejs.config({
 
-	config : {
-		'projects-manager/info-list/info-list-binding' : {
-			urls: {
-			},
-			data: {
-                    project: {
-                    	id: /*[[${proj.id}]]*/ 0
-                             },
-				    lists : {
-				    	category:/*[[${category}]]*/ [],
-				    	type:/*[[${type}]]*/ [],
-				    	nature: /*[[${nature}]]*/ []
+  requirejs.config({
+    config : {
+      'projects-manager/info-list/info-list-binding' : {
+        urls: {},
+        data: {
+          project: {
+            id: /*[[${proj.id}]]*/ 0,
+            infoListsAreModifiable: /*[[${!isBoundToATemplate}]]*/ false
+          },
+          lists : {
+            category:/*[[${category}]]*/ [],
+            type:/*[[${type}]]*/ [],
+            nature: /*[[${nature}]]*/ []
+          }
+        }
+      }
+    }
+  });
 
-				           }
-			       }
-				           }
-			}
+  require(["common"], function() {
+    require(["projects-manager/info-list/info-list-binding"], function(){});
+  });
 
-		});
-
-
-
-require(["common"], function(){
-	require(["projects-manager/info-list/info-list-binding"], function(){});
-});
 /*]]>*/
-
 </script>

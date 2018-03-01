@@ -67,6 +67,7 @@ public class InfoListBindingManagerController {
 		mav.addObject("category", buildCategoryData(infoLists, locale));
 		mav.addObject("nature", buildNatureData(infoLists, locale));
 		mav.addObject("type", buildTypeData(infoLists, locale));
+		mav.addObject("isBoundToATemplate", project.isBoundToTemplate());
 		return mav;
 	}
 

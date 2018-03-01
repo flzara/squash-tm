@@ -28,6 +28,7 @@ import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.exception.project.LockedParameterException;
 import org.squashtest.tm.service.infolist.InfoListBindingManagerService;
 import org.squashtest.tm.service.internal.project.ProjectHelper;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
@@ -50,6 +51,8 @@ public class InfoListBindingManagerServiceImpl implements InfoListBindingManager
 	@Override
 	public void bindListToProjectReqCategory(long infoListId, long projectId) {
 		GenericProject project = genericProjectDao.findOne(projectId);
+		/* If Project is a bound Project, modifications must be done in the Template. */
+		checkIfParameterIsModifiable(project);
 		InfoList infoList = infoListDao.findOne(infoListId);
 		InfoListItem defaultItem = infoList.getDefaultItem();
 		project.setRequirementCategories(infoList);
@@ -68,6 +71,8 @@ public class InfoListBindingManagerServiceImpl implements InfoListBindingManager
 	@Override
 	public void bindListToProjectTcNature(long infoListId, long projectId) {
 		GenericProject project = genericProjectDao.findOne(projectId);
+		/* If Project is a bound Project, modifications must be done in the Template. */
+		checkIfParameterIsModifiable(project);
 		InfoList infoList = infoListDao.findOne(infoListId);
 		InfoListItem defaultItem = infoList.getDefaultItem();
 		project.setTestCaseNatures(infoList);
@@ -85,6 +90,8 @@ public class InfoListBindingManagerServiceImpl implements InfoListBindingManager
 	@Override
 	public void bindListToProjectTcType(long infoListId, long projectId) {
 		GenericProject project = genericProjectDao.findOne(projectId);
+		/* If Project is a bound Project, modifications must be done in the Template. */
+		checkIfParameterIsModifiable(project);
 		InfoList infoList = infoListDao.findOne(infoListId);
 		InfoListItem defaultItem = infoList.getDefaultItem();
 		project.setTestCaseTypes(infoList);
@@ -99,6 +106,10 @@ public class InfoListBindingManagerServiceImpl implements InfoListBindingManager
 		}
 	}
 
-
+	private void checkIfParameterIsModifiable(GenericProject genericProject) {
+		if(genericProject.isBoundToTemplate()) {
+			throw new LockedParameterException();
+		}
+	}
 
 }
