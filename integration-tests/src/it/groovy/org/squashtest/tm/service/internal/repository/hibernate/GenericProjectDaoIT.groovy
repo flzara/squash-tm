@@ -24,6 +24,7 @@ import org.springframework.data.domain.Sort
 import org.squashtest.it.basespecs.DbunitDaoSpecification;
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.project.ProjectTemplate
 import org.squashtest.tm.service.internal.repository.GenericProjectDao
 import org.unitils.dbunit.annotation.DataSet
 
@@ -92,12 +93,12 @@ class GenericProjectDaoIT extends DbunitDaoSpecification {
 	}
 
 	@DataSet("GenericProjectDaoIT.xml")
-	def "should coerce template into a project" () {
+	def "should coerce project into template" () {
 		when:
-		GenericProject res = dao.coerceTemplateIntoProject(100004)
+		GenericProject res = dao.coerceProjectIntoTemplate(100001)
 
 		then:
-		res instanceof Project
+		res instanceof ProjectTemplate
 	}
 
 
