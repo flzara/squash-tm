@@ -56,6 +56,12 @@ public class GherkinStepGenerator {
 	private static final String SCENARIO_KEYWORD_CLASS_NAME = "scenario-keyword";
 	private static final String SCENARIO_DESCRIPTION_CLASS_NAME = "scenario-description";
 
+	//HTML tags
+	private static final String TABLE_TAG = "table";
+	private static final String ROW_TAG = "tr";
+	private static final String CELL_TAG = "td";
+	private static final String SPAN_TAG = "span";
+
 	private GherkinDialectProvider dialectProvider = new GherkinDialectProvider();
 
 	private GherkinDialect dialect;
@@ -186,40 +192,46 @@ public class GherkinStepGenerator {
 			appendClassSpan(sb, docString.getContent(), STEP_DOC_STRING_CLASS_NAME);
 		} else if (argument instanceof DataTable) {
 			DataTable dataTable = (DataTable) argument;
-			sb.append("<table class='");
-			sb.append(ARGUMENT_TABLE_CLASS_NAME);
-			sb.append("'>");
+			appendOpeningClassTab(sb, TABLE_TAG, ARGUMENT_TABLE_CLASS_NAME);
 			for (TableRow tableRow : dataTable.getRows()) {
-				sb.append("<tr class='");
-				sb.append(ARGUMENT_TABLE_TR_CLASS_NAME);
-				sb.append("'>");
+				appendOpeningClassTab(sb, ROW_TAG, ARGUMENT_TABLE_TR_CLASS_NAME);
 				for (TableCell tableCell : tableRow.getCells()) {
-					sb.append("<td class='");
-					sb.append(ARGUMENT_TABLE_TD_CLASS_NAME);
-					sb.append("'>");
+					appendOpeningClassTab(sb, CELL_TAG, ARGUMENT_TABLE_TD_CLASS_NAME);
 					sb.append(tableCell.getValue());
-					sb.append("</td>");
+					appendClosingTab(sb,CELL_TAG);
 				}
-				sb.append("</tr>");
+				appendClosingTab(sb,ROW_TAG);
 			}
-			sb.append("</table>");
+			appendClosingTab(sb,TABLE_TAG);
 			appendLineBreak(sb);
 		}
 	}
 
 	private void appendClassSpan(StringBuilder sb, String text, String... cssClass) {
 		if (StringUtils.isNotBlank(text)) {
-			sb.append("<span class='");
-
-			for (String aClass : cssClass) {
-				sb.append(aClass);
-				sb.append(" ");
-			}
-
-			sb.append("'>")
-				.append(StringUtils.appendIfMissing(text, " "))
-				.append("</span>");
+			appendOpeningClassTab(sb, SPAN_TAG, cssClass);
+			sb.append(StringUtils.appendIfMissing(text, " "));
+			appendClosingTab(sb, SPAN_TAG);
 		}
+	}
+
+	private void appendClosingTab(StringBuilder sb, String tag) {
+		sb.append("</")
+			.append(tag)
+			.append(">");
+	}
+
+	private void appendOpeningClassTab(StringBuilder sb, String tag, String... cssClass) {
+		sb.append("<")
+			.append(tag)
+			.append(" class='");
+
+		for (String aClass : cssClass) {
+			sb.append(aClass);
+			sb.append(" ");
+		}
+
+		sb.append("'>");
 	}
 
 	private void appendScenarioLine(ScenarioDefinition scenarioDefinition, StringBuilder sb) {
@@ -275,11 +287,11 @@ public class GherkinStepGenerator {
 	}
 
 	private void changeCurrentStepClass(String keyword) {
-		if (dialect.getGivenKeywords().contains(keyword)){
+		if (dialect.getGivenKeywords().contains(keyword)) {
 			currentStepClass = GIVEN_KEYWORD_CLASS_NAME;
-		} else if(dialect.getWhenKeywords().contains(keyword)){
+		} else if (dialect.getWhenKeywords().contains(keyword)) {
 			currentStepClass = WHEN_KEYWORD_CLASS_NAME;
-		} else if(dialect.getThenKeywords().contains(keyword)){
+		} else if (dialect.getThenKeywords().contains(keyword)) {
 			currentStepClass = THEN_KEYWORD_CLASS_NAME;
 		} else {
 			LOGGER.warn("No css class defined for Gherkin step keyword {} ", keyword);
