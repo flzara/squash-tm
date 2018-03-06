@@ -37,6 +37,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+//This class is responsible for generating Squash TM executions steps, with their rich text field, from a Gherkin script.
 public class GherkinStepGenerator {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(GherkinStepGenerator.class);
@@ -45,6 +46,13 @@ public class GherkinStepGenerator {
 	private static final String GIVEN_KEYWORD_CLASS_NAME = "step-keyword-given";
 	private static final String WHEN_KEYWORD_CLASS_NAME = "step-keyword-when";
 	private static final String THEN_KEYWORD_CLASS_NAME = "step-keyword-then";
+
+	private static final String STEP_DOC_STRING_CLASS_NAME = "step-doc-string";
+
+	private static final String ARGUMENT_TABLE_CLASS_NAME = "step-table";
+	private static final String ARGUMENT_TABLE_TR_CLASS_NAME = "step-table-tr";
+	private static final String ARGUMENT_TABLE_TD_CLASS_NAME = "step-table-td";
+
 	private static final String SCENARIO_KEYWORD_CLASS_NAME = "scenario-keyword";
 	private static final String SCENARIO_DESCRIPTION_CLASS_NAME = "scenario-description";
 
@@ -76,7 +84,6 @@ public class GherkinStepGenerator {
 			//Can't use visitor because cannot change Gherking Parser source code to add accept method, and haven't right to fork ...
 			if (scenarioDefinition instanceof Scenario) {
 				appendScenarioStep(execution, background, scenarioDefinition);
-
 			} else if (scenarioDefinition instanceof ScenarioOutline) {
 				appendScenarioOutilineStep(execution, background, scenarioDefinition);
 			}
@@ -176,14 +183,20 @@ public class GherkinStepGenerator {
 		appendLineBreak(sb);
 		if (argument instanceof DocString) {
 			DocString docString = (DocString) argument;
-			appendClassSpan(sb, docString.getContent(), SCENARIO_DESCRIPTION_CLASS_NAME);
+			appendClassSpan(sb, docString.getContent(), STEP_DOC_STRING_CLASS_NAME);
 		} else if (argument instanceof DataTable) {
 			DataTable dataTable = (DataTable) argument;
-			sb.append("<table>");
+			sb.append("<table class='");
+			sb.append(ARGUMENT_TABLE_CLASS_NAME);
+			sb.append("'>");
 			for (TableRow tableRow : dataTable.getRows()) {
-				sb.append("<tr>");
+				sb.append("<tr class='");
+				sb.append(ARGUMENT_TABLE_TR_CLASS_NAME);
+				sb.append("'>");
 				for (TableCell tableCell : tableRow.getCells()) {
-					sb.append("<td>");
+					sb.append("<td class='");
+					sb.append(ARGUMENT_TABLE_TD_CLASS_NAME);
+					sb.append("'>");
 					sb.append(tableCell.getValue());
 					sb.append("</td>");
 				}
@@ -231,7 +244,12 @@ public class GherkinStepGenerator {
 	private void appendStepLine(Step step, Map<String, String> valueByHeader, StringBuilder sb) {
 		appendStepKeyword(step, sb);
 		String text = step.getText();
+		text = performParamSubstitution(valueByHeader, text);
+		sb.append(text);
+		appendLineBreak(sb);
+	}
 
+	private String performParamSubstitution(Map<String, String> valueByHeader, String text) {
 		//now substitute each <param> by it's value, if not found inject a placeholder
 		Pattern p = Pattern.compile("<[.*?[^>]]*>");
 		Matcher m = p.matcher(text);
@@ -244,9 +262,7 @@ public class GherkinStepGenerator {
 			}
 			text = text.replace(token, value);
 		}
-
-		sb.append(text);
-		appendLineBreak(sb);
+		return text;
 	}
 
 	private void appendStepKeyword(Step step, StringBuilder sb) {
@@ -266,7 +282,7 @@ public class GherkinStepGenerator {
 		} else if(dialect.getThenKeywords().contains(keyword)){
 			currentStepClass = THEN_KEYWORD_CLASS_NAME;
 		} else {
-			LOGGER.warn("No class defined for Gherkin step keyword {} ", keyword);
+			LOGGER.warn("No css class defined for Gherkin step keyword {} ", keyword);
 			currentStepClass = "";
 		}
 	}

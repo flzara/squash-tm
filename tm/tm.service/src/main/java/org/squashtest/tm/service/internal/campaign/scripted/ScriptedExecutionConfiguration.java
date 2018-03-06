@@ -39,7 +39,7 @@ public class ScriptedExecutionConfiguration {
 	//As the called method is a spring managed prototype bean, these will be like a Provider but with arguments
 	@Bean
 	public Function<ScriptedTestCaseExtender, ScriptedTestCaseParser> scriptedTestCaseParserFactory() {
-		return this::parser; // this in that case is the bean of class Function that will just forward the call to parser() method
+		return this::parser; //just return the function that will instantiate the bean when called
 	}
 
 	@Bean
