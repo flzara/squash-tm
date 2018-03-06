@@ -30,3 +30,15 @@
 .step-keyword {
 	font-weight: bold;
 }
+
+.step-keyword-given {
+	color: #008800;
+}
+
+.step-keyword-when {
+	color: #0000FF;
+}
+
+.step-keyword-then {
+	color: #660066;
+}

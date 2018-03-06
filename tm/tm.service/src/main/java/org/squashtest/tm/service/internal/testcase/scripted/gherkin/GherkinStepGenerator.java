@@ -24,6 +24,8 @@ import gherkin.GherkinDialect;
 import gherkin.GherkinDialectProvider;
 import gherkin.ast.*;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 
@@ -37,14 +39,20 @@ import java.util.stream.IntStream;
 
 public class GherkinStepGenerator {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(GherkinStepGenerator.class);
+
 	private static final String STEP_KEYWORD_CLASS_NAME = "step-keyword";
+	private static final String GIVEN_KEYWORD_CLASS_NAME = "step-keyword-given";
+	private static final String WHEN_KEYWORD_CLASS_NAME = "step-keyword-when";
+	private static final String THEN_KEYWORD_CLASS_NAME = "step-keyword-then";
 	private static final String SCENARIO_KEYWORD_CLASS_NAME = "scenario-keyword";
 	private static final String SCENARIO_DESCRIPTION_CLASS_NAME = "scenario-description";
 
 	private GherkinDialectProvider dialectProvider = new GherkinDialectProvider();
 
-
 	private GherkinDialect dialect;
+
+	private String currentStepClass = "";
 
 	public void populateExecution(Execution execution, GherkinDocument gherkinDocument) {
 		Feature feature = gherkinDocument.getFeature();
@@ -169,7 +177,7 @@ public class GherkinStepGenerator {
 		if (argument instanceof DocString) {
 			DocString docString = (DocString) argument;
 			appendClassSpan(sb, docString.getContent(), SCENARIO_DESCRIPTION_CLASS_NAME);
-		} else if(argument instanceof DataTable){
+		} else if (argument instanceof DataTable) {
 			DataTable dataTable = (DataTable) argument;
 			sb.append("<table>");
 			for (TableRow tableRow : dataTable.getRows()) {
@@ -186,11 +194,16 @@ public class GherkinStepGenerator {
 		}
 	}
 
-	private void appendClassSpan(StringBuilder sb, String text, String cssClass) {
+	private void appendClassSpan(StringBuilder sb, String text, String... cssClass) {
 		if (StringUtils.isNotBlank(text)) {
-			sb.append("<span class='")
-				.append(cssClass)
-				.append("'>")
+			sb.append("<span class='");
+
+			for (String aClass : cssClass) {
+				sb.append(aClass);
+				sb.append(" ");
+			}
+
+			sb.append("'>")
 				.append(StringUtils.appendIfMissing(text, " "))
 				.append("</span>");
 		}
@@ -214,7 +227,7 @@ public class GherkinStepGenerator {
 		sb.append("</br>");
 	}
 
-	//this method append steps lines in scenario outline mode (ie with dataset so we must do param substitution)
+	//this method append steps lines in scenario outline mode (ie with Gherkin equivalent of dataset so we must do param substitution)
 	private void appendStepLine(Step step, Map<String, String> valueByHeader, StringBuilder sb) {
 		appendStepKeyword(step, sb);
 		String text = step.getText();
@@ -238,10 +251,24 @@ public class GherkinStepGenerator {
 
 	private void appendStepKeyword(Step step, StringBuilder sb) {
 		String keyword = step.getKeyword();
-		if (!isContinuousKeyword(keyword)){
+		if (!isContinuousKeyword(keyword)) {
 			appendLineBreak(sb);
+			changeCurrentStepClass(keyword);
 		}
-		appendClassSpan(sb, keyword, STEP_KEYWORD_CLASS_NAME);
+		appendClassSpan(sb, keyword, STEP_KEYWORD_CLASS_NAME, currentStepClass);
+	}
+
+	private void changeCurrentStepClass(String keyword) {
+		if (dialect.getGivenKeywords().contains(keyword)){
+			currentStepClass = GIVEN_KEYWORD_CLASS_NAME;
+		} else if(dialect.getWhenKeywords().contains(keyword)){
+			currentStepClass = WHEN_KEYWORD_CLASS_NAME;
+		} else if(dialect.getThenKeywords().contains(keyword)){
+			currentStepClass = THEN_KEYWORD_CLASS_NAME;
+		} else {
+			LOGGER.warn("No class defined for Gherkin step keyword {} ", keyword);
+			currentStepClass = "";
+		}
 	}
 
 	private boolean isContinuousKeyword(String keyword) {
