@@ -28,9 +28,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
+import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
+import org.squashtest.tm.service.internal.batchexport.RequirementExportModel;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -78,12 +80,7 @@ public class MilestoneController {
 		}
 
 		// they must be initially sorted by date descending
-		Collections.sort(milestones, new Comparator<Milestone>() {
-			@Override
-			public int compare(Milestone o1, Milestone o2) {
-				return o2.getEndDate().before(o1.getEndDate()) ? -1 : 1;
-			}
-		});
+		Collections.sort(milestones,COMPARATOR);
 
 		// now make the model
 		PagedCollectionHolder<List<Milestone>> holderCollection =
@@ -106,6 +103,15 @@ public class MilestoneController {
 		}
 		return milestoneFiltered;
 	}
+
+	public static final Comparator<Milestone> COMPARATOR = new Comparator<Milestone>() {
+		@Override
+		public int compare(Milestone o1, Milestone o2) {
+			return o2.getEndDate().before(o1.getEndDate()) ? -1 : o2.getEndDate().equals(o1.getEndDate()) ?0 : 1;
+		}
+	};
+
+
 
 
 }
