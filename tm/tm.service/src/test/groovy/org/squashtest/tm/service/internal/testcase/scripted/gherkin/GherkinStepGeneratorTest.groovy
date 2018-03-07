@@ -75,7 +75,7 @@ class GherkinStepGeneratorTest extends Specification {
 		where:
 		text                 | cssClasses  || expectedSpan
 		"toto"               | []          || "<span>toto </span>"
-		"i'm a super string" | ['keyword'] || "<span class='keyword '>i'm a super string </span>"
+		"i'm a super string" | ['keyword'] || "<span class='keyword'>i'm a super string </span>"
 
 	}
 }

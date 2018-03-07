@@ -227,10 +227,7 @@ public class GherkinStepGenerator {
 
 		if (cssClass.length > 0) {
 			sb.append(" class='");
-			for (String aClass : cssClass) {
-				sb.append(aClass);
-				sb.append(" ");
-			}
+			sb.append(StringUtils.join(cssClass, " "));
 			sb.append("'");
 		}
 		sb.append(">");
