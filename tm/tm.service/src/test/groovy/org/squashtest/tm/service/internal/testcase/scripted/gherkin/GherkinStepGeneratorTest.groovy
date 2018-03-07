@@ -53,6 +53,28 @@ class GherkinStepGeneratorTest extends Specification {
 
 	}
 
+	def "should perform param substitution"() {
+
+		given:
+		GherkinStepGenerator stepGenerator = new GherkinStepGenerator()
+
+		when:
+		String substitutedText = stepGenerator.performParamSubstitution(dataset, text)
+
+		then:
+		substitutedText == expectedText
+
+		where:
+		dataset                                  | text                                           || expectedText
+		["param": "value"]                       | "a text with parameter <param>"                || "a text with parameter value"
+		["param": "value"]                       | "a text with parameter <param_2>"              || "a text with parameter <NO_DATA>"
+		["param": "value", "param_2": "value_2"] | "a text with parameter <param>"                || "a text with parameter value"
+		["param": "value", "param_2": "value_2"] | "a text with parameter <param> <param>"        || "a text with parameter value value"
+		["param": "value", "param_2": "value_2"] | "a text with parameters <param> and <param_2>" || "a text with parameters value and value_2"
+
+	}
+
+
 	GherkinDocument getGherkinDocument(String file) {
 		Resource resource = new ClassPathResource("testcase/scripted/gherkin/" + file)
 		String script = readFileToString(resource.getFile())
@@ -73,9 +95,11 @@ class GherkinStepGeneratorTest extends Specification {
 		sb.toString().equals(expectedSpan)
 
 		where:
-		text                 | cssClasses  || expectedSpan
-		"toto"               | []          || "<span>toto </span>"
-		"i'm a super string" | ['keyword'] || "<span class='keyword'>i'm a super string </span>"
-
+		text                 | cssClasses                   || expectedSpan
+		"toto"               | []                           || "<span>toto </span>"
+		"i'm a super string" | ['keyword']                  || "<span class='keyword'>i'm a super string </span>"
+		"i'm a super string" | ['keyword', 'keyword-given'] || "<span class='keyword keyword-given'>i'm a super string </span>"
 	}
+
+
 }

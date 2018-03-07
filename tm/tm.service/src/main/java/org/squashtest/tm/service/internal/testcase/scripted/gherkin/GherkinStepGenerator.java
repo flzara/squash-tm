@@ -91,7 +91,7 @@ public class GherkinStepGenerator {
 			if (scenarioDefinition instanceof Scenario) {
 				appendScenarioStep(execution, background, scenarioDefinition);
 			} else if (scenarioDefinition instanceof ScenarioOutline) {
-				appendScenarioOutilineStep(execution, background, scenarioDefinition);
+				appendScenarioOutlineStep(execution, background, scenarioDefinition);
 			}
 		}
 	}
@@ -121,7 +121,7 @@ public class GherkinStepGenerator {
 		appendExecutionStep(execution, sb);
 	}
 
-	private void appendScenarioOutilineStep(Execution execution, Background background, ScenarioDefinition scenarioDefinition) {
+	private void appendScenarioOutlineStep(Execution execution, Background background, ScenarioDefinition scenarioDefinition) {
 		ScenarioOutline scenario = (ScenarioOutline) scenarioDefinition;
 		List<Examples> examples = scenario.getExamples();
 
@@ -230,6 +230,7 @@ public class GherkinStepGenerator {
 			sb.append(StringUtils.join(cssClass, " "));
 			sb.append("'");
 		}
+
 		sb.append(">");
 
 	}
@@ -238,9 +239,9 @@ public class GherkinStepGenerator {
 		String keyword = scenarioDefinition.getKeyword();
 		appendClassSpan(sb, keyword, SCENARIO_KEYWORD_CLASS_NAME);
 		sb.append(scenarioDefinition.getName());
-		appendLineBreak(sb);
+//		appendLineBreak(sb);
 		appendClassSpan(sb, scenarioDefinition.getDescription(), SCENARIO_DESCRIPTION_CLASS_NAME);
-		appendBlankLine(sb);
+//		appendBlankLine(sb);
 	}
 
 	private void appendBlankLine(StringBuilder sb) {
