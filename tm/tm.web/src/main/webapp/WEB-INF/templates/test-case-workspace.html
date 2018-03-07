@@ -456,7 +456,7 @@
                   <div class="display-table-cell">
                     <select id="import-project-list" name="projectId">
                       <option th:each="lib : ${editableLibraries}" th:value="${lib.id}" th:selected="${libStat.first}"
-                        th:text="${lib.project.name}">project name</option>
+                        th:utext="${lib.project.name}">project name</option>
                     </select>
                     <div class="icon-helper no-print small-margin-left" th:title="#{message.import.info.targetproject}"></div>
                   </div>
