@@ -198,11 +198,11 @@ public class GherkinStepGenerator {
 				for (TableCell tableCell : tableRow.getCells()) {
 					appendOpeningClassTab(sb, CELL_TAG, ARGUMENT_TABLE_TD_CLASS_NAME);
 					sb.append(tableCell.getValue());
-					appendClosingTab(sb,CELL_TAG);
+					appendClosingTab(sb, CELL_TAG);
 				}
-				appendClosingTab(sb,ROW_TAG);
+				appendClosingTab(sb, ROW_TAG);
 			}
-			appendClosingTab(sb,TABLE_TAG);
+			appendClosingTab(sb, TABLE_TAG);
 			appendLineBreak(sb);
 		}
 	}
@@ -223,15 +223,18 @@ public class GherkinStepGenerator {
 
 	private void appendOpeningClassTab(StringBuilder sb, String tag, String... cssClass) {
 		sb.append("<")
-			.append(tag)
-			.append(" class='");
+			.append(tag);
 
-		for (String aClass : cssClass) {
-			sb.append(aClass);
-			sb.append(" ");
+		if (cssClass.length > 0) {
+			sb.append(" class='");
+			for (String aClass : cssClass) {
+				sb.append(aClass);
+				sb.append(" ");
+			}
+			sb.append("'");
 		}
+		sb.append(">");
 
-		sb.append("'>");
 	}
 
 	private void appendScenarioLine(ScenarioDefinition scenarioDefinition, StringBuilder sb) {
