@@ -46,7 +46,7 @@ public class RequirementVersionBundleStat {
 	public void computeRate(Long reqId , String key, Integer countAll, Integer countMatching) {
 		SimpleRequirementStats stats = getSimpleStats(reqId);
 		double rate = calculateRate(countAll, countMatching);
-		stats.setRate(key, rate);
+		stats.setRate(key, rate, countAll, countMatching);
 	}
 
 	private double calculateRate(Integer countAll, Integer countMatching) {
@@ -72,10 +72,22 @@ public class RequirementVersionBundleStat {
 		public static final String VERIFICATION_RATE_KEY = "VERIFICATION_RATE";
 		public static final String VALIDATION_RATE_KEY = "VALIDATION_RATE";
 
-		private Map<String, Double> rates = new HashMap<>();
+		private Map<String, StatisticData> rates = new HashMap<>();
 
 		SimpleRequirementStats(Long reqId) {
 			this.reqId = reqId;
+		}
+
+		public void setRate(String key, Double rate, Integer countAll, Integer countMatching){
+			switch (key){
+				case REDACTION_RATE_KEY :
+				case VERIFICATION_RATE_KEY :
+				case VALIDATION_RATE_KEY :
+					rates.put(key, new StatisticData(countMatching,countAll,rate));
+					break;
+				default:
+					throw new IllegalArgumentException("Programmatic error : Unknown key : " + key);
+			}
 		}
 
 		public Long getReqId() {
@@ -83,30 +95,100 @@ public class RequirementVersionBundleStat {
 		}
 
 		public Double getRedactionRate() {
-			return rates.getOrDefault(REDACTION_RATE_KEY, Double.NaN);
+			return getRate(REDACTION_RATE_KEY);
 		}
 
+		public Integer getAllTestCaseCount (){
+			return getCount(REDACTION_RATE_KEY);
+		}
+
+		public Integer getRedactedTestCase (){
+			return getMatching(REDACTION_RATE_KEY);
+		}
+
+		public Integer getVerifiedTestCase (){
+			return getMatching(VERIFICATION_RATE_KEY);
+		}
+
+		public Integer getPlannedTestCase (){
+			return getCount(VERIFICATION_RATE_KEY);
+		}
+
+		public Integer getValidatedTestCase (){
+			return getMatching(VALIDATION_RATE_KEY);
+		}
+
+		public Integer getExecutedTestCase (){
+			return getCount(VALIDATION_RATE_KEY);
+		}
+
+		private Double getRate(String rateKey) {
+			if(rates.containsKey(rateKey)){
+				return rates.get(rateKey).getRate();
+			}
+			throw throwNoDataExeception(rateKey);
+		}
+
+
+		private Integer getCount(String rateKey) {
+			if(rates.containsKey(rateKey)){
+				return rates.get(rateKey).getCountAll();
+			}
+			throw throwNoDataExeception(rateKey);
+		}
+
+		private Integer getMatching(String rateKey) {
+			if(rates.containsKey(rateKey)){
+				return rates.get(rateKey).getMatchingCount();
+			}
+			throw throwNoDataExeception(rateKey);
+		}
 
 		public Double getVerificationRate() {
-			return rates.getOrDefault(VERIFICATION_RATE_KEY, Double.NaN);
+			return getRate(VERIFICATION_RATE_KEY);
 		}
-
 
 		public Double getValidationRate() {
-			return rates.getOrDefault(VALIDATION_RATE_KEY, Double.NaN);
+			return getRate(VALIDATION_RATE_KEY);
 		}
 
-		public void setRate(String key, Double value){
-			switch (key){
-				case REDACTION_RATE_KEY :
-				case VERIFICATION_RATE_KEY :
-				case VALIDATION_RATE_KEY :
-					rates.put(key, value);
-					break;
-				default:
-					throw new IllegalArgumentException("Programmatic error : Unknown key : " + key);
-			}
+		private IllegalArgumentException throwNoDataExeception(String rateKey) {
+			return new IllegalArgumentException("You must initialize statistic bundle before get rates... no value for key " + rateKey + " in statistic map.");
 		}
+
+
+
+	}
+
+	public static class StatisticData {
+		private Integer matchingCount;
+		private Integer countAll;
+		private Double rate;
+
+		StatisticData(Integer matchingCount, Integer countAll, Double rate) {
+			this.matchingCount = matchingCount;
+			this.countAll = countAll;
+			this.rate = rate;
+		}
+
+		public Integer getMatchingCount() {
+			if (matchingCount == null) {
+				return 0;
+			}
+			return matchingCount;
+		}
+
+		public Integer getCountAll() {
+			if (countAll == null) {
+				return 0;
+			}
+			return countAll;
+		}
+
+		public Double getRate() {
+			return rate;
+		}
+
 
 	}
 }
