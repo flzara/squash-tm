@@ -39,7 +39,7 @@ final class IssueOwnershipFinderUtils {
 	}
 
 	static Map<String, RemoteIssue> createRemoteIssueByRemoteIdMap(List<RemoteIssue> btIssues) {
-		return btIssues.stream().collect(Collectors.toMap(RemoteIssue::getId, Function.identity()));
+		return btIssues.stream().collect(Collectors.toMap(RemoteIssue::getId, Function.identity(), (RemoteIssue issue1, RemoteIssue issue2) -> issue1));
 	}
 
 	static List<IssueOwnership<RemoteIssueDecorator>> coerceIntoIssueOwnerships(List<? extends Pair<? extends IssueDetector, Issue>> pairs, Map<String, RemoteIssue> remoteIssueByRemoteId) {
@@ -53,7 +53,6 @@ final class IssueOwnershipFinderUtils {
 			}
 			return new IssueOwnership<>(new RemoteIssueDecorator(remote, ish.getId()), p.left);
 		}).collect(Collectors.toList());
-
 
 
 	}
