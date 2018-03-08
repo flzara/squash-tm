@@ -98,7 +98,7 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 	@PreventConcurrent(entityType = CampaignLibraryNode.class)
 	void addCampaignToCampaignFolder(@Id long folderId, Campaign campaign, Map<Long, RawValue> customFieldValues);
 
-	@PreventConcurrent(entityType=CampaignLibraryNode.class,paramName= DESTINATION_ID)
+	@PreventConcurrent(entityType=CampaignLibraryNode.class,paramName = DESTINATION_ID)
 	void moveIterationsWithinCampaign(@Id(DESTINATION_ID)long destinationId, Long[] nodeIds, int position);
 
 	/**

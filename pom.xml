@@ -505,7 +505,6 @@
 
   <scm>
     <connection>scm:hg:${project.basedir}</connection>
-    <developerConnection>scm:hg:${project.basedir}</developerConnection>
     <tag>HEAD</tag>
   </scm>
 
