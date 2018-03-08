@@ -372,7 +372,7 @@ public final class BugTrackerControllerHelper {
 
 			result.put(ISSUE_URL, strUrl);
 			result.put("issue-id", issue.getId());
-			result.put("issue-summary", HTMLCleanupUtils.cleanHtml(issue.getSummary()));
+			result.put("issue-summary", HtmlUtils.htmlUnescape(HTMLCleanupUtils.cleanHtml(issue.getSummary())));
 			result.put("issue-priority", findPriority(issue));
 			result.put("issue-status", findStatus(issue));
 			result.put("issue-assignee", findAssignee(issue));
@@ -421,7 +421,7 @@ public final class BugTrackerControllerHelper {
 
 			row.put("url", url);
 			row.put("remote-id", issue.getId());
-			row.put("summary", HTMLCleanupUtils.cleanHtml(issue.getSummary()));
+			row.put("summary", HtmlUtils.htmlUnescape(HTMLCleanupUtils.cleanHtml(issue.getSummary())));
 			row.put("priority", findPriority(issue));
 			row.put("status", findStatus(issue));
 			row.put("assignee", findAssignee(issue));
@@ -467,7 +467,7 @@ public final class BugTrackerControllerHelper {
 					.toExternalForm()));
 
 			result.put("remote-id", issue.getId());
-			result.put("summary", HTMLCleanupUtils.cleanHtml(issue.getSummary()));
+			result.put("summary", HtmlUtils.htmlUnescape(HTMLCleanupUtils.cleanHtml(issue.getSummary())));
 			result.put("priority", findPriority(issue));
 			result.put("status", findStatus(issue));
 			result.put("assignee", findAssignee(issue));
@@ -506,7 +506,7 @@ public final class BugTrackerControllerHelper {
 					.toExternalForm()));
 
 			result.put("remote-id", issue.getId());
-			result.put("summary", HTMLCleanupUtils.cleanHtml(issue.getSummary()));
+			result.put("summary", HtmlUtils.htmlUnescape(HTMLCleanupUtils.cleanHtml(issue.getSummary())));
 			result.put("priority", findPriority(issue));
 			result.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, "");
 			result.put("local-id", issue.getIssueId());
