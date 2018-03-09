@@ -372,13 +372,13 @@ public final class BugTrackerControllerHelper {
 
 			result.put(ISSUE_URL, strUrl);
 			result.put("issue-id", issue.getId());
-			result.put("issue-summary", HtmlUtils.htmlUnescape(HTMLCleanupUtils.cleanHtml(issue.getSummary())));
+			result.put("issue-summary", HTMLCleanupUtils.cleanHtml(issue.getSummary()));
 			result.put("issue-priority", findPriority(issue));
 			result.put("issue-status", findStatus(issue));
 			result.put("issue-assignee", findAssignee(issue));
 			result.put("issue-owner", ownerName);
 			result.put("issue-owner-url", ownerPath);
-			result.put(BT_PROJECT, HTMLCleanupUtils.cleanHtml(issue.getProject().getName()));
+			result.put(BT_PROJECT, HtmlUtils.htmlUnescape(HTMLCleanupUtils.cleanHtml(issue.getProject().getName())));
 
 			return result;
 
