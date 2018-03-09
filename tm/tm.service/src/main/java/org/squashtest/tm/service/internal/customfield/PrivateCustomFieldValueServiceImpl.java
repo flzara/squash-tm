@@ -180,7 +180,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 			customFieldValueDao.save(value);
 		}
 
-		reindexAfterCufBindingModification(binding, boundEntities);
+		// reindexAfterCufBindingModification(binding, boundEntities);
 	}
 
 	private void reindexAfterCufBindingModification(CustomFieldBinding binding, List<BoundEntity> boundEntities) {
