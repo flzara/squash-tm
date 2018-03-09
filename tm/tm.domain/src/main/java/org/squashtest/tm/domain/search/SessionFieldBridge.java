@@ -22,6 +22,7 @@ package org.squashtest.tm.domain.search;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+
 import org.apache.lucene.document.Document;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -42,7 +43,6 @@ public abstract class SessionFieldBridge implements FieldBridge {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SessionFieldBridge.class);
 
 
-
 	/*
 	 * 2016-04-13
 	 *
@@ -61,7 +61,7 @@ public abstract class SessionFieldBridge implements FieldBridge {
 	@Lazy
 	private EntityManager em;
 
-	private Session getCurrentSession(){
+	private Session getCurrentSession() {
 		return em.unwrap(Session.class);
 	}
 
@@ -70,16 +70,17 @@ public abstract class SessionFieldBridge implements FieldBridge {
 	}
 
 	protected abstract void writeFieldToDocument(String name, Session session, Object value, Document document,
-			LuceneOptions luceneOptions);
+												 LuceneOptions luceneOptions);
 
 	@Override
 	public void set(String name, Object value, Document document, LuceneOptions luceneOptions) {
 		long start = 0;
+
 		if (LOGGER.isDebugEnabled()) {
 			start = System.nanoTime();
 		}
 
-		Session session = null;
+		Session session;
 		Transaction tx;
 
 		try {
@@ -90,10 +91,24 @@ public abstract class SessionFieldBridge implements FieldBridge {
 
 		if (session == null) {
 			session = getSessionFactory().openSession();
-			tx = session.beginTransaction();
-			writeFieldToDocument(name, session, value, document, luceneOptions);
-			tx.commit();
-			session.close();
+			try {
+				tx = session.beginTransaction();
+				try {
+					writeFieldToDocument(name, session, value, document, luceneOptions);
+					tx.commit();
+				} catch (Exception indexationException) {
+					LOGGER.warn("Exception while writing index to Lucene document for field {}, value {}.", name, value, indexationException);
+					tx.rollback();
+					throw indexationException;
+				}
+			} finally {
+				try {
+					session.close();
+				} catch (Exception e) {
+					//Do not rethrow the closing exception here as it will eat the eventual original indexationException witch can be in the flow at this stage
+					LOGGER.error("UNABLE TO CLOSE HIBERNATE SESSION DEDICATED TO INDEXATION. Could lead to a DB connection starving...", e);
+				}
+			}
 		} else {
 			writeFieldToDocument(name, session, value, document, luceneOptions);
 		}
@@ -102,7 +117,7 @@ public abstract class SessionFieldBridge implements FieldBridge {
 			long end = System.nanoTime();
 			int timeInMilliSec = Math.round((end - start) / 1000000f);
 			LOGGER.trace(this.getClass().getSimpleName() + ".set(..) took {} ms for entity {}", timeInMilliSec,
-					((Identified) value).getId());
+				((Identified) value).getId());
 			final int threshold = 10;
 			if (timeInMilliSec > threshold) {
 				LOGGER.trace("BEWARE : " + this.getClass().getSimpleName() + ".set(..) took more than {} ms", threshold);
