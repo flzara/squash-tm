@@ -128,7 +128,7 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
     * Try to add the LinkType submitted by user.
     * Manage potential errors, post adding request and execute callback.
     */
-    addNewLinkType(callback) {
+     addNewLinkType : function(callback) {
 
 			var self = this;
 
@@ -158,7 +158,7 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
     *					}
 		* @return true if at least one is left blank, else returns false.
 		*/
-		checkBlankInputsAndDisplayErrors(params) {
+		checkBlankInputsAndDisplayErrors : function(params) {
 
 			var newRole1 = params.role1;
       var newRole1Code = params.role1Code;
@@ -197,7 +197,7 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
 		*					}
 		* @return Promise of codes-checking request.
 		*/
-		checkCodesExistence(params) {
+		checkCodesExistence : function(params) {
       return $.ajax({
       	url : routing.buildURL("requirementLinkType.checkCodes"),
       	type : 'GET',
@@ -212,7 +212,7 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
 		* @params codesInfos.
 		* @return true if at least one code exists in database, else returns false.
 		*/
-		checkCodesExistenceAndDisplayErrors(codesInfos) {
+		checkCodesExistenceAndDisplayErrors : function(codesInfos) {
 			if(!codesInfos.areCodesAndRolesConsistent) {
 				Forms.input($("#add-link-type-popup-role1-code")).setState("error", translator.get("requirement-version.link.type.rejection.codesAndRolesNotConsistent"));
 				Forms.input($("#add-link-type-popup-role2-code")).setState("error", translator.get("requirement-version.link.type.rejection.codesAndRolesNotConsistent"));
@@ -233,7 +233,7 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
 		/**
 		* Get the input values of the AddLinkTypePopup and returns it as a structured object.
 		*/
-		retrievePopupParams() {
+		retrievePopupParams :  function() {
 
 			var self = this;
 
@@ -317,7 +317,7 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
     	Forms.input($("#change-type-role-popup-role")).clearState();
     },
 
-		isRoleEditable(data) {
+		isRoleEditable : function(data) {
 			if(data['type-role1'] === data['type-role2']
 				&& data['type-role1-code'] === data['type-role2-code']) {
 					return false;
@@ -521,7 +521,7 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
       dialog.on('formdialogcancel', this.closePopup);
 		},
 
-		openDeleteTypePopup(event) {
+		openDeleteTypePopup : function(event) {
 			var self = this;
       var cell = event.currentTarget;
 
