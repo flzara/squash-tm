@@ -75,7 +75,7 @@ class TestStepTest extends Specification {
 		def res = ActionTestStep.createBlankActionStep()
 
 		then:
-		blankableFields.findAll({ it.get(res) != null })*.name == []
+		blankableFields.findAll({ it.get(res) != null })*.name == ['audit']
 
 	}
 

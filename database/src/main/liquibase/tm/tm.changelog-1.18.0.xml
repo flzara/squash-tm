@@ -56,9 +56,56 @@
       <column name="TEMPLATE_ID" type="bigint">
         <constraints nullable="true"
                      foreignKeyName="fk_project_template_id"
-                     references="PROJECT(PROJECT_ID)" />
+                     references="PROJECT(PROJECT_ID)"/>
       </column>
     </addColumn>
+  </changeSet>
+
+
+  <changeSet id="tm-1.18.0-feature-2342" author="cholc">
+    <comment>Adding columns to keep track of who modified the ActionTestStep</comment>
+
+    <addColumn tableName="ACTION_TEST_STEP">
+      <column name="CREATED_BY" type="java.sql.Types.VARCHAR(50)" defaultValue="default">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+
+    <addColumn tableName="ACTION_TEST_STEP">
+      <column name="CREATED_ON" type="DATETIME" defaultValue="1970-01-01 00:00:00">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+
+    <addColumn tableName="ACTION_TEST_STEP">
+      <column name="LAST_MODIFIED_BY" type="java.sql.Types.VARCHAR(50)" defaultValue="NULL"/>
+    </addColumn>
+
+    <addColumn tableName="ACTION_TEST_STEP">
+      <column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="tm-1.18.0-feature-2342-mysql" author="cholc" dbms="mysql">
+
+    <comment>mysql-triggers for ACTION_TEST_STEP table</comment>
+
+    <!-- after insertion of a cl node : create auto reference in the closure
+          table -->
+    <sql>
+      create trigger update_tcln_after after update on
+      ACTION_TEST_STEP
+      for each row
+      UPDATE TEST_CASE_LIBRARY_NODE TCLN
+      JOIN
+      TEST_CASE_STEPS TCS ON TCS.TEST_CASE_ID = TCLN.TCLN_ID
+      SET
+      TCLN.LAST_MODIFIED_BY = new.LAST_MODIFIED_BY,
+      TCLN.LAST_MODIFIED_ON = new.LAST_MODIFIED_ON
+      WHERE
+      TCS.STEP_ID = new.TEST_STEP_ID;
+    </sql>
+
   </changeSet>
 
 </databaseChangeLog>
