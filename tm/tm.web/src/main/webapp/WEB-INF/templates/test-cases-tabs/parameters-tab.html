@@ -130,7 +130,7 @@
               <th>id (masked)</th>
               <th>#</th>
               <th th:text="#{label.dataset}">Dataset</th>
-              <th th:each="param : ${paramHeaders}" th:text="${param['name']}" th:title="${param['description']}" th:attr="data-id=${param['id']}" class="set-title">param1</th>
+              <th th:each="parameter : ${paramHeaders}" th:text="${parameter['name']}" th:title="${parameter['description']}" th:attr="data-id=${parameter['id']}" class="set-title">parameter1</th>
               <th></th>
             </tr>
           </thead>

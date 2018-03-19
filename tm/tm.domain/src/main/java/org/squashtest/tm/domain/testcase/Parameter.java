@@ -47,8 +47,10 @@ import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.Sizes;
+import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.exception.DuplicateNameException;
 
+@Auditable
 @Entity
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "NAME", "TEST_CASE_ID" }) })
 public class Parameter implements Identified {
