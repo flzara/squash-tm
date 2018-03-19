@@ -140,6 +140,8 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 		GenericProject project = genericProjectDao.findOne(projectId);
 
 		deleteAllLibrariesContent(project);
+		CustomReportLibrary customReportLibrary = project.getCustomReportLibrary();
+		deleteCustomReportLibrary(customReportLibrary);
 
 		em.unwrap(Session.class).evict(project);
 		project = genericProjectDao.findById(projectId);
@@ -178,6 +180,9 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 		//1 delete library content ie folders as we cannot have other things because eit was checked early
 		List<Long> descendantIds = crlnDao.findAllNodeIdsForLibraryEntity(customReportLibrary.getId());
 		crlnService.delete(descendantIds);
+	}
+
+	private void deleteCustomReportLibrary(CustomReportLibrary customReportLibrary) {
 		//2 Check if node exist because of Issue 6499 which was basically executing only part of the process (Thanks to the re-indexation optimization mess)
 		if(crlnDao.countNodeFromEntity(customReportLibrary).equals(1L)){
 			//3 delete the node representing the library. The deletion of the CustomReportLibrary entity will be handled by cascade delete on Project in the last part of the deletion process
