@@ -194,11 +194,11 @@
           table -->
 
     <createProcedure>
-      drop trigger if exists update_tcln_after_parameter on PARAMETER;
-      drop trigger if exists update_tcln_after_parameter on TEST_CASE_LIBRARY_NODE;
-      drop function if exists update_tcln_after_parameter();
+      drop trigger if exists update_tcln_after_updating_parameter on PARAMETER;
+      drop trigger if exists update_tcln_after_updating_parameter on TEST_CASE_LIBRARY_NODE;
+      drop function if exists update_tcln_after_updating_parameter();
 
-      create function update_tcln_after_parameter() returns trigger as $update_tcln_after_parameter$
+      create function update_tcln_after_updating_parameter() returns trigger as $update_tcln_after_updating_parameter$
       begin
         UPDATE TEST_CASE_LIBRARY_NODE
         SET
@@ -209,11 +209,57 @@
           TEST_CASE_LIBRARY_NODE.tcln_id = new.test_case_id;
         return new;
       end;
-      $update_tcln_after_parameter$ language plpgsql;
+      $update_tcln_after_updating_parameter$ language plpgsql;
 
-      create trigger update_tcln_after_parameter after update on  PARAMETER
-      for each row execute procedure update_tcln_after_parameter();
+      create trigger update_tcln_after_updating_parameter after update on  PARAMETER
+      for each row execute procedure update_tcln_after_updating_parameter();
     </createProcedure>
+
+    <createProcedure>
+      drop trigger if exists update_tcln_after_inserting_parameter on PARAMETER;
+      drop trigger if exists update_tcln_after_inserting_parameter on TEST_CASE_LIBRARY_NODE;
+      drop function if exists update_tcln_after_inserting_parameter();
+
+      create function update_tcln_after_inserting_parameter() returns trigger as $update_tcln_after_inserting_parameter$
+      begin
+        UPDATE TEST_CASE_LIBRARY_NODE
+        SET
+          LAST_MODIFIED_BY = new.created_by,
+          LAST_MODIFIED_ON = new.created_on
+        from parameter
+        where
+          TEST_CASE_LIBRARY_NODE.tcln_id = new.test_case_id;
+        return new;
+      end;
+      $update_tcln_after_inserting_parameter$ language plpgsql;
+
+      create trigger update_tcln_after_inserting_parameter after insert on  PARAMETER
+      for each row execute procedure update_tcln_after_inserting_parameter();
+    </createProcedure>
+
+    <createProcedure>
+      drop trigger if exists update_tcln_after_deleting_parameter on PARAMETER;
+      drop trigger if exists update_tcln_after_deleting_parameter on TEST_CASE_LIBRARY_NODE;
+      drop function if exists update_tcln_after_deleting_parameter();
+
+      create function update_tcln_after_deleting_parameter() returns trigger as $update_tcln_after_deleting_parameter$
+      begin
+        UPDATE TEST_CASE_LIBRARY_NODE
+        SET
+          LAST_MODIFIED_ON = CURRENT_TIMESTAMP
+        from parameter
+        where
+          TEST_CASE_LIBRARY_NODE.tcln_id = old.test_case_id;
+        return new;
+      end;
+      $update_tcln_after_deleting_parameter$ language plpgsql;
+
+      create trigger update_tcln_after_deleting_parameter after DELETE on  PARAMETER
+      for each row execute procedure update_tcln_after_deleting_parameter();
+    </createProcedure>
+
+
+
 
   </changeSet>
 
