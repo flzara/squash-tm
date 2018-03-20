@@ -93,7 +93,7 @@
     <!-- after creation of test case step : update tcln last modified by and last modified on -->
     <!--I put the trigger on TCS because it seems that the row in the join table is inserted after the trigger so the
     join doesn't work-->
-  <sql>
+    <sql>
       drop trigger if exists ins_tcs_after;
 
       create trigger ins_tcs_after after insert on
@@ -123,8 +123,8 @@
       JOIN TEST_CASE_STEPS TCS
         ON TCS.TEST_CASE_ID = TCLN.TCLN_ID
     SET
-        TCLN.LAST_MODIFIED_BY = new.LAST_MODIFIED_BY,
-        TCLN.LAST_MODIFIED_ON = new.LAST_MODIFIED_ON
+        TCLN.LAST_MODIFIED_BY = NEW.LAST_MODIFIED_BY,
+        TCLN.LAST_MODIFIED_ON = NEW.LAST_MODIFIED_ON
     WHERE
         TCS.STEP_ID = NEW.TEST_STEP_ID;
     </sql>
@@ -169,7 +169,7 @@
           TCLN.TCLN_ID = TCS.TEST_CASE_ID AND
           TCS.STEP_ID = ATS.TEST_STEP_ID AND
           ATS.TEST_STEP_ID = NEW.STEP_ID;
-        return new;
+        return NEW;
       end;
       $ins_tcs_after$ language plpgsql;
 
@@ -239,38 +239,7 @@
       ACTION_TEST_STEP
       for each row call
       "org.squashtest.csp.h2.triggers.ATSAfterUpdate";
-  </sql>
-
-</changeSet>
-
-    <changeSet id="tm-1.18.0-feature-2342-postgresql" author="bflessel" dbms="postgresql">
-
-    <comment>postgresql-triggers for ACTION_TEST_STEP table</comment>
-
-    <!-- after insertion of a cl node : create auto reference in the closure
-          table -->
-
-     <createProcedure>
-       drop trigger if exists update_tcln_after_action_test_steps on ACTION_TEST_STEP;
-       drop trigger if exists update_tcln_after_action_test_steps on TEST_CASE_LIBRARY_NODE;
-       drop function if exists update_tcln_after_action_test_steps();
-
-       create function update_tcln_after_action_test_steps() returns trigger as $update_tcln_after_action_test_steps$
-         begin
-           UPDATE TEST_CASE_LIBRARY_NODE
-           SET
-             LAST_MODIFIED_BY = new.LAST_MODIFIED_BY,
-             LAST_MODIFIED_ON = new.LAST_MODIFIED_ON
-           from TEST_CASE_STEPS
-           where
-           TEST_CASE_STEPS.STEP_ID = new.TEST_STEP_ID;
-           return new;
-        end;
-       $update_tcln_after_action_test_steps$ language plpgsql;
-
-       create trigger update_tcln_after_action_test_steps after update on  ACTION_TEST_STEP
-       for each row execute procedure update_tcln_after_action_test_steps();
-      </createProcedure>
+    </sql>
 
   </changeSet>
 
