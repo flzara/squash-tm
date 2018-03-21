@@ -359,7 +359,7 @@
           reportDef : /*[[${reportDef}]]*/,
           reportDefDescription : /*[[${reportDefDescription}]]*/,
           parentId: /*[[${parentId}]]*/,
-          contextPath: /*[[ ${#ctx.servletContext.contextPath} ]]*/ "http://localhost:8080/squash",
+          contextPath: /*[[ @{/} ]]*/ "http://localhost:8080/squash",
           reportUrl: /*[[ @{'/reports/' + ${report.namespace}} ]]*/ "/squash/reports",
           dateFormat: /*[[ #{squashtm.dateformatShort.datepicker} ]]*/ "dd/mm/yy",
           noDateLabel: /*[[ #{squashtm.nodata} ]]*/ "-",

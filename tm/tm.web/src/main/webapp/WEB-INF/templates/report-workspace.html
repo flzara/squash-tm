@@ -73,7 +73,7 @@
 			</div>
 		</div>
 
-			<div id="outer-category-frame " class="left-frame">
+			<div id="outer-category-frame" class="left-frame">
 				<div th:each="cat : ${categories}" th:id="${#ids.seq('left-panel')}" class="report-category sq-tg expand">
                   <div class="tg-head">
                     <h3 th:text="#{${cat.i18nKey}}"></h3>
