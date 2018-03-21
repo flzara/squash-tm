@@ -33,113 +33,62 @@
            relativeToChangelogFile="true" />
   <!-- ========================================================================================================= -->
 
-  <changeSet id="tm-1.18.0-feature-7183.1-mysql-test" author="jprioux" dbms="mysql">
+  <changeSet id="tm-1.18.0-feature-7183.1-test" author="jprioux" dbms="mysql, postgresql">
     <preConditions>
-      <sqlCheck expectedResult="14">
+      <sqlCheck expectedResult="0">
         <![CDATA[
-            select count(*) from (select t1.STEP_ID, t1.STEP_ORDER, t2.LIGNE - 1
-                                  from TEST_CASE_STEPS t1,
-                                       (select TEST_CASE_ID, STEP_ID, (select count(*)
-                                                                       from TEST_CASE_STEPS b
-                                                                       where a.TEST_CASE_ID = b.TEST_CASE_ID
-                                                                       and a.STEP_ORDER >= b.STEP_ORDER) ligne
-                                        from TEST_CASE_STEPS a) t2
-                                  where t1.TEST_CASE_ID = t2.TEST_CASE_ID
-                                  and t1.STEP_ID = t2.STEP_ID
-                                  and ligne - 1 <> t1.step_order) t3;
-          ]]>
+          select count(*) from
+            (select t1.STEP_ID, t1.STEP_ORDER, t2.LIGNE - 1
+               from TEST_CASE_STEPS t1,
+                   (select TEST_CASE_ID, STEP_ID, (select count(*)
+                                                     from TEST_CASE_STEPS b
+                                                    where a.TEST_CASE_ID = b.TEST_CASE_ID
+                                                      and a.STEP_ORDER >= b.STEP_ORDER) ligne
+                      from TEST_CASE_STEPS a) t2
+              where t1.TEST_CASE_ID = t2.TEST_CASE_ID
+                and t1.STEP_ID = t2.STEP_ID
+                and ligne-1 <> t1.step_order) t3;
+        ]]>
       </sqlCheck>
 
     </preConditions>
   </changeSet>
-  <changeSet id="tm-1.18.0-feature-7183.2-mysql-test" author="jprioux" dbms="mysql">
+
+  <changeSet id="tm-1.18.0-feature-7183.2-test" author="jprioux" dbms="mysql, postgresql">
     <preConditions>
       <sqlCheck expectedResult="0">
         <![CDATA[
           select count(*) from
-            (select t1.ITERATION_ID, t1.ITEM_TEST_PLAN_ID, t1.ITEM_TEST_PLAN_ORDER, t2.ligne - 1
-             from ITEM_TEST_PLAN_LIST t1,
-                  (select ITERATION_ID, ITEM_TEST_PLAN_ID, (select count(*)
-                                                            from ITEM_TEST_PLAN_LIST b
-                                                            where a.ITERATION_ID = b.ITERATION_ID
-                                                            and a.ITEM_TEST_PLAN_ORDER >= b.ITEM_TEST_PLAN_ORDER) ligne
-                   from ITEM_TEST_PLAN_LIST a) t2
-             where t1.ITERATION_ID = t2.ITERATION_ID
-             and t1.ITEM_TEST_PLAN_ID = t2.ITEM_TEST_PLAN_ID
-             and ligne - 1 <> t1.ITEM_TEST_PLAN_ORDER) t3;
+            (select t1.ITERATION_ID, t1.ITEM_TEST_PLAN_ID, t1.ITEM_TEST_PLAN_ORDER, t2.ligne-1
+               from ITEM_TEST_PLAN_LIST t1,
+                   (select ITERATION_ID, ITEM_TEST_PLAN_ID, (select count(*)
+                                                               from ITEM_TEST_PLAN_LIST b
+                                                              where a.ITERATION_ID = b.ITERATION_ID
+                                                                and a.ITEM_TEST_PLAN_ORDER >= b.ITEM_TEST_PLAN_ORDER) ligne
+                      from ITEM_TEST_PLAN_LIST a) t2
+              where t1.ITERATION_ID = t2.ITERATION_ID
+                and t1.ITEM_TEST_PLAN_ID = t2.ITEM_TEST_PLAN_ID
+                and ligne-1 <> t1.ITEM_TEST_PLAN_ORDER) t3;
         ]]>
       </sqlCheck>
     </preConditions>
   </changeSet>
-  <changeSet id="tm-1.18.0-feature-7183.3-mysql-test" author="jprioux" dbms="mysql">
-    <preConditions>
-      <sqlCheck expectedResult="0">
-        <![CDATA[
-          select count(*) from (select t1.SUITE_ID, t1.TPI_ID, t1.TEST_PLAN_ORDER, t2.ligne - 1
-                                from TEST_SUITE_TEST_PLAN_ITEM t1,
-                                     (select SUITE_ID, TPI_ID, (select count(*)
-                                                                from TEST_SUITE_TEST_PLAN_ITEM b
-                                                                where a.SUITE_ID = b.SUITE_ID
-                                                                and a.TEST_PLAN_ORDER >= b.TEST_PLAN_ORDER) ligne
-                                      from TEST_SUITE_TEST_PLAN_ITEM a) t2
-                                where t1.SUITE_ID = t2.SUITE_ID
-                                and t1.TPI_ID = t2.TPI_ID
-                                and ligne - 1 <> t1.TEST_PLAN_ORDER) t3;
-        ]]>
-      </sqlCheck>
-    </preConditions>
-  </changeSet>
-  <changeSet id="tm-1.18.0-feature-7183.1-postgresql-test" author="jprioux" dbms="postgresql">
-    <preConditions>
-      <sqlCheck expectedResult="0">
-        <![CDATA[
-            select count(*) from (select t1.STEP_ID, t1.STEP_ORDER, t2.LIGNE - 1
-                                  from TEST_CASE_STEPS t1,
-                                       (select TEST_CASE_ID, STEP_ID, (select count(*)
-                                                                       from TEST_CASE_STEPS b
-                                                                       where a.TEST_CASE_ID = b.TEST_CASE_ID
-                                                                       and a.STEP_ORDER >= b.STEP_ORDER) ligne
-                                        from TEST_CASE_STEPS a) t2
-                                  where t1.TEST_CASE_ID = t2.TEST_CASE_ID
-                                  and t1.STEP_ID = t2.STEP_ID
-                                  and ligne - 1 <> t1.step_order) t3;
-          ]]>
-      </sqlCheck>
-    </preConditions>
-  </changeSet>
-  <changeSet id="tm-1.18.0-feature-7183.2-postgresql-test" author="jprioux" dbms="postgresql">
+
+  <changeSet id="tm-1.18.0-feature-7183.3-test" author="jprioux" dbms="mysql, postgresql">
     <preConditions>
       <sqlCheck expectedResult="0">
         <![CDATA[
           select count(*) from
-            (select t1.ITERATION_ID, t1.ITEM_TEST_PLAN_ID, t1.ITEM_TEST_PLAN_ORDER, t2.ligne - 1
-             from ITEM_TEST_PLAN_LIST t1,
-                  (select ITERATION_ID, ITEM_TEST_PLAN_ID, (select count(*)
-                                                            from ITEM_TEST_PLAN_LIST b
-                                                            where a.ITERATION_ID = b.ITERATION_ID
-                                                            and a.ITEM_TEST_PLAN_ORDER >= b.ITEM_TEST_PLAN_ORDER) ligne
-                   from ITEM_TEST_PLAN_LIST a) t2
-             where t1.ITERATION_ID = t2.ITERATION_ID
-             and t1.ITEM_TEST_PLAN_ID = t2.ITEM_TEST_PLAN_ID
-             and ligne - 1 <> t1.ITEM_TEST_PLAN_ORDER) t3;
-        ]]>
-      </sqlCheck>
-    </preConditions>
-  </changeSet>
-  <changeSet id="tm-1.18.0-feature-7183.3-postgresql-test" author="jprioux" dbms="postgresql">
-    <preConditions>
-      <sqlCheck expectedResult="0">
-        <![CDATA[
-          select count(*) from (select t1.SUITE_ID, t1.TPI_ID, t1.TEST_PLAN_ORDER, t2.ligne - 1
-                                from TEST_SUITE_TEST_PLAN_ITEM t1,
-                                     (select SUITE_ID, TPI_ID, (select count(*)
-                                                                from TEST_SUITE_TEST_PLAN_ITEM b
-                                                                where a.SUITE_ID = b.SUITE_ID
-                                                                and a.TEST_PLAN_ORDER >= b.TEST_PLAN_ORDER) ligne
-                                      from TEST_SUITE_TEST_PLAN_ITEM a) t2
-                                where t1.SUITE_ID = t2.SUITE_ID
-                                and t1.TPI_ID = t2.TPI_ID
-                                and ligne - 1 <> t1.TEST_PLAN_ORDER) t3;
+            (select t1.ITERATION_ID, t1.ITEM_TEST_PLAN_ID, t1.ITEM_TEST_PLAN_ORDER, t2.ligne-1
+               from ITEM_TEST_PLAN_LIST t1,
+                   (select ITERATION_ID, ITEM_TEST_PLAN_ID, (select count(*)
+                                                               from ITEM_TEST_PLAN_LIST b
+                                                              where a.ITERATION_ID = b.ITERATION_ID
+                                                                and a.ITEM_TEST_PLAN_ORDER >= b.ITEM_TEST_PLAN_ORDER) ligne
+                      from ITEM_TEST_PLAN_LIST a) t2
+              where t1.ITERATION_ID = t2.ITERATION_ID
+                and t1.ITEM_TEST_PLAN_ID = t2.ITEM_TEST_PLAN_ID
+                and ligne-1 <> t1.ITEM_TEST_PLAN_ORDER) t3;
         ]]>
       </sqlCheck>
     </preConditions>
