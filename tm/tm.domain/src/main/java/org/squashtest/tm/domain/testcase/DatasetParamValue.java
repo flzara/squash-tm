@@ -33,7 +33,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.audit.Auditable;
 
+@Auditable
 @Entity
 public class DatasetParamValue implements Identified {
 	@Id

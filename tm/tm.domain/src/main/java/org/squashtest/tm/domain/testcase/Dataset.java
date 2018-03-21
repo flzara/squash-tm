@@ -42,7 +42,9 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.Sizes;
+import org.squashtest.tm.domain.audit.Auditable;
 
+@Auditable
 @Entity
 @Table(uniqueConstraints={@UniqueConstraint(columnNames={"NAME","TEST_CASE_ID"})})
 public class Dataset implements Identified {
