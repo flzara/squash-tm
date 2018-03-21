@@ -107,7 +107,7 @@ define([ "backbone", "underscore", "jquery", "jeditable.datepicker" ], function(
 			var boundary = false;
 
 			var boundarySelector =  _.find(this.values(), function(attr) {
-				return attr.type === RADIO_BUTTONS_GROUP && (attr.val === PROJECT_PICKER || attr.val === TREE_PICKER || attr.val === MILESTONE_PICKER);
+				return attr.type === RADIO_BUTTONS_GROUP && (attr.val === PROJECT_PICKER || attr.val === TREE_PICKER || attr.val === MILESTONE_PICKER || attr.val === TAG_PICKER);
 			});
 
 			var pickedBoundary = function(pickerType) {
