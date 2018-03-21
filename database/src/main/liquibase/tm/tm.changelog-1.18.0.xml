@@ -282,8 +282,9 @@
         UPDATE TEST_CASE_LIBRARY_NODE as TCLN
       JOIN
       PARAMETER P ON P.TEST_CASE_ID = TCLN.TCLN_ID
-        TCLN.LAST_MODIFIED_BY := new.LAST_MODIFIED_BY,
-        TCLN.LAST_MODIFIED_ON := new.LAST_MODIFIED_ON
+      SET
+        TCLN.LAST_MODIFIED_BY = new.LAST_MODIFIED_BY,
+        TCLN.LAST_MODIFIED_ON = new.LAST_MODIFIED_ON
       WHERE
         TCLN.TCLN_ID = new.TEST_CASE_ID;
     </sql>
@@ -362,11 +363,247 @@
       for each row execute procedure update_tcln_after_deleting_parameter();
     </createProcedure>
 
-
-
-
   </changeSet>
 
+  <changeSet id="tm-1.18.0-feature-7183.1-mysql" author="jprioux" dbms="mysql">
+    <comment>mysql - add unique constraint for ordered list : test case steps</comment>
+    <sql>
+      <![CDATA[
+        drop table if exists TEST_CASE_STEPS_TMP;
+
+        create table TEST_CASE_STEPS_TMP
+                    (select TEST_CASE_ID, STEP_ID, min(STEP_ORDER) STEP_ORDER
+                       from TEST_CASE_STEPS
+                   group by TEST_CASE_ID, STEP_ID);
+
+        create index idx1 on TEST_CASE_STEPS_TMP(TEST_CASE_ID,STEP_ID);
+
+        update TEST_CASE_STEPS_TMP t1,
+              (select TEST_CASE_ID, STEP_ID, (select count(*)
+                                     from TEST_CASE_STEPS_TMP b
+                                    where a.TEST_CASE_ID = b.TEST_CASE_ID
+                                      and a.STEP_ORDER >= b.STEP_ORDER) ligne
+                 from TEST_CASE_STEPS_TMP a) t2
+        set t1.STEP_ORDER = t2.ligne - 1
+         where t1.TEST_CASE_ID = t2.TEST_CASE_ID and t1.STEP_ID = t2.STEP_ID;
+
+        truncate table TEST_CASE_STEPS;
+
+        insert into TEST_CASE_STEPS
+        select a.TEST_CASE_ID, a.STEP_ID,
+               a.STEP_ORDER + 1 - (select count(*) from TEST_CASE_STEPS_TMP b
+                                where a.TEST_CASE_ID = b.TEST_CASE_ID
+                                  and a.STEP_ORDER = b.STEP_ORDER
+                                  and a.STEP_ID <= b.STEP_ID
+                             group by b.TEST_CASE_ID, b.STEP_ORDER) STEP_ORDER
+          from TEST_CASE_STEPS_TMP a;
+
+        drop table TEST_CASE_STEPS_TMP;
+      ]]>
+    </sql>
+    <addUniqueConstraint tableName="TEST_CASE_STEPS" columnNames="TEST_CASE_ID, STEP_ORDER"
+                         constraintName="uc_test_case_steps_order"/>
+  </changeSet>
+
+  <changeSet id="tm-1.18.0-feature-7183.2-mysql" author="jprioux" dbms="mysql">
+    <comment>mysql - add unique constraint for ordered list : tcs in iteration</comment>
+    <sql>
+      <![CDATA[
+        drop table if exists ITEM_TEST_PLAN_LIST_TMP;
+
+        create table ITEM_TEST_PLAN_LIST_TMP
+                    (select ITERATION_ID, ITEM_TEST_PLAN_ID, min(ITEM_TEST_PLAN_ORDER) ITEM_TEST_PLAN_ORDER
+                       from ITEM_TEST_PLAN_LIST
+                   group by ITERATION_ID, ITEM_TEST_PLAN_ID);
+
+        create index idx2 on ITEM_TEST_PLAN_LIST_TMP(ITERATION_ID, ITEM_TEST_PLAN_ID);
+
+        update ITEM_TEST_PLAN_LIST_TMP t1,
+              (select ITERATION_ID, ITEM_TEST_PLAN_ID, (select count(*)
+                                     from ITEM_TEST_PLAN_LIST_TMP b
+                                    where a.ITERATION_ID = b.ITERATION_ID
+                                      and a.ITEM_TEST_PLAN_ORDER >= b.ITEM_TEST_PLAN_ORDER) ligne
+                 from ITEM_TEST_PLAN_LIST_TMP a) t2
+        set t1.ITEM_TEST_PLAN_ORDER = t2.ligne - 1
+         where t1.ITERATION_ID = t2.ITERATION_ID and t1.ITEM_TEST_PLAN_ID = t2.ITEM_TEST_PLAN_ID;
+
+        truncate table ITEM_TEST_PLAN_LIST;
+
+        insert into ITEM_TEST_PLAN_LIST
+        select a.ITERATION_ID, a.ITEM_TEST_PLAN_ID,
+               a.ITEM_TEST_PLAN_ORDER + 1 - (select count(*) from ITEM_TEST_PLAN_LIST_TMP b
+                                where a.ITERATION_ID = b.ITERATION_ID
+                                  and a.ITEM_TEST_PLAN_ORDER = b.ITEM_TEST_PLAN_ORDER
+                                  and a.ITEM_TEST_PLAN_ID <= b.ITEM_TEST_PLAN_ID
+                             group by b.ITERATION_ID, b.ITEM_TEST_PLAN_ORDER) ITEM_TEST_PLAN_ORDER
+          from ITEM_TEST_PLAN_LIST_TMP a;
+
+        drop table ITEM_TEST_PLAN_LIST_TMP;
+      ]]>
+    </sql>
+    <addUniqueConstraint tableName="ITEM_TEST_PLAN_LIST" columnNames="ITERATION_ID, ITEM_TEST_PLAN_ORDER"
+                         constraintName="uc_item_test_plan_list_order"/>
+  </changeSet>
+
+  <changeSet id="tm-1.18.0-feature-7183.3-mysql" author="jprioux" dbms="mysql">
+    <comment>mysql - add unique constraint for ordered list : tcs in test suite</comment>
+    <sql>
+      <![CDATA[
+        drop table if exists TEST_SUITE_TEST_PLAN_ITEM_TMP;
+
+        create table TEST_SUITE_TEST_PLAN_ITEM_TMP
+                    (select SUITE_ID, TPI_ID, min(TEST_PLAN_ORDER) TEST_PLAN_ORDER
+                       from TEST_SUITE_TEST_PLAN_ITEM
+                   group by SUITE_ID, TPI_ID);
+
+        create index idx2 on TEST_SUITE_TEST_PLAN_ITEM_TMP(SUITE_ID, TPI_ID);
+
+        update TEST_SUITE_TEST_PLAN_ITEM_TMP t1,
+              (select SUITE_ID, TPI_ID, (select count(*)
+                                     from TEST_SUITE_TEST_PLAN_ITEM_TMP b
+                                    where a.SUITE_ID = b.SUITE_ID
+                                      and a.TEST_PLAN_ORDER >= b.TEST_PLAN_ORDER) ligne
+                 from TEST_SUITE_TEST_PLAN_ITEM_TMP a) t2
+        set t1.TEST_PLAN_ORDER = t2.ligne - 1
+         where t1.SUITE_ID = t2.SUITE_ID and t1.TPI_ID = t2.TPI_ID;
+
+        truncate table TEST_SUITE_TEST_PLAN_ITEM;
+
+        insert into TEST_SUITE_TEST_PLAN_ITEM
+        select a.TPI_ID, a.SUITE_ID,
+               a.TEST_PLAN_ORDER + 1 - (select count(*) from TEST_SUITE_TEST_PLAN_ITEM_TMP b
+                                where a.SUITE_ID = b.SUITE_ID
+                                  and a.TEST_PLAN_ORDER = b.TEST_PLAN_ORDER
+                                  and a.TPI_ID <= b.TPI_ID
+                             group by b.SUITE_ID, b.TEST_PLAN_ORDER) TEST_PLAN_ORDER
+          from TEST_SUITE_TEST_PLAN_ITEM_TMP a;
+
+        drop table TEST_SUITE_TEST_PLAN_ITEM_TMP;
+      ]]>
+    </sql>
+    <addUniqueConstraint tableName="TEST_SUITE_TEST_PLAN_ITEM" columnNames="SUITE_ID, TEST_PLAN_ORDER"
+                         constraintName="uc_test_suite_test_plan_item_order"/>
+  </changeSet>
+
+  <changeSet id="tm-1.18.0-feature-7183.1-postgresql" author="jprioux" dbms="postgresql">
+    <comment>postgresql - add unique constraint for ordered list : test case steps</comment>
+    <sql>
+      <![CDATA[
+        drop table if exists TEST_CASE_STEPS_TMP;
+
+        create table TEST_CASE_STEPS_TMP AS
+                    (select TEST_CASE_ID, STEP_ID, min(STEP_ORDER) STEP_ORDER
+                       from TEST_CASE_STEPS
+                   group by TEST_CASE_ID, STEP_ID);
+
+        create index idx1 on TEST_CASE_STEPS_TMP(TEST_CASE_ID,STEP_ID);
+
+        update TEST_CASE_STEPS_TMP t1
+           set STEP_ORDER = t2.ligne - 1
+          from (select TEST_CASE_ID, STEP_ID, (select count(*)
+                                                 from TEST_CASE_STEPS_TMP b
+                                                where a.TEST_CASE_ID = b.TEST_CASE_ID
+                                                  and a.STEP_ORDER >= b.STEP_ORDER) ligne
+                  from TEST_CASE_STEPS_TMP a) t2
+         where t1.TEST_CASE_ID = t2.TEST_CASE_ID and t1.STEP_ID = t2.STEP_ID;
+
+        truncate table TEST_CASE_STEPS;
+
+        insert into TEST_CASE_STEPS
+        select a.TEST_CASE_ID, a.STEP_ID,
+               a.STEP_ORDER + 1 - (select count(*) from TEST_CASE_STEPS_TMP b
+                                where a.TEST_CASE_ID = b.TEST_CASE_ID
+                                  and a.STEP_ORDER = b.STEP_ORDER
+                                  and a.STEP_ID <= b.STEP_ID
+                             group by b.TEST_CASE_ID, b.STEP_ORDER) STEP_ORDER
+          from TEST_CASE_STEPS_TMP a;
+
+        drop table TEST_CASE_STEPS_TMP;
+      ]]>
+    </sql>
+    <addUniqueConstraint tableName="TEST_CASE_STEPS" columnNames="TEST_CASE_ID, STEP_ORDER"
+                         constraintName="uc_test_case_steps_order"/>
+  </changeSet>
+
+  <changeSet id="tm-1.18.0-feature-7183.2-postgresql" author="jprioux" dbms="postgresql">
+    <comment>postgresql - add unique constraint for ordered list : tcs in iteration</comment>
+    <sql>
+      <![CDATA[
+        drop table if exists ITEM_TEST_PLAN_LIST_TMP;
+
+        create table ITEM_TEST_PLAN_LIST_TMP AS
+                    (select ITERATION_ID, ITEM_TEST_PLAN_ID, min(ITEM_TEST_PLAN_ORDER) ITEM_TEST_PLAN_ORDER
+                       from ITEM_TEST_PLAN_LIST
+                   group by ITERATION_ID, ITEM_TEST_PLAN_ID);
+
+        create index idx2 on ITEM_TEST_PLAN_LIST_TMP(ITERATION_ID, ITEM_TEST_PLAN_ID);
+
+        update ITEM_TEST_PLAN_LIST_TMP t1
+        set ITEM_TEST_PLAN_ORDER = t2.ligne - 1
+        from (select ITERATION_ID, ITEM_TEST_PLAN_ID, (select count(*)
+                                     from ITEM_TEST_PLAN_LIST_TMP b
+                                    where a.ITERATION_ID = b.ITERATION_ID
+                                      and a.ITEM_TEST_PLAN_ORDER >= b.ITEM_TEST_PLAN_ORDER) ligne
+                 from ITEM_TEST_PLAN_LIST_TMP a) t2
+         where t1.ITERATION_ID = t2.ITERATION_ID and t1.ITEM_TEST_PLAN_ID = t2.ITEM_TEST_PLAN_ID;
+
+        truncate table ITEM_TEST_PLAN_LIST;
+
+        insert into ITEM_TEST_PLAN_LIST
+        select a.ITERATION_ID, a.ITEM_TEST_PLAN_ID,
+               a.ITEM_TEST_PLAN_ORDER + 1 - (select count(*) from ITEM_TEST_PLAN_LIST_TMP b
+                                where a.ITERATION_ID = b.ITERATION_ID
+                                  and a.ITEM_TEST_PLAN_ORDER = b.ITEM_TEST_PLAN_ORDER
+                                  and a.ITEM_TEST_PLAN_ID <= b.ITEM_TEST_PLAN_ID
+                             group by b.ITERATION_ID, b.ITEM_TEST_PLAN_ORDER) ITEM_TEST_PLAN_ORDER
+          from ITEM_TEST_PLAN_LIST_TMP a;
+
+        drop table ITEM_TEST_PLAN_LIST_TMP;
+      ]]>
+    </sql>
+    <addUniqueConstraint tableName="ITEM_TEST_PLAN_LIST" columnNames="ITERATION_ID, ITEM_TEST_PLAN_ORDER"
+                         constraintName="uc_item_test_plan_list_order"/>
+  </changeSet>
+
+  <changeSet id="tm-1.18.0-feature-7183.3-postgresql" author="jprioux" dbms="postgresql">
+    <comment>postgresql - add unique constraint for ordered list : tcs in test suite</comment>
+    <sql>
+      <![CDATA[
+        drop table if exists TEST_SUITE_TEST_PLAN_ITEM_TMP;
+
+        create table TEST_SUITE_TEST_PLAN_ITEM_TMP AS
+                    (select SUITE_ID, TPI_ID, min(TEST_PLAN_ORDER) TEST_PLAN_ORDER
+                       from TEST_SUITE_TEST_PLAN_ITEM
+                   group by SUITE_ID, TPI_ID);
+
+        create index idx2 on TEST_SUITE_TEST_PLAN_ITEM_TMP(SUITE_ID, TPI_ID);
+
+        update TEST_SUITE_TEST_PLAN_ITEM_TMP t1
+        set TEST_PLAN_ORDER = t2.ligne - 1
+        from (select SUITE_ID, TPI_ID, (select count(*)
+                                     from TEST_SUITE_TEST_PLAN_ITEM_TMP b
+                                    where a.SUITE_ID = b.SUITE_ID
+                                      and a.TEST_PLAN_ORDER >= b.TEST_PLAN_ORDER) ligne
+                 from TEST_SUITE_TEST_PLAN_ITEM_TMP a) t2
+         where t1.SUITE_ID = t2.SUITE_ID and t1.TPI_ID = t2.TPI_ID;
+
+        truncate table TEST_SUITE_TEST_PLAN_ITEM;
+
+        insert into TEST_SUITE_TEST_PLAN_ITEM
+        select a.TPI_ID, a.SUITE_ID,
+               a.TEST_PLAN_ORDER + 1 - (select count(*) from TEST_SUITE_TEST_PLAN_ITEM_TMP b
+                                where a.SUITE_ID = b.SUITE_ID
+                                  and a.TEST_PLAN_ORDER = b.TEST_PLAN_ORDER
+                                  and a.TPI_ID <= b.TPI_ID
+                             group by b.SUITE_ID, b.TEST_PLAN_ORDER) TEST_PLAN_ORDER
+          from TEST_SUITE_TEST_PLAN_ITEM_TMP a;
+
+        drop table TEST_SUITE_TEST_PLAN_ITEM_TMP;
+      ]]>
+    </sql>
+    <addUniqueConstraint tableName="TEST_SUITE_TEST_PLAN_ITEM" columnNames="SUITE_ID, TEST_PLAN_ORDER"
+                         constraintName="uc_test_suite_test_plan_item_order"/>
+  </changeSet>
 
 
 </databaseChangeLog>
