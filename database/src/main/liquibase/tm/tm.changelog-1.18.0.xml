@@ -632,6 +632,48 @@
   </changeSet>
 
 
+  <!-- Add unique constraints for ordered lists. Before adding it, a script cleans up the related tables -->
+
+  <changeSet id="tm-1.18.0-feature-7183.1-mysql" author="jprioux" dbms="mysql">
+    <comment>mysql - add unique constraint for ordered list : test case steps</comment>
+    <sql>
+      <![CDATA[
+        drop table if exists TEST_CASE_STEPS_TMP;
+
+        create table TEST_CASE_STEPS_TMP
+                    (select TEST_CASE_ID, STEP_ID, min(STEP_ORDER) STEP_ORDER
+                       from TEST_CASE_STEPS
+                   group by TEST_CASE_ID, STEP_ID);
+
+        create index idx1 on TEST_CASE_STEPS_TMP(TEST_CASE_ID,STEP_ID);
+
+        update TEST_CASE_STEPS_TMP t1,
+              (select TEST_CASE_ID, STEP_ID, (select count(*)
+                                     from TEST_CASE_STEPS_TMP b
+                                    where a.TEST_CASE_ID = b.TEST_CASE_ID
+                                      and a.STEP_ORDER >= b.STEP_ORDER) ligne
+                 from TEST_CASE_STEPS_TMP a) t2
+        set t1.STEP_ORDER = t2.ligne - 1
+         where t1.TEST_CASE_ID = t2.TEST_CASE_ID and t1.STEP_ID = t2.STEP_ID;
+
+        truncate table TEST_CASE_STEPS;
+
+        insert into TEST_CASE_STEPS
+        select a.TEST_CASE_ID, a.STEP_ID,
+               a.STEP_ORDER + 1 - (select count(*) from TEST_CASE_STEPS_TMP b
+                                where a.TEST_CASE_ID = b.TEST_CASE_ID
+                                  and a.STEP_ORDER = b.STEP_ORDER
+                                  and a.STEP_ID <= b.STEP_ID
+                             group by b.TEST_CASE_ID, b.STEP_ORDER) STEP_ORDER
+          from TEST_CASE_STEPS_TMP a;
+
+        drop table TEST_CASE_STEPS_TMP;
+      ]]>
+    </sql>
+    <addUniqueConstraint tableName="TEST_CASE_STEPS" columnNames="TEST_CASE_ID, STEP_ORDER"
+                         constraintName="uc_test_case_steps_order"/>
+  </changeSet>
+
   <changeSet id="tm-1.18.0-feature-7183.2-mysql" author="jprioux" dbms="mysql">
     <comment>mysql - add unique constraint for ordered list : tcs in iteration</comment>
     <sql>
@@ -832,44 +874,5 @@
                          constraintName="uc_test_suite_test_plan_item_order"/>
   </changeSet>
 
- <changeSet id="tm-1.18.0-feature-7183.1-mysql" author="jprioux" dbms="mysql">
-    <comment>mysql - add unique constraint for ordered list : test case steps</comment>
-    <sql>
-      <![CDATA[
-        drop table if exists TEST_CASE_STEPS_TMP;
-
-        create table TEST_CASE_STEPS_TMP
-                    (select TEST_CASE_ID, STEP_ID, min(STEP_ORDER) STEP_ORDER
-                       from TEST_CASE_STEPS
-                   group by TEST_CASE_ID, STEP_ID);
-
-        create index idx1 on TEST_CASE_STEPS_TMP(TEST_CASE_ID,STEP_ID);
-
-        update TEST_CASE_STEPS_TMP t1,
-              (select TEST_CASE_ID, STEP_ID, (select count(*)
-                                     from TEST_CASE_STEPS_TMP b
-                                    where a.TEST_CASE_ID = b.TEST_CASE_ID
-                                      and a.STEP_ORDER >= b.STEP_ORDER) ligne
-                 from TEST_CASE_STEPS_TMP a) t2
-        set t1.STEP_ORDER = t2.ligne - 1
-         where t1.TEST_CASE_ID = t2.TEST_CASE_ID and t1.STEP_ID = t2.STEP_ID;
-
-        truncate table TEST_CASE_STEPS;
-
-        insert into TEST_CASE_STEPS
-        select a.TEST_CASE_ID, a.STEP_ID,
-               a.STEP_ORDER + 1 - (select count(*) from TEST_CASE_STEPS_TMP b
-                                where a.TEST_CASE_ID = b.TEST_CASE_ID
-                                  and a.STEP_ORDER = b.STEP_ORDER
-                                  and a.STEP_ID <= b.STEP_ID
-                             group by b.TEST_CASE_ID, b.STEP_ORDER) STEP_ORDER
-          from TEST_CASE_STEPS_TMP a;
-
-        drop table TEST_CASE_STEPS_TMP;
-      ]]>
-    </sql>
-    <addUniqueConstraint tableName="TEST_CASE_STEPS" columnNames="TEST_CASE_ID, STEP_ORDER"
-                         constraintName="uc_test_case_steps_order"/>
-  </changeSet>
 
 </databaseChangeLog>
