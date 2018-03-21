@@ -252,6 +252,7 @@
       "org.squashtest.csp.h2.triggers.TCSAfterDelete";
     </sql>
   <!-- Updating the testcase when updating the parameters -->
+  </changeSet>
 
   <changeSet id="tm-1.18.0-feature-2342-2" author="bflessel">
     <comment>Adding columns to keep track of who modified the parameters</comment>
@@ -448,33 +449,6 @@
       <column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL"/>
     </addColumn>
 
-        create index idx1 on TEST_CASE_STEPS_TMP(TEST_CASE_ID,STEP_ID);
-
-        update TEST_CASE_STEPS_TMP t1,
-              (select TEST_CASE_ID, STEP_ID, (select count(*)
-                                     from TEST_CASE_STEPS_TMP b
-                                    where a.TEST_CASE_ID = b.TEST_CASE_ID
-                                      and a.STEP_ORDER >= b.STEP_ORDER) ligne
-                 from TEST_CASE_STEPS_TMP a) t2
-        set t1.STEP_ORDER = t2.ligne - 1
-         where t1.TEST_CASE_ID = t2.TEST_CASE_ID and t1.STEP_ID = t2.STEP_ID;
-
-        truncate table TEST_CASE_STEPS;
-
-        insert into TEST_CASE_STEPS
-        select a.TEST_CASE_ID, a.STEP_ID,
-               a.STEP_ORDER + 1 - (select count(*) from TEST_CASE_STEPS_TMP b
-                                where a.TEST_CASE_ID = b.TEST_CASE_ID
-                                  and a.STEP_ORDER = b.STEP_ORDER
-                                  and a.STEP_ID <= b.STEP_ID
-                             group by b.TEST_CASE_ID, b.STEP_ORDER) STEP_ORDER
-          from TEST_CASE_STEPS_TMP a;
-
-        drop table TEST_CASE_STEPS_TMP;
-      ]]>
-    </sql>
-    <addUniqueConstraint tableName="TEST_CASE_STEPS" columnNames="TEST_CASE_ID, STEP_ORDER"
-                         constraintName="uc_test_case_steps_order"/>
   </changeSet>
 
   <changeSet id="tm-1.18.0-feature-2342-3-postgresql" author="BFLESSEL" dbms="postgresql">
