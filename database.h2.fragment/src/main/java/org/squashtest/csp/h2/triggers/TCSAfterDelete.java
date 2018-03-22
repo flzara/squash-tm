@@ -33,7 +33,7 @@ public class TCSAfterDelete extends TriggerAdapter {
 		"UPDATE " +
 			"TEST_CASE_LIBRARY_NODE TCLN " +
 		"SET " +
-			"TCLN.LAST_MODIFIED_ON = NOW() " +
+			"TCLN.LAST_MODIFIED_ON = CURRENT_TIMESTAMP() " +
 		"WHERE " +
 			"TCLN.TCLN_ID = ?;";
 

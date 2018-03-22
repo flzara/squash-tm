@@ -36,6 +36,7 @@ import org.squashtest.tm.domain.testcase.Dataset
 import org.squashtest.tm.exception.DuplicateNameException
 import org.squashtest.tm.service.project.GenericProjectManagerService
 import org.unitils.dbunit.annotation.DataSet
+import spock.lang.IgnoreIf
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
@@ -79,6 +80,10 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 
 		folderId = folder.id
 		testCaseId = testCase.id
+	}
+
+	static boolean isH2() {
+		return System.properties['jooq.sql.dialect'] == null || System.properties['jooq.sql.dialect'] == 'H2'
 	}
 
 
@@ -591,24 +596,23 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 
 	}
 
+	@IgnoreIf({ return TestCaseModificationServiceImplIT.isH2() })
 	def "should update a test case and its test step audit after the deletion of the test step"() {
 
 		given:
+		TestCase testCase = findEntity(TestCase.class, testCaseId)
 		def step1 = new ActionTestStep("original step", "original result")
 		service.addActionTestStep(testCaseId, step1)
 		UserContextHelper.setUsername("updater")
 
 		when:
-		TestCase testCase = findEntity(TestCase.class, testCaseId)
-
+		service.removeListOfSteps(testCaseId, Arrays.asList(step1.getId()))
 		session.flush()
 		session.evict(testCase)
 		testCase = findEntity(TestCase.class, testCaseId)
 
 		then:
-
 		AuditableMixin testCaseAudit = (AuditableMixin) testCase
-
 		testCaseAudit.getLastModifiedOn() != null
 
 	}
