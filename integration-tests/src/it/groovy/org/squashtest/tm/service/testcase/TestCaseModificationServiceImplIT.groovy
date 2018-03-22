@@ -31,6 +31,8 @@ import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.domain.testcase.Parameter
+import org.squashtest.tm.domain.testcase.Dataset
 import org.squashtest.tm.exception.DuplicateNameException
 import org.squashtest.tm.service.project.GenericProjectManagerService
 import org.unitils.dbunit.annotation.DataSet
@@ -51,6 +53,12 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 
 	@Inject
 	GenericProjectManagerService projectService
+
+	@Inject
+	ParameterModificationService parameterModificationService
+
+	@Inject
+	DatasetModificationService datasetModificationService
 
 	private int testCaseId = -1
 	private int folderId = -1
@@ -604,4 +612,109 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		testCaseAudit.getLastModifiedOn() != null
 
 	}
+
+	def "should update a test case and its parameter audit after the update of the parameter"() {
+
+		given:
+		def parameter = new Parameter("parameter")
+		parameterModificationService.addNewParameterToTestCase(parameter, testCaseId)
+		def newDescription = "updated description"
+		UserContextHelper.setUsername("updater")
+
+		when:
+		parameterModificationService.changeDescription(parameter.getId(), newDescription)
+		TestCase testCase = findEntity(TestCase.class, testCaseId)
+
+		session.flush()
+		session.evict(testCase)
+
+		testCase = findEntity(TestCase.class, testCaseId)
+		Parameter param = findEntity(Parameter.class, parameter.getId())
+
+		then:
+		AuditableMixin testCaseAudit = (AuditableMixin) testCase
+		AuditableMixin parameterAudit = (AuditableMixin) param
+
+		parameterAudit.getLastModifiedBy() == "updater"
+		parameterAudit.getLastModifiedOn() != null
+		testCaseAudit.getLastModifiedBy() == parameterAudit.getLastModifiedBy()
+		testCaseAudit.getLastModifiedOn() == parameterAudit.getLastModifiedOn()
+	}
+
+	def "should update a test case and its parameter audit after the deletion of the test step"() {
+
+		given:
+		def parameter = new Parameter("parameter")
+		parameterModificationService.addNewParameterToTestCase(parameter, testCaseId)
+		UserContextHelper.setUsername("updater")
+
+		when:
+		parameterModificationService.remove(parameter)
+		TestCase testCase = findEntity(TestCase.class, testCaseId)
+
+		session.flush()
+		session.evict(testCase)
+		testCase = findEntity(TestCase.class, testCaseId)
+
+		then:
+
+		AuditableMixin testCaseAudit = (AuditableMixin) testCase
+
+		testCaseAudit.getLastModifiedOn() != null
+	}
+
+
+	def "should update a test case and its dataset audit after the update of the dataset"() {
+
+		given:
+		def seconddataset = new Dataset()
+		seconddataset.setName("seconddataset")
+		datasetModificationService.persist(seconddataset, testCaseId)
+		def newName = "updated name"
+		UserContextHelper.setUsername("updater")
+
+		when:
+		datasetModificationService.changeName(seconddataset.getId(), newName)
+		TestCase testCase = findEntity(TestCase.class, testCaseId)
+
+		session.flush()
+		session.evict(testCase)
+
+		testCase = findEntity(TestCase.class, testCaseId)
+		Dataset data = findEntity(Dataset.class, seconddataset.getId())
+
+		then:
+		AuditableMixin testCaseAudit = (AuditableMixin) testCase
+		AuditableMixin datasetAudit = (AuditableMixin) data
+
+		datasetAudit.getLastModifiedBy() == "updater"
+		datasetAudit.getLastModifiedOn() != null
+		testCaseAudit.getLastModifiedBy() == datasetAudit.getLastModifiedBy()
+		testCaseAudit.getLastModifiedOn() == datasetAudit.getLastModifiedOn()
+	}
+
+	def "should update a test case and its dataset audit after the deletion of the dataset"() {
+
+		given:
+		def thirddataset = new Dataset()
+		thirddataset.setName("thirddataset")
+		datasetModificationService.persist(thirddataset, testCaseId)
+		UserContextHelper.setUsername("updater")
+
+		when:
+		datasetModificationService.remove(thirddataset)
+		TestCase testCase = findEntity(TestCase.class, testCaseId)
+
+		session.flush()
+		session.evict(testCase)
+		testCase = findEntity(TestCase.class, testCaseId)
+
+		then:
+
+		AuditableMixin testCaseAudit = (AuditableMixin) testCase
+
+		testCaseAudit.getLastModifiedOn() != null
+	}
+
+
 }

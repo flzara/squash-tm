@@ -620,7 +620,20 @@
       for each row call
       "org.squashtest.csp.h2.triggers.TCLNAfterUpdatingParameters";
     </sql>
+    <sql>
+      create trigger update_tcln_after_insert_parameter after insert on
+      PARAMETER
+      for each row call
+      "org.squashtest.csp.h2.triggers.TCLNAfterInsertIntoParameters";
+    </sql>
+    <sql>
+      create trigger update_tcln_after_deleting_parameter after delete on
+      PARAMETER
+      for each row call
+      "org.squashtest.csp.h2.triggers.TCLNAfterDeletingParameters";
+    </sql>
 
+    <!-- after insertion of a tcl node : create auto reference about the dataset table -->
 
     <sql>
       create trigger update_tcln_after_updating_dataset after update on
@@ -628,6 +641,27 @@
       for each row call
       "org.squashtest.csp.h2.triggers.TCLNAfterUpdatingDatasets";
     </sql>
+    <sql>
+      create trigger update_tcln_after_insert_dataset after insert on
+      DATASET
+      for each row call
+      "org.squashtest.csp.h2.triggers.TCLNAfterInsertIntoDatasets";
+    </sql>
+    <sql>
+      create trigger update_tcln_after_deleting_dataset after delete on
+      DATASET
+      for each row call
+      "org.squashtest.csp.h2.triggers.TCLNAfterDeletingDatasets";
+    </sql>
+    <sql>
+      create trigger update_tcln_after_deleting_updatingDatasetParamValue after update on
+      dataset_param_value
+      for each row call
+      "org.squashtest.csp.h2.triggers.TCLNAfterUpdatingDatasetParamValue";
+    </sql>
+
+
+
 
   </changeSet>
 
