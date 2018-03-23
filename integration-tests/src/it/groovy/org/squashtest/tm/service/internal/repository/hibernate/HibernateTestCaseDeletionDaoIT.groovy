@@ -226,7 +226,7 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 		!found("ITERATION_TEST_PLAN_ITEM", "item_test_plan_id", -13L)
 		!found("ITERATION_TEST_PLAN_ITEM", "item_test_plan_id", -23L)
 
-		def it1 = findEntity(Iteration.class, -1L)
+		def it1 = findEntity(Iteration.class, -153L)
 		def it2 = findEntity(Iteration.class, -2L)
 
 		it1.testPlans.size() == 2
