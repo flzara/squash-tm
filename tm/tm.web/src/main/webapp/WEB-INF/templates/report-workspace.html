@@ -21,20 +21,23 @@
 
 -->
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-	<title th:text="#{workspace.report.title}">Espace rapports</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title th:text="#{workspace.report.title}">Espace rapports</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
   <meta name="_csrf" th:content="${_csrf.token}"/>
   <!-- default header name is X-CSRF-TOKEN -->
   <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-	<!-- common head -->
-	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" sq:css="squash.core.css" />
-	<link rel="shortcut icon" type="image/x-icon" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}"/>
-	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.wine.css" sq:css="squash.wine.css" />
-	<!-- rich jeditable header -->
-    <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
-    <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+  <!-- common head -->
+  <link rel="stylesheet" type="text/css" media="all"
+        href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" sq:css="squash.core.css"/>
+  <link rel="shortcut icon" type="image/x-icon" media="all"
+        href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}"/>
+  <link rel="stylesheet" type="text/css" media="all"
+        href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.wine.css" sq:css="squash.wine.css"/>
+  <!-- rich jeditable header -->
+  <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
   <script type="text/javascript" th:inline="javascript">
     /* <![CDATA[ */
     var squashtm = {};
@@ -44,61 +47,69 @@
       reportWorkspaceConf: {
         expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>',
         collapseSidebarLabel: /*[[ #{report.workspace.togglebutton.normal.label} ]]*/ '<<',
-        pluginNamespace : /*[[${pluginNamespace}]]*/
+        pluginNamespace: /*[[${pluginNamespace}]]*/
       }
     };
     /* ]]> */
   </script>
-    <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
-    <script data-main="../../scripts/report-workspace.js" th:attr="data-main=@{/scripts/report-workspace.js}"
-      src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
+  <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
+  <script data-main="../../scripts/report-workspace.js" th:attr="data-main=@{/scripts/report-workspace.js}"
+          src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
 </head>
 <body>
-	<div id="navigation" th:include="navbar.frag :: navbar('report')">
-		NAVBAR
-	</div>
+<div id="navigation" th:include="navbar.frag :: navbar('report')">
+  NAVBAR
+</div>
 
-	<div id="workspace">
-		<div id="workspace-title">
-			<div class="snap-left">
-        <h2 th:text="${parentId != null} ? #{ workspace.custom-report.title } : #{ workspace.report.title }">Espace Rapport ou Espace Custom Rapport</h2>
-			</div>
-			<div class="snap-right">
- 				<div class="main-menubar unstyled" th:include="menubar.frag :: menubar">
- 					MENUBAR
-				</div>
-        <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">
-          NOTIFICATION
+<div id="workspace">
+  <div id="workspace-title">
+    <div class="snap-left">
+      <h2 th:text="${parentId != null} ? #{ workspace.custom-report.title } : #{ workspace.report.title }">Espace
+        Rapport ou Espace Custom Rapport</h2>
+    </div>
+    <div class="snap-right">
+      <div class="main-menubar unstyled" th:include="menubar.frag :: menubar">
+        MENUBAR
+      </div>
+      <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">
+        NOTIFICATION
+      </div>
+    </div>
+  </div>
+
+  <div id="outer-category-frame" class="left-frame">
+    <div th:each="cat : ${categories}" th:id="${#ids.seq('left-panel')}" class="report-category sq-tg expand">
+      <div class="tg-head">
+        <h3 th:text="#{${cat.i18nKey}}"></h3>
+        <div class="tg-tollbar"></div>
+      </div>
+      <div class="tg-body">
+        <div th:each="rpt : ${reports.get(cat)}" th:id="${parentId != null ? rpt.namespace : #ids.seq('left-panel')}"
+             data-href="sample-report/0"
+             th:attr="data-href=@{'/reports/' + ${rpt.namespace} + '/panel' + ${parentId != null ? ('/'+ parentId) :''}}"
+             class="report-item">
+          <div class="report-item-icon" th:classappend="${rpt.type.iconClass}"></div>
+          <div class="report-item-text">
+            <strong class="report-item-name">
+              <span th:text="${rpt.label}">Sample report</span>
+            </strong>
+            <br/>
+            <span class="report-item-description" th:text="${rpt.description}">Report description</span>
+          </div>
+          <div class="unsnap"></div>
         </div>
-			</div>
-		</div>
+      </div>
+    </div>
+  </div>
 
-			<div id="outer-category-frame" class="left-frame">
-				<div th:each="cat : ${categories}" th:id="${#ids.seq('left-panel')}" class="report-category sq-tg expand">
-                  <div class="tg-head">
-                    <h3 th:text="#{${cat.i18nKey}}"></h3>
-                    <div class="tg-tollbar"></div>
-                  </div>
-                    <div class="tg-body">
-        				<div th:each="rpt : ${reports.get(cat)}" th:id="${parentId != null ? rpt.namespace : #ids.seq('left-panel')}"
-        					data-href="sample-report/0" th:attr="data-href=@{'/reports/' + ${rpt.namespace} + '/panel' + ${parentId != null ? ('/'+ parentId) :''}}"
-        					class="report-item">
-        					<div class="report-item-icon" th:classappend="${rpt.type.iconClass}"></div>
-        					<div class="report-item-text">
-        							<strong class="report-item-name">
-        								<span th:text="${rpt.label}">Sample report</span>
-        							</strong>
-        						<br/>
-        						<span class="report-item-description" th:text="${rpt.description}">Report description</span>
-        					</div>
-        					<div class="unsnap"></div>
-        				</div>
-                    </div>
-				</div>
-			</div>
-
-		<div id="contextual-content" class="no-resizable-contextual-content" th:remove="body">
-		</div>
-	</div>
+  <div id="contextual-content" class="no-resizable-contextual-content">
+    <div id="report-name-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header cf">
+      <div class="snap-right">
+        <input id="back" type="button" th:value="#{label.Back}" class="sq-btn btn-sm"
+               value="Back" onclick="document.location.href=squashtm.app.contextRoot+'custom-report-workspace'"/>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
