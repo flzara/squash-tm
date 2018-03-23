@@ -25,7 +25,7 @@
  *
  */
 define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub", "squash.statusfactory", "squash.translator",
-        "jqueryui", "jquery.squash.formdialog"], function($, _, Handlebars, ps, statusfactory, translator) {
+	"jqueryui", "jquery.squash.formdialog"], function ($, _, Handlebars, ps, statusfactory, translator) {
 	"use strict";
 
 	Handlebars.registerHelper("ballsyStatus", $.proxy(statusfactory.getHtmlFor, statusfactory));
@@ -35,12 +35,12 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 		$.widget("squash.autosuiteOverview", $.squash.formDialog, {
 
 			// remember that some options are passed using dom conf, done in the super constructor
-			options : {
-				suite : null,
-				intervalId : null
+			options: {
+				suite: null,
+				intervalId: null
 			},
 
-			_create : function(){
+			_create: function () {
 				this._super();
 
 				var self = this;
@@ -49,42 +49,42 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 				this.options.executionAutoInfos = $("#executions-auto-infos");
 
 				// progressbar
-				var executionProgressBar =  $("#execution-auto-progress-bar");
-				executionProgressBar.progressbar({value : 0});
+				var executionProgressBar = $("#execution-auto-progress-bar");
+				executionProgressBar.progressbar({value: 0});
 				executionProgressBar.find("div").addClass("ui-state-default");
 
 				// events
-				this.onOwnBtn("mainclose", function(){
+				this.onOwnBtn("mainclose", function () {
 					self.close();
 				});
 
-				this.onOwnBtn("warningok", function(){
+				this.onOwnBtn("warningok", function () {
 					self.close();
 				});
 
-				this.onOwnBtn("warningcancel", function(){
+				this.onOwnBtn("warningcancel", function () {
 					self.unclose();
 				});
-				this.onOwnBtn("submitNodes", function(){
+				this.onOwnBtn("submitNodes", function () {
 					self._submitNodes();
 				});
-				this.onOwnBtn("discardNodes", function(){
+				this.onOwnBtn("discardNodes", function () {
 					self._removeSuite();
 				});
 			},
 
-			close : function(){
+			close: function () {
 
 				// check : if the suite wasn't finished, we must let the user confirm
 				var suite = this.options.suite;
-				if (!! suite && suite.percentage < 100 && this.getState() !== "warning"){
+				if (!!suite && suite.percentage < 100 && this.getState() !== "warning") {
 					this.setState("warning");
 					return false;
 				}
 				// else we actually close that dialog
-				else{
+				else {
 					this._super();
-					if (!! this.options.intervalId ){
+					if (!!this.options.intervalId) {
 						clearInterval(this.options.intervalId);
 					}
 					this._cleancontent();
@@ -92,12 +92,12 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 
 			},
 
-			unclose : function (){
+			unclose: function () {
 				this.setState("main");
 			},
 
 
-			_cleancontent : function(){
+			_cleancontent: function () {
 				var opts = this.options;
 
 				clearInterval(opts.intervalId);
@@ -110,12 +110,14 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 				if (table.length > 0) {
 					table.squashTable().refresh();
 				}
+				squashtm.execution.refreshTestSuiteInfo()
+
 				// TODO : replace the following function that doesn't exist anymore with an event published on the event
 				// bus
 				// refreshStatistics();
 			},
 
-			watch : function(suite){
+			watch: function (suite) {
 				this.options.suite = suite;
 				this._initWatch();
 				this.setState("main");
@@ -124,13 +126,13 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 				var self = this;
 
 				if (suite.percentage < 100) {
-					this.options.intervalId = setInterval(function() {
+					this.options.intervalId = setInterval(function () {
 						self.update();
 					}, 5000);
 				}
 			},
 
-			start : function(suite) {
+			start: function (suite) {
 				if (suite.manualNodeSelection) {
 					this._startManualSelectNodes(suite);
 				} else {
@@ -138,21 +140,23 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 				}
 			},
 
-			_startAutoSelectNodes : function(suite) {
-				this._execAndWatch(suite.id, function() { return []; });
+			_startAutoSelectNodes: function (suite) {
+				this._execAndWatch(suite.id, function () {
+					return [];
+				});
 			},
 
-			_execAndWatch: function(suiteId, dataMapper) {
-				var runUrl = this.options.url + "/" + suiteId  + "/executor";
+			_execAndWatch: function (suiteId, dataMapper) {
+				var runUrl = this.options.url + "/" + suiteId + "/executor";
 				var self = this;
 
 				$.ajax({
-					type : "POST",
-					url : runUrl,
+					type: "POST",
+					url: runUrl,
 					data: JSON.stringify(dataMapper()),
-					dataType : "json",
+					dataType: "json",
 					contentType: "application/json"
-				}).done(function(overview) {
+				}).done(function (overview) {
 					if (overview.executions.length === 0) {
 						$.squash.openMessage(translator.get("popup.title.Info"), translator.get("dialog.execution.auto.overview.error.none"));
 					} else {
@@ -161,28 +165,28 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 				});
 			},
 
-			_startManualSelectNodes : function(suite) {
+			_startManualSelectNodes: function (suite) {
 				this.suiteId = suite.id;
 				this.setState("node-selector");
 				this.open();
 
 				var template = Handlebars.compile($("#node-selector-pnl-tpl").html());
-				var manuals = _.filter(suite.contexts, function(context) {
+				var manuals = _.filter(suite.contexts, function (context) {
 					return context.project.server.manualSlaveSelection;
 				}) || {};
 				$("#node-selector-pnl").html(template({contexts: manuals}));
 			},
 
-			_submitNodes : function() {
-				var dataMapper = function() {
-					var data = _.map($("#node-selector-pnl").find("fieldset"), function(item) {
+			_submitNodes: function () {
+				var dataMapper = function () {
+					var data = _.map($("#node-selector-pnl").find("fieldset"), function (item) {
 						var $item = $(item);
 						var node = $item.find("select").val();
 						node = node === "" ? null : node;
 
 						return {
-							projectId : $item.data("proj-id"),
-							node : node
+							projectId: $item.data("proj-id"),
+							node: node
 						};
 					});
 
@@ -192,15 +196,15 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 				this._execAndWatch(this.suiteId, dataMapper);
 			},
 
-			update : function(){
+			update: function () {
 				var self = this,
 					opts = this.options;
 
 				$.ajax({
-					type : "GET",
-					url : opts.url + "/" + opts.suite.suiteId + "/executions",
-					dataType : "json"
-				}).done(function(json){
+					type: "GET",
+					url: opts.url + "/" + opts.suite.suiteId + "/executions",
+					dataType: "json"
+				}).done(function (json) {
 					self.options.suite = json;
 					self._updateWatch();
 					if (json.percentage == 100) {
@@ -209,7 +213,7 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 				});
 			},
 
-			_initWatch : function(){
+			_initWatch: function () {
 				var data = this.options.suite;
 				var executions = data.executions,
 					progress = data.percentage;
@@ -220,27 +224,27 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 				$("#execution-auto-progress-amount").text(Math.round(executionComplete) + "/" + executions.length);
 
 				// the "table"
-				var htmlRows = this.options.executionRowTemplate({execs : executions});
+				var htmlRows = this.options.executionRowTemplate({execs: executions});
 				this.options.executionAutoInfos.html(htmlRows);
 			},
 
-			_updateWatch : function(){
+			_updateWatch: function () {
 				this._initWatch();
 			},
 
-			_removeSuite: function() {
+			_removeSuite: function () {
 				var opts = this.options;
 				var suiteId = this.suiteId;
 
 				$.ajax({
-					type : "DELETE",
-					url : opts.url + "/" + suiteId
+					type: "DELETE",
+					url: opts.url + "/" + suiteId
 				});
 
 				this.close();
 			},
 
-			_destroy: function() {
+			_destroy: function () {
 				if (!!squashtm.context) {
 					squashtm.context.autosuiteOverview = undefined;
 				}
@@ -253,7 +257,7 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 	}
 
 	function init() {
-		if (squashtm.context === undefined || squashtm.context.autosuiteOverview === undefined){
+		if (squashtm.context === undefined || squashtm.context.autosuiteOverview === undefined) {
 			squashtm.context = squashtm.context || {};
 
 			var dialog = $("#execute-auto-dialog");
@@ -265,16 +269,16 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 		}
 	}
 
-	ps.subscribe("reload.auto-suite-overview-popup", function() {
+	ps.subscribe("reload.auto-suite-overview-popup", function () {
 		init();
 	});
 
 	var module = {
-			// should not be useful anymore
+		// should not be useful anymore
 		// init : init,
 
-		get : function(){
-			if (squashtm.context === undefined || squashtm.context.autosuiteOverview === undefined){
+		get: function () {
+			if (squashtm.context === undefined || squashtm.context.autosuiteOverview === undefined) {
 				this.init();
 			}
 			return squashtm.context.autosuiteOverview;

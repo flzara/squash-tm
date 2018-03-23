@@ -26,6 +26,8 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.exception.DuplicateNameException;
 
+import java.util.List;
+
 /**
  * Test-Suite modification services which cannot be dynamically generated.
  *
@@ -45,6 +47,8 @@ public interface CustomTestSuiteModificationService extends TestSuiteFinder{
 
 
 	void updateExecutionStatus(TestSuite testSuite);
+
+	void updateExecutionStatus(List<TestSuite> testSuite);
 
 	/**
 	 * <p>That method will retrieve the data and fill the testSuiteStatistics DTO.</p>

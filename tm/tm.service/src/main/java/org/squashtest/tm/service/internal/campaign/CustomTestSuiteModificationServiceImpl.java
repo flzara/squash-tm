@@ -43,6 +43,7 @@ import org.squashtest.tm.service.user.UserAccountService;
 import javax.inject.Inject;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
@@ -82,6 +83,13 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 		ExecutionStatusReport report = testSuiteDao.getStatusReport(testsuite.getId());
 		ExecutionStatus newExecutionStatus = ExecutionStatus.computeNewStatus(report);
 		testsuite.setExecutionStatus(newExecutionStatus);
+	}
+
+	@Override
+	public void updateExecutionStatus(List<TestSuite> testSuites) {
+		for (TestSuite testSuite : testSuites) {
+			updateExecutionStatus(testSuite);
+		}
 	}
 
 

@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.service.internal.testautomation;
 
-import java.net.URL;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -35,12 +29,18 @@ import org.squashtest.tm.core.foundation.exception.InvalidUrlException;
 import org.squashtest.tm.core.foundation.lang.UrlUtils;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
+import org.squashtest.tm.service.campaign.CustomTestSuiteModificationService;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.service.internal.repository.AutomatedExecutionExtenderDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testautomation.AutomatedExecutionManagerService;
 import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
 import org.squashtest.tm.service.testautomation.TestAutomationCallbackService;
+
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import java.net.URL;
+import java.util.List;
 
 /**
  * @author Gregory Fouquet
@@ -49,7 +49,7 @@ import org.squashtest.tm.service.testautomation.TestAutomationCallbackService;
 @Service("squashtest.tm.service.testautomation.AutomatedExecutionManagerService")
 @Transactional
 public class AutomatedExecutionManagerServiceImpl implements AutomatedExecutionManagerService,
-TestAutomationCallbackService {
+	TestAutomationCallbackService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AutomatedExecutionManagerServiceImpl.class);
 
 	@Inject
@@ -60,6 +60,9 @@ TestAutomationCallbackService {
 
 	@Inject
 	private ExecutionProcessingService execProcService;
+
+	@Inject
+	private CustomTestSuiteModificationService customTestSuiteModificationService;
 
 	@Override
 	public void updateExecutionStatus(AutomatedExecutionSetIdentifier execIdentifier, ExecutionStatus newStatus) {
@@ -99,7 +102,7 @@ TestAutomationCallbackService {
 
 	private List<AutomatedExecutionExtender> findExtendersFor(AutomatedExecutionSetIdentifier setIdentifier) {
 		return automatedExecutionDao.findAllBySuiteIdAndTestName(setIdentifier.getAutomatedSuiteId(),
-				setIdentifier.getAutomatedTestName(), setIdentifier.getTestAutomationProjectName());
+			setIdentifier.getAutomatedTestName(), setIdentifier.getTestAutomationProjectName());
 	}
 
 	/**
@@ -110,12 +113,14 @@ TestAutomationCallbackService {
 		exec.setResultSummary(stateChange.getStatusMessage());
 		exec.setExecutionStatus(coerce(stateChange.getStatus()));
 
+		customTestSuiteModificationService.updateExecutionStatus(exec.getExecution().getTestPlan().getTestSuites());
+
 		try {
 			URL result = UrlUtils.toUrl(stateChange.getResultUrl());
 			exec.setResultURL(result);
 		} catch (InvalidUrlException ex) {
 			LOGGER.warn("Received a result url which does not math any valid url pattern : {}",
-					stateChange.getResultUrl(), ex);
+				stateChange.getResultUrl(), ex);
 		}
 
 		execProcService.updateExecutionMetadata(exec);
