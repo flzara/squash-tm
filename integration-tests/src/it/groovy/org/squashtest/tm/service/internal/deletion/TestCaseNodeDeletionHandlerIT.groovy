@@ -179,10 +179,10 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 		session.flush();
 
 		def tsMaxOrder = session.createSQLQuery("select max(test_plan_order) from TEST_SUITE_TEST_PLAN_ITEM where suite_id = -1").uniqueResult()
-		def itMaxOrder = session.createSQLQuery("select max(item_test_plan_order) from ITEM_TEST_PLAN_LIST where iteration_id=-11").uniqueResult()
+		def itMaxOrder = session.createSQLQuery("select max(item_test_plan_order) from ITEM_TEST_PLAN_LIST where iteration_id=-2299").uniqueResult()
 		then :
 		tsMaxOrder == 0	//only one element, max index 0
-		itMaxOrder == 8 //only one element too because this test case was included twice, random max index 8 because of unique constraint
+		itMaxOrder == 0 //only one element too because this test case was included twice
 	}
 
 }

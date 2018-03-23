@@ -69,8 +69,8 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		deletionHandler.deleteExecution(exec)
 		em.flush()
 
-		then :		
-		
+		then :
+
 		allDeleted("Attachment", [
 			-5001L,
 			-5002L,
@@ -81,7 +81,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 			-60031L,
 			-60032L
 		])
-		
+
 		allDeleted("AttachmentList", [-500L, -6001L, -6002L, -6003L]);
 
 		allDeleted("AttachmentContent", [
@@ -146,7 +146,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		deletionHandler.deleteExecution(exec)
 
 		then :
-		
+
 		// Exec -1111L is gone
 		! found(AttachmentList, -1111L)
 		! found(IssueList, -1111L)
@@ -317,14 +317,14 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		given :
 		IterationTestPlanItem item = findEntity(IterationTestPlanItem.class, -111L)
                 Iteration iter = findEntity(Iteration.class, -11)
-                
+
 		when :
-                iter.removeItemFromTestPlan(item)                
+                iter.removeItemFromTestPlan(item)
 		deletionHandler.deleteIterationTestPlanItem(item)
                 em.flush()
 
 		then :
-                
+
 		allNotDeleted("Iteration", [-12L, -11L])
                 allNotDeleted("AttachmentList", [
                     -11L,-12L,
@@ -338,7 +338,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		allNotDeleted("IssueList", [-1211L, -1212L, -1221L, -1222L, -1121L, -1122L])
 		allNotDeleted("Execution", [-1211L, -1212L, -1221L, -1222L, -1121L, -1122L])
 		allNotDeleted("IterationTestPlanItem", [-121L, -122L, -112L])
-                
+
                 and :
 
 		allDeleted("IterationTestPlanItem", [-111L])
@@ -448,7 +448,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		IterationTestPlanItem iterationTestPlanItem2=findEntity(IterationTestPlanItem.class, -122L)
 		iterationTestPlanItem2.getTestSuites().size() == 0
 
-		Iteration iteration = findEntity(Iteration.class, -11L)
+		Iteration iteration = findEntity(Iteration.class, -2299L)
 		iteration.getTestSuites().size() == 0
 		Iteration iteration2 = findEntity(Iteration.class, -12L)
 		iteration2.getTestSuites().size() == 0
@@ -470,9 +470,9 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		where :
 		suiteId    | attachListId | itpiId			| notdeletedItpi
 		// dataset 1 : itpi 123 is shared with test suite 3
-		[-1L, -2L] | [-12L, -13L] | [-121L, -122L]	| [-123L]	
+		[-1L, -2L] | [-12L, -13L] | [-121L, -122L]	| [-123L]
 		// dataset 2 : itpi 123 out of scope and 121 is shared with test suite 2 (which is not deleted)
-		[-1L]      | [-12L]       | [-122L]			| [-121L, -123L] 
+		[-1L]      | [-12L]       | [-122L]			| [-121L, -123L]
 
 	}
 
