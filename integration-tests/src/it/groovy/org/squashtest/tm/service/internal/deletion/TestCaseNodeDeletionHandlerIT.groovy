@@ -182,7 +182,7 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 		def itMaxOrder = session.createSQLQuery("select max(item_test_plan_order) from ITEM_TEST_PLAN_LIST where iteration_id=-11").uniqueResult()
 		then :
 		tsMaxOrder == 0	//only one element, max index 0
-		itMaxOrder == 6 //only one element too because this test case was included twice, random max index 6 because of unique constraint
+		itMaxOrder == 8 //only one element too because this test case was included twice, random max index 8 because of unique constraint
 	}
 
 }
