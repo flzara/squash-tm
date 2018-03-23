@@ -171,7 +171,7 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 
 	}
 
-	@DataSet("NodeDeletionHandlerTest.should delete testSuites.xml")
+	@DataSet("NodeDeletionHandlerTest.delete_tc_and_reorder_test_plan.xml")
 	def "should delete a test case and reorder the (non executed) test plans that includes it"(){
 
 		when :
