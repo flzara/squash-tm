@@ -364,7 +364,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	@Override
 	public LogTrain addCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase,
-		CallStepParamsInfo paramInfo, ActionTestStep actionStepBackup) {
+								CallStepParamsInfo paramInfo, ActionTestStep actionStepBackup) {
 
 		LogTrain logs;
 
@@ -448,7 +448,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	@Override
 	public LogTrain updateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase,
-		CallStepParamsInfo paramInfos, ActionTestStep actionStepBackup) {
+								   CallStepParamsInfo paramInfos, ActionTestStep actionStepBackup) {
 
 		LogTrain logs;
 
@@ -593,7 +593,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	@Override
 	public LogTrain failsafeUpdateParameterValue(DatasetTarget dataset, ParameterTarget param, String value,
-		boolean isUpdate) {
+												 boolean isUpdate) {
 
 		/*
 		 * Feat 3695 in this method we must assume that all the checks on the
@@ -747,7 +747,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	}
 
 	private LogEntry checkStepIndex(ImportMode mode, TestStepTarget target, ImportStatus importStatus,
-		String optionalImpact) {
+									String optionalImpact) {
 		Integer index = target.getIndex();
 		LogEntry entry = null;
 
@@ -957,7 +957,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	 * and save the modified {@link RequirementStatus} in target to reassign it in postprocess
 	 */
 	private void checkImportedRequirementVersionStatus(RequirementVersionTarget target,
-		RequirementVersion reqVersion) {
+													   RequirementVersion reqVersion) {
 		RequirementStatus requirementVersionStatus = reqVersion.getStatus();
 		if (requirementVersionStatus != null && requirementVersionStatus != RequirementStatus.WORK_IN_PROGRESS) {
 			target.setImportedRequirementStatus(requirementVersionStatus);
@@ -1039,7 +1039,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 
 	private void checkRequirementVersionExists(RequirementVersionTarget target,
-		LogTrain logs) {
+											   LogTrain logs) {
 
 		TargetStatus status = model.getStatus(target);
 		TargetStatus reqStatus = model.getStatus(target.getRequirement());
@@ -1087,7 +1087,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	}
 
 	private void checkAndFixNameConsistency(RequirementVersionTarget target,
-		RequirementVersion reqVersion) {
+											RequirementVersion reqVersion) {
 		String reqName = PathUtils.extractName(target.getPath());
 		String reqVersionName = reqVersion.getName();
 
@@ -1175,7 +1175,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			return logs;
 		}
 
-		if(reqVersionId != null && tcId != null){
+		if (reqVersionId != null && tcId != null) {
 			checkCoverageAlreadyExist(target, logs, tcId, reqVersionId);
 		}
 
@@ -1187,10 +1187,6 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		return logs;
 	}
-
-
-
-
 
 
 	private void checkCoverageAlreadyExist(CoverageTarget target, LogTrain logs, Long tcId, Long reqVersionId) {
@@ -1272,7 +1268,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			Long id = tcLibNavigationService.findNodeIdByPath(tcPath);
 			if (id == null) {
 				TargetStatus targetStatus = getModel().getStatus(new TestCaseTarget(target.getTcPath()));
-				if(targetStatus.getStatus() != Existence.TO_BE_CREATED) {
+				if (targetStatus.getStatus() != Existence.TO_BE_CREATED) {
 					logs.addEntry(createLogFailure(target, Messages.ERROR_TC_NOT_FOUND, target.getTcPath()));
 				}
 			} else {
@@ -1311,30 +1307,30 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	}
 
 
-	private LogTrain checkRequirementLinkRole(RequirementLinkInstruction instr, LogTrain logs){
+	private LogTrain checkRequirementLinkRole(RequirementLinkInstruction instr, LogTrain logs) {
 		RequirementLinkTarget target = instr.getTarget();
 		String role = instr.getRelationRole();
 
 		// if no role set -> issue a warning that the system will use the default
-		if (StringUtils.isBlank(role)){
+		if (StringUtils.isBlank(role)) {
 			logs.addEntry(LogEntry
-							.warning()
-							.forTarget(target)
-							.withMessage(Messages.WARN_REQ_LINK_ROLE_NOT_SET)
-							.withImpact(Messages.IMPACT_REQ_LINK_ROLE_NOT_SET)
-							.build());
+				.warning()
+				.forTarget(target)
+				.withMessage(Messages.WARN_REQ_LINK_ROLE_NOT_SET)
+				.withImpact(Messages.IMPACT_REQ_LINK_ROLE_NOT_SET)
+				.build());
 		}
 
 		// if role is set -> check it exists
 		else {
 			Set<String> allRoles = getModel().getRequirementLinkRoles();
 
-			if (! allRoles.contains(role)){
+			if (!allRoles.contains(role)) {
 				logs.addEntry(LogEntry
-						.failure()
-						.forTarget(target)
-						.withMessage(Messages.ERROR_REQ_LINK_ROLE_NOT_EXIST)
-						.build());
+					.failure()
+					.forTarget(target)
+					.withMessage(Messages.ERROR_REQ_LINK_ROLE_NOT_EXIST)
+					.build());
 			}
 		}
 
@@ -1346,7 +1342,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	 * - exist,
 	 * - be linkable
 	 */
-	private LogTrain requirementsExistAndLinkable(RequirementLinkTarget linkTarget){
+	private LogTrain requirementsExistAndLinkable(RequirementLinkTarget linkTarget) {
 		LogTrain logs = new LogTrain();
 
 		// check source requirement
@@ -1359,76 +1355,87 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 
 		// cannot link a requirement to itself
-		if (! logs.hasCriticalErrors()){
-			if (linkTarget.getSourceVersion().equals(linkTarget.getDestVersion())){
+		if (!logs.hasCriticalErrors()) {
+			if (linkTarget.getSourceVersion().equals(linkTarget.getDestVersion())) {
 				logs.addEntry(LogEntry
-						.failure()
-						.forTarget(linkTarget)
-						.withMessage(Messages.ERROR_REQ_LINK_SAME_VERSION)
-						.build());
+					.failure()
+					.forTarget(linkTarget)
+					.withMessage(Messages.ERROR_REQ_LINK_SAME_VERSION)
+					.build());
 			}
 		}
 		return logs;
 	}
 
 
-	private void existAndLinkable(RequirementLinkTarget linkTarget, RequirementVersionTarget versionTarget, LogTrain logs, String malformedPathMessage, String nonexistentMessage){
+	private void existAndLinkable(RequirementLinkTarget linkTarget, RequirementVersionTarget versionTarget, LogTrain logs, String malformedPathMessage, String nonexistentMessage) {
 		// 1 - source path must be supplied and well formed
-		if (! versionTarget.isWellFormed()){
+		if (!versionTarget.isWellFormed()) {
 			logs.addEntry(LogEntry
-								.failure()
-								.forTarget(linkTarget)
-								.withMessage(malformedPathMessage, versionTarget.getPath())
-								.build()
+				.failure()
+				.forTarget(linkTarget)
+				.withMessage(malformedPathMessage, versionTarget.getPath())
+				.build()
 			);
 			return;
 		}
 
 		// 2 - project must exist
 		TargetStatus projectStatus = getModel().getProjectStatus(versionTarget.getProject());
-		if (projectStatus.getStatus() != Existence.EXISTS){
+		if (projectStatus.getStatus() != Existence.EXISTS) {
 			logs.addEntry(LogEntry
-							.failure()
-							.forTarget(linkTarget)
-							.withMessage(Messages.ERROR_PROJECT_NOT_EXIST)
-							.build());
+				.failure()
+				.forTarget(linkTarget)
+				.withMessage(Messages.ERROR_PROJECT_NOT_EXIST)
+				.build());
 			return;
 		}
 
-		// 3 - RequirementVersion must exist
+		// 3 - RequirementVersion must exist or will be created
 		TargetStatus versionStatus = getModel().getStatus(versionTarget);
-		if (versionStatus.getStatus() != Existence.EXISTS){
+		if (versionStatus.getStatus() != Existence.EXISTS && versionStatus.getStatus() != Existence.TO_BE_CREATED) {
 			logs.addEntry(LogEntry
-							.failure()
-							.forTarget(linkTarget)
-							.withMessage(nonexistentMessage)
-							.build());
+				.failure()
+				.forTarget(linkTarget)
+				.withMessage(nonexistentMessage)
+				.build());
 			return;
 		}
 
-		// 4 - RequirementVersion must be linkable (i.e. not Obsolete)
+		// 4 - RequirementVersion must be linkable (i.e. not Obsolete) or will be linkable
 		Long reqId = reqFinderService.findNodeIdByPath(versionTarget.getPath());
-		Requirement req = reqLibNavigationService.findRequirement(reqId);
-		RequirementVersion reqVersion = req.findRequirementVersion(versionTarget.getVersion());
-		if (!reqVersion.getStatus().isRequirementLinkable()) {
-			logs.addEntry(LogEntry
-							.failure()
-							.forTarget(linkTarget)
-							.withMessage(Messages.ERROR_REQ_LINK_NOT_LINKABLE)
-							.build());
-			return;
+		if (reqId != null) {
+			// in case of the requirement already exist
+			Requirement req = reqLibNavigationService.findRequirement(reqId);
+			RequirementVersion reqVersion = req.findRequirementVersion(versionTarget.getVersion());
+			if (!reqVersion.getStatus().isRequirementLinkable()) {
+				logs.addEntry(LogEntry
+					.failure()
+					.forTarget(linkTarget)
+					.withMessage(Messages.ERROR_REQ_LINK_NOT_LINKABLE)
+					.build());
+				return;
+			}
+		} else {
+			// in case of the requirement will be created, and now we verify its imported status
+			if (!versionTarget.getImportedRequirementStatus().isRequirementLinkable()) {
+				logs.addEntry(LogEntry
+					.failure()
+					.forTarget(linkTarget)
+					.withMessage(Messages.ERROR_REQ_LINK_NOT_LINKABLE)
+					.build());
+				return;
+			}
 		}
+
 
 		// 5 - User must have high enough credentials
 		LogEntry entry = checkPermissionOnProject("LINK", versionTarget, linkTarget);
-		if (entry != null){
+		if (entry != null) {
 			logs.addEntry(entry);
 		}
 
 	}
-
-
-
 
 
 	private LogEntry createLogFailure(Target target, String msg, Object... msgArgs) {
