@@ -448,7 +448,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		IterationTestPlanItem iterationTestPlanItem2=findEntity(IterationTestPlanItem.class, -122L)
 		iterationTestPlanItem2.getTestSuites().size() == 0
 
-		Iteration iteration = findEntity(Iteration.class, -2299L)
+		Iteration iteration = findEntity(Iteration.class, -11L)
 		iteration.getTestSuites().size() == 0
 		Iteration iteration2 = findEntity(Iteration.class, -12L)
 		iteration2.getTestSuites().size() == 0
