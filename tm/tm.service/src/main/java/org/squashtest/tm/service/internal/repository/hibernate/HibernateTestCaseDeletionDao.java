@@ -54,6 +54,8 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 	private static final String TEST_CASES_IDS = "testCaseIds";
 	private static final String TEST_STEP_IDS = "testStepIds";
 	private static final String FOLDER_IDS = "folderIds";
+	private static final String ITP_HAVING_NO_EXEC_IDS = "itpHavingNoExecIds";
+	private static final String ITP_HAVING_EXEC_IDS = "itpHavingExecIds";
 
 	@Override
 	public void removeEntities(final List<Long> entityIds) {
@@ -153,13 +155,10 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 
 		if (!testCaseIds.isEmpty()) {
 
-			// first we must reorder the campaign_item_test_plans
+			// we must reorder the campaign_item_test_plans
 			reorderTestPlan(NativeQueries.TESTCASE_SQL_GETCALLINGCAMPAIGNITEMTESTPLANORDEROFFSET,
-					NativeQueries.TESTCASE_SQL_UPDATECALLINGCAMPAIGNITEMTESTPLAN, testCaseIds);
-
-			// now we can delete the items
-			executeDeleteSQLQuery(NativeQueries.TESTCASE_SQL_REMOVECALLINGCAMPAIGNITEMTESTPLAN, TEST_CASES_IDS,
-					testCaseIds);
+					NativeQueries.TESTCASE_SQL_UPDATECALLINGCAMPAIGNITEMTESTPLAN, testCaseIds,
+					NativeQueries.TESTCASE_SQL_REMOVECALLINGCAMPAIGNITEMTESTPLAN, TEST_CASES_IDS);
 
 		}
 
@@ -200,37 +199,31 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 	private void setNullCallingIterationItemTestPlanHavingExecutions(List<Long> itpHavingExecIds) {
 		if (!itpHavingExecIds.isEmpty()) {
 			executeDeleteSQLQuery(NativeQueries.TESTCASE_SQL_SETNULLCALLINGITERATIONITEMTESTPLANHAVINGEXECUTIONS,
-					"itpHavingExecIds", itpHavingExecIds);
+				ITP_HAVING_EXEC_IDS, itpHavingExecIds);
 		}
 	}
 
 	private void removeCallingIterationItemTestPlanHavingNoExecutions(List<Long> itpHavingNoExecIds) {
 		if (!itpHavingNoExecIds.isEmpty()) {
 
-			// reorder the test plans for iterations
-			reorderTestPlan(NativeQueries.TESTCASE_SQL_GETCALLINGITERATIONITEMTESTPLANORDEROFFSET,
-					NativeQueries.TESTCASE_SQL_UPDATECALLINGITERATIONITEMTESTPLANORDER, itpHavingNoExecIds);
-
-			// reorder the test plans for test suites
+			// reorder the test plans for test suites and remove the elements before update
 			reorderTestPlan(NativeQueries.TESTCASE_SQL_GETCALLINGTESTSUITEITEMTESTPLANORDEROFFSET,
-					NativeQueries.TESTCASE_SQL_UPDATECALLINGTESTSUITEITEMTESTPLANORDER, itpHavingNoExecIds);
+				NativeQueries.TESTCASE_SQL_UPDATECALLINGTESTSUITEITEMTESTPLANORDER, itpHavingNoExecIds,
+				NativeQueries.TESTCASE_SQL_REMOVECALLINGTESTSUITEITEMTESTPLAN, ITP_HAVING_NO_EXEC_IDS);
 
-			// remove the elements from their collection
-			executeDeleteSQLQuery(NativeQueries.TESTCASE_SQL_REMOVECALLINGTESTSUITEITEMTESTPLAN, "itpHavingNoExecIds",
-					itpHavingNoExecIds);
-
-			executeDeleteSQLQuery(NativeQueries.TESTCASE_SQL_REMOVECALLINGITERATIONITEMTESTPLANFROMLIST,
-					"itpHavingNoExecIds", itpHavingNoExecIds);
+			// reorder the test plans for iterations and remove the elements before update
+			reorderTestPlan(NativeQueries.TESTCASE_SQL_GETCALLINGITERATIONITEMTESTPLANORDEROFFSET,
+					NativeQueries.TESTCASE_SQL_UPDATECALLINGITERATIONITEMTESTPLANORDER, itpHavingNoExecIds,
+					NativeQueries.TESTCASE_SQL_REMOVECALLINGITERATIONITEMTESTPLANFROMLIST, ITP_HAVING_NO_EXEC_IDS);
 
 			// remove the elements themselves
-			executeDeleteSQLQuery(NativeQueries.TESTCASE_SQL_REMOVECALLINGITERATIONITEMTESTPLAN, "itpHavingNoExecIds",
+			executeDeleteSQLQuery(NativeQueries.TESTCASE_SQL_REMOVECALLINGITERATIONITEMTESTPLAN, ITP_HAVING_NO_EXEC_IDS,
 					itpHavingNoExecIds);
-
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private void reorderTestPlan(String selectOffsetQuery, String updateOrderQuery, List<Long> removedItems) {
+	private void reorderTestPlan(String selectOffsetQuery, String updateOrderQuery, List<Long> removedItems, String deleteQueryString, String deleteParamName) {
 
 		Query query0 = getSession().createSQLQuery(selectOffsetQuery);
 		query0.setParameterList("removedItemIds1", removedItems);
@@ -238,6 +231,11 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 		List<Object[]> pairIdOffset = query0.list();
 
 		Map<Integer, List<Long>> mapOffsets = buildMapOfOffsetAndIds(pairIdOffset);
+
+		// Feat 7183 - remove the elements from their collection before the update because of unique constraints
+		if (deleteQueryString != null && !deleteQueryString.isEmpty()) {
+			executeDeleteSQLQuery(deleteQueryString, deleteParamName, removedItems);
+		}
 
 		for (Entry<Integer, List<Long>> offsetEntry : mapOffsets.entrySet()) {
 			Query query = getSession().createSQLQuery(updateOrderQuery);
