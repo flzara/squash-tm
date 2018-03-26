@@ -179,6 +179,9 @@ public class WebSecurityConfig {
 		protected void configure(HttpSecurity http) throws Exception {
 			// @formatter:off
 			http
+				.csrf()
+					.ignoringAntMatchers("/saml/**")
+				.and()
 				.headers()
 				.defaultsDisabled()
 				// w/o cache control, some browser's cache policy is too aggressive
@@ -209,6 +212,7 @@ public class WebSecurityConfig {
 					).access(HAS_ROLE_ADMIN)
 
 					.antMatchers("/accessDenied").permitAll()
+					.antMatchers("/saml/**").permitAll()
 
 
 					// Namespace reserved for other use
@@ -219,7 +223,8 @@ public class WebSecurityConfig {
 				.and()
 					.formLogin()
 						.permitAll()
-						.loginPage("/login")
+						//.loginPage("/login")
+						.loginPage("/saml/login")
 						.failureUrl("/login?error")
 						.defaultSuccessUrl("/home-workspace")
 
