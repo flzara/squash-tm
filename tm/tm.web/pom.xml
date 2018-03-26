@@ -204,10 +204,20 @@
       <artifactId>mysql-connector-java</artifactId>
     </dependency>
 
-    <dependency>
+    <!--
+      EXPERIMENTAL (1.18 dev) : removed cyberneko because it was needed for the legacy HTML5 mode of Thymeleaf 2, which is not required
+      anymore in thymeleaf 3.
+
+      If nothing breaks, then we can safely assume that we can dispose of that library.
+
+      Be mindful that it transitively pulled xerces:xercesImpl and xml-apis:xml-apis in a version that could be
+      required by a couple of plugins. If the plugins break, consider bundling with them those libraries at their
+      required versions.
+
+    dependency>
       <groupId>net.sourceforge.nekohtml</groupId>
       <artifactId>nekohtml</artifactId>
-    </dependency>
+    </dependency -->
 
     <!-- dependency>
       <groupId>org.objenesis</groupId>
