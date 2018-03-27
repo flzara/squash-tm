@@ -34,8 +34,18 @@ import org.squashtest.tm.core.foundation.lang.Assert;
 import org.squashtest.tm.web.internal.annotation.ApplicationComponent;
 
 /**
- * @author Gregory Fouquet
+ * Registers all {@link AuthenticationProviderFeatures} available in the context, and provides with the main instance (that corresponds to 
+ * the main authentication provider). For this to work, {@link AuthenticationProviderFeatures#getProviderName()} should match the 
+ * value of application property 'authentication.provider' (not to be confused with the bean name).
  * 
+ * @author Gregory Fouquet
+ * @documented by bsiri
+ * 
+ */
+/*
+ * I suspect it registers all available instances because many may exist in the bean factory simultaneously but we cannot pimpoint which 
+ * one is required by bean name only, because that bean name is hard to predict. Hence the need to check for the value of #getProviderName().
+ * Still it add a bit of complexity. Perhaps it was necessary with older versions of Spring Security ?
  */
 @ApplicationComponent
 public class AuthenticationProviderContext {

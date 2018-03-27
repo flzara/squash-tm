@@ -20,8 +20,38 @@
  */
 package org.squashtest.tm.api.security.authentication;
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+
 /**
+ * <p>An AuthenticationProviderFeatures drives how Squash will behave in certain User management use-cases, eg regarding credential managements.</p>
+ *  
+ * <p>
+ * By default Squash comes with an {@link AuthenticationManager} backed by a db-based {@link AuthenticationProvider}, which allow password management. 
+ * It publishes an instance of {@link AuthenticationProviderFeatures} which name is 'internal' and states that actions like password changes 
+ * are supported and permitted.  
+ * </p>  
+ * 
+ * <p>
+ * 	Third party plugins can provide alternate security contexts, namely : additional AuthenticationManagers, 
+ * AuthenticationProviders, security filter chain etc. If they do so, they should provide a companion
+ * {@link AuthenticationProviderFeatures} that tells whether they support the given operations.
+ * </p>
+ * 
+ * <p>
+ * 	In particular, a plugin can completely replace the global {@link AuthenticationManager} of the main security filter chain. 
+ * 	If it does so, {@link AuthenticationProviderFeatures} MUST be published as a Spring Bean and the name returned by {@link #getProviderName()} 
+ *  must also be set in the application property 'authentication.provider'. 	
+ * </p>
+ * 
+ * <p>
+ * 	 A plugin can merely propose a {@link AuthenticationManager} and/or {@link AuthenticationProvider} local to its own security filter chain.
+ * 	 If so, it will not be considered as the main authentication provider, and thus the features of that main provider would apply by default.   
+ * 	 If this is undesirable, the AuthenticationProvider can return {@link FeaturesAwareAuthentication} tokens (see documentation). 
+ * </p>
+ * 
  * @author Gregory Fouquet
+ * @documented by bsiri
  * 
  */
 public interface AuthenticationProviderFeatures {

@@ -47,12 +47,13 @@ import static org.springframework.security.config.http.SessionCreationPolicy.NEV
  * @author Gregory Fouquet
  * @since 1.13.0
  */
+
 @Configuration
 public class OAuth2Config {
 
 	private static final String OAUTH_SUBPATH = "/whatever";
 
-
+	
 	public static class AuthenticationServerConfig extends AuthorizationServerConfigurerAdapter {
 		@Inject
 		private
@@ -131,5 +132,5 @@ public class OAuth2Config {
 			// @formatter:on
 		}
 	}
-
+	
 }

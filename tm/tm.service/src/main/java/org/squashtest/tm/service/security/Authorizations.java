@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.security;
 
+import org.squashtest.tm.api.security.acls.Roles;
+import static org.squashtest.tm.api.security.acls.Roles.*;
 /**
  * Defines constants for authorization rules.
  *
@@ -28,15 +30,24 @@ package org.squashtest.tm.service.security;
  */
 public final class Authorizations {
 
+	
+	/* -- Roles -- */
+
+	/**
+	 * use {@link org.squashtest.tm.api.security.acls.Roles#ROLE_ADMIN} instead.
+	 * @deprecated 
+	 */
+	@Deprecated 
+	public static final String ROLE_ADMIN = "ROLE_ADMIN";
+	
 	/* -- ADMIN -- */
 
 	public static final String READ = "READ";
-	public static final String ROLE_ADMIN = "ROLE_ADMIN";
 
-	public static final String HAS_ROLE_ADMIN = "hasRole('ROLE_ADMIN')";
-	public static final String OR_HAS_ROLE_ADMIN = " or hasRole('ROLE_ADMIN')";
+	public static final String HAS_ROLE_ADMIN = "hasRole('" +Roles.ROLE_ADMIN+"')";
+	public static final String OR_HAS_ROLE_ADMIN = " or " + HAS_ROLE_ADMIN;
 
-	public static final String HAS_ROLE_ADMIN_OR_PROJECT_MANAGER = "hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')";
+	public static final String HAS_ROLE_ADMIN_OR_PROJECT_MANAGER = "hasRole('" + Roles.ROLE_ADMIN +"') or hasRole('"+ ROLE_TM_PROJECT_MANAGER +"')";
 
 	/* -- MILESTONES -- */
 

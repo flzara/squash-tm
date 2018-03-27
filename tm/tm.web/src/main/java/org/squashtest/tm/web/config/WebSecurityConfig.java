@@ -47,7 +47,9 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.HttpPutFormContentFilter;
+import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManager;
+import org.squashtest.tm.web.internal.security.authentication.InternalAuthenticationProviderFeatures;
 
 /**
  * This configures Spring Security
@@ -62,9 +64,34 @@ import org.squashtest.tm.service.internal.security.SquashUserDetailsManager;
 public class WebSecurityConfig {
 
 
+	/* *********************************************************
+	 *  
+	 *  Global AuthenticationManager
+	 * 
+	 * *********************************************************/
+	
 
 	/**
-	 * Defines a global internal (dao based) authentication manager. This is the default authentication manager.
+	 * <p>Defines the default AuthenticationManager.
+	 * Along with other configuration options it comes with a DAO-based AuthenticationProvider (ie the defaul authentication provider).</p>
+	 * 
+	 * <p>
+	 * The default authentication provider have no bean name, but nevertheless it is the one referred to when the application 
+	 * property 'authentication.provider' is set to 'internal'. Its corresponding instance of {@link AuthenticationProviderFeatures} is 
+	 * {@link InternalAuthenticationProviderFeatures}.  
+	 * <p> 
+	 * 
+	 * <p>
+	 * 	If another main AuthenticationProvider is defined (ie 'authentication.provider' is not 'internal',
+	 * 	the whole AuthenticationManager will not be defined at all. This happen when a plugin wants to take over as 
+	 * the primary authenticator. In this case it is the responsibility of the plugin to configure the global 
+	 * 	AuthenticationManager that will replace that of Squash TM, along with  
+	 * 
+	 * must define its own AuthenticationManager, AuthenticationProvider,
+	 * and {@link AuthenticationProviderFeatures}, and the application property 'authentication.provider' must be set accordingly.
+	 * 
+	 * </p>
+	 * 
 	 */
 	@Configuration
 	@ConditionalOnProperty(name = "authentication.provider", matchIfMissing = true, havingValue = "internal")
@@ -83,6 +110,15 @@ public class WebSecurityConfig {
 		}
 	}
 
+	
+
+	/* *********************************************************
+	 *  
+	 *  Enpoint-specific security filter chains
+	 * 
+	 * *********************************************************/
+	
+	
 	@Configuration
 	@Order(10)
 	public static class SquashTAWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
