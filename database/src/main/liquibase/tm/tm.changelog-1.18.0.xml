@@ -788,6 +788,46 @@
                          constraintName="uc_test_suite_test_plan_item_order"/>
   </changeSet>
 
+  <changeSet id="tm-1.18.0-feature-7183.4-mysql" author="jprioux" dbms="mysql">
+    <comment>mysql - add unique constraint for ordered list : tcs in campaign</comment>
+    <sql>
+      <![CDATA[
+        drop table if exists CAMPAIGN_TEST_PLAN_ITEM_TMP;
+
+        create table CAMPAIGN_TEST_PLAN_ITEM_TMP
+                    (select CTPI_ID, CAMPAIGN_ID, TEST_CASE_ID, USER_ID, min(TEST_PLAN_ORDER) TEST_PLAN_ORDER, DATASET_ID
+                       from CAMPAIGN_TEST_PLAN_ITEM
+                   group by CAMPAIGN_ID, CTPI_ID);
+
+        create index idx2 on CAMPAIGN_TEST_PLAN_ITEM_TMP(CAMPAIGN_ID, CTPI_ID);
+
+        update CAMPAIGN_TEST_PLAN_ITEM_TMP t1,
+              (select CTPI_ID, CAMPAIGN_ID, TEST_CASE_ID, USER_ID, (select count(*)
+                                     from CAMPAIGN_TEST_PLAN_ITEM_TMP b
+                                    where a.CAMPAIGN_ID = b.CAMPAIGN_ID
+                                      and a.TEST_PLAN_ORDER >= b.TEST_PLAN_ORDER) ligne, DATASET_ID
+                 from CAMPAIGN_TEST_PLAN_ITEM_TMP a) t2
+        set t1.TEST_PLAN_ORDER = t2.ligne - 1
+         where t1.CAMPAIGN_ID = t2.CAMPAIGN_ID and t1.CTPI_ID = t2.CTPI_ID;
+
+        truncate table CAMPAIGN_TEST_PLAN_ITEM;
+
+        insert into CAMPAIGN_TEST_PLAN_ITEM
+        select a.CTPI_ID, a.CAMPAIGN_ID, a.TEST_CASE_ID, a.USER_ID,
+               a.TEST_PLAN_ORDER + 1 - (select count(*) from CAMPAIGN_TEST_PLAN_ITEM_TMP b
+                                where a.CAMPAIGN_ID = b.CAMPAIGN_ID
+                                  and a.TEST_PLAN_ORDER = b.TEST_PLAN_ORDER
+                                  and a.CTPI_ID <= b.CTPI_ID
+                             group by b.CAMPAIGN_ID, b.TEST_PLAN_ORDER) TEST_PLAN_ORDER, a.DATASET_ID
+          from CAMPAIGN_TEST_PLAN_ITEM_TMP a;
+
+        drop table CAMPAIGN_TEST_PLAN_ITEM_TMP;
+      ]]>
+    </sql>
+    <addUniqueConstraint tableName="CAMPAIGN_TEST_PLAN_ITEM" columnNames="CAMPAIGN_ID, TEST_PLAN_ORDER"
+                         constraintName="uc_campaign_test_plan_item_order"/>
+  </changeSet>
+
   <changeSet id="tm-1.18.0-feature-7183.1-postgresql" author="jprioux" dbms="postgresql">
     <comment>postgresql - add unique constraint for ordered list : test case steps</comment>
     <sql>
@@ -908,5 +948,44 @@
                          constraintName="uc_test_suite_test_plan_item_order"/>
   </changeSet>
 
+  <changeSet id="tm-1.18.0-feature-7183.4-postgresql" author="jprioux" dbms="postgresql">
+    <comment>postgresql - add unique constraint for ordered list : tcs in campaign</comment>
+    <sql>
+      <![CDATA[
+        drop table if exists CAMPAIGN_TEST_PLAN_ITEM_TMP;
+
+        create table CAMPAIGN_TEST_PLAN_ITEM_TMP AS
+                    (select CTPI_ID, CAMPAIGN_ID, TEST_CASE_ID, USER_ID, min(TEST_PLAN_ORDER) TEST_PLAN_ORDER, DATASET_ID
+                       from CAMPAIGN_TEST_PLAN_ITEM
+                   group by CAMPAIGN_ID, CTPI_ID);
+
+        create index idx2 on CAMPAIGN_TEST_PLAN_ITEM_TMP(CAMPAIGN_ID, CTPI_ID);
+
+        update CAMPAIGN_TEST_PLAN_ITEM_TMP t1
+           set TEST_PLAN_ORDER = t2.ligne - 1
+          from (select CTPI_ID, CAMPAIGN_ID, TEST_CASE_ID, USER_ID, (select count(*)
+                                     from CAMPAIGN_TEST_PLAN_ITEM_TMP b
+                                    where a.CAMPAIGN_ID = b.CAMPAIGN_ID
+                                      and a.TEST_PLAN_ORDER >= b.TEST_PLAN_ORDER) ligne, DATASET_ID
+                 from CAMPAIGN_TEST_PLAN_ITEM_TMP a) t2
+         where t1.CAMPAIGN_ID = t2.CAMPAIGN_ID and t1.CTPI_ID = t2.CTPI_ID;
+
+        truncate table CAMPAIGN_TEST_PLAN_ITEM;
+
+        insert into CAMPAIGN_TEST_PLAN_ITEM
+        select a.CTPI_ID, a.CAMPAIGN_ID, a.TEST_CASE_ID, a.USER_ID,
+               a.TEST_PLAN_ORDER + 1 - (select count(*) from CAMPAIGN_TEST_PLAN_ITEM_TMP b
+                                where a.CAMPAIGN_ID = b.CAMPAIGN_ID
+                                  and a.TEST_PLAN_ORDER = b.TEST_PLAN_ORDER
+                                  and a.CTPI_ID <= b.CTPI_ID
+                             group by b.CAMPAIGN_ID, b.TEST_PLAN_ORDER) TEST_PLAN_ORDER, a.DATASET_ID
+          from CAMPAIGN_TEST_PLAN_ITEM_TMP a;
+
+        drop table CAMPAIGN_TEST_PLAN_ITEM_TMP;
+      ]]>
+    </sql>
+    <addUniqueConstraint tableName="CAMPAIGN_TEST_PLAN_ITEM" columnNames="CAMPAIGN_ID, TEST_PLAN_ORDER"
+                         constraintName="uc_campaign_test_plan_item_order"/>
+  </changeSet>
 
 </databaseChangeLog>

@@ -52,6 +52,7 @@
       </sqlCheck>
 
     </preConditions>
+    <comment>We check that there is no duplicate for (TEST_CASE_ID, STEP_ORDER)</comment>
   </changeSet>
 
   <changeSet id="tm-1.18.0-feature-7183.2-test" author="jprioux" dbms="mysql, postgresql">
@@ -72,26 +73,52 @@
         ]]>
       </sqlCheck>
     </preConditions>
+    <comment>We check that there are no duplicates for (ITERATION_ID, ITEM_TEST_PLAN_ORDER)</comment>
   </changeSet>
 
   <changeSet id="tm-1.18.0-feature-7183.3-test" author="jprioux" dbms="mysql, postgresql">
     <preConditions>
       <sqlCheck expectedResult="0">
         <![CDATA[
-          select count(*) from
-            (select t1.ITERATION_ID, t1.ITEM_TEST_PLAN_ID, t1.ITEM_TEST_PLAN_ORDER, t2.ligne-1
-               from ITEM_TEST_PLAN_LIST t1,
-                   (select ITERATION_ID, ITEM_TEST_PLAN_ID, (select count(*)
-                                                               from ITEM_TEST_PLAN_LIST b
-                                                              where a.ITERATION_ID = b.ITERATION_ID
-                                                                and a.ITEM_TEST_PLAN_ORDER >= b.ITEM_TEST_PLAN_ORDER) ligne
-                      from ITEM_TEST_PLAN_LIST a) t2
-              where t1.ITERATION_ID = t2.ITERATION_ID
-                and t1.ITEM_TEST_PLAN_ID = t2.ITEM_TEST_PLAN_ID
-                and ligne-1 <> t1.ITEM_TEST_PLAN_ORDER) t3;
+          select count(*) from TEST_SUITE_TEST_PLAN_ITEM group by TPI_ID, SUITE_ID having count(*)>1;
+
+          select count(*) from TEST_SUITE_TEST_PLAN_ITEM group by SUITE_ID, TEST_PLAN_ORDER having count(*)>1;
+
+          select t1.SUITE_ID, t1.TPI_ID, t1.TEST_PLAN_ORDER, t2.ligne-1
+            from TEST_SUITE_TEST_PLAN_ITEM t1,
+                (select SUITE_ID, TPI_ID, (select count(*)
+                                                            from TEST_SUITE_TEST_PLAN_ITEM b
+                                                           where a.SUITE_ID=b.SUITE_ID
+                                                             and a.TEST_PLAN_ORDER>=b.TEST_PLAN_ORDER) ligne
+                   from TEST_SUITE_TEST_PLAN_ITEM a) t2
+           where t1.SUITE_ID=t2.SUITE_ID
+             and t1.TPI_ID=t2.TPI_ID
+             and ligne-1<>t1.TEST_PLAN_ORDER;
         ]]>
       </sqlCheck>
     </preConditions>
+    <comment>We check that there are no duplicates for (SUITE_ID, TEST_PLAN_ORDER)</comment>
+  </changeSet>
+
+  <changeSet id="tm-1.18.0-feature-7183.4-test" author="jprioux" dbms="mysql, postgresql">
+    <preConditions>
+      <sqlCheck expectedResult="0">
+        <![CDATA[
+          select count(*) from
+            (select t1.CTPI_ID, t1.CAMPAIGN_ID, t1.TEST_CASE_ID, t1.USER_ID, t1.TEST_PLAN_ORDER, t2.ligne - 1, t1.DATASET_ID
+               from CAMPAIGN_TEST_PLAN_ITEM t1,
+                   (select CTPI_ID, CAMPAIGN_ID, TEST_CASE_ID, USER_ID, (select count(*)
+                                                               from CAMPAIGN_TEST_PLAN_ITEM b
+                                                              where a.CAMPAIGN_ID = b.CAMPAIGN_ID
+                                                                and a.TEST_PLAN_ORDER >= b.TEST_PLAN_ORDER) ligne, DATASET_ID
+                      from CAMPAIGN_TEST_PLAN_ITEM a) t2
+              where t1.CAMPAIGN_ID = t2.CAMPAIGN_ID
+                and t1.CTPI_ID = t2.CTPI_ID
+                and ligne - 1 <> t1.TEST_PLAN_ORDER) t3;
+        ]]>
+      </sqlCheck>
+    </preConditions>
+    <comment>We check that there are no duplicates for (CAMPAIGN_ID, TEST_PLAN_ORDER)</comment>
   </changeSet>
 
 </databaseChangeLog>
