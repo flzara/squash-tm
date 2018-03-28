@@ -20,7 +20,10 @@
  */
 package org.squashtest.tm.service.security;
 
+import java.util.Optional;
+
 import org.springframework.security.core.Authentication;
+import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
 
 /**
  * Provides information about the current user
@@ -46,5 +49,12 @@ public interface UserContextService {
 	 *
 	 * @return the current user authentication object or <code>null</code> if no user authenticated.
 	 */
-	Authentication getPrincipal();
+	Authentication getAuthentication();
+	
+	/**
+	 * Retrieve the {@link AuthenticationProviderFeatures} from the Authentication context, if any.
+	 * 
+	 * @return
+	 */
+	public Optional<AuthenticationProviderFeatures> getUserContextAuthProviderFeatures();
 }

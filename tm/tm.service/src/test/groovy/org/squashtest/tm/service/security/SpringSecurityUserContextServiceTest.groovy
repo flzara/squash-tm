@@ -71,7 +71,7 @@ class SpringSecurityUserContextServiceTest extends Specification {
         given:
         anAuthenticatedUser()
         when:
-        def auth = service.getPrincipal()
+        def auth = service.getAuthentication()
 
         then:
         auth == currentUser
@@ -81,7 +81,7 @@ class SpringSecurityUserContextServiceTest extends Specification {
         given:
         noAuthenticatedUser()
         when:
-        def auth = service.getPrincipal()
+        def auth = service.getAuthentication()
 
         then:
         auth == null

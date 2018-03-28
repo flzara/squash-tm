@@ -22,15 +22,19 @@ package org.squashtest.tm.web.internal.security.authentication;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
+import org.squashtest.tm.api.security.authentication.FeaturesAwareAuthentication;
 import org.squashtest.tm.core.foundation.lang.Assert;
+import org.squashtest.tm.service.internal.security.SpringSecurityUserContextService;
 import org.squashtest.tm.web.internal.annotation.ApplicationComponent;
 
 /**
@@ -38,14 +42,32 @@ import org.squashtest.tm.web.internal.annotation.ApplicationComponent;
  * the main authentication provider). For this to work, {@link AuthenticationProviderFeatures#getProviderName()} should match the 
  * value of application property 'authentication.provider' (not to be confused with the bean name).
  * 
+ * <p>Registers all the {@link AuthenticationProviderFeatures} available in the context and provides which one is relevant depending on the context.</p>
+ * 
+ * <ul>
+ * 		<ol>
+ * 			General case : return the primary AuthenticationProviderFeatures. The primary instance is returned as default value the authentication provider 
+ * 			that authenticated the current user does not specify its own (see {@link AuthenticationProviderFeatures} for documentation).
+ * 			Furthermore when no user context is available then the main provider features are returned as defaults.
+ * 		</ol>
+ * 
+ * 		<ol>
+ * 			Specific-case : return the instance attached to the user context if any. If there is a user context and the user was authenticated through 
+ * 			a provider that declared its own features (and attached them to the Authentication object, see {@link FeaturesAwareAuthentication}), 
+ * 			those features will be used instead.
+ * 		</ol>
+ * </ul>
+ * 
  * @author Gregory Fouquet
- * @documented by bsiri
+ * @author bsiri
  * 
  */
 /*
+ * TODO : about registering many AuthenticationProviderFeatures even though we only use one.
+ * 
  * I suspect it registers all available instances because many may exist in the bean factory simultaneously but we cannot pimpoint which 
  * one is required by bean name only, because that bean name is hard to predict. Hence the need to check for the value of #getProviderName().
- * Still it add a bit of complexity. Perhaps it was necessary with older versions of Spring Security ?
+ * Still it add a bit of complexity. Perhaps was it necessary with older versions of Spring Security ?
  */
 @ApplicationComponent
 public class AuthenticationProviderContext {
@@ -64,6 +86,12 @@ public class AuthenticationProviderContext {
 	 */
 	@Inject
 	private List<AuthenticationProviderFeatures> providersFeatures = new ArrayList<>();
+	
+	private AuthenticationProviderFeatures primaryProviderFeature;
+	
+	@Inject
+	@Named("squashtest.core.user.UserContextService")
+	private SpringSecurityUserContextService secService;
 
 	/**
 	 * 
@@ -71,18 +99,52 @@ public class AuthenticationProviderContext {
 	public AuthenticationProviderContext() {
 		super();
 	}
+	
+	/*
+	 * Finalize the bean creation by locating which of the features is the primary one
+	 */
+	@PostConstruct
+	public void afterPropertiesSet(){
 
-	public AuthenticationProviderFeatures getCurrentProviderFeatures() {
 		for (AuthenticationProviderFeatures features : providersFeatures) {
 			if (currentProviderName.equals(features.getProviderName())) {
-				return features;
+				this.primaryProviderFeature = features;
+				LOGGER.trace("located the primary authentication provider features named '{}'", currentProviderName);
+				break;
 			}
 		}
 
-		LOGGER.error("Provider features named {} could not be found in list {}", currentProviderName, providersFeatures);
+		if (this.primaryProviderFeature == null){
+			LOGGER.error("Provider features named {} could not be found in list {}", currentProviderName, providersFeatures);
+	
+			throw new IllegalStateException("Features for authentication provider named '" + currentProviderName
+					+ "' not available. Please check the application property 'authentication.provider'. The default value is 'internal' and refers to "
+					+ "the native authentication manager of Squash-TM. "
+					+ "If plugins that provides with alternate authentication system are deployed, please check the documentation to know if the property "
+					+ "should be set and to which value.");
+		}
+	}
 
-		throw new IllegalStateException("Features for authentication provider named '" + currentProviderName
-				+ "' not available");
+	
+	/**
+	 * Returns the features supported by the Authentication provider.
+	 * 
+	 * @return
+	 */
+	public AuthenticationProviderFeatures getCurrentProviderFeatures() {
+		
+		// first look for specific user features associated to the user account
+		Optional<AuthenticationProviderFeatures> optFeatures = secService.getUserContextAuthProviderFeatures();
+		
+		if (optFeatures.isPresent()){
+			return optFeatures.get();
+		}
+		
+		// if not available, use the main provider
+		else{
+			return primaryProviderFeature;
+		}
+
 	}
 
 	/**

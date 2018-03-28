@@ -36,13 +36,17 @@ import spock.lang.Specification
  */
 class AuthenticatedMissingUserCreatorTest extends Specification {
 	AuthenticatedMissingUserCreator listener = new AuthenticatedMissingUserCreator();
+	AuthenticationProviderContext authProviderContext = Mock()
 	AuthenticationProviderFeatures features = Mock()
 	AdministrationService userAccountManager = Mock()
 	Authentication principal = Mock();
 	AuthenticationSuccessEvent authenticatedEvent = new AuthenticationSuccessEvent(principal)
 
 	def setup() {
-		listener.authenticationProviderFeatures  = features
+		
+		authProviderContext.getCurrentProviderFeatures() >> features
+		
+		listener.authProviderContext  = authProviderContext
 		listener.userAccountManager = userAccountManager
 		principal.getName() >> "chris.jericho"
 	}

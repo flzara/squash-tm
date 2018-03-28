@@ -77,4 +77,5 @@ public interface AuthenticationProviderFeatures {
 	 * @return
 	 */
 	boolean shouldCreateMissingUser();
+	
 }

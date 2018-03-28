@@ -84,7 +84,7 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 			return true;
 		}
 
-		return permissionEvaluator.hasPermission(userContextService.getPrincipal(), object, permission);
+		return permissionEvaluator.hasPermission(userContextService.getAuthentication(), object, permission);
 	}
 
 
@@ -98,7 +98,7 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 	 */
 	@Override
 	public boolean hasPermissionOnObject(String permission, Object entity) {
-		return permissionEvaluator.hasPermission(userContextService.getPrincipal(), entity, permissionFactory.buildFromName(permission));
+		return permissionEvaluator.hasPermission(userContextService.getAuthentication(), entity, permissionFactory.buildFromName(permission));
 	}
 
 	@Override
@@ -130,7 +130,7 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 		if (userContextService.hasRole("ROLE_ADMIN")) {
 			hasMore = true;
 		} else {
-			Authentication authentication = userContextService.getPrincipal();
+			Authentication authentication = userContextService.getAuthentication();
 			Field[] fields = CustomPermission.class.getFields();
 			// TODO below is a hacky enum of all rights, should be externalized.
 			for (Field field : fields) {
@@ -155,7 +155,7 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 
 	@Override
 	public boolean hasPermissionOnObject(String permissionName, Long entityId, String entityClassName) {
-		Authentication authentication = userContextService.getPrincipal();
+		Authentication authentication = userContextService.getAuthentication();
 		Permission permission = permissionFactory.buildFromName(permissionName);
 
 		return permissionEvaluator.hasPermission(authentication, entityId, entityClassName, permission);

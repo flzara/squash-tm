@@ -44,8 +44,10 @@ import org.squashtest.tm.web.internal.annotation.ApplicationComponent;
 public class AuthenticatedMissingUserCreator implements ApplicationListener<AuthenticationSuccessEvent> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticatedMissingUserCreator.class);
 
-	@Value("#{authenticationProviderContext.currentProviderFeatures}")
-	private AuthenticationProviderFeatures authenticationProviderFeatures;
+	/*@Value("#{authenticationProviderContext.currentProviderFeatures}")
+	private AuthenticationProviderFeatures authenticationProviderFeatures;*/
+	@Inject
+	private AuthenticationProviderContext authProviderContext;
 
 	@Inject
 	private AdministrationService userAccountManager;
@@ -63,7 +65,8 @@ public class AuthenticatedMissingUserCreator implements ApplicationListener<Auth
 	 */
 	@Override
 	public void onApplicationEvent(AuthenticationSuccessEvent event) {
-		if (authenticationProviderFeatures.shouldCreateMissingUser()) {
+		AuthenticationProviderFeatures features = authProviderContext.getCurrentProviderFeatures();
+		if (features.shouldCreateMissingUser()) {
 			createMissingUser(event.getAuthentication());
 		}
 	}

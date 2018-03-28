@@ -22,10 +22,13 @@ package org.squashtest.tm.service.internal.security;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
+import org.squashtest.tm.api.security.authentication.FeaturesAwareAuthentication;
 import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.security.UserContextService;
 
@@ -57,7 +60,7 @@ public class SpringSecurityUserContextService implements UserContextService {
 	}
 
 	private Collection<? extends GrantedAuthority> getGrantedAuthorities() {
-		Authentication principal = getPrincipal();
+		Authentication principal = getAuthentication();
 
 		Collection<? extends GrantedAuthority> grantedAuths;
 
@@ -71,7 +74,22 @@ public class SpringSecurityUserContextService implements UserContextService {
 	}
 
 	@Override
-	public Authentication getPrincipal() {
-		return UserContextHolder.getPrincipal();
+	public Authentication getAuthentication() {
+		return UserContextHolder.getAuthentication();
+	}
+	
+
+	@Override 
+	public Optional<AuthenticationProviderFeatures> getUserContextAuthProviderFeatures(){
+		Authentication auth = UserContextHolder.getAuthentication();
+		Optional<AuthenticationProviderFeatures> optResult = null;
+		if (auth == null || ! FeaturesAwareAuthentication.class.isAssignableFrom(auth.getClass())){
+			optResult = Optional.empty();
+		}
+		else{
+			AuthenticationProviderFeatures features = ((FeaturesAwareAuthentication)auth).getFeatures();
+			optResult = (features != null) ? Optional.of(features) : Optional.empty();
+		}
+		return optResult;
 	}
 }

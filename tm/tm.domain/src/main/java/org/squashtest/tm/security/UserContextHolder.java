@@ -42,11 +42,11 @@ public final class UserContextHolder {
 	}
 
 	/**
-	 * Returns the principal registered by the security manager for the current thread.
+	 * Returns the authentication registered by the security manager for the current thread.
 	 * 
 	 * @return
 	 */
-	public static Authentication getPrincipal() {
+	public static Authentication getAuthentication() {
 		SecurityContext context = getContext();
 		LOGGER.debug("Got authentication {}", context.getAuthentication());
 		return context.getAuthentication();
@@ -60,7 +60,7 @@ public final class UserContextHolder {
 	 * @return
 	 */
 	public static String getUsername() {
-		Authentication principal = getPrincipal();
+		Authentication principal = getAuthentication();
 		return principal == null ? "" : principal.getName();
 	}
 }

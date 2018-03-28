@@ -127,8 +127,12 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 		}
 	}
 	
+	/*
+	 * Basically, only login/password authentication is supported at the moment. For now,  
+	 * we assume that if the credential is a String then we can use it as a password / token
+	 * otherwise it's not applicable.
+	 */
 	private boolean isApplicable(InteractiveAuthenticationSuccessEvent event){
-		// we assume that if the credential is a String then we can use it as a password / token
 		return (event.getAuthentication().getCredentials() instanceof String);
 	}
 
@@ -217,6 +221,7 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 			}
 
 			//I don't understand why we put new content in session ? new content has been merged into existing content... why override it ?
+			// A: Fair point. 
 			session.setAttribute(BugTrackerContextPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY, newContext);
 			LOGGER.debug("BugTrackerAutoconnectCallback : BugTrackerContext stored to session");
 		}
