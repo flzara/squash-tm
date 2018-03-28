@@ -28,6 +28,7 @@ import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.customreport.CustomReportReportBinding;
 
 @Transactional
 public interface CustomReportDashboardService {
@@ -39,6 +40,13 @@ public interface CustomReportDashboardService {
 	void updateGridPosition(List<CustomReportChartBinding> bindings);
 
 	CustomReportDashboard findById(Long id);
+
+	/**
+	 * Bind a report to a dashboard
+	 * @param newBinding
+	 */
+	void bindReport(CustomReportReportBinding newBinding);
+
 
 	/**
 	 * Bind a chart to a dashboard

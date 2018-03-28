@@ -36,6 +36,7 @@ import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.customreport.CustomReportReportBinding;
 import org.squashtest.tm.domain.users.PartyPreference;
 import org.squashtest.tm.domain.users.preferences.CorePartyPreference;
 import org.squashtest.tm.domain.users.preferences.WorkspaceDashboardContentValues;
@@ -44,6 +45,7 @@ import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.internal.repository.CustomReportChartBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomReportDashboardDao;
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao;
+import org.squashtest.tm.service.internal.repository.CustomReportReportBindingDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.PartyPreferenceService;
 
@@ -55,7 +57,10 @@ public class CustomReportDashboardServiceImpl implements
 	private CustomReportDashboardDao customReportDashboardDao;
 
 	@Inject
-	private CustomReportChartBindingDao bindingDao;
+	private CustomReportChartBindingDao chartBindingDao;
+
+	@Inject
+	private CustomReportReportBindingDao reportbindingDao;
 
 	@Inject
 	private CustomReportLibraryNodeService crlnService;
@@ -79,9 +84,17 @@ public class CustomReportDashboardServiceImpl implements
 
 	@Override
 	@PreAuthorize("hasPermission(#newBinding.dashboard.id, 'org.squashtest.tm.domain.customreport.CustomReportDashboard' ,'WRITE') "
+		+ OR_HAS_ROLE_ADMIN)
+	public void bindReport(CustomReportReportBinding newBinding) {
+		reportbindingDao.save(newBinding);
+		em.flush();
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#newBinding.dashboard.id, 'org.squashtest.tm.domain.customreport.CustomReportDashboard' ,'WRITE') "
 			+ OR_HAS_ROLE_ADMIN)
 	public void bindChart(CustomReportChartBinding newBinding) {
-		bindingDao.save(newBinding);
+		chartBindingDao.save(newBinding);
 		em.flush();
 	}
 
@@ -94,7 +107,7 @@ public class CustomReportDashboardServiceImpl implements
 	}
 
 	private void updateBinding(CustomReportChartBinding transientBinding) {
-		CustomReportChartBinding persistedBinding = bindingDao.findOne(transientBinding.getId());
+		CustomReportChartBinding persistedBinding = chartBindingDao.findOne(transientBinding.getId());
 		if(permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN","WRITE",persistedBinding.getDashboard())
 				&& persistedBinding.hasMoved(transientBinding)){
 			persistedBinding.move(transientBinding);
@@ -105,7 +118,7 @@ public class CustomReportDashboardServiceImpl implements
 	@PreAuthorize("hasPermission(#id, 'org.squashtest.tm.domain.customreport.CustomReportChartBinding' ,'WRITE') "
 			+ OR_HAS_ROLE_ADMIN)
 	public void unbindChart(Long id) {
-		bindingDao.delete(id);
+		chartBindingDao.delete(id);
 	}
 
 	@Override
@@ -113,7 +126,7 @@ public class CustomReportDashboardServiceImpl implements
 			+ OR_HAS_ROLE_ADMIN)
 	public CustomReportChartBinding changeBindedChart(long bindingId,
 			long chartNodeId) {
-		CustomReportChartBinding chartBinding = bindingDao.findOne(bindingId);
+		CustomReportChartBinding chartBinding = chartBindingDao.findOne(bindingId);
 		ChartDefinition chartDefinition = crlnService.findChartDefinitionByNodeId(chartNodeId);
 		chartBinding.setChart(chartDefinition);
 		return chartBinding;
