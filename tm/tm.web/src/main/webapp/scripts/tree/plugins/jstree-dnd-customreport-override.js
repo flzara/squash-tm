@@ -309,7 +309,7 @@ define([],function () {
 					drop_target		: ".jstree-drop",
 					drop_check		: function (data) {
 						var type = data.o.treeNode().getResType();
-						if(type==='custom-report-chart'){
+						if(type==='custom-report-chart' || type==='custom-report-report'){
 							return true;
 						}
 						return false;
