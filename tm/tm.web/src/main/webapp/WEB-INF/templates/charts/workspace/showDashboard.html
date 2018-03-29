@@ -88,9 +88,9 @@
 </div>
 
 <div th:fragment="chart-in-dashboard">
-  <div id="widget-chart-binding-{{id}}" data-binding-id="{{id}}" class="dashboard-graph" data-row="{{row}}"
+  <div id="widget-chart-binding-{{id}}" data-binding-id="{{id}}" data-type="chart" class="dashboard-graph" data-row="{{row}}"
        data-col="{{col}}" data-sizex="{{sizeX}}" data-sizey="{{sizeY}}">
-    <div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area"
+    <div id="chart-binding-{{id}}" data-binding-id="{{id}}"  class="chart-display-area"
          style="height:100%; width:100%;"></div>
     <div id="delete-chart-binding-{{id}}" class="delete-chart-button" data-binding-id="{{id}}">
       <span class="ui-icon ui-icon-trash"></span>
@@ -99,7 +99,7 @@
 </div>
 
 <div th:fragment="new-chart-in-dashboard">
-  <div id="widget-chart-binding-{{id}}" class="dashboard-graph" data-binding-id="{{id}}">
+  <div id="widget-chart-binding-{{id}}" class="dashboard-graph" data-binding-id="{{id}}" data-type="chart">
     <div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area"
          style="height:100%; width:100%;"></div>
     <div id="delete-chart-binding-{{id}}" class="delete-chart-button" data-binding-id="{{id}}">
@@ -109,7 +109,7 @@
 </div>
 
 <div th:fragment="chart-display-area">
-  <div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area"
+  <div id="chart-binding-{{id}}" data-binding-id="{{id}}" data-type="chart" class="chart-display-area"
        style="height:100%; width:100%;"></div>
   <div id="delete-chart-binding-{{id}}" class="delete-chart-button" data-binding-id="{{id}}">
     <span class="ui-icon ui-icon-trash"></span>
@@ -119,7 +119,7 @@
 
 
 <div th:fragment="report-in-dashboard">
-  <div id="widget-report-binding-{{id}}" data-binding-id="{{id}}" class="dashboard-graph" data-row="{{row}}"
+  <div id="widget-report-binding-{{id}}" data-binding-id="{{id}}" data-type="report" class="dashboard-graph" data-row="{{row}}"
        data-col="{{col}}" data-sizex="{{sizeX}}" data-sizey="{{sizeY}}">
     <div id="report-binding-{{id}}" data-binding-id="{{id}}" class="report-display-area"
          style="height:100%; width:100%;"></div>
@@ -130,7 +130,7 @@
 </div>
 
 <div th:fragment="new-report-in-dashboard">
-  <div id="widget-report-binding-{{id}}" class="dashboard-graph" data-binding-id="{{id}}">
+  <div id="widget-report-binding-{{id}}" class="dashboard-graph" data-type="report" data-binding-id="{{id}}">
     <div id="report-binding-{{id}}" data-binding-id="{{id}}" class="report-display-area"
          style="height:100%; width:100%;">
     </div>
@@ -141,7 +141,7 @@
 </div>
 
 <div th:fragment="report-display-area">
-  <div id="report-binding-{{id}}" data-binding-id="{{id}}" class="report-display-area"
+  <div id="report-binding-{{id}}" data-binding-id="{{id}}" data-type="report" class="report-display-area"
        style="height:100%; width:100%;"></div>
   <div id="delete-report-binding-{{id}}" class="delete-report-button" data-binding-id="{{id}}">
     <span class="ui-icon ui-icon-trash"></span>

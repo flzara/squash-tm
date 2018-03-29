@@ -207,11 +207,11 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 							self.cacheWidgetOriginalSize(e, ui, $widget);
 						},
 						resize: function (e, ui, $widget) {
-							self.resizeChart(e, ui, $widget);
+							self.resizeItem(e, ui, $widget);
 						},
 						stop: function (e, ui, $widget) {
 							self.resolveConflict($widget);
-							self.resizeChart(e, ui, $widget);
+							self.resizeItem(e, ui, $widget);
 						}
 					},
 					draggable: {
@@ -526,6 +526,12 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 				view.render();
 			},
 
+			redrawReport: function (id) {
+				var view = this.dashboardReportViews[id];
+				// I don't know yet if I should redraw the report
+				// view.render();
+			},
+
 			buildDashBoard: function () {
 				var bindings = _.values(this.dashboardChartBindings);
 				for (var i = 0; i < bindings.length; i++) {
@@ -541,9 +547,14 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 				return this;
 			},
 
-			resizeChart: function (e, ui, $widget) {
-				var chartBindingId = $widget.attr("data-binding-id");//get binding id
-				this.redrawChart(chartBindingId);
+			resizeItem: function (e, ui, $widget) {
+				var bindingId = $widget.attr("data-binding-id");//get binding id
+				if ( $widget.attr("data-type") === "chart") {
+					this.redrawChart(bindingId);
+				}
+				if ( $widget.attr("data-type") === "report") {
+					this.redrawReport(bindingId);
+				}
 			},
 
 			serializeGridster: function () {
@@ -561,11 +572,23 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 				}).success(function (response) {
 					//updating bindings
 					_.each(gridData, function (widgetData) {//as resize or move can alter several widgets, all bindings must be updateds
-						var binding = self.dashboardChartBindings[widgetData.id];
-						binding.row = widgetData.row;
-						binding.col = widgetData.col;
-						binding.sizeX = widgetData.sizeX;
-						binding.sizeY = widgetData.sizeY;
+
+						if (widgetData.elementType === "chart") {
+							var chartBinding = self.dashboardChartBindings[widgetData.id];
+							chartBinding.row = widgetData.row;
+							chartBinding.col = widgetData.col;
+							chartBinding.sizeX = widgetData.sizeX;
+							chartBinding.sizeY = widgetData.sizeY;
+						}
+
+						if (widgetData.elementType === "report") {
+							var reportBinding = self.dashboardReportBindings[widgetData.id];
+							reportBinding.row = widgetData.row;
+							reportBinding.col = widgetData.col;
+							reportBinding.sizeX = widgetData.sizeX;
+							reportBinding.sizeY = widgetData.sizeY;
+						}
+
 					});
 				});
 			},
