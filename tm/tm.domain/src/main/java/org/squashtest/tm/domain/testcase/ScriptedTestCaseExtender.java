@@ -47,7 +47,7 @@ public class ScriptedTestCaseExtender {
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	private ScriptedTestCaseKind kind;
+	private ScriptedTestCaseLanguage language;
 
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
@@ -61,21 +61,21 @@ public class ScriptedTestCaseExtender {
 	public ScriptedTestCaseExtender() {
 	}
 
-	public ScriptedTestCaseExtender(TestCase testCase, ScriptedTestCaseKind kind) {
+	public ScriptedTestCaseExtender(TestCase testCase, ScriptedTestCaseLanguage language) {
 		this.testCase = testCase;
-		this.kind = kind;
+		this.language = language;
 	}
 
-	public ScriptedTestCaseExtender(TestCase testCase, String kind) {
+	public ScriptedTestCaseExtender(TestCase testCase, String language) {
 		this.testCase = testCase;
-		if (StringUtils.isNotBlank(kind)) {
-			ScriptedTestCaseKind scriptedTestCaseKind = EnumUtils.getEnum(ScriptedTestCaseKind.class, kind);
-			if (scriptedTestCaseKind == null) {
-				throw new IllegalArgumentException("Unknown kind of scripted test case : " + kind);
+		if (StringUtils.isNotBlank(language)) {
+			ScriptedTestCaseLanguage scriptedTestCaseLanguage = EnumUtils.getEnum(ScriptedTestCaseLanguage.class, language);
+			if (scriptedTestCaseLanguage == null) {
+				throw new IllegalArgumentException("Unknown language of scripted test case : " + language);
 			}
-			this.kind = scriptedTestCaseKind;
+			this.language = scriptedTestCaseLanguage;
 		} else {
-			throw new IllegalArgumentException("Scripted test case MUST have a not null kind");
+			throw new IllegalArgumentException("Scripted test case MUST have a not null language");
 		}
 	}
 
@@ -87,12 +87,12 @@ public class ScriptedTestCaseExtender {
 		this.id = id;
 	}
 
-	public ScriptedTestCaseKind getKind() {
-		return kind;
+	public ScriptedTestCaseLanguage getLanguage() {
+		return language;
 	}
 
-	public void setKind(ScriptedTestCaseKind kind) {
-		this.kind = kind;
+	public void setLanguage(ScriptedTestCaseLanguage language) {
+		this.language = language;
 	}
 
 	public String getScript() {
@@ -115,7 +115,7 @@ public class ScriptedTestCaseExtender {
 	public ScriptedTestCaseExtender createCopy() {
 		ScriptedTestCaseExtender copy = new ScriptedTestCaseExtender();
 		copy.setScript(this.getScript());
-		copy.setKind(this.getKind());
+		copy.setLanguage(this.getLanguage());
 		return copy;
 	}
 

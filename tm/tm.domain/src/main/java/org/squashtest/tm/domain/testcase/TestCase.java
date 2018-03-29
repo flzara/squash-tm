@@ -51,8 +51,11 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.*;
 
+import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
 import static org.squashtest.tm.domain.testcase.TestCaseImportance.LOW;
+import static org.squashtest.tm.domain.testcase.TestCaseKind.SCRIPTED;
+import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD;
 
 import org.squashtest.tm.domain.testcase.Parameter;
 
@@ -122,7 +125,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private Set<Dataset> datasets = new HashSet<>(0);
 
 	@NotNull
-	@Enumerated(EnumType.STRING)
+	@Enumerated(STRING)
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = LevelEnumBridge.class)
 	private TestCaseImportance importance = LOW;
@@ -143,14 +146,14 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 
 	@NotNull
-	@Enumerated(EnumType.STRING)
+	@Enumerated(STRING)
 	@Column(name = "TC_STATUS")
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = LevelEnumBridge.class)
 	private TestCaseStatus status = TestCaseStatus.WORK_IN_PROGRESS;
 
 	@NotNull
-	@Enumerated(EnumType.STRING)
+	@Enumerated(STRING)
 	private TestCaseExecutionMode executionMode = TestCaseExecutionMode.MANUAL;
 
 	/**
@@ -171,6 +174,11 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	@OneToOne(mappedBy = "testCase", optional = true, fetch = LAZY, cascade = CascadeType.ALL)
 	private ScriptedTestCaseExtender scriptedTestCaseExtender;
+
+	@Column(name = "TC_KIND")
+	@Enumerated(value = STRING)
+	private TestCaseKind kind = STANDARD;
+
 
 	// *************************** CODE *************************************
 
@@ -390,6 +398,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		this.status = source.getStatus();
 		this.reference = source.getReference();
 		this.importanceAuto = source.isImportanceAuto();
+		this.kind = source.getKind();
 	}
 
 	/**
@@ -873,13 +882,21 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 	public boolean isScripted(){
-		return this.scriptedTestCaseExtender != null;
+		return SCRIPTED.equals(this.kind);
 	}
 
-	public void extendWithScript(String kind){
-		ScriptedTestCaseExtender scriptedTestCaseExtender = new ScriptedTestCaseExtender(this, kind);
+	public void extendWithScript(String scriptLanguage){
+		ScriptedTestCaseExtender scriptedTestCaseExtender = new ScriptedTestCaseExtender(this, scriptLanguage);
 		this.setScriptedTestCaseExtender(scriptedTestCaseExtender);
+		this.setKind(SCRIPTED);
 	}
 
+	public TestCaseKind getKind() {
+		return kind;
+	}
+
+	public void setKind(TestCaseKind kind) {
+		this.kind = kind;
+	}
 }
 

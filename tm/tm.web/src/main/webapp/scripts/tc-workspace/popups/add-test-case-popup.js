@@ -29,7 +29,7 @@ define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permi
 			name : dialog.find('#add-test-case-name').val(),
 			reference : dialog.find('#add-test-case-reference').val(),
 			description : dialog.find('#add-test-case-description').val(),
-			scriptKind : dialog.find('#add-test-case-script-kind').val()
+			scriptLanguage : dialog.find('#add-test-case-script-language').val()
 		};
 
 		var cufParams = dialog.data('cuf-values-support').readValues();

@@ -18,8 +18,32 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.testcase;
+package org.squashtest.tm.exception;
 
-public enum ScriptedTestCaseKind {
-	GHERKIN;
+import org.squashtest.tm.core.foundation.exception.ActionException;
+
+public class ScriptedStepCallException extends ActionException {
+
+	private static final String SCRIPTED_TC_MESSAGE_KEY = "squashtm.action.exception.callstep.scripted";
+
+
+	public ScriptedStepCallException(Exception ex){
+		super(ex);
+	}
+
+	public ScriptedStepCallException(String message){
+		super(message);
+	}
+
+	public ScriptedStepCallException(){
+
+	}
+
+	@Override
+	public String getI18nKey() {
+		return SCRIPTED_TC_MESSAGE_KEY;
+	}
+
+
+
 }

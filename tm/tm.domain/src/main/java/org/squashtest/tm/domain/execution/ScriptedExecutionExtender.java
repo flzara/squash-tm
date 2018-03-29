@@ -22,7 +22,7 @@ package org.squashtest.tm.domain.execution;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseKind;
+import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
 import org.squashtest.tm.domain.testcase.TestCase;
 
 import javax.persistence.*;
@@ -46,7 +46,7 @@ public class ScriptedExecutionExtender {
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	private ScriptedTestCaseKind kind;
+	private ScriptedTestCaseLanguage kind;
 
 	@NotNull
 	@OneToOne(optional = false)
@@ -62,7 +62,7 @@ public class ScriptedExecutionExtender {
 		if (referencedTestCase == null || !referencedTestCase.isScripted()){
 			throw new IllegalArgumentException("Can't create an execution extender if test case doesn't exist or is not scripted.");
 		}
-		this.kind = referencedTestCase.getScriptedTestCaseExtender().getKind();
+		this.kind = referencedTestCase.getScriptedTestCaseExtender().getLanguage();
 	}
 
 	public Long getId() {
@@ -73,11 +73,11 @@ public class ScriptedExecutionExtender {
 		this.id = id;
 	}
 
-	public ScriptedTestCaseKind getKind() {
+	public ScriptedTestCaseLanguage getKind() {
 		return kind;
 	}
 
-	public void setKind(ScriptedTestCaseKind kind) {
+	public void setKind(ScriptedTestCaseLanguage kind) {
 		this.kind = kind;
 	}
 

@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseKind;
+import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
 import org.squashtest.tm.service.internal.testcase.scripted.gherkin.GherkinTestCaseParser;
 import org.squashtest.tm.service.internal.testcase.scripted.gherkin.GherkinStepGenerator;
 import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseParser;
@@ -45,12 +45,12 @@ public class ScriptedExecutionConfiguration {
 	@Bean
 	@Scope(value = "prototype")
 	public ScriptedTestCaseParser parser(ScriptedTestCaseExtender extender) {
-		ScriptedTestCaseKind kind = extender.getKind();
-		switch (kind) {
+		ScriptedTestCaseLanguage language = extender.getLanguage();
+		switch (language) {
 			case GHERKIN:
 				return new GherkinTestCaseParser(gherkinStepGenerator());
 			default:
-				throw new IllegalArgumentException("No pasrser defined for script of kind : " + kind.name());
+				throw new IllegalArgumentException("No pasrser defined for script of language : " + language.name());
 		}
 	}
 
