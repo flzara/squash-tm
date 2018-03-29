@@ -90,6 +90,7 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 
 			events: {
 				"click .delete-chart-button": "unbindChart",
+				"click .delete-report-button": "unbindReport",
 				"click .favorite-select": "chooseFavoriteDashboard",
 				"transitionend #dashboard-grid": "refreshCharts",
 				"webkitTransitionEnd #dashboard-grid": "refreshCharts",
@@ -141,10 +142,11 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 				var source = $(this.tpl).html();
 				var template = Handlebars.compile(source);
 				Handlebars.registerPartial("chart", $(this.tplChart).html());
+				Handlebars.registerPartial("report", $(this.tplReport).html());
 				Handlebars.registerPartial("dashboardDoc", $(this.tplDashboardDoc).html());
 
 				//this bolean is used to allow cleaner html code... i prefer avoid complex test in handlebars templates
-				if (this.dashboardInitialData.chartBindings.length === 0) {
+				if (this.dashboardInitialData.chartBindings.length === 0 && this.dashboardInitialData.reportBindings.length === 0) {
 					this.dashboardInitialData.emptyDashboard = true;
 				} else {
 					this.dashboardInitialData.emptyDashboard = false;
@@ -439,9 +441,12 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 			redrawDashboard: function () {
 				console.log("REDRAW !!!!");
 				var bindings = _.values(this.dashboardChartBindings);
+				var reportBindings = _.values(this.dashboardReportBindings);
 				var self = this;
 				//update initial data with changes done by user since initialization
 				this.dashboardInitialData.chartBindings = bindings;
+				this.dashboardInitialData.reportBindings = reportBindings;
+
 				this.gridster.destroy();
 				this.render().generateGridsterCss().initGrid();
 				//As ie don't support css animations we fallback on traditionnal js with delay to wait end of transition
@@ -464,6 +469,12 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 					var binding = bindings[i];
 					var id = binding.id;
 					this.dashboardChartBindings[id] = binding;
+				}
+				var reportBindings = response.reportBindings;
+				for (var j = 0; j < reportBindings.length; j++) {
+					var reportBindings = reportBindings[j];
+					var reportId = reportBindings.id;
+					this.dashboardReportBindings[reportId] = reportBindings;
 				}
 				return this;
 			},
@@ -499,6 +510,12 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 				for (var i = 0; i < bindings.length; i++) {
 					var binding = bindings[i];
 					this.buildChart(binding);
+				}
+
+				var reportBindings = _.values(this.dashboardReportBindings);
+				for (var j = 0; j < reportBindings.length; j++) {
+					var reportBinding = reportBindings[j];
+					this.buildReport(reportBinding);
 				}
 				return this;
 			},
@@ -541,7 +558,7 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 				var html = template(binding);
 				this.gridster.add_widget(html, binding.sizeX, binding.sizeY, binding.col, binding.row);
 				this.buildReport(binding);
-				// this.addNewBindingInMap(binding);
+				this.addNewBindingInMap(binding);
 			},
 
 			addNewChart: function (binding) {
@@ -573,6 +590,23 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 				}
 			},
 
+			unbindReport: function (event) {
+				//Get id of the suppressed chart
+				if (this.canWrite()) {
+					var id = event.currentTarget.getAttribute("data-binding-id");
+					var url = urlBuilder.buildURL("custom-report-report-binding-with-id", id);
+					var self = this;
+					//Suppress on server and if success, update gridster and update maps properties
+					$.ajax({
+						url: url,
+						type: 'delete'
+					}).success(function (response) {
+						self.removeReport(id);
+						self.removeWidget(id);
+					});
+				}
+			},
+
 			removeAllCharts: function () {
 				var views = this.dashboardChartViews;
 				_.each(views, function (view) {
@@ -585,6 +619,12 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 				this.dashboardChartViews[bindingId].remove();//remove backbone view
 				delete this.dashboardChartViews[bindingId];
 				delete this.dashboardChartBindings[bindingId];
+			},
+
+			removeReport: function (bindingId) {
+				this.dashboardReportViews[bindingId].remove();//remove backbone view
+				delete this.dashboardReportViews[bindingId];
+				delete this.dashboardReportBindings[bindingId];
 			},
 
 			removeWidget: function (bindingId) {
@@ -604,7 +644,13 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 			},
 
 			addNewBindingInMap: function (binding) {
-				this.dashboardChartBindings[binding.id] = binding;
+
+				if (binding.hasOwnProperty("chartDefinitionId")) {
+					this.dashboardChartBindings[binding.id] = binding;
+				}
+				if (binding.hasOwnProperty("reportDefinitionId")) {
+					this.dashboardReportBindings[binding.id] = binding;
+				}
 			},
 
 			//Return the first empty cell.

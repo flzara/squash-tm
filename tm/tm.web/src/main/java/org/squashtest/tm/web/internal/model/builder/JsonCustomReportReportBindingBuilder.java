@@ -23,22 +23,20 @@ package org.squashtest.tm.web.internal.model.builder;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.api.report.Report;
-import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.domain.customreport.CustomReportReportBinding;
 import org.squashtest.tm.domain.report.ReportDefinition;
 import org.squashtest.tm.service.report.ReportModificationService;
 import org.squashtest.tm.web.internal.controller.report.JsonReportInstance;
-import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.helper.ReportHelper;
 import org.squashtest.tm.web.internal.model.json.JsonCustomReportReportBinding;
 import org.squashtest.tm.web.internal.report.ReportsRegistry;
-import org.squashtest.tm.web.internal.report.criteria.ConciseFormToCriteriaConverter;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+
+/**
+ * @author zyang
+ */
 
 @Component("customReport.reportBindingBuilder")
 @Scope("prototype")
@@ -74,11 +72,7 @@ public class JsonCustomReportReportBindingBuilder {
 
 		JsonReportInstance jsonReportInstance = new JsonReportInstance(reportDefinition);
 		jsonReportInstance.setLabel(report.getLabel());
-
-		Map<String, Object> form = JsonHelper.deserialize(reportDefinition.getParameters());
-		Map<String, Criteria> crit = new ConciseFormToCriteriaConverter(report, Collections.singletonList(reportDefinition.getProject())).convert(form);
-		jsonReportInstance.setReportAttributes(reportHelper.getAttributesForReport(report, crit));
-
+		jsonReportInstance.setReportAttributes(reportHelper.getAttributesFromReportDefinition(reportDefinition));
 		json.setReportInstance(jsonReportInstance);
 		return json;
 	}

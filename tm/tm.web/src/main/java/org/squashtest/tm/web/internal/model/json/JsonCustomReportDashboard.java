@@ -30,22 +30,25 @@ import java.util.Set;
  *
  */
 public class JsonCustomReportDashboard {
-	
+
 	private Long id;
-	
+
 	private String name;
-	
+
 	private String createdBy;
-	
+
 	private String lastModifiedBy;
-	
+
 	//Date formating is done server side
 	private String createdOn;
-	
+
 	//Date formating is done server side
 	private String lastModifiedOn;
-	
+
 	private Set<JsonCustomReportChartBinding> chartBindings = new HashSet<>();
+
+	private Set<JsonCustomReportReportBinding> reportBindings = new HashSet<>();
+
 
 	public Long getId() {
 		return id;
@@ -109,4 +112,11 @@ public class JsonCustomReportDashboard {
 		this.chartBindings = chartBindings;
 	}
 
+	public Set<JsonCustomReportReportBinding> getReportBindings() {
+		return reportBindings;
+	}
+
+	public void setReportBindings(Set<JsonCustomReportReportBinding> reportBindings) {
+		this.reportBindings = reportBindings;
+	}
 }

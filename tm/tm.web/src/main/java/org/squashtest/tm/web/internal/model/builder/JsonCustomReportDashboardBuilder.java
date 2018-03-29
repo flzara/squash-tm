@@ -30,20 +30,27 @@ import javax.inject.Inject;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.api.report.Report;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.chart.ChartInstance;
 import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
+import org.squashtest.tm.domain.customreport.CustomReportReportBinding;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.report.ReportDefinition;
 import org.squashtest.tm.service.chart.ChartModificationService;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.web.internal.controller.chart.JsonChartInstance;
+import org.squashtest.tm.web.internal.controller.report.JsonReportInstance;
+import org.squashtest.tm.web.internal.helper.ReportHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.i18n.MessageObject;
 import org.squashtest.tm.web.internal.model.json.JsonCustomReportChartBinding;
+import org.squashtest.tm.web.internal.model.json.JsonCustomReportReportBinding;
 import org.squashtest.tm.web.internal.model.json.JsonCustomReportDashboard;
+import org.squashtest.tm.web.internal.report.ReportsRegistry;
 
 @Component("customReport.dashboardBuilder")
 @Scope("prototype")
@@ -66,6 +73,12 @@ public class JsonCustomReportDashboardBuilder {
 	private Milestone milestone;
 
 	private Workspace workspace;
+
+	@Inject
+	private ReportHelper reportHelper;
+
+	@Inject
+	private ReportsRegistry reportsRegistry;
 
 	@Inject
 	public JsonCustomReportDashboardBuilder(ChartModificationService chartService, InternationalizationHelper i18nHelper, ActiveMilestoneHolder activeMilestoneHolder) {
@@ -104,7 +117,7 @@ public class JsonCustomReportDashboardBuilder {
 		for (CustomReportChartBinding binding : bindings) {
 			JsonCustomReportChartBinding jsonBinding = new JsonCustomReportChartBinding();
 			jsonBinding.setId(binding.getId());
-			jsonBinding.setChartDefinitionId(dashboard.getId());
+			jsonBinding.setDashboardId(dashboard.getId());
 			jsonBinding.setChartDefinitionId(binding.getChart().getId());
 			jsonBinding.setRow(binding.getRow());
 			jsonBinding.setCol(binding.getCol());
@@ -120,6 +133,29 @@ public class JsonCustomReportDashboardBuilder {
 			}
 			jsonBinding.setChartInstance(new JsonChartInstance(chartInstance));
 			json.getChartBindings().add(jsonBinding);
+		}
+
+		Set<CustomReportReportBinding> reportBindings = dashboard.getReportBindings();
+		for (CustomReportReportBinding reportBinding : reportBindings) {
+			ReportDefinition reportDefinition = reportBinding.getReport();
+			Report report = reportsRegistry.findReport(reportDefinition.getPluginNamespace());
+
+			JsonCustomReportReportBinding jsonBinding = new JsonCustomReportReportBinding();
+			jsonBinding.setId(reportBinding.getId());
+			jsonBinding.setDashboardId(dashboard.getId());
+			jsonBinding.setReportDefinitionId(reportDefinition.getId());
+			jsonBinding.setRow(reportBinding.getRow());
+			jsonBinding.setCol(reportBinding.getCol());
+			jsonBinding.setSizeX(reportBinding.getSizeX());
+			jsonBinding.setSizeY(reportBinding.getSizeY());
+
+			JsonReportInstance jsonReportInstance = new JsonReportInstance(reportDefinition);
+
+			jsonReportInstance.setLabel(report.getLabel());
+			jsonReportInstance.setReportAttributes(reportHelper.getAttributesFromReportDefinition(reportDefinition));
+
+			jsonBinding.setReportInstance(jsonReportInstance);
+			json.getReportBindings().add(jsonBinding);
 		}
 	}
 

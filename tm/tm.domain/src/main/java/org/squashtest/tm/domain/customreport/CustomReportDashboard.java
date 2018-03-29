@@ -67,6 +67,10 @@ public class CustomReportDashboard implements TreeEntity {
 	@OneToMany(fetch=FetchType.LAZY,mappedBy="dashboard", cascade = { CascadeType.ALL})
 	private Set<CustomReportChartBinding> chartBindings = new HashSet<>();
 
+	@NotNull
+	@OneToMany(fetch=FetchType.LAZY,mappedBy="dashboard", cascade = { CascadeType.ALL})
+	private Set<CustomReportReportBinding> reportBindings = new HashSet<>();
+
 	@Override
 	public Long getId() {
 		return id;
@@ -102,16 +106,27 @@ public class CustomReportDashboard implements TreeEntity {
 		CustomReportDashboard copy = new CustomReportDashboard();
 		copy.setProject(this.getProject());
 		copy.setName(this.getName());
-		copy.getChartBindings().addAll(this.copyBindingsToAnotherDashboard(copy));
+		copy.getChartBindings().addAll(this.copyChartBindingsToAnotherDashboard(copy));
+		copy.getReportBindings().addAll(this.copyReportBindingsToAnotherDashboard(copy));
 		return copy;
 	}
 
-	private Set<CustomReportChartBinding> copyBindingsToAnotherDashboard(CustomReportDashboard target) {
+	private Set<CustomReportChartBinding> copyChartBindingsToAnotherDashboard(CustomReportDashboard target) {
 		Set<CustomReportChartBinding> copy = new HashSet<>();
 		for (CustomReportChartBinding chartBinding : this.chartBindings) {
 			CustomReportChartBinding chartBindingCopy = chartBinding.createCopy();
 			chartBindingCopy.setDashboard(target);
 			copy.add(chartBindingCopy);
+		}
+		return copy;
+	}
+
+	private Set<CustomReportReportBinding> copyReportBindingsToAnotherDashboard(CustomReportDashboard target) {
+		Set<CustomReportReportBinding> copy = new HashSet<>();
+		for (CustomReportReportBinding reportBinding : this.reportBindings) {
+			CustomReportReportBinding reportBindingCopy = reportBinding.createCopy();
+			reportBindingCopy.setDashboard(target);
+			copy.add(reportBindingCopy);
 		}
 		return copy;
 	}
@@ -127,5 +142,13 @@ public class CustomReportDashboard implements TreeEntity {
 
 	public void setChartBindings(Set<CustomReportChartBinding> chartBindings) {
 		this.chartBindings = chartBindings;
+	}
+
+	public Set<CustomReportReportBinding> getReportBindings() {
+		return reportBindings;
+	}
+
+	public void setReportBindings(Set<CustomReportReportBinding> reportBindings) {
+		this.reportBindings = reportBindings;
 	}
 }
