@@ -60,7 +60,7 @@ public class CustomReportDashboardServiceImpl implements
 	private CustomReportChartBindingDao chartBindingDao;
 
 	@Inject
-	private CustomReportReportBindingDao reportbindingDao;
+	private CustomReportReportBindingDao reportBindingDao;
 
 	@Inject
 	private CustomReportLibraryNodeService crlnService;
@@ -86,7 +86,7 @@ public class CustomReportDashboardServiceImpl implements
 	@PreAuthorize("hasPermission(#newBinding.dashboard.id, 'org.squashtest.tm.domain.customreport.CustomReportDashboard' ,'WRITE') "
 		+ OR_HAS_ROLE_ADMIN)
 	public void bindReport(CustomReportReportBinding newBinding) {
-		reportbindingDao.save(newBinding);
+		reportBindingDao.save(newBinding);
 		em.flush();
 	}
 
@@ -99,17 +99,29 @@ public class CustomReportDashboardServiceImpl implements
 	}
 
 	@Override
-	public void updateGridPosition(List<CustomReportChartBinding> transientBindings) {
-		for (CustomReportChartBinding transientBinding : transientBindings) {
-			updateBinding(transientBinding);
+	public void updateGridPosition(List<CustomReportChartBinding> chartBindings, List<CustomReportReportBinding> reportBindings) {
+		for (CustomReportChartBinding chartBinding : chartBindings) {
+			updateChartBinding(chartBinding);
+		}
+
+		for (CustomReportReportBinding reportBinding : reportBindings) {
+			updateReportBinding(reportBinding);
 		}
 
 	}
 
-	private void updateBinding(CustomReportChartBinding transientBinding) {
+	private void updateChartBinding(CustomReportChartBinding transientBinding) {
 		CustomReportChartBinding persistedBinding = chartBindingDao.findOne(transientBinding.getId());
 		if(permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN","WRITE",persistedBinding.getDashboard())
 				&& persistedBinding.hasMoved(transientBinding)){
+			persistedBinding.move(transientBinding);
+		}
+	}
+
+	private void updateReportBinding(CustomReportReportBinding transientBinding) {
+		CustomReportReportBinding persistedBinding = reportBindingDao.findOne(transientBinding.getId());
+		if(permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN","WRITE",persistedBinding.getDashboard())
+			&& persistedBinding.hasMoved(transientBinding)){
 			persistedBinding.move(transientBinding);
 		}
 	}
@@ -119,6 +131,13 @@ public class CustomReportDashboardServiceImpl implements
 			+ OR_HAS_ROLE_ADMIN)
 	public void unbindChart(Long id) {
 		chartBindingDao.delete(id);
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#id, 'org.squashtest.tm.domain.customreport.CustomReportReportBinding' ,'WRITE') "
+		+ OR_HAS_ROLE_ADMIN)
+	public void unbindReport(Long id) {
+		reportBindingDao.delete(id);
 	}
 
 	@Override

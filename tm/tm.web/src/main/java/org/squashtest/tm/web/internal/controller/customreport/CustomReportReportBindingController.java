@@ -23,6 +23,7 @@ package org.squashtest.tm.web.internal.controller.customreport;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.customreport.CustomReportReportBinding;
 import org.squashtest.tm.domain.report.ReportDefinition;
@@ -30,16 +31,22 @@ import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.web.internal.model.builder.JsonCustomReportReportBindingBuilder;
 import org.squashtest.tm.web.internal.model.json.FormCustomReportReportBinding;
+import org.squashtest.tm.web.internal.model.json.JsonCustomReportGridElement;
 import org.squashtest.tm.web.internal.model.json.JsonCustomReportReportBinding;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Controller
 public class CustomReportReportBindingController {
+
+	private static final String CHART = "chart";
+
+	private static final String REPORT = "report";
 
 	@Inject
 	private CustomReportLibraryNodeService crlnservice;
@@ -54,7 +61,7 @@ public class CustomReportReportBindingController {
 	@ResponseBody
 	@RequestMapping(value = "/custom-report-report-binding", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
-	public JsonCustomReportReportBinding createCustomReportReportBinding(@RequestBody FormCustomReportReportBinding formReportBinding) throws IOException {
+	public JsonCustomReportReportBinding createCustomReportReportBinding(@RequestBody FormCustomReportReportBinding formReportBinding) {
 		CustomReportReportBinding crrb = formReportBinding.convertToEntity();
 
 		//setting the nested entities.
@@ -68,4 +75,29 @@ public class CustomReportReportBindingController {
 		return builderProvider.get().build(crrb);
 	}
 
+	@ResponseBody
+	@RequestMapping(value = "/custom-report-report-binding", method = RequestMethod.PUT)
+	public void updateGrid(@RequestBody JsonCustomReportGridElement[] gridElements){
+		List<CustomReportReportBinding> reportBindings = new ArrayList<>();
+		for (JsonCustomReportGridElement gridElement : gridElements) {
+			if (gridElement.getElementType().equals(REPORT)) {
+				reportBindings.add(gridElement.convertToReportEntity());
+			}
+		}
+
+		List<CustomReportChartBinding> chartBindings = new ArrayList<>();
+		for (JsonCustomReportGridElement gridElement : gridElements) {
+			if (gridElement.getElementType().equals(CHART)) {
+				chartBindings.add(gridElement.convertToChartEntity());
+			}
+		}
+
+		dashboardService.updateGridPosition(chartBindings, reportBindings);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/custom-report-report-binding/{id}", method = RequestMethod.DELETE)
+	public void unbindChart(@PathVariable long id){
+		dashboardService.unbindReport(id);
+	}
 }

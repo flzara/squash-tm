@@ -241,6 +241,7 @@ define([], function(){
 		'custom-report-chart-server' :		root + '/custom-report-chart/{\\d+}',
 		'custom-report-report-server' :		root + '/custom-report-report/{\\d+}',
 		'custom-report-report-binding' :		root + '/custom-report-report-binding',
+		'custom-report-report-binding-with-id' : root + '/custom-report-report-binding/{\\d+}',
 		'custom-report-chart-binding' :		root + '/custom-report-chart-binding',
 		'custom-report-chart-binding-with-id' : root + '/custom-report-chart-binding/{\\d+}',
 		'custom-report-chart-binding-replace-chart' : root + '/custom-report-chart-binding-replace-chart/{\\d+}/{\\d+}',

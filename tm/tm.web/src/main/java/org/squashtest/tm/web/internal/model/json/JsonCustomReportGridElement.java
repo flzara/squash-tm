@@ -21,25 +21,28 @@
 package org.squashtest.tm.web.internal.model.json;
 
 import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
+import org.squashtest.tm.domain.customreport.CustomReportReportBinding;
 
 
 /**
- * Pojo used only for resize/move operations on a client side dashboard grid 
+ * Pojo used only for resize/move operations on a client side dashboard grid
  * @author jthebault
  *
  */
 public class JsonCustomReportGridElement {
 
 	private Long id;
-	
+
 	private int row;
-	
+
 	private int col;
-	
+
 	private int sizeX;
-	
+
 	private int sizeY;
-	
+
+	private String elementType;
+
 	public JsonCustomReportGridElement() {
 		// TODO Auto-generated constructor stub
 	}
@@ -84,7 +87,15 @@ public class JsonCustomReportGridElement {
 		this.sizeY = sizeY;
 	}
 
-	public CustomReportChartBinding convertToEntity() {
+	public String getElementType() {
+		return elementType;
+	}
+
+	public void setElementType(String elementType) {
+		this.elementType = elementType;
+	}
+
+	public CustomReportChartBinding convertToChartEntity() {
 		CustomReportChartBinding crcb = new CustomReportChartBinding();
 		crcb.setId(id);
 		crcb.setCol(col);
@@ -93,6 +104,15 @@ public class JsonCustomReportGridElement {
 		crcb.setSizeY(sizeY);
 		return crcb;
 	}
-	
-	
+
+	public CustomReportReportBinding convertToReportEntity() {
+		CustomReportReportBinding crrb = new CustomReportReportBinding();
+		crrb.setId(id);
+		crrb.setCol(col);
+		crrb.setRow(row);
+		crrb.setSizeX(sizeX);
+		crrb.setSizeY(sizeY);
+		return crrb;
+	}
+
 }

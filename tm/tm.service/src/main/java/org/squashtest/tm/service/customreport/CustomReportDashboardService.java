@@ -35,9 +35,11 @@ public interface CustomReportDashboardService {
 
 	/**
 	 * Update all bindings position given in argument.
-	 * @param bindings
+	 * @param chartBindings
+	 * @param reportBindings
 	 */
-	void updateGridPosition(List<CustomReportChartBinding> bindings);
+	void updateGridPosition(List<CustomReportChartBinding> chartBindings, List<CustomReportReportBinding> reportBindings);
+
 
 	CustomReportDashboard findById(Long id);
 
@@ -59,6 +61,12 @@ public interface CustomReportDashboardService {
 	 * @param newBinding
 	 */
 	void unbindChart(Long id);
+
+	/**
+	 * remove designed binding from database
+	 * @param newBinding
+	 */
+	void unbindReport(Long id);
 
 	/**
 	 * Change the chartbinded by the {@link CustomReportChartBinding} designed by bindingId.

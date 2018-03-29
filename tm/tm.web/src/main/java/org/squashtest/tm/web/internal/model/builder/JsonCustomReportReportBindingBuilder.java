@@ -32,7 +32,6 @@ import org.squashtest.tm.web.internal.model.json.JsonCustomReportReportBinding;
 import org.squashtest.tm.web.internal.report.ReportsRegistry;
 
 import javax.inject.Inject;
-import java.io.IOException;
 
 /**
  * @author zyang
@@ -58,7 +57,7 @@ public class JsonCustomReportReportBindingBuilder {
 		this.reportService = reportService;
 	}
 
-	public JsonCustomReportReportBinding build(CustomReportReportBinding binding) throws IOException {
+	public JsonCustomReportReportBinding build(CustomReportReportBinding binding) {
 		ReportDefinition reportDefinition = binding.getReport();
 		Report report = reportsRegistry.findReport(reportDefinition.getPluginNamespace());
 

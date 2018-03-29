@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
+import org.squashtest.tm.domain.customreport.CustomReportReportBinding;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.web.internal.model.builder.JsonCustomReportChartBindingBuilder;
@@ -48,6 +49,10 @@ import org.squashtest.tm.web.internal.model.json.JsonCustomReportGridElement;
 
 @Controller
 public class CustomReportChartBindingController {
+
+	private static final String CHART = "chart";
+
+	private static final String REPORT = "report";
 
 	@Inject
 	private CustomReportLibraryNodeService crlnservice;
@@ -86,11 +91,21 @@ public class CustomReportChartBindingController {
 	@ResponseBody
 	@RequestMapping(value = "/custom-report-chart-binding", method = RequestMethod.PUT)
 	public void updateGrid(@RequestBody JsonCustomReportGridElement[] gridElements){
-		List<CustomReportChartBinding> bindings = new ArrayList<>();
+		List<CustomReportReportBinding> reportBindings = new ArrayList<>();
 		for (JsonCustomReportGridElement gridElement : gridElements) {
-			bindings.add(gridElement.convertToEntity());
+			if (gridElement.getElementType().equals(REPORT)) {
+				reportBindings.add(gridElement.convertToReportEntity());
+			}
 		}
-		dashboardService.updateGridPosition(bindings);
+
+		List<CustomReportChartBinding> chartBindings = new ArrayList<>();
+		for (JsonCustomReportGridElement gridElement : gridElements) {
+			if (gridElement.getElementType().equals(CHART)) {
+				chartBindings.add(gridElement.convertToChartEntity());
+			}
+		}
+
+		dashboardService.updateGridPosition(chartBindings, reportBindings);
 	}
 
 	@ResponseBody

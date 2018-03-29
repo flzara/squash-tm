@@ -28,7 +28,7 @@ define(["backbone", "squash.translator"],
 		});
 
 		function buildReport(viewID, jsonReport) {
-			var view = $(viewID)[0];
+			var target = $(viewID)[0];
 
 			var table = document.createElement("div");
 			table.className = "display-table";
@@ -37,9 +37,9 @@ define(["backbone", "squash.translator"],
 			table.appendChild(createNewRow(translations.typeLabel, jsonReport.label));
 			table.appendChild(createNewRow(translations.descriptionLabel, jsonReport.description));
 
-			vue.appendChild(table);
+			target.appendChild(table);
 
-			return view;
+			return target;
 		}
 
 		function createNewRow(label, value) {
