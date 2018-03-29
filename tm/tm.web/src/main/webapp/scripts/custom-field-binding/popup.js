@@ -33,7 +33,7 @@
  *
  *
  */
-define([ "require", "underscore", "./models", "app/util/ButtonUtil", "jquery.squash", "jquery.squash.formdialog"], function(require, _, Model, ButtonUtil) {
+define([ "require","app/util/StringUtil", "underscore", "./models", "app/util/ButtonUtil", "jquery.squash", "jquery.squash.formdialog"], function(require,StringUtil, _, Model, ButtonUtil) {
 
 	return function(settings) {
 
@@ -92,7 +92,7 @@ define([ "require", "underscore", "./models", "app/util/ButtonUtil", "jquery.squ
 
 					tds.eq(0).prop("id", data.id)
 							.data("type", data.inputType.enumName);
-					tds.eq(1).text(_.unescape(data.name));
+					tds.eq(1).text( StringUtil.unescape(data.name));
 					tds.eq(2).text(data.inputType.friendlyName);
 					tds.eq(3).text(data.friendlyOptional);
 
