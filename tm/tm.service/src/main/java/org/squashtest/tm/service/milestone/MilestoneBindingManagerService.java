@@ -76,7 +76,7 @@ public interface MilestoneBindingManagerService {
 	 * @param milestoneId the id of milestone
 	 * @return list of all bindable project for milestone
 	 */
-	@PostFilter("hasPermission(filterObject , 'READ')" + OR_HAS_ROLE_ADMIN)
+	@PostFilter("hasPermission(filterObject , 'MANAGEMENT')" + OR_HAS_ROLE_ADMIN)
 	List<GenericProject> getAllBindableProjectForMilestone(Long milestoneId);
 
 	/**
