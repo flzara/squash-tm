@@ -44,7 +44,7 @@ class AuthenticatedMissingUserCreatorTest extends Specification {
 
 	def setup() {
 		
-		authProviderContext.getCurrentProviderFeatures() >> features
+		authProviderContext.getProviderFeatures(principal) >> features
 		
 		listener.authProviderContext  = authProviderContext
 		listener.userAccountManager = userAccountManager

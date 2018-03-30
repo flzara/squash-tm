@@ -60,11 +60,12 @@
   </dependencyManagement>
 
   <dependencies>
-    <!--dependency>
+
+    <!-- dependency>
       <groupId>org.squashtest.tm.plugin</groupId>
       <artifactId>security.saml</artifactId>
       <version>1.0.0.RC1-SNAPSHOT</version>
-    </dependency-->
+    </dependency  -->
 
     <!-- dependency>
       <groupId>org.beanshell</groupId>

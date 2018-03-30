@@ -24,11 +24,12 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
+import org.springframework.core.Ordered;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
 import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
+import org.squashtest.tm.api.security.authentication.FeaturesAwareAuthentication;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
 import org.squashtest.tm.service.user.AdministrationService;
@@ -41,7 +42,7 @@ import org.squashtest.tm.web.internal.annotation.ApplicationComponent;
  *
  */
 @ApplicationComponent
-public class AuthenticatedMissingUserCreator implements ApplicationListener<AuthenticationSuccessEvent> {
+public class AuthenticatedMissingUserCreator implements ApplicationListener<AuthenticationSuccessEvent>, Ordered {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticatedMissingUserCreator.class);
 
 	/*@Value("#{authenticationProviderContext.currentProviderFeatures}")
@@ -59,17 +60,29 @@ public class AuthenticatedMissingUserCreator implements ApplicationListener<Auth
 		super();
 		LOGGER.info("created");
 	}
+	
+	
+	// we must ensure that the user exist 
+	// before any other event listener that rely on its existence 
+	// kick in
+	@Override
+	public int getOrder() {
+		return Ordered.HIGHEST_PRECEDENCE +1;
+	}
+
 
 	/**
 	 * @see org.springframework.context.ApplicationListener#onApplicationEvent(org.springframework.context.ApplicationEvent)
 	 */
 	@Override
 	public void onApplicationEvent(AuthenticationSuccessEvent event) {
-		AuthenticationProviderFeatures features = authProviderContext.getCurrentProviderFeatures();
+
+		AuthenticationProviderFeatures features = authProviderContext.getProviderFeatures(event.getAuthentication());
 		if (features.shouldCreateMissingUser()) {
 			createMissingUser(event.getAuthentication());
 		}
 	}
+	
 
 	private void createMissingUser(Authentication principal) {
 		LOGGER.debug("Will try to create user from principal if it does not exist");

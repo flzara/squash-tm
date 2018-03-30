@@ -22,6 +22,7 @@ package org.squashtest.tm.api.security.authentication;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 /**
  * <p>An AuthenticationProviderFeatures drives how Squash will behave in certain User management use-cases, eg regarding credential managements.</p>
@@ -57,7 +58,8 @@ import org.springframework.security.authentication.AuthenticationProvider;
 public interface AuthenticationProviderFeatures {
 	/**
 	 * Should return true when the authentication provider manages itself the passwords ie. passwords re not modifiable
-	 * from Squash.
+	 * from Squash. If the value is false Squash-TM will allow users/admins to change the passwords... by modifying those 
+	 * stored in the database (ie even if the plugin supplied its own {@link UserDetailsService} it won't be used for that purpose).
 	 * 
 	 * @return
 	 */

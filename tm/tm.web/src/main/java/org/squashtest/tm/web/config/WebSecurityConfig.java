@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
@@ -42,6 +43,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
@@ -62,55 +64,9 @@ import org.squashtest.tm.web.internal.security.authentication.InternalAuthentica
  */
 @Configuration
 public class WebSecurityConfig {
-
-
-	/* *********************************************************
-	 *  
-	 *  Global AuthenticationManager
-	 * 
-	 * *********************************************************/
 	
+	private static final String ALTERNATE_AUTH_PATH = "/auth/**";
 
-	/**
-	 * <p>Defines the default AuthenticationManager.
-	 * Along with other configuration options it comes with a DAO-based AuthenticationProvider (ie the defaul authentication provider).</p>
-	 * 
-	 * <p>
-	 * The default authentication provider have no bean name, but nevertheless it is the one referred to when the application 
-	 * property 'authentication.provider' is set to 'internal'. Its corresponding instance of {@link AuthenticationProviderFeatures} is 
-	 * {@link InternalAuthenticationProviderFeatures}.  
-	 * <p> 
-	 * 
-	 * <p>
-	 * 	If another main AuthenticationProvider is defined (ie 'authentication.provider' is not 'internal',
-	 * 	the whole AuthenticationManager will not be defined at all. This happen when a plugin wants to take over as 
-	 * the primary authenticator. In this case it is the responsibility of the plugin to configure the global 
-	 * 	AuthenticationManager that will replace that of Squash TM, along with  
-	 * 
-	 * must define its own AuthenticationManager, AuthenticationProvider,
-	 * and {@link AuthenticationProviderFeatures}, and the application property 'authentication.provider' must be set accordingly.
-	 * 
-	 * </p>
-	 * 
-	 */
-	@Configuration
-	@ConditionalOnProperty(name = "authentication.provider", matchIfMissing = true, havingValue = "internal")
-	@Order(0) // WebSecurityConfigurerAdapter default order is 100, we need to init this before
-	public static class InternalAuthenticationConfig extends GlobalAuthenticationConfigurerAdapter {
-		@Inject
-		private SquashUserDetailsManager squashUserDetailsManager;
-
-		@Inject
-		private PasswordEncoder passwordEncoder;
-
-		@Override
-		public void init(AuthenticationManagerBuilder auth) throws Exception {
-			auth.userDetailsService(squashUserDetailsManager).passwordEncoder(passwordEncoder);
-			auth.eraseCredentials(false);
-		}
-	}
-
-	
 
 	/* *********************************************************
 	 *  
@@ -216,7 +172,7 @@ public class WebSecurityConfig {
 			// @formatter:off
 			http
 				.csrf()
-					.ignoringAntMatchers("/saml/**")
+					.ignoringAntMatchers(ALTERNATE_AUTH_PATH)
 				.and()
 				.headers()
 				.defaultsDisabled()
@@ -227,6 +183,11 @@ public class WebSecurityConfig {
 				//.addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
 
 				.authorizeRequests()
+					// allow access to main/alternate authentication portals
+					.antMatchers(
+							"/login", 
+							ALTERNATE_AUTH_PATH)
+						.permitAll()
 					// Administration namespace. Some of which can be accessed by PMs
 					.antMatchers(
 						"/administration",
@@ -248,8 +209,6 @@ public class WebSecurityConfig {
 					).access(HAS_ROLE_ADMIN)
 
 					.antMatchers("/accessDenied").permitAll()
-					.antMatchers("/saml/**").permitAll()
-
 
 					// Namespace reserved for other use
 					.antMatchers("/management/**").denyAll()
@@ -259,8 +218,7 @@ public class WebSecurityConfig {
 				.and()
 					.formLogin()
 						.permitAll()
-						//.loginPage("/login")
-						.loginPage("/saml/login")
+						.loginPage("/login")
 						.failureUrl("/login?error")
 						.defaultSuccessUrl("/home-workspace")
 

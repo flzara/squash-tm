@@ -32,11 +32,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.security.AuthenticationManagerConfiguration;
 import org.springframework.cache.ehcache.EhCacheFactoryBean;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Role;
@@ -59,10 +62,14 @@ import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.authentication.configurers.GlobalAuthenticationConfigurerAdapter;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
 import org.squashtest.tm.security.acls.Slf4jAuditLogger;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.internal.security.AffirmativeBasedCompositePermissionEvaluator;
@@ -72,6 +79,7 @@ import org.squashtest.tm.service.internal.security.SquashUserDetailsManagerProxy
 import org.squashtest.tm.service.internal.spring.ArgumentPositionParameterNameDiscoverer;
 import org.squashtest.tm.service.internal.spring.CompositeDelegatingParameterNameDiscoverer;
 import org.squashtest.tm.service.security.acls.ExtraPermissionEvaluator;
+import org.squashtest.tm.web.internal.security.authentication.InternalAuthenticationProviderFeatures;
 
 /**
  * Partial Spring Sec config. Should be with the rest of spring sec's config now that we dont have osgi bundles segregation
@@ -81,20 +89,90 @@ import org.squashtest.tm.service.security.acls.ExtraPermissionEvaluator;
  * @author Gregory Fouquet
  * @since 1.13.0
  */
+/*
+ * Note : both SquashUserDetailsManagerImpl require the AuthenticationManager (not our fault, they extend from JdbcUserDetailManager 
+ * which need it). But injecting it is tricky because of circular dependency and using @Lazy wouldn't work (the proxy resolves to itself 
+ * and triggers stackoverflowerrors when invoked).
+ * 
+ * The AuthenticationManager becomes "available" (directly or via a delegator managed by Spring) only after AuthenticationConfiguration 
+ * has completed and built it. For that reason we wire the AuthenticationManager at the GlobalMethodSecurityConfiguration phase.
+ * 
+ * So go see SquashMethodSecurityConfiguration and find the WebSecurityConfigurerAdapter that injects the authentication manager.
+ */
 @Configuration
 public class SecurityConfig {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SecurityConfig.class);
 
+	
+	
+
+	/* *********************************************************
+	 *  
+	 *  Global AuthenticationManager
+	 * 
+	 * *********************************************************/
+	
+
+	/**
+	 * <p>Defines the default primary AuthenticationManager.
+	 * Along with other configuration options it comes with a DAO-based AuthenticationProvider (the default primary authentication provider).</p>
+	 * 
+	 * <p>
+	 * The default AuthenticationManager and provider are defined when the application 
+	 * property 'authentication.provider' is set to 'internal'. Its corresponding instance of {@link AuthenticationProviderFeatures} is 
+	 * {@link InternalAuthenticationProviderFeatures}.  
+	 * <p> 
+	 * 
+	 * <p>
+	 * 	Some plugins can take over as the primary authentication sources. In this case it is the responsibility of the plugin to configure the global 
+	 * 	AuthenticationManager that will replace that of Squash TM, along with an AuthenticationProvider 
+	 * and {@link AuthenticationProviderFeatures}, and the application property 'authentication.provider' must be set accordingly.
+	 * </p>
+	 * 
+	 */
+	@Configuration
+	@ConditionalOnProperty(name = "authentication.provider", matchIfMissing = true, havingValue = "internal")
+	@Order(0) // WebSecurityConfigurerAdapter default order is 100, we need to init this before
+	public static class InternalAuthenticationConfig extends GlobalAuthenticationConfigurerAdapter {
+		@Inject
+		private SquashUserDetailsManager squashUserDetailsManager;
+
+		@Inject
+		private PasswordEncoder passwordEncoder;
+
+		@Override
+		public void init(AuthenticationManagerBuilder auth) throws Exception {
+			auth
+				.userDetailsService(squashUserDetailsManager)
+				.passwordEncoder(passwordEncoder);
+			
+			auth.eraseCredentials(false);
+		}
+
+		
+	}
+	
+	
 	/**
 	 * Configures method security. It has to be annotated @EnableGlobalMethodSecurity according to
 	 * GlobalMethodSecurityConfiguration javadoc.
 	 * <p/>
 	 * We would put this in SecurityConfig if we could, but GlobalMethodSecurityConfiguration requires a PermissionEvaluator
-	 * which would induce a depencency cycle on SecurityConfig itself.
+	 * which would induce a dependency cycle on SecurityConfig itself.
 	 */
 	@Configuration
 	@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, order = Ordered.HIGHEST_PRECEDENCE + 100, mode = AdviceMode.PROXY, proxyTargetClass = false)
 	public static class SquashMethodSecurityConfiguration extends GlobalMethodSecurityConfiguration {
+	
+		@Inject
+		@Named("userDetailsManager.caseSensitive")
+		private SquashUserDetailsManager caseSensitive;
+		
+		@Inject
+		@Named("userDetailsManager.caseInsensitive")
+		private SquashUserDetailsManager caseInsensitive;
+
+		
 		@Override
 		protected MethodSecurityExpressionHandler createExpressionHandler() {
 			MethodSecurityExpressionHandler meh = super.createExpressionHandler();
@@ -126,7 +204,32 @@ public class SecurityConfig {
 
 			return accessDecisionManager;
 		}
+
+		
+		/*
+		 * This hack is really meant to inject the authentication manager (at least a valid reference to it)
+		 * 
+		 * (non-Javadoc)
+		 * @see org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration#authenticationManager()
+		 */
+		@Override
+		protected AuthenticationManager authenticationManager() throws Exception {
+			
+			// at this point this is an AuthenticationManagerDelegator
+			AuthenticationManager manager = super.authenticationManager();
+			
+			((SquashUserDetailsManagerImpl) caseSensitive).setAuthenticationManager(manager);
+			((SquashUserDetailsManagerImpl) caseInsensitive).setAuthenticationManager(manager);
+			
+			return manager;
+		}
+
+		
+		
 	}
+	
+
+	
 
 	@Inject
 	private DataSource dataSource;
@@ -142,9 +245,6 @@ public class SecurityConfig {
 	@Inject
 	@Lazy
 	private FeatureManager featureManager;
-
-	@Inject
-	private AuthenticationManager authenticationManager;
 
 	@Inject
 	@Named("squashtest.core.security.AclService")
@@ -288,10 +388,7 @@ public class SecurityConfig {
 	}
 
 	private SquashUserDetailsManagerImpl configure(SquashUserDetailsManagerImpl manager) {
-		// TODO AuthenticationManagerDelegator provides low coupling necessary because of chicken / egg problem induced by OSGi
-		// hopefully we can remove this turdy trick when OSGi's gone.
-		// TODO nosgi
-		manager.setAuthenticationManager(authenticationManager);
+
 		manager.setDataSource(dataSource);
 		manager.setChangePasswordSql("update AUTH_USER set PASSWORD = ? where LOGIN = ?");
 		manager.setUpdateUserSql("update AUTH_USER set PASSWORD = ?, ACTIVE = ? where LOGIN = ?");

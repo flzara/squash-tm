@@ -31,6 +31,7 @@ import javax.inject.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
 import org.squashtest.tm.api.security.authentication.FeaturesAwareAuthentication;
 import org.squashtest.tm.core.foundation.lang.Assert;
@@ -127,7 +128,15 @@ public class AuthenticationProviderContext {
 
 	
 	/**
-	 * Returns the features supported by the Authentication provider.
+	 * <p>Returns the features supported by the Authentication provider. If the current user authenticated via 
+	 * a provider that support different features than the primary they will be returned, otherwise the primary 
+	 * is returned. </p>
+	 * 
+	 * <p>
+	 * 	This implementation will retrieve the Authentication informations from the security context. If there 
+	 * is no Authentication available (eg, the security context is undefined at the moment), the primary 
+	 * features will be returned.
+	 * </p>
 	 * 
 	 * @return
 	 */
@@ -145,6 +154,35 @@ public class AuthenticationProviderContext {
 			return primaryProviderFeature;
 		}
 
+	}
+	
+	
+	/**
+	 * <p>Returns the features supported by the Authentication provider. If the current user authenticated via 
+	 * a provider that support different features than the primary they will be returned, otherwise the primary 
+	 * is returned.</p> 
+	 * 
+	 * <p>Unlike {@link #getCurrentProviderFeatures()}, this implementation will check the supplied Authentication
+	 * object instead of retrieving it from the security context.</p>
+	 * @return
+	 */
+	public AuthenticationProviderFeatures getProviderFeatures(Authentication authentication){
+		AuthenticationProviderFeatures features = null;
+		
+		if (FeaturesAwareAuthentication.class.isAssignableFrom(authentication.getClass())){
+			features = ((FeaturesAwareAuthentication)authentication).getFeatures();
+		}
+		
+		return (features != null) ? features : primaryProviderFeature;
+	}
+	
+	/**
+	 * Returns the primary authentication provider features.
+	 * 
+	 * @return
+	 */
+	public AuthenticationProviderFeatures getPrimaryProviderFeatures() {
+		return primaryProviderFeature;
 	}
 
 	/**

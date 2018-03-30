@@ -62,6 +62,46 @@ import com.querydsl.core.Tuple;
  * <p>Based on this specification the {@link ChartDataFinder} will design the query plan and run it. The rest of this javadoc
  * is a technical documentation of its internal processes.</p>
  *
+ *
+ * <h1>Column prototypes</h1>
+ *
+ *	<p>
+ *		The main java type that define a column is {@link ColumnPrototype}. All available columns are statically defined in the database.
+ *		When a column is included in a chart it will assume the role of a Measure, Axis or Column ({@link ColumnPrototypeInstance}).
+ *	</p>
+ *
+ * <h1>Column types</h1>
+ *
+ * <p>
+ * A column represent a logical attribute of an entity. Attributes are said logical because they may or may not directly relate 
+ * to a database column : they represent a business information in a broader sense, which will be reconstructed from other raw data when necessary.
+ * Please note that the column type thus refer to its natural or artificial nature (like 'label' or 'number of executions last month'), as 
+ * opposed to the underlying data type (eg 'integer' or 'date').
+ * </p>
+ * 
+ * <p>
+ * 	An exception to this are the custom field columns, which have a different semantic : a custom field column here is "custom field of type X" of an entity. 
+ * 	An example for instance is "a custom field of type date of a TestCase". Here the column doesn't hold the name of the attribute, as opposed to the other columns described 
+ * 	above. This discrepancy of the model stems from the need of having a unmodifiable set of {@link ColumnPrototype}, statically defined in the database as referential data.
+ *  This requirement is incompatible with the custom fields, which are essentially dynamic. The alternative would have been to manage (CRUD-like) a moving set of column 
+ *  prototypes that reflect the state of the custom fields.
+ * </p>
+ *  
+ * <p>
+ * 	You can check a column type by looking at {@link ColumnPrototype#getColumnType()} :
+ * </p>
+ * 
+ *  <ul>
+ *  	<li>{@link ColumnType#ATTRIBUTE} : represents a normal attribute - eg it maps directly to a database column</li>
+ *  	<li>{@link ColumnType#CALCULATED} : represents a derived attribute, that results from one or more database columns that may span over several tables </li>
+ *  	<li>{@link ColumnType#CUF} : represents a custom field, here a special case of calculated column. See above for details.
+ *  </ul>
+ *  
+ * <p>
+ * 	The column type has technical implications on the final shape of the query that will be generated. Read on to know more on how these "logical" columns are processed
+ * and tied into the query.
+ * </p>
+ *
  * <h1>Column roles</h1>
  *
  * <p>Here we explain how these roles will be used in a query :</p>
@@ -69,8 +109,7 @@ import com.querydsl.core.Tuple;
  * <h3>Filters</h3>
  *
  * <p>
- * 	In a query they naturally fit the role of a where clause. However a regular where clause is a simple case : sometimes you would have
- * 	it within a Having clause, and in other times it could be a whole subquery.
+ * 	In a query they naturally fit the role of a where clause. On a technical level they can become where clause or something more complex (see above).
  * </p>
  *
  * <h3>AxisColumns</h3>
@@ -83,16 +122,17 @@ import com.querydsl.core.Tuple;
  * <h3>MeasureColumn</h3>
  *
  * <p>
- * 	These columns appear in the select clause and will be subject to an aggregation method. The aggregation is specified in the MeasureColumn.
- * 	They appear in the select clause, after the axis columns, and keep the same order as in the list defined in the ChartDefinition.
+ * 	These columns appear in the select clause and will be subject to an aggregation method (count, sum etc). The aggregation is specified in the MeasureColumn.
+ * 	They appear in the select clause after the axis columns, and keep the same order as in the list defined in the ChartDefinition.
  * </p>
+ * 
  * <p>
- * 	Most of the time no specific attribute will be specified : in this case the measure column defaults to the id of the observed entity.
- * 	For instance consider a measure which aggregation is 'sum' (count). If the user is interested to know how many test cases match the given filters,
+ * 	Most of the time no specific attribute will be specified : in this case the measure column defaults to the id of the entity.
+ * 	For instance consider a measure which aggregation is 'count'. If the user is interested to know how many test cases match the given filters,
  * 	the aggregation should be made on the test case ids. However if the user picked something more specific - like the test case labels -, the semantics
- * 	becomes how many different labels exist within the test cases that match the filter. This, of course, is a problem for the tool that will design
- * 	the ChartDefinition : the current class will just create and process the query.
+ * 	becomes how many different labels exist within the test cases that match the filter. 
  * </p>
+ * 
  *
  * <h1>Query plan</h1>
  *
@@ -138,8 +178,8 @@ import com.querydsl.core.Tuple;
  *
  *  </p>
  *
- * 	<p>Depending on the ChartDefinition, a main query will be generated as
- * 	a subset of this domain. The specifics of its construction depend on the "Root entity", "Target entities" and
+ * 	<p>Following the ChartDefinition a main query will be generated, that will cover a 
+ * 	a subset of this domain (or entirely). The specifics of its construction depend on the "Root entity", "Target entities" and
  * 	"Support entities", those concepts are defined below. </p>
  *
  * 	<h3>Main query</h3>
@@ -150,12 +190,12 @@ import com.querydsl.core.Tuple;
  *
  * 	<ul>
  * 		<li><b>Root Entity</b> : This is the entity from which the query plan begins the entity traversal. The root entity is the
- * 		entity targeted by the AxisColumn.  When multiple target entities are eligible, the one with the lowest rank will be the Root entity.</li>
- * 		<li><b>Target Entities</b> : entities on which apply at least one of the MeasureColumns, AxisColumns, Filters, or Scope (see <b>Scope and ACLs</b>)</li>
+ * 		entity targeted by the AxisColumn.  When multiple target entities are eligible, the one with the lowest rank will be the Root entity (ie the first in the axis list).</li>
+ * 		<li><b>Target Entities</b> : entities to which apply at least one of the MeasureColumns, AxisColumns, Filters, or Scope (see <b>Scope and ACLs</b>)</li>
  * 		<li><b>Support Entities</b> : entities that aren't Target entities but must be joined on in order to join together all
  * 			the Target entities. For example if a ChartDefinition defines Execution as Root entity and Campaign as a TargetEntity,
  * 			then IterationTestPlanItem and Iteration are Support entities.
- *              </li>
+ *      </li>
  * 	</ul>
  * </p>
  *
@@ -184,22 +224,22 @@ import com.querydsl.core.Tuple;
  *
  * <p>
  * 	Filters are restriction applied on the tuples returned by the main query.
- * 	At the atomic level a filter is a combination of a column, an comparison operator, and
+ * 	Each filter is a combination of a column, a comparison operator, and
  * 	one/several operands. They are translated in the appropriate Querydsl expression,
- * 	bound together by appropriate logical operators then inserted in the main query.
+ * 	bound together by appropriate logic operators then inserted in the main query.
  * </p>
  *
  * <p>
- * 	Mostly they are no more complex than "where" clauses, but in some cases
- * 	a subquery is required. Filters are treated according to the following process :
+ * 	Most of the time they are handled as plain "where" clauses, but in some cases
+ * 	a subquery is required. Filters are processed as follow :
  *
  *  <ol>
- *  	<li>Filters are first grouped by Target Entity</li>
- *  	<li>Filters from each groups are then combined in a logical combination</li>
- *  	<li>For each filter happens one of theses :
+ *  	<li>Filters are first grouped by their Target Entity</li>
+ *  	<li>Within a group, filters are combined with a logical combination</li>
+ *  	<li>The filters are then included in he main query :
  *  		<ul>
- *  			<li>inlined as a where clause in the main query</li>
- *  			<li>subquery + where or having clause</li>
+ *  			<li>either inlined as a where clause</li>
+ *  			<li>or as a subquery attached to the main query by a where or having clause</li>
  *  		 </ul>
  *  	</li>
  *  </ol>
@@ -209,16 +249,17 @@ import com.querydsl.core.Tuple;
  * <h4>logical combination</h4>
  *
  * <p>
- * 	Each Filter apply on one column (eg, TestCase.label). Typically, multiple filters will apply on several
- * 	columns. However one can stack multiple Filters on the same column, (eg TestCase.label = 'bob', TestCase.label = 'mike').
+ * 	Each Filter apply to one column that belong to a Target entity (eg, TestCase.label). 
+ *  Usually multiple filters will apply to several columns, but one can also stack multiple Filters on the 
+ *  same column (eg TestCase.label = 'bob', TestCase.label = 'mike').
  * </p>
  *
  * <p>
- * 	For each entity, the filters are thus combined according to the following rules :
- * 	<ul>
- * 		<li>Filters applied to the same column will be OR'ed together</li>
- * 		<li>Filters applied to different columns will be AND'ed</li>
- * 	</ul>
+ * 	The filters are combined according to the following rules :
+ * 	<ol>
+ * 		<li>Filters applied to the same column define a Filter group. Within a group filters are OR'ed together.</li>
+ * 		<li>Then, filter groups are AND'ed.</li>
+ * 	</ol>
  *
  * </p>
  *
@@ -244,13 +285,13 @@ import com.querydsl.core.Tuple;
  * </p>
  *
  * <p>
- * 	Subqueries have them own Query plan, and are joined with the main query as follow : the bean of the outer query that defines the
- * calculated attribute will join with the root entity of the subquery (usually its axis).
+ * 	Subqueries have them own Query plan, and are joined with the main query as follow : the Target entity of the outer (main) query 
+ *  of the calculated column will join on the Root entity of the subquery (usually its axis). Entities are joined on their ids.
  * 	We choose to use correlated subqueries (joining them as described above) even when an uncorellated would do fine, because in
  * practice a clause
  * 	<pre> where exists (select 1 from ... where ... and inner_col = outer_col) </pre>
  * will outperform
- * 	<pre> where bean.id in (select id from .... where ...) </pre>
+ * 	<pre> where entity.id in (select id from .... where ...) </pre>
  * by several order of magnitude (especially because in the former the DB can then use the indexed primary keys).
  * </p>
  *
@@ -258,15 +299,15 @@ import com.querydsl.core.Tuple;
  *
  * <p>
  * 	Data will be grouped on each {@link AxisColumn} in the given order. Special care is given for columns of
- * 	type {@link DataType#DATE} : indeed the desired level of aggregation may be day, month etc. We must be watchful
- * 	of not grouping together every month of December accross the years. For this reason data grouped by Day will
- * 	actually grouped by (year,month,day). Same goes for grouping by month, which actually mean grouping by (year,month)
+ * 	type {@link DataType#DATE} : indeed the desired level of aggregation may be day, month etc. For instance one would never
+ * 	want to group together every month of December across the years. For this reason data grouped by Day will
+ * 	actually grouped by (year,month,day). Same goes for grouping by month, which actually mean grouping by (year,month).
  * </p>
  *
  * <h1>Result </h1>
  *
  * <p>
- * 	The result will be an array of array of Object. Each row represents a tuple of (x+m) cells, where x = card(AxisColumn)
+ * 	The result will be an array of array of Object. Each row represents a tuple of (x+y) cells, where x = card(AxisColumn)
  * 	and y = card(MeasureColumn). The first batch of cells are those of the AxisColumns, the second batch are those of the
  * 	MeasureColumns.
  * </p>
