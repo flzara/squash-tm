@@ -37,6 +37,7 @@ import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportReportBinding;
+import org.squashtest.tm.domain.report.ReportDefinition;
 import org.squashtest.tm.domain.users.PartyPreference;
 import org.squashtest.tm.domain.users.preferences.CorePartyPreference;
 import org.squashtest.tm.domain.users.preferences.WorkspaceDashboardContentValues;
@@ -149,6 +150,17 @@ public class CustomReportDashboardServiceImpl implements
 		ChartDefinition chartDefinition = crlnService.findChartDefinitionByNodeId(chartNodeId);
 		chartBinding.setChart(chartDefinition);
 		return chartBinding;
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#bindingId, 'org.squashtest.tm.domain.customreport.CustomReportReportBinding' ,'WRITE') "
+		+ OR_HAS_ROLE_ADMIN)
+	public CustomReportReportBinding changeBindedReport(long bindingId,
+													  long reportNodeId) {
+		CustomReportReportBinding reportBinding = reportBindingDao.findOne(bindingId);
+		ReportDefinition reportDefinition = crlnService.findReportDefinitionByNodeId(reportNodeId);
+		reportBinding.setReport(reportDefinition);
+		return reportBinding;
 	}
 
 	@Override

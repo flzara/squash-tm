@@ -366,7 +366,7 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 							self.dropItemInGrid(data);
 						}
 						else {
-							self.dropChartInExistingChart(data);
+							self.dropItemInExistingItem(data);
 						}
 					}
 				});
@@ -440,23 +440,45 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 
 			},
 
-			dropChartInExistingChart: function (data) {
-				var chartNodeId = data.o.getResId();
-				var bindingId = $(data.r).parents(".chart-display-area").attr("data-binding-id");//id of binding on wich new chart is dropped
-
-				var url = urlBuilder.buildURL("custom-report-chart-binding-replace-chart", bindingId, chartNodeId);
+			dropItemInExistingItem: function (data) {
+				var nodeId = data.o.getResId();
+				var bindingId;
+				var url;
 				var self = this;
-				$.ajax({
-					headers: {
-						'Accept': 'application/json',
-						'Content-Type': 'application/json'
-					},
-					url: url,
-					type: 'post'
-				})
-					.success(function (response) {
-						self.changeBindedChart(bindingId, response);
-					});
+
+				if (data.o.getResType() === "custom-report-chart") {
+					bindingId = $(data.r).parents(".chart-display-area").attr("data-binding-id");//id of binding on wich new chart is dropped
+					url = urlBuilder.buildURL("custom-report-chart-binding-replace-chart", bindingId, nodeId);
+					$.ajax({
+						headers: {
+							'Accept': 'application/json',
+							'Content-Type': 'application/json'
+						},
+						url: url,
+						type: 'post'
+					})
+						.success(function (response) {
+							self.changeBindedChart(bindingId, response);
+						});
+
+				}
+				if (data.o.getResType() === "custom-report-report") {
+
+
+					bindingId = $(data.r).parents(".report-display-area").context.getAttribute("data-binding-id");//id of binding on wich new chart is dropped
+					url = urlBuilder.buildURL("custom-report-report-binding-replace-report", bindingId, nodeId);
+					$.ajax({
+						headers: {
+							'Accept': 'application/json',
+							'Content-Type': 'application/json'
+						},
+						url: url,
+						type: 'post'
+					})
+						.success(function (response) {
+							self.changeBindedReport(bindingId, response);
+						});
+				}
 			},
 
 			redrawDashboard: function () {

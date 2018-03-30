@@ -76,6 +76,13 @@ public class CustomReportReportBindingController {
 	}
 
 	@ResponseBody
+	@RequestMapping(value = "/custom-report-report-binding-replace-report/{bindingId}/{reportNodeId}", method = RequestMethod.POST)
+	public JsonCustomReportReportBinding changeBindedReport(@PathVariable long bindingId, @PathVariable long reportNodeId){
+		CustomReportReportBinding crrb = dashboardService.changeBindedReport(bindingId,reportNodeId);
+		return  builderProvider.get().build(crrb);
+	}
+
+	@ResponseBody
 	@RequestMapping(value = "/custom-report-report-binding", method = RequestMethod.PUT)
 	public void updateGrid(@RequestBody JsonCustomReportGridElement[] gridElements){
 		List<CustomReportReportBinding> reportBindings = new ArrayList<>();

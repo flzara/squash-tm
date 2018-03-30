@@ -78,6 +78,8 @@ public interface CustomReportDashboardService {
 	 */
 	CustomReportChartBinding changeBindedChart(long bindingId, long chartNodeId);
 
+	CustomReportReportBinding changeBindedReport(long bindingId, long reportNodeId);
+
 	/**
 	 * Set the dashboard as favorite.
 	 * @param nodeId This is the {@link CustomReportLibraryNode} id not the {@link CustomReportDashboard} id

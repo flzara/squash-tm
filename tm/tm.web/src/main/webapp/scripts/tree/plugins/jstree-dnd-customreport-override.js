@@ -308,8 +308,12 @@ define([],function () {
 					open_timeout	: 500,
 					drop_target		: ".jstree-drop",
 					drop_check		: function (data) {
+						var cible = data.r.context.className;
 						var type = data.o.treeNode().getResType();
-						if(type==='custom-report-chart' || type==='custom-report-report'){
+						if(type==='custom-report-chart' && cible !== 'report-display-area'){
+							return true;
+						}
+						if( type==='custom-report-report' && cible !== 'chart-display-area'){
 							return true;
 						}
 						return false;
