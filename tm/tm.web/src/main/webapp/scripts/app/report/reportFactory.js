@@ -34,11 +34,11 @@ define(["backbone", "squash.translator"],
 
 			var table = document.createElement("div");
 			table.className = "display-table";
-			table.style.margin = "10px 5px 10px 5px";
+			table.style.padding = "2%";
+			table.style.display = "block";
 			table.appendChild(createNewRow(translations.nameLabel, jsonReport.name.bold()));
 			table.appendChild(createNewRow(translations.typeLabel, jsonReport.label));
 			table.appendChild(createNewRow(translations.descriptionLabel, jsonReport.description));
-
 			target.appendChild(createGenerateButton(jsonReport));
 			target.appendChild(table);
 
@@ -62,12 +62,12 @@ define(["backbone", "squash.translator"],
 
 		function createGenerateButton(jsonReport) {
 			var container = document.createElement("div");
-			container.style.color = "blue";
+			container.setAttribute("style", "position: absolute; bottom: 2%; width: 100%;");
 			var inputButton = document.createElement("input");
 			inputButton.type = "button";
 			inputButton.className = "sq-btn";
 			inputButton.value = translations.generateLabel;
-			inputButton.setAttribute("style", "position: absolute; bottom : 20px;");
+			inputButton.setAttribute("style", "position: relative; margin: 0 auto; display: block;");
 
 			inputButton.onclick = function () {
 				var url;
