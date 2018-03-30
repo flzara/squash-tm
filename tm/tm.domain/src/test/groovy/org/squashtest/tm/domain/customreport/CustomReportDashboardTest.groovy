@@ -21,8 +21,7 @@
 package org.squashtest.tm.domain.customreport
 
 import org.squashtest.tm.domain.chart.ChartDefinition
-import org.squashtest.tm.domain.tree.TreeEntity
-import spock.lang.Ignore
+import org.squashtest.tm.domain.report.ReportDefinition
 import spock.lang.Specification
 
 /**
@@ -34,15 +33,25 @@ class CustomReportDashboardTest extends Specification {
 		when :
 		CustomReportDashboard source = new CustomReportDashboard()
 		ChartDefinition chart = Mock()
-		CustomReportChartBinding binding = new CustomReportChartBinding()
-		binding.setChart(chart)
-		binding.setDashboard(source)
-		source.getChartBindings().add(binding)
+		ReportDefinition report = Mock()
+
+		CustomReportChartBinding chartBinding = new CustomReportChartBinding()
+		chartBinding.setChart(chart)
+		chartBinding.setDashboard(source)
+
+		CustomReportReportBinding reportBinding = new CustomReportReportBinding()
+		reportBinding.setReport(report)
+		reportBinding.setDashboard(source)
+
+		source.getChartBindings().add(chartBinding)
+		source.getReportBindings().add(reportBinding)
 
 		CustomReportDashboard copy = source.createCopy()
 
 		then:
 		copy.getChartBindings().size() == 1
+		copy.getReportBindings().size() == 1
+
 	}
 
 }
