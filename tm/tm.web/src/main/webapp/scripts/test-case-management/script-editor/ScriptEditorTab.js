@@ -30,35 +30,27 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing", "ace
 			this._initializeModel(serverModel);
 		},
 
+		events: {
+			"click #tc-script-save-button": "saveScript"
+		},
+
+		saveScript: function () {
+			var tcScript = this.editor.session.getValue();
+			this.model.set('script', tcScript);
+			this.model.save();
+		},
+
 		_initializeEditor: function (serverModel) {
 			var editor = ace.edit("tc-script-editor");
+			this.editor = editor;
 			editor.session.setValue(serverModel.scriptExender.script);
-			var line0 = editor.session.getLine(0);
-			var locale = "en";
-			console.log(line0);
-			if (line0 !== null) {
-				line0 = line0.trim();
-				if (line0.search("language:") !== -1) {
-					var parsedLocale = line0.substring(line0.length - 2);
-					console.log(parsedLocale);
-					if (parsedLocale === "fr") {
-						locale = "fr";
-					}
-				}
-			}
-
-			if (locale === "fr") {
-				editor.session.setMode("ace/mode/gherkin-fr");
-			} else {
-				editor.session.setMode("ace/mode/gherkin");
-			}
+			this._initialize_editor_mode(editor);
 			editor.setTheme("ace/theme/twilight");
 			editor.setOptions({
 				enableBasicAutocompletion: true,
 				enableSnippets: true,
-				enableLiveAutocompletion: true
+				enableLiveAutocompletion: false
 			});
-			this.editor = editor;
 		},
 
 		_initializeModel: function (options) {
@@ -69,14 +61,44 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing", "ace
 			this.model = new ScriptedTestCseModel();
 		},
 
-		events: {
-			"click #tc-script-save-button": "saveScript"
+		_initialize_editor_mode: function (editor) {
+			this.locale = this._findScriptLocale();
+
+			var aceEditorMode;
+			if (this.locale === "en") {
+				aceEditorMode = "ace/mode/gherkin";
+			} else {
+				aceEditorMode = "ace/mode/gherkin-" + this.locale;
+			}
+
+			this.editor.session.setMode(aceEditorMode);
 		},
 
-		saveScript: function () {
-			var tcScript = this.editor.session.getValue();
-			this.model.set('script', tcScript);
-			this.model.save();
+		_findScriptLocale: function () {
+			var line0 = this.editor.session.getLine(0);
+			var locale = "en";
+			console.log(line0);
+			if (line0 !== null) {
+				line0 = line0.trim();
+				if (line0.search("language:") !== -1) {
+					var parsedLocale = line0.substring(line0.length - 2);
+					console.log(parsedLocale);
+					switch (parsedLocale) {
+						case "fr" :
+							locale = "fr";
+							break;
+						case "de" :
+							locale = "de";
+							break;
+						case "es" :
+							locale = "es";
+							break;
+						default:
+							console.log("Unable to find locale from parsed locale : " + parsedLocale + ". Default to en.")
+					}
+				}
+			}
+			return locale;
 		}
 
 	});
