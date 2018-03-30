@@ -485,17 +485,17 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 				this.dashboardInitialData.canWrite = this.canWrite;//copy rights to allow effcient templating
 				this.dashboardInitialData.generatedDate = this.i18nFormatDate(new Date());
 				this.dashboardInitialData.generatedHour = this.i18nFormatHour(new Date());
-				var bindings = response.chartBindings;
-				for (var i = 0; i < bindings.length; i++) {
-					var binding = bindings[i];
-					var id = binding.id;
-					this.dashboardChartBindings[id] = binding;
+				var chartBindings = response.chartBindings;
+				for (var i = 0; i < chartBindings.length; i++) {
+					var chartBinding = chartBindings[i];
+					var id = chartBinding.id;
+					this.dashboardChartBindings[id] = chartBinding;
 				}
 				var reportBindings = response.reportBindings;
 				for (var j = 0; j < reportBindings.length; j++) {
-					var reportBindings = reportBindings[j];
-					var reportId = reportBindings.id;
-					this.dashboardReportBindings[reportId] = reportBindings;
+					var reportBinding = reportBindings[j];
+					var reportId = reportBinding.id;
+					this.dashboardReportBindings[reportId] = reportBinding;
 				}
 				return this;
 			},

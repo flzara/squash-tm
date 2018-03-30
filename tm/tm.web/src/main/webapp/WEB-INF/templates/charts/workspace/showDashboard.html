@@ -78,6 +78,7 @@
   {{> dashboardDoc}}
   {{/if}}
   <div id="dashboard-grid" class="dashboard-grid gridster jstree-drop">
+    <div id="document-holder"></div>
     {{#each chartBindings}}
     {{> chart canWrite=../canWrite}}
     {{/each}}

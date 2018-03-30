@@ -50,6 +50,7 @@ import org.squashtest.tm.web.internal.i18n.MessageObject;
 import org.squashtest.tm.web.internal.model.json.JsonCustomReportChartBinding;
 import org.squashtest.tm.web.internal.model.json.JsonCustomReportReportBinding;
 import org.squashtest.tm.web.internal.model.json.JsonCustomReportDashboard;
+import org.squashtest.tm.web.internal.report.IdentifiedReportDecorator;
 import org.squashtest.tm.web.internal.report.ReportsRegistry;
 
 @Component("customReport.dashboardBuilder")
@@ -153,7 +154,8 @@ public class JsonCustomReportDashboardBuilder {
 
 			jsonReportInstance.setLabel(report.getLabel());
 			jsonReportInstance.setReportAttributes(reportHelper.getAttributesFromReportDefinition(reportDefinition));
-
+			jsonReportInstance.setDocx(((IdentifiedReportDecorator) report).isDocxTemplate());
+			jsonReportInstance.setPdfViews(report.getViews().length);
 			jsonBinding.setReportInstance(jsonReportInstance);
 			json.getReportBindings().add(jsonBinding);
 		}

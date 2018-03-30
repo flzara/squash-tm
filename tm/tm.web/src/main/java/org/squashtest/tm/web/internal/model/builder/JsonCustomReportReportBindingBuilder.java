@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.model.builder;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.api.report.DocxTemplaterReport;
 import org.squashtest.tm.api.report.Report;
 import org.squashtest.tm.domain.customreport.CustomReportReportBinding;
 import org.squashtest.tm.domain.report.ReportDefinition;
@@ -29,6 +30,7 @@ import org.squashtest.tm.service.report.ReportModificationService;
 import org.squashtest.tm.web.internal.controller.report.JsonReportInstance;
 import org.squashtest.tm.web.internal.helper.ReportHelper;
 import org.squashtest.tm.web.internal.model.json.JsonCustomReportReportBinding;
+import org.squashtest.tm.web.internal.report.IdentifiedReportDecorator;
 import org.squashtest.tm.web.internal.report.ReportsRegistry;
 
 import javax.inject.Inject;
@@ -72,6 +74,8 @@ public class JsonCustomReportReportBindingBuilder {
 		JsonReportInstance jsonReportInstance = new JsonReportInstance(reportDefinition);
 		jsonReportInstance.setLabel(report.getLabel());
 		jsonReportInstance.setReportAttributes(reportHelper.getAttributesFromReportDefinition(reportDefinition));
+		jsonReportInstance.setDocx(((IdentifiedReportDecorator) report).isDocxTemplate());
+		jsonReportInstance.setPdfViews(report.getViews().length);
 		json.setReportInstance(jsonReportInstance);
 		return json;
 	}

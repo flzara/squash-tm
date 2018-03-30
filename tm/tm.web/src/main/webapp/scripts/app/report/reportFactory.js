@@ -24,11 +24,13 @@ define(["backbone", "squash.translator"],
 		var translations = translator.get({
 			nameLabel: "label.Name",
 			typeLabel: "label.Type",
-			descriptionLabel: "label.Description"
+			descriptionLabel: "label.Description",
+			generateLabel: "report.criteria.panel.button.generate.label"
 		});
 
 		function buildReport(viewID, jsonReport) {
 			var target = $(viewID)[0];
+			target.style.position = "relative";
 
 			var table = document.createElement("div");
 			table.className = "display-table";
@@ -37,6 +39,7 @@ define(["backbone", "squash.translator"],
 			table.appendChild(createNewRow(translations.typeLabel, jsonReport.label));
 			table.appendChild(createNewRow(translations.descriptionLabel, jsonReport.description));
 
+			target.appendChild(createGenerateButton(jsonReport));
 			target.appendChild(table);
 
 			return target;
@@ -55,6 +58,66 @@ define(["backbone", "squash.translator"],
 			rowElement.appendChild(labelElement);
 			rowElement.appendChild(valueElement);
 			return rowElement;
+		}
+
+		function createGenerateButton(jsonReport) {
+			var container = document.createElement("div");
+			container.style.color = "blue";
+			var inputButton = document.createElement("input");
+			inputButton.type = "button";
+			inputButton.className = "sq-btn";
+			inputButton.value = translations.generateLabel;
+			inputButton.setAttribute("style", "position: absolute; bottom : 20px;");
+
+			inputButton.onclick = function () {
+				var url;
+				var namespace = jsonReport.pluginNamespace;
+				var parameters = jsonReport.parameters;
+				if (jsonReport.docx){
+
+					url = buildViewUrl(0, "docx", namespace);
+					$.ajax({
+						type : "get",
+						url : url,
+						dataType : "html",
+						data : { json : parameters }
+					}).done(function(html) {
+						$("#document-holder").html(html);
+					});
+				} else {
+
+					var promises = [];
+					var nbPages = jsonReport.pdfViews;
+					var result = "";
+					for (var i = 0; i < nbPages; i++) {
+						url = buildViewUrl(i, "html", namespace);
+
+						var request = $.ajax({
+							type : "get",
+							url : url,
+							dataType : "html",
+							data : { json : parameters }
+						}).done(function(html) {
+							result += html;
+						});
+						promises.push(request);
+
+					}
+
+					$.when.apply(null, promises).done(function(){
+						var win = window.open("", "_blank", "scrollbars=yes,resizable=yes");
+						win.document.body.innerHTML = result;
+					});
+				}
+			};
+
+			container.appendChild(inputButton);
+			return container;
+		}
+
+		function buildViewUrl(index, format, reportNamespace) {
+			return document.location.protocol + "//" + document.location.host + "/squash/reports/" + reportNamespace + "/views/" + index +
+				"/formats/" + format;
 		}
 
 		return {

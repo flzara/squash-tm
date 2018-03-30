@@ -34,7 +34,13 @@ public class JsonReportInstance {
 
 	private String pluginNamespace;
 
+	private String parameters;
+
 	private String label;
+
+	private Boolean isDocx;
+
+	private int pdfViews;
 
 	private Map<String, List<String>> reportAttributes;
 
@@ -58,6 +64,7 @@ public class JsonReportInstance {
 		this.name = def.getName();
 		this.description = def.getDescription();
 		this.pluginNamespace = def.getPluginNamespace();
+		this.parameters = def.getParameters();
 		this.projectId = def.getProject().getId();
 		this.ownerId = def.getOwner().getId();
 		doAuditableAttributes(def);
@@ -158,5 +165,29 @@ public class JsonReportInstance {
 
 	public void setLabel(String label) {
 		this.label = label;
+	}
+
+	public String getParameters() {
+		return parameters;
+	}
+
+	public void setParameters(String parameters) {
+		this.parameters = parameters;
+	}
+
+	public Boolean getDocx() {
+		return isDocx;
+	}
+
+	public void setDocx(Boolean docx) {
+		isDocx = docx;
+	}
+
+	public int getPdfViews() {
+		return pdfViews;
+	}
+
+	public void setPdfViews(int pdfViews) {
+		this.pdfViews = pdfViews;
 	}
 }
