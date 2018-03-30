@@ -54,6 +54,7 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
 import org.squashtest.tm.service.user.AdministrationService;
 import org.squashtest.tm.service.connectionhistory.ConnectionLogFinderService;
+import org.squashtest.tm.service.internal.security.AuthenticationProviderContext;
 import org.squashtest.tm.service.user.TeamFinderService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.project.ProjectModel;
@@ -68,7 +69,6 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
-import org.squashtest.tm.web.internal.security.authentication.AuthenticationProviderContext;
 
 @Controller
 @RequestMapping("/administration/users")

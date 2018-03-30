@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.security.authentication;
+package org.squashtest.tm.service.internal.security;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,11 +32,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
 import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
 import org.squashtest.tm.api.security.authentication.FeaturesAwareAuthentication;
 import org.squashtest.tm.core.foundation.lang.Assert;
-import org.squashtest.tm.service.internal.security.SpringSecurityUserContextService;
-import org.squashtest.tm.web.internal.annotation.ApplicationComponent;
 
 /**
  * Registers all {@link AuthenticationProviderFeatures} available in the context, and provides with the main instance (that corresponds to 
@@ -70,7 +69,8 @@ import org.squashtest.tm.web.internal.annotation.ApplicationComponent;
  * one is required by bean name only, because that bean name is hard to predict. Hence the need to check for the value of #getProviderName().
  * Still it add a bit of complexity. Perhaps was it necessary with older versions of Spring Security ?
  */
-@ApplicationComponent
+//@ApplicationComponent
+@Component
 public class AuthenticationProviderContext {
 	/**
 	 * logger.

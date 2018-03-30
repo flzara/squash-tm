@@ -25,6 +25,7 @@ import org.springframework.security.core.Authentication;
 import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
+import org.squashtest.tm.service.internal.security.AuthenticationProviderContext
 import org.squashtest.tm.service.user.AdministrationService;
 import org.squashtest.tm.service.user.UserAccountService;
 

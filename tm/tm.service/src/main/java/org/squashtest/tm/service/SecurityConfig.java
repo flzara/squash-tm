@@ -33,13 +33,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.security.AuthenticationManagerConfiguration;
 import org.springframework.cache.ehcache.EhCacheFactoryBean;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Role;
@@ -63,7 +61,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.authentication.configurers.GlobalAuthenticationConfigurerAdapter;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
@@ -73,13 +70,13 @@ import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatu
 import org.squashtest.tm.security.acls.Slf4jAuditLogger;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.internal.security.AffirmativeBasedCompositePermissionEvaluator;
+import org.squashtest.tm.service.internal.security.InternalAuthenticationProviderFeatures;
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManager;
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManagerImpl;
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManagerProxyFactory;
 import org.squashtest.tm.service.internal.spring.ArgumentPositionParameterNameDiscoverer;
 import org.squashtest.tm.service.internal.spring.CompositeDelegatingParameterNameDiscoverer;
 import org.squashtest.tm.service.security.acls.ExtraPermissionEvaluator;
-import org.squashtest.tm.web.internal.security.authentication.InternalAuthenticationProviderFeatures;
 
 /**
  * Partial Spring Sec config. Should be with the rest of spring sec's config now that we dont have osgi bundles segregation
@@ -224,11 +221,7 @@ public class SecurityConfig {
 			return manager;
 		}
 
-		
-		
 	}
-	
-
 	
 
 	@Inject

@@ -32,6 +32,7 @@ import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatu
 import org.squashtest.tm.api.security.authentication.FeaturesAwareAuthentication;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
+import org.squashtest.tm.service.internal.security.AuthenticationProviderContext;
 import org.squashtest.tm.service.user.AdministrationService;
 import org.squashtest.tm.web.internal.annotation.ApplicationComponent;
 
