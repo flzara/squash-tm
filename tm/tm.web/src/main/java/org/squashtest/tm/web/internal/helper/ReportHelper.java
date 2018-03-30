@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.web.internal.helper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.api.report.Report;
@@ -30,6 +32,7 @@ import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.report.ReportDefinition;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.campaign.CampaignModificationService;
@@ -39,6 +42,8 @@ import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import org.squashtest.tm.web.internal.report.ReportsRegistry;
+import org.squashtest.tm.web.internal.report.criteria.ConciseFormToCriteriaConverter;
 import org.squashtest.tm.web.internal.report.criteria.MultiOptionsCriteria;
 import org.squashtest.tm.web.internal.report.criteria.MultiValuesCriteria;
 import org.squashtest.tm.web.internal.report.criteria.SimpleCriteria;
@@ -47,8 +52,15 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * @author zyang
+ */
+
 @Component
 public class ReportHelper {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(ReportHelper.class);
+
 	private static final String REQUIREMENTS_IDS = "requirementsIds";
 	private static final String TESTCASES_IDS = "testcasesIds";
 	private static final String CAMPAIGN_IDS = "campaignIds";
@@ -62,23 +74,45 @@ public class ReportHelper {
 
 	@Inject
 	private CampaignModificationService campaignModificationService;
+
 	@Inject
 	private IterationModificationService iterationModificationService;
+
 	@Inject
 	private RequirementVersionManagerService requirementVersionManagerService;
+
 	@Inject
 	private TestCaseModificationService testCaseModificationService;
+
 	@Inject
 	private GenericProjectManagerService projectManagerService;
+
 	@Inject
 	private MilestoneManagerService milestoneManagerService;
+
+	@Inject
+	private ReportsRegistry reportsRegistry;
+
 	@Inject
 	private InternationalizationHelper i18nHelper;
 
 	private Locale locale = LocaleContextHolder.getLocale();
 
+	public Map<String, List<String>> getAttributesFromReportDefinition(ReportDefinition def){
 
-	public Map<String, List<String>> getAttributesForReport(Report report, Map<String, Criteria> criteriaMap) throws IOException {
+		Report report = reportsRegistry.findReport(def.getPluginNamespace());
+		Map<String, Object> form = null;
+		try {
+			form = JsonHelper.deserialize(def.getParameters());
+		} catch (IOException e) {
+			LOGGER.error("the report : " + def.getName() + " has corrupted parameters.", e);
+		}
+
+		Map<String, Criteria> crit = new ConciseFormToCriteriaConverter(report, Collections.singletonList(def.getProject())).convert(form);
+		return getAttributesForReport(report, crit);
+	}
+
+	public Map<String, List<String>> getAttributesForReport(Report report, Map<String, Criteria> criteriaMap) {
 
 		Map<String, List<String>> attributes = new LinkedHashMap<>();
 

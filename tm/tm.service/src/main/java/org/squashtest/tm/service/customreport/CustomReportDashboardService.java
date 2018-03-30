@@ -28,17 +28,27 @@ import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.customreport.CustomReportReportBinding;
 
 @Transactional
 public interface CustomReportDashboardService {
 
 	/**
 	 * Update all bindings position given in argument.
-	 * @param bindings
+	 * @param chartBindings
+	 * @param reportBindings
 	 */
-	void updateGridPosition(List<CustomReportChartBinding> bindings);
+	void updateGridPosition(List<CustomReportChartBinding> chartBindings, List<CustomReportReportBinding> reportBindings);
+
 
 	CustomReportDashboard findById(Long id);
+
+	/**
+	 * Bind a report to a dashboard
+	 * @param newBinding
+	 */
+	void bindReport(CustomReportReportBinding newBinding);
+
 
 	/**
 	 * Bind a chart to a dashboard
@@ -53,6 +63,12 @@ public interface CustomReportDashboardService {
 	void unbindChart(Long id);
 
 	/**
+	 * remove designed binding from database
+	 * @param newBinding
+	 */
+	void unbindReport(Long id);
+
+	/**
 	 * Change the chartbinded by the {@link CustomReportChartBinding} designed by bindingId.
 	 * WARNING: the chartNodeId param is the {@link CustomReportLibraryNode} id, not the {@link ChartDefinition} id.
 	 * This is because the user manipulate the tree node not the entity directly
@@ -61,6 +77,8 @@ public interface CustomReportDashboardService {
 	 * @return
 	 */
 	CustomReportChartBinding changeBindedChart(long bindingId, long chartNodeId);
+
+	CustomReportReportBinding changeBindedReport(long bindingId, long reportNodeId);
 
 	/**
 	 * Set the dashboard as favorite.

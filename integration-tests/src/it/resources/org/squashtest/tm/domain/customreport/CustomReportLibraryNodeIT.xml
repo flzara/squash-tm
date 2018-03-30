@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 
-<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.17.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.18.0.dtd">
 
 <dataset>
 	<!--  general chart setup -->
@@ -106,4 +106,6 @@
   <CRLN_RELATIONSHIP ANCESTOR_ID="-2" DESCENDANT_ID="-6" CONTENT_ORDER="3"/>
 
     <REPORT_DEFINITION REPORT_ID="-1" USER_ID="-1" PROJECT_ID="-1" CREATED_BY="dbunit" CREATED_ON="2017-11-07"/>
+    <CUSTOM_REPORT_REPORT_BINDING CRRB_ID="-1" CRD_ID="-1" REPORT_ID="-1" COL="2" ROW="2" SIZE_X="1" SIZE_Y="1"/>
+
 </dataset>

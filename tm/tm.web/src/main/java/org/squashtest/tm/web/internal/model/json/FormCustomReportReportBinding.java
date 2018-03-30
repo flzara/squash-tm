@@ -20,18 +20,15 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
-import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 import org.squashtest.tm.domain.customreport.CustomReportReportBinding;
 
-
-/**
- * Pojo used only for resize/move operations on a client side dashboard grid
- * @author jthebault
- *
- */
-public class JsonCustomReportGridElement {
+public class FormCustomReportReportBinding {
 
 	private Long id;
+
+	private Long reportNodeId;
+
+	private Long dashboardNodeId;
 
 	private int row;
 
@@ -41,9 +38,7 @@ public class JsonCustomReportGridElement {
 
 	private int sizeY;
 
-	private String elementType;
-
-	public JsonCustomReportGridElement() {
+	public FormCustomReportReportBinding() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -53,6 +48,22 @@ public class JsonCustomReportGridElement {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Long getDashboardNodeId() {
+		return dashboardNodeId;
+	}
+
+	public void setDashboardNodeId(Long dashboardId) {
+		this.dashboardNodeId = dashboardId;
+	}
+
+	public Long getReportNodeId() {
+		return reportNodeId;
+	}
+
+	public void setReportNodeId(Long reportNodeId) {
+		this.reportNodeId = reportNodeId;
 	}
 
 	public int getRow() {
@@ -87,32 +98,14 @@ public class JsonCustomReportGridElement {
 		this.sizeY = sizeY;
 	}
 
-	public String getElementType() {
-		return elementType;
-	}
-
-	public void setElementType(String elementType) {
-		this.elementType = elementType;
-	}
-
-	public CustomReportChartBinding convertToChartEntity() {
-		CustomReportChartBinding crcb = new CustomReportChartBinding();
-		crcb.setId(id);
-		crcb.setCol(col);
-		crcb.setRow(row);
-		crcb.setSizeX(sizeX);
-		crcb.setSizeY(sizeY);
-		return crcb;
-	}
-
-	public CustomReportReportBinding convertToReportEntity() {
+	public CustomReportReportBinding convertToEntity (){
 		CustomReportReportBinding crrb = new CustomReportReportBinding();
-		crrb.setId(id);
+
 		crrb.setCol(col);
 		crrb.setRow(row);
 		crrb.setSizeX(sizeX);
 		crrb.setSizeY(sizeY);
+
 		return crrb;
 	}
-
 }

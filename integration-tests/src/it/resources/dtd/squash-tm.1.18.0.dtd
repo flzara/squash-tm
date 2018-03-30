@@ -56,6 +56,7 @@
 	CUSTOM_REPORT_DASHBOARD*,
 	CUSTOM_REPORT_LIBRARY*,
 	CUSTOM_REPORT_LIBRARY_NODE*,
+	CUSTOM_REPORT_REPORT_BINDING*,
 	DATABASECHANGELOG*,
 	DATABASECHANGELOGLOCK*,
 	DATASET*,
@@ -172,6 +173,7 @@
 	custom_report_dashboard?,
 	custom_report_library?,
 	custom_report_library_node?,
+	custom_report_report_binding?,
 	databasechangelog?,
 	databasechangeloglock?,
 	Dataset?,
@@ -680,7 +682,16 @@
 		ATTACHMENT_LIST_ID #IMPLIED
 		>
 
-
+	<!ELEMENT CUSTOM_REPORT_REPORT_BINDING EMPTY>
+	<!ATTLIST CUSTOM_REPORT_REPORT_BINDING
+		CRRB_ID CDATA #IMPLIED
+		CRD_ID CDATA #REQUIRED
+		REPORT_ID CDATA #REQUIRED
+		ROW CDATA #IMPLIED
+		COL CDATA #IMPLIED
+		SIZE_X CDATA #IMPLIED
+		SIZE_Y CDATA #IMPLIED
+		>
 
 
 	<!ELEMENT DATABASECHANGELOG EMPTY>
@@ -1308,6 +1319,7 @@
 	<!ELEMENT custom_report_folder EMPTY>
 	<!ELEMENT custom_report_dashboard EMPTY>
 	<!ELEMENT custom_report_library_node EMPTY>
+	<!ELEMENT custom_report_report_binding EMPTY>
 	<!ELEMENT Dataset EMPTY>
 	<!ELEMENT databasechangelog EMPTY>
 	<!ELEMENT databasechangeloglock EMPTY>

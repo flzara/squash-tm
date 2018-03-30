@@ -21,85 +21,131 @@
 
 -->
 <div th:fragment="dashboard-view">
-			<div id="dashboard-name-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
-  			<div id="right-frame-button">
-				<input type="button" class="sq-btn btn-sm" id="toggle-expand-left-frame-button" th:title="#{tooltip.toggleLibraryDisplay}"/>
-  			</div>
-			<div style="float: left; height: 100%;" class="small-margin-left">
-				<h2>
-					{{name}}
-				</h2>
-			</div>
+  <div id="dashboard-name-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
+    <div id="right-frame-button">
+      <input type="button" class="sq-btn btn-sm" id="toggle-expand-left-frame-button"
+             th:title="#{tooltip.toggleLibraryDisplay}"/>
+    </div>
+    <div style="float: left; height: 100%;" class="small-margin-left">
+      <h2>
+        {{name}}
+      </h2>
+    </div>
 
-			<div class="unsnap"></div>
-		</div>
-		<div id="element-toolbar" class="toolbar-class ui-corner-all">
-			<div class="toolbar-information-panel">
-				<div id="general-information-panel" class="information-panel">
-					<span th:text="#{label.CreatedOn}+'&nbsp;:&nbsp;'">created on </span>{{createdOn}} ({{createdBy}})
-					<br/>
-					<span th:text="#{workspace.custom-report.timestamp.label}">chart type</span>
-				</div>
-			</div>
-      <div class="toolbar-button-panel">
+    <div class="unsnap"></div>
+  </div>
+  <div id="element-toolbar" class="toolbar-class ui-corner-all">
+    <div class="toolbar-information-panel">
+      <div id="general-information-panel" class="information-panel">
+        <span th:text="#{label.CreatedOn}+'&nbsp;:&nbsp;'">created on </span>{{createdOn}} ({{createdBy}})
+        <br/>
+        <span th:text="#{workspace.custom-report.timestamp.label}">chart type</span>
+      </div>
+    </div>
+    <div class="toolbar-button-panel">
 
-			<a id="change-favorite-dashboard-button" class="buttonmenu sq-icon-btn buttonmenu-button" role="buttonmenu">
-				<span th:text="#{label.favorite-dashboard}"/>
-			</a>
+      <a id="change-favorite-dashboard-button" class="buttonmenu sq-icon-btn buttonmenu-button" role="buttonmenu">
+        <span th:text="#{label.favorite-dashboard}"/>
+      </a>
 
-			<ul id="change-favorite-dashboard-menu" class="buttonmenu-menu squash-buttonmenu ui-menu ui-widget  ui-corner-all collapse" role="menu" tabindex="0" style="position: absolute; overflow: hidden; white-space: nowrap; z-index: 3000; width: 113px; display: none;">
-				<li  class="cursor-pointer ui-menu-item favorite-select" role="presentation" aria-disabled="true">
-					<a class="ui-corner-all " tabindex="-1" role="menuitem" name="home" th:text="#{label.home}">home</a>
-				</li>
-				<li  class="cursor-pointer ui-menu-item favorite-select" role="presentation" aria-disabled="true">
-					<a class="ui-corner-all " tabindex="-1" role="menuitem" name="requirement" th:text="#{label.requirement}">requirement</a>
-				</li>
-				<li  class="cursor-pointer ui-menu-item favorite-select" role="presentation" aria-disabled="true">
-					<a class="ui-corner-all " tabindex="-1" role="menuitem" name="test-case" th:text="#{label.testCase}">test-case</a>
-				</li>
-				<li  class="cursor-pointer ui-menu-item favorite-select" role="presentation" aria-disabled="true">
-					<a class="ui-corner-all " tabindex="-1" role="menuitem" name="campaign" th:text="#{label.Campaign}">campaign</a>
-				</li>
-			</ul>
+      <ul id="change-favorite-dashboard-menu"
+          class="buttonmenu-menu squash-buttonmenu ui-menu ui-widget  ui-corner-all collapse" role="menu" tabindex="0"
+          style="position: absolute; overflow: hidden; white-space: nowrap; z-index: 3000; width: 113px; display: none;">
+        <li class="cursor-pointer ui-menu-item favorite-select" role="presentation" aria-disabled="true">
+          <a class="ui-corner-all " tabindex="-1" role="menuitem" name="home" th:text="#{label.home}">home</a>
+        </li>
+        <li class="cursor-pointer ui-menu-item favorite-select" role="presentation" aria-disabled="true">
+          <a class="ui-corner-all " tabindex="-1" role="menuitem" name="requirement" th:text="#{label.requirement}">requirement</a>
+        </li>
+        <li class="cursor-pointer ui-menu-item favorite-select" role="presentation" aria-disabled="true">
+          <a class="ui-corner-all " tabindex="-1" role="menuitem" name="test-case"
+             th:text="#{label.testCase}">test-case</a>
+        </li>
+        <li class="cursor-pointer ui-menu-item favorite-select" role="presentation" aria-disabled="true">
+          <a class="ui-corner-all " tabindex="-1" role="menuitem" name="campaign"
+             th:text="#{label.Campaign}">campaign</a>
+        </li>
+      </ul>
 
       {{#if canWrite}}
-				<input type="button" th:attr="value=#{label.Rename},title=#{label.Rename}" id="rename-dashboard-button" class="sq-btn" />
+      <input type="button" th:attr="value=#{label.Rename},title=#{label.Rename}" id="rename-dashboard-button"
+             class="sq-btn"/>
       {{/if}}
-      </div>
-			<div class="unsnap"></div>
-		</div>
-			{{#if emptyDashboard}}
-				{{> dashboardDoc}}
-			{{/if}}
-		<div id="dashboard-grid" class="dashboard-grid gridster jstree-drop">
-			{{#each chartBindings}}
-   				{{> chart canWrite=../canWrite}}
- 			{{/each}}
-		</div>
+    </div>
+    <div class="unsnap"></div>
+  </div>
+  {{#if emptyDashboard}}
+  {{> dashboardDoc}}
+  {{/if}}
+  <div id="dashboard-grid" class="dashboard-grid gridster jstree-drop">
+    <div id="document-holder"></div>
+    {{#each chartBindings}}
+    {{> chart canWrite=../canWrite}}
+    {{/each}}
+    {{#each reportBindings}}
+    {{> report canWrite=../canWrite}}
+    {{/each}}
+  </div>
 </div>
 
 <div th:fragment="chart-in-dashboard">
-	<div id="widget-chart-binding-{{id}}" data-binding-id="{{id}}" class="dashboard-graph" data-row="{{row}}" data-col="{{col}}" data-sizex="{{sizeX}}" data-sizey="{{sizeY}}">
-		<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
-		<div id="delete-chart-binding-{{id}}" class="delete-chart-button" data-binding-id="{{id}}">
-			<span class="ui-icon ui-icon-trash"></span>
-		</div>
-	</div>
+  <div id="widget-chart-binding-{{id}}" data-binding-id="{{id}}" data-type="chart" class="dashboard-graph" data-row="{{row}}"
+       data-col="{{col}}" data-sizex="{{sizeX}}" data-sizey="{{sizeY}}">
+    <div id="chart-binding-{{id}}" data-binding-id="{{id}}"  class="chart-display-area"
+         style="height:100%; width:100%;"></div>
+    <div id="delete-chart-binding-{{id}}" class="delete-chart-button" data-binding-id="{{id}}">
+      <span class="ui-icon ui-icon-trash"></span>
+    </div>
+  </div>
 </div>
 
 <div th:fragment="new-chart-in-dashboard">
-	<div id="widget-chart-binding-{{id}}" class="dashboard-graph" data-binding-id="{{id}}">
-		<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
-		<div id="delete-chart-binding-{{id}}" class="delete-chart-button" data-binding-id="{{id}}">
-			<span class="ui-icon ui-icon-trash"></span>
-		</div>
-	</div>
+  <div id="widget-chart-binding-{{id}}" class="dashboard-graph" data-binding-id="{{id}}" data-type="chart">
+    <div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area"
+         style="height:100%; width:100%;"></div>
+    <div id="delete-chart-binding-{{id}}" class="delete-chart-button" data-binding-id="{{id}}">
+      <span class="ui-icon ui-icon-trash"></span>
+    </div>
+  </div>
 </div>
 
 <div th:fragment="chart-display-area">
-	<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
-		<div id="delete-chart-binding-{{id}}" class="delete-chart-button" data-binding-id="{{id}}">
-				<span class="ui-icon ui-icon-trash"></span>
-		</div>
-		<span class="gs-resize-handle gs-resize-handle-both"></span>
+  <div id="chart-binding-{{id}}" data-binding-id="{{id}}" data-type="chart" class="chart-display-area"
+       style="height:100%; width:100%;"></div>
+  <div id="delete-chart-binding-{{id}}" class="delete-chart-button" data-binding-id="{{id}}">
+    <span class="ui-icon ui-icon-trash"></span>
+  </div>
+  <span class="gs-resize-handle gs-resize-handle-both"></span>
+</div>
+
+
+<div th:fragment="report-in-dashboard">
+  <div id="widget-report-binding-{{id}}" data-binding-id="{{id}}" data-type="report" class="dashboard-graph" data-row="{{row}}"
+       data-col="{{col}}" data-sizex="{{sizeX}}" data-sizey="{{sizeY}}">
+    <div id="report-binding-{{id}}" data-binding-id="{{id}}" class="report-display-area"
+         style="height:100%; width:100%;"></div>
+    <div id="delete-report-binding-{{id}}" class="delete-report-button" data-binding-id="{{id}}">
+      <span class="ui-icon ui-icon-trash"></span>
+    </div>
+  </div>
+</div>
+
+<div th:fragment="new-report-in-dashboard">
+  <div id="widget-report-binding-{{id}}" class="dashboard-graph" data-type="report" data-binding-id="{{id}}">
+    <div id="report-binding-{{id}}" data-binding-id="{{id}}" class="report-display-area"
+         style="height:100%; width:100%;">
+    </div>
+    <div id="delete-report-binding-{{id}}" class="delete-report-button" data-binding-id="{{id}}">
+      <span class="ui-icon ui-icon-trash"></span>
+    </div>
+  </div>
+</div>
+
+<div th:fragment="report-display-area">
+  <div id="report-binding-{{id}}" data-binding-id="{{id}}" data-type="report" class="report-display-area"
+       style="height:100%; width:100%;"></div>
+  <div id="delete-report-binding-{{id}}" class="delete-report-button" data-binding-id="{{id}}">
+    <span class="ui-icon ui-icon-trash"></span>
+  </div>
+  <span class="gs-resize-handle gs-resize-handle-both"></span>
 </div>

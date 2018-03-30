@@ -38,6 +38,21 @@
     	opacity: 1;
   	}
 
+	.delete-report-button{
+		position: absolute;
+		min-width: 20px;
+		min-height: 20px;
+		background-position: top left;
+		background-repeat: no-repeat;
+		z-index: 20;
+		top: 3px;
+		right: -1px;
+		opacity: 0;
+	}
+	.gs-w:hover .delete-report-button{
+		opacity: 1;
+	}
+
   	.jqplot-table-legend { width: auto; margin: auto; padding: inherit;}
 	.jqplot-target-wrapper{ width: 95%; height: 600px; margin: auto;}
 	.jqplot-title{ margin-top: 10px;}

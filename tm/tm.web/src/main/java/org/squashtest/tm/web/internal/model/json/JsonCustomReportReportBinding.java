@@ -20,18 +20,18 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
-import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
-import org.squashtest.tm.domain.customreport.CustomReportReportBinding;
 
+import org.squashtest.tm.web.internal.controller.report.JsonReportInstance;
 
-/**
- * Pojo used only for resize/move operations on a client side dashboard grid
- * @author jthebault
- *
- */
-public class JsonCustomReportGridElement {
+public class JsonCustomReportReportBinding {
 
 	private Long id;
+
+	private Long reportDefinitionId;
+
+	private Long dashboardId;
+
+	private JsonReportInstance reportInstance;
 
 	private int row;
 
@@ -41,18 +41,36 @@ public class JsonCustomReportGridElement {
 
 	private int sizeY;
 
-	private String elementType;
-
-	public JsonCustomReportGridElement() {
-		// TODO Auto-generated constructor stub
-	}
-
 	public Long getId() {
 		return id;
 	}
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Long getReportDefinitionId() {
+		return reportDefinitionId;
+	}
+
+	public void setReportDefinitionId(Long reportDefinitionId) {
+		this.reportDefinitionId = reportDefinitionId;
+	}
+
+	public Long getDashboardId() {
+		return dashboardId;
+	}
+
+	public void setDashboardId(Long dashboardId) {
+		this.dashboardId = dashboardId;
+	}
+
+	public JsonReportInstance getReportInstance() {
+		return reportInstance;
+	}
+
+	public void setReportInstance(JsonReportInstance reportInstance) {
+		this.reportInstance = reportInstance;
 	}
 
 	public int getRow() {
@@ -85,34 +103,6 @@ public class JsonCustomReportGridElement {
 
 	public void setSizeY(int sizeY) {
 		this.sizeY = sizeY;
-	}
-
-	public String getElementType() {
-		return elementType;
-	}
-
-	public void setElementType(String elementType) {
-		this.elementType = elementType;
-	}
-
-	public CustomReportChartBinding convertToChartEntity() {
-		CustomReportChartBinding crcb = new CustomReportChartBinding();
-		crcb.setId(id);
-		crcb.setCol(col);
-		crcb.setRow(row);
-		crcb.setSizeX(sizeX);
-		crcb.setSizeY(sizeY);
-		return crcb;
-	}
-
-	public CustomReportReportBinding convertToReportEntity() {
-		CustomReportReportBinding crrb = new CustomReportReportBinding();
-		crrb.setId(id);
-		crrb.setCol(col);
-		crrb.setRow(row);
-		crrb.setSizeX(sizeX);
-		crrb.setSizeY(sizeY);
-		return crrb;
 	}
 
 }

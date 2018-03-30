@@ -20,35 +20,29 @@
  */
 package org.squashtest.tm.web.internal.controller.customreport;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
+import org.squashtest.tm.domain.customreport.CustomReportDashboard;
+import org.squashtest.tm.domain.customreport.CustomReportReportBinding;
+import org.squashtest.tm.domain.report.ReportDefinition;
+import org.squashtest.tm.service.customreport.CustomReportDashboardService;
+import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
+import org.squashtest.tm.web.internal.model.builder.JsonCustomReportReportBindingBuilder;
+import org.squashtest.tm.web.internal.model.json.FormCustomReportReportBinding;
+import org.squashtest.tm.web.internal.model.json.JsonCustomReportGridElement;
+import org.squashtest.tm.web.internal.model.json.JsonCustomReportReportBinding;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.squashtest.tm.domain.chart.ChartDefinition;
-import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
-import org.squashtest.tm.domain.customreport.CustomReportDashboard;
-import org.squashtest.tm.domain.customreport.CustomReportReportBinding;
-import org.squashtest.tm.service.customreport.CustomReportDashboardService;
-import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
-import org.squashtest.tm.web.internal.model.builder.JsonCustomReportChartBindingBuilder;
-import org.squashtest.tm.web.internal.model.json.FormCustomReportChartBinding;
-import org.squashtest.tm.web.internal.model.json.JsonCustomReportChartBinding;
-import org.squashtest.tm.web.internal.model.json.JsonCustomReportGridElement;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Controller
-public class CustomReportChartBindingController {
+public class CustomReportReportBindingController {
 
 	private static final String CHART = "chart";
 
@@ -61,35 +55,35 @@ public class CustomReportChartBindingController {
 	private CustomReportDashboardService dashboardService;
 
 	@Inject
-	@Named("customReport.chartBindingBuilder")
-	private Provider<JsonCustomReportChartBindingBuilder> builderProvider;
+	@Named("customReport.reportBindingBuilder")
+	private Provider<JsonCustomReportReportBindingBuilder> builderProvider;
 
 	@ResponseBody
-	@RequestMapping(value = "/custom-report-chart-binding", method = RequestMethod.POST)
+	@RequestMapping(value = "/custom-report-report-binding", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
-	public JsonCustomReportChartBinding createCustomReportChartBinding(@RequestBody FormCustomReportChartBinding formChartBinding){
-		CustomReportChartBinding crcb = formChartBinding.convertToEntity();
+	public JsonCustomReportReportBinding createCustomReportReportBinding(@RequestBody FormCustomReportReportBinding formReportBinding) {
+		CustomReportReportBinding crrb = formReportBinding.convertToEntity();
 
 		//setting the nested entities.
-		ChartDefinition chartDefinition = crlnservice.findChartDefinitionByNodeId(formChartBinding.getChartNodeId());
-		CustomReportDashboard dashboard = crlnservice.findCustomReportDashboardById(formChartBinding.getDashboardNodeId());
-		crcb.setChart(chartDefinition);
-		crcb.setDashboard(dashboard);
+		ReportDefinition reportDefinition = crlnservice.findReportDefinitionByNodeId(formReportBinding.getReportNodeId());
+		CustomReportDashboard dashboard = crlnservice.findCustomReportDashboardById(formReportBinding.getDashboardNodeId());
+		crrb.setReport(reportDefinition);
+		crrb.setDashboard(dashboard);
 
 		//do binding and return.
-		dashboardService.bindChart(crcb);
-		return  builderProvider.get().build(crcb);
+		dashboardService.bindReport(crrb);
+		return builderProvider.get().build(crrb);
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/custom-report-chart-binding-replace-chart/{bindingId}/{chartNodeId}", method = RequestMethod.POST)
-	public JsonCustomReportChartBinding changeBindedChart(@PathVariable long bindingId, @PathVariable long chartNodeId){
-		CustomReportChartBinding crcb = dashboardService.changeBindedChart(bindingId,chartNodeId);
-		return  builderProvider.get().build(crcb);
+	@RequestMapping(value = "/custom-report-report-binding-replace-report/{bindingId}/{reportNodeId}", method = RequestMethod.POST)
+	public JsonCustomReportReportBinding changeBindedReport(@PathVariable long bindingId, @PathVariable long reportNodeId){
+		CustomReportReportBinding crrb = dashboardService.changeBindedReport(bindingId,reportNodeId);
+		return  builderProvider.get().build(crrb);
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/custom-report-chart-binding", method = RequestMethod.PUT)
+	@RequestMapping(value = "/custom-report-report-binding", method = RequestMethod.PUT)
 	public void updateGrid(@RequestBody JsonCustomReportGridElement[] gridElements){
 		List<CustomReportReportBinding> reportBindings = new ArrayList<>();
 		for (JsonCustomReportGridElement gridElement : gridElements) {
@@ -109,8 +103,8 @@ public class CustomReportChartBindingController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/custom-report-chart-binding/{id}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/custom-report-report-binding/{id}", method = RequestMethod.DELETE)
 	public void unbindChart(@PathVariable long id){
-		dashboardService.unbindChart(id);
+		dashboardService.unbindReport(id);
 	}
 }

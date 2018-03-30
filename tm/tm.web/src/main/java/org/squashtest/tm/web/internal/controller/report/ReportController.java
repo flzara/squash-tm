@@ -146,7 +146,7 @@ public class ReportController {
 
 	@RequestMapping(value = "/panel/{parentId}", method = RequestMethod.GET)
 	public String showReportPanelInCustomReport(@PathVariable String namespace, Model model,
-												@PathVariable("parentId") long parentId, Locale locale) throws IOException {
+												@PathVariable("parentId") long parentId, Locale locale) {
 		populateModel(namespace, model);
 
 		model.addAttribute("parentId", parentId);
@@ -158,7 +158,13 @@ public class ReportController {
 			model.addAttribute("reportDef", JsonHelper.serialize(def));
 			model.addAttribute("reportDefDescription", HTMLCleanupUtils.cleanHtml(def.getDescription()));
 
-			Map<String, Object> form = JsonHelper.deserialize(def.getParameters());
+			Map<String, Object> form = null;
+			try {
+				form = JsonHelper.deserialize(def.getParameters());
+			} catch (IOException e) {
+				LOGGER.error("the report : " + def.getName() + " has corrupted parameters.", e);
+			}
+
 			Report report = reportsRegistry.findReport(namespace);
 			List<Project> projects = projectFinder.findAllOrderedByName();
 			if (def.getPluginNamespace().equalsIgnoreCase(namespace)) {

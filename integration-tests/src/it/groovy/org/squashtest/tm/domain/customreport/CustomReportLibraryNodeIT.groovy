@@ -20,23 +20,14 @@
  */
 package org.squashtest.tm.domain.customreport
 
-import javax.inject.Inject
-
-import org.hibernate.SessionFactory
-import org.hibernate.Query
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.domain.chart.ChartDefinition;
-import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
-import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
-import org.unitils.dbunit.annotation.ExpectedDataSet
 
-import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
@@ -157,9 +148,11 @@ class CustomReportLibraryNodeIT extends DbunitServiceSpecification {
 
 		when :
 		def chartBindings = crd.getChartBindings()
+		def reportBindings = crd.getReportBindings()
 
 		then :
 		chartBindings.size()==3
+		reportBindings.size()==1
 
 	}
 

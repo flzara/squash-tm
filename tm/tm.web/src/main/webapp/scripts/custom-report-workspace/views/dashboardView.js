@@ -24,20 +24,24 @@
  * The version used is a maintened fork : https://github.com/dsmorse/gridster.js
  * The library used for data plotting is the same as classic dashboard JqPlot
  */
-define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "tree", "workspace.routing", "../charts/chartFactory", "isIE", "squash.dateutils", "jquery.gridster"],
-	function ($, _, Backbone, translator, Handlebars, tree, urlBuilder, main, isIE, dateutils) {
+define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "tree", "workspace.routing", "../charts/chartFactory", "app/report/reportFactory", "isIE", "squash.dateutils", "jquery.gridster"],
+	function ($, _, Backbone, translator, Handlebars, tree, urlBuilder, main, reportMain, isIE, dateutils) {
 		"use strict";
 
 		var View = Backbone.View.extend({
 
-            //here we have 'class' variable. ie, all instance share the same variable
+			//here we have 'class' variable. ie, all instance share the same variable
 			el: "#contextual-content-wrapper",
 			tpl: "#tpl-show-dashboard",
 			tplChart: "#tpl-chart-in-dashboard",
 			tplNewChart: "#tpl-new-chart-in-dashboard",
 			tplChartDisplay: "#tpl-chart-display-area",
+			tplReport: "#tpl-report-in-dashboard",
+			tplNewReport: "#tpl-new-report-in-dashboard",
+			tplReportDisplay: "#tpl-report-display-area",
 			tplDashboardDoc: "#tpl-dashboard-doc",
-			widgetPrefixSelector: "#widget-chart-binding-",
+			chartWidgetPrefixSelector: "#widget-chart-binding-",
+			reportWidgetPrefixSelector: "#widget-report-binding-",
 			gridCol: 4,
 			gridRow: 3,
 			gridAdditionalRow: 10,
@@ -51,42 +55,47 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 			// xSizeWidget: null,//this attribute will be computed by calculateWidgetDimension
 			// ySizeWidget: null,//this attribute will be computed by calculateWidgetDimension
 			secureBlank: 5,//in pixel, a margin around widget to prevent inesthetics scrollbars
-            
-            //Instance variable are initialised in initialize function
+
+			//Instance variable are initialised in initialize function
 			initialize: function (options) {
 				this.options = options;
 				var self = this;
-				this.xSizeWidget = null,//this attribute will be computed by calculateWidgetDimension
-				this.ySizeWidget = null,//this attribute will be computed by calculateWidgetDimension
+				this.xSizeWidget = null;//this attribute will be computed by calculateWidgetDimension
+				this.ySizeWidget = null;//this attribute will be computed by calculateWidgetDimension
 				//fetching the acls so we can adapt the view with user rights
 				//Initial data that will be set by ajax request, contains dashboard attributes and bindings. NOT UPDATED by user actions. Will be reinitialized on refresh.
-                this.dashboardInitialData = null;
-                //Map of the charts drawn on the grid. Each object inside this map is a backbone view.
-                this.dashboardChartViews = {};
-                //Map of the binding, ie all the CustomReportChartBinding for this dashboard. UPDATED by user actions and synchronized with server.
-                //Initialy set with CustomReportChartBinding presents inside initial data
-                this.dashboardChartBindings = {};
-                this.gridster = null;
-                this.i18nString = translator.get({
-                    "dateFormat": "squashtm.dateformat",
-                    "dateFormatShort": "squashtm.dateformatShort"
-                });
+				this.dashboardInitialData = null;
+				//Map of the charts drawn on the grid. Each object inside this map is a backbone view.
+				this.dashboardChartViews = {};
+				//Map of the binding, ie all the CustomReportChartBinding for this dashboard. UPDATED by user actions and synchronized with server.
+				//Initialy set with CustomReportChartBinding presents inside initial data
+				this.dashboardChartBindings = {};
+				//Map of the reports drawn on the grid. Each object inside this map is a backbone view.
+				this.dashboardReportViews = {};
+				//Initialy set with CustomReportReportBinding presents inside initial data
+				this.dashboardReportBindings = {};
+				this.gridster = null;
+				this.i18nString = translator.get({
+					"dateFormat": "squashtm.dateformat",
+					"dateFormatShort": "squashtm.dateformatShort"
+				});
 
-                _.bindAll(this,"initializeData","render","initGrid","initListenerOnTree","dropChartInGrid","generateGridsterCss","redrawDashboard","serializeGridster","canWrite");
-                this.initializeData();
-                this.initListenerOnTree();
-                this.initListenerOnWindowResize();
-                this.refreshCharts = _.throttle(this.refreshCharts, 1000);//throttle refresh chart to avoid costly redraw of dashboard on resize
-				
+				_.bindAll(this, "initializeData", "render", "initGrid", "initListenerOnTree", "dropItemInGrid", "generateGridsterCss", "redrawDashboard", "serializeGridster", "canWrite");
+				this.initializeData();
+				this.initListenerOnTree();
+				this.initListenerOnWindowResize();
+				this.refreshItems = _.throttle(this.refreshItems, 1000);//throttle refresh chart to avoid costly redraw of dashboard on resize
+
 			},
 
 			events: {
 				"click .delete-chart-button": "unbindChart",
+				"click .delete-report-button": "unbindReport",
 				"click .favorite-select": "chooseFavoriteDashboard",
-				"transitionend #dashboard-grid": "refreshCharts",
-				"webkitTransitionEnd #dashboard-grid": "refreshCharts",
-				"oTransitionEnd #dashboard-grid": "refreshCharts",
-				"MSTransitionEnd #dashboard-grid": "refreshCharts",
+				"transitionend #dashboard-grid": "refreshItems",
+				"webkitTransitionEnd #dashboard-grid": "refreshItems",
+				"oTransitionEnd #dashboard-grid": "refreshItems",
+				"MSTransitionEnd #dashboard-grid": "refreshItems",
 				"click #toggle-expand-left-frame-button": "toggleDashboard",
 				"click #rename-dashboard-button": "rename"
 			},
@@ -103,15 +112,15 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 						//1.15 favorite dashboard in classic workspaces. In that case we must pass the model (ie tree selection to server)
 						//I choose to do a POST request to avoid the nasty URL param size limit witch is causing serious unresolved bug in research workspace.
 						//Even if the http semantic suggest to do a GET in that kind of request...
-						if(self.options.model.get("showInClassicWorkspace")){
+						if (self.options.model.get("showInClassicWorkspace")) {
 							var scope = self.options.model.get("dynamicScopeModel");
 							return $.ajax({
-								'type' : 'POST',
-								'contentType' : 'application/json',
-								'url':url,
+								'type': 'POST',
+								'contentType': 'application/json',
+								'url': url,
 								'data': JSON.stringify(scope)
-								});
-							}
+							});
+						}
 
 						return $.ajax({
 							url: url,
@@ -133,15 +142,16 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 				var source = $(this.tpl).html();
 				var template = Handlebars.compile(source);
 				Handlebars.registerPartial("chart", $(this.tplChart).html());
+				Handlebars.registerPartial("report", $(this.tplReport).html());
 				Handlebars.registerPartial("dashboardDoc", $(this.tplDashboardDoc).html());
 
 				//this bolean is used to allow cleaner html code... i prefer avoid complex test in handlebars templates
-				if (this.dashboardInitialData.chartBindings.length === 0) {
+				if (this.dashboardInitialData.chartBindings.length === 0 && this.dashboardInitialData.reportBindings.length === 0) {
 					this.dashboardInitialData.emptyDashboard = true;
 				} else {
 					this.dashboardInitialData.emptyDashboard = false;
 				}
-                
+
 				this.$el.append(template(this.dashboardInitialData));
 				return this;
 			},
@@ -167,13 +177,28 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 					autogenerate_stylesheet: false,//Turned off
 					serialize_params: function ($w, wgd) {
 						var chartBindingId = $w.find(".chart-display-area").attr("data-binding-id");
-						return {
-							id: chartBindingId,
-							col: wgd.col,
-							row: wgd.row,
-							sizeX: wgd.size_x,
-							sizeY: wgd.size_y
-						};
+						var reportBindingId = $w.find(".report-display-area").attr("data-binding-id");
+						if (chartBindingId) {
+							return {
+								id: chartBindingId,
+								col: wgd.col,
+								row: wgd.row,
+								sizeX: wgd.size_x,
+								sizeY: wgd.size_y,
+								elementType: "chart"
+							};
+						}
+						if (reportBindingId) {
+							return {
+								id: reportBindingId,
+								col: wgd.col,
+								row: wgd.row,
+								sizeX: wgd.size_x,
+								sizeY: wgd.size_y,
+								elementType: "report"
+							};
+						}
+
 					},
 					resize: {
 						enabled: resizeable,
@@ -182,11 +207,11 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 							self.cacheWidgetOriginalSize(e, ui, $widget);
 						},
 						resize: function (e, ui, $widget) {
-							self.resizeChart(e, ui, $widget);
+							self.resizeItem(e, ui, $widget);
 						},
 						stop: function (e, ui, $widget) {
 							self.resolveConflict($widget);
-							self.resizeChart(e, ui, $widget);
+							self.resizeItem(e, ui, $widget);
 						}
 					},
 					draggable: {
@@ -207,11 +232,17 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 			/**
 			 * Update all charts. The binding are given by this.dashboardChartBindings
 			 */
-			refreshCharts: function () {
-				var bindings = _.values(this.dashboardChartBindings);
-				for (var j = 0; j < bindings.length; j++) {
-					var binding = bindings[j];
-					this.changeBindedChart(binding.id, binding);
+			refreshItems: function () {
+				var chartBindings = _.values(this.dashboardChartBindings);
+				for (var j = 0; j < chartBindings.length; j++) {
+					var chartBinding = chartBindings[j];
+					this.changeBindedChart(chartBinding.id, chartBinding);
+				}
+
+				var reportBindings = _.values(this.dashboardReportBindings);
+				for (var k = 0; k < reportBindings.length; k++) {
+					var reportBinding = reportBindings[k];
+					this.changeBindedReport(reportBinding.id, reportBinding);
 				}
 			},
 
@@ -332,10 +363,10 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 					if (self.canWrite()) {
 						var idTarget = data.r.attr('id');
 						if (idTarget === 'dashboard-grid') {
-							self.dropChartInGrid(data);
+							self.dropItemInGrid(data);
 						}
 						else {
-							self.dropChartInExistingChart(data);
+							self.dropItemInExistingItem(data);
 						}
 					}
 				});
@@ -351,27 +382,30 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 				});
 			},
 
-			initFavoriteButton : function () {
+			initFavoriteButton: function () {
 				$("#change-favorite-dashboard-button").buttonmenu();
 				return this;
 			},
 
 			//create a new customReportChartBinding in database and add it to gridster in call back
-			dropChartInGrid: function (data) {
+			dropItemInGrid: function (data) {
 				var cell = this.getCellFromDrop();
+				var url;
+				var self = this;
 
 				var ajaxData = {
 					dashboardNodeId: this.model.id,
-					chartNodeId: data.o.getResId(),
 					sizeX: this.newChartSizeX,
 					sizeY: this.newChartSizeY,
 					col: cell.col,
 					row: cell.row
 				};
 
-				var url = urlBuilder.buildURL("custom-report-chart-binding");
-				var self = this;
-				$.ajax({
+				if (data.o.getResType() === "custom-report-chart") {
+					ajaxData.chartNodeId = data.o.getResId();
+
+					url = urlBuilder.buildURL("custom-report-chart-binding");
+					$.ajax({
 						headers: {
 							'Accept': 'application/json',
 							'Content-Type': 'application/json'
@@ -380,19 +414,42 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 						type: 'post',
 						'data': JSON.stringify(ajaxData)
 					})
-					.success(function (response) {
-						self.addNewChart(response);
-					});
+						.success(function (response) {
+							self.addNewChart(response);
+						});
+				}
+
+				if (data.o.getResType() === "custom-report-report") {
+					ajaxData.reportNodeId = data.o.getResId();
+
+					url = urlBuilder.buildURL("custom-report-report-binding");
+					$.ajax({
+						headers: {
+							'Accept': 'application/json',
+							'Content-Type': 'application/json'
+						},
+						url: url,
+						type: 'post',
+						'data': JSON.stringify(ajaxData)
+					})
+						.success(function (response) {
+							self.addNewReport(response);
+						});
+				}
+
 
 			},
 
-			dropChartInExistingChart: function (data) {
-				var chartNodeId = data.o.getResId();
-				var bindingId = $(data.r).parents(".chart-display-area").attr("data-binding-id");//id of binding on wich new chart is dropped
-
-				var url = urlBuilder.buildURL("custom-report-chart-binding-replace-chart", bindingId, chartNodeId);
+			dropItemInExistingItem: function (data) {
+				var nodeId = data.o.getResId();
+				var bindingId;
+				var url;
 				var self = this;
-				$.ajax({
+
+				if (data.o.getResType() === "custom-report-chart") {
+					bindingId = $(data.r).parents(".chart-display-area").attr("data-binding-id");//id of binding on wich new chart is dropped
+					url = urlBuilder.buildURL("custom-report-chart-binding-replace-chart", bindingId, nodeId);
+					$.ajax({
 						headers: {
 							'Accept': 'application/json',
 							'Content-Type': 'application/json'
@@ -400,17 +457,39 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 						url: url,
 						type: 'post'
 					})
-					.success(function (response) {
-						self.changeBindedChart(bindingId, response);
-					});
+						.success(function (response) {
+							self.changeBindedChart(bindingId, response);
+						});
+
+				}
+				if (data.o.getResType() === "custom-report-report") {
+
+
+					bindingId = $(data.r).parents(".report-display-area").context.getAttribute("data-binding-id");//id of binding on wich new chart is dropped
+					url = urlBuilder.buildURL("custom-report-report-binding-replace-report", bindingId, nodeId);
+					$.ajax({
+						headers: {
+							'Accept': 'application/json',
+							'Content-Type': 'application/json'
+						},
+						url: url,
+						type: 'post'
+					})
+						.success(function (response) {
+							self.changeBindedReport(bindingId, response);
+						});
+				}
 			},
 
 			redrawDashboard: function () {
 				console.log("REDRAW !!!!");
 				var bindings = _.values(this.dashboardChartBindings);
+				var reportBindings = _.values(this.dashboardReportBindings);
 				var self = this;
 				//update initial data with changes done by user since initialization
 				this.dashboardInitialData.chartBindings = bindings;
+				this.dashboardInitialData.reportBindings = reportBindings;
+
 				this.gridster.destroy();
 				this.render().generateGridsterCss().initGrid();
 				//As ie don't support css animations we fallback on traditionnal js with delay to wait end of transition
@@ -418,21 +497,27 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 				if (isIE() || this.options.model.get("showInClassicWorkspace")) {
 					console.log("classic refresh");
 					_.delay(function () {
-						self.refreshCharts();
+						self.refreshItems();
 					}, 1000);
 				}
 			},
 
 			buildBindingData: function (response) {
 				this.dashboardInitialData = response;//We need to cache the initial data for templating, ie render()
-                this.dashboardInitialData.canWrite = this.canWrite;//copy rights to allow effcient templating
+				this.dashboardInitialData.canWrite = this.canWrite;//copy rights to allow effcient templating
 				this.dashboardInitialData.generatedDate = this.i18nFormatDate(new Date());
 				this.dashboardInitialData.generatedHour = this.i18nFormatHour(new Date());
-				var bindings = response.chartBindings;
-				for (var i = 0; i < bindings.length; i++) {
-					var binding = bindings[i];
-					var id = binding.id;
-					this.dashboardChartBindings[id] = binding;
+				var chartBindings = response.chartBindings;
+				for (var i = 0; i < chartBindings.length; i++) {
+					var chartBinding = chartBindings[i];
+					var id = chartBinding.id;
+					this.dashboardChartBindings[id] = chartBinding;
+				}
+				var reportBindings = response.reportBindings;
+				for (var j = 0; j < reportBindings.length; j++) {
+					var reportBinding = reportBindings[j];
+					var reportId = reportBinding.id;
+					this.dashboardReportBindings[reportId] = reportBinding;
 				}
 				return this;
 			},
@@ -451,10 +536,22 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 				this.dashboardChartViews[id] = main.buildChart(selector, binding.chartInstance);
 			},
 
+			buildReport: function (binding) {
+				var id = binding.id;
+				var selector = "#report-binding-" + id;
+				this.dashboardReportViews[id] = reportMain.buildReport(selector, binding.reportInstance);
+			},
+
 			//rebuild an existing chart
 			redrawChart: function (id) {
 				var view = this.dashboardChartViews[id];
 				view.render();
+			},
+
+			redrawReport: function (id) {
+				var view = this.dashboardReportViews[id];
+				// I don't know yet if I should redraw the report
+				// view.render();
 			},
 
 			buildDashBoard: function () {
@@ -463,12 +560,23 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 					var binding = bindings[i];
 					this.buildChart(binding);
 				}
+
+				var reportBindings = _.values(this.dashboardReportBindings);
+				for (var j = 0; j < reportBindings.length; j++) {
+					var reportBinding = reportBindings[j];
+					this.buildReport(reportBinding);
+				}
 				return this;
 			},
 
-			resizeChart: function (e, ui, $widget) {
-				var chartBindingId = $widget.attr("data-binding-id");//get binding id
-				this.redrawChart(chartBindingId);
+			resizeItem: function (e, ui, $widget) {
+				var bindingId = $widget.attr("data-binding-id");//get binding id
+				if ( $widget.attr("data-type") === "chart") {
+					this.redrawChart(bindingId);
+				}
+				if ( $widget.attr("data-type") === "report") {
+					this.redrawReport(bindingId);
+				}
 			},
 
 			serializeGridster: function () {
@@ -486,13 +594,37 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 				}).success(function (response) {
 					//updating bindings
 					_.each(gridData, function (widgetData) {//as resize or move can alter several widgets, all bindings must be updateds
-						var binding = self.dashboardChartBindings[widgetData.id];
-						binding.row = widgetData.row;
-						binding.col = widgetData.col;
-						binding.sizeX = widgetData.sizeX;
-						binding.sizeY = widgetData.sizeY;
+
+						if (widgetData.elementType === "chart") {
+							var chartBinding = self.dashboardChartBindings[widgetData.id];
+							chartBinding.row = widgetData.row;
+							chartBinding.col = widgetData.col;
+							chartBinding.sizeX = widgetData.sizeX;
+							chartBinding.sizeY = widgetData.sizeY;
+						}
+
+						if (widgetData.elementType === "report") {
+							var reportBinding = self.dashboardReportBindings[widgetData.id];
+							reportBinding.row = widgetData.row;
+							reportBinding.col = widgetData.col;
+							reportBinding.sizeX = widgetData.sizeX;
+							reportBinding.sizeY = widgetData.sizeY;
+						}
+
 					});
 				});
+			},
+
+			addNewReport: function (binding) {
+				if (_.size(this.dashboardReportBindings) === 0 && this.$el.find("#dashboard-doc").length === 1) {
+					this.$el.find("#dashboard-doc").remove();
+				}
+				var source = $(this.tplNewReport).html();
+				var template = Handlebars.compile(source);
+				var html = template(binding);
+				this.gridster.add_widget(html, binding.sizeX, binding.sizeY, binding.col, binding.row);
+				this.buildReport(binding);
+				this.addNewBindingInMap(binding);
 			},
 
 			addNewChart: function (binding) {
@@ -524,6 +656,23 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 				}
 			},
 
+			unbindReport: function (event) {
+				//Get id of the suppressed chart
+				if (this.canWrite()) {
+					var id = event.currentTarget.getAttribute("data-binding-id");
+					var url = urlBuilder.buildURL("custom-report-report-binding-with-id", id);
+					var self = this;
+					//Suppress on server and if success, update gridster and update maps properties
+					$.ajax({
+						url: url,
+						type: 'delete'
+					}).success(function (response) {
+						self.removeReport(id);
+						self.removeReportWidget(id);
+					});
+				}
+			},
+
 			removeAllCharts: function () {
 				var views = this.dashboardChartViews;
 				_.each(views, function (view) {
@@ -538,8 +687,19 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 				delete this.dashboardChartBindings[bindingId];
 			},
 
+			removeReport: function (bindingId) {
+				this.dashboardReportViews[bindingId].remove();//remove backbone view
+				delete this.dashboardReportViews[bindingId];
+				delete this.dashboardReportBindings[bindingId];
+			},
+
 			removeWidget: function (bindingId) {
-				var widgetSelector = this.widgetPrefixSelector + bindingId;
+				var widgetSelector = this.chartWidgetPrefixSelector + bindingId;
+				this.gridster.remove_widget(widgetSelector, this.serializeGridster);//after suppressing widget, serialize to update position on server if the grid reorganize itself after widget suppression
+			},
+
+			removeReportWidget: function (bindingId) {
+				var widgetSelector = this.reportWidgetPrefixSelector + bindingId;
 				this.gridster.remove_widget(widgetSelector, this.serializeGridster);//after suppressing widget, serialize to update position on server if the grid reorganize itself after widget suppression
 			},
 
@@ -548,14 +708,31 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 				var source = $(this.tplChartDisplay).html();
 				var template = Handlebars.compile(source);
 				var html = template(binding);
-				var widgetSelector = this.widgetPrefixSelector + bindingId;
+				var widgetSelector = this.chartWidgetPrefixSelector + bindingId;
 				$(widgetSelector).html(html);
 				this.buildChart(binding);
 				this.addNewBindingInMap(binding);
 			},
 
+			changeBindedReport: function (bindingId, binding) {
+				this.removeReport(bindingId);
+				var source = $(this.tplReportDisplay).html();
+				var template = Handlebars.compile(source);
+				var html = template(binding);
+				var widgetSelector = this.reportWidgetPrefixSelector + bindingId;
+				$(widgetSelector).html(html);
+				this.buildReport(binding);
+				this.addNewBindingInMap(binding);
+			},
+
 			addNewBindingInMap: function (binding) {
-				this.dashboardChartBindings[binding.id] = binding;
+
+				if (binding.hasOwnProperty("chartDefinitionId")) {
+					this.dashboardChartBindings[binding.id] = binding;
+				}
+				if (binding.hasOwnProperty("reportDefinitionId")) {
+					this.dashboardReportBindings[binding.id] = binding;
+				}
 			},
 
 			//Return the first empty cell.
@@ -612,16 +789,16 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 				var wreqr = squashtm.app.wreqr;
 				wreqr.trigger("renameNode");
 			},
-            
-            chooseFavoriteDashboard : function (event) {
-                var id = this.model.get('id');
+
+			chooseFavoriteDashboard: function (event) {
+				var id = this.model.get('id');
 				var workspace = event.target.getAttribute("name");
-                var url = urlBuilder.buildURL("custom-report-dashboard-favorite",workspace, id);
-                $.ajax({
+				var url = urlBuilder.buildURL("custom-report-dashboard-favorite", workspace, id);
+				$.ajax({
 					url: url,
 					type: 'post'
 				});
-            }
+			}
 		});
 
 		return View;
