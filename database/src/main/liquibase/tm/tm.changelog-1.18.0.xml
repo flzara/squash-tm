@@ -988,4 +988,29 @@
                          constraintName="uc_campaign_test_plan_item_order"/>
   </changeSet>
 
+  <changeSet id="tm-1.18.0-binding-report-to-dashboard" author="zyang">
+    <createTable tableName="CUSTOM_REPORT_REPORT_BINDING">
+      <column name="CRRB_ID" type="BIGINT" autoIncrement="true" remarks="pk genere">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="PK_CRRB_ID" />
+      </column>
+
+      <column name="CRD_ID" type="BIGINT" remarks="cle etrangere vers le dashboard. ">
+        <constraints nullable="false" foreignKeyName="fk_report_bindind_custom_report_dashboard_crd_id" references="CUSTOM_REPORT_DASHBOARD(CRD_ID)" />
+      </column>
+
+      <column name="REPORT_ID" type="BIGINT" remarks="cle etrangere vers le report. ">
+        <constraints nullable="false" foreignKeyName="fk_chart_bindind_report_definition_report_id" references="REPORT_DEFINITION(REPORT_ID)" />
+      </column>
+
+      <column name="ROW" type="INT"/>
+
+      <column name="COL" type="INT"/>
+
+      <column name="SIZE_X" type="INT"/>
+
+      <column name="SIZE_Y" type="INT"/>
+
+    </createTable>
+  </changeSet>
+
 </databaseChangeLog>
