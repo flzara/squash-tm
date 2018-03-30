@@ -20,90 +20,115 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ tag language="java" pageEncoding="utf-8" body-content="empty" description="structure of a dashboard for test cases. No javascript."%>
+<%@ tag language="java" pageEncoding="utf-8" body-content="empty"
+		description="structure of a dashboard for test cases. No javascript." %>
 
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ attribute name="workspace" required="false" %>
 
 <div id="favorite-dashboard-wrapper" class="favorite-dashboard-wrapper">
- <div id='contextual-content-wrapper' class="dashboard-grid-in-classic-workspace  ui-corner-all">
-	<!--empty -->
- </div>
+	<div id='contextual-content-wrapper' class="dashboard-grid-in-classic-workspace  ui-corner-all">
+		<!--empty -->
+	</div>
 </div>
 
 <!-- SHOW DASHBOARD -->
-  <script id="tpl-show-dashboard" type="text/x-handlebars-template">
+<script id="tpl-show-dashboard" type="text/x-handlebars-template">
 	<div id="dashboard-name-div" class="ui-default-black">
 		<div class="ui-favorite-dashboard-name small-margin-left">
 
-				{{name}}
+			{{name}}
 
 		</div>
 
-	<div class="dashboard-grid-toolbar">
-		<span>(<f:message key="workspace.custom-report.timestamp.label"/>)</span>
-		<a class="favorite-dashboard-refresh-button sq-btn" role="button" title="<f:message key='label.Refresh' />">
-			<span><f:message key='label.Refresh' /></span>
-		</a>
-		<a class="show-default-dashboard-button sq-btn" role="button"  title="<f:message key='label.default' />">
-			<span><f:message key='label.default' /></span>
-		</a>
+		<div class="dashboard-grid-toolbar">
+			<span>(<f:message key="workspace.custom-report.timestamp.label"/>)</span>
+			<a class="favorite-dashboard-refresh-button sq-btn" role="button" title="<f:message key='label.Refresh' />">
+				<span><f:message key='label.Refresh'/></span>
+			</a>
+			<a class="show-default-dashboard-button sq-btn" role="button" title="<f:message key='label.default' />">
+				<span><f:message key='label.default'/></span>
+			</a>
 
-		<div class="unsnap"></div>
+			<div class="unsnap"></div>
+		</div>
 	</div>
-	</div>
-			{{#if emptyDashboard}}
-				{{> dashboardDoc}}
-			{{/if}}
+	{{#if emptyDashboard}}
+	{{> dashboardDoc}}
+	{{/if}}
 	<div id="dashboard-grid" class="dashboard-grid gridster jstree-drop">
+		<div id="document-holder"></div>
 		{{#each chartBindings}}
-			{{> chart canWrite=../canWrite}}
+		{{> chart canWrite=../canWrite}}
+		{{/each}}
+		{{#each reportBindings}}
+		{{> report canWrite=../canWrite}}
 		{{/each}}
 	</div>
-  </script>
+</script>
 
-  <script id="tpl-chart-in-dashboard" type="text/x-handlebars-template">
-	<div id="widget-chart-binding-{{id}}" data-binding-id="{{id}}" class="dashboard-graph" data-row="{{row}}" data-col="{{col}}" data-sizex="{{sizeX}}" data-sizey="{{sizeY}}">
-    	<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
-    </div>
-  </script>
+<script id="tpl-chart-in-dashboard" type="text/x-handlebars-template">
+	<div id="widget-chart-binding-{{id}}" data-binding-id="{{id}}" class="dashboard-graph" data-row="{{row}}"
+		 data-col="{{col}}" data-sizex="{{sizeX}}" data-sizey="{{sizeY}}">
+		<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area"
+			 style="height:100%; width:100%;"></div>
+	</div>
+</script>
 
-  <script id="tpl-chart-display-area" type="text/x-handlebars-template">
-	<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
-  </script>
+<script id="tpl-chart-display-area" type="text/x-handlebars-template">
+	<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area"
+		 style="height:100%; width:100%;"></div>
+</script>
 
-  <script id="tpl-new-chart-in-dashboard" type="text/x-handlebars-template">
-	<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
+<script id="tpl-new-chart-in-dashboard" type="text/x-handlebars-template">
+	<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area"
+		 style="height:100%; width:100%;"></div>
 	<span class="gs-resize-handle gs-resize-handle-both"></span>
-  </script>
+</script>
 
-  <script id="tpl-dashboard-doc" type="text/x-handlebars-template">
-    <div id="dashboard-doc">
-    	<strong><f:message key="workspace.home.dashboard.empty"/></strong>
-    </div>
-  </script>
 
-  <script id="tpl-default-dashboard" type="text/x-handlebars-template">
-  	<div id="dashboard-name-div" class="fragment-header ui-default-black">
+<script id="tpl-report-in-dashboard" type="text/x-handlebars-template">
+	<div id="widget-report-binding-{{id}}" data-binding-id="{{id}}" class="dashboard-graph" data-row="{{row}}" data-col="{{col}}" data-sizex="{{sizeX}}" data-sizey="{{sizeY}}">
+		<div id="report-binding-{{id}}" data-binding-id="{{id}}" class="report-display-area" style="height:100%; width:100%;"></div>
+	</div>
+</script>
+
+<script id="tpl-report-display-area" type="text/x-handlebars-template">
+	<div id="report-binding-{{id}}" data-binding-id="{{id}}" class="report-display-area" style="height:100%; width:100%;"></div>
+</script>
+
+<script id="tpl-new-report-in-dashboard" type="text/x-handlebars-template">
+	<div id="report-binding-{{id}}" data-binding-id="{{id}}" class="report-display-area" style="height:100%; width:100%;"></div>
+	<span class="gs-resize-handle gs-resize-handle-both"></span>
+</script>
+
+<script id="tpl-dashboard-doc" type="text/x-handlebars-template">
+	<div id="dashboard-doc">
+		<strong><f:message key="workspace.home.dashboard.empty"/></strong>
+	</div>
+</script>
+
+<script id="tpl-default-dashboard" type="text/x-handlebars-template">
+	<div id="dashboard-name-div" class="fragment-header ui-default-black">
 		<div class="ui-favorite-dashboard-name small-margin-left">
-				<span><f:message key='report.view.code.dashboard' /></span>
+			<span><f:message key='report.view.code.dashboard'/></span>
 		</div>
 
-    	<div class="dashboard-grid-toolbar">
-    		<a class="show-default-dashboard-button sq-btn" role="button"  title="<f:message key='label.default' />">
-    			<span><f:message key='label.default' /></span>
-    		</a>
+		<div class="dashboard-grid-toolbar">
+			<a class="show-default-dashboard-button sq-btn" role="button" title="<f:message key='label.default' />">
+				<span><f:message key='label.default'/></span>
+			</a>
 
-    		<div class="unsnap"></div>
-    	</div>
-    	</div>
+			<div class="unsnap"></div>
+		</div>
+	</div>
 
-      <div id="dashboard-doc">
-        <strong><f:message key="workspace.home.dashboard.default"/></strong>
-      </div>
-  </script>
+	<div id="dashboard-doc">
+		<strong><f:message key="workspace.home.dashboard.default"/></strong>
+	</div>
+</script>
 
-  <!-- /SHOW DASHBOARD  -->
+<!-- /SHOW DASHBOARD -->
 
 

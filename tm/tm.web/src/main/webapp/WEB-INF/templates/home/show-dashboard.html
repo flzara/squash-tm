@@ -34,9 +34,13 @@
 				{{> dashboardDoc}}
 			{{/if}}
 		<div id="dashboard-grid" class="dashboard-grid gridster jstree-drop">
-			{{#each chartBindings}}
-   				{{> chart canWrite=../canWrite}}
- 			{{/each}}
+      <div id="document-holder"></div>
+      {{#each chartBindings}}
+      {{> chart canWrite=../canWrite}}
+      {{/each}}
+      {{#each reportBindings}}
+      {{> report canWrite=../canWrite}}
+      {{/each}}
 		</div>
 </div>
 
@@ -55,4 +59,23 @@
 <div th:fragment="chart-display-area">
 	<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
 		<span class="gs-resize-handle gs-resize-handle-both"></span>
+</div>
+
+
+
+<div th:fragment="report-in-dashboard">
+  <div id="widget-report-binding-{{id}}" data-binding-id="{{id}}" class="dashboard-graph" data-row="{{row}}" data-col="{{col}}" data-sizex="{{sizeX}}" data-sizey="{{sizeY}}">
+    <div id="report-binding-{{id}}" data-binding-id="{{id}}" class="report-display-area" style="height:100%; width:100%;"></div>
+  </div>
+</div>
+
+<div th:fragment="new-report-in-dashboard">
+  <div id="widget-report-binding-{{id}}" class="dashboard-graph" data-binding-id="{{id}}">
+    <div id="report-binding-{{id}}" data-binding-id="{{id}}" class="report-display-area" style="height:100%; width:100%;"></div>
+  </div>
+</div>
+
+<div th:fragment="report-display-area">
+  <div id="report-binding-{{id}}" data-binding-id="{{id}}" class="report-display-area" style="height:100%; width:100%;"></div>
+  <span class="gs-resize-handle gs-resize-handle-both"></span>
 </div>

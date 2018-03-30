@@ -129,6 +129,19 @@
           th:inline="text"
           th:include="home/show-dashboard :: new-chart-in-dashboard" />
 
+  <script id="tpl-report-in-dashboard" type="text/x-handlebars-template"
+          th:inline="text"
+          th:include="home/show-dashboard:: report-in-dashboard" />
+
+  <script id="tpl-report-display-area" type="text/x-handlebars-template"
+          th:inline="text"
+          th:include="home/show-dashboard :: report-display-area" />
+
+  <script id="tpl-new-report-in-dashboard" type="text/x-handlebars-template"
+          th:inline="text"
+          th:include="home/show-dashboard :: new-report-in-dashboard" />
+
+
   <script id="tpl-dashboard-doc" type="text/x-handlebars-template">
     <div id="dashboard-doc">
       <strong th:text="#{workspace.home.dashboard.empty}">dashboard doc</strong>
