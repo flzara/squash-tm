@@ -128,14 +128,16 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.r
 		},
 
 		modifySearch : function(){
-
+			var token = $("meta[name='_csrf']").attr("content");
 			if(this.isAssociation){
 				this.post(squashtm.app.contextRoot + "advanced-search?searchDomain="+this.domain+"&id="+this.associationId+"&associateResultWithType="+this.associationType, {
-					searchModel : JSON.stringify(this.model)
+					searchModel : JSON.stringify(this.model),
+					_csrf : token
 				});
 			} else {
 				this.post(squashtm.app.contextRoot + "advanced-search?searchDomain="+this.domain, {
-					searchModel : JSON.stringify(this.model)
+					searchModel : JSON.stringify(this.model),
+					_csrf : token
 				});
 			}
 		},

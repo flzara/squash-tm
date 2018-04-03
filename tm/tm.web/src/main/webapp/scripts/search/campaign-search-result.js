@@ -98,9 +98,10 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 		},
 
 		modifySearch : function(){
-
+				var token = $("meta[name='_csrf']").attr("content");
 				this.post(squashtm.app.contextRoot + "/advanced-search?searchDomain=campaign", {
-					searchModel : JSON.stringify(this.model)
+					searchModel : JSON.stringify(this.model),
+					_csrf : token
 				});
 
 		},
