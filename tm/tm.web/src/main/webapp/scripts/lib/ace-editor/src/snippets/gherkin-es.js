@@ -17,19 +17,19 @@ snippet esquema_del_escenario\n\
 		Entonces ${4}\n\n\
 		Ejemplos: ${5}\n\
 snippet tab3*2\n\
-	| ${1}\t\t\t\t| ${2}\t\t\t\t| ${3}\t\t\t\t|\n\
-	| ${4}\t\t\t\t| ${5}\t\t\t\t| ${6}\t\t\t\t|\n\
+	| ${1}\t| ${2}\t| ${3}\t|\n\
+	| ${4}\t| ${5}\t| ${6}\t|\n\
 snippet tab4*2\n\
-	| ${1}\t\t\t\t| ${2}\t\t\t\t| ${3}\t\t\t\t| ${4}\t\t\t\t|\n\
-	| ${5}\t\t\t\t| ${6}\t\t\t\t| ${7}\t\t\t\t| ${8}\t\t\t\t|\n\
+	| ${1}\t| ${2}\t| ${3}\t| ${4}\t|\n\
+	| ${5}\t| ${6}\t| ${7}\t| ${8}\t|\n\
 snippet tab3*3\n\
-	| ${1}\t\t\t\t| ${2}\t\t\t\t| ${3}\t\t\t\t|\n\
-	| ${4}\t\t\t\t| ${5}\t\t\t\t| ${6}\t\t\t\t|\n\
-	| ${7}\t\t\t\t| ${8}\t\t\t\t| ${9}\t\t\t\t|\n\
+	| ${1}\t| ${2}\t| ${3}\t|\n\
+	| ${4}\t| ${5}\t| ${6}\t|\n\
+	| ${7}\t| ${8}\t| ${9}\t|\n\
 snippet tab4*3\n\
-	| ${1}\t\t\t\t| ${2}\t\t\t\t| ${3}\t\t\t\t| ${4}\t\t\t\t\n\
-	| ${5}\t\t\t\t| ${6}\t\t\t\t| ${7}\t\t\t\t| ${8}\t\t\t\t\n\
-	| ${9}\t\t\t\t| ${10}\t\t\t\t| ${11}\t\t\t\t| ${12}\t\t\t\t\n\
+	| ${1}\t| ${2}\t| ${3}\t| ${4}\t\n\
+	| ${5}\t| ${6}\t| ${7}\t| ${8}\t\n\
+	| ${9}\t| ${10}\t| ${11}\t| ${12}\t\n\
 ";
 // @formatter:on
 	console.log(exports.snippetText);
