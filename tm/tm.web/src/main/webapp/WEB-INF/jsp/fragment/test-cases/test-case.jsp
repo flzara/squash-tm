@@ -116,14 +116,22 @@
     overflow: hidden;
   }
 
-  #tc-script-editor {
+  .tc-script-editor {
     margin: 0;
     position: absolute;
     top: 35px;
     bottom: 0;
-    left: 300px;
     right: 0;
   }
+
+  .tc-script-editor-option-open{
+    left: 300px;
+  }
+
+  .tc-script-editor-option-closed{
+    left: 0;
+  }
+
 
   .option-panel-wrapper{
     position: absolute;
@@ -246,12 +254,17 @@
                 class="button test-step-toolbar-button">
               SAVE IT !!!!
         </button>
+        <button id="tc-script-toggle-option-panel"
+                data-icon="ui-icon-plusthick"
+                class="button test-step-toolbar-button">
+              OPTIONS
+        </button>
       </span>
         </div>
-        <div class="option-panel-wrapper">
+        <div class="option-panel-wrapper" style="display: none">
           <div id="optionsPanel"></div>
         </div>
-        <div id="tc-script-editor"></div>
+        <div id="tc-script-editor" class="tc-script-editor tc-script-editor-option-closed"></div>
       </div>
     </c:if>
 

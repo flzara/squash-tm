@@ -31,7 +31,8 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing", "ace
 		},
 
 		events: {
-			"click #tc-script-save-button": "saveScript"
+			"click #tc-script-save-button": "saveScript",
+			"click #tc-script-toggle-option-panel": "toggleOptionPanel"
 		},
 
 		saveScript: function () {
@@ -113,16 +114,16 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing", "ace
 				"Show Invisibles": {
 					path: "showInvisibles"
 				},
-				"Show Indent Guides": {
-					path: "displayIndentGuides"
-				},
+				// "Show Indent Guides": {
+				// 	path: "displayIndentGuides"
+				// },
 				"Show Gutter": {
 					path: "showGutter"
 				}
 			};
 
 			// brutal monkey patching... sorry for that but the authors of ext-options.js
-			// do not seems to have exposed a way to control witch item is shown in control panel...
+			// do not seems to have exposed a way to control witch items is shown in control panel...
 			optionsPanel.render = function() {
 				optionsPanel.container.innerHTML = "";
 				dom.buildDom(["table", {id: "controls"},
@@ -164,6 +165,11 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing", "ace
 				}
 			}
 			return locale;
+		},
+
+		toggleOptionPanel : function () {
+			this.$el.find(".option-panel-wrapper").show();
+			this.$el.find("#tc-script-editor").toggleClass("tc-script-editor-option-open tc-script-editor-option-closed");
 		}
 
 	});
