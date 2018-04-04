@@ -78,10 +78,16 @@ public class GherkinStepGenerator {
 		}
 
 		//first, we get the first item of scenario definition witch could be the background
+		//by Gherkin specification only the first item can be a background, so we will ignore other ones
 		ScenarioDefinition potentialBackground = scenarioDefinitions.get(0);
 		Background background = null;
 		if (potentialBackground instanceof Background) {
 			background = (Background) potentialBackground;
+			//Setting the background also in execution prerequisite as specified
+			//Yes it means that the TC pre-requisite is ignored for Gherkin script witch seems legit in this context
+			StringBuilder preRequisiteBuilder = new StringBuilder();
+			appendBackground(background,preRequisiteBuilder);
+			execution.setPrerequisite(preRequisiteBuilder.toString());
 		}
 
 		//now let's do the scenarios
@@ -111,7 +117,7 @@ public class GherkinStepGenerator {
 		Scenario scenario = (Scenario) scenarioDefinition;
 		appendScenarioLine(scenarioDefinition, sb);
 		if (background != null) {
-			includeBackground(background, sb);
+			appendBackground(background, sb);
 		}
 		List<Step> steps = scenario.getSteps();
 		for (Step step : steps) {
@@ -139,7 +145,7 @@ public class GherkinStepGenerator {
 			StringBuilder sb = new StringBuilder();
 			appendScenarioLine(scenario, sb);
 			if (background != null) {
-				includeBackground(background, sb);
+				appendBackground(background, sb);
 			}
 			List<String> valuesForThisLine = getExampleLineValue(example, i);
 			Map<String, String> valueByHeader = new HashMap<>();
@@ -165,7 +171,7 @@ public class GherkinStepGenerator {
 		return example.getTableHeader().getCells().stream().map(TableCell::getValue).collect(Collectors.toList());
 	}
 
-	private void includeBackground(Background background, StringBuilder sb) {
+	private void appendBackground(Background background, StringBuilder sb) {
 		List<Step> steps = background.getSteps();
 		for (Step step : steps) {
 			appendStepLine(step, sb);
