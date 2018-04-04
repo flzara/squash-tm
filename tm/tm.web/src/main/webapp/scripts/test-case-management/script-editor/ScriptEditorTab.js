@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing", "ace/ext-language_tools"], function ($, Backbone, _, ace, urlBuilder) {
+define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing", "ace/ext-options", "ace/ext-language_tools"], function ($, Backbone, _, ace, urlBuilder) {
 	var ScriptEditorTab = Backbone.View.extend({
 
 		el: "#tab-tc-script-editor",
@@ -43,6 +43,7 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing", "ace
 		_initializeEditor: function (serverModel) {
 			var editor = ace.edit("tc-script-editor");
 			this.editor = editor;
+			this._initOptionTab(editor);
 			editor.session.setValue(serverModel.scriptExender.script);
 			this._initialize_editor_mode(editor);
 			editor.setTheme("ace/theme/twilight");
@@ -57,7 +58,6 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing", "ace
 			var ScriptedTestCseModel = Backbone.Model.extend({
 				urlRoot: urlBuilder.buildURL("testcases.scripted", options.testCaseId)
 			});
-
 			this.model = new ScriptedTestCseModel();
 		},
 
@@ -70,8 +70,73 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing", "ace
 			} else {
 				aceEditorMode = "ace/mode/gherkin-" + this.locale;
 			}
-
 			this.editor.session.setMode(aceEditorMode);
+		},
+
+		//copy pasta from ext-options.js as it is not exposed... sigh
+		getThemes: function () {
+			var themeList = ace.require("ace/ext/themelist");
+			var themes = {Bright: [], Dark: []};
+			themeList.themes.forEach(function (x) {
+				themes[x.isDark ? "Dark" : "Bright"].push({caption: x.caption, value: x.theme});
+			});
+			return themes;
+		},
+
+		//do it in standard js mode, not in jquery, as done in ace editor demo and code
+		_initOptionTab: function (editor) {
+			var OptionPanel = ace.require("ace/ext/options").OptionPanel;
+			var dom = ace.require("ace/lib/dom");
+			var optionsPanel = new OptionPanel(editor);
+			var themes = this.getThemes();
+
+
+			var mainOptionGroup = {
+				Theme: {
+					path: "theme",
+					type: "select",
+					items: themes
+				},
+
+				"Font Size": {
+					path: "fontSize",
+					type: "number",
+					defaultValue: 12,
+					defaults: [
+						{caption: "12px", value: 12},
+						{caption: "24px", value: 24}
+					]
+				}
+			};
+
+			var moreOptionGroup = {
+				"Show Invisibles": {
+					path: "showInvisibles"
+				},
+				"Show Indent Guides": {
+					path: "displayIndentGuides"
+				},
+				"Show Gutter": {
+					path: "showGutter"
+				}
+			};
+
+			// brutal monkey patching... sorry for that but the authors of ext-options.js
+			// do not seems to have exposed a way to control witch item is shown in control panel...
+			optionsPanel.render = function() {
+				optionsPanel.container.innerHTML = "";
+				dom.buildDom(["table", {id: "controls"},
+					optionsPanel.renderOptionGroup(mainOptionGroup),
+					["tr", null, ["td", {colspan: 2},
+						["table", {id: "more-controls"},
+							optionsPanel.renderOptionGroup(moreOptionGroup)
+						]
+					]]
+				], optionsPanel.container);
+			};
+			var optionsPanelContainer = document.getElementById("optionsPanel");
+			optionsPanel.render();
+			optionsPanelContainer.insertBefore(optionsPanel.container, optionsPanelContainer.firstChild);
 		},
 
 		_findScriptLocale: function () {

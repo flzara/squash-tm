@@ -121,8 +121,24 @@
     position: absolute;
     top: 35px;
     bottom: 0;
+    left: 300px;
+    right: 0;
+  }
+
+  .option-panel-wrapper{
+    position: absolute;
+    top: 35px;
+    bottom: 0;
     left: 0;
     right: 0;
+    width: 300px;
+  }
+
+  #optionsPanel {
+    margin: 0;
+    width: 100%;
+    height: 80%;
+    overflow-y: auto;
   }
 </style>
 
@@ -211,9 +227,9 @@
 
         <%--------------------------- calling test case section ------------------------------------%>
 
-          <c:if test="${!scripted}">
-            <tc:calling-test-cases-panel testCase="${testCase}"/>
-          </c:if>
+      <c:if test="${!scripted}">
+        <tc:calling-test-cases-panel testCase="${testCase}"/>
+      </c:if>
 
     </div>
 
@@ -232,7 +248,9 @@
         </button>
       </span>
         </div>
-
+        <div class="option-panel-wrapper">
+          <div id="optionsPanel"></div>
+        </div>
         <div id="tc-script-editor"></div>
       </div>
     </c:if>
