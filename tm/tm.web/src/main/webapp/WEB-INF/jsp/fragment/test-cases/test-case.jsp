@@ -124,16 +124,15 @@
     right: 0;
   }
 
-  .tc-script-editor-option-open{
+  .tc-script-editor-option-open {
     left: 300px;
   }
 
-  .tc-script-editor-option-closed{
+  .tc-script-editor-option-closed {
     left: 0;
   }
 
-
-  .option-panel-wrapper{
+  .option-panel-wrapper {
     position: absolute;
     top: 35px;
     bottom: 0;
@@ -223,10 +222,9 @@
 
 
         <%----------------------------------- Prerequisites -----------------------------------------------%>
-
-      <tc:test-case-prerequisites testCase="${testCase}"/>
-
-
+      <c:if test="${!scripted}">
+        <tc:test-case-prerequisites testCase="${testCase}"/>
+      </c:if>
         <%--------------------------- Verified Requirements section ------------------------------------%>
 
       <tc:test-case-verified-requirement-bloc linkable="${ linkable }" testCase="${testCase}"
