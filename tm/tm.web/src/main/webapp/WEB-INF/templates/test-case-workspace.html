@@ -131,6 +131,9 @@
                   <li id="new-test-case-tree-button" class="ui-state-disabled cursor-pointer">
                     <a th:text="#{tree.button.new-test-case.label}+'...'">New test case...</a>
                   </li>
+                  <li id="new-test-case-gherkin-tree-button" class="ui-state-disabled cursor-pointer">
+                    <a th:text="#{tree.button.new-gherkin-test-case.label}+'...'">New Gherkin test case...</a>
+                  </li>
                 </ul>
               </div>
 
@@ -316,20 +319,6 @@
           </td>
         </tr>
 
-
-        <tr>
-          <td>
-            <label for="add-test-case-script-language">LANGAGE DE SCRIPT</label>
-          </td>
-
-          <td>
-            <select id="add-test-case-script-language">
-              <option value="NO_SCRIPT">NO SCRIPT</option>
-              <option value="GHERKIN">Gherkin</option>
-            </select>
-
-          </td>
-        </tr>
 
       </table>
       <div class="popup-dialog-buttonpane">

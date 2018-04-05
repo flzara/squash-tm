@@ -135,7 +135,11 @@ define(["jquery","backbone", "tree","./permissions-rules", "workspace.contextual
 			});
 
 			$("#new-test-case-tree-button").on("click", function(){
-				$("#add-test-case-dialog").formDialog("open");
+				$("#add-test-case-dialog").data("test-case-script-language","").formDialog("open");
+			});
+
+			$("#new-test-case-gherkin-tree-button").on("click", function(){
+				$("#add-test-case-dialog").data("test-case-script-language","GHERKIN").formDialog("open");
 			});
 
 
