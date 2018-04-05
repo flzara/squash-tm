@@ -27,7 +27,6 @@ import java.lang.reflect.Proxy;
 
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
 
@@ -74,26 +73,12 @@ public class SquashUserDetailsManagerProxyFactory implements FactoryBean<SquashU
 		 * @see java.lang.reflect.InvocationHandler#invoke(java.lang.Object,
 		 * java.lang.reflect.Method, java.lang.Object[])
 		 */
-		/*
-		 * Also responsible of injecting the authentication manager in both user detail service.
-		 * See the invokation site in SquashMethodSecurityConfiguration, which has the advantage of 
-		 * being invoked from within a security configuration context. 
-		 * 
-		 * Other solutions involved @Lazy injection (didn't work) or crafting by hand a beanfactory-based 
-		 * proxy with delayed resolution (once again).
-		 * 
-		 * (non-Javadoc)
-		 * @see java.lang.reflect.InvocationHandler#invoke(java.lang.Object, java.lang.reflect.Method, java.lang.Object[])
-		 */
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 			try {
-				/*if (method.getName().equals("setAuthenticationManager")){
-					
-				}
-				else{*/
-					return method.invoke(context.getCurrentManager(), args);
-				//}
+				
+				return method.invoke(context.getCurrentManager(), args);
+
 			} catch (InvocationTargetException e) {
 				throw e.getCause();
 			}
