@@ -43,8 +43,14 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing", "ace
 
 		_initializeEditor: function (serverModel) {
 			var editor = ace.edit("tc-script-editor");
+			//disabling local auto completion as specified
+			//must do it before using enableBasicAutocompletion: true
+			var langTools = ace.require("ace/ext/language_tools");
+			langTools.setCompleters([langTools.snippetCompleter]);
 			this.editor = editor;
+
 			this._initOptionTab(editor);
+
 			editor.session.setValue(serverModel.scriptExender.script);
 			this._initialize_editor_mode(editor);
 			editor.setTheme("ace/theme/chrome");
