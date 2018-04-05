@@ -47,7 +47,7 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing", "ace
 			this._initOptionTab(editor);
 			editor.session.setValue(serverModel.scriptExender.script);
 			this._initialize_editor_mode(editor);
-			editor.setTheme("ace/theme/twilight");
+			editor.setTheme("ace/theme/chrome");
 			editor.setOptions({
 				enableBasicAutocompletion: true,
 				enableSnippets: true,
@@ -122,8 +122,8 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing", "ace
 				}
 			};
 
-			// brutal monkey patching... sorry for that but the authors of ext-options.js
-			// do not seems to have exposed a way to control witch items is shown in control panel...
+			// brutal monkey patching... sorry for that but the authors of ace/ext-options.js
+			// do not seems to have exposed a way to control witch items are shown in their nice control panel...
 			optionsPanel.render = function() {
 				optionsPanel.container.innerHTML = "";
 				dom.buildDom(["table", {id: "controls"},

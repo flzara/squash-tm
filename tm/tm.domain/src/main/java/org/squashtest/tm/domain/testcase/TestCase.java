@@ -885,8 +885,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		return SCRIPTED.equals(this.kind);
 	}
 
-	public void extendWithScript(String scriptLanguage){
-		ScriptedTestCaseExtender scriptedTestCaseExtender = new ScriptedTestCaseExtender(this, scriptLanguage);
+	public void extendWithScript( String scriptLanguage, String locale){
+		ScriptedTestCaseExtender scriptedTestCaseExtender = new ScriptedTestCaseExtender(this, scriptLanguage, locale);
 		this.setScriptedTestCaseExtender(scriptedTestCaseExtender);
 		this.setKind(SCRIPTED);
 	}

@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.domain.testcase;
 
+import gherkin.GherkinDialect;
+import gherkin.GherkinDialectProvider;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
@@ -38,6 +40,7 @@ public class ScriptedTestCaseExtender {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ScriptedTestCaseExtender.class);
 	private static final String CLASS_NAME = "org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender";
 	private static final String SIMPLE_CLASS_NAME = "ScriptedTestCaseExtender";
+	public static final String LANGUAGE_TAG = "# language: ";
 
 	@Id
 	@Column(name = "SCRIPTED_TC_EXTENDER_ID")
@@ -66,17 +69,38 @@ public class ScriptedTestCaseExtender {
 		this.language = language;
 	}
 
-	public ScriptedTestCaseExtender(TestCase testCase, String language) {
+	public ScriptedTestCaseExtender(TestCase testCase, String scriptLanguage, String locale) {
 		this.testCase = testCase;
-		if (StringUtils.isNotBlank(language)) {
-			ScriptedTestCaseLanguage scriptedTestCaseLanguage = EnumUtils.getEnum(ScriptedTestCaseLanguage.class, language);
+		if (StringUtils.isNotBlank(scriptLanguage)) {
+			ScriptedTestCaseLanguage scriptedTestCaseLanguage = EnumUtils.getEnum(ScriptedTestCaseLanguage.class, scriptLanguage);
 			if (scriptedTestCaseLanguage == null) {
-				throw new IllegalArgumentException("Unknown language of scripted test case : " + language);
+				throw new IllegalArgumentException("Unknown scriptLanguage of scripted test case : " + scriptLanguage);
 			}
 			this.language = scriptedTestCaseLanguage;
+			this.populateInitialScript(testCase, scriptLanguage, locale);
 		} else {
-			throw new IllegalArgumentException("Scripted test case MUST have a not null language");
+			throw new IllegalArgumentException("Scripted test case MUST have a not null scriptLanguage");
 		}
+	}
+
+	//For SquashTM 1.18 this is for Gherkin only for now
+	//if sometime another script language need to be handled, you will probably need to subclass with a discriminator column...
+	private void populateInitialScript(TestCase testCase, String scriptLanguage, String locale) {
+		LOGGER.info("Try to populate script with script language {} and locale {}.", scriptLanguage, locale);
+		StringBuilder sb = new StringBuilder();
+		sb.append(LANGUAGE_TAG)
+			.append(locale)
+			.append("\n");
+
+		GherkinDialectProvider gherkinDialectProvider = new GherkinDialectProvider(locale);
+		GherkinDialect defaultDialect = gherkinDialectProvider.getDefaultDialect();
+		String featureKeyword = defaultDialect.getFeatureKeywords().get(0);
+		sb.append(featureKeyword)
+			.append(": ")
+			.append(testCase.getName())
+			.append("\n");
+
+		this.setScript(sb.toString());
 	}
 
 	public Long getId() {

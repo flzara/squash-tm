@@ -108,7 +108,8 @@ public class TestCaseFormModel {
 		newTC.setDescription(description);
 		newTC.setReference(reference);
 		if (StringUtils.isNotBlank(scriptLanguage)) {
-			newTC.extendWithScript(scriptLanguage);
+			String locale = LocaleContextHolder.getLocale().getLanguage();
+			newTC.extendWithScript(scriptLanguage, locale);
 		}
 		return newTC;
 	}
