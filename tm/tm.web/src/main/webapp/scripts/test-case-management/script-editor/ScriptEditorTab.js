@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing", "ace/ext-options", "ace/ext-language_tools"], function ($, Backbone, _, ace, urlBuilder) {
+define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing"], function ($, Backbone, _, ace, urlBuilder) {
 	var ScriptEditorTab = Backbone.View.extend({
 
 		el: "#tab-tc-script-editor",
@@ -42,22 +42,24 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing", "ace
 		},
 
 		_initializeEditor: function (serverModel) {
-			var editor = ace.edit("tc-script-editor");
-			//disabling local auto completion as specified
-			//must do it before using enableBasicAutocompletion: true
-			var langTools = ace.require("ace/ext/language_tools");
-			langTools.setCompleters([langTools.snippetCompleter]);
-			this.editor = editor;
+			var that = this;
+			//see https://github.com/ajaxorg/ace-builds/issues/35 to understand the next line...
+			//so much headaches with the loading of ace extensions before finding this magic method...
+			ace.config.loadModule("ace/ext/language_tools", function(langTools) {
+				var editor = ace.edit("tc-script-editor");
+				//disabling local auto completion as specified
+				//must do it before using enableBasicAutocompletion: true
+				langTools.setCompleters([langTools.snippetCompleter]);
+				that.editor = editor;
+				editor.session.setValue(serverModel.scriptExender.script);
+				that._initialize_editor_mode(editor);
+				editor.setTheme("ace/theme/chrome");
+				editor.setOptions({
+					enableBasicAutocompletion: true,
+					enableSnippets: true,
+					enableLiveAutocompletion: false
+				});
 
-			this._initOptionTab(editor);
-
-			editor.session.setValue(serverModel.scriptExender.script);
-			this._initialize_editor_mode(editor);
-			editor.setTheme("ace/theme/chrome");
-			editor.setOptions({
-				enableBasicAutocompletion: true,
-				enableSnippets: true,
-				enableLiveAutocompletion: false
 			});
 		},
 
@@ -130,7 +132,7 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing", "ace
 
 			// brutal monkey patching... sorry for that but the authors of ace/ext-options.js
 			// do not seems to have exposed a way to control witch items are shown in their nice control panel...
-			optionsPanel.render = function() {
+			optionsPanel.render = function () {
 				optionsPanel.container.innerHTML = "";
 				dom.buildDom(["table", {id: "controls"},
 					optionsPanel.renderOptionGroup(mainOptionGroup),
@@ -173,7 +175,7 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing", "ace
 			return locale;
 		},
 
-		toggleOptionPanel : function () {
+		toggleOptionPanel: function () {
 			this.$el.find(".option-panel-wrapper").show();
 			this.$el.find("#tc-script-editor").toggleClass("tc-script-editor-option-open tc-script-editor-option-closed");
 		}
