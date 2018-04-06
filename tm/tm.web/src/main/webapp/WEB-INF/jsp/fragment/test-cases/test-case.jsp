@@ -245,19 +245,36 @@
     <c:if test="${scripted}">
       <div id="tab-tc-script-editor">
           <%-- ==================== toolbar definition ===================--%>
-        <div class="toolbar">
-      <span class="group">
-        <button id="tc-script-save-button"
-                data-icon="ui-icon-plusthick"
-                class="button test-step-toolbar-button">
-              SAVE IT !!!!
-        </button>
-        <button id="tc-script-toggle-option-panel"
-                data-icon="ui-icon-plusthick"
-                class="button test-step-toolbar-button">
-              OPTIONS
-        </button>
-      </span>
+        <div>
+
+          <div class="left btn-toolbar">
+            <span class="group">
+              <button id="tc-script-save-button"
+                      data-icon="ui-icon ui-icon-plusthick"
+                      class="sq-btn ui-icon-plusthick" disabled='disabled'>
+                    Enregistrer
+              </button>
+            </span>
+          </div>
+          <div class="right btn-toolbar">
+            <span class="group">
+              <button id="tc-script-toggle-option-panel"
+                      data-icon="ui-icon-plusthick"
+                      class="sq-btn">
+                    Options
+              </button>
+              <button id="tc-script-activate-editor"
+                      data-icon="ui-icon-plusthick"
+                      class="sq-btn">
+                    Editer
+              </button>
+              <button id="tc-script-cancel"
+                      data-icon="ui-icon-plusthick"
+                      class="sq-btn" style="display: none" >
+                    Annuler
+              </button>
+            </span>
+          </div>
         </div>
         <div class="option-panel-wrapper" style="display: none">
           <div id="optionsPanel"></div>

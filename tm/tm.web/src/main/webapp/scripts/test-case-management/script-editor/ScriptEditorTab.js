@@ -32,13 +32,19 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing"], fun
 
 		events: {
 			"click #tc-script-save-button": "saveScript",
-			"click #tc-script-toggle-option-panel": "toggleOptionPanel"
+			"click #tc-script-toggle-option-panel": "toggleOptionPanel",
+			"click #tc-script-activate-editor": "activateEditor",
+			"click #tc-script-cancel": "cancel"
 		},
 
 		saveScript: function () {
+			var that = this;
 			var tcScript = this.editor.session.getValue();
 			this.model.set('script', tcScript);
-			this.model.save();
+			this.model.save(null,{
+				success: function (model, response) {
+					that.originalScript = tcScript;
+				}});
 		},
 
 		_initializeEditor: function (serverModel) {
@@ -48,16 +54,22 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing"], fun
 			ace.config.loadModule("ace/ext/language_tools", function(langTools) {
 				var editor = ace.edit("tc-script-editor");
 				//disabling local auto completion as specified
-				//must do it before using enableBasicAutocompletion: true
+				//must do it before using enableBasicAutoCompletion: true
 				langTools.setCompleters([langTools.snippetCompleter]);
 				that.editor = editor;
-				editor.session.setValue(serverModel.scriptExender.script);
+				that.originalScript = serverModel.scriptExender.script;
+
+				editor.session.setValue(that.originalScript);
 				that._initialize_editor_mode(editor);
-				editor.setTheme("ace/theme/chrome");
+				editor.setTheme("ace/theme/iplastic");
 				editor.setOptions({
+					//has to set this one to true if i want snippets, but basic auto completion is disabled above
 					enableBasicAutocompletion: true,
 					enableSnippets: true,
-					enableLiveAutocompletion: false
+					enableLiveAutocompletion: false,
+					readOnly: true,
+					highlightActiveLine: false,
+					highlightGutterLine: false
 				});
 
 			});
@@ -178,6 +190,31 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing"], fun
 		toggleOptionPanel: function () {
 			this.$el.find(".option-panel-wrapper").show();
 			this.$el.find("#tc-script-editor").toggleClass("tc-script-editor-option-open tc-script-editor-option-closed");
+		},
+
+		activateEditor: function () {
+			this.editor.setTheme("ace/theme/chrome");
+			this.editor.setOptions({
+				readOnly: false,
+				highlightActiveLine: true,
+				highlightGutterLine: true
+			});
+			this.$el.find("#tc-script-save-button").prop("disabled", false);
+			this.$el.find("#tc-script-cancel").show();
+			this.$el.find("#tc-script-activate-editor").hide();
+		},
+
+		cancel : function () {
+			this.editor.setTheme("ace/theme/iplastic");
+			this.editor.setOptions({
+				readOnly: true,
+				highlightActiveLine: false,
+				highlightGutterLine: false
+			});
+			this.$el.find("#tc-script-save-button").prop("disabled", true);
+			this.$el.find("#tc-script-cancel").hide();
+			this.$el.find("#tc-script-activate-editor").show();
+			this.editor.session.setValue(this.originalScript);
 		}
 
 	});

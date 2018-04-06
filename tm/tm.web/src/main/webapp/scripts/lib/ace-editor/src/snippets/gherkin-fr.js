@@ -3,9 +3,10 @@ define("ace/snippets/gherkin-fr", ["require", "exports", "module"], function (re
 	// @formatter:off
 	// DO NOT REFORMAT THE SNIPPETS, INDENTATION MUST BE PRESERVED
 	exports.snippetText =
-"snippet scenario\n\
+"\
+snippet scenario\n\
   \n\
-  Scénario: ${1}\n\
+	Scénario: ${1}\n\n\
 		Soit ${2}\n\n\
 		Quand ${3}\n\n\
 		Alors ${4}\n\
