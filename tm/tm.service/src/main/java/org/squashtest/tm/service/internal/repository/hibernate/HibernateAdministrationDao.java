@@ -53,6 +53,7 @@ public class HibernateAdministrationDao implements AdministrationDao {
 	private static final String REQ_DATABASE_SIZE_POSTGRESQL = "select pg_database_size(:databaseName) / 1024 / 1024";
 	private static final String URL_SPLIT_SEPARATOR = "/";
 	private static final String DATABASE_NAME_EMPTY = "";
+	private static final String URL_PARAMS_SPLIT_SEPARATOR = "\\?";
 
 
 	@Override
@@ -65,7 +66,7 @@ public class HibernateAdministrationDao implements AdministrationDao {
 		BigInteger databaseSize = BigInteger.ZERO;
 		String url = dataSourceProperties.getUrl();
 		if (url.contains(DATABASE_LABEL_MYSQL) || url.contains(DATABASE_LABEL_POSTGRESQL)) {
-			String databaseName = getDatabaseName();
+			String databaseName = getDatabaseName(url);
 			if (url.contains(DATABASE_LABEL_MYSQL) && isDatabaseNameValid(databaseName)) {
 				databaseSize = getDatabaseSizeForMysql(databaseName);
 			}
@@ -77,9 +78,10 @@ public class HibernateAdministrationDao implements AdministrationDao {
 	}
 
 	// dataSourceProperties gives us an url (ex : jdbc:mysql://127.0.0.1:3306/squash-tm), so we retrieve the database name from it
-	private String getDatabaseName() {
-		String url = dataSourceProperties.getUrl();
-		String[] urlSplit = url.split(URL_SPLIT_SEPARATOR);
+	// Issue 7342 - url can have params (ex : jdbc:mysql://localhost:3306/squash-tm?param1=true&param2=1)
+	private String getDatabaseName(String url) {
+		String[] urlWithoutParams = url.split(URL_PARAMS_SPLIT_SEPARATOR);
+		String[] urlSplit = urlWithoutParams[0].split(URL_SPLIT_SEPARATOR);
 		return urlSplit[urlSplit.length - 1];
 	}
 
