@@ -49,10 +49,8 @@ public class HibernateAdministrationDao implements AdministrationDao {
 
 	private static final String DATABASE_LABEL_MYSQL = "mysql";
 	private static final String DATABASE_LABEL_POSTGRESQL = "postgresql";
-	private static final String REQ_DATABASE_SIZE_MYSQL = "select sum((data_length + index_length) / 1024 / 1024) from information_schema.tables where table_schema = :databaseName";
-	private static final String REQ_DATABASE_SIZE_POSTGRESQL = "select pg_database_size(:databaseName) / 1024 / 1024";
-	private static final String URL_SPLIT_SEPARATOR = "/";
-	private static final String DATABASE_NAME_EMPTY = "";
+	private static final String REQ_DATABASE_SIZE_MYSQL = "select sum((data_length + index_length) / 1024 / 1024) from information_schema.tables where table_schema = database()";
+	private static final String REQ_DATABASE_SIZE_POSTGRESQL = "select pg_database_size(current_database()) / 1024 / 1024";
 
 
 	@Override
@@ -65,37 +63,24 @@ public class HibernateAdministrationDao implements AdministrationDao {
 		BigInteger databaseSize = BigInteger.ZERO;
 		String url = dataSourceProperties.getUrl();
 		if (url.contains(DATABASE_LABEL_MYSQL) || url.contains(DATABASE_LABEL_POSTGRESQL)) {
-			String databaseName = getDatabaseName();
-			if (url.contains(DATABASE_LABEL_MYSQL) && isDatabaseNameValid(databaseName)) {
-				databaseSize = getDatabaseSizeForMysql(databaseName);
+			if (url.contains(DATABASE_LABEL_MYSQL)) {
+				databaseSize = getDatabaseSizeForMysql();
 			}
-			if (url.contains(DATABASE_LABEL_POSTGRESQL) && isDatabaseNameValid(databaseName)) {
-				databaseSize = getDatabaseSizeForPostgresql(databaseName);
+			if (url.contains(DATABASE_LABEL_POSTGRESQL)) {
+				databaseSize = getDatabaseSizeForPostgresql();
 			}
 		}
 		return new AdministrationStatistics(result, databaseSize);
 	}
 
-	// dataSourceProperties gives us an url (ex : jdbc:mysql://127.0.0.1:3306/squash-tm), so we retrieve the database name from it
-	private String getDatabaseName() {
-		String url = dataSourceProperties.getUrl();
-		String[] urlSplit = url.split(URL_SPLIT_SEPARATOR);
-		return urlSplit[urlSplit.length - 1];
-	}
-
-	// We make sure that the database name is not null and not empty
-	private boolean isDatabaseNameValid(String databaseName) {
-		return databaseName != null && !DATABASE_NAME_EMPTY.equals(databaseName);
-	}
-
 	// SQL query retrieving database size for MySQL. The query's result is a BigDecimal, we convert it into a BigInteger.
-	private BigInteger getDatabaseSizeForMysql(String databaseName) {
-		return ((BigDecimal) entityManager.createNativeQuery(REQ_DATABASE_SIZE_MYSQL).setParameter("databaseName", databaseName).getSingleResult()).toBigInteger();
+	private BigInteger getDatabaseSizeForMysql() {
+		return ((BigDecimal) entityManager.createNativeQuery(REQ_DATABASE_SIZE_MYSQL).getSingleResult()).toBigInteger();
 	}
 
 	// SQL query retrieving database size for PostgreSQL
-	private BigInteger getDatabaseSizeForPostgresql(String databaseName) {
-		return (BigInteger) entityManager.createNativeQuery(REQ_DATABASE_SIZE_POSTGRESQL).setParameter("databaseName", databaseName).getSingleResult();
+	private BigInteger getDatabaseSizeForPostgresql() {
+		return (BigInteger) entityManager.createNativeQuery(REQ_DATABASE_SIZE_POSTGRESQL).getSingleResult();
 	}
 
 }
