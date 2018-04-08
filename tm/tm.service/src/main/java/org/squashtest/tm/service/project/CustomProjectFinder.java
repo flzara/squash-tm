@@ -54,4 +54,7 @@ public interface CustomProjectFinder {
 	 * @return The list of projects ids
 	 */
 	List<Long> findAllReadableIds();
+
+	List<Project> findAllOrderedByName();
+
 }

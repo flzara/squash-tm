@@ -30,12 +30,17 @@ import org.squashtest.tm.domain.project.Project;
 
 /**
  * @author mpagnon
- * 
+ *
  */
 @Transactional(readOnly = true)
 public interface ProjectFinder extends CustomProjectFinder {
 
-	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
-	List<Project> findAllOrderedByName();
+	// Why is it empty?
+	// It contained a previous method "findAllOrderedByName()", with  this annotation:@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
+	// this method's post filter doesn't work with the LDAP and AD plugin, so this method has been replaced by the one in
+	// CustomProjectModificationServiceImpl
+	// Why isn't deleted then?
+	// Interface used in other plugins
+
 
 }
