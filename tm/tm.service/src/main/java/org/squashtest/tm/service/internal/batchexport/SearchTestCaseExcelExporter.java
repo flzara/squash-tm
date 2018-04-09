@@ -28,6 +28,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
@@ -37,29 +38,29 @@ import org.squashtest.tm.service.testcase.TestCaseFinder;
 
 @Component
 @Scope("prototype")
-public class SearchTestCaseExcelExporter extends ExcelExporter{
+public class SearchTestCaseExcelExporter extends ExcelExporter {
 
 	@Inject
 	private TestCaseFinder testCaseFinder;
-	
+
 	@Inject
 	IterationModificationService iterationFinder;
-	
+
 	private static final TestCaseSheetColumn[] SEARCH_TC_COLUMNS = {
 		TestCaseSheetColumn.TC_NB_STEPS,
 		TestCaseSheetColumn.TC_NB_ITERATION
-		};
-	
-	private static final TestCaseSheetColumn MILESTONE_SEARCH_TC_COLUMNS = 
-			TestCaseSheetColumn.TC_NB_MILESTONES;
+	};
 
-	
+	private static final TestCaseSheetColumn MILESTONE_SEARCH_TC_COLUMNS =
+		TestCaseSheetColumn.TC_NB_MILESTONES;
+
+
 	@Inject
 	public SearchTestCaseExcelExporter(FeatureManager featureManager,
-			MessageSource messageSource) {
+									   MessageSource messageSource) {
 		super(featureManager, messageSource);
 	}
-	
+
 	@Override
 	protected void createOptionalTestCaseSheetHeaders() {
 		Sheet dsSheet = workbook.getSheet(TC_SHEET);
@@ -68,12 +69,12 @@ public class SearchTestCaseExcelExporter extends ExcelExporter{
 		if (milestonesEnabled) {
 			h.createCell(cIdx++).setCellValue(MILESTONE_SEARCH_TC_COLUMNS.getHeader());
 		}
-		
-		for (TemplateColumn t : SEARCH_TC_COLUMNS){
-			h.createCell(cIdx++).setCellValue(t.getHeader());	
+
+		for (TemplateColumn t : SEARCH_TC_COLUMNS) {
+			h.createCell(cIdx++).setCellValue(t.getHeader());
 		}
 	}
-	
+
 	@Override
 	protected int doOptionnalAppendTestCases(Row r, int cIdx, TestCaseModel tcm) {
 		TestCase tc = testCaseFinder.findById(tcm.getId());
@@ -86,6 +87,10 @@ public class SearchTestCaseExcelExporter extends ExcelExporter{
 		}
 		r.createCell(cIdxOptional++).setCellValue(nbSteps);
 		r.createCell(cIdxOptional++).setCellValue(nbIteration);
+
+
+
+
 		return cIdxOptional;
 	}
 

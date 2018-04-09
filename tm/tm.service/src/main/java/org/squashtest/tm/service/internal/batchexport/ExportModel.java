@@ -29,7 +29,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.internal.batchexport.RequirementExportModel.RequirementPathSortable;
 
@@ -229,13 +231,20 @@ public class ExportModel {
 		private Date lastModifiedOn;
 		private String lastModifiedBy;
 		private List<CustomField> cufs = new LinkedList<>();
+		//scripted tc optional attributes
+		private TestCaseKind testCaseKind;
+		private ScriptedTestCaseLanguage scriptedTestCaseLanguage;
+		private String tcScript;
+
 
 		// that monster constructor will be used by Hibernate in a hql query
 		public TestCaseModel(Long projectId, String projectName, Integer order, Long id, String reference, String name,
 				String milestone,
 				Boolean weightAuto, TestCaseImportance weight, InfoListItem nature, InfoListItem type,
 				TestCaseStatus status, String description, String prerequisite, Long nbReq, Long nbCaller,
-				Long nbAttachments, Date createdOn, String createdBy, Date lastModifiedOn, String lastModifiedBy) {
+				Long nbAttachments, Date createdOn, String createdBy, Date lastModifiedOn, String lastModifiedBy,
+				TestCaseKind testCaseKind, ScriptedTestCaseLanguage scriptedTestCaseLanguage, String tcScript
+		) {
 
 			super();
 			this.projectId = projectId;
@@ -259,6 +268,9 @@ public class ExportModel {
 			this.createdBy = createdBy;
 			this.lastModifiedOn = lastModifiedOn;
 			this.lastModifiedBy = lastModifiedBy;
+			this.testCaseKind = testCaseKind;
+			this.scriptedTestCaseLanguage = scriptedTestCaseLanguage;
+			this.tcScript = tcScript;
 		}
 
 		public String getMilestone() {
@@ -445,6 +457,29 @@ public class ExportModel {
 			return cufs;
 		}
 
+		public TestCaseKind getTestCaseKind() {
+			return testCaseKind;
+		}
+
+		public void setTestCaseKind(TestCaseKind testCaseKind) {
+			this.testCaseKind = testCaseKind;
+		}
+
+		public ScriptedTestCaseLanguage getScriptedTestCaseLanguage() {
+			return scriptedTestCaseLanguage;
+		}
+
+		public void setScriptedTestCaseLanguage(ScriptedTestCaseLanguage scriptedTestCaseLanguage) {
+			this.scriptedTestCaseLanguage = scriptedTestCaseLanguage;
+		}
+
+		public String getTcScript() {
+			return tcScript;
+		}
+
+		public void setTcScript(String tcScript) {
+			this.tcScript = tcScript;
+		}
 	}
 
 	public static final class TestStepModel {

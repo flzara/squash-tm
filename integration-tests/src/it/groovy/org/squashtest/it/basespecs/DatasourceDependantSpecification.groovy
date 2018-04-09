@@ -27,7 +27,8 @@ import org.springframework.transaction.aspectj.AspectJTransactionManagementConfi
 import org.squashtest.it.config.DatasourceSpecConfig
 import org.squashtest.it.config.JooqSpecConfig
 import org.squashtest.it.config.RepositorySpecConfig
-import org.squashtest.tm.service.RepositoryConfig;
+import org.squashtest.tm.service.RepositoryConfig
+import org.squashtest.tm.service.internal.campaign.scripted.ScriptedExecutionConfiguration;
 
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext;
@@ -35,7 +36,7 @@ import javax.persistence.PersistenceContext;
 import spock.lang.Specification
 
 
-@ContextConfiguration(classes = [DatasourceSpecConfig, RepositoryConfig, JooqSpecConfig])
+@ContextConfiguration(classes = [DatasourceSpecConfig, RepositoryConfig, JooqSpecConfig, ScriptedExecutionConfiguration])
 @TestPropertySource(["classpath:other_properties.properties", "classpath:hibernate.properties"])
 class DatasourceDependantSpecification extends Specification {
 

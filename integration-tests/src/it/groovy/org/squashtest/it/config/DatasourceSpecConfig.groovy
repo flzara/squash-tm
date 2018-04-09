@@ -21,25 +21,19 @@
 package org.squashtest.it.config
 
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Primary
+import org.springframework.context.annotation.aspectj.EnableSpringConfigured
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
+import org.squashtest.it.stub.milestone.StubActiveMilestoneHolder
+import org.squashtest.it.stub.validation.StubValidatorFactory
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
+import org.unitils.database.UnitilsDataSourceFactoryBean
 
 import javax.sql.DataSource
 import javax.validation.ValidatorFactory
-
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Import
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
-import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestPropertySource
-import org.springframework.transaction.aspectj.AspectJTransactionManagementConfiguration
-import org.squashtest.it.stub.milestone.StubActiveMilestoneHolder;
-import org.squashtest.it.stub.validation.StubValidatorFactory
-import org.squashtest.tm.service.RepositoryConfig
-import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
-import org.unitils.database.UnitilsDataSourceFactoryBean
 
 @Configuration
 @EnableSpringConfigured

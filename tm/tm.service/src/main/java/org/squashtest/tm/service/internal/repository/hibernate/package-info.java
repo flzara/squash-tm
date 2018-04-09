@@ -314,10 +314,11 @@
 	+ "("
 	+ "select count(distinct attach) from TestCase tc2 join tc2.attachmentList atlist left join atlist.attachments attach where tc.id = tc2.id"
 	+ "), "
-	+ "content.audit.createdOn, content.audit.createdBy, content.audit.lastModifiedOn, content.audit.lastModifiedBy "
-	+ "from TestCaseFolder f join f.content content, TestCase tc join tc.project p left join tc.milestones milestones "
+	+ "content.audit.createdOn, content.audit.createdBy, content.audit.lastModifiedOn, content.audit.lastModifiedBy, tc.kind, scExt.language, scExt.script "
+	+ "from TestCaseFolder f join f.content content, TestCase tc join tc.project p left join tc.milestones milestones left join tc.scriptedTestCaseExtender scExt "
 	+ " join tc.nature nat join tc.type type"
-	+ " where content.id = tc.id and tc.id in (:testCaseIds) group by p.id, tc.id, index(content)+1 , content.id, type.id, nat.id  "
+	+ " where content.id = tc.id and tc.id in (:testCaseIds) "
+	+ " group by p.id, tc.id, index(content)+1 , content.id, type.id, nat.id, tc.kind, scExt.language, scExt.script "
 	),
 
 	@NamedQuery(name = "testCase.excelExportDataFromLibrary", query = "select p.id, p.name, index(content)+1, tc.id, tc.reference, content.name, "
@@ -332,11 +333,11 @@
 	+ "("
 	+ "select count(distinct attach) from TestCase tc2 join tc2.attachmentList atlist left join atlist.attachments attach where tc.id = tc2.id"
 	+ "), "
-	+ "content.audit.createdOn, content.audit.createdBy, content.audit.lastModifiedOn, content.audit.lastModifiedBy "
-	+ "from TestCaseLibrary tcl join tcl.rootContent content, TestCase tc join tc.project p left join tc.milestones milestones "
+	+ "content.audit.createdOn, content.audit.createdBy, content.audit.lastModifiedOn, content.audit.lastModifiedBy, tc.kind, scExt.language, scExt.script "
+	+ "from TestCaseLibrary tcl join tcl.rootContent content, TestCase tc join tc.project p left join tc.milestones milestones left join tc.scriptedTestCaseExtender scExt "
 	+ " join tc.nature nat join tc.type type "
 	+ "where content.id = tc.id and  tc.id in (:testCaseIds) "
-	+ "group by p.id, tc.id, index(content)+1 , content.id, nat.id, type.id "),
+	+ "group by p.id, tc.id, index(content)+1 , content.id, nat.id, type.id, tc.kind, scExt.language, scExt.script "),
 
 	@NamedQuery(name = "testCase.excelExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cfv.largeValue, cf.inputType, case when cfv.class = TagsValue then group_concat(so.label, 'order by', so.label, 'asc', '|')  else '' end "
 	+ "from CustomFieldValue cfv join cfv.binding binding join binding.customField cf left join cfv.selectedOptions so "
