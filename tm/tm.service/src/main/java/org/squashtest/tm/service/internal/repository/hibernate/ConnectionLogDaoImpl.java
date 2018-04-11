@@ -38,6 +38,7 @@ import org.squashtest.tm.service.internal.repository.CustomConnectionLogDao;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.text.ParseException;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 
@@ -99,6 +100,7 @@ public class ConnectionLogDaoImpl implements CustomConnectionLogDao {
 			try {
 				startDate = DateUtils.parseDdMmYyyyDate(dateArray[0].trim());
 				endDate = DateUtils.parseDdMmYyyyDate(dateArray[1].trim());
+				endDate = Date.from(endDate.toInstant().plus(1, ChronoUnit.DAYS));
 			} catch (ParseException e) {
 				LOGGER.warn(e.getMessage(), e);
 			}
