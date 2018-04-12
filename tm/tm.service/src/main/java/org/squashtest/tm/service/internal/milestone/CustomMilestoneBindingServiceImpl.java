@@ -72,9 +72,6 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 	private PermissionEvaluationService permissionEvaluationService;
 
 	@Inject
-	private TestCaseLibraryNavigationService tcService;
-
-	@Inject
 	private IndexationService indexService;
 
 	@Override
