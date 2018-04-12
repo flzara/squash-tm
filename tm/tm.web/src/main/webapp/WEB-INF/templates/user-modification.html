@@ -51,6 +51,14 @@
       users : {
         url : /*[[ @{/administration/users/} ]]*/"/administration/users/",
       },
+      permission : {
+          url : {
+            table : /*[[ @{'/administration/users/'+${user.id}+'/permissions'} ]]*/"/administration/users/1/permissions",
+            popup : /*[[ @{'/administration/users/'+${user.id}+'/permission-popup'} ]]*/"/administration/users/1/permission-popup",
+            add : /*[[ @{'/administration/users/'+${user.id}+'/add-permission'} ]]*/"/administration/users/1/add-permission",
+            remove : /*[[ @{'/administration/users/'+${user.id}+'/remove-permission'} ]]*/"/administration/users/1/remove-permission"
+          }
+      },
       message : {
         passSuccess : /*[[ #{user.account.changepass.success} ]]*/"cool it worked ! ",
         error : /*[[ #{popup.title.error} ]]*/"Error",
@@ -73,14 +81,6 @@
         removeAccreditationField : /*[[ #{title.DisassociateAccreditation} ]]*/ "remove Accreditation",
         addTeamField : /*[[ #{label.addTeam} ]]*/ "add team",
         removeTeamField : /*[[ #{label.removeTeam} ]]*/ "remove team"
-      },
-      permission : {
-        url : {
-          table : /*[[ @{'/administration/users/'+${user.id}+'/permissions'} ]]*/"/administration/users/1/permissions",
-          popup : /*[[ @{'/administration/users/'+${user.id}+'/permission-popup'} ]]*/"/administration/users/1/permission-popup",
-          add : /*[[ @{'/administration/users/'+${user.id}+'/add-permission'} ]]*/"/administration/users/1/add-permission",
-          remove : /*[[ @{'/administration/users/'+${user.id}+'/remove-permission'} ]]*/"/administration/users/1/remove-permission",
-        }
       }
 
     }

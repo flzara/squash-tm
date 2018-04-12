@@ -164,7 +164,7 @@ public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements 
 		}
 
 		LOGGER.info("Dynamic component {} is bound to delegate to custom implementation named {}",
-				componentType.getSimpleName(), customImplementationBeanName);
+				componentType.getSimpleName(), beanName);
 
 		return new DeferredLookupCustomImplementationProvider(beanFactory, beanName);
 	}
