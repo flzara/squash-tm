@@ -39,12 +39,11 @@ import spock.lang.Unroll
  *
  */
 abstract class DynamicManagerInterfaceSpecification extends Specification {
-	DynamicManagerFactoryBean factory = new DynamicManagerFactoryBean()
+	DynamicManagerFactoryBean factory
 
 	def setup() {
+		factory = new DynamicManagerFactoryBean(managerType, entityType)
 		factory.lookupCustomImplementation = false
-		factory.componentType = managerType
-		factory.entityType = entityType
 
 		EntityManager entityManager = Mock()
 		entityManager.getReference(entityType, _) >> entityInstance()

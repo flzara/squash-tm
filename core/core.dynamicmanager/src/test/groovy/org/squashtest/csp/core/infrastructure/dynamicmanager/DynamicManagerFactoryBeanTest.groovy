@@ -33,15 +33,14 @@ import javax.persistence.Query
 
 class DynamicManagerFactoryBeanTest extends Specification{
 
-	DynamicManagerFactoryBean factory = new DynamicManagerFactoryBean()
+	DynamicManagerFactoryBean factory
 	EntityManager em = Mock()
 	BeanFactory beanFactory = Mock()
 
 	def setup() {
+		factory = new DynamicManagerFactoryBean(DummyManager, DummyEntity)
 		factory.beanFactory = beanFactory
 		factory.lookupCustomImplementation = false
-		factory.componentType = DummyManager
-		factory.entityType = DummyEntity
 		factory.entityManager = em
 	}
 

@@ -91,13 +91,13 @@ public class DynamicManagerFactoryBean<MANAGER, ENTITY> extends AbstractDynamicC
 	 * Type of entities which are manipulated by the Dynamic manager. Should be initialized.
 	 */
 	private Class<ENTITY> entityType;
-
-	/**
-	 * @param entityType the entityType to set
-	 */
-	public void setEntityType(Class<ENTITY> entityType) {
+	
+	
+	public DynamicManagerFactoryBean(Class<MANAGER> componentType, Class<ENTITY> entityType) {
+		super(componentType);
 		this.entityType = entityType;
 	}
+
 
 	@Override
 	protected List<DynamicComponentInvocationHandler> createInvocationHandlers() {

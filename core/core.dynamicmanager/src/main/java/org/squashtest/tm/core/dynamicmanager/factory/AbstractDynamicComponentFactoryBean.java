@@ -87,10 +87,11 @@ public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements 
 	 * The current dynamic component, for internal use only.
 	 */
 	private COMPONENT proxy;
-
-	public final synchronized void setComponentType(Class<COMPONENT> componentType) {
+	
+	public AbstractDynamicComponentFactoryBean(Class<COMPONENT> componentType){
 		this.componentType = componentType;
 	}
+
 
 	protected final synchronized void initializeFactory() {
 		LOGGER.info("Initializing Dynamic component of type {}", componentType.getSimpleName()); // NOSONAR

@@ -57,8 +57,8 @@ public abstract class DynamicComponentProcessor<ANNOTATION extends Annotation> e
 	private static final String FILE_FOOTER = "</beans>\n";
 
 	protected static final String DYNAMIC_COMPONENT_TEMPLATE = "  <bean id=\"{0}\" {5} class=\"{1}\" depends-on=\"entityManagerFactory\">\n"
-			+ "    <property name=\"componentType\" value=\"{2}\" />\n"
-			+ "    <property name=\"entityType\" value=\"{3}\" />\n"
+			+ "	   <constructor-arg index=\"0\" type=\"java.lang.Class\" value=\"{2}\" />	<!-- componentType -->\n"
+			+ "    <constructor-arg index=\"1\" type=\"java.lang.Class\" value=\"{3}\" />	<!-- entityType -->\n"
 			+ "    <property name=\"lookupCustomImplementation\" value=\"{4}\" />\n" 
 			+ "  </bean>\n";
 
