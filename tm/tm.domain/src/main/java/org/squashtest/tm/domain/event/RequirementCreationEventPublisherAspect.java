@@ -32,20 +32,22 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
  * This aspect advises a RequirementVersion's state change from transient to persistent and raises a creation event.
  *
  * FIXME probably doesn't work since jpa / spring data migration
- *
+ * bsiri 12/04/18 : for a number of reasons Spring AOP will now handle this aspect (instead of compile-time weaving)
+ * 
  * @author Gregory Fouquet
  * @since 1.4.0  11/04/16 (port from .aj file)
+ * 
  */
 @Aspect
 public class RequirementCreationEventPublisherAspect extends AbstractRequirementEventPublisher {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementCreationEventPublisherAspect.class);
 
-	@Pointcut("call(public void org.hibernate.Session+.persist(Object)) && args(requirement)")
+	@Pointcut("execution(public void javax.persistence.EntityManager+.persist(Object)) && args(requirement)")
 	private void callRequirementPersister(Requirement requirement) {
 		// NOOP
 	}
 
-	@Pointcut("call(public void org.hibernate.Session+.persist(Object)) && args(requirementVersion)")
+	@Pointcut("execution(public void javax.persistence.EntityManager+.persist(Object)) && args(requirementVersion)")
 	private void callRequirementVersionPersister(RequirementVersion requirementVersion) {
 		// NOOP
 	}
