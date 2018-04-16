@@ -20,31 +20,22 @@
  */
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.validation.constraints.NotNull;
-
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
+import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
-import org.squashtest.tm.service.internal.batchimport.excel.CellValueCoercer;
-import org.squashtest.tm.service.internal.batchimport.excel.ImportModeCellCoercer;
-import org.squashtest.tm.service.internal.batchimport.excel.InfoListItemCoercer;
+import org.squashtest.tm.service.internal.batchimport.excel.*;
 import org.squashtest.tm.service.internal.batchimport.excel.InfoListItemCoercer.ListRole;
-import org.squashtest.tm.service.internal.batchimport.excel.OptionalBooleanCellCoercer;
-import org.squashtest.tm.service.internal.batchimport.excel.OptionalDateCellCoercer;
-import org.squashtest.tm.service.internal.batchimport.excel.OptionalEnumCellCoercer;
-import org.squashtest.tm.service.internal.batchimport.excel.OptionalIntegerCellCoercer;
-import org.squashtest.tm.service.internal.batchimport.excel.OptionalOneBasedIndexCellCoercer;
-import org.squashtest.tm.service.internal.batchimport.excel.OptionalStringArrayCellCoercer;
-import org.squashtest.tm.service.internal.batchimport.excel.ParamAssignationModeCellCoercer;
-import org.squashtest.tm.service.internal.batchimport.excel.StringCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementLinksSheetColumn;
 import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn;
+
+import javax.validation.constraints.NotNull;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Repository of {@link CellValueCoercer} for a given {@link TemplateColumn}s
@@ -101,14 +92,14 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 		repo.coercerByColumn.put(RequirementSheetColumn.REQ_VERSION_STATUS, OptionalEnumCellCoercer.forEnum(RequirementStatus.class));
 		return repo;
 	}
-	
+
 	private static CellValueCoercerRepository<?> createRequirementLinkSheetRepo(){
-		CellValueCoercerRepository<RequirementLinksSheetColumn> repo = new CellValueCoercerRepository<>();		
-		
+		CellValueCoercerRepository<RequirementLinksSheetColumn> repo = new CellValueCoercerRepository<>();
+
 		repo.coercerByColumn.put(RequirementLinksSheetColumn.ACTION, ImportModeCellCoercer.INSTANCE);
 		repo.coercerByColumn.put(RequirementLinksSheetColumn.REQ_VERSION_NUM, OptionalIntegerCellCoercer.INSTANCE);
 		repo.coercerByColumn.put(RequirementLinksSheetColumn.RELATED_REQ_VERSION_NUM, OptionalIntegerCellCoercer.INSTANCE);
-		
+
 		// for other properties, the default StringCellCoercer will kick in
 		return repo;
 	}
@@ -177,6 +168,9 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 		repo.coercerByColumn.put(TestCaseSheetColumn.TC_MILESTONE, OptionalStringArrayCellCoercer.INSTANCE);
 
 		repo.coercerByColumn.put(TestCaseSheetColumn.ACTION, ImportModeCellCoercer.INSTANCE);
+
+		repo.coercerByColumn.put(TestCaseSheetColumn.TC_KIND, OptionalEnumCellCoercer.forEnum(TestCaseKind.class));
+		repo.coercerByColumn.put(TestCaseSheetColumn.TC_SCRIPTING_LANGUAGE, OptionalEnumCellCoercer.forEnum(ScriptedTestCaseLanguage.class));
 
 		return repo;
 	}

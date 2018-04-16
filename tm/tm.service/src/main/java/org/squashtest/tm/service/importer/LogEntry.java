@@ -21,8 +21,8 @@
 package org.squashtest.tm.service.importer;
 
 import javax.validation.constraints.NotNull;
-import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class LogEntry implements Comparable<LogEntry> {
 	private Integer line;
@@ -174,9 +174,7 @@ public class LogEntry implements Comparable<LogEntry> {
 
 	@Override
 	public int hashCode() {
-		int result = line.hashCode();
-		result = 31 * result + status.hashCode();
-		result = 31 * result + i18nError.hashCode();
+		int result = Objects.hash(line, status, i18nError);
 		result = 31 * result + Arrays.hashCode(errorArgs);
 		return result;
 	}

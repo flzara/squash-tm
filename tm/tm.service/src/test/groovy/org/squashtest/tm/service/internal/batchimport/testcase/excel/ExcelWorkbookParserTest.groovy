@@ -20,17 +20,23 @@
  */
 package org.squashtest.tm.service.internal.batchimport.testcase.excel
 
-import static org.squashtest.tm.service.importer.ImportMode.*
-
 import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.Resource
 import org.squashtest.tm.core.foundation.lang.DateUtils
+import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender
+import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseKind
 import org.squashtest.tm.exception.SheetCorruptedException
 import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException
 import org.squashtest.tm.service.internal.batchimport.CallStepInstruction
-
+import org.squashtest.tm.service.internal.batchimport.Instruction
+import org.squashtest.tm.service.internal.batchimport.TestCaseTarget
+import org.squashtest.tm.service.internal.batchimport.excel.CannotCoerceException
 import spock.lang.Specification
 import spock.lang.Unroll
+
+import static org.squashtest.tm.service.importer.ImportMode.*
 
 /**
  * @author Gregory Fouquet
@@ -263,5 +269,45 @@ class ExcelWorkbookParserTest extends Specification {
 
 		then:
 		instructions*.target.path == paths
+	}
+
+	def "should create a test case scripted extender"() {
+		given:
+		Resource xls = new ClassPathResource("batchimport/testcase/import-scripted-tc.xlsx")
+
+		and:
+		ExcelWorkbookParser parser = ExcelWorkbookParser.createParser(xls.file)
+
+		when:
+		parser.parse().releaseResources()
+		def instructions = parser.getTestCaseInstructions()
+
+		then:
+		Instruction<TestCaseTarget> instruction = instructions.get(0)
+
+		TestCase testCase = instruction.getTestCase()
+		testCase.getKind().equals(TestCaseKind.SCRIPTED)
+
+		ScriptedTestCaseExtender extender = testCase.getScriptedTestCaseExtender()
+		extender.language.equals(ScriptedTestCaseLanguage.GHERKIN)
+		extender.script.equals("Feature: Make something")
+
+
+	}
+
+	def "should cast exception when invalid values inside test case scripted extender"() {
+		given:
+		Resource xls = new ClassPathResource("batchimport/testcase/import-incorrect-scripted-tc.xlsx")
+
+		and:
+		ExcelWorkbookParser parser = ExcelWorkbookParser.createParser(xls.file)
+
+		when:
+		parser.parse().releaseResources()
+
+		then:
+		thrown CannotCoerceException.class
+
+
 	}
 }
