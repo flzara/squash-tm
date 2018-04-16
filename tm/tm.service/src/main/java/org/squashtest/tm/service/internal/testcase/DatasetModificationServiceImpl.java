@@ -71,6 +71,12 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 
 			TestCase testCase = testCaseDao.findById(testCaseId);
 
+			if(testCase.isScripted()){
+				//No need to make proper error message, because the IHM do not allow parameters on scripted test case.
+				//So if we are here the user is playing with controllers...
+				throw new IllegalArgumentException("Cannot add dataset to scripted test case.");
+			}
+
 			dataset.setTestCase(testCase);
 			testCase.addDataset(dataset);
 
