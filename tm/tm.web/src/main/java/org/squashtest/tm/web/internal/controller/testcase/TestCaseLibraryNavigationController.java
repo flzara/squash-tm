@@ -221,6 +221,20 @@ public class TestCaseLibraryNavigationController extends
 
 	}
 
+	@RequestMapping(value = "/content/features", produces = APPLICATION_SLASH_OCTET_STREAM, method = RequestMethod.GET, params = {
+		FILENAME, LIBRARIES, NODES})
+	@ResponseBody
+	public FileSystemResource exportGherkinFeatures(Locale locale, @RequestParam(FILENAME) String filename,
+							@RequestParam(LIBRARIES) List<Long> libraryIds, @RequestParam(NODES) List<Long> nodeIds,
+							HttpServletResponse response)  {
+
+		response.setContentType(APPLICATION_SLASH_OCTET_STREAM);
+		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".zip");
+
+		File file = testCaseLibraryNavigationService.exportGherkinTestCaseAsFeatureFiles(libraryIds, nodeIds, getMessageSource());
+		return new FileSystemResource(file);
+	}
+
 	@RequestMapping(value = "/searchExports", produces = APPLICATION_SLASH_OCTET_STREAM, method = RequestMethod.GET, params = {
 		FILENAME, NODES, CALLS, RequestParams.RTEFORMAT})
 	@ResponseBody

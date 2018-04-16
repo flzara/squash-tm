@@ -1,4 +1,4 @@
-/*
+/**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) Henix, henix.fr
  *
@@ -18,29 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['./add-folder-popup', './add-test-case-popup' ,
-        './rename-node-popup', './delete-node-popup',
-        './import-excel-popup',
-        './export-popup','./export-gherkin-popup'],
-		function(folderpopup, tcpopup, renamepopup, deletepopup, importpopup, exportpopup, exportgherkinpopup){
+package org.squashtest.tm.service.internal.batchexport;
 
+import org.springframework.stereotype.Service;
 
-	function init(){
-
-		folderpopup.init();
-		tcpopup.init();
-		renamepopup.init();
-
-		importpopup.init();
-		exportpopup.init();
-		exportgherkinpopup.init();
-
-		deletepopup.init();
-
-	}
-
-	return {
-		init : init
-	};
-
-});
+@Service
+public class GherkinFeatureFilesExporterService {
+}

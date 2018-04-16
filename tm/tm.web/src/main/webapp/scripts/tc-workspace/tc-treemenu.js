@@ -33,6 +33,7 @@ define(["jquery", "./utils", "./permissions-rules", "workspace/WorkspaceTreeMenu
 			"#import-excel-tree-button",
 			"#import-links-excel-tree-button",
 			"#export-tree-button",
+			"#export-gherkin-tree-button",
 			"#delete-node-tree-button",
 			"#search-tree-button"
 		].join(", ");

@@ -205,6 +205,10 @@ define(["jquery","backbone", "tree","./permissions-rules", "workspace.contextual
 
 			});
 
+			$("#export-gherkin-tree-button").on("click", function(){
+				$("#export-gherkin-test-case-dialog").exportGherkinFeatureDialog("open");
+			});
+
 			// *****************  search  ********************
 
 			// $("#search-tree-button").on("click", function(){

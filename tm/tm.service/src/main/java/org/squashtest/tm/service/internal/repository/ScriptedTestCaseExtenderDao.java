@@ -22,8 +22,13 @@ package org.squashtest.tm.service.internal.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
+import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
+
+import java.util.Collection;
+import java.util.List;
 
 public interface ScriptedTestCaseExtenderDao extends JpaRepository<ScriptedTestCaseExtender,Long>{
 
 	ScriptedTestCaseExtender findByTestCase_Id(Long testCaseId);
+	List<ScriptedTestCaseExtender> findByLanguageAndTestCase_IdIn(ScriptedTestCaseLanguage language, Collection<Long> testCaseIds);
 }

@@ -23,6 +23,8 @@ package org.squashtest.tm.service.internal.testcase;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,8 +37,10 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.compress.archivers.ArchiveException;
+import org.apache.commons.compress.archivers.ArchiveOutputStream;
+import org.apache.commons.compress.archivers.ArchiveStreamFactory;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.security.access.prepost.PostFilter;
@@ -49,12 +53,7 @@ import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
-import org.squashtest.tm.domain.testcase.ExportTestCaseData;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.tm.domain.testcase.TestCaseLibrary;
-import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
-import org.squashtest.tm.domain.testcase.TestCaseLibraryNodeVisitor;
+import org.squashtest.tm.domain.testcase.*;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
@@ -73,13 +72,7 @@ import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
 import org.squashtest.tm.service.internal.library.NodeDeletionHandler;
 import org.squashtest.tm.service.internal.library.PasteStrategy;
 import org.squashtest.tm.service.internal.library.PathService;
-import org.squashtest.tm.service.internal.repository.FolderDao;
-import org.squashtest.tm.service.internal.repository.LibraryDao;
-import org.squashtest.tm.service.internal.repository.ProjectDao;
-import org.squashtest.tm.service.internal.repository.TestCaseDao;
-import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
-import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
-import org.squashtest.tm.service.internal.repository.TestCaseLibraryNodeDao;
+import org.squashtest.tm.service.internal.repository.*;
 import org.squashtest.tm.service.internal.testcase.coercers.TCLNAndParentIdsCoercerForArray;
 import org.squashtest.tm.service.internal.testcase.coercers.TCLNAndParentIdsCoercerForList;
 import org.squashtest.tm.service.internal.testcase.coercers.TestCaseLibraryIdsCoercerForArray;
@@ -98,7 +91,7 @@ import java.util.Optional;
 public class TestCaseLibraryNavigationServiceImpl
 	extends AbstractLibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>
 	implements TestCaseLibraryNavigationService {
-	
+
 	private static final String EXPORT = "EXPORT";
 	private static final String TEST_CASE_CLASS_NAME = "org.squashtest.tm.domain.testcase.TestCase";
 	private static final String DESTINATION_ID = "destinationId";
@@ -115,6 +108,9 @@ public class TestCaseLibraryNavigationServiceImpl
 	@Inject
 	@Qualifier("squashtest.tm.repository.TestCaseLibraryNodeDao")
 	private TestCaseLibraryNodeDao testCaseLibraryNodeDao;
+
+	@Inject
+	private ScriptedTestCaseExtenderDao scriptedTestCaseExtenderDao;
 
 	@Inject
 	private TestCaseImporter testCaseImporter;
@@ -501,6 +497,36 @@ public class TestCaseLibraryNavigationServiceImpl
 	}
 
 	@Override
+	@Transactional(readOnly = true)
+	public File exportGherkinTestCaseAsFeatureFiles(List<Long> libraryIds, List<Long> nodeIds, MessageSource messageSource) {
+		Collection<Long> ids = findTestCaseIdsFromSelection(libraryIds, nodeIds);
+		List<ScriptedTestCaseExtender> extenders = scriptedTestCaseExtenderDao.findByLanguageAndTestCase_IdIn(ScriptedTestCaseLanguage.GHERKIN, ids);
+
+		try {
+			File zipFile = File.createTempFile("export-feature-", "zip");
+			FileOutputStream fileOutputStream = new FileOutputStream(zipFile);
+			zipFile.deleteOnExit();
+
+			ArchiveOutputStream archive = new ArchiveStreamFactory().createArchiveOutputStream(ArchiveStreamFactory.ZIP, fileOutputStream);
+
+			ZipArchiveEntry entry = new ZipArchiveEntry("toto");
+//			entry.setSize(size);
+//			zipOutput.putArchiveEntry(entry);
+//			zipOutput.write(contentOfEntry);
+//			zipOutput.closeArchiveEntry();
+
+			archive.putArchiveEntry(entry);
+			archive.closeArchiveEntry();
+			archive.close();
+
+			return zipFile;
+		} catch (IOException | ArchiveException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+
+	@Override
 	@SuppressWarnings("unchecked")
 	public File searchExportTestCaseAsExcel(List<Long> nodeIds, boolean includeCalledTests, boolean keepRteFormat,
 											MessageSource messageSource) {
@@ -512,7 +538,6 @@ public class TestCaseLibraryNavigationServiceImpl
 		return excelService.searchExportAsExcel(new ArrayList<>(allIds), keepRteFormat, messageSource);
 
 	}
-
 
 
 	@Override
@@ -650,7 +675,7 @@ public class TestCaseLibraryNavigationServiceImpl
 			testCase.setNature(projectNatures.getDefaultItem());
 		} else {
 			// validate the code
-			if (! projectNatures.contains(nature)) {
+			if (!projectNatures.contains(nature)) {
 				throw new InconsistentInfoListItemException("nature", nature.getCode());
 			}
 
@@ -668,7 +693,7 @@ public class TestCaseLibraryNavigationServiceImpl
 		if (type == null) {
 			testCase.setType(projectTypes.getDefaultItem());
 		} else {
-			if (! projectTypes.contains(type)) {
+			if (!projectTypes.contains(type)) {
 				throw new InconsistentInfoListItemException("type", type.getCode());
 			}
 			if (type instanceof ListItemReference) {

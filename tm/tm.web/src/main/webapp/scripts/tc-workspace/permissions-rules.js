@@ -261,6 +261,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 			'import-excel-tree-button' : this.canImport,
 			'import-links-excel-tree-button' : this.canImport,
 			'export-tree-button' : this.canExport,
+			'export-gherkin-tree-button' : this.canExport,
 			'delete-node-tree-button' : this.canDelete,
 			'search-tree-button' : this.canSearch
 		};
