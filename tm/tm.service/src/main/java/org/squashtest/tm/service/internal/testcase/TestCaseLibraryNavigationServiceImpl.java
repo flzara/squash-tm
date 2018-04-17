@@ -42,6 +42,8 @@ import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.security.access.prepost.PostFilter;
@@ -92,6 +94,8 @@ import java.util.Optional;
 public class TestCaseLibraryNavigationServiceImpl
 	extends AbstractLibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>
 	implements TestCaseLibraryNavigationService {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseLibraryNavigationServiceImpl.class);
 
 	private static final String EXPORT = "EXPORT";
 	private static final String TEST_CASE_CLASS_NAME = "org.squashtest.tm.domain.testcase.TestCase";
@@ -504,12 +508,13 @@ public class TestCaseLibraryNavigationServiceImpl
 		return doGherkinExport(ids);
 	}
 
-	File doGherkinExport(Collection<Long> ids) {
+	private File doGherkinExport(Collection<Long> ids) {
 		List<ScriptedTestCaseExtender> extenders = scriptedTestCaseExtenderDao.findByLanguageAndTestCase_IdIn(ScriptedTestCaseLanguage.GHERKIN, ids);
 
+		FileOutputStream fileOutputStream = null;
 		try {
 			File zipFile = File.createTempFile("export-feature-", ".zip");
-			FileOutputStream fileOutputStream = new FileOutputStream(zipFile);
+			fileOutputStream = new FileOutputStream(zipFile);
 			zipFile.deleteOnExit();
 
 			ArchiveOutputStream archive = new ArchiveStreamFactory().createArchiveOutputStream(ArchiveStreamFactory.ZIP, fileOutputStream);
@@ -526,6 +531,14 @@ public class TestCaseLibraryNavigationServiceImpl
 			return zipFile;
 		} catch (IOException | ArchiveException e) {
 			throw new RuntimeException(e);
+		} finally {
+			if (fileOutputStream != null) {
+				try {
+					fileOutputStream.close();
+				} catch (IOException e) {
+					LOGGER.error("Unable to close FileOutputStream: ", e);
+				}
+			}
 		}
 	}
 
