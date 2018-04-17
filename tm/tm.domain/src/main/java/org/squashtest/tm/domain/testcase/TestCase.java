@@ -177,6 +177,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	@Column(name = "TC_KIND")
 	@Enumerated(value = STRING)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	private TestCaseKind kind = STANDARD;
 
 

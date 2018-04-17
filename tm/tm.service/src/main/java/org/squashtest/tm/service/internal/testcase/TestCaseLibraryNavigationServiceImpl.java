@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -500,25 +501,28 @@ public class TestCaseLibraryNavigationServiceImpl
 	@Transactional(readOnly = true)
 	public File exportGherkinTestCaseAsFeatureFiles(List<Long> libraryIds, List<Long> nodeIds, MessageSource messageSource) {
 		Collection<Long> ids = findTestCaseIdsFromSelection(libraryIds, nodeIds);
+		return doGherkinExport(ids);
+	}
+
+	File doGherkinExport(Collection<Long> ids) {
 		List<ScriptedTestCaseExtender> extenders = scriptedTestCaseExtenderDao.findByLanguageAndTestCase_IdIn(ScriptedTestCaseLanguage.GHERKIN, ids);
 
 		try {
-			File zipFile = File.createTempFile("export-feature-", "zip");
+			File zipFile = File.createTempFile("export-feature-", ".zip");
 			FileOutputStream fileOutputStream = new FileOutputStream(zipFile);
 			zipFile.deleteOnExit();
 
 			ArchiveOutputStream archive = new ArchiveStreamFactory().createArchiveOutputStream(ArchiveStreamFactory.ZIP, fileOutputStream);
 
-			ZipArchiveEntry entry = new ZipArchiveEntry("toto");
-//			entry.setSize(size);
-//			zipOutput.putArchiveEntry(entry);
-//			zipOutput.write(contentOfEntry);
-//			zipOutput.closeArchiveEntry();
+			for (ScriptedTestCaseExtender extender : extenders) {
+				String name = "tc_" + extender.getTestCaseId();
+				ZipArchiveEntry entry = new ZipArchiveEntry(name + ".feature");
+				archive.putArchiveEntry(entry);
+				archive.write(extender.getScript().getBytes(Charset.forName("UTF-8")));
+				archive.closeArchiveEntry();
+			}
 
-			archive.putArchiveEntry(entry);
-			archive.closeArchiveEntry();
 			archive.close();
-
 			return zipFile;
 		} catch (IOException | ArchiveException e) {
 			throw new RuntimeException(e);

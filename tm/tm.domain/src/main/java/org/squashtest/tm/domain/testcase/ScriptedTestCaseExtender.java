@@ -61,6 +61,10 @@ public class ScriptedTestCaseExtender {
 	@JoinColumn(name = "TEST_CASE_ID")
 	private TestCase testCase;
 
+
+	@Column(name = "TEST_CASE_ID", insertable = false, updatable = false)
+	private Long testCaseId;
+
 	public ScriptedTestCaseExtender() {
 	}
 
@@ -135,6 +139,13 @@ public class ScriptedTestCaseExtender {
 		this.testCase = testCase;
 	}
 
+	public Long getTestCaseId() {
+		return testCaseId;
+	}
+
+	public void setTestCaseId(Long testCaseId) {
+		this.testCaseId = testCaseId;
+	}
 
 	public ScriptedTestCaseExtender createCopy() {
 		ScriptedTestCaseExtender copy = new ScriptedTestCaseExtender();
