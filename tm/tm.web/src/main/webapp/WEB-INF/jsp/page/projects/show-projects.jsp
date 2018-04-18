@@ -181,7 +181,7 @@
       <!--       TEMPLATE COMBO -->
       <tr class="control-group">
         <td>
-          <label class="control-label" for="add-project-from-template-tempate"><f:message key="label.projectTemplate" /></label>
+          <label class="control-label" for="add-project-from-template-template"><f:message key="label.projectTemplate" /></label>
         </td>
       	<td class="controls">
   			<select id="add-project-from-template-template" data-prop="templateId">
@@ -193,7 +193,7 @@
       </tr>
       <tr class="control-group">
       <td>
-          <label class="control-label" for="add-project-from-template-tempate"><f:message key="label.parametersFromTemplate" /></label>
+          <label class="control-label" for="add-project-from-template-template"><f:message key="label.parametersFromTemplate" /></label>
       </td>
       <td>
       <!--        CHECKBOXES -->

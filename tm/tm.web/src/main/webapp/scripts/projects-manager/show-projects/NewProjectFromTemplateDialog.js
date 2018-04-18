@@ -51,7 +51,10 @@ define(["handlebars", "underscore", "jquery.squash.bindviewformdialog","./NewPro
 				async : false,
 				success : function(collection, response, options) {
 						//adding the "no template" option, id=0 as no project can have the id 0 on server
-						collection.add({id : "0" ,name : translator.get("label.noneDS")});
+						/*[Issue 7346] Using "unshift" method to be sure the "no template" option is at the beginning of the list.
+						This is not the case with "add" method in case of templates having a name beginning with a number
+						because of name sorting*/
+						collection.unshift({id : "0" ,name : translator.get("label.noneDS")});
 				}
 			});
 		},
