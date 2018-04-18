@@ -230,7 +230,7 @@
 						</c:if>
 					</h3>
 				</td>
-		<c:if test="${execution.project.allowTcModifDuringExec()}">
+		<c:if test="${execution.project.allowTcModifDuringExec() and !execution.isScripted()}">
 		<td> <button  id="edit-tc" style="float: right" class="sq-btn std-btn ui-button control-button " ${ executionStep.referencedTestStep == null ? 'disabled="disabled"' : ''} title="${modifyTcLabel}">
                                  <span class="ui-icon ui-icon-pencil"/>
                                  </button> </td>
