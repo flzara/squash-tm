@@ -35,7 +35,7 @@
 
 
 <c:set var="scripted" value="${execution.isScripted()}"/>
-<c:set var="actionPanelTitle" value="${scripted ? 'execute.panel.script.title' : 'execute.panel.action.title'}"/>
+<c:set var="actionPanelTitle" value="${scripted ? 'label.Script' : 'execute.panel.action.title'}"/>
 
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
