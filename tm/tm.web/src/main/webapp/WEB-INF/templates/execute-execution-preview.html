@@ -30,7 +30,9 @@
 	   		: #{title.ExecutionPopupPreviewWithoutDataset(${execution.executionOrder + 1}, ${execution.name})} ,
 	   title = ${execution.datasetLabel != null AND execution.datasetLabel != ''} ?
 	   		#{title.ExecutionPopupWithDataset(${execution.executionOrder + 1}, ${execution.name}, ${execution.datasetLabel})}
-	   		: #{title.ExecutionPopupWithoutDataset(${execution.executionOrder + 1}, ${execution.name})}">
+	   		: #{title.ExecutionPopupWithoutDataset(${execution.executionOrder + 1}, ${execution.name})} ,
+	   titlePrerequisite = ${execution.isScripted()} ? #{label.Background} : #{generics.prerequisite.title}
+">
 <head>
   <meta name="_csrf" th:content="${_csrf.token}"/>
   <!-- default header name is X-CSRF-TOKEN -->
@@ -227,7 +229,7 @@ documentation :
 
     <div class="sq-tg expand">
         <div class="tg-head">
-          <h3 th:text="#{generics.prerequisite.title}"></h3>
+          <h3 th:text="${titlePrerequisite}"></h3>
         </div>
         <div id="execute-prerequisite-panel" class="tg-body is-contextual load-links-right-frame" >
     			<div class="display-table">
