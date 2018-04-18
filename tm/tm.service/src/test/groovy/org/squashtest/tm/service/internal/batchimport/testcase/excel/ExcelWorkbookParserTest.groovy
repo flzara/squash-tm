@@ -286,7 +286,7 @@ class ExcelWorkbookParserTest extends Specification {
 		Instruction<TestCaseTarget> instruction = instructions.get(0)
 
 		TestCase testCase = instruction.getTestCase()
-		testCase.getKind().equals(TestCaseKind.SCRIPTED)
+		testCase.getKind().equals(TestCaseKind.GHERKIN)
 
 		ScriptedTestCaseExtender extender = testCase.getScriptedTestCaseExtender()
 		extender.language.equals(ScriptedTestCaseLanguage.GHERKIN)

@@ -55,7 +55,6 @@ import java.util.*;
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
 import static org.squashtest.tm.domain.testcase.TestCaseImportance.LOW;
-import static org.squashtest.tm.domain.testcase.TestCaseKind.SCRIPTED;
 import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD;
 
 import org.squashtest.tm.domain.testcase.Parameter;
@@ -176,10 +175,12 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@OneToOne(mappedBy = "testCase", optional = true, fetch = LAZY, cascade = CascadeType.ALL)
 	private ScriptedTestCaseExtender scriptedTestCaseExtender;
 
+
 	@Column(name = "TC_KIND")
 	@Enumerated(value = STRING)
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = EnumBridge.class)
+	@NotNull
 	private TestCaseKind kind = STANDARD;
 
 
@@ -885,13 +886,13 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 	public boolean isScripted(){
-		return SCRIPTED.equals(this.kind);
+		return this.kind.isScripted();
 	}
 
 	public void extendWithScript( String scriptLanguage, String locale){
 		ScriptedTestCaseExtender scriptedTestCaseExtender = new ScriptedTestCaseExtender(this, scriptLanguage, locale);
 		this.setScriptedTestCaseExtender(scriptedTestCaseExtender);
-		this.setKind(SCRIPTED);
+		this.setKind(TestCaseKind.getFromString(scriptLanguage));
 	}
 
 	public TestCaseKind getKind() {

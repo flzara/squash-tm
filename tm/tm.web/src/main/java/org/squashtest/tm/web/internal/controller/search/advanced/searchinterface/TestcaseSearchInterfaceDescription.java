@@ -31,12 +31,16 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.internal.dto.json.JsonInfoList;
 import org.squashtest.tm.service.internal.dto.json.JsonInfoListItem;
 import org.squashtest.tm.service.internal.dto.json.JsonProject;
 import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+
+import static org.squashtest.tm.domain.testcase.TestCaseKind.GHERKIN;
+import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD;
 
 @Component
 public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescription {
@@ -74,8 +78,8 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 			.internationalize("test-case.format.label", locale), MULTISELECT);
 		panel.addField(testCaseKind);
 
-		testCaseKind.addPossibleValue(optionBuilder(locale).labelI18nKey("test-case.format.classic").optionKey("STANDARD").selected().build());
-		testCaseKind.addPossibleValue(optionBuilder(locale).labelI18nKey("test-case.format.script").optionKey("SCRIPTED").selected().build());
+		testCaseKind.addPossibleValue(optionBuilder(locale).labelI18nKey(STANDARD.getI18nKey()).optionKey(STANDARD.name()).selected().build());
+		testCaseKind.addPossibleValue(optionBuilder(locale).labelI18nKey(GHERKIN.getI18nKey()).optionKey(GHERKIN.name()).selected().build());
 
 		return panel;
 	}

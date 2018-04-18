@@ -57,7 +57,7 @@
 				<f:message key="test-case.format.gherkin"/>
 		</c:when>
         <c:otherwise>
-				<f:message key="test-case.format.classic"/>
+				<f:message key="test-case.format.standard"/>
         </c:otherwise>
       </c:choose>
 			</div>

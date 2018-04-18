@@ -66,7 +66,7 @@ class TestCaseInstructionBuilder extends InstructionBuilder<TestCaseSheetColumn,
 			return;
 		}
 		TestCaseKind testCaseKind = getValue(row, columnDef);
-		if (TestCaseKind.SCRIPTED.equals(testCaseKind)) {
+		if (testCaseKind != null && testCaseKind.isScripted()) {
 			TestCase testCase = instruction.getTestCase();
 			ScriptedTestCaseLanguage language = getValue(row, worksheetDef.getColumnDef(TestCaseSheetColumn.TC_SCRIPTING_LANGUAGE));
 			ScriptedTestCaseExtender testCaseExtender = new ScriptedTestCaseExtender();

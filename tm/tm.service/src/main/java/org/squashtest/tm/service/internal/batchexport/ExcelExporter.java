@@ -20,19 +20,6 @@
  */
 package org.squashtest.tm.service.internal.batchexport;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -52,20 +39,16 @@ import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.CoverageModel;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.DatasetModel;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.ParameterModel;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.TestStepModel;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageSheetColumn;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.DatasetSheetColumn;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.ParameterSheetColumn;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.StepSheetColumn;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.*;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.*;
 import org.squashtest.tm.service.internal.dto.NumericCufHelper;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * @author bsiri
@@ -303,7 +286,7 @@ class ExcelExporter {
 		TestCaseKind testCaseKind = tcm.getTestCaseKind();
 		r.createCell(cIdx++).setCellValue(testCaseKind.name());
 
-		if (TestCaseKind.SCRIPTED.equals(testCaseKind)) {
+		if (testCaseKind.isScripted()) {
 			r.createCell(cIdx++).setCellValue(tcm.getScriptedTestCaseLanguage().name());
 			r.createCell(cIdx++).setCellValue(tcm.getTcScript());
 		} else {

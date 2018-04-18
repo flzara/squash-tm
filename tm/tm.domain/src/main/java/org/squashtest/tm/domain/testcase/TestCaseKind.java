@@ -20,6 +20,26 @@
  */
 package org.squashtest.tm.domain.testcase;
 
-public enum TestCaseKind {
-	STANDARD, SCRIPTED
+import org.apache.commons.lang3.EnumUtils;
+import org.squashtest.tm.core.foundation.i18n.Internationalizable;
+
+public enum TestCaseKind implements Internationalizable {
+	STANDARD, GHERKIN;
+
+	public boolean isScripted() {
+		return !this.equals(STANDARD);
+	}
+
+	public static TestCaseKind getFromString(String kind){
+		TestCaseKind testCaseKind = EnumUtils.getEnum(TestCaseKind.class, kind);
+		if (testCaseKind == null) {
+			throw new IllegalArgumentException("Unknown scriptLanguage of scripted test case : " + kind);
+		}
+		return testCaseKind;
+	}
+
+	@Override
+	public String getI18nKey() {
+		return "test-case.format." + this.name().toLowerCase();
+	}
 }
