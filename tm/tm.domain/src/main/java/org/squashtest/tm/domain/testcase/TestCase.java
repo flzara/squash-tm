@@ -23,6 +23,7 @@ package org.squashtest.tm.domain.testcase;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.*;
+import org.hibernate.search.bridge.builtin.EnumBridge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.attachment.Attachment;
@@ -178,6 +179,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@Column(name = "TC_KIND")
 	@Enumerated(value = STRING)
 	@Field(analyze = Analyze.NO, store = Store.YES)
+	@FieldBridge(impl = EnumBridge.class)
 	private TestCaseKind kind = STANDARD;
 
 

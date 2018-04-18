@@ -70,6 +70,13 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 				.internationalize("test-case.prerequisite.label", locale), TEXTAREA);
 		panel.addField(prerequisiteField);
 
+		SearchInputFieldModel testCaseKind = new SearchInputFieldModel("kind", getMessageSource()
+			.internationalize("test-case.format.label", locale), MULTISELECT);
+		panel.addField(testCaseKind);
+
+		testCaseKind.addPossibleValue(optionBuilder(locale).labelI18nKey("test-case.format.classic").optionKey("STANDARD").selected().build());
+		testCaseKind.addPossibleValue(optionBuilder(locale).labelI18nKey("test-case.format.script").optionKey("SCRIPTED").selected().build());
+
 		return panel;
 	}
 
