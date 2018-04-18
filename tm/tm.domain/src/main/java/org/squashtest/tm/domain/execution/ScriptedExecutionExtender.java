@@ -48,6 +48,8 @@ public class ScriptedExecutionExtender {
 	@Enumerated(EnumType.STRING)
 	private ScriptedTestCaseLanguage kind;
 
+	private String scriptName = "";
+
 	@NotNull
 	@OneToOne(optional = false)
 	@JoinColumn(name = "EXECUTION_ID")
@@ -87,6 +89,14 @@ public class ScriptedExecutionExtender {
 
 	public void setExecution(Execution execution) {
 		this.execution = execution;
+	}
+
+	public String getScriptName() {
+		return scriptName;
+	}
+
+	public void setScriptName(String scriptName) {
+		this.scriptName = scriptName;
 	}
 }
 

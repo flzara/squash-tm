@@ -137,7 +137,15 @@ documentation :
 
           <div class="display-table">
 
-                  <div class="display-table-row">
+            <div th:if="${execution.isScripted()}" class="display-table-row">
+
+              <label class="display-table-cell" th:text="#{test-case.reference.label}">reference</label>
+
+              <div id="testcase-script-name" class="display-table-cell" th:text="${execution.scriptedExecutionExtender.scriptName}">REF01</div>
+            </div>
+
+
+            <div class="display-table-row">
 
               <label class="display-table-cell" th:text="#{test-case.reference.label}">reference</label>
 
@@ -172,7 +180,7 @@ documentation :
                 <span id="testcase-status" th:text="${execution.status.level}+'-'+#{${execution.status.getI18nKey()}}">0 - a specifier</span>
               </div>
             </div>
-             <div class="display-table-row">
+             <div th:if="${execution.isNotScripted()}" class="display-table-row">
               <label class="display-table-cell" th:text="#{label.dataset}">dataset</label>
 
           <div id="execute-dataset" class="display-table-cell" th:text="${execution.datasetLabel}">

@@ -709,6 +709,10 @@ DenormalizedFieldHolder, BoundEntity {
 		return this.scriptedExecutionExtender != null;
 	}
 
+	public boolean isNotScripted(){
+		return !isScripted();
+	}
+
 	public void createScriptedExtender(){
 		this.setScriptedExecutionExtender(new ScriptedExecutionExtender(this));
 	}

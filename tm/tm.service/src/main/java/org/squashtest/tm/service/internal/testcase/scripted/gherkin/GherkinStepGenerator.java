@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.execution.ScriptedExecutionExtender;
 
 import java.util.HashMap;
 import java.util.List;
@@ -69,8 +70,12 @@ public class GherkinStepGenerator {
 	private String currentStepClass = "";
 
 	public void populateExecution(Execution execution, GherkinDocument gherkinDocument) {
+		ScriptedExecutionExtender executionExtender = execution.getScriptedExecutionExtender();
 		Feature feature = gherkinDocument.getFeature();
+		executionExtender.setScriptName(feature.getName());
 		initDialect(feature);
+
+
 
 		List<ScenarioDefinition> scenarioDefinitions = feature.getChildren();
 		if (scenarioDefinitions.isEmpty()) {
