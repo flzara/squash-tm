@@ -75,6 +75,18 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing"], fun
 					highlightGutterLine: false
 				});
 
+				// Adding convenient shortcut to save the script to server
+				editor.commands.addCommand({
+					name: 'saveGherkinScript',
+					bindKey: {win: 'Ctrl-Alt-S',  mac: 'Command-Alt-S'},
+					exec: function(editor) {
+						console.log("saving script to server");
+						that.saveScript();
+					},
+					readOnly: false
+				});
+
+
 			});
 		},
 
