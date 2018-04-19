@@ -249,7 +249,7 @@
 
           <div class="left btn-toolbar">
             <span class="group">
-              <button id="tc-script-save-button"
+              <button id="tc-script-save-button" title="Ctrl+Alt+S"
                       data-icon="ui-icon ui-icon-plusthick"
                       class="sq-btn ui-icon-plusthick" disabled='disabled'>
                     Enregistrer

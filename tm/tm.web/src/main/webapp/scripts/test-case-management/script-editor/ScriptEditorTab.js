@@ -80,7 +80,6 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing"], fun
 					name: 'saveGherkinScript',
 					bindKey: {win: 'Ctrl-Alt-S',  mac: 'Command-Alt-S'},
 					exec: function(editor) {
-						console.log("saving script to server");
 						that.saveScript();
 					},
 					readOnly: false
