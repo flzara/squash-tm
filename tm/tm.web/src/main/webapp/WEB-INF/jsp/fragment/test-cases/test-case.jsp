@@ -162,7 +162,7 @@
 
 <%-- --------------------------------------- Test Case body --------------------------------------- --%>
 
-<csst:jq-tab>
+<csst:jq-tab activeContentIndex="1">
   <div class="fragment-tabs fragment-body">
 
       <%--  ------------------ main tab panel --------------------------------- --%>
