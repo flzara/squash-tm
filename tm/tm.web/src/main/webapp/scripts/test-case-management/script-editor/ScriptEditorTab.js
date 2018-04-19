@@ -217,6 +217,7 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing"], fun
 			this.$el.find("#tc-script-save-button").prop("disabled", false);
 			this.$el.find("#tc-script-cancel").show();
 			this.$el.find("#tc-script-activate-editor").hide();
+			this.editor.focus();
 		},
 
 		cancel : function () {
