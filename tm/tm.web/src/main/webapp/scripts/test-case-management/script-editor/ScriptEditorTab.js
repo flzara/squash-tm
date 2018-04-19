@@ -63,8 +63,11 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing"], fun
 				that._initialize_editor_mode(editor);
 				editor.setTheme("ace/theme/iplastic");
 				editor.setOptions({
-					//has to set this one to true if i want snippets, but basic auto completion is disabled above
+					// Has to set this one to true if i want snippets, but basic auto completion is disabled above
 					enableBasicAutocompletion: true,
+					// Soft tabs with two spaces by tabs like required by gherkin good practices
+					tabSize: 2,
+					useSoftTabs: true,
 					enableSnippets: true,
 					enableLiveAutocompletion: false,
 					readOnly: true,
