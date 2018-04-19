@@ -173,7 +173,7 @@
       <c:choose>
         <c:when test="${scripted}">
           <li>
-            <a href="#tab-tc-script-editor">SCRIPT</a>
+            <a href="#tab-tc-script-editor"><f:message key="label.Script"/></a>
           </li>
         </c:when>
         <c:otherwise>
