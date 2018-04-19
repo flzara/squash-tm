@@ -46,7 +46,7 @@ public class ScriptedExecutionExtender {
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	private ScriptedTestCaseLanguage kind;
+	private ScriptedTestCaseLanguage language;
 
 	private String scriptName = "";
 
@@ -64,7 +64,7 @@ public class ScriptedExecutionExtender {
 		if (referencedTestCase == null || !referencedTestCase.isScripted()){
 			throw new IllegalArgumentException("Can't create an execution extender if test case doesn't exist or is not scripted.");
 		}
-		this.kind = referencedTestCase.getScriptedTestCaseExtender().getLanguage();
+		this.language = referencedTestCase.getScriptedTestCaseExtender().getLanguage();
 	}
 
 	public Long getId() {
@@ -75,12 +75,12 @@ public class ScriptedExecutionExtender {
 		this.id = id;
 	}
 
-	public ScriptedTestCaseLanguage getKind() {
-		return kind;
+	public ScriptedTestCaseLanguage getLanguage() {
+		return language;
 	}
 
-	public void setKind(ScriptedTestCaseLanguage kind) {
-		this.kind = kind;
+	public void setLanguage(ScriptedTestCaseLanguage language) {
+		this.language = language;
 	}
 
 	public Execution getExecution() {

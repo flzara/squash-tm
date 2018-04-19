@@ -22,4 +22,8 @@ package org.squashtest.tm.domain.testcase;
 
 public enum ScriptedTestCaseLanguage {
 	GHERKIN;
+
+	public String i18nScriptNameKey(){
+		return "execution.script.name." + this.name().toLowerCase();
+	}
 }
