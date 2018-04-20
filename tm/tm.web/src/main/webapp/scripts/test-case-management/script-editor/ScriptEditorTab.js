@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing"], function ($, Backbone, _, ace, urlBuilder) {
+define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing","./documentation/ScriptDocumentation"], function ($, Backbone, _, ace, urlBuilder, doc) {
 	var ScriptEditorTab = Backbone.View.extend({
 
 		el: "#tab-tc-script-editor",
@@ -32,7 +32,7 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing"], fun
 
 		events: {
 			"click #tc-script-save-button": "saveScript",
-			"click #tc-script-toggle-option-panel": "toggleOptionPanel",
+			"click #tc-script-toggle-option-panel": "toggleHelpPanel",
 			"click #tc-script-activate-editor": "activateEditor",
 			"click #tc-script-cancel": "cancel"
 		},
@@ -41,48 +41,61 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing"], fun
 			var that = this;
 			var tcScript = this.editor.session.getValue();
 			this.model.set('script', tcScript);
-			this.model.save(null,{
+			this.model.save(null, {
 				success: function (model, response) {
 					that.originalScript = tcScript;
-				}});
+				}
+			});
 		},
 
 		_initializeEditor: function (serverModel) {
 			var that = this;
 			//see https://github.com/ajaxorg/ace-builds/issues/35 to understand the next line...
 			//so much headaches with the loading of ace extensions before finding this magic method...
-			ace.config.loadModule("ace/ext/language_tools", function(langTools) {
-				var editor = ace.edit("tc-script-editor");
-				//disabling local auto completion as specified
-				//must do it before using enableBasicAutoCompletion: true
-				langTools.setCompleters([langTools.snippetCompleter]);
-				that.editor = editor;
-				that.originalScript = serverModel.scriptExender.script;
+			ace.config.loadModule("ace/ext/language_tools", function (langTools) {
+				//modules must be loaded one by one
+				ace.config.loadModule("ace/ext/split", function (splitModule) {
+					var container = document.getElementById("tc-script-editor");
+					var theme = "ace/theme/iplastic";
 
-				editor.session.setValue(that.originalScript);
-				that._initialize_editor_mode(editor);
-				editor.setTheme("ace/theme/iplastic");
-				editor.setOptions({
-					// Has to set this one to true if i want snippets, but basic auto completion is disabled above
-					enableBasicAutocompletion: true,
-					// Soft tabs with two spaces by tabs like required by gherkin good practices
-					tabSize: 2,
-					useSoftTabs: true,
-					enableSnippets: true,
-					enableLiveAutocompletion: false,
-					readOnly: true,
-					highlightActiveLine: false,
-					highlightGutterLine: false
-				});
+					//creating split before editors
+					var split = new splitModule.Split(container, theme, 1);
+					that.split = split;
 
-				// Adding convenient shortcut to save the script to server
-				editor.commands.addCommand({
-					name: 'saveGherkinScript',
-					bindKey: {win: 'Ctrl-Alt-S',  mac: 'Command-Alt-S'},
-					exec: function(editor) {
-						that.saveScript();
-					},
-					readOnly: false
+					//now init the main editor, ie the one where user will type his script
+					var editor = split.getEditor(0);
+					that.editor = editor;
+
+					//disabling local auto completion as specified
+					//must do it before using enableBasicAutoCompletion: true
+					langTools.setCompleters([langTools.snippetCompleter]);
+					that.originalScript = serverModel.scriptExender.script;
+
+					editor.session.setValue(that.originalScript);
+					that._initialize_editor_mode(editor);
+					editor.setTheme("ace/theme/iplastic");
+					editor.setOptions({
+						// Has to set this one to true if i want snippets, but basic auto completion is disabled above
+						enableBasicAutocompletion: true,
+						// Soft tabs with two spaces by tabs like required by gherkin good practices
+						tabSize: 2,
+						useSoftTabs: true,
+						enableSnippets: true,
+						enableLiveAutocompletion: false,
+						readOnly: true,
+						highlightActiveLine: false,
+						highlightGutterLine: false
+					});
+
+					// Adding convenient shortcut to save the script to server
+					editor.commands.addCommand({
+						name: 'saveGherkinScript',
+						bindKey: {win: 'Ctrl-Alt-S', mac: 'Command-Alt-S'},
+						exec: function (editor) {
+							that.saveScript();
+						},
+						readOnly: false
+					});
 				});
 
 
@@ -105,73 +118,7 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing"], fun
 			} else {
 				aceEditorMode = "ace/mode/gherkin-" + this.locale;
 			}
-			this.editor.session.setMode(aceEditorMode);
-		},
-
-		//copy pasta from ext-options.js as it is not exposed... sigh
-		getThemes: function () {
-			var themeList = ace.require("ace/ext/themelist");
-			var themes = {Bright: [], Dark: []};
-			themeList.themes.forEach(function (x) {
-				themes[x.isDark ? "Dark" : "Bright"].push({caption: x.caption, value: x.theme});
-			});
-			return themes;
-		},
-
-		//do it in standard js mode, not in jquery, as done in ace editor demo and code
-		_initOptionTab: function (editor) {
-			var OptionPanel = ace.require("ace/ext/options").OptionPanel;
-			var dom = ace.require("ace/lib/dom");
-			var optionsPanel = new OptionPanel(editor);
-			var themes = this.getThemes();
-
-
-			var mainOptionGroup = {
-				Theme: {
-					path: "theme",
-					type: "select",
-					items: themes
-				},
-
-				"Font Size": {
-					path: "fontSize",
-					type: "number",
-					defaultValue: 12,
-					defaults: [
-						{caption: "12px", value: 12},
-						{caption: "24px", value: 24}
-					]
-				}
-			};
-
-			var moreOptionGroup = {
-				"Show Invisibles": {
-					path: "showInvisibles"
-				},
-				// "Show Indent Guides": {
-				// 	path: "displayIndentGuides"
-				// },
-				"Show Gutter": {
-					path: "showGutter"
-				}
-			};
-
-			// brutal monkey patching... sorry for that but the authors of ace/ext-options.js
-			// do not seems to have exposed a way to control witch items are shown in their nice control panel...
-			optionsPanel.render = function () {
-				optionsPanel.container.innerHTML = "";
-				dom.buildDom(["table", {id: "controls"},
-					optionsPanel.renderOptionGroup(mainOptionGroup),
-					["tr", null, ["td", {colspan: 2},
-						["table", {id: "more-controls"},
-							optionsPanel.renderOptionGroup(moreOptionGroup)
-						]
-					]]
-				], optionsPanel.container);
-			};
-			var optionsPanelContainer = document.getElementById("optionsPanel");
-			optionsPanel.render();
-			optionsPanelContainer.insertBefore(optionsPanel.container, optionsPanelContainer.firstChild);
+			editor.session.setMode(aceEditorMode);
 		},
 
 		_findScriptLocale: function () {
@@ -201,9 +148,26 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing"], fun
 			return locale;
 		},
 
-		toggleOptionPanel: function () {
-			this.$el.find(".option-panel-wrapper").show();
-			this.$el.find("#tc-script-editor").toggleClass("tc-script-editor-option-open tc-script-editor-option-closed");
+		toggleHelpPanel: function () {
+			var split = this.split;
+			if (split.getSplits() === 2) {
+				split.setSplits(1);
+				return;
+			}
+			split.setSplits(2);
+			var documentationEditor = split.getEditor(1);
+			documentationEditor.setReadOnly(true);
+			documentationEditor.setOptions({
+				tabSize: 2,
+				useSoftTabs: true,
+				readOnly: true,
+				highlightActiveLine: false,
+				highlightGutterLine: false
+			});
+			documentationEditor.session.setValue(doc.getDocumentation(this.locale));
+			documentationEditor.getSession().setUseWrapMode(true);
+			documentationEditor.getSession().setWrapLimitRange(80,80);
+			this._initialize_editor_mode(documentationEditor);
 		},
 
 		activateEditor: function () {
@@ -219,7 +183,7 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing"], fun
 			this.editor.focus();
 		},
 
-		cancel : function () {
+		cancel: function () {
 			this.editor.setTheme("ace/theme/iplastic");
 			this.editor.setOptions({
 				readOnly: true,
