@@ -70,8 +70,9 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing","./do
 					//must do it before using enableBasicAutoCompletion: true
 					langTools.setCompleters([langTools.snippetCompleter]);
 					that.originalScript = serverModel.scriptExender.script;
-
 					editor.session.setValue(that.originalScript);
+					editor.getSession().setUseWrapMode(true);
+					editor.getSession().setWrapLimitRange(160,160);
 					that._initialize_editor_mode(editor);
 					editor.setTheme("ace/theme/iplastic");
 					editor.setOptions({
@@ -80,6 +81,7 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing","./do
 						// Soft tabs with two spaces by tabs like required by gherkin good practices
 						tabSize: 2,
 						useSoftTabs: true,
+						printMarginColumn: 160,
 						enableSnippets: true,
 						enableLiveAutocompletion: false,
 						readOnly: true,
@@ -152,12 +154,17 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing","./do
 			var split = this.split;
 			if (split.getSplits() === 2) {
 				split.setSplits(1);
+				this.editor.getSession().setWrapLimitRange(160,160);
+				this.editor.setOption("printMarginColumn", 160);
 				return;
 			}
 			split.setSplits(2);
+			this.editor.getSession().setWrapLimitRange(80,80);
+			this.editor.setOption("printMarginColumn", 80);
 			var documentationEditor = split.getEditor(1);
 			documentationEditor.setReadOnly(true);
 			documentationEditor.setOptions({
+				showPrintMargin: false,
 				tabSize: 2,
 				useSoftTabs: true,
 				readOnly: true,

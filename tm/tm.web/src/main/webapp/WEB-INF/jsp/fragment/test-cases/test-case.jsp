@@ -243,6 +243,8 @@
 
       <%------------------------------ Script Editor Only for scripted test case ---------------------------------------------%>
     <c:if test="${scripted}">
+
+
       <div id="tab-tc-script-editor">
           <%-- ==================== toolbar definition ===================--%>
         <div>
@@ -252,7 +254,7 @@
               <button id="tc-script-save-button" title="Ctrl+Alt+S"
                       data-icon="ui-icon ui-icon-plusthick"
                       class="sq-btn ui-icon-plusthick" disabled='disabled'>
-                    Enregistrer
+                    <f:message key="label.save"/>
               </button>
             </span>
           </div>
@@ -261,17 +263,17 @@
               <button id="tc-script-toggle-option-panel"
                       data-icon="ui-icon-plusthick"
                       class="sq-btn">
-                    Options
+                    <f:message key="label.Help"/>
               </button>
               <button id="tc-script-activate-editor"
                       data-icon="ui-icon-plusthick"
                       class="sq-btn">
-                    Editer
+                    <f:message key="label.Edit"/>
               </button>
               <button id="tc-script-cancel"
                       data-icon="ui-icon-plusthick"
-                      class="sq-btn" style="display: none" >
-                    Annuler
+                      class="sq-btn" style="display: none">
+                    <f:message key="label.Cancel"/>
               </button>
             </span>
           </div>
