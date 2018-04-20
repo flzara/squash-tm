@@ -32,7 +32,7 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing","./do
 
 		events: {
 			"click #tc-script-save-button": "saveScript",
-			"click #tc-script-toggle-option-panel": "toggleHelpPanel",
+			"click #tc-script-toggle-help-panel": "toggleHelpPanel",
 			"click #tc-script-activate-editor": "activateEditor",
 			"click #tc-script-cancel": "cancel"
 		},

@@ -260,7 +260,7 @@
           </div>
           <div class="right btn-toolbar">
             <span class="group">
-              <button id="tc-script-toggle-option-panel"
+              <button id="tc-script-toggle-help-panel"
                       data-icon="ui-icon-plusthick"
                       class="sq-btn">
                     <f:message key="label.Help"/>
