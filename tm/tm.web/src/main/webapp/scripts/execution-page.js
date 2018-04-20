@@ -54,7 +54,7 @@ define(['module', 'jquery', 'app/pubsub', 'squash.basicwidgets', 'app/ws/squasht
 					resumeOER: 'execution.execute.IEO.resume.button.label'
 			});
 
-			if (config.basic.isTestCaseDeleted && $("#execute-execution-button").val() != btnlang.resume) {
+			if (config.basic.isTestCaseDeleted) {
 				$("#execute-execution-button").prop('disabled', true);
 				$("#ieo-execution-button").prop('disabled', true);
 			}
