@@ -256,6 +256,11 @@
                       class="sq-btn ui-icon-plusthick" disabled='disabled'>
                     <f:message key="label.save"/>
               </button>
+               <button id="tc-script-snippets-button" title="Ctrl+<f:message key="label.Space"/>"
+                       data-icon="ui-icon ui-icon-plusthick"
+                       class="sq-btn ui-icon-plusthick" disabled='disabled'>
+                 <f:message key="label.Insert"/>
+              </button>
             </span>
           </div>
           <div class="right btn-toolbar">

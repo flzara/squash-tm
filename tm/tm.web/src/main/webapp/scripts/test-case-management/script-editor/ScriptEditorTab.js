@@ -32,6 +32,7 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing","./do
 
 		events: {
 			"click #tc-script-save-button": "saveScript",
+			"click #tc-script-snippets-button": "showSnippets",
 			"click #tc-script-toggle-help-panel": "toggleHelpPanel",
 			"click #tc-script-activate-editor": "activateEditor",
 			"click #tc-script-cancel": "cancel"
@@ -185,6 +186,7 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing","./do
 				highlightGutterLine: true
 			});
 			this.$el.find("#tc-script-save-button").prop("disabled", false);
+			this.$el.find("#tc-script-snippets-button").prop("disabled", false);
 			this.$el.find("#tc-script-cancel").show();
 			this.$el.find("#tc-script-activate-editor").hide();
 			this.editor.focus();
@@ -198,9 +200,14 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing","./do
 				highlightGutterLine: false
 			});
 			this.$el.find("#tc-script-save-button").prop("disabled", true);
+			this.$el.find("#tc-script-snippets-button").prop("disabled", true);
 			this.$el.find("#tc-script-cancel").hide();
 			this.$el.find("#tc-script-activate-editor").show();
 			this.editor.session.setValue(this.originalScript);
+		},
+
+		showSnippets : function () {
+			this.editor.execCommand("startAutocomplete");
 		}
 
 	});
