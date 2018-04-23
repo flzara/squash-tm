@@ -547,12 +547,28 @@
       <br/><br/>
       <f:message key="dialog.associate-template.text2"/>
       <br/><br/>
-      <c:forEach items="${templatesList}" var="template" varStatus="varStatus">
-      <input type="radio" id="${template.id}" value="${template.id}" name="associate-template-input"
-        ${varStatus.first ? 'checked="checked"' : ''} />
-      <label for="${template.id}">${template.name}</label>
-      <br/>
-      </c:forEach>
+
+      <table id="associate-template-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th><f:message key='label.Name'/></th>
+          </tr>
+        </thead>
+        <tbody>
+          <c:forEach items="${templatesList}" var="template" varStatus="varStatus">
+            <tr>
+              <td>
+                <input type="radio" id="${template.id}" value="${template.id}" name="associate-template-input"
+                  ${varStatus.first ? 'checked="checked"' : ''} />
+              </td>
+              <td>
+                <label for="${template.id}" class="afterDisabled">${template.name}</label>
+              </td>
+            </tr>
+          </c:forEach>
+        </tbody>
+      </table>
 
       <!-- Error message if no selection -->
       <div data-def="state=noselect">
@@ -693,7 +709,6 @@ require(["common"], function() {
     if(!adminproject.isBound) {
       toggleFunction(parameter);
     } else {
-      // Why is it working ?
       $.squash.openMessage("<f:message key='title.project.lockedParameter'/>",
                            "<f:message key='message.project.lockedParameter'/>").resolve();
     }
@@ -824,10 +839,7 @@ require(["common"], function() {
 						}
 				 }
 			});
-
-
 		}
-
 	}
 
 	function activateStatus(status){
@@ -845,7 +857,6 @@ require(["common"], function() {
 	}
 
 	function init(projectsManager, Frag){
-
 
 		// back button
 		$("#back").click(clickProjectBackButton);
@@ -883,6 +894,19 @@ require(["common"], function() {
     // Associate Popup
     var associateDialog = $('#associate-template-dialog');
     associateDialog.formDialog();
+
+    $('#associate-template-table').squashTable({
+      'bServerSide': false,
+      'sDom' : '<r>t<i>',
+      'sPaginationType' : 'full_numbers'
+    }, {});
+
+    $('#associate-template-table tbody tr').click(function() {
+      var radioBtn = $(this).find('input');
+      if(!radioBtn.prop('checked')) {
+        radioBtn.prop('checked', true);
+      }
+    });
 
     associateDialog.on('formdialogconfirm', function() {
       var templateId = $('input[name=associate-template-input]:checked').val();
