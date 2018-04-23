@@ -64,8 +64,6 @@ import org.squashtest.tm.domain.chart.SpecializedEntityType.EntityRole;
  * <p>Usage : A ColumnPrototype may be specialized to assume on of the three {@link ColumnRole}s : it can be filtered on, or it can hold the
  * observable value displayed in the chart, or be an axis of this chart. See {@link Filter}, {@link AxisColumn}, {@link MeasureColumn}</p>
  *
- * <p>No user shall create them: only the system can do that. Typically prototypes will be inserted or removed when custom fields
- * are bound to/ unbound from entities.</p>
  *
  * @author bsiri
  *

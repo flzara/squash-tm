@@ -18,10 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.security.authentication;
+package org.squashtest.tm.service.internal.security;
 
+import org.springframework.stereotype.Component;
 import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
-import org.squashtest.tm.web.internal.annotation.ApplicationComponent;
 
 /**
  * Features of Squash internal (db-based) authentication provider.
@@ -29,7 +29,8 @@ import org.squashtest.tm.web.internal.annotation.ApplicationComponent;
  * @author Gregory Fouquet
  * 
  */
-@ApplicationComponent
+//@ApplicationComponent
+@Component
 public class InternalAuthenticationProviderFeatures implements AuthenticationProviderFeatures {
 	/**
 	 * @return false

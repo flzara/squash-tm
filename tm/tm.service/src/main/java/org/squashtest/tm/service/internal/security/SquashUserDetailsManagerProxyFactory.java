@@ -76,11 +76,15 @@ public class SquashUserDetailsManagerProxyFactory implements FactoryBean<SquashU
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 			try {
+				
 				return method.invoke(context.getCurrentManager(), args);
+
 			} catch (InvocationTargetException e) {
 				throw e.getCause();
 			}
 		}
+		
+		
 	}
 
 	/**

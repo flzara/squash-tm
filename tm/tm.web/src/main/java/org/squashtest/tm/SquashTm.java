@@ -27,6 +27,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+import org.springframework.boot.autoconfigure.velocity.VelocityAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -46,7 +47,7 @@ import org.squashtest.tm.web.config.ResourceResolverProperties;
  * @since 1.13.0
  */
 @SpringBootApplication(exclude = { HibernateJpaAutoConfiguration.class, JpaRepositoriesAutoConfiguration.class,
-		BatchAutoConfiguration.class })
+		BatchAutoConfiguration.class, VelocityAutoConfiguration.class })
 @EnableConfigurationProperties({ResourceResolverProperties.class, SquashPathProperties.class})
 @EnableWebSecurity
 @ImportResource({"classpath*:META-INF/spring/dynamicdao-context.xml", "classpath*:META-INF/spring/dynamicmanager-context.xml"})

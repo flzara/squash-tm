@@ -18,43 +18,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.security;
+package org.squashtest.tm.api.security.authentication;
 
-import java.util.Optional;
-
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
-import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
+
 
 /**
- * Provides information about the current user
- *
- * @author Gregory Fouquet
+ * <p>
+ * 	Third-party {@link AuthenticationProvider} may tie to the Authentication object they produce their own {@link AuthenticationProviderFeatures} with this.
+ * 	When Squash is presented an FeaturesAwareAuthentication, it will try first to honor these features instead of the primary {@link AuthenticationProviderFeatures}.
+ * </p> 
+ * 
+ *  <p>
+ *   This is very useful when the said authentication provider is not the primary one (ie, not set as such in application property 'authentication.provider').
+ *  </p>
+ * 
+ * @author bsiri
  *
  */
-public interface UserContextService {
-	/**
-	 *
-	 * @return the username of the current user. If no user is authenticated, returns an empty string.
-	 */
-	String getUsername();
+public interface FeaturesAwareAuthentication extends Authentication {
 
 	/**
-	 *
-	 * @param role
-	 * @return true if the current user has the given role.
-	 */
-	boolean hasRole(String role);
-
-	/**
-	 *
-	 * @return the current user authentication object or <code>null</code> if no user authenticated.
-	 */
-	Authentication getAuthentication();
-	
-	/**
-	 * Retrieve the {@link AuthenticationProviderFeatures} from the Authentication context, if any.
+	 * Return the features specific to the authentication provider that created this Authentication instead of 
+	 * the primary. If null, the primary will be used instead.
 	 * 
 	 * @return
 	 */
-	public Optional<AuthenticationProviderFeatures> getUserContextAuthProviderFeatures();
+	AuthenticationProviderFeatures getFeatures();
+	
 }

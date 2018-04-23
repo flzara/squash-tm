@@ -37,6 +37,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.service.security.AdministratorAuthenticationService;
+import static org.squashtest.tm.api.security.acls.Roles.*;
 
 @Component("squashtest.core.security.AdministratorAuthenticationService")
 public class AdministratorAuthenticationServiceImpl implements AdministratorAuthenticationService {
@@ -52,7 +53,6 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 
 	private Object salt = null;
 
-	private static final String projectManagerAuthority = "ROLE_TM_PROJECT_MANAGER";
 
 	public void setUserDetailsManager(SquashUserDetailsManager userManager) {
 		this.userManager = userManager;
@@ -158,8 +158,8 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 		 undesired authorities are added to the "core_party_authority" table*/
 		Set<GrantedAuthority> filteredAuthorities = new HashSet<>();
 		for (GrantedAuthority authority: authorities) {
-			if(authority.toString().equals(projectManagerAuthority)){
-				filteredAuthorities.add(new SimpleGrantedAuthority(projectManagerAuthority));
+			if(authority.toString().equals(ROLE_TM_PROJECT_MANAGER)){
+				filteredAuthorities.add(new SimpleGrantedAuthority(ROLE_TM_PROJECT_MANAGER));
 			}
 		}
 		return filteredAuthorities;

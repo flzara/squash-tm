@@ -39,7 +39,7 @@ class AclPermissionEvaluationServiceTest extends Specification {
 
 	def setup() {
 		service.userContextService = userContextService
-		userContextService.getPrincipal() >> currentUser
+		userContextService.getAuthentication() >> currentUser
 		service.permissionEvaluator = permissionEvaluator
 	}
 

@@ -50,7 +50,7 @@ import org.squashtest.tm.service.project.ProjectsPermissionFinder;
 import org.squashtest.tm.service.user.PartyPreferenceService;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
-import org.squashtest.tm.web.internal.security.authentication.AuthenticationProviderContext;
+import org.squashtest.tm.service.internal.security.AuthenticationProviderContext;
 
 import java.util.Optional;
 

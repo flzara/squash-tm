@@ -25,19 +25,14 @@ import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_O
 
 import java.io.IOException;
 
-import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configurers.GlobalAuthenticationConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -47,7 +42,6 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.HttpPutFormContentFilter;
-import org.squashtest.tm.service.internal.security.SquashUserDetailsManager;
 
 /**
  * This configures Spring Security
@@ -60,29 +54,17 @@ import org.squashtest.tm.service.internal.security.SquashUserDetailsManager;
  */
 @Configuration
 public class WebSecurityConfig {
+	
+	private static final String ALTERNATE_AUTH_PATH = "/auth/**";
 
 
-
-	/**
-	 * Defines a global internal (dao based) authentication manager. This is the default authentication manager.
-	 */
-	@Configuration
-	@ConditionalOnProperty(name = "authentication.provider", matchIfMissing = true, havingValue = "internal")
-	@Order(0) // WebSecurityConfigurerAdapter default order is 100, we need to init this before
-	public static class InternalAuthenticationConfig extends GlobalAuthenticationConfigurerAdapter {
-		@Inject
-		private SquashUserDetailsManager squashUserDetailsManager;
-
-		@Inject
-		private PasswordEncoder passwordEncoder;
-
-		@Override
-		public void init(AuthenticationManagerBuilder auth) throws Exception {
-			auth.userDetailsService(squashUserDetailsManager).passwordEncoder(passwordEncoder);
-			auth.eraseCredentials(false);
-		}
-	}
-
+	/* *********************************************************
+	 *  
+	 *  Enpoint-specific security filter chains
+	 * 
+	 * *********************************************************/
+	
+	
 	@Configuration
 	@Order(10)
 	public static class SquashTAWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
@@ -179,6 +161,9 @@ public class WebSecurityConfig {
 		protected void configure(HttpSecurity http) throws Exception {
 			// @formatter:off
 			http
+				.csrf()
+					.ignoringAntMatchers(ALTERNATE_AUTH_PATH)
+				.and()
 				.headers()
 				.defaultsDisabled()
 				// w/o cache control, some browser's cache policy is too aggressive
@@ -188,6 +173,11 @@ public class WebSecurityConfig {
 				//.addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
 
 				.authorizeRequests()
+					// allow access to main/alternate authentication portals
+					.antMatchers(
+							"/login", 
+							ALTERNATE_AUTH_PATH)
+						.permitAll()
 					// Administration namespace. Some of which can be accessed by PMs
 					.antMatchers(
 						"/administration",
@@ -209,7 +199,6 @@ public class WebSecurityConfig {
 					).access(HAS_ROLE_ADMIN)
 
 					.antMatchers("/accessDenied").permitAll()
-
 
 					// Namespace reserved for other use
 					.antMatchers("/management/**").denyAll()
