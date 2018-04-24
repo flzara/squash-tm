@@ -22,11 +22,15 @@ package org.squashtest.tm.service.internal.testcase.scripted;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.internal.repository.ScriptedTestCaseExtenderDao;
 import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseService;
 
 import javax.inject.Inject;
+import java.util.Date;
 
 @Service
 @Transactional
@@ -39,5 +43,10 @@ public class ScriptedTestCaseServiceImpl implements ScriptedTestCaseService {
 	public void updateTcScript(Long testCaseId, String script) {
 		ScriptedTestCaseExtender scriptExtender = scriptedTestCaseExtenderDao.findByTestCase_Id(testCaseId);
 		scriptExtender.setScript(script);
+		//Audit on test case... No way to write 3 triggers for only one method call
+		TestCase testCase = scriptExtender.getTestCase();
+		AuditableMixin auditable = (AuditableMixin)testCase;
+		auditable.setLastModifiedOn(new Date());
+		auditable.setLastModifiedBy(UserContextHolder.getUsername());
 	}
 }
