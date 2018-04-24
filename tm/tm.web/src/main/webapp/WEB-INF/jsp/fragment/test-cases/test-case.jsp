@@ -122,31 +122,9 @@
     top: 35px;
     bottom: 0;
     right: 0;
-  }
-
-  .tc-script-editor-option-open {
-    left: 300px;
-  }
-
-  .tc-script-editor-option-closed {
     left: 0;
   }
 
-  .option-panel-wrapper {
-    position: absolute;
-    top: 35px;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 300px;
-  }
-
-  #optionsPanel {
-    margin: 0;
-    width: 100%;
-    height: 80%;
-    overflow-y: auto;
-  }
 </style>
 
 <%---------------------------- Test Case Header ------------------------------%>

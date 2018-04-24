@@ -34,21 +34,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Locale;
 import java.util.Map;
 
-/**
- * This handler will format ActionExceptions and subclasses in order to raise a popup clientside and display an
- * exception. This is a complementary system to @HandlerDomainExceptionResolver. The difference here is that in this
- * case the treatment client-side will open a generic popup and display the error text in it.
- *
- * @author bsiri
- * @reviewed-on 2011-12-15
- */
-
 @Component
-public class HandlerScriptParsingExceptionResolver extends AbstractHandlerExceptionResolver {
+public class HandlerScriptParsingExceptionResolverBck extends AbstractHandlerExceptionResolver {
 	@Inject
 	private MessageSource messageSource;
 
-	public HandlerScriptParsingExceptionResolver() {
+	public HandlerScriptParsingExceptionResolverBck() {
 		super();
 	}
 
