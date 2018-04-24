@@ -35,11 +35,11 @@ import java.util.Locale;
 import java.util.Map;
 
 @Component
-public class HandlerScriptParsingExceptionResolverBck extends AbstractHandlerExceptionResolver {
+public class HandlerScriptParsingExceptionResolver extends AbstractHandlerExceptionResolver {
 	@Inject
 	private MessageSource messageSource;
 
-	public HandlerScriptParsingExceptionResolverBck() {
+	public HandlerScriptParsingExceptionResolver() {
 		super();
 	}
 
