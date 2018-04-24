@@ -22,12 +22,14 @@ package org.squashtest.tm.service.internal.testcase.scripted.gherkin;
 
 import gherkin.AstBuilder;
 import gherkin.Parser;
+import gherkin.ParserException;
 import gherkin.ast.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.exception.testcase.ScriptParsingException;
 import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseParser;
 
 public class GherkinTestCaseParser implements ScriptedTestCaseParser {
@@ -48,7 +50,12 @@ public class GherkinTestCaseParser implements ScriptedTestCaseParser {
 			LOGGER.debug("Begin parsing of Test Case {} for Execution {}", referencedTestCase, execution);
 		}
 		Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
-		GherkinDocument gherkinDocument = parser.parse(scriptExtender.getScript());
+		GherkinDocument gherkinDocument = null;
+		try {
+			gherkinDocument = parser.parse(scriptExtender.getScript());
+		} catch (ParserException e) {
+			throw new ScriptParsingException(e);
+		}
 		stepGenerator.populateExecution(execution, gherkinDocument);
 	}
 
