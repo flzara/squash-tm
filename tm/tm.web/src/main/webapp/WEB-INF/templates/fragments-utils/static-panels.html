@@ -32,7 +32,8 @@
   3/ custom-please-wait : same than large please wait but with some customization. Accepts as argument height : string, represents the height (don't forget the unit).
   4/ warning-pane : will render some text as it would in the generic-warning-dialog. Accepts as argument txtcontent : string, the text to display in  
   5/ error-pane   : will render some text as it would in the generic-error-dialog. Accepts as argument txtcontent : string, the text to display in  
-  6/ info-pane! will render some text as it would be in the generic-info-dialog. Accepts as argument txtcontent : string, the text to display in
+  6/ info-pane : will render some text as it would be in the generic-info-dialog. Accepts as argument txtcontent : string, the text to display in
+  7/ upper-banner : render the upper bar just like in the login page
  -->
 
 </div>
@@ -79,3 +80,17 @@
       <div class="generic-info-main display-table-cell" style="padding-top:20px" th:text="${txtcontent}"></div>
     </div>
 </div> 
+
+
+
+ <div th:fragment="upper-banner" id="nav-bar" class="ui-helper-clearfix">
+   <div class="snap-left">
+<span id="nav-up-version">Squash TM v[[${@environment.getProperty('info.app.version')}]] </span>
+   </div>
+   <div class="snap-right">
+       <div class="horizontal-logo" />
+     </div>
+   </div>
+ </div>
+
+

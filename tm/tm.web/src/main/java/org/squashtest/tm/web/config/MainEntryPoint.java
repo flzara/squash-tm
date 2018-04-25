@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.security.authentication;
+package org.squashtest.tm.web.config;
 
 import java.io.IOException;
 
@@ -28,18 +28,17 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
-import org.springframework.stereotype.Component;
 
 /***
- * This class is used to commence a redirect to Login Form
- *
- * @author xpetitrenaud
- *
+ * 
+ * Main authentication entry point. It will redirect unauthenticated users to  
+ * 
+ * History : based on the old (and now defunct) org.squashtest.tm.web.internal.security.authentication.RedirectEntryPoint
  */
-@Component
-public class RedirectEntryPoint extends LoginUrlAuthenticationEntryPoint {
-	public RedirectEntryPoint() {
-		super("/login");
+public class MainEntryPoint extends LoginUrlAuthenticationEntryPoint {
+	
+	public MainEntryPoint(String preferredLoginUrl) {
+		super(preferredLoginUrl);
 	}
 
 	/***

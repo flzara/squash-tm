@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
@@ -150,6 +151,9 @@ public class WebSecurityConfig {
 
 		@Value("${squash.security.filter.debug.enabled:false}")
 		private boolean debugSecurityFilter;
+		
+		@Value("${squash.security.preferred-auth-url:/login}")
+		private String entryPointUrl = "/login";
 
 		@Override
 		public void configure(WebSecurity web) throws Exception {
@@ -169,11 +173,21 @@ public class WebSecurityConfig {
 				// w/o cache control, some browser's cache policy is too aggressive
 				.cacheControl()
 				.and().frameOptions().sameOrigin()
+				
+				//.and() .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
+				
+				// main entry point for unauthenticated users
 				.and()
-				//.addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
-
+					.exceptionHandling()
+					.authenticationEntryPoint(mainEntryPoint())
+				
+				// URL security
+				.and()
 				.authorizeRequests()
 					// allow access to main/alternate authentication portals
+					// note : on this domain the requests will always succeed, 
+					// thus the user will not be redirected via the main entry 
+					// point
 					.antMatchers(
 							"/login", 
 							ALTERNATE_AUTH_PATH)
@@ -218,12 +232,20 @@ public class WebSecurityConfig {
 						.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
 						.invalidateHttpSession(true)
 						.logoutSuccessUrl("/")
-
+				
 				.and()
-				.addFilterAfter(new HttpPutFormContentFilter(), SecurityContextPersistenceFilter.class);
+					.addFilterAfter(new HttpPutFormContentFilter(), SecurityContextPersistenceFilter.class);
 			//@formatter:on
 		}
+		
+		@Bean
+		public AuthenticationEntryPoint mainEntryPoint(){
+			MainEntryPoint entryPoint = new MainEntryPoint(entryPointUrl);
+			return entryPoint;
+		}
 	}
+	
+
 
 
 	/**

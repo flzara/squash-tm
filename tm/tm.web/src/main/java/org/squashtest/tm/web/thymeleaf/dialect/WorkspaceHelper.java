@@ -21,6 +21,10 @@
 package org.squashtest.tm.web.thymeleaf.dialect;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.env.PropertySource;
+import org.springframework.core.env.PropertySources;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
@@ -79,6 +83,29 @@ public class WorkspaceHelper {
 
 		WorkspaceType type = WorkspaceType.valueOf(workspaceName);
 		return wizardManager.findAllByWorkspace(type);
+	}
+	
+	/**
+	 * Allow to retrieve application properties that aren't stored as environment properties.
+	 * Note that most of the time your property will belong to the environment properties, 
+	 * so that invoking <pre>${@environment.getProperty('your.property.name')}</pre> is just as fine.
+	 * 
+	 * @param pptName
+	 * @return
+	 */
+	public Object property(String pptName){
+		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(servletContext);
+		PropertySourcesPlaceholderConfigurer configurer = wac.getBean(PropertySourcesPlaceholderConfigurer.class);
+		
+		PropertySources sources = configurer.getAppliedPropertySources();
+		Object found = null;
+		for (PropertySource<?> src : sources){
+			if (src.getProperty(pptName) != null){
+				found = src.getProperty(pptName);
+				break;
+			}
+		}
+		return found;
 	}
 
 
