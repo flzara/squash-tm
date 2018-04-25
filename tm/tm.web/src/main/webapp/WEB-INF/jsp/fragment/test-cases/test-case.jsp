@@ -206,51 +206,7 @@
 
       <%------------------------------ Script Editor Only for scripted test case ---------------------------------------------%>
     <c:if test="${scripted}">
-
-
-      <div id="tab-tc-script-editor">
-          <%-- ==================== toolbar definition ===================--%>
-        <div>
-
-          <div class="left btn-toolbar">
-            <span class="group">
-              <button id="tc-script-save-button" title="Ctrl+Alt+S"
-                      data-icon="ui-icon ui-icon-plusthick"
-                      class="sq-btn ui-icon-plusthick" disabled='disabled'>
-                    <f:message key="label.save"/>
-              </button>
-               <button id="tc-script-snippets-button" title="Ctrl+<f:message key="label.Space"/>"
-                       data-icon="ui-icon ui-icon-plusthick"
-                       class="sq-btn ui-icon-plusthick" disabled='disabled'>
-                 <f:message key="label.Insert"/>
-              </button>
-            </span>
-          </div>
-          <div class="right btn-toolbar">
-            <span class="group">
-              <button id="tc-script-toggle-help-panel"
-                      data-icon="ui-icon-plusthick"
-                      class="sq-btn">
-                    <f:message key="label.Help"/>
-              </button>
-              <button id="tc-script-activate-editor" ${writable ? 'enabled' : 'disabled'}
-                      data-icon="ui-icon-plusthick"
-                      class="sq-btn">
-                    <f:message key="label.Edit"/>
-              </button>
-              <button id="tc-script-cancel" disabled='disabled'
-                      data-icon="ui-icon-plusthick"
-                      class="sq-btn" style="display: none">
-                    <f:message key="label.Cancel"/>
-              </button>
-            </span>
-          </div>
-        </div>
-        <div class="option-panel-wrapper" style="display: none">
-          <div id="optionsPanel"></div>
-        </div>
-        <div id="tc-script-editor" class="tc-script-editor tc-script-editor-option-closed"></div>
-      </div>
+      <tc:test-case-scripted-editor writable="${writable}"/>
     </c:if>
 
       <%------------------------------ /Script Editor  ---------------------------------------------%>
