@@ -233,12 +233,12 @@
                       class="sq-btn">
                     <f:message key="label.Help"/>
               </button>
-              <button id="tc-script-activate-editor"
+              <button id="tc-script-activate-editor" ${writable ? 'enabled' : 'disabled'}
                       data-icon="ui-icon-plusthick"
                       class="sq-btn">
                     <f:message key="label.Edit"/>
               </button>
-              <button id="tc-script-cancel"
+              <button id="tc-script-cancel" disabled='disabled'
                       data-icon="ui-icon-plusthick"
                       class="sq-btn" style="display: none">
                     <f:message key="label.Cancel"/>
