@@ -111,21 +111,6 @@
 <%-- ----------------------------------- Variables ----------------------------------------------%>
 
 <c:set var="scripted" value="${testCase.isScripted()}"/>
-<style type="text/css" media="screen">
-  body {
-    overflow: hidden;
-  }
-
-  .tc-script-editor {
-    margin: 0;
-    position: absolute;
-    top: 35px;
-    bottom: 0;
-    right: 0;
-    left: 0;
-  }
-
-</style>
 
 <%---------------------------- Test Case Header ------------------------------%>
 
