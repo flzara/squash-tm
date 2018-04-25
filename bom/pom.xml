@@ -152,39 +152,12 @@
         	 -->
 
           <exclusion>
-            <!--
-          	pulled by itext. The bouncycastle jars have changed groupid
-          	from "bouncycastle" to "org.bouncycastle", furthermore they also
-          	changed their versioning convention from 'majorminor' to 'major.minor'.
-          	The artifact ids are however left unchanged.
-
-          	The itext pom states that artifacts "bcmail-jdk14", "bcprov-jdk14" and
-          	"bctsp-jdk14", all from groupid "bouncycastle", are used. However
-          	for some reason, Maven actually resolves "bctsp-jdk14" with groupid
-          	"org.bouncycastle", that itself pulls the other two with the name
-          	groupid, leading to double inclusion of those jars (no name conflict
-          	though because the different versioning convention made their name different
-          	too). And of course they are binary equals, but at least it doesn't induce
-          	Heisenbugs when the classes are laoded.
-
-          	Because of that, we must manually remove "bouncycastle:bcprov-jdk14" and
-          	"bouncycastle:bcmail-jdk14" and let "org.bouncycastle:bcstp-jdk14" pull
-          	the other two with the same groupid.
-
-          	This is of course hazardous because no one really knows why
-          	"org.bouncycastle:bctsp-jdk14" is resolved instead of
-          	"bouncycastle:bctsp-jdk14" and that might break one day.
-
-          	Maven drives me nuts.
-          	-->
+            <!-- 
+		  		Pulled by itext. But no we wont do xmlsecurity in our documents
+		  		so we just exclude them. 
+		  	-->
             <groupId>bouncycastle</groupId>
-            <artifactId>bcprov-jdk14</artifactId>
-          </exclusion>
-
-          <exclusion>
-            <!-- see the comment above -->
-            <groupId>bouncycastle</groupId>
-            <artifactId>bcmail-jdk14</artifactId>
+            <artifactId>*</artifactId>
           </exclusion>
 
           <exclusion>
