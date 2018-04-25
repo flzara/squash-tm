@@ -48,10 +48,10 @@ import static org.squashtest.tm.api.security.acls.Roles.*;
 
 public class UserDaoImpl implements CustomUserDao {
 
-	private static final String FIND_ALL_MANAGER_AND_ADMIN = 
+	private static final String FIND_ALL_MANAGER_AND_ADMIN =
 			"SELECT  member.PARTY_ID FROM  CORE_GROUP_MEMBER member "
 			+ "inner join CORE_GROUP_AUTHORITY cga on cga.GROUP_ID=member.GROUP_ID "
-			+ "WHERE cga.AUTHORITY = '' " + ROLE_ADMIN + "' "
+			+ "WHERE cga.AUTHORITY = '" + ROLE_ADMIN + "' "
 			+ "UNION "
 			+ "Select auth.PARTY_ID From  CORE_PARTY_AUTHORITY auth where auth.AUTHORITY = '" + ROLE_TM_PROJECT_MANAGER + "'";
 
