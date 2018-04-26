@@ -75,8 +75,6 @@ public class GherkinStepGenerator {
 		executionExtender.setScriptName(feature.getName());
 		initDialect(feature);
 
-
-
 		List<ScenarioDefinition> scenarioDefinitions = feature.getChildren();
 		if (scenarioDefinitions.isEmpty()) {
 			return;
