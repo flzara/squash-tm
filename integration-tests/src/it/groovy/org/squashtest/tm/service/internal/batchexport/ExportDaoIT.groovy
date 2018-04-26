@@ -35,7 +35,6 @@ import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 
 import static org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage.GHERKIN
-import static org.squashtest.tm.domain.testcase.TestCaseKind.SCRIPTED
 import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD
 
 @UnitilsSupport
@@ -80,7 +79,7 @@ class ExportDaoIT extends DbunitServiceSpecification{
 		standardTestCaseModel.getTestCaseKind() == STANDARD
 		standardTestCaseModel.getScriptedTestCaseLanguage() == null
 
-		scriptedTestCaseModel.getTestCaseKind() == SCRIPTED
+		scriptedTestCaseModel.getTestCaseKind() == org.squashtest.tm.domain.testcase.TestCaseKind.GHERKIN
 		scriptedTestCaseModel.getScriptedTestCaseLanguage() == GHERKIN
 		scriptedTestCaseModel.getTcScript() == "Feature: three cucumbers and two tomatoes"
 
