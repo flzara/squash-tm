@@ -462,6 +462,7 @@
             <!-- test resources -->
             <exclude>integration-tests/src/it/resources/**</exclude>
             <exclude>**/*.xlsx</exclude>
+            <exclude>**/*.feature</exclude>
             <!--other -->
             <exclude>**/new_report.rptdesign</exclude>
             <!-- generated xml (dev) -->
@@ -475,6 +476,7 @@
             <exclude>tm/tm.web/styles/**</exclude>
             <!-- excluding node module for jenkins -->
             <exclude>tm/tm.web/node_module/**</exclude>
+
 
           </excludes>
           <mapping>

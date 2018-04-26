@@ -20,19 +20,6 @@
  */
 package org.squashtest.tm.service.internal.batchexport;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -49,26 +36,22 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.customfield.InputType;
+import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.CoverageModel;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.DatasetModel;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.ParameterModel;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.TestStepModel;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageSheetColumn;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.DatasetSheetColumn;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.ParameterSheetColumn;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.StepSheetColumn;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.*;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.*;
 import org.squashtest.tm.service.internal.dto.NumericCufHelper;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * @author bsiri
- *
  */
 @Component
 @Scope("prototype")
@@ -151,7 +134,11 @@ class ExcelExporter {
 		TestCaseSheetColumn.TC_CREATED_ON,
 		TestCaseSheetColumn.TC_CREATED_BY,
 		TestCaseSheetColumn.TC_LAST_MODIFIED_ON,
-		TestCaseSheetColumn.TC_LAST_MODIFIED_BY};
+		TestCaseSheetColumn.TC_LAST_MODIFIED_BY,
+		TestCaseSheetColumn.TC_KIND,
+		TestCaseSheetColumn.TC_SCRIPTING_LANGUAGE,
+		TestCaseSheetColumn.TC_SCRIPT
+	};
 
 	private static final List<TestCaseSheetColumn> TC_COLUMNS_MILESTONES = new ArrayList<>(Arrays.asList(ArrayUtils.add(BASIC_TC_COLUMNS, 7, TestCaseSheetColumn.TC_MILESTONE)));
 
@@ -214,7 +201,7 @@ class ExcelExporter {
 	}
 
 	private String removeHtml(String html) {
-		if(StringUtils.isBlank(html)){
+		if (StringUtils.isBlank(html)) {
 			return "";
 		}
 		return html.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", "");
@@ -272,15 +259,17 @@ class ExcelExporter {
 				r.createCell(cIdx++).setCellValue(format(tcm.getLastModifiedOn()));
 				r.createCell(cIdx++).setCellValue(tcm.getLastModifiedBy());
 
+				cIdx = appendScriptedTestCaseExtender(r, cIdx, tcm);
+
 				appendCustomFields(r, "TC_CUF_", tcm.getCufs());
 				cIdx = doOptionnalAppendTestCases(r, cIdx, tcm);
 
 			} catch (IllegalArgumentException wtf) {
-				if (LOGGER.isWarnEnabled()){
-					LOGGER.warn("cannot export content for test case '"+tcm.getId()+ DATA_EXCEED_MAX_CELL_SIZE_MESSAGE);
+				if (LOGGER.isWarnEnabled()) {
+					LOGGER.warn("cannot export content for test case '" + tcm.getId() + DATA_EXCEED_MAX_CELL_SIZE_MESSAGE);
 				}
-				if (LOGGER.isTraceEnabled()){
-					LOGGER.trace("",wtf);
+				if (LOGGER.isTraceEnabled()) {
+					LOGGER.trace("", wtf);
 				}
 				tcSheet.removeRow(r);
 				r = tcSheet.createRow(rIdx);
@@ -292,6 +281,21 @@ class ExcelExporter {
 			cIdx = 0;
 		}
 	}
+
+	private int appendScriptedTestCaseExtender(Row r, int cIdx, TestCaseModel tcm) {
+		TestCaseKind testCaseKind = tcm.getTestCaseKind();
+		r.createCell(cIdx++).setCellValue(testCaseKind.name());
+
+		if (testCaseKind.isScripted()) {
+			r.createCell(cIdx++).setCellValue(tcm.getScriptedTestCaseLanguage().name());
+			r.createCell(cIdx++).setCellValue(tcm.getTcScript());
+		} else {
+			r.createCell(cIdx++).setCellValue("");
+			r.createCell(cIdx++).setCellValue("");
+		}
+		return cIdx;
+	}
+
 
 	protected int doOptionnalAppendTestCases(Row r, int cIdx, TestCaseModel tcm) {
 		//extension point for optional columns
@@ -325,11 +329,11 @@ class ExcelExporter {
 
 				appendCustomFields(r, "TC_STEP_CUF_", tsm.getCufs());
 			} catch (IllegalArgumentException wtf) {
-				if (LOGGER.isWarnEnabled()){
-					LOGGER.warn("cannot export content for test step '"+tsm.getId()+ DATA_EXCEED_MAX_CELL_SIZE_MESSAGE);
+				if (LOGGER.isWarnEnabled()) {
+					LOGGER.warn("cannot export content for test step '" + tsm.getId() + DATA_EXCEED_MAX_CELL_SIZE_MESSAGE);
 				}
-				if (LOGGER.isTraceEnabled()){
-					LOGGER.trace("",wtf);
+				if (LOGGER.isTraceEnabled()) {
+					LOGGER.trace("", wtf);
 				}
 				stSheet.removeRow(r);
 				r = stSheet.createRow(rIdx);
@@ -363,11 +367,11 @@ class ExcelExporter {
 				r.createCell(cIdx++).setCellValue(HtmlUtils.htmlUnescape(pm.getDescription()));
 			} catch (IllegalArgumentException wtf) {
 
-				if (LOGGER.isWarnEnabled()){
-					LOGGER.warn("cannot export content for parameter '"+pm.getId()+ DATA_EXCEED_MAX_CELL_SIZE_MESSAGE);
+				if (LOGGER.isWarnEnabled()) {
+					LOGGER.warn("cannot export content for parameter '" + pm.getId() + DATA_EXCEED_MAX_CELL_SIZE_MESSAGE);
 				}
-				if (LOGGER.isTraceEnabled()){
-					LOGGER.trace("",wtf);
+				if (LOGGER.isTraceEnabled()) {
+					LOGGER.trace("", wtf);
 				}
 				pSheet.removeRow(r);
 				r = pSheet.createRow(rIdx);
@@ -403,11 +407,11 @@ class ExcelExporter {
 				r.createCell(cIdx++).setCellValue(dm.getParamName());
 				r.createCell(cIdx++).setCellValue(dm.getParamValue());
 			} catch (IllegalArgumentException wtf) {
-				if (LOGGER.isWarnEnabled()){
-					LOGGER.warn("cannot export content for dataset '"+dm.getId()+ DATA_EXCEED_MAX_CELL_SIZE_MESSAGE);
+				if (LOGGER.isWarnEnabled()) {
+					LOGGER.warn("cannot export content for dataset '" + dm.getId() + DATA_EXCEED_MAX_CELL_SIZE_MESSAGE);
 				}
-				if (LOGGER.isTraceEnabled()){
-					LOGGER.trace("",wtf);
+				if (LOGGER.isTraceEnabled()) {
+					LOGGER.trace("", wtf);
 				}
 				dsSheet.removeRow(r);
 				r = dsSheet.createRow(rIdx);
@@ -436,7 +440,7 @@ class ExcelExporter {
 
 			Cell c = r.createCell(idx);
 			String value = nullSafeValue(cuf);
-			if (cuf.getType().equals(InputType.NUMERIC)){
+			if (cuf.getType().equals(InputType.NUMERIC)) {
 				value = NumericCufHelper.formatOutputNumericCufValue(value);
 			}
 			c.setCellValue(value);

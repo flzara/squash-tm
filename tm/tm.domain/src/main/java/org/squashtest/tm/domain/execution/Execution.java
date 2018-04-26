@@ -185,6 +185,9 @@ DenormalizedFieldHolder, BoundEntity {
 	@OneToOne(mappedBy = "execution", cascade = { CascadeType.REMOVE, CascadeType.PERSIST }, optional = true)
 	private AutomatedExecutionExtender automatedExecutionExtender;
 
+	@OneToOne(mappedBy = "execution", cascade = { CascadeType.REMOVE, CascadeType.PERSIST }, optional = true)
+	private ScriptedExecutionExtender scriptedExecutionExtender;
+
 	/* *********************** attachment attributes ************************ */
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,CascadeType.DETACH, CascadeType.REMOVE })
@@ -692,6 +695,26 @@ DenormalizedFieldHolder, BoundEntity {
 
 	public boolean isAutomated() {
 		return executionMode == TestCaseExecutionMode.AUTOMATED && automatedExecutionExtender != null;
+	}
+
+	public ScriptedExecutionExtender getScriptedExecutionExtender() {
+		return scriptedExecutionExtender;
+	}
+
+	private void setScriptedExecutionExtender(ScriptedExecutionExtender scriptedExecutionExtender) {
+		this.scriptedExecutionExtender = scriptedExecutionExtender;
+	}
+
+	public boolean isScripted(){
+		return this.scriptedExecutionExtender != null;
+	}
+
+	public boolean isNotScripted(){
+		return !isScripted();
+	}
+
+	public void createScriptedExtender(){
+		this.setScriptedExecutionExtender(new ScriptedExecutionExtender(this));
 	}
 
 	private boolean checkValidNewStatus(ExecutionStatus status) {

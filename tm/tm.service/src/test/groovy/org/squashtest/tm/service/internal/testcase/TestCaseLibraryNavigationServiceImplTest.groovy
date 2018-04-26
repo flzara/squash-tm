@@ -18,8 +18,15 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.testcase;
+package org.squashtest.tm.service.internal.testcase
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream
+import org.junit.Test
+import org.springframework.context.MessageSource
+import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender
+import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.service.internal.repository.ScriptedTestCaseExtenderDao;
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory;
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCaseFolder
@@ -34,6 +41,8 @@ import org.squashtest.tm.service.internal.repository.TestCaseLibraryNodeDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import spock.lang.Specification
 
+import static org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage.GHERKIN
+
 
 class TestCaseLibraryNavigationServiceImplTest extends Specification {
 
@@ -44,6 +53,7 @@ class TestCaseLibraryNavigationServiceImplTest extends Specification {
 	ProjectDao projectDao = Mock()
 	TestCaseLibraryNodeDao nodeDao = Mock()
 	PermissionEvaluationService permissionService = Mock()
+	ScriptedTestCaseExtenderDao scriptedTestCaseExtenderDao = Mock()
 
 	def setup() {
 		service.testCaseLibraryDao = testCaseLibraryDao
@@ -51,6 +61,7 @@ class TestCaseLibraryNavigationServiceImplTest extends Specification {
 		service.testCaseDao = testCaseDao
 		service.projectDao = projectDao
 		service.testCaseLibraryNodeDao = nodeDao
+		service.scriptedTestCaseExtenderDao = scriptedTestCaseExtenderDao
 
 
 		use (ReflectionCategory) {
@@ -193,6 +204,46 @@ class TestCaseLibraryNavigationServiceImplTest extends Specification {
 					it.content[0].content[0].name == "folder / 3" &&
 					it.content[0].content[0].content[0].name == "folder4"
 		} )
+	}
+
+	def "should export some gherkin test cases"(){
+		given:
+		def testCase1 = Mock(TestCase)
+		testCase1.getId() >> 1L
+		def extender1 = new ScriptedTestCaseExtender(testCase1, GHERKIN)
+		extender1.script = "Feature: one"
+		extender1.id = 1L
+		extender1.testCaseId =1L
+
+		def testCase2 = Mock(TestCase)
+		testCase2.getId() >> 2L
+		def extender2 = new ScriptedTestCaseExtender(testCase2, GHERKIN)
+		extender2.script = "Feature: two\nScenario: one"
+		extender2.id = 2L
+		extender2.testCaseId = 2L
+
+		and:
+		scriptedTestCaseExtenderDao.findByLanguageAndTestCase_IdIn(GHERKIN,_) >> [extender1,extender2]
+
+		when:
+		File export = service.doGherkinExport([]);
+		String name = export.getName()
+
+		then:
+		export != null
+		name.matches("export-feature-.*\\.zip")
+		def zipArchiveInputStream = new ZipArchiveInputStream(new FileInputStream(export), "UTF-8", true)
+		zipArchiveInputStream.nextEntry.name == "tc_1.feature"
+		def lines = zipArchiveInputStream.readLines()
+		lines.size() == 1
+		lines.get(0).equals("Feature: one")
+
+		def zipArchiveInputStream1 = new ZipArchiveInputStream(new FileInputStream(export), "UTF-8", true)
+		zipArchiveInputStream1.nextEntry.name == "tc_1.feature"
+		zipArchiveInputStream1.nextEntry.name == "tc_2.feature"
+		def lines2 = zipArchiveInputStream1.readLines()
+		lines2.size() == 2
+		lines2 == ["Feature: two","Scenario: one"]
 	}
 
 }

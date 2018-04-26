@@ -18,26 +18,27 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['./add-folder-popup', './add-test-case-popup' , 
-        './rename-node-popup', './delete-node-popup', 
+define(['./add-folder-popup', './add-test-case-popup' ,
+        './rename-node-popup', './delete-node-popup',
         './import-excel-popup',
-        './export-popup'], 
-		function(folderpopup, tcpopup, renamepopup, deletepopup, importpopup, exportpopup){
-	
-	
+        './export-popup','./export-gherkin-popup'],
+		function(folderpopup, tcpopup, renamepopup, deletepopup, importpopup, exportpopup, exportgherkinpopup){
+
+
 	function init(){
-		
+
 		folderpopup.init();
 		tcpopup.init();
 		renamepopup.init();
-		
+
 		importpopup.init();
 		exportpopup.init();
-		
+		exportgherkinpopup.init();
+
 		deletepopup.init();
-		
+
 	}
-	
+
 	return {
 		init : init
 	};

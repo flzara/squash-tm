@@ -69,4 +69,5 @@ class RepositorySpecConfig {
 		new DetachedMockFactory().createMock("attachmentManagerService", AttachmentManagerService, MockNature.MOCK, [:])
 	}
 
+
 }

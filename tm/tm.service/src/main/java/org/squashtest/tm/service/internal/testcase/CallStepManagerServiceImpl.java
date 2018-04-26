@@ -37,6 +37,7 @@ import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.exception.CyclicStepCallException;
+import org.squashtest.tm.exception.ScriptedStepCallException;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
@@ -57,7 +58,7 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 
 	@Inject
 	private TestStepDao testStepDao;
-	
+
 	@Inject
 	private TestCaseLibraryNodeDao testCaseLibraryNodeDao;
 
@@ -69,7 +70,7 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 
 	@Inject
 	private DatasetModificationService datasetModificationService;
-	
+
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
 
@@ -97,42 +98,49 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 		 */
 		testCaseImportanceManagerService.changeImportanceIfCallStepAddedToTestCases(calledTestCase, parentTestCase);
 	}
-	
-	
-	
+
+
+
 	@Override
-	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') " 
-			
+	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') "
 			+ OR_HAS_ROLE_ADMIN)
 	public void addCallTestSteps(long parentTestCaseId, List<Long> calledTestCaseIds) {
-		
+
 		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
-		
+
 		List<TestCaseLibraryNode> nodes = testCaseLibraryNodeDao.findAllByIds(calledTestCaseIds);
-		
+
 		// check READ on each of those nodes
 		// Throws AccessDenied if cannot read one of them
 		for (TestCaseLibraryNode node : nodes){
 			PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(node, "READ"));
 		}
-		
+
+		if(parentTestCase.isScripted()){
+			throw new ScriptedStepCallException();
+		}
+
 		List<TestCase> testCases = new TestCaseNodeWalker().walk(nodes);
-		
+
 		for (TestCase testCase : testCases) {
 
 			checkAddCallTestStep(parentTestCaseId, testCase.getId());
-			
+
 			TestCase calledTestCase = testCaseDao.findById(testCase.getId());
-			
+
+			if(calledTestCase.isScripted()){
+				throw new ScriptedStepCallException();
+			}
+
 			CallTestStep newStep = new CallTestStep();
 			newStep.setCalledTestCase(calledTestCase);
 			testStepDao.persist(newStep);
 
 			parentTestCase. addStep(newStep);
-			
+
 			testCaseImportanceManagerService.changeImportanceIfCallStepAddedToTestCases(calledTestCase, parentTestCase);
 		}
-		
+
 	}
 
 	@Override
@@ -154,8 +162,8 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 		testCaseImportanceManagerService.changeImportanceIfCallStepAddedToTestCases(calledTestCase, parentTestCase);
 
 	}
-	
-	
+
+
 
 	private void checkAddCallTestStep(long parentTestCaseId, long calledTestCaseId){
 		if (parentTestCaseId == calledTestCaseId) {
@@ -289,7 +297,7 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 
 	}
 
-	
+
 
 
 

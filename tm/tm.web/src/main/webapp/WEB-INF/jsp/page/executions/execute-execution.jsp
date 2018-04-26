@@ -39,6 +39,10 @@
 <s:url var="btEntityUrl" value="/bugtracker/execution-step/${executionStep.id}"/>
 
 
+<c:set var="scripted" value="${execution.isScripted()}"/>
+<c:set var="actionPanelTitle" value="${scripted ? 'label.Script' : 'execute.panel.action.title'}"/>
+
+
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 
 
@@ -229,7 +233,7 @@
                         data-status="SUCCESS" title="${passedTitle}">
                   <span class="ui-icon exec-status-success"></span>
                 </button>
-                <c:if test="${execution.project.allowTcModifDuringExec()}">
+                <c:if test="${execution.project.allowTcModifDuringExec() and !execution.isScripted()}">
                   <button id="edit-tc" style="float: right"
                           class="sq-btn std-btn ui-button control-button " ${ executionStep.referencedTestStep == null ? 'disabled="disabled"' : ''}
                           title="${modifyTcLabel}">
@@ -273,14 +277,18 @@
           publish("reload.executedialog.cufs");
         </script>
       </c:if>
+
+
+
       <comp:toggle-panel id="execution-action-panel"
-                         titleKey="execute.panel.action.title"
+                         titleKey="${actionPanelTitle}"
                          open="true">
 					<jsp:attribute name="body">
 						<div id="execution-action">${hu:clean(executionStep.action)} </div>
 					</jsp:attribute>
       </comp:toggle-panel>
 
+      <c:if test="${!execution.isScripted()}">
       <comp:toggle-panel id="execution-expected-result-panel"
                          titleKey="execute.panel.expected-result.title"
                          open="true">
@@ -288,6 +296,7 @@
 						<div id="execution-expected-result">${hu:clean(executionStep.expectedResult)} </div>
 					</jsp:attribute>
       </comp:toggle-panel>
+      </c:if>
 
       <div id="execute-evaluation">
 

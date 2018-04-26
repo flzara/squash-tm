@@ -54,7 +54,7 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 
 	/**
 	 * Returns the parameters that belongs to this test case only.
-	 * 
+	 *
 	 */
 	@Override
 	public List<Parameter> findOwnParameters(long testCaseId) {
@@ -62,10 +62,10 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	}
 
 	/**
-	 * 
+	 *
 	 * Returns a list of parameters that either belongs to this test case, either belongs to
 	 * test cases being called by a call step that uses the parameter delegation mode.
-	 * 
+	 *
 	 * @see
 	 */
 	@Override
@@ -80,6 +80,11 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	@Override
 	public void addNewParameterToTestCase(Parameter parameter, long testCaseId) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
+		if(testCase.isScripted()){
+			//No need to make proper error message, because the IHM do not allow parameters on scripted test case.
+			//So if we are here the user is playing with controllers...
+			throw new IllegalArgumentException("Cannot add parameters to scripted test case.");
+		}
 		addNewParameterToTestCase(parameter, testCase);
 	}
 
@@ -159,7 +164,7 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	/**
 	 * Will first check for a parameter of the given name in the test case. If there is none, will create one. When a
 	 * parameter is created, the datasets of the test case and it's calling test cases will be updated in consequence.
-	 * 
+	 *
 	 * @param name
 	 *            : the name of the potential new Parameter
 	 * @param testCase

@@ -80,6 +80,18 @@ li[rel="folder"][sync-folder-type="TARGET"][sync-status="FAILURE"] > a > .jstree
 	background-image: url("../images/Sync_Folder_Failure.png"); /** sprite-ref: sprites-icons; */
 }
 
+li[rel="test-case"][kind="gherkin"] > a {
+	color: #006c96;
+}
+
+li[rel="test-case"][kind="gherkin"] > a.jstree-hovered {
+	color: white;
+}
+
+li[rel="test-case"][kind="gherkin"] > a.jstree-clicked {
+	color: white;
+}
+
 
 @import url("testCaseTreeIcons.css");
 

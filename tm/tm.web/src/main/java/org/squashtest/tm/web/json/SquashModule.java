@@ -31,6 +31,7 @@ import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.servers.Credentials;
+import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
 import org.squashtest.tm.service.internal.dto.CustomFieldModel;
@@ -69,6 +70,7 @@ public class SquashModule extends SimpleModule {
 		context.setMixInAnnotations(BugTracker.class, BugTrackerMixin.class);
 		context.setMixInAnnotations(Credentials.class, CredentialsMixin.class);
 		context.setMixInAnnotations(CustomFieldValueModel.class, CustomFieldValueModelMixin.class);
+		context.setMixInAnnotations(ScriptedTestCaseExtender.class, ScriptedTestCaseExtenderMixin.class);
 		context.setMixInAnnotations(CustomFieldModelFactory.SingleSelectFieldModel.class, SingleSelectFieldModelMixin.class);
 		context.setMixInAnnotations(CustomFieldModelFactory.SingleValuedCustomFieldModel.class, SingleValuedCustomFieldModelMixin.class);
 		context.setMixInAnnotations(CustomFieldModelFactory.MultiSelectFieldModel.class, MultiSelectFieldModelMixin.class);

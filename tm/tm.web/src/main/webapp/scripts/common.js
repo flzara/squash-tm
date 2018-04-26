@@ -273,7 +273,9 @@ requirejs.config({
         //for plugin compatibility purposes
         "jquery.squash.datatables": "plugin-compatibility/jquery.squash.datatable",
         // contextual content
-        "squash.KeyEventListener": "squashtest/classes/KeyEventListener"
+        "squash.KeyEventListener": "squashtest/classes/KeyEventListener",
+				// ace editor for adding script edition feature to squash tm
+				"ace": "lib/ace-editor/src"
     },
     shim: {
 

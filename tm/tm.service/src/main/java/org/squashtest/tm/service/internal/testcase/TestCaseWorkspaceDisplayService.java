@@ -100,7 +100,7 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 	private Map<Long, JsTreeNode> buildTestCaseJsTreeNode(UserDto currentUser, Map<Long, List<Long>> allMilestonesForTCs, List<Long> milestonesModifiable, TestCaseLibraryNodeDistribution nodeDistribution) {
 		return DSL.select(TCLN.TCLN_ID, TCLN.NAME
-			, TC.IMPORTANCE, TC.REFERENCE, TC.TC_STATUS
+			, TC.IMPORTANCE, TC.REFERENCE, TC.TC_STATUS, TC.TC_KIND
 			, count(TCS.TEST_CASE_ID).as("STEP_COUNT")
 			, count(RVC.VERIFYING_TEST_CASE_ID).as("COVERAGE_COUNT")
 			)
@@ -110,18 +110,18 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.leftJoin(RVC).on(TCLN.TCLN_ID.eq(RVC.VERIFYING_TEST_CASE_ID))
 			.where(TCLN.TCLN_ID.in(nodeDistribution.getTcIds()))
 			//i would love to have the right to do some window function to avoid this messy groupBy clause
-			.groupBy(TCLN.TCLN_ID, TCLN.NAME, TC.IMPORTANCE, TC.REFERENCE, TC.TC_STATUS, TCS.TEST_CASE_ID, RVC.VERIFYING_TEST_CASE_ID)
+			.groupBy(TCLN.TCLN_ID, TCLN.NAME, TC.IMPORTANCE, TC.REFERENCE, TC.TC_STATUS, TCS.TEST_CASE_ID, RVC.VERIFYING_TEST_CASE_ID, TC.TC_KIND)
 			.fetch()
 			.stream()
 			.map(r -> {
 				Integer milestonesNumber = getMilestonesNumberForTC(allMilestonesForTCs, r.get(TCLN.TCLN_ID));
 				String isMilestoneModifiable = isMilestoneModifiable(allMilestonesForTCs, milestonesModifiable, r.get(TCLN.TCLN_ID));
-				return buildTestCase(r.get(TCLN.TCLN_ID), r.get(TCLN.NAME), "test-cases", r.get(TC.REFERENCE),
+				return buildTestCase(r.get(TCLN.TCLN_ID), r.get(TCLN.NAME), "test-cases",r.get(TC.TC_KIND), r.get(TC.REFERENCE),
 					r.get(TC.IMPORTANCE), r.get(TC.TC_STATUS), r.get("STEP_COUNT", Integer.class), r.get("COVERAGE_COUNT", Integer.class), currentUser, milestonesNumber, isMilestoneModifiable);
 			}).collect(Collectors.toMap(node -> (Long) node.getAttr().get(RES_ID), Function.identity()));
 	}
 
-	private JsTreeNode buildTestCase(Long id, String name, String restype, String reference, String importance, String status,
+	private JsTreeNode buildTestCase(Long id, String name, String restype, String kind, String reference, String importance, String status,
 									 Integer stepCount, Integer coverageCount, UserDto currentUser, Integer milestonesNumber, String isMilestoneModifiable) {
 		Map<String, Object> attr = new HashMap<>();
 		Boolean isreqcovered = coverageCount > 0 ||
@@ -136,7 +136,7 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		attr.put("name", name);
 		attr.put("id", "TestCase-" + id);
 		attr.put("rel", "test-case");
-
+		attr.put("kind", kind.toLowerCase());
 
 		attr.put("importance", importance.toLowerCase());
 		attr.put("status", status.toLowerCase());

@@ -131,6 +131,9 @@
                   <li id="new-test-case-tree-button" class="ui-state-disabled cursor-pointer">
                     <a th:text="#{tree.button.new-test-case.label}+'...'">New test case...</a>
                   </li>
+                  <li id="new-test-case-gherkin-tree-button" class="ui-state-disabled cursor-pointer">
+                    <a th:text="#{tree.button.new-gherkin-test-case.label}+'...'">New Gherkin test case...</a>
+                  </li>
                 </ul>
               </div>
 
@@ -163,6 +166,11 @@
                   <li id="export-tree-button" class="ui-state-disabled cursor-pointer">
                     <a th:text="#{label.Export}+'...'">full ...</a>
                   </li>
+
+                  <li id="export-gherkin-tree-button" class="ui-state-disabled cursor-pointer">
+                    <a th:text="#{label.Export.gherkin}+'...'">full ...</a>
+                  </li>
+
                   <li th:each="plugin :  ${#workspace.exportPlugins( 'TEST_CASE_WORKSPACE')}"
                     th:id="'export-plugin-'+${pluginStat.index}" class="ui-state-disabled cursor-pointer export-plugin"
                     th:attr="data-module=${plugin.javascriptModuleName}">
@@ -313,6 +321,8 @@
             <textarea id="add-test-case-description" data-def="isrich"></textarea>
           </td>
         </tr>
+
+
       </table>
       <div class="popup-dialog-buttonpane">
         <input type="button" th:value="#{label.addAnother}" value="add another" data-def="evt=add-another, state=confirm, mainbtn=confirm" />
@@ -782,6 +792,36 @@
 
 
   <!--  ================= /EXPORT TC POPUP =======================  -->
+
+
+  <div id="export-gherkin-test-case-dialog" class="popup-dialog not-displayed" th:title="#{label.Export}" title="export"
+       th:attr="data-def='nameprefix='+#{label.lower.dash.exportTestCase}+', dateformat='+#{export.dateformat}"
+       data-def="nameprefix=nameprefix, dateformat=dd_MM_yyyy">
+
+    <div data-def="state=main" class="std-margin-top">
+
+      <span th:text="#{test-case.export.dialog.message}">export message</span>
+
+      <div class="std-margin-top">
+        <span th:text="#{test-case.export.dialog.filename}"> test case export filename </span>
+        <input type="text" id="export-gherkin-test-case-filename" size="255" style="width: 350px" />
+      </div>
+
+    </div>
+
+    <div data-def="state=nonodeserror" class="std-margin-top">
+      <span th:text="#{message.exportTestCaseNoNodeSelected}">export test case no node selected</span>
+    </div>
+
+    <div class="popup-dialog-buttonpane">
+      <input type="button" th:value="#{label.Export}" value="export" data-def="evt=confirm, mainbtn=main, state=main !nonodeserror" />
+      <input type="button" th:value="#{label.Cancel}" value="cancel"
+             data-def="evt=cancel, mainbtn=crossproerror, mainbtn=nonodeserror, state=main !nonodeserror" />
+      <input type="button" th:value="#{label.Close}" value="cancel"
+             data-def="evt=cancel, mainbtn=crossproerror, state=nonodeserror" />
+    </div>
+  </div>
+
 
   <!--  ================= MILESTONE POPUP =======================  -->
 

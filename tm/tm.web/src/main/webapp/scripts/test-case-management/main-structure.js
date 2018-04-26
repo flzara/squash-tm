@@ -31,7 +31,7 @@ define(["jquery",
 		"jquery.squash.formdialog"],
 		function($, pubsub, basic, contentHandlers, Frag, eventBus, routing, milestonePanel, milestoneNotifier){
 
-	
+
 	function initRenameDialog(settings){
 
 		var identity = { resid : settings.testCaseId, restype : "test-cases"  },
@@ -41,18 +41,18 @@ define(["jquery",
 
 		dialog.formDialog();
 
-		
+
 		$("#rename-test-case-button").on('click', function(){
 			dialog.formDialog('open');
 		});
 
-		
+
 		dialog.on( "formdialogopen", function(event, ui) {
 			var hiddenRawName = $('#test-case-raw-name');
 			var name = $.trim(hiddenRawName.text());
 			$("#rename-test-case-input").val(name);
 		});
-		
+
 
 		dialog.on('formdialogconfirm', function(){
 
@@ -75,17 +75,17 @@ define(["jquery",
 		});
 
 	}
-	
+
 	function initNewVersionDialog(settings){
-		
+
 		var url = settings.urls.testCaseUrl+'/new-version';
-		
+
 		var dialog = $("#create-test-case-version-dialog").formDialog();
-		
+
 		dialog.on('formdialogopen', function(){
-			
+
 			dialog.formDialog('setState', 'wait');
-			
+
 			$.ajax({
 				url : url,
 				dataType : 'json'
@@ -94,29 +94,29 @@ define(["jquery",
 				var name = json.name,
 					ref = json.ref,
 					description = json.description;
-				
+
 				var fullname = name;
 				if (!! settings.milestone){
 					fullname+='-'+settings.milestone.label;
 				}
-				
-				$("#new-version-test-case-name").val(fullname);		
+
+				$("#new-version-test-case-name").val(fullname);
 				$("#new-version-test-case-reference").val(ref);
 				CKEDITOR.instances['new-version-test-case-description'].setData(json.description);
-				
+
 				dialog.formDialog('setState','confirm');
 			});
-			
+
 		});
-		
+
 		dialog.on('formdialogconfirm', function(){
-			
+
 			var params = {
 				name : dialog.find('#new-version-test-case-name').val(),
 				reference : dialog.find('#new-version-test-case-reference').val(),
 				description : dialog.find('#new-version-test-case-description').val()
 			};
-			
+
 			$.ajax({
 				url : url,
 				type : 'post',
@@ -128,13 +128,13 @@ define(["jquery",
 				dialog.formDialog('close');
 				eventBus.trigger('test-case.new-version', jsonTestCase);
 			});
-			
+
 		});
-		
+
 		dialog.on('formdialogcancel', function(){
 			dialog.formDialog('close');
 		});
-		
+
 	}
 
 	function initRenameListener(settings){
@@ -149,7 +149,7 @@ define(["jquery",
 
 	function initFragmentTab(){
 
-		var fragConf = {
+		var fragConf = {active: 1
 			/*cookie : {
 				name : "testcase-tab-cookie",
 				path : routing.buildURL('testcases.base')
@@ -159,17 +159,17 @@ define(["jquery",
 	}
 
 	function initButtons(settings){
-		
+
 		$("#print-test-case-button").on('click', function(){
 			window.open(settings.urls.testCaseUrl+"?format=printable", "_blank");
 		});
-		
+
 		$("#create-test-case-version-button").on('click', function(){
 			$("#create-test-case-version-dialog").formDialog('open');
 		});
 	}
 
-	
+
 	function initMilestonesCountNotifier(settings){
 		milestoneNotifier.newHandler({
 			restype : 'test-cases',
@@ -178,22 +178,22 @@ define(["jquery",
 	}
 
 	// defines which actions should be made when a test step has been edited
-	// in full screen page : reload the verified requirements table and the 
+	// in full screen page : reload the verified requirements table and the
 	// steps table
-	function initReloadSteps(settings){	
-		squashtm.app.reloadSteps = function() { 
+	function initReloadSteps(settings){
+		squashtm.app.reloadSteps = function() {
 			var reqTable = $("#verified-requirements-table"),
 				stepTable = $("#test-steps-table-"+settings.testCaseId);
-			
+
 			reqTable.squashTable().refresh();
-			
-			// the steps table might not be present yet, hence the test 
+
+			// the steps table might not be present yet, hence the test
 			if (stepTable.length>0){
-				stepTable.squashTable().refresh(); 
+				stepTable.squashTable().refresh();
 			}
 		};
 	}
-	
+
 	function init(settings){
 		basic.init();
 		initButtons(settings);

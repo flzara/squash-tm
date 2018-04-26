@@ -60,10 +60,6 @@ class ExcelWorkbookParserBuilder {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelWorkbookParserBuilder.class);
 	private final File xls;
 
-	@Inject
-	@Value("${uploadfilter.upload.import.sizeLimitInBytes}")
-	private double maxSize;
-
 	public ExcelWorkbookParserBuilder(@NotNull File xls) {
 		super();
 		this.xls = xls;

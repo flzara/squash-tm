@@ -154,6 +154,13 @@
                      open="true">
 		<jsp:attribute name="body">
 		<div id="execution-information-table" class="display-table">
+      <c:if test="${execution.isScripted()}">
+         <div class="display-table-row">
+           <label class="display-table-cell" for="testcase-script-name"><f:message key="${execution.scriptedExecutionExtender.language.i18nScriptNameKey()}"/></label>
+           <div id="testcase-script-name" class="display-table-cell"><c:out value="${ execution.scriptedExecutionExtender.scriptName }"/> </div>
+         </div>
+      </c:if>
+
       <div class="display-table-row">
         <label class="display-table-cell" for="testcase-reference"><f:message key="test-case.reference.label"/></label>
         <div id="testcase-reference" class="display-table-cell"><c:out value="${ execution.reference }"/> </div>

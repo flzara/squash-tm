@@ -34,6 +34,7 @@ import org.squashtest.tm.domain.users.User
 import org.squashtest.tm.service.advancedsearch.IndexationService
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService
 import org.squashtest.tm.service.execution.ExecutionModificationService
+import org.squashtest.tm.service.internal.campaign.scripted.ScriptedTestCaseExecutionHelper
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService
 import org.squashtest.tm.service.internal.repository.*
@@ -60,6 +61,8 @@ class CustomIterationModificationServiceImplTest extends Specification {
 
 	ExecutionModificationService executionModificationService = Mock();
 
+	ScriptedTestCaseExecutionHelper scriptedTestCaseExecutionHelper =  Mock();
+
 	def setup() {
 		service.executionDao = execDao
 		service.campaignDao = campaignDao
@@ -70,6 +73,7 @@ class CustomIterationModificationServiceImplTest extends Specification {
 		service.denormalizedFieldValueService = denormalizedFieldValueService
 		service.indexationService = indexationService
 		service.executionModificationService = executionModificationService
+		service.scriptedTestCaseExecutionHelper = scriptedTestCaseExecutionHelper
 	}
 
 	def "should add unparameterized iteration to campaign with test plan"() {

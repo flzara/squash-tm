@@ -135,7 +135,11 @@ define(["jquery","backbone", "tree","./permissions-rules", "workspace.contextual
 			});
 
 			$("#new-test-case-tree-button").on("click", function(){
-				$("#add-test-case-dialog").formDialog("open");
+				$("#add-test-case-dialog").data("test-case-script-language","").formDialog("open");
+			});
+
+			$("#new-test-case-gherkin-tree-button").on("click", function(){
+				$("#add-test-case-dialog").data("test-case-script-language","GHERKIN").formDialog("open");
 			});
 
 
@@ -199,6 +203,10 @@ define(["jquery","backbone", "tree","./permissions-rules", "workspace.contextual
 					$('#export-test-case-includecalls').prop('checked', false);
 					$('#export-test-case-keepRteFormat').prop('checked', true);
 
+			});
+
+			$("#export-gherkin-tree-button").on("click", function(){
+				$("#export-gherkin-test-case-dialog").exportGherkinFeatureDialog("open");
 			});
 
 			// *****************  search  ********************

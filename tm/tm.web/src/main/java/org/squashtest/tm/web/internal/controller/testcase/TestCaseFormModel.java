@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.internal.controller.testcase;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.validation.Errors;
@@ -49,6 +50,8 @@ public class TestCaseFormModel {
 
 	private String reference;
 	private String description;
+
+	private String scriptLanguage;
 
 
 	/*@NotNull
@@ -82,11 +85,17 @@ public class TestCaseFormModel {
 		this.description = description;
 	}
 
-
 	public RawValueModelMap getCustomFields() {
 		return customFields;
 	}
 
+	public String getScriptLanguage() {
+		return scriptLanguage;
+	}
+
+	public void setScriptLanguage(String scriptLanguage) {
+		this.scriptLanguage = scriptLanguage;
+	}
 
 	public void setCustomFields(RawValueModelMap customFields) {
 		this.customFields = customFields;
@@ -98,6 +107,10 @@ public class TestCaseFormModel {
 		newTC.setName(name);
 		newTC.setDescription(description);
 		newTC.setReference(reference);
+		if (StringUtils.isNotBlank(scriptLanguage)) {
+			String locale = LocaleContextHolder.getLocale().getLanguage();
+			newTC.extendWithScript(scriptLanguage, locale);
+		}
 		return newTC;
 	}
 

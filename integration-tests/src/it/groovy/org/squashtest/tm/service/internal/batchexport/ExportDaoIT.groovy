@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.service.internal.batchexport
 
+import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage
+import org.squashtest.tm.domain.testcase.TestCaseKind
+
 import javax.inject.Inject
 
 import org.junit.runner.RunWith
@@ -31,6 +34,9 @@ import org.unitils.dbunit.annotation.DataSet
 
 import spock.unitils.UnitilsSupport
 
+import static org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage.GHERKIN
+import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD
+
 @UnitilsSupport
 @Transactional
 @RunWith(Sputnik)
@@ -38,8 +44,8 @@ class ExportDaoIT extends DbunitServiceSpecification{
 
 	@Inject
 	private ExportDao exporter
-	
-	
+
+
 	@DataSet("ExportDaoIT.should create models.xml")
 	def "should create models"(){
 		given :
@@ -55,19 +61,42 @@ class ExportDaoIT extends DbunitServiceSpecification{
 		result.testSteps.size() == 2
 
 	}
-	
-	
+
+	@DataSet("ExportDaoIT.should create scripted test case model.xml")
+	def "should create scripted test case models"(){
+		given :
+		def testCaseIds = [-10L, -11L]
+
+		when :
+		ExportModel result = exporter.findModel(testCaseIds)
+		List<ExportModel.TestCaseModel> testCases = result.testCases
+		ExportModel.TestCaseModel standardTestCaseModel = testCases.find{it.id == -10L}
+		ExportModel.TestCaseModel scriptedTestCaseModel = testCases.find{it.id == -11L}
+
+
+		then :
+		testCases.size() == 2
+		standardTestCaseModel.getTestCaseKind() == STANDARD
+		standardTestCaseModel.getScriptedTestCaseLanguage() == null
+
+		scriptedTestCaseModel.getTestCaseKind() == org.squashtest.tm.domain.testcase.TestCaseKind.GHERKIN
+		scriptedTestCaseModel.getScriptedTestCaseLanguage() == GHERKIN
+		scriptedTestCaseModel.getTcScript() == "Feature: three cucumbers and two tomatoes"
+
+	}
+
+
 	/*
 	 * See dataset description in the dataset file
 	 */
 	@DataSet("export-req-links.xml")
 	def "should collect the requirement links model"(){
-		
+
 		given :
-			// setup : must fix the reciprocal references from requirement to requirement version 
+			// setup : must fix the reciprocal references from requirement to requirement version
 			// (it had to be stripped from the dataset because it wouldn't be inserted otherwise)
-			// the following maps Requirement ids to RequirementVersion ids 
-			[ 
+			// the following maps Requirement ids to RequirementVersion ids
+			[
 				(-255) : -255,
 				(-256) : -256,
 				(-257) : -259,
@@ -75,17 +104,17 @@ class ExportDaoIT extends DbunitServiceSpecification{
 				(-259) : -261
 			]
 			.each { k,v -> executeSQL("update REQUIREMENT set current_version_id = $v where rln_id = $k") }
-		
-		
+
+
 		and :
 			def ids = -259l..-255l
-		
+
 		when :
 			List<RequirementLinkModel> linkModels = exporter.findRequirementLinksModel(ids)
-		
+
 		then :
 			linkModels.size() == 4
-		
+
 			// first, test what should be contained
 			def req1v1_req3v1_related = model([reqPath : "/Test Project-1/Test Folder 1/Test Requirement 1", reqVersion : 1, relReqPath : "/Test Project-1/Test Folder 1/Test Requirement 3", relReqVersion : 1, relatedReqRole : "RELATED"])
 			def req1v1_req3v3_duplicate = model([reqPath : "/Test Project-1/Test Folder 1/Test Requirement 1", reqVersion : 1, relReqPath : "/Test Project-1/Test Folder 1/Test Requirement 3", relReqVersion : 3, relatedReqRole : "DUPLICATE"])
@@ -96,17 +125,17 @@ class ExportDaoIT extends DbunitServiceSpecification{
 			linkModels.find { match(it, req1v1_req3v3_duplicate) } != null
 			linkModels.find { match(it, req2v1_req1v1_child) } != null
 			linkModels.find { match(it, req3v3_otherv1_child) } != null
-			
+
 			// now those that should not be found
 			def unrelated = model([reqPath : "/Test Project-1/unrelated", reqVersion : 1, relReqPath : "/Test Project-1/related to ex3", relReqVersion : 1, relatedReqRole : "DUPLICATE"])
-		
+
 			linkModels.find { match(it, unrelated) } == null
-			
+
 			true
-		
+
 	}
-	
-	
+
+
 	private boolean match(RequirementLinkModel model1, RequirementLinkModel model2){
 		return model1.reqPath.equals(model2.reqPath) &&
 				(model1.reqVersion == model2.reqVersion) &&
@@ -114,7 +143,7 @@ class ExportDaoIT extends DbunitServiceSpecification{
 				(model1.relReqVersion == model2.relReqVersion) &&
 				model1.relatedReqRole.equals(model2.relatedReqRole)
 	}
-	
+
 	private RequirementLinkModel model(Map ppts){
 		return RequirementLinkModel.create(ppts["reqVersion"], ppts["relReqVersion"], ppts["relatedReqRole"], ppts["reqPath"], ppts["relReqPath"])
 	}

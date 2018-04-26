@@ -164,7 +164,8 @@
 
 		</div>
 
-<div id="prerequisite-panel" class="panel">
+
+<div th:if="!${testCase.isScripted()}" id="prerequisite-panel" class="tab">
 				<h4 th:text="#{generics.prerequisite.title}">Prerequisite</h4>
 				<p id="test-case-prerequisite" sq:unsafe-html="${testCase.prerequisite}">Lorem ipsum dolor sit amet,
 					consectetur adipiscing elit. Nullam felis ante, accumsan quis
@@ -179,9 +180,31 @@
 					id commodo dui. Duis in vestibulum magna. Sed porta ante id magna
 					semper ac gravida risus dapi bus. Fusce eu ante sapien.</p>
 			</div>
+    <!-- ===========================================GHERKIN SCRIPT ===================================================-->
+    <div th:if="${testCase.isScripted()}" id="test-case-script-panel" class="tab">
+      <h3 th:text="#{label.Script}">Script</h3>
+      <div id="test-case-script-table" class="display-table">
+        <div class="display-table-row">
+          <label for="test-case-script-language" class="display-table-cell"
+                 th:text="#{ test-case.scripted.language.label }">Langage de Scripting</label>
+          <div class="display-table-cell" id="test-case-script-language"
+               th:text="#{${testCase.kind.getI18nKey()}}">Gherkin</div>
+        </div>
+        <div class="display-table-row">
+          <label for="test-case-script" class="display-table-cell"
+                 th:text="#{label.Script}">Script</label>
+          <div class="display-table-cell" id="test-case-script">
+            <p th:utext="${#strings.replace(testCase.scriptedTestCaseExtender.script,'&#10;','&lt;br /&gt;')}" ></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===========================================/GHERKIN SCRIPT ===================================================-->
+
 
 		<!-- ===========================================STEPS ===================================================-->
-		<div id="step-tab" class="tab">
+		<div th:if="!${testCase.isScripted()}" id="step-tab" class="tab">
 			<h3 th:text="#{tabs.label.steps}">Steps</h3>
 
 			<table id="test-steps-table" class="greystyle-table">
@@ -243,7 +266,7 @@
 			</table>
 		</div>
 		<!-- ===========================================PARAMETERS ===================================================-->
-		<div id="parameters-tab" class="tab">
+		<div th:if="!${testCase.isScripted()}" id="parameters-tab" class="tab">
 			<h3 th:text="#{label.parameters}">Parameters</h3>
 
 			<table id="parameters-table" class="greystyle-table">
@@ -270,7 +293,7 @@
 		</div>
 			<!-- ===========================================PARAMETERS ===================================================-->
 
-		<div id="datasets-tab" class="tab">
+		<div th:if="!${testCase.isScripted()}" id="datasets-tab" class="tab">
 			<h3 th:text="#{label.datasets}">Datasets</h3>
 
 			<table id="datasets-table" class="greystyle-table">
@@ -336,7 +359,7 @@
 		</div>
 
 		<!-- ===========================================CALLING TEST CASES ===================================================-->
-		<div id="calling-test-case-tab" class="tab">
+		<div th:if="!${testCase.isScripted()}" id="calling-test-case-tab" class="tab">
 			<h3 th:text="#{test-case.calling-test-cases.panel.title}">Calling
 				test cases</h3>
 			<table id="calling-test-case-table" class="greystyle-table">

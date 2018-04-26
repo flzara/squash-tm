@@ -34,5 +34,5 @@ Configuration:
       level: error
       AppenderRef:
         ref: Console
-        
-        
+
+

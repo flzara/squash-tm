@@ -115,12 +115,12 @@ public class TestCaseFacility extends EntityFacilitySupport {
 
 		InfoListItem nature = testCase.getNature();
 		if (nature != null && !listItemFinderService.isNatureConsistent(projectStatus.getId(), nature.getCode())) {
-				testCase.setNature(listItemFinderService.findDefaultTestCaseNature(projectStatus.getId()));
+			testCase.setNature(listItemFinderService.findDefaultTestCaseNature(projectStatus.getId()));
 		}
 
 		InfoListItem type = testCase.getType();
 		if (type != null && !listItemFinderService.isTypeConsistent(projectStatus.getId(), type.getCode())) {
-				testCase.setType(listItemFinderService.findDefaultTestCaseType(projectStatus.getId()));
+			testCase.setType(listItemFinderService.findDefaultTestCaseType(projectStatus.getId()));
 		}
 
 	}
@@ -242,20 +242,21 @@ public class TestCaseFacility extends EntityFacilitySupport {
 		if (validator.areMilestoneValid(instr)) {
 			rebindMilestones(instr, orig);
 		}
-		
+
 
 		/*
-		 * Issue #6968 : Because renaming / changing the ref of a test case triggers an immediate reindexation 
-		 * of the related ITPIs (and the test case itself by the way). In the process the session attached to 
-		 * the persistent collection of the milestones is killed, not sure why, thus triggering the 
+		 * Issue #6968 : Because renaming / changing the ref of a test case triggers an immediate reindexation
+		 * of the related ITPIs (and the test case itself by the way). In the process the session attached to
+		 * the persistent collection of the milestones is killed, not sure why, thus triggering the
 		 * lazy exception.
-		 * 
-		 *  The hack to prevent this is to make sure the indexation happens last, which here can be done 
+		 *
+		 *  The hack to prevent this is to make sure the indexation happens last, which here can be done
 		 *  by updating the core attributes to the last position.
 		 */
 		// update the test case core attributes last
-		
+
 		doUpdateTestCaseCoreAttributes(testCase, orig);
+		doUpdateTestCaseScriptExtender(testCase, orig);
 
 		// move the test case if its index says it has to move
 		Integer order = target.getOrder();
@@ -269,6 +270,15 @@ public class TestCaseFacility extends EntityFacilitySupport {
 			}
 		}
 
+	}
+
+	private void doUpdateTestCaseScriptExtender(TestCase testCase, TestCase orig) {
+		if (orig.isScripted() && testCase.isScripted()) {
+			String newScript = testCase.getScriptedTestCaseExtender().getScript();
+			if (StringUtils.isNoneBlank(newScript)) {
+				orig.getScriptedTestCaseExtender().setScript(newScript);
+			}
+		}
 	}
 
 	private void doUpdateTestCaseCoreAttributes(TestCase testCase, TestCase orig) {

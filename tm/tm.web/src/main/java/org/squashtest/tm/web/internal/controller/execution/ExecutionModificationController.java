@@ -188,7 +188,7 @@ public class ExecutionModificationController {
 		List<AoColumnDef> columnDefs;
 		boolean editable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "EXECUTE", execution);
 		boolean isBugtrackerConnected = execution.getProject().isBugtrackerConnected();
-		columnDefs = new ExecutionStepTableColumnDefHelper().getAoColumnDfvDefs(editable, isBugtrackerConnected);
+		columnDefs = new ExecutionStepTableColumnDefHelper().getAoColumnDfvDefs(editable, isBugtrackerConnected, execution.isScripted());
 		return columnDefs;
 	}
 
@@ -287,8 +287,9 @@ public class ExecutionModificationController {
 			columns.addAll(baseColumns);
 		}
 
-		private List<AoColumnDef> getAoColumnDfvDefs(boolean editable, boolean isBugtrackerConnected) {
+		private List<AoColumnDef> getAoColumnDfvDefs(boolean editable, boolean isBugtrackerConnected, boolean isScripted) {
 			columns.get(columns.size() - 2).setbVisible(editable);
+			columns.get(3).setbVisible(!isScripted);
 			columns.get(columns.size() - 4).setbVisible(editable && isBugtrackerConnected);
 			addATargets(columns);
 			return columns;
