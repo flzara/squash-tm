@@ -101,8 +101,7 @@ public class ScriptedTestCaseExtender {
 		String featureKeyword = defaultDialect.getFeatureKeywords().get(0);
 		sb.append(featureKeyword)
 			.append(": ")
-			.append(testCase.getName())
-			.append("\n");
+			.append(testCase.getName());
 
 		this.setScript(sb.toString());
 	}
