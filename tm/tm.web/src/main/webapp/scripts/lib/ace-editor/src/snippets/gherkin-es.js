@@ -6,15 +6,15 @@ define("ace/snippets/gherkin-es", ["require", "exports", "module"], function (re
 "snippet escenario\n\
   \n\
   Escenario: ${1}\n\
-		Dado ${2}\n\n\
-		Cuando ${3}\n\n\
+		Dado ${2}\n\
+		Cuando ${3}\n\
 		Entonces ${4}\n\
 snippet esquema_del_escenario\n\
   \n\
-	Esquema del escenario: ${1}\n\n\
-		Dado ${2}\n\n\
-		Cuando ${3}\n\n\
-		Entonces ${4}\n\n\
+	Esquema del escenario: ${1}\n\
+		Dado ${2}\n\
+		Cuando ${3}\n\
+		Entonces ${4}\n\
 		Ejemplos: ${5}\n\
 snippet tab3*2\n\
 	| ${1}\t| ${2}\t| ${3}\t|\n\

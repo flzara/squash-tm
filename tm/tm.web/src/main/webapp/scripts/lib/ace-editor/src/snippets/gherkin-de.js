@@ -6,15 +6,15 @@ define("ace/snippets/gherkin-de", ["require", "exports", "module"], function (re
 "snippet szenario\n\
   \n\
   Szenario: ${1}\n\
-		Angenommen ${2}\n\n\
-		Wenn ${3}\n\n\
+		Angenommen ${2}\n\
+		Wenn ${3}\n\
 		Dann ${4}\n\
 snippet szenariogrundriss\n\
   \n\
-	Szenariogrundriss: ${1}\n\n\
-		Angenommen ${2}\n\n\
-		Wenn ${3}\n\n\
-		Dann ${4}\n\n\
+	Szenariogrundriss: ${1}\n\
+		Angenommen ${2}\n\
+		Wenn ${3}\n\
+		Dann ${4}\n\
 		Beispiele: ${5}\n\
 snippet tab3*2\n\
 	| ${1}\t| ${2}\t| ${3}\t|\n\

@@ -6,16 +6,16 @@ define("ace/snippets/gherkin-fr", ["require", "exports", "module"], function (re
 "\
 snippet scenario\n\
   \n\
-	Scénario: ${1}\n\n\
-		Soit ${2}\n\n\
-		Quand ${3}\n\n\
+	Scénario: ${1}\n\
+		Soit ${2}\n\
+		Quand ${3}\n\
 		Alors ${4}\n\
 snippet plan_scenario\n\
   \n\
-	Plan du scénario: ${1}\n\n\
-		Soit ${2}\n\n\
-		Quand ${3}\n\n\
-		Alors ${4}\n\n\
+	Plan du scénario: ${1}\n\
+		Soit ${2}\n\
+		Quand ${3}\n\
+		Alors ${4}\n\
 		Exemples: ${5}\n\
 snippet tab3*2\n\
 	| ${1}\t| ${2}\t| ${3}\t|\n\

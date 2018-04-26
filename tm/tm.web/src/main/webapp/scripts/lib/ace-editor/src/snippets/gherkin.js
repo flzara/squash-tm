@@ -5,16 +5,16 @@ define("ace/snippets/gherkin", ["require", "exports", "module"], function (requi
 	exports.snippetText =
 "snippet sc\n\
 	\n\
-	Scenario: ${1}\n\n\
-		Given ${2}\n\n\
-		When ${3}\n\n\
+	Scenario: ${1}\n\
+		Given ${2}\n\
+		When ${3}\n\
 snippet scout\n\
 	\n\
-	Scenario Outline: ${1}\n\n\
-		Given ${2}\n\n\
-		When ${3}\n\n\
-		Then ${4}\n\n\
-		Examples: ${5}\n\n\
+	Scenario Outline: ${1}\n\
+		Given ${2}\n\
+		When ${3}\n\
+		Then ${4}\n\
+		Examples: ${5}\n\
 snippet tab3*2\n\
 	| ${1}\t| ${2}\t| ${3}\t|\n\
 	| ${4}\t| ${5}\t| ${6}\t|\n\
