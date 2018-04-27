@@ -28,6 +28,11 @@ define([ "jquery", "app/pubsub", "app/ws/squashtm.navbar", "project-filter/Proje
             spinner.init();
             notification.init();
 	});
+	ps.subscribe("load.logout", function(){
+		$("#menu-logout-link").on('click', function(){
+			$.post(squashtm.app.contextRoot+"logout");
+		});
+	})
 
 	/* session ping */
 	new SSP();

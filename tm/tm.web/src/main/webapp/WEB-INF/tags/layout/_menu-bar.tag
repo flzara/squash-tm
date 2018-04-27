@@ -70,16 +70,22 @@
 </div>
 
 <sec:authorize access="isAuthenticated()">
-
-  <c:url var="logoutUrl" value="/logout" />
+<c:url var="logoutUrl" value="/logged-out" />
 </sec:authorize>
 <div>
+	<%-- 
+		CRSF : since '/logout' modifies the application state it must not be
+		called by GET : a POST + csrf token is more appropriate.
+		The logout menu is bound by javascript in app/ws/squashtm.workspace.js  
+	--%>
   <div class="icon"><span class="ui-icon ui-icon-power"></span></div>
-  <a id="menu-logout-link" href="${ logoutUrl }">
+  <a id="menu-logout-link" href="${ logoutUrl }"  >
     <f:message key="workspace.menubar.logout.label" />
   </a>
 </div>
-
+<script type="text/javascript">
+	publish("load.logout");
+</script>
 
 <%-- ====== project filter popup ========  --%>
 

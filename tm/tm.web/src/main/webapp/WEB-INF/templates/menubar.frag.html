@@ -61,9 +61,17 @@
 		</div>
 
 		<div th:if="${sec.isAuthenticated()}">
+			<!-- 
+				CRSF : since '/logout' modifies the application state it must not be
+				called by GET : a POST + csrf token is more appropriate.
+				The logout menu is bound by javascript in app/ws/squashtm.workspace.js  
+			-->
 			<div class="icon"><span class="ui-icon ui-icon-power"></span></div>
-			<a id="menu-logout-link" href="logout.html" th:href="@{/logout}" th:text="#{workspace.menubar.logout.label}">logout</a>
+			<a id="menu-logout-link" th:href="@{/logged-out}"  th:text="#{workspace.menubar.logout.label}">logout</a>
 		</div>
+	    <script type="text/javascript" >
+	      publish("load.logout");
+	    </script>		
 
 		<div id="project-filter-popup" class="project-picker popup-dialog not-displayed" style="display:none" th:title="#{dialog.settings.filter.title}" th:attr="data-url=@{/global-filter/filter}">
 			  <div id="dialog-settings-filter-maincontent">

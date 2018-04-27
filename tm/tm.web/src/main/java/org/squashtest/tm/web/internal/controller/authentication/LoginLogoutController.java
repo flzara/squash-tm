@@ -49,5 +49,11 @@ public class LoginLogoutController {
 		model.addAttribute("version", version);
 		return "page/authentication/login";
 	}
+	
+	
+	@RequestMapping("/logged-out")
+	public String logout(){
+		return "logged-out.html";
+	}
 
 }

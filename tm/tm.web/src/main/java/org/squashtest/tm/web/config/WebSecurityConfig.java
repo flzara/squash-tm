@@ -190,7 +190,9 @@ public class WebSecurityConfig {
 					// point
 					.antMatchers(
 							"/login", 
-							ALTERNATE_AUTH_PATH)
+							ALTERNATE_AUTH_PATH, 
+							"/logout",
+							"/logged-out")
 						.permitAll()
 					// Administration namespace. Some of which can be accessed by PMs
 					.antMatchers(
@@ -229,9 +231,8 @@ public class WebSecurityConfig {
 				.and()
 					.logout()
 						.permitAll()
-						.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
 						.invalidateHttpSession(true)
-						.logoutSuccessUrl("/")
+						.logoutSuccessUrl("/logged-out")
 				
 				.and()
 					.addFilterAfter(new HttpPutFormContentFilter(), SecurityContextPersistenceFilter.class);
