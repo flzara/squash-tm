@@ -270,7 +270,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	}
 
 	@Override
-	@PreAuthorize(HAS_ROLE_ADMIN)
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public void deleteProject(long projectId) {
 		projectDeletionHandler.deleteProject(projectId);
 	}

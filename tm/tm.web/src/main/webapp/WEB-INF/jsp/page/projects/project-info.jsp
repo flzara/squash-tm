@@ -146,7 +146,7 @@
 
           </sec:authorize>
 
-          <sec:authorize access="hasRole('ROLE_ADMIN')">
+          <sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
 
             <c:if test="${ !adminproject.template }">
               <button   id="coerce" class="sq-btn" data-template-id="${ adminproject.id }" >
