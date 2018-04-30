@@ -32,6 +32,8 @@ public class JsonReportInstance {
 
 	private String description;
 
+	private String summary;
+
 	private String pluginNamespace;
 
 	private String parameters;
@@ -63,6 +65,7 @@ public class JsonReportInstance {
 	public JsonReportInstance(ReportDefinition def) {
 		this.name = def.getName();
 		this.description = def.getDescription();
+		this.summary = def.getSummary();
 		this.pluginNamespace = def.getPluginNamespace();
 		this.parameters = def.getParameters();
 		this.projectId = def.getProject().getId();
@@ -189,5 +192,13 @@ public class JsonReportInstance {
 
 	public void setPdfViews(int pdfViews) {
 		this.pdfViews = pdfViews;
+	}
+
+	public String getSummary() {
+		return summary;
+	}
+
+	public void setSummary(String summary) {
+		this.summary = summary;
 	}
 }

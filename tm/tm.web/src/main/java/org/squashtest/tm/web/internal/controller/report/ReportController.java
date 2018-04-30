@@ -157,6 +157,8 @@ public class ReportController {
 			ReportDefinition def = (ReportDefinition) crln.getEntity();
 			model.addAttribute("reportDef", JsonHelper.serialize(def));
 			model.addAttribute("reportDefDescription", HTMLCleanupUtils.cleanHtml(def.getDescription()));
+			model.addAttribute("reportDefSummary", HTMLCleanupUtils.cleanHtml(def.getSummary()));
+
 
 			Map<String, Object> form = null;
 			try {

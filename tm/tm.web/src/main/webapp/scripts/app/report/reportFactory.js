@@ -24,7 +24,7 @@ define(["backbone", "squash.translator"],
 		var translations = translator.get({
 			nameLabel: "label.Name",
 			typeLabel: "label.Type",
-			descriptionLabel: "label.Description",
+			summaryLabel: "label.Summary",
 			generateLabel: "report.criteria.panel.button.generate.label"
 		});
 
@@ -36,9 +36,15 @@ define(["backbone", "squash.translator"],
 			table.className = "display-table";
 			table.style.padding = "2%";
 			table.style.display = "block";
-			table.appendChild(createNewRow(translations.nameLabel, jsonReport.name.bold()));
+
+			var name = jsonReport.name;
+			if (name.length >= 25) {
+				name = name.substring(0, 25) + "...";
+			}
+
+			table.appendChild(createNewRow(translations.nameLabel, name.bold()));
 			table.appendChild(createNewRow(translations.typeLabel, jsonReport.label));
-			table.appendChild(createNewRow(translations.descriptionLabel, jsonReport.description));
+			table.appendChild(createNewRow(translations.summaryLabel, jsonReport.summary));
 			target.appendChild(createGenerateButton(jsonReport));
 			target.appendChild(table);
 
@@ -73,15 +79,15 @@ define(["backbone", "squash.translator"],
 				var url;
 				var namespace = jsonReport.pluginNamespace;
 				var parameters = jsonReport.parameters;
-				if (jsonReport.docx){
+				if (jsonReport.docx) {
 
 					url = buildViewUrl(0, "docx", namespace);
 					$.ajax({
-						type : "get",
-						url : url,
-						dataType : "html",
-						data : { json : parameters }
-					}).done(function(html) {
+						type: "get",
+						url: url,
+						dataType: "html",
+						data: {json: parameters}
+					}).done(function (html) {
 						$("#document-holder").html(html);
 					});
 				} else {
@@ -93,18 +99,18 @@ define(["backbone", "squash.translator"],
 						url = buildViewUrl(i, "html", namespace);
 
 						var request = $.ajax({
-							type : "get",
-							url : url,
-							dataType : "html",
-							data : { json : parameters }
-						}).done(function(html) {
+							type: "get",
+							url: url,
+							dataType: "html",
+							data: {json: parameters}
+						}).done(function (html) {
 							result += html;
 						});
 						promises.push(request);
 
 					}
 
-					$.when.apply(null, promises).done(function(){
+					$.when.apply(null, promises).done(function () {
 						var win = window.open("", "_blank", "scrollbars=yes,resizable=yes");
 						win.document.body.innerHTML = result;
 					});

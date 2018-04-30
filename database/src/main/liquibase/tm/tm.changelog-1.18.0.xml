@@ -1057,4 +1057,13 @@
 
   </changeSet>
 
+  <changeSet id="tm-1.18.0-modification-report" author="zyang">
+    <comment>Adds a summary field to report definition</comment>
+    <addColumn tableName="REPORT_DEFINITION">
+      <column name="SUMMARY" type="VARCHAR(255)" defaultValue="">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
 </databaseChangeLog>

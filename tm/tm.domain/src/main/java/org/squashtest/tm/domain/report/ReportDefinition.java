@@ -32,6 +32,7 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
@@ -46,7 +47,7 @@ public class ReportDefinition implements TreeEntity{
 	private Long id;
 
 	@NotBlank
-	@Size(max = Sizes.NAME_MAX)
+	@Size(max = 255)
 	@Column
 	private String name;
 
@@ -55,8 +56,13 @@ public class ReportDefinition implements TreeEntity{
 	@Basic(optional = false)
 	private String description;
 
+	@NotNull
+	@Type(type = "org.hibernate.type.TextType")
+	@Size(max = 255)
+	private String summary = "";
+
 	@NotBlank
-	@Size(max = Sizes.NAME_MAX)
+	@Size(max = 255)
 	@Column
 	private String pluginNamespace;
 
@@ -95,6 +101,14 @@ public class ReportDefinition implements TreeEntity{
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getSummary() {
+		return summary;
+	}
+
+	public void setSummary(String summary) {
+		this.summary = summary;
 	}
 
 	public String getPluginNamespace() {

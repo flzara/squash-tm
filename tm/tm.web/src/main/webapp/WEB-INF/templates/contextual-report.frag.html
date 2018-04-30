@@ -122,8 +122,14 @@
             <table style="width:100%; border-spacing:0.5em; ">
               <tr>
                 <td><label for="report-name" th:text="#{label.Name}"></label></td>
-                <td><input id="report-name" name="name" type="text" size="50" maxlength="255"
+                <td><input id="report-name" name="name" type="text" maxlength="255" style="width: 25vw;"
                            data-prop="name" data-object="reportDefinition"/><span
+                  class="error-message name-error"></span></td>
+              </tr>
+              <tr>
+                <td><label for="report-summary" th:text="#{label.Summary}"></label></td>
+                <td><input id="report-summary" name="summary" type="text" maxlength="255" style="width: 50vw;"
+                           data-prop="summary" data-object="reportDefinition"/><span
                   class="error-message name-error"></span></td>
               </tr>
               <tr>
@@ -360,6 +366,13 @@
             </div>
 
             <div class="display-table-row">
+              <label for="report-sum" class="display-table-cell"> <span
+                th:text="#{label.Summary }">Description</span>
+              </label>
+              <div class="display-table-cell" id="report-sum"/>
+            </div>
+
+            <div class="display-table-row">
               <label for="report-desc" class="display-table-cell"> <span
                 th:text="#{label.Description }">Description</span>
               </label>
@@ -383,6 +396,7 @@
       squashtm.app.reportConf = {
         reportDef: /*[[${reportDef}]]*/,
         reportDefDescription: /*[[${reportDefDescription}]]*/,
+        reportDefSummary: /*[[${reportDefSummary}]]*/,
         parentId: /*[[${parentId}]]*/,
         contextPath: /*[[ @{/} ]]*/ "http://localhost:8080/squash",
         reportUrl: /*[[ @{'/reports/' + ${report.namespace}} ]]*/ "/squash/reports",

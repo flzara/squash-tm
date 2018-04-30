@@ -44,9 +44,11 @@ define(["is", "jquery", "backbone", "squash.configmanager", "workspace.routing",
 					if (this.isModify()) {
 						var reportDef = JSON.parse(this.config.reportDef);
 						$("#report-name").val(reportDef.name);
+						$("#report-summary").val(reportDef.summary);
 						$("#report-description").val(reportDef.description);
 
 						$("#report-desc").html(this.config.reportDefDescription);
+						$("#report-sum").html(this.config.reportDefSummary);
 					}
 				},
 
@@ -69,6 +71,7 @@ define(["is", "jquery", "backbone", "squash.configmanager", "workspace.routing",
 						var path = this.getCookiePath();
 						var data = {
 							name: $("#report-name").val(),
+							summary: $("#report-summary").val(),
 							description: $("#report-description").val(),
 							parameters: JSON.stringify(this.model.toJSON())
 						};
@@ -95,13 +98,8 @@ define(["is", "jquery", "backbone", "squash.configmanager", "workspace.routing",
 
 						var invalidPerimeterDialog = $("#invalid-perimeter").messageDialog();
 						invalidPerimeterDialog.messageDialog("open");
-
 					}
-
-
 				}
-
-
 			})
 		;
 
