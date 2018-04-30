@@ -67,11 +67,11 @@ final class TestPlanFilteringHelper {
 	public static final String MODE_DATA = "exec-mode";
 	public static final String LASTEXEC_DATA = "last-exec-on";
 
-	private static final String HQL_INDEXED_TEST_PLAN_PROJECT_FILTER = "and Project.name like :projectFilter ";
-	private static final String HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER = "and TestCase.reference like :referenceFilter ";
-	private static final String HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER = "and TestCase.name like :testcaseFilter ";
+	private static final String HQL_INDEXED_TEST_PLAN_PROJECT_FILTER = "and lower(Project.name) like :projectFilter ";
+	private static final String HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER = "and lower(TestCase.reference) like :referenceFilter ";
+	private static final String HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER = "and lower(TestCase.name) like :testcaseFilter ";
 	private static final String HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER = "and TestCase.importance = :weightFilter ";
-	private static final String HQL_INDEXED_TEST_PLAN_DATASET_FILTER = "and Dataset.name like :datasetFilter ";
+	private static final String HQL_INDEXED_TEST_PLAN_DATASET_FILTER = "and lower(Dataset.name) like :datasetFilter ";
 	private static final String HQL_INDEXED_TEST_PLAN_STATUS_FILTER = "and IterationTestPlanItem.executionStatus = :statusFilter ";
 
 	public static final String HQL_INDEXED_TEST_PLAN_MODEAUTO_FILTER = "and TestCase.automatedTest is not null ";
@@ -106,15 +106,15 @@ final class TestPlanFilteringHelper {
 		}
 
 		if (columnFiltering.hasFilter(PROJECT_DATA)) {
-			query.setParameter(PROJECT_FILTER, anywhereToken(columnFiltering.getFilter(PROJECT_DATA)));
+			query.setParameter(PROJECT_FILTER, anywhereToken(columnFiltering.getFilter(PROJECT_DATA).toLowerCase()));
 		}
 
 		if (columnFiltering.hasFilter(REFERENCE_DATA)) {
-			query.setParameter(REFERENCE_FILTER, anywhereToken(columnFiltering.getFilter(REFERENCE_DATA)));
+			query.setParameter(REFERENCE_FILTER, anywhereToken(columnFiltering.getFilter(REFERENCE_DATA).toLowerCase()));
 		}
 
 		if (columnFiltering.hasFilter(TESTCASE_DATA)) {
-			query.setParameter(TESTCASE_FILTER, anywhereToken(columnFiltering.getFilter(TESTCASE_DATA)));
+			query.setParameter(TESTCASE_FILTER, anywhereToken(columnFiltering.getFilter(TESTCASE_DATA).toLowerCase()));
 		}
 
 		if (columnFiltering.hasFilter(WEIGHT_DATA)) {
@@ -124,7 +124,7 @@ final class TestPlanFilteringHelper {
 		}
 
 		if (columnFiltering.hasFilter(DATASET_DATA)) {
-			query.setParameter(DATASET_FILTER, anywhereToken(columnFiltering.getFilter(DATASET_DATA)));
+			query.setParameter(DATASET_FILTER, anywhereToken(columnFiltering.getFilter(DATASET_DATA).toLowerCase()));
 		}
 
 		if (columnFiltering.hasFilter(TESTSUITE_DATA)) {
