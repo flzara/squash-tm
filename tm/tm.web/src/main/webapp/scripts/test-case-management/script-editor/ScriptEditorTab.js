@@ -144,7 +144,7 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing","./do
 							locale = "es";
 							break;
 						default:
-							console.log("Unable to find locale from parsed locale : " + parsedLocale + ". Default to en.")
+							console.log("Unable to find locale from parsed locale : " + parsedLocale + ". Default to en.");
 					}
 				}
 			}

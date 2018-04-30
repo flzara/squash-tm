@@ -32,7 +32,7 @@ define([ "jquery", "app/pubsub", "app/ws/squashtm.navbar", "project-filter/Proje
 		$("#menu-logout-link").on('click', function(){
 			$.post(squashtm.app.contextRoot+"logout");
 		});
-	})
+	});
 
 	/* session ping */
 	new SSP();
