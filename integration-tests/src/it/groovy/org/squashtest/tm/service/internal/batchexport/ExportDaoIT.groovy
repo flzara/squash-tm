@@ -20,19 +20,15 @@
  */
 package org.squashtest.tm.service.internal.batchexport
 
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage
-import org.squashtest.tm.domain.testcase.TestCaseKind
-
-import javax.inject.Inject
-
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.service.internal.batchexport.RequirementExportModel.RequirementLinkModel
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 import static org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage.GHERKIN
 import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD

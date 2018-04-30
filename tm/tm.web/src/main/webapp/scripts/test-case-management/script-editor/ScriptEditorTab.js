@@ -127,12 +127,10 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing","./do
 		_findScriptLocale: function () {
 			var line0 = this.editor.session.getLine(0);
 			var locale = "en";
-			console.log(line0);
 			if (line0 !== null) {
 				line0 = line0.trim();
 				if (line0.search("language:") !== -1) {
 					var parsedLocale = line0.substring(line0.length - 2);
-					console.log(parsedLocale);
 					switch (parsedLocale) {
 						case "fr" :
 							locale = "fr";

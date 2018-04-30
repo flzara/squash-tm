@@ -36,7 +36,6 @@ snippet tab4*3\n\
 	| ${13}\t| ${14}\t| ${14}\t| ${16}\t\n\
 ";
 // @formatter:on
-	console.log(exports.snippetText);
 	exports.scope = "gherkin-de";
 
 });
