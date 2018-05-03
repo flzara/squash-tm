@@ -61,9 +61,6 @@
             </span>
     </div>
   </div>
-  <div class="option-panel-wrapper" style="display: none">
-    <div id="optionsPanel"></div>
-  </div>
   <div id="tc-script-editor" class="tc-script-editor tc-script-editor-option-closed"></div>
 </div>
 
