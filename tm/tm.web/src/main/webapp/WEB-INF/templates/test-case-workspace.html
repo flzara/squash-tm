@@ -264,7 +264,7 @@
         </tr>
         <tr>
           <td>
-            <label for="add-foldder-description" th:text="#{label.Description}">Description</label>
+            <label for="add-folder-description" th:text="#{label.Description}">Description</label>
           </td>
           <td>
             <textarea id="add-folder-description" data-def="isrich"></textarea>
@@ -290,6 +290,16 @@
 
       <div data-def="state=confirm">
       <table class="add-node-attributes">
+
+        <tr>
+          <td>
+            <label for="add-test-case-format" th:text="#{test-case.format.label}">Format</label>
+          </td>
+
+          <td>
+            <span id="add-test-case-format" th:text="#{test-case.format.standard}">Classique</span>
+          </td>
+        </tr>
 
         <tr>
           <td>

@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permissions-rules', 'jquery.squash.formdialog'],
-		function($, zetree, cufValuesManager, projects, rules){
+define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permissions-rules','squash.translator', 'jquery.squash.formdialog'],
+		function($, zetree, cufValuesManager, projects, rules, translator){
 
 
 
@@ -68,6 +68,11 @@ define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permi
 		var dialog = $("#add-test-case-dialog").formDialog();
 		var tree = zetree.get();
 
+		var i18nFormat = translator.get({
+			"GHERKIN": "test-case.format.gherkin",
+			"CLASSIC": "test-case.format.standard"
+		});
+
 		// Added to cancel the open if no rights
 		dialog.on('formdialogopen', function(){
 			var node = tree.jstree('get_selected');
@@ -94,6 +99,10 @@ define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permi
 				dialog.formDialog('setState','confirm');
 				var name = node.getName();
 				dialog.find("#new-test-case-tree-button").val(name);
+
+				var format = dialog.data('test-case-script-language');
+				dialog.find("#add-test-case-format").text(i18nFormat[format]);
+
 			}
 		});
 
