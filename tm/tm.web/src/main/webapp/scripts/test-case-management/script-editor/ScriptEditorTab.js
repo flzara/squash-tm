@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing","./documentation/ScriptDocumentation"], function ($, Backbone, _, ace, urlBuilder, doc) {
+define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing", "./documentation/ScriptDocumentation"], function ($, Backbone, _, ace, urlBuilder, doc) {
 	var ScriptEditorTab = Backbone.View.extend({
 
 		el: "#tab-tc-script-editor",
@@ -28,13 +28,15 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing","./do
 			var serverModel = options.settings;
 			this._initializeEditor(serverModel);
 			this._initializeModel(serverModel);
+			this.writable = serverModel.writable;
+			this.active = false;
 		},
 
 		events: {
 			"click #tc-script-save-button": "saveScript",
 			"click #tc-script-snippets-button": "showSnippets",
 			"click #tc-script-toggle-help-panel": "toggleHelpPanel",
-			"click #tc-script-activate-editor": "activateEditor",
+			"click #tc-script-editor": "activateEditor",
 			"click #tc-script-cancel": "cancel"
 		},
 
@@ -73,7 +75,7 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing","./do
 					that.originalScript = serverModel.scriptExender.script;
 					editor.session.setValue(that.originalScript);
 					editor.getSession().setUseWrapMode(true);
-					editor.getSession().setWrapLimitRange(160,160);
+					editor.getSession().setWrapLimitRange(160, 160);
 					that._initialize_editor_mode(editor);
 					editor.setTheme("ace/theme/iplastic");
 					editor.setOptions({
@@ -153,12 +155,12 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing","./do
 			var split = this.split;
 			if (split.getSplits() === 2) {
 				split.setSplits(1);
-				this.editor.getSession().setWrapLimitRange(160,160);
+				this.editor.getSession().setWrapLimitRange(160, 160);
 				this.editor.setOption("printMarginColumn", 160);
 				return;
 			}
 			split.setSplits(2);
-			this.editor.getSession().setWrapLimitRange(80,80);
+			this.editor.getSession().setWrapLimitRange(80, 80);
 			this.editor.setOption("printMarginColumn", 80);
 			var documentationEditor = split.getEditor(1);
 			documentationEditor.setReadOnly(true);
@@ -172,22 +174,25 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing","./do
 			});
 			documentationEditor.session.setValue(doc.getDocumentation(this.locale));
 			documentationEditor.getSession().setUseWrapMode(true);
-			documentationEditor.getSession().setWrapLimitRange(80,80);
+			documentationEditor.getSession().setWrapLimitRange(80, 80);
 			this._initialize_editor_mode(documentationEditor);
 		},
 
 		activateEditor: function () {
-			this.editor.setTheme("ace/theme/chrome");
-			this.editor.setOptions({
-				readOnly: false,
-				highlightActiveLine: true,
-				highlightGutterLine: true
-			});
-			this.$el.find("#tc-script-save-button").prop("disabled", false);
-			this.$el.find("#tc-script-snippets-button").prop("disabled", false);
-			this.$el.find("#tc-script-cancel").show();
-			this.$el.find("#tc-script-activate-editor").hide();
-			this.editor.focus();
+			if (this.writable && !this.active) {
+				this.editor.setTheme("ace/theme/chrome");
+				this.editor.setOptions({
+					readOnly: false,
+					highlightActiveLine: true,
+					highlightGutterLine: true
+				});
+				this.$el.find("#tc-script-save-button").prop("disabled", false);
+				this.$el.find("#tc-script-snippets-button").prop("disabled", false);
+				this.$el.find("#tc-script-cancel").show();
+				this.$el.find("#tc-script-activate-editor").hide();
+				this.editor.focus();
+				this.active = true;
+			}
 		},
 
 		cancel: function () {
@@ -202,9 +207,10 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing","./do
 			this.$el.find("#tc-script-cancel").hide();
 			this.$el.find("#tc-script-activate-editor").show();
 			this.editor.session.setValue(this.originalScript);
+			this.active = false;
 		},
 
-		showSnippets : function () {
+		showSnippets: function () {
 			this.editor.execCommand("startAutocomplete");
 		}
 
