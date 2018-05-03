@@ -36,12 +36,17 @@
             <span class="group">
               <button id="tc-script-save-button" title="Ctrl+Alt+S"
                       data-icon="ui-icon ui-icon-plusthick"
-                      class="sq-btn ui-icon-plusthick" disabled='disabled'>
+                      class="sq-btn ui-icon-plusthick" style="display: none">
                     <f:message key="label.save"/>
+              </button>
+              <button id="tc-script-cancel"
+                      data-icon="ui-icon-plusthick"
+                      class="sq-btn" style="display: none">
+                    <f:message key="label.Cancel"/>
               </button>
                <button id="tc-script-snippets-button" title="Ctrl+<f:message key="label.Space"/>"
                        data-icon="ui-icon ui-icon-plusthick"
-                       class="sq-btn ui-icon-plusthick" disabled='disabled'>
+                       class="sq-btn ui-icon-plusthick" style="display: none">
                  <f:message key="label.Insert"/>
               </button>
             </span>
@@ -52,11 +57,6 @@
                       data-icon="ui-icon-plusthick"
                       class="sq-btn">
                     <f:message key="label.Help"/>
-              </button>
-              <button id="tc-script-cancel"
-                      data-icon="ui-icon-plusthick"
-                      class="sq-btn" style="display: none">
-                    <f:message key="label.Cancel"/>
               </button>
             </span>
     </div>

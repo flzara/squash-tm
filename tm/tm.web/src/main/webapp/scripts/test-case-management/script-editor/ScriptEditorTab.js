@@ -186,10 +186,9 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing", "./d
 					highlightActiveLine: true,
 					highlightGutterLine: true
 				});
-				this.$el.find("#tc-script-save-button").prop("disabled", false);
-				this.$el.find("#tc-script-snippets-button").prop("disabled", false);
+				this.$el.find("#tc-script-save-button").show();
+				this.$el.find("#tc-script-snippets-button").show();
 				this.$el.find("#tc-script-cancel").show();
-				this.$el.find("#tc-script-activate-editor").hide();
 				this.editor.focus();
 				this.active = true;
 			}
@@ -202,10 +201,9 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing", "./d
 				highlightActiveLine: false,
 				highlightGutterLine: false
 			});
-			this.$el.find("#tc-script-save-button").prop("disabled", true);
-			this.$el.find("#tc-script-snippets-button").prop("disabled", true);
+			this.$el.find("#tc-script-save-button").hide();
+			this.$el.find("#tc-script-snippets-button").hide();
 			this.$el.find("#tc-script-cancel").hide();
-			this.$el.find("#tc-script-activate-editor").show();
 			this.editor.session.setValue(this.originalScript);
 			this.active = false;
 		},
