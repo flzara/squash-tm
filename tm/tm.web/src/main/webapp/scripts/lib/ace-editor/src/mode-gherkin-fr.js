@@ -5,19 +5,13 @@ define("ace/mode/gherkin_highlight_rules_fr", ["require", "exports", "module", "
 	var stringEscape = "\\\\(x[0-9A-Fa-f]{2}|[0-7]{3}|[\\\\abfnrtv'\"]|U[0-9A-Fa-f]{8}|u[0-9A-Fa-f]{4})";
 
 	var GherkinHighlightRules = function () {
-		var keywords = ["Soit",
+		var steps = ["Soit",
 			"Etant donné que",
 			"Etant donné qu'",
-			"Etant donné",
-			"Etant donnée",
+			"Etant donné ",
 			"Etant donnés",
+			"Etant donnée",
 			"Etant données",
-			"Étant donné que",
-			"Étant donné qu'",
-			"Étant donné",
-			"Étant donnée",
-			"Étant donnés",
-			"Étant données",
 			"Et que",
 			"Et qu'",
 			"Et",
@@ -26,14 +20,14 @@ define("ace/mode/gherkin_highlight_rules_fr", ["require", "exports", "module", "
 			"Mais",
 			"Alors",
 			"Quand",
-			"Lorsque",
-			"Lorsqu'"
+			"Lorsqu'",
+			"Lorsque"
 		].join("|");
 
 		var languages = [{
 			name: "fr",
 			labels: "Fonctionnalité|Contexte|Scénario|Plan du scénario|Plan du Scénario|Exemples",
-			keywords: keywords
+			keywords: steps
 		}];
 
 		var labels = languages.map(function (l) {
@@ -41,7 +35,7 @@ define("ace/mode/gherkin_highlight_rules_fr", ["require", "exports", "module", "
 		}).join("|");
 		var keywords = languages.map(function (l) {
 			return l.keywords;
-		}).join("|");
+		}).join(")|(");
 		this.$rules = {
 			start: [{
 				token: "constant.numeric",
@@ -49,12 +43,27 @@ define("ace/mode/gherkin_highlight_rules_fr", ["require", "exports", "module", "
 			}, {
 				token: "comment",
 				regex: "#.*$"
+			},{
+				token: "keyword",
+				regex: "Etant donné qu'"
+			},{
+				token: "keyword",
+				regex: "Lorsqu'"
+			}, {
+				token: "keyword",
+				regex: "Et qu'"
+			}, {
+				token: "keyword",
+				regex: "Mais qu'"
 			}, {
 				token: "keyword",
 				regex: "(?:" + labels + "):|(?:" + keywords + ")\\b"
 			}, {
 				token: "keyword",
 				regex: "\\*"
+			},{
+				token: "keyword",
+				regex: "Etant donné"
 			}, {
 				token: "string",           // multi line """ string start
 				regex: '"{3}',
@@ -165,7 +174,7 @@ define("ace/mode/gherkin-fr", ["require", "exports", "module", "ace/lib/oop", "a
 				indent += "| ";
 			}
 
-			if (tokens.length && tokens[tokens.length - 1].type == "comment") {
+			if (tokens.length && tokens[tokens.length - 1].type === "comment") {
 				return indent;
 			}
 
@@ -184,7 +193,7 @@ define("ace/mode/gherkin-fr", ["require", "exports", "module", "ace/lib/oop", "a
 				"Étant données",
 				"Alors "].join("|");
 
-			if (state == "start") {
+			if (state === "start") {
 				if (line.match("Fonctionnalité:|Contexte:|Scénario:|Plan du scénario:|Plan du Scénario:|Exemples:")) {
 					indent += space2;
 				} else if (line.match("("+ keywords + ").+(:)$|Examples:")) {

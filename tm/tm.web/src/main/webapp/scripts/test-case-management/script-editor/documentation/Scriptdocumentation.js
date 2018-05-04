@@ -24,7 +24,42 @@ define(function () {
 		"# Aide à la rédaction de cas de test Gherkin.\n\n" +
 		"# Gherkin est un langage implémentant la méthodologie du Behavior Driven Developement.\n" +
 		"# Dans Squash TM un cas de test Gherkin peut être exécuté manuellement comme un cas de test classique ou exporté pour une excecution automatisée externe.\n\n\n" +
-		"# Exemple de structure : \n\n" +
+		"# ---------------------- LEXIQUE DES MOTS CLEFS----------------------- \n" +
+		"Fonctionnalité: \n\n"+
+		"# Mots clefs de definition de scenario : \n"+
+		"# Scénario de test simple (sans jeu de données)\n" +
+		"Scénario:\n"+
+		"# Scénario de test avec exemples (avec jeux de données)\n" +
+		"Plan du Scénario:\n"+
+		"# Mot clef pour le jeu de données (à faire suivre d'une table de données)\n" +
+		"Exemples:\n\n"+
+		"# Mot clef de contexte (Pas de test commun à tous les scénarios du script)\n" +
+		"Contexte:\n\n"+
+		"# Mots clefs de pas de test de type précondition : \n"+
+		"Soit\n"+
+		"Etant donné que\n"+
+		"Etant donné qu'\n"+
+		"Etant données\n"+
+		"Etant donnés\n"+
+		"Etant donnée\n"+
+		"Etant donné \n\n"+
+		"# Mots clefs de pas de test de type action : \n"+
+		"Quand\n"+
+		"Lorsque\n"+
+		"Lorsqu'\n\n"+
+		"# Mots clefs de pas de test de type résultat : \n"+
+		"Alors\n\n"+
+		"# Mots clefs de pas de test de type continuation du pas de test en cours : \n"+
+		"Et\n"+
+		"Et que\n"+
+		"Et qu'\n"+
+		"Mais\n"+
+		"Mais que\n"+
+		"Mais qu'\n"+
+		"*\n"+
+
+		"\n# ----------------------------- EXEMPLE DE FEATURE ----------------------------- \n" +
+		"# Exemple de structure d'une feature complète avec trois scenari de tests et un contexte: \n\n" +
 		"# language: fr <- ligne de commentaire indiquant la localisation du script. Si absent ou invalide Squash TM interpretera le script comme rédigé en Anglais.\n\n" +
 		"# Nom de la fonctionnalité et description optionelle de la fonctionnalité (Attention à l'indentation si vous desirez une description) \n" +
 		"Fonctionnalité: Vérifier la machine à café \n" +
@@ -32,11 +67,13 @@ define(function () {
 		"\t# Contexte optionnel. Si un contexte est présent, il sera réutilisé en tant que condition supplémentaire pour chaque scenario du script.\n" +
 		"\tContexte:\n" +
 		"\t\tSoit une machine à café.\n\n" +
+		"\n\t# -------------------------- EXEMPLE SCENARIO 1 -------------------------- \n" +
 		"\t# Exemple de scenario simple\n" +
 		"\tScénario: Vérifier que la machine est disponible.\n" +
 		"\t\tEtant donné que la machine est branchée.\n" +
 		"\t\tQuand je passe mon badge.\n" +
 		"\t\tAlors je constate que mon solde s'affiche.\n\n" +
+		"\n\t# -------------------------- EXEMPLE SCENARIO 2 -------------------------- \n" +
 		"\t# Exemple de scenario avec table de donnée sans paramétrage des pas de test\n" +
 		"\tScénario: Vérifier les produits disponibles.\n" +
 		"\t\tEtant donné que la machine est en marche.\n" +
@@ -46,6 +83,7 @@ define(function () {
 		"\t\t| Expresso\t\t| 0.40  |\n" +
 		"\t\t| Lungo\t\t\t\t| 0.50  |\n" +
 		"\t\t| Cappuccino\t| 0.80  |\n\n" +
+		"\n\t# -------------------------- EXEMPLE SCENARIO 3 -------------------------- \n" +
 		"\t# Exemple de scénario avec table de données et paramétrage des pas de test\n" +
 		"\t# A l'éxécution les valeurs de paramètres entre <> seront substitées\n" +
 		"\t# Le scenario sera joué une fois pour chaque jeu de données\n" +

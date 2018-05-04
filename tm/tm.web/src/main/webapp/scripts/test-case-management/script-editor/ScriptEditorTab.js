@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore","squash.translator", "ace/ace", "workspace.routing", "./documentation/ScriptDocumentation","app/ws/squashtm.notification"], function ($, Backbone, _,translator, ace, urlBuilder, doc, notification) {
+define(["jquery", "backbone", "underscore","squash.translator", "ace/ace", "workspace.routing", "./documentation/Scriptdocumentation","app/ws/squashtm.notification"], function ($, Backbone, _,translator, ace, urlBuilder, doc, notification) {
 	var ScriptEditorTab = Backbone.View.extend({
 
 		el: "#tab-tc-script-editor",
@@ -64,7 +64,7 @@ define(["jquery", "backbone", "underscore","squash.translator", "ace/ace", "work
 				//modules must be loaded one by one
 				ace.config.loadModule("ace/ext/split", function (splitModule) {
 					var container = document.getElementById("tc-script-editor");
-					var theme = "ace/theme/iplastic";
+					var theme = "ace/theme/chrome-grey";
 
 					//creating split before editors
 					var split = new splitModule.Split(container, theme, 1);
@@ -82,7 +82,7 @@ define(["jquery", "backbone", "underscore","squash.translator", "ace/ace", "work
 					editor.getSession().setUseWrapMode(true);
 					editor.getSession().setWrapLimitRange(160, 160);
 					that._initialize_editor_mode(editor);
-					editor.setTheme("ace/theme/iplastic");
+					editor.setTheme(theme);
 					editor.setOptions({
 						// Has to set this one to true if i want snippets, but basic auto completion is disabled above
 						enableBasicAutocompletion: true,
@@ -203,7 +203,7 @@ define(["jquery", "backbone", "underscore","squash.translator", "ace/ace", "work
 		},
 
 		cancel: function () {
-			this.editor.setTheme("ace/theme/iplastic");
+			this.editor.setTheme("ace/theme/chrome-grey");
 			this.editor.setOptions({
 				readOnly: true,
 				highlightActiveLine: false,
