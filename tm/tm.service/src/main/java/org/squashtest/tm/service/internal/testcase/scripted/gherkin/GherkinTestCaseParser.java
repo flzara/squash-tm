@@ -49,6 +49,16 @@ public class GherkinTestCaseParser implements ScriptedTestCaseParser {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Begin parsing of Test Case {} for Execution {}", referencedTestCase, execution);
 		}
+		GherkinDocument gherkinDocument = parseToGherkinDocument(scriptExtender);
+		stepGenerator.populateExecution(execution, gherkinDocument);
+	}
+
+	@Override
+	public void validateScript(ScriptedTestCaseExtender extender) {
+		parseToGherkinDocument(extender);
+	}
+
+	private GherkinDocument parseToGherkinDocument(ScriptedTestCaseExtender scriptExtender) {
 		Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
 		GherkinDocument gherkinDocument = null;
 		try {
@@ -56,8 +66,6 @@ public class GherkinTestCaseParser implements ScriptedTestCaseParser {
 		} catch (ParserException e) {
 			throw new ScriptParsingException(e);
 		}
-		stepGenerator.populateExecution(execution, gherkinDocument);
+		return gherkinDocument;
 	}
-
-
 }

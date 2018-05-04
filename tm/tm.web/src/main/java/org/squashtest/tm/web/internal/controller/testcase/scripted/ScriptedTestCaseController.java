@@ -20,14 +20,16 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.scripted;
 
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
 import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseService;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 
 import javax.inject.Inject;
 
-@RequestMapping("/test-cases/{testCaseId}")
+@RequestMapping("/test-cases/{testCaseId}/scripted")
 @Controller
 public class ScriptedTestCaseController {
 
@@ -35,9 +37,16 @@ public class ScriptedTestCaseController {
 	private ScriptedTestCaseService scriptedTestCaseService;
 
 	@ResponseBody
-	@RequestMapping(path = "/scripted",method = RequestMethod.POST, headers = AcceptHeaders.CONTENT_JSON)
+	@RequestMapping(method = RequestMethod.POST, headers = AcceptHeaders.CONTENT_JSON)
 	public ScriptedTestCaseModel updateTcScript(@PathVariable Long testCaseId, @RequestBody ScriptedTestCaseModel scriptedTestCaseModel) {
-		scriptedTestCaseService.updateTcScript(testCaseId,scriptedTestCaseModel.getScript());
+		scriptedTestCaseService.updateTcScript(testCaseId, scriptedTestCaseModel.getScript());
+		return scriptedTestCaseModel;
+	}
+
+	@ResponseBody
+	@RequestMapping(path = "/validate", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, headers = AcceptHeaders.CONTENT_JSON)
+	public ScriptedTestCaseModel validateTcScript(@PathVariable Long testCaseId, @RequestBody ScriptedTestCaseModel scriptedTestCaseModel) {
+		scriptedTestCaseService.validateScript(testCaseId, scriptedTestCaseModel.getScript(), ScriptedTestCaseLanguage.GHERKIN);
 		return scriptedTestCaseModel;
 	}
 }

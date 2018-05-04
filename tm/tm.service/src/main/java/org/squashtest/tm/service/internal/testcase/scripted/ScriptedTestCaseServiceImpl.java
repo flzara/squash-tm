@@ -24,13 +24,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
+import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.internal.repository.ScriptedTestCaseExtenderDao;
+import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseParser;
 import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseService;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.Date;
+import java.util.function.Function;
 
 @Service
 @Transactional
@@ -38,6 +42,10 @@ public class ScriptedTestCaseServiceImpl implements ScriptedTestCaseService {
 
 	@Inject
 	private ScriptedTestCaseExtenderDao scriptedTestCaseExtenderDao;
+
+	@Inject
+	@Named("scriptedTestCaseParserFactory")
+	private Function<ScriptedTestCaseExtender, ScriptedTestCaseParser> parserFactory;
 
 	@Override
 	public void updateTcScript(Long testCaseId, String script) {
@@ -48,5 +56,12 @@ public class ScriptedTestCaseServiceImpl implements ScriptedTestCaseService {
 		AuditableMixin auditable = (AuditableMixin)testCase;
 		auditable.setLastModifiedOn(new Date());
 		auditable.setLastModifiedBy(UserContextHolder.getUsername());
+	}
+
+	@Override
+	public void validateScript(Long testCaseId, String script, ScriptedTestCaseLanguage language) {
+		ScriptedTestCaseExtender extender = new ScriptedTestCaseExtender(language,script);
+		ScriptedTestCaseParser parser = parserFactory.apply(extender);
+		parser.validateScript(extender);
 	}
 }

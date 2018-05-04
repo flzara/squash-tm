@@ -68,6 +68,11 @@ public class ScriptedTestCaseExtender {
 	public ScriptedTestCaseExtender() {
 	}
 
+	public ScriptedTestCaseExtender(ScriptedTestCaseLanguage language, String script) {
+		this.language = language;
+		this.script = script;
+	}
+
 	public ScriptedTestCaseExtender(TestCase testCase, ScriptedTestCaseLanguage language) {
 		this.testCase = testCase;
 		this.language = language;

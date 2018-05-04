@@ -124,6 +124,7 @@ define([], function(){
 		'testcases.info' :					root + '/test-cases/{\\d+}/info',
 		'testcases.requirements.manager' :	root + '/test-cases/{\\d+}/verified-requirement-versions/manager',
 		'testcases.scripted' : root + '/test-cases/{\\d+}/scripted',
+		'testcases.scripted.validate' : root + '/test-cases/{\\d+}/scripted/validate',
 
 		'teststeps.info' :					root + '/test-steps/{\\d+}',
 		'teststeps.fromExec' :              root + '/test-steps/{\\d+}/from-exec?optimized={true|false}',

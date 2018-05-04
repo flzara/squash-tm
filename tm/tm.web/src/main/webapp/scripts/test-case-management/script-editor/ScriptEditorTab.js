@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing", "./documentation/ScriptDocumentation"], function ($, Backbone, _, ace, urlBuilder, doc) {
+define(["jquery", "backbone", "underscore","squash.translator", "ace/ace", "workspace.routing", "./documentation/ScriptDocumentation","app/ws/squashtm.notification"], function ($, Backbone, _,translator, ace, urlBuilder, doc, notification) {
 	var ScriptEditorTab = Backbone.View.extend({
 
 		el: "#tab-tc-script-editor",
@@ -30,6 +30,10 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing", "./d
 			this._initializeModel(serverModel);
 			this.writable = serverModel.writable;
 			this.active = false;
+			this.testCaseId = serverModel.testCaseId;
+			this.i18n = translator.get({
+				"validate.success": "test-case.scripted.check.valid"
+			});
 		},
 
 		events: {
@@ -37,6 +41,7 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing", "./d
 			"click #tc-script-snippets-button": "showSnippets",
 			"click #tc-script-toggle-help-panel": "toggleHelpPanel",
 			"click #tc-script-editor": "activateEditor",
+			"click #tc-script-validate-button": "validateScript",
 			"click #tc-script-cancel": "cancel"
 		},
 
@@ -108,9 +113,11 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing", "./d
 		},
 
 		_initializeModel: function (options) {
+			var urlRoot = urlBuilder.buildURL("testcases.scripted", options.testCaseId);
 			var ScriptedTestCseModel = Backbone.Model.extend({
-				urlRoot: urlBuilder.buildURL("testcases.scripted", options.testCaseId)
+				urlRoot: urlRoot
 			});
+			this.urlRoot = urlRoot;
 			this.model = new ScriptedTestCseModel();
 		},
 
@@ -189,6 +196,7 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing", "./d
 				this.$el.find("#tc-script-save-button").show();
 				this.$el.find("#tc-script-snippets-button").show();
 				this.$el.find("#tc-script-cancel").show();
+				this.$el.find("#tc-script-validate-button").show();
 				this.editor.focus();
 				this.active = true;
 			}
@@ -204,13 +212,33 @@ define(["jquery", "backbone", "underscore", "ace/ace", "workspace.routing", "./d
 			this.$el.find("#tc-script-save-button").hide();
 			this.$el.find("#tc-script-snippets-button").hide();
 			this.$el.find("#tc-script-cancel").hide();
+			this.$el.find("#tc-script-validate-button").hide();
 			this.editor.session.setValue(this.originalScript);
 			this.active = false;
 		},
 
 		showSnippets: function () {
 			this.editor.execCommand("startAutocomplete");
+		},
+
+		validateScript: function () {
+			console.log("validateScript");
+
+			var that = this;
+			var script = this.editor.session.getValue();
+			var validationUrl = urlBuilder.buildURL("testcases.scripted.validate", this.testCaseId);
+
+			var xhr = $.ajax({
+				url : validationUrl,
+				type : 'post',
+				contentType: 'application/json',
+				dataType: 'json',
+				data : JSON.stringify({'script' : script })
+			}).success(function () {
+				notification.showInfo(that.i18n["validate.success"]);
+			});
 		}
+
 
 	});
 

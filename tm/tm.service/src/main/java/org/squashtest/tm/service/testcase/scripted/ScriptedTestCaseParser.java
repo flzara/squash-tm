@@ -21,7 +21,10 @@
 package org.squashtest.tm.service.testcase.scripted;
 
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
 
 public interface ScriptedTestCaseParser {
 	void populateExecution(Execution execution);
+
+	void validateScript(ScriptedTestCaseExtender extender);
 }
