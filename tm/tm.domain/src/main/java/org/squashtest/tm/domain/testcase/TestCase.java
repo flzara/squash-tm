@@ -349,8 +349,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		}
 	}
 
-	private void addCopyOfScript(TestCase source){
-		if(source.isScripted()){
+	private void addCopyOfScript(TestCase source) {
+		if (source.isScripted()) {
 			ScriptedTestCaseExtender copy = source.getScriptedTestCaseExtender().createCopy();
 			copy.setTestCase(this);
 			this.setScriptedTestCaseExtender(copy);
@@ -885,14 +885,17 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		this.scriptedTestCaseExtender = scriptedTestCaseExtender;
 	}
 
-	public boolean isScripted(){
+	public boolean isScripted() {
 		return this.kind.isScripted();
 	}
 
-	public void extendWithScript( String scriptLanguage, String locale){
-		ScriptedTestCaseExtender scriptedTestCaseExtender = new ScriptedTestCaseExtender(this, scriptLanguage, locale);
-		this.setScriptedTestCaseExtender(scriptedTestCaseExtender);
-		this.setKind(TestCaseKind.getFromString(scriptLanguage));
+	public void extendWithScript(String scriptLanguage, String locale) {
+		TestCaseKind kind = TestCaseKind.getFromString(scriptLanguage);
+		if (kind.isScripted()) {
+			ScriptedTestCaseExtender scriptedTestCaseExtender = new ScriptedTestCaseExtender(this, scriptLanguage, locale);
+			this.setScriptedTestCaseExtender(scriptedTestCaseExtender);
+			this.setKind(kind);
+		}
 	}
 
 	public TestCaseKind getKind() {

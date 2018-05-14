@@ -27,7 +27,7 @@ public enum TestCaseKind implements Internationalizable {
 	STANDARD, GHERKIN;
 
 	public boolean isScripted() {
-		return !this.equals(STANDARD);
+		return this.equals(GHERKIN);
 	}
 
 	public static TestCaseKind getFromString(String kind){
