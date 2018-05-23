@@ -29,16 +29,17 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.testcase.TestCase;
 
 /**
  * Builds parameters hash which shall be passed when executing an automated test.
- * 
+ *
  * Builder sould be discarded after the {@link TaParametersBuilder#build()} method is invoked.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Component
 @Scope("prototype")
@@ -67,6 +68,17 @@ public class TaParametersBuilder implements ParametersBuilder {
 		public ScopedParametersBuilder<Campaign> campaign() {
 			return TaParametersBuilder.this.campaign();
 		}
+
+		/**
+		 * @see org.squashtest.tm.service.internal.testautomation.ParametersBuilder#testSuite()
+		 */
+		@Override
+		public ScopedParametersBuilder<TestSuite> testSuite() {
+			return TaParametersBuilder.this.testSuite();
+		}
+
+
+
 
 		/**
 		 * @see org.squashtest.tm.service.internal.testautomation.ParametersBuilder#build()
@@ -141,6 +153,19 @@ public class TaParametersBuilder implements ParametersBuilder {
 			return "IT";
 		}
 	};
+	private ScopedParametersBuilder<TestSuite> testSuiteScopeBuilder = new ChildScopedParametersBuilder<TestSuite>() {
+
+		@Override
+		protected void doAddEntity(TestSuite entity) {
+			// NOOP
+		}
+
+		@Override
+		protected String getCustomFieldPrefix() {
+			return "TS";
+		}
+	};
+
 
 	private Map<String, Object> params = new HashMap<>();
 
@@ -169,6 +194,14 @@ public class TaParametersBuilder implements ParametersBuilder {
 	}
 
 	/**
+	 * @see org.squashtest.tm.service.internal.testautomation.ParametersBuilder#campaign()
+	 */
+	@Override
+	public ScopedParametersBuilder<TestSuite> testSuite() {
+		return testSuiteScopeBuilder;
+	}
+
+	/**
 	 * @see org.squashtest.tm.service.internal.testautomation.ParametersBuilder#build()
 	 */
 	@Override
@@ -192,7 +225,7 @@ public class TaParametersBuilder implements ParametersBuilder {
 	/**
 	 * Adds a custom field to build parms. Param key is "${codePrefix}${field.code}" If a field's value is
 	 * <code>null</code>, it is not added.
-	 * 
+	 *
 	 * @param codePrefix
 	 * @param fields
 	 */

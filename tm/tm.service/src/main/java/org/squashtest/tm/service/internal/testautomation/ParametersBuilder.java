@@ -24,13 +24,14 @@ import java.util.Map;
 
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.testcase.TestCase;
 
 /**
  * Builds parameters hash which shall be passed when executing an automated test.<br/>
- * 
+ *
  * Builder sould be discarded after the {@link ParametersBuilder#build()} method is invoked.<br/>
- * 
+ *
  * Usage :
  * <pre>
  * Map params = builder.testCase()
@@ -40,35 +41,42 @@ import org.squashtest.tm.domain.testcase.TestCase;
  *                         .addCustomFields(iterationFields)
  *                     .build();
  * </pre>
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public interface ParametersBuilder {
 	/**
 	 * opens the test case scope
-	 * 
+	 *
 	 * @return
 	 */
 	ScopedParametersBuilder<TestCase> testCase();
 
 	/**
 	 * opens the iteration scope
-	 * 
+	 *
 	 * @return
 	 */
 	ScopedParametersBuilder<Iteration> iteration();
 
 	/**
 	 * opens the campaign scope
-	 * 
+	 *
 	 * @return
 	 */
 	ScopedParametersBuilder<Campaign> campaign();
 
 	/**
+	 * opens the test suite scope
+	 *
+	 * @return
+	 */
+	ScopedParametersBuilder<TestSuite> testSuite();
+
+	/**
 	 * builds the parameter map
-	 * 
+	 *
 	 * @return
 	 */
 	Map<String, Object> build();

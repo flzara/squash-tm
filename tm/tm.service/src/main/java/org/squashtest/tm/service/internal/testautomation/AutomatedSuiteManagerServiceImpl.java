@@ -405,9 +405,15 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		Collection<CustomFieldValue> campFields = customFieldValueFinder.findAllCustomFieldValues(execution
 			.getCampaign());
 
-		Map<String, Object> params = paramBuilder.get().testCase().addEntity(execution.getReferencedTestCase())
-			.addCustomFields(tcFields).iteration().addCustomFields(iterFields).campaign()
-			.addCustomFields(campFields).build();
+		Collection<CustomFieldValue> testSuiteFields = customFieldValueFinder.findAllCustomFieldValues(execution
+			.getTestPlan().getTestSuites());
+
+		Map<String, Object> params = paramBuilder.get().testCase().addEntity(
+			execution.getReferencedTestCase()).addCustomFields(tcFields).
+			iteration().addCustomFields(iterFields).
+			campaign().addCustomFields(campFields).
+			testSuite().addCustomFields(testSuiteFields)
+			.build();
 
 		return new Couple<>(extender, params);
 	}

@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.testautomation.service
 
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem
+import org.squashtest.tm.domain.campaign.TestSuite
 
 import javax.inject.Provider
 
@@ -295,6 +297,7 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 
 		Execution exec = Mock()
 		exec.iteration >> Mock(Iteration)
+		exec.testPlan >> Mock(IterationTestPlanItem)
 		exec.campaign >> Mock(Campaign)
 
 		extender.getExecution() >> exec
