@@ -23,6 +23,7 @@ package org.squashtest.tm.domain.servers;
 import org.hibernate.annotations.Type;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.servers.Credentials;
+import org.squashtest.tm.domain.users.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -70,18 +71,25 @@ public class StoredCredentials {
 	private String encryptedCredentials;
 
 
-
 	/**
 	 * The server for which this credentials apply
 	 */
 	/*
 	 * TODO : once we really have a proper management of thid party servers, change the class from BugTracker to that class.
-	 * TODO : the same day I suspect the mapping to become ManyToManny. But since I don't really think this will happen,
-	 * for now I say YAGNI and go with a OneToOne.
 	 */
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "AUTHENTICATED_SERVER")
 	private BugTracker authenticatedServer;
+
+	/**
+	 	The user that own the credentials.
+	 	For now can be null. Null value means the credentials owner is Squash-TM itself (indeed Squash-TM has no
+	 	user account of it own). And yes, this is sloppy.
+	 */
+
+	@ManyToOne
+	@JoinColumn(name = "AUTHENTICATED_USER")
+	private User authenticatedUser;
 
 
 	public Long getId() {
@@ -112,4 +120,21 @@ public class StoredCredentials {
 		this.authenticatedServer = authenticatedServer;
 	}
 
+	public User getAuthenticatedUser() {
+		return authenticatedUser;
+	}
+
+	public void setAuthenticatedUser(User authenticatedUser) {
+		this.authenticatedUser = authenticatedUser;
+	}
+
+	/**
+	 * Returns true if these credentials are system credentials (ie Squash-TM credentials).
+	 *
+	 * @return
+	 */
+	public boolean isSystemCredentials(){
+		// omg this is so wrong
+		return authenticatedUser == null;
+	}
 }

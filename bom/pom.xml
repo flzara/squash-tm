@@ -28,6 +28,10 @@
     <commons-validator.version>1.5.1</commons-validator.version>
     <ehcache.version>2.10.2.2.21</ehcache.version>
     <gherkin.version>5.0.0</gherkin.version>
+
+    <!-- google http libraries -->
+    <google.http.client.version>1.23.0</google.http.client.version>
+    <google.http.oauth.version>1.23.0</google.http.oauth.version>
     <guava.version>18.0</guava.version>
     <h2.version>1.4.187</h2.version>
     <hibernate.search.version>5.4.0.Final</hibernate.search.version>
@@ -57,6 +61,8 @@
     <unitils.version>3.4.2</unitils.version>
     <validation-api.version>1.1.0.Final</validation-api.version>
     <xml-resolver.version>1.2</xml-resolver.version>
+    <!-- /google http libraries -->
+
   </properties>
 
   <dependencyManagement>
@@ -123,6 +129,18 @@
       </dependency>
 
       <dependency>
+        <groupId>com.google.http-client</groupId>
+        <artifactId>google-http-client</artifactId>
+        <version>${google.http.client.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.google.oauth-client</groupId>
+        <artifactId>google-oauth-client</artifactId>
+        <version>${google.http.oauth.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.codehaus.groovy</groupId>
         <artifactId>groovy-all</artifactId>
         <version>${groovy.version}</version>
@@ -159,9 +177,9 @@
         	 -->
 
           <exclusion>
-            <!-- 
+            <!--
 		  		Pulled by itext. But no we wont do xmlsecurity in our documents
-		  		so we just exclude them. 
+		  		so we just exclude them.
 		  	-->
             <groupId>bouncycastle</groupId>
             <artifactId>*</artifactId>

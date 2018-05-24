@@ -21,14 +21,15 @@
 package org.squashtest.tm.domain.servers;
 
 /**
- * The authentication schemes (or authorizations, if used that way) that are supported by Squash. 
+ * The authentication schemes (or authorizations, if used that way) that are supported by Squash.
  */
 public enum AuthenticationProtocol {
 
-	BASIC_AUTH(BasicAuthenticationCredentials.class);
-	
+	BASIC_AUTH(BasicAuthenticationCredentials.class),
+	OAUTH_1A(OAuth1aCredentials.class);
+
 	private Class<? extends Credentials> implementation;
-	
+
 	private AuthenticationProtocol(Class<? extends Credentials> refImpl){
 		this.implementation = refImpl;
 	}

@@ -463,4 +463,25 @@
     </addColumn>
   </changeSet>
 
+  <changeSet id="tm-1.18.0-oauth1a-consumer-1" author="bsiri">
+    <comment>
+        Users can now have stored credentials (even though they can't manage them yet).
+        Only one credentials can be created for a given user and a given server (bugtracker)
+    </comment>
+
+    <addColumn tableName="STORED_CREDENTIALS">
+      <column name="AUTHENTICATED_USER" type="BIGINT" defaultValue="null"
+              remarks="Foreign key to the user account that owns the credentials. A NULL value means that Squash-TM owns the credentials.">
+        <constraints nullable="true"
+                     foreignKeyName="fk_stored_credentials_user" references="CORE_USER(PARTY_ID)"
+                     deleteCascade="true"/>
+      </column>
+    </addColumn>
+
+    <addUniqueConstraint tableName="STORED_CREDENTIALS"
+                         columnNames="AUTHENTICATED_SERVER,AUTHENTICATED_USER"
+                         constraintName="uniq_stored_credentials_server_user"/>
+
+  </changeSet>
+
 </databaseChangeLog>

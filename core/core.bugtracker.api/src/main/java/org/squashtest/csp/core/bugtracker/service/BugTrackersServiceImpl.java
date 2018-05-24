@@ -92,7 +92,7 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 
 		InternalBugtrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
 
-		// setcredentials to null first. If the operation succeed then we'll set them in the context.
+		// set credentials to null first. If the operation succeed then we'll set them in the context.
 		getBugTrackerContext().setCredentials(bugTracker, null);
 
 		connector.checkCredentials(credentials);
@@ -124,7 +124,7 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 	private InternalBugtrackerConnector connect(BugTracker bugTracker) {
 		InternalBugtrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
 		Credentials creds = null;
-		
+
 		switch(bugTracker.getAuthenticationPolicy()){
 			case USER:
 				creds = getBugTrackerContext().getCredentials(bugTracker);
@@ -133,16 +133,16 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 			case APP_LEVEL:
 				creds = credentialsManager.unsecuredFindCredentials(bugTracker.getId());
 				break;
-				
+
 			default : throw new RuntimeException("BugTrackerService#connect : forgot to implement policy "+bugTracker.getAuthenticationPolicy().toString());
-		
+
 		}
 
 		AuthenticationProtocol protocol = creds.getImplementedProtocol();
 		if (! connector.supports(protocol)){
 			throw new UnsupportedAuthenticationModeException(protocol.toString());
 		}
-		
+
 		connector.authenticate(creds);
 		return connector;
 	}
