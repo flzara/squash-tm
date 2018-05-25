@@ -54,12 +54,9 @@ define(['module', 'jquery', 'app/pubsub', 'squash.basicwidgets', 'app/ws/squasht
 					resumeOER: 'execution.execute.IEO.resume.button.label'
 			});
 
-			// Issue 7365
-			// Before, if condition was
-			// "config.basic.isTestCaseDeleted && $("#execute-execution-button").val()!= btnlang.resume".
-			// Didn't see the necessity of condition $("#execute-execution-button").val()!= btnlang.resume
-			// and it interfere with expected behavior of buttons so it has been removed.
-			if (config.basic.isTestCaseDeleted) {
+			// Issue 7137 - error when launching an execution, with a deleted referenced test case, which has "ready" status,
+			// buttons are now blocked
+			if (config.basic.isTestCaseDeleted && $("#execute-execution-button").val()!= btnlang.resume) {
 				$("#execute-execution-button").prop('disabled', true);
 				$("#ieo-execution-button").prop('disabled', true);
 			}
