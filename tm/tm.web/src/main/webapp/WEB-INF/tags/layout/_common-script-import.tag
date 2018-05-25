@@ -33,13 +33,13 @@ var require = require || {};
 require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";
 	var squashtm = {};
 	squashtm.app = {
-		contextRoot: "${pageContext.servletContext.contextPath}",
+		contextRoot: "${pageContext.servletContext.contextPath}/",
 		locale : "<f:message key='squashtm.locale'/>",
 		ckeditorLanguage: "<f:message key='rich-edit.language.value' />"
     	};
-	
+
 <lay:_common-lang/>
-	
+
 </script>
 <script type="text/javascript" src="<c:url value='/scripts/pubsub-boot.js' />"></script>
 <c:choose>
