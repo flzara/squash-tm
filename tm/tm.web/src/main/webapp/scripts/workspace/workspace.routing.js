@@ -129,6 +129,7 @@ define([], function(){
 		'teststeps.info' :					root + '/test-steps/{\\d+}',
 		'teststeps.fromExec' :              root + '/test-steps/{\\d+}/from-exec?optimized={true|false}',
 		'teststeps.requirements.manager' :	root + '/test-steps/{\\d+}/verified-requirement-versions/manager',
+		'parameters.validate' : root + '/parameters/validate',
 
 		'requirements.workspace':			root + '/requirement-workspace/',
 		'requirements' :					root + '/requirements/{\\d+}',

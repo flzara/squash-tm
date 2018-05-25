@@ -48,9 +48,10 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.exception.DuplicateNameException;
+import org.squashtest.tm.exception.testcase.InvalidParameterNameException;
 
 @Entity
-@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "NAME", "TEST_CASE_ID" }) })
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"NAME", "TEST_CASE_ID"})})
 public class Parameter implements Identified {
 
 	private static final String PARAM_REGEXP = "[A-Za-z0-9_-]{1,255}";
@@ -61,7 +62,11 @@ public class Parameter implements Identified {
 	public static final String USAGE_PREFIX = "${";
 	public static final String USAGE_SUFFIX = "}";
 	public static final String USAGE_PATTERN = "\\Q" + USAGE_PREFIX + "\\E(" + PARAM_REGEXP + ")\\Q" + USAGE_SUFFIX
-			+ "\\E";
+		+ "\\E";
+	//This pattern detect all forms like ${-any-chars-} to allow exception throwing during actionStep creation
+	//\Q${\E([^}]+)\Q}\E
+	public static final String LOOSE_PATTERN = "\\Q" + USAGE_PREFIX + "\\E(" + "[^}]+" + ")\\Q" + USAGE_SUFFIX
+		+ "\\E";
 
 	@Id
 	@Column(name = "PARAM_ID")
@@ -75,14 +80,14 @@ public class Parameter implements Identified {
 	private String name;
 
 	@Lob
-	@Type(type="org.hibernate.type.TextType")
+	@Type(type = "org.hibernate.type.TextType")
 	private String description = "";
 
 	@ManyToOne
 	@JoinColumn(name = "TEST_CASE_ID", referencedColumnName = "TCLN_ID")
 	private TestCase testCase;
 
-	@OneToMany(mappedBy = "parameter", cascade = { CascadeType.REMOVE })
+	@OneToMany(mappedBy = "parameter", cascade = {CascadeType.REMOVE})
 	private List<DatasetParamValue> datasetParamValues = new ArrayList<>();
 
 	public Parameter() {
@@ -104,7 +109,7 @@ public class Parameter implements Identified {
 	 * A detached copy means it belong to no test case yet
 	 * @return
 	 */
-	public Parameter detachedCopy(){
+	public Parameter detachedCopy() {
 		Parameter p = new Parameter(name);
 		p.setDescription(description);
 		return p;
@@ -194,12 +199,17 @@ public class Parameter implements Identified {
 		return Parameter.USAGE_PREFIX + parameterName + Parameter.USAGE_SUFFIX;
 	}
 
-	protected static Set<String> findUsedParameterNamesInString(String content) {
+	public static Set<String> findUsedParameterNamesInString(String content) {
 		Set<String> paramNames = new HashSet<>();
-		java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(Parameter.USAGE_PATTERN);
+		java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(Parameter.LOOSE_PATTERN);
 		Matcher matcher = pattern.matcher(content);
 		while (matcher.find()) {
-			paramNames.add(matcher.group(1));
+			String paramName = matcher.group(1);
+			if (paramName.matches(PARAM_REGEXP)) {
+				paramNames.add(paramName);
+			} else {
+				throw new InvalidParameterNameException("invalid parameter name " + paramName);
+			}
 		}
 		return paramNames;
 	}

@@ -64,9 +64,9 @@
  *
  */
 
-define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "workspace.event-bus",
+define(["jquery", "workspace.routing","squashtable/squashtable.collapser", "custom-field-values", "workspace.event-bus",
 	"./popups", 'workspace.storage', 'squash.translator', "jquery.squash.oneshotdialog",
-	"jquery.squash.formdialog", "squashtable"], function ($, TableCollapser,
+	"jquery.squash.formdialog", "squashtable"], function ($, routing, TableCollapser,
 	cufValuesManager, eventBus, popups, storage, translator, oneshot) {
 	"use strict";
 
@@ -338,6 +338,26 @@ define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "w
 		datatableSettings = cufTableHandler.decorateTableSettings(datatableSettings, settings.basic.cufDefinitions,
 			cufColumnPosition, permissions.isWritable);
 
+		var parameterNameValidationFunction = function (settings, original) {
+			var area = $('textarea', original);
+			var value = CKEDITOR.instances[area.attr('id')].getData();
+			var submitdata = {value:value};
+			var valid = false;
+			$.ajax({
+				url : routing.buildURL('parameters.validate'),
+				type    : 'POST',
+				data    : submitdata,
+				dataType: 'html',
+				//must be async to prevent jeditable.ckeditor destroying the CKEDITOR instance.
+				//without waiting the validation.
+				async: false,
+				success: function () {
+					valid = true;
+				}
+			});
+			return valid;
+		};
+
 		var squashSettings = {
 
 			dataKeys: {
@@ -405,8 +425,14 @@ define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "w
 				},
 
 				richEditables: {
-					'rich-edit-action': urls.editActionUrl,
-					'rich-edit-result': urls.editResultUrl
+					'rich-edit-action': {
+						url : urls.editActionUrl,
+						onsubmit : parameterNameValidationFunction
+					},
+					'rich-edit-result':{
+						url : urls.editResultUrl,
+						onsubmit : parameterNameValidationFunction
+					}
 				},
 
 				functions: {

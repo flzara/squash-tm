@@ -776,12 +776,10 @@ define(["jquery",
 			// design the link and voila !
 			var link = '<a href="' + url + '" class="' + linkClass + '"';
 
-			if (attachConf.target !== undefined){
-				link = link  + "target="+ attachConf.target;
+			if (attachConf.target !== undefined) {
+				link = link + "target=" + attachConf.target;
 			}
 			link = link + '></a>';
-
-
 
 
 			$(cell).html(link);
@@ -826,12 +824,15 @@ define(["jquery",
 			var row = cell.parentNode;
 			var data = self.fnGetData(row);
 			var editableConf_url = _.isString(targets[css]) ? targets[css] : targets[css]['url'];
+			var editableConf_onsubmit = _.isString(targets[css]) ? null : targets[css]['onsubmit'];
+			var editableConf_oncomplete = _.isString(targets[css]) ? null : targets[css]['oncomplete'];
 			var url = _resolvePlaceholders.call(self, editableConf_url, data);
 			var finalConf = $.extend(true, {
-				"url": url
+				"url": url,
+				"onsubmit": editableConf_onsubmit
 			}, baseconf);
 
-			if (!_.isString(targets[css])) {
+			if (editableConf_oncomplete) {
 				var evt = targets[css]['oncomplete'];
 				finalConf.ajaxoptions = {
 					complete: function () {
@@ -896,7 +897,7 @@ define(["jquery",
 					data = self.fnGetData(row);
 
 				// should the button be displayed in the first place ?
-				var rendered = ($.isFunction(button.condition) ) ? button.condition(row, data) : button.condition;
+				var rendered = ($.isFunction(button.condition)) ? button.condition(row, data) : button.condition;
 				if (rendered === false) {
 					return "continue"; // returning whatever non-false means 'continue'
 				}
@@ -959,7 +960,7 @@ define(["jquery",
 				data = self.fnGetData(row);
 
 			// find value if function
-			var value = ($.isFunction(icon.value) ) ? icon.value(row, data) : icon.value;
+			var value = ($.isFunction(icon.value)) ? icon.value(row, data) : icon.value;
 
 			self.drawIcon(value, $cell);
 		};
@@ -992,7 +993,7 @@ define(["jquery",
 				data = self.fnGetData(row);
 
 			// find value if function
-			var value = ($.isFunction(tooltip.value) ) ? tooltip.value(row, data) : tooltip.value;
+			var value = ($.isFunction(tooltip.value)) ? tooltip.value(row, data) : tooltip.value;
 
 			$cell.attr('title', value);
 		};
@@ -1194,7 +1195,7 @@ define(["jquery",
 
 		for (var i = 0; i < linksConf.list.length; i++) {
 			var linkConf = linksConf.list[i];
-			
+
 			// 1. build link
 			var link = $('<a></a>');
 			if (linkConf.isOpenInTab) {
@@ -1203,22 +1204,22 @@ define(["jquery",
 
 			// 2. select required td and wrap their text with the built link
 			var cellSelector = (!!linkConf.targetClass) ?
-			"td." + linkConf.targetClass :
-			'td:nth-child(' + linkConf.target + ')';
+				"td." + linkConf.targetClass :
+				'td:nth-child(' + linkConf.target + ')';
 
 			var cells = self.find('>tbody ' + cellSelector);
 
-			cells.filter(function(){
-					// check against the condition of the binding (if defined)
-					var condOK = true;
-					if (!! linkConf.condition){
-						var row = this.parentNode;
-						var data = self.fnGetData(row);
-						condOK = linkConf.condition(row, data);
-					}
-					return condOK;					
-				})
-				// get the content of the remaining cells
+			cells.filter(function () {
+				// check against the condition of the binding (if defined)
+				var condOK = true;
+				if (!!linkConf.condition) {
+					var row = this.parentNode;
+					var data = self.fnGetData(row);
+					condOK = linkConf.condition(row, data);
+				}
+				return condOK;
+			})
+			// get the content of the remaining cells
 				.contents()
 				// retain only those that are text nodes
 				.filter(cellFilter)
@@ -2018,14 +2019,14 @@ define(["jquery",
 					var cls = 'link-' + Math.random().toString().substr(2, 3);
 					conf.current.sClass += ' ' + cls;
 					conf.squash.bindLinks = conf.squash.bindLinks || {
-							list: []
-						};
+						list: []
+					};
 					conf.squash.bindLinks.list.push({
 						url: value,
 						targetClass: cls
 					});
 				},
-				'link-if-readable' : function(conf, value){
+				'link-if-readable': function (conf, value) {
 					var cls = 'link-' + Math.random().toString().substr(2, 3);
 					conf.current.sClass += ' ' + cls;
 					conf.squash.bindLinks = conf.squash.bindLinks || {
@@ -2034,15 +2035,17 @@ define(["jquery",
 					conf.squash.bindLinks.list.push({
 						url: value,
 						targetClass: cls,
-						condition : function(row, data){return data['readable']}
-					});	
+						condition: function (row, data) {
+							return data['readable']
+						}
+					});
 				},
 				'link-new-tab': function (conf, value) {
 					var cls = 'link-' + Math.random().toString().substr(2, 3);
 					conf.current.sClass += ' ' + cls;
 					conf.squash.bindLinks = conf.squash.bindLinks || {
-							list: []
-						};
+						list: []
+					};
 					conf.squash.bindLinks.list.push({
 						url: value,
 						targetClass: cls,

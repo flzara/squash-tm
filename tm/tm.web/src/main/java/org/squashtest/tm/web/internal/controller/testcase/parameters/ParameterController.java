@@ -96,4 +96,10 @@ public class ParameterController {
 		parameterModificationService.changeDescription(parameterId, value);
 		return HTMLCleanupUtils.cleanHtml(value);
 	}
+
+	@RequestMapping(value = "/validate", method = RequestMethod.POST, params = {VALUE}, produces = "text/plain;charset=UTF-8")
+	@ResponseBody
+	public void validateActionStep( @RequestParam(VALUE) String newAction) {
+		Parameter.findUsedParameterNamesInString(newAction);
+	}
 }
