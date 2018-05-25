@@ -79,6 +79,12 @@ define([ "jquery", "app/ws/squashtm.toggleworkspace", "jquery.squash.squashbutto
 
 				/* decorate buttons */
 				$.squash.decorateButtons();
+
+				if (sessionStorage.length > 0) {
+					var lastReport = sessionStorage.key(sessionStorage.length - 1).replace('-formerState', '').replace('/squash/reports/', '');
+					$("div[id='" + lastReport + "']").click();
+				}
+
 			}
 
 			squashtm.reportWorkspace = {
