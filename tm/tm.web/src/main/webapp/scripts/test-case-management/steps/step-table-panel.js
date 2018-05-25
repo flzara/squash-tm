@@ -64,10 +64,10 @@
  *
  */
 
-define(["jquery", "workspace.routing","squashtable/squashtable.collapser", "custom-field-values", "workspace.event-bus",
-	"./popups", 'workspace.storage', 'squash.translator', "jquery.squash.oneshotdialog",
-	"jquery.squash.formdialog", "squashtable"], function ($, routing, TableCollapser,
-	cufValuesManager, eventBus, popups, storage, translator, oneshot) {
+define(["jquery","squashtable/squashtable.collapser", "custom-field-values", "workspace.event-bus",
+	"./popups", 'workspace.storage', 'squash.translator', "jquery.squash.oneshotdialog","../ParameterValidationNameHelper",
+	"jquery.squash.formdialog", "squashtable"], function ($, TableCollapser,
+	cufValuesManager, eventBus, popups, storage, translator, oneshot, paramNameValidation) {
 	"use strict";
 
 	// ************************* configuration functions
@@ -338,26 +338,6 @@ define(["jquery", "workspace.routing","squashtable/squashtable.collapser", "cust
 		datatableSettings = cufTableHandler.decorateTableSettings(datatableSettings, settings.basic.cufDefinitions,
 			cufColumnPosition, permissions.isWritable);
 
-		var parameterNameValidationFunction = function (settings, original) {
-			var area = $('textarea', original);
-			var value = CKEDITOR.instances[area.attr('id')].getData();
-			var submitdata = {value:value};
-			var valid = false;
-			$.ajax({
-				url : routing.buildURL('parameters.validate'),
-				type    : 'POST',
-				data    : submitdata,
-				dataType: 'html',
-				//must be async to prevent jeditable.ckeditor destroying the CKEDITOR instance.
-				//without waiting the validation.
-				async: false,
-				success: function () {
-					valid = true;
-				}
-			});
-			return valid;
-		};
-
 		var squashSettings = {
 
 			dataKeys: {
@@ -427,11 +407,11 @@ define(["jquery", "workspace.routing","squashtable/squashtable.collapser", "cust
 				richEditables: {
 					'rich-edit-action': {
 						url : urls.editActionUrl,
-						onsubmit : parameterNameValidationFunction
+						onsubmit : paramNameValidation.parameterNameValidationFunction
 					},
 					'rich-edit-result':{
 						url : urls.editResultUrl,
-						onsubmit : parameterNameValidationFunction
+						onsubmit : paramNameValidation.parameterNameValidationFunction
 					}
 				},
 

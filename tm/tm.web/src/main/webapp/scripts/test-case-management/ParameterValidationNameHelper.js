@@ -18,31 +18,29 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "squash.configmanager", "../ParameterValidationNameHelper", "jquery.squash.jeditable"],
-		function($, Backbone, _, confman, paramNameValidation ) {
+define(['jquery','workspace.routing'],function ($, routing) {
 
-			var PrerequisitePanel = Backbone.View.extend({
+	var parameterNameValidationFunction = function (settings, original) {
+		var area = $('textarea', original);
+		var value = CKEDITOR.instances[area.attr('id')].getData();
+		var submitdata = {value:value};
+		var valid = false;
+		$.ajax({
+			url : routing.buildURL('parameters.validate'),
+			type    : 'POST',
+			data    : submitdata,
+			dataType: 'html',
+			//must be async to prevent jeditable.ckeditor destroying the CKEDITOR instance without waiting the validation result.
+			async: false,
+			success: function () {
+				valid = true;
+			}
+		});
+		return valid;
+	};
 
-				el : "#test-case-prerequisite-panel",
+	return {
+		parameterNameValidationFunction : parameterNameValidationFunction
+	};
 
-				initialize : function(options) {
-					this.settings = options.settings;
-
-					if(this.settings.writable){
-
-						var richEditSettings = confman.getJeditableCkeditor();
-						richEditSettings.url = this.settings.urls.testCaseUrl;
-						richEditSettings.onsubmit = paramNameValidation.parameterNameValidationFunction;
-
-						$('#test-case-prerequisite').richEditable(richEditSettings).addClass("editable");
-					}
-
-				},
-
-				events : {
-
-				}
-
-			});
-			return PrerequisitePanel;
 });
