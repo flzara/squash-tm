@@ -39,6 +39,7 @@ import org.squashtest.tm.exception.NoBugTrackerBindingException;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import static java.util.stream.Collectors.toList;
 
@@ -98,7 +99,7 @@ public class TestCaseExecutionRunnerController {
 			BugTrackerInterfaceDescriptor descriptor = bugTrackersLocalService.getInterfaceDescriptor(bugtracker);
 			String projectNames = JsonHelper.serialize(project.getBugtrackerBinding().getProjectNames()
 				.stream()
-				.map(name-> HtmlUtils.htmlEscape(name))
+				.map(name-> HtmlUtils.htmlUnescape(HTMLCleanupUtils.cleanHtml(name)))
 				.collect(toList()));
 			model.addAttribute("interfaceDescriptor", descriptor);
 			model.addAttribute("bugTracker", bugtracker);
