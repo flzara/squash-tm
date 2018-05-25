@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "workspace.projects", "./abstractStepView", "tree", "squash.translator", "./treePopup","../project-filter/ProjectSelectorPopup","../custom-report-workspace/utils", "jquery.squash.confirmdialog", "jquery.squash.buttonmenu"],
-	function ($, backbone, _, Handlebars, projects, AbstractStepView, tree, translator, TreePopup,ProjectSelectorPopup,chartUtils) {
+define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "workspace.projects", "./abstractStepView", "tree", "squash.translator", "./treePopup","../project-filter/ProjectSelectorPopup","../custom-report-workspace/utils", "../app/util/StringUtil","jquery.squash.confirmdialog", "jquery.squash.buttonmenu"],
+	function ($, backbone, _, Handlebars, projects, AbstractStepView, tree, translator, TreePopup,ProjectSelectorPopup,chartUtils, StringUtil) {
 		"use strict";
 
 		translator.load({
@@ -87,7 +87,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 						var checked = _.contains(self.model.get("projectsScope"),project.id);
 						return {
 							id: project.id,
-							name: project.name,
+							name: StringUtil.unescape(project.name),
 							label: project.label,
 							checked : isModifyMode ? checked : false
 						};
