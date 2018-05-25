@@ -70,6 +70,7 @@ public class CampaignSearchResultDataTableModelBuilder extends DataTableModelBui
 				item.isTestCaseDeleted() ? "" : formatImportance(item.getReferencedTestCase().getImportance(), locale));
 		res.put("itpi-isauto", item.isAutomated());
 		res.put("itpi-label", item.isTestCaseDeleted() ? "" : HtmlUtils.htmlEscape(item.getReferencedTestCase().getName()));
+		res.put("is-tc-deleted", item.isTestCaseDeleted());
 		res.put("itpi-mode", formatMode(item.getExecutionMode(), locale));
 		res.put("itpi-testsuites", item.getTestSuiteNames());
 		res.put("itpi-status", formatExecutionStatus(item.getExecutionStatus(), locale));
