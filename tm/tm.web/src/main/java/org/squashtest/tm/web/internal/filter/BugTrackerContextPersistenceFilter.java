@@ -18,14 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.bugtracker.web;
+package org.squashtest.tm.web.internal.filter;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.squashtest.csp.core.bugtracker.service.BugTrackerContext;
-import org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder;
+import org.squashtest.tm.service.servers.BugTrackerContext;
+import org.squashtest.tm.service.servers.BugTrackerContextHolder;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -34,7 +34,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.security.Principal;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -118,7 +117,7 @@ public final class BugTrackerContextPersistenceFilter extends OncePerRequestFilt
 
 		if (context == null) {
 			LOGGER.info("BugTrackerContextPersistenceFilter : No BugTrackerContext available, will create it and eagerly store it in session");
-			// TODO : once this module is moved into tm.web, look for the current username in the security context (fetchable with session.getAttribute("SPRINT_SECURITY_CONTEXT")) and 
+			// TODO : once this module is moved into tm.web, look for the current username in the security context (fetchable with session.getAttribute("SPRINT_SECURITY_CONTEXT")) and
 			// use the constructor BugTrackerContext(String username)
 			context = new BugTrackerContext();
 			storeContext(session, context);
@@ -138,6 +137,6 @@ public final class BugTrackerContextPersistenceFilter extends OncePerRequestFilt
     public void setExcludePatterns(String excludePatterns) {
         this.excludePatterns = excludePatterns;
     }
-    
+
 
 }

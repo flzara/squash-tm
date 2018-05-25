@@ -42,14 +42,14 @@ import org.springframework.context.annotation.Role;
 import org.springframework.core.annotation.Order;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
-import org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder;
-import org.squashtest.csp.core.bugtracker.web.BugTrackerContextPersistenceFilter;
+import org.squashtest.tm.service.servers.BugTrackerContextHolder;
 import org.squashtest.tm.api.config.SquashPathProperties;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.web.internal.context.ReloadableSquashTmMessageSource;
 import org.squashtest.tm.web.internal.fileupload.MultipartResolverDispatcher;
 import org.squashtest.tm.web.internal.fileupload.SquashMultipartResolver;
 import org.squashtest.tm.web.internal.filter.AjaxEmptyResponseFilter;
+import org.squashtest.tm.web.internal.filter.BugTrackerContextPersistenceFilter;
 import org.squashtest.tm.web.internal.filter.MultipartFilterExceptionAware;
 import org.squashtest.tm.web.internal.filter.UserConcurrentRequestLockFilter;
 import org.squashtest.tm.web.internal.listener.HttpSessionLifecycleLogger;
@@ -58,7 +58,6 @@ import org.thymeleaf.dialect.IDialect;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.standard.StandardDialect;
-import org.thymeleaf.standard.serializer.IStandardJavaScriptSerializer;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -105,47 +104,47 @@ public class SquashServletConfig {
 	}
 
 
-	/* ************************************************************************	
-									THYMELEAF	
+	/* ************************************************************************
+									THYMELEAF
 	************************************************************************* */
-	
+
 	/**
 	 * A SpringTemplateEngine for the thymeleaf view resolvers
-	 * which is for a large part declared as the one found 
+	 * which is for a large part declared as the one found
 	 * in {@link ThymeleafAutoConfiguration} (and thus has access
 	 * to the rest of the autoconfigured beans).
-	 * 
-	 * It also accepts extra configuration for SpringEL compilation, 
-	 * and more importantly it will use our shiny-customize instance 
-	 * of Jackson Object mapper instead of the default Thymeleaf 
+	 *
+	 * It also accepts extra configuration for SpringEL compilation,
+	 * and more importantly it will use our shiny-customize instance
+	 * of Jackson Object mapper instead of the default Thymeleaf
 	 * JacksonStandardJavaScriptSerializer
-	 * 
+	 *
 	 */
 	@Bean
 	public SpringTemplateEngine springTemplateEngine(
-			Collection<ITemplateResolver> templateResolvers, 
+			Collection<ITemplateResolver> templateResolvers,
 			ObjectProvider<Collection<IDialect>> dialectsProvider,
-			ObjectMapper squashMapper 
+			ObjectMapper squashMapper
 			){
-		
+
 		SpringTemplateEngine engine = new SpringTemplateEngine();
 		for (ITemplateResolver templateResolver : templateResolvers) {
 			engine.addTemplateResolver(templateResolver);
 		}
-		
-		Collection<IDialect> dialects = dialectsProvider.getIfAvailable(); 
+
+		Collection<IDialect> dialects = dialectsProvider.getIfAvailable();
 		if (!CollectionUtils.isEmpty(dialects)) {
 			for (IDialect dialect : dialects) {
 				engine.addDialect(dialect);
 			}
 		}
-		
+
 		injectObjectMapper(engine, squashMapper);
-		
-		return engine;		
-		
+
+		return engine;
+
 	}
-	
+
 	private void injectObjectMapper(SpringTemplateEngine engine, ObjectMapper mapper){
 		for (IDialect dialect : engine.getDialects()){
 			if (StandardDialect.class.isAssignableFrom(dialect.getClass())){
@@ -154,13 +153,13 @@ public class SquashServletConfig {
 			}
 		}
 	}
-	
+
 
 	/**
 	 * The main Thymeleaf template resolver. It resolves pages of the core application and as such is the first
-	 * template resolver in the chain (see order = 1). If a template cannot be resolved the secondary template resolver should 
+	 * template resolver in the chain (see order = 1). If a template cannot be resolved the secondary template resolver should
 	 * kick in (see checkExistence).
-	 * 
+	 *
 	 * @param context
 	 * @return
 	 */
@@ -178,7 +177,7 @@ public class SquashServletConfig {
 		return res;
 	}
 
-	
+
 	@Bean(name = "thymeleaf.templateResolver.plugins")
 	public ITemplateResolver thymeleafClasspathTemplateResolver(ApplicationContext context) {
 		SpringResourceTemplateResolver res = new SpringResourceTemplateResolver();
@@ -191,17 +190,17 @@ public class SquashServletConfig {
 		res.setOrder(2);
 		return res;
 	}
-	
 
 
-	/* ************************************************************************	
-									/THYMELEAF	
+
+	/* ************************************************************************
+									/THYMELEAF
 	************************************************************************* */
-	
-	
 
-	/* ************************************************************************	
-									MULTIPART	
+
+
+	/* ************************************************************************
+									MULTIPART
 	************************************************************************* */
 
 	@Bean
@@ -238,12 +237,12 @@ public class SquashServletConfig {
         final FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean(multipartFilter);
         return filterRegistrationBean;
     }
-    
 
-	/* ************************************************************************	
-									/MULTIPART	
+
+	/* ************************************************************************
+									/MULTIPART
 	************************************************************************* */
-    
+
 
 	@Bean
 	@Order(1)

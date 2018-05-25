@@ -37,9 +37,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.core.bugtracker.service.BugTrackerContext;
-import org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder;
-import org.squashtest.csp.core.bugtracker.web.BugTrackerContextPersistenceFilter;
+import org.squashtest.tm.service.servers.BugTrackerContext;
+import org.squashtest.tm.service.servers.BugTrackerContextHolder;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.servers.AuthenticationPolicy;
@@ -48,12 +47,13 @@ import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.project.ProjectFinder;
+import org.squashtest.tm.web.internal.filter.BugTrackerContextPersistenceFilter;
 
 
 /**
  * Provides with a pseudo-SSO that will pre-authenticate the user on each of the known bugtrackers, by reusing its credentials after successful authentication.
  * But arguably this is a terrible way to do it.
- * 
+ *
  * @author bsiri
  * @since the dinosaurs
  */
@@ -109,7 +109,7 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 	public void onApplicationEvent(InteractiveAuthenticationSuccessEvent event) {
 		String login = event.getAuthentication().getName();
 		if (isApplicable(event)){
-			try {				
+			try {
 				String password = (String) event.getAuthentication().getCredentials();
 				HttpSession session = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getSession();
 				onLoginSuccess(login, password, session);
@@ -120,15 +120,15 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 		}
 		else{
 			if (LOGGER.isInfoEnabled()){
-				Object credentials = event.getAuthentication().getCredentials(); 
+				Object credentials = event.getAuthentication().getCredentials();
 				String credClazz = (credentials != null) ? credentials.getClass().getName() : "(undefined)";
 				LOGGER.info("BugTrackerAutoconnectCallback : user '{}' authenticated with credentials of class '{}' that cannot be used for bugtracker autoconnection", login, credClazz);
 			}
 		}
 	}
-	
+
 	/*
-	 * Basically, only login/password authentication is supported at the moment. For now,  
+	 * Basically, only login/password authentication is supported at the moment. For now,
 	 * we assume that if the credential is a String then we can use it as a password / token
 	 * otherwise it's not applicable.
 	 */
@@ -221,7 +221,7 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 			}
 
 			//I don't understand why we put new content in session ? new content has been merged into existing content... why override it ?
-			// A: Fair point. 
+			// A: Fair point.
 			session.setAttribute(BugTrackerContextPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY, newContext);
 			LOGGER.debug("BugTrackerAutoconnectCallback : BugTrackerContext stored to session");
 		}

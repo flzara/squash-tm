@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.bugtracker.core;
+package org.squashtest.tm.service.internal.bugtracker;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -33,11 +33,8 @@ import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
+import org.squashtest.csp.core.bugtracker.core.UnknownConnectorKindException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.core.bugtracker.service.AdvancedBugtrackerConnectorAdapter;
-import org.squashtest.csp.core.bugtracker.service.InternalBugtrackerConnector;
-import org.squashtest.csp.core.bugtracker.service.OslcBugtrackerConnectorAdapter;
-import org.squashtest.csp.core.bugtracker.service.SimpleBugtrackerConnectorAdapter;
 import org.squashtest.csp.core.bugtracker.spi.AdvancedBugTrackerConnector;
 import org.squashtest.csp.core.bugtracker.spi.AdvancedBugTrackerConnectorProvider;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnector;
@@ -45,6 +42,10 @@ import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider;
 import org.squashtest.csp.core.bugtracker.spi.OslcBugTrackerConnector;
 import org.squashtest.csp.core.bugtracker.spi.OslcBugTrackerConnectorProvider;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
+import org.squashtest.tm.service.internal.bugtracker.adapter.AdvancedBugtrackerConnectorAdapter;
+import org.squashtest.tm.service.internal.bugtracker.adapter.InternalBugtrackerConnector;
+import org.squashtest.tm.service.internal.bugtracker.adapter.OslcBugtrackerConnectorAdapter;
+import org.squashtest.tm.service.internal.bugtracker.adapter.SimpleBugtrackerConnectorAdapter;
 
 /**
  * Factory of BugTrackerConnector objects. It delegates to {@link BugTrackerConnectorProvider} which should register to

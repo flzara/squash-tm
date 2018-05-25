@@ -18,15 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.bugtracker.internal.core
+package org.squashtest.tm.service.internal.bugtracker
 
-import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory
 import org.squashtest.csp.core.bugtracker.core.UnknownConnectorKindException
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
-import org.squashtest.csp.core.bugtracker.service.SimpleBugtrackerConnectorAdapter
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnector
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider
 import org.squashtest.tm.core.foundation.exception.NullArgumentException
+import org.squashtest.tm.service.internal.bugtracker.adapter.SimpleBugtrackerConnectorAdapter
 import spock.lang.Specification
 
 class BugTrackerConnectorFactoryTest extends Specification {

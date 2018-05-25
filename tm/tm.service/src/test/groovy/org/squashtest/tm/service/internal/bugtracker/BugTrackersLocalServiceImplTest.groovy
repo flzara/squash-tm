@@ -23,8 +23,8 @@ package org.squashtest.tm.service.internal.bugtracker
 import org.squashtest.csp.core.bugtracker.domain.BTIssue
 import org.squashtest.csp.core.bugtracker.domain.BTProject
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
-import org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder
-import org.squashtest.csp.core.bugtracker.service.BugTrackersService
+import org.squashtest.tm.service.servers.BugTrackerContextHolder
+import org.squashtest.tm.service.bugtracker.BugTrackersService
 import org.squashtest.tm.domain.bugtracker.Issue
 import org.squashtest.tm.domain.bugtracker.IssueList
 import org.squashtest.tm.domain.bugtracker.IssueOwnership

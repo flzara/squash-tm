@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.bugtracker.service;
+package org.squashtest.tm.service.servers;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -78,7 +78,7 @@ public class BugTrackerContext implements Serializable {
 		if (this.user == null && anotherContext.user != null){
 			this.user = anotherContext.user;
 		}
-		
+
 		for (Entry<Long, Credentials> anotherEntry : anotherContext.bugTrackersCredentials.entrySet()){
 
 			Long id = anotherEntry.getKey();

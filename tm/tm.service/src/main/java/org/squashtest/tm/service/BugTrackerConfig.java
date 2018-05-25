@@ -26,17 +26,15 @@ import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
-import org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder;
-import org.squashtest.csp.core.bugtracker.service.BugTrackersService;
-import org.squashtest.csp.core.bugtracker.service.BugTrackersServiceImpl;
-import org.squashtest.csp.core.bugtracker.service.ThreadLocalBugTrackerContextHolder;
+import org.squashtest.tm.service.internal.bugtracker.BugTrackerConnectorFactory;
+import org.squashtest.tm.service.servers.BugTrackerContextHolder;
+import org.squashtest.tm.service.bugtracker.BugTrackersService;
+import org.squashtest.tm.service.internal.bugtracker.BugTrackersServiceImpl;
+import org.squashtest.tm.service.internal.servers.ThreadLocalBugTrackerContextHolder;
 import org.squashtest.csp.core.bugtracker.spi.AdvancedBugTrackerConnectorProvider;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider;
 import org.squashtest.csp.core.bugtracker.spi.OslcBugTrackerConnectorProvider;
 import org.squashtest.tm.service.servers.StoredCredentialsManager;
-
-import javax.inject.Inject;
 
 /**
  * Spring configuration for bugtracker connectors subsystem

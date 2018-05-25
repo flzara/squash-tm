@@ -18,42 +18,19 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.bugtracker.service;
+package org.squashtest.tm.service.internal.servers;
 
-import org.squashtest.tm.core.foundation.exception.NullArgumentException;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerLocalException;
+import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 
 /**
- * Thread-local based implementation of {@link BugTrackerContext}
- *
- * @author Gregory Fouquet
+ * Thrown when attempting to authenticate to a bugtracker with the wrong policy (@see {@link org.squashtest.tm.domain.servers.AuthenticationPolicy} )
  *
  */
-public class ThreadLocalBugTrackerContextHolder implements BugTrackerContextHolder {
-	private final ThreadLocal<BugTrackerContext> contextHolder = new ThreadLocal<>();
+public class WrongAuthenticationPolicyException extends BugTrackerLocalException {
 
-	@Override
-	public BugTrackerContext getContext() {
-		BugTrackerContext context = contextHolder.get();
-
-		if (context == null) {
-			context = new BugTrackerContext();
-			contextHolder.set(context);
-		}
-
-		return context;
-	}
-
-	@Override
-	public void setContext(BugTrackerContext context) {
-		if (context == null) {
-			throw new NullArgumentException("context");
-		}
-		this.contextHolder.set(context);
-	}
-
-	@Override
-	public void clearContext() {
-		contextHolder.remove();
+	public WrongAuthenticationPolicyException(AuthenticationPolicy wrongPolicy){
+		super("Attempted to authenticate with policy "+wrongPolicy+", yet the server is configured to use a different policy", null);
 	}
 
 }

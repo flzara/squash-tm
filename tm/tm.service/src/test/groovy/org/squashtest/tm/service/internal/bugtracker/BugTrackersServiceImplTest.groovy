@@ -18,20 +18,22 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.bugtracker.internal.service
+package org.squashtest.tm.service.internal.bugtracker
 
-import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory
+import org.squashtest.tm.service.internal.bugtracker.BugTrackerConnectorFactory
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException
 import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
-import org.squashtest.csp.core.bugtracker.service.BugTrackerContext
-import org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder
-import org.squashtest.csp.core.bugtracker.service.BugTrackersServiceImpl
+import BugTrackerContext
+import BugTrackerContextHolder
+import org.squashtest.tm.service.internal.bugtracker.BugTrackersServiceImpl
 import org.squashtest.csp.core.bugtracker.service.InternalBugtrackerConnector
-import org.squashtest.csp.core.bugtracker.service.WrongAuthenticationPolicyException
-import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnector
+import org.squashtest.tm.service.internal.bugtracker.adapter.InternalBugtrackerConnector
+import org.squashtest.tm.service.internal.servers.WrongAuthenticationPolicyException
 import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials
 import org.squashtest.tm.domain.servers.Credentials
+import org.squashtest.tm.service.servers.BugTrackerContext
+import org.squashtest.tm.service.servers.BugTrackerContextHolder
 
 import static org.squashtest.tm.domain.servers.AuthenticationPolicy.*
 import org.squashtest.tm.service.servers.StoredCredentialsManager

@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.bugtracker.service;
+package org.squashtest.tm.service.internal.bugtracker;
 
 import java.net.URL;
 import java.util.Collection;
@@ -29,10 +29,10 @@ import java.util.concurrent.Future;
 import org.springframework.context.i18n.LocaleContext;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.scheduling.annotation.AsyncResult;
-import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
 import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
+import org.squashtest.tm.service.internal.bugtracker.adapter.InternalBugtrackerConnector;
+import org.squashtest.tm.service.internal.servers.WrongAuthenticationPolicyException;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
 import org.squashtest.tm.bugtracker.definition.Attachment;
@@ -42,10 +42,13 @@ import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials;
 import org.squashtest.tm.domain.servers.Credentials;
+import org.squashtest.tm.service.bugtracker.BugTrackersService;
+import org.squashtest.tm.service.servers.BugTrackerContext;
+import org.squashtest.tm.service.servers.BugTrackerContextHolder;
 import org.squashtest.tm.service.servers.StoredCredentialsManager;
 
 /**
- * Basic implementation of {@link BugTrackersService}
+ * Basic implementation of {@link BugTrackersService}. See doc on the interface.
  *
  * @author Gregory Fouquet
  *

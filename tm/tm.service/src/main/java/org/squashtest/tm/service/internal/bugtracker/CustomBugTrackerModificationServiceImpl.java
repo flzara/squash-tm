@@ -24,37 +24,34 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
-import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.core.bugtracker.service.InternalBugtrackerConnector;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
-import org.squashtest.tm.domain.servers.AuthenticationStatus;
 import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.bugtracker.CustomBugTrackerModificationService;
+import org.squashtest.tm.service.internal.bugtracker.adapter.InternalBugtrackerConnector;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 import org.squashtest.tm.service.servers.StoredCredentialsManager;
 
 /**
- * 
+ *
  * @author mpagnon
- * 
+ *
  */
 @Service("CustomBugTrackerModificationService")
 @Transactional
 public class CustomBugTrackerModificationServiceImpl implements CustomBugTrackerModificationService {
-	
+
 	@Inject
 	private BugTrackerDao bugTrackerDao;
-	
+
 	@Inject
 	private StoredCredentialsManager credentialsManager;
-	
+
 	@Inject
 	private BugTrackerConnectorFactory connectorFactory;
-	
-	
+
+
 	@Override
 	public void changeName(long bugtrackerId, String newName) {
 		String trimedNewName = newName.trim();
@@ -68,7 +65,7 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 				throw new NameAlreadyInUseException(NameAlreadyInUseException.EntityType.BUG_TRACKER, trimedNewName);
 			}
 		}
-		
+
 	}
 
 
@@ -107,13 +104,13 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 	public void testCredentials(long bugtrackerId, Credentials credentials) {
 		BugTracker bt = bugTrackerDao.findOne(bugtrackerId);
 		InternalBugtrackerConnector connector = connectorFactory.createConnector(bt);
-		
+
 		connector.checkCredentials(credentials);
-		
+
 	}
-	
-	
-	
-	
+
+
+
+
 
 }

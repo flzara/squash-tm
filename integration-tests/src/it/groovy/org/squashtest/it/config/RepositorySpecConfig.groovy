@@ -32,7 +32,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
-import org.squashtest.csp.core.bugtracker.service.BugTrackersService
+import org.squashtest.tm.service.bugtracker.BugTrackersService
 import org.squashtest.it.stub.validation.StubValidatorFactory
 
 /**

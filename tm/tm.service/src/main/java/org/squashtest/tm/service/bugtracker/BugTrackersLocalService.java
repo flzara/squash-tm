@@ -44,7 +44,17 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.servers.AuthenticationStatus;
 import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.internal.servers.WrongAuthenticationPolicyException;
 
+
+/**
+ * <p>
+ *     That service manages the Issues on the Squash side (CRUD, relationships, aggregation etc).
+ * 	   It does not, however, interact with the bugtracker connectors directly : that is the
+ * 	   job of {@link BugTrackersService}.
+ * </p>
+ *
+ */
 @Transactional
 public interface BugTrackersLocalService {
 
@@ -53,10 +63,7 @@ public interface BugTrackersLocalService {
 	/**
 	 * adds a new Issue to the entity. The entity must implement IssueDetector.
 	 *
-	 * @param entityId
-	 *            : the id of that entity.
-	 * @param entityClass
-	 *            : the actual class of that entity, that implements IssueDetector.
+	 * @param entity : the entity that will hold the issue
 	 * @param issue
 	 *            : the issue to add
 	 * @return the BTIssue corresponding to the bug remotely created
@@ -273,7 +280,7 @@ public interface BugTrackersLocalService {
 	 * @param bugTracker : the concerned BugTracker
 	 * @return nothing
 	 * @throws BugTrackerRemoteException if the credentials are wrong
-	 * @throws org.squashtest.csp.core.bugtracker.service.WrongAuthenticationPolicyException
+	 * @throws WrongAuthenticationPolicyException
 	 * @throws {@link UnsupportedAuthenticationModeException} if the connector does not support such authentication
 	 */
 	void setCredentials(Credentials credentials, BugTracker bugTracker) throws BugTrackerRemoteException;
@@ -284,7 +291,7 @@ public interface BugTrackersLocalService {
 	 * @param credentials
 	 * @param bugtrackerId
 	 * @throws BugTrackerRemoteException
-	 * @throws org.squashtest.csp.core.bugtracker.service.WrongAuthenticationPolicyException
+	 * @throws WrongAuthenticationPolicyException
 	 * @throws {@link UnsupportedAuthenticationModeException}
 	 */
 	void setCredentials(Credentials credentials, Long bugtrackerId) throws BugTrackerRemoteException;
@@ -300,7 +307,7 @@ public interface BugTrackersLocalService {
 	 * @param bugTracker : the concerned BugTracker
 	 * @return nothing
 	 * @throws BugTrackerRemoteException if the credentials are wrong
-	 * @throws org.squashtest.csp.core.bugtracker.service.WrongAuthenticationPolicyException
+	 * @throws WrongAuthenticationPolicyException
 	 * @throws {@link UnsupportedAuthenticationModeException}
 	 */
 	@Deprecated
@@ -314,7 +321,7 @@ public interface BugTrackersLocalService {
 	 * @param password
 	 * @param bugtrackerId
 	 * @throws BugTrackerRemoteException
-	 * @throws org.squashtest.csp.core.bugtracker.service.WrongAuthenticationPolicyException
+	 * @throws WrongAuthenticationPolicyException
 	 * @throws {@link UnsupportedAuthenticationModeException}
 	 */
 	@Deprecated

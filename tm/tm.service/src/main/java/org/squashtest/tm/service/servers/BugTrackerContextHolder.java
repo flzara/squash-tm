@@ -18,19 +18,31 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.bugtracker.service;
+package org.squashtest.tm.service.servers;
 
-import org.squashtest.csp.core.bugtracker.core.BugTrackerLocalException;
-import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 
 /**
- * Thrown when attempting to authenticate to a bugtracker with the wrong policy (@see {@link org.squashtest.tm.domain.servers.AuthenticationPolicy} )
+ * Associates a {@link BugTrackerContext} to the current thread.
+ *
+ * @author Gregory Fouquet
  *
  */
-public class WrongAuthenticationPolicyException extends BugTrackerLocalException {
+public interface BugTrackerContextHolder {
+	/**
+	 *
+	 * @return the held context. Never returns null.
+	 */
+	BugTrackerContext getContext();
 
-	public WrongAuthenticationPolicyException(AuthenticationPolicy wrongPolicy){
-		super("Attempted to authenticate with policy "+wrongPolicy+", yet the server is configured to use a different policy", null);
-	}
+	/**
+	 *
+	 * @param context
+	 *            The context to hold. Should not be null.
+	 */
+	void setContext(BugTrackerContext context);
 
+	/**
+	 * Clears this holder from the {@link BugTrackerContext} it holds.
+	 */
+	void clearContext();
 }

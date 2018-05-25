@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.bugtracker.service;
+package org.squashtest.tm.service.bugtracker;
 
 import java.net.URL;
 import java.util.Collection;
@@ -31,16 +31,24 @@ import org.springframework.scheduling.annotation.Async;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.service.internal.servers.ThreadLocalBugTrackerContextHolder;
+import org.squashtest.tm.service.internal.servers.WrongAuthenticationPolicyException;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
 import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
 import org.squashtest.tm.domain.servers.Credentials;
+import org.squashtest.tm.service.servers.BugTrackerContext;
 
 
 /**
- * Service / Facade to access the bug-trackers from the rest of the application.
+ * <p>Service / Facade to access the bug-trackers from the rest of the application.</p>
+ *
+ * <p>
+ *     The mission is primarily to interact with the bugtracker, by piloting calls to the remote APIs. It has nothing to do with
+ *     how Squash-tM will manage the issues internally : that would be the job of {@link BugTrackersLocalService}.
+ * </p>
  *
  * @author Gregory Fouquet
  *

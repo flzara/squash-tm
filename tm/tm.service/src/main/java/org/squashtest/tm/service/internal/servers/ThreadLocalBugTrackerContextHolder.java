@@ -18,31 +18,44 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.bugtracker.service;
+package org.squashtest.tm.service.internal.servers;
 
+import org.squashtest.tm.core.foundation.exception.NullArgumentException;
+import org.squashtest.tm.service.servers.BugTrackerContext;
+import org.squashtest.tm.service.servers.BugTrackerContextHolder;
 
 /**
- * Associates a {@link BugTrackerContext} to the current thread.
+ * Thread-local based implementation of {@link BugTrackerContext}
  *
  * @author Gregory Fouquet
  *
  */
-public interface BugTrackerContextHolder {
-	/**
-	 *
-	 * @return the held context. Never returns null.
-	 */
-	BugTrackerContext getContext();
+public class ThreadLocalBugTrackerContextHolder implements BugTrackerContextHolder {
+	private final ThreadLocal<BugTrackerContext> contextHolder = new ThreadLocal<>();
 
-	/**
-	 *
-	 * @param context
-	 *            The context to hold. Should not be null.
-	 */
-	void setContext(BugTrackerContext context);
+	@Override
+	public BugTrackerContext getContext() {
+		BugTrackerContext context = contextHolder.get();
 
-	/**
-	 * Clears this holder from the {@link BugTrackerContext} it holds.
-	 */
-	void clearContext();
+		if (context == null) {
+			context = new BugTrackerContext();
+			contextHolder.set(context);
+		}
+
+		return context;
+	}
+
+	@Override
+	public void setContext(BugTrackerContext context) {
+		if (context == null) {
+			throw new NullArgumentException("context");
+		}
+		this.contextHolder.set(context);
+	}
+
+	@Override
+	public void clearContext() {
+		contextHolder.remove();
+	}
+
 }
