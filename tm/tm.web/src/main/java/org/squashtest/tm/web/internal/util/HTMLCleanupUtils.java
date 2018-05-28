@@ -98,4 +98,8 @@ public final class HTMLCleanupUtils {
 		return StringUtils.EMPTY;
 	}
 
+	public static String cleanAndUnescapeHTML(String unsecureHtml) {
+		return HtmlUtils.htmlUnescape(cleanHtml(unsecureHtml));
+	}
+
 }

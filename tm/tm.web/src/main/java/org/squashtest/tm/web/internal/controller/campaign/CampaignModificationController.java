@@ -562,7 +562,7 @@ public class CampaignModificationController {
 		List<JsonIteration> jsonIters = new ArrayList<>(iterations.size());
 		for (Iteration iter : iterations) {
 
-			JsonIteration jsonIter = new JsonIteration(iter.getId(), HtmlUtils.htmlEscape(iter.getName()), iter.getScheduledStartDate(),
+			JsonIteration jsonIter = new JsonIteration(iter.getId(), HTMLCleanupUtils.cleanAndUnescapeHTML(iter.getName()), iter.getScheduledStartDate(),
 				iter.getScheduledEndDate());
 
 			jsonIters.add(jsonIter);

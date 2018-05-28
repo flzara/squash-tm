@@ -296,8 +296,8 @@ public class GenericProjectController {
 		List<Map<String, Object>> partiesModel = new ArrayList<>(partyList.size());
 		for (Party p : partyList) {
 			Map<String, Object> newModel = new HashMap<>();
-			newModel.put(LABEL, HtmlUtils.htmlEscape(p.getName()));
-			newModel.put(JEditablePostParams.VALUE, HtmlUtils.htmlEscape(p.getName()));
+			newModel.put(LABEL, HTMLCleanupUtils.cleanAndUnescapeHTML(p.getName()));
+			newModel.put(JEditablePostParams.VALUE, HTMLCleanupUtils.cleanAndUnescapeHTML(p.getName()));
 			newModel.put("id", p.getId());
 			partiesModel.add(newModel);
 		}
