@@ -99,7 +99,7 @@ public class TestCaseExecutionRunnerController {
 			BugTrackerInterfaceDescriptor descriptor = bugTrackersLocalService.getInterfaceDescriptor(bugtracker);
 			String projectNames = JsonHelper.serialize(project.getBugtrackerBinding().getProjectNames()
 				.stream()
-				.map(name-> HtmlUtils.htmlUnescape(HTMLCleanupUtils.cleanHtml(name)))
+				.map(HTMLCleanupUtils::cleanAndUnescapeHTML)
 				.collect(toList()));
 			model.addAttribute("interfaceDescriptor", descriptor);
 			model.addAttribute("bugTracker", bugtracker);

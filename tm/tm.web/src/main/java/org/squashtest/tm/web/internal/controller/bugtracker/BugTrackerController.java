@@ -812,7 +812,7 @@ public class BugTrackerController {
 			descriptor.setLocale(locale);
 			String projectNames = JsonHelper.serialize(project.getBugtrackerBinding().getProjectNames()
 				.stream()
-				.map(name-> HtmlUtils.htmlUnescape(HTMLCleanupUtils.cleanHtml(name)))
+				.map(HTMLCleanupUtils :: cleanAndUnescapeHTML)
 				.collect(toList()));
 			ModelAndView mav = new ModelAndView("fragment/bugtracker/bugtracker-panel-content");
 			mav.addObject("entity", entity);
