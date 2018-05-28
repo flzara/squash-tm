@@ -20,12 +20,11 @@
  */
 package org.squashtest.tm.domain.testcase
 
-import org.squashtest.tm.core.foundation.exception.NullArgumentException;
-import org.squashtest.tm.domain.testcase.Parameter;
+import org.squashtest.tm.core.foundation.exception.NullArgumentException
+import org.squashtest.tm.domain.testcase.Parameter
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.exception.testcase.InvalidParameterNameException
 import spock.lang.Specification
-import spock.lang.Unroll;
 
 class ParameterTest extends Specification {
 
