@@ -43,6 +43,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.Identified;
@@ -201,6 +202,9 @@ public class Parameter implements Identified {
 
 	public static Set<String> findUsedParameterNamesInString(String content) {
 		Set<String> paramNames = new HashSet<>();
+		if (StringUtils.isBlank(content)) {
+			return paramNames;
+		}
 		java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(Parameter.LOOSE_PATTERN);
 		Matcher matcher = pattern.matcher(content);
 		while (matcher.find()) {
@@ -212,6 +216,21 @@ public class Parameter implements Identified {
 			}
 		}
 		return paramNames;
+	}
+
+	public static boolean hasInvalidParameterNamesInString(String content) {
+		if(StringUtils.isBlank(content)){
+			return false;
+		}
+		java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(Parameter.LOOSE_PATTERN);
+		Matcher matcher = pattern.matcher(content);
+		while (matcher.find()) {
+			String paramName = matcher.group(1);
+			if (!paramName.matches(PARAM_REGEXP)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public static Parameter createBlankParameter() {

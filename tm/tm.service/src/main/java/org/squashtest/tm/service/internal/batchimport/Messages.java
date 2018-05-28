@@ -52,6 +52,7 @@ public final class Messages {
 	public static final String ERROR_NOT_A_CALLSTEP = "message.import.log.error.tc.tcStep.notacallstep";
 	public static final String ERROR_NOT_AN_ACTIONSTEP = "message.import.log.error.tc.tcStep.notanactionstep";
 	public static final String ERROR_CYCLIC_STEP_CALLS = "message.import.log.error.tc.callStep.cyclicCalls";
+	public static final String ERROR_INVALID_PARAM_NAME_IN_FIELD = "message.import.log.error.step.param.wrongFormat";
 	public static final String ERROR_UNEXPECTED_ERROR = "message.import.log.error.unexpectederror";
 	public static final String ERROR_PARAMETER_OWNER_NOT_FOUND = "message.import.log.error.tc.tcOwnerNotFound";
 	public static final String ERROR_DATASET_PARAM_OWNER_NOT_FOUND = "message.import.log.error.tc.paramValueParamOwnerNotFound";
@@ -80,11 +81,11 @@ public final class Messages {
 	public static final String ERROR_REQUIREMENT_NOT_EXISTS = "message.import.log.error.requirement.notExists";
 	public static final String ERROR_REQ_USER_NOT_FOUND = "message.import.log.error.requirement.userNotFound";
 	public static final String ERROR_REQUIREMENT_VERSION_NULL = "message.import.log.error.requirement.version.null";
-	
+
 
 	public static final String IMPACT_MAX_SIZE = "message.import.log.impact.truncatedValue";
 	public static final String IMPACT_DEFAULT_VALUE = "message.import.log.impact.useDefaultValue";
-	public static final String IMPACT_USE_CURRENT_DATE ="message.import.log.impact.useCurrentDate";
+	public static final String IMPACT_USE_CURRENT_DATE = "message.import.log.impact.useCurrentDate";
 	public static final String IMPACT_NO_CHANGE = "message.import.log.impact.fieldNotChange";
 	public static final String IMPACT_TC_WITH_SUFFIX = "message.import.log.impact.tc.renamed";
 	public static final String IMPACT_TC_CREATED = "message.import.log.impact.tc.created";
@@ -114,7 +115,7 @@ public final class Messages {
 	public static final String ERROR_COVERAGE_ALREADY_EXIST = "message.import.log.warning.coverageAlreadyExist";
 
 	public static final String REQ_RENAME_SUFFIX = "-Copie1";
-	
+
 
 	// requirement links messages
 	public static final String ERROR_REQ_LINK_SAME_VERSION = "message.import.log.error.requirementlinks.linking-same-requirement";
@@ -128,7 +129,7 @@ public final class Messages {
 	public static final String ERROR_REQ_LINK_NOT_LINKABLE = "message.import.log.error.requirementlinks.not-linkable";
 
 
-	private Messages(){
+	private Messages() {
 		super();
 	}
 }

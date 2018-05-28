@@ -60,8 +60,7 @@ import org.squashtest.tm.service.importer.LogEntry.Builder;
 import org.squashtest.tm.service.importer.Target;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.batchimport.MilestoneImportHelper.Partition;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageInstruction;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageTarget;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.*;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
@@ -358,8 +357,22 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			}
 		}
 
+		// 6 - check the parameter name validity in action step and expected result
+		checkParamNameInString(target, logs, testStep.getAction(), StepSheetColumn.TC_STEP_ACTION);
+		checkParamNameInString(target, logs, testStep.getExpectedResult(), StepSheetColumn.TC_STEP_EXPECTED_RESULT);
+
 		return logs;
 
+	}
+
+	private void checkParamNameInString(Target target, LogTrain logs, String action, TemplateColumn column) {
+		boolean hasInvalidParameterNamesInAction = Parameter.hasInvalidParameterNamesInString(action);
+		if (hasInvalidParameterNamesInAction) {
+			logs.addEntry(LogEntry.failure()
+				.forTarget(target)
+				.withMessage(Messages.ERROR_INVALID_PARAM_NAME_IN_FIELD, column.getHeader())
+				.build());
+		}
 	}
 
 	@Override
@@ -442,6 +455,10 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 				logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_NOT_AN_ACTIONSTEP).build());
 			}
 		}
+
+		//6 check parameter name value
+		checkParamNameInString(target, logs, testStep.getAction(), StepSheetColumn.TC_STEP_ACTION);
+		checkParamNameInString(target, logs, testStep.getExpectedResult(), StepSheetColumn.TC_STEP_EXPECTED_RESULT);
 
 		return logs;
 	}
@@ -826,6 +843,10 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		// 3-5 : fix test case metadatas
 		List<LogEntry> logEntries = fixMetadatas(target, (AuditableMixin) testCase, ImportMode.CREATE, EntityType.TEST_CASE);
 		logs.addEntries(logEntries);
+
+		// 3-6 : check the parameters names inside prerequisite
+		checkParamNameInString(target, logs,testCase.getPrerequisite(), TestCaseSheetColumn.TC_PRE_REQUISITE);
+
 		return logs;
 
 	}
@@ -882,6 +903,9 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			logs.addEntries(logEntries);
 
 			testCaseUpdateStrategy.validateMilestones(instr, logs);
+
+			// 3 - 5: check parameters names in prerequisite column
+			checkParamNameInString(target, logs,testCase.getPrerequisite(), TestCaseSheetColumn.TC_PRE_REQUISITE);
 		}
 
 		return logs;
