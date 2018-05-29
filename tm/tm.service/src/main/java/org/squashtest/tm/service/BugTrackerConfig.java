@@ -27,14 +27,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.squashtest.tm.service.internal.bugtracker.BugTrackerConnectorFactory;
-import org.squashtest.tm.service.servers.BugTrackerContextHolder;
-import org.squashtest.tm.service.bugtracker.BugTrackersService;
-import org.squashtest.tm.service.internal.bugtracker.BugTrackersServiceImpl;
-import org.squashtest.tm.service.internal.servers.ThreadLocalBugTrackerContextHolder;
 import org.squashtest.csp.core.bugtracker.spi.AdvancedBugTrackerConnectorProvider;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider;
 import org.squashtest.csp.core.bugtracker.spi.OslcBugTrackerConnectorProvider;
-import org.squashtest.tm.service.servers.StoredCredentialsManager;
 
 /**
  * Spring configuration for bugtracker connectors subsystem
@@ -53,12 +48,7 @@ public class BugTrackerConfig {
 	private Collection<OslcBugTrackerConnectorProvider> oslcProviders = Collections.emptyList();
 
 
-	@Bean(name = "squashtest.core.bugtracker.BugTrackerContextHolder")
-	public BugTrackerContextHolder bugTrackerContextHolder() {
-		return new ThreadLocalBugTrackerContextHolder();
-	}
-
-	@Bean(name = "squashtest.core.bugtracker.BugTrackerConnectorFactory")
+	@Bean(name = "squashtest.tm.service.BugTrackerConnectorFactory")
 	public BugTrackerConnectorFactory bugTrackerConnectorFactory() {
 		BugTrackerConnectorFactory bean = new BugTrackerConnectorFactory();
 		bean.setAdvancedProviders(advancedProviders);
@@ -67,13 +57,4 @@ public class BugTrackerConfig {
 		return bean;
 	}
 
-	@Bean
-	public BugTrackersService bugTrackersService(StoredCredentialsManager credentialsManager) {
-		BugTrackersServiceImpl service = new BugTrackersServiceImpl();
-		service.setBugTrackerConnectorFactory(bugTrackerConnectorFactory());
-		service.setContextHolder(bugTrackerContextHolder());
-		service.setCredentialsManager(credentialsManager);
-
-		return service;
-	}
 }

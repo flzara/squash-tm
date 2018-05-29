@@ -29,7 +29,6 @@ import org.springframework.stereotype.Service;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.service.servers.BugTrackerContextHolder;
 import org.squashtest.tm.service.bugtracker.BugTrackersService;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
@@ -57,6 +56,7 @@ import org.squashtest.tm.service.internal.repository.*;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
+import org.squashtest.tm.service.servers.CredentialsProvider;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -111,7 +111,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	private PermissionEvaluationService permissionEvaluationService;
 
 	@Inject
-	private BugTrackerContextHolder contextHolder;
+	private CredentialsProvider credentialsProvider;
 
 	@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 	@Inject
@@ -207,7 +207,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	public List<RemoteIssue> getIssues(List<String> issueKeyList, BugTracker bugTracker) {
 
 		try {
-			Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(issueKeyList, bugTracker, contextHolder.getContext(), getLocaleContext());
+			Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(issueKeyList, bugTracker, credentialsProvider.getLiveCredentials(), getLocaleContext());
 			return futureIssues.get(timeout, TimeUnit.SECONDS);
 		} catch (TimeoutException timex) {
 			throw new BugTrackerRemoteException(timex);

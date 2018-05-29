@@ -74,7 +74,7 @@ class BugTrackersLocalServiceIT extends DbunitServiceSpecification  {
 	 void addIssue( Long entityId, Class<? extends Bugged> entityClass, Issue issue);
 	 String findProjectName(Bugged entity);
 	 BugTrackerStatus checkBugTrackerStatus();
-	 void setCredentials(String username, String password);
+	 void addToLiveCredentials(String username, String password);
 	 BTProject findRemoteProject(String name);
 	 List<Priority> getRemotePriorities();
 	 */

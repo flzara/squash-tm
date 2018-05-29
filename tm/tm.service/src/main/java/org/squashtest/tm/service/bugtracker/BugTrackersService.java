@@ -31,7 +31,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.service.internal.servers.ThreadLocalBugTrackerContextHolder;
 import org.squashtest.tm.service.internal.servers.WrongAuthenticationPolicyException;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
@@ -39,7 +38,7 @@ import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
 import org.squashtest.tm.domain.servers.Credentials;
-import org.squashtest.tm.service.servers.BugTrackerContext;
+import org.squashtest.tm.service.servers.UserLiveCredentials;
 
 
 /**
@@ -140,7 +139,7 @@ public interface BugTrackersService {
 	 * @param name of the project
 	 * @param bugTracker the concerned BugTracker
 	 * @return the project if found, shipped with all known versions, categories and users.
-	 * @throws various subclasses of BugTrackerManagerException
+	 * @throws org.squashtest.csp.core.bugtracker.core.BugTrackerManagerException
 	 */
 	RemoteProject findProject(String name, BugTracker bugTracker);
 
@@ -151,7 +150,7 @@ public interface BugTrackersService {
 	 * @param id of the project
 	 * @param bugTracker the concerned BugTracker
 	 * @return the project if found, shipped with all known versions, categories and users.
-	 * @throws various subclasses of BugTrackerManagerException
+	 * @throws org.squashtest.csp.core.bugtracker.core.BugTrackerManagerException
 	 */
 	RemoteProject findProjectById(String id, BugTracker bugTracker);
 
@@ -183,7 +182,7 @@ public interface BugTrackersService {
 	 * returns a future so that the caller can abort if this takes too long. Technically it is done by having the
 	 * current thread enqueue a new task in the TaskExecutor, the caller can then set a time limit.</p>
 	 *
-	 * <p>Because the credentials are usually passed using a {@link ThreadLocalBugTrackerContextHolder}, and that the task
+	 * <p>Because the credentials are usually passed using the {@link org.squashtest.tm.service.servers.CredentialsProvider}, and that the task
 	 * is performed in another thread, the code being executed will not find the credentials. That's why you have to
 	 * provide them explicitly here.</p>
 	 *
@@ -195,14 +194,14 @@ public interface BugTrackersService {
 	 */
 
 	@Async
-	Future<List<RemoteIssue>> getIssues(Collection<String> issueKeyList, BugTracker bugTracker, BugTrackerContext context, LocaleContext localeContext);
+	Future<List<RemoteIssue>> getIssues(Collection<String> issueKeyList, BugTracker bugTracker, UserLiveCredentials context, LocaleContext localeContext);
 
 
 	/**
 	 * Must return ready-to-fill issue, ie with empty fields and its project configured with as many metadata as possible related to issue creation.
 	 *
 	 * @param projectName
-	 * @param BugTracker bugTracker
+	 * @param bugTracker
 	 * @return
 	 */
 	RemoteIssue createReportIssueTemplate(String projectName, BugTracker bugTracker);

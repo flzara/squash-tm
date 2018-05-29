@@ -20,8 +20,8 @@
  */
 package org.squashtest.tm.web.internal.filter
 
-import org.squashtest.tm.service.servers.BugTrackerContext
-import org.squashtest.tm.service.servers.BugTrackerContextHolder
+import org.squashtest.tm.service.servers.CredentialsProvider
+import org.squashtest.tm.service.servers.UserLiveCredentials
 
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
@@ -32,9 +32,9 @@ import javax.servlet.http.HttpSession;
 import spock.lang.Specification;
 
 
-class BugTrackerContextPersistenceFilterTest extends Specification {
-	BugTrackerContextPersistenceFilter filter = new BugTrackerContextPersistenceFilter()
-	BugTrackerContextHolder contextHolder = Mock()
+class UserLiveCredentialsPersistenceFilterTest extends Specification {
+	UserLiveCredentialsPersistenceFilter filter = new UserLiveCredentialsPersistenceFilter()
+	CredentialsProvider credentialsProvider = Mock()
 
 	// container lifecycle stuff
 	HttpServletRequest request = Mock()
@@ -43,13 +43,13 @@ class BugTrackerContextPersistenceFilterTest extends Specification {
 	FilterChain chain = Mock()
 
 	def setup() {
-		filter.contextHolder = contextHolder
+		filter.credentialsProvider = credentialsProvider
 	}
 
 
 	def "filter should delegate to filter chain"() {
 		given:
-		BugTrackerContext context = Mock()
+		UserLiveCredentials context = Mock()
 		sessionExistsAndHolds context
 
 		when:
@@ -64,25 +64,25 @@ class BugTrackerContextPersistenceFilterTest extends Specification {
 	def sessionExistsAndHolds(def context) {
 		request.getSession() >> session
 		request.getSession(_) >> session
-		session.getAttribute(BugTrackerContextPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY) >> context
+		session.getAttribute(UserLiveCredentialsPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY) >> context
 	}
 
 	def "should retrieve context from session and set it in context holder"() {
 		given:
-		BugTrackerContext context = Mock()
-		sessionExistsAndHolds context
+		UserLiveCredentials credentials = Mock()
+		sessionExistsAndHolds credentials
 
 		when:
 		filter.doFilter request, response, chain
 
 		then:
-		1 * contextHolder.setContext(context)
+		1 * credentialsProvider.restoreLiveCredentials(credentials)
 	}
 
 	def "should store context to session after filter chain processing"() {
 		given:
-		BugTrackerContext context = Mock()
-		sessionExistsAndHolds context
+		UserLiveCredentials credentials = Mock()
+		sessionExistsAndHolds credentials
 
 		when:
 		filter.doFilter request, response, chain
@@ -90,17 +90,17 @@ class BugTrackerContextPersistenceFilterTest extends Specification {
 
 		then:
 		// context persisted to session
-		1 * session.setAttribute(BugTrackerContextPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY, context)
+		1 * session.setAttribute(UserLiveCredentialsPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY, credentials)
 		// context holder cleared
-		1 * contextHolder.clearContext()
+		1 * credentialsProvider.clearLiveCredentials()
 
 	}
 
 	def "should not store context back to session when session has been invalidated"() {
 		given: "session initially holds context"
-		BugTrackerContext context = Mock()
+		UserLiveCredentials credentials = Mock()
 		request.getSession() >> session
-		session.getAttribute(_) >> context
+		session.getAttribute(_) >> credentials
 
 		and: "session invalidated at some point"
 		request.getSession(false) >> null
@@ -110,7 +110,7 @@ class BugTrackerContextPersistenceFilterTest extends Specification {
 
 		then:
 		// no context persistence
-		0 * session.setAttribute(BugTrackerContextPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY, context)
+		0 * session.setAttribute(UserLiveCredentialsPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY, credentials)
 
 	}
 
@@ -122,7 +122,7 @@ class BugTrackerContextPersistenceFilterTest extends Specification {
 		filter.doFilter request, response, chain
 
 		then:
-		1 * contextHolder.setContext(!null)
+		1 * credentialsProvider.restoreLiveCredentials(!null)
 	}
 
 	def sessionHoldsNoContext() {
@@ -139,6 +139,6 @@ class BugTrackerContextPersistenceFilterTest extends Specification {
 
 
 		then:
-		2 * session.setAttribute(BugTrackerContextPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY, !null)
+		2 * session.setAttribute(UserLiveCredentialsPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY, !null)
 	}
 }

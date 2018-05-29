@@ -27,7 +27,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.service.servers.BugTrackerContextHolder;
 import org.squashtest.tm.service.bugtracker.BugTrackersService;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -41,6 +40,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 import org.squashtest.tm.service.internal.repository.IssueDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
+import org.squashtest.tm.service.servers.CredentialsProvider;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -60,7 +60,7 @@ public class TestCaseIssueFinder implements IssueOwnershipFinder {
 	@Inject
 	private BugTrackersService remoteBugTrackersService;
 	@Inject
-	private BugTrackerContextHolder contextHolder;
+	private CredentialsProvider credentialsProvider;
 	@Inject
 	private IssueDao issueDao;
 	@Inject
@@ -173,7 +173,7 @@ public class TestCaseIssueFinder implements IssueOwnershipFinder {
 		List<String> remoteIssueIds = IssueOwnershipFinderUtils.collectRemoteIssueIds(pairs);
 
 		try {
-			Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(remoteIssueIds, bugTracker, contextHolder.getContext(), LocaleContextHolder.getLocaleContext());
+			Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(remoteIssueIds, bugTracker, credentialsProvider.getLiveCredentials(), LocaleContextHolder.getLocaleContext());
 			List<RemoteIssue> btIssues = futureIssues.get(timeout, TimeUnit.SECONDS);
 
 			Map<String, RemoteIssue> remoteById = IssueOwnershipFinderUtils.createRemoteIssueByRemoteIdMap(btIssues);

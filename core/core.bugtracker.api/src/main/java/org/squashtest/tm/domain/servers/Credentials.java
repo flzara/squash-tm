@@ -22,13 +22,15 @@ package org.squashtest.tm.domain.servers;
 
 import org.squashtest.csp.core.bugtracker.spi.BugtrackerConnectorBase;
 
+import java.io.Serializable;
+
 /**
  * Marker interface for the different ways the application can connect to a third party server. A BugTrackerConnector must publish
  * which credentials it supports with method {@link BugtrackerConnectorBase#getSupportedAuthProtocols()}.
  *
  */
-public interface Credentials {
-	
+public interface Credentials extends Serializable {
+
 	/**
 	 * @return which authentication protocol the implementation of Credentials is for.
 	 */

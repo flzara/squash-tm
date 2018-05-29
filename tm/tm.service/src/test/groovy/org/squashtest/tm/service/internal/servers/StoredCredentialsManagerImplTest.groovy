@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.servers
 
 import org.squashtest.tm.domain.servers.Credentials
 import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials
+import org.squashtest.tm.service.feature.FeatureManager
 import org.squashtest.tm.service.servers.EncryptionKeyChangedException
 import org.squashtest.tm.service.servers.MissingEncryptionKeyException
 import spock.lang.Specification
@@ -29,10 +30,14 @@ import spock.lang.Specification
 class StoredCredentialsManagerImplTest extends Specification{
 
 	StoredCredentialsManagerImpl manager
+	FeatureManager features = Mock()
 
 	def setup(){
+		features.isEnabled(FeatureManager.Feature.CASE_INSENSITIVE_LOGIN) >> false
 		manager = new StoredCredentialsManagerImpl();
+		manager.features = features
 		manager.initialize()
+
 	}
 
 	// *************** test of the object mapper configuration ****************
@@ -75,7 +80,7 @@ class StoredCredentialsManagerImplTest extends Specification{
 			def creds = mockCredentials()
 
 		when :
-			manager.storeCredentials(1L, creds)
+			manager.storeAppLevelCredentials(1L, creds)
 
 		then :
 			thrown MissingEncryptionKeyException
@@ -84,7 +89,7 @@ class StoredCredentialsManagerImplTest extends Specification{
 	def "cannot find credentials because the secret isn't configured"(){
 
 		when :
-			manager.findCredentials(1L)
+			manager.findAppLevelCredentials(1L)
 
 		then :
 			thrown MissingEncryptionKeyException

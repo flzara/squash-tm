@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -37,8 +38,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.service.servers.BugTrackerContext;
-import org.squashtest.tm.service.servers.BugTrackerContextHolder;
+import org.squashtest.tm.service.servers.CredentialsProvider;
+import org.squashtest.tm.service.servers.UserLiveCredentials;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.servers.AuthenticationPolicy;
@@ -47,24 +48,23 @@ import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.project.ProjectFinder;
-import org.squashtest.tm.web.internal.filter.BugTrackerContextPersistenceFilter;
+import org.squashtest.tm.web.internal.filter.UserLiveCredentialsPersistenceFilter;
 
 
 /**
- * Provides with a pseudo-SSO that will pre-authenticate the user on each of the known bugtrackers, by reusing its credentials after successful authentication.
+ * Provides with a pseudo-SSO that will pre-authenticate the user on each of the known bugtrackers.
+ * In some cases we do so by reusing its credentials after successful authentication.
  * But arguably this is a terrible way to do it.
  *
  * @author bsiri
  * @since the dinosaurs
  */
+
 /*
- *
- * Warning : its job partly overlaps the one of BugTrackerContextPersistenceFilter because
- * it creates a BugtrackerContext.
- *
- * If you really want to know the reason is that when the hook is invoked we're still in the security chain,
- * not in the regular filter chain. So the context does not exist yet, therefore there is no place to store the
- * credentials even if the bugtracker auto auth is a success.
+ * As an authentication event listener this class is called while still in the security filter chain (ie before the
+ * application filter chain). It is invoked every time a user authenticates. Its first task is to create
+ * a UserLiveCredentials and store it into session, then proceed an asynchronous job that will test each known
+ * credentials against the bugtrackers.
  *
  * This class was retro-fitted as an app listener in v1.13.0
  */
@@ -83,73 +83,63 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 	private BugTrackerFinderService bugTrackerFinder;
 
 	@Inject
-	private BugTrackerContextHolder contextHolder;
+	private CredentialsProvider credentialsProvider;
 
 	@Inject
 	private TaskExecutor taskExecutor;
 
-	private void onLoginSuccess(String username, String password, HttpSession session) {
-		if (taskExecutor == null) {
-			//skip if we cannot perform the operation asynchronously
-			LOGGER.info("BugTrackerAutoconnectCallback : Threadpool service not ready. Skipping autologging.");
-		} else if (bugTrackersLocalService == null) {
-			//skip if the required service is not up yet
-			LOGGER.info("BugTrackerAutoconnectCallback : no bugtracker available (service not ready yet). Skipping autologging.");
-		} else {
-			//let's do it.
-			LOGGER.info("BugTrackerAutoconnectCallback : Autologging against known bugtrackers...");
-			//creation of AsynchronousBugTrackerAutoconnect in this thread.
-			Credentials credentials = new BasicAuthenticationCredentials(username, password.toCharArray());
-			Runnable autoconnector = new AsynchronousBugTrackerAutoconnect(username, credentials, session);
-			taskExecutor.execute(autoconnector);
-		}
-	}
 
 	@Override
 	public void onApplicationEvent(InteractiveAuthenticationSuccessEvent event) {
-		String login = event.getAuthentication().getName();
-		if (isApplicable(event)){
-			try {
-				String password = (String) event.getAuthentication().getCredentials();
-				HttpSession session = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getSession();
-				onLoginSuccess(login, password, session);
-			} catch (ClassCastException ex) {
-				// Such errors should not break the app flow
-				LOGGER.warn("BugTrackerAutoconnectCallback : The following exception was caught and ignored in BT autoconnector : {}. It does not prevent Squash from working, yet it is probably a bug.", ex.getMessage(), ex);
-			}
-		}
-		else{
-			if (LOGGER.isInfoEnabled()){
-				Object credentials = event.getAuthentication().getCredentials();
-				String credClazz = (credentials != null) ? credentials.getClass().getName() : "(undefined)";
-				LOGGER.info("BugTrackerAutoconnectCallback : user '{}' authenticated with credentials of class '{}' that cannot be used for bugtracker autoconnection", login, credClazz);
-			}
-		}
+
+		Authentication authentication = event.getAuthentication();
+		HttpSession session = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getSession();
+
+		// initialize the live credentials
+		UserLiveCredentials liveCredentials = initializeLiveCredentials(authentication.getName(), session);
+
+		// start the autoconnection tester thread
+		runAutoconnect(authentication, liveCredentials);
+
 	}
 
-	/*
-	 * Basically, only login/password authentication is supported at the moment. For now,
-	 * we assume that if the credential is a String then we can use it as a password / token
-	 * otherwise it's not applicable.
-	 */
-	private boolean isApplicable(InteractiveAuthenticationSuccessEvent event){
-		return (event.getAuthentication().getCredentials() instanceof String);
+	// will create the user credentials and store them into the session, and the credentials provider
+	private UserLiveCredentials initializeLiveCredentials(String username, HttpSession session){
+		LOGGER.debug("BugTrackerAutoconnectCallback : initializing the live credentials");
+
+		UserLiveCredentials credentials = new UserLiveCredentials(username);
+
+		session.setAttribute(UserLiveCredentialsPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY, credentials);
+		credentialsProvider.restoreLiveCredentials(credentials);
+
+		return credentials;
 	}
+
+	private void runAutoconnect(Authentication authentication, UserLiveCredentials userLiveCredentials){
+		LOGGER.debug("BugTrackerAutoconnectCallback : scheduling autologging");
+
+		Runnable autoconnector = new AsynchronousBugTrackerAutoconnect(authentication.getName(), authentication.getCredentials(), userLiveCredentials);
+		taskExecutor.execute(autoconnector);
+	}
+
+
+
+	// ********************* private worker class ******************************
 
 
 	private class AsynchronousBugTrackerAutoconnect implements Runnable {
 
 		private final String user;
-		private final Credentials credentials;
-		private final HttpSession session;
+		private final Object springsecCredentials;
+		private final UserLiveCredentials userLiveCredentials;
 		private final SecurityContext secContext;
 
 
-		public AsynchronousBugTrackerAutoconnect(String user, Credentials credentials, HttpSession session) {
+		public AsynchronousBugTrackerAutoconnect(String user, Object springsecCredentials, UserLiveCredentials userLiveCredentials) {
 			super();
 			this.user = user;
-			this.credentials = credentials;
-			this.session = session;
+			this.springsecCredentials = springsecCredentials;
+			this.userLiveCredentials = userLiveCredentials;
 			//As Spring SecurityContext is ThreadLocal by default, we must get the main thread SecurityContext
 			//and get a local reference pointing to this SecurityContext
 			//Take care that SecurityContext have been correctly created and initialized by Spring Security
@@ -162,11 +152,11 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 		@Override
 		public void run() {
 
-			BugTrackerContext newContext = new BugTrackerContext(user);
+			UserLiveCredentials newLiveCredentials = new UserLiveCredentials(user);
 
 			//Setting the SecurityContext in the new thread with a reference to the original one.
 			SecurityContextHolder.setContext(secContext);
-			contextHolder.setContext(newContext);
+			credentialsProvider.restoreLiveCredentials(newLiveCredentials);
 
 			try{
 				List<BugTracker> bugTrackers = findBugTrackers();
@@ -182,7 +172,7 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 							bugTrackersLocalService.setCredentials(credentials, bugTracker);
 							// if success, store the credential in context
 							LOGGER.debug("BugTrackerAutoconnectCallback : add credentials for bug-tracker : {}", bugTracker.getName());
-							newContext.setCredentials(bugTracker, credentials);
+							newLiveCredentials.setCredentials(bugTracker, credentials);
 						}
 					} catch (BugTrackerRemoteException ex) {
 						LOGGER.info("BugTrackerAutoconnectCallback : Failed to connect user '{}' to the bugtracker {} with the supplied credentials. User will have to connect manually.", user, bugTracker);
@@ -190,11 +180,12 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 					}
 				}
 
-				// store context into session
-				mergeIntoSession(newContext);
+				// merge the live credentials
+				mergeIntoSession(newLiveCredentials);
 			}
 			finally{
-				contextHolder.clearContext();
+				// clear the credentials from that thread.
+				credentialsProvider.clearLiveCredentials();
 			}
 
 		}
@@ -207,23 +198,23 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 
 		//This method deals with the (rare) case where the operation took so long that another request had created the bugtracker context in the mean time.
 		//In this case, the data already present has precedence.
-		private void mergeIntoSession(BugTrackerContext newContext) {
+		private void mergeIntoSession(UserLiveCredentials newCredentials) {
 
-			BugTrackerContext existingContext = (BugTrackerContext) session.getAttribute(BugTrackerContextPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY);
+			UserLiveCredentials existingCredentials = (UserLiveCredentials) session.getAttribute(UserLiveCredentialsPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY);
 
-			if (existingContext == null) {
+			if (existingCredentials == null) {
 				//if no existing context was found the newContext is entirely stored
-				session.setAttribute(BugTrackerContextPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY, newContext);
-				LOGGER.trace("BugTrackerAutoconnectCallback : storing into session #{} new context #{}", session.getId(),newContext.toString());
+				session.setAttribute(UserLiveCredentialsPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY, newCredentials);
+				LOGGER.trace("BugTrackerAutoconnectCallback : storing into session #{} new context #{}", session.getId(),newCredentials.toString());
 			} else {
-				existingContext.absorb(newContext);
-				LOGGER.trace("BugTrackerAutoconnectCallback : done merging into session #{} and context #{}", session.getId(),existingContext.toString());
+				existingCredentials.absorb(newCredentials);
+				LOGGER.trace("BugTrackerAutoconnectCallback : done merging into session #{} and context #{}", session.getId(),existingCredentials.toString());
 			}
 
 			//I don't understand why we put new content in session ? new content has been merged into existing content... why override it ?
 			// A: Fair point.
-			session.setAttribute(BugTrackerContextPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY, newContext);
-			LOGGER.debug("BugTrackerAutoconnectCallback : BugTrackerContext stored to session");
+			session.setAttribute(UserLiveCredentialsPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY, newCredentials);
+			LOGGER.debug("BugTrackerAutoconnectCallback : UserLiveCredentials stored to session");
 		}
 
 

@@ -42,14 +42,14 @@ import org.springframework.context.annotation.Role;
 import org.springframework.core.annotation.Order;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
-import org.squashtest.tm.service.servers.BugTrackerContextHolder;
 import org.squashtest.tm.api.config.SquashPathProperties;
 import org.squashtest.tm.service.configuration.ConfigurationService;
+import org.squashtest.tm.service.servers.CredentialsProvider;
 import org.squashtest.tm.web.internal.context.ReloadableSquashTmMessageSource;
 import org.squashtest.tm.web.internal.fileupload.MultipartResolverDispatcher;
 import org.squashtest.tm.web.internal.fileupload.SquashMultipartResolver;
 import org.squashtest.tm.web.internal.filter.AjaxEmptyResponseFilter;
-import org.squashtest.tm.web.internal.filter.BugTrackerContextPersistenceFilter;
+import org.squashtest.tm.web.internal.filter.UserLiveCredentialsPersistenceFilter;
 import org.squashtest.tm.web.internal.filter.MultipartFilterExceptionAware;
 import org.squashtest.tm.web.internal.filter.UserConcurrentRequestLockFilter;
 import org.squashtest.tm.web.internal.listener.HttpSessionLifecycleLogger;
@@ -85,7 +85,7 @@ public class SquashServletConfig {
 	@Inject
 	private SquashPathProperties squashPathProperties;
 	@Inject
-	private BugTrackerContextHolder bugTrackerContextHolder;
+	private CredentialsProvider credentialsProvider;
 
 
 	/**
@@ -248,8 +248,8 @@ public class SquashServletConfig {
 	@Order(1)
 	public FilterRegistrationBean bugTrackerContextPersister() {
 
-		BugTrackerContextPersistenceFilter filter = new BugTrackerContextPersistenceFilter();
-		filter.setContextHolder(bugTrackerContextHolder);
+		UserLiveCredentialsPersistenceFilter filter = new UserLiveCredentialsPersistenceFilter();
+		filter.setCredentialsProvider(credentialsProvider);
 		filter.setExcludePatterns("/isSquashAlive");
 
 		FilterRegistrationBean bean = new FilterRegistrationBean(filter);

@@ -23,7 +23,6 @@ package org.squashtest.tm.service.internal.bugtracker
 import org.squashtest.csp.core.bugtracker.domain.BTIssue
 import org.squashtest.csp.core.bugtracker.domain.BTProject
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
-import org.squashtest.tm.service.servers.BugTrackerContextHolder
 import org.squashtest.tm.service.bugtracker.BugTrackersService
 import org.squashtest.tm.domain.bugtracker.Issue
 import org.squashtest.tm.domain.bugtracker.IssueList
@@ -33,6 +32,7 @@ import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.servers.AuthenticationStatus
 import org.squashtest.tm.service.advancedsearch.IndexationService
 import org.squashtest.tm.service.internal.repository.IssueDao
+import org.squashtest.tm.service.servers.CredentialsProvider
 import spock.lang.Specification
 
 /**
@@ -53,7 +53,7 @@ class BugTrackersLocalServiceImplTest extends Specification {
 		service.issueDao = issueDao
 		service.remoteBugTrackersService = bugTrackersService
 		service.indexationService = indexationService;
-		service.contextHolder = Mock(BugTrackerContextHolder)
+		service.credentialsProvider = Mock(CredentialsProvider)
 	}
 
 

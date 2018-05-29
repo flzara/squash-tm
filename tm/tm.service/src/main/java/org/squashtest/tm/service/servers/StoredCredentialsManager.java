@@ -27,7 +27,7 @@ import org.squashtest.tm.domain.servers.Credentials;
  * That manager deals with the stored credentials for third party servers, most of the time for the usage of Squash itself.
  * The credentials are encrypted with AES 128, so that neither the JCE extension nor setting crypto.policy is required.
  * </p>
- * 
+ *
  * <p>
  * 	Unless stated otherwise, users of this service must have administrator privileges.
  * </p>
@@ -37,26 +37,73 @@ public interface StoredCredentialsManager {
 
 	/**
 	 * Tells whether the secret key used for encryption has been configured. Returns false if not, in which case the administrator
-	 * should know about that and the problem fixed before any credential is stored. The user context for that operation needs not 
+	 * should know about that and the problem fixed before any credential is stored. The user context for that operation needs not
 	 * to be that of an administrator.
 	 *
 	 * @return true if a secret key was provided
 	 */
 	boolean isSecretConfigured();
 
+	// ****************** User credentials management *************************
+
 	/**
-	 * Stores the given credentials for the given server. If the server already had a stored credential,
+	 * Stores the given credentials for the given user. If the server already had a stored credential,
+	 * the previous credentials will be replaced by the new ones (so this also serves as an update operation).
+	 * @param serverId
+	 * @param username
+	 * @param credentials
+	 * @throws MissingEncryptionKeyException if no secret key was configured
+	 */
+	void storeUserCredentials(long serverId, String username, Credentials credentials);
+
+
+	/**
+	 * Returns the stored credentials associated to a server for the given user.	 *
+	 *
+	 * @param serverId
+	 * @param username
+	 * @return the credentials or null if none are defined
+	 * @throws EncryptionKeyChangedException if credentials exist but cannot be loaded because they were encrypted with
+	 * 			a different key
+	 * @throws MissingEncryptionKeyException if if no secret key was configured
+	 */
+	Credentials findUserCredentials(long serverId, String username);
+
+
+	/**
+	 * Like {@link #findUserCredentials(long, String)}, but left unsecured : no check will be performed on the authorizations of the
+	 * user context. Useful when no user context is available in the thread (eg Squash-TM initiated the request on its own).
+	 *
+	 * @param serverId
+	 * @param username
+	 * @return
+	 */
+	Credentials unsecuredFindUserCredentials(long serverId, String username);
+
+
+	/**
+	 * Will remove the stored credentials of a server and given user if there were one.
+	 *
+	 * @param serverId
+	 * @param username
+	 */
+	void deleteUserCredentials(long serverId, String username);
+
+
+	// ****************** Application-level credentials management *******************
+
+	/**
+	 * Stores the given credentials for the given server as application-level credentials (ie Squash-TM own credentials). If the server already had a stored credential,
 	 * the previous credentials will be replaced by the new ones (so this also serves as an update operation).
 	 * @param serverId
 	 * @param credentials
 	 * @throws MissingEncryptionKeyException if no secret key was configured
 	 */
-	void storeCredentials(long serverId, Credentials credentials);
+	void storeAppLevelCredentials(long serverId, Credentials credentials);
 
 
 	/**
-	 * Returns the stored credentials associated to a server.
-	 *
+	 * Returns Squash-TM own stored credentials associated to a server
 	 *
 	 * @param serverId
 	 * @return the credentials or null if none are defined
@@ -64,25 +111,25 @@ public interface StoredCredentialsManager {
 	 * 			a different key
 	 * @throws MissingEncryptionKeyException if if no secret key was configured
 	 */
-	Credentials findCredentials(long serverId);
-	
-	
+	Credentials findAppLevelCredentials(long serverId);
+
+
 	/**
-	 * Like {@link #findCredentials(long)} but left unsecured : no check will be performed on the authorizations of the 
+	 * Like {@link #findAppLevelCredentials(long)} but left unsecured : no check will be performed on the authorizations of the
 	 * user context. For Squash internal use only.
-	 * 
+	 *
 	 * @param serverId
 	 * @return
 	 */
-	Credentials unsecuredFindCredentials(long serverId);
+	Credentials unsecuredFindAppLevelCredentials(long serverId);
 
 
 	/**
-	 * Will remove the stored credentials of a server if there were one.
+	 * Will remove Squash-TM own stored credentials of a server if there were one.
 	 *
 	 * @param serverId
 	 */
-	void deleteCredentials(long serverId);
+	void deleteAppLevelCredentials(long serverId);
 
 
 

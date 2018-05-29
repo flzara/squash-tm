@@ -34,15 +34,19 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.domain.servers.StoredCredentials;
-import org.squashtest.tm.service.security.Authorizations;
+import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.service.feature.FeatureManager;
+import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.servers.EncryptionKeyChangedException;
 import org.squashtest.tm.service.servers.MissingEncryptionKeyException;
 import org.squashtest.tm.service.servers.StoredCredentialsManager;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.Arrays;
@@ -54,6 +58,11 @@ import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 @Service
 public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 
+	private static final String OR_CURRENT_USER_OWNS_CREDENTIALS = " or principal.username = #username";
+
+	private static final String FIND_APP_LEVEL_CREDENTIALS = "StoredCredentials.findAppLevelCredentialsByServerId";
+	private static final String FIND_USER_CREDENTIALS = "StoredCredentials.findUserCredentialsByServerId";
+
 
 	private static final String JACKSON_TYPE_ID_ATTR = "@class";
 
@@ -61,6 +70,12 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 
 	@PersistenceContext
 	private EntityManager em;
+
+	@Inject
+	private FeatureManager features;
+
+	@Inject
+	private UserDao userDao;
 
 	/*
 	 * XXX to make this safer we should keep the secret in memory only when required, which means to read and wipe the key
@@ -72,6 +87,7 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 
 
 	private ObjectMapper objectMapper;
+	private boolean caseInsensitive = false;
 
 
 	@Override
@@ -91,9 +107,66 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 		return false;
 	}
 
+	// ****************** API methods *************************
+
 	@Override
-    @PreAuthorize(HAS_ROLE_ADMIN)
-	public void storeCredentials(long serverId, Credentials credentials) {
+	@PreAuthorize(HAS_ROLE_ADMIN + OR_CURRENT_USER_OWNS_CREDENTIALS)
+	public void storeUserCredentials(long serverId, String username, Credentials credentials) {
+		storeCredentials(serverId, username, credentials);
+	}
+
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN + OR_CURRENT_USER_OWNS_CREDENTIALS)
+	public Credentials findUserCredentials(long serverId, String username) {
+		return unsecuredFindUserCredentials(serverId, username);
+	}
+
+	@Override
+	public Credentials unsecuredFindUserCredentials(long serverId, String username) {
+		return unsecuredFindCredentials(serverId, username);
+	}
+
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN + OR_CURRENT_USER_OWNS_CREDENTIALS)
+	public void deleteUserCredentials(long serverId, String username) {
+		deleteCredentials(serverId, username);
+	}
+
+
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public void storeAppLevelCredentials(long serverId, Credentials credentials) {
+		storeCredentials(serverId, null, credentials);
+	}
+
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public Credentials findAppLevelCredentials(long serverId) {
+		return unsecuredFindAppLevelCredentials(serverId);
+	}
+
+	@Override
+	public Credentials unsecuredFindAppLevelCredentials(long serverId) {
+		return unsecuredFindCredentials(serverId, null);
+	}
+
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public void deleteAppLevelCredentials(long serverId) {
+		deleteCredentials(serverId, null);
+	}
+
+
+	// ****************** implementation **********************
+
+	/*********************************************************
+		General note :
+	 for the following methods the argument 'username' can be null,
+	 in which case it designate application-level credentials.
+	 *********************************************************/
+
+
+	private void storeCredentials(long serverId, String username, Credentials credentials) {
 
 		if (! isSecretConfigured()){
 			throw new MissingEncryptionKeyException();
@@ -118,8 +191,7 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 
 		// try : the server had credentials so we updated them
 		try {
-			sc = (StoredCredentials) em.createNamedQuery("StoredCredentials.findByServerId")
-										 .setParameter("serverId", serverId).getSingleResult();
+			sc = loadStoredCredentials(serverId, username);
 
 			sc.setEncryptedCredentials(outcome.getEncryptedText());
 		}
@@ -127,9 +199,12 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 		catch(NoResultException ex){
 
 			BugTracker bt = em.find(BugTracker.class, serverId);
+			User user = loadUserOrNull(username);
+
 			sc = new StoredCredentials();
 
 			sc.setAuthenticatedServer(bt);
+			sc.setAuthenticatedUser(user);
 			sc.setEncryptedCredentials(outcome.getEncryptedText());
 			sc.setEncryptionVersion(outcome.getVersion());
 
@@ -143,15 +218,7 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 
 
 
-
-	@Override
-	@PreAuthorize(HAS_ROLE_ADMIN)
-	public Credentials findCredentials(long serverId) {
-		return unsecuredFindCredentials(serverId);
-	}
-
-	@Override
-	public Credentials unsecuredFindCredentials(long serverId) {
+	private Credentials unsecuredFindCredentials(long serverId, String username) {
 
 		if (! isSecretConfigured()){
 			throw new MissingEncryptionKeyException();
@@ -163,8 +230,7 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 
 		try{
 			// retrieve
-			StoredCredentials sc = (StoredCredentials) em.createNamedQuery("StoredCredentials.findByServerId")
-										 .setParameter("serverId", serverId).getSingleResult();
+			StoredCredentials sc = loadStoredCredentials(serverId, username);
 
 			// decrypt
 			// TODO : here we are supposed to test the encryption version but that'd be a concern later if we change the implementation one day
@@ -194,12 +260,10 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 
 	}
 
-	@Override
-	@PreAuthorize(HAS_ROLE_ADMIN)
-	public void deleteCredentials(long serverId) {
+
+	public void deleteCredentials(long serverId, String username) {
 		try {
-			StoredCredentials sc = (StoredCredentials) em.createNamedQuery("StoredCredentials.findByServerId")
-														   .setParameter("serverId", serverId).getSingleResult();
+			StoredCredentials sc = loadStoredCredentials(serverId, username);
 			em.remove(sc);
 		}
 		catch(NoResultException ex){
@@ -207,7 +271,39 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 		}
 	}
 
-	// ***************** private boilerplate *********************
+	// ***************** accessors *********************
+
+	/*
+	 * if username is null, returns the application-level credentials.
+	 */
+	private StoredCredentials loadStoredCredentials(long serverId, String username){
+
+		boolean isForHumanUser = (username != null);
+
+		String queryStr = (isForHumanUser) ? FIND_USER_CREDENTIALS : FIND_APP_LEVEL_CREDENTIALS;
+
+		Query query = em.createNamedQuery(queryStr).setParameter("serverId", serverId);
+
+		if (isForHumanUser){
+			query.setParameter("username", username);
+		}
+
+		StoredCredentials sc = (StoredCredentials) query.getSingleResult();
+
+		return sc;
+	}
+
+	/*
+		If username is null, returns null (ie, the user is Squash-TM)
+	 */
+	private User loadUserOrNull(String username){
+		User user = null;
+		if (username == null){
+			user = (caseInsensitive) ? userDao.findUserByCiLogin(username) : userDao.findUserByLogin(username);
+		}
+		return user;
+	}
+
 
 	private RuntimeException investigateDeserializationError(String failedDeser, Throwable cause){
 
@@ -233,10 +329,10 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 	@PostConstruct
 	void initialize(){
 		ObjectMapper om = new ObjectMapper();
-
 		om.addMixIn(Credentials.class, CredentialsMixin.class);
-
 		objectMapper = om;
+
+		caseInsensitive = features.isEnabled(FeatureManager.Feature.CASE_INSENSITIVE_LOGIN);
 	}
 
 

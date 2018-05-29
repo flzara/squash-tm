@@ -20,20 +20,15 @@
  */
 package org.squashtest.tm.service.internal.bugtracker
 
-import org.squashtest.tm.service.internal.bugtracker.BugTrackerConnectorFactory
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException
 import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
-import BugTrackerContext
-import BugTrackerContextHolder
-import org.squashtest.tm.service.internal.bugtracker.BugTrackersServiceImpl
-import org.squashtest.csp.core.bugtracker.service.InternalBugtrackerConnector
 import org.squashtest.tm.service.internal.bugtracker.adapter.InternalBugtrackerConnector
 import org.squashtest.tm.service.internal.servers.WrongAuthenticationPolicyException
 import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials
 import org.squashtest.tm.domain.servers.Credentials
-import org.squashtest.tm.service.servers.BugTrackerContext
-import org.squashtest.tm.service.servers.BugTrackerContextHolder
+import org.squashtest.tm.service.servers.CredentialsProvider
+import org.squashtest.tm.service.servers.UserLiveCredentials
 
 import static org.squashtest.tm.domain.servers.AuthenticationPolicy.*
 import org.squashtest.tm.service.servers.StoredCredentialsManager
@@ -43,21 +38,21 @@ import spock.lang.Specification
 class BugTrackersServiceImplTest extends Specification {
 	BugTrackersServiceImpl service = new BugTrackersServiceImpl()
 
-	BugTrackerContextHolder contextHolder = Mock()
+	CredentialsProvider credentialsProvider = Mock()
 	BugTrackerConnectorFactory connectorFactory = Mock()
 	StoredCredentialsManager credentialsManager = Mock();
 
-	BugTrackerContext btcontext = Mock()
+	UserLiveCredentials liveCredentials = Mock()
 	BugTracker bt = Mock()
 	InternalBugtrackerConnector btconnector = Mock()
 
 	def setup() {
 
-		contextHolder.getContext() >> btcontext
+		credentialsProvider.getLiveCredentials() >> liveCredentials
 		connectorFactory.createConnector(bt) >> btconnector
 		bt.getId() >>10L
 
-		service.contextHolder = contextHolder
+		service.credentialsProvider = credentialsProvider
 		service.bugTrackerConnectorFactory = connectorFactory
 		service.credentialsManager = credentialsManager
 	}
@@ -65,7 +60,7 @@ class BugTrackersServiceImplTest extends Specification {
 
 	def "should tell credentials are needed"() {
 		given:
-		btcontext.hasCredentials(bt) >> false
+		liveCredentials.hasCredentials(bt) >> false
 		bt.getAuthenticationPolicy() >> USER
 
 		when:
@@ -75,9 +70,9 @@ class BugTrackersServiceImplTest extends Specification {
 		needsCredentials
 	}
 
-	def "should tell credentials are not needed because credentials are set"() {
+	def "should tell user input are not needed because credentials are set"() {
 		given:
-		btcontext.hasCredentials(bt) >>true
+		credentialsProvider.hasCredentials(bt) >>true
 
 		when:
 		def needsCredentials = service.isCredentialsNeeded(bt)
@@ -89,7 +84,7 @@ class BugTrackersServiceImplTest extends Specification {
 	def "should tell credentials are not needed because the bugtracker uses app-level auth"() {
 		given:
 		bt.getAuthenticationPolicy() >> APP_LEVEL
-		btcontext.hasCredentials() >> false
+		credentialsProvider.hasCredentials() >> false
 
 		when:
 		def needsCredentials = service.isCredentialsNeeded(bt)
@@ -109,7 +104,7 @@ class BugTrackersServiceImplTest extends Specification {
 
 		then:
 		notThrown BugTrackerRemoteException
-		1 * btcontext.setCredentials(bt, creds)
+		1 * credentialsProvider.addToLiveCredentials(bt, creds)
 	}
 
 	def "should not store credentials in context when they are invalid"() {
@@ -123,7 +118,7 @@ class BugTrackersServiceImplTest extends Specification {
 
 		then:
 		thrown BugTrackerRemoteException
-		0 * btcontext.setCredentials(bt, creds)
+		0 * liveCredentials.setCredentials(bt, creds)
 	}
 
 
@@ -138,7 +133,7 @@ class BugTrackersServiceImplTest extends Specification {
 
 		then:
 		thrown WrongAuthenticationPolicyException
-		0 * btcontext.setCredentials(bt, creds)
+		0 * credentialsProvider.addToLiveCredentials(bt, creds)
 	}
 
 	def "should authenticate a bugtracker with user-defined credentials"(){
@@ -148,7 +143,7 @@ class BugTrackersServiceImplTest extends Specification {
 			btconnector.supports(_) >> true
 		and:
 			def creds = mockCredentials()
-			btcontext.getCredentials(bt) >> creds
+			credentialsProvider.getCredentials(bt) >> {Optional.of(creds)}
 
 		when :
 			service.connect(bt)
@@ -168,7 +163,7 @@ class BugTrackersServiceImplTest extends Specification {
 
 		and:
 		btconnector.supports(_) >> true
-		credentialsManager.unsecuredFindCredentials(_) >> creds
+		credentialsManager.unsecuredFindAppLevelCredentials(_) >> creds
 
 		when :
 		service.connect(bt)
@@ -183,7 +178,7 @@ class BugTrackersServiceImplTest extends Specification {
 		given :
 		def creds = mockCredentials()
 		bt.getAuthenticationPolicy() >> USER
-		btcontext.getCredentials(bt) >> creds
+		credentialsProvider.getCredentials(bt) >> { Optional.of(creds) }
 
 		and :
 		btconnector.supports(_) >> false

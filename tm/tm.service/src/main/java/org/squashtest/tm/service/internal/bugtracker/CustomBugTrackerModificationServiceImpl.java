@@ -77,19 +77,19 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 
 	@Override
 	public void storeCredentials(long serverId, Credentials credentials) {
-		credentialsManager.storeCredentials(serverId, credentials);
+		credentialsManager.storeAppLevelCredentials(serverId, credentials);
 	}
 
 
 	@Override
 	public Credentials findCredentials(long serverId) {
-		return credentialsManager.findCredentials(serverId);
+		return credentialsManager.findAppLevelCredentials(serverId);
 	}
 
 
 	@Override
 	public void deleteCredentials(long serverId) {
-		credentialsManager.deleteCredentials(serverId);
+		credentialsManager.deleteAppLevelCredentials(serverId);
 	}
 
 
