@@ -185,10 +185,10 @@ define(
 			$td.append(strmenu);
 
 			// if the test case is deleted : just disable the whole thing
-			// Plot twist  : Launch button has to be greyed
+			// Issue 7366 : we now add a message to tell user there are deleted test cases in test suite test plan
+			// so #test-suite-execution-button isn't greyed anymore
 			if (isTcDel) {
 				$td.find('.execute-arrow').addClass('disabled-transparent');
-				$("#test-suite-execution-button").addClass('disabled-transparent');
 			}
 
 			// if the test case is manual : configure a button menu,

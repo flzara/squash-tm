@@ -27,7 +27,6 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +45,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.exception.NoBugTrackerBindingException;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.exception.execution.TestPlanTerminatedOrNoStepsException;
+import org.squashtest.tm.exception.execution.TestSuiteTestPlanHasDeletedTestCaseException;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService;
 import org.squashtest.tm.service.campaign.TestSuiteFinder;
@@ -128,11 +128,27 @@ public class TestSuiteExecutionRunnerController {
 	@RequestMapping(value = RequestMappingPattern.INIT_EXECUTION_RUNNER, method = RequestMethod.POST, params = {"mode=start-resume", "dry-run"})
 	public
 	void testStartResumeExecutionInClassicRunner(@PathVariable long testSuiteId) {
-		try {
-			testSuiteExecutionRunner.startResume(testSuiteId);
-		} catch (TestPlanItemNotExecutableException e) {
-			throw new TestPlanTerminatedOrNoStepsException(e);
+		boolean hasDeletedTestCaseInTestPlan = hasDeletedTestCaseInTestPlan(testSuiteId);
+		if (! hasDeletedTestCaseInTestPlan) {
+			try {
+				testSuiteExecutionRunner.startResume(testSuiteId);
+			} catch (TestPlanItemNotExecutableException e) {
+				throw new TestPlanTerminatedOrNoStepsException(e);
+			}
+		} else {
+			throw new TestSuiteTestPlanHasDeletedTestCaseException();
 		}
+	}
+
+	/**
+	 * Issue 7366
+	 * Method which tests if test suite has at least one deleted test case in its test plan
+	 *
+	 * @param testSuiteId testSuiteId
+	 * @return true if test suite has at least one deleted test case in its test plan
+	 */
+	private boolean hasDeletedTestCaseInTestPlan(long testSuiteId) {
+		return suiteFinder.findById(testSuiteId).getTestPlan().stream().anyMatch(c -> c.getReferencedTestCase() == null);
 	}
 
 	@RequestMapping(value = RequestMappingPattern.INIT_EXECUTION_RUNNER, params = { "optimized=false", "!dry-run" })
