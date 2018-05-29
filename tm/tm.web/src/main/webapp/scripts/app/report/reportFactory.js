@@ -88,6 +88,9 @@ define(["backbone", "squash.translator"],
 						dataType: "html",
 						data: {json: parameters}
 					}).done(function (html) {
+						// Issue 7417
+						// If we only take the body part of html, the css for will not be applicated in other workspace
+						html = html.substring(html.indexOf("<body>"), html.indexOf("</body>"));
 						$("#document-holder").html(html);
 					});
 				} else {
