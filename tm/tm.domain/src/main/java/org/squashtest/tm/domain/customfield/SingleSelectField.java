@@ -74,7 +74,7 @@ public class SingleSelectField extends CustomField {
 	// TODO fix [Task 1682] and remove this method
 	// Also, aded a way to check if code is not only spaces
 	private void checkCodeMatchesPattern(String code) {
-		if (!code.matches(CODE_REGEXP)  && code.trim().isEmpty()) {
+		if (!code.matches(CODE_REGEXP)) {
 			throw new CodeDoesNotMatchesPatternException(code, CODE_REGEXP, "optionCode");
 		}
 		if (code.length() > MAX_CODE_SIZE || code.length() < MIN_CODE_SIZE) {
