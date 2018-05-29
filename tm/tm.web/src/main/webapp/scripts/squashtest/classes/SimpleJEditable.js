@@ -38,24 +38,22 @@ define([ "jquery", "squash.configmanager", "jquery.squash.jeditable" ], function
 		} else {
 			component = settings.component;
 		}
-		var txt = component.text();
-		component.text($.trim(txt));
 
 		var defaultSettings = confman.getStdJeditable();
-		
+
 		if(!settings.jeditableSettings){
 			settings.jeditableSettings = {};
 		}
-	
-		if(settings.submitCallback){			
+
+		if(settings.submitCallback){
 			settings.jeditableSettings.callback = function(value, settings2){
 				value = $("<span/>").html(value).text();
 				self.settings.submitCallback(value, settings2);
 			};
 		}
-		
+
 		this.refresh = function(){
-			
+
 		};
 		var effectiveSettings = $.extend(true, {}, settings.jeditableSettings, defaultSettings);
 		this.instance = $(component).editable(targetUrl, effectiveSettings).addClass("editable");

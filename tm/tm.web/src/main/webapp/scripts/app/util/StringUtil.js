@@ -32,7 +32,7 @@ define(["jquery"], function ($) {
 		var members = atom.split('=');
 		return {
 			name: members[0],
-			value: (members.length > 1) ? $.trim(members[1]) : 'true'
+			value: (members.length > 1) ? members[1] : 'true'
 		};
 	}
 
