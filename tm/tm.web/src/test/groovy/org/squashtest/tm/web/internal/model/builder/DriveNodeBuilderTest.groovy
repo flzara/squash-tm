@@ -18,8 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.model.builder;
+package org.squashtest.tm.web.internal.model.builder
 
+import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
 
 import javax.inject.Provider
@@ -147,6 +148,7 @@ class DriveNodeBuilderTest extends NodeBuildingSpecification {
 		tc.getSteps()>>[]
 		tc.getRequirementVersionCoverages() >> []
 		tc.getId()>>23L
+		tc.getKind() >> TestCaseKind.STANDARD
 
 
 		Milestone m = Mock()
