@@ -73,14 +73,25 @@ define(["jquery", "backbone", "underscore","squash.translator", "ace/ace", "work
 					//now init the main editor, ie the one where user will type his script
 					var editor = split.getEditor(0);
 					that.editor = editor;
+					//[Issue 7449]
+					//temporary setting the mode to gherkin and text to empty so session and undo manager are properly initialized
+					//text and mode will be set in next steps of editor initialization
+					//see :
+					// https://github.com/ajaxorg/ace/issues/2045
+					// https://github.com/ajaxorg/ace/blob/v1.1.3/lib/ace/ace.js#L111
+					var session = ace.createEditSession("","gherkin");
+					editor.setSession(session);
 
 					//disabling local auto completion as specified
 					//must do it before using enableBasicAutoCompletion: true
+					//because we need that auto completion is enabled to have the snippet ONLY
 					langTools.setCompleters([langTools.snippetCompleter]);
 					that.originalScript = serverModel.scriptExender.script;
+					//now that editor and session are properly initialized we can init the value
 					editor.session.setValue(that.originalScript);
 					editor.getSession().setUseWrapMode(true);
 					editor.getSession().setWrapLimitRange(160, 160);
+					//now that editor and session are properly initialized we can init the mode (ie the script language that the editor will know)
 					that._initialize_editor_mode(editor);
 					editor.setTheme(theme);
 					editor.setOptions({
