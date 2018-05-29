@@ -142,22 +142,19 @@
                   </button>
                 </c:otherwise>
               </c:choose>
-            </c:if>
-
-          </sec:authorize>
-
-          <sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
-
-            <c:if test="${ !adminproject.template }">
-              <button   id="coerce" class="sq-btn" data-template-id="${ adminproject.id }" >
-                <f:message key='label.coerceProjectIntoTemplate' />
-              </button>
+               <button   id="coerce" class="sq-btn" data-template-id="${ adminproject.id }" >
+                 <f:message key='label.coerceProjectIntoTemplate' />
+               </button>
               <div id="coerce-warning-dialog" title="<f:message key="title.coerceProjectIntoTemplate" />" class="alert not-displayed">
                 <f:message key="message.coerceProjectIntoTemplate" />
                 <input type="button" value="<f:message key='label.Confirm' />" />
                 <input type="button" value="<f:message key='label.Cancel' />" />
               </div>
             </c:if>
+
+          </sec:authorize>
+
+          <sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
 
 					  <f:message var="rename" key="project.button.rename.label" />
 					  <button   value="${ rename }" id="rename-project-button" title="<f:message key='project.button.renameproject.label' />" class="sq-btn" >
