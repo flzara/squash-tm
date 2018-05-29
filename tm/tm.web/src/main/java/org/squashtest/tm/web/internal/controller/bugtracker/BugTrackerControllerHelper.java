@@ -112,7 +112,7 @@ public final class BugTrackerControllerHelper {
 				break;
 			}
 		}
-		return HtmlUtils.htmlEscape(builder.toString());
+		return builder.toString();
 	}
 
 	private static void appendStepTitle(Locale locale, MessageSource messageSource, int totalStepNumber,
