@@ -18,94 +18,116 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'tree',
-        'squash.attributeparser',
-        'squash.dateutils',
-        'jquery.squash.formdialog'],
-		function($, zetree, attrparser, dateutils){
+define(['jquery', 'tree', 'underscore',
+		'squash.attributeparser',
+		'squash.dateutils',
+		'jquery.squash.formdialog'],
+	function ($, zetree, _, attrparser, dateutils) {
 
-	$.widget("squash.exportGherkinFeatureDialog", $.squash.formDialog, {
+		$.widget("squash.exportGherkinFeatureDialog", $.squash.formDialog, {
 
-		_create : function(){
-			this._super();
+			_create: function () {
+				this._super();
 
-			var self = this;
+				var self = this;
 
-			this.onOwnBtn('cancel', function(){
-				self.close();
-			});
+				this.onOwnBtn('cancel', function () {
+					self.close();
+				});
 
-			this.onOwnBtn('confirm', function(){
-				self.confirm();
-			});
-		},
+				this.onOwnBtn('confirm', function () {
+					self.confirm();
+				});
+			},
 
-		open : function(){
-			this._super();
+			open: function () {
+				this._super();
+				var selection = this.options.tree.jstree('get_selected');
 
-			var selection = this.options.tree.jstree('get_selected');
-			if (selection.length>0){
-				var name = this._createName();
-				$('#export-gherkin-test-case-filename').val(name);
-				this.setState('main');
+				var countObject = {
+					container: 0,
+					tcGherkin: 0
+				};
+
+				//[Issue 7436] We want error message if we have not at least a container or a gherkin test case in our selection
+				countObject = _.chain(selection)
+					.map(function (htmlElmt) {
+						return $(htmlElmt).treeNode();
+					})
+					.reduce(function (countObject, node) {
+						if (node.is(':library') || node.attr('rel') === 'folder') {
+							countObject.container++;
+						} else {
+							if (node.attr('kind') === 'gherkin') {
+								countObject.tcGherkin++;
+							}
+						}
+						return countObject;
+					}, countObject)
+					.value();
+
+				if (selection.length > 0 && (countObject.tcGherkin > 0) || countObject.container > 0) {
+					var name = this._createName();
+					$('#export-gherkin-test-case-filename').val(name);
+					this.setState('main');
+				}
+				else {
+					this.setState('nonodeserror');
+				}
+			},
+
+
+			_createName: function () {
+				return this.options.nameprefix + "_" + dateutils.format(new Date(), this.options.dateformat);
+			},
+
+			_createUrl: function (nodes, type, filename) {
+
+				var url = squashtm.app.contextRoot + '/test-case-browser/content/features';
+
+				var libIds = nodes.filter(':library').map(function () {
+					return $(this).attr('resid');
+				}).get().join(',');
+				var nodeIds = nodes.not(':library').map(function () {
+					return $(this).attr('resid');
+				}).get().join(',');
+
+				var params = {
+					'filename': filename,
+					'libraries': libIds,
+					'nodes': nodeIds
+				};
+
+				return url + "?" + $.param(params);
+			},
+
+
+			confirm: function () {
+				var nodes = this.options.tree.jstree('get_selected');
+				if ((nodes.length > 0)) {
+					var filename = $("#export-gherkin-test-case-filename").val();
+					var url = this._createUrl(nodes, filename, filename);
+					document.location.href = url;
+					this.close();
+				}
+				else {
+					this.setState('nonodeserror');
+				}
 			}
-			else{
-				this.setState('nonodeserror');
-			}
-		},
-
-
-		_createName : function(){
-			return this.options.nameprefix+"_"+ dateutils.format(new Date(), this.options.dateformat);
-		},
-
-		_createUrl : function(nodes, type, filename){
-
-			var url = squashtm.app.contextRoot+'/test-case-browser/content/features';
-
-			var libIds = nodes.filter(':library').map(function(){
-				return $(this).attr('resid');
-			}).get().join(',');
-			var nodeIds = nodes.not(':library').map(function(){
-				return $(this).attr('resid');
-			}).get().join(',');
-
-			var params = {
-				'filename' : filename,
-				'libraries' : libIds,
-				'nodes' : nodeIds
-			};
-
-			return url+"?"+$.param(params);
-		},
-
-
-		confirm : function(){
-			var nodes = this.options.tree.jstree('get_selected');
-			if ((nodes.length>0) ){
-				var filename = $("#export-gherkin-test-case-filename").val();
-				var url = this._createUrl(nodes, filename, filename);
-				document.location.href = url;
-				this.close();
-			}
-			else{
-				this.setState('nonodeserror');
-			}
-		}
-	});
-
-
-	function init(){
-
-		var dialog = $("#export-gherkin-test-case-dialog").exportGherkinFeatureDialog({
-			tree : zetree.get()
 		});
 
-	}
+
+		function init() {
+
+			var dialog = $("#export-gherkin-test-case-dialog").exportGherkinFeatureDialog({
+				tree: zetree.get()
+			});
+
+		}
 
 
-	return {
-		init : init
-	};
+		return {
+			init: init
+		};
 
-});
+	});

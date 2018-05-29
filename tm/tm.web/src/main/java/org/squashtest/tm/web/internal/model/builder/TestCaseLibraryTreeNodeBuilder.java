@@ -54,7 +54,7 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 	@Inject
 	private MilestoneMembershipFinder milestoneMembershipFinder;
 
-	public void setMilestoneMembershipFinder(MilestoneMembershipFinder finder){
+	public void setMilestoneMembershipFinder(MilestoneMembershipFinder finder) {
 		this.milestoneMembershipFinder = finder;
 	}
 
@@ -79,7 +79,7 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 			TestCaseStatus status = visited.getStatus();
 			TestCaseImportance importance = visited.getImportance();
 			Boolean isreqcovered = !visited.getRequirementVersionCoverages().isEmpty() ||
-					verifiedRequirementsManagerService.testCaseHasUndirectRequirementCoverage(visited.getId());
+				verifiedRequirementsManagerService.testCaseHasUndirectRequirementCoverage(visited.getId());
 
 			Boolean hasSteps = !visited.getSteps().isEmpty();
 
@@ -88,9 +88,9 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 			String localizedStatus = internationalizationHelper.internationalize(status, locale);
 			String localizedImportance = internationalizationHelper.internationalize(importance, locale);
 			String localizedIsReqCovered = internationalizationHelper.internationalizeYesNo(isreqcovered, locale);
-			String localizedHasSteps = internationalizationHelper.internationalize("tooltip.tree.testCase.hasSteps."+hasSteps,locale);
+			String localizedHasSteps = internationalizationHelper.internationalize("tooltip.tree.testCase.hasSteps." + hasSteps, locale);
 			String[] args = {localizedStatus, localizedImportance, localizedIsReqCovered, localizedHasSteps};
-			String tooltip = internationalizationHelper.getMessage("label.tree.testCase.tooltip",args,visited.getId().toString(), locale);
+			String tooltip = internationalizationHelper.getMessage("label.tree.testCase.tooltip", args, visited.getId().toString(), locale);
 
 			// for-display instructions
 			addLeafAttributes("test-case", "test-cases");
@@ -106,6 +106,7 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 			builtNode.addAttr("isreqcovered", isreqcovered.toString());
 			builtNode.addAttr("title", tooltip);
 			builtNode.addAttr("hassteps", hasSteps.toString());
+			builtNode.addAttr("kind", visited.getKind().name().toLowerCase());
 
 			//milestone attributes
 			Collection<Milestone> allMilestones = milestoneMembershipFinder.findAllMilestonesForTestCase(visited.getId());
@@ -157,19 +158,19 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 			if (visited.hasContent()) {
 
 				TestCaseLibraryTreeNodeBuilder childrenBuilder = new TestCaseLibraryTreeNodeBuilder(
-						permissionEvaluationService, verifiedRequirementsManagerService, internationalizationHelper);
+					permissionEvaluationService, verifiedRequirementsManagerService, internationalizationHelper);
 				childrenBuilder.setMilestoneMembershipFinder(milestoneMembershipFinder);
 				childrenBuilder.filterByMilestone(milestoneFilter);
 
 				List<JsTreeNode> children = new JsTreeNodeListBuilder<>(childrenBuilder)
-						.expand(getExpansionCandidates()).setModel(visited.getOrderedContent()).build();
+					.expand(getExpansionCandidates()).setModel(visited.getOrderedContent()).build();
 
 				builtNode.setChildren(children);
 
 
 				// because of the milestoneFilter it may happen that the children collection ends up empty.
 				// in that case we must set the state of the node accordingly
-				State state =  children.isEmpty() ? State.leaf : State.open;
+				State state = children.isEmpty() ? State.leaf : State.open;
 				builtNode.setState(state);
 			}
 		}
@@ -206,21 +207,20 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 
 	@Override
 	protected boolean passesMilestoneFilter() {
-		if (milestoneFilter != null){
+		if (milestoneFilter != null) {
 			return new MilestoneFilter(milestoneMembershipFinder, milestoneFilter).isValid(node);
-		}
-		else{
+		} else {
 			return true;
 		}
 	}
 
-	private static final class MilestoneFilter implements TestCaseLibraryNodeVisitor{
+	private static final class MilestoneFilter implements TestCaseLibraryNodeVisitor {
 
 		private MilestoneMembershipFinder memberFinder;
 		private Milestone milestone;
 		private boolean isValid;
 
-		private MilestoneFilter(MilestoneMembershipFinder memberFinder, Milestone milestone){
+		private MilestoneFilter(MilestoneMembershipFinder memberFinder, Milestone milestone) {
 			this.memberFinder = memberFinder;
 			this.milestone = milestone;
 		}
@@ -228,7 +228,7 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 		@Override
 		public void visit(TestCase visited) {
 			Collection<Milestone> allMilestones = memberFinder.findAllMilestonesForTestCase(visited.getId());
-			isValid =  allMilestones.contains(milestone);
+			isValid = allMilestones.contains(milestone);
 		}
 
 		@Override
@@ -236,7 +236,7 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 			isValid = true;
 		}
 
-		public boolean isValid(TestCaseLibraryNode node){
+		public boolean isValid(TestCaseLibraryNode node) {
 			isValid = false;
 			node.accept(this);
 			return isValid;

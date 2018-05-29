@@ -803,6 +803,8 @@
 
   <!--  ================= /EXPORT TC POPUP =======================  -->
 
+  <!--  ================= EXPORT GHERKIN POPUP ======================= -->
+
 
   <div id="export-gherkin-test-case-dialog" class="popup-dialog not-displayed" th:title="#{label.Export}" title="export"
        th:attr="data-def='nameprefix='+#{label.lower.dash.exportTestCase}+', dateformat='+#{export.dateformat}"
@@ -820,7 +822,7 @@
     </div>
 
     <div data-def="state=nonodeserror" class="std-margin-top">
-      <span th:text="#{message.exportTestCaseNoNodeSelected}">export test case no node selected</span>
+      <span th:text="#{message.exportGherkinTestCaseNoNodeSelected}">export test case no node selected</span>
     </div>
 
     <div class="popup-dialog-buttonpane">
@@ -831,6 +833,8 @@
              data-def="evt=cancel, mainbtn=crossproerror, state=nonodeserror" />
     </div>
   </div>
+
+  <!--  ================= /EXPORT GHERKIN POPUP ======================= -->
 
 
   <!--  ================= MILESTONE POPUP =======================  -->
