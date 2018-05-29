@@ -5,7 +5,7 @@ define("ace/snippets/gherkin-de", ["require", "exports", "module"], function (re
 	exports.snippetText =
 "snippet szenario\n\
   \n\
-  Szenario: ${1}\n\
+	Szenario: ${1}\n\
 		Angenommen ${2}\n\
 		Wenn ${3}\n\
 		Dann ${4}\n\
@@ -30,10 +30,10 @@ snippet tab3*3\n\
 	| ${7}\t| ${8}\t| ${9}\t|\n\
 	| ${10}\t| ${11}\t| ${12}\t|\n\
 snippet tab4*3\n\
-	| ${1}\t| ${2}\t| ${3}\t| ${4}\t\n\
-	| ${5}\t| ${6}\t| ${7}\t| ${8}\t\n\
-	| ${9}\t| ${10}\t| ${11}\t| ${12}\t\n\
-	| ${13}\t| ${14}\t| ${14}\t| ${16}\t\n\
+	| ${1}\t| ${2}\t| ${3}\t| ${4}\t|\n\
+	| ${5}\t| ${6}\t| ${7}\t| ${8}\t|\n\
+	| ${9}\t| ${10}\t| ${11}\t| ${12}\t|\n\
+	| ${13}\t| ${14}\t| ${14}\t| ${16}\t|\n\
 ";
 // @formatter:on
 	exports.scope = "gherkin-de";
