@@ -41,7 +41,8 @@ public class CustomFieldOption {
 
 	@NotBlank
 	@Size(max = 30)
-	@Pattern(regexp = CustomField.CODE_REGEXP)
+	//The message here is in resource bundle ValidationMessages in tm.service module
+	@Pattern(regexp = CustomField.CODE_REGEXP, message = "{org.squashtest.tm.validation.constraint.onlyStdChars}")
 	private String code = "";
 
 	public CustomFieldOption(String label, String code) {
