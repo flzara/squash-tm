@@ -83,7 +83,7 @@ public class CustomField implements Identified{
 
 	@NotBlank
 	@Size(min = MIN_CODE_SIZE, max = MAX_CODE_SIZE)
-	@Pattern(regexp = CODE_REGEXP)
+	@Pattern(regexp = CODE_REGEXP,message = "{org.squashtest.tm.validation.constraint.onlyStdChars}")
 	protected String code = "";
 
 	/**
