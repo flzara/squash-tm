@@ -205,7 +205,7 @@ define([ "jquery", "underscore",  "app/ws/squashtm.notification", "squash.transl
 								}
 								else {
 									self.createSummary(json);
-									if(!!params.queryParams){
+									if(params.queryParams["dry-run"]){
 										self.setState("simulation-summary");
 									}else {
 										self.setState("summary");
