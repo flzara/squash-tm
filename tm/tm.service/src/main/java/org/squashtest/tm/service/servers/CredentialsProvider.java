@@ -27,10 +27,13 @@ import java.util.Optional;
 
 /**
  * <p>
- * Retrieves the credentials of a given user for a server, and manage the {@link UserLiveCredentials}. It is NOT intended
+ * Retrieves the credentials of a given user for a server, and manage the {@link UserCredentialsCache}. It is NOT intended
  * to manage the persistent credentials (that is the job of {@link StoredCredentialsManager}. The services
- * here are <b></b>scoped to the user context</b> of the current execution flow : all operations implicitly target the current user.
- * Since the user context is thread-based it means that the live credentials must be set and cleaned up at careful times.
+ * here are <b>scoped to the user context</b> of the current execution flow : all operations implicitly target the current user.
+ * The only exception is #getAppLevelCredentials(), which means (as the name implies) that Squash-TM own credentials themselves should be
+ * retrieved. The caller of the method must ensure that it will not call cache operations when no user context is defined or
+ * disappointing events will follow.
+ * Since the user context is thread-based it means that the credentials cache must be set and cleaned up at careful times.
  * It also means that if there is no user context available this service will (hopefully) fail early.
  * </p>
  *
@@ -50,12 +53,26 @@ import java.util.Optional;
 public interface CredentialsProvider {
 
 	/**
+	 * @return the username of the current user. Should be invoked only if you know that
+	 * there is indeed a user context.
+	 */
+	String currentUser();
+
+	/**
 	 * Checks whether the user has credentials for the given server.
 	 *
 	 * @param server
 	 * @return
 	 */
 	boolean hasCredentials(BugTracker server);
+
+	/**
+	 * Checks whether Squash-TM owns credentials for the given server.
+	 *
+	 * @param server
+	 * @return
+	 */
+	boolean hasAppLevelCredentials(BugTracker server);
 
 	/**
 	 * Retrieves the credentials of the current user for the given server, if any.
@@ -65,49 +82,64 @@ public interface CredentialsProvider {
 	 */
 	Optional<Credentials> getCredentials(BugTracker server);
 
+	/**
+	 * Retrieves Squash-TM own credentials for the given server, if any.
+	 *
+	 * @param server
+	 * @return
+	 */
+	Optional<Credentials> getAppLevelCredentials(BugTracker server);
+
 
 	/**
-	 * Sets the current credentials for the current user and for the given server.
-	 * The credentials must not be null.
+	 * Store the given credentials into the cache for the given bugtracker
+	 * (and for the current user). The credentials will be cached only if
+	 * the cache deems them cachable indeed (see documentation in {@link UserCredentialsCache}).
+	 * That method should not be invoked to cache Squash-TM app level credentials. The credentials must not be null.
 	 *
 	 * @param server
 	 * @param credentials
 	 */
-	void addToLiveCredentials(BugTracker server, Credentials credentials);
+	void cacheCredentials(BugTracker server, Credentials credentials);
 
 
 	/**
-	 * Discard the credentials set for that server.
-	 * 
+	 * Discard the credentials that were set for the given server and current user
+	 * from the cache.
+	 *
 	 * @param server
 	 */
-	void removeFromLiveCredentials(BugTracker server);
+	void uncacheCredentials(BugTracker server);
 
 
-	// ******* LiveCredentials plumbing (infrastructure) **************
+	// ******* UserCredentialsCache plumbing (infrastructure) **************
+
+	/*
+		hint: think of those operations as the management of a ThreadLocal<UserCredentialsCache>
+	 */
 
 	/**
-	 * Restore the current uses's LiveCredentials. Internal usage only.
-	 *
+	 * Reinstall the cache given in parameter as the current user's credentials cache
+	 * ie the current thread context. Internal usage only.
 	 *
 	 * @param credentials
 	 */
-	void restoreLiveCredentials(UserLiveCredentials credentials);
+	void restoreCache(UserCredentialsCache credentials);
 
 
 	/**
-	 * Returns the live credentials of the current user.
+	 * Returns the credentials cache of the current user.
 	 *
 	 * @return
 	 */
-	UserLiveCredentials getLiveCredentials();
+	UserCredentialsCache getCache();
 
 
 	/**
-	 *  Clears the context for the current user. Internal usage only.
+	 *  Uninstall the cache and clears the thread context.
 	 *
 	 */
-	void clearLiveCredentials();
+	void unloadCache();
 
 
 }

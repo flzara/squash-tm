@@ -63,7 +63,8 @@ public class ThirdPartyServersAuthenticationController {
 	void authenticate(@RequestBody BasicAuthenticationCredentials credentials,
 			@PathVariable("serverId") long serverId) {
 
-		btService.setCredentials(credentials.getUsername(), new String(credentials.getPassword()), serverId);
+
+		btService.validateCredentials(serverId, credentials, false);
 
 	}
 

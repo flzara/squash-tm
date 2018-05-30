@@ -20,9 +20,11 @@
  */
 package org.squashtest.tm.service.internal.bugtracker
 
+import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException
 import org.squashtest.csp.core.bugtracker.domain.BTIssue
 import org.squashtest.csp.core.bugtracker.domain.BTProject
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
+import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials
 import org.squashtest.tm.service.bugtracker.BugTrackersService
 import org.squashtest.tm.domain.bugtracker.Issue
 import org.squashtest.tm.domain.bugtracker.IssueList
@@ -33,6 +35,7 @@ import org.squashtest.tm.domain.servers.AuthenticationStatus
 import org.squashtest.tm.service.advancedsearch.IndexationService
 import org.squashtest.tm.service.internal.repository.IssueDao
 import org.squashtest.tm.service.servers.CredentialsProvider
+import org.squashtest.tm.service.servers.StoredCredentialsManager
 import spock.lang.Specification
 
 /**
@@ -45,6 +48,8 @@ class BugTrackersLocalServiceImplTest extends Specification {
 	IssueDao issueDao = Mock()
 	BugTrackersService bugTrackersService = Mock()
 	IndexationService indexationService = Mock();
+	CredentialsProvider credentialsProvider = Mock()
+	StoredCredentialsManager storedCredentialsManager = Mock()
 
 	// alias
 	BugTrackersService remoteService = bugTrackersService;
@@ -53,7 +58,10 @@ class BugTrackersLocalServiceImplTest extends Specification {
 		service.issueDao = issueDao
 		service.remoteBugTrackersService = bugTrackersService
 		service.indexationService = indexationService;
-		service.credentialsProvider = Mock(CredentialsProvider)
+		service.credentialsProvider = credentialsProvider
+		service.storedCredentialsManager = storedCredentialsManager
+
+		credentialsProvider.currentUser() >> "bob"
 	}
 
 
@@ -150,20 +158,64 @@ class BugTrackersLocalServiceImplTest extends Specification {
 		reproject == project
 	}
 
-	def "should set the credentials"() {
+	def "should validate the credentials"() {
 
 		given:
-		def name = "bob"
-		def password = "bobpassword"
+		def creds = new BasicAuthenticationCredentials("bob", "bobpassword" as char[])
 		BugTracker bugTracker = Mock()
 
 
 		when:
-		service.setCredentials(name, password, bugTracker)
+		service.validateCredentials(bugTracker, creds, true)
 
 
 		then:
-		1 * remoteService.setCredentials(name, password, bugTracker);
+		1 * remoteService.testCredentials(bugTracker, creds);
+		1 * credentialsProvider.cacheCredentials(bugTracker, creds)
+		notThrown Exception
+	}
+
+
+	def "should invalidate the credentials and remove due to failure"(){
+
+		given:
+		def creds = new BasicAuthenticationCredentials("bob", "bobpassword" as char[])
+		BugTracker bugTracker = Mock()
+		bugTracker.getId() >> 1L
+		bugTracker.getName() >> "some bugtracker"
+
+
+		when:
+		service.validateCredentials(bugTracker, creds, true)
+
+
+		then:
+		1 * remoteService.testCredentials(bugTracker, creds)  >> { throw new BugTrackerNoCredentialsException(null)}
+		1 * credentialsProvider.uncacheCredentials(bugTracker)
+		1 * storedCredentialsManager.deleteUserCredentials(1L, "bob")
+		thrown BugTrackerNoCredentialsException
+
+	}
+
+	def "should invalidate the credentials but not remove the offending data"(){
+
+		given:
+		def creds = new BasicAuthenticationCredentials("bob", "bobpassword" as char[])
+		BugTracker bugTracker = Mock()
+		bugTracker.getId() >> 1L
+		bugTracker.getName() >> "some bugtracker"
+
+
+		when:
+		service.validateCredentials(bugTracker, creds, false)
+
+
+		then:
+		1 * remoteService.testCredentials(bugTracker, creds)  >> { throw new BugTrackerNoCredentialsException(null)}
+		0 * credentialsProvider.uncacheCredentials(bugTracker, creds)
+		0 * storedCredentialsManager.deleteUserCredentials(1L)
+		thrown BugTrackerNoCredentialsException
+
 	}
 
 

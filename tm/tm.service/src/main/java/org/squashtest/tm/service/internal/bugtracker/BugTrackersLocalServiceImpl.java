@@ -21,14 +21,19 @@
 package org.squashtest.tm.service.internal.bugtracker;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.i18n.LocaleContext;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
+import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.service.bugtracker.BugTrackersService;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
@@ -57,6 +62,7 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.servers.CredentialsProvider;
+import org.squashtest.tm.service.servers.StoredCredentialsManager;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -74,6 +80,7 @@ import static org.squashtest.tm.service.security.Authorizations.*;
 @Service("squashtest.tm.service.BugTrackersLocalService")
 public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(BugTrackersLocalServiceImpl.class);
 
 	@Value("${squashtm.bugtracker.timeout:15}")
 	private long timeout;
@@ -112,6 +119,9 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	@Inject
 	private CredentialsProvider credentialsProvider;
+
+	@Inject
+	private StoredCredentialsManager storedCredentialsManager;
 
 	@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 	@Inject
@@ -207,15 +217,47 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	public List<RemoteIssue> getIssues(List<String> issueKeyList, BugTracker bugTracker) {
 
 		try {
-			Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(issueKeyList, bugTracker, credentialsProvider.getLiveCredentials(), getLocaleContext());
+			Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(issueKeyList, bugTracker, credentialsProvider.getCache(), getLocaleContext());
 			return futureIssues.get(timeout, TimeUnit.SECONDS);
-		} catch (TimeoutException timex) {
+		}
+		catch (TimeoutException timex) {
 			throw new BugTrackerRemoteException(timex);
-		} catch (InterruptedException | ExecutionException e) {
+		}
+		catch (InterruptedException | ExecutionException e) {
 			throw new BugTrackerRemoteException(e);
 		}
 
 	}
+
+	@Override
+	public void validateCredentials(BugTracker bugTracker, Credentials credentials, boolean removeOnFail) throws BugTrackerRemoteException {
+
+		LOGGER.debug("BugTrackerLocalServiceImpl : validating credentials for server '{}'", bugTracker.getName());
+
+		try{
+			remoteBugTrackersService.testCredentials(bugTracker, credentials);
+			LOGGER.debug("BugTrackerLocalServiceImpl : credentials successfully validated");
+			credentialsProvider.cacheCredentials(bugTracker, credentials);
+		}
+		catch(BugTrackerNoCredentialsException | UnsupportedAuthenticationModeException ex){
+			LOGGER.debug("BugTrackerLocalServerImpl : credentials were rejected ({})", ex.getClass());
+			if (removeOnFail){
+				LOGGER.debug("BugTrackerLocalServiceImpl : removing failed credentials as requested");
+				credentialsProvider.uncacheCredentials(bugTracker);
+				storedCredentialsManager.deleteUserCredentials(bugTracker.getId(), credentialsProvider.currentUser());
+			}
+			// propagate exception
+			throw ex;
+		}
+
+	}
+
+	@Override
+	public void validateCredentials(Long bugtrackerId, Credentials credentials, boolean removeOnFail) throws BugTrackerRemoteException {
+		BugTracker server = bugTrackerDao.findOne(bugtrackerId);
+		validateCredentials(server, credentials, removeOnFail);
+	}
+
 
 	/* ************** delegate methods ************* */
 
@@ -230,27 +272,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		return remoteBugTrackersService.createReportIssueTemplate(projectName, bugTracker);
 	}
 
-	@Override
-	public void setCredentials(Credentials credentials, BugTracker bugTracker) throws BugTrackerRemoteException {
-		remoteBugTrackersService.setCredentials(credentials, bugTracker);
-	}
 
-	@Override
-	public void setCredentials(Credentials credentials, Long bugtrackerId) throws BugTrackerRemoteException {
-		BugTracker bugtracker = bugTrackerDao.findOne(bugtrackerId);
-		remoteBugTrackersService.setCredentials(credentials, bugtracker);
-	}
-
-	@Override
-	public void setCredentials(String username, String password, BugTracker bugTracker) {
-		remoteBugTrackersService.setCredentials(username, password, bugTracker);
-	}
-
-	@Override
-	public void setCredentials(String username, String password, Long bugtrackerId) throws BugTrackerRemoteException {
-		BugTracker bugtracker = bugTrackerDao.findOne(bugtrackerId);
-		remoteBugTrackersService.setCredentials(username, password, bugtracker);
-	}
 
 	@Override
 	public URL getIssueUrl(String btIssueId, BugTracker bugTracker) {

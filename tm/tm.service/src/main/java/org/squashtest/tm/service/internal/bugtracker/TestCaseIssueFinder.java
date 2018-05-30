@@ -173,7 +173,7 @@ public class TestCaseIssueFinder implements IssueOwnershipFinder {
 		List<String> remoteIssueIds = IssueOwnershipFinderUtils.collectRemoteIssueIds(pairs);
 
 		try {
-			Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(remoteIssueIds, bugTracker, credentialsProvider.getLiveCredentials(), LocaleContextHolder.getLocaleContext());
+			Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(remoteIssueIds, bugTracker, credentialsProvider.getCache(), LocaleContextHolder.getLocaleContext());
 			List<RemoteIssue> btIssues = futureIssues.get(timeout, TimeUnit.SECONDS);
 
 			Map<String, RemoteIssue> remoteById = IssueOwnershipFinderUtils.createRemoteIssueByRemoteIdMap(btIssues);

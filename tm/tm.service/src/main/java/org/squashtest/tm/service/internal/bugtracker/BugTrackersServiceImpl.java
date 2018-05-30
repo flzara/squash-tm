@@ -28,6 +28,8 @@ import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.function.Supplier;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContext;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.scheduling.annotation.AsyncResult;
@@ -44,12 +46,10 @@ import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
 import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
-import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials;
 import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.service.bugtracker.BugTrackersService;
 import org.squashtest.tm.service.servers.CredentialsProvider;
-import org.squashtest.tm.service.servers.UserLiveCredentials;
-import org.squashtest.tm.service.servers.StoredCredentialsManager;
+import org.squashtest.tm.service.servers.UserCredentialsCache;
 
 import javax.inject.Inject;
 
@@ -63,11 +63,10 @@ import javax.inject.Inject;
 @Service("squashtest.tm.service.BugTrackersServiceImpl")
 public class BugTrackersServiceImpl implements BugTrackersService {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(BugTrackersServiceImpl.class);
+
 	@Inject // see org.squashtest.tm.service.BugTrackerConfig
 	private BugTrackerConnectorFactory bugTrackerConnectorFactory;
-
-	@Inject
-	private StoredCredentialsManager credentialsManager;
 
 	@Inject
 	private CredentialsProvider credentialsProvider;
@@ -93,32 +92,13 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 		return connect(bugTracker).makeViewIssueUrl(bugTracker, issueId);
 	}
 
-	@Override
-	public void setCredentials(Credentials credentials, BugTracker bugTracker) {
-		AuthenticationPolicy policy = bugTracker.getAuthenticationPolicy();
-
-		if (policy != AuthenticationPolicy.USER){
-			throw new WrongAuthenticationPolicyException(policy);
-		}
-
-		InternalBugtrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
-
-		// set credentials to null first. If the operation succeed then we'll set them in the context.
-		credentialsProvider.removeFromLiveCredentials(bugTracker);
-
-		connector.checkCredentials(credentials);
-
-		credentialsProvider.addToLiveCredentials(bugTracker, credentials);
-	}
-
-	@Override
-	public void setCredentials(String username, String password, BugTracker bugTracker) {
-		setCredentials(new BasicAuthenticationCredentials(username, password.toCharArray()), bugTracker);
-	}
 
 	@Override
 	public void testCredentials(BugTracker bugTracker, Credentials credentials) {
 		InternalBugtrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
+		if (! connector.supports(credentials.getImplementedProtocol())){
+			throw new UnsupportedAuthenticationModeException(credentials.getImplementedProtocol().toString());
+		}
 		connector.checkCredentials(credentials);
 	}
 
@@ -133,26 +113,26 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 	}
 
 	private InternalBugtrackerConnector connect(BugTracker bugTracker) {
+
 		InternalBugtrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
-		Credentials creds = null;
 		Supplier<BugTrackerNoCredentialsException> throwIfNull = () -> { throw new BugTrackerNoCredentialsException(null); };
+
+		Optional<Credentials> maybeCredentials = null;
 
 		switch(bugTracker.getAuthenticationPolicy()){
 			case USER:
-				Optional<Credentials> maybeCredentials = credentialsProvider.getCredentials(bugTracker);
-				creds = maybeCredentials.orElseThrow( throwIfNull );
+				maybeCredentials = credentialsProvider.getCredentials(bugTracker);
 				break;
 
 			case APP_LEVEL:
-				creds = credentialsManager.unsecuredFindAppLevelCredentials(bugTracker.getId());
-				if (creds == null){
-					throwIfNull.get();
-				}
+				maybeCredentials = credentialsProvider.getAppLevelCredentials(bugTracker);
 				break;
 
 			default : throw new RuntimeException("BugTrackerService#connect : forgot to implement policy "+bugTracker.getAuthenticationPolicy().toString());
 
 		}
+
+		Credentials creds = maybeCredentials.orElseThrow(throwIfNull);
 
 		AuthenticationProtocol protocol = creds.getImplementedProtocol();
 		if (! connector.supports(protocol)){
@@ -186,11 +166,11 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 	}
 
 	@Override
-	public Future<List<RemoteIssue>> getIssues(Collection<String> issueKeyList, BugTracker bugTracker, UserLiveCredentials liveCredentials, LocaleContext localeContext) {
+	public Future<List<RemoteIssue>> getIssues(Collection<String> issueKeyList, BugTracker bugTracker, UserCredentialsCache credentialsCache, LocaleContext localeContext) {
 
 		try {
-			// reinstate the live credentials (since this method will execute in a different thread, see comments in the interface)
-			credentialsProvider.restoreLiveCredentials(liveCredentials);
+			// reinstate the credentials cache (since this method will execute in a different thread, see comments in the interface)
+			credentialsProvider.restoreCache(credentialsCache);
 			LocaleContextHolder.setLocaleContext(localeContext);
 
 			List<RemoteIssue> issues = connect(bugTracker).findIssues(issueKeyList);
@@ -203,9 +183,9 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 
 			return new AsyncResult<>(issues);
 		}
-		// we can safely unload the live credentials from the thread
+		// we can safely unload the cache from the thread
 		finally{
-			credentialsProvider.clearLiveCredentials();
+			credentialsProvider.unloadCache();
 		}
 	}
 

@@ -58,7 +58,18 @@ import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 @Service
 public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 
-	private static final String OR_CURRENT_USER_OWNS_CREDENTIALS = " or principal.username = #username";
+	/*
+	 *  Sometimes the principal IS the username, sometimes it is a spring security User, God know what will be next. 
+	 *  The security provider that authenticated the user for that session decided what the Authentication object 
+	 *  should look like, and more specifically what the Principal should be.
+	 *     
+	 *  In the future if a newly included spring sec authentication provider uses yet another principal convention, 
+	 *  maybe we should wrap it in something that will ensure a consistent representation of the principal (eg 
+	 *  a User, or just the username).
+	 *  
+	 */
+	//private static final String OR_CURRENT_USER_OWNS_CREDENTIALS = " or (principal == #username or principal.username == #username)";
+	private static final String OR_CURRENT_USER_OWNS_CREDENTIALS = " or authentication.name == #username";
 
 	private static final String FIND_APP_LEVEL_CREDENTIALS = "StoredCredentials.findAppLevelCredentialsByServerId";
 	private static final String FIND_USER_CREDENTIALS = "StoredCredentials.findUserCredentialsByServerId";
@@ -244,7 +255,7 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 			/*
 			 * failure on retrieval, this is an expected error case which translates to a null result.
 			 */
-			LOGGER.debug("No Result on retrieving credentials.", ex);
+			LOGGER.debug("No credentials found.");
 			return null;
 		}
 		catch(IOException ex){

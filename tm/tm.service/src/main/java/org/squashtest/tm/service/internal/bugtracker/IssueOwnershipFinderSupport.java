@@ -105,7 +105,7 @@ abstract class IssueOwnershipFinderSupport<H> implements IssueOwnershipFinder {
 
 		try {
 			Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(remoteIssueIds, bugTracker,
-				credentialsProvider.getLiveCredentials(), LocaleContextHolder.getLocaleContext());
+				credentialsProvider.getCache(), LocaleContextHolder.getLocaleContext());
 			List<RemoteIssue> btIssues = futureIssues.get(timeout, TimeUnit.SECONDS);
 
 			Map<String, RemoteIssue> remoteById = createRemoteIssueByRemoteIdMap(btIssues);

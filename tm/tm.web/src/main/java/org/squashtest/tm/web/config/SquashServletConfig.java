@@ -49,7 +49,7 @@ import org.squashtest.tm.web.internal.context.ReloadableSquashTmMessageSource;
 import org.squashtest.tm.web.internal.fileupload.MultipartResolverDispatcher;
 import org.squashtest.tm.web.internal.fileupload.SquashMultipartResolver;
 import org.squashtest.tm.web.internal.filter.AjaxEmptyResponseFilter;
-import org.squashtest.tm.web.internal.filter.UserLiveCredentialsPersistenceFilter;
+import org.squashtest.tm.web.internal.filter.UserCredentialsCachePersistenceFilter;
 import org.squashtest.tm.web.internal.filter.MultipartFilterExceptionAware;
 import org.squashtest.tm.web.internal.filter.UserConcurrentRequestLockFilter;
 import org.squashtest.tm.web.internal.listener.HttpSessionLifecycleLogger;
@@ -74,6 +74,8 @@ import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 @Configuration
 public class SquashServletConfig {
 
+    private static final String[] CREDENTIALS_CACHE_EXCLUDE_PATTERNS = new String[] {"/isSquashAlive/**","/scripts/**", "/static/**", "/images/**", "/styles/**" };
+	
     private static final String IMPORTER_REGEX = ".*/importer/.*";
     private static final String UPLOAD_REGEX = ".*/attachments/upload.*";
 
@@ -248,9 +250,9 @@ public class SquashServletConfig {
 	@Order(1)
 	public FilterRegistrationBean bugTrackerContextPersister() {
 
-		UserLiveCredentialsPersistenceFilter filter = new UserLiveCredentialsPersistenceFilter();
+		UserCredentialsCachePersistenceFilter filter = new UserCredentialsCachePersistenceFilter();
 		filter.setCredentialsProvider(credentialsProvider);
-		filter.setExcludePatterns("/isSquashAlive");
+		filter.addExcludePatterns(CREDENTIALS_CACHE_EXCLUDE_PATTERNS);
 
 		FilterRegistrationBean bean = new FilterRegistrationBean(filter);
 		bean.setDispatcherTypes(DispatcherType.REQUEST);

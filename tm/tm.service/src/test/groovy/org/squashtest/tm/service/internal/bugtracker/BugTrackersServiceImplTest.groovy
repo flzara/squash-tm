@@ -28,7 +28,7 @@ import org.squashtest.tm.service.internal.servers.WrongAuthenticationPolicyExcep
 import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials
 import org.squashtest.tm.domain.servers.Credentials
 import org.squashtest.tm.service.servers.CredentialsProvider
-import org.squashtest.tm.service.servers.UserLiveCredentials
+import org.squashtest.tm.service.servers.UserCredentialsCache
 
 import static org.squashtest.tm.domain.servers.AuthenticationPolicy.*
 import org.squashtest.tm.service.servers.StoredCredentialsManager
@@ -40,21 +40,19 @@ class BugTrackersServiceImplTest extends Specification {
 
 	CredentialsProvider credentialsProvider = Mock()
 	BugTrackerConnectorFactory connectorFactory = Mock()
-	StoredCredentialsManager credentialsManager = Mock();
 
-	UserLiveCredentials liveCredentials = Mock()
+	UserCredentialsCache liveCredentials = Mock()
 	BugTracker bt = Mock()
 	InternalBugtrackerConnector btconnector = Mock()
 
 	def setup() {
 
-		credentialsProvider.getLiveCredentials() >> liveCredentials
+		credentialsProvider.getCache() >> liveCredentials
 		connectorFactory.createConnector(bt) >> btconnector
 		bt.getId() >>10L
 
 		service.credentialsProvider = credentialsProvider
 		service.bugTrackerConnectorFactory = connectorFactory
-		service.credentialsManager = credentialsManager
 	}
 
 
@@ -93,48 +91,7 @@ class BugTrackersServiceImplTest extends Specification {
 		!needsCredentials
 	}
 
-	def "should store credentials in context when the authentication policy is USER and authentication is successful"() {
 
-		given :
-		def creds = mockCredentials()
-		bt.getAuthenticationPolicy() >>USER
-
-		when:
-		service.setCredentials(creds, bt)
-
-		then:
-		notThrown BugTrackerRemoteException
-		1 * credentialsProvider.addToLiveCredentials(bt, creds)
-	}
-
-	def "should not store credentials in context when they are invalid"() {
-		given:
-		def creds = mockCredentials()
-		bt.getAuthenticationPolicy() >>USER
-		btconnector.checkCredentials (_)  >> {throw new BugTrackerRemoteException("wrong !", null);}
-
-		when:
-		service.setCredentials(creds, bt)
-
-		then:
-		thrown BugTrackerRemoteException
-		0 * liveCredentials.setCredentials(bt, creds)
-	}
-
-
-	def "should not store credentials in context because the auth-policy is app-level"() {
-		given:
-		def creds = mockCredentials()
-		bt.getAuthenticationPolicy() >> APP_LEVEL
-
-
-		when:
-		service.setCredentials(creds, bt)
-
-		then:
-		thrown WrongAuthenticationPolicyException
-		0 * credentialsProvider.addToLiveCredentials(bt, creds)
-	}
 
 	def "should authenticate a bugtracker with user-defined credentials"(){
 
@@ -163,7 +120,7 @@ class BugTrackersServiceImplTest extends Specification {
 
 		and:
 		btconnector.supports(_) >> true
-		credentialsManager.unsecuredFindAppLevelCredentials(_) >> creds
+		credentialsProvider.getAppLevelCredentials(_) >> { Optional.of(creds) }
 
 		when :
 		service.connect(bt)
@@ -173,6 +130,7 @@ class BugTrackersServiceImplTest extends Specification {
 		1 * btconnector.authenticate(creds)
 
 	}
+
 
 	def "should fail to authenticate because the connector does not support the choosen authentication protocol"(){
 		given :

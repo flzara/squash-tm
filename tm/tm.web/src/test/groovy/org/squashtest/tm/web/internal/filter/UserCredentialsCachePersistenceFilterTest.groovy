@@ -21,7 +21,7 @@
 package org.squashtest.tm.web.internal.filter
 
 import org.squashtest.tm.service.servers.CredentialsProvider
-import org.squashtest.tm.service.servers.UserLiveCredentials
+import org.squashtest.tm.service.servers.UserCredentialsCache
 
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
@@ -32,8 +32,8 @@ import javax.servlet.http.HttpSession;
 import spock.lang.Specification;
 
 
-class UserLiveCredentialsPersistenceFilterTest extends Specification {
-	UserLiveCredentialsPersistenceFilter filter = new UserLiveCredentialsPersistenceFilter()
+class UserCredentialsCachePersistenceFilterTest extends Specification {
+	UserCredentialsCachePersistenceFilter filter = new UserCredentialsCachePersistenceFilter()
 	CredentialsProvider credentialsProvider = Mock()
 
 	// container lifecycle stuff
@@ -49,8 +49,8 @@ class UserLiveCredentialsPersistenceFilterTest extends Specification {
 
 	def "filter should delegate to filter chain"() {
 		given:
-		UserLiveCredentials context = Mock()
-		sessionExistsAndHolds context
+		UserCredentialsCache cache = Mock()
+		sessionExistsAndHolds cache
 
 		when:
 		filter.doFilter request, response, chain
@@ -61,46 +61,47 @@ class UserLiveCredentialsPersistenceFilterTest extends Specification {
 		1 * chain.doFilter(request, response)
 	}
 
-	def sessionExistsAndHolds(def context) {
+	def sessionExistsAndHolds(def cache) {
 		request.getSession() >> session
 		request.getSession(_) >> session
-		session.getAttribute(UserLiveCredentialsPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY) >> context
+		session.getAttribute(UserCredentialsCachePersistenceFilter.CREDENTIALS_CACHE_SESSION_KEY) >> cache
 	}
 
-	def "should retrieve context from session and set it in context holder"() {
+	def "should retrieve cache from session and set it in the credentials provider"() {
 		given:
-		UserLiveCredentials credentials = Mock()
-		sessionExistsAndHolds credentials
+		UserCredentialsCache cache = Mock()
+		sessionExistsAndHolds cache
 
 		when:
 		filter.doFilter request, response, chain
 
 		then:
-		1 * credentialsProvider.restoreLiveCredentials(credentials)
+		1 * credentialsProvider.restoreCache(cache)
 	}
 
-	def "should store context to session after filter chain processing"() {
+	def "should store cache to session after filter chain processing"() {
 		given:
-		UserLiveCredentials credentials = Mock()
-		sessionExistsAndHolds credentials
+		UserCredentialsCache cache = Mock()
+		sessionExistsAndHolds cache
 
 		when:
 		filter.doFilter request, response, chain
 
 
 		then:
-		// context persisted to session
-		1 * session.setAttribute(UserLiveCredentialsPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY, credentials)
-		// context holder cleared
-		1 * credentialsProvider.clearLiveCredentials()
+		// cache persisted to session
+		1 * credentialsProvider.getCache() >> cache
+		1 * session.setAttribute(UserCredentialsCachePersistenceFilter.CREDENTIALS_CACHE_SESSION_KEY, cache)
+		// cache cleared
+		1 * credentialsProvider.unloadCache()
 
 	}
 
-	def "should not store context back to session when session has been invalidated"() {
-		given: "session initially holds context"
-		UserLiveCredentials credentials = Mock()
+	def "should not store cache back to session when session has been invalidated"() {
+		given: "session initially holds cache"
+		UserCredentialsCache cache = Mock()
 		request.getSession() >> session
-		session.getAttribute(_) >> credentials
+		session.getAttribute(_) >> cache
 
 		and: "session invalidated at some point"
 		request.getSession(false) >> null
@@ -109,36 +110,52 @@ class UserLiveCredentialsPersistenceFilterTest extends Specification {
 		filter.doFilter request, response, chain
 
 		then:
-		// no context persistence
-		0 * session.setAttribute(UserLiveCredentialsPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY, credentials)
+		// no cache persistence
+		0 * session.setAttribute(UserCredentialsCachePersistenceFilter.CREDENTIALS_CACHE_SESSION_KEY, cache)
 
 	}
 
-	def "should create context when no previously available"() {
+	def "should NOT create cache when no previously available"() {
 		given:
-		sessionHoldsNoContext()
+		sessionHoldsNoCache()
 
 		when:
 		filter.doFilter request, response, chain
 
 		then:
-		1 * credentialsProvider.restoreLiveCredentials(!null)
+		0 * credentialsProvider.restoreCache(_)
 	}
 
-	def sessionHoldsNoContext() {
+	def sessionHoldsNoCache() {
 		request.getSession() >> session
 		request.getSession(_) >> session
 	}
 
-	def "should eagerly store context to session when no previously available"() {
-		given:
-		sessionHoldsNoContext()
+
+	def "should find that the given url is excluded"(){
+
+		given :
+		def url = "/scripts/the-script.js"
+		filter.addExcludePatterns "/scripts/**"
 
 		when:
-		filter.doFilter request, response, chain
+		def res = filter.matchExcludePatterns url
 
+		then :
+		res == true
 
-		then:
-		2 * session.setAttribute(UserLiveCredentialsPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY, !null)
 	}
+
+	def "should find that the given url is filtered"(){
+		given :
+		def url = "/test-cases/1"
+		filter.addExcludePatterns "/scripts/**"
+
+		when:
+		def res = filter.matchExcludePatterns url
+
+		then :
+		res == false
+	}
+
 }

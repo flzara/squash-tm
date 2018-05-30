@@ -74,7 +74,7 @@ class BugTrackersLocalServiceIT extends DbunitServiceSpecification  {
 	 void addIssue( Long entityId, Class<? extends Bugged> entityClass, Issue issue);
 	 String findProjectName(Bugged entity);
 	 BugTrackerStatus checkBugTrackerStatus();
-	 void addToLiveCredentials(String username, String password);
+	 void cacheCredentials(String username, String password);
 	 BTProject findRemoteProject(String name);
 	 List<Priority> getRemotePriorities();
 	 */
@@ -201,7 +201,7 @@ class BugTrackersLocalServiceIT extends DbunitServiceSpecification  {
 
 		when :
 		AuthenticationStatus status1 = btService.checkAuthenticationStatus()
-		btService.setCredentials("administrator", "root")
+		btService.validateCredentials("administrator", "root")
 		AuthenticationStatus status2 = btService.checkAuthenticationStatus()
 		then :
 		status1 == AuthenticationStatus.NON_AUTHENTICATED
@@ -211,7 +211,7 @@ class BugTrackersLocalServiceIT extends DbunitServiceSpecification  {
 
 	def "should get the list of Mantis priorities"(){
 		given :
-		btService.setCredentials("administrator", "root")
+		btService.validateCredentials("administrator", "root")
 		when :
 		def priorities = btService.getRemotePriorities()
 		then :
@@ -232,7 +232,7 @@ class BugTrackersLocalServiceIT extends DbunitServiceSpecification  {
 	def "should find a remote Project based on its name"(){
 		given :
 		def projectname="squashbt"
-		btService.setCredentials("administrator", "root")
+		btService.validateCredentials("administrator", "root")
 
 		when :
 		BTProject project = btService.findRemoteProject(projectname)
@@ -271,7 +271,7 @@ class BugTrackersLocalServiceIT extends DbunitServiceSpecification  {
 
 	def "should find an issue list"(){
 		given:
-			btService.setCredentials("administrator", "root")
+			btService.validateCredentials("administrator", "root")
 
 		and :
 			//need a bug tracker like mantis or JIRA and you have to know the issue id
@@ -294,7 +294,7 @@ class BugTrackersLocalServiceIT extends DbunitServiceSpecification  {
 	def "should throw an exception when fetching a remote project that doesn't exists"(){
 		given :
 		def projectname="non-existant project"
-		btService.setCredentials("administrator", "root")
+		btService.validateCredentials("administrator", "root")
 
 		when :
 		BTProject project = btService.findRemoteProject(projectname)
@@ -310,7 +310,7 @@ class BugTrackersLocalServiceIT extends DbunitServiceSpecification  {
 
 		given :
 
-		btService.setCredentials("administrator", "root")
+		btService.validateCredentials("administrator", "root")
 
 
 		when :
@@ -330,7 +330,7 @@ class BugTrackersLocalServiceIT extends DbunitServiceSpecification  {
 
 		given :
 
-			btService.setCredentials("administrator", "root")
+			btService.validateCredentials("administrator", "root")
 
 		and :
 			ExecutionStep estep = findEntity(ExecutionStep.class, 1l)

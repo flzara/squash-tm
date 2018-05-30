@@ -60,6 +60,10 @@ public class BasicAuthenticationCredentials implements Credentials {
 		}
 	}
 
+	public BasicAuthenticationCredentials(String login, String password){
+		this(login, password.toCharArray());
+	}
+
 	public String getUsername() {
 		return username;
 	}

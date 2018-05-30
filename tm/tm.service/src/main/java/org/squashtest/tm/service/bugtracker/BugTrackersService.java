@@ -38,7 +38,7 @@ import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
 import org.squashtest.tm.domain.servers.Credentials;
-import org.squashtest.tm.service.servers.UserLiveCredentials;
+import org.squashtest.tm.service.servers.UserCredentialsCache;
 
 
 /**
@@ -64,47 +64,10 @@ public interface BugTrackersService {
 
 
 	/**
-	 * Sets the credentials to use for bug tracker authentication using basic authentication. Once set,
-	 * {@link BugTrackersService#isCredentialsNeeded(BugTracker)} should no longer be <code>false</code> unless
-	 * an authentication error happens at some point. That operation is not required if the
-	 * bugtracker uses {@link org.squashtest.tm.domain.servers.AuthenticationPolicy#APP_LEVEL},
-	 * since the user will always be considered as authenticated.
+	 * Will test if connector accepts and validate these credentials. A normal termination means that
+	 * the credentials passed the test.
 	 *
-	 * @param credentials
-	 * @param bugTracker the concerned BugTracker
-	 * @return nothing
-	 * @throws BugTrackerRemoteException if the credentials are invalid
-	 * @throws WrongAuthenticationPolicyException if the bugtracker is configured to use
-	 * {@link org.squashtest.tm.domain.servers.AuthenticationPolicy#APP_LEVEL}
-	 * @throws org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException if the connector does not support the protocol
-	 * {@link org.squashtest.tm.domain.servers.AuthenticationProtocol#BASIC_AUTH}
-	 */
-	void  setCredentials(Credentials credentials, BugTracker bugTracker);
-
-
-	/**
-	 * Same as {@link #setCredentials(Credentials, BugTracker)}, using {@link org.squashtest.tm.domain.servers.BasicAuthenticationCredentials}
-	 * behind the scene for the protocol. The connector must support such mode of authentication.
-	 *
-	 * @deprecated use {@link #setCredentials(Credentials, BugTracker)} instead
-	 * @param username
-	 * @param password
-	 * @param bugTracker the concerned BugTracker
-	 * @return nothing
-	 * @throws BugTrackerRemoteException if the credentials are invalid
-	 * @throws WrongAuthenticationPolicyException if the bugtracker is configured to use
-	 * {@link org.squashtest.tm.domain.servers.AuthenticationPolicy#APP_LEVEL}
-	 * @throws org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException the connector does not support
-	 * {@link org.squashtest.tm.domain.servers.AuthenticationProtocol#BASIC_AUTH}
-	 */
-	@Deprecated
-	void  setCredentials(String username, String password, BugTracker bugTracker);
-
-
-	/**
-	 * Will test if connector accepts and validate these credentials.
-	 *
-	 * @throws org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException if the credentials are of the wrong type
+	 * @throws org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException if the credentials aren' supported by the connector
 	 * @throws org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException if the credentials are rejected by the endpoint
 	 *
 	 * @param credentials
@@ -194,7 +157,7 @@ public interface BugTrackersService {
 	 */
 
 	@Async
-	Future<List<RemoteIssue>> getIssues(Collection<String> issueKeyList, BugTracker bugTracker, UserLiveCredentials context, LocaleContext localeContext);
+	Future<List<RemoteIssue>> getIssues(Collection<String> issueKeyList, BugTracker bugTracker, UserCredentialsCache context, LocaleContext localeContext);
 
 
 	/**

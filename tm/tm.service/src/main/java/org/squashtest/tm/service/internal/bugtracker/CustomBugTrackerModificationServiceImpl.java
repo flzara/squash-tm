@@ -104,9 +104,7 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 	public void testCredentials(long bugtrackerId, Credentials credentials) {
 		BugTracker bt = bugTrackerDao.findOne(bugtrackerId);
 		InternalBugtrackerConnector connector = connectorFactory.createConnector(bt);
-
 		connector.checkCredentials(credentials);
-
 	}
 
 
