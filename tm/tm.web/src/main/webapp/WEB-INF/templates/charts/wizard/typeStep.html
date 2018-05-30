@@ -23,104 +23,105 @@
 <div th:fragment="chart-wizard-type">
 
 
+  {{#*inline "axe"}}
+  <div id="{{name}}">
 
-{{#*inline "axe"}}
-<div id="{{name}}">
+    <div id="{{name}}-axeName" style="display: flex;">
+      <span class="ui-icon {{icone}}"/><span
+      style="font-weight: bold;">{{i18n name prefix="chart.wizard.axis.label."}}</span>
+    </div>
 
-<div id="{{name}}-axeName" style="display: flex;">
-<span class="ui-icon {{icone}}"/><span style="font-weight: bold;">{{i18n name prefix="chart.wizard.axis.label."}}</span>
-</div>
-
-{{#equal name "axis-x1"}}
-<div id="pie-axis" style='font-weight: bold; display:none'>
-{{i18n "chart.wizard.axis.label.axis"}}
-</div>
-{{/equal}}
-
-
-<select id="axis-{{name}}" class="axis-select" name="{{name}}">
-{{#each attributes.operations}}
-
-{{#if (contains (lookup ../attributes.columnRoles ../role) this.operation)}}
-<option value="{{this.column.label}}"   >
+    {{#equal name "axis-x1"}}
+    <div id="pie-axis" style='font-weight: bold; display:none'>
+      {{i18n "chart.wizard.axis.label.axis"}}
+    </div>
+    {{/equal}}
 
 
-{{#equal this.column.columnType "CUF"}}
-{{i18n this.column.specializedType.entityType prefix="chart.entityType."}}     >  {{cuf-label this.column}}
-{{else}}
-{{i18n this.column.specializedType.entityType prefix="chart.entityType."}}     >  {{i18n this.column.label prefix="chart.column."}}
-{{/equal}}
+    <select id="axis-{{name}}" class="axis-select" name="{{name}}">
+      {{#each attributes.operations}}
 
-</option>
-{{/if}}
-{{/each}}
-</select>
-<br />
-<span th:text="#{chart.wizard.label.operation}"/> <span id="operation-{{name}}" />
-<br />
-<span id="filter-{{name}}" />
-<br />
-<br />
-<br />
-</div>
-
-{{/inline}}
+      {{#if (contains (lookup ../attributes.columnRoles ../role) this.operation)}}
+      <option id="{{this.column.id}}" value="{{this.column.label}}">
 
 
-<span style="font-weight: bold;" th:text="#{chart.wizard.creation.step.message.type}"/>
-<br />
-<div id="type-explanation"></div>
-<div>
- <ul style="list-style: none;">
-        {{#each attributes.chartTypes}}
-        <li style="float:left;width:20%">
-          <div style='display: table;height: 36px;width: 100%; '>
+        {{#equal this.column.columnType "CUF"}}
+        {{i18n this.column.specializedType.entityType prefix="chart.entityType."}} > {{cuf-label this.column}}
+        {{else}}
+        {{i18n this.column.specializedType.entityType prefix="chart.entityType."}} > {{i18n this.column.label
+        prefix="chart.column."}}
+        {{/equal}}
+
+      </option>
+      {{/if}}
+      {{/each}}
+    </select>
+    <br/>
+    <span th:text="#{chart.wizard.label.operation}"/> <span id="operation-{{name}}"/>
+    <br/>
+    <span id="filter-{{name}}"/>
+    <br/>
+    <br/>
+    <br/>
+  </div>
+
+  {{/inline}}
+
+
+  <span style="font-weight: bold;" th:text="#{chart.wizard.creation.step.message.type}"/>
+  <br/>
+  <div id="type-explanation"></div>
+  <div>
+    <ul style="list-style: none;">
+      {{#each attributes.chartTypes}}
+      <li style="float:left;width:20%">
+        <div style='display: table;height: 36px;width: 100%; '>
 
 
           <div style="display: table-cell; vertical-align: middle;">
-        {{!--<![CDATA[--}}
-        <input  type="radio" name="chart-type" class="chart-type" value="{{this}}"
+            {{!--<![CDATA[--}}
+            <input type="radio" name="chart-type" class="chart-type" value="{{this}}"
 
-        {{#if ../attributes/type}}
-        {{#equal this ../attributes/type}} checked="checked" {{/equal}}
-        {{else}}
-        {{#unless @index}} checked="checked" {{/unless}}
-        {{/if}}
-        />
-        {{!--]]>--}}
-        </div>
-         <span    style="min-height: 36px; width:20%;
-    min-width: 36px; display: table-cell;     " class="chart-{{this}}" />
+                   {{#if ../attributes/type}}
+            {{#equal this ../attributes/type}} checked="checked" {{/equal}}
+            {{else}}
+            {{#unless @index}} checked="checked" {{/unless}}
+            {{/if}}
+            />
+            {{!--]]>--}}
+          </div>
+          <span style="min-height: 36px; width:20%;
+    min-width: 36px; display: table-cell;     " class="chart-{{this}}"/>
 
-      <span   style="width:65%; display: table-cell; vertical-align: middle;">
+          <span style="width:65%; display: table-cell; vertical-align: middle;">
         {{i18n this prefix="chart.chartType." }}
         </span>
         </div>
-        </li>
-        {{/each}}
-</ul>
-</div>
+      </li>
+      {{/each}}
+    </ul>
+  </div>
 
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-
-
-<div style="float:left">
-{{>axe name="axis-x1" role="AXIS" icone="ui-icon-arrowthick-1-e"}}
-{{>axe name="axis-y" role="MEASURE" icone="ui-icon-arrowthick-1-n"}}
-{{>axe name="axis-x2" role="AXIS" icone="ui-icon-arrowthick-1-ne"}}
-</div>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
 
 
-<div  style="float:right;width:70%;">
- <div id="chart-display-area" style="height: 500px;background-color:white" />
-</div>
+  <div style="float:left">
+    {{>axe name="axis-x1" role="AXIS" icone="ui-icon-arrowthick-1-e"}}
+    {{>axe name="axis-y" role="MEASURE" icone="ui-icon-arrowthick-1-n"}}
+    {{>axe name="axis-x2" role="AXIS" icone="ui-icon-arrowthick-1-ne"}}
+  </div>
+
+
+  <div style="float:right;width:70%;">
+    <div id="chart-display-area" style="height: 500px;background-color:white"/>
+  </div>
 
 </div>
 
