@@ -1,25 +1,5 @@
-/*
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2014 Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
- */
 ﻿/**
- * @license Copyright (c) 2003-2014, CKSource - Frederico Knabben. All rights reserved.
+ * @license Copyright (c) 2003-2018, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or http://ckeditor.com/license
  */
 
@@ -33,10 +13,10 @@
  * (1) http://ckeditor.com/builder
  *     Visit online builder to build CKEditor from scratch.
  *
- * (2) http://ckeditor.com/builder/46519db514290150731e78289dd8ffbb
+ * (2) http://ckeditor.com/builder/1853fb65474343b60958734ab1904133
  *     Visit online builder to build CKEditor, starting with the same setup as before.
  *
- * (3) http://ckeditor.com/builder/download/46519db514290150731e78289dd8ffbb
+ * (3) http://ckeditor.com/builder/download/1853fb65474343b60958734ab1904133
  *     Straight download link to the latest version of CKEditor (Optimized) with the same setup as before.
  *
  * NOTE:
@@ -48,23 +28,26 @@ var CKBUILDER_CONFIG = {
 	skin: 'moonocolor',
 	preset: 'full',
 	ignore: [
-		'.bender',
-		'bender.js',
-		'bender-err.log',
-		'bender-out.log',
-		'dev',
 		'.DS_Store',
+		'.bender',
+		'.editorconfig',
 		'.gitattributes',
 		'.gitignore',
-		'Gruntfile.js',
 		'.idea',
 		'.jscsrc',
 		'.jshintignore',
 		'.jshintrc',
 		'.mailmap',
+		'.travis.yml',
+		'bender-err.log',
+		'bender-out.log',
+		'bender.ci.js',
+		'bender.js',
+		'dev',
+		'gruntfile.js',
+		'less',
 		'node_modules',
 		'package.json',
-		'README.md',
 		'tests'
 	],
 	plugins : {
@@ -77,6 +60,7 @@ var CKBUILDER_CONFIG = {
 		'colorbutton' : 1,
 		'colordialog' : 1,
 		'contextmenu' : 1,
+		'copyformatting' : 1,
 		'dialogadvtab' : 1,
 		'div' : 1,
 		'elementspath' : 1,
@@ -103,6 +87,7 @@ var CKBUILDER_CONFIG = {
 		'magicline' : 1,
 		'maximize' : 1,
 		'newpage' : 1,
+		'onchange' : 1,
 		'pagebreak' : 1,
 		'pastefromword' : 1,
 		'pastetext' : 1,
@@ -121,16 +106,19 @@ var CKBUILDER_CONFIG = {
 		'stylescombo' : 1,
 		'tab' : 1,
 		'table' : 1,
+		'tableselection' : 1,
 		'tabletools' : 1,
 		'templates' : 1,
 		'toolbar' : 1,
 		'undo' : 1,
+		'uploadimage' : 1,
 		'wsc' : 1,
 		'wysiwygarea' : 1
 	},
 	languages : {
 		'af' : 1,
 		'ar' : 1,
+		'az' : 1,
 		'bg' : 1,
 		'bn' : 1,
 		'bs' : 1,
@@ -139,6 +127,7 @@ var CKBUILDER_CONFIG = {
 		'cy' : 1,
 		'da' : 1,
 		'de' : 1,
+		'de-ch' : 1,
 		'el' : 1,
 		'en' : 1,
 		'en-au' : 1,
@@ -146,6 +135,7 @@ var CKBUILDER_CONFIG = {
 		'en-gb' : 1,
 		'eo' : 1,
 		'es' : 1,
+		'es-mx' : 1,
 		'et' : 1,
 		'eu' : 1,
 		'fa' : 1,
@@ -175,6 +165,7 @@ var CKBUILDER_CONFIG = {
 		'nb' : 1,
 		'nl' : 1,
 		'no' : 1,
+		'oc' : 1,
 		'pl' : 1,
 		'pt' : 1,
 		'pt-br' : 1,
