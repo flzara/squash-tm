@@ -688,7 +688,6 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 			},
 
 			removeReport: function (bindingId) {
-				this.dashboardReportViews[bindingId].remove();//remove backbone view
 				delete this.dashboardReportViews[bindingId];
 				delete this.dashboardReportBindings[bindingId];
 			},
