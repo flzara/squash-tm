@@ -81,11 +81,6 @@ define([ "app/pubsub", "jquery", "workspace.event-bus", "jqueryui" ], function(p
 
 				var defer = $.Deferred();
 				var self = this;
-				//firing an event with wreqr for custom dashboard
-				var wreqr = squashtm.app.wreqr;
-				if(wreqr){
-					wreqr.trigger("contextualContent.loadWith");
-				}
 
 				if (url == this.currentUrl) {
 					defer.reject();
@@ -98,6 +93,11 @@ define([ "app/pubsub", "jquery", "workspace.event-bus", "jqueryui" ], function(p
 						cleanContent();
 						self.html(html);
 
+						//firing an event with wreqr for custom dashboard
+						var wreqr = squashtm.app.wreqr;
+						if (wreqr) {
+							wreqr.trigger("contextualContent.loadWith");
+						}
 					});
 
 					return this.currentXhr;
