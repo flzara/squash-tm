@@ -125,14 +125,28 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 				$("#add-dashboard-dialog").formDialog("open");
 			});
 
-			$("#new-report-tree-button").on("click", function(){
-				var selectedNode =  tree.jstree("get_selected");
-				if (!selectedNode.canContainNodes()) {
-					selectedNode = selectedNode.getParent();
+			$("#new-report-tree-button").on("click", function () {
+
+				var selectedNode = tree.jstree("get_selected");
+
+				// Issue 7418, here we check if the user really has the permission create a new report in the management workspace,
+				// if not, one should not see the information block and save button for his report
+
+				if (rules.canCreateReport(selectedNode)) {
+
+					if (!selectedNode.canContainNodes()) {
+						selectedNode = selectedNode.getParent();
+					}
+					var nodeId = selectedNode.getResId();
+					url = urlBuilder.buildURL("report-workspace", nodeId);
+
+				} else {
+
+					url = urlBuilder.buildURL("report-workspace", "");
 				}
-				var nodeId = selectedNode.getResId();
-				url = urlBuilder.buildURL("report-workspace",nodeId);
 				document.location.href = url;
+
+
 			});
 
       $("#new-chart-tree-button").on("click", function(){

@@ -101,6 +101,11 @@ define(["jquery", "./utils", "./permissions-rules",
 				}
 			}
 
+			// Issue 7418, users can always click on the new report button and be redirect to the report generating page,
+			// but not everyone can save the his report.
+			$("#tree-create-button").removeClass("ui-state-disabled");
+			$("#new-report-tree-button").removeClass("ui-state-disabled disabled");
+
 			return true;
 
 		}
