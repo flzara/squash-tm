@@ -5708,7 +5708,12 @@ the display:block trick will implicitly add that property */
   margin-bottom: 1em;
 }
 .confirm-div span {
+  max-width: 100%;
+  display:inline-block;
   font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .confirm-div label {
   font-size: 1.1em;

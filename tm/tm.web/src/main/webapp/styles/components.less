@@ -317,7 +317,12 @@ the display:block trick will implicitly add that property */
 }
 
 .confirm-div span {
+	max-width: 100%;
+	display:inline-block;
 	font-weight: bold;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .confirm-div label {
@@ -1087,7 +1092,7 @@ Third party servers authentication credentials management
 	.srv-auth-credentials-section{
 		margin-top : 1em;
 		padding: 1em;
-		margin-bottom: 1em;		
+		margin-bottom: 1em;
 	}
 	.srv-auth-messagepane{
 		max-width : 500px;
