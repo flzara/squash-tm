@@ -307,7 +307,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isItalic="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.projects.label}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.project.label}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement uuid="953f8551-f593-4c72-8543-8de995e9b1a8" x="269" y="8" width="84" height="20"/>

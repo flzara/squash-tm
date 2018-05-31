@@ -74,7 +74,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.projects.label}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.project.label}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement uuid="44aa3a48-f819-455c-8bc4-6a5b17ea3721" style="cell" x="142" y="41" width="150" height="20"/>
