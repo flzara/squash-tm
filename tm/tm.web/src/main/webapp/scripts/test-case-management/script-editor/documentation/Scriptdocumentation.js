@@ -97,7 +97,90 @@ define(function () {
 		"\t\t| Expresso\t\t| 0.40  |\n" +
 		"\t\t| Lungo\t\t\t\t| 0.50  |\n" +
 		"\t\t| Cappuccino\t| 0.80  |\n";
-	var doc_en = "documentation en";
+
+	var doc_en = "# language: en\n" +
+		"# Assistance for the writing of Gherkin test cases\n" +
+		"\n" +
+		"# Gherkin is a language utilizing the methodology of Behaviour Driven Development.\n" +
+		"# When using Squash TM, A Gherkin test case can either be executed manually like any regular test case or exported for use in an external automated execution.\n" +
+		"\n" +
+		"\n" +
+		"# ---------------------- KEYWORDS LEXICON ----------------------- \n" +
+		"Feature: \n" +
+		"\n" +
+		"# Scenario-defining Keywords : \n" +
+		"# Simple test scenario (no dataset)\n" +
+		"Scenario:\n" +
+		"# Test scenario with exemples (and datasets)\n" +
+		"Scenario Outline:\n" +
+		"# Keyword for a dataset (to be followed with a data table)\n" +
+		"Examples:\n" +
+		"\n" +
+		"# Context keyword (Test steps that are common to all the scenarios within the script)\n" +
+		"Background:\n" +
+		"\n" +
+		"# Keyword for test steps preconditions :\n" +
+		"Given\n" +
+		"\n" +
+		"# Keyword for test steps actions :\n" +
+		"When\n" +
+		"\n" +
+		"# Keyword for test steps results : \n" +
+		"Then\n" +
+		"\n" +
+		"# Keyword for requirement to continue the ongoing test step :\n" +
+		"And\n" +
+		"But\n" +
+		"*\n" +
+		"\n" +
+		"# ----------------------------- FEATURE EXAMPLE ----------------------------- \n" +
+		"# Structure example of a feature complete with three test scenarios and a context :\n" +
+		"\n" +
+		"# language: en <- this comment line indicate the localization of the script. By default (if missing or invalid), Squash TM will consider the script to be written in English.\n" +
+		"\n" +
+		"# Feature name and its (optional) description (Beware indentation if you wish to include a description)\n" +
+		"Feature: Check the coffee machine\n" +
+		"\tThe aim is to check that the coffee machine functions properly.\n" +
+		"\n" +
+		"\t# Optional context. If a context is present here, it will be re-used as an additional condition for each scenario of the script.\n" +
+		"\tBackground:\n" +
+		"\t\tGiven a coffee machine\n" +
+		"\n" +
+		"\n" +
+		"\t# -------------------------- SCENARIO EXAMPLE N°1 -------------------------- \n" +
+		"\t# Simple scenario example\n" +
+		"\tScenario: Check that the machine is available.\n" +
+		"\t\tGiven that the machine is operating.\n" +
+		"\t\tWhen I use identify my badge.\n" +
+		"\t\tThen I can check my balance.\n" +
+		"\t\t\n" +
+		"\n" +
+		"\t# -------------------------- SCENARIO EXAMPLE N°2 -------------------------- \n" +
+		"\t# Example of a scenario with a data table but no configuration of test steps\n" +
+		"\tScenario: Check what products are available.\n" +
+		"\t\tGiven that the machine is operating.\n" +
+		"\t\tWhen I list the available products.\n" +
+		"\t\tThen I notice that the following products are available :\n" +
+		"\t\t| products\t\t| price |\n" +
+		"\t\t| Expresso\t\t| 0.40  |\n" +
+		"\t\t| Lungo\t\t\t\t| 0.50  |\n" +
+		"\t\t| Cappuccino\t| 0.80  |\n" +
+		"\n" +
+		"\n" +
+		"\t# -------------------------- SCENARIO EXAMPLE N°3 -------------------------- \n" +
+		"\t# Example of a scenario with a data table and configuration of test steps\n" +
+		"\t# Upon execution, the parameters' values in between <> will be substituted\n" +
+		"\t# The scenario will be played once for each and every dataset\n" +
+		"\tScenario Outline: Check the delivery of products.\n" +
+		"\t\tGiven that the machine is operating\n" +
+		"\t\tAnd that my balance is of at least <price>.\n" +
+		"\t\tWhen I select <product>.\n" +
+		"\t\tThen the machine delivers me a <product> and my balance is reduced by <price>.\n" +
+		"\t\tExamples:\n" +
+		"\t\t| products\t\t| price |\n" +
+		"\t\t| Expresso\t\t| 0.40  |\n" +
+		"\t\t| Lungo\t\t\t\t| 0.50  |\n" +
+		"\t\t| Cappuccino\t| 0.80  |\n";
 
 	function getDocumentation(locale) {
 		switch (locale) {
