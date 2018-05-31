@@ -30,6 +30,7 @@ import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.servers.CredentialsProvider;
+import org.squashtest.tm.service.servers.ManageableCredentials;
 import org.squashtest.tm.service.servers.StoredCredentialsManager;
 import org.squashtest.tm.service.servers.UserCredentialsCache;
 
@@ -125,19 +126,20 @@ public class CredentialsProviderImpl implements CredentialsProvider {
 	}
 
 	private Credentials getUserCredentialsFromStore(BugTracker server){
-		Credentials credentials = storedCredentialsManager.findUserCredentials(server.getId(), currentUser());
-		if (credentials != null){
+		ManageableCredentials managed = storedCredentialsManager.findUserCredentials(server.getId(), currentUser());
+		if (managed != null){
 			LOGGER.trace("CredentialsProviderImpl : found in database");
 		}
-		return credentials;
+		return managed.build(storedCredentialsManager, server, getCache().getUser());
 	}
 
+
 	private Credentials getAppLevelCredentialsFromStore(BugTracker server){
-		Credentials credentials = storedCredentialsManager.unsecuredFindAppLevelCredentials(server.getId());
-		if (credentials != null){
+		ManageableCredentials managed = storedCredentialsManager.unsecuredFindAppLevelCredentials(server.getId());
+		if (managed != null){
 			LOGGER.trace("CredentialsProviderImpl : found in database");
 		}
-		return credentials;
+		return managed.build(storedCredentialsManager, server, null);
 	}
 
 

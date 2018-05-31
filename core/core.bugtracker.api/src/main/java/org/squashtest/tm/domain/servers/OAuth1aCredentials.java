@@ -21,29 +21,21 @@
 package org.squashtest.tm.domain.servers;
 
 
+import org.apache.commons.lang3.NotImplementedException;
+
 /**
  * <p>
-	Credentials of type OAuth 1a. It is an all-in-one bundle, because it contains the actual credentials (ie the required
-info in order to sign requests) and the mean of obtain them (ie the urls and all for the oauth dance).
+	Credentials of type OAuth 1a. If asked to, can sign a request.
  	</p>
  */
 
-/*
-	Note :
-	In the proper bugtracker use-cases (the user authorized Squash already), the message signature require the
-	user tokens for one part (each user has its own), and some other info such as consumerKey which are unique for a given
-	server. Because of that, the credentials must be reconstructed
-
-	because OAuth1 signature require the user tokens
-
- */
 public class OAuth1aCredentials implements Credentials {
 
-	// ****** signature elements ******************
+	/**
+	 * Identifier of the OAuth endpoint Squash-TM is supposed to dock to
+	 */
+	private final String consumerKey;
 
-	private String consumerKey;
-
-	private SignatureMethod signatureMethod;
 
 	/**
 	 * The client secret. Depending on the type of signature needed by the endpoint,
@@ -51,52 +43,38 @@ public class OAuth1aCredentials implements Credentials {
 	 * (and the endpoint knows the public key)
 	 *
 	 */
-	private String clientSecret;
+	private final String clientSecret;
 
 	/**
-	 * The persistent (authorized) token
+	 * The long-lasting (authorized) user token
 	 */
-	private String token;
+	private final String token;
 
 	/**
-	 * The persistent (authorized) token secret.
+	 * The long-lasting (authorized) user token secret.
 	 */
-	private String tokenSecret;
+	private final String tokenSecret;
+
+	/**
+	 * The signature algorithm.
+	 */
+	private final SignatureMethod signatureMethod;
 
 
-	// *************** token dance part ******************
-
-	private HttpMethod requestTokenHttpMethod = HttpMethod.GET;
-
-	private String requestTokenUrl;
-
-	private String userAuthorizationURL;
-
-	private HttpMethod accessTokenHttpMethod = HttpMethod.GET;
-
-	private String accessTokenUrl;
-
-
-	// ****************** constructors *******************
-
-	public OAuth1aCredentials() {
+	public static enum SignatureMethod{
+		HMAC_SHA1,
+		RSA_SHA1;
 	}
 
-	public OAuth1aCredentials(String consumerKey, SignatureMethod signatureMethod, String clientSecret, String token, String tokenSecret, HttpMethod requestTokenHttpMethod, String requestTokenUrl, String userAuthorizationURL, HttpMethod accessTokenHttpMethod, String accessTokenUrl) {
+	// *********** getters, setters, methods **************
+
+	public OAuth1aCredentials(String consumerKey, String clientSecret, String token, String tokenSecret, SignatureMethod signatureMethod) {
 		this.consumerKey = consumerKey;
-		this.signatureMethod = signatureMethod;
 		this.clientSecret = clientSecret;
 		this.token = token;
 		this.tokenSecret = tokenSecret;
-		this.requestTokenHttpMethod = requestTokenHttpMethod;
-		this.requestTokenUrl = requestTokenUrl;
-		this.userAuthorizationURL = userAuthorizationURL;
-		this.accessTokenHttpMethod = accessTokenHttpMethod;
-		this.accessTokenUrl = accessTokenUrl;
+		this.signatureMethod = signatureMethod;
 	}
-
-	// ****************** accessors **********************
-
 
 	@Override
 	public AuthenticationProtocol getImplementedProtocol() {
@@ -105,10 +83,6 @@ public class OAuth1aCredentials implements Credentials {
 
 	public String getConsumerKey() {
 		return consumerKey;
-	}
-
-	public SignatureMethod getSignatureMethod() {
-		return signatureMethod;
 	}
 
 	public String getClientSecret() {
@@ -123,46 +97,12 @@ public class OAuth1aCredentials implements Credentials {
 		return tokenSecret;
 	}
 
-	public HttpMethod getRequestTokenHttpMethod() {
-		return requestTokenHttpMethod;
-	}
-
-	public String getRequestTokenUrl() {
-		return requestTokenUrl;
-	}
-
-	public String getUserAuthorizationURL() {
-		return userAuthorizationURL;
-	}
-
-	public HttpMethod getAccessTokenHttpMethod() {
-		return accessTokenHttpMethod;
-	}
-
-	public String getAccessTokenUrl() {
-		return accessTokenUrl;
+	public SignatureMethod getSignatureMethod() {
+		return signatureMethod;
 	}
 
 
-	// *************** factories ***********************
-
-	// create a new instance without the token dance metadata
-	// the access tokens will be those of a user, supplied as a parameter.
-	public OAuth1aCredentials withUserTokens(OAuth1aCredentials userTokens){
-		return new OAuth1aCredentials(consumerKey, signatureMethod, clientSecret,userTokens.token, userTokens.tokenSecret, requestTokenHttpMethod, requestTokenUrl,
-			userAuthorizationURL, accessTokenHttpMethod, accessTokenUrl);
+	public String sign(String url){
+		throw new NotImplementedException("not yet implemented");
 	}
-
-	// *********** support classes and alike *********
-
-	public static enum SignatureMethod{
-		HMAC_SHA1,
-		RSA_SHA1;
-	}
-
-	public static enum HttpMethod{
-		GET,
-		POST
-	}
-
 }

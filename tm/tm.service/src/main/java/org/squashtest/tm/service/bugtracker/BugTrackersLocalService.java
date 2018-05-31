@@ -44,7 +44,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.servers.AuthenticationStatus;
 import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.service.internal.servers.WrongAuthenticationPolicyException;
+import org.squashtest.tm.service.servers.WrongAuthenticationPolicyException;
 
 
 /**

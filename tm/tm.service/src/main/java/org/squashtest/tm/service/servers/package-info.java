@@ -18,16 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 /**
- * <p>
- * That package deals in a general way with other servers that Squash would interact with. Currently residing
- * in artifact 'core.bugtracker.api' but ought to belong to 'tm.service'.
- * </p>
- *
- * <p>
- * TODO : one day we will extract all the services, the BugTracker entity etc in tm.service.
- * In waiting for this glorious day I put some classes of the package org.squashtest.tm.service.servers
- * in this artifact.
- * </p>
+ * TODO : document
  */
 package org.squashtest.tm.service.servers;

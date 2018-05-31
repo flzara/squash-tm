@@ -20,18 +20,22 @@
  */
 package org.squashtest.tm.service.servers;
 
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.servers.Credentials;
 
 /**
  * <p>
- * That manager deals with the stored credentials for third party servers, most of the time for the usage of Squash itself.
- * The credentials are encrypted with AES 128, so that neither the JCE extension nor setting crypto.policy is required.
+ * 		That manager deals with the stored credentials for third party servers, most of the time for the usage of Squash itself.
+ * 		The credentials are encrypted with AES 128, so that neither the JCE extension nor setting crypto.policy is required.
  * </p>
  *
  * <p>
- * 	Unless stated otherwise, users of this service must have administrator privileges.
+ *     Note that this service is INTENDED FOR MANAGEMENT ONLY. If you need to read credentials for consumption, use {@link CredentialsProvider}
+ *     instead. This service deals with the manageable form of credentials, aka a {@link ManageableCredentials}, which can be different
+ *     from the credentials actually used (eg OAuth1aCredentials must be recomposed from Server-owned data + user-specific tokens).
+ *     As a management service, this class only deals with manageable representations. {@link CredentialsProvider} provides
+ *     with usable representations.
  * </p>
- *
  */
 public interface StoredCredentialsManager {
 
@@ -40,7 +44,7 @@ public interface StoredCredentialsManager {
 	 * should know about that and the problem fixed before any credential is stored. The user context for that operation needs not
 	 * to be that of an administrator.
 	 *
-	 * @return true if a secret key was provided
+	 * @return true if a secret key is available.
 	 */
 	boolean isSecretConfigured();
 
@@ -54,7 +58,7 @@ public interface StoredCredentialsManager {
 	 * @param credentials
 	 * @throws MissingEncryptionKeyException if no secret key was configured
 	 */
-	void storeUserCredentials(long serverId, String username, Credentials credentials);
+	void storeUserCredentials(long serverId, String username, ManageableCredentials credentials);
 
 
 	/**
@@ -67,7 +71,7 @@ public interface StoredCredentialsManager {
 	 * 			a different key
 	 * @throws MissingEncryptionKeyException if if no secret key was configured
 	 */
-	Credentials findUserCredentials(long serverId, String username);
+	ManageableCredentials findUserCredentials(long serverId, String username);
 
 
 	/**
@@ -78,7 +82,7 @@ public interface StoredCredentialsManager {
 	 * @param username
 	 * @return
 	 */
-	Credentials unsecuredFindUserCredentials(long serverId, String username);
+	ManageableCredentials unsecuredFindUserCredentials(long serverId, String username);
 
 
 	/**
@@ -93,13 +97,15 @@ public interface StoredCredentialsManager {
 	// ****************** Application-level credentials management *******************
 
 	/**
-	 * Stores the given credentials for the given server as application-level credentials (ie Squash-TM own credentials). If the server already had a stored credential,
-	 * the previous credentials will be replaced by the new ones (so this also serves as an update operation).
+	 * Stores the given credentials for the given server as application-level credentials (ie Squash-TM own credentials).
+	 * If the server already had a stored credential, the previous credentials will be replaced by the new ones
+	 * (so this also serves as an update operation).
+	 *
 	 * @param serverId
 	 * @param credentials
 	 * @throws MissingEncryptionKeyException if no secret key was configured
 	 */
-	void storeAppLevelCredentials(long serverId, Credentials credentials);
+	void storeAppLevelCredentials(long serverId, ManageableCredentials credentials);
 
 
 	/**
@@ -111,7 +117,7 @@ public interface StoredCredentialsManager {
 	 * 			a different key
 	 * @throws MissingEncryptionKeyException if if no secret key was configured
 	 */
-	Credentials findAppLevelCredentials(long serverId);
+	ManageableCredentials findAppLevelCredentials(long serverId);
 
 
 	/**
@@ -121,7 +127,7 @@ public interface StoredCredentialsManager {
 	 * @param serverId
 	 * @return
 	 */
-	Credentials unsecuredFindAppLevelCredentials(long serverId);
+	ManageableCredentials unsecuredFindAppLevelCredentials(long serverId);
 
 
 	/**
@@ -132,6 +138,18 @@ public interface StoredCredentialsManager {
 	void deleteAppLevelCredentials(long serverId);
 
 
+
+	// ********************** deprecated *****************************
+
+	/**
+	 * Returns the credentials in usable form directly.
+	 *
+	 * @param serverId
+	 * @deprecated Should call {@link CredentialsProvider#getAppLevelCredentials(BugTracker)} instead.
+	 * @return
+	 */
+	@Deprecated
+	Credentials unsecuredFindCredentials(long serverId);
 
 
 }

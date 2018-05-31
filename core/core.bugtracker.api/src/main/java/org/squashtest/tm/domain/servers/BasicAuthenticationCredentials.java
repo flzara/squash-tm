@@ -34,6 +34,12 @@ import java.util.Arrays;
  * 	Currently this practice is not widely enforced throughout the application, so here this is really for show.
  * 	However if one day the in-memory password usage is actually implemented this bit is already done.
  * </p>
+ *
+ * <p>
+ * 	31/05/18 passwords using char arrays is stronger in term of security but for now we cannot make sure no String will
+ * 	ever contain it. Plus the need to keep them living in a session-scoped cache defeats the purpose of wipable
+ * 	credentials (see comment in #dispose()). For now, the idea of char[]-based password are postponed.
+ * </p>
  */
 public class BasicAuthenticationCredentials implements Credentials {
 	private String username = "";
@@ -47,7 +53,7 @@ public class BasicAuthenticationCredentials implements Credentials {
 	}
 
 	public BasicAuthenticationCredentials() {
-
+		super();
 	}
 
 	public BasicAuthenticationCredentials(String login, char[] password) {
@@ -60,8 +66,15 @@ public class BasicAuthenticationCredentials implements Credentials {
 		}
 	}
 
+	// see the sorry statement on the class-level javadoc
 	public BasicAuthenticationCredentials(String login, String password){
-		this(login, password.toCharArray());
+		super();
+		this.username = login;
+		if(password == null) {
+			this.password = null;
+		} else {
+			this.password = password.toCharArray();
+		}
 	}
 
 	public String getUsername() {

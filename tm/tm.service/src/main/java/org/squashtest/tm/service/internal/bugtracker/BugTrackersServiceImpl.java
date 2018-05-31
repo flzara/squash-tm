@@ -38,7 +38,6 @@ import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.service.internal.bugtracker.adapter.InternalBugtrackerConnector;
-import org.squashtest.tm.service.internal.servers.WrongAuthenticationPolicyException;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
 import org.squashtest.tm.bugtracker.definition.Attachment;

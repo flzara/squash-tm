@@ -32,18 +32,23 @@ import java.util.Set;
 
 
 /**
+ *
  * <p>
- * That entity represents the credentials used at the application-level by Squash to connect to other third party servers
- * persisted in the database. The actual credentials, in their encrypted form, are held by the property "encryptedCredentials"
- * and the other properties have a more peripheric role like the encryption version used or which servers they are used for.
+ *     That entity wraps the credentials used at the application-level by Squash to connect to other third party servers, for
+ *     persistence in the database. The actual credentials, in their encrypted form, are held by the property "encryptedCredentials"
+ *     and the other properties have a more peripheric role like the encryption version used or which servers they are used for.
  *</p>
  *
  * <p>
- *     The actual credentials is one of the several implementations of {@link org.squashtest.tm.domain.servers.Credentials}, in an encrypted form. The format is unspecified here
- *     and mostly depend on the service that manage it. See the service layer and usages of {@link #getEncryptedCredentials()}
- *     about that.
+ *     The actual credentials is one of the several implementations of {@link org.squashtest.tm.domain.servers.Credentials}, in an encrypted form.
+ *     The format is unspecified here and mostly depend on the service that manage it. See the service layer and usages
+ *     of {@link #getEncryptedCredentials()} about that.
  * </p>
  *
+ */
+
+/*
+	Note : due to its internal nature only this class should be moved in tm.service (be mindful of the persistence config though).
  */
 @Entity
 public class StoredCredentials {

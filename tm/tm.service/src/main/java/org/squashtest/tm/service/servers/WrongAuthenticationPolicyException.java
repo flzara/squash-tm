@@ -18,13 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.servers;
+package org.squashtest.tm.service.servers;
 
 import org.squashtest.csp.core.bugtracker.core.BugTrackerLocalException;
 import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 
 /**
- * Thrown when attempting to authenticate to a bugtracker with the wrong policy (@see {@link org.squashtest.tm.domain.servers.AuthenticationPolicy} )
+ * Thrown when attempting to authenticate to a server with the wrong policy (@see {@link org.squashtest.tm.domain.servers.AuthenticationPolicy} )
  *
  */
 public class WrongAuthenticationPolicyException extends BugTrackerLocalException {

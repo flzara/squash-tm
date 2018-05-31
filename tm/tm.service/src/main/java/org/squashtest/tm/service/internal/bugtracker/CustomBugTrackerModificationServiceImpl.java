@@ -28,9 +28,11 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
+import org.squashtest.tm.service.bugtracker.BugTrackersService;
 import org.squashtest.tm.service.bugtracker.CustomBugTrackerModificationService;
 import org.squashtest.tm.service.internal.bugtracker.adapter.InternalBugtrackerConnector;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
+import org.squashtest.tm.service.servers.ManageableCredentials;
 import org.squashtest.tm.service.servers.StoredCredentialsManager;
 
 /**
@@ -50,6 +52,9 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 
 	@Inject
 	private BugTrackerConnectorFactory connectorFactory;
+
+	@Inject
+	private BugTrackersService btService;
 
 
 	@Override
@@ -76,13 +81,13 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 
 
 	@Override
-	public void storeCredentials(long serverId, Credentials credentials) {
+	public void storeCredentials(long serverId, ManageableCredentials credentials) {
 		credentialsManager.storeAppLevelCredentials(serverId, credentials);
 	}
 
 
 	@Override
-	public Credentials findCredentials(long serverId) {
+	public ManageableCredentials findCredentials(long serverId) {
 		return credentialsManager.findAppLevelCredentials(serverId);
 	}
 
@@ -101,10 +106,12 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 
 
 	@Override
-	public void testCredentials(long bugtrackerId, Credentials credentials) {
+	public void testCredentials(long bugtrackerId, ManageableCredentials credentials) {
+
 		BugTracker bt = bugTrackerDao.findOne(bugtrackerId);
-		InternalBugtrackerConnector connector = connectorFactory.createConnector(bt);
-		connector.checkCredentials(credentials);
+		Credentials usableCredentials = credentials.build(credentialsManager, bt, null);
+
+		btService.testCredentials(bt, usableCredentials);
 	}
 
 

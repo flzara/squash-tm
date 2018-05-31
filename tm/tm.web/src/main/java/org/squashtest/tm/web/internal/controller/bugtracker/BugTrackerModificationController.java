@@ -49,6 +49,7 @@ import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.bugtracker.BugTrackerModificationService;
 import org.squashtest.tm.service.servers.EncryptionKeyChangedException;
+import org.squashtest.tm.service.servers.ManageableCredentials;
 import org.squashtest.tm.service.servers.MissingEncryptionKeyException;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -148,7 +149,7 @@ public class BugTrackerModificationController {
 
 	@RequestMapping(value= "/credentials/validator", method = RequestMethod.POST, consumes="application/json")
 	@ResponseBody
-	public void testCredentials(@PathVariable(BUGTRACKER_ID) long bugtrackerId ,@RequestBody Credentials credentials){
+	public void testCredentials(@PathVariable(BUGTRACKER_ID) long bugtrackerId ,@RequestBody ManageableCredentials credentials){
 		/*
 		 * no exception -> no problem
 		 * exception	-> let it fly
@@ -158,7 +159,7 @@ public class BugTrackerModificationController {
 
 	@RequestMapping(value = "/credentials", method = RequestMethod.POST, consumes="application/json")
 	@ResponseBody
-	public void storeCredentials(@PathVariable(BUGTRACKER_ID) long bugtrackerId ,@RequestBody Credentials credentials){
+	public void storeCredentials(@PathVariable(BUGTRACKER_ID) long bugtrackerId ,@RequestBody ManageableCredentials credentials){
 		bugtrackerModificationService.storeCredentials(bugtrackerId, credentials);
 	}
 
@@ -188,7 +189,7 @@ public class BugTrackerModificationController {
 
 		// now check against the credentials
 		try{
-			Credentials credentials = bugtrackerModificationService.findCredentials(bugTracker.getId());
+			ManageableCredentials credentials = bugtrackerModificationService.findCredentials(bugTracker.getId());
 
 			if (credentials != null){
 				bean.setSelectedProto(credentials.getImplementedProtocol());
@@ -228,7 +229,7 @@ public class BugTrackerModificationController {
 		private AuthenticationPolicy authPolicy;
 		private List<AuthenticationProtocol> availableProtos;
 		private AuthenticationProtocol selectedProto;
-		private Credentials credentials;
+		private ManageableCredentials credentials;
 
 		public AuthenticationPolicy getAuthPolicy() {
 			return authPolicy;
@@ -248,10 +249,10 @@ public class BugTrackerModificationController {
 		public void setSelectedProto(AuthenticationProtocol selectedProto) {
 			this.selectedProto = selectedProto;
 		}
-		public Credentials getCredentials() {
+		public ManageableCredentials getCredentials() {
 			return credentials;
 		}
-		public void setCredentials(Credentials credentials) {
+		public void setCredentials(ManageableCredentials credentials) {
 			this.credentials = credentials;
 		}
 		public String getFailureMessage() {

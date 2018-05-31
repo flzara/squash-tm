@@ -27,6 +27,7 @@ import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.servers.Credentials;
+import org.squashtest.tm.service.servers.ManageableCredentials;
 import org.squashtest.tm.service.servers.StoredCredentialsManager;
 
 
@@ -60,12 +61,12 @@ public interface CustomBugTrackerModificationService {
 
 	/**
 	 *
-	 * @see StoredCredentialsManager#storeAppLevelCredentials(long, Credentials)
+	 * @see StoredCredentialsManager#storeAppLevelCredentials(long, ManageableCredentials)
 	 * @param serverId
 	 * @param credentials
 	 */
 	@PreAuthorize(HAS_ROLE_ADMIN)
-	void storeCredentials(long serverId, Credentials credentials);
+	void storeCredentials(long serverId, ManageableCredentials credentials);
 
 	/**
 	 *
@@ -74,20 +75,20 @@ public interface CustomBugTrackerModificationService {
 	 * @return
 	 */
 	@PreAuthorize(HAS_ROLE_ADMIN)
-	Credentials findCredentials(long serverId);
+	ManageableCredentials findCredentials(long serverId);
 
 
 	/**
 	 * Tests whether the given credentials are valid for the given bugtracker.
 	 * The method exits normally if the credentials are valid.
 	 *
-	 * @param bugtracker
+	 * @param bugtrackerId
 	 * @param credentials
 	 * @throws BugTrackerRemoteException in case of a problem.
 	 * @return
 	 */
 	@PreAuthorize(HAS_ROLE_ADMIN)
-	void testCredentials(long bugtrackerId, Credentials credentials);
+	void testCredentials(long bugtrackerId, ManageableCredentials credentials);
 
 
 	/**

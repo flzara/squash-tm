@@ -27,19 +27,25 @@ import java.util.Optional;
 
 /**
  * <p>
- * Retrieves the credentials of a given user for a server, and manage the {@link UserCredentialsCache}. It is NOT intended
- * to manage the persistent credentials (that is the job of {@link StoredCredentialsManager}. The services
- * here are <b>scoped to the user context</b> of the current execution flow : all operations implicitly target the current user.
- * The only exception is #getAppLevelCredentials(), which means (as the name implies) that Squash-TM own credentials themselves should be
- * retrieved. The caller of the method must ensure that it will not call cache operations when no user context is defined or
- * disappointing events will follow.
- * Since the user context is thread-based it means that the credentials cache must be set and cleaned up at careful times.
- * It also means that if there is no user context available this service will (hopefully) fail early.
+ * 	Retrieves the credentials of a given user for a server, and manage the {@link UserCredentialsCache}. It is NOT intended
+ * 	to manage the persistent credentials (that is the job of {@link StoredCredentialsManager}.
+ * 	This provider deals with credentials in their usable form, while StoredCredentialsManager deals with their storable form.
+ * 	Sometimes it's the same, sometimes it's different (see comments in StoredCredentialsManager. Read its documentation to
+ * 	find more.
  * </p>
  *
  * <p>
- *     Note : if no user context is available (eg when Squash-TM do things on its own) the credentials should be loaded using
- *     the lower-level service {@link StoredCredentialsManager}.
+ * 	The services here are <b>scoped to the user context</b> of the current execution flow : all operations implicitly
+ * 	target the current user. The only exception is #getAppLevelCredentials(), which means (as the name implies) that
+ * 	Squash-TM own credentials themselves should be retrieved. The caller of the method must ensure that it will not call
+ * 	cache operations when no user context is defined or disappointing consequences will follow.
+ * 	Since the user context is thread-based it means that the credentials cache must be set and cleaned up at careful times.
+ * 	It also means that if there is no user context available this service will (hopefully) fail early.
+ * </p>
+ *
+ * <p>
+ *     Note : if no user context is available (eg when Squash-TM do things on its own) the (app-level) credentials should
+ *     be loaded using getAppLevelCredentials.
  * </p>
  *
  * <p>
