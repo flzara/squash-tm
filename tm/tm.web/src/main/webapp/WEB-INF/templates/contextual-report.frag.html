@@ -115,7 +115,7 @@
         th:remove="all">'ui-widget' class above is required to get a (somewhat) uniform font size across workspaces</span>
 
       <div th:if="${parentId != null}">
-        <div id="report-information-panel" class="is-contextual expand sq-tg">
+        <div id="report-information-panel" class="is-contextual expand sq-tg frozen">
           <div class="tg-head" th:text="#{label.Information}"> Information</div>
           <div class="tg-body cf">
 
@@ -144,7 +144,7 @@
         </div>
       </div>
 
-      <div id="report-criteria-panel" class="is-contextual expand sq-tg" title="Report form"
+      <div id="report-criteria-panel" class="is-contextual expand sq-tg frozen" title="Report form"
            th:title="#{report.criteria.panel.title}">
         <div class="tg-head" th:text="#{report.criteria.panel.title}">
           Report form - should be in an h3 if we had not .report-criteria-panel california style sheet
