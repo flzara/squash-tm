@@ -261,7 +261,7 @@ public class TestSuiteModificationController {
 			LOGGER.debug("TestSuiteModificationController : renaming " + suiteId + " as " + newName);
 		}
 		service.rename(suiteId, newName);
-		return new RenameModel(HtmlUtils.htmlEscape(newName));
+		return new RenameModel(HTMLCleanupUtils.cleanAndUnescapeHTML(newName));
 
 	}
 
