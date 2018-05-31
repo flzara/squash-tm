@@ -151,7 +151,7 @@ define(function () {
 		"\t# Simple scenario example\n" +
 		"\tScenario: Check that the machine is available.\n" +
 		"\t\tGiven that the machine is operating.\n" +
-		"\t\tWhen I use identify my badge.\n" +
+		"\t\tWhen I use my badge.\n" +
 		"\t\tThen I can check my balance.\n" +
 		"\t\t\n" +
 		"\n" +
