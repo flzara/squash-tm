@@ -182,10 +182,97 @@ define(function () {
 		"\t\t| Lungo\t\t\t\t| 0.50  |\n" +
 		"\t\t| Cappuccino\t| 0.80  |\n";
 
+	var doc_es = "# language: es\n" +
+		"# Asistencia para el proceso de escritura de los casos de test Gherkin.\n" +
+		"\n" +
+		"# Gherkin es un lenguaje implementando las metodologías del Behaviour Driven Development.\n" +
+		"# En Squash TM, un caso de test Gherkin puede ejecutarse manualmente de la misma manera que un caso de test clásico o ser exportado para una ejecución externa automatizada.\n" +
+		"\n" +
+		"# ---------------------- LÉXICO DE TÉRMINOS -----------------------\n" +
+		"Característica\n" +
+		"\n" +
+		"# Términos para definir a los escenarios:\n" +
+		"# Escenarios de test simples (sin dataset)\n" +
+		"Escenario\n" +
+		"# Escenarios de test con ejemplos (y con dataset)\n" +
+		"Esquema del escenario\n" +
+		"# término para definir un dataset (debe acompañarse de una tabla de datos)\n" +
+		"Ejemplos\n" +
+		"\n" +
+		"# Término para definir un contexto (pasos de test comunes pare todos los escenarios del script)\n" +
+		"Antecedentes\n" +
+		"\n" +
+		"# Términos de precondiciones para pasos de test:\n" +
+		"Dado\n" +
+		"Dada\n" +
+		"Dados\n" +
+		"Dadas\n" +
+		"\n" +
+		"# Término de acción para pasos de test:\n" +
+		"Cuando\n" +
+		"\n" +
+		"# Término de resultado para pasos de test:\n" +
+		"Entonces\n" +
+		"\n" +
+		"# Términos de continuación de los pasos de test en curso para pasos de test\n" +
+		"Y\n" +
+		"E\n" +
+		"\n" +
+		"# ----------------------------- EJEMPLO DE FEATURE ----------------------------- \n" +
+		"# Ejemplo de estructura de una feature completa con tres escenarios de test y un contexto:\n" +
+		"\n" +
+		"# language: es <- Esta línea de comentario indica la localización del script. Por defecto (cuando falta o es incorrecta), Squash TM interpretará el script como si era en inglés.\n" +
+		"\n" +
+		"# Nombre de la funcionalidad y su descripción facultativa (Cuidado con el sangrado si quieren implementar a una descripción)\n" +
+		"Característica: Comprobar la máquina de café\n" +
+		"\tAsegurarse de qué la máquina de café funciona correctamente\n" +
+		"\n" +
+		"\t# Contexto facultativo. Cuando un contexto existe, será reutilizado como condición suplementaria para cada escenario del script.\n" +
+		"\tAntecedentes:\n" +
+		"\t\tDado una máquina de café\n" +
+		"\n" +
+		"\n" +
+		"\t# -------------------------- ESCENARIO DE EJEMPLO 1 -------------------------- \n" +
+		"\t# Ejemplo de escenario simple\n" +
+		"\tEscenario: Verificar que la máquina de café es disponible.\n" +
+		"\t\tDado que la máquina está conectada.\n" +
+		"\t\tCuando utilizo mi tarjeta.\n" +
+		"\t\tEntonces constato que mi saldo se indica.\n" +
+		"\n" +
+		"\n" +
+		"\t# -------------------------- ESCENARIO DE EJEMPLO 2 -------------------------- \n" +
+		"\t# Ejemplo de escenario con tabla de datos sin configuración de los pasos de test\n" +
+		"\tEscenario: Controlar cuales son los productos disponibles.\n" +
+		"\t\tDado que la máquina está conectada.\n" +
+		"\t\tCuando listo los productos disponibles.\n" +
+		"\t\tEntonces constato que todos los productos siguientes son disponibles:\n" +
+		"\t\t| producto\t\t\| precio |\n" +
+		"\t\t| Expresso\t\t|  0.40  |\n" +
+		"\t\t| Lungo\t\t\t\t|  0.50  |\n" +
+		"\t\t| Cappuccino\t|  0.80  |\n" +
+		"\n" +
+		"\n" +
+		"\t# -------------------------- ESCENARIO DE EJEMPLO 3 -------------------------- \n" +
+		"\t# Ejemplo de escenario con tabla de datos y pasos de test configurados\n" +
+		"\t# Los valores de los parámetros entre <> serán sustituidos a la ejecución\n" +
+		"\t# El escenario estará ejecutado una vez para cada dataset\n" +
+		"\tEsquema del escenario: Verificar la entrega de los productos\n" +
+		"\t\tDado que la máquina está conectada.\n" +
+		"\t\tY que mi saldo es de <precio> por lo menos.\n" +
+		"\t\tCuando selecciono el <producto>.\n" +
+		"\t\tEntonces la máquina me sirve un <producto> y le cargó el <precio> a mi cuenta.\n" +
+		"\t\tEjemplos:\n" +
+		"\t\t| producto\t\t| precio |\n" +
+		"\t\t| Expresso\t\t|  0.40  |\n" +
+		"\t\t| Lungo\t\t\t\t|  0.50  |\n" +
+		"\t\t| Cappuccino\t|  0.80  |\n";
+
 	function getDocumentation(locale) {
 		switch (locale) {
 			case "fr":
 				return doc_fr;
+			case "es":
+				return doc_es;
 			default :
 				return doc_en;
 		}
