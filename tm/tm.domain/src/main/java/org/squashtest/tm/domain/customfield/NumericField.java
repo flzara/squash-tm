@@ -62,4 +62,9 @@ public class NumericField extends CustomField {
 		return defaultValue  != null ? defaultValue  : "";
 	}
 
+	@Override
+	public void accept(CustomFieldVisitor visitor) {
+		visitor.visit(this);
+	}
+
 }
