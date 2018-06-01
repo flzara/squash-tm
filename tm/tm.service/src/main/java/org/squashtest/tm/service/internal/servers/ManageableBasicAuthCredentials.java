@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.service.internal.servers;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials;
 import org.squashtest.tm.domain.servers.Credentials;
@@ -31,6 +34,8 @@ import org.squashtest.tm.service.servers.StoredCredentialsManager;
  *
  */
 public class ManageableBasicAuthCredentials extends BasicAuthenticationCredentials implements ManageableCredentials {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ManageableBasicAuthCredentials.class);
 
 	public ManageableBasicAuthCredentials() {
 	}
@@ -47,9 +52,27 @@ public class ManageableBasicAuthCredentials extends BasicAuthenticationCredentia
 	public boolean allowsAppLevelStorage() {
 		return true;
 	}
+	
+	
+	@Override
+	public void invalidate() {
+		setUsername("");
+		setPassword(new char[]{});
+	}
+	
+	private boolean isValid(){
+		return ! StringUtils.isBlank(getUsername());
+		// note : empty password is fine
+	}
 
 	@Override
 	public Credentials build(StoredCredentialsManager storeManager, BugTracker server, String username) {
-		return this;
+		if (isValid()){
+			return this;
+		}
+		else{
+			LOGGER.debug("Cannot create the credentials because username and/or password is empty. Perhaps were they invalidated ?");
+			return null;
+		}
 	}
 }

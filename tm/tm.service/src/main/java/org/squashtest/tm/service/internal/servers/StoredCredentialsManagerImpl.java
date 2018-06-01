@@ -134,6 +134,16 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 	public ManageableCredentials unsecuredFindUserCredentials(long serverId, String username) {
 		return unsecuredFindCredentials(serverId, username);
 	}
+	
+	
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN + OR_CURRENT_USER_OWNS_CREDENTIALS)
+	public void invalidateUserCredentials(long serverId, String username) {
+		ManageableCredentials creds = unsecuredFindCredentials(serverId, username);
+		if (creds != null){
+			creds.invalidate();
+		}		
+	}
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN + OR_CURRENT_USER_OWNS_CREDENTIALS)
@@ -163,6 +173,15 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 	@Override
 	public ManageableCredentials unsecuredFindAppLevelCredentials(long serverId) {
 		return unsecuredFindCredentials(serverId, null);
+	}
+	
+
+	@Override
+	public void invalidateAppLevelCredentials(long serverId) {
+		ManageableCredentials creds = unsecuredFindCredentials(serverId, null);
+		if (creds != null){
+			creds.invalidate();
+		}	
 	}
 
 	@Override
@@ -219,6 +238,10 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 
 
 
+	/*
+	 * Returns the credentials for the server id. If username is not null, this implicitly means 
+	 * user-level credentials. If username is null, app-level credentials will be retrieved instead.
+	 */
 	private ManageableCredentials unsecuredFindCredentials(long serverId, String username) {
 
 		if (! isSecretConfigured()){

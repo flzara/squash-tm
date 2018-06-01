@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.servers;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
@@ -70,6 +71,10 @@ public class UserOAuth1aToken implements ManageableCredentials {
 	public void setTokenSecret(String tokenSecret) {
 		this.tokenSecret = tokenSecret;
 	}
+	
+	boolean isValid(){
+		return ! StringUtils.isAnyBlank(token, tokenSecret);
+	}
 
 	//*********************** ManageableCredentials **************
 
@@ -82,22 +87,46 @@ public class UserOAuth1aToken implements ManageableCredentials {
 	public boolean allowsUserLevelStorage() {
 		return true;
 	}
+	
+
+	@Override
+	public void invalidate() {
+		token = "";
+		tokenSecret = "";
+	}
 
 	@Override
 	public OAuth1aCredentials build(StoredCredentialsManager storeManager, BugTracker server, String username) {
+		
+		OAuth1aCredentials result = null;
+		
 		LOGGER.debug("Building OAuth1aCredentials");
 
 		ManageableCredentials serverCreds = storeManager.findAppLevelCredentials(server.getId());
-
-		if (! ServerOAuth1aConsumerConf.class.isAssignableFrom(serverCreds.getClass())){
-			String message = String.format("Attempted to build OAuth1a credentials for user '%s' but could only find the user tokens. The rest of the configuration, " +
-											   "usually held ass app-level configuration, could not be found, and got this instread : '%s'", username, serverCreds);
-			LOGGER.error(message);
-			throw new BugTrackerNoCredentialsException(message, null);
+		
+		if (! isValid()){
+			LOGGER.debug("Attempted to build OAuth1a credentials for user '{}' but user tokens were invalidated and need to be recreated", username);
+		}		
+		
+		else if (! canBuildWith(serverCreds)){
+			LOGGER.error("Attempted to build OAuth1a credentials for user '{}' but could only find the user tokens. The rest of the configuration, " +
+					   "usually held as app-level credentials, is absent or invalid.", username);
 		}
-
-		ServerOAuth1aConsumerConf serverConf = (ServerOAuth1aConsumerConf) serverCreds;
-
-		return new OAuth1aCredentials(serverConf.getConsumerKey(), serverConf.getClientSecret(), token, tokenSecret, serverConf.getSignatureMethod());
+		
+		else{
+			ServerOAuth1aConsumerConf serverConf = (ServerOAuth1aConsumerConf) serverCreds;
+			result = new OAuth1aCredentials(serverConf.getConsumerKey(), serverConf.getClientSecret(), token, tokenSecret, serverConf.getSignatureMethod());
+		}
+		
+		return result;
+	}
+	
+	private boolean canBuildWith(ManageableCredentials serverCreds){
+		
+		return (
+				serverCreds != null && 
+				ServerOAuth1aConsumerConf.class.isAssignableFrom(serverCreds.getClass())
+		);
+		
 	}
 }

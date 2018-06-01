@@ -192,7 +192,7 @@ class BugTrackersLocalServiceImplTest extends Specification {
 		then:
 		1 * remoteService.testCredentials(bugTracker, creds)  >> { throw new BugTrackerNoCredentialsException(null)}
 		1 * credentialsProvider.uncacheCredentials(bugTracker)
-		1 * storedCredentialsManager.deleteUserCredentials(1L, "bob")
+		1 * storedCredentialsManager.invalidateUserCredentials(1L, "bob")
 		thrown BugTrackerNoCredentialsException
 
 	}

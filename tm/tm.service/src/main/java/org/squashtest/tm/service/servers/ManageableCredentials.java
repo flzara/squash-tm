@@ -67,11 +67,22 @@ public interface ManageableCredentials {
 	}
 
 	/**
-	 * The factory method that produces the actual credentials, if the storable representation is not the definitive
-	 * credentials itself.
+	 * The factory method that produces the actual credentials, if the managed representation is not the definitive
+	 * credentials itself. If credentials cannot be built for some reasons, will return null : the caller will decide 
+	 * if an exception must be thrown (eg BugTrackerNoCredentialsException) or else.
 	 *
 	 * @return
 	 */
 	Credentials build(StoredCredentialsManager storeManager, BugTracker server, String username);
+	
+	
+	/**
+	 * Invalidates these credentials, if it appears that the endpoint that accepted them is now rejecting them.
+	 * 
+	 * Note this doesn't mean the credentials themselves are deleted, but this renders them ineffective
+	 * (eg {@link #build(StoredCredentialsManager, BugTracker, String)} would return null if called with them).
+	 * 
+	 */
+	void invalidate();
 
 }

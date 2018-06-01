@@ -33,7 +33,6 @@ import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.service.bugtracker.BugTrackersService;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
@@ -230,7 +229,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	}
 
 	@Override
-	public void validateCredentials(BugTracker bugTracker, Credentials credentials, boolean removeOnFail) throws BugTrackerRemoteException {
+	public void validateCredentials(BugTracker bugTracker, Credentials credentials, boolean invalidateOnFail) throws BugTrackerRemoteException {
 
 		LOGGER.debug("BugTrackerLocalServiceImpl : validating credentials for server '{}'", bugTracker.getName());
 
@@ -241,10 +240,10 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		}
 		catch(BugTrackerNoCredentialsException | UnsupportedAuthenticationModeException ex){
 			LOGGER.debug("BugTrackerLocalServerImpl : credentials were rejected ({})", ex.getClass());
-			if (removeOnFail){
+			if (invalidateOnFail){
 				LOGGER.debug("BugTrackerLocalServiceImpl : removing failed credentials as requested");
 				credentialsProvider.uncacheCredentials(bugTracker);
-				storedCredentialsManager.deleteUserCredentials(bugTracker.getId(), credentialsProvider.currentUser());
+				storedCredentialsManager.invalidateUserCredentials(bugTracker.getId(), credentialsProvider.currentUser());
 			}
 			// propagate exception
 			throw ex;
@@ -253,9 +252,9 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	}
 
 	@Override
-	public void validateCredentials(Long bugtrackerId, Credentials credentials, boolean removeOnFail) throws BugTrackerRemoteException {
+	public void validateCredentials(Long bugtrackerId, Credentials credentials, boolean invalidateOnFail) throws BugTrackerRemoteException {
 		BugTracker server = bugTrackerDao.findOne(bugtrackerId);
-		validateCredentials(server, credentials, removeOnFail);
+		validateCredentials(server, credentials, invalidateOnFail);
 	}
 
 

@@ -21,6 +21,8 @@
 package org.squashtest.tm.service.internal.servers;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.servers.Credentials;
@@ -48,6 +50,8 @@ import org.squashtest.tm.service.servers.StoredCredentialsManager;
  * </p>
  */
 public class ServerOAuth1aConsumerConf implements ManageableCredentials {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ServerOAuth1aConsumerConf.class);
 
 	/**
 	 * Identifier of the OAuth endpoint Squash-TM is supposed to dock to
@@ -113,10 +117,27 @@ public class ServerOAuth1aConsumerConf implements ManageableCredentials {
 
 	@Override
 	public Credentials build(StoredCredentialsManager storeManager, BugTracker server, String username) {
-		return new OAuth1aCredentials(consumerKey, clientSecret, squashtmTokens.getToken(), squashtmTokens.getTokenSecret(), signatureMethod);
+		if (isValid()){
+			return new OAuth1aCredentials(consumerKey, clientSecret, squashtmTokens.getToken(), squashtmTokens.getTokenSecret(), signatureMethod);
+		}
+		else{
+			LOGGER.debug("cannot create oauth1a server credentials : no app-level tokens defined");
+			return null;
+		}
 	}
+	
+	
 
 	// ****************** accessors **********************
+
+	private boolean isValid(){
+		return squashtmTokens.isValid();
+	}
+	
+	@Override
+	public void invalidate() {
+		squashtmTokens.invalidate();
+	}
 
 	@Override
 	public AuthenticationProtocol getImplementedProtocol() {
