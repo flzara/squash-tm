@@ -555,7 +555,7 @@
         <tbody>
           <c:forEach items="${templatesList}" var="template" varStatus="varStatus">
             <tr>
-              <td>
+              <td  style="text-align: center;">
                 <input type="radio" id="${template.id}" value="${template.id}" name="associate-template-input"
                   ${varStatus.first ? 'checked="checked"' : ''} />
               </td>
