@@ -20,28 +20,6 @@
  */
 package org.squashtest.tm.service.internal.project;
 
-import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
-import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang3.StringUtils;
@@ -53,13 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.api.workspace.WorkspaceType;
-import org.squashtest.tm.core.foundation.collection.Filtering;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.SortOrder;
-import org.squashtest.tm.core.foundation.collection.Sorting;
+import org.squashtest.tm.core.foundation.collection.*;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
@@ -71,12 +43,7 @@ import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.library.PluginReferencer;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.project.AdministrableProject;
-import org.squashtest.tm.domain.project.GenericProject;
-import org.squashtest.tm.domain.project.LibraryPluginBinding;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.project.ProjectForCustomCompare;
-import org.squashtest.tm.domain.project.ProjectTemplate;
+import org.squashtest.tm.domain.project.*;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
@@ -102,6 +69,14 @@ import org.squashtest.tm.service.security.ObjectIdentityService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.*;
+
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("CustomGenericProjectManager")
 @Transactional
@@ -949,8 +924,6 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	}
 
 	private void copyPlugins(GenericProject target, GenericProject source) {
-		/* Passer par WorkspaceWizardManager pour aussi désactiver ?
-		* -> A Tester. */
 		for(String pluginId : source.getRequirementLibrary().getEnabledPlugins()) {
 			target.getRequirementLibrary().enablePlugin(pluginId);
 		}
@@ -1005,6 +978,13 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		copyInfolists(target, source);
 		target.setAllowTcModifDuringExec(source.allowTcModifDuringExec());
 		copyExecutionStatuses(target, source);
+		copyPlugins(target, source);
+		if(target.getBugtrackerBinding() == null) {
+			copyBugtrackerSettings(target, source);
+		}
+		if(target.getTestAutomationServer() == null) {
+			copyTestAutomationSettings(target, source);
+		}
 		return target;
 	}
 
