@@ -115,6 +115,12 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN + OR_CURRENT_USER_OWNS_CREDENTIALS)
 	public void storeUserCredentials(long serverId, String username, ManageableCredentials credentials) {
+		if (! credentials.allowsUserLevelStorage()){
+			throw new IllegalArgumentException(
+				"Refused to store credentials of type '"+credentials.getImplementedProtocol()+"' : business rules forbid " +
+					"to store such credentials for human users"
+			);
+		}
 		storeCredentials(serverId, username, credentials);
 	}
 
@@ -139,6 +145,12 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void storeAppLevelCredentials(long serverId, ManageableCredentials credentials) {
+		if (! credentials.allowsAppLevelStorage()){
+			throw new IllegalArgumentException(
+				"Refused to store credentials of type '"+credentials.getImplementedProtocol()+"' : business rules forbid " +
+					"to store such credentials as application-level credentials"
+			);
+		}
 		storeCredentials(serverId, null, credentials);
 	}
 
@@ -242,45 +254,33 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 		}
 
 		// -- exception 2 : something was wrong --
+		// using a catchall here because Jackson might use IOException, IllegalArgumentException and whatnot
+		catch(Exception ex){
+			try {
+				/*
+				 * Well, maybe this is the old BasicAuthenticationCredentials (which does not implement ManageableCredentials).
+				 */
+				LOGGER.debug("Something got wrong. Perhaps former BasicAuthenticationCredentials need migration ?");
 
-		catch(IOException ex){
-
-			if (sc == null){
-				// The database failed and Hibernate didn't catch it
-				throw new RuntimeException("Failed to retrieve stored credentials from the database");
+				return migrateToNewFormat(strDecrypt, sc);
 			}
 
-			/*
-			 * Well, maybe this is the old BasicAuthenticationCredentials (which does not implement ManageableCredentials).
-			 */
-			LOGGER.debug("Something got wrong. Perhaps former BasicAuthenticationCredentials need migration ?");
-			try{
-
-				ManageableCredentials fixed = tryMigrateBasicAuthCredentials(strDecrypt);
-
-				// no error ? Well, let's try to fix the database
-				// TODO : will fail if the transaction is set to read-only. But I leave that to the future for now.
-				Crypto.EncryptionOutcome outcome = toEncryptedForm(fixed);
-				sc.setEncryptedCredentials(outcome.getEncryptedText());
-
-				// now return the awaited credentials
-				return fixed;
-			}
+			// -- exception 2.1 : something was very wrong
 			catch(IOException definitelyWrong){
 				/*
-				 * failure on deserialization. Let's try to investigate and refine the error.
+				 * Let's try to investigate and refine the error.
 				 */
 				LOGGER.error("something got definitely wrong.");
-				LOGGER.error(ex.getMessage(), ex);
-				throw investigateDeserializationError(strDecrypt, ex);
+				LOGGER.error(definitelyWrong.getMessage(), definitelyWrong);
+				throw investigateDeserializationError(strDecrypt, definitelyWrong);
 			}
-
 		}
 		finally{
 			crypto.dispose();
 		}
 
 	}
+
 
 
 	public void deleteCredentials(long serverId, String username) {
@@ -349,7 +349,7 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 	 */
 	private User loadUserOrNull(String username){
 		User user = null;
-		if (username == null){
+		if (username != null){
 			user = (caseInsensitive) ? userDao.findUserByCiLogin(username) : userDao.findUserByLogin(username);
 		}
 		return user;
@@ -381,25 +381,25 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 	@PostConstruct
 	void initialize(){
 		ObjectMapper om = new ObjectMapper();
-		//om.addMixIn(Credentials.class, CredentialsMixin.class);
-		om.addMixIn(ManageableCredentialsMixin.class, ManageableCredentialsMixin.class);
+		om.addMixIn(Credentials.class, InternalCredentialsMixin.class);
+		om.addMixIn(ManageableCredentials.class, InternalManageableCredentialsMixin.class);
 		objectMapper = om;
 
 		caseInsensitive = features.isEnabled(FeatureManager.Feature.CASE_INSENSITIVE_LOGIN);
 	}
 
-/*
+
 	@JsonTypeInfo(include = JsonTypeInfo.As.PROPERTY, use = JsonTypeInfo.Id.CLASS)
 	@JsonInclude
-	abstract class CredentialsMixin {
+	abstract class InternalCredentialsMixin {
 		@JsonIgnore
 		abstract AuthenticationProtocol getImplementedProtocol();
 
-	}*/
+	}
 
 	@JsonTypeInfo(include = JsonTypeInfo.As.PROPERTY, use = JsonTypeInfo.Id.CLASS)
 	@JsonInclude
-	abstract class ManageableCredentialsMixin {
+	abstract class InternalManageableCredentialsMixin {
 		@JsonIgnore
 		abstract AuthenticationProtocol getImplementedProtocol();
 
@@ -419,6 +419,25 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 	}
 
 
+
+	private ManageableCredentials migrateToNewFormat(String strDecrypt, StoredCredentials sc) throws IOException{
+			
+		LOGGER.debug("attempting migration of the deprecated stored credentials");
+		
+		ManageableCredentials fixed = tryAsBasicAuth(strDecrypt);
+
+		// no error ? Well, let's try to fix the database
+		// TODO : will fail if the transaction is set to read-only. But I leave that to the future for now.
+		Crypto.EncryptionOutcome outcome = toEncryptedForm(fixed);
+		sc.setEncryptedCredentials(outcome.getEncryptedText());
+		
+		LOGGER.debug("migration completed");
+
+		// now return the awaited credentials
+		return fixed;
+
+	}
+
 	/**
 	 * In former versions of Squash, credentials were stored in the database as is. This method is an attempt to migrate
 	 * them to the new format.
@@ -427,7 +446,7 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 	 * @return
 	 * @throws IOException
 	 */
-	private ManageableCredentials tryMigrateBasicAuthCredentials(String serialized) throws IOException{
+	private ManageableCredentials tryAsBasicAuth(String serialized) throws IOException{
 
 		BasicAuthenticationCredentials creds = objectMapper.readValue(serialized, BasicAuthenticationCredentials.class);
 

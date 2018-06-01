@@ -20,7 +20,8 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
-import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials;
+import org.squashtest.tm.service.internal.servers.ManageableBasicAuthCredentials;
+import org.squashtest.tm.service.internal.servers.ServerOAuth1aConsumerConf;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
@@ -29,8 +30,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 @JsonTypeInfo(include=JsonTypeInfo.As.PROPERTY, use=Id.NAME, property="type")
 @JsonSubTypes({
-	@Type(name="BASIC_AUTH", value=BasicAuthenticationCredentials.class)
+	@Type(name="BASIC_AUTH", value=ManageableBasicAuthCredentials.class),
+	@Type(name="OAUTH_1A", value=ServerOAuth1aConsumerConf.class)
 })
-public abstract class CredentialsMixin {
+public abstract class ManageableCredentialsMixin {
 
 }

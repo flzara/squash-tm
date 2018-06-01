@@ -126,20 +126,24 @@ public class CredentialsProviderImpl implements CredentialsProvider {
 	}
 
 	private Credentials getUserCredentialsFromStore(BugTracker server){
+		Credentials result = null;
 		ManageableCredentials managed = storedCredentialsManager.findUserCredentials(server.getId(), currentUser());
 		if (managed != null){
 			LOGGER.trace("CredentialsProviderImpl : found in database");
+			result = managed.build(storedCredentialsManager, server, getCache().getUser()); 
 		}
-		return managed.build(storedCredentialsManager, server, getCache().getUser());
+		return result;
 	}
 
 
 	private Credentials getAppLevelCredentialsFromStore(BugTracker server){
+		Credentials result = null;
 		ManageableCredentials managed = storedCredentialsManager.unsecuredFindAppLevelCredentials(server.getId());
 		if (managed != null){
 			LOGGER.trace("CredentialsProviderImpl : found in database");
+			result = managed.build(storedCredentialsManager, server, getCache().getUser()); 
 		}
-		return managed.build(storedCredentialsManager, server, null);
+		return result;
 	}
 
 

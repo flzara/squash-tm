@@ -53,9 +53,12 @@ public interface StoredCredentialsManager {
 	/**
 	 * Stores the given credentials for the given user. If the server already had a stored credential,
 	 * the previous credentials will be replaced by the new ones (so this also serves as an update operation).
+	 * Credentials that cannot be saved as user credentials will throw an exception : the invoker should check
+	 * if the operation is legal first (see {@link ManageableCredentials#allowsUserLevelStorage()})
 	 * @param serverId
 	 * @param username
 	 * @param credentials
+	 * @throws IllegalArgumentException if the credentials cannot be stored as user-level credentials
 	 * @throws MissingEncryptionKeyException if no secret key was configured
 	 */
 	void storeUserCredentials(long serverId, String username, ManageableCredentials credentials);
@@ -100,9 +103,12 @@ public interface StoredCredentialsManager {
 	 * Stores the given credentials for the given server as application-level credentials (ie Squash-TM own credentials).
 	 * If the server already had a stored credential, the previous credentials will be replaced by the new ones
 	 * (so this also serves as an update operation).
+	 * Credentials that cannot be saved as server credentials will throw an exception: the invoker should check
+	 * if the operation is legal first (see {@link ManageableCredentials#allowsAppLevelStorage()}).
 	 *
 	 * @param serverId
 	 * @param credentials
+	 * @throws IllegalArgumentException if the credentials cannot be stored as user-level credentials
 	 * @throws MissingEncryptionKeyException if no secret key was configured
 	 */
 	void storeAppLevelCredentials(long serverId, ManageableCredentials credentials);

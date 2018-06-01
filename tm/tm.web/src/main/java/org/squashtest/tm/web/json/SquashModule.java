@@ -37,6 +37,7 @@ import org.squashtest.tm.domain.users.UsersGroup;
 import org.squashtest.tm.service.internal.dto.CustomFieldModel;
 import org.squashtest.tm.service.internal.dto.CustomFieldModelFactory;
 import org.squashtest.tm.service.internal.dto.CustomFieldValueModel;
+import org.squashtest.tm.service.servers.ManageableCredentials;
 import org.squashtest.tm.web.internal.model.json.*;
 
 /**
@@ -68,7 +69,7 @@ public class SquashModule extends SimpleModule {
 		context.setMixInAnnotations(UsersGroup.class, UserGroupMixin.class);
 		context.setMixInAnnotations(User.class, UserMixin.class);
 		context.setMixInAnnotations(BugTracker.class, BugTrackerMixin.class);
-		context.setMixInAnnotations(Credentials.class, CredentialsMixin.class);
+		context.setMixInAnnotations(ManageableCredentials.class, ManageableCredentialsMixin.class);
 		context.setMixInAnnotations(CustomFieldValueModel.class, CustomFieldValueModelMixin.class);
 		context.setMixInAnnotations(ScriptedTestCaseExtender.class, ScriptedTestCaseExtenderMixin.class);
 		context.setMixInAnnotations(CustomFieldModelFactory.SingleSelectFieldModel.class, SingleSelectFieldModelMixin.class);

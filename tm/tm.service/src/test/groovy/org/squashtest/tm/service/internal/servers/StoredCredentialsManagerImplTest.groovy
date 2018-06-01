@@ -20,39 +20,74 @@
  */
 package org.squashtest.tm.service.internal.servers
 
-import org.squashtest.tm.domain.servers.Credentials
+import com.fasterxml.jackson.databind.ObjectMapper
+import org.squashtest.csp.core.bugtracker.domain.BugTracker
 import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials
+import org.squashtest.tm.domain.servers.StoredCredentials
+import org.squashtest.tm.domain.users.User
+import org.squashtest.tm.service.internal.repository.UserDao
 import org.squashtest.tm.service.feature.FeatureManager
 import org.squashtest.tm.service.servers.EncryptionKeyChangedException
+import org.squashtest.tm.service.servers.ManageableCredentials
 import org.squashtest.tm.service.servers.MissingEncryptionKeyException
 import spock.lang.Specification
 
+import javax.management.remote.NotificationResult
+import javax.persistence.EntityManager
+import javax.persistence.NoResultException
+import javax.persistence.Query
+
 class StoredCredentialsManagerImplTest extends Specification{
+
+	private static ManageableCredentials DEFAULT_CREDS = new ManageableBasicAuthCredentials("bob", "you'll never find it" as char[])
+
+	// one possible encryption result of the above
+	private static String DEFAULT_ENCRYPTED = "fmilBzv0lvpySZEul1GEdyxyjr02BSxg8dHksU59Or5AyT3BzfLIl1TSmyX6bgP9zBuZWLyg4MN4PtKe1GEduQBI2Ikr2zwk7o7gutsQ0bFVQtpegQQzK/xwN1YYPfcWp1LQllnIL4lYFXym0edaQ5klq59ffaIgjKutFDvQh8X+RfPEEBOKVgcq6aY1dd/JSofdxNhzgU5ww0yrI+ZwLt/Y2jwYhBHt"
+
+	// **************************************************************************
 
 	StoredCredentialsManagerImpl manager
 	FeatureManager features = Mock()
+	UserDao userDao = Mock()
+
+
+	EntityManager em = Mock()
+	Query findCredQuery = Mock()
+	BugTracker bt = Mock()
+	User user = Mock()
 
 	def setup(){
 		features.isEnabled(FeatureManager.Feature.CASE_INSENSITIVE_LOGIN) >> false
+
+		// manager init
 		manager = new StoredCredentialsManagerImpl();
+
 		manager.features = features
+		manager.em = em
+		manager.secret = "mypassword" as char[]
+		manager.userDao = userDao
+
 		manager.initialize()
 
+		// entity manager and dao init
+		em.createNamedQuery(_) >> findCredQuery
+		findCredQuery.setParameter(_,_) >> findCredQuery
+
+		bt.getId() >> 10L
+		em.find(BugTracker, _) >> bt
+
+		userDao.findUserByLogin(_) >> user
 	}
 
 	// *************** test of the object mapper configuration ****************
 
 	def "should serialize credentials"(){
 
-		given :
-
-			BasicAuthenticationCredentials creds = new BasicAuthenticationCredentials("bob", "you'll never find it" as char[])
-
 		when :
-			String res = manager.objectMapper.writeValueAsString(creds)
+			String res = manager.objectMapper.writeValueAsString(DEFAULT_CREDS)
 
 		then :
-			res == '{"@class":"org.squashtest.tm.domain.servers.BasicAuthenticationCredentials","username":"bob","password":"you\'ll never find it"}'
+			res == '{"@class":"org.squashtest.tm.service.internal.servers.ManageableBasicAuthCredentials","username":"bob","password":"you\'ll never find it"}'
 
 	}
 
@@ -60,23 +95,157 @@ class StoredCredentialsManagerImplTest extends Specification{
 	def "should deserialize credentials"(){
 
 		given :
-			def str = '{"@class":"org.squashtest.tm.domain.servers.BasicAuthenticationCredentials","username":"bob","password":"you\'ll never find it"}'
+			def str = '{"@class":"org.squashtest.tm.service.internal.servers.ManageableBasicAuthCredentials","username":"bob","password":"you\'ll never find it"}'
 
 		when :
-			def res = manager.objectMapper.readValue(str, Credentials.class)
+			def res = manager.objectMapper.readValue(str, ManageableCredentials)
 
 
 		then :
-			res instanceof BasicAuthenticationCredentials
+			res instanceof ManageableBasicAuthCredentials
 			res.username == "bob"
 			res.password.join() == "you'll never find it"
 
 	}
 
-	// ******************** main methods *********************************
+	def "should encrypt the credentials and reread encrypted credentials"(){
+
+		given :
+			String encrypted = manager.toEncryptedForm(DEFAULT_CREDS).encryptedText
+
+		when :
+			Crypto recrypto = new Crypto(manager.secret)
+			String decrypted = recrypto.decrypt(encrypted)
+			ManageableBasicAuthCredentials recreds = manager.objectMapper.readValue(decrypted, ManageableCredentials)
+
+		then :
+			recreds.username == DEFAULT_CREDS.username
+			recreds.password == DEFAULT_CREDS.password
+
+
+	}
+
+	def "should say that the secret is configured"(){
+
+		expect:
+			// secret was configured in the setup
+			manager.isSecretConfigured() == true
+
+	}
+
+	def "should say that no secret is configured (secret is empty)"(){
+		when :
+			manager.secret = [] as char[]
+
+		then:
+			manager.isSecretConfigured() == false
+	}
+
+	def "should say that no secret is configured (secret is blank)"(){
+		when :
+			manager.secret = "   " as char[]
+
+		then :
+			manager.isSecretConfigured() == false
+	}
+
+
+	def "should load credentials for a human"(){
+
+		given :
+		def q = Mock(Query)
+		def sc = Mock(StoredCredentials)
+		q.getSingleResult() >> sc
+
+		when :
+		def res = manager.loadStoredCredentials(10L, "bob")
+
+		then :
+
+		res == sc
+
+		1 * em.createNamedQuery(StoredCredentialsManagerImpl.FIND_USER_CREDENTIALS) >> q
+		1 * q.setParameter("username", "bob") >> q
+		1 * q.setParameter("serverId", 10L) >> q
+
+	}
+
+	def "should load app-level credentials"(){
+
+		given :
+		def q = Mock(Query)
+		def sc = Mock(StoredCredentials)
+		q.getSingleResult() >> sc
+
+		when :
+		def res = manager.loadStoredCredentials(10L, null)
+
+		then :
+
+		res == sc
+
+		1 * em.createNamedQuery(StoredCredentialsManagerImpl.FIND_APP_LEVEL_CREDENTIALS) >> q
+		0 * q.setParameter("username", _) >> q
+		1 * q.setParameter("serverId", 10L) >> q
+
+	}
+
+
+	def "should load a user account"(){
+
+		expect :
+		manager.loadUserOrNull("bob") == user
+
+	}
+
+	def "should load squash-tm account (namely, null value)"(){
+		expect:
+		manager.loadUserOrNull(null) == null
+	}
+
+
+	// ******************** writing *********************************
+
+	def "creating the credentials for a user"(){
+		given:
+			UserOAuth1aToken userTokens = new UserOAuth1aToken("token", "secret")
+
+		and :
+			findCredQuery.getSingleResult() >> { throw new NoResultException() }
+
+		when :
+			manager.storeUserCredentials(10L, "bob", userTokens)
+
+		then :
+			1 * em.persist( {
+				it.authenticatedServer == bt &&
+				it.authenticatedUser == user &&
+				it.encryptedCredentials.size() > 0 &&
+				it.encryptionVersion == 1
+			})
+	}
+
+
+	def "update the credentials for a user"(){
+		given:
+			UserOAuth1aToken userTokens = new UserOAuth1aToken("token", "secret")
+
+		and :
+			StoredCredentials sc = Mock()
+			findCredQuery.getSingleResult() >> sc
+
+		when :
+			manager.storeUserCredentials(10L, "bob", userTokens)
+
+		then :
+			1 * sc.setEncryptedCredentials(_)
+	}
+
+
 
 	def "cannot store credentials because the secret isn't configured"(){
 		given :
+			manager.secret = [] as char[]
 			def creds = mockCredentials()
 
 		when :
@@ -86,13 +255,81 @@ class StoredCredentialsManagerImplTest extends Specification{
 			thrown MissingEncryptionKeyException
 	}
 
+
+	def "cannot store because such credentials are not suitable for user-level persistence"(){
+
+		when:
+			manager.storeUserCredentials(10L, "bob", new ServerOAuth1aConsumerConf())
+
+		then:
+			thrown IllegalArgumentException
+
+	}
+
+
+	def "cannot store because such credentials are not suitable for app-level persistence"(){
+
+		when:
+		manager.storeAppLevelCredentials(10L, new UserOAuth1aToken())
+
+		then:
+		thrown IllegalArgumentException
+
+	}
+
+	// ******************* reading *****************************
+
+	def "should find a user credentials"(){
+
+		given :
+			def sc = Mock(StoredCredentials)
+			sc.getEncryptedCredentials() >> DEFAULT_ENCRYPTED
+
+			findCredQuery.getSingleResult() >> sc
+
+
+		when :
+			def result = manager.unsecuredFindCredentials(10L, "bob")
+
+		then :
+			result.username == DEFAULT_CREDS.username
+			result.password == DEFAULT_CREDS.password
+
+	}
+
+
 	def "cannot find credentials because the secret isn't configured"(){
+
+		given:
+			manager.secret = [] as char[]
 
 		when :
 			manager.findAppLevelCredentials(1L)
 
 		then :
 			thrown MissingEncryptionKeyException
+
+	}
+
+	// ******************* reading error recovery *****************************
+
+	def "should migrate old basic auth credentials"(){
+
+		given:
+			def unmanagedCreds = new BasicAuthenticationCredentials("bob", "these are my old creds")
+			def serialized = manager.objectMapper.writeValueAsString(unmanagedCreds)
+
+			StoredCredentials sc = Mock()
+
+		when :
+			def res = manager.migrateToNewFormat(serialized, sc)
+
+		then :
+			res instanceof ManageableBasicAuthCredentials
+			res.username == "bob"
+			res.password.join() == "these are my old creds"
+
+			1 * sc.setEncryptedCredentials(_)
 
 	}
 
@@ -122,15 +359,14 @@ class StoredCredentialsManagerImplTest extends Specification{
 
 		then :
 		ex instanceof EncryptionKeyChangedException
-
-
 	}
+
 
 
 	// ****************** helper code ******************************
 
-	private Credentials mockCredentials(){
-		new BasicAuthenticationCredentials("bob", "you'll never find it".toCharArray())
+	private ManageableCredentials mockCredentials(){
+		new ManageableBasicAuthCredentials("bob", "you'll never find it" as char[])
 	}
 
 }
