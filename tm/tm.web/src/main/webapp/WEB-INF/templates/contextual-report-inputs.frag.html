@@ -148,7 +148,10 @@
               </tr>
             </thead>
             <tbody class="available-fields">
-              <tr th:each="projectData : ${projectFilterModel.projectData}">
+            <!--Issue 7415, report projects selection filter: when filter is enabled, the non selected projects will be hide in the following popup,
+            the main reason is that the filtered projects list may not contains the previously selected project, and we need it to show selected result.
+            Please reference to SingleProjectPickerPopup : updateResult to know more-->
+              <tr th:each="projectData : ${projectFilterModel.projectData}" th:style="${!projectFilterModel.enabled or projectData[2]} ? '' : 'display:none'">
                 <td class="td-check">
                   <input th:type="${projectMultiselect} ? 'checkbox' : 'radio'" type="checkbox" class="project-checkbox report-init-ignore"
                     id="project-checkbox-1" th:id="'project-checkbox-'+${projectData[0]}" name="rpt-project-crit"

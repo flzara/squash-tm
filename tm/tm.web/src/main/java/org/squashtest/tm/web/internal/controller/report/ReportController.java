@@ -44,10 +44,12 @@ import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportNodeType;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.domain.report.ReportDefinition;
 import org.squashtest.tm.service.customfield.CustomFieldManagerService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.internal.dto.FilterModel;
+import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.report.ReportModificationService;
 import org.squashtest.tm.service.user.UserAccountService;
@@ -104,6 +106,9 @@ public class ReportController {
 
 	@Inject
 	private CustomReportLibraryNodeService customReportLibraryNodeService;
+
+	@Inject
+	private ProjectFilterModificationService projectFilterService;
 
 	@ResponseBody
 	@RequestMapping(value = "/panel/content/new-report/{parentId}", method = RequestMethod.POST, consumes = "application/json")
@@ -178,8 +183,16 @@ public class ReportController {
 	}
 
 	private FilterModel findProjectsModels() {
-		List<Project> projects = projectFinder.findAllOrderedByName();
-		return new FilterModel(projects);
+
+		// Issue 7415, report projects selection filter: when filter is enabled, the new filterModel will be treated in
+		// thymeleaf page "contextual-report-inputs.frag.html"
+		ProjectFilter filter = projectFilterService.findProjectFilterByUserLogin();
+		if (filter.isEnabled()) {
+			return new FilterModel(filter, projectFinder.findAllOrderedByName());
+		} else {
+			return new FilterModel(projectFinder.findAllOrderedByName());
+		}
+
 	}
 
 	private void populateModel(String namespace, Model model) {
