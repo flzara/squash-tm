@@ -48,6 +48,18 @@
 	color: #99352B;
 }
 
+.error-message-main {
+	color: #ff0000;
+	font-size: 18px;
+	font-weight: bold;
+}
+
+.error-message-main-container {
+	text-align: center;
+	margin-top: 5%;
+}
+
+
 .export-requirement-link {
 	bottom: 1px;
 	float: left;

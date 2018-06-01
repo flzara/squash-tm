@@ -20,16 +20,17 @@
  */
 package org.squashtest.tm.web.internal.controller.authentication;
 
-import javax.inject.Inject;
-
 import org.springframework.beans.factory.annotation.Value;
-
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+
+import javax.inject.Inject;
+import java.util.Arrays;
+import java.util.List;
 
 // XSS OK
 @Controller
@@ -40,6 +41,9 @@ public class LoginLogoutController {
 	@Value("${info.app.version}")
     private String version;
 
+	@Inject
+	private Environment environment;
+
 	private static final String LOGIN_MESSAGE = "LOGIN_MESSAGE";
 
 	@RequestMapping("/login")
@@ -47,10 +51,12 @@ public class LoginLogoutController {
 		String welcomeMessage = configService.findConfiguration(LOGIN_MESSAGE);
 		model.addAttribute("welcomeMessage", HTMLCleanupUtils.cleanHtml(welcomeMessage));
 		model.addAttribute("version", version);
+		List<String> activeProfiles = Arrays.asList(environment.getActiveProfiles());
+		model.addAttribute("isH2",activeProfiles.contains("h2"));
 		return "page/authentication/login";
 	}
-	
-	
+
+
 	@RequestMapping("/logged-out")
 	public String logout(){
 		return "logged-out.html";
