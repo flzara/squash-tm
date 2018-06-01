@@ -38,11 +38,11 @@
 <f:message var="confirmLabel"   key="label.Confirm"/>
 <f:message var="cancelLabel"    key="label.Cancel"/>
 <f:message var="closeLabel"    key="label.Close"/>
-<jsp:useBean id="now" class="java.util.Date"  />   
+<jsp:useBean id="now" class="java.util.Date"  />
 <f:message var="dateFormat" key="squashtm.dateformatShort" />
 
 <layout:info-page-layout titleKey="squashtm.milestone.title" isSubPaged="true" main="milestone-manager">
-  <jsp:attribute  name="head">	
+  <jsp:attribute  name="head">
     <comp:sq-css name="squash.grey.css" />
       <script type="text/javascript">
       squashtm = squashtm || {}
@@ -62,7 +62,7 @@
   <div class='display-table-cell'>
     <span>{{first}}</span>
     <span class='red-warning-message'>{{second}}</span>
-    <span>{{third}}</span>
+    <span>{{{third}}}</span>
     <span class='bold-warning-message'>{{fourth}}</span>
   </div>
 </div>
@@ -75,7 +75,7 @@
 		<jsp:attribute name="subPageTitle">
 		<h2><f:message key="workspace.milestone.title" /></h2>
 	</jsp:attribute>
-	
+
 	<jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
 		<a class="sq-btn" href="${administrationUrl}">${backButtonLabel}</a>
@@ -86,7 +86,7 @@
 		<c:url var="milestoneDetailsBaseUrl" value="/milestones" />
 		<c:url var="dtMessagesUrl" value="/datatables/messages" />
 
-		
+
 		<%----------------------------------- Milestone Table -----------------------------------------------%>
 
 <div class="fragment-body">
@@ -107,15 +107,15 @@
       <button id="new-milestone-button" ${ actionState } class="sq-btn milestone-dep" title="<f:message key='milestone.tooltip.add' />">
         <span class="ui-icon ui-icon-plusthick">+</span>&nbsp;<f:message key="label.Add" />
       </button>
-      
+
       <button id="clone-milestone-button" ${ actionState } class="sq-btn milestone-dep" title="<f:message key='milestone.tooltip.duplicate' />">
         <f:message key="label.milestone.duplicate" />
       </button>
-       
+
       <button id="synchronize-milestone-button" ${ actionState } class="sq-btn milestone-dep" title="<f:message key='milestone.tooltip.synchronize' />">
         <f:message key="label.milestone.synchronize" />
       </button>
-      
+
       <button id="delete-milestone-button" ${ actionState } class="sq-btn milestone-dep" title="<f:message key='milestone.tooltip.delete' />">
         <span class="ui-icon ui-icon-trash">-</span>&nbsp;<f:message key="label.Delete" />
       </button>
@@ -135,17 +135,17 @@
         <th data-def="map=created-on, sortable, sType=squashdateShort"><f:message key="label.CreatedOn" /></th>
         <th data-def="map=created-by, sortable" ><f:message key="label.createdBy" /></th>
         <th data-def="map=last-mod-on, sortable, sType=squashdateLong"><f:message key="label.modifiedOn" /></th>
-        <th data-def="map=last-mod-by, sortable"><f:message key="label.modifiedBy" /></th> 
+        <th data-def="map=last-mod-by, sortable"><f:message key="label.modifiedBy" /></th>
         <th data-def="map=delete, delete-button=#delete-milestone-popup"></th>
       </tr>
     </thead>
     <tbody>
     </tbody>
   </table>
-  <%-- 
+  <%--
    Here we define a generic error dialog, much like in the notification system
-   used in every other pages. The thing is there is no notification section 
-   in the OER so we have to insert a copycat of that dialog here 
+   used in every other pages. The thing is there is no notification section
+   in the OER so we have to insert a copycat of that dialog here
    so that the js module squashtm.notification can use it seamlessly.
    --%>
 	<f:message var="errorTitle" key="popup.title.error"/>
@@ -157,41 +157,41 @@
 	     <div class="display-table-row">
 	        <div class="generic-error-main display-table-cell" style="padding-top:20px">
 	        </div>
-	        <div class="display-table-cell">		
+	        <div class="display-table-cell">
 			 	<p>
 	              <span>	${noSelectedMilestone} </span>
-	            </p>     	            
+	            </p>
           </div>
 	      </div>
 	  </div>
-	  <input type="button" value="${closeLabel}"/>  
+	  <input type="button" value="${closeLabel}"/>
 	</div>
-	
-	<f:message var="deleteMilestoneTitle" key="dialog.delete-milestone.title" />	
+
+	<f:message var="deleteMilestoneTitle" key="dialog.delete-milestone.title" />
 	<div id="delete-milestone-popup" class="popup-dialog not-displayed" title="${deleteMilestoneTitle}" data-action="menu">
 		<div class="display-table-row">
             <div class="display-table-cell warning-cell">
                 <div class="generic-error-signal"></div>
             </div>
             <div id="warning-delete" class="display-table-cell">
-            </div>          
-			<div class="display-table-cell">		
+            </div>
+			<div class="display-table-cell">
 			 	<p>
 	              <span id="errorMessageDeleteMilestone">	  </span>
-	            </p>     	            
+	            </p>
           </div>
 		</div>
 		<div class="popup-dialog-buttonpane">
 		    <input class="confirm" type="button" value="${confirmLabel}" />
 		    <input class="cancel" type="button" value="${cancelLabel}" />
 		</div>
-	
-	</div>	
+
+	</div>
 
     <f:message var="addMilestoneTitle" key="milestone.create"/>
-    <div id="add-milestone-dialog" class="not-displayed popup-dialog" 
+    <div id="add-milestone-dialog" class="not-displayed popup-dialog"
           title="${addMilestoneTitle}" />
-          
+
         <table>
           <tr>
             <td><label for="add-milestone-label"><f:message
@@ -199,24 +199,24 @@
             <td><input id="add-milestone-label" type="text" size="30" maxlength="30" data-def="maininput"/>
             <comp:error-message forField="label" /></td>
           </tr>
-        
+
             <td><label for="add-milestone-status"><f:message
               key="label.Status" /></label></td>
             <td>
 		<select id="add-milestone-status" class="combobox">
-            <c:forEach items="${milestoneStatus}" var="status" > 
+            <c:forEach items="${milestoneStatus}" var="status" >
             <option value = "${status.key}" >${status.value} </option>
             </c:forEach>
             </select>
-    
+
         </td>
-        
+
          <tr>
-       
+
             <td><label><f:message key="label.EndDate" /></td>
             <td><span id="add-milestone-end-date"></span>
         <comp:error-message forField="endDate" /></td>
-         </tr>  
+         </tr>
 
           <tr>
             <td>
@@ -227,21 +227,21 @@
             <td>
                 <textarea id="add-milestone-description" name="add-milestone-description" data-def="isrich"></textarea>
             <comp:error-message forField="description" /></td>
-          </tr>     
+          </tr>
         </table>
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${addAnotherLabel}" data-def="mainbtn, evt=addanother"/>
         <input type="button" value="${addLabel}" data-def="evt=confirm"/>
         <input type="button" value="${closeLabel}" data-def="evt=cancel"/>
-      </div>     
+      </div>
 </div>
 
 
 <!--  clone popup -->
  <f:message var="cloneMilestoneTitle" key="dialog.clone-milestone.title"/>
-    <div id="clone-milestone-dialog" class="not-displayed popup-dialog" 
+    <div id="clone-milestone-dialog" class="not-displayed popup-dialog"
           title="${cloneMilestoneTitle}" />
-          
+
         <table>
           <tr>
             <td><label for="clone-milestone-label"><f:message
@@ -250,25 +250,25 @@
             <comp:error-message forField="label" /></td>
           </tr>
         <tr>
-        
+
          <td><label for="add-milestone-status"><f:message
               key="label.Status" /></label></td>
             <td>
         	<select id="clone-milestone-status" class="combobox">
-            <c:forEach items="${milestoneCloneStatus}" var="status" > 
+            <c:forEach items="${milestoneCloneStatus}" var="status" >
             <option value = "${status.key}" >${status.value} </option>
             </c:forEach>
             </select>
-        
+
         </td>
         </tr>
-   
+
          <tr>
-       
-            <td><label><f:message key="label.EndDate" /></td>    
+
+            <td><label><f:message key="label.EndDate" /></td>
             <td><span id="clone-milestone-end-date"></span>
         <comp:error-message forField="endDate" /></td>
-         </tr>  
+         </tr>
 
           <tr>
             <td>
@@ -279,26 +279,26 @@
             <td>
                 <textarea id="clone-milestone-description" name="add-milestone-description"></textarea>
             <comp:error-message forField="description" /></td>
-          </tr>   
-          
-          
+          </tr>
+
+
           <tr>
           <td> <f:message key="label.milestone.cloneoptions" /> </td>
-          
+
           <td>
            <input id="bindToRequirements"  name="bindToRequirements" type="checkbox" checked="checked"/>
           <label class=" afterDisabled" for="bindToRequirements"><f:message key="label.milestone.bindToRequirements" /></label>
    </br>
           <input id="bindToTestCases" name="bindToTestCases" type="checkbox" checked="checked"/>
          <label class=" afterDisabled" for="bindToTestCases"><f:message key="label.milestone.bindToTestCases" /></label>
-   </br>          
+   </br>
        </td>
    </tr>
-       
+
         </table>
-        
+
         <ul>
-	
+
 <li><a id="checkAll"><f:message key= "label.selectAllForSelection"/></a></li>
 <li><a id="uncheckAll"><f:message key= "label.selectNoneForSelection"/></a></li>
 
@@ -307,7 +307,7 @@
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${addLabel}" data-def="mainbtn, evt=confirm"/>
         <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
-      </div>     
+      </div>
 </div>
 <!--  clone popup end-->
 
@@ -315,46 +315,46 @@
 <!--  synchronize popup -->
 
 <f:message var="synchronizeMilestoneTitle" key="dialog.synchronize-milestone.title"/>
-    <div id="synchronize-milestone-dialog" class="not-displayed popup-dialog" 
+    <div id="synchronize-milestone-dialog" class="not-displayed popup-dialog"
           title="${synchronizeMilestoneTitle}" />
-    
-    
+
+
      <table>
           <tr>
 <td><input id="mil1" type="radio" name="synchro"></td>
 <td><span id="mil1Label"></span>
 <span id="mil1warn"></span></td>
           </tr>
-        
-     
+
+
          <tr>
 <td><input id="mil2" type="radio" name="synchro"></td>
 <td><span id="mil2Label"></span>
 <span id="mil2warn"> </span>
 </td>
-         </tr>  
+         </tr>
 
           <tr>
 <td><input id="union" type="radio" name="synchro" ></td>
 <td><span id="unionLabel"></span>
 <span id="unionwarn"></span></td>
-          </tr>   
-          
-          
+          </tr>
+
+
           <tr>
         <td><input id="perim" type="checkbox" ></td>
 <td id="perimtxt"><f:message key="label.milestone.synchronize.extendperim1"/>
 </br>
 <f:message key="label.milestone.synchronize.extendperim2"/></td>
    </tr>
-       
+
         </table>
-    
-    
+
+
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${confirmLabel}" data-def="mainbtn, evt=confirm"/>
         <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
-      </div>     
+      </div>
 </div>
 <!--  synchronize popup end-->
 
@@ -362,16 +362,16 @@
 	<f:message var="synchronizeWarning" key="dialog.milestone.synchronizeWarning"/>
 	<div id="synchronize-milestone-dialog-confirm" class="popup-dialog not-displayed" title="${synchronizeMilestoneTitle}" data-action="menu">
 		<div class="display-table-row">
-           
-             
-                ${synchronizeWarning } 
-			
+
+
+                ${synchronizeWarning }
+
 		</div>
 		<div class="popup-dialog-buttonpane">
 		    <input class="confirm" type="button" value="${confirmLabel}" />
 		    <input class="cancel" type="button" value="${cancelLabel}" />
 		</div>
-	
+
 	</div>
 
 
