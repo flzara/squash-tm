@@ -33,7 +33,7 @@
             Requirement workspace - Category
           </label>
           <div id="info-list-category" class="display-table-cell"
-               th:text="${#messages.msgOrNull('__${proj.requirementCategories.label}__')} ?:${proj.requirementCategories.label}">
+               th:text="${#messages.msgOrNull(proj.requirementCategories.label)} ?:${proj.requirementCategories.label}">
             category
           </div>
         </div>
@@ -42,7 +42,7 @@
             Test case workspace - Nature
           </label>
           <div id="info-list-nature" class="display-table-cell"
-               th:text="${#messages.msgOrNull('__${proj.testCaseNatures.label}__')} ?: ${proj.testCaseNatures.label}">
+               th:text="${#messages.msgOrNull(proj.testCaseNatures.label)} ?: ${proj.testCaseNatures.label}">
             nature
           </div>
         </div>
@@ -51,7 +51,7 @@
             Test case workspace - Type
           </label>
           <div id="info-list-type" class="display-table-cell"
-               th:text="${#messages.msgOrNull('__${proj.testCaseTypes.label}__')} ?: ${proj.testCaseTypes.label}">
+               th:text="${#messages.msgOrNull(proj.testCaseTypes.label)} ?: ${proj.testCaseTypes.label}">
             type
           </div>
         </div>
