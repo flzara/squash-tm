@@ -76,8 +76,8 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 		new SortField("labelUpperCased", SortField.Type.STRING, false)};
 
 	private static final List<String> LONG_SORTABLE_FIELDS = Arrays.asList("requirement.id", "id",
-		"requirement.versions", "testcases", "attachments");
-	private static final List<String> INT_SORTABLE_FIELDS = Arrays.asList("versionNumber");
+		"testcases", "attachments");
+	private static final List<String> INT_SORTABLE_FIELDS = Arrays.asList("requirement.versions","versionNumber");
 
 	private static final String FAKE_REQUIREMENT_VERSION_ID = "-9000";
 

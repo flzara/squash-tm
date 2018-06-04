@@ -123,7 +123,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 						}, {
 							"aTargets" : [ 11 ],
 							"mDataProp" : "requirement-version-nb",
-							"bSortable" : true,
+							"bSortable" : false,
 							"sClass" : "centered"
 						}, {
 							"aTargets" : [ 12 ],
@@ -234,7 +234,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 						}, {
 							"aTargets" : [ 10 ],
 							"mDataProp" : "requirement-version-nb",
-							"bSortable" : true,
+							"bSortable" : false,
 							"sClass" : "centered"
 						}, {
 							"aTargets" : [ 11 ],
