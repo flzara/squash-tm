@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.workspace;
 
 import org.jooq.DSLContext;
+import org.jooq.Record1;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.service.internal.dto.FilterModel;
@@ -31,10 +32,7 @@ import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.workspace.WorkspaceHelperService;
 
 import javax.inject.Inject;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
@@ -88,14 +86,22 @@ public class WorkspaceHelperServiceImpl implements WorkspaceHelperService {
 		List<Long> selectedProjectIds;
 		if (filterModels.size() == 0) {
 			filterModel = new FilterModel();
-			filterModel.setEnabled(false);
-			selectedProjectIds = projectIds;
+			selectedProjectIds = new ArrayList<>();
 		} else {
 			Set<Map.Entry<FilterModel, List<Long>>> filterModelEntries = filterModels.entrySet();
 			Map.Entry<FilterModel, List<Long>> filterModelEntry = filterModelEntries.iterator().next();
 			filterModel = filterModelEntry.getKey();
 			selectedProjectIds = filterModelEntry.getValue();
 		}
+
+		// Issue 7472, instead of counting size of filterModels to see whether the filter is enable or not, it's better
+		// we check it directly from project filter table.
+		Record1<Boolean> record1 = DSL.select(PROJECT_FILTER.ACTIVATED)
+			.from(PROJECT_FILTER)
+			.where(PROJECT_FILTER.USER_LOGIN.eq(currentUser.getUsername()))
+			.fetchOne();
+		filterModel.setEnabled(record1.value1());
+
 
 		//fetch the necessary data for all readable projects
 		DSL.select(PROJECT.PROJECT_ID, PROJECT.PROJECT_TYPE, PROJECT.NAME, PROJECT.LABEL)
