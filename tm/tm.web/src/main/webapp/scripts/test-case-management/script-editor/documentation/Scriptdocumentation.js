@@ -197,7 +197,7 @@ define(function () {
 		"\t\tWhen I select <product>.\n" +
 		"\t\tThen the machine delivers me a <product> and my balance is reduced by <price>.\n" +
 		"\t\tExamples:\n" +
-		"\t\t| products\t\t| price |\n" +
+		"\t\t| product\t\t\t| price |\n" +
 		"\t\t| Expresso\t\t| 0.40  |\n" +
 		"\t\t| Lungo\t\t\t\t| 0.50  |\n" +
 		"\t\t| Cappuccino\t| 0.80  |\n";
