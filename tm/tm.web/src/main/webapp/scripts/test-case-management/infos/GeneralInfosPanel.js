@@ -128,7 +128,7 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "app/util/St
 
 				_updateIcon : function(form, data, receiver){
 					var value = form.find('select').val();
-					var icon = $.grep(data, function(e){return e.code === value;})[0].iconName;
+					var icon = $.grep(data, function(e){return StringUtil.unescape(e.code) === value;})[0].iconName;
 					$(receiver).attr('class', '').addClass('sq-icon sq-icon-'+icon);
 				},
 
@@ -186,10 +186,13 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "app/util/St
 				},
 
 				_unescapeData : function (data){
-					for(var property in data ){
-						data[property]= StringUtil.unescape(data[property]);
+					var result = {};
+					for (var property in data) {
+						var code = StringUtil.unescape(property);
+						var label = StringUtil.unescape(data[property]);
+						result[code] = label;
 					}
-					return data;
+					return result;
 				}
 
 			});
