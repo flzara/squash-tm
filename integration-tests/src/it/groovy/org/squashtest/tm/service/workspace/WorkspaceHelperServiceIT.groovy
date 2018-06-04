@@ -87,19 +87,19 @@ class WorkspaceHelperServiceIT extends DbunitServiceSpecification {
 		Object[] pData1 = filterModel.projectData[0]
 		pData1[0] == -2L
 		pData1[1] == "bar"
-		pData1[2] == true
+		pData1[2] == false
 		pData1[3] == null
 
 		Object[] pData = filterModel.projectData[1]
 		pData[0] == -3L
 		pData[1] == "baz"
-		pData[2] == true
+		pData[2] == false
 		pData[3] == null
 
 		Object[] pData2 = filterModel.projectData[2]
 		pData2[0] == -1L
 		pData2[1] == "foo"
-		pData2[2] == true
+		pData2[2] == false
 		pData2[3] == "foo label"
 
 	}
