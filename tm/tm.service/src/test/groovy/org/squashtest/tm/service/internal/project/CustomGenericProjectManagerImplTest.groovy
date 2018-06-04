@@ -24,6 +24,9 @@ import org.squashtest.tm.domain.campaign.CampaignLibrary
 import org.squashtest.tm.domain.execution.ExecutionStatus
 import org.squashtest.tm.domain.infolist.InfoList
 import org.squashtest.tm.domain.project.GenericProject
+import org.squashtest.tm.domain.requirement.RequirementLibrary
+import org.squashtest.tm.domain.requirement.RequirementLibraryPluginBinding
+import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.exception.project.LockedParameterException
 import org.squashtest.tm.service.internal.repository.ProjectDao
 import org.squashtest.tm.service.internal.repository.ProjectTemplateDao;
@@ -376,8 +379,32 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		projectLibrary.disableStatus(ExecutionStatus.SETTLED)
 		projectLibrary.enableStatus(ExecutionStatus.UNTESTABLE)
 
+		RequirementLibrary templateReqLibrary = new RequirementLibrary()
+		Set<RequirementLibraryPluginBinding> templatePlugins = new HashSet<>()
+		Set<RequirementLibraryPluginBinding> projectPlugins = new HashSet<>()
+		RequirementLibraryPluginBinding plugin1 = new RequirementLibraryPluginBinding()
+		plugin1.pluginId = "plugin1"
+		templatePlugins.add(plugin1)
+		RequirementLibraryPluginBinding plugin2 = new RequirementLibraryPluginBinding()
+		plugin2.pluginId = "plugin2"
+		projectPlugins.add(plugin2)
+		templateReqLibrary.enabledPlugins = templatePlugins
+		RequirementLibrary projectReqLibrary = new RequirementLibrary()
+		projectReqLibrary.enabledPlugins = projectPlugins
+		TestCaseLibrary templateTCLibrary = new TestCaseLibrary()
+
+		TestCaseLibrary projectTCLibrary = new TestCaseLibrary()
+
+		List<TestAutomationProject> taProjects = new ArrayList<>()
+
 		template.getCampaignLibrary() >> templateLibrary
+		template.getRequirementLibrary() >> templateReqLibrary
+		template.getTestCaseLibrary() >> templateTCLibrary
+		template.getTestAutomationProjects() >> taProjects
 		project.getCampaignLibrary() >> projectLibrary
+		project.getRequirementLibrary() >> projectReqLibrary
+		project.getTestCaseLibrary() >> projectTCLibrary
+		project.testAutomationProjects >> taProjects
 
 		and:
 
@@ -404,6 +431,8 @@ class CustomGenericProjectManagerImplTest extends Specification {
 
 		project.getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED)
 		!project.getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE)
+
+		project.getRequirementLibrary().getEnabledPlugins().size() == 2
 	}
 
 	def "#enableExecutionStatus - Should enable an ExecutionStatus in a Project"() {
