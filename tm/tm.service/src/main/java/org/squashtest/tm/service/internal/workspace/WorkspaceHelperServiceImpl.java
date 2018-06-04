@@ -100,7 +100,9 @@ public class WorkspaceHelperServiceImpl implements WorkspaceHelperService {
 			.from(PROJECT_FILTER)
 			.where(PROJECT_FILTER.USER_LOGIN.eq(currentUser.getUsername()))
 			.fetchOne();
-		filterModel.setEnabled(record1.value1());
+		if (record1 != null) {
+			filterModel.setEnabled(record1.value1());
+		}
 
 
 		//fetch the necessary data for all readable projects
