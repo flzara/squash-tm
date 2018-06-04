@@ -81,6 +81,21 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 			initProjectPerimeterPopup : function() {
 				var self = this;
 				var projects = squashtm.workspace.projects;
+
+
+				// Issue 7415, when filter is enabled, we will compare the activated projects in the filter and remove
+				// the non activated projects from the projects list above.
+				var filter = squashtm.workspace.filter;
+				if (filter.enabled) {
+					filter.projectData.forEach(function (row) {
+						if (!row[2]) {
+							projects = projects.filter(function (p) {
+								return p.id !== row[0];
+							});
+						}
+					})
+				}
+
 				var isModifyMode = this.model.get('chartDef');
 				var initialModel =  _.chain(projects)
 					.map(function(project) {
