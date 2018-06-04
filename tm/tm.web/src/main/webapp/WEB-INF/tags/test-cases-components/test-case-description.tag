@@ -66,9 +66,7 @@
 		<div class="display-table-row">
 			<label class="display-table-cell" for="test-case-reference"><f:message
 				key="test-case.reference.label"/></label>
-			<div class="display-table-cell" id="test-case-reference">
-				<c:out value="${ testCase.reference }" escapeXml="true"/>
-			</div>
+			<div class="display-table-cell" id="test-case-reference"><c:out value="${ testCase.reference }" escapeXml="true"/></div>
 		</div>
 
 		<div class="display-table-row">
