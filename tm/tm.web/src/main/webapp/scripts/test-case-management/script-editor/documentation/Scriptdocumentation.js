@@ -287,12 +287,102 @@ define(function () {
 		"\t\t| Lungo\t\t\t\t|  0.50  |\n" +
 		"\t\t| Cappuccino\t|  0.80  |\n";
 
+	var doc_de = "# language: de\n" +
+		"# Hilfe zur Erstellung Gherkin Testfälle.\n" +
+		"\n" +
+		"# Gherkin ist eine Programmiersprache die die Behavior Driven Development Methodologie implementiert.\n" +
+		"# In Squash TM kann ein in Gherkin geschriebener Testfall manuell durchgeführt sein, genau so wie ein klassischer Testfall, oder noch kann er exportiert sein, für eine äusserliche autoamtisierte Durchführung.\n" +
+		"\n" +
+		"\n" +
+		"# ---------------------- SCHLÜSSELWÖRTER VERZEICNHIS ----------------------- \n" +
+		"Funktionalität: \n" +
+		"\n" +
+		"# Schlüsselwörter um szenarios zu definieren : \n" +
+		"# Einfaches Szenario (ohne Datensatz)\n" +
+		"Szenario:\n" +
+		"\n" +
+		"# Testszenario (mit Datensatz)\n" +
+		"Szenariogrundriss:\n" +
+		"\n" +
+		"# Schlüssel für den Datensatz (eine Datentafel muss folgen)\n" +
+		"Beispiele:\n" +
+		"\n" +
+		"# Grundlage Schlüsselwort (Mit jedem szenario des Skripts gemeinsamer Testschritt)\n" +
+		"Grundlage:\n" +
+		"\n" +
+		"# Testschrittsschlüsselwörter Vorbedinung Typs: \n" +
+		"Angenommen\n" +
+		"Gegeben sei\n" +
+		"Gegeben seien\n" +
+		"\n" +
+		"# Testschrittsschlüsselwort Ereignis oder Handlung Typs:\n" +
+		"Wenn\n" +
+		"\n" +
+		"# Testschrittsschlüsselwort Ergebnis Typs:\n" +
+		"Dann\n" +
+		"\n" +
+		"# Testschrittsschlüsselwörter Fortsetzung Typs: \n" +
+		"Und\n" +
+		"Aber\n" +
+		"*\n" +
+		"\n" +
+		"# ----------------------------- FUNKTIONNALITÄTSBEISPIEL  ----------------------------- \n" +
+		"# Struktursbeispiel einer ganzen Funktionnalität mit drei szenarios un eine Grundlage:\n" +
+		"\n" +
+		"# language: de <- Kommentarzeile die die Sprache des Skripts angibt. Wenn abwesend oder ungültig entscheidet sich Squash TM für Englisch.\n" +
+		"\n" +
+		"# Name der Funktionnalität, und fakultative Beschreibung (passen Sie gut auf  die Einrückung wenn Sie eine Beschreibung einfügen).\n" +
+		"Funktionalität: Die Kaffeemachine prüfen \n" +
+		"\tEs handelt sich darum, das gute Funktionieren der Kaffeemaschine zu überprüfen.\n" +
+		"\n" +
+		"\t# Fakultative Grundlage. Wenn eine Grundlage anwesend ist, wird sie als zusätzliche Bedingung für jedes Szenario des Skriptes hinzugefügt.\n" +
+		"\tGrundlage:\n" +
+		"\t\tGegeben sei eine Kaffeemaschine.\n" +
+		"\n" +
+		"\n" +
+		"\t# -------------------------- SZENARIOBEISPIEL 1 -------------------------- \n" +
+		"\t# Beispiel für ein einfaches Szenarion\n" +
+		"\tSzenario: Prüfen dass die Kaffeemachine zur Verfügung steht.\n" +
+		"\t\tGegeben sei die Maschine ist angeschlossen.\n" +
+		"\t\tWenn ich meinen Ausweis vorstelle.\n" +
+		"\t\tDann stelle ich fest, dass mein Kontostand angezeigt ist.\n" +
+		"\n" +
+		"\t# -------------------------- SZENARIOBEISPIEL 2 -------------------------- \n" +
+		"\t# Szenariobeispiel mit Datentafel ohne Einstellung der Testschritte\n" +
+		"\tSzenario: Die verfügbaren Produkte überprüfen.\n" +
+		"\t\tGegeben sei die Maschine ist in Gang.\n" +
+		"\t\tWenn ich die verfügbaren Produkte aufliste.\n" +
+		"\t\tDann stelle ich fest, dass alle folgenden Produkte verfügbar sind:\n" +
+		"\t\t| Produkt\t\t\t| Preis  |\n" +
+		"\t\t| Expresso\t\t| 0.40   |\n" +
+		"\t\t| Lungo\t\t\t\t| 0.50   |\n" +
+		"\t\t| Cappuccino\t| 0.80   |\n" +
+		"\n" +
+		"\n" +
+		"\t# -------------------------- SZENARIOBEISPIEL 3 -------------------------- \n" +
+		"\t# Szenariobeispiel mit Datentafel und Einstellug von Testschritten\n" +
+		"\t# Während des Durchlaufs werden die Werte der Parameter zwischen <> substituiert\n" +
+		"\t# Der Szenario wird einmal für jeden Datensatz gespielt sein\n" +
+		"\tSzenariogrundriss: die Lieferung der Produkte überprüfen.\n" +
+		"\t\tGegeben sei die Maschine ist in Gang.\n" +
+		"\t\tUnd mein Kontostand ist mindestens von <Preis>.\n" +
+		"\t\tWenn ich <Produkt > wähle.\n" +
+		"\t\tDann dient die Maschine mir ein <Produkt > und mein Konto ist um <Preis> belastet.\n" +
+		"\t\tBeispiele:\n" +
+		"\t\t| Produkt\t\t\t| Preis  |\n" +
+		"\t\t| Expresso\t\t| 0.40   |\n" +
+		"\t\t| Lungo\t\t\t\t| 0.50   |\n" +
+		"\t\t| Cappuccino\t| 0.80   |\n" +
+		"\n";
+
 	function getDocumentation(locale) {
 		switch (locale) {
 			case "fr":
 				return doc_fr;
 			case "es":
 				return doc_es;
+			case "de":
+				return doc_de;
 			default :
 				return doc_en;
 		}
