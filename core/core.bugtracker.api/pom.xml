@@ -87,6 +87,12 @@
     </dependency>
 
     <dependency>
+      <groupId>com.google.oauth-client</groupId>
+      <artifactId>google-oauth-client</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>org.squashtest.tm.tools.unittest</artifactId>
       <version>${project.version}</version>

@@ -18,24 +18,30 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.bugtracker.core;
+package org.squashtest.tm.service.servers;
 
-/**
- *
- * @author bsiri
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.service.internal.servers.UserOAuth1aToken;
+
+import java.io.IOException;
+
+/*
+ * Service for usage of Squash-TM in the role of a OAuth1a client
  *
  */
-public class UnsupportedAuthenticationModeException extends BugTrackerManagerException {
-	private static final long serialVersionUID = -1102202905127664259L;
+public interface OAuth1aConsumerService {
 
-	private final String authMode;
+	/**
+	 * First part of the token dance.
+	 *
+	 * @param serverId
+	 * @return
+	 */
+	OAuth1aTemporaryTokens requestTemporaryToken(long serverId, String callbackUrl);
 
-	public UnsupportedAuthenticationModeException(String authMode) {
-		super("authentication mode '"+authMode+"' not supported");
-		this.authMode = authMode;
-	}
+	/**
+	 * Second part of the token dance.
+	 */
+	void authorize(long serverId, OAuth1aTemporaryTokens tempTokens);
 
-	public String getAuthMode() {
-		return authMode;
-	}
 }

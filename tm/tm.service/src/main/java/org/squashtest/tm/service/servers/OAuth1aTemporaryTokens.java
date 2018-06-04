@@ -18,24 +18,41 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.bugtracker.core;
+package org.squashtest.tm.service.servers;
 
-/**
- *
- * @author bsiri
- *
- */
-public class UnsupportedAuthenticationModeException extends BugTrackerManagerException {
-	private static final long serialVersionUID = -1102202905127664259L;
 
-	private final String authMode;
+public class OAuth1aTemporaryTokens {
+	// those are set during the first part of the oauth dance
+	final private String tempToken;
+	final private String tempTokenSecret;
+	final private String redirectUrl;
 
-	public UnsupportedAuthenticationModeException(String authMode) {
-		super("authentication mode '"+authMode+"' not supported");
-		this.authMode = authMode;
+	// this one is set once the callback is called
+	private String verifier;
+
+	public OAuth1aTemporaryTokens(String tempToken, String tempTokenSecret, String redirectUrl) {
+		this.tempToken = tempToken;
+		this.tempTokenSecret = tempTokenSecret;
+		this.redirectUrl = redirectUrl;
 	}
 
-	public String getAuthMode() {
-		return authMode;
+	public String getTempToken() {
+		return tempToken;
+	}
+
+	public String getTempTokenSecret() {
+		return tempTokenSecret;
+	}
+
+	public String getRedirectUrl() {
+		return redirectUrl;
+	}
+
+	public String getVerifier() {
+		return verifier;
+	}
+
+	public void setVerifier(String verifier) {
+		this.verifier = verifier;
 	}
 }

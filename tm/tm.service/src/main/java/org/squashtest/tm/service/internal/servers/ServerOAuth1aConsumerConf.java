@@ -50,7 +50,7 @@ import org.squashtest.tm.service.servers.StoredCredentialsManager;
  * </p>
  */
 public class ServerOAuth1aConsumerConf implements ManageableCredentials {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(ServerOAuth1aConsumerConf.class);
 
 	/**
@@ -125,15 +125,13 @@ public class ServerOAuth1aConsumerConf implements ManageableCredentials {
 			return null;
 		}
 	}
-	
-	
 
 	// ****************** accessors **********************
 
 	private boolean isValid(){
 		return squashtmTokens.isValid();
 	}
-	
+
 	@Override
 	public void invalidate() {
 		squashtmTokens.invalidate();

@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.servers
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
 import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials
+import org.squashtest.tm.domain.servers.OAuth1aCredentials
 import org.squashtest.tm.domain.servers.StoredCredentials
 import org.squashtest.tm.domain.users.User
 import org.squashtest.tm.service.internal.repository.UserDao
@@ -360,7 +361,6 @@ class StoredCredentialsManagerImplTest extends Specification{
 		then :
 		ex instanceof EncryptionKeyChangedException
 	}
-
 
 
 	// ****************** helper code ******************************
