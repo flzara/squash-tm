@@ -56,7 +56,7 @@ public class OAuth1aConsumerServiceImpl implements OAuth1aConsumerService {
 	@Override
 	public OAuth1aTemporaryTokens requestTemporaryToken(long serverId, String callbackUrl) {
 
-		LOGGER.debug("requesting temporary tokens for server '{}'", serverId);
+		LOGGER.debug("requesting temporary tokens for user '{}' on server '{}' ", credProvider.currentUser(), serverId);
 
 		ServerOAuth1aConsumerConf conf = loadConf(serverId);
 
@@ -70,6 +70,7 @@ public class OAuth1aConsumerServiceImpl implements OAuth1aConsumerService {
 			// if you do however notice a leak in that area, please blame Google instead of me :-)
 			OAuthCredentialsResponse response = getTemporaryToken.execute();
 
+			LOGGER.trace("temporary token acquired, caching the tokens for the coming authorization step");
 			// prepare the authorization redirection
 			OAuthAuthorizeTemporaryTokenUrl authorizationUrl = new OAuthAuthorizeTemporaryTokenUrl(conf.getUserAuthorizationURL());
 			authorizationUrl.temporaryToken = response.token;
@@ -88,7 +89,7 @@ public class OAuth1aConsumerServiceImpl implements OAuth1aConsumerService {
 
 		String user = credProvider.currentUser();
 
-		LOGGER.debug("authorizing Squash-TM for user '{}' and server '{}'", user, serverId);
+		LOGGER.debug("authorizing Squash-TM for user '{}' on server '{}'", user, serverId);
 
 		ServerOAuth1aConsumerConf conf = loadConf(serverId);
 
@@ -96,8 +97,9 @@ public class OAuth1aConsumerServiceImpl implements OAuth1aConsumerService {
 			SquashGetAccessToken getAccess = new SquashGetAccessToken(conf, tempTokens);
 			OAuthCredentialsResponse response = getAccess.execute();
 
-			UserOAuth1aToken userTokens = new UserOAuth1aToken(response.token, response.tokenSecret);
+			UserOAuth1aToken userTokens = new UserOAuth1aToken(response.token, tempTokens.getVerifier());
 
+			LOGGER.trace("Squash-TM is now authorized by user '{}' on server '{}', now storing them in the database", user, serverId);
 			credManager.storeUserCredentials(serverId, user, userTokens);
 		}
 		catch(IOException ex){
@@ -112,9 +114,9 @@ public class OAuth1aConsumerServiceImpl implements OAuth1aConsumerService {
 
 	private ServerOAuth1aConsumerConf loadConf(long serverId){
 
-		LOGGER.debug("requesting temporary tokens for server '{}'", serverId);
+		LOGGER.debug("loading oauth conf for server '{}'", serverId);
 
-		ManageableCredentials credentials = credManager.findAppLevelCredentials(serverId);
+		ManageableCredentials credentials = credManager.unsecuredFindAppLevelCredentials(serverId);
 		if (credentials == null || credentials.getImplementedProtocol() != AuthenticationProtocol.OAUTH_1A ){
 			throw new BugTrackerNoCredentialsException("No OAuth 1a configuration available !", null);
 		}

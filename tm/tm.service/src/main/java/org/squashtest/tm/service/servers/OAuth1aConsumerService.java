@@ -20,11 +20,6 @@
  */
 package org.squashtest.tm.service.servers;
 
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.service.internal.servers.UserOAuth1aToken;
-
-import java.io.IOException;
-
 /*
  * Service for usage of Squash-TM in the role of a OAuth1a client
  *

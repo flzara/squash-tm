@@ -33,6 +33,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContext;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.scheduling.annotation.AsyncResult;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException;
@@ -165,12 +167,14 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 	}
 
 	@Override
-	public Future<List<RemoteIssue>> getIssues(Collection<String> issueKeyList, BugTracker bugTracker, UserCredentialsCache credentialsCache, LocaleContext localeContext) {
+	public Future<List<RemoteIssue>> getIssues(Collection<String> issueKeyList, BugTracker bugTracker, 
+			UserCredentialsCache credentialsCache, LocaleContext localeContext, SecurityContext secContext) {
 
 		try {
 			// reinstate the credentials cache (since this method will execute in a different thread, see comments in the interface)
 			credentialsProvider.restoreCache(credentialsCache);
 			LocaleContextHolder.setLocaleContext(localeContext);
+			SecurityContextHolder.setContext(secContext);
 
 			List<RemoteIssue> issues = connect(bugTracker).findIssues(issueKeyList);
 
@@ -185,6 +189,7 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 		// we can safely unload the cache from the thread
 		finally{
 			credentialsProvider.unloadCache();
+			SecurityContextHolder.clearContext();
 		}
 	}
 

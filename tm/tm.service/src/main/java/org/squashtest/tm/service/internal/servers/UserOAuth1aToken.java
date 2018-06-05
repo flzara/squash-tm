@@ -102,7 +102,7 @@ public class UserOAuth1aToken implements ManageableCredentials {
 		
 		LOGGER.debug("Building OAuth1aCredentials");
 
-		ManageableCredentials serverCreds = storeManager.findAppLevelCredentials(server.getId());
+		ManageableCredentials serverCreds = storeManager.unsecuredFindAppLevelCredentials(server.getId());
 		
 		if (! isValid()){
 			LOGGER.debug("Attempted to build OAuth1a credentials for user '{}' but user tokens were invalidated and need to be recreated", username);

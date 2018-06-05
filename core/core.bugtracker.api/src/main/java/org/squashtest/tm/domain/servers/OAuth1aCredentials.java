@@ -22,10 +22,11 @@ package org.squashtest.tm.domain.servers;
 
 
 import org.apache.commons.lang3.NotImplementedException;
+import org.squashtest.csp.core.bugtracker.net.OAuthUtils;
 
 /**
  * <p>
-	Credentials of type OAuth 1a. If asked to, can sign a request.
+	Credentials of type OAuth 1a.
  	</p>
  */
 
@@ -76,6 +77,15 @@ public class OAuth1aCredentials implements Credentials {
 		this.signatureMethod = signatureMethod;
 	}
 
+
+	/*
+		Returns the value of the http header 'authorization' for the given request.
+	 */
+	public String createAuthorizationHeader(String url, String httpMethod){
+		return OAuthUtils.createAuthorizationHeader(this, url, httpMethod);
+	}
+
+
 	@Override
 	public AuthenticationProtocol getImplementedProtocol() {
 		return AuthenticationProtocol.OAUTH_1A;
@@ -101,10 +111,6 @@ public class OAuth1aCredentials implements Credentials {
 		return signatureMethod;
 	}
 
-
-	public String sign(String url){
-		throw new NotImplementedException("not yet implemented");
-	}
 
 
 }

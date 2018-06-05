@@ -27,6 +27,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.i18n.LocaleContext;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
@@ -62,6 +64,7 @@ import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.servers.CredentialsProvider;
 import org.squashtest.tm.service.servers.StoredCredentialsManager;
+import org.squashtest.tm.service.servers.UserCredentialsCache;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -135,6 +138,14 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	private LocaleContext getLocaleContext() {
 		return LocaleContextHolder.getLocaleContext();
+	}
+	
+	private SecurityContext getSecurityContext(){
+		return SecurityContextHolder.getContext();
+	}
+	
+	private UserCredentialsCache getCredentialsCache(){
+		return credentialsProvider.getCache();
 	}
 
 	@Override
@@ -216,7 +227,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	public List<RemoteIssue> getIssues(List<String> issueKeyList, BugTracker bugTracker) {
 
 		try {
-			Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(issueKeyList, bugTracker, credentialsProvider.getCache(), getLocaleContext());
+			Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(issueKeyList, bugTracker, getCredentialsCache(), getLocaleContext(), getSecurityContext());
 			return futureIssues.get(timeout, TimeUnit.SECONDS);
 		}
 		catch (TimeoutException timex) {
