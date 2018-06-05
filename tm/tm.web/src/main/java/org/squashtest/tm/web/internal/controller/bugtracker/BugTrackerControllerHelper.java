@@ -221,9 +221,9 @@ public final class BugTrackerControllerHelper {
 			description.append("# ");
 			description.append(messageSource.getMessage("issue.default.description.testCase", null, locale));
 			description.append(": [");
-			description.append(HTMLCleanupUtils.cleanHtml(testCase.getReference()));
+			description.append(HTMLCleanupUtils.cleanAndUnescapeHTML(testCase.getReference()));
 			description.append("] ");
-			description.append(HTMLCleanupUtils.cleanHtml(testCase.getName()));
+			description.append(HTMLCleanupUtils.cleanAndUnescapeHTML(testCase.getName()));
 			description.append("\n");
 		}
 	}
