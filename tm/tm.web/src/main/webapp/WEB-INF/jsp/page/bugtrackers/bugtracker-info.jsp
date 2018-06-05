@@ -167,19 +167,24 @@
 												${credSectionEnabling} ${credsSectionVisibility}">
 
 
-										<label for="bt-auth-proto"><f:message key="bugtracker.admin.protocol.label"/></label>
+                    <div id="bt-auth-cred-template" class="display-table">
+                      <div id="protocol" class="display-table-row" style="line-height: 3.5;">
 
-										<select id="bt-auth-proto" >
-											<c:forEach items="${authConf.availableProtos}" var="protocol">
-											<option value="${protocol}" ${(authConf.selectedProto == protocol) ? 'selected' : ''} >
-												<f:message key="authentication.protocol.${protocol.toString().toLowerCase()}"/>
-											</option>
-											</c:forEach>
-										</select>
+                        <label for="bt-auth-proto" class="display-table-cell"><f:message
+                          key="bugtracker.admin.protocol.label"/></label>
 
-										<div id="bt-auth-cred-template">
-										<%-- populated by javascript --%>
-										</div>
+                        <select id="bt-auth-proto" class="display-table-cell">
+                        <c:forEach items="${authConf.availableProtos}" var="protocol">
+                        <option value="${protocol}" ${(authConf.selectedProto == protocol) ? 'selected' : ''} >
+                          <f:message key="authentication.protocol.${protocol.toString().toLowerCase()}"/>
+                        </option>
+                        </c:forEach>
+                        </select>
+
+                      </div>
+
+                        <%-- populated by javascript --%>
+                    </div>
 
 										<div id="bt-auth-creds-buttonpane" class="centered" style="position:relative">
 											<input type="button" class="sq-btn" id="bt-auth-test" value="${testLabel}"/>

@@ -493,20 +493,19 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 		},
 
 		template: Handlebars.compile(
-			'<div class="display-table">' +
-				'<div class="display-table-row" style="line-height:3.5">' +
-					'<label class="display-table-cell">{{i18n "label.Login"}}</label>' +
-					'<input id="bt-auth-basic-login" type="text" class="display-table-cell" value="{{this.username}}">' +
-				'</div>' +
-				'<div class="display-table-row" style="line-height:3.5">' +
-					'<label class="display-table-cell">{{i18n "label.Password"}}</label> ' +
-					'<input id="bt-auth-basic-pwd" class="display-table-cell" type="password" value="{{this.password}}"> ' +
-				'</div>' +
+			'<div class="display-table-row" style="line-height:3.5">' +
+				'<label class="display-table-cell">{{i18n "label.Login"}}</label>' +
+				'<input id="bt-auth-basic-login" type="text" class="display-table-cell" value="{{this.username}}">' +
+			'</div>' +
+			'<div class="display-table-row" style="line-height:3.5">' +
+				'<label class="display-table-cell">{{i18n "label.Password"}}</label> ' +
+				'<input id="bt-auth-basic-pwd" class="display-table-cell" type="password" value="{{this.password}}"> ' +
 			'</div>'
 		),
 
 		render: function(){
-			this.$el.html(this.template(this.model.attributes));
+			var protocol = $('#protocol')[0].outerHTML;
+			this.$el.html(protocol + this.template(this.model.attributes));
 			return this;
 		},
 
