@@ -32,7 +32,7 @@ define(['jquery', 'squash.attributeparser',	'handlebars', 'squash.configmanager'
 				template : handlebars.compile(
 						'{{#each this}}'+
 							'<tr data-iterid="{{this.id}}" class="centered picker-item">'+
-								'<td>{{this.name}}</td>'+
+								'<td class="left-aligned">{{this.name}}</td>'+
 								'<td><span class="picker-start cursor-pointer">{{this.scheduledStartDate}}</span></td>'+
 								'<td><span class="picker-end cursor-pointer">{{this.scheduledEndDate}}</span></td>'+
 							'</tr>' +
@@ -170,10 +170,10 @@ define(['jquery', 'squash.attributeparser',	'handlebars', 'squash.configmanager'
 			commitThenClose : function(){
 				var url = window.squashtm.app.contextRoot + '/campaigns/'+this.options.campaignId+'/iterations/planning',
 					self = this;
-				
+
 				var dateFormat = this.options.dateformat;
 				var allPeriodsConsistent = true;
-				
+
 				var scheduledTimePeriodValidator = function(key, value) {
 					// Value can be null or undefined
 					if(!value) {
@@ -181,7 +181,7 @@ define(['jquery', 'squash.attributeparser',	'handlebars', 'squash.configmanager'
 					}
 					var scheduledEnd = value.scheduledEndDate;
 					var scheduledStart = value.scheduledStartDate;
-					
+
 					// Check validity of the dates
 					if(!!scheduledEnd) {
 						scheduledEnd = dateutils.parse(scheduledEnd);
@@ -197,7 +197,7 @@ define(['jquery', 'squash.attributeparser',	'handlebars', 'squash.configmanager'
 							value.scheduledStartDate = null;
 						}
 					}
-					
+
 					if(!! scheduledStart && !! scheduledEnd) {
 						// Check consistency of the time Period
 						if(scheduledStart > scheduledEnd) {
@@ -211,7 +211,7 @@ define(['jquery', 'squash.attributeparser',	'handlebars', 'squash.configmanager'
 					}
 					return value;
 				};
-				
+
 				$.ajax({
 					url : url,
 					async : false,		// we don't want the user to interact with the system while the request is being processed
