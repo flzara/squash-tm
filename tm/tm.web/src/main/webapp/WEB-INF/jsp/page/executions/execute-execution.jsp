@@ -149,10 +149,13 @@
         }
       });
 
-      require(["common"], function () {
-        require(["execution-dialog-main"], function () {
+      document.addEventListener("DOMContentLoaded", function(event) {
+        require(["common"], function () {
+          require(["execution-dialog-main"], function () {
+          });
         });
       });
+
 
 
     </script>

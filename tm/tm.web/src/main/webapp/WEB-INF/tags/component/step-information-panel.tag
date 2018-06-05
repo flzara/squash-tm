@@ -31,11 +31,11 @@
 	<f:message var="displayDateFormat" key="squashtm.dateformat" />
 	<f:message var="neverLabel" key="label.lower.Never"/>
 
-	<div id="general-information-panel" class="information-panel" 
+	<div id="general-information-panel" class="information-panel"
 		data-def="url=${entityUrl}, never=${neverLabel}, format=${displayDateFormat}">
-		
-		<div id="last-executed-on">		
-			<div>	
+
+		<div id="last-executed-on">
+			<div>
 				<label><f:message key="label.LastExecutionOn" /></label>
 				<span class="datetime" ><f:formatDate value="${ auditableEntity.lastExecutedOn }" pattern="${rawDateFormat}" timeZone="UTC"/></span>
 			</div>
@@ -47,11 +47,13 @@
 	</div>
 
 	<script type="text/javascript">
-	require( ["common"], function(){
-			require(["jquery","page-components/step-information-panel"], function($,infopanel){
-		$(function(){
-				infopanel.init();
+		document.addEventListener("DOMContentLoaded", function (event) {
+			require(["common"], function () {
+				require(["jquery", "page-components/step-information-panel"], function ($, infopanel) {
+					$(function () {
+						infopanel.init();
+					});
+				});
 			});
 		});
-	});
 	</script>
