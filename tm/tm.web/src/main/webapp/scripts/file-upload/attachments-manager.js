@@ -64,7 +64,7 @@ define(["jquery", "squash.translator", "app/ws/squashtm.notification", "./jquery
 					// Issue 6966. tried with a
 					// $.when(table.refresh();).then(if(table.data().squashtableInstance.fnGetNodes().length === 0)){...} but it didn't work
 					if (tableLength - removedIdsLength === 0) {
-						$(".hasAttach").remove()
+						$(".hasAttach").remove();
 					}
 					table.refresh();
 				});
