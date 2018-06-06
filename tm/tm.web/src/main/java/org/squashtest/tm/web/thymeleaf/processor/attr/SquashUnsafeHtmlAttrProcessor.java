@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.web.thymeleaf.processor.attr;
 
+import static org.squashtest.tm.web.internal.util.HTMLCleanupUtils.cleanAndUnescapeHTML;
 import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.MATCH_ANY_TAG;
 import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.NO_TAG_PREFIX;
 import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.REMOVE_PSEUDO_ATTRIBUTE_WHEN_PROCESSED;
 import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.REQUIRE_BOTH_DIALECT_PREFIX_AND_ATTRIBUTE;
-import static org.squashtest.tm.web.internal.util.HTMLCleanupUtils.cleanHtml;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +45,7 @@ import org.thymeleaf.templatemode.TemplateMode;
 
 /**
  * <p>This processor ensures that the given html will be cleaned of harmful content.</p>
- * 
+ *
  *  <p>
  *  	Note that this class was repurposed after migration to Thymeleaf 3. Its prior use was to
  *  make Thymeleaf accept malformed html (it would crash otherwise, for instance with unbalanced tags).
@@ -56,7 +56,7 @@ import org.thymeleaf.templatemode.TemplateMode;
  */
 /*
  * (History comment)
- * 
+ *
  * This processor processes "unsafe-html" attributes. The attribute value is expected to be a potentially unbalanced
  * html fragment. This processor uses the LEGACYHTML5 parser to balance the html fragment and then replace this
  * element's inner html by this balanced html fragment.
@@ -98,9 +98,13 @@ public final class SquashUnsafeHtmlAttrProcessor extends AbstractAttributeTagPro
 		final IStandardExpression expression = parser.parseExpression(context, attributeValue);
 
 		final Object html = expression.execute(context);
-		final String htmlString = html == null ? "" : cleanHtml(html.toString());
+		/*[Issue 7478] Use of cleanAndUnescapeHTML method instead of cleanHtml because of non html markup reading in
+		test-step display during step modification at execution.
+		Doesn't seem to break other use of sq:unsafe-html tag...
+		 */
+		final String htmlString = html == null ? "" : cleanAndUnescapeHTML(html.toString());
 
-		
+
 		final TemplateModel parsed = configuration.getTemplateManager().parseString(
 			context.getTemplateData(),
 			htmlString,
@@ -109,11 +113,11 @@ public final class SquashUnsafeHtmlAttrProcessor extends AbstractAttributeTagPro
 			null,
 			false
 		);
-		
+
 		structureHandler.setBody(parsed, false);
 
-	
-		
+
+
 
 	}
 
