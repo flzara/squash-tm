@@ -124,18 +124,25 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 
 		Execution lastExec = item.getLatestExecution();
 		if (lastExec != null) {
-			int succes = 0;
-			List<ExecutionStep> steps = item.getLatestExecution().getSteps();
-			for (ExecutionStep step : steps) {
-				if (step.getExecutionStatus() == ExecutionStatus.SUCCESS) {
-					succes++;
-				}
-			}
-			int totalSteps = steps.size();
 
-			// I think it's not possible to have total step = 0, because we need at least 1 step to execute
-			// but maybe there's a case i don't see so better give 0 than divide by 0 exception.
-			succesPercent = totalSteps > 0 ? succes * 100 / totalSteps : 0;
+			// Feat 6978, when a automated test is executed, the success percent will either 100% or 0%.
+			if (lastExec.isAutomated()) {
+				succesPercent = lastExec.getExecutionStatus() == ExecutionStatus.SUCCESS ? 100 : 0;
+			} else {
+				int succes = 0;
+				List<ExecutionStep> steps = item.getLatestExecution().getSteps();
+				for (ExecutionStep step : steps) {
+					if (step.getExecutionStatus() == ExecutionStatus.SUCCESS) {
+						succes++;
+					}
+				}
+				int totalSteps = steps.size();
+
+				// I think it's not possible to have total step = 0, because we need at least 1 step to execute
+				// but maybe there's a case i don't see so better give 0 than divide by 0 exception.
+				succesPercent = totalSteps > 0 ? succes * 100 / totalSteps : 0;
+			}
+
 		}
 
 		// now stuff the map
