@@ -19,14 +19,14 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
- * settings : 
+ * settings :
  * {
  *	baseURL : the base url where files manipulation occur
  *	aaData : table data (optional)
- *	
- * 
+ *
+ *
  * }
- * 
+ *
  */
 
 define(["jquery", "squash.translator", "app/ws/squashtm.notification", "./jquery.squash.attachmentsDialog",
@@ -54,12 +54,18 @@ define(["jquery", "squash.translator", "app/ws/squashtm.notification", "./jquery
 
 				var removedIds = table.getSelectedIds().join(',');
 				var url = settings.baseURL + "/" + removedIds;
-
+				var removedIdsLength = table.getSelectedIds().length;
+				var tableLength = table.data().squashtableInstance.fnGetNodes().length;
 				$.ajax({
 					type: 'DELETE',
 					url: url
 				}).done(function () {
 					deleteDialog.confirmDialog('close');
+					// Issue 6966. tried with a
+					// $.when(table.refresh();).then(if(table.data().squashtableInstance.fnGetNodes().length === 0)){...} but it didn't work
+					if (tableLength - removedIdsLength === 0) {
+						$(".hasAttach").remove()
+					}
 					table.refresh();
 				});
 			});
@@ -97,7 +103,7 @@ define(["jquery", "squash.translator", "app/ws/squashtm.notification", "./jquery
 			uploadDialog.on('attachmentsdialogdone', function () {
 				table.refresh();
 			});
-			
+
 		}
 
 
@@ -140,11 +146,11 @@ define(["jquery", "squash.translator", "app/ws/squashtm.notification", "./jquery
 				}
 			});
 
-			
+
 			uploadButton.on('click', function () {
 				$("#add-attachments-dialog").attachmentsDialog('open');
 			});
-			
+
 		}
 
 

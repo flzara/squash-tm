@@ -189,7 +189,7 @@
         </a>
       </li>
       <li>
-        <a href="#tabs-3">
+        <a class="tabs-attachments" href="#tabs-3">
           <f:message key="label.Attachments" />
           <c:if test="${ campaign.attachmentList.notEmpty }">
             <span class="hasAttach">!</span>

@@ -200,7 +200,7 @@
 				</li>
 			</c:if>
 			<li>
-				<a href="#tabs-2">
+				<a class="tabs-attachments" href="#tabs-2">
 					<f:message key="label.Attachments"/>
 					<c:if test="${ requirementVersion.attachmentList.notEmpty }">
 						<span class="hasAttach">!</span>

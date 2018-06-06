@@ -154,7 +154,7 @@
         </li>
       </c:if>
       <li>
-        <a href="#tabs-tc-attachments"><f:message key="label.Attachments"/>
+        <a class="tabs-attachments" href="#tabs-tc-attachments"><f:message key="label.Attachments"/>
           <c:if test="${testCase.attachmentList.notEmpty}">
             <span class="hasAttach">!</span>
           </c:if>

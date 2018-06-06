@@ -214,7 +214,7 @@ publish('reload.requirement.toolbar');
         <a href="${requirementVersionUrl}/milestones/panel"><f:message key="tabs.label.milestone"/></a>
       </li>
     </c:if>
-    <li><a href="#tabs-2"><f:message key="label.Attachments"/>
+    <li><a class="tabs-attachments" href="#tabs-2"><f:message key="label.Attachments"/>
       <c:if test="${ requirementVersion.attachmentList.notEmpty }"><span class="hasAttach">!</span></c:if>
     </a></li>
     <c:if test="${requirementVersion.project.bugtrackerConnected}">
