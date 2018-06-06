@@ -182,7 +182,7 @@ define(
 						var header = $("meta[name='_csrf_header']").attr("content");
 						xhr.setRequestHeader(header, token);
 						xhr.send(formData);
-						$(".tabs-attachments:not(:has(.hasAttach))").append("<span class=\"hasAttach\">!</span>")
+						$(".tabs-attachments:not(:has(.hasAttach))").append("<span class=\"hasAttach\">!</span>");
 					} else { //no attach
 
 						self.close();
@@ -205,7 +205,7 @@ define(
 						},
 						complete: function (xhr) {
 							self.submitComplete(xhr);
-							$(".tabs-attachments:not(:has(.hasAttach))").append("<span class=\"hasAttach\">!</span>")
+							$(".tabs-attachments:not(:has(.hasAttach))").append("<span class=\"hasAttach\">!</span>");
 						},
 						target: "#dump"
 
