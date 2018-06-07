@@ -77,6 +77,11 @@ public class BugTracker {
 	@Column(name="AUTH_POLICY")
 	private AuthenticationPolicy authenticationPolicy = AuthenticationPolicy.USER;
 
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	@Column(name="AUTH_PROTOCOL")
+	private AuthenticationProtocol authenticationProtocol = AuthenticationProtocol.BASIC_AUTH;
+
 
 	private boolean iframeFriendly;
 
@@ -154,6 +159,13 @@ public class BugTracker {
 		this.authenticationPolicy = authenticationPolicy;
 	}
 
+	public AuthenticationProtocol getAuthenticationProtocol() {
+		return authenticationProtocol;
+	}
+
+	public void setAuthenticationProtocol(AuthenticationProtocol authenticationProtocol) {
+		this.authenticationProtocol = authenticationProtocol;
+	}
 
 	public BugTracker getDetachedBugTracker() {
 		BugTracker detached = new BugTracker();
@@ -162,6 +174,7 @@ public class BugTracker {
 		detached.name = this.name;
 		detached.iframeFriendly = this.iframeFriendly;
 		detached.authenticationPolicy = this.authenticationPolicy;
+		detached.authenticationProtocol = this.authenticationProtocol;
 		return detached;
 	}
 

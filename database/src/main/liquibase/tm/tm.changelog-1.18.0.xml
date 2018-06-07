@@ -463,6 +463,10 @@
     </addColumn>
   </changeSet>
 
+
+  <!-- OAuth consumer profile [SQTM-338] -->
+
+
   <changeSet id="tm-1.18.0-oauth1a-consumer-1" author="bsiri">
     <comment>
         Users can now have stored credentials (even though they can't manage them yet).
@@ -471,7 +475,7 @@
 
     <addColumn tableName="STORED_CREDENTIALS">
       <column name="AUTHENTICATED_USER" type="BIGINT" defaultValue="null"
-              remarks="Foreign key to the user account that owns the credentials. A NULL value means that Squash-TM owns the credentials.">
+              remarks="Foreign key to the user account that owns the credentials. A NULL value means that Squash-TM owns the credentials (app-level credentials).">
         <constraints nullable="true"
                      foreignKeyName="fk_stored_credentials_user" references="CORE_USER(PARTY_ID)"
                      deleteCascade="true"/>
@@ -481,6 +485,19 @@
     <addUniqueConstraint tableName="STORED_CREDENTIALS"
                          columnNames="AUTHENTICATED_SERVER,AUTHENTICATED_USER"
                          constraintName="uniq_stored_credentials_server_user"/>
+
+  </changeSet>
+
+  <changeSet id="tm-1.18.0-oauth1a-consumer-2" author="bsiri">
+    <comment>
+      Bugtracker now declare which authentication protocol should be used upfront.
+    </comment>
+
+    <addColumn tableName="BUGTRACKER">
+      <column name="AUTH_PROTOCOL" type="java.sql.Types.VARCHAR(30)" defaultValue="BASIC_AUTH">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
 
   </changeSet>
 

@@ -49,7 +49,7 @@ view will be rendered.
 
 2/ MainView
 
- Used for the authentication mode is APP_LEVEL :
+ Used for the authentication mode APP_LEVEL :
 
 	* main div : #bt-auth-creds-main
 	* the authentication protocol dopdown list : #bt-auth-proto
@@ -404,7 +404,7 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 			this.$btnpane.addClass('waiting-loading');
 		},
 
-		unserAjaxMode : function(){
+		unsetAjaxMode : function(){
 			this.getButtons().css('visibility', 'visible');
 			this.$btnpane.removeClass('waiting-loading');
 		},
@@ -414,18 +414,27 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 		},
 
 		test : function(){
-			this.postCredentials('test');
+			this.postCredentials('/credentials/validator')
+				.done(function(){
+					radio.trigger('bt-auth-success');
+				});
 		},
 
 		save : function(){
-			this.postCredentials('save');
+			var self=this;
+			this.postCredentials('/credentials/validator')
+				.done(function(){
+					return self.postCredentials('/credentials');
+				})
+				.done(function(){					
+					radio.trigger('bt-auth-save-success');
+				})
 		},
 
 		// 7156 : to avoid false login/password, we need to test before saving
-		// now this function has the action type in argument 'test' or 'save'
-		postCredentials : function(action){
+		// 2018-06-06 : rewritten to use the promises
+		postCredentials : function(urlSuffix){
 			var self = this;
-			var urlSuffix = '/credentials/validator';
 			var url = this.btUrl + urlSuffix;
 			var creds = this.model.get('credentials').attributes;
 
@@ -441,32 +450,12 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 				data : JSON.stringify(payload),
 				contentType : 'application/json'
 			})
-			.done(function(){
-				if (action == 'save') {
-					url = url.replace('/validator', '');
-					$.ajax({
-						url : url,
-						type : 'POST',
-						data : JSON.stringify(payload),
-						contentType : 'application/json'
-					})
-					.done(function(){
-						radio.trigger('bt-auth-save-success');
-					})
-					.fail(function(xhr){
-						xhr.errorIsHandled = true;
-						radio.trigger('bt-auth-warning', notification.getErrorMessage(xhr));
-					});
-				} else {
-					radio.trigger('bt-auth-success');
-				}
-			})
 			.fail(function(xhr){
 				xhr.errorIsHandled = true;
 				radio.trigger('bt-auth-warning', notification.getErrorMessage(xhr));
 			})
 			.always(function(){
-				self.unserAjaxMode();
+				self.unsetAjaxMode();
 			});
 		}
 	});

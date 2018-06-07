@@ -130,7 +130,7 @@
 
 						<%-- ==================== authentication panel ===================== --%>
 
-						<%-- all the variable states necessary for the pre-rendering --%>
+						<%-- all the state variables necessary for the pre-rendering --%>
 						<c:set var="credSectionEnabling" value="${(authConf.authPolicy == 'USER') ? 'disabled-transparent' : ''}"/>
 						<c:set var="credsSectionVisibility" 	value="${(not empty authConf.failureMessage) ? 'not-displayed' : ''}" />
 						<c:set var="policyAppAvailable" value="${(not empty authConf.failureMessage) ? 'disabled=disabled' : ''}"/>
@@ -203,9 +203,9 @@
 											<comp:notification-pane type="info" txtcontent="${labelSuccess}"/>
 										</div>
 
-                    <div id="bt-auth-save-info" class="not-displayed">
-                      <comp:notification-pane type="info" txtcontent="${labelSaveSuccess}"/>
-                    </div>
+					                    <div id="bt-auth-save-info" class="not-displayed">
+					                      <comp:notification-pane type="info" txtcontent="${labelSaveSuccess}"/>
+					                    </div>
 									</div>
 
 						   		</div>
@@ -252,8 +252,8 @@
 
 <!-- ------------------------------------END RENAME POPUP------------------------------------------------------- -->
 
-<f:message var="deleteBugtrackerTitle" key="dialog.delete-bugtracker.title" />
-<f:message var="warningDelete" key="dialog.deleteBugTracker.warning" />
+<f:message var="deleteBugtrackerTitle" 	key="dialog.delete-bugtracker.title" 	/>
+<f:message var="warningDelete" 			key="dialog.deleteBugTracker.warning" 	/>
 <div id="delete-bugtracker-popup" class="popup-dialog not-displayed" title="${deleteBugtrackerTitle}">
 
     <comp:notification-pane type="error" txtcontent="${warningDelete}"/>
