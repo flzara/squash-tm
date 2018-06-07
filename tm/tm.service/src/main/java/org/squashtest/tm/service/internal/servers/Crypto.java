@@ -25,14 +25,9 @@ import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
-
-import org.squashtest.tm.service.servers.EncryptionKeyChangedException;
-
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.security.*;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.InvalidParameterSpecException;
 import java.util.Arrays;
 import java.util.Base64;
 
@@ -77,6 +72,7 @@ class Crypto {
     private static final int ITER_CNT = 65556;
     private static final int KEY_LEN = 128;
 
+    // TODO : not fixing what is not broken yet, but I think Latin-1 is what we want since the server is using it. 
     private static final String CHARSET = "UTF-8";
 
     private char[] keyPassword;
@@ -95,7 +91,7 @@ class Crypto {
     }
 
 
-    EncryptionOutcome encrypt(String toEncrypt){
+    EncryptionOutcome encrypt(String toEncrypt) throws GeneralSecurityException, UnsupportedEncodingException{
 
         byte[] salt = generateSalt();
 
@@ -114,7 +110,7 @@ class Crypto {
 
     }
 
-    String decrypt(String encrypted){
+    String decrypt(String encrypted) throws GeneralSecurityException, UnsupportedEncodingException{
 
         Cipher cipher = createPlainCipher();
 
@@ -140,36 +136,20 @@ class Crypto {
 
     // *************** all purpose private methods **************************************
 
-    private SecretKeySpec generateKeySpec(char[] pwd, byte[] salt){
-        try {
-            PBEKeySpec keySpec = new PBEKeySpec(pwd, salt, ITER_CNT, KEY_LEN);
+    private SecretKeySpec generateKeySpec(char[] pwd, byte[] salt) throws GeneralSecurityException{
+        
+        PBEKeySpec keySpec = new PBEKeySpec(pwd, salt, ITER_CNT, KEY_LEN);
 
-            SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(KEY_GEN);
-            SecretKey secKey = keyFactory.generateSecret(keySpec);
+        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(KEY_GEN);
+        SecretKey secKey = keyFactory.generateSecret(keySpec);
 
-            return new SecretKeySpec(secKey.getEncoded(), KEY_ALG);
-        }
-        catch(NoSuchAlgorithmException ex){
-            // ouch, I so believed this algorithm was a standard honored by any JRE implementor
-            throw new RuntimeException(ex);
-        }
-        catch(InvalidKeySpecException ex){
-            // ouch, I so believed my key spec was a standard honored by any JRE implementor
-            throw new RuntimeException(ex);
-        }
+        return new SecretKeySpec(secKey.getEncoded(), KEY_ALG);
+        
     }
 
 
-    private Cipher createPlainCipher(){
-        try {
-            return Cipher.getInstance(CRYPT_ALG);
-        } catch (NoSuchAlgorithmException ex) {
-            // ouch, I so believed this algorithm was a standard honored by any JRE implementor
-            throw new RuntimeException(ex);
-        } catch (NoSuchPaddingException ex) {
-            // ouch, I so believed this padding was a standard honored by any JRE implementor
-            throw new RuntimeException(ex);
-        }
+    private Cipher createPlainCipher() throws GeneralSecurityException{        
+        return Cipher.getInstance(CRYPT_ALG);      
     }
 
 
@@ -185,42 +165,23 @@ class Crypto {
         return salt;
     }
 
-    private Cipher createEncryptionCipher(SecretKeySpec keySpec){
+    private Cipher createEncryptionCipher(SecretKeySpec keySpec) throws GeneralSecurityException{
         Cipher cipher = null;
-        try {
-            cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            cipher.init(Cipher.ENCRYPT_MODE, keySpec);
-            return cipher;
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException  ex) {
-            // ouch, I so believed I was using standard algorithms, padding and key spec honored by any JRE implementor
-            throw new RuntimeException(ex);
-        }
+        cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        cipher.init(Cipher.ENCRYPT_MODE, keySpec);
+        return cipher;
     }
 
 
-    private final byte[] getIV(Cipher cipher){
-        try {
-            AlgorithmParameters params = cipher.getParameters();
-            return params.getParameterSpec(IvParameterSpec.class).getIV();
-        }
-        catch(InvalidParameterSpecException ex){
-            // ouch, I so  believed this parameter spec was a standard honored by any JRE implementor
-            throw new RuntimeException(ex);
-        }
+    private final byte[] getIV(Cipher cipher) throws GeneralSecurityException{
+       
+        AlgorithmParameters params = cipher.getParameters();
+        return params.getParameterSpec(IvParameterSpec.class).getIV();
+        
     }
 
-    private byte[] doEncrypt(Cipher cipher, String text){
-        try {
-            return cipher.doFinal(text.getBytes(CHARSET));
-        }
-        catch(UnsupportedEncodingException ex){
-            // ouch, I so  believed UTF-8 was a standard honored by any JRE implementor
-            throw new RuntimeException(ex);
-        }
-        catch(IllegalBlockSizeException | BadPaddingException ex){
-            // ouch, I so  believed that my block size and padding were honored by any JRE implementor
-            throw new RuntimeException(ex);
-        }
+    private byte[] doEncrypt(Cipher cipher, String text) throws UnsupportedEncodingException, GeneralSecurityException{       
+        return cipher.doFinal(text.getBytes(CHARSET));        
     }
 
     private byte[] appendEverything(byte[] salt, byte[] iv, byte[] encrypted){
@@ -256,33 +217,16 @@ class Crypto {
 
     }
 
-    private void initCipher(Cipher cipher, SecretKeySpec key, byte[] iv){
-        try {
-            cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(iv));
-        } catch (InvalidKeyException ex) {
-            // ouch, I so believed my key spec was a standard honored by any JRE implementor
-            throw new RuntimeException(ex);
-        } catch (InvalidAlgorithmParameterException ex) {
-            // ouch, I so believed that initialization vector was a standard parameter honored by any JRE implementor
-            throw new RuntimeException(ex);
-        }
+    private void initCipher(Cipher cipher, SecretKeySpec key, byte[] iv) throws GeneralSecurityException{        
+        cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(iv));
     }
 
-    private byte[] doDecrypt(Cipher cipher, byte[] encrypted){
-        try {
-            return cipher.doFinal(encrypted);
-        } catch (IllegalBlockSizeException | BadPaddingException ex) {
-            throw new EncryptionKeyChangedException(ex);
-        }
+    private byte[] doDecrypt(Cipher cipher, byte[] encrypted) throws GeneralSecurityException{
+        return cipher.doFinal(encrypted);
     }
 
-    private String decryptedToString(byte[] decrypted){
-        try {
-            return new String(decrypted, CHARSET);
-        } catch (UnsupportedEncodingException ex) {
-            // ouch, I so  believed UTF-8 was a standard honored by any JRE implementor
-            throw new RuntimeException(ex);
-        }
+    private String decryptedToString(byte[] decrypted) throws UnsupportedEncodingException{
+        return new String(decrypted, CHARSET);
     }
 
     // *********************** inner classes *******************************

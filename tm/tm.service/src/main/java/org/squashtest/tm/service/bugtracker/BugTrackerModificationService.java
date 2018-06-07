@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.domain.servers.AuthenticationPolicy;
+import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 
 @Transactional
 @DynamicManager(name = "squashtest.tm.service.BugTrackerModificationService", entity = BugTracker.class)
@@ -41,8 +42,11 @@ public interface BugTrackerModificationService extends CustomBugTrackerModificat
 
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeUrl(long bugtrackerId, String url);
-	
+
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeAuthenticationPolicy(long bugtrackerId, AuthenticationPolicy policy);
+
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	void changeAuthenticationProtocol(long bugtrackerId, AuthenticationProtocol protocol);
 
 }

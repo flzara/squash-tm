@@ -51,6 +51,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -95,7 +97,7 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 
 	@Override
 	public boolean isSecretConfigured() {
-		if (secret.length == 0){
+		if (secret.length == 0 || secret[0] == '\0'){
 			return false;
 		}
 
@@ -154,7 +156,7 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
-	public void storeAppLevelCredentials(long serverId, ManageableCredentials credentials) {
+	public void storeAppLevelCredentials(long serverId, ManageableCredentials credentials){
 		if (! credentials.allowsAppLevelStorage()){
 			throw new IllegalArgumentException(
 				"Refused to store credentials of type '"+credentials.getImplementedProtocol()+"' : business rules forbid " +
@@ -200,14 +202,21 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 	 *********************************************************/
 
 
-	private void storeCredentials(long serverId, String username, ManageableCredentials credentials) {
+	private void storeCredentials(long serverId, String username, ManageableCredentials credentials){
 
 		if (! isSecretConfigured()){
 			throw new MissingEncryptionKeyException();
 		}
 
-		// encrypt
-		Crypto.EncryptionOutcome outcome = toEncryptedForm(credentials);
+		Crypto.EncryptionOutcome outcome = null;
+		try{
+			// encrypt
+			outcome = toEncryptedForm(credentials);
+		}
+		catch(GeneralSecurityException | IOException ex){
+			LOGGER.error("Could encrypt the credentials because the JRE doesn't support the specified encryption algorithms.");
+			throw new RuntimeException(ex);
+		}
 
 		// prepare for storage
 		StoredCredentials sc = null;
@@ -242,7 +251,7 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 	 * Returns the credentials for the server id. If username is not null, this implicitly means 
 	 * user-level credentials. If username is null, app-level credentials will be retrieved instead.
 	 */
-	private ManageableCredentials unsecuredFindCredentials(long serverId, String username) {
+	private ManageableCredentials unsecuredFindCredentials(long serverId, String username)  {
 
 		if (! isSecretConfigured()){
 			throw new MissingEncryptionKeyException();
@@ -275,20 +284,32 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 			LOGGER.debug("No credentials found.");
 			return null;
 		}
+		
+		// -- exception 2 : encryption exceptions --
+		catch(GeneralSecurityException | UnsupportedEncodingException cryptoException){
+			LOGGER.error("Decryption failed probably because the encryption key changed. Less likely, is also can be that JRE doesn't support the specified encryption algorithms.");
+			throw new EncryptionKeyChangedException(cryptoException);
+		}
 
-		// -- exception 2 : something was wrong --
-		// using a catchall here because Jackson might use IOException, IllegalArgumentException and whatnot
+		// -- exception 3 : data format is wrong was wrong, or less probably a rarer encryption exception was thrown --
+		// using a catchall here because Jackson might also use IOException, IllegalArgumentException and whatnot
 		catch(Exception ex){
+			
+			// exception 3.1 : the decryption failed but thrown a different exception than expected above
+			if (strDecrypt == null){
+				// we just rethrow it.
+				LOGGER.debug("The decryption failed for unknown reasons.");
+				throw new RuntimeException(ex);
+			}
+			
+			// first possible data format error : the old BasicAuthenticationCredentials (which does not implement ManageableCredentials).
 			try {
-				/*
-				 * Well, maybe this is the old BasicAuthenticationCredentials (which does not implement ManageableCredentials).
-				 */
-				LOGGER.debug("Something got wrong. Perhaps former BasicAuthenticationCredentials need migration ?");
+				LOGGER.debug("The data format is wrong. Perhaps an instance of BasicAuthenticationCredentials, which cannot now be stored directly, needs migration ?");
 
 				return migrateToNewFormat(strDecrypt, sc);
 			}
 
-			// -- exception 2.1 : something was very wrong
+			// -- exception 3.2 : other data format errors
 			catch(IOException definitelyWrong){
 				/*
 				 * Let's try to investigate and refine the error.
@@ -296,6 +317,12 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 				LOGGER.error("something got definitely wrong.");
 				LOGGER.error(definitelyWrong.getMessage(), definitelyWrong);
 				throw investigateDeserializationError(strDecrypt, definitelyWrong);
+			}
+			
+			// exception 3.3 : data were decrypted and migrated successfully but could not encrypt the new credentials
+			catch(GeneralSecurityException cryptoException){
+				LOGGER.error("encryption exception while trying to migrate and restore old credentials ! Was the secret key changed ?");
+				throw new EncryptionKeyChangedException(cryptoException);
 			}
 		}
 		finally{
@@ -319,7 +346,7 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 	// ************* encrypt / decrypt *****************
 
 
-	private Crypto.EncryptionOutcome toEncryptedForm(ManageableCredentials credentials) {
+	private Crypto.EncryptionOutcome toEncryptedForm(ManageableCredentials credentials) throws IOException, GeneralSecurityException{
 
 		Crypto crypto = new Crypto(Arrays.copyOf(secret, secret.length));
 
@@ -391,7 +418,7 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 			return new RuntimeException("missing implementation for ManageableCredentials type '"+clazz+"', or that type does not implement '"+ManageableCredentials.class.getName()+"'", cause);
 		}
 		catch (IOException e) {
-			/**
+			/*
 			 * Woa, definitely not json. Most probably the encryption key changed. Note that the IOException might have
 			 * been thrown by the database but a Jackson failure is more likely, due to decryption returning garbage.
 			 */
@@ -443,7 +470,7 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 
 
 
-	private ManageableCredentials migrateToNewFormat(String strDecrypt, StoredCredentials sc) throws IOException{
+	private ManageableCredentials migrateToNewFormat(String strDecrypt, StoredCredentials sc) throws IOException, GeneralSecurityException{
 			
 		LOGGER.debug("attempting migration of the deprecated stored credentials");
 		

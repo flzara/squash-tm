@@ -184,7 +184,7 @@ public class BugTrackerModificationController {
 
 		// defaults
 		bean.setAuthPolicy(bugTracker.getAuthenticationPolicy());
-		bean.setSelectedProto(AuthenticationProtocol.BASIC_AUTH);
+		bean.setSelectedProto(bugTracker.getAuthenticationProtocol());
 		bean.setAvailableProtos(Arrays.asList(availableProtos));
 
 		// now check against the credentials
