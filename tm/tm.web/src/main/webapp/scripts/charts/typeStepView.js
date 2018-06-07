@@ -494,7 +494,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			find: function (name) {
 
 				var self = this;
-				var columnId = $("#axis-axis-" + name).children().attr('id');
+				var columnId = $("#axis-axis-" + name).find(":selected").attr('id');
 
 				var result;
 
