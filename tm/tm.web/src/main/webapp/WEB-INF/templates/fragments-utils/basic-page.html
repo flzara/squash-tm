@@ -68,5 +68,28 @@
 	      </div>
 		</div>
 	</body>
+	
 
 </html>
+
+<html th:fragment="basic-page-and-script(title, header, message, script)">
+
+	<p th:remove="all">
+		Same as 'basic-page', with a footer section that will contain your script.
+		Only one script tag allowed.
+	</p>
+
+	<th:block th:replace=":: basic-page(${title}, ${header}, ${message})">
+		<div>some message</div>
+	</th:block>
+	
+	<footer>
+		<script th:replace="${script}">console.log('some script');</script>
+	</footer>
+	
+</html>
+
+	
+
+
+

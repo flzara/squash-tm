@@ -40,6 +40,9 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.servers.AuthenticationPolicy;
+import static org.squashtest.tm.domain.servers.AuthenticationPolicy.*;
+import org.squashtest.tm.domain.servers.AuthenticationProtocol;
+import static org.squashtest.tm.domain.servers.AuthenticationProtocol.*;
 import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials;
 import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.service.servers.CredentialsProvider;
@@ -178,42 +181,8 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 				for (BugTracker server: servers){
 
 					try{
-
-						// server uses app-level authentication -> credentials are assumed set and correct
-						if (server.getAuthenticationPolicy() == AuthenticationPolicy.APP_LEVEL){
-							LOGGER.debug("BugTrackerAutoconnectCallback : server '{}' uses the app-level authentication policy, credentials are assumed set and correct", server.getName());
-						}
-
-						// user need to authenticate
-						else{
-							LOGGER.debug("BugTrackerAutoconnectCallback : try connection of server : {}", server.getName());
-
-							Credentials credentials = null;
-
-							// attempt to load from the provider
-							Optional<Credentials> maybeCredentials = credentialsProvider.getCredentials(server);
-
-							if (maybeCredentials.isPresent()){
-								LOGGER.trace("BugTrackerAutoconnectCallback : found credentials from the provider");
-								credentials = maybeCredentials.get();
-							}
-
-							// if none, attempt to create from the spring sec authentication if possible
-							else if (canTryAuthenticationEvent(server)){
-								LOGGER.trace("BugTrackerAutoconnectCallback : can create the credentials using the authentication event");
-								credentials = buildFromAuthenticationEvent();
-							}
-
-							if (credentials == null){
-								LOGGER.debug("BugTrackerAutoconnectCallback : could not find suitable credentials, skipping");
-							}
-							else{
-								bugTrackersLocalService.validateCredentials(server, credentials, true);
-								LOGGER.debug("BugTrackerAutoconnectCallback : credentials successfully tested for server '{}'", server.getName());
-							}
-
-						}
-
+						LOGGER.debug("BugTrackerAutoconnectCallback : attempting authentication on server '{}'", server.getName());
+						attemptAuthentication(server);
 					}
 					catch(BugTrackerNoCredentialsException | UnsupportedAuthenticationModeException ex){
 						LOGGER.debug("BugTrackerAutoconnectCallback : Failed to connect user '{}' to the bugtracker {} with the supplied credentials. User will have to connect manually.", user, server);
@@ -222,7 +191,6 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 					catch(Exception genericException){
 						LOGGER.error("BugTrackerAutoconnectCallback : an unexpected error happened :", genericException);
 					}
-
 
 				}
 
@@ -236,21 +204,94 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 		}
 
 
+		private void attemptAuthentication(BugTracker server) {
+			
+			AuthenticationPolicy policy = server.getAuthenticationPolicy();
+			AuthenticationProtocol protocol = server.getAuthenticationProtocol();
+			
+			LOGGER.trace("server '{}' is set to authentication policy '{}' and protocol '{}'", policy, protocol);
+
+			// find testable credentials if possible
+			Credentials credentials = fetchCredentialsOrNull(server);
+
+			// are the credentials absent ?
+			if (credentials == null){
+				LOGGER.debug("BugTrackerAutoconnectCallback : could not find suitable credentials, skipping");
+			}
+			// else attempt authentication
+			else{
+				
+				// warn if credentials of unexpected type
+				warnIfCredentialsOfWrongType(credentials, protocol);
+				
+				bugTrackersLocalService.validateCredentials(server, credentials, true);
+				
+				LOGGER.debug("BugTrackerAutoconnectCallback : credentials successfully tested for server '{}'", server.getName());
+			}
+
+		}
+
+
+		
+		private Credentials fetchCredentialsOrNull(BugTracker server){
+			
+			Credentials credentials = null;
+			
+			AuthenticationPolicy policy = server.getAuthenticationPolicy();
+			
+			// attempt to load from the provider			
+			Optional<Credentials> maybeCredentials = null;
+			if (policy == AuthenticationPolicy.USER){
+				maybeCredentials = credentialsProvider.getCredentials(server);
+			}
+			else{
+				maybeCredentials = credentialsProvider.getAppLevelCredentials(server);
+			}
+
+			
+			// use the credentials if present, or try fallback
+			if (maybeCredentials.isPresent()){
+				LOGGER.trace("BugTrackerAutoconnectCallback : found credentials from the provider");
+				credentials = maybeCredentials.get();
+			}
+			else if (canTryAuthenticationEvent(server)){
+				LOGGER.trace("BugTrackerAutoconnectCallback : can create the credentials using the authentication event");
+				credentials = buildFromAuthenticationEvent();
+			}
+			
+			return credentials;
+		}
+
+		
 		private List<BugTracker> findBugTrackers() {
 			List<Project> readableProjects = projectFinder.findAllReadable();
 			List<Long> projectIds = IdentifiedUtil.extractIds(readableProjects);
 			return bugTrackerFinder.findDistinctBugTrackersForProjects(projectIds);
 		}
-
-		// for now we assume that only String credentials are suitable (as passwords)
+		
+		
+		// for now we assume that only String credentials are suitable (as passwords), 
+		// and the server is set to auth policy USER 
 		private boolean canTryAuthenticationEvent(BugTracker server){
-			return (springsecCredentials instanceof String);
+			return (server.getAuthenticationPolicy() == AuthenticationPolicy.USER && 
+					springsecCredentials instanceof String);
 		}
 
 		// for now we assume that BasicAuthentication is what we need
 		// the cast is safe thanks to canTryAuthenticationEvent
 		private Credentials buildFromAuthenticationEvent(){
 			return new BasicAuthenticationCredentials(user, (String)springsecCredentials);
+		}
+		
+		
+		private void warnIfCredentialsOfWrongType(Credentials credentials, AuthenticationProtocol protocol){
+			AuthenticationProtocol credsProtocol = credentials.getImplementedProtocol();
+			if (credsProtocol != protocol){
+				LOGGER.warn("BugTrackerAutoconnectCallback : attempting autoconnection with credentials for protocol '{}' "
+						+ "while the configuration states that the (preferred) protocol is  '{}'. That doesn't mean the "
+						+ "current credentials won't work (the connector still supports them) but this warning hints "
+						+ "that they might be obsolete regarding your new preferred protocol.", credsProtocol, protocol);
+			}
 		}
 
 

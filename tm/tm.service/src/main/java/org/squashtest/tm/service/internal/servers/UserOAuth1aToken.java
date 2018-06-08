@@ -23,7 +23,6 @@ package org.squashtest.tm.service.internal.servers;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.servers.OAuth1aCredentials;
@@ -41,12 +40,12 @@ public class UserOAuth1aToken implements ManageableCredentials {
 	/**
 	 * The long-lasting (authorized) user token
 	 */
-	private String token;
+	private String token = "";
 
 	/**
 	 * The long-lasting (authorized) user token secret.
 	 */
-	private String tokenSecret;
+	private String tokenSecret = "";
 
 	public UserOAuth1aToken() {
 	}

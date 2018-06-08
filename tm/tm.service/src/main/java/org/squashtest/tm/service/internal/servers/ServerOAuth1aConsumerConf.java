@@ -56,7 +56,7 @@ public class ServerOAuth1aConsumerConf implements ManageableCredentials {
 	/**
 	 * Identifier of the OAuth endpoint Squash-TM is supposed to dock to
 	 */
-	private String consumerKey;
+	private String consumerKey = "";
 
 
 	/**
@@ -65,29 +65,29 @@ public class ServerOAuth1aConsumerConf implements ManageableCredentials {
 	 * (and the endpoint knows the public key)
 	 *
 	 */
-	private String clientSecret;
+	private String clientSecret = "";
 
 	/**
 	 * Squash-TM own tokens, if any.
 	 */
-	private UserOAuth1aToken squashtmTokens;
+	private UserOAuth1aToken squashtmTokens = new UserOAuth1aToken();
 
 	/**
 	 * The signature algorithm.
 	 */
-	private OAuth1aCredentials.SignatureMethod signatureMethod;
+	private SignatureMethod signatureMethod = SignatureMethod.HMAC_SHA1;
 
 	// *************** token dance part ******************
 
 	private HttpMethod requestTokenHttpMethod = HttpMethod.GET;
 
-	private String requestTokenUrl;
+	private String requestTokenUrl = "";
 
-	private String userAuthorizationURL;
+	private String userAuthorizationURL = "";
 
 	private HttpMethod accessTokenHttpMethod = HttpMethod.GET;
 
-	private String accessTokenUrl;
+	private String accessTokenUrl = "";
 
 
 	// ****************** constructors *******************
@@ -129,12 +129,14 @@ public class ServerOAuth1aConsumerConf implements ManageableCredentials {
 	// ****************** accessors **********************
 
 	private boolean isValid(){
-		return squashtmTokens.isValid();
+		return (squashtmTokens != null && squashtmTokens.isValid());
 	}
 
 	@Override
 	public void invalidate() {
-		squashtmTokens.invalidate();
+		if (squashtmTokens != null){
+			squashtmTokens.invalidate();
+		}
 	}
 
 	@Override

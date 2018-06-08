@@ -25,6 +25,8 @@ import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,6 +46,7 @@ import org.squashtest.tm.service.servers.OAuth1aTemporaryTokens;
 public class ThirdPartyServersAuthenticationController {
 	
 	private static final String OAUTH_ERROR_PAGE = "servers/oauth1a-failure.html";
+	private static final String OAUTH_SUCCESS_PAGE = "servers/oauth1a-success.html";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ThirdPartyServersAuthenticationController.class);
 
@@ -105,23 +108,25 @@ public class ThirdPartyServersAuthenticationController {
 
 
 	@RequestMapping(value = "/{serverId}/authentication/oauth1a/callback", method = RequestMethod.GET)
-	@ResponseBody
 	public String callbackOAuth1(HttpSession session, @PathVariable("serverId") long serverId,
 								 @RequestParam("oauth_token") String oauthToken,
 								 @RequestParam("oauth_verifier") String oauthVerifier){
 
-		String response="completed !";
-
+		String view = OAUTH_SUCCESS_PAGE;
+		
 		try {
 			OAuth1aTemporaryTokens tempTokens = (OAuth1aTemporaryTokens) session.getAttribute(OAUTH_1_A_TEMP_TOKENS);
 
 			if (tempTokens == null){
-				response = "unexpected call to the oauth1 consumer callback, no temporary tokens found user session !";
+				String user = findUsernameOrUndefined();
+				LOGGER.error("oauth callback (user '{}', server '{}') : unexpected call to the oauth1 consumer callback, no temporary tokens found user session !", user, serverId);
+				view = OAUTH_ERROR_PAGE;
 			}
 
 			if (! oauthToken.equals(tempTokens.getTempToken())){
-				response = "wtf, received a oauth callback for server "+serverId+" but received token "+oauthToken+" while " +
-							   "expecting "+tempTokens.getTempToken();
+				String user = findUsernameOrUndefined();
+				LOGGER.error("oauth callback (user '{}', server '{}') : received token '{}' but expected '{}'", user, serverId, oauthToken, tempTokens.getTempToken());
+				view = OAUTH_ERROR_PAGE;
 			}
 
 			else {
@@ -131,13 +136,27 @@ public class ThirdPartyServersAuthenticationController {
 			}
 		}
 		catch(ClassCastException ex){
-			response = "unexpected call to the oauth1 consumer callback, no temporary tokens found user session !";
+			String user = findUsernameOrUndefined();
+			LOGGER.error("oauth callback (user '{}', server '{}') : programmatic error, exception is ", user, serverId, ex);
+			view = OAUTH_ERROR_PAGE;
 		}
 
-		return response;
+		return view;
 
 	}
 
 
-
+	private String findUsernameOrUndefined(){
+		try{
+			SecurityContext sec = SecurityContextHolder.getContext();
+			String username = sec.getAuthentication().getName();
+			return (username != null) ? username : "(unknown)";
+		}
+		catch(Exception ex){
+			LOGGER.debug("attempted to retrieve the current username for debugging purposes but failed to retrieve one. "
+					+ "Probable cause is that no user context is set. It is also likely that the error reported below was caused for that same reason.");
+			return "(unknown)";
+		}
+	}
+	
 }

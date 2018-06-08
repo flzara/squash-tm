@@ -261,6 +261,7 @@ define([], function(){
 
 		// server authentication
 		'servers.authentication' :			root + '/servers/{\\d+}/authentication',
+		'servers.authentication.oauth1a' :	root + '/servers/{\\d+}/authentication/oauth1a',
 
 		// authorizations
 		'acls': root + '/acls',

@@ -116,11 +116,22 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 	private InternalBugtrackerConnector connect(BugTracker bugTracker) {
 
 		InternalBugtrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
-		Supplier<BugTrackerNoCredentialsException> throwIfNull = () -> { throw new BugTrackerNoCredentialsException(null); };
+		final AuthenticationPolicy authPolicy = bugTracker.getAuthenticationPolicy(); 
+		
+		// prepare exception handling
+		Supplier<BugTrackerNoCredentialsException> throwIfNull = () -> { 
+			StringBuilder errorBuilder = new StringBuilder("Cannot authenticate because no valid credentials were found for authentication on the remote server.");
+			if (authPolicy == AuthenticationPolicy.APP_LEVEL){
+				errorBuilder.append(" Squash-TM is supposed to use application-level credentials for that and it seems they were not configured properly. "
+						+ "Please contact your administrator in order to fix the situation.");
+			}
+			throw new BugTrackerNoCredentialsException(errorBuilder.toString(), null); 
+		};
 
+		// now fetch the credentials if exists
 		Optional<Credentials> maybeCredentials = null;
 
-		switch(bugTracker.getAuthenticationPolicy()){
+		switch(authPolicy){
 			case USER:
 				maybeCredentials = credentialsProvider.getCredentials(bugTracker);
 				break;
