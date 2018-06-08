@@ -266,7 +266,7 @@ define(function () {
 		"\t\tDado que la máquina está conectada.\n" +
 		"\t\tCuando listo los productos disponibles.\n" +
 		"\t\tEntonces constato que todos los productos siguientes son disponibles:\n" +
-		"\t\t| producto\t\t\| precio |\n" +
+		"\t\t| producto\t\t| precio |\n" +
 		"\t\t| Espresso\t\t|  0.40  |\n" +
 		"\t\t| Lungo\t\t\t\t|  0.50  |\n" +
 		"\t\t| Cappuccino\t|  0.80  |\n" +
