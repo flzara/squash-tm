@@ -20,11 +20,18 @@
  */
 package org.squashtest.tm.web.internal.util;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,8 +40,17 @@ public final class UriUtils {
 		super();
 	}
 
+	private static final Map<String, Integer> DEFAULT_PORTS;
+
+	static {
+		DEFAULT_PORTS = new HashMap<>(3);
+		DEFAULT_PORTS.put("ftp", 23);
+		DEFAULT_PORTS.put("http", 80);
+		DEFAULT_PORTS.put("https", 443);
+	}
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(UriUtils.class);
-	
+
 	/**
 	 * Returns the part of the request's URL between the URI prefix and the URI suffix.
 	 * @param request
@@ -52,5 +68,56 @@ public final class UriUtils {
 		LOGGER.trace("Path extracted = " + path);
 		return path;
 	}
-	
+
+
+	/**
+	 * Extract the base url of Squash-TM based on the incoming request.
+	 * Implemenation is ripped from spring-security-saml : MetadataGeneratorFilter#getDefaultBaseURL
+	 *
+	 * @param request
+	 * @return
+	 */
+	public static String extractBaseUrl(HttpServletRequest request){
+		StringBuilder sb = new StringBuilder();
+		sb.append(request.getScheme()).append("://").append(request.getServerName()).append(":").append(request.getServerPort());
+		sb.append(request.getContextPath());
+		String url = sb.toString();
+		String finalUrl = canonicalize(url);
+		return finalUrl;
+	}
+
+	/*
+	 * Canonicalize an URL.
+	 * Ripped from opensaml : SimpleURLCanonicalizer
+	 */
+	public static final String canonicalize(String strUrl){
+		try{
+			URIBuilder builder = new URIBuilder(strUrl);
+
+			String scheme = builder.getScheme();
+			if (scheme != null){
+				scheme = scheme.toLowerCase();
+				builder.setScheme(scheme);
+
+				Integer port = DEFAULT_PORTS.get(scheme);
+				if (port != null && port == builder.getPort()){
+					builder.setPort(-1);
+				}
+
+			}
+
+			if (builder.getHost() != null){
+				builder.setHost(builder.getHost().toLowerCase());
+			}
+
+			return builder.toString();
+
+		}
+		catch(URISyntaxException ex){
+			throw new RuntimeException(ex);
+		}
+	}
+
+
+
 }
