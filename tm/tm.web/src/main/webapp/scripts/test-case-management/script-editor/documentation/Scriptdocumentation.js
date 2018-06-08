@@ -203,43 +203,43 @@ define(function () {
 		"\t\t| Cappuccino\t| 0.80  |\n";
 
 	var doc_es = "# language: es\n" +
-		"# Asistencia para el proceso de escritura de los casos de test Gherkin.\n" +
+		"# Asistencia para el proceso de escritura de los casos de prueba Gherkin.\n" +
 		"\n" +
 		"# Gherkin es un lenguaje implementando las metodologías del Behaviour Driven Development.\n" +
-		"# En Squash TM, un caso de test Gherkin puede ejecutarse manualmente de la misma manera que un caso de test clásico o ser exportado para una ejecución externa automatizada.\n" +
+		"# En Squash TM, un caso de prueba Gherkin puede ejecutarse manualmente de la misma manera que un caso de prueba clásico o ser exportado para una ejecución externa automatizada.\n" +
 		"\n" +
 		"# ---------------------- LÉXICO DE TÉRMINOS -----------------------\n" +
-		"Característica\n" +
+		"Característica:\n" +
 		"\n" +
 		"# Términos para definir a los escenarios:\n" +
-		"# Escenarios de test simples (sin dataset)\n" +
-		"Escenario\n" +
+		"# Escenarios de prueba simples (sin dataset)\n" +
+		"Escenario:\n" +
 		"# Escenarios de test con ejemplos (y con dataset)\n" +
-		"Esquema del escenario\n" +
-		"# término para definir un dataset (debe acompañarse de una tabla de datos)\n" +
+		"Esquema del escenario:\n" +
+		"# Término para definir un dataset (debe acompañarse de una tabla de datos)\n" +
 		"Ejemplos\n" +
 		"\n" +
-		"# Término para definir un contexto (pasos de test comunes pare todos los escenarios del script)\n" +
-		"Antecedentes\n" +
+		"# Término para definir un contexto (pasos de prueba comunes pare todos los escenarios del script)\n" +
+		"Antecedentes:\n" +
 		"\n" +
-		"# Términos de precondiciones para pasos de test:\n" +
+		"# Términos de precondiciones para pasos de prueba:\n" +
 		"Dado\n" +
 		"Dada\n" +
 		"Dados\n" +
 		"Dadas\n" +
 		"\n" +
-		"# Término de acción para pasos de test:\n" +
+		"# Término de acción para pasos de prueba:\n" +
 		"Cuando\n" +
 		"\n" +
-		"# Término de resultado para pasos de test:\n" +
+		"# Término de resultado para pasos de prueba:\n" +
 		"Entonces\n" +
 		"\n" +
-		"# Términos de continuación de los pasos de test en curso para pasos de test\n" +
+		"# Términos de continuación de los pasos de prueba en curso\n" +
 		"Y\n" +
 		"E\n" +
 		"\n" +
 		"# ----------------------------- EJEMPLO DE FEATURE ----------------------------- \n" +
-		"# Ejemplo de estructura de una feature completa con tres escenarios de test y un contexto:\n" +
+		"# Ejemplo de estructura de una feature completa con tres escenarios de prueba y un contexto:\n" +
 		"\n" +
 		"# language: es <- Esta línea de comentario indica la localización del script. Por defecto (cuando falta o es incorrecta), Squash TM interpretará el script como si era en inglés.\n" +
 		"\n" +
@@ -261,19 +261,19 @@ define(function () {
 		"\n" +
 		"\n" +
 		"\t# -------------------------- ESCENARIO DE EJEMPLO 2 -------------------------- \n" +
-		"\t# Ejemplo de escenario con tabla de datos sin configuración de los pasos de test\n" +
+		"\t# Ejemplo de escenario con tabla de datos sin configuración de los pasos de prueba\n" +
 		"\tEscenario: Controlar cuales son los productos disponibles.\n" +
 		"\t\tDado que la máquina está conectada.\n" +
 		"\t\tCuando listo los productos disponibles.\n" +
 		"\t\tEntonces constato que todos los productos siguientes son disponibles:\n" +
 		"\t\t| producto\t\t\| precio |\n" +
-		"\t\t| Expresso\t\t|  0.40  |\n" +
+		"\t\t| Espresso\t\t|  0.40  |\n" +
 		"\t\t| Lungo\t\t\t\t|  0.50  |\n" +
 		"\t\t| Cappuccino\t|  0.80  |\n" +
 		"\n" +
 		"\n" +
 		"\t# -------------------------- ESCENARIO DE EJEMPLO 3 -------------------------- \n" +
-		"\t# Ejemplo de escenario con tabla de datos y pasos de test configurados\n" +
+		"\t# Ejemplo de escenario con tabla de datos y pasos de prueba configurados\n" +
 		"\t# Los valores de los parámetros entre <> serán sustituidos a la ejecución\n" +
 		"\t# El escenario estará ejecutado una vez para cada dataset\n" +
 		"\tEsquema del escenario: Verificar la entrega de los productos\n" +
@@ -283,7 +283,7 @@ define(function () {
 		"\t\tEntonces la máquina me sirve un <producto> y le cargó el <precio> a mi cuenta.\n" +
 		"\t\tEjemplos:\n" +
 		"\t\t| producto\t\t| precio |\n" +
-		"\t\t| Expresso\t\t|  0.40  |\n" +
+		"\t\t| Espresso\t\t|  0.40  |\n" +
 		"\t\t| Lungo\t\t\t\t|  0.50  |\n" +
 		"\t\t| Cappuccino\t|  0.80  |\n";
 
