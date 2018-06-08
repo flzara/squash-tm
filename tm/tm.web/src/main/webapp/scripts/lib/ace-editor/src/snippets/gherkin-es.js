@@ -22,6 +22,8 @@ snippet tab3*2\n\
 	| ${1}\t| ${2}\t| ${3}\t|\n\
 	| ${4}\t| ${5}\t| ${6}\t|\n\
 	| ${7}\t| ${8}\t| ${9}\t|\n\
+snippet param\n\
+	<${1}>\n\
 snippet esquema_del_escenario\n\
 	\n\
 	Esquema del escenario: ${1}\n\
@@ -35,8 +37,6 @@ snippet escenario\n\
 		Dado ${2}\n\
 		Cuando ${3}\n\
 		Entonces ${4}\n\
-snippet param\n\
-	<${1}>\n\
 ";
 // @formatter:on
 	exports.scope = "gherkin-es";
