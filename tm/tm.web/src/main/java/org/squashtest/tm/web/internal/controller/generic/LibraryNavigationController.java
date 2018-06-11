@@ -24,6 +24,8 @@ import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.export.JRCsvExporterParameter;
 import net.sf.jasperreports.engine.export.JRXlsAbstractExporterParameter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.MessageSourceResourceBundle;
 import org.springframework.http.HttpStatus;
@@ -36,8 +38,7 @@ import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationException;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
-import org.squashtest.tm.service.deletion.OperationReport;
-import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
+import org.squashtest.tm.service.deletion.*;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.library.LibraryNavigationService;
@@ -55,6 +56,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Superclass for library navigation controllers. This controller handles : library root retrieval, folder content
@@ -68,6 +70,19 @@ import java.util.*;
 
 // XSS OK
 public abstract class LibraryNavigationController<LIBRARY extends Library<? extends NODE>, FOLDER extends Folder<? extends NODE>, NODE extends LibraryNode> {
+	private static final int EOF = -1;
+	private static final Logger LOGGER = LoggerFactory.getLogger(LibraryNavigationController.class);
+	@Inject
+	protected CustomReportDashboardService customReportDashboardService;
+	@Inject
+	protected UserAccountService userAccountService;
+	@Inject
+	protected ActiveMilestoneHolder activeMilestoneHolder;
+	@Inject
+	private MessageSource messageSource;
+	@Inject
+	private JasperReportsService jrServices;
+
 	/**
 	 * Should return a library navigation service.
 	 *
@@ -75,30 +90,11 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	 */
 	protected abstract LibraryNavigationService<LIBRARY, FOLDER, NODE> getLibraryNavigationService();
 
-
-	@Inject
-	private MessageSource messageSource;
-
-	@Inject
-	private JasperReportsService jrServices;
-
-	@Inject
-	protected CustomReportDashboardService customReportDashboardService;
-
-	@Inject
-	protected UserAccountService userAccountService;
-
-	@Inject
-	protected ActiveMilestoneHolder activeMilestoneHolder;
-
-	private static final int EOF = -1;
-
 	protected MessageSource getMessageSource() {
 		return messageSource;
 	}
 
 	protected abstract JsTreeNode createTreeNodeFromLibraryNode(NODE resource);
-
 
 	@ResponseBody
 	@RequestMapping(value = "/drives/{libraryId}/content", method = RequestMethod.GET)
@@ -127,7 +123,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	@ResponseStatus(HttpStatus.CREATED)
 	@SuppressWarnings("unchecked")
 	public final JsTreeNode addNewFolderToLibraryRootContent(@PathVariable long libraryId,
-															 @Valid @RequestBody FOLDER newFolder) {
+	                                                         @Valid @RequestBody FOLDER newFolder) {
 
 		getLibraryNavigationService().addFolderToLibrary(libraryId, newFolder);
 
@@ -139,7 +135,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	@ResponseStatus(HttpStatus.CREATED)
 	@SuppressWarnings("unchecked")
 	public final JsTreeNode addNewFolderToFolderContent(@PathVariable long folderId,
-														@Valid @RequestBody FOLDER newFolder) {
+	                                                    @Valid @RequestBody FOLDER newFolder) {
 
 		getLibraryNavigationService().addFolderToFolder(folderId, newFolder);
 
@@ -158,7 +154,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	@ResponseBody
 	@RequestMapping(value = "/content/{nodeIds}/deletion-simulation", method = RequestMethod.GET)
 	public Messages simulateNodeDeletion(@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds,
-										 Locale locale) {
+	                                     Locale locale) {
 
 
 		List<SuppressionPreviewReport> reportList = getLibraryNavigationService().simulateDeletion(nodeIds);
@@ -177,14 +173,15 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	public OperationReport confirmNodeDeletion(
 		@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds) {
 
-		return getLibraryNavigationService().deleteNodes(nodeIds);
+		OperationReport report = getLibraryNavigationService().deleteNodes(nodeIds);
+		logOperations(report);
+		return report;
 	}
-
 
 	@ResponseBody
 	@RequestMapping(value = "/{destinationType}/{destinationId}/content/new", method = RequestMethod.POST, params = {"nodeIds[]"})
 	public List<JsTreeNode> copyNodes(@RequestParam("nodeIds[]") Long[] nodeIds,
-									  @PathVariable("destinationId") long destinationId, @PathVariable("destinationType") String destType) {
+	                                  @PathVariable("destinationId") long destinationId, @PathVariable("destinationType") String destType) {
 
 		List<NODE> nodeList;
 		try {
@@ -210,7 +207,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	@ResponseBody
 	@RequestMapping(value = "/{destinationType}/{destinationId}/content/{nodeIds}", method = RequestMethod.PUT)
 	public void moveNodes(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
-						  @PathVariable("destinationId") long destinationId, @PathVariable("destinationType") String destType) {
+	                      @PathVariable("destinationId") long destinationId, @PathVariable("destinationType") String destType) {
 
 		try {
 			switch (destType) {
@@ -233,8 +230,8 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	@ResponseBody
 	@RequestMapping(value = "/{destinationType}/{destinationId}/content/{nodeIds}/{position}", method = RequestMethod.PUT)
 	public void moveNodes(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
-						  @PathVariable("destinationId") long destinationId, @PathVariable("destinationType") String destType,
-						  @PathVariable("position") int position) {
+	                      @PathVariable("destinationId") long destinationId, @PathVariable("destinationType") String destType,
+	                      @PathVariable("position") int position) {
 
 		try {
 			switch (destType) {
@@ -273,7 +270,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	 * @param keepRteFormat
 	 */
 	protected void printExport(List<ExportTestCaseData> dataSource, String filename2, String jasperExportFile,
-							   HttpServletResponse response, Locale locale, String string, Boolean keepRteFormat) {
+	                           HttpServletResponse response, Locale locale, String string, Boolean keepRteFormat) {
 		printExport(dataSource, filename2, jasperExportFile, response, locale, string, keepRteFormat,
 			new HashMap<String, Object>());
 
@@ -281,8 +278,8 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 
 	protected void printExport(List<? extends ExportData> dataSource, String filename, String jasperFile,
-							   HttpServletResponse response, Locale locale, String format, boolean keepRteFormat,
-							   Map<String, Object> reportParameters) {
+	                           HttpServletResponse response, Locale locale, String format, boolean keepRteFormat,
+	                           Map<String, Object> reportParameters) {
 		try {
 
 			if (!keepRteFormat) {
@@ -333,6 +330,23 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 			}
 		} while (readByte != EOF);
 
+	}
+
+	private void logOperations(OperationReport report) {
+		for (Node deletedNode : report.getRemoved()) {
+			LOGGER.debug("The node #{} was removed", deletedNode.getResid());
+		}
+		for (NodeMovement movedNode : report.getMoved()) {
+			LOGGER.debug("The nodes #{} were moved to node #{}",
+				movedNode.getMoved().stream().map(Node::getResid).collect(Collectors.toList()),
+				movedNode.getDest().getResid());
+		}
+		for (NodeRenaming renamedNode : report.getRenamed()) {
+			LOGGER.debug("The node #{} was renamed to {}", renamedNode.getNode().getResid(), renamedNode.getName());
+		}
+		for (NodeReferenceChanged nodeReferenceChanged : report.getReferenceChanges()) {
+			LOGGER.debug("The node #{} reference was changed to {}", nodeReferenceChanged.getNode().getResid(), nodeReferenceChanged.getReference());
+		}
 	}
 
 

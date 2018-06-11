@@ -33,7 +33,7 @@ import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.customreport.CustomReportWorkspaceService;
-import org.squashtest.tm.service.deletion.OperationReport;
+import org.squashtest.tm.service.deletion.*;
 import org.squashtest.tm.service.internal.customreport.CustomReportWorkspaceDisplayService;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This controller is dedicated to the operations in the tree of Custom Reports
@@ -66,29 +67,22 @@ import java.util.List;
 @RequestMapping("/custom-report-browser")
 public class CustomReportNavigationController {
 
+	public static final Logger LOGGER = LoggerFactory.getLogger(CustomReportNavigationController.class);
 	private static final String NODE_IDS = "nodeIds[]";
 	private static final String DESTINATION_ID = "destinationId";
-
 	@Inject
 	private CustomReportWorkspaceService workspaceService;
-
 	@Inject
 	private CustomReportLibraryNodeService customReportLibraryNodeService;
-
 	@Inject
 	private CustomReportWorkspaceDisplayService customReportWorkspaceDisplayService;
-
 	@Inject
 	private CustomReportListTreeNodeBuilder listBuilder;
-
 	@Inject
 	@Named("customReport.nodeBuilder")
 	private Provider<CustomReportTreeNodeBuilder> builderProvider;
-
 	@Inject
 	private UserAccountService userAccountService;
-
-	public static final Logger LOGGER = LoggerFactory.getLogger(CustomReportNavigationController.class);
 
 	//----- CREATE NODE METHODS -----
 
@@ -147,42 +141,42 @@ public class CustomReportNavigationController {
 	@ResponseBody
 	@RequestMapping(value = "/folders/{destinationId}/content/new", method = RequestMethod.POST, params = {NODE_IDS})
 	public List<JsTreeNode> copyNodesTofolder(@RequestParam(NODE_IDS) Long[] nodeIds,
-											  @PathVariable(DESTINATION_ID) long destinationId) {
+	                                          @PathVariable(DESTINATION_ID) long destinationId) {
 		return copyNodes(nodeIds, destinationId);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/drives/{destinationId}/content/new", method = RequestMethod.POST, params = {NODE_IDS})
 	public List<JsTreeNode> copyNodesToDrives(@RequestParam(NODE_IDS) Long[] nodeIds,
-											  @PathVariable(DESTINATION_ID) long destinationId) {
+	                                          @PathVariable(DESTINATION_ID) long destinationId) {
 		return copyNodes(nodeIds, destinationId);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/folders/{destinationId}/content/{nodeIds}/{position}", method = RequestMethod.PUT)
 	public void moveNodesToFolderWithPosition(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
-											  @PathVariable(DESTINATION_ID) long destinationId) {
+	                                          @PathVariable(DESTINATION_ID) long destinationId) {
 		moveNodes(nodeIds, destinationId);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/drives/{destinationId}/content/{nodeIds}/{position}", method = RequestMethod.PUT)
 	public void moveNodesToDriveWithPosition(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
-											 @PathVariable(DESTINATION_ID) long destinationId) {
+	                                         @PathVariable(DESTINATION_ID) long destinationId) {
 		moveNodes(nodeIds, destinationId);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/folders/{destinationId}/content/{nodeIds}", method = RequestMethod.PUT)
 	public void moveNodesToFolder(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
-								  @PathVariable(DESTINATION_ID) long destinationId) {
+	                              @PathVariable(DESTINATION_ID) long destinationId) {
 		moveNodes(nodeIds, destinationId);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/drives/{destinationId}/content/{nodeIds}", method = RequestMethod.PUT)
 	public void moveNodesToDrive(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
-								 @PathVariable(DESTINATION_ID) long destinationId) {
+	                             @PathVariable(DESTINATION_ID) long destinationId) {
 		moveNodes(nodeIds, destinationId);
 	}
 
@@ -209,7 +203,9 @@ public class CustomReportNavigationController {
 	public OperationReport confirmNodeDeletion(
 		@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds) {
 
-		return customReportLibraryNodeService.delete(nodeIds);
+		OperationReport report = customReportLibraryNodeService.delete(nodeIds);
+		logOperations(report);
+		return report;
 	}
 
 
@@ -234,6 +230,22 @@ public class CustomReportNavigationController {
 		return new ArrayList<>(customReportWorkspaceDisplayService.getNodeContent(nodeId, currentUser));
 	}
 
+	private void logOperations(OperationReport report) {
+		for (Node deletedNode : report.getRemoved()) {
+			LOGGER.debug("The node #{} was removed", deletedNode.getResid());
+		}
+		for (NodeMovement movedNode : report.getMoved()) {
+			LOGGER.debug("The nodes #{} were moved to node #{}",
+				movedNode.getMoved().stream().map(Node::getResid).collect(Collectors.toList()),
+				movedNode.getDest().getResid());
+		}
+		for (NodeRenaming renamedNode : report.getRenamed()) {
+			LOGGER.debug("The node #{} was renamed to {}", renamedNode.getNode().getResid(), renamedNode.getName());
+		}
+		for (NodeReferenceChanged nodeReferenceChanged : report.getReferenceChanges()) {
+			LOGGER.debug("The node #{} reference was changed to {}", nodeReferenceChanged.getNode().getResid(), nodeReferenceChanged.getReference());
+		}
+	}
 
 	//Class for messages
 
