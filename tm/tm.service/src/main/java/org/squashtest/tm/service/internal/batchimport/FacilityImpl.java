@@ -20,16 +20,6 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,30 +28,23 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.CallTestStep;
-import org.squashtest.tm.domain.testcase.Dataset;
-import org.squashtest.tm.domain.testcase.DatasetParamValue;
-import org.squashtest.tm.domain.testcase.Parameter;
-import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
-import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.domain.testcase.*;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageInstruction;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageTarget;
+import org.squashtest.tm.service.internal.importer.ExcelRowReaderUtils;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.repository.DatasetParamValueDao;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
-import org.squashtest.tm.service.testcase.CallStepManagerService;
-import org.squashtest.tm.service.testcase.DatasetModificationService;
-import org.squashtest.tm.service.testcase.ParameterModificationService;
-import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
-import org.squashtest.tm.service.testcase.TestCaseModificationService;
+import org.squashtest.tm.service.testcase.*;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import java.util.*;
 
 /**
  * Implementation of batch import methods that will actually update the
@@ -72,62 +55,43 @@ import org.squashtest.tm.service.testcase.TestCaseModificationService;
 public class FacilityImpl extends EntityFacilitySupport implements Facility {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FacilityImpl.class);
-
-
+	private final FacilityImplHelper helper = new FacilityImplHelper(this);
 	@Inject
 	private TestCaseLibraryNavigationService navigationService;
-
 	@Inject
 	private TestCaseModificationService testcaseModificationService;
-
 	@Inject
 	private CallStepManagerService callstepService;
-
 	@Inject
 	private ParameterModificationService parameterService;
-
 	@Inject
 	private DatasetModificationService datasetService;
-
 	@Inject
 	private RequirementLibraryNavigationService reqLibNavigationService;
-
 	@Inject
 	private DatasetDao datasetDao;
-
 	@Inject
 	private DatasetParamValueDao paramvalueDao;
-
 	@Inject
 	private ParameterDao paramDao;
-
 	@Inject
 	private RequirementLibraryFinderService reqFinderService;
-
 	@Inject
 	private RequirementVersionCoverageDao coverageDao;
-
 	@Inject
 	private RequirementFacility requirementFacility;
-
 	@Inject
 	private TestCaseFacility testCaseFacility;
-
-        
-    // the following attributes shadow the same attributes defined in EntityFacilitySupport
-    // here we can inject prototype-scoped instances and configure the RequirementFacility and TestCaseFacility with them.
+	// the following attributes shadow the same attributes defined in EntityFacilitySupport
+	// here we can inject prototype-scoped instances and configure the RequirementFacility and TestCaseFacility with them.
 	@Inject
 	private CustomFieldTransator customFieldTransator;
-        
 	@Inject
 	private ValidationFacility validator;
-
-	private final FacilityImplHelper helper = new FacilityImplHelper(this);
 
 
 	// ************************ public (and nice looking) code
 	// **************************************
-
 
 	/**
 	 * @see org.squashtest.tm.service.internal.batchimport.Facility#createTestCase(org.squashtest.tm.service.internal.batchimport.TestCaseInstruction)
@@ -180,7 +144,7 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 
 	@Override
 	public LogTrain addCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase,
-		CallStepParamsInfo paramInfo, ActionTestStep actionStepBackup) {
+	                            CallStepParamsInfo paramInfo, ActionTestStep actionStepBackup) {
 
 		LogTrain train = validator.addCallStep(target, testStep, calledTestCase, paramInfo, actionStepBackup);
 
@@ -231,7 +195,7 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 
 	@Override
 	public LogTrain updateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase,
-		CallStepParamsInfo paramInfo, ActionTestStep actionStepBackup) {
+	                               CallStepParamsInfo paramInfo, ActionTestStep actionStepBackup) {
 
 		LogTrain train = validator.updateCallStep(target, testStep, calledTestCase, paramInfo, actionStepBackup);
 
@@ -340,7 +304,7 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 
 	@Override
 	public LogTrain failsafeUpdateParameterValue(DatasetTarget dataset, ParameterTarget param, String value,
-		boolean isUpdate) {
+	                                             boolean isUpdate) {
 
 		LogTrain train = validator.failsafeUpdateParameterValue(dataset, param, value, isUpdate);
 
@@ -429,20 +393,18 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 	public LogTrain createRequirementLink(RequirementLinkInstruction instr) {
 		return requirementFacility.createRequirementLink(instr);
 	}
-	
+
 	@Override
 	public LogTrain updateRequirementLink(RequirementLinkInstruction instr) {
 		return requirementFacility.updateRequirementLink(instr);
 	}
-	
+
 	@Override
 	public LogTrain deleteRequirementLink(RequirementLinkInstruction instr) {
 		return requirementFacility.deleteRequirementLink(instr);
 	}
-	
-	
-	
-	
+
+
 	/**
 	 * for all other stuffs that need to be done afterward
 	 */
@@ -465,7 +427,7 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 		// move it if the index was specified. Perf optim : don't move it if already in the good place
 		Integer index = target.getIndex();
 		if (index != null && index >= 0 && index < tc.getSteps().size()
-				&& tc.getPositionOfStep(testStep.getId()) != index) {
+			&& tc.getPositionOfStep(testStep.getId()) != index) {
 			testcaseModificationService.changeTestStepsPosition(tc.getId(), index, Collections.singletonList(testStep.getId()));
 		}
 
@@ -499,12 +461,12 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 
 		String newAction = testStep.getAction();
 		if (!StringUtils.isBlank(newAction) && !newAction.equals(orig.getAction())) {
-			orig.setAction(newAction);
+			orig.setAction(ExcelRowReaderUtils.escapeHTMLInsideTags(newAction));
 		}
 
 		String newResult = testStep.getExpectedResult();
 		if (!StringUtils.isBlank(newResult) && !newResult.equals(orig.getExpectedResult())) {
-			orig.setExpectedResult(newResult);
+			orig.setExpectedResult(ExcelRowReaderUtils.escapeHTMLInsideTags(newResult));
 		}
 
 		// the custom field values now
@@ -691,10 +653,10 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 		this.initializeCustomFieldTransator(customFieldTransator);
 		testCaseFacility.initializeCustomFieldTransator(customFieldTransator);
 		requirementFacility.initializeCustomFieldTransator(customFieldTransator);
-                
-        this.initializeValidator(validator);
-        testCaseFacility.initializeValidator(validator);
-        requirementFacility.initializeValidator(validator);
+
+		this.initializeValidator(validator);
+		testCaseFacility.initializeValidator(validator);
+		requirementFacility.initializeValidator(validator);
 	}
 
 }

@@ -25,8 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
+import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -36,6 +36,7 @@ import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
+import org.squashtest.tm.service.internal.importer.ExcelRowReaderUtils;
 import org.squashtest.tm.service.internal.library.LibraryUtils;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
@@ -54,17 +55,13 @@ import java.util.Map;
 @Scope("prototype")
 public class TestCaseFacility extends EntityFacilitySupport {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FacilityImpl.class);
-
+	private final FacilityImplHelper helper = new FacilityImplHelper(this);
 	@Inject
 	private InfoListItemFinderService listItemFinderService;
-
 	@Inject
 	private TestCaseLibraryNavigationService navigationService;
-
 	@Inject
 	private TestCaseModificationService testcaseModificationService;
-
-	private final FacilityImplHelper helper = new FacilityImplHelper(this);
 
 	public LogTrain createTestCase(TestCaseInstruction instr) {
 		LogTrain train = validator.createTestCase(instr);
@@ -297,12 +294,12 @@ public class TestCaseFacility extends EntityFacilitySupport {
 
 		String newDesc = testCase.getDescription();
 		if (!StringUtils.isBlank(newDesc) && !newDesc.equals(orig.getDescription())) {
-			testcaseModificationService.changeDescription(origId, newDesc);
+			testcaseModificationService.changeDescription(origId, ExcelRowReaderUtils.escapeHTMLInsideTags(newDesc));
 		}
 
 		String newPrereq = testCase.getPrerequisite();
 		if (!StringUtils.isBlank(newPrereq) && !newPrereq.equals(orig.getPrerequisite())) {
-			testcaseModificationService.changePrerequisite(origId, newPrereq);
+			testcaseModificationService.changePrerequisite(origId, ExcelRowReaderUtils.escapeHTMLInsideTags(newPrereq));
 		}
 
 		TestCaseImportance newImp = testCase.getImportance();

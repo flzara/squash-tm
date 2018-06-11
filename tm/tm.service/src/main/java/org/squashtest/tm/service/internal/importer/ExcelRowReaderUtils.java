@@ -29,10 +29,11 @@ import java.util.Map;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/*package private*/final class ExcelRowReaderUtils {
+/*package private*/public final class ExcelRowReaderUtils {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelRowReaderUtils.class);
 
 	private ExcelRowReaderUtils(){
@@ -157,5 +158,14 @@ import org.slf4j.LoggerFactory;
 		}
 		return columnsMapping;
 
+	}
+
+	/**
+	 * Escape html as in ckEditor, meaning that only the content between tags is escaped
+	 * @param html string corresponding to html with tags
+	 * @return String corresponding to the previous html with unmodified tags and the content between those tags is escaped
+	 */
+	public static String escapeHTMLInsideTags(String html) {
+		return Jsoup.parse(html).body().html();
 	}
 }
