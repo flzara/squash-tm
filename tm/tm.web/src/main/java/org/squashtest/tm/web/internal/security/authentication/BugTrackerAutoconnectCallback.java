@@ -21,11 +21,14 @@
 package org.squashtest.tm.web.internal.security.authentication;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
@@ -40,9 +43,7 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.servers.AuthenticationPolicy;
-import static org.squashtest.tm.domain.servers.AuthenticationPolicy.*;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
-import static org.squashtest.tm.domain.servers.AuthenticationProtocol.*;
 import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials;
 import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.service.servers.CredentialsProvider;
@@ -79,19 +80,14 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 	private static final Logger LOGGER = LoggerFactory.getLogger(BugTrackerAutoconnectCallback.class);
 
 	@Inject
-	private BugTrackersLocalService bugTrackersLocalService;
-
-	@Inject
-	private ProjectFinder projectFinder;
-
-	@Inject
-	private BugTrackerFinderService bugTrackerFinder;
+	private TaskExecutor taskExecutor;
 
 	@Inject
 	private CredentialsProvider credentialsProvider;
 
 	@Inject
-	private TaskExecutor taskExecutor;
+	private Provider<AsynchronousBugTrackerAutoconnect> asyncProvider;
+
 
 
 	@Override
@@ -126,7 +122,11 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 
 		LOGGER.debug("BugTrackerAutoconnectCallback : scheduling autoconnection for user '{}'", credentialsCache.getUser());
 
-		Runnable autoconnector = new AsynchronousBugTrackerAutoconnect(authentication.getName(), authentication.getCredentials(), credentialsCache);
+		AsynchronousBugTrackerAutoconnect autoconnector = asyncProvider.get();
+		autoconnector.setUser(authentication.getName());
+		autoconnector.setSpringsecCredentials(authentication.getCredentials());
+		autoconnector.setCredentialsCache(credentialsCache);
+
 		taskExecutor.execute(autoconnector);
 
 	}
@@ -136,20 +136,32 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 	// ********************* private worker class ******************************
 
 
+	@Component
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	static class AsynchronousBugTrackerAutoconnect implements Runnable {
 
-	private class AsynchronousBugTrackerAutoconnect implements Runnable {
+		// set by setters
+		private String user;
+		private Object springsecCredentials;
+		private UserCredentialsCache credentialsCache;
 
-		private final String user;
-		private final Object springsecCredentials;
-		private final UserCredentialsCache credentialsCache;
-		private final SecurityContext secContext;
+		// set by the constructor
+		final private SecurityContext secContext;
 
+		// set by injection
+		@Inject
+		private BugTrackersLocalService bugTrackersLocalService;
 
-		public AsynchronousBugTrackerAutoconnect(String user, Object springsecCredentials, UserCredentialsCache credentialsCache) {
-			super();
-			this.user = user;
-			this.springsecCredentials = springsecCredentials;
-			this.credentialsCache = credentialsCache;
+		@Inject
+		private ProjectFinder projectFinder;
+
+		@Inject
+		private BugTrackerFinderService bugTrackerFinder;
+
+		@Inject
+		private CredentialsProvider credentialsProvider;
+
+		public AsynchronousBugTrackerAutoconnect(){
 			//As Spring SecurityContext is ThreadLocal by default, we must get the main thread SecurityContext
 			//and get a local reference pointing to this SecurityContext
 			//Take care that SecurityContext have been correctly created and initialized by Spring Security
@@ -205,10 +217,10 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 
 
 		private void attemptAuthentication(BugTracker server) {
-			
+
 			AuthenticationPolicy policy = server.getAuthenticationPolicy();
 			AuthenticationProtocol protocol = server.getAuthenticationProtocol();
-			
+
 			LOGGER.trace("server '{}' is set to authentication policy '{}' and protocol '{}'", policy, protocol);
 
 			// find testable credentials if possible
@@ -220,26 +232,26 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 			}
 			// else attempt authentication
 			else{
-				
+
 				// warn if credentials of unexpected type
 				warnIfCredentialsOfWrongType(credentials, protocol);
-				
+
 				bugTrackersLocalService.validateCredentials(server, credentials, true);
-				
+
 				LOGGER.debug("BugTrackerAutoconnectCallback : credentials successfully tested for server '{}'", server.getName());
 			}
 
 		}
 
 
-		
+
 		private Credentials fetchCredentialsOrNull(BugTracker server){
-			
+
 			Credentials credentials = null;
-			
+
 			AuthenticationPolicy policy = server.getAuthenticationPolicy();
-			
-			// attempt to load from the provider			
+
+			// attempt to load from the provider
 			Optional<Credentials> maybeCredentials = null;
 			if (policy == AuthenticationPolicy.USER){
 				maybeCredentials = credentialsProvider.getCredentials(server);
@@ -248,42 +260,42 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 				maybeCredentials = credentialsProvider.getAppLevelCredentials(server);
 			}
 
-			
+
 			// use the credentials if present, or try fallback
 			if (maybeCredentials.isPresent()){
-				LOGGER.trace("BugTrackerAutoconnectCallback : found credentials from the provider");
+				LOGGER.debug("BugTrackerAutoconnectCallback : found credentials from the provider");
 				credentials = maybeCredentials.get();
 			}
-			else if (canTryAuthenticationEvent(server)){
-				LOGGER.trace("BugTrackerAutoconnectCallback : can create the credentials using the authentication event");
+			else if (canTryUsingEvent(server)){
+				LOGGER.debug("BugTrackerAutoconnectCallback : can create the credentials using the authentication event");
 				credentials = buildFromAuthenticationEvent();
 			}
-			
+
 			return credentials;
 		}
 
-		
+
 		private List<BugTracker> findBugTrackers() {
 			List<Project> readableProjects = projectFinder.findAllReadable();
 			List<Long> projectIds = IdentifiedUtil.extractIds(readableProjects);
 			return bugTrackerFinder.findDistinctBugTrackersForProjects(projectIds);
 		}
-		
-		
-		// for now we assume that only String credentials are suitable (as passwords), 
-		// and the server is set to auth policy USER 
-		private boolean canTryAuthenticationEvent(BugTracker server){
-			return (server.getAuthenticationPolicy() == AuthenticationPolicy.USER && 
+
+
+		// for now we assume that only String credentials are suitable (as passwords),
+		// and the server is set to auth policy USER
+		private boolean canTryUsingEvent(BugTracker server){
+			return (server.getAuthenticationPolicy() == AuthenticationPolicy.USER &&
 					springsecCredentials instanceof String);
 		}
 
 		// for now we assume that BasicAuthentication is what we need
-		// the cast is safe thanks to canTryAuthenticationEvent
+		// the cast is safe thanks to canTryUsingEvent
 		private Credentials buildFromAuthenticationEvent(){
 			return new BasicAuthenticationCredentials(user, (String)springsecCredentials);
 		}
-		
-		
+
+
 		private void warnIfCredentialsOfWrongType(Credentials credentials, AuthenticationProtocol protocol){
 			AuthenticationProtocol credsProtocol = credentials.getImplementedProtocol();
 			if (credsProtocol != protocol){
@@ -292,6 +304,20 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 						+ "current credentials won't work (the connector still supports them) but this warning hints "
 						+ "that they might be obsolete regarding your new preferred protocol.", credsProtocol, protocol);
 			}
+		}
+
+		// ********** setters ********************
+
+		public void setUser(String user) {
+			this.user = user;
+		}
+
+		public void setSpringsecCredentials(Object springsecCredentials) {
+			this.springsecCredentials = springsecCredentials;
+		}
+
+		public void setCredentialsCache(UserCredentialsCache credentialsCache) {
+			this.credentialsCache = credentialsCache;
 		}
 
 
