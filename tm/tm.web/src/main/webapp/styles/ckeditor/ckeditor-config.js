@@ -16,4 +16,18 @@ CKEDITOR.editorConfig = function( config ){
 	config.resize_minWidth = 200;
 	config.removePlugins = 'elementspath';
 	config.extraPlugins='onchange';
+	config.scayt_autoStartup = true;
+	config.scayt_sLang = getLocale();
+	config.scayt_disableOptionsStorage = 'lang';
+}
+
+getLocale = function(){
+	var locale = squashtm.app.locale;
+	switch(locale) {
+		case 'fr': return 'fr_FR';
+		case 'de': return 'de_DE';
+		case 'es': return 'es_ES';
+		case 'uk': return 'en_GB';
+		default : return 'en_US';
+	}
 }
