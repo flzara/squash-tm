@@ -23,14 +23,14 @@ define(function () {
 		"# Aide à la rédaction de cas de test Gherkin.\n" +
 		"\n" +
 		"# Gherkin est un langage implémentant la méthodologie du Behavior Driven Developement.\n" +
-		"# Dans Squash TM un cas de test Gherkin peut être exécuté manuellement comme un cas de test classique ou exporté pour une exécution automatisée externe.\n" +
+		"# Dans Squash TM, un cas de test Gherkin peut être exécuté manuellement comme un cas de test classique ou exporté pour une exécution automatisée externe.\n" +
 		"\n" +
 		"\n" +
 		"# ---------------------- LEXIQUE DES MOTS CLEFS----------------------- \n" +
 		"Fonctionnalité: \n" +
 		"\n" +
-		"# Mots clefs de definition de scenario : \n" +
-		"# Scénario de test simple (sans jeu de données)\n" +
+		"# Mots clefs de définition de scénario : \n" +
+		"# Scénario de test simple (sans jeux de données)\n" +
 		"Scénario:\n" +
 		"\n" +
 		"# Scénario de test avec exemples (avec jeux de données)\n" +
@@ -39,7 +39,7 @@ define(function () {
 		"# Mot clef pour le jeu de données (à faire suivre d'une table de données)\n" +
 		"Exemples:\n" +
 		"\n" +
-		"# Mot clef de contexte (Pas de test commun à tous les scénarios du script)\n" +
+		"# Mot clef de contexte (Pas de test commun à tous les scénarii du script)\n" +
 		"Contexte:\n" +
 		"\n" +
 		"# Mots clefs de pas de test de type précondition : \n" +
@@ -56,7 +56,7 @@ define(function () {
 		"Lorsque\n" +
 		"Lorsqu'\n" +
 		"\n" +
-		"# Mots clefs de pas de test de type résultat : \n" +
+		"# Mot clef de pas de test de type résultat : \n" +
 		"Alors\n" +
 		"\n" +
 		"# Mots clefs de pas de test de type continuation du pas de test en cours : \n" +
@@ -68,22 +68,22 @@ define(function () {
 		"Mais qu'\n" +
 		"*\n" +
 		"\n" +
-		"# ----------------------------- EXEMPLE DE FEATURE ----------------------------- \n" +
-		"# Exemple de structure d'une feature complète avec trois scenarii de test et un contexte : \n" +
+		"# ----------------------------- EXEMPLE DE FONCTIONNALITE ----------------------------- \n" +
+		"# Exemple de structure d'une fonctionnalité complète avec trois scenarii de test et un contexte : \n" +
 		"\n" +
-		"# language: fr <- ligne de commentaire indiquant la localisation du script. Si absent ou invalide Squash TM interpretera le script comme rédigé en Anglais.\n" +
+		"# language: fr <- ligne de commentaire indiquant la localisation du script. Si absent ou invalide, Squash TM interprétera le script comme rédigé en Anglais.\n" +
 		"\n" +
-		"# Nom de la fonctionnalité et description optionelle de la fonctionnalité (Attention à l'indentation si vous desirez une description) \n" +
+		"# Nom de la fonctionnalité et description optionnelle de la fonctionnalité (Attention à l'indentation si vous désirez une description) \n" +
 		"Fonctionnalité: Vérifier la machine à café \n" +
 		"\tIl s'agit de vérifier le bon fonctionnement de la machine à café.\n" +
 		"\n" +
-		"\t# Contexte optionnel. Si un contexte est présent, il sera réutilisé en tant que condition supplémentaire pour chaque scenario du script.\n" +
+		"\t# Contexte optionnel. Si un contexte est présent, il sera réutilisé en tant que condition supplémentaire pour chaque scénario du script.\n" +
 		"\tContexte:\n" +
 		"\t\tSoit une machine à café.\n" +
 		"\n" +
 		"\n" +
 		"\t# -------------------------- EXEMPLE SCENARIO 1 -------------------------- \n" +
-		"\t# Exemple de scenario simple\n" +
+		"\t# Exemple de scénario simple\n" +
 		"\tScénario: Vérifier que la machine est disponible.\n" +
 		"\t\tEtant donné que la machine est branchée.\n" +
 		"\t\tQuand je passe mon badge.\n" +
@@ -91,7 +91,7 @@ define(function () {
 		"\n" +
 		"\n" +
 		"\t# -------------------------- EXEMPLE SCENARIO 2 -------------------------- \n" +
-		"\t# Exemple de scenario avec table de donnée sans paramétrage des pas de test\n" +
+		"\t# Exemple de scénario avec table de données sans paramétrage des pas de test\n" +
 		"\tScénario: Vérifier les produits disponibles.\n" +
 		"\t\tEtant donné que la machine est en marche.\n" +
 		"\t\tQuand je liste les produits disponibles.\n" +
@@ -104,12 +104,12 @@ define(function () {
 		"\n" +
 		"\t# -------------------------- EXEMPLE SCENARIO 3 -------------------------- \n" +
 		"\t# Exemple de scénario avec table de données et paramétrage des pas de test\n" +
-		"\t# A l'éxécution les valeurs de paramètres entre <> seront substitées\n" +
-		"\t# Le scenario sera joué une fois pour chaque jeu de données\n" +
+		"\t# A l'exécution, les valeurs de paramètres entre <> seront substituées\n" +
+		"\t# Le scénario sera joué une fois pour chaque jeu de données\n" +
 		"\tPlan du Scénario: Vérifier la livraison des produits.\n" +
 		"\t\tEtant donné que la machine est en marche.\n" +
 		"\t\tEt que mon solde est au moins de <prix>.\n" +
-		"\t\tQuand je selectionne le <produit>.\n" +
+		"\t\tQuand je sélectionne le <produit>.\n" +
 		"\t\tAlors la machine me sert un <produit> et mon compte est débité de <prix>.\n" +
 		"\t\tExemples:\n" +
 		"\t\t| produit\t\t\t| prix  |\n" +
@@ -121,8 +121,8 @@ define(function () {
 	var doc_en = "# language: en\n" +
 		"# Assistance for the writing of Gherkin test cases\n" +
 		"\n" +
-		"# Gherkin is a language utilizing the methodology of Behaviour Driven Development.\n" +
-		"# When using Squash TM, A Gherkin test case can either be executed manually like any regular test case or exported for use in an external automated execution.\n" +
+		"# Gherkin is a language using the methodology of Behaviour Driven Development.\n" +
+		"# When using Squash TM, a Gherkin test case can either be executed manually like any regular test case or exported for use in an external automated execution.\n" +
 		"\n" +
 		"\n" +
 		"# ---------------------- KEYWORDS LEXICON ----------------------- \n" +
@@ -131,12 +131,14 @@ define(function () {
 		"# Scenario-defining Keywords : \n" +
 		"# Simple test scenario (no dataset)\n" +
 		"Scenario:\n" +
-		"# Test scenario with exemples (and datasets)\n" +
+		"\n" +
+		"# Test scenario with examples (and datasets)\n" +
 		"Scenario Outline:\n" +
-		"# Keyword for a dataset (to be followed with a data table)\n" +
+		"\n" +
+		"# Keyword for a dataset (to be followed by a data table)\n" +
 		"Examples:\n" +
 		"\n" +
-		"# Context keyword (Test steps that are common to all the scenarios within the script)\n" +
+		"# Context keyword (Test steps common to all the scenarios of the script)\n" +
 		"Background:\n" +
 		"\n" +
 		"# Keyword for test steps preconditions :\n" +
@@ -148,19 +150,19 @@ define(function () {
 		"# Keyword for test steps results : \n" +
 		"Then\n" +
 		"\n" +
-		"# Keyword for requirement to continue the ongoing test step :\n" +
+		"# Keyword for test steps to continue the ongoing test step :\n" +
 		"And\n" +
 		"But\n" +
 		"*\n" +
 		"\n" +
 		"# ----------------------------- FEATURE EXAMPLE ----------------------------- \n" +
-		"# Structure example of a feature complete with three test scenarios and a context :\n" +
+		"# Structure example of a complete feature with three test scenarios and a context :\n" +
 		"\n" +
-		"# language: en <- this comment line indicate the localization of the script. By default (if missing or invalid), Squash TM will consider the script to be written in English.\n" +
+		"# language: en <- this comment line indicates the localization of the script. By default (if missing or invalid), Squash TM will consider the script as written in English.\n" +
 		"\n" +
-		"# Feature name and its (optional) description (Beware indentation if you wish to include a description)\n" +
+		"# Feature name and its (optional) description (Beware the indentation if you wish to include a description)\n" +
 		"Feature: Check the coffee machine\n" +
-		"\tThe aim is to check that the coffee machine functions properly.\n" +
+		"\tThe aim is to check that the coffee machine works properly.\n" +
 		"\n" +
 		"\t# Optional context. If a context is present here, it will be re-used as an additional condition for each scenario of the script.\n" +
 		"\tBackground:\n" +
@@ -170,7 +172,7 @@ define(function () {
 		"\t# -------------------------- SCENARIO EXAMPLE N°1 -------------------------- \n" +
 		"\t# Simple scenario example\n" +
 		"\tScenario: Check that the machine is available.\n" +
-		"\t\tGiven that the machine is operating.\n" +
+		"\t\tGiven the machine is operating.\n" +
 		"\t\tWhen I use my badge.\n" +
 		"\t\tThen I can check my balance.\n" +
 		"\t\t\n" +
@@ -178,10 +180,10 @@ define(function () {
 		"\t# -------------------------- SCENARIO EXAMPLE N°2 -------------------------- \n" +
 		"\t# Example of a scenario with a data table but no configuration of test steps\n" +
 		"\tScenario: Check what products are available.\n" +
-		"\t\tGiven that the machine is operating.\n" +
+		"\t\tGiven the machine is operating.\n" +
 		"\t\tWhen I list the available products.\n" +
 		"\t\tThen I notice that the following products are available :\n" +
-		"\t\t| products\t\t| price |\n" +
+		"\t\t| product\t\t| price |\n" +
 		"\t\t| Expresso\t\t| 0.40  |\n" +
 		"\t\t| Lungo\t\t\t\t| 0.50  |\n" +
 		"\t\t| Cappuccino\t| 0.80  |\n" +
@@ -190,12 +192,12 @@ define(function () {
 		"\t# -------------------------- SCENARIO EXAMPLE N°3 -------------------------- \n" +
 		"\t# Example of a scenario with a data table and configuration of test steps\n" +
 		"\t# Upon execution, the parameters' values in between <> will be substituted\n" +
-		"\t# The scenario will be played once for each and every dataset\n" +
+		"\t# The scenario will be played once for each dataset (that is to say each line)\n" +
 		"\tScenario Outline: Check the delivery of products.\n" +
-		"\t\tGiven that the machine is operating\n" +
-		"\t\tAnd that my balance is of at least <price>.\n" +
+		"\t\tGiven the machine is operating\n" +
+		"\t\tAnd my account contains at least <price>.\n" +
 		"\t\tWhen I select <product>.\n" +
-		"\t\tThen the machine delivers me a <product> and my balance is reduced by <price>.\n" +
+		"\t\tThen the machine delivers me a <product> and my account is charged <price>.\n" +
 		"\t\tExamples:\n" +
 		"\t\t| product\t\t\t| price |\n" +
 		"\t\t| Expresso\t\t| 0.40  |\n" +
@@ -238,12 +240,12 @@ define(function () {
 		"Y\n" +
 		"E\n" +
 		"\n" +
-		"# ----------------------------- EJEMPLO DE FEATURE ----------------------------- \n" +
-		"# Ejemplo de estructura de una feature completa con tres escenarios de prueba y un contexto:\n" +
+		"# ----------------------------- EJEMPLO DE CARACTERISTICA ----------------------------- \n" +
+		"# Ejemplo de estructura de una característica completa con tres escenarios de prueba y un contexto:\n" +
 		"\n" +
 		"# language: es <- Esta línea de comentario indica la localización del script. Por defecto (cuando falta o es incorrecta), Squash TM interpretará el script como si era en inglés.\n" +
 		"\n" +
-		"# Nombre de la funcionalidad y su descripción facultativa (Cuidado con el sangrado si quieren implementar a una descripción)\n" +
+		"# Nombre de la característica y su descripción facultativa (Cuidado con el sangrado si quieren implementar a una descripción)\n" +
 		"Característica: Comprobar la máquina de café\n" +
 		"\tAsegurarse de qué la máquina de café funciona correctamente\n" +
 		"\n" +
@@ -288,89 +290,89 @@ define(function () {
 		"\t\t| Cappuccino\t|  0.80  |\n";
 
 	var doc_de = "# language: de\n" +
-		"# Hilfe zur Erstellung Gherkin Testfälle.\n" +
+		"# Anleitung zur Erstellung von Testfällen mit Gherkin.\n" +
 		"\n" +
-		"# Gherkin ist eine Programmiersprache die die Behavior Driven Development Methodologie implementiert.\n" +
-		"# In Squash TM kann ein in Gherkin geschriebener Testfall manuell durchgeführt sein, genau so wie ein klassischer Testfall, oder noch kann er exportiert sein, für eine äusserliche autoamtisierte Durchführung.\n" +
+		"# Gherkin ist eine Programmiersprache, die die Behavior Driven Development Methodologie implementiert.\n" +
+		"# Mit Squash TM kann ein Gherkin-Testfall entweder manuell durchgeführt werden, genauso wie ein klassischer Testfall, oder exportiert werden, für eine automatisierte Durchführung außerhalb von Squash TM.\n" +
 		"\n" +
 		"\n" +
 		"# ---------------------- SCHLÜSSELWÖRTER VERZEICNHIS ----------------------- \n" +
 		"Funktionalität: \n" +
 		"\n" +
-		"# Schlüsselwörter um szenarios zu definieren : \n" +
+		"# Sprachelemente um Szenarien zu definieren: \n" +
 		"# Einfaches Szenario (ohne Datensatz)\n" +
 		"Szenario:\n" +
 		"\n" +
 		"# Testszenario (mit Datensatz)\n" +
 		"Szenariogrundriss:\n" +
 		"\n" +
-		"# Schlüssel für den Datensatz (eine Datentafel muss folgen)\n" +
+		"# Schlüsselwort für einen Datensatz (Eine Datentabelle muss folgen)\n" +
 		"Beispiele:\n" +
 		"\n" +
-		"# Grundlage Schlüsselwort (Mit jedem szenario des Skripts gemeinsamer Testschritt)\n" +
+		"# Schlüsselwort für eine Grundlage (Mit jedem Szenario des Skriptes gemeinsamer Testschritt)\n" +
 		"Grundlage:\n" +
 		"\n" +
-		"# Testschrittsschlüsselwörter Vorbedinung Typs: \n" +
+		"# Schlüsselwörter für Testschritte des Types „Vorbedingung“: \n" +
 		"Angenommen\n" +
 		"Gegeben sei\n" +
 		"Gegeben seien\n" +
 		"\n" +
-		"# Testschrittsschlüsselwort Ereignis oder Handlung Typs:\n" +
+		"# Schlüsselwort für Testschritte des Types „Ereignis oder Handlung“:\n" +
 		"Wenn\n" +
 		"\n" +
-		"# Testschrittsschlüsselwort Ergebnis Typs:\n" +
+		"# Schlüsselwort für Testschritte des Types „Ergebnis“:\n" +
 		"Dann\n" +
 		"\n" +
-		"# Testschrittsschlüsselwörter Fortsetzung Typs: \n" +
+		"# Schlüsselwort für Testschritte des Types „Fortsetzung“: \n" +
 		"Und\n" +
 		"Aber\n" +
 		"*\n" +
 		"\n" +
-		"# ----------------------------- FUNKTIONNALITÄTSBEISPIEL  ----------------------------- \n" +
-		"# Struktursbeispiel einer ganzen Funktionnalität mit drei szenarios un eine Grundlage:\n" +
+		"# ----------------------------- BEISPIELFUNKTIONNALITÄT ----------------------------- \n" +
+		"# Beispielstruktur einer Funktionalität mit drei Szenarien und eine Grundlage:\n" +
 		"\n" +
-		"# language: de <- Kommentarzeile die die Sprache des Skripts angibt. Wenn abwesend oder ungültig entscheidet sich Squash TM für Englisch.\n" +
+		"# language: de <- Angabe der Sprache. Wenn abwesend oder ungültig entscheidet sich Squash TM für Englisch.\n" +
 		"\n" +
-		"# Name der Funktionnalität, und fakultative Beschreibung (passen Sie gut auf  die Einrückung wenn Sie eine Beschreibung einfügen).\n" +
+		"# Name der Funktionalität und optionale Beschreibung (Passen Sie auf die Einrückung auf, wenn Sie eine Beschreibung eingeben).\n" +
 		"Funktionalität: Die Kaffeemachine prüfen \n" +
 		"\tEs handelt sich darum, das gute Funktionieren der Kaffeemaschine zu überprüfen.\n" +
 		"\n" +
-		"\t# Fakultative Grundlage. Wenn eine Grundlage anwesend ist, wird sie als zusätzliche Bedingung für jedes Szenario des Skriptes hinzugefügt.\n" +
+		"\t# optionale Grundlage. Wenn eine Grundlage anwesend ist, wird sie als zusätzliche Bedingung für jedes Szenario des Skriptes hinzugefügt.\n" +
 		"\tGrundlage:\n" +
 		"\t\tGegeben sei eine Kaffeemaschine.\n" +
 		"\n" +
 		"\n" +
-		"\t# -------------------------- SZENARIOBEISPIEL 1 -------------------------- \n" +
-		"\t# Beispiel für ein einfaches Szenarion\n" +
-		"\tSzenario: Prüfen dass die Kaffeemachine zur Verfügung steht.\n" +
+		"\t# -------------------------- BEISPIELSZENARIO 1 -------------------------- \n" +
+		"\t# Beispiel für ein einfaches Szenario\n" +
+		"\tSzenario: Überprüfung, dass die Kaffeemaschine zur Verfügung steht.\n" +
 		"\t\tGegeben sei die Maschine ist angeschlossen.\n" +
-		"\t\tWenn ich meinen Ausweis vorstelle.\n" +
-		"\t\tDann stelle ich fest, dass mein Kontostand angezeigt ist.\n" +
+		"\t\tWenn ich meine Karte vorstelle.\n" +
+		"\t\tDann stelle ich fest, dass mein Kontostand angezeigt wird.\n" +
 		"\n" +
-		"\t# -------------------------- SZENARIOBEISPIEL 2 -------------------------- \n" +
-		"\t# Szenariobeispiel mit Datentafel ohne Einstellung der Testschritte\n" +
-		"\tSzenario: Die verfügbaren Produkte überprüfen.\n" +
-		"\t\tGegeben sei die Maschine ist in Gang.\n" +
+		"\t# -------------------------- BEISPIELSZENARIO 2 -------------------------- \n" +
+		"\t# Beispielszenario mit Datentabelle ohne Platzhalter\n" +
+		"\tSzenario: Überprüfung der Verfügbarkeit von Produkten.\n" +
+		"\t\tGegeben sei die Maschine steht zur Verfügung.\n" +
 		"\t\tWenn ich die verfügbaren Produkte aufliste.\n" +
 		"\t\tDann stelle ich fest, dass alle folgenden Produkte verfügbar sind:\n" +
 		"\t\t| Produkt\t\t\t| Preis  |\n" +
-		"\t\t| Expresso\t\t| 0.40   |\n" +
+		"\t\t| Espresso\t\t| 0.40   |\n" +
 		"\t\t| Lungo\t\t\t\t| 0.50   |\n" +
 		"\t\t| Cappuccino\t| 0.80   |\n" +
 		"\n" +
 		"\n" +
-		"\t# -------------------------- SZENARIOBEISPIEL 3 -------------------------- \n" +
-		"\t# Szenariobeispiel mit Datentafel und Einstellug von Testschritten\n" +
+		"\t# -------------------------- BEISPIELSZENARIO 3 -------------------------- \n" +
+		"\t# Beispielszenario mit Datentafel mit Platzhalter in Testschritten\n" +
 		"\t# Während des Durchlaufs werden die Werte der Parameter zwischen <> substituiert\n" +
-		"\t# Der Szenario wird einmal für jeden Datensatz gespielt sein\n" +
+		"\t# Das Szenario wird einmal für jeden Datensatz gespielt sein\n" +
 		"\tSzenariogrundriss: die Lieferung der Produkte überprüfen.\n" +
-		"\t\tGegeben sei die Maschine ist in Gang.\n" +
-		"\t\tUnd mein Kontostand ist mindestens von <Preis>.\n" +
-		"\t\tWenn ich <Produkt > wähle.\n" +
-		"\t\tDann dient die Maschine mir ein <Produkt > und mein Konto ist um <Preis> belastet.\n" +
+		"\t\tGegeben sei die Maschine steht zur Verfügung.\n" +
+		"\t\tUnd mein Kontostand mindestens <Preis> beträgt.\n" +
+		"\t\tWenn ich <Produkt> auswähle.\n" +
+		"\t\tDann spendet mir die Maschine ein <Produkt> und <Preis> wird von meinem Konto abgebucht.\n" +
 		"\t\tBeispiele:\n" +
 		"\t\t| Produkt\t\t\t| Preis  |\n" +
-		"\t\t| Expresso\t\t| 0.40   |\n" +
+		"\t\t| Espresso\t\t| 0.40   |\n" +
 		"\t\t| Lungo\t\t\t\t| 0.50   |\n" +
 		"\t\t| Cappuccino\t| 0.80   |\n" +
 		"\n";
