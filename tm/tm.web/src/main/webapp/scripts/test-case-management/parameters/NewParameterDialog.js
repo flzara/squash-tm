@@ -47,6 +47,8 @@ define([ "jquery", "backbone", "app/lnf/Forms", 'workspace.event-bus',
 			if (this.validate()){
 				this.cleanup();
 				$('#parameters-table').squashTable().refresh();
+				//Issue 7498: Triggering newparameterdialog.confirm for datasets table refresh purpose.
+				this.trigger("newparameterdialog.confirm");
 			}
 		},
 
@@ -100,7 +102,7 @@ define([ "jquery", "backbone", "app/lnf/Forms", 'workspace.event-bus',
 		cleanup : function() {
 			this.$el.addClass("not-displayed");
 			this._resetForm();
-			
+
 			if(this.$el.data().formDialog !== undefined) {
 				this.$el.formDialog("focusMainInput");
 			}
