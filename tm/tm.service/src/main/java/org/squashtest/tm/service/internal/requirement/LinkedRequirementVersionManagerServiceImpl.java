@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -38,28 +37,19 @@ import org.squashtest.tm.exception.requirement.link.AlreadyLinkedRequirementVers
 import org.squashtest.tm.exception.requirement.link.LinkedRequirementVersionException;
 import org.squashtest.tm.exception.requirement.link.SameRequirementLinkedRequirementVersionException;
 import org.squashtest.tm.exception.requirement.link.UnlinkableLinkedRequirementVersionException;
-import org.squashtest.tm.service.campaign.IterationStatisticsService;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionLinkDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionLinkTypeDao;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerService;
-import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import static org.squashtest.tm.service.security.Authorizations.LINK_REQVERSION_OR_ROLE_ADMIN;
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-import static org.squashtest.tm.service.security.Authorizations.READ_REQVERSION_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.LinkedRequirementVersionManagerService")
 @Transactional
@@ -87,7 +77,10 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 	@Override
 	@PreAuthorize(READ_REQVERSION_OR_ROLE_ADMIN)
 	public PagedCollectionHolder<List<LinkedRequirementVersion>>
-		findAllByRequirementVersion(long requirementVersionId, PagingAndSorting pagingAndSorting) {
+	findAllByRequirementVersion(long requirementVersionId, PagingAndSorting pagingAndSorting) {
+
+		// Issue 7497 we need to get the total number of requirement version links to correctly display the number of page
+		long totalNumberOfItems = reqVersionDao.findOne(requirementVersionId).getRequirementVersionLinks().size();
 
 		List<RequirementVersionLink> requirementVersionLinksList =
 			reqVersionLinkDao.findAllByReqVersionId(requirementVersionId, pagingAndSorting);
@@ -95,12 +88,12 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		List<LinkedRequirementVersion> linkedReqVersionsList =
 			new ArrayList<>();
 
-		for(RequirementVersionLink reqVerLink : requirementVersionLinksList) {
-				linkedReqVersionsList.add(
-					reqVerLink.getRelatedLinkedRequirementVersion());
+		for (RequirementVersionLink reqVerLink : requirementVersionLinksList) {
+			linkedReqVersionsList.add(
+				reqVerLink.getRelatedLinkedRequirementVersion());
 		}
 
-		return new PagingBackedPagedCollectionHolder<>(pagingAndSorting, requirementVersionLinksList.size(), linkedReqVersionsList);
+		return new PagingBackedPagedCollectionHolder<>(pagingAndSorting, totalNumberOfItems, linkedReqVersionsList);
 	}
 
 	@Override
@@ -119,7 +112,7 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		List<LinkedRequirementVersionException> rejections = new ArrayList<>();
 
 		RequirementVersion mainReqVersion = reqVersionDao.findOne(mainReqVersionId);
-		for(RequirementVersion otherRequirementVersion : requirementVersions) {
+		for (RequirementVersion otherRequirementVersion : requirementVersions) {
 
 			try {
 				checkIfLinkAlreadyExists(mainReqVersion, otherRequirementVersion);
@@ -134,7 +127,7 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 						reqVersionLinkTypeDao.getDefaultRequirementVersionLinkType(),
 						false);
 				reqVersionLinkDao.addLink(newReqVerLink);
-			} catch(LinkedRequirementVersionException exception) {
+			} catch (LinkedRequirementVersionException exception) {
 				rejections.add(exception);
 			}
 		}
@@ -152,15 +145,14 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		List<Long> relatedReqVerNodeIds = new ArrayList<>(1);
 		relatedReqVerNodeIds.add(relatedReqVersionNodeId);
 
- 		List<RequirementVersion> requirementVersions = findRequirementVersions(reqVerNodeIds);
+		List<RequirementVersion> requirementVersions = findRequirementVersions(reqVerNodeIds);
 		return addLinkedReqVersionsToReqVersion(requirementVersions.get(0).getId(), relatedReqVerNodeIds);
 	}
 
 
-
 	@Override
 	@PreAuthorize("hasPermission(#sourceVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'LINK')" +
-			OR_HAS_ROLE_ADMIN)
+		OR_HAS_ROLE_ADMIN)
 	public void addOrUpdateRequirementLink(Long sourceVersionId, Long destVersionId, String destRole) {
 
 		// compute the type and direction
@@ -181,23 +173,22 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		RequirementVersionLink outboundLink = reqVersionLinkDao.findByReqVersionsIds(sourceVersionId, destVersionId);
 
 		// if null, we need to create them
-		if (outboundLink == null){
+		if (outboundLink == null) {
 			outboundLink = new RequirementVersionLink(source, dest, type, outboundDirection);
 			reqVersionLinkDao.addLink(outboundLink);
 		}
 		// else we just update them
-		else{
+		else {
 			RequirementVersionLink inboundLink = reqVersionLinkDao.findByReqVersionsIds(destVersionId, sourceVersionId);
 
 			outboundLink.setLinkType(type);
 			outboundLink.setLinkDirection(outboundDirection);
 
 			inboundLink.setLinkType(type);
-			inboundLink.setLinkDirection(! outboundDirection);
+			inboundLink.setLinkDirection(!outboundDirection);
 		}
 
 	}
-
 
 
 	@Override
@@ -208,7 +199,7 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 
 		long relatedVersionId = relatedReqNodeId;
 
-		if(isRelatedIdANodeId) {
+		if (isRelatedIdANodeId) {
 			List<Long> reqVerNodeIds = new ArrayList<>();
 			reqVerNodeIds.add(relatedReqNodeId);
 			List<RequirementVersion> list = findRequirementVersions(reqVerNodeIds);
@@ -229,20 +220,19 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 	}
 
 
-
 	@Override
 	public void copyRequirementVersionLinks(RequirementVersion previousVersion, RequirementVersion newVersion) {
-		for(RequirementVersionLink reqVerLink : previousVersion.getRequirementVersionLinks()) {
+		for (RequirementVersionLink reqVerLink : previousVersion.getRequirementVersionLinks()) {
 			try {
 				addDetailedReqVersionLink(
 					newVersion.getId(),
 					reqVerLink.getRelatedLinkedRequirementVersion().getId(),
 					reqVerLink.getLinkType().getId(),
 					reqVerLink.getLinkDirection());
-			} catch(LinkedRequirementVersionException exception) {
+			} catch (LinkedRequirementVersionException exception) {
 				LOGGER.info("RequirementVersion " + previousVersion.getName() +
-							" could not be linked to RequirementVersion " + newVersion.getName(),
-							exception);
+						" could not be linked to RequirementVersion " + newVersion.getName(),
+					exception);
 			}
 		}
 	}
@@ -275,7 +265,7 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 
 		Set<String> codes = new HashSet<>();
 
-		for (RequirementVersionLinkType type : allTypes){
+		for (RequirementVersionLinkType type : allTypes) {
 			codes.add(type.getRole1Code());
 			codes.add(type.getRole2Code());
 		}
@@ -285,12 +275,12 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 
 	@Override
 	public void postponeTestCaseToNewRequirementVersion(RequirementVersion previousVersion, RequirementVersion newVersion) {
-		for(TestCase testCaseToPostpone :verifyingTestCaseManagerService.findAllByRequirementVersion(previousVersion.getId())) {
+		for (TestCase testCaseToPostpone : verifyingTestCaseManagerService.findAllByRequirementVersion(previousVersion.getId())) {
 			try {
-				verifiedRequirementsManagerService.changeVerifiedRequirementVersionOnTestCase(previousVersion.getId(),newVersion.getId(), testCaseToPostpone.getId());
-			} catch(VerifiedRequirementException exception) {
+				verifiedRequirementsManagerService.changeVerifiedRequirementVersionOnTestCase(previousVersion.getId(), newVersion.getId(), testCaseToPostpone.getId());
+			} catch (VerifiedRequirementException exception) {
 				LOGGER.info("Could not change VerifiedRequirementVersion of VerifyingTestCase " + testCaseToPostpone.getName(),
-							exception);
+					exception);
 			}
 		}
 
@@ -308,21 +298,27 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		if (reqVersionLinkDao.linkAlreadyExists(reqVersion.getId(), relatedReqVersion.getId())) {
 			throw new AlreadyLinkedRequirementVersionException();
 		}
-	};
+	}
+
+	;
 
 	@Override
 	public void checkIfSameRequirement(RequirementVersion reqVersion, RequirementVersion relatedReqVersion) {
-			if (reqVersion.getRequirement().getId().equals(relatedReqVersion.getRequirement().getId())) {
-				throw new SameRequirementLinkedRequirementVersionException();
-			}
-		};
+		if (reqVersion.getRequirement().getId().equals(relatedReqVersion.getRequirement().getId())) {
+			throw new SameRequirementLinkedRequirementVersionException();
+		}
+	}
+
+	;
 
 	@Override
 	public void checkIfVersionsAreLinkable(RequirementVersion reqVersion, RequirementVersion relatedReqVersion) {
 		if (!reqVersion.isLinkable() || !relatedReqVersion.isLinkable()) {
 			throw new UnlinkableLinkedRequirementVersionException();
 		}
-	};
+	}
+
+	;
 
 	private List<RequirementVersion> findRequirementVersions(
 		List<Long> requirementNodesIds) {

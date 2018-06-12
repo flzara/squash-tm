@@ -85,8 +85,12 @@ class LinkedRequirementVersionManagerServiceImplTest extends Specification {
 
 			List<RequirementVersionLink> linksList = [link1, link2, link3] as List
 
-		and: "Mock dao method"
+			RequirementVersion mainRv = Mock(RequirementVersion.class)
+			mainRv.getRequirementVersionLinks() >> linksList
+
+		and: "Mock dao methods"
 			reqVersionLinkDao.findAllByReqVersionId(requirementId, pas) >> linksList
+			reqVersionDao.findOne(requirementId) >> mainRv
 
 		and: "Expected result data"
 			List<LinkedRequirementVersion> expectedList = [lrv1, lrv2, lrv3] as List
