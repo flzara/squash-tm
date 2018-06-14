@@ -44,58 +44,6 @@
 <layout:info-page-layout titleKey="workspace.bugtracker.info.title" isSubPaged="true">
 	<jsp:attribute name="head">
 		<comp:sq-css name="squash.grey.css" />
-		<style>
-.adm-srv-auth .srv-auth-credentials-section {
-  margin-top: 1em;
-  padding: 1em;
-  margin-bottom: 1em;
-}
-.adm-srv-auth .srv-auth-messagepane {
-  max-width: 500px;
-}
-.adm-srv-auth .side-panel.not-displayed {
-  display: none;
-}
-.adm-srv-auth label:after {
-  content: "";
-}
-.adm-srv-auth .tbl {
-  display: table;
-}
-.adm-srv-auth .tbl > div,
-.adm-srv-auth .tbl .tr {
-  display: table-row;
-  margin-bottom: 1em;
-  line-height: 3;
-}
-.adm-srv-auth .tbl > div > label,
-.adm-srv-auth .tbl .tr > label {
-  display: table-cell;
-  padding-left: 10px;
-  padding-right: 10px;
-  vertical-align: top;
-}
-.adm-srv-auth .tbl > div > div.flexible,
-.adm-srv-auth .tbl .tr > div.flexible {
-  display: flex;
-}
-.adm-srv-auth .tbl > div > div.flexible > input,
-.adm-srv-auth .tbl .tr > div.flexible > input {
-  width: 300px;
-  margin-left: 5px;
-}
-.adm-srv-auth .tbl > div > input,
-.adm-srv-auth .tbl .tr > input {
-  width: 100%;
-}
-.adm-srv-auth .tbl > div > textarea,
-.adm-srv-auth .tbl .tr > textarea {
-  width: 100%;
-  height: 60px;
-}
-
-	
-		</style>
 	</jsp:attribute>
 
 	<jsp:attribute name="titlePane"><h2 class="admin"><f:message key="label.administration" /></h2></jsp:attribute>
@@ -231,13 +179,14 @@
 						<div id="bt-auth-conf-main" class="srv-auth-credentials-section side-panel std-border std-border-radius" 
 						 ${featEnab}>
 							
-							<div id="bt-auth-conf-form">
+							<div id="bt-auth-conf-form" class="templated-form">
 							<%-- templated by handlebars --%>
 							</div>
-	
+		
 							<div id="bt-auth-conf-buttonpane" class="centered" style="position:relative">
+								<span class="needs-save-msg" style="display:none;"><f:message key="bugtracker.admin.messages.needs-save"/></span>
 								<%-- note : there is no 'test' button, because testing auth-configuration is hard --%>
-								<input type="button" class="sq-btn" id="bt-auth-conf-save" value="${saveLabel}"/>
+								<input type="button" class="sq-btn auth-save" value="${saveLabel}"/>
 							</div>						
 							
 						</div>
@@ -274,14 +223,14 @@
 					<%-- policy choice --%>
 					<div>
 						<label style="vertical-align:middle;">
-							<input id="bt-auth-policy-user" type="radio" name="bt-auth-policy" value="user" ${policyUsr}>
+							<input id="bt-auth-policy-user" type="radio" name="bt-auth-policy" value="USER" ${policyUsr}>
 							<f:message key="bugtracker.admin.policy.users"/>
 						</label>
 					</div>
 
 					<div>
 						<label style="vertical-align:middle;">
-							<input id="bt-auth-policy-application" type="radio" name="bt-auth-policy" value="application" ${policyApp} ${policyAppEnab}>
+							<input id="bt-auth-policy-application" type="radio" name="bt-auth-policy" value="APP_LEVEL" ${policyApp} ${policyAppEnab}>
 							<f:message key="bugtracker.admin.policy.app"/>
 						</label>
 					</div>										
@@ -291,13 +240,14 @@
 					<div id="bt-auth-creds-main" class="srv-auth-credentials-section side-panel std-border std-border-radius
 					${credsEnab} ${credsVisi}" >
 
-						<div id="bt-auth-creds-form">
+						<div id="bt-auth-creds-form" class="templated-form">
 							<%-- templated by handlebars --%>
 						</div>
 
 						<div id="bt-auth-creds-buttonpane" class="centered" style="position:relative">
-							<input type="button" class="sq-btn" id="bt-auth-creds-test" value="${testLabel}"/>
-							<input type="button" class="sq-btn" id="bt-auth-creds-save" value="${saveLabel}"/>
+							<span class="needs-save-msg" style="display:none;"><f:message key="bugtracker.admin.messages.needs-save"/></span>
+							<input type="button" class="sq-btn auth-test" value="${testLabel}"/>
+							<input type="button" class="sq-btn auth-save" value="${saveLabel}"/>
 						</div>
 
 					</div>	
@@ -339,18 +289,18 @@
 				<div class="tbl">
 				<div>
 					<label><f:message key="bugtracker.admin.protocol.conf.oauth1a.consumerkey"/></label>
-					<input id="oauth-conf-consumer-key" type="text" value="{{consumerKey}}" data-bind="consumerKey"/>
+					<input type="text" value="{{consumerKey}}" data-bind="consumerKey"/>
 					<span class="error-message consumerKey-error"></span>
 				</div>
 	
 				<div>
 					<label><f:message key="bugtracker.admin.protocol.conf.oauth1a.request-tokens"/></label>
 					<div class="flexible">
-						<select id="oauth-conf-temptok-method" data-bind="requestTokenHttpMethod">
+						<select data-bind="requestTokenHttpMethod">
 							<option value="GET" 	{{#equal requestTokenHttpMethod 'GET'}}selected="selected"{{/equal}}>GET</option>
-							<option value="POST" {{#equal requestTokenHttpMethod 'POST'}}selected="selected"{{/equal}}>POST</option>
+							<option value="POST" 	{{#equal requestTokenHttpMethod 'POST'}}selected="selected"{{/equal}}>POST</option>
 						</select>
-						<input id="oauth-conf-temptok-url" type="text" value="{{requestTokenUrl}}" data-bind="requestTokenUrl"/>
+						<input type="text" value="{{requestTokenUrl}}" data-bind="requestTokenUrl"/>
 						<span class="error-message requestTokenUrl-error"></span>			
 					</div>
 				</div>
@@ -358,30 +308,30 @@
 				<div>
 					<label><f:message key="bugtracker.admin.protocol.conf.oauth1a.access-tokens"/></label>
 					<div class="flexible">
-						<select id="oauth-conf-accesstok-method" data-bind="accessTokenHttpMethod">
+						<select data-bind="accessTokenHttpMethod">
 							<option value="GET" 	{{#equal accessTokenHttpMethod 'GET'}}selected="selected"{{/equal}}>GET</option>
 							<option value="POST" {{#equal accessTokenHttpMethod 'POST'}}selected="selected"{{/equal}}>POST</option>
 						</select>
-						<input id="oauth-conf-accesstok-url" type="text" value="{{accessTokenUrl}}" data-bind="accessTokenUrl"/>
+						<input  type="text" value="{{accessTokenUrl}}" data-bind="accessTokenUrl"/>
 						<span class="error-message accessTokenUrl-error"></span>			
 					</div>
 				</div>
 	
 				<div>
 					<label><f:message key="bugtracker.admin.protocol.conf.oauth1a.autorize"/></label>
-					<input id="oauth-conf-authorize-url" type="text" value="{{userAuthorizationUrl}}" data-bind="userAuthorizationUrl"/>
+					<input type="text" value="{{userAuthorizationUrl}}" data-bind="userAuthorizationUrl"/>
 					<span class="error-message userAuthorizationUrl-error"></span>			
 				</div>
 	
 				<div>
 					<label><f:message key="bugtracker.admin.protocol.conf.oauth1a.secret"/></label>
-					<textarea id="oauth-conf-secret" data-bind="clientSecret" >{{clientSecret}}</textarea>
+					<textarea data-bind="clientSecret" >{{clientSecret}}</textarea>
 					<span class="error-message clientSecret-error"></span>			
 				</div>
 				
 				<div>
 					<label><f:message key="bugtracker.admin.protocol.conf.oauth1a.sig-method"/></label>
-					<select id="oauth-conf-sig-method" data-bind="signatureMethod">
+					<select data-bind="signatureMethod">
 						<option value="HMAC_SHA1" {{#equal signatureMethod 'HMAC_SHA1'}}selected="selected"{{/equal}}>HMAC-SHA1</option>
 						<option value="RSA_SHA1" {{#equal signatureMethod 'RSA_SHA1'}}selected="selected"{{/equal}}>RSA-SHA1</option>
 					</select>
@@ -389,12 +339,32 @@
 				</div>
 				</script>
 				
+	
 				<script id="oauth-creds-template" type="text/x-handlebars-template">
-
+				<div class="tbl">
+					<div>
+						<label><f:message key="label.Token"/></label>
+						<input type="text" value="{{token}}" data-bind="token">
+					</div>
+					<div>
+						<label><f:message key="label.TokenSecret"/></label>
+						<input value="{{tokenSecret}}" data-bind="tokenSecret">
+					</div>
+				</div>		
 				</script>
 				
+				
 				<script id="basic-creds-template" type="text/x-handlebars-template">
-
+				<div class="tbl">
+					<div>
+						<label><f:message key="label.Login"/></label>
+						<input type="text" value="{{username}}" data-bind="username">
+					</div>
+					<div>
+						<label><f:message key="label.Password"/></label>
+						<input value="{{password}}" data-bind="password">
+					</div>
+				</div>			
 				</script>
 
 			</div>

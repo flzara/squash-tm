@@ -142,13 +142,13 @@ public class BugTrackerModificationController {
 
 	@RequestMapping(value = "/authentication-policy", method = RequestMethod.POST, params = VALUE)
 	@ResponseBody
-	public void changeAuthPolicy(@RequestParam(VALUE) AuthenticationPolicy policy, @PathVariable(BUGTRACKER_ID) long bugtrackerId){
+	public void changeAuthPolicy(@PathVariable(BUGTRACKER_ID) long bugtrackerId, @RequestParam(VALUE) AuthenticationPolicy policy){
 		bugtrackerModificationService.changeAuthenticationPolicy(bugtrackerId, policy);
 	}
 	
 	@RequestMapping(value = "/authentication-protocol", method = RequestMethod.POST, params = VALUE)
 	@ResponseBody
-	public void changeAuthProtocol(@RequestParam(VALUE) AuthenticationProtocol protocol, @PathVariable(BUGTRACKER_ID) long bugtrackerId){
+	public void changeAuthProtocol(@PathVariable(BUGTRACKER_ID) long bugtrackerId, @RequestParam(VALUE) AuthenticationProtocol protocol){
 		bugtrackerModificationService.changeAuthenticationProtocol(bugtrackerId, protocol);
 	}
 	
@@ -174,6 +174,14 @@ public class BugTrackerModificationController {
 	@ResponseBody
 	public void storeCredentials(@PathVariable(BUGTRACKER_ID) long bugtrackerId ,@RequestBody ManageableCredentials credentials){
 		bugtrackerModificationService.storeCredentials(bugtrackerId, credentials);
+	}
+	
+	
+	// method for error testing
+	@RequestMapping(value = "/throw-me-an-error", method = RequestMethod.POST)
+	@ResponseBody
+	public void throwError(@PathVariable(BUGTRACKER_ID) long bugtrackerId){
+		throw new EncryptionKeyChangedException(null);
 	}
 
 

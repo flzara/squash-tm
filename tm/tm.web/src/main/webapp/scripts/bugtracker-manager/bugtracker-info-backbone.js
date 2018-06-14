@@ -81,15 +81,24 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 
 	var radio = $.extend({}, Backbone.Events);
 
+	
 	// ************************** The models ******************************
 
-
+	// base class for the others
+	var BaseModel = Backbone.Model.extend({
+		
+		readInput : function(input){
+			var $input = $(input);
+			var attr = $input.data('bind');
+			var val = $input.val();
+			this.set(attr,val);
+		}
+		
+	});
 	
 	// -------------- conf model --------------
 	
-	var OAuthConfModel = Backbone.Model.extend({
-
-	
+	var OAuthConfModel = BaseModel.extend({
 		defaults : {
 			consumerKey: "",
 			requestTokenHttpMethod: 'GET',
@@ -99,6 +108,22 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 			requestTokenUrl: "", 
 			accessTokenUrl: "",
 			userAuthorizationUrl: ""
+		}
+	});
+	
+	// -------------- credentials models --------------
+	
+	var BasicAuthCredsModel = BaseModel.extend({
+		defaults: {
+			username: "",
+			password: ""
+		}
+	});
+	
+	var OAuthCredsModel = BaseModel.extend({
+		defaults: {
+			token: "",
+			tokenSecret: ""
 		}
 	});
 
@@ -120,7 +145,110 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 				'BASIC_AUTH' : new Backbone.Model(),
 				'OAUTH_1A': new Backbone.Model()
 			}
+		},
+		
+		currentConf : function(){
+			var proto = this.attributes.protocol;
+			return this.attributes.authConfMap[proto];
+		},
+		
+		currentCreds : function(){
+			var proto = this.attributes.protocol;
+			return this.attributes.credentialsMap[proto];
 		}
+	});
+
+
+
+	// *************** Authentication conf views *****************************
+	
+	var BaseTemplatedView = Backbone.View.extend({
+		
+		events: {
+			'change input' : 'updateModel',
+			'change select' : 'updateModel',
+			'change textarea' : 'updateModel',			
+		},
+		
+		initialize : function(options){
+			this.model = options.model;
+			this.initModel();
+			this.render();
+		},
+		
+		
+		updateModel : function(evt){
+			this.model.readInput(evt.currentTarget);
+		},
+		
+		render : function(){
+			this.$el.empty();
+			this.$el.html(this.template(this.model.attributes));
+		},
+		
+		enable: function(){
+			this.$el.find('input').prop('disabled', false);
+		},
+
+		disable: function(){
+			this.$el.find('input').prop('disabled', true);
+		},
+
+		//*** may be overriden by subclasses ***
+
+		initModel: function(){
+			
+		}
+		
+	});
+	
+	/*
+	 * The model will have the same attributes than the java bean ServerOAuth1aConsumerConf  
+	 */
+	var OAuthConfView = BaseTemplatedView.extend({
+		
+		el: "#bt-auth-conf-form",
+		
+		template: loadTemplate("#oauth-conf-template"),
+
+		// by 'init', we mean initialization of empty fields
+		initModel : function(){
+			// MAAAAGIIIC REAAACH OF REMOTE UNRELATED PROPERTYYYYY ELSEWHERE IN THE DOOOOM !			
+			var baseUrl = $("#bugtracker-url").text();
+			var model = this.model;
+			var self = this;
+			['requestTokenUrl', 'userAuthorizationUrl', 'accessTokenUrl'].forEach(function(url){
+				if ( self.isBlank(url) ){
+					model.set(url, baseUrl);
+				}
+			});
+			
+		},
+		
+		isBlank : function(ppt){
+			return StringUtil.isBlank(this.model.get(ppt));
+		}
+
+		
+	});
+	
+	// ************ Application-Level credentials *****************************
+
+
+	var BasicAuthCredentialsView = BaseTemplatedView.extend({
+
+		el: '#bt-auth-creds-form',
+		
+		template: loadTemplate("#basic-creds-template")
+
+	});
+
+	var OAuthCredentialsView = BaseTemplatedView.extend({
+		
+		el: '#bt-auth-creds-form',
+		
+		template: loadTemplate("#oauth-creds-template")
+		
 	});
 	
 	
@@ -133,103 +261,215 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 
 		el: "#bugtracker-authentication-masterpane",
 		
-		// set by initialize()
-		$protoPane: null,
-		$policyPane: null,
-		model: null,
-		btUrl: null,
-		
 		initialize : function(options){
 			
-			this.initModel(options.conf);
-			this.btUrl = options.btUrl;
+			var model = this.initModel(options.conf);
 			
 			var conf = {
-				model : this.model
+				model : model
 			}
 			
-			this.$protoPane = new ProtocolView(conf);
-			this.$policyPane = new PolicyView(conf);
+			new ProtocolView(conf);
+			new PolicyView(conf);
 			
 		},
 		
 		initModel : function(mdl){
-			var proto = mdl.selectedProto;
-			this.model = new AuthenticationModel({
+			var model = new AuthenticationModel({
 				btUrl : mdl.btUrl,
 				protocol: mdl.selectedProto,
 				policy: mdl.authPolicy,
 			});
 			
-			this.model.get('authConfMap')[proto].set(mdl.authConf);
-			this.model.get('credentialsMap')[proto].set(mdl.credentials);
+			// set the attributes of the current conf and credentials
+			model.currentConf().set(mdl.authConf);
+			model.currentCreds().set(mdl.credentials);
+			
+			return model;
 		}
 		
 	});
 
-
+	// ************************ Panel views ************************
 	
-	var ProtocolView = Backbone.View.extend({
-		el: "#bugtracker-auth-protocol",
+	/*
+	 * Base behavior : handle panels that have a message pane, 
+	 * a templated part, a save reminer and a button pane.
+	 * 
+	 * Subclasses must define 'prefix' and several other methods,
+	 * and their dom must follow the same conventions 
+	 * (read bugtracker-info.jsp)
+	 */
+	var BasePanelView = Backbone.View.extend({
 		
-		// flag regarding the display of the 'data unsaved' warning
-		saved: true,
+		// must be defined by subclasses
+		prefix : "",
 		
 		$main: null,
-		$form: null,
+		$saveReminder: null,
+		$btnpane: null,
+		$currTpl: null,
 		
 		initialize : function(options){
-			
-			this.model = options.model;
-			this.btUrl = options.btUrl;
-			
-			this.$main = this.$("#bt-auth-conf-main");
-			this.$form = this.$("#bt-auth-conf-form");
-			
-			new MessageView({
-				el: "#bt-auth-conf-messagezone",
-				evtPrefix : "bt-auth-conf"
-			});
-			
-			this.bindModelEvents();
-			
-			this.render();
-		},
-		
-		render : function(){
-			var proto = this.model.get('protocol'),
-				conf = this.model.get('authConfMap')[proto];
-			
-			switch(proto){
-			case 'BASIC_AUTH':
-				// basic auth has no conf
-				this.$form.empty();
-				this.$main.hide();
-				break;
-				
-			case 'OAUTH_1A':
-				// TODO: render the form
-				this.$form.empty();
-				this.$main.show();
-				var confModel = this.getCurrentConf();
-				new OAuthConfView({model: confModel});
-				break;
+			var prefix = this.prefix;
+			if (StringUtil.isBlank(prefix)){
+				throw "prefix undefined !";
 			}
 			
+			this.model = options.model;
+			
+			this.$main = this.$("#"+prefix+"-main");
+			this.$saveReminder = this.$(".needs-save-msg");
+			this.$btnpane = this.$("#"+prefix+"-buttonpane");
+			
+			new MessageView({
+				el: "#"+prefix+"-messagezone",
+				evtPrefix : prefix
+			});
+			
+			this._modelEvents();
+			this.render();
+			
 		},
 		
-		events : {
-			'change #bt-auth-proto-select' : 'updateProtocol',
-			'change input' : 'updateModel',
-			'change select' : 'updateModel',
-			'change textarea' : 'updateModel',
-			'click #bt-auth-conf-save' : 'save'
+		render: function(){
+			var protocol = this.model.get('protocol');
+			var View = this.viewMap[protocol];			
+			var tplModel = this.getConfiguredModel();
+			
+			if (View == null){
+				this.$main.hide();
+			}
+			else{
+				this.$main.show();
+				this.$currTpl = new View({model: tplModel});
+			}	
 		},
 		
-		bindModelEvents : function(){
+		
+		_modelEvents : function(){
+			var self = this;
 			this.listenTo(this.model, 'change:protocol', this.render);
+			this.listenTo(this.model, 'change:protocol', this.showSaveReminder);
+			
+			// also listen to changes in the model map
+			var confModels = this.getModelMap();
+			_.values(confModels).forEach(function(model){
+				self.listenTo(model, 'change', self.showSaveReminder)
+			});	
+			
+			// additional model events
+			this.specificModelEvents();
+		},
+		
+		showSaveReminder : function(){
+			this.$saveReminder.show();
+		},
+		
+		hideSaveReminder : function(){
+			this.$saveReminder.hide();
+		},
+		
+		setAjaxMode : function(){
+			this.$btnpane.children().css('visibility', 'hidden');
+			this.$btnpane.addClass('waiting-loading');
 		},
 
+		unsetAjaxMode : function(){
+			this.$btnpane.children().css('visibility', 'visible');
+			this.$btnpane.removeClass('waiting-loading');
+		},
+
+		updateModel : function(evt){
+			this.getConfiguredModel().readInput(evt.currentTarget);
+		},
+		
+		getCurrentTemplate: function(){
+			return this.$currTpl;
+		},
+		
+		ajax: function(conf){
+			
+			this.setAjaxMode();
+			
+			var self = this;
+			
+			return $.ajax(conf)
+			.done(function(){
+				//rearm the unsaved data reminder and trigger success
+				self.hideSaveReminder();
+				self.$('.error-message').text('');
+				radio.trigger('bt-auth-conf-save-success');
+			})
+			.fail(function(xhr){
+				// let go validation errors : they are caught and handled by
+				// the notification listener
+				// for others, display them in the pane
+				if (xhr.status !== 412){
+					xhr.errorIsHandled = true;
+					radio.trigger(self.prefix+'-warning', notification.getErrorMessage(xhr));
+				}
+			})
+			.always(function(){
+				self.unsetAjaxMode();
+			});
+		},
+		
+		// *********** subclasses may/must override theses ***********
+		
+		getModelMap: function(){
+			throw "not implemeted !";
+		},
+		
+		getConfiguredModel : function(){
+			throw "not implemeted !";
+		},
+		
+		specificEvents: function(){
+			return {};
+		}, 
+		
+		specificModelEvents: function(){
+			//noop
+		},
+		
+		// templated view constructor mapped by protocol
+		// or null if none defined for that protocol
+		viewMap : {
+			'BASIC_AUTH': null,
+			'OAUTH_1A': null
+		}
+		
+	});
+	
+	
+	var ProtocolView = BasePanelView.extend({
+		
+		el: "#bugtracker-auth-protocol",
+		prefix: "bt-auth-conf",
+
+		viewMap: {
+			'BASIC_AUTH': null,
+			'OAUTH_1A': OAuthConfView
+		},
+	
+		
+		getModelMap: function(){
+			return this.model.get('authConfMap');
+		},
+		
+		getConfiguredModel : function(){
+			return this.model.currentConf();
+		},
+		
+		events: {
+			'change #bt-auth-proto-select' : 'updateProtocol',	
+			'click 	.auth-save' : 'save'
+		},
+		
+
+		// ************* ajax *******************
+		
 		updateProtocol : function(evt){
 			var val = $(evt.target).val();
 			var self = this;
@@ -240,51 +480,67 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 			});
 		}, 
 		
-		getCurrentConf : function(){
-			var proto = this.model.get('protocol');
-			var confMap = this.model.get('authConfMap');
-			return confMap[proto];
-		},
-		
-		updateModel : function(evt){
-			var inp = $(evt.currentTarget);
-			var attr = inp.data('bind');
-			var val = inp.val();
-			var confModel = this.getCurrentConf();
-			confModel.set(attr,val);
-		},
 		
 		save : function(){
 			var url = this.model.get('btUrl') + '/authentication-configuration';
-			var authConfAttributes = this.getCurrentConf().attributes;
+			
+			var authConfAttributes = this.getConfiguredModel().attributes;
 			// add the type to hint Jackson at what to do
 			authConfAttributes.type = this.model.get('protocol');
 			var payload = JSON.stringify(authConfAttributes);
-			$.ajax({
+			
+			var self = this;
+			
+			this.ajax({
 				type: 'POST',
 				url : url,
 				data : payload,
 				contentType: 'application/json'
+			})
+			.done(function(){
+				radio.trigger('bt-auth-conf-save-success');
 			});
 		}
 	
 	
 	});
 	
-	var PolicyView = Backbone.View.extend({
+	var PolicyView = BasePanelView.extend({
+
 		el: "#bugtracker-auth-policy",
+		prefix: "bt-auth-creds",
 		
-		initialize : function(options){
-			this.model = options.model;
-			new MessageView({
-				el: "#bt-auth-creds-messagezone",
-				evtPrefix : "bt-auth-creds"
-			})
+		viewMap: {
+			'BASIC_AUTH': BasicAuthCredentialsView,
+			'OAUTH_1A': OAuthCredentialsView
+		},
+	
+		
+		getModelMap: function(){
+			return this.model.get('credentialsMap');
+		},
+		
+		getConfiguredModel : function(){
+			return this.model.currentCreds();
+		},
+		
+		events: {
+			'click .auth-test' : 'test',
+			'click .auth-save' : 'save',
+			'change input[name="bt-auth-policty"]' : 'updatePolicy'
+		},
+		
+		// ******* ajax **************
+		
+		updatePolicy: function(){
+			alert("TODOOO");
 		}
 		
 	});
 	
-
+	
+	// ****************** Message view *****************
+	
 	var MessageView = Backbone.View.extend({
 
 		$failPane : null,
@@ -346,117 +602,6 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 		}
 	});
 	
-
-	// *************** Authentication conf views *****************************
-	
-	/*
-	 * The model will have the same attributes than the java bean ServerOAuth1aConsumerConf  
-	 */
-	var OAuthConfView = Backbone.View.extend({
-		
-		el: "#bt-auth-conf-form",
-		
-		template: loadTemplate("#oauth-conf-template"),
-		
-		initialize : function(options){
-			this.model = options.model;
-			this.initModel();
-			this.render();
-		},
-		
-		// by 'init', we mean initialization of empty fields
-		initModel : function(){
-			// MAAAAGIIIC REAAACH OF REMOTE UNRELATED PROPERTYYYYY ELSEWHERE IN THE DOOOOM !			
-			var baseUrl = $("#bugtracker-url").text();
-			var model = this.model;
-			var self = this;
-			['requestTokenUrl', 'userAuthorizationUrl', 'accessTokenUrl'].forEach(function(url){
-				if ( self.isBlank(url) ){
-					model.set(url, baseUrl);
-				}
-			});
-			
-		},
-		
-		
-		isBlank : function(ppt){
-			return StringUtil.isBlank(this.model.get(ppt));
-		},
-		
-		render : function(){
-			this.$el.empty();
-			this.$el.html(this.template(this.model.attributes));
-		}, 
-		
-		events : {
-			
-		}
-		
-		
-		
-	});
-	
-	// ************ Application-Level credentials *****************************
-
-	// BasicAuthCredentialsView
-	var BasicAuthCredentialsView = Backbone.View.extend({
-
-		el: '#bt-auth-creds-form',
-
-		events: {
-			'change #bt-auth-basic-login' : 'setUsername',
-			'change #bt-auth-basic-pwd' : 'setPassword'
-		},
-
-		initialize : function(options){
-			// deal with the case of undefined model
-			if (_.isEmpty(options.model.attributes)){
-				options.model.set('username', '');
-				options.model.set('password', '');
-			}
-		},
-
-		template: Handlebars.compile(
-			'<div class="display-table">' +
-				'<div class="display-table-row" style="line-height:3.5">' +
-					'<label class="display-table-cell">{{i18n "label.Login"}}</label>' +
-					'<input id="bt-auth-basic-login" type="text" class="display-table-cell" value="{{this.username}}">' +
-				'</div>' +
-				'<div class="display-table-row" style="line-height:3.5">' +
-					'<label class="display-table-cell">{{i18n "label.Password"}}</label> ' +
-					'<input id="bt-auth-basic-pwd" class="display-table-cell" type="password" value="{{this.password}}"> ' +
-				'</div>' +
-			'</div>'
-		),
-
-		render: function(){
-			this.$el.html(this.template(this.model.attributes));
-			return this;
-		},
-
-		enable: function(){
-			this.$el.find('input').prop('disabled', false);
-		},
-
-		disable: function(){
-			this.$el.find('input').prop('disabled', true);
-		},
-
-		setUsername: function(evt){
-			this.model.set('username', evt.target.value);
-		},
-
-		setPassword: function(evt){
-			this.model.set('password', evt.target.value);
-		}
-
-
-	});
-
-	
-
-	// ************ message pane *************************
-
 
 
 	return AuthenticationMasterView;
