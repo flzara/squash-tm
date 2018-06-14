@@ -75,7 +75,7 @@ define([ "app/pubsub", "jquery", "workspace.event-bus", "jqueryui" ], function(p
 
 			/* ******************* public **************** */
 
-			this.loadWith = function(url, params) {
+			this.loadWith = function (url, params) {
 				// [Issue 4168] Hide datepicker if there is one unclosed
 				$('.ui-datepicker').hide();
 
@@ -86,20 +86,21 @@ define([ "app/pubsub", "jquery", "workspace.event-bus", "jqueryui" ], function(p
 					defer.reject();
 					return defer.promise();
 				} else {
+
+					//firing an event with wreqr for custom dashboard
+					var wreqr = squashtm.app.wreqr;
+					if (wreqr) {
+						wreqr.trigger("contextualContent.loadWith");
+					}
+
 					abortIfRunning();
 
 					this.currentUrl = url;
-					this.currentXhr = $.get(url, params, 'html').success(function(html) {
+					this.currentXhr = $.get(url, params, 'html').success(function (html) {
 						cleanContent();
 						self.html(html);
 
-						//firing an event with wreqr for custom dashboard
-						var wreqr = squashtm.app.wreqr;
-						if (wreqr) {
-							wreqr.trigger("contextualContent.loadWith");
-						}
 					});
-
 					return this.currentXhr;
 				}
 
