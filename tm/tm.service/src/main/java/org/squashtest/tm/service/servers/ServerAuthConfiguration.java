@@ -18,28 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.bugtracker;
+package org.squashtest.tm.service.servers;
 
-import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
+/**
+ * Marker interface for beans containing authentication information that complements individual credentials
+ */
+public interface ServerAuthConfiguration {
 
-@Transactional
-@DynamicManager(name = "squashtest.tm.service.BugTrackerModificationService", entity = BugTracker.class)
-public interface BugTrackerModificationService extends CustomBugTrackerModificationService {
-
-
-	@PreAuthorize(HAS_ROLE_ADMIN)
-	void changeIframeFriendly(long bugtrackerId, boolean isIframeFriendly);
-
-	@PreAuthorize(HAS_ROLE_ADMIN)
-	void changeKind(long bugtrackerId, String kind);
-
-	@PreAuthorize(HAS_ROLE_ADMIN)
-	void changeUrl(long bugtrackerId, String url);
-
+	/**
+	 * Returns the protocol this configuration is for.
+	 *
+	 * @return
+	 */
+	AuthenticationProtocol getImplementedProtocol();
 
 }

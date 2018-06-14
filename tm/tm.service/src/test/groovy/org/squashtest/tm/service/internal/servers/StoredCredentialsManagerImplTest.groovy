@@ -20,10 +20,11 @@
  */
 package org.squashtest.tm.service.internal.servers
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
+import org.squashtest.tm.domain.servers.AuthenticationProtocol
 import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials
-import org.squashtest.tm.domain.servers.OAuth1aCredentials
+import org.squashtest.tm.domain.servers.Credentials
+import org.squashtest.tm.domain.servers.StoredCredentials.ContentType
 import org.squashtest.tm.domain.servers.StoredCredentials
 import org.squashtest.tm.domain.users.User
 import org.squashtest.tm.service.internal.repository.UserDao
@@ -31,9 +32,9 @@ import org.squashtest.tm.service.feature.FeatureManager
 import org.squashtest.tm.service.servers.EncryptionKeyChangedException
 import org.squashtest.tm.service.servers.ManageableCredentials
 import org.squashtest.tm.service.servers.MissingEncryptionKeyException
+import org.squashtest.tm.service.servers.StoredCredentialsManager
 import spock.lang.Specification
 
-import javax.management.remote.NotificationResult
 import javax.persistence.EntityManager
 import javax.persistence.NoResultException
 import javax.persistence.Query
@@ -159,7 +160,7 @@ class StoredCredentialsManagerImplTest extends Specification{
 		q.getSingleResult() >> sc
 
 		when :
-		def res = manager.loadStoredCredentials(10L, "bob")
+		def res = manager.loadStoredContent(10L, "bob", ContentType.CRED)
 
 		then :
 
@@ -179,7 +180,7 @@ class StoredCredentialsManagerImplTest extends Specification{
 		q.getSingleResult() >> sc
 
 		when :
-		def res = manager.loadStoredCredentials(10L, null)
+		def res = manager.loadStoredContent(10L, null, ContentType.CRED)
 
 		then :
 
@@ -260,7 +261,7 @@ class StoredCredentialsManagerImplTest extends Specification{
 	def "cannot store because such credentials are not suitable for user-level persistence"(){
 
 		when:
-			manager.storeUserCredentials(10L, "bob", new ServerOAuth1aConsumerConf())
+			manager.storeUserCredentials(10L, "bob", new ManageableBasicAuthCredentials("bob", "bobpassword" as char[]))
 
 		then:
 			thrown IllegalArgumentException
@@ -271,7 +272,7 @@ class StoredCredentialsManagerImplTest extends Specification{
 	def "cannot store because such credentials are not suitable for app-level persistence"(){
 
 		when:
-		manager.storeAppLevelCredentials(10L, new UserOAuth1aToken())
+		manager.storeAppLevelCredentials(10L, new PseudoCredentials())
 
 		then:
 		thrown IllegalArgumentException
@@ -284,13 +285,14 @@ class StoredCredentialsManagerImplTest extends Specification{
 
 		given :
 			def sc = Mock(StoredCredentials)
+			sc.getContentType() >> ContentType.CRED
 			sc.getEncryptedCredentials() >> DEFAULT_ENCRYPTED
 
 			findCredQuery.getSingleResult() >> sc
 
 
 		when :
-			def result = manager.unsecuredFindCredentials(10L, "bob")
+			def result = manager.unsecuredFindContent(10L, "bob", ManageableCredentials)
 
 		then :
 			result.username == DEFAULT_CREDS.username
@@ -367,6 +369,35 @@ class StoredCredentialsManagerImplTest extends Specification{
 
 	private ManageableCredentials mockCredentials(){
 		new ManageableBasicAuthCredentials("bob", "you'll never find it" as char[])
+	}
+
+
+	private static final class PseudoCredentials implements ManageableCredentials{
+
+		@Override
+		boolean allowsUserLevelStorage() {
+			return false
+		}
+
+		@Override
+		boolean allowsAppLevelStorage() {
+			return false
+		}
+
+		@Override
+		AuthenticationProtocol getImplementedProtocol() {
+			return AuthenticationProtocol.BASIC_AUTH
+		}
+
+		@Override
+		Credentials build(StoredCredentialsManager storeManager, BugTracker server, String username) {
+			return null
+		}
+
+		@Override
+		void invalidate() {
+
+		}
 	}
 
 }

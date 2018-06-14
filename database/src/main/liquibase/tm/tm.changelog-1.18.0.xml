@@ -469,13 +469,20 @@
 
   <changeSet id="tm-1.18.0-oauth1a-consumer-1" author="bsiri">
     <comment>
-        Users can now have stored credentials (even though they can't manage them yet).
+        StoredCredentials can now store either credentials, either general configuration.
+        A new column appear so we can hint what is the type of the payload.
+        Also, users can now have stored credentials (even though they can't manage them yet).
         Only one credentials can be created for a given user and a given server (bugtracker)
     </comment>
 
     <addColumn tableName="STORED_CREDENTIALS">
+      <column name="CONTENT_TYPE" type="java.sql.Types.VARCHAR(4)" defaultValue="CRED"
+              remarks="the role of the content, either CRED or CONF">
+      </column>
+
       <column name="AUTHENTICATED_USER" type="BIGINT" defaultValue="null"
-              remarks="Foreign key to the user account that owns the credentials. A NULL value means that Squash-TM owns the credentials (app-level credentials).">
+              remarks="Foreign key to the user account that owns the credentials. A NULL value means that Squash-TM 
+              owns the credentials (app-level credentials).">
         <constraints nullable="true"
                      foreignKeyName="fk_stored_credentials_user" references="CORE_USER(PARTY_ID)"
                      deleteCascade="true"/>
@@ -483,7 +490,7 @@
     </addColumn>
 
     <addUniqueConstraint tableName="STORED_CREDENTIALS"
-                         columnNames="AUTHENTICATED_SERVER,AUTHENTICATED_USER"
+                         columnNames="AUTHENTICATED_SERVER,AUTHENTICATED_USER,CONTENT_TYPE"
                          constraintName="uniq_stored_credentials_server_user"/>
 
   </changeSet>

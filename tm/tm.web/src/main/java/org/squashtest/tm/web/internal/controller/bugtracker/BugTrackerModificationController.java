@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,16 +42,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
-import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.bugtracker.BugTrackerModificationService;
 import org.squashtest.tm.service.servers.EncryptionKeyChangedException;
 import org.squashtest.tm.service.servers.ManageableCredentials;
 import org.squashtest.tm.service.servers.MissingEncryptionKeyException;
+import org.squashtest.tm.service.servers.ServerAuthConfiguration;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
@@ -140,10 +140,23 @@ public class BugTrackerModificationController {
 
 	// **************************** credentials management ******************************
 
-	@RequestMapping(method = RequestMethod.POST, params = {"id=bugtracker-auth-policy", VALUE})
+	@RequestMapping(value = "/authentication-policy", method = RequestMethod.POST, params = VALUE)
 	@ResponseBody
 	public void changeAuthPolicy(@RequestParam(VALUE) AuthenticationPolicy policy, @PathVariable(BUGTRACKER_ID) long bugtrackerId){
 		bugtrackerModificationService.changeAuthenticationPolicy(bugtrackerId, policy);
+	}
+	
+	@RequestMapping(value = "/authentication-protocol", method = RequestMethod.POST, params = VALUE)
+	@ResponseBody
+	public void changeAuthProtocol(@RequestParam(VALUE) AuthenticationProtocol protocol, @PathVariable(BUGTRACKER_ID) long bugtrackerId){
+		bugtrackerModificationService.changeAuthenticationProtocol(bugtrackerId, protocol);
+	}
+	
+	
+	@RequestMapping(value = "/authentication-configuration", method = RequestMethod.POST, consumes="application/json")
+	@ResponseBody
+	public void saveAuthConfiguration(@PathVariable(BUGTRACKER_ID) long bugtrackerId,  @Valid @RequestBody ServerAuthConfiguration configuration){
+		bugtrackerModificationService.storeAuthConfiguration(bugtrackerId, configuration);
 	}
 
 
@@ -190,11 +203,11 @@ public class BugTrackerModificationController {
 		// now check against the credentials
 		try{
 			ManageableCredentials credentials = bugtrackerModificationService.findCredentials(bugTracker.getId());
+			ServerAuthConfiguration configuration = bugtrackerModificationService.findAuthConfiguration(bugTracker.getId());
 
-			if (credentials != null){
-				bean.setSelectedProto(credentials.getImplementedProtocol());
-				bean.setCredentials(credentials);
-			}
+			bean.setCredentials(credentials);
+			bean.setAuthConf(configuration);
+			
 
 		}
 		// no encryption key : blocking error, internationalizable
@@ -220,7 +233,7 @@ public class BugTrackerModificationController {
 
 
 	public static final class BugtrackerCredentialsManagementBean{
-
+		
 		// if those Strings remains to null it is a good thing
 		private String failureMessage = null;
 		private String warningMessage = null;
@@ -229,47 +242,67 @@ public class BugTrackerModificationController {
 		private AuthenticationPolicy authPolicy;
 		private List<AuthenticationProtocol> availableProtos;
 		private AuthenticationProtocol selectedProto;
+		
+		// conf
+		private ServerAuthConfiguration authConf;		
+		// app-level credentials
 		private ManageableCredentials credentials;
 
-		public AuthenticationPolicy getAuthPolicy() {
-			return authPolicy;
-		}
-		public void setAuthPolicy(AuthenticationPolicy authPolicy) {
-			this.authPolicy = authPolicy;
-		}
-		public List<AuthenticationProtocol> getAvailableProtos() {
-			return availableProtos;
-		}
-		public void setAvailableProtos(List<AuthenticationProtocol> availableProtos) {
-			this.availableProtos = availableProtos;
-		}
-		public AuthenticationProtocol getSelectedProto() {
-			return selectedProto;
-		}
-		public void setSelectedProto(AuthenticationProtocol selectedProto) {
-			this.selectedProto = selectedProto;
-		}
-		public ManageableCredentials getCredentials() {
-			return credentials;
-		}
-		public void setCredentials(ManageableCredentials credentials) {
-			this.credentials = credentials;
-		}
 		public String getFailureMessage() {
 			return failureMessage;
 		}
+
 		public void setFailureMessage(String failureMessage) {
 			this.failureMessage = failureMessage;
 		}
+
 		public String getWarningMessage() {
 			return warningMessage;
 		}
+
 		public void setWarningMessage(String warningMessage) {
 			this.warningMessage = warningMessage;
 		}
 
+		public AuthenticationPolicy getAuthPolicy() {
+			return authPolicy;
+		}
 
+		public void setAuthPolicy(AuthenticationPolicy authPolicy) {
+			this.authPolicy = authPolicy;
+		}
 
+		public List<AuthenticationProtocol> getAvailableProtos() {
+			return availableProtos;
+		}
+
+		public void setAvailableProtos(List<AuthenticationProtocol> availableProtos) {
+			this.availableProtos = availableProtos;
+		}
+
+		public AuthenticationProtocol getSelectedProto() {
+			return selectedProto;
+		}
+
+		public void setSelectedProto(AuthenticationProtocol selectedProto) {
+			this.selectedProto = selectedProto;
+		}
+
+		public ServerAuthConfiguration getAuthConf() {
+			return authConf;
+		}
+
+		public void setAuthConf(ServerAuthConfiguration authConf) {
+			this.authConf = authConf;
+		}
+
+		public ManageableCredentials getCredentials() {
+			return credentials;
+		}
+
+		public void setCredentials(ManageableCredentials credentials) {
+			this.credentials = credentials;
+		}
 
 	}
 

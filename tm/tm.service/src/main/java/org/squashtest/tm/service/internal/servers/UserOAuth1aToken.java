@@ -27,6 +27,7 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.servers.OAuth1aCredentials;
 import org.squashtest.tm.service.servers.ManageableCredentials;
+import org.squashtest.tm.service.servers.ServerAuthConfiguration;
 import org.squashtest.tm.service.servers.StoredCredentialsManager;
 
 /**
@@ -70,7 +71,7 @@ public class UserOAuth1aToken implements ManageableCredentials {
 	public void setTokenSecret(String tokenSecret) {
 		this.tokenSecret = tokenSecret;
 	}
-	
+
 	boolean isValid(){
 		return ! StringUtils.isAnyBlank(token, tokenSecret);
 	}
@@ -86,7 +87,12 @@ public class UserOAuth1aToken implements ManageableCredentials {
 	public boolean allowsUserLevelStorage() {
 		return true;
 	}
-	
+
+	@Override
+	public boolean allowsAppLevelStorage(){
+		return true;
+	}
+
 
 	@Override
 	public void invalidate() {
@@ -96,36 +102,36 @@ public class UserOAuth1aToken implements ManageableCredentials {
 
 	@Override
 	public OAuth1aCredentials build(StoredCredentialsManager storeManager, BugTracker server, String username) {
-		
+
 		OAuth1aCredentials result = null;
-		
+
 		LOGGER.debug("Building OAuth1aCredentials");
 
-		ManageableCredentials serverCreds = storeManager.unsecuredFindAppLevelCredentials(server.getId());
-		
+		ServerAuthConfiguration conf = storeManager.unsecuredFindServerAuthConfiguration(server.getId());
+
 		if (! isValid()){
 			LOGGER.debug("Attempted to build OAuth1a credentials for user '{}' but user tokens were invalidated and need to be recreated", username);
-		}		
-		
-		else if (! canBuildWith(serverCreds)){
+		}
+
+		else if (! canBuildWith(conf)){
 			LOGGER.error("Attempted to build OAuth1a credentials for user '{}' but could only find the user tokens. The rest of the configuration, " +
 					   "usually held as app-level credentials, is absent or invalid.", username);
 		}
-		
+
 		else{
-			ServerOAuth1aConsumerConf serverConf = (ServerOAuth1aConsumerConf) serverCreds;
+			ServerOAuth1aConsumerConf serverConf = (ServerOAuth1aConsumerConf) conf;
 			result = new OAuth1aCredentials(serverConf.getConsumerKey(), serverConf.getClientSecret(), token, tokenSecret, serverConf.getSignatureMethod());
 		}
-		
+
 		return result;
 	}
-	
-	private boolean canBuildWith(ManageableCredentials serverCreds){
-		
+
+	private boolean canBuildWith(ServerAuthConfiguration serverConf){
+
 		return (
-				serverCreds != null && 
-				ServerOAuth1aConsumerConf.class.isAssignableFrom(serverCreds.getClass())
+			serverConf != null &&
+				ServerOAuth1aConsumerConf.class.isAssignableFrom(serverConf.getClass())
 		);
-		
+
 	}
 }

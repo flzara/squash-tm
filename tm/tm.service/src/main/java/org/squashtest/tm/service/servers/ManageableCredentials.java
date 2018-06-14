@@ -36,7 +36,9 @@ import org.squashtest.tm.domain.servers.Credentials;
  * </p>
  *
  * <p>
- *
+ *		In some cases the credentials alone would not suffice, and the server authentication configuration is required.
+ *		To that end, the method that build the effective credentials {@link #build(StoredCredentialsManager, BugTracker, String)}
+ *		receives extra parameters that allows for extra operations.
  * </p>
  */
 public interface ManageableCredentials {
@@ -68,20 +70,20 @@ public interface ManageableCredentials {
 
 	/**
 	 * The factory method that produces the actual credentials, if the managed representation is not the definitive
-	 * credentials itself. If credentials cannot be built for some reasons, will return null : the caller will decide 
+	 * credentials itself. If credentials cannot be built for some reasons, will return null : the caller will decide
 	 * if an exception must be thrown (eg BugTrackerNoCredentialsException) or else.
 	 *
 	 * @return
 	 */
 	Credentials build(StoredCredentialsManager storeManager, BugTracker server, String username);
-	
-	
+
+
 	/**
 	 * Invalidates these credentials, if it appears that the endpoint that accepted them is now rejecting them.
-	 * 
+	 *
 	 * Note this doesn't mean the credentials themselves are deleted, but this renders them ineffective
 	 * (eg {@link #build(StoredCredentialsManager, BugTracker, String)} would return null if called with them).
-	 * 
+	 *
 	 */
 	void invalidate();
 

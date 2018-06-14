@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
@@ -33,6 +34,7 @@ import org.squashtest.tm.service.bugtracker.CustomBugTrackerModificationService;
 import org.squashtest.tm.service.internal.bugtracker.adapter.InternalBugtrackerConnector;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 import org.squashtest.tm.service.servers.ManageableCredentials;
+import org.squashtest.tm.service.servers.ServerAuthConfiguration;
 import org.squashtest.tm.service.servers.StoredCredentialsManager;
 
 /**
@@ -84,7 +86,7 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 	public void storeCredentials(long serverId, ManageableCredentials credentials) {
 		credentialsManager.storeAppLevelCredentials(serverId, credentials);
 	}
-
+	
 
 	@Override
 	public ManageableCredentials findCredentials(long serverId) {
@@ -103,6 +105,23 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 		InternalBugtrackerConnector connector = connectorFactory.createConnector(bugtracker);
 		return connector.getSupportedAuthProtocols();
 	}
+	
+
+	@Override
+	public void changeAuthenticationPolicy(long bugtrackerId, AuthenticationPolicy policy) {
+		BugTracker tracker = bugTrackerDao.findOne(bugtrackerId);
+		tracker.setAuthenticationPolicy(policy);
+	}
+
+
+	@Override
+	public void changeAuthenticationProtocol(long bugtrackerId, AuthenticationProtocol protocol) {
+		BugTracker tracker = bugTrackerDao.findOne(bugtrackerId);
+		tracker.setAuthenticationProtocol(protocol);
+		
+		credentialsManager.deleteAppLevelCredentials(bugtrackerId);
+		credentialsManager.deleteServerAuthConfiguration(bugtrackerId);
+	}
 
 
 	@Override
@@ -115,7 +134,22 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 	}
 
 
+	@Override
+	public void storeAuthConfiguration(long serverId, ServerAuthConfiguration conf) {
+		credentialsManager.storeServerAuthConfiguration(serverId, conf);
+	}
 
+
+	@Override
+	public ServerAuthConfiguration findAuthConfiguration(long serverId) {
+		return credentialsManager.findServerAuthConfiguration(serverId);
+	}
+
+
+	@Override
+	public void deleteAuthConfiguration(long serverId) {
+		credentialsManager.deleteServerAuthConfiguration(serverId);
+	}
 
 
 }

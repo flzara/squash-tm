@@ -25,9 +25,10 @@ import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
-import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.service.servers.ManageableCredentials;
+import org.squashtest.tm.service.servers.ServerAuthConfiguration;
 import org.squashtest.tm.service.servers.StoredCredentialsManager;
 
 
@@ -38,6 +39,7 @@ public interface CustomBugTrackerModificationService {
 
 
 	//**** credential services, some being forwarded to StoredCredentialsManager ****
+	
 
 	/**
 	 * Returns the authentication protocols supported by the underlying connector
@@ -49,6 +51,28 @@ public interface CustomBugTrackerModificationService {
 	AuthenticationProtocol[] getSupportedProtocols(BugTracker bugtracker);
 
 
+	/**
+	 * Changes the authentication policy for this server.
+	 * 
+	 * @param bugtrackerId
+	 * @param policy
+	 */
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	void changeAuthenticationPolicy(long bugtrackerId, AuthenticationPolicy policy);
+
+	/**
+	 * Changes the authentication protocol. Be warned that doing this will automatically 
+	 * remove the authentication configuration and app-level credentials (since they target 
+	 * the former protocol) 
+	 * 
+	 * @param bugtrackerId
+	 * @param protocol
+	 */
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	void changeAuthenticationProtocol(long bugtrackerId, AuthenticationProtocol protocol);
+	
+	
+	
 	/**
 	 * Says whether the StoredCredentials service is properly configured
 	 *
@@ -68,6 +92,17 @@ public interface CustomBugTrackerModificationService {
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	void storeCredentials(long serverId, ManageableCredentials credentials);
 
+	
+	/**
+	 * 
+	 * @see StoredCredentialsManager#storeAuthenticationInformation(long, ServerAuthConfiguration)A
+	 * @param serverId
+	 * @param conf
+	 */
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	void storeAuthConfiguration(long serverId, ServerAuthConfiguration conf);
+	
+	
 	/**
 	 *
 	 * @see StoredCredentialsManager#findAppLevelCredentials(long)
@@ -76,6 +111,15 @@ public interface CustomBugTrackerModificationService {
 	 */
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	ManageableCredentials findCredentials(long serverId);
+	
+	/**
+	 * 
+	 * @See {@link StoredCredentialsManager#findServerAuthConfiguration(long)
+	 * @param serverId
+	 * @return
+	 */
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	ServerAuthConfiguration findAuthConfiguration(long serverId);
 
 
 	/**
@@ -98,5 +142,14 @@ public interface CustomBugTrackerModificationService {
 	 */
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	void deleteCredentials(long serverId);
+	
+	
+	/**
+	 * 
+	 * @see StoredCredentialsManager#deleteServerAuthConfiguration(long)
+	 * @param serverId
+	 */
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	void deleteAuthConfiguration(long serverId);
 
 }

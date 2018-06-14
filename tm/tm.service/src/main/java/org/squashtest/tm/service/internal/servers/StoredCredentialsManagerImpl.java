@@ -35,13 +35,12 @@ import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials;
 import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.domain.servers.StoredCredentials;
+import org.squashtest.tm.domain.servers.StoredCredentials.ContentType;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.internal.repository.UserDao;
-import org.squashtest.tm.service.servers.EncryptionKeyChangedException;
-import org.squashtest.tm.service.servers.ManageableCredentials;
-import org.squashtest.tm.service.servers.MissingEncryptionKeyException;
-import org.squashtest.tm.service.servers.StoredCredentialsManager;
+import org.squashtest.tm.service.servers.*;
+import com.google.common.collect.ImmutableMap;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -58,12 +57,26 @@ import java.util.Map;
 
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 
+
+/*
+ * TODO :
+ *
+ * For now we store the following in StoredCredentials :
+ * - server authentication information,
+ * - user credentials (for third party servers),
+ * - machine credentials
+ *
+ * The variety of possible content represented in this uniform entity poses extra complexity for handling the data properly and
+ * makes the business less expressibe. It is manageable for now but in the future it could be wise to separate the payload (the encrypted data)
+ * from the purpose (user credentials, configuration, or whatever we will need to encrypt next).
+ */
 @Transactional
 @Service
 public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 
 	private static final String OR_CURRENT_USER_OWNS_CREDENTIALS = " or authentication.name == #username";
 
+	private static final String FIND_SERVER_AUTH_CONF = "StoredCredentials.findServerAuthConfByServerId";
 	private static final String FIND_APP_LEVEL_CREDENTIALS = "StoredCredentials.findAppLevelCredentialsByServerId";
 	private static final String FIND_USER_CREDENTIALS = "StoredCredentials.findUserCredentialsByServerId";
 
@@ -72,6 +85,15 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 	private static final String DEPREC_BASIC_CREDENTIALS = BasicAuthenticationCredentials.class.getName();
 
 	private static final Logger LOGGER= LoggerFactory.getLogger(StoredCredentialsManagerImpl.class);
+
+	private static final Map<Class<?>, ContentType> CONTENT_TYPE_BY_CLS;
+
+	static {
+		CONTENT_TYPE_BY_CLS = new ImmutableMap.Builder<Class<?>, ContentType>()
+											.put(ServerAuthConfiguration.class, ContentType.CONF)
+											.put(ManageableCredentials.class, ContentType.CRED)
+											.build();
+	}
 
 	@PersistenceContext
 	private EntityManager em;
@@ -123,7 +145,7 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 					"to store such credentials for human users"
 			);
 		}
-		storeCredentials(serverId, username, credentials);
+		storeContent(serverId, username, credentials, ContentType.CRED);
 	}
 
 	@Override
@@ -134,23 +156,23 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 
 	@Override
 	public ManageableCredentials unsecuredFindUserCredentials(long serverId, String username) {
-		return unsecuredFindCredentials(serverId, username);
+		return unsecuredFindContent(serverId, username, ManageableCredentials.class);
 	}
-	
-	
+
+
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN + OR_CURRENT_USER_OWNS_CREDENTIALS)
 	public void invalidateUserCredentials(long serverId, String username) {
-		ManageableCredentials creds = unsecuredFindCredentials(serverId, username);
+		ManageableCredentials creds = unsecuredFindContent(serverId, username, ManageableCredentials.class);
 		if (creds != null){
 			creds.invalidate();
-		}		
+		}
 	}
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN + OR_CURRENT_USER_OWNS_CREDENTIALS)
 	public void deleteUserCredentials(long serverId, String username) {
-		deleteCredentials(serverId, username);
+		deleteContent(serverId, username, ContentType.CRED);
 	}
 
 
@@ -163,7 +185,7 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 					"to store such credentials as application-level credentials"
 			);
 		}
-		storeCredentials(serverId, null, credentials);
+		storeContent(serverId, null, credentials, ContentType.CRED);
 	}
 
 	@Override
@@ -174,24 +196,45 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 
 	@Override
 	public ManageableCredentials unsecuredFindAppLevelCredentials(long serverId) {
-		return unsecuredFindCredentials(serverId, null);
+		return unsecuredFindContent(serverId, null, ManageableCredentials.class);
 	}
-	
 
 	@Override
 	public void invalidateAppLevelCredentials(long serverId) {
-		ManageableCredentials creds = unsecuredFindCredentials(serverId, null);
+		ManageableCredentials creds = unsecuredFindContent(serverId, null, ManageableCredentials.class);
 		if (creds != null){
 			creds.invalidate();
-		}	
+		}
 	}
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deleteAppLevelCredentials(long serverId) {
-		deleteCredentials(serverId, null);
+		deleteContent(serverId, null, ContentType.CRED);
 	}
 
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public void storeServerAuthConfiguration(long serverId, ServerAuthConfiguration conf) {
+		storeContent(serverId, null, conf, ContentType.CONF);
+	}
+
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public ServerAuthConfiguration findServerAuthConfiguration(long serverId) {
+		return unsecuredFindServerAuthConfiguration(serverId);
+	}
+
+	@Override
+	public ServerAuthConfiguration unsecuredFindServerAuthConfiguration(long serverId) {
+		return unsecuredFindContent(serverId, null, ServerAuthConfiguration.class);
+	}
+
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public void deleteServerAuthConfiguration(long serverId) {
+		deleteContent(serverId, null, ContentType.CONF);
+	}
 
 	// ****************** implementation **********************
 
@@ -202,7 +245,7 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 	 *********************************************************/
 
 
-	private void storeCredentials(long serverId, String username, ManageableCredentials credentials){
+	private void storeContent(long serverId, String username, Object content, ContentType contentType){
 
 		if (! isSecretConfigured()){
 			throw new MissingEncryptionKeyException();
@@ -211,19 +254,19 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 		Crypto.EncryptionOutcome outcome = null;
 		try{
 			// encrypt
-			outcome = toEncryptedForm(credentials);
+			outcome = toEncryptedForm(content);
 		}
 		catch(GeneralSecurityException | IOException ex){
-			LOGGER.error("Could encrypt the credentials because the JRE doesn't support the specified encryption algorithms.");
+			LOGGER.error("Could encrypt the content because the JRE doesn't support the specified encryption algorithms.");
 			throw new RuntimeException(ex);
 		}
 
 		// prepare for storage
 		StoredCredentials sc = null;
 
-		// try : the server had credentials so we updated them
+		// try : the server has content of that type already so we updated them
 		try {
-			sc = loadStoredCredentials(serverId, username);
+			sc = loadStoredContent(serverId, username, contentType);
 
 			sc.setEncryptedCredentials(outcome.getEncryptedText());
 		}
@@ -234,6 +277,7 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 			User user = loadUserOrNull(username);
 
 			sc = new StoredCredentials();
+			sc.setContentType(contentType);
 
 			sc.setAuthenticatedServer(bt);
 			sc.setAuthenticatedUser(user);
@@ -248,14 +292,18 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 
 
 	/*
-	 * Returns the credentials for the server id. If username is not null, this implicitly means 
+	 * Returns the credentials for the server id. If username is not null, this implicitly means
 	 * user-level credentials. If username is null, app-level credentials will be retrieved instead.
 	 */
-	private ManageableCredentials unsecuredFindCredentials(long serverId, String username)  {
+	private <TYPE> TYPE unsecuredFindContent(long serverId, String username, Class<TYPE> deserializationClass)  {
 
 		if (! isSecretConfigured()){
 			throw new MissingEncryptionKeyException();
 		}
+
+		ContentType contentType = findContentType(deserializationClass);
+
+		LOGGER.debug("loading stored content for server '{}', user '{}' and of type '{}'", serverId, username, contentType);
 
 		Crypto crypto = new Crypto(Arrays.copyOf(secret, secret.length));
 
@@ -264,66 +312,45 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 
 		try{
 			// retrieve
-			sc = loadStoredCredentials(serverId, username);
+			sc = loadStoredContent(serverId, username, contentType);
 
 			// decrypt
 			// TODO : here we are supposed to test the encryption version but that'd be a concern later if we change the implementation one day
 			strDecrypt = crypto.decrypt(sc.getEncryptedCredentials());
 
-			ManageableCredentials creds = objectMapper.readValue(strDecrypt, ManageableCredentials.class);
+			TYPE creds = objectMapper.readValue(strDecrypt, deserializationClass);
 
 			return creds;
 		}
 
 		// -- exception 1 : nothing to retrieve --
-
 		catch(NoResultException ex){
-			/*
-			 * failure on retrieval, this is an expected error case which translates to a null result.
-			 */
-			LOGGER.debug("No credentials found.");
+			//failure on retrieval, this is an expected error case which translates to a null result.
+			LOGGER.debug("Content not found.");
 			return null;
 		}
-		
+
 		// -- exception 2 : encryption exceptions --
 		catch(GeneralSecurityException | UnsupportedEncodingException cryptoException){
-			LOGGER.error("Decryption failed probably because the encryption key changed. Less likely, is also can be that JRE doesn't support the specified encryption algorithms.");
+			LOGGER.error("Decryption failed probably because the encryption key changed. " +
+							 "Less likely, is also can be that JRE doesn't support the specified " +
+							 "encryption algorithms.");
 			throw new EncryptionKeyChangedException(cryptoException);
 		}
 
 		// -- exception 3 : data format is wrong was wrong, or less probably a rarer encryption exception was thrown --
 		// using a catchall here because Jackson might also use IOException, IllegalArgumentException and whatnot
 		catch(Exception ex){
-			
-			// exception 3.1 : the decryption failed but thrown a different exception than expected above
+
+			// null string : the decryption failed but thrown a different exception than expected above
 			if (strDecrypt == null){
 				// we just rethrow it.
 				LOGGER.debug("The decryption failed for unknown reasons.");
 				throw new RuntimeException(ex);
 			}
-			
-			// first possible data format error : the old BasicAuthenticationCredentials (which does not implement ManageableCredentials).
-			try {
-				LOGGER.debug("The data format is wrong. Perhaps an instance of BasicAuthenticationCredentials, which cannot now be stored directly, needs migration ?");
 
-				return migrateToNewFormat(strDecrypt, sc);
-			}
-
-			// -- exception 3.2 : other data format errors
-			catch(IOException definitelyWrong){
-				/*
-				 * Let's try to investigate and refine the error.
-				 */
-				LOGGER.error("something got definitely wrong.");
-				LOGGER.error(definitelyWrong.getMessage(), definitelyWrong);
-				throw investigateDeserializationError(strDecrypt, definitelyWrong);
-			}
-			
-			// exception 3.3 : data were decrypted and migrated successfully but could not encrypt the new credentials
-			catch(GeneralSecurityException cryptoException){
-				LOGGER.error("encryption exception while trying to migrate and restore old credentials ! Was the secret key changed ?");
-				throw new EncryptionKeyChangedException(cryptoException);
-			}
+			// else we can try alternatives
+			return fallbackOrDie(sc, strDecrypt);
 		}
 		finally{
 			crypto.dispose();
@@ -331,11 +358,35 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 
 	}
 
+	private <TYPE> TYPE fallbackOrDie(StoredCredentials sc, String strDecrypt) {
 
-
-	public void deleteCredentials(long serverId, String username) {
+		// possible data format error : the old BasicAuthenticationCredentials (which does not implement ManageableCredentials).
+		// such backup is possible only if we are trying to load credentials (no server auth conf needs migration yet).
+		LOGGER.debug("The data format is wrong. Perhaps an instance of BasicAuthenticationCredentials," +
+					" which cannot now be stored directly, needs migration ?");
 		try {
-			StoredCredentials sc = loadStoredCredentials(serverId, username);
+			return (TYPE) migrateToNewFormat(strDecrypt, sc);
+		}
+
+		// other format error
+		catch (IOException | ClassCastException definitelyWrong) {
+			//Let's try to investigate and refine the error.
+			LOGGER.error("something has gone definitely wrong.");
+			LOGGER.error(definitelyWrong.getMessage(), definitelyWrong);
+			throw investigateDeserializationError(strDecrypt, definitelyWrong);
+		}
+
+		// sec exception : data were decrypted and migrated successfully but could not encrypt the new credentials
+		catch (GeneralSecurityException cryptoException) {
+			LOGGER.error("encryption exception while trying to migrate and restore old credentials ! Was the secret key changed ?");
+			throw new EncryptionKeyChangedException(cryptoException);
+		}
+	}
+
+
+	public void deleteContent(long serverId, String username, ContentType type) {
+		try {
+			StoredCredentials sc = loadStoredContent(serverId, username, type);
 			em.remove(sc);
 		}
 		catch(NoResultException ex){
@@ -346,7 +397,7 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 	// ************* encrypt / decrypt *****************
 
 
-	private Crypto.EncryptionOutcome toEncryptedForm(ManageableCredentials credentials) throws IOException, GeneralSecurityException{
+	private Crypto.EncryptionOutcome toEncryptedForm(Object credentials) throws IOException, GeneralSecurityException{
 
 		Crypto crypto = new Crypto(Arrays.copyOf(secret, secret.length));
 
@@ -377,11 +428,11 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 	/*
 	 * if username is null, returns the application-level credentials.
 	 */
-	private StoredCredentials loadStoredCredentials(long serverId, String username){
+	private StoredCredentials loadStoredContent(long serverId, String username, ContentType type){
 
 		boolean isForHumanUser = (username != null);
 
-		String queryStr = (isForHumanUser) ? FIND_USER_CREDENTIALS : FIND_APP_LEVEL_CREDENTIALS;
+		String queryStr = locateQuery(username, type);
 
 		Query query = em.createNamedQuery(queryStr).setParameter("serverId", serverId);
 
@@ -406,6 +457,17 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 	}
 
 
+	private String locateQuery(String username, ContentType type){
+		boolean isConf = (type == ContentType.CONF);
+		boolean isForHumanUser = (username != null);
+
+		String queryStr = (isConf) ? 			FIND_SERVER_AUTH_CONF :
+							(isForHumanUser) ? 	FIND_USER_CREDENTIALS :
+												FIND_APP_LEVEL_CREDENTIALS;
+
+		return queryStr;
+	}
+
 	private RuntimeException investigateDeserializationError(String failedDeser, Throwable cause){
 
 		try {
@@ -427,12 +489,21 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 
 	}
 
+	private ContentType findContentType(Class<?> targetClass){
+		ContentType type = CONTENT_TYPE_BY_CLS.get(targetClass);
+		if (type == null){
+			throw new IllegalArgumentException("Content type for class '"+targetClass.getName()+"' is not supported and is definitely a programmatic error");
+		}
+		return type;
+	}
+
 
 	@PostConstruct
 	void initialize(){
 		ObjectMapper om = new ObjectMapper();
 		om.addMixIn(Credentials.class, InternalCredentialsMixin.class);
 		om.addMixIn(ManageableCredentials.class, InternalManageableCredentialsMixin.class);
+		om.addMixIn(ServerAuthConfiguration.class, InternalServerAuthConfigurationMixin.class);
 		objectMapper = om;
 
 		caseInsensitive = features.isEnabled(FeatureManager.Feature.CASE_INSENSITIVE_LOGIN);
@@ -444,7 +515,6 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 	abstract class InternalCredentialsMixin {
 		@JsonIgnore
 		abstract AuthenticationProtocol getImplementedProtocol();
-
 	}
 
 	@JsonTypeInfo(include = JsonTypeInfo.As.PROPERTY, use = JsonTypeInfo.Id.CLASS)
@@ -452,9 +522,14 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 	abstract class InternalManageableCredentialsMixin {
 		@JsonIgnore
 		abstract AuthenticationProtocol getImplementedProtocol();
-
 	}
 
+	@JsonTypeInfo(include = JsonTypeInfo.As.PROPERTY, use = JsonTypeInfo.Id.CLASS)
+	@JsonInclude
+	abstract class InternalServerAuthConfigurationMixin {
+		@JsonIgnore
+		abstract AuthenticationProtocol getImplementedProtocol();
+	}
 
 
 	// ************** sometime, a man has to bury the skeletons way way down below **************************
@@ -471,16 +546,16 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 
 
 	private ManageableCredentials migrateToNewFormat(String strDecrypt, StoredCredentials sc) throws IOException, GeneralSecurityException{
-			
+
 		LOGGER.debug("attempting migration of the deprecated stored credentials");
-		
+
 		ManageableCredentials fixed = tryAsBasicAuth(strDecrypt);
 
 		// no error ? Well, let's try to fix the database
 		// TODO : will fail if the transaction is set to read-only. But I leave that to the future for now.
 		Crypto.EncryptionOutcome outcome = toEncryptedForm(fixed);
 		sc.setEncryptedCredentials(outcome.getEncryptedText());
-		
+
 		LOGGER.debug("migration completed");
 
 		// now return the awaited credentials

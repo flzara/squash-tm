@@ -104,7 +104,21 @@ class BugTrackerAutoconnectCallbackTest extends Specification{
 	def "the authentication event is not usable for fallback because of auth policy"(){
 
 		given:
-		BugTracker bt = new BugTracker(authenticationPolicy: AuthenticationPolicy.APP_LEVEL)
+		BugTracker bt = new BugTracker(authenticationPolicy: AuthenticationPolicy.APP_LEVEL, authenticationProtocol: AuthenticationProtocol.BASIC_AUTH)
+
+		when:
+		def res = auto.canTryUsingEvent bt
+
+		then:
+		res == false
+
+	}
+
+
+	def "the authentication event is not usable for fallback because of auth protocol"(){
+
+		given:
+		BugTracker bt = new BugTracker(authenticationPolicy: AuthenticationPolicy.USER, authenticationProtocol: AuthenticationProtocol.OAUTH_1A)
 
 		when:
 		def res = auto.canTryUsingEvent bt
@@ -117,7 +131,7 @@ class BugTrackerAutoconnectCallbackTest extends Specification{
 	def "the authentication event is not usable for fallback because evt credentials are not suitable"(){
 
 		given:
-		BugTracker bt = new BugTracker(authenticationPolicy: AuthenticationPolicy.USER)
+		BugTracker bt = new BugTracker(authenticationPolicy: AuthenticationPolicy.USER, authenticationProtocol: AuthenticationProtocol.BASIC_AUTH)
 		auto.springsecCredentials = new Object()
 
 		when:

@@ -21,7 +21,6 @@
 package org.squashtest.tm.domain.servers;
 
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.squashtest.csp.core.bugtracker.net.OAuthUtils;
 
 /**

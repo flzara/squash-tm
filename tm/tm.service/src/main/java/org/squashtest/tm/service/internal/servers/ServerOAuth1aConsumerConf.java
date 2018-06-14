@@ -21,41 +21,27 @@
 package org.squashtest.tm.service.internal.servers;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
-import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.domain.servers.OAuth1aCredentials;
 import org.squashtest.tm.domain.servers.OAuth1aCredentials.SignatureMethod;
-import org.squashtest.tm.service.servers.ManageableCredentials;
-import org.squashtest.tm.service.servers.StoredCredentialsManager;
+import org.squashtest.tm.service.servers.ServerAuthConfiguration;
 
 /**
  * <p>
  * 		This class contains all the information related to a OAuth1a remote endpoint. It also acts as a factory of
- * 		0Auth1aCredentials.
- *</p>
- *
- * <p>
- *     	The OAuth1aCredentials are created by merging a user's {@link UserOAuth1aToken} with
- *     	{@link ServerOAuth1aConsumerConf}. However, it can also embbed its own tokens, that will then be used to identity
- *     	Squash-TM itself.
- * </p>
- *
- * <p>
- *     Note that it implements {@link org.squashtest.tm.domain.servers.Credentials} for technical reasons (because of
- *     how the StoredCredentialsManager is built), but until that ill conception is fixed be careful not to expose
- *     them as consumable credentials.
+ * 		0Auth1aCredentials. The OAuth1aCredentials are created by merging a user's {@link UserOAuth1aToken} with
+ *     	{@link ServerOAuth1aConsumerConf}.
  * </p>
  */
-public class ServerOAuth1aConsumerConf implements ManageableCredentials {
+public class ServerOAuth1aConsumerConf implements ServerAuthConfiguration {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ServerOAuth1aConsumerConf.class);
 
 	/**
 	 * Identifier of the OAuth endpoint Squash-TM is supposed to dock to
 	 */
+	
+	@NotBlank
 	private String consumerKey = "";
 
 
@@ -65,12 +51,9 @@ public class ServerOAuth1aConsumerConf implements ManageableCredentials {
 	 * (and the endpoint knows the public key)
 	 *
 	 */
+	@NotBlank
 	private String clientSecret = "";
 
-	/**
-	 * Squash-TM own tokens, if any.
-	 */
-	private UserOAuth1aToken squashtmTokens = new UserOAuth1aToken();
 
 	/**
 	 * The signature algorithm.
@@ -81,12 +64,15 @@ public class ServerOAuth1aConsumerConf implements ManageableCredentials {
 
 	private HttpMethod requestTokenHttpMethod = HttpMethod.GET;
 
+	@NotBlank
 	private String requestTokenUrl = "";
 
-	private String userAuthorizationURL = "";
+	@NotBlank
+	private String userAuthorizationUrl = "";
 
 	private HttpMethod accessTokenHttpMethod = HttpMethod.GET;
 
+	@NotBlank
 	private String accessTokenUrl = "";
 
 
@@ -96,48 +82,19 @@ public class ServerOAuth1aConsumerConf implements ManageableCredentials {
 
 	}
 
-	public ServerOAuth1aConsumerConf(String consumerKey, OAuth1aCredentials.SignatureMethod signatureMethod, String clientSecret, UserOAuth1aToken squashtmTokens, HttpMethod requestTokenHttpMethod, String requestTokenUrl, String userAuthorizationURL, HttpMethod accessTokenHttpMethod, String accessTokenUrl) {
+	public ServerOAuth1aConsumerConf(String consumerKey, OAuth1aCredentials.SignatureMethod signatureMethod, String clientSecret, HttpMethod requestTokenHttpMethod, String requestTokenUrl, String userAuthorizationUrl, HttpMethod accessTokenHttpMethod, String accessTokenUrl) {
 		this.consumerKey = consumerKey;
 		this.signatureMethod = signatureMethod;
 		this.clientSecret = clientSecret;
-		this.squashtmTokens = squashtmTokens;
 		this.requestTokenHttpMethod = requestTokenHttpMethod;
 		this.requestTokenUrl = requestTokenUrl;
-		this.userAuthorizationURL = userAuthorizationURL;
+		this.userAuthorizationUrl = userAuthorizationUrl;
 		this.accessTokenHttpMethod = accessTokenHttpMethod;
 		this.accessTokenUrl = accessTokenUrl;
 	}
 
-	// *************** ManageableCredentials ***********************
-
-	@Override
-	public boolean allowsAppLevelStorage() {
-		return true;
-	}
-
-	@Override
-	public Credentials build(StoredCredentialsManager storeManager, BugTracker server, String username) {
-		if (isValid()){
-			return new OAuth1aCredentials(consumerKey, clientSecret, squashtmTokens.getToken(), squashtmTokens.getTokenSecret(), signatureMethod);
-		}
-		else{
-			LOGGER.debug("cannot create oauth1a server credentials : no app-level tokens defined");
-			return null;
-		}
-	}
-
 	// ****************** accessors **********************
 
-	private boolean isValid(){
-		return (squashtmTokens != null && squashtmTokens.isValid());
-	}
-
-	@Override
-	public void invalidate() {
-		if (squashtmTokens != null){
-			squashtmTokens.invalidate();
-		}
-	}
 
 	@Override
 	public AuthenticationProtocol getImplementedProtocol() {
@@ -158,14 +115,6 @@ public class ServerOAuth1aConsumerConf implements ManageableCredentials {
 
 	public void setClientSecret(String clientSecret) {
 		this.clientSecret = clientSecret;
-	}
-
-	public UserOAuth1aToken getSquashtmTokens() {
-		return squashtmTokens;
-	}
-
-	public void setSquashtmTokens(UserOAuth1aToken squashtmTokens) {
-		this.squashtmTokens = squashtmTokens;
 	}
 
 	public SignatureMethod getSignatureMethod() {
@@ -192,12 +141,12 @@ public class ServerOAuth1aConsumerConf implements ManageableCredentials {
 		this.requestTokenUrl = requestTokenUrl;
 	}
 
-	public String getUserAuthorizationURL() {
-		return userAuthorizationURL;
+	public String getUserAuthorizationUrl() {
+		return userAuthorizationUrl;
 	}
 
-	public void setUserAuthorizationURL(String userAuthorizationURL) {
-		this.userAuthorizationURL = userAuthorizationURL;
+	public void setUserAuthorizationUrl(String userAuthorizationURL) {
+		this.userAuthorizationUrl = userAuthorizationURL;
 	}
 
 	public HttpMethod getAccessTokenHttpMethod() {

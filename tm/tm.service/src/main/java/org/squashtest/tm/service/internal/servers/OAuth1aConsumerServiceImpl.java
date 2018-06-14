@@ -78,7 +78,7 @@ public class OAuth1aConsumerServiceImpl implements OAuth1aConsumerService {
 
 			LOGGER.trace("temporary token acquired, caching the tokens for the coming authorization step");
 			// prepare the authorization redirection
-			OAuthAuthorizeTemporaryTokenUrl authorizationUrl = new OAuthAuthorizeTemporaryTokenUrl(conf.getUserAuthorizationURL());
+			OAuthAuthorizeTemporaryTokenUrl authorizationUrl = new OAuthAuthorizeTemporaryTokenUrl(conf.getUserAuthorizationUrl());
 			authorizationUrl.temporaryToken = response.token;
 
 			// return
@@ -123,12 +123,12 @@ public class OAuth1aConsumerServiceImpl implements OAuth1aConsumerService {
 
 		LOGGER.debug("loading oauth conf for server '{}'", serverId);
 
-		ManageableCredentials credentials = credManager.unsecuredFindAppLevelCredentials(serverId);
-		if (credentials == null || credentials.getImplementedProtocol() != AuthenticationProtocol.OAUTH_1A ){
+		ServerAuthConfiguration storedConf = credManager.unsecuredFindServerAuthConfiguration(serverId);
+		if (storedConf == null || storedConf.getImplementedProtocol() != AuthenticationProtocol.OAUTH_1A ){
 			throw new BugTrackerNoCredentialsException("No OAuth 1a configuration available !", null);
 		}
 
-		ServerOAuth1aConsumerConf conf = (ServerOAuth1aConsumerConf) credentials;
+		ServerOAuth1aConsumerConf conf = (ServerOAuth1aConsumerConf) storedConf;
 
 		return conf;
 	}

@@ -88,9 +88,9 @@ public interface StoredCredentialsManager {
 	ManageableCredentials unsecuredFindUserCredentials(long serverId, String username);
 
 	/**
-	 * Invalidates the credentials of the given user for a given server. Note that this is 
+	 * Invalidates the credentials of the given user for a given server. Note that this is
 	 * different from removing them.
-	 * 
+	 *
 	 * @param serverId
 	 * @param username
 	 */
@@ -145,14 +145,13 @@ public interface StoredCredentialsManager {
 
 
 	/**
-	 * Invalidates Squash-TM own credentials for a given server. Note that this is 
+	 * Invalidates Squash-TM own credentials for a given server. Note that this is
 	 * different from removing them.
-	 * 
+	 *
 	 * @param serverId
-	 * @param username
 	 */
 	void invalidateAppLevelCredentials(long serverId);
-	
+
 
 	/**
 	 * Will remove Squash-TM own stored credentials of a server if there were one.
@@ -162,6 +161,46 @@ public interface StoredCredentialsManager {
 	void deleteAppLevelCredentials(long serverId);
 
 
+	// ********************** server auth configuration **************
+
+	/**
+	 * Stores the given configuration for the given server. By nature only Squash-TM hold that information
+	 * (unlike credentials, which can be owned by users too), and can be defined by administrators only.
+	 * If there was already a configuration for that server, the new configuration will replace
+	 * the former configuration (so this also serves as an update operation).
+	 *
+	 * @param serverId
+	 * @param conf
+	 * @throws MissingEncryptionKeyException if no secret key was configured
+	 */
+	void storeServerAuthConfiguration(long serverId, ServerAuthConfiguration conf);
+
+	/**
+	 * Retrieves the authentication configuration for a given server.
+	 *
+	 * @param serverId
+	 * @return the configuration, or null if none is defined.
+	 * @throws EncryptionKeyChangedException if credentials exist but cannot be loaded because they were encrypted with
+	 * 			a different key
+	 * @throws MissingEncryptionKeyException if if no secret key was configured
+	 */
+	ServerAuthConfiguration findServerAuthConfiguration(long serverId);
+
+
+	/**
+	 * Similar to {@link #findServerAuthConfiguration(long)}, without security checks. For Squash-TM internal
+	 * usage only.
+	 *
+	 * @param serverId
+	 * @return
+	 */
+	ServerAuthConfiguration unsecuredFindServerAuthConfiguration(long serverId);
+
+
+	/**
+	 * Will remove the given configuration from the database.
+	 */
+	void deleteServerAuthConfiguration(long serverId);
 
 	// ********************** deprecated *****************************
 

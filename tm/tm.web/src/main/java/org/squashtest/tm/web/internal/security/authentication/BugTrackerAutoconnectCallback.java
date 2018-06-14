@@ -285,7 +285,8 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 		// for now we assume that only String credentials are suitable (as passwords),
 		// and the server is set to auth policy USER
 		private boolean canTryUsingEvent(BugTracker server){
-			return (server.getAuthenticationPolicy() == AuthenticationPolicy.USER &&
+			return (server.getAuthenticationPolicy() == AuthenticationPolicy.USER && 
+					server.getAuthenticationProtocol() == AuthenticationProtocol.BASIC_AUTH &&
 					springsecCredentials instanceof String);
 		}
 
