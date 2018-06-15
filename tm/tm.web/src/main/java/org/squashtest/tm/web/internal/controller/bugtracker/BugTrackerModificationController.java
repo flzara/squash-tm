@@ -34,6 +34,8 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,7 +43,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
@@ -72,7 +76,7 @@ public class BugTrackerModificationController {
 
 	@Inject
 	private BugTrackerFinderService bugtrackerFinder;
-
+	
 
 
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
@@ -153,7 +157,7 @@ public class BugTrackerModificationController {
 	}
 	
 	
-	@RequestMapping(value = "/authentication-configuration", method = RequestMethod.POST, consumes="application/json")
+	@RequestMapping(value = "/authentication-protocol/configuration", method = RequestMethod.POST, consumes="application/json")
 	@ResponseBody
 	public void saveAuthConfiguration(@PathVariable(BUGTRACKER_ID) long bugtrackerId,  @Valid @RequestBody ServerAuthConfiguration configuration){
 		bugtrackerModificationService.storeAuthConfiguration(bugtrackerId, configuration);
@@ -164,10 +168,17 @@ public class BugTrackerModificationController {
 	@ResponseBody
 	public void testCredentials(@PathVariable(BUGTRACKER_ID) long bugtrackerId ,@RequestBody ManageableCredentials credentials){
 		/*
-		 * no exception -> no problem
-		 * exception	-> let it fly
+		 * catch BugTrackerNoCredentialsException, let fly the others
 		 */
-		bugtrackerModificationService.testCredentials(bugtrackerId, credentials);
+		try{
+			bugtrackerModificationService.testCredentials(bugtrackerId, credentials);
+		}
+		catch(BugTrackerNoCredentialsException ex){
+			// need to rethrow the same exception, with a message in the expected user language 
+			LOGGER.debug("server-app credentials test failed : ", ex);
+			String message = i18nHelper.internationalize("bugtracker.admin.messages.testcreds.fail", LocaleContextHolder.getLocale());
+			throw new BugTrackerNoCredentialsException(message, ex);
+		}
 	}
 
 	@RequestMapping(value = "/credentials", method = RequestMethod.POST, consumes="application/json")
@@ -176,14 +187,6 @@ public class BugTrackerModificationController {
 		bugtrackerModificationService.storeCredentials(bugtrackerId, credentials);
 	}
 	
-	
-	// method for error testing
-	@RequestMapping(value = "/throw-me-an-error", method = RequestMethod.POST)
-	@ResponseBody
-	public void throwError(@PathVariable(BUGTRACKER_ID) long bugtrackerId){
-		throw new EncryptionKeyChangedException(null);
-	}
-
 
 	// ********************** more private stuffs ******************
 

@@ -139,25 +139,10 @@
 			<%----------------------------------- BEGIN AUTHENTICATION MGNT -----------------------------------------------%>
 			<div id="bugtracker-authentication-masterpane">
 			
-				<%-- all the state variables necessary for the pre-rendering --%>
-				
-				<%--
-				<c:set var="credsEnab" value="${(authConf.authPolicy == 'USER') ? 'disabled-transparent' : ''}"/>
-				<c:set var="credsVisi" 	value="${(not empty authConf.failureMessage) ? 'not-displayed' : ''}" />
-				<c:set var="policyAppEnab" value="${(not empty authConf.failureMessage) ? 'disabled=disabled' : ''}"/>
 
-				<c:set var="failVisi" 	value="${(empty authConf.failureMessage) ? 'not-displayed' : ''}" />
-				<c:set var="warnVisi" 	value="${(empty authConf.warningMessage) ? 'not-displayed' : ''}" />
-				 --%>
-				 
-				<c:set var="credEnabled" value="${(not empty authConf.failureMessage) ? 'disabled=disabled' : ''}"/>
+				<%-- state variables etc --%>
 				<c:set var="policyUsr" 	value="${(authConf.authPolicy == 'USER') ? 'checked=\"checked\"' : ''}"/>
 				<c:set var="policyApp" 	value="${(authConf.authPolicy == 'APP_LEVEL') ? 'checked=\"checked\"' : ''}"/>
-				<c:set var="failVisi" 	value="${(empty authConf.failureMessage) ? 'not-displayed' : ''}" />
-				<c:set var="warnVisi" 	value="${(empty authConf.warningMessage) ? 'not-displayed' : ''}" />
-
-				<f:message var="labelSuccess" key="bugtracker.admin.messages.success"/>
-				<f:message var="labelSaveSuccess" key="bugtracker.admin.messages.save.success"/>
 				<f:message var="testLabel" key="label.test"/>
 				<f:message var="saveLabel" key="label.save"/>
 			
@@ -167,7 +152,7 @@
 					<div class="adm-srv-auth">
 						
 						<%-- protocol selection --%>
-						<select id="bt-auth-proto-select" style="display:block;">
+						<select id="srv-auth-proto-select" style="display:block;">
 							<c:forEach items="${authConf.availableProtos}" var="protocol">
 							<option value="${protocol}" ${(authConf.selectedProto == protocol) ? 'selected' : ''} >
 								<f:message key="authentication.protocol.${protocol.toString().toLowerCase()}"/>
@@ -176,35 +161,24 @@
 						</select>
 						
 						<%-- protocol conf section --%>
-						<div id="bt-auth-conf-form-main" class="srv-auth-credentials-section side-panel std-border std-border-radius" 
+						<div class="srv-auth-form-main side-panel std-border std-border-radius" 
 						 ${featEnab}>
 							
-							<div id="bt-auth-conf-form" class="templated-form">
+							<div id="srv-auth-conf-form" class="templated-form">
 							<%-- templated by handlebars --%>
 							</div>
 		
-							<div id="bt-auth-conf-buttonpane" class="centered" style="position:relative">
+							<div class="centered srv-auth-buttonpane" style="position:relative">
 								<span class="needs-save-msg" style="display:none;"><f:message key="bugtracker.admin.messages.needs-save"/></span>
-								<%-- note : there is no 'test' button, because testing auth-configuration is hard --%>
+								<%-- note : there is no 'test' button, because testing auth-configuration is hard or impossible --%>
 								<input type="button" class="sq-btn auth-save" value="${saveLabel}"/>
 							</div>						
 							
 						</div>
 	
-						<%-- msg pane of the protocol section --%>
-						<div id="bt-auth-conf-messagezone" class="side-panel srv-auth-messagepane">
-
-							<div class="bt-auth-failure" class="${failVisi}">
-								<comp:notification-pane type="warning" txtcontent="${authConf.failureMessage}"/>
-							</div>
-
-							<div class="bt-auth-warning" class="${warnVisi}">
-								<comp:notification-pane type="warning" txtcontent="${authConf.warningMessage}"/>
-							</div>
-
-		                    <div class="bt-auth-save-success" class="not-displayed">
-		                      <comp:notification-pane type="info" txtcontent="${labelSaveSuccess}"/>
-		                    </div>
+						
+						<div class="side-panel srv-auth-messagepane">
+							<%--templated by handlebars --%>
 						</div>
 											
 					</div>		
@@ -219,28 +193,28 @@
 					<%-- policy choice --%>
 					<div>
 						<label style="vertical-align:middle;">
-							<input id="bt-auth-policy-user" type="radio" name="bt-auth-policy" value="USER" ${policyUsr}>
+							<input type="radio" name="srv-auth-policy" value="USER" ${policyUsr}>
 							<f:message key="bugtracker.admin.policy.users"/>
 						</label>
 					</div>
 
 					<div>
 						<label style="vertical-align:middle;">
-							<input id="bt-auth-policy-application" type="radio" name="bt-auth-policy" value="APP_LEVEL" ${policyApp} ${policyAppEnab}>
+							<input type="radio" name="srv-auth-policy" value="APP_LEVEL" ${policyApp}>
 							<f:message key="bugtracker.admin.policy.app"/>
 						</label>
 					</div>										
 					
 					
 					<%-- app-level credentials section --%>
-					<div id="bt-auth-creds-form-main" class="srv-auth-credentials-section side-panel std-border std-border-radius
+					<div class="srv-auth-form-main side-panel std-border std-border-radius
 					${credsEnab} ${credsVisi}" >
 
-						<div id="bt-auth-creds-form" class="templated-form">
+						<div id="srv-auth-creds-form" class="templated-form">
 							<%-- templated by handlebars --%>
 						</div>
 
-						<div id="bt-auth-creds-buttonpane" class="centered" style="position:relative">
+						<div class="centered srv-auth-buttonpane" style="position:relative">
 							<span class="needs-save-msg" style="display:none;"><f:message key="bugtracker.admin.messages.needs-save"/></span>
 							<input type="button" class="sq-btn auth-test" value="${testLabel}"/>
 							<input type="button" class="sq-btn auth-save" value="${saveLabel}"/>
@@ -248,27 +222,12 @@
 
 					</div>	
 					
-											
-	
-					<%-- msg pane of the policy section --%>
-					<div id="bt-auth-creds-messagezone" class="side-panel srv-auth-messagepane">
 
-						<div class="bt-auth-failure" class="${failVisi}">
-							<comp:notification-pane type="warning" txtcontent="${authConf.failureMessage}"/>
-						</div>
-
-						<div class="bt-auth-warning" class="${warnVisi}">
-							<comp:notification-pane type="warning" txtcontent="${authConf.warningMessage}"/>
-						</div>
-
-						<div class="bt-auth-test-success" class="not-displayed">
-							<comp:notification-pane type="info" txtcontent="${labelSuccess}"/>
-						</div>
-
-	                    <div class="bt-auth-save-success" class="not-displayed">
-	                      <comp:notification-pane type="info" txtcontent="${labelSaveSuccess}"/>
-	                    </div>
+						
+					<div class="side-panel srv-auth-messagepane">
+						<%--templated by handlebars --%>
 					</div>
+							
 						
 				</div>
 				</jsp:attribute>				
@@ -361,6 +320,16 @@
 						<input value="{{password}}" data-bind="password">
 					</div>
 				</div>			
+				</script>
+
+				<script id="messagepane-template" type="text/x-handlebars-template">
+				<div class="display-table-row">
+				    <div class="display-table-cell warning-cell">
+				      <div class="generic-signal"></div>
+				    </div>
+				                   
+				    <div class="txt-message display-table-cell" style="padding-top:20px"></div>   
+				</div>	
 				</script>
 
 			</div>

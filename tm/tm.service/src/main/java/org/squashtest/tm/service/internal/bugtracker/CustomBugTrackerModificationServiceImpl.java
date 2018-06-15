@@ -24,6 +24,7 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
@@ -131,6 +132,11 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 
 		BugTracker bt = bugTrackerDao.findOne(bugtrackerId);
 		Credentials usableCredentials = credentials.build(credentialsManager, bt, null);
+		
+		if (usableCredentials == null){
+			throw new BugTrackerNoCredentialsException("credentials could not be built, either because the credentials themselves "
+					+ "are not suitable, or because the protocol configuration is incomplete/invalid", null);
+		}
 
 		btService.testCredentials(bt, usableCredentials);
 	}

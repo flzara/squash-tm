@@ -131,6 +131,7 @@ public interface CustomBugTrackerModificationService {
 	 * @param bugtrackerId
 	 * @param credentials
 	 * @throws BugTrackerRemoteException in case of a problem.
+	 * @throws BugTrackerNoCredentialsException if the credentials where rejected, or could not be built due to incomplete data
 	 * @return
 	 */
 	@PreAuthorize(HAS_ROLE_ADMIN)
