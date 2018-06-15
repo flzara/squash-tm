@@ -59,7 +59,7 @@ public class JsonProject {
 		JsonProject res = new JsonProject();
 		res.id = project.getId();
 		res.uri = "/projects/" + res.id;
-		res.name = HtmlUtils.htmlEscape(project.getName());
+		res.name = HtmlUtils.htmlUnescape(project.getName());
 		return res;
 	}
 
