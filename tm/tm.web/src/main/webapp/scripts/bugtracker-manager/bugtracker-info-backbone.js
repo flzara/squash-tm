@@ -82,11 +82,15 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 	var radio = $.extend({}, Backbone.Events);
 
 	
-	// ************************** The models ******************************
+	
+	// ************************** Superclasses definition ******************************
 
-	// base class for the others
+	// --- model base classe -----
 	var BaseModel = Backbone.Model.extend({
 		
+		// reads the value of a simple html input
+		// and checks the value of data-bind html attribute
+		// then store the attr: value in this model
 		readInput : function(input){
 			var $input = $(input);
 			var attr = $input.data('bind');
@@ -96,72 +100,8 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 		
 	});
 	
-	// -------------- conf model --------------
 	
-	var OAuthConfModel = BaseModel.extend({
-		defaults : {
-			consumerKey: "",
-			requestTokenHttpMethod: 'GET',
-			accessTokenHttpMethod: 'GET',
-			clientSecret: "",
-			signatureMethod: 'HMAC_SHA1', 
-			requestTokenUrl: "", 
-			accessTokenUrl: "",
-			userAuthorizationUrl: ""
-		}
-	});
-	
-	// -------------- credentials models --------------
-	
-	var BasicAuthCredsModel = BaseModel.extend({
-		defaults: {
-			username: "",
-			password: ""
-		}
-	});
-	
-	var OAuthCredsModel = BaseModel.extend({
-		defaults: {
-			token: "",
-			tokenSecret: ""
-		}
-	});
-
-	// -------------- the main model ------------------
-	
-	var AuthenticationModel = Backbone.Model.extend({
-		
-		defaults : {
-			btUrl : "",
-			protocol: null,		// selected protocol
-			// conf mapped by protocol
-			authConfMap : {
-				'BASIC_AUTH': new Backbone.Model(),
-				'OAUTH_1A' : new OAuthConfModel()
-			},	
-			policy : null,		// selected policy
-			// app-level credentials mapped by protocol,
-			credentialsMap : {
-				'BASIC_AUTH' : new Backbone.Model(),
-				'OAUTH_1A': new Backbone.Model()
-			}
-		},
-		
-		currentConf : function(){
-			var proto = this.attributes.protocol;
-			return this.attributes.authConfMap[proto];
-		},
-		
-		currentCreds : function(){
-			var proto = this.attributes.protocol;
-			return this.attributes.credentialsMap[proto];
-		}
-	});
-
-
-
-	// *************** Authentication conf views *****************************
-	
+	// ----- base protocol-specific templated view -----
 	var BaseTemplatedView = Backbone.View.extend({
 		
 		events: {
@@ -196,102 +136,16 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 
 		//*** may be overriden by subclasses ***
 
+		// allow for further customization of the model 
+		// when the view initialize
 		initModel: function(){
 			
 		}
 		
 	});
 	
-	/*
-	 * The model will have the same attributes than the java bean ServerOAuth1aConsumerConf  
-	 */
-	var OAuthConfView = BaseTemplatedView.extend({
-		
-		el: "#bt-auth-conf-form",
-		
-		template: loadTemplate("#oauth-conf-template"),
-
-		// by 'init', we mean initialization of empty fields
-		initModel : function(){
-			// MAAAAGIIIC REAAACH OF REMOTE UNRELATED PROPERTYYYYY ELSEWHERE IN THE DOOOOM !			
-			var baseUrl = $("#bugtracker-url").text();
-			var model = this.model;
-			var self = this;
-			['requestTokenUrl', 'userAuthorizationUrl', 'accessTokenUrl'].forEach(function(url){
-				if ( self.isBlank(url) ){
-					model.set(url, baseUrl);
-				}
-			});
-			
-		},
-		
-		isBlank : function(ppt){
-			return StringUtil.isBlank(this.model.get(ppt));
-		}
-
-		
-	});
 	
-	// ************ Application-Level credentials *****************************
-
-
-	var BasicAuthCredentialsView = BaseTemplatedView.extend({
-
-		el: '#bt-auth-creds-form',
-		
-		template: loadTemplate("#basic-creds-template")
-
-	});
-
-	var OAuthCredentialsView = BaseTemplatedView.extend({
-		
-		el: '#bt-auth-creds-form',
-		
-		template: loadTemplate("#oauth-creds-template")
-		
-	});
-	
-	
-	// ************************ Main views ****************************
-
-	/*
-	 * The main view merely handle interactions between ProtocolView and PolicyView
-	 */
-	var AuthenticationMasterView = Backbone.View.extend({
-
-		el: "#bugtracker-authentication-masterpane",
-		
-		initialize : function(options){
-			
-			var model = this.initModel(options.conf);
-			
-			var conf = {
-				model : model
-			}
-			
-			new ProtocolView(conf);
-			new PolicyView(conf);
-			
-		},
-		
-		initModel : function(mdl){
-			var model = new AuthenticationModel({
-				btUrl : mdl.btUrl,
-				protocol: mdl.selectedProto,
-				policy: mdl.authPolicy,
-			});
-			
-			// set the attributes of the current conf and credentials
-			model.currentConf().set(mdl.authConf);
-			model.currentCreds().set(mdl.credentials);
-			
-			return model;
-		}
-		
-	});
-
-	// ************************ Panel views ************************
-	
+	// -------- base panel view ------------
 	/*
 	 * Base behavior : handle panels that have a message pane, 
 	 * a templated part, a save reminer and a button pane.
@@ -318,7 +172,7 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 			
 			this.model = options.model;
 			
-			this.$main = this.$("#"+prefix+"-main");
+			this.$main = this.$("#"+prefix+"-form-main");
 			this.$saveReminder = this.$(".needs-save-msg");
 			this.$btnpane = this.$("#"+prefix+"-buttonpane");
 			
@@ -388,6 +242,13 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 			return this.$currTpl;
 		},
 		
+		preparePayload: function(){
+			var authConfAttributes = this.getConfiguredModel().attributes;
+			// add the type to hint Jackson at what to do
+			authConfAttributes.type = this.model.get('protocol');
+			return JSON.stringify(authConfAttributes);
+		},
+		
 		ajax: function(conf){
 			
 			this.setAjaxMode();
@@ -399,7 +260,6 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 				//rearm the unsaved data reminder and trigger success
 				self.hideSaveReminder();
 				self.$('.error-message').text('');
-				radio.trigger('bt-auth-conf-save-success');
 			})
 			.fail(function(xhr){
 				// let go validation errors : they are caught and handled by
@@ -442,7 +302,147 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 		
 	});
 	
+
 	
+	// ************************ Main views ****************************
+
+
+	// -------------- the main model ------------------
+	
+	var AuthenticationModel = Backbone.Model.extend({
+		
+		defaults : {
+			btUrl : "",
+			protocol: null,		// selected protocol
+		
+			// conf mapped by protocol
+			// cannot be set in the defaults yet because the 
+			// backbone models aren't defined yet
+			authConfMap : {
+				'BASIC_AUTH': null,
+				'OAUTH_1A' : null
+			},	
+			policy : null,		// selected policy
+			
+			// app-level credentials mapped by protocol
+			// cannot be set in the defaults yet because the 
+			// backbone models aren't defined yet
+			credentialsMap : {
+				'BASIC_AUTH' : null,
+				'OAUTH_1A': null
+			}
+		},
+		
+		initialize: function(){
+			this.set('authConfMap', {
+				'BASIC_AUTH': new Backbone.Model(),
+				'OAUTH_1A' : new OAuthConfModel()				
+			});
+			this.set('credentialsMap', {
+				'BASIC_AUTH' : new BasicAuthCredsModel(),
+				'OAUTH_1A': new OAuthCredsModel()				
+			});
+			
+		},
+		
+		currentConf : function(){
+			var proto = this.attributes.protocol;
+			return this.attributes.authConfMap[proto];
+		},
+		
+		currentCreds : function(){
+			var proto = this.attributes.protocol;
+			return this.attributes.credentialsMap[proto];
+		}
+	});
+
+
+	
+	/*
+	 * The main view merely handle interactions between ProtocolView and PolicyView
+	 */
+	var AuthenticationMasterView = Backbone.View.extend({
+
+		el: "#bugtracker-authentication-masterpane",
+		
+		initialize : function(options){
+			
+			var model = this.initModel(options.conf);
+			
+			var conf = {
+				model : model
+			}
+			
+			new ProtocolView(conf);
+			new PolicyView(conf);
+			
+		},
+		
+		initModel : function(mdl){
+			var model = new AuthenticationModel({
+				btUrl : mdl.btUrl,
+				protocol: mdl.selectedProto,
+				policy: mdl.authPolicy,
+			});
+			
+			// set the attributes of the current conf and credentials
+			model.currentConf().set(mdl.authConf);
+			model.currentCreds().set(mdl.credentials);
+			
+			return model;
+		}
+		
+	});
+
+	// ************************ Panel views ************************
+
+	
+	// ************ Protocol configuration section ***********
+	
+	// ---- protocol conf models -----------
+	
+	var OAuthConfModel = BaseModel.extend({
+		defaults : {
+			consumerKey: "",
+			requestTokenHttpMethod: 'GET',
+			accessTokenHttpMethod: 'GET',
+			clientSecret: "",
+			signatureMethod: 'HMAC_SHA1', 
+			requestTokenUrl: "", 
+			accessTokenUrl: "",
+			userAuthorizationUrl: ""
+		}
+	});
+	
+	// ----- protocol conf views -----------------
+	var OAuthConfView = BaseTemplatedView.extend({
+		
+		el: "#bt-auth-conf-form",
+		
+		template: loadTemplate("#oauth-conf-template"),
+
+		// by 'init', we mean initialization of empty fields
+		initModel : function(){
+			// MAAAAGIIIC REAAACH OF REMOTE UNRELATED PROPERTYYYYY ELSEWHERE IN THE DOOOOM !			
+			var baseUrl = $("#bugtracker-url").text();
+			var model = this.model;
+			var self = this;
+			['requestTokenUrl', 'userAuthorizationUrl', 'accessTokenUrl'].forEach(function(url){
+				if ( self.isBlank(url) ){
+					model.set(url, baseUrl);
+				}
+			});
+			
+		},
+		
+		isBlank : function(ppt){
+			return StringUtil.isBlank(this.model.get(ppt));
+		}
+
+		
+	});
+	
+	// ------- main protocol panel view ---------
 	var ProtocolView = BasePanelView.extend({
 		
 		el: "#bugtracker-auth-protocol",
@@ -483,13 +483,7 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 		
 		save : function(){
 			var url = this.model.get('btUrl') + '/authentication-configuration';
-			
-			var authConfAttributes = this.getConfiguredModel().attributes;
-			// add the type to hint Jackson at what to do
-			authConfAttributes.type = this.model.get('protocol');
-			var payload = JSON.stringify(authConfAttributes);
-			
-			var self = this;
+			var payload = this.preparePayload();	
 			
 			this.ajax({
 				type: 'POST',
@@ -505,6 +499,45 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 	
 	});
 	
+	
+	// ************ Policy section *****************************
+
+	// -------- credentials configuration view -----------
+	var BasicAuthCredentialsView = BaseTemplatedView.extend({
+
+		el: '#bt-auth-creds-form',
+		
+		template: loadTemplate("#basic-creds-template")
+
+	});
+
+	var OAuthCredentialsView = BaseTemplatedView.extend({
+		
+		el: '#bt-auth-creds-form',
+		
+		template: loadTemplate("#oauth-creds-template")
+		
+	});
+	
+	
+	// -------------- credentials models --------------
+	
+	var BasicAuthCredsModel = BaseModel.extend({
+		defaults: {
+			username: "",
+			password: ""
+		}
+	});
+	
+	var OAuthCredsModel = BaseModel.extend({
+		defaults: {
+			token: "",
+			tokenSecret: ""
+		}
+	});
+	
+	
+	// ------- main policy panel view ----------------
 	var PolicyView = BasePanelView.extend({
 
 		el: "#bugtracker-auth-policy",
@@ -527,14 +560,73 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 		events: {
 			'click .auth-test' : 'test',
 			'click .auth-save' : 'save',
-			'change input[name="bt-auth-policty"]' : 'updatePolicy'
+			'change input[name="bt-auth-policy"]' : 'updatePolicy'
+		},
+		
+		specificModelEvents: function(){
+			this.listenTo(this.model, 'change:policy', this.showSaveReminder);
+			this.listenTo(this.model, 'change:policy', this.render);
+		},
+		
+		render: function(){
+			var policy = this.model.get('policy');
+			if (policy === 'USER'){
+				this.$main.hide();
+			}
+			else{
+				BasePanelView.prototype.render.call(this);
+			}
 		},
 		
 		// ******* ajax **************
 		
-		updatePolicy: function(){
-			alert("TODOOO");
+		updatePolicy: function(evt){
+			var newPolicy=$(evt.currentTarget).val();
+			
+			var self = this;
+			var url = this.model.get('btUrl') + '/authentication-policy';
+			
+			$.post(url, {value: newPolicy}).done(function(){
+				self.model.set('policy', newPolicy);
+			});
+			
+		}, 
+		
+		_postCreds: function(url, payload){
+			return this.ajax({
+				type: 'POST',
+				url: url,
+				data: payload,
+				contentType: 'application/json'
+			});		
+		},
+		
+		test: function(){
+			var url = this.model.get('btUrl') + '/credentials/validator';
+			var payload = this.preparePayload();
+			
+			this._postCreds(url, payload)
+				.done(function(){
+					radio.trigger('bt-auth-creds-test-success');
+				});
+			
+		},
+		
+		save: function(){
+			var testUrl = this.model.get('btUrl') + '/credentials/validator';
+			var saveUrl = this.model.get('btUrl') + '/credentials';
+			var payload = this.preparePayload();
+			var self = this;
+			
+			this._postCreds(testUrl, payload)
+				.done(function(){
+					return self._postCreds(saveUrl, payload);
+				})
+				.done(function(){
+					radio.trigger('bt-auth-creds-save-success');					
+				});
 		}
+		
 		
 	});
 	
@@ -550,14 +642,14 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 
 
 		initialize : function(options){
-			this.$failPane = $("#bt-auth-failure");
-			this.$warnPane = $("#bt-auth-warning");
-			this.$succPane = $("#bt-auth-info");
-			this.$saveSuccPane = $("#bt-auth-save-info");
+			this.$failPane = this.$(".bt-auth-failure");
+			this.$warnPane = this.$(".bt-auth-warning");
+			this.$succPane = this.$(".bt-auth-test-success");
+			this.$saveSuccPane = this.$(".bt-auth-save-success");
 
 			var prefix = options.evtPrefix; 
 			
-			this.listenTo(radio, prefix+'-success', this.showSuccess);
+			this.listenTo(radio, prefix+'-test-success', this.showTestSuccess);
 			this.listenTo(radio, prefix+'-save-success', this.showSaveSuccess);
 			this.listenTo(radio, prefix+'-warning', this.showWarning);
 			this.listenTo(radio, prefix+'-failure', this.showFailure);
@@ -603,6 +695,7 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 	});
 	
 
+	// ********************* Returned object *********************
 
 	return AuthenticationMasterView;
 

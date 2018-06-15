@@ -52,7 +52,9 @@ public interface CustomBugTrackerModificationService {
 
 
 	/**
-	 * Changes the authentication policy for this server.
+	 * Changes the authentication policy for this server. Be warned that doing this 
+	 * will automatically remove the app-level credentials (since they target the 
+	 * former protocol).
 	 * 
 	 * @param bugtrackerId
 	 * @param policy

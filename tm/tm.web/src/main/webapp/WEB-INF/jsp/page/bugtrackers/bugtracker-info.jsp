@@ -150,7 +150,7 @@
 				<c:set var="warnVisi" 	value="${(empty authConf.warningMessage) ? 'not-displayed' : ''}" />
 				 --%>
 				 
-				<c:set var="featEnab" 	value="${(not empty authConf.failureMessage) ? 'disabled=disabled' : ''}"/>
+				<c:set var="credEnabled" value="${(not empty authConf.failureMessage) ? 'disabled=disabled' : ''}"/>
 				<c:set var="policyUsr" 	value="${(authConf.authPolicy == 'USER') ? 'checked=\"checked\"' : ''}"/>
 				<c:set var="policyApp" 	value="${(authConf.authPolicy == 'APP_LEVEL') ? 'checked=\"checked\"' : ''}"/>
 				<c:set var="failVisi" 	value="${(empty authConf.failureMessage) ? 'not-displayed' : ''}" />
@@ -176,7 +176,7 @@
 						</select>
 						
 						<%-- protocol conf section --%>
-						<div id="bt-auth-conf-main" class="srv-auth-credentials-section side-panel std-border std-border-radius" 
+						<div id="bt-auth-conf-form-main" class="srv-auth-credentials-section side-panel std-border std-border-radius" 
 						 ${featEnab}>
 							
 							<div id="bt-auth-conf-form" class="templated-form">
@@ -194,19 +194,15 @@
 						<%-- msg pane of the protocol section --%>
 						<div id="bt-auth-conf-messagezone" class="side-panel srv-auth-messagepane">
 
-							<div id="bt-auth-failure" class="std-border std-border-radius ${failVisi}">
+							<div class="bt-auth-failure" class="${failVisi}">
 								<comp:notification-pane type="warning" txtcontent="${authConf.failureMessage}"/>
 							</div>
 
-							<div id="bt-auth-warning" class="${warnVisi}">
+							<div class="bt-auth-warning" class="${warnVisi}">
 								<comp:notification-pane type="warning" txtcontent="${authConf.warningMessage}"/>
 							</div>
 
-							<div id="bt-auth-info" class="not-displayed">
-								<comp:notification-pane type="info" txtcontent="${labelSuccess}"/>
-							</div>
-
-		                    <div id="bt-auth-save-info" class="not-displayed">
+		                    <div class="bt-auth-save-success" class="not-displayed">
 		                      <comp:notification-pane type="info" txtcontent="${labelSaveSuccess}"/>
 		                    </div>
 						</div>
@@ -237,7 +233,7 @@
 					
 					
 					<%-- app-level credentials section --%>
-					<div id="bt-auth-creds-main" class="srv-auth-credentials-section side-panel std-border std-border-radius
+					<div id="bt-auth-creds-form-main" class="srv-auth-credentials-section side-panel std-border std-border-radius
 					${credsEnab} ${credsVisi}" >
 
 						<div id="bt-auth-creds-form" class="templated-form">
@@ -257,19 +253,19 @@
 					<%-- msg pane of the policy section --%>
 					<div id="bt-auth-creds-messagezone" class="side-panel srv-auth-messagepane">
 
-						<div id="bt-auth-failure" class="std-border std-border-radius ${failVisi}">
+						<div class="bt-auth-failure" class="${failVisi}">
 							<comp:notification-pane type="warning" txtcontent="${authConf.failureMessage}"/>
 						</div>
 
-						<div id="bt-auth-warning" class="${warnVisi}">
+						<div class="bt-auth-warning" class="${warnVisi}">
 							<comp:notification-pane type="warning" txtcontent="${authConf.warningMessage}"/>
 						</div>
 
-						<div id="bt-auth-info" class="not-displayed">
+						<div class="bt-auth-test-success" class="not-displayed">
 							<comp:notification-pane type="info" txtcontent="${labelSuccess}"/>
 						</div>
 
-	                    <div id="bt-auth-save-info" class="not-displayed">
+	                    <div class="bt-auth-save-success" class="not-displayed">
 	                      <comp:notification-pane type="info" txtcontent="${labelSaveSuccess}"/>
 	                    </div>
 					</div>

@@ -111,6 +111,8 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 	public void changeAuthenticationPolicy(long bugtrackerId, AuthenticationPolicy policy) {
 		BugTracker tracker = bugTrackerDao.findOne(bugtrackerId);
 		tracker.setAuthenticationPolicy(policy);
+		
+		credentialsManager.deleteAppLevelCredentials(bugtrackerId);
 	}
 
 
