@@ -267,30 +267,28 @@
 				<div class="display-table">
 				<div class="display-table-row">
 					<div class="display-table-cell" style="vertical-align: bottom;">
-					<c:choose>
-				     <c:when  test= "${ milestoneList.size() != 0}">
 					<label for="toggle-activation-checkbox" ><f:message key="user-preferences.tree-order.mode.label"/></label>
 					</div>
 					<div class="display-table-cell">
-					<div class="display-table-cell">
                  		<input id="toggle-milestone-checkbox" type="checkbox"
                  	          data-def="width=35, on_label='${milestoneMilestoneMode}', off_label='${milestoneReferentialMode}'" style="display: none;"/>
-                 		</div>
-                 	</div>
-        			</div>
-        			<div class="display-table-row">
-        				<div class="display-table-cell">
-        				    <label for="choose-your-mode" ><f:message key="user-preferences.milestone"/></label>
-        				</div>
-        				<div id="labelchoose" class="customHeigth">
-                            <c:if test="${not empty activeMilestone}">
-                            <span id="toggle-milestone-label" >${activeMilestone.label}</span>
-                            </c:if>
-                            <c:if test="${empty activeMilestone}">
-                             <span id="toggle-milestone-label" class="disabled-transparent"><f:message key="label.Choose"/></span>
-                            </c:if>
+          </div>
+        </div>
 
-        			     </div>
+        <div class="display-table-row">
+          <div class="display-table-cell">
+            <label for="choose-your-mode" ><f:message key="user-preferences.milestone"/></label>
+          </div>
+          <c:choose>
+				     <c:when  test= "${ milestoneList.size() != 0}">
+          <div id="labelchoose" class="customHeigth">
+            <c:if test="${not empty activeMilestone}">
+              <span id="toggle-milestone-label" >${activeMilestone.label}</span>
+            </c:if>
+            <c:if test="${empty activeMilestone}">
+              <span id="toggle-milestone-label" class="disabled-transparent"><f:message key="label.Choose"/></span>
+            </c:if>
+          </div>
 
                 <div class="bind-milestone-dialog popup-dialog not-displayed" title="${bindMilestoneDialogTitle}">
                   <div>
@@ -324,9 +322,12 @@
                   </div>
 
                 </div>
+        </div>
         		</c:when>
 			   <c:otherwise>
-                   <f:message key="message.library-display-mode.no-milestones"/>
+         <div >
+           <f:message key="message.library-display-mode.no-milestones"/>
+         </div>
                </c:otherwise>
               </c:choose>
 			</jsp:attribute>
@@ -356,9 +357,7 @@
 
 
           	  $(function() {
-              		<c:if test="${ not milestoneList.isEmpty()}">
               		milestonesPrefs.init();
-                    </c:if>
 
                     Frag.init();
 
