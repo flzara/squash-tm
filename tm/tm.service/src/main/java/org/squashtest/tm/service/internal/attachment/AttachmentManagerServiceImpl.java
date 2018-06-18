@@ -216,6 +216,8 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 			}
 		} while (readByte != EOF);
 
+		is.close();
+
 	}
 
 	@Override
