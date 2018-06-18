@@ -32,6 +32,13 @@ import org.squashtest.tm.service.internal.batchimport.excel.CannotCoerceExceptio
 import org.squashtest.tm.service.internal.batchimport.excel.InvalidTargetException;
 import org.squashtest.tm.service.internal.batchimport.excel.NullMandatoryValueException;
 import org.squashtest.tm.service.internal.batchimport.excel.PropertySetter;
+import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn;
+import org.squashtest.tm.service.internal.importer.ExcelRowReaderUtils;
+
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Generic superclass for instruction builders.
@@ -124,7 +131,16 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 		Object value = null;
 
 		try {
-			value = getValue(row, colDef);
+			Object getValue = getValue(row, colDef);
+			if (getValue != null) {
+				// Issue 7485 - there are problems with accents in reports from import, we have to escape html inside tags into database
+				List<String> targetedColumnsToEscape = new ArrayList<>(Arrays.asList(TestCaseSheetColumn.TC_DESCRIPTION.getHeader(),
+					TestCaseSheetColumn.TC_PRE_REQUISITE.getHeader(), StepSheetColumn.TC_STEP_ACTION.getHeader(),
+					StepSheetColumn.TC_STEP_EXPECTED_RESULT.getHeader(), RequirementSheetColumn.REQ_VERSION_DESCRIPTION.getHeader(),
+					ParameterSheetColumn.TC_PARAM_DESCRIPTION.getHeader(), DatasetSheetColumn.TC_DATASET_PARAM_VALUE.getHeader()));
+				boolean mustEscapeColValue = mustEscapeColValue(colDef, targetedColumnsToEscape);
+				value = mustEscapeColValue ? ExcelRowReaderUtils.escapeHTMLInsideTags("" + getValue) : getValue;
+			}
 		} catch (CannotCoerceException cce) {
 			log(colDef, cce, instruction);
 
@@ -144,8 +160,16 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 	}
 
 	/**
+	 * @param colDef the column definition
+	 * @param targetedColumns all columns which data need to be escaped
+	 * @return true if we have to escape the value of this column
+	 */
+	private boolean mustEscapeColValue(ColumnDef colDef, List<String> targetedColumns) {
+		return targetedColumns.stream().anyMatch(it -> it.equals(colDef.getHeader()));
+	}
+
+	/**
 	 * @param colDef
-	 * @param e
 	 * @param instruction
 	 */
 	private void log(ColumnDef colDef, INST instruction) {
