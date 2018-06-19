@@ -94,6 +94,12 @@
 						th:text="${ testCase.id }">1</div>
 				</div>
 
+        <div class="display-table-row">
+          <label class="display-table-cell" for="test-case-format" th:text="#{test-case.format.label}">Format</label>
+          <div class="display-table-cell" id="test-case-format"
+               th:text="#{${ testCase.kind.i18nKey }}">Classique</div>
+        </div>
+
 				<div class="display-table-row">
 					<label for="test-case-description" class="display-table-cell"
 						th:text="#{label.Description}">Description</label>
@@ -194,7 +200,7 @@
           <label for="test-case-script" class="display-table-cell"
                  th:text="#{label.Script}">Script</label>
           <div class="display-table-cell" id="test-case-script">
-            <p th:utext="${#strings.replace(testCase.scriptedTestCaseExtender.script,'&#10;','&lt;br /&gt;')}" ></p>
+            <p th:utext="${#strings.multipleReplace(testCase.scriptedTestCaseExtender.script, {'<', '>', '&#10;'}, {'&#10877;', '&#10878;', '&lt;br /&gt;'})}" ></p>
           </div>
         </div>
       </div>
