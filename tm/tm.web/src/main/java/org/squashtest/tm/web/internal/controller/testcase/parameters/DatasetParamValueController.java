@@ -24,6 +24,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.service.testcase.DatasetModificationService;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import javax.inject.Inject;
 
@@ -56,7 +57,7 @@ public class DatasetParamValueController {
 	@ResponseBody
 	public String changeParamValue(@PathVariable long datasetParamValueId, @RequestParam(VALUE) String value) {
 		this.datasetModificationService.changeParamValue(datasetParamValueId, value);
-		return HtmlUtils.htmlEscape(value);
+		return HTMLCleanupUtils.cleanAndUnescapeHTML(value);
 	}
 
 }

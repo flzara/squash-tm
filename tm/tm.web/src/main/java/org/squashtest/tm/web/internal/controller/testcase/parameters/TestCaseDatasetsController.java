@@ -45,6 +45,7 @@ import org.squashtest.tm.web.internal.model.datatable.*;
 import org.squashtest.tm.web.internal.model.json.JsonDataset;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -243,7 +244,7 @@ public class TestCaseDatasetsController {
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, HtmlUtils.htmlEscape(item.getName()));
 			for (DatasetParamValue parameterValue : item.getParameterValues()) {
 				res.put("parameter-" + parameterValue.getParameter().getId(), "id=" + parameterValue.getId()
-					+ ", value=" + HtmlUtils.htmlEscape(parameterValue.getParamValue()));
+					+ ", value=" + HTMLCleanupUtils.cleanAndUnescapeHTML(parameterValue.getParamValue()));
 			}
 			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, "");
 			return res;
