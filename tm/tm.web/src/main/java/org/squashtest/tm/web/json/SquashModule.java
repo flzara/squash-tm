@@ -20,24 +20,51 @@
  */
 package org.squashtest.tm.web.json;
 
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.springframework.stereotype.Component;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.domain.chart.*;
+import org.squashtest.tm.domain.chart.AxisColumn;
+import org.squashtest.tm.domain.chart.ChartDefinition;
+import org.squashtest.tm.domain.chart.ChartQuery;
+import org.squashtest.tm.domain.chart.ColumnPrototype;
+import org.squashtest.tm.domain.chart.Filter;
+import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
-import org.squashtest.tm.service.internal.dto.CustomFieldModel;
 import org.squashtest.tm.service.internal.dto.CustomFieldModelFactory;
 import org.squashtest.tm.service.internal.dto.CustomFieldValueModel;
-import org.squashtest.tm.web.internal.model.json.*;
+import org.squashtest.tm.service.servers.ManageableCredentials;
+import org.squashtest.tm.service.servers.ServerAuthConfiguration;
+import org.squashtest.tm.web.internal.model.json.AxisColumnMixin;
+import org.squashtest.tm.web.internal.model.json.BugTrackerMixin;
+import org.squashtest.tm.web.internal.model.json.ChartDefinitionMixin;
+import org.squashtest.tm.web.internal.model.json.ChartQueryMixin;
+import org.squashtest.tm.web.internal.model.json.ColumnPrototypeMixin;
+import org.squashtest.tm.web.internal.model.json.CustomFieldValueModelMixin;
+import org.squashtest.tm.web.internal.model.json.CustomReportFolderMixin;
+import org.squashtest.tm.web.internal.model.json.CustomReportLibraryMixin;
+import org.squashtest.tm.web.internal.model.json.DatePickerFieldModelMixin;
+import org.squashtest.tm.web.internal.model.json.FilterMixin;
+import org.squashtest.tm.web.internal.model.json.GenericProjectMixin;
+import org.squashtest.tm.web.internal.model.json.InfoListItemMixin;
+import org.squashtest.tm.web.internal.model.json.InfoListMixin;
+import org.squashtest.tm.web.internal.model.json.ManageableCredentialsMixin;
+import org.squashtest.tm.web.internal.model.json.MeasureColumnMixin;
+import org.squashtest.tm.web.internal.model.json.MultiSelectFieldModelMixin;
+import org.squashtest.tm.web.internal.model.json.ScriptedTestCaseExtenderMixin;
+import org.squashtest.tm.web.internal.model.json.ServerAuthConfigurationMixin;
+import org.squashtest.tm.web.internal.model.json.SingleSelectFieldModelMixin;
+import org.squashtest.tm.web.internal.model.json.SingleValuedCustomFieldModelMixin;
+import org.squashtest.tm.web.internal.model.json.UserGroupMixin;
+import org.squashtest.tm.web.internal.model.json.UserMixin;
+
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
 /**
  * Jackson Module which configures the default object mapper. Mixins definitions go here.
@@ -68,7 +95,8 @@ public class SquashModule extends SimpleModule {
 		context.setMixInAnnotations(UsersGroup.class, UserGroupMixin.class);
 		context.setMixInAnnotations(User.class, UserMixin.class);
 		context.setMixInAnnotations(BugTracker.class, BugTrackerMixin.class);
-		context.setMixInAnnotations(Credentials.class, CredentialsMixin.class);
+		context.setMixInAnnotations(ManageableCredentials.class, ManageableCredentialsMixin.class);
+		context.setMixInAnnotations(ServerAuthConfiguration.class, ServerAuthConfigurationMixin.class);
 		context.setMixInAnnotations(CustomFieldValueModel.class, CustomFieldValueModelMixin.class);
 		context.setMixInAnnotations(ScriptedTestCaseExtender.class, ScriptedTestCaseExtenderMixin.class);
 		context.setMixInAnnotations(CustomFieldModelFactory.SingleSelectFieldModel.class, SingleSelectFieldModelMixin.class);

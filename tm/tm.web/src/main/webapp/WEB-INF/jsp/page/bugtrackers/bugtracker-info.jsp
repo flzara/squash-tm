@@ -127,106 +127,215 @@
 							</div>
 						</div>
 
-
-						<%-- ==================== authentication panel ===================== --%>
-
-						<%-- all the variable states necessary for the pre-rendering --%>
-						<c:set var="credSectionEnabling" value="${(authConf.authPolicy == 'USER') ? 'disabled-transparent' : ''}"/>
-						<c:set var="credsSectionVisibility" 	value="${(not empty authConf.failureMessage) ? 'not-displayed' : ''}" />
-						<c:set var="policyAppAvailable" value="${(not empty authConf.failureMessage) ? 'disabled=disabled' : ''}"/>
-						<c:set var="policyUsr" 			value="${(authConf.authPolicy == 'USER') ? 'checked=\"checked\"' : ''}"/>
-						<c:set var="policyApp" 			value="${(authConf.authPolicy == 'APP_LEVEL') ? 'checked=\"checked\"' : ''}"/>
-
-						<c:set var="failureVisibility" 	value="${(empty authConf.failureMessage) ? 'not-displayed' : ''}" />
-						<c:set var="warningVisibility" 	value="${(empty authConf.warningMessage) ? 'not-displayed' : ''}" />
-
-						<f:message var="labelSuccess" key="bugtracker.admin.messages.success"/>
-						<f:message var="labelSaveSuccess" key="bugtracker.admin.messages.save.success"/>
-						<f:message var="testLabel" key="label.test"/>
-						<f:message var="saveLabel" key="label.save"/>
-
-						<div id="bugtracker-auth" class="adm-srv-auth display-table-row ">
-
-							<label class="display-table-cell"><f:message key="bugtracker.admin.policy.title"/></label>
-
-							<div class="display-table-cell" style="padding-left: 5px;">
-
-								<div>
-									<input id="bt-auth-policy-user" 	type="radio" name="bt-auth-policy" value="user" ${policyUsr}>
-									<label for="bt-auth-policy-user" class="vertical-align:middle;"><f:message key="bugtracker.admin.policy.users"/></label>
-								</div>
-
-								<div>
-									<input id="bt-auth-policy-application" type="radio" name="bt-auth-policy" value="application" ${policyApp} ${policyAppAvailable}>
-									<label for="bt-auth-policy-application" class="vertical-align:middle;"><f:message key="bugtracker.admin.policy.app"/></label>
-								</div>
-
-								<div style="padding-left: 5px;">
-									<div id="bt-auth-creds-main"
-										class="srv-auth-credentials-section side-panel std-border std-border-radius
-												${credSectionEnabling} ${credsSectionVisibility}">
-
-
-                    <div id="bt-auth-cred-template" class="display-table">
-                      <div id="protocol" class="display-table-row" style="line-height: 3.5;">
-
-                        <label for="bt-auth-proto" class="display-table-cell"><f:message
-                          key="bugtracker.admin.protocol.label"/></label>
-
-                        <select id="bt-auth-proto" class="display-table-cell">
-                        <c:forEach items="${authConf.availableProtos}" var="protocol">
-                        <option value="${protocol}" ${(authConf.selectedProto == protocol) ? 'selected' : ''} >
-                          <f:message key="authentication.protocol.${protocol.toString().toLowerCase()}"/>
-                        </option>
-                        </c:forEach>
-                        </select>
-
-                      </div>
-
-                        <%-- populated by javascript --%>
-                    </div>
-
-										<div id="bt-auth-creds-buttonpane" class="centered" style="position:relative">
-											<input type="button" class="sq-btn" id="bt-auth-test" value="${testLabel}"/>
-											<input type="button" class="sq-btn" id="bt-auth-save" value="${saveLabel}"/>
-										</div>
-
-
-									</div>
-
-									<div id="bt-auth-main-messagezone" class="side-panel srv-auth-messagepane ${credSectionEnabling}">
-
-										<div id="bt-auth-failure" class="std-border std-border-radius ${failureVisibility}">
-											<comp:notification-pane type="warning" txtcontent="${authConf.failureMessage}"/>
-										</div>
-
-										<div id="bt-auth-warning" class="${warningVisibility}">
-											<comp:notification-pane type="warning" txtcontent="${authConf.warningMessage}"/>
-										</div>
-
-										<div id="bt-auth-info" class="not-displayed">
-											<comp:notification-pane type="info" txtcontent="${labelSuccess}"/>
-										</div>
-
-                    <div id="bt-auth-save-info" class="not-displayed">
-                      <comp:notification-pane type="info" txtcontent="${labelSaveSuccess}"/>
-                    </div>
-									</div>
-
-						   		</div>
-
-
-							</div>
-						</div>
-
-						<%-- ==================== /authentication panel ===================== --%>
-
 					</div>
 				</jsp:attribute>
 			</comp:toggle-panel>
+			
 
 			<%-----------------------------------END INFORMATION PANEL -----------------------------------------------%>
+			
+			
+			
+			<%----------------------------------- BEGIN AUTHENTICATION MGNT -----------------------------------------------%>
+			<div id="bugtracker-authentication-masterpane">
+			
 
+				<%-- state variables etc --%>
+				<c:set var="policyUsr" 	value="${(authConf.authPolicy == 'USER') ? 'checked=\"checked\"' : ''}"/>
+				<c:set var="policyApp" 	value="${(authConf.authPolicy == 'APP_LEVEL') ? 'checked=\"checked\"' : ''}"/>
+				<f:message var="testLabel" key="label.test"/>
+				<f:message var="saveLabel" key="label.save"/>
+			
+				<%-- protocol configuration --%>
+				<comp:toggle-panel id="bugtracker-auth-protocol" titleKey="label.BugtrackerAuthProtocol" open="true">
+				<jsp:attribute name="body">
+					<div class="adm-srv-auth">
+						
+						<%-- protocol selection --%>
+						<select id="srv-auth-proto-select" style="display:block;">
+							<c:forEach items="${authConf.availableProtos}" var="protocol">
+							<option value="${protocol}" ${(authConf.selectedProto == protocol) ? 'selected' : ''} >
+								<f:message key="authentication.protocol.${protocol.toString().toLowerCase()}"/>
+							</option>
+							</c:forEach>
+						</select>
+						
+						<%-- protocol conf section --%>
+						<div class="srv-auth-form-main side-panel std-border std-border-radius" 
+						 ${featEnab}>
+							
+							<div id="srv-auth-conf-form" class="templated-form">
+							<%-- templated by handlebars --%>
+							</div>
+		
+							<div class="centered srv-auth-buttonpane" style="position:relative">
+								<span class="needs-save-msg" style="display:none;"><f:message key="bugtracker.admin.messages.needs-save"/></span>
+								<%-- note : there is no 'test' button, because testing auth-configuration is hard or impossible --%>
+								<input type="button" class="sq-btn auth-save" value="${saveLabel}"/>
+							</div>						
+							
+						</div>
+	
+						
+						<div class="side-panel srv-auth-messagepane">
+							<%--templated by handlebars --%>
+						</div>
+											
+					</div>		
+				</jsp:attribute>
+				</comp:toggle-panel>
+	
+				<%-- policy configuration --%>
+				<comp:toggle-panel id="bugtracker-auth-policy" titleKey="label.BugtrackerAuthPolicy" open="true">
+				<jsp:attribute name="body">
+				<div class="adm-srv-auth">
+					
+					<%-- policy choice --%>
+					<div>
+						<label style="vertical-align:middle;">
+							<input type="radio" name="srv-auth-policy" value="USER" ${policyUsr}>
+							<f:message key="bugtracker.admin.policy.users"/>
+						</label>
+					</div>
+
+					<div>
+						<label style="vertical-align:middle;">
+							<input type="radio" name="srv-auth-policy" value="APP_LEVEL" ${policyApp}>
+							<f:message key="bugtracker.admin.policy.app"/>
+						</label>
+					</div>										
+					
+					
+					<%-- app-level credentials section --%>
+					<div class="srv-auth-form-main side-panel std-border std-border-radius
+					${credsEnab} ${credsVisi}" >
+
+						<div id="srv-auth-creds-form" class="templated-form">
+							<%-- templated by handlebars --%>
+						</div>
+
+						<div class="centered srv-auth-buttonpane" style="position:relative">
+							<span class="needs-save-msg" style="display:none;"><f:message key="bugtracker.admin.messages.needs-save"/></span>
+							<input type="button" class="sq-btn auth-test" value="${testLabel}"/>
+							<input type="button" class="sq-btn auth-save" value="${saveLabel}"/>
+						</div>
+
+					</div>	
+					
+
+						
+					<div class="side-panel srv-auth-messagepane">
+						<%--templated by handlebars --%>
+					</div>
+							
+						
+				</div>
+				</jsp:attribute>				
+				</comp:toggle-panel>
+				
+			</div>
+
+
+			
+			<%-- templates --%>
+			<div class="not-displayed" id="auth-templates">
+				
+				<script id="oauth-conf-template" type="text/x-handlebars-template">
+				<div class="tbl">
+				<div>
+					<label><f:message key="bugtracker.admin.protocol.conf.oauth1a.consumerkey"/></label>
+					<input type="text" value="{{consumerKey}}" data-bind="consumerKey"/>
+					<span class="error-message consumerKey-error"></span>
+				</div>
+	
+				<div>
+					<label><f:message key="bugtracker.admin.protocol.conf.oauth1a.request-tokens"/></label>
+					<div class="flexible">
+						<select data-bind="requestTokenHttpMethod">
+							<option value="GET" 	{{#equal requestTokenHttpMethod 'GET'}}selected="selected"{{/equal}}>GET</option>
+							<option value="POST" 	{{#equal requestTokenHttpMethod 'POST'}}selected="selected"{{/equal}}>POST</option>
+						</select>
+						<input type="text" value="{{requestTokenUrl}}" data-bind="requestTokenUrl"/>
+						<span class="error-message requestTokenUrl-error"></span>			
+					</div>
+				</div>
+	
+				<div>
+					<label><f:message key="bugtracker.admin.protocol.conf.oauth1a.access-tokens"/></label>
+					<div class="flexible">
+						<select data-bind="accessTokenHttpMethod">
+							<option value="GET" 	{{#equal accessTokenHttpMethod 'GET'}}selected="selected"{{/equal}}>GET</option>
+							<option value="POST" {{#equal accessTokenHttpMethod 'POST'}}selected="selected"{{/equal}}>POST</option>
+						</select>
+						<input  type="text" value="{{accessTokenUrl}}" data-bind="accessTokenUrl"/>
+						<span class="error-message accessTokenUrl-error"></span>			
+					</div>
+				</div>
+	
+				<div>
+					<label><f:message key="bugtracker.admin.protocol.conf.oauth1a.autorize"/></label>
+					<input type="text" value="{{userAuthorizationUrl}}" data-bind="userAuthorizationUrl"/>
+					<span class="error-message userAuthorizationUrl-error"></span>			
+				</div>
+	
+				<div>
+					<label><f:message key="bugtracker.admin.protocol.conf.oauth1a.secret"/></label>
+					<textarea data-bind="clientSecret" >{{clientSecret}}</textarea>
+					<span class="error-message clientSecret-error"></span>			
+				</div>
+				
+				<div>
+					<label><f:message key="bugtracker.admin.protocol.conf.oauth1a.sig-method"/></label>
+					<select data-bind="signatureMethod">
+						<option value="HMAC_SHA1" {{#equal signatureMethod 'HMAC_SHA1'}}selected="selected"{{/equal}}>HMAC-SHA1</option>
+						<option value="RSA_SHA1" {{#equal signatureMethod 'RSA_SHA1'}}selected="selected"{{/equal}}>RSA-SHA1</option>
+					</select>
+				</div>		
+				</div>
+				</script>
+				
+	
+				<script id="oauth-creds-template" type="text/x-handlebars-template">
+				<div class="tbl">
+					<div>
+						<label><f:message key="label.Token"/></label>
+						<input type="text" value="{{token}}" data-bind="token">
+					</div>
+					<div>
+						<label><f:message key="label.TokenSecret"/></label>
+						<input value="{{tokenSecret}}" data-bind="tokenSecret">
+					</div>
+				</div>		
+				</script>
+				
+				
+				<script id="basic-creds-template" type="text/x-handlebars-template">
+				<div class="tbl">
+					<div>
+						<label><f:message key="label.Login"/></label>
+						<input type="text" value="{{username}}" data-bind="username">
+					</div>
+					<div>
+						<label><f:message key="label.Password"/></label>
+						<input value="{{password}}" data-bind="password">
+					</div>
+				</div>			
+				</script>
+
+				<script id="messagepane-template" type="text/x-handlebars-template">
+				<div class="display-table-row">
+				    <div class="display-table-cell warning-cell">
+				      <div class="generic-signal"></div>
+				    </div>
+				                   
+				    <div class="txt-message display-table-cell" style="padding-top:20px"></div>   
+				</div>	
+				</script>
+
+			</div>
+			
+			<%----------------------------------- END AUTHENTICATION MGNT -----------------------------------------------%>
+			
 			</div>
 		<%---------------------------------------------------------------END  BODY -----------------------------------------------%>
 	</jsp:attribute>
@@ -257,8 +366,8 @@
 
 <!-- ------------------------------------END RENAME POPUP------------------------------------------------------- -->
 
-<f:message var="deleteBugtrackerTitle" key="dialog.delete-bugtracker.title" />
-<f:message var="warningDelete" key="dialog.deleteBugTracker.warning" />
+<f:message var="deleteBugtrackerTitle" 	key="dialog.delete-bugtracker.title" 	/>
+<f:message var="warningDelete" 			key="dialog.deleteBugTracker.warning" 	/>
 <div id="delete-bugtracker-popup" class="popup-dialog not-displayed" title="${deleteBugtrackerTitle}">
 
     <comp:notification-pane type="error" txtcontent="${warningDelete}"/>

@@ -201,11 +201,11 @@ require([ "common" ], function() {
   require([ "jquery","underscore", "workspace.storage", "squash.basicwidgets", "workspace.event-bus", "serverauth/auth-manager", "jquery.squash.formdialog" ],
       function($,_,  storage, basicwidg, eventBus, authmanagers) {
 
-	  $(function() {
-		  var btId = ${bugTracker.id};
+	  $(function() {		  
 
 		  var btmanager = authmanagers.get({
-			 serverId : btId,
+			 serverId : ${bugTracker.id},
+			 protocol : "${bugTracker.authenticationProtocol}",
 			 status : "${bugTrackerStatus}"
 		  })
 

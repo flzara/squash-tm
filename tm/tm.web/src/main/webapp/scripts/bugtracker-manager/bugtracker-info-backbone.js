@@ -19,496 +19,120 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
 /*
- Backbone things used by bugtracker-info.
+ * Handles the authentication options for this bugtracker. The overall layout is as follow : 
+ * 
+ * AuthenticationMasterView
+ * 	+ ProtocolView
+ * 	|	+ (own content)
+ * 	|	+ ProtocolConfView
+ * 	|	- ProtocolMessageView
+ * 	+ PolicyView
+ * 		+ (own content)
+ * 		+ AppLevelCredsView
+ * 		- PolicyMessageView
+ * 
+ * ProtocolConfView and AppLevelCredsView partially rely on Handlebars, but most of the html here is server-generated 
+ * and pre-rendered whenever possible. 
+ * 
+ * 1/ Configuration
+ * 
+ *	{
+ *		btUrl : the bugtracker url
+ *		authPolicy :  either 'USER' and 'APP_LEVEL'
+ *		availableProtos : the list of available authentication protocols
+ *		selectedProto : the selected protocol chosen among the above
+ *		failureMessage : error message if an unrecoverable error was encountered
+ *		warningMessage: error message if a recoverable error was encountered
+ *		conf : the conf object, which is variable. See the various ConfView implementations. 
+ *		credentials : the (app-level) credential object, which is variable. See the various CredentialsView implementations.
+ *	}
+ *
+ *
+ * 2/ Flow
+ * 
+ * The main model is common to AuthenticationMasterView, ProtocolView and PolicyView. 
+ * 
+ * The views that manage the templated parts (the server conf and server credentials) will receive their own model instead.
+ * 
+ * UI event -> xhr update -> model update -> redraw() 
+ * 
+ * 
+ * 3/ Managing the Authentication Protocol
+ * 
+ * Updating the protocol has very fundamental effects : it triggers a redraw on both views, and on the server every 
+ * information (conf and credentials) related to the formerly selected protocol are wiped. The subview must account 
+ * for that and notify the user when the data needs to be resaved. 
+ * 
+ * 
+ */
+define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notification', 
+	'app/util/StringUtil', 'squash.translator', 'app/squash.handlebars.helpers'],
+		function($, Backbone, _, Handlebars, notification, StringUtil, translator){
 
- The overall layout of this view is the following :
-
-CredentialManagerView
- 	* MessageView
- 	* MainView
- 		* SubView (variable implementation, see below)
-
-Aside from the SubView, which embbed their own Handlebars templates, each of these
-use the pre-rendered DOM existing in the page. It means the code here mostly handle
-the state of the UI but generate no HTML.
-
-
- 1/ CredentialManagerView
-
- This is the main view. Its components are :
-
-  	* main div : #bugtracker-auth
-  	* the radio buttons : #bt-auth-policy-user and #bt-auth-policy-application
-
-It also manage the MessageView and MainView. In the nominal case both are rendered
-(although the MessageView may remain empty at first, and thus invisible). However
-if the initial model reports an unrecoverable failure (see Model), only the message
-view will be rendered.
-
-
-2/ MainView
-
- Used for the authentication mode is APP_LEVEL :
-
-	* main div : #bt-auth-creds-main
-	* the authentication protocol dopdown list : #bt-auth-proto
-	* the button pane : #bt-auth-creds-buttonpane
-	* the test button : #bt-auth-test
-	* the save button : #bt-auth-save
-
-Other inputs that may appear between the dropdown and the buttonpane are actually
-handled by the SubView.
-
-
-3/ Subview
-
-The SubView is whichever form that allows the administrator to enter app level credentials
-per se. The implementation varies according to the selected authentication protocol
-(ie the #bt-auth-proto). Each implementation comes ith its own template.
-
- 	* main div : #bt-auth-cred-template
-
- Currently this feature is not yet implemented because only basic auth is available
- anyway.
-
-4/ MessageView
-
- This is a dumb container which contains three panels that may show or hide alternately
- if something must be reported to the user.
-
-  * main div : #bt-auth-creds-messagezone
-  * the failure notification : #bt-auth-failure
-  * warning notification : #bt-auth-warning
-  * test success notification : #bt-auth-success
-  * save success notification : #bt-auth-save-success
-
-Failure are for unrecoverable errors while warnings are for other less fatal errors.
-
-The other views interact with the MessageView with the radio. It is a simple event channel
-that the MessageView listen to and the preferred way of displaying a message.
-When a message must be displayed, the other views can trigger on the radio one of
-events 'bt-auth-failure', 'bt-auth-warning' and 'bt-auth-success', and pass the message
-as a parameter.
-
-
-5/ Configuration
-
-The configuration expected by the CredentialManagerView is :
-
-	{
-		btUrl : the bugtracker url
-		model : {
-			authPolicy :  either 'USER' and 'APP_LEVEL'
-			availableProtos : the list of available authentication protocols
-			selectedProto : the selected protocol chosen among the above
-			failureMessage : error message if an unrecoverable error was encountered
-			warningMessage: error message if a recoverable error was encountered
-			credentials : the actual credential object, which is variable. See the various subview implementations for insights. May be null if none were set yet.
-		}
+	// async load of the messages we need here
+	translator.load(['bugtracker.admin.messages.testcreds.success', 
+		'bugtracker.admin.messages.save.success', 
+		'error.generic.label']);
+	
+	// ***************** Handlebars helpers ******************************
+	
+	function loadTemplate(id){
+		return Handlebars.compile($(id).html());
 	}
-
-
-This serves as the Backbone model for both CredentialManagerView and MainView.
-
-An important thing to note is that the attribute 'credentials' will itself
-be turned into a Backbone model and then passed to the SubView : this element
-is shared between the MainView and the SubView. It entails that the SubView
-implementation MUST NEVER instantiate its model, instead it must work with
-what was given to it. The content may however change at will.
-
-
-6/ States
-
-	* When the policy is set to 'USER', the MainView (and SubView) and MessageView are disabled
-	* When the policy is set to 'APP_LEVEL', the MainView and MessageView are enabled
-	* In case of unrecoverable error, the error is displayed in the failure pane of the MessageView
-		and the MainView is hidden.
-	* The MainView chooses the implementation of SubView to be rendered and gives it its
-		Backbone Model for the credentials. At initialization if those credentials were null an
-		empty model is passed instead.
-	* When the selected auth protocol changes, the SubView is destroyed and replaced by a new,
-	   adequate implementation and is given an empty model.
-
-*/
-
-
-define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notification', 'app/squash.handlebars.helpers'],
-		function($, Backbone, _, Handlebars, notification){
-
-
 
 	// ***************** communication channel ***************************
 
+	// todo : the radio has not much point after the refactor
+	// ditch it at the next refactor
 	var radio = $.extend({}, Backbone.Events);
 
+	
+	
+	// ************************** Superclasses definition ******************************
 
-	// ************************ The main view ****************************
-
-	var CredentialManagerView = Backbone.View.extend({
-
-		el: "#bugtracker-auth",
-
-		// the following are created at initialization
-		$credPane : null,
-		$msgPane : null,
-		$usrPolRadio : null,
-		$appPolRadio : null,
-
+	// --- model base classe -----
+	var BaseModel = Backbone.Model.extend({
+		
+		// reads the value of a simple html input
+		// and checks the value of data-bind html attribute
+		// then store the attr: value in this model
+		readInput : function(input){
+			var $input = $(input);
+			var attr = $input.data('bind');
+			var val = $input.val();
+			this.set(attr,val);
+		}
+		
+	});
+	
+	
+	// ----- base protocol-specific templated view -----
+	var BaseTemplatedView = Backbone.View.extend({
+		
+		events: {
+			'change input' : 'updateModel',
+			'change select' : 'updateModel',
+			'change textarea' : 'updateModel',			
+		},
+		
 		initialize : function(options){
-			this.$credPane = new MainView(options);
-			this.$msgPane = new MessageView();
-
-			this.$usrPolRadio = $("#bt-auth-policy-user");
-			this.$appPolRadio = $("#bt-auth-policy-application");
-			this.btUrl = options.btUrl;
-
+			this.model = options.model;
+			this.initModel();
 			this.render();
 		},
-
-		events : {
-			'change #bt-auth-policy-user' : 'setPolicyUser',
-			'change #bt-auth-policy-application' : 'setPolicyApp'
+		
+		
+		updateModel : function(evt){
+			this.model.readInput(evt.currentTarget);
 		},
-
+		
 		render : function(){
-			var failure = this.model.get('failureMessage');
-
-			if (!! failure){
-				// ooooh this is bad. Do not show the app credentials panel
-				// and just display the message
-				this.fail(failure);
-			}
-			else{
-				this.renderCreds();
-			}
-
-			return this;
+			this.$el.empty();
+			this.$el.html(this.template(this.model.attributes));
 		},
-
-		fail : function(failure){
-			this.$appPolRadio.prop('disabled', true);
-			this.$credPane.hide();
-			radio.trigger('bt-auth-failure', failure);
-		},
-
-		renderCreds: function(){
-			this.$appPolRadio.prop('disabled', false);
-
-			/*
-			 * Most of the time the message pane and the cred pane work together
-			 * but here we really mean to handle the cred pane alone because
-			 * the msg pane must be rendered no matter what (and already has)
-			 */
-			this.$credPane.render();
-			this.$credPane.show();
-
-
-			switch(this.model.get('authPolicy')){
-				case 'USER': this.setPaneStatus('disable'); break;
-				case 'APP_LEVEL' : this.setPaneStatus('enable'); break;
-				default: this.$credPane.enable(); break;
-			}
-
-			this.$credPane.render();
-		},
-
-		setPolicyUser : function(evt){
-			var view = this;
-			this.setPolicy('USER').done(function(){
-				view.setPaneStatus('disable');
-			});
-		},
-
-		setPolicyApp : function(evt){
-			var view = this;
-			this.setPolicy('APP_LEVEL').done(function(){
-				view.setPaneStatus('enable');
-			});
-		},
-
-		setPaneStatus : function(status){
-			this.$credPane[status]();
-			this.$msgPane[status]();
-		},
-
-		setPolicy : function(policy){
-			this.model.set('authPolicy', policy);
-			var url = this.btUrl;
-			return $.ajax({
-				url : url,
-				type : 'POST',
-				data : {id: 'bugtracker-auth-policy', value : policy}
-			});
-		}
-
-
-	});
-
-
-	// ************ message pane *************************
-
-
-	var MessageView = Backbone.View.extend({
-
-		el : '#bt-auth-main-messagezone',
-
-		$failPane : null,
-		$warnPane : null,
-		$succPane : null,
-		$saveSuccPane : null,
-
-
-		initialize : function(){
-			this.$failPane = $("#bt-auth-failure");
-			this.$warnPane = $("#bt-auth-warning");
-			this.$succPane = $("#bt-auth-info");
-			this.$saveSuccPane = $("#bt-auth-save-info");
-
-			this.listenTo(radio, 'bt-auth-success', this.showSuccess);
-			this.listenTo(radio, 'bt-auth-save-success', this.showSaveSuccess);
-			this.listenTo(radio, 'bt-auth-warning', this.showWarning);
-			this.listenTo(radio, 'bt-auth-failure', this.showFailure);
-		},
-
-		disable : function(){
-			this.$el.addClass('disabled-transparent');
-		},
-
-		enable : function(){
-			this.$el.removeClass('disabled-transparent');
-		},
-
-		allPanes : function(){
-			return [this.$failPane, this.$warnPane, this.$succPane, this.$saveSuccPane];
-		},
-
-		showPane : function(paneName){
-			_.without(this.allPanes(), this[paneName])
-			.forEach(function(pane){
-				pane.addClass('not-displayed');
-			});
-			this[paneName].removeClass('not-displayed');
-		},
-
-		showSuccess : function(){
-			this.showPane('$succPane');
-		},
-
-		showSaveSuccess : function(){
-			this.showPane('$saveSuccPane');
-		},
-
-		showWarning : function(msg){
-			this.$warnPane.find('.generic-warning-main').text(msg);
-			this.showPane('$warnPane');
-		},
-
-		showFailure : function(msg){
-			this.$failPane.find('.generic-warning-main').text(msg);
-			this.showPane('$failPane');
-		}
-	});
-
-
-	// ********************* The application credentials view **************************
-
-	// TODO : actually handle the dropdown list when more protocols are supported
-	var MainView = Backbone.View.extend({
-
-		el: "#bt-auth-creds-main",
-
-		// following attributes are initialized in the init function
-		$dropdown : null,
-		$btnpane : null,
-		btUrl : null,
-
-		initialize: function(options){
-
-			var $el = this.$el;
-			this.$dropdown = $el.find('#bt-auth-proto');
-			this.$btnpane = $el.find('#bt-auth-creds-buttonpane');
-			this.btUrl = options.btUrl;
-
-			this.getButtons().button();
-
-			// select the right subview to apply for the credentials form
-			var SubView = null;
-			var authMode = options.model.get('selectedProto');
-
-			switch(authMode){
-				case 'BASIC_AUTH' :  SubView = BasicAuthView; break;
-
-				default : console.log('unsupported mode : '+authMode);
-							SubView = new Backbone.View();	// default, empty view if unsupported
-							break;
-			}
-
-			// prepare the options for the subview
-			// note that content can legally be empty, the subview is required to deal with it
-			var subviewModel = new Backbone.Model(options.model.get('credentials'));
-			var credsOptions = {
-				model : subviewModel
-			}
-
-			// also make the main model listen to the subview model
-			options.model.set('credentials', subviewModel);
-
-			// init, if defined
-			this.subview = new SubView(credsOptions);
-
-
-		},
-
-		events : {
-			'click #bt-auth-test' : 'test',
-			'click #bt-auth-save' : 'save'
-		},
-
-		render: function(){
-			this.subview.render();
-
-			var warning = this.model.get('warningMessage');
-			if (!!warning){
-				radio.trigger('bt-auth-warning', warning);
-			}
-
-			return this;
-		},
-
-		show : function(){
-			this.$el.removeClass('not-displayed');
-		},
-
-		hide : function(){
-			this.$el.addClass('not-displayed');
-		},
-
-
-		disable : function(){
-			this.$el.addClass('disabled-transparent');
-			this.$dropdown.prop('disabled', true);
-			this.getButtons().button('disable');
-			this.subview.disable();
-		},
-
-		enable : function(){
-			this.$el.removeClass('disabled-transparent');
-			this.$dropdown.prop('disabled', false);
-			this.getButtons().button('enable');
-			this.subview.enable();
-		},
-
-		setAjaxMode : function(){
-			this.getButtons().css('visibility', 'hidden');
-			this.$btnpane.addClass('waiting-loading');
-		},
-
-		unserAjaxMode : function(){
-			this.getButtons().css('visibility', 'visible');
-			this.$btnpane.removeClass('waiting-loading');
-		},
-
-		getButtons : function(){
-			return this.$btnpane.find(':button');
-		},
-
-		test : function(){
-			this.postCredentials('test');
-		},
-
-		save : function(){
-			this.postCredentials('save');
-		},
-
-		// 7156 : to avoid false login/password, we need to test before saving
-		// now this function has the action type in argument 'test' or 'save'
-		postCredentials : function(action){
-			var self = this;
-			var urlSuffix = '/credentials/validator';
-			var url = this.btUrl + urlSuffix;
-			var creds = this.model.get('credentials').attributes;
-
-			// mixin with the type because it's required for deserialization
-			var type = this.model.get('selectedProto');
-			var payload = $.extend({type: type}, creds, true);
-
-			this.setAjaxMode();
-
-			return $.ajax({
-				url : url,
-				type : 'POST',
-				data : JSON.stringify(payload),
-				contentType : 'application/json'
-			})
-			.done(function(){
-				if (action == 'save') {
-					url = url.replace('/validator', '');
-					$.ajax({
-						url : url,
-						type : 'POST',
-						data : JSON.stringify(payload),
-						contentType : 'application/json'
-					})
-					.done(function(){
-						radio.trigger('bt-auth-save-success');
-					})
-					.fail(function(xhr){
-						xhr.errorIsHandled = true;
-						radio.trigger('bt-auth-warning', notification.getErrorMessage(xhr));
-					});
-				} else {
-					radio.trigger('bt-auth-success');
-				}
-			})
-			.fail(function(xhr){
-				xhr.errorIsHandled = true;
-				radio.trigger('bt-auth-warning', notification.getErrorMessage(xhr));
-			})
-			.always(function(){
-				self.unserAjaxMode();
-			});
-		}
-	});
-
-
-
-	// ************ implementations for the subviews *****************************
-
-	var BasicAuthView = Backbone.View.extend({
-
-		el: '#bt-auth-cred-template',
-
-		events: {
-			'change #bt-auth-basic-login' : 'setUsername',
-			'change #bt-auth-basic-pwd' : 'setPassword'
-		},
-
-		initialize : function(options){
-			// deal with the case of undefined model
-			if (_.isEmpty(options.model.attributes)){
-				options.model.set('username', '');
-				options.model.set('password', '');
-			}
-		},
-
-		template: Handlebars.compile(
-			'<div class="display-table-row" style="line-height:3.5">' +
-				'<label class="display-table-cell">{{i18n "label.Login"}}</label>' +
-				'<input id="bt-auth-basic-login" type="text" class="display-table-cell" value="{{this.username}}">' +
-			'</div>' +
-			'<div class="display-table-row" style="line-height:3.5">' +
-				'<label class="display-table-cell">{{i18n "label.Password"}}</label> ' +
-				'<input id="bt-auth-basic-pwd" class="display-table-cell" type="password" value="{{this.password}}"> ' +
-			'</div>'
-		),
-
-		render: function(){
-			var protocol = $('#protocol')[0].outerHTML;
-			this.$el.html(protocol + this.template(this.model.attributes));
-			return this;
-		},
-
+		
 		enable: function(){
 			this.$el.find('input').prop('disabled', false);
 		},
@@ -517,20 +141,644 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 			this.$el.find('input').prop('disabled', true);
 		},
 
-		setUsername: function(evt){
-			this.model.set('username', evt.target.value);
+		//*** may be overridden by subclasses ***
+
+		// allow for further customization of the model 
+		// when the view initialize
+		initModel: function(){
+			
+		}
+		
+	});
+	
+	
+	// -------- base panel view ------------
+	/*
+	 * Base behavior : handle panels that have a message pane, 
+	 * a templated part, a save reminer and a button pane.
+	 * 
+	 * Subclasses must define 'name' and several other methods,
+	 * and their dom must follow the same conventions 
+	 * (read bugtracker-info.jsp)
+	 */
+	var BasePanelView = Backbone.View.extend({
+		
+		// must be defined by subclasses
+		name : "",
+		
+		$main: null,
+		$saveReminder: null,
+		$btnpane: null,
+		$currTpl: null,
+		
+		initialize : function(options){			
+			var name = this.name;
+			if (StringUtil.isBlank(name)){
+				throw "name undefined !";
+			}
+			
+			// special rendering if there is a critical error :
+			if (this.hasCriticalError(options)){
+				this.$('.adm-srv-auth').children().not('.srv-auth-messagepane').remove();
+			}
+			
+			// else normal rendering
+			else{
+				this.model = options.model;
+				
+				this.$main = this.$(".srv-auth-form-main");
+				this.$saveReminder = this.$(".needs-save-msg");
+				this.$btnpane = this.$(".srv-auth-buttonpane");				
+				
+				this._modelEvents();
+				this.render();
+			}
+			
+			// always initialize the message view and display messages in it if any
+			new MessageView({
+				el: this.$('.srv-auth-messagepane').get(),
+				event : name
+			});
+			
+
+			this.initialMessage(options);
+			
+			
+		},
+		
+		render: function(){
+			var protocol = this.model.get('protocol');
+			var View = this.viewMap[protocol];			
+			var tplModel = this.getConfiguredModel();
+			
+			if (View == null){
+				this.$main.hide();
+			}
+			else{
+				this.$main.show();
+				this.$currTpl = new View({model: tplModel});
+			}	
+		},
+		
+		_modelEvents : function(){
+			var self = this;
+			this.listenTo(this.model, 'change:protocol', this.render);
+			this.listenTo(this.model, 'change:protocol', this.resetMessages);
+			this.listenTo(this.model, 'change:protocol', this.showSaveReminder);
+			
+			// also listen to changes in the model map
+			var confModels = this.getModelMap();
+			_.values(confModels).forEach(function(model){
+				self.listenTo(model, 'change', self.showSaveReminder)
+			});	
+			
+			// additional model events
+			this.specificModelEvents();
+		},
+		
+		hasCriticalError: function(options){
+			return !! options.failureMessage;
+		},
+		
+		initialMessage: function(options){
+			if (!! options.failureMessage){
+				radio.trigger(this.name, 'error', options.failureMessage);
+			}
+			else if (!! options.warningMessage){
+				radio.trigger(this.name, 'failure', options.warningMessage);
+			}
+		},
+		
+		showSaveReminder : function(){
+			this.$saveReminder.show();
+		},
+		
+		hideSaveReminder : function(){
+			this.$saveReminder.hide();
+		},
+		
+		resetMessages : function(){
+			radio.trigger(this.name, 'reset', '');
+		},
+		
+		setAjaxMode : function(){
+			this.$btnpane.children().css('visibility', 'hidden');
+			this.$btnpane.addClass('waiting-loading');
 		},
 
-		setPassword: function(evt){
-			this.model.set('password', evt.target.value);
+		unsetAjaxMode : function(){
+			this.$btnpane.children().css('visibility', 'visible');
+			this.$btnpane.removeClass('waiting-loading');
+		},
+
+		updateModel : function(evt){
+			this.getConfiguredModel().readInput(evt.currentTarget);
+		},
+		
+		getCurrentTemplate: function(){
+			return this.$currTpl;
+		},
+		
+		preparePayload: function(){
+			var authConfAttributes = this.getConfiguredModel().attributes;
+			// add the type to hint Jackson at what to do
+			authConfAttributes.type = this.model.get('protocol');
+			return JSON.stringify(authConfAttributes);
+		},
+		
+		ajax: function(conf){
+			
+			this.setAjaxMode();
+			
+			var self = this;
+			
+			return $.ajax(conf)
+			.done(function(){
+				self.$('.error-message').text('');
+			})
+			.fail(function(xhr){
+				
+				/*
+				 * Server errors handling is a bit tricky here.
+				 * We want every exception displayed in the message pane (instead of the default error dialog), 
+				 * except field validation errors, for which we let the regular handler kick in (it will display 
+				 * the error messages next to the offending fields).
+				 * 
+				 * The way we identify field validation errors is explained in function isFieldValidationError().
+				 * 
+				 * #workaround #fixthismessplease
+				 */
+				if (self.isFieldValidationError(xhr)){
+					// let it flyyyyy
+				}
+				// else display in the panel
+				else{
+					// a shame that our current version of jquery doesn't support
+					// deferred.catch()
+					try{
+						xhr.errorIsHandled = true;
+						radio.trigger(self.name, 'failure', notification.getErrorMessage(xhr));
+					}
+					catch(damnit){
+						radio.trigger(self.name, 'error', translator.get('error.generic.label'));
+					}
+				}
+				return this;
+			})
+			.always(function(){
+				self.unsetAjaxMode();
+			});
+		},
+		
+		/*
+		 * The form validation error are all returned with status 412. However not all 412 yield a form validation error : 
+		 * action exception are also 412 precondition failed, at the time I'm writing this. Plus, some other errors (that should 
+		 * have been action exception) posture as form validation error but aren't really because they target no object and merely
+		 * hold a message.
+		 * 
+		 * Thus, we identify genuine field validation errors if http status is 412, the response can be parsed as JSON and 
+		 * there is an attribute 'fieldValidationError', and 'objectName' is not empty.
+		 * 
+		 * #workaround #fixthismessplease
+		 */
+		isFieldValidationError : function(xhr){
+			var is412 = (xhr.status === 412);
+			
+			var hasFieldValidationError = false;
+			var hasObjectName = false;
+			try{
+				var ex = JSON.parse(xhr.responseText);
+				var hasFieldValidationError = (ex.fieldValidationErrors !== undefined);
+				var hasObjectName = (_.find(ex.fieldValidationErrors, function(err){
+					return ! StringUtil.isBlank(err.objectName);
+				}) !== undefined);
+			}
+			catch(parseException){
+				var hasFieldValidationError = false;
+			}
+			return (is412 && hasFieldValidationError && hasObjectName);
+		},
+		
+		// *********** subclasses may/must override theses ***********
+		
+		getModelMap: function(){
+			throw "not implemeted !";
+		},
+		
+		getConfiguredModel : function(){
+			throw "not implemeted !";
+		},
+		
+		specificEvents: function(){
+			return {};
+		}, 
+		
+		specificModelEvents: function(){
+			//noop
+		},
+		
+		// templated view constructor mapped by protocol
+		// or null if none defined for that protocol
+		viewMap : {
+			'BASIC_AUTH': null,
+			'OAUTH_1A': null
 		}
+		
+	});
+	
+
+	
+	// ************************ Main views ****************************
 
 
+	// -------------- the main model ------------------
+	
+	var AuthenticationModel = Backbone.Model.extend({
+		
+		defaults : {
+			btUrl : "",
+			protocol: null,		// selected protocol
+		
+			// conf mapped by protocol
+			// cannot be set in the defaults yet because the 
+			// backbone models aren't defined yet
+			authConfMap : {
+				'BASIC_AUTH': null,
+				'OAUTH_1A' : null
+			},	
+			policy : null,		// selected policy
+			
+			// app-level credentials mapped by protocol
+			// cannot be set in the defaults yet because the 
+			// backbone models aren't defined yet
+			credentialsMap : {
+				'BASIC_AUTH' : null,
+				'OAUTH_1A': null
+			}
+		},
+		
+		initialize: function(){
+			this.set('authConfMap', {
+				'BASIC_AUTH': new Backbone.Model(),
+				'OAUTH_1A' : new OAuthConfModel()				
+			});
+			this.set('credentialsMap', {
+				'BASIC_AUTH' : new BasicAuthCredsModel(),
+				'OAUTH_1A': new OAuthCredsModel()				
+			});
+			
+		},
+		
+		currentConf : function(){
+			var proto = this.attributes.protocol;
+			return this.attributes.authConfMap[proto];
+		},
+		
+		currentCreds : function(){
+			var proto = this.attributes.protocol;
+			return this.attributes.credentialsMap[proto];
+		}
 	});
 
 
+	
+	/*
+	 * The main view merely handle interactions between ProtocolView and PolicyView
+	 */
+	var AuthenticationMasterView = Backbone.View.extend({
 
-	return CredentialManagerView;
+		el: "#bugtracker-authentication-masterpane",
+		
+		initialize : function(options){
+			
+			var model = this.initModel(options.conf);
+			
+			var conf = {
+				model : model, 
+				failureMessage: options.conf.failureMessage, 
+				warningMessage: options.conf.warningMessage
+			}
+			
+			new ProtocolView(conf);
+			new PolicyView(conf);
+			
+		},
+		
+		initModel : function(mdl){
+			var model = new AuthenticationModel({
+				btUrl : mdl.btUrl,
+				protocol: mdl.selectedProto,
+				policy: mdl.authPolicy,
+			});
+			
+			// set the attributes of the current conf and credentials
+			model.currentConf().set(mdl.authConf);
+			model.currentCreds().set(mdl.credentials);
+			
+			return model;
+		}
+		
+	});
+
+	// ************************ Panel views ************************
+
+	
+	// ************ Protocol configuration section ***********
+	
+	// ---- protocol conf models -----------
+	
+	var OAuthConfModel = BaseModel.extend({
+		defaults : {
+			consumerKey: "",
+			requestTokenHttpMethod: 'GET',
+			accessTokenHttpMethod: 'GET',
+			clientSecret: "",
+			signatureMethod: 'HMAC_SHA1', 
+			requestTokenUrl: "", 
+			accessTokenUrl: "",
+			userAuthorizationUrl: ""
+		}
+	});
+	
+	// ----- protocol conf views -----------------
+	var OAuthConfView = BaseTemplatedView.extend({
+		
+		el: "#srv-auth-conf-form",
+		
+		template: loadTemplate("#oauth-conf-template"),
+
+		// by 'init', we mean initialization of empty fields
+		initModel : function(){
+			// MAAAAGIIIC REAAACH OF REMOTE UNRELATED PROPERTYYYYY ELSEWHERE IN THE DOOOOM !			
+			var baseUrl = $("#bugtracker-url").text();
+			var model = this.model;
+			var self = this;
+			['requestTokenUrl', 'userAuthorizationUrl', 'accessTokenUrl'].forEach(function(url){
+				if ( self.isBlank(url) ){
+					model.set(url, baseUrl);
+				}
+			});
+			
+		},
+		
+		isBlank : function(ppt){
+			return StringUtil.isBlank(this.model.get(ppt));
+		}
+
+		
+	});
+	
+	// ------- main protocol panel view ---------
+	var ProtocolView = BasePanelView.extend({
+		
+		el: "#bugtracker-auth-protocol",
+		name: "srv-auth-conf",
+
+		viewMap: {
+			'BASIC_AUTH': null,
+			'OAUTH_1A': OAuthConfView
+		},
+	
+		
+		getModelMap: function(){
+			return this.model.get('authConfMap');
+		},
+		
+		getConfiguredModel : function(){
+			return this.model.currentConf();
+		},
+		
+		events: {
+			'change #srv-auth-proto-select' : 'updateProtocol',	
+			'click 	.auth-save' : 'save'
+		},
+		
+
+		// ************* ajax *******************
+		
+		updateProtocol : function(evt){
+			var val = $(evt.target).val();
+			var self = this;
+			var url = this.model.get('btUrl') + '/authentication-protocol';
+			
+			$.post(url, {value: val}).done(function(){
+				self.model.set('protocol', val);
+			});
+		}, 
+		
+		
+		save : function(){
+			var url = this.model.get('btUrl') + '/authentication-protocol/configuration';
+			var payload = this.preparePayload();
+			var self = this;
+			
+			this.ajax({
+				type: 'POST',
+				url : url,
+				data : payload,
+				contentType: 'application/json'
+			})
+			.done(function(){
+				//rearm the unsaved data reminder and trigger success
+				self.hideSaveReminder();
+				radio.trigger('srv-auth-conf', 'success', translator.get('bugtracker.admin.messages.save.success'));
+			});
+		}
+	
+	
+	});
+	
+	
+	// ************ Policy section *****************************
+
+	// -------- credentials configuration view -----------
+	var BasicAuthCredentialsView = BaseTemplatedView.extend({
+
+		el: '#srv-auth-creds-form',
+		
+		template: loadTemplate("#basic-creds-template")
+
+	});
+
+	var OAuthCredentialsView = BaseTemplatedView.extend({
+		
+		el: '#srv-auth-creds-form',
+		
+		template: loadTemplate("#oauth-creds-template")
+		
+	});
+	
+	
+	// -------------- credentials models --------------
+	
+	var BasicAuthCredsModel = BaseModel.extend({
+		defaults: {
+			username: "",
+			password: ""
+		}
+	});
+	
+	var OAuthCredsModel = BaseModel.extend({
+		defaults: {
+			token: "",
+			tokenSecret: ""
+		}
+	});
+	
+	
+	// ------- main policy panel view ----------------
+	var PolicyView = BasePanelView.extend({
+
+		el: "#bugtracker-auth-policy",
+		name: "srv-auth-creds",
+		
+		viewMap: {
+			'BASIC_AUTH': BasicAuthCredentialsView,
+			'OAUTH_1A': OAuthCredentialsView
+		},
+	
+		
+		getModelMap: function(){
+			return this.model.get('credentialsMap');
+		},
+		
+		getConfiguredModel : function(){
+			return this.model.currentCreds();
+		},
+		
+		events: {
+			'click .auth-test' : 'test',
+			'click .auth-save' : 'save',
+			'change input[name="srv-auth-policy"]' : 'updatePolicy'
+		},
+		
+		specificModelEvents: function(){
+			this.listenTo(this.model, 'change:policy', this.showSaveReminder);
+			this.listenTo(this.model, 'change:policy', this.render);
+		},
+		
+		render: function(){
+			var policy = this.model.get('policy');
+			if (policy === 'USER'){
+				this.$main.hide();
+			}
+			else{
+				BasePanelView.prototype.render.call(this);
+			}
+		},
+		
+		// ******* ajax **************
+		
+		updatePolicy: function(evt){
+			var newPolicy=$(evt.currentTarget).val();
+			
+			var self = this;
+			var url = this.model.get('btUrl') + '/authentication-policy';
+			
+			$.post(url, {value: newPolicy}).done(function(){
+				// reset the message pane
+				self.resetMessages();
+				self.model.set('policy', newPolicy);
+			});
+			
+		}, 
+		
+		_postCreds: function(url, payload){
+			return this.ajax({
+				type: 'POST',
+				url: url,
+				data: payload,
+				contentType: 'application/json'
+			});		
+		},
+		
+		test: function(){
+			var url = this.model.get('btUrl') + '/credentials/validator';
+			var payload = this.preparePayload();
+			
+			this._postCreds(url, payload)
+				.done(function(){
+					radio.trigger('srv-auth-creds', 'success', translator.get('bugtracker.admin.messages.testcreds.success'));
+				});
+			
+		},
+		
+		save: function(){
+			var testUrl = this.model.get('btUrl') + '/credentials/validator';
+			var saveUrl = this.model.get('btUrl') + '/credentials';
+			var payload = this.preparePayload();
+			var self = this;
+			
+			this._postCreds(testUrl, payload)
+				.done(function(){
+					return self._postCreds(saveUrl, payload);
+				})
+				.done(function(){
+					//rearm the unsaved data reminder and trigger success
+					self.hideSaveReminder();
+					radio.trigger('srv-auth-creds', 'success',  translator.get('bugtracker.admin.messages.save.success'));					
+				});
+		}
+		
+		
+	});
+	
+	
+	// ****************** Message view *****************
+	
+	/*
+	 * Listens to the radio for events and display messages with an accompanying icon.
+	 * 
+	 * Actually it waits only one event, and the arguments that comes along 
+	 * will actually decide of what is displayed.
+	 * 
+	 * Arguments :  
+	 * 1/ success | failure | error | reset, 
+	 * 2/ the message
+	 * 
+	 * options: {
+	 * 	el: its javascript dom element
+	 * 	event: the name of the do-it-all event it must listens to.
+	 * }
+	 */
+	var MessageView = Backbone.View.extend({
+		
+		// maps status to icons
+		iconMap: {
+			'success': 	'generic-info-signal',
+			'failure': 	'generic-warning-signal',
+			'error':	'generic-error-signal', 
+			'reset':	''
+		},
+
+		initialize : function(options){
+			var event = options.event; 
+			this.listenTo(radio, event, this.displayMessage);
+			this.$el.html(loadTemplate('#messagepane-template'));
+		},
+		
+		/*
+		disable : function(){
+			this.$el.addClass('disabled-transparent');
+		},
+
+		enable : function(){
+			this.$el.removeClass('disabled-transparent');
+		},
+		*/
+		
+		displayMessage : function(status, msg){
+			var icon = this.iconMap[status];
+			this.$('.generic-signal').prop('class', 'generic-signal '+icon);
+			this.$('.txt-message').text(msg);
+		}
+
+	});
+	
+
+	// ********************* Returned object *********************
+
+	return AuthenticationMasterView;
 
 
 });

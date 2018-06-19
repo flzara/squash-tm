@@ -1010,7 +1010,22 @@
 					"where rvl.linkType.id = :linkTypeId"),
 
 	// StoredCredentials
-	@NamedQuery(name="StoredCredentials.findByServerId", query = "select sc from StoredCredentials sc join sc.authenticatedServer server where server.id = :serverId")
+	@NamedQuery(name="StoredCredentials.findAppLevelCredentialsByServerId",
+		query = "select sc from StoredCredentials sc join sc.authenticatedServer server " +
+					"where server.id = :serverId and sc.contentType = 'CRED' " +
+					"and sc.authenticatedUser is null"),
+
+	@NamedQuery(name="StoredCredentials.findUserCredentialsByServerId",
+		query = "select sc from StoredCredentials sc join sc.authenticatedServer server join sc.authenticatedUser user " +
+					"where server.id = :serverId and sc.contentType = 'CRED' " +
+					" and user.login = :username"),
+
+  	@NamedQuery(name = "StoredCredentials.findServerAuthConfByServerId",
+		query = "select sc from StoredCredentials sc join sc.authenticatedServer server " +
+					"where server.id = :serverId and sc.contentType = 'CONF' " +
+					"and sc.authenticatedUser is null")
+
+
 })
 //@formatter:on
 package org.squashtest.tm.service.internal.repository.hibernate;

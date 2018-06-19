@@ -27,7 +27,8 @@
  * ---------------------
  * 
  * get({
- * 	serverId : mandatory. the id of the server we want to check authentication.
+ * 	serverId : mandatory. The id of the server we want to check authentication.
+ *  protocol : mandatory. The authentication protocol that must be used for that server.
  * 	status : optional, default to 'NON_AUTHENTICATED'. A string value of java enum AuthenticationStatus.
  * 			If set, will override the current status of the manager with that new value.
  * }) 
@@ -40,25 +41,25 @@
  * AuthenticationManager API
  * -----------------------
  * 
- * authenticate() => checks whether the used is authenticated to the server it manages, and challenges the 
+ * authenticate() => checks whether the user is authenticated to the server it manages, and challenges the 
  * user if he is not. 
  * 
- * The method returns a JQuery promise. If the used is authenticated, or becomes authenticated after challenge, 
+ * The method returns a JQuery promise. If the user is authenticated, or becomes authenticated after challenge, 
  * the promise will be resolved, otherwise it will be rejected.
  * 
  * AuthenticationManager events 
  * ----------------------
  * 
- * authmanager.authentication => thrown when a used authenticate successfully for the first time. The manager itself
+ * authmanager.authentication => triggered when a used authenticate successfully for the first time. The manager itself
  * 								is passed as argument.
  * 
  */
 define(['jquery', 'handlebars', 'workspace.routing',
-        "text!./auth-dialog.html!strip", 'squash.translator' , 
+        "text!./basic-auth-dialog.html!strip", 'squash.translator' , 
         'app/ws/squashtm.notification',
         'workspace.event-bus',
         'jquery.squash.formdialog'], 
-        function($, Handlebars, routing, template, translator, notification, eventBus){
+        function($, Handlebars, routing, basauthTemplate, translator, notification, eventBus){
 	
 	// classic global variables initialisation
 	window.squashtm = window.squashtm || {};
@@ -84,6 +85,30 @@ define(['jquery', 'handlebars', 'workspace.routing',
 	}
 	
 	
+	function doAuthenticate(manager, deferred){
+		switch(manager.protocol){
+		case "BASIC_AUTH":
+			invokeLoginDialog(manager, deferred);
+			break;
+		case "OAUTH_1A":
+			commenceOauthTokensExchange(manager, deferred);
+			break;
+		}
+	}
+	
+	
+	/*
+	 * Basic Auth form dialog.
+	 * 
+	 * Will open basic authentication form dialog. The dialog will let the user try a username/password that will be submitted 
+	 * to the server for validation. In case of failure the user is allowed to try again with different credentials 
+	 * (typo in passwords etc), until he has authenticated successfully or aborted by closing the dialog.
+	 * 
+	 * Each authentication attempts will test the credentials on the server, which will then reply with HTTP 2XX (success) or 
+	 * a HTTP 4XX/5XX (failure). A XHR success will automatically close the dialog and resolve the deferred. XHR failure 
+	 * will display the error message and let the user try again. If the dialog closes and the user is still not authenticated 
+	 * the deferred will be rejected.   
+	 */
 	function invokeLoginDialog(manager, deferred){
 		
 		
@@ -102,7 +127,7 @@ define(['jquery', 'handlebars', 'workspace.routing',
 		}
 		
 		// now we can build a fresh one
-		var dHtml= (Handlebars.compile(template))(lang);
+		var dHtml= (Handlebars.compile(basauthTemplate))(lang);
 		$('body').append(dHtml);
 		var dialog = $("#login-dialog");
 		
@@ -133,7 +158,6 @@ define(['jquery', 'handlebars', 'workspace.routing',
 		      hasResolved = true;
 	          dialog.formDialog('close');
 	          manager.status = "AUTHENTICATED";
-	          eventBus.trigger('authmanager.authentication', manager);
 	          deferred.resolve();
 	        })
 	        .error(function(xhr){
@@ -159,10 +183,34 @@ define(['jquery', 'handlebars', 'workspace.routing',
 				
 	}
 	
+	
+	/*
+	 * OAuth1A authentication
+	 * 
+	 * The oauth 1a authentication will happen in a separate window. On user authentication success the window will call the main 
+	 * window back for deferred resolution.
+	 * 
+	 * The deferred will be stored in the main window context under the property 'squashtm.workspace.authmanagers.oauthdeferred'. 
+	 * The pages served by Squash TM in that separate window can interact with it, see pages in WEB-INF/templates/servers/oauth1a-*.html
+	 * 
+	 */
+	function commenceOauthTokensExchange(manager, deferred){
+		
+		// store the deferred
+		squashtm.workspace.authmanagers.oauthdeferred = deferred;
+		
+		// begin token exchanges 
+		var oauthUrl = routing.buildURL('servers.authentication.oauth1a', manager.serverId);		
+		window.open(oauthUrl, 'OAuth authorizations', 'height=690, width=810, resizable, scrollbars, dialog, alwaysRaised');
+		
+	}
+	
+	
 	// *************** AuthenticationManager ***************
 	
 	function AuthenticationManager(conf){
 		this.serverId = conf.serverId;
+		this.protocol = conf.protocol;
 		this.status = conf.status || "NON_AUTHENTICATED";
 	}
 	
@@ -171,6 +219,12 @@ define(['jquery', 'handlebars', 'workspace.routing',
 		var manager = this;
 		
 		var defer = $.Deferred();
+		
+		// first, we want to make sure that the deferred fire the event 'authmanager.authentication'
+		// when resolved
+		defer.done(function(){
+	          eventBus.trigger('authmanager.authentication', manager);
+		});
 		
 		// no server -> nothing to do
 		if (this.status === "UNDEFINED"){
@@ -199,7 +253,7 @@ define(['jquery', 'handlebars', 'workspace.routing',
 					break;
 					
 				case "NON_AUTHENTICATED" :
-					invokeLoginDialog(manager, defer);
+					doAuthenticate(manager, defer);
 					break;
 				}
 				

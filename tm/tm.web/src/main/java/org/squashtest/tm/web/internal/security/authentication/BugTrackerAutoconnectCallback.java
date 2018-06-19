@@ -20,51 +20,57 @@
  */
 package org.squashtest.tm.web.internal.security.authentication;
 
-import java.util.List;
-
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
+import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.core.bugtracker.service.BugTrackerContext;
-import org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder;
-import org.squashtest.csp.core.bugtracker.web.BugTrackerContextPersistenceFilter;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.servers.AuthenticationPolicy;
+import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials;
 import org.squashtest.tm.domain.servers.Credentials;
+import org.squashtest.tm.service.servers.CredentialsProvider;
+import org.squashtest.tm.service.servers.UserCredentialsCache;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.project.ProjectFinder;
+import org.squashtest.tm.web.internal.filter.UserCredentialsCachePersistenceFilter;
+
+import java.util.List;
+import java.util.Optional;
 
 
 /**
- * Provides with a pseudo-SSO that will pre-authenticate the user on each of the known bugtrackers, by reusing its credentials after successful authentication.
+ * Provides with a pseudo-SSO that will pre-authenticate the user on each of the known bugtrackers.
+ * In some cases we do so by reusing its credentials after successful authentication.
  * But arguably this is a terrible way to do it.
- * 
+ *
  * @author bsiri
  * @since the dinosaurs
  */
+
 /*
- *
- * Warning : its job partly overlaps the one of BugTrackerContextPersistenceFilter because
- * it creates a BugtrackerContext.
- *
- * If you really want to know the reason is that when the hook is invoked we're still in the security chain,
- * not in the regular filter chain. So the context does not exist yet, therefore there is no place to store the
- * credentials even if the bugtracker auto auth is a success.
+ * As an authentication event listener this class is called while still in the security filter chain (ie before the
+ * application filter chain). It is invoked every time a user authenticates. Its first task is to create
+ * a UserCredentialsCache and store it into session, then proceed an asynchronous job that will test each known
+ * credentials against the bugtrackers.
  *
  * This class was retro-fitted as an app listener in v1.13.0
  */
@@ -74,82 +80,88 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 	private static final Logger LOGGER = LoggerFactory.getLogger(BugTrackerAutoconnectCallback.class);
 
 	@Inject
-	private BugTrackersLocalService bugTrackersLocalService;
-
-	@Inject
-	private ProjectFinder projectFinder;
-
-	@Inject
-	private BugTrackerFinderService bugTrackerFinder;
-
-	@Inject
-	private BugTrackerContextHolder contextHolder;
-
-	@Inject
 	private TaskExecutor taskExecutor;
 
-	private void onLoginSuccess(String username, String password, HttpSession session) {
-		if (taskExecutor == null) {
-			//skip if we cannot perform the operation asynchronously
-			LOGGER.info("BugTrackerAutoconnectCallback : Threadpool service not ready. Skipping autologging.");
-		} else if (bugTrackersLocalService == null) {
-			//skip if the required service is not up yet
-			LOGGER.info("BugTrackerAutoconnectCallback : no bugtracker available (service not ready yet). Skipping autologging.");
-		} else {
-			//let's do it.
-			LOGGER.info("BugTrackerAutoconnectCallback : Autologging against known bugtrackers...");
-			//creation of AsynchronousBugTrackerAutoconnect in this thread.
-			Credentials credentials = new BasicAuthenticationCredentials(username, password.toCharArray());
-			Runnable autoconnector = new AsynchronousBugTrackerAutoconnect(username, credentials, session);
-			taskExecutor.execute(autoconnector);
-		}
-	}
+	@Inject
+	private CredentialsProvider credentialsProvider;
+
+	@Inject
+	private Provider<AsynchronousBugTrackerAutoconnect> asyncProvider;
+
+
 
 	@Override
 	public void onApplicationEvent(InteractiveAuthenticationSuccessEvent event) {
-		String login = event.getAuthentication().getName();
-		if (isApplicable(event)){
-			try {				
-				String password = (String) event.getAuthentication().getCredentials();
-				HttpSession session = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getSession();
-				onLoginSuccess(login, password, session);
-			} catch (ClassCastException ex) {
-				// Such errors should not break the app flow
-				LOGGER.warn("BugTrackerAutoconnectCallback : The following exception was caught and ignored in BT autoconnector : {}. It does not prevent Squash from working, yet it is probably a bug.", ex.getMessage(), ex);
-			}
-		}
-		else{
-			if (LOGGER.isInfoEnabled()){
-				Object credentials = event.getAuthentication().getCredentials(); 
-				String credClazz = (credentials != null) ? credentials.getClass().getName() : "(undefined)";
-				LOGGER.info("BugTrackerAutoconnectCallback : user '{}' authenticated with credentials of class '{}' that cannot be used for bugtracker autoconnection", login, credClazz);
-			}
-		}
-	}
-	
-	/*
-	 * Basically, only login/password authentication is supported at the moment. For now,  
-	 * we assume that if the credential is a String then we can use it as a password / token
-	 * otherwise it's not applicable.
-	 */
-	private boolean isApplicable(InteractiveAuthenticationSuccessEvent event){
-		return (event.getAuthentication().getCredentials() instanceof String);
+
+		Authentication authentication = event.getAuthentication();
+		HttpSession session = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getSession();
+
+		// initialize the credentials cache
+		UserCredentialsCache credentialsCache = initializeCredentialsCache(authentication.getName(), session);
+
+		// start the autoconnection tester thread
+		scheduleAutoconnection(authentication, credentialsCache);
+
 	}
 
+	// will create the user credentials and store them into the session, and the credentials provider
+	private UserCredentialsCache initializeCredentialsCache(String username, HttpSession session){
 
-	private class AsynchronousBugTrackerAutoconnect implements Runnable {
+		LOGGER.debug("BugTrackerAutoconnectCallback : initializing the credentials cache");
 
-		private final String user;
-		private final Credentials credentials;
-		private final HttpSession session;
-		private final SecurityContext secContext;
+		UserCredentialsCache credentials = new UserCredentialsCache(username);
+
+		session.setAttribute(UserCredentialsCachePersistenceFilter.CREDENTIALS_CACHE_SESSION_KEY, credentials);
+		credentialsProvider.restoreCache(credentials);
+
+		return credentials;
+
+	}
+
+	private void scheduleAutoconnection(Authentication authentication, UserCredentialsCache credentialsCache){
+
+		LOGGER.debug("BugTrackerAutoconnectCallback : scheduling autoconnection for user '{}'", credentialsCache.getUser());
+
+		AsynchronousBugTrackerAutoconnect autoconnector = asyncProvider.get();
+		autoconnector.setUser(authentication.getName());
+		autoconnector.setSpringsecCredentials(authentication.getCredentials());
+		autoconnector.setCredentialsCache(credentialsCache);
+
+		taskExecutor.execute(autoconnector);
+
+	}
 
 
-		public AsynchronousBugTrackerAutoconnect(String user, Credentials credentials, HttpSession session) {
-			super();
-			this.user = user;
-			this.credentials = credentials;
-			this.session = session;
+
+	// ********************* private worker class ******************************
+
+
+	@Component
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	static class AsynchronousBugTrackerAutoconnect implements Runnable {
+
+		// set by setters
+		private String user;
+		private Object springsecCredentials;
+		private UserCredentialsCache credentialsCache;
+
+		// set by the constructor
+		final private SecurityContext secContext;
+
+		// set by injection
+		@Inject
+		private BugTrackersLocalService bugTrackersLocalService;
+
+		@Inject
+		private ProjectFinder projectFinder;
+
+		@Inject
+		private BugTrackerFinderService bugTrackerFinder;
+
+		@Inject
+		private CredentialsProvider credentialsProvider;
+
+		public AsynchronousBugTrackerAutoconnect(){
 			//As Spring SecurityContext is ThreadLocal by default, we must get the main thread SecurityContext
 			//and get a local reference pointing to this SecurityContext
 			//Take care that SecurityContext have been correctly created and initialized by Spring Security
@@ -159,45 +171,109 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 		}
 
 
+		/*
+			XXX concurrency concern : the cache instance 'credentialsCache' is running concurrently in the main
+			use thread and in this one. I doubt it will fail horribly though : concurrency only happens between at most
+			two threads which essentially belong to the same user, might happen for a brief time only, and consequences
+			of collision won't go farther than wrong label displayed in the UI.
+		*/
 		@Override
-		public void run() {
+		public void run(){
 
-			BugTrackerContext newContext = new BugTrackerContext(user);
-
-			//Setting the SecurityContext in the new thread with a reference to the original one.
+			// restore the user context
 			SecurityContextHolder.setContext(secContext);
-			contextHolder.setContext(newContext);
+
+			// restore the credentials cache
+			credentialsProvider.restoreCache(credentialsCache);
 
 			try{
-				List<BugTracker> bugTrackers = findBugTrackers();
 
-				for (BugTracker bugTracker : bugTrackers) {
-					try {
+				List<BugTracker> servers = findBugTrackers();
 
-						if (bugTracker.getAuthenticationPolicy() == AuthenticationPolicy.APP_LEVEL){
-							LOGGER.debug("BugTrackerAutoconnectCallback : bugtracker {} uses the app-level authentication policy, credentials are assumed set and correct", bugTracker.getName());
-						}
-						else {
-							LOGGER.debug("BugTrackerAutoconnectCallback : try connexion of bug-tracker : {}", bugTracker.getName());
-							bugTrackersLocalService.setCredentials(credentials, bugTracker);
-							// if success, store the credential in context
-							LOGGER.debug("BugTrackerAutoconnectCallback : add credentials for bug-tracker : {}", bugTracker.getName());
-							newContext.setCredentials(bugTracker, credentials);
-						}
-					} catch (BugTrackerRemoteException ex) {
-						LOGGER.info("BugTrackerAutoconnectCallback : Failed to connect user '{}' to the bugtracker {} with the supplied credentials. User will have to connect manually.", user, bugTracker);
-						LOGGER.debug("BugTrackerAutoconnectCallback : Bugtracker autoconnector threw this exception : {}", ex.getMessage(), ex);
+				for (BugTracker server: servers){
+
+					try{
+						LOGGER.debug("BugTrackerAutoconnectCallback : attempting authentication on server '{}'", server.getName());
+						attemptAuthentication(server);
 					}
+					catch(BugTrackerNoCredentialsException | UnsupportedAuthenticationModeException ex){
+						LOGGER.debug("BugTrackerAutoconnectCallback : Failed to connect user '{}' to the bugtracker {} with the supplied credentials. User will have to connect manually.", user, server);
+						LOGGER.debug("BugTrackerAutoconnectCallback : original exception is : ", ex);
+					}
+					catch(Exception genericException){
+						LOGGER.error("BugTrackerAutoconnectCallback : an unexpected error happened :", genericException);
+					}
+
 				}
 
-				// store context into session
-				mergeIntoSession(newContext);
 			}
 			finally{
-				contextHolder.clearContext();
+				LOGGER.debug("BugTrackerAutoconnectCallback : completed autoconnection for user '{}'", credentialsCache.getUser());
+				// clear the credentials from that thread.
+				credentialsProvider.unloadCache();
 			}
 
 		}
+
+
+		private void attemptAuthentication(BugTracker server) {
+
+			AuthenticationPolicy policy = server.getAuthenticationPolicy();
+			AuthenticationProtocol protocol = server.getAuthenticationProtocol();
+
+			LOGGER.trace("server '{}' is set to authentication policy '{}' and protocol '{}'", policy, protocol);
+
+			// find testable credentials if possible
+			Credentials credentials = fetchCredentialsOrNull(server);
+
+			// are the credentials absent ?
+			if (credentials == null){
+				LOGGER.debug("BugTrackerAutoconnectCallback : could not find suitable credentials, skipping");
+			}
+			// else attempt authentication
+			else{
+
+				// warn if credentials of unexpected type
+				warnIfCredentialsOfWrongType(credentials, protocol);
+
+				bugTrackersLocalService.validateCredentials(server, credentials, true);
+
+				LOGGER.debug("BugTrackerAutoconnectCallback : credentials successfully tested for server '{}'", server.getName());
+			}
+
+		}
+
+
+
+		private Credentials fetchCredentialsOrNull(BugTracker server){
+
+			Credentials credentials = null;
+
+			AuthenticationPolicy policy = server.getAuthenticationPolicy();
+
+			// attempt to load from the provider
+			Optional<Credentials> maybeCredentials = null;
+			if (policy == AuthenticationPolicy.USER){
+				maybeCredentials = credentialsProvider.getCredentials(server);
+			}
+			else{
+				maybeCredentials = credentialsProvider.getAppLevelCredentials(server);
+			}
+
+
+			// use the credentials if present, or try fallback
+			if (maybeCredentials.isPresent()){
+				LOGGER.debug("BugTrackerAutoconnectCallback : found credentials from the provider");
+				credentials = maybeCredentials.get();
+			}
+			else if (canTryUsingEvent(server)){
+				LOGGER.debug("BugTrackerAutoconnectCallback : can create the credentials using the authentication event");
+				credentials = buildFromAuthenticationEvent();
+			}
+
+			return credentials;
+		}
+
 
 		private List<BugTracker> findBugTrackers() {
 			List<Project> readableProjects = projectFinder.findAllReadable();
@@ -205,29 +281,47 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 			return bugTrackerFinder.findDistinctBugTrackersForProjects(projectIds);
 		}
 
-		//This method deals with the (rare) case where the operation took so long that another request had created the bugtracker context in the mean time.
-		//In this case, the data already present has precedence.
-		private void mergeIntoSession(BugTrackerContext newContext) {
 
-			BugTrackerContext existingContext = (BugTrackerContext) session.getAttribute(BugTrackerContextPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY);
+		// for now we assume that only String credentials are suitable (as passwords),
+		// and the server is set to auth policy USER
+		private boolean canTryUsingEvent(BugTracker server){
+			return (server.getAuthenticationPolicy() == AuthenticationPolicy.USER && 
+					server.getAuthenticationProtocol() == AuthenticationProtocol.BASIC_AUTH &&
+					springsecCredentials instanceof String);
+		}
 
-			if (existingContext == null) {
-				//if no existing context was found the newContext is entirely stored
-				session.setAttribute(BugTrackerContextPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY, newContext);
-				LOGGER.trace("BugTrackerAutoconnectCallback : storing into session #{} new context #{}", session.getId(),newContext.toString());
-			} else {
-				existingContext.absorb(newContext);
-				LOGGER.trace("BugTrackerAutoconnectCallback : done merging into session #{} and context #{}", session.getId(),existingContext.toString());
+		// for now we assume that BasicAuthentication is what we need
+		// the cast is safe thanks to canTryUsingEvent
+		private Credentials buildFromAuthenticationEvent(){
+			return new BasicAuthenticationCredentials(user, (String)springsecCredentials);
+		}
+
+
+		private void warnIfCredentialsOfWrongType(Credentials credentials, AuthenticationProtocol protocol){
+			AuthenticationProtocol credsProtocol = credentials.getImplementedProtocol();
+			if (credsProtocol != protocol){
+				LOGGER.warn("BugTrackerAutoconnectCallback : attempting autoconnection with credentials for protocol '{}' "
+						+ "while the configuration states that the (preferred) protocol is  '{}'. That doesn't mean the "
+						+ "current credentials won't work (the connector still supports them) but this warning hints "
+						+ "that they might be obsolete regarding your new preferred protocol.", credsProtocol, protocol);
 			}
+		}
 
-			//I don't understand why we put new content in session ? new content has been merged into existing content... why override it ?
-			// A: Fair point. 
-			session.setAttribute(BugTrackerContextPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY, newContext);
-			LOGGER.debug("BugTrackerAutoconnectCallback : BugTrackerContext stored to session");
+		// ********** setters ********************
+
+		public void setUser(String user) {
+			this.user = user;
+		}
+
+		public void setSpringsecCredentials(Object springsecCredentials) {
+			this.springsecCredentials = springsecCredentials;
+		}
+
+		public void setCredentialsCache(UserCredentialsCache credentialsCache) {
+			this.credentialsCache = credentialsCache;
 		}
 
 
 	}
-
 
 }

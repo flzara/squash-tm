@@ -44,7 +44,17 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.servers.AuthenticationStatus;
 import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.servers.WrongAuthenticationPolicyException;
 
+
+/**
+ * <p>
+ *     That service manages the Issues on the Squash side (CRUD, relationships, aggregation etc).
+ * 	   It does not, however, interact with the bugtracker connectors directly : that is the
+ * 	   job of {@link BugTrackersService}.
+ * </p>
+ *
+ */
 @Transactional
 public interface BugTrackersLocalService {
 
@@ -53,10 +63,7 @@ public interface BugTrackersLocalService {
 	/**
 	 * adds a new Issue to the entity. The entity must implement IssueDetector.
 	 *
-	 * @param entityId
-	 *            : the id of that entity.
-	 * @param entityClass
-	 *            : the actual class of that entity, that implements IssueDetector.
+	 * @param entity : the entity that will hold the issue
 	 * @param issue
 	 *            : the issue to add
 	 * @return the BTIssue corresponding to the bug remotely created
@@ -175,7 +182,7 @@ public interface BugTrackersLocalService {
 	 * To keep track of which IssueDetector owns which issue, the data are wrapped in a IssueOwnership (that just pair
 	 * the informations together).
 	 *
-	 * @param testCase
+	 * @param tcId
 	 *            id for which we need to get the issues,
 	 * @param sorter
 	 *            that tells us how we should sort and filter the data
@@ -227,7 +234,7 @@ public interface BugTrackersLocalService {
 	 * To keep track of which IssueDetector owns which issue, the data are wrapped in a IssueOwnership (that just pair
 	 * the informations together).
 	 *
-	 * @param testCase
+	 * @param testCaseId
 	 *            id for which we need to get the issues,
 	 *
 	 * @return a  non-null but possibly empty list of IssueOwnership,
@@ -259,66 +266,44 @@ public interface BugTrackersLocalService {
 	 * says whether the user is authenticated against that bugtracker regardless
 	 * of the bindings with projects.
 	 *
-	 * @param bugtracker
+	 * @param bugtrackerId
 	 * @return
 	 */
 	AuthenticationStatus checkAuthenticationStatus(Long bugtrackerId);
 
 
 	/**
-	 * sets the credentials of an user for authentication bugtracker-side. This operation is illegal if the bugtracker is set to use
-	 * {@link org.squashtest.tm.domain.servers.AuthenticationPolicy#APP_LEVEL}.
+	 * Sets the credentials of an user for authentication bugtracker-side. The credentials will be tested for validity.
 	 *
-	 * @param credentials
+	 * Note that a user context is mandatory : it should not be invoked if Squash-TM itself initiated the ongoing job.
+	 * Also, this operation is illegal if the bugtracker is configured for using policy {@link org.squashtest.tm.domain.servers.AuthenticationPolicy#APP_LEVEL}.
+	 *
+	 * If the credentials are rejected, they will also be invalidated and purged from cache if the parameter invalidateOnFail is true.
+	 * Credentials purged this way will only happen if the credentials themselves are invalid, and not for other reasons (endpoint failure etc).
+	 *
 	 * @param bugTracker : the concerned BugTracker
-	 * @return nothing
-	 * @throws BugTrackerRemoteException if the credentials are wrong
-	 * @throws org.squashtest.csp.core.bugtracker.service.WrongAuthenticationPolicyException
-	 * @throws {@link UnsupportedAuthenticationModeException} if the connector does not support such authentication
-	 */
-	void setCredentials(Credentials credentials, BugTracker bugTracker) throws BugTrackerRemoteException;
-
-	/**
-	 * Same as {@link #setCredentials(String, String, BugTracker)}, but the bugtracker is identified by its id.
-	 *
 	 * @param credentials
-	 * @param bugtrackerId
-	 * @throws BugTrackerRemoteException
-	 * @throws org.squashtest.csp.core.bugtracker.service.WrongAuthenticationPolicyException
-	 * @throws {@link UnsupportedAuthenticationModeException}
-	 */
-	void setCredentials(Credentials credentials, Long bugtrackerId) throws BugTrackerRemoteException;
-
-	/**
-	 * Same as {@link #setCredentials(String, String, BugTracker)}, using behind the scene
-	 * {@link org.squashtest.tm.domain.servers.BasicAuthenticationCredentials} with the
-	 * given username and password
-	 *
-	 * @deprecated use {@link #setCredentials(Credentials, BugTracker)} instead
-	 * @param username
-	 * @param password
-	 * @param bugTracker : the concerned BugTracker
+	 * @param invalidateOnFail
 	 * @return nothing
-	 * @throws BugTrackerRemoteException if the credentials are wrong
-	 * @throws org.squashtest.csp.core.bugtracker.service.WrongAuthenticationPolicyException
-	 * @throws {@link UnsupportedAuthenticationModeException}
+	 * @throws org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException (triggers invalidation if invalidateOnFail is true)
+	 * @throws WrongAuthenticationPolicyException if attempted to authenticate with user-level credentials while application-level credentials are excepted
+	 * @throws {@link UnsupportedAuthenticationModeException} (triggers removal if removeIfFail is true)
+	 * @throws BugTrackerRemoteException for errors related to the endpoint
 	 */
-	@Deprecated
-	void setCredentials(String username, String password, BugTracker bugTracker) throws BugTrackerRemoteException;
+	void validateCredentials(BugTracker bugTracker, Credentials credentials, boolean invalidateOnFail) throws BugTrackerRemoteException;
 
 	/**
-	 * Same as {@link #setCredentials(String, String, BugTracker)}, but the bugtracker is identified by its id.
+	 * Same as {@link #validateCredentials(BugTracker, Credentials, boolean)}, but the bugtracker is identified by its id.
 	 *
-	 * @deprecated
-	 * @param username
-	 * @param password
 	 * @param bugtrackerId
+	 * @param credentials
+	 * @param invalidateOnFail
 	 * @throws BugTrackerRemoteException
-	 * @throws org.squashtest.csp.core.bugtracker.service.WrongAuthenticationPolicyException
+	 * @throws WrongAuthenticationPolicyException
 	 * @throws {@link UnsupportedAuthenticationModeException}
 	 */
-	@Deprecated
-	void setCredentials(String username, String password, Long bugtrackerId) throws BugTrackerRemoteException;
+	void validateCredentials(Long bugtrackerId, Credentials credentials, boolean invalidateOnFail) throws BugTrackerRemoteException;
+
 
 	/**
 	 * returns an instance of the remote project.

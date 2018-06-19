@@ -21,12 +21,14 @@
 package org.squashtest.tm.service.internal.bugtracker;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.i18n.LocaleContext;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder;
-import org.squashtest.csp.core.bugtracker.service.BugTrackersService;
+import org.squashtest.tm.service.bugtracker.BugTrackersService;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -38,6 +40,8 @@ import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
 import org.squashtest.tm.service.internal.repository.IssueDao;
+import org.squashtest.tm.service.servers.CredentialsProvider;
+import org.squashtest.tm.service.servers.UserCredentialsCache;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -57,7 +61,7 @@ public class ExecutionStepIssueFinder implements IssueOwnershipFinder {
 	@Inject
 	private BugTrackersService remoteBugTrackersService;
 	@Inject
-	private BugTrackerContextHolder contextHolder;
+	private CredentialsProvider credentialsProvider;
 	@Inject
 	private IssueDao issueDao;
 	@Inject
@@ -65,6 +69,18 @@ public class ExecutionStepIssueFinder implements IssueOwnershipFinder {
 	@Inject
 	private ExecutionStepDao executionStepDao;
 
+	private LocaleContext getLocaleContext() {
+		return LocaleContextHolder.getLocaleContext();
+	}
+	
+	private SecurityContext getSecurityContext(){
+		return SecurityContextHolder.getContext();
+	}
+	
+	private UserCredentialsCache getCredentialsCache(){
+		return credentialsProvider.getCache();
+	}
+	
 	@Override
 	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSorted(long entityId, PagingAndSorting sorter) {
 		ExecutionStep executionStep = executionStepDao.findById(entityId);
@@ -90,7 +106,7 @@ public class ExecutionStepIssueFinder implements IssueOwnershipFinder {
 		}
 
 		try {
-			Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(remoteIssueIds, bugTracker, contextHolder.getContext(), LocaleContextHolder.getLocaleContext());
+			Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(remoteIssueIds, bugTracker, getCredentialsCache(), getLocaleContext(), getSecurityContext());
 			List<RemoteIssue> btIssues = futureIssues.get(timeout, TimeUnit.SECONDS);
 
 			Map<String, RemoteIssue> remoteById = IssueOwnershipFinderUtils.createRemoteIssueByRemoteIdMap(btIssues);

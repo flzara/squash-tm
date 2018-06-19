@@ -24,7 +24,7 @@ import org.spockframework.mock.MockNature
 import org.springframework.context.annotation.*
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
-import org.squashtest.csp.core.bugtracker.service.BugTrackersService
+import org.squashtest.tm.service.bugtracker.BugTrackersService
 import org.squashtest.tm.service.internal.security.ObjectIdentityServiceImpl;
 import org.squashtest.tm.service.internal.security.SpringSecurityUserContextService
 import org.squashtest.tm.service.security.ObjectIdentityService;

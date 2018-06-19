@@ -25,77 +25,134 @@ import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
-import org.squashtest.tm.domain.servers.Credentials;
+import org.squashtest.tm.service.servers.ManageableCredentials;
+import org.squashtest.tm.service.servers.ServerAuthConfiguration;
 import org.squashtest.tm.service.servers.StoredCredentialsManager;
 
 
 public interface CustomBugTrackerModificationService {
-	
+
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeName(long bugtrackerId, String newName);
-	
-	
+
+
 	//**** credential services, some being forwarded to StoredCredentialsManager ****
+	
 
 	/**
 	 * Returns the authentication protocols supported by the underlying connector
-	 * 
+	 *
 	 * @param bugtracker
 	 * @return
 	 */
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	AuthenticationProtocol[] getSupportedProtocols(BugTracker bugtracker);
+
+
+	/**
+	 * Changes the authentication policy for this server. Be warned that doing this 
+	 * will automatically remove the app-level credentials (since they target the 
+	 * former protocol).
+	 * 
+	 * @param bugtrackerId
+	 * @param policy
+	 */
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	void changeAuthenticationPolicy(long bugtrackerId, AuthenticationPolicy policy);
+
+	/**
+	 * Changes the authentication protocol. Be warned that doing this will automatically 
+	 * remove the authentication configuration and app-level credentials (since they target 
+	 * the former protocol) 
+	 * 
+	 * @param bugtrackerId
+	 * @param protocol
+	 */
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	void changeAuthenticationProtocol(long bugtrackerId, AuthenticationProtocol protocol);
+	
 	
 	
 	/**
 	 * Says whether the StoredCredentials service is properly configured
-	 * 
+	 *
 	 *  @see StoredCredentialsManager#isSecretConfigured()
-	 * 
+	 *
 	 * @return
 	 */
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	boolean isCredentialsServiceAvailable();
 
 	/**
-	 * 
-	 * @see StoredCredentialsManager#storeCredentials(long, Credentials)
+	 *
+	 * @see StoredCredentialsManager#storeAppLevelCredentials(long, ManageableCredentials)
 	 * @param serverId
 	 * @param credentials
 	 */
 	@PreAuthorize(HAS_ROLE_ADMIN)
-	void storeCredentials(long serverId, Credentials credentials);
+	void storeCredentials(long serverId, ManageableCredentials credentials);
 
+	
 	/**
 	 * 
-	 * @see StoredCredentialsManager#findCredentials(long)
+	 * @see StoredCredentialsManager#storeAuthenticationInformation(long, ServerAuthConfiguration)A
+	 * @param serverId
+	 * @param conf
+	 */
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	void storeAuthConfiguration(long serverId, ServerAuthConfiguration conf);
+	
+	
+	/**
+	 *
+	 * @see StoredCredentialsManager#findAppLevelCredentials(long)
 	 * @param serverId
 	 * @return
 	 */
 	@PreAuthorize(HAS_ROLE_ADMIN)
-	Credentials findCredentials(long serverId);
+	ManageableCredentials findCredentials(long serverId);
+	
+	/**
+	 * 
+	 * @See {@link StoredCredentialsManager#findServerAuthConfiguration(long)
+	 * @param serverId
+	 * @return
+	 */
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	ServerAuthConfiguration findAuthConfiguration(long serverId);
 
 
 	/**
 	 * Tests whether the given credentials are valid for the given bugtracker.
-	 * The method exits normally if the credentials are valid.   
-	 * 
-	 * @param bugtracker
+	 * The method exits normally if the credentials are valid.
+	 *
+	 * @param bugtrackerId
 	 * @param credentials
 	 * @throws BugTrackerRemoteException in case of a problem.
+	 * @throws BugTrackerNoCredentialsException if the credentials where rejected, or could not be built due to incomplete data
 	 * @return
 	 */
 	@PreAuthorize(HAS_ROLE_ADMIN)
-	void testCredentials(long bugtrackerId, Credentials credentials);
-	
-	
+	void testCredentials(long bugtrackerId, ManageableCredentials credentials);
+
+
 	/**
-	 * 
-	 * @see StoredCredentialsManager#deleteCredentials(long)
+	 *
+	 * @see StoredCredentialsManager#deleteAppLevelCredentials(long)
 	 * @param serverId
 	 */
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	void deleteCredentials(long serverId);
 	
+	
+	/**
+	 * 
+	 * @see StoredCredentialsManager#deleteServerAuthConfiguration(long)
+	 * @param serverId
+	 */
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	void deleteAuthConfiguration(long serverId);
+
 }

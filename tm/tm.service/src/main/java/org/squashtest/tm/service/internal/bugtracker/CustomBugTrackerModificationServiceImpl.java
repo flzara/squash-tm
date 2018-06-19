@@ -24,37 +24,42 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.core.bugtracker.service.InternalBugtrackerConnector;
+import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
-import org.squashtest.tm.domain.servers.AuthenticationStatus;
 import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
+import org.squashtest.tm.service.bugtracker.BugTrackersService;
 import org.squashtest.tm.service.bugtracker.CustomBugTrackerModificationService;
+import org.squashtest.tm.service.internal.bugtracker.adapter.InternalBugtrackerConnector;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
+import org.squashtest.tm.service.servers.ManageableCredentials;
+import org.squashtest.tm.service.servers.ServerAuthConfiguration;
 import org.squashtest.tm.service.servers.StoredCredentialsManager;
 
 /**
- * 
+ *
  * @author mpagnon
- * 
+ *
  */
 @Service("CustomBugTrackerModificationService")
 @Transactional
 public class CustomBugTrackerModificationServiceImpl implements CustomBugTrackerModificationService {
-	
+
 	@Inject
 	private BugTrackerDao bugTrackerDao;
-	
+
 	@Inject
 	private StoredCredentialsManager credentialsManager;
-	
+
 	@Inject
 	private BugTrackerConnectorFactory connectorFactory;
-	
-	
+
+	@Inject
+	private BugTrackersService btService;
+
+
 	@Override
 	public void changeName(long bugtrackerId, String newName) {
 		String trimedNewName = newName.trim();
@@ -68,7 +73,7 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 				throw new NameAlreadyInUseException(NameAlreadyInUseException.EntityType.BUG_TRACKER, trimedNewName);
 			}
 		}
-		
+
 	}
 
 
@@ -79,20 +84,20 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 
 
 	@Override
-	public void storeCredentials(long serverId, Credentials credentials) {
-		credentialsManager.storeCredentials(serverId, credentials);
+	public void storeCredentials(long serverId, ManageableCredentials credentials) {
+		credentialsManager.storeAppLevelCredentials(serverId, credentials);
 	}
-
+	
 
 	@Override
-	public Credentials findCredentials(long serverId) {
-		return credentialsManager.findCredentials(serverId);
+	public ManageableCredentials findCredentials(long serverId) {
+		return credentialsManager.findAppLevelCredentials(serverId);
 	}
 
 
 	@Override
 	public void deleteCredentials(long serverId) {
-		credentialsManager.deleteCredentials(serverId);
+		credentialsManager.deleteAppLevelCredentials(serverId);
 	}
 
 
@@ -101,19 +106,58 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 		InternalBugtrackerConnector connector = connectorFactory.createConnector(bugtracker);
 		return connector.getSupportedAuthProtocols();
 	}
+	
+
+	@Override
+	public void changeAuthenticationPolicy(long bugtrackerId, AuthenticationPolicy policy) {
+		BugTracker tracker = bugTrackerDao.findOne(bugtrackerId);
+		tracker.setAuthenticationPolicy(policy);
+		
+		credentialsManager.deleteAppLevelCredentials(bugtrackerId);
+	}
 
 
 	@Override
-	public void testCredentials(long bugtrackerId, Credentials credentials) {
-		BugTracker bt = bugTrackerDao.findOne(bugtrackerId);
-		InternalBugtrackerConnector connector = connectorFactory.createConnector(bt);
+	public void changeAuthenticationProtocol(long bugtrackerId, AuthenticationProtocol protocol) {
+		BugTracker tracker = bugTrackerDao.findOne(bugtrackerId);
+		tracker.setAuthenticationProtocol(protocol);
 		
-		connector.checkCredentials(credentials);
-		
+		credentialsManager.deleteAppLevelCredentials(bugtrackerId);
+		credentialsManager.deleteServerAuthConfiguration(bugtrackerId);
 	}
-	
-	
-	
-	
+
+
+	@Override
+	public void testCredentials(long bugtrackerId, ManageableCredentials credentials) {
+
+		BugTracker bt = bugTrackerDao.findOne(bugtrackerId);
+		Credentials usableCredentials = credentials.build(credentialsManager, bt, null);
+		
+		if (usableCredentials == null){
+			throw new BugTrackerNoCredentialsException("credentials could not be built, either because the credentials themselves "
+					+ "are not suitable, or because the protocol configuration is incomplete/invalid", null);
+		}
+
+		btService.testCredentials(bt, usableCredentials);
+	}
+
+
+	@Override
+	public void storeAuthConfiguration(long serverId, ServerAuthConfiguration conf) {
+		credentialsManager.storeServerAuthConfiguration(serverId, conf);
+	}
+
+
+	@Override
+	public ServerAuthConfiguration findAuthConfiguration(long serverId) {
+		return credentialsManager.findServerAuthConfiguration(serverId);
+	}
+
+
+	@Override
+	public void deleteAuthConfiguration(long serverId) {
+		credentialsManager.deleteServerAuthConfiguration(serverId);
+	}
+
 
 }

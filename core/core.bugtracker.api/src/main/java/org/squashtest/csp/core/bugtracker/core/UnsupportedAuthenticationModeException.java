@@ -31,7 +31,7 @@ public class UnsupportedAuthenticationModeException extends BugTrackerManagerExc
 	private final String authMode;
 
 	public UnsupportedAuthenticationModeException(String authMode) {
-		super("does not support authentication mode '"+authMode+"' not supported");
+		super("authentication mode '"+authMode+"' not supported");
 		this.authMode = authMode;
 	}
 
