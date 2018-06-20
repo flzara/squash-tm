@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,7 +35,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class CheckXFO {
 
-    @ResponseBody
+	private static final Logger LOGGER = LoggerFactory.getLogger(CheckXFO.class);
+
+
+	@ResponseBody
 	@RequestMapping(value = "/checkXFO", method = RequestMethod.POST, params = "URL")
 	public boolean XFOAllowForAll(@RequestParam("URL") String url) {
 
@@ -51,7 +56,7 @@ public class CheckXFO {
             }
 
         } catch (IOException e) {
-            // nothing to do
+			LOGGER.error(e.getMessage(), e);
 		}
 
         return result;

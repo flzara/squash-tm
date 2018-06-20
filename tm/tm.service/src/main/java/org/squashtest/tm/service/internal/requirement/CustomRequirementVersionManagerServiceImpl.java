@@ -281,8 +281,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 					ps.setCriticality(update.getCriticality());
 				}
 
-			} catch (Exception ex) {
-				// lots of legitimate business exception could happen so I won't log them here
+			} catch (Exception ex) {//NOSONAR lots of legitimate business exception could happen so I won't log them here
 				failures.add(rv.getId());
 			}
 		}

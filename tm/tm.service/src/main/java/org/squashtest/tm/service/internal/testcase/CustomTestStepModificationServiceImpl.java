@@ -92,6 +92,7 @@ public class CustomTestStepModificationServiceImpl implements CustomTestStepModi
 		try {
 			testStepDao.flush();
 		} catch (ConstraintViolationException e) {
+			LOGGER.error(e.getMessage(), e);
 			for (ConstraintViolation<?> cv : e.getConstraintViolations()) {
 				String property = cv.getPropertyPath().toString();
 				String message = cv.getMessage();

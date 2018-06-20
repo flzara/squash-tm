@@ -180,7 +180,7 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 			try {
 				return DateUtils.parseIso8601Date(value);
 			} catch (ParseException | ClassCastException e) {
-				LOGGER.debug("Unable to parse date {} of custom field #{}", value, id);
+				LOGGER.debug("Unable to parse date {} of custom field #{}", value, id, e);
 			}
 
 			return null;

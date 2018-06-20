@@ -20,13 +20,14 @@
  */
 package org.squashtest.tm.internal.domain.report.common.hibernate;
 
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.squashtest.tm.internal.domain.report.query.QueryOperator;
 import org.squashtest.tm.internal.domain.report.query.hibernate.ReportCriterion;
 
@@ -35,6 +36,9 @@ import org.squashtest.tm.internal.domain.report.query.hibernate.ReportCriterion;
  *
  */
 public class BelowDateCriterion extends ReportCriterion {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(BelowDateCriterion.class);
+
 
 	public BelowDateCriterion() {
 
@@ -80,6 +84,7 @@ public class BelowDateCriterion extends ReportCriterion {
 			return result;
 			// WARNING!! it previously caught all Exceptions
 		} catch (IllegalArgumentException|ClassCastException e) {
+			LOGGER.error(e.getMessage(), e);
 			return null;
 		}
 	}

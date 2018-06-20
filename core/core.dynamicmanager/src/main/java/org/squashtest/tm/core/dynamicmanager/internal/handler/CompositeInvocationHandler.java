@@ -28,6 +28,8 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.squashtest.tm.core.dynamicmanager.exception.UnsupportedMethodException;
 
 /**
@@ -39,6 +41,8 @@ import org.squashtest.tm.core.dynamicmanager.exception.UnsupportedMethodExceptio
  *
  */
 public class CompositeInvocationHandler implements InvocationHandler {
+	private static final Logger LOGGER = LoggerFactory.getLogger(CompositeInvocationHandler.class);
+
 	/**
 	 * @param invocationHandlers
 	 */
@@ -60,6 +64,7 @@ public class CompositeInvocationHandler implements InvocationHandler {
 			return doInvoke(proxy, method, args);
 
 		} catch (InvocationTargetException ex) {
+			LOGGER.error(ex.getMessage(), ex);
 			throw ex.getTargetException();
 			// otherwise, checked ITE will be wrapped into UndeclaredThrowableException
 

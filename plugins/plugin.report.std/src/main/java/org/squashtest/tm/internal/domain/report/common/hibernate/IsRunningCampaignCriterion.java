@@ -25,6 +25,8 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.internal.domain.report.common.dto.ExProgressCampaignStatus;
@@ -45,6 +47,8 @@ import org.squashtest.tm.internal.domain.report.query.hibernate.ReportCriterion;
  *
  */
 public class IsRunningCampaignCriterion extends ReportCriterion {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(IsRunningCampaignCriterion.class);
 
 	public IsRunningCampaignCriterion(){
 		super();
@@ -99,6 +103,7 @@ public class IsRunningCampaignCriterion extends ReportCriterion {
 			}
 			return result;
 		}catch(Exception e){
+			LOGGER.error(e.getMessage(), e);
 			return null;
 		}
 	}

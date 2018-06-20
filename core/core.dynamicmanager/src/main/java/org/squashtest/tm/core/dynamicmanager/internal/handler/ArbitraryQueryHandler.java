@@ -106,6 +106,7 @@ public class ArbitraryQueryHandler<ENTITY> implements DynamicComponentInvocation
 			Query q = setupQuery(method, args);
 			return executeQuery(method, q);
 		} catch (EmptyCollectionException ex) {
+			LOGGER.error(ex.getMessage(), ex);
 			return abortQuery(method);
 		}
 

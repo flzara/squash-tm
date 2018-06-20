@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -49,6 +51,9 @@ import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMI
 
 @Service("CustomTestSuiteModificationService")
 public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteModificationService {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(CustomTestSuiteModificationServiceImpl.class);
+
 	private static final String HAS_WRITE_PERMISSION_ID = "hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'WRITE') ";
 	private static final String HAS_READ_PERMISSION_ID = "hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite','READ') ";
 	private static final String PERMISSION_EXECUTE_ITEM = "hasPermission(#testPlanItemId, 'org.squashtest.tm.domain.campaign.IterationTestPlanItem', 'EXECUTE') ";
@@ -107,6 +112,7 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 			return testSuiteDao.getTestSuiteStatistics(suiteId);
 
 		} catch (AccessDeniedException ade) {
+			LOGGER.error(ade.getMessage(), ade);
 			String userLogin = userService.findCurrentUser().getLogin();
 			return testSuiteDao.getTestSuiteStatistics(suiteId, userLogin);
 

@@ -75,7 +75,7 @@ import org.slf4j.LoggerFactory;
 				}
 			}
 		} catch (IOException e) {
-			LOGGER.warn(e.getMessage());
+			LOGGER.warn(e.getMessage(), e);
 
 		}
 

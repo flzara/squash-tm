@@ -25,6 +25,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.squashtest.tm.service.feature.FeatureManager;
@@ -38,6 +40,9 @@ import org.squashtest.tm.service.feature.FeatureManager.Feature;
  * @author Gregory Fouquet
  */
 public class SquashUserDetailsManagerProxyFactory implements FactoryBean<SquashUserDetailsManager>, InitializingBean {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(SquashUserDetailsManagerProxyFactory.class);
+
 
 	private SquashUserDetailsManager caseSensitiveManager;
 
@@ -76,15 +81,16 @@ public class SquashUserDetailsManagerProxyFactory implements FactoryBean<SquashU
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 			try {
-				
+
 				return method.invoke(context.getCurrentManager(), args);
 
 			} catch (InvocationTargetException e) {
+				LOGGER.error(e.getMessage(), e);
 				throw e.getCause();
 			}
 		}
-		
-		
+
+
 	}
 
 	/**

@@ -49,6 +49,7 @@ import org.squashtest.tm.web.internal.util.UriUtils;
 @RequestMapping("/servers")
 public class ThirdPartyServersAuthenticationController {
 
+
 	private static final String OAUTH_ERROR_PAGE = "servers/oauth1a-failure.html";
 	private static final String OAUTH_SUCCESS_PAGE = "servers/oauth1a-success.html";
 
@@ -170,7 +171,7 @@ public class ThirdPartyServersAuthenticationController {
 		}
 		catch(Exception ex){
 			LOGGER.debug("attempted to retrieve the current username for debugging purposes but failed to retrieve one. "
-					+ "Probable cause is that no user context is set. It is also likely that the error reported below was caused for that same reason.");
+					+ "Probable cause is that no user context is set. It is also likely that the error reported below was caused for that same reason.", ex);
 			return "(unknown)";
 		}
 	}
