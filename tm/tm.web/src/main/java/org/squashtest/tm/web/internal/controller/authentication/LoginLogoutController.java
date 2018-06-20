@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.authentication;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
@@ -41,7 +42,9 @@ public class LoginLogoutController {
 	@Value("${info.app.version}")
     private String version;
 
-	@Inject
+	// Issue 7509, Spring is a myth, please don't replace @Autowired by @Inject,
+	// otherwise, the ClassLoader can not find the class used in Trac plugin
+	@Autowired
 	private Environment environment;
 
 	private static final String LOGIN_MESSAGE = "LOGIN_MESSAGE";
