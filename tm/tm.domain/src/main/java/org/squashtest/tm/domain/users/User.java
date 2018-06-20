@@ -54,7 +54,7 @@ public class User extends Party {
 	private String login;
 
 	@NotNull
-	@Size(min = 0, max = 50)
+	@Size(min = 0, max = 255)
 	private String email = "";
 
 	// TODO is it nullable ? Aint "boolean" ok ?

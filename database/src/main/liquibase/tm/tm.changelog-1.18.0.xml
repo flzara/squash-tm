@@ -481,7 +481,7 @@
       </column>
 
       <column name="AUTHENTICATED_USER" type="BIGINT" defaultValue="null"
-              remarks="Foreign key to the user account that owns the credentials. A NULL value means that Squash-TM 
+              remarks="Foreign key to the user account that owns the credentials. A NULL value means that Squash-TM
               owns the credentials (app-level credentials).">
         <constraints nullable="true"
                      foreignKeyName="fk_stored_credentials_user" references="CORE_USER(PARTY_ID)"
@@ -506,6 +506,10 @@
       </column>
     </addColumn>
 
+  </changeSet>
+
+  <changeSet id="tm-1.18.0-email-column-resizing" author="aguilhem">
+    <modifyDataType tableName="CORE_USER" columnName="EMAIL" newDataType="VARCHAR(255)"/>
   </changeSet>
 
 </databaseChangeLog>
