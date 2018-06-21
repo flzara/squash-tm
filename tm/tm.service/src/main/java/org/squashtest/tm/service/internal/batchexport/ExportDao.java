@@ -122,7 +122,6 @@ public class ExportDao {
 
 	private List<TestCaseModel> findTestCaseModels(List<Long> tclnIds){
 
-		Session session = getStatelessSession();
 		List<TestCaseModel> models = new ArrayList<>(tclnIds.size());
 		List<TestCaseModel> buffer;
 
@@ -159,7 +158,6 @@ public class ExportDao {
 
 	private List<TestStepModel> findStepsModel(List<Long> tcIds){
 
-		Session session = getStatelessSession();
 		List<TestStepModel> models = new ArrayList<>(tcIds.size());
 		List<TestStepModel> buffer;
 

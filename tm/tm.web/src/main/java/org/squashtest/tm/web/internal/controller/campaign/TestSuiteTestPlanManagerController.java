@@ -321,8 +321,6 @@ public class TestSuiteTestPlanManagerController {
 		Long iterationId = testSuite.getIteration().getId();
 		List<Execution> executionList = iterationFinder.findExecutionsByTestPlan(iterationId, itemId);
 
-		// get the iteraction to check access rights
-		Iteration iter = iterationFinder.findById(iterationId);
 		IterationTestPlanItem iterationTestPlanItem = iterationTestPlanManagerService.findTestPlanItem(itemId);
 
 		ModelAndView mav = new ModelAndView("fragment/test-suites/test-suite-test-plan-row");

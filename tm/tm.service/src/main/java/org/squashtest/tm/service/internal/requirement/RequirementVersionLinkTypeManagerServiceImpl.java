@@ -51,7 +51,6 @@ public class RequirementVersionLinkTypeManagerServiceImpl implements Requirement
 
 	@Override
 	public void addLinkType(RequirementVersionLinkType newLinkType) {
-		List<RequirementVersionLinkType> typeList = linkTypeDao.getAllRequirementVersionLinkTypes();
 		if(linkTypeDao.doesCodeAlreadyExist(newLinkType.getRole1Code())
 			|| linkTypeDao.doesCodeAlreadyExist(newLinkType.getRole2Code())) {
 

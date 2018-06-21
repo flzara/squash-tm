@@ -53,9 +53,7 @@ class RowImpl implements Row {
 
 		for (Cell cell : cells) {
 			String value = cell.getValue();
-			if (value == null) {
-				String escaped = "";
-			} else {
+			if (value != null) {
 				String escaped = value.replaceAll(strSeparator, ";");
 				/* Issue #6509:
 				 * Inserting quotation mark around each cell value
@@ -65,7 +63,7 @@ class RowImpl implements Row {
 					.append("\"")
 					.append(separator);
 			}
-			}
+		}
 
 
 		return builder.toString().replaceAll(separator + "$", "");

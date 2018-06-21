@@ -145,7 +145,6 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 	@Override
 	public void deleteAccount(String login) {
 		if (userManager.userExists(login)) {
-			UserDetails oldUser = userManager.loadUserByUsername(login);
 			userManager.deleteUser(login);
 		} else {
 			LOGGER.trace("User {} has no authentidation data, it can't be deleted", login);

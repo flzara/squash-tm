@@ -99,14 +99,7 @@ public class UserAccountController {
 		Party party = userService.getParty(idUser);
 		Map<String, String> map  =  partyPreferenceService.findPreferences(party);
 		String bugtrackerMode= map.get("squash.bug.tracker.mode");
-		Boolean test;
-		if(bugtrackerMode==null){
-			test=true;
-		}else if ("Automatic".equals(bugtrackerMode)){
-			test=true;
-		}else{
-			test=false;
-		}
+
 		List<Milestone> milestoneList = milestoneManager.findAllVisibleToCurrentUser();
 
 		List<ProjectPermission> projectPermissions = permissionFinder.findProjectPermissionByUserLogin(user.getLogin());

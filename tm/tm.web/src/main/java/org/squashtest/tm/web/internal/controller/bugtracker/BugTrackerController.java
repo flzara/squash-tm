@@ -773,8 +773,6 @@ public class BugTrackerController {
 			String projectName) {
 		String defaultDescription = BugTrackerControllerHelper.getDefaultDescription(step, locale, messageSource,
 				executionUrl);
-		String defaultAdditionalInformations = BugTrackerControllerHelper.getDefaultAdditionalInformations(step, locale,
-				messageSource);
 		return makeReportIssueModel(step, defaultDescription, locale, projectName);
 	}
 
