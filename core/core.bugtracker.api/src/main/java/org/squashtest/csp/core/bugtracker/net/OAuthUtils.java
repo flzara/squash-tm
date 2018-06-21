@@ -27,16 +27,23 @@ import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.springframework.http.HttpMethod;
 import org.squashtest.tm.domain.servers.OAuth1aCredentials;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public final class OAuthUtils {
 
@@ -74,9 +81,18 @@ public final class OAuthUtils {
 
 
 	/**
-	 * Creates the signature that corresponds to the given target url and given http method.
-	 * Throws IllegalArgumentException if the url or the method are malformed, or if the credentials
-	 * cannot properly sign the request.
+	 * <p>
+	 * 	  Creates the signature that corresponds to the given target url and given http method.
+	 *    Throws IllegalArgumentException if the url or the method are malformed, or if the credentials
+	 *    cannot properly sign the request.
+	 * </p>
+	 *
+	 * <p>
+	 *     Note : A URL which query string contains a parameter declared multiple times will be declared
+	 *     invalid. It is so because it will generate invalid signatures (per behavior of the third party signing
+	 *     library). If such query parameters are absolutely needed you should try to sign your query by your
+	 *     own means.
+	 * </p>
 	 *
 	 * @param creds
 	 * @param targetUrl
@@ -113,15 +129,6 @@ public final class OAuthUtils {
 		}
 	}
 
-	private void validateParameters(String url, String method){
-		try{
-			new URL(url);
-		}
-		catch(MalformedURLException ex){
-			throw new IllegalArgumentException("malformed url : "+url);
-		}
-
-	}
 
 	private static OAuthParameters createOAuthParams(OAuth1aCredentials creds){
 		OAuthParameters params = new OAuthParameters();
@@ -133,18 +140,41 @@ public final class OAuthUtils {
 	}
 
 	private static void validateUrlAndMethod(String url, String method){
-		// 1 : validate URL
+		URL asUrl = null;
+		// 1.1 : validate URL
 		try{
-			new URL(url);
+			asUrl = new URL(url);
 		}
 		catch(MalformedURLException ex){
 			throw new IllegalArgumentException("malformed url :", ex);
 		}
 
-		// 2 : valudate method. This will naturally throw IllegalArgumentException in
+		// 1.2 : check that no parameter is declared multiple time
+		if (hasNonUniqueParameters(url)){
+			throw new IllegalArgumentException("Query parameters of the url contains the same parameter declared multiple times. " +
+												   "This is forbidden because it will end with invalid OAuth1a signatures.");
+		}
+
+		// 2 : validate method. This will naturally throw IllegalArgumentException in
 		// case it is invalid
 		HttpMethod.valueOf(method.toUpperCase());
 
+	}
+
+	private static boolean hasNonUniqueParameters(String url){
+		/*
+			note about the charset: should be Latin-1 because that is
+			default web app charset, some says it should be utf-8.
+			Frankly I don't know whether there will be bug or not
+			but for now I leave it to the platform charset.
+		 */
+		List<NameValuePair> params = URLEncodedUtils.parse(url, Charset.defaultCharset());
+
+		List<String> paramNames = params.stream().map(param -> param.getName()).collect(Collectors.toList());
+		Set<String> uniqueNames = new HashSet<>();
+		uniqueNames.addAll(paramNames);
+
+		return (paramNames.size() != uniqueNames.size());
 	}
 
 	// this is ripped of OAuthParameters#intercept(HttpRequest), sorry
