@@ -33,8 +33,8 @@ public class IndexMonitor {
 
 	private static final BigInteger CENT = BigInteger.valueOf(100);
 
-	public static Map<Class<?>, IndexMonitor> monitors = new HashMap<>();
-	public static IndexMonitor total = new IndexMonitor();
+	private static Map<Class<?>, IndexMonitor> monitors = new HashMap<>();
+	private static IndexMonitor total = new IndexMonitor();
 
 	static {
 		monitors.put(TestCase.class, new IndexMonitor());
@@ -54,7 +54,13 @@ public class IndexMonitor {
 		documentsBuilt.addAndGet(doc);
 	}
 
+	public static Map<Class<?>, IndexMonitor> getMonitors() {
+		return monitors;
+	}
 
+	public static IndexMonitor getTotal() {
+		return total;
+	}
 
 	public BigInteger getTotalCount() {
 		return BigInteger.valueOf(totalCount.get());

@@ -38,11 +38,11 @@ public class IndexingProgressModel {
 	private IndexMonitor total;
 
 	public IndexingProgressModel() {
-		Map<Class<?>, IndexMonitor> allMonitor = IndexMonitor.monitors;
+		Map<Class<?>, IndexMonitor> allMonitor = IndexMonitor.getMonitors();
 		tcMon = allMonitor.get(TestCase.class);
 		reqVMon = allMonitor.get(RequirementVersion.class);
 		itpiMon = allMonitor.get(IterationTestPlanItem.class);
-		total = IndexMonitor.total;
+		total = IndexMonitor.getTotal();
 	}
 
 	public BigInteger getProgressPercentage() {

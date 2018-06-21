@@ -66,7 +66,7 @@ public class AdvancedSearchIndexingMonitor implements MassIndexerProgressMonitor
 			IndexMonitor.resetTotal();
 		} else {
 			indexedClass = indexedDomains.get(0);
-			IndexMonitor.monitors.put(indexedClass, new IndexMonitor());
+			IndexMonitor.getMonitors().put(indexedClass, new IndexMonitor());
 		}
 
 	}
@@ -79,9 +79,9 @@ public class AdvancedSearchIndexingMonitor implements MassIndexerProgressMonitor
 	private IndexMonitor getCurrentMonitor() {
 
 		if (multipleIndex()) {
-			return IndexMonitor.total;
+			return IndexMonitor.getTotal();
 		} else {
-			return IndexMonitor.monitors.get(indexedClass);
+			return IndexMonitor.getMonitors().get(indexedClass);
 		}
 
 	}
