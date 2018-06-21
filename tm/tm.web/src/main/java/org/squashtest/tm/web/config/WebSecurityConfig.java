@@ -55,17 +55,17 @@ import org.springframework.web.filter.HttpPutFormContentFilter;
  */
 @Configuration
 public class WebSecurityConfig {
-	
-	private static final String ALTERNATE_AUTH_PATH = "/auth/**";
 
+	private static final String ALTERNATE_AUTH_PATH = "/auth/**";
+	private static final String LOGIN = "/login";
 
 	/* *********************************************************
-	 *  
+	 *
 	 *  Enpoint-specific security filter chains
-	 * 
+	 *
 	 * *********************************************************/
-	
-	
+
+
 	@Configuration
 	@Order(10)
 	public static class SquashTAWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
@@ -151,9 +151,9 @@ public class WebSecurityConfig {
 
 		@Value("${squash.security.filter.debug.enabled:false}")
 		private boolean debugSecurityFilter;
-		
+
 		@Value("${squash.security.preferred-auth-url:/login}")
-		private String entryPointUrl = "/login";
+		private String entryPointUrl = LOGIN;
 
 		@Override
 		public void configure(WebSecurity web) throws Exception {
@@ -173,24 +173,24 @@ public class WebSecurityConfig {
 				// w/o cache control, some browser's cache policy is too aggressive
 				.cacheControl()
 				.and().frameOptions().sameOrigin()
-				
+
 				//.and() .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
-				
+
 				// main entry point for unauthenticated users
 				.and()
 					.exceptionHandling()
 					.authenticationEntryPoint(mainEntryPoint())
-				
+
 				// URL security
 				.and()
 				.authorizeRequests()
 					// allow access to main/alternate authentication portals
-					// note : on this domain the requests will always succeed, 
-					// thus the user will not be redirected via the main entry 
+					// note : on this domain the requests will always succeed,
+					// thus the user will not be redirected via the main entry
 					// point
 					.antMatchers(
-							"/login", 
-							ALTERNATE_AUTH_PATH, 
+						LOGIN,
+							ALTERNATE_AUTH_PATH,
 							"/logout",
 							"/logged-out")
 						.permitAll()
@@ -224,7 +224,7 @@ public class WebSecurityConfig {
 				.and()
 					.formLogin()
 						.permitAll()
-						.loginPage("/login")
+						.loginPage(LOGIN)
 						.failureUrl("/login?error")
 						.defaultSuccessUrl("/home-workspace")
 
@@ -233,19 +233,19 @@ public class WebSecurityConfig {
 						.permitAll()
 						.invalidateHttpSession(true)
 						.logoutSuccessUrl("/logged-out")
-				
+
 				.and()
 					.addFilterAfter(new HttpPutFormContentFilter(), SecurityContextPersistenceFilter.class);
 			//@formatter:on
 		}
-		
+
 		@Bean
 		public AuthenticationEntryPoint mainEntryPoint(){
 			MainEntryPoint entryPoint = new MainEntryPoint(entryPointUrl);
 			return entryPoint;
 		}
 	}
-	
+
 
 
 

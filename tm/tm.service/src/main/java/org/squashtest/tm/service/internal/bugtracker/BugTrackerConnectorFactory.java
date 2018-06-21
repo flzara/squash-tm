@@ -55,7 +55,8 @@ import org.squashtest.tm.service.internal.bugtracker.adapter.SimpleBugtrackerCon
  */
 public class BugTrackerConnectorFactory {
 	private static final Logger LOGGER = LoggerFactory.getLogger(BugTrackerConnectorFactory.class);
-
+	private static final String PROVIDER_BUGTRACKER_KIND="provider.bugTrackerKind";
+	private static final String REGISTERING_CONNECTOR_KIND = "Registering Connector provider for bug trackers of kind '{}'";
 	/**
 	 * Registered providers mapped by connector kind.
 	 */
@@ -158,10 +159,10 @@ public class BugTrackerConnectorFactory {
 		String kind = provider.getBugTrackerKind();
 
 		if (kind == null) {
-			throw new NullArgumentException("provider.bugTrackerKind");
+			throw new NullArgumentException(PROVIDER_BUGTRACKER_KIND);
 		}
 
-		LOGGER.info("Registering Connector provider for bug trackers of kind '{}'", kind);
+		LOGGER.info(REGISTERING_CONNECTOR_KIND, kind);
 
 		providerByKind.put(kind, provider);
 	}
@@ -174,10 +175,10 @@ public class BugTrackerConnectorFactory {
 		String kind = provider.getBugTrackerKind();
 
 		if (kind == null) {
-			throw new NullArgumentException("provider.bugTrackerKind");
+			throw new NullArgumentException(PROVIDER_BUGTRACKER_KIND);
 		}
 
-		LOGGER.info("Registering Connector provider for bug trackers of kind '{}'", kind);
+		LOGGER.info(REGISTERING_CONNECTOR_KIND, kind);
 
 		advancedProviderByKind.put(kind, provider);
 	}
@@ -186,10 +187,10 @@ public class BugTrackerConnectorFactory {
 		String kind = provider.getBugTrackerKind();
 
 		if (kind == null) {
-			throw new NullArgumentException("provider.bugTrackerKind");
+			throw new NullArgumentException(PROVIDER_BUGTRACKER_KIND);
 		}
 
-		LOGGER.info("Registering Connector provider for bug trackers of kind '{}'", kind);
+		LOGGER.info(REGISTERING_CONNECTOR_KIND, kind);
 
 		oslcProviderByKind.put(kind, provider);
 

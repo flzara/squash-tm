@@ -124,7 +124,7 @@ public class TestSuiteTestPlanManagerController {
 		.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, NAME, Project.class).mapAttribute(REFERENCE, REFERENCE, TestCase.class)
 		.mapAttribute("tc-name", NAME, TestCase.class).mapAttribute(IMPORTANCE, IMPORTANCE, TestCase.class)
 		.mapAttribute("dataset.selected.name", NAME, Dataset.class)
-		.mapAttribute("status", "executionStatus", IterationTestPlanItem.class)
+		.mapAttribute(STATUS, "executionStatus", IterationTestPlanItem.class)
 		.mapAttribute("assignee-login", "login", User.class)
 		.mapAttribute("last-exec-on", "lastExecutedOn", IterationTestPlanItem.class)
 		.mapAttribute("exec-mode", "automatedTest", TestCase.class)
@@ -157,7 +157,7 @@ public class TestSuiteTestPlanManagerController {
 		Collection<JsTreeNode> linkableLibrariesModel = testCaseWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, activeMilestoneId.get());
 
 		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-test-suite-test-plan-manager");
-		mav.addObject("testSuite", testSuite);
+		mav.addObject(TEST_SUITE, testSuite);
 		mav.addObject("baseURL", "/test-suites/" + suiteId);
 		mav.addObject("linkableLibrariesModel", linkableLibrariesModel);
 		mav.addObject("milestoneConf", milestoneConf);

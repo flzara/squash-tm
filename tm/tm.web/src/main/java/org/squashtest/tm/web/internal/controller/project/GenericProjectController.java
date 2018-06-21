@@ -78,6 +78,10 @@ import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 public class GenericProjectController {
 
 	private static final String LABEL = "label";
+	private static final String ACTIVE = "active";
+	private static final String HABILITATION = "habilitation";
+	private static final String BUGTRACKER = "bugtracker";
+	private static final String AUTOMATION = "automation";
 
 	@Inject
 	private InternationalizationHelper messageSource;
@@ -106,14 +110,14 @@ public class GenericProjectController {
 	private DatatableMapper<String> allProjectsMapper = new NameBasedMapper(9)
 		.map(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "name")
 		.map(LABEL, LABEL)
-		.map("active", "active")
+		.map(ACTIVE, ACTIVE)
 		.map(DataTableModelConstants.DEFAULT_CREATED_ON_KEY, DataTableModelConstants.DEFAULT_CREATED_ON_VALUE)
 		.map(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, DataTableModelConstants.DEFAULT_CREATED_BY_VALUE)
 		.map("last-mod-on", DataTableModelConstants.DEFAULT_LAST_MODIFIED_ON_VALUE)
 		.map("last-mod-by", DataTableModelConstants.DEFAULT_LAST_MODIFIED_BY_VALUE)
-		.map("habilitation", "habilitation")
-		.map("bugtracker", "bugtracker")
-		.map("automation", "automation");
+		.map(HABILITATION, HABILITATION)
+		.map(BUGTRACKER, BUGTRACKER)
+		.map(AUTOMATION, AUTOMATION);
 	private DatatableMapper<String> partyPermissionMapper = new NameBasedMapper(5).map("party-index", "index")
 		.map("party-id", "id").map("party-name", "name").map("party-type", "type")
 		.map("permission-group.qualifiedName", "qualifiedName");
@@ -471,7 +475,7 @@ public class GenericProjectController {
 			data.put("project-id", project.getId());
 			data.put("index", getCurrentIndex());
 			data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, HtmlUtils.htmlEscape(project.getName()));
-			data.put("active", messageSource.internationalizeYesNo(project.isActive(), locale));
+			data.put(ACTIVE, messageSource.internationalizeYesNo(project.isActive(), locale));
 			data.put(LABEL, HtmlUtils.htmlEscape(project.getLabel()));
 			data.put(DataTableModelConstants.DEFAULT_CREATED_ON_KEY, messageSource.localizeDate(auditable.getCreatedOn(), locale));
 			data.put(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, HtmlUtils.htmlEscape(auditable.getCreatedBy()));
@@ -479,9 +483,9 @@ public class GenericProjectController {
 			data.put("last-mod-by", HtmlUtils.htmlEscape(auditable.getLastModifiedBy()));
 			data.put("raw-type", ProjectHelper.isTemplate(project) ? "template" : "project");
 			data.put("type", "&nbsp;");
-			data.put("habilitation", messageSource.internationalizeYesNo(hasPermissions(project), locale));
-			data.put("bugtracker", getBugtrackerKind(project));
-			data.put("automation", messageSource.internationalizeYesNo(project.isTestAutomationEnabled(), locale));
+			data.put(HABILITATION, messageSource.internationalizeYesNo(hasPermissions(project), locale));
+			data.put(BUGTRACKER, getBugtrackerKind(project));
+			data.put(AUTOMATION, messageSource.internationalizeYesNo(project.isTestAutomationEnabled(), locale));
 			return data;
 		}
 

@@ -78,6 +78,8 @@ public class CustomReportDashboardServiceImpl implements
 	@Inject
 	private CustomReportLibraryNodeDao customReportLibraryNodeDao;
 
+	private static final String ROLE_ADMIN = "ROLE_ADMIN";
+
 	@Override
 	public CustomReportDashboard findById(Long id) {
 		return customReportDashboardDao.findOne(id);
@@ -113,7 +115,7 @@ public class CustomReportDashboardServiceImpl implements
 
 	private void updateChartBinding(CustomReportChartBinding transientBinding) {
 		CustomReportChartBinding persistedBinding = chartBindingDao.findOne(transientBinding.getId());
-		if(permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN","WRITE",persistedBinding.getDashboard())
+		if(permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN,"WRITE",persistedBinding.getDashboard())
 				&& persistedBinding.hasMoved(transientBinding)){
 			persistedBinding.move(transientBinding);
 		}
@@ -121,7 +123,7 @@ public class CustomReportDashboardServiceImpl implements
 
 	private void updateReportBinding(CustomReportReportBinding transientBinding) {
 		CustomReportReportBinding persistedBinding = reportBindingDao.findOne(transientBinding.getId());
-		if(permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN","WRITE",persistedBinding.getDashboard())
+		if(permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN,"WRITE",persistedBinding.getDashboard())
 			&& persistedBinding.hasMoved(transientBinding)){
 			persistedBinding.move(transientBinding);
 		}
@@ -230,6 +232,6 @@ public class CustomReportDashboardServiceImpl implements
 		}
 		Long dashboardId = Long.parseLong(candidateDashboardId);
 		CustomReportLibraryNode node = customReportLibraryNodeDao.findOne(dashboardId);
-		return node != null && permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN","READ",node);
+		return node != null && permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN,"READ",node);
 	}
 }

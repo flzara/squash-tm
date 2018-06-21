@@ -456,7 +456,7 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 	private void synchronizePerimeterAndProjects(Milestone source, Milestone target, boolean extendPerimeter,
 	                                             boolean isUnion) {
 
-		if (permissionEvaluationService.hasRole("ROLE_ADMIN")) {
+		if (permissionEvaluationService.hasRole(ADMIN_ROLE)) {
 			adminSynchronizePerimeterAndProjects(source, target, isUnion);
 		} else {
 			projectManagerSynchronizePerimeterAndProjects(source, target, extendPerimeter);

@@ -76,6 +76,8 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 	@Inject
 	private PermissionFactory permissionFactory;
 
+	private static final String ROLE_ADMIN = "ROLE_ADMIN";
+
 	/*
 	 * Not exposed so that interface remains spring-sec agnostic.
 	 */
@@ -115,7 +117,7 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 
 	@Override
 	public boolean canRead(Object object) {
-		return hasRoleOrPermissionOnObject("ROLE_ADMIN", "READ", object);
+		return hasRoleOrPermissionOnObject(ROLE_ADMIN, "READ", object);
 	}
 
 	@Override
@@ -127,7 +129,7 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 	@Override
 	public boolean hasMoreThanRead(Object object) {
 		boolean hasMore = false;
-		if (userContextService.hasRole("ROLE_ADMIN")) {
+		if (userContextService.hasRole(ROLE_ADMIN)) {
 			hasMore = true;
 		} else {
 			Authentication authentication = userContextService.getAuthentication();
@@ -181,7 +183,7 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 	public Collection<String> permissionsOn(@NotNull String className, long id) {
 		List<String> perms = new ArrayList<>();
 
-		if (this.hasRole("ROLE_ADMIN")) {
+		if (this.hasRole(ROLE_ADMIN)) {
 			return Arrays.asList(RIGHTS);
 		}
 

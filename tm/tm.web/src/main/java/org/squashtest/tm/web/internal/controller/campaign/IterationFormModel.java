@@ -52,6 +52,8 @@ public class IterationFormModel {
 
 	private boolean copyTestPlan;
 
+	private static final String MESSAGE_NOT_BLANK ="message.notBlank";
+
 	/*@NotNull
 	@NotEmpty*/
 	private RawValueModelMap customFields = new RawValueModelMap();
@@ -146,17 +148,17 @@ public class IterationFormModel {
 		@Override
 		public void validate(Object target, Errors errors) {
 
-			String notBlank = messageSource.getMessage("message.notBlank", null, LocaleContextHolder.getLocale());
+			String notBlank = messageSource.getMessage(MESSAGE_NOT_BLANK, null, LocaleContextHolder.getLocale());
 
 			IterationFormModel model = (IterationFormModel) target;
 
-			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "message.notBlank", notBlank);
+			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", MESSAGE_NOT_BLANK, notBlank);
 
 
 			for (Entry<Long, RawValueModel> entry : model.getCustomFields().entrySet()) {
 				RawValueModel value = entry.getValue();
 				if (value.isEmpty()) {
-					errors.rejectValue("customFields[" + entry.getKey() + "]", "message.notBlank", notBlank);
+					errors.rejectValue("customFields[" + entry.getKey() + "]", MESSAGE_NOT_BLANK, notBlank);
 				}
 			}
 

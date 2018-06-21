@@ -118,7 +118,7 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 		// controller to directly map the http query string to that criterion.
 		criterions.put(PROJECT_IDS, projectIds);
 
-		ReportCriterion milestoneIds = new MilestoneIdsIsInIds(MILESTONE_IDS, "id", Milestone.class, "milestones");
+		ReportCriterion milestoneIds = new MilestoneIdsIsInIds(MILESTONE_IDS, "id", Milestone.class, MILESTONE_IDS);
 		criterions.put(MILESTONE_IDS, milestoneIds);
 
 		ReportCriterion reportMode = new RequirementReportTypeCriterion("mode", "on s'en fout");
@@ -199,7 +199,7 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 				"where mstones.id in (:milestones)";
 
 		Query q = session.createQuery(hql);
-		q.setParameterList("milestones", mIds, LongType.INSTANCE);
+		q.setParameterList(MILESTONE_IDS, mIds, LongType.INSTANCE);
 
 		return q.list();
 

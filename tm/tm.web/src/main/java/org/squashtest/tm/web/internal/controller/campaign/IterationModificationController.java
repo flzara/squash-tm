@@ -247,7 +247,7 @@ public class IterationModificationController {
 		IterationStatisticsBundle bundle = iterationModService.gatherIterationStatisticsBundle(iterationId);
 
 		ModelAndView mav = new ModelAndView("fragment/iterations/iteration-dashboard");
-		mav.addObject("iteration", iteration);
+		mav.addObject(ITERATION_KEY, iteration);
 		mav.addObject("dashboardModel", bundle);
 
 		populateOptionalExecutionStatuses(iteration, model);

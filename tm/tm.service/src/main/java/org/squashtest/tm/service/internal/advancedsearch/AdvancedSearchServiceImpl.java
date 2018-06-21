@@ -73,6 +73,9 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	private static final List<String> MILESTONE_SEARCH_FIELD = Arrays.asList("milestone.label", "milestone.status",
 		"milestone.endDate", "milestones.id","searchByMilestone","activeMilestoneMode");
 
+	private static final String SEARCH_BY_MILESTONE= "searchByMilestone";
+
+
 	@Inject
 	private PermissionEvaluationService permissionService;
 
@@ -83,7 +86,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	private EntityManager em;
 
 	@Inject
-	protected UserAccountService userAccountService;
+	private UserAccountService userAccountService;
 
 	@Inject
 	private CustomFieldModelService customFieldModelService;
@@ -92,7 +95,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	private ProjectFinder projectFinder;
 
 	@Inject
-	MilestoneModelService milestoneModelService;
+	private MilestoneModelService milestoneModelService;
 
 	@Inject
 	private CustomFieldBindingFinderService customFieldBindingFinderService;
@@ -399,7 +402,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		Map<String, AdvancedSearchFieldModel> fields = searchModel.getFields();
 
 		AdvancedSearchSingleFieldModel searchByMilestone = (AdvancedSearchSingleFieldModel) fields
-			.get("searchByMilestone");
+			.get(SEARCH_BY_MILESTONE);
 
 		if (searchByMilestone != null && "true".equals(searchByMilestone.getValue())) {
 
@@ -680,7 +683,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	public boolean shouldSearchByMilestones(AdvancedSearchModel model) {
 		boolean enabled = getFeatureManager().isEnabled(Feature.MILESTONE);
 
-		AdvancedSearchSingleFieldModel searchByMilestone = (AdvancedSearchSingleFieldModel) model.getFields().get("searchByMilestone");
+		AdvancedSearchSingleFieldModel searchByMilestone = (AdvancedSearchSingleFieldModel) model.getFields().get(SEARCH_BY_MILESTONE);
 		AdvancedSearchSingleFieldModel activeMilestoneMode = (AdvancedSearchSingleFieldModel) model.getFields().get("activeMilestoneMode");
 		boolean hasCriteria = (searchByMilestone != null && "true".equals(searchByMilestone.getValue())) || (activeMilestoneMode != null && "true".equals(activeMilestoneMode.getValue()));
 

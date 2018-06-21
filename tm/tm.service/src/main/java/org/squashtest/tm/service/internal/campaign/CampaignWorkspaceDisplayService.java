@@ -81,7 +81,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	private static final TestSuiteTestPlanItem TSTPI = TEST_SUITE_TEST_PLAN_ITEM.as("TSTPI");
 	private static final IterationTestPlanItem ITPI = ITERATION_TEST_PLAN_ITEM.as("ITPI");
 	private static final TestCaseLibraryNode TCLN = TEST_CASE_LIBRARY_NODE.as("TCLN");
-
+	private static final String RESTYPE = "resType";
 	private MultiMap campaignFatherChildrenMultimap = new MultiValueMap();
 	private MultiMap iterationFatherChildrenMultiMap = new MultiValueMap();
 	private Map<Long, JsTreeNode> iterationMap = new HashMap<>();
@@ -187,7 +187,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		reference = HtmlUtils.htmlEscape(reference);
 
 		attr.put(RES_ID, campaignId);
-		attr.put("resType", restype);
+		attr.put(RESTYPE, restype);
 		attr.put("name", name);
 		attr.put("id", "Campaign-" + campaignId);
 		attr.put(REL, "campaign");
@@ -229,7 +229,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		reference = HtmlUtils.htmlEscape(reference);
 
 		attr.put(RES_ID, id);
-		attr.put("resType", "iterations");
+		attr.put(RESTYPE, "iterations");
 		attr.put("name", name);
 		attr.put("id", "Iteration-" + id);
 		attr.put(REL, "iteration");
@@ -259,7 +259,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		attr.put("name", name);
 		attr.put("id", "TestSuite-" + id);
 		attr.put("executionstatus", executionStatus);
-		attr.put("resType", "test-suites");
+		attr.put(RESTYPE, "test-suites");
 		attr.put(REL, "test-suite");
 		//build tooltip
 		String[] args = {getMessage("execution.execution-status." + executionStatus)};

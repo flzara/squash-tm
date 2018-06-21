@@ -167,7 +167,7 @@ class Crypto {
 
     private Cipher createEncryptionCipher(SecretKeySpec keySpec) throws GeneralSecurityException{
         Cipher cipher = null;
-        cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        cipher = Cipher.getInstance(CRYPT_ALG);
         cipher.init(Cipher.ENCRYPT_MODE, keySpec);
         return cipher;
     }

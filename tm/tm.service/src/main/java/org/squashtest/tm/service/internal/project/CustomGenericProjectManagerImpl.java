@@ -126,6 +126,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomGenericProjectManagerImpl.class);
 
+	private static final String ROLE_ADMIN = "ROLE_ADMIN";
+
 	// ************************* finding projects wrt user role
 	// ****************************
 
@@ -140,7 +142,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	public PagedCollectionHolder<List<GenericProject>> findSortedProjects(PagingAndMultiSorting sorting,
 			Filtering filter) {
 
-		Class<? extends GenericProject> type = permissionEvaluationService.hasRole("ROLE_ADMIN") ? GenericProject.class
+		Class<? extends GenericProject> type = permissionEvaluationService.hasRole(ROLE_ADMIN) ? GenericProject.class
 				: Project.class;
 		List<? extends GenericProject> resultset = genericProjectDao.findAllWithTextProperty(type, filter);
 
@@ -828,13 +830,13 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	}
 
 	private void checkManageProjectOrAdmin(GenericProject genericProject) {
-		permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "MANAGEMENT", genericProject);
+		permissionEvaluationService.hasRoleOrPermissionOnObject(ROLE_ADMIN, "MANAGEMENT", genericProject);
 	}
 
 	private final class IsManagerOnObject implements Predicate {
 		@Override
 		public boolean evaluate(Object object) {
-			return permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "MANAGEMENT", object);
+			return permissionEvaluationService.hasRoleOrPermissionOnObject(ROLE_ADMIN, "MANAGEMENT", object);
 		}
 	}
 

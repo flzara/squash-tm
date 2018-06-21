@@ -107,7 +107,7 @@ public class ExecutionDaoImpl implements CustomExecutionDao {
 
 			Long lResult = (Long) entityManager.createNamedQuery(EXECUTION_COUNT_STATUS)
 				.setParameter("execId", executionId)
-				.setParameter("status", fStatus)
+				.setParameter(STATUS, fStatus)
 				.getSingleResult();
 
 			report.set(status, lResult.intValue());

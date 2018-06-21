@@ -72,6 +72,8 @@ import java.util.stream.Collectors;
 public abstract class LibraryNavigationController<LIBRARY extends Library<? extends NODE>, FOLDER extends Folder<? extends NODE>, NODE extends LibraryNode> {
 	private static final int EOF = -1;
 	private static final Logger LOGGER = LoggerFactory.getLogger(LibraryNavigationController.class);
+	private static final String FOLDERS = "folders";
+	private static final String DRIVES = "drives";
 	@Inject
 	protected CustomReportDashboardService customReportDashboardService;
 	@Inject
@@ -186,10 +188,10 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		List<NODE> nodeList;
 		try {
 			switch (destType) {
-				case "folders":
+				case FOLDERS:
 					nodeList = getLibraryNavigationService().copyNodesToFolder(destinationId, nodeIds);
 					break;
-				case "drives":
+				case DRIVES:
 					nodeList = getLibraryNavigationService().copyNodesToLibrary(destinationId, nodeIds);
 					break;
 				default:
@@ -211,10 +213,10 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 		try {
 			switch (destType) {
-				case "folders":
+				case FOLDERS:
 					getLibraryNavigationService().moveNodesToFolder(destinationId, nodeIds);
 					break;
-				case "drives":
+				case DRIVES:
 					getLibraryNavigationService().moveNodesToLibrary(destinationId, nodeIds);
 					break;
 				default:
@@ -235,10 +237,10 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 		try {
 			switch (destType) {
-				case "folders":
+				case FOLDERS:
 					getLibraryNavigationService().moveNodesToFolder(destinationId, nodeIds, position);
 					break;
-				case "drives":
+				case DRIVES:
 					getLibraryNavigationService().moveNodesToLibrary(destinationId, nodeIds, position);
 					break;
 				default:
