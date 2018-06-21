@@ -72,7 +72,7 @@ class Crypto {
     private static final int ITER_CNT = 65556;
     private static final int KEY_LEN = 128;
 
-    // TODO : not fixing what is not broken yet, but I think Latin-1 is what we want since the server is using it. 
+    // TODO : not fixing what is not broken yet, but I think Latin-1 is what we want since the server is using it.
     private static final String CHARSET = "UTF-8";
 
     private char[] keyPassword;
@@ -137,19 +137,19 @@ class Crypto {
     // *************** all purpose private methods **************************************
 
     private SecretKeySpec generateKeySpec(char[] pwd, byte[] salt) throws GeneralSecurityException{
-        
+
         PBEKeySpec keySpec = new PBEKeySpec(pwd, salt, ITER_CNT, KEY_LEN);
 
         SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(KEY_GEN);
         SecretKey secKey = keyFactory.generateSecret(keySpec);
 
         return new SecretKeySpec(secKey.getEncoded(), KEY_ALG);
-        
+
     }
 
 
-    private Cipher createPlainCipher() throws GeneralSecurityException{        
-        return Cipher.getInstance(CRYPT_ALG);      
+    private Cipher createPlainCipher() throws GeneralSecurityException{
+        return Cipher.getInstance(CRYPT_ALG);
     }
 
 
@@ -174,14 +174,14 @@ class Crypto {
 
 
     private final byte[] getIV(Cipher cipher) throws GeneralSecurityException{
-       
+
         AlgorithmParameters params = cipher.getParameters();
         return params.getParameterSpec(IvParameterSpec.class).getIV();
-        
+
     }
 
-    private byte[] doEncrypt(Cipher cipher, String text) throws UnsupportedEncodingException, GeneralSecurityException{       
-        return cipher.doFinal(text.getBytes(CHARSET));        
+    private byte[] doEncrypt(Cipher cipher, String text) throws UnsupportedEncodingException, GeneralSecurityException{
+        return cipher.doFinal(text.getBytes(CHARSET));
     }
 
     private byte[] appendEverything(byte[] salt, byte[] iv, byte[] encrypted){
@@ -217,7 +217,7 @@ class Crypto {
 
     }
 
-    private void initCipher(Cipher cipher, SecretKeySpec key, byte[] iv) throws GeneralSecurityException{        
+    private void initCipher(Cipher cipher, SecretKeySpec key, byte[] iv) throws GeneralSecurityException{
         cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(iv));
     }
 
@@ -266,7 +266,7 @@ class Crypto {
 		 * but returns null if array parameter is null. */
 		private byte[] copyArrayOrReturnNull(byte[] arrayToCopy) {
 			if(arrayToCopy == null) {
-				return null;
+				return new byte[0];
 			} else {
 				return Arrays.copyOf(arrayToCopy, arrayToCopy.length);
 			}

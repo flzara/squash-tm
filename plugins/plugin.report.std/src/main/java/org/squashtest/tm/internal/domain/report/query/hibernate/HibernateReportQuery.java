@@ -127,7 +127,7 @@ public abstract class HibernateReportQuery implements ReportQuery {
 		if (criterion != null) {
 			return criterion.getParameters();
 		} else {
-			return null;
+			return new Object[0];
 		}
 	}
 

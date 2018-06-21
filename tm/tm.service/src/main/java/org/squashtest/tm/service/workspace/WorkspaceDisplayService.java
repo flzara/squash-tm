@@ -43,8 +43,7 @@ public interface WorkspaceDisplayService {
 	Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser, MultiMap expansionCandidates, Long activeMilestoneId);
 
 	Collection<JsonProject> findAllEmptyProjects(List<Long> readableProjectIds);
-	
+
 	Collection<JsTreeNode> getNodeContent(Long folderId, UserDto currentUser, String libraryNode, Long activeMilestoneId);
 
-	Collection<JsTreeNode> getCampaignNodeContent(Long folderId, UserDto currentUser, String libraryNode);
 }

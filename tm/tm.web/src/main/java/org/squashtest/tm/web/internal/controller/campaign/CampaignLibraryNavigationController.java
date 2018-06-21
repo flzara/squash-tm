@@ -46,6 +46,7 @@ import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.execution.ExecutionFinder;
+import org.squashtest.tm.service.internal.campaign.CampaignWorkspaceDisplayService;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.library.LibraryNavigationService;
@@ -312,7 +313,7 @@ public class CampaignLibraryNavigationController extends
 	@RequestMapping(value = "/campaigns/{campaignId}/content", method = RequestMethod.GET)
 	public List<JsTreeNode> getCampaignIterationsTreeModel(@PathVariable long campaignId) {
 		UserDto currentUser = userAccountService.findCurrentUserDto();
-		Collection<JsTreeNode> nodes = workspaceDisplayService().getCampaignNodeContent(campaignId, currentUser, "Campaign");
+		Collection<JsTreeNode> nodes = ((CampaignWorkspaceDisplayService)workspaceDisplayService()).getCampaignNodeContent(campaignId, currentUser, "Campaign");
 		return new ArrayList<>(nodes);
 	}
 
@@ -320,7 +321,7 @@ public class CampaignLibraryNavigationController extends
 	@RequestMapping(value = "/iterations/{resourceId}/content", method = RequestMethod.GET)
 	public List<JsTreeNode> getIterationTestSuitesTreeModel(@PathVariable("resourceId") long iterationId) {
 		UserDto currentUser = userAccountService.findCurrentUserDto();
-		Collection<JsTreeNode> nodes = workspaceDisplayService().getCampaignNodeContent(iterationId, currentUser, "Iteration");
+		Collection<JsTreeNode> nodes = ((CampaignWorkspaceDisplayService)workspaceDisplayService()).getCampaignNodeContent(iterationId, currentUser, "Iteration");
 		return new ArrayList<>(nodes);
 	}
 

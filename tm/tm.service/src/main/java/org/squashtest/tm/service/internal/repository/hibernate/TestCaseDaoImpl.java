@@ -140,7 +140,7 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 	public List<TestStep> findTestSteps(long testCaseId) {
 		TestCase tc = (TestCase)currentSession().getNamedQuery("TestCase.findInitialized").setParameter("tcId", testCaseId).uniqueResult();
 		if (tc == null){
-			return null;
+			return Collections.emptyList();
 		}
 		else{
 			return new ArrayList<>(tc.getSteps());

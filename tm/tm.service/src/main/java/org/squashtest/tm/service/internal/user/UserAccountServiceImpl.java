@@ -233,7 +233,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
 	@Override
 	public Collection<Milestone> findAllMilestonesForUser(long userId) {
-		return null;
+		return Collections.emptyList();
 	}
 
 	/* ************ private stuffs ****************** */

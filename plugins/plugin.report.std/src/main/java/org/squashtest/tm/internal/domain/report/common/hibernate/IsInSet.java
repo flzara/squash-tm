@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.internal.domain.report.common.hibernate;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -69,8 +70,9 @@ public abstract class IsInSet<T extends Number> extends ReportCriterion {
 
 		Object[] rawParameters = getParameters();
 
-		if (rawParameters == null || rawParameters.length == 0){
-			return null;}
+		if (rawParameters == null || rawParameters.length == 0) {
+			return Collections.emptyList();
+		}
 		try {
 			List<Object> typedValues = new LinkedList<>();
 

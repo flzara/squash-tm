@@ -433,11 +433,6 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 		return RequirementLibraryPluginBinding.RL_TYPE;
 	}
 
-	@Override
-	public Collection<JsTreeNode> getCampaignNodeContent(Long folderId, UserDto currentUser, String libraryNode) {
-		return null;
-	}
-
 	public class RequirementLibraryNodeDistribution {
 		Set<Long> reqIds = new HashSet<>();
 		Set<Long> reqFolderIds = new HashSet<>();

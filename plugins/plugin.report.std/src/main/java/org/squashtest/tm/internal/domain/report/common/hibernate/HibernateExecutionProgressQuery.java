@@ -20,11 +20,7 @@
  */
 package org.squashtest.tm.internal.domain.report.common.hibernate;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import org.hibernate.Session;
@@ -134,7 +130,7 @@ public class HibernateExecutionProgressQuery extends HibernateReportQuery {
 
 	@Override
 	public List<?> doInSession(Session session) {
-		return null;
+		return Collections.emptyList();
 	}
 
 	/*
