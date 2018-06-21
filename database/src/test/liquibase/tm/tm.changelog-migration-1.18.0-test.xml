@@ -123,7 +123,7 @@
     <preConditions>
       <sqlCheck expectedResult="bob@bob.com">
         <![CDATA[
-          select user.EMAIL from CORE_USER user where user.LOGIN='Bob';
+          select cu.EMAIL from CORE_USER cu where cu.LOGIN='Bob';
         ]]>
       </sqlCheck>
 
