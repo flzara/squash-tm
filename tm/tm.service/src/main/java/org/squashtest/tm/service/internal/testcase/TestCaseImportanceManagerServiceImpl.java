@@ -51,10 +51,10 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 	@Inject
 	private TestCaseDao testCaseDao;
 
-	@Inject private TestCaseCallTreeFinder callTreeFinder;
+	@Inject
+	private TestCaseCallTreeFinder callTreeFinder;
 
 	/**
-	 *
 	 * @param testCaseId
 	 * @return distinct criticalities found for all verified requirementVersions (including through call steps)
 	 */
@@ -79,7 +79,7 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 	 */
 	private TestCaseImportance deduceImportanceAuto(long testCaseId) {
 		List<RequirementCriticality> rCriticalities = findAllDistinctRequirementsCriticalityByTestCaseId(testCaseId);
-		return  TestCaseImportance.deduceTestCaseImportance(rCriticalities);
+		return TestCaseImportance.deduceTestCaseImportance(rCriticalities);
 	}
 
 	/**
@@ -96,7 +96,7 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 
 	/**
 	 * @see org.squashtest.tm.service.testcase.TestCaseImportanceManagerService#changeImportanceIfRelationsAddedToReq(List,
-	 *      RequirementVersion)
+	 * RequirementVersion)
 	 */
 	@Override
 	public void changeImportanceIfRelationsAddedToReq(List<TestCase> testCases, RequirementVersion requirementVersion) {
@@ -108,22 +108,22 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 
 	/**
 	 * @see org.squashtest.tm.service.testcase.TestCaseImportanceManagerService#changeImportanceIfRelationsAddedToTestCases(List,
-	 *      TestCase)
+	 * TestCase)
 	 */
 	@Override
 	public void changeImportanceIfRelationsAddedToTestCase(List<RequirementVersion> requirementVersions,
-			TestCase testCase) {
+														   TestCase testCase) {
 		if (!requirementVersions.isEmpty()) {
 			List<RequirementCriticality> requirementCriticalities = extractCriticalities(requirementVersions);
 			RequirementCriticality strongestRequirementCriticality = RequirementCriticality
-					.findStrongestCriticality(requirementCriticalities);
+				.findStrongestCriticality(requirementCriticalities);
 			changeImportanceIfRelationAdded(testCase, strongestRequirementCriticality);
 		}
 	}
 
 	private List<RequirementCriticality> extractCriticalities(List<RequirementVersion> requirementVersions) {
 		List<RequirementCriticality> requirementCriticalities = new ArrayList<>(
-				requirementVersions.size());
+			requirementVersions.size());
 		for (RequirementVersion requirementVersion : requirementVersions) {
 			requirementCriticalities.add(requirementVersion.getCriticality());
 		}
@@ -153,14 +153,14 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 
 	/**
 	 * @see org.squashtest.tm.service.testcase.TestCaseImportanceManagerService#changeImportanceIfRelationsRemovedFromReq(List,
-	 *      long)
+	 * long)
 	 */
 	@Override
 	public void changeImportanceIfRelationsRemovedFromReq(List<Long> testCasesIds, long requirementVersionId) {
 		RequirementVersion requirementVersion = requirementVersionDao.findOne(requirementVersionId);
 		RequirementCriticality requirementCriticality = requirementVersion.getCriticality();
 		TestCaseImportance reqCritImportance = TestCaseImportance.deduceTestCaseImportance(Arrays
-				.asList(requirementCriticality));
+			.asList(requirementCriticality));
 		List<TestCase> testCases = extractTestCases(testCasesIds);
 		for (TestCase testCase : testCases) {
 			changeImportanceIfRelationRemoved(reqCritImportance, testCase);
@@ -169,7 +169,7 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 
 	/**
 	 * @see org.squashtest.tm.service.testcase.TestCaseImportanceManagerService#changeImportanceIfRelationRemoved(TestCaseImportance,
-	 *      TestCase)
+	 * TestCase)
 	 */
 	@Override
 	public void changeImportanceIfRelationRemoved(TestCaseImportance maxReqCritImportance, TestCase testCase) {
@@ -178,11 +178,7 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 			if (maxReqCritImportance.getLevel() <= actualImportance.getLevel()) {
 				TestCaseImportance newImportance = deduceImportanceAuto(testCase.getId());
 				if (newImportance != actualImportance) {
-					testCase.setImportance(newImportance);
-					List<TestCase> callingTestCases = testCaseDao.findAllCallingTestCases(testCase.getId(), null);
-					for (TestCase callingTestCase : callingTestCases) {
-						changeImportanceIfRelationRemoved(maxReqCritImportance, callingTestCase);
-					}
+					changeImportanceIfRelationRemovedForAll( testCase, newImportance, maxReqCritImportance);
 				}
 			}
 		} else {
@@ -192,6 +188,14 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 			}
 		}
 	}
+	private void changeImportanceIfRelationRemovedForAll(TestCase testCase,TestCaseImportance newImportance,TestCaseImportance maxReqCritImportance){
+		testCase.setImportance(newImportance);
+		List<TestCase> callingTestCases = testCaseDao.findAllCallingTestCases(testCase.getId(), null);
+		for (TestCase callingTestCase : callingTestCases) {
+			changeImportanceIfRelationRemoved(maxReqCritImportance, callingTestCase);
+		}
+	}
+
 
 	private List<TestCase> extractTestCases(List<Long> testCasesIds) {
 		List<TestCase> testCases = new ArrayList<>(testCasesIds.size());
@@ -204,14 +208,14 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 
 	/**
 	 * @see org.squashtest.tm.service.testcase.TestCaseImportanceManagerService#changeImportanceIfRelationsRemovedFromTestCase(List,
-	 *      long)
+	 * long)
 	 */
 	@Override
 	public void changeImportanceIfRelationsRemovedFromTestCase(List<Long> requirementsVersionIds, long testCaseId) {
 		if (!requirementsVersionIds.isEmpty()) {
 			TestCase testCase = testCaseDao.findById(testCaseId);
 			List<RequirementCriticality> reqCriticalities = requirementDao
-					.findDistinctRequirementsCriticalities(requirementsVersionIds);
+				.findDistinctRequirementsCriticalities(requirementsVersionIds);
 			TestCaseImportance maxReqCritImportance = TestCaseImportance.deduceTestCaseImportance(reqCriticalities);
 			changeImportanceIfRelationRemoved(maxReqCritImportance, testCase);
 		}
@@ -219,11 +223,11 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 
 	/**
 	 * @see org.squashtest.tm.service.testcase.TestCaseImportanceManagerService#changeImportanceIfRequirementCriticalityChanged(long,
-	 *      RequirementCriticality)
+	 * RequirementCriticality)
 	 */
 	@Override
 	public void changeImportanceIfRequirementCriticalityChanged(long requirementVersionId,
-			RequirementCriticality oldRequirementCriticality) {
+																RequirementCriticality oldRequirementCriticality) {
 		RequirementVersion requirementVersion = requirementVersionDao.findOne(requirementVersionId);
 		List<TestCase> testCases = testCaseDao.findUnsortedAllByVerifiedRequirementVersion(requirementVersionId);
 		for (TestCase testCase : testCases) {
@@ -232,13 +236,13 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 	}
 
 	private void changeImportanceIfRequirementCriticalityChanged(RequirementCriticality oldRequirementCriticality,
-			RequirementVersion requirementVersion, TestCase testCase) {
+																 RequirementVersion requirementVersion, TestCase testCase) {
 		// if test-case is auto
 		if (testCase.isImportanceAuto()) {
 			TestCaseImportance importanceAuto = testCase.getImportance();
 			// if change of criticality can change importanceAuto
 			boolean importanceAutoCanChange = importanceAuto.changeOfCriticalityCanChangeImportanceAuto(
-					oldRequirementCriticality, requirementVersion.getCriticality());
+				oldRequirementCriticality, requirementVersion.getCriticality());
 			if (importanceAutoCanChange) {
 				// -if it changes
 				TestCaseImportance newImportanceAuto = deduceImportanceAuto(testCase.getId());
@@ -248,13 +252,8 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 					testCase.setImportance(newImportanceAuto);
 					// -- look for any calling test case and call the method on
 					// them
-
-					List<TestCase> callingTestCases = testCaseDao.findAllCallingTestCases(testCase.getId(), null);
-					for (TestCase callingTestCase : callingTestCases) {
-						changeImportanceIfRequirementCriticalityChanged(oldRequirementCriticality, requirementVersion,
-								callingTestCase);
+					changeImportanceIfRequirementCriticalityChangedForAll(testCase, oldRequirementCriticality, requirementVersion);
 					}
-				}
 
 			}
 		} else {
@@ -262,34 +261,42 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 			List<TestCase> callingTestCases = testCaseDao.findAllCallingTestCases(testCase.getId(), null);
 			for (TestCase callingTestCase : callingTestCases) {
 				changeImportanceIfRequirementCriticalityChanged(oldRequirementCriticality, requirementVersion,
-						callingTestCase);
+					callingTestCase);
 			}
+		}
+	}
+
+	private void changeImportanceIfRequirementCriticalityChangedForAll( TestCase testCase,RequirementCriticality oldRequirementCriticality,RequirementVersion requirementVersion){
+		List<TestCase> callingTestCases = testCaseDao.findAllCallingTestCases(testCase.getId(), null);
+		for (TestCase callingTestCase : callingTestCases) {
+			changeImportanceIfRequirementCriticalityChanged(oldRequirementCriticality, requirementVersion,
+				callingTestCase);
 		}
 	}
 
 	/**
 	 * @see org.squashtest.tm.service.testcase.TestCaseImportanceManagerService#changeImportanceIfCallStepAddedToTestCases(TestCase,
-	 *      TestCase)
+	 * TestCase)
 	 */
 	@Override
 	public void changeImportanceIfCallStepAddedToTestCases(TestCase calledTestCase, TestCase parentTestCase) {
 		List<RequirementCriticality> rCriticalities = findAllDistinctRequirementsCriticalityByTestCaseId(calledTestCase
-				.getId());
+			.getId());
 		if (!rCriticalities.isEmpty()) {
 			RequirementCriticality strongestRequirementCriticality = RequirementCriticality
-					.findStrongestCriticality(rCriticalities);
+				.findStrongestCriticality(rCriticalities);
 			changeImportanceIfRelationAdded(parentTestCase, strongestRequirementCriticality);
 		}
 	}
 
 	/**
 	 * @see org.squashtest.tm.service.testcase.TestCaseImportanceManagerService#changeImportanceIfCallStepRemoved(TestCase,
-	 *      TestCase)
+	 * TestCase)
 	 */
 	@Override
 	public void changeImportanceIfCallStepRemoved(TestCase calledTestCase, TestCase parentTestCase) {
 		List<RequirementCriticality> rCriticalities = findAllDistinctRequirementsCriticalityByTestCaseId(calledTestCase
-				.getId());
+			.getId());
 		if (!rCriticalities.isEmpty()) {
 			TestCaseImportance maxReqCritImportance = TestCaseImportance.deduceTestCaseImportance(rCriticalities);
 			changeImportanceIfRelationRemoved(maxReqCritImportance, parentTestCase);

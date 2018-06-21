@@ -378,21 +378,25 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 		private String getValue(Collection<CustomFieldValue> values, CustomField model) {
 
 			if (values != null) {
-				for (CustomFieldValue value : values) {
-					CustomField customField = value.getBinding().getCustomField();
-					if (customField.getCode().equals(model.getCode())) {
-						if (customField.getInputType().equals(InputType.NUMERIC)) {
-							return NumericCufHelper.formatOutputNumericCufValue(value.getValue());
-						}
-						return value.getValue();
+				return formatOutputValue(values, model);
+
+		private String formatOutputValue(Collection<CustomFieldValue> values ,CustomField model) {
+			for (CustomFieldValue value : values) {
+				CustomField customField = value.getBinding().getCustomField();
+				if (customField.getCode().equals(model.getCode())) {
+					if (customField.getInputType().equals(InputType.NUMERIC)) {
+						return NumericCufHelper.formatOutputNumericCufValue(value.getValue());
 					}
+					return value.getValue();
 				}
+
 			}
 
 			return "";
 		}
 
-		private int getNbIssues(IterationTestPlanItem itp) {
+
+			private int getNbIssues(IterationTestPlanItem itp) {
 
 			return bugTrackerService.findNumberOfIssueForItemTestPlanLastExecution(itp.getId());
 

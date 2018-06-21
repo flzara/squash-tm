@@ -675,21 +675,23 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 		private String getValue(Collection<CustomFieldValue> values, CustomField model) {
 
 			if (values != null) {
-				for (CustomFieldValue value : values) {
-					CustomField customField = value.getBinding().getCustomField();
-					if (customField.getCode().equals(model.getCode())) {
-						if (customField.getInputType().equals(InputType.NUMERIC)) {
-							return NumericCufHelper.formatOutputNumericCufValue(value.getValue());
-						}
-						return value.getValue();
+				return formatOutputValue( model, values);
+}
+		private String formatOutputValue(CustomField model,Collection<CustomFieldValue> values) {
+			for (CustomFieldValue value : values) {			CustomField customField = value.getBinding().getCustomField();
+				if (customField.getCode().equals(model.getCode())) {
+					if (customField.getInputType().equals(InputType.NUMERIC)) {
+						return NumericCufHelper.formatOutputNumericCufValue(value.getValue());
 					}
+					return value.getValue();
 				}
+			
 			}
 
 			return "";
 		}
 
-		private String getDenormalizedValue(Collection<DenormalizedFieldValue> values, CustomField model) {
+			private String getDenormalizedValue(Collection<DenormalizedFieldValue> values, CustomField model) {
 
 			if (values != null) {
 				for (DenormalizedFieldValue value : values) {

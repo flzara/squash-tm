@@ -349,16 +349,15 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 			this.status = status;
 		}
 
-
-		public void setNotExists(Integer version) {
-			requirementVersions.put(version,new RequirementVersionModel(TargetStatus.NOT_EXISTS));
-		}
-
 		public Node(RequirementTarget target, TargetStatus status, boolean isRequirement, boolean virtual) {
 			super(target);
 			this.status = status;
 			this.isRequirement = isRequirement;
 			this.virtual = virtual;
+		}
+
+		public void setNotExists(Integer version) {
+			requirementVersions.put(version,new RequirementVersionModel(TargetStatus.NOT_EXISTS));
 		}
 
 		boolean isRequirement(){

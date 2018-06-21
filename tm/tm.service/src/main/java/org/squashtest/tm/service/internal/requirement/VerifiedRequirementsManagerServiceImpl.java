@@ -72,7 +72,6 @@ import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
-import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
@@ -337,31 +336,34 @@ public class VerifiedRequirementsManagerServiceImpl implements
 				.findActionTestStepById(testStepId);
 			TestCase testCase = step.getTestCase();
 			// iterate on requirement versions
-			Iterator<RequirementVersion> iterator = requirementVersions
-				.iterator();
-			while (iterator.hasNext()) {
-				try {
-					RequirementVersion requirementVersion = iterator.next();
-					PermissionsUtils.checkPermission(permissionService,
-						new SecurityCheckableObject(requirementVersion,
-							"LINK"));
-					boolean newReqCoverage = addVerifiedRequirementVersionToTestStep(
-						requirementVersion, step, testCase);
-					if (!newReqCoverage) {
-						iterator.remove();
-					}
-				} catch (RequirementAlreadyVerifiedException | RequirementVersionNotLinkableException ex) {
-					LOGGER.warn(ex.getMessage());
-					iterator.remove();
-					rejections.add(ex);
-				}
-			}
+			testAllRequirement(requirementVersions, step, testCase, rejections);
 			testCaseImportanceManagerService
 				.changeImportanceIfRelationsAddedToTestCase(
 					requirementVersions, testCase);
-
 		}
 		return rejections;
+	}
+
+	public void testAllRequirement(List<RequirementVersion> requirementVersions,ActionTestStep step,TestCase testCase,Collection<VerifiedRequirementException> rejections){
+		Iterator<RequirementVersion> iterator = requirementVersions
+			.iterator();
+		while (iterator.hasNext()) {
+			try {
+				RequirementVersion requirementVersion = iterator.next();
+				PermissionsUtils.checkPermission(permissionService,
+					new SecurityCheckableObject(requirementVersion,
+						"LINK"));
+				boolean newReqCoverage = addVerifiedRequirementVersionToTestStep(
+					requirementVersion, step, testCase);
+				if (!newReqCoverage) {
+					iterator.remove();
+				}
+			} catch (RequirementAlreadyVerifiedException | RequirementVersionNotLinkableException ex) {
+				LOGGER.warn(ex.getMessage());
+				iterator.remove();
+				rejections.add(ex);
+			}
+		}
 	}
 
 	/**
@@ -817,37 +819,40 @@ List<Long> requirementsIds) {
 			// [Issue 6943] If the testStep has never been executed, then it will not be take into account for the calculation.
 			if (executionsStatus.containsKey(testStepsId)){
 				List<ExecutionStep> executionSteps = (List<ExecutionStep>) executionsStatus.get(testStepsId);
-				for (ExecutionStep executionStep : executionSteps) {
-					//Here come horrible code to detect if ITPI was fast passed AFTER execution.
-					//We have no attribute in model to help us, and no time to develop a proper solution.
-					//So we'll use execution date on itpi and exec. If the delta between two date is superior to 2 seconds,
-					//we consider it's a fast pass
-					Execution execution = executionStep.getExecution();
-					IterationTestPlanItem itpi = execution.getTestPlan();
-					Date itpiDateLastExecutedOn = itpi.getLastExecutedOn();
-					Date execDateLastExecutedOn = execution.getLastExecutedOn();
-					ExecutionStatus status = ExecutionStatus.READY;
-					//if execution dates are null, the execution was only READY, so we don't compare dates to avoid npe
-					if (itpiDateLastExecutedOn != null && execDateLastExecutedOn != null) {
-						DateTime itpiLastExecutedOn = new DateTime(itpi.getLastExecutedOn().getTime());
-						DateTime execLastExecutedOn = new DateTime(execution.getLastExecutedOn().getTime());
-						Interval interval = new Interval(execLastExecutedOn, itpiLastExecutedOn);
-						boolean fastPass = interval.toDuration().isLongerThan(new Duration(2000L));
-						//If we have a fast path use it for step status
-						status = fastPass ? itpi.getExecutionStatus() : executionStep.getExecutionStatus();
-					}
-					Long memo = result.get(status);
-					if (memo == null) {
-						result.put(status, 1L);
-					} else {
-						result.put(status, memo + 1);
-					}
-				}
+				fillingResult(executionSteps, result);
 			}
 		}
 		return result;
 	}
 
+	private void fillingResult(List<ExecutionStep> executionSteps,Map<ExecutionStatus, Long> result){
+		for (ExecutionStep executionStep : executionSteps) {
+			//Here come horrible code to detect if ITPI was fast passed AFTER execution.
+			//We have no attribute in model to help us, and no time to develop a proper solution.
+			//So we'll use execution date on itpi and exec. If the delta between two date is superior to 2 seconds,
+			//we consider it's a fast pass
+			Execution execution = executionStep.getExecution();
+			IterationTestPlanItem itpi = execution.getTestPlan();
+			Date itpiDateLastExecutedOn = itpi.getLastExecutedOn();
+			Date execDateLastExecutedOn = execution.getLastExecutedOn();
+			ExecutionStatus status = ExecutionStatus.READY;
+			//if execution dates are null, the execution was only READY, so we don't compare dates to avoid npe
+			if (itpiDateLastExecutedOn != null && execDateLastExecutedOn != null) {
+				DateTime itpiLastExecutedOn = new DateTime(itpi.getLastExecutedOn().getTime());
+				DateTime execLastExecutedOn = new DateTime(execution.getLastExecutedOn().getTime());
+				Interval interval = new Interval(execLastExecutedOn, itpiLastExecutedOn);
+				boolean fastPass = interval.toDuration().isLongerThan(new Duration(2000L));
+				//If we have a fast path use it for step status
+				status = fastPass ? itpi.getExecutionStatus() : executionStep.getExecutionStatus();
+			}
+			Long memo = result.get(status);
+			if (memo == null) {
+				result.put(status, 1L);
+			} else {
+				result.put(status, memo + 1);
+			}
+		}
+	}
 	private Long calculateUntestedElementCount(List<Long> mainVersionTCWithoutItpiIds, Map<Long, Long> nbSimpleCoverageByTestCase,
 											   List<RequirementVersionCoverage> stepedCoverage, List<Long> steppedCoverageTCIdsWithoutITPI) {
 		Long total = 0L;

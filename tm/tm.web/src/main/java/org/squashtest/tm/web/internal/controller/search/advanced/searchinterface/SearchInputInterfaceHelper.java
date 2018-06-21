@@ -33,7 +33,6 @@ import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.internal.dto.CustomFieldModel;
 import org.squashtest.tm.service.internal.dto.CustomFieldModelFactory;
-import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsonProject;
 import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -104,7 +103,7 @@ public class SearchInputInterfaceHelper {
 		return model;
 	}
 
-	public SearchInputInterfaceModel getTestCaseSearchInputInterfaceModel(Locale locale, boolean isMilestoneMode ,List<Long> readableProjectIds,Collection<JsonProject> jsProjects) {
+	public SearchInputInterfaceModel getTestCaseSearchInputInterfaceModel(Locale locale, boolean isMilestoneMode, List<Long> readableProjectIds, Collection<JsonProject> jsProjects) {
 
 		SearchInputInterfaceModel model = new SearchInputInterfaceModel();
 
@@ -138,7 +137,7 @@ public class SearchInputInterfaceHelper {
 		return model;
 	}
 
-	public SearchInputInterfaceModel getCampaignSearchInputInterfaceModel(Locale locale, boolean isMilestoneMode,List<Long> readableProjectIds,Collection<JsonProject> jsProjects) {
+	public SearchInputInterfaceModel getCampaignSearchInputInterfaceModel(Locale locale, boolean isMilestoneMode, List<Long> readableProjectIds, Collection<JsonProject> jsProjects) {
 
 		SearchInputInterfaceModel model = new SearchInputInterfaceModel();
 		List<String> users = campaignAdvancedSearchService.findAllAuthorizedUsersForACampaign(readableProjectIds);
@@ -182,21 +181,7 @@ public class SearchInputInterfaceHelper {
 
 			switch (InputType.valueOf(customField.getInputType().getEnumName())) {
 			case DROPDOWN_LIST:
-				CustomFieldModelFactory.SingleSelectFieldModel singleSelectFieldModel = (CustomFieldModelFactory.SingleSelectFieldModel)customField;
-				SingleSelectField selectField = new SingleSelectField();
-				selectField.setCode(singleSelectFieldModel.getCode());
-				selectField.setDefaultValue(singleSelectFieldModel.getDefaultValue().toString());
-				selectField.setLabel(singleSelectFieldModel.getLabel());
-				selectField.setName(singleSelectFieldModel.getName());
-				selectField.setOptional(singleSelectFieldModel.isOptional());
-				for(CustomFieldModelFactory.CustomFieldOptionModel optionModel : singleSelectFieldModel.getOptions()){
-					CustomFieldOption customFieldModel = new CustomFieldOption(optionModel.getLabel(),optionModel.getCode());
-					if(!selectField.getOptions().contains(customFieldModel)) {
-						if(customFieldModel.getCode()!=null&&customFieldModel.getLabel()!=null) {
-							selectField.addOption(customFieldModel);
-						}
-					}
-				}
+				SingleSelectField selectField = convertToDropdownList( customField);
 				model.getFields().add(dropdownConvertToSearchInputFieldModel(selectField, locale));
 				break;
 
@@ -217,20 +202,7 @@ public class SearchInputInterfaceHelper {
 				break;
 
 			case TAG:
-				CustomFieldModelFactory.MultiSelectFieldModel multiSelectFieldModel = (CustomFieldModelFactory.MultiSelectFieldModel)customField;
-				MultiSelectField multiSelectField = new MultiSelectField();
-				multiSelectField.setCode(multiSelectFieldModel.getCode());
-				// Sonar: here #getDefaultValue() returns an array. This line is adding a wrong possible option value.
-				// multiSelectField.setDefaultValue(multiSelectFieldModel.getDefaultValue().toString());
-				multiSelectField.setLabel(multiSelectFieldModel.getLabel());
-				multiSelectField.setName(multiSelectFieldModel.getName());
-				multiSelectField.setOptional(multiSelectFieldModel.isOptional());
-				for(CustomFieldModelFactory.CustomFieldOptionModel optionModel :  multiSelectFieldModel.getOptions()) {
-					CustomFieldOption customFieldOptionModel = new CustomFieldOption(optionModel.getLabel());
-					if (!multiSelectField.getOptions().contains(customFieldOptionModel)) {
-						multiSelectField.addOption(optionModel.getLabel());
-					}
-				}
+				MultiSelectField multiSelectField =convertToMultiSelectField(customField);
 				model.getFields().add(multiSelectFieldConvertToSearchInputFieldModel(multiSelectField));
 				break;
 
@@ -242,6 +214,46 @@ public class SearchInputInterfaceHelper {
 		}
 		return model;
 	}
+
+	private SingleSelectField convertToDropdownList(CustomFieldModel customField){
+		CustomFieldModelFactory.SingleSelectFieldModel singleSelectFieldModel = (CustomFieldModelFactory.SingleSelectFieldModel)customField;
+		SingleSelectField selectField = new SingleSelectField();
+		selectField.setCode(singleSelectFieldModel.getCode());
+		selectField.setDefaultValue(singleSelectFieldModel.getDefaultValue().toString());
+		selectField.setLabel(singleSelectFieldModel.getLabel());
+		selectField.setName(singleSelectFieldModel.getName());
+		selectField.setOptional(singleSelectFieldModel.isOptional());
+		for(CustomFieldModelFactory.CustomFieldOptionModel optionModel : singleSelectFieldModel.getOptions()){
+			CustomFieldOption customFieldModel = new CustomFieldOption(optionModel.getLabel(),optionModel.getCode());
+			if(!selectField.getOptions().contains(customFieldModel)) {
+				if(customFieldModel.getCode()!=null&&customFieldModel.getLabel()!=null) {
+					selectField.addOption(customFieldModel);
+				}
+			}
+		}
+		return selectField;
+	}
+
+	private MultiSelectField convertToMultiSelectField(CustomFieldModel customField){
+		CustomFieldModelFactory.MultiSelectFieldModel multiSelectFieldModel = (CustomFieldModelFactory.MultiSelectFieldModel)customField;
+		MultiSelectField multiSelectField = new MultiSelectField();
+		multiSelectField.setCode(multiSelectFieldModel.getCode());
+		// Sonar: here #getDefaultValue() returns an array. This line is adding a wrong possible option value.
+		// multiSelectField.setDefaultValue(multiSelectFieldModel.getDefaultValue().toString());
+		multiSelectField.setLabel(multiSelectFieldModel.getLabel());
+		multiSelectField.setName(multiSelectFieldModel.getName());
+		multiSelectField.setOptional(multiSelectFieldModel.isOptional());
+		for(CustomFieldModelFactory.CustomFieldOptionModel optionModel :  multiSelectFieldModel.getOptions()) {
+			CustomFieldOption customFieldOptionModel = new CustomFieldOption(optionModel.getLabel());
+			if (!multiSelectField.getOptions().contains(customFieldOptionModel)) {
+				multiSelectField.addOption(optionModel.getLabel());
+			}
+		}
+		return multiSelectField;
+	}
+
+
+
 
 	private SearchInputFieldModel createDateCustomFieldSearchModel(CustomFieldModel customField) {
 

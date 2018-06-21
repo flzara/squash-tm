@@ -133,25 +133,29 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 			Authentication authentication = userContextService.getAuthentication();
 			Field[] fields = CustomPermission.class.getFields();
 			// TODO below is a hacky enum of all rights, should be externalized.
-			for (Field field : fields) {
-				try {
-					if (!"READ".equals(field.getName())
-						&& permissionEvaluator.hasPermission(authentication, object, field.getName())) {
-						return true;
-					}
-				} catch (IllegalArgumentException iaexecption) {
-					List<String> knownMessages = Arrays.asList("Unknown permission 'RESERVED_ON'",
-						"Unknown permission 'RESERVED_OFF'", "Unknown permission 'THIRTY_TWO_RESERVED_OFF'");
-					if (!knownMessages.contains(iaexecption.getMessage())) {
-						throw iaexecption;
-					}
-				}
-			}
+			findPermission(fields, object,authentication);
 
 		}
 		return hasMore;
 	}
 
+	boolean findPermission(Field[] fields , Object object,Authentication authentication){
+		for (Field field : fields) {
+			try {
+				if (!"READ".equals(field.getName())
+					&& permissionEvaluator.hasPermission(authentication, object, field.getName())) {
+					return true;
+				}
+			} catch (IllegalArgumentException iaexecption) {
+				List<String> knownMessages = Arrays.asList("Unknown permission 'RESERVED_ON'",
+					"Unknown permission 'RESERVED_OFF'", "Unknown permission 'THIRTY_TWO_RESERVED_OFF'");
+				if (!knownMessages.contains(iaexecption.getMessage())) {
+					throw iaexecption;
+				}
+			}
+		}
+		return false;
+	}
 
 	@Override
 	public boolean hasPermissionOnObject(String permissionName, Long entityId, String entityClassName) {

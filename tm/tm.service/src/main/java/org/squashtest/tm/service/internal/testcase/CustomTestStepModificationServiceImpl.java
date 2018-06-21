@@ -111,18 +111,22 @@ public class CustomTestStepModificationServiceImpl implements CustomTestStepModi
 		if (cufValues != null) {
 			PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(step, "WRITE"));
 			for (Entry<Long, RawValue> cufValue : cufValues.entrySet()) {
-				try {
-					if (cufValue.getValue() != null){
-						RawValue rValue = cufValue.getValue();
-						cufValueService.changeValue(cufValue.getKey(), rValue);
-					}
-				} catch (DomainException e) {
-					LOGGER.error(e.getMessage());
-					exceptions.add(e);
-				}
+				changeCufRawValue(cufValue, exceptions);
 			}
 		}
 		return step;
+	}
+
+	private void changeCufRawValue(Entry<Long, RawValue> cufValue,List<DomainException> exceptions){
+		try {
+			if (cufValue.getValue() != null){
+				RawValue rValue = cufValue.getValue();
+				cufValueService.changeValue(cufValue.getKey(), rValue);
+			}
+		} catch (DomainException e) {
+			LOGGER.error(e.getMessage());
+			exceptions.add(e);
+		}
 	}
 
 	private static final class TestStepUpdater implements TestStepVisitor {

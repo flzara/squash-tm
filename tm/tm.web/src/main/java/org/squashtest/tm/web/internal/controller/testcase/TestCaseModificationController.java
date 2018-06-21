@@ -644,11 +644,10 @@ public class TestCaseModificationController {
 					issuesOwnerShipList = bugTrackersLocalService.findIssueOwnershipForTestCase(testCaseId);
 					decoratedIssues = new ArrayList<>(
 						issuesOwnerShipList.size());
-					for (IssueOwnership<RemoteIssueDecorator> ownerShip : issuesOwnerShipList) {
-						decoratedIssues.add(new DecoratedIssueOwnership(ownerShip, locale));
-					}
+					fillDecoratedIssues(decoratedIssues,issuesOwnerShipList, locale);
 
-				}
+
+					}
 				// it's okay if the bugtracker fails, it should not forbid the rest to work
 				catch (BugTrackerRemoteException | NullArgumentException whatever) { // NOSONAR : this exception is part of the nominal use case
 				}
@@ -717,6 +716,12 @@ public class TestCaseModificationController {
 		mav.addObject("milestones", milestoneModels);
 
 		return mav;
+	}
+
+	private void fillDecoratedIssues(List<DecoratedIssueOwnership> decoratedIssues,List<IssueOwnership<RemoteIssueDecorator>> issuesOwnerShipList,Locale locale){
+		for (IssueOwnership<RemoteIssueDecorator> ownerShip : issuesOwnerShipList) {
+			decoratedIssues.add(new DecoratedIssueOwnership(ownerShip, locale));
+		}
 	}
 
 	/**
