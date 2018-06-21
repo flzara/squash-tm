@@ -27,6 +27,7 @@
      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
   <include file="tm.data-1.18.0-feat-7183.xml" relativeToChangelogFile="true" />
+  <include file="tm.data-1.18.0-email-column-resizing.xml" relativeToChangelogFile="true" />
 
   <!-- ========================================INCLUDE CHANGELOG================================================ -->
   <include file="../../../main/liquibase/tm/tm.changelog-1.18.0.xml"
@@ -116,6 +117,21 @@
       </sqlCheck>
     </preConditions>
     <comment>We check that there are no duplicates for (CAMPAIGN_ID, TEST_PLAN_ORDER)</comment>
+  </changeSet>
+
+  <changeSet id="tm-1.18.0-email-column-resizing-test" author="aguilhem" dbms="mysql, postgresql">
+    <preConditions>
+      <sqlCheck expectedResult="bob@bob.com">
+        <![CDATA[
+          select EMAIL from CORE_USER user where user.LOGIN='Bob';
+        ]]>
+      </sqlCheck>
+
+    </preConditions>
+    <comment>
+      We check email column datas are not erased after column datatype changement.
+    </comment>
+
   </changeSet>
 
 </databaseChangeLog>
