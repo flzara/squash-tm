@@ -31,10 +31,6 @@ public class SearchInputInterfaceModel {
 
 	private Map<String, Object> metadata = new HashMap<>();
 
-	public SearchInputInterfaceModel() {
-
-	}
-
 	public void addPanel(SearchInputPanelModel panel){
 		this.panels.add(panel);
 	}

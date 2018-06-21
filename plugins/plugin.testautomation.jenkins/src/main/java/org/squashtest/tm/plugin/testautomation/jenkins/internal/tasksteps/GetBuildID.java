@@ -110,7 +110,7 @@ public class GetBuildID extends BuildStep<GetBuildID> implements HttpBasedStep {
 
 	@Override
 	public void reset() {
-
+		// NOOP
 	}
 
 	@Override

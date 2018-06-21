@@ -49,10 +49,6 @@ public class TestCaseImportanceManagerForRequirementDeletion {
 	@Inject
 	private TestCaseImportanceManagerService testCaseImportanceManagerService;
 
-	public TestCaseImportanceManagerForRequirementDeletion() {
-
-	}
-
 	/**
 	 * <p>
 	 * will find TestCases concerned by deleted requirements versions and store them in property along with the

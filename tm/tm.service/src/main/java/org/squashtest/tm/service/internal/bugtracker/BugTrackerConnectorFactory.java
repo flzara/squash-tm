@@ -67,9 +67,6 @@ public class BugTrackerConnectorFactory {
 	private Collection<AdvancedBugTrackerConnectorProvider> advancedProviders = Collections.emptyList();
 	private Collection<OslcBugTrackerConnectorProvider> oslcProviders = Collections.emptyList();
 
-	public BugTrackerConnectorFactory() {
-	}
-
 	public Set<String> getProviderKinds() {
 		Set<String> result = new HashSet<>();
 		result.addAll(providerByKind.keySet());

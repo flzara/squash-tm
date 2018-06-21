@@ -47,7 +47,7 @@ public class ParameterNameInStepUpdater implements TestStepVisitor {
 
 	@Override
 	public void visit(CallTestStep visited) {
-
+		// NOOP
 	}
 
 }

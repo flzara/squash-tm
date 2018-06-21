@@ -25,7 +25,6 @@ import org.squashtest.tm.domain.report.ReportDefinition;
 
 @Transactional
 public interface ReportModificationService {
-	void persist(ReportDefinition newReport);
 
 	ReportDefinition findById (long id);
 

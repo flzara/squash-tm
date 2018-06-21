@@ -61,9 +61,6 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager {
 	@Inject
 	private GenericProjectFinder projectFinder;
 
-	public WorkspaceWizardManagerImpl() {
-	}
-
 	@PostConstruct
 	public void registerWizards() {
 		for (WorkspaceWizard wizard : wizards) {

@@ -45,11 +45,6 @@ public class ReportModificationServiceImpl implements ReportModificationService{
 	private CustomReportLibraryNodeService customReportLibraryNodeService;
 
 	@Override
-	public void persist(ReportDefinition newReport) {
-
-	}
-
-	@Override
 	public ReportDefinition findById(long id) {
 		return null;
 	}

@@ -37,10 +37,6 @@ class TestStepViewFromExecBuilder implements TestStepVisitor {
 	private TestStepViewFromExec testStepView;
 	private ExecutionStep execStep;
 
-	public TestStepViewFromExecBuilder() {
-	}
-
-
 	public TestStepViewFromExec buildTestStepViewFromExec(ExecutionStep execStep) {
 
 		this.execStep = findExistingStep(execStep);

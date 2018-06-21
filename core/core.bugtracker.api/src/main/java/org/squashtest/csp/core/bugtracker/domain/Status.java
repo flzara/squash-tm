@@ -68,7 +68,7 @@ public class Status implements Identifiable<Status>, RemoteStatus {
 
 	/** exists for the purpose of being javabean compliant */
 	public void setDummy(Boolean dummy){
-
+		// NOOP
 	}
 
 }

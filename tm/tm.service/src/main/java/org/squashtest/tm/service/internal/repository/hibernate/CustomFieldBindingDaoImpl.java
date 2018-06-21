@@ -39,9 +39,6 @@ public class CustomFieldBindingDaoImpl extends HibernateEntityDao<CustomFieldBin
 		private int formerPosition;
 		private int newPosition;
 
-		public NewBindingPosition() {
-		}
-
 		public Long getBindingId() {
 			return bindingId;
 		}
