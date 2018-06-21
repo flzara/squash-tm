@@ -676,18 +676,21 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 
 			if (values != null) {
 				return formatOutputValue( model, values);
-}
+			}
+
+			return "";
+		}
+
 		private String formatOutputValue(CustomField model,Collection<CustomFieldValue> values) {
-			for (CustomFieldValue value : values) {			CustomField customField = value.getBinding().getCustomField();
+			for (CustomFieldValue value : values) {
+				CustomField customField = value.getBinding().getCustomField();
 				if (customField.getCode().equals(model.getCode())) {
 					if (customField.getInputType().equals(InputType.NUMERIC)) {
 						return NumericCufHelper.formatOutputNumericCufValue(value.getValue());
 					}
 					return value.getValue();
 				}
-			
 			}
-
 			return "";
 		}
 

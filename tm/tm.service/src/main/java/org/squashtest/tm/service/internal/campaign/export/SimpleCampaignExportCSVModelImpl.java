@@ -379,6 +379,9 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 
 			if (values != null) {
 				return formatOutputValue(values, model);
+			}
+			return "";
+		}
 
 		private String formatOutputValue(Collection<CustomFieldValue> values ,CustomField model) {
 			for (CustomFieldValue value : values) {
@@ -389,9 +392,7 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 					}
 					return value.getValue();
 				}
-
 			}
-
 			return "";
 		}
 

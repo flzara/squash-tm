@@ -375,6 +375,11 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 
 			if (values != null) {
 				return formatOutputValue(values , model);
+			}
+
+			return "--";
+		}
+
 		private String formatOutputValue(Collection<CustomFieldValue> values ,CustomField model) {
 			for (CustomFieldValue value : values) {
 				CustomField customField = value.getBinding().getCustomField();
@@ -385,8 +390,7 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 					return value.getValue();
 				}
 			}
-
-			return "--";
+			return "";
 		}
 
 
