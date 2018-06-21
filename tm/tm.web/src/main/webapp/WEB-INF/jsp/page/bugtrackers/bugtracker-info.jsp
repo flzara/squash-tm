@@ -162,9 +162,9 @@
 						
 						<%-- protocol conf section --%>
 						<div class="srv-auth-form-main side-panel std-border std-border-radius" 
-						 ${featEnab}>
+						 ${featEnab} style="min-width:50%">
 							
-							<div id="srv-auth-conf-form" class="templated-form">
+							<div id="srv-auth-conf-form" class="templated-form" >
 							<%-- templated by handlebars --%>
 							</div>
 		
@@ -177,7 +177,7 @@
 						</div>
 	
 						
-						<div class="side-panel srv-auth-messagepane">
+						<div class="side-panel srv-auth-messagepane" >
 							<%--templated by handlebars --%>
 						</div>
 											
@@ -241,7 +241,7 @@
 			<div class="not-displayed" id="auth-templates">
 				
 				<script id="oauth-conf-template" type="text/x-handlebars-template">
-				<div class="tbl">
+				<div class="tbl" style="width:100%">
 				<div>
 					<label><f:message key="bugtracker.admin.protocol.conf.oauth1a.consumerkey"/></label>
 					<input type="text" value="{{consumerKey}}" data-bind="consumerKey"/>
