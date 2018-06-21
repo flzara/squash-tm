@@ -23,12 +23,12 @@ package org.squashtest.tm.internal.domain.report.query.hibernate;
 import org.squashtest.tm.internal.domain.report.query.ReportQueryFlavor;
 
 /**
- * See org.squashtest.tm.internal.domain.report.query.ReportQueryFlavor. This flavor tells that a given ReportQuery or Dao 
- * uses a Hibernate repository.  
- * 
+ * See org.squashtest.tm.internal.domain.report.query.ReportQueryFlavor. This flavor tells that a given ReportQuery or Dao
+ * uses a Hibernate repository.
+ *
  * @author bsiri
  *
  */
-public class HibernateQueryFlavor extends ReportQueryFlavor {
+public class HibernateQueryFlavor implements ReportQueryFlavor {
 
 }

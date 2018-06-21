@@ -28,15 +28,15 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @JsonAutoDetect
-public abstract class AxisColumnMixin {
+public interface AxisColumnMixin {
 
 	@JsonIgnore
-	public abstract EntityType getEntityType();
+	EntityType getEntityType();
 
 	@JsonIgnore
-	public abstract DataType getDataType();
+	DataType getDataType();
 
 	@JsonIgnore
-	public abstract SpecializedEntityType getSpecializedType();
+	SpecializedEntityType getSpecializedType();
 
 }

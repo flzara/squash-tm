@@ -512,23 +512,23 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 
 	@JsonTypeInfo(include = JsonTypeInfo.As.PROPERTY, use = JsonTypeInfo.Id.CLASS)
 	@JsonInclude
-	abstract class InternalCredentialsMixin {
+	interface InternalCredentialsMixin {
 		@JsonIgnore
-		abstract AuthenticationProtocol getImplementedProtocol();
+		AuthenticationProtocol getImplementedProtocol();
 	}
 
 	@JsonTypeInfo(include = JsonTypeInfo.As.PROPERTY, use = JsonTypeInfo.Id.CLASS)
 	@JsonInclude
-	abstract class InternalManageableCredentialsMixin {
+	interface InternalManageableCredentialsMixin {
 		@JsonIgnore
-		abstract AuthenticationProtocol getImplementedProtocol();
+		 AuthenticationProtocol getImplementedProtocol();
 	}
 
 	@JsonTypeInfo(include = JsonTypeInfo.As.PROPERTY, use = JsonTypeInfo.Id.CLASS)
 	@JsonInclude
-	abstract class InternalServerAuthConfigurationMixin {
+	interface InternalServerAuthConfigurationMixin {
 		@JsonIgnore
-		abstract AuthenticationProtocol getImplementedProtocol();
+		AuthenticationProtocol getImplementedProtocol();
 	}
 
 

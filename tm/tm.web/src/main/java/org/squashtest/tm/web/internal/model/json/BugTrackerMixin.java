@@ -26,14 +26,14 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @JsonAutoDetect
-public abstract class BugTrackerMixin {
+public interface BugTrackerMixin {
 
 	@JsonIgnore
-	public abstract BugTracker getDetachedBugTracker();
-	
+	BugTracker getDetachedBugTracker();
 
-	// This one is conflicting with getUrl() : String. 
+
+	// This one is conflicting with getUrl() : String.
 	// No comments.
 	@JsonIgnore
-	public abstract BugTracker getURL();
+	BugTracker getURL();
 }

@@ -27,11 +27,11 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @JsonAutoDetect
-public abstract class ColumnPrototypeMixin {
+public interface ColumnPrototypeMixin {
 
 	@JsonIgnore
-	public abstract EntityType getEntityType();
+	EntityType getEntityType();
 
 	@JsonIgnore
-	public abstract EntityRole getEntityRole();
+	EntityRole getEntityRole();
 }
