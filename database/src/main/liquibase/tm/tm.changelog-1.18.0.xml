@@ -510,6 +510,7 @@
 
   <changeSet id="tm-1.18.0-email-column-resizing" author="aguilhem">
     <modifyDataType tableName="CORE_USER" columnName="EMAIL" newDataType="VARCHAR(255)"/>
+    <addDefaultValue tableName="CORE_USER" columnName="EMAIL" columnDataType="VARCHAR(255)" defaultValue=""/>
   </changeSet>
 
 </databaseChangeLog>
