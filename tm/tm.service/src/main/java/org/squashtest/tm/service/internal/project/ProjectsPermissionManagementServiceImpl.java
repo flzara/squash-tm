@@ -373,13 +373,10 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		boolean isInGroup = false;
 		List<PartyProjectPermissionsBean> permissions = findPartyPermissionsBeanByProject(projectId);
 		for (PartyProjectPermissionsBean permission : permissions) {
-			if (permission.getParty().getId() == partyId) {
-				if (permission.getPermissionGroup().getQualifiedName().equals(permissionGroup)) {
-					isInGroup = true;
-				}
+			if (permission.getParty().getId() == partyId && permission.getPermissionGroup().getQualifiedName().equals(permissionGroup)) {
+				isInGroup = true;
 			}
 		}
-
 		return isInGroup;
 	}
 

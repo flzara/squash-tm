@@ -1379,14 +1379,14 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 
 		// cannot link a requirement to itself
-		if (!logs.hasCriticalErrors()) {
-			if (linkTarget.getSourceVersion().equals(linkTarget.getDestVersion())) {
-				logs.addEntry(LogEntry
-					.failure()
-					.forTarget(linkTarget)
-					.withMessage(Messages.ERROR_REQ_LINK_SAME_VERSION)
-					.build());
-			}
+		if (!logs.hasCriticalErrors() && linkTarget.getSourceVersion().equals(linkTarget.getDestVersion())) {
+
+			logs.addEntry(LogEntry
+				.failure()
+				.forTarget(linkTarget)
+				.withMessage(Messages.ERROR_REQ_LINK_SAME_VERSION)
+				.build());
+
 		}
 		return logs;
 	}

@@ -136,9 +136,7 @@ public class ExecutionStepModificationHelper {
 
 	private boolean isExecutionWithDataset(Execution execution) {
 		if (execution.getTestPlan() != null) {
-			if (execution.getTestPlan().getReferencedDataset() != null) {
-				return true;
-			}
+			return execution.getTestPlan().getReferencedDataset() != null;
 		}
 		return false;
 	}

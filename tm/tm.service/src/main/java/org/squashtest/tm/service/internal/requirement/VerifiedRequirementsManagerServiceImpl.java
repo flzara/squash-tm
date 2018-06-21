@@ -1062,12 +1062,8 @@ List<Long> requirementsIds) {
 		for (Requirement requirement : requirements) {
 			RequirementVersion rv = requirement.getResource();
 
-			if (rv.isNotObsolete()) {
-
-				if (!activeMilestone.isPresent() || rv.getMilestones().contains(activeMilestone.get())) {
-					rvs.add(rv);
-				}
-
+			if (rv.isNotObsolete() && (!activeMilestone.isPresent() || rv.getMilestones().contains(activeMilestone.get()))) {
+				rvs.add(rv);
 			}
 		}
 		return rvs;

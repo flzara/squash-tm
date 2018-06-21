@@ -559,16 +559,17 @@ class EntityValidator {
 		if (target.isWellFormed()) {
 
 			TargetStatus projectStatus = getModel().getProjectStatus(target.getProject());
-			if (projectStatus.getStatus() == Existence.EXISTS) {
-				//category, if specified, must be consistent with the categories of the target project
-				if (!categoryDefinedAndConsistent(projectStatus, reqVersion)) {
-					logs.addEntry(
-						LogEntry.warning().forTarget(target)
-							.withMessage(Messages.ERROR_INVALID_CATEGORY, target.getPath())
-							.withImpact(Messages.IMPACT_DEFAULT_VALUE)
-							.build()
-					);
-				}
+
+			//category, if specified, must be consistent with the categories of the target project
+			if (projectStatus.getStatus() == Existence.EXISTS && !categoryDefinedAndConsistent(projectStatus, reqVersion)) {
+
+				logs.addEntry(
+					LogEntry.warning().forTarget(target)
+						.withMessage(Messages.ERROR_INVALID_CATEGORY, target.getPath())
+						.withImpact(Messages.IMPACT_DEFAULT_VALUE)
+						.build()
+				);
+
 			}
 		}
 
