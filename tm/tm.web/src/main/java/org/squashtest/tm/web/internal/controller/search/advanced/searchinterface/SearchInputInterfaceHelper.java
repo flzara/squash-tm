@@ -104,7 +104,7 @@ public class SearchInputInterfaceHelper {
 		return model;
 	}
 
-	public SearchInputInterfaceModel getTestCaseSearchInputInterfaceModel(Locale locale, boolean isMilestoneMode,UserDto currentUser ,List<Long> readableProjectIds,Collection<JsonProject> jsProjects) {
+	public SearchInputInterfaceModel getTestCaseSearchInputInterfaceModel(Locale locale, boolean isMilestoneMode ,List<Long> readableProjectIds,Collection<JsonProject> jsProjects) {
 
 		SearchInputInterfaceModel model = new SearchInputInterfaceModel();
 
@@ -138,7 +138,7 @@ public class SearchInputInterfaceHelper {
 		return model;
 	}
 
-	public SearchInputInterfaceModel getCampaignSearchInputInterfaceModel(Locale locale, boolean isMilestoneMode,UserDto currentUser,List<Long> readableProjectIds,Collection<JsonProject> jsProjects) {
+	public SearchInputInterfaceModel getCampaignSearchInputInterfaceModel(Locale locale, boolean isMilestoneMode,List<Long> readableProjectIds,Collection<JsonProject> jsProjects) {
 
 		SearchInputInterfaceModel model = new SearchInputInterfaceModel();
 		List<String> users = campaignAdvancedSearchService.findAllAuthorizedUsersForACampaign(readableProjectIds);

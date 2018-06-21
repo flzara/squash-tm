@@ -124,7 +124,7 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 		if (!train.hasCriticalErrors()) {
 			try {
 				helper.fillNullWithDefaults(testStep);
-				helper.truncate(testStep, cufValues);
+				helper.truncate(cufValues);
 
 				doAddActionStep(target, testStep, cufValues);
 				validator.getModel().addActionStep(target);
@@ -179,7 +179,7 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 
 		if (!train.hasCriticalErrors()) {
 			try {
-				helper.truncate(testStep, cufValues);
+				helper.truncate(cufValues);
 				doUpdateActionStep(target, testStep, cufValues);
 
 				LOGGER.debug(EXCEL_ERR_PREFIX + "Updated Action Step \t'" + target + "'");

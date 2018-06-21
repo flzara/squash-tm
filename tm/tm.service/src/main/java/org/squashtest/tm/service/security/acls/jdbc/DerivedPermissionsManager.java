@@ -107,15 +107,6 @@ class DerivedPermissionsManager {
 		updateDerivedAuths(partyId);
 	}
 
-
-	void updateDerivedPermissions(long partyId, ObjectIdentity identity) {
-
-		// as for now we don't have a use for the identity argument yet. That might change later though.
-		//updateDerivedAcl(partyId);
-		updateDerivedAuths(partyId);
-	}
-
-
 	// *************************** private ******************************
 
 

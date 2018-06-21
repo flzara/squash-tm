@@ -113,7 +113,7 @@ public abstract class GlobalSearchController {
 				Collection<JsonProject> jsProjects = projectFinder.findAllProjects(readableProjectIds, currentUser);
 
 				SearchInputInterfaceModel model = searchInputInterfaceHelper.getTestCaseSearchInputInterfaceModel(locale,
-					isMilestoneMode, currentUser, readableProjectIds, jsProjects);
+					isMilestoneMode, readableProjectIds, jsProjects);
 				populateMetadata(model, jsProjects);
 				return model;
 			}
@@ -140,7 +140,7 @@ public abstract class GlobalSearchController {
 				List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
 				Collection<JsonProject> jsProjects = projectFinder.findAllProjects(readableProjectIds, currentUser);
 				SearchInputInterfaceModel model = searchInputInterfaceHelper.getCampaignSearchInputInterfaceModel(locale,
-					isMilestoneMode, currentUser, readableProjectIds, jsProjects);
+					isMilestoneMode, readableProjectIds, jsProjects);
 				populateMetadata(model, jsProjects);
 				return model;
 			}

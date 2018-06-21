@@ -315,9 +315,9 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 		return req.isMilestoneUsedByOneVersion(milestone);
 	}
 
-	public boolean isMilestoneLocked(RequirementVersionTarget target, String milestone){
+	public boolean isMilestoneLocked(RequirementVersionTarget target){
 		Node req = getNode(target.getRequirement());
-		return req.isVersionMilestoneLocked(target.getVersion(),milestone);
+		return req.isVersionMilestoneLocked(target.getVersion());
 	}
 
 	public void milestoneLock(RequirementVersionTarget target){
@@ -415,7 +415,7 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 			return milestonesInVersion.contains(milestone);
 		}
 
-		boolean isVersionMilestoneLocked(Integer noVersion, String milestone){
+		boolean isVersionMilestoneLocked(Integer noVersion){
 			return requirementVersions.get(noVersion).isMilestoneLocked();
 		}
 

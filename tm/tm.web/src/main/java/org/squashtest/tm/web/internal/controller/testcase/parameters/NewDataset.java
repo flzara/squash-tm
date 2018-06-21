@@ -40,7 +40,7 @@ public class NewDataset extends Dataset {
 
 	}
 
-	public Dataset createTransientEntity(TestCase testCase, ParameterFinder parameterFinder) {
+	public Dataset createTransientEntity(ParameterFinder parameterFinder) {
 		Dataset dataset = new Dataset();
 		dataset.setName(getName());
 		for (Object[] paramValue : paramValues) {

@@ -61,13 +61,13 @@ public class IterationItemBundleClassBridge implements FieldBridge{
 			LOGGER.debug("preparing indexation bundle for iteration test plan item "+item.getId());
 		}
 
-		indexTestCase(item, document, luceneOptions);
+		indexTestCase(item, document);
 
 	}
 
 	// ************************** test case indexation ***************************************
 
-	private void indexTestCase(IterationTestPlanItem item, Document document, LuceneOptions luceneOptions){
+	private void indexTestCase(IterationTestPlanItem item, Document document){
 
 		LOGGER.debug("indexing referencedTestCase :");
 

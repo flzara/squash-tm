@@ -24,7 +24,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
@@ -175,14 +174,7 @@ class EntityValidator {
 
 	}
 
-	LogTrain basicTestStepChecks(TestStepTarget target, TestStep testStep) {
-
-		// for now nothing much more to do with the TestStep
-		return basicTestStepChecks(target);
-
-	}
-
-	LogTrain validateCallStep(TestStepTarget target, TestStep testStep, TestCaseTarget calledTestCase,
+	LogTrain validateCallStep(TestStepTarget target, TestCaseTarget calledTestCase,
 		CallStepParamsInfo paramInfos, ImportMode mode) {
 
 		LogTrain logs = new LogTrain();

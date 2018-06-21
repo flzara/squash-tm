@@ -80,7 +80,7 @@ public class MilestoneFeatureConfiguration {
 
 	public MilestoneFeatureConfiguration(boolean enabled) {
 		super();
-		this.globallyEnabled = false;
+		this.globallyEnabled = enabled;
 	}
 
 

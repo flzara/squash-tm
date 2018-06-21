@@ -161,7 +161,7 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 
 	@Override
 	public ChartInstance generateChartForMilestoneDashboard(ChartDefinition chart, Long milestoneId, Workspace workspace) {
-		List<EntityReference> scope = generateScopeForMilestoneDashboard(milestoneId);
+		List<EntityReference> scope = generateScopeForMilestoneDashboard();
 		return generateChart(chart, scope, null, milestoneId, workspace);
 	}
 
@@ -181,7 +181,7 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 		return chartDefinitionDao.hasChart(userIds);
 	}
 
-	private List<EntityReference> generateScopeForMilestoneDashboard (Long milestoneId){
+	private List<EntityReference> generateScopeForMilestoneDashboard (){
 		List<Project> projects = projectFinder.findAllReadable();
 
 		List<EntityReference> entityReferences = new ArrayList<>();

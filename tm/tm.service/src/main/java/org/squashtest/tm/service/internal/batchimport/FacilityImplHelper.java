@@ -41,7 +41,7 @@ final class FacilityImplHelper {
 	static final int STD_TRUNCATE_SIZE = 255;
 
 	private EntityFacilitySupport facility;
-	
+
 	FacilityImplHelper(EntityFacilitySupport facility) {
 		super();
 		this.facility = facility;
@@ -152,7 +152,7 @@ final class FacilityImplHelper {
 	void truncate(TestCase testCase, Map<String, String> cufValues) {
 		String name = testCase.getName();
 		testCase.setName(truncate(name, Sizes.NAME_MAX));
-		
+
 		String ref = testCase.getReference();
 		testCase.setReference(truncate(ref, TestCase.MAX_REF_SIZE));
 
@@ -172,10 +172,10 @@ final class FacilityImplHelper {
 	/*
 	 * Truncates string content that would exceed their maximum length
 	 */
-	void truncate(ActionTestStep step, Map<String, String> cufValues) {
+	void truncate(Map<String, String> cufValues) {
 		truncateCustomfields(cufValues);
 	}
-	
+
 
 	/*
 	 * Truncates string content that would exceed their maximum length
@@ -210,12 +210,12 @@ final class FacilityImplHelper {
 		}
 	}
 
-	
+
 	String truncate(String str){
 		return truncate(str, STD_TRUNCATE_SIZE);
 	}
 
-	
+
 	void truncateCustomfields(Map<String, String> cufValues){
 		for (Entry<String, String> cuf : cufValues.entrySet()) {
 			InputType type = facility.getInputTypeFor(cuf.getKey());

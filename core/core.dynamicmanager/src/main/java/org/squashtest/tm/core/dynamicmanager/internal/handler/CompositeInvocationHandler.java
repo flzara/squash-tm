@@ -82,7 +82,7 @@ public class CompositeInvocationHandler implements InvocationHandler {
 			}
 		}
 
-		throw new UnsupportedMethodException(method, args);
+		throw new UnsupportedMethodException(method);
 	}
 
 	private Object proxyEquals(Object thisProxy, Object thatProxy) {

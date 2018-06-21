@@ -700,7 +700,7 @@ public class Model {
 
 				List<InternalStepModel> steps = testCaseStepsByTarget
 					.get(current.getKey());
-				extractParametersFromSteps(processing, processed, child, steps);
+				extractParametersFromSteps(processing, child, steps);
 				processed.add(current);
 			}
 
@@ -710,15 +710,13 @@ public class Model {
 
 	}
 
-	private void extractParametersFromSteps(Collection<Node> processing,
-											Set<Node> processed, Node child, List<InternalStepModel> steps) {
+	private void extractParametersFromSteps(Collection<Node> processing, Node child, List<InternalStepModel> steps) {
 		if (steps != null) {
 			for (InternalStepModel step : steps) {
 				if (step.type == StepType.CALL
 					&& step.calledTC.equals(child.getKey())
 					&& step.getDeleguates()) {
 					// FIXME calledTC is not a Node so there's probably a bug here
-					//&& !processed.contains(step.calledTC)) {
 					processing.add(child);
 				}
 			}

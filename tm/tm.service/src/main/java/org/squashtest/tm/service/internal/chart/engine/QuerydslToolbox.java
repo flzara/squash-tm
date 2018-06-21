@@ -602,7 +602,7 @@ class QuerydslToolbox {
 		return result;
 	}
 
-	private SimpleExpression<?> applyOperationForDateCustomFields(Operation operation, Expression<?> baseExp, Expression... operands) {
+	private SimpleExpression<?> applyOperationForDateCustomFields(Operation operation, Expression<?> baseExp) {
 		SimpleExpression result;
 
 		Operator operator = Ops.SUBSTR_2ARGS;
@@ -759,7 +759,7 @@ class QuerydslToolbox {
 		return makePath(clazz, alias, attributeType, attribute);
 
 	}
-	
+
 	List<Expression<?>> makeOperands(Operation operation, DataType type, List<String> values) {
 		try {
 

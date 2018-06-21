@@ -162,7 +162,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 		FullTextEntityManager ftSession = Search.getFullTextEntityManager(entityManager);
 
 
-		Query luceneQuery = searchForRequirementVersionQuery(model, ftSession, locale);
+		Query luceneQuery = searchForRequirementVersionQuery(model, ftSession);
 
 		List<RequirementVersion> result = Collections.emptyList();
 		int countAll = 0;
@@ -183,7 +183,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 		return new PagingBackedPagedCollectionHolder<>(sorting, countAll, result);
 	}
 
-	protected Query searchForRequirementVersionQuery(AdvancedSearchModel model, FullTextEntityManager ftem, Locale locale) {
+	protected Query searchForRequirementVersionQuery(AdvancedSearchModel model, FullTextEntityManager ftem) {
 		QueryBuilder qb = ftem.getSearchFactory().buildQueryBuilder().forEntity(RequirementVersion.class).get();
 		/* Creating a copy of the model to keep a model with milestones criteria */
 		AdvancedSearchModel modelCopy = model.shallowCopy();
@@ -194,12 +194,12 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 		Query luceneQuery = buildCoreLuceneQuery(qb, model);
 		/* If requested, add milestones criteria with the copied model */
 		if(shouldSearchByMilestones(modelCopy)) {
-			luceneQuery = addAggregatedMilestonesCriteria(luceneQuery, qb, modelCopy, locale);
+			luceneQuery = addAggregatedMilestonesCriteria(luceneQuery, qb, modelCopy);
 		}
 		return luceneQuery;
 	}
 
-	public Query addAggregatedMilestonesCriteria(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy, Locale locale) {
+	public Query addAggregatedMilestonesCriteria(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy) {
 
 		addMilestoneFilter(modelCopy);
 

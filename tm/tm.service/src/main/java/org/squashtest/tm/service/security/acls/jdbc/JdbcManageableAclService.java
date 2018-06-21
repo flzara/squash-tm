@@ -295,7 +295,7 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 		jdbcTemplate.update(DELETE_PARTY_RESPONSABILITY_ENTRY, partyId, entityRef.getIdentifier(), entityRef.getType());
 
 
-		derivedManager.updateDerivedPermissions(partyId, entityRef);
+		derivedManager.updateDerivedPermissions(partyId);
 
 		evictFromCache(entityRef);
 	}

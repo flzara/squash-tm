@@ -149,25 +149,6 @@ public class TestCaseDatasetsController {
 	}
 
 	/**
-	 * Returns the list of parameter description for parameters in the Datasets table ordered by parameter name.
-	 *
-	 * @param testCaseId                : the concerned test case id
-	 * @param locale                    : the browser's locale
-	 * @param directAndCalledParameters : the list of parameters directly associated or associated through call steps
-	 * @param messageSource             : the message source to internationalize suffix
-	 * @return
-	 */
-	public static List<String> findDatasetParamDescriptions(long testCaseId, final Locale locale,
-															List<Parameter> directAndCalledParameters, MessageSource messageSource) {
-		Collections.sort(directAndCalledParameters, new ParameterNameComparator(SortOrder.ASCENDING));
-		List<String> result = new ArrayList<>(directAndCalledParameters.size());
-		for (Parameter param : directAndCalledParameters) {
-			result.add(param.getDescription());
-		}
-		return result;
-	}
-
-	/**
 	 * Returns the list of column headers names for parameters in the Datasets table mapped with the parameter id.
 	 *
 	 * @param testCaseId                : the concerned test case id
@@ -263,7 +244,7 @@ public class TestCaseDatasetsController {
 	public void newDataset(@PathVariable long testCaseId, @Valid @RequestBody NewDataset dataset) {
 		TestCase testCase = testCaseFinder.findById(testCaseId);
 		try {
-			datasetModificationService.persist(dataset.createTransientEntity(testCase, parameterFinder), testCaseId);
+			datasetModificationService.persist(dataset.createTransientEntity(parameterFinder), testCaseId);
 		} catch (DomainException e) {
 			e.setObjectName("add-dataset");
 			throw e;
