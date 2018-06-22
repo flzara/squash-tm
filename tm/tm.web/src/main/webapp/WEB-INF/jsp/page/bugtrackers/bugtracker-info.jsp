@@ -161,7 +161,7 @@
 						</select>
 						
 						<%-- protocol conf section --%>
-						<div class="srv-auth-form-main side-panel std-border std-border-radius" 
+						<div class="srv-form srv-auth-form-main side-panel std-border std-border-radius" 
 						 ${featEnab} style="min-width:50%">
 							
 							<div id="srv-auth-conf-form" class="templated-form" >
@@ -189,46 +189,50 @@
 				<comp:toggle-panel id="bugtracker-auth-policy" titleKey="label.BugtrackerAuthPolicy" open="true">
 				<jsp:attribute name="body">
 				<div class="adm-srv-auth">
-					
-					<%-- policy choice --%>
-					<div>
-						<label style="vertical-align:middle;">
-							<input type="radio" name="srv-auth-policy" value="USER" ${policyUsr}>
-							<f:message key="bugtracker.admin.policy.users"/>
-						</label>
-					</div>
-
-					<div>
-						<label style="vertical-align:middle;">
-							<input type="radio" name="srv-auth-policy" value="APP_LEVEL" ${policyApp}>
-							<f:message key="bugtracker.admin.policy.app"/>
-						</label>
-					</div>										
-					
-					
-					<%-- app-level credentials section --%>
-					<div class="srv-auth-form-main side-panel std-border std-border-radius
-					${credsEnab} ${credsVisi}" >
-
-						<div id="srv-auth-creds-form" class="templated-form">
-							<%-- templated by handlebars --%>
-						</div>
-
-						<div class="centered srv-auth-buttonpane" style="position:relative">
-							<span class="needs-save-msg" style="display:none;"><f:message key="bugtracker.admin.messages.needs-save"/></span>
-							<input type="button" class="sq-btn auth-test" value="${testLabel}"/>
-							<input type="button" class="sq-btn auth-save" value="${saveLabel}"/>
-						</div>
-
-					</div>	
-					
-
-						
+					<%-- policy conf panel --%>
+					<div class="side-panel">
+						<div class="tbl side-panel">	
+							<%-- user policy choice --%>
+							<div>
+								<label><f:message key="bugtracker.admin.policy.user-section"/></label>
+								<div>
+									<label style="vertical-align:middle; display:block;">
+										<input type="radio" name="srv-auth-policy" value="USER" ${policyUsr}>
+										<f:message key="bugtracker.admin.policy.users"/>
+									</label>		
+									
+									<label style="vertical-align:middle; display:block;">
+										<input type="radio" name="srv-auth-policy" value="APP_LEVEL" ${policyApp}>
+										<f:message key="bugtracker.admin.policy.app"/>
+									</label>										
+								</div>	
+							</div>	
+							
+							<%-- app-level credentials section --%>
+							<div class="srv-form">
+								<label><f:message key="bugtracker.admin.policy.squashtm-section"/></label>
+								<div class="srv-auth-form-main std-border std-border-radius
+								${credsEnab} ${credsVisi}" >
+			
+									<div id="srv-auth-creds-form" class="templated-form">
+										<%-- templated by handlebars --%>
+									</div>
+			
+									<div class="centered srv-auth-buttonpane" style="position:relative">
+										<span class="needs-save-msg" style="display:none;"><f:message key="bugtracker.admin.messages.needs-save"/></span>
+										<input type="button" class="sq-btn auth-test" value="${testLabel}"/>
+										<input type="button" class="sq-btn auth-save" value="${saveLabel}"/>
+									</div>
+			
+								</div>	
+							</div>
+						</div>	
+					</div>		
+							
+					<%-- message zone --%>
 					<div class="side-panel srv-auth-messagepane">
 						<%--templated by handlebars --%>
-					</div>
-							
-						
+					</div>	
 				</div>
 				</jsp:attribute>				
 				</comp:toggle-panel>

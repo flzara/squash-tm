@@ -39,7 +39,7 @@ public interface CustomBugTrackerModificationService {
 
 
 	//**** credential services, some being forwarded to StoredCredentialsManager ****
-	
+
 
 	/**
 	 * Returns the authentication protocols supported by the underlying connector
@@ -52,29 +52,27 @@ public interface CustomBugTrackerModificationService {
 
 
 	/**
-	 * Changes the authentication policy for this server. Be warned that doing this 
-	 * will automatically remove the app-level credentials (since they target the 
-	 * former protocol).
-	 * 
+	 * Changes the authentication policy for this server. If the chosen policy is
+	 * APP_LEVEL be sure to {@link #storeCredentials(long, ManageableCredentials)} too.
+	 *
 	 * @param bugtrackerId
 	 * @param policy
 	 */
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeAuthenticationPolicy(long bugtrackerId, AuthenticationPolicy policy);
 
+
 	/**
-	 * Changes the authentication protocol. Be warned that doing this will automatically 
-	 * remove the authentication configuration and app-level credentials (since they target 
-	 * the former protocol) 
-	 * 
+	 * Changes the authentication protocol. Be warned that doing this will automatically
+	 * remove the authentication configuration and app-level credentials (since they target
+	 * the former protocol)
+	 *
 	 * @param bugtrackerId
 	 * @param protocol
 	 */
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeAuthenticationProtocol(long bugtrackerId, AuthenticationProtocol protocol);
-	
-	
-	
+
 	/**
 	 * Says whether the StoredCredentials service is properly configured
 	 *
@@ -94,17 +92,17 @@ public interface CustomBugTrackerModificationService {
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	void storeCredentials(long serverId, ManageableCredentials credentials);
 
-	
+
 	/**
-	 * 
-	 * @see StoredCredentialsManager#storeAuthenticationInformation(long, ServerAuthConfiguration)A
+	 *
+	 * @see StoredCredentialsManager#storeServerAuthConfiguration(long, ServerAuthConfiguration)
 	 * @param serverId
 	 * @param conf
 	 */
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	void storeAuthConfiguration(long serverId, ServerAuthConfiguration conf);
-	
-	
+
+
 	/**
 	 *
 	 * @see StoredCredentialsManager#findAppLevelCredentials(long)
@@ -113,9 +111,9 @@ public interface CustomBugTrackerModificationService {
 	 */
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	ManageableCredentials findCredentials(long serverId);
-	
+
 	/**
-	 * 
+	 *
 	 * @See {@link StoredCredentialsManager#findServerAuthConfiguration(long)
 	 * @param serverId
 	 * @return
@@ -131,7 +129,7 @@ public interface CustomBugTrackerModificationService {
 	 * @param bugtrackerId
 	 * @param credentials
 	 * @throws BugTrackerRemoteException in case of a problem.
-	 * @throws BugTrackerNoCredentialsException if the credentials where rejected, or could not be built due to incomplete data
+	 * @throws org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException if the credentials where rejected, or could not be built due to incomplete data
 	 * @return
 	 */
 	@PreAuthorize(HAS_ROLE_ADMIN)
@@ -145,10 +143,10 @@ public interface CustomBugTrackerModificationService {
 	 */
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	void deleteCredentials(long serverId);
-	
-	
+
+
 	/**
-	 * 
+	 *
 	 * @see StoredCredentialsManager#deleteServerAuthConfiguration(long)
 	 * @param serverId
 	 */

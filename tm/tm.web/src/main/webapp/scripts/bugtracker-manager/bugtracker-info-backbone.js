@@ -186,7 +186,7 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 			else{
 				this.model = options.model;
 				
-				this.$main = this.$(".srv-auth-form-main");
+				this.$main = this.$(".srv-form");
 				this.$saveReminder = this.$(".needs-save-msg");
 				this.$btnpane = this.$(".srv-auth-buttonpane");				
 				
@@ -651,21 +651,7 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 			'click .auth-save' : 'save',
 			'change input[name="srv-auth-policy"]' : 'updatePolicy'
 		},
-		
-		specificModelEvents: function(){
-			this.listenTo(this.model, 'change:policy', this.showSaveReminder);
-			this.listenTo(this.model, 'change:policy', this.render);
-		},
-		
-		render: function(){
-			var policy = this.model.get('policy');
-			if (policy === 'USER'){
-				this.$main.hide();
-			}
-			else{
-				BasePanelView.prototype.render.call(this);
-			}
-		},
+
 		
 		// ******* ajax **************
 		
@@ -682,6 +668,7 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 			});
 			
 		}, 
+
 		
 		_postCreds: function(url, payload){
 			return this.ajax({

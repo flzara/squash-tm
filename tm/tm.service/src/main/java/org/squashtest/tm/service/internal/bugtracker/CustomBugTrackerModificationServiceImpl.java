@@ -87,7 +87,7 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 	public void storeCredentials(long serverId, ManageableCredentials credentials) {
 		credentialsManager.storeAppLevelCredentials(serverId, credentials);
 	}
-	
+
 
 	@Override
 	public ManageableCredentials findCredentials(long serverId) {
@@ -106,14 +106,12 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 		InternalBugtrackerConnector connector = connectorFactory.createConnector(bugtracker);
 		return connector.getSupportedAuthProtocols();
 	}
-	
+
 
 	@Override
 	public void changeAuthenticationPolicy(long bugtrackerId, AuthenticationPolicy policy) {
 		BugTracker tracker = bugTrackerDao.findOne(bugtrackerId);
 		tracker.setAuthenticationPolicy(policy);
-		
-		credentialsManager.deleteAppLevelCredentials(bugtrackerId);
 	}
 
 
@@ -121,7 +119,7 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 	public void changeAuthenticationProtocol(long bugtrackerId, AuthenticationProtocol protocol) {
 		BugTracker tracker = bugTrackerDao.findOne(bugtrackerId);
 		tracker.setAuthenticationProtocol(protocol);
-		
+
 		credentialsManager.deleteAppLevelCredentials(bugtrackerId);
 		credentialsManager.deleteServerAuthConfiguration(bugtrackerId);
 	}
@@ -132,7 +130,7 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 
 		BugTracker bt = bugTrackerDao.findOne(bugtrackerId);
 		Credentials usableCredentials = credentials.build(credentialsManager, bt, null);
-		
+
 		if (usableCredentials == null){
 			throw new BugTrackerNoCredentialsException("credentials could not be built, either because the credentials themselves "
 					+ "are not suitable, or because the protocol configuration is incomplete/invalid", null);
