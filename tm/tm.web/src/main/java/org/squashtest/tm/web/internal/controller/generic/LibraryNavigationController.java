@@ -334,18 +334,18 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 	private void logOperations(OperationReport report) {
 		for (Node deletedNode : report.getRemoved()) {
-			LOGGER.debug("The node #{} was removed", deletedNode.getResid());
+			LOGGER.info("The node #{} was removed", deletedNode.getResid());
 		}
 		for (NodeMovement movedNode : report.getMoved()) {
-			LOGGER.debug("The nodes #{} were moved to node #{}",
+			LOGGER.info("The nodes #{} were moved to node #{}",
 				movedNode.getMoved().stream().map(Node::getResid).collect(Collectors.toList()),
 				movedNode.getDest().getResid());
 		}
 		for (NodeRenaming renamedNode : report.getRenamed()) {
-			LOGGER.debug("The node #{} was renamed to {}", renamedNode.getNode().getResid(), renamedNode.getName());
+			LOGGER.info("The node #{} was renamed to {}", renamedNode.getNode().getResid(), renamedNode.getName());
 		}
 		for (NodeReferenceChanged nodeReferenceChanged : report.getReferenceChanges()) {
-			LOGGER.debug("The node #{} reference was changed to {}", nodeReferenceChanged.getNode().getResid(), nodeReferenceChanged.getReference());
+			LOGGER.info("The node #{} reference was changed to {}", nodeReferenceChanged.getNode().getResid(), nodeReferenceChanged.getReference());
 		}
 	}
 
