@@ -59,12 +59,14 @@ public class MantisConnector implements BugTrackerConnector {
 
 	private MantisExceptionConverter exConverter;
 
+	private BugTrackerInterfaceDescriptor interfaceDescriptor;
+
 	public MantisConnector(BugTracker bugTracker) {
 		super();
 		client = new MantisAxis1SoapClient(bugTracker);
 	}
 
-	private BugTrackerInterfaceDescriptor interfaceDescriptor;
+
 
 	public void setInterfaceDescriptor(BugTrackerInterfaceDescriptor interfaceDescriptor) {
 		this.interfaceDescriptor = interfaceDescriptor;

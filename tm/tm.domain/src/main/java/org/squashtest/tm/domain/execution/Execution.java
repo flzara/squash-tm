@@ -227,10 +227,6 @@ DenormalizedFieldHolder, BoundEntity {
 
 	/* *********************** /issues attributes ************************ */
 
-	public List<ExecutionStep> getSteps() {
-		return steps;
-	}
-
 	public Execution() {
 
 	}
@@ -252,6 +248,12 @@ DenormalizedFieldHolder, BoundEntity {
 		populateAttachments();
 		setDatasetLabel(testCase, dataset);
 	}
+
+
+	public List<ExecutionStep> getSteps() {
+		return steps;
+	}
+
 
 	public void removeStep(long executionStepId) {
 

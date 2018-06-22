@@ -24,7 +24,22 @@ public class DefaultSorting implements Sorting{
 
 	private String sortedAttribute;
 	private SortOrder sortOrder = SortOrder.ASCENDING;
-	
+
+	public DefaultSorting(){
+		super();
+	}
+
+	public DefaultSorting(String sortedAttribute){
+		super();
+		this.sortedAttribute=sortedAttribute;
+	}
+
+	public DefaultSorting(String sortedAttribute, SortOrder sortOrder) {
+		super();
+		this.sortedAttribute = sortedAttribute;
+		this.sortOrder = sortOrder;
+	}
+
 	@Override
 	public String getSortedAttribute() {
 		return sortedAttribute;
@@ -43,21 +58,8 @@ public class DefaultSorting implements Sorting{
 		this.sortOrder = sortOrder;
 	}
 
-	public DefaultSorting(){
-		super();
-	}
-	
-	public DefaultSorting(String sortedAttribute){
-		super();
-		this.sortedAttribute=sortedAttribute;
-	}
 
-	public DefaultSorting(String sortedAttribute, SortOrder sortOrder) {
-		super();
-		this.sortedAttribute = sortedAttribute;
-		this.sortOrder = sortOrder;
-	}
-	
-	
-	
+
+
+
 }

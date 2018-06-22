@@ -657,10 +657,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		if (selectedIds == null || selectedIds.isEmpty()) {
 
 			approvedIds = new ArrayList<>();
-			findAllReadablesId().stream().forEach(r-> {
-				approvedIds.add(String.valueOf(r));
-			});
-
+			findAllReadablesId().stream().forEach(r-> approvedIds.add(String.valueOf(r)));
 		}
 		// case 2 : some projects were selected
 		else {

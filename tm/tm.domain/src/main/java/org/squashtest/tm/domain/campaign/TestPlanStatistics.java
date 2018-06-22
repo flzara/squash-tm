@@ -54,6 +54,31 @@ public final class TestPlanStatistics {
 	private int nbDone;
 	private Map<String, Integer> statisticValues;
 
+	public TestPlanStatistics() {
+		super();
+	}
+
+	/*
+	 * The format for Object[] is : [executionStatus : String, nbItems : Long ]
+	 *
+	 *
+	 */
+	public TestPlanStatistics(Iterable<Object[]> statisticValues) {
+		super();
+		Map<String, Integer> statMaps = new HashMap<>();
+		for (Object[] tuple : statisticValues) {
+			statMaps.put(((ExecutionStatus) tuple[0]).name(), ((Long) tuple[1]).intValue());
+		}
+		this.statisticValues = statMaps;
+		init();
+	}
+
+	public TestPlanStatistics(Map<String, Integer> statisticValues) {
+		super();
+		this.statisticValues = statisticValues;
+		init();
+	}
+
 
 	public int getNbTestCases() {
 		return nbTestCases;
@@ -104,30 +129,6 @@ public final class TestPlanStatistics {
 		return nbDone;
 	}
 
-	public TestPlanStatistics() {
-		super();
-	}
-
-	/*
-	 * The format for Object[] is : [executionStatus : String, nbItems : Long ]
-	 *
-	 *
-	 */
-	public TestPlanStatistics(Iterable<Object[]> statisticValues) {
-		super();
-		Map<String, Integer> statMaps = new HashMap<>();
-		for (Object[] tuple : statisticValues) {
-			statMaps.put(((ExecutionStatus) tuple[0]).name(), ((Long) tuple[1]).intValue());
-		}
-		this.statisticValues = statMaps;
-		init();
-	}
-
-	public TestPlanStatistics(Map<String, Integer> statisticValues) {
-		super();
-		this.statisticValues = statisticValues;
-		init();
-	}
 
 	// **************************** ***************************
 

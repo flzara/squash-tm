@@ -43,6 +43,9 @@ import org.squashtest.tm.core.dynamicmanager.exception.UnsupportedMethodExceptio
 public class CompositeInvocationHandler implements InvocationHandler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompositeInvocationHandler.class);
 
+	private final List<DynamicComponentInvocationHandler> invocationHandlers;
+
+
 	/**
 	 * @param invocationHandlers
 	 */
@@ -51,7 +54,6 @@ public class CompositeInvocationHandler implements InvocationHandler {
 		this.invocationHandlers = new ArrayList<>(invocationHandlers);
 	}
 
-	private final List<DynamicComponentInvocationHandler> invocationHandlers;
 
 	/**
 	 * Delegates to the first item of {@link #invocationHandlers} able to handle the invocation.

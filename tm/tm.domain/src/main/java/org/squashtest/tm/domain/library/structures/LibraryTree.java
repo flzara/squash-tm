@@ -493,19 +493,6 @@ public class  LibraryTree<IDENT, T extends TreeNode<IDENT, T>>{
 		private IDENT parentKey;
 		private T child;
 
-		public IDENT getParentKey() {
-			return parentKey;
-		}
-		public void setParentKey(IDENT parentKey) {
-			this.parentKey = parentKey;
-		}
-		public T getChild() {
-			return child;
-		}
-		public void setChild(T child) {
-			this.child = child;
-		}
-
 		public TreeNodePair(){
 
 		}
@@ -520,6 +507,21 @@ public class  LibraryTree<IDENT, T extends TreeNode<IDENT, T>>{
 			return "["+this.parentKey+" : "+this.child.getKey()+"]";
 
 		}
+
+		public IDENT getParentKey() {
+			return parentKey;
+		}
+		public void setParentKey(IDENT parentKey) {
+			this.parentKey = parentKey;
+		}
+		public T getChild() {
+			return child;
+		}
+		public void setChild(T child) {
+			this.child = child;
+		}
+
+
 
 
 	}

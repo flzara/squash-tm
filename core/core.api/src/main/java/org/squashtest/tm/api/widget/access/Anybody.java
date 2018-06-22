@@ -24,10 +24,14 @@ import org.squashtest.tm.api.security.acls.AccessRule;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 public final class Anybody implements AccessRule {
 	private static Anybody instance;
+
+	private Anybody() {
+		super();
+	}
 
 	public static Anybody instance() {
 		if (instance == null) {
@@ -36,7 +40,5 @@ public final class Anybody implements AccessRule {
 		return instance;
 	}
 
-	private Anybody() {
-		super();
-	}
+
 }

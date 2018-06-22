@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.customfield;
 import org.apache.commons.lang3.EnumUtils;
 import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.Record11;
 import org.jooq.Result;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -95,37 +96,22 @@ public class CustomFieldModelServiceImpl implements CustomFieldModelService {
 				InputType inputType = EnumUtils.getEnum(InputType.class, type);
 				switch (inputType) {
 					case RICH_TEXT:
-						CustomFieldModel richTextCustomFieldModel = getRichTextCustomFieldModel(r);
-						cufMap.put(richTextCustomFieldModel.getId(), richTextCustomFieldModel);
+						creatingRichTextCuf( r, cufMap);
 						break;
 					//here is the not fun case
 					//as we have made a left join, we can have the first tuple witch need to be treated as a cuf AND an option
 					//or subsequent tuple witch must be treated only as option...
 					case DROPDOWN_LIST:
-						if (cufMap.containsKey(cufId)) {
-							CustomFieldModelFactory.SingleSelectFieldModel singleSelectFieldModel = (CustomFieldModelFactory.SingleSelectFieldModel) cufMap.get(cufId);
-							singleSelectFieldModel.addOption(getCufValueOptionModel(r));
-						} else {
-							CustomFieldModelFactory.SingleSelectFieldModel singleSelectFieldModel = getSingleSelectFieldModel(r);
-							singleSelectFieldModel.addOption(getCufValueOptionModel(r));
-							cufMap.put(singleSelectFieldModel.getId(), singleSelectFieldModel);
-						}
+						creatingDropDownListCuf( r,cufMap,cufId);
 						break;
 
 					case DATE_PICKER:
-						CustomFieldModel datePickerCustomFieldModel = getDatePickerCustomFieldModel(r);
-						cufMap.put(datePickerCustomFieldModel.getId(), datePickerCustomFieldModel);
+						creatingDatePickerCuf(r, cufMap);
 						break;
 
 					case TAG:
-						if (cufMap.containsKey(cufId)) {
-							CustomFieldModelFactory.MultiSelectFieldModel multiSelectFieldModel = (CustomFieldModelFactory.MultiSelectFieldModel) cufMap.get(cufId);
-							multiSelectFieldModel.addOption(getCufValueOptionModel(r));
-						} else {
-							CustomFieldModelFactory.MultiSelectFieldModel multiSelectFieldModel = getMultiSelectFieldModel(r);
-							multiSelectFieldModel.addOption(getCufValueOptionModel(r));
-							cufMap.put(multiSelectFieldModel.getId(), multiSelectFieldModel);
-						}
+						creatingTagCuf(cufId, r, cufMap);
+
 						break;
 
 					default:
@@ -138,12 +124,40 @@ public class CustomFieldModelServiceImpl implements CustomFieldModelService {
 	}
 
 
+	private void creatingRichTextCuf(Record11<Long, String, String, String, String, Boolean, String, String, String, String, Integer> r,Map<Long, CustomFieldModel> cufMap){
+		CustomFieldModel richTextCustomFieldModel = getRichTextCustomFieldModel(r);
+		cufMap.put(richTextCustomFieldModel.getId(), richTextCustomFieldModel);
+	}
+
+	private void creatingDropDownListCuf(Record11<Long, String, String, String, String, Boolean, String, String, String, String, Integer> r,Map<Long, CustomFieldModel> cufMap,Long cufId){
+		if (cufMap.containsKey(cufId)) {
+			CustomFieldModelFactory.SingleSelectFieldModel singleSelectFieldModel = (CustomFieldModelFactory.SingleSelectFieldModel) cufMap.get(cufId);
+			singleSelectFieldModel.addOption(getCufValueOptionModel(r));
+		} else {
+			CustomFieldModelFactory.SingleSelectFieldModel singleSelectFieldModel = getSingleSelectFieldModel(r);
+			singleSelectFieldModel.addOption(getCufValueOptionModel(r));
+			cufMap.put(singleSelectFieldModel.getId(), singleSelectFieldModel);
+		}
+	}
+
+	private void creatingDatePickerCuf(Record11<Long, String, String, String, String, Boolean, String, String, String, String, Integer> r,Map<Long, CustomFieldModel> cufMap){
+		CustomFieldModel datePickerCustomFieldModel = getDatePickerCustomFieldModel(r);
+		cufMap.put(datePickerCustomFieldModel.getId(), datePickerCustomFieldModel);
+	}
+
+	private void creatingTagCuf(Long cufId,Record11<Long, String, String, String, String, Boolean, String, String, String, String, Integer> r,Map<Long, CustomFieldModel> cufMap){
+		if (cufMap.containsKey(cufId)) {
+			CustomFieldModelFactory.MultiSelectFieldModel multiSelectFieldModel = (CustomFieldModelFactory.MultiSelectFieldModel) cufMap.get(cufId);
+			multiSelectFieldModel.addOption(getCufValueOptionModel(r));
+		} else {
+			CustomFieldModelFactory.MultiSelectFieldModel multiSelectFieldModel = getMultiSelectFieldModel(r);
+			multiSelectFieldModel.addOption(getCufValueOptionModel(r));
+			cufMap.put(multiSelectFieldModel.getId(), multiSelectFieldModel);
+		}
+	}
 
 
-
-
-
-	protected Map<Long, CustomFieldModel> findCufMap(List<Long> usedCufIds) {
+		protected Map<Long, CustomFieldModel> findCufMap(List<Long> usedCufIds) {
 		Map<Long, CustomFieldModel> cufMap = new HashMap<>();
 
 		DSL.selectDistinct(CUSTOM_FIELD.CF_ID, CUSTOM_FIELD.INPUT_TYPE, CUSTOM_FIELD.NAME, CUSTOM_FIELD.LABEL, CUSTOM_FIELD.CODE, CUSTOM_FIELD.OPTIONAL, CUSTOM_FIELD.DEFAULT_VALUE, CUSTOM_FIELD.LARGE_DEFAULT_VALUE
@@ -165,14 +179,7 @@ public class CustomFieldModelServiceImpl implements CustomFieldModelService {
 					//as we have made a left join, we can have the first tuple witch need to be treated as a cuf AND an option
 					//or subsequent tuple witch must be treated only as option...
 					case DROPDOWN_LIST:
-						if (cufMap.containsKey(cufId)) {
-							CustomFieldModelFactory.SingleSelectFieldModel singleSelectFieldModel = (CustomFieldModelFactory.SingleSelectFieldModel) cufMap.get(cufId);
-							singleSelectFieldModel.addOption(getCufValueOptionModel(r));
-						} else {
-							CustomFieldModelFactory.SingleSelectFieldModel singleSelectFieldModel = getSingleSelectFieldModel(r);
-							singleSelectFieldModel.addOption(getCufValueOptionModel(r));
-							cufMap.put(singleSelectFieldModel.getId(), singleSelectFieldModel);
-						}
+						creatingDropDownListCuf( r,cufMap,cufId);
 						break;
 
 					case DATE_PICKER:
@@ -181,14 +188,7 @@ public class CustomFieldModelServiceImpl implements CustomFieldModelService {
 						break;
 
 					case TAG:
-						if (cufMap.containsKey(cufId)) {
-							CustomFieldModelFactory.MultiSelectFieldModel multiSelectFieldModel = (CustomFieldModelFactory.MultiSelectFieldModel) cufMap.get(cufId);
-							multiSelectFieldModel.addOption(getCufValueOptionModel(r));
-						} else {
-							CustomFieldModelFactory.MultiSelectFieldModel multiSelectFieldModel = getMultiSelectFieldModel(r);
-							multiSelectFieldModel.addOption(getCufValueOptionModel(r));
-							cufMap.put(multiSelectFieldModel.getId(), multiSelectFieldModel);
-						}
+						creatingTagCuf(cufId, r, cufMap);
 						break;
 
 					default:
@@ -320,9 +320,7 @@ public class CustomFieldModelServiceImpl implements CustomFieldModelService {
 	private HashMap<String, List<CustomFieldBindingModel>> createEmptyCufMap() {
 		HashMap<String, List<CustomFieldBindingModel>> map = new HashMap<>();
 		EnumSet<BindableEntity> bindableEntities = EnumSet.allOf(BindableEntity.class);
-		bindableEntities.forEach(bindableEntity -> {
-            map.put(bindableEntity.name(), new ArrayList<>());
-        });
+		bindableEntities.forEach(bindableEntity -> map.put(bindableEntity.name(), new ArrayList<>()));
 		return map;
 	}
 

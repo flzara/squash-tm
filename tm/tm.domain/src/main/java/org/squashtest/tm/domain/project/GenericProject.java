@@ -157,15 +157,15 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 
 	private boolean allowTcModifDuringExec = false;
 
+	public GenericProject() {
+		super();
+	}
+
+
 	public List<Milestone> getMilestones() {
 		return new ArrayList<>(milestones);
 	}
 
-
-
-	public GenericProject() {
-		super();
-	}
 
 	public String getLabel() {
 		return label;

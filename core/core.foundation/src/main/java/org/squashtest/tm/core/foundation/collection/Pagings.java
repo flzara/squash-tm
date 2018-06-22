@@ -32,11 +32,11 @@ import java.lang.reflect.Proxy;
  */
 public final class Pagings {
 
-	private Pagings(){}
-
 	public static final Paging DEFAULT_PAGING = new PagingImpl();
 
 	public static final Paging NO_PAGING = new PagingImpl(0,0,true);
+
+	private Pagings(){}
 
 	public static Paging createNew (int firstItemIndex){
 		return new PagingImpl(firstItemIndex);

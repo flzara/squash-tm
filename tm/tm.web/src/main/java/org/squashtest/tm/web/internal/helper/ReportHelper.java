@@ -132,31 +132,11 @@ public class ReportHelper {
 
 		switch (input.getType()) {
 			case RADIO_BUTTONS_GROUP:
-				RadioButtonsGroup radioButtonsGroup = (RadioButtonsGroup) input;
-				sCrit = (SimpleCriteria) criteriaMap.get(radioButtonsGroup.getName());
-				radioButtonsGroup.getOptions().forEach(optionInput -> {
-					if (optionInput.getValue().equalsIgnoreCase((String) sCrit.getValue())) {
-						getAttributesFromOptionInput(attributes, optionInput, criteriaMap);
-					}
-				});
+				getAttributesFromRadioButtonsGroup( attributes,  input,  criteriaMap);
 				break;
+
 			case CHECKBOXES_GROUP:
-				CheckboxesGroup checkboxesGroup = (CheckboxesGroup) input;
-				moCrit = (MultiOptionsCriteria) criteriaMap.get(checkboxesGroup.getName());
-				targets = new ArrayList<>();
-				checkboxesGroup.getOptions().forEach(optionInput -> {
-					moCrit.getSelectedOptions().forEach(selectedOption -> {
-						if (optionInput.getValue().equalsIgnoreCase(selectedOption.toString())) {
-							if (attributes.get(checkboxesGroup.getLabel()) == null) {
-								attributes.put(checkboxesGroup.getLabel(), Arrays.asList(optionInput.getLabel()));
-							} else {
-								targets.addAll(attributes.get(checkboxesGroup.getLabel()));
-								targets.add(optionInput.getLabel());
-								attributes.put(checkboxesGroup.getLabel(), targets);
-							}
-						}
-					});
-				});
+				getAttributesFromChexBoxesGroup( attributes, input, criteriaMap );
 				break;
 			case INPUTS_GROUP:
 				InputsGroup inputsGroup = (InputsGroup) input;
@@ -165,29 +145,13 @@ public class ReportHelper {
 			case CHECKBOX:
 				CheckboxInput checkboxInput = (CheckboxInput) input;
 				sCrit = (SimpleCriteria) criteriaMap.get(checkboxInput.getName());
-				if ((boolean) sCrit.getValue()) {
-					getAttributesFromOptionInput(attributes, checkboxInput, criteriaMap);
-				}
+				if ((boolean) sCrit.getValue()) { getAttributesFromOptionInput(attributes, checkboxInput, criteriaMap);	}
 				break;
 			case DATE:
-				DateInput dateInput = (DateInput) input;
-				Criteria crit = criteriaMap.get(dateInput.getName());
-				if (crit instanceof SimpleCriteria) {
-					sCrit = (SimpleCriteria) crit;
-					Date date = (Date) sCrit.getValue();
-					attributes.put(dateInput.getLabel(), Arrays.asList(i18nHelper.localizeShortDate(date, locale)));
-				} else {
-					attributes.put(dateInput.getLabel(), Arrays.asList("-"));
-				}
+				getAttributesFromDate( attributes, input, criteriaMap);
 				break;
 			case DROPDOWN_LIST:
-				DropdownList dropdownList = (DropdownList) input;
-				sCrit = (SimpleCriteria) criteriaMap.get(dropdownList.getName());
-				dropdownList.getOptions().forEach(optionInput -> {
-					if (optionInput.getValue().equalsIgnoreCase((String) sCrit.getValue())) {
-						attributes.put(dropdownList.getLabel(), Arrays.asList(optionInput.getLabel()));
-					}
-				});
+				getAttributesFromDropdownList(  attributes,  input, criteriaMap);
 				break;
 			case TREE_PICKER:
 				TreePicker treePicker = (TreePicker) input;
@@ -208,7 +172,58 @@ public class ReportHelper {
 		}
 	}
 
-	private void getAttributesFromOptionInput(Map<String, List<String>> attributes, OptionInput optionInput, Map<String, Criteria> criteriaMap) {
+	private void getAttributesFromRadioButtonsGroup(Map<String, List<String>> attributes, Input input, Map<String, Criteria> criteriaMap ){
+		RadioButtonsGroup radioButtonsGroup = (RadioButtonsGroup) input;
+		SimpleCriteria sCrit = (SimpleCriteria) criteriaMap.get(radioButtonsGroup.getName());
+		SimpleCriteria finalSCrit = sCrit;
+		radioButtonsGroup.getOptions().forEach(optionInput -> {
+			if (optionInput.getValue().equalsIgnoreCase((String) finalSCrit.getValue())) {
+				getAttributesFromOptionInput(attributes, optionInput, criteriaMap);
+			}
+		});
+	}
+
+	private void getAttributesFromChexBoxesGroup(Map<String, List<String>> attributes, Input input, Map<String, Criteria> criteriaMap ) {
+		CheckboxesGroup checkboxesGroup = (CheckboxesGroup) input;
+		MultiOptionsCriteria moCrit = (MultiOptionsCriteria) criteriaMap.get(checkboxesGroup.getName());
+		List<String> targets = new ArrayList<>();
+		checkboxesGroup.getOptions().forEach(optionInput ->
+			moCrit.getSelectedOptions().forEach(selectedOption -> {
+				if (optionInput.getValue().equalsIgnoreCase(selectedOption.toString())) {
+					if (attributes.get(checkboxesGroup.getLabel()) == null) {
+						attributes.put(checkboxesGroup.getLabel(), Arrays.asList(optionInput.getLabel()));
+					} else {
+						targets.addAll(attributes.get(checkboxesGroup.getLabel()));
+						targets.add(optionInput.getLabel());
+						attributes.put(checkboxesGroup.getLabel(), targets);
+					}
+				}
+			})
+		);
+	}
+
+	private void getAttributesFromDropdownList(Map<String, List<String>> attributes, Input input, Map<String, Criteria> criteriaMap ){
+		DropdownList dropdownList = (DropdownList) input;
+		SimpleCriteria sCrit = (SimpleCriteria) criteriaMap.get(dropdownList.getName());
+		dropdownList.getOptions().forEach(optionInput -> {
+			if (optionInput.getValue().equalsIgnoreCase((String) sCrit.getValue())) {
+				attributes.put(dropdownList.getLabel(), Arrays.asList(optionInput.getLabel()));
+			}});
+	}
+
+	private void getAttributesFromDate(Map<String, List<String>> attributes, Input input, Map<String, Criteria> criteriaMap ) {
+		DateInput dateInput = (DateInput) input;
+		Criteria crit = criteriaMap.get(dateInput.getName());
+		if (crit instanceof SimpleCriteria) {
+			SimpleCriteria sCrit = (SimpleCriteria) crit;
+			Date date = (Date) sCrit.getValue();
+			attributes.put(dateInput.getLabel(), Arrays.asList(i18nHelper.localizeShortDate(date, locale)));
+		} else {
+			attributes.put(dateInput.getLabel(), Arrays.asList("-"));
+		}
+	}
+
+		private void getAttributesFromOptionInput(Map<String, List<String>> attributes, OptionInput optionInput, Map<String, Criteria> criteriaMap) {
 		List<String> options = new ArrayList<>();
 		if (optionInput instanceof ContainerOption) {
 			ContainerOption containerOption = (ContainerOption) optionInput;

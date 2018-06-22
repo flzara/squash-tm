@@ -95,9 +95,32 @@ public class ColumnPrototype {
 	@JoinColumn(name = "SUBQUERY_ID", insertable = false)
 	private ChartQuery subQuery = new ChartQuery();
 
+	@CollectionTable(name = "CHART_COLUMN_ROLE", joinColumns = @JoinColumn(name = "CHART_COLUMN_ID") )
+	@ElementCollection
+	@Enumerated(EnumType.STRING)
+	@Column(name="ROLE")
+	private Set<ColumnRole> role;
+
 	private String attributeName;
 
 	private boolean business = true;
+
+	protected ColumnPrototype() {
+
+	}
+
+	public ColumnPrototype(String label, SpecializedEntityType specializedType, DataType dataType,
+						   ColumnType columnType, ChartQuery subQuery, String attributeName, boolean business, Set<ColumnRole> role) {
+		super();
+		this.label = label;
+		this.specializedType = specializedType;
+		this.dataType = dataType;
+		this.columnType = columnType;
+		this.subQuery = subQuery;
+		this.attributeName = attributeName;
+		this.business = business;
+		this.role = role;
+	}
 
 	public Long getId() {
 		return id;
@@ -110,13 +133,6 @@ public class ColumnPrototype {
 	public String getAttributeName() {
 		return attributeName;
 	}
-
-	@CollectionTable(name = "CHART_COLUMN_ROLE", joinColumns = @JoinColumn(name = "CHART_COLUMN_ID") )
-	@ElementCollection
-	@Enumerated(EnumType.STRING)
-	@Column(name="ROLE")
-	private Set<ColumnRole> role;
-
 
 	public String getLabel() {
 		return label;
@@ -153,23 +169,6 @@ public class ColumnPrototype {
 
 	public boolean isBusiness() {
 		return business;
-	}
-
-	protected ColumnPrototype() {
-
-	}
-
-	public ColumnPrototype(String label, SpecializedEntityType specializedType, DataType dataType,
-			ColumnType columnType, ChartQuery subQuery, String attributeName, boolean business, Set<ColumnRole> role) {
-		super();
-		this.label = label;
-		this.specializedType = specializedType;
-		this.dataType = dataType;
-		this.columnType = columnType;
-		this.subQuery = subQuery;
-		this.attributeName = attributeName;
-		this.business = business;
-		this.role = role;
 	}
 
 	public void setLabel(String label) {

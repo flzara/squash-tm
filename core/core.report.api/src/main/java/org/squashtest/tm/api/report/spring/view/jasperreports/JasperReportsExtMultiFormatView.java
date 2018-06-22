@@ -63,8 +63,12 @@ import org.springframework.web.servlet.view.jasperreports.JasperReportsXlsView;
  *
  */
 public class JasperReportsExtMultiFormatView extends JasperReportsMultiFormatView {
+
 	private static final Pattern EL_TIMESTAMP_PATTERN = Pattern.compile("(\\Q${\\E([A-Za-z:]+)\\Q}\\E)");
 	private static final Pattern MUSTACHE_TIMESTAMP_PATTERN = Pattern.compile("(\\Q{{\\E([A-Za-z:]+)\\Q}}\\E)");
+	private static final Logger LOGGER = LoggerFactory.getLogger(JasperReportsExtMultiFormatView.class);
+
+	private String reportFileName;
 
 	public JasperReportsExtMultiFormatView() {
 		super();
@@ -72,8 +76,7 @@ public class JasperReportsExtMultiFormatView extends JasperReportsMultiFormatVie
 		configureContentDispositionMapping();
 	}
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(JasperReportsExtMultiFormatView.class);
-	private String reportFileName;
+
 
 	/**
 	 *
