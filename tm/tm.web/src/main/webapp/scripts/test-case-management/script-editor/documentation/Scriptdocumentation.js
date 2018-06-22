@@ -334,7 +334,7 @@ define(function () {
 		"# language: de <- Angabe der Sprache. Wenn abwesend oder ungültig entscheidet sich Squash TM für Englisch.\n" +
 		"\n" +
 		"# Name der Funktionalität und optionale Beschreibung (Passen Sie auf die Einrückung auf, wenn Sie eine Beschreibung eingeben).\n" +
-		"Funktionalität: Die Kaffeemachine prüfen \n" +
+		"Funktionalität: Die Kaffeemaschine prüfen \n" +
 		"\tEs handelt sich darum, das gute Funktionieren der Kaffeemaschine zu überprüfen.\n" +
 		"\n" +
 		"\t# optionale Grundlage. Wenn eine Grundlage anwesend ist, wird sie als zusätzliche Bedingung für jedes Szenario des Skriptes hinzugefügt.\n" +
