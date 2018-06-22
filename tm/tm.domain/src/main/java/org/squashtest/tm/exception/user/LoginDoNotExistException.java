@@ -24,14 +24,6 @@ import org.squashtest.tm.core.foundation.exception.ActionException;
 
 public class LoginDoNotExistException extends ActionException {
 
-	@Override
-	public String getI18nKey() {
-		return "squashtm.action.exception.login.doesnt.exist.label";
-	}
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	public LoginDoNotExistException() {
@@ -41,5 +33,14 @@ public class LoginDoNotExistException extends ActionException {
 	public LoginDoNotExistException(String message) {
 		super(message);
 	}
+
+	@Override
+	public String getI18nKey() {
+		return "squashtm.action.exception.login.doesnt.exist.label";
+	}
+
+	/**
+	 *
+	 */
 
 }

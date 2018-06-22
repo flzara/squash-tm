@@ -48,6 +48,11 @@ public class CheckBuildQueue extends BuildStep<CheckBuildQueue> implements HttpB
 
 	private boolean buildIsQueued = true;
 
+	//************* constructor ******************
+
+	public CheckBuildQueue(BuildProcessor processor) {
+		super(processor);
+	}
 
 	// ****** accessors ********** */
 
@@ -74,11 +79,6 @@ public class CheckBuildQueue extends BuildStep<CheckBuildQueue> implements HttpB
 	}
 
 
-	//************* constructor ******************
-
-	public CheckBuildQueue(BuildProcessor processor) {
-		super(processor);
-	}
 
 	// *************** code ******************** */
 

@@ -31,6 +31,16 @@ public class TeamModel {
 	private Long id;
 	private String name;
 
+	public TeamModel(Long id, String name) {
+		super();
+		this.id = id;
+		this.name = name;
+	}
+
+	public TeamModel(Team team) {
+		this(team.getId(), team.getName());
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -45,16 +55,6 @@ public class TeamModel {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public TeamModel(Long id, String name) {
-		super();
-		this.id = id;
-		this.name = name;
-	}
-
-	public TeamModel(Team team) {
-		this(team.getId(), team.getName());
 	}
 
 }

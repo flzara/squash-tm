@@ -150,6 +150,27 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 
 		private Long id;
 
+		public CustomFieldValueTableModel() {
+			super();
+		}
+
+		private CustomFieldValueTableModel(CustomFieldValue value) {
+			this.id = value.getId();
+
+			if (MultiValuedCustomFieldValue.class.isAssignableFrom(value.getClass())) {
+				List<String> escapedValues = new ArrayList<>();
+				List<String> rawValues = ((MultiValuedCustomFieldValue) value).getValues();
+				if(rawValues!=null)
+					for(String string : rawValues){
+						escapedValues.add(HTMLCleanupUtils.cleanHtml(string));
+					}
+				this.values = escapedValues;
+			} else if (NumericCustomFieldValue.class.isAssignableFrom(value.getClass())) {
+				this.value = NumericCufHelper.formatOutputNumericCufValue(value.getValue());
+			} else {
+				this.value = HTMLCleanupUtils.cleanHtml(value.getValue());
+			}
+		}
 
 		public Object getValue() {
 			return value != null ? value : values;
@@ -173,9 +194,6 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 			this.id = id;
 		}
 
-		public CustomFieldValueTableModel() {
-			super();
-		}
 
 		public Date getValueAsDate() {
 			try {
@@ -185,24 +203,6 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 			}
 
 			return null;
-		}
-
-		private CustomFieldValueTableModel(CustomFieldValue value) {
-			this.id = value.getId();
-
-			if (MultiValuedCustomFieldValue.class.isAssignableFrom(value.getClass())) {
-				List<String> escapedValues = new ArrayList<>();
-				List<String> rawValues = ((MultiValuedCustomFieldValue) value).getValues();
-				if(rawValues!=null)
-				for(String string : rawValues){
-					escapedValues.add(HTMLCleanupUtils.cleanHtml(string));
-				}
-				this.values = escapedValues;
-			} else if (NumericCustomFieldValue.class.isAssignableFrom(value.getClass())) {
-				this.value = NumericCufHelper.formatOutputNumericCufValue(value.getValue());
-			} else {
-				this.value = HTMLCleanupUtils.cleanHtml(value.getValue());
-			}
 		}
 
 	}

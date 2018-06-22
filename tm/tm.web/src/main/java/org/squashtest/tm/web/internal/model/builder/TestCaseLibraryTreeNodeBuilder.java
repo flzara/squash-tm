@@ -54,6 +54,14 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 	@Inject
 	private MilestoneMembershipFinder milestoneMembershipFinder;
 
+	@Inject
+	public TestCaseLibraryTreeNodeBuilder(PermissionEvaluationService permissionEvaluationService, VerifiedRequirementsManagerService verifiedRequirementsManagerService, InternationalizationHelper internationalizationHelper) {
+		super(permissionEvaluationService);
+		this.verifiedRequirementsManagerService = verifiedRequirementsManagerService;
+		this.internationalizationHelper = internationalizationHelper;
+
+	}
+
 	public void setMilestoneMembershipFinder(MilestoneMembershipFinder finder) {
 		this.milestoneMembershipFinder = finder;
 	}
@@ -174,14 +182,6 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 				builtNode.setState(state);
 			}
 		}
-
-	}
-
-	@Inject
-	public TestCaseLibraryTreeNodeBuilder(PermissionEvaluationService permissionEvaluationService, VerifiedRequirementsManagerService verifiedRequirementsManagerService, InternationalizationHelper internationalizationHelper) {
-		super(permissionEvaluationService);
-		this.verifiedRequirementsManagerService = verifiedRequirementsManagerService;
-		this.internationalizationHelper = internationalizationHelper;
 
 	}
 

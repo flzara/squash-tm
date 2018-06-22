@@ -28,15 +28,16 @@ import java.util.Map;
  */
 public class FormEntryNotConvertibleException extends RuntimeException {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 7295665354262783414L;
+
+	public FormEntryNotConvertibleException(Map.Entry<String, Object> entry) {
+		super(message(entry));
+	}
 
 	private static final String message(Map.Entry<String, Object> entry) {
 		return "Form entry not convertible : " + entry.toString();
 	}
-	
-	public FormEntryNotConvertibleException(Map.Entry<String, Object> entry) {
-		super(message(entry));
-	}
+
 }

@@ -87,10 +87,6 @@ public abstract class GlobalSearchController {
 	protected static final String PROJECTS_META = "projects";
 	protected static final Logger LOGGER = LoggerFactory.getLogger(GlobalSearchController.class);
 
-	protected interface FormModelBuilder {
-		SearchInputInterfaceModel build(Locale locale, boolean isMilestoneMode);
-	}
-
 	protected static final String NAME = "name";
 	protected static final String IDS = "ids[]";
 	protected static final String CAMPAIGN = "campaign";
@@ -101,6 +97,10 @@ public abstract class GlobalSearchController {
 	protected static final String TESTCASE_VIA_REQUIREMENT = "testcaseViaRequirement";
 	protected static final String RESULTS = "/results";
 	protected static final String TABLE = "/table";
+
+	protected interface FormModelBuilder {
+		SearchInputInterfaceModel build(Locale locale, boolean isMilestoneMode);
+	}
 
 	protected Map<String, FormModelBuilder> formModelBuilder = new HashMap<>();
 

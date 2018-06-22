@@ -38,6 +38,12 @@ public class FetchTestListBuildProcessor extends SynchronousBuildProcessor<Colle
 
 	private TestAutomationProject project;
 
+	//******* the result we obtain once the computation is over *********
+
+	private Collection<AutomatedTest> tests = new ArrayList<>();
+
+
+
 	//******* collaborators *********
 
 	public void setClient(CloseableHttpClient client) {
@@ -52,11 +58,6 @@ public class FetchTestListBuildProcessor extends SynchronousBuildProcessor<Colle
 	public void setBuildAbsoluteId(BuildAbsoluteId absoluteId) {
 		stepSequence.setAbsoluteId(absoluteId);
 	}
-
-
-	//******* the result we obtain once the computation is over *********
-
-	private Collection<AutomatedTest> tests = new ArrayList<>();
 
 
 	@Override

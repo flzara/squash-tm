@@ -39,15 +39,15 @@ public class HibernateReportQueryDao implements ReportQueryDao {
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	private Session currentSession() {
-		return entityManager.unwrap(Session.class);
-	}
-
 	private final ReportQueryFlavor flavor = new HibernateQueryFlavor();
 
 	@Override
 	public boolean doesSupportFlavor(ReportQueryFlavor flavor) {
 		return this.flavor.getClass() == flavor.getClass();
+	}
+
+	private Session currentSession() {
+		return entityManager.unwrap(Session.class);
 	}
 
 	@Override

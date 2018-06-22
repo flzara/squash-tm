@@ -23,8 +23,12 @@ package org.squashtest.tm.plugin.testautomation.jenkins.beans;
 import java.util.Arrays;
 
 public class Action {
-	
+
 	private Parameter[] parameters;
+
+	public Action(){
+		super();
+	}
 
 	public Parameter[] getParameters() {
 		return parameters;
@@ -33,25 +37,22 @@ public class Action {
 	public void setParameters(Parameter[] parameters) {	//NOSONAR that array is not stored directly
 		this.parameters = Arrays.copyOf(parameters, parameters.length);
 	}
-	
-	public Action(){
-		super();
-	}
-	
+
+
 	public boolean hasParameter(Parameter parameter){
-		
+
 		if (parameters == null) return false;
-		
+
 		for (Parameter param : parameters){
-			
+
 			if (param == null) continue;
-			
+
 			if (param.equals(parameter)){
 				return true;
 			}
-			
+
 		}
 		return false;
 	}
-	
+
 }

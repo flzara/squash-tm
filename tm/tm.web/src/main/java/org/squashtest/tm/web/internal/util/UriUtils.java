@@ -36,11 +36,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class UriUtils {
-	private UriUtils() {
-		super();
-	}
 
 	private static final Map<String, Integer> DEFAULT_PORTS;
+	private static final Logger LOGGER = LoggerFactory.getLogger(UriUtils.class);
+
 
 	static {
 		DEFAULT_PORTS = new HashMap<>(3);
@@ -49,7 +48,9 @@ public final class UriUtils {
 		DEFAULT_PORTS.put("https", 443);
 	}
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(UriUtils.class);
+	private UriUtils() {
+		super();
+	}
 
 	/**
 	 * Returns the part of the request's URL between the URI prefix and the URI suffix.
@@ -77,7 +78,7 @@ public final class UriUtils {
 	 * @param request
 	 * @return
 	 */
-	public static String extractBaseUrl(HttpServletRequest request){
+	public static String extractBaseUrl(HttpServletRequest request) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(request.getScheme()).append("://").append(request.getServerName()).append(":").append(request.getServerPort());
 		sb.append(request.getContextPath());
@@ -90,34 +91,32 @@ public final class UriUtils {
 	 * Canonicalize an URL.
 	 * Ripped from opensaml : SimpleURLCanonicalizer
 	 */
-	public static final String canonicalize(String strUrl){
-		try{
+	public static final String canonicalize(String strUrl) {
+		try {
 			URIBuilder builder = new URIBuilder(strUrl);
 
 			String scheme = builder.getScheme();
-			if (scheme != null){
+			if (scheme != null) {
 				scheme = scheme.toLowerCase();
 				builder.setScheme(scheme);
 
 				Integer port = DEFAULT_PORTS.get(scheme);
-				if (port != null && port == builder.getPort()){
+				if (port != null && port == builder.getPort()) {
 					builder.setPort(-1);
 				}
 
 			}
 
-			if (builder.getHost() != null){
+			if (builder.getHost() != null) {
 				builder.setHost(builder.getHost().toLowerCase());
 			}
 
 			return builder.toString();
 
-		}
-		catch(URISyntaxException ex){
+		} catch (URISyntaxException ex) {
 			throw new RuntimeException(ex);
 		}
 	}
-
 
 
 }

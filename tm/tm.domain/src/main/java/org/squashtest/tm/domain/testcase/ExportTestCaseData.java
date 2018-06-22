@@ -45,6 +45,23 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 	private String lastModifiedBy = "";
 	private Date lastModifiedOn ;
 
+	public ExportTestCaseData() {
+		super();
+	}
+
+	public ExportTestCaseData(TestCase testCase, TestCaseFolder folder) {
+		super(testCase, folder);
+		doSetReference(testCase.getReference());
+		doSetPrerequisite(testCase.getPrerequisite());
+		this.weight = testCase.getImportance() ;
+		this.nature = testCase.getNature().getCode();
+		this.type = testCase.getType().getCode();
+		this.status = testCase.getStatus();
+		AuditableMixin audit = (AuditableMixin) testCase;
+		this.lastModifiedBy = audit.getLastModifiedBy();
+		this.lastModifiedOn = audit.getLastModifiedOn();
+		formatSteps(testCase);
+	}
 
 	public String getPrerequisite() {
 		return prerequisite;
@@ -67,9 +84,6 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 		this.weight = weight;
 	}
 
-	public ExportTestCaseData() {
-		super();
-	}
 
 	public String getReference() {
 		return reference;
@@ -140,20 +154,6 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 
 	public void setSteps(List<ExportTestStepData> steps) {
 		this.steps = steps;
-	}
-
-	public ExportTestCaseData(TestCase testCase, TestCaseFolder folder) {
-		super(testCase, folder);
-		doSetReference(testCase.getReference());
-		doSetPrerequisite(testCase.getPrerequisite());
-		this.weight = testCase.getImportance() ;
-		this.nature = testCase.getNature().getCode();
-		this.type = testCase.getType().getCode();
-		this.status = testCase.getStatus();
-		AuditableMixin audit = (AuditableMixin) testCase;
-		this.lastModifiedBy = audit.getLastModifiedBy();
-		this.lastModifiedOn = audit.getLastModifiedOn();
-		formatSteps(testCase);
 	}
 
 	private void formatSteps(TestCase testCase) {

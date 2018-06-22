@@ -29,6 +29,11 @@ public class Build {
 	private boolean building;
 
 
+	public Build(){
+		super();
+	}
+
+
 	public Action[] getActions() {
 		return actions;
 	}
@@ -51,10 +56,6 @@ public class Build {
 
 	public void setBuilding(boolean building) {
 		this.building = building;
-	}
-
-	public Build(){
-		super();
 	}
 
 	public boolean hasExternalId(String externalId){

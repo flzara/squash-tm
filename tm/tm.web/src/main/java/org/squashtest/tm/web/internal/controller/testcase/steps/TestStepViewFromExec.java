@@ -32,6 +32,9 @@ import java.util.List;
 // XSS OK
 public class TestStepViewFromExec extends AbstractTestStepView<ExecutionStep> {
 
+
+
+
 	public static final Predicate NOT_DELETED = new Predicate() {
 		@Override
 		public boolean evaluate(Object step) {
@@ -54,7 +57,6 @@ public class TestStepViewFromExec extends AbstractTestStepView<ExecutionStep> {
 		genericSettings(execStep);
 		actionStep = visited;
 	}
-
 
 	private void genericSettings(ExecutionStep execStep) {
 		Execution exec = execStep.getExecution();

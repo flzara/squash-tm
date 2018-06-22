@@ -40,16 +40,15 @@ public class TestCaseAutomationController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseAutomationController.class);
 	private TestCaseModificationService testCaseModificationService;
 
-	@Inject
-	public void setTestCaseModificationService(TestCaseModificationService testCaseModificationService) {
-		this.testCaseModificationService = testCaseModificationService;
-	}
-
 	private static final String NAME_KEY = RequestParams.NAME;
 	private static final String PATH = "path";
 	private static final String TEST_CASE_ID = "testCaseId";
 	private static final String PROJECT_ID = RequestParams.PROJECT_ID;
 
+	@Inject
+	public void setTestCaseModificationService(TestCaseModificationService testCaseModificationService) {
+		this.testCaseModificationService = testCaseModificationService;
+	}
 
 	@RequestMapping(value = "/tests", method = RequestMethod.GET)
 	@ResponseBody

@@ -117,17 +117,17 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 
 	}
 
+	@Inject
+	public RequirementLibraryTreeNodeBuilder(PermissionEvaluationService permissionEvaluationService) {
+		super(permissionEvaluationService);
+	}
+
 	private int totalMilestones(Requirement requirement) {
 		int count = 0;
 		for (RequirementVersion v : requirement.getRequirementVersions()) {
 			count += v.getMilestones().size();
 		}
 		return count;
-	}
-
-	@Inject
-	public RequirementLibraryTreeNodeBuilder(PermissionEvaluationService permissionEvaluationService) {
-		super(permissionEvaluationService);
 	}
 
 	@Override

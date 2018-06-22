@@ -44,6 +44,12 @@ public class CheckBuildRunning extends BuildStep<CheckBuildRunning> implements H
 
 	private boolean stillBuilding = true;
 
+	//************* constructor ******************
+
+
+	public CheckBuildRunning(BuildProcessor processor) {
+		super(processor);
+	}
 
 	// ****** accessors ********** */
 
@@ -68,15 +74,7 @@ public class CheckBuildRunning extends BuildStep<CheckBuildRunning> implements H
 		//not needed here
 	}
 
-	//************* constructor ******************
-
-
-	public CheckBuildRunning(BuildProcessor processor) {
-		super(processor);
-	}
-
-
-	// ************ code ***************** 
+	// ************ code *****************
 
 	@Override
 	public boolean needsRescheduling() {

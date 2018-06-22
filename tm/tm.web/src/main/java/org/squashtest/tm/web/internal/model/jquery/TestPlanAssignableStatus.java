@@ -21,10 +21,19 @@
 package org.squashtest.tm.web.internal.model.jquery;
 
 public class TestPlanAssignableStatus {
-	
+
 	private String name;
 	private String internationalizedName;
-	
+
+	public TestPlanAssignableStatus(){
+		super();
+	}
+
+	public TestPlanAssignableStatus(String name, String internationalizedName){
+		this.name = name;
+		this.internationalizedName = internationalizedName;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -41,13 +50,6 @@ public class TestPlanAssignableStatus {
 		this.internationalizedName = internationalizedName;
 	}
 
-	public TestPlanAssignableStatus(){
-		super();
-	}
-	
-	public TestPlanAssignableStatus(String name, String internationalizedName){
-		this.name = name;
-		this.internationalizedName = internationalizedName;
-	}
-	
+
+
 }

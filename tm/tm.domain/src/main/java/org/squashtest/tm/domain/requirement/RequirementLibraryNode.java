@@ -54,9 +54,9 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 /*
  *  the following tells hibernate additional informations about the join table RLN_RESOURCE, that we want to be readonly. Hence we give
- *  it a custom sql string that is effectively useless and hopefully crossplatform. 
- *  
- *  Note that, because RLN_RESOURCE is a view and shall not be targeted by any insert/update/delete command, we have to 
+ *  it a custom sql string that is effectively useless and hopefully crossplatform.
+ *
+ *  Note that, because RLN_RESOURCE is a view and shall not be targeted by any insert/update/delete command, we have to
  *  find another table for which the database will not be such a pussy about. Why not the table Requirement itself then ?
  */
 @Table(appliesTo="RLN_RESOURCE", sqlDelete=@SQLDelete(sql="delete from REQUIREMENT where RLN_ID=null and RLN_ID=?"))
@@ -72,29 +72,40 @@ public abstract class RequirementLibraryNode<RESOURCE extends Resource> implemen
 	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	private Project project;
 
-	@Override
-	public Project getProject() {
-		return project;
-	}
-	
-	
+
 	/**
-	 * <p>This is not a business attribute and should not be used in services. This mapping 
-	 * exists solely to make hql queries on it. It allows for fast retrieval of the 
-	 * name (of a folder, or of the newest version of a requirement).</p> 
-	 * 
+	 * <p>This is not a business attribute and should not be used in services. This mapping
+	 * exists solely to make hql queries on it. It allows for fast retrieval of the
+	 * name (of a folder, or of the newest version of a requirement).</p>
+	 *
 	 */
 	@OneToOne(fetch=FetchType.LAZY)
-	@JoinTable(name="RLN_RESOURCE", 
+	@JoinTable(name="RLN_RESOURCE",
 	joinColumns=@JoinColumn(name="RLN_ID", insertable=false, updatable=false ),
 	inverseJoinColumns = @JoinColumn(name="RES_ID"))
 	@Immutable
 	private Resource mainResource;
-	
+
+	public RequirementLibraryNode() {
+		super();
+	}
+
+	public RequirementLibraryNode(String name, String description) {
+		setName(name);
+		setDescription(description);
+	}
+
+
 	public Resource getMainResource(){
 		return mainResource;
 	}
-	
+
+	@Override
+	public Project getProject() {
+		return project;
+	}
+
+
 	/**
 	 * Notifies this object it is now a resource of the given project.
 	 *
@@ -106,14 +117,6 @@ public abstract class RequirementLibraryNode<RESOURCE extends Resource> implemen
 
 	}
 
-	public RequirementLibraryNode() {
-		super();
-	}
-
-	public RequirementLibraryNode(String name, String description) {
-		setName(name);
-		setDescription(description);
-	}
 
 	@Override
 	public Long getId() {
@@ -139,5 +142,5 @@ public abstract class RequirementLibraryNode<RESOURCE extends Resource> implemen
 	public abstract void accept(RequirementLibraryNodeVisitor visitor);
 
 	public abstract RESOURCE getResource();
-	
+
 }

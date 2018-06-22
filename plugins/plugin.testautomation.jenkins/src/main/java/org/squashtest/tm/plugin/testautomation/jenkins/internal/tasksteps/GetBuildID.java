@@ -46,6 +46,13 @@ public class GetBuildID extends BuildStep<GetBuildID> implements HttpBasedStep {
 
 	// ****** the output here is stored when available in the absolueId#setBuildId *****
 
+	//************* constructor ******************
+
+	public GetBuildID(BuildProcessor processor) {
+		super(processor);
+	}
+
+
 	// ****** accessors ********** */
 
 
@@ -76,11 +83,6 @@ public class GetBuildID extends BuildStep<GetBuildID> implements HttpBasedStep {
 		return absoluteId.getBuildId();
 	}
 
-	//************* constructor ******************
-
-	public GetBuildID(BuildProcessor processor) {
-		super(processor);
-	}
 
 	// ************ code *****************
 

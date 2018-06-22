@@ -66,12 +66,14 @@ public abstract class ChartDefinitionMixin {
 	private Set<CustomReportChartBinding> chartBindings;
 
 	@JsonIgnore
+	private Project project;
+
+	@JsonIgnore
 	public abstract CustomReportLibrary getCustomReportLibrary();
 
 	@JsonIgnore
 	public abstract Map<ColumnRole, Set<SpecializedEntityType>> getInvolvedEntities();
 
-	@JsonIgnore
-	private Project project;
+
 
 }

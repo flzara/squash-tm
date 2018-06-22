@@ -25,11 +25,17 @@ import java.util.Arrays;
 
 /**
  * Thrown when date received from a DateInput does not match expected (parseable) format.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class InconsistentDateFormatException extends RuntimeException {
+
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 7789123433803143273L;
+
 
 	/**
 	 * @param rawDate
@@ -48,9 +54,5 @@ public class InconsistentDateFormatException extends RuntimeException {
 		return "Format of date '" + rawDate + "' does not match expected formats : " + Arrays.toString(FormEntryConstants.DATE_ENTRY_FORMATS);
 	}
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 7789123433803143273L;
 
 }

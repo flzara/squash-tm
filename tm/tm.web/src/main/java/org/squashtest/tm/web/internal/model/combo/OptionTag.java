@@ -21,11 +21,11 @@
 package org.squashtest.tm.web.internal.model.combo;
 
 /***
- * Used to compose select option tag with the association label / value 
+ * Used to compose select option tag with the association label / value
  * especially for internationalization devices
- * 
+ *
  * @author xpetitrenaud
- * 
+ *
  */
 
 public class OptionTag {
@@ -33,11 +33,26 @@ public class OptionTag {
 	 * select option label
 	 */
 	private String label;
-	
+
 	/***
 	 * select option value
 	 */
 	private String value;
+
+	/***
+	 * Overloaded constructor
+	 * @param givenLabel the label
+	 * @param givenValue the value
+	 */
+	public OptionTag(String givenLabel, String givenValue )
+	{
+		this.label = givenLabel;
+		this.value = givenValue;
+	}
+
+	public OptionTag(){
+
+	}
 
 	public String getLabel() {
 		return label;
@@ -54,19 +69,6 @@ public class OptionTag {
 	public void setValue(String value) {
 		this.value = value;
 	}
-	
-	/***
-	 * Overloaded constructor 
-	 * @param givenLabel the label 
-	 * @param givenValue the value
-	 */
-	public OptionTag(String givenLabel, String givenValue )
-	{
-		this.label = givenLabel;
-		this.value = givenValue;
-	}
-	
-	public OptionTag(){
-		
-	}
+
+
 }

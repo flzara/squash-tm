@@ -22,24 +22,25 @@ package org.squashtest.tm.exception.execution;
 
 /**
  * Indicates we tried to run an execution which has no runnable step.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class ExecutionHasNoRunnableStepException extends RunExecutionException {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -5950946392120066945L;
 	private static final String EXECUTION_HAS_NO_RUNNABLE_STEPS_KEY = "squashtm.action.exception.execution.has.no.runnable.steps";
+
+	public ExecutionHasNoRunnableStepException() {
+		super("Execution has no runnable step");
+	}
 
 	@Override
 	public String getI18nKey() {
 		return EXECUTION_HAS_NO_RUNNABLE_STEPS_KEY;
 	}
 
-	public ExecutionHasNoRunnableStepException() {
-		super("Execution has no runnable step");
-	}
 }

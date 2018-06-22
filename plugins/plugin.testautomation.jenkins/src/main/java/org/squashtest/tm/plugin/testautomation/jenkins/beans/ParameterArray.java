@@ -26,6 +26,11 @@ public class ParameterArray {
 
 	private Object[] parameter;
 
+	public ParameterArray(Object[] parameter){
+		doSetParameter(parameter);
+	}
+
+
 	public Object[] getParameter() {
 		return parameter;
 	}
@@ -38,8 +43,5 @@ public class ParameterArray {
 		this.parameter = Arrays.copyOf(parameter,parameter.length);
 	}
 
-	public ParameterArray(Object[] parameter){
-		doSetParameter(parameter);
-	}
 
 }

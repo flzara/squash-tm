@@ -57,11 +57,6 @@ public class RequirementVersionLink implements Identified {
 	@Column(name="LINK_DIRECTION")
 	private boolean linkDirection;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
-
 	public RequirementVersionLink() {
 		super();
 	}
@@ -81,6 +76,12 @@ public class RequirementVersionLink implements Identified {
 		this.relatedRequirementVersion = relatedRequirementVersion;
 		this.linkType = linkType;
 		this.linkDirection = linkDirection;
+	}
+
+
+	@Override
+	public Long getId() {
+		return id;
 	}
 
 	private String getRequirementVersionRole() {

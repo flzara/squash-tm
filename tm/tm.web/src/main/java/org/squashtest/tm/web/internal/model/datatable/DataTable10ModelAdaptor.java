@@ -34,6 +34,10 @@ public final class DataTable10ModelAdaptor<T> implements DataTable10Model<T> {
 
 	private final DataTableModel<T> adapted;
 
+	private DataTable10ModelAdaptor(DataTableModel<T> adapted) {
+		super();
+		this.adapted = adapted;
+	}
 	/**
 	 * Adapts a {@link DataTableModel} into a {@link DataTable10Model}
 	 *
@@ -44,10 +48,7 @@ public final class DataTable10ModelAdaptor<T> implements DataTable10Model<T> {
 		return new DataTable10ModelAdaptor<>(model);
 	}
 
-	private DataTable10ModelAdaptor(DataTableModel<T> adapted) {
-		super();
-		this.adapted = adapted;
-	}
+
 
 	/**
 	 * @see org.squashtest.tm.web.internal.model.datatable.DataTable10Model#getDraw()

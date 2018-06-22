@@ -49,14 +49,6 @@ public class OslcIssue implements RemoteIssue {
 
 	private String btName;
 
-	public URL getUrl() {
-		return url;
-	}
-
-	public void setUrl(URL url) {
-		this.url = url;
-	}
-
 	private URL url;
 	//the name of the fields scheme currently used, see AdvancedProject#schemes
 	private String currentScheme;
@@ -98,6 +90,13 @@ public class OslcIssue implements RemoteIssue {
 			id.matches("^\\s*$");
 	}
 
+	public URL getUrl() {
+		return url;
+	}
+
+	public void setUrl(URL url) {
+		this.url = url;
+	}
 
 	@Override
 	public String getSummary() {

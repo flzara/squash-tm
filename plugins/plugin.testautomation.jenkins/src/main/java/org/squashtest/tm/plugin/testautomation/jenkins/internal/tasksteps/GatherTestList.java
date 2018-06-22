@@ -47,6 +47,14 @@ public class GatherTestList extends BuildStep<GatherTestList> implements HttpBas
 
 	private Collection<String> testNames;
 
+	//************* constructor ******************
+
+
+	public GatherTestList(BuildProcessor processor) {
+		super(processor);
+	}
+
+
 
 	//************** accessors *****************
 
@@ -74,12 +82,6 @@ public class GatherTestList extends BuildStep<GatherTestList> implements HttpBas
 
 	public Collection<String> getTestNames() {
 		return testNames;
-	}
-	//************* constructor ******************
-
-
-	public GatherTestList(BuildProcessor processor) {
-		super(processor);
 	}
 
 	//**************** code **********************

@@ -86,6 +86,10 @@ public class RequirementVersionCoverage implements Identified {
 	@ManyToMany(mappedBy="requirementVersionCoverages", cascade=CascadeType.DETACH)
 	private Set<ActionTestStep> verifyingSteps = new HashSet<>();
 
+	RequirementVersionCoverage() {
+		super();
+	}
+
 	/**
 	 * @throws RequirementVersionNotLinkableException
 	 * @param verifiedRequirementVersion
@@ -195,9 +199,7 @@ public class RequirementVersionCoverage implements Identified {
 
 	}
 
-	RequirementVersionCoverage() {
-		super();
-	}
+
 
 
 	public RequirementVersionCoverage copyForRequirementVersion(RequirementVersion rvCopy) {

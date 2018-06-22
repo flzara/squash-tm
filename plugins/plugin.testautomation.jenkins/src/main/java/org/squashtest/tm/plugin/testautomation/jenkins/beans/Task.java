@@ -21,8 +21,12 @@
 package org.squashtest.tm.plugin.testautomation.jenkins.beans;
 
 public class Task {
-	
+
 	private String name;
+
+	public Task(){
+		super();
+	}
 
 	public String getName() {
 		return name;
@@ -31,10 +35,7 @@ public class Task {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	public Task(){
-		super();
-	}
-	
-	
+
+
+
 }

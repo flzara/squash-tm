@@ -98,6 +98,11 @@ public class ActionStepFormModel {
 
 		private MessageSource messageSource;
 
+		public ActionStepFormModelValidator(MessageSource messageSource) {
+			super();
+			this.messageSource = messageSource;
+		}
+
 		public void setMessageSource(MessageSource messageSource) {
 			this.messageSource = messageSource;
 		}
@@ -107,11 +112,6 @@ public class ActionStepFormModel {
 			return clazz.equals(ActionStepFormModel.class);
 		}
 
-
-		public ActionStepFormModelValidator(MessageSource messageSource) {
-			super();
-			this.messageSource = messageSource;
-		}
 
 		@Override
 		public void validate(Object target, Errors errors) {

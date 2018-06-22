@@ -27,6 +27,16 @@ public class Parameter {
 	protected String name;
 	protected String value;
 
+	public Parameter() {
+		super();
+	}
+
+	public Parameter(String name, String value) {
+		super();
+		this.name = name;
+		this.value = value;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -40,16 +50,6 @@ public class Parameter {
 	}
 
 	public void setValue(String value) {
-		this.value = value;
-	}
-
-	public Parameter() {
-		super();
-	}
-
-	public Parameter(String name, String value) {
-		super();
-		this.name = name;
 		this.value = value;
 	}
 

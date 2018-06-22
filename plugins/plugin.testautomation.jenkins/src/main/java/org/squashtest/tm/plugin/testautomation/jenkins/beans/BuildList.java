@@ -23,21 +23,13 @@ package org.squashtest.tm.plugin.testautomation.jenkins.beans;
 import java.util.Arrays;
 
 public class BuildList {
-	
+
 	private Build[] builds;
 
-	public Build[] getBuilds() {
-		return builds;
-	}
-
-	public void setBuilds(Build[] builds) {	//NOSONAR no, this array is not stored directly
-		this.builds = Arrays.copyOf(builds, builds.length);
-	}
-	
 	public BuildList(){
 		super();
 	}
-	
+
 	public Build findById(int id){
 		for (Build build : builds){
 			if (build.hasId(id)){
@@ -46,7 +38,17 @@ public class BuildList {
 		}
 		return null;
 	}
-	
+
+	public Build[] getBuilds() {
+		return builds;
+	}
+
+	public void setBuilds(Build[] builds) {	//NOSONAR no, this array is not stored directly
+		this.builds = Arrays.copyOf(builds, builds.length);
+	}
+
+
+
 	public Build findByExternalId(String externalId){
 		for (Build build : builds){
 			if (build.hasExternalId(externalId)){

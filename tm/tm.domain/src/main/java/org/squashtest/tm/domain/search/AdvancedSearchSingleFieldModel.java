@@ -23,15 +23,15 @@ package org.squashtest.tm.domain.search;
 public class AdvancedSearchSingleFieldModel implements AdvancedSearchFieldModel{
 
 	private AdvancedSearchFieldModelType type = AdvancedSearchFieldModelType.SINGLE;
-	
+
 	private String value;
+
+	private boolean ignoreBridge = false;
 
 	public String getValue() {
 		return value;
 	}
 
-	private boolean ignoreBridge = false;
-	
 	@Override
 	public AdvancedSearchFieldModelType getType() {
 		return type;
@@ -40,7 +40,7 @@ public class AdvancedSearchSingleFieldModel implements AdvancedSearchFieldModel{
 	public void setValue(String value) {
 		this.value = value;
 	}
-	
+
 	@Override
 	public boolean isIgnoreBridge() {
 		return this.ignoreBridge;

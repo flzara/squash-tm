@@ -548,12 +548,12 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 		private List<ActionTestStep> result;
 
-		private List<ActionTestStep> getResult() {
-			return result;
-		}
-
 		private ActionStepRetreiver(List<ActionTestStep> result) {
 			this.result = result;
+		}
+
+		private List<ActionTestStep> getResult() {
+			return result;
 		}
 
 		@Override

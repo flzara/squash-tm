@@ -45,13 +45,6 @@ public class BasicAuthenticationCredentials implements Credentials {
 	private String username = "";
 	private char[] password = new char[0];
 
-
-
-	@Override
-	public AuthenticationProtocol getImplementedProtocol() {
-		return AuthenticationProtocol.BASIC_AUTH;
-	}
-
 	public BasicAuthenticationCredentials() {
 		super();
 	}
@@ -75,6 +68,11 @@ public class BasicAuthenticationCredentials implements Credentials {
 		} else {
 			this.password = password.toCharArray();
 		}
+	}
+
+	@Override
+	public AuthenticationProtocol getImplementedProtocol() {
+		return AuthenticationProtocol.BASIC_AUTH;
 	}
 
 	public String getUsername() {

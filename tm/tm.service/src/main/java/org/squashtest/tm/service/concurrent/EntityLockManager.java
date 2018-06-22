@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class EntityLockManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(EntityLockManager.class);
+	private static final Map<EntityRef, WeakReference<ReentrantLock>> locks = new ConcurrentHashMap<>();
 
 	/**
 	 * "static" class -> private constructor
@@ -54,6 +55,12 @@ public final class EntityLockManager {
 		private final Class type;
 		private final Serializable id;
 
+		public EntityRef(@NotNull Class type, Serializable id) {
+			this.type = type;
+			this.id = id;
+		}
+
+
 		@Override
 		public String toString() {
 			return "EntityRef{" +
@@ -62,10 +69,6 @@ public final class EntityLockManager {
 				'}';
 		}
 
-		public EntityRef(@NotNull Class type, Serializable id) {
-			this.type = type;
-			this.id = id;
-		}
 
 		// GENERATED:START
 		@Override
@@ -89,7 +92,6 @@ public final class EntityLockManager {
 		}
 	}
 
-	private static final Map<EntityRef, WeakReference<ReentrantLock>> locks = new ConcurrentHashMap<>();
 
 	/**
 	 * Gets a lock for the given entity.

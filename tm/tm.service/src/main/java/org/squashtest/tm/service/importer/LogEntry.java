@@ -35,6 +35,22 @@ public class LogEntry implements Comparable<LogEntry> {
 	private Object[] errorArgs;
 	private Object[] impactArgs;
 
+	public LogEntry(Target target, ImportStatus status, String i18nError) {
+		super();
+		this.target = target;
+		this.status = status;
+		this.i18nError = i18nError;
+	}
+
+	/**
+	 * @deprecated use builder api
+	 */
+	@Deprecated
+	public LogEntry(Target target, ImportStatus status, String i18nError, Object[] errorArgs) {
+		this(target, status, i18nError);
+		setErrorArgsPrivately(errorArgs);
+	}
+
 	public static final class Builder {
 		private final LogEntry product;
 
@@ -91,21 +107,7 @@ public class LogEntry implements Comparable<LogEntry> {
 		return new Builder(status);
 	}
 
-	public LogEntry(Target target, ImportStatus status, String i18nError) {
-		super();
-		this.target = target;
-		this.status = status;
-		this.i18nError = i18nError;
-	}
 
-	/**
-	 * @deprecated use builder api
-	 */
-	@Deprecated
-	public LogEntry(Target target, ImportStatus status, String i18nError, Object[] errorArgs) {
-		this(target, status, i18nError);
-		setErrorArgsPrivately(errorArgs);
-	}
 
 	public Object[] getErrorArgs() {
 		return errorArgs;

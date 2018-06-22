@@ -29,6 +29,15 @@ public class ThreadPoolStepScheduler implements StepScheduler {
 
 	private TaskScheduler scheduler;
 
+	public ThreadPoolStepScheduler() {
+		super();
+	}
+
+	public ThreadPoolStepScheduler(TaskScheduler scheduler) {
+		this.scheduler = scheduler;
+	}
+
+
 	public TaskScheduler getScheduler() {
 		return scheduler;
 	}
@@ -37,13 +46,8 @@ public class ThreadPoolStepScheduler implements StepScheduler {
 		this.scheduler = scheduler;
 	}
 
-	public ThreadPoolStepScheduler() {
-		super();
-	}
 
-	public ThreadPoolStepScheduler(TaskScheduler scheduler) {
-		this.scheduler = scheduler;
-	}
+
 
 	@SuppressWarnings("rawtypes")
 	@Override

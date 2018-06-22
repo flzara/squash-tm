@@ -39,16 +39,6 @@ public final class DataTable10ErrorModel implements DataTable10Model {
 	private final DataTable10Model decorated;
 	private final String error;
 
-	/**
-	 * Decorates a {@link DataTable10Model} with an error message.
-	 *
-	 * @param decorated
-	 * @param errorMessage
-	 * @return
-	 */
-	public static final DataTable10Model decorate(@NotNull DataTable10Model decorated, @NotNull String errorMessage) {
-		return new DataTable10ErrorModel(decorated, errorMessage);
-	}
 
 	/**
 	 *
@@ -62,6 +52,16 @@ public final class DataTable10ErrorModel implements DataTable10Model {
 		this.error = errorMessage;
 	}
 
+	/**
+	 * Decorates a {@link DataTable10Model} with an error message.
+	 *
+	 * @param decorated
+	 * @param errorMessage
+	 * @return
+	 */
+	public static final DataTable10Model decorate(@NotNull DataTable10Model decorated, @NotNull String errorMessage) {
+		return new DataTable10ErrorModel(decorated, errorMessage);
+	}
 	/**
 	 * @return
 	 * @see org.squashtest.tm.web.internal.model.datatable.DataTable10Model#getDraw()

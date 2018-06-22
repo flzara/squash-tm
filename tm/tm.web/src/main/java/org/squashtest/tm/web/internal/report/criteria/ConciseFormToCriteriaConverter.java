@@ -232,14 +232,17 @@ public class ConciseFormToCriteriaConverter {
 		Object selVal = concise.get(CON_VAL);
 
 		for (OptionInput opt : reportInput.getOptions()) {
+			filingExpandedGroups(inputName,  concise,  exp, opt, selVal);
+		}
+		return exp;
+	}
+
+	private void filingExpandedGroups(String inputName, Map concise, List exp,OptionInput opt,Object selVal){
 			Map expOpt = new HashMap();
 			expOpt.put(EXP_TYPE, concise.get(CON_TYPE));
 			expOpt.put(EXP_VALUE, opt.getValue());
 			expOpt.put(EXP_SEL, selVal.equals(opt.getValue()));
-
 			exp.add(expOpt);
-		}
-		return exp;
 	}
 
 	@SuppressWarnings({RAWTYPES, UNCHECKED})
@@ -249,12 +252,7 @@ public class ConciseFormToCriteriaConverter {
 		Object selVal = concise.get(CON_VAL);
 
 		for (OptionInput opt : reportInput.getOptions()) {
-			Map expOpt = new HashMap();
-			expOpt.put(EXP_TYPE, concise.get(CON_TYPE));
-			expOpt.put(EXP_VALUE, opt.getValue());
-			expOpt.put(EXP_SEL, selVal.equals(opt.getValue()));
-
-			exp.add(expOpt);
+			filingExpandedGroups(inputName,  concise,  exp, opt, selVal);
 		}
 		return exp;
 	}

@@ -21,23 +21,31 @@
 package org.squashtest.tm.web.internal.fileupload;
 
 public class UploadSummary {
-	
+
 	public static final int INT_UPLOAD_STATUS_OK = 0;
-	public static final int INT_UPLOAD_STATUS_WRONGFILETYPE = 1;  
-	
+	public static final int INT_UPLOAD_STATUS_WRONGFILETYPE = 1;
+
 	private String name;
 	private String status;
 	private int iStatus;
-	
 
-	
+	public UploadSummary(){
+
+	}
+
+	public UploadSummary(String name, String status, int iStatus){
+		this.name=name;
+		this.status=status;
+		this.iStatus = iStatus;
+	}
+
 	public int getiStatus() {
 		return iStatus;
 	}
 	public void setiStatus(int iStatus) {
 		this.iStatus = iStatus;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
@@ -50,15 +58,7 @@ public class UploadSummary {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	
-	public UploadSummary(){
-		
-	}
-	
-	public UploadSummary(String name, String status, int iStatus){
-		this.name=name;
-		this.status=status;
-		this.iStatus = iStatus;
-	}
-	
+
+
+
 }
