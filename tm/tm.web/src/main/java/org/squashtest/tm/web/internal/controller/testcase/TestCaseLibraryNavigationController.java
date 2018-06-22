@@ -65,6 +65,8 @@ public class TestCaseLibraryNavigationController extends
 	public static final Logger LOGGER = LoggerFactory.getLogger(TestCaseLibraryNavigationController.class);
 
 	private static final String APPLICATION_SLASH_OCTET_STREAM = "application/octet-stream";
+	private static final String ATTACHMENT_FILENAME = "attachment; filename=";
+	private static final String CONTENT_DISPOSITION = "Content-Disposition";
 
 	@Inject
 	private Provider<TestCaseLibraryTreeNodeBuilder> testCaseLibraryTreeNodeBuilder;
@@ -191,7 +193,7 @@ public class TestCaseLibraryNavigationController extends
 							HttpServletResponse response) throws FileNotFoundException {
 
 		response.setContentType(APPLICATION_SLASH_OCTET_STREAM);
-		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".xls");
+		response.setHeader(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + filename + ".xls");
 
 		List<ExportTestCaseData> dataSource = testCaseLibraryNavigationService.findTestCasesToExport(libraryIds,
 			nodeIds, includeCalledTests);
@@ -213,7 +215,7 @@ public class TestCaseLibraryNavigationController extends
 											HttpServletResponse response) throws FileNotFoundException {
 
 		response.setContentType(APPLICATION_SLASH_OCTET_STREAM);
-		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".xls");
+		response.setHeader(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + filename + ".xls");
 
 		File export = testCaseLibraryNavigationService.exportTestCaseAsExcel(libraryIds, nodeIds, includeCalledTests,
 			keepRteFormat, getMessageSource());
@@ -229,7 +231,7 @@ public class TestCaseLibraryNavigationController extends
 							HttpServletResponse response)  {
 
 		response.setContentType(APPLICATION_SLASH_OCTET_STREAM);
-		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".zip");
+		response.setHeader(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + filename + ".zip");
 
 		File file = testCaseLibraryNavigationService.exportGherkinTestCaseAsFeatureFiles(libraryIds, nodeIds, getMessageSource());
 		return new FileSystemResource(file);
@@ -243,7 +245,7 @@ public class TestCaseLibraryNavigationController extends
 												  HttpServletResponse response) throws FileNotFoundException {
 
 		response.setContentType(APPLICATION_SLASH_OCTET_STREAM);
-		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".xls");
+		response.setHeader(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + filename + ".xls");
 
 		File export = testCaseLibraryNavigationService.searchExportTestCaseAsExcel(nodeIds, includeCalledTests,
 			keepRteFormat, getMessageSource());

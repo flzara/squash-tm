@@ -55,6 +55,7 @@ public class TestCaseImportController {
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseImportController.class);
+	private static final String SUMMARY = "summary";
 
 	@Inject
 	private TestCaseLibraryNavigationService navigationService;
@@ -89,7 +90,7 @@ public class TestCaseImportController {
 		ModelAndView mav = new ModelAndView("fragment/import/import-summary");
 
 		ImportSummary summary = navigationService.importZipTestCase(stream, projectId, zipEncoding);
-		mav.addObject("summary", summary);
+		mav.addObject(SUMMARY, summary);
 		mav.addObject("workspace", "test-case");
 
 		return mav;
@@ -130,14 +131,14 @@ public class TestCaseImportController {
 			ImportLog summary = callback.execute(xls); // TODO parser may throw ex we should handle
 			summary.recompute(); // TODO why is it here ? shouldnt it be in service ?
 			generateImportLog(request, summary);
-			mav.addObject("summary", summary);
+			mav.addObject(SUMMARY, summary);
 
 		} catch (IOException e) {
 			LOGGER.error("An exception prevented processing of test-case import file", e);
 
 		} catch (TemplateMismatchException tme) {
 			ImportFormatFailure importFormatFailure = new ImportFormatFailure(tme);
-			mav.addObject("summary", importFormatFailure);
+			mav.addObject(SUMMARY, importFormatFailure);
 		} finally {
 			if (xls != null) {
 				xls.deleteOnExit();

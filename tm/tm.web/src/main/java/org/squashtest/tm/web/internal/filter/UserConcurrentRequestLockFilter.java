@@ -52,6 +52,8 @@ public class UserConcurrentRequestLockFilter implements Filter {
 	 * Key used do store lock in http session.
 	 */
 	public static final String READ_WRITE_LOCK_SESSION_KEY = "squashtest.core.ReadWriteLock";
+	public static final String READ_REQUEST = "READ request : ";
+	public static final String WRITE_REQUEST = "WRITE request : ";
 	private String excludePatterns;
 
 	@Override
@@ -108,14 +110,14 @@ public class UserConcurrentRequestLockFilter implements Filter {
 
 		if (LOGGER.isDebugEnabled()){
 			HttpServletRequest hrequest = (HttpServletRequest)request;
-			LOGGER.debug("READ request : "+hrequest.getMethod()+" "+hrequest.getRequestURI()+" : attempting to acquire lock");
+			LOGGER.debug(READ_REQUEST+hrequest.getMethod()+" "+hrequest.getRequestURI()+" : attempting to acquire lock");
 		}
 		lock.readLock().lock();
 
 		try {
 			if (LOGGER.isDebugEnabled()) {
 				HttpServletRequest hrequest = (HttpServletRequest)request;
-				LOGGER.debug("READ request : "+hrequest.getMethod()+" "+hrequest.getRequestURI()+" : lock acquired");
+				LOGGER.debug(READ_REQUEST+hrequest.getMethod()+" "+hrequest.getRequestURI()+" : lock acquired");
 			}
 
 			chain.doFilter(request, response);
@@ -124,7 +126,7 @@ public class UserConcurrentRequestLockFilter implements Filter {
 
 			if (LOGGER.isDebugEnabled()) {
 				HttpServletRequest hrequest = (HttpServletRequest)request;
-				LOGGER.debug("READ request : "+hrequest.getMethod()+" "+hrequest.getRequestURI()+" : lock released");
+				LOGGER.debug(READ_REQUEST+hrequest.getMethod()+" "+hrequest.getRequestURI()+" : lock released");
 			}
 		}
 
@@ -135,14 +137,14 @@ public class UserConcurrentRequestLockFilter implements Filter {
 
 		if (LOGGER.isDebugEnabled()){
 			HttpServletRequest hrequest = (HttpServletRequest)request;
-			LOGGER.debug("WRITE request : "+hrequest.getMethod()+" "+hrequest.getRequestURI()+" : attempting to acquire lock");
+			LOGGER.debug(WRITE_REQUEST+hrequest.getMethod()+" "+hrequest.getRequestURI()+" : attempting to acquire lock");
 		}
 		lock.writeLock().lock();
 
 		try {
 			if (LOGGER.isDebugEnabled()) {
 				HttpServletRequest hrequest = (HttpServletRequest)request;
-				LOGGER.debug("WRITE request : "+hrequest.getMethod()+" "+hrequest.getRequestURI()+" : lock acquired");
+				LOGGER.debug(WRITE_REQUEST+hrequest.getMethod()+" "+hrequest.getRequestURI()+" : lock acquired");
 			}
 
 			chain.doFilter(request, response);
@@ -151,7 +153,7 @@ public class UserConcurrentRequestLockFilter implements Filter {
 
 			if (LOGGER.isDebugEnabled()) {
 				HttpServletRequest hrequest = (HttpServletRequest)request;
-				LOGGER.debug("WRITE request : "+hrequest.getMethod()+" "+hrequest.getRequestURI()+" : lock released");
+				LOGGER.debug(WRITE_REQUEST+hrequest.getMethod()+" "+hrequest.getRequestURI()+" : lock released");
 			}
 		}
 

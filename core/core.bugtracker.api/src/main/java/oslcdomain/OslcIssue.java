@@ -36,6 +36,10 @@ import org.squashtest.tm.bugtracker.definition.RemoteVersion;
 
 public class OslcIssue implements RemoteIssue {
 
+	private static final String SUMMARY = "summary";
+	private static final String DESCRIPTION = "description";
+	private static final String COMMENT = "comment";
+
 	//maps a fieldId to a FieldValue
 	private Map<String, FieldValue> fieldValues = new HashMap<>();
 
@@ -72,12 +76,6 @@ public class OslcIssue implements RemoteIssue {
 	public String getCreateDialog() {
 		return createDialog;
 	}
-
-	private static final String SUMMARY = "summary";
-
-	private static final String DESCRIPTION = "description";
-
-	private static final String COMMENT = "comment";
 
 	public void setCreateDialog(String createDialog) {
 		this.createDialog = createDialog;

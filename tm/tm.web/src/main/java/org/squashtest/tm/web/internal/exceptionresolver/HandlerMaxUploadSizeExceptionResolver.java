@@ -39,18 +39,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 /*
-Deprecation notice : Because multipart requests are handled in the filter chain this 
-exception resolver will probably not kick in anymore. I'm deprecating this 
-and put a few loggers to watch if its ever invoked at all. 
+Deprecation notice : Because multipart requests are handled in the filter chain this
+exception resolver will probably not kick in anymore. I'm deprecating this
+and put a few loggers to watch if its ever invoked at all.
 
 If by Squash TM 16 it has shown no sign of activity feel free to decommission this class.
 */
 @Component
-@Deprecated 
+@Deprecated
 public class HandlerMaxUploadSizeExceptionResolver extends AbstractHandlerExceptionResolver {
 
 	private static final int NB_BYTES_PER_MBYTES = 1048576;
-        
+	private static final String ACTION_VALIDATION_ERROR = "actionValidationError";
+
         // SONAR made me rename the logger in order to avoid nameclash with the logger in the supperclass
         private static final Logger THIS_LOGGER = LoggerFactory.getLogger(HandlerMaxUploadSizeExceptionResolver.class);
 
@@ -66,11 +67,11 @@ public class HandlerMaxUploadSizeExceptionResolver extends AbstractHandlerExcept
 	protected ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response, Object handler,
 	                                          Exception ex) {
                 THIS_LOGGER.trace("received exception, testing whether it should be handled");
-            
+
 		if (exceptionIsHandled(ex)) {
 
                         THIS_LOGGER.trace("exception is being handled");
-                    
+
 			response.setStatus(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
 
 			MaxUploadSizeExceededException mex = (MaxUploadSizeExceededException) ex; // NOSONAR Type was checked
@@ -108,7 +109,7 @@ public class HandlerMaxUploadSizeExceptionResolver extends AbstractHandlerExcept
 
 		AbstractView view = new MaxSizeView();
 
-		return new ModelAndView(view, "actionValidationError", error);
+		return new ModelAndView(view, ACTION_VALIDATION_ERROR, error);
 
 	}
 
@@ -122,7 +123,7 @@ public class HandlerMaxUploadSizeExceptionResolver extends AbstractHandlerExcept
 
 		AbstractView view = new MaxSizeView();
 
-		return new ModelAndView(view, "actionValidationError", error);
+		return new ModelAndView(view, ACTION_VALIDATION_ERROR, error);
 
 	}
 
@@ -131,7 +132,7 @@ public class HandlerMaxUploadSizeExceptionResolver extends AbstractHandlerExcept
 		protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request,
 		                                       HttpServletResponse response) throws Exception {
 			ServletOutputStream out = response.getOutputStream();
-			out.write(((String) model.get("actionValidationError")).getBytes());
+			out.write(((String) model.get(ACTION_VALIDATION_ERROR)).getBytes());
 			out.flush();
 		}
 	}

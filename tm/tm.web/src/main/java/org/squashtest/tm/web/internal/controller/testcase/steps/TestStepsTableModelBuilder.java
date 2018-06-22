@@ -46,6 +46,7 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 	 *
 	 */
 	private static final int DEFAULT_MAP_CAPACITY = 16;
+	private static final String STEP_ID = "step-id";
 
 	private Map<Long, Map<String, CustomFieldValueTableModel>> customFieldValuesById;
 
@@ -73,7 +74,7 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 
 		Map<Object, Object> item = new HashMap<>(11);
 
-		item.put("step-id", visited.getId());
+		item.put(STEP_ID, visited.getId());
 		item.put("step-index", getCurrentIndex());
 		item.put("attach-list-id", visited.getAttachmentList().getId());
 		item.put("step-action", HTMLCleanupUtils.cleanHtml(visited.getAction()));
@@ -97,7 +98,7 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 	public void visit(CallTestStep visited) {
 		Map<Object, Object> item = new HashMap<>(11);
 
-		item.put("step-id", visited.getId());
+		item.put(STEP_ID, visited.getId());
 		item.put("step-index", getCurrentIndex());
 		item.put("attach-list-id", null);
 		item.put("step-action", null);
@@ -118,7 +119,7 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 	}
 
 	private void appendCustomFields(Map<Object, Object> item) {
-		Map<String, CustomFieldValueTableModel> cufValues = getCustomFieldsFor((Long) item.get("step-id"));
+		Map<String, CustomFieldValueTableModel> cufValues = getCustomFieldsFor((Long) item.get(STEP_ID));
 		item.put("customFields", cufValues);
 
 	}

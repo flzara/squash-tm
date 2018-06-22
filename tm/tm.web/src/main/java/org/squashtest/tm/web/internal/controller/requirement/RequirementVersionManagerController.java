@@ -66,6 +66,10 @@ import java.util.*;
 @RequestMapping("/requirements/{requirementId}/versions")
 public class RequirementVersionManagerController {
 
+	private static final String REFERENCE ="reference";
+	private static final String STATUS ="status";
+	private static final String CRITICALITY ="criticality";
+	private static final String CATEGORY ="category";
 
 	@Inject
 	private RequirementVersionManagerService versionService;
@@ -108,11 +112,11 @@ public class RequirementVersionManagerController {
 
 	private final DatatableMapper<String> versionMapper = new NameBasedMapper()
 		.map("version-number", "versionNumber")
-		.map("reference", "reference")
+		.map(REFERENCE, REFERENCE)
 		.map(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "name")
-		.map("status", "status")
-		.map("criticality", "criticality")
-		.map("category", "category");
+		.map(STATUS, STATUS)
+		.map(CRITICALITY, CRITICALITY)
+		.map(CATEGORY, CATEGORY);
 
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST, params = {"inheritReqLinks", "inheritTestcasesReqLinks"})
@@ -227,11 +231,11 @@ public class RequirementVersionManagerController {
 
 			row.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, version.getId());
 			row.put("version-number", version.getVersionNumber());
-			row.put("reference", HtmlUtils.htmlEscape(version.getReference()));
+			row.put(REFERENCE, HtmlUtils.htmlEscape(version.getReference()));
 			row.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, HtmlUtils.htmlEscape(version.getName()));
-			row.put("status", internationalize(version.getStatus(), locale, levelFormatterProvider));
-			row.put("criticality", internationalize(version.getCriticality(), locale, levelFormatterProvider));
-			row.put("category", i18nHelper.getMessage(version.getCategory().getLabel(), null, version.getCategory().getLabel(), locale));
+			row.put(STATUS, internationalize(version.getStatus(), locale, levelFormatterProvider));
+			row.put(CRITICALITY, internationalize(version.getCriticality(), locale, levelFormatterProvider));
+			row.put(CATEGORY, i18nHelper.getMessage(version.getCategory().getLabel(), null, version.getCategory().getLabel(), locale));
 			row.put("milestone-dates", MilestoneModelUtils.timeIntervalToString(version.getMilestones(), i18nHelper, locale));
 			row.put("milestone", HtmlUtils.htmlEscape(MilestoneModelUtils.milestoneLabelsOrderByDate(version.getMilestones())));
 			return row;

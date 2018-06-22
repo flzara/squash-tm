@@ -217,7 +217,7 @@ public abstract class GlobalSearchController {
 	}
 
 	private void populateMetadata(Model model) {
-		model.addAttribute("projects", readableJsonProjects());
+		model.addAttribute(PROJECTS_META, readableJsonProjects());
 	}
 
 	private void populateMetadata(SearchInputInterfaceModel model, Collection<JsonProject> jsProjects) {
