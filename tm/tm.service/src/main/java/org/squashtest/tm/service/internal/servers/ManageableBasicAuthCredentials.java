@@ -34,7 +34,7 @@ import org.squashtest.tm.service.servers.StoredCredentialsManager;
  *
  */
 public class ManageableBasicAuthCredentials extends BasicAuthenticationCredentials implements ManageableCredentials {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(ManageableBasicAuthCredentials.class);
 
 	public ManageableBasicAuthCredentials() {
@@ -52,14 +52,8 @@ public class ManageableBasicAuthCredentials extends BasicAuthenticationCredentia
 	public boolean allowsAppLevelStorage() {
 		return true;
 	}
-	
-	
-	@Override
-	public void invalidate() {
-		setUsername("");
-		setPassword(new char[]{});
-	}
-	
+
+
 	private boolean isValid(){
 		return ! StringUtils.isBlank(getUsername());
 		// note : empty password is fine

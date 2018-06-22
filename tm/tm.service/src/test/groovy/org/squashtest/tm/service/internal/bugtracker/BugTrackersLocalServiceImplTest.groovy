@@ -176,7 +176,7 @@ class BugTrackersLocalServiceImplTest extends Specification {
 	}
 
 
-	def "should invalidate the credentials and remove due to failure"(){
+	def "should remove the credentials on authentication failure"(){
 
 		given:
 		def creds = new BasicAuthenticationCredentials("bob", "bobpassword" as char[])
@@ -192,12 +192,12 @@ class BugTrackersLocalServiceImplTest extends Specification {
 		then:
 		1 * remoteService.testCredentials(bugTracker, creds)  >> { throw new BugTrackerNoCredentialsException(null)}
 		1 * credentialsProvider.uncacheCredentials(bugTracker)
-		1 * storedCredentialsManager.invalidateUserCredentials(1L, "bob")
+		1 * storedCredentialsManager.deleteUserCredentials(1L, "bob")
 		thrown BugTrackerNoCredentialsException
 
 	}
 
-	def "should invalidate the credentials but not remove the offending data"(){
+	def "should not remove the credentials on authentication failure"(){
 
 		given:
 		def creds = new BasicAuthenticationCredentials("bob", "bobpassword" as char[])

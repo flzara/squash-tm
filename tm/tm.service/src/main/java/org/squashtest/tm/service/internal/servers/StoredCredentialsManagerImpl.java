@@ -159,16 +159,6 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 		return unsecuredFindContent(serverId, username, ManageableCredentials.class);
 	}
 
-
-	@Override
-	@PreAuthorize(HAS_ROLE_ADMIN + OR_CURRENT_USER_OWNS_CREDENTIALS)
-	public void invalidateUserCredentials(long serverId, String username) {
-		ManageableCredentials creds = unsecuredFindContent(serverId, username, ManageableCredentials.class);
-		if (creds != null){
-			creds.invalidate();
-		}
-	}
-
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN + OR_CURRENT_USER_OWNS_CREDENTIALS)
 	public void deleteUserCredentials(long serverId, String username) {
@@ -197,14 +187,6 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 	@Override
 	public ManageableCredentials unsecuredFindAppLevelCredentials(long serverId) {
 		return unsecuredFindContent(serverId, null, ManageableCredentials.class);
-	}
-
-	@Override
-	public void invalidateAppLevelCredentials(long serverId) {
-		ManageableCredentials creds = unsecuredFindContent(serverId, null, ManageableCredentials.class);
-		if (creds != null){
-			creds.invalidate();
-		}
 	}
 
 	@Override

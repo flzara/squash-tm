@@ -30,6 +30,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
@@ -139,11 +140,11 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	private LocaleContext getLocaleContext() {
 		return LocaleContextHolder.getLocaleContext();
 	}
-	
+
 	private SecurityContext getSecurityContext(){
 		return SecurityContextHolder.getContext();
 	}
-	
+
 	private UserCredentialsCache getCredentialsCache(){
 		return credentialsProvider.getCache();
 	}
@@ -240,7 +241,10 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	}
 
 	@Override
-	public void validateCredentials(BugTracker bugTracker, Credentials credentials, boolean invalidateOnFail) throws BugTrackerRemoteException {
+	// when purgeOnFail is true, we need to alter the database content (eg deleting the faulty credentials) then commit,
+	// while still propagating the exception. Here we define an exception rule to the default "rollback on exception" policy.
+	@Transactional(noRollbackFor={BugTrackerNoCredentialsException.class, UnsupportedAuthenticationModeException.class})
+	public void validateCredentials(BugTracker bugTracker, Credentials credentials, boolean purgeOnFail) throws BugTrackerRemoteException {
 
 		LOGGER.debug("BugTrackerLocalServiceImpl : validating credentials for server '{}'", bugTracker.getName());
 
@@ -251,10 +255,10 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		}
 		catch(BugTrackerNoCredentialsException | UnsupportedAuthenticationModeException ex){
 			LOGGER.debug("BugTrackerLocalServerImpl : credentials were rejected ({})", ex.getClass());
-			if (invalidateOnFail){
+			if (purgeOnFail){
 				LOGGER.debug("BugTrackerLocalServiceImpl : removing failed credentials as requested");
 				credentialsProvider.uncacheCredentials(bugTracker);
-				storedCredentialsManager.invalidateUserCredentials(bugTracker.getId(), credentialsProvider.currentUser());
+				storedCredentialsManager.deleteUserCredentials(bugTracker.getId(), credentialsProvider.currentUser());
 			}
 			// propagate exception
 			throw ex;
@@ -263,9 +267,11 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	}
 
 	@Override
-	public void validateCredentials(Long bugtrackerId, Credentials credentials, boolean invalidateOnFail) throws BugTrackerRemoteException {
+	// see comment above
+	@Transactional(noRollbackFor={BugTrackerNoCredentialsException.class, UnsupportedAuthenticationModeException.class})
+	public void validateCredentials(Long bugtrackerId, Credentials credentials, boolean purgeOnFail) throws BugTrackerRemoteException {
 		BugTracker server = bugTrackerDao.findOne(bugtrackerId);
-		validateCredentials(server, credentials, invalidateOnFail);
+		validateCredentials(server, credentials, purgeOnFail);
 	}
 
 

@@ -278,31 +278,31 @@ public interface BugTrackersLocalService {
 	 * Note that a user context is mandatory : it should not be invoked if Squash-TM itself initiated the ongoing job.
 	 * Also, this operation is illegal if the bugtracker is configured for using policy {@link org.squashtest.tm.domain.servers.AuthenticationPolicy#APP_LEVEL}.
 	 *
-	 * If the credentials are rejected, they will also be invalidated and purged from cache if the parameter invalidateOnFail is true.
+	 * If the credentials are rejected, they will also be purged from the database and cache if the parameter purgeOnFail is true.
 	 * Credentials purged this way will only happen if the credentials themselves are invalid, and not for other reasons (endpoint failure etc).
 	 *
 	 * @param bugTracker : the concerned BugTracker
 	 * @param credentials
-	 * @param invalidateOnFail
+	 * @param purgeOnFail
 	 * @return nothing
-	 * @throws org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException (triggers invalidation if invalidateOnFail is true)
+	 * @throws org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException (triggers invalidation if purgeOnFail is true)
 	 * @throws WrongAuthenticationPolicyException if attempted to authenticate with user-level credentials while application-level credentials are excepted
 	 * @throws {@link UnsupportedAuthenticationModeException} (triggers removal if removeIfFail is true)
 	 * @throws BugTrackerRemoteException for errors related to the endpoint
 	 */
-	void validateCredentials(BugTracker bugTracker, Credentials credentials, boolean invalidateOnFail) throws BugTrackerRemoteException;
+	void validateCredentials(BugTracker bugTracker, Credentials credentials, boolean purgeOnFail) throws BugTrackerRemoteException;
 
 	/**
 	 * Same as {@link #validateCredentials(BugTracker, Credentials, boolean)}, but the bugtracker is identified by its id.
 	 *
 	 * @param bugtrackerId
 	 * @param credentials
-	 * @param invalidateOnFail
+	 * @param purgeOnFail
 	 * @throws BugTrackerRemoteException
 	 * @throws WrongAuthenticationPolicyException
 	 * @throws {@link UnsupportedAuthenticationModeException}
 	 */
-	void validateCredentials(Long bugtrackerId, Credentials credentials, boolean invalidateOnFail) throws BugTrackerRemoteException;
+	void validateCredentials(Long bugtrackerId, Credentials credentials, boolean purgeOnFail) throws BugTrackerRemoteException;
 
 
 	/**

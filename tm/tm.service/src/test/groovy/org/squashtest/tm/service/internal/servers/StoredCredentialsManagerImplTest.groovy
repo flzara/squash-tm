@@ -394,10 +394,7 @@ class StoredCredentialsManagerImplTest extends Specification{
 			return null
 		}
 
-		@Override
-		void invalidate() {
 
-		}
 	}
 
 }

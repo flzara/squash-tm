@@ -93,13 +93,6 @@ public class UserOAuth1aToken implements ManageableCredentials {
 		return true;
 	}
 
-
-	@Override
-	public void invalidate() {
-		token = "";
-		tokenSecret = "";
-	}
-
 	@Override
 	public OAuth1aCredentials build(StoredCredentialsManager storeManager, BugTracker server, String username) {
 

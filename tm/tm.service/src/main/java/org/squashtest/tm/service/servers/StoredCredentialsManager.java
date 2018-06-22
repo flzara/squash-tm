@@ -87,14 +87,6 @@ public interface StoredCredentialsManager {
 	 */
 	ManageableCredentials unsecuredFindUserCredentials(long serverId, String username);
 
-	/**
-	 * Invalidates the credentials of the given user for a given server. Note that this is
-	 * different from removing them.
-	 *
-	 * @param serverId
-	 * @param username
-	 */
-	void invalidateUserCredentials(long serverId, String username);
 
 	/**
 	 * Will remove the stored credentials of a server and given user if there were one.
@@ -143,14 +135,6 @@ public interface StoredCredentialsManager {
 	 */
 	ManageableCredentials unsecuredFindAppLevelCredentials(long serverId);
 
-
-	/**
-	 * Invalidates Squash-TM own credentials for a given server. Note that this is
-	 * different from removing them.
-	 *
-	 * @param serverId
-	 */
-	void invalidateAppLevelCredentials(long serverId);
 
 
 	/**
