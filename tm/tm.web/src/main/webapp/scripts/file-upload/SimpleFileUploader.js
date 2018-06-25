@@ -25,46 +25,47 @@
 
 define(["jquery", "jform"], function($){
 
-	
+
 	function _detachUnrelatedInputs(form){
 		var unrelatedInputs = form.find('input').filter(function(){
-			
+
 			var unrelated = true;
 			var $this = $(this);
-			
+
 			if ($this.attr('type') === 'file'){
 				var content = $this.val();
 				if (content !== ""){
 					unrelated = false;	//this input is actually very relevant
 				}
 			}
-			
+
 			return unrelated;
-			
+
 		});
-		
+
 		unrelatedInputs.detach();
-		
+
 		return unrelatedInputs;
 	}
-	
-	
+
+
 	function _uploadFilesOnly(form, url){
-		
+
 		var notToBePosted = _detachUnrelatedInputs(form);
 
 		//sets the name of the remaining inputs
 		form.find('input').attr('name', 'attachment[]');
-		
+
 		//don't post if there is nothing to send
 		if (form.find('input').length>0){
+			//CSRF token is given as QueryParameter as we can not put it in request header in this case
+			var token = $("meta[name='_csrf']").attr("content");
 			form.ajaxSubmit({
-				url : url,
+				url : url + '?_csrf='+token,
 				iframe : true,
 				type : 'POST'
 			});
 		}
-		
 		//now reattach the detached inputs
 		form.append(notToBePosted);
 
@@ -72,19 +73,19 @@ define(["jquery", "jform"], function($){
 
 	return {
 		uploadFilesOnly : function(arg, url){
-			
+
 			var $arg = (arg instanceof jQuery) ? arg : $(arg);
-			
+
 			if ($arg.is('form')){
 				_uploadFilesOnly($arg, url);
 			}
-			
+
 			else {
 				throw "argument is neither a form nor an input file";
 			}
-			
+
 
 		}
 	};
-	
+
 });
