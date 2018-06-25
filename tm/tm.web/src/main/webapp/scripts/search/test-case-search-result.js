@@ -155,12 +155,12 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.ro
 				temp.style.display = "none";
 				temp.acceptCharset = "UTF-8";
 				for (var x in PARAMS) {
-					var opt = document.createElement("textarea");
 					if (PARAMS.hasOwnProperty(x)) {
+						var opt = document.createElement("textarea");
 						opt.name = x;
 						opt.value = PARAMS[x];
+						temp.appendChild(opt);
 					}
-					temp.appendChild(opt);
 				}
 				document.body.appendChild(temp);
 				temp.submit();
