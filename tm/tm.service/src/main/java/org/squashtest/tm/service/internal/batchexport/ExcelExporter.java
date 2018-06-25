@@ -191,6 +191,9 @@ class ExcelExporter {
 		for (TestCaseModel tc : testCases) {
 			tc.setDescription(removeHtml(tc.getDescription()));
 			tc.setPrerequisite(removeHtml(tc.getPrerequisite()));
+			for (ExportModel.CustomField cf : tc.getCufs()) {
+				cf.setValue(removeHtml(cf.getValue()));
+			}
 		}
 	}
 

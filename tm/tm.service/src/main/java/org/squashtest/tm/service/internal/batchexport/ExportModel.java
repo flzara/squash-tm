@@ -824,6 +824,8 @@ public class ExportModel {
 			return type;
 		}
 
+		public void setValue(String newValue){this.value = newValue;}
+
 	}
 
 

@@ -289,6 +289,9 @@ public class RequirementExcelExporter {
 		List<RequirementModel> requirementsModels) {
 		for (RequirementModel requirementModel : requirementsModels) {
 			requirementModel.setDescription(removeHtml(requirementModel.getDescription()));
+			for (ExportModel.CustomField cf : requirementModel.getCufs()) {
+				cf.setValue(removeHtml(cf.getValue()));
+			}
 		}
 	}
 
