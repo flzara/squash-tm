@@ -134,7 +134,7 @@ define([ "jquery", "tree", "handlebars", "underscore", "workspace/workspace.impo
 			this.doSubmit({
 				urlPostfix : "/" + this.importType,
 				queryParams : {
-					_csrf : token,
+					_csrf : token
 				}
 			});
 		}

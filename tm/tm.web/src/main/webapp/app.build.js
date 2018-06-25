@@ -20,7 +20,7 @@
  */
 /* https://github.com/requirejs/example-multipage-shim */
 //noinspection BadExpressionStatementJS
-({
+({// NOSONAR
 	appDir: "${project.basedir}/src/main/webapp", // root of webapp files
 	mainConfigFile: "${project.basedir}/src/main/webapp/scripts/common.js",
 	baseUrl: "scripts", // where the js files are supposed to be inside appDir
