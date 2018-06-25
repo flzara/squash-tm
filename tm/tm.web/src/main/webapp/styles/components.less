@@ -335,7 +335,7 @@ the display:block trick will implicitly add that property */
 .please-wait-message {
 	font-size: 1.5em;
 	font-weight: bold;
-	vertical-align: center;
+	vertical-align: middle;
 	text-align: center;
 }
 
@@ -1100,7 +1100,7 @@ Third party servers authentication credentials management
 	.side-panel.not-displayed{
 		display : none;
 	}
-	label:after {
+	.label:after {
 		content: "";
 	}
 	span.needs-save-msg {
@@ -1110,25 +1110,25 @@ Third party servers authentication credentials management
 		font-size: 1.2em;
 		font-weight: bold;
 	}
-	
+
 	.tbl {
 		display: table;
-		
+
 		> div, .tr{
 			display: table-row;
 			margin-bottom:1em;
-			line-height:3;	
-			
+			line-height:3;
+
 			> label{
 				display: table-cell;
 				padding-left:10px;
-				padding-right:10px;			
-				vertical-align:top;	
-			}	
-			
+				padding-right:10px;
+				vertical-align:top;
+			}
+
 			> div.flexible {
 				display: flex;
-				
+
 				> input {
 					width: 300px;
 					margin-left: 5px;
@@ -1136,14 +1136,14 @@ Third party servers authentication credentials management
 			}
 			> input {
 				width: 100%;
-			}	
+			}
 			> textarea {
-				width: 100%; 
+				width: 100%;
 				height: 60px;
 			}
-		}		
+		}
 	}
-	
+
 }
 
 
