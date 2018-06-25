@@ -90,25 +90,25 @@
          * Class for mime small buttons that are in tg-head. Duplicate of tg-head -> tg-toolbar to avoid conflict is we have decided to extract this class from .tg-head
          */
     	.dashboard-grid-toolbar {
-    		display: block;
-    		float: right;
-    		text-align: right;
-    		margin-top: 0.4em;
-    		margin-right: 0.5em !important;
+			display: block;
+			float: right;
+			text-align: right;
+			margin-top: 0.4em;
+			margin-right: 0.5em !important;
+		}
 
-    		// meh... we have to redefine buttons height
-    		// for them to look good^h^h as before
-    		input {
+    		/*meh... we have to redefine buttons height
+    		for them to look good^h^h as before*/
+		.dashboard-grid-toolbar input {
     			.sq-btn;
     		}
 
-    		a {
+		.dashboard-grid-toolbar a {
     			padding-top: .15em;
     			padding-bottom: .15em;
     			margin-left: 0.5em !important;
-    			font-size: @small-font;
+    			font-size: 0.9em;
     			color: #ffffff !important;
     		}
 
-    	}
 

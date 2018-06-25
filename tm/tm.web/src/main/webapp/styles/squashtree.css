@@ -28,6 +28,8 @@
 
  /** sprite: sprites-icons; sprite-image: url('../images/sprites-icons.png'); sprite-layout: vertical */
 
+@import url("testCaseTreeIcons.css");
+
 .ui-squashtest-tree-inactive {	color: black;	background: transparent;	border: none;}
 
 li[rel] a.ui-state-default {	font-weight: bold; }
@@ -91,9 +93,6 @@ li[rel="test-case"][kind="gherkin"] > a.jstree-hovered {
 li[rel="test-case"][kind="gherkin"] > a.jstree-clicked {
 	color: white;
 }
-
-
-@import url("testCaseTreeIcons.css");
 
 li[rel="campaign"] > a > .jstree-icon{
 	background-image: url("../images/Icon_Tree_Campaign.png");  /** sprite-ref: sprites-icons; */
