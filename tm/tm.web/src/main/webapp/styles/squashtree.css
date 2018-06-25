@@ -103,7 +103,7 @@ li[rel="iteration"] > a > .jstree-icon {
 	background-image: url("../images/Icon_Tree_Iteration.png")
 }
 
-li[rel="test-suite"] > a > .jstree-icon{
+li[rel="test-suite"] > a > .jstree-icon{ /* NOSONAR */
 	width: 32px;
 	background-position: left, right;
 }
