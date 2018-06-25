@@ -562,8 +562,10 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 
 			for ( var x in PARAMS) {
 				var opt = document.createElement("textarea");
-				opt.name = x;
-				opt.value = PARAMS[x];
+				if (PARAMS.hasOwnProperty(x)) {
+					opt.name = x;
+					opt.value = PARAMS[x];
+				}
 				temp.appendChild(opt);
 			}
 

@@ -92,7 +92,9 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 
 			if (validationErrors !== null) {
 				for ( var key in validationErrors) {
-					Forms.input(this.$("input[name='" + key + "']")).setState("error", validationErrors[key]);
+					if (validationErrors.hasOwnProperty(key)) {
+						Forms.input(this.$("input[name='" + key + "']")).setState("error", validationErrors[key]);
+					}
 				}
 
 				return false;

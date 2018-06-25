@@ -36,8 +36,10 @@ define(
 
 			if (validationErrors !== null) {
 				for (var key in validationErrors) {
-					Forms.input(view.$("[name='" + key +"']")).setState("error",
+					if (validationErrors.hasOwnProperty(key)) {
+						Forms.input(view.$("[name='" + key +"']")).setState("error",
 							validationErrors[key]);
+					}
 				}
 
 				return false;

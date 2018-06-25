@@ -555,8 +555,10 @@ define(['jquery'], function($){
 				var res = {};
 				var localNode = $(elt);
 				for ( var i in attributes) {
-					var attr = attributes[i];
-					res[attr] = localNode.attr(attr);
+					if (attributes.hasOwnProperty(i)) {
+						var attr = attributes[i];
+						res[attr] = localNode.attr(attr);
+					}
 				}
 				return res;
 			});
@@ -574,8 +576,10 @@ define(['jquery'], function($){
 			var shrinkingSet = this;
 
 			for ( var ppt in matchObject) {
-				var selector = "[" + ppt + "='" + matchObject[ppt] + "']";
-				shrinkingSet = shrinkingSet.filter(selector);
+				if (matchObject.hasOwnProperty(ppt)) {
+					var selector = "[" + ppt + "='" + matchObject[ppt] + "']";
+					shrinkingSet = shrinkingSet.filter(selector);
+				}
 			}
 
 			return (shrinkingSet.length == this.length);

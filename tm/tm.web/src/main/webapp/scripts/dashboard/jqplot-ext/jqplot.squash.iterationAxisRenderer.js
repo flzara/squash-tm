@@ -20,7 +20,7 @@
  */
 /*
  * ripped and adapted from jqplot.CategoryAxisRenderer
- * 
+ *
  */
 
 define([ "jquery", "jqplot-category" ], function($) {
@@ -34,7 +34,7 @@ define([ "jquery", "jqplot-category" ], function($) {
 
 	/*
 	 * The whole function is modified
-	 * 
+	 *
 	 */
 	$.jqplot.IterationAxisRenderer.prototype.createTicks = function() {
 		// we're are operating on an axis here
@@ -103,7 +103,9 @@ define([ "jquery", "jqplot-category" ], function($) {
 		var i, t, p;
 
 		for ( p in pos) {
-			this._elem.css(p, pos[p]);
+			if(pos.hasOwnProperty(p)) {
+				this._elem.css(p, pos[p]);
+			}
 		}
 
 		this._offsets = offsets;

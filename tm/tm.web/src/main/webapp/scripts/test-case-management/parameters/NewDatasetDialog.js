@@ -77,14 +77,14 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms", "app/util/StringUt
 		},
 
 		confirm : function(event) {
-			var res = this.validate();			
+			var res = this.validate();
 			if (res){
 				this.trigger("newDataset.confirm");
 				this.cleanup();
 			}
 		},
 
-		addanother : function(event) {	
+		addanother : function(event) {
 			if (this.validate()) {
 				this.cleanup();
 				$('#datasets-table').squashTable().refresh();
@@ -99,7 +99,9 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms", "app/util/StringUt
 
 			if (validationErrors !== null) {
 				for ( var key in validationErrors) {
-					Forms.input(this.$("input[name='add-dataset-" + key + "']")).setState("error", validationErrors[key]);
+					if (validationErrors.hasOwnProperty(key)) {
+						Forms.input(this.$("input[name='add-dataset-" + key + "']")).setState("error", validationErrors[key]);
+					}
 				}
 				res = false;
 				return res;
@@ -133,7 +135,7 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms", "app/util/StringUt
 				async : false,
 				data : JSON.stringify(params),
 				dataType : 'json',
-				success : function(){	
+				success : function(){
 					res = true;
 				},
 				error : function(jqXHR, textStatus, errorThrown){
@@ -155,7 +157,7 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms", "app/util/StringUt
 		cleanup : function() {
 			this.$el.addClass("not-displayed");
 			this._resetForm();
-			
+
 			if(this.$el.data().formDialog !== undefined) {
 				this.$el.formDialog("focusMainInput");
 			}

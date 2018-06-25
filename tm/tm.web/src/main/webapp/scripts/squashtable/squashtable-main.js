@@ -848,8 +848,10 @@ define(["jquery",
 		};
 
 		for (var css in targets) {
-			var cells = $('td.' + css, this);
-			$(cells).each(processCell);
+			if (targets.hasOwnProperty(css)) {
+				var cells = $('td.' + css, this);
+				$(cells).each(processCell);
+			}
 		}
 	}
 
@@ -1113,17 +1115,21 @@ define(["jquery",
 
 				var rowDatas = self.getDataById(_rowid);
 				for (var rowData in rowDatas) {
-					_delegate.data(rowData, rowDatas[rowData]);
+					if (rowDatas.hasOwnProperty(rowData)) {
+						_delegate.data(rowData, rowDatas[rowData]);
+					}
 				}
 
 				// the following trick will open a dialog instance regardless of the actual
 				// implementation used (the original jquery dialog or one of ours).
 				var _data = _delegate.data();
 				for (var _ppt in _data) {
-					var _widg = _data[_ppt];
-					if (_widg.uiDialog !== undefined && _widg.open !== undefined) {
-						_widg.open();
-						break;
+					if (_data.hasOwnProperty(_ppt)) {
+						var _widg = _data[_ppt];
+						if (_widg.uiDialog !== undefined && _widg.open !== undefined) {
+							_widg.open();
+							break;
+						}
 					}
 				}
 			};
@@ -1394,13 +1400,16 @@ define(["jquery",
 		};
 
 		for (var selector in toggleSettings) {
-			// adds a draw callback. It will be then executed every time the table is reloaded
-			this.drawcallbacks.push(drawCallback(selector));
+			if (toggleSettings.hasOwnProperty(selector)) {
 
-			// click handler (executed one time only).
-			var loader = toggleSettings[selector];
+				// adds a draw callback. It will be then executed every time the table is reloaded
+				this.drawcallbacks.push(drawCallback(selector));
 
-			this.on('click', selector + '>div> span.toggle-row-label', clickCallback(loader));
+				// click handler (executed one time only).
+				var loader = toggleSettings[selector];
+
+				this.on('click', selector + '>div> span.toggle-row-label', clickCallback(loader));
+			}
 		}
 	}
 
@@ -1471,9 +1480,11 @@ define(["jquery",
 
 	function _loopConfiguration(defs, handlers, conf) {
 		for (var defItem in defs) {
-			var handler = handlers[defItem];
-			if (!!handler) {
-				handler(conf, defs[defItem]);
+			if (defs.hasOwnProperty(defItem)) {
+				var handler = handlers[defItem];
+				if (!!handler) {
+					handler(conf, defs[defItem]);
+				}
 			}
 		}
 	}
@@ -2084,9 +2095,11 @@ define(["jquery",
 					linkConf.beforeNavigate = function (row, data) {
 						// sets each attribute as a cookie
 						for (var cookiename in oCook) {
-							var rawvalue = oCook[cookiename];
-							var cookievalue = _resolvePlaceholders(rawvalue, data);
-							$.cookie(cookiename, cookievalue, {path: "/"});
+							if (oCook.hasOwnProperty(cookiename)) {
+								var rawvalue = oCook[cookiename];
+								var cookievalue = _resolvePlaceholders(rawvalue, data);
+								$.cookie(cookiename, cookievalue, {path: "/"});
+							}
 						}
 						return true;	// true ~== go on and navigate
 					};

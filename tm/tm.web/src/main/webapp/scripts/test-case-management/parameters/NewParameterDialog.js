@@ -75,11 +75,13 @@ define([ "jquery", "backbone", "app/lnf/Forms", 'workspace.event-bus',
 			Forms.form(this.$el).clearState();
 
 			if (validationErrors !== null) {
-				for ( var key in validationErrors) {
-					Forms.input(this.$("input[name='add-parameter-" + key + "']")).setState("error",
+				for (var key in validationErrors) {
+					if (validationErrors.hasOwnProperty(key)) {
+						Forms.input(this.$("input[name='add-parameter-" + key + "']")).setState("error",
 							validationErrors[key]);
-				}
 
+					}
+				}
 				return false;
 			}
 

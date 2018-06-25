@@ -185,12 +185,15 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "app/util/St
 					eventBus.trigger('node.update-reference', {identity : self.identity, newRef : newRef});
 				},
 
-				_unescapeData : function (data){
+				_unescapeData: function (data) {
 					var result = {};
 					for (var property in data) {
-						var code = StringUtil.unescape(property);
-						var label = StringUtil.unescape(data[property]);
-						result[code] = label;
+						if (data.hasOwnProperty(property)) {
+							var code = StringUtil.unescape(property);
+							var label = StringUtil.unescape(data[property]);
+							result[code] = label;
+
+						}
 					}
 					return result;
 				}

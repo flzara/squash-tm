@@ -34,13 +34,13 @@ require([ "common" ], function() {
 			"requirement-version.verifying-test-case.not-linkable-rejection",
 			"dialog.unbind-ta-project.tooltip"
 		]);
-		
-        
+
+
   	  function lock(){
   		  $('#add-items-button').button('disable');
   		  $('#remove-items-button').button('disable');
   	  }
-  	  
+
   	  function unlock(){
   		  $('#add-items-button').button('enable');
   		  $('#remove-items-button').button('enable');
@@ -61,10 +61,12 @@ require([ "common" ], function() {
 				summaryRoot.empty();
 
 				for(var rejectionType in summary) {
-					var message = summaryMessages[rejectionType];
+					if (summary.hasOwnProperty(rejectionType)) {
+						var message = summaryMessages[rejectionType];
 
-					if (message) {
-						summaryRoot.append('<li>' + message + '</li>');
+						if (message) {
+							summaryRoot.append('<li>' + message + '</li>');
+						}
 					}
 				}
 
@@ -85,7 +87,7 @@ require([ "common" ], function() {
 			squash.vent.trigger("verifying-test-cases:bind-selected", { source: event });
 		});
 
-		
+
 		// maybe here
 		$(document).on("click", "#remove-items-button", function(event){
 			squash.vent.trigger("verifying-test-cases:unbind-selected", { source: event });
@@ -97,18 +99,18 @@ require([ "common" ], function() {
 
 		//the case 'get ids from the research tab' is disabled here, waiting for refactoring.
 		function getTestCasesIds(){
-			
+
 			var ids =	[];
 			var nodes = 0;
 			if( $( '#linkable-test-cases-tree' ).jstree('get_selected').length > 0 ) {
 				 nodes = $( '#linkable-test-cases-tree' ).jstree('get_selected').not(':library').treeNode();
 				 ids = nodes.all('getResId');
-			}	 
+			}
 			return $.map(ids, function(id) { return parseInt(id); });
 		}
 
 		$(function() {
-			
+
 
 			// init the table
 			$("#verifying-test-cases-table").squashTable({
@@ -117,9 +119,9 @@ require([ "common" ], function() {
 	          unbindButtons : {
 	            delegate : "#unbind-active-row-dialog",
 	            tooltip : msg.get('dialog.unbind-ta-project.tooltip')
-	          }		
+	          }
 			});
-			
+
 			// init the panel
 			new VerifyingTestCasesPanel({ apiUrl: window.squashtm.bindingsManager.bindingsUrl })
 
@@ -131,14 +133,14 @@ require([ "common" ], function() {
 				lock();
 				var tree = $('#linkable-test-cases-tree');
 				var ids = getTestCasesIds();
-			
+
 				if (ids.length === 0) {
 					notification.showError(msg.get('message.emptySelectionTestCase'));
 					return;
 				}
 
 				tree.jstree('deselect_all');
-				
+
 				bind(ids).success(function(data){
 					showAddSummary(data);
 					table().refresh();
@@ -147,8 +149,8 @@ require([ "common" ], function() {
 				});
 
 			});
-			
-			
+
+
 		});
 	});
 });

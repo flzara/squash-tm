@@ -27,7 +27,7 @@
  *  Those strings are keys for i18n properties.
  *
  *  The function returns the resolved object, of which the keys has been replaced by the corresponding value.
- *  
+ *
  *
  * Example :
  *
@@ -43,11 +43,11 @@
  *		}
  *	}
  *
- * 
+ *
  * ------------ support for parameterized messages : ----------------
  *
- * Additionally to the 'get(object)' signature, it also supports get(string, param1,...). When used that way, the string argument will have 
- * its placeholders filled with the extra parameters, provided the resulting string contains placeholders like {0}, {1} etc. Parameter 
+ * Additionally to the 'get(object)' signature, it also supports get(string, param1,...). When used that way, the string argument will have
+ * its placeholders filled with the extra parameters, provided the resulting string contains placeholders like {0}, {1} etc. Parameter
  * substitution is positional : param1 will be substituted to placeholder {0}, param2 to {1} etc.
  *
  *
@@ -114,34 +114,35 @@ define(["jquery", "underscore", "workspace.storage"], function($, _, storage){
 		//let's iterate over the properties of the object query
 		for (var ppt in oQuery){
 
-			_i18nkey = oQuery[ppt];
+			if (oQuery.hasOwnProperty(ppt)) {
+				_i18nkey = oQuery[ppt];
 
-			//case 1 : the property is a string, and is expected to be a _18nkey
-			if (typeof _i18nkey === "string"){
-				var _cachedValue = window.squashtm.message.cache[_i18nkey];
-				if (_cachedValue!==undefined){
-					cached[ppt] = _cachedValue;	//value is found : the translation is attached to the 'cached' object
+				//case 1 : the property is a string, and is expected to be a _18nkey
+				if (typeof _i18nkey === "string"){
+					var _cachedValue = window.squashtm.message.cache[_i18nkey];
+					if (_cachedValue!==undefined){
+						cached[ppt] = _cachedValue;	//value is found : the translation is attached to the 'cached' object
+					}
+					else{
+						remains[ppt] = _i18nkey;	//value not found : the key remains attached to the 'remains' object
+					}
 				}
-				else{
-					remains[ppt] = _i18nkey;	//value not found : the key remains attached to the 'remains' object
-				}
-			}
-			//case 2 : the property is an object that we must inspect thoroughly, and of which the split results must be appended to their respective result objects.
-			else if (_.isObject(_i18nkey) && ! _.isFunction(_i18nkey)){
-				var _sub = _split(_i18nkey);
-				var _subcached = _sub[0];
-				var _subremains = _sub[1];
+				//case 2 : the property is an object that we must inspect thoroughly, and of which the split results must be appended to their respective result objects.
+				else if (_.isObject(_i18nkey) && ! _.isFunction(_i18nkey)){
+					var _sub = _split(_i18nkey);
+					var _subcached = _sub[0];
+					var _subremains = _sub[1];
 
-				if (! _.isEmpty(_subcached)){
-					cached[ppt] = _subcached;
-				}
+					if (! _.isEmpty(_subcached)){
+						cached[ppt] = _subcached;
+					}
 
-				if (! _.isEmpty(_subremains)){
-					remains[ppt] = _subremains;
+					if (! _.isEmpty(_subremains)){
+						remains[ppt] = _subremains;
+					}
 				}
 			}
 		}
-
 		return [cached, remains];
 	}
 
@@ -154,16 +155,18 @@ define(["jquery", "underscore", "workspace.storage"], function($, _, storage){
 		var _i18nvalue;
 
 		for (var ppt in keys){
-			_i18nkey = keys[ppt];
+			if (keys.hasOwnProperty(ppt)) {
+				_i18nkey = keys[ppt];
 
-			//if the property is a string : it is a i18key. The value is stored in the 'value' argument, indexed at the same property.
-			if (typeof _i18nkey === "string"){
-				_i18nvalue = values[ppt];
-				window.squashtm.message.cache[_i18nkey] = _i18nvalue;
-			}
-			//if it's an object, let's cache its properties
-			else{
-				_cache(keys[ppt], values[ppt], false);
+				//if the property is a string : it is a i18key. The value is stored in the 'value' argument, indexed at the same property.
+				if (typeof _i18nkey === "string"){
+					_i18nvalue = values[ppt];
+					window.squashtm.message.cache[_i18nkey] = _i18nvalue;
+				}
+				//if it's an object, let's cache its properties
+				else{
+					_cache(keys[ppt], values[ppt], false);
+				}
 			}
 		}
 
@@ -227,20 +230,20 @@ define(["jquery", "underscore", "workspace.storage"], function($, _, storage){
 	function getAsString(/*string key, varargs string params*/){
 		var str = arguments[0];
 		var res = getAsObject({ query : str });
-		
+
 		var translated = res.query;
 		if (arguments.length > 1){
 			// here we match placeholder {0} pos with arguments[pos+1]
 			var pos = 0,
 				needle = null;
-			
+
 			while (pos < arguments.length -1){
 				needle = new RegExp('\\\{'+pos+'\\\}', 'g');
 				translated = translated.replace(needle, arguments[pos+1]);
 				pos++;
 			}
 		}
-		
+
 		return translated;
 	}
 
