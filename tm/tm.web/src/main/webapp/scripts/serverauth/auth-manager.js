@@ -136,7 +136,7 @@ define(['jquery', 'handlebars', 'workspace.routing',
 		});
 
 		// Issue 7520 - CKEDITOR with SCAYT autoStartup makes these pop-up inputs too big
-		$("#login-dialog-login").css({'line-height':'0','margin-bottom':'0.5em'});
+		$("#login-dialog-login").css({'line-height':'0','margin-bottom':'0.3em'});
 		$("#login-dialog-password").css('line-height', 0);
 
 		var hasResolved = false;
