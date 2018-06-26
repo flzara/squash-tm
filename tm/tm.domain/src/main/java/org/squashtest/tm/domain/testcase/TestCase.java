@@ -890,11 +890,11 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 	public void extendWithScript(String scriptLanguage, String locale) {
-		TestCaseKind kind = TestCaseKind.getFromString(scriptLanguage);
-		if (kind.isScripted()) {
-			ScriptedTestCaseExtender scriptedTestCaseExtender = new ScriptedTestCaseExtender(this, scriptLanguage, locale);
-			this.setScriptedTestCaseExtender(scriptedTestCaseExtender);
-			this.setKind(kind);
+		TestCaseKind tcKind = TestCaseKind.getFromString(scriptLanguage);
+		if (tcKind.isScripted()) {
+			ScriptedTestCaseExtender scriptedTCExtender = new ScriptedTestCaseExtender(this, scriptLanguage, locale);
+			this.setScriptedTestCaseExtender(scriptedTCExtender);
+			this.setKind(tcKind);
 		}
 	}
 
