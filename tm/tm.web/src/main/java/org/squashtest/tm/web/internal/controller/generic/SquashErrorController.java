@@ -95,7 +95,7 @@ public class SquashErrorController implements ErrorController {
 			response.setHeader("Stack-Trace", "enable");
 		} else {
 			result = result.entrySet().stream()
-				.filter(map -> map.getKey().equals("status") || map.getKey().equals("error"))
+				.filter(map -> "status".equals(map.getKey()) || "error".equals(map.getKey()))
 				.collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
 		}
 

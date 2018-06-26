@@ -170,7 +170,7 @@ public class CustomReportWorkspaceController {
 				.stream()
 				.filter(node -> !node[0].equals(BigInteger.valueOf(nodeId)))
 				.forEach(node -> {
-					if (node[1].equals("LIBRARY")) {
+					if ("LIBRARY".equals(node[1])) {
 						ancestors.add("#CustomReportLibrary-" + node[0]);
 					} else {
 						ancestors.add("#CustomReportFolder-" + node[0]);
