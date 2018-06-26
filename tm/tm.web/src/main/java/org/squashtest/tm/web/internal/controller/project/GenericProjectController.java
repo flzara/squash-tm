@@ -209,15 +209,15 @@ public class GenericProjectController {
 	}
 
 	private static final class Active {
-		private Boolean active;
+		private Boolean isActive;
 
 		private Active(Boolean active) {
-			this.active = active;
+			this.isActive = active;
 		}
 
 		@SuppressWarnings("unused")
 		public Boolean isActive() {
-			return active;
+			return isActive;
 		}
 	}
 
