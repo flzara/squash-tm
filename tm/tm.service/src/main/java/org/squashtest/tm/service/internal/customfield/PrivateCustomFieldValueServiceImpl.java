@@ -179,8 +179,6 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 			value.setBoundEntity(entity);
 			customFieldValueDao.save(value);
 		}
-
-		// reindexAfterCufBindingModification(binding, boundEntities);
 	}
 
 	@Override

@@ -42,7 +42,6 @@ public final class ScheduledIteration{
 	private Date scheduledStart;
 	private Date scheduledEnd;
 
-	// an entry = { Date, int }
 	private Collection<Object[]> cumulativeTestsByDate = new LinkedList<>();
 
 	public ScheduledIteration(){

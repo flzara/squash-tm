@@ -38,17 +38,17 @@ import org.squashtest.tm.service.statistics.campaign.ManyCampaignStatisticsBundl
  * 	- reduced to one campaign,
  *  - all campaigns that belong to a milestone,
  *  - all campaigns that belong to a folder and a milestone if any.
- * 
+ *
  *  and the list can go on maybe.
- * 
+ *
  *  Undoubtfully many methods are triplicate and would benefit a refactor as with a single arguments List<Long> campaignIds.
  *  The problem for now is that 1) I'm getting lazy and 2) depending on the context some statistics aren't exactly the same
  *  (for instance the granularity of TestInventoryStatistics : they can be computed at campaign level or iteration level).
  *  (also the ProgressionStatistics are undefined for more than one campaign).
- * 
+ *
  *  So I leave it there but if some day we have yet another set of methods to add (like, dashboard for Project), please do that refactoring.
- * 
- *  Note : CampaignLibraryFinderService#findCampaignIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds);
+ *
+ *  Note : CampaignLibraryFinderService#findCampaignIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds); 		// NOSONAR
  *  and CampaignDao#filterByMilestone(Collection<Long> campaignIds, Long milestoneId) might be useful to that end. If you can
  *  solve :
  *  - the inconsistencies regarding the TestInventory (that depends on the the context)
@@ -62,7 +62,7 @@ public interface CampaignStatisticsService {
 
 	/**
 	 * Given a campaign id, gathers all of the following in one package.
-	 * 
+	 *
 	 * @param campaignId
 	 * @return
 	 */
@@ -73,8 +73,8 @@ public interface CampaignStatisticsService {
 	 * <p>
 	 * For activeMilestone, gathers all of the following in one package for a milestone.
 	 * </p>
-	 * 
-	 * 
+	 *
+	 *
 	 * @return
 	 */
 	// functional FIXME : ask a spec writer why statistics vary so subtly depending on
@@ -86,7 +86,7 @@ public interface CampaignStatisticsService {
 	/**
 	 * Given a campaign folder id, gathers all of the following in one package for a milestone.
 	 * If milestoneId is non null, only campaigns that belong to that milestone will be accounted for.
-	 * 
+	 *
 	 * @param folderId
 	 * @param milestoneId
 	 * @return
@@ -100,7 +100,7 @@ public interface CampaignStatisticsService {
 
 	/**
 	 * Given a list of campaign id, gathers and returns the number of test cases grouped by execution status.
-	 * 
+	 *
 	 * @param campaignIds
 	 * @return
 	 */
@@ -109,7 +109,7 @@ public interface CampaignStatisticsService {
 
 	/**
 	 * Given a list of campaign id, gathers and returns the number of passed and failed test cases grouped by weight.
-	 * 
+	 *
 	 * @param campaignIds
 	 * @return
 	 */
@@ -117,7 +117,7 @@ public interface CampaignStatisticsService {
 
 	/**
 	 * Given a list of campaign id, gathers and returns the number of non-executed test cases grouped by weight.
-	 * 
+	 *
 	 * @param campaignIds
 	 * @return
 	 */
@@ -133,11 +133,11 @@ public interface CampaignStatisticsService {
 	 * The theoretical cumulative test count by iterations means how many tests should have been executed per day on
 	 * the basis of the scheduled start and end of an iteration. The actual cumulative test count means how many tests
 	 * have been executed so far, each days, during the same period.</p>
-	 * 
+	 *
 	 * <p>This assumes that the scheduled start and end dates of each iterations are square : they must all be defined,
 	 * and must not overlap. In case of errors appropriate messages will be filled instead and data won't be returned.</p>
-	 * 
-	 * 
+	 *
+	 *
 	 * @param campaignId
 	 * @return
 	 */
@@ -146,7 +146,7 @@ public interface CampaignStatisticsService {
 	/**
 	 * Given a campaign id, gathers and returns how many tests and at which status are planned in this campaign.
 	 * Only tests part of an iteration count. Those statistics are grouped and sorted by Iteration.
-	 * 
+	 *
 	 * @param campaignId
 	 * @return
 	 */
@@ -166,7 +166,7 @@ public interface CampaignStatisticsService {
 	 * 	Note : this method differs slightly from #gatherCampaignTestInventoryStatistics() because the name of each entry
 	 * 	is different.
 	 * </>
-	 * 
+	 *
 	 * @param milestoneId
 	 * @return
 	 */

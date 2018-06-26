@@ -168,9 +168,6 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 		 * as of Squash 1.12, because renaming is sometimes mandatory when the requirement is
 		 * moved around (see requirement deletion specs for details), we no longer fail
 		 * when renaming an requirement that normally shouldn't.
-		 *
-		 * //checkModifiable();
-		 *
 		 */
 		super.setName(name);
 	}

@@ -241,7 +241,6 @@ public class SearchInputInterfaceHelper {
 		MultiSelectField multiSelectField = new MultiSelectField();
 		multiSelectField.setCode(multiSelectFieldModel.getCode());
 		// Sonar: here #getDefaultValue() returns an array. This line is adding a wrong possible option value.
-		// multiSelectField.setDefaultValue(multiSelectFieldModel.getDefaultValue().toString());
 		multiSelectField.setLabel(multiSelectFieldModel.getLabel());
 		multiSelectField.setName(multiSelectFieldModel.getName());
 		multiSelectField.setOptional(multiSelectFieldModel.isOptional());

@@ -459,10 +459,6 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 			buildSubHierarchy(jsTreeNodeChild.getChildren(), fatherChildrenEntity, allChildren, activeMilestoneId);
 		}
 	}
-/*	// TODO factorise or make it abstract
-	private boolean passesMilestoneFilter(JsTreeNode node, Long activeMilestoneId) {
-		return (node != null && (NO_ACTIVE_MILESTONE_ID.equals(activeMilestoneId) || node.getAttr().get("rel").equals("folder") || nodeHasActiveMilestone(nodeLinkedToMilestone, (Long) node.getAttr().get("resId"))));
-	}*/
 
 	protected boolean nodeHasActiveMilestone(Set<Long> nodesLinkedToMilestone, Long libraryNodeId) {
 		for (Long nodeId : nodesLinkedToMilestone) {

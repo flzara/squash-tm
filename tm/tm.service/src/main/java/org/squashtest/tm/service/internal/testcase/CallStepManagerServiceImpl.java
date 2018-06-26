@@ -94,7 +94,6 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 
 		/*
 		 * Feat 3693 : no need for that anymore : by default a call step doesn't delegate the parameters of the called test case anymore
-		 *	datasetModificationService.updateDatasetParameters(parentTestCaseId);
 		 */
 		testCaseImportanceManagerService.changeImportanceIfCallStepAddedToTestCases(calledTestCase, parentTestCase);
 	}

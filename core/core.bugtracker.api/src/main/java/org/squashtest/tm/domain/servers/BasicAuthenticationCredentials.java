@@ -101,6 +101,5 @@ public class BasicAuthenticationCredentials implements Credentials {
 	public void wipePassword(){
 		//NOOP it make the bugtracker auto-connect loosing it's password...
 		//We must find another way to protect the password
-//		Arrays.fill(password, '\0');
 	}
 }

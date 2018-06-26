@@ -248,9 +248,7 @@ public class GherkinStepGenerator {
 		String keyword = scenarioDefinition.getKeyword();
 		appendClassSpan(sb, keyword, SCENARIO_KEYWORD_CLASS_NAME);
 		sb.append(scenarioDefinition.getName());
-//		appendLineBreak(sb);
 		appendClassSpan(sb, scenarioDefinition.getDescription(), SCENARIO_DESCRIPTION_CLASS_NAME);
-//		appendBlankLine(sb);
 	}
 
 	private void appendLineBreak(StringBuilder sb) {

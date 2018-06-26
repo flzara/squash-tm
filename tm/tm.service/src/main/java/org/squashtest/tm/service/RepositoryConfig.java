@@ -122,7 +122,6 @@ public class RepositoryConfig implements TransactionManagementConfigurer {
 	public JpaTransactionManager transactionManager() {
 		JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
 		jpaTransactionManager.setEntityManagerFactory(entityManagerFactory());
-		//jpaTransactionManager.setEntityManagerFactory(emf);
 		// Below is useful to be able to perform direct JDBC operations using this same tx mgr.
 		jpaTransactionManager.setDataSource(dataSource);
 		return jpaTransactionManager;

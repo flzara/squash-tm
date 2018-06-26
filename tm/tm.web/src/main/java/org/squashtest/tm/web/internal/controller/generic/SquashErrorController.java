@@ -102,10 +102,4 @@ public class SquashErrorController implements ErrorController {
 		return result;
 	}
 
-    /*
-	 * for reminder here is how you can fetch the exception
-    private Throwable getError(HttpServletRequest request){
-    	RequestAttributes requestAttributes = new ServletRequestAttributes(request);
-    	return (Throwable)requestAttributes.getAttribute("javax.servlet.error.exception", RequestAttributes.SCOPE_REQUEST);
-    }*/
 }

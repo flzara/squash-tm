@@ -69,7 +69,6 @@ public class CustomFieldModelServiceImpl implements CustomFieldModelService {
 	}
 
 	public Map<Long, CustomFieldModel> findAllUsedCustomFieldsByEntity(List<Long> projectIds,BindableEntity entity) {
-//		List<Long> usedCufIds = findUsedCustomFieldIds(projectIds);
 		return findCufMapByEntityType(projectIds,entity);
 	}
 

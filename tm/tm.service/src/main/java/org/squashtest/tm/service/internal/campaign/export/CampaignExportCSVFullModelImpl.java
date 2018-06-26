@@ -730,7 +730,6 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 
 		private String formatStepRequirements() {
 			String res;
-			// WARNING !! removed try{...}catch(NPE)
 			if (execStep != null && execStep.getReferencedTestStep() != null && ((ActionTestStep) execStep.getReferencedTestStep()).getRequirementVersionCoverages() != null) {
 				/*
 				 * should fix the mapping of execution steps -> action step : an execution step cannot reference a

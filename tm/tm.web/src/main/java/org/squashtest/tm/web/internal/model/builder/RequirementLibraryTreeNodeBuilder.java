@@ -71,7 +71,7 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 		@Override
 		public void visit(Requirement requirement) {
 
-			// supposed not to be null;
+			// supposed not to be null
 			RequirementVersion version = milestoneFilter == null ? requirement.getCurrentVersion() : requirement.findByMilestone(milestoneFilter);
 
 			//version can be null if it not in the current milestone but on of his child is.

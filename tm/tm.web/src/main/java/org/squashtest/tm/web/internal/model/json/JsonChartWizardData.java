@@ -114,7 +114,6 @@ public class JsonChartWizardData {
 		addInfoList(projects);
 		//For 1.13 we don't support operations on the custom fields.
 		//But as it will be in next version, i don't suppress the code.
-		//addCustomFields(projects);
 		addDisabledStatus(projects);
 
 

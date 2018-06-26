@@ -98,9 +98,9 @@ import org.hibernate.persister.spi.PersisterCreationContext;
  *  the default implementation straight from org.hibernate.persister.entity.AbstractEntityPersister :
  *
  *  [quote]
- *  protected boolean isInverseTable(int j) {
- *		return false;
- *	}
+ *  protected boolean isInverseTable(int j) { 		//NOSONAR
+ *		return false; 								//NOSONAR
+ *	}												//NOSONAR
  *	[/quote]
  *
  *	And here is how Gavin King solved the problem : by delegating to me.
@@ -119,7 +119,7 @@ import org.hibernate.persister.spi.PersisterCreationContext;
  */
 
 /*
-    ABOUT SONAR : it says this class has been copypasted into IterationTestPlanItemPersister, 
+    ABOUT SONAR : it says this class has been copypasted into IterationTestPlanItemPersister,
 and should be refactored. Sure, go ahdead. I'm watching.
 */
 public class TestStepPersister extends JoinedSubclassEntityPersister {
@@ -139,7 +139,7 @@ public class TestStepPersister extends JoinedSubclassEntityPersister {
 	 */
 	private int _cachedIndex=-1;
 
-      
+
 	public TestStepPersister(PersistentClass persistentClass,
 			EntityRegionAccessStrategy cacheAccessStrategy,
 			NaturalIdRegionAccessStrategy naturalIdRegionAccessStrategy,
@@ -147,7 +147,7 @@ public class TestStepPersister extends JoinedSubclassEntityPersister {
 					throws HibernateException {
 
 		super(persistentClass, cacheAccessStrategy, naturalIdRegionAccessStrategy, creationContext);
-                
+
 		init(persistentClass, creationContext.getSessionFactory());
 	}
 

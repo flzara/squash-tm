@@ -99,7 +99,7 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 	 * @param instruction
 	 */
 	protected void postProcessInstruction(Row row, INST instruction) {
-		// NOOP;
+		// NOOP
 	}
 
 	private void processCustomFieldColumns(Row row, INST instruction) {

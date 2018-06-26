@@ -71,7 +71,7 @@ import org.squashtest.tm.domain.testcase.TestStep;
 			builder.append("<p>").append(elements.get(0)[1]).append("</p>");
 		}
 
-		// appending supplementary material if any;
+		// appending supplementary material if any
 
 		if (elements.size() > 1) {
 

@@ -106,7 +106,7 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 	}
 
 	private static PropertyHolderFinderRepository<?> createCoverageWorksheetRepo() {
-		PropertyHolderFinderRepository<CoverageSheetColumn> r = new PropertyHolderFinderRepository<>();		
+		PropertyHolderFinderRepository<CoverageSheetColumn> r = new PropertyHolderFinderRepository<>();
 		PropertyHolderFinder<CoverageInstruction, CoverageTarget> targetFinder = new PropertyHolderFinder<CoverageInstruction, CoverageTarget>() {
 
 			@Override
@@ -118,41 +118,41 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 		r.defaultFinder = targetFinder;
 		return r;
 	}
-	
+
 	private static PropertyHolderFinderRepository<?> createRequirementLinksWorksheetRepo(){
 		PropertyHolderFinderRepository<RequirementLinksSheetColumn> r = new PropertyHolderFinderRepository<>();
-		
+
 		PropertyHolderFinder<RequirementLinkInstruction, RequirementVersionTarget> sourceVersionTarget = new PropertyHolderFinder<RequirementLinkInstruction, RequirementVersionTarget>() {
 			@Override
 			public RequirementVersionTarget find(RequirementLinkInstruction instruction) {
 				return instruction.getTarget().getSourceVersion();
 			}
 		};
-		
+
 		PropertyHolderFinder<RequirementLinkInstruction, RequirementVersionTarget> destVersionTarget = new PropertyHolderFinder<RequirementLinkInstruction, RequirementVersionTarget>() {
 			@Override
 			public RequirementVersionTarget find(RequirementLinkInstruction instruction) {
 				return instruction.getTarget().getDestVersion();
 			}
 		};
-		
+
 		PropertyHolderFinder<RequirementLinkInstruction, RequirementLinkInstruction> instructionFinder = new PropertyHolderFinder<RequirementLinkInstruction, RequirementLinkInstruction>(){
 			@Override
 			public RequirementLinkInstruction find(RequirementLinkInstruction instruction) {
 				return instruction;
 			}
 		};
-		
+
 
 		r.finderByColumn.put(RequirementLinksSheetColumn.ACTION, instructionFinder);
 		r.finderByColumn.put(RequirementLinksSheetColumn.REQ_PATH, sourceVersionTarget);
 		r.finderByColumn.put(RequirementLinksSheetColumn.REQ_VERSION_NUM, sourceVersionTarget);
 		r.finderByColumn.put(RequirementLinksSheetColumn.RELATED_REQ_PATH, destVersionTarget);
 		r.finderByColumn.put(RequirementLinksSheetColumn.RELATED_REQ_VERSION_NUM, destVersionTarget);
-		
-		// other properties (code etc) left to the body of the instruction (see RequirementLinkInstruction);
+
+		// other properties (code etc) left to the body of the instruction (see RequirementLinkInstruction)
 		r.defaultFinder = instructionFinder;
-				
+
 		return r;
 	}
 
