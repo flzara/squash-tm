@@ -124,8 +124,8 @@ public class ReqCoverageByTestProjectDto implements HasMilestoneLabel{
 			}
 		}
 	}
-	
-	
+
+
 	/**
 	 * Increments the number identified by the ReqCoverageByTestStatType
 	 *
@@ -276,8 +276,8 @@ public class ReqCoverageByTestProjectDto implements HasMilestoneLabel{
 		return requirementNumbers;
 	}
 
-	public void setRequirementNumbers(EnumMap<ReqCoverageByTestStatType, Long> requirementNumbers) {
-		this.requirementNumbers = requirementNumbers;
+	public void setRequirementNumbers(Map<ReqCoverageByTestStatType, Long> requirementNumbers) {
+		this.requirementNumbers = (EnumMap<ReqCoverageByTestStatType, Long>) requirementNumbers;
 	}
 
 	public Long getWorkInProgressTotalRequirementNumber() {

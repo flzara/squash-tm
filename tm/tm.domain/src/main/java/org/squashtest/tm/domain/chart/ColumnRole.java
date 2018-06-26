@@ -42,6 +42,7 @@ import static org.squashtest.tm.domain.chart.Operation.SUM;
 
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.Set;
 
 public enum ColumnRole {
 
@@ -57,10 +58,7 @@ public enum ColumnRole {
 		this.operations = EnumSet.copyOf(Arrays.asList(operations));
 	}
 
-	public EnumSet<Operation> getOperations() {
+	public Set<Operation> getOperations() {
 		return EnumSet.copyOf(operations);
 	}
-
-
-
 }
