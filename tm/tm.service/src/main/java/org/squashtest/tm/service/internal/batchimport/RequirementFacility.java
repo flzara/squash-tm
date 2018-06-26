@@ -304,15 +304,6 @@ class RequirementFacility extends EntityFacilitySupport {
 		}
 	}
 
-
-	private void moveNodesToLibrary(Long requirementLibrairyId, Long[] longs,
-		Integer order) {
-		if (order != null && order > 0) {
-			reqLibNavigationService.moveNodesToLibrary(requirementLibrairyId, longs, order);
-		}
-
-	}
-
 	/**
 	 * Here we do all the needed modifications to the freshly created requirement.
 	 *

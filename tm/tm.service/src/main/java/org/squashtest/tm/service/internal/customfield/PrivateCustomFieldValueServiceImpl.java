@@ -183,16 +183,6 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		// reindexAfterCufBindingModification(binding, boundEntities);
 	}
 
-	private void reindexAfterCufBindingModification(CustomFieldBinding binding, List<BoundEntity> boundEntities) {
-		if (BindableEntity.TEST_CASE == binding.getBoundEntity()) {
-			List<Long> tcIds = boundEntities.stream().map(BoundEntity::getBoundEntityId).collect(toList());
-			indexationService.batchReindexTc(tcIds);
-		} else if (BindableEntity.REQUIREMENT_VERSION == binding.getBoundEntity()) {
-			List<Long> reqVersionIds = boundEntities.stream().map(BoundEntity::getBoundEntityId).collect(toList());
-			indexationService.batchReindexReqVersion(reqVersionIds);
-		}
-	}
-
 	@Override
 	public void cascadeCustomFieldValuesDeletion(CustomFieldBinding binding) {
 		customFieldValueDao.deleteAllForBinding(binding.getId());

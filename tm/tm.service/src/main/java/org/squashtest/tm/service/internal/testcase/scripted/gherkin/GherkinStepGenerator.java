@@ -253,11 +253,6 @@ public class GherkinStepGenerator {
 //		appendBlankLine(sb);
 	}
 
-	private void appendBlankLine(StringBuilder sb) {
-		appendLineBreak(sb);
-		appendLineBreak(sb);
-	}
-
 	private void appendLineBreak(StringBuilder sb) {
 		sb.append("</br>");
 	}
