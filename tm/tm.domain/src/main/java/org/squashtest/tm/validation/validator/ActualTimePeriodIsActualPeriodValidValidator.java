@@ -37,7 +37,7 @@ public class ActualTimePeriodIsActualPeriodValidValidator implements ConstraintV
 	@Override
 	public void initialize(IsActualPeriodValid constraintAnnotation) {
 		// NOOP
-		
+
 	}
 
 	/**
@@ -48,9 +48,7 @@ public class ActualTimePeriodIsActualPeriodValidValidator implements ConstraintV
 		boolean result = true;
 		if(!actualTimePeriod.isActualStartAuto() && !actualTimePeriod.isActualEndAuto()
 				&& actualTimePeriod.getActualStartDate() != null && actualTimePeriod.getActualEndDate() !=null) {
-			if(actualTimePeriod.getActualStartDate().getTime() > actualTimePeriod.getActualEndDate().getTime()) {
-				result = false;
-			}
+			result = actualTimePeriod.getActualStartDate().getTime() <= actualTimePeriod.getActualEndDate().getTime();
 		}
 		return result;
 	}

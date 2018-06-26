@@ -219,19 +219,21 @@ public class SearchInputInterfaceHelper {
 		CustomFieldModelFactory.SingleSelectFieldModel singleSelectFieldModel = (CustomFieldModelFactory.SingleSelectFieldModel)customField;
 		SingleSelectField selectField = new SingleSelectField();
 		selectField.setCode(singleSelectFieldModel.getCode());
-		selectField.setDefaultValue(singleSelectFieldModel.getDefaultValue().toString());
+		selectField.setDefaultValue(singleSelectFieldModel.getDefaultValue());
 		selectField.setLabel(singleSelectFieldModel.getLabel());
 		selectField.setName(singleSelectFieldModel.getName());
 		selectField.setOptional(singleSelectFieldModel.isOptional());
 		for(CustomFieldModelFactory.CustomFieldOptionModel optionModel : singleSelectFieldModel.getOptions()){
 			CustomFieldOption customFieldModel = new CustomFieldOption(optionModel.getLabel(),optionModel.getCode());
-			if(!selectField.getOptions().contains(customFieldModel)) {
-				if(customFieldModel.getCode()!=null&&customFieldModel.getLabel()!=null) {
-					selectField.addOption(customFieldModel);
-				}
+			if(!selectField.getOptions().contains(customFieldModel) && checkCodeAndLabel(customFieldModel)) {
+				selectField.addOption(customFieldModel);
 			}
 		}
 		return selectField;
+	}
+
+	private boolean checkCodeAndLabel(CustomFieldOption customFieldOption) {
+		return customFieldOption.getCode() != null && customFieldOption.getLabel() != null;
 	}
 
 	private MultiSelectField convertToMultiSelectField(CustomFieldModel customField){
