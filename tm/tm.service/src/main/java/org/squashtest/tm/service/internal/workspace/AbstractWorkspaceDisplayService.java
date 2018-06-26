@@ -418,13 +418,13 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 			Long parentKey = parentChildrenEntry.getKey();
 			if (jsTreeNodes.containsKey(parentKey)) {
 				builParentHierarchy(  openedLibrary,
-				parentKey,  parentChildrenEntry, jsTreeNodes,fatherChildrenLibrary, fatherChildrenEntity,
+				parentKey,  parentChildrenEntry, jsTreeNodes, fatherChildrenEntity,
 					 allChildren, 	activeMilestoneId);
 			}
 		}
 	}
 
-	private void builParentHierarchy(boolean openedLibrary, Long parentKey, Map.Entry<Long, List<Long>> parentChildrenEntry, Map<Long, JsTreeNode> jsTreeNodes, MultiMap fatherChildrenLibrary, MultiMap fatherChildrenEntity, Map<Long, JsTreeNode> allChildren, Long activeMilestoneId){
+	private void builParentHierarchy(boolean openedLibrary, Long parentKey, Map.Entry<Long, List<Long>> parentChildrenEntry, Map<Long, JsTreeNode> jsTreeNodes, MultiMap fatherChildrenEntity, Map<Long, JsTreeNode> allChildren, Long activeMilestoneId){
 		for (Long childKey : parentChildrenEntry.getValue()) {
 			if (passesMilestoneFilter(allChildren.get(childKey), activeMilestoneId)) {
 				jsTreeNodes.get(parentKey).addChild(allChildren.get(childKey));
@@ -442,12 +442,12 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		boolean openedEntity = false;
 		for (JsTreeNode jsTreeNodeChild : children) {
 			if (fatherChildrenEntity.containsKey(jsTreeNodeChild.getAttr().get(RES_ID))) {
-				buildSubHierarchyItems( openedEntity,jsTreeNodeChild, children, fatherChildrenEntity,  allChildren, activeMilestoneId);
+				buildSubHierarchyItems( openedEntity,jsTreeNodeChild, fatherChildrenEntity,  allChildren, activeMilestoneId);
 				}
 		}
 	}
 
-	private void buildSubHierarchyItems(boolean openedEntity, JsTreeNode jsTreeNodeChild, List<JsTreeNode> children, MultiMap fatherChildrenEntity, Map<Long, JsTreeNode> allChildren, Long activeMilestoneId){
+	private void buildSubHierarchyItems(boolean openedEntity, JsTreeNode jsTreeNodeChild, MultiMap fatherChildrenEntity, Map<Long, JsTreeNode> allChildren, Long activeMilestoneId){
 		for (Long childKey : (ArrayList<Long>) fatherChildrenEntity.get(jsTreeNodeChild.getAttr().get(RES_ID))) {
 			if (passesMilestoneFilter(allChildren.get(childKey), activeMilestoneId)) {
 				jsTreeNodeChild.addChild(allChildren.get(childKey));

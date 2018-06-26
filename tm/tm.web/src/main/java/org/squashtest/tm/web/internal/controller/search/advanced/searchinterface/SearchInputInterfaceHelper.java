@@ -137,7 +137,7 @@ public class SearchInputInterfaceHelper {
 		return model;
 	}
 
-	public SearchInputInterfaceModel getCampaignSearchInputInterfaceModel(Locale locale, boolean isMilestoneMode, List<Long> readableProjectIds, Collection<JsonProject> jsProjects) {
+	public SearchInputInterfaceModel getCampaignSearchInputInterfaceModel(Locale locale, boolean isMilestoneMode, List<Long> readableProjectIds) {
 
 		SearchInputInterfaceModel model = new SearchInputInterfaceModel();
 		List<String> users = campaignAdvancedSearchService.findAllAuthorizedUsersForACampaign(readableProjectIds);
