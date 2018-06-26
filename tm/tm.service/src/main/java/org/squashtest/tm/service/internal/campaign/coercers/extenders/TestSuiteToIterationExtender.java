@@ -39,6 +39,7 @@ import org.squashtest.tm.service.internal.hibernate.HibernateStatelessSessionHel
  */
 @Configurable
 @Named("testSuiteToIterationExtender")
+@SuppressWarnings("Duplicates")
 public class TestSuiteToIterationExtender implements IdsCoercerExtender {
 
 	@Inject

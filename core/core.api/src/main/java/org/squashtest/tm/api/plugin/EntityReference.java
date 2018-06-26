@@ -38,6 +38,7 @@ public class EntityReference {
 	 */
 	private final Long id;
 
+	@SuppressWarnings("Duplicates")
 	public EntityReference(EntityType entityType, Long entityId) {
 		super();
 		this.type = entityType;
@@ -49,6 +50,7 @@ public class EntityReference {
 	/**
 	 * @return the type
 	 */
+	@SuppressWarnings("Duplicates")
 	public EntityType getType() {
 		return type;
 	}
@@ -56,11 +58,13 @@ public class EntityReference {
 	/**
 	 * @return the id
 	 */
+	@SuppressWarnings("Duplicates")
 	public Long getId() {
 		return id;
 	}
 
 	@Override
+	@SuppressWarnings("Duplicates")
 	public String toString(){
 		return "["+type.toString()+":"+id+"]";
 	}
@@ -68,7 +72,7 @@ public class EntityReference {
 	/**
 	 * @see java.lang.Object#hashCode()
 	 */
-	@Override
+	@SuppressWarnings("Duplicates")	@Override
 	public int hashCode() { // GENERATED:START
 		final int prime = 43;
 		int result = 29;
@@ -81,6 +85,7 @@ public class EntityReference {
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
+	@SuppressWarnings("Duplicates")
 	public boolean equals(Object obj) { // GENERATED:START
 		if (this == obj)
 			return true;

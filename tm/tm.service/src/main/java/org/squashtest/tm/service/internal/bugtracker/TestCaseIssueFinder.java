@@ -57,6 +57,7 @@ import java.util.concurrent.TimeoutException;
  * @author Gregory Fouquet
  * @since 1.14.0  04/04/16
  */
+@SuppressWarnings("Duplicates")
 @Component
 public class TestCaseIssueFinder implements IssueOwnershipFinder {
 	@Value("${squashtm.bugtracker.timeout:15}")
@@ -75,15 +76,15 @@ public class TestCaseIssueFinder implements IssueOwnershipFinder {
 	private LocaleContext getLocaleContext() {
 		return LocaleContextHolder.getLocaleContext();
 	}
-	
+
 	private SecurityContext getSecurityContext(){
 		return SecurityContextHolder.getContext();
 	}
-	
+
 	private UserCredentialsCache getCredentialsCache(){
 		return credentialsProvider.getCache();
 	}
-	
+
 	private List<Pair<Execution, Issue>> findExecutionIssuePairs(TestCase testCase, PagingAndSorting sorter) {
 		return issueDao.findAllExecutionIssuePairsByTestCase(testCase, sorter);
 	}

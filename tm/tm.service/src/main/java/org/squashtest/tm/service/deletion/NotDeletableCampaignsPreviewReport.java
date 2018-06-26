@@ -27,6 +27,7 @@ import java.util.Set;
 
 import org.springframework.context.MessageSource;
 
+@SuppressWarnings("Duplicates")
 public class NotDeletableCampaignsPreviewReport implements SuppressionPreviewReport {
 
 	private static final String NORIGHT_MESSAGE_KEY_1 = "dialog.label.delete-node.label.specialcase.noright.first";

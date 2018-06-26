@@ -44,7 +44,7 @@ import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.project.GenericLibrary;
 import org.squashtest.tm.domain.project.GenericProject;
 
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({"rawtypes","Duplicates"})
 @Entity
 public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  {
 

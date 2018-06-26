@@ -45,7 +45,6 @@ import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.library.*;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneMember;
@@ -58,6 +57,7 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Auditable
 @Entity
+@SuppressWarnings("Duplicates")
 public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, TreeNode, Copiable, Identified,
 	BoundEntity, MilestoneMember {
 	private static final String ITERATION_ID = "ITERATION_ID";

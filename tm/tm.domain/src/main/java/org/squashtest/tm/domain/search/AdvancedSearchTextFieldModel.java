@@ -20,14 +20,15 @@
  */
 package org.squashtest.tm.domain.search;
 
+@SuppressWarnings("Duplicates")
 public class AdvancedSearchTextFieldModel implements AdvancedSearchFieldModel{
 
 	private AdvancedSearchFieldModelType type = AdvancedSearchFieldModelType.TEXT;
 
 	private String value;
-	
+
 	private boolean ignoreBridge = false;
-	
+
 	public String getValue() {
 		return value;
 	}
@@ -40,7 +41,7 @@ public class AdvancedSearchTextFieldModel implements AdvancedSearchFieldModel{
 	public void setValue(String value) {
 		this.value = value;
 	}
-	
+
 	@Override
 	public boolean isIgnoreBridge() {
 		return this.ignoreBridge;

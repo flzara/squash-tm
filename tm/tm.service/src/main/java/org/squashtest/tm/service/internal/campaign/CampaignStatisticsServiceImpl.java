@@ -43,6 +43,7 @@ import java.util.*;
 
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
+@SuppressWarnings("Duplicates")
 @Transactional(readOnly = true)
 @Service("CampaignStatisticsService")
 public class CampaignStatisticsServiceImpl implements CampaignStatisticsService {

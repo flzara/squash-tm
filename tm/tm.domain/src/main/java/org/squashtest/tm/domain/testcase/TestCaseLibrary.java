@@ -45,6 +45,7 @@ import org.squashtest.tm.domain.project.GenericLibrary;
 import org.squashtest.tm.domain.project.GenericProject;
 
 @Entity
+@SuppressWarnings("Duplicates")
 public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> {
 
 	private static final String CLASS_NAME = "org.squashtest.tm.domain.testcase.TestCaseLibrary";

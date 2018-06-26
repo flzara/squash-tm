@@ -33,7 +33,7 @@ import org.squashtest.tm.domain.chart.*;
 import org.squashtest.tm.domain.chart.SpecializedEntityType.EntityRole;
 
 
-
+@SuppressWarnings("Duplicates")
 public class JsonChartInstance {
 
 	private String name;

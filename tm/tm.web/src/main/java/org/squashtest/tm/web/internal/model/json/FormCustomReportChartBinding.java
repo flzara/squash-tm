@@ -29,24 +29,24 @@ import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
  * @author jthebault
  *
  */
+@SuppressWarnings("Duplicates")
 public class FormCustomReportChartBinding {
-	
+
 	private Long id;
-	
+
 	private Long chartNodeId;
-	
+
 	private Long dashboardNodeId;
-	
+
 	private int row;
-	
+
 	private int col;
-	
+
 	private int sizeX;
-	
+
 	private int sizeY;
-	
+
 	public FormCustomReportChartBinding() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public Long getId() {
@@ -104,15 +104,15 @@ public class FormCustomReportChartBinding {
 	public void setSizeY(int sizeY) {
 		this.sizeY = sizeY;
 	}
-	
+
 	public CustomReportChartBinding convertToEntity (){
 		CustomReportChartBinding crcb = new CustomReportChartBinding();
-		
+
 		crcb.setCol(col);
 		crcb.setRow(row);
 		crcb.setSizeX(sizeX);
 		crcb.setSizeY(sizeY);
-		
+
 		return crcb;
 	}
 }

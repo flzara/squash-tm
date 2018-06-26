@@ -29,7 +29,9 @@ import java.util.List;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.squashtest.tm.service.statistics.campaign.ScheduledIteration;
+import org.squashtest.tm.service.statistics.campaign.StatisticUtils;
 
+@SuppressWarnings("Duplicates")
 public class IterationProgressionStatistics {
 private Collection<String> i18nErrors;
 
@@ -37,6 +39,7 @@ private Collection<String> i18nErrors;
 
 	private List<Object[]> cumulativeExecutionsPerDate;
 
+	private StatisticUtils statisticUtils;
 
 	public ScheduledIteration getScheduledIteration() {
 		return scheduledIteration;
@@ -75,35 +78,7 @@ private Collection<String> i18nErrors;
 	public void computeCumulativeTestPerDate(List<Date> dates){
 
 		// that where I'd love to have collection.fold(), instead we do the following
-		List<Object[]> cumulativeTestsPerDate = new LinkedList<>();
-
-		if (! dates.isEmpty()){
-			// we use here a modified list with a dummy element at the end that will
-			// help us to work around a corner case : handling the last element of the loop
-			List<Date> trickedDates = new LinkedList<>(dates);
-			trickedDates.add(null);
-
-			Iterator<Date> dateIter = trickedDates.iterator();
-			Date precDate= dateIter.next();
-			Date curDate;
-			Date truncated;
-			int accumulator = 1;
-
-			// iterate over the rest. Remember that the last element is a dummy null value
-			while(dateIter.hasNext()){
-				curDate = dateIter.next();
-				if (! isSameDay(precDate, curDate)){
-					truncated = DateUtils.truncate(precDate, Calendar.DATE);
-					cumulativeTestsPerDate.add(new Object[]{truncated, accumulator});
-				}
-				accumulator++;
-				precDate = curDate;
-			}
-
-		}
-
-		setCumulativeExecutionsPerDate(cumulativeTestsPerDate);
-
+		setCumulativeExecutionsPerDate(statisticUtils.gatherCumulativeTestsPerDate(dates));
 
 	}
 

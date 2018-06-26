@@ -44,6 +44,7 @@ import org.squashtest.tm.domain.project.Project;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "CLN_ID")
+@SuppressWarnings("Duplicates")
 public class CampaignFolder extends CampaignLibraryNode implements Folder<CampaignLibraryNode> {
 	/**
 	 * Delegate implementation of folder responsibilities.
@@ -52,7 +53,7 @@ public class CampaignFolder extends CampaignLibraryNode implements Folder<Campai
 	private final FolderSupport<CampaignLibraryNode, CampaignFolder> folderSupport = new FolderSupport<>(this);
 
         /*
-        Note about cascading: 
+        Note about cascading:
         CascadeType.PERSIST is desirable because it allows us to cascade-create a complete grape of object (useful when importing for instance)
         CascadeType.DELETE is not desirable, because we need to call custom code for proper deletion (see the deletion services)
         */

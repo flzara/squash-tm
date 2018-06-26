@@ -22,7 +22,7 @@ package org.squashtest.tm.service.statistics.campaign;
 
 import java.util.List;
 
-
+@SuppressWarnings("Duplicates")
 public final class CampaignStatisticsBundle {
 
 	private List<IterationTestInventoryStatistics> iterationTestInventoryStatisticsList;

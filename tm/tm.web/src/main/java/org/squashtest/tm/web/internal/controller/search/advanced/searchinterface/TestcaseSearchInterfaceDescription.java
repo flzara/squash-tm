@@ -43,6 +43,7 @@ import static org.squashtest.tm.domain.testcase.TestCaseKind.GHERKIN;
 import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD;
 
 @Component
+@SuppressWarnings("Duplicates")
 public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescription {
 
 	private static final String COLUMN_1 = "column1";

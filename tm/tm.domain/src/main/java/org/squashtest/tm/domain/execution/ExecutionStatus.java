@@ -115,6 +115,7 @@ import org.squashtest.tm.domain.requirement.RequirementStatus;
  *  Two more TA statuses : NOT_RUN(BLOCKED) and NOT_FOUND(UNTESTABLE)
  *
  */
+@SuppressWarnings("Duplicates")
 public enum ExecutionStatus implements Internationalizable, Level {
 
 	SETTLED(10) {

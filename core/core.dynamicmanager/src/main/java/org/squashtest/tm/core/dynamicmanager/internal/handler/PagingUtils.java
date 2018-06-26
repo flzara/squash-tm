@@ -31,6 +31,7 @@ import javax.persistence.Query;
  * @author Gregory Fouquet
  *
  */
+@SuppressWarnings("Duplicates")
 final class PagingUtils {
 	private PagingUtils() {
 		super();

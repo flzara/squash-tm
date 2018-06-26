@@ -29,7 +29,7 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.RequestExecu
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildProcessor;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildStep;
 
-
+@SuppressWarnings("Duplicates")
 public class CheckBuildQueue extends BuildStep<CheckBuildQueue> implements HttpBasedStep {
 
 	/* *** technically needed for the computation **** */

@@ -38,6 +38,7 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "REPORT_DEFINITION")
 @Auditable
+@SuppressWarnings("Duplicates")
 public class ReportDefinition implements TreeEntity{
 
 	@Id

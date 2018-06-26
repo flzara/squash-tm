@@ -26,10 +26,11 @@ import static org.squashtest.tm.service.internal.batchimport.testcase.excel.Colu
 
 /**
  * Enumerates columns in the parameters worksheet
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
+@SuppressWarnings("Duplicates")
 public enum ParameterSheetColumn implements TemplateColumn {
 	ACTION,
 	TC_OWNER_PATH(MANDATORY),

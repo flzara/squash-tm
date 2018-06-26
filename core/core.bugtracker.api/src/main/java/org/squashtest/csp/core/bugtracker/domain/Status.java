@@ -35,6 +35,7 @@ public class Status implements Identifiable<Status>, RemoteStatus {
 		//Default constructor
 	}
 
+	@SuppressWarnings("Duplicates")
 	public Status(String id, String name) {
 		super();
 		this.id = id;
@@ -42,21 +43,24 @@ public class Status implements Identifiable<Status>, RemoteStatus {
 	}
 
 	@Override
+	@SuppressWarnings("Duplicates")
 	public String getId() {
 		return id;
 	}
 
 	@Override
+	@SuppressWarnings("Duplicates")
 	public String getName() {
 		return name;
 	}
 
 	@Override
+	@SuppressWarnings("Duplicates")
 	public boolean isDummy() {
 		return this.id.equals(NO_STATUS.id);
 	}
 
-
+	@SuppressWarnings("Duplicates")
 	public void setId(String id) {
 		this.id = id;
 	}

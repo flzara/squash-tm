@@ -59,6 +59,7 @@ import java.util.concurrent.TimeoutException;
  * @author Gregory Fouquet
  * @since 1.14.0  29/03/16
  */
+@SuppressWarnings("Duplicates")
 abstract class IssueOwnershipFinderSupport<H> implements IssueOwnershipFinder {
 	@Value("${squashtm.bugtracker.timeout:15}")
 	private long timeout;
@@ -74,15 +75,15 @@ abstract class IssueOwnershipFinderSupport<H> implements IssueOwnershipFinder {
 	IssueOwnershipFinderSupport() {
 		super();
 	}
-	
+
 	private LocaleContext getLocaleContext() {
 		return LocaleContextHolder.getLocaleContext();
 	}
-	
+
 	private SecurityContext getSecurityContext(){
 		return SecurityContextHolder.getContext();
 	}
-	
+
 	private UserCredentialsCache getCredentialsCache(){
 		return credentialsProvider.getCache();
 	}
@@ -133,8 +134,8 @@ abstract class IssueOwnershipFinderSupport<H> implements IssueOwnershipFinder {
 
 		return ownerships;
 	}
-	
-	
+
+
 
 	private Map<String, RemoteIssue> createRemoteIssueByRemoteIdMap(List<RemoteIssue> btIssues) {
 

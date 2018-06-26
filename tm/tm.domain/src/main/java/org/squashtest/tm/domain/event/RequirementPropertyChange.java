@@ -37,6 +37,7 @@ import java.util.Objects;
  */
 @Entity
 @PrimaryKeyJoinColumn(name = "EVENT_ID")
+@SuppressWarnings("Duplicates")
 public class RequirementPropertyChange extends RequirementAuditEvent implements RequirementVersionModification,
 	ChangedProperty {
 
@@ -79,7 +80,7 @@ public class RequirementPropertyChange extends RequirementAuditEvent implements 
 	public void accept(RequirementAuditEventVisitor visitor) {
 		visitor.visit(this);
 	}
-	
+
 	public static RequirementPropertyChangeEventBuilder<RequirementPropertyChange> builder() {
 		return new Builder();
 	}

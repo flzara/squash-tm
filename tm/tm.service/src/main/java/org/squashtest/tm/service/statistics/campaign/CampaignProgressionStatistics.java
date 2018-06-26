@@ -38,6 +38,7 @@ public final class CampaignProgressionStatistics {
 
 	private List<Object[]> cumulativeExecutionsPerDate;
 
+	private StatisticUtils statisticUtils = new StatisticUtils();
 
 	public Collection<ScheduledIteration> getScheduledIterations() {
 		return scheduledIterations;
@@ -83,34 +84,7 @@ public final class CampaignProgressionStatistics {
 	public void computeCumulativeTestPerDate(List<Date> dates){
 
 		// that where I'd love to have collection.fold(), instead we do the following
-		List<Object[]> cumulativeTestsPerDate = new LinkedList<>();
-
-		if (! dates.isEmpty()){
-			// we use here a modified list with a dummy element at the end that will
-			// help us to work around a corner case : handling the last element of the loop
-			List<Date> trickedDates = new LinkedList<>(dates);
-			trickedDates.add(null);
-
-			Iterator<Date> dateIter = trickedDates.iterator();
-			Date precDate= dateIter.next();
-			Date curDate;
-			Date truncated;
-			int accumulator = 1;
-
-			// iterate over the rest. Remember that the last element is a dummy null value
-			while(dateIter.hasNext()){
-				curDate = dateIter.next();
-				if (! isSameDay(precDate, curDate)){
-					truncated = DateUtils.truncate(precDate, Calendar.DATE);
-					cumulativeTestsPerDate.add(new Object[]{truncated, accumulator});
-				}
-				accumulator++;
-				precDate = curDate;
-			}
-
-		}
-
-		setCumulativeExecutionsPerDate(cumulativeTestsPerDate);
+		setCumulativeExecutionsPerDate(statisticUtils.gatherCumulativeTestsPerDate(dates));
 
 
 	}

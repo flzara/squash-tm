@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.dto;
 
+@SuppressWarnings("Duplicates")
 public class RenderingLocationModel {
 
 	private String enumName;

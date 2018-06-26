@@ -30,6 +30,7 @@ public class Couple<T1, T2> {
 	private final T1 a1;
 	private final T2 a2;
 
+	@SuppressWarnings("Duplicates")
 	public Couple(T1 a1, T2 a2) {
 		super();
 		this.a1 = a1;
@@ -39,6 +40,7 @@ public class Couple<T1, T2> {
 	/**
 	 * @return the a1
 	 */
+	@SuppressWarnings("Duplicates")
 	public T1 getA1() {
 		return a1;
 	}
@@ -46,6 +48,7 @@ public class Couple<T1, T2> {
 	/**
 	 * @return the a2
 	 */
+	@SuppressWarnings("Duplicates")
 	public T2 getA2() {
 		return a2;
 	}

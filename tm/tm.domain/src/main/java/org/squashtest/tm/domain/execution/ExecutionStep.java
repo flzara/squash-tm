@@ -47,6 +47,7 @@ import java.util.regex.Pattern;
 
 @Entity
 @Auditable
+@SuppressWarnings("Duplicates")
 public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepVisitor, Identified, HasExecutionStatus, DenormalizedFieldHolder, BoundEntity {
 
 	public static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;

@@ -30,6 +30,7 @@ import static org.squashtest.tm.service.internal.batchimport.testcase.excel.Colu
  * @author Gregory Fouquet
  *
  */
+@SuppressWarnings("Duplicates")
 public enum TestCaseSheetColumn implements TemplateColumn {
 	ACTION,
 	PROJECT_ID(IGNORED),

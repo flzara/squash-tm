@@ -67,6 +67,7 @@ import java.util.*;
  *
  */
 @Aspect
+@SuppressWarnings("Duplicates")
 public class SpringDaoMetaAnnotationAspect implements Ordered {
 
 	@Override
@@ -147,6 +148,7 @@ public class SpringDaoMetaAnnotationAspect implements Ordered {
 		return res;
 	}
 
+	@SuppressWarnings("all")
 	private Object newPrimitiveZero(Class<?> returnType) {
 		Object res;
 

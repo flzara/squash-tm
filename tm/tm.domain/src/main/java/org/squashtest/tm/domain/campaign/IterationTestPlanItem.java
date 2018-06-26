@@ -76,6 +76,7 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 	@NamedQuery(name="IterationTestPlanItem.findAllByIdsOrderedByIterationTestPlan", query="select tp from Iteration i join i.testPlans tp where tp.id in :testPlanIds order by index(tp)"),
 	@NamedQuery(name="IterationTestPlanItem.findAllByIdsOrderedBySuiteTestPlan", query="select tp from TestSuite ts join ts.testPlan tp where ts.id = :suiteId and tp.id in :testPlanIds order by index(tp)")
 })
+@SuppressWarnings("Duplicates")
 @Entity
 @Indexed
 @Auditable

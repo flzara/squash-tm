@@ -27,7 +27,7 @@ import org.squashtest.tm.service.project.GenericProjectCopyParameter;
 /**
  * @author Julien Thébault This class is used to deserialize the request body of "/project-templates/new"
  */
-
+@SuppressWarnings("Duplicates")
 public class JsonTemplateFromProject {
 
 	private ProjectTemplate projectTemplate;

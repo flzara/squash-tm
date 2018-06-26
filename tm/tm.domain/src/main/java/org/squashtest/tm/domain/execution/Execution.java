@@ -73,6 +73,7 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Auditable
 @Entity
+@SuppressWarnings("Duplicates")
 /*
  *  the following annotation is a trick, see same thing in class documentation in RequirementLibraryNode
  */

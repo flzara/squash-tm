@@ -47,6 +47,7 @@ import java.io.InputStream;
  */
 // XSS OK
 @Controller
+@SuppressWarnings("Duplicates")
 @RequestMapping("/test-cases/importer")
 public class TestCaseImportController {
 

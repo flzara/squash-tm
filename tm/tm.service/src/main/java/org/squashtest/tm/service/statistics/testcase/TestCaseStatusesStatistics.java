@@ -20,56 +20,57 @@
  */
 package org.squashtest.tm.service.statistics.testcase;
 
+@SuppressWarnings("Duplicates")
 public final class TestCaseStatusesStatistics{
-	
+
 	private int workInProgress;
 	private int underReview;
 	private int approved;
 	private int obsolete;
 	private int toBeUpdated;
-	
-	
+
+
 	public int getWorkInProgress() {
 		return workInProgress;
 	}
-	
+
 	public void setWorkInProgress(int workInProgress) {
 		this.workInProgress = workInProgress;
 	}
-	
+
 	public int getUnderReview() {
 		return underReview;
 	}
-	
+
 	public void setUnderReview(int underReview) {
 		this.underReview = underReview;
 	}
-	
+
 	public int getApproved() {
 		return approved;
 	}
-	
+
 	public void setApproved(int approved) {
 		this.approved = approved;
 	}
-	
+
 	public int getObsolete() {
 		return obsolete;
 	}
-	
+
 	public void setObsolete(int obsolete) {
 		this.obsolete = obsolete;
 	}
-	
+
 	public int getToBeUpdated() {
 		return toBeUpdated;
 	}
-	
+
 	public void setToBeUpdated(int toBeUpdated) {
 		this.toBeUpdated = toBeUpdated;
 	}
-	
-		
+
+
 	public TestCaseStatusesStatistics() {
 		super();
 	}

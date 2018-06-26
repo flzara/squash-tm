@@ -25,7 +25,7 @@ import org.squashtest.tm.domain.report.ReportDefinition;
 
 import java.util.*;
 
-
+@SuppressWarnings("Duplicates")
 public class JsonReportInstance {
 
 	private String name;

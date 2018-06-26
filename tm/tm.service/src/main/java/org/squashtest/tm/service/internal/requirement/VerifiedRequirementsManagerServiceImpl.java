@@ -83,6 +83,7 @@ import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.VerifiedRequirementsManagerService")
 @Transactional
+@SuppressWarnings("Duplicates")
 public class VerifiedRequirementsManagerServiceImpl implements
 	VerifiedRequirementsManagerService {
 

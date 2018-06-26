@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 
+@SuppressWarnings("Duplicates")
 public final class IterationTestInventoryStatistics {
 
 	private String iterationName;

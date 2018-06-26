@@ -30,7 +30,7 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildStep;
 
 import java.util.Collection;
 
-
+@SuppressWarnings("Duplicates")
 public class GatherTestList extends BuildStep<GatherTestList> implements HttpBasedStep {
 
 

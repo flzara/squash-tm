@@ -46,6 +46,7 @@ import org.squashtest.tm.service.internal.hibernate.HibernateStatelessSessionHel
  */
 @Configurable
 @Named("requirementLibraryNodePathEdgeExtender")
+@SuppressWarnings("Duplicates")
 public class RequirementLibraryNodePathEdgeExtender implements IdsCoercerExtender {
 
 	@Inject

@@ -76,6 +76,7 @@ import static org.squashtest.tm.service.security.Authorizations.*;
  */
 @Service("CustomRequirementVersionManagerService")
 @Transactional
+@SuppressWarnings("Duplicates")
 public class CustomRequirementVersionManagerServiceImpl implements CustomRequirementVersionManagerService {
 
 	@Inject

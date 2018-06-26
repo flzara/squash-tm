@@ -28,6 +28,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.Sizes;
 
 @Embeddable
+@SuppressWarnings("Duplicates")
 public class CustomFieldValueOption {
 	public static final int MAX_SIZE = 255;
 

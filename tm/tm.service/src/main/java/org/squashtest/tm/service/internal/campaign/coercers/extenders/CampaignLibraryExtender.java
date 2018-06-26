@@ -47,6 +47,7 @@ import org.squashtest.tm.service.internal.hibernate.HibernateStatelessSessionHel
  */
 @Configurable
 @Named("campaignLibraryExtender")
+@SuppressWarnings("Duplicates")
 public class CampaignLibraryExtender implements IdsCoercerExtender {
 
 	@Inject

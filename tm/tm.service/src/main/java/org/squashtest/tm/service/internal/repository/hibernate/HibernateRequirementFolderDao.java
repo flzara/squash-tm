@@ -33,6 +33,7 @@ import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.service.internal.repository.RequirementFolderDao;
 
 @Repository
+@SuppressWarnings("Duplicates")
 public class HibernateRequirementFolderDao extends HibernateEntityDao<RequirementFolder> implements
 		RequirementFolderDao {
 	@SuppressWarnings("rawtypes")

@@ -215,7 +215,7 @@ public class GenericProjectController {
 			this.isActive = active;
 		}
 
-		@SuppressWarnings("unused")
+		@SuppressWarnings({"unused","squid:S1700"})
 		public Boolean isActive() {
 			return isActive;
 		}

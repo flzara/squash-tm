@@ -27,9 +27,9 @@ import javax.validation.constraints.NotNull;
 
 /**
  * This class encapsulates test execution status updates.
- * 
+ *
  * @author edegenetais
- * 
+ *
  */
 /*
  * TODO This is not per se a "status", we already have ExecutionStatus. It's more of a partial state. Rename as
@@ -59,7 +59,7 @@ public class TestExecutionStatus implements Serializable {
 	/** Explanation message if any (mostly, short versions of error messages). */
 	@NotNull
 	private String statusMessage = "";
-	
+
 	private String resultUrl = null;
 
 	/**
@@ -101,6 +101,7 @@ public class TestExecutionStatus implements Serializable {
 	/**
 	 * @return Start time. Mandatory.
 	 */
+	@SuppressWarnings("Duplicates")
 	public Date getStartTime() {
 		return startTime;
 	}
@@ -109,6 +110,7 @@ public class TestExecutionStatus implements Serializable {
 	 * @param startTime
 	 *            Start time. Mandatory.
 	 */
+	@SuppressWarnings("Duplicates")
 	public void setStartTime(Date startTime) {
 		if (startTime == null) {
 			throw new IllegalArgumentException("start time cannot be null.");
@@ -119,6 +121,7 @@ public class TestExecutionStatus implements Serializable {
 	/**
 	 * @return End time. May be null (while the execution is still running for example)
 	 */
+	@SuppressWarnings("Duplicates")
 	public Date getEndTime() {
 		return endTime;
 	}
@@ -127,6 +130,7 @@ public class TestExecutionStatus implements Serializable {
 	 * @param endTime
 	 *            End time. May be null (while the execution is still running for example)
 	 */
+	@SuppressWarnings("Duplicates")
 	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
 	}
@@ -134,6 +138,7 @@ public class TestExecutionStatus implements Serializable {
 	/**
 	 * @return New status of the test.
 	 */
+	@SuppressWarnings("Duplicates")
 	public ExecutionStatus getStatus() {
 		return status;
 	}
@@ -142,6 +147,7 @@ public class TestExecutionStatus implements Serializable {
 	 * @param status
 	 *            New status of the test.
 	 */
+	@SuppressWarnings("Duplicates")
 	public void setStatus(ExecutionStatus status) {
 		if (status == null) {
 			throw new IllegalArgumentException("status cannot be null.");
@@ -163,11 +169,11 @@ public class TestExecutionStatus implements Serializable {
 	public void setStatusMessage(String statusMessage) {
 		this.statusMessage = statusMessage == null ? "" : statusMessage;
 	}
-	
+
 	public void setResultUrl(String resultUrl){
 		this.resultUrl = resultUrl;
 	}
-	
+
 	public String getResultUrl(){
 		return resultUrl;
 	}

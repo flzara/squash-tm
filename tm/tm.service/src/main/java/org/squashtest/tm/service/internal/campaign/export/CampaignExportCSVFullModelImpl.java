@@ -63,6 +63,7 @@ import java.util.*;
  */
 @Component
 @Scope("prototype")
+@SuppressWarnings("Duplicates")
 public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignExportCSVModel.class);

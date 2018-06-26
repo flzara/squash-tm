@@ -97,7 +97,9 @@ import java.util.*;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 @Controller
+@SuppressWarnings("Duplicates")
 @RequestMapping("/test-cases/{testCaseId}")
+
 public class TestCaseModificationController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseModificationController.class);

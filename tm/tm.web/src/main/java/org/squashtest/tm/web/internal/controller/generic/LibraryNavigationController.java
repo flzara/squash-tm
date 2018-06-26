@@ -278,7 +278,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 	}
 
-
+	@SuppressWarnings("squid:S1700")
 	protected void printExport(List<? extends ExportData> dataSource, String filename, String jasperFile,
 	                           HttpServletResponse response, Locale locale, String format, boolean keepRteFormat,
 	                           Map<String, Object> reportParameters) {

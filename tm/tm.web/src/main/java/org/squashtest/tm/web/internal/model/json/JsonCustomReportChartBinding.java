@@ -22,22 +22,23 @@ package org.squashtest.tm.web.internal.model.json;
 
 import org.squashtest.tm.web.internal.controller.chart.JsonChartInstance;
 
+@SuppressWarnings("Duplicates")
 public class JsonCustomReportChartBinding {
-	
+
 	private Long id;
-	
+
 	private Long chartDefinitionId;
-	
+
 	private Long dashboardId;
-	
+
 	private JsonChartInstance chartInstance;
-	
+
 	private int row;
-	
+
 	private int col;
-	
+
 	private int sizeX;
-	
+
 	private int sizeY;
 
 	public Long getId() {
@@ -103,6 +104,6 @@ public class JsonCustomReportChartBinding {
 	public void setSizeY(int sizeY) {
 		this.sizeY = sizeY;
 	}
-	
-	
+
+
 }

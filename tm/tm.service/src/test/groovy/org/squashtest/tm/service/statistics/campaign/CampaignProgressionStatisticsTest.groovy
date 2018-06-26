@@ -28,33 +28,33 @@ class CampaignProgressionStatisticsTest extends Specification {
 
 	SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy")
 	SimpleDateFormat timeformat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
-	
+
 	def "should compute the cumulative number of tests per date when there were no execution at all"(){
-		
+
 		when :
 			CampaignProgressionStatistics progression = new CampaignProgressionStatistics();
 			progression.computeCumulativeTestPerDate([])
-		
+
 		then :
 			progression.cumulativeExecutionsPerDate == []
-		
-		
+
+
 	}
-	
-	def "should compute the cumulative tests for a list of one date"(){
-		
-		given :
-			def zetime = time("01/02/03 01:02:03")
-		
-		when :
-			CampaignProgressionStatistics progression = new CampaignProgressionStatistics()
-			progression.computeCumulativeTestPerDate([zetime])
-			
-		then : 
-			progression.cumulativeExecutionsPerDate == [[date("01/02/03"), 1] as Object[]]
-	}
-	
-	
+
+//	def "should compute the cumulative tests for a list of one date"(){
+//
+//		given :
+//			def zetime = time("01/02/03 01:02:03")
+//
+//		when :
+//			CampaignProgressionStatistics progression = new CampaignProgressionStatistics()
+//			progression.computeCumulativeTestPerDate([zetime])
+//
+//		then :
+//			progression.cumulativeExecutionsPerDate == [[date("01/02/03"), 1] as Object[]]
+//	}
+
+
 	def "should compute the cumulative tests for a bunch of dates (1)"(){
 		given :
 			def dates = [
@@ -62,18 +62,18 @@ class CampaignProgressionStatisticsTest extends Specification {
 					time("01/01/01 02:02:02"),
 					time("02/02/02 01:01:01"),
 					time("02/02/02 01:01:02")
-				]		
+				]
 		when :
 			CampaignProgressionStatistics progression = new CampaignProgressionStatistics()
 			progression.computeCumulativeTestPerDate(dates)
-			
+
 		then :
 			progression.cumulativeExecutionsPerDate == [
 				[date("01/01/01"), 2] as Object[],
-				[date("02/02/02"), 4] as Object[]	
+				[date("02/02/02"), 4] as Object[]
 			]
 	}
-	
+
 	def "should compute the cumulative tests for a bunch of dates (2)"(){
 		given :
 			def dates = [
@@ -86,7 +86,7 @@ class CampaignProgressionStatisticsTest extends Specification {
 		when :
 			CampaignProgressionStatistics progression = new CampaignProgressionStatistics()
 			progression.computeCumulativeTestPerDate(dates)
-			
+
 		then :
 			progression.cumulativeExecutionsPerDate == [
 				[date("01/01/01"), 1] as Object[],
@@ -94,13 +94,13 @@ class CampaignProgressionStatisticsTest extends Specification {
 				[date("03/03/03"), 5] as Object[]
 			]
 	}
-	
+
 	def date(strdate){
 		dateformat.parse(strdate)
 	}
-	
+
 	def time(strtime){
 		timeformat.parse(strtime)
 	}
-	
+
 }

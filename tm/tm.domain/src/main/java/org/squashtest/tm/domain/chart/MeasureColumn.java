@@ -34,6 +34,7 @@ import org.squashtest.tm.domain.EntityType;
 
 @Embeddable
 @Table(name = "CHART_MEASURE_COLUMN")
+@SuppressWarnings("Duplicates")
 public class MeasureColumn implements ColumnPrototypeInstance {
 
 

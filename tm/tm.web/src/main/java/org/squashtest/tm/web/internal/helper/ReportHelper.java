@@ -123,7 +123,7 @@ public class ReportHelper {
 
 		return attributes;
 	}
-
+	@SuppressWarnings({"squid:S00107","squid:MethodCyclomaticComplexity"})
 	private void getAttributesFromInput(Map<String, List<String>> attributes, Input input, Map<String, Criteria> criteriaMap) {
 		SimpleCriteria sCrit;
 		MultiValuesCriteria mvCrit;

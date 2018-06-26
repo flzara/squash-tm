@@ -48,6 +48,7 @@ import org.squashtest.tm.web.internal.model.json.JsonCustomReportGridElement;
 
 
 @Controller
+@SuppressWarnings("Duplicates")
 public class CustomReportChartBindingController {
 
 	private static final String CHART = "chart";

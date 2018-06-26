@@ -33,22 +33,23 @@ import org.squashtest.tm.domain.requirement.RequirementVersionLinkType;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CoverageModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
 
+@SuppressWarnings("Duplicates")
 public class RequirementExportModel {
-	
+
 	private List<RequirementModel> requirementsModels = new LinkedList<>();
 
 	private List<CoverageModel> coverages = new LinkedList<>();
-	
+
 	private List<RequirementLinkModel> reqLinks = new LinkedList<>();
 
 
 	public RequirementExportModel() {
 		super();
 	}
-	
-	
-	
-	
+
+
+
+
 	public List<CoverageModel> getCoverages() {
 		return coverages;
 	}
@@ -64,8 +65,8 @@ public class RequirementExportModel {
 	public void setRequirementsModels(List<RequirementModel> requirementsModels) {
 		this.requirementsModels = requirementsModels;
 	}
-	
-	
+
+
 
 	public List<RequirementLinkModel> getReqLinks() {
 		return reqLinks;
@@ -359,50 +360,50 @@ public class RequirementExportModel {
 		}
 
 	}
-	
-	
+
+
 
 	public static final class RequirementLinkModel{
 
 		public static final Comparator<RequirementLinkModel> REQ_LINK_COMPARATOR = new Comparator<RequirementExportModel.RequirementLinkModel>() {
-			
+
 			// SONAR wont like the four-return clauses I guess
 			@Override
 			public int compare(RequirementLinkModel o1, RequirementLinkModel o2) {
-				
+
 				int comp = o1.getReqPath().compareTo(o2.getReqPath());
 				if (comp != 0){
 					return comp;
 				}
-				
+
 				comp = o1.getReqVersion() - o2.getReqVersion();
 				if (comp != 0){
 					return comp;
 				}
-				
+
 				comp = o1.getRelReqPath().compareTo(o2.getRelReqPath());
 				if (comp != 0){
 					return comp;
 				}
-				
+
 				comp = o1.getRelReqVersion() - o2.getRelReqVersion();
 				return comp;
 			}
-			
+
 		};
-		
+
 		// those attributes will be set by Hibernate (they are part of the constructor)
-		
+
 		/**
-		 * Id of the requirement for the requirement version under consideration. Not exported in the final 
+		 * Id of the requirement for the requirement version under consideration. Not exported in the final
 		 * excel file, but useful to resolve the requirement path later on.
 		 */
-		private Long reqId;		
+		private Long reqId;
 		/**
-		 * Id of the requirement for the related requirement version. Not exported in the final 
+		 * Id of the requirement for the related requirement version. Not exported in the final
 		 * excel file, but useful to resolve the requirement path later on.
 		 */
-		private Long relReqId;	
+		private Long relReqId;
 		/**
 		 * The version number of the requirement version under consideration
 		 */
@@ -411,28 +412,28 @@ public class RequirementExportModel {
 		 * The version number of the related requirement.
 		 */
 		private int relReqVersion;
-		
+
 		/**
 		 * The role of the related requirement version. Corresponds to {@link RequirementVersionLinkType#getRole2Code()}.
 		 */
-		private String relatedReqRole;	
-		
+		private String relatedReqRole;
+
 		/**
-		 * The path of the requirement of the requirement version under consideration. Will not be extracted directly from 
+		 * The path of the requirement of the requirement version under consideration. Will not be extracted directly from
 		 * the database, must be set manually.
 		 */
 		private String reqPath;
-		
+
 		/**
-		 * The path of the requirement of the related requirement version. Will not be extracted directly from 
+		 * The path of the requirement of the related requirement version. Will not be extracted directly from
 		 * the database, must be set manually.
 		 */
 		private String relReqPath;
-		
-		
+
+
 		/**
 		 * Constuctor used by Hibernate
-		 * 
+		 *
 		 * @param reqId
 		 * @param relReqId
 		 * @param reqVersion
@@ -451,17 +452,17 @@ public class RequirementExportModel {
 
 		/**
 		 * factory method for test purposes
-		 * 
+		 *
 		 * @return
 		 */
 		public static RequirementLinkModel create(int reqVersion, int relReqVersion, String relatedReqRole, String reqPath,
 				String relReqPath) {
-			
+
 			RequirementLinkModel model = new RequirementLinkModel(null, null, reqVersion, relReqVersion, relatedReqRole);
-			
+
 			model.setReqPath(reqPath);
 			model.setRelReqPath(relReqPath);
-			
+
 			return model;
 		}
 
@@ -507,8 +508,8 @@ public class RequirementExportModel {
 		public String getRelatedReqRole() {
 			return relatedReqRole;
 		}
-		
-		
+
+
 		@Override
 		public String toString(){
 			return new ToStringBuilder(this)
@@ -521,7 +522,7 @@ public class RequirementExportModel {
 					.append("rel-req-role", relatedReqRole)
 					.toString();
 		}
-		
+
 
 	}
 

@@ -35,6 +35,7 @@ public class TagPickerOption  extends ContainerOption<TagPicker>  {
 	 * @see org.squashtest.tm.api.report.form.ContainerOption#setContent(org.squashtest.tm.api.report.form.Input)
 	 */
 	@Override
+	@SuppressWarnings("Duplicates")
 	public void setContent(TagPicker content) {
 		throw new IllegalArgumentException(
 				"Content cannot be set, it is automatically set toTagPicker. Remove the <property name=\"content\" /> tag");
@@ -43,6 +44,7 @@ public class TagPickerOption  extends ContainerOption<TagPicker>  {
 	/**
 	 * @return the pickerName
 	 */
+	@SuppressWarnings("Duplicates")
 	public String getPickerName() {
 		return getContent().getName();
 	}
@@ -51,6 +53,7 @@ public class TagPickerOption  extends ContainerOption<TagPicker>  {
 	 * @param pickerName
 	 *            the pickerName to set
 	 */
+	@SuppressWarnings("Duplicates")
 	public void setPickerName(String pickerName) {
 		getContent().setName(pickerName);
 	}
@@ -58,6 +61,7 @@ public class TagPickerOption  extends ContainerOption<TagPicker>  {
 	/**
 	 * @return the pickerLabelKey
 	 */
+	@SuppressWarnings("Duplicates")
 	public String getPickerLabelKey() {
 		return getContent().getLabelKey();
 	}
@@ -68,6 +72,7 @@ public class TagPickerOption  extends ContainerOption<TagPicker>  {
 	 * @see org.squashtest.tm.api.report.form.OptionInput#setValue(java.lang.String)
 	 */
 	@Override
+	@SuppressWarnings("Duplicates")
 	public void setValue(String value) { // NOSONAR I do want to override for doc purposes
 		// overriden for doc only
 		super.setValue(value);
@@ -77,10 +82,12 @@ public class TagPickerOption  extends ContainerOption<TagPicker>  {
 	 * @param pickerLabelKey
 	 *            the pickerLabelKey to set
 	 */
+	@SuppressWarnings("Duplicates")
 	public void setPickerLabelKey(String pickerLabelKey) {
 		getContent().setLabelKey(pickerLabelKey);
 	}
 
+	@SuppressWarnings("Duplicates")
 	public void setPickerBoundEntity(String boundEntity){
 		getContent().setBoundEntity(boundEntity);
 	}

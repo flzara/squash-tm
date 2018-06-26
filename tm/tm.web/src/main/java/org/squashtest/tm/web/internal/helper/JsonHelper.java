@@ -30,7 +30,6 @@ import org.jsoup.safety.Whitelist;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.service.internal.dto.CustomFieldModel;
-import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import javax.inject.Inject;
@@ -110,8 +109,7 @@ public final class JsonHelper {
 		try {
 			String valueEscaped = Jsoup.clean(HtmlUtils.htmlUnescape(INSTANCE.objectMapper.writeValueAsString(value)), Whitelist.none());
 			String unescapeValue = HtmlUtils.htmlUnescape(valueEscaped);
-			String result = unescapeValue.replace(";","");
-			return result;
+			return unescapeValue.replace(";","");
 		} catch (IOException e) {
 			throw new JsonMarshallerException(e);
 		}

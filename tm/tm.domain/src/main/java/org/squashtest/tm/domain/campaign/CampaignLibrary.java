@@ -50,6 +50,7 @@ import org.squashtest.tm.domain.project.GenericLibrary;
 import org.squashtest.tm.domain.project.GenericProject;
 
 @Entity
+@SuppressWarnings("Duplicates")
 public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 
 	private static final String CLASS_NAME = "org.squashtest.tm.domain.campaign.CampaignLibrary";

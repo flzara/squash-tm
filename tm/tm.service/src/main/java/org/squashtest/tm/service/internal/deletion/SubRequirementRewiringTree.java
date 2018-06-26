@@ -30,6 +30,7 @@ import org.apache.commons.collections.Closure;
 import org.squashtest.tm.domain.library.structures.LibraryTree;
 import org.squashtest.tm.domain.library.structures.TreeNode;
 
+@SuppressWarnings("Duplicates")
 public class SubRequirementRewiringTree extends LibraryTree<Long, SubRequirementRewiringTree.Node> {
 
 	private List<Movement> movements = new ArrayList<>();

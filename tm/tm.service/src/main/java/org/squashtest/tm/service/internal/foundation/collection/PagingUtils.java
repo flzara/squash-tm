@@ -26,10 +26,11 @@ import org.squashtest.tm.core.foundation.collection.Paging;
 
 /**
  * Utility clas for paging queries.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
+@SuppressWarnings("Duplicates")
 public final class PagingUtils {
 	private PagingUtils() {
 		super();

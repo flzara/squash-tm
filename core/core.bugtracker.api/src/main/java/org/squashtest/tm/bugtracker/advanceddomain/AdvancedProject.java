@@ -26,6 +26,7 @@ import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
 
+@SuppressWarnings("Duplicates")
 public class AdvancedProject implements RemoteProject {
 
 	private String id;

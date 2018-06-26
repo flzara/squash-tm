@@ -41,6 +41,7 @@ import org.hibernate.annotations.Immutable;
 @Immutable
 @Table(name = "RLN_RELATIONSHIP_CLOSURE")
 @IdClass(RequirementPathEdge.PathId.class)
+@SuppressWarnings("Duplicates")
 public class RequirementPathEdge {
 	public static class PathId implements Serializable {
 		private static final long serialVersionUID = 1462511274257146101L;

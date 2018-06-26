@@ -42,6 +42,7 @@ public class DocxTemplaterView extends Labelled implements ReportView, Initializ
 	 * @see org.squashtest.tm.api.report.ReportView#getFormats()
 	 */
 	@Override
+	@SuppressWarnings("Duplicates")
 	public String[] getFormats() {
 		return formats;
 	}
@@ -50,6 +51,7 @@ public class DocxTemplaterView extends Labelled implements ReportView, Initializ
 	 * @param formats
 	 *            the formats to set
 	 */
+	@SuppressWarnings("Duplicates")
 	public void setFormats(String[] formats) {
 		if(formats == null) {
 			this.formats = null;
@@ -62,6 +64,7 @@ public class DocxTemplaterView extends Labelled implements ReportView, Initializ
 	 * @see org.squashtest.tm.api.report.ReportView#buildViewModel(java.lang.String, java.util.Map)
 	 */
 	@Override
+	@SuppressWarnings("Duplicates")
 	public Map<String, Object> buildViewModel(String format, Map<String, Criteria> criteria) {
 		Map<String, Object> res = new HashMap<>();
 
@@ -77,6 +80,7 @@ public class DocxTemplaterView extends Labelled implements ReportView, Initializ
 	 * @param springView
 	 *            the springView to set
 	 */
+	@SuppressWarnings("Duplicates")
 	public void setSpringView(View viewBean) {
 		this.springView = viewBean;
 	}
@@ -85,6 +89,7 @@ public class DocxTemplaterView extends Labelled implements ReportView, Initializ
 	 * @return the springView
 	 */
 	@Override
+	@SuppressWarnings("Duplicates")
 	public View getSpringView() {
 		return springView;
 	}
@@ -93,6 +98,7 @@ public class DocxTemplaterView extends Labelled implements ReportView, Initializ
 	 * @param query
 	 *            the query to set
 	 */
+	@SuppressWarnings("Duplicates")
 	public void setQuery(ReportQuery query) {
 		this.query = query;
 	}
@@ -103,6 +109,7 @@ public class DocxTemplaterView extends Labelled implements ReportView, Initializ
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
 	@Override
+	@SuppressWarnings("Duplicates")
 	public void afterPropertiesSet() {
 		Assert.notNull(springView, "springView must not be null");
 		Assert.notNull(query, "query must not be null");

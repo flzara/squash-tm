@@ -263,6 +263,7 @@ public class ArbitraryQueryHandler<ENTITY> implements DynamicComponentInvocation
 		query.setParameter(paramName.value(), arg);
 	}
 
+	@SuppressWarnings("Duplicates")
 	private Object newPrimitiveZero(Class<?> returnType) {
 		Object res = null;
 

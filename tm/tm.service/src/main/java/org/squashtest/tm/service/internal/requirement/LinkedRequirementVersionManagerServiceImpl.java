@@ -53,6 +53,7 @@ import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.LinkedRequirementVersionManagerService")
 @Transactional
+@SuppressWarnings("Duplicates")
 public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequirementVersionManagerService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(LinkedRequirementVersionManagerService.class);

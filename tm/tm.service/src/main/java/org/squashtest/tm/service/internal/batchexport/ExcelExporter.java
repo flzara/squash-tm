@@ -55,6 +55,7 @@ import java.util.*;
  */
 @Component
 @Scope("prototype")
+@SuppressWarnings("Duplicates")
 class ExcelExporter {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelExporter.class);

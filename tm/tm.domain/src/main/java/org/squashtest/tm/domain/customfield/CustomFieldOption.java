@@ -34,6 +34,7 @@ import org.squashtest.tm.domain.Sizes;
  * @author Gregory Fouquet
  */
 @Embeddable
+@SuppressWarnings("Duplicates")
 public class CustomFieldOption {
 	@NotBlank
 	@Size(max = Sizes.LABEL_MAX)

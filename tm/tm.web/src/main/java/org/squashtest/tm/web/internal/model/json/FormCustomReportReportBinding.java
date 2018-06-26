@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.model.json;
 
 import org.squashtest.tm.domain.customreport.CustomReportReportBinding;
 
+@SuppressWarnings("Duplicates")
 public class FormCustomReportReportBinding {
 
 	private Long id;
@@ -39,7 +40,6 @@ public class FormCustomReportReportBinding {
 	private int sizeY;
 
 	public FormCustomReportReportBinding() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public Long getId() {

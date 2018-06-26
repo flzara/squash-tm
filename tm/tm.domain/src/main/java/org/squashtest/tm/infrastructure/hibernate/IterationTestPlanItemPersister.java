@@ -34,10 +34,10 @@ import org.hibernate.persister.entity.SingleTableEntityPersister;
 import org.hibernate.persister.spi.PersisterCreationContext;
 
 /*
-    ABOUT SONAR : it says this class has been copypasted from TestStepPersister, 
+    ABOUT SONAR : it says this class has been copypasted from TestStepPersister,
 and should be refactored. Sure, go ahdead. I'm watching.
 */
-
+@SuppressWarnings("Duplicates")
 public class IterationTestPlanItemPersister extends SingleTableEntityPersister {
 
 	private static final String NONFORMATTED_TABLE_NAME = "ITEM_TEST_PLAN_LIST";
@@ -55,7 +55,7 @@ public class IterationTestPlanItemPersister extends SingleTableEntityPersister {
 	 */
 	private int _cachedIndex=-1;
 
-      
+
 	public IterationTestPlanItemPersister(PersistentClass persistentClass,
 			EntityRegionAccessStrategy cacheAccessStrategy,
 			NaturalIdRegionAccessStrategy naturalIdRegionAccessStrategy,
@@ -63,7 +63,7 @@ public class IterationTestPlanItemPersister extends SingleTableEntityPersister {
 					throws HibernateException {
 
 		super(persistentClass, cacheAccessStrategy, naturalIdRegionAccessStrategy, creationContext);
-                
+
 		init(persistentClass, creationContext.getSessionFactory());
 	}
 

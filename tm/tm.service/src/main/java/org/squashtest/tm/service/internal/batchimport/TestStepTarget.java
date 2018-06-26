@@ -24,6 +24,7 @@ import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.Target;
 import org.squashtest.tm.service.importer.WithPath;
 
+@SuppressWarnings("Duplicates")
 public class TestStepTarget implements Target, WithPath {
 
 	private TestCaseTarget testCase;

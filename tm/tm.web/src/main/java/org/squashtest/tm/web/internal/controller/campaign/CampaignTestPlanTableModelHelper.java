@@ -38,6 +38,7 @@ import org.squashtest.tm.web.internal.model.json.JsonDataset;
 import java.util.*;
 
 //XSS OK
+@SuppressWarnings("Duplicates")
 final class CampaignTestPlanTableModelHelper extends DataTableModelBuilder<IndexedCampaignTestPlanItem> {
 
 	private Locale locale;

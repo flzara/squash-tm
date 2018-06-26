@@ -33,6 +33,7 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
 
 @Repository
+@SuppressWarnings("Duplicates")
 public class HibernateTestCaseFolderDao extends HibernateEntityDao<TestCaseFolder> implements TestCaseFolderDao {
 	@Override
 	public List<TestCaseLibraryNode> findAllContentById(final long folderId) {

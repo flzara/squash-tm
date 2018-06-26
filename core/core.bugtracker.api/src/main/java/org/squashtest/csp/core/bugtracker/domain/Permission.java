@@ -33,6 +33,7 @@ public class Permission implements Identifiable<Permission> {
 		//Default constructor
 	}
 
+	@SuppressWarnings("Duplicates")
 	public Permission(String id, String name) {
 		super();
 		this.id = id;
@@ -40,11 +41,13 @@ public class Permission implements Identifiable<Permission> {
 	}
 
 	@Override
+	@SuppressWarnings("Duplicates")
 	public String getId(){
 		return id;
 	}
 
 	@Override
+	@SuppressWarnings("Duplicates")
 	public String getName(){
 		return name;
 	}
@@ -54,21 +57,23 @@ public class Permission implements Identifiable<Permission> {
 	 * is hopefully never a dummy
 	 */
 	@Override
+	@SuppressWarnings("Duplicates")
 	public boolean isDummy(){
 		return false;
 	}
 
-
+	@SuppressWarnings("Duplicates")
 	public void setId(String id) {
 		this.id = id;
 	}
 
-
+	@SuppressWarnings("Duplicates")
 	public void setName(String name) {
 		this.name = name;
 	}
 
 	/** exists for the purpose of being javabean compliant */
+	@SuppressWarnings("Duplicates")
 	public void setDummy(Boolean dummy){
 		//exists for the purpose of being javabean compliant
 	}

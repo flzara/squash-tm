@@ -58,6 +58,7 @@ import java.util.concurrent.TimeoutException;
  * @since 1.14.0  29/03/16
  */
 @Component
+@SuppressWarnings("Duplicates")
 class ExecutionIssueFinder implements IssueOwnershipFinder {
 	private static final Comparator<Pair<? extends IssueDetector, Issue>> ASC_PAIR_COMPARATOR = new Comparator<Pair<? extends IssueDetector, Issue>>() {
 		@Override
@@ -99,16 +100,16 @@ class ExecutionIssueFinder implements IssueOwnershipFinder {
 	private BugTracker findBugTracker(Execution execution) {
 		return bugTrackerDao.findByExecution(execution);
 	}
-	
-	
+
+
 	private LocaleContext getLocaleContext() {
 		return LocaleContextHolder.getLocaleContext();
 	}
-	
+
 	private SecurityContext getSecurityContext(){
 		return SecurityContextHolder.getContext();
 	}
-	
+
 	private UserCredentialsCache getCredentialsCache(){
 		return credentialsProvider.getCache();
 	}

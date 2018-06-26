@@ -34,6 +34,7 @@ import org.squashtest.tm.domain.EntityType;
 
 @Embeddable
 @Table(name = "CHART_AXIS_COLUMN")
+@SuppressWarnings("Duplicates")
 public class AxisColumn implements ColumnPrototypeInstance{
 
 

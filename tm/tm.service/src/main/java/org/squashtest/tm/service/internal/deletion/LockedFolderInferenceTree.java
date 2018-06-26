@@ -27,13 +27,14 @@ import org.apache.commons.collections.Closure;
 import org.squashtest.tm.domain.library.structures.LibraryTree;
 import org.squashtest.tm.domain.library.structures.TreeNode;
 
+@SuppressWarnings("Duplicates")
  public class LockedFolderInferenceTree extends LibraryTree<Long, LockedFolderInferenceTree.Node> {
 
 
 	/**
 	 * will populate the tree. Default status for nodes is 'deletable'.
 	 * The input structure pair the id of parent and child nodes.
-	 * 
+	 *
 	 * @param pairedIds
 	 */
 	public void build(List<Long[]> pairedIds){
@@ -78,7 +79,7 @@ import org.squashtest.tm.domain.library.structures.TreeNode;
 
 	/**
 	 * will mark the nodes identified by their key as locked
-	 * 
+	 *
 	 * @param nodeKeys
 	 * @param isDeletable
 	 */
@@ -94,7 +95,7 @@ import org.squashtest.tm.domain.library.structures.TreeNode;
 
 	/**
 	 * will mark the nodes identified by their key as deletable
-	 * 
+	 *
 	 * @param nodeKeys
 	 * @param isDeletable
 	 */

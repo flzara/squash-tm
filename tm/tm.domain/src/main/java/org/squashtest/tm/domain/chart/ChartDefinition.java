@@ -64,6 +64,7 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 @Entity
 @Table(name = "CHART_DEFINITION")
 @Auditable
+@SuppressWarnings("Duplicates")
 public class ChartDefinition implements TreeEntity{
 
 	@Id

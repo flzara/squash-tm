@@ -35,7 +35,7 @@ public class JsonInfoList implements Identified {
 	private String description;
 	private List<JsonInfoListItem> items;
 
-
+	@SuppressWarnings("Duplicates")
 	public JsonInfoList(){
 		super();
 	}

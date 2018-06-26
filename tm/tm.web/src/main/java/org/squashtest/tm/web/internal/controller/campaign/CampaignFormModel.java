@@ -37,6 +37,7 @@ import org.squashtest.tm.service.internal.dto.RawValueModel.RawValueModelMap;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 //XSS OK
+@SuppressWarnings("Duplicates")
 public class CampaignFormModel {
 	/**
 	 * Note : the following validation annotations are never called, a custom validator will be invoked for this.

@@ -40,6 +40,7 @@ import org.squashtest.tm.bugtracker.definition.RemoteVersion;
  * @author bsiri
  *
  */
+@SuppressWarnings("Duplicates")
 public class AdvancedIssue implements RemoteIssue {
 
 	//maps a fieldId to a FieldValue

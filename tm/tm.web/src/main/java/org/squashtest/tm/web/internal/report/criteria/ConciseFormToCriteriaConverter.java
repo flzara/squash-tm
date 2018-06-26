@@ -141,9 +141,7 @@ public class ConciseFormToCriteriaConverter {
 
 			case TREE_PICKER:
 				Collection<Map> selNodes = (Collection<Map>) concise.get(CON_VAL);
-				if (selNodes.isEmpty()) {
-					return;
-				}
+				if (selNodes.isEmpty()) {return;}
 				expanded = expendedTreePicker(concise);
 				break;
 
