@@ -104,7 +104,7 @@ public class IndexationServiceImpl implements IndexationService {
 			try {
 				date = dateFormat.parse(value);
 			} catch (ParseException e) {
-
+				LOGGER.error(e.getMessage(), e);
 			}
 		}
 		return date;
@@ -241,7 +241,7 @@ public class IndexationServiceImpl implements IndexationService {
 
 	private FullTextEntityManager getFullTextSession() {
 		FullTextEntityManager ftem = Search.getFullTextEntityManager(em);
-		
+
 		/*
 		  We need to change the flush mode (not sure why, it's historically there) and we'd like to restore it
 		  after indexation. So we store it, set to commit mode, then restore to whatever value it was.
@@ -252,7 +252,7 @@ public class IndexationServiceImpl implements IndexationService {
 
 		// Clear the lucene work queue to eliminate lazy init bug for batch processing.
 		clearLuceneQueue(ftem);
-		
+
 		ftem.setFlushMode(previous);
 
 		return ftem;
