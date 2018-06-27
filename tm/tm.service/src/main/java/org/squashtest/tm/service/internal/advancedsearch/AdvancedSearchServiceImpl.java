@@ -70,10 +70,11 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdvancedSearchServiceImpl.class);
 
-	private static final List<String> MILESTONE_SEARCH_FIELD = Arrays.asList("milestone.label", "milestone.status",
-		"milestone.endDate", "milestones.id","searchByMilestone","activeMilestoneMode");
-
 	private static final String SEARCH_BY_MILESTONE= "searchByMilestone";
+
+	private static final List<String> MILESTONE_SEARCH_FIELD = Arrays.asList("milestone.label", "milestone.status",
+		"milestone.endDate", "milestones.id", SEARCH_BY_MILESTONE,"activeMilestoneMode");
+
 
 
 	@Inject

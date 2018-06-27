@@ -32,8 +32,6 @@ import java.util.Map.Entry;
 
 import javax.validation.constraints.NotNull;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.squashtest.tm.api.report.Report;
 import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.api.report.form.CheckboxesGroup;
@@ -100,7 +98,7 @@ public class ConciseFormToCriteriaConverter {
 
 	}
 
-	@SuppressWarnings({UNCHECKED, RAWTYPES})
+	@SuppressWarnings({UNCHECKED, RAWTYPES,"squid:S00122"})
 	private void populateExpandedInput(String inputName, Object inputValue, Map<String, Object> expandedForm) {
 		Map concise = (Map) inputValue;
 		InputType type = InputType.valueOf((String) concise.get(CON_TYPE));

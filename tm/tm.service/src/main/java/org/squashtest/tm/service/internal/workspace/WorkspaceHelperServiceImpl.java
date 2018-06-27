@@ -74,12 +74,12 @@ public class WorkspaceHelperServiceImpl implements WorkspaceHelperService {
 			.where(PROJECT_FILTER.USER_LOGIN.eq(currentUser.getUsername()))
 			.fetch()
 			.stream()
-			.collect(groupingBy((r) -> {
+			.collect(groupingBy(r -> {
 				FilterModel filterModel = new FilterModel();
 				filterModel.setId(r.get(PROJECT_FILTER.PROJECT_FILTER_ID));
 				filterModel.setEnabled(r.get(PROJECT_FILTER.ACTIVATED));
 				return filterModel;
-			}, mapping((r) -> r.get(PROJECT_FILTER_ENTRY.PROJECT_ID), toList())));
+			}, mapping(r-> r.get(PROJECT_FILTER_ENTRY.PROJECT_ID), toList())));
 
 		//for now, an user can only have one filter so we can get the first or default model if the user have no filter
 		FilterModel filterModel;

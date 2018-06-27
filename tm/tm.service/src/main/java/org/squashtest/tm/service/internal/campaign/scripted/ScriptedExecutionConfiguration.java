@@ -46,10 +46,9 @@ public class ScriptedExecutionConfiguration {
 	@Scope(value = "prototype")
 	public ScriptedTestCaseParser parser(ScriptedTestCaseExtender extender) {
 		ScriptedTestCaseLanguage language = extender.getLanguage();
-		switch (language) {
-			case GHERKIN:
-				return new GherkinTestCaseParser(gherkinStepGenerator());
-			default:
+		if(language.equals(ScriptedTestCaseLanguage.GHERKIN)) {
+			return new GherkinTestCaseParser(gherkinStepGenerator());
+		}else {
 				throw new IllegalArgumentException("No pasrser defined for script of language : " + language.name());
 		}
 	}

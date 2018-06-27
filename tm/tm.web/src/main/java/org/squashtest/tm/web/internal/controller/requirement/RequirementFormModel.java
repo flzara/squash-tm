@@ -184,7 +184,7 @@ public class RequirementFormModel {
 			for (Entry<Long, RawValueModel> entry : model.getCustomFields().entrySet()) {
 				RawValueModel value = entry.getValue();
 				if (value.isEmpty()) {
-					errors.rejectValue("customFields[" + entry.getKey() + "]", "message.notBlank", notBlank);
+					errors.rejectValue("customFields[" + entry.getKey() + "]", MESSAGE_NOT_BLANK, notBlank);
 				}
 			}
 

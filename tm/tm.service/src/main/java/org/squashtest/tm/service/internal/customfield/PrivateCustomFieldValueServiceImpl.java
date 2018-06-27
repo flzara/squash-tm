@@ -434,14 +434,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 				CustomFieldValue updatedCUFValue = binding.createNewValue();
 
-				for (CustomFieldValue formerCUFValue : valuesToUpdate) {
-					if (formerCUFValue.representsSameCustomField(updatedCUFValue)) {
-						// here we use a RawValue as a container that hides us the arity of the value (single or multi-valued)
-						RawValue rawValue = formerCUFValue.asRawValue();
-						rawValue.setValueFor(updatedCUFValue);
-						break;
-					}
-				}
+				findUpdatedCufValue(valuesToUpdate, updatedCUFValue);
 
 				updatedCUFValue.setBoundEntity(entity);
 				customFieldValueDao.save(updatedCUFValue);
@@ -451,8 +444,21 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 		deleteCustomFieldValues(valuesToUpdate);
 
-
 	}
+
+	private void findUpdatedCufValue(List<CustomFieldValue> valuesToUpdate,CustomFieldValue updatedCUFValue ){
+		for (CustomFieldValue formerCUFValue : valuesToUpdate) {
+			if (formerCUFValue.representsSameCustomField(updatedCUFValue)) {
+				// here we use a RawValue as a container that hides us the arity of the value (single or multi-valued)
+				RawValue rawValue = formerCUFValue.asRawValue();
+				rawValue.setValueFor(updatedCUFValue);
+				break;
+			}
+		}
+	}
+
+
+
 
 	@Override
 	public void migrateCustomFieldValues(Collection<BoundEntity> entities) {
@@ -511,11 +517,11 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	 * @return
 	 */
 	private ValueEditionStatusStrategy editableStrategy(BindableEntity bindableEntity) {
-		switch (bindableEntity) {
-			case REQUIREMENT_VERSION:
-				return requirementBoundEditionStatusStrategy;
-			default:
-				return defaultEditionStatusStrategy;
+
+		if(bindableEntity.equals(BindableEntity.REQUIREMENT_VERSION)){
+			return requirementBoundEditionStatusStrategy;
+		}else {
+			return defaultEditionStatusStrategy;
 		}
 	}
 

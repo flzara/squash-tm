@@ -74,11 +74,15 @@ public final class EntityLockManager {
 		@Override
 		public boolean equals(Object o) {
 			if (this == o) return true;
-			if (o == null || getClass() != o.getClass()) return false;
+			if (o == null || getClass() != o.getClass()) {
+				return false;
+			}
 
 			EntityRef entityRef = (EntityRef) o;
 
-			if (!type.equals(entityRef.type)) return false;
+			if (!type.equals(entityRef.type)){
+				return false;
+			}
 			return id.equals(entityRef.id);
 
 		}

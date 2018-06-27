@@ -103,8 +103,8 @@ public class MilestoneModelServiceImpl implements MilestoneModelService {
 			.where(MILESTONE_BINDING.PROJECT_ID.in(readableProjectIds))
 			.fetch()
 			.stream()
-			.collect(groupingBy((r) -> r.get(MILESTONE_BINDING.PROJECT_ID),
-				mapping((r) -> {
+			.collect(groupingBy(r -> r.get(MILESTONE_BINDING.PROJECT_ID),
+				mapping(r -> {
 					Long milestoneId = r.get(MILESTONE_BINDING.MILESTONE_ID);
 					return milestoneMap.get(milestoneId);
 				}, toList())

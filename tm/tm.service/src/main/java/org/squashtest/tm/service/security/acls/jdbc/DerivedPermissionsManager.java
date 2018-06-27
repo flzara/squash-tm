@@ -35,6 +35,7 @@ import org.squashtest.tm.security.acls.CustomPermission;
 
 @Service
 @Transactional
+@SuppressWarnings("squid:S1192")
 class DerivedPermissionsManager {
 
 	private static final String PROJECT_CLASS_NAME = Project.class.getName();

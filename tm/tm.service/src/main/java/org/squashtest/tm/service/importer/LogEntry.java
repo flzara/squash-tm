@@ -22,7 +22,6 @@ package org.squashtest.tm.service.importer;
 
 import javax.validation.constraints.NotNull;
 import java.util.Arrays;
-import java.util.Objects;
 
 public class LogEntry implements Comparable<LogEntry> {
 	private Integer line;
@@ -163,14 +162,24 @@ public class LogEntry implements Comparable<LogEntry> {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+		if (this == o){
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()){
+			return false;
+		}
 
 		LogEntry logEntry = (LogEntry) o;
 
-		if (!line.equals(logEntry.line)) return false;
-		if (status != logEntry.status) return false;
-		if (!i18nError.equals(logEntry.i18nError)) return false;
+		if (!line.equals(logEntry.line)){
+			return false;
+		}
+		if (status != logEntry.status){
+			return false;
+		}
+		if (!i18nError.equals(logEntry.i18nError)){
+			return false;
+		}
 		return Arrays.deepEquals(errorArgs, logEntry.errorArgs);
 	}
 

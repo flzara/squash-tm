@@ -83,6 +83,7 @@ public class SquashErrorController implements ErrorController {
 	}
 
 	@Override
+	@SuppressWarnings("squid:S1612")
 	public String getErrorPath() {
 		return PATH;
 	}

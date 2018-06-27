@@ -77,6 +77,9 @@ public class UserController {
 
 
 	private static final String USER_ID_URL = "/{userId}";
+	private static final String STATUS = "status";
+	;
+
 
 	private DatatableMapper<String> teamsMapper = new NameBasedMapper(1).map("team-name", "name");
 
@@ -115,13 +118,13 @@ public class UserController {
 		Map<String, Object> result = new HashMap<>();
 		long teamTot = teamFinder.countAll();
 		if (teamTot <= 0) {
-			result.put("status", "no-team");
+			result.put(STATUS, "no-team");
 		} else {
 			List<Team> nonAssociatedTeams = service.findAllNonAssociatedTeams(userId);
 			if (nonAssociatedTeams.isEmpty()) {
-				result.put("status", "no-more-teams");
+				result.put(STATUS, "no-more-teams");
 			} else {
-				result.put("status", "ok");
+				result.put(STATUS, "ok");
 				result.put("teams", CollectionUtils.collect(nonAssociatedTeams, new TeamModelCreator()));
 			}
 		}

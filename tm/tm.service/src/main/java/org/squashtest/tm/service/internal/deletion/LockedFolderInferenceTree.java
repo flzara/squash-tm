@@ -60,7 +60,9 @@ import org.squashtest.tm.domain.library.structures.TreeNode;
 				Node node = (Node) input;
 
 				//if the node is already locked we skip it.
-				if (! node.isDeletable()){ return;}
+				if (! node.isDeletable()){
+					return;
+				}
 
 				//otherwise let's loop. A node is locked if all at least one child is locked.
 				boolean isDeletable = true;
@@ -143,14 +145,6 @@ import org.squashtest.tm.domain.library.structures.TreeNode;
 
 		private Boolean deletable = null;
 
-		public Boolean isDeletable(){
-			return deletable;
-		}
-
-		public void setDeletable(Boolean isDeletable){
-			this.deletable=isDeletable;
-		}
-
 		public Node(){
 			super();
 		}
@@ -164,6 +158,13 @@ import org.squashtest.tm.domain.library.structures.TreeNode;
 			this.deletable =  deletable;
 		}
 
+		public Boolean isDeletable(){
+			return deletable;
+		}
+
+		public void setDeletable(Boolean isDeletable){
+			this.deletable=isDeletable;
+		}
 
 		@Override
 		public void updateWith(LockedFolderInferenceTree.Node newData){

@@ -29,7 +29,7 @@ package org.squashtest.tm.service.internal.repository.hibernate;
  * @author bsiri
  *
  */
-
+@SuppressWarnings("squid:S1192")
 public final class NativeQueries {
 
 	public static final String ATTACHMENT_LIST_SQL_REMOVE_FROM_ATTACHMENT_LIST_CONTENT = " delete from ATTACHMENT_LIST_CONTENT where al_id in (:alIds)";

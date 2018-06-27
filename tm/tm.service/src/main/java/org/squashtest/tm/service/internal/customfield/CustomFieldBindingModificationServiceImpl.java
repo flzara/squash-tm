@@ -22,21 +22,18 @@ package org.squashtest.tm.service.internal.customfield;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.customfield.*;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding.PositionAwareBindingList;
 import org.squashtest.tm.domain.project.GenericProject;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.event.CreateCustomFieldBindingEvent;
 import org.squashtest.tm.event.DeleteCustomFieldBindingEvent;
 import org.squashtest.tm.exception.project.LockedParameterException;
@@ -165,7 +162,6 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
-	// TODO add check for permission MANAGEMENT on the project id
 	public void addNewCustomFieldBinding(long projectId, BindableEntity entity, long customFieldId,
 										 Set<RenderingLocation> locations) {
 
@@ -254,7 +250,9 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 			newBinding.setBoundEntity(entity);
 			newBinding.setCustomField(field);
 			newBinding.setPosition(newIndex.intValue());
-			if(locations != null) { newBinding.setRenderingLocations(locations); }
+			if(locations != null) {
+				newBinding.setRenderingLocations(locations);
+			}
 
 			customFieldBindingDao.save(newBinding);
 			eventPublisher.publishEvent(new CreateCustomFieldBindingEvent(newBinding));

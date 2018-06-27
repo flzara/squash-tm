@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.bugtracker;
 
-import org.apache.commons.collections.map.MultiValueMap;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -49,6 +48,7 @@ class RequirementVersionIssueFinder extends TestCaseIssueFinder {
 
 	static final String INFO = "info";
 
+	@SuppressWarnings("squid:S1612")
 	public PagedCollectionHolder<List<RequirementVersionIssueOwnership<RemoteIssueDecorator>>> findSorted(long entityId, String panelSource, PagingAndSorting sorter) {
 
 		RequirementVersion currentReqVer = requirementVersionManagerService.findById(entityId);
