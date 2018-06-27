@@ -27,7 +27,7 @@ import org.apache.commons.collections.Closure;
 import org.squashtest.tm.domain.library.structures.LibraryTree;
 import org.squashtest.tm.domain.library.structures.TreeNode;
 
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
  public class LockedFolderInferenceTree extends LibraryTree<Long, LockedFolderInferenceTree.Node> {
 
 

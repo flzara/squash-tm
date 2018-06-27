@@ -25,7 +25,7 @@ import java.util.Map;
 
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 public class CampaignTestInventoryStatistics {
 
 	private String campaignName;

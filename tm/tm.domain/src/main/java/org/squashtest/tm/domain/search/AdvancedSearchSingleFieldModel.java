@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.domain.search;
 
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 public class AdvancedSearchSingleFieldModel implements AdvancedSearchFieldModel{
 
 	private AdvancedSearchFieldModelType type = AdvancedSearchFieldModelType.SINGLE;

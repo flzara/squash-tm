@@ -30,7 +30,7 @@ import org.squashtest.tm.core.foundation.collection.Paging;
  * @author Gregory Fouquet
  *
  */
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 public final class PagingUtils {
 	private PagingUtils() {
 		super();

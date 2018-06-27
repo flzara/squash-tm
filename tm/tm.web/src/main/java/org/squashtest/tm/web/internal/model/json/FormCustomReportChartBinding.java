@@ -29,7 +29,7 @@ import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
  * @author jthebault
  *
  */
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 public class FormCustomReportChartBinding {
 
 	private Long id;
@@ -47,6 +47,7 @@ public class FormCustomReportChartBinding {
 	private int sizeY;
 
 	public FormCustomReportChartBinding() {
+		//NOOP
 	}
 
 	public Long getId() {

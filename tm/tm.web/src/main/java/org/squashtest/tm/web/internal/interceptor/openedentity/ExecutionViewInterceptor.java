@@ -34,7 +34,7 @@ import org.squashtest.tm.domain.execution.Execution;
  *
  */
 @WebComponent
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 public class ExecutionViewInterceptor extends ObjectViewsInterceptor {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExecutionViewInterceptor.class);

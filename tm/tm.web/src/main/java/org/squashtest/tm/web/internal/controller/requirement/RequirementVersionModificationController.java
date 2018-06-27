@@ -88,7 +88,7 @@ import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 // XSS OK
 @Controller
 @RequestMapping("/requirement-versions/{requirementVersionId}")
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 public class RequirementVersionModificationController {
 
 	private static final String REQUIREMENT_VERSION_ID = "requirementVersionId";

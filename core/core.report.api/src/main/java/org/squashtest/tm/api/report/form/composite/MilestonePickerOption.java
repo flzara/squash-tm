@@ -35,7 +35,7 @@ public class MilestonePickerOption  extends ContainerOption<MilestonePicker>  {
 	 * @see org.squashtest.tm.api.report.form.ContainerOption#setContent(org.squashtest.tm.api.report.form.Input)
 	 */
 	@Override
-	@SuppressWarnings("Duplicates")
+	@SuppressWarnings("common-java:DuplicatedBlock")
 	public void setContent(MilestonePicker content) {
 		throw new IllegalArgumentException(
 				"Content cannot be set, it is automatically set to MilestonePicker. Remove the <property name=\"content\" /> tag");
@@ -44,7 +44,7 @@ public class MilestonePickerOption  extends ContainerOption<MilestonePicker>  {
 	/**
 	 * @return the pickerName
 	 */
-	@SuppressWarnings("Duplicates")
+	@SuppressWarnings("common-java:DuplicatedBlock")
 	public String getPickerName() {
 		return getContent().getName();
 	}
@@ -53,7 +53,7 @@ public class MilestonePickerOption  extends ContainerOption<MilestonePicker>  {
 	 * @param pickerName
 	 *            the pickerName to set
 	 */
-	@SuppressWarnings("Duplicates")
+	@SuppressWarnings("common-java:DuplicatedBlock")
 	public void setPickerName(String pickerName) {
 		getContent().setName(pickerName);
 	}
@@ -61,7 +61,7 @@ public class MilestonePickerOption  extends ContainerOption<MilestonePicker>  {
 	/**
 	 * @return the pickerLabelKey
 	 */
-	@SuppressWarnings("Duplicates")
+	@SuppressWarnings("common-java:DuplicatedBlock")
 	public String getPickerLabelKey() {
 		return getContent().getLabelKey();
 	}
@@ -72,7 +72,7 @@ public class MilestonePickerOption  extends ContainerOption<MilestonePicker>  {
 	 * @see org.squashtest.tm.api.report.form.OptionInput#setValue(java.lang.String)
 	 */
 	@Override
-	@SuppressWarnings("Duplicates")
+	@SuppressWarnings("common-java:DuplicatedBlock")
 	public void setValue(String value) { // NOSONAR I do want to override for doc purposes
 		// overriden for doc only
 		super.setValue(value);
@@ -82,7 +82,7 @@ public class MilestonePickerOption  extends ContainerOption<MilestonePicker>  {
 	 * @param pickerLabelKey
 	 *            the pickerLabelKey to set
 	 */
-	@SuppressWarnings("Duplicates")
+	@SuppressWarnings("common-java:DuplicatedBlock")
 	public void setPickerLabelKey(String pickerLabelKey) {
 		getContent().setLabelKey(pickerLabelKey);
 	}

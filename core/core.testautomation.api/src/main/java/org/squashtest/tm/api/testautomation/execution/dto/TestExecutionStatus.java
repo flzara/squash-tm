@@ -101,7 +101,7 @@ public class TestExecutionStatus implements Serializable {
 	/**
 	 * @return Start time. Mandatory.
 	 */
-	@SuppressWarnings("Duplicates")
+	@SuppressWarnings("common-java:DuplicatedBlock")
 	public Date getStartTime() {
 		return startTime;
 	}
@@ -110,7 +110,7 @@ public class TestExecutionStatus implements Serializable {
 	 * @param startTime
 	 *            Start time. Mandatory.
 	 */
-	@SuppressWarnings("Duplicates")
+	@SuppressWarnings("common-java:DuplicatedBlock")
 	public void setStartTime(Date startTime) {
 		if (startTime == null) {
 			throw new IllegalArgumentException("start time cannot be null.");
@@ -121,7 +121,7 @@ public class TestExecutionStatus implements Serializable {
 	/**
 	 * @return End time. May be null (while the execution is still running for example)
 	 */
-	@SuppressWarnings("Duplicates")
+	@SuppressWarnings("common-java:DuplicatedBlock")
 	public Date getEndTime() {
 		return endTime;
 	}
@@ -130,7 +130,7 @@ public class TestExecutionStatus implements Serializable {
 	 * @param endTime
 	 *            End time. May be null (while the execution is still running for example)
 	 */
-	@SuppressWarnings("Duplicates")
+	@SuppressWarnings("common-java:DuplicatedBlock")
 	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
 	}
@@ -138,7 +138,7 @@ public class TestExecutionStatus implements Serializable {
 	/**
 	 * @return New status of the test.
 	 */
-	@SuppressWarnings("Duplicates")
+	@SuppressWarnings("common-java:DuplicatedBlock")
 	public ExecutionStatus getStatus() {
 		return status;
 	}
@@ -147,7 +147,7 @@ public class TestExecutionStatus implements Serializable {
 	 * @param status
 	 *            New status of the test.
 	 */
-	@SuppressWarnings("Duplicates")
+	@SuppressWarnings("common-java:DuplicatedBlock")
 	public void setStatus(ExecutionStatus status) {
 		if (status == null) {
 			throw new IllegalArgumentException("status cannot be null.");

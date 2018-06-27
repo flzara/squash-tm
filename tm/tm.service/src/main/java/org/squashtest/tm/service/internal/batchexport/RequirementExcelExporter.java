@@ -64,7 +64,7 @@ import org.squashtest.tm.service.internal.dto.NumericCufHelper;
  */
 @Component
 @Scope("prototype")
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 public class RequirementExcelExporter {
 	private static final String REQUIREMENT_SHEET = TemplateWorksheet.REQUIREMENT_SHEET.sheetName;
 	private static final String COV_SHEET = TemplateWorksheet.COVERAGE_SHEET.sheetName;

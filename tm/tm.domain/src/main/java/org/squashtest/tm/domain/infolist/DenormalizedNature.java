@@ -24,7 +24,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 public class DenormalizedNature implements DenormalizedInfoListItem {
 
 	@Column(name="TC_NAT_LABEL")

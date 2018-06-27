@@ -45,6 +45,15 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 
 	protected final Class<ENTITY_TYPE> entityType;
 
+	/*
+ * Note : it is fine that all dao here share the same entity manager
+ * because we only have one DB (one persistence unit). If we did we would have to
+ * deambiguate and make sure that each dao gets the correct entity manager that handle
+ * the domain class they must deal with.
+ */
+	@PersistenceContext
+	protected EntityManager entityManager;
+
 	@SuppressWarnings(UNCHECKED)
 	public HibernateDao() {
 		super();
@@ -52,14 +61,6 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 		entityType = (Class<ENTITY_TYPE>) type.getActualTypeArguments()[0];
 	}
 
-	/*
-	 * Note : it is fine that all dao here share the same entity manager
-	 * because we only have one DB (one persistence unit). If we did we would have to
-	 * deambiguate and make sure that each dao gets the correct entity manager that handle
-	 * the domain class they must deal with.
-	 */
-	@PersistenceContext
-	protected EntityManager entityManager;
 
 	// transitional method, replace underlying code by direct uses of the
 	// EntityManager when possible.
@@ -124,6 +125,9 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 	 * @param setParams
 	 * @return
 	 */
+	/**
+	 * @deprecated does not seem to be used any longer
+	 */
 	@SuppressWarnings(UNCHECKED)
 	@Deprecated
 	protected /*final*/ <R> List<R> executeListNamedQuery(String queryName, SetQueryParametersCallback setParams) {
@@ -179,6 +183,9 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 			.getSingleResult();
 	}
 
+	/**
+	 * @deprecated does not seem to be used any longer
+	 */
 	@SuppressWarnings(UNCHECKED)
 	@Deprecated
 	protected /*final*/ <R> R executeEntityNamedQuery(String queryName, SetQueryParametersCallback setParams) {

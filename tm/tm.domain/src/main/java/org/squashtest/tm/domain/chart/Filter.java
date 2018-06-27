@@ -41,7 +41,7 @@ import org.squashtest.tm.domain.EntityType;
 
 @Entity
 @Table(name = "CHART_FILTER")
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 public class Filter implements ColumnPrototypeInstance {
 
 	@Id

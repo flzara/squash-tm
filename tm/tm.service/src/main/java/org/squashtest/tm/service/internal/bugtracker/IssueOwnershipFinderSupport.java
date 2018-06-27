@@ -59,7 +59,7 @@ import java.util.concurrent.TimeoutException;
  * @author Gregory Fouquet
  * @since 1.14.0  29/03/16
  */
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 abstract class IssueOwnershipFinderSupport<H> implements IssueOwnershipFinder {
 	@Value("${squashtm.bugtracker.timeout:15}")
 	private long timeout;

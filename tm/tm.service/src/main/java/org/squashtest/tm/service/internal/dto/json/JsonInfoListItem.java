@@ -22,7 +22,7 @@ package org.squashtest.tm.service.internal.dto.json;
 
 
 
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 public class JsonInfoListItem {
 
 	private long id;

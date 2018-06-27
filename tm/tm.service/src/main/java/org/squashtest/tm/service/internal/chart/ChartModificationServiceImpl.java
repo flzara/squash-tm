@@ -59,7 +59,7 @@ import java.util.Optional;
 import com.querydsl.jpa.hibernate.HibernateQueryFactory;
 
 @Service("squashtest.tm.service.ChartModificationService")
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 public class ChartModificationServiceImpl implements ChartModificationService {
 
 	@PersistenceContext

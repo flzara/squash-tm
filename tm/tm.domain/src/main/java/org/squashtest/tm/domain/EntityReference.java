@@ -28,7 +28,7 @@ import javax.persistence.Enumerated;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 public class EntityReference {
 	/**
 	 * Type of the referenced entity.

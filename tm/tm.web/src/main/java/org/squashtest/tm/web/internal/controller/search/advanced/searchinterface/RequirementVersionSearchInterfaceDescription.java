@@ -44,7 +44,7 @@ import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
 @Component
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 public class RequirementVersionSearchInterfaceDescription extends SearchInterfaceDescription {
 
 	private static final String COLUMN_1 = "column1";

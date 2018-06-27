@@ -39,7 +39,7 @@ import org.squashtest.tm.web.internal.model.json.JsonDataset;
 
 import java.util.*;
 
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTestPlanItem> {
 
 	private InternationalizationHelper messageSource;

@@ -67,7 +67,7 @@ import java.util.*;
  *
  */
 @Aspect
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 public class SpringDaoMetaAnnotationAspect implements Ordered {
 
 	@Override

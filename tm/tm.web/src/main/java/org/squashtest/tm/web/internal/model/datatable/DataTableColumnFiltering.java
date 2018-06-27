@@ -82,10 +82,10 @@ public class DataTableColumnFiltering implements ColumnFiltering {
 	}
 
 	@Override
-	@Deprecated
 	/**
 	 * @deprecated does not seem to be used any longer
 	 */
+	@Deprecated
 	public String getFilter(String mDataProp, int offset) {
 		return getFilter(this.dataProps.get(mDataProp) + offset);
 	}

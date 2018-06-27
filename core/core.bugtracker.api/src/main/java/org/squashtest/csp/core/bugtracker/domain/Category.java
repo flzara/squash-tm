@@ -36,21 +36,21 @@ public class Category implements Identifiable<Category>, RemoteCategory{
 		//Default constructor
 	}
 
-	@SuppressWarnings("Duplicates")
+	@SuppressWarnings("common-java:DuplicatedBlock")
 	public Category(String id, String name) {
 		super();
 		this.id = id;
 		this.name = name;
 	}
 
-	@SuppressWarnings("Duplicates")
+	@SuppressWarnings("common-java:DuplicatedBlock")
 	@Override
 	public String getId(){
 		return id;
 	}
 
 	@Override
-	@SuppressWarnings("Duplicates")
+	@SuppressWarnings("common-java:DuplicatedBlock")
 	public String getName(){
 		return name;
 	}
@@ -58,7 +58,7 @@ public class Category implements Identifiable<Category>, RemoteCategory{
 
 
 	@Override
-	@SuppressWarnings("Duplicates")
+	@SuppressWarnings("common-java:DuplicatedBlock")
 	public boolean isDummy(){
 		return this.id.equals(NO_CATEGORY.id);
 	}

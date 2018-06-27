@@ -33,7 +33,7 @@ import org.squashtest.tm.domain.infolist.ListItemReference;
  * @author Gregory Fouquet
  *
  */
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 public class NewRequirementVersionDto {
 
 	/*@NotBlank*/

@@ -113,6 +113,9 @@ public class DenormalizedMultiSelectField extends DenormalizedFieldValue {
 	 * use adCUFieldValueOption when possible.
 	 */
 	@Override
+	/**
+	 * @deprecated does not seem to be used any longer
+	 */
 	@Deprecated
 	public void setValue(String value){
 		setValues(Arrays.asList(value.split(MultiSelectField.SEPARATOR_EXPR)));

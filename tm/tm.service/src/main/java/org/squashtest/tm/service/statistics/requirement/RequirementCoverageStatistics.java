@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.statistics.requirement;
 
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 public final class RequirementCoverageStatistics {
 
 	private int undefined;

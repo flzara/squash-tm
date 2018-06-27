@@ -49,7 +49,7 @@ import org.hibernate.annotations.Immutable;
 @Immutable
 @Table(name = "CLN_RELATIONSHIP_CLOSURE")
 @IdClass(CampaignPathEdge.PathId.class)
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 public class CampaignPathEdge {
 
 	public static class PathId implements Serializable {

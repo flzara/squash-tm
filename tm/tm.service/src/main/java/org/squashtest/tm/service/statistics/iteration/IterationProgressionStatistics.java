@@ -31,7 +31,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.squashtest.tm.service.statistics.campaign.ScheduledIteration;
 import org.squashtest.tm.service.statistics.campaign.StatisticUtils;
 
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 public class IterationProgressionStatistics {
 private Collection<String> i18nErrors;
 

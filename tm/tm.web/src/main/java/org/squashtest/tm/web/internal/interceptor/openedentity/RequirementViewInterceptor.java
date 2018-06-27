@@ -34,7 +34,7 @@ import org.squashtest.tm.domain.requirement.Requirement;
  *
  */
 @WebComponent
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 public class RequirementViewInterceptor extends ObjectViewsInterceptor {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementViewInterceptor.class);

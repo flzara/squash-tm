@@ -35,7 +35,7 @@ public class Version implements Identifiable<Version>, RemoteVersion{
 		//Default constructor
 	}
 
-	@SuppressWarnings("Duplicates")
+	@SuppressWarnings("common-java:DuplicatedBlock")
 	public Version(String id, String name) {
 		super();
 		this.id = id;
@@ -43,19 +43,19 @@ public class Version implements Identifiable<Version>, RemoteVersion{
 	}
 
 	@Override
-	@SuppressWarnings("Duplicates")
+	@SuppressWarnings("common-java:DuplicatedBlock")
 	public String getId(){
 		return id;
 	}
 
 	@Override
-	@SuppressWarnings("Duplicates")
+	@SuppressWarnings("common-java:DuplicatedBlock")
 	public String getName(){
 		return name;
 	}
 
 	@Override
-	@SuppressWarnings("Duplicates")
+	@SuppressWarnings("common-java:DuplicatedBlock")
 	public boolean isDummy(){
 		return this.id.equals(NO_VERSION.id);
 	}

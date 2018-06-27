@@ -22,7 +22,7 @@ package org.squashtest.tm.web.internal.model.json;
 
 import org.squashtest.tm.domain.customreport.CustomReportReportBinding;
 
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 public class FormCustomReportReportBinding {
 
 	private Long id;
@@ -40,6 +40,7 @@ public class FormCustomReportReportBinding {
 	private int sizeY;
 
 	public FormCustomReportReportBinding() {
+		//NOOP
 	}
 
 	public Long getId() {

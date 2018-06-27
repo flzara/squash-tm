@@ -31,7 +31,7 @@ import spock.lang.Unroll;
 import static org.squashtest.tm.domain.EntityType.*
 import org.apache.commons.collections.Transformer
 
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 class DomainGraphTest extends Specification {
 
 	// some abreviations

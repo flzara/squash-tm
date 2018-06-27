@@ -30,7 +30,7 @@ import static org.squashtest.tm.service.internal.batchimport.testcase.excel.Colu
  * @author Gregory Fouquet
  *
  */
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 public enum DatasetParamValuesSheetColumn implements TemplateColumn {
 	ACTION,
 	TC_OWNER_PATH(MANDATORY),

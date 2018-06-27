@@ -28,6 +28,9 @@ import org.hibernate.Query;
  * @author Gregory Fouquet
  * @see HibernateDao#executeListNamedQuery(String, SetQueryParametersCallback)
  */
+/**
+ * @deprecated does not seem to be used any longer
+ */
 @Deprecated
 public interface SetQueryParametersCallback {
 	/**

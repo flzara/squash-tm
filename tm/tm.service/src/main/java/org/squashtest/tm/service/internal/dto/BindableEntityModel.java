@@ -22,7 +22,7 @@ package org.squashtest.tm.service.internal.dto;
 
 import org.squashtest.tm.domain.customfield.BindableEntity;
 
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 public class BindableEntityModel {
 
 	//value of that BindableEntity

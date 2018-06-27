@@ -56,24 +56,24 @@ public class BTProject implements Identifiable<BTProject>, RemoteProject {
 		this.id = id;
 		this.name = name;
 	}
-	@SuppressWarnings("Duplicates")
+	@SuppressWarnings("common-java:DuplicatedBlock")
 	public void setId(String id) {
 		this.id = id;
 	}
 
-	@SuppressWarnings("Duplicates")
+	@SuppressWarnings("common-java:DuplicatedBlock")
 	public void setName(String name) {
 		this.name = name;
 	}
 
 	@Override
-	@SuppressWarnings("Duplicates")
+	@SuppressWarnings("common-java:DuplicatedBlock")
 	public String getId() {
 		return id;
 	}
 
 	@Override
-	@SuppressWarnings("Duplicates")
+	@SuppressWarnings("common-java:DuplicatedBlock")
 	public String getName() {
 		return name;
 	}

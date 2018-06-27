@@ -222,6 +222,9 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	 * @deprecated
 	 */
 	@Override
+	/**
+	 * @deprecated does not seem to be used any longer
+	 */
 	@Deprecated
 	public void persistIterationAndTestPlan(Iteration iteration) {
 		persist(iteration);

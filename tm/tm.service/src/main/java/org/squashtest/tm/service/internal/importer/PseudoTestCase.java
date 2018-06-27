@@ -40,7 +40,7 @@ import org.squashtest.tm.domain.testcase.TestStep;
  * @author Gregory Fouquet
  *
  */
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 /* package-private */class PseudoTestCase {
 	private Date createdOnDate = null;
 	private String createdBy = null;

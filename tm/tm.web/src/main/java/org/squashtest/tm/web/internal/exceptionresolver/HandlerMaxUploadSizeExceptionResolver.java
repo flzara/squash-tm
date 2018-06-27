@@ -46,6 +46,9 @@ and put a few loggers to watch if its ever invoked at all.
 If by Squash TM 16 it has shown no sign of activity feel free to decommission this class.
 */
 @Component
+/**
+ * @deprecated does not seem to be used any longer
+ */
 @Deprecated
 public class HandlerMaxUploadSizeExceptionResolver extends AbstractHandlerExceptionResolver {
 

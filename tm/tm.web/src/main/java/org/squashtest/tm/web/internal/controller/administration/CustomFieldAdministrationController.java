@@ -62,6 +62,16 @@ public final class CustomFieldAdministrationController {
 	@Inject
 	private InternationalizationHelper messageSource;
 
+	/**
+	 * A Mapping for custom fields table sortable columns : maps the table column index to an entity property. NB:
+	 * column index is of all table's columns (displayed or not)
+	 */
+	private final DatatableMapper<String> customFieldTableMapper = new NameBasedMapper(3)
+		.map(NAME, NAME)
+		.map(LABEL, LABEL)
+		.map("input-type", INPUT_TYPE);
+
+
 	@Inject
 	public void setCustomFieldManagerService(CustomFieldManagerService customFieldManagerService) {
 		this.customFieldManagerService = customFieldManagerService;
@@ -92,14 +102,6 @@ public final class CustomFieldAdministrationController {
 		return "custom-field-manager.html";
 	}
 
-	/**
-	 * A Mapping for custom fields table sortable columns : maps the table column index to an entity property. NB:
-	 * column index is of all table's columns (displayed or not)
-	 */
-	private final DatatableMapper<String> customFieldTableMapper = new NameBasedMapper(3)
-	.map(NAME, NAME)
-	.map(LABEL, LABEL)
-	.map("input-type", INPUT_TYPE);
 
 	/**
 	 * Return the DataTableModel to display the table of all custom fields.
@@ -150,7 +152,9 @@ public final class CustomFieldAdministrationController {
 
 	@RequestMapping(value = "/{customFieldId}", method = RequestMethod.DELETE)
 	@ResponseBody
-	@Deprecated
+	/**
+	 * @deprecated does not seem to be used any longer
+	 */
 	/**
 	 *
 	 * @param customFieldId

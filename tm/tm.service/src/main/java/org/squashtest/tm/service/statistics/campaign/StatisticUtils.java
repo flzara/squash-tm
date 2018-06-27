@@ -27,7 +27,7 @@ import java.util.*;
 public final class StatisticUtils {
 
 	public StatisticUtils() {
-
+		//NOOP
 	}
 
 	public List<Object[]> gatherCumulativeTestsPerDate(List<Date> dates) {

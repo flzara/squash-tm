@@ -34,7 +34,7 @@ import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 public class CustomReportLibraryNodeDaoImpl implements CustomCustomReportLibraryNodeDao {
 
 	private static final String UNCHECKED = "unchecked";

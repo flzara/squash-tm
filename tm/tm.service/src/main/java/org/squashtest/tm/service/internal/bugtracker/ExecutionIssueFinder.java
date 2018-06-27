@@ -58,7 +58,7 @@ import java.util.concurrent.TimeoutException;
  * @since 1.14.0  29/03/16
  */
 @Component
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 class ExecutionIssueFinder implements IssueOwnershipFinder {
 	private static final Comparator<Pair<? extends IssueDetector, Issue>> ASC_PAIR_COMPARATOR = new Comparator<Pair<? extends IssueDetector, Issue>>() {
 		@Override

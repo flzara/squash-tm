@@ -37,7 +37,7 @@ import java.util.Objects;
  */
 @Entity
 @PrimaryKeyJoinColumn(name = "EVENT_ID")
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 public class RequirementLargePropertyChange extends RequirementAuditEvent implements RequirementVersionModification,
 ChangedProperty {
 

@@ -37,7 +37,7 @@ import org.hibernate.persister.spi.PersisterCreationContext;
     ABOUT SONAR : it says this class has been copypasted from TestStepPersister,
 and should be refactored. Sure, go ahdead. I'm watching.
 */
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 public class IterationTestPlanItemPersister extends SingleTableEntityPersister {
 
 	private static final String NONFORMATTED_TABLE_NAME = "ITEM_TEST_PLAN_LIST";

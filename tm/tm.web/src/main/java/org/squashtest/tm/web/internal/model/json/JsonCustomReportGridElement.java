@@ -29,7 +29,7 @@ import org.squashtest.tm.domain.customreport.CustomReportReportBinding;
  * @author jthebault
  *
  */
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 public class JsonCustomReportGridElement {
 
 	private Long id;

@@ -94,6 +94,9 @@ public class TagsValue extends CustomFieldValue implements MultiValuedCustomFiel
 	 * use adCUFieldValueOption when possible.
 	 */
 	@Override
+	/**
+	 * @deprecated does not seem to be used any longer
+	 */
 	@Deprecated
 	public void setValue(String value) {
 		setValues(value == null ? Collections.<String>emptyList() : Arrays.asList(value.split(MultiSelectField.SEPARATOR_EXPR)));

@@ -115,7 +115,7 @@ import org.squashtest.tm.domain.requirement.RequirementStatus;
  *  Two more TA statuses : NOT_RUN(BLOCKED) and NOT_FOUND(UNTESTABLE)
  *
  */
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 public enum ExecutionStatus implements Internationalizable, Level {
 
 	SETTLED(10) {
@@ -471,6 +471,9 @@ public enum ExecutionStatus implements Internationalizable, Level {
 		return SUCCESS_STATUSES;
 	}
 
+	/**
+	 * @deprecated does not seem to be used any longer
+	 */
 	@Deprecated // use DEFAULT_DISABLED_STATUSES instead
 	public boolean defaultEnabled() {
 		return true;

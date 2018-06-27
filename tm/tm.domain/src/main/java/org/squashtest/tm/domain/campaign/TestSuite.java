@@ -55,7 +55,7 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 @Entity
 @Indexed
 @InheritsAcls(constrainedClass = Iteration.class, collectionName = "testSuites")
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, AttachmentHolder, MilestoneMember, HasExecutionStatus {
 	public static final int MAX_NAME_SIZE = 100;
 	static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;

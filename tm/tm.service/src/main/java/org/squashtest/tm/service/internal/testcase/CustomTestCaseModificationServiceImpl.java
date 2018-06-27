@@ -87,7 +87,7 @@ import static org.squashtest.tm.service.security.Authorizations.*;
  */
 @Service("CustomTestCaseModificationService")
 @Transactional
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("common-java:DuplicatedBlock")
 public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModificationService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomTestCaseModificationServiceImpl.class);
@@ -268,6 +268,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		parameterModificationService.createParamsForStep(testStepId);
 	}
 
+	/**
+	 * @deprecated does not seem to be used any longer
+	 */
 	@Override
 	@Deprecated
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
