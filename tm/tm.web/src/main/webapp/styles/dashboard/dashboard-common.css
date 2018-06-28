@@ -96,8 +96,8 @@
     		margin-top: 0.4em;
     		margin-right: 0.5em !important;
 
-    		 /*meh... we have to redefine buttons height*/
-    		 /*for them to look good^h^h as before*/
+    		// meh... we have to redefine buttons height
+    		// for them to look good^h^h as before
     		input {
     			.sq-btn;
     		}

@@ -21,26 +21,25 @@
 
 -->
 
-<!DOCTYPE HTML>
+
 <html th:replace="fragments-utils/basic-page :: basic-page(~{::title}, ~{::h1}, ~{::div})">
 
 	<head>
 		<title>[[#{title.LoggedOut}]]</title>
-    <link rel="stylesheet" th:css="features.css" />
 	</head>
-
+	
 	<body>
 		<h1>[[#{title.LoggedOut}]]</h1>
-
+		
 		<div style="margin: 2em; font-size: 1.5em;">
 			<p >
 				[[#{message.YouAreLoggedOut}]]
 			</p>
-
+			
 			<!-- Let the main entry point decide where to go -->
 			<a style="margin: auto;color:blue;" th:href="@{/}">[[#{label.LogInAgain}]]</a>
 		</div>
 	</body>
-
+	
 
 </html>

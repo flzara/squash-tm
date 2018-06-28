@@ -20,12 +20,14 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE HTML>
+
+
 <html th:replace="fragments-utils/basic-page :: basic-page-and-script(~{::title}, ~{::h1}, ~{::div}, ~{::script})">
+
   <head>
     <title>[[#{oauth1.requestfailed.title}]]</title>
-    <link rel="stylesheet" th:css="features.css" />
   </head>
+
   <body>
     <h1>[[#{oauth1.requestfailed.title}]]</h1>
     <div style="margin: 2em; font-size: 1.5em;">
@@ -33,7 +35,7 @@
         [[#{oauth1.requestfailed.message}]]
       </p>
     </div>
-
+    
     <script type="text/javascript">
     	// see /scripts/serverauth/auth-manager function commenceOauthTokensExchange()
     	window.onunload = function(){
@@ -46,9 +48,9 @@
     				// nothing worth doing
     			}
     		}
-    	}
+    	}    
     </script>
-
+    
   </body>
 
 
