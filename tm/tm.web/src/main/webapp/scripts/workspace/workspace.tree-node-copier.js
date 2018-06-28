@@ -19,13 +19,13 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
- * create a singleton instance if needed, 
- * then returns it to the client. 
- * 
- * 
+ * create a singleton instance if needed,
+ * then returns it to the client.
+ *
+ *
  */
 
-define([ 'jquery', 'underscore', 'squash.translator', "jquery.squash.oneshotdialog", "workspace.projects" ], 
+define([ 'jquery', 'underscore', 'squash.translator', "jquery.squash.oneshotdialog", "workspace.projects" ],
 		function($, _, translator, oneshot, projects) {
 
 	squashtm = squashtm || {};
@@ -48,7 +48,7 @@ define([ 'jquery', 'underscore', 'squash.translator', "jquery.squash.oneshotdial
 
 		// ***************** private methods *********************
 
-	
+
 
 		var reset = function() {
 			$.cookie('squash-copy-nodes', null);
@@ -104,7 +104,6 @@ define([ 'jquery', 'underscore', 'squash.translator', "jquery.squash.oneshotdial
 		// assumes that the operation is ok according to the rules of this workspace.
 		this.pasteNodesFromCookie = function() {
 
-			var self = this;
 			var tree = this.tree;
 
 			var data = retrieve();
@@ -120,7 +119,7 @@ define([ 'jquery', 'underscore', 'squash.translator', "jquery.squash.oneshotdial
 		// assumes that the operation is ok according to the rules of this workspace.
 		this.pasteNodesFromTree = function() {
 
-			var self = this, tree = this.tree;
+			var tree = this.tree;
 
 			var data = readNodesData(tree), move = tree.jstree('get_instance')._get_move();
 			target = $(move.np).treeNode();
@@ -136,9 +135,9 @@ define([ 'jquery', 'underscore', 'squash.translator', "jquery.squash.oneshotdial
 
 			var defer = $.Deferred();
 
-			var targetProject = target.getProjectId(), 
+			var targetProject = target.getProjectId(),
 				isCrossProject = false;
-			
+
 			// convert the dom-id to a res-id
 			var srcProjects = data.projects;
 
@@ -149,24 +148,24 @@ define([ 'jquery', 'underscore', 'squash.translator', "jquery.squash.oneshotdial
 					break;
 				}
 			}
-				
-			
+
+
 			if (isCrossProject) {
 				var msg = translator.get('message.warnCopyToDifferentLibrary');
 
 				// if cross-project, also check whether
-				// the nature/type/category settings are different				
+				// the nature/type/category settings are different
 				var areInfoListsDifferent = projects.haveDifferentInfolists(srcProjects.concat(targetProject));
 				var addendum;
-				
+
 				if (areInfoListsDifferent){
 					addendum = translator.get('message.warnCopyToDifferentLibrary.infolistsDiffer');
 					// we append the addendum by manipulating the html directly
-					// it is so because first creating the js element then appending 
+					// it is so because first creating the js element then appending
 					// will give poor results
 					msg = msg.replace('</ul>', addendum + '</ul>');
 				}
-				
+
 				var lostMilestones = projects.willMilestonesBeLost(targetProject, srcProjects);
 				if (lostMilestones){
 					if (target.getName() === 'RequirementLibrary'){
@@ -182,15 +181,15 @@ define([ 'jquery', 'underscore', 'squash.translator', "jquery.squash.oneshotdial
 						msg = msg.replace('</ul>', addendum + '</ul>');
 					}
 				}
-				
-				
+
+
 				oneshot.show('Info', msg)
 				.done(function() {
 					defer.resolve();
 				}).fail(function() {
 					defer.reject();
 				});
-				
+
 			} else {
 				defer.resolve();
 			}

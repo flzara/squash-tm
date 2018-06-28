@@ -30,8 +30,6 @@ define([ "jquery", "backbone", "squash.translator", '../test-plan-panel/exec-run
 			this.getTableRowId = $.proxy(this._getTableRowId, this);
 			this.tableRowCallback = $.proxy(this._tableRowCallback, this);
 
-			var self = this;
-
 			var tableConf = {
 					"oLanguage" : {
 						"sUrl" : squashtm.app.contextRoot + "/datatables/messages"

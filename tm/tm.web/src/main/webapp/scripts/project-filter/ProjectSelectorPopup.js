@@ -28,7 +28,6 @@
 	var ProjectSelectorPopup = AbstractProjectFilterPopup.extend({
 
 		initialize :function(options){
-			var self = this;
 			this.options = options;
 			this.render()._initialize();
 		},

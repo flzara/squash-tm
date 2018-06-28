@@ -309,7 +309,6 @@ define(["jquery",
 
 			var newValues = {};
 			var controls = this._getAllControls();
-			var self = this;
 
 			controls.each(function(){
 

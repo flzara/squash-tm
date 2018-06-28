@@ -200,7 +200,6 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 			this.$el.formDialog('close');
 		},
 		setParentPanel : function(parentPanel) {
-			var self = this;
 			this.parentPanel = parentPanel;
 		}
 	});

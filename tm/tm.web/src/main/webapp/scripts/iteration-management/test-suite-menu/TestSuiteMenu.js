@@ -94,8 +94,6 @@ define(["jquery", "underscore", "app/ws/squashtm.notification", "squash.translat
 
 		/* **************** private ************** */
 
-		var self = this;
-
 		var makeItem = $.proxy(function (json) {
 			var node = $("<li/>", {
 				'class': 'suite-item'

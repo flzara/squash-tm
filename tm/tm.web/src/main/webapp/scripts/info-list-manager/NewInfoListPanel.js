@@ -154,7 +154,6 @@ define(
 				richWidth : 1000,
 
 				initialize : function() {
-					var self = this;
 					this.apiRoot = $(this.wrapper).data("api-url");
 
 					this.options = new InfoListOptionCollection([], { apiRoot: this.apiRoot });

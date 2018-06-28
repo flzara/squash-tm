@@ -268,7 +268,6 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 		},
 
 		reloadCufValues : function(filter) {
-			var self = this;
 			var datatype = filter.column.dataType;
 			if(datatype === "TAG"){
 				var id = filter.column.id;

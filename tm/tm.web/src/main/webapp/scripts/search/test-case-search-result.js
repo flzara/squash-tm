@@ -185,7 +185,6 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.ro
 			},
 
 			editMilestone: function () {
-				var self = this;
 				var table = $('#test-case-search-result-table').squashTable();
 				var ids = table.getSelectedIds();
 				var dialogOptions = {
@@ -311,7 +310,6 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.ro
 			},
 			initModifyMilestoneDialog: function () {
 
-				var self = this;
 				var table = $('#test-case-search-result-table').squashTable();
 				var ids = table.getSelectedIds();
 

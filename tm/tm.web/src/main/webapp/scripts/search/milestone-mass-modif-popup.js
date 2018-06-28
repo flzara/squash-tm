@@ -18,16 +18,15 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.translator", "jquery.squash.formdialog" ], 
+define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.translator", "jquery.squash.formdialog" ],
 		function($, Backbone, _, routing, translator) {
 	"use strict";
-	
-	
+
+
 	var View = Backbone.View.extend({
 		el : ".bind-milestone-dialog",
 		initialize : function() {
 
-			var self = this;
 			this.dialog = this.$el.formDialog({
 				autoOpen : false,
 				width : 800
@@ -36,17 +35,17 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 			this.initBlanketSelectors();
 
 		},
-		
+
 		events : {
 			"formdialogcancel" : "cancel",
 			"formdialogconfirm" : "confirm",
 			"formdialogselection" : "selection"
 		},
-		
+
 		open : function(options){
 			this.options = options;
 			this.initData();
-				
+
 
 		},
 		_afterDataInit : function(){
@@ -77,45 +76,45 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 		_openDialog : function (){
 			var data = this.data;
 			var workspace = this.options.workspace;
-			
+
 			if (data.hasData) {
 				this.dialog.formDialog('setState', 'selection');
-				this.dialog.formDialog('open');	
+				this.dialog.formDialog('open');
 			} else {
 				var errorMessageKey = 'message.search.mass-modif.milestone.wrongperim.'+workspace;
 				var warn = translator.get({
 					errorTitle : 'popup.title.Info',
 					errorMessage : errorMessageKey
 				});
-				$.squash.openMessage(warn.errorTitle, warn.errorMessage);	
+				$.squash.openMessage(warn.errorTitle, warn.errorMessage);
 			}
 		},
-		
+
 		initTable : function(){
 			var table = this.$el.find('.bind-milestone-dialog-table');
 			var tblCnf = {
 					bServerSide : false
 				},
-			squashCnf = {};	
+			squashCnf = {};
 			table.squashTable(tblCnf, squashCnf);
 			this.table = table;
 
 		},
 		updateTable : function(){
 			var table = this.$el.find('.bind-milestone-dialog-table');
-			table.squashTable().fnSettings().sAjaxSource  = this.options.tableSource;	
+			table.squashTable().fnSettings().sAjaxSource  = this.options.tableSource;
 			table.squashTable()._fnAjaxUpdate();
 		},
-		
+
 		initWarning : function(){
 
 			var data = this.data;
-		
+
 			if (!data.samePerimeter){
 				var warning = translator.get('message.search.mass-modif.milestone.warn');
 				this.$el.find('#warning-mass-modif').text(warning);
 			}
-			
+
 
 		},
 		initData : function(){
@@ -128,32 +127,32 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 				self._afterDataInit();
 			});
 		},
-	
+
 		cancel : function(event) {
 			this.cleanup();
 		},
-		
+
 		selection : function(){
 			this.dialog.formDialog('setState', 'confirm');
 		},
-		
+
 		confirm : function() {
 			this.cleanup();
 			var self = this;
-			
+
 			var checks = this.table.find('>tbody>tr>td.bind-milestone-dialog-check input:checked');
 			var ids = [];
-			
+
 			checks.each(function(){
 				var r = this.parentNode.parentNode;
 				var id = self.table.fnGetData(r)['entity-id'];
 				ids.push(id);
 			});
-			
+
 			var data =  ids.length !== 0 ? $.param({"ids" : ids}) : 'ids[]';
-			
-			
-		
+
+
+
 			$.ajax({
 				url : this.options.milestonesURL,
 				type : 'POST',
@@ -165,13 +164,13 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 						errorTitle : 'popup.title.Info',
 						errorMessage : 'message.search.mass-modif.milestone.requirement-version-already-bind'
 					});
-					$.squash.openMessage(warn.errorTitle, warn.errorMessage);	
-					
+					$.squash.openMessage(warn.errorTitle, warn.errorMessage);
+
 				}
-			});	
-			
+			});
+
 		},
-		
+
 		refreshSearchTable : function(){
 			this.options.searchTableCallback();
 		},
@@ -181,7 +180,7 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
          checkBindedMilestone : function(){
 			this._check(this.data.checkedIds);
          },
-         
+
          _check: function(ids){
 			var tab = $('.bind-milestone-dialog-table').squashTable();
 			var checks = tab.find('>tbody>tr>td.bind-milestone-dialog-check input');
@@ -193,7 +192,7 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 					}
 				});
 			},
-	
+
 		cleanup : function() {
 			this.$el.addClass("not-displayed");
 			this.$el.find('#warning-mass-modif').text("");
@@ -207,31 +206,30 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 			this.cleanup();
 			this.undelegateEvents();
 		},
-	
+
 		initBlanketSelectors : function(){
-			
+
 
 		   var table = this.$el.find('.bind-milestone-dialog-table');
-			
-			
+
+
 		   this.$el.on('click', '.bind-milestone-dialog-selectall', function(){
 					table.find('>tbody>tr>td.bind-milestone-dialog-check input').prop('checked', true);
-				});			
-				
+				});
+
 		   this.$el.on('click', '.bind-milestone-dialog-selectnone', function(){
-					table.find('>tbody>tr>td.bind-milestone-dialog-check input').prop('checked', false);				
-				});			
-				
+					table.find('>tbody>tr>td.bind-milestone-dialog-check input').prop('checked', false);
+				});
+
 		   this.$el.on('click', '.bind-milestone-dialog-invertselect', function(){
 					table.find('>tbody>tr>td.bind-milestone-dialog-check input').each(function(){
-						this.checked = ! this.checked;					
-					});				
+						this.checked = ! this.checked;
+					});
 				});
 			}
 
-		
+
 		});
 
 	return View;
 });
-	

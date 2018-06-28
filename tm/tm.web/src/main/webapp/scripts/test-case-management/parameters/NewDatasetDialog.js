@@ -93,7 +93,6 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms", "app/util/StringUt
 
 
 		validate : function(event) {
-			var self = this;
 			var res = true, validationErrors = this.validateAll();
 			Forms.form(this.$el).clearState();
 

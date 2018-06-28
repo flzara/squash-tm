@@ -59,7 +59,6 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 			//Instance variable are initialised in initialize function
 			initialize: function (options) {
 				this.options = options;
-				var self = this;
 				this.xSizeWidget = null;//this attribute will be computed by calculateWidgetDimension
 				this.ySizeWidget = null;//this attribute will be computed by calculateWidgetDimension
 				//fetching the acls so we can adapt the view with user rights
@@ -375,7 +374,6 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 
 			initListenerOnWindowResize: function () {
 				var lazyInitialize = _.throttle(this.redrawDashboard, 500);
-				var self = this;
 				//adding a namespace to resize event to avoid conflict with other resize handler, and allow proper event removing
 				$(window).on('resize.dashboard', function () {
 					lazyInitialize();

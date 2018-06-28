@@ -43,7 +43,6 @@ define(['jquery', 'squash.attributeparser',	'handlebars', 'squash.configmanager'
 
 			_create : function(){
 				this._super();
-				var self=this;
 
 				this._configure();
 
