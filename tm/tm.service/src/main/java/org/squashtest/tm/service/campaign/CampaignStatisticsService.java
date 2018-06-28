@@ -48,7 +48,7 @@ import org.squashtest.tm.service.statistics.campaign.ManyCampaignStatisticsBundl
  *
  *  So I leave it there but if some day we have yet another set of methods to add (like, dashboard for Project), please do that refactoring.
  *
- *  Note : CampaignLibraryFinderService#findCampaignIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds); 		// NOSONAR
+ *  <code> Note : CampaignLibraryFinderService#findCampaignIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds); </code>
  *  and CampaignDao#filterByMilestone(Collection<Long> campaignIds, Long milestoneId) might be useful to that end. If you can
  *  solve :
  *  - the inconsistencies regarding the TestInventory (that depends on the the context)

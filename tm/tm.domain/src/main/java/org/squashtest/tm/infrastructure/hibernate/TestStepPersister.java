@@ -98,10 +98,12 @@ import org.hibernate.persister.spi.PersisterCreationContext;
  *  the default implementation straight from org.hibernate.persister.entity.AbstractEntityPersister :
  *
  *  [quote]
- *  protected boolean isInverseTable(int j) { 		//NOSONAR
- *		return false; 								//NOSONAR
- *	}												//NOSONAR
+ *
+ *  <code>protected boolean isInverseTable(int j) {</code>
+ *		<code>return false;</code>
+ *	<code>}</code>
  *	[/quote]
+ *  
  *
  *	And here is how Gavin King solved the problem : by delegating to me.
  *
