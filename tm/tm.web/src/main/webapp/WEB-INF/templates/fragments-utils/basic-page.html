@@ -22,53 +22,53 @@
 -->
 
 
-
+<!DOCTYPE HTML>
 <html th:fragment="basic-page(title, header, message)">
 
 	<p th:remove="all">
 		Documentation :
-		
+
 		This is a template of general purpose page. It is suited for simple layout. Parameters :
 		- title : The title for the browser tab
-		- header : A header for the content 
+		- header : A header for the content
 		- message : The html block of the actual message.
-		
+
 		Usage : see https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#template-layout
-		
+
 	</p>
 
 	<head>
 		<title th:replace="${title}">Some error title</title>
-						
+
 		<link rel="stylesheet" sq:css="features.css" />
 		<link rel="stylesheet" sq:css="squash.core.css"/>
 		<link rel="stylesheet" sq:css="squash.grey.css"/>
 		<link rel="stylesheet" sq:css="jquery/ui/jquery-ui-1.9.1.custom.grey.css"
-		
+
 	</head>
-	
-	
+
+
 	<body class="nav-up-layout">
-	
+
 		<div th:replace="fragments-utils/static-panels :: upper-banner" />
-		
+
 		<div id="main-pane">
-		
+
 		  <div class="centered">
 		  	<h1 th:replace="${header}">Your header</h1>
 		  </div>
-		
+
 	 	  <div class="ui-widget ui-widget-content ui-corner-all"
 	        style="margin: auto; margin-top: 2%; padding-left: 0.5em; padding-right: 0.5em; width: 80%">
-	        
+
 	        	<th:block th:replace="${message}">
 	        		<p>Your message gets here</p>
 	        	</th:block>
-	        
+
 	      </div>
 		</div>
 	</body>
-	
+
 
 </html>
 
@@ -82,14 +82,14 @@
 	<th:block th:replace=":: basic-page(${title}, ${header}, ${message})">
 		<div>some message</div>
 	</th:block>
-	
+
 	<footer>
 		<script th:replace="${script}">console.log('some script');</script>
 	</footer>
-	
+
 </html>
 
-	
+
 
 
 

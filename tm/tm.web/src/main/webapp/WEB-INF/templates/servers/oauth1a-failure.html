@@ -21,7 +21,7 @@
 
 -->
 
-
+<!DOCTYPE HTML>
 <html th:replace="fragments-utils/basic-page :: basic-page-and-script(~{::title}, ~{::h1}, ~{::div}, ~{::script})">
 
   <head>
@@ -35,7 +35,7 @@
         [[#{oauth1.requestfailed.message}]]
       </p>
     </div>
-    
+
     <script type="text/javascript">
     	// see /scripts/serverauth/auth-manager function commenceOauthTokensExchange()
     	window.onunload = function(){
@@ -48,9 +48,9 @@
     				// nothing worth doing
     			}
     		}
-    	}    
+    	}
     </script>
-    
+
   </body>
 
 
