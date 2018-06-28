@@ -119,9 +119,9 @@ define(function () {
 		"\n";
 
 	var doc_en = "# language: en\n" +
-		"# Assistance for the writing of Gherkin test cases\n" +
+		"# Quick reference guide to writing Gherkin test cases\n" +
 		"\n" +
-		"# Gherkin is a language using the methodology of Behaviour Driven Development.\n" +
+		"# Gherkin is a language based on the process of Behaviour Driven Development.\n" +
 		"# When using Squash TM, a Gherkin test case can either be executed manually like any regular test case or exported for use in an external automated execution.\n" +
 		"\n" +
 		"\n" +
@@ -138,7 +138,7 @@ define(function () {
 		"# Keyword for a dataset (to be followed by a data table)\n" +
 		"Examples:\n" +
 		"\n" +
-		"# Context keyword (Test steps common to all the scenarios of the script)\n" +
+		"# Context keyword (Test steps common to all script scenarios)\n" +
 		"Background:\n" +
 		"\n" +
 		"# Keyword for test steps preconditions :\n" +
@@ -158,13 +158,13 @@ define(function () {
 		"# ----------------------------- FEATURE EXAMPLE ----------------------------- \n" +
 		"# Structure example of a complete feature with three test scenarios and a context :\n" +
 		"\n" +
-		"# language: en <- this comment line indicates the localization of the script. By default (if missing or invalid), Squash TM will consider the script as written in English.\n" +
+		"# language: en <- this comment line indicates the localization of the script. By default (if missing or invalid), Squash TM will consider that the script is written in English.\n" +
 		"\n" +
 		"# Feature name and its (optional) description (Beware the indentation if you wish to include a description)\n" +
 		"Feature: Check the coffee machine\n" +
 		"\tThe aim is to check that the coffee machine works properly.\n" +
 		"\n" +
-		"\t# Optional context. If a context is present here, it will be re-used as an additional condition for each scenario of the script.\n" +
+		"\t# Optional context. If a context is present here, it will be re-used as an additional condition for each script scenario.\n" +
 		"\tBackground:\n" +
 		"\t\tGiven a coffee machine\n" +
 		"\n" +
