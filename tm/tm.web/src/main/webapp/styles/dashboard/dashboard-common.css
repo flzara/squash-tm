@@ -100,7 +100,7 @@
     		 /*meh... we have to redefine buttons height
     		 for them to look good^h^h as before*/
     		input {
-    			.sq-btn; /* NOSOAR */
+    			.sq-btn; /* NOSONAR */
     		}
 
     		a {
