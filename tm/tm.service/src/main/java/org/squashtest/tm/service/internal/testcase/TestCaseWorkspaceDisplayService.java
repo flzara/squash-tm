@@ -333,6 +333,11 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		return (node != null && (NO_ACTIVE_MILESTONE_ID.equals(activeMilestoneId) || "folder".equals(node.getAttr().get("rel")) || nodeHasActiveMilestone(nodeLinkedToMilestone, (Long) node.getAttr().get(RES_ID))));
 	}
 
+	@Override
+	public Collection<JsTreeNode> getCampaignNodeContent(Long folderId, UserDto currentUser, String libraryNode) {
+		return null;
+	}
+
 	class TestCaseLibraryNodeDistribution {
 		Set<Long> tcIds = new HashSet<>();
 		Set<Long> tcFolderIds = new HashSet<>();

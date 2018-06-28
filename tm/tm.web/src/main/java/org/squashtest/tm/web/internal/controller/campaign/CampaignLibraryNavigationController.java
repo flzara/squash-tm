@@ -313,7 +313,7 @@ public class CampaignLibraryNavigationController extends
 	@RequestMapping(value = "/campaigns/{campaignId}/content", method = RequestMethod.GET)
 	public List<JsTreeNode> getCampaignIterationsTreeModel(@PathVariable long campaignId) {
 		UserDto currentUser = userAccountService.findCurrentUserDto();
-		Collection<JsTreeNode> nodes = ((CampaignWorkspaceDisplayService)workspaceDisplayService()).getCampaignNodeContent(campaignId, currentUser, "Campaign");
+		Collection<JsTreeNode> nodes = workspaceDisplayService().getCampaignNodeContent(campaignId, currentUser, "Campaign");
 		return new ArrayList<>(nodes);
 	}
 
@@ -321,7 +321,7 @@ public class CampaignLibraryNavigationController extends
 	@RequestMapping(value = "/iterations/{resourceId}/content", method = RequestMethod.GET)
 	public List<JsTreeNode> getIterationTestSuitesTreeModel(@PathVariable("resourceId") long iterationId) {
 		UserDto currentUser = userAccountService.findCurrentUserDto();
-		Collection<JsTreeNode> nodes = ((CampaignWorkspaceDisplayService)workspaceDisplayService()).getCampaignNodeContent(iterationId, currentUser, "Iteration");
+		Collection<JsTreeNode> nodes = workspaceDisplayService().getCampaignNodeContent(iterationId, currentUser, "Iteration");
 		return new ArrayList<>(nodes);
 	}
 
