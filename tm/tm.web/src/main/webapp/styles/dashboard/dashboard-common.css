@@ -99,9 +99,6 @@
 
     		 /*meh... we have to redefine buttons height
     		 for them to look good^h^h as before*/
-    		input { /* NOSONAR */
-    			.sq-btn;
-    		}
 
     		a {
     			padding-top: .15em;
