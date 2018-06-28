@@ -27,7 +27,7 @@
   		position: absolute;
   		min-width: 20px;
     	min-height: 20px;
-    	background-position: top left;
+    	background-position: top left; /* NOSONAR */
     	background-repeat: no-repeat;
     	z-index: 20;
     	top: 3px;
@@ -42,7 +42,7 @@
 		position: absolute;
 		min-width: 20px;
 		min-height: 20px;
-		background-position: top left;
+		background-position: top left; /* NOSONAR */
 		background-repeat: no-repeat;
 		z-index: 20;
 		top: 3px;
