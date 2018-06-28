@@ -29,10 +29,10 @@
 define(
 		[ "jquery", "handlebars", "underscore", "./lib/cuf-values-utils", "jqueryui", "./lib/jquery.editableCustomfield"],
 		function($, handlebars, _, utils) {
-		
+
 			"use strict";
 			utils.registerHandlebarHelpers(handlebars);
-			
+
 			var template =
 				'{{#each this}}' +
 				'<tr class="create-node-custom-field-row">' +
@@ -45,7 +45,7 @@ define(
 						'{{/each}}' +
 						'</ul>' +
 					'{{else}}' +
-						'{{defaultValue}}' + 
+						'{{defaultValue}}' +
 					'{{/ifequals}}' +
 				'</td>' +
 				'</tr>' +
@@ -70,8 +70,8 @@ define(
 				 * loads the custom field values into the table. Parameter can be either :
 				 * - undefined : this.source will be used instead
 				 * - a String : will thus be treated as an URL where to fetch data from
-				 * - else : directly the array of beans that define the custom fields. 
-				 * 
+				 * - else : directly the array of beans that define the custom fields.
+				 *
 				 */
 				this.loadPanel = function(urlOrBeans) {
 					var pleaseWait = $('<tr class="cuf-wait" style="line-height:50px;"><td colspan="2" style="height : 50px;" class="waiting-loading"></td></tr>');
@@ -84,14 +84,14 @@ define(
 					table.append(pleaseWait);
 
 					var self = this;
-					
+
 					function generate(jsonDef){
 						table.find(".cuf-wait").remove();
 						// only required fields are shown in creation popup
 						self.cufDefs = _.where(jsonDef, {optional: false});
 						self.init();
 					}
-					
+
 					if (typeof source === "string"){
 						$.getJSON(source).success(generate);
 					}
@@ -99,7 +99,7 @@ define(
 						generate(source);
 					}
 					// the source might have been redefined if a parameter was supplied -> redefine it
-					this.source = source; 
+					this.source = source;
 
 				};
 
@@ -121,7 +121,7 @@ define(
 							event.stopPropagation();
 						}
 					});
-					
+
 					if (fields.length > 0) {
 						fields.each(function(idx) {
 							var $this = $(this);
@@ -169,12 +169,11 @@ define(
 					var result = {
 						customFields : {}
 					};
-					var table = this.table,
-						cufDefs = this.cufDefs;
+					var table = this.table;
 
 					var $this,
 						fields = table.find(".create-node-custom-field");
-					
+
 					if (fields.length > 0) {
 						fields.each(function(idx) {
 							$this = $(this);
@@ -186,7 +185,7 @@ define(
 
 			}
 
-			
+
 
 			return CUFValuesCreator;
 

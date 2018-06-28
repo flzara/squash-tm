@@ -21,18 +21,18 @@
 /*
  * As of Squash TM 1.14 the date format can come in one flavor :
  * 1 - java format : the prefered one. The property of the conf object is rendering.inputType.configuration['format'].
- *  
+ *
  */
-define(["jquery", "../domain/FieldValue", "squash.configmanager", "squash.dateutils", "squash.translator", "jquery.timepicker", "jqueryui"], 
+define(["jquery", "../domain/FieldValue", "squash.configmanager", "squash.dateutils", "squash.translator", "jquery.timepicker", "jqueryui"],
 		function($, FieldValue, confman, dateutils, translator){
 
 	function convertStrDate(fromFormat, toFormat, strFromValue){
 		var date = $.datepicker.parseDate(fromFormat, strFromValue);
-		return $.datepicker.formatDate(toFormat, date);		
+		return $.datepicker.formatDate(toFormat, date);
 	}
-	
+
 	return {
-		
+
 		options : {
 			rendering : {
 				inputType : {
@@ -40,39 +40,38 @@ define(["jquery", "../domain/FieldValue", "squash.configmanager", "squash.dateut
 					configuration : { 'format' : "yyyy-MM-dd",
 							 'time-format' : "HH:mm"}
 				}
-				
+
 			}
 		},
-		
+
 		_create : function(){
-			
+
 			this._super();
-			
+
 			var pickerconf = confman.getStdDatepicker();
 			pickerconf.separator = ' @ ';
-			
+
 			this.element.datetimepicker(pickerconf);
 
 		},
-		
+
 		fieldvalue : function(fieldvalue){
 			var date, time, strDate, strTime;
 			if (fieldvalue===null || fieldvalue === undefined){
-								
-				var toTimeFormat = this.options.rendering.inputType.configuration['time-format']; 
-				
+
+				var toTimeFormat = this.options.rendering.inputType.configuration['time-format'];
+
 				date = this.element.datetimepicker('getDate');
-				strTime = "";
 				strDate = "";
-				
+
 				if(!!date){
 					strDate = this.formatDate(date);
 					time = $.trim(this.element.val().split('@')[1]);
-					strTime = $.datepicker.formatTime(toTimeFormat, $.datepicker.parseTime(toTimeFormat, time,{})); 
+					strTime = $.datepicker.formatTime(toTimeFormat, $.datepicker.parseTime(toTimeFormat, time,{}));
 					strDate = strDate+" "+strTime;
 				}
-				
-				var typename = this.options.rendering.inputType.dataType;				
+
+				var typename = this.options.rendering.inputType.dataType;
 				return new FieldValue("--", typename, strDate);
 			}
 			else{
@@ -82,30 +81,30 @@ define(["jquery", "../domain/FieldValue", "squash.configmanager", "squash.dateut
 					this.element.datetimepicker('setDate', date);
 				}
 			}
-		}, 
-		
+		},
+
 		createDom : function(field){
 			var input = $('<input/>', {
 				'type' : 'text',
 				'data-widgetname' : 'date_time',
 				'data-fieldid' : field.id
 			});
-			
-			
+
+
 			return input;
 		},
-		
+
 		formatDate : function(date){
 
 			var javaformat = this.options.rendering.inputType.configuration['format'];// the java format
 			return dateutils.format(date, javaformat);
 		},
-		
+
 		parseDate : function(strdate){
 			var javaformat = this.options.rendering.inputType.configuration['format'];// the java format
-			return dateutils.parse(strdate, javaformat);			
+			return dateutils.parse(strdate, javaformat);
 		},
-		
+
 		// warning : it only checks the date, not the time.
 		validate : function(){
 			// first let's check the default behavior
@@ -113,21 +112,21 @@ define(["jquery", "../domain/FieldValue", "squash.configmanager", "squash.dateut
 			if (messages.length>0){
 				return messages;
 			}
-			
+
 			if ( this.element.val() !== ""){
 				var txtdate = $.trim(this.element.val().split('@')[0]);
-				/* 
+				/*
 				 * warning : the format here must be the 'java' form of the dateformat returned by confman.getStdDatepicker()
 				 * (the later returning the 'datepicker' form of this dateformat). (why people don't you agree on date formats).
 				 * Here it is hardcoded to 'squashtm.dateformatShort'.
 				 */
-				var format = translator.get('squashtm.dateformatShort');	
-				
+				var format = translator.get('squashtm.dateformatShort');
+
 				if (! dateutils.dateExists(txtdate, format)){
 					messages.push('error.notadate');
 				}
 			}
-			
+
 			return messages;
 		}
 	};

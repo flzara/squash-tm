@@ -103,7 +103,7 @@ import org.hibernate.persister.spi.PersisterCreationContext;
  *		<code>return false;</code>
  *	<code>}</code>
  *	[/quote]
- *  
+ *
  *
  *	And here is how Gavin King solved the problem : by delegating to me.
  *

@@ -92,7 +92,6 @@ define(["jquery", "handlebars"], function($, Handlebars){
 			title : title
 		};
 
-		var headers = jsonChart.abscissa;
 		var serie = jsonChart.series;
 
 		templateModel.headers = [];

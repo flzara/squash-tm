@@ -170,7 +170,6 @@ define(['jquery', 'squash.attributeparser',	'handlebars', 'squash.configmanager'
 				var url = window.squashtm.app.contextRoot + '/campaigns/'+this.options.campaignId+'/iterations/planning',
 					self = this;
 
-				var dateFormat = this.options.dateformat;
 				var allPeriodsConsistent = true;
 
 				var scheduledTimePeriodValidator = function(key, value) {

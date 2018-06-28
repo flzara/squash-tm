@@ -74,8 +74,6 @@ define(['backbone', 'jquery', 'tree', 'workspace.event-bus', '../permissions-rul
 				}
 				else {
 					var url = node.getResourceUrl();
-					var id = node.getResId();
-					var backboneRouter = squashtm.app.router;
 
 					$.post(url, {newName: name}, null, 'json')
 						.done(function () {

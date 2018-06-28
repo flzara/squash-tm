@@ -31,7 +31,6 @@ define([ "jquery", "squash.translator", "app/ws/squashtm.notification", "squasht
 
 					$.each(cells, function(index, cell) {
 						var row = cell.parentNode; // should be the tr
-						var id = clientTable.getODataId(row);
 						var $cell = $(cell);
 
 						$cell.html(template);
@@ -68,7 +67,6 @@ define([ "jquery", "squash.translator", "app/ws/squashtm.notification", "squasht
 		var ids = (!!id) ? [ id ] : id;
 		var url = squashtm.app.contextRoot + '/administration/config/clients/' + ids.join(",");
 		var table = $("#client-table").squashTable();
-		var selectedRow = table.getRowsByIds(ids);
 
 		$.ajax({
 			url : url,

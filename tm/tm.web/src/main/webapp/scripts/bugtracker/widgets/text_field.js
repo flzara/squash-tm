@@ -22,72 +22,71 @@ define(["jquery", "../domain/FieldValue", "jqueryui"], function($, FieldValue){
 
 	//expects 'this' to be the widget instance
 	function configureAutocomplete(){
-		
+
 		var command = this.options.rendering.inputType.configuration.onchange;
-		
+
 		if (!!command){
-			
+
 			var self=this;
-			
+
 			var autoconf = {
 				source : function(search, callback){
-					var values = self.sendDelegateCommand( {command : command, argument : search.term}, 
+					self.sendDelegateCommand( {command : command, argument : search.term},
 								function(res){
 									proposal = new FieldValue(res);	//sort of "cast as" FieldValue
 									callback(proposal.getName().split(/,\s*/));
 								}, function(xhr){
 									//nothing, we don't want the widget to fail
-								});				
+								});
 				}
 			};
-			
+
 			this.element.autocomplete(autoconf);
-			
-			var toto=1;
+
 		}
-		
+
 	}
-	
+
 	return {
-		
+
 		options : {
 			rendering : {
 				inputType : {
 					name : "text_field",
 					configuration : {}
 				}
-				
+
 			}
 		},
-		
+
 		_create : function(){
-			
+
 			this._super();
-			
+
 			var configuration = this.options.rendering.inputType.configuration;
-			
+
 			if (!!configuration['max-length']){
 				this.element.attr('maxlength', configuration['max-length']);
 			}
-			
+
 			if (!!configuration.onchange){
 				configureAutocomplete.call(this);
 			}
 		},
-		
+
 		fieldvalue : function(fieldvalue){
 			if (fieldvalue===null || fieldvalue === undefined){
 				var text = this.element.eq(0).val();
 				var typename = this.options.rendering.inputType.dataType;
-				
+
 				return new FieldValue("--", typename, text);
 			}
 			else{
 				this.element.val(fieldvalue.scalar);
 			}
-		}, 
-		
-		
+		},
+
+
 		createDom : function(field){
 			var input = $('<input />', {
 				'type' : 'text',
@@ -95,8 +94,8 @@ define(["jquery", "../domain/FieldValue", "jqueryui"], function($, FieldValue){
 				'data-fieldid' : field.id
 			});
 
-			
-			
+
+
 			return input;
 		}
 	};

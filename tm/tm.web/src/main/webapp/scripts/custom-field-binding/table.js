@@ -62,7 +62,6 @@ define(
 						'url' : sSource,
 						'data' : aoData,
 						'success' : function(allData, textStatus, jqXHR) {
-							var availableLocations = settings.renderingLocations;
 							var count = 0, dataLength = allData.aaData.length;
 
 							var namecollect = function(elt){ return elt.enumName; };
@@ -109,7 +108,6 @@ define(
 					cells.each(function() {
 
 						var cell = $(this);
-						var row = cell.parent('tr').get(0);
 						var colPosition = table.fnGetPosition(this)[2];
 						// see the definition of aoColumnDefs regarding the offset (-3)
 						var locationName = _.escape(settings.renderingLocations[colPosition - 3]);

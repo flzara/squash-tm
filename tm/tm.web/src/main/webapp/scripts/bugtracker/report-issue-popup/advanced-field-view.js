@@ -184,11 +184,6 @@ define(["jquery",
 			//first, post process the source html and split into two templates
 			this._initTemplates();
 
-			//generate the main template (the 'frame')
-			var data = {
-				labels : this.options.labels
-			};
-
 		},
 
 
