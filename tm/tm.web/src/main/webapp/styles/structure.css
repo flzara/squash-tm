@@ -329,10 +329,6 @@ select.th_input {
 	vertical-align:top;
 }
 
-.search-toggle-panel {
-	 /* width:350px; */
-}
-
 .search-line {
 	display:inline;
 }
@@ -1084,9 +1080,7 @@ div#contextual-content>div:first-child h2,.fragment-header h2 {
 /* ------------------------------------------ */
 /* -------->>> Execution windows <<<--------- */
 /* ------------------------------------------ */
-body.execute-html-body { /*width:100%;*/
 
-}
 
 div#execute-header {
 	position: absolute;
@@ -1291,9 +1285,6 @@ div.information-panel p {
 	bottom: 0;
 }
 
-.nav-up-layout #footer {
-
-}
 
 /* ---------------------------------------------------------*/
 /* ---------------->>> User Infos page <<<------------------*/
@@ -1707,28 +1698,7 @@ div.admin-message-page-content{
 .iteration-dashbord-test-suite-col{
 	text-align : left;
 }
-.iteration-dashbord-total-col{
 
-}
-
-.iteration-dashbord-failed-col{
-
-}
-.iteration-dashbord-ready-col{
-
-}
-.iteration-dashbord-running-col{
-
-}
-.iteration-dashbord-passed-col{
-
-}
-.iteration-dashbord-blocked-col{
-
-}
-.iteration-dashbord-untestable-col{
-
-}
 .iteration-dashbord-total-ligne{
 font-weight: bold;
 background-color:#969696;
@@ -1858,66 +1828,6 @@ height: 16px;
 	background-image: url("../images/Icon_Blue_Navy_Uniform.png");
 	width: 24px;
 	height: 16px;
-}
-
-.icon-default-tc-nat-undefined{
-
-}
-
-.icon-default-tc-nat-functional-testing{
-
-}
-
-.icon-default-tc-nat-business-testing{
-
-}
-
-.icon-default-tc-nat-user-testing{
-
-}
-
-.icon-default-tc-nat-non-functional-testing{
-
-}
-
-.icon-default-tc-nat-performance-testing{
-
-}
-
-.icon-default-tc-nat-security-testing{
-
-}
-
-.icon-default-tc-nat-atdd{
-
-}
-
-.icon-default-tc-typ-undefined{
-
-}
-
-.icon-default-tc-typ-compliance-testing{
-
-}
-
-.icon-default-tc-typ-correction-testing{
-
-}
-
-.icon-default-tc-typ-evolution-testing{
-
-}
-
-.icon-default-tc-typ-regression-testing{
-
-}
-
-.icon-default-tc-typ-end-to-end-testing{
-
-}
-
-.icon-default-tc-typ-partner-testing{
-
 }
 
 .info-list-item-icon-selected {
