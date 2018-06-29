@@ -256,21 +256,29 @@ public class HibernateExecutionProgressQuery extends HibernateReportQuery {
 		if (milestoneCrit != null) {
 			Object[] ids = milestoneCrit.getParameters();
 
-			if (ids != null && ids.length > 0 && !campaignList.isEmpty()) {
-				// for now we support only one milestone
-				Long milestoneId = Long.valueOf(ids[0].toString());
+			findMilestoneLabelFromCriteria(ids,campaignList, milestone);
+		}
+		return milestone;
+	}
 
-				Campaign c = campaignList.get(0);
-				for (Milestone m : c.getMilestones()) {
-					if (m.getId().equals(milestoneId)) {
-						milestone = m.getLabel();
-						break;
-					}
+	private String findMilestoneLabelFromCriteria(Object[] ids,List<Campaign> campaignList,String milestone){
+		if (ids != null && ids.length > 0 && !campaignList.isEmpty()) {
+			// for now we support only one milestone
+			Long milestoneId = Long.valueOf(ids[0].toString());
+
+			Campaign c = campaignList.get(0);
+			for (Milestone m : c.getMilestones()) {
+				if (m.getId().equals(milestoneId)) {
+					return m.getLabel();
 				}
 			}
 		}
-
 		return milestone;
 	}
+
+
+
+
+
 
 }

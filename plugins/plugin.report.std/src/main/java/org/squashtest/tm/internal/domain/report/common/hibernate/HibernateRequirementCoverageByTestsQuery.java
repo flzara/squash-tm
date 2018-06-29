@@ -368,17 +368,24 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 				Long milestoneId = Long.valueOf(ids[0].toString());
 
 				Project p = req.getProject();
-				for (Milestone m : p.getMilestones()){
-					if (m.getId().equals(milestoneId)){
-						milestone = m.getLabel();
-					}
-				}
+				milestone = getMilestoneLabel( p, milestone, milestoneId);
 			}
 		}
 
 		return milestone;
-
 	}
+	private String getMilestoneLabel(Project p,String milestone,Long milestoneId){
+		for (Milestone m : p.getMilestones()){
+			if (m.getId().equals(milestoneId)){
+				milestone = m.getLabel();
+			}
+		}
+		return milestone;
+	}
+
+
+
+
 
 	/**
 	 * check if the project is not here and create if necessary
