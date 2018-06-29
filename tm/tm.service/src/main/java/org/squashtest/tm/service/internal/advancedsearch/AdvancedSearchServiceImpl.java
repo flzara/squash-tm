@@ -70,11 +70,10 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdvancedSearchServiceImpl.class);
 
-	private static final String SEARCH_BY_MILESTONE= "searchByMilestone";
+	private static final String SEARCH_BY_MILESTONE = "searchByMilestone";
 
 	private static final List<String> MILESTONE_SEARCH_FIELD = Arrays.asList("milestone.label", "milestone.status",
-		"milestone.endDate", "milestones.id", SEARCH_BY_MILESTONE,"activeMilestoneMode");
-
+		"milestone.endDate", "milestones.id", SEARCH_BY_MILESTONE, "activeMilestoneMode");
 
 
 	@Inject
@@ -113,7 +112,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	@Override
 	public List<CustomFieldModel> findAllQueryableCustomFieldsByBoundEntityType(BindableEntity entity, List<Long> readableProjectIds) {
 
-		Map<Long, CustomFieldModel> cufMap = customFieldModelService.findAllUsedCustomFieldsByEntity(readableProjectIds,entity);
+		Map<Long, CustomFieldModel> cufMap = customFieldModelService.findAllUsedCustomFieldsByEntity(readableProjectIds, entity);
 		List<CustomFieldModel> cufList = new ArrayList<>(cufMap.values());
 
 		return cufList;
@@ -135,8 +134,8 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	public List<JsonMilestone> findAllVisibleMilestonesToCurrentUser() {
 
 		List<JsonMilestone> list = new ArrayList<>();
-		milestoneModelService.findMilestoneByProject(findAllReadablesId()).values().stream().forEach(r-> {
-			for(JsonMilestone milestone : r) {
+		milestoneModelService.findMilestoneByProject(findAllReadablesId()).values().stream().forEach(r -> {
+			for (JsonMilestone milestone : r) {
 				if (!list.contains(milestone)) {
 					list.add(milestone);
 				}
@@ -183,8 +182,8 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	private Query buildLuceneNumericRangeQuery(QueryBuilder qb, String fieldKey, Double minValue, Double maxValue) {
 		return qb.bool()
-				.must(NumericRangeQuery.newDoubleRange(fieldKey,minValue,maxValue,true,true))
-				.createQuery();
+			.must(NumericRangeQuery.newDoubleRange(fieldKey, minValue, maxValue, true, true))
+			.createQuery();
 	}
 
 	protected Query buildLuceneValueInListQuery(QueryBuilder qb, String fieldName, List<String> values, boolean isTag) {
@@ -281,10 +280,10 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return tokens.isEmpty() ? null : buildLuceneTextQuery(qb, fieldKey, tokens);
 	}
 
-	private List<String> getTokens(String value){
+	private List<String> getTokens(String value) {
 
 		if (value != null && StringUtils.isNotBlank(value)) {
-			return  parseInput(value);
+			return parseInput(value);
 		}
 
 		return Collections.emptyList();
@@ -576,7 +575,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 				query = buildQueryForTimeIntervalCriterium(fieldKey, fieldModel, qb);
 				break;
 			case CF_TIME_INTERVAL:
-			query = buildQueryForTimeIntervalCriterium(fieldKey, fieldModel, qb);
+				query = buildQueryForTimeIntervalCriterium(fieldKey, fieldModel, qb);
 				break;
 			case TAGS:
 				query = buildQueryForTagsCriterium(fieldKey, fieldModel, qb);
@@ -589,7 +588,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 
 	private Query buildQueryForTimeIntervalCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel,
-			QueryBuilder qb) {
+													 QueryBuilder qb) {
 		AdvancedSearchTimeIntervalFieldModel intervalModel = (AdvancedSearchTimeIntervalFieldModel) fieldModel;
 		Date startDate = intervalModel.getStartDate();
 		Date endDate = intervalModel.getEndDate();
@@ -658,7 +657,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		if (selectedIds == null || selectedIds.isEmpty()) {
 
 			approvedIds = new ArrayList<>();
-			findAllReadablesId().stream().forEach(r-> approvedIds.add(String.valueOf(r)));
+			findAllReadablesId().stream().forEach(r -> approvedIds.add(String.valueOf(r)));
 		}
 		// case 2 : some projects were selected
 		else {
@@ -688,16 +687,44 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return enabled && hasCriteria;
 	}
 
-	public List<Long> findAllReadablesId(){
+	public List<Long> findAllReadablesId() {
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 		List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
 		return readableProjectIds;
 	}
 
+	public List<Long> findMilestonesIds(AdvancedSearchModel modelCopy) {
+		addMilestoneFilter(modelCopy);
 
+		List<String> strMilestoneIds =
+			((AdvancedSearchListFieldModel) modelCopy.getFields().get("milestones.id")).getValues();
+		List<Long> milestoneIds = new ArrayList<>(strMilestoneIds.size());
+		for (String str : strMilestoneIds) {
+			milestoneIds.add(Long.valueOf(str));
+		}
+		return milestoneIds;
+	}
 
+	public Query fakeIdToFindNoResultViaLuceneForCreatingQuery(List<Long> lReqVerIds, QueryBuilder qb, Query mainQuery, String fakeId) {
+		List<String> itpiIds = new ArrayList<>(lReqVerIds.size());
+		for(Long l : lReqVerIds) {
+			itpiIds.add(l.toString());
+		}
 
+		if (itpiIds.isEmpty()) {
+			itpiIds.add(fakeId);
+		}
 
+		/* Add Criteria to restrict Requirement Versions ids */
+		Query idQuery = buildLuceneValueInListQuery(qb, "id", itpiIds, false);
 
+		return qb.bool().must(mainQuery).must(idQuery).createQuery();
+	}
 
 }
+
+
+
+
+
+

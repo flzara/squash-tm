@@ -431,7 +431,7 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 
 	@Override
 	public Collection<JsTreeNode> getCampaignNodeContent(Long folderId, UserDto currentUser, String libraryNode) {
-		return null;
+		return Collections.emptyList();
 	}
 
 	public class RequirementLibraryNodeDistribution {

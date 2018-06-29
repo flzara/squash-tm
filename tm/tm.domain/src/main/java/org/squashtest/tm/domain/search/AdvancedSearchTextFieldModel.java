@@ -29,8 +29,9 @@ public class AdvancedSearchTextFieldModel implements AdvancedSearchFieldModel{
 
 	private boolean ignoreBridge = false;
 
-	public String getValue() {
-		return value;
+	@Override
+	public boolean isIgnoreBridge() {
+		return this.ignoreBridge;
 	}
 
 	@Override
@@ -42,8 +43,7 @@ public class AdvancedSearchTextFieldModel implements AdvancedSearchFieldModel{
 		this.value = value;
 	}
 
-	@Override
-	public boolean isIgnoreBridge() {
-		return this.ignoreBridge;
+	public String getValue() {
+		return value;
 	}
 }

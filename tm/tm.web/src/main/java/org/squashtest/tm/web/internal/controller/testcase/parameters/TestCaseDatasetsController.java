@@ -242,7 +242,6 @@ public class TestCaseDatasetsController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
 	public void newDataset(@PathVariable long testCaseId, @Valid @RequestBody NewDataset dataset) {
-		TestCase testCase = testCaseFinder.findById(testCaseId);
 		try {
 			datasetModificationService.persist(dataset.createTransientEntity(parameterFinder), testCaseId);
 		} catch (DomainException e) {

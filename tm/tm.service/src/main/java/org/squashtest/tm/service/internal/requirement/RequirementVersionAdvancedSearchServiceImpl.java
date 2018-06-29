@@ -202,32 +202,15 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 	public Query addAggregatedMilestonesCriteria(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy) {
 
-		addMilestoneFilter(modelCopy);
 
 		/* Find the milestones ids. */
-		List<String> strMilestoneIds =
-				((AdvancedSearchListFieldModel) modelCopy.getFields().get("milestones.id")).getValues();
-		List<Long> milestoneIds = new ArrayList<>(strMilestoneIds.size());
-		for (String str : strMilestoneIds) {
-			milestoneIds.add(Long.valueOf(str));
-		}
+		List<Long> milestoneIds = findMilestonesIds(modelCopy);
 
 		/* Find the RequirementVersions ids. */
 		List<Long> lReqVerIds = requirementVersionDao.findAllForMilestones(milestoneIds);
-		List<String> itpiIds = new ArrayList<>(lReqVerIds.size());
-		for(Long l : lReqVerIds) {
-			itpiIds.add(l.toString());
-		}
 
-		/* Fake Id to find no result via Lucene if no Requirement Version found */
-		if(itpiIds.isEmpty()) {
-			itpiIds.add(FAKE_REQUIREMENT_VERSION_ID);
-		}
-
-		/* Add Criteria to restrict Requirement Versions ids */
-		Query idQuery = buildLuceneValueInListQuery(qb, "id", itpiIds, false);
-
-		return qb.bool().must(mainQuery).must(idQuery).createQuery();
+		/* Create the query. */
+		return fakeIdToFindNoResultViaLuceneForCreatingQuery(lReqVerIds,  qb,  mainQuery,  FAKE_REQUIREMENT_VERSION_ID);
 	}
 
 

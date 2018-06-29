@@ -335,7 +335,7 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 	@Override
 	public Collection<JsTreeNode> getCampaignNodeContent(Long folderId, UserDto currentUser, String libraryNode) {
-		return null;
+		return Collections.emptyList();
 	}
 
 	class TestCaseLibraryNodeDistribution {

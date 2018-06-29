@@ -82,14 +82,4 @@ private Collection<String> i18nErrors;
 
 	}
 
-	private boolean isSameDay(Date d1, Date d2){
-		if (d1==null || d2 == null){
-			return false;
-		}
-		else{
-			return DateUtils.isSameDay(d1,  d2);
-		}
-	}
-
-
 }

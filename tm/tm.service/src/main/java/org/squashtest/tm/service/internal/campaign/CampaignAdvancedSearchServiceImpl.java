@@ -126,32 +126,14 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 	public Query addAggregatedMilestonesCriteria(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy) {
 
-		addMilestoneFilter(modelCopy);
-
 		/* Find the milestones ids. */
-		List<String> strMilestoneIds =
-			((AdvancedSearchListFieldModel) modelCopy.getFields().get("milestones.id")).getValues();
-		List<Long> milestoneIds = new ArrayList<>(strMilestoneIds.size());
-		for (String str : strMilestoneIds) {
-			milestoneIds.add(Long.valueOf(str));
-		}
+		List<Long> milestoneIds = findMilestonesIds(modelCopy);
 
 		/* Find the ItereationTestPlanItems ids. */
 		List<Long> lItpiIds = iterationTestPlanDao.findAllForMilestones(milestoneIds);
-		List<String> itpiIds = new ArrayList<>(lItpiIds.size());
-		for (Long l : lItpiIds) {
-			itpiIds.add(l.toString());
-		}
 
-		/* Fake Id to find no result via Lucene if no Itpi found */
-		if (itpiIds.isEmpty()) {
-			itpiIds.add(FAKE_ITPI_ID);
-		}
-
-		/* Add Criteria to restrict Itpi ids */
-		Query idQuery = buildLuceneValueInListQuery(qb, "id", itpiIds, false);
-
-		return qb.bool().must(mainQuery).must(idQuery).createQuery();
+		/* Create the query. */
+		return fakeIdToFindNoResultViaLuceneForCreatingQuery(lItpiIds,  qb,  mainQuery,  FAKE_ITPI_ID);
 	}
 
 	@Override
