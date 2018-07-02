@@ -202,12 +202,7 @@ class TestCaseCallGraph extends LibraryGraph<TestCaseTarget, TestCaseCallGraph.N
 					break;
 				}
 				else{
-					for (Node child : current.getOutbounds()){
-						if (! processed.contains(child)){
-							nodes.add(child);
-							processed.add(child);
-						}
-					}
+					processingChilds(current,processed,nodes);
 
 				}
 
@@ -216,6 +211,15 @@ class TestCaseCallGraph extends LibraryGraph<TestCaseTarget, TestCaseCallGraph.N
 
 		return createsCycle;
 
+	}
+
+	private void processingChilds(Node current,Set<Node> processed,LinkedList<Node> nodes){
+		for (Node child : current.getOutbounds()){
+			if (! processed.contains(child)){
+				nodes.add(child);
+				processed.add(child);
+			}
+		}
 	}
 
 

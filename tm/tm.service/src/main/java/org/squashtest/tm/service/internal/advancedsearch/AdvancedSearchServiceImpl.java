@@ -442,45 +442,16 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 					case "milestone.label":
 
-						List<String> labelValues = ((AdvancedSearchListFieldModel) model).getValues();
-
-						if (labelValues != null && !labelValues.isEmpty()) {
-
-							Collection<Long> ids = CollectionUtils.collect(labelValues, new Transformer() {
-								@Override
-								public Object transform(Object val) {
-									return Long.parseLong((String) val);
-								}
-							});
-
-							crit.add(Restrictions.in("id", ids));// milestone.label now contains ids
-						}
+						creatingMilestoneLabelCriteria( model, crit);
 						break;
 
 					case "milestone.status":
-						List<String> statusValues = ((AdvancedSearchListFieldModel) model).getValues();
-
-						if (statusValues != null && !statusValues.isEmpty()) {
-							crit.add(Restrictions.in("status", convertStatus(statusValues)));
-						}
+						creatingMilestoneStatusCriteria( model, crit);
 
 						break;
 
 					case "milestone.endDate":
-						Date startDate = ((AdvancedSearchTimeIntervalFieldModel) model).getStartDate();
-						Date endDate = ((AdvancedSearchTimeIntervalFieldModel) model).getEndDate();
-
-						if (startDate != null) {
-							Calendar cal = Calendar.getInstance();
-							cal.setTime(startDate);
-							cal.set(Calendar.HOUR, 0);
-							crit.add(Restrictions.ge("endDate", cal.getTime()));
-						}
-
-						if (endDate != null) {
-							crit.add(Restrictions.le("endDate", endDate));
-
-						}
+						creatingMilestoneEndDateCriteria( model, crit);
 
 						break;
 					default:
@@ -495,7 +466,50 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return crit;
 	}
 
-	protected void removeMilestoneSearchFields(AdvancedSearchModel model) {
+	private void creatingMilestoneLabelCriteria(AdvancedSearchFieldModel model,Criteria crit){
+		List<String> labelValues = ((AdvancedSearchListFieldModel) model).getValues();
+
+		if (labelValues != null && !labelValues.isEmpty()) {
+
+			Collection<Long> ids = CollectionUtils.collect(labelValues, new Transformer() {
+				@Override
+				public Object transform(Object val) {
+					return Long.parseLong((String) val);
+				}
+			});
+
+			crit.add(Restrictions.in("id", ids));// milestone.label now contains ids
+		}
+	}
+
+	private void creatingMilestoneStatusCriteria(AdvancedSearchFieldModel model,Criteria crit) {
+		List<String> statusValues = ((AdvancedSearchListFieldModel) model).getValues();
+
+		if (statusValues != null && !statusValues.isEmpty()) {
+			crit.add(Restrictions.in("status", convertStatus(statusValues)));
+		}
+	}
+
+
+	private void creatingMilestoneEndDateCriteria(AdvancedSearchFieldModel model,Criteria crit) {
+		Date startDate = ((AdvancedSearchTimeIntervalFieldModel) model).getStartDate();
+		Date endDate = ((AdvancedSearchTimeIntervalFieldModel) model).getEndDate();
+
+		if (startDate != null) {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(startDate);
+			cal.set(Calendar.HOUR, 0);
+			crit.add(Restrictions.ge("endDate", cal.getTime()));
+		}
+
+		if (endDate != null) {
+			crit.add(Restrictions.le("endDate", endDate));
+
+		}
+	}
+
+
+		protected void removeMilestoneSearchFields(AdvancedSearchModel model) {
 		Map<String, AdvancedSearchFieldModel> fields = model.getFields();
 
 		for (String s : MILESTONE_SEARCH_FIELD) {

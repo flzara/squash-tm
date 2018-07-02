@@ -90,13 +90,18 @@ import org.slf4j.LoggerFactory;
 				if (type == Cell.CELL_TYPE_STRING) {
 					String dateS = cell.getStringCellValue();
 
-					try {
-						toReturn = new SimpleDateFormat("dd/MM/yyyy").parse(dateS);
-					} catch (ParseException e) {
-						LOGGER.warn(e.getMessage());
-					}
+					determineDateValue(toReturn, dateS);
 				}
 			}
+		}
+		return toReturn;
+	}
+	private static Date determineDateValue(Date toReturn,String dateS){
+
+		try {
+			toReturn =  new SimpleDateFormat("dd/MM/yyyy").parse(dateS);
+		} catch (ParseException e) {
+			LOGGER.warn(e.getMessage());
 		}
 		return toReturn;
 	}
@@ -122,15 +127,19 @@ import org.slf4j.LoggerFactory;
 			} else {
 				if (type == Cell.CELL_TYPE_NUMERIC) {
 					Double doubleVal = cell.getNumericCellValue();
-					if(doubleVal - doubleVal.intValue() == 0){
-						toReturn = String.valueOf(doubleVal.intValue());
-					}else{
-					toReturn = doubleVal.toString();
-					}
+					toReturn=détermineNumericDoubleValue( doubleVal);
 				}
 			}
 		}
 		return toReturn;
+	}
+
+	private static String détermineNumericDoubleValue(Double doubleVal){
+		if(doubleVal - doubleVal.intValue() == 0){
+			return String.valueOf(doubleVal.intValue());
+		}else{
+			return doubleVal.toString();
+		}
 	}
 
 	private static boolean notEmpty(String string) {

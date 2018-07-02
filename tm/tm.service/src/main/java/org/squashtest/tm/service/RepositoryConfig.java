@@ -134,13 +134,7 @@ public class RepositoryConfig implements TransactionManagementConfigurer {
 
 		for (PropertySource ps : env.getPropertySources()) {
 			if (ps instanceof EnumerablePropertySource) {
-				for (String name : ((EnumerablePropertySource) ps).getPropertyNames()) {
-					if (name.toLowerCase().startsWith("hibernate")) {
-						names.add(name);
-						// Don't directly get the property because in case of duplicate props, it would short-circuit
-						// property priority, which is managed by Environment object
-					}
-				}
+				fillingNames( names, ps);
 			}
 		}
 
@@ -157,6 +151,18 @@ public class RepositoryConfig implements TransactionManagementConfigurer {
 
 		return props;
 	}
+
+
+	private void fillingNames(Set<String> names,PropertySource ps){
+		for (String name : ((EnumerablePropertySource) ps).getPropertyNames()) {
+			if (name.toLowerCase().startsWith("hibernate")) {
+				names.add(name);
+				// Don't directly get the property because in case of duplicate props, it would short-circuit
+				// property priority, which is managed by Environment object
+			}
+		}
+	}
+
 
 	@Bean
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)

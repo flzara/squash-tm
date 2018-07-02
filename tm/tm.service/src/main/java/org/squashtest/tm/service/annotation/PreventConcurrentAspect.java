@@ -48,6 +48,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 @Component
 @Aspect
+@SuppressWarnings("squid:LabelsShouldNotBeUsedCheck")
 public class PreventConcurrentAspect implements Ordered {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PreventConcurrentAspect.class);
 	private static final String ANY_ARG_ANNOTATED = "I coult not find any arg annotated @";

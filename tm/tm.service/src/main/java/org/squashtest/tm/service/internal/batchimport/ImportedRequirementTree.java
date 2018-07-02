@@ -237,9 +237,7 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 				// additional test : if the parent is a requirement -> all its children are requirements too
 				// this would happen only if a parent is found
 				if (parent.isRequirement()){
-					for (Node n : createdNodes){
-						n.setRequirement(true);
-					}
+					completingNodes( createdNodes);
 				}
 
 				// now we can exit
@@ -261,6 +259,11 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 		}
 	}
 
+	public void completingNodes(List<Node> createdNodes){
+		for (Node n : createdNodes){
+			n.setRequirement(true);
+		}
+	}
 
 
 	// behavior for this is commented in the javadoc on addOrUpdateNode
