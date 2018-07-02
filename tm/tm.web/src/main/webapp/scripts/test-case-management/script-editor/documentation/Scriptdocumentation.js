@@ -240,7 +240,7 @@ define(function () {
 		"Y\n" +
 		"E\n" +
 		"\n" +
-		"# ----------------------------- EJEMPLO DE CARACTERISTICA ----------------------------- \n" +
+		"# ------------------------- EJEMPLO DE CARACTERISTICA ------------------------- \n" +
 		"# Ejemplo de estructura de una característica completa con tres escenarios de prueba y un contexto:\n" +
 		"\n" +
 		"# language: es <- Esta línea de comentario indica la localización del script. Por defecto (cuando falta o es incorrecta), Squash TM interpretará el script como si era en inglés.\n" +
@@ -345,14 +345,14 @@ define(function () {
 		"\t# -------------------------- BEISPIELSZENARIO 1 -------------------------- \n" +
 		"\t# Beispiel für ein einfaches Szenario\n" +
 		"\tSzenario: Überprüfung, dass die Kaffeemaschine zur Verfügung steht.\n" +
-		"\t\tGegeben sei die Maschine ist angeschlossen.\n" +
+		"\t\tGegeben sei, dass die Maschine angeschlossen ist.\n" +
 		"\t\tWenn ich meine Karte vorstelle.\n" +
 		"\t\tDann stelle ich fest, dass mein Kontostand angezeigt wird.\n" +
 		"\n" +
 		"\t# -------------------------- BEISPIELSZENARIO 2 -------------------------- \n" +
 		"\t# Beispielszenario mit Datentabelle ohne Platzhalter\n" +
 		"\tSzenario: Überprüfung der Verfügbarkeit von Produkten.\n" +
-		"\t\tGegeben sei die Maschine steht zur Verfügung.\n" +
+		"\t\tGegeben sei, dass die Maschine zur Verfügung steht.\n" +
 		"\t\tWenn ich die verfügbaren Produkte aufliste.\n" +
 		"\t\tDann stelle ich fest, dass alle folgenden Produkte verfügbar sind:\n" +
 		"\t\t| Produkt\t\t\t| Preis  |\n" +
