@@ -29,7 +29,6 @@ import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
  * @author jthebault
  *
  */
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class FormCustomReportChartBinding {
 
 	private Long id;

@@ -28,7 +28,6 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.RequestExecu
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildProcessor;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildStep;
 
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class CheckBuildRunning extends BuildStep<CheckBuildRunning> implements HttpBasedStep {
 
 	/* ********* technically needed for the computation ************** */

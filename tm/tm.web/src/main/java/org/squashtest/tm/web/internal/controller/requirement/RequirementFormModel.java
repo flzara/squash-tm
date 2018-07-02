@@ -38,7 +38,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 // XSS OK
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class RequirementFormModel {
 
 	/*

@@ -576,7 +576,6 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	}
 
 	@Override
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public Boolean doMilestonesAllowCreation() {
 		Boolean allowed = Boolean.TRUE;
 		for (Milestone m : getMilestones()) {
@@ -589,7 +588,6 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	}
 
 	@Override
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public Boolean doMilestonesAllowEdition() {
 		Boolean allowed = Boolean.TRUE;
 		for (Milestone m : getMilestones()) {

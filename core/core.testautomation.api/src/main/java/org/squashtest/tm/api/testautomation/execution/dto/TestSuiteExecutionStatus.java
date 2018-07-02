@@ -75,7 +75,6 @@ public class TestSuiteExecutionStatus implements Serializable {
         /**
          * @return Start time. Should always be defined.
          */
-		@SuppressWarnings("common-java:DuplicatedBlock")
         public Date getStartTime() {
                 return startTime;
         }
@@ -84,7 +83,6 @@ public class TestSuiteExecutionStatus implements Serializable {
          * @param startTime
          *            Start time. Never null.
          */
-		@SuppressWarnings("common-java:DuplicatedBlock")
         public void setStartTime(Date startTime) {
                 if (startTime == null) {
                         throw new IllegalArgumentException("Start time cannot be null.");
@@ -96,7 +94,6 @@ public class TestSuiteExecutionStatus implements Serializable {
          * @return End time. May be null (ex: updates to status RUNNING don't define
          *         end time).
          */
-		@SuppressWarnings("common-java:DuplicatedBlock")
         public Date getEndTime() {
                 return endTime;
         }
@@ -106,7 +103,6 @@ public class TestSuiteExecutionStatus implements Serializable {
          *            End time. May be null (ex: updates to status RUNNING don't
          *            define end time).
          */
-		@SuppressWarnings("common-java:DuplicatedBlock")
         public void setEndTime(Date endTime) {
                 this.endTime = endTime;
         }
@@ -114,7 +110,6 @@ public class TestSuiteExecutionStatus implements Serializable {
         /**
          * @return The new status of the test suite.
          */
-		@SuppressWarnings("common-java:DuplicatedBlock")
         public ExecutionStatus getStatus() {
                 return status;
         }
@@ -122,7 +117,6 @@ public class TestSuiteExecutionStatus implements Serializable {
         /**
          * @param status The new status of the test suite. Cannot be null.
          */
-		@SuppressWarnings("common-java:DuplicatedBlock")
         public void setStatus(ExecutionStatus status) {
                 if(status==null){
                         throw new IllegalArgumentException("Status cannot be null.");

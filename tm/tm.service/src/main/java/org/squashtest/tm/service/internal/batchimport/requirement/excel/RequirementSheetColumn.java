@@ -34,7 +34,6 @@ import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWor
  * @author Julien Thebault
  *
  */
-@SuppressWarnings("common-java:DuplicatedBlock")
 public enum RequirementSheetColumn implements TemplateColumn {
 	ACTION,
 	PROJECT_ID(IGNORED),

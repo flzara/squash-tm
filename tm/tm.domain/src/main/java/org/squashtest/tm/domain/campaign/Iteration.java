@@ -57,7 +57,6 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Auditable
 @Entity
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, TreeNode, Copiable, Identified,
 	BoundEntity, MilestoneMember {
 	private static final String ITERATION_ID = "ITERATION_ID";

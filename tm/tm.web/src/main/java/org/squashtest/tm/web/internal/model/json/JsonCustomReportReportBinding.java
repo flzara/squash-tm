@@ -23,7 +23,6 @@ package org.squashtest.tm.web.internal.model.json;
 
 import org.squashtest.tm.web.internal.controller.report.JsonReportInstance;
 
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class JsonCustomReportReportBinding {
 
 	private Long id;

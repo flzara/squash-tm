@@ -35,7 +35,6 @@ import javax.persistence.PersistenceContext;
 
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
-@SuppressWarnings("common-java:DuplicatedBlock")
 @Service("squashtest.tm.service.ReportModificationService")
 public class ReportModificationServiceImpl implements ReportModificationService{
 

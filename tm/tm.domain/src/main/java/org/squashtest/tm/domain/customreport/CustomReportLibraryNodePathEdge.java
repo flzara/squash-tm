@@ -40,7 +40,6 @@ import org.hibernate.annotations.Immutable;
 @Immutable
 @Table(name = "CRLN_RELATIONSHIP_CLOSURE")
 @IdClass(CustomReportLibraryNodePathEdge.PathId.class)
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class CustomReportLibraryNodePathEdge {
 	public static class PathId implements Serializable {
 		private static final long serialVersionUID = 1462511274257146101L;

@@ -22,7 +22,6 @@ package org.squashtest.tm.web.internal.model.json;
 
 import org.squashtest.tm.web.internal.controller.chart.JsonChartInstance;
 
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class JsonCustomReportChartBinding {
 
 	private Long id;

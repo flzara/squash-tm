@@ -29,7 +29,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class CustomReportReportBinding implements Identified {
 
 	@Id

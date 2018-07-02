@@ -44,7 +44,6 @@ import org.squashtest.tm.domain.project.Project;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "CLN_ID")
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class CampaignFolder extends CampaignLibraryNode implements Folder<CampaignLibraryNode> {
 	/**
 	 * Delegate implementation of folder responsibilities.

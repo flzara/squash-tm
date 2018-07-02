@@ -36,7 +36,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 // XSS OK
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class IterationFormModel {
 	/**
 	 * Note : the following validation annotations are never called, a custom validator will be invoked for this.

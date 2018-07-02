@@ -46,7 +46,6 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Entity
 @Auditable
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class CustomReportDashboard implements TreeEntity {
 
 	@Id

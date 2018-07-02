@@ -55,7 +55,6 @@ import java.util.*;
  */
 @Component
 @Scope("prototype")
-@SuppressWarnings("common-java:DuplicatedBlock")
 class ExcelExporter {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelExporter.class);

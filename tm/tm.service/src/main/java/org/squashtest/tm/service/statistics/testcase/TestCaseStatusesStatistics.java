@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.statistics.testcase;
 
-@SuppressWarnings("common-java:DuplicatedBlock")
 public final class TestCaseStatusesStatistics{
 
 	private int workInProgress;

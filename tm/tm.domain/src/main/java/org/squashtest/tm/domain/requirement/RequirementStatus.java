@@ -26,7 +26,6 @@ import java.util.TreeSet;
 
 import org.squashtest.tm.domain.Level;
 
-@SuppressWarnings("common-java:DuplicatedBlock")
 public enum RequirementStatus implements Level {
 
 	WORK_IN_PROGRESS(1) {

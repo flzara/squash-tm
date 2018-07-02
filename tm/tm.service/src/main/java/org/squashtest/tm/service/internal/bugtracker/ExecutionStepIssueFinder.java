@@ -55,7 +55,6 @@ import java.util.concurrent.TimeoutException;
  * @since 1.14.0  06/04/16
  */
 @Component
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class ExecutionStepIssueFinder implements IssueOwnershipFinder {
 	@Value("${squashtm.bugtracker.timeout:15}")
 	private long timeout;

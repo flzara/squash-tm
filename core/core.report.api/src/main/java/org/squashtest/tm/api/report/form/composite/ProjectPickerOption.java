@@ -42,7 +42,6 @@ public class ProjectPickerOption extends ContainerOption<ProjectPicker> {
 	 * @see org.squashtest.tm.api.report.form.ContainerOption#setContent(org.squashtest.tm.api.report.form.Input)
 	 */
 	@Override
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public void setContent(ProjectPicker content) {
 		throw new IllegalArgumentException(
 				"Content cannot be set, it is automatically set to ProjetPicker. Remove the <property name=\"content\" /> tag");
@@ -51,7 +50,6 @@ public class ProjectPickerOption extends ContainerOption<ProjectPicker> {
 	/**
 	 * @return the pickerName
 	 */
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public String getPickerName() {
 		return getContent().getName();
 	}
@@ -60,7 +58,6 @@ public class ProjectPickerOption extends ContainerOption<ProjectPicker> {
 	 * @param pickerName
 	 *            the pickerName to set
 	 */
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public void setPickerName(String pickerName) {
 		getContent().setName(pickerName);
 	}
@@ -68,7 +65,6 @@ public class ProjectPickerOption extends ContainerOption<ProjectPicker> {
 	/**
 	 * @return the pickerLabelKey
 	 */
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public String getPickerLabelKey() {
 		return getContent().getLabelKey();
 	}
@@ -79,7 +75,6 @@ public class ProjectPickerOption extends ContainerOption<ProjectPicker> {
 	 * @see org.squashtest.tm.api.report.form.OptionInput#setValue(java.lang.String)
 	 */
 	@Override
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public void setValue(String value) { // NOSONAR I do want to override for doc purposes
 		// overriden for doc only
 		super.setValue(value);
@@ -89,7 +84,6 @@ public class ProjectPickerOption extends ContainerOption<ProjectPicker> {
 	 * @param pickerLabelKey
 	 *            the pickerLabelKey to set
 	 */
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public void setPickerLabelKey(String pickerLabelKey) {
 		getContent().setLabelKey(pickerLabelKey);
 	}

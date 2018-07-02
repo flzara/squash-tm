@@ -64,6 +64,7 @@ import net.sf.jasperreports.engine.util.MarkupProcessorFactory;
  * @author bsiri
  *
  */
+@SuppressWarnings("squid:S1226")
 public class CustomHtmlProcessorFactory extends JEditorPaneHtmlMarkupProcessor implements MarkupProcessorFactory {
 
 	private static CustomHtmlProcessorFactory custom_instance;

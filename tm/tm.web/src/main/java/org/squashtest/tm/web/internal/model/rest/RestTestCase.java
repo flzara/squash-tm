@@ -22,7 +22,6 @@ package org.squashtest.tm.web.internal.model.rest;
 
 import org.squashtest.tm.domain.testcase.TestCase;
 
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class RestTestCase {
 
 

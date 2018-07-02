@@ -34,7 +34,6 @@ import org.squashtest.tm.domain.campaign.TestSuite;
  *
  */
 @WebComponent
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class TestSuiteViewInterceptor extends ObjectViewsInterceptor {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteViewInterceptor.class);

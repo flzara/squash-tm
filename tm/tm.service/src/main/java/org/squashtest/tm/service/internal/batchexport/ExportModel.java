@@ -35,7 +35,6 @@ import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.internal.batchexport.RequirementExportModel.RequirementPathSortable;
 
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class ExportModel {
 	private List<TestCaseModel> testCases = new LinkedList<>();
 

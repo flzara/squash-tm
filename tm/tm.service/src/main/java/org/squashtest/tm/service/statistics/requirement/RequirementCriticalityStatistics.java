@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.statistics.requirement;
 
-@SuppressWarnings("common-java:DuplicatedBlock")
 public final class RequirementCriticalityStatistics {
 
 	private int undefined;

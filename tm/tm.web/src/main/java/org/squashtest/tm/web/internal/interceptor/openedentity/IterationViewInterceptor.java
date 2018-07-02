@@ -34,7 +34,6 @@ import org.squashtest.tm.domain.campaign.Iteration;
  *
  */
 @WebComponent
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class IterationViewInterceptor extends ObjectViewsInterceptor {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(IterationViewInterceptor.class);

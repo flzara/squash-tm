@@ -35,7 +35,6 @@ import org.squashtest.tm.internal.domain.report.query.hibernate.ReportCriterion;
  * this ReportCriterion is exactly wysiwyg
  *
  */
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class AboveDateCriterion extends ReportCriterion {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AboveDateCriterion.class);
 

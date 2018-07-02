@@ -56,7 +56,6 @@ public final class JasperReportsView extends Labelled implements ReportView, Ini
 	 * @see org.squashtest.tm.api.report.ReportView#getFormats()
 	 */
 	@Override
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public String[] getFormats() {
 		return formats;
 	}
@@ -65,7 +64,6 @@ public final class JasperReportsView extends Labelled implements ReportView, Ini
 	 * @param formats
 	 *            the formats to set
 	 */
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public void setFormats(String[] formats) {
 		if(formats == null) {
 			this.formats = null;
@@ -78,7 +76,6 @@ public final class JasperReportsView extends Labelled implements ReportView, Ini
 	 * @see org.squashtest.tm.api.report.ReportView#buildViewModel(java.lang.String, java.util.Map)
 	 */
 	@Override
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public Map<String, Object> buildViewModel(String format, Map<String, Criteria> criteria) {
 		Map<String, Object> res = new HashMap<>();
 
@@ -97,7 +94,6 @@ public final class JasperReportsView extends Labelled implements ReportView, Ini
 	 * @param springView
 	 *            the springView to set
 	 */
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public void setSpringView(View viewBean) {
 		this.springView = viewBean;
 	}
@@ -106,7 +102,6 @@ public final class JasperReportsView extends Labelled implements ReportView, Ini
 	 * @return the springView
 	 */
 	@Override
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public View getSpringView() {
 		return springView;
 	}
@@ -115,7 +110,6 @@ public final class JasperReportsView extends Labelled implements ReportView, Ini
 	 * @param query
 	 *            the query to set
 	 */
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public void setQuery(ReportQuery query) {
 		this.query = query;
 	}
@@ -126,7 +120,6 @@ public final class JasperReportsView extends Labelled implements ReportView, Ini
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
 	@Override
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public void afterPropertiesSet() {
 		Assert.notNull(springView, "springView must not be null");
 		Assert.notNull(query, "query must not be null");
@@ -137,7 +130,6 @@ public final class JasperReportsView extends Labelled implements ReportView, Ini
 	 * @see org.squashtest.tm.core.foundation.i18n.ContextBasedInternationalized#initializeMessageSource(org.springframework.context.MessageSource)
 	 */
 	@Override
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	protected void initializeMessageSource(MessageSource messageSource) {
 		super.initializeMessageSource(messageSource);
 		this.messageSource = messageSource;

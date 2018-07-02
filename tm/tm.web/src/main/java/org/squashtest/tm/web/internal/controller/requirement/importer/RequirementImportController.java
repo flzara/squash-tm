@@ -43,7 +43,6 @@ import java.io.IOException;
 // XSS OK
 @Controller
 @RequestMapping("/requirements/importer")
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class RequirementImportController {
 
 	private interface Command<T, U> {

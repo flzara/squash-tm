@@ -27,7 +27,6 @@ import org.squashtest.tm.service.internal.batchimport.testcase.excel.ColumnProce
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet;
 
-@SuppressWarnings("common-java:DuplicatedBlock")
 public enum RequirementLinksSheetColumn implements TemplateColumn{
 	ACTION,
 	REQ_PATH(MANDATORY),

@@ -34,7 +34,6 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.service.internal.repository.CampaignFolderDao;
 
 @Repository
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class HibernateCampaignFolderDao extends HibernateEntityDao<CampaignFolder> implements CampaignFolderDao {
 
 	@Override

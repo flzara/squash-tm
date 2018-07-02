@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.dto;
 
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class RenderingLocationModel {
 
 	private String enumName;

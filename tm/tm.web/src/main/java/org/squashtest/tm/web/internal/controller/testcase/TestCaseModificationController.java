@@ -97,7 +97,6 @@ import java.util.*;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 @Controller
-@SuppressWarnings("common-java:DuplicatedBlock")
 @RequestMapping("/test-cases/{testCaseId}")
 
 public class TestCaseModificationController {

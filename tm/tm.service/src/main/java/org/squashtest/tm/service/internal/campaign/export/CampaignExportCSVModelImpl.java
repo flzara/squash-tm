@@ -51,7 +51,6 @@ import org.squashtest.tm.service.internal.dto.NumericCufHelper;
 
 @Component
 @Scope("prototype")
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 
 	@Inject

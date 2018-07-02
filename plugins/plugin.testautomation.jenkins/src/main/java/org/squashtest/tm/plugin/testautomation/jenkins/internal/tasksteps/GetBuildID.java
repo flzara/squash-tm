@@ -30,7 +30,6 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildProce
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildStep;
 import org.squashtest.tm.service.testautomation.spi.NotFoundException;
 
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class GetBuildID extends BuildStep<GetBuildID> implements HttpBasedStep {
 
 	/* ********* technically needed for the computation ************** */

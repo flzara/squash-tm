@@ -37,7 +37,6 @@ import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Entity
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class CustomReportChartBinding implements Identified {
 
 	@Id

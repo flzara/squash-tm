@@ -50,7 +50,6 @@ import org.squashtest.tm.service.statistics.iteration.TestSuiteTestInventoryStat
 
 @Transactional(readOnly = true)
 @Service("IterationStatisticsService")
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class IterationStatisticsServiceImpl implements IterationStatisticsService {
 
 	private static final String PERM_CAN_READ_CAMPAIGN = "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ') ";

@@ -50,7 +50,6 @@ import org.squashtest.tm.domain.project.GenericLibrary;
 import org.squashtest.tm.domain.project.GenericProject;
 
 @Entity
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 
 	private static final String CLASS_NAME = "org.squashtest.tm.domain.campaign.CampaignLibrary";

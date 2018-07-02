@@ -25,7 +25,6 @@ import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.Target;
 import org.squashtest.tm.service.importer.WithPath;
 
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class DatasetTarget implements Target, WithPath {
 	private final TestCaseTarget testCase;
 	private String name;

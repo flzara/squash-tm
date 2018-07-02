@@ -42,7 +42,6 @@ import org.squashtest.tm.domain.project.Project;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCaseLibraryNode> {
 	/**
 	 * Delegate implementation of folder responsibilities.

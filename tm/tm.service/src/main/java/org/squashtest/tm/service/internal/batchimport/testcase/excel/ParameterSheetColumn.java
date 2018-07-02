@@ -30,7 +30,6 @@ import static org.squashtest.tm.service.internal.batchimport.testcase.excel.Colu
  * @author Gregory Fouquet
  *
  */
-@SuppressWarnings("common-java:DuplicatedBlock")
 public enum ParameterSheetColumn implements TemplateColumn {
 	ACTION,
 	TC_OWNER_PATH(MANDATORY),

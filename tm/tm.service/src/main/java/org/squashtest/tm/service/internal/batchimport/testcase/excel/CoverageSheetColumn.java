@@ -22,7 +22,6 @@ package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.ColumnProcessingMode.MANDATORY;
 
-@SuppressWarnings("common-java:DuplicatedBlock")
 public enum CoverageSheetColumn implements TemplateColumn{
 
 	REQ_PATH(MANDATORY),

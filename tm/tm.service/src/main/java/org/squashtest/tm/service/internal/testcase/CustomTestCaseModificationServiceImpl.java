@@ -87,7 +87,6 @@ import static org.squashtest.tm.service.security.Authorizations.*;
  */
 @Service("CustomTestCaseModificationService")
 @Transactional
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModificationService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomTestCaseModificationServiceImpl.class);

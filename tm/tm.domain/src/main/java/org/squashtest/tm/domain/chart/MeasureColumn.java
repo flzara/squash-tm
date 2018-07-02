@@ -34,7 +34,6 @@ import org.squashtest.tm.domain.EntityType;
 
 @Embeddable
 @Table(name = "CHART_MEASURE_COLUMN")
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class MeasureColumn implements ColumnPrototypeInstance {
 
 

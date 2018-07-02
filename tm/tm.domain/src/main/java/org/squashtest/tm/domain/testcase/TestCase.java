@@ -77,7 +77,6 @@ import org.squashtest.tm.domain.testcase.Parameter;
 		@org.hibernate.search.annotations.Parameter(name = "type", value = "testcase"),
 		@org.hibernate.search.annotations.Parameter(name = "inputType", value = "DROPDOWN_LIST")})})
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, BoundEntity, MilestoneHolder {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseLibraryNode.class);
 	private static final String CLASS_NAME = "org.squashtest.tm.domain.testcase.TestCase";

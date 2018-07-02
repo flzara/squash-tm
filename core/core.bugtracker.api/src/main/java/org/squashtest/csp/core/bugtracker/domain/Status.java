@@ -35,7 +35,6 @@ public class Status implements Identifiable<Status>, RemoteStatus {
 		//Default constructor
 	}
 
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public Status(String id, String name) {
 		super();
 		this.id = id;
@@ -43,24 +42,20 @@ public class Status implements Identifiable<Status>, RemoteStatus {
 	}
 
 	@Override
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public String getId() {
 		return id;
 	}
 
 	@Override
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public String getName() {
 		return name;
 	}
 
 	@Override
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public boolean isDummy() {
 		return this.id.equals(NO_STATUS.id);
 	}
 
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public void setId(String id) {
 		this.id = id;
 	}

@@ -35,7 +35,6 @@ public class Severity implements Identifiable<Severity>{
 		//Default constructor
 	}
 
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public Severity(String id, String name) {
 		super();
 		this.id = id;
@@ -43,13 +42,11 @@ public class Severity implements Identifiable<Severity>{
 	}
 
 	@Override
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public String getId(){
 		return id;
 	}
 
 	@Override
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public String getName(){
 		return name;
 	}
@@ -60,23 +57,19 @@ public class Severity implements Identifiable<Severity>{
 	 *
 	 */
 	@Override
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public boolean isDummy(){
 		return false;
 	}
 
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public void setId(String id) {
 		this.id = id;
 	}
 
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public void setName(String name) {
 		this.name = name;
 	}
 
 	/** exists for the purpose of being javabean compliant */
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public void setDummy(Boolean dummy){
 		// NOOP
 	}

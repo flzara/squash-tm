@@ -33,7 +33,6 @@ public class Priority implements Identifiable<Priority>, RemotePriority{
 		//Default constructor
 	}
 
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public Priority(String id, String name) {
 		super();
 		this.id = id;
@@ -41,13 +40,11 @@ public class Priority implements Identifiable<Priority>, RemotePriority{
 	}
 
 	@Override
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public String getId(){
 		return id;
 	}
 
 	@Override
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public String getName(){
 		return name;
 	}
@@ -59,23 +56,19 @@ public class Priority implements Identifiable<Priority>, RemotePriority{
 	 *
 	 */
 	@Override
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public boolean isDummy(){
 		return false;
 	}
 
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public void setId(String id) {
 		this.id = id;
 	}
 
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public void setName(String name) {
 		this.name = name;
 	}
 
 	/** exists for the purpose of being javabean compliant */
-	@SuppressWarnings("common-java:DuplicatedBlock")
 	public void setDummy(Boolean dummy){
 		// NOOP
 	}

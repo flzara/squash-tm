@@ -85,7 +85,6 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 @Entity
 @Indexed
 @PrimaryKeyJoinColumn(name = "RES_ID")
-@SuppressWarnings("common-java:DuplicatedBlock")
 @InheritsAcls(constrainedClass = Requirement.class, collectionName = "versions")
 @ClassBridges({
 	@ClassBridge(name = "attachments", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionAttachmentBridge.class),

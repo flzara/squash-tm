@@ -22,7 +22,6 @@ package org.squashtest.tm.web.internal.model.json;
 
 import org.squashtest.tm.domain.customreport.CustomReportReportBinding;
 
-@SuppressWarnings("common-java:DuplicatedBlock")
 public class FormCustomReportReportBinding {
 
 	private Long id;
