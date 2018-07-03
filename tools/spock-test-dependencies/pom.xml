@@ -13,6 +13,11 @@
   <name>spock-test-dependencies</name>
   <description>Defines dependencies for Spock-based tests.</description>
 
+  <properties>
+    <objenesis.version>[2.2,)</objenesis.version>
+  </properties>
+
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -36,11 +41,12 @@
       <artifactId>groovy-all</artifactId>
     </dependency>
 
-    <dependency>
+    <!--dependency>
       <groupId>org.objenesis</groupId>
       <artifactId>objenesis</artifactId>
       <scope>compile</scope>
-    </dependency>
+      <version>2.2</version>
+    </dependency -->
 
     <dependency>
       <groupId>org.spockframework</groupId>
@@ -81,5 +87,6 @@
       <groupId>org.unitils</groupId>
       <artifactId>unitils-spring</artifactId>
     </dependency>
+
   </dependencies>
 </project>

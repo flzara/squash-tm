@@ -31,7 +31,6 @@ import org.squashtest.it.stub.security.StubUserDetailsManager
 import org.squashtest.tm.service.internal.security.AdministratorAuthenticationServiceImpl
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManager
 import org.squashtest.tm.service.security.AdministratorAuthenticationService
-import org.squashtest.tm.service.security.acls.model.NullAclCache
 
 /**
  * Configuration for Service specification. Instanciates service and repo layer beans
@@ -48,34 +47,34 @@ excludeFilters = [
 )
 @EnableSpringConfigured
 class DisabledAclSpecConfig {
-	
+
 	@Bean
 	AclCache aclCache() {
 		new NullAclCache();
 	}
-	
+
 	@Bean
 	PasswordEncoder passwordEncoder() {
 		new ShaPasswordEncoder()
 	}
-	
-	
+
+
 	/*
-	 * The following implements both OjectAclService and ManageableAclService. 
+	 * The following implements both OjectAclService and ManageableAclService.
 	 */
-		
+
 	@Primary
 	@Bean(name = "squashtest.core.security.AclService")
 	StubAclService aclService(){
 		new StubAclService();
 	}
-	
+
 	// defined in tm.service : SecurityConfig, and tricky as shit to create a real instance
 	@Bean(name= "squashtest.core.security.JdbcUserDetailsManager")
 	SquashUserDetailsManager squashUserDetailsManager(){
 		new StubUserDetailsManager()
 	}
-	
+
 	@Bean
 	AdministratorAuthenticationService administratorAuthenticationService() {
 		new AdministratorAuthenticationServiceImpl();

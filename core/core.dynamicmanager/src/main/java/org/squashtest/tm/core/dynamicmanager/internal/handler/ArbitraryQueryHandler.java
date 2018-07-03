@@ -83,7 +83,15 @@ import java.util.Collections;
  * </ul>
  * </p>
  *
+ *  <p>
+ *      Note:  The dynamic dao were all replaced by Spring Data repositories but the dynamic services are still in use.
+ *      However the nature of their operations make them essentially very close to Spring Data repositories too.
+ *      I suggest we finish the job and ditch the dynamic services too. We could then definitely remove
+ *      this module and tools/tools.annotation.processor.
+ *  </p>
+ *
  * @author bsiri
+ *
  *
  * @param <ENTITY>
  */

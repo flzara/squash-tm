@@ -18,19 +18,44 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.core.dynamicmanager.annotation;
+package org.squashtest.it.config;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.io.Serializable;
 
-/**
- * TODO : since spring-data is available this annotation could be replaced by the spring-data variant. This would require
- * mild changes in ArbitraryQueryHandler, and this annotation is not much used throughout the application.
- */
-@Target(value={ElementType.PARAMETER})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface QueryParam {
-	String value();
+import org.springframework.security.acls.model.AclCache;
+import org.springframework.security.acls.model.MutableAcl;
+import org.springframework.security.acls.model.ObjectIdentity;
+
+class NullAclCache implements AclCache {
+
+	@Override
+	public void evictFromCache(Serializable pk) {
+		// NOOP
+	}
+
+	@Override
+	public void evictFromCache(ObjectIdentity objectIdentity) {
+		// NOOP
+	}
+
+	@Override
+	public MutableAcl getFromCache(ObjectIdentity objectIdentity) {
+		return null;
+	}
+
+	@Override
+	public MutableAcl getFromCache(Serializable pk) {
+		return null;
+	}
+
+	@Override
+	public void putInCache(MutableAcl acl) {
+		// NOOP
+	}
+
+	@Override
+	public void clearCache() {
+		// NOOP
+	}
+
 }

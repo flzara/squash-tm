@@ -22,14 +22,10 @@ package org.squashtest.csp.core.bugtracker.net;
 
 import com.google.api.client.auth.oauth.*;
 import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpMethods;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.common.collect.ImmutableSet;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
-import org.springframework.http.HttpMethod;
 import org.squashtest.tm.domain.servers.OAuth1aCredentials;
 
 import java.net.MalformedURLException;
@@ -46,6 +42,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public final class OAuthUtils {
+
+	private static final Set<String> HTTP_METHODS = ImmutableSet.<String>builder()
+														.add("GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "TRACE")
+														.build();
+
 
 	private OAuthUtils(){}
 
@@ -155,9 +156,10 @@ public final class OAuthUtils {
 												   "This is forbidden because it will end with invalid OAuth1a signatures.");
 		}
 
-		// 2 : validate method. This will naturally throw IllegalArgumentException in
-		// case it is invalid
-		HttpMethod.valueOf(method.toUpperCase());
+		// 2 : validate method.
+		if (! HTTP_METHODS.contains(method.toUpperCase())){
+			throw new IllegalArgumentException("unknown method '"+method+"'");
+		}
 
 	}
 

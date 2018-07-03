@@ -20,8 +20,9 @@
  */
 package org.squashtest.tm.api.report.form;
 
+
 /**
- * Represents the different types of Input. They should also be managed on the client side (javascript).
+ *  Represents the different types of Input. They should also be managed on the client side (javascript).
  * @author Gregory Fouquet
  *
  */

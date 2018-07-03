@@ -18,19 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.core.dynamicmanager.annotation;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
-/**
- * TODO : since spring-data is available this annotation could be replaced by the spring-data variant. This would require
- * mild changes in ArbitraryQueryHandler, and this annotation is not much used throughout the application.
+/*
+ *  <p>
+ *      Deprecation Note:  The dynamic dao were all replaced by Spring Data repositories but the dynamic services are still in use.
+ *      However the nature of their operations make them essentially very close to Spring Data repositories too.
+ *      I suggest we finish the job and ditch the dynamic services too. We could then definitely remove
+ *      this module and tools/tools.annotation.processor.
+ *  </p>
  */
-@Target(value={ElementType.PARAMETER})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface QueryParam {
-	String value();
-}
+package org.squashtest.tm.core.dynamicmanager;

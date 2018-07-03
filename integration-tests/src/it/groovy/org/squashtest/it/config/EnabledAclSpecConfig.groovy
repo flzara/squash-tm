@@ -33,9 +33,6 @@ import org.springframework.security.authentication.encoding.ShaPasswordEncoder
 import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
 import org.squashtest.tm.service.SecurityConfig
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManager
-import org.squashtest.tm.service.security.AdministratorAuthenticationService;
-import org.squashtest.tm.service.security.StubLookupStrategy
-import org.squashtest.tm.service.security.acls.model.NullAclCache
 
 /**
  * Configuration for Service specification. Instanciates service and repo layer beans
@@ -48,44 +45,44 @@ basePackages = ["org.squashtest.tm.security.acls","org.squashtest.tm.service.sec
 )
 @EnableSpringConfigured
 class EnabledAclSpecConfig {
-	
+
 	@Inject
 	DataSource dataSource
-	
+
 	@Inject
 	PermissionFactory permFactory;
-	
+
 	SecurityConfig seconf = null // instanciated on demand later
-	
+
 	@Bean
 	PasswordEncoder passwordEncoder() {
 		new ShaPasswordEncoder()
 	}
-	
+
 	@Bean
 	LookupStrategy lookupStrategy(){
 		getSeconf().lookupStrategy()
 	}
-	
+
 	@Bean
 	AclCache aclCache() {
 		new NullAclCache();
 	}
-	
-	// have to manually create an instance of SecurityConfig and selectively pick 
+
+	// have to manually create an instance of SecurityConfig and selectively pick
 	// the items we want from it
 	@Bean(name="squashtest.core.security.JdbcUserDetailsManager")
 	SquashUserDetailsManager userDetailsManager(){
 		getSeconf().caseInensitiveUserDetailsManager()
 	}
-	
+
 	// for OAuth
 	@Bean
 	JdbcClientDetailsService jdbcClientDetailsService(){
 		new JdbcClientDetailsService(dataSource);
 	}
 
-	
+
 	SecurityConfig getSeconf(){
 		if (seconf == null){
 			seconf = new SecurityConfig(dataSource : dataSource, permissionFactory : permFactory)
