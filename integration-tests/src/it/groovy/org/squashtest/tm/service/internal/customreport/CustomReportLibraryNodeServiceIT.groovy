@@ -105,14 +105,14 @@ class CustomReportLibraryNodeServiceIT extends DbunitServiceSpecification {
 
 		then:
 
-		for (id in deletedNodesIds) {
-			def node = crlDao.findOne(id);
-			node == null;
+		deletedNodesIds.each {
+			def node = crlnDao.findOne(it)
+			assert node == null
 		}
 
-		for (id in siblingIds) {
-			def node = crlDao.findOne(id);
-			node != null;
+		siblingIds.each {
+			def node = crlnDao.findOne(it)
+			assert node != null
 		}
 
 		where:
@@ -121,7 +121,7 @@ class CustomReportLibraryNodeServiceIT extends DbunitServiceSpecification {
 		[-20L]			||	[-10L,-30L,-2L,-3L,-4L,-5L,-7L,-6L,-11L,-12L,-13L,-14L,-16L]		|	[-20L,-40L]
 		[-20L,-40L]		||	[-10L,-30L,-2L,-3L,-4L,-5L,-7L,-6L,-11L,-12L,-13L,-14L,-16L]		|	[-20L,-40L]
 		[-20L,-40L,-12L]||	[-10L,-30L,-2L,-3L,-4L,-5L,-7L,-6L,-11L,-16L]						|	[-20L,-40L,-12L,-13L,-14L]
-		[-20L,-30L]		||	[-10L,-2L,-3L,-4L,-5L,-7L,-6L,-11L,-12L,-13L,-14L,-16L]				|	[-20L,-30L,-40L]
+		[-20L,-30L]		||	[-10L,-2L,-3L,-4L,-5L,-6L,-11L,-12L,-13L,-14L,-16L]					|	[-20L,-30L,-40L, -7L]
 		[-11L,-15L]		||	[-10L,-20L,-30L,-40L,-2L,-3L,-4L,-5L,-7L,-6L,-12L,-13L,-14L,-16L]	|	[-11L,-15L]
 	}
 
@@ -133,8 +133,8 @@ class CustomReportLibraryNodeServiceIT extends DbunitServiceSpecification {
 
 		then:
 		CustomReportLibraryNode node = crlnDao.findOne(nodeId)
-		node.getName().equals(newName)
-		node.getEntity().getName().equals(newName)
+		node.name == newName
+		node.entity.name == newName
 
 		where:
 		nodeId 	|| newName
