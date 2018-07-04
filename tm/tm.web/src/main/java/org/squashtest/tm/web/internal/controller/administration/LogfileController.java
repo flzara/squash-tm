@@ -36,7 +36,7 @@ import java.util.Arrays;
 @RequestMapping("/administration/log-file")
 public class LogfileController {
 
-	@Value("${logging.path}")
+	@Value("${logging.dir}")
 	private String loggingPath;
 
 	@Inject
@@ -59,6 +59,7 @@ public class LogfileController {
 
 		} catch (IOException e) {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			throw new RuntimeException(e);
 		}
 	}
 
