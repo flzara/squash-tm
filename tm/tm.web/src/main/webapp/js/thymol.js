@@ -27,7 +27,7 @@ $(function() {
 });
 
 var thymol = function() {
-
+	
 	var urlParams = {};
 	(function() {
 		var e, a = /\+/g, r = /([^&=]+)=?([^&]*)/g, d = function(s) {
@@ -131,7 +131,7 @@ var thymol = function() {
 							last.nextSibling = child;
 						}
 						last = child;
-						count++;
+						count++;						
 					}
 				}
 			});
@@ -207,7 +207,7 @@ var thymol = function() {
 		var filePart = null;
 		var fragmentPart = "::";
 		if (attr.value.indexOf("::") < 0) {
-			filePart = getFilePart(attr.value);
+			filePart = getFilePart(attr.value); 
 		}
 		else {
 			var names = attr.value.split("::");
@@ -247,15 +247,15 @@ var thymol = function() {
 				window.alert("fragment import failed: " + filePart + " fragment: " + fragmentPart);
 			}
 		}
-		element.removeAttribute(attr.name);
+		element.removeAttribute(attr.name);		
 		return importNode;
 	}
-
+	
 	function getFilePart(part) {
 		var result = substitute(part);
 		if( result.charAt(0) != '.' ) {	// Initial period character indicates a relative path
 			if( result.indexOf('/') >= 0 ) {	// If it doesn't start with a '.', and there are no path separators, it's also treated as relative
-				result = thProtocol + root + path + result;
+				result = thProtocol + root + path + result;													
 			}
 		}
 		return result;
@@ -265,7 +265,7 @@ var thymol = function() {
 		if (isNode) {
 			element.parentNode.replaceChild(content.cloneNode(true), element);
 		}
-		else {
+		else {			
 			try {
 				element.innerHTML = content.innerHTML;
 			}
@@ -276,7 +276,7 @@ var thymol = function() {
 				for (i = 0; i < content.childNodes.length; i++) {
 					element.appendChild(content.childNodes[i].cloneNode(true));
 				}
-			}
+			}			
 		}
 	}
 
@@ -317,7 +317,7 @@ var thymol = function() {
 		}
 		return false;
 	}
-
+	
 	function substitute(argValue) {
 		var result = argValue;
 		var args = argValue.match(/[$\*#]{(!?.*)}/);
@@ -327,9 +327,9 @@ var thymol = function() {
 				var paramValue = urlParams[param];
 				if (paramValue) {
 					result = paramValue.value;
-				}
-			}
-		}
+				}					
+			}		
+		}			
 		return result;
 	}
 
@@ -339,7 +339,7 @@ var thymol = function() {
 			localValue = false;
 		}
 		else {
-			localValue = "";
+			localValue = "";			
 		}
 		var theParam = urlParams[paramName];
 		if (isBoolean && theParam) {
@@ -347,25 +347,25 @@ var thymol = function() {
 		}
 		else {
 			var paramValue;
-			try {
-				paramValue = eval(paramName); // NOSONAR
+			try {			
+				paramValue = eval(paramName);
 				if( !(typeof paramValue === "undefined") ) {
 					if( paramValue != null ) {
 						if ( isBoolean ) {
 							localValue = (paramValue==true);
-						}
+						}								
 						else {
-							localValue = paramValue;
+							localValue = paramValue;							
 						}
 					}
 				}
 			}
 			catch (err) {
-				if (err instanceof ReferenceError) {
+				if (err instanceof ReferenceError) {					
 				}
-				if (err instanceof EvalError) {
+				if (err instanceof EvalError) {					
 				}
-			}
+			}				
 		}
 		if( !isBoolean && isPath && localValue.length > 0 && localValue.charAt(localValue.length-1) != '/' ) {
 			localValue = localValue + '/';
