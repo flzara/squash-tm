@@ -66,6 +66,9 @@ public class Attachment implements Identified {
 	@Transient
 	private Long attachmentToCopyId;
 
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date addedOn;
+
 	public Attachment() {
 		super();
 	}
@@ -86,9 +89,6 @@ public class Attachment implements Identified {
 	public void setContent(AttachmentContent content) {
 		this.content = content;
 	}
-
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date addedOn;
 
 	/**
 	 * @return the full name of the file (including extension)

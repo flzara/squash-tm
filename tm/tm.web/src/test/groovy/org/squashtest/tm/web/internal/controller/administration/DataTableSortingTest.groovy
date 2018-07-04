@@ -30,7 +30,7 @@ import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
 import spock.lang.Specification
 
 /**
- * 
+ *
  * @author Gregory Fouquet
  *
  */
@@ -41,7 +41,7 @@ class DataTableSortingTest extends Specification {
 				.mapAttribute(2, "name", BugTracker.class)
 				.mapAttribute(3, "kind", BugTracker.class)
 				.mapAttribute(4, "url", BugTracker.class)
-				.mapAttribute(5, "iframeFriendly", BugTracker.class)
+				.mapAttribute(5, "isIframeFriendly", BugTracker.class)
 
 		and:
 		DataTableDrawParameters params = new DataTableDrawParameters()

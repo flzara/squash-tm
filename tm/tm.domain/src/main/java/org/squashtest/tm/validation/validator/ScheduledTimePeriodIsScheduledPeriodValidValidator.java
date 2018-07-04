@@ -37,7 +37,7 @@ public class ScheduledTimePeriodIsScheduledPeriodValidValidator implements Const
 	@Override
 	public void initialize(IsScheduledPeriodValid constraintAnnotation) {
 		// NOOP
-		
+
 	}
 
 	/**
@@ -45,12 +45,10 @@ public class ScheduledTimePeriodIsScheduledPeriodValidValidator implements Const
 	 */
 	@Override
 	public boolean isValid(ScheduledTimePeriod scheduledTimePeriod, ConstraintValidatorContext context) {
-		
+
 		boolean result = true;
 		if(scheduledTimePeriod.getScheduledStartDate() != null && scheduledTimePeriod.getScheduledEndDate() !=null) {
-			if(scheduledTimePeriod.getScheduledStartDate().getTime() > scheduledTimePeriod.getScheduledEndDate().getTime()) {
-				result = false;
-			}
+				result = scheduledTimePeriod.getScheduledStartDate().getTime() <= scheduledTimePeriod.getScheduledEndDate().getTime();
 		}
 		return result;
 	}

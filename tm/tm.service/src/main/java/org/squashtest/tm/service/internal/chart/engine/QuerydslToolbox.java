@@ -77,7 +77,7 @@ class QuerydslToolbox {
 	public static final int BY_YEAR_SUBSTRING_SIZE = 4;
 	public static final int BY_MONTH_SUBSTRING_SIZE = 7;
 	public static final int BY_DAY_SUBSTRING_SIZE = 10;
-
+	private static final String NOT_YET_SUPPORTED = "' not yet supported";
 	private String subContext;
 
 	private EnumMap<InternalEntityType, String> nondefaultPath = new EnumMap<>(InternalEntityType.class);
@@ -602,7 +602,7 @@ class QuerydslToolbox {
 		return result;
 	}
 
-	private SimpleExpression<?> applyOperationForDateCustomFields(Operation operation, Expression<?> baseExp, Expression... operands) {
+	private SimpleExpression<?> applyOperationForDateCustomFields(Operation operation, Expression<?> baseExp) {
 		SimpleExpression result;
 
 		Operator operator = Ops.SUBSTR_2ARGS;
@@ -718,7 +718,7 @@ class QuerydslToolbox {
 				result = dateOp.ne(exp);
 				break;
 			default:
-				throw new IllegalArgumentException("Operation '" + operation + "' not yet supported");
+				throw new IllegalArgumentException("Operation '" + operation + NOT_YET_SUPPORTED);
 		}
 
 		return result;
@@ -759,7 +759,7 @@ class QuerydslToolbox {
 		return makePath(clazz, alias, attributeType, attribute);
 
 	}
-	
+
 	List<Expression<?>> makeOperands(Operation operation, DataType type, List<String> values) {
 		try {
 
@@ -804,7 +804,7 @@ class QuerydslToolbox {
 						operand = Boolean.valueOf(val.toLowerCase());
 						break;
 					default:
-						throw new IllegalArgumentException("type '" + type + "' not yet supported");
+						throw new IllegalArgumentException("type '" + type + NOT_YET_SUPPORTED);
 				}
 
 				if (Operation.LIKE == operation) {
@@ -902,7 +902,7 @@ class QuerydslToolbox {
 				operator = Ops.NE;
 				break;
 			default:
-				throw new IllegalArgumentException("Operation '" + operation + "' not yet supported");
+				throw new IllegalArgumentException("Operation '" + operation + NOT_YET_SUPPORTED);
 		}
 
 		return operator;

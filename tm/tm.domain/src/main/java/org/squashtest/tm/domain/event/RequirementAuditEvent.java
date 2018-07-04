@@ -63,6 +63,16 @@ public abstract class RequirementAuditEvent {
 	@Size(max = 255)
 	private String author;
 
+	public RequirementAuditEvent(){
+		super();
+	}
+
+	public RequirementAuditEvent(RequirementVersion requirementVersion, String author) {
+		super();
+		this.requirementVersion = requirementVersion;
+		this.author = author;
+		this.date = new Date();
+	}
 
 	public Long getId() {
 		return id;
@@ -83,19 +93,7 @@ public abstract class RequirementAuditEvent {
 		return author;
 	}
 
-	public RequirementAuditEvent(){
-		super();
-	}
-
-	public RequirementAuditEvent(RequirementVersion requirementVersion, String author) {
-		super();
-		this.requirementVersion = requirementVersion;
-		this.author = author;
-		this.date = new Date();
-	}
-
-
-	public abstract void accept(RequirementAuditEventVisitor visitor);
+		public abstract void accept(RequirementAuditEventVisitor visitor);
 
 
 }

@@ -31,6 +31,9 @@ import org.springframework.web.util.HtmlUtils;
 
 public final class HTMLCleanupUtils {
 
+	private static final String STYLE = "style";
+	private static final String CLASS = "class";
+
 	private HTMLCleanupUtils() {
 
 	}
@@ -84,15 +87,15 @@ public final class HTMLCleanupUtils {
 			outputSettings.prettyPrint(false);
 			outputSettings.outline(false);
 			return Jsoup.clean(unsecureHtml, "", Whitelist.relaxed()
-					.addAttributes("a", "accesskey", "charset", "class", "dir", "lang", "name", "rel", "style", "tabindex", "target", "type")
+					.addAttributes("a", "accesskey", "charset", CLASS, "dir", "lang", "name", "rel", STYLE, "tabindex", "target", "type")
 					.addProtocols("img", "src", "cid", "data", "http", "https")
-					.addAttributes("img", "class", "dir", "lang", "longdesc", "style")
-					.addAttributes("li", "class", "style")
-					.addAttributes("p", "class", "style")
-					.addAttributes("span", "class", "style")
-					.addAttributes("table", "align", "border", "cellpadding", "cellspacing", "class", "dir", "style")
-					.addAttributes("ul", "class", "style")
-					.addAttributes("ol", "class", "style")
+					.addAttributes("img", CLASS, "dir", "lang", "longdesc", STYLE)
+					.addAttributes("li", CLASS, STYLE)
+					.addAttributes("p", CLASS, STYLE)
+					.addAttributes("span", CLASS, STYLE)
+					.addAttributes("table", "align", "border", "cellpadding", "cellspacing", CLASS, "dir", STYLE)
+					.addAttributes("ul", CLASS, STYLE)
+					.addAttributes("ol", CLASS, STYLE)
 				, outputSettings);
 		}
 		return StringUtils.EMPTY;

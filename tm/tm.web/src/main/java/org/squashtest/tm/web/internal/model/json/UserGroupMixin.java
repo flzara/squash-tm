@@ -24,8 +24,8 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @JsonAutoDetect
-public abstract class UserGroupMixin {
+public interface UserGroupMixin {
 
 	@JsonIgnore
-	public abstract String getSimpleName();
+	String getSimpleName();
 }

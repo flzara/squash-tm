@@ -58,11 +58,9 @@ public class Permission implements Identifiable<Permission> {
 		return false;
 	}
 
-
 	public void setId(String id) {
 		this.id = id;
 	}
-
 
 	public void setName(String name) {
 		this.name = name;

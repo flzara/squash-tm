@@ -94,8 +94,6 @@ define(["jquery", "underscore", "app/ws/squashtm.notification", "squash.translat
 
 		/* **************** private ************** */
 
-		var self = this;
-
 		var makeItem = $.proxy(function (json) {
 			var node = $("<li/>", {
 				'class': 'suite-item'
@@ -164,8 +162,10 @@ define(["jquery", "underscore", "app/ws/squashtm.notification", "squash.translat
 			var items = [];
 
 			for (var i in model) {
-				var node = makeItem(model[i]);
-				items.push(node);
+				if (model.hasOwnProperty(i)) {
+					var node = makeItem(model[i]);
+					items.push(node);
+				}
 			}
 
 			// sort new content

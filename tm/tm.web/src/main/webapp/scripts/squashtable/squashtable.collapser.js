@@ -52,8 +52,6 @@ define([ "jquery" ], function() {
 
 	return function(dataTableP, columnsP) {
 
-		var self = this;
-
 		var dataTable = dataTableP;
 
 		var cellSelector;

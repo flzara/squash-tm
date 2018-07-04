@@ -207,18 +207,21 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		} else if (campaignFatherChildrenMultimap.containsKey(campaignId)) {
 			campaign.setState(State.open);
 			for (Long iterationId : (ArrayList<Long>) campaignFatherChildrenMultimap.get(campaignId)) {
-				if (iterationFatherChildrenMultiMap.containsKey(iterationId)) {
-					iterationMap.get(iterationId).setState(State.open);
-					for (Long testSuiteId : (ArrayList<Long>) iterationFatherChildrenMultiMap.get(iterationId)) {
-						iterationMap.get(iterationId).addChild(testSuiteMap.get(testSuiteId));
-					}
-				}
+				completeIterationMap(iterationId);
 				campaign.addChild(iterationMap.get(iterationId));
 			}
 		} else {
 			campaign.setState(State.closed);
 		}
 		return campaign;
+	}
+	private void completeIterationMap(Long iterationId){
+		if (iterationFatherChildrenMultiMap.containsKey(iterationId)) {
+			iterationMap.get(iterationId).setState(State.open);
+			for (Long testSuiteId : (ArrayList<Long>) iterationFatherChildrenMultiMap.get(iterationId)) {
+				iterationMap.get(iterationId).addChild(testSuiteMap.get(testSuiteId));
+			}
+		}
 	}
 
 	private JsTreeNode buildIteration(Long id, String name, String reference, Integer iterationOrder, boolean hasContent, UserDto currentUser, Long milestone, String isMilestoneModifiable) {
@@ -493,7 +496,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 	@Override
 	protected boolean passesMilestoneFilter(JsTreeNode node, Long activeMilestoneId) {
-		return (node != null && (NO_ACTIVE_MILESTONE_ID.equals(activeMilestoneId) || node.getAttr().get(REL).equals("folder") || nodeHasActiveMilestone(nodeLinkedToMilestone, (Long) node.getAttr().get(RES_ID))));
+		return (node != null && (NO_ACTIVE_MILESTONE_ID.equals(activeMilestoneId) || ("folder").equals(node.getAttr().get(REL)) || nodeHasActiveMilestone(nodeLinkedToMilestone, (Long) node.getAttr().get(RES_ID))));
 	}
 
 	@Override

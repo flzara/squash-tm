@@ -77,7 +77,7 @@ public class SpringDaoMetaAnnotationAspect implements Ordered {
 
 	@Pointcut(value = "call(@org.squashtest.tm.service.annotation.EmptyCollectionGuard * org.springframework.data.repository.Repository+.*(..))")
 	public void callEmptyCollectionGuard() {
-
+		// NOOP
 	}
 
 	// NOSONAR yes I know I throw a Throwable but that's usual stuff with reflection <insert more bitching here>
@@ -147,6 +147,7 @@ public class SpringDaoMetaAnnotationAspect implements Ordered {
 		return res;
 	}
 
+	@SuppressWarnings("all")
 	private Object newPrimitiveZero(Class<?> returnType) {
 		Object res;
 

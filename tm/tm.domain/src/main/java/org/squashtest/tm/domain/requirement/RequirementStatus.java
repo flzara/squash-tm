@@ -35,7 +35,7 @@ public enum RequirementStatus implements Level {
 			next.add(UNDER_REVIEW);
 			return next;
 		}
-		
+
 		@Override
 		public boolean isRequirementModifiable() {
 			return true;
@@ -162,31 +162,31 @@ public enum RequirementStatus implements Level {
 	public int getLevel() {
 		return level;
 	}
-	
+
 	/**
 	 * the set of the available status transition. As for 1.1.0 and until further notice, should also include
 	 * <i>this</i>
-	 * 
+	 *
 	 * @return the availableTransition.
 	 */
 	public abstract Set<RequirementStatus> getAvailableNextStatus();
 
 	/**
 	 * tells whether this status allows the owner to be modified, i.e. its intrinsic properties can be changed.
-	 * 
+	 *
 	 * @return yay or nay.
 	 */
 	public abstract boolean isRequirementModifiable();
 
 	/**
 	 * tells whether the status could be changed regardless of {@link #isRequirementModifiable()};
-	 * 
+	 *
 	 * @return yay or nay.
 	 */
 	public abstract boolean getAllowsStatusUpdate();
 
 	/**
-	 * 
+	 *
 	 * @return the owning Requirement can be (un)linked to Test Cases
 	 */
 	public abstract boolean isRequirementLinkable();
@@ -214,14 +214,14 @@ public enum RequirementStatus implements Level {
 		@Override
 		public int compare(String o1, String o2) {
 			RequirementStatus status1, status2;
-			
+
 			try {
 				String comparableString1 = removeDisableString(o1);
 				status1 = RequirementStatus.valueOf(comparableString1);
 			} catch (IllegalArgumentException iae) {
 				return 1;
 			}
-			
+
 			try {
 				String comparableString2 = removeDisableString(o2);
 				status2 = RequirementStatus.valueOf(comparableString2);
@@ -244,7 +244,7 @@ public enum RequirementStatus implements Level {
 
 	/**
 	 * will check if the transition from this status to new status is legal
-	 * 
+	 *
 	 * @return true if it's okay
 	 */
 	public boolean isTransitionLegal(RequirementStatus newStatus) {
@@ -254,7 +254,7 @@ public enum RequirementStatus implements Level {
 	/**
 	 * the set of the NON-available status transition. As for 1.1.0 and until further notice, should NOT include
 	 * <i>this</i>
-	 * 
+	 *
 	 * @return the NON-availableTransition.
 	 */
 	public abstract Set<RequirementStatus> getDisabledStatus();

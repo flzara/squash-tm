@@ -111,7 +111,7 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	 *
 	 * I don't know what to do about it.
 	 */
-	protected Query searchTestCasesQuery(AdvancedSearchModel model, FullTextEntityManager ftem, Locale locale) {
+	protected Query searchTestCasesQuery(AdvancedSearchModel model, FullTextEntityManager ftem) {
 
 		QueryBuilder qb = ftem.getSearchFactory().buildQueryBuilder().forEntity(TestCase.class).get();
 
@@ -131,7 +131,7 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 		// now add the test-cases specific milestones criteria
 		if (shouldSearchByMilestones(modelCopy)) {
-			luceneQuery = addAggregatedMilestonesCriteria(luceneQuery, qb, modelCopy, locale);
+			luceneQuery = addAggregatedMilestonesCriteria(luceneQuery, qb, modelCopy);
 		}
 
 		return luceneQuery;
@@ -145,7 +145,7 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 		FullTextEntityManager ftem = Search.getFullTextEntityManager(entityManager);
 
-		Query luceneQuery = searchTestCasesQuery(model, ftem, locale);
+		Query luceneQuery = searchTestCasesQuery(model, ftem);
 
 		FullTextQuery hibQuery = ftem.createFullTextQuery(luceneQuery, TestCase.class);
 
@@ -242,7 +242,7 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 		FullTextEntityManager ftem = Search.getFullTextEntityManager(entityManager);
 
-		Query luceneQuery = searchTestCasesQuery(model, ftem, locale);
+		Query luceneQuery = searchTestCasesQuery(model, ftem);
 
 		return fetchPagedResults(ftem, luceneQuery, sorting);
 	}
@@ -264,7 +264,7 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		return new PagingBackedPagedCollectionHolder<>(sorting, countAll, result);
 	}
 
-	public Query addAggregatedMilestonesCriteria(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy, Locale locale) {
+	public Query addAggregatedMilestonesCriteria(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy) {
 
 		// find the milestones
 		addMilestoneFilter(modelCopy);

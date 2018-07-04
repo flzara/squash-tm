@@ -120,14 +120,18 @@ public class ExecutionStepModificationHelper {
 					Dataset dataset = execution.getTestPlan().getReferencedDataset();
 					changeStepParamsByValue(eStep, aStep, dataset, toBeUpdated);
 				} else {
-					if (!isStepEqual(eStep, aStep)) {
-						toBeUpdated.add(eStep);
-					}
+					testingStep( aStep,  eStep,toBeUpdated);
 				}
 			}
 		}
 
 		return toBeUpdated;
+	}
+
+	private void testingStep(ActionTestStep aStep, ExecutionStep eStep,List<ExecutionStep> toBeUpdated){
+		if (!isStepEqual(eStep, aStep)) {
+			toBeUpdated.add(eStep);
+		}
 	}
 
 	private boolean isExecutionWithParameters(ActionTestStep aStep) {
@@ -136,9 +140,7 @@ public class ExecutionStepModificationHelper {
 
 	private boolean isExecutionWithDataset(Execution execution) {
 		if (execution.getTestPlan() != null) {
-			if (execution.getTestPlan().getReferencedDataset() != null) {
-				return true;
-			}
+			return execution.getTestPlan().getReferencedDataset() != null;
 		}
 		return false;
 	}

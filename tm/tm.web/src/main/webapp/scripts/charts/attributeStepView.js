@@ -23,7 +23,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 	"use strict";
 
 	var attributesStepView = AbstractStepView.extend({
-		
+
 		initialize : function(data, wizrouter) {
 			this.tmpl = "#attributes-step-tpl";
 			this.model = data;
@@ -35,12 +35,12 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			this.listenTo(this.model, 'change:selectedCufAttributes', this.updateSelectedAttributesWithCuf);
 			this.initializeCufCheckBox();
 		},
-		
+
 		events : {
 			"click .wizard-cuf-btn" : "openCufPopup",
 			"click input[name='entity']" : "toggleEntityPanelVisibility"
 		},
-	
+
 		updateModel : function() {
 
 			var self = this;
@@ -69,7 +69,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			/* Finding which entities icons were checked. */
 			var checkedEntities = _.pluck($('[name="entity"]').filter(":checked"), "id");
 
-			/* Intersection between the two variables above. 
+			/* Intersection between the two variables above.
 			 * We don't want to include attributes that are checked but not visible. */
 			selectedEntities = _.intersection(selectedEntities, checkedEntities);
 
@@ -78,7 +78,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			//now filtering out the axis, filter, measures and operations to sync them with new user selection
 			var filteredAxis = this.filterWithValidIds(this.model.get("axis"));
 			this.model.set({"axis" : filteredAxis});
-			
+
 			var filteredMeasures = this.filterWithValidIds(this.model.get("measures"));
 			this.model.set({"measures" : filteredMeasures});
 
@@ -88,17 +88,16 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			var filteredOperations = this.filterWithValidIds(this.model.get("operations"));
 			this.model.set({"operations" : filteredOperations});
 		},
-		
-		filterWithValidIds : function (col) {		
+
+		filterWithValidIds : function (col) {
 			var self = this;
 			return _.chain(col)
 			.filter(function(val){return _.contains(self.model.get("selectedAttributes"), "" + val.column.id);})
 			.value();
-			
+
 		},
 
 		openCufPopup : function(event) {
-			var self = this;
 			var entityType = event.target.getAttribute("data-entity");
 			var cufToDisplay = _.mapObject(this.model.get("computedColumnsPrototypes"),function(prototypes,entityType) {
 				return _.filter(prototypes,function(proto) {
@@ -109,7 +108,6 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			this.model.set("selectedCufEntity",entityType);
 			var ids = _.pluck($('[id^="attributes-selection-"][data-cuf="true"]').filter(":checked"), "name");
 			this.model.set("selectedCufAttributes",ids);
-			var cufPopup = new CustomFieldPopup(this.model);
 		},
 
 		//callback executed when selected cuf changes

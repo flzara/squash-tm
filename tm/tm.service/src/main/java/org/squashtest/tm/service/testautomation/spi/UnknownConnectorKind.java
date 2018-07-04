@@ -28,14 +28,14 @@ import java.util.List;
 public class UnknownConnectorKind extends TestAutomationException {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -5396461746323466331L;
 
 	private static final String UNKNOWN_KIND_EXCEPTION = "testautomation.exceptions.unknownkind";
-	
-	
-	private List<String> args = new LinkedList<>();
+
+
+	private final List<String> args = new LinkedList<>();
 
 	public UnknownConnectorKind() {
 		super();
@@ -52,7 +52,7 @@ public class UnknownConnectorKind extends TestAutomationException {
 	public UnknownConnectorKind(Throwable cause) {
 		super(cause);
 	}
-	
+
 	@Override
 	public Object[] messageArgs(){
 		return args.toArray();
@@ -66,7 +66,7 @@ public class UnknownConnectorKind extends TestAutomationException {
 	public String getI18nKey() {
 		return UNKNOWN_KIND_EXCEPTION;
 	}
-	
-	
-	
+
+
+
 }

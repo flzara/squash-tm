@@ -83,7 +83,6 @@
 		},
 
 		filterTable : function(event){
-			var self = this;
 			var warning = this.$(".filter-warning");
 			var filterText = this.$("div.dataTables_filter input").val();
 			if(filterText){

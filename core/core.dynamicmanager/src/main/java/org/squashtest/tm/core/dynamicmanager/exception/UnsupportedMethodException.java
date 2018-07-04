@@ -24,31 +24,31 @@ import java.lang.reflect.Method;
 
 /**
  * Indicates a Dynamic Manager is not able to handle a specific method call.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class UnsupportedMethodException extends RuntimeException {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -971438788310348625L;
 
-	public UnsupportedMethodException(Method method, Object[] args) {
-		super(createMessage(method, args));
+	public UnsupportedMethodException(Method method) {
+		super(createMessage(method));
 	}
 
-	private static String createMessage(Method method, Object[] args) {
+	private static String createMessage(Method method) {
 		StringBuilder sb = new StringBuilder("The method '");
 		sb.append(method.getReturnType().getCanonicalName()).append(' ').append(method.getName()).append('(');
-		
+
 		for (Class<?> paramType : method.getParameterTypes()) {
 			sb.append(paramType.getCanonicalName()).append(',');
 		}
-		
+
 		sb.append(") ' cannot be dynamically handled or delegated to custom manager" );
-		
+
 		return sb.toString();
 	}
 

@@ -379,10 +379,12 @@ define([ 'jquery', "underscore", 'squash.attributeparser', 'squash.configmanager
 		_destroyCked : function() {
 			var editors = this.options._richeditors;
 			for (var i in editors) {
-				var domelt = editors[i];
-				var ckInstance = CKEDITOR.instances[domelt.attr('id')];
-				if (ckInstance) {
-					ckInstance.destroy(true);
+				if (editors.hasOwnProperty(i)) {
+					var domelt = editors[i];
+					var ckInstance = CKEDITOR.instances[domelt.attr('id')];
+					if (ckInstance) {
+						ckInstance.destroy(true);
+					}
 				}
 			}
 		},
@@ -407,10 +409,11 @@ define([ 'jquery', "underscore", 'squash.attributeparser', 'squash.configmanager
 
 				var handler;
 				for ( var key in conf) {
-
-					handler = handlers[key];
-					if (handler !== undefined) {
-						handler.call($widget, $elt, conf[key]);
+					if (conf.hasOwnProperty(key)) {
+						handler = handlers[key];
+						if (handler !== undefined) {
+							handler.call($widget, $elt, conf[key]);
+						}
 					}
 				}
 			});

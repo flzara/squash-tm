@@ -22,7 +22,6 @@ package org.squashtest.tm.service.statistics.campaign;
 
 import java.util.List;
 
-
 public final class CampaignStatisticsBundle {
 
 	private List<IterationTestInventoryStatistics> iterationTestInventoryStatisticsList;

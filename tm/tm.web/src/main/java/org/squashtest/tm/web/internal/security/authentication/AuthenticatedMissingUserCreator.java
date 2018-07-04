@@ -46,8 +46,6 @@ import org.squashtest.tm.web.internal.annotation.ApplicationComponent;
 public class AuthenticatedMissingUserCreator implements ApplicationListener<AuthenticationSuccessEvent>, Ordered {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticatedMissingUserCreator.class);
 
-	/*@Value("#{authenticationProviderContext.currentProviderFeatures}")
-	private AuthenticationProviderFeatures authenticationProviderFeatures;*/
 	@Inject
 	private AuthenticationProviderContext authProviderContext;
 
@@ -61,10 +59,10 @@ public class AuthenticatedMissingUserCreator implements ApplicationListener<Auth
 		super();
 		LOGGER.info("created");
 	}
-	
-	
-	// we must ensure that the user exist 
-	// before any other event listener that rely on its existence 
+
+
+	// we must ensure that the user exist
+	// before any other event listener that rely on its existence
 	// kick in
 	@Override
 	public int getOrder() {
@@ -83,7 +81,7 @@ public class AuthenticatedMissingUserCreator implements ApplicationListener<Auth
 			createMissingUser(event.getAuthentication());
 		}
 	}
-	
+
 
 	private void createMissingUser(Authentication principal) {
 		LOGGER.debug("Will try to create user from principal if it does not exist");

@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
@@ -91,6 +90,9 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 
 	void updateTestStepExpectedResult(long testStepId, String newExpectedResult);
 
+	/**
+	 * @deprecated does not seem to be used any longer
+	 */
 	@Deprecated
 	@PreventConcurrent(entityType=TestCase.class)
 	void changeTestStepPosition(@Id long testCaseId, long testStepId, int newStepPosition);

@@ -121,8 +121,8 @@ public class ChartSeries {
 		return series;
 	}
 
-	public void setSeries(LinkedHashMap<String, List<Object>> series) {
-		this.series = series;
+	public void setSeries(Map<String, List<Object>> series) {
+		this.series = (LinkedHashMap<String, List<Object>>) series;
 	}
 
 	public List<Object[]> getAbscissa() {

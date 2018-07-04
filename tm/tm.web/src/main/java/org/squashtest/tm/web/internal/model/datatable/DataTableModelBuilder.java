@@ -35,26 +35,26 @@ import java.util.List;
  * @param <X>
  */
 public abstract class DataTableModelBuilder<X> {
-    
+
 	private long currentIndex = 0;
 
-        
+
         // ************* public API ****************
-        
+
 	public final DataTableModel buildDataModel(Page<X> page, String sEcho) {
             currentIndex = ((long)page.getNumber() * page.getSize()) + 1L;
             DataTableModel model = createModelFromItems(sEcho, page.getContent());
             model.displayRowsFromTotalOf(page.getTotalElements());
             return model;
         }
-        
+
 	public final DataTableModel buildDataModel(PagedCollectionHolder<List<X>> holder, String sEcho) {
             currentIndex = holder.getFirstItemIndex() + 1;
             DataTableModel model = createModelFromItems(sEcho, holder.getPagedItems());
             model.displayRowsFromTotalOf(holder.getTotalNumberOfItems());
             return model;
 	}
-        
+
         public final Collection<Object> buildRawModel(Page<X> page){
             currentIndex = ((long)page.getNumber() * page.getSize()) + 1L;
             return buildRawModel(page.getContent());
@@ -84,10 +84,10 @@ public abstract class DataTableModelBuilder<X> {
 		currentIndex = startIndex;
 		return buildRawModel(pagedItems);
 	}
-        
-        
+
+
         // *********** private ********************
-        
+
 	private DataTableModel createModelFromItems(String sEcho, Collection<X> pagedItems) {
 		DataTableModel model = new DataTableModel(sEcho);
 

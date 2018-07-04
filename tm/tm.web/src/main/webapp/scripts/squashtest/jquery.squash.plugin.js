@@ -164,7 +164,9 @@ var squashtm = squashtm || {};
 			var postData = '';
 
 			for ( var attr in data) {
-				postData += '<input type=\"hidden\" name=\"' + attr + '\" value=\"' + data[attr] + '\" />';
+				if (data.hasOwnProperty(attr)) {
+					postData += '<input type=\"hidden\" name=\"' + attr + '\" value=\"' + data[attr] + '\" />';
+				}
 			}
 
 			var form = '<form id=\"postForm\" style=\"display:none;\" action=\"' + url + '\" method=\"post\">' +

@@ -23,11 +23,11 @@ package org.squashtest.tm.plugin.testautomation.jenkins.beans;
 import java.util.Arrays;
 
 public class ItemList {
-	
+
 	private Item[] items;
-	
-	
-	
+
+
+
 	public Item[] getItems() {
 		return items;
 	}
@@ -36,35 +36,41 @@ public class ItemList {
 		this.items = Arrays.copyOf(items, items.length);
 	}
 
-	
+
 	public Item findQueuedBuildByExtId(String projectName, String extId){
-		
+
 		Item result = null;
-		
+
 		// defensive check, probably useless if the json deserializer does the job correctly
 		if (items != null){
 			for (Item item : items){
-				
-				if (item == null) continue;
-				
+
+				if (item == null){
+					continue;
+				}
+
 				if (item.representsProjectWithExtId(projectName, extId)){
 					result = item;
 					break;
 				}
 			}
 		}
-		
+
 		return result;
 	}
-	
+
 	public Item findQueuedBuildById(String projectName, int id){
-		
-		if (items == null) return null;
-		
+
+		if (items == null){
+			return null;
+		}
+
 		for (Item item : items){
-			
-			if (item == null) continue;
-			
+
+			if (item == null){
+				continue;
+			}
+
 			if (item.representsProjectWithId(projectName, id)){
 				return item;
 			}

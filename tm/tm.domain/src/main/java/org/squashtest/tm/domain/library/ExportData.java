@@ -45,6 +45,36 @@ public abstract class ExportData {
 	public ExportData() {
 	}
 
+	public ExportData(LibraryNode node, Folder folder) {
+		this.id = node.getId();
+		this.name = node.getName();
+		doSetDescription(node.getDescription());
+		this.project = node.getProject().getName();
+		AuditableMixin audit = (AuditableMixin) node;
+		this.createdOn = audit.getCreatedOn();
+		this.createdBy = audit.getCreatedBy();
+		// folder is null if the requirement is located directly under the project root.
+		if (folder == null) {
+			this.folderId = NO_FOLDER;
+		} else {
+			this.folderId = folder.getId();
+			doSetFolderName(folder.getName());
+		}
+	}
+
+	public ExportData(LibraryNode node) {
+		this.id = node.getId();
+		this.name = node.getName();
+		doSetDescription(node.getDescription());
+		this.project = node.getProject().getName();
+		AuditableMixin audit = (AuditableMixin) node;
+		this.createdOn = audit.getCreatedOn();
+		this.createdBy = audit.getCreatedBy();
+		// folder is null if the requirement is located directly under the project root.
+		this.folderId = NO_FOLDER;
+	}
+
+
 	public Long getId() {
 		return id;
 	}
@@ -121,33 +151,5 @@ public abstract class ExportData {
 		this.folderId = folderId;
 	}
 
-	public ExportData(LibraryNode node, Folder folder) {
-		this.id = node.getId();
-		this.name = node.getName();
-		doSetDescription(node.getDescription());
-		this.project = node.getProject().getName();
-		AuditableMixin audit = (AuditableMixin) node;
-		this.createdOn = audit.getCreatedOn();
-		this.createdBy = audit.getCreatedBy();
-		// folder is null if the requirement is located directly under the project root.
-		if (folder == null) {
-			this.folderId = NO_FOLDER;
-		} else {
-			this.folderId = folder.getId();
-			doSetFolderName(folder.getName());
-		}
-	}
-
-	public ExportData(LibraryNode node) {
-		this.id = node.getId();
-		this.name = node.getName();
-		doSetDescription(node.getDescription());
-		this.project = node.getProject().getName();
-		AuditableMixin audit = (AuditableMixin) node;
-		this.createdOn = audit.getCreatedOn();
-		this.createdBy = audit.getCreatedBy();
-		// folder is null if the requirement is located directly under the project root.
-		this.folderId = NO_FOLDER;
-	}
 
 }

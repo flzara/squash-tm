@@ -35,6 +35,7 @@ import org.squashtest.tm.security.acls.CustomPermission;
 
 @Service
 @Transactional
+@SuppressWarnings("squid:S1192")
 class DerivedPermissionsManager {
 
 	private static final String PROJECT_CLASS_NAME = Project.class.getName();
@@ -106,15 +107,6 @@ class DerivedPermissionsManager {
 	void updateDerivedPermissions(long partyId) {
 		updateDerivedAuths(partyId);
 	}
-
-
-	void updateDerivedPermissions(long partyId, ObjectIdentity identity) {
-
-		// as for now we don't have a use for the identity argument yet. That might change later though.
-		//updateDerivedAcl(partyId);
-		updateDerivedAuths(partyId);
-	}
-
 
 	// *************************** private ******************************
 

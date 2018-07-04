@@ -132,7 +132,7 @@ class DomainGraph {
 
 	private Set<TraversableEntity> nodes = new HashSet<>();
 
-
+	private static final String MILESTONES = "milestones";
 	// this one is used only in "shouldNavigate" and "morphToQueryPlan()"
 	private Set<InternalEntityType> visited = new HashSet<>();
 
@@ -255,12 +255,12 @@ class DomainGraph {
 		addEdge(testcaseNode, teststepNode, "steps");
 		addEdge(testcaseNode, tcnatNode, "nature");
 		addEdge(testcaseNode, tctypNode, "type");
-		addEdge(testcaseNode, tcmilNode, "milestones");
+		addEdge(testcaseNode, tcmilNode, MILESTONES);
 
 		addEdge(rversionNode, rvcatNode, "category");
-		addEdge(rversionNode, rvmilNode, "milestones");
+		addEdge(rversionNode, rvmilNode, MILESTONES);
 
-		addEdge(campaignNode, campmilNode, "milestones");
+		addEdge(campaignNode, campmilNode, MILESTONES);
 
 		addEdge(testcaseNode, autoNode, "automatedTest");
 

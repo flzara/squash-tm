@@ -43,6 +43,16 @@ public class TestAutomationProjectContentModel {
 	private AutomatedTestModel[] tests;
 	private boolean orderGuaranteed;
 
+	public TestAutomationProjectContentModel(TestAutomationProjectContent content) {
+		this.project = new TestAutomationProjectModel(content.getProject());
+		this.orderGuaranteed = content.isOrderGuaranteed();
+		Collection<AutomatedTestModel> tmodels = new ArrayList<>(content.getTests().size());
+		for (AutomatedTest test : content.getTests()) {
+			tmodels.add(new AutomatedTestModel(test));
+		}
+		tests = tmodels.toArray(new AutomatedTestModel[tmodels.size()]);
+	}
+
 	public TestAutomationProjectModel getProject() {
 		return project;
 	}
@@ -70,17 +80,6 @@ public class TestAutomationProjectContentModel {
 	public void setOrderGuaranteed(boolean orderGuaranteed) {
 		this.orderGuaranteed = orderGuaranteed;
 	}
-
-	public TestAutomationProjectContentModel(TestAutomationProjectContent content) {
-		this.project = new TestAutomationProjectModel(content.getProject());
-		this.orderGuaranteed = content.isOrderGuaranteed();
-		Collection<AutomatedTestModel> tmodels = new ArrayList<>(content.getTests().size());
-		for (AutomatedTest test : content.getTests()) {
-			tmodels.add(new AutomatedTestModel(test));
-		}
-		tests = tmodels.toArray(new AutomatedTestModel[tmodels.size()]);
-	}
-
 
 	public static final class TestAutomationProjectModel {
 		private Long id;

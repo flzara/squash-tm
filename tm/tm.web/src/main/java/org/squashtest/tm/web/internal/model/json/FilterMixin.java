@@ -28,14 +28,14 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @JsonAutoDetect
-public abstract class FilterMixin {
+public interface FilterMixin {
 
 	@JsonIgnore
-	public abstract EntityType getEntityType();
+	EntityType getEntityType();
 
 	@JsonIgnore
-	public abstract DataType getDataType();
+	DataType getDataType();
 
 	@JsonIgnore
-	public abstract SpecializedEntityType getSpecializedType();
+	SpecializedEntityType getSpecializedType();
 }

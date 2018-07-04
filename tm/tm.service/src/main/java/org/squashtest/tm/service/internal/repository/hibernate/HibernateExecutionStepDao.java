@@ -50,7 +50,9 @@ public class HibernateExecutionStepDao extends HibernateEntityDao<ExecutionStep>
 
 		int index=0;
 		for (ExecutionStep step : execution.getSteps()){
-			if (step.getId().equals(executionStepId)){ return index;}
+			if (step.getId().equals(executionStepId)){
+				return index;
+			}
 			index++;
 		}
 		return index;

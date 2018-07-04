@@ -79,7 +79,7 @@ public class RequirementPropertyChange extends RequirementAuditEvent implements 
 	public void accept(RequirementAuditEventVisitor visitor) {
 		visitor.visit(this);
 	}
-	
+
 	public static RequirementPropertyChangeEventBuilder<RequirementPropertyChange> builder() {
 		return new Builder();
 	}

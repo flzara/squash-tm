@@ -84,6 +84,8 @@ public class TeamController extends PartyControllerSupport {
 	 *
 	 */
 	private static final String TEAM_ID = "teamId";
+	private static final String TEAM_ID_URL = "/{teamId}";
+	private static final String DESCRIPTION = "description" ;
 
 	@Inject
 	private TeamModificationService service;
@@ -91,12 +93,9 @@ public class TeamController extends PartyControllerSupport {
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
 
-
-	private static final String TEAM_ID_URL = "/{teamId}";
-
 	private DatatableMapper<String> teamsMapper = new NameBasedMapper(9)
 	.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "name", Team.class)
-	.mapAttribute("description", "description", Team.class)
+	.mapAttribute(DESCRIPTION, DESCRIPTION, Team.class)
 	.mapAttribute("nb-associated-users", "members.size", Team.class)
 	.mapAttribute("created-on", "audit.createdOn", Team.class)
 	.mapAttribute("created-by", "audit.createdBy", Team.class)
@@ -301,7 +300,7 @@ public class TeamController extends PartyControllerSupport {
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, HtmlUtils.htmlEscape(item.getName()));
-			res.put("description", HtmlUtils.htmlEscape(item.getDescription()));
+			res.put(DESCRIPTION, HtmlUtils.htmlEscape(item.getDescription()));
 			res.put("nb-associated-users", item.getMembers().size());
 			res.put(DataTableModelConstants.DEFAULT_CREATED_ON_KEY, messageSource.localizeDate(auditable.getCreatedOn(), locale));
 			res.put(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, HtmlUtils.htmlEscape(auditable.getCreatedBy()));

@@ -141,7 +141,7 @@ public class CampaignSearchController extends GlobalSearchController {
 				model.addAttribute("selectedNode", getTreeElementIdInWorkspace(entityReference.getId()));
 				// WARNING! it was previously catching all Exceptions
 			} catch (CodeDoesNotMatchesPatternException | IllegalArgumentException e) {
-				LOGGER.warn("Error during conversion of the 'workspace-prefs' cookie to an EntityReference.");
+				LOGGER.warn("Error during conversion of the 'workspace-prefs' cookie to an EntityReference.", e);
 			}
 		}
 

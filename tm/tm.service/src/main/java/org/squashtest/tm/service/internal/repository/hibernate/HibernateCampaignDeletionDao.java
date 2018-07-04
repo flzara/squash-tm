@@ -43,6 +43,7 @@ implements CampaignDeletionDao {
 	@Inject
 	private AttachmentManagerService attachmentManagerService;
 
+	private static final String CAMPAIGN_IDS= "campaignIds";
 	@Override
 	public void removeEntities(List<Long> entityIds) {
 		if (!entityIds.isEmpty()) {
@@ -101,7 +102,7 @@ implements CampaignDeletionDao {
 		List<Long> campaignIds = new ArrayList<>();
 
 		List<BigInteger> filtredFolderIds = executeSelectSQLQuery(
-				NativeQueries.CAMPAIGNLIBRARYNODE_SQL_FILTERFOLDERIDS, "campaignIds", originalIds);
+				NativeQueries.CAMPAIGNLIBRARYNODE_SQL_FILTERFOLDERIDS, CAMPAIGN_IDS, originalIds);
 
 		for (Long oId : originalIds){
 			if (filtredFolderIds.contains(BigInteger.valueOf(oId))){
@@ -123,7 +124,7 @@ implements CampaignDeletionDao {
 
 		if (! campaignIds.isEmpty()){
 			Query query = getSession().createSQLQuery(NativeQueries.CAMPAIGN_SQL_UNBIND_MILESTONE);
-			query.setParameterList("campaignIds", campaignIds, LongType.INSTANCE);
+			query.setParameterList(CAMPAIGN_IDS, campaignIds, LongType.INSTANCE);
 			query.setParameter("milestoneId", milestoneId);
 			query.executeUpdate();
 		}
@@ -135,7 +136,7 @@ implements CampaignDeletionDao {
 		if (! originalId.isEmpty()){
 			MilestoneStatus[] lockedStatuses = new MilestoneStatus[]{ MilestoneStatus.PLANNED, MilestoneStatus.LOCKED};
 			Query query = getSession().getNamedQuery("campaign.findCampaignsWhichMilestonesForbidsDeletion");
-			query.setParameterList("campaignIds", originalId, LongType.INSTANCE);
+			query.setParameterList(CAMPAIGN_IDS, originalId, LongType.INSTANCE);
 			query.setParameterList("lockedStatuses", lockedStatuses);
 			return query.list();
 		}else{

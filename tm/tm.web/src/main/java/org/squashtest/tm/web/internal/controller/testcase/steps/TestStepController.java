@@ -53,6 +53,7 @@ import java.util.*;
 public class TestStepController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestStepController.class);
 	private static final String OPTIMIZED = "optimized";
+	private static final String ROLE_ADMIN = "ROLE_ADMIN";
 
 	@Inject
 	private TestStepModificationService testStepService;
@@ -115,15 +116,15 @@ public class TestStepController {
 
 		// ------------------------------------RIGHTS PART
 		// waiting for [Task 1843]
-		boolean writable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", testStep);
+		boolean writable = permissionEvaluationService.hasRoleOrPermissionOnObject(ROLE_ADMIN, "WRITE", testStep);
 		writable = writable && milestoneConf.isEditable();
 		model.addAttribute("writable", writable); // right to modify steps
 
-		boolean attachable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "ATTACH", testStep);
+		boolean attachable = permissionEvaluationService.hasRoleOrPermissionOnObject(ROLE_ADMIN, "ATTACH", testStep);
 		attachable = attachable && milestoneConf.isEditable();
 		model.addAttribute("attachable", attachable); // right to modify steps
 
-		boolean linkable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "LINK", testStep);
+		boolean linkable = permissionEvaluationService.hasRoleOrPermissionOnObject(ROLE_ADMIN, "LINK", testStep);
 		model.addAttribute("linkable", linkable); // right to bind steps to requirement
 
 		// end waiting for [Task 1843]

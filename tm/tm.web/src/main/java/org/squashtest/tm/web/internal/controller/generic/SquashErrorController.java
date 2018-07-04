@@ -83,6 +83,7 @@ public class SquashErrorController implements ErrorController {
 	}
 
 	@Override
+	@SuppressWarnings("squid:S1612")
 	public String getErrorPath() {
 		return PATH;
 	}
@@ -95,17 +96,11 @@ public class SquashErrorController implements ErrorController {
 			response.setHeader("Stack-Trace", "enable");
 		} else {
 			result = result.entrySet().stream()
-				.filter(map -> map.getKey().equals("status") || map.getKey().equals("error"))
+				.filter(map -> "status".equals(map.getKey()) || "error".equals(map.getKey()))
 				.collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
 		}
 
 		return result;
 	}
 
-    /*
-	 * for reminder here is how you can fetch the exception
-    private Throwable getError(HttpServletRequest request){
-    	RequestAttributes requestAttributes = new ServletRequestAttributes(request);
-    	return (Throwable)requestAttributes.getAttribute("javax.servlet.error.exception", RequestAttributes.SCOPE_REQUEST);
-    }*/
 }

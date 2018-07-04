@@ -75,15 +75,15 @@ public class TestCaseIssueFinder implements IssueOwnershipFinder {
 	private LocaleContext getLocaleContext() {
 		return LocaleContextHolder.getLocaleContext();
 	}
-	
+
 	private SecurityContext getSecurityContext(){
 		return SecurityContextHolder.getContext();
 	}
-	
+
 	private UserCredentialsCache getCredentialsCache(){
 		return credentialsProvider.getCache();
 	}
-	
+
 	private List<Pair<Execution, Issue>> findExecutionIssuePairs(TestCase testCase, PagingAndSorting sorter) {
 		return issueDao.findAllExecutionIssuePairsByTestCase(testCase, sorter);
 	}

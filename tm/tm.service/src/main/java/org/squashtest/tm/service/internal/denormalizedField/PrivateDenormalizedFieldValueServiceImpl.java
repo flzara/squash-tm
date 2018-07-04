@@ -102,7 +102,7 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 
 	private void createDenormalizedFieldValues(DenormalizedFieldHolder entity, List<CustomFieldValue> values){
 
-		// now loop and create the custom fields;
+		// now loop and create the custom fields
 		for (CustomFieldValue cfv : values ){
 			DenormalizedFieldValue dfv;
 

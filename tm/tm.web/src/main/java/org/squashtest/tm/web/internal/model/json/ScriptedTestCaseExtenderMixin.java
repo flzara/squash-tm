@@ -30,9 +30,9 @@ import org.squashtest.tm.domain.testcase.TestCase;
  *
  */
 @JsonAutoDetect
-public abstract class ScriptedTestCaseExtenderMixin {
+public interface ScriptedTestCaseExtenderMixin {
 
 	@JsonIgnore
-	public abstract TestCase getTestCase();
+	TestCase getTestCase();
 
 }

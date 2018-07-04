@@ -54,14 +54,18 @@ abstract class AbstractInternalConnectorAdapter implements InternalBugtrackerCon
 		getConnector().checkCredentials(credentials);
 	}
 
-
+	/**
+	 * @deprecated does not seem to be used any longer
+	 */
 	@Deprecated
 	@Override
 	public void authenticate(AuthenticationCredentials credentials){
 		getConnector().authenticate(credentials);
 	}
 
-
+	/**
+	 * @deprecated does not seem to be used any longer
+	 */
 	@Deprecated
 	@Override
 	public void checkCredentials(AuthenticationCredentials credentials) throws BugTrackerNoCredentialsException,

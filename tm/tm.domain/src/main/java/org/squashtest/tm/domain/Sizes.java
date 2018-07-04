@@ -37,13 +37,15 @@ package org.squashtest.tm.domain;
  * @since 1.14.0  07/07/16
  */
 public final  class Sizes {
-	private Sizes() {
-		super();
-	}
 
 	public static final int NAME_MAX = 255;
 
 	public static final int LABEL_MAX = 255;
 
 	public static final int STATUS_MAX = 50;
+
+	private Sizes() {
+		super();
+	}
+
 }

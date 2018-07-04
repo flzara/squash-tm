@@ -185,7 +185,7 @@ public final class OAuthUtils {
 			params.computeSignature(method, url);
 		}
 		catch(GeneralSecurityException e){
-			throw new IllegalArgumentException("it seems that something is wrong with your credentials that prevented the computation of the signature");
+			throw new IllegalArgumentException("it seems that something is wrong with your credentials that prevented the computation of the signature", e);
 		}
 	}
 

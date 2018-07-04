@@ -89,7 +89,7 @@ public class TestSuiteDaoImpl implements CustomTestSuiteDao {
 	@Override
 	public TestPlanStatistics getTestSuiteStatistics(final long testSuiteId) {
 
-		Query q = entityManager.createNamedQuery("TestSuite.countStatuses");
+		Query q = entityManager.createNamedQuery(TEST_SUITE_COUNT_STATUS);
 		q.setParameter("id", testSuiteId);
 		List<Object[]> result = q.getResultList();
 

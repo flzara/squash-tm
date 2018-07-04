@@ -28,7 +28,6 @@ import java.util.Set;
 import org.springframework.context.MessageSource;
 
 
-
 public class LinkedToIterationPreviewReport implements SuppressionPreviewReport {
 
 	private static final String NODES_NAMES_MESSAGE_KEY = "message.deletionWarning.testCase.nodeNames";

@@ -53,7 +53,7 @@ public class OAuth2Config {
 
 	private static final String OAUTH_SUBPATH = "/whatever";
 
-	
+
 	public static class AuthenticationServerConfig extends AuthorizationServerConfigurerAdapter {
 		@Inject
 		private
@@ -68,7 +68,7 @@ public class OAuth2Config {
 		@Override
 		public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
 //			security.checkTokenAccess()
-//		security;
+//		security
 		}
 
 		@Override
@@ -77,7 +77,6 @@ public class OAuth2Config {
 			endpoints.authorizationCodeServices(authorizationCodeServices())
 			.authenticationManager(authenticationManager)
 			.tokenStore(tokenStore());
-//			.tokenServices(tokenServices());
 			// @formatter:on
 		}
 
@@ -132,5 +131,5 @@ public class OAuth2Config {
 			// @formatter:on
 		}
 	}
-	
+
 }

@@ -47,6 +47,8 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 public class ExecutionProcessingController {
 	private static final String OPTIMIZED = "optimized";
 	private static final String ACCEPT_HTML_HEADER = AcceptHeaders.CONTENT_HTTP;
+	private static final String EXECUTE = "/execute/";
+	private static final String REDIRECT ="redirect:";
 	/**
 	 * Step partial URL
 	 */
@@ -65,15 +67,15 @@ public class ExecutionProcessingController {
 
 
 	private void addCurrentStepUrl(long executionId, Model model) {
-		model.addAttribute("currentStepsUrl", "/execute/" + executionId + "/step");
+		model.addAttribute("currentStepsUrl", EXECUTE + executionId + "/step");
 	}
 
 	private String getRedirectToPrologue(long executionId, boolean optimized) {
-		return "/execute/" + executionId + "/step/prologue?optimized=" + optimized;
+		return EXECUTE + executionId + "/step/prologue?optimized=" + optimized;
 	}
 
 	private String getRedirectToStep(long executionId, int stepIndex, boolean optimized) {
-		return "/execute/" + executionId + "/step/index/" + stepIndex + "?optimized=" + optimized;
+		return EXECUTE + executionId + "/step/index/" + stepIndex + "?optimized=" + optimized;
 	}
 
 	// ************************** getters for the main execution fragments **************************************
@@ -83,10 +85,10 @@ public class ExecutionProcessingController {
 										   @RequestParam(OPTIMIZED) boolean optimized) {
 
 		if (executionProcService.wasNeverRun(executionId)) {
-			return "redirect:" + getRedirectToPrologue(executionId, optimized);
+			return REDIRECT + getRedirectToPrologue(executionId, optimized);
 		} else {
 			int stepIndex = executionProcService.findRunnableExecutionStep(executionId).getExecutionStepOrder();
-			return "redirect:" + getRedirectToStep(executionId, stepIndex, optimized);
+			return REDIRECT + getRedirectToStep(executionId, stepIndex, optimized);
 		}
 
 	}
@@ -139,7 +141,7 @@ public class ExecutionProcessingController {
 		Execution execution = executionProcService.findExecution(executionId);
 		int stepIndex = execution.getStepIndex(stepId);
 		// simple case here : the context is simply the popup. We redirect to the execution processing view controller.
-		return "redirect:" + getRedirectToStep(executionId, stepIndex, false);
+		return REDIRECT + getRedirectToStep(executionId, stepIndex, false);
 
 	}
 

@@ -87,10 +87,6 @@ public abstract class GlobalSearchController {
 	protected static final String PROJECTS_META = "projects";
 	protected static final Logger LOGGER = LoggerFactory.getLogger(GlobalSearchController.class);
 
-	protected interface FormModelBuilder {
-		SearchInputInterfaceModel build(Locale locale, boolean isMilestoneMode);
-	}
-
 	protected static final String NAME = "name";
 	protected static final String IDS = "ids[]";
 	protected static final String CAMPAIGN = "campaign";
@@ -101,6 +97,10 @@ public abstract class GlobalSearchController {
 	protected static final String TESTCASE_VIA_REQUIREMENT = "testcaseViaRequirement";
 	protected static final String RESULTS = "/results";
 	protected static final String TABLE = "/table";
+
+	protected interface FormModelBuilder {
+		SearchInputInterfaceModel build(Locale locale, boolean isMilestoneMode);
+	}
 
 	protected Map<String, FormModelBuilder> formModelBuilder = new HashMap<>();
 
@@ -113,7 +113,7 @@ public abstract class GlobalSearchController {
 				Collection<JsonProject> jsProjects = projectFinder.findAllProjects(readableProjectIds, currentUser);
 
 				SearchInputInterfaceModel model = searchInputInterfaceHelper.getTestCaseSearchInputInterfaceModel(locale,
-					isMilestoneMode, currentUser, readableProjectIds, jsProjects);
+					isMilestoneMode, readableProjectIds, jsProjects);
 				populateMetadata(model, jsProjects);
 				return model;
 			}
@@ -140,7 +140,7 @@ public abstract class GlobalSearchController {
 				List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
 				Collection<JsonProject> jsProjects = projectFinder.findAllProjects(readableProjectIds, currentUser);
 				SearchInputInterfaceModel model = searchInputInterfaceHelper.getCampaignSearchInputInterfaceModel(locale,
-					isMilestoneMode, currentUser, readableProjectIds, jsProjects);
+					isMilestoneMode, readableProjectIds);
 				populateMetadata(model, jsProjects);
 				return model;
 			}
@@ -217,7 +217,7 @@ public abstract class GlobalSearchController {
 	}
 
 	private void populateMetadata(Model model) {
-		model.addAttribute("projects", readableJsonProjects());
+		model.addAttribute(PROJECTS_META, readableJsonProjects());
 	}
 
 	private void populateMetadata(SearchInputInterfaceModel model, Collection<JsonProject> jsProjects) {

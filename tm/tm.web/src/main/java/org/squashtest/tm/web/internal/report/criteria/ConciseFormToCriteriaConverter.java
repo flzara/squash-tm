@@ -32,8 +32,6 @@ import java.util.Map.Entry;
 
 import javax.validation.constraints.NotNull;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.squashtest.tm.api.report.Report;
 import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.api.report.form.CheckboxesGroup;
@@ -100,7 +98,7 @@ public class ConciseFormToCriteriaConverter {
 
 	}
 
-	@SuppressWarnings({UNCHECKED, RAWTYPES})
+	@SuppressWarnings({UNCHECKED, RAWTYPES,"squid:S00122"})
 	private void populateExpandedInput(String inputName, Object inputValue, Map<String, Object> expandedForm) {
 		Map concise = (Map) inputValue;
 		InputType type = InputType.valueOf((String) concise.get(CON_TYPE));
@@ -141,9 +139,7 @@ public class ConciseFormToCriteriaConverter {
 
 			case TREE_PICKER:
 				Collection<Map> selNodes = (Collection<Map>) concise.get(CON_VAL);
-				if (selNodes.isEmpty()) {
-					return;
-				}
+				if (selNodes.isEmpty()) {return;}
 				expanded = expendedTreePicker(concise);
 				break;
 
@@ -232,14 +228,17 @@ public class ConciseFormToCriteriaConverter {
 		Object selVal = concise.get(CON_VAL);
 
 		for (OptionInput opt : reportInput.getOptions()) {
+			filingExpandedGroups(concise,  exp, opt, selVal);
+		}
+		return exp;
+	}
+
+	private void filingExpandedGroups(Map concise, List exp,OptionInput opt,Object selVal){
 			Map expOpt = new HashMap();
 			expOpt.put(EXP_TYPE, concise.get(CON_TYPE));
 			expOpt.put(EXP_VALUE, opt.getValue());
 			expOpt.put(EXP_SEL, selVal.equals(opt.getValue()));
-
 			exp.add(expOpt);
-		}
-		return exp;
 	}
 
 	@SuppressWarnings({RAWTYPES, UNCHECKED})
@@ -249,12 +248,7 @@ public class ConciseFormToCriteriaConverter {
 		Object selVal = concise.get(CON_VAL);
 
 		for (OptionInput opt : reportInput.getOptions()) {
-			Map expOpt = new HashMap();
-			expOpt.put(EXP_TYPE, concise.get(CON_TYPE));
-			expOpt.put(EXP_VALUE, opt.getValue());
-			expOpt.put(EXP_SEL, selVal.equals(opt.getValue()));
-
-			exp.add(expOpt);
+			filingExpandedGroups(concise,  exp, opt, selVal);
 		}
 		return exp;
 	}

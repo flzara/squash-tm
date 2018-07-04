@@ -74,6 +74,9 @@ public interface Plugin {
 	/**
 	 * @return
 	 */
+	/**
+	 * @deprecated does not seem to be used any longer
+	 */
 	@Deprecated
 	Map<String, String> getProperties();
 
@@ -101,6 +104,9 @@ public interface Plugin {
 	 * and this method will no more be invoked.
 	 *
 	 * @param reference to a given object
+	 */
+	/**
+	 * @deprecated does not seem to be used any longer
 	 */
 	@Deprecated
 	void validate(EntityReference reference, Map<String, String> configuration) throws PluginValidationException;

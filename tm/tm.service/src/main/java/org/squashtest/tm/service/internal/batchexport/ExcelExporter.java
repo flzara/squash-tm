@@ -300,7 +300,7 @@ class ExcelExporter {
 	}
 
 
-	protected int doOptionnalAppendTestCases(Row r, int cIdx, TestCaseModel tcm) {
+	protected int doOptionnalAppendTestCases(Row r, int cIdx, TestCaseModel tcm) { //NOSONAR
 		//extension point for optional columns
 		return cIdx;
 	}

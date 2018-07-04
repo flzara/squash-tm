@@ -193,10 +193,6 @@ public class BugTrackerController {
 
 		ExecutionStep step = executionFinder.findExecutionStepById(stepId);
 
-//		step.setComment(HtmlUtils.htmlEscape(step.getComment()));
-//		step.setAction(HtmlUtils.htmlEscape(step.getAction()));
-//		step.setLastExecutedBy(HtmlUtils.htmlEscape(step.getLastExecutedBy()));
-
 		ModelAndView mav = makeIssuePanel(step, EXECUTION_STEP_TYPE, locale, panelStyle, step.getProject());
 		mav.addObject("useParentContextPopup", useParentPopup);
 
@@ -773,8 +769,6 @@ public class BugTrackerController {
 			String projectName) {
 		String defaultDescription = BugTrackerControllerHelper.getDefaultDescription(step, locale, messageSource,
 				executionUrl);
-		String defaultAdditionalInformations = BugTrackerControllerHelper.getDefaultAdditionalInformations(step, locale,
-				messageSource);
 		return makeReportIssueModel(step, defaultDescription, locale, projectName);
 	}
 
@@ -890,8 +884,7 @@ public class BugTrackerController {
 				filteredCollection = bugTrackersLocalService.findSortedIssueOwnerShipsForExecutionStep(id, paging);
 				break;
 			default:
-				String error = "BugTrackerController : cannot fetch issues for unknown entity type '" + entityType
-						+ "'";
+				String error = "BugTrackerController : cannot fetch issues for unknown entity type '" + entityType	+ "'";
 				if (LOGGER.isErrorEnabled()) {
 					LOGGER.error(error);
 				}

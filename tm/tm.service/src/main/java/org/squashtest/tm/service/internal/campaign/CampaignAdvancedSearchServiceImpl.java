@@ -36,7 +36,6 @@ import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
 import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
-import org.squashtest.tm.jooq.domain.tables.CoreUser;
 import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
@@ -105,9 +104,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 	private List<String> findUsersWhoCanAccessProject(List<Long> projectIds) {
 		List<Long> partyIds = findPartyIdsCanAccessProject(projectIds);
-		List<String> userLogins = findUserLoginsByPartyIds(partyIds);
-
-		return userLogins;
+		return  findUserLoginsByPartyIds(partyIds);
 	}
 
 	protected Query searchIterationTestPlanItemQuery(AdvancedSearchModel model, FullTextEntityManager ftem) {
@@ -128,32 +125,14 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 	public Query addAggregatedMilestonesCriteria(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy) {
 
-		addMilestoneFilter(modelCopy);
-
 		/* Find the milestones ids. */
-		List<String> strMilestoneIds =
-			((AdvancedSearchListFieldModel) modelCopy.getFields().get("milestones.id")).getValues();
-		List<Long> milestoneIds = new ArrayList<>(strMilestoneIds.size());
-		for (String str : strMilestoneIds) {
-			milestoneIds.add(Long.valueOf(str));
-		}
+		List<Long> milestoneIds = findMilestonesIds(modelCopy);
 
 		/* Find the ItereationTestPlanItems ids. */
 		List<Long> lItpiIds = iterationTestPlanDao.findAllForMilestones(milestoneIds);
-		List<String> itpiIds = new ArrayList<>(lItpiIds.size());
-		for (Long l : lItpiIds) {
-			itpiIds.add(l.toString());
-		}
 
-		/* Fake Id to find no result via Lucene if no Itpi found */
-		if (itpiIds.isEmpty()) {
-			itpiIds.add(FAKE_ITPI_ID);
-		}
-
-		/* Add Criteria to restrict Itpi ids */
-		Query idQuery = buildLuceneValueInListQuery(qb, "id", itpiIds, false);
-
-		return qb.bool().must(mainQuery).must(idQuery).createQuery();
+		/* Create the query. */
+		return fakeIdToFindNoResultViaLuceneForCreatingQuery(lItpiIds,  qb,  mainQuery,  FAKE_ITPI_ID);
 	}
 
 	@Override
@@ -249,7 +228,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 	private List<Long> findPartyIdsCanAccessProject(List<Long> projectIds) {
 
-		List<Long> result = DSL
+			return DSL
 			.select(CORE_PARTY.PARTY_ID)
 			.from(CORE_PARTY)
 			.join(ACL_RESPONSIBILITY_SCOPE_ENTRY).on(ACL_RESPONSIBILITY_SCOPE_ENTRY.PARTY_ID.eq(CORE_PARTY.PARTY_ID))
@@ -260,8 +239,6 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			.where(ACL_OBJECT_IDENTITY.IDENTITY.in(projectIds))
 			.groupBy(CORE_PARTY.PARTY_ID)
 			.fetch(CORE_PARTY.PARTY_ID, Long.class);
-
-		return result;
 	}
 
 	private List<String> findUserLoginsByPartyIds(List<Long> partyIds) {
@@ -282,9 +259,8 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			.groupBy(CORE_USER.PARTY_ID)
 			.fetch(CORE_USER.LOGIN, String.class);
 
-		List<String> result = Stream.concat(usersSolo.stream(), usersInTeam.stream()).distinct()
+		return Stream.concat(usersSolo.stream(), usersInTeam.stream()).distinct()
 			.collect(Collectors.toList());
-		return result;
 	}
 
 }

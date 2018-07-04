@@ -45,7 +45,6 @@ import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.library.*;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneMember;
@@ -424,6 +423,9 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	 *            the current position
 	 * @param newPosition
 	 *            the new position
+	 */
+	/**
+	 * @deprecated does not seem to be used any longer
 	 */
 	@Deprecated
 	public void moveTestPlan(int currentPosition, int newPosition) {

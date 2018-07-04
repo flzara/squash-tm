@@ -205,8 +205,7 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 		function initRenameDialog(conf) {
 
 			var dialog = $("#rename-campaign-dialog"),
-				campaignUrl = conf.data.campaignUrl,
-				campaignId = conf.data.campaignId;
+				campaignUrl = conf.data.campaignUrl;
 
 			dialog.formDialog();
 

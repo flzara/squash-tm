@@ -24,42 +24,42 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporter;
 import net.sf.jasperreports.engine.export.JRGraphics2DExporter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.view.jasperreports.AbstractJasperReportsSingleFormatView;
 
 
 /*
- * A JRGraphic2DExporter needs an awt Graphic object to print the report into. But guess what ? 
+ * A JRGraphic2DExporter needs an awt Graphic object to print the report into. But guess what ?
  * JasperReportsMultiFormatView doesn't give a damn of your parameters and will override them
  * with its own parameter map.
- * 
+ *
  * So we can't fully initialize the Exporter here, additional code to set up the java.awt.Graphic2d is
  * required elsewhere.
- * 
+ *
  */
 public class JasperReportsGraphic2DView extends AbstractJasperReportsSingleFormatView {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(JasperReportsGraphic2DView.class);
+
 
 	public JasperReportsGraphic2DView(){
 		setContentType("image/bmp");
 	}
-	
+
 	@Override
 	protected JRExporter createExporter() {
-		try {			
+		try {
 			return new JRGraphics2DExporter();
-			
+
 		} catch (JRException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 			throw new RuntimeException(e);
 		}
 	}
 
 	@Override
 	protected boolean useWriter() {
-		// TODO Auto-generated method stub
 		return false;
 	}
-
-
-
 }

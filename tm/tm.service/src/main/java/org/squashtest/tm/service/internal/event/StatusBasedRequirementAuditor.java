@@ -73,12 +73,12 @@ public class StatusBasedRequirementAuditor implements RequirementAuditor,
 	public void visit(RequirementPropertyChange event) {
 		if (shouldAuditModification(event)) {
 			entityManager.persist(event);
-			logEvent(event);
+			logEvent();
 		}
 
 	}
 
-	private void logEvent(RequirementVersionModification event) {
+	private void logEvent() {
 		LOGGER.trace("Requirement was modified");
 	}
 
@@ -93,7 +93,7 @@ public class StatusBasedRequirementAuditor implements RequirementAuditor,
 	public void visit(RequirementLargePropertyChange event) {
 		if (shouldAuditModification(event)) {
 			entityManager.persist(event);
-			logEvent(event);
+			logEvent();
 		}
 	}
 

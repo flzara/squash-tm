@@ -35,6 +35,12 @@ public class ExProgressTestPlanDto {
 		super();
 	}
 
+	public ExProgressTestPlanDto(String testCaseName, ExecutionStatus executionStatus) {
+		super();
+		this.testCaseName = testCaseName;
+		this.executionStatus = executionStatus;
+	}
+
 	public ExProgressIterationDto getIteration() {
 		return iteration;
 	}
@@ -43,11 +49,6 @@ public class ExProgressTestPlanDto {
 		this.iteration = iteration;
 	}
 
-	public ExProgressTestPlanDto(String testCaseName, ExecutionStatus executionStatus) {
-		super();
-		this.testCaseName = testCaseName;
-		this.executionStatus = executionStatus;
-	}
 
 	public String getTestCaseName() {
 		return testCaseName;

@@ -21,12 +21,12 @@
 package org.squashtest.tm.service.statistics.requirement;
 
 public final class RequirementStatusesStatistics {
-	
+
 	private int workInProgress;
 	private int underReview;
 	private int approved;
 	private int obsolete;
-	
+
 	public RequirementStatusesStatistics() {
 		super();
 	}
@@ -38,33 +38,33 @@ public final class RequirementStatusesStatistics {
 		this.approved = approved;
 		this.obsolete = obsolete;
 	}
-	
+
 	public int getWorkInProgress() {
 		return workInProgress;
 	}
 	public void setWorkInProgress(int workInProgress) {
 		this.workInProgress = workInProgress;
 	}
-	
+
 	public int getUnderReview() {
 		return underReview;
 	}
 	public void setUnderReview(int underReview) {
 		this.underReview = underReview;
 	}
-	
+
 	public int getApproved() {
 		return approved;
 	}
 	public void setApproved(int approved) {
 		this.approved = approved;
 	}
-	
+
 	public int getObsolete() {
 		return obsolete;
 	}
 	public void setObsolete(int obsolete) {
 		this.obsolete = obsolete;
 	}
-	
+
 }

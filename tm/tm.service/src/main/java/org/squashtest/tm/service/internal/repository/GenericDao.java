@@ -33,7 +33,9 @@ public interface GenericDao<ENTITY_TYPE> {
 
 	void removeAll(List<ENTITY_TYPE> entities);
 
-	// FIXME hibernate should not appear in dao interface.
+	/**
+	 * @deprecated does not seem to be used any longer
+	 */
 	@Deprecated
 	void flush();
 }

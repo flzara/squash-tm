@@ -38,35 +38,6 @@ public class TestAutomationProjectContent {
 
 	private boolean orderGuaranteed ;
 
-	public TestAutomationProject getProject() {
-		return project;
-	}
-
-	/**
-	 * 
-	 * @return an **copy** of the test list.
-	 */
-	public List<AutomatedTest> getTests() {
-		return Collections.unmodifiableList(tests);
-	}
-
-	public Exception getKnownProblem() {
-		return knownProblem;
-	}
-
-	public boolean hadKnownProblems() {
-		return knownProblem != null;
-	}
-
-	public void setKnownProblem(Exception knownProblem) {
-		this.knownProblem = knownProblem;
-	}
-	public boolean isOrderGuaranteed() {
-		return orderGuaranteed;
-	}
-	public void setOrderGuaranteed(boolean orderGuaranteed) {
-		this.orderGuaranteed = orderGuaranteed;
-	}
 	public TestAutomationProjectContent(TestAutomationProject project) {
 		super();
 		this.project = project;
@@ -90,14 +61,44 @@ public class TestAutomationProjectContent {
 	}
 
 	public TestAutomationProjectContent(TestAutomationProject project, Collection<AutomatedTest> tests,
-			boolean orderGuaranteed) {
+										boolean orderGuaranteed) {
 		this(project, tests);
+		this.orderGuaranteed = orderGuaranteed;
+	}
+
+	public TestAutomationProject getProject() {
+		return project;
+	}
+
+	/**
+	 *
+	 * @return an **copy** of the test list.
+	 */
+	public List<AutomatedTest> getTests() {
+		return Collections.unmodifiableList(tests);
+	}
+
+	public Exception getKnownProblem() {
+		return knownProblem;
+	}
+
+	public boolean hadKnownProblems() {
+		return knownProblem != null;
+	}
+
+	public void setKnownProblem(Exception knownProblem) {
+		this.knownProblem = knownProblem;
+	}
+	public boolean isOrderGuaranteed() {
+		return orderGuaranteed;
+	}
+	public void setOrderGuaranteed(boolean orderGuaranteed) {
 		this.orderGuaranteed = orderGuaranteed;
 	}
 
 	/**
 	 * Adds a test without params
-	 * 
+	 *
 	 * @param test
 	 */
 	public void appendTest(AutomatedTest test) {
@@ -114,7 +115,7 @@ public class TestAutomationProjectContent {
 
 	/**
 	 * Adds a batch of tests without params. Tests are added in the order of the given colleciton.
-	 * 
+	 *
 	 * @param tests
 	 */
 	public final void appendTests(Collection<AutomatedTest> tests) {

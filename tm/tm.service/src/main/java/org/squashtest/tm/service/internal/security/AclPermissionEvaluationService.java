@@ -76,6 +76,8 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 	@Inject
 	private PermissionFactory permissionFactory;
 
+	private static final String ROLE_ADMIN = "ROLE_ADMIN";
+
 	/*
 	 * Not exposed so that interface remains spring-sec agnostic.
 	 */
@@ -115,7 +117,7 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 
 	@Override
 	public boolean canRead(Object object) {
-		return hasRoleOrPermissionOnObject("ROLE_ADMIN", "READ", object);
+		return hasRoleOrPermissionOnObject(ROLE_ADMIN, "READ", object);
 	}
 
 	@Override
@@ -127,31 +129,35 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 	@Override
 	public boolean hasMoreThanRead(Object object) {
 		boolean hasMore = false;
-		if (userContextService.hasRole("ROLE_ADMIN")) {
+		if (userContextService.hasRole(ROLE_ADMIN)) {
 			hasMore = true;
 		} else {
 			Authentication authentication = userContextService.getAuthentication();
 			Field[] fields = CustomPermission.class.getFields();
 			// TODO below is a hacky enum of all rights, should be externalized.
-			for (Field field : fields) {
-				try {
-					if (!"READ".equals(field.getName())
-						&& permissionEvaluator.hasPermission(authentication, object, field.getName())) {
-						return true;
-					}
-				} catch (IllegalArgumentException iaexecption) {
-					List<String> knownMessages = Arrays.asList("Unknown permission 'RESERVED_ON'",
-						"Unknown permission 'RESERVED_OFF'", "Unknown permission 'THIRTY_TWO_RESERVED_OFF'");
-					if (!knownMessages.contains(iaexecption.getMessage())) {
-						throw iaexecption;
-					}
-				}
-			}
+			findPermission(fields, object,authentication);
 
 		}
 		return hasMore;
 	}
 
+	boolean findPermission(Field[] fields , Object object,Authentication authentication){
+		for (Field field : fields) {
+			try {
+				if (!"READ".equals(field.getName())
+					&& permissionEvaluator.hasPermission(authentication, object, field.getName())) {
+					return true;
+				}
+			} catch (IllegalArgumentException iaexecption) {
+				List<String> knownMessages = Arrays.asList("Unknown permission 'RESERVED_ON'",
+					"Unknown permission 'RESERVED_OFF'", "Unknown permission 'THIRTY_TWO_RESERVED_OFF'");
+				if (!knownMessages.contains(iaexecption.getMessage())) {
+					throw iaexecption;
+				}
+			}
+		}
+		return false;
+	}
 
 	@Override
 	public boolean hasPermissionOnObject(String permissionName, Long entityId, String entityClassName) {
@@ -177,7 +183,7 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 	public Collection<String> permissionsOn(@NotNull String className, long id) {
 		List<String> perms = new ArrayList<>();
 
-		if (this.hasRole("ROLE_ADMIN")) {
+		if (this.hasRole(ROLE_ADMIN)) {
 			return Arrays.asList(RIGHTS);
 		}
 

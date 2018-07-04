@@ -59,10 +59,11 @@ public class RequirementImportController {
 	private RequirementImportLogHelper logHelper;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementImportController.class);
+	private static final String  REQ_IMPORT = "Req-Import";
 
 	@RequestMapping(value = "/xls", method = RequestMethod.POST, params = "dry-run")
 	public ModelAndView dryRunExcelWorkbook(@RequestParam("archive") MultipartFile uploadedFile, WebRequest request) {
-		LOGGER.debug("Req-Import" + "In controller, DRY RUN");
+		LOGGER.debug(REQ_IMPORT + "In controller, DRY RUN");
 		return importWorkbook(uploadedFile, request, new Command<File, ImportLog>() {
 				@Override
 				public ImportLog execute(File xls) {
@@ -74,7 +75,7 @@ public class RequirementImportController {
 
 	@RequestMapping(value = "/xls", params = "!dry-run", method = RequestMethod.POST)
 	public ModelAndView importExcelWorkbook(@RequestParam("archive") MultipartFile uploadedFile, WebRequest request) {
-		LOGGER.debug("Req-Import" + "In controller, RUN");
+		LOGGER.debug(REQ_IMPORT + "In controller, RUN");
 		return importWorkbook(uploadedFile, request, new Command<File, ImportLog>() {
 				@Override
 				public ImportLog execute(File xls) {
@@ -110,7 +111,7 @@ public class RequirementImportController {
 		}
 		mav.addObject("workspace", "requirement"); // TODO
 
-		LOGGER.debug("Req-Import" + "OUT controller, RUN");
+		LOGGER.debug(REQ_IMPORT + "OUT controller, RUN");
 		return mav;
 	}
 

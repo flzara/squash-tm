@@ -371,8 +371,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 			},
 
 			makeDefaultTagsEditable : function(){
-				var ul = this.$("#cuf-default-value"),
-					self = this;
+				var ul = this.$("#cuf-default-value");
 
 				var conf = confman.getStdTagit();
 				ul.squashTagit(conf);

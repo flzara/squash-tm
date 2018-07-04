@@ -47,10 +47,6 @@ public class ImportSummaryImpl implements ImportSummary {
 		this.milestoneFailures = milestoneFailures;
 	}
 
-	public ImportSummaryImpl(){
-
-	}
-
 	public void incrMilestoneNotActivatedFailures(){
 		milestoneNotActivatedFailures++;
 	}

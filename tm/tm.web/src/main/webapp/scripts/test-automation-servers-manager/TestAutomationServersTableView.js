@@ -30,7 +30,6 @@ define([ 'jquery', 'backbone', "underscore", './NewTestAutomationServerDialogVie
 	var NewTestAutomationServersTableView = Backbone.View.extend({
 		el : "#test-automation-server-table-pane",
 		initialize : function() {
-			var self = this;
 
 			_.bindAll(this, "removeTestAutomationServer", "setConfirmRemoveDialogState", "showDeleteTestAutomationServerDialog");
 
@@ -63,7 +62,6 @@ define([ 'jquery', 'backbone', "underscore", './NewTestAutomationServerDialogVie
 
 		configureRemoveTASPanel :  function(event) {
 			var tableCf = $("#test-automation-server-table").squashTable();
-			var self = this;
 			var deleteDialog = $("#remove-test-automation-server-confirm-dialog").formDialog();
 			deleteDialog.formDialog('setState','processing');
 			deleteDialog.on('formdialogconfirm', function(){
@@ -140,7 +138,6 @@ define([ 'jquery', 'backbone', "underscore", './NewTestAutomationServerDialogVie
 		},
 
 		configureRemoveTASDialog : function() {
-			var self= this;
 
 			var dialog = $("#remove-test-automation-server-confirm-dialog").formDialog();
 			dialog.formDialog('setState','processing');

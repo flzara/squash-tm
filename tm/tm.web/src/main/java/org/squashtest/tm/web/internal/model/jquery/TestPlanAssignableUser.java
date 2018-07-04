@@ -27,6 +27,19 @@ public class TestPlanAssignableUser {
 	private String id;
 	private String login;
 
+	public TestPlanAssignableUser(){
+		super();
+	}
+
+	public TestPlanAssignableUser(User user){
+		this.id=user.getId().toString();
+		this.login= HtmlUtils.htmlEscape(user.getLogin());
+	}
+
+	public TestPlanAssignableUser(String id, String login){
+		this.id=id;
+		this.login=HtmlUtils.htmlEscape(login);
+	}
 
 	public String getId() {
 		return id;
@@ -41,18 +54,5 @@ public class TestPlanAssignableUser {
 		this.login = login;
 	}
 
-	public TestPlanAssignableUser(){
-		super();
-	}
-
-	public TestPlanAssignableUser(User user){
-		this.id=user.getId().toString();
-		this.login= HtmlUtils.htmlEscape(user.getLogin());
-	}
-
-	public TestPlanAssignableUser(String id, String login){
-		this.id=id;
-		this.login=HtmlUtils.htmlEscape(login);
-	}
 
 }

@@ -41,16 +41,16 @@ require([ "common" ], function() {
   	function lock(){
   		$('#add-items-button').button('disable');
   		$('#remove-items-button').button('disable');
-  	};
+  	}
 
   	function unlock(){
   		$('#add-items-button').button('enable');
   		$('#remove-items-button').button('enable');
-  	};
+  	}
 
 		function sendUpdateTree(ids){
 			eventBus.trigger("node.update-reqCoverage", {targetIds : ids});
-		};
+		}
 
 		function showAddSummary(summary) {
 			if (summary) {
@@ -64,10 +64,11 @@ require([ "common" ], function() {
 				summaryRoot.empty();
 
 				for(var rejectionType in summary) {
-					var message = summaryMessages[rejectionType];
-
-					if (message) {
-						summaryRoot.append('<span>' + message + '</span>');
+					if (summary.hasOwnProperty(rejectionType)) {
+						var message = summaryMessages[rejectionType];
+						if (message) {
+							summaryRoot.append('<span>' + message + '</span>');
+						}
 					}
 				}
 
@@ -75,14 +76,14 @@ require([ "common" ], function() {
 					$( "#add-summary-dialog" ).messageDialog("open");
 				}
 			}
-		};
+		}
 
 		/**
 		 * returns the datatable (well, squashtable) object for linked ReqVersions
 		 */
 		function table() {
 			return $("#linked-requirement-versions-table").squashTable();
-		};
+		}
 
 		$(document).on("click", "#remove-items-button", function(event){
 			squash.vent.trigger("linkedrequirementversions:unbind-selected", { source: event });
@@ -106,7 +107,7 @@ require([ "common" ], function() {
 				 ids = node.all('getResId');
 			}
 			return $.map(ids, function(id) { return parseInt(id); });
-		};
+		}
 
 		$(function() {
 

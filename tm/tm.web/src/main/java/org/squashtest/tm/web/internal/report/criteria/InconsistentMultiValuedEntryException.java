@@ -28,6 +28,9 @@ import java.util.Map;
  *
  */
 public class InconsistentMultiValuedEntryException extends RuntimeException {
+
+	private static final long serialVersionUID = 2116033712812898030L;
+
 	/**
 	 * @param multiValued
 	 */
@@ -44,8 +47,7 @@ public class InconsistentMultiValuedEntryException extends RuntimeException {
 	}
 
 	/**
-	 * 
+	 *
 	 */
-	private static final long serialVersionUID = 2116033712812898030L;
 
 }

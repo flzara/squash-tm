@@ -37,6 +37,7 @@ public class JsonIterationTestPlanItem{
 	private boolean isTestCaseDeleted;
 	private boolean isAutomated;
 
+	@SuppressWarnings("squid:S00107")
 	public JsonIterationTestPlanItem(long id, ExecutionStatus executionStatus,
 			String name, String lastExecutedOn, String lastExecutedBy, String assignee, boolean isTestCaseDeleted, boolean isAutomated) {
 		super();
@@ -50,6 +51,7 @@ public class JsonIterationTestPlanItem{
 		this.isAutomated = isAutomated;
 	}
 
+	@SuppressWarnings("squid:S00107")
 	public JsonIterationTestPlanItem(long id, ExecutionStatus executionStatus,
 			String name, Date lastExecutedOn, String lastExecutedBy, User assignee, boolean isTestCaseDeleted, boolean isAutomated) {
 		super();

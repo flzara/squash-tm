@@ -22,7 +22,6 @@ package org.squashtest.tm.web.internal.model.builder;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.api.report.DocxTemplaterReport;
 import org.squashtest.tm.api.report.Report;
 import org.squashtest.tm.domain.customreport.CustomReportReportBinding;
 import org.squashtest.tm.domain.report.ReportDefinition;

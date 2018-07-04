@@ -417,17 +417,23 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		for (Map.Entry<Long, List<Long>> parentChildrenEntry : (Set<Map.Entry>) fatherChildrenLibrary.entrySet()) {
 			Long parentKey = parentChildrenEntry.getKey();
 			if (jsTreeNodes.containsKey(parentKey)) {
-				for (Long childKey : parentChildrenEntry.getValue()) {
-					if (passesMilestoneFilter(allChildren.get(childKey), activeMilestoneId)) {
-						jsTreeNodes.get(parentKey).addChild(allChildren.get(childKey));
-						openedLibrary = true;
-					}
-				}
-				if (openedLibrary) {
-					jsTreeNodes.get(parentKey).setState(State.open);
-					buildSubHierarchy(jsTreeNodes.get(parentKey).getChildren(), fatherChildrenEntity, allChildren, activeMilestoneId);
-				}
+				builParentHierarchy(  openedLibrary,
+				parentKey,  parentChildrenEntry, jsTreeNodes, fatherChildrenEntity,
+					 allChildren, 	activeMilestoneId);
 			}
+		}
+	}
+
+	private void builParentHierarchy(boolean openedLibrary, Long parentKey, Map.Entry<Long, List<Long>> parentChildrenEntry, Map<Long, JsTreeNode> jsTreeNodes, MultiMap fatherChildrenEntity, Map<Long, JsTreeNode> allChildren, Long activeMilestoneId){
+		for (Long childKey : parentChildrenEntry.getValue()) {
+			if (passesMilestoneFilter(allChildren.get(childKey), activeMilestoneId)) {
+				jsTreeNodes.get(parentKey).addChild(allChildren.get(childKey));
+				openedLibrary = true;
+			}
+		}
+		if (openedLibrary) {
+			jsTreeNodes.get(parentKey).setState(State.open);
+			buildSubHierarchy(jsTreeNodes.get(parentKey).getChildren(), fatherChildrenEntity, allChildren, activeMilestoneId);
 		}
 	}
 
@@ -436,24 +442,23 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		boolean openedEntity = false;
 		for (JsTreeNode jsTreeNodeChild : children) {
 			if (fatherChildrenEntity.containsKey(jsTreeNodeChild.getAttr().get(RES_ID))) {
-				for (Long childKey : (ArrayList<Long>) fatherChildrenEntity.get(jsTreeNodeChild.getAttr().get(RES_ID))) {
-					if (passesMilestoneFilter(allChildren.get(childKey), activeMilestoneId)) {
-						jsTreeNodeChild.addChild(allChildren.get(childKey));
-						openedEntity = true;
-					}
+				buildSubHierarchyItems( openedEntity,jsTreeNodeChild, fatherChildrenEntity,  allChildren, activeMilestoneId);
 				}
-				if (openedEntity) {
-					jsTreeNodeChild.setState(State.open);
-					buildSubHierarchy(jsTreeNodeChild.getChildren(), fatherChildrenEntity, allChildren, activeMilestoneId);
-				}
-			}
 		}
 	}
 
-/*	// TODO factorise or make it abstract
-	private boolean passesMilestoneFilter(JsTreeNode node, Long activeMilestoneId) {
-		return (node != null && (NO_ACTIVE_MILESTONE_ID.equals(activeMilestoneId) || node.getAttr().get("rel").equals("folder") || nodeHasActiveMilestone(nodeLinkedToMilestone, (Long) node.getAttr().get("resId"))));
-	}*/
+	private void buildSubHierarchyItems(boolean openedEntity, JsTreeNode jsTreeNodeChild, MultiMap fatherChildrenEntity, Map<Long, JsTreeNode> allChildren, Long activeMilestoneId){
+		for (Long childKey : (ArrayList<Long>) fatherChildrenEntity.get(jsTreeNodeChild.getAttr().get(RES_ID))) {
+			if (passesMilestoneFilter(allChildren.get(childKey), activeMilestoneId)) {
+				jsTreeNodeChild.addChild(allChildren.get(childKey));
+				openedEntity = true;
+			}
+		}
+		if (openedEntity) {
+			jsTreeNodeChild.setState(State.open);
+			buildSubHierarchy(jsTreeNodeChild.getChildren(), fatherChildrenEntity, allChildren, activeMilestoneId);
+		}
+	}
 
 	protected boolean nodeHasActiveMilestone(Set<Long> nodesLinkedToMilestone, Long libraryNodeId) {
 		for (Long nodeId : nodesLinkedToMilestone) {

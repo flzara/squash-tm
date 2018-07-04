@@ -38,6 +38,8 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -82,6 +84,8 @@ import org.squashtest.tm.service.user.UserAccountService;
 @Service("squashtest.tm.service.AdministrationService")
 @Transactional
 public class AdministrationServiceImpl implements AdministrationService {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(AdministrationServiceImpl.class);
 
 	@Inject
 	private UserAccountService userAccountService;
@@ -323,7 +327,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 			try {
 				result = dateFormat.parse(date);
 			} catch (ParseException e) {
-
+				LOGGER.error(e.getMessage(), e);
 			}
 		}
 		return result;
@@ -336,7 +340,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 			try {
 				result = dateFormat.parse(date);
 			} catch (ParseException e) {
-
+				LOGGER.error(e.getMessage(), e);
 			}
 		}
 		return result;
@@ -349,7 +353,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 			try {
 				result = dateFormat.parse(date);
 			} catch (ParseException e) {
-
+				LOGGER.error(e.getMessage(), e);
 			}
 		}
 		return result;

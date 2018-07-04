@@ -54,6 +54,12 @@ public class AdvancedIssue implements RemoteIssue {
 	//the name of the fields scheme currently used, see AdvancedProject#schemes
 	private String currentScheme;
 
+	private static final String SUMMARY = "summary";
+
+	private static final String DESCRIPTION = "description";
+
+	private static final String COMMENT = "comment";
+
 	public void setId(String key){
 		this.id = key;
 	}
@@ -73,36 +79,36 @@ public class AdvancedIssue implements RemoteIssue {
 
 	@Override
 	public String getSummary() {
-		return findFieldValueName("summary");
+		return findFieldValueName(SUMMARY);
 	}
 
 	public void setSummary(String summary){
-		if (isFieldNotSet("summary")){
-			addGenericFieldValue("summary", summary);
+		if (isFieldNotSet(SUMMARY)){
+			addGenericFieldValue(SUMMARY, summary);
 		}
 	}
 
 	@Override
 	public String getDescription() {
-		return findFieldValueName("description");
+		return findFieldValueName(DESCRIPTION);
 	}
 
 	@Override
 	public void setDescription(String description) {
-		if (isFieldNotSet("description")){
-			addGenericFieldValue("description", description);
+		if (isFieldNotSet(DESCRIPTION)){
+			addGenericFieldValue(DESCRIPTION, description);
 		}
 	}
 
 	@Override
 	public String getComment() {
-		return findFieldValueName("comment");
+		return findFieldValueName(COMMENT);
 	}
 
 	@Override
 	public void setComment(String comment) {
-		if (isFieldNotSet("comment")){
-			addGenericFieldValue("comment", comment);
+		if (isFieldNotSet(COMMENT)){
+			addGenericFieldValue(COMMENT, comment);
 		}
 	}
 

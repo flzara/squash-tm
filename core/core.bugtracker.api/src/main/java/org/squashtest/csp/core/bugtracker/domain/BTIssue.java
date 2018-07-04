@@ -205,7 +205,7 @@ public class BTIssue implements RemoteIssue {
 
 	/** exists for the purpose of being java-bean compliant */
 	public void setDummy(Boolean dummy){
-
+		// NOOP
 	}
 
 	@Override

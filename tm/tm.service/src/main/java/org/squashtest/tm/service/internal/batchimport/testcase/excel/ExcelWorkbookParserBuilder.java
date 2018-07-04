@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.io.IOUtils;
@@ -43,7 +42,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.squashtest.tm.exception.SheetCorruptedException;
 import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException;
 import org.squashtest.tm.service.batchimport.excel.WorksheetFormatStatus;

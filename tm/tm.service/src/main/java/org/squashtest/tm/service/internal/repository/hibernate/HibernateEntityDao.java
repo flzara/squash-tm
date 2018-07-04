@@ -86,10 +86,7 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 				list = sqlQuery.list();
 				if (!list.isEmpty()) {
 					local.clear();
-					for (BigInteger bint : list) {
-						local.add(bint.longValue());
-						result.add(bint.longValue());
-					}
+					addingDescendantIds( local, result, list);
 				}
 			} while (!list.isEmpty());
 			if (result.isEmpty()) {
@@ -102,6 +99,13 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 
 		}
 
+	}
+
+	private void addingDescendantIds(List<Long> local,List<Long> result,List<BigInteger> list){
+		for (BigInteger bint : list) {
+			local.add(bint.longValue());
+			result.add(bint.longValue());
+		}
 	}
 
 

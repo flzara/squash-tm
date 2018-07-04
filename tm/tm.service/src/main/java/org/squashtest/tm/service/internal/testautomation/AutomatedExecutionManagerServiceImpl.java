@@ -64,13 +64,18 @@ public class AutomatedExecutionManagerServiceImpl implements AutomatedExecutionM
 	@Inject
 	private CustomTestSuiteModificationService customTestSuiteModificationService;
 
+	private static final String EXECUTE = "EXECUTE";
+
+	private static final String ROLE_ADMIN = "ROLE_ADMIN";
+
+
 	@Override
 	public void updateExecutionStatus(AutomatedExecutionSetIdentifier execIdentifier, ExecutionStatus newStatus) {
 
 		List<AutomatedExecutionExtender> execs = findExtendersFor(execIdentifier);
 
 		for (AutomatedExecutionExtender exec : execs) {
-			permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "EXECUTE", exec);
+			permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, EXECUTE, exec);
 			exec.setExecutionStatus(newStatus);
 			execProcService.updateExecutionMetadata(exec);
 		}
@@ -83,7 +88,7 @@ public class AutomatedExecutionManagerServiceImpl implements AutomatedExecutionM
 		List<AutomatedExecutionExtender> execs = findExtendersFor(execIdentifier);
 
 		for (AutomatedExecutionExtender exec : execs) {
-			permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "EXECUTE", exec);
+			permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, EXECUTE, exec);
 			exec.setResultURL(resultURL);
 		}
 	}
@@ -94,7 +99,7 @@ public class AutomatedExecutionManagerServiceImpl implements AutomatedExecutionM
 		List<AutomatedExecutionExtender> execs = findExtendersFor(execIdentifier);
 
 		for (AutomatedExecutionExtender exec : execs) {
-			permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "EXECUTE", exec);
+			permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, EXECUTE, exec);
 			exec.setResultSummary(newSummary);
 		}
 

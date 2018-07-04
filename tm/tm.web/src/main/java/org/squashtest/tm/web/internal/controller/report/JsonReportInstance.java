@@ -25,7 +25,6 @@ import org.squashtest.tm.domain.report.ReportDefinition;
 
 import java.util.*;
 
-
 public class JsonReportInstance {
 
 	private String name;

@@ -345,7 +345,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 
 		if (! testCaseIds.isEmpty()){
 			Query query = getSession().createSQLQuery(NativeQueries.TESTCASE_SQL_UNBIND_MILESTONE);
-			query.setParameterList("testCaseIds", testCaseIds, LongType.INSTANCE);
+			query.setParameterList(TEST_CASES_IDS, testCaseIds, LongType.INSTANCE);
 			query.setParameter("milestoneId", milestoneId);
 			query.executeUpdate();
 		}
@@ -357,7 +357,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 		if (! originalId.isEmpty()){
 			MilestoneStatus[] lockedStatuses = new MilestoneStatus[]{ MilestoneStatus.PLANNED, MilestoneStatus.LOCKED};
 			Query query = getSession().getNamedQuery("testCase.findTestCasesWhichMilestonesForbidsDeletion");
-			query.setParameterList("testCaseIds", originalId, LongType.INSTANCE);
+			query.setParameterList(TEST_CASES_IDS, originalId, LongType.INSTANCE);
 			query.setParameterList("lockedStatuses", lockedStatuses);
 			return query.list();
 		}else{

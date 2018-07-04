@@ -251,9 +251,7 @@ public class CustomFieldController {
 	@ResponseBody
 	public String changeDefaultValue(@PathVariable long customFieldId, @RequestParam(JEditablePostParams.VALUE) String defaultValue) {
 		customFieldManager.changeDefaultValue(customFieldId, defaultValue);
-		CustomField customField = customFieldManager.findById(customFieldId);
-		String toReturn = defaultValue;
-		return toReturn;
+		return defaultValue;
 	}
 
 	/**

@@ -75,7 +75,7 @@ public class RequirementVersionTarget implements Target, WithPath {
 	public String getPath() {
 		return requirement.getPath();
 	}
-	
+
 	public void setPath(String path){
 		requirement.setPath(path);
 	}

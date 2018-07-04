@@ -85,28 +85,30 @@ define(["jquery", "handlebars", "./lib/cuf-values-utils","jqueryui", "./lib/jque
 		container.find('ul.custom-field, ul.denormalized-custom-field').parent().css('line-height', '0');
 
 		for ( var idx in cufValues) {
-			var cufValue = cufValues[idx], selector = (cufValue.binding.customField.denormalized) ? "#denormalized-cuf-value-" +
+			if (cufValues.hasOwnProperty(idx)) {
+				var cufValue = cufValues[idx], selector = (cufValue.binding.customField.denormalized) ? "#denormalized-cuf-value-" +
 					cufValue.id
 					: "#cuf-value-" + cufValue.id;
 
-			var elt = container.find(selector);
-			var i;
-			switch (mode) {
-			case "static":
-				elt.staticCustomfield(cufValue.binding.customField);
-				break;
+				var elt = container.find(selector);
+				switch (mode) {
+					case "static":
+						elt.staticCustomfield(cufValue.binding.customField);
+						break;
 
-			case "editable":
-				elt.editableCustomfield(cufValue.binding.customField);
-				elt.parent().addClass('editable');
-				break;
+					case "editable":
+						elt.editableCustomfield(cufValue.binding.customField);
+						elt.parent().addClass('editable');
+						break;
 
-			case "jeditable":
-				escapeCustomFieldOptions(cufValue);
-				elt.jeditableCustomfield(cufValue.binding.customField, cufValue.id);
-				elt.parent().addClass('editable');
-				break;
+					case "jeditable":
+						escapeCustomFieldOptions(cufValue);
+						elt.jeditableCustomfield(cufValue.binding.customField, cufValue.id);
+						elt.parent().addClass('editable');
+						break;
+				}
 			}
+
 		}
 	}
 };

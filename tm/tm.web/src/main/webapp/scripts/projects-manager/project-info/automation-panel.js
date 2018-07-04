@@ -188,7 +188,10 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 					this.isAdmin = conf.isAdmin;
 					this.popups = popups;
 					for(var popup in popups){
-						popups[popup].setParentPanel(this);
+						if (popups.hasOwnProperty(popup)) {
+							popups[popup].setParentPanel(this);
+
+						}
 					}
 					this.initSelect(conf);
 					this.initTable();

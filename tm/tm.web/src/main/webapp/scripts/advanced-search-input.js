@@ -24,8 +24,6 @@ require([ "common" ], function(common) {
 
 		$(function() {
 			WS.init();
-			var view = new AdvancedSearchView();
-			
 		});
 
 	});

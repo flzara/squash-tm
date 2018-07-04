@@ -47,7 +47,7 @@ public class OAuth1aConsumerServiceImpl implements OAuth1aConsumerService {
 	/*
 		Shared instance of HttpTransport. Because from https://developers.google.com/api-client-library/java/google-http-java-client/reference/1.20.0/com/google/api/client/http/HttpTransport :
 		"Implementation is thread-safe, and sub-classes must be thread-safe. For maximum efficiency, applications should use a single globally-shared instance of the HTTP transport."
-		
+
 		Lazy init, because I believe that OAuth usage will never happen for most environments.
 	*/
 	private static LazyInitializer<HttpTransport> transportInitializer = new LazyInitializer<HttpTransport>(){
@@ -202,7 +202,7 @@ public class OAuth1aConsumerServiceImpl implements OAuth1aConsumerService {
 		}
 		catch(ConcurrentException ex){
 			LOGGER.error("Failed to create the shared HttpTransport ! Creating a new instance just for this. If you note " +
-							 "this message littering all over the log file please report to Squash-TM development team.");
+							 "this message littering all over the log file please report to Squash-TM development team.", ex);
 			return new ApacheHttpTransport();
 		}
 	}

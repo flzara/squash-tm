@@ -155,10 +155,12 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.ro
 				temp.style.display = "none";
 				temp.acceptCharset = "UTF-8";
 				for (var x in PARAMS) {
-					var opt = document.createElement("textarea");
-					opt.name = x;
-					opt.value = PARAMS[x];
-					temp.appendChild(opt);
+					if (PARAMS.hasOwnProperty(x)) {
+						var opt = document.createElement("textarea");
+						opt.name = x;
+						opt.value = PARAMS[x];
+						temp.appendChild(opt);
+					}
 				}
 				document.body.appendChild(temp);
 				temp.submit();
@@ -183,7 +185,6 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.ro
 			},
 
 			editMilestone: function () {
-				var self = this;
 				var table = $('#test-case-search-result-table').squashTable();
 				var ids = table.getSelectedIds();
 				var dialogOptions = {
@@ -309,7 +310,6 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.ro
 			},
 			initModifyMilestoneDialog: function () {
 
-				var self = this;
 				var table = $('#test-case-search-result-table').squashTable();
 				var ids = table.getSelectedIds();
 

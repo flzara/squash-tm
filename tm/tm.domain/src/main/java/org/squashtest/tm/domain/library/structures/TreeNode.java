@@ -25,19 +25,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 
+ *
  * <p>Please read also {@link LibraryTree}.</p>
- * 
+ *
  * <p>
  *  TreeNode is the type of node used by a LibraryTree. A TreeNode maintains informations regarding its position in the tree, ie its parent node, its layer/depth etc. Each node is identified
  *  by a key, that will be used to identify each node uniquely.
  * </p>
- * 
+ *
  * <p>
  *  Subclasses of TreeNode should be genericized <i>Enum</i>-style, i.e. generics of themselves, and implement {@link #updateWith(TreeNode)}.
  * </p>
- * 
- * 
+ *
+ *
  * @author bsiri
  *
  * @param <T> the type of the actual subclass.
@@ -52,16 +52,6 @@ public abstract class TreeNode<IDENT, T extends TreeNode<IDENT, T>> {
 	private int depth;
 	private IDENT key;
 
-
-	/**
-	 * 
-	 * @return the children nodes of this node.
-	 */
-	public List<T> getChildren(){
-		return children ;
-	}
-
-
 	public TreeNode(){
 
 	}
@@ -71,7 +61,15 @@ public abstract class TreeNode<IDENT, T extends TreeNode<IDENT, T>> {
 	}
 
 
-	LibraryTree<IDENT, T> getTree(){
+	/**
+	 *
+	 * @return the children nodes of this node.
+	 */
+	public List<T> getChildren(){
+		return children ;
+	}
+
+		LibraryTree<IDENT, T> getTree(){
 		return tree;
 	}
 
@@ -95,7 +93,7 @@ public abstract class TreeNode<IDENT, T extends TreeNode<IDENT, T>> {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the depth of that node, i.e. the layer depth it belongs to.
 	 */
 	int getDepth(){
@@ -139,7 +137,7 @@ public abstract class TreeNode<IDENT, T extends TreeNode<IDENT, T>> {
 
 	/**
 	 * Adds a child to this node and wire their properties accordingly.
-	 * 
+	 *
 	 * @param child the new child.
 	 */
 	void addChild(T child){

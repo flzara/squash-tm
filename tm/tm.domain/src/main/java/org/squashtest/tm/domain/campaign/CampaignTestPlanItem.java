@@ -65,11 +65,6 @@ public class CampaignTestPlanItem implements Identified{
 	@JoinColumn(name = "CAMPAIGN_ID", insertable = false, updatable = false)
 	private Campaign campaign;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
-
 	public CampaignTestPlanItem() {
 		super();
 	}
@@ -81,6 +76,11 @@ public class CampaignTestPlanItem implements Identified{
 	public CampaignTestPlanItem(TestCase testCase, Dataset dataset){
 		this.referencedTestCase = testCase;
 		this.referencedDataset = dataset;
+	}
+
+	@Override
+	public Long getId() {
+		return id;
 	}
 
 	public TestCase getReferencedTestCase() {

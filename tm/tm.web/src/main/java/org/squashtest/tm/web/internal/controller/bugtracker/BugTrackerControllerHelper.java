@@ -64,6 +64,11 @@ public final class BugTrackerControllerHelper {
 	@Inject
 	private InternationalizationHelper source;
 
+	private final static String REMOTE_ID = "remote-id";
+
+	private final static String SUMMARY = "summary";
+
+	private final static String PRIORITY = "priority";
 	private BugTrackerControllerHelper() {
 
 	}
@@ -420,9 +425,9 @@ public final class BugTrackerControllerHelper {
 			String issueOwner = nameBuilder.buildName(ownership.getOwner());
 
 			row.put("url", url);
-			row.put("remote-id", issue.getId());
-			row.put("summary", HtmlUtils.htmlUnescape(HTMLCleanupUtils.cleanHtml(issue.getSummary())));
-			row.put("priority", findPriority(issue));
+			row.put(REMOTE_ID, issue.getId());
+			row.put(SUMMARY, HtmlUtils.htmlUnescape(HTMLCleanupUtils.cleanHtml(issue.getSummary())));
+			row.put(PRIORITY, findPriority(issue));
 			row.put("status", findStatus(issue));
 			row.put("assignee", findAssignee(issue));
 			row.put("execution", issueOwner);
@@ -466,9 +471,9 @@ public final class BugTrackerControllerHelper {
 				HTMLCleanupUtils.cleanHtml(service.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
 					.toExternalForm()));
 
-			result.put("remote-id", issue.getId());
-			result.put("summary", HtmlUtils.htmlUnescape(HTMLCleanupUtils.cleanHtml(issue.getSummary())));
-			result.put("priority", findPriority(issue));
+			result.put(REMOTE_ID, issue.getId());
+			result.put(SUMMARY, HtmlUtils.htmlUnescape(HTMLCleanupUtils.cleanHtml(issue.getSummary())));
+			result.put(PRIORITY, findPriority(issue));
 			result.put("status", findStatus(issue));
 			result.put("assignee", findAssignee(issue));
 			result.put("owner", nameBuilder.buildName(ownership.getOwner()));
@@ -505,9 +510,9 @@ public final class BugTrackerControllerHelper {
 				HTMLCleanupUtils.cleanHtml(service.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
 					.toExternalForm()));
 
-			result.put("remote-id", issue.getId());
-			result.put("summary", HtmlUtils.htmlUnescape(HTMLCleanupUtils.cleanHtml(issue.getSummary())));
-			result.put("priority", findPriority(issue));
+			result.put(REMOTE_ID, issue.getId());
+			result.put(SUMMARY, HtmlUtils.htmlUnescape(HTMLCleanupUtils.cleanHtml(issue.getSummary())));
+			result.put(PRIORITY, findPriority(issue));
 			result.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, "");
 			result.put("local-id", issue.getIssueId());
 			result.put(BT_PROJECT, HTMLCleanupUtils.cleanHtml(issue.getProject().getName()));

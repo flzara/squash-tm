@@ -31,6 +31,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 @JsonSubTypes({
 	@Type(name="OAUTH_1A", value=ServerOAuth1aConsumerConf.class)
 })
-public abstract class ServerAuthConfigurationMixin {
+public interface ServerAuthConfigurationMixin {
 
 }

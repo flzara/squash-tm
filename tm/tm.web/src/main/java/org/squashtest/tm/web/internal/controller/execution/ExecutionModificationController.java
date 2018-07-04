@@ -91,7 +91,7 @@ public class ExecutionModificationController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExecutionModificationController.class);
 
-
+	private static final String EXECUTION = "Execution ";
 	@Inject
 	private ExecutionModificationService executionModService;
 
@@ -131,6 +131,7 @@ public class ExecutionModificationController {
 
 	@Inject
 	private MilestoneUIConfigurationService milestoneConfService;
+
 
 
 	// ****** /custom field services ******************
@@ -343,7 +344,7 @@ public class ExecutionModificationController {
 	public String updateDescription(@RequestParam(VALUE) String newDescription, @PathVariable long executionId) {
 
 		executionModService.setExecutionDescription(executionId, newDescription);
-		LOGGER.trace("Execution " + executionId + ": updated description to " + newDescription);
+		LOGGER.trace(EXECUTION + executionId + ": updated description to " + newDescription);
 		return HTMLCleanupUtils.cleanHtml(newDescription);
 
 	}
@@ -353,7 +354,7 @@ public class ExecutionModificationController {
 	public String updateAssignment(@RequestParam(VALUE) String newDescription, @PathVariable long executionId) {
 
 		executionModService.setExecutionDescription(executionId, newDescription);
-		LOGGER.trace("Execution " + executionId + ": updated description to " + newDescription);
+		LOGGER.trace(EXECUTION + executionId + ": updated description to " + newDescription);
 		return HTMLCleanupUtils.cleanHtml(newDescription);
 
 	}
@@ -364,7 +365,7 @@ public class ExecutionModificationController {
 							   Locale locale) {
 
 		executionModService.setExecutionStatus(executionId, newStatus);
-		LOGGER.trace("Execution " + executionId + ": updated status to " + newStatus);
+		LOGGER.trace(EXECUTION + executionId + ": updated status to " + newStatus);
 		return internationalize(newStatus, locale);
 
 	}

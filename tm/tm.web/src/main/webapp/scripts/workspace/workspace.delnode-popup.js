@@ -199,8 +199,6 @@ define(['jquery', 'underscore', "workspace.event-bus", 'jquery.squash.formdialog
 		performDeletion: function () {
 			this.setState("pleasewait");
 
-			var self = this;
-			var tree = this.options.tree;
 			var nodes = this.uiDialog.data('selected-nodes');
 			var newSelection = this._findPrevNode(nodes);
 

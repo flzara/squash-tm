@@ -26,44 +26,44 @@ public class RestTestCase {
 
 
 	private Long id;
-	
+
 
 	private String name;
-	
+
 
 	private String description;
-	
+
 
 	private String reference;
-	
+
 
 	private String prerequisite;
-	
+
 
 	private String importance;
-	
+
 
 	private String nature;
-	
+
 
 	private String type;
-	
+
 
 	private String status;
-	
+
 
 	private String executionMode;
-	
+
 
 	private RestProjectStub project;
-	
+
 
 	private String path;
-	
+
 	public RestTestCase(){
 		super();
 	}
-	
+
 	public RestTestCase(TestCase testCase) {
 		this.id = testCase.getId();
 		this.name = testCase.getName();
@@ -174,7 +174,6 @@ public class RestTestCase {
 	public void setPath(String path) {
 		this.path = path;
 	}
-	
-	
+
+
 }
-	

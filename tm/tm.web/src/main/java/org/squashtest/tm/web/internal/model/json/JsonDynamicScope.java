@@ -51,11 +51,7 @@ public class JsonDynamicScope {
 
 	//Workspace, as the string identifier in domain entity Workspace
 	private String workspaceName;
-
-
-	public JsonDynamicScope() {
-	}
-
+	
 	public List<Long> getRequirementLibraryIds() {
 		return requirementLibraryIds;
 	}

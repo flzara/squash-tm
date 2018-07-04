@@ -51,6 +51,9 @@ public class TestCaseRestController {
 	 *             {@link org.squashtest.tm.web.exception.ResourceNotFoundException}
 	 *
 	 */
+	/**
+	 * @deprecated does not seem to be used any longer
+	 */
 	@Deprecated
 	@ResponseStatus(value = HttpStatus.NOT_FOUND)
 	private final class ResourceNotFoundException extends RuntimeException {

@@ -121,7 +121,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 		copy = null;
 		source.accept(this);
 		if (projectChanged) {
-			// see comment on the method flush();
+			// see comment on the method flush()
 			flush();
 			copy.accept(treeNodeUpdater);
 		}
@@ -377,7 +377,6 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 
 	private void copyRequirementVersionLinks(RequirementVersion sourceVersion, RequirementVersion copyVersion) {
 		List<RequirementVersionLink> copies = sourceVersion.createRequirementVersionLinksForCopy(copyVersion);
-		//indexRequirementVersionLinkCopies(copies);
 		requirementVersionLinkDao.addLinks(copies);
 	}
 

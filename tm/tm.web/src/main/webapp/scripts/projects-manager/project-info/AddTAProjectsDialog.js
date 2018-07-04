@@ -29,7 +29,6 @@ define([ "jquery", "backbone", "handlebars", "app/ws/squashtm.notification", "un
 		el : "#ta-projects-bind-popup",
 
 		initialize : function(conf) {
-			var self = this;
 			// properties
 			this.isAdmin = conf.isAdmin;
 			this.selectedServerId = conf.TAServerId;

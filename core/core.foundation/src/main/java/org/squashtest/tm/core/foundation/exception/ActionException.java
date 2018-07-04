@@ -22,11 +22,13 @@ package org.squashtest.tm.core.foundation.exception;
 
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 
+import java.util.Collections;
+
 
 public class ActionException extends RuntimeException implements Internationalizable {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -7715263070633043453L;
 	private static final String GENERIC_ACTION_EXCEPTION_KEY = "error.generic.label";
@@ -51,9 +53,9 @@ public class ActionException extends RuntimeException implements Internationaliz
 	public String getI18nKey() {
 		return GENERIC_ACTION_EXCEPTION_KEY;
 	}
-	
+
 	public Object[] messageArgs(){
-		return null;
+		return new Object[0];
 	}
 
 }

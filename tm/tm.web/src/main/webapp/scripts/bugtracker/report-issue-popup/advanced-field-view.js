@@ -184,18 +184,13 @@ define(["jquery",
 			//first, post process the source html and split into two templates
 			this._initTemplates();
 
-			//generate the main template (the 'frame')
-			var data = {
-				labels : this.options.labels
-			};
-
 		},
 
 
 		render : function(){
 
 			this.undelegateEvents();
-			
+
 			//flush the panels
 			this._flushPanels();
 
@@ -309,7 +304,6 @@ define(["jquery",
 
 			var newValues = {};
 			var controls = this._getAllControls();
-			var self = this;
 
 			controls.each(function(){
 
@@ -331,12 +325,15 @@ define(["jquery",
 			var allControls = this._getAllControls();
 
 			for (var fieldId in fieldValues){
-				var value	= fieldValues[fieldId];
-				var control	= allControls.filter('[data-fieldid="'+fieldId+'"]');
+				if( fieldValues.hasOwnProperty(fieldId)){
+					var value	= fieldValues[fieldId];
+					var control	= allControls.filter('[data-fieldid="'+fieldId+'"]');
 
-				if (control.length>0){
-					control.data('widget').fieldvalue(value);
+					if (control.length>0){
+						control.data('widget').fieldvalue(value);
+					}
 				}
+
 			}
 		},
 
@@ -376,8 +373,10 @@ define(["jquery",
 			if (scheme === null || scheme === undefined){
 				//the following is weird but correct
 				for (var schemeName in project.schemes){
-					this.model.set('currentScheme', schemeName, {silent : true});
-					break;
+					if (project.schemes.hasOwnProperty(schemeName)) {
+						this.model.set('currentScheme', schemeName, {silent : true});
+						break;
+					}
 				}
 			}
 		},

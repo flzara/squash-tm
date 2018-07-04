@@ -180,7 +180,7 @@ class EntityValidatorTest extends Specification {
 		model.getStatus(_) >> new TargetStatus(EXISTS, 10l)
 
 		when :
-		LogTrain train = validator.basicTestStepChecks(target, astep)
+		LogTrain train = validator.basicTestStepChecks(target)
 
 
 		then :
@@ -206,7 +206,7 @@ class EntityValidatorTest extends Specification {
 			new TargetStatus(NOT_EXISTS, null)
 		}
 		when :
-		LogTrain train = validator.basicTestStepChecks(target, astep)
+		LogTrain train = validator.basicTestStepChecks(target)
 
 
 		then :
@@ -241,7 +241,7 @@ class EntityValidatorTest extends Specification {
 
 
 		when :
-		LogTrain train = validator.validateCallStep(target, cstep, called, info, mode)
+		LogTrain train = validator.validateCallStep(target, called, info, mode)
 
 
 		then :
@@ -270,7 +270,7 @@ class EntityValidatorTest extends Specification {
 
 
 		when :
-		LogTrain train = validator.validateCallStep(target, cstep, called, info, mode)
+		LogTrain train = validator.validateCallStep(target, called, info, mode)
 
 		then :
 

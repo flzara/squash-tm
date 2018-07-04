@@ -27,13 +27,6 @@ package org.squashtest.tm.exception;
  */
 public class WrongUrlException extends DomainException {
 
-	public WrongUrlException(String field, Throwable cause) {
-		super("The property "+field+" should be an url", field, cause);
-
-	}
-
-
-
 	/**
 	 * TODO my eclipse coudn't thanks - mpagnon
 	 */
@@ -43,7 +36,10 @@ public class WrongUrlException extends DomainException {
 	private Object[] i18nParams = new Object[2];
 
 
+	public WrongUrlException(String field, Throwable cause) {
+		super("The property "+field+" should be an url", field, cause);
 
+	}
 
 
 	@Override

@@ -42,9 +42,6 @@ public abstract class CustomFieldModel<VALUETYPE> {
 
 	private InputTypeModel inputType;
 
-	// this one is required by Jackson, this is how Jackson discriminates (see annotations above)
-	//private String itype;
-
 	private boolean isDenormalized;
 
 
@@ -94,15 +91,7 @@ public abstract class CustomFieldModel<VALUETYPE> {
 	public void setInputType(InputTypeModel inputType) {
 		this.inputType = inputType;
 	}
-/*
-	public String getItype() {
-		return itype;
-	}
 
-	public void setIType(String itype) {
-		this.itype = itype;
-	}
-*/
 	public String getCode() {
 		return code;
 	}

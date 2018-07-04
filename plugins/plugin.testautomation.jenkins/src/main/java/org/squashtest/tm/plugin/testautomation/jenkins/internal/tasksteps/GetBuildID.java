@@ -30,7 +30,6 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildProce
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildStep;
 import org.squashtest.tm.service.testautomation.spi.NotFoundException;
 
-
 public class GetBuildID extends BuildStep<GetBuildID> implements HttpBasedStep {
 
 	/* ********* technically needed for the computation ************** */
@@ -45,6 +44,13 @@ public class GetBuildID extends BuildStep<GetBuildID> implements HttpBasedStep {
 
 
 	// ****** the output here is stored when available in the absolueId#setBuildId *****
+
+	//************* constructor ******************
+
+	public GetBuildID(BuildProcessor processor) {
+		super(processor);
+	}
+
 
 	// ****** accessors ********** */
 
@@ -76,11 +82,6 @@ public class GetBuildID extends BuildStep<GetBuildID> implements HttpBasedStep {
 		return absoluteId.getBuildId();
 	}
 
-	//************* constructor ******************
-
-	public GetBuildID(BuildProcessor processor) {
-		super(processor);
-	}
 
 	// ************ code *****************
 
@@ -110,7 +111,7 @@ public class GetBuildID extends BuildStep<GetBuildID> implements HttpBasedStep {
 
 	@Override
 	public void reset() {
-
+		// NOOP
 	}
 
 	@Override

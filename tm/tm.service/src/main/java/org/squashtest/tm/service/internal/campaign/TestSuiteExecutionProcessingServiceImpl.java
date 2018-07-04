@@ -26,6 +26,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -43,6 +45,8 @@ import org.squashtest.tm.service.user.UserAccountService;
 @Service("squashtest.tm.service.TestSuiteExecutionProcessingService")
 @Transactional
 public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecutionProcessingService {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteExecutionProcessingServiceImpl.class);
 
 	private static final String CAN_EXECUTE_BY_TESTSUITE_ID = "hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'EXECUTE')" + OR_HAS_ROLE_ADMIN;
 
@@ -171,6 +175,7 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 			PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(domainObject,
 					"READ_UNASSIGNED"));
 		} catch (AccessDeniedException ade) {
+			LOGGER.error(ade.getMessage(), ade);
 			testerLogin = userService.findCurrentUser().getLogin();
 		}
 		return testerLogin;

@@ -196,10 +196,7 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 			visitWhenNodeIsRequirement((Requirement) toMove, position);
 			List<Long> reqVersionIds = new ArrayList<>();
 			List<RequirementVersion> requirementVersions =((Requirement) toMove).getRequirementVersions();
-			for (RequirementVersion requirementVersion : requirementVersions) {
-				reqVersionIds.add(requirementVersion.getId());
-			}
-			movedReqVersionIds.addAll(reqVersionIds);
+			fillingreqVersionIds( requirementVersions, reqVersionIds);
 			break;
 		case ITERATION:
 		case TEST_SUITE:
@@ -207,8 +204,13 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 		default:
 			throw new IllegalArgumentException("Libraries cannot be copied nor moved !");
 		}
+	}
 
-
+	private void fillingreqVersionIds(List<RequirementVersion> requirementVersions,List<Long> reqVersionIds){
+		for (RequirementVersion requirementVersion : requirementVersions) {
+			reqVersionIds.add(requirementVersion.getId());
+		}
+		movedReqVersionIds.addAll(reqVersionIds);
 	}
 
 

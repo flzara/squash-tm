@@ -23,7 +23,7 @@
  *
  *   Copyright (c) 2011-2014, The THYMELEAF team (http://www.thymeleaf.org)
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   Licensed under the Apache License, Version 2.0 (the "License")
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
  *
@@ -39,7 +39,6 @@
  */
 package org.squashtest.tm.web.thymeleaf.processor.attr;
 
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.engine.AttributeName;
 import org.thymeleaf.model.IProcessableElementTag;

@@ -22,7 +22,7 @@ define([ "jquery", "backbone", "squashtable", "jqueryui"], function($, Backbone)
 	var View = Backbone.View.extend({
 		el : "#connections-table",
 		initialize : function() {
-			var self = this, tableConf = {
+			var tableConf = {
 				"oLanguage" : {
 					"sUrl" : squashtm.app.contextRoot + "/datatables/messages"
 				},

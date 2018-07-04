@@ -68,6 +68,19 @@ public class TestAutomationServerManagementAdminController {
 	@Inject
 	private InternationalizationHelper messageSource;
 
+	/**
+	 * A Mapping for ta servers table sortable columns : maps the table column index to an entity property. NB: column
+	 * index is of all table's columns (displayed or not)
+	 */
+	private final DatatableMapper<String> testAutomationServerTableMapper = new NameBasedMapper(6)
+		.map(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY)
+		.map(BASE_URL_KEY, BASE_URL_VALUE)
+		.map(DataTableModelConstants.DEFAULT_CREATED_ON_KEY, DataTableModelConstants.DEFAULT_CREATED_ON_VALUE)
+		.map(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, DataTableModelConstants.DEFAULT_CREATED_BY_VALUE)
+		.map(DataTableModelConstants.DEFAULT_LAST_MODIFIED_ON_KEY, DataTableModelConstants.DEFAULT_LAST_MODIFIED_ON_VALUE)
+		.map(DataTableModelConstants.DEFAULT_LAST_MODIFIED_BY_KEY, DataTableModelConstants.DEFAULT_LAST_MODIFIED_BY_VALUE);
+
+
 	@ModelAttribute("testAutomationServerPageSize")
 	public long populateTestAutomationServerPageSize() {
 		return Pagings.DEFAULT_PAGING.getPageSize();
@@ -89,18 +102,6 @@ public class TestAutomationServerManagementAdminController {
 
 		return "test-automation/servers-manager.html";
 	}
-
-	/**
-	 * A Mapping for ta servers table sortable columns : maps the table column index to an entity property. NB: column
-	 * index is of all table's columns (displayed or not)
-	 */
-	private final DatatableMapper<String> testAutomationServerTableMapper = new NameBasedMapper(6)
-		.map(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY)
-		.map(BASE_URL_KEY, BASE_URL_VALUE)
-		.map(DataTableModelConstants.DEFAULT_CREATED_ON_KEY, DataTableModelConstants.DEFAULT_CREATED_ON_VALUE)
-		.map(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, DataTableModelConstants.DEFAULT_CREATED_BY_VALUE)
-		.map(DataTableModelConstants.DEFAULT_LAST_MODIFIED_ON_KEY, DataTableModelConstants.DEFAULT_LAST_MODIFIED_ON_VALUE)
-		.map(DataTableModelConstants.DEFAULT_LAST_MODIFIED_BY_KEY, DataTableModelConstants.DEFAULT_LAST_MODIFIED_BY_VALUE);
 
 	/**
 	 * Return the DataTableModel to display the table of all ta servers.

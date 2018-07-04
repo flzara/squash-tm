@@ -21,11 +21,14 @@
 
 -->
 
-
+<!DOCTYPE HTML>
 <html th:replace="fragments-utils/basic-page :: basic-page-and-script(~{::title}, ~{::h1}, ~{::div}, ~{::script})">
 
   <head>
     <title>[[#{oauth1.requestfailed.title}]]</title>
+    <link rel="shortcut icon" type="image/x-icon" media="all"
+          href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico"
+          th:href="@{/images/favicon.ico}" />
   </head>
 
   <body>
@@ -35,7 +38,7 @@
         [[#{oauth1.requestfailed.message}]]
       </p>
     </div>
-    
+
     <script type="text/javascript">
     	// see /scripts/serverauth/auth-manager function commenceOauthTokensExchange()
     	window.onunload = function(){
@@ -48,9 +51,9 @@
     				// nothing worth doing
     			}
     		}
-    	}    
+    	}
     </script>
-    
+
   </body>
 
 

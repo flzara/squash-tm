@@ -29,6 +29,18 @@ public class AoColumnDef {
 	private int[] aTargets = new int[1];
 	private String mDataProp;
 
+	public AoColumnDef(boolean bVisible, boolean bSortable, String sClass, String sWidth,
+					   String mDataProp) {
+		super();
+		this.bVisible = bVisible;
+		this.bSortable = bSortable;
+		this.sClass = sClass;
+		this.sWidth = sWidth;
+
+		this.mDataProp = mDataProp;
+	}
+
+
 	public boolean isbVisible() {
 		return bVisible;
 	}
@@ -51,17 +63,6 @@ public class AoColumnDef {
 
 	public String getmDataProp() {
 		return mDataProp;
-	}
-
-	public AoColumnDef(boolean bVisible, boolean bSortable, String sClass, String sWidth,
-					   String mDataProp) {
-		super();
-		this.bVisible = bVisible;
-		this.bSortable = bSortable;
-		this.sClass = sClass;
-		this.sWidth = sWidth;
-
-		this.mDataProp = mDataProp;
 	}
 
 	public void setbVisible(boolean bVisible) {

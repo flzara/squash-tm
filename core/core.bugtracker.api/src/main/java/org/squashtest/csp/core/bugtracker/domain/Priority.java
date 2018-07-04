@@ -60,11 +60,9 @@ public class Priority implements Identifiable<Priority>, RemotePriority{
 		return false;
 	}
 
-
 	public void setId(String id) {
 		this.id = id;
 	}
-
 
 	public void setName(String name) {
 		this.name = name;
@@ -72,7 +70,7 @@ public class Priority implements Identifiable<Priority>, RemotePriority{
 
 	/** exists for the purpose of being javabean compliant */
 	public void setDummy(Boolean dummy){
-
+		// NOOP
 	}
 }
 

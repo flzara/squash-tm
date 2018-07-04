@@ -70,7 +70,8 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 	private static final String WEIGHT_DATA = "importance";
 	private static final String MODE_DATA = "exec-mode";
 	private static final String DATASET_DATA = "dataset.selected.name";
-
+	private static final String NODE_IDS= "nodeIds";
+	private static final String MILESTONE_ID= "milestoneId";
 	/*
 	 * Because it is impossible to sort over the indices of ordered collection in a criteria query
 	 * we must then build an hql string which will let us do that.
@@ -129,7 +130,7 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 	public List<Long> findAllCampaignIdsByNodeIds(Collection<Long> nodeIds) {
 		if (! nodeIds.isEmpty()){
 			Query query = currentSession().getNamedQuery("campaign.findAllCampaignIdsByNodeIds");
-			query.setParameterList("nodeIds", nodeIds, LongType.INSTANCE);
+			query.setParameterList(NODE_IDS, nodeIds, LongType.INSTANCE);
 			return query.list();		}
 		else{
 			return Collections.emptyList();
@@ -146,7 +147,7 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 		else if (! campaignIds.isEmpty()){
 			Query query = currentSession().getNamedQuery("campaign.filterByMilestone");
 			query.setParameterList("campaignIds", campaignIds, LongType.INSTANCE);
-			query.setParameter("milestoneId", milestoneId, LongType.INSTANCE);
+			query.setParameter(MILESTONE_ID, milestoneId, LongType.INSTANCE);
 			res = query.list();
 		}
 		else {
@@ -161,7 +162,7 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 
 		if (milestoneId != null){
 			Query query = currentSession().getNamedQuery("campaign.findAllIdsByMilestoneId");
-			query.setParameter("milestoneId", milestoneId, LongType.INSTANCE);
+			query.setParameter(MILESTONE_ID, milestoneId, LongType.INSTANCE);
 			return query.list();
 		}
 		else{
@@ -428,15 +429,15 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 	@Override
 	public List<Long> findNonBoundCampaign(Collection<Long> nodeIds, Long milestoneId) {
 		Query q = currentSession().getNamedQuery("campaign.findNonBoundCampaign");
-		q.setParameterList("nodeIds", nodeIds, LongType.INSTANCE);
-		q.setParameter("milestoneId", milestoneId);
+		q.setParameterList(NODE_IDS, nodeIds, LongType.INSTANCE);
+		q.setParameter(MILESTONE_ID, milestoneId);
 		return q.list();
 	}
 
 	@Override
 	public List<Long> findCampaignIdsHavingMultipleMilestones(List<Long> nodeIds) {
 		Query q = currentSession().getNamedQuery("campaign.findCampaignIdsHavingMultipleMilestones");
-		q.setParameterList("nodeIds", nodeIds, LongType.INSTANCE);
+		q.setParameterList(NODE_IDS, nodeIds, LongType.INSTANCE);
 		return q.list();
 	}
 

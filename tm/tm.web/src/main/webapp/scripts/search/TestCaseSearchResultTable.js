@@ -44,7 +44,6 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 			this.tableRowCallback = $.proxy(this._tableRowCallback, this);
 			this.addAssociationCheckboxes  = $.proxy(this._addAssociationCheckboxes, this);
 
-			var self = this;
 			var tableConf;
 			var	squashConf;
 
@@ -317,7 +316,6 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 		},
 
 		_addSelectEditableToImportance : function(row, data) {
-			var self = this;
 			var urlPOST = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
 			var urlGET = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"] + "/importance-combo-data";
 			var ok = translator.get("rich-edit.button.ok.label");
@@ -373,7 +371,6 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 		},
 
 		_addSelectEditableToStatus : function(row, data) {
-			var self = this;
 			var urlPOST = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
 			var urlGET = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"] + "/status-combo-data";
 			var ok = translator.get("rich-edit.button.ok.label");
@@ -470,7 +467,6 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 		},
 
 		_addTreeLink : function(row, data){
-			var self = this;
 			var id = data["test-case-id"];
 			var $cell = $(".search-open-tree-holder", row);
 			$cell.append('<span class="search-open-tree"></span>')

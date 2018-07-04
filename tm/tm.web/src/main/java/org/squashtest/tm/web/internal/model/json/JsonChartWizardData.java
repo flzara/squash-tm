@@ -114,7 +114,6 @@ public class JsonChartWizardData {
 		addInfoList(projects);
 		//For 1.13 we don't support operations on the custom fields.
 		//But as it will be in next version, i don't suppress the code.
-		//addCustomFields(projects);
 		addDisabledStatus(projects);
 
 
@@ -138,14 +137,14 @@ public class JsonChartWizardData {
 
 	private void addColumnRoles() {
 		for (ColumnRole cr : ColumnRole.values()) {
-			columnRoles.put(cr, cr.getOperations());
+			columnRoles.put(cr, (EnumSet<Operation>) cr.getOperations());
 		}
 	}
 
 	private void addDataType() {
 
 		for (DataType dt : DataType.values()) {
-			dataTypes.put(dt, dt.getOperations());
+			dataTypes.put(dt, (EnumSet<Operation>) dt.getOperations());
 		}
 	}
 
@@ -211,7 +210,7 @@ public class JsonChartWizardData {
 		return columnPrototypes;
 	}
 
-	public EnumSet<ChartType> getChartTypes() {
+	public Set<ChartType> getChartTypes() {
 		return chartTypes;
 	}
 
@@ -241,7 +240,7 @@ public class JsonChartWizardData {
 	}
 
 	@JsonSerialize(using = LevelEnumSerializer.class)
-	public EnumSet<ExecutionStatus> getExecutionStatus() {
+	public Set<ExecutionStatus> getExecutionStatus() {
 		return executionStatus;
 	}
 
@@ -250,7 +249,7 @@ public class JsonChartWizardData {
 	}
 
 	@JsonSerialize(using = LevelEnumSerializer.class)
-	public EnumSet<ExecutionStatus> getItpiExecutionStatus() {
+	public Set<ExecutionStatus> getItpiExecutionStatus() {
 		return itpiExecutionStatus;
 	}
 

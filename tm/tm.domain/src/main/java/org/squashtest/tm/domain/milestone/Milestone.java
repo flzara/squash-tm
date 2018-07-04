@@ -93,16 +93,25 @@ public class Milestone implements Identified {
 	@ManyToOne(cascade=CascadeType.DETACH)
 	private User owner;
 
+	/**
+	 * @deprecated does not seem to be used any longer
+	 */
 	@Deprecated
 	@ManyToMany(fetch = FetchType.LAZY, cascade=CascadeType.DETACH)
 	@JoinTable(name = "MILESTONE_TEST_CASE", joinColumns = @JoinColumn(name = MILESTONE_ID), inverseJoinColumns = @JoinColumn(name = "TEST_CASE_ID"))
 	private Set<TestCase> testCases = new HashSet<>();
 
+	/**
+	 * @deprecated does not seem to be used any longer
+	 */
 	@Deprecated
 	@ManyToMany(fetch = FetchType.LAZY, cascade=CascadeType.DETACH)
 	@JoinTable(name = "MILESTONE_REQ_VERSION", joinColumns = @JoinColumn(name = MILESTONE_ID), inverseJoinColumns = @JoinColumn(name = "REQ_VERSION_ID"))
 	private Set<RequirementVersion> requirementVersions = new HashSet<>();
 
+	/**
+	 * @deprecated does not seem to be used any longer
+	 */
 	@Deprecated
 	@ManyToMany(fetch = FetchType.LAZY, cascade=CascadeType.DETACH)
 	@JoinTable(name = "MILESTONE_CAMPAIGN", joinColumns = @JoinColumn(name = MILESTONE_ID), inverseJoinColumns = @JoinColumn(name = "CAMPAIGN_ID"))
@@ -254,30 +263,45 @@ public class Milestone implements Identified {
 		}
 	}
 
+	/**
+	 * @deprecated does not seem to be used any longer
+	 */
 	@Deprecated
 	// XXX omg potentially VERY EXPENSIVE
 	public Set<TestCase> getTestCases() {
 		return testCases;
 	}
 
+	/**
+	 * @deprecated does not seem to be used any longer
+	 */
 	@Deprecated
 	// XXX omg potentially VERY EXPENSIVE
 	public Set<RequirementVersion> getRequirementVersions() {
 		return requirementVersions;
 	}
 
+	/**
+	 * @deprecated does not seem to be used any longer
+	 */
 	@Deprecated
 	// XXX omg potentially VERY EXPENSIVE
 	public Set<Campaign> getCampaigns() {
 		return campaigns;
 	}
 
+	/**
+	 * @deprecated does not seem to be used any longer
+	 */
 	@Deprecated
 	// XXX omg potentially VERY EXPENSIVE
 	public void bindTestCase(TestCase testCase) {
 		testCases.add(testCase);
 	}
 
+	/**
+	 * @deprecated does not seem to be used any longer
+	 */
 	@Deprecated
 	// XXX omg potentially VERY EXPENSIVE
 	public void bindRequirementVersion(RequirementVersion version) {

@@ -72,15 +72,15 @@ public class ExecutionStepIssueFinder implements IssueOwnershipFinder {
 	private LocaleContext getLocaleContext() {
 		return LocaleContextHolder.getLocaleContext();
 	}
-	
+
 	private SecurityContext getSecurityContext(){
 		return SecurityContextHolder.getContext();
 	}
-	
+
 	private UserCredentialsCache getCredentialsCache(){
 		return credentialsProvider.getCache();
 	}
-	
+
 	@Override
 	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSorted(long entityId, PagingAndSorting sorter) {
 		ExecutionStep executionStep = executionStepDao.findById(entityId);

@@ -61,11 +61,9 @@ public class Severity implements Identifiable<Severity>{
 		return false;
 	}
 
-
 	public void setId(String id) {
 		this.id = id;
 	}
-
 
 	public void setName(String name) {
 		this.name = name;
@@ -73,7 +71,7 @@ public class Severity implements Identifiable<Severity>{
 
 	/** exists for the purpose of being javabean compliant */
 	public void setDummy(Boolean dummy){
-
+		// NOOP
 	}
 
 }

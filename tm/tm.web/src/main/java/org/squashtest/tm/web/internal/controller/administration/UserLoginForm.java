@@ -25,18 +25,15 @@ import javax.validation.constraints.Size;
 
 /**
  * Form class for the change user jeditable field in user detail page.
- * 
+ *
  * @author jthebault
  *
  */
 public class UserLoginForm {
-	
+
 	@NotNull
 	@Size(max=50)
 	private String value;
-
-	public UserLoginForm() {
-	}
 	
 	public String getValue() {
 		return value;

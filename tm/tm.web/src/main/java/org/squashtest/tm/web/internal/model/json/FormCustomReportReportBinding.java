@@ -39,7 +39,7 @@ public class FormCustomReportReportBinding {
 	private int sizeY;
 
 	public FormCustomReportReportBinding() {
-		// TODO Auto-generated constructor stub
+		//NOOP
 	}
 
 	public Long getId() {

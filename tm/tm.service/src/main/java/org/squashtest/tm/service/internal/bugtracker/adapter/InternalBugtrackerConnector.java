@@ -28,7 +28,6 @@ import org.squashtest.csp.core.bugtracker.core.*;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
-import org.squashtest.csp.core.bugtracker.spi.BugtrackerConnectorBase;
 import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
 import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
@@ -97,6 +96,9 @@ public interface InternalBugtrackerConnector {
 	 * @Deprecated use {@link #authenticate(Credentials)} instead
 	 * @param credentials
 	 */
+	/**
+	 * @deprecated does not seem to be used any longer
+	 */
 	@Deprecated
 	void authenticate(AuthenticationCredentials credentials);
 
@@ -108,6 +110,9 @@ public interface InternalBugtrackerConnector {
 	 * @param credentials
 	 * @throws BugTrackerNoCredentialsException for null arguments
 	 * @throws BugTrackerRemoteException for else.
+	 */
+	/**
+	 * @deprecated does not seem to be used any longer
 	 */
 	@Deprecated
 	void checkCredentials(AuthenticationCredentials credentials) throws BugTrackerNoCredentialsException,

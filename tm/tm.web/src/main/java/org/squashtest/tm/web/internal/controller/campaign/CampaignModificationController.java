@@ -90,6 +90,8 @@ public class CampaignModificationController {
 	private static final String PLANNING_URL = "/planning";
 	private static final String NEW_DATE_ = ", new date : ";
 
+	private static final String CAMPAIGN = "campaign";
+
 	@Inject
 	private CampaignModificationService campaignModService;
 
@@ -169,7 +171,7 @@ public class CampaignModificationController {
 		boolean hasCUF = cufValueService.hasCustomFields(campaign);
 		DataTableModel attachments = attachmentHelper.findPagedAttachments(campaign);
 
-		model.addAttribute("campaign", campaign);
+		model.addAttribute(CAMPAIGN, campaign);
 		model.addAttribute("statistics", statistics);
 		model.addAttribute("hasCUF", hasCUF);
 		model.addAttribute("attachmentsModel", attachments);
@@ -454,7 +456,7 @@ public class CampaignModificationController {
 		CampaignStatisticsBundle bundle = campaignModService.gatherCampaignStatisticsBundle(campaignId);
 
 		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-campaign-dashboard");
-		mav.addObject("campaign", campaign);
+		mav.addObject(CAMPAIGN, campaign);
 		mav.addObject("dashboardModel", bundle);
 		mav.addObject("printmode", printmode);
 
@@ -532,7 +534,7 @@ public class CampaignModificationController {
 
 
 		// add them to the model
-		conf.setNodeType("campaign");
+		conf.setNodeType(CAMPAIGN);
 		conf.setRootPath(rootPath);
 		conf.setIdentity(identity);
 		conf.setCurrentModel(currentModel);

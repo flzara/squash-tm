@@ -56,7 +56,6 @@ public class BTProject implements Identifiable<BTProject>, RemoteProject {
 		this.id = id;
 		this.name = name;
 	}
-
 	public void setId(String id) {
 		this.id = id;
 	}

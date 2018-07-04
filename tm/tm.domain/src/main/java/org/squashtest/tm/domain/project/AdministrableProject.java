@@ -33,6 +33,10 @@ public class AdministrableProject {
 	private boolean deletable = false;
 	private boolean template = false;
 
+	public AdministrableProject(GenericProject project) {
+		this.project = project;
+	}
+
 	public boolean isDeletable() {
 		return deletable;
 	}
@@ -75,10 +79,6 @@ public class AdministrableProject {
 
 	public GenericProject getProject() {
 		return project;
-	}
-
-	public AdministrableProject(GenericProject project) {
-		this.project = project;
 	}
 
 	public boolean isTemplate() {

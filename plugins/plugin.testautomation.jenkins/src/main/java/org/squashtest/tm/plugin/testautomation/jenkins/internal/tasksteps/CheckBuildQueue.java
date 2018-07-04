@@ -29,7 +29,6 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.RequestExecu
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildProcessor;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildStep;
 
-
 public class CheckBuildQueue extends BuildStep<CheckBuildQueue> implements HttpBasedStep {
 
 	/* *** technically needed for the computation **** */
@@ -48,6 +47,11 @@ public class CheckBuildQueue extends BuildStep<CheckBuildQueue> implements HttpB
 
 	private boolean buildIsQueued = true;
 
+	//************* constructor ******************
+
+	public CheckBuildQueue(BuildProcessor processor) {
+		super(processor);
+	}
 
 	// ****** accessors ********** */
 
@@ -74,11 +78,6 @@ public class CheckBuildQueue extends BuildStep<CheckBuildQueue> implements HttpB
 	}
 
 
-	//************* constructor ******************
-
-	public CheckBuildQueue(BuildProcessor processor) {
-		super(processor);
-	}
 
 	// *************** code ******************** */
 

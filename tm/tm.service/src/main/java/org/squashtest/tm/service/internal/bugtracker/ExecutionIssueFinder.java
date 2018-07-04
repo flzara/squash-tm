@@ -99,16 +99,16 @@ class ExecutionIssueFinder implements IssueOwnershipFinder {
 	private BugTracker findBugTracker(Execution execution) {
 		return bugTrackerDao.findByExecution(execution);
 	}
-	
-	
+
+
 	private LocaleContext getLocaleContext() {
 		return LocaleContextHolder.getLocaleContext();
 	}
-	
+
 	private SecurityContext getSecurityContext(){
 		return SecurityContextHolder.getContext();
 	}
-	
+
 	private UserCredentialsCache getCredentialsCache(){
 		return credentialsProvider.getCache();
 	}

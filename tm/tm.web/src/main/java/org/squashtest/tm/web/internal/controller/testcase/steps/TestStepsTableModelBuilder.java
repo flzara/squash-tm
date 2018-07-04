@@ -46,6 +46,7 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 	 *
 	 */
 	private static final int DEFAULT_MAP_CAPACITY = 16;
+	private static final String STEP_ID = "step-id";
 
 	private Map<Long, Map<String, CustomFieldValueTableModel>> customFieldValuesById;
 
@@ -73,7 +74,7 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 
 		Map<Object, Object> item = new HashMap<>(11);
 
-		item.put("step-id", visited.getId());
+		item.put(STEP_ID, visited.getId());
 		item.put("step-index", getCurrentIndex());
 		item.put("attach-list-id", visited.getAttachmentList().getId());
 		item.put("step-action", HTMLCleanupUtils.cleanHtml(visited.getAction()));
@@ -97,7 +98,7 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 	public void visit(CallTestStep visited) {
 		Map<Object, Object> item = new HashMap<>(11);
 
-		item.put("step-id", visited.getId());
+		item.put(STEP_ID, visited.getId());
 		item.put("step-index", getCurrentIndex());
 		item.put("attach-list-id", null);
 		item.put("step-action", null);
@@ -118,7 +119,7 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 	}
 
 	private void appendCustomFields(Map<Object, Object> item) {
-		Map<String, CustomFieldValueTableModel> cufValues = getCustomFieldsFor((Long) item.get("step-id"));
+		Map<String, CustomFieldValueTableModel> cufValues = getCustomFieldsFor((Long) item.get(STEP_ID));
 		item.put("customFields", cufValues);
 
 	}
@@ -149,6 +150,27 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 
 		private Long id;
 
+		public CustomFieldValueTableModel() {
+			super();
+		}
+
+		private CustomFieldValueTableModel(CustomFieldValue value) {
+			this.id = value.getId();
+
+			if (MultiValuedCustomFieldValue.class.isAssignableFrom(value.getClass())) {
+				List<String> escapedValues = new ArrayList<>();
+				List<String> rawValues = ((MultiValuedCustomFieldValue) value).getValues();
+				if(rawValues!=null)
+					for(String string : rawValues){
+						escapedValues.add(HTMLCleanupUtils.cleanHtml(string));
+					}
+				this.values = escapedValues;
+			} else if (NumericCustomFieldValue.class.isAssignableFrom(value.getClass())) {
+				this.value = NumericCufHelper.formatOutputNumericCufValue(value.getValue());
+			} else {
+				this.value = HTMLCleanupUtils.cleanHtml(value.getValue());
+			}
+		}
 
 		public Object getValue() {
 			return value != null ? value : values;
@@ -172,36 +194,15 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 			this.id = id;
 		}
 
-		public CustomFieldValueTableModel() {
-			super();
-		}
 
 		public Date getValueAsDate() {
 			try {
 				return DateUtils.parseIso8601Date(value);
 			} catch (ParseException | ClassCastException e) {
-				LOGGER.debug("Unable to parse date {} of custom field #{}", value, id);
+				LOGGER.debug("Unable to parse date {} of custom field #{}", value, id, e);
 			}
 
 			return null;
-		}
-
-		private CustomFieldValueTableModel(CustomFieldValue value) {
-			this.id = value.getId();
-
-			if (MultiValuedCustomFieldValue.class.isAssignableFrom(value.getClass())) {
-				List<String> escapedValues = new ArrayList<>();
-				List<String> rawValues = ((MultiValuedCustomFieldValue) value).getValues();
-				if(rawValues!=null)
-				for(String string : rawValues){
-					escapedValues.add(HTMLCleanupUtils.cleanHtml(string));
-				}
-				this.values = escapedValues;
-			} else if (NumericCustomFieldValue.class.isAssignableFrom(value.getClass())) {
-				this.value = NumericCufHelper.formatOutputNumericCufValue(value.getValue());
-			} else {
-				this.value = HTMLCleanupUtils.cleanHtml(value.getValue());
-			}
 		}
 
 	}

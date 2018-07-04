@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-
 public class GraphNode<IDENT, T extends GraphNode<IDENT, T>>{
 
 	protected IDENT key;

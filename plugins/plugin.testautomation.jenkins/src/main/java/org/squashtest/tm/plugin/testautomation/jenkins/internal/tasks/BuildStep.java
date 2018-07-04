@@ -29,6 +29,11 @@ public abstract class BuildStep<S extends BuildStep<S>> implements Runnable {
 
 	private Collection<StepEventListener<S>> eventListeners;
 
+	public BuildStep(BuildProcessor processor) {
+		super();
+		this.buildProcessor = processor;
+	}
+
 	public void addListener(StepEventListener<S> newListener) {
 		if (eventListeners == null) {
 			eventListeners = new LinkedList<>();
@@ -37,11 +42,6 @@ public abstract class BuildStep<S extends BuildStep<S>> implements Runnable {
 	}
 
 	public void setBuildProcessor(BuildProcessor processor) {
-		this.buildProcessor = processor;
-	}
-
-	public BuildStep(BuildProcessor processor) {
-		super();
 		this.buildProcessor = processor;
 	}
 

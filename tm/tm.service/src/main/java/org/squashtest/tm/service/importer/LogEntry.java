@@ -22,7 +22,6 @@ package org.squashtest.tm.service.importer;
 
 import javax.validation.constraints.NotNull;
 import java.util.Arrays;
-import java.util.Objects;
 
 public class LogEntry implements Comparable<LogEntry> {
 	private Integer line;
@@ -34,6 +33,22 @@ public class LogEntry implements Comparable<LogEntry> {
 
 	private Object[] errorArgs;
 	private Object[] impactArgs;
+
+	public LogEntry(Target target, ImportStatus status, String i18nError) {
+		super();
+		this.target = target;
+		this.status = status;
+		this.i18nError = i18nError;
+	}
+
+	/**
+	 * @deprecated use builder api
+	 */
+	@Deprecated
+	public LogEntry(Target target, ImportStatus status, String i18nError, Object[] errorArgs) {
+		this(target, status, i18nError);
+		setErrorArgsPrivately(errorArgs);
+	}
 
 	public static final class Builder {
 		private final LogEntry product;
@@ -91,21 +106,7 @@ public class LogEntry implements Comparable<LogEntry> {
 		return new Builder(status);
 	}
 
-	public LogEntry(Target target, ImportStatus status, String i18nError) {
-		super();
-		this.target = target;
-		this.status = status;
-		this.i18nError = i18nError;
-	}
 
-	/**
-	 * @deprecated use builder api
-	 */
-	@Deprecated
-	public LogEntry(Target target, ImportStatus status, String i18nError, Object[] errorArgs) {
-		this(target, status, i18nError);
-		setErrorArgsPrivately(errorArgs);
-	}
 
 	public Object[] getErrorArgs() {
 		return errorArgs;
@@ -161,14 +162,24 @@ public class LogEntry implements Comparable<LogEntry> {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+		if (this == o){
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()){
+			return false;
+		}
 
 		LogEntry logEntry = (LogEntry) o;
 
-		if (!line.equals(logEntry.line)) return false;
-		if (status != logEntry.status) return false;
-		if (!i18nError.equals(logEntry.i18nError)) return false;
+		if (!line.equals(logEntry.line)){
+			return false;
+		}
+		if (status != logEntry.status){
+			return false;
+		}
+		if (!i18nError.equals(logEntry.i18nError)){
+			return false;
+		}
 		return Arrays.deepEquals(errorArgs, logEntry.errorArgs);
 	}
 

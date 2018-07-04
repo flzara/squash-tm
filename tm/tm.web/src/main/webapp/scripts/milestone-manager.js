@@ -220,7 +220,6 @@ require(["common"], function(){
 			var ids = ( !! id) ? [id] : id ;
 			var url = squashtm.app.contextRoot+'/administration/milestones/'+ ids.join(",");
 			var table = $table();
-			//var selectedRow = table.getRowsByIds(ids);
 
 			$.ajax({
 				url : url,

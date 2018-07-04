@@ -36,6 +36,10 @@ import org.squashtest.tm.bugtracker.definition.RemoteVersion;
 
 public class OslcIssue implements RemoteIssue {
 
+	private static final String SUMMARY = "summary";
+	private static final String DESCRIPTION = "description";
+	private static final String COMMENT = "comment";
+
 	//maps a fieldId to a FieldValue
 	private Map<String, FieldValue> fieldValues = new HashMap<>();
 
@@ -44,14 +48,6 @@ public class OslcIssue implements RemoteIssue {
 	private String id;
 
 	private String btName;
-
-	public URL getUrl() {
-		return url;
-	}
-
-	public void setUrl(URL url) {
-		this.url = url;
-	}
 
 	private URL url;
 	//the name of the fields scheme currently used, see AdvancedProject#schemes
@@ -94,15 +90,22 @@ public class OslcIssue implements RemoteIssue {
 			id.matches("^\\s*$");
 	}
 
+	public URL getUrl() {
+		return url;
+	}
+
+	public void setUrl(URL url) {
+		this.url = url;
+	}
 
 	@Override
 	public String getSummary() {
-		return findFieldValueName("summary");
+		return findFieldValueName(SUMMARY);
 	}
 
 	public void setSummary(String summary) {
-		if (isFieldNotSet("summary")) {
-			addGenericFieldValue("summary", summary);
+		if (isFieldNotSet(SUMMARY)) {
+			addGenericFieldValue(SUMMARY, summary);
 		}
 	}
 
@@ -120,25 +123,25 @@ public class OslcIssue implements RemoteIssue {
 
 	@Override
 	public String getDescription() {
-		return findFieldValueName("description");
+		return findFieldValueName(DESCRIPTION);
 	}
 
 	@Override
 	public void setDescription(String description) {
-		if (isFieldNotSet("description")) {
-			addGenericFieldValue("description", description);
+		if (isFieldNotSet(DESCRIPTION)) {
+			addGenericFieldValue(DESCRIPTION, description);
 		}
 	}
 
 	@Override
 	public String getComment() {
-		return findFieldValueName("comment");
+		return findFieldValueName(COMMENT);
 	}
 
 	@Override
 	public void setComment(String comment) {
-		if (isFieldNotSet("comment")) {
-			addGenericFieldValue("comment", comment);
+		if (isFieldNotSet(COMMENT)) {
+			addGenericFieldValue(COMMENT, comment);
 		}
 	}
 

@@ -21,6 +21,6 @@
 package org.squashtest.tm.domain.tree;
 
 
-public abstract class GenericTreeLibraryNode implements TreeLibraryNode{
+public interface GenericTreeLibraryNode extends TreeLibraryNode{
 
 }

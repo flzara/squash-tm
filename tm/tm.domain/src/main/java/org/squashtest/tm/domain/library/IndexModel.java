@@ -31,10 +31,6 @@ public class IndexModel {
 	private String testcaseIndexVersion;
 	private String campaignIndexVersion;
 	private String currentSquashVersion;
-	
-	public IndexModel(){
-		
-	}
 
 	public Date getRequirementIndexDate() {
 		return requirementIndexDate;
@@ -91,5 +87,5 @@ public class IndexModel {
 	public void setCurrentSquashVersion(String currentSquashVersion) {
 		this.currentSquashVersion = currentSquashVersion;
 	}
-	
+
 }

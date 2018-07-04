@@ -25,11 +25,12 @@ public class AdvancedSearchTextFieldModel implements AdvancedSearchFieldModel{
 	private AdvancedSearchFieldModelType type = AdvancedSearchFieldModelType.TEXT;
 
 	private String value;
-	
+
 	private boolean ignoreBridge = false;
-	
-	public String getValue() {
-		return value;
+
+	@Override
+	public boolean isIgnoreBridge() {
+		return this.ignoreBridge;
 	}
 
 	@Override
@@ -40,9 +41,8 @@ public class AdvancedSearchTextFieldModel implements AdvancedSearchFieldModel{
 	public void setValue(String value) {
 		this.value = value;
 	}
-	
-	@Override
-	public boolean isIgnoreBridge() {
-		return this.ignoreBridge;
+
+	public String getValue() {
+		return value;
 	}
 }

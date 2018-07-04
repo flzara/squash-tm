@@ -56,7 +56,6 @@ public class Status implements Identifiable<Status>, RemoteStatus {
 		return this.id.equals(NO_STATUS.id);
 	}
 
-
 	public void setId(String id) {
 		this.id = id;
 	}
@@ -68,7 +67,7 @@ public class Status implements Identifiable<Status>, RemoteStatus {
 
 	/** exists for the purpose of being javabean compliant */
 	public void setDummy(Boolean dummy){
-
+		// NOOP
 	}
 
 }

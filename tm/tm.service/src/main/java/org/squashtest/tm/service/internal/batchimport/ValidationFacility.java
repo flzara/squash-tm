@@ -330,7 +330,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		LogTrain logs;
 
 		// 1 - basic checks
-		logs = entityValidator.basicTestStepChecks(target, testStep);
+		logs = entityValidator.basicTestStepChecks(target);
 
 		// 2 - custom fields (create)
 		logs.append(cufValidator.checkCreateCustomFields(target, cufValues, model.getTestStepCufs(target)));
@@ -382,10 +382,10 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		LogTrain logs;
 
 		// 1 - basic checks
-		logs = entityValidator.basicTestStepChecks(target, testStep);
+		logs = entityValidator.basicTestStepChecks(target);
 
 		// 2 - call step specific checks
-		logs.append(entityValidator.validateCallStep(target, testStep, calledTestCase, paramInfo, ImportMode.CREATE));
+		logs.append(entityValidator.validateCallStep(target, calledTestCase, paramInfo, ImportMode.CREATE));
 
 		// 3 - cufs : call steps have no cufs -> skip
 
@@ -473,7 +473,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		logs = entityValidator.basicTestStepChecks(target);
 
 		// 2 - call step specific checks
-		logs.append(entityValidator.validateCallStep(target, testStep, calledTestCase, paramInfos, ImportMode.UPDATE));
+		logs.append(entityValidator.validateCallStep(target, calledTestCase, paramInfos, ImportMode.UPDATE));
 
 		// 3 - cufs : call steps have no cufs -> skip
 
@@ -1379,14 +1379,14 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 
 		// cannot link a requirement to itself
-		if (!logs.hasCriticalErrors()) {
-			if (linkTarget.getSourceVersion().equals(linkTarget.getDestVersion())) {
-				logs.addEntry(LogEntry
-					.failure()
-					.forTarget(linkTarget)
-					.withMessage(Messages.ERROR_REQ_LINK_SAME_VERSION)
-					.build());
-			}
+		if (!logs.hasCriticalErrors() && linkTarget.getSourceVersion().equals(linkTarget.getDestVersion())) {
+
+			logs.addEntry(LogEntry
+				.failure()
+				.forTarget(linkTarget)
+				.withMessage(Messages.ERROR_REQ_LINK_SAME_VERSION)
+				.build());
+
 		}
 		return logs;
 	}

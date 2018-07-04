@@ -71,7 +71,7 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 		@Override
 		public void visit(Requirement requirement) {
 
-			// supposed not to be null;
+			// supposed not to be null
 			RequirementVersion version = milestoneFilter == null ? requirement.getCurrentVersion() : requirement.findByMilestone(milestoneFilter);
 
 			//version can be null if it not in the current milestone but on of his child is.
@@ -117,17 +117,17 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 
 	}
 
+	@Inject
+	public RequirementLibraryTreeNodeBuilder(PermissionEvaluationService permissionEvaluationService) {
+		super(permissionEvaluationService);
+	}
+
 	private int totalMilestones(Requirement requirement) {
 		int count = 0;
 		for (RequirementVersion v : requirement.getRequirementVersions()) {
 			count += v.getMilestones().size();
 		}
 		return count;
-	}
-
-	@Inject
-	public RequirementLibraryTreeNodeBuilder(PermissionEvaluationService permissionEvaluationService) {
-		super(permissionEvaluationService);
 	}
 
 	@Override

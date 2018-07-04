@@ -31,16 +31,13 @@ import java.util.Map;
 public class RequirementCoverageStat {
 
 	/**
-	 * Used to mark if the perimeter(persisted in localstorage of each user) is referencing a suppressed Campaign or Iteration. 
+	 * Used to mark if the perimeter(persisted in localstorage of each user) is referencing a suppressed Campaign or Iteration.
 	 */
 	private boolean corruptedPerimeter = false;
-	
-	private boolean ancestor = false;
-	
-	private Map<String,Rate> rates = new HashMap<>();
 
-	public RequirementCoverageStat() {
-	}
+	private boolean ancestor = false;
+
+	private Map<String,Rate> rates = new HashMap<>();
 
 	public boolean isAncestor() {
 		return ancestor;
@@ -64,7 +61,7 @@ public class RequirementCoverageStat {
 		private double requirementVersionRate;
 		private double requirementVersionChildrenRate;
 		private double requirementVersionGlobalRate;
-		
+
 		public Rate() {
 			// TODO Auto-generated constructor stub
 		}
@@ -101,13 +98,13 @@ public class RequirementCoverageStat {
 		public void setRequirementVersionGlobalRate(double requirementVersionGlobalRate) {
 			this.requirementVersionGlobalRate = requirementVersionGlobalRate;
 		}
-		
+
 		public void convertToPercent(){
 			this.requirementVersionRate = convertOneRateToPercent(requirementVersionRate);
 			this.requirementVersionChildrenRate = convertOneRateToPercent(requirementVersionChildrenRate);
 			this.requirementVersionGlobalRate = convertOneRateToPercent(requirementVersionGlobalRate);
 		}
-		
+
 		private double convertOneRateToPercent(double rate){
 			return Math.round(rate * 100);
 		};
@@ -116,7 +113,7 @@ public class RequirementCoverageStat {
 	public void addRate(String key, Rate coverageRate) {
 		rates.put(key, coverageRate);
 	}
-	
+
 	public void convertRatesToPercent(){
 		for (Rate rate : rates.values()) {
 			rate.convertToPercent();

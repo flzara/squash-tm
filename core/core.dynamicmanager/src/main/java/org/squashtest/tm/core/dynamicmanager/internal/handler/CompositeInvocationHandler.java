@@ -28,6 +28,8 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.squashtest.tm.core.dynamicmanager.exception.UnsupportedMethodException;
 
 /**
@@ -39,6 +41,11 @@ import org.squashtest.tm.core.dynamicmanager.exception.UnsupportedMethodExceptio
  *
  */
 public class CompositeInvocationHandler implements InvocationHandler {
+	private static final Logger LOGGER = LoggerFactory.getLogger(CompositeInvocationHandler.class);
+
+	private final List<DynamicComponentInvocationHandler> invocationHandlers;
+
+
 	/**
 	 * @param invocationHandlers
 	 */
@@ -47,7 +54,6 @@ public class CompositeInvocationHandler implements InvocationHandler {
 		this.invocationHandlers = new ArrayList<>(invocationHandlers);
 	}
 
-	private final List<DynamicComponentInvocationHandler> invocationHandlers;
 
 	/**
 	 * Delegates to the first item of {@link #invocationHandlers} able to handle the invocation.
@@ -60,6 +66,7 @@ public class CompositeInvocationHandler implements InvocationHandler {
 			return doInvoke(proxy, method, args);
 
 		} catch (InvocationTargetException ex) {
+			LOGGER.error(ex.getMessage(), ex);
 			throw ex.getTargetException();
 			// otherwise, checked ITE will be wrapped into UndeclaredThrowableException
 
@@ -77,7 +84,7 @@ public class CompositeInvocationHandler implements InvocationHandler {
 			}
 		}
 
-		throw new UnsupportedMethodException(method, args);
+		throw new UnsupportedMethodException(method);
 	}
 
 	private Object proxyEquals(Object thisProxy, Object thatProxy) {

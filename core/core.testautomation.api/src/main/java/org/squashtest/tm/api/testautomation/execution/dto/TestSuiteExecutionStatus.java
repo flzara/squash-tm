@@ -25,9 +25,9 @@ import java.util.Date;
 
 /**
  * This class encapsulates test suite execution status updates.
- * 
+ *
  * @author edegenetais
- * 
+ *
  */
 public class TestSuiteExecutionStatus implements Serializable {
         /**

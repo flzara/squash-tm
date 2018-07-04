@@ -162,7 +162,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 		FullTextEntityManager ftSession = Search.getFullTextEntityManager(entityManager);
 
 
-		Query luceneQuery = searchForRequirementVersionQuery(model, ftSession, locale);
+		Query luceneQuery = searchForRequirementVersionQuery(model, ftSession);
 
 		List<RequirementVersion> result = Collections.emptyList();
 		int countAll = 0;
@@ -183,7 +183,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 		return new PagingBackedPagedCollectionHolder<>(sorting, countAll, result);
 	}
 
-	protected Query searchForRequirementVersionQuery(AdvancedSearchModel model, FullTextEntityManager ftem, Locale locale) {
+	protected Query searchForRequirementVersionQuery(AdvancedSearchModel model, FullTextEntityManager ftem) {
 		QueryBuilder qb = ftem.getSearchFactory().buildQueryBuilder().forEntity(RequirementVersion.class).get();
 		/* Creating a copy of the model to keep a model with milestones criteria */
 		AdvancedSearchModel modelCopy = model.shallowCopy();
@@ -194,39 +194,22 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 		Query luceneQuery = buildCoreLuceneQuery(qb, model);
 		/* If requested, add milestones criteria with the copied model */
 		if(shouldSearchByMilestones(modelCopy)) {
-			luceneQuery = addAggregatedMilestonesCriteria(luceneQuery, qb, modelCopy, locale);
+			luceneQuery = addAggregatedMilestonesCriteria(luceneQuery, qb, modelCopy);
 		}
 		return luceneQuery;
 	}
 
-	public Query addAggregatedMilestonesCriteria(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy, Locale locale) {
+	public Query addAggregatedMilestonesCriteria(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy) {
 
-		addMilestoneFilter(modelCopy);
 
 		/* Find the milestones ids. */
-		List<String> strMilestoneIds =
-				((AdvancedSearchListFieldModel) modelCopy.getFields().get("milestones.id")).getValues();
-		List<Long> milestoneIds = new ArrayList<>(strMilestoneIds.size());
-		for (String str : strMilestoneIds) {
-			milestoneIds.add(Long.valueOf(str));
-		}
+		List<Long> milestoneIds = findMilestonesIds(modelCopy);
 
 		/* Find the RequirementVersions ids. */
 		List<Long> lReqVerIds = requirementVersionDao.findAllForMilestones(milestoneIds);
-		List<String> itpiIds = new ArrayList<>(lReqVerIds.size());
-		for(Long l : lReqVerIds) {
-			itpiIds.add(l.toString());
-		}
 
-		/* Fake Id to find no result via Lucene if no Requirement Version found */
-		if(itpiIds.isEmpty()) {
-			itpiIds.add(FAKE_REQUIREMENT_VERSION_ID);
-		}
-
-		/* Add Criteria to restrict Requirement Versions ids */
-		Query idQuery = buildLuceneValueInListQuery(qb, "id", itpiIds, false);
-
-		return qb.bool().must(mainQuery).must(idQuery).createQuery();
+		/* Create the query. */
+		return fakeIdToFindNoResultViaLuceneForCreatingQuery(lReqVerIds,  qb,  mainQuery,  FAKE_REQUIREMENT_VERSION_ID);
 	}
 
 

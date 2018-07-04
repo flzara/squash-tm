@@ -324,17 +324,21 @@ public class ReportController {
 		for (Input input : report.getForm()) {
 			if (input.getType() == InputType.RADIO_BUTTONS_GROUP) {
 				RadioButtonsGroup container = (RadioButtonsGroup) input;
-				for (OptionInput opt : container.getOptions()) {
-					if (opt instanceof TagPickerOption) {
-						String entityType = ((TagPickerOption) opt).getPickerBoundEntity();
-						List<String> availableTags = getPossibleTagValues(entityType);
-						if (availableTags.isEmpty()) {
-							availableTags = null;
-						}
-						model.addAttribute("availableTags", availableTags);
-						return;    // OOOOh !
-					}
+				fillAvailableTags( container, model);
+			}
+		}
+	}
+
+	private void fillAvailableTags(RadioButtonsGroup container,Model model){
+		for (OptionInput opt : container.getOptions()) {
+			if (opt instanceof TagPickerOption) {
+				String entityType = ((TagPickerOption) opt).getPickerBoundEntity();
+				List<String> availableTags = getPossibleTagValues(entityType);
+				if (availableTags.isEmpty()) {
+					availableTags = null;
 				}
+				model.addAttribute("availableTags", availableTags);
+				return;    // OOOOh !
 			}
 		}
 	}

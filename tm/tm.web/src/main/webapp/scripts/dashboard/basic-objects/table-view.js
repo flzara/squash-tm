@@ -19,58 +19,58 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
- * This is your plain table. When its model is updated, will render again. Note that 
- * it must be subclassed and implement getData. 
- * 
+ * This is your plain table. When its model is updated, will render again. Note that
+ * it must be subclassed and implement getData.
+ *
  * DOM configuration :
- * 
+ *
  * 1/ on the <table> tag :
- * use the usual 'data-def' attributes : 
+ * use the usual 'data-def' attributes :
  * - model-attribute : (optional) If set, will consider only this attribute of the model and not the whole model.
- * 
+ *
  * 2/ on the <tbody>
- * 
+ *
  * one can define sereval rows here, that will be interpreted as templates.
- * - <tr class="dashboard-table-template-emptyrow"> : 
- *  that row will be used when there are no data to display. 
- *  Default  : empty row 
- *  
- * <tr class="dashboard-table-template-datarow"> : 
- *  this is a handlebar template, which context will be a row data (an array). Useful if you want custom css for your tds. 
+ * - <tr class="dashboard-table-template-emptyrow"> :
+ *  that row will be used when there are no data to display.
+ *  Default  : empty row
+ *
+ * <tr class="dashboard-table-template-datarow"> :
+ *  this is a handlebar template, which context will be a row data (an array). Useful if you want custom css for your tds.
  *  Default : will generate rows and tds that work, with no css.
- * 
+ *
  */
 
-define(["jquery", "backbone", "squash.attributeparser", "handlebars"], 
+define(["jquery", "backbone", "squash.attributeparser", "handlebars"],
 		function($, Backbone, attrparser, Handlebars){
-	
-	
+
+
 	return Backbone.View.extend({
-		
+
 		DEFAULT_DATAROW : "<tr> {{#each this}}<td>{{this}}</td>{{/each}} </tr>" ,
 
-		
+
 		getData : function(){
 			throw "must be override. Must return [][] (array of array).";
 		},
-		
+
 		initialize : function(){
 			this._readDOM();
 			this.render();
 			this._bindEvents();
 		},
-		
+
 		render : function(){
-			
+
 			if (! this.model.isAvailable()){
 				return;
 			}
-			
+
 			var body = this.$el.find('tbody');
 			body.empty();
-			
+
 			var data = this.getData();
-			
+
 			if (data.length===0){
 				body.append(this.emptyrowTemplate.clone());
 			}
@@ -81,40 +81,39 @@ define(["jquery", "backbone", "squash.attributeparser", "handlebars"],
 					var r = this.datarowTemplate(data[i]);
 					body.append(r);
 				}
-				
+
 			}
 		},
-		
+
 		_readDOM : function(){
 			var body = this.$el.find('tbody');
-			
+
 			// empty row template
 			var emptyrow = body.find('tr.dashboard-table-template-emptyrow');
 			this.emptyrowTemplate = (emptyrow.length>0) ? emptyrow : $('<tr></tr>');
 
 			// data row template
 			var datarow = body.find("tr.dashboard-table-template-datarow");
-			var dtrtpl = (datarow.length>0) ? "<tr>"+datarow.html()+"</tr>" : this.DEFAULT_DATAROW;		
-				
+			var dtrtpl = (datarow.length>0) ? "<tr>"+datarow.html()+"</tr>" : this.DEFAULT_DATAROW;
+
 			this.datarowTemplate = Handlebars.compile(dtrtpl);
-			
+
 			var strconf = this.$el.data('def');
 			var conf = attrparser.parse(strconf);
 			if (conf['model-attribute']!==undefined){
 				this.modelAttribute = conf['model-attribute'];
 			}
 		},
-		
+
 		_bindEvents : function(){
-			var self = this;
 			var modelchangeevt = "change";
 			if (this.modelAttribute!==undefined){
 				modelchangeevt+=":"+this.modelAttribute;
 			}
 			this.listenTo(this.model, modelchangeevt, this.render);
 		}
-		
+
 	});
-	
-	
+
+
 });

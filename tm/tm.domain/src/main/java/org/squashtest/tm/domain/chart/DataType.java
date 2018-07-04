@@ -44,6 +44,7 @@ import static org.squashtest.tm.domain.chart.Operation.SUM;
 
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.Set;
 
 public enum DataType {
 
@@ -69,7 +70,7 @@ public enum DataType {
 	}
 
 
-	public EnumSet<Operation> getOperations() {
+	public Set<Operation> getOperations() {
 		return EnumSet.copyOf(operations);
 	}
 

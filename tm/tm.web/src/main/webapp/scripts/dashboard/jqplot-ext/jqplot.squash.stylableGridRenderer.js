@@ -95,242 +95,239 @@ define([ "jquery", "jqplot-core" ], function($) {
 						bopts.strokeStyle = axis.baselineColor;
 					}
 					switch (name) {
-					case 'xaxis':
-					case 'x2axis':
-						drawLine(this._left, this._bottom, this._right, this._bottom, bopts);
-						break;
-					case 'yaxis':
-						drawLine(this._left, this._bottom, this._left, this._top, bopts);
-						break;
-					case 'y2axis':
-						drawLine(this._right, this._bottom, this._right, this._top, bopts);
-						break;
+						case 'xaxis':
+						case 'x2axis':
+							drawLine(this._left, this._bottom, this._right, this._bottom, bopts);
+							break;
+						case 'yaxis':
+							drawLine(this._left, this._bottom, this._left, this._top, bopts);
+							break;
+						case 'y2axis':
+							drawLine(this._right, this._bottom, this._right, this._top, bopts);
+							break;
 					}
 				}
-				for ( j = numticks; j > 0; j--) {
+				for (j = numticks; j > 0; j--) {
 					t = ticks[j - 1];
 					if (t.show) {
 						pos = Math.round(axis.u2p(t.value)) + 0.5;
 						switch (name) {
-						case 'xaxis':
-							// draw the grid line if we should
-							if (t.showGridline &&
+							case 'xaxis':
+								// draw the grid line if we should
+								if (t.showGridline &&
 									this.drawGridlines &&
 									((!t.isMinorTick && axis.drawMajorGridlines) || (t.isMinorTick && axis.drawMinorGridlines))) {
-								overrideCtx(ctx, t.gridStyle);
-								drawLine(pos, this._top, pos, this._bottom);
-								unoverrideCtx(ctx);
-							}
-							// draw the mark
-							if (t.showMark &&
+									overrideCtx(ctx, t.gridStyle);
+									drawLine(pos, this._top, pos, this._bottom);
+									unoverrideCtx(ctx);
+								}
+								// draw the mark
+								if (t.showMark &&
 									t.mark &&
 									((!t.isMinorTick && axis.drawMajorTickMarks) || (t.isMinorTick && axis.drawMinorTickMarks))) {
-								s = t.markSize;
-								m = t.mark;
-								pos = Math.round(axis.u2p(t.value)) + 0.5;
-								switch (m) {
-								case 'outside':
-									b = this._bottom;
-									e = this._bottom + s;
-									break;
-								case 'inside':
-									b = this._bottom - s;
-									e = this._bottom;
-									break;
-								case 'cross':
-									b = this._bottom - s;
-									e = this._bottom + s;
-									break;
-								default:
-									b = this._bottom;
-									e = this._bottom + s;
-									break;
+									s = t.markSize;
+									m = t.mark;
+									pos = Math.round(axis.u2p(t.value)) + 0.5;
+									switch (m) {
+										case 'outside':
+											b = this._bottom;
+											e = this._bottom + s;
+											break;
+										case 'inside':
+											b = this._bottom - s;
+											e = this._bottom;
+											break;
+										case 'cross':
+											b = this._bottom - s;
+											e = this._bottom + s;
+											break;
+										default:
+											b = this._bottom;
+											e = this._bottom + s;
+											break;
+									}
+									// draw the shadow
+									if (this.shadow) {
+										this.renderer.shadowRenderer.draw(ctx, [[pos, b], [pos, e]], {
+											lineCap: 'butt',
+											lineWidth: this.gridLineWidth,
+											offset: this.gridLineWidth * 0.75,
+											depth: 2,
+											fill: false,
+											closePath: false
+										});
+									}
+									// draw the line
+									overrideCtx(ctx, t.markStyle);
+									drawLine(pos, b, pos, e);
+									unoverrideCtx(ctx);
 								}
-								// draw the shadow
-								if (this.shadow) {
-									this.renderer.shadowRenderer.draw(ctx, [ [ pos, b ], [ pos, e ] ], {
-										lineCap : 'butt',
-										lineWidth : this.gridLineWidth,
-										offset : this.gridLineWidth * 0.75,
-										depth : 2,
-										fill : false,
-										closePath : false
-									});
-								}
-								// draw the line
-								overrideCtx(ctx, t.markStyle);
-								drawLine(pos, b, pos, e);
-								unoverrideCtx(ctx);
-							}
-							break;
+								break;
 
-						case 'yaxis':
+							case 'yaxis':
 
-							// draw the grid line
-							if (t.showGridline &&
+								// draw the grid line
+								if (t.showGridline &&
 									this.drawGridlines &&
 									((!t.isMinorTick && axis.drawMajorGridlines) || (t.isMinorTick && axis.drawMinorGridlines))) {
-								overrideCtx(ctx, t.gridStyle);
-								drawLine(this._right, pos, this._left, pos);
-								unoverrideCtx(ctx);
-							}
+									overrideCtx(ctx, t.gridStyle);
+									drawLine(this._right, pos, this._left, pos);
+									unoverrideCtx(ctx);
+								}
 
-							// draw the mark
-							if (t.showMark &&
+								// draw the mark
+								if (t.showMark &&
 									t.mark &&
 									((!t.isMinorTick && axis.drawMajorTickMarks) || (t.isMinorTick && axis.drawMinorTickMarks))) {
-								s = t.markSize;
-								m = t.mark;
-								pos = Math.round(axis.u2p(t.value)) + 0.5;
-								switch (m) {
-								case 'outside':
-									b = this._left - s;
-									e = this._left;
-									break;
-								case 'inside':
-									b = this._left;
-									e = this._left + s;
-									break;
-								case 'cross':
-									b = this._left - s;
-									e = this._left + s;
-									break;
-								default:
-									b = this._left - s;
-									e = this._left;
-									break;
-								}
-								// draw the shadow
-								if (this.shadow) {
-									this.renderer.shadowRenderer.draw(ctx, [ [ b, pos ], [ e, pos ] ], {
-										lineCap : 'butt',
-										lineWidth : this.gridLineWidth * 1.5,
-										offset : this.gridLineWidth * 0.75,
-										fill : false,
-										closePath : false
+									s = t.markSize;
+									m = t.mark;
+									pos = Math.round(axis.u2p(t.value)) + 0.5;
+									switch (m) {
+										case 'outside':
+											b = this._left - s;
+											e = this._left;
+											break;
+										case 'inside':
+											b = this._left;
+											e = this._left + s;
+											break;
+										case 'cross':
+											b = this._left - s;
+											e = this._left + s;
+											break;
+										default:
+											b = this._left - s;
+											e = this._left;
+											break;
+									}
+									// draw the shadow
+									if (this.shadow) {
+										this.renderer.shadowRenderer.draw(ctx, [[b, pos], [e, pos]], {
+											lineCap: 'butt',
+											lineWidth: this.gridLineWidth * 1.5,
+											offset: this.gridLineWidth * 0.75,
+											fill: false,
+											closePath: false
+										});
+									}
+									overrideCtx(ctx, t.markStyle);
+									drawLine(b, pos, e, pos, {
+										strokeStyle: axis.borderColor
 									});
+									unoverrideCtx(ctx);
+
 								}
-								overrideCtx(ctx, t.markStyle);
-								drawLine(b, pos, e, pos, {
-									strokeStyle : axis.borderColor
-								});
-								unoverrideCtx(ctx);
+								break;
 
-							}
-							break;
+							case 'x2axis':
 
-						case 'x2axis':
-
-							// draw the grid line
-							if (t.showGridline &&
+								// draw the grid line
+								if (t.showGridline &&
 									this.drawGridlines &&
 									((!t.isMinorTick && axis.drawMajorGridlines) || (t.isMinorTick && axis.drawMinorGridlines))) {
-								overrideCtx(ctx, t.gridStyle);
-								drawLine(pos, this._bottom, pos, this._top);
-								unoverrideCtx(ctx);
-							}
-							// draw the mark
-							if (t.showMark &&
+									overrideCtx(ctx, t.gridStyle);
+									drawLine(pos, this._bottom, pos, this._top);
+									unoverrideCtx(ctx);
+								}
+								// draw the mark
+								if (t.showMark &&
 									t.mark &&
 									((!t.isMinorTick && axis.drawMajorTickMarks) || (t.isMinorTick && axis.drawMinorTickMarks))) {
-								s = t.markSize;
-								m = t.mark;
-								pos = Math.round(axis.u2p(t.value)) + 0.5;
-								switch (m) {
-								case 'outside':
-									b = this._top - s;
-									e = this._top;
-									break;
-								case 'inside':
-									b = this._top;
-									e = this._top + s;
-									break;
-								case 'cross':
-									b = this._top - s;
-									e = this._top + s;
-									break;
-								default:
-									b = this._top - s;
-									e = this._top;
-									break;
+									s = t.markSize;
+									m = t.mark;
+									pos = Math.round(axis.u2p(t.value)) + 0.5;
+									switch (m) {
+										case 'outside':
+											b = this._top - s;
+											e = this._top;
+											break;
+										case 'inside':
+											b = this._top;
+											e = this._top + s;
+											break;
+										case 'cross':
+											b = this._top - s;
+											e = this._top + s;
+											break;
+										default:
+											b = this._top - s;
+											e = this._top;
+											break;
+									}
+									// draw the shadow
+									if (this.shadow) {
+										this.renderer.shadowRenderer.draw(ctx, [[pos, b], [pos, e]], {
+											lineCap: 'butt',
+											lineWidth: this.gridLineWidth,
+											offset: this.gridLineWidth * 0.75,
+											depth: 2,
+											fill: false,
+											closePath: false
+										});
+									}
+									overrideCtx(ctx, t.markStyle);
+									drawLine(pos, b, pos, e);
+									unoverrideCtx(ctx);
 								}
-								// draw the shadow
-								if (this.shadow) {
-									this.renderer.shadowRenderer.draw(ctx, [ [ pos, b ], [ pos, e ] ], {
-										lineCap : 'butt',
-										lineWidth : this.gridLineWidth,
-										offset : this.gridLineWidth * 0.75,
-										depth : 2,
-										fill : false,
-										closePath : false
-									});
-								}
-								overrideCtx(ctx, t.markStyle);
-								drawLine(pos, b, pos, e);
-								unoverrideCtx(ctx);
-							}
-							break;
+								break;
 
-						case 'y2axis':
-							// draw the grid line
-							if (t.showGridline &&
+							case 'y2axis':
+								// draw the grid line
+								if (t.showGridline &&
 									this.drawGridlines &&
 									((!t.isMinorTick && axis.drawMajorGridlines) || (t.isMinorTick && axis.drawMinorGridlines))) {
-								overrideCtx(ctx, t.gridStyle);
-								drawLine(this._left, pos, this._right, pos);
-								unoverrideCtx(ctx);
-							}
-							// draw the mark
-							if (t.showMark &&
+									overrideCtx(ctx, t.gridStyle);
+									drawLine(this._left, pos, this._right, pos);
+									unoverrideCtx(ctx);
+								}
+								// draw the mark
+								if (t.showMark &&
 									t.mark &&
 									((!t.isMinorTick && axis.drawMajorTickMarks) || (t.isMinorTick && axis.drawMinorTickMarks))) {
-								s = t.markSize;
-								m = t.mark;
-								pos = Math.round(axis.u2p(t.value)) + 0.5;
-								switch (m) {
-								case 'outside':
-									b = this._right;
-									e = this._right + s;
-									break;
-								case 'inside':
-									b = this._right - s;
-									e = this._right;
-									break;
-								case 'cross':
-									b = this._right - s;
-									e = this._right + s;
-									break;
-								default:
-									b = this._right;
-									e = this._right + s;
-									break;
-								}
-								// draw the shadow
-								if (this.shadow) {
-									this.renderer.shadowRenderer.draw(ctx, [ [ b, pos ], [ e, pos ] ], {
-										lineCap : 'butt',
-										lineWidth : this.gridLineWidth * 1.5,
-										offset : this.gridLineWidth * 0.75,
-										fill : false,
-										closePath : false
+									s = t.markSize;
+									m = t.mark;
+									pos = Math.round(axis.u2p(t.value)) + 0.5;
+									switch (m) {
+										case 'outside':
+											b = this._right;
+											e = this._right + s;
+											break;
+										case 'inside':
+											b = this._right - s;
+											e = this._right;
+											break;
+										case 'cross':
+											b = this._right - s;
+											e = this._right + s;
+											break;
+										default:
+											b = this._right;
+											e = this._right + s;
+											break;
+									}
+									// draw the shadow
+									if (this.shadow) {
+										this.renderer.shadowRenderer.draw(ctx, [[b, pos], [e, pos]], {
+											lineCap: 'butt',
+											lineWidth: this.gridLineWidth * 1.5,
+											offset: this.gridLineWidth * 0.75,
+											fill: false,
+											closePath: false
+										});
+									}
+									overrideCtx(ctx, t.markStyle);
+									drawLine(b, pos, e, pos, {
+										strokeStyle: axis.borderColor
 									});
+									unoverrideCtx(ctx);
 								}
-								overrideCtx(ctx, t.markStyle);
-								drawLine(b, pos, e, pos, {
-									strokeStyle : axis.borderColor
-								});
-								unoverrideCtx(ctx);
-							}
-							break;
-						default:
-							break;
+								break;
+							default:
+								break;
 						}
 					}
 				}
-				t = null;
 			}
-			axis = null;
-			ticks = null;
 		}
 		// Now draw grid lines for additional y axes
 		// ////
@@ -401,12 +398,8 @@ define([ "jquery", "jqplot-core" ], function($) {
 							strokeStyle : axis.borderColor
 						});
 					}
-					t = null;
 				}
-				t0 = null;
 			}
-			axis = null;
-			ticks = null;
 		}
 
 		ctx.restore();

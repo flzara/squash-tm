@@ -32,15 +32,15 @@ public interface CallStepManagerService {
 
 	/**
 	 * will add a call test step.
-	 * 
+	 *
 	 * @param parentTestCaseId that calls a step
 	 * @param calledTestCaseId being called
 	 */
 	void addCallTestStep(long parentTestCaseId, long calledTestCaseId);
-	
+
 	/**
 	 * will add a call test step, at the required index
-	 * 
+	 *
 	 * @param parentTestCaseId that calls a step
 	 * @param calledTestCaseId being called
 	 * @param index where call should be inserted
@@ -50,16 +50,16 @@ public interface CallStepManagerService {
 
 	/**
 	 * Will call a bunch of test cases. The call steps will be appended at the end of the test script.
-	 * 
+	 *
 	 * @param parentTestCaseId
 	 * @param calledTestCaseIds
 	 */
 	void addCallTestSteps(long parentTestCaseId, List<Long> calledTestCaseIds);
-	
-	
+
+
 	/**
 	 * Says how the given call step should handle the parameters of the called test case.
-	 * 
+	 *
 	 * @param callStepId
 	 * @param mode
 	 * @param datasetId, may be null if we choose mode.NOTHING, and must not be null if mode.CALLED_DATASET
@@ -69,16 +69,19 @@ public interface CallStepManagerService {
 	/**
 	 * Used to check if the destination test case id is found in the calling tree of the pasted steps
 	 * if so : a {@linkplain CyclicStepCallException} is thrown.
-	 * 
+	 *
 	 * @param testCaseId
 	 * @param copiedStepId
+	 */
+	/**
+	 * @deprecated does not seem to be used any longer
 	 */
 	@Deprecated
 	void checkForCyclicStepCallBeforePaste(long destinationTestCaseId, String[] pastedStepsIds);
 
 	/**
 	 * same as {@link #checkForCyclicStepCallBeforePaste(long, String[])} with a more comfortable signature
-	 * 
+	 *
 	 * @param destinationTestCaseId
 	 * @param pastedStepsIds
 	 */

@@ -47,7 +47,7 @@ import java.util.Map;
  *
  *
  * <p>
- *   an InputType also accepts metadata that will be transmitted to the Squash UI, as a map. These metadata should 
+ *   an InputType also accepts metadata that will be transmitted to the Squash UI, as a map. These metadata should
  * be stuffed in the attribute {@link #configuration}. Supported metadata are :
  *
  *   <ul>
@@ -59,11 +59,11 @@ import java.util.Map;
  *   			<li>{@link #DATE_PICKER} (use the standard java date format)</li>
  *   			<li>{@link #DATE_TIME} (use the standard java date format)</li>
  *   		</ul>
- *   	<li>{@link #ONCHANGE} : since 1.5.1. 
+ *   	<li>{@link #ONCHANGE} : since 1.5.1.
  *      If set, when the widget on the Squash UI changes its value, it will emit a {@link DelegateCommand} to the bugtracker connector. Not all widgets
  *      supports this, as of 1.5.1 and until further notice only text_field can do so.
- * 
- *   	Native squash widgets will emit a DelegateCommand, using the value you supplied for 'onchange' as command name and its {@link FieldValue#getName()} as argument. 
+ *
+ *   	Native squash widgets will emit a DelegateCommand, using the value you supplied for 'onchange' as command name and its {@link FieldValue#getName()} as argument.
  *      Customized widgets shipped with an extension can of course specify something else, it will be up to your connector to know how to interpret them.
  *   	This mechanism is used for instance by the text_fields for autocompletion.
  *   	</li>
@@ -188,7 +188,7 @@ public class InputType {
 	 * @return
 	 */
 	public static String formatName(String original){
-		return original.replaceAll("[^\\w-_.0-9]", "_");
+		return original.replaceAll(EXCLUDED_CHARACTERS, "_");
 	}
 
 }

@@ -22,6 +22,9 @@ package org.squashtest.tm.domain.testcase;
 
 import org.squashtest.tm.domain.Level;
 
+/**
+ * @deprecated does not seem to be used any longer
+ */
 @Deprecated
 public enum TestCaseType implements Level{
 

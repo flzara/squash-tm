@@ -233,7 +233,9 @@ define(['jquery', 'jquery.squash.oneshotdialog', "app/util/StringUtil",
 			this.panel.empty();
 
 			for (var i in modelData) {
-				appendItem(modelData[i]);
+				if (modelData.hasOwnProperty(i)) {
+					appendItem(modelData[i]);
+				}
 			}
 
 			sortSuiteList();

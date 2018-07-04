@@ -267,6 +267,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		parameterModificationService.createParamsForStep(testStepId);
 	}
 
+	/**
+	 * @deprecated does not seem to be used any longer
+	 */
 	@Override
 	@Deprecated
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)

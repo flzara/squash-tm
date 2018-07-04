@@ -46,6 +46,7 @@ import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.execution.ExecutionFinder;
+import org.squashtest.tm.service.internal.campaign.CampaignWorkspaceDisplayService;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.library.LibraryNavigationService;
@@ -360,29 +361,6 @@ public class CampaignLibraryNavigationController extends
 		}
 
 	}
-
-
-//	@ResponseBody
-//	private List<JsTreeNode> createCampaignIterationsModel(List<Iteration> iterations) {
-//		List<JsTreeNode> res = new ArrayList<>();
-//
-//		PermissionEvaluationService pev = new ShortCutPermissionEvaluator();
-//
-//		for (int i = 0; i < iterations.size(); i++) {
-//			Iteration iteration = iterations.get(i);
-//			res.add(createBatchedIterationTreeNode(iteration, i, pev));
-//		}
-//
-//		return res;
-//	}
-
-//	private List<JsTreeNode> createIterationTestSuitesModel(List<TestSuite> suites) {
-//		TestSuiteNodeBuilder nodeBuilder = suiteNodeBuilder.get();
-//		JsTreeNodeListBuilder<TestSuite> listBuilder = new JsTreeNodeListBuilder<>(nodeBuilder);
-//
-//		return listBuilder.setModel(suites).build();
-//
-//	}
 
 	@ResponseBody
 	private List<JsTreeNode> createCopiedIterationsModel(List<Iteration> newIterations, int nextIterationNumber) {

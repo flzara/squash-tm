@@ -45,13 +45,6 @@ public class BasicAuthenticationCredentials implements Credentials {
 	private String username = "";
 	private char[] password = new char[0];
 
-
-
-	@Override
-	public AuthenticationProtocol getImplementedProtocol() {
-		return AuthenticationProtocol.BASIC_AUTH;
-	}
-
 	public BasicAuthenticationCredentials() {
 		super();
 	}
@@ -75,6 +68,11 @@ public class BasicAuthenticationCredentials implements Credentials {
 		} else {
 			this.password = password.toCharArray();
 		}
+	}
+
+	@Override
+	public AuthenticationProtocol getImplementedProtocol() {
+		return AuthenticationProtocol.BASIC_AUTH;
 	}
 
 	public String getUsername() {
@@ -103,6 +101,5 @@ public class BasicAuthenticationCredentials implements Credentials {
 	public void wipePassword(){
 		//NOOP it make the bugtracker auto-connect loosing it's password...
 		//We must find another way to protect the password
-//		Arrays.fill(password, '\0');
 	}
 }

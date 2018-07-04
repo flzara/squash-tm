@@ -22,15 +22,15 @@ package org.squashtest.tm.web.internal.http;
 
 /**
  * Standard http request headers
- * 
+ *
  * @author Gregory Fouquet
  *
  */
 public final class RequestHeaders {
+
+	public static final String ACCEPT = "Accept";
+	public static final String USER_AGENT = "User-Agent";
 	private RequestHeaders() {
 		super();
 	}
-	public static final String ACCEPT = "Accept";
-	public static final String USER_AGENT = "User-Agent";
-
 }

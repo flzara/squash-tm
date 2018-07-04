@@ -25,9 +25,14 @@ import org.squashtest.tm.api.report.form.InputType;
 
 /**
  * @author Gregory
- * 
+ *
  */
 public final class EmptyCriteria extends CriteriaBase implements Criteria {
+
+	protected EmptyCriteria(String name, InputType sourceInput) {
+		super(name, sourceInput);
+	}
+
 	public static Criteria createEmptyCriteria(String name, InputType sourceInput) {
 		return new EmptyCriteria(name, sourceInput);
 	}
@@ -36,9 +41,6 @@ public final class EmptyCriteria extends CriteriaBase implements Criteria {
 	 * @param name
 	 * @param sourceInput
 	 */
-	protected EmptyCriteria(String name, InputType sourceInput) {
-		super(name, sourceInput);
-	}
 
 	/**
 	 * @see org.squashtest.tm.api.report.criteria.Criteria#getValue()

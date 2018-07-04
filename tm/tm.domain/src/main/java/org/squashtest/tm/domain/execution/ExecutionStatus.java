@@ -470,6 +470,9 @@ public enum ExecutionStatus implements Internationalizable, Level {
 		return SUCCESS_STATUSES;
 	}
 
+	/**
+	 * @deprecated does not seem to be used any longer
+	 */
 	@Deprecated // use DEFAULT_DISABLED_STATUSES instead
 	public boolean defaultEnabled() {
 		return true;

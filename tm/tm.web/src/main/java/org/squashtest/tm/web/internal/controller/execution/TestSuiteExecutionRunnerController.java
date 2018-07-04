@@ -84,6 +84,7 @@ public class TestSuiteExecutionRunnerController {
 	}
 
 	private static final String OPTIMIZED_RUNNER_MAIN = "page/executions/oer-main-page";
+	private static final String REDIRECT ="redirect:";
 
 	@Inject
 	private BugTrackerConnectorFactory btFactory;
@@ -157,7 +158,7 @@ public class TestSuiteExecutionRunnerController {
 
 		Execution execution = testSuiteExecutionRunner.startResume(testSuiteId);
 
-		return "redirect:" + getExecutionUrl(testSuiteId, execution, false);
+		return REDIRECT + getExecutionUrl(testSuiteId, execution, false);
 
 	}
 
@@ -219,7 +220,7 @@ public class TestSuiteExecutionRunnerController {
 
 		Execution execution = testSuiteExecutionRunner.startResumeNextExecution(testSuiteId, testPlanItemId);
 
-		return "redirect:" + getExecutionUrl(testSuiteId, execution, optimized);
+		return REDIRECT + getExecutionUrl(testSuiteId, execution, optimized);
 
 	}
 
@@ -291,7 +292,7 @@ public class TestSuiteExecutionRunnerController {
 
 		}
 
-		return "redirect:" + viewName + "?optimized=" + optimized;
+		return REDIRECT + viewName + "?optimized=" + optimized;
 
 	}
 

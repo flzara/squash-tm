@@ -29,11 +29,12 @@ public enum WorkspaceDashboardContentValues {
 
 	private String preferenceValue;
 
+	WorkspaceDashboardContentValues(String preferenceValue) {
+		this.preferenceValue = preferenceValue;
+	}
+
 	public String getPreferenceValue() {
 		return preferenceValue;
 	}
 
-	WorkspaceDashboardContentValues(String preferenceValue) {
-		this.preferenceValue = preferenceValue;
-	}
 }

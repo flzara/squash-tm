@@ -36,11 +36,7 @@ import java.util.Arrays;
 public class NewDataset extends Dataset {
 	private Object[][] paramValues;
 
-	public NewDataset() {
-
-	}
-
-	public Dataset createTransientEntity(TestCase testCase, ParameterFinder parameterFinder) {
+	public Dataset createTransientEntity(ParameterFinder parameterFinder) {
 		Dataset dataset = new Dataset();
 		dataset.setName(getName());
 		for (Object[] paramValue : paramValues) {

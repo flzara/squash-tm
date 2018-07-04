@@ -22,14 +22,14 @@ package org.squashtest.tm.internal.domain.report.query;
 
 
 /**
- * This class is used to check if a given implementation of ReportQueryDao actually supports a given 
+ * This class is used to check if a given implementation of ReportQueryDao actually supports a given
  * implementation of a ReportQuery.
- * 
+ *
  *  Think of it like an extendable Enum.
- * 
+ *
  * @author bsiri
  *
  */
-public abstract class ReportQueryFlavor {
+public interface ReportQueryFlavor {
 
 }

@@ -43,7 +43,7 @@ import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 @Scope("prototype")
 class CustomFieldTransator {
 	private final Map<String, CustomFieldInfos> cufInfosCache = new HashMap<>();
-	
+
 	@Inject
 	private CustomFieldDao customFieldDao;
 
@@ -73,14 +73,11 @@ class CustomFieldTransator {
 			CustomFieldInfos infos = cufInfosCache.get(requestedCode);
 			if (infos != null) {
 				String requestedValue = entry.getValue();
-				switch (infos.getType()) {
-					case TAG:
-						List<String> values = requestedValue == null ? Collections.<String>emptyList() : Arrays.asList(requestedValue.split("\\|"));
-						result.put(infos.getId(), new RawValue(values));
-						break;
-					default:
-						result.put(infos.getId(), new RawValue(requestedValue));
-						break;
+				if(infos.getType().equals(InputType.TAG)){
+					List<String> values = requestedValue == null ? Collections.<String>emptyList() : Arrays.asList(requestedValue.split("\\|"));
+					result.put(infos.getId(), new RawValue(values));
+				}else{
+					result.put(infos.getId(), new RawValue(requestedValue));
 				}
 			}
 		}
@@ -88,21 +85,21 @@ class CustomFieldTransator {
 		return result;
 
 	}
-	
+
 	/**
-	 * Returns the input type of a customfield given its code. Returns null 
+	 * Returns the input type of a customfield given its code. Returns null
 	 * if no such customfield exists.
-	 * 
+	 *
 	 * @param cufCode
 	 * @return
 	 */
 	protected final InputType getInputTypeFor(String cufCode){
 		InputType response = null;
-		
+
 		if (!cufInfosCache.containsKey(cufCode)) {
 			loadCustomFieldByCode(cufCode);
 		}
-		
+
 		CustomFieldInfos infos = cufInfosCache.get(cufCode);
 		if (infos != null) {
 			response = infos.getType();
@@ -110,7 +107,7 @@ class CustomFieldTransator {
 
 		return response;
 	}
-	
+
 	private void loadCustomFieldByCode(String code){
 		CustomField customField = customFieldDao.findByCode(code);
 

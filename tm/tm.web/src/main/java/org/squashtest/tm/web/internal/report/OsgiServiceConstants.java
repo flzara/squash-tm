@@ -22,18 +22,21 @@ package org.squashtest.tm.web.internal.report;
 
 /**
  * Defines constants related to Osgi Services related properties.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 final class OsgiServiceConstants {
-	private OsgiServiceConstants() {
-		super();
-	}
 
 	/**
 	 * Key to retrieve an OSGi service's id as passed to a service registration callback.
 	 */
 	public static final String SERVICE_ID_KEY = "osgi.service.blueprint.compname";
+
+	private OsgiServiceConstants() {
+		super();
+	}
+
+
 
 }

@@ -29,9 +29,9 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildStep;
 
 
 public class StartBuild extends BuildStep<StartBuild> implements HttpBasedStep{
-	
+
 	private CloseableHttpClient client;
-	
+
 	private HttpUriRequest method;
 
 	public StartBuild(BuildProcessor processor) {
@@ -47,18 +47,18 @@ public class StartBuild extends BuildStep<StartBuild> implements HttpBasedStep{
 	public void setMethod(HttpUriRequest method) {
 		this.method = method;
 	}
-	
+
 	@Override
 	public void setParser(JsonParser parser) {
 		//nothing, no parser needed
 	}
-	
-	
+
+
 	@Override
 	public void setBuildAbsoluteId(BuildAbsoluteId absoluteId) {
 		//not needed here
 	}
-	
+
 
 	@Override
 	public boolean needsRescheduling() {
@@ -73,13 +73,13 @@ public class StartBuild extends BuildStep<StartBuild> implements HttpBasedStep{
 
 	@Override
 	public void reset() {
-	
+		// NOOP
 	}
 
 	@Override
 	public Integer suggestedReschedulingInterval() {
 		return null;
 	}
-	
+
 
 }

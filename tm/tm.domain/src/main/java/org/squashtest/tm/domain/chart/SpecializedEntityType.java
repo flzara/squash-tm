@@ -52,6 +52,15 @@ public class SpecializedEntityType {
 	@Enumerated(EnumType.STRING)
 	private EntityRole entityRole;
 
+	protected SpecializedEntityType() {
+	}
+
+	public SpecializedEntityType(EntityType entityType, EntityRole entityRole) {
+		super();
+		this.entityType = entityType;
+		this.entityRole = entityRole;
+	}
+
 
 	public EntityType getEntityType() {
 		return entityType;
@@ -90,16 +99,6 @@ public class SpecializedEntityType {
 		}
 		return true;
 	}
-
-	protected SpecializedEntityType() {
-	}
-
-	public SpecializedEntityType(EntityType entityType, EntityRole entityRole) {
-		super();
-		this.entityType = entityType;
-		this.entityRole = entityRole;
-	}
-
 
 
 

@@ -33,6 +33,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 	@Type(name="BASIC_AUTH", value=ManageableBasicAuthCredentials.class),
 	@Type(name="OAUTH_1A", value=UserOAuth1aToken.class)
 })
-public abstract class ManageableCredentialsMixin {
+public interface ManageableCredentialsMixin {
 
 }

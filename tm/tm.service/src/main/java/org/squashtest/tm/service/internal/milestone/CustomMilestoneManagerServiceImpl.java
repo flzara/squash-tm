@@ -163,9 +163,7 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 		// admin can edit all milestones
 		if (!permissionEvaluationService.hasRole(ADMIN_ROLE)) {
 			// project manager can't edit global milestone or milestone they don't own
-			if (isGlobal(milestone) || !isCreatedBySelf(milestone)) {
-				return false;
-			}
+			return !(isGlobal(milestone) || !isCreatedBySelf(milestone));
 		}
 		return true;
 	}
@@ -200,15 +198,15 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 		return milestones;
 	}
 
-	
+
 	@Override
 	public List<Milestone> findAllVisibleToCurrentUser() {
 
-		List<Long> milestoneIds = findAllIdsVisibleToCurrentUser();		
+		List<Long> milestoneIds = findAllIdsVisibleToCurrentUser();
 		return milestoneDao.findAll(milestoneIds);
 	}
-	
-	
+
+
 	@Override
 	public List<Long> findAllIdsVisibleToCurrentUser() {
 		UserDto user = userService.findCurrentUserDto();
@@ -458,7 +456,7 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 	private void synchronizePerimeterAndProjects(Milestone source, Milestone target, boolean extendPerimeter,
 	                                             boolean isUnion) {
 
-		if (permissionEvaluationService.hasRole("ROLE_ADMIN")) {
+		if (permissionEvaluationService.hasRole(ADMIN_ROLE)) {
 			adminSynchronizePerimeterAndProjects(source, target, isUnion);
 		} else {
 			projectManagerSynchronizePerimeterAndProjects(source, target, extendPerimeter);

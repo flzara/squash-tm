@@ -21,7 +21,7 @@
 package org.squashtest.tm.service.statistics.requirement;
 
 public final class RequirementCoverageStatistics {
-	
+
 	private int undefined;
 	private int minor;
 	private int major;
@@ -31,7 +31,7 @@ public final class RequirementCoverageStatistics {
 	private int totalMinor;
 	private int totalMajor;
 	private int totalCritical;
-	
+
 	public RequirementCoverageStatistics(int undefined, int minor, int major, int critical, int totalUndefined,
 			int totalMinor, int totalMajor, int totalCritical) {
 		super();
@@ -49,7 +49,7 @@ public final class RequirementCoverageStatistics {
 		super();
 	}
 
-	
+
 	public int getUndefined() {
 		return undefined;
 	}
@@ -58,7 +58,7 @@ public final class RequirementCoverageStatistics {
 		this.undefined = undefined;
 	}
 
-	
+
 	public int getMinor() {
 		return minor;
 	}
@@ -120,5 +120,5 @@ public final class RequirementCoverageStatistics {
 	public void setTotalCritical(int totalCritical) {
 		this.totalCritical = totalCritical;
 	}
-	
+
 }

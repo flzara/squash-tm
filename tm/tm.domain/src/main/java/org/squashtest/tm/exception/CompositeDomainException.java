@@ -31,9 +31,15 @@ import java.util.List;
  */
 public class CompositeDomainException extends RuntimeException {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
+
+	public <T extends Exception> CompositeDomainException(List<? extends DomainException> exceptions) {
+		super(buildMessage(exceptions));
+		this.exceptions = exceptions;
+	}
+
 	/**
 	 * Component exceptions.
 	 */
@@ -47,11 +53,6 @@ public class CompositeDomainException extends RuntimeException {
 		}
 		sb.append(']');
 		return sb.toString();
-	}
-
-	public <T extends Exception> CompositeDomainException(List<? extends DomainException> exceptions) {
-		super(buildMessage(exceptions));
-		this.exceptions = exceptions;
 	}
 
 	/**

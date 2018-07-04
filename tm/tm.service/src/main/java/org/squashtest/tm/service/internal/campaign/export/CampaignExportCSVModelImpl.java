@@ -374,21 +374,27 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 		private String getValue(Collection<CustomFieldValue> values, CustomField model) {
 
 			if (values != null) {
-				for (CustomFieldValue value : values) {
-					CustomField customField = value.getBinding().getCustomField();
-					if (customField.getCode().equals(model.getCode())) {
-						if (customField.getInputType().equals(InputType.NUMERIC)){
-							return NumericCufHelper.formatOutputNumericCufValue(value.getValue());
-						}
-						return value.getValue();
-					}
-				}
+				return formatOutputValue(values , model);
 			}
 
 			return "--";
 		}
 
-		private int getNbIssues(IterationTestPlanItem aitp) {
+		private String formatOutputValue(Collection<CustomFieldValue> values ,CustomField model) {
+			for (CustomFieldValue value : values) {
+				CustomField customField = value.getBinding().getCustomField();
+				if (customField.getCode().equals(model.getCode())) {
+					if (customField.getInputType().equals(InputType.NUMERIC)){
+						return NumericCufHelper.formatOutputNumericCufValue(value.getValue());
+					}
+					return value.getValue();
+				}
+			}
+			return "";
+		}
+
+
+			private int getNbIssues(IterationTestPlanItem aitp) {
 
 			return bugTrackerService.findNumberOfIssueForItemTestPlanLastExecution(aitp.getId());
 

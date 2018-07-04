@@ -39,7 +39,7 @@ import java.util.Objects;
 @PrimaryKeyJoinColumn(name = "EVENT_ID")
 public class RequirementLargePropertyChange extends RequirementAuditEvent implements RequirementVersionModification,
 ChangedProperty {
-	
+
 
 	@NotNull
 	@Size(min = 0, max = 100)
@@ -62,8 +62,8 @@ ChangedProperty {
 	public RequirementLargePropertyChange(RequirementVersion requirementVersion, String author) {
 		super(requirementVersion, author);
 	}
-	
-	
+
+
 	public static RequirementPropertyChangeEventBuilder<RequirementLargePropertyChange> builder() {
 		return new Builder();
 	}
@@ -89,7 +89,7 @@ ChangedProperty {
 		visitor.visit(this);
 	}
 
-	
+
 
 	private static class Builder extends AbstractRequirementPropertyChangeEventBuilder<RequirementLargePropertyChange> {
 
@@ -109,5 +109,5 @@ ChangedProperty {
 
 	}
 
-	
+
 }

@@ -55,6 +55,7 @@ public class ExportDao {
 
 	private static final String TEST_CASE_IDS = "testCaseIds";
 
+	private static final String VERSION_IDS= "versionIds";
 	@PersistenceContext
 	private EntityManager em;
 
@@ -64,6 +65,8 @@ public class ExportDao {
 	public ExportDao(){
 		super();
 	}
+
+
 
 
 	public RequirementExportModel findAllRequirementModel(List<Long> versionIds){
@@ -122,7 +125,6 @@ public class ExportDao {
 
 	private List<TestCaseModel> findTestCaseModels(List<Long> tclnIds){
 
-		Session session = getStatelessSession();
 		List<TestCaseModel> models = new ArrayList<>(tclnIds.size());
 		List<TestCaseModel> buffer;
 
@@ -159,7 +161,6 @@ public class ExportDao {
 
 	private List<TestStepModel> findStepsModel(List<Long> tcIds){
 
-		Session session = getStatelessSession();
 		List<TestStepModel> models = new ArrayList<>(tcIds.size());
 		List<TestStepModel> buffer;
 
@@ -211,12 +212,12 @@ public class ExportDao {
 	}
 
 	private List<CoverageModel> findRequirementVersionCoverageModel(List<Long> versionIds) {
-		return loadModels("requirementVersion.excelExportCoverage", versionIds, "versionIds", CoverageModel.class);
+		return loadModels("requirementVersion.excelExportCoverage", versionIds, VERSION_IDS, CoverageModel.class);
 	}
 
 	private List<RequirementLinkModel> findRequirementLinksModel(List<Long> versionIds){
 		// get the models
-		List<RequirementLinkModel> models = loadModels("requirementVersion.excelExportRequirementLinks", versionIds, "versionIds", RequirementLinkModel.class);
+		List<RequirementLinkModel> models = loadModels("requirementVersion.excelExportRequirementLinks", versionIds, VERSION_IDS, RequirementLinkModel.class);
 
 		/*
 		 * more complex part : computing the pathes. The steps are the following :
@@ -233,7 +234,7 @@ public class ExportDao {
 
 
 	private List<RequirementModel> findRequirementModel(List<Long> versionIds) {
-		List<RequirementModel> requirementModels = loadModels("requirement.findVersionsModels", versionIds,"versionIds",
+		List<RequirementModel> requirementModels = loadModels("requirement.findVersionsModels", versionIds,VERSION_IDS,
 				RequirementModel.class);
 		getOtherProperties(requirementModels);
 		return requirementModels;

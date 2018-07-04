@@ -99,7 +99,6 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/util/StringUtil
 				// Issue 6800 - For Test Runner & Guest, the row data was "id=?, value=?", but we only want the value
 				// TODO: code refactoring ==> Duplicated code from 'addSimpleJEditableToParamValues'
 				initRow : function(row) {
-					var self = this;
 					var components = $('td.parameter', row);
 					$.each(components, function(index, value) {
 						var $value = $(value);
@@ -152,7 +151,6 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/util/StringUtil
 
 				// call createSimpleJEditable instead
 				_createSimpleJEditable : function(url, component) {
-					var self = this;
 					new SimpleJEditable({
 						targetUrl : url,
 						component : component,

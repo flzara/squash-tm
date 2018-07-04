@@ -26,9 +26,9 @@ import static org.squashtest.tm.service.internal.batchimport.testcase.excel.Colu
 
 /**
  * Describes columns from test step import template.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public enum StepSheetColumn implements TemplateColumn {
 	ACTION,

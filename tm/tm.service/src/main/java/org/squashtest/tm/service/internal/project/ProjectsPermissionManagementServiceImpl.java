@@ -47,6 +47,7 @@ import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Service("squashtest.tm.service.ProjectsPermissionManagementService")
@@ -194,7 +195,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	public List<GenericProject> findProjectWithoutPermissionByParty(long partyId) {
 		List<Long> idList = aclService.findObjectWithoutPermissionByPartyId(partyId, PROJECT_CLASS_NAMES);
 		if (idList == null || idList.isEmpty()) {
-			return null;
+			return Collections.emptyList();
 		}
 		return genericProjectFinder.findAll(idList);
 
@@ -205,7 +206,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	public List<GenericProject> findProjectWithoutPermissionByParty(long partyId, Sort sorting) {
 		List<Long> idList = aclService.findObjectWithoutPermissionByPartyId(partyId, PROJECT_CLASS_NAMES);
 		if (idList == null || idList.isEmpty()) {
-			return null;
+			return Collections.emptyList();
 		}
 		return genericProjectFinder.findAllByIdIn(idList, sorting);
 	}
@@ -372,13 +373,10 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		boolean isInGroup = false;
 		List<PartyProjectPermissionsBean> permissions = findPartyPermissionsBeanByProject(projectId);
 		for (PartyProjectPermissionsBean permission : permissions) {
-			if (permission.getParty().getId() == partyId) {
-				if (permission.getPermissionGroup().getQualifiedName().equals(permissionGroup)) {
-					isInGroup = true;
-				}
+			if (permission.getParty().getId() == partyId && permission.getPermissionGroup().getQualifiedName().equals(permissionGroup)) {
+				isInGroup = true;
 			}
 		}
-
 		return isInGroup;
 	}
 

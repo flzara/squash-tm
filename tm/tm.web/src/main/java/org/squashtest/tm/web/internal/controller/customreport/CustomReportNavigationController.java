@@ -247,22 +247,22 @@ public class CustomReportNavigationController {
 		}
 	}
 
-	//Class for messages
+	//Class for messageCollection
 
 	protected static class Messages {
 
-		private Collection<String> messages = new ArrayList<>();
+		private Collection<String> messageCollection = new ArrayList<>();
 
 		public Messages() {
 			super();
 		}
 
 		public void addMessage(String msg) {
-			this.messages.add(msg);
+			this.messageCollection.add(msg);
 		}
 
-		public Collection<String> getMessages() {
-			return this.messages;
+		public Collection<String> getMessageCollection() {
+			return this.messageCollection;
 		}
 
 	}

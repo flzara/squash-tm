@@ -22,7 +22,6 @@ package org.squashtest.tm.service.internal.dto.json;
 
 
 
-
 public class JsonInfoListItem {
 
 	private long id;

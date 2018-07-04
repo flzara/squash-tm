@@ -47,6 +47,10 @@ public class UsersGroup {
 	private String qualifiedName;
 	private transient String simpleName;
 
+	public UsersGroup(String qualifiedName) {
+		this.qualifiedName = qualifiedName;
+	}
+
 	public UsersGroup() {
 		if (qualifiedName != null) {
 			this.calculateSimpleName();
@@ -60,10 +64,6 @@ public class UsersGroup {
 
 	private void calculateSimpleName() {
 		this.simpleName = qualifiedName.substring(qualifiedName.lastIndexOf('.') + 1);
-	}
-
-	public UsersGroup(String qualifiedName) {
-		this.qualifiedName = qualifiedName;
 	}
 
 	public String getQualifiedName() {

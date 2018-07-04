@@ -27,6 +27,10 @@ import org.springframework.security.access.AccessDeniedException;
 
 public final class PermissionsUtils {
 
+	private static final String ROLE_ADMIN = "ROLE_ADMIN";
+
+	private static final String ACCESS_IS_DENIED = "Access is denied";
+
 	private PermissionsUtils() {
 		super();
 	}
@@ -34,7 +38,7 @@ public final class PermissionsUtils {
 	/**
 	 * Will check if the current user has sufficient rights on the given checkable objects. If not will throw an
 	 * {@link AccessDeniedException}.
-	 * 
+	 *
 	 * @throws AccessDeniedException
 	 * @param permissionService
 	 *            : the {@link PermissionEvaluationService} to use to do the check
@@ -45,8 +49,8 @@ public final class PermissionsUtils {
 			SecurityCheckableObject... checkableObjects) {
 		for (SecurityCheckableObject object : checkableObjects) {
 			if (!permissionService
-					.hasRoleOrPermissionOnObject("ROLE_ADMIN", object.getPermission(), object.getObject())) {
-				throw new AccessDeniedException("Access is denied");
+					.hasRoleOrPermissionOnObject(ROLE_ADMIN, object.getPermission(), object.getObject())) {
+				throw new AccessDeniedException(ACCESS_IS_DENIED);
 
 			}
 		}
@@ -55,7 +59,7 @@ public final class PermissionsUtils {
 	/**
 	 * Wil check if the current user has sufficient rights on the entities of the given ids and classname. If not, will
 	 * throw an {@link AccessDeniedException}
-	 * 
+	 *
 	 * @throws AccessDeniedException
 	 * @param permissionService
 	 *            : the {@link PermissionEvaluationService} to use to do the check
@@ -68,12 +72,12 @@ public final class PermissionsUtils {
 	 */
 	public static void checkPermission(PermissionEvaluationService permissionService, List<Long> ids,
 			String permission, String entityClassName) {
-		if (permissionService.hasRole("ROLE_ADMIN")) {
+		if (permissionService.hasRole(ROLE_ADMIN)) {
 			return;
 		}
 		for (Long entityId : ids) {
 			if (!permissionService.hasPermissionOnObject(permission, entityId, entityClassName)) {
-				throw new AccessDeniedException("Access is denied");
+				throw new AccessDeniedException(ACCESS_IS_DENIED);
 
 			}
 		}
@@ -82,8 +86,8 @@ public final class PermissionsUtils {
 	public static void checkPermission(PermissionEvaluationService permissionService, Collection<?> toCheck, String permission){
 
 		for (Object o : toCheck){
-			if (!permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", permission, o)){
-				throw new AccessDeniedException("Access is denied");
+			if (!permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, o)){
+				throw new AccessDeniedException(ACCESS_IS_DENIED);
 			}
 		}
 	}

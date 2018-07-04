@@ -51,7 +51,7 @@ public class CampaignFormModel {
 
 	private String description;
 
-
+	private static final String MESSAGE_NOT_BLANK ="message.notBlank";
 
 	/*@NotNull
 	@NotEmpty*/
@@ -141,17 +141,17 @@ public class CampaignFormModel {
 		@Override
 		public void validate(Object target, Errors errors) {
 
-			String notBlank = messageSource.getMessage("message.notBlank", null, LocaleContextHolder.getLocale());
+			String notBlank = messageSource.getMessage(MESSAGE_NOT_BLANK, null, LocaleContextHolder.getLocale());
 
 			CampaignFormModel model = (CampaignFormModel) target;
 
-			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "message.notBlank", notBlank);
+			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", MESSAGE_NOT_BLANK, notBlank);
 
 
 			for (Entry<Long, RawValueModel> entry : model.getCustomFields().entrySet()){
 				RawValueModel value = entry.getValue();
 				if (value.isEmpty()){
-					errors.rejectValue("customFields["+entry.getKey()+"]", "message.notBlank", notBlank);
+					errors.rejectValue("customFields["+entry.getKey()+"]", MESSAGE_NOT_BLANK, notBlank);
 				}
 			}
 

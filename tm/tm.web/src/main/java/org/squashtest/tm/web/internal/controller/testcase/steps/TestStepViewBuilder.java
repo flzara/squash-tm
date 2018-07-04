@@ -35,10 +35,6 @@ import org.squashtest.tm.domain.testcase.TestStepVisitor;
 class TestStepViewBuilder implements TestStepVisitor {
 	private TestStepView testStepView;
 
-	public TestStepViewBuilder() {
-	}
-
-
 	public TestStepView buildTestStepView(TestStep item) {
 		item.accept(this);
 		return testStepView;

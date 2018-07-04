@@ -176,7 +176,7 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 				model.addAttribute("selectedNode", getTreeElementIdInWorkspace(entityReference));
 				// WARNING! it was previously catching all Exceptions
 			} catch (CodeDoesNotMatchesPatternException | IllegalArgumentException e) {
-				LOGGER.warn("Error during conversion of the 'workspace-prefs' cookie to an EntityReference.");
+				LOGGER.warn("Error during conversion of the 'workspace-prefs' cookie to an EntityReference.", e);
 			}
 		}
 

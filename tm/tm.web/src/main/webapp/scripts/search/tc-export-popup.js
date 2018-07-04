@@ -27,7 +27,6 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 		el : ".export-test-case-dialog",
 		initialize : function() {
 
-			var self = this;
 			this.dialog = this.$el.formDialog({
 				autoOpen : false,
 				width : 800

@@ -154,9 +154,7 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 			.groupBy(REQ.RLN_ID, REQ.MODE, RES.NAME, RV.REFERENCE, RV.REQUIREMENT_STATUS, ILI.ICON_NAME, RLNR.ANCESTOR_ID)
 			.fetch()
 			.stream()
-			.map(r -> {
-				return buildRequirementJsTreeNode(currentUser, allMilestonesForReqs, milestonesModifiable, activeMilestoneId, r);
-			})
+			.map(r -> buildRequirementJsTreeNode(currentUser, allMilestonesForReqs, milestonesModifiable, activeMilestoneId, r))
 			.collect(Collectors.toMap(jsTreeNode -> (Long) jsTreeNode.getAttr().get(RES_ID), Function.identity()));
 	}
 
@@ -193,9 +191,7 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 			.groupBy(REQ.RLN_ID, REQ.MODE, RES.NAME, RV.REFERENCE, RV.REQUIREMENT_STATUS, ILI.ICON_NAME, RLNR.ANCESTOR_ID)
 			.fetch()
 			.stream()
-			.map(r -> {
-				return buildRequirementJsTreeNode(currentUser, allMilestonesForReqs, milestonesModifiable, activeMilestoneId, r);
-			})
+			.map(r -> buildRequirementJsTreeNode(currentUser, allMilestonesForReqs, milestonesModifiable, activeMilestoneId, r))
 			.collect(Collectors.toMap(jsTreeNode -> (Long) jsTreeNode.getAttr().get(RES_ID), Function.identity()));
 	}
 
@@ -400,7 +396,7 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 
 	@Override
 	protected boolean passesMilestoneFilter(JsTreeNode node, Long activeMilestoneId) {
-		return (node != null && (NO_ACTIVE_MILESTONE_ID.equals(activeMilestoneId) || node.getAttr().get("rel").equals("folder") || nodeHasActiveMilestone(nodeLinkedToMilestone, (Long) node.getAttr().get(RES_ID)) || reqsDontAllowClick.contains(node.getAttr().get(RES_ID))));
+		return (node != null && (NO_ACTIVE_MILESTONE_ID.equals(activeMilestoneId) || "folder".equals(node.getAttr().get("rel")) || nodeHasActiveMilestone(nodeLinkedToMilestone, (Long) node.getAttr().get(RES_ID)) || reqsDontAllowClick.contains(node.getAttr().get(RES_ID))));
 	}
 
 	@Override
@@ -435,7 +431,7 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 
 	@Override
 	public Collection<JsTreeNode> getCampaignNodeContent(Long folderId, UserDto currentUser, String libraryNode) {
-		return null;
+		return Collections.emptyList();
 	}
 
 	public class RequirementLibraryNodeDistribution {

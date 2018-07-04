@@ -26,7 +26,7 @@ define([ "require", "./panel", "./table", "./popup", "./popupDelete" ], function
 			'selector' : settings.mainSelector + " .cuf-binding-panel",
 			'initiallyOpen' : true,
 			'title' : settings.panelTitle,
-			areBindingsModifiable : settings.areBindingsModifiable,
+			areBindingsModifiable : settings.areBindingsModifiable
 		};
 	}
 

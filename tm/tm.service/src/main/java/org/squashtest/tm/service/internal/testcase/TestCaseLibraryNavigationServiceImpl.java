@@ -384,8 +384,7 @@ public class TestCaseLibraryNavigationServiceImpl
 		switch (nullIdx) {
 			case -1:
 				return foundIds.get(foundIds.size() - 1); // all folders do exist,
-			// simply return the
-			// last element;
+			// simply return the last element
 
 			case 0:
 				Long libraryId = projectDao.findByName(split[0].replaceAll("\\\\\\/", "/")).getTestCaseLibrary().getId();

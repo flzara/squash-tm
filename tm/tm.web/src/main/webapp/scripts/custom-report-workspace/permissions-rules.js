@@ -217,8 +217,6 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 
 		this.canDnD = function(movednodes, newparent){
 
-			var oldparent = movednodes.getParent();
-
 			// check if the node is draggable first
 			if (movednodes.is(':library')){
 				return false;

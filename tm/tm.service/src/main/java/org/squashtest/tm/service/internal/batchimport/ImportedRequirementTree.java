@@ -237,9 +237,7 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 				// additional test : if the parent is a requirement -> all its children are requirements too
 				// this would happen only if a parent is found
 				if (parent.isRequirement()){
-					for (Node n : createdNodes){
-						n.setRequirement(true);
-					}
+					completingNodes( createdNodes);
 				}
 
 				// now we can exit
@@ -261,6 +259,11 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 		}
 	}
 
+	public void completingNodes(List<Node> createdNodes){
+		for (Node n : createdNodes){
+			n.setRequirement(true);
+		}
+	}
 
 
 	// behavior for this is commented in the javadoc on addOrUpdateNode
@@ -315,9 +318,9 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 		return req.isMilestoneUsedByOneVersion(milestone);
 	}
 
-	public boolean isMilestoneLocked(RequirementVersionTarget target, String milestone){
+	public boolean isMilestoneLocked(RequirementVersionTarget target){
 		Node req = getNode(target.getRequirement());
-		return req.isVersionMilestoneLocked(target.getVersion(),milestone);
+		return req.isVersionMilestoneLocked(target.getVersion());
 	}
 
 	public void milestoneLock(RequirementVersionTarget target){
@@ -349,16 +352,15 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 			this.status = status;
 		}
 
-
-		public void setNotExists(Integer version) {
-			requirementVersions.put(version,new RequirementVersionModel(TargetStatus.NOT_EXISTS));
-		}
-
 		public Node(RequirementTarget target, TargetStatus status, boolean isRequirement, boolean virtual) {
 			super(target);
 			this.status = status;
 			this.isRequirement = isRequirement;
 			this.virtual = virtual;
+		}
+
+		public void setNotExists(Integer version) {
+			requirementVersions.put(version,new RequirementVersionModel(TargetStatus.NOT_EXISTS));
 		}
 
 		boolean isRequirement(){
@@ -415,7 +417,7 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 			return milestonesInVersion.contains(milestone);
 		}
 
-		boolean isVersionMilestoneLocked(Integer noVersion, String milestone){
+		boolean isVersionMilestoneLocked(Integer noVersion){
 			return requirementVersions.get(noVersion).isMilestoneLocked();
 		}
 

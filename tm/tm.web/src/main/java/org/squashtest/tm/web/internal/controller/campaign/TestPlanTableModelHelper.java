@@ -129,13 +129,8 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 			if (lastExec.isAutomated()) {
 				succesPercent = lastExec.getExecutionStatus() == ExecutionStatus.SUCCESS ? 100 : 0;
 			} else {
-				int succes = 0;
 				List<ExecutionStep> steps = item.getLatestExecution().getSteps();
-				for (ExecutionStep step : steps) {
-					if (step.getExecutionStatus() == ExecutionStatus.SUCCESS) {
-						succes++;
-					}
-				}
+				int succes = countSucces(steps);
 				int totalSteps = steps.size();
 
 				// I think it's not possible to have total step = 0, because we need at least 1 step to execute
@@ -171,6 +166,15 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		res.put("milestone-labels", HtmlUtils.htmlEscape(milestoneLabels));
 
 		return res;
+	}
+	private int countSucces(List<ExecutionStep> steps){
+		int succes = 0;
+		for (ExecutionStep step : steps) {
+			if (step.getExecutionStatus() == ExecutionStatus.SUCCESS) {
+				succes++;
+			}
+		}
+		return succes;
 	}
 
 	/* **************** other private stufs ********************** */

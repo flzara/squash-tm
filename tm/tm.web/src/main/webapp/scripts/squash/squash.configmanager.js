@@ -253,8 +253,10 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 			labelPpt;
 
 		for (var ppt in descriptor){
-			valuePpt = ppt;
-			labelPpt = descriptor[ppt];
+			if (descriptor.hasOwnProperty(ppt)) {
+				valuePpt = ppt;
+				labelPpt = descriptor[ppt];
+			}
 		}
 
 		// now build the output

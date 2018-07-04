@@ -118,7 +118,7 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 		// controller to directly map the http query string to that criterion.
 		criterions.put(PROJECT_IDS, projectIds);
 
-		ReportCriterion milestoneIds = new MilestoneIdsIsInIds(MILESTONE_IDS, "id", Milestone.class, "milestones");
+		ReportCriterion milestoneIds = new MilestoneIdsIsInIds(MILESTONE_IDS, "id", Milestone.class, MILESTONE_IDS);
 		criterions.put(MILESTONE_IDS, milestoneIds);
 
 		ReportCriterion reportMode = new RequirementReportTypeCriterion("mode", "on s'en fout");
@@ -199,7 +199,7 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 				"where mstones.id in (:milestones)";
 
 		Query q = session.createQuery(hql);
-		q.setParameterList("milestones", mIds, LongType.INSTANCE);
+		q.setParameterList(MILESTONE_IDS, mIds, LongType.INSTANCE);
 
 		return q.list();
 
@@ -368,17 +368,24 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 				Long milestoneId = Long.valueOf(ids[0].toString());
 
 				Project p = req.getProject();
-				for (Milestone m : p.getMilestones()){
-					if (m.getId().equals(milestoneId)){
-						milestone = m.getLabel();
-					}
-				}
+				milestone = getMilestoneLabel( p, milestone, milestoneId);
 			}
 		}
 
 		return milestone;
-
 	}
+	private String getMilestoneLabel(Project p,String milestone,Long milestoneId){
+		for (Milestone m : p.getMilestones()){
+			if (m.getId().equals(milestoneId)){
+				milestone = m.getLabel();
+			}
+		}
+		return milestone;
+	}
+
+
+
+
 
 	/**
 	 * check if the project is not here and create if necessary

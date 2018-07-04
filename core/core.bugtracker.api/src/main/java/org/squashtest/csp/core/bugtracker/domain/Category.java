@@ -36,7 +36,6 @@ public class Category implements Identifiable<Category>, RemoteCategory{
 		//Default constructor
 	}
 
-
 	public Category(String id, String name) {
 		super();
 		this.id = id;

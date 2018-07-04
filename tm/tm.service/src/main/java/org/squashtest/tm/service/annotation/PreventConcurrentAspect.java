@@ -48,9 +48,12 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 @Component
 @Aspect
+@SuppressWarnings("squid:LabelsShouldNotBeUsedCheck")
 public class PreventConcurrentAspect implements Ordered {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PreventConcurrentAspect.class);
-
+	private static final String ANY_ARG_ANNOTATED = "I coult not find any arg annotated @";
+	private static final String IN_PREVENT_CONCURRENT_METHOD=" in @PreventConcurrent method '";
+	private static final String MUST_BE_A_STRUCTURAL_ERROR = "' This must be a structural programming error";
 	@Override
 	/**
 	 * This aspect must be executed around the spring transaction manager to avoid commits after the lock release.
@@ -148,8 +151,8 @@ public class PreventConcurrentAspect implements Ordered {
 		}
 
 		if (annotatedParam == null) {
-			throw new IllegalArgumentException("I coult not find any arg annotated @" + expected.getSimpleName() + " in @PreventConcurrent method '" +
-				pjp.getSignature().getDeclaringTypeName() + '.' + meth.getName() + "' This must be a structural programming error");
+			throw new IllegalArgumentException(ANY_ARG_ANNOTATED + expected.getSimpleName() + IN_PREVENT_CONCURRENT_METHOD +
+				pjp.getSignature().getDeclaringTypeName() + '.' + meth.getName() + MUST_BE_A_STRUCTURAL_ERROR);
 
 		}
 		return annotatedParam;
@@ -223,8 +226,8 @@ public class PreventConcurrentAspect implements Ordered {
 						annotatedParam = (T) pjp.getArgs()[iArg];
 					}
 					else {
-						throw new IllegalArgumentException("I coult not find any arg annotated @" + expected.getSimpleName() + " with a value of "+ paramName + " in @PreventConcurrent method '" +
-								pjp.getSignature().getDeclaringTypeName() + '.' + meth.getName() + ". Instead an @Id was found with a value of "+ annoValue + "' This must be a structural programming error");
+						throw new IllegalArgumentException(ANY_ARG_ANNOTATED + expected.getSimpleName() + " with a value of "+ paramName + IN_PREVENT_CONCURRENT_METHOD +
+								pjp.getSignature().getDeclaringTypeName() + '.' + meth.getName() + ". Instead an @Id was found with a value of "+ annoValue + MUST_BE_A_STRUCTURAL_ERROR);
 					}
 					break argsLoop;
 				}
@@ -232,8 +235,8 @@ public class PreventConcurrentAspect implements Ordered {
 		}
 
 		if (annotatedParam == null) {
-			throw new IllegalArgumentException("I coult not find any arg annotated @" + expected.getSimpleName() + " in @PreventConcurrent method '" +
-				pjp.getSignature().getDeclaringTypeName() + '.' + meth.getName() + "' This must be a structural programming error");
+			throw new IllegalArgumentException(ANY_ARG_ANNOTATED + expected.getSimpleName() + IN_PREVENT_CONCURRENT_METHOD +
+				pjp.getSignature().getDeclaringTypeName() + '.' + meth.getName() + MUST_BE_A_STRUCTURAL_ERROR);
 		}
 		return annotatedParam;
 	}

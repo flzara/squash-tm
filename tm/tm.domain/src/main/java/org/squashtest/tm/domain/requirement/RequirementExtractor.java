@@ -25,14 +25,11 @@ import java.util.List;
 
 public class RequirementExtractor implements RequirementLibraryNodeVisitor {
 
-	public RequirementExtractor() {
-	}
-
 	private List<Requirement> result;
 
 	/**
 	 * will go through the given nodes to return a list of the requirement ones (not folder).
-	 * 
+	 *
 	 * @param nodes
 	 * @return the requirements
 	 */

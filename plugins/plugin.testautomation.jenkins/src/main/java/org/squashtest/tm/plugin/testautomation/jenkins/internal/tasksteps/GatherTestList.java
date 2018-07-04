@@ -30,7 +30,6 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildStep;
 
 import java.util.Collection;
 
-
 public class GatherTestList extends BuildStep<GatherTestList> implements HttpBasedStep {
 
 
@@ -46,6 +45,14 @@ public class GatherTestList extends BuildStep<GatherTestList> implements HttpBas
 	//* ************ output of the computation ******
 
 	private Collection<String> testNames;
+
+	//************* constructor ******************
+
+
+	public GatherTestList(BuildProcessor processor) {
+		super(processor);
+	}
+
 
 
 	//************** accessors *****************
@@ -74,12 +81,6 @@ public class GatherTestList extends BuildStep<GatherTestList> implements HttpBas
 
 	public Collection<String> getTestNames() {
 		return testNames;
-	}
-	//************* constructor ******************
-
-
-	public GatherTestList(BuildProcessor processor) {
-		super(processor);
 	}
 
 	//**************** code **********************

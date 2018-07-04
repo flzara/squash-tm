@@ -22,12 +22,12 @@ package org.squashtest.tm.web.internal.helper;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 public final class JEditablePostParams {
+
+	public static final String VALUE = "value";
 	private JEditablePostParams() {
 		super();
 	}
-
-	public static final String VALUE = "value";
 }

@@ -26,9 +26,9 @@ import org.squashtest.tm.core.foundation.collection.Paging;
 
 /**
  * Utility clas for paging queries.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public final class PagingUtils {
 	private PagingUtils() {

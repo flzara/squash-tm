@@ -59,6 +59,8 @@ import java.util.Optional;
 @RequestMapping("/user-account")
 public class UserAccountController {
 
+	private static final String SQUASH_BUGTRACKER_MODE= "squash.bug.tracker.mode";
+
 	private UserAccountService userService;
 
 	@Inject
@@ -98,15 +100,8 @@ public class UserAccountController {
 		Long idUser = user.getId();
 		Party party = userService.getParty(idUser);
 		Map<String, String> map  =  partyPreferenceService.findPreferences(party);
-		String bugtrackerMode= map.get("squash.bug.tracker.mode");
-		Boolean test;
-		if(bugtrackerMode==null){
-			test=true;
-		}else if ("Automatic".equals(bugtrackerMode)){
-			test=true;
-		}else{
-			test=false;
-		}
+		String bugtrackerMode= map.get(SQUASH_BUGTRACKER_MODE);
+
 		List<Milestone> milestoneList = milestoneManager.findAllVisibleToCurrentUser();
 
 		List<ProjectPermission> projectPermissions = permissionFinder.findProjectPermissionByUserLogin(user.getLogin());
@@ -165,8 +160,8 @@ public class UserAccountController {
 	@RequestMapping(value = "/update", method= RequestMethod.POST)
 	@ResponseBody
 	public PartyPreference changeUserBugtrackerMode (@RequestParam(VALUE) String bugtrackerMode){
-		partyPreferenceService.addOrUpdatePreferenceForCurrentUser("squash.bug.tracker.mode",bugtrackerMode);
-		return partyPreferenceService.findPreferenceForCurrentUser("squash.bug.tracker.mode");
+		partyPreferenceService.addOrUpdatePreferenceForCurrentUser(SQUASH_BUGTRACKER_MODE,bugtrackerMode);
+		return partyPreferenceService.findPreferenceForCurrentUser(SQUASH_BUGTRACKER_MODE);
 	}
 
 }

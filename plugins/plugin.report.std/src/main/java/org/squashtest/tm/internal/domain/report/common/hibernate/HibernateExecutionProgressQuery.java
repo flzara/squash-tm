@@ -20,11 +20,7 @@
  */
 package org.squashtest.tm.internal.domain.report.common.hibernate;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import org.hibernate.Session;
@@ -134,7 +130,7 @@ public class HibernateExecutionProgressQuery extends HibernateReportQuery {
 
 	@Override
 	public List<?> doInSession(Session session) {
-		return null;
+		return Collections.emptyList();
 	}
 
 	/*
@@ -260,21 +256,29 @@ public class HibernateExecutionProgressQuery extends HibernateReportQuery {
 		if (milestoneCrit != null) {
 			Object[] ids = milestoneCrit.getParameters();
 
-			if (ids != null && ids.length > 0 && !campaignList.isEmpty()) {
-				// for now we support only one milestone
-				Long milestoneId = Long.valueOf(ids[0].toString());
+			findMilestoneLabelFromCriteria(ids,campaignList, milestone);
+		}
+		return milestone;
+	}
 
-				Campaign c = campaignList.get(0);
-				for (Milestone m : c.getMilestones()) {
-					if (m.getId().equals(milestoneId)) {
-						milestone = m.getLabel();
-						break;
-					}
+	private String findMilestoneLabelFromCriteria(Object[] ids,List<Campaign> campaignList,String milestone){
+		if (ids != null && ids.length > 0 && !campaignList.isEmpty()) {
+			// for now we support only one milestone
+			Long milestoneId = Long.valueOf(ids[0].toString());
+
+			Campaign c = campaignList.get(0);
+			for (Milestone m : c.getMilestones()) {
+				if (m.getId().equals(milestoneId)) {
+					return m.getLabel();
 				}
 			}
 		}
-
 		return milestone;
 	}
+
+
+
+
+
 
 }

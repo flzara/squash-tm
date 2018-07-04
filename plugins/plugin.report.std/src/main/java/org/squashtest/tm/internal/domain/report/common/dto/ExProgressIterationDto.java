@@ -35,14 +35,6 @@ public class ExProgressIterationDto extends ExProgressScheduledAbstractDto {
 	private List<ExProgressTestPlanDto> testPlans = new LinkedList<>();
 	private List<ExProgressTestSuiteDto> testSuites = new LinkedList<>();
 
-	public ExProgressCampaignDto getCampaign() {
-		return campaign;
-	}
-
-	public void setCampaign(ExProgressCampaignDto campaign) {
-		this.campaign = campaign;
-	}
-
 	public ExProgressIterationDto(Iteration iteration) {
 		super(iteration.getTestPlans());
 		fillBasicInfos(iteration);
@@ -57,6 +49,14 @@ public class ExProgressIterationDto extends ExProgressScheduledAbstractDto {
 		actualEndDate = iteration.getActualEndDate();
 
 		return this;
+	}
+
+	public ExProgressCampaignDto getCampaign() {
+		return campaign;
+	}
+
+	public void setCampaign(ExProgressCampaignDto campaign) {
+		this.campaign = campaign;
 	}
 
 	private void fillTestSuiteInfos(Iteration iteration) {

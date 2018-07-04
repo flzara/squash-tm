@@ -175,23 +175,24 @@ define(["jquery", "./lib/jquery.staticCustomfield", "./lib/jquery.jeditableCusto
 				cufCells.wrapInner('<span/>');
 
 				for (var code in defMap) {
+					if (defMap.hasOwnProperty(code)) {
+						var def = defMap[code];
 
-					var def = defMap[code];
+						var cufselts;
+						if (def.itype === "TAG") {
+							cufselts = table.find('td.custom-field-' + code + '>span>ul, td.denormalized-field-' + code + '>span>ul');
+						}
+						else {
+							cufselts = table.find('td.custom-field-' + code + '>span, td.denormalized-field-' + code + '>span');
+						}
 
-					var cufselts;
-					if (def.itype === "TAG") {
-						cufselts = table.find('td.custom-field-' + code + '>span>ul, td.denormalized-field-' + code + '>span>ul');
-					}
-					else {
-						cufselts = table.find('td.custom-field-' + code + '>span, td.denormalized-field-' + code + '>span');
-					}
-
-					if (isEditable) {
-						var postFunction = makePostFunction(code, table);
-						cufselts.jeditableCustomfield(def, postFunction);
-					}
-					else {
-						cufselts.staticCustomfield(def);
+						if (isEditable) {
+							var postFunction = makePostFunction(code, table);
+							cufselts.jeditableCustomfield(def, postFunction);
+						}
+						else {
+							cufselts.staticCustomfield(def);
+						}
 					}
 
 				}

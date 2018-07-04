@@ -62,6 +62,9 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MilestoneDaoImpl.class);
 	private static final int BATCH_UPDATE_SIZE = 50;
 	private static final String UNCHECKED = "unchecked";
+	private static final String TESTCASE_ID= "testCaseId";
+	private static final String ABOUT_TO_FETCH_ENTITIES = "About to fetch entities {}" ;
+	private static final String FETCHING_BOUND_ENTITIES = "Fetching bound entities with query named {}" ;
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -74,7 +77,7 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 	@Override
 	public Collection<Milestone> findAssociableMilestonesForTestCase(long testCaseId) {
 		Query query = entityManager.createNamedQuery("milestone.findAssociableMilestonesForTestCase");
-		query.setParameter("testCaseId", testCaseId);
+		query.setParameter(TESTCASE_ID, testCaseId);
 		query.setParameter(VALID_STATUS, MilestoneStatus.getAllStatusAllowingObjectBind());
 		return query.getResultList();
 	}
@@ -113,11 +116,11 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 		Set<Milestone> allMilestones = new HashSet<>();
 
 		Query query1 = entityManager.createNamedQuery("milestone.findTestCaseMilestones");
-		query1.setParameter("testCaseId", testCaseId);
+		query1.setParameter(TESTCASE_ID, testCaseId);
 		List<Milestone> ownMilestones = query1.getResultList();
 
 		Query query2 = entityManager.createNamedQuery("milestone.findIndirectTestCaseMilestones");
-		query2.setParameter("testCaseId", testCaseId);
+		query2.setParameter(TESTCASE_ID, testCaseId);
 		List<Milestone> indirectMilestones = query2.getResultList();
 
 		allMilestones.addAll(ownMilestones);
@@ -260,10 +263,10 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 		Session session = entityManager.unwrap(Session.class);
 
 		for (String entity : entities) {
-			LOGGER.info("About to fetch entities {}", entity);
+			LOGGER.info(ABOUT_TO_FETCH_ENTITIES, entity);
 
 			String namedQuery = entity + ".findAllWithMilestones";
-			LOGGER.debug("Fetching bound entities with query named {}", namedQuery);
+			LOGGER.debug(FETCHING_BOUND_ENTITIES, namedQuery);
 
 			ScrollableResults holders = scrollableResults(session.getNamedQuery(namedQuery));
 
@@ -305,10 +308,10 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 		Session session = entityManager.unwrap(Session.class);
 
 		for (String entity : entities) {
-			LOGGER.info("About to fetch entities {}", entity);
+			LOGGER.info(ABOUT_TO_FETCH_ENTITIES, entity);
 
 			String namedQuery = "milestone.findAll" + entity + "ForProjectAndMilestone";
-			LOGGER.debug("Fetching bound entities with query named {}", namedQuery);
+			LOGGER.debug(FETCHING_BOUND_ENTITIES, namedQuery);
 			org.hibernate.Query query = session.getNamedQuery(namedQuery);
 			query.setParameter(MILESTONE_ID, milestoneId);
 			query.setParameterList(PROJECT_IDS, projectIds);
@@ -350,10 +353,10 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 		Session session = entityManager.unwrap(Session.class);
 
 		for (String entity : entities) {
-			LOGGER.info("About to fetch entities {}", entity);
+			LOGGER.info(ABOUT_TO_FETCH_ENTITIES, entity);
 
 			String namedQuery = entity + ".findAllBoundToMilestone";
-			LOGGER.debug("Fetching bound entities with query named {}", namedQuery);
+			LOGGER.debug(FETCHING_BOUND_ENTITIES, namedQuery);
 			org.hibernate.Query query = session.getNamedQuery(namedQuery);
 			query.setParameter(MILESTONE_ID, milestoneId);
 			ScrollableResults holders = scrollableResults(query);

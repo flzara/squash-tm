@@ -25,6 +25,20 @@ public class FileParameter {
 	protected String name;
 	protected String file;
 
+
+
+	public FileParameter() {
+		super();
+	}
+
+	public FileParameter(String name, String file) {
+		super();
+		this.name = name;
+		this.file = file;
+	}
+
+
+
 	public String getName() {
 		return name;
 	}
@@ -41,15 +55,6 @@ public class FileParameter {
 		this.file = file;
 	}
 
-	public FileParameter() {
-		super();
-	}
-
-	public FileParameter(String name, String file) {
-		super();
-		this.name = name;
-		this.file = file;
-	}
 
 	@Override
 	public int hashCode() {

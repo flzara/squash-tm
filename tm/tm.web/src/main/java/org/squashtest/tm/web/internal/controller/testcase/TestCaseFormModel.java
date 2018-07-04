@@ -44,6 +44,8 @@ public class TestCaseFormModel {
 	 *
 	 */
 
+	private static final String MESSAGE_NOT_BLANK = "message.notBlank";
+
 	/*@NotBlank
 	@NotNull*/
 	private String name;
@@ -145,12 +147,12 @@ public class TestCaseFormModel {
 		public void validate(Object target, Errors errors) {
 
 			Locale locale = LocaleContextHolder.getLocale();
-			String notBlank = messageSource.getMessage("message.notBlank", null, locale);
+			String notBlank = messageSource.getMessage(MESSAGE_NOT_BLANK, null, locale);
 			String lengthMax = messageSource.getMessage("message.lengthMax", new Object[]{"50"}, locale);
 
 			TestCaseFormModel model = (TestCaseFormModel) target;
 
-			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "message.notBlank", notBlank);
+			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", MESSAGE_NOT_BLANK, notBlank);
 
 			if (model.reference != null && model.reference.length() > 50) {
 				errors.rejectValue("reference", "message.lengthMax", lengthMax);
@@ -159,7 +161,7 @@ public class TestCaseFormModel {
 			for (Entry<Long, RawValueModel> entry : model.getCustomFields().entrySet()) {
 				RawValueModel value = entry.getValue();
 				if (value.isEmpty()) {
-					errors.rejectValue("customFields[" + entry.getKey() + "]", "message.notBlank", notBlank);
+					errors.rejectValue("customFields[" + entry.getKey() + "]", MESSAGE_NOT_BLANK, notBlank);
 				}
 			}
 

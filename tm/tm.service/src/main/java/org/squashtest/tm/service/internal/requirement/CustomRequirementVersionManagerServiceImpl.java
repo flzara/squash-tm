@@ -55,7 +55,6 @@ import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.requirement.CustomRequirementVersionManagerService;
 import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerService;
 import org.squashtest.tm.service.requirement.RequirementBulkUpdate;
-import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
@@ -217,8 +216,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	@PreAuthorize(READ_REQUIREMENT_OR_ROLE_ADMIN)
 	@Transactional(readOnly = true)
 	public Page<RequirementVersion> findAllByRequirement(long requirementId, Pageable pageable) {
-		Page<RequirementVersion> page = requirementVersionDao.findAllByRequirementId(requirementId, pageable);
-		return page;
+		return requirementVersionDao.findAllByRequirementId(requirementId, pageable);
 	}
 
 	@Override
@@ -264,11 +262,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 
 				// update category if needed
 				if (update.hasCategoryDefined()) {
-					if (infoListItemService.isCategoryConsistent(rv.getProject().getId(), update.getCategory())) {
-						ps.setCategory(category);
-					} else {
-						throw new InconsistentInfoListItemException("requirementCategory", update.getCategory());
-					}
+					updateCategoryIfNeeded( rv, category, ps , update);
 				}
 
 				// update status if needed
@@ -281,14 +275,21 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 					ps.setCriticality(update.getCriticality());
 				}
 
-			} catch (Exception ex) {
-				// lots of legitimate business exception could happen so I won't log them here
+			} catch (Exception ex) {//NOSONAR lots of legitimate business exception could happen so I won't log them here
 				failures.add(rv.getId());
 			}
 		}
 
 		return failures;
 
+	}
+
+	private void updateCategoryIfNeeded(RequirementVersion rv,InfoListItem category,PropertiesSetter ps ,RequirementBulkUpdate update){
+		if (infoListItemService.isCategoryConsistent(rv.getProject().getId(), update.getCategory())) {
+			ps.setCategory(category);
+		} else {
+			throw new InconsistentInfoListItemException("requirementCategory", update.getCategory());
+		}
 	}
 
 	@Override

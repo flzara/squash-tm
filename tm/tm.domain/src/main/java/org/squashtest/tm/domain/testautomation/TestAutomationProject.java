@@ -76,7 +76,7 @@ public class TestAutomationProject {
 
 	/**
 	 * This is a space-separated list of slave nodes of the server on which that project can be run.
-	 * 
+	 *
 	 */
 	/*
 	 * TODO : For the sake of cool please implement a dedicated UserType that would map the single column in the DB to a
@@ -85,7 +85,7 @@ public class TestAutomationProject {
 	@Column(name = "EXECUTION_ENVIRONMENTS")
 	private String slaves = "";
 
-	
+
 
 	public TestAutomationProject() {
 		super();
@@ -109,16 +109,19 @@ public class TestAutomationProject {
 	public TestAutomationProject(String jobName, TestAutomationServer server) {
 		this(jobName, jobName, server);
 	}
-	
-	
+
+
 	public Long getId() {
 		return id;
 	}
 
 	/**
 	 * Still there for legacy purposes. Depending on what you need use {@link #getLabel()} or {@link #getJobName()}
-	 * 
+	 *
 	 * @return
+	 */
+	/**
+	 * @deprecated does not seem to be used any longer
 	 */
 	@Deprecated
 	public String getName() {

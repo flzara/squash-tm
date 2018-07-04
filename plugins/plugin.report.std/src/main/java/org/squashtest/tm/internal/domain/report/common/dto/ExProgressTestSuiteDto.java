@@ -33,20 +33,18 @@ public class ExProgressTestSuiteDto extends ExProgressAbstractDto{
 		super();
 	}
 
-	public ExProgressIterationDto getIteration() {
-		return iteration;
-	}
-
-
-	public void setIteration(ExProgressIterationDto iteration) {
-		this.iteration = iteration;
-	}
-
 	public ExProgressTestSuiteDto(TestSuite testSuite){
 		super(testSuite.getTestPlan());
 		super.name=testSuite.getName();
 	}
 
+	public ExProgressIterationDto getIteration() {
+		return iteration;
+	}
+
+	public void setIteration(ExProgressIterationDto iteration) {
+		this.iteration = iteration;
+	}
 
 	public List<ExProgressTestPlanDto> getTestPlans(){
 		return testPlans;

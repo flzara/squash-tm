@@ -35,7 +35,6 @@ public class JsonInfoList implements Identified {
 	private String description;
 	private List<JsonInfoListItem> items;
 
-
 	public JsonInfoList(){
 		super();
 	}
@@ -99,12 +98,17 @@ public class JsonInfoList implements Identified {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
 		JsonInfoList that = (JsonInfoList) o;
 
-		if (id != that.id) return false;
+		if (id != that.id){
+			return false;
+		}
 		if (code == null || that.code == null) {
 			return false;
 		}

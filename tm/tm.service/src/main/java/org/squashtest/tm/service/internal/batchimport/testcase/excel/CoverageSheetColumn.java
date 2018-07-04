@@ -23,7 +23,7 @@ package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.ColumnProcessingMode.MANDATORY;
 
 public enum CoverageSheetColumn implements TemplateColumn{
-	
+
 	REQ_PATH(MANDATORY),
 	REQ_VERSION_NUM(MANDATORY),
 	TC_PATH(MANDATORY);

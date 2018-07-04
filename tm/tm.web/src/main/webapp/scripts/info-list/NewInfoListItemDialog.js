@@ -192,7 +192,6 @@ define(["jquery", "backbone", "underscore", "handlebars", "./IconSelectDialog", 
 			validate: function (event) {
 				var res = true;
 				this.populateModel();
-				var self = this;
 				Forms.form(this.$el).clearState();
 
 				// We manually use validation rules implemented for list creation - quite inelegant, we should use BB.Model to back this view
@@ -203,7 +202,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./IconSelectDialog", 
 						.pairs()
 						.each(function (pair) {
 							Forms.input($("#new-info-list-item-" + pair[0])).setState("error", pair[1]);
-						})
+						});
 					return false;
 				}
 				//event.preventDefault();

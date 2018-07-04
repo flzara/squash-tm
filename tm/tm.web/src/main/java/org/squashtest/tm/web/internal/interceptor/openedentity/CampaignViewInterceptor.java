@@ -40,7 +40,7 @@ public class CampaignViewInterceptor extends ObjectViewsInterceptor {
 
 	@Override
 	public void preHandle(WebRequest request) {
-
+		// NOOP
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class CampaignViewInterceptor extends ObjectViewsInterceptor {
 
 	@Override
 	public void afterCompletion(WebRequest request, Exception ex) {
-
+		// NOOP
 	}
 
 }

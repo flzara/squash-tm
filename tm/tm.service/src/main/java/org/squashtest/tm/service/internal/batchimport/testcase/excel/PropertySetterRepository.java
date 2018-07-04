@@ -41,6 +41,8 @@ final class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 	private static final String PROPERTY_PATH = "path";
 	private static final String PROPERTY_MODE = "mode";
 	private static final String PROPERTY_NAME = "name";
+	private static final String DESCRIPTION = "description";
+	private static final String VERSION = "version";
 	private static final Map<TemplateWorksheet, PropertySetterRepository<?>> FINDER_REPO_BY_WORKSHEET = new HashMap<>(
 		TemplateWorksheet.values().length);
 
@@ -73,19 +75,19 @@ final class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 		r.propSetterByColumn.put(CoverageSheetColumn.TC_PATH, ReflectionMutatorSetter.forProperty("tcPath", String.class));
 		return r;
 	}
-	
+
 	private static PropertySetterRepository<?> createRequirementLinksWorksheetRepo(){
 		PropertySetterRepository<RequirementLinksSheetColumn> r = new PropertySetterRepository<>();
-		
+
 		r.propSetterByColumn.put(RequirementLinksSheetColumn.ACTION, ReflectionMutatorSetter.forOptionalProperty(PROPERTY_MODE));
 		r.propSetterByColumn.put(RequirementLinksSheetColumn.REQ_PATH, ReflectionMutatorSetter.forProperty(PROPERTY_PATH, String.class));
-		r.propSetterByColumn.put(RequirementLinksSheetColumn.REQ_VERSION_NUM, ReflectionMutatorSetter.forProperty("version", Integer.class));
+		r.propSetterByColumn.put(RequirementLinksSheetColumn.REQ_VERSION_NUM, ReflectionMutatorSetter.forProperty(VERSION, Integer.class));
 		r.propSetterByColumn.put(RequirementLinksSheetColumn.RELATED_REQ_PATH, ReflectionMutatorSetter.forProperty(PROPERTY_PATH, String.class));
-		r.propSetterByColumn.put(RequirementLinksSheetColumn.RELATED_REQ_VERSION_NUM, ReflectionMutatorSetter.forProperty("version", Integer.class));
+		r.propSetterByColumn.put(RequirementLinksSheetColumn.RELATED_REQ_VERSION_NUM, ReflectionMutatorSetter.forProperty(VERSION, Integer.class));
 		r.propSetterByColumn.put(RequirementLinksSheetColumn.RELATED_REQ_ROLE, ReflectionMutatorSetter.forOptionalProperty("relationRole"));
-		
+
 		return r;
-		
+
 	}
 
 	private static PropertySetterRepository<?> createRequirementWorksheetRepo() {
@@ -98,13 +100,13 @@ final class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 		r.propSetterByColumn.put(RequirementSheetColumn.REQ_VERSION_REFERENCE, ReflectionFieldSetter.forOptionalField("reference"));
 		r.propSetterByColumn.put(RequirementSheetColumn.REQ_VERSION_NAME, ReflectionFieldSetter.forOptionalField(PROPERTY_NAME));
 		r.propSetterByColumn.put(RequirementSheetColumn.REQ_VERSION_MILESTONE, ReflectionFieldSetter.forOptionalField("milestones"));
-		r.propSetterByColumn.put(RequirementSheetColumn.REQ_VERSION_NUM, ReflectionFieldSetter.forOptionalField("version"));
+		r.propSetterByColumn.put(RequirementSheetColumn.REQ_VERSION_NUM, ReflectionFieldSetter.forOptionalField(VERSION));
 		r.propSetterByColumn.put(RequirementSheetColumn.REQ_VERSION_CATEGORY, ReflectionFieldSetter.forOptionalField("category"));
 		r.propSetterByColumn.put(RequirementSheetColumn.REQ_VERSION_STATUS, ReflectionFieldSetter.forOptionalField("status"));
 		r.propSetterByColumn.put(RequirementSheetColumn.REQ_VERSION_CRITICALITY, ReflectionFieldSetter.forOptionalField("criticality"));
 
 		r.propSetterByColumn.put(RequirementSheetColumn.REQ_VERSION_DESCRIPTION,
-			ReflectionFieldSetter.forOptionalField("description"));
+			ReflectionFieldSetter.forOptionalField(DESCRIPTION));
 
 		// createdOn and createdBy field name is not known, we use mutators to set'entityManager
 		r.propSetterByColumn.put(RequirementSheetColumn.REQ_VERSION_CREATED_ON,
@@ -188,7 +190,7 @@ final class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 		// param.setName(..) has logic we'd rather short-circuit
 		r.propSetterByColumn.put(ParameterSheetColumn.TC_PARAM_NAME, ReflectionFieldSetter.forField(PROPERTY_NAME));
 		r.propSetterByColumn.put(ParameterSheetColumn.TC_PARAM_DESCRIPTION,
-			ReflectionFieldSetter.forOptionalField("description"));
+			ReflectionFieldSetter.forOptionalField(DESCRIPTION));
 
 		return r;
 	}
@@ -240,7 +242,7 @@ final class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 		r.propSetterByColumn.put(TestCaseSheetColumn.TC_TYPE, ReflectionFieldSetter.forOptionalField("type"));
 		r.propSetterByColumn.put(TestCaseSheetColumn.TC_STATUS, ReflectionFieldSetter.forOptionalField("status"));
 		r.propSetterByColumn.put(TestCaseSheetColumn.TC_DESCRIPTION,
-			ReflectionFieldSetter.forOptionalField("description"));
+			ReflectionFieldSetter.forOptionalField(DESCRIPTION));
 		r.propSetterByColumn.put(TestCaseSheetColumn.TC_PRE_REQUISITE,
 			ReflectionFieldSetter.forOptionalField("prerequisite"));
 		// createdOn and createdBy field name is not known, we use mutators to set'entityManager

@@ -29,12 +29,12 @@ import org.squashtest.tm.domain.infolist.ListItemReference;
 /**
  * Data holder for requirement version creation. We cannot use a requirement version because of its constrained
  * relationship with a requirement.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class NewRequirementVersionDto {
-	
+
 	/*@NotBlank*/
 	private String name;
 
@@ -53,13 +53,13 @@ public class NewRequirementVersionDto {
 	@NotEmpty*/
 	//maps a CustomField id to the value of a corresponding CustomFieldValue
 	private Map<Long, RawValue> customFields = new HashMap<>();
-	
-	
-	
+
+
+
 	public NewRequirementVersionDto() {
 		super();
 	}
-	
+
 	/**
 	 * Constructor used by import requirement process. As the exel parser return a {@link RequirementVersion}
 	 * we need to convert it to DTO before persist the new requirement version
@@ -73,9 +73,9 @@ public class NewRequirementVersionDto {
 		this.category = requirementVersion.getCategory().getCode();
 		this.customFields = customFields;
 	}
-	
-	
-	
+
+
+
 	public String getName() {
 		return name;
 	}

@@ -30,9 +30,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonAutoDetect
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class UserMixin {
+public interface UserMixin {
 
 	@JsonIgnore
-	public abstract Set<Team> getTeams();	
+	Set<Team> getTeams();
 
 }

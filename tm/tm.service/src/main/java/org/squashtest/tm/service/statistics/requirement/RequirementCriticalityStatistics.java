@@ -21,12 +21,12 @@
 package org.squashtest.tm.service.statistics.requirement;
 
 public final class RequirementCriticalityStatistics {
-	
+
 	private int undefined;
 	private int minor;
 	private int major;
 	private int critical;
-	
+
 	public RequirementCriticalityStatistics(int undefined, int minor, int major, int critical) {
 		super();
 		this.undefined = undefined;
@@ -37,28 +37,28 @@ public final class RequirementCriticalityStatistics {
 	public RequirementCriticalityStatistics() {
 		super();
 	}
-	
+
 	public int getUndefined() {
 		return undefined;
 	}
 	public void setUndefined(int undefined) {
 		this.undefined = undefined;
 	}
-	
+
 	public int getMinor() {
 		return minor;
 	}
 	public void setMinor(int minor) {
 		this.minor = minor;
 	}
-	
+
 	public int getMajor() {
 		return major;
 	}
 	public void setMajor(int major) {
 		this.major = major;
 	}
-	
+
 	public int getCritical() {
 		return critical;
 	}

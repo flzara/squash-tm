@@ -160,13 +160,13 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 
 			//1 creating synthetics prototypes and merging with natural
 			var mergedProto = this.mergeProtoypes(initialColumnsPrototypes);
-			
+
 			//2 reorder to follow the squashtm workspace order
 			var orderedProtos = _.pick(mergedProto,["REQUIREMENT","REQUIREMENT_VERSION","TEST_CASE","CAMPAIGN","ITERATION","ITEM_TEST_PLAN","EXECUTION"]);
 
 			return orderedProtos;
 		},
-		
+
 		getSelectedProject : function () {
 			var projectsScope = this.model.get('projectsScope');
 			return _.filter(squashtm.workspace.projects,function (project) {
@@ -222,7 +222,6 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 		getCufProjectMap : function () {
 			var selectedProjects = this.getSelectedProject();
 			var scopeType = this.model.get('scopeType');
-			var self = this;
 			var cufMap = _.reduce(selectedProjects,function (memo, project) {
 				_.each(project.customFieldBindings,function (values,key) {
 					values = _.filter(values, function (binding) {
@@ -236,7 +235,7 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 			},chartUtils.getEmptyCufMap());
 
 			// if the perimeter type is default or selected project, we want only cuf in the project scope
-			// but if the perimeter type is is custom, we want only the project scope for the specified entity and all cuf of the database for the others entities 
+			// but if the perimeter type is is custom, we want only the project scope for the specified entity and all cuf of the database for the others entities
 			// as we can't infer the joins that can be made between projects entities (eg a requirement can be linked to any TC so the cufs for TC must cover everything)
 			// An alternative could be to make an ajax request to find all linked entities and adjust cuf but it will be far too complex for a small gain, and will introduce issues for custom reports in workspaces
 			if (scopeType === "CUSTOM") {
@@ -265,7 +264,7 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 				else {
 					cufBindingMap[entityType] = additionnalCuf;
 				}
-				
+
 			});
 		},
 
@@ -346,13 +345,13 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 					break;
 				case "CHECKBOX":
 					suffix = "CUF_CHECKBOX";
-					break;				
+					break;
 				case "DROPDOWN_LIST":
 					suffix = "CUF_LIST";
-					break;				
+					break;
 				case "DATE_PICKER":
 					suffix = "CUF_DATE";
-					break;				
+					break;
 				case "TAG":
 					suffix = "CUF_TAG";
 					break;

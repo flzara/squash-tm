@@ -62,9 +62,9 @@ public class ExecutionProgressQueryAdapter extends LegacyQueryAdapter<HibernateE
 			setNoCampaignIds(legacyQuery);
 		}
 		else if ("MILESTONE_PICKER".equals(selMode.getValue())){
-			Criteria mIdsCrit = criteria.get("milestones");
+			Criteria mIdsCrit = criteria.get(MILESTONE_IDS);
 			Collection values = (Collection) mIdsCrit.getValue();
-			legacyQuery.setCriterion("milestones", values.toArray());
+			legacyQuery.setCriterion(MILESTONE_IDS, values.toArray());
 		}
 		else {
 			Criteria idsCrit = criteria.get(CAMPAIGN_IDS);

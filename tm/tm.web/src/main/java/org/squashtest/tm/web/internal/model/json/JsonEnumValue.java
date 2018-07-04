@@ -23,12 +23,18 @@ package org.squashtest.tm.web.internal.model.json;
 
 /**
  * @author mpagnon
- * 
+ *
  */
 public class JsonEnumValue {
 
 	private String value;
 	private String localizedValue;
+
+	public JsonEnumValue(String value, String localizedValue) {
+		super();
+		this.value = value;
+		this.localizedValue = localizedValue;
+	}
 
 	public String getLocalizedValue() {
 		return localizedValue;
@@ -46,11 +52,7 @@ public class JsonEnumValue {
 		this.value = value;
 	}
 
-	public JsonEnumValue(String value, String localizedValue) {
-		super();
-		this.value = value;
-		this.localizedValue = localizedValue;
-	}
-	
-	
+
+
+
 }

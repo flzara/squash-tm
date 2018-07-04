@@ -41,7 +41,6 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 			this.getTableRowId = $.proxy(this._getTableRowId, this);
 			this.tableRowCallback = $.proxy(this._tableRowCallback, this);
 
-			var self = this;
 			var tableConf ;
 			var squashConf;
 			if(isAssociation){
@@ -291,7 +290,6 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 		},
 
 		_addSelectEditableToCriticality : function(row, data) {
-			var self = this;
 			var urlPOST = routing.buildURL('requirementversions', data['requirement-version-id']);
 			var urlGET = squashtm.app.contextRoot + "/requirements/criticality-combo-data";
 			var confirm = translator.get("rich-edit.button.confirm.label");
@@ -331,7 +329,6 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 		},
 
 		_addSelectEditableToStatus : function(row, data) {
-			var self = this;
 			var urlPOST = routing.buildURL('requirementversions', data['requirement-version-id']);
 			var urlGET = squashtm.app.contextRoot + "/requirements/status-combo-data";
 			var confirm = translator.get("rich-edit.button.confirm.label");
@@ -430,7 +427,6 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 		},
 
 		_addTreeLink : function(row, data){
-			var self = this;
 			var id = data["requirement-id"];
 			var $cell = $(".search-open-tree-holder", row);
 			$cell.append('<span class="search-open-tree"></span>')

@@ -35,7 +35,6 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,7 +42,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
@@ -76,7 +74,7 @@ public class BugTrackerModificationController {
 
 	@Inject
 	private BugTrackerFinderService bugtrackerFinder;
-	
+
 
 
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
@@ -121,15 +119,15 @@ public class BugTrackerModificationController {
 	}
 
 	private static final class IframeFriendly {
-		private Boolean iframeFriendly;
+		private Boolean isIframeFriendly;
 
 		private IframeFriendly(boolean iframeFriendly) {
-			this.iframeFriendly = iframeFriendly;
+			this.isIframeFriendly = iframeFriendly;
 		}
 
 		@SuppressWarnings("unused")
 		public Boolean isIframeFriendly() {
-			return iframeFriendly;
+			return isIframeFriendly;
 		}
 	}
 
@@ -149,14 +147,14 @@ public class BugTrackerModificationController {
 	public void changeAuthPolicy(@PathVariable(BUGTRACKER_ID) long bugtrackerId, @RequestParam(VALUE) AuthenticationPolicy policy){
 		bugtrackerModificationService.changeAuthenticationPolicy(bugtrackerId, policy);
 	}
-	
+
 	@RequestMapping(value = "/authentication-protocol", method = RequestMethod.POST, params = VALUE)
 	@ResponseBody
 	public void changeAuthProtocol(@PathVariable(BUGTRACKER_ID) long bugtrackerId, @RequestParam(VALUE) AuthenticationProtocol protocol){
 		bugtrackerModificationService.changeAuthenticationProtocol(bugtrackerId, protocol);
 	}
-	
-	
+
+
 	@RequestMapping(value = "/authentication-protocol/configuration", method = RequestMethod.POST, consumes="application/json")
 	@ResponseBody
 	public void saveAuthConfiguration(@PathVariable(BUGTRACKER_ID) long bugtrackerId,  @Valid @RequestBody ServerAuthConfiguration configuration){
@@ -174,7 +172,7 @@ public class BugTrackerModificationController {
 			bugtrackerModificationService.testCredentials(bugtrackerId, credentials);
 		}
 		catch(BugTrackerNoCredentialsException ex){
-			// need to rethrow the same exception, with a message in the expected user language 
+			// need to rethrow the same exception, with a message in the expected user language
 			LOGGER.debug("server-app credentials test failed : ", ex);
 			String message = i18nHelper.internationalize("bugtracker.admin.messages.testcreds.fail", LocaleContextHolder.getLocale());
 			throw new BugTrackerNoCredentialsException(message, ex);
@@ -186,7 +184,7 @@ public class BugTrackerModificationController {
 	public void storeCredentials(@PathVariable(BUGTRACKER_ID) long bugtrackerId ,@RequestBody ManageableCredentials credentials){
 		bugtrackerModificationService.storeCredentials(bugtrackerId, credentials);
 	}
-	
+
 
 	// ********************** more private stuffs ******************
 
@@ -218,7 +216,7 @@ public class BugTrackerModificationController {
 
 			bean.setCredentials(credentials);
 			bean.setAuthConf(configuration);
-			
+
 
 		}
 		// no encryption key : blocking error, internationalizable
@@ -244,7 +242,7 @@ public class BugTrackerModificationController {
 
 
 	public static final class BugtrackerCredentialsManagementBean{
-		
+
 		// if those Strings remains to null it is a good thing
 		private String failureMessage = null;
 		private String warningMessage = null;
@@ -253,9 +251,9 @@ public class BugTrackerModificationController {
 		private AuthenticationPolicy authPolicy;
 		private List<AuthenticationProtocol> availableProtos;
 		private AuthenticationProtocol selectedProto;
-		
+
 		// conf
-		private ServerAuthConfiguration authConf;		
+		private ServerAuthConfiguration authConf;
 		// app-level credentials
 		private ManageableCredentials credentials;
 

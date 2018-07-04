@@ -36,6 +36,11 @@ public class CompositeException extends RuntimeException {
 	 */
 	private final List<?> exceptions;
 
+	public <T extends Exception> CompositeException(List<T> exceptions) {
+		super(buildMessage(exceptions));
+		this.exceptions = exceptions;
+	}
+
 	private static String buildMessage(List<?> exceptions) {
 		StringBuilder sb = new StringBuilder("Exceptions with the following messages were thrown : [");
 		for (Object ex : exceptions) {
@@ -44,11 +49,6 @@ public class CompositeException extends RuntimeException {
 		}
 		sb.append(']');
 		return sb.toString();
-	}
-
-	public <T extends Exception> CompositeException(List<T> exceptions) {
-		super(buildMessage(exceptions));
-		this.exceptions = exceptions;
 	}
 
 	/**

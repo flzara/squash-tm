@@ -26,8 +26,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.FieldError;
@@ -60,12 +58,12 @@ public class MethodArgumentNotValidExceptionHandler extends
 			HttpServletResponse response, Object handler, Exception ex) {
 		//only handle if ex is a MethodArgumentNotValidException
 		if (exceptionIsHandled(ex)) {
-			return handleException(request,response,ex);
+			return handleException(response,ex);
 		}
 		return null;
 	}
 
-	private ModelAndView handleException(HttpServletRequest request, HttpServletResponse response, Exception ex){
+	private ModelAndView handleException(HttpServletResponse response, Exception ex){
 		MethodArgumentNotValidException invalidAgrumentEx = (MethodArgumentNotValidException) ex; // NOSONAR Type was checked earlier
 		response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
 		List<FieldValidationErrorModel> errors = buildFieldValidationErrors(invalidAgrumentEx);

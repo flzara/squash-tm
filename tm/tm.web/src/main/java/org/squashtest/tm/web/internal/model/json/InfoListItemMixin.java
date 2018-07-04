@@ -28,16 +28,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 @JsonAutoDetect
 public abstract class InfoListItemMixin {
+
+	@JsonIgnore
+	private InfoList infoList;
+
 	@JsonProperty("isDefault")
 	public abstract void setDefault(boolean isDefault);
 
 	@JsonProperty("isDefault")
 	public abstract boolean isDefault();
 
-	@JsonIgnore
-	private InfoList infoList;
+
 }

@@ -35,11 +35,11 @@ public enum Workspace {
 	CAMPAIGN("campaign"),
 	CUSTOM_REPORT("custom-report");
 
+	private final String shortName;
+
 	Workspace(String shortName) {
 		this.shortName = shortName;
 	}
-
-	private final String shortName;
 
 	public String getShortName() {
 		return shortName;

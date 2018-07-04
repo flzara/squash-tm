@@ -27,9 +27,9 @@ import javax.validation.constraints.NotNull;
 
 /**
  * This class encapsulates test execution status updates.
- * 
+ *
  * @author edegenetais
- * 
+ *
  */
 /*
  * TODO This is not per se a "status", we already have ExecutionStatus. It's more of a partial state. Rename as
@@ -59,7 +59,7 @@ public class TestExecutionStatus implements Serializable {
 	/** Explanation message if any (mostly, short versions of error messages). */
 	@NotNull
 	private String statusMessage = "";
-	
+
 	private String resultUrl = null;
 
 	/**
@@ -163,11 +163,11 @@ public class TestExecutionStatus implements Serializable {
 	public void setStatusMessage(String statusMessage) {
 		this.statusMessage = statusMessage == null ? "" : statusMessage;
 	}
-	
+
 	public void setResultUrl(String resultUrl){
 		this.resultUrl = resultUrl;
 	}
-	
+
 	public String getResultUrl(){
 		return resultUrl;
 	}

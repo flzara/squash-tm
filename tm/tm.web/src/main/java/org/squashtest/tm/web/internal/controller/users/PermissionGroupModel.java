@@ -29,6 +29,17 @@ public class PermissionGroupModel {
 	private String simpleName;
 	private String displayName;
 
+	public PermissionGroupModel(){
+
+	}
+
+	public PermissionGroupModel(PermissionGroup permissionGroup){
+		super();
+		this.id = permissionGroup.getId();
+		this.qualifiedName = permissionGroup.getQualifiedName();
+		this.simpleName = permissionGroup.getSimpleName();
+	}
+
 	public long getId() {
 		return id;
 	}
@@ -54,14 +65,4 @@ public class PermissionGroupModel {
 		this.displayName = displayName;
 	}
 
-	public PermissionGroupModel(){
-
-	}
-
-	public PermissionGroupModel(PermissionGroup permissionGroup){
-		super();
-		this.id = permissionGroup.getId();
-		this.qualifiedName = permissionGroup.getQualifiedName();
-		this.simpleName = permissionGroup.getSimpleName();
-	}
 }
