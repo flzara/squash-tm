@@ -189,6 +189,7 @@ div#tree-pane li a.ui-state-default, div#tree-pane li a.ui-state-active{	 border
 
 #vakata-contextmenu.jstree-squashtest-context,
 #vakata-contextmenu.jstree-squashtest-context li ul { background:#f0f0f0; border:1px solid #979797; -moz-box-shadow: 1px 1px 2px #999; -webkit-box-shadow: 1px 1px 2px #999; box-shadow: 1px 1px 2px #999; }
+#vakata-contextmenu.jstree-squashtest-context li { }
 #vakata-contextmenu.jstree-squashtest-context a { color:black; }
 
 #vakata-contextmenu.jstree-squashtest-context li.jstree-contextmenu-disabled a,
