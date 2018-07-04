@@ -5724,7 +5724,7 @@ the display:block trick will implicitly add that property */
 .please-wait-message {
   font-size: 1.5em;
   font-weight: bold;
-  vertical-align: middle;
+  vertical-align: center;
   text-align: center;
 }
 .issue-panel-knownissues-displayed {

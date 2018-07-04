@@ -19,12 +19,12 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 span.cke_wrapper.cke_ltr {
-	background-color:#DDDDDD;
+	background-color:#DDDDDD;	
 }
 
 
 td.cke_contents {
-	width:100%;
+	width:100;
 }
 
 /* special delivery for ie */
@@ -32,5 +32,5 @@ td.cke_contents fieldset, td.cke_contents iframe {width:100%;}
 
 
 .cke_skin_squashtest .cke_fontSize .cke_text{
-	width:auto ! important;
+	width:auto ! important;	
 }

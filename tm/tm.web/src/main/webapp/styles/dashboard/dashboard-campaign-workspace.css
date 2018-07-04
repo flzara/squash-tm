@@ -20,7 +20,7 @@
  */
 	.favorite-dashboard-wrapper {
   		height: 780px;
-  		overflow: hidden;
+  		overflow: none;
   	}
 
   	.dashboard-grid {
@@ -35,7 +35,7 @@
      	background: #ffffff;
      	height: 780px;
      	width: 99.2%;
-     	overflow: hidden;
+     	overflow: none;
      	position:absolute;
      }
 
