@@ -71,7 +71,7 @@
     	* and toggle panel doesn't support gridster manipulating is own dimensions after initialization, or on windows resize...
     	*/
     	.ui-default-black {
-    		background: #2b2b2b url(../images/ui-bg_glass_75_2b2b2b_1x400.png) 50% 50% repeat-x;
+    		background: #2b2b2b url(images/ui-bg_glass_75_2b2b2b_1x400.png) 50% 50% repeat-x;
     		font-weight: normal;
     		color: #ffffff;
     		overflow: hidden;
@@ -90,26 +90,25 @@
          * Class for mime small buttons that are in tg-head. Duplicate of tg-head -> tg-toolbar to avoid conflict is we have decided to extract this class from .tg-head
          */
     	.dashboard-grid-toolbar {
-			display: block;
-			float: right;
-			text-align: right;
-			margin-top: 0.4em;
-			margin-right: 0.5em !important;
-		}
+    		display: block;
+    		float: right;
+    		text-align: right;
+    		margin-top: 0.4em;
+    		margin-right: 0.5em !important;
 
-    		 /*meh... we have to redefine buttons height
-    		 for them to look good^h^h as before*/
+    		// meh... we have to redefine buttons height
+    		// for them to look good^h^h as before
     		input {
-    			.sq-btn; /* NOSOAR */
+    			.sq-btn;
     		}
 
     		a {
     			padding-top: .15em;
     			padding-bottom: .15em;
     			margin-left: 0.5em !important;
-    			font-size: 0.9em;;
+    			font-size: @small-font;
     			color: #ffffff !important;
     		}
 
-
+    	}
 
