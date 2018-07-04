@@ -798,6 +798,11 @@ public class RequirementLibraryNavigationServiceImpl extends
 		return lastfolder.getId();
 	}
 
+
+
+
+
+
 	private Long createRequirementTree(Project project, int position, Long idBaseRequirement, String[] splits) {
 		Requirement requirementTree = makeRequirementTree(project, position + 1, splits);
 		List<Long> emptyIds = Collections.emptyList();

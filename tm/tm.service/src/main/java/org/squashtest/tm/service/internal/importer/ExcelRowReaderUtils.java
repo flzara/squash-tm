@@ -59,16 +59,22 @@ import org.slf4j.LoggerFactory;
 			} else {
 				if (type == Cell.CELL_TYPE_STRING) {
 					String value2s = cell.getStringCellValue();
-					try {
-						toReturn = Double.parseDouble(value2s);
-					} catch (NumberFormatException nfe) {
-						LOGGER.warn(nfe.getMessage());
-					}
+					toReturn = determineNumericValue(toReturn , value2s);
 				}
 			}
 		}
 		return toReturn;
 	}
+
+	public static Double determineNumericValue(Double toReturn ,String value2s){
+		try {
+			toReturn = Double.parseDouble(value2s);
+		} catch (NumberFormatException nfe) {
+			LOGGER.warn(nfe.getMessage());
+		}
+		return toReturn;
+	}
+
 
 	/**
 	 * If the cell is of numeric type : will read the Date value of the cell. <br>
@@ -127,14 +133,14 @@ import org.slf4j.LoggerFactory;
 			} else {
 				if (type == Cell.CELL_TYPE_NUMERIC) {
 					Double doubleVal = cell.getNumericCellValue();
-					toReturn=détermineNumericDoubleValue( doubleVal);
+					toReturn= determineNumericDoubleValue( doubleVal);
 				}
 			}
 		}
 		return toReturn;
 	}
 
-	private static String détermineNumericDoubleValue(Double doubleVal){
+	private static String determineNumericDoubleValue(Double doubleVal){
 		if(doubleVal - doubleVal.intValue() == 0){
 			return String.valueOf(doubleVal.intValue());
 		}else{

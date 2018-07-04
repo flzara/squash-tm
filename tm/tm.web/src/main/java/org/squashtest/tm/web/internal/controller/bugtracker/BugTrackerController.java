@@ -884,8 +884,7 @@ public class BugTrackerController {
 				filteredCollection = bugTrackersLocalService.findSortedIssueOwnerShipsForExecutionStep(id, paging);
 				break;
 			default:
-				String error = "BugTrackerController : cannot fetch issues for unknown entity type '" + entityType
-						+ "'";
+				String error = "BugTrackerController : cannot fetch issues for unknown entity type '" + entityType	+ "'";
 				if (LOGGER.isErrorEnabled()) {
 					LOGGER.error(error);
 				}

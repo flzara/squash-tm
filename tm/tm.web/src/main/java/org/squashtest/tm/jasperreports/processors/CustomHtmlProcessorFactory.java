@@ -178,15 +178,15 @@ public class CustomHtmlProcessorFactory extends JEditorPaneHtmlMarkupProcessor i
 				} else if (htmlTag == Tag.BR) {
 					chunk = "\n";
 				} else if (htmlTag == Tag.OL) {
-					whitespacesIfTagOl(orderedListIndex, i,	 parent, whitespaces, elements,  whitespace, chunk, crtOffset);
+					whitespacesIfTagOl(orderedListIndex, i, parent, whitespaces, elements, whitespace, chunk, crtOffset);
 				} else if (htmlTag == Tag.UL) {
-					whitespacesIfTagUl( i, parent,whitespaces, elements,  whitespace, chunk, crtOffset);
+					whitespacesIfTagUl(i, parent, whitespaces, elements, whitespace, chunk, crtOffset);
 				} else if (htmlTag == Tag.LI) {
-					whitespacesIfTagLi(element, orderedListIndex,  i,	 parent, whitespaces, elements,  crtOffset, chunk);
+					whitespacesIfTagLi(element, orderedListIndex, i, parent, whitespaces, elements, crtOffset, chunk);
 				} else if (element instanceof LeafElement) {
-					processIfLeafElement( endOffset, startOffset, document, element,   hyperlink,  chunk);
+					processIfLeafElement(endOffset, startOffset, document, element, hyperlink, chunk);
 
-					}
+				}
 			}
 		}
 
@@ -216,7 +216,7 @@ public class CustomHtmlProcessorFactory extends JEditorPaneHtmlMarkupProcessor i
 		return JRStyledTextParser.getInstance().write(styledText);
 	}
 
-	private void whitespacesIfTagOl(int[] orderedListIndex, int i,	Element parent,String[] whitespaces,List<Element> elements, String whitespace,String chunk,int crtOffset){
+	private void whitespacesIfTagOl(int[] orderedListIndex, int i, Element parent, String[] whitespaces, List<Element> elements, String whitespace, String chunk, int crtOffset) {
 		orderedListIndex[i] = 0;
 		String parentName = parent.getName().toLowerCase();
 		whitespaces[i] = whitespaces[elements.indexOf(parent)] + whitespace;
@@ -228,7 +228,7 @@ public class CustomHtmlProcessorFactory extends JEditorPaneHtmlMarkupProcessor i
 		}
 	}
 
-	private void whitespacesIfTagUl(int i,	Element parent,String[] whitespaces,List<Element> elements, String whitespace,String chunk,int crtOffset) {
+	private void whitespacesIfTagUl(int i, Element parent, String[] whitespaces, List<Element> elements, String whitespace, String chunk, int crtOffset) {
 		whitespaces[i] = whitespaces[elements.indexOf(parent)] + whitespace;
 
 		String parentName = parent.getName().toLowerCase();
@@ -240,7 +240,7 @@ public class CustomHtmlProcessorFactory extends JEditorPaneHtmlMarkupProcessor i
 		}
 	}
 
-	private void whitespacesIfTagLi(Element element, int[] orderedListIndex, int i,	Element parent,String[] whitespaces,List<Element> elements, int crtOffset,String chunk){
+	private void whitespacesIfTagLi(Element element, int[] orderedListIndex, int i, Element parent, String[] whitespaces, List<Element> elements, int crtOffset, String chunk) {
 
 		whitespaces[i] = whitespaces[elements.indexOf(parent)];
 		if (element.getElement(0) != null &&
@@ -259,7 +259,7 @@ public class CustomHtmlProcessorFactory extends JEditorPaneHtmlMarkupProcessor i
 
 	}
 
-	private void processIfLeafElement(int endOffset,int startOffset,Document document,Element element,  JRPrintHyperlink hyperlink, String chunk){
+	private void processIfLeafElement(int endOffset, int startOffset, Document document, Element element, JRPrintHyperlink hyperlink, String chunk) {
 		if (element instanceof RunElement) {
 			RunElement runElement = (RunElement) element;
 			AttributeSet attrSet = (AttributeSet) runElement.getAttribute(Tag.A);

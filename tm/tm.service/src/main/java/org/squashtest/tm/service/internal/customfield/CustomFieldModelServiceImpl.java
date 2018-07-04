@@ -103,16 +103,12 @@ public class CustomFieldModelServiceImpl implements CustomFieldModelService {
 					case DROPDOWN_LIST:
 						creatingDropDownListCuf( r,cufMap,cufId);
 						break;
-
 					case DATE_PICKER:
 						creatingDatePickerCuf(r, cufMap);
 						break;
-
 					case TAG:
 						creatingTagCuf(cufId, r, cufMap);
-
 						break;
-
 					default:
 						CustomFieldModel cufModel = getSingleValueCustomFieldModel(r);
 						cufMap.put(cufId, cufModel);
@@ -180,16 +176,13 @@ public class CustomFieldModelServiceImpl implements CustomFieldModelService {
 					case DROPDOWN_LIST:
 						creatingDropDownListCuf( r,cufMap,cufId);
 						break;
-
 					case DATE_PICKER:
 						CustomFieldModel datePickerCustomFieldModel = getDatePickerCustomFieldModel(r);
 						cufMap.put(datePickerCustomFieldModel.getId(), datePickerCustomFieldModel);
 						break;
-
 					case TAG:
 						creatingTagCuf(cufId, r, cufMap);
 						break;
-
 					default:
 						CustomFieldModel cufModel = getSingleValueCustomFieldModel(r);
 						cufMap.put(cufId, cufModel);
@@ -306,8 +299,7 @@ public class CustomFieldModelServiceImpl implements CustomFieldModelService {
 				groupingBy((CustomFieldBindingModel customFieldBindingModel) -> customFieldBindingModel.getBoundEntity().getEnumName(),
 					() -> {
 						//here we create the empty list, initial step of the reducing operation
-						HashMap<String, List<CustomFieldBindingModel>> map = createEmptyCufMap();
-						return map;
+						return createEmptyCufMap();
 					},
 					mapping(
 						Function.identity(),
