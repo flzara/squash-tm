@@ -40,12 +40,20 @@ import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 /**
- * Creates {@link ObjectIdentity} objects using the
+ * <p>
+ * Creates {@link ObjectIdentity} objects by retrieving the actual identity holder for a given
+ * domain object. An identity holder is one of the domain entities one which Acl are actually defined,
+ * typically a Library (eg TestCaseLibrary).
+ * </p>
+ *
+ * <p>
+ *     Unless the given domain object is itself an identity holder, it will usually bear the annotation
+ * </p>
  *
  * @author Gregory Fouquet
+ * @author bsiri
  *
  */
-@Component
 public class AnnotatedPropertyObjectIdentityRetrievalStrategy implements ObjectIdentityRetrievalStrategy {
 
 	private static final Logger LOGGER = LoggerFactory

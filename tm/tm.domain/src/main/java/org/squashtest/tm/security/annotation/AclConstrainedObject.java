@@ -27,9 +27,11 @@ import java.lang.annotation.Target;
 
 /**
  * This annotation should be put on the property getter of a domain object. It designates the property which should be
- * used to check ACL permissions.
+ * used to check ACL permissions. Contrary to {@link InheritsAcls}, the referenced entity directly holds the acl (eg
+ * TestCaseLibrary).
  *
  * @author Gregory Fouquet
+ * @author bsiri
  *
  */
 @Retention(RetentionPolicy.RUNTIME)

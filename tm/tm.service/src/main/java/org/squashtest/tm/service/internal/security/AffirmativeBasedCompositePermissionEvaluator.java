@@ -51,6 +51,7 @@ public class AffirmativeBasedCompositePermissionEvaluator extends AclPermissionE
 	// Note : I choose not to synchronize this collection because chances of things going haywire
 	// are very slim, and could happen only at boot time.
 	// NOTE while nosgi, ExtraPermissionEvaluator not implemented anywhere, could be removable over-engineered stuff
+	// NOTE : actually it was introduced because of the Kanchô plugin
 	private Collection<ExtraPermissionEvaluator> evaluators = Collections.emptyList();
 
 	public AffirmativeBasedCompositePermissionEvaluator(AclService aclService, Collection<ExtraPermissionEvaluator> delegates) {
