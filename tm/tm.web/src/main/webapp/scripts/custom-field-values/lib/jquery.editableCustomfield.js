@@ -31,8 +31,8 @@
  * .editableCustomfield("destroy") : destroys the custom field.
  *
  */
-define([ "jquery", "underscore", "ckeditor",  "squash.configmanager", "./cuf-values-utils", "jquery.squash.jeditable", "jquery.generateId", "jquery.squash.tagit" ],
-		function($, _, CKEDITOR, confman, utils) {
+define([ "jquery","app/util/StringUtil", "underscore", "ckeditor",  "squash.configmanager", "./cuf-values-utils", "jquery.squash.jeditable", "jquery.generateId", "jquery.squash.tagit" ],
+		function($, StringUtil,_, CKEDITOR, confman, utils) {
 			"use strict";
 
 	if ($.fn.editableCustomfield !== undefined){
@@ -113,7 +113,7 @@ define([ "jquery", "underscore", "ckeditor",  "squash.configmanager", "./cuf-val
 
 		'DROPDOWN_LIST' : {
 			_build : function(elt, def){
-				var content = elt.text();
+				var content = StringUtil.unescape(elt.text());
 
 				var select = $("<select>");
 				var options = def.options;
@@ -135,7 +135,7 @@ define([ "jquery", "underscore", "ckeditor",  "squash.configmanager", "./cuf-val
 				elt.append(select);
 			},
 			_set : function(elt, def, value){
-				elt.find('select').val(value);
+				elt.find('select').val(StringUtil.unescape(value));
 			},
 			_get : function(elt, def){
 				return elt.find('select').val();
