@@ -18,20 +18,27 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.security.acls;
+package org.squashtest.tm.service;
 
-import org.springframework.security.acls.domain.DefaultPermissionFactory;
-import org.springframework.stereotype.Component;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 
 /**
+ * JSR 107 (JCache)-based cache configuration, the provider being ehcache 3 (org.ehache, not net.sf.ehcache).
+ * The configuration is in resources/ehcache.xml.
  *
- * @author mpagnon
+ * The cache manager configured here allows for creating caches if one day we need to use Spring @org.springframework.cache.Cacheable,
+ * or configure a Hibernate second-level cache.
+ *
+ * Also used in SecurityConfig for the AclCache
  *
  */
-public class CustomPermissionFactory extends DefaultPermissionFactory {
+@Configuration
+// forcing highest precedence, because caches don't depend on any other things
+// on the other hand some other beans might need it
+@EnableCaching(order = Ordered.HIGHEST_PRECEDENCE)
+public class CacheConfig {
 
-	public CustomPermissionFactory() {
-		super();
-		 registerPublicPermissions(CustomPermission.class);
-	}
 }

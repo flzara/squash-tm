@@ -46,7 +46,6 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
  * @author Gregory Fouquet
  *
  */
-@Component("squashtest.core.security.ObjectIdentityRetrievalStrategy")
 public class InheritableAclsObjectIdentityRetrievalStrategy implements ObjectIdentityRetrievalStrategy {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InheritableAclsObjectIdentityRetrievalStrategy.class);
@@ -108,9 +107,7 @@ public class InheritableAclsObjectIdentityRetrievalStrategy implements ObjectIde
 	/**
 	 * Strategy responsible for actually retrieving the object identities.
 	 */
-	@Inject
-	@Named("annotatedPropertyObjectIdentityRetrievalStrategy")
-	private ObjectIdentityRetrievalStrategy delegate;
+	private ObjectIdentityRetrievalStrategy delegate = new AnnotatedPropertyObjectIdentityRetrievalStrategy();
 	/**
 	 * Session factory, used to retrieve constrained objects.
 	 */
