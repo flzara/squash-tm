@@ -68,6 +68,8 @@ define(["jquery", "./utils", "./permissions-rules",
 			"#new-report-tree-button",
 			"#new-chart-tree-button",
       "#new-dashboard-tree-button",
+			"#copy-node-tree-button",
+			"#paste-node-tree-button",
 			"#rename-node-tree-button",
 			"#delete-node-tree-button"
 		].join(", ");
