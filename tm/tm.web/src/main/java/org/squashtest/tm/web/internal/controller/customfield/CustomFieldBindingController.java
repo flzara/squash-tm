@@ -23,7 +23,6 @@ package org.squashtest.tm.web.internal.controller.customfield;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
@@ -39,12 +38,9 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTablePaging;
-import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @RequestMapping("/custom-fields-binding")
@@ -174,7 +170,7 @@ public class CustomFieldBindingController {
             CustomFieldModel model = converter.toJson(field);
             result.add(model);
         }
-
+		Collections.sort(result, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
         return result;
     }
 
@@ -199,3 +195,6 @@ public class CustomFieldBindingController {
     }
 
 }
+
+
+
