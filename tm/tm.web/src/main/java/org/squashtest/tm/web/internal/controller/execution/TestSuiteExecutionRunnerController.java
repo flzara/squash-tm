@@ -30,13 +30,10 @@ import javax.servlet.ServletContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.service.internal.bugtracker.BugTrackerConnectorFactory;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
@@ -153,6 +150,7 @@ public class TestSuiteExecutionRunnerController {
 	}
 
 	@RequestMapping(value = RequestMappingPattern.INIT_EXECUTION_RUNNER, params = { "optimized=false", "!dry-run" })
+	@ResponseStatus(HttpStatus.MOVED_PERMANENTLY)
 	public String startResumeExecutionInClassicRunner(@PathVariable long testSuiteId) {
 		LOGGER.trace("startResumeExecutionInClassicRunner({})", testSuiteId);
 
@@ -214,6 +212,7 @@ public class TestSuiteExecutionRunnerController {
 	 * @return
 	 */
 	@RequestMapping(value = RequestMappingPattern.INIT_NEXT_EXECUTION_RUNNER)
+	@ResponseStatus(HttpStatus.MOVED_PERMANENTLY)
 	public String moveToNextTestCase(@PathVariable("testPlanItemId") long testPlanItemId,
 			@PathVariable("testSuiteId") long testSuiteId, @RequestParam("optimized") boolean optimized) {
 		LOGGER.trace("moveToNextTestCase({}, {})", testPlanItemId, testSuiteId);
@@ -278,6 +277,7 @@ public class TestSuiteExecutionRunnerController {
 	 * @return
 	 */
 	@RequestMapping(value = "{testPlanItemId}/executions/{executionId}", method = RequestMethod.GET)
+	@ResponseStatus(HttpStatus.MOVED_PERMANENTLY)
 	public String runFirstRunnableStep(@PathVariable long testSuiteId, @PathVariable long testPlanItemId,
 			@PathVariable long executionId, @RequestParam(defaultValue = "false") boolean optimized) {
 

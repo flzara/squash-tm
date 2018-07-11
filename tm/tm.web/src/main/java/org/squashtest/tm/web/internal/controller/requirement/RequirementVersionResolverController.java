@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -48,6 +49,7 @@ public class RequirementVersionResolverController {
 
 
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
+	@ResponseStatus(HttpStatus.MOVED_PERMANENTLY)
 	public String resolveRequirementInfo(@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId) {
 
 		RequirementVersion version = versionResolver.resolveByRequirementId(requirementId);
@@ -57,6 +59,7 @@ public class RequirementVersionResolverController {
 
 	// will return the fragment only
 	@RequestMapping(method = RequestMethod.GET)
+	@ResponseStatus(HttpStatus.MOVED_PERMANENTLY)
 	public String resolveRequirement(@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId) {
 		RequirementVersion version = versionResolver.resolveByRequirementId(requirementId);
 		return "redirect:/requirement-versions/" + version.getId();

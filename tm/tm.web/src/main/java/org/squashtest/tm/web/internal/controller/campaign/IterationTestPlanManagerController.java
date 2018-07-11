@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.internal.controller.campaign;
 
 import org.apache.commons.collections.MultiMap;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -289,6 +290,7 @@ public class IterationTestPlanManagerController {
 	}
 
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanId}/last-execution", method = RequestMethod.GET)
+	@ResponseStatus(HttpStatus.MOVED_PERMANENTLY)
 	public String goToLastExecution(@PathVariable("testPlanId") Long testPlanId) {
 		IterationTestPlanItem item = iterationTestPlanManagerService.findTestPlanItem(testPlanId);
 		Execution exec = item.getLatestExecution();

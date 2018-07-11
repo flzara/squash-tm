@@ -25,11 +25,13 @@ import java.util.Locale;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.service.internal.bugtracker.BugTrackerConnectorFactory;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
@@ -125,6 +127,7 @@ public class TestCaseExecutionRunnerController {
 	}
 
 	@RequestMapping(params = { "optimized=false" })
+	@ResponseStatus(HttpStatus.MOVED_PERMANENTLY)
 	public String startResumeExecutionInClassicRunner(@PathVariable long executionId) {
 
 		// simple case here : the context is simply the popup. We redirect to the execution processing view controller.

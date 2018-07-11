@@ -26,13 +26,10 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
@@ -81,6 +78,7 @@ public class ExecutionProcessingController {
 	// ************************** getters for the main execution fragments **************************************
 
 	@RequestMapping(method = RequestMethod.GET, params = OPTIMIZED)
+	@ResponseStatus(HttpStatus.MOVED_PERMANENTLY)
 	public String executeFirstRunnableStep(@PathVariable long executionId,
 										   @RequestParam(OPTIMIZED) boolean optimized) {
 
@@ -137,6 +135,7 @@ public class ExecutionProcessingController {
 	}
 
 	@RequestMapping(value = "/step/{stepId}", params = "optimized=false")
+	@ResponseStatus(HttpStatus.MOVED_PERMANENTLY)
 	public String startResumeExecutionStepInClassicRunner(@PathVariable long executionId, @PathVariable long stepId) {
 		Execution execution = executionProcService.findExecution(executionId);
 		int stepIndex = execution.getStepIndex(stepId);
