@@ -21,9 +21,7 @@
 package org.squashtest.tm.service;
 
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 
 /**
  * JSR 107 (JCache)-based cache configuration, the provider being ehcache 3 (org.ehache, not net.sf.ehcache).
@@ -38,7 +36,7 @@ import org.springframework.core.Ordered;
 @Configuration
 // forcing highest precedence, because caches don't depend on any other things
 // on the other hand some other beans might need it
-@EnableCaching(order = Ordered.HIGHEST_PRECEDENCE)
+@EnableCaching
 public class CacheConfig {
 
 }

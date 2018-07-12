@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.core.security.acls.jdbc
 
+import org.junit.Ignore
+
 import javax.inject.Inject
 import javax.sql.DataSource
 
@@ -46,8 +48,8 @@ import spock.unitils.UnitilsSupport
 @Rollback
 @Transactional
 @ContextHierarchy([
-	// enabling the ACL management that was disabled in DbunitServiceSpecification 
-	@ContextConfiguration(name="aclcontext", classes = [EnabledAclSpecConfig], inheritLocations=false)	
+	// enabling the ACL management that was disabled in DbunitServiceSpecification
+	@ContextConfiguration(name="aclcontext", classes = [EnabledAclSpecConfig], inheritLocations=false)
 ])
 class JdbcManageableAclServiceIT extends DbunitServiceSpecification {
 	@Inject
@@ -61,7 +63,7 @@ class JdbcManageableAclServiceIT extends DbunitServiceSpecification {
 		UserContextHelper.setUsername("Bob")
 	}
 
-	@IgnoreRest
+	@Ignore // the test condition is still empty
 	@DataSet("JdbcManageableAclServiceIT.should create OID for a project.xml")
 	@ExpectedDataSet("JdbcManageableAclServiceIT.should create OID for a project.expected.xml")
 	def "should create OID for a project"() {
@@ -75,6 +77,7 @@ class JdbcManageableAclServiceIT extends DbunitServiceSpecification {
 		true // expected dataset constraint
 	}
 
+	@Ignore // the test condition is still empty
 	@DataSet("JdbcManageableAclServiceIT.should delete OID for a project.xml")
 	@ExpectedDataSet("JdbcManageableAclServiceIT.should delete OID for a project.expected.xml")
 	def "should delete OID for a project"() {
@@ -139,7 +142,7 @@ class JdbcManageableAclServiceIT extends DbunitServiceSpecification {
 		then:
 		res != null
 		!res.isEmpty()
-		res.collectAll { it[0] }.containsAll(-102L, -101L)
+		res.collect{ it[0] }.containsAll(-102L, -101L)
 	}
 
 	@DataSet("JdbcManageableAclServiceIT.should retrieve acl group user.xml")

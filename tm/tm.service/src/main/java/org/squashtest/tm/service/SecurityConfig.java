@@ -73,6 +73,7 @@ import org.squashtest.tm.service.internal.security.SquashUserDetailsManagerProxy
 import org.squashtest.tm.service.internal.spring.ArgumentPositionParameterNameDiscoverer;
 import org.squashtest.tm.service.internal.spring.CompositeDelegatingParameterNameDiscoverer;
 import org.squashtest.tm.service.security.acls.ExtraPermissionEvaluator;
+import org.squashtest.tm.service.security.acls.domain.DatabaseBackedObjectIdentityGeneratorStrategy;
 import org.squashtest.tm.service.security.acls.domain.InheritableAclsObjectIdentityRetrievalStrategy;
 
 /**
@@ -248,6 +249,10 @@ public class SecurityConfig {
 		return new InheritableAclsObjectIdentityRetrievalStrategy();
 	}
 
+	@Bean("squashtest.core.security.ObjectIdentityGeneratorStrategy")
+	public ObjectIdentityGenerator objectIdentityGenerator(){
+		return new DatabaseBackedObjectIdentityGeneratorStrategy(objectIdentityRetrievalStrategy());
+	}
 
 
 

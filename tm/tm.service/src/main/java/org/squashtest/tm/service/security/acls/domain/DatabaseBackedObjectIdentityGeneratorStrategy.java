@@ -40,7 +40,6 @@ import org.springframework.stereotype.Component;
  * @author bsiri
  * @reviewed-on 2011/11/23
  */
-@Component("squashtest.core.security.ObjectIdentityGeneratorStrategy")
 public class DatabaseBackedObjectIdentityGeneratorStrategy implements ObjectIdentityGenerator {
 	/**
 	 * Object identity which won't match anything. Identifier is "0" to prevent
@@ -81,9 +80,12 @@ public class DatabaseBackedObjectIdentityGeneratorStrategy implements ObjectIden
 	@PersistenceContext
 	private EntityManager em;
 
-	@Inject
-	@Named("squashtest.core.security.ObjectIdentityRetrievalStrategy")
-	private ObjectIdentityRetrievalStrategy objectRetrievalStrategy;
+	private final ObjectIdentityRetrievalStrategy objectRetrievalStrategy;
+
+	public DatabaseBackedObjectIdentityGeneratorStrategy(ObjectIdentityRetrievalStrategy objectRetrievalStrategy){
+		super();
+		this.objectRetrievalStrategy = objectRetrievalStrategy;
+	}
 
 	/**
 	 * Creates an ObjectIdentity by : 1. fetching the entity using the given id

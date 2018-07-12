@@ -22,15 +22,21 @@ package org.squashtest.it.config
 
 import org.springframework.context.annotation.*
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured
+import org.springframework.security.acls.domain.ObjectIdentityRetrievalStrategyImpl
 import org.springframework.security.acls.model.AclCache
 import org.springframework.security.acls.model.AclService
+import org.springframework.security.acls.model.ObjectIdentityGenerator
+import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy
 import org.springframework.security.authentication.encoding.PasswordEncoder
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.squashtest.it.stub.security.StubAclService
+import org.squashtest.it.stub.security.StubObjectIdentityRetrievalGenerator
 import org.squashtest.it.stub.security.StubUserDetailsManager
 import org.squashtest.tm.service.internal.security.AdministratorAuthenticationServiceImpl
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManager
 import org.squashtest.tm.service.security.AdministratorAuthenticationService
+import org.squashtest.tm.service.security.acls.domain.DatabaseBackedObjectIdentityGeneratorStrategy
+import org.squashtest.tm.service.security.acls.domain.InheritableAclsObjectIdentityRetrievalStrategy
 
 /**
  * Configuration for Service specification. Instanciates service and repo layer beans
@@ -48,10 +54,12 @@ excludeFilters = [
 @EnableSpringConfigured
 class DisabledAclSpecConfig {
 
+	/*
 	@Bean
 	AclCache aclCache() {
 		new NullAclCache();
 	}
+	*/
 
 	@Bean
 	PasswordEncoder passwordEncoder() {
@@ -78,6 +86,17 @@ class DisabledAclSpecConfig {
 	@Bean
 	AdministratorAuthenticationService administratorAuthenticationService() {
 		new AdministratorAuthenticationServiceImpl();
+	}
+
+
+	@Bean("squashtest.core.security.ObjectIdentityRetrievalStrategy")
+	public ObjectIdentityRetrievalStrategy objectIdentityRetrievalStrategy(){
+		return new StubObjectIdentityRetrievalGenerator()
+	}
+
+	@Bean("squashtest.core.security.ObjectIdentityGeneratorStrategy")
+	public ObjectIdentityGenerator objectIdentityGeneratorStrategy(){
+		return new StubObjectIdentityRetrievalGenerator()
 	}
 
 
