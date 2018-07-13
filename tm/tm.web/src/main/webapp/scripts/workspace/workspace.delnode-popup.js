@@ -99,7 +99,7 @@ define(['jquery', 'underscore', "workspace.event-bus", 'jquery.squash.formdialog
 
 			$.each(responsesArray, function (idx, arg) {
 				if (arg !== null && arg !== undefined) {
-					var messages = arg[0].messages;
+					var messages = arg[0].messageCollection;
 					for (var i = 0, len = messages.length; i < len; i++) {
 						htmlDetail += '<li>' + messages[i] + '</li>';
 					}
