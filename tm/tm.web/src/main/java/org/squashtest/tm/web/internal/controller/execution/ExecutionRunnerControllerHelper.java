@@ -306,7 +306,7 @@ public class ExecutionRunnerControllerHelper {
 		model.addAttribute("hasDenormFields", hasDenormFields);
 		model.addAttribute("bugtrackerMode", bugtrackerMode);
 
-
+		model.addAttribute("verifiedReqVersions", execution.getReferencedTestCase().getVerifiedRequirementVersions());
 	}
 
 }

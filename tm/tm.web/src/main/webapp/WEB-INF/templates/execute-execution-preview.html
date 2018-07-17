@@ -254,6 +254,41 @@ documentation :
     			</div>
     	</div>
 	</div>
+
+    <div class="sq-tg expand">
+      <div class="tg-head">
+        <h3 th:text="#{label.verifiedRequirements}"></h3>
+      </div>
+      <div id="verified-requirements-panel" class="tg-body is-contextual load-links-right-frame">
+        <table id="verified-requirements-table" data-def="pre-sort=3-asc, pagesize=50 ">
+          <thead>
+          <tr>
+            <th th:attr="data-def='select, map=entity-index'">#</th>
+            <th th:attr="data-def='sortable, map=project'" th:text="#{label.project}">Project</th>
+            <th th:attr="data-def='sortable, map=versionId'" th:text="#{label.versionId }">Id</th>
+            <th th:attr="data-def='sortable, map=reference'" th:text="#{label.Reference}">Reference</th>
+            <th th:attr="data-def='sortable, sClass=verif-req-description, map=name'"
+                th:text="#{requirement.name.label}">Name
+            </th>
+            <th th:attr="data-def='sortable, map=criticality'" th:text="#{requirement.criticality.label}">Critical</th>
+            <th th:attr="data-def='invisible, map=description'"></th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="reqVer, iterStat : ${verifiedReqVersions}">
+            <td th:text="${iterStat.count}">1</td>
+            <td th:text="${reqVer.requirement.project.name}">project</td>
+            <td th:text="${reqVer.id}">version id </td>
+            <td th:text="${reqVer.reference}">ref 1</td>
+            <td th:text="${reqVer.name}">name 1</td>
+            <td th:text="#{__${reqVer.criticality.i18nKey}__}">Criticality</td>
+            <td th:utext="${reqVer.description}">description</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
   <div th:with="attachable = ${false}, attachableEntity=${execution}, attachmentSet = ${attachments}"
        id="attachment-bloc-frag" th:include="attachment-bloc.frag :: attachment-bloc">
     ATTACHMENT-BLOC

@@ -20,11 +20,11 @@
  */
 /*
  * That page doesn't have the whole init code for templates/execute-execution-preview.html.
- * Some code was left behind, do that when time 
+ * Some code was left behind, do that when time
  */
 
 require(["common"], function () {
-	require(["jquery", "squash.basicwidgets", "custom-field-values","workspace.routing", "jquery.squash"],
+	require(["jquery", "squash.basicwidgets", "custom-field-values","workspace.routing", "jquery.squash", "squashtable"],
 		function ($, basic, cfieldVal,routing) {
 			var squashtm = window.squashtm;
 			var page = window.squashtm.page;
@@ -82,6 +82,25 @@ require(["common"], function () {
 				window.close();
 				parent.squashtm.ieomanager.closeWindow();
 			});
+
+
+			$("#verified-requirements-table").squashTable({
+				'bServerSide' : false,
+				'sDom' : '<r>t<i>'
+			},{
+				tooltips: [{
+					tdSelector: 'td.verif-req-description',
+					value: function (row, data) {
+						return showBriefDescription(data["description"]);
+					}
+				}]
+			});
+
+			function showBriefDescription(fullDescription){
+				var span= document.createElement('span');
+				span.innerHTML = fullDescription;
+				return span.innerText.substr(0, 47)+"...";
+			}
 
 			$(function () {
 				basic.init();
