@@ -40,6 +40,7 @@ import org.squashtest.tm.api.report.form.InputType;
 import org.squashtest.tm.api.report.form.OptionInput;
 import org.squashtest.tm.api.report.form.RadioButtonsGroup;
 import org.squashtest.tm.api.report.form.composite.TagPickerOption;
+import org.squashtest.tm.domain.IdCollector;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportNodeType;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -345,13 +346,7 @@ public class ReportController {
 
 	public List<String> getPossibleTagValues(String boundEntity) {
 
-		List<Long> projectIds = (List<Long>) CollectionUtils.collect(projectFinder.findAllOrderedByName(), new Transformer() {
-
-			@Override
-			public Object transform(Object input) {
-				return ((GenericProject) input).getId();
-			}
-		});
+		List<Long> projectIds = (List<Long>) CollectionUtils.collect(projectFinder.findAllOrderedByName(), new IdCollector());
 
 		return customFieldFinder.getAvailableTagsForEntity(boundEntity, projectIds);
 	}
