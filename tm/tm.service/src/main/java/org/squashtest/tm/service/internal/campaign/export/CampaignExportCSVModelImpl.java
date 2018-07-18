@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import javax.inject.Inject;
 
@@ -39,6 +40,9 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.InputType;
+import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
@@ -206,6 +210,7 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 		headerCells.add(new CellImpl("#_ISSUES"));
 		headerCells.add(new CellImpl("DATASET"));
 		headerCells.add(new CellImpl("EXEC_STATUS"));
+		headerCells.add(new CellImpl("EXEC_SUCCESS_RATE"));
 		headerCells.add(new CellImpl("EXEC_USER"));
 		headerCells.add(new CellImpl("EXECUTION_DATE"));
 		headerCells.add(new CellImpl("DESCRIPTION"));
@@ -294,6 +299,7 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 			dataCells.add(new CellImpl(Integer.toString(getNbIssues(itp))));
 			dataCells.add(new CellImpl((itp.getReferencedDataset() == null) ? "" : itp.getReferencedDataset().getName()));
 			dataCells.add(new CellImpl(itp.getExecutionStatus().toString()));
+			dataCells.add(new CellImpl(formatLongText(calculateSuccessRate() + " %")));
 			dataCells.add(new CellImpl(formatUser(itp.getUser())));
 			dataCells.add(new CellImpl(formatDate(itp.getLastExecutedOn())));
 			dataCells.add(new CellImpl(formatLongText(testCase.getDescription())));
@@ -482,6 +488,22 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 			itp = nextITP;
 
 			return itp != null;
+		}
+
+		private int calculateSuccessRate() {
+			int successRate = 0;
+			Execution lastExec = itp.getLatestExecution();
+			if (lastExec != null) {
+				if (lastExec.isAutomated()) {
+					successRate = lastExec.getExecutionStatus() == ExecutionStatus.SUCCESS ? 100 : 0;
+				} else {
+					Predicate<ExecutionStep> predicate = step -> step.getExecutionStatus() == ExecutionStatus.SUCCESS;
+					List<ExecutionStep> steps = itp.getLatestExecution().getSteps();
+					int success = (int) steps.stream().filter(predicate).count();
+					successRate = success / steps.size() * 100;
+				}
+			}
+			return successRate;
 		}
 
 	}
