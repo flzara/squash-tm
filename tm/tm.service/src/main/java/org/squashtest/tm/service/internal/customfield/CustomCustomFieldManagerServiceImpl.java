@@ -27,6 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.customfield.*;
 import org.squashtest.tm.event.ChangeCustomFieldCodeEvent;
 import org.squashtest.tm.exception.DuplicateNameException;
@@ -70,7 +71,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	private ApplicationEventPublisher eventPublisher;
 
 	/**
-	 * @see org.squashtest.tm.service.customfield.CustomFieldFinderService#findSortedCustomFields(Pageable)
+	 * @see org.squashtest.tm.service.customfield.CustomFieldFinderService#findSortedCustomFields(PagingAndSorting)
 	 */
 	@Override
 	public Page<CustomField> findSortedCustomFields(Pageable pageable) {
@@ -152,7 +153,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	 */
 	@Override
 	public void changeOptional(Long customFieldId, Boolean optional) {
-		CustomField customField = customFieldDao.findById(customFieldId);
+		CustomField customField = customFieldDao.getOne(customFieldId);
 		if (!optional) {
 			checkDefaultValueExists(customField);
 			addDefaultValueToCustomFields(customFieldId, customField.getDefaultValue());
@@ -190,7 +191,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	}
 
 	/**
-	 * @see org.squashtest.tm.service.customfield.CustomCustomFieldManagerService#changeOptionCode(Long, String,
+	 * @see org.squashtest.tm.service.customfield.CustomCustomFieldManagerService#changeOptionCode(long, String, String)
 	 *      String)
 	 */
 	@Override

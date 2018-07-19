@@ -16,6 +16,7 @@
     <!--<sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>-->
     <h2.driver>org.h2.Driver</h2.driver>
     <h2.url>jdbc:h2:${project.build.directory}/data/squash-tm</h2.url>
+    <jooq.version>3.10.7</jooq.version>
     <master.changelog>src/main/liquibase/global.changelog-master.xml</master.changelog>
   </properties>
 
@@ -143,6 +144,11 @@
     </dependency>
 
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-jooq</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-acl</artifactId>
     </dependency>
@@ -194,18 +200,6 @@
         <directory>${project.basedir}/src/test/resources</directory>
       </testResource>
     </testResources>
-
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <!-- Specify the maven code generator plugin -->
-          <groupId>org.jooq</groupId>
-          <artifactId>jooq-codegen-maven</artifactId>
-
-        </plugin>
-      </plugins>
-
-    </pluginManagement>
 
     <plugins>
       <plugin>
@@ -325,9 +319,9 @@
       </plugin>
 
       <plugin>
-        <!-- Specify the maven code generator plugin -->
         <groupId>org.jooq</groupId>
         <artifactId>jooq-codegen-maven</artifactId>
+        <version>${jooq.version}</version>
 
         <!-- Specify the plugin configuration.
      The configuration format is the same as for the standalone code generator -->

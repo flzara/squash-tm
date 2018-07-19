@@ -88,7 +88,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	@Override
 	public void modifyUserFirstName(long userId, String newName) {
 		// fetch
-		User user = userDao.findOne(userId);
+		User user = userDao.getOne(userId);
 		// check
 		checkPermissions(user);
 		// proceed
@@ -98,7 +98,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	@Override
 	public void modifyUserLastName(long userId, String newName) {
 		// fetch
-		User user = userDao.findOne(userId);
+		User user = userDao.getOne(userId);
 		// check
 		checkPermissions(user);
 		// proceed
@@ -109,7 +109,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	public void modifyUserLogin(long userId, String newLogin) {
 		// fetch
 		String newtrimedLogin = newLogin.trim();
-		User user = userDao.findOne(userId);
+		User user = userDao.getOne(userId);
 		if (!newtrimedLogin.equals(user.getLogin())) {
 			LOGGER.debug("change login for user " + user.getLogin() + " to " + newtrimedLogin);
 			// check
@@ -127,7 +127,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	@Override
 	public void modifyUserEmail(long userId, String newEmail) {
 		// fetch
-		User user = userDao.findOne(userId);
+		User user = userDao.getOne(userId);
 		// check
 		checkPermissions(user);
 		// proceed
@@ -202,7 +202,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deactivateUser(long userId) {
 
-		User user = userDao.findOne(userId);
+		User user = userDao.getOne(userId);
 
 		unassignUserFromAllTestPlan(userId);
 		user.setActive(false);
@@ -212,7 +212,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void activateUser(long userId) {
 
-		User user = userDao.findOne(userId);
+		User user = userDao.getOne(userId);
 
 		user.setActive(true);
 	}

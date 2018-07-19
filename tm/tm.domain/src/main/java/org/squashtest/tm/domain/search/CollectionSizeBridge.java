@@ -31,6 +31,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.search.bridge.StringBridge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -238,7 +239,7 @@ public class CollectionSizeBridge implements StringBridge {
 		boolean hasSession = false;
 		boolean isLive = false;
 
-		SessionImplementor implementor = hibCollection.getSession();
+		SharedSessionContractImplementor implementor = hibCollection.getSession();
 		if (implementor != null && Session.class.isAssignableFrom(implementor.getClass())){
 			hasSession = true;
 			Session s = (Session)implementor;
@@ -302,12 +303,12 @@ public class CollectionSizeBridge implements StringBridge {
 
 	private Session createNewSession(AbstractPersistentCollection hibCollection){
 		// let run potential NPE
-		SessionImplementor deadSession = hibCollection.getSession();
+		SharedSessionContractImplementor deadSession = hibCollection.getSession();
 		SessionFactoryImplementor sf = deadSession.getFactory();
 
 		Session newSession = sf.openSession();
 		newSession.setDefaultReadOnly(true);
-		newSession.setFlushMode(FlushMode.MANUAL);
+		newSession.setHibernateFlushMode(FlushMode.MANUAL);
 
 		return newSession;
 

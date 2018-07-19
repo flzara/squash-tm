@@ -173,13 +173,17 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	@Override
 	public AuthenticationStatus checkAuthenticationStatus(Long bugtrackerId) {
 		AuthenticationStatus status;
-		BugTracker bugtracker = bugTrackerDao.findOne(bugtrackerId);
-		if (bugtracker == null) {
-			status = AuthenticationStatus.UNDEFINED;
-		} else {
-			boolean needs = remoteBugTrackersService.isCredentialsNeeded(bugtracker);
+		Optional<BugTracker> optBugtracker = bugTrackerDao.findById(bugtrackerId);
+
+		if (optBugtracker.isPresent()){
+			boolean needs = remoteBugTrackersService.isCredentialsNeeded(optBugtracker.get());
 			status = needs ? AuthenticationStatus.NON_AUTHENTICATED : AuthenticationStatus.AUTHENTICATED;
 		}
+		else{
+			// sloppy semantics, but I'm not fixing what is not broken yet.
+			status = AuthenticationStatus.UNDEFINED;
+		}
+
 		return status;
 	}
 
@@ -489,7 +493,8 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	@Override
 	public int findNumberOfIssueForItemTestPlanLastExecution(Long itemTestPlanId) {
 
-		IterationTestPlanItem itp = iterationTestPlanDao.findById(itemTestPlanId);
+		IterationTestPlanItem itp = iterationTestPlanDao.getOne(itemTestPlanId);
+
 		Execution execution = itp.getLatestExecution();
 		if (execution == null) {
 			return 0;
@@ -534,7 +539,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	@Override
 	public Issue findIssueById(Long id) {
-		return issueDao.findOne(id);
+		return issueDao.getOne(id);
 	}
 
 	@Override

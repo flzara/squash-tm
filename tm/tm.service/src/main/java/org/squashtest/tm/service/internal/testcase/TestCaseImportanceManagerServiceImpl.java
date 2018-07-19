@@ -107,8 +107,7 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 	}
 
 	/**
-	 * @see org.squashtest.tm.service.testcase.TestCaseImportanceManagerService#changeImportanceIfRelationsAddedToTestCases(List,
-	 * TestCase)
+	 * @see org.squashtest.tm.service.testcase.TestCaseImportanceManagerService#changeImportanceIfRelationsAddedToTestCase(List, TestCase)
 	 */
 	@Override
 	public void changeImportanceIfRelationsAddedToTestCase(List<RequirementVersion> requirementVersions,
@@ -157,7 +156,7 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 	 */
 	@Override
 	public void changeImportanceIfRelationsRemovedFromReq(List<Long> testCasesIds, long requirementVersionId) {
-		RequirementVersion requirementVersion = requirementVersionDao.findOne(requirementVersionId);
+		RequirementVersion requirementVersion = requirementVersionDao.getOne(requirementVersionId);
 		RequirementCriticality requirementCriticality = requirementVersion.getCriticality();
 		TestCaseImportance reqCritImportance = TestCaseImportance.deduceTestCaseImportance(Arrays
 			.asList(requirementCriticality));
@@ -228,7 +227,7 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 	@Override
 	public void changeImportanceIfRequirementCriticalityChanged(long requirementVersionId,
 																RequirementCriticality oldRequirementCriticality) {
-		RequirementVersion requirementVersion = requirementVersionDao.findOne(requirementVersionId);
+		RequirementVersion requirementVersion = requirementVersionDao.getOne(requirementVersionId);
 		List<TestCase> testCases = testCaseDao.findUnsortedAllByVerifiedRequirementVersion(requirementVersionId);
 		for (TestCase testCase : testCases) {
 			changeImportanceIfRequirementCriticalityChanged(oldRequirementCriticality, requirementVersion, testCase);

@@ -94,7 +94,7 @@ public class CustomReportLibraryNodeServiceImpl implements
 	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	@Transactional(readOnly = true)
 	public List<CustomReportLibraryNode> findAllCustomReportLibraryNodeById(List<Long> treeNodeIds) {
-		return customReportLibraryNodeDao.findAll(treeNodeIds);
+		return customReportLibraryNodeDao.findAllById(treeNodeIds);
 	}
 
 
@@ -207,8 +207,8 @@ public class CustomReportLibraryNodeServiceImpl implements
 	@PreAuthorize("hasPermission(#targetId, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'WRITE') "
 		+ OR_HAS_ROLE_ADMIN)
 	public List<TreeLibraryNode> copyNodes(List<Long> nodeIds, Long targetId) {
-		List<CustomReportLibraryNode> nodes = customReportLibraryNodeDao.findAll(nodeIds);
-		CustomReportLibraryNode target = customReportLibraryNodeDao.findOne(targetId);
+		List<CustomReportLibraryNode> nodes = customReportLibraryNodeDao.findAllById(nodeIds);
+		CustomReportLibraryNode target = customReportLibraryNodeDao.getOne(targetId);
 		return makeCopy(nodes, target);
 	}
 
@@ -216,8 +216,8 @@ public class CustomReportLibraryNodeServiceImpl implements
 	@PreAuthorize("hasPermission(#targetId, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'WRITE') "
 		+ OR_HAS_ROLE_ADMIN)
 	public void moveNodes(List<Long> nodeIds, Long targetId) {
-		List<CustomReportLibraryNode> nodes = customReportLibraryNodeDao.findAll(nodeIds);
-		CustomReportLibraryNode target = customReportLibraryNodeDao.findOne(targetId);
+		List<CustomReportLibraryNode> nodes = customReportLibraryNodeDao.findAllById(nodeIds);
+		CustomReportLibraryNode target = customReportLibraryNodeDao.getOne(targetId);
 		nodeMover.moveNodes(nodes,target);
 	}
 

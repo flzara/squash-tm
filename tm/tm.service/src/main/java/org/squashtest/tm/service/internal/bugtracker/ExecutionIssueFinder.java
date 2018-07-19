@@ -116,7 +116,7 @@ class ExecutionIssueFinder implements IssueOwnershipFinder {
 	@Override
 	public final PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSorted(
 		long entityId, PagingAndSorting sorter) {
-		Execution execution = executionDao.findOne(entityId);
+		Execution execution = executionDao.getOne(entityId);
 
 		List<Pair<? extends IssueDetector, Issue>> pairs = findAllPagedPairs(execution, sorter);
 

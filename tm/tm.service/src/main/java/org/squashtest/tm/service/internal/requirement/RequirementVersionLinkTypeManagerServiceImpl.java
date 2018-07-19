@@ -178,7 +178,7 @@ public class RequirementVersionLinkTypeManagerServiceImpl implements Requirement
 
 	@Override
 	public boolean doesContainDefault(List<Long> linkTypesIdsToCheck) {
-		Iterable<RequirementVersionLinkType> linkTypesToCheck = linkTypeDao.findAll(linkTypesIdsToCheck);
+		Iterable<RequirementVersionLinkType> linkTypesToCheck = linkTypeDao.findAllById(linkTypesIdsToCheck);
 		for(RequirementVersionLinkType linkType : linkTypesToCheck) {
 			if(linkType.isDefault()) {
 				return true;

@@ -218,7 +218,7 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 		use (ReflectionCategory) {
 			Resource.set field: "id", of: req, to: 5L
 		}
-		requirementVersionDao.findOne(5) >> req
+		requirementVersionDao.getOne(5) >> req
 
 
 		and: " a test case which verifies this requirements"

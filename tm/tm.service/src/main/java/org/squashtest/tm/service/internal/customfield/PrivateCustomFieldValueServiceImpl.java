@@ -387,7 +387,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	@Override
 	public void changeValue(long customFieldValueId, RawValue newValue) {
 
-		CustomFieldValue changedValue = customFieldValueDao.findById(customFieldValueId);
+		CustomFieldValue changedValue = customFieldValueDao.getOne(customFieldValueId);
 
 		BoundEntity boundEntity = boundEntityDao.findBoundEntity(changedValue);
 

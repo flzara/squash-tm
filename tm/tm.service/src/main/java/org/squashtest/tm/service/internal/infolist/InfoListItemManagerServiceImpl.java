@@ -63,14 +63,14 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 	@Override
 	public void changeCode(long infoListItemId, String newCode) {
 
-		InfoListItem item = itemDao.findOne(infoListItemId);
+		InfoListItem item = itemDao.getOne(infoListItemId);
 		SystemInfoListItemCode.verifyModificationPermission(item);
 		item.setCode(newCode);
 	}
 
 	@Override
 	public void changeLabel(long infoListItemId, String newLabel) {
-		InfoListItem item = itemDao.findOne(infoListItemId);
+		InfoListItem item = itemDao.getOne(infoListItemId);
 		SystemInfoListItemCode.verifyModificationPermission(item);
 		item.setLabel(newLabel);
 	}
@@ -78,7 +78,7 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 	@Override
 	public void changeDefault(long infoListItemId) {
 
-		InfoListItem changedItem = itemDao.findOne(infoListItemId);
+		InfoListItem changedItem = itemDao.getOne(infoListItemId);
 		SystemInfoListItemCode.verifyModificationPermission(changedItem);
 		List<InfoListItem> items = changedItem.getInfoList().getItems();
 		for(InfoListItem item : items){
@@ -91,7 +91,7 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 
 	@Override
 	public void changeIcon(long infoListItemId, String icon) {
-		InfoListItem item = itemDao.findOne(infoListItemId);
+		InfoListItem item = itemDao.getOne(infoListItemId);
 		SystemInfoListItemCode.verifyModificationPermission(item);
 		item.setIconName(icon);
 
@@ -119,7 +119,7 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 
 	@Override
 	public InfoListItem findById(Long id){
-		return itemDao.findOne(id);
+		return itemDao.getOne(id);
 	}
 
 	@Override

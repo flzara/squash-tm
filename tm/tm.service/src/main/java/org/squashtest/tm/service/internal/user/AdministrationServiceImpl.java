@@ -167,7 +167,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public AuthenticatedUser findUserById(long userId) {
-		User user = userDao.findOne(userId);
+		User user = userDao.getOne(userId);
 		boolean hasAuth = adminAuthentService.userExists(user.getLogin());
 		return new AuthenticatedUser(user, hasAuth);
 	}
@@ -210,15 +210,15 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void setUserGroupAuthority(long userId, long groupId) {
-		UsersGroup group = groupDao.findOne(groupId);
-		User user = userDao.findOne(userId);
+		UsersGroup group = groupDao.getOne(groupId);
+		User user = userDao.getOne(userId);
 		user.setGroup(group);
 	}
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deactivateUser(long userId) {
-		User user = userDao.findOne(userId);
+		User user = userDao.getOne(userId);
 		checkActiveUser(user);
 		userAccountService.deactivateUser(userId);
 		adminAuthentService.deactivateAccount(user.getLogin());
@@ -229,7 +229,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void activateUser(long userId) {
 		userAccountService.activateUser(userId);
-		User user = userDao.findOne(userId);
+		User user = userDao.getOne(userId);
 		adminAuthentService.activateAccount(user.getLogin());
 		aclService.refreshAcls();
 	}
@@ -258,7 +258,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 		checkUsersOwnCharts(userIds);
 
 		for (Long id : userIds) {
-			User user = userDao.findOne(id);
+			User user = userDao.getOne(id);
 			checkActiveUser(user);
 			userAccountService.deleteUser(id);
 			adminAuthentService.deleteAccount(user.getLogin());
@@ -362,7 +362,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void resetUserPassword(long userId, String newPassword) {
-		User user = userDao.findOne(userId);
+		User user = userDao.getOne(userId);
 		adminAuthentService.resetUserPassword(user.getLogin(), newPassword);
 	}
 
@@ -384,7 +384,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deassociateTeams(long userId, List<Long> teamIds) {
-		User user = userDao.findOne(userId);
+		User user = userDao.getOne(userId);
 		user.removeTeams(teamIds);
 		aclService.updateDerivedPermissions(userId);
 	}
@@ -395,8 +395,8 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void associateToTeams(long userId, List<Long> teamIds) {
-		User user = userDao.findOne(userId);
-		List<Team> teams = teamDao.findAll(teamIds);
+		User user = userDao.getOne(userId);
+		List<Team> teams = teamDao.findAllById(teamIds);
 		for (Team team : teams) {
 			team.addMember(user);
 			user.addTeam(team);
@@ -462,7 +462,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	public void createUserWithoutCredentials(User user, long groupId) {
 		checkLoginAvailability(user.getLogin());
 
-		UsersGroup group = groupDao.findOne(groupId);
+		UsersGroup group = groupDao.getOne(groupId);
 		user.setGroup(group);
 
 		userDao.save(user);
@@ -474,7 +474,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	 */
 	@Override
 	public void createAuthentication(long userId, String password) throws LoginAlreadyExistsException {
-		User user = userDao.findOne(userId);
+		User user = userDao.getOne(userId);
 
 		if (!adminAuthentService.userExists(user.getLogin())) {
 			UserDetails auth = UserBuilder.forUser(user.getLogin()).password(password).active(user.getActive()).build();

@@ -114,7 +114,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 
 		genericProjectManager.persist(newProject);
 
-		ProjectTemplate projectTemplate = projectTemplateDao.findOne(templateId);
+		ProjectTemplate projectTemplate = projectTemplateDao.getOne(templateId);
 		if(params.isKeepTemplateBinding()) {
 			newProject.setTemplate(projectTemplate);
 			makeParamsConsistent(params);

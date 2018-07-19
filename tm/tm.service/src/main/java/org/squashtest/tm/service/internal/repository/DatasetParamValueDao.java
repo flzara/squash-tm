@@ -24,10 +24,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
 
 public interface DatasetParamValueDao extends JpaRepository<DatasetParamValue, Long> {
-	/**
-	 * @deprecated use #findOne
-	 */
-	@Deprecated
-	DatasetParamValue findById(Long id);
+
 }
 

@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.execution;
 
+import org.springframework.data.domain.Example;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -73,7 +74,7 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	@Override
 	@PreAuthorize(EXECUTE_EXECUTION_OR_ROLE_ADMIN)
 	public void setExecutionDescription(Long executionId, String description) {
-		Execution execution = executionDao.findOne(executionId);
+		Execution execution = executionDao.getOne(executionId);
 		execution.setDescription(description);
 	}
 
@@ -119,7 +120,7 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 
 	@Override
 	public Execution findById(long id) {
-		return executionDao.findOne(id);
+		return executionDao.getOne(id);
 	}
 
 	@Override
@@ -141,20 +142,22 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 
 	@Override
 	public boolean exists(long id) {
-		return executionDao.exists(id);
+		// !!! since recent change in Spring Data, the former dao method #exists(ID) have been
+		// deleted, leaving us only with the query-by-example option. I'd rather load the entity outright.
+		return executionDao.findById(id).isPresent();
 	}
 
 	@Override
 	@PreAuthorize(EXECUTE_EXECUTION_OR_ROLE_ADMIN)
 	public void setExecutionStatus(Long executionId, ExecutionStatus status) {
-		Execution execution = executionDao.findOne(executionId);
+		Execution execution = executionDao.getOne(executionId);
 		execution.setExecutionStatus(status);
 
 	}
 
 	@Override
 	public long updateSteps(long executionId) {
-		Execution execution = executionDao.findOne(executionId);
+		Execution execution = executionDao.getOne(executionId);
 		List<ExecutionStep> toBeUpdated = executionStepModifHelper.findStepsToUpdate(execution);
 
 		long result = executionStepModifHelper.doUpdateStep(toBeUpdated, execution);

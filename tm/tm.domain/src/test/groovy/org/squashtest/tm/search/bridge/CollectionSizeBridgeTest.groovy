@@ -117,7 +117,7 @@ class CollectionSizeBridgeTest extends Specification{
 		then :
 			created == newSession
 			1 * newSession.setDefaultReadOnly(true)
-			1 * newSession.setFlushMode(FlushMode.MANUAL)
+			1 * newSession.setHibernateFlushMode(FlushMode.MANUAL)
 
 
 	}

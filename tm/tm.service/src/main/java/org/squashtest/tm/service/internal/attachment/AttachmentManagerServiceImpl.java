@@ -89,7 +89,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 
 		Attachment attachment = new Attachment();
 
-		AttachmentList list = attachmentListDao.findOne(attachmentListId);
+		AttachmentList list = attachmentListDao.getOne(attachmentListId);
 		list.addAttachment(attachment);
 		attachment.setContent(content);
 		attachment.setAddedOn(new Date());
@@ -127,7 +127,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	}
 
 	private Attachment findById(Long attachmentId) {
-		return attachmentDao.findOne(attachmentId);
+		return attachmentDao.getOne(attachmentId);
 	}
 
 	@Override

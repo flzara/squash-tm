@@ -95,7 +95,7 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 
 	@Override
 	public void deleteProject(long projectId) {
-		GenericProject project = genericProjectDao.findOne(projectId);
+		GenericProject project = genericProjectDao.getOne(projectId);
 
 		project.accept(new ProjectVisitor() {
 			@Override
@@ -137,7 +137,7 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 
 	private void doDeleteProject(long projectId) {
 		LOGGER.debug("The project #" + projectId + " is being deleted");
-		GenericProject project = genericProjectDao.findOne(projectId);
+		GenericProject project = genericProjectDao.getOne(projectId);
 
 		deleteAllLibrariesContent(project);
 		CustomReportLibrary customReportLibrary = project.getCustomReportLibrary();

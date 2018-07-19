@@ -32,10 +32,12 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.IdCollector;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
@@ -63,10 +65,8 @@ import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.squashtest.tm.service.security.Authorizations.*;
 
@@ -177,7 +177,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	@Override
 	@PreAuthorize(WRITE_REQVERSION_OR_ROLE_ADMIN)
 	public void changeCriticality(long requirementVersionId, RequirementCriticality criticality) {
-		RequirementVersion requirementVersion = requirementVersionDao.findOne(requirementVersionId);
+		RequirementVersion requirementVersion = requirementVersionDao.getOne(requirementVersionId);
 		RequirementCriticality oldCriticality = requirementVersion.getCriticality();
 		requirementVersion.setCriticality(criticality);
 		testCaseImportanceManagerService.changeImportanceIfRequirementCriticalityChanged(requirementVersionId,
@@ -187,7 +187,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	@Override
 	@PreAuthorize(WRITE_REQVERSION_OR_ROLE_ADMIN)
 	public void rename(long requirementVersionId, String newName) {
-		RequirementVersion v = requirementVersionDao.findOne(requirementVersionId);
+		RequirementVersion v = requirementVersionDao.getOne(requirementVersionId);
 
 		/*
 		 * FIXME : there is a loophole here. What exactly means DuplicateNameException for requirements, that can have
@@ -210,7 +210,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 
 	/**
 	 * @see org.squashtest.tm.service.requirement.CustomRequirementVersionManagerService#findAllByRequirement(long,
-	 *      org.springframework.data.Pageable)
+	 *      org.springframework.data.domain.Pageable)
 	 */
 	@Override
 	@PreAuthorize(READ_REQUIREMENT_OR_ROLE_ADMIN)
@@ -229,7 +229,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	@Override
 	@PreAuthorize(WRITE_REQVERSION_OR_ROLE_ADMIN)
 	public void changeCategory(long requirementVersionId, String categoryCode) {
-		RequirementVersion version = requirementVersionDao.findOne(requirementVersionId);
+		RequirementVersion version = requirementVersionDao.getOne(requirementVersionId);
 		InfoListItem category = infoListItemService.findByCode(categoryCode);
 
 		if (infoListItemService.isCategoryConsistent(version.getProject().getId(), categoryCode)) {
@@ -244,7 +244,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 
 		List<Long> failures = new ArrayList<>();
 
-		List<RequirementVersion> versions = requirementVersionDao.findAll(requirementVersionIds);
+		List<RequirementVersion> versions = requirementVersionDao.findAllById(requirementVersionIds);
 
 		InfoListItem category = null;
 		if (update.hasCategoryDefined()) {
@@ -324,76 +324,100 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 
 	@Override
 	public Collection<Milestone> findAssociableMilestonesForMassModif(List<Long> reqVersionIds) {
-		Collection<Milestone> milestones = null;
 
-		for (Long reqVersionId : reqVersionIds) {
-			List<Milestone> mil = requirementVersionDao.findOne(reqVersionId).getProject().getMilestones();
-			if (milestones != null) {
-				// keep only milestone that in ALL selected requirementVersion
-				milestones.retainAll(mil);
-			} else {
-				// populate the collection for the first time
-				milestones = new ArrayList<>(mil);
-			}
-		}
-		filterLockedAndPlannedStatus(milestones);
-		return milestones;
+		List<RequirementVersion> versions = requirementVersionDao.findAllById(reqVersionIds);
+
+		// find all associable milestone sets
+		List<Set<Milestone>> milestoneSetList =
+			versions.stream()
+				// first find the distinct projects
+				.map ( v -> v.getProject() )
+				.distinct()
+				// now fetch all the milestones that can be modified and return them as set
+				.map ( p -> this.retainModifiableMilestones(p.getMilestones()) )
+				// return the list of sets
+				.collect(Collectors.toList());
+
+		// find the intersection.
+		return intersect(milestoneSetList);
+
 	}
 
-	private void filterLockedAndPlannedStatus(Collection<Milestone> milestones) {
-		CollectionUtils.filter(milestones, new Predicate() {
-			@Override
-			public boolean evaluate(Object milestone) {
 
-				return ((Milestone) milestone).getStatus() != MilestoneStatus.LOCKED
-					&& ((Milestone) milestone).getStatus() != MilestoneStatus.PLANNED;
-			}
-		});
-	}
 
 	@Override
 	public Collection<Long> findBindedMilestonesIdForMassModif(List<Long> reqVersionIds) {
-		Collection<Milestone> milestones = null;
 
-		for (Long reqVersionId : reqVersionIds) {
-			Set<Milestone> mil = requirementVersionDao.findOne(reqVersionId).getMilestones();
-			if (milestones != null) {
-				// keep only milestone that in ALL selected requirementVersion
-				milestones.retainAll(mil);
-			} else {
-				// populate the collection for the first time
-				milestones = new ArrayList<>(mil);
-			}
-		}
-		filterLockedAndPlannedStatus(milestones);
-		return CollectionUtils.collect(milestones, new Transformer() {
+		List<RequirementVersion> versions = requirementVersionDao.findAllById(reqVersionIds);
 
-			@Override
-			public Object transform(Object milestone) {
+		// find all associable milestone sets
+		List<Set<Milestone>> milestoneSetList =
+			versions.stream()
+				// now fetch the set of those milestones (only those that can be modified though)
+				.map ( version -> this.retainModifiableMilestones(version.getMilestones()) )
+				// return the list of sets
+				.collect(Collectors.toList());
 
-				return ((Milestone) milestone).getId();
-			}
-		});
+		// find the intersection
+		Set<Milestone> milestones = intersect(milestoneSetList);
+
+		// return the ids
+		return CollectionUtils.collect(milestones, new IdCollector());
 	}
+
+	private Set<Milestone> retainModifiableMilestones(Collection<Milestone> milestones){
+		return milestones.stream().filter( this::isModifiableMilestone ).collect(Collectors.toSet());
+	}
+
+	// a milestone is mass modifiable if its status is neither locked not planned
+	private boolean isModifiableMilestone(Milestone milestone){
+		MilestoneStatus status = milestone.getStatus();
+		return ! (status == MilestoneStatus.LOCKED || status == MilestoneStatus.PLANNED);
+	}
+
+	private Set<Milestone> intersect(List<Set<Milestone>> milestoneSetList){
+
+		if (milestoneSetList.isEmpty()){
+			return new HashSet<>();
+		}
+
+		Set<Milestone> result = new HashSet<>(milestoneSetList.get(0));
+
+		return milestoneSetList.stream().skip(1)
+					.collect( () -> result,
+								Collection::retainAll,
+								CollectionUtils::retainAll
+					);
+
+	}
+
+
+
 
 	@Override
 	public boolean haveSamePerimeter(List<Long> reqVersionIds) {
 
+		boolean allMatch = true;
+
 		if (reqVersionIds.size() != 1) {
+			// find the milestone sets
+			List<Set<Milestone>> milestoneSetList =
+				requirementVersionDao.findAllById(reqVersionIds).stream()
+					// first find the distinct projects
+					.map ( v -> v.getProject() )
+					.distinct()
+					// now gather the milestone sets
+					.map ( p -> new HashSet<>(p.getMilestones()) )
+					// return the list of sets
+					.collect(Collectors.toList());
 
-			Long first = reqVersionIds.remove(0);
-			List<Milestone> toCompare = requirementVersionDao.findOne(first).getProject().getMilestones();
+			// verify they have the same content
+			Set<Milestone> sample = milestoneSetList.get(0);
+			allMatch = milestoneSetList.stream().allMatch( set -> set.size() == sample.size() && set.containsAll(sample));
 
-			for (Long reqVersionId : reqVersionIds) {
-				List<Milestone> mil = requirementVersionDao.findOne(reqVersionId).getProject().getMilestones();
-
-				if (mil.size() != toCompare.size() || !mil.containsAll(toCompare)) {
-					return false;
-				}
-			}
 		}
 
-		return true;
+		return allMatch;
 	}
 
 	@Override

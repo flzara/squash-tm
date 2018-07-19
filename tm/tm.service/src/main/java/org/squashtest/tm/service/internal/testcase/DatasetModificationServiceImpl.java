@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.testcase;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -57,7 +58,7 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 
 	@Override
 	public Dataset findById(long datasetId) {
-		return datasetDao.findById(datasetId);
+		return datasetDao.getOne(datasetId);
 	}
 
 	@Override
@@ -93,15 +94,17 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 
 	@Override
 	public void remove(Dataset dataset) {
-		this.datasetDao.removeDatasetFromTestPlanItems(dataset.getId());
-		this.datasetDao.delete(dataset);
+		datasetDao.removeDatasetFromTestPlanItems(dataset.getId());
+		datasetDao.delete(dataset);
 	}
 
 
 	@Override
 	public void removeById(long datasetId) {
-		Dataset dataset = this.datasetDao.findById(datasetId);
-		remove(dataset);
+		Optional<Dataset> optDatadataset = this.datasetDao.findById(datasetId);
+		if (optDatadataset.isPresent()){
+			remove(optDatadataset.get());
+		}
 	}
 
 	@Override
@@ -115,7 +118,7 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 	@Override
 	public void changeName(long datasetId, String newName) {
 
-		Dataset dataset = this.datasetDao.findById(datasetId);
+		Dataset dataset = datasetDao.getOne(datasetId);
 		Dataset sameName = datasetDao.findByTestCaseIdAndName(dataset.getTestCase().getId(), dataset.getName());
 		if(sameName != null && ! sameName.getId().equals(dataset.getId())){
 			throw new DuplicateNameException(dataset.getName(), newName);
@@ -126,7 +129,7 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 
 	@Override
 	public void changeParamValue(long datasetParamValueId, String value) {
-		DatasetParamValue paramValue = this.datasetParamValueDao.findById(datasetParamValueId);
+		DatasetParamValue paramValue = datasetParamValueDao.getOne(datasetParamValueId);
 		paramValue.setParamValue(value);
 	}
 

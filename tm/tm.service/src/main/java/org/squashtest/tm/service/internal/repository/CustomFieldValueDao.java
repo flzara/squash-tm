@@ -110,7 +110,6 @@ public interface CustomFieldValueDao extends JpaRepository<CustomFieldValue, Lon
 	@EmptyCollectionGuard
 	void deleteAllForEntities(@Param(ENTITY_TYPE) BindableEntity entityType, @Param(ParameterNames.ENTITY_IDS) List<Long> entityIds);
 
-	CustomFieldValue findById(Long id);
 
 	/**
 	 * returns the list of {@link CustomFieldValue} for the given entity, sorted according to the

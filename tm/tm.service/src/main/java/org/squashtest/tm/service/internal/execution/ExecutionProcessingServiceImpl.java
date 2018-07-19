@@ -83,7 +83,7 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 
 	@Override
 	public ExecutionStep findRunnableExecutionStep(long executionId) throws ExecutionHasNoStepsException {
-		Execution execution = executionDao.findOne(executionId);
+		Execution execution = executionDao.getOne(executionId);
 
 		ExecutionStep step;
 		try {
@@ -143,7 +143,7 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 
 	@Override
 	public void setExecutionStatus(Long executionId, ExecutionStatus status) {
-		Execution execution = executionDao.findOne(executionId);
+		Execution execution = executionDao.getOne(executionId);
 		execution.setExecutionStatus(status);
 
 	}
