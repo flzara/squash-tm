@@ -24,6 +24,7 @@ import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.customfield.CustomFieldValue
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService
@@ -131,9 +132,40 @@ class CampaignExportCSVModelImplTest extends Specification {
 
 			def tcValues = [tcCUFValue11, tcCUFValue21, tcCUFValue22, tcCUFValue12]
 
+		and :
+
+			CustomFieldValue execCUFValue11 = Mock()
+			execCUFValue11.getBoundEntityId() >> new Long(30l)
+
+			CustomFieldValue execCUFValue12 = Mock()
+			execCUFValue12.getBoundEntityId() >> new Long(30l)
+
+			CustomFieldValue execCUFValue21 = Mock()
+			execCUFValue21.getBoundEntityId() >> new Long(40l)
+
+			CustomFieldValue execCUFValue22 = Mock()
+			execCUFValue22.getBoundEntityId() >> new Long(40l)
+
+			def execValues = [execCUFValue11, execCUFValue21, execCUFValue22, execCUFValue12]
+
+		and :
+
+			DenormalizedFieldValue execDCUFValue11 = Mock()
+			execDCUFValue11.getDenormalizedFieldHolderId() >> new Long(50l)
+
+			DenormalizedFieldValue execDCUFValue12 = Mock()
+			execDCUFValue12.getDenormalizedFieldHolderId() >> new Long(50l)
+
+			DenormalizedFieldValue execDCUFValue21 = Mock()
+			execDCUFValue21.getDenormalizedFieldHolderId() >> new Long(60l)
+
+			DenormalizedFieldValue execDCUFValue22 = Mock()
+			execDCUFValue22.getDenormalizedFieldHolderId() >> new Long(60l)
+
+			def execDValues = [execDCUFValue11, execDCUFValue21, execDCUFValue22, execDCUFValue12]
 
 		when :
-			model.createCustomFieldValuesIndex(iterValues, tcValues)
+			model.createCustomFieldValuesIndex(iterValues, tcValues, execValues, execDValues)
 
 		then :
 
@@ -141,6 +173,10 @@ class CampaignExportCSVModelImplTest extends Specification {
 			model.iterCUFValues[2l] as Set == [iterCUFValue21, iterCUFValue22] as Set
 			model.tcCUFValues[10l] as Set == [tcCUFValue11, tcCUFValue12] as Set
 			model.tcCUFValues[20l] as Set == [tcCUFValue21, tcCUFValue22] as Set
+			model.execCUFValues[30l] as Set == [execCUFValue11, execCUFValue12] as Set
+			model.execCUFValues[40l] as Set == [execCUFValue21, execCUFValue22] as Set
+			model.execDenormalizedCUFValues[50l] as Set == [execDCUFValue11, execDCUFValue12] as Set
+			model.execDenormalizedCUFValues[60l] as Set == [execDCUFValue21, execDCUFValue22] as Set
 
 
 	}
