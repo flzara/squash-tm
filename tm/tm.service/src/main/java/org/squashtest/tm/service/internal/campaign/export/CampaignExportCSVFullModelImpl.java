@@ -1,22 +1,22 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Squashtest platform.
+ * Copyright (C) Henix, henix.fr
+ * <p>
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ * <p>
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * this software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.campaign.export;
 
@@ -113,13 +113,13 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 	}
 
 	@Override
-	public void setSeparator(char separator) {
-		this.separator = separator;
+	public char getSeparator() {
+		return separator;
 	}
 
 	@Override
-	public char getSeparator() {
-		return separator;
+	public void setSeparator(char separator) {
+		this.separator = separator;
 	}
 
 	@Override
@@ -222,8 +222,8 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 	}
 
 	private void createCustomFieldValuesIndex(List<CustomFieldValue> iterValues, List<CustomFieldValue> tcValues,
-											  List<CustomFieldValue> execValues, List<DenormalizedFieldValue> execDenormalizedValues,
-											  List<CustomFieldValue> esValues, List<DenormalizedFieldValue> esDenormalizedValues) {
+	                                          List<CustomFieldValue> execValues, List<DenormalizedFieldValue> execDenormalizedValues,
+	                                          List<CustomFieldValue> esValues, List<DenormalizedFieldValue> esDenormalizedValues) {
 
 		iterCUFValues = new MultiValueMap();
 		tcCUFValues = new MultiValueMap();
@@ -675,13 +675,13 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 		private String getValue(Collection<CustomFieldValue> values, CustomField model) {
 
 			if (values != null) {
-				return formatOutputValue( model, values);
+				return formatOutputValue(model, values);
 			}
 
 			return "";
 		}
 
-		private String formatOutputValue(CustomField model,Collection<CustomFieldValue> values) {
+		private String formatOutputValue(CustomField model, Collection<CustomFieldValue> values) {
 			for (CustomFieldValue value : values) {
 				CustomField customField = value.getBinding().getCustomField();
 				if (customField.getCode().equals(model.getCode())) {
@@ -694,7 +694,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 			return "";
 		}
 
-			private String getDenormalizedValue(Collection<DenormalizedFieldValue> values, CustomField model) {
+		private String getDenormalizedValue(Collection<DenormalizedFieldValue> values, CustomField model) {
 
 			if (values != null) {
 				for (DenormalizedFieldValue value : values) {
@@ -851,25 +851,6 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 			return result;
 		}
 
-		private final class TestStepExaminer implements TestStepVisitor {
-
-			private boolean isActionStep;
-
-			public boolean isActionStep() {
-				return isActionStep;
-			}
-
-			@Override
-			public void visit(ActionTestStep visited) {
-				this.isActionStep = true;
-			}
-
-			@Override
-			public void visit(CallTestStep visited) {
-				this.isActionStep = false;
-			}
-		}
-
 		private boolean moveToNextTestCase() {
 
 			boolean foundNextTC;
@@ -942,6 +923,25 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 			cachedItpcellFixed.clear();
 			cachedItpcellCuf.clear();
 			cachedItpcellReady = false;
+		}
+
+		private final class TestStepExaminer implements TestStepVisitor {
+
+			private boolean isActionStep;
+
+			public boolean isActionStep() {
+				return isActionStep;
+			}
+
+			@Override
+			public void visit(ActionTestStep visited) {
+				this.isActionStep = true;
+			}
+
+			@Override
+			public void visit(CallTestStep visited) {
+				this.isActionStep = false;
+			}
 		}
 
 	}
