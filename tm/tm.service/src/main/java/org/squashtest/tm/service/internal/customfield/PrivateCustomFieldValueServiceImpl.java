@@ -118,14 +118,17 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	@Override
 	@Transactional(readOnly = true)
 	public List<CustomFieldValue> findAllCustomFieldValues(long boundEntityId, BindableEntity bindableEntity) {
-
-		BoundEntity boundEntity = boundEntityDao.findBoundEntity(boundEntityId, bindableEntity);
-
-		if (!permissionService.canRead(boundEntity)) {
-			throw new AccessDeniedException("Access is denied");
+		List<CustomFieldValue> customFieldValueList = new ArrayList<>();
+		if(bindableEntity == BindableEntity.PROJECT) {
+			customFieldValueList =customFieldValueDao.findAllCustomValues(boundEntityId, bindableEntity);
+		} else {
+			BoundEntity boundEntity = boundEntityDao.findBoundEntity(boundEntityId, bindableEntity);
+			if (!permissionService.canRead(boundEntity)) {
+				throw new AccessDeniedException("Access is denied");
+			}
+			customFieldValueList=  findAllCustomFieldValues(boundEntity);
 		}
-
-		return findAllCustomFieldValues(boundEntity);
+		return customFieldValueList;
 	}
 
 	@Override
@@ -179,6 +182,12 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 			value.setBoundEntity(entity);
 			customFieldValueDao.save(value);
 		}
+	}
+
+	public void cascadeCustomFieldValuesCreationNotCreatedFolderYet(CustomFieldBinding binding, BoundEntity entity) {
+				CustomFieldValue value = binding.createNewValue();
+				value.setBoundEntity(entity);
+				customFieldValueDao.save(value);
 	}
 
 	@Override

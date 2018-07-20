@@ -50,6 +50,8 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
@@ -64,11 +66,13 @@ import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.Ids;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.annotation.PreventConcurrents;
+import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.internal.batchexport.TestCaseExcelExporterService;
 import org.squashtest.tm.service.internal.batchimport.TestCaseExcelBatchImporter;
+import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.importer.TestCaseImporter;
 import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
@@ -157,6 +161,12 @@ public class TestCaseLibraryNavigationServiceImpl
 
 	@Inject
 	private ActiveMilestoneHolder activeMilestoneHolder;
+
+	@Inject
+	private CustomFieldBindingFinderService service;
+
+	@Inject
+	private PrivateCustomFieldValueService customValueService;
 
 	@Override
 	protected NodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> getDeletionHandler() {
@@ -269,6 +279,7 @@ public class TestCaseLibraryNavigationServiceImpl
 		// and then create the custom field values, as a better fix for [Issue
 		// 2061]
 		new CustomFieldValuesFixer().fix(newFolder);
+		generateCustomField(newFolder);
 	}
 
 	@Override
@@ -290,6 +301,7 @@ public class TestCaseLibraryNavigationServiceImpl
 		// and then create the custom field values, as a better fix for [Issue
 		// 2061]
 		new CustomFieldValuesFixer().fix(newFolder);
+		generateCustomField(newFolder);
 	}
 
 	@Override
@@ -848,4 +860,10 @@ public class TestCaseLibraryNavigationServiceImpl
 		return super.deleteNodes(targetIds);
 	}
 
+	private void generateCustomField(TestCaseFolder newFolder){
+		List<CustomFieldBinding> projectsBindings = service.findCustomFieldsForProjectAndEntity(newFolder.getProject().getId(), BindableEntity.TESTCASE_FOLDER);
+		for(CustomFieldBinding binding: projectsBindings){
+			customValueService.cascadeCustomFieldValuesCreationNotCreatedFolderYet(binding, newFolder);
+		}
+	}
 }

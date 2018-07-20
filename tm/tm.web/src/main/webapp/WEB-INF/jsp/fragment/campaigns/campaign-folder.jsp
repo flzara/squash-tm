@@ -123,6 +123,16 @@
       <at:attachment-bloc editable="${ editable }" workspaceName="${ workspaceName }"
                           attachListId="${ folder.attachmentList.id }" attachmentSet="${attachments}"/>
 
+        <%-- CUF panel --%>
+     <c:if test="${hasFolderCUF}">
+      <comp:toggle-panel id="folder-cuf-panel" titleKey="generics.customfieldvalues.title"  open="true">
+       <jsp:attribute name="body">
+          	<div id="requirement-CUF-table"  class="display-table">
+           </div>
+       </jsp:attribute>
+      </comp:toggle-panel>
+     </c:if>
+
     </div>
 
   </div>
@@ -132,10 +142,11 @@
 <script type="text/javascript">
 
   var identity = {resid: ${folder.id}, restype: '${su:camelCaseToHyphened(folder["class"].simpleName)}s'};
+  var hasFolderCUF = ${hasFolderCUF};
 
   require(["common"], function () {
-    require(["campaign-folder-management", "workspace.routing"],
-      function (CFManager, routing) {
+    require(["campaign-folder-management", "workspace.routing","custom-field-values"],
+      function (CFManager, routing,cufvalues) {
         $(function () {
 
           var conf = {
@@ -155,6 +166,14 @@
 
           CFManager.init(conf);
         });
+        if (hasFolderCUF) {
+          var cufurl = routing.buildURL('customfield.values.get',${folder.id}, 'CAMPAIGN_FOLDER'),
+            mode = (${ editable }) ? 'jeditable':  'static';
+          $.getJSON(cufurl)
+            .success(function (jsonCufs) {
+              cufvalues.infoSupport.init("#requirement-CUF-table", jsonCufs, mode);
+            });
+        }
       });
   });
 

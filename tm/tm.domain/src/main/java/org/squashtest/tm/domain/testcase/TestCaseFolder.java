@@ -34,6 +34,8 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Transient;
 
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.FolderSupport;
 import org.squashtest.tm.domain.library.NodeContainerVisitor;
@@ -42,7 +44,7 @@ import org.squashtest.tm.domain.project.Project;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
-public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCaseLibraryNode> {
+public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCaseLibraryNode>, BoundEntity {
 	/**
 	 * Delegate implementation of folder responsibilities.
 	 */
@@ -148,4 +150,13 @@ public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCa
 		return content;
 	}
 
+	@Override
+	public Long getBoundEntityId() {
+		return getId();
+	}
+
+	@Override
+	public BindableEntity getBoundEntityType() {
+		return BindableEntity.TESTCASE_FOLDER;
+	}
 }

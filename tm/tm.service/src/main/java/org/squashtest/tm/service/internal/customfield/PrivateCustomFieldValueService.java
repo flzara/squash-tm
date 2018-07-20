@@ -48,6 +48,14 @@ public interface PrivateCustomFieldValueService extends CustomFieldValueManagerS
 	void cascadeCustomFieldValuesCreation(CustomFieldBinding binding);
 
 	/**
+	 * Will create a custom field value for all the folders created
+	 *
+	 * @param binding
+	 */
+	void cascadeCustomFieldValuesCreationNotCreatedFolderYet(CustomFieldBinding binding, BoundEntity entity);
+
+
+	/**
 	 * Will remove the custom field values corresponding to the given binding
 	 *
 	 * @param binding

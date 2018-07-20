@@ -35,12 +35,14 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.Sizes;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Entity
-public class CustomReportFolder implements TreeEntity {
+public class CustomReportFolder implements TreeEntity, BoundEntity {
 
 	@Id
 	@Column(name = "CRF_ID")
@@ -98,6 +100,16 @@ public class CustomReportFolder implements TreeEntity {
 	@AclConstrainedObject
 	public CustomReportLibrary getCustomReportLibrary() {
 		return project.getCustomReportLibrary();
+	}
+
+	@Override
+	public Long getBoundEntityId() {
+		return getId();
+	}
+
+	@Override
+	public BindableEntity getBoundEntityType() {
+		return BindableEntity.CUSTOM_REPORT_FOLDER;
 	}
 
 	@Override

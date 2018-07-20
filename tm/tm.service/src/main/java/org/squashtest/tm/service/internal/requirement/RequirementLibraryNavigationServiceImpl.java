@@ -48,7 +48,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
-import org.squashtest.tm.domain.customfield.RawValue;
+import org.squashtest.tm.domain.customfield.*;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
@@ -75,6 +75,9 @@ import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.Ids;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.annotation.PreventConcurrents;
+import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
+import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService;
+import org.squashtest.tm.service.customfield.CustomFieldModelService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
@@ -83,15 +86,15 @@ import org.squashtest.tm.service.internal.batchexport.RequirementExcelExporter;
 import org.squashtest.tm.service.internal.batchexport.RequirementExportModel;
 import org.squashtest.tm.service.internal.batchexport.SearchRequirementExcelExporter;
 import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementExcelBatchImporter;
+import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
+import org.squashtest.tm.service.internal.dto.CustomFieldBindingModel;
+import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
+import org.squashtest.tm.service.internal.dto.CustomFieldModel;
 import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
 import org.squashtest.tm.service.internal.library.NodeDeletionHandler;
 import org.squashtest.tm.service.internal.library.PasteStrategy;
-import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
-import org.squashtest.tm.service.internal.repository.ProjectDao;
-import org.squashtest.tm.service.internal.repository.RequirementDao;
-import org.squashtest.tm.service.internal.repository.RequirementFolderDao;
-import org.squashtest.tm.service.internal.repository.RequirementLibraryDao;
+import org.squashtest.tm.service.internal.repository.*;
 import org.squashtest.tm.service.internal.requirement.coercers.RLNAndParentIdsCoercerForArray;
 import org.squashtest.tm.service.internal.requirement.coercers.RLNAndParentIdsCoercerForList;
 import org.squashtest.tm.service.internal.requirement.coercers.RequirementLibraryIdsCoercerForArray;
@@ -102,7 +105,6 @@ import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.service.requirement.RequirementStatisticsService;
-import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.statistics.requirement.RequirementStatisticsBundle;
@@ -181,6 +183,12 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 	@Inject
 	private ProjectDao projectDao;
+
+	@Inject
+	private CustomFieldBindingFinderService service;
+
+	@Inject
+	private PrivateCustomFieldValueService customValueService;
 
 	@Override
 	protected NodeDeletionHandler<RequirementLibraryNode, RequirementFolder> getDeletionHandler() {
@@ -263,6 +271,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 		// and then create the custom field values, as a better fix for [Issue 2061]
 		createAllCustomFieldValues(newFolder);
+		generateCuf(newFolder);
 	}
 
 	@Override
@@ -279,9 +288,16 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 		// now proceed
 		getFolderDao().persist(newFolder);
-
 		// and then create the custom field values, as a better fix for [Issue 2061]
 		createAllCustomFieldValues(newFolder);
+		generateCuf(newFolder);
+	}
+
+	private void generateCuf(RequirementFolder newFolder){
+		List<CustomFieldBinding> projectsBindings = service.findCustomFieldsForProjectAndEntity(newFolder.getProject().getId(), BindableEntity.REQUIREMENT_FOLDER);
+		for(CustomFieldBinding binding: projectsBindings){
+			customValueService.cascadeCustomFieldValuesCreationNotCreatedFolderYet(binding, newFolder);
+		}
 	}
 
 	@Override
