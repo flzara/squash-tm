@@ -21,14 +21,7 @@
 package org.squashtest.tm.service.internal.repository.hibernate;
 
 import static java.util.stream.Collectors.toList;
-import static org.squashtest.tm.domain.customfield.BindableEntity.CAMPAIGN;
-import static org.squashtest.tm.domain.customfield.BindableEntity.EXECUTION;
-import static org.squashtest.tm.domain.customfield.BindableEntity.EXECUTION_STEP;
-import static org.squashtest.tm.domain.customfield.BindableEntity.ITERATION;
-import static org.squashtest.tm.domain.customfield.BindableEntity.REQUIREMENT_VERSION;
-import static org.squashtest.tm.domain.customfield.BindableEntity.TEST_CASE;
-import static org.squashtest.tm.domain.customfield.BindableEntity.TEST_STEP;
-import static org.squashtest.tm.domain.customfield.BindableEntity.TEST_SUITE;
+import static org.squashtest.tm.domain.customfield.BindableEntity.*;
 
 import java.util.*;
 
@@ -39,7 +32,6 @@ import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.customfield.*;
-import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.internal.repository.BoundEntityDao;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
@@ -56,6 +48,11 @@ public class HibernateBoundEntityDao implements BoundEntityDao {
 	private static final String TEST_STEP_QUERY_NAME = "BoundEntityDao.findAllTestStepsIdsForProject";
 	private static final String EXECUTION_QUERY_NAME = "BoundEntityDao.findAllExecutionsIdsForProject";
 	private static final String EXECUTION_STEP_QUERY_NAME = "BoundEntityDao.findAllExecutionStepsIdsForProject";
+	private static final String PROJECT_QUERY_NAME = "BoundEntityDao.findAllProjectIdsForProject";
+	private static final String REQUIREMENT_FOLDER_QUERY_NAME = "BoundEntityDao.findAllRequirementFoldersIdsForProject";
+	private static final String CAMPAIGN_FOLDER_QUERY_NAME = "BoundEntityDao.findAllCampaignFoldersIdsForProject";
+	private static final String TESTCASE_FOLDER_QUERY_NAME = "BoundEntityDao.findAllTestCaseFoldersIdsForProject";
+//	private static final String CUSTOM_REPORT_FOLDER_QUERY_NAME = "BoundEntityDao.findAllCustomReportFoldersIdsForProject";
 
 	private static final Map<BindableEntity, String> BOUND_ENTITIES_IN_PROJECT_QUERY;
 
@@ -69,6 +66,12 @@ public class HibernateBoundEntityDao implements BoundEntityDao {
 		queriesByBindable.put(TEST_STEP, TEST_STEP_QUERY_NAME);
 		queriesByBindable.put(EXECUTION, EXECUTION_QUERY_NAME);
 		queriesByBindable.put(EXECUTION_STEP, EXECUTION_STEP_QUERY_NAME);
+		queriesByBindable.put(PROJECT, PROJECT_QUERY_NAME);
+		queriesByBindable.put(REQUIREMENT_FOLDER, REQUIREMENT_FOLDER_QUERY_NAME);
+		queriesByBindable.put(CAMPAIGN_FOLDER, CAMPAIGN_FOLDER_QUERY_NAME);
+		queriesByBindable.put(TESTCASE_FOLDER, TESTCASE_FOLDER_QUERY_NAME);
+//		queriesByBindable.put(CUSTOM_REPORT_FOLDER, CUSTOM_REPORT_FOLDER_QUERY_NAME);
+
 
 		BOUND_ENTITIES_IN_PROJECT_QUERY = Collections.unmodifiableMap(queriesByBindable);
 	}

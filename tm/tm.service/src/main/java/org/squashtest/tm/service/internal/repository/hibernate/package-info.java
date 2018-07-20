@@ -755,6 +755,11 @@
 	@NamedQuery(name = "BoundEntityDao.findAllTestStepsIdsForProject", query = "select ts.id from TestCase tc join tc.steps ts where tc.project.id = :projectId and ts.class = ActionTestStep"),
 	@NamedQuery(name = "BoundEntityDao.findAllExecutionsIdsForProject", query = "select exec.id from Execution exec join exec.testPlan tp join tp.iteration i join i.campaign c where c.project.id = :projectId"),
 	@NamedQuery(name = "BoundEntityDao.findAllExecutionStepsIdsForProject", query = "select execst.id from ExecutionStep execst join execst.execution exe join exe.testPlan tp join tp.iteration i join i.campaign c where c.project.id = :projectId"),
+	@NamedQuery(name = "BoundEntityDao.findAllCampaignFoldersIdsForProject", query = "select n.id from CampaignLibraryNode n join n.project p where p.id = :projectId"),
+	@NamedQuery(name = "BoundEntityDao.findAllTestCaseFoldersIdsForProject", query = "select n.id from TestCaseLibraryNode n join n.project p where p.id = :projectId"),
+	@NamedQuery(name = "BoundEntityDao.findAllRequirementFoldersIdsForProject", query = "select n.id from RequirementLibraryNode n join n.project p where p.id = :projectId"),
+	@NamedQuery(name = "BoundEntityDao.findAllProjectIdsForProject", query = "select p.id from Project p where p.id = :projectId"),
+//	@NamedQuery(name = "BoundEntityDao.findAllCustomReportFoldersIdsForProject", query = "select n.id from CustomReportLibraryNode n join n.entity e join e.project p where p.id = :projectId"),
 
 
 	@NamedQuery(name = "BoundEntityDao.hasCustomFields", query = "select count(cfv) from CustomFieldValue cfv where cfv.boundEntityId = :boundEntityId and cfv.boundEntityType = :boundEntityType"),

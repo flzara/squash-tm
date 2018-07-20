@@ -56,16 +56,35 @@
 		<div id="library-description">${hu:clean( library.project["description"] )}</div>
 	</jsp:attribute>
   </comp:toggle-panel>
+
+  <%-- CUF panel --%>
+  <%--<c:if test="${hasCuf}">--%>
+  <comp:toggle-panel id="folder-cuf-panel" titleKey="generics.customfieldvalues.title"  open="true">
+      <jsp:attribute name="body">
+            	<div id="requirement-CUF-table"  class="display-table">
+              </div>
+        		</jsp:attribute>
+  </comp:toggle-panel>
+  <%--</c:if>--%>
+
   <at:attachment-bloc editable="${ editable }" workspaceName="${ workspaceName }"
                       attachListId="${ library.attachmentList.id}" attachmentSet="${attachments}"/>
 
   <script type="text/javascript">
-    require(["common"], function () {
+    require(["workspace.routing","custom-field-values","common"], function (routing,cufvalues) {
       require(["jquery", "file-upload", "squash.basicwidgets"], function ($, upload, basic) {
         $(function () {
           basic.init();
         });
       });
+      //      if (hasCufs) {
+      var cufurl = routing.buildURL('customfield.values.get',${library.project.id}, 'PROJECT'),
+        mode = (${ editable }) ? 'jeditable':  'static';
+      $.getJSON(cufurl)
+        .success(function (jsonCufs) {
+          cufvalues.infoSupport.init("#requirement-CUF-table", jsonCufs, mode);
+        });
+//      }
     });
 
   </script>

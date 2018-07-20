@@ -22,6 +22,8 @@ package org.squashtest.tm.domain.requirement;
 
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.FolderSupport;
 import org.squashtest.tm.domain.library.NodeContainerVisitor;
@@ -39,7 +41,7 @@ import java.util.List;
 @SuppressWarnings("rawtypes")
 @Entity
 @PrimaryKeyJoinColumn(name = "RLN_ID")
-public class RequirementFolder extends RequirementLibraryNode<SimpleResource> implements Folder<RequirementLibraryNode> {
+public class RequirementFolder extends RequirementLibraryNode<SimpleResource> implements Folder<RequirementLibraryNode>, BoundEntity {
 	/**
 	 * Delegate implementation of folder responsibilities.
 	 */
@@ -193,5 +195,15 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 
 	public boolean isSynchronized(){
 		return this.requirementFolderSyncExtender != null;
+	}
+
+	@Override
+	public Long getBoundEntityId() {
+		return getId();
+	}
+
+	@Override
+	public BindableEntity getBoundEntityType() {
+		return BindableEntity.REQUIREMENT_FOLDER;
 	}
 }

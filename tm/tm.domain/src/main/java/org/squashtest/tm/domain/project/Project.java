@@ -23,13 +23,17 @@ package org.squashtest.tm.domain.project;
 import javax.persistence.*;
 
 import org.hibernate.search.annotations.Indexed;
+import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.BoundEntity;
+import org.squashtest.tm.domain.library.Folder;
 
 import static org.squashtest.tm.domain.project.Project.PROJECT_TYPE;
 
 @Entity
 @Indexed
 @DiscriminatorValue(PROJECT_TYPE)
-public class Project extends GenericProject {
+public class Project extends GenericProject  {
 
 	public static final String PROJECT_TYPE = "P";
 
@@ -46,4 +50,18 @@ public class Project extends GenericProject {
 
 	}
 
+	@Override
+	public Long getBoundEntityId() {
+		return getId();
+	}
+
+	@Override
+	public BindableEntity getBoundEntityType() {
+		return  BindableEntity.PROJECT;
+	}
+
+	@Override
+	public Project getProject() {
+		return this;
+	}
 }

@@ -70,6 +70,11 @@ public class CustomFieldBindingManagerController {
 			List<CustomFieldBinding> testSuiteBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.TEST_SUITE);
 			List<CustomFieldBinding> executionBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.EXECUTION);
 			List<CustomFieldBinding> executionStepBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.EXECUTION_STEP);
+			List<CustomFieldBinding> projectsBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.PROJECT);
+			List<CustomFieldBinding> campaignFoldersBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.CAMPAIGN_FOLDER);
+			List<CustomFieldBinding> crFoldersBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.CUSTOM_REPORT_FOLDER);
+			List<CustomFieldBinding> reqFoldersBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.REQUIREMENT_FOLDER);
+			List<CustomFieldBinding> tcFoldersBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.TESTCASE_FOLDER);
 
 			mav = new ModelAndView("project-tabs/custom-field-binding.html");
 			mav.addObject("testCaseBindings", testCaseBindings);
@@ -80,6 +85,11 @@ public class CustomFieldBindingManagerController {
 			mav.addObject("testSuiteBindings", testSuiteBindings);
 			mav.addObject("executionBindings", executionBindings);
 			mav.addObject("executionStepBindings", executionStepBindings);
+			mav.addObject("projectsBindings", projectsBindings);
+			mav.addObject("campaignFoldersBindings", campaignFoldersBindings);
+			mav.addObject("crFoldersBindings", crFoldersBindings);
+			mav.addObject("reqFoldersBindings", reqFoldersBindings);
+			mav.addObject("tcFoldersBindings", tcFoldersBindings);
 
 			mav.addObject("projectIdentifier", projectId);
 			mav.addObject("isTemplate", ProjectHelper.isTemplate(project));
