@@ -208,4 +208,10 @@ public interface InternalBugtrackerConnector {
 	 */
 	Object executeDelegateCommand(DelegateCommand command);
 
+	/**
+	 * Create Issue links between the issue identified by remoteIssueKey and each issue identified by key of remoteReqIds
+	 * @param remoteIssueKey
+	 * @param remoteReqIds
+	 */
+	void linkIssues(String remoteIssueKey, List<String> remoteReqIds);
 }

@@ -108,4 +108,9 @@ public class AdvancedBugtrackerConnectorAdapter extends AbstractInternalConnecto
 		return connector.executeDelegateCommand(command);
 	}
 
+	@Override
+	public void linkIssues(String remoteIssueKey, List<String> remoteReqIds) {
+		connector.linkIssues(remoteIssueKey, remoteReqIds);
+	}
+
 }

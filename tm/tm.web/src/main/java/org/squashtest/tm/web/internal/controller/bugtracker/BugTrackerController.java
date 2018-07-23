@@ -703,6 +703,11 @@ public class BugTrackerController {
 		result.put("url", issueUrl.toString());
 		result.put("issueId", postedIssue.getId());
 
+		List<String> remoteReqIds = bugTrackersLocalService.findAllRemoteReqIdByServerUrlVerifiedByATestCase(entity.getBugTracker().getUrl(), entity.getReferencedTestCase().getId());
+		if(!remoteReqIds.isEmpty()){
+			bugTrackersLocalService.linkIssueToRemoteRequirements(issue.getId(), remoteReqIds, entity.getBugTracker());
+		}
+
 		return result;
 	}
 
@@ -715,6 +720,10 @@ public class BugTrackerController {
 		result.put("url", issueUrl.toString());
 		result.put("issueId", issue.getId());
 
+		List<String> remoteReqIds = bugTrackersLocalService.findAllRemoteReqIdByServerUrlVerifiedByATestCase(entity.getBugTracker().getUrl(), entity.getReferencedTestCase().getId());
+		if(!remoteReqIds.isEmpty()){
+			bugTrackersLocalService.linkIssueToRemoteRequirements(issue.getId(), remoteReqIds, entity.getBugTracker());
+		}
 		return result;
 	}
 

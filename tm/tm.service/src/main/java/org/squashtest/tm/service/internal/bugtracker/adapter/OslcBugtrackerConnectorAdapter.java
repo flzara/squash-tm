@@ -100,4 +100,9 @@ public class OslcBugtrackerConnectorAdapter extends AbstractInternalConnectorAda
 		return null;
 	}
 
+	@Override
+	public void linkIssues(String remoteIssueKey, List<String> remoteReqIds) {
+		// not used
+	}
+
 }

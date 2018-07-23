@@ -190,4 +190,12 @@ public interface BugTrackersService {
 
 	Set<String> getProviderKinds();
 
+	/**
+	 * Given a remote issue key, will create a Blocks link with each issue of the given remote issue key list.
+	 * Note that the specified bugtracker will be used for that purpose.
+	 * @param remoteIssueKey
+	 * @param remoteReqIds
+	 * @param bugtracker
+	 */
+	void linkIssueToRemoteRequirements(String remoteIssueKey, List<String> remoteReqIds, BugTracker bugtracker);
 }

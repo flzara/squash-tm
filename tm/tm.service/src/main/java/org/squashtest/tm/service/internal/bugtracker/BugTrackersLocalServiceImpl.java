@@ -132,6 +132,9 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	@Inject
 	private RequirementVersionIssueFinder requirementVersionIssueFinder;
 
+	@Inject
+	private RequirementSyncExtenderDao requirementSyncExtenderDao;
+
 	@Override
 	public BugTrackerInterfaceDescriptor getInterfaceDescriptor(BugTracker bugTracker) {
 		return remoteBugTrackersService.getInterfaceDescriptor(bugTracker);
@@ -563,6 +566,16 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 			}
 		}
 		return executions;
+	}
+
+	@Override
+	public List<String> findAllRemoteReqIdByServerUrlVerifiedByATestCase(String serverUrl, Long testCaseId){
+		return requirementSyncExtenderDao.findAllRemoteReqIdVerifiedByATestCaseByServerUrl(serverUrl, testCaseId);
+	}
+
+	@Override
+	public void linkIssueToRemoteRequirements(String issueId, List<String> remoteReqIds, BugTracker bugtracker) {
+		remoteBugTrackersService.linkIssueToRemoteRequirements(issueId, remoteReqIds, bugtracker);
 	}
 
 }

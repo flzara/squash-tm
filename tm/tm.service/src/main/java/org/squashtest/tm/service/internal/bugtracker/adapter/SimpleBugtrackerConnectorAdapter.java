@@ -163,4 +163,9 @@ public class SimpleBugtrackerConnectorAdapter extends AbstractInternalConnectorA
 				+ "a programming error : file uploads should never have been available in the GUI in the first place");
 	}
 
+	@Override
+	public void linkIssues(String remoteIssueKey, List<String> remoteReqIds) {
+
+	}
+
 }

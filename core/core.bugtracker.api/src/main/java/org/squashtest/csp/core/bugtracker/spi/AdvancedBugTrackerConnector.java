@@ -119,4 +119,10 @@ public interface AdvancedBugTrackerConnector extends BugtrackerConnectorBase {
 	 */
 	Object executeDelegateCommand(DelegateCommand command);
 
+	/**
+	 * Create Issue links of type Blocks between the issue identified by remoteIssueKey and each issue identified by key of remoteReqIds
+	 * @param remoteIssueKey
+	 * @param remoteReqIds
+	 */
+	void linkIssues(String remoteIssueKey, List<String> remoteReqIds);
 }

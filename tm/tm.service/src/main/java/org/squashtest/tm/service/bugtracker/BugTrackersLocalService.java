@@ -419,4 +419,23 @@ public interface BugTrackersLocalService {
 
 	Execution findExecutionByIssueId(Long id);
 
+	/**
+	 * Retrieve remote issue key of {@link org.squashtest.tm.domain.requirement.RequirementSyncExtender}
+	 * synchronized via the {@link org.squashtest.csp.core.bugtracker.domain.BugTracker} with the given serverUrl
+	 * and verified by {@link org.squashtest.tm.domain.testcase.TestCase} with the given testCaseId
+	 * @param serverUrl
+	 * @param testCaseId
+	 * @return
+	 */
+	List<String> findAllRemoteReqIdByServerUrlVerifiedByATestCase(String serverUrl, Long testCaseId);
+
+	/**
+	 * Create Issue links of type Blocks between the issue identified by remoteIssueKey and each issue identified by key of remoteReqIds
+	 * In order to prevent possible conflicts (multiple issue may have the same id if defined on different bugtrackers)
+	 * the bugtracker name is required too.
+	 * @param issueId
+	 * @param remoteReqIds
+	 * @param bugtracker
+	 */
+	void linkIssueToRemoteRequirements(String issueId, List<String> remoteReqIds, BugTracker bugtracker);
 }

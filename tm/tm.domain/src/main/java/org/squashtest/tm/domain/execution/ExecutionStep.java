@@ -336,6 +336,11 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	}
 
 	@Override
+	public TestCase getReferencedTestCase() {
+		return this.execution.getReferencedTestCase();
+	}
+
+	@Override
 	public BugTracker getBugTracker() {
 		return getProject().findBugTracker();
 	}

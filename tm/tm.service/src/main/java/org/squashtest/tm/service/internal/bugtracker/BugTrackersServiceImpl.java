@@ -116,16 +116,16 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 	private InternalBugtrackerConnector connect(BugTracker bugTracker) {
 
 		InternalBugtrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
-		final AuthenticationPolicy authPolicy = bugTracker.getAuthenticationPolicy(); 
-		
+		final AuthenticationPolicy authPolicy = bugTracker.getAuthenticationPolicy();
+
 		// prepare exception handling
-		Supplier<BugTrackerNoCredentialsException> throwIfNull = () -> { 
+		Supplier<BugTrackerNoCredentialsException> throwIfNull = () -> {
 			StringBuilder errorBuilder = new StringBuilder("Cannot authenticate because no valid credentials were found for authentication on the remote server.");
 			if (authPolicy == AuthenticationPolicy.APP_LEVEL){
 				errorBuilder.append(" Squash-TM is supposed to use application-level credentials for that and it seems they were not configured properly. "
 						+ "Please contact your administrator in order to fix the situation.");
 			}
-			throw new BugTrackerNoCredentialsException(errorBuilder.toString(), null); 
+			throw new BugTrackerNoCredentialsException(errorBuilder.toString(), null);
 		};
 
 		// now fetch the credentials if exists
@@ -178,7 +178,7 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 	}
 
 	@Override
-	public Future<List<RemoteIssue>> getIssues(Collection<String> issueKeyList, BugTracker bugTracker, 
+	public Future<List<RemoteIssue>> getIssues(Collection<String> issueKeyList, BugTracker bugTracker,
 			UserCredentialsCache credentialsCache, LocaleContext localeContext, SecurityContext secContext) {
 
 		try {
@@ -213,6 +213,11 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 	@Override
 	public Set<String> getProviderKinds() {
 		return bugTrackerConnectorFactory.getProviderKinds();
+	}
+
+	@Override
+	public void linkIssueToRemoteRequirements (String remoteIssueKey, List<String> remoteReqIds, BugTracker bugtracker) {
+		connect(bugtracker).linkIssues(remoteIssueKey, remoteReqIds);
 	}
 
 
