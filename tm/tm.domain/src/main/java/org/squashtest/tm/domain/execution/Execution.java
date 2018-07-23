@@ -451,7 +451,7 @@ DenormalizedFieldHolder, BoundEntity {
 		return this.name;
 	}
 
-	public final void setName(String name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 
