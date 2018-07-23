@@ -76,8 +76,6 @@ import org.squashtest.tm.service.annotation.Ids;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.annotation.PreventConcurrents;
 import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
-import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService;
-import org.squashtest.tm.service.customfield.CustomFieldModelService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
@@ -87,9 +85,6 @@ import org.squashtest.tm.service.internal.batchexport.RequirementExportModel;
 import org.squashtest.tm.service.internal.batchexport.SearchRequirementExcelExporter;
 import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementExcelBatchImporter;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
-import org.squashtest.tm.service.internal.dto.CustomFieldBindingModel;
-import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
-import org.squashtest.tm.service.internal.dto.CustomFieldModel;
 import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
 import org.squashtest.tm.service.internal.library.NodeDeletionHandler;
@@ -185,7 +180,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 	private ProjectDao projectDao;
 
 	@Inject
-	private CustomFieldBindingFinderService service;
+	private CustomFieldBindingFinderService customFieldBindingFinderService;
 
 	@Inject
 	private PrivateCustomFieldValueService customValueService;
@@ -294,7 +289,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 	}
 
 	private void generateCuf(RequirementFolder newFolder){
-		List<CustomFieldBinding> projectsBindings = service.findCustomFieldsForProjectAndEntity(newFolder.getProject().getId(), BindableEntity.REQUIREMENT_FOLDER);
+		List<CustomFieldBinding> projectsBindings = customFieldBindingFinderService.findCustomFieldsForProjectAndEntity(newFolder.getProject().getId(), BindableEntity.REQUIREMENT_FOLDER);
 		for(CustomFieldBinding binding: projectsBindings){
 			customValueService.cascadeCustomFieldValuesCreationNotCreatedFolderYet(binding, newFolder);
 		}

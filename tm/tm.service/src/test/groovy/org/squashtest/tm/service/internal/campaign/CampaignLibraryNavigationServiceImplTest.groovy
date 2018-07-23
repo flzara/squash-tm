@@ -20,6 +20,10 @@
  */
 package org.squashtest.tm.service.internal.campaign
 
+import org.squashtest.tm.domain.customfield.BindableEntity
+import org.squashtest.tm.domain.customfield.CustomField
+import org.squashtest.tm.domain.customfield.CustomFieldBinding
+import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.CampaignFolder
@@ -47,8 +51,8 @@ class CampaignLibraryNavigationServiceImplTest extends Specification {
 	PermissionEvaluationService permissionService = Mock()
 	IterationModificationService iterationModificationService = Mock()
 	IterationDao iterationDao = Mock()
-	PrivateCustomFieldValueService customFieldService = Mock()
-
+	PrivateCustomFieldValueService customValueService = Mock()
+	CustomFieldBindingFinderService customFieldBindingFinderService  = Mock()
 	def setup() {
 		service.campaignLibraryDao = campaignLibraryDao
 		service.campaignFolderDao = campaignFolderDao
@@ -56,23 +60,53 @@ class CampaignLibraryNavigationServiceImplTest extends Specification {
 		permissionService.hasRoleOrPermissionOnObject(_, _, _) >> true
 		service.iterationModificationService = iterationModificationService
 		service.iterationDao = iterationDao
+		service.customFieldBindingFinderService = customFieldBindingFinderService
+		service.customValueService = customValueService
 
 		use (ReflectionCategory) {
 			AbstractLibraryNavigationService.set(field: "permissionService", of: service, to: permissionService)
-			AbstractLibraryNavigationService.set(field: "customFieldValuesService", of: service, to: customFieldService)
+			AbstractLibraryNavigationService.set(field: "customFieldValuesService", of: service, to: customValueService)
 		}
+		customValueService.findAllCustomFieldValues(_) >> []
+		customValueService.findAllCustomFieldValues(_, _) >> []
 
-		customFieldService.findAllCustomFieldValues(_) >> []
-		customFieldService.findAllCustomFieldValues(_, _) >> []
 	}
 
 
 	def "should add folder to library"(){
 		given:
 		CampaignFolder newFolder = Mock()
+
+		and :
+		Project project = Mock()
+		newFolder.getProject() >> project
+		project.getId() >>  10L
+
 		and:
 		CampaignLibrary container = Mock()
+
+		and :
+
+		CustomField cuf = Mock()
+		cuf.getId() >> 4L
+
+		BindableEntity entity1 = Mock()
+		BindableEntity entity2 = Mock()
+
+		CustomFieldBinding binding1 = Mock()
+		CustomFieldBinding binding2 = Mock()
+
+		binding1.getBoundEntity() >> entity1
+		binding1.getCustomField() >> cuf
+
+		binding2.getBoundEntity() >> entity2
+		binding2.getCustomField() >> cuf
+
+		List<CustomFieldBinding> bindings = [binding1, binding2]
+
 		container.isContentNameAvailable(_) >> true
+		customFieldBindingFinderService.findCustomFieldsForProjectAndEntity(10L, BindableEntity.CAMPAIGN_FOLDER) >> bindings
+
 		campaignLibraryDao.findById(10) >> container
 
 		when:
@@ -81,6 +115,7 @@ class CampaignLibraryNavigationServiceImplTest extends Specification {
 		then:
 		1 * container.addContent(newFolder)
 		1 * campaignFolderDao.persist(newFolder)
+
 	}
 
 
@@ -101,8 +136,32 @@ class CampaignLibraryNavigationServiceImplTest extends Specification {
 		CampaignFolder newFolder = Mock()
 		and:
 		CampaignFolder container = Mock()
+		and :
+		Project project = Mock()
+		newFolder.getProject() >> project
+		project.getId() >>  10L
+
+		and :
+
+		CustomField cuf = Mock()
+		cuf.getId() >> 4L
+
+		BindableEntity entity1 = Mock()
+		BindableEntity entity2 = Mock()
+
+		CustomFieldBinding binding1 = Mock()
+		CustomFieldBinding binding2 = Mock()
+
+		binding1.getBoundEntity() >> entity1
+		binding1.getCustomField() >> cuf
+
+		binding2.getBoundEntity() >> entity2
+		binding2.getCustomField() >> cuf
+
+		List<CustomFieldBinding> bindings = [binding1, binding2]
 		container.isContentNameAvailable(_) >> true
 		campaignFolderDao.findById(10) >> container
+		customFieldBindingFinderService.findCustomFieldsForProjectAndEntity(10L, BindableEntity.CAMPAIGN_FOLDER) >> bindings
 
 		when:
 		service.addFolderToFolder(10, newFolder)
