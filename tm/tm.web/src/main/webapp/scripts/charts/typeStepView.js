@@ -53,7 +53,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 						'type': 'POST',
 						'dataType': 'json',
 						'contentType': 'application/json',
-						'url': squashtm.app.contextRoot + '/charts/instance/' + this.model.get("defaultProject"),
+						'url': squashtm.app.contextRoot + 'charts/instance/' + this.model.get("defaultProject"),
 						'data': this.model.toJson("graph")
 					})
 						.success(function (json) {

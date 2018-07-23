@@ -28,7 +28,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
-import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.transaction.config.TransactionManagementConfigUtils;
 import org.squashtest.tm.domain.campaign.*;
 import org.squashtest.tm.domain.event.RequirementCreationEventPublisherAspect;

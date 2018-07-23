@@ -59,7 +59,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./IconSelectDialog", 
 			}
 		}
 
-		squashtm.reqres.setHandler("list-option:code:validate", checkNotExistsHandler("code", squashtm.app.contextRoot + "/info-lists/items/code"));
+		squashtm.reqres.setHandler("list-option:code:validate", checkNotExistsHandler("code", squashtm.app.contextRoot + "info-lists/items/code"));
 
 		var ICON_PREFIX = "sq-icon-";
 
@@ -68,7 +68,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./IconSelectDialog", 
 
 			initialize: function () {
 				squashtm.reqres.setHandler("list-option:label:validate",
-					checkNotExistsHandler("label", squashtm.app.contextRoot + "/info-lists/" + this.model.listId + "/items/label"));
+					checkNotExistsHandler("label", squashtm.app.contextRoot + "info-lists/" + this.model.listId + "/items/label"));
 				this.$el.find("input:text").val("");
 				this.render();
 				this.$el.formDialog({

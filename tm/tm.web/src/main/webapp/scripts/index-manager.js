@@ -24,7 +24,7 @@ require([ "common" ], function(common) {
 			WS.init();
 			var view = new IndexAdministrationView();
 			$("#back").click(function() {
-				document.location.href = squashtm.app.contextRoot + "/administration";
+				document.location.href = squashtm.app.contextRoot + "administration";
 			});
 			
 		});

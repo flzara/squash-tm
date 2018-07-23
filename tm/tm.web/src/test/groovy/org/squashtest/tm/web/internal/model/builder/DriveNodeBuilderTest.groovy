@@ -101,9 +101,12 @@ class DriveNodeBuilderTest extends NodeBuildingSpecification {
 	}
 
 	def ofProject(TestCaseLibrary library, String name) {
-		Project project = Mock(Project)
-		project.getName() >> name
-		project.getId() >> 10l
+		Project project = Mock{
+			getId() >> 10l
+			getName() >> name
+			getLabel() >> name
+		}
+
 		library.project = project
 		return library
 	}
@@ -140,16 +143,20 @@ class DriveNodeBuilderTest extends NodeBuildingSpecification {
 	def "should build an expanded node"() {
 		given:
 		Library library = theTestCaseLibrary(10L).ofProject("foo")
-		TestCase tc = Mock()
-		def visitor
-		tc.accept({ visitor = it }) >> { visitor.visit(tc) }
-		tc.getStatus() >> TestCaseStatus.WORK_IN_PROGRESS
-		tc.getImportance() >> TestCaseImportance.LOW
-		tc.getSteps()>>[]
-		tc.getRequirementVersionCoverages() >> []
-		tc.getId()>>23L
-		tc.getKind() >> TestCaseKind.STANDARD
+		//def visitor
 
+		TestCase tc = Mock{
+			accept(_) >> {
+				it[0].visit( delegate.mockObject.instance)
+			}
+			getStatus() >> TestCaseStatus.WORK_IN_PROGRESS
+			getImportance() >> TestCaseImportance.LOW
+			getSteps()>>[]
+			getRequirementVersionCoverages() >> []
+			getId()>>23L
+			getKind() >> TestCaseKind.STANDARD
+			getName() >> "Test case"
+		}
 
 		Milestone m = Mock()
 		m.getStatus() >> MilestoneStatus.IN_PROGRESS

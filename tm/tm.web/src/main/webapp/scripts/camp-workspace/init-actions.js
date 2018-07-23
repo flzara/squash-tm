@@ -92,7 +92,7 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 	}
 
 	function exportUrl(nodeId) {
-		return window.squashtm.app.contextRoot+"/campaign-browser/export-campaign/" + nodeId;
+		return window.squashtm.app.contextRoot + "campaign-browser/export-campaign/" + nodeId;
 	}
 
 	return {
@@ -175,8 +175,7 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 
 			$("#search-tree-button").on("click", function(){
 				// get value of Campaign Workspace Cookie
-				document.location.href = window.squashtm.app.contextRoot +
-					"/advanced-search?searchDomain=campaign";
+				document.location.href = window.squashtm.app.contextRoot + "advanced-search?searchDomain=campaign";
 			});
 
 			// ***************** deletion ********************
@@ -232,12 +231,12 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 
 			wreqr.on("favoriteDashboard.milestone.showDefault", function () {
 				ctxcontent.unload();
-				ctxcontent.loadWith(squashtm.app.contextRoot+"/campaign-browser/dashboard-milestones");
+				ctxcontent.loadWith(squashtm.app.contextRoot + "campaign-browser/dashboard-milestones");
 			});
 
 			wreqr.on("favoriteDashboard.milestone.showFavorite", function () {
 				ctxcontent.unload();
-				ctxcontent.loadWith(squashtm.app.contextRoot+"/campaign-browser/dashboard-milestones");
+				ctxcontent.loadWith(squashtm.app.contextRoot + "campaign-browser/dashboard-milestones");
 			});
 
 

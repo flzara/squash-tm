@@ -214,7 +214,8 @@ class CustomIterationModificationServiceImplTest extends Specification {
 			exec.getExecutionOrder() >> it - 1
 			exec.getId() >> it
 			exec.getTestPlan() >> testPlan
-			execDao.findOne(it) >> exec
+
+			execDao.findById(it) >> Optional.of(exec)
 			testPlan.addExecution exec
 			return exec
 		}

@@ -124,9 +124,9 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 			var  targetUrl = "";
 			var  returnUrl = "";
 			if("test-case" === this.associationType){
-				targetUrl =  squashtm.app.contextRoot + "/test-cases/" + id + "/verified-requirements";
+				targetUrl =  squashtm.app.contextRoot + "test-cases/" + id + "/verified-requirements";
 			}else if ("teststep" === this.associationType){
-				targetUrl = squashtm.app.contextRoot + "/test-steps/" + id + "/verified-requirements";
+				targetUrl = squashtm.app.contextRoot + "test-steps/" + id + "/verified-requirements";
 			}
 
 			$.ajax({
@@ -200,9 +200,9 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 		newSearch : function(){
 
 			if(this.isAssociation){
-				document.location.href= squashtm.app.contextRoot +"/advanced-search?searchDomain=requirement&id="+this.associationId+"&associateResultWithType="+this.associationType;
+				document.location.href= squashtm.app.contextRoot + "advanced-search?searchDomain=requirement&id="+this.associationId+"&associateResultWithType="+this.associationType;
 			} else {
-				document.location.href= squashtm.app.contextRoot +"/advanced-search?searchDomain=requirement";
+				document.location.href= squashtm.app.contextRoot + "advanced-search?searchDomain=requirement";
 			}
 		},
 
@@ -372,7 +372,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 
 			function loadCombos(comboname){
 				$.ajax({
-					url : squashtm.app.contextRoot + "/requirements/"+ comboname +"-data",
+					url : squashtm.app.contextRoot + "requirements/"+ comboname +"-data",
 					dataType : 'json'
 				})
 				.success(function(json) {

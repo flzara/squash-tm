@@ -92,7 +92,7 @@ require(["common"], function() {
 			var $this = $(this);
 			var id = $this.data('entity-id');
 			var ids = ( !! id) ? [id] : id ;
-			var url = squashtm.app.contextRoot+'/bugtracker/'+ ids.join(",");
+			var url = squashtm.app.contextRoot + 'bugtracker/'+ ids.join(",");
 			var table = $("#bugtrackers-table").squashTable();
 			
 			$.ajax({

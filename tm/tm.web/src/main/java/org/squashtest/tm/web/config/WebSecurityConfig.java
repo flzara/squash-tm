@@ -154,13 +154,18 @@ public class WebSecurityConfig {
 
 		@Value("${squash.security.preferred-auth-url:/login}")
 		private String entryPointUrl = LOGIN;
+		
+		@Value("${squash.security.ignored:/scripts/**}")
+		private String[] secIngored;
 
 		@Override
 		public void configure(WebSecurity web) throws Exception {
 			web.debug(debugSecurityFilter)
-				.ignoring().antMatchers("/scripts/**");
+				.ignoring()
+				.antMatchers(secIngored);
 		}
-
+		
+		
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 			// @formatter:off
@@ -175,7 +180,7 @@ public class WebSecurityConfig {
 				.and().frameOptions().sameOrigin()
 
 				//.and() .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
-
+				
 				// main entry point for unauthenticated users
 				.and()
 					.exceptionHandling()

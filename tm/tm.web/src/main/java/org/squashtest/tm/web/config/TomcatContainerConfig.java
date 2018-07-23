@@ -35,9 +35,7 @@ import org.apache.coyote.http11.AbstractHttp11Protocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerException;
-import org.springframework.boot.context.embedded.Ssl;
-import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ResourceUtils;
@@ -60,18 +58,18 @@ public class TomcatContainerConfig {
      */
     @Bean
     @ConditionalOnProperty(prefix="squash", name="run-as-war", havingValue = "false", matchIfMissing = true)
-    public TomcatEmbeddedServletContainerFactory containerFactory(){
+    public TomcatServletWebServerFactory containerFactory(){
 
-    	TomcatEmbeddedServletContainerFactory tomcatEmbeddedServletContainerFactory = new CustomizedTomcatContainerFactory();
+		TomcatServletWebServerFactory tomcatServerFactory = new CustomizedTomcatServerFactory();
 
-		return tomcatEmbeddedServletContainerFactory;
+		return tomcatServerFactory;
 	}
 
 
 
-    private static final class CustomizedTomcatContainerFactory extends TomcatEmbeddedServletContainerFactory {
+    private static final class CustomizedTomcatServerFactory extends TomcatServletWebServerFactory  {
 
-    	private static final Logger LOGGER = LoggerFactory.getLogger(CustomizedTomcatContainerFactory.class);
+    	private static final Logger LOGGER = LoggerFactory.getLogger(CustomizedTomcatServerFactory.class);
 
 
     	@Override

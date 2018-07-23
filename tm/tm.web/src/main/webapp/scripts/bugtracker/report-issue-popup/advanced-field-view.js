@@ -215,7 +215,7 @@ define(["jquery",
 
 			//generate the widgets
 			var btname = this.model.get('bugtracker');
-			WidgetFactory.delegateurl = squashtm.app.contextRoot+"/bugtracker/"+btname+"/command";
+			WidgetFactory.delegateurl = squashtm.app.contextRoot + "bugtracker/"+btname+"/command";
 			WidgetFactory.processPanel(panel, fields);
 
 			//rebinds the view

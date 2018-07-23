@@ -165,7 +165,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	@Override
 	@PreAuthorize(EXECUTE_TS_OR_ROLE_ADMIN)
 	public AutomatedSuite createFromTestSuiteTestPlan(long testSuiteId) {
-		TestSuite suite = testSuiteDao.findOne(testSuiteId);
+		TestSuite suite = testSuiteDao.getOne(testSuiteId);
 		List<IterationTestPlanItem> items = suite.getTestPlan();
 		return createFromItems(items);
 	}

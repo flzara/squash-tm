@@ -56,7 +56,7 @@ class CustomMilestoneBindingServiceImplTest extends Specification{
 		milestoneDao.findAll() >> allMilestones
 		GenericProject project = new Project()
 		project.bindMilestones(binded)
-		projectDao.findById(1L) >> project
+		projectDao.getOne(1L) >> project
 
 		when :
 		def result = manager.getAllBindableMilestoneForProject(1L);
@@ -81,7 +81,7 @@ class CustomMilestoneBindingServiceImplTest extends Specification{
 		projectDao.findAll(_) >> allProject
 		Milestone milestone = new Milestone(range:MilestoneRange.GLOBAL)
 		milestone.bindProjects(binded)
-		milestoneDao.findOne(1L) >> milestone
+		milestoneDao.getOne(1L) >> milestone
 
 		when :
 		def result = manager.getAllBindableProjectForMilestone(1L);
@@ -105,7 +105,7 @@ class CustomMilestoneBindingServiceImplTest extends Specification{
 		Milestone milestone = new Milestone(range:MilestoneRange.GLOBAL)
 		milestone.bindProjects(projects);
 		milestone.bindProjects(templates);
-		milestoneDao.findOne(1L) >> milestone
+		milestoneDao.getOne(1L) >> milestone
 
 		when :
 		 manager.unbindTemplateFrom(1L);

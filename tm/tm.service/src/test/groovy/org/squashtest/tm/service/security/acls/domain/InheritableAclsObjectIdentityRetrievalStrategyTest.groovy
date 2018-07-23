@@ -22,25 +22,23 @@ package org.squashtest.tm.service.security.acls.domain
 
 import javax.persistence.EntityManager;
 
-import org.hibernate.Query
 import org.springframework.security.acls.model.ObjectIdentity
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy
-import org.squashtest.tm.service.security.acls.domain.InheritableAclsObjectIdentityRetrievalStrategy
 import org.squashtest.tm.security.annotation.InheritsAcls
 
 import spock.lang.Specification
+
+import javax.persistence.Query
 
 class InheritableAclsObjectIdentityRetrievalStrategyTest extends Specification {
 	InheritableAclsObjectIdentityRetrievalStrategy strategy = new InheritableAclsObjectIdentityRetrievalStrategy()
 	ObjectIdentityRetrievalStrategy delegate = Mock()
 	EntityManager em = Mock()
-	org.hibernate.Session session = Mock()
 	Query query = Mock()
 
 	def setup() {
 		strategy.delegate = delegate
 		strategy.em = em
-		em.unwrap(_) >> session
 	}
 
 	def "should fetch parent and retrieve its object id from multi-valued heir"() {
@@ -49,8 +47,8 @@ class InheritableAclsObjectIdentityRetrievalStrategyTest extends Specification {
 
 		and:
 		MultiValuedParent parent = new MultiValuedParent()
-		session.createQuery(_) >> query
-		query.uniqueResult() >> parent
+		em.createQuery(_) >> query
+		query.getSingleResult() >> parent
 		and:
 		ObjectIdentity id = Mock()
 		delegate.getObjectIdentity(parent) >> id
@@ -83,8 +81,8 @@ class InheritableAclsObjectIdentityRetrievalStrategyTest extends Specification {
 
 		and:
 		SingleValuedParent parent = new SingleValuedParent()
-		session.createQuery(_) >> query
-		query.uniqueResult() >> parent
+		em.createQuery(_) >> query
+		query.getSingleResult() >> parent
 
 		and:
 		ObjectIdentity id = Mock()
@@ -103,8 +101,8 @@ class InheritableAclsObjectIdentityRetrievalStrategyTest extends Specification {
 
 		and:
 		SingleValuedParent parent = new SingleValuedParent()
-		session.createQuery(_) >> query
-		query.uniqueResult() >> parent
+		em.createQuery(_) >> query
+		query.getSingleResult() >> parent
 
 		and:
 		ObjectIdentity id = Mock()

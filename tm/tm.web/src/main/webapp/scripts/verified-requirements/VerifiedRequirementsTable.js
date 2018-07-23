@@ -176,7 +176,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		_addSelectEditableToVersionNumber : function(row, data) {
 			var self = this;
 			var urlPOST = VRTS.url + '/' + data["entity-id"];
-			var urlGET = squashtm.app.contextRoot + '/requirement-versions/' + data["entity-id"] + '/version-numbers';
+			var urlGET = squashtm.app.contextRoot + 'requirement-versions/' + data["entity-id"] + '/version-numbers';
 
 			// the table needs to be redrawn after each return
 			// of the POST so we implement the posting workflow

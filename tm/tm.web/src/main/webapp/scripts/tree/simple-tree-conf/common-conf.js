@@ -54,7 +54,7 @@ define(function () {
 					"theme": "squashtest",
 					"dots": true,
 					"icons": true,
-					"url": window.squashtm.app.contextRoot + "/styles/squash.tree.css"
+					"url": window.squashtm.app.contextRoot + "styles/squash.tree.css"
 				},
 				"squash": {
 					rootUrl: window.squashtm.app.contextRoot,

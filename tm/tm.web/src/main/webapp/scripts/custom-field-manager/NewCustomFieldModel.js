@@ -41,7 +41,7 @@ define(
 			 */
 			var NewCustomFieldModel = Backbone.Model
 					.extend({
-						url : squashtm.app.contextRoot + "/custom-fields/new",
+						url : squashtm.app.contextRoot + "custom-fields/new",
 						defaults : {
 							name : "",
 							label : "",

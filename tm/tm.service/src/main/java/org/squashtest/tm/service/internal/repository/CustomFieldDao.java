@@ -32,11 +32,10 @@ import java.util.List;
 
 public interface CustomFieldDao extends JpaRepository<CustomField, Long> {
 
-	CustomField findById(long id);
 
 
 	/**
-	 * This is a downcast-version of #findOne
+	 * This is a downcast-version of #getOne
 	 * will find the {@link SingleSelectField} of the given id
 	 * @param customFieldId the id of the wanted {@link SingleSelectField}
 	 * @return the {@link SingleSelectField} or <code>null</code>

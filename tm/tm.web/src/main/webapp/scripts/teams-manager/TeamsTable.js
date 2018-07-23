@@ -34,9 +34,9 @@ define([ "jquery", "backbone", "squashtable", "jqueryui" ], function($, Backbone
 		initialize : function() {
 			var self = this, tableConf = {
 				"oLanguage" : {
-					"sUrl" : squashtm.app.contextRoot + "/datatables/messages"
+					"sUrl" : squashtm.app.contextRoot + "datatables/messages"
 				},
-				"sAjaxSource" : squashtm.app.contextRoot + "/administration/teams",
+				"sAjaxSource" : squashtm.app.contextRoot + "administration/teams",
 				"bDeferRender" : true,
 				"bFilter" : true,
 				"fnRowCallback" : this.teamTableRowCallback,
@@ -95,12 +95,12 @@ define([ "jquery", "backbone", "squashtable", "jqueryui" ], function($, Backbone
 				bindLinks : {
 					list : [ {
 						target : 2,
-						url : squashtm.app.contextRoot + "/administration/teams/{entity-id}",
+						url : squashtm.app.contextRoot + "administration/teams/{entity-id}",
 						isOpenInTab : false
 					} ]
 				},
 				deleteButtons : {
-					url : squashtm.app.contextRoot + "/administration/teams/{entity-id}",
+					url : squashtm.app.contextRoot + "administration/teams/{entity-id}",
 					popupmessage : squashtm.app.teamsManager.table.deleteButtons.popupmessage,
 					tooltip : squashtm.app.teamsManager.table.deleteButtons.tooltip,
 					success : function() {

@@ -115,6 +115,20 @@ class EnumJeditableComboDataBuilderTest extends Specification {
 }
 
 
+
+public enum DummyEnum {
+	TWO(2),
+	ONE(1);
+
+	final int order;
+
+	DummyEnum(int order) {
+		this.order = order
+	}
+	
+}
+
+
 public class DummyEnumComparator implements Comparator<DummyEnum> {
 	public int compare(DummyEnum a,  DummyEnum b) {
 		return a.order.compareTo(b.order)
@@ -130,8 +144,11 @@ public class DummyLabelFormatter implements LabelFormatter<DummyEnum> {
 		return this;
 	}
 
-	@Override
-	public String formatLabel(DummyEnum toFormat) {
+
+	@Override 
+	// 2018/07/23 : compiler seemingly fails to detect the generic type  
+	// DummyEnum but is happy with Object 
+	public String formatLabel(Object toFormat) {
 		switch (toFormat) {
 			case DummyEnum.ONE : return "un"
 			case DummyEnum.TWO : return "deux"
@@ -157,14 +174,4 @@ public class DummyLabelFormatter implements LabelFormatter<DummyEnum> {
 	
 }
 
-public enum DummyEnum {
-	TWO(2),
-	ONE(1);
 
-	final int order;
-
-	DummyEnum(int order) {
-		this.order = order
-	}
-	
-}

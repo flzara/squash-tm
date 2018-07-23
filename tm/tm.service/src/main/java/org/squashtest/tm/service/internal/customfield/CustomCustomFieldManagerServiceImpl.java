@@ -83,7 +83,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	 */
 	@Override
 	public void deleteCustomField(long customFieldId) {
-		CustomField customField = customFieldDao.findById(customFieldId);
+		CustomField customField = customFieldDao.getOne(customFieldId);
 		/* TODO: Wow */
 		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllByCustomFieldIdOrderByPositionAsc(customFieldId);
 		List<Long> bindingIds = new ArrayList<>();
@@ -138,7 +138,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	@Override
 	public void changeName(long customFieldId, String newName) {
 		String trimedNewName = newName.trim();
-		CustomField customField = customFieldDao.findById(customFieldId);
+		CustomField customField = customFieldDao.getOne(customFieldId);
 		String oldName = customField.getName();
 		if (customFieldDao.findByName(trimedNewName) != null) {
 			throw new DuplicateNameException(oldName, trimedNewName);
@@ -242,7 +242,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	 */
 	@Override
 	public void changeCode(long customFieldId, String code) {
-		CustomField field = customFieldDao.findById(customFieldId);
+		CustomField field = customFieldDao.getOne(customFieldId);
 		checkDuplicateCode(field, code);
 		String oldCode = field.getCode();
 		field.setCode(code);

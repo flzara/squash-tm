@@ -145,8 +145,11 @@ class VerifiedRequirementsManagerControllerTest extends NodeBuildingSpecificatio
 		and:
 		RequirementLibrary lib = Mock()
 		lib.getClassSimpleName() >> "RequirementLibrary"
-		Project project = Mock()
-		project.getId() >> 10l
+		Project project = Mock{
+			getId() >> 10L
+			getName() >> "Bob"
+			getLabel() >> "Label"
+		}
 		lib.project >> project
 		requirementLibraryFinder.findLinkableRequirementLibraries() >> [lib]
 

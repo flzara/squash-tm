@@ -57,7 +57,7 @@ define(['jquery',
 		  var table = $("#connections-table").squashTable();
 		  //Drawing to be sure that oAjaxData exist (not the case if no filtering or sorting before export)
 		  table.fnDraw();
-			var url = squashtm.app.contextRoot + '/administration/connections/exports';
+			var url = squashtm.app.contextRoot + 'administration/connections/exports';
 
 			var params = table.fnSettings().oAjaxData;
 			params["filename"] = name;

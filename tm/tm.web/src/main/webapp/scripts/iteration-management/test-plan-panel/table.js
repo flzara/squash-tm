@@ -313,7 +313,7 @@ define(
 					var tpiId = data['entity-id'];
 					tpiIds.push(tpiId);
 
-					var url = window.squashtm.app.contextRoot + "/automated-suites/new";
+					var url = window.squashtm.app.contextRoot + "automated-suites/new";
 
 					var formParams = {};
 					var ent = window.squashtm.page.identity.restype === "iterations" ? "iterationId" : "testSuiteId";
@@ -478,7 +478,7 @@ define(
 										formParams.testPlanItemsIds = [tpiId];
 
 
-										var url = window.squashtm.app.contextRoot + "/automated-suites/new";
+										var url = window.squashtm.app.contextRoot + "automated-suites/new";
 										$.ajax({
 											url: url,
 											dataType: 'json',

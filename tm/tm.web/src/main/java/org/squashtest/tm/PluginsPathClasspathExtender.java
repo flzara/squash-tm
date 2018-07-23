@@ -70,13 +70,17 @@ public class PluginsPathClasspathExtender implements SpringApplicationRunListene
 	}
 
 	@Override
-	public void started() {
+	public void starting() {
+		// NOOP
+	}
+
+	@Override
+	public void started(ConfigurableApplicationContext context){
 		// NOOP
 	}
 
 	@Override
 	public void environmentPrepared(ConfigurableEnvironment environment) {
-
 		// NOOP
 	}
 
@@ -148,8 +152,12 @@ public class PluginsPathClasspathExtender implements SpringApplicationRunListene
 	}
 
 	@Override
-	public void finished(ConfigurableApplicationContext context, Throwable exception) {
-		LOGGER.info("finished");
+	public void running(ConfigurableApplicationContext context) {
+		LOGGER.info("running");
+	}
 
+	@Override
+	public void failed(ConfigurableApplicationContext context, Throwable exception) {
+		// NOOP
 	}
 }

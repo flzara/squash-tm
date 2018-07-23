@@ -26,7 +26,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "jquery.squash
 		return function() {
 			$.ajax({
 				type : "put",
-				url : squashtm.app.contextRoot + "/projects/" + templateId,
+				url : squashtm.app.contextRoot + "projects/" + templateId,
 				data : JSON.stringify({
 					mode : "coerce-template",
 					templateId : templateId
@@ -34,7 +34,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "jquery.squash
 				dataType : "json",
 				contentType : "application/json"
 			}).done(function() {
-				document.location.href = squashtm.app.contextRoot + "/administration/projects/" + templateId;
+				document.location.href = squashtm.app.contextRoot + "administration/projects/" + templateId;
 			});
 		};
 	}

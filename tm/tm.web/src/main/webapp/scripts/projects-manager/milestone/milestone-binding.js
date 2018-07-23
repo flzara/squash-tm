@@ -189,7 +189,7 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 				function decorateArea() {
 					$(this).ckeditor(function() {
 					}, {
-						customConfig : squashtm.app.contextRoot + "/styles/ckeditor/ckeditor-config.js",
+						customConfig : squashtm.app.contextRoot + "styles/ckeditor/ckeditor-config.js",
 						language : squashtm.app.ckeditorLanguage
 					});
 				}

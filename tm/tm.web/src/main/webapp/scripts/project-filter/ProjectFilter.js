@@ -36,7 +36,7 @@ define([ "jquery", "./ProjectFilterPopup" ],
 				$("#menu-toggle-filter-ckbox").click(function(){
 
 					function postStatus(enabled){
-						$.post(squashtm.app.contextRoot+'/global-filter/filter-status', { isEnabled : enabled })
+						$.post(squashtm.app.contextRoot + 'global-filter/filter-status', { isEnabled : enabled })
 						.done(function(){
 							window.location.reload();
 						});

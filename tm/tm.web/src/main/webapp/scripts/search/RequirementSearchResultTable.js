@@ -47,10 +47,10 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 
 				tableConf = {
 						"oLanguage" : {
-							"sUrl" : squashtm.app.contextRoot + "/datatables/messages"
+							"sUrl" : squashtm.app.contextRoot + "datatables/messages"
 						},
 						"bServerSide": true,
-						"sAjaxSource" : squashtm.app.contextRoot + "/advanced-search/table",
+						"sAjaxSource" : squashtm.app.contextRoot + "advanced-search/table",
 						"fnServerParams": function ( aoData )
 							{
 								aoData.push( { "name": "model", "value": JSON.stringify(model) } );
@@ -165,10 +165,10 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 			} else {
 				tableConf = {
 						"oLanguage" : {
-							"sUrl" : squashtm.app.contextRoot + "/datatables/messages"
+							"sUrl" : squashtm.app.contextRoot + "datatables/messages"
 						},
 						"bServerSide": true,
-						"sAjaxSource" : squashtm.app.contextRoot + "/advanced-search/table",
+						"sAjaxSource" : squashtm.app.contextRoot + "advanced-search/table",
 						"fnServerParams": function ( aoData )
 							{
 								aoData.push( { "name": "model", "value": JSON.stringify(model) } );
@@ -291,7 +291,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 
 		_addSelectEditableToCriticality : function(row, data) {
 			var urlPOST = routing.buildURL('requirementversions', data['requirement-version-id']);
-			var urlGET = squashtm.app.contextRoot + "/requirements/criticality-combo-data";
+			var urlGET = squashtm.app.contextRoot + "requirements/criticality-combo-data";
 			var confirm = translator.get("rich-edit.button.confirm.label");
 			var cancel = translator.get("label.Cancel");
 			var component =$('.editable_criticality', row);
@@ -330,7 +330,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 
 		_addSelectEditableToStatus : function(row, data) {
 			var urlPOST = routing.buildURL('requirementversions', data['requirement-version-id']);
-			var urlGET = squashtm.app.contextRoot + "/requirements/status-combo-data";
+			var urlGET = squashtm.app.contextRoot + "requirements/status-combo-data";
 			var confirm = translator.get("rich-edit.button.confirm.label");
 			var cancel = translator.get("label.Cancel");
 			var component = $('.editable_status', row);
@@ -407,7 +407,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 			var $cell = $(".search-open-interface2-holder",row);
 			$cell.append('<span class="ui-icon ui-icon-pencil"></span>')
 			.click(function(){
-				window.location = squashtm.app.contextRoot + "/requirements/" + id + "/info";
+				window.location = squashtm.app.contextRoot + "requirements/" + id + "/info";
 			});
 		},
 

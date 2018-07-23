@@ -38,11 +38,6 @@ public interface GenericProjectDao extends JpaRepository<GenericProject, Long>, 
 
 	long countByName(String name);
 
-	/**
-	 * @deprecated use findOne
-	 */
-	@Deprecated
-	GenericProject findById(long projectId);
 
 	@Query
 	List<TestAutomationProject> findBoundTestAutomationProjects(@Param(ParameterNames.PROJECT_ID) long id);

@@ -51,7 +51,7 @@ define(['jquery'], function($){
 	}
 
 	function getBaseUrl(){
-		return this.tree.data.squash.rootUrl + "/";
+		return this.tree.data.squash.rootUrl ;
 	}
 
 	function getBrowserUrl(){

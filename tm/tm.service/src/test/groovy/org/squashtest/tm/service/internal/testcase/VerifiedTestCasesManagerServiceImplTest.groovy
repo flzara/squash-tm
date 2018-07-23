@@ -91,7 +91,7 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 	def "should add TestCase to test case's verified requirements"() {
 		given:
 		RequirementVersion requirementVersion = new RequirementVersion()
-		requirementVersionDao.findOne(10) >> requirementVersion
+		requirementVersionDao.getOne(10) >> requirementVersion
 
 		and:
 		TestCase tc5 = new TestCase()
@@ -112,7 +112,7 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 		given:
 		RequirementVersion requirementVersion = new RequirementVersion()
 		requirementVersion.setName("foo");
-		requirementVersionDao.findOne(10) >> requirementVersion
+		requirementVersionDao.getOne(10) >> requirementVersion
 
 		and:
 		TestCase tc5 = new TestCase()
@@ -144,7 +144,7 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 		RequirementVersion rv = new RequirementVersion()
 		RequirementVersionCoverage rvc5 = new RequirementVersionCoverage(rv, tc5)
 		RequirementVersionCoverage rvc15 = new RequirementVersionCoverage(rv, tc15)
-		requirementVersionDao.findOne(10L) >> rv
+		requirementVersionDao.getOne(10L) >> rv
 		requirementVersionCoverageDao.byRequirementVersionAndTestCases([15L], 10L)>>[rvc15]
 		when:
 		service.removeVerifyingTestCasesFromRequirementVersion([15], 10)
@@ -163,7 +163,7 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 		RequirementVersion rv = new RequirementVersion()
 		rv.id >> 10L
 		RequirementVersionCoverage rvc = new RequirementVersionCoverage(rv, tq)
-		requirementVersionDao.findOne(10L) >> rv
+		requirementVersionDao.getOne(10L) >> rv
 		requirementVersionCoverageDao.byRequirementVersionAndTestCase(10L, 5L)>>rvc
 		when:
 		service.removeVerifyingTestCaseFromRequirementVersion(5L, 10L)
@@ -179,7 +179,7 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 		and:
 		RequirementVersion req = new RequirementVersion(status: RequirementStatus.OBSOLETE)
 		req.id >> 10L
-		requirementVersionDao.findOne(10L) >> req
+		requirementVersionDao.getOne(10L) >> req
 		RequirementVersionCoverage rvc = new RequirementVersionCoverage();
 		use (ReflectionCategory) {
 			RequirementVersionCoverage.set field:"verifiedRequirementVersion", of: rvc, to : req

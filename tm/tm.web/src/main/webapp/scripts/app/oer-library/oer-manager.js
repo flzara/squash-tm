@@ -118,7 +118,7 @@ define(["jquery", "app/ws/squashtm.notification", "squash.translator", "jquery.s
 					var iframeBody = this.rightPane.find('iframe body');
 					var iframe = this.rightPane.find('iframe');
 
-					$.post(squashtm.app.contextRoot + "/checkXFO/", {URL: url}, function (xframeAllowed) {
+					$.post(squashtm.app.contextRoot + "checkXFO/", {URL: url}, function (xframeAllowed) {
 						if (!xframeAllowed) {
 							iframe.attr('src', "about:blank");
 							notification.showError(translator.get('message.exception.OER.XFODoNotPermitIFrame'));

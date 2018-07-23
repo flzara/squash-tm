@@ -249,7 +249,7 @@ public class ExecutionModificationServiceTest extends Specification {
 			execution.addStep(ex)
 			}
 
-			execDao.findOne (1) >> execution
+			execDao.getOne (1) >> execution
 
 		when :
 		def firstChanged = service.updateSteps(1);
@@ -293,7 +293,7 @@ public class ExecutionModificationServiceTest extends Specification {
 			return ex
 			}
 
-			execDao.findOne (1) >> execution
+			execDao.getOne (1) >> execution
 
 		when :
 		def firstChanged = service.updateSteps(1);

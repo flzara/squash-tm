@@ -30,7 +30,6 @@ import java.util.List;
 
 
 public interface DatasetDao extends JpaRepository<Dataset, Long>, CustomDatasetDao {
-	Dataset findById(Long id);
 
 
 	/**

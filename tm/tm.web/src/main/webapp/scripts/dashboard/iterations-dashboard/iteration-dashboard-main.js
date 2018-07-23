@@ -128,7 +128,7 @@ define(["require", 'squash.translator', "./iteration-progression-view", "./nonex
 				}
 
 				var queryString = "searchModel=" + encodeURIComponent(JSON.stringify(search));
-				document.location.href = squashtm.app.contextRoot + "/advanced-search/results?campaign&" + queryString;
+				document.location.href = squashtm.app.contextRoot + "advanced-search/results?campaign&" + queryString;
 
 			});
 		}

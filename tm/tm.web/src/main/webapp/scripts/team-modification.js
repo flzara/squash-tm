@@ -27,7 +27,7 @@ require([ "common" ], function(common) {
 		};
 		
 		var goBack = function() {
-			document.location.href = squashtm.app.contextRoot + "/administration/users/list";
+			document.location.href = squashtm.app.contextRoot + "administration/users/list";
 		};
 
 		domReady(function() {

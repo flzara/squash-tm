@@ -165,7 +165,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	public void addNewCustomFieldBinding(long projectId, BindableEntity entity, long customFieldId,
 										 Set<RenderingLocation> locations) {
 
-		GenericProject genericProject = genericProjectDao.findOne(projectId);
+		GenericProject genericProject = genericProjectDao.getOne(projectId);
 		CustomFieldBinding newBinding = createBinding(genericProject, entity, customFieldId, locations);
 		/* Create all the cufValues for the existing Entities. */
 		if (!genericProjectDao.isProjectTemplate(projectId)) {
@@ -243,7 +243,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 							   Set<RenderingLocation> locations) {
 
 			CustomFieldBinding newBinding = new CustomFieldBinding();
-			CustomField field = customFieldDao.findById(customFieldId);
+			CustomField field = customFieldDao.getOne(customFieldId);
 			Long newIndex = customFieldBindingDao.countAllForProjectAndEntity(genericProject.getId(), entity) + 1;
 
 			newBinding.setBoundProject(genericProject);

@@ -108,7 +108,7 @@ class CustomReportDashboardServiceImplTest extends Specification {
 		def preference = new PartyPreference()
 		preference.setPreferenceValue('12')
 		partyPreferenceService.findPreferenceForCurrentUser(_) >> preference;
-		customReportLibraryNodeDao.getOne(_)>>null
+		customReportLibraryNodeDao.findById(_)>> Optional.empty()
 
 		when:
 		boolean result = service.canShowDashboardInWorkspace(Workspace.HOME);
@@ -123,7 +123,7 @@ class CustomReportDashboardServiceImplTest extends Specification {
 		preference.setPreferenceValue('12')
 		partyPreferenceService.findPreferenceForCurrentUser(_) >> preference
 		def node = new CustomReportLibraryNode()
-		customReportLibraryNodeDao.getOne(_) >> node
+		customReportLibraryNodeDao.findById(_) >> Optional.of(node)
 		permissionService.hasRoleOrPermissionOnObject(_,_,_,) >> false
 
 		when:
@@ -138,7 +138,7 @@ class CustomReportDashboardServiceImplTest extends Specification {
 		def preference = new PartyPreference()
 		preference.setPreferenceValue('12')
 		partyPreferenceService.findPreferenceForCurrentUser(_) >> preference
-		customReportLibraryNodeDao.getOne(_)>> new CustomReportLibraryNode()
+		customReportLibraryNodeDao.findById(_)>> Optional.of(new CustomReportLibraryNode())
 		permissionService.hasRoleOrPermissionOnObject(_,_,_,) >> true
 
 		when:

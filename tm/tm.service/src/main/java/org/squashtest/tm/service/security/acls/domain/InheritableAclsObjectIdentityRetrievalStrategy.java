@@ -23,20 +23,16 @@ package org.squashtest.tm.service.security.acls.domain;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.Query;
-import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
-import org.springframework.stereotype.Component;
 import org.squashtest.tm.security.annotation.InheritsAcls;
 
 /**
@@ -154,10 +150,10 @@ public class InheritableAclsObjectIdentityRetrievalStrategy implements ObjectIde
 			cacheQuery(domainObject, inherits, hql);
 		}
 
-		Query query = em.unwrap(Session.class).createQuery(hql);
+		Query query = em.createQuery(hql);
 		query.setParameter("heir", domainObject);
 
-		return query.uniqueResult();
+		return query.getSingleResult();
 	}
 
 	private void cacheQuery(Object domainObject, InheritsAcls inherits, String hql) {

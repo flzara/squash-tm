@@ -49,7 +49,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 			Forms.form(this.$el).clearState();
 			var table = $("#teams-table").squashTable();
 			var ids = table.getSelectedIds().join(',');
-			var urlDelete = squashtm.app.contextRoot + "/administration/teams/" + ids ;
+			var urlDelete = squashtm.app.contextRoot + "administration/teams/" + ids ;
 
 			$.ajax({
 				type : 'delete',
@@ -79,7 +79,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 
 			$.ajax({
 				type : 'post',
-				url : squashtm.app.contextRoot + "/administration/teams/{entity-id}",
+				url : squashtm.app.contextRoot + "administration/teams/{entity-id}",
 				dataType : 'json',
 				// note : we cannot use promise api with async param. see
 				// http://bugs.jquery.com/ticket/11013#comment:40
@@ -122,7 +122,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 			function decorateArea() {
 				$(this).ckeditor(function() {
 				}, {
-					customConfig : squashtm.app.contextRoot + "/styles/ckeditor/ckeditor-config.js",
+					customConfig : squashtm.app.contextRoot + "styles/ckeditor/ckeditor-config.js",
 					language : squashtm.app.ckeditorLanguage
 				});
 			}

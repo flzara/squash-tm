@@ -167,7 +167,7 @@
 	@NamedQuery(name = "requirement.findReqParentPath", query = "select group_concat(requirement.resource.name, 'order by', closure.depth, 'desc','"+HibernatePathService.PATH_SEPARATOR+"')"
 				+ " from Requirement requirement,Requirement requirement1, RequirementPathEdge closure"
 				+ " where closure.ancestorId = requirement.id and closure.descendantId = requirement1.id and requirement1.id=:requirementId"
-				+ " group by requirement1.id)"),
+				+ " group by requirement1.id"),
 	@NamedQuery(name = "requirement.findVersionsModelsIndexInLibrary", query = "select index(content)+1 from RequirementLibrary rl join rl.rootContent content where content.id=:requirementId"),
 	@NamedQuery(name = "requirement.findVersionsModelsIndexInFolder", query = "select index(content)+1 from RequirementFolder rf join rf.content content where content.id=:requirementId"),
 	@NamedQuery(name = "requirement.findVersionsModelsIndexChildrenRequirement", query = "select index(child)+1 from Requirement r join r.children child where child.id=:requirementId"),

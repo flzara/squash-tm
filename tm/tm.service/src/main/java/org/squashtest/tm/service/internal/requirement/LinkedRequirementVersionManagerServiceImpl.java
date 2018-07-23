@@ -210,7 +210,7 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		RequirementVersionLink linkToUpdate = reqVersionLinkDao.findByReqVersionsIds(requirementVersionId, relatedVersionId);
 		RequirementVersionLink symmetricalLinkToUpdate = reqVersionLinkDao.findByReqVersionsIds(relatedVersionId, requirementVersionId);
 
-		RequirementVersionLinkType newLinkType = reqVersionLinkTypeDao.findOne(linkTypeId);
+		RequirementVersionLinkType newLinkType = reqVersionLinkTypeDao.getOne(linkTypeId);
 
 		linkToUpdate.setLinkType(newLinkType);
 		linkToUpdate.setLinkDirection(linkDirection);
@@ -248,7 +248,7 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		checkIfSameRequirement(reqVersion, relatedReqVersion);
 		checkIfVersionsAreLinkable(reqVersion, relatedReqVersion);
 
-		RequirementVersionLinkType linkType = reqVersionLinkTypeDao.findOne(linkTypeId);
+		RequirementVersionLinkType linkType = reqVersionLinkTypeDao.getOne(linkTypeId);
 		RequirementVersionLink newLink = new RequirementVersionLink(reqVersion, relatedReqVersion, linkType, linkDirection);
 		reqVersionLinkDao.addLink(newLink);
 		return newLink;

@@ -206,7 +206,7 @@ define([ "jquery", "workspace.event-bus", "squash.translator", "squash.configman
 					"theme" : "squashtest",
 					"dots" : true,
 					"icons" : true,
-					"url" : squashtm.app.contextRoot + "/styles/squash.tree.css"
+					"url" : squashtm.app.contextRoot + "styles/squash.tree.css"
 				},
 
 				"core" : {

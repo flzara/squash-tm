@@ -83,7 +83,7 @@ define(['jquery', 'tree', 'underscore',
 
 			_createUrl: function (nodes, type, filename) {
 
-				var url = squashtm.app.contextRoot + '/test-case-browser/content/features';
+				var url = squashtm.app.contextRoot + 'test-case-browser/content/features';
 
 				var libIds = nodes.filter(':library').map(function () {
 					return $(this).attr('resid');

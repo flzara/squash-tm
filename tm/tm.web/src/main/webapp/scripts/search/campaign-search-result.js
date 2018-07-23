@@ -99,7 +99,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 
 		modifySearch : function(){
 				var token = $("meta[name='_csrf']").attr("content");
-				this.post(squashtm.app.contextRoot + "/advanced-search?searchDomain=campaign", {
+				this.post(squashtm.app.contextRoot + "advanced-search?searchDomain=campaign", {
 					searchModel : JSON.stringify(this.model),
 					_csrf : token
 				});
@@ -126,7 +126,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 		},
 
 		newSearch : function(){
-				document.location.href= squashtm.app.contextRoot +"/advanced-search?searchDomain=campaign";
+				document.location.href= squashtm.app.contextRoot + "advanced-search?searchDomain=campaign";
 
 		},
 
@@ -213,7 +213,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 
 			function loadCombos(comboname){
 				$.ajax({
-					url : squashtm.app.contextRoot + "/executions/"+ comboname +"-data",
+					url : squashtm.app.contextRoot + "executions/"+ comboname +"-data",
 					dataType : 'json'
 				})
 				.success(function(json) {
@@ -299,7 +299,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 
 		loadTree : function (){
 			$.ajax({
-				url : squashtm.app.contextRoot + "/campaign-workspace/tree/''",
+				url : squashtm.app.contextRoot + "campaign-workspace/tree/''",
 				datatype : 'json'
 			})
 			.success(function(json) {
@@ -353,7 +353,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 				}
 				else {
 					$.ajax({
-						url : squashtm.app.contextRoot + "/iterations/" +  nodes.getResId() + "/test-plan"  ,
+						url : squashtm.app.contextRoot + "iterations/" +  nodes.getResId() + "/test-plan"  ,
 						type : 'POST',
 						data : {
 							itpiIds : selectedIds

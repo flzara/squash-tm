@@ -29,7 +29,7 @@ require([ "common" ], function(common) {
 
 		ps.subscribe("load.informationContent", function() {
 			var goBack = function() {
-				document.location.href = squashtm.app.contextRoot + "/administration/users/list";
+				document.location.href = squashtm.app.contextRoot + "administration/users/list";
 			};
 
 			var view = new UserModificationView();

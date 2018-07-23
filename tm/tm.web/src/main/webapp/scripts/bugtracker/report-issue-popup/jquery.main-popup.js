@@ -115,7 +115,7 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 				if (forms.length > 0) {
 
 					var btName = this.controller.model.get('bugtracker');
-					var url = squashtm.app.contextRoot + '/bugtracker/' + btName + '/remote-issues/' + json.issueId + '/attachments';
+					var url = squashtm.app.contextRoot + 'bugtracker/' + btName + '/remote-issues/' + json.issueId + '/attachments';
 
 					for (var i = 0; i < forms.length; i++) {
 						var form = $(forms[i]);

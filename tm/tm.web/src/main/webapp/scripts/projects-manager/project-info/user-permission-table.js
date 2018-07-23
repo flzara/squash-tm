@@ -46,7 +46,7 @@ define([ "jquery", "squashtable" ], function($) {
 					// the
 					// permission to be interpreted as a file extension
 					// by spring MVC
-					var url = squashtm.app.contextRoot + "/generic-projects/" + projectId + "/parties/" + partyId +
+					var url = squashtm.app.contextRoot + "generic-projects/" + projectId + "/parties/" + partyId +
 							"/permissions/" + $this.val() + "/";
 
 					$.ajax({
@@ -104,7 +104,7 @@ define([ "jquery", "squashtable" ], function($) {
 			"fnDrawCallback" : drawCallback,
 			"iDeferLoading" : userPermissions.length,
 			"bServerSide" : true,
-			"sAjaxSource" : squashtm.app.contextRoot + "/generic-projects/" + settings.basic.projectId +
+			"sAjaxSource" : squashtm.app.contextRoot + "generic-projects/" + settings.basic.projectId +
 					"/party-permissions",
 			"aaData" : userPermissions,
 			"sDom" : 'ft<"dataTables_footer"lp>',
@@ -156,14 +156,14 @@ define([ "jquery", "squashtable" ], function($) {
 			},
 			unbindButtons : {
 				popupmessage : language.deleteMessage,
-				url : squashtm.app.contextRoot + "/generic-projects/" + settings.basic.projectId +
+				url : squashtm.app.contextRoot + "generic-projects/" + settings.basic.projectId +
 						"/parties/{party-id}/permissions",
 				tooltip : language.deleteTooltip,
 				success : refreshTableAndPopup
 			},
 			bindLinks : {
 				list : [ {
-					url : squashtm.app.contextRoot + "/administration/parties/{party-id}/info",
+					url : squashtm.app.contextRoot + "administration/parties/{party-id}/info",
 					targetClass : 'party-reference'
 				} ]
 			}

@@ -69,7 +69,7 @@ class TestSuiteExecutionProcessingServiceImplTest  extends Specification {
 		suite.findFirstExecutableTestPlanItem(_)>>item
 		item.getExecutions()>> []
 		and:
-		testSuiteDao.findOne(10) >> suite
+		testSuiteDao.getOne(10) >> suite
 
 		and:
 		Execution exec = Mock()
@@ -91,7 +91,7 @@ class TestSuiteExecutionProcessingServiceImplTest  extends Specification {
 		Project project = Mock()
 		testSuite.getProject() >> project
 		project.getId()>>1L
-		testSuiteDao.findOne(10) >> testSuite
+		testSuiteDao.getOne(10) >> testSuite
 
 		and:
 		testSuite.isLastExecutableTestPlanItem(20, _) >> lastExecutable
@@ -120,7 +120,7 @@ class TestSuiteExecutionProcessingServiceImplTest  extends Specification {
 		nextItem.isExecutableThroughTestSuite()>>true
 
 		and:
-		testSuiteDao.findOne(10) >> suite
+		testSuiteDao.getOne(10) >> suite
 
 		and:
 		Execution exec = Mock()

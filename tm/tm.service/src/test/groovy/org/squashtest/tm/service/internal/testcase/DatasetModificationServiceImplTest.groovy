@@ -31,20 +31,20 @@ public class DatasetModificationServiceImplTest extends Specification {
 	DatasetModificationServiceImpl service = new DatasetModificationServiceImpl();
 	ParameterDao parameterDao = Mock()
 	DatasetDao datasetDao = Mock()
-	
+
 	def setup() {
 		service.parameterDao = parameterDao;
 		service.datasetDao = datasetDao;
 	}
-	
+
 	def "should delete dataset "(){
 		given:
 		Dataset dataset = Mock()
-		datasetDao.findById(1L) >> dataset
-			
+		datasetDao.findById(1L) >> Optional.of(dataset)
+
 		when :
 		service.removeById(1L);
-		
+
 		then:
 		1* datasetDao.delete(dataset)
 	}

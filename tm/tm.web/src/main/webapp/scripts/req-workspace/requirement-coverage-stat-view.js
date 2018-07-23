@@ -90,7 +90,7 @@ define(["jquery", "backbone", "handlebars", "underscore", "workspace.routing", "
         });
 
         $.ajax({
-            url : squashtm.app.contextRoot + "/" + 'campaign-workspace/tree/0',
+            url : squashtm.app.contextRoot + "" + 'campaign-workspace/tree/0',
             datatype : 'json'
 
 

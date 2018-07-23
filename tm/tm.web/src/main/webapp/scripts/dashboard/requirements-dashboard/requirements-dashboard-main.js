@@ -182,7 +182,7 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 			}
 
 			var queryString = "searchModel=" + encodeURIComponent(JSON.stringify(search));
-			document.location.href = squashtm.app.contextRoot + "/advanced-search/results?requirement&" + queryString;
+			document.location.href = squashtm.app.contextRoot + "advanced-search/results?requirement&" + queryString;
 
 		});
 	}
@@ -345,7 +345,7 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 			var search = _initializeSearch();
 			
 			$.ajax({
-				url: squashtm.app.contextRoot + "/requirement-browser/validation-statistics",
+				url: squashtm.app.contextRoot + "requirement-browser/validation-statistics",
 				type: "POST",
 				dataType: "json",
 				data : { 
@@ -356,7 +356,7 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 			}).success(function(requirementIdsFromValidation) {
 				search.fields["requirement.id"].values = requirementIdsFromValidation.toString().split(",");
 				var queryString = "searchModel=" + encodeURIComponent(JSON.stringify(search));
-				document.location.href = squashtm.app.contextRoot + "/advanced-search/results?requirement&" + queryString;
+				document.location.href = squashtm.app.contextRoot + "advanced-search/results?requirement&" + queryString;
 			});
 
 		});

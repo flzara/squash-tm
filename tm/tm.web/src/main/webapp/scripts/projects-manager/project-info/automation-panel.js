@@ -84,7 +84,7 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 						// edit state of popup depending on datas retrieved by ajax
 						$.ajax(
 								{
-									url : squashtm.app.contextRoot + "/test-automation-servers/" + self.selectedId +
+									url : squashtm.app.contextRoot + "test-automation-servers/" + self.selectedId +
 											"/usage-status",
 									type : "GET"
 								}).then(function(status) {
@@ -128,7 +128,7 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 				confirm : function() {
 					this.trigger("unbindTAProjectPopup.confirm");
 					$.ajax({
-						url : squashtm.app.contextRoot + "/test-automation-projects/" + this.deletedId,
+						url : squashtm.app.contextRoot + "test-automation-projects/" + this.deletedId,
 						type : "delete"
 					}).done(this.confirmSuccess).fail(this.confirmFail);
 				},
@@ -150,7 +150,7 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 
 					// set state with or without warnin message depending on project's usage status
 					$.ajax({
-						url: squashtm.app.contextRoot + "/test-automation-projects/"+this.deletedId+"/usage-status",
+						url: squashtm.app.contextRoot + "test-automation-projects/"+this.deletedId+"/usage-status",
 						type : "get"
 					}).then(function(status){
 						if (!status.hasExecutedTests){

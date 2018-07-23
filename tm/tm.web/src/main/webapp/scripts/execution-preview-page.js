@@ -77,7 +77,7 @@ require(["common"], function () {
 				var match = myRegexp.exec(currentUrl);
 				var optimized = match[1];
 				var winDef = {};
-				var url = squashtm.app.contextRoot + "/test-cases/" + page.refTestCaseId + "/edit-from-exec/" + page.executionId + "?optimized=" + optimized;
+				var url = squashtm.app.contextRoot + "test-cases/" + page.refTestCaseId + "/edit-from-exec/" + page.executionId + "?optimized=" + optimized;
 				window.open(url);
 				window.close();
 				parent.squashtm.ieomanager.closeWindow();

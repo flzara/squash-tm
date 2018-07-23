@@ -61,7 +61,7 @@ define(['jquery', 'tree',
 		
 		//REQUIREMENT EXPORT URL
 		_createUrl : function(nodes, name, keepRteFormat){
-			var url = squashtm.app.contextRoot+'/requirement-browser/exports';
+			var url = squashtm.app.contextRoot + 'requirement-browser/exports';
 			
 			var libIds = nodes.filter(':library').map(function(){
 				return $(this).attr('resid');

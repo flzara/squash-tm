@@ -63,7 +63,7 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 	@Override
 	public void changeName(long bugtrackerId, String newName) {
 		String trimedNewName = newName.trim();
-		BugTracker bugTracker = bugTrackerDao.findOne(bugtrackerId);
+		BugTracker bugTracker = bugTrackerDao.getOne(bugtrackerId);
 		if(!bugTracker.getName().equals(trimedNewName)){
 			BugTracker existing = bugTrackerDao.findByName(trimedNewName);
 			if (existing == null){
@@ -110,14 +110,14 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 
 	@Override
 	public void changeAuthenticationPolicy(long bugtrackerId, AuthenticationPolicy policy) {
-		BugTracker tracker = bugTrackerDao.findOne(bugtrackerId);
+		BugTracker tracker = bugTrackerDao.getOne(bugtrackerId);
 		tracker.setAuthenticationPolicy(policy);
 	}
 
 
 	@Override
 	public void changeAuthenticationProtocol(long bugtrackerId, AuthenticationProtocol protocol) {
-		BugTracker tracker = bugTrackerDao.findOne(bugtrackerId);
+		BugTracker tracker = bugTrackerDao.getOne(bugtrackerId);
 		tracker.setAuthenticationProtocol(protocol);
 
 		credentialsManager.deleteAppLevelCredentials(bugtrackerId);
@@ -128,7 +128,7 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 	@Override
 	public void testCredentials(long bugtrackerId, ManageableCredentials credentials) {
 
-		BugTracker bt = bugTrackerDao.findOne(bugtrackerId);
+		BugTracker bt = bugTrackerDao.getOne(bugtrackerId);
 		Credentials usableCredentials = credentials.build(credentialsManager, bt, null);
 
 		if (usableCredentials == null){

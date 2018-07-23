@@ -34,7 +34,7 @@ import java.util.List;
 /**
  * @author Gregory Fouquet
  */
-public interface RequirementVersionDao extends CrudRepository<RequirementVersion, Long>, CustomRequirementVersionDao {
+public interface RequirementVersionDao extends JpaRepository<RequirementVersion, Long>, CustomRequirementVersionDao {
 
 	@Override
 	@EmptyCollectionGuard

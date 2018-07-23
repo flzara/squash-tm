@@ -249,7 +249,7 @@ define([ "jquery", "squash.translator",
 	}
 
 	function usersUrl(ids) {
-		return window.squashtm.app.contextRoot + "/administration/users/" + ids.join(',');
+		return window.squashtm.app.contextRoot + "administration/users/" + ids.join(',');
 	}
 
 	function initTable(settings) {

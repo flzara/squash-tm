@@ -130,7 +130,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 	def "should not change project's name to name in use"() {
 		given:
 		Project project = new Project()
-		genericProjectDao.findOne(10L) >> project
+		genericProjectDao.getOne(10L) >> project
 
 		and:
 		genericProjectDao.countByName("HASHTAG NAME CLASH") >> 1L
@@ -145,7 +145,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 	def "should change a project's name to its own name"() {
 		given:
 		Project project = new Project(name: "HASHTAG NO NAME CLASH")
-		genericProjectDao.findOne(10L) >> project
+		genericProjectDao.getOne(10L) >> project
 
 		and:
 		genericProjectDao.countByName("HASHTAG NO NAME CLASH") >> 1L
@@ -161,7 +161,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		given:
 		Project project = new Project()
 		CustomReportLibrary crl = new CustomReportLibrary()
-		genericProjectDao.findOne(10L) >> project
+		genericProjectDao.getOne(10L) >> project
 		project.getCustomReportLibrary() >> crl
 		customReportLibraryNodeDao.findNodeFromEntity(_) >> new CustomReportLibraryNode()
 
@@ -184,8 +184,8 @@ class CustomGenericProjectManagerImplTest extends Specification {
 
 		template.isTestAutomationEnabled() >> Boolean.TRUE
 
-		genericProjectDao.findOne(1L) >> template
-		genericProjectDao.findOne(2L) >> project
+		genericProjectDao.getOne(1L) >> template
+		genericProjectDao.getOne(2L) >> project
 		permissionEvaluationService.hasRoleOrPermissionOnObject(_,_,_) >> true
 
 		TestAutomationProject automationProject = Mock()
@@ -242,8 +242,8 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		ProjectTemplate template = Mock()
 		Project project = Mock()
 		template.isTestAutomationEnabled() >> Boolean.TRUE
-		genericProjectDao.findOne(1L) >> template
-		genericProjectDao.findOne(2L) >> project
+		genericProjectDao.getOne(1L) >> template
+		genericProjectDao.getOne(2L) >> project
 		permissionEvaluationService.hasRoleOrPermissionOnObject(_,_,_) >> true
 
 		TestAutomationProject automationProject = Mock()
@@ -296,8 +296,8 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		ProjectTemplate template = Mock()
 		Project project = Mock()
 		template.isTestAutomationEnabled() >> Boolean.TRUE
-		genericProjectDao.findOne(1L) >> template
-		genericProjectDao.findOne(2L) >> project
+		genericProjectDao.getOne(1L) >> template
+		genericProjectDao.getOne(2L) >> project
 		permissionEvaluationService.hasRoleOrPermissionOnObject(_,_,_) >> true
 
 		and: "a project"
@@ -341,7 +341,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 
 		and:
 
-		genericProjectDao.findOne(_) >> project
+		genericProjectDao.getOne(_) >> project
 
 		when:
 
@@ -408,10 +408,10 @@ class CustomGenericProjectManagerImplTest extends Specification {
 
 		and:
 
-		projectDao.findOne(_) >> project
-		templateDao.findOne(_) >> template
-		genericProjectDao.findOne(1L) >> project
-		genericProjectDao.findOne(2L) >> template
+		projectDao.getOne(_) >> project
+		templateDao.getOne(_) >> template
+		genericProjectDao.getOne(1L) >> project
+		genericProjectDao.getOne(2L) >> template
 
 		when:
 
@@ -448,7 +448,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 
 		and:
 
-		genericProjectDao.findOne(44L) >> project
+		genericProjectDao.getOne(44L) >> project
 		genericProjectDao.isProjectTemplate(44L) >> false
 
 		when:
@@ -475,7 +475,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 
 		and:
 
-		genericProjectDao.findOne(44L) >> project
+		genericProjectDao.getOne(44L) >> project
 
 		when:
 
@@ -505,7 +505,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 
 		and:
 
-		genericProjectDao.findOne(404L) >> template
+		genericProjectDao.getOne(404L) >> template
 		genericProjectDao.isProjectTemplate(404L) >> true
 		projectDao.findAllBoundToTemplate(404L) >> [project]
 
@@ -533,7 +533,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 
 		and:
 
-		genericProjectDao.findOne(404L) >> project
+		genericProjectDao.getOne(404L) >> project
 		genericProjectDao.isProjectTemplate(404L) >> false
 
 		when:
@@ -560,7 +560,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 
 		and:
 
-		genericProjectDao.findOne(404L) >> project
+		genericProjectDao.getOne(404L) >> project
 
 		when:
 
@@ -590,7 +590,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 
 		and:
 
-		genericProjectDao.findOne(404L) >> template
+		genericProjectDao.getOne(404L) >> template
 		genericProjectDao.isProjectTemplate(404L) >> true
 		projectDao.findAllBoundToTemplate(404L) >> [project]
 
@@ -614,7 +614,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 
 		and:
 
-		genericProjectDao.findOne(404L) >> project
+		genericProjectDao.getOne(404L) >> project
 
 		when:
 
@@ -638,7 +638,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 
 		and:
 
-		genericProjectDao.findOne(404L) >> project
+		genericProjectDao.getOne(404L) >> project
 
 		when:
 
@@ -664,7 +664,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 
 		and:
 
-		genericProjectDao.findOne(404L) >> template
+		genericProjectDao.getOne(404L) >> template
 		templateDao.propagateAllowTcModifDuringExec(404L, true) >> {
 			args ->
 				if(args[1]) {

@@ -25,9 +25,9 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 
 public interface AttachmentListDao {
-	AttachmentList findOne(Long id);
+	AttachmentList getOne(Long id);
 
 	TestCase findAssociatedTestCaseIfExists(Long attachmentListId);
-	
+
 	RequirementVersion findAssociatedRequirementVersionIfExists(Long attachmentListId);
 }

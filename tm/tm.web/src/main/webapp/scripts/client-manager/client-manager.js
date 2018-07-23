@@ -65,7 +65,7 @@ define([ "jquery", "squash.translator", "app/ws/squashtm.notification", "squasht
 		var $this = $(this);
 		var id = $this.data('entity-id');
 		var ids = (!!id) ? [ id ] : id;
-		var url = squashtm.app.contextRoot + '/administration/config/clients/' + ids.join(",");
+		var url = squashtm.app.contextRoot + 'administration/config/clients/' + ids.join(",");
 		var table = $("#client-table").squashTable();
 
 		$.ajax({
@@ -95,7 +95,7 @@ define([ "jquery", "squash.translator", "app/ws/squashtm.notification", "squasht
 	addClientDialog.formDialog();
 
 	addClientDialog.on('formdialogconfirm', function() {
-		var url = squashtm.app.contextRoot + '/administration/config/clients/';
+		var url = squashtm.app.contextRoot + 'administration/config/clients/';
 		var params = {
 			clientId : $('#add-client-name').val(),
 			clientSecret : $('#add-client-secret').val(),

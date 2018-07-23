@@ -107,12 +107,12 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService, B
 
 	@Override
 	public String findBugtrackerName(Long bugtrackerId) {
-		return bugTrackerDao.findOne(bugtrackerId).getName();
+		return bugTrackerDao.getOne(bugtrackerId).getName();
 	}
 
 	@Override
 	public BugTracker findById(long bugTrackerId) {
-		return bugTrackerDao.findOne(bugTrackerId);
+		return bugTrackerDao.getOne(bugTrackerId);
 	}
 
 	@Override
@@ -155,7 +155,8 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService, B
 	}
 
 	private void deleteBugTracker(final long bugtrackerId) {
-		bugTrackerDao.delete(bugtrackerId);
+		BugTracker tracker = bugTrackerDao.getOne(bugtrackerId);
+		bugTrackerDao.delete(tracker);
 	}
 
 	/**

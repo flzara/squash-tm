@@ -51,7 +51,7 @@ import java.time.Duration;
  * @since 1.13.0
  */
 @Configuration
-public class WebMvcConfig extends WebMvcConfigurer {
+public class WebMvcConfig implements WebMvcConfigurer {
 	@Value("${info.app.version}")
 	private String appVersion;
 
@@ -152,7 +152,6 @@ public class WebMvcConfig extends WebMvcConfigurer {
 	@Override
 	public void addViewControllers(ViewControllerRegistry registry) {
 		registry.addRedirectViewController("/", "/home-workspace");
-		super.addViewControllers(registry);
 	}
 
 	@Override

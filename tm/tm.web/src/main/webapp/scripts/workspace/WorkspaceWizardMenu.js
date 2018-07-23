@@ -157,7 +157,7 @@ define([ "jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil"
 			if (! util.isBlank(wizard.url)){
 
 				var postData = {
-					url : squashtm.app.contextRoot + "/" + wizard.url
+					url : squashtm.app.contextRoot + "" + wizard.url
 				};
 				postData.nodes = _.map(this.selectedNodes, function(node) {
 					var $node = $(node).treeNode();

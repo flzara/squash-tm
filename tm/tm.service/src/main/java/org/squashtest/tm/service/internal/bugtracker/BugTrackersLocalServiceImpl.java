@@ -274,7 +274,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	// see comment above
 	@Transactional(noRollbackFor={BugTrackerNoCredentialsException.class, UnsupportedAuthenticationModeException.class})
 	public void validateCredentials(Long bugtrackerId, Credentials credentials, boolean purgeOnFail) throws BugTrackerRemoteException {
-		BugTracker server = bugTrackerDao.findOne(bugtrackerId);
+		BugTracker server = bugTrackerDao.getOne(bugtrackerId);
 		validateCredentials(server, credentials, purgeOnFail);
 	}
 
@@ -352,7 +352,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		IssueDetector bugged = issueDao.findIssueDetectorByIssue(id);
 		PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(bugged, "EXECUTE"));
 
-		Issue issue = issueDao.findOne(id);
+		Issue issue = issueDao.getOne(id);
 		TestCase testCase = this.findTestCaseRelatedToIssue(issue.getId());
 		issueDao.delete(issue);
 		this.indexationService.reindexTestCase(testCase.getId());

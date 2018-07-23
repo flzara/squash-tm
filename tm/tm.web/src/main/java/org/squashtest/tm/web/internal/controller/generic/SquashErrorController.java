@@ -21,14 +21,14 @@
 package org.squashtest.tm.web.internal.controller.generic;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.web.ErrorAttributes;
-import org.springframework.boot.autoconfigure.web.ErrorController;
+import org.springframework.boot.web.servlet.error.ErrorAttributes;
+import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.context.request.WebRequest;
 import org.squashtest.tm.service.feature.FeatureManager;
 
 import javax.inject.Inject;
@@ -36,10 +36,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-/*
- *https://gist.github.com/jonikarppinen/662c38fb57a23de61c8b
- */
 
 // XSS OK
 @Controller
@@ -89,8 +85,9 @@ public class SquashErrorController implements ErrorController {
 	}
 
 	private Map<String, Object> getErrorAttributes(HttpServletRequest request, HttpServletResponse response) {
-		RequestAttributes requestAttributes = new ServletRequestAttributes(request);
-		Map<String, Object> result = errorAttributes.getErrorAttributes(requestAttributes, true);
+		WebRequest webRequest = new ServletWebRequest(request) {
+		};
+		Map<String, Object> result = errorAttributes.getErrorAttributes(webRequest, true);
 
 		if (featureManager.isEnabled(FeatureManager.Feature.STACK_TRACE) && stackTracePanel) {
 			response.setHeader("Stack-Trace", "enable");

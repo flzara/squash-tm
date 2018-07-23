@@ -144,7 +144,7 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 		deleteCustomReportLibrary(customReportLibrary);
 
 		em.unwrap(Session.class).evict(project);
-		project = genericProjectDao.findById(projectId);
+		project = genericProjectDao.getOne(projectId);
 		project.accept(new ProjectVisitor() {
 			@Override
 			public void visit(ProjectTemplate projectTemplate) {

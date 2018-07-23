@@ -522,6 +522,10 @@
       <id>squash-snapshot-repo</id>
       <url>http://repo.squashtest.org/maven2/snapshots</url>
     </repository>
+    <repository>
+      <id>jasper-reports</id>
+      <url>http://jasperreports.sourceforge.net/maven2</url>
+    </repository>
   </repositories>
 
   <pluginRepositories>

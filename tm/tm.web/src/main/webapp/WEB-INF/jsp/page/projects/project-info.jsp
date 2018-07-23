@@ -983,7 +983,7 @@ require(["common"], function() {
 
 			if (validselection.length === 1){
 				var partyId = validselection[0].id;
-				var url = squashtm.app.contextRoot+"/generic-projects/${adminproject.project.id}/parties/"+partyId+"/permissions/"+permission+"/";
+				var url = squashtm.app.contextRoot + "generic-projects/${adminproject.project.id}/parties/"+partyId+"/permissions/"+permission+"/";
 				permpopup.formDialog('setState','loading');
 				$.ajax({
 					url : url,
@@ -1037,7 +1037,7 @@ require(["common"], function() {
 			$.ajax({
 				type : 'delete',
 				dataType : "json",
-				url : squashtm.app.contextRoot + "/generic-projects/" + permSettings.basic.projectId +
+				url : squashtm.app.contextRoot + "generic-projects/" + permSettings.basic.projectId +
 				"/parties/" + val +"/permissions"
 			}).done(function() {
 				table.squashTable().refresh();

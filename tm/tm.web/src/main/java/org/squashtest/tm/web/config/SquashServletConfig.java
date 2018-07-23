@@ -55,8 +55,8 @@ import org.squashtest.tm.web.internal.filter.UserConcurrentRequestLockFilter;
 import org.squashtest.tm.web.internal.listener.HttpSessionLifecycleLogger;
 import org.squashtest.tm.web.internal.listener.OpenedEntitiesLifecycleListener;
 import org.thymeleaf.dialect.IDialect;
-import org.thymeleaf.spring4.SpringTemplateEngine;
-import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
+import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.standard.StandardDialect;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
@@ -75,7 +75,7 @@ import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 public class SquashServletConfig {
 
     private static final String[] CREDENTIALS_CACHE_EXCLUDE_PATTERNS = new String[] {"/isSquashAlive/**","/scripts/**", "/static/**", "/images/**", "/styles/**" };
-	
+
     private static final String IMPORTER_REGEX = ".*/importer/.*";
     private static final String UPLOAD_REGEX = ".*/attachments/upload.*";
 

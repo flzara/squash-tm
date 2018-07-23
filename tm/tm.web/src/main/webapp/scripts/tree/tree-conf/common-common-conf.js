@@ -90,7 +90,7 @@ define(["jquery", 'workspace.event-bus'], function ($, eventBus) {
 				"theme": "squashtest",
 				"dots": true,
 				"icons": true,
-				"url": settings.baseURL + "/styles/squash.tree.css"
+				"url": settings.baseURL + "styles/squash.tree.css"
 			},
 
 			"squash": {
