@@ -22,19 +22,18 @@
 * View derivated from abstractCutomReportChart  for representing PieChart in CustomReport context.
 */
 
-define(["jquery", "underscore", "./abstractCustomReportChart", "jqplot-pie"], function($,_,AbstractCustomReportChart){
-
+define(["jquery", "underscore", "./abstractCustomReportChart", "jqplot-pie"], function ($, _, AbstractCustomReportChart) {
 
 
 	return AbstractCustomReportChart.extend({
 
 		// The color for '0%' charts
-		EMPTY_COLOR : ["#EEEEEE"],
+		EMPTY_COLOR: ["#EEEEEE"],
 
 
 		// ************************* rendering  ***********************
 
-		render : function(){
+		render: function () {
 
 			var pieserie = this.getData();
 			var conf = this.getConf(pieserie);
@@ -42,9 +41,9 @@ define(["jquery", "underscore", "./abstractCustomReportChart", "jqplot-pie"], fu
 			var series = this.getSeries();
 			var legends = this.getLegends();
 			legends = _.flatten(legends);
-      var axis = this.getAxis()[0];
-      legends = this.replaceInfoListDefaultLegend(legends,axis);
-			var jqplotSeries = [_.zip(legends,series)];
+			var axis = this.getAxis()[0];
+			legends = this.replaceInfoListDefaultLegend(legends, axis);
+			var jqplotSeries = [_.zip(legends, series)];
 
 			this.draw(jqplotSeries, conf);
 
@@ -54,97 +53,99 @@ define(["jquery", "underscore", "./abstractCustomReportChart", "jqplot-pie"], fu
 
 
 		// returns data that works, eliminating corner cases.
-		getData : function(){
+		getData: function () {
 			var serie = this.getSeries();
 			return new PieSerie(serie);
 		},
 
 
-		getConf : function(pieserie){
+		getConf: function (pieserie) {
 
 			var colorsAndLabels;
 
-			if (pieserie.isEmpty){
+			if (pieserie.isEmpty) {
 				colorsAndLabels = this._getEmptyConf(pieserie);
 			}
-			else if (pieserie.isFull){
+			else if (pieserie.isFull) {
 				colorsAndLabels = this._getFullConf(pieserie);
 			}
-			else{
+			else {
 				colorsAndLabels = this._getNormalConf(pieserie);
 			}
 
-			var sizeDependantconf = this.getResizeConf(colorsAndLabels.labels,colorsAndLabels.labels);
+			var sizeDependantconf = this.getResizeConf(colorsAndLabels.labels, colorsAndLabels.labels);
 
-			var finalConf = _.extend(this.getCommonConf(),{
-				seriesDefaults : {
-					renderer : jQuery.jqplot.PieRenderer,
-					rendererOptions : {
-						showDataLabels : true,
-						dataLabels : colorsAndLabels.labels,
-						startAngle : -45,
-						shadowOffset : 0,
-						sliceMargin : 1.5,
-						dataLabelThreshold : 2
+			var finalConf = _.extend(this.getCommonConf(), {
+				seriesDefaults: {
+					renderer: jQuery.jqplot.PieRenderer,
+					rendererOptions: {
+						showDataLabels: true,
+						dataLabels: colorsAndLabels.labels,
+						startAngle: -45,
+						shadowOffset: 0,
+						sliceMargin: 1.5,
+						dataLabelThreshold: 2
 					},
-					showHighlight : false
+					showHighlight: false
 				},
-				grid : {
-					background : '#FFFFFF',
-					drawBorder : false,
-					borderColor : 'transparent',
-					shadow : false,
-					shadowColor : 'transparent'
+				grid: {
+					background: '#FFFFFF',
+					drawBorder: false,
+					borderColor: 'transparent',
+					shadow: false,
+					shadowColor: 'transparent'
 				},
-				legend : sizeDependantconf.legend
+				legend: sizeDependantconf.legend
 				//seriesColors : colorsAndLabels.colors
 			});
 
+			this.setColors(finalConf, this.getLegends());
+
 			var vueConf = this.getVueConf();
 			if (vueConf) {
-				finalConf = _.extend(finalConf,vueConf);
+				finalConf = _.extend(finalConf, vueConf);
 			}
 
 			return finalConf;
 		},
 
-		_getEmptyConf : function(pieserie){
+		_getEmptyConf: function (pieserie) {
 			return {
-				labels : ["0% (0)"],
-				colors :  this.EMPTY_COLOR
+				labels: ["0% (0)"],
+				colors: this.EMPTY_COLOR
 			};
 		},
 
-		_getFullConf : function(pieserie){
+		_getFullConf: function (pieserie) {
 			return {
-				labels : [ "100% ("+pieserie.total+")" ]
+				labels: ["100% (" + pieserie.total + ")"]
 				//colors : [ this.colorscheme[pieserie.nonzeroindex]]
 			};
 		},
 
-		_getNormalConf : function(pieserie){
+		_getNormalConf: function (pieserie) {
 			var labels = this._createLabels(pieserie);
 			return {
-				labels : labels,
-				colors : this.colorscheme
+				labels: labels,
+				colors: this.colorscheme
 			};
 		},
 
-		_createLabels : function(serie){
+		_createLabels: function (serie) {
 
-			var total=0,
+			var total = 0,
 				labels = [];
 
-			for (var s=0, lens=serie.length; s<lens; s++){
+			for (var s = 0, lens = serie.length; s < lens; s++) {
 				total += serie[s];
 			}
-			var coef = 100.0/total;
+			var coef = 100.0 / total;
 
 			var perc, dec;
-			for (var i=0, leni=serie.length; i<leni ;i++){
-				dec=serie[i];
+			for (var i = 0, leni = serie.length; i < leni; i++) {
+				dec = serie[i];
 				perc = (dec * coef).toFixed();
-				labels.push(perc+"% ("+dec+")");
+				labels.push(perc + "% (" + dec + ")");
 			}
 
 			return labels;
@@ -159,17 +160,17 @@ define(["jquery", "underscore", "./abstractCustomReportChart", "jqplot-pie"], fu
 	 * The View object will use those meta informations to make jqplot behave properly when those corner cases are met.
 	 *
 	 */
-	function PieSerie(serie){
+	function PieSerie(serie) {
 
-		var total=0,
-			nonzeroindex=-1,
-			nonzerocount=0,
+		var total = 0,
+			nonzeroindex = -1,
+			nonzerocount = 0,
 			length = serie.length,
 			_val;
 
-		for (var i=0;i<length;i++){
+		for (var i = 0; i < length; i++) {
 			_val = serie[i];
-			if (_val>0){
+			if (_val > 0) {
 				total += _val;
 				nonzerocount++;
 				nonzeroindex = i;
@@ -178,12 +179,12 @@ define(["jquery", "underscore", "./abstractCustomReportChart", "jqplot-pie"], fu
 
 		// collect the stats
 		this.total = total;
-		this.isEmpty = (total===0);
-		this.isFull = (nonzerocount===1);
+		this.isEmpty = (total === 0);
+		this.isFull = (nonzerocount === 1);
 		this.nonzeroindex = (this.isFull) ? nonzeroindex : -1;
 
 		// plot data : special data for special cases, normal data in normal cases.
-		this.plotdata = (this.isEmpty || this.isFull) ? [[1]] : [ serie ];
+		this.plotdata = (this.isEmpty || this.isFull) ? [[1]] : [serie];
 
 		// push the data onto self
 		Array.prototype.push.apply(this, serie);
@@ -192,7 +193,6 @@ define(["jquery", "underscore", "./abstractCustomReportChart", "jqplot-pie"], fu
 
 	PieSerie.prototype = [];
 	PieSerie.prototype.constructor = PieSerie;
-
 
 
 });

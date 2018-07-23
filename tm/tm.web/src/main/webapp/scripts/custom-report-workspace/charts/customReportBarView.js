@@ -26,84 +26,86 @@
 
 //TODO : move to dashboard/basic-objects when ready
 define(["jquery", "./abstractCustomReportChart",
-        "jqplot-core",  "jqplot-category", "jqplot-bar","jqplot-point-labels","jqplot-canvas-label","jqplot-canvas-ticks"],
-		function($, JqplotView){
+		"jqplot-core", "jqplot-category", "jqplot-bar", "jqplot-point-labels", "jqplot-canvas-label", "jqplot-canvas-ticks"],
+	function ($, JqplotView) {
 
-	return JqplotView.extend({
+		return JqplotView.extend({
 
-		getCategories : function(){
-			throw "attempted to create an abstract BarView !";
-		},
+			getCategories: function () {
+				throw "attempted to create an abstract BarView !";
+			},
 
-    getConf : function(series){
+			getConf: function (series) {
 
-			var ticks = this.getCategories();
-      var axis = this.getAxis()[0];
-      ticks = this.replaceInfoListDefaultLegend(ticks,axis);
+				var ticks = this.getCategories();
+				var axis = this.getAxis()[0];
+				ticks = this.replaceInfoListDefaultLegend(ticks, axis);
 
-      var finalConf = _.extend(this.getCommonConf(),{
-    	  seriesDefaults : {
-    		  renderer : $.jqplot.BarRenderer,
-    		  rendererOptions : {
-    			  animation: {
-    				  speed: 1000
-    			  },
-    			  fillToZero : true,
-    			  varyBarColor : true
-    		  },
-    		  pointLabels: {
-    			  show: true,
-    			  labelsFromSeries : true,
-    			  formatString :'%.1f',
-    			  textColor: "slategray",
-    			  location : 'n',
-    			  hideZeros : true
-    		  }
-    	  },
-    	  legend : {
-    		  show : false
-    	  },
-    	  axes : {
-    		  xaxis : {
-    			  renderer : $.jqplot.CategoryAxisRenderer,
-    			  tickRenderer:$.jqplot.CanvasAxisTickRenderer,
-    			  ticks : ticks,
-    			  tickOptions:{
-    				  angle : -30,
-    				  showGridline: false
-    			  },
-    			  labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-    			  label : this.getXAxisLabel()
-    		  },
-    		  yaxis : {
-    			  label : this.getYAxisLabel(),
-    			  labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-    			  tickOptions:{
-    				  gridStyle : {
-    					  lineDash : [5],
-    					  strokeStyle : "#c3c3c3"
-    				  },
-    				  markStyle : {
-    					  lineDash : [5],
-    					  strokeStyle : '#c3c3c3'
-    				  },
-    				  fontSize : '12px'
-    			  }
+				var finalConf = _.extend(this.getCommonConf(), {
+					seriesDefaults: {
+						renderer: $.jqplot.BarRenderer,
+						rendererOptions: {
+							animation: {
+								speed: 1000
+							},
+							fillToZero: true,
+							varyBarColor: true
+						},
+						pointLabels: {
+							show: true,
+							labelsFromSeries: true,
+							formatString: '%.1f',
+							textColor: "slategray",
+							location: 'n',
+							hideZeros: true
+						}
+					},
+					legend: {
+						show: false
+					},
+					axes: {
+						xaxis: {
+							renderer: $.jqplot.CategoryAxisRenderer,
+							tickRenderer: $.jqplot.CanvasAxisTickRenderer,
+							ticks: ticks,
+							tickOptions: {
+								angle: -30,
+								showGridline: false
+							},
+							labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+							label: this.getXAxisLabel()
+						},
+						yaxis: {
+							label: this.getYAxisLabel(),
+							labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+							tickOptions: {
+								gridStyle: {
+									lineDash: [5],
+									strokeStyle: "#c3c3c3"
+								},
+								markStyle: {
+									lineDash: [5],
+									strokeStyle: '#c3c3c3'
+								},
+								fontSize: '12px'
+							}
 
-    		  }
-    	  }
+						}
+					}
 
 
-      });
+				});
 
-      var vueConf = this.getVueConf();
-      if (vueConf) {
-        finalConf = _.extend(finalConf,vueConf);
-      }
+				this.setColors(finalConf, this.getCategories());
 
-      return finalConf;
+				var vueConf = this.getVueConf();
+				if (vueConf) {
+					finalConf = _.extend(finalConf, vueConf);
+				}
 
-		}
+				return finalConf;
 
+			}
+
+		});
 	});
-});

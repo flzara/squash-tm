@@ -29,8 +29,8 @@
  *
  */
 define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "underscore", "squash.translator", "handlebars",
-        "text!./empty-chart.html!strip","../utils", "squash.dateutils", "dashboard/jqplot-ext/jqplot.squash.stylableGridRenderer"],
-	function ($, Backbone, attrparser, eventbus, _, translator, Handlebars, emptyChartTemplate, chartUtils, dateUtils) {
+		"text!./empty-chart.html!strip", "../utils", "squash.dateutils", "./color-utils", "dashboard/jqplot-ext/jqplot.squash.stylableGridRenderer"],
+	function ($, Backbone, attrparser, eventbus, _, translator, Handlebars, emptyChartTemplate, chartUtils, dateUtils, colorUtils) {
 		"use strict";
 		var squashtm = window.squashtm;
 
@@ -70,6 +70,32 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 				return this.model.get('vueConf');
 			},
 
+			// a level enum or an executionStatus will have it's own set of colors, otherwise we will give the default colors from jqplot
+			setColors: function (finalConf, legends) {
+				var axis = this.getAxis();
+				var colors = [];
+				// test on the x axis
+				var xAxisDatatype = axis[0].columnPrototype.dataType;
+				var xShouldGetColors = xAxisDatatype === "LEVEL_ENUM" || xAxisDatatype === "EXECUTION_STATUS";
+
+				// test on the y axis if present
+				if (typeof axis[1] !== 'undefined') {
+					var yAxisDatatype = axis[1].columnPrototype.dataType;
+					var yShouldGetColors = yAxisDatatype === "LEVEL_ENUM" || yAxisDatatype === "EXECUTION_STATUS";
+				}
+
+				var shouldGetColors = xShouldGetColors || yShouldGetColors;
+
+				if (shouldGetColors) {
+					colors = colorUtils.getAssociatedColors(legends);
+				}
+
+				if (typeof colors !== 'undefined' && colors.length > 0) {
+					finalConf.seriesColors = colors;
+				}
+			},
+
+
 			/**
 			 * The JqPlot conf of all
 			 * @return {[type]} [description]
@@ -94,8 +120,8 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 						renderer: $.jqplot.StylableGridRenderer
 					},
 					highlighter: {
-			    		  show: false
-			    	}
+						show: false
+					}
 				};
 			},
 
@@ -114,9 +140,9 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 				}
 
 				if (protoDatatype === "DATE_AS_STRING") {
-					legends = _.map(legends, function(legend) {
+					legends = _.map(legends, function (legend) {
 						return dateUtils.format(legend, "yyyyMMdd", "yyyy-MM-dd")
-						});
+					});
 					return this._formatDateLegend(legends, axis);
 				}
 

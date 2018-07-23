@@ -26,95 +26,97 @@
 
 //TODO : move to dashboard/basic-objects when ready
 define(["jquery", "./abstractCustomReportChart",
-        "jqplot-core",  "jqplot-category", "jqplot-bar","jqplot-legend","jqplot-point-labels","jqplot-canvas-label","jqplot-canvas-ticks"],
-		function($, JqplotView){
+		"jqplot-core", "jqplot-category", "jqplot-bar", "jqplot-legend", "jqplot-point-labels", "jqplot-canvas-label", "jqplot-canvas-ticks"],
+	function ($, JqplotView) {
 
-	return JqplotView.extend({
+		return JqplotView.extend({
 
-		getCategories : function(){
-			throw "attempted to create an abstract LineView !";
-		},
+			getCategories: function () {
+				throw "attempted to create an abstract LineView !";
+			},
 
-    getConf : function(series){
+			getConf: function (series) {
 
-			var ticks = this.getCategories();
-      var axis = this.getAxis()[0];
-      ticks = this.replaceInfoListDefaultLegend(ticks,axis);
+				var ticks = this.getCategories();
+				var axis = this.getAxis()[0];
+				ticks = this.replaceInfoListDefaultLegend(ticks, axis);
 
-      var legends = this.getSeriesLegends();
-      var axis2 = this.getAxis()[1];
+				var legends = this.getSeriesLegends();
+				var axis2 = this.getAxis()[1];
 
-      var formatedLegends = this.replaceInfoListDefaultLegend(legends,axis2);
+				var formatedLegends = this.replaceInfoListDefaultLegend(legends, axis2);
 
-      formatedLegends = this.objectifyLegend(formatedLegends);
-      formatedLegends = _.map( formatedLegends, function( formatedLegend ){
-          return _.extend(formatedLegend,{
-            markerOptions: { size:5 }
-          });
-      });
-      var sizeDependantconf = this.getResizeConf(formatedLegends,ticks);
+				formatedLegends = this.objectifyLegend(formatedLegends);
+				formatedLegends = _.map(formatedLegends, function (formatedLegend) {
+					return _.extend(formatedLegend, {
+						markerOptions: {size: 5}
+					});
+				});
+				var sizeDependantconf = this.getResizeConf(formatedLegends, ticks);
 
-			var finalConf = _.extend(this.getCommonConf(),{
-				seriesDefaults : {
-					rendererOptions : {
-            animation: {
-              speed: 1000
-            },
-            smooth: false
+				var finalConf = _.extend(this.getCommonConf(), {
+					seriesDefaults: {
+						rendererOptions: {
+							animation: {
+								speed: 1000
+							},
+							smooth: false
+						},
+						pointLabels: {
+							show: true,
+							labelsFromSeries: true,
+							formatString: '%d',
+							textColor: "slategray",
+							location: 'se',
+							hideZeros: true
+						}
 					},
-          pointLabels: {
-            show: true,
-            labelsFromSeries : true,
-            formatString :'%d',
-            textColor: "slategray",
-            location : 'se',
-            hideZeros : true
-          }
-				},
-        series: formatedLegends,
+					series: formatedLegends,
 
-        legend : sizeDependantconf.legend,
+					legend: sizeDependantconf.legend,
 
-				axes : {
-					xaxis : {
-						renderer : $.jqplot.CategoryAxisRenderer,
-            tickRenderer:$.jqplot.CanvasAxisTickRenderer,
-						ticks : ticks,
-            tickOptions: {
-              fontSize : sizeDependantconf.fontSize,
-              showGridline: false,
-              angle:-30
-            },
-            label : this.getXAxisLabel(),
-            labelRenderer: $.jqplot.CanvasAxisLabelRenderer
-					},
-          yaxis: {
-            tickOptions: {
-              fontSize : sizeDependantconf.fontSize,
-              gridStyle : {
-                lineDash : [5],
-                strokeStyle : "#c3c3c3"
-              },
-              markStyle : {
-                lineDash : [5],
-                strokeStyle : '#c3c3c3'
-              }
-            },
-            min:0,
-            label : this.getYAxisLabel(),
-            labelRenderer: $.jqplot.CanvasAxisLabelRenderer
-          }
+					axes: {
+						xaxis: {
+							renderer: $.jqplot.CategoryAxisRenderer,
+							tickRenderer: $.jqplot.CanvasAxisTickRenderer,
+							ticks: ticks,
+							tickOptions: {
+								fontSize: sizeDependantconf.fontSize,
+								showGridline: false,
+								angle: -30
+							},
+							label: this.getXAxisLabel(),
+							labelRenderer: $.jqplot.CanvasAxisLabelRenderer
+						},
+						yaxis: {
+							tickOptions: {
+								fontSize: sizeDependantconf.fontSize,
+								gridStyle: {
+									lineDash: [5],
+									strokeStyle: "#c3c3c3"
+								},
+								markStyle: {
+									lineDash: [5],
+									strokeStyle: '#c3c3c3'
+								}
+							},
+							min: 0,
+							label: this.getYAxisLabel(),
+							labelRenderer: $.jqplot.CanvasAxisLabelRenderer
+						}
+					}
+				});
+
+				this.setColors(finalConf, legends);
+
+				var vueConf = this.getVueConf();
+				if (vueConf) {
+					finalConf = _.extend(finalConf, vueConf);
 				}
-			});
 
-      var vueConf = this.getVueConf();
-      if (vueConf) {
-        finalConf = _.extend(finalConf,vueConf);
-      }
+				return finalConf;
 
-      return finalConf;
+			}
 
-		}
-
+		});
 	});
-});
