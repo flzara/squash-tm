@@ -163,7 +163,7 @@ public class TestCaseLibraryNavigationServiceImpl
 	private ActiveMilestoneHolder activeMilestoneHolder;
 
 	@Inject
-	private CustomFieldBindingFinderService service;
+	private CustomFieldBindingFinderService customFieldBindingFinderService;
 
 	@Inject
 	private PrivateCustomFieldValueService customValueService;
@@ -862,7 +862,7 @@ public class TestCaseLibraryNavigationServiceImpl
 	}
 
 	private void generateCustomField(TestCaseFolder newFolder){
-		List<CustomFieldBinding> projectsBindings = service.findCustomFieldsForProjectAndEntity(newFolder.getProject().getId(), BindableEntity.TESTCASE_FOLDER);
+		List<CustomFieldBinding> projectsBindings = customFieldBindingFinderService.findCustomFieldsForProjectAndEntity(newFolder.getProject().getId(), BindableEntity.TESTCASE_FOLDER);
 		for(CustomFieldBinding binding: projectsBindings){
 			customValueService.cascadeCustomFieldValuesCreationNotCreatedFolderYet(binding, newFolder);
 		}

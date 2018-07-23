@@ -21,11 +21,13 @@
 package org.squashtest.tm.service.internal.testcase
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream
-import org.junit.Test
-import org.springframework.context.MessageSource
+import org.squashtest.tm.domain.customfield.BindableEntity
+import org.squashtest.tm.domain.customfield.CustomField
+import org.squashtest.tm.domain.customfield.CustomFieldBinding
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage
 import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService
+import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
 import org.squashtest.tm.service.internal.repository.ScriptedTestCaseExtenderDao;
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory;
 import org.squashtest.tm.domain.project.Project
@@ -54,6 +56,8 @@ class TestCaseLibraryNavigationServiceImplTest extends Specification {
 	TestCaseLibraryNodeDao nodeDao = Mock()
 	PermissionEvaluationService permissionService = Mock()
 	ScriptedTestCaseExtenderDao scriptedTestCaseExtenderDao = Mock()
+	PrivateCustomFieldValueService customValueService = Mock()
+	CustomFieldBindingFinderService customFieldBindingFinderService  = Mock()
 
 	def setup() {
 		service.testCaseLibraryDao = testCaseLibraryDao
@@ -62,10 +66,13 @@ class TestCaseLibraryNavigationServiceImplTest extends Specification {
 		service.projectDao = projectDao
 		service.testCaseLibraryNodeDao = nodeDao
 		service.scriptedTestCaseExtenderDao = scriptedTestCaseExtenderDao
-
+		service.customFieldBindingFinderService = customFieldBindingFinderService
+		service.customValueService = customValueService
 
 		use (ReflectionCategory) {
 			AbstractLibraryNavigationService.set(field: "permissionService", of: service, to: permissionService)
+			AbstractLibraryNavigationService.set(field: "customFieldValuesService", of: service, to: customValueService)
+
 		}
 		permissionService.hasRoleOrPermissionOnObject(_, _, _) >> true
 	}
@@ -134,6 +141,27 @@ class TestCaseLibraryNavigationServiceImplTest extends Specification {
 		and:
 		TestCaseFolder container = Mock()
 		testCaseFolderDao.findById(10) >> container
+		and :
+		Project project = Mock()
+		newFolder.getProject() >> project
+		project.getId() >>  10L
+		CustomField cuf = Mock()
+		cuf.getId() >> 4L
+
+		BindableEntity entity1 = Mock()
+		BindableEntity entity2 = Mock()
+
+		CustomFieldBinding binding1 = Mock()
+		CustomFieldBinding binding2 = Mock()
+
+		binding1.getBoundEntity() >> entity1
+		binding1.getCustomField() >> cuf
+
+		binding2.getBoundEntity() >> entity2
+		binding2.getCustomField() >> cuf
+
+		List<CustomFieldBinding> bindings = [binding1, binding2]
+		customFieldBindingFinderService.findCustomFieldsForProjectAndEntity(10L, BindableEntity.TESTCASE_FOLDER) >> bindings
 
 		when:
 		service.addFolderToFolder(10, newFolder)
@@ -170,7 +198,6 @@ class TestCaseLibraryNavigationServiceImplTest extends Specification {
 	}
 
 	def "should persist a hierarchy of folders at the root of a library"(){
-
 		given :
 		def path = "/project/folder1/folder2/folder \\/ 3/folder4"
 
@@ -180,8 +207,45 @@ class TestCaseLibraryNavigationServiceImplTest extends Specification {
 		p.getTestCaseLibrary() >> tcl
 		tcl.getId() >> 5l
 
+		and :
+		TestCaseFolder newFolder = Mock()
+		Project project = Mock()
+		newFolder.getProject() >> project
+		project.getId() >> 5L
+
+		CustomField cuf = Mock()
+		cuf.getId() >> 5L
+
+		BindableEntity entity1 = Mock()
+		BindableEntity entity2 = Mock()
+
+		CustomFieldBinding binding1 = Mock()
+		CustomFieldBinding binding2 = Mock()
+
+		binding1.getBoundEntity() >> entity1
+		binding1.getCustomField() >> cuf
+
+		binding2.getBoundEntity() >> entity2
+		binding2.getCustomField() >> cuf
+
+		List<CustomFieldBinding> bindings = [binding1, binding2]
+
+		TestCaseFolder tcln1 = new TestCaseFolder()
+		TestCaseFolder tcln2 = new TestCaseFolder()
+		TestCaseFolder tcln3 = new TestCaseFolder()
+
+		tcln1.getName() >> 	"folder2"
+		tcln2.getName() >> 	"folder / 3"
+		tcln3.getName() >> 	"folder4"
+		newFolder.getContent() >>[tcln1]
+		tcln1.getContent()>>[tcln2]
+		tcln2.getContent()>>[tcln3]
+		and :
 		projectDao.findByName("project") >> p
 		testCaseLibraryDao.findById(5l) >> tcl
+		customFieldBindingFinderService.findCustomFieldsForProjectAndEntity(5L, BindableEntity.TESTCASE_FOLDER) >> bindings
+		String[] split = ["project","folder1","folder2", "folder / 3","folder4"]
+
 
 		and :
 		nodeDao.findNodeIdsByPath(_) >> [null, null, null, null]
@@ -191,19 +255,9 @@ class TestCaseLibraryNavigationServiceImplTest extends Specification {
 
 		then :
 
-		1 * testCaseFolderDao.persist ( {
-			it.name == "folder1" &&
-					it.content[0].name == "folder2" &&
-					it.content[0].content[0].name == "folder / 3" &&
-					it.content[0].content[0].content[0].name == "folder4"
-		})
+		1 * testCaseFolderDao.persist (newFolder)
 
-		1 * tcl.addContent( {
-			it.name == "folder1" &&
-					it.content[0].name == "folder2" &&
-					it.content[0].content[0].name == "folder / 3" &&
-					it.content[0].content[0].content[0].name == "folder4"
-		} )
+		1 * tcl.addContent( newFolder)
 	}
 
 	def "should export some gherkin test cases"(){
