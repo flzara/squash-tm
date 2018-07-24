@@ -52,7 +52,7 @@ public class HibernateBoundEntityDao implements BoundEntityDao {
 	private static final String REQUIREMENT_FOLDER_QUERY_NAME = "BoundEntityDao.findAllRequirementFoldersIdsForProject";
 	private static final String CAMPAIGN_FOLDER_QUERY_NAME = "BoundEntityDao.findAllCampaignFoldersIdsForProject";
 	private static final String TESTCASE_FOLDER_QUERY_NAME = "BoundEntityDao.findAllTestCaseFoldersIdsForProject";
-//	private static final String CUSTOM_REPORT_FOLDER_QUERY_NAME = "BoundEntityDao.findAllCustomReportFoldersIdsForProject";
+	private static final String CUSTOM_REPORT_FOLDER_QUERY_NAME = "BoundEntityDao.findAllCustomReportFoldersIdsForProject";
 
 	private static final Map<BindableEntity, String> BOUND_ENTITIES_IN_PROJECT_QUERY;
 
@@ -70,7 +70,7 @@ public class HibernateBoundEntityDao implements BoundEntityDao {
 		queriesByBindable.put(REQUIREMENT_FOLDER, REQUIREMENT_FOLDER_QUERY_NAME);
 		queriesByBindable.put(CAMPAIGN_FOLDER, CAMPAIGN_FOLDER_QUERY_NAME);
 		queriesByBindable.put(TESTCASE_FOLDER, TESTCASE_FOLDER_QUERY_NAME);
-//		queriesByBindable.put(CUSTOM_REPORT_FOLDER, CUSTOM_REPORT_FOLDER_QUERY_NAME);
+		queriesByBindable.put(CUSTOM_REPORT_FOLDER, CUSTOM_REPORT_FOLDER_QUERY_NAME);
 
 
 		BOUND_ENTITIES_IN_PROJECT_QUERY = Collections.unmodifiableMap(queriesByBindable);
@@ -113,9 +113,13 @@ public class HibernateBoundEntityDao implements BoundEntityDao {
 
 	@Override
 	public BoundEntity findBoundEntity(Long boundEntityId, BindableEntity entityType) {
-
-		Class<?> entityClass = entityType.getReferencedClass();
-		return (BoundEntity) em.getReference(entityClass, boundEntityId);
+		if(entityType == BindableEntity.CUSTOM_REPORT_FOLDER) {
+			Query query = em.createNamedQuery("BoundEntityDao.findCurrentCustomReportFoldersId");
+			query.setParameter("clnId", boundEntityId);
+			boundEntityId = (Long)query.getSingleResult();
+		}
+			Class<?> entityClass = entityType.getReferencedClass();
+			return (BoundEntity) em.getReference(entityClass, boundEntityId);
 
 	}
 

@@ -30,13 +30,18 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.squashtest.tm.api.workspace.WorkspaceType;
-import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.campaign.CampaignFolder;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
+import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
+import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.customreport.CustomReportWorkspaceService;
 import org.squashtest.tm.service.infolist.InfoListModelService;
@@ -53,11 +58,9 @@ import org.squashtest.tm.service.workspace.WorkspaceHelperService;
 import org.squashtest.tm.web.internal.helper.I18nLevelEnumInfolistHelper;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.builder.CustomReportTreeNodeBuilder;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Provider;
 import java.math.BigInteger;
 import java.util.*;
 
@@ -109,6 +112,9 @@ public class CustomReportWorkspaceController {
 	@Inject
 	private InfoListModelService infoListModelService;
 
+	@Inject
+	private CustomFieldValueFinderService cufValueService;
+
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale,
 								@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
@@ -141,6 +147,15 @@ public class CustomReportWorkspaceController {
 
 		Collection<JsonProject> projects =
 			projectFinder.findAllProjects(readableProjectIds, currentUser);
+
+		boolean hasFolderCUF = false;
+		BindableEntity entity = BindableEntity.CUSTOM_REPORT_FOLDER;
+
+
+		//	hasFolderCUF = cufValueService.hasCustomFields(folder.getId(), entity);
+
+
+
 
 		model.addAttribute("projects", projects);
 

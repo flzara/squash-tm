@@ -75,7 +75,8 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 				this.cleanContextContent();
 
 				var activeModel = new LibraryModel({id: id});
-
+				var cufurl = urlBuilder.buildURL('customfield.values.get',id, 'PROJECT'),	mode =  'jeditable';
+				this.cufurl = cufurl;
 				this.activeView = new libraryView({
 					model: activeModel
 				});
@@ -84,13 +85,13 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 
 			showFolderDetails: function (id) {
 				this.cleanContextContent();
-
 				var activeModel = new FolderModel({id: id});
 				var acls = new AclModel({type: "custom-report-library-node", id: id});
-
+				var cufurl = urlBuilder.buildURL('customfield.values.get',id, 'PROJECT'),	mode =  'jeditable';
+				this.cufurl = cufurl;
 				this.activeView = new folderView({
 					model: activeModel,
-					acls: acls
+					acls: acls,
 				});
 			},
 
@@ -107,7 +108,7 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 
 				this.activeView = new dashboardView({
 					model: activeModel,
-                    acls: acls
+          acls: acls,
 				});
 			},
 
@@ -124,7 +125,8 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 
 				this.activeView = new chartView({
 					model: activeModel,
-					acls: acls
+					acls: acls,
+
 				});
 			},
 
@@ -141,7 +143,7 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 
 				this.activeView = new reportView({
 					model: activeModel,
-					acls: acls
+					acls: acls,
 				});
 			},
 
