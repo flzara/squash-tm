@@ -107,6 +107,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./IconSelectDialog", 
 					var params = {
 						"label": this.model.label,
 						"code": this.model.code,
+						"colour": this.model.colour,
 						"iconName": this.model.icon || "noicon"
 					};
 					$.ajax({
@@ -220,6 +221,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./IconSelectDialog", 
 				var self = this;
 				self.model.label = $el.find("#new-info-list-item-label").val();
 				self.model.code = $el.find("#new-info-list-item-code").val();
+				self.model.colour = $el.find("#new-info-list-item-colour").val();
 				var selected = $el.find("#new-info-list-item-icon");
 				var classList = selected.attr('class').split(/\s+/);
 

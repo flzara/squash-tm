@@ -63,6 +63,14 @@ public class InfoListItemController {
 		return HtmlUtils.htmlEscape(code);
 	}
 
+	@RequestMapping(value = INFO_LIST_ITEM_ID_MAPPING, method = RequestMethod.POST, params = {"id=info-list-item-colour",
+		JEditablePostParams.VALUE})
+	@ResponseBody
+	public String changeColour(@PathVariable Long infoListItemId, @RequestParam(JEditablePostParams.VALUE) String colour) {
+		listItemManager.changeColour(infoListItemId, colour);
+		return HtmlUtils.htmlEscape(colour);
+	}
+
 	@RequestMapping(value = INFO_LIST_ITEM_ID_MAPPING, method = RequestMethod.POST, params = {"id=info-list-item-default"})
 	@ResponseBody
 	public void changeDefault(@PathVariable Long infoListItemId) {

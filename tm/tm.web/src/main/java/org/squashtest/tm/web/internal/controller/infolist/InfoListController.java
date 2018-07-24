@@ -27,7 +27,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
-import javax.swing.text.html.HTML;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -259,6 +258,7 @@ public class InfoListController {
 			data.put("label", HtmlUtils.htmlEscape(item.getLabel()));
 			data.put("code", HtmlUtils.htmlEscape(item.getCode()));
 			data.put("iconName", item.getIconName());
+			data.put("colour", HtmlUtils.htmlEscape(item.getColour()));
 			data.put(DataTableModelConstants.DEFAULT_EMPTY_ICON_HOLDER_KEY, "");
 			data.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			return data;

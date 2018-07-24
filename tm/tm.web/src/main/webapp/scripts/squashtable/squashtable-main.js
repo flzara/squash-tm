@@ -1033,6 +1033,19 @@ define(["jquery",
 
 	}
 
+	function _configureColourInput() {
+		var self = this;
+		$("td.colour" , self).each(function (i, item) {
+
+			var $item = $(item);
+			var data = $item.text();
+			var template = '<input type="color" value="' + data + '"/>';
+			$item.html(template);
+
+		});
+
+	}
+
 	function _configureDeleteButtons() {
 		var deleteConf = this.squashSettings.deleteButtons;
 		if (!deleteConf) {
@@ -1718,6 +1731,7 @@ define(["jquery",
 		aDrawCallbacks.push(_configureDeleteButtons);
 		aDrawCallbacks.push(_configureUnbindButtons);
 		aDrawCallbacks.push(_configureCheckBox);
+		aDrawCallbacks.push(_configureColourInput);
 		aDrawCallbacks.push(_configureLinks);
 		aDrawCallbacks.push(_restoreTableSelection);
 		aDrawCallbacks.push(_applyFilteredStyle);
@@ -2125,6 +2139,11 @@ define(["jquery",
 				'radio': function (conf, value) {
 					var cls = 'radio-' + Math.random().toString().substr(2, 3);
 					conf.current.sClass += 'radio centered ' + cls;
+
+				},
+				'colour': function (conf, value) {
+					var cls = 'colour-' + Math.random().toString().substr(2, 3);
+					conf.current.sClass += 'colour centered ' + cls;
 
 				},
 				'icon': function (conf, value) {

@@ -22,7 +22,7 @@
 -->
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+      xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title th:text="#{title.infoList}">Espace detail info list</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -176,6 +176,8 @@
                   </th>
                   <th th:attr="data-def='map=empty-icon-holder,icon=iconName, center'"
                       th:text="#{label.icon}"/>
+                  <th th:attr="data-def='map=colour, colour, sClass=opt-colour'"
+                      th:text="#{label.colour}"/>
                   <th
                     th:attr="data-def='map=default, radio, sClass=isDefault'"
                     th:text="#{label.default}">Default
@@ -335,9 +337,10 @@
     <tr class="control-group">
       <td><label class="control-label" for="new-info-list-item-code"
                  th:text="#{label.code}">Code</label></td>
-      <td class="controls"><input id="new-info-list-item-code"
-                                  name="new-info-list-item-code" type="text" value="" maxlength="30"
-                                  size="50"/> <span class="help-inline">&nbsp;</span></td>
+      <td class="controls">
+        <input id="new-info-list-item-code" name="new-info-list-item-code" type="text" value="" maxlength="30" size="50"/>
+        <span class="help-inline">&nbsp;</span>
+      </td>
     </tr>
 
     <tr class="control-group">
@@ -347,6 +350,16 @@
       <td class="controls">
                 <span class="sq-icon" id="new-info-list-item-icon"
                       th:text="#{label.infoListItems.icon.none}">None</span>
+      </td>
+    </tr>
+
+    <tr class="control-group">
+      <td>
+        <label class="control-label" for="new-info-list-item-colour" th:text="#{label.colour}">icon</label>
+      </td>
+      <td class="controls">
+        <input id="new-info-list-item-colour" name="new-info-list-item-code" type="color"/>
+        <span class="help-inline">&nbsp;</span>
       </td>
     </tr>
 

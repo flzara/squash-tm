@@ -34,4 +34,13 @@
     </update>
   </changeSet>
 
+  <changeSet id="tm-1.19.0-SQTM-400" author="cholc">
+    <comment>Adds a colour field to info list items</comment>
+    <addColumn tableName="INFO_LIST_ITEM">
+      <column name="COLOUR" type="VARCHAR(7)" defaultValue="#000000">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
 </databaseChangeLog>

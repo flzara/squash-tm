@@ -31,7 +31,7 @@ define(['jquery', 'underscore'], function ($, _) {
 		// RequirementCriticality
 		MINOR: "#258123",
 		MAJOR: "#ffd423",
-		CRITICAL: "#d32424",
+		CRITICAL: "#FF0000",
 		// UNDEFINED: ""
 
 		// TestCaseExecutionMode
@@ -39,7 +39,7 @@ define(['jquery', 'underscore'], function ($, _) {
 		MANUAL: "#284bee",
 
 		// TestCaseImportance
-		VERY_HIGH: "#d32424",
+		VERY_HIGH: "#FF0000",
 		HIGH: "#ffd423",
 		MEDIUM: "#258123",
 		LOW: "#284bee",
@@ -55,7 +55,7 @@ define(['jquery', 'underscore'], function ($, _) {
 		SETTLED: "#006700",
 		UNTESTABLE: "#f4f4f4",
 		BLOCKED: "#ffd423",
-		FAILURE: "#d32424",
+		FAILURE: "#FF0000",
 		SUCCESS: "#258123",
 		RUNNING: "#284bee",
 		READY: "#bababb"

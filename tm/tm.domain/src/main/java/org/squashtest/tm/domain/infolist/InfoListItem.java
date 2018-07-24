@@ -20,23 +20,12 @@
  */
 package org.squashtest.tm.domain.infolist;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.validation.constraints.Size;
-
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.Identified;
+
+import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -67,6 +56,10 @@ public abstract class InfoListItem implements Identified {
 
 	@Size(max = 100)
 	private String iconName = "";
+
+	@Size(max = 7)
+	@NotBlank
+	private String colour;
 
 	public InfoListItem() {
 		super();
@@ -105,16 +98,24 @@ public abstract class InfoListItem implements Identified {
 	}
 
 	public String getIconName() {
-		if (! StringUtils.isBlank(iconName)){
+		if (!StringUtils.isBlank(iconName)) {
 			return iconName;
-		}
-		else{
+		} else {
 			return NO_ICON;
 		}
 	}
 
 	public void setIconName(String iconName) {
 		this.iconName = iconName;
+	}
+
+
+	public String getColour() {
+		return colour;
+	}
+
+	public void setColour(String colour) {
+		this.colour = colour;
 	}
 
 	@Override
@@ -124,7 +125,7 @@ public abstract class InfoListItem implements Identified {
 
 	/**
 	 * tests equality-by-code
-	 * 
+	 *
 	 * @param other
 	 * @return
 	 */

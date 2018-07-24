@@ -25,6 +25,7 @@ import org.squashtest.tm.domain.infolist.InfoListItem;
 
 public interface InfoListItemManagerService extends InfoListItemFinderService{
 void changeCode(long infoListItemId, String newCode);
+void changeColour(long infoListItemId, String newColour);
 void changeLabel(long infoListItemId, String newLabel);
 void changeDefault(long infoListItemId);
 void changeIcon(long infoListItemId, String icon);
