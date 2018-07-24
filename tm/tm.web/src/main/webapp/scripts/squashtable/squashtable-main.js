@@ -346,6 +346,7 @@ define(["jquery",
 	"jquery.squash.oneshotdialog",
 	"squash.translator",
 	"squash.attributeparser",
+	"spectrum",
 	"datatables",
 	"./squashtable.defaults",
 	"./squashtable.pagination",
@@ -1035,15 +1036,26 @@ define(["jquery",
 
 	function _configureColourInput() {
 		var self = this;
-		$("td.colour" , self).each(function (i, item) {
+		$("td.colour", self).each(function (i, item) {
 
 			var $item = $(item);
 			var data = $item.text();
 			var template = '<input type="color" value="' + data + '"/>';
 			$item.html(template);
 
+			// fix for IE only (won't detect edge), will display an ugly colorpick as it doesn't support the  HTML5 input type color
+			var ua = window.navigator.userAgent;
+			var msie = ua.indexOf("MSIE ");
+			if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {
+				$item.find("input").first().spectrum({
+					cancelText: translator.get("label.Cancel"),
+					chooseText: translator.get("label.Modify"),
+					preferredFormat: "hex",
+					showPalette: true,
+					showInitial: true
+				});
+			}
 		});
-
 	}
 
 	function _configureDeleteButtons() {
@@ -1104,8 +1116,8 @@ define(["jquery",
 
 
 	/*
-	 * See documentation of 'deleteButtons' at the top of the file
-	 */
+     * See documentation of 'deleteButtons' at the top of the file
+     */
 	function _bindUnbindOrDeleteButtons(conf, self, target) {
 		if (!conf) {
 			return;
@@ -1255,9 +1267,9 @@ define(["jquery",
 		}
 	}
 
-	// this code was inlined in section 4 of _configureLinks
-	// it was moved in there to ensure that the function
-	// remains in the closure of the 'on click' handler
+// this code was inlined in section 4 of _configureLinks
+// it was moved in there to ensure that the function
+// remains in the closure of the 'on click' handler
 	function _bindBeforeNavigate(table, selector, fn) {
 		table.on('click', selector + ' a', function (evt) {
 			var row = $(evt.currentTarget).closest('tr'),
@@ -1278,7 +1290,7 @@ define(["jquery",
 	 *
 	 * some bits are taken from jquery.datatable.js, sorry for the copy pasta.
 	 */
-	// TODO : some bits of it are now in squash.attributeparser (signatures may change though)
+// TODO : some bits of it are now in squash.attributeparser (signatures may change though)
 	function _createObjectDOMInitFixer(property) {
 
 		function exists(data, property) {
@@ -1426,24 +1438,24 @@ define(["jquery",
 		}
 	}
 
-	// ************************ autonum  *****************************
+// ************************ autonum  *****************************
 
-	// note that this is a row callback, and a draw callback
+// note that this is a row callback, and a draw callback
 	function _autonum(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 		if (this.squashSettings.autonum) {
 			$(nRow).find('td:first').text(iDisplayIndex + 1);
 		}
 	}
 
-	// ************************ functions used by the static functions
-	// *****************************
+// ************************ functions used by the static functions
+// *****************************
 
-	// ******** used by the main init method
+// ******** used by the main init method
 
-	// [Issue 4891]
-	// that method will make sure that conflicting column definitions
-	// between DOM annotations and programmatic configuration
-	// will merge nicely
+// [Issue 4891]
+// that method will make sure that conflicting column definitions
+// between DOM annotations and programmatic configuration
+// will merge nicely
 	function mergeColumnDefs(domConf, jsConf) {
 
 		// fast pass if no work is needed
@@ -1488,7 +1500,7 @@ define(["jquery",
 
 	}
 
-	// ******** configurator
+// ******** configurator
 
 
 	function _loopConfiguration(defs, handlers, conf) {
@@ -1569,7 +1581,7 @@ define(["jquery",
 
 	}
 
-	// ******** decorator ************************
+// ******** decorator ************************
 
 	function _fnRewriteData(aoData) {
 
@@ -1624,7 +1636,7 @@ define(["jquery",
 		}
 	};
 
-	// let's figure out if i18n messages are available
+// let's figure out if i18n messages are available
 	try {
 		squashDefaults.confirmPopup.oklabel = squashtm.message.confirm;
 		squashDefaults.confirmPopup.cancellabel = squashtm.message.cancel;
@@ -1636,50 +1648,50 @@ define(["jquery",
 	$.fn.squashTable = function (datatableSettings, squashSettings) {
 
 		/* *************************************************************
-		 *
-		 * 0 - Getter ?
-		 *
-		 * are we in retrieve mode or init mode ? the answer is simple : no
-		 * param means retrieve mode. Note that the key is the dome element.
-		 *
-		 * *********************************************************** */
+         *
+         * 0 - Getter ?
+         *
+         * are we in retrieve mode or init mode ? the answer is simple : no
+         * param means retrieve mode. Note that the key is the dome element.
+         *
+         * *********************************************************** */
 
 		if (arguments.length === 0) {
 			return this.data('squashtableInstance');
 		}
 
 		/* *************************************************************
-		 *
-		 * 0 - Constructor ?
-		 *
-		 * If the function was not invoked as a getter for an existing
-		 * instance, then we will create a new one with the supplied
-		 * arguments.
-		 *
-		 ***************************************************************/
+         *
+         * 0 - Constructor ?
+         *
+         * If the function was not invoked as a getter for an existing
+         * instance, then we will create a new one with the supplied
+         * arguments.
+         *
+         ***************************************************************/
 
 		/* ******************************************************************
-		 * 1 - Settings augmentation
-		 *
-		 * Here we we tune some more the datatable configuration by preconfiguring
-		 * some callbacks. Those callbacks may also have been configured by the
-		 * user, so we will wrap our own definition around those instead of bluntly
-		 * overriding them.
-		 *
-		 * **************************************************************** */
+         * 1 - Settings augmentation
+         *
+         * Here we we tune some more the datatable configuration by preconfiguring
+         * some callbacks. Those callbacks may also have been configured by the
+         * user, so we will wrap our own definition around those instead of bluntly
+         * overriding them.
+         *
+         * **************************************************************** */
 
 		// ---------- merge programmatic and DOM-based configuration --------
 
 		var domConf = $.fn.squashTable.configurator.fromDOM(this);
 
 		/*
-		 * [Issue 4891]
-		 * aoColumnDefs array are not correctly merged with $.extend :
-		 * the merge is done by matching the content by their index, however
-		 * in this case the aoColumnDefs must be matched by targets.
-		 * $.extend([{target: 0}, {target:1}], [{target: 1}]) == [{target: 1}, {target:1}]
-		 * so we have to manually merge the aoColumnDefs
-		 */
+         * [Issue 4891]
+         * aoColumnDefs array are not correctly merged with $.extend :
+         * the merge is done by matching the content by their index, however
+         * in this case the aoColumnDefs must be matched by targets.
+         * $.extend([{target: 0}, {target:1}], [{target: 1}]) == [{target: 1}, {target:1}]
+         * so we have to manually merge the aoColumnDefs
+         */
 		mergeColumnDefs(domConf.table, datatableSettings);
 
 		var datatableEffective = $.extend(true, {}, datatableDefaults, domConf.table, datatableSettings);
@@ -1773,10 +1785,10 @@ define(["jquery",
 
 
 		/* *****************************************************
-		 *
-		 * 2 - public methods definition
-		 *
-		 ***************************************************** */
+         *
+         * 2 - public methods definition
+         *
+         ***************************************************** */
 		this.computeSelectionRange = _computeSelectionRange;
 		this.dropHandler = _dropHandler;
 		this.getODataId = _getODataId;
@@ -1842,10 +1854,10 @@ define(["jquery",
 
 
 		/* **********************************************************
-		 *
-		 * 3 - Final leg : creation and events
-		 *
-		 ********************************************************** */
+         *
+         * 3 - Final leg : creation and events
+         *
+         ********************************************************** */
 
 		// ---------------- store the new instance ---------------------
 
@@ -1884,7 +1896,7 @@ define(["jquery",
 	};
 
 
-	// *********************** static methods ***************************
+// *********************** static methods ***************************
 
 	$.fn.squashTable.configurator = {
 
@@ -2082,15 +2094,15 @@ define(["jquery",
 				'link-cookie': function (conf, value) {
 
 					/*
-					 * First we must retrieve the 'link' configuration object,
-					 * in order to complement it with the hook that sets the cookie.
-					 *
-					 * We do so by :
-					 * 	- first, find which css class was set by the 'link' clause in conf.current.sClass,
-					 *  - second, look it up in conf.squash.bindLinks
-					 *
-					 *  TODO : do something to make it easier next time
-					 */
+                     * First we must retrieve the 'link' configuration object,
+                     * in order to complement it with the hook that sets the cookie.
+                     *
+                     * We do so by :
+                     * 	- first, find which css class was set by the 'link' clause in conf.current.sClass,
+                     *  - second, look it up in conf.squash.bindLinks
+                     *
+                     *  TODO : do something to make it easier next time
+                     */
 
 					var sClass = conf.current.sClass || '';
 					var classmatch = /\blink-\d{3}\b/.exec(sClass);
@@ -2177,6 +2189,7 @@ define(["jquery",
 
 	return $.fn.squashTable;
 
-});
+})
+;
 
 
