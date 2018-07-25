@@ -145,10 +145,10 @@ class DummyFolder extends DummyNode implements Folder<DummyNode> {
 	public List<String> getContentNames() { return null; }
 
 	@Override
-	public void addContent(DummyNode contentToAdd) throws DuplicateNameException, NullArgumentException {}
+	public void addContent(Object contentToAdd) throws DuplicateNameException, NullArgumentException {}
 
 	@Override
-	public void addContent(DummyNode contentToAdd, int position) throws DuplicateNameException, NullArgumentException {}
+	public void addContent(Object contentToAdd, int position) throws DuplicateNameException, NullArgumentException {}
 
 	@Override
 	public boolean isContentNameAvailable(String name) {}
@@ -170,6 +170,17 @@ class DummyFolder extends DummyNode implements Folder<DummyNode> {
 
 	@Override
 	boolean hasContent() { return true }
+
+	// now the compiler wants to see this, but without @Override
+	// whatever
+	void addContent( DummyNode node) throws DuplicateNameException, NullArgumentException {
+
+	}
+
+	// see #addContent(DummyNode)
+	void addContent(DummyNode node, int position) throws DuplicateNameException, NullArgumentException {
+
+	}
 }
 
 class DummyNode implements LibraryNode {
@@ -256,7 +267,19 @@ class DummyLibrary implements Library<DummyNode> {
 		return true;
 	}
 
+
 	public void addContent(DummyNode contentToAdd) throws DuplicateNameException, NullArgumentException {
+	}
+
+
+	// the compile ABSOLUTELY wanted to see this. Not sure why.
+	void addContent(TreeNode node, int position){
+
+	}
+
+	// see above
+	void addContent(TreeNode node){
+
 	}
 
 	public void addContent(DummyNode contentToAdd, int position) throws DuplicateNameException, NullArgumentException {

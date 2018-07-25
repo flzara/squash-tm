@@ -23,17 +23,19 @@ package org.squashtest.tm.service.internal.infolist;
 import java.io.IOException;
 import java.util.Locale;
 
-import org.apache.lucene.index.AtomicReaderContext;
 import org.apache.lucene.index.BinaryDocValues;
-import org.apache.lucene.search.FieldCache;
+import org.apache.lucene.index.DocValues;
+import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.FieldComparator;
+import org.apache.lucene.search.LeafFieldComparator;
+import org.apache.lucene.search.SimpleFieldComparator;
 import org.springframework.context.MessageSource;
 
 /**
  * FIXME NdGRF I added required methods when upgrading dependencies. As there is no documentation (comments or tests),
  * the original author shall check and fix.
  */
-public class InfoListItemComparator extends FieldComparator<String> {
+public class InfoListItemComparator extends SimpleFieldComparator<String> {
 
     private String[] values;
 	private BinaryDocValues currentReaderValues;
@@ -52,7 +54,8 @@ public class InfoListItemComparator extends FieldComparator<String> {
         this.locale = locale;
     }
 
-    @Override
+
+	@Override
     public int compare(int slot1, int slot2) {
         final String val1 = values[slot1];
         final String val2 = values[slot2];
@@ -103,11 +106,20 @@ public class InfoListItemComparator extends FieldComparator<String> {
 		values[slot] = currentReaderValues.get(doc).utf8ToString();
     }
 
+
+
     @Override
-    public FieldComparator<String> setNextReader(AtomicReaderContext context) throws IOException {
-		currentReaderValues = FieldCache.DEFAULT.getTerms(context.reader(), field, true);
-        return this;
-    }
+	protected void doSetNextReader(LeafReaderContext context) throws IOException {
+    	/*
+			XXX originally, was : currentReaderValues = FieldCache.DEFAULT.getTerms(context.reader(), field, true);
+			Lucene migration guide is very obscure and all I could find about the disappearance of FieldCache was
+			there (view-source:https://lucene.apache.org/core/5_2_1/changes/Changes.html, I had too look at the source
+			of the page to find it) which pointed to there (https://issues.apache.org/jira/browse/LUCENE-5666)
+			I'm not sure if document field access still benefit from caching with this but for now I can't do ny better.
+    	 */
+		currentReaderValues = DocValues.getBinary(context.reader(), field);
+	}
+
 
     @Override
     public void setBottom(final int bottom) {

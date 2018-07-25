@@ -43,6 +43,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.HttpPutFormContentFilter;
+import org.squashtest.tm.web.internal.controller.authentication.HttpSessionRequestCacheWithExceptions;
 
 /**
  * This configures Spring Security
@@ -58,6 +59,7 @@ public class WebSecurityConfig {
 
 	private static final String ALTERNATE_AUTH_PATH = "/auth/**";
 	private static final String LOGIN = "/login";
+	private static final String ROOT_PATH = "/";
 
 	/* *********************************************************
 	 *
@@ -181,6 +183,11 @@ public class WebSecurityConfig {
 
 				//.and() .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
 				
+				// cache configuration
+				.and()
+				.requestCache()
+					.requestCache(new HttpSessionRequestCacheWithExceptions(http, "/error"))
+				
 				// main entry point for unauthenticated users
 				.and()
 					.exceptionHandling()
@@ -194,11 +201,12 @@ public class WebSecurityConfig {
 					// thus the user will not be redirected via the main entry
 					// point
 					.antMatchers(
+						ROOT_PATH,
 						LOGIN,
-							ALTERNATE_AUTH_PATH,
-							"/logout",
-							"/logged-out")
-						.permitAll()
+						ALTERNATE_AUTH_PATH,
+						"/logout",
+						"/logged-out")
+					.permitAll()
 					// Administration namespace. Some of which can be accessed by PMs
 					.antMatchers(
 						"/administration",

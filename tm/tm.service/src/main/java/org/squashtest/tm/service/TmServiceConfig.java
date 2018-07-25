@@ -121,9 +121,14 @@ public class TmServiceConfig {
 
 	@Bean
 	public static ConfigFileApplicationListener configFileApplicationListener() {
+		
 		final String[] propertiesFiles = {
+			/*
+			 * XXX I'm failry sure those two commented properties files simply don't exist. 
+			 * Remove them definitely during the dev of TM 20 if no one complained.
+			 * 
 			"squashtest.core.datasource.jdbc.config",
-			"squashtest.tm.hibernate.config",
+			"squashtest.tm.hibernate.config",*/
 			"squashtest.tm.cfg"
 		};
 

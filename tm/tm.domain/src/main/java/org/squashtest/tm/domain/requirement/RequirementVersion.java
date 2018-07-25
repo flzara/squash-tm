@@ -63,17 +63,13 @@ import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneHolder;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.resource.Resource;
-import org.squashtest.tm.domain.search.CUFBridge;
-import org.squashtest.tm.domain.search.CollectionSizeBridge;
-import org.squashtest.tm.domain.search.InfoListItemBridge;
-import org.squashtest.tm.domain.search.LevelEnumBridge;
+import org.squashtest.tm.domain.search.*;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
 import org.squashtest.tm.exception.requirement.MilestoneForbidModificationException;
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
 import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException;
-import org.squashtest.tm.exception.requirement.link.UnlinkableLinkedRequirementVersionException;
 import org.squashtest.tm.security.annotation.InheritsAcls;
 
 /**
@@ -88,16 +84,11 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 @InheritsAcls(constrainedClass = Requirement.class, collectionName = "versions")
 @ClassBridges({
 	@ClassBridge(name = "attachments", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionAttachmentBridge.class),
-	@ClassBridge(name = "cufs", store = Store.YES, impl = CUFBridge.class, params = {
-		@Parameter(name = "type", value = "requirement"),
-		@Parameter(name = "inputType", value = "ALL")
-	}),
-	@ClassBridge(name = "cufs", store = Store.YES, analyze = Analyze.NO, impl = CUFBridge.class, params = {
-		@Parameter(name = "type", value = "requirement"),
-		@Parameter(name = "inputType", value = "DROPDOWN_LIST")
-	}),
+	@ClassBridge(name = "analyzed_cufs", store = Store.YES, impl = AnalyzableCUFBridge.class),
+	@ClassBridge(name = "not_analyzed_cufs", store = Store.YES, analyze = Analyze.NO, impl = NotAnalyzableCUFBridge.class),
 	@ClassBridge(name = "isCurrentVersion", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionIsCurrentBridge.class),
-	@ClassBridge(name = "parent", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionHasParentBridge.class) })
+	@ClassBridge(name = "parent", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionHasParentBridge.class)
+})
 public class RequirementVersion extends Resource implements BoundEntity, MilestoneHolder {
 
 	public static final int MAX_REF_SIZE = 50;

@@ -18,35 +18,25 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.search
+package org.squashtest.tm.domain.search;
 
-import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
+import org.squashtest.tm.domain.customfield.InputType;
 
-import spock.lang.Specification
-import spock.lang.Unroll;
 
 /**
- * @author Gregory Fouquet
- *
+ * "You see, in this world there's two kinds of cuf bridges, my friend: those that analyze and those that don't. You don't."
  */
-class CUFBridgeTest extends Specification {
-	CUFBridge bridge = new CUFBridge()
+public class NotAnalyzableCUFBridge extends AbstractCUFBridge {
 
-	@Unroll
-	def "should format #fieldValue date as #formatted"() {
-		given:
-		CustomFieldValue value = Mock()
-		value.value >> fieldValue
-
-		expect:
-		formatted == bridge.coerceToDate(value);
-
-		where:
-		fieldValue   | formatted
-		null	     | null
-		""	         | null
-		"   "        | null
-		"abc"	     | null
-		"2013-04-01" | { def cal = Calendar.getInstance(); cal.clear(); cal.set(2013, 3, 1); return cal.time; }.call()
+	/**
+	 * The analyze variant of AbstractCUFBridge accept only the dropdown list.
+	 *
+	 * @param criteria
+	 */
+	@Override
+	protected void filterOnCufType(Criteria criteria) {
+		criteria.add(Restrictions.eq("cuf.inputType", InputType.DROPDOWN_LIST));
 	}
 }

@@ -54,7 +54,7 @@
 		require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";
 		var squashtm = {};
 		squashtm.app = {
-			contextRoot: "${pageContext.servletContext.contextPath}",
+			contextRoot: "${pageContext.servletContext.contextPath}/",
 			locale : "<f:message key='squashtm.locale'/>"
 		};
 		<layout:_common-lang/>
