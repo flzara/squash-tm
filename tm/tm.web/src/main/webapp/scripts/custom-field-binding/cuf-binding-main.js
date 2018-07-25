@@ -48,18 +48,7 @@ define([ "jquery", "./entity-manager" ], function(jquery, EntityManager) {
 		return $.extend({}, conf.general, conf.execSettings);
 	}
 
-	function makeCampaignFoldersConf(conf) {
-		return $.extend({}, conf.general, conf.campaignFoldersSettings);
 
-	}
-	function makeReqFoldersConf(conf) {
-		return $.extend({}, conf.general, conf.reqFoldersSettings);
-
-	}
-	function makeTcFoldersConf(conf) {
-		return $.extend({}, conf.general, conf.tcFoldersSettings);
-
-	}
 	function makeCrFoldersConf(conf) {
 		return $.extend({}, conf.general, conf.crFoldersSettings);
 	}
@@ -119,20 +108,10 @@ define([ "jquery", "./entity-manager" ], function(jquery, EntityManager) {
 			new EntityManager(projectConf);
 
 			// folders
-			var campaignFolderConf = makeCampaignFoldersConf(this.config);
-			new EntityManager(campaignFolderConf);
-
-			// folders
 			var crFoldersConf = makeCrFoldersConf(this.config);
 			new EntityManager(crFoldersConf);
 
-			// folders
-			var reqFoldersConf = makeReqFoldersConf(this.config);
-			new EntityManager(reqFoldersConf);
 
-			// folders
-			var tcFoldersConf = makeTcFoldersConf(this.config);
-			new EntityManager(tcFoldersConf);
 
 		}
 	};

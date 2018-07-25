@@ -28,6 +28,7 @@ import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.List;
 
 public interface CustomFieldBindingDao extends JpaRepository<CustomFieldBinding, Long>, CustomCustomFieldBindingDao {
@@ -59,6 +60,9 @@ public interface CustomFieldBindingDao extends JpaRepository<CustomFieldBinding,
 	 * */
 	@Query
 	List<Long> findEquivalentBindingsForBoundProjects(@Param("cufBindingIds") List<Long> cufBindingIds);
+
+	@Query
+	List<Long> findEquivalentBindingsForOtherFolders(@Param("cufBindingIds") List<Long> cufBindingIds);
 
 	List<CustomFieldBinding> findAllByCustomFieldIdOrderByPositionAsc(long customFieldId);
 
