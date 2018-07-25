@@ -174,7 +174,7 @@
 
 	@NamedQuery(name = "requirement.excelRequirementExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cfv.largeValue, cf.inputType, case when cfv.class = TagsValue then group_concat(so.label, 'order by', so.label, 'asc', '|')  else '' end "
 			+ "from CustomFieldValue cfv join cfv.binding binding join binding.customField cf left join cfv.selectedOptions so "
-			+ "where cfv.boundEntityId=:requirementVersionId and cfv.boundEntityType = 'REQUIREMENT_VERSION' group by cfv.id, cf.id"),
+			+ "where cfv.boundEntityId=:requirementVersionId and cfv.boundEntityType = 'REQUIREMENT_VERSION' group by cf.id,cfv.id"),
 
 	 @NamedQuery(name= "requirement.findAllRequirementIdsFromMilestones", query= "Select Distinct req.id From Requirement req Join req.versions reqVer Join reqVer.milestones milestones Where milestones.id in (:milestoneIds)"),
 	// Synchronized requirements
@@ -341,7 +341,7 @@
 
 	@NamedQuery(name = "testCase.excelExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cfv.largeValue, cf.inputType, case when cfv.class = TagsValue then group_concat(so.label, 'order by', so.label, 'asc', '|')  else '' end "
 	+ "from CustomFieldValue cfv join cfv.binding binding join binding.customField cf left join cfv.selectedOptions so "
-	+ "where cfv.boundEntityId in (:testCaseIds) and cfv.boundEntityType = 'TEST_CASE' group by cfv.id, cf.id"),
+	+ "where cfv.boundEntityId in (:testCaseIds) and cfv.boundEntityType = 'TEST_CASE' group by cf.id, cfv.id"),
 
 	@NamedQuery(name = "testCase.excelExportCoverage", query = "select verifedReqV.versionNumber, req.id, verifiedTc.id, proj.name from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion verifedReqV join verifedReqV.requirement req join  rvc.verifyingTestCase verifiedTc  join req.project proj where verifiedTc in (:testCaseIds)"),
 	@NamedQuery(name = "requirementVersion.excelExportCoverage", query = "select verifedReqV.versionNumber, req.id, verifiedTc.id, proj.name from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion verifedReqV join verifedReqV.requirement req join  rvc.verifyingTestCase verifiedTc  join req.project proj where verifedReqV.id in (:versionIds)"),
@@ -430,7 +430,7 @@
 	+ "where cfv.boundEntityId = st.id "
 	+ "and cfv.boundEntityType = 'TEST_STEP' "
 	+ "and tc.id in (:testCaseIds) "
-	+ "group by cfv.id, cf.id"),
+	+ "group by  cf.id, cfv.id"),
 
 	@NamedQuery(name = "testStep.findBasicInfosByTcId",
 	query = "select case when st.class = ActionTestStep then 'ACTION' else 'CALL' end as steptype, "
@@ -710,6 +710,7 @@
 	@NamedQuery(name = "CustomFieldBinding.findEffectiveBindingsForEntities", query = "select cfv.boundEntityId, cfb from CustomFieldValue cfv inner join cfv.binding cfb where cfv.boundEntityId in (:entityIds) and cfv.boundEntityType = :entityType "),
 	@NamedQuery(name = "CustomFieldBinding.cufBindingAlreadyExists", query = "select count(*) from CustomFieldBinding cfb where cfb.customField.id = :cufId and cfb.boundEntity = :boundEntity and cfb.boundProject.id = :projectId"),
 	@NamedQuery(name = "CustomFieldBinding.findEquivalentBindingsForBoundProjects", query = "select equivalent_cfb.id from CustomFieldBinding original_cfb, CustomFieldBinding equivalent_cfb where original_cfb.boundEntity = equivalent_cfb.boundEntity and original_cfb.customField.id = equivalent_cfb.customField.id and original_cfb.id in (:cufBindingIds) and equivalent_cfb.id not in (:cufBindingIds) and equivalent_cfb.boundProject.template.id = original_cfb.boundProject.id"),
+	@NamedQuery(name = "CustomFieldBinding.findEquivalentBindingsForOtherFolders", query = "select equivalent_cfb.id from CustomFieldBinding original_cfb, CustomFieldBinding equivalent_cfb where original_cfb.customField.id = equivalent_cfb.customField.id and equivalent_cfb.boundEntity in ('REQUIREMENT_FOLDER','CAMPAIGN_FOLDER','TESTCASE_FOLDER') and original_cfb.boundEntity = 'CUSTOM_REPORT_FOLDER' and original_cfb.id in (:cufBindingIds)  and equivalent_cfb.id not in (:cufBindingIds) and equivalent_cfb.boundProject.id = original_cfb.boundProject.id"),
 
 	//CustomFieldValue
 	@NamedQuery(name = "CustomFieldValue.findBoundEntityId", query = "select cfv.boundEntityId from CustomFieldValue cfv where cfv.id = :customFieldValueId"),
@@ -761,6 +762,7 @@
 	@NamedQuery(name = "BoundEntityDao.findAllProjectIdsForProject", query = "select p.id from Project p where p.id = :projectId"),
 	@NamedQuery(name = "BoundEntityDao.findAllCustomReportFoldersIdsForProject", query = "select n.entityId from CustomReportLibraryNode n where n.library.project.id = :projectId"),
 	@NamedQuery(name = "BoundEntityDao.findCurrentCustomReportFoldersId", query = "select n.entityId from CustomReportLibraryNode n where n.id = :clnId and n.entityType = 'FOLDER'"),
+	@NamedQuery(name = "BoundEntityDao.findCurrentProjectFromCustomReportFoldersId", query = "select n.library.project.id from CustomReportLibraryNode n where n.id = :clnId and n.entityType = 'LIBRARY'"),
 
 
 	@NamedQuery(name = "BoundEntityDao.hasCustomFields", query = "select count(cfv) from CustomFieldValue cfv where cfv.boundEntityId = :boundEntityId and cfv.boundEntityType = :boundEntityType"),

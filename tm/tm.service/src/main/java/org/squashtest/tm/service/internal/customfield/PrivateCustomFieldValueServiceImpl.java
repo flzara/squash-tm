@@ -46,6 +46,7 @@ import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
+import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.annotation.CachableType;
@@ -54,6 +55,7 @@ import org.squashtest.tm.service.internal.repository.BoundEntityDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao.CustomFieldValuesPair;
+import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 import static java.util.stream.Collectors.*;
@@ -71,7 +73,12 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	private ValueEditionStatusStrategy requirementBoundEditionStatusStrategy;
 
 	@Inject
+	CustomReportLibraryNodeDao customReportLibraryNodeDao;
+
+	@Inject
 	private CustomFieldValueDao customFieldValueDao;
+
+
 
 	@Inject
 	private CustomFieldBindingDao customFieldBindingDao;
@@ -121,6 +128,9 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		List<CustomFieldValue> customFieldValueList = new ArrayList<>();
 		if(bindableEntity == BindableEntity.PROJECT) {
 			customFieldValueList =customFieldValueDao.findAllCustomValues(boundEntityId, bindableEntity);
+		}else if(bindableEntity == BindableEntity.CUSTOM_REPORT_PROJECT) {
+			Long projectId = customReportLibraryNodeDao.findCurrentProjectFromCustomReportFoldersId(boundEntityId);
+			customFieldValueList =customFieldValueDao.findAllCustomValues(projectId, BindableEntity.PROJECT);
 		} else {
 			BoundEntity boundEntity = boundEntityDao.findBoundEntity(boundEntityId, bindableEntity);
 			if (!permissionService.canRead(boundEntity)) {
