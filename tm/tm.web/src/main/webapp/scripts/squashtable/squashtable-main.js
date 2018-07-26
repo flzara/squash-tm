@@ -1043,18 +1043,8 @@ define(["jquery",
 			var template = '<input type="color" value="' + data + '"/>';
 			$item.html(template);
 
-			// fix for IE only (won't detect edge), will display an ugly colorpick as it doesn't support the  HTML5 input type color
-			var ua = window.navigator.userAgent;
-			var msie = ua.indexOf("MSIE ");
-			if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {
-				$item.find("input").first().spectrum({
-					cancelText: translator.get("label.Cancel"),
-					chooseText: translator.get("label.Modify"),
-					preferredFormat: "hex",
-					showPalette: true,
-					showInitial: true
-				});
-			}
+			var colorPicker = $("input", $item);
+			confman.getStandardIEColorPicker(colorPicker);
 		});
 	}
 

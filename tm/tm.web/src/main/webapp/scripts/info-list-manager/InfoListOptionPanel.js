@@ -18,8 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "underscore", "app/BindView", "handlebars", "backbone.validation", "squash.translator", "info-list/IconSelectDialog" ],
-	function(_, BindView, Handlebars, Validation, messages, IconPicker) {
+define([ "underscore", "app/BindView", "handlebars", "backbone.validation", "squash.translator", "info-list/IconSelectDialog"
+		,"squash.configmanager"],
+	function(_, BindView, Handlebars, Validation, messages, IconPicker, confman) {
 	"use strict";
 
 	/**
@@ -58,6 +59,9 @@ define([ "underscore", "app/BindView", "handlebars", "backbone.validation", "squ
 		initialize : function() {
 			Backbone.Validation.bind(this, validationOptions);
 			$(this.wrapper).html(this.render().$el);
+
+			var colorPicker = $("#option-colour");
+			confman.getStandardIEColorPicker(colorPicker);
 
 			this.listenTo(squashtm.vent, "iconselectdialog:cancelled", this.onIconPickingCancelled);
 			this.listenTo(squashtm.vent, "iconselectdialog:confirmed", this.onIconPicked);

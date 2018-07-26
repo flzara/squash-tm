@@ -25,7 +25,8 @@ define(["underscore", "app/squash.handlebars.helpers", "moment"], function (_, H
 	 * default handlebars sources
 	 */
 	var defaultSrc = {
-		radio: '<input type="checkbox" name="{{name}}" value="{{value}}" {{checked}} />'
+		radio: '<input type="checkbox" name="{{name}}" value="{{value}}" {{checked}} />',
+		colour: '<input type="colour"  value="{{value}}"/>'
 	};
 
 	/**
@@ -48,6 +49,28 @@ define(["underscore", "app/squash.handlebars.helpers", "moment"], function (_, H
 
 		if (!_.has(defaultTpl, "radio")) {
 			defaultTpl.radio = Handlebars.compile(defaultSrc.radio);
+		}
+
+		var name = "radio-" + meta.col;
+		var value = name + "-" + meta.row;
+
+		return defaultTpl.radio({
+			checked: data,
+			name: name,
+			value: value
+		});
+	};
+
+	defaultRenderer.colour = function defaultColour(data, type, row, meta) {
+		if (type === "sort") {
+			return !!data ? data : "";
+		}
+		if (type === "filter") {
+			return "";
+		}
+
+		if (!_.has(defaultTpl, "colour")) {
+			defaultTpl.colour = Handlebars.compile(defaultSrc.colour);
 		}
 
 		var name = "radio-" + meta.col;
@@ -124,6 +147,15 @@ define(["underscore", "app/squash.handlebars.helpers", "moment"], function (_, H
 		width: "2em",
 		render: defaultRenderer.radio
 	});
+
+
+	ColDefsBuilder.prototype.colour = makeColDef({
+		sortable: false,
+		searchable: false,
+		width: "2em",
+		render: defaultRenderer.colour
+	});
+
 
 	ColDefsBuilder.prototype.icon = makeColDef({
 		sortable: false,

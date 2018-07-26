@@ -50,7 +50,7 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms" ], function($, Back
 			event.wasBound = true;
 		}
 	};
-	
+
 	/**
 	 * change event callback which sets the current model's property
 	 * only for checkboxes as they have no value attribute so generic method won't work.
@@ -71,7 +71,10 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms" ], function($, Back
 		"change input:text[data-prop]" : setProp,
 		"change textarea[data-prop]" : setProp,
 		"change input:checkbox[data-prop]" : setPropCheckBox,
-		"change select[data-prop]" : setProp
+		"change select[data-prop]" : setProp,
+		 "change input#option-colour[data-prop]" : setProp
+		// the following doesn't work for a reason...
+		// "change input:color[data-prop]" : setProp
 	};
 
 	function bindingsEvents(view) {

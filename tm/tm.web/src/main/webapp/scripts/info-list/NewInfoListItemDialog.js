@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(["jquery", "backbone", "underscore", "handlebars", "./IconSelectDialog", "squash.translator", "workspace.routing", "app/lnf/Forms",
-		"info-list-manager/InfoListOptionModel", "app/squash.backbone.validation", "app/squash.wreqr.init", "jquery.squash.formdialog"],
-	function ($, Backbone, _, Handlebars, IconSelectDialog, translator, routing, Forms, InfoListOptionModel, Validation, squashtm) {
+		"info-list-manager/InfoListOptionModel", "app/squash.backbone.validation", "app/squash.wreqr.init", "squash.configmanager", "jquery.squash.formdialog"],
+	function ($, Backbone, _, Handlebars, IconSelectDialog, translator, routing, Forms, InfoListOptionModel, Validation, squashtm, confman) {
 		"use strict";
 		$.ajaxPrefilter(function (options, originalOptions, jqXHR) {
 			var token = $("meta[name='_csrf']").attr("content");
@@ -83,6 +83,8 @@ define(["jquery", "backbone", "underscore", "handlebars", "./IconSelectDialog", 
 					.addClass("sq-icon")
 					.html(translator.get("label.infoListItems.icon.none"));
 
+				var colorPicker = $("#new-info-list-item-colour");
+				confman.getStandardIEColorPicker(colorPicker);
 				return this;
 			},
 
@@ -103,11 +105,11 @@ define(["jquery", "backbone", "underscore", "handlebars", "./IconSelectDialog", 
 				var self = this;
 				var url = routing.buildURL('info-list.items', this.model.listId);
 
-				if(this.validate(event)){
+				if (this.validate(event)) {
 					var params = {
 						"label": this.model.label,
 						"code": this.model.code,
-						"colour": this.model.colour,
+						"colour": this.model.colour || "#000000",
 						"iconName": this.model.icon || "noicon"
 					};
 					$.ajax({
@@ -116,11 +118,11 @@ define(["jquery", "backbone", "underscore", "handlebars", "./IconSelectDialog", 
 						dataType: 'json',
 						data: params
 					})
-					.success(function(){
-						self.cleanup();
-						self.trigger("newOption.confirm");
-						self.$el.formDialog("close");
-					});
+						.success(function () {
+							self.cleanup();
+							self.trigger("newOption.confirm");
+							self.$el.formDialog("close");
+						});
 				}
 			},
 
@@ -128,11 +130,11 @@ define(["jquery", "backbone", "underscore", "handlebars", "./IconSelectDialog", 
 				var self = this;
 				var url = routing.buildURL('info-list.items', this.model.listId);
 
-				if(this.validate(event)){
+				if (this.validate(event)) {
 					var params = {
-							"label": this.model.label,
-							"code": this.model.code,
-							"iconName": this.model.icon || "noicon"
+						"label": this.model.label,
+						"code": this.model.code,
+						"iconName": this.model.icon || "noicon"
 					};
 
 					$.ajax({
@@ -141,12 +143,12 @@ define(["jquery", "backbone", "underscore", "handlebars", "./IconSelectDialog", 
 						dataType: 'json',
 						data: params
 					})
-					.success(function(){
-						self.cleanup();
-						self.render();
-						self.model.icon = "noicon";
-						self.trigger("newOption.addanother");
-					});
+						.success(function () {
+							self.cleanup();
+							self.render();
+							self.model.icon = "noicon";
+							self.trigger("newOption.addanother");
+						});
 				}
 			},
 
@@ -221,7 +223,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./IconSelectDialog", 
 				var self = this;
 				self.model.label = $el.find("#new-info-list-item-label").val();
 				self.model.code = $el.find("#new-info-list-item-code").val();
-				self.model.colour = $el.find("#new-info-list-item-colour").val();
+				self.model.colour = $el.find("#new-info-list-item-colour").val() || "#000000";
 				var selected = $el.find("#new-info-list-item-icon");
 				var classList = selected.attr('class').split(/\s+/);
 

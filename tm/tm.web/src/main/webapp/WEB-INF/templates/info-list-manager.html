@@ -52,6 +52,10 @@
   <a href="{{url}}">{{text}}</a>
   </script>
 
+  <script id="colour-cell-tpl" type="text/x-handlebars-template" th:inline="text">
+    <input type="color" value="{{value}}" name="{{name}}" code="{{code}}"></input>
+  </script>
+
   <script id="remove-cell-tpl" type="text/x-handlebars-template" th:inline="text">
   <button data-value="{{value}}" name="{{name}}" class="sq-icon-btn btn-sm" th:title="#{label.Delete}" title="Delete">
     <span class="ui-icon ui-icon-trash"></span>
@@ -216,6 +220,7 @@
                       <th th:text="#{label.option}">Option</th>
                       <th th:text="#{label.code}">Code</th>
                       <th th:text="#{label.icon}">Icon</th>
+                      <th th:text="#{label.colour}">Colour</th>
                       <th style="width: 2em;" th:text="#{label.default}">Default</th>
                       <th style="width: 1.5em;">&nbsp;</th>
                     </tr>
@@ -257,6 +262,14 @@
                 <a id="choose-sel-opt-icon" href="javascript:void(0)" value="choose icon" th:value="#{label.chooseIcon}">
                   <span id="sel-opt-icon" class="sq-icon" th:attr="data-none=#{label.infoListItems.icon.none}" th:text="#{label.infoListItems.icon.none}">none</span>
                 </a>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <label class="control-label" for="option-colour" th:text="#{label.colour}">Colour</label>
+              <div class="controls">
+                <input id="option-colour" data-prop="colour" data-view="option" type="color"/>
+                <span class="help-inline">&nbsp;</span>
               </div>
             </div>
 
