@@ -84,7 +84,7 @@ public class GenericNodeManagementService<MANAGED extends LibraryNode, NODE exte
 	 * @see org.squashtest.csp.tm.internal.service.NodeManagementService#removeNode(long)
 	 */
 	@Override
-	public/* final */void removeNode(long nodeId) {
+	public void removeNode(long nodeId) {
 		MANAGED node = checkDeletableNode(nodeId);
 
 		// proceed
@@ -126,7 +126,7 @@ public class GenericNodeManagementService<MANAGED extends LibraryNode, NODE exte
 	 * @see org.squashtest.csp.tm.internal.service.NodeManagementService#renameNode(long, java.lang.String)
 	 */
 	@Override
-	public final void renameNode(long nodeId, String newName) throws DuplicateNameException {
+	public void renameNode(long nodeId, String newName) throws DuplicateNameException {
 		MANAGED node = checkWritableNode(nodeId);
 
 		// proceed
@@ -141,7 +141,7 @@ public class GenericNodeManagementService<MANAGED extends LibraryNode, NODE exte
 	}
 
 	@Override
-	public final void updateNodeDescription(long nodeId, String newDescription) {
+	public void updateNodeDescription(long nodeId, String newDescription) {
 		MANAGED node = checkWritableNode(nodeId);
 
 		// proceed
