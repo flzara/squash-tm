@@ -165,7 +165,7 @@ class CampaignExportCSVModelImplTest extends Specification {
 			def execDValues = [execDCUFValue11, execDCUFValue21, execDCUFValue22, execDCUFValue12]
 
 		when :
-			model.createCustomFieldValuesIndex(iterValues, tcValues, execValues, execDValues)
+			model.createCustomFieldValuesIndex(iterValues, tcValues, execValues)
 
 		then :
 
@@ -175,8 +175,7 @@ class CampaignExportCSVModelImplTest extends Specification {
 			model.tcCUFValues[20l] as Set == [tcCUFValue21, tcCUFValue22] as Set
 			model.execCUFValues[30l] as Set == [execCUFValue11, execCUFValue12] as Set
 			model.execCUFValues[40l] as Set == [execCUFValue21, execCUFValue22] as Set
-			model.execDenormalizedCUFValues[50l] as Set == [execDCUFValue11, execDCUFValue12] as Set
-			model.execDenormalizedCUFValues[60l] as Set == [execDCUFValue21, execDCUFValue22] as Set
+
 
 
 	}
