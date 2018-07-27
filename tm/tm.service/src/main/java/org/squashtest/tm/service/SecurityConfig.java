@@ -124,7 +124,7 @@ public class SecurityConfig {
 	 */
 	@Configuration
 //	@ConditionalOnProperty(name = "authentication.provider", matchIfMissing = true, havingValue = "internal")
-	@Order(0) // WebSecurityConfigurerAdapter default order is 100, we need to init this before
+	@Order(10) // WebSecurityConfigurerAdapter default order is 100, we need to init this before. Also ldap order is 1, we need to init this after.
 	public static class InternalAuthenticationConfig extends GlobalAuthenticationConfigurerAdapter {
 		@Inject
 		private SquashUserDetailsManager squashUserDetailsManager;
