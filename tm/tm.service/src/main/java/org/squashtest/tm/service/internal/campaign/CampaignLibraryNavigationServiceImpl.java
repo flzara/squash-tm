@@ -204,17 +204,17 @@ public class CampaignLibraryNavigationServiceImpl
 	}
 
 	@Override
-	protected final CampaignLibraryDao getLibraryDao() {
+	protected CampaignLibraryDao getLibraryDao() {
 		return campaignLibraryDao;
 	}
 
 	@Override
-	protected final CampaignFolderDao getFolderDao() {
+	protected CampaignFolderDao getFolderDao() {
 		return campaignFolderDao;
 	}
 
 	@Override
-	protected final LibraryNodeDao<CampaignLibraryNode> getLibraryNodeDao() {
+	protected LibraryNodeDao<CampaignLibraryNode> getLibraryNodeDao() {
 		return campaignLibraryNodeDao;
 	}
 

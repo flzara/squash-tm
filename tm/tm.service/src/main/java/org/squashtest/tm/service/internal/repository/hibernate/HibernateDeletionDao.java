@@ -56,7 +56,7 @@ public abstract class HibernateDeletionDao implements DeletionDao {
 		return em.unwrap(Session.class);
 	}
 
-	protected final EntityManager entityManager() {
+	protected EntityManager entityManager() {
 		return em;
 	}
 

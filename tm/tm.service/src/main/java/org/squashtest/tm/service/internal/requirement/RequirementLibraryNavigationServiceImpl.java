@@ -102,7 +102,6 @@ import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.service.requirement.RequirementStatisticsService;
-import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.statistics.requirement.RequirementStatisticsBundle;
@@ -194,17 +193,17 @@ public class RequirementLibraryNavigationServiceImpl extends
 	}
 
 	@Override
-	protected final RequirementLibraryDao getLibraryDao() {
+	protected RequirementLibraryDao getLibraryDao() {
 		return requirementLibraryDao;
 	}
 
 	@Override
-	protected final RequirementFolderDao getFolderDao() {
+	protected RequirementFolderDao getFolderDao() {
 		return requirementFolderDao;
 	}
 
 	@Override
-	protected final LibraryNodeDao<RequirementLibraryNode> getLibraryNodeDao() {
+	protected LibraryNodeDao<RequirementLibraryNode> getLibraryNodeDao() {
 		return requirementLibraryNodeDao;
 	}
 
@@ -269,7 +268,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.requirement.RequirementFolder' , 'CREATE' )"
 		+ OR_HAS_ROLE_ADMIN)
 	@PreventConcurrent(entityType=RequirementLibraryNode.class)
-	public final void addFolderToFolder(@Id long destinationId, RequirementFolder newFolder) {
+	public void addFolderToFolder(@Id long destinationId, RequirementFolder newFolder) {
 
 		RequirementFolder container = getFolderDao().findById(destinationId);
 		container.addContent(newFolder);
