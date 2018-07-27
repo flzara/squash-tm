@@ -547,6 +547,7 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 			},
 
 			redrawReport: function (id) {
+				var view = this.dashboardReportViews[id];
 				// I don't know yet if I should redraw the report
 				// view.render();
 			},

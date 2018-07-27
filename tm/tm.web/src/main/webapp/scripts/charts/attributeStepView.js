@@ -108,6 +108,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			this.model.set("selectedCufEntity",entityType);
 			var ids = _.pluck($('[id^="attributes-selection-"][data-cuf="true"]').filter(":checked"), "name");
 			this.model.set("selectedCufAttributes",ids);
+			var cufPopup = new CustomFieldPopup(this.model);
 		},
 
 		//callback executed when selected cuf changes

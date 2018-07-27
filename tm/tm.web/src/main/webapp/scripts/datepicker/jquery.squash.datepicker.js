@@ -31,7 +31,7 @@
  </style>
 
 
- This simple control is behaving just the same
+ This simple control is behaving just the same 
  than the jquery datepicker, except that we're
  managing a label for display and text input
  for edit instead of using the later for both.
@@ -40,18 +40,18 @@
 
 /*******************************************************************************
  * initialization
- *
+ * 
  * require an object containing :
- *
+ * 
  * control : object having - datepick : the jQuery datepicker - datelabel : the
  * jQuery label displaying the date
- *
+ * 
  * params : object having - paramName : the string containing the label of the
  * POST parameter - url : the url to post to - initialDate : a string containing
  * the number of milliseconds since the 1st january 1970 - callback : a callback
  * for the ajax post date success handler
- *
- *
+ * 
+ * 
  ******************************************************************************/
 
 function SquashDatePicker(controls, params) {
@@ -94,7 +94,7 @@ function dp_initialize(options) {
 	$(this.controls.datepick).datepicker("option", "onClose", function(submittedDateText) {
 		// the following check happens to prevent a weird recursion
 		if (!$(this).hasClass("date-hidden")) {
-
+			
 			// Check validity of submitted date if a validator exists
 			if(!!options.validator) {
 				if (options.validator.isValid(submittedDateText)) {
@@ -129,11 +129,11 @@ function dp_initialize(options) {
 
 /*
  * *** manage the entering in edit mode
- *
+ * 
  * controls as usual
- *
+ * 
  * note : the caller should save the former state of the control
- *
+ * 
  * *****
  */
 function dp_enterEditMode() {
@@ -150,7 +150,7 @@ function dp_enterEditMode() {
 
 /*
  * this mode resume the control back to a normal display mode
- *
+ * 
  */
 function dp_enterDisplayMode() {
 	var datepick = this.controls.datepick;
@@ -163,14 +163,17 @@ function dp_enterDisplayMode() {
 
 /*
  * ** manage the exit of edit mode via cancel
- *
+ * 
  * controls as usual
- *
+ * 
  * formerState : - wasAuto : boolean, telling is the control was automode or not -
  * formerDate : Date, to restore here
- *
+ * 
  */
 function dp_cancelEditMode() {
+
+	var datepick = this.controls.datepick;
+	var datelabel = this.controls.datelabel;
 
 	this.setDate(this.formerState.formerDate);
 
@@ -179,14 +182,14 @@ function dp_cancelEditMode() {
 
 /*
  * ** manage the exit of edit mode via cancel, and posts the new informations
- *
+ * 
  * controls as usual
- *
+ * 
  * formerState : - wasAuto : boolean, telling is the control was automode or not -
  * formerDate : Date, to restore here
- *
+ * 
  * see definition of params in the init function
- *
+ * 
  */
 function dp_inputAndExitEditMode() {
 	this.postDate();
@@ -218,10 +221,10 @@ function dp_setDate(iDate) {
 }
 
 /**
- *
+ * 
  * params here is the same, plus a callback in case of success - callback :
  * pointer to a function with no arguments;
- *
+ * 
  */
 
 function dp_postDate() {

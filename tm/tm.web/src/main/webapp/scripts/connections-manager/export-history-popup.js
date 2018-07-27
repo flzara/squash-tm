@@ -79,7 +79,7 @@ define(['jquery',
 
 	function init(){
 
-		$("#export-connection-history-dialog").exportDialog({width : 600});
+		var dialog = $("#export-connection-history-dialog").exportDialog({width : 600});
 
 	}
 

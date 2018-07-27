@@ -327,7 +327,11 @@ define([ "jquery", "jqplot-core" ], function($) {
 						}
 					}
 				}
+				t = null;
 			}
+			axis = null;
+			ticks = null;
+		}
 		}
 		// Now draw grid lines for additional y axes
 		// ////
@@ -398,8 +402,12 @@ define([ "jquery", "jqplot-core" ], function($) {
 							strokeStyle : axis.borderColor
 						});
 					}
+					t = null;
 				}
+				t0 = null;
 			}
+			axis = null;
+			ticks = null;
 		}
 
 		ctx.restore();

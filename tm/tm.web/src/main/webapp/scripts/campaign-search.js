@@ -24,22 +24,24 @@ require([ "common" ], function() {
 
 		domReady(function() {
 			WS.init();
-
+			
 			$.cookie("workspace-prefs", null, {
 				path : '/'
 			});
 			CampWorkspaceSearch.init(squashtm.app.campaignWorkspaceConf);
 		});
-
-
-
+		
+		
+		
 		$(function() {
 			WS.init();
-			$('#tree').bind("select_node.jstree", function (e, data) {
-        data.rslt.obj.parents('.jstree-closed').each(function () {
-          data.inst.open_node(this);
-        });
-			});
+			$('#tree').bind("select_node.jstree", function (e, data) { 
+        data.rslt.obj.parents('.jstree-closed').each(function () { 
+          data.inst.open_node(this); 
+        }); 
+			}); 
+			var view = new AdvancedSearchView();
+			
 		});
 	});
 });

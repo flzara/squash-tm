@@ -29,10 +29,10 @@
 define(
 	["jquery", "handlebars", "underscore", "./lib/cuf-values-utils", "jqueryui", "./lib/jquery.editableCustomfield"],
 	function ($, handlebars, _, utils) {
-
+		
 		"use strict";
 		utils.registerHandlebarHelpers(handlebars);
-
+			
 		var template =
 			'{{#each this}}' +
 			'<tr class="create-node-custom-field-row">' +
@@ -84,14 +84,14 @@ define(
 				table.append(pleaseWait);
 
 				var self = this;
-
+					
 				function generate(jsonDef) {
 					table.find(".cuf-wait").remove();
 					// only required fields are shown in creation popup
 					self.cufDefs = _.where(jsonDef, {optional: false});
 					self.init();
 				}
-
+					
 				if (typeof source === "string") {
 					$.getJSON(source).success(generate);
 				}
@@ -121,7 +121,7 @@ define(
 						event.stopPropagation();
 					}
 				});
-
+					
 				if (fields.length > 0) {
 					fields.each(function (idx) {
 						var $this = $(this);
@@ -169,11 +169,12 @@ define(
 				var result = {
 					customFields: {}
 				};
-				var table = this.table;
+					var table = this.table,
+						cufDefs = this.cufDefs;
 
 				var $this,
 					fields = table.find(".create-node-custom-field");
-
+					
 				if (fields.length > 0) {
 					fields.each(function (idx) {
 						$this = $(this);
@@ -185,7 +186,7 @@ define(
 
 		}
 
-
+			
 		return CUFValuesCreator;
 
 	});

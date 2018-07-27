@@ -175,6 +175,8 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 
 			$("#search-tree-button").on("click", function(){
 				// get value of Campaign Workspace Cookie
+				var cookieValueSelect = $.cookie("jstree_select");
+				var cookieValueOpen = $.cookie("workspace-prefs");
 				document.location.href = window.squashtm.app.contextRoot +
 					"/advanced-search?searchDomain=campaign";
 			});

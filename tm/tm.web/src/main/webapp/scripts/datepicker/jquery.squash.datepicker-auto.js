@@ -35,8 +35,8 @@
  - automatic or manual
  - display or edit.
 
- All combinations exists except edit-auto,
- since editing the date means the user is not
+ All combinations exists except edit-auto, 
+ since editing the date means the user is not 
  requesting an automatic setting.
 
 
@@ -44,20 +44,20 @@
 
 /*******************************************************************************
  * initialization
- *
+ * 
  * require an object containing :
- *
+ * 
  * control : object having - datepick : the jQuery datepicker - datelabel : the
  * jQuery label displaying the date - checkbx : the jQuery checkbox managing the
  * state of the control
- *
+ * 
  * params : object having - paramName : the string containing the label of the
  * POST parameter - url : the url to post to - initialDate : a string containing
  * the number of milliseconds since the 1st january 1970 - isAuto : a boolean
  * telling if the control is in auto state (true), or manual state (false); -
  * callback : a callback for the ajax post date success handler
- *
- *
+ * 
+ * 
  ******************************************************************************/
 
 function DatePickerAuto(controls, params) {
@@ -181,8 +181,8 @@ function dpa_setAutoMode() {
 
 /*
  * same parameter than above
- *
- *
+ * 
+ * 
  */
 function dpa_setManualMode() {
 	var datelabel = this.controls.datelabel;
@@ -199,11 +199,11 @@ function dpa_setManualMode() {
 
 /*
  * *** manage the entering in edit mode
- *
+ * 
  * controls as usual
- *
+ * 
  * note : the caller should save the former state of the control
- *
+ * 
  * *****
  */
 function dpa_enterEditMode() {
@@ -222,7 +222,7 @@ function dpa_enterEditMode() {
 
 /*
  * this mode resume the control back to a normal display mode
- *
+ * 
  */
 function dpa_enterDisplayMode() {
 	var datepick = this.controls.datepick;
@@ -235,14 +235,17 @@ function dpa_enterDisplayMode() {
 
 /*
  * ** manage the exit of edit mode via cancel
- *
+ * 
  * controls as usual
- *
+ * 
  * formerState : - wasAuto : boolean, telling is the control was automode or not -
  * formerDate : Date, to restore here
- *
+ * 
  */
 function dpa_cancelEditMode() {
+
+	var datepick = this.controls.datepick;
+	var datelabel = this.controls.datelabel;
 
 	this.setDate(this.formerState.formerDate);
 
@@ -258,14 +261,14 @@ function dpa_cancelEditMode() {
 
 /*
  * ** manage the exit of edit mode via cancel, and posts the new informations
- *
+ * 
  * controls as usual
- *
+ * 
  * formerState : - wasAuto : boolean, telling is the control was automode or not -
  * formerDate : Date, to restore here
- *
+ * 
  * see definition of params in the init function
- *
+ * 
  */
 function dpa_inputAndExitEditMode() {
 	this.postDate();
@@ -298,10 +301,10 @@ function dpa_setDate(iDate) {
 }
 
 /**
- *
+ * 
  * params here is the same, plus a callback in case of success
  *  - callback : pointer to a function with no arguments;
- *
+ * 
  */
 
 function dpa_postDate() {
@@ -392,6 +395,8 @@ function dpa_postState() {
 }
 
 function dpa_postStateSuccess(strDate, callback) {
+	var datepick = this.controls.datepick;
+	var datelabel = this.controls.datelabel;
 	var checkbx = this.controls.checkbx;
 
 	var isChecked = checkbx.is(':checked');

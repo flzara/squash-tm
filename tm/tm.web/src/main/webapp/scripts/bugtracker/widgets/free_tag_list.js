@@ -19,17 +19,17 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * That widget is awkward because it delegates almost all of its behavior to $.squashTagit. Separating the btwidget and the squashTagit widget is
+ * That widget is awkward because it delegates almost all of its behavior to $.squashTagit. Separating the btwidget and the squashTagit widget is 
  * a good way to prevent undesirable clashes with the type definition
- *
+ * 
  */
 
 define(["jquery", "../domain/FieldValue", "jqueryui", "jquery.squash.tagit"], function($, FieldValue){
 
 	return {
-
+		
 		options : {
-
+			
 			id : null,
 			possibleValues : [],
 			rendering : {
@@ -39,71 +39,73 @@ define(["jquery", "../domain/FieldValue", "jqueryui", "jquery.squash.tagit"], fu
 				},
 				required : false
 			}
-
+			
 		},
-
+		
 		_create : function(){
-
+					
 			var delegate = this._createDelegate();
-
+			
+			var tags = this._createTags();
+			
 			var config = {
 				singleFieldNode : this.element
 			};
-
+			
 			delegate.squashTagit(config);
-
+	
 			if (! this.canEdit()){
 				this.disable();
 			}
-
-		},
-
+			
+		},		
+		
 		canEdit : function(){
 			return (this.options.rendering.operations.length!==0);
 		},
-
+		
 		_getDelegate : function(){
 			return this.element.next('ul.bt-delegate');
 		},
-
+		
 		_createDelegate : function(){
 			var elt = $("<ul/>",{ 'class' : 'bt-delegate' });
-			this.element.after(elt);
+			this.element.after(elt);			
 			return elt;
 		},
-
+		
 		_createTags : function(){
 
 			var possibleValues = this.options.possibleValues;
-
+			
 			//build the autocomplete source
 			var tags = [];
 			for (var i=0, len = possibleValues.length ; i < len; i++){
 				tags.push(possibleValues[i].scalar);
-			}
-
+			}			
+			
 			return tags;
 		},
-
+		
 		fieldvalue : function(fieldvalue){
 			var i;
 			var delegate = this._getDelegate();
-
+			
 			if (fieldvalue===null || fieldvalue === undefined){
-
+				
 				var field = this.options;
 				var typename = field.rendering.inputType.dataType;
-
+	
 				var selected = delegate.squashTagit('assignedTags');
 				var allValues = [];
-
-				for (i=0;i<selected.length;i++){
-					var label = selected[i];
-					var value = this.findValueByLabel(label);
+				
+				for (i=0;i<selected.length;i++){					
+					var label = selected[i];					
+					var value = this.findValueByLabel(label);					
 					if (value===null){
 						//value not found, let's create a new one
 						value = new FieldValue("--", typename, label);
-					}
+					}					
 					allValues.push(value);
 				}
 
@@ -114,36 +116,36 @@ define(["jquery", "../domain/FieldValue", "jqueryui", "jquery.squash.tagit"], fu
 				var values = fieldvalue.composite;
 				for (i=0;i<values.length;i++){
 					delegate.squashTagit('createTag', values[i].scalar);
-				}
+				}				
 			}
-
+			
 		},
-
+		
 		//search the label among the possible values, returns null if value was not found
 		findValueByLabel : function(label){
-
+			
 			var values = $.grep(this.options.possibleValues, function(item){
 				return (item.scalar === label);
 			});
-
+			
 			if (values.length>0){
 				return values[0];
 			}
 			else{
 				return null;
-			}
-
+			}		
+			
 		},
-
+		
 
 		disable : function(){
 			this._getDelegate().squashTagit('disable');
 		},
-
+		
 		enable : function(){
 			this._getDelegate().squashTagit('enable');
 		},
-
+		
 		createDom : function(field){
 			var elt = $('<input/>',{
 				'data-widgetname' : 'free_tag_list',
@@ -152,11 +154,11 @@ define(["jquery", "../domain/FieldValue", "jqueryui", "jquery.squash.tagit"], fu
 				'id' : "bttaglist-"+field.id,
 				'class' : 'not-displayed'
 			});
-
+			
 			return elt;
 		}
-
-
+		
+		
 	};
-
+	
 });

@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(['jquery','underscore'], function($,_){
-
+	
 	return {
 		btnconf : function(css){
 			return {
@@ -45,7 +45,7 @@ define(['jquery','underscore'], function($,_){
 								return customField.id;
 							})
 							.value();
-			return cufs;
+			return cufs;							
 		},
 
 		getEmptyCufMap : function () {
@@ -81,7 +81,7 @@ define(['jquery','underscore'], function($,_){
 					.each(function(bindings){
 						_.each(keys,function(key){
 								var bindingsForEntityType = bindings[key] || [];
-								_.filter(bindingsForEntityType, function (binding) {
+								bindingsForEntityType = _.filter(bindingsForEntityType, function (binding) {
 									return binding.customField.inputType.enumName !== "RICH_TEXT";
 								});
 								cufMap[key] = cufMap[key].concat();

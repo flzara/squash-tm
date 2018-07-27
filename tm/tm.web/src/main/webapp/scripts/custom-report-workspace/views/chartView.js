@@ -95,7 +95,7 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 			 */
 			setPerimeterMessage: function (json) {
 				var projectScope = json.projectScope,
-					scope = json.scope,
+					scope = json.scope, 
 					scopeType = json.scopeType;
 
 				// extract the type of perimeter
@@ -223,7 +223,7 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 						};
 						return formatedFilter;
 					})
-					.map(function(filter) {//Formating the filters values of date type
+					.map(function(filter) {//Formating the filters values of date type 
 						if(filter.dataType === "DATE" || filter.dataType === "DATE_AS_STRING"){
 							filter.values = _.map(filter.values, function(date) {
 								return dateutils.format(date, self.i18nString.dateFormatShort);
@@ -240,6 +240,9 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 			loadOperations: function () {
 				var self = this;
 				var operations = _.union(this.model.get("axes"), this.model.get("measures"));
+				
+				//extracting all the cufs from the bindings
+				var cufs = this.model.get("cufs");
 
 				var formatedOperations = _.chain(operations)
 					.map(function (operation) {

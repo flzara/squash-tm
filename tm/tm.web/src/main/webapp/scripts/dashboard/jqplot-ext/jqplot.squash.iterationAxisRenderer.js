@@ -38,7 +38,9 @@ define([ "jquery", "jqplot-category" ], function($) {
 	 */
 	$.jqplot.IterationAxisRenderer.prototype.createTicks = function() {
 		// we're are operating on an axis here
+		var ticks = this._ticks;
 		var userTicks = this.ticks;
+		var name = this.name;
 
 		var min, max;
 		var start, end;

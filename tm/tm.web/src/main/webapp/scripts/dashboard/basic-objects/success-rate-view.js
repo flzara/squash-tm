@@ -56,6 +56,7 @@ define(["../basic-objects/donut-view"], function (DonutView) {
 
 			var totalSuccess = this._sumAllSuccess(model),
 				totalFailures = this._sumAllFailures(model),
+				total = totalSuccess + totalFailures + this._sumAllOther(model),
 				totalExecuted = this._sumAllExecuted(model);
 
 			var percentSuccess = (totalExecuted !== 0 ) ? totalSuccess * 100 / totalExecuted : 0,
