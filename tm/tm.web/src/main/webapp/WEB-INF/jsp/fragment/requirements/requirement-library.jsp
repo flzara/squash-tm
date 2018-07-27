@@ -75,7 +75,6 @@
 		</jsp:attribute>
 	</comp:toggle-panel>
 
-	<at:attachment-bloc editable="${ editable }" workspaceName="${ workspaceName }" attachListId="${ library.attachmentList.id}" attachmentSet="${attachments}"/>
 
     <%-- CUF panel --%>
     <%--<c:if test="${hasCuf}">--%>
@@ -86,6 +85,7 @@
   	</jsp:attribute>
   </comp:toggle-panel>
     <%--</c:if>--%>
+    <at:attachment-bloc editable="${ editable }" workspaceName="${ workspaceName }" attachListId="${ library.attachmentList.id}" attachmentSet="${attachments}"/>
 
 </div>
 
