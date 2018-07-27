@@ -33,10 +33,10 @@ import org.squashtest.tm.service.internal.repository.CustomReportFolderDao;
 @Service("org.squashtest.tm.service.customreport.CustomReportFolderService")
 public class CustomReportFolderServiceImpl implements
 		CustomReportFolderService {
-	
+
 	@Inject
 	private CustomReportFolderDao folderDao;
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#entityId, 'org.squashtest.tm.domain.customreport.CustomReportFolder' ,'WRITE') "
 			+ OR_HAS_ROLE_ADMIN)
@@ -44,4 +44,6 @@ public class CustomReportFolderServiceImpl implements
 		CustomReportFolder crf = folderDao.findById(entityId);
 		crf.setDescription(newDescription);
 	}
+
+
 }

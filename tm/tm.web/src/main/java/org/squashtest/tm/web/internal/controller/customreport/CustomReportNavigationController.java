@@ -25,15 +25,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.library.LibraryNode;
+import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
+import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.customreport.CustomReportWorkspaceService;
 import org.squashtest.tm.service.deletion.*;
+import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.customreport.CustomReportWorkspaceDisplayService;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
@@ -83,6 +88,12 @@ public class CustomReportNavigationController {
 	private Provider<CustomReportTreeNodeBuilder> builderProvider;
 	@Inject
 	private UserAccountService userAccountService;
+	@Inject
+	private CustomFieldBindingFinderService customFieldBindingFinderService;
+
+	@Inject
+	private PrivateCustomFieldValueService customValueService;
+
 
 	//----- CREATE NODE METHODS -----
 
@@ -90,15 +101,27 @@ public class CustomReportNavigationController {
 	@RequestMapping(value = "/drives/{libraryId}/content/new-folder", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
 	public JsTreeNode createNewFolderInLibrary(@PathVariable Long libraryId, @Valid @RequestBody CustomReportFolder customReportFolder) {
-		return createNewCustomReportLibraryNode(libraryId, customReportFolder);
+		JsTreeNode node = createNewCustomReportLibraryNode(libraryId, customReportFolder);
+		generateCuf(customReportFolder);
+		return node;
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/folders/{folderId}/content/new-folder", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
 	public JsTreeNode createNewFolderInFolder(@PathVariable Long folderId, @Valid @RequestBody CustomReportFolder customReportFolder) {
-		return createNewCustomReportLibraryNode(folderId, customReportFolder);
+		JsTreeNode node = createNewCustomReportLibraryNode(folderId, customReportFolder);
+		generateCuf(customReportFolder);
+		return node;
 	}
+
+	private void generateCuf(CustomReportFolder newFolder){
+		List<CustomFieldBinding> projectsBindings = customFieldBindingFinderService.findCustomFieldsForProjectAndEntity(newFolder.getProject().getId(), BindableEntity.CUSTOM_REPORT_FOLDER);
+		for(CustomFieldBinding binding: projectsBindings){
+			customValueService.cascadeCustomFieldValuesCreationNotCreatedFolderYet(binding, newFolder);
+		}
+	}
+
 
 	@ResponseBody
 	@RequestMapping(value = "/drives/{libraryId}/content/new-dashboard", method = RequestMethod.POST)
@@ -212,7 +235,8 @@ public class CustomReportNavigationController {
 	//-------------- PRIVATE STUFF ---------------------------
 	private JsTreeNode createNewCustomReportLibraryNode(Long libraryId, TreeEntity entity) {
 		CustomReportLibraryNode newNode = customReportLibraryNodeService.createNewNode(libraryId, entity);
-		return builderProvider.get().build(newNode);
+		JsTreeNode node = builderProvider.get().build(newNode);
+		return node;
 	}
 
 	private void moveNodes(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds, @PathVariable(DESTINATION_ID) long destinationId) {
