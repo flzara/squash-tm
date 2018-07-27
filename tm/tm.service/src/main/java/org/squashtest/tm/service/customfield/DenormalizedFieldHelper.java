@@ -20,7 +20,13 @@
  */
 package org.squashtest.tm.service.customfield;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
@@ -29,9 +35,6 @@ import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
-import org.squashtest.tm.service.internal.dto.*;
-
-import javax.inject.Inject;
 
 /**
  * This version exists for the {@link DenormalizedFieldHolder}, which are structurally equivalent to
@@ -50,11 +53,11 @@ public class DenormalizedFieldHelper<X extends DenormalizedFieldHolder>{
 
 	private DenormalizedFieldValueManager dcufFinder;
 
+
 	// ************ attributes ******************
 
 	private Collection<RenderingLocation> locations;
 	private List<CustomField> customFields;
-	private List<CustomFieldModel> customFieldModels;
 
 	private List<DenormalizedFieldValue> values;
 	private final Collection<X> entities;
@@ -104,14 +107,6 @@ public class DenormalizedFieldHelper<X extends DenormalizedFieldHolder>{
 
 	}
 
-	public List<CustomFieldModel> getCustomFieldModelConfiguration() {
-		if(!isInited()) {
-			init();
-		}
-
-		return customFieldModels;
-	}
-
 	// ******************* private stuffs ******************
 
 
@@ -125,13 +120,10 @@ public class DenormalizedFieldHelper<X extends DenormalizedFieldHolder>{
 			//extract the custom fields according to the adding strategy
 			extractCustomFields();
 
-			extractCustomFieldModels();
-
 		}
 		else{
 			values = Collections.emptyList();
 			customFields = Collections.emptyList();
-			customFieldModels = Collections.emptyList();
 		}
 
 	}
@@ -147,6 +139,7 @@ public class DenormalizedFieldHelper<X extends DenormalizedFieldHolder>{
 	private void extractCustomFields(){
 
 		Map<String, CustomField> cfMap = new HashMap<>();
+
 		CustomField customField;
 		for (DenormalizedFieldValue dfv : values){
 			if ( cfMap.get(dfv.getCode()) == null){
@@ -164,42 +157,4 @@ public class DenormalizedFieldHelper<X extends DenormalizedFieldHolder>{
 		return customFields != null;
 	}
 
-	private <VT> CustomFieldModel<VT> populateCustomFieldModel(CustomFieldModel<VT> customFieldModel, DenormalizedFieldValue value) {
-
-		InputTypeModel inputTypeModel = new InputTypeModel();
-		inputTypeModel.setEnumName(value.getInputType().name());
-		inputTypeModel.setFriendlyName(value.getInputType().name());
-
-		customFieldModel.setCode(value.getCode());
-		customFieldModel.setId(value.getId());
-		customFieldModel.setInputType(inputTypeModel);
-		customFieldModel.setLabel(value.getLabel());
-		customFieldModel.setOptional(true);
-		customFieldModel.setDenormalized(true);
-
-		return customFieldModel;
-	}
-
-	private CustomFieldModel<?> createCustomField(DenormalizedFieldValue customField) {
-
-		CustomFieldModel<String> model = new CustomFieldModelFactory.SingleValuedCustomFieldModel();
-
-		populateCustomFieldModel(model, customField);
-
-		return model;
-
-	}
-
-	private void extractCustomFieldModels(){
-
-		Map<String, CustomFieldModel> cfmMap = new HashMap<>();
-
-		for (DenormalizedFieldValue dfv : values){
-			if ( cfmMap.get(dfv.getCode()) == null){
-				cfmMap.put(dfv.getCode(), createCustomField(dfv));
-			}
-		}
-
-		customFieldModels = new ArrayList(cfmMap.values());
-	}
 }
