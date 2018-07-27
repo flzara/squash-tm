@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -53,6 +52,7 @@ import org.springframework.security.acls.domain.*;
 import org.springframework.security.acls.jdbc.BasicLookupStrategy;
 import org.springframework.security.acls.model.*;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -65,11 +65,7 @@ import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatu
 import org.squashtest.tm.security.acls.CustomPermissionFactory;
 import org.squashtest.tm.security.acls.Slf4jAuditLogger;
 import org.squashtest.tm.service.feature.FeatureManager;
-import org.squashtest.tm.service.internal.security.AffirmativeBasedCompositePermissionEvaluator;
-import org.squashtest.tm.service.internal.security.InternalAuthenticationProviderFeatures;
-import org.squashtest.tm.service.internal.security.SquashUserDetailsManager;
-import org.squashtest.tm.service.internal.security.SquashUserDetailsManagerImpl;
-import org.squashtest.tm.service.internal.security.SquashUserDetailsManagerProxyFactory;
+import org.squashtest.tm.service.internal.security.*;
 import org.squashtest.tm.service.internal.spring.ArgumentPositionParameterNameDiscoverer;
 import org.squashtest.tm.service.internal.spring.CompositeDelegatingParameterNameDiscoverer;
 import org.squashtest.tm.service.security.acls.ExtraPermissionEvaluator;
@@ -127,7 +123,7 @@ public class SecurityConfig {
 	 *
 	 */
 	@Configuration
-	@ConditionalOnProperty(name = "authentication.provider", matchIfMissing = true, havingValue = "internal")
+//	@ConditionalOnProperty(name = "authentication.provider", matchIfMissing = true, havingValue = "internal")
 	@Order(0) // WebSecurityConfigurerAdapter default order is 100, we need to init this before
 	public static class InternalAuthenticationConfig extends GlobalAuthenticationConfigurerAdapter {
 		@Inject
@@ -138,13 +134,23 @@ public class SecurityConfig {
 
 		@Override
 		public void init(AuthenticationManagerBuilder auth) throws Exception {
-			auth
-				.userDetailsService(squashUserDetailsManager)
-				.passwordEncoder(passwordEncoder);
+			auth.authenticationProvider(daoAuthenticationProvider());
 
 			auth.eraseCredentials(false);
 		}
 
+		@Bean
+		public DaoAuthenticationProvider daoAuthenticationProvider() {
+			LOGGER.info("initializing : daoAuthenticationProvider");
+			SquashDaoAuthenticationProvider provider = new SquashDaoAuthenticationProvider();
+
+			provider.setUserDetailsService(squashUserDetailsManager);
+			provider.setPasswordEncoder(passwordEncoder);
+
+			provider.setFeatures(new InternalAuthenticationProviderFeatures());
+
+			return provider;
+		}
 
 	}
 
