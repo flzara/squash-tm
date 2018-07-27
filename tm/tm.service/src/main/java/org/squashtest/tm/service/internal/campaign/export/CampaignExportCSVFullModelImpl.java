@@ -44,6 +44,8 @@ import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.customfield.DenormalizedFieldHelper;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
+import org.squashtest.tm.service.internal.dto.CustomFieldModel;
+import org.squashtest.tm.service.internal.dto.CustomFieldModelFactory;
 import org.squashtest.tm.service.internal.dto.NumericCufHelper;
 
 import javax.inject.Inject;
@@ -86,9 +88,9 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 	private List<CustomField> iterCUFModel;
 	private List<CustomField> tcCUFModel;
 	private List<CustomField> execCUFModel;
-	private List<CustomField> execDenormalizedCUFModel;
+	private List<CustomFieldModel> execDenormalizedCUFModel;
 	private List<CustomField> esCUFModel;
-	private List<CustomField> esDenormalizedCUFModel;
+	private List<CustomFieldModel> esDenormalizedCUFModel;
 
 	private List<CustomFieldValue> campCUFValues;
 	private MultiValueMap iterCUFValues; // <Long, Collection<CustomFieldValue>>
@@ -160,7 +162,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 
 		// denormalized cufs for the executions
 		DenormalizedFieldHelper<Execution> execDenormalizedHelper = cufHelperService.newDenormalizedHelper(allExecs);
-		execDenormalizedCUFModel = execDenormalizedHelper.getCustomFieldConfiguration();
+		execDenormalizedCUFModel = execDenormalizedHelper.getCustomFieldModelConfiguration();
 		List<DenormalizedFieldValue> execDenormalizedValues = execDenormalizedHelper.getDenormalizedFieldValues();
 
 		// cufs for the execution steps
@@ -170,7 +172,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 
 		// denormalized cuffs for the execution steps
 		DenormalizedFieldHelper<ExecutionStep> esDenormalizedHelper = cufHelperService.newDenormalizedHelper(allExecSteps);
-		esDenormalizedCUFModel = esDenormalizedHelper.getCustomFieldConfiguration();
+		esDenormalizedCUFModel = esDenormalizedHelper.getCustomFieldModelConfiguration();
 		List<DenormalizedFieldValue> esDenormalizedValues = esDenormalizedHelper.getDenormalizedFieldValues();
 
 		nbColumns = 35 + campCUFModel.size() + iterCUFModel.size() + tcCUFModel.size() + execCUFModel.size() +
@@ -341,7 +343,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 		}
 
 		// execution denormalized custom fields
-		for (CustomField cufModel : execDenormalizedCUFModel) {
+		for (CustomFieldModel cufModel : execDenormalizedCUFModel) {
 			headerCells.add(new CellImpl("EXEC_CUF_FROM_TC_" + cufModel.getCode()));
 		}
 
@@ -351,7 +353,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 		}
 
 		// execution steps denormalized custom fields
-		for (CustomField cufModel : esDenormalizedCUFModel) {
+		for (CustomFieldModel cufModel : esDenormalizedCUFModel) {
 			headerCells.add(new CellImpl("STEP_CUF_FROM_TC_" + cufModel.getCode()));
 		}
 
@@ -477,7 +479,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 
 				Collection<DenormalizedFieldValue> execDenormalizedValues = (Collection<DenormalizedFieldValue>) execDenormalizedCUFValues
 					.get(exec.getId());
-				for (CustomField model : execDenormalizedCUFModel) {
+				for (CustomFieldModel model : execDenormalizedCUFModel) {
 					String strValue = getDenormalizedValue(execDenormalizedValues, model);
 					dataCells.add(new CellImpl(strValue));
 				}
@@ -504,7 +506,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 
 				Collection<DenormalizedFieldValue> esDenormalizedValues = (Collection<DenormalizedFieldValue>) esDenormalizedCUFValues
 					.get(execStep.getId());
-				for (CustomField model : esDenormalizedCUFModel) {
+				for (CustomFieldModel model : esDenormalizedCUFModel) {
 					String strValue = getDenormalizedValue(esDenormalizedValues, model);
 					dataCells.add(new CellImpl(strValue));
 				}
@@ -702,7 +704,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 			return "";
 		}
 
-		private String getDenormalizedValue(Collection<DenormalizedFieldValue> values, CustomField model) {
+		private String getDenormalizedValue(Collection<DenormalizedFieldValue> values, CustomFieldModel model) {
 
 			if (values != null) {
 				for (DenormalizedFieldValue value : values) {
