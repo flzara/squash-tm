@@ -1,36 +1,32 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Squashtest platform.
+ * Copyright (C) Henix, henix.fr
+ * <p>
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ * <p>
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * this software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.web.internal.controller.chart;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.chart.*;
 import org.squashtest.tm.domain.chart.SpecializedEntityType.EntityRole;
+
+import java.util.*;
 
 
 public class JsonChartInstance {
@@ -57,7 +53,9 @@ public class JsonChartInstance {
 
 	private Map<String, List<Object>> series = new HashMap<>();
 
-    private List<String> projectScope = new ArrayList<>();
+	private List<String> projectScope = new ArrayList<>();
+
+	private List<String> colours = new ArrayList<>();
 
 	private List<JsonEntityReference> scope = new ArrayList<>();
 
@@ -69,18 +67,18 @@ public class JsonChartInstance {
 		super();
 	}
 
-	public JsonChartInstance(ChartInstance instance){
+	public JsonChartInstance(ChartInstance instance) {
 		ChartDefinition def = instance.getDefinition();
 		this.name = def.getName();
 		this.type = def.getType();
 		this.projectId = def.getProject().getId();
 		doAuditableAttributes(def);
 
-		for (AxisColumn ax : def.getAxis()){
+		for (AxisColumn ax : def.getAxis()) {
 			axes.add(new JsonAxisColumn(ax));
 		}
 
-		for (MeasureColumn me : def.getMeasures()){
+		for (MeasureColumn me : def.getMeasures()) {
 			measures.add(new JsonMeasureColumn(me));
 		}
 
@@ -94,11 +92,13 @@ public class JsonChartInstance {
 
 		this.scopeType = def.getScopeType();
 
-        this.projectScope = instance.getDefinition().getProjectScope();
+		this.projectScope = instance.getDefinition().getProjectScope();
 
 		ChartSeries chartSeries = instance.getSeries();
 
 		this.abscissa = chartSeries.getAbscissa();
+
+		this.colours = chartSeries.getColours();
 
 		this.series = chartSeries.getSeries();
 
@@ -208,8 +208,6 @@ public class JsonChartInstance {
 		this.series = series;
 	}
 
-
-
 	public List<JsonFilter> getFilters() {
 		return filters;
 	}
@@ -217,8 +215,6 @@ public class JsonChartInstance {
 	public void setFilters(List<JsonFilter> filters) {
 		this.filters = filters;
 	}
-
-
 
 	public List<JsonEntityReference> getScope() {
 		return scope;
@@ -228,15 +224,23 @@ public class JsonChartInstance {
 		this.scope = scope;
 	}
 
-        public List<String> getProjectScope() {
-            return projectScope;
-        }
+	public List<String> getProjectScope() {
+		return projectScope;
+	}
 
-        public void setProjectScope(List<String> projectScope) {
-            this.projectScope = projectScope;
-        }
+	public void setProjectScope(List<String> projectScope) {
+		this.projectScope = projectScope;
+	}
 
-	public static final class JsonMeasureColumn{
+	public List<String> getColours() {
+		return colours;
+	}
+
+	public void setColours(List<String> colours) {
+		this.colours = colours;
+	}
+
+	public static final class JsonMeasureColumn {
 
 		private Long cufId;
 		private String label;
@@ -249,7 +253,7 @@ public class JsonChartInstance {
 			super();
 		}
 
-		public JsonMeasureColumn(MeasureColumn measure){
+		public JsonMeasureColumn(MeasureColumn measure) {
 			super();
 			this.label = measure.getLabel();
 			this.columnPrototype = new JsonColumnPrototype(measure.getColumn());
@@ -290,12 +294,24 @@ public class JsonChartInstance {
 		}
 	}
 
-	public static final class JsonAxisColumn{
+	public static final class JsonAxisColumn {
 
 		private Long cufId;
 		private String label;
 		private JsonColumnPrototype columnPrototype;
 		private JsonOperation operation;
+
+		public JsonAxisColumn() {
+			super();
+		}
+
+		public JsonAxisColumn(AxisColumn axis) {
+			super();
+			this.label = axis.getLabel();
+			this.setColumnPrototype(new JsonColumnPrototype(axis.getColumn()));
+			this.setOperation(new JsonOperation(axis.getOperation()));
+			this.cufId = axis.getCufId();
+		}
 
 		public String getLabel() {
 			return label;
@@ -329,21 +345,9 @@ public class JsonChartInstance {
 			this.cufId = cufId;
 		}
 
-		public JsonAxisColumn() {
-			super();
-		}
-
-		public JsonAxisColumn(AxisColumn axis){
-			super();
-			this.label = axis.getLabel();
-			this.setColumnPrototype(new JsonColumnPrototype(axis.getColumn()));
-			this.setOperation(new JsonOperation(axis.getOperation()));
-			this.cufId = axis.getCufId();
-		}
-
 	}
 
-	public static final class JsonColumnPrototype{
+	public static final class JsonColumnPrototype {
 
 		private final ColumnType columnType;
 
@@ -373,7 +377,7 @@ public class JsonChartInstance {
 		}
 
 		public void setSpecializedEntityType(
-				JsonSpecializedEntityType specializedEntityType) {
+			JsonSpecializedEntityType specializedEntityType) {
 			this.specializedEntityType = specializedEntityType;
 		}
 
@@ -390,7 +394,7 @@ public class JsonChartInstance {
 		}
 	}
 
-	public static final class JsonOperation{
+	public static final class JsonOperation {
 
 		private String name;
 
@@ -408,7 +412,7 @@ public class JsonChartInstance {
 
 	}
 
-	public static final class JsonEntityReference{
+	public static final class JsonEntityReference {
 		private EntityType entityType;
 		private long id;
 		private String name;
@@ -469,7 +473,7 @@ public class JsonChartInstance {
 		}
 	}
 
-	public static final class JsonFilter{
+	public static final class JsonFilter {
 
 		private Long cufId;
 		private List<String> values;
@@ -486,18 +490,23 @@ public class JsonChartInstance {
 		public List<String> getValues() {
 			return values;
 		}
+
 		public void setValues(List<String> values) {
 			this.values = values;
 		}
+
 		public JsonColumnPrototype getColumnPrototype() {
 			return columnPrototype;
 		}
+
 		public void setColumnPrototype(JsonColumnPrototype columnPrototype) {
 			this.columnPrototype = columnPrototype;
 		}
+
 		public JsonOperation getOperation() {
 			return operation;
 		}
+
 		public void setOperation(JsonOperation operation) {
 			this.operation = operation;
 		}

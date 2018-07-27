@@ -73,30 +73,30 @@ import com.querydsl.core.Tuple;
  * <h1>Column types</h1>
  *
  * <p>
- * A column represent a logical attribute of an entity. Attributes are said logical because they may or may not directly relate 
+ * A column represent a logical attribute of an entity. Attributes are said logical because they may or may not directly relate
  * to a database column : they represent a business information in a broader sense, which will be reconstructed from other raw data when necessary.
- * Please note that the column type thus refer to its natural or artificial nature (like 'label' or 'number of executions last month'), as 
+ * Please note that the column type thus refer to its natural or artificial nature (like 'label' or 'number of executions last month'), as
  * opposed to the underlying data type (eg 'integer' or 'date').
  * </p>
- * 
+ *
  * <p>
- * 	An exception to this are the custom field columns, which have a different semantic : a custom field column here is "custom field of type X" of an entity. 
- * 	An example for instance is "a custom field of type date of a TestCase". Here the column doesn't hold the name of the attribute, as opposed to the other columns described 
+ * 	An exception to this are the custom field columns, which have a different semantic : a custom field column here is "custom field of type X" of an entity.
+ * 	An example for instance is "a custom field of type date of a TestCase". Here the column doesn't hold the name of the attribute, as opposed to the other columns described
  * 	above. This discrepancy of the model stems from the need of having a unmodifiable set of {@link ColumnPrototype}, statically defined in the database as referential data.
- *  This requirement is incompatible with the custom fields, which are essentially dynamic. The alternative would have been to manage (CRUD-like) a moving set of column 
+ *  This requirement is incompatible with the custom fields, which are essentially dynamic. The alternative would have been to manage (CRUD-like) a moving set of column
  *  prototypes that reflect the state of the custom fields.
  * </p>
- *  
+ *
  * <p>
  * 	You can check a column type by looking at {@link ColumnPrototype#getColumnType()} :
  * </p>
- * 
+ *
  *  <ul>
  *  	<li>{@link ColumnType#ATTRIBUTE} : represents a normal attribute - eg it maps directly to a database column</li>
  *  	<li>{@link ColumnType#CALCULATED} : represents a derived attribute, that results from one or more database columns that may span over several tables </li>
  *  	<li>{@link ColumnType#CUF} : represents a custom field, here a special case of calculated column. See above for details.
  *  </ul>
- *  
+ *
  * <p>
  * 	The column type has technical implications on the final shape of the query that will be generated. Read on to know more on how these "logical" columns are processed
  * and tied into the query.
@@ -125,14 +125,14 @@ import com.querydsl.core.Tuple;
  * 	These columns appear in the select clause and will be subject to an aggregation method (count, sum etc). The aggregation is specified in the MeasureColumn.
  * 	They appear in the select clause after the axis columns, and keep the same order as in the list defined in the ChartDefinition.
  * </p>
- * 
+ *
  * <p>
  * 	Most of the time no specific attribute will be specified : in this case the measure column defaults to the id of the entity.
  * 	For instance consider a measure which aggregation is 'count'. If the user is interested to know how many test cases match the given filters,
  * 	the aggregation should be made on the test case ids. However if the user picked something more specific - like the test case labels -, the semantics
- * 	becomes how many different labels exist within the test cases that match the filter. 
+ * 	becomes how many different labels exist within the test cases that match the filter.
  * </p>
- * 
+ *
  *
  * <h1>Query plan</h1>
  *
@@ -178,7 +178,7 @@ import com.querydsl.core.Tuple;
  *
  *  </p>
  *
- * 	<p>Following the ChartDefinition a main query will be generated, that will cover a 
+ * 	<p>Following the ChartDefinition a main query will be generated, that will cover a
  * 	a subset of this domain (or entirely). The specifics of its construction depend on the "Root entity", "Target entities" and
  * 	"Support entities", those concepts are defined below. </p>
  *
@@ -249,8 +249,8 @@ import com.querydsl.core.Tuple;
  * <h4>logical combination</h4>
  *
  * <p>
- * 	Each Filter apply to one column that belong to a Target entity (eg, TestCase.label). 
- *  Usually multiple filters will apply to several columns, but one can also stack multiple Filters on the 
+ * 	Each Filter apply to one column that belong to a Target entity (eg, TestCase.label).
+ *  Usually multiple filters will apply to several columns, but one can also stack multiple Filters on the
  *  same column (eg TestCase.label = 'bob', TestCase.label = 'mike').
  * </p>
  *
@@ -285,7 +285,7 @@ import com.querydsl.core.Tuple;
  * </p>
  *
  * <p>
- * 	Subqueries have them own Query plan, and are joined with the main query as follow : the Target entity of the outer (main) query 
+ * 	Subqueries have them own Query plan, and are joined with the main query as follow : the Target entity of the outer (main) query
  *  of the calculated column will join on the Root entity of the subquery (usually its axis). Entities are joined on their ids.
  * 	We choose to use correlated subqueries (joining them as described above) even when an uncorellated would do fine, because in
  * practice a clause
@@ -445,7 +445,7 @@ public class ChartDataFinder {
 	private void postProcessAbsciss(List<Object[]> abscissa, ChartSeries chartSeries, DetailedChartQuery definition) {
 		List<AxisColumn> columns = definition.getAxis();
 		for (int i = 0; i < columns.size(); i++) {
-			postProcessColumn(abscissa, columns, i);
+			postProcessColumn(abscissa,chartSeries, columns, i);
 		}
 		chartSeries.setAbscissa(abscissa);
 	}
@@ -454,10 +454,10 @@ public class ChartDataFinder {
 	 * As 1.13.3 we only need to postprocess infolist items. If another fancy business rule appears,
 	 * change the if to switch, and branch other absciss post process here
      */
-	private void postProcessColumn(List<Object[]> abscissa, List<AxisColumn> columns, int i) {
+	private void postProcessColumn(List<Object[]> abscissa, ChartSeries chartSeries, List<AxisColumn> columns, int i) {
 		AxisColumn axisColumn =  columns.get(i);
 		if (axisColumn.getDataType() == DataType.INFO_LIST_ITEM){
-			postProcessInfoListItem(abscissa, i);
+			postProcessInfoListItem(abscissa,chartSeries, i);
 		}
 	}
 
@@ -466,12 +466,15 @@ public class ChartDataFinder {
 	 * select count(*), CODE from INFOLIST_ITEM group by CODE, and we want the label :
 	 * with i18n support if the INFOLIST_ITEM is in default system list
      */
-	private void postProcessInfoListItem(List<Object[]> abscissa, int i) {
+	private void postProcessInfoListItem(List<Object[]> abscissa, ChartSeries chartSeries, int i) {
+		List<String> colours = new ArrayList<>();
 		for (Object[] obj : abscissa) {
             String code = obj[i].toString();
             InfoListItem infoListItem = infoListItemDao.findByCode(code);
             obj[i] = infoListItem.getLabel();
+			colours.add(infoListItem.getColour()) ;
         }
+        chartSeries.setColours(colours);
 	}
 
 

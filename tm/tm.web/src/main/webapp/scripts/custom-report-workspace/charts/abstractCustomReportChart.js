@@ -70,27 +70,36 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 				return this.model.get('vueConf');
 			},
 
-			// a level enum or an executionStatus will have it's own set of colors, otherwise we will give the default colors from jqplot
-			setColors: function (finalConf, legends) {
+			// checks if one of the axis has a datatype corresponding to a fixed list, for which we have colours by default
+			isFixedList: function () {
 				var axis = this.getAxis();
-				var colors = [];
+				var dataTypeWithFixedColor = ["LEVEL_ENUM", "EXECUTION_STATUS"];
+
 				// test on the x axis
 				var xAxisDatatype = axis[0].columnPrototype.dataType;
-				var xShouldGetColors = xAxisDatatype === "LEVEL_ENUM" || xAxisDatatype === "EXECUTION_STATUS";
+				var xShouldGetColors = dataTypeWithFixedColor.includes(xAxisDatatype);
 
 				// test on the y axis if present
 				if (typeof axis[1] !== 'undefined') {
 					var yAxisDatatype = axis[1].columnPrototype.dataType;
-					var yShouldGetColors = yAxisDatatype === "LEVEL_ENUM" || yAxisDatatype === "EXECUTION_STATUS";
+					var yShouldGetColors = dataTypeWithFixedColor.includes(yAxisDatatype);
 				}
 
-				var shouldGetColors = xShouldGetColors || yShouldGetColors;
+				return xShouldGetColors || yShouldGetColors;
+			},
 
-				if (shouldGetColors) {
+			// By default a chart won't have any color, so we won't change the finalConf.seriesColors => jqplot will use its default colours
+			// In the case of an infolist, the model will have colours fetched from the server, the info is stored in the jsonChart
+			// In the case of a level enum or an execution status, we will get the colours from the colorUtils
+			setColors: function (finalConf, legends) {
+
+				var colors = this.model.get('colours');
+
+				if (colors.length === 0 && this.isFixedList()) {
 					colors = colorUtils.getAssociatedColors(legends);
 				}
 
-				if (typeof colors !== 'undefined' && colors.length > 0) {
+				if (colors.length > 0) {
 					finalConf.seriesColors = colors;
 				}
 			},

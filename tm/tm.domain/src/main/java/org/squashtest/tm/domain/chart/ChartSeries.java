@@ -55,6 +55,8 @@ public class ChartSeries {
 
 	private List<Object[]> abscissa;
 
+	private List<String> colours = new ArrayList<>();
+
 	// I insist, this must a LinkedHashMap (or any Map which iterator returns elements in the order they were inserted)
 	private LinkedHashMap<String, List<Object>> series = new LinkedHashMap<>();
 
@@ -129,5 +131,11 @@ public class ChartSeries {
 		return abscissa;
 	}
 
+	public List<String> getColours() {
+		return colours;
+	}
 
+	public void setColours(List<String> colours) {
+		this.colours = colours;
+	}
 }

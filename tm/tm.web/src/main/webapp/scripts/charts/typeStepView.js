@@ -142,7 +142,8 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 					}],
 					"filters": [],
 					"abscissa": [["201502"], ["201503"], ["201504"], ["201505"], ["201506"], ["201507"], ["201508"], ["201509"], ["201510"], ["201511"]],
-					"series": {"": [1, 1, 3, 1, 1, 1, 4, 2, 5, 2]}
+					"series": {"": [1, 1, 3, 1, 1, 1, 4, 2, 5, 2]},
+					"colours" : []
 				};
 
 			},
@@ -185,7 +186,8 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 						"operation": {"name": "NONE"}
 					}],
 					"abscissa": [[value(1), serie(1)], [value(2), serie(1)], [value(3), serie(1)], [value(4), serie(1)], [value(1), serie(2)], [value(2), serie(2)], [value(3), serie(2)], [value(4), serie(2)], [value(1), serie(3)], [value(2), serie(3)], [value(3), serie(3)], [value(4), serie(3)], [value(1), serie(4)], [value(2), serie(4)], [value(3), serie(4)], [value(4), serie(4)]],
-					"series": {"": [0, 1, 2, 4, 0, 1, 4, 2, 0, 1, 4, 1, 0, 0, 5, 0]}
+					"series": {"": [0, 1, 2, 4, 0, 1, 4, 2, 0, 1, 4, 1, 0, 0, 5, 0]},
+					"colours" : []
 				};
 
 			},
