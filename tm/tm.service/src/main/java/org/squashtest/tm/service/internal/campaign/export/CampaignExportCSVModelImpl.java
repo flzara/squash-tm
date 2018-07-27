@@ -559,7 +559,7 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 					Predicate<ExecutionStep> predicate = step -> step.getExecutionStatus() == ExecutionStatus.SUCCESS;
 					List<ExecutionStep> steps = itp.getLatestExecution().getSteps();
 					int success = (int) steps.stream().filter(predicate).count();
-					successRate = success / steps.size() * 100;
+					successRate = success * 100/ steps.size() ;
 				}
 			}
 			return successRate;
