@@ -21,12 +21,7 @@
 package org.squashtest.tm.service.internal.campaign.export;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.inject.Inject;
 
@@ -207,6 +202,12 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 		headerCells.add(new CellImpl("TC_TYPE"));
 		headerCells.add(new CellImpl("TC_STATUS"));
 
+		Collections.sort(campCUFModel, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
+		Collections.sort(iterCUFModel, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
+		Collections.sort(tcCUFModel, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
+
+
+
 		// campaign custom fields
 		for (CustomField cufModel : campCUFModel) {
 			headerCells.add(new CellImpl("CPG_CUF_" + cufModel.getCode()));
@@ -378,21 +379,26 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 		private String getValue(Collection<CustomFieldValue> values, CustomField model) {
 
 			if (values != null) {
-				for (CustomFieldValue value : values) {
-					CustomField customField = value.getBinding().getCustomField();
-					if (customField.getCode().equals(model.getCode())) {
-						if (customField.getInputType().equals(InputType.NUMERIC)) {
-							return NumericCufHelper.formatOutputNumericCufValue(value.getValue());
-						}
-						return value.getValue();
-					}
-				}
+				return formatOutputValue(values, model);
 			}
-
 			return "";
 		}
 
-		private int getNbIssues(IterationTestPlanItem itp) {
+		private String formatOutputValue(Collection<CustomFieldValue> values ,CustomField model) {
+			for (CustomFieldValue value : values) {
+				CustomField customField = value.getBinding().getCustomField();
+				if (customField.getCode().equals(model.getCode())) {
+					if (customField.getInputType().equals(InputType.NUMERIC)) {
+						return NumericCufHelper.formatOutputNumericCufValue(value.getValue());
+					}
+					return value.getValue();
+				}
+			}
+			return "";
+		}
+
+
+			private int getNbIssues(IterationTestPlanItem itp) {
 
 			return bugTrackerService.findNumberOfIssueForItemTestPlanLastExecution(itp.getId());
 

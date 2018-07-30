@@ -284,6 +284,12 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 		headerCells.add(new CellImpl("EXEC_STEP_#_ISSUES"));
 		headerCells.add(new CellImpl("EXEC_STEP_COMMENT"));
 
+		Collections.sort(campCUFModel, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
+		Collections.sort(iterCUFModel, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
+		Collections.sort(tcCUFModel, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
+		Collections.sort(execCUFModel, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
+		Collections.sort(esCUFModel, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
+
 		// campaign custom fields
 		for (CustomField cufModel : campCUFModel) {
 			headerCells.add(new CellImpl("CPG_CUF_" + cufModel.getCode()));
@@ -605,17 +611,22 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 		private String getValue(Collection<CustomFieldValue> values, CustomField model) {
 
 			if (values != null) {
-				for (CustomFieldValue value : values) {
-					CustomField customField = value.getBinding().getCustomField();
-					if (customField.getCode().equals(model.getCode())) {
-						if (customField.getInputType().equals(InputType.NUMERIC)) {
-							return NumericCufHelper.formatOutputNumericCufValue(value.getValue());
-						}
-						return value.getValue();
-					}
-				}
+				return formatOutputValue(model, values);
 			}
 
+			return "";
+		}
+
+		private String formatOutputValue(CustomField model, Collection<CustomFieldValue> values) {
+			for (CustomFieldValue value : values) {
+				CustomField customField = value.getBinding().getCustomField();
+				if (customField.getCode().equals(model.getCode())) {
+					if (customField.getInputType().equals(InputType.NUMERIC)) {
+						return NumericCufHelper.formatOutputNumericCufValue(value.getValue());
+					}
+					return value.getValue();
+				}
+			}
 			return "";
 		}
 
@@ -644,7 +655,6 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 
 		private String formatStepRequirements() {
 			String res;
-			// WARNING !! removed try{...}catch(NPE)
 			if (execStep != null && execStep.getReferencedTestStep() != null && ((ActionTestStep) execStep.getReferencedTestStep()).getRequirementVersionCoverages() != null) {
 				/*
 				 * should fix the mapping of execution steps -> action step : an execution step cannot reference a

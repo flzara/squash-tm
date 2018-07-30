@@ -174,7 +174,7 @@
 
 	@NamedQuery(name = "requirement.excelRequirementExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cfv.largeValue, cf.inputType, case when cfv.class = TagsValue then group_concat(so.label, 'order by', so.label, 'asc', '|')  else '' end "
 			+ "from CustomFieldValue cfv join cfv.binding binding join binding.customField cf left join cfv.selectedOptions so "
-			+ "where cfv.boundEntityId=:requirementVersionId and cfv.boundEntityType = 'REQUIREMENT_VERSION' group by cfv.id, cf.id"),
+			+ "where cfv.boundEntityId=:requirementVersionId and cfv.boundEntityType = 'REQUIREMENT_VERSION' group by cf.id,cfv.id"),
 
 	 @NamedQuery(name= "requirement.findAllRequirementIdsFromMilestones", query= "Select Distinct req.id From Requirement req Join req.versions reqVer Join reqVer.milestones milestones Where milestones.id in (:milestoneIds)"),
 	// Synchronized requirements
@@ -341,7 +341,7 @@
 
 	@NamedQuery(name = "testCase.excelExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cfv.largeValue, cf.inputType, case when cfv.class = TagsValue then group_concat(so.label, 'order by', so.label, 'asc', '|')  else '' end "
 	+ "from CustomFieldValue cfv join cfv.binding binding join binding.customField cf left join cfv.selectedOptions so "
-	+ "where cfv.boundEntityId in (:testCaseIds) and cfv.boundEntityType = 'TEST_CASE' group by cfv.id, cf.id"),
+	+ "where cfv.boundEntityId in (:testCaseIds) and cfv.boundEntityType = 'TEST_CASE' group by cf.id, cfv.id"),
 
 	@NamedQuery(name = "testCase.excelExportCoverage", query = "select verifedReqV.versionNumber, req.id, verifiedTc.id, proj.name from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion verifedReqV join verifedReqV.requirement req join  rvc.verifyingTestCase verifiedTc  join req.project proj where verifiedTc in (:testCaseIds)"),
 	@NamedQuery(name = "requirementVersion.excelExportCoverage", query = "select verifedReqV.versionNumber, req.id, verifiedTc.id, proj.name from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion verifedReqV join verifedReqV.requirement req join  rvc.verifyingTestCase verifiedTc  join req.project proj where verifedReqV.id in (:versionIds)"),
@@ -430,7 +430,7 @@
 	+ "where cfv.boundEntityId = st.id "
 	+ "and cfv.boundEntityType = 'TEST_STEP' "
 	+ "and tc.id in (:testCaseIds) "
-	+ "group by cfv.id, cf.id"),
+	+ "group by  cf.id, cfv.id"),
 
 	@NamedQuery(name = "testStep.findBasicInfosByTcId",
 	query = "select case when st.class = ActionTestStep then 'ACTION' else 'CALL' end as steptype, "
