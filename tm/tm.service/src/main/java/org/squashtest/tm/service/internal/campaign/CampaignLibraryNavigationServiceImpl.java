@@ -138,7 +138,7 @@ public class CampaignLibraryNavigationServiceImpl
 	private ActiveMilestoneHolder activeMilestoneHolder;
 
 	@Inject
-	private CustomFieldBindingFinderService customFieldBindingFinderService;
+	private CustomFieldBindingFinderService service;
 
 	@Inject
 	private PrivateCustomFieldValueService customValueService;
@@ -486,7 +486,7 @@ public class CampaignLibraryNavigationServiceImpl
 	}
 
 	private void generateCUF(CampaignFolder newFolder){
-		List<CustomFieldBinding> projectsBindings = customFieldBindingFinderService.findCustomFieldsForProjectAndEntity(newFolder.getProject().getId(), BindableEntity.CAMPAIGN_FOLDER);
+		List<CustomFieldBinding> projectsBindings = service.findCustomFieldsForProjectAndEntity(newFolder.getProject().getId(), BindableEntity.CAMPAIGN_FOLDER);
 		for(CustomFieldBinding binding: projectsBindings) {
 			customValueService.cascadeCustomFieldValuesCreationNotCreatedFolderYet(binding, newFolder);
 		}

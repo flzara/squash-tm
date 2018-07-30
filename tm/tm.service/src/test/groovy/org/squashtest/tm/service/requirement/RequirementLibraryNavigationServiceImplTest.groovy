@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.service.requirement
 
-import org.squashtest.tm.domain.campaign.CampaignLibrary
-import org.squashtest.tm.domain.customfield.BindableEntity
-import org.squashtest.tm.domain.customfield.CustomField
-import org.squashtest.tm.domain.customfield.CustomFieldBinding
-import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter
 import org.squashtest.tm.domain.requirement.NewRequirementVersionDto
@@ -57,11 +51,11 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 	RequirementDao requirementDao = Mock()
 	PermissionEvaluationService permissionService = Mock()
 	ProjectFilterModificationService projectFilterModificationService = Mock()
+	PrivateCustomFieldValueService customFieldValueManager = Mock()
 	InfoListItemFinderService infoListItemService = Mock()
 	MilestoneMembershipManager milestoneService = Mock()
-	PrivateCustomFieldValueService customValueService = Mock()
-	CustomFieldBindingFinderService customFieldBindingFinderService  = Mock()
-	MockFactory mockFactory = new MockFactory()
+
+	MockFactory mockFactory = new MockFactory();
 
 	RequirementVersion version;	// used in some hacks
 
@@ -80,57 +74,30 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 		permissionService.hasRoleOrPermissionOnObject(_, _, _) >> true
 		service.infoListItemService = infoListItemService
 		service.milestoneService = milestoneService
-		service.customFieldBindingFinderService = customFieldBindingFinderService
-		service.customValueService = customValueService
 
 		use (ReflectionCategory) {
 			AbstractLibraryNavigationService.set(field: "permissionService", of: service, to: permissionService)
-			AbstractLibraryNavigationService.set(field: "customFieldValuesService", of: service, to: customValueService)
+			AbstractLibraryNavigationService.set(field: "customFieldValuesService", of: service, to: customFieldValueManager)
 		}
 
-		customValueService.findAllCustomFieldValues(_) >> []
-		customValueService.findAllCustomFieldValues(_, _) >> []
-
+		customFieldValueManager.findAllCustomFieldValues(_) >> []
+		customFieldValueManager.findAllCustomFieldValues(_, _) >> []
 	}
 
 	def "should add folder to library and persist the folder"() {
 		given:
-		RequirementFolder newFolder = Mock()
-
-		and:
-		Project project = Mock()
-		newFolder.getProject() >> project
-		project.getId() >>  10L
-
-		and:
-		CustomField cuf = Mock()
-		cuf.getId() >> 4L
-
-		BindableEntity entity1 = Mock()
-		BindableEntity entity2 = Mock()
-
-		CustomFieldBinding binding1 = Mock()
-		CustomFieldBinding binding2 = Mock()
-
-		binding1.getBoundEntity() >> entity1
-		binding1.getCustomField() >> cuf
-
-		binding2.getBoundEntity() >> entity2
-		binding2.getCustomField() >> cuf
-
-		List<CustomFieldBinding> bindings = [binding1, binding2]
-		customFieldBindingFinderService.findCustomFieldsForProjectAndEntity(10L, BindableEntity.REQUIREMENT_FOLDER) >> bindings
+		RequirementFolder f = new RequirementFolder(name: 'foo')
 
 		and:
 		RequirementLibrary lib = Mock()
 		requirementLibraryDao.findById(10) >> lib
-		newFolder.getContent()>> []
+
 		when:
-		service.addFolderToLibrary(10, newFolder)
+		service.addFolderToLibrary(10l, f)
 
 		then:
-		1 * lib.addContent(newFolder)
-		1 * requirementFolderDao.persist(newFolder)
+		1 * lib.addContent(f)
+		1 * requirementFolderDao.persist(f)
 	}
 
 	def "should return root content of library"() {
