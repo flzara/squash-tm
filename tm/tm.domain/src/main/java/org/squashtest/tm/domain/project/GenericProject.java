@@ -61,7 +61,6 @@ import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
-import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -84,7 +83,7 @@ import org.squashtest.tm.exception.NoBugTrackerBindingException;
 @DiscriminatorColumn(name = "PROJECT_TYPE", discriminatorType = DiscriminatorType.STRING)
 @Entity
 @Table(name = "PROJECT")
-public abstract class GenericProject implements Identified, AttachmentHolder, BoundEntity {
+public abstract class GenericProject implements Identified, AttachmentHolder {
 
 	@Id
 	@Column(name = "PROJECT_ID")

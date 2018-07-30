@@ -77,15 +77,6 @@
 
 	<at:attachment-bloc editable="${ editable }" workspaceName="${ workspaceName }" attachListId="${ library.attachmentList.id}" attachmentSet="${attachments}"/>
 
-  <%-- CUF panel --%>
-  <%--<c:if test="${hasCuf}">--%>
-  <comp:toggle-panel id="folder-cuf-panel" titleKey="generics.customfieldvalues.title"  open="true">
-    <jsp:attribute name="body">
-          	<div id="requirement-CUF-table"  class="display-table">
-            </div>
-  	</jsp:attribute>
-  </comp:toggle-panel>
-    <%--</c:if>--%>
 </div>
 
 <script type="text/javascript">
@@ -94,7 +85,7 @@ var shouldShowDashboard = ${shouldShowDashboard};
 
 require(["common"], function() {
 
-		require(["jquery","squash.basicwidgets","test-case-library-management", "favorite-dashboard","workspace.routing","custom-field-values"], function($,basicwidg, TCLM, favoriteMain, routing,cufvalues){
+		require(["jquery","squash.basicwidgets","test-case-library-management", "favorite-dashboard"], function($,basicwidg, TCLM, favoriteMain){
 			$(function(){
 			basicwidg.init();
 
@@ -109,17 +100,7 @@ require(["common"], function() {
             cacheKey : 'dashboard-tclib${library.id}'
           });
 			  }
-        //      if (hasCufs) {
-        var cufurl = routing.buildURL('customfield.values.get',${library.project.id}, 'PROJECT'),
-          mode = (${ editable }) ? 'jeditable':  'static';
-        $.getJSON(cufurl)
-          .success(function (jsonCufs) {
-               cufvalues.infoSupport.init("#requirement-CUF-table", jsonCufs, mode);
-          });
-//      }
 		});
-
-
 	});
 });
 </script>

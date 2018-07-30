@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.domain.project;
 
-import org.squashtest.tm.domain.customfield.BindableEntity;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
@@ -49,21 +47,6 @@ public class ProjectTemplate extends GenericProject {
 	public void accept(ProjectVisitor visitor) {
 		visitor.visit(this);
 
-	}
-
-	@Override
-	public Long getBoundEntityId() {
-		return getId();
-	}
-
-	@Override
-	public BindableEntity getBoundEntityType() {
-		return  BindableEntity.PROJECT;
-	}
-
-	@Override
-	public Project getProject() {
-		return null;
 	}
 
 }

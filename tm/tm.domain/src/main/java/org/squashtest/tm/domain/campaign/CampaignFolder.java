@@ -36,18 +36,15 @@ import javax.persistence.Transient;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.FolderSupport;
 import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.library.NodeVisitor;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "CLN_ID")
-public class CampaignFolder extends CampaignLibraryNode implements Folder<CampaignLibraryNode>, BoundEntity {
+public class CampaignFolder extends CampaignLibraryNode implements Folder<CampaignLibraryNode> {
 	/**
 	 * Delegate implementation of folder responsibilities.
 	 */
@@ -144,14 +141,7 @@ public class CampaignFolder extends CampaignLibraryNode implements Folder<Campai
 	}
 
 
-	@Override
-	public Long getBoundEntityId() {
-		return getId();
-	}
 
-	@Override
-	public BindableEntity getBoundEntityType() {
-		return BindableEntity.CAMPAIGN_FOLDER;
-	}
+
 
 }

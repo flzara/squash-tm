@@ -93,19 +93,7 @@
 	</comp:toggle-panel>
 
 
-    <%-- CUF panel --%>
-  <c:if test="${hasFolderCUF}">
-    <comp:toggle-panel id="folder-cuf-panel" titleKey="generics.customfieldvalues.title"  open="true">
-      <jsp:attribute name="body">
-          	<div id="testcase-CUF-table"  class="display-table">
-            </div>
-   		</jsp:attribute>
-   </comp:toggle-panel>
-  </c:if>
-
-
-
-  <%-- attachments panel --%>
+	<%-- attachments panel --%>
 
 	<at:attachment-bloc editable="${ editable }" workspaceName="${ workspaceName }" attachListId="${ folder.attachmentList.id }" attachmentSet="${attachments}"/>
 
@@ -113,12 +101,10 @@
 
 	var identity = { resid : ${folder.id}, restype : 'test-case-folders'  };
 	var shouldShowDashboard = ${shouldShowDashboard};
-  var hasFolderCUF = ${hasFolderCUF};
-
 
 	require(["common"], function(){
-			require(["jquery", "squash.basicwidgets","contextual-content-handlers",  "test-case-folder-management", "favorite-dashboard","custom-field-values","workspace.routing"],
-					function($, basic, contentHandlers, TCFM, favoriteMain,cufvalues,routing){
+			require(["jquery", "squash.basicwidgets","contextual-content-handlers",  "test-case-folder-management", "favorite-dashboard"],
+					function($, basic, contentHandlers, TCFM, favoriteMain){
 		$(function(){
 
 				basic.init();
@@ -141,14 +127,6 @@
             cacheKey : 'dashboard-tcfold${folder.id}'
           });
          }
-      if (hasFolderCUF) {
-        var cufurl = routing.buildURL('customfield.values.get',${folder.id}, 'TESTCASE_FOLDER'),
-          mode = (${ editable }) ? 'jeditable':  'static';
-        $.getJSON(cufurl)
-          .success(function (jsonCufs) {
-                cufvalues.infoSupport.init("#testcase-CUF-table", jsonCufs, mode);
-          });
-      }
 			});
 		});
 	});

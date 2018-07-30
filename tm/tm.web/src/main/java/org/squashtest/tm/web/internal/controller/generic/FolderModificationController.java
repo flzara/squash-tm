@@ -26,14 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.attachment.Attachment;
-import org.squashtest.tm.domain.campaign.CampaignFolder;
-import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.library.Folder;
-import org.squashtest.tm.domain.requirement.RequirementFolder;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.library.FolderModificationService;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
@@ -53,9 +46,6 @@ public abstract class FolderModificationController<FOLDER extends Folder<?>> {
 	@Inject
 	private CustomReportDashboardService customReportDashboardService;
 
-	@Inject
-	private CustomFieldValueFinderService cufValueService;
-
 	public void setCustomReportDashboardService(CustomReportDashboardService customReportDashboardService) {
 		this.customReportDashboardService = customReportDashboardService;
 	}
@@ -63,27 +53,12 @@ public abstract class FolderModificationController<FOLDER extends Folder<?>> {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showFolder(@PathVariable long folderId, HttpServletRequest request) {
 		FOLDER folder = getFolderModificationService().findFolder(folderId);
-		boolean hasFolderCUF = false;
-		BindableEntity entity = null;
-		if(folder.getClass() == CampaignFolder.class){
-			entity= BindableEntity.CAMPAIGN_FOLDER;
-		} else if(folder.getClass() == RequirementFolder.class){
-			entity = BindableEntity.REQUIREMENT_FOLDER;
-		}else if(folder.getClass() == TestCaseFolder.class){
-			entity = BindableEntity.TESTCASE_FOLDER;
-		}else if(folder.getClass() == CustomReportFolder.class){
-			entity = BindableEntity.CUSTOM_REPORT_FOLDER;
-		}
 
-		if(entity != null) {
-			hasFolderCUF = cufValueService.hasCustomFields(folder.getId(), entity);
-		}
 		ModelAndView mav = new ModelAndView("fragment/generics/edit-folder");
 		mav.addObject("folder", folder);
 		mav.addObject("updateUrl", getUpdateUrl(request.getServletPath() + StringUtils.defaultString(request.getPathInfo())));
 		mav.addObject("workspaceName", getWorkspaceName());
 		mav.addObject("attachments", findAttachments(folder));
-		mav.addObject("hasFolderCUF", hasFolderCUF);
 
 		//favorite dashboard part
 		Workspace workspace = Workspace.getWorkspaceFromShortName(getWorkspaceName());

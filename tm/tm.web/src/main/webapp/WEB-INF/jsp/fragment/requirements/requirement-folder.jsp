@@ -89,17 +89,6 @@
 	</comp:toggle-panel>
 
 
-
-    <%-- CUF panel --%>
-  <c:if test="${hasFolderCUF}">
-    <comp:toggle-panel id="folder-cuf-panel" titleKey="generics.customfieldvalues.title"  open="true">
-      <jsp:attribute name="body">
-            	<div id="requirement-CUF-table"  class="display-table">
-              </div>
-   		</jsp:attribute>
-   </comp:toggle-panel>
-  </c:if>
-
 	<%-- attachments panel --%>
 
 	<at:attachment-bloc editable="${ editable }" workspaceName="${ workspaceName }" attachListId="${ folder.attachmentList.id }" attachmentSet="${attachments}"/>
@@ -107,12 +96,11 @@
 	<script type="text/javascript">
 
 	var identity = { resid : ${folder.id}, restype : 'requirement-folders'  };
-	var hasFolderCUF = ${hasFolderCUF};
 	var shouldShowDashboard = ${shouldShowDashboard};
 
 	require(["common"], function(){
-			require(["jquery", "squash.basicwidgets","contextual-content-handlers",  "requirement-folder-management", "favorite-dashboard","custom-field-values","workspace.routing"],
-					function($, basic, contentHandlers, RFM, favoriteMain,cufvalues,routing){
+			require(["jquery", "squash.basicwidgets","contextual-content-handlers",  "requirement-folder-management", "favorite-dashboard"],
+					function($, basic, contentHandlers, RFM, favoriteMain){
 		$(function(){
 
 				basic.init();
@@ -121,6 +109,7 @@
 
 				nameHandler.identity = identity;
 				nameHandler.nameDisplay = "#folder-name";
+
 
 				//init the custom dashboard
 				if(shouldShowDashboard){
@@ -135,14 +124,6 @@
             cacheKey : 'dashboard-reqfold${folder.id}'
            });
          }
-      if (hasFolderCUF) {
-        var cufurl = routing.buildURL('customfield.values.get',${folder.id}, 'REQUIREMENT_FOLDER'),
-          mode = (${ editable }) ? 'jeditable':  'static';
-        $.getJSON(cufurl)
-          .success(function (jsonCufs) {
-            cufvalues.infoSupport.init("#requirement-CUF-table", jsonCufs, mode);
-          });
-      }
 			});
 		});
 	});

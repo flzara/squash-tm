@@ -24,87 +24,22 @@ import javax.validation.constraints.NotNull;
 
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 import org.squashtest.tm.domain.campaign.Campaign;
-import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
-import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseFolder;
 
 /**
  * Enumerates the entities which can be bounded to custom fields.
- *
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
 public enum BindableEntity implements Internationalizable {
 
-	PROJECT() {
-		@Override
-		public Class<?> getReferencedClass() {
-			return Project.class;
-		};
-
-		@Override
-		public RenderingLocation[] getValidRenderingLocations() {
-			return new RenderingLocation[0];
-		}
-
-	},
-	REQUIREMENT_FOLDER() {
-		@Override
-		public Class<?> getReferencedClass() {
-			return RequirementFolder.class;
-		};
-
-		@Override
-		public RenderingLocation[] getValidRenderingLocations() {
-			return new RenderingLocation[0];
-		}
-
-	},
-	CAMPAIGN_FOLDER() {
-		@Override
-		public Class<?> getReferencedClass() {
-			return CampaignFolder.class;
-		};
-
-		@Override
-		public RenderingLocation[] getValidRenderingLocations() {
-			return new RenderingLocation[0];
-		}
-
-	},
-	TESTCASE_FOLDER() {
-		@Override
-		public Class<?> getReferencedClass() {
-			return TestCaseFolder.class;
-		};
-
-		@Override
-		public RenderingLocation[] getValidRenderingLocations() {
-			return new RenderingLocation[0];
-		}
-
-	},
-	CUSTOM_REPORT_FOLDER() {
-		@Override
-		public Class<?> getReferencedClass() {
-			return CustomReportFolder.class;
-		};
-
-		@Override
-		public RenderingLocation[] getValidRenderingLocations() {
-			return new RenderingLocation[0];
-		}
-
-	},
 	TEST_CASE() {
 		@Override
 		public Class<?> getReferencedClass() {
@@ -117,6 +52,7 @@ public enum BindableEntity implements Internationalizable {
 		}
 
 	},
+
 	TEST_STEP() {
 
 		@Override
@@ -129,6 +65,7 @@ public enum BindableEntity implements Internationalizable {
 			return new RenderingLocation[] { RenderingLocation.STEP_TABLE };
 		}
 	},
+
 	CAMPAIGN() {
 		@Override
 		public Class<?> getReferencedClass() {
@@ -181,7 +118,7 @@ public enum BindableEntity implements Internationalizable {
 		public Class<?> getReferencedClass() {
 			return Execution.class;
 		};
-
+		
 		@Override
 		public RenderingLocation[] getValidRenderingLocations() {
 			return new RenderingLocation[0];
@@ -192,7 +129,7 @@ public enum BindableEntity implements Internationalizable {
 		public Class<?> getReferencedClass() {
 			return ExecutionStep.class;
 		};
-
+		
 		@Override
 		public RenderingLocation[] getValidRenderingLocations() {
 			return new RenderingLocation[] { RenderingLocation.STEP_TABLE };

@@ -30,8 +30,6 @@ import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.campaign.*;
 import org.squashtest.tm.domain.campaign.export.CampaignExportCSVModel;
-import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
@@ -40,7 +38,6 @@ import org.squashtest.tm.service.annotation.*;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.campaign.CampaignStatisticsService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
-import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.campaign.coercers.*;
@@ -48,7 +45,6 @@ import org.squashtest.tm.service.internal.campaign.export.CampaignExportCSVFullM
 import org.squashtest.tm.service.internal.campaign.export.CampaignExportCSVModelImpl;
 import org.squashtest.tm.service.internal.campaign.export.SimpleCampaignExportCSVModelImpl;
 import org.squashtest.tm.service.internal.campaign.export.WritableCampaignCSVModel;
-import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
 import org.squashtest.tm.service.internal.library.NodeDeletionHandler;
@@ -136,12 +132,6 @@ public class CampaignLibraryNavigationServiceImpl
 
 	@Inject
 	private ActiveMilestoneHolder activeMilestoneHolder;
-
-	@Inject
-	private CustomFieldBindingFinderService service;
-
-	@Inject
-	private PrivateCustomFieldValueService customValueService;
 
 	@Override
 	protected NodeDeletionHandler<CampaignLibraryNode, CampaignFolder> getDeletionHandler() {
@@ -475,21 +465,12 @@ public class CampaignLibraryNavigationServiceImpl
 	@PreventConcurrent(entityType = CampaignLibraryNode.class)
 	public void addFolderToFolder(@Id long destinationId, CampaignFolder newFolder) {
 		super.addFolderToFolder(destinationId, newFolder);
-		generateCUF(newFolder);
 	}
 
 	@Override
 	@PreventConcurrent(entityType = CampaignLibrary.class)
 	public void addFolderToLibrary(@Id long destinationId, CampaignFolder newFolder) {
 		super.addFolderToLibrary(destinationId, newFolder);
-		generateCUF(newFolder);
-	}
-
-	private void generateCUF(CampaignFolder newFolder){
-		List<CustomFieldBinding> projectsBindings = service.findCustomFieldsForProjectAndEntity(newFolder.getProject().getId(), BindableEntity.CAMPAIGN_FOLDER);
-		for(CustomFieldBinding binding: projectsBindings) {
-			customValueService.cascadeCustomFieldValuesCreationNotCreatedFolderYet(binding, newFolder);
-		}
 	}
 
 	@Override
@@ -560,5 +541,4 @@ public class CampaignLibraryNavigationServiceImpl
 
 	// ###################### /PREVENT CONCURRENCY OVERIDES
 	// ############################
-
 }
