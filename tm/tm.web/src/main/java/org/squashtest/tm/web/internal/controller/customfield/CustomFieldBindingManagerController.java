@@ -71,7 +71,7 @@ public class CustomFieldBindingManagerController {
 			List<CustomFieldBinding> executionBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.EXECUTION);
 			List<CustomFieldBinding> executionStepBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.EXECUTION_STEP);
 			List<CustomFieldBinding> projectsBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.PROJECT);
-			List<CustomFieldBinding> crFoldersBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.CUSTOM_REPORT_FOLDER);
+			List<CustomFieldBinding> crFoldersBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.REQUIREMENT_FOLDER);
 
 			mav = new ModelAndView("project-tabs/custom-field-binding.html");
 			mav.addObject("testCaseBindings", testCaseBindings);

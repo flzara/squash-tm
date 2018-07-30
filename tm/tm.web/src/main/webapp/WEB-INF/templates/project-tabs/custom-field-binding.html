@@ -98,7 +98,7 @@
 
   <div id="crFolders-binding-manager"
        th:include="project-tabs/custom-field-binding :: cuf-unit-binder"
-       th:with="HTMLID='crFolders',bindings=${crFoldersBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).CUSTOM_REPORT_FOLDER}">
+       th:with="HTMLID='crFolders',bindings=${crFoldersBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).REQUIREMENT_FOLDER}">
   </div>
 
 
@@ -159,10 +159,10 @@
           },
 
           crFoldersSettings : {
-            entityType : 'CUSTOM_REPORT_FOLDER',
+            entityType : 'REQUIREMENT_FOLDER',
             mainSelector : "#crFolders-binding-manager",
             tableDeferLoading : /*[[ ${crFoldersBindings.size()} ]]*/ 3,
-            tableDeleteMessageSecond : /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.CUSTOM_REPORT_FOLDER})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
+            tableDeleteMessageSecond : /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.REQUIREMENT_FOLDER})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
             tableRenderingLocations : []
           },
 
