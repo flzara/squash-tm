@@ -39,32 +39,5 @@
 			<div id="description-panel" class="tg-body">
 				{{{project-description}}}</div>
 		</div>
-    <div class="sq-tg expand">
-      <div class="tg-head">
-        <h3 th:text="#{generics.customfieldvalues.title}">desc</h3>
-      </div>
-      <div class="tg-body" id="folder-cuf-panel">
-        <div id="CUF-table" class="display-table">
-        </div>
-      </div>
-    </div>
 	</div>
-
-
-
-
-<script type="text/javascript">
-  require(["common"], function(){
-    require(["jquery","custom-field-values"],
-      function($, cufvalues){
-        var cufmode =  'jeditable';
-        $.getJSON(window.squashtm.app.router.cufurl).success(function (jsonCufs) {
-          cufvalues.infoSupport.init("#CUF-table", jsonCufs, cufmode);
-        });
-
-      });
-  });
-
-</script>
 </div>
-

@@ -759,8 +759,7 @@
 	@NamedQuery(name = "BoundEntityDao.findAllTestCaseFoldersIdsForProject", query = "select n.id from TestCaseLibraryNode n join n.project p where p.id = :projectId"),
 	@NamedQuery(name = "BoundEntityDao.findAllRequirementFoldersIdsForProject", query = "select n.id from RequirementLibraryNode n join n.project p where p.id = :projectId"),
 	@NamedQuery(name = "BoundEntityDao.findAllProjectIdsForProject", query = "select p.id from Project p where p.id = :projectId"),
-	@NamedQuery(name = "BoundEntityDao.findAllCustomReportFoldersIdsForProject", query = "select n.entityId from CustomReportLibraryNode n where n.library.project.id = :projectId"),
-	@NamedQuery(name = "BoundEntityDao.findCurrentCustomReportFoldersId", query = "select n.entityId from CustomReportLibraryNode n where n.id = :clnId and n.entityType = 'FOLDER'"),
+//	@NamedQuery(name = "BoundEntityDao.findAllCustomReportFoldersIdsForProject", query = "select n.id from CustomReportLibraryNode n join n.entity e join e.project p where p.id = :projectId"),
 
 
 	@NamedQuery(name = "BoundEntityDao.hasCustomFields", query = "select count(cfv) from CustomFieldValue cfv where cfv.boundEntityId = :boundEntityId and cfv.boundEntityType = :boundEntityType"),
