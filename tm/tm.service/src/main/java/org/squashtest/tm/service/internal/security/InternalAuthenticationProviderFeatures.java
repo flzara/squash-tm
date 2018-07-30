@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.security;
 
-import org.springframework.stereotype.Component;
 import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
 
 /**
@@ -29,9 +28,14 @@ import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatu
  * @author Gregory Fouquet
  * 
  */
-//@ApplicationComponent
-@Component
 public class InternalAuthenticationProviderFeatures implements AuthenticationProviderFeatures {
+
+	// make class Singleton
+	public static final InternalAuthenticationProviderFeatures INSTANCE = new InternalAuthenticationProviderFeatures();
+
+	// private constructor
+	private InternalAuthenticationProviderFeatures(){}
+
 	/**
 	 * @return false
 	 * @see org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures#isManagedPassword()

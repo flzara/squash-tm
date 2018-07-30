@@ -27,50 +27,32 @@ import org.springframework.security.core.AuthenticationException;
 import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
 import org.squashtest.tm.api.security.authentication.FeaturesAwareAuthentication;
 
-import javax.inject.Inject;
-
 
 /**
  * This class will wrap the authentication object in a {@link FeaturesAwareAuthentication}
  *
- *
  * @author zyang
  *
  */
-
 public class SquashDaoAuthenticationProvider extends DaoAuthenticationProvider {
-
-	@Inject
-	private InternalAuthenticationProviderFeatures features;
 
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		Authentication auth = super.authenticate(authentication);
-		return new FeatureAwareDaoAuthenticationToken((UsernamePasswordAuthenticationToken) auth, features);
-	}
-
-	public InternalAuthenticationProviderFeatures getFeatures() {
-		return features;
-	}
-
-	public void setFeatures(InternalAuthenticationProviderFeatures features) {
-		this.features = features;
+		return new FeatureAwareDaoAuthenticationToken((UsernamePasswordAuthenticationToken) auth);
 	}
 
 	public static final class FeatureAwareDaoAuthenticationToken extends UsernamePasswordAuthenticationToken implements FeaturesAwareAuthentication {
 
 		private static final long serialVersionUID = 1L;
 
-		private AuthenticationProviderFeatures features;
-
-		public FeatureAwareDaoAuthenticationToken(UsernamePasswordAuthenticationToken token, AuthenticationProviderFeatures features) {
+		private FeatureAwareDaoAuthenticationToken(UsernamePasswordAuthenticationToken token) {
 			super(token.getPrincipal(), token.getCredentials(), token.getAuthorities());
-			this.features = features;
 		}
 
 		@Override
 		public AuthenticationProviderFeatures getFeatures() {
-			return features;
+			return InternalAuthenticationProviderFeatures.INSTANCE;
 		}
 	}
 }

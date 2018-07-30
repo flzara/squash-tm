@@ -62,6 +62,7 @@ import org.springframework.security.config.annotation.method.configuration.Globa
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
+import org.squashtest.tm.api.security.authentication.SquashConditionalAuthenticationProvider;
 import org.squashtest.tm.security.acls.CustomPermissionFactory;
 import org.squashtest.tm.security.acls.Slf4jAuditLogger;
 import org.squashtest.tm.service.feature.FeatureManager;
@@ -123,7 +124,7 @@ public class SecurityConfig {
 	 *
 	 */
 	@Configuration
-//	@ConditionalOnProperty(name = "authentication.provider", matchIfMissing = true, havingValue = "internal")
+	@SquashConditionalAuthenticationProvider(value = "internal", matchIfMissing = true)
 	@Order(10) // WebSecurityConfigurerAdapter default order is 100, we need to init this before. Also ldap order is 1, we need to init this after.
 	public static class InternalAuthenticationConfig extends GlobalAuthenticationConfigurerAdapter {
 		@Inject
@@ -133,9 +134,8 @@ public class SecurityConfig {
 		private PasswordEncoder passwordEncoder;
 
 		@Override
-		public void init(AuthenticationManagerBuilder auth) throws Exception {
+		public void configure(AuthenticationManagerBuilder auth) throws Exception{
 			auth.authenticationProvider(daoAuthenticationProvider());
-
 			auth.eraseCredentials(false);
 		}
 
@@ -146,8 +146,6 @@ public class SecurityConfig {
 
 			provider.setUserDetailsService(squashUserDetailsManager);
 			provider.setPasswordEncoder(passwordEncoder);
-
-			provider.setFeatures(new InternalAuthenticationProviderFeatures());
 
 			return provider;
 		}
