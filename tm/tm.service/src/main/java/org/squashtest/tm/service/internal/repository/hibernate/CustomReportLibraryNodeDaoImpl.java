@@ -198,9 +198,4 @@ public class CustomReportLibraryNodeDaoImpl implements CustomCustomReportLibrary
 		return query.getResultList();
 	}
 
-	public Long findCurrentProjectFromCustomReportFoldersId(Long id){
-		Query query = em.createNamedQuery("BoundEntityDao.findCurrentProjectFromCustomReportFoldersId");
-		query.setParameter("clnId", id);
-		return (Long) query.getSingleResult();
-	}
 }

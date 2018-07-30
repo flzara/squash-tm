@@ -105,18 +105,6 @@ public enum BindableEntity implements Internationalizable {
 		}
 
 	},
-	CUSTOM_REPORT_PROJECT() {
-		@Override
-		public Class<?> getReferencedClass() {
-			return Project.class;
-		};
-
-		@Override
-		public RenderingLocation[] getValidRenderingLocations() {
-			return new RenderingLocation[0];
-		}
-
-	},
 	TEST_CASE() {
 		@Override
 		public Class<?> getReferencedClass() {

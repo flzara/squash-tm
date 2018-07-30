@@ -279,7 +279,6 @@ public class TestCaseLibraryNavigationServiceImpl
 		// and then create the custom field values, as a better fix for [Issue
 		// 2061]
 		new CustomFieldValuesFixer().fix(newFolder);
-
 		generateCustomField(newFolder);
 	}
 

@@ -21,7 +21,12 @@
 package org.squashtest.tm.service.internal.campaign.export;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -201,12 +206,6 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 		headerCells.add(new CellImpl("TC_NATURE"));
 		headerCells.add(new CellImpl("TC_TYPE"));
 		headerCells.add(new CellImpl("TC_STATUS"));
-
-		Collections.sort(campCUFModel, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
-		Collections.sort(iterCUFModel, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
-		Collections.sort(tcCUFModel, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
-
-
 
 		// campaign custom fields
 		for (CustomField cufModel : campCUFModel) {

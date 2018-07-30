@@ -55,11 +55,30 @@
 	 th:with="HTMLID='project',bindings=${projectsBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).PROJECT}">
 </div>
 
+  <div id="crFolders-binding-manager"
+       th:include="project-tabs/custom-field-binding :: cuf-unit-binder"
+       th:with="HTMLID='crFolders',bindings=${crFoldersBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).CUSTOM_REPORT_FOLDER}">
+  </div>
 
-<div id="requirements-binding-manager"
+  <div id="campaignFolders-binding-manager"
+       th:include="project-tabs/custom-field-binding :: cuf-unit-binder"
+       th:with="HTMLID='campaignFolders',bindings=${campaignFoldersBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).CAMPAIGN_FOLDER}">
+  </div>
+
+  <div id="reqFolders-binding-manager"
+       th:include="project-tabs/custom-field-binding :: cuf-unit-binder"
+       th:with="HTMLID='reqFolders',bindings=${reqFoldersBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).REQUIREMENT_FOLDER}">
+  </div>
+
+  <div id="tcFolders-binding-manager"
+       th:include="project-tabs/custom-field-binding :: cuf-unit-binder"
+       th:with="HTMLID='tcFolders',bindings=${tcFoldersBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).TESTCASE_FOLDER}">
+  </div>
+
+  <div id="requirements-binding-manager"
        th:include="project-tabs/custom-field-binding :: cuf-unit-binder"
        th:with="HTMLID='requirements',bindings=${requirementBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).REQUIREMENT_VERSION}">
-</div>
+  </div>
 
 <div id="test-cases-binding-manager"
      th:include="project-tabs/custom-field-binding :: cuf-unit-binder"
@@ -95,12 +114,6 @@
 	 th:include="project-tabs/custom-field-binding :: cuf-unit-binder"
 	 th:with="HTMLID='execution-steps',bindings=${executionStepBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).EXECUTION_STEP}">
 </div>
-
-  <div id="crFolders-binding-manager"
-       th:include="project-tabs/custom-field-binding :: cuf-unit-binder"
-       th:with="HTMLID='crFolders',bindings=${crFoldersBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).CUSTOM_REPORT_FOLDER}">
-  </div>
-
 
 <script type="text/javascript" th:inline="javascript">
 //<![CDATA[
@@ -166,6 +179,29 @@
             tableRenderingLocations : []
           },
 
+          campaignFoldersSettings : {
+            entityType : 'CAMPAIGN_FOLDER',
+            mainSelector : "#campaignFolders-binding-manager",
+            tableDeferLoading : /*[[ ${campaignFoldersBindings.size()} ]]*/ 3,
+            tableDeleteMessageSecond : /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.CAMPAIGN_FOLDER})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
+            tableRenderingLocations : []
+          },
+
+          reqFoldersSettings : {
+            entityType : 'REQUIREMENT_FOLDER',
+            mainSelector : "#reqFolders-binding-manager",
+            tableDeferLoading : /*[[ ${reqFoldersBindings.size()} ]]*/ 3,
+            tableDeleteMessageSecond : /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.REQUIREMENT_FOLDER})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
+            tableRenderingLocations : []
+          },
+
+          tcFoldersSettings : {
+            entityType : 'TESTCASE_FOLDER',
+            mainSelector : "#tcFolders-binding-manager",
+            tableDeferLoading : /*[[ ${tcFoldersBindings.size()} ]]*/ 3,
+            tableDeleteMessageSecond : /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.TESTCASE_FOLDER})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
+            tableRenderingLocations : []
+          },
 
 
 	    		campSettings : {

@@ -368,12 +368,11 @@ class CustomFieldBindingModificationServiceImplTest extends Specification {
 		given:
 
 		List<Long> bindingIds = [7L, 19L, 32L, 42L]
-		List<Long> result = [2L,10L]
+
 		and:
 
-		customFieldBindingDao.findEquivalentBindingsForOtherFolders(_) >> result
-		customFieldBindingDao.findEquivalentBindingsForBoundProjects(_) >> [2L, 10L, 9L, 52L, 90L, 44L]
 		genericProjectDao.oneIsBoundToABoundProject(_) >> false
+		customFieldBindingDao.findEquivalentBindingsForBoundProjects(_) >> [9L, 52L, 90L, 44L]
 
 		when:
 

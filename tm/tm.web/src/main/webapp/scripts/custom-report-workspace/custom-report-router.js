@@ -75,7 +75,7 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 				this.cleanContextContent();
 
 				var activeModel = new LibraryModel({id: id});
-				var cufurl = urlBuilder.buildURL('customfield.values.get',id, 'CUSTOM_REPORT_PROJECT'),	mode =  'jeditable';
+				var cufurl = urlBuilder.buildURL('customfield.values.get',id, 'PROJECT'),	mode =  'jeditable';
 				this.cufurl = cufurl;
 				this.activeView = new libraryView({
 					model: activeModel
@@ -87,7 +87,7 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 				this.cleanContextContent();
 				var activeModel = new FolderModel({id: id});
 				var acls = new AclModel({type: "custom-report-library-node", id: id});
-				var cufurl = urlBuilder.buildURL('customfield.values.get',id, 'CUSTOM_REPORT_FOLDER'),	mode =  'jeditable';
+				var cufurl = urlBuilder.buildURL('customfield.values.get',id, 'PROJECT'),	mode =  'jeditable';
 				this.cufurl = cufurl;
 				this.activeView = new folderView({
 					model: activeModel,

@@ -114,25 +114,21 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 		CustomFieldHelper<Campaign> campHelper = cufHelperService.newHelper(campaign);
 		campCUFModel = campHelper.getCustomFieldConfiguration();
 		campCUFValues = campHelper.getCustomFieldValues();
-		Collections.sort(campCUFValues, (a, b) -> a.getCustomField().getId()< b.getCustomField().getId() ? -1 : a.getCustomField().getId() == b.getCustomField().getId() ? 0 : 1);
 
 		// cufs for the iterations
 		CustomFieldHelper<Iteration> iterHelper = cufHelperService.newHelper(iterations).includeAllCustomFields();
 		iterCUFModel = iterHelper.getCustomFieldConfiguration();
 		List<CustomFieldValue> iterValues = iterHelper.getCustomFieldValues();
-		Collections.sort(iterValues, (a, b) -> a.getCustomField().getId()< b.getCustomField().getId() ? -1 : a.getCustomField().getId() == b.getCustomField().getId() ? 0 : 1);
 
 		// cufs for the test cases
 		CustomFieldHelper<TestCase> tcHelper = cufHelperService.newHelper(allTestCases).includeAllCustomFields();
 		tcCUFModel = tcHelper.getCustomFieldConfiguration();
 		List<CustomFieldValue> tcValues = tcHelper.getCustomFieldValues();
-		Collections.sort(tcValues, (a, b) -> a.getCustomField().getId()< b.getCustomField().getId() ? -1 : a.getCustomField().getId() == b.getCustomField().getId() ? 0 : 1);
 
 		// cufs for the executions
 		CustomFieldHelper<Execution> execHelper = cufHelperService.newHelper(allExecs).includeAllCustomFields();
 		execCUFModel = execHelper.getCustomFieldConfiguration();
 		List<CustomFieldValue> execValues = execHelper.getCustomFieldValues();
-		Collections.sort(execValues, (a, b) -> a.getCustomField().getId()< b.getCustomField().getId() ? -1 : a.getCustomField().getId() == b.getCustomField().getId() ? 0 : 1);
 
 		nbColumns = 25 + campCUFModel.size() + iterCUFModel.size() + tcCUFModel.size() + execCUFModel.size();
 
@@ -209,11 +205,6 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 		headerCells.add(new CellImpl("CPG_SCHEDULED_END_ON"));
 		headerCells.add(new CellImpl("CPG_ACTUAL_START_ON"));
 		headerCells.add(new CellImpl("CPG_ACTUAL_END_ON"));
-
-		Collections.sort(campCUFModel, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
-		Collections.sort(iterCUFModel, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
-		Collections.sort(tcCUFModel, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
-		Collections.sort(execCUFModel, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
 
 		// campaign custom fields
 		for (CustomField cufModel : campCUFModel) {
@@ -419,6 +410,7 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 			dataCells.add(new CellImpl(formatDate(campaign.getActualEndDate())));
 
 			List<CustomFieldValue> cValues = campCUFValues;
+			// ensure that the CUF values are processed in the correct order
 			for (CustomField model : campCUFModel) {
 				String strValue = getValue(cValues, model);
 				if (model.getInputType().equals(InputType.NUMERIC)) {

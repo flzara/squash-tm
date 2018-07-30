@@ -284,12 +284,6 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 		headerCells.add(new CellImpl("EXEC_STEP_#_ISSUES"));
 		headerCells.add(new CellImpl("EXEC_STEP_COMMENT"));
 
-		Collections.sort(campCUFModel, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
-		Collections.sort(iterCUFModel, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
-		Collections.sort(tcCUFModel, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
-		Collections.sort(execCUFModel, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
-		Collections.sort(esCUFModel, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
-
 		// campaign custom fields
 		for (CustomField cufModel : campCUFModel) {
 			headerCells.add(new CellImpl("CPG_CUF_" + cufModel.getCode()));
