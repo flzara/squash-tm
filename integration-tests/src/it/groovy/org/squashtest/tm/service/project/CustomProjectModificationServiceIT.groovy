@@ -57,7 +57,7 @@ class CustomProjectModificationServiceIT extends DbunitServiceSpecification {
 		jsonProject15.getTestCaseTypes().id == -3L
 
 		def customFieldBindings = jsonProject15.getCustomFieldBindings()
-		customFieldBindings.size() == 14
+		customFieldBindings.size() == 8
 		def customFieldBindingModels = customFieldBindings.get("CAMPAIGN")
 		customFieldBindingModels.size() == 3
 		customFieldBindingModels.collect { it.id }.sort() == [-3L, -2L, -1L]
