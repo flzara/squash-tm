@@ -332,175 +332,175 @@ define(["jquery", "jqplot-core"], function ($) {
 			axis = null;
 			ticks = null;
 		}
-	};
-	// Now draw grid lines for additional y axes
-	// ////
-	// TO DO: handle yMidAxis
-	// ////
-	ax = ['y3axis', 'y4axis', 'y5axis', 'y6axis', 'y7axis', 'y8axis', 'y9axis', 'yMidAxis'];
-	for (i = 7; i > 0; i--) {
-		axis = axes[ax[i - 1]];
-		ticks = axis._ticks;
-		if (axis.show) {
-			var tn = ticks[axis.numberTicks - 1];
-			var t0 = ticks[0];
-			var left = axis.getLeft();
-			points = [[left, tn.getTop() + tn.getHeight() / 2],
-				[left, t0.getTop() + t0.getHeight() / 2 + 1.0]];
-			// draw the shadow
-			if (this.shadow) {
-				this.renderer.shadowRenderer.draw(ctx, points, {
-					lineCap: 'butt',
-					fill: false,
-					closePath: false
-				});
-			}
-			// draw the line
-			drawLine(points[0][0], points[0][1], points[1][0], points[1][1], {
-				lineCap: 'butt',
-				strokeStyle: axis.borderColor,
-				lineWidth: axis.borderWidth
-			});
-			// draw the tick marks
-			for (j = ticks.length; j > 0; j--) {
-				t = ticks[j - 1];
-				s = t.markSize;
-				m = t.mark;
-				pos = Math.round(axis.u2p(t.value)) + 0.5;
-				if (t.showMark && t.mark) {
-					switch (m) {
-						case 'outside':
-							b = left;
-							e = left + s;
-							break;
-						case 'inside':
-							b = left - s;
-							e = left;
-							break;
-						case 'cross':
-							b = left - s;
-							e = left + s;
-							break;
-						default:
-							b = left;
-							e = left + s;
-							break;
-					}
-					points = [[b, pos], [e, pos]];
-					// draw the shadow
-					if (this.shadow) {
-						this.renderer.shadowRenderer.draw(ctx, points, {
-							lineCap: 'butt',
-							lineWidth: this.gridLineWidth * 1.5,
-							offset: this.gridLineWidth * 0.75,
-							fill: false,
-							closePath: false
-						});
-					}
-					// draw the line
-					drawLine(b, pos, e, pos, {
-						strokeStyle: axis.borderColor
+		// Now draw grid lines for additional y axes
+		// ////
+		// TO DO: handle yMidAxis
+		// ////
+		ax = ['y3axis', 'y4axis', 'y5axis', 'y6axis', 'y7axis', 'y8axis', 'y9axis', 'yMidAxis'];
+		for (i = 7; i > 0; i--) {
+			axis = axes[ax[i - 1]];
+			ticks = axis._ticks;
+			if (axis.show) {
+				var tn = ticks[axis.numberTicks - 1];
+				var t0 = ticks[0];
+				var left = axis.getLeft();
+				points = [[left, tn.getTop() + tn.getHeight() / 2],
+					[left, t0.getTop() + t0.getHeight() / 2 + 1.0]];
+				// draw the shadow
+				if (this.shadow) {
+					this.renderer.shadowRenderer.draw(ctx, points, {
+						lineCap: 'butt',
+						fill: false,
+						closePath: false
 					});
 				}
-				t = null;
+				// draw the line
+				drawLine(points[0][0], points[0][1], points[1][0], points[1][1], {
+					lineCap: 'butt',
+					strokeStyle: axis.borderColor,
+					lineWidth: axis.borderWidth
+				});
+				// draw the tick marks
+				for (j = ticks.length; j > 0; j--) {
+					t = ticks[j - 1];
+					s = t.markSize;
+					m = t.mark;
+					pos = Math.round(axis.u2p(t.value)) + 0.5;
+					if (t.showMark && t.mark) {
+						switch (m) {
+							case 'outside':
+								b = left;
+								e = left + s;
+								break;
+							case 'inside':
+								b = left - s;
+								e = left;
+								break;
+							case 'cross':
+								b = left - s;
+								e = left + s;
+								break;
+							default:
+								b = left;
+								e = left + s;
+								break;
+						}
+						points = [[b, pos], [e, pos]];
+						// draw the shadow
+						if (this.shadow) {
+							this.renderer.shadowRenderer.draw(ctx, points, {
+								lineCap: 'butt',
+								lineWidth: this.gridLineWidth * 1.5,
+								offset: this.gridLineWidth * 0.75,
+								fill: false,
+								closePath: false
+							});
+						}
+						// draw the line
+						drawLine(b, pos, e, pos, {
+							strokeStyle: axis.borderColor
+						});
+					}
+					t = null;
+				}
+				t0 = null;
 			}
-			t0 = null;
+			axis = null;
+			ticks = null;
 		}
-		axis = null;
-		ticks = null;
-	}
 
-	ctx.restore();
+		ctx.restore();
 
-	function drawLine(bx, by, ex, ey, opts) {
-		ctx.save();
-		opts = opts || {};
-		if (opts.lineWidth == null || opts.lineWidth !== 0) {
-			$.extend(true, ctx, opts);
-			ctx.beginPath();
-			ctx.moveTo(bx, by);
-			ctx.lineTo(ex, ey);
-			ctx.stroke();
-			ctx.restore();
+		function drawLine(bx, by, ex, ey, opts) {
+			ctx.save();
+			opts = opts || {};
+			if (opts.lineWidth == null || opts.lineWidth !== 0) {
+				$.extend(true, ctx, opts);
+				ctx.beginPath();
+				ctx.moveTo(bx, by);
+				ctx.lineTo(ex, ey);
+				ctx.stroke();
+				ctx.restore();
+			}
 		}
-	}
 
-	if (this.shadow) {
-		points = [[this._left, this._bottom], [this._right, this._bottom],
-			[this._right, this._top]];
-		this.renderer.shadowRenderer.draw(ctx, points);
-	}
-	// Now draw border around grid. Use axis border definitions. start at
-	// upper left and go clockwise.
-	if (this.borderWidth !== 0 && this.drawBorder) {
-		drawLine(this._left, this._top, this._right, this._top, {
-			lineCap: 'round',
-			strokeStyle: axes.x2axis.borderColor,
-			lineWidth: axes.x2axis.borderWidth
-		});
-		drawLine(this._right, this._top, this._right, this._bottom, {
-			lineCap: 'round',
-			strokeStyle: axes.y2axis.borderColor,
-			lineWidth: axes.y2axis.borderWidth
-		});
-		drawLine(this._right, this._bottom, this._left, this._bottom, {
-			lineCap: 'round',
-			strokeStyle: axes.xaxis.borderColor,
-			lineWidth: axes.xaxis.borderWidth
-		});
-		drawLine(this._left, this._bottom, this._left, this._top, {
-			lineCap: 'round',
-			strokeStyle: axes.yaxis.borderColor,
-			lineWidth: axes.yaxis.borderWidth
-		});
-	}
-	// ctx.lineWidth = this.borderWidth;
-	// ctx.strokeStyle = this.borderColor;
-	// ctx.strokeRect(this._left, this._top, this._width, this._height);
+		if (this.shadow) {
+			points = [[this._left, this._bottom], [this._right, this._bottom],
+				[this._right, this._top]];
+			this.renderer.shadowRenderer.draw(ctx, points);
+		}
+		// Now draw border around grid. Use axis border definitions. start at
+		// upper left and go clockwise.
+		if (this.borderWidth !== 0 && this.drawBorder) {
+			drawLine(this._left, this._top, this._right, this._top, {
+				lineCap: 'round',
+				strokeStyle: axes.x2axis.borderColor,
+				lineWidth: axes.x2axis.borderWidth
+			});
+			drawLine(this._right, this._top, this._right, this._bottom, {
+				lineCap: 'round',
+				strokeStyle: axes.y2axis.borderColor,
+				lineWidth: axes.y2axis.borderWidth
+			});
+			drawLine(this._right, this._bottom, this._left, this._bottom, {
+				lineCap: 'round',
+				strokeStyle: axes.xaxis.borderColor,
+				lineWidth: axes.xaxis.borderWidth
+			});
+			drawLine(this._left, this._bottom, this._left, this._top, {
+				lineCap: 'round',
+				strokeStyle: axes.yaxis.borderColor,
+				lineWidth: axes.yaxis.borderWidth
+			});
+		}
+		// ctx.lineWidth = this.borderWidth;
+		// ctx.strokeStyle = this.borderColor;
+		// ctx.strokeRect(this._left, this._top, this._width, this._height);
 
-	ctx.restore();
-	ctx = null;
-	axes = null;
-});
-
-
-/*
-   * ADDITIONAL FUNCTIONS HERE
-   *
-   */
-
-function overrideCtx(ctx, style) {
-
-	if (style === undefined) {
-		return;
-	}
-
-	var saveStyle = {
-		strokeStyle: ctx.strokeStyle,
-		lineDash: ctx.getLineDash()
+		ctx.restore();
+		ctx = null;
+		axes = null;
 	};
 
-	if (!!style.lineDash) {
-		ctx.setLineDash(style.lineDash);
+
+	/*
+     * ADDITIONAL FUNCTIONS HERE
+     *
+     */
+
+	function overrideCtx(ctx, style) {
+
+		if (style === undefined) {
+			return;
+		}
+
+		var saveStyle = {
+			strokeStyle: ctx.strokeStyle,
+			lineDash: ctx.getLineDash()
+		};
+
+		if (!!style.lineDash) {
+			ctx.setLineDash(style.lineDash);
+		}
+
+		if (!!style.strokeStyle) {
+			ctx.strokeStyle = style.strokeStyle;
+		}
+
+		ctx._save = saveStyle;
 	}
 
-	if (!!style.strokeStyle) {
-		ctx.strokeStyle = style.strokeStyle;
+	function unoverrideCtx(ctx) {
+
+		var saveStyle = ctx._save;
+
+		if (saveStyle === undefined) {
+			return;
+		}
+
+		ctx.setLineDash(saveStyle.lineDash);
+		ctx.strokeStyle = saveStyle.strokeStyle;
+
+		delete ctx._save;
 	}
-
-	ctx._save = saveStyle;
-}
-
-function unoverrideCtx(ctx) {
-
-	var saveStyle = ctx._save;
-
-	if (saveStyle === undefined) {
-		return;
-	}
-
-	ctx.setLineDash(saveStyle.lineDash);
-	ctx.strokeStyle = saveStyle.strokeStyle;
-
-	delete ctx._save;
-}
+});
