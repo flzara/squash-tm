@@ -72,7 +72,8 @@ public class NewCustomField extends CustomField {
 		for(String[] option : options) {
 			String label = option[0];
 			String code = option[1];
-			ssf.addOption(new CustomFieldOption(label, code) );
+			String colour = option[2];
+			ssf.addOption(new CustomFieldOption(label, code, colour) );
 		}
 
 		res = ssf;

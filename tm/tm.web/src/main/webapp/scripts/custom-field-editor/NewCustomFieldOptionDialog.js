@@ -18,53 +18,55 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "handlebars", "app/lnf/Forms", "app/ws/squashtm.notification",
-		"jquery.squash.formdialog" ], function($, Backbone, Handlebars,
-		Forms, notification) {
+define(["jquery", "backbone", "handlebars", "app/lnf/Forms", "app/ws/squashtm.notification", "squash.configmanager",
+	"jquery.squash.formdialog"], function ($, Backbone, Handlebars, Forms, notification, confman) {
 	var View = Backbone.View.extend({
-		el : "#add-cuf-option-popup",
+		el: "#add-cuf-option-popup",
 
-		initialize : function() {
+		initialize: function () {
 
 			this.$el.find("input:text").val("");
 			this._resetForm();
+
+			var colorPicker = $('#new-cuf-option-colour');
+			confman.getStandardIEColorPicker(colorPicker);
 			this.$el.formDialog({
-				autoOpen : true
+				autoOpen: true
 			});
 		},
 
-		events : {
-			"formdialogcancel" : "cancel",
-			"formdialogvalidate" : "validate",
-			"formdialogaddanother" : "addanother",
-			"formdialogconfirm" : "validate"
+		events: {
+			"formdialogcancel": "cancel",
+			"formdialogvalidate": "validate",
+			"formdialogaddanother": "addanother",
+			"formdialogconfirm": "validate"
 		},
 
-		cancel : function(event) {
+		cancel: function (event) {
 			this.cleanup();
 			this.trigger("newOption.cancel");
 		},
 
-		confirm : function(event) {
+		confirm: function (event) {
 			this.cleanup();
 			this.trigger("newOption.confirm");
 		},
 
-		addanother : function(event) {
+		addanother: function (event) {
 			var res = true;
 			this.populateModel();
 			var self = this;
 			Forms.form(this.$el).clearState();
 
 			$.ajax({
-				url : squashtm.app.cfMod.optionsTable.newOptionUrl,
-				type : 'POST',
-				data : self.model,
+				url: squashtm.app.cfMod.optionsTable.newOptionUrl,
+				type: 'POST',
+				data: self.model,
 				// note : we cannot use promise api with async param. see
 				// http://bugs.jquery.com/ticket/11013#comment:40
-				async : false,
-				dataType : 'json'
-			}).fail(function(jqXHR, textStatus, errorThrown) {
+				async: false,
+				dataType: 'json'
+			}).fail(function (jqXHR, textStatus, errorThrown) {
 				res = false;
 				event.preventDefault();
 				var errormsg = notification.getErrorMessage(jqXHR);
@@ -75,21 +77,21 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms", "app/ws/squashtm.n
 			return res;
 		},
 
-		validate : function(event) {
+		validate: function (event) {
 			var res = true;
 			this.populateModel();
 			var self = this;
 			Forms.form(this.$el).clearState();
 
 			$.ajax({
-				url : squashtm.app.cfMod.optionsTable.newOptionUrl,
-				type : 'POST',
-				data : self.model,
+				url: squashtm.app.cfMod.optionsTable.newOptionUrl,
+				type: 'POST',
+				data: self.model,
 				// note : we cannot use promise api with async param. see
 				// http://bugs.jquery.com/ticket/11013#comment:40
-				async : false,
-				dataType : 'json'
-			}).fail(function(jqXHR, textStatus, errorThrown) {
+				async: false,
+				dataType: 'json'
+			}).fail(function (jqXHR, textStatus, errorThrown) {
 				res = false;
 				event.preventDefault();
 				var errormsg = notification.getErrorMessage(jqXHR);
@@ -100,26 +102,28 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms", "app/ws/squashtm.n
 			return res;
 		},
 
-		_resetForm : function() {
+		_resetForm: function () {
 			this.$textFields = this.$el.find("input:text");
 			this.$textFields.val("");
-		//	this.$errorMessages.text("");
+			this.$el.find("input#new-cuf-option-colour").spectrum("set", '#000000');
+			//	this.$errorMessages.text("");
 			Forms.form(this.$el).clearState();
-			if(this.$el.data().formDialog !== undefined) {
+			if (this.$el.data().formDialog !== undefined) {
 				this.$el.formDialog("focusMainInput");
 			}
 		},
 
-		cleanup : function() {
+		cleanup: function () {
 			this.$el.addClass("not-displayed");
 			Forms.form(this.$el).clearState();
 			this.$el.formDialog("destroy");
 		},
 
-		populateModel : function() {
+		populateModel: function () {
 			var $el = this.$el;
 			this.model.label = $el.find("#new-cuf-option-label").val();
 			this.model.code = $el.find("#new-cuf-option-code").val();
+			this.model.colour = $el.find("#new-cuf-option-colour").val() || "#000000";
 		}
 
 	});

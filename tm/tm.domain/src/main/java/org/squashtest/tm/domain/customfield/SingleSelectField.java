@@ -132,11 +132,12 @@ public class SingleSelectField extends CustomField {
 		checkLabelAvailable(newlabel);
 		int index = findIndexOfLabel(previousLabel);
 		String code = findCodeOf(previousLabel);
+		String colour = findColourOf(previousLabel);
 		if (defaultValue.equals(previousLabel)) {
 			defaultValue = newlabel;
 		}
 		removeOption(previousLabel);
-		addOption(newlabel, code, index);
+		addOption(newlabel, code, colour, index);
 
 	}
 
@@ -152,10 +153,20 @@ public class SingleSelectField extends CustomField {
 		// TODO fix [Task 1682] and remove this line
 		checkCodeMatchesPattern(newCode);
 		int index = findIndexOfLabel(optionLabel);
+		String colour = findColourOf(optionLabel);
 		//We can remove the option without checking if it is the default value because an option
 		//with the same label will be created right after that.
 		removeOptionWithoutCheck(optionLabel);
-		addOption(optionLabel, newCode, index);
+		addOption(optionLabel, newCode, colour, index);
+	}
+
+	public void changeOptionColour(String optionLabel, String newColour) {
+		int index = findIndexOfLabel(optionLabel);
+		//We can remove the option without checking if it is the default value because an option
+		//with the same label will be created right after that.
+		String code = findCodeOf(optionLabel);
+		removeOptionWithoutCheck(optionLabel);
+		addOption(optionLabel, code, newColour, index);
 	}
 
 	private String findCodeOf(String previousLabel) {
@@ -163,6 +174,16 @@ public class SingleSelectField extends CustomField {
 		for (CustomFieldOption option : options) {
 			if (previousLabel.equals(option.getLabel())) {
 				return option.getCode();
+			}
+		}
+		return null;
+	}
+
+	private String findColourOf(String previousLabel) {
+
+		for (CustomFieldOption option : options) {
+			if (previousLabel.equals(option.getLabel())) {
+				return option.getColour();
 			}
 		}
 		return null;
@@ -186,8 +207,8 @@ public class SingleSelectField extends CustomField {
 		return -1;
 	}
 
-	private void addOption(String newlabel, String code, int index) {
-		options.add(index, new CustomFieldOption(newlabel, code));
+	private void addOption(String newlabel, String code, String colour, int index) {
+		options.add(index, new CustomFieldOption(newlabel, code, colour));
 	}
 
 	private int findIndexOfLabel(String previousLabel) {

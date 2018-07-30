@@ -2318,7 +2318,10 @@
 
     $(function () {
         if ($.fn.spectrum.load) {
-            $.fn.spectrum.processNativeColorInputs();
+        		// will find every input type color and apply the polyfill in IE
+						// commented cause we want the polyfill only when requested,
+					  // fucks up a datatable if this method is called before the one in confman
+            // $.fn.spectrum.processNativeColorInputs();
         }
     });
 

@@ -20,13 +20,13 @@
  */
 package org.squashtest.tm.domain.customfield;
 
-import javax.persistence.Embeddable;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.util.DigestUtils;
 import org.squashtest.tm.domain.Sizes;
+
+import javax.persistence.Embeddable;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 /**
  * Defines an option which can be selected among a list and set as a custom field's value.
@@ -45,12 +45,22 @@ public class CustomFieldOption {
 	@Pattern(regexp = CustomField.CODE_REGEXP, message = "{org.squashtest.tm.validation.constraint.onlyStdChars}")
 	private String code = "";
 
+	@Size(max = 7)
+	@NotBlank
+	private String colour;
+
 	public CustomFieldOption(String label, String code) {
 		this.label = label;
 		this.code = code;
 	}
 
-	public CustomFieldOption(String label){
+	public CustomFieldOption(String label, String code, String colour) {
+		this.label = label;
+		this.code = code;
+		this.colour = colour;
+	}
+
+	public CustomFieldOption(String label) {
 
 		// when no code is supplied we need to create it.
 		// To do so we md5-hash it then truncate to 30 characters because we
@@ -58,7 +68,7 @@ public class CustomFieldOption {
 		String generatedCode = DigestUtils.md5DigestAsHex(label.getBytes());
 
 		this.label = label;
-		this.code = generatedCode.substring(0,30);
+		this.code = generatedCode.substring(0, 30);
 	}
 
 	/**
@@ -68,19 +78,15 @@ public class CustomFieldOption {
 		super();
 	}
 
-	public void setLabel(String label) {
-		this.label = label.trim();
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
 	/**
 	 * @return the label
 	 */
 	public String getLabel() {
 		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label.trim();
 	}
 
 	/**
@@ -90,12 +96,24 @@ public class CustomFieldOption {
 		return code;
 	}
 
+	public void setCode(String code) {
+		this.code = code;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 57; // NOSONAR : look somewhere else
 		int result = 53; // NOSONAR : look somewhere else
 		result = prime * result + (label == null ? 0 : label.hashCode());
 		return result;
+	}
+
+	public String getColour() {
+		return colour;
+	}
+
+	public void setColour(String colour) {
+		this.colour = colour;
 	}
 
 	@Override//NOSONAR code generation, assumed to be safe

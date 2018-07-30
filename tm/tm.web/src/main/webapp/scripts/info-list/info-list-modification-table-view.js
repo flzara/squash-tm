@@ -20,10 +20,9 @@
  */
 define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.simpleJEditable",
 		"workspace.routing", "./NewInfoListItemDialog", "./IconSelectDialog", "squash.translator",
-		"app/lnf/Forms", "app/util/StringUtil", "squash.cssloader",
-		"jquery.squash.togglepanel", "squashtable", "jquery.squash.formdialog",
+		"app/lnf/Forms", "app/util/StringUtil", "jquery.squash.togglepanel", "squashtable", "jquery.squash.formdialog",
 		"jquery.squash", "jqueryui", "jquery.squash.confirmdialog", "jquery.squash.messagedialog"],
-	function ($, backbone, _, basic, SimpleJEditable, routing, NewInfoListItemDialog, IconSelectDialog, translator, Forms, StringUtil, cssloader) {
+	function ($, backbone, _, basic, SimpleJEditable, routing, NewInfoListItemDialog, IconSelectDialog, translator, Forms, StringUtil) {
 		"use strict";
 
 		translator.load(["label.infoListItems.icon.none",
@@ -44,7 +43,6 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 				this.configureChangeCodePopup();
 				this.configureReindexPopup();
 				this.$("#add-info-list-item-button").on("click", this.openAddItemPopup);
-				this.IEFix();
 			},
 
 			events: {
@@ -461,15 +459,8 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 				self.newItemDialog.on("newOption.cancel", discard);
 				self.newItemDialog.on("newOption.confirm", discardAndRefresh);
 				self.newItemDialog.on("newOption.addanother", refresh);
-			},
-
-			IEFix: function () {
-				var ua = window.navigator.userAgent;
-				var msie = ua.indexOf("MSIE ");
-				if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {
-					cssloader.cssFromPath("spectrum.css");
-				}
 			}
+
 		});
 
 		return TableView;

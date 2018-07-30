@@ -19,10 +19,11 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(
-		[ "jquery","underscore", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app/lnf/Forms", "squash.configmanager",
-		  "./NewCustomFieldModel", "jquery.squash.formdialog", "datepicker/jquery.squash.datepicker-locales", "jquery.squash.tagit" ],
-	function($, _, Backbone, Handlebars, SD, Forms, confman, NewCustomFieldModel) {
+	["jquery", "underscore", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app/lnf/Forms", "squash.configmanager",
+		"./NewCustomFieldModel", "jquery.squash.formdialog", "datepicker/jquery.squash.datepicker-locales", "jquery.squash.tagit"],
+	function ($, _, Backbone, Handlebars, SD, Forms, confman, NewCustomFieldModel) {
 		"use strict";
+
 		/**
 		 * Validates model and sets error messages accordingly
 		 * /!\ Inputs are fetched BY NAME
@@ -37,7 +38,7 @@ define(
 			if (validationErrors !== null) {
 				for (var key in validationErrors) {
 					if (validationErrors.hasOwnProperty(key)) {
-						Forms.input(view.$("[name='" + key +"']")).setState("error",
+						Forms.input(view.$("[name='" + key + "']")).setState("error",
 							validationErrors[key]);
 					}
 				}
@@ -51,25 +52,35 @@ define(
 		/**
 		 * returns the function which should be used as a callback.
 		 */
-	function optionRow(self) {
-		return function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-			var row = $(nRow),
-				defaultCell = row.find(".is-default"),
-				removeCell = row.find(".remove-row"),
-				option = aData[0],
-				checked = option === self.model.get("defaultValue"),
-				tplData = {
-					option : option,
-					checked : checked
-				};
+		function optionRow(self) {
+			return function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+				var row = $(nRow),
+					defaultCell = row.find(".is-default"),
+					removeCell = row.find(".remove-row"),
+					colourCell = row.find(".colour"),
+					option = aData[0],
+					checked = option === self.model.get("defaultValue"),
+					colour = aData[2],
+					tplData = {
+						option: option,
+						checked: checked,
+						colour: colour
+					};
 
-			optionRow.removeTpl = optionRow.removeTpl || Handlebars.compile($("#remove-cell-tpl").html());
-			removeCell.html(optionRow.removeTpl(tplData));
+				optionRow.removeTpl = optionRow.removeTpl || Handlebars.compile($("#remove-cell-tpl").html());
+				removeCell.html(optionRow.removeTpl(tplData));
 
-			optionRow.defaultTpl = optionRow.defaultTpl || Handlebars.compile($("#default-cell-tpl").html());
-			defaultCell.html(optionRow.defaultTpl(tplData));
-		};
-	}
+				optionRow.defaultTpl = optionRow.defaultTpl || Handlebars.compile($("#default-cell-tpl").html());
+				defaultCell.html(optionRow.defaultTpl(tplData));
+
+				optionRow.colourTpl = optionRow.colourTpl || Handlebars.compile($("#colour-cell-tpl").html());
+				colourCell.html(optionRow.colourTpl(tplData));
+
+
+				var colorPicker = $(".colour > input", row);
+				confman.getStandardIEColorPicker(colorPicker);
+			};
+		}
 
 
 		/**
@@ -82,10 +93,10 @@ define(
 			var ssok = true;
 
 			var csok = model.save(null, {
-				async : false,
-				error : function() {
+				async: false,
+				error: function () {
 					ssok = false;
-					if (!! event) {
+					if (!!event) {
 						event.preventDefault();
 					}
 				}
@@ -98,10 +109,10 @@ define(
 		 * Defines the controller for the new custom field panel.
 		 */
 		var NewCustomFieldPanelView = Backbone.View.extend({
-			el : "#new-cf-pane",
-			defaultWidth : 600,
-			richWidth : 1000,
-			initialize : function() {
+			el: "#new-cf-pane",
+			defaultWidth: 600,
+			richWidth: 1000,
+			initialize: function () {
 				var self = this;
 				this.model = new NewCustomFieldModel();
 				$.datepicker.setDefaults($.datepicker.regional[squashtm.app.locale]);
@@ -111,28 +122,28 @@ define(
 				this.render();
 
 				this.$el.formDialog({
-					autoOpen : true,
-					close : function() {
+					autoOpen: true,
+					close: function () {
 						self.cancel.call(self);
 					}
 				});
 				this._resize();
 			},
 
-			initializeForm: function() {
+			initializeForm: function () {
 				var model = this.model;
-				this.$("input:text.strprop").each(function() {
+				this.$("input:text.strprop").each(function () {
 					this.value = model.get(this.name);
 				});
 				this.$("input:checkbox[name='optional']").get()[0].checked = model.get("optional");
 				this.$("select[name='inputType']").val(model.get("inputType"));
 
-				if(this.$el.data().formDialog !== undefined) {
+				if (this.$el.data().formDialog !== undefined) {
 					this.$el.formDialog("focusMainInput");
 				}
 			},
 
-			render : function() {
+			render: function () {
 				// in case the input type was previously rich text.
 				// MUST be done before template is inserted, otherwise the text field wont be in the dom anymore
 				confman.destroyCkeditor("#defaultValue");
@@ -143,98 +154,99 @@ define(
 				this.$("#default-value-pane").html(template(this.model.toJSON()));
 
 				switch (inputType) {
-				case "DROPDOWN_LIST":
-					this.renderNewOptionPane();
-					this.renderOptionsTable();
-					this.renderOptional(true);
-					break;
+					case "DROPDOWN_LIST":
+						this.renderNewOptionPane();
+						this.renderOptionsTable();
+						this.renderOptional(true);
+						break;
 
-				case "CHECKBOX":
-					this.renderOptional(false);
-					break;
+					case "CHECKBOX":
+						this.renderOptional(false);
+						break;
 
-				case "PLAIN_TEXT":
-				case "NUMERIC":
-					this.renderOptional(true);
-					break;
+					case "PLAIN_TEXT":
+					case "NUMERIC":
+						this.renderOptional(true);
+						break;
 
-				case "DATE_PICKER":
-					this.renderOptional(true);
-					$("#defaultValue").datepicker({
-						dateFormat : squashtm.app.localizedDateFormat
-					});
-					break;
+					case "DATE_PICKER":
+						this.renderOptional(true);
+						$("#defaultValue").datepicker({
+							dateFormat: squashtm.app.localizedDateFormat
+						});
+						break;
 
-				case "RICH_TEXT" :
-					this.renderOptional(true);
-					this.renderRichText();
-					break;
+					case "RICH_TEXT" :
+						this.renderOptional(true);
+						this.renderRichText();
+						break;
 
-				case "TAG" :
-					this.renderOptional(true);
-					this.renderTagList();
-					break;
+					case "TAG" :
+						this.renderOptional(true);
+						this.renderTagList();
+						break;
 				}
 				this._resize();
 				return this;
 			},
 
-			_resize : function(){
-				if (this.$el.data().formDialog !== undefined){
+			_resize: function () {
+				if (this.$el.data().formDialog !== undefined) {
 					var type = this.model.get("inputType");
 					var width = (type === "RICH_TEXT") ? this.richWidth : this.defaultWidth;
 					this.$el.formDialog("option", "width", width);
 				}
 			},
 
-			events : {
+			events: {
 				// textboxes with class .strprop are bound to the
 				// model prop which name matches the textbox name
-				"blur input:text.strprop" : "changeStrProp",
-				"change select.optprop" : "changeOptProp",
-				"change input:text.dateprop" : "changeDateProp",
-				"change textarea.richprop" : "changeRichProp",
-				"change ul.tagprop" : "changeTagProp",
-				"invalidtag ul.tagprop" : "invalidTag",
-				"change select[name='inputType']" : "changeInputType",
-				"click input:checkbox[name='optional']" : "changeOptional",
-				"formdialogcancel" : "cancel",
-				"formdialogvalidate" : "addAndClose",
-				"formdialogaddanother" : "addAnother",
-				"click .add-option" : "addOption",
-				"click .remove-row>a" : "removeOption",
-				"click .is-default>input:checkbox" : "changeDefaultOption"
+				"blur input:text.strprop": "changeStrProp",
+				"change select.optprop": "changeOptProp",
+				"change input:text.dateprop": "changeDateProp",
+				"change textarea.richprop": "changeRichProp",
+				"change ul.tagprop": "changeTagProp",
+				"invalidtag ul.tagprop": "invalidTag",
+				"change select[name='inputType']": "changeInputType",
+				"click input:checkbox[name='optional']": "changeOptional",
+				"formdialogcancel": "cancel",
+				"formdialogvalidate": "addAndClose",
+				"formdialogaddanother": "addAnother",
+				"click .add-option": "addOption",
+				"click .remove-row>a": "removeOption",
+				"click .is-default>input:checkbox": "changeDefaultOption",
+				"change .colour>input": "changeColour"
 			},
 
-			changeStrProp : function(event) {
+			changeStrProp: function (event) {
 				var textbox = event.target;
 				this.model.set(textbox.name, textbox.value);
 
 			},
 
-			changeDateProp : function(event) {
+			changeDateProp: function (event) {
 				var textbox = event.target;
 				var date = $(textbox).datepicker("getDate");
 				var dateToString = $.datepicker.formatDate($.datepicker.ATOM, date);
 				this.model.set(textbox.name, dateToString);
 			},
 
-			changeOptProp : function(event) {
+			changeOptProp: function (event) {
 				var option = event.target;
 				this.model.set(option.name, option.value);
 			},
 
-			changeRichProp : function(event){
+			changeRichProp: function (event) {
 				var area = $("#defaultValue");
 				this.model.set(area.attr('id'), area.val());
 			},
 
-			changeTagProp : function(event){
+			changeTagProp: function (event) {
 				var tags = $("#defaultValue").squashTagit("assignedTags").join("|");
 				this.model.set("defaultValue", tags);
 			},
 
-			changeInputType : function(event) {
+			changeInputType: function (event) {
 				var model = this.model;
 
 				model.set("inputType", event.target.value);
@@ -243,44 +255,44 @@ define(
 				this.render();
 			},
 
-			changeOptional : function(event) {
+			changeOptional: function (event) {
 				this.model.set("optional", event.target.checked);
 			},
 
-			cancel : function(event) {
+			cancel: function (event) {
 				this.cleanup();
 				this.trigger("newcustomfield.cancel");
 			},
 
-			invalidTag : function(event) {
+			invalidTag: function (event) {
 				var res = true, invalidTag = this.model.invalidTag();
 				Forms.form(this.$el).clearState();
 				Forms.input(this.$("ul[name='" + "defaultValue" + "']")).setState("error", invalidTag["tagCode"]);
 				return false;
 			},
 
-			addAnother : function(event) {
+			addAnother: function (event) {
 				if (validateView(this) && saveModel(this.model, event)) {
-					this.trigger("newcustomfield.added", { source: event, view: this, model: this.model });
+					this.trigger("newcustomfield.added", {source: event, view: this, model: this.model});
 					this._resetForm();
 				}
 			},
 
-			addAndClose: function(event) {
+			addAndClose: function (event) {
 				if (validateView(this) && saveModel(this.model, event)) {
-					this.trigger("newcustomfield.added", { source: event, view: this, model: this.model });
+					this.trigger("newcustomfield.added", {source: event, view: this, model: this.model});
 					this.cleanup();
-					this.trigger("newcustomfield.cancel", { source: event, view: this });
+					this.trigger("newcustomfield.cancel", {source: event, view: this});
 				}
 			},
 
-			cleanup : function() {
+			cleanup: function () {
 				this.$el.addClass("not-displayed");
 				Forms.form(this.$el).clearState();
 				this.$el.formDialog("destroy");
 			},
 
-			renderOptional : function(show) {
+			renderOptional: function (show) {
 				var renderPane = this.$("#optional-pane");
 				if (show) {
 					renderPane.show();
@@ -289,66 +301,72 @@ define(
 				}
 			},
 
-			renderOptionsTable : function() {
+			renderOptionsTable: function () {
 				this.optionsTable = this.$("#options-table");
 				this.optionsTable.dataTable({
-					"oLanguage" : {
-						"sUrl" : squashtm.app.cfTable.languageUrl
+					"oLanguage": {
+						"sUrl": squashtm.app.cfTable.languageUrl
 					},
-					"bAutoWidth" : false,
-					"bJQueryUI" : true,
-					"bFilter" : false,
-					"bPaginate" : false,
-					"bServerSide" : false,
-					"bDeferRender" : true,
-					"bRetrieve" : false,
-					"bSort" : false,
-					"aaSorting" : [],
-					"fnRowCallback" : optionRow(this),
-					"fnDrawCallback" : this.decorateOptionsTable,
-					"aoColumnDefs" : [ {
-						"aTargets" : [ 0 ],
-						"sClass" : "option"
+					"bAutoWidth": false,
+					"bJQueryUI": true,
+					"bFilter": false,
+					"bPaginate": false,
+					"bServerSide": false,
+					"bDeferRender": true,
+					"bRetrieve": false,
+					"bSort": false,
+					"aaSorting": [],
+					"fnRowCallback": optionRow(this),
+					"fnDrawCallback": this.decorateOptionsTable,
+					"aoColumnDefs": [{
+						"aTargets": [0],
+						"sClass": "option"
 					}, {
-						"aTargets" : [ 1 ],
-						"sClass" : "code"
+						"aTargets": [1],
+						"sClass": "code"
 					}, {
-						"aTargets" : [ 2 ],
-						"sClass" : "is-default"
+						"aTargets": [2],
+						"sClass": "colour centered"
 					}, {
-						"aTargets" : [ 3 ],
-						"sClass" : "remove-row"
-					} ]
+						"aTargets": [3],
+						"sClass": "is-default"
+					}, {
+						"aTargets": [4],
+						"sClass": "remove-row"
+					}]
 				});
 			},
 
-			renderNewOptionPane: function() {
+			renderNewOptionPane: function () {
 				var src = $("#new-option-pane-tpl").html();
-				var tpl =  Handlebars.compile(src);
+				var tpl = Handlebars.compile(src);
 				this.$("#new-option-pane").html(tpl({}));
+				var colorPicker = $("[name*='new-option-colour']");
+				confman.getStandardIEColorPicker(colorPicker);
 			},
 
-			renderRichText: function() {
+			renderRichText: function () {
 				var conf = confman.getStdCkeditor();
-				$("#defaultValue").ckeditor(function(){}, conf);
+				$("#defaultValue").ckeditor(function () {
+				}, conf);
 				// the following reroute the blur event from the ckeditor and relocate it as thrown by the textarea
-				CKEDITOR.instances["defaultValue"].on('change', function(){
+				CKEDITOR.instances["defaultValue"].on('change', function () {
 					$("#defaultValue").trigger('change');
 				});
 			},
 
-			renderTagList: function() {
+			renderTagList: function () {
 				var tagconf = confman.getStdTagit();
-				var triggerChange = function(event, ui){
+				var triggerChange = function (event, ui) {
 					$("#defaultValue").trigger('change');
 				};
 
 				$.extend(true, tagconf, {
-					validate :  function(label){
-						if (label.indexOf("|") !== -1){
+					validate: function (label) {
+						if (label.indexOf("|") !== -1) {
 							$("#defaultValue").trigger('invalidtag');
 							return false;
-						} else{
+						} else {
 							return true;
 						}
 					},
@@ -358,7 +376,7 @@ define(
 				$("#defaultValue").squashTagit(tagconf);
 			},
 
-			_resetForm : function() {
+			_resetForm: function () {
 				this.model = new NewCustomFieldModel();
 				confman.destroyCkeditor("#defaultValue");
 				Forms.form(this.$el).clearState();
@@ -366,16 +384,18 @@ define(
 				this.render();
 			},
 
-			addOption : function() {
+			addOption: function () {
 				Forms.form(this.$("#new-option-pane")).clearState();
 				var $label = this.$("input[name='new-option-label']");
 				var $code = this.$("input[name='new-option-code']");
+				var $colour = this.$("input[name='new-option-colour']");
 
 				try {
 					var label = _.escape($label.val());
 					var code = _.escape($code.val());
-					this.model.addOption([label,code ]);
-					this.optionsTable.dataTable().fnAddData([ label, code, false, "" ]);
+					var colour = _.escape($colour.val());
+					this.model.addOption([label, code, colour]);
+					this.optionsTable.dataTable().fnAddData([label, code, colour, false, ""]);
 					this.renderNewOptionPane();
 				} catch (ex) {
 					if (ex.name === "ValidationException") {
@@ -390,20 +410,20 @@ define(
 				}
 			},
 
-			removeOption : function(event) {
+			removeOption: function (event) {
 				// target of click event is a <span> inside of <button>, so we use currentTarget
 				var button = event.currentTarget, $button = $(button), option = $button.data("value"), row = $button
-						.parents("tr")[0];
+					.parents("tr")[0];
 
 				this.model.removeOption(option);
 				this.optionsTable.dataTable().fnDeleteRow(row);
 			},
 
-			changeDefaultOption : function(event) {
+			changeDefaultOption: function (event) {
 				var checkbox = event.currentTarget, option = checkbox.value, defaultValue = checkbox.checked ? option
-						: "", uncheckSelector = ".is-default>input:checkbox" +
-						(checkbox.checked ? "[value!='" + option + "']" : ""), optionsInput = Forms
-						.input(this.$("input[name='options']"));
+					: "", uncheckSelector = ".is-default>input:checkbox" +
+					(checkbox.checked ? "[value!='" + option + "']" : ""), optionsInput = Forms
+					.input(this.$("input[name='options']"));
 
 				optionsInput.clearState();
 
@@ -418,10 +438,20 @@ define(
 
 			},
 
-			decorateOptionsTable : function() {
+			changeColour: function (event) {
+				var colourInput = event.currentTarget;
+				var value = $(colourInput).val();
+				var code = $(colourInput).attr('data-value');
+				// really IE? no find function?
+				_.find(this.model.attributes.options, function (option) {
+					return option[1] === code;
+				})[2] = value;
+			},
+
+			decorateOptionsTable: function () {
 				SD.deleteButton($(this).find(".remove-row>a"));
 			}
 		});
 
 		return NewCustomFieldPanelView;
-		});
+	});

@@ -220,6 +220,7 @@
                       <th>#</th>
                       <th th:text="#{label.option}">Option</th>
                       <th th:text="#{label.code}">Code</th>
+                      <th th:text="#{label.colour}">Colour</th>
                       <th th:text="#{label.default}">Default</th>
                       <th>&nbsp;</th>
                     </tr>
@@ -229,6 +230,7 @@
                       <td th:text="${iterStat.count}">1</td>
                       <td th:text="*{label}">label1</td>
                       <td th:text="*{code}">code1</td>
+                      <td th:text="*{colour}">colour</td>
                       <td>
                         <input type="checkbox" name="default" th:value="*{label}" value="label1"
                           th:checked="${customField.defaultValue == cfOpt.label}" title="Add cuf option" />
@@ -312,6 +314,18 @@
         </td>
         <td class="controls">
         <br /> <span class="error-message name-error"></span>
+        </td>
+      </tr>
+      <tr class="control-group">
+        <td>
+          <label class="control-label" for="new-cuf-option-colour" th:text="#{label.colour}">Code</label>
+        </td>
+        <td class="controls">
+          <input id="new-cuf-option-colour" name="new-cuf-option-colour" type="color"/> <span
+          class="help-inline">&nbsp;</span>
+        </td>
+        <td class="controls">
+          <br /> <span class="error-message name-error"></span>
         </td>
       </tr>
     </table>

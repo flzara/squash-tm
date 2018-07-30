@@ -20,14 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.customfield;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.validation.Valid;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -37,14 +29,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Pagings;
@@ -65,13 +50,18 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
-import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+
+import javax.inject.Inject;
+import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Controller for the Custom Fields resources.
  *
  * @author Gregory Fouquet
- *
  */
 @Controller
 @RequestMapping("/custom-fields")
@@ -111,8 +101,7 @@ public class CustomFieldController {
 	/**
 	 * Shows the custom field modification page.
 	 *
-	 * @param customFieldId
-	 *            the id of the custom field to show
+	 * @param customFieldId the id of the custom field to show
 	 * @param model
 	 * @return
 	 */
@@ -120,7 +109,7 @@ public class CustomFieldController {
 	public String showCustomFieldModificationPage(@PathVariable Long customFieldId, Model model) {
 		CustomField customField = customFieldManager.findById(customFieldId);
 
-		switch (customField.getInputType()){
+		switch (customField.getInputType()) {
 			case DROPDOWN_LIST:
 				SingleSelectField cuf = customFieldManager.findSingleSelectFieldById(customFieldId);
 				model.addAttribute(CUSTOM_FIELD, cuf);
@@ -153,13 +142,11 @@ public class CustomFieldController {
 	/**
 	 * Changes the label of the concerned custom field
 	 *
-	 * @param customFieldId
-	 *            the id of the concerned custom field
-	 * @param label
-	 *            the new label
+	 * @param customFieldId the id of the concerned custom field
+	 * @param label         the new label
 	 * @return
 	 */
-	@RequestMapping(value = CUSTOM_FIELD_ID_MAPPING, method = RequestMethod.POST, params = { "id=cuf-label", JEditablePostParams.VALUE }, produces = "text/plain;charset=UTF-8")
+	@RequestMapping(value = CUSTOM_FIELD_ID_MAPPING, method = RequestMethod.POST, params = {"id=cuf-label", JEditablePostParams.VALUE}, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String changeLabel(@PathVariable long customFieldId, @RequestParam(JEditablePostParams.VALUE) String label) {
 		customFieldManager.changeLabel(customFieldId, label);
@@ -169,13 +156,11 @@ public class CustomFieldController {
 	/**
 	 * Changes the code of the concerned custom field
 	 *
-	 * @param customFieldId
-	 *            the id of the concerned custom field
-	 * @param code
-	 *            the new code
+	 * @param customFieldId the id of the concerned custom field
+	 * @param code          the new code
 	 * @return
 	 */
-	@RequestMapping(value = CUSTOM_FIELD_ID_MAPPING, method = RequestMethod.POST, params = { "id=cuf-code", JEditablePostParams.VALUE })
+	@RequestMapping(value = CUSTOM_FIELD_ID_MAPPING, method = RequestMethod.POST, params = {"id=cuf-code", JEditablePostParams.VALUE})
 	@ResponseBody
 	public String changeCode(@PathVariable long customFieldId, @RequestParam(JEditablePostParams.VALUE) String code) {
 		customFieldManager.changeCode(customFieldId, code);
@@ -185,13 +170,11 @@ public class CustomFieldController {
 	/**
 	 * Changes the name of the concerned custom field
 	 *
-	 * @param customFieldId
-	 *            the id of the concerned custom field
-	 * @param name
-	 *            the new name
+	 * @param customFieldId the id of the concerned custom field
+	 * @param name          the new name
 	 * @return
 	 */
-	@RequestMapping(value = "/{customFieldId}/name", method = RequestMethod.POST, params = { JEditablePostParams.VALUE })
+	@RequestMapping(value = "/{customFieldId}/name", method = RequestMethod.POST, params = {JEditablePostParams.VALUE})
 	@ResponseBody
 	public Object changeName(@PathVariable long customFieldId, @RequestParam(JEditablePostParams.VALUE) String name) {
 		customFieldManager.changeName(customFieldId, name);
@@ -201,13 +184,11 @@ public class CustomFieldController {
 	/**
 	 * Changes the whether the custom-field is optional or not.
 	 *
-	 * @param customFieldId
-	 *            the id of the concerned custom field
-	 * @param optional
-	 *            : true if the custom field is optional
+	 * @param customFieldId the id of the concerned custom field
+	 * @param optional      : true if the custom field is optional
 	 * @return
 	 */
-	@RequestMapping(value = "/{customFieldId}/optional", method = RequestMethod.POST, params = { JEditablePostParams.VALUE })
+	@RequestMapping(value = "/{customFieldId}/optional", method = RequestMethod.POST, params = {JEditablePostParams.VALUE})
 	@ResponseBody
 	public boolean changeOptional(@PathVariable long customFieldId, @RequestParam(JEditablePostParams.VALUE) Boolean optional) {
 		customFieldManager.changeOptional(customFieldId, optional);
@@ -217,19 +198,15 @@ public class CustomFieldController {
 	/**
 	 * Changes the default value of the concerned custom-field
 	 *
-	 * @param customFieldId
-	 *            : the id of concerned custom-field
-	 * @param defaultValue
-	 *            : the new default-value for the custom-field
-	 * @param locale
-	 *            : the browser's locale
-	 *
+	 * @param customFieldId : the id of concerned custom-field
+	 * @param defaultValue  : the new default-value for the custom-field
+	 * @param locale        : the browser's locale
 	 * @return defaultValue
 	 */
-	@RequestMapping(value = CUSTOM_FIELD_ID_MAPPING, method = RequestMethod.POST, params = { "id=cuf-default-value", JEditablePostParams.VALUE })
+	@RequestMapping(value = CUSTOM_FIELD_ID_MAPPING, method = RequestMethod.POST, params = {"id=cuf-default-value", JEditablePostParams.VALUE})
 	@ResponseBody
 	public String changeDefaultValueJedit(@PathVariable long customFieldId, @RequestParam(JEditablePostParams.VALUE) String defaultValue,
-			Locale locale) {
+	                                      Locale locale) {
 		customFieldManager.changeDefaultValue(customFieldId, defaultValue);
 		CustomField customField = customFieldManager.findById(customFieldId);
 		String toReturn = defaultValue;
@@ -242,12 +219,10 @@ public class CustomFieldController {
 	/**
 	 * Changes the default value of the concerned custom-field
 	 *
-	 * @param customFieldId
-	 *            : the id of concerned custom-field
-	 * @param defaultValue
-	 *            : the new default-value for the custom-field
+	 * @param customFieldId : the id of concerned custom-field
+	 * @param defaultValue  : the new default-value for the custom-field
 	 */
-	@RequestMapping(value = "/{customFieldId}/defaultValue", method = RequestMethod.POST, params = { JEditablePostParams.VALUE })
+	@RequestMapping(value = "/{customFieldId}/defaultValue", method = RequestMethod.POST, params = {JEditablePostParams.VALUE})
 	@ResponseBody
 	public String changeDefaultValue(@PathVariable long customFieldId, @RequestParam(JEditablePostParams.VALUE) String defaultValue) {
 		customFieldManager.changeDefaultValue(customFieldId, defaultValue);
@@ -257,19 +232,16 @@ public class CustomFieldController {
 	/**
 	 * Changes the label of the concerned custom-field's option
 	 *
-	 * @param customFieldId
-	 *            : the id of the concerned custom-field
-	 * @param optionLabel
-	 *            : the label of the concerned custom-field's option
-	 * @param newLabel
-	 *            : the new label for the concerned custom-field's option
+	 * @param customFieldId : the id of the concerned custom-field
+	 * @param optionLabel   : the label of the concerned custom-field's option
+	 * @param newLabel      : the new label for the concerned custom-field's option
 	 * @return
 	 */
-	@RequestMapping(value = "/{customFieldId}/options/{optionLabel}/label", method = RequestMethod.POST, params = { JEditablePostParams.VALUE })
+	@RequestMapping(value = "/{customFieldId}/options/{optionLabel}/label", method = RequestMethod.POST, params = {JEditablePostParams.VALUE})
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void changeOptionLabel(@PathVariable long customFieldId, @PathVariable String optionLabel,
-			@RequestParam(JEditablePostParams.VALUE) String newLabel) {
+	                              @RequestParam(JEditablePostParams.VALUE) String newLabel) {
 		try {
 			customFieldManager.changeOptionLabel(customFieldId, optionLabel, newLabel);
 		} catch (DomainException e) {
@@ -278,26 +250,36 @@ public class CustomFieldController {
 		}
 	}
 
+	@RequestMapping(value = "/{customFieldId}/options/{optionLabel}/colour", method = RequestMethod.POST, params = {JEditablePostParams.VALUE})
+	@ResponseBody
+	@ResponseStatus(value = HttpStatus.NO_CONTENT)
+	public void changeOptionColour(@PathVariable long customFieldId, @PathVariable String optionLabel,
+	                               @RequestParam(JEditablePostParams.VALUE) String newLabel) {
+		try {
+			customFieldManager.changeOptionColour(customFieldId, optionLabel, newLabel);
+		} catch (DomainException e) {
+			e.setObjectName("change-cuf-option-colour");
+			throw e;
+		}
+	}
+
 	/**
 	 * Changes the code of the concerned custom-field's option
 	 *
-	 * @param customFieldId
-	 *            : the id of the concerned custom-field
-	 * @param optionLabel
-	 *            : the label of the concerned custom-field's option
-	 * @param newCode
-	 *            : the new code for the concerned custom-field's option
+	 * @param customFieldId : the id of the concerned custom-field
+	 * @param optionLabel   : the label of the concerned custom-field's option
+	 * @param newCode       : the new code for the concerned custom-field's option
 	 * @return
 	 */
-	@RequestMapping(value = "/{customFieldId}/options/{optionLabel}/code", method = RequestMethod.POST, params = { JEditablePostParams.VALUE })
+	@RequestMapping(value = "/{customFieldId}/options/{optionLabel}/code", method = RequestMethod.POST, params = {JEditablePostParams.VALUE})
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void changeOptionCode(@PathVariable long customFieldId, @PathVariable String optionLabel,
-			@RequestParam(JEditablePostParams.VALUE) String newCode) {
+	                             @RequestParam(JEditablePostParams.VALUE) String newCode) {
 		try {
 			customFieldManager.changeOptionCode(customFieldId, optionLabel, newCode);
 		} catch (DomainException e) {
-			e.setObjectName("change-cuf-option");
+			e.setObjectName("change-cuf-option-code");
 			throw e;
 		}
 	}
@@ -305,16 +287,14 @@ public class CustomFieldController {
 	/**
 	 * Adds an option to the concerned custom-field
 	 *
-	 * @param customFieldId
-	 *            : the id of the concerned custom-field
-	 * @param option
-	 *            : the new option
+	 * @param customFieldId : the id of the concerned custom-field
+	 * @param option        : the new option
 	 */
 	@RequestMapping(value = "/{customFieldId}/options/new", method = RequestMethod.POST)
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void addOption(@PathVariable long customFieldId,
-			@Valid @ModelAttribute("new-cuf-option") CustomFieldOption option) {
+	                      @Valid @ModelAttribute("new-cuf-option") CustomFieldOption option) {
 		try {
 			customFieldManager.addOption(customFieldId, option);
 		} catch (DomainException e) {
@@ -326,10 +306,8 @@ public class CustomFieldController {
 	/**
 	 * Remove a customField's option
 	 *
-	 * @param customFieldId
-	 *            : the id of the concerned custom-field
-	 * @param optionLabel
-	 *            : the label of the option to remove
+	 * @param customFieldId : the id of the concerned custom-field
+	 * @param optionLabel   : the label of the option to remove
 	 */
 	@RequestMapping(value = "/{customFieldId}/options/{optionLabel}", method = RequestMethod.DELETE)
 	@ResponseBody
@@ -341,25 +319,60 @@ public class CustomFieldController {
 	/**
 	 * Return the DataTableModel to display the table of all custom field's option.
 	 *
-	 * @param customFieldId
-	 *            : the id of the concerned custom field
-	 * @param params
-	 *            the {@link DataTableDrawParameters} for the custom field's options table
+	 * @param customFieldId : the id of the concerned custom field
+	 * @param params        the {@link DataTableDrawParameters} for the custom field's options table
 	 * @return the {@link DataTableModel} with organized {@link CustomFieldOption} infos.
 	 */
 	@RequestMapping(value = "/{customFieldId}/options", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getCustomFieldsTableModel(@PathVariable long customFieldId,
-			final DataTableDrawParameters params) {
+	                                                final DataTableDrawParameters params) {
 		SingleSelectField customField = customFieldManager.findSingleSelectFieldById(customFieldId);
 		List<CustomFieldOption> customFieldOptions = customField.getOptions();
 		PagedCollectionHolder<List<CustomFieldOption>> holder = new SinglePageCollectionHolder<>(customFieldOptions);
-		return new CustomFieldOptionsDataTableModelHelper(customField).buildDataModel(holder,params.getsEcho());
+		return new CustomFieldOptionsDataTableModelHelper(customField).buildDataModel(holder, params.getsEcho());
+	}
+
+	/**
+	 * Will change custom field's options positions.
+	 *
+	 * @param customFieldId : the id of the concerned CustomField.
+	 * @param newIndex      : the lowest index for the moved selection
+	 * @param optionsLabels : the labels of the moved options
+	 */
+	@RequestMapping(value = "/{customFieldId}/options/positions", method = RequestMethod.POST, params = {"itemIds[]",
+		"newIndex"})
+	@ResponseBody
+	@ResponseStatus(value = HttpStatus.NO_CONTENT)
+	public void changeOptionsPositions(@PathVariable long customFieldId, @RequestParam int newIndex,
+	                                   @RequestParam("itemIds[]") List<String> optionsLabels) {
+		customFieldManager.changeOptionsPositions(customFieldId, newIndex, optionsLabels);
+	}
+
+	@ResponseBody
+	@ResponseStatus(value = HttpStatus.NO_CONTENT)
+	@RequestMapping(value = "/{customFieldIds}", method = RequestMethod.DELETE)
+	public void deleteCustomField(@PathVariable("customFieldIds") List<Long> customFieldIds) {
+		customFieldManager.deleteCustomField(customFieldIds);
+	}
+
+	@RequestMapping(value = "/tags/{boundEntity}", method = RequestMethod.GET)
+	@ResponseBody
+	public List<String> getPossibleTagValues(@PathVariable("boundEntity") String boundEntity) {
+
+		List<Long> projectIds = (List<Long>) CollectionUtils.collect(projectFinder.findAllOrderedByName(), new Transformer() {
+
+			@Override
+			public Object transform(Object input) {
+				return ((GenericProject) input).getId();
+			}
+		});
+
+		return customFieldManager.getAvailableTagsForEntity(boundEntity, projectIds);
 	}
 
 	/**
 	 * Will help to create the {@link DataTableModel} to fill the data-table of custom field's options
-	 *
 	 */
 	private static final class CustomFieldOptionsDataTableModelHelper extends DataTableModelBuilder<CustomFieldOption> {
 
@@ -380,52 +393,11 @@ public class CustomFieldController {
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 			res.put("opt-label", HtmlUtils.htmlEscape(item.getLabel()));
 			res.put("opt-code", HtmlUtils.htmlEscape(item.getCode()));
-			res.put("opt-default", "<input type='checkbox' name='default' value='" +  HtmlUtils.htmlEscape(item.getLabel()) + "'" + checked
-					+ "/>");
+			res.put("opt-colour", HtmlUtils.htmlEscape(item.getColour()));
+			res.put("opt-default", "<input type='checkbox' name='default' value='" + HtmlUtils.htmlEscape(item.getLabel()) + "'" + checked
+				+ "/>");
 			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			return res;
 		}
-	}
-
-	/**
-	 * Will change custom field's options positions.
-	 *
-	 * @param customFieldId
-	 *            : the id of the concerned CustomField.
-	 * @param newIndex
-	 *            : the lowest index for the moved selection
-	 * @param optionsLabels
-	 *            : the labels of the moved options
-	 */
-	@RequestMapping(value = "/{customFieldId}/options/positions", method = RequestMethod.POST, params = { "itemIds[]",
-	"newIndex" })
-	@ResponseBody
-	@ResponseStatus(value = HttpStatus.NO_CONTENT)
-	public void changeOptionsPositions(@PathVariable long customFieldId, @RequestParam int newIndex,
-			@RequestParam("itemIds[]") List<String> optionsLabels) {
-		customFieldManager.changeOptionsPositions(customFieldId, newIndex, optionsLabels);
-	}
-
-	@ResponseBody
-	@ResponseStatus(value = HttpStatus.NO_CONTENT)
-	@RequestMapping(value = "/{customFieldIds}", method = RequestMethod.DELETE)
-	public
-	void deleteCustomField(@PathVariable("customFieldIds") List<Long> customFieldIds) {
-		customFieldManager.deleteCustomField(customFieldIds);
-	}
-
-	@RequestMapping(value = "/tags/{boundEntity}", method = RequestMethod.GET)
-	@ResponseBody
-	public List<String> getPossibleTagValues(@PathVariable("boundEntity") String boundEntity){
-
-	List<Long> projectIds = (List<Long>) CollectionUtils.collect(projectFinder.findAllOrderedByName(), new Transformer() {
-
-			@Override
-			public Object transform(Object input) {
-				return 	((GenericProject) input).getId();
-			}
-		});
-
-		return customFieldManager.getAvailableTagsForEntity(boundEntity, projectIds);
 	}
 }

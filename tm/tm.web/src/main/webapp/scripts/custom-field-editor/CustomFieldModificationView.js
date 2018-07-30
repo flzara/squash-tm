@@ -68,7 +68,8 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 				"click .is-default>input:checkbox" : "changeDefaultOption",
 				"click .opt-label" : "openRenameOptionPopup",
 				"click .opt-code" : "openChangeOptionCodePopup",
-				"click #delete-cuf-button" : "confirmCustomFieldDeletion"
+				"click #delete-cuf-button" : "confirmCustomFieldDeletion",
+				"change .opt-colour>input": "changeColour"
 			},
 
 			confirmCustomFieldDeletion : function(event) {
@@ -211,6 +212,24 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 						"#change-cuf-option-code").val(
 						previousValue);
 				self.changeOptionCodePopup.formDialog("open");
+			},
+
+			changeColour : function(event) {
+				var self = this;
+				var colourInput = event.currentTarget;
+				var colour = $(colourInput).val();
+				//first parent is the cell, second parent is the row
+				var row = colourInput.parentElement.parentElement;
+				var data = self.optionsTable.fnGetData(row);
+				var label = data['opt-label'];
+				$.ajax({
+					type : 'POST',
+					data : {
+						'value' : colour
+					},
+					dataType : "json",
+					url : cfMod.optionsTable.ajaxSource	+ "/" + label + "/colour"
+				});
 			},
 
 			renameOption : function() {
@@ -557,9 +576,15 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 												"sClass" : "opt-code linkWise",
 												"mDataProp" : "opt-code"
 											},
+										{
+											'bSortable' : false,
+											"aTargets" : [ 3 ],
+											"sClass" : "opt-colour colour centered",
+											"mDataProp" : "opt-colour"
+										},
 											{
 												'bSortable' : false,
-												'aTargets' : [ 3 ],
+												'aTargets' : [ 4 ],
 												'sClass' : "is-default",
 												'mDataProp' : 'opt-default'
 											},
@@ -567,7 +592,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 												'bSortable' : false,
 												'sWidth' : '2em',
 												'sClass' : 'delete-button',
-												'aTargets' : [ 4 ],
+												'aTargets' : [ 5 ],
 												'mDataProp' : 'empty-delete-holder'
 											} ]
 								}, squashtm.datatable.defaults);

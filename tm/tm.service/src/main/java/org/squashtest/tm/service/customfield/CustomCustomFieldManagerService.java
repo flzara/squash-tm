@@ -39,15 +39,15 @@ import org.squashtest.tm.exception.customfield.OptionAlreadyExistException;
 
 /**
  * Custom-Field manager services which cannot be dynamically generated.
- * 
+ *
  * @author mpagnon
- * 
+ *
  */
 @Transactional
 public interface CustomCustomFieldManagerService {
 	/**
 	 * Will delete the custom-field entity
-	 * 
+	 *
 	 * @param customFieldId
 	 *            : the id of the custom field to delete
 	 */
@@ -59,7 +59,7 @@ public interface CustomCustomFieldManagerService {
 
 	/**
 	 * Will persist the given custom field.
-	 * 
+	 *
 	 * @param newCustomField
 	 *            : the custom field to persist
 	 */
@@ -69,7 +69,7 @@ public interface CustomCustomFieldManagerService {
 	/**
 	 * Will check if new name is available among all custom fields and, if so, will change the name of the concerned
 	 * {@link CustomField}.
-	 * 
+	 *
 	 * @param customFieldId
 	 *            the id of the concerned {@link CustomField}
 	 * @param newName
@@ -82,7 +82,7 @@ public interface CustomCustomFieldManagerService {
 	 * If custom-field becomes mandatory, will check that a default value exist. If so, all necessary CustomFieldValues
 	 * will be added, otherwise an exception is thrown.<br>
 	 * If custom-field becomes optional the change is done without check of special action.<br>
-	 * 
+	 *
 	 * @param customFieldId
 	 *            the id of the concerned {@link CustomField}
 	 * @param optional
@@ -96,7 +96,7 @@ public interface CustomCustomFieldManagerService {
 	/**
 	 * Will check if the new label is available among all the concerned {@link CustomField}'s {@link CustomFieldOption},
 	 * if so, will change the label of the concerned custom-field's option.
-	 * 
+	 *
 	 * @throws OptionAlreadyExistException
 	 * @param customFieldId
 	 *            : the id of the concerned {@link CustomField}
@@ -111,7 +111,7 @@ public interface CustomCustomFieldManagerService {
 	/**
 	 * Will check if the new code is available among all the concerned {@link CustomField}'s {@link CustomFieldOption},
 	 * if so, will change the code of the concerned custom-field's option.
-	 * 
+	 *
 	 * @throws CodeAlreadyExistException
 	 * @param customFieldId
 	 *            : the id of the concerned {@link CustomField}
@@ -123,10 +123,13 @@ public interface CustomCustomFieldManagerService {
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeOptionCode(long customFieldId, String optionLabel, String newCode);
 
+
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	void changeOptionColour(long customFieldId, String optionLabel, String newColour);
 	/**
 	 * Will check if the new option's label is available among all the concerned {@link CustomField}'s
 	 * {@link CustomFieldOption}, check also if the code is available,if so, will add the new option at the bottom of the list.
-	 * 
+	 *
 	 * @throws OptionAlreadyExistException
 	 * @param customFieldId
 	 *            : the id of the concerned {@link CustomField}
@@ -138,7 +141,7 @@ public interface CustomCustomFieldManagerService {
 	/**
 	 * Will remove the from the custom-field's option list. If the option to remove is the default one, will throw a
 	 * {@link CannotDeleteDefaultOptionException}
-	 * 
+	 *
 	 * @param customFieldId
 	 *            : the id of the concerned {@link SingleSelectField}
 	 * @param optionLabel
@@ -150,7 +153,7 @@ public interface CustomCustomFieldManagerService {
 
 	/**
 	 * Will change custom field's options positions.
-	 * 
+	 *
 	 * @param customFieldId
 	 *            : the id of the concerned CustomField.
 	 * @param newIndex
@@ -163,7 +166,7 @@ public interface CustomCustomFieldManagerService {
 
 	/**
 	 * Will find all custom fields available and return them ordered according to the given parameters.
-	 * 
+	 *
 	 * @param filter
 	 *            the {@link Page} that holds order and paging params.
 	 * @return the filtered collection of all custom field available in squash
@@ -172,7 +175,7 @@ public interface CustomCustomFieldManagerService {
 
 	/**
 	 * Will find the {@link SingleSelectField} of the given id
-	 * 
+	 *
 	 * @param customFieldId
 	 *            the id of the {@link SingleSelectField}
 	 * @return the {@link SingleSelectField} or <code>null</code>
@@ -182,7 +185,7 @@ public interface CustomCustomFieldManagerService {
 	/**
 	 * Will change the code of the custom field after having checked that : the code is unique among all custom fields,
 	 * and that the code contains only letters (upper and lower cases), numbers or under-scores.
-	 * 
+	 *
 	 * @param customFieldId
 	 *            : the id of the concerned {@link CustomField}
 	 * @param code

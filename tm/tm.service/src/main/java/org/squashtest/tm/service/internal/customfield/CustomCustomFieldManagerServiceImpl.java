@@ -199,6 +199,11 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 		customField.changeOptionCode(optionLabel, newCode);
 	}
 
+	@Override
+	public void changeOptionColour(long customFieldId, String optionLabel, String newColour) {
+		SingleSelectField customField = customFieldDao.findSingleSelectFieldById(customFieldId);
+		customField.changeOptionColour(optionLabel, newColour);
+	}
 	/**
 	 * @see org.squashtest.tm.service.customfield.CustomCustomFieldManagerService#addOption(Long, CustomFieldOption)
 	 */
