@@ -21,6 +21,9 @@
 package org.squashtest.tm.service;
 
 
+import javax.inject.Inject;
+import javax.validation.ValidatorFactory;
+
 import org.jooq.ConnectionProvider;
 import org.jooq.SQLDialect;
 import org.jooq.TransactionProvider;
@@ -30,49 +33,52 @@ import org.jooq.impl.DefaultExecuteListenerProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.*;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.autoconfigure.transaction.PlatformTransactionManagerCustomizer;
+import org.springframework.context.annotation.AdviceMode;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Role;
 import org.springframework.context.annotation.aspectj.SpringConfiguredConfiguration;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.AbstractEnvironment;
-import org.springframework.core.env.EnumerablePropertySource;
-import org.springframework.core.env.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.support.lob.DefaultLobHandler;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 import org.springframework.transaction.aspectj.AspectJTransactionManagementConfiguration;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-
-import javax.inject.Inject;
-import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
-import javax.validation.ValidatorFactory;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
 
 /**
  * Configuration for repository layer.
  *
- * "implements TransactionManagementConfigurer" seems necessary because we dont't use standard JPA. As a consequence,
- * @EnableTransactionManagement magic don't seem to properly kick in.
- *
  * @author Gregory Fouquet
+ * @author bsiri
  * @since 1.13.0
  */
 @Configuration
-@EnableTransactionManagement(order = Ordered.HIGHEST_PRECEDENCE + 100, mode = AdviceMode.PROXY, proxyTargetClass = false)
-@Import(AspectJTransactionManagementConfiguration.class)
-@EnableJpaRepositories("org.squashtest.tm.service.internal.repository")
-public class RepositoryConfig implements TransactionManagementConfigurer {
-	private static final Logger LOGGER = LoggerFactory.getLogger(RepositoryConfig.class);
 
-	@Inject
-	private DataSource dataSource;
+// Transaction management
+@EnableTransactionManagement(order = Ordered.HIGHEST_PRECEDENCE + 100, mode = AdviceMode.PROXY, proxyTargetClass = false)
+@Import({SpringConfiguredConfiguration.class,AspectJTransactionManagementConfiguration.class})
+
+// Hibernate autoconf
+@EntityScan({
+	// annotated packages
+	"org.squashtest.tm.service.internal.repository.hibernate",
+	"org.squashtest.tm.service.internal.hibernate",
+
+	// annotated classes
+	"org.squashtest.tm.domain",
+	"org.squashtest.csp.core.bugtracker.domain"})
+
+// Spring Data JPA
+@EnableJpaRepositories("org.squashtest.tm.service.internal.repository")
+public class RepositoryConfig {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(RepositoryConfig.class);
 
 	@Inject
 	private AbstractEnvironment env;
@@ -83,105 +89,40 @@ public class RepositoryConfig implements TransactionManagementConfigurer {
 
 	@Bean
 	public DefaultLobHandler lobHandler() {
+		LOGGER.info("init lobHandler");
 		return new DefaultLobHandler();
 	}
-
-
-	@Bean(name = "entityManagerFactory")
-	@DependsOn(SpringConfiguredConfiguration.BEAN_CONFIGURER_ASPECT_BEAN_NAME)
-	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-	public EntityManagerFactory entityManagerFactory() {
-
-		LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
-		factory.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-
-		factory.setDataSource(dataSource);
-		factory.setPackagesToScan(
-			// annotated packages (scanned in this method since Spring 4.1)
-			"org.squashtest.tm.service.internal.repository.hibernate",
-			"org.squashtest.tm.service.internal.hibernate",
-
-			// annotated classes
-			"org.squashtest.tm.domain",
-			"org.squashtest.csp.core.bugtracker.domain"
-		);
-
-		// setting the properties
-		Properties hibProperties = hibernateProperties();
-		factory.setJpaProperties(hibProperties);
-
-		factory.afterPropertiesSet();
-
-		return factory.getObject();
-	}
-
-
-	@Bean
-	//@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-	@DependsOn("entityManagerFactory")
-	public JpaTransactionManager transactionManager() {
-		JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
-		jpaTransactionManager.setEntityManagerFactory(entityManagerFactory());
-		// Below is useful to be able to perform direct JDBC operations using this same tx mgr.
-		jpaTransactionManager.setDataSource(dataSource);
-		return jpaTransactionManager;
-	}
-
-
-	@Bean
-	public Properties hibernateProperties() {
-		Set<String> names = new HashSet<>();
-
-		for (PropertySource ps : env.getPropertySources()) {
-			if (ps instanceof EnumerablePropertySource) {
-				fillingNames( names, ps);
-			}
-		}
-
-		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace("Filtering hibernate properties from environment : {}", names);
-		}
-
-		Properties props = new Properties();
-
-		for (String name : names) {
-			props.put(name, env.getProperty(name));
-		}
-
-
-		return props;
-	}
-
-
-	private void fillingNames(Set<String> names,PropertySource ps){
-		for (String name : ((EnumerablePropertySource) ps).getPropertyNames()) {
-			if (name.toLowerCase().startsWith("hibernate")) {
-				names.add(name);
-				// Don't directly get the property because in case of duplicate props, it would short-circuit
-				// property priority, which is managed by Environment object
-			}
-		}
-	}
-
 
 	@Bean
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 	public static ValidatorFactory validatorFactory() {
+		LOGGER.info("init LocalValudatorFactory");
 		return new LocalValidatorFactoryBean();
 	}
-
-
-	@Override
-	//[Issue 6432]
-	//trying to remove a nasty double bean PlatformTransactionManager bug by commenting the @Bean below
-	//see http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/transaction/annotation/TransactionManagementConfigurer.html#annotationDrivenTransactionManager--
-	//@Bean
-	public PlatformTransactionManager annotationDrivenTransactionManager() {
-		return transactionManager();
+	
+	
+	/*
+	 * Because the SessionFieldBridge are @Configurable we need to ensure that SpringConfiguredConfiguration is ready
+	 * when the EntityManagerFactory is created (by the autoconfiguration class HibernateJpaConfiguration). Since there 
+	 * is no way to ensure the order of autoconfiguration application we resort to hacks such as here. 
+	 * 
+	 * Technically this bean will register a configurer for the transaction manager that does nothing (which will then be 
+	 * created early as part of the EMF configuration), and incidentally allows us to declare @DependsOn. I couldn't find 
+	 * of any other cleaner, functional way to make it work.  
+	 * 
+	 * @return some useless bytecode that will sit in the RAM forever
+	 */
+	@Bean
+	@DependsOn(SpringConfiguredConfiguration.BEAN_CONFIGURER_ASPECT_BEAN_NAME)
+	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+	public PlatformTransactionManagerCustomizer<PlatformTransactionManager> platformTransactionManagerCustomize(){
+		return (manager) -> {};		
 	}
+	
 
 	@Bean
 	public org.jooq.Configuration jooqConfiguration(TransactionProvider transactionProvider, ConnectionProvider connectionProvider, DefaultExecuteListenerProvider defaultExecuteListenerProvider) {
+		LOGGER.info("init JooqConfiguration");
 		DefaultConfiguration defaultConfiguration = new DefaultConfiguration();
 		String sqlDialect = env.getRequiredProperty("jooq.sql.dialect");
 		SQLDialect dialect = SQLDialect.valueOf(sqlDialect);

@@ -135,11 +135,11 @@ define(["jquery", "./lib/jquery.staticCustomfield", "./lib/jquery.jeditableCusto
 
 				if (isDenormalized) {
 					cufId = table.fnGetData(row).denormalizedFields[cufCode].id;
-					url += "/denormalized-fields/values/" + cufId;
+					url += "denormalized-fields/values/" + cufId;
 				}
 				else {
 					cufId = table.fnGetData(row).customFields[cufCode].id;
-					url += "/custom-fields/values/" + cufId;
+					url += "custom-fields/values/" + cufId;
 				}
 
 				return $.ajax({

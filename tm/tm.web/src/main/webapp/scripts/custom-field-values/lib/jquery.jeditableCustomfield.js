@@ -47,7 +47,7 @@ define(
 				};
 
 				var baseURL  = squashtm.app.contextRoot;
-					baseURL += (isDenormalized) ? "/denormalized-fields/values/" : "/custom-fields/values/";
+					baseURL += (isDenormalized) ? "denormalized-fields/values/" : "custom-fields/values/";
 
 				var ajaxconf = {
 					data : {},

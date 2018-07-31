@@ -218,7 +218,7 @@ require(["common"], function(){
 			var $this = $(this);
 			var id = $this.data('entity-id');
 			var ids = ( !! id) ? [id] : id ;
-			var url = squashtm.app.contextRoot+'/administration/milestones/'+ ids.join(",");
+			var url = squashtm.app.contextRoot + 'administration/milestones/'+ ids.join(",");
 			var table = $table();
 			//var selectedRow = table.getRowsByIds(ids);
 

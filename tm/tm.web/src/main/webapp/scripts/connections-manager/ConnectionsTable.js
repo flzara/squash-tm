@@ -24,9 +24,9 @@ define([ "jquery", "backbone", "squashtable", "jqueryui"], function($, Backbone)
 		initialize : function() {
 			var tableConf = {
 				"oLanguage" : {
-					"sUrl" : squashtm.app.contextRoot + "/datatables/messages"
+					"sUrl" : squashtm.app.contextRoot + "datatables/messages"
 				},
-				"sAjaxSource" : squashtm.app.contextRoot + "/administration/connections",
+				"sAjaxSource" : squashtm.app.contextRoot + "administration/connections",
 				"bDeferRender" : true,
 				"bServerSide" : true,
 				"bFilter" : true,

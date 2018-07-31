@@ -99,7 +99,7 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 					nodes : nodeIds.join(",")
 				};
 
-				ctxcontent.loadWith(squashtm.app.contextRoot+"/requirement-browser/dashboard", params);
+				ctxcontent.loadWith(squashtm.app.contextRoot + "requirement-browser/dashboard", params);
 			}
 
 			//if favorite dashboard is loaded and a multiselection is already loaded we only need to refresh the dashboard view
@@ -112,7 +112,7 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 			//if favorite dashboard is not loaded or if favorite dashboard is loaded but with a single node was selected before,
 			//we need to clear contextual content and reload the whole thing
 			else {
-				ctxcontent.loadWith(squashtm.app.contextRoot + "/requirement-browser/dashboard-favorite");
+				ctxcontent.loadWith(squashtm.app.contextRoot + "requirement-browser/dashboard-favorite");
 			}
 
 			break;
@@ -208,7 +208,7 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 
 			$("#search-tree-button").on("click", function(){
 
-				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=requirement";
+				document.location.href = squashtm.app.contextRoot + "advanced-search?searchDomain=requirement";
 			});
 
 
@@ -244,12 +244,12 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 
 			  wreqr.on("favoriteDashboard.milestone.showDefault", function () {
 				ctxcontent.unload();
-				ctxcontent.loadWith(squashtm.app.contextRoot+"/requirement-browser/dashboard");
+				ctxcontent.loadWith(squashtm.app.contextRoot + "requirement-browser/dashboard");
 			  });
 
 			    wreqr.on("favoriteDashboard.milestone.showFavorite", function () {
 				ctxcontent.unload();
-				ctxcontent.loadWith(squashtm.app.contextRoot+"/requirement-browser/dashboard");
+				ctxcontent.loadWith(squashtm.app.contextRoot + "requirement-browser/dashboard");
 			  });
 
 

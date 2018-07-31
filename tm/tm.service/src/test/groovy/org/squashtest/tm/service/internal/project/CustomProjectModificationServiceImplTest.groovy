@@ -66,7 +66,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 
 		and:
 
-		projectTemplateDao.findOne(1L) >> template
+		projectTemplateDao.getOne(1L) >> template
 
 		when:
 
@@ -108,7 +108,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 
 		and:
 
-		projectTemplateDao.findOne(1L) >> template
+		projectTemplateDao.getOne(1L) >> template
 
 		when:
 

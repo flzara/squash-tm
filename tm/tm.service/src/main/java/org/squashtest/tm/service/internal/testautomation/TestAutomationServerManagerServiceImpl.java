@@ -54,7 +54,7 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public TestAutomationServer findById(long serverId) {
-		return serverDao.findOne(serverId);
+		return serverDao.getOne(serverId);
 	}
 
 	@Override
@@ -130,7 +130,7 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void changeURL(long serverId, URL url) {
 
-		TestAutomationServer server = serverDao.findOne(serverId);
+		TestAutomationServer server = serverDao.getOne(serverId);
 		checkNoConflicts(server, url);
 		server.setBaseURL(url);
 
@@ -139,7 +139,7 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void changeName(long serverId, String newName) {
-		TestAutomationServer server = serverDao.findOne(serverId);
+		TestAutomationServer server = serverDao.getOne(serverId);
 		if (newName.equals(server.getName())) {
 			return;
 		}
@@ -154,7 +154,7 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void changeLogin(long serverId, String login) {
-		TestAutomationServer server = serverDao.findOne(serverId);
+		TestAutomationServer server = serverDao.getOne(serverId);
 		checkNoConflicts(server, login);
 		server.setLogin(login);
 	}
@@ -162,21 +162,21 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void changePassword(long serverId, String password) {
-		TestAutomationServer server = serverDao.findOne(serverId);
+		TestAutomationServer server = serverDao.getOne(serverId);
 		server.setPassword(password);
 	}
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void changeDescription(long serverId, String description) {
-		TestAutomationServer server = serverDao.findOne(serverId);
+		TestAutomationServer server = serverDao.getOne(serverId);
 		server.setDescription(description);
 	}
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void changeManualSlaveSelection(long serverId, boolean manualSlaveSelection) {
-		TestAutomationServer server = serverDao.findOne(serverId);
+		TestAutomationServer server = serverDao.getOne(serverId);
 		server.setManualSlaveSelection(manualSlaveSelection);
 	}
 

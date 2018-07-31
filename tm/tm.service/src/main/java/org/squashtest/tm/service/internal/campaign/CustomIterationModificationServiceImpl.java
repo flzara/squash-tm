@@ -70,6 +70,7 @@ import javax.inject.Provider;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import static org.squashtest.tm.service.security.Authorizations.*;
 
@@ -320,7 +321,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Override
 	@BatchPreventConcurrent(entityType = Iteration.class, coercer = TestSuiteToIterationCoercerForList.class)
 	public OperationReport removeTestSuites(@Ids List<Long> suitesIds) {
-		List<TestSuite> testSuites = suiteDao.findAll(suitesIds);
+		List<TestSuite> testSuites = suiteDao.findAllById(suitesIds);
 		// check
 		checkPermissionsForAll(testSuites, "DELETE");
 		// proceed
@@ -433,11 +434,11 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Override
 	public Execution updateExecutionFromTc(long executionId) {
 
-		Execution exec = executionDao.findOne(executionId);
-		if (exec == null) {
+		Optional<Execution> optExec = executionDao.findById(executionId);
+		if (! optExec.isPresent()) {
 			throw new ExecutionWasDeleted();
 		}
-
+		Execution exec = optExec.get();
 		if (exec.getReferencedTestCase() != null && exec.getReferencedTestCase().getSteps().isEmpty()) {
 			throw new ExecutionHasNoStepsException();
 		}

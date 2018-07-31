@@ -37,10 +37,7 @@ import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneHolder;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.search.CUFBridge;
-import org.squashtest.tm.domain.search.CollectionSizeBridge;
-import org.squashtest.tm.domain.search.InfoListItemBridge;
-import org.squashtest.tm.domain.search.LevelEnumBridge;
+import org.squashtest.tm.domain.search.*;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.exception.UnallowedTestAssociationException;
@@ -57,8 +54,6 @@ import static javax.persistence.FetchType.LAZY;
 import static org.squashtest.tm.domain.testcase.TestCaseImportance.LOW;
 import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD;
 
-import org.squashtest.tm.domain.testcase.Parameter;
-
 /**
  * @author Gregory Fouquet
  */
@@ -70,12 +65,9 @@ import org.squashtest.tm.domain.testcase.Parameter;
 	@ClassBridge(name = "iterations", store = Store.YES, impl = TestCaseIterationBridge.class),
 	@ClassBridge(name = "executions", store = Store.YES, impl = TestCaseExecutionBridge.class),
 	@ClassBridge(name = "issues", store = Store.YES, impl = TestCaseIssueBridge.class),
-	@ClassBridge(name = "cufs", store = Store.YES, impl = CUFBridge.class, params = {
-		@org.hibernate.search.annotations.Parameter(name = "type", value = "testcase"),
-		@org.hibernate.search.annotations.Parameter(name = "inputType", value = "ALL")}),
-	@ClassBridge(name = "cufs", store = Store.YES, analyze = Analyze.NO, impl = CUFBridge.class, params = {
-		@org.hibernate.search.annotations.Parameter(name = "type", value = "testcase"),
-		@org.hibernate.search.annotations.Parameter(name = "inputType", value = "DROPDOWN_LIST")})})
+	@ClassBridge(name = "analyzed_cufs", store = Store.YES, impl = AnalyzableCUFBridge.class),
+	@ClassBridge(name = "not_analyzed_cufs", store = Store.YES, analyze = Analyze.NO, impl = NotAnalyzableCUFBridge.class)
+})
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
 public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, BoundEntity, MilestoneHolder {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseLibraryNode.class);

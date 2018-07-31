@@ -55,7 +55,7 @@ class CampaignDeletionHandlerImplTest  extends Specification{
 		def itpi = (1..5).collect{ createItpi(it, ts) }
 		ts.each {it.getTestPlan() >> itpi}
 
-		suiteDao.findAll(_) >> ts
+		suiteDao.findAllById(_) >> ts
 		def ids = [1L, 2L, 3L, 4L, 5L]
 		when :
 		def result = handler.simulateSuiteDeletion(ids)
@@ -71,7 +71,7 @@ class CampaignDeletionHandlerImplTest  extends Specification{
 		def itpi = (1..5).collect{ createItpi(it, ts) }
 		ts.each {it.getTestPlan() >> itpi}
 
-		suiteDao.findAll(_) >> ts
+		suiteDao.findAllById(_) >> ts
 		def ids = [1L, 2L, 5L]
 		when :
 		def result = handler.simulateSuiteDeletion(ids)
@@ -87,7 +87,7 @@ class CampaignDeletionHandlerImplTest  extends Specification{
 		def itpi = (1..5).collect{ createItpi(it, ts) }
 		ts.each {it.getTestPlan() >> itpi}
 
-		suiteDao.findAll(_) >> ts
+		suiteDao.findAllById(_) >> ts
 		def ids = [1L, 2L, 5L]
 		when :
 		def result = handler.deleteSuites(ids, false)
@@ -104,7 +104,7 @@ class CampaignDeletionHandlerImplTest  extends Specification{
 		def itpi = (1..5).collect{ createItpi(it, ts) }
 		ts.each {it.getTestPlan() >> itpi}
 
-		suiteDao.findAll(_) >> ts
+		suiteDao.findAllById(_) >> ts
 		def ids = [1L, 2L, 3L, 4L, 5L]
 		when :
 		def result = handler.deleteSuites(ids, true)
@@ -120,7 +120,7 @@ class CampaignDeletionHandlerImplTest  extends Specification{
 		def itpi = (1..5).collect{ createItpi(it, ts) }
 		ts.each {it.getTestPlan() >> itpi}
 
-		suiteDao.findAll(_) >> ts
+		suiteDao.findAllById(_) >> ts
 		def ids = [1L, 3L, 4L, 5L]
 		when :
 		def result = handler.deleteSuites(ids, true)

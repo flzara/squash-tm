@@ -68,6 +68,9 @@ class AutomatedExecutionViewUtilsTest extends Specification {
 		tap.label >> "drips drips drips drips"
 		autoExec.automatedProject >> tap
 
+		and :
+		i18n.internationalize(_,_) >>	"成功"
+
 		when:
 		ExecutionAutoView res = AutomatedExecutionViewUtils.translateExecutionInView(autoExec, Locale.JAPAN, i18n);
 

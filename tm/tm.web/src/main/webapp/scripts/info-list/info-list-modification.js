@@ -133,7 +133,7 @@ define([ 'module', "info-list/info-list-modification-information-view", "info-li
 				type : 'DELETE',
 				url : routing.buildURL("info-list.info", config.data.infoList.id)
 			}).done(function(data) {
-				document.location.href = squashtm.app.contextRoot + "/administration/info-lists/";
+				document.location.href = squashtm.app.contextRoot + "administration/info-lists/";
 			});
 
 		},

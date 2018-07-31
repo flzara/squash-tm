@@ -52,14 +52,14 @@ import org.springframework.security.acls.jdbc.BasicLookupStrategy;
 import org.springframework.security.acls.model.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.authentication.encoding.PasswordEncoder;
-import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configurers.GlobalAuthenticationConfigurerAdapter;
+import org.springframework.security.config.annotation.authentication.configuration.GlobalAuthenticationConfigurerAdapter;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.password.MessageDigestPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
 import org.squashtest.tm.api.security.authentication.ConditionalOnAuthProviderProperty;
 import org.squashtest.tm.security.acls.CustomPermissionFactory;
@@ -324,8 +324,9 @@ public class SecurityConfig {
 	@Bean
     @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 	@Order(0)
+	// XXX : time to migrate to a stronger encryption scheme. See DelegatingPasswordEncoder for password migration strategies.
 	public PasswordEncoder shaPasswordEncoder() {
-		return new ShaPasswordEncoder();
+		return new MessageDigestPasswordEncoder("SHA-1");
 	}
 
 	@Bean(name = "userDetailsManager.caseSensitive")

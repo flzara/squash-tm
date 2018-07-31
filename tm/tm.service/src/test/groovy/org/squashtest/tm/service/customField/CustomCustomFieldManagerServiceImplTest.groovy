@@ -49,7 +49,7 @@ class CustomCustomFieldManagerServiceImplTest extends Specification {
 		given:
 		CustomField cuf = Mock()
 		List<Long> bindingIds = new ArrayList<Long>();
-		customFieldDao.findById(1L) >> cuf
+		customFieldDao.getOne(1L) >> cuf
 		customFieldBindingDao.findAllByCustomFieldIdOrderByPositionAsc(1L) >> bindingIds;
 
 		when :
@@ -64,7 +64,7 @@ class CustomCustomFieldManagerServiceImplTest extends Specification {
 		given:
 		CustomField field = Mock()
 		field.code >> "CODE"
-		customFieldDao.findById(10L) >> field
+		customFieldDao.getOne(10L) >> field
 
 		and:
 		customFieldDao.findByCode("NEW CODE") >> null
@@ -80,7 +80,7 @@ class CustomCustomFieldManagerServiceImplTest extends Specification {
 		given:
 		CustomField field = Mock()
 		field.code >> "CODE"
-		customFieldDao.findById(10L) >> field
+		customFieldDao.getOne(10L) >> field
 
 		and:
 		customFieldDao.findByCode("CODE") >> field
@@ -96,7 +96,7 @@ class CustomCustomFieldManagerServiceImplTest extends Specification {
 		given:
 		CustomField field = Mock()
 		field.code >> "CODE"
-		customFieldDao.findById(10L) >> field
+		customFieldDao.getOne(10L) >> field
 
 		and:
 		customFieldDao.findByCode("CLASHING CODE") >> Mock(CustomField)

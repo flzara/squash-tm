@@ -55,7 +55,9 @@ public interface CustomIterationModificationService extends IterationFinder {
 	 * @param campaignId
 	 * @return the index of the added iteration.
 	 */
-	@PreventConcurrent(entityType = CampaignLibraryNode.class)
+	// Commented because 1/ implementation already has it, leading to double application of the advice and 2/ it's best to avoid aspects on interfaces
+	// Revert that decision if experience has proven me wrong
+	//@PreventConcurrent(entityType = CampaignLibraryNode.class)
 	int addIterationToCampaign(Iteration iteration, @Id long campaignId, boolean copyTestPlan);
 
 	String delete(long iterationId);

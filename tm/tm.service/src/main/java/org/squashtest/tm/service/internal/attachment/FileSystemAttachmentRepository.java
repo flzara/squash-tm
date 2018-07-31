@@ -123,7 +123,7 @@ public class FileSystemAttachmentRepository implements AttachmentRepository {
 	 * @return the path as specified above
 	 */
 	private String getAttachmentPath(Long attachmentId) {
-		Attachment attachment = attachmentDao.findOne(attachmentId);
+		Attachment attachment = attachmentDao.getOne(attachmentId);
 		Long attachmentListId = attachment.getAttachmentList().getId();
 		String folderPath = findFolderPath(attachmentListId);
 		Long contentId = attachment.getContent().getId();

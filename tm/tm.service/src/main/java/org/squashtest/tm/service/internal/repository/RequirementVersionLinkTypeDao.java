@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -34,7 +35,7 @@ import org.squashtest.tm.domain.requirement.RequirementVersionLinkType;
  *
  * Note: This Dao uses NamedQueries written in hibernate/package-info.
  */
-public interface RequirementVersionLinkTypeDao extends CrudRepository<RequirementVersionLinkType, Long>, CustomRequirementVersionLinkTypeDao {
+public interface RequirementVersionLinkTypeDao extends JpaRepository<RequirementVersionLinkType, Long>, CustomRequirementVersionLinkTypeDao {
 
 	/**
 	 * Get the only {@link RequirementVersionLinkType} set as the Default one.

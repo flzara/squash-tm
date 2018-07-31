@@ -59,7 +59,7 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public void bindTestCaseToMilestones(long testCaseId, Collection<Long> milestoneIds) {
 		TestCase tc = testCaseDao.findById(testCaseId);
-		Collection<Milestone> milestones = milestoneDao.findAll(milestoneIds);
+		Collection<Milestone> milestones = milestoneDao.findAllById(milestoneIds);
 
 		for (Milestone m : milestones) {
 			tc.bindMilestone(m);
@@ -78,8 +78,8 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 	@Override
 	@PreAuthorize(WRITE_REQVERSION_OR_ROLE_ADMIN)
 	public void bindRequirementVersionToMilestones(long requirementVersionId, Collection<Long> milestoneIds) {
-		RequirementVersion version = requirementVersionDao.findOne(requirementVersionId);
-		Collection<Milestone> milestones = milestoneDao.findAll(milestoneIds);
+		RequirementVersion version = requirementVersionDao.getOne(requirementVersionId);
+		Collection<Milestone> milestones = milestoneDao.findAllById(milestoneIds);
 
 		for (Milestone m : milestones) {
 			if (!m.isOneVersionAlreadyBound(version)) {
@@ -92,7 +92,7 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 	@Override
 	@PreAuthorize(WRITE_REQVERSION_OR_ROLE_ADMIN)
 	public void unbindRequirementVersionFromMilestones(long requirementVersionId, Collection<Long> milestoneIds) {
-		RequirementVersion version = requirementVersionDao.findOne(requirementVersionId);
+		RequirementVersion version = requirementVersionDao.getOne(requirementVersionId);
 		for (Long milestoneId : milestoneIds) {
 			version.unbindMilestone(milestoneId);
 		}
@@ -103,7 +103,7 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 	public void bindCampaignToMilestone(long campaignId, Long milestoneId) {
 		if (milestoneId != null){
 			Campaign campaign = campaignDao.findById(campaignId);
-			Milestone milestone = milestoneDao.findOne(milestoneId);
+			Milestone milestone = milestoneDao.getOne(milestoneId);
 			campaign.bindMilestone(milestone);
 		}
 	}

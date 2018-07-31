@@ -164,7 +164,7 @@ class TestCaseImportanceManagerServiceImplTest extends Specification {
 		//the requirement
 		RequirementVersion rv = new RequirementVersion()
 		rv.setCriticality CRITICAL
-		requirementVersionDao.findOne( 3L )>> rv
+		requirementVersionDao.getOne( 3L )>> rv
 
 		//no called test case
 		Set<Long> calleesIds2 = [1L]
@@ -216,7 +216,7 @@ class TestCaseImportanceManagerServiceImplTest extends Specification {
 		RequirementCriticality oldRequirementCriticality = MINOR
 		RequirementVersion rv = new RequirementVersion()
 		rv.setCriticality CRITICAL
-		requirementVersionDao.findOne (3L )>> rv
+		requirementVersionDao.getOne (3L )>> rv
 
 		TestCase testCase = new TestCase()
 		testCase.setImportance LOW

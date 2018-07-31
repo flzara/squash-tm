@@ -184,7 +184,7 @@ public class TestCaseLibraryNavigationServiceImpl
 	}
 
 	@Override
-	protected final TestCaseLibraryNodeDao getLibraryNodeDao() {
+	protected TestCaseLibraryNodeDao getLibraryNodeDao() {
 		return testCaseLibraryNodeDao;
 	}
 
@@ -287,7 +287,7 @@ public class TestCaseLibraryNavigationServiceImpl
 	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.testcase.TestCaseFolder' , 'CREATE' )"
 		+ OR_HAS_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCaseLibraryNode.class)
-	public final void addFolderToFolder(@Id long destinationId, TestCaseFolder newFolder) {
+	public void addFolderToFolder(@Id long destinationId, TestCaseFolder newFolder) {
 
 		TestCaseFolder container = getFolderDao().findById(destinationId);
 		container.addContent(newFolder);

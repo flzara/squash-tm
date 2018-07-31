@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.requirement.Requirement;
@@ -33,11 +34,11 @@ import java.util.List;
 /**
  * @author Gregory Fouquet
  */
-public interface RequirementVersionDao extends CrudRepository<RequirementVersion, Long>, CustomRequirementVersionDao {
+public interface RequirementVersionDao extends JpaRepository<RequirementVersion, Long>, CustomRequirementVersionDao {
 
 	@Override
 	@EmptyCollectionGuard
-	List<RequirementVersion> findAll(Iterable<Long> ids);
+	List<RequirementVersion> findAllById(Iterable<Long> ids);
 
 	long countVerifiedByTestCase(long testCaseId);
 

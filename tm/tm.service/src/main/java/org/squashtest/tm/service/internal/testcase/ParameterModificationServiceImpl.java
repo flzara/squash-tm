@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.testcase;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -99,7 +100,7 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	 */
 	@Override
 	public void changeName(long parameterId, String newName) {
-		Parameter parameter = this.parameterDao.findById(parameterId);
+		Parameter parameter = parameterDao.getOne(parameterId);
 		parameter.setName(newName);
 	}
 
@@ -109,7 +110,7 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	@Override
 	public void changeDescription(long parameterId, String newDescription) {
 
-		Parameter parameter = this.parameterDao.findById(parameterId);
+		Parameter parameter = parameterDao.getOne(parameterId);
 		parameter.setDescription(newDescription);
 	}
 
@@ -136,9 +137,10 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	 */
 	@Override
 	public void removeById(long parameterId) {
-
-		Parameter parameter = this.parameterDao.findById(parameterId);
-		this.parameterDao.delete(parameter);
+		Optional<Parameter> optParameter = parameterDao.findById(parameterId);
+		if (optParameter.isPresent()){
+			this.parameterDao.delete(optParameter.get());
+		}
 	}
 
 	/**
@@ -185,7 +187,7 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	 */
 	@Override
 	public boolean isUsed(long parameterId) {
-		Parameter parameter = this.parameterDao.findById(parameterId);
+		Parameter parameter = parameterDao.getOne(parameterId);
 		long testCaseId = parameter.getTestCase().getId();
 		return testStepDao.stringIsFoundInStepsOfTestCase(parameter.getParamStringAsUsedInStep(), testCaseId);
 	}
@@ -195,7 +197,7 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	 */
 	@Override
 	public Parameter findById(long parameterId) {
-		return parameterDao.findById(parameterId);
+		return parameterDao.getOne(parameterId);
 	}
 
 	/**

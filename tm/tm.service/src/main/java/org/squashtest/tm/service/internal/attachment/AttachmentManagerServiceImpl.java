@@ -89,7 +89,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 
 		Attachment attachment = new Attachment();
 
-		AttachmentList list = attachmentListDao.findOne(attachmentListId);
+		AttachmentList list = attachmentListDao.getOne(attachmentListId);
 		list.addAttachment(attachment);
 		attachment.setContent(content);
 		attachment.setAddedOn(new Date());
@@ -127,7 +127,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	}
 
 	private Attachment findById(Long attachmentId) {
-		return attachmentDao.findOne(attachmentId);
+		return attachmentDao.getOne(attachmentId);
 	}
 
 	@Override
@@ -137,8 +137,8 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 
 	@Override
 	public void removeAttachmentFromList(long attachmentListId, long attachmentId) throws IOException {
-		AttachmentList list = attachmentListDao.findOne(attachmentListId);
-		Attachment attachment = attachmentDao.findOne(attachmentId);
+		AttachmentList list = attachmentListDao.getOne(attachmentListId);
+		Attachment attachment = attachmentDao.getOne(attachmentId);
 
 		list.removeAttachment(attachment);
 		attachmentDao.removeAttachment(attachment.getId());
@@ -151,7 +151,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	@Override
 	public void removeListOfAttachments(long attachmentListId, List<Long> attachmentIds) throws IOException {
 
-		Iterator<Attachment> iterAttach = attachmentListDao.findOne(attachmentListId).getAllAttachments().iterator();
+		Iterator<Attachment> iterAttach = attachmentListDao.getOne(attachmentListId).getAllAttachments().iterator();
 
 		while (iterAttach.hasNext()) {
 			Attachment att = iterAttach.next();
@@ -178,7 +178,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 
 	@Override
 	public void renameAttachment(long attachmentId, String newName) {
-		Attachment attachment = attachmentDao.findOne(attachmentId);
+		Attachment attachment = attachmentDao.getOne(attachmentId);
 		attachment.setShortName(newName);
 	}
 

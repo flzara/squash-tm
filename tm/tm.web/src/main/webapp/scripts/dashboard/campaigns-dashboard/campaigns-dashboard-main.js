@@ -124,7 +124,7 @@ define([ "require", "squash.translator", "./campaign-progression-view", "./test-
 				}
 
 					var queryString = "searchModel=" + encodeURIComponent(JSON.stringify(search));
-					document.location.href = squashtm.app.contextRoot + "/advanced-search/results?campaign&" + queryString;
+					document.location.href = squashtm.app.contextRoot + "advanced-search/results?campaign&" + queryString;
 
 				});
 			}

@@ -28,10 +28,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.resource.CssLinkResourceTransformer;
 import org.springframework.web.servlet.resource.GzipResourceResolver;
 import org.springframework.web.servlet.resource.VersionResourceResolver;
@@ -45,6 +42,8 @@ import org.squashtest.tm.web.internal.interceptor.openedentity.RequirementViewIn
 import org.squashtest.tm.web.internal.interceptor.openedentity.TestCaseViewInterceptor;
 import org.squashtest.tm.web.internal.interceptor.openedentity.TestSuiteViewInterceptor;
 
+import java.time.Duration;
+
 /**
  * This class configures Spring MVC.
  *
@@ -52,7 +51,7 @@ import org.squashtest.tm.web.internal.interceptor.openedentity.TestSuiteViewInte
  * @since 1.13.0
  */
 @Configuration
-public class WebMvcConfig extends WebMvcConfigurerAdapter {
+public class WebMvcConfig implements WebMvcConfigurer {
 	@Value("${info.app.version}")
 	private String appVersion;
 
@@ -153,7 +152,6 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	@Override
 	public void addViewControllers(ViewControllerRegistry registry) {
 		registry.addRedirectViewController("/", "/home-workspace");
-		super.addViewControllers(registry);
 	}
 
 	@Override
@@ -166,25 +164,30 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
 		CssLinkResourceTransformer transformer = new CssLinkResourceTransformer();
 
+		// cache
+		Duration cacheDuration = resourceProperties.getCache().getPeriod();
+		Integer cacheSeconds = Math.toIntExact(cacheDuration.getSeconds());
+		boolean isCache = resourceResolverProperties.isCache();
+
 		registry.addResourceHandler("/images/**")
 			.addResourceLocations("/images/", "classpath:/images/")
-			.setCachePeriod(resourceProperties.getCachePeriod())
-			.resourceChain(resourceResolverProperties.isCache())
+			.setCachePeriod(cacheSeconds)
+			.resourceChain(isCache)
 			.addResolver(versionResolver)
 			.addTransformer(transformer);
 
 		registry.addResourceHandler("/styles/**")
 			.addResourceLocations("/styles/", "classpath:/styles/")
-			.setCachePeriod(resourceProperties.getCachePeriod())
-			.resourceChain(resourceResolverProperties.isCache())
+			.setCachePeriod(cacheSeconds)
+			.resourceChain(isCache)
 			.addResolver(gzipResolver)
 			.addResolver(versionResolver)
 			.addTransformer(transformer);
 
 		registry.addResourceHandler("/scripts/**")
 			.addResourceLocations("/scripts/", "classpath:/scripts/")
-			.setCachePeriod(resourceProperties.getCachePeriod())
-			.resourceChain(resourceResolverProperties.isCache())
+			.setCachePeriod(cacheSeconds)
+			.resourceChain(isCache)
 			.addResolver(gzipResolver)
 			.addResolver(versionResolver);
 	}

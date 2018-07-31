@@ -335,6 +335,7 @@ requirejs.config({
 				"jquery.cookie"],
 			exports: "jqueryui"
 		},
+        "jquery.hotkeys": ["jquery"],
 		"jform": ["jquery"],
 		"jqueryui": ["jquery"],
 		"jquery.generateId": ["jquery"],

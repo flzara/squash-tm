@@ -31,7 +31,6 @@ import java.util.List;
 
 
 public interface ParameterDao extends JpaRepository<Parameter, Long>, CustomParameterDao {
-	Parameter findById(Long id);
 
 	@Query
 	@Modifying

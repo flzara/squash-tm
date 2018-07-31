@@ -61,7 +61,7 @@ define(['jquery', 'tree',
 		
 		_createUrl : function(nodes, type, filename, includeCalls, keepRteFormat){
 			
-			var url = squashtm.app.contextRoot+'/test-case-browser/content/'+type;
+			var url = squashtm.app.contextRoot + 'test-case-browser/content/'+type;
 			
 			var libIds = nodes.filter(':library').map(function(){
 				return $(this).attr('resid');

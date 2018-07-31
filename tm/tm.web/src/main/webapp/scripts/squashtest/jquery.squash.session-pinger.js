@@ -48,7 +48,7 @@ define([ "jquery", "jquery.ckeditor" ], function($) {
 		function doPing() {
 			//console.log("Ping");
 			$.ajax({
-				url : squashtm.app.contextRoot + "/ping",
+				url : squashtm.app.contextRoot + "ping",
 				method : "GET"
 			});
 		}

@@ -92,7 +92,7 @@ define(["jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loca
 			});
 
 			return {
-				customConfig: squashtm.app.contextRoot + '/styles/ckeditor/ckeditor-config.js',
+			customConfig : squashtm.app.contextRoot + 'styles/ckeditor/ckeditor-config.js',
 				lang: lang/*,
 			disallowedContent : 'img'*/
 			};

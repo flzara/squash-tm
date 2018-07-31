@@ -40,8 +40,8 @@
     <maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <spring-boot-maven-plugin.version>1.4.7.RELEASE</spring-boot-maven-plugin.version>
-    <spring.boot.version>1.4.7.RELEASE</spring.boot.version>
+    <spring-boot-maven-plugin.version>2.0.3.RELEASE</spring-boot-maven-plugin.version>
+    <spring.boot.version>2.0.3.RELEASE</spring.boot.version>
 
     <verbose.compiler>false</verbose.compiler>
     <wro4j.version>1.7.8</wro4j.version>
@@ -314,13 +314,6 @@
           <artifactId>maven-enforcer-plugin</artifactId>
           <version>1.4.1</version>
         </plugin>
-
-        <plugin>
-          <groupId>org.jooq</groupId>
-          <artifactId>jooq-codegen-maven</artifactId>
-          <version>3.8.4</version>
-        </plugin>
-
       </plugins>
     </pluginManagement>
 
@@ -528,6 +521,10 @@
       </snapshots>
       <id>squash-snapshot-repo</id>
       <url>http://repo.squashtest.org/maven2/snapshots</url>
+    </repository>
+    <repository>
+      <id>jasper-reports</id>
+      <url>http://jasperreports.sourceforge.net/maven2</url>
     </repository>
   </repositories>
 

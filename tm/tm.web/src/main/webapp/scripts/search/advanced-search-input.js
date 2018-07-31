@@ -251,7 +251,7 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 
 			} else { // TODO legacy, remove that in Squash 1.9
 				$.ajax({
-					url : squashtm.app.contextRoot + "/advanced-search/input?"+this.$("#searchDomain").text(),
+					url : squashtm.app.contextRoot + "advanced-search/input?"+this.$("#searchDomain").text(),
 					data : "nodata",
 					dataType : "json"
 				}).success(function() {

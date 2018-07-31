@@ -33,72 +33,77 @@ import org.hibernate.search.bridge.ParameterizedBridge;
 import org.hibernate.search.bridge.builtin.NumericEncodingDateBridge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.domain.customfield.InputType;
-import org.squashtest.tm.domain.customfield.NumericCustomFieldValue;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.customfield.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
-public class CUFBridge extends SessionFieldBridge implements ParameterizedBridge {
-	private static final Logger LOGGER = LoggerFactory.getLogger(CUFBridge.class);
+/**
+ * <p>Base class for bridges that index the custom fields of a given entity.</p>
+ *
+ * <p>
+ *    Some custom fields require analysis and some don't. However we have cannot control the behavior from here because
+ *    it is specified at the declaration site (the @ClassBridge annotation above the entity has a property 'analyze').
+ *    Previously we relied on bridge parameters for this, but the usage was confusing. The new approach is now to use
+ *    a specific subtype of the bridge we need : check the subclasses.
+ * </p>
+ *
+ */
+public abstract class AbstractCUFBridge extends SessionFieldBridge {
+	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCUFBridge.class);
 
 	private SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-	private String type = "";
-	private String inputType = "";
+
 
 	@SuppressWarnings("unchecked")
-	private List<CustomFieldValue> findCufValuesForType(Session session, Object value) {
+	private List<CustomFieldValue> findCufValuesForType(Session session, BoundEntity entity) {
 
-		BindableEntity entityType = null;
-		Long id = null;
+		BindableEntity entityType = entity.getBoundEntityType();
+		Long id = entity.getId();
 
-		if ("testcase".equals(type)) {
-			TestCase testcase = (TestCase) value;
-			id = testcase.getId();
-			entityType = BindableEntity.TEST_CASE;
+		Criteria crit =
+			session.createCriteria(CustomFieldValue.class)
+				.createAlias("binding", "binding")
+				.createAlias("binding.customField", "cuf");
 
-		} else if ("requirement".equals(type)) {
-			RequirementVersion requirement = (RequirementVersion) value;
-			id = requirement.getId();
-			entityType = BindableEntity.REQUIREMENT_VERSION;
-		}
-		Criteria crit = session.createCriteria(CustomFieldValue.class).createAlias("binding", "binding")
-			.createAlias("binding.customField", "cuf");
-		crit.add(Restrictions.eq("boundEntityId", id)).add(Restrictions.eq("boundEntityType", entityType));
+		crit.add(Restrictions.eq("boundEntityId", id))
+			.add(Restrictions.eq("boundEntityType", entityType));
 
-		SimpleExpression typeDropDownList = Restrictions.eq("cuf.inputType", InputType.DROPDOWN_LIST);
-		if (inputType != null && inputType.equals(InputType.DROPDOWN_LIST.name())) {
-			crit.add(typeDropDownList);
-		} else {
-			crit.add(Restrictions.not(typeDropDownList));
-		}
+
+		filterOnCufType(crit);
+
 		return crit.list();
 
 	}
 
-	@Override
-	public void setParameterValues(Map<String, String> parameters) {
-		if (parameters.containsKey("type")) {
-			this.type = parameters.get("type");
-		}
-		if (parameters.containsKey("inputType")) {
-			this.inputType = parameters.get("inputType");
-		}
-	}
+	/**
+	 * May (and should) add a restriction on the custom field that will be indexed by this bridge, to the criteria.
+	 * Note that the alias of the 'cuf' entity in the query is 'cuf'.
+	 *
+	 * @param criteria
+	 */
+	protected abstract void filterOnCufType(Criteria criteria);
+
+
 
 	@Override
 	protected void writeFieldToDocument(String name, Session session, Object value, Document document,
 										LuceneOptions luceneOptions) {
 
-		List<CustomFieldValue> cufValues = findCufValuesForType(session, value);
+		Class<?> valClass = value.getClass();
+		BoundEntity boundEntity = null;
+		if (BoundEntity.class.isAssignableFrom(valClass)){
+			boundEntity = (BoundEntity) value;
+		}
+		else{
+			LOGGER.debug("Attempted to write the customfields for an entity that cannot have cufs : '"+valClass+"', skipping");
+			return;
+		}
+
+		List<CustomFieldValue> cufValues = findCufValuesForType(session, boundEntity);
 
 		for (CustomFieldValue cufValue : cufValues) {
 
@@ -134,7 +139,6 @@ public class CUFBridge extends SessionFieldBridge implements ParameterizedBridge
 			} else if (val != null) {
 				Field field = new Field(code, val, luceneOptions.getStore(), luceneOptions.getIndex(),
 					luceneOptions.getTermVector());
-				field.setBoost(luceneOptions.getBoost());
 				document.add(field);
 			}
 		}
@@ -146,7 +150,7 @@ public class CUFBridge extends SessionFieldBridge implements ParameterizedBridge
 	 * @param fieldValue
 	 * @return
 	 */
-	private Date coerceToDate(CustomFieldValue fieldValue) {
+	protected Date coerceToDate(CustomFieldValue fieldValue) {
 		String value = fieldValue.getValue();
 
 		if (StringUtils.isEmpty(value)) {

@@ -52,10 +52,10 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 
 				tableConf = {
 						"oLanguage" : {
-							"sUrl" : squashtm.app.contextRoot + "/datatables/messages"
+							"sUrl" : squashtm.app.contextRoot + "datatables/messages"
 						},
 					    "bServerSide": true,
-						"sAjaxSource" : squashtm.app.contextRoot + "/advanced-search/table",
+						"sAjaxSource" : squashtm.app.contextRoot + "advanced-search/table",
 						"fnServerParams": function ( aoData )
 							{
 								aoData.push( { "name": domain, "value": domain } );
@@ -182,10 +182,10 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 
 				tableConf = {
 						"oLanguage" : {
-							"sUrl" : squashtm.app.contextRoot + "/datatables/messages"
+							"sUrl" : squashtm.app.contextRoot + "datatables/messages"
 						},
 						"bServerSide": true,
-						"sAjaxSource" : squashtm.app.contextRoot + "/advanced-search/table",
+						"sAjaxSource" : squashtm.app.contextRoot + "advanced-search/table",
 						"fnServerParams": function ( aoData )
 							{
 								aoData.push( { "name": domain, "value": domain } );
@@ -316,8 +316,8 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 		},
 
 		_addSelectEditableToImportance : function(row, data) {
-			var urlPOST = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
-			var urlGET = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"] + "/importance-combo-data";
+			var urlPOST = squashtm.app.contextRoot + "test-cases/" + data["test-case-id"];
+			var urlGET = squashtm.app.contextRoot + "test-cases/" + data["test-case-id"] + "/importance-combo-data";
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
 			//TODO use SelectJEditable obj
@@ -337,7 +337,7 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 		},
 
 		_addSelectEditableToNature : function(row, data) {
-			var urlPOST = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
+			var urlPOST = squashtm.app.contextRoot + "test-cases/" + data["test-case-id"];
 			var projectNatures = projects.findProject(data['project-id']).testCaseNatures;
 			var naturesData = confman.toJeditableSelectFormat(projectNatures.items, {'code' : 'friendlyLabel'});
 
@@ -354,7 +354,7 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 		},
 
 		_addSelectEditableToType : function(row, data) {
-			var urlPOST = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
+			var urlPOST = squashtm.app.contextRoot + "test-cases/" + data["test-case-id"];
 			var projectTypes = projects.findProject(data['project-id']).testCaseTypes;
 			var typesData = confman.toJeditableSelectFormat(projectTypes.items, {'code' : 'friendlyLabel'});
 
@@ -371,8 +371,8 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 		},
 
 		_addSelectEditableToStatus : function(row, data) {
-			var urlPOST = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
-			var urlGET = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"] + "/status-combo-data";
+			var urlPOST = squashtm.app.contextRoot + "test-cases/" + data["test-case-id"];
+			var urlGET = squashtm.app.contextRoot + "test-cases/" + data["test-case-id"] + "/status-combo-data";
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
 			//TODO use SelectJEditable obj
@@ -387,7 +387,7 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 
 		_addSimpleEditableToReference : function(row, data) {
 			var component = $("td.editable_ref", row);
-			var url = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
+			var url = squashtm.app.contextRoot + "test-cases/" + data["test-case-id"];
 			new SimpleJEditable({
 				targetUrl : url,
 				component : component,
@@ -403,7 +403,7 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 
 		_addSimpleEditableToLabel : function(row, data) {
 			var component = $('td.editable_label', row);
-			var url = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
+			var url = squashtm.app.contextRoot + "test-cases/" + data["test-case-id"];
 
 			new SimpleJEditable({
 				targetUrl : url,
@@ -449,7 +449,7 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 			var $cell = $(".search-open-interface2-holder",row);
 			$cell.append('<span class="ui-icon ui-icon-pencil"></span>')
 			.click(function(){
-				window.location = squashtm.app.contextRoot + "/test-cases/" + id + "/info";
+				window.location = squashtm.app.contextRoot + "test-cases/" + id + "/info";
 			});
 		},
 

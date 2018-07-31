@@ -241,7 +241,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 		List<SuppressionPreviewReport> reportList = new ArrayList<>();
 
-		List<TestSuite> suites = suiteDao.findAll(targetIds);
+		List<TestSuite> suites = suiteDao.findAllById(targetIds);
 
 		// Check that test case do not belong to other suite that is not in the selection
 
@@ -631,7 +631,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 	@Override
 	public OperationReport deleteSuites(List<Long> suiteIds, boolean removeFromIter) {
-		List<TestSuite> suites = suiteDao.findAll(suiteIds);
+		List<TestSuite> suites = suiteDao.findAllById(suiteIds);
 
 		if (removeFromIter) {
 			removeItpiFromIteration(suites, suiteIds);

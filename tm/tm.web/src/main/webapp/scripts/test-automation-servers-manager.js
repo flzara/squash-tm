@@ -25,7 +25,7 @@ require([ "common" ], function(common) {
 			WS.init();
 			new TestAutomationServersTableView();
 			$("#back").click(function() {
-				document.location.href = squashtm.app.contextRoot + "/administration";
+				document.location.href = squashtm.app.contextRoot + "administration";
 			});
 		});
 	});

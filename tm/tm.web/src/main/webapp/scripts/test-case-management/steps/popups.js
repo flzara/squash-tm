@@ -123,7 +123,7 @@ define(['jquery', 'workspace.event-bus', 'squash.translator','underscore', 'jque
 			// fetch the dataset available for this test case. We'll then
 			// proceed to the initialization of the popup
 
-			var fetchDatasetsUrl = squashtm.app.contextRoot + '/test-cases/'+stepInfo.calledTcId+'/datasets';
+			var fetchDatasetsUrl = squashtm.app.contextRoot + 'test-cases/'+stepInfo.calledTcId+'/datasets';
 
 			$.getJSON(fetchDatasetsUrl).success(function(json){
 
@@ -212,7 +212,7 @@ define(['jquery', 'workspace.event-bus', 'squash.translator','underscore', 'jque
 			}
 
 			// now we can post
-			var postURL = squashtm.app.contextRoot + '/test-cases/'+conf.testCaseId+'/steps/'+stepId+'/parameter-assignation-mode';
+			var postURL = squashtm.app.contextRoot + 'test-cases/'+conf.testCaseId+'/steps/'+stepId+'/parameter-assignation-mode';
 			$.ajax({
 				url : postURL,
 				type : 'POST',

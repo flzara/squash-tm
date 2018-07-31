@@ -288,7 +288,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 				});
 
 				reindexPopup.on('formdialogconfirm', function () {
-					document.location.href = squashtm.app.contextRoot + "/administration/indexes";
+				document.location.href = squashtm.app.contextRoot + "administration/indexes";
 				});
 			},
 

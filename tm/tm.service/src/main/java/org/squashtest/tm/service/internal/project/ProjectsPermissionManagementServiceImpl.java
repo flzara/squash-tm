@@ -83,7 +83,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 		aclService.removeAllResponsibilities(user.getId(), entityRef);
 
-		GenericProject project = genericProjectFinder.findOne(projectId);
+		GenericProject project = genericProjectFinder.getOne(projectId);
 
 		ObjectIdentity rlibraryRef = createRequirementLibraryIdentity(project);
 		aclService.removeAllResponsibilities(user.getId(), rlibraryRef);
@@ -99,7 +99,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	}
 
 	private ObjectIdentity createProjectIdentity(long projectId) {
-		GenericProject project = genericProjectFinder.findOne(projectId);
+		GenericProject project = genericProjectFinder.getOne(projectId);
 		final Class<?>[] projectType = {null};
 
 		project.accept(new ProjectVisitor() {
@@ -141,7 +141,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		List<ProjectPermission> newResult = new ArrayList<>();
 		List<Object[]> result = aclService.retrieveClassAclGroupFromPartyId(partyId, PROJECT_CLASS_NAMES);
 		for (Object[] objects : result) {
-			GenericProject project = genericProjectFinder.findOne((Long) objects[0]);
+			GenericProject project = genericProjectFinder.getOne((Long) objects[0]);
 			newResult.add(new ProjectPermission(project, (PermissionGroup) objects[1]));
 		}
 		return newResult;
@@ -153,7 +153,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		List<GenericProject> newResult = new ArrayList<>();
 		List<Object[]> result = aclService.retrieveClassAclGroupFromPartyId(partyId, PROJECT_CLASS_NAMES);
 		for (Object[] objects : result) {
-			GenericProject project = genericProjectFinder.findOne((Long) objects[0]);
+			GenericProject project = genericProjectFinder.getOne((Long) objects[0]);
 			newResult.add(project);
 		}
 		return newResult;
@@ -165,7 +165,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		List<ProjectPermission> newResult = new ArrayList<>();
 		List<Object[]> result = aclService.retrieveClassAclGroupFromUserLogin(userLogin, PROJECT_CLASS_NAMES);
 		for (Object[] objects : result) {
-			GenericProject project = genericProjectFinder.findOne((Long) objects[0]);
+			GenericProject project = genericProjectFinder.getOne((Long) objects[0]);
 			newResult.add(new ProjectPermission(project, (PermissionGroup) objects[1]));
 		}
 		return newResult;
@@ -183,7 +183,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		int total = result.size();
 
 		for (Object[] objects : result) {
-			GenericProject project = genericProjectFinder.findOne((Long) objects[0]);
+			GenericProject project = genericProjectFinder.getOne((Long) objects[0]);
 			newResult.add(new ProjectPermission(project, (PermissionGroup) objects[1]));
 		}
 
@@ -197,7 +197,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		if (idList == null || idList.isEmpty()) {
 			return Collections.emptyList();
 		}
-		return genericProjectFinder.findAll(idList);
+		return genericProjectFinder.findAllById(idList);
 
 	}
 
@@ -214,10 +214,10 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	@Override
 	public void addNewPermissionToProject(long partyId, long projectId, String permissionName) {
 		ObjectIdentity projectRef = createProjectIdentity(projectId);
-		Party party = partyDao.findOne(partyId);
+		Party party = partyDao.getOne(partyId);
 		aclService.addNewResponsibility(party.getId(), projectRef, permissionName);
 
-		GenericProject project = genericProjectFinder.findOne(projectId);
+		GenericProject project = genericProjectFinder.getOne(projectId);
 
 		ObjectIdentity rlibraryRef = createRequirementLibraryIdentity(project);
 		aclService.addNewResponsibility(party.getId(), rlibraryRef, permissionName);
@@ -239,7 +239,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 		aclService.removeAllResponsibilities(partyId, projectRef);
 
-		GenericProject project = genericProjectFinder.findOne(projectId);
+		GenericProject project = genericProjectFinder.getOne(projectId);
 
 		ObjectIdentity rlibraryRef = createRequirementLibraryIdentity(project);
 		aclService.removeAllResponsibilities(partyId, rlibraryRef);
@@ -286,7 +286,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	@Override
 	public List<Party> findPartyWithoutPermissionByProject(long projectId) {
 		List<Long> idList = aclService.findPartiesWithoutPermissionByObject(projectId, PROJECT_CLASS_NAMES);
-		return partyDao.findAll(idList);
+		return partyDao.findAllById(idList);
 	}
 
 	private List<PartyProjectPermissionsBean> findPartyPermissionsBeanByProjectTemplate(long genericProjectId, Class<?> genericClass) {
@@ -300,7 +300,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 		List<Object[]> result = aclService.retrievePartyAndAclGroupNameFromIdentityAndClass(genericProjectId, projectType);
 		for (Object[] objects : result) {
-			Party party = partyDao.findOne((Long) objects[0]);
+			Party party = partyDao.getOne((Long) objects[0]);
 			newResult.add(new PartyProjectPermissionsBean(party, (PermissionGroup) objects[1]));
 		}
 		return newResult;
@@ -325,7 +325,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		List<PartyProjectPermissionsBean> newResult = new ArrayList<>(result.size());
 
 		for (Object[] objects : result) {
-			Party party = partyDao.findOne((Long) objects[0]);
+			Party party = partyDao.getOne((Long) objects[0]);
 			newResult.add(new PartyProjectPermissionsBean(party, (PermissionGroup) objects[1]));
 		}
 

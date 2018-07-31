@@ -67,7 +67,7 @@ define([ 'module', "jquery", "squash.basicwidgets", "jeditable.selectJEditable",
 	});
 
 	changeListDialogAfter.on('formdialogconfirm', function() {
-		document.location.href=  squashtm.app.contextRoot + "/administration/indexes";
+		document.location.href=  squashtm.app.contextRoot + "administration/indexes";
 	});
 
 	var submitFn = function (value, settings, self){

@@ -231,7 +231,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 
 		TestCase testCase = testCaseDao.findById(testCaseId);
 
-		Dataset ds = datasetId!=null ? datasetDao.findById(datasetId) : null;
+		Dataset ds = datasetId!=null ? datasetDao.getOne(datasetId) : null;
 
 		CampaignTestPlanItem itp = new CampaignTestPlanItem(testCase, ds);
 		campaignTestPlanItemDao.persist(itp);
@@ -254,7 +254,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	}
 
 	/**
-	 * @see CampaignTestPlanManagerService#assignUserToTestPlanItem(Long, long, Long)
+	 * @see CampaignTestPlanManagerService#assignUserToTestPlanItem(long, long, long)
 	 * @param campaignId
 	 *            not necessary but actually used for security check
 	 */
@@ -263,7 +263,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	public void assignUserToTestPlanItem(long itemId, long campaignId, long userId) {
 		User assignee = null;
 		if (userId != 0) {
-			assignee = userDao.findOne(userId);
+			assignee = userDao.getOne(userId);
 		}
 
 		CampaignTestPlanItem item = campaignTestPlanItemDao.findById(itemId);
@@ -271,7 +271,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	}
 
 	/**
-	 * @see CampaignTestPlanManagerService#assignUserToTestPlanItem(Long, long, Long)
+	 * @see CampaignTestPlanManagerService#assignUserToTestPlanItem(long, long, long)
 	 * @param campaignId
 	 *            not necessary but actually used for security check
 	 */
@@ -280,7 +280,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	public void assignUserToTestPlanItems(@NotNull List<Long> itemsIds, long campaignId, long userId) {
 		User assignee = null;
 		if (userId != 0) {
-			assignee = userDao.findOne(userId);
+			assignee = userDao.getOne(userId);
 		}
 
 		List<CampaignTestPlanItem> items = campaignTestPlanItemDao.findAllByIds(itemsIds);
@@ -363,7 +363,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 		}
 		else{
 			TestCase tc = item.getReferencedTestCase();
-			Dataset ds = datasetDao.findById(datasetId);
+			Dataset ds = datasetDao.getOne(datasetId);
 			if (! ds.getTestCase().equals(tc)){
 				throw new IllegalArgumentException("dataset [id:'"+ds.getId()+"', name:'"+ds.getName()+
 						"'] doesn't belong to test case [id:'"+tc.getId()+"', name:'"+tc.getName()+"']");

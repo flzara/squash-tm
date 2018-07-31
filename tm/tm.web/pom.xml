@@ -61,12 +61,6 @@
 
   <dependencies>
 
-    <!--dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-properties-migrator</artifactId>
-      <scope>runtime</scope>
-    </dependency -->
-
     <dependency>
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
@@ -127,8 +121,9 @@
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-search-orm</artifactId>
     </dependency>
+
     <dependency>
-      <groupId>org.hibernate</groupId>
+      <groupId>org.hibernate.validator</groupId>
       <artifactId>hibernate-validator</artifactId>
       <!-- todo : wtf, version is supposed to be managed by spring-boot-starter-web -->
       <!--version>6.0.10.Final</version-->
@@ -171,14 +166,14 @@
       </exclusions>
     </dependency>
 
-    <!-- 
-    	DEPRECRATION NOTICE (1.19.0) : Remove this if 
-    	1.19.0 is tested and released successfully, which means 
-    	this dependency wasn't needed after all. 
-    	
+    <!--
+    	DEPRECRATION NOTICE (1.19.0) : Remove this if
+    	1.19.0 is tested and released successfully, which means
+    	this dependency wasn't needed after all.
+
     	REASON : I don't think we need this at tm.web top level
-    	(we don't do commons logging). 
-    	
+    	(we don't do commons logging).
+
     dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jcl-over-slf4j</artifactId>
@@ -203,7 +198,6 @@
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
     </dependency>
-
 
     <dependency>
       <groupId>org.squashtest.tm</groupId>
@@ -235,11 +229,6 @@
 
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-actuator</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-configuration-processor</artifactId>
       <optional>true</optional>
     </dependency>
@@ -247,6 +236,11 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
 
     <dependency>
@@ -317,6 +311,12 @@
     <dependency>
       <groupId>xml-resolver</groupId>
       <artifactId>xml-resolver</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-properties-migrator</artifactId>
+      <scope>runtime</scope>
     </dependency>
 
     <dependency>

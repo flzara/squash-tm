@@ -57,7 +57,7 @@
 define(["jquery", "underscore", "workspace.storage"], function($, _, storage){
 	"use strict";
 
-	var serviceURL = window.squashtm.app.contextRoot+"/localization/filler";
+	var serviceURL = window.squashtm.app.contextRoot.replace(/\/$/, '') + "/localization/filler";
 	var ajaxDefaults = {
 			url : serviceURL,
 			headers : {

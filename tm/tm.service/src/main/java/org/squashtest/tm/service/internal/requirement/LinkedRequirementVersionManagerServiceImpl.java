@@ -80,7 +80,7 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 	findAllByRequirementVersion(long requirementVersionId, PagingAndSorting pagingAndSorting) {
 
 		// Issue 7497 we need to get the total number of requirement version links to correctly display the number of page
-		long totalNumberOfItems = reqVersionDao.findOne(requirementVersionId).getRequirementVersionLinks().size();
+		long totalNumberOfItems = reqVersionDao.getOne(requirementVersionId).getRequirementVersionLinks().size();
 
 		List<RequirementVersionLink> requirementVersionLinksList =
 			reqVersionLinkDao.findAllByReqVersionId(requirementVersionId, pagingAndSorting);
@@ -111,7 +111,7 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		List<RequirementVersion> requirementVersions = findRequirementVersions(otherReqVersionsIds);
 		List<LinkedRequirementVersionException> rejections = new ArrayList<>();
 
-		RequirementVersion mainReqVersion = reqVersionDao.findOne(mainReqVersionId);
+		RequirementVersion mainReqVersion = reqVersionDao.getOne(mainReqVersionId);
 		for (RequirementVersion otherRequirementVersion : requirementVersions) {
 
 			try {
@@ -162,8 +162,8 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		boolean outboundDirection = type.getRole2Code().equals(destRole) ? false : true;
 
 		// the requirement versions
-		RequirementVersion source = reqVersionDao.findOne(sourceVersionId);
-		RequirementVersion dest = reqVersionDao.findOne(destVersionId);
+		RequirementVersion source = reqVersionDao.getOne(sourceVersionId);
+		RequirementVersion dest = reqVersionDao.getOne(destVersionId);
 
 		// checks
 		checkIfSameRequirement(source, dest);
@@ -210,7 +210,7 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		RequirementVersionLink linkToUpdate = reqVersionLinkDao.findByReqVersionsIds(requirementVersionId, relatedVersionId);
 		RequirementVersionLink symmetricalLinkToUpdate = reqVersionLinkDao.findByReqVersionsIds(relatedVersionId, requirementVersionId);
 
-		RequirementVersionLinkType newLinkType = reqVersionLinkTypeDao.findOne(linkTypeId);
+		RequirementVersionLinkType newLinkType = reqVersionLinkTypeDao.getOne(linkTypeId);
 
 		linkToUpdate.setLinkType(newLinkType);
 		linkToUpdate.setLinkDirection(linkDirection);
@@ -241,14 +241,14 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 	public RequirementVersionLink addDetailedReqVersionLink(long reqVersionId, long relatedReqVersionId, long linkTypeId, boolean linkDirection)
 		throws LinkedRequirementVersionException {
 
-		RequirementVersion reqVersion = reqVersionDao.findOne(reqVersionId);
-		RequirementVersion relatedReqVersion = reqVersionDao.findOne(relatedReqVersionId);
+		RequirementVersion reqVersion = reqVersionDao.getOne(reqVersionId);
+		RequirementVersion relatedReqVersion = reqVersionDao.getOne(relatedReqVersionId);
 
 		checkIfLinkAlreadyExists(reqVersion, relatedReqVersion);
 		checkIfSameRequirement(reqVersion, relatedReqVersion);
 		checkIfVersionsAreLinkable(reqVersion, relatedReqVersion);
 
-		RequirementVersionLinkType linkType = reqVersionLinkTypeDao.findOne(linkTypeId);
+		RequirementVersionLinkType linkType = reqVersionLinkTypeDao.getOne(linkTypeId);
 		RequirementVersionLink newLink = new RequirementVersionLink(reqVersion, relatedReqVersion, linkType, linkDirection);
 		reqVersionLinkDao.addLink(newLink);
 		return newLink;

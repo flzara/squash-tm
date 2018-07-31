@@ -71,7 +71,7 @@ class CustomTeamModificationServiceImplTest extends Specification {
 		team.getId()>> 1L
 		team.getMembers()>>[]
 		userDao.findAll(_)>>[]
-		teamDao.findOne(1L)>> team
+		teamDao.getOne(1L)>> team
 		when: service.deleteTeam(1L)
 		then :
 		1* aclService.removeAllResponsibilities(1L)

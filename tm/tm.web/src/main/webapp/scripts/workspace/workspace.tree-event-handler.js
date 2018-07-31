@@ -270,7 +270,7 @@ define(['jquery', 'tree', 'workspace.event-bus'], function ($, tree, eventBus) {
 			return item.getAttribute("resid");
 		});
 		$.ajax({
-			url: squashtm.app.contextRoot + "/test-cases/tree-infos",
+			url: squashtm.app.contextRoot + "test-cases/tree-infos",
 			type: "post",
 			contentType: "application/json",
 			data: JSON.stringify({

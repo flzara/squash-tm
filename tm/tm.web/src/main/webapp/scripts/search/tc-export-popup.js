@@ -76,7 +76,7 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 
 		//REQUIREMENT EXPORT URL
 		_createUrl : function(nodes){
-			var url = window.squashtm.app.contextRoot+'/test-case-browser/searchExports';
+			var url = window.squashtm.app.contextRoot + 'test-case-browser/searchExports';
 			var filename = this.$el.find("#export-test-case-filename").val();
 			var calledTestCases = this.$el.find("#export-test-case-includecalls").prop('checked');
 			var keepRte = this.$el.find("#export-test-case-keepRteFormat").prop('checked');

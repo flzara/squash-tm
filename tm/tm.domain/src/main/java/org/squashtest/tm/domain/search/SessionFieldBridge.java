@@ -24,11 +24,9 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import org.apache.lucene.document.Document;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.jpa.HibernateEntityManagerFactory;
 import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.slf4j.Logger;
@@ -52,11 +50,8 @@ public abstract class SessionFieldBridge implements FieldBridge {
 	 *  Using @Inject here seems to be ok because the bean actually injected is a shared entitymanager factorybean, which is the same result of using @PersistenceContext.
 	 *  But I am not 100% sure there would be no problems (like, not thread-safe instances etc) so I'm leaving here this comment.
 	 *
-	 *  --
-	 *
-	 *  Note : if there are new instances of theses created everytime then maybe thread safety won't be an issue after all.
-	 *
 	 */
+
 	@Inject
 	@Lazy
 	private EntityManager em;
@@ -68,6 +63,8 @@ public abstract class SessionFieldBridge implements FieldBridge {
 	private SessionFactory getSessionFactory() {
 		return em.getEntityManagerFactory().unwrap(SessionFactory.class);
 	}
+
+	
 
 	protected abstract void writeFieldToDocument(String name, Session session, Object value, Document document,
 												 LuceneOptions luceneOptions);

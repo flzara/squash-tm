@@ -83,7 +83,7 @@ define(["jquery","squashtable/squashtable.collapser", "custom-field-values", "wo
 		var ctxUrl = conf.basic.rootContext;
 		return {
 			dropUrl: tcUrl + "/steps/move",
-			attachments: ctxUrl + "/attach-list/{attach-list-id}/attachments/manager?workspace=test-case&open=true",
+			attachments: ctxUrl + "attach-list/{attach-list-id}/attachments/manager?workspace=test-case&open=true",
 			steps: ctxUrl + "test-steps/",
 			callTC: ctxUrl + "/test-cases/{called-tc-id}/info",
 			pasteStep: tcUrl + "/steps",
@@ -91,11 +91,11 @@ define(["jquery","squashtable/squashtable.collapser", "custom-field-values", "wo
 			addStep: tcUrl + "/steps/add",
 			editActionUrl: tcUrl + "/steps/{step-id}/action",
 			editResultUrl: tcUrl + "/steps/{step-id}/result",
-			stepcufBindingUrl: ctxUrl + "/custom-fields-binding?projectId=" + conf.basic.projectId +
+			stepcufBindingUrl: ctxUrl + "custom-fields-binding?projectId=" + conf.basic.projectId +
 			"&bindableEntity=TEST_STEP&optional=false",
 			ckeConfigUrl: ctxUrl + "styles/ckeditor/ckeditor-config.js",
-			indicatorUrl: ctxUrl + "/scripts/jquery/indicator.gif",
-			tableLanguageUrl: ctxUrl + "/datatables/messages",
+			indicatorUrl: ctxUrl + "scripts/jquery/indicator.gif",
+			tableLanguageUrl: ctxUrl + "datatables/messages",
 			tableAjaxUrl: tcUrl + "/steps",
 			projectId: conf.basic.projectId,
 			testCaseId: conf.basic.testCaseId
@@ -149,7 +149,7 @@ define(["jquery","squashtable/squashtable.collapser", "custom-field-values", "wo
 		var data = table.fnGetData(row);
 		var stepinfo = data['call-step-info'];
 
-		var tcUrl = window.squashtm.app.contextRoot + '/test-cases/' + stepinfo.calledTcId + '/info',
+		var tcUrl = window.squashtm.app.contextRoot + 'test-cases/' + stepinfo.calledTcId + '/info',
 			dsName = (stepinfo.paramMode === 'NOTHING') ? alllang.none :
 				(stepinfo.paramMode === 'DELEGATE') ? alllang.delegate :
 					stepinfo.calledDatasetName;

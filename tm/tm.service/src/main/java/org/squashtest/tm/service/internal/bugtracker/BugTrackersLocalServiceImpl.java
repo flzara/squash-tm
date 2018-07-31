@@ -176,13 +176,17 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	@Override
 	public AuthenticationStatus checkAuthenticationStatus(Long bugtrackerId) {
 		AuthenticationStatus status;
-		BugTracker bugtracker = bugTrackerDao.findOne(bugtrackerId);
-		if (bugtracker == null) {
-			status = AuthenticationStatus.UNDEFINED;
-		} else {
-			boolean needs = remoteBugTrackersService.isCredentialsNeeded(bugtracker);
+		Optional<BugTracker> optBugtracker = bugTrackerDao.findById(bugtrackerId);
+
+		if (optBugtracker.isPresent()){
+			boolean needs = remoteBugTrackersService.isCredentialsNeeded(optBugtracker.get());
 			status = needs ? AuthenticationStatus.NON_AUTHENTICATED : AuthenticationStatus.AUTHENTICATED;
 		}
+		else{
+			// sloppy semantics, but I'm not fixing what is not broken yet.
+			status = AuthenticationStatus.UNDEFINED;
+		}
+
 		return status;
 	}
 
@@ -273,7 +277,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	// see comment above
 	@Transactional(noRollbackFor={BugTrackerNoCredentialsException.class, UnsupportedAuthenticationModeException.class})
 	public void validateCredentials(Long bugtrackerId, Credentials credentials, boolean purgeOnFail) throws BugTrackerRemoteException {
-		BugTracker server = bugTrackerDao.findOne(bugtrackerId);
+		BugTracker server = bugTrackerDao.getOne(bugtrackerId);
 		validateCredentials(server, credentials, purgeOnFail);
 	}
 
@@ -351,7 +355,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		IssueDetector bugged = issueDao.findIssueDetectorByIssue(id);
 		PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(bugged, "EXECUTE"));
 
-		Issue issue = issueDao.findOne(id);
+		Issue issue = issueDao.getOne(id);
 		TestCase testCase = this.findTestCaseRelatedToIssue(issue.getId());
 		issueDao.delete(issue);
 		this.indexationService.reindexTestCase(testCase.getId());
@@ -492,7 +496,8 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	@Override
 	public int findNumberOfIssueForItemTestPlanLastExecution(Long itemTestPlanId) {
 
-		IterationTestPlanItem itp = iterationTestPlanDao.findById(itemTestPlanId);
+		IterationTestPlanItem itp = iterationTestPlanDao.getOne(itemTestPlanId);
+
 		Execution execution = itp.getLatestExecution();
 		if (execution == null) {
 			return 0;
@@ -537,7 +542,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	@Override
 	public Issue findIssueById(Long id) {
-		return issueDao.findOne(id);
+		return issueDao.getOne(id);
 	}
 
 	@Override

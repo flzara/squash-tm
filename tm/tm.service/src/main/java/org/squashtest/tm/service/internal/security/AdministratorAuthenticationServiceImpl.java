@@ -30,11 +30,11 @@ import javax.inject.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.service.security.AdministratorAuthenticationService;
 import static org.squashtest.tm.api.security.acls.Roles.*;
@@ -51,9 +51,6 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 	@Lazy
 	private PasswordEncoder encoder;
 
-	private Object salt = null;
-
-
 	public void setUserDetailsManager(SquashUserDetailsManager userManager) {
 		this.userManager = userManager;
 	}
@@ -62,9 +59,6 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 		this.encoder = encoder;
 	}
 
-	public void setSalt(Object salt) {
-		this.salt = salt;
-	}
 
 	@Override
 	public boolean canModifyUser() {
@@ -80,7 +74,8 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 	}
 
 	private String encode(String plainNewPassword) {
-		return encoder.encodePassword(plainNewPassword, salt);
+		//return encoder.encodePassword(plainNewPassword, salt);
+		return encoder.encode(plainNewPassword);
 	}
 
 	@Override

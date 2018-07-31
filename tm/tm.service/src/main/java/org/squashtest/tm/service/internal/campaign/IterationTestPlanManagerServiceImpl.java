@@ -190,7 +190,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 		TestCase testCase = testCaseDao.findById(testcaseId);
 
-		Dataset ds = datasetId != null ? datasetDao.findById(datasetId) : null;
+		Dataset ds = datasetId != null ? datasetDao.getOne(datasetId) : null;
 
 		IterationTestPlanItem itp = new IterationTestPlanItem(testCase, ds);
 		iterationTestPlanDao.save(itp);
@@ -451,7 +451,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@PreAuthorize("hasPermission(#testPlanItemId, 'org.squashtest.tm.domain.campaign.IterationTestPlanItem', 'WRITE') "
 		+ OR_HAS_ROLE_ADMIN)
 	public void assignUserToTestPlanItem(long testPlanItemId, long userId) {
-		User user = userId == 0 ? null : userDao.findOne(userId);
+		User user = userId == 0 ? null : userDao.getOne(userId);
 
 		IterationTestPlanItem itp = iterationTestPlanDao.findById(testPlanItemId);
 		if (!itp.isTestCaseDeleted()) {
@@ -469,7 +469,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		PermissionsUtils.checkPermission(permissionEvaluationService, testPlanIds, "WRITE", IterationTestPlanItem.class.getName());
 		List<IterationTestPlanItem> items = iterationTestPlanDao.findAllByIdIn(testPlanIds);
 
-		User user = userId == 0 ? null : userDao.findOne(userId);
+		User user = userId == 0 ? null : userDao.getOne(userId);
 
 		for (IterationTestPlanItem item : items) {
 			if (!item.isTestCaseDeleted()) {
@@ -565,7 +565,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 			item.setReferencedDataset(null);
 		} else if (!item.isTestCaseDeleted()) {
 			TestCase tc = item.getReferencedTestCase();
-			Dataset ds = datasetDao.findById(datasetId);
+			Dataset ds = datasetDao.getOne(datasetId);
 			if (!ds.getTestCase().equals(tc)) {
 				throw new IllegalArgumentException("dataset [id:'" + ds.getId() + "', name:'" + ds.getName() +
 					"'] doesn't belong to test case [id:'" + tc.getId() + "', name:'" + tc.getName() + "']");

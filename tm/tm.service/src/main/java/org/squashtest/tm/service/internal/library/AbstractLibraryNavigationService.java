@@ -131,18 +131,18 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 
 	@Override
 	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
-	public final List<NODE> findLibraryRootContent(long libraryId) {
+	public List<NODE> findLibraryRootContent(long libraryId) {
 		return getLibraryDao().findAllRootContentById(libraryId);
 	}
 
 	@Override
 	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
-	public final List<NODE> findFolderContent(long folderId) {
+	public List<NODE> findFolderContent(long folderId) {
 		return getFolderDao().findAllContentById(folderId);
 	}
 
 	@Override
-	public final LIBRARY findLibrary(long libraryId) {
+	public LIBRARY findLibrary(long libraryId) {
 		// fetch
 		LIBRARY library = getLibraryDao().findById(libraryId);
 		// check
@@ -152,7 +152,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	}
 
 	@Override
-	public final LIBRARY findCreatableLibrary(long libraryId) {
+	public LIBRARY findCreatableLibrary(long libraryId) {
 		// fetch
 		LIBRARY library = getLibraryDao().findById(libraryId);
 		// check
@@ -162,7 +162,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	}
 
 	@Override
-	public final FOLDER findFolder(long folderId) {
+	public FOLDER findFolder(long folderId) {
 		// fetch
 		FOLDER folder = getFolderDao().findById(folderId);
 		// check

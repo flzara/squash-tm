@@ -23,24 +23,24 @@ package org.squashtest.tm.web.config;
 import java.util.Map;
 
 import org.thymeleaf.IEngineConfiguration;
-import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
+import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 
 
 /**
  * <p>
- * Legacy compatiblity. When a controller returns a view name it usually includes '.html' at the end, however when resolving fragment the html is omitted. 
+ * Legacy compatibility. When a controller returns a view name it usually includes '.html' at the end, however when resolving fragment the html is omitted.
  * </p>
- * 
+ *
  * <p>
- * Thymeleaf 3 template resolver cannot cope with this inconsistency anymore. In order to avoid breaking things we now make  the suffix optional, so that 
+ * Thymeleaf 3 template resolver cannot cope with this inconsistency anymore. In order to avoid breaking things we now make  the suffix optional, so that
  * a view name can include .html or not in its name, as long as it resides in the /WEB-INF/templates folder it'll be fine.
  * </p>
- * 
+ *
  * <p>
- * The big TODO is of course to user always use .html (ie track all directives th:include and make sure they specify '.html' in the fragment name) or 
+ * The big TODO is of course to user always use .html (ie track all directives th:include and make sure they specify '.html' in the fragment name) or
  * never use the suffix (ie track all views returned by a controller and remove the .html in its name).
  * </p>
- * 
+ *
  * @author bsiri
  *
  */
@@ -50,13 +50,13 @@ public class OptionalSuffixThymeleafTemplateResolver extends SpringResourceTempl
 	protected String computeResourceName(IEngineConfiguration configuration, String ownerTemplate, String template,
 			String prefix, String suffix, Map<String, String> templateAliases,
 			Map<String, Object> templateResolutionAttributes) {
-		
+
 		String effectiveSuffix = (template.endsWith(suffix)) ? "" : suffix;
-		
+
 		return super.computeResourceName(configuration, ownerTemplate, template, prefix, effectiveSuffix, templateAliases,
 				templateResolutionAttributes);
 	}
-	
-	
+
+
 
 }

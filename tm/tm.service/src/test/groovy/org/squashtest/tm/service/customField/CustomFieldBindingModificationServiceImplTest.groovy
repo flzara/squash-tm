@@ -75,7 +75,7 @@ class CustomFieldBindingModificationServiceImplTest extends Specification {
 
 		and:
 
-		genericProjectDao.findOne(3L) >> project
+		genericProjectDao.getOne(3L) >> project
 
 		and: "The Template"
 
@@ -87,7 +87,7 @@ class CustomFieldBindingModificationServiceImplTest extends Specification {
 		CustomField cuf = Mock()
 		cuf.getId() >> 4L
 
-		customFieldDao.findById(4L) >> cuf
+		customFieldDao.getOne(4L) >> cuf
 
 		BindableEntity entity1 = Mock()
 		BindableEntity entity2 = Mock()
@@ -162,8 +162,8 @@ class CustomFieldBindingModificationServiceImplTest extends Specification {
 
 		customFieldBindingDao.cufBindingAlreadyExists(2L, (BindableEntity) _, 4L) >>> [true, false]
 
-		genericProjectDao.findOne(2L) >> project
-		customFieldDao.findById(4L) >> cuf
+		genericProjectDao.getOne(2L) >> project
+		customFieldDao.getOne(4L) >> cuf
 		customFieldBindingDao.countAllForProjectAndEntity(2L, entity2) >> 1L
 
 		genericProjectDao.isProjectTemplate(2L) >> false
@@ -221,9 +221,9 @@ class CustomFieldBindingModificationServiceImplTest extends Specification {
 		and:
 
 		genericProjectDao.isBoundToATemplate(404L) >> false
-		genericProjectDao.findOne(404) >> project
-		customFieldDao.findById(1L) >> cuf1
-		customFieldDao.findById(2L) >> cuf2
+		genericProjectDao.getOne(404) >> project
+		customFieldDao.getOne(1L) >> cuf1
+		customFieldDao.getOne(2L) >> cuf2
 		customFieldBindingDao.countAllForProjectAndEntity(404L, _) >> 2L
 
 		and:
@@ -329,9 +329,9 @@ class CustomFieldBindingModificationServiceImplTest extends Specification {
 		and:
 
 		genericProjectDao.isBoundToATemplate(404L) >> false
-		genericProjectDao.findOne(404L) >> template
-		customFieldDao.findById(1L) >> cuf1
-		customFieldDao.findById(2L) >> cuf2
+		genericProjectDao.getOne(404L) >> template
+		customFieldDao.getOne(1L) >> cuf1
+		customFieldDao.getOne(2L) >> cuf2
 		customFieldBindingDao.countAllForProjectAndEntity(404L, _) >> 1
 
 		and:
@@ -343,8 +343,8 @@ class CustomFieldBindingModificationServiceImplTest extends Specification {
 		projectDao.findAllIdsBoundToTemplate(404L) >> [42L]
 		customFieldBindingDao.cufBindingAlreadyExists(42, _, _) >>> [true, false]
 
-		genericProjectDao.findOne(42L) >> project
-		customFieldDao.findById(2l) >> cuf2
+		genericProjectDao.getOne(42L) >> project
+		customFieldDao.getOne(2l) >> cuf2
 		customFieldBindingDao.countAllForProjectAndEntity(42L, _) >> 1
 
 		genericProjectDao.isProjectTemplate(42L) >> false

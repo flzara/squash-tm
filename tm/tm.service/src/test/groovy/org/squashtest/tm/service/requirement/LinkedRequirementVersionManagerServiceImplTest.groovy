@@ -90,7 +90,7 @@ class LinkedRequirementVersionManagerServiceImplTest extends Specification {
 
 		and: "Mock dao methods"
 			reqVersionLinkDao.findAllByReqVersionId(requirementId, pas) >> linksList
-			reqVersionDao.findOne(requirementId) >> mainRv
+			reqVersionDao.getOne(requirementId) >> mainRv
 
 		and: "Expected result data"
 			List<LinkedRequirementVersion> expectedList = [lrv1, lrv2, lrv3] as List
@@ -196,7 +196,7 @@ class LinkedRequirementVersionManagerServiceImplTest extends Specification {
 
 		and: "Mock dao methods"
 			requirementLibraryNodeDao.findAllByIds(reqVerIdsToLink) >> reqList
-			reqVersionDao.findOne(_) >> mainRv
+			reqVersionDao.getOne(_) >> mainRv
 			reqVersionLinkDao.linkAlreadyExists(mainRvId, _) >> { args ->
 				if(args[1] == rv1Id) true
 				else false

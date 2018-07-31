@@ -77,13 +77,13 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'READ') "
 		+ OR_HAS_ROLE_ADMIN)
 	public TestSuite findTestSuite(long testSuiteId) {
-		return testSuiteDao.findOne(testSuiteId);
+		return testSuiteDao.getOne(testSuiteId);
 	}
 
 	@Override
 	@PreAuthorize(HAS_LINK_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
 	public void bindTestPlan(long suiteId, List<Long> itemTestPlanIds) {
-		TestSuite suite = testSuiteDao.findOne(suiteId);
+		TestSuite suite = testSuiteDao.getOne(suiteId);
 		suite.bindTestPlanItemsById(itemTestPlanIds);
 		customTestSuiteModificationService.updateExecutionStatus(suite);
 	}
@@ -119,7 +119,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 
 	@Override
 	public void unbindTestPlanToMultipleSuites(List<Long> unboundTestSuiteIds, List<Long> itpIds) {
-		List<TestSuite> unboundTestSuites = testSuiteDao.findAll(unboundTestSuiteIds);
+		List<TestSuite> unboundTestSuites = testSuiteDao.findAllById(unboundTestSuiteIds);
 		List<IterationTestPlanItem> iterationTestPlanItems = itemTestPlanDao.findAllByIdIn(itpIds);
 		for (TestSuite suite : unboundTestSuites) {
 			unbindTestPlanObj(suite, iterationTestPlanItems);
@@ -156,7 +156,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	@PreAuthorize(HAS_LINK_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
 	public void changeTestPlanPosition(long suiteId, int newIndex, List<Long> itemIds) {
 
-		TestSuite suite = testSuiteDao.findOne(suiteId);
+		TestSuite suite = testSuiteDao.getOne(suiteId);
 
 		List<IterationTestPlanItem> items = testSuiteDao.findTestPlanPartition(suiteId, itemIds);
 
@@ -174,7 +174,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 
 		List<IterationTestPlanItem> items = testSuiteDao.findTestPlan(suiteId, sorting, filtering, columnFiltering);
 
-		TestSuite testSuite = testSuiteDao.findOne(suiteId);
+		TestSuite testSuite = testSuiteDao.getOne(suiteId);
 
 		testSuite.getTestPlan().clear();
 		testSuite.getTestPlan().addAll(items);
@@ -185,7 +185,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	@PreventConcurrent(entityType = TestSuite.class, paramName = "suiteId")
 	public void addTestCasesToIterationAndTestSuite(List<Long> testCaseIds, @Id long suiteId) {
 
-		TestSuite testSuite = testSuiteDao.findOne(suiteId);
+		TestSuite testSuite = testSuiteDao.getOne(suiteId);
 
 		Iteration iteration = testSuite.getIteration();
 
@@ -201,11 +201,11 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	@PreventConcurrent(entityType = TestSuite.class, paramName = "suiteId")
 	public void detachTestPlanFromTestSuite(List<Long> testPlanIds, @Id long suiteId) {
 
-		TestSuite testSuite = testSuiteDao.findOne(suiteId);
+		TestSuite testSuite = testSuiteDao.getOne(suiteId);
 		List<IterationTestPlanItem> listTestPlanItems = new ArrayList<>();
 
 		for (long testPlanId : testPlanIds) {
-			IterationTestPlanItem iterTestPlanItem = itemTestPlanDao.findOne(testPlanId);
+			IterationTestPlanItem iterTestPlanItem = itemTestPlanDao.getOne(testPlanId);
 			listTestPlanItems.add(iterTestPlanItem);
 		}
 
@@ -217,7 +217,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	@PreAuthorize(HAS_LINK_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestSuite.class, paramName = "suiteId")
 	public boolean detachTestPlanFromTestSuiteAndRemoveFromIteration(List<Long> testPlanIds, @Id long suiteId) {
-		TestSuite testSuite = testSuiteDao.findOne(suiteId);
+		TestSuite testSuite = testSuiteDao.getOne(suiteId);
 
 		Iteration iteration = testSuite.getIteration();
 

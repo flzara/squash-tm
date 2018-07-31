@@ -32,10 +32,10 @@ define([ "jquery", "backbone", "squash.translator", '../test-plan-panel/exec-run
 
 			var tableConf = {
 					"oLanguage" : {
-						"sUrl" : squashtm.app.contextRoot + "/datatables/messages"
+						"sUrl" : squashtm.app.contextRoot + "datatables/messages"
 					},
 					"bServerSide": true,
-					"sAjaxSource" : squashtm.app.contextRoot + "/advanced-search/table",
+					"sAjaxSource" : squashtm.app.contextRoot + "advanced-search/table",
 					"fnServerParams": function ( aoData )
 						{
 							aoData.push( { "name": "model", "value": JSON.stringify(model) } );
@@ -68,12 +68,12 @@ define([ "jquery", "backbone", "squash.translator", '../test-plan-panel/exec-run
 			var itId = $this.data('itid');
 
 			var	ui = ($this.is('.run-popup')) ? "popup" : "oer";
-			var newurl = squashtm.app.contextRoot + "/iterations/" + itId + "/test-plan/" + tpid + "/executions/new";
+			var newurl = squashtm.app.contextRoot + "iterations/" + itId + "/test-plan/" + tpid + "/executions/new";
 
 			$.post(newurl, {
 				mode : 'manual'
 			}, 'json').done(function(execId) {
-				var execurl = squashtm.app.contextRoot + "/executions/" + execId + '/runner';
+				var execurl = squashtm.app.contextRoot + "executions/" + execId + '/runner';
 				if (ui === "popup") {
 					execrunner.runInPopup(execurl);
 				} else {
@@ -92,7 +92,7 @@ define([ "jquery", "backbone", "squash.translator", '../test-plan-panel/exec-run
 			var	tpid = row['tpid'];
 			var itId = row['iteration-id'];
 
-			var url = squashtm.app.contextRoot + "/automated-suites/new";
+			var url = squashtm.app.contextRoot + "automated-suites/new";
 
 
 

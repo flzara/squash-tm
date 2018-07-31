@@ -58,6 +58,17 @@ public final class HTMLCleanupUtils {
 		String unescaped = HtmlUtils.htmlUnescape(fixedHtml);
 		return HtmlUtils.htmlEscape(unescaped);
 	}
+	
+	/**
+	 * If the argument is not null, returns the HTML-escaped version,
+	 * else returns the default value
+	 * 
+	 * @param toEscape
+	 * @return
+	 */
+	public static String escapeOrDefault(String toEscape, String defaultString){
+		return (toEscape != null) ? HtmlUtils.htmlEscape(toEscape) : defaultString;
+	}
 
 	public static String stripJavascript(String json) {
 		if (StringUtils.isNotBlank(json)) {

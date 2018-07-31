@@ -74,7 +74,7 @@ define(
 			'text': messages.get("label.GotoIndex"),
 			'click': function () {
 				buggerOffReindex.apply(this, arguments);
-				document.location.href = squashtm.app.contextRoot + "/administration/indexes";
+				document.location.href = squashtm.app.contextRoot + "administration/indexes";
 			}
 		};
 

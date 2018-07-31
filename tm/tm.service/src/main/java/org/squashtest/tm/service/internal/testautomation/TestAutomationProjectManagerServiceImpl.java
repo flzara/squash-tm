@@ -133,7 +133,7 @@ public class TestAutomationProjectManagerServiceImpl implements TestAutomationPr
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public Collection<TestAutomationProject> listProjectsOnServer(Long serverId) {
-		TestAutomationServer server = serverDao.findOne(serverId);
+		TestAutomationServer server = serverDao.getOne(serverId);
 
 		return listProjectsOnServer(server);
 	}

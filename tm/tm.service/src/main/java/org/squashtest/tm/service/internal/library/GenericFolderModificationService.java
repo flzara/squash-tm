@@ -68,7 +68,7 @@ FolderModificationService<FOLDER> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public final void removeFolder(long folderId) {
+	public void removeFolder(long folderId) {
 		// check
 		checkPermission(new SecurityCheckableItem(folderId, SecurityCheckableItem.FOLDER, "DELETE"));
 		// proceed
@@ -77,7 +77,7 @@ FolderModificationService<FOLDER> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public final void renameFolder(long folderId, String newName) {
+	public void renameFolder(long folderId, String newName) {
 		// check
 		checkPermission(new SecurityCheckableItem(folderId, SecurityCheckableItem.FOLDER, "WRITE"));
 		// proceed
@@ -86,7 +86,7 @@ FolderModificationService<FOLDER> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public final void updateFolderDescription(long folderId, String newDescription) {
+	public void updateFolderDescription(long folderId, String newDescription) {
 		// check
 		checkPermission(new SecurityCheckableItem(folderId, SecurityCheckableItem.FOLDER, "WRITE"));
 		// proceed

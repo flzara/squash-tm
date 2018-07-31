@@ -114,7 +114,9 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 
 	def "should create a node of closed folder type"() {
 		given:
-		TestCaseFolder node = Mock()
+		TestCaseFolder node = Mock {
+			getName() >> "folder"
+		}
 
 
 		when:
@@ -143,8 +145,10 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 
 	def "should create folder at root of library and return folder tree model"() {
 		given:
-		TestCaseFolder folder = Mock()
-		folder.id >> 50
+		TestCaseFolder folder = Mock{
+			getId() >> 50
+			getName() >> "folder"
+		}
 
 		when:
 		def res = controller.addNewFolderToLibraryRootContent(10, folder)

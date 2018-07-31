@@ -60,10 +60,13 @@ class IterationNodeBuilderTest extends NodeBuildingSpecification {
 
 	def "should expand iteration"() {
 		given:
-		Campaign c = Mock()
-		c.getMilestones() >> []
-		c.doMilestonesAllowCreation() >> Boolean.TRUE
-		c.doMilestonesAllowEdition() >> Boolean.TRUE
+		Campaign c = Mock{
+			getName() >> "campaign"
+			getMilestones() >> []
+			doMilestonesAllowCreation() >> Boolean.TRUE
+			doMilestonesAllowEdition() >> Boolean.TRUE
+		}
+
 		Iteration iter = new Iteration(name: "it", campaign: c)
 		def id = 10L
 		use(ReflectionCategory) {
@@ -71,7 +74,7 @@ class IterationNodeBuilderTest extends NodeBuildingSpecification {
 		}
 
 		and:
-		TestSuite ts = new TestSuite(iteration: iter)
+		TestSuite ts = new TestSuite(iteration: iter, name:"test-suite")
 		iter.testSuites << ts
 
 

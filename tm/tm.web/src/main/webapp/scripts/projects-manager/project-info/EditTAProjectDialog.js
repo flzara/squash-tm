@@ -41,7 +41,7 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 			return errors;
 		},
 
-		urlRoot  : squashtm.app.contextRoot + "/test-automation-projects/"
+		urlRoot  : squashtm.app.contextRoot + "test-automation-projects/"
 
 	});
 

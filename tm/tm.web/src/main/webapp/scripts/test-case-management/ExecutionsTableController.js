@@ -21,7 +21,7 @@
 define([ "jquery", "squashtable", "jqueryui" ],
 		function($) {
 			function init() {
-				var execUrlRoot = squashtm.app.contextRoot + "/executions";
+				var execUrlRoot = squashtm.app.contextRoot + "executions";
 
 				function addExecutionLink(row, data) {
 					var id = data["exec-id"];

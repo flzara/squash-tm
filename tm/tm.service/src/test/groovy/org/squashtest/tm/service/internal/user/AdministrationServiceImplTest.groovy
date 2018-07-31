@@ -49,11 +49,11 @@ class AdministrationServiceImplTest extends Specification {
 	def "shoud add a group to a specific user" (){
 		given:
 		User user = new User()
-		userDao.findOne(10) >> user
+		userDao.getOne(10) >> user
 
 		and:
 		UsersGroup group = new UsersGroup()
-		groupDao.findOne(1) >> group
+		groupDao.getOne(1) >> group
 
 
 		when:
@@ -105,7 +105,7 @@ class AdministrationServiceImplTest extends Specification {
 
 		then:
 		1 * groupDao.findByQualifiedName("squashtest.authz.group.core.Admin") >> admin
-		1 * groupDao.findOne(_) >> admin
+		1 * groupDao.getOne(_) >> admin
 		res.group == admin
 
 	}

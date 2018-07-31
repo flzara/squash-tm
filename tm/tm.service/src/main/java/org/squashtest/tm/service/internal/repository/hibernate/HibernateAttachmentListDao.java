@@ -38,7 +38,7 @@ public class HibernateAttachmentListDao implements AttachmentListDao {
 	private EntityManager entityManager;
 
 	@Override
-	public AttachmentList findOne(Long id) {
+	public AttachmentList getOne(Long id) {
 		return entityManager.getReference(AttachmentList.class, id);
 	}
 

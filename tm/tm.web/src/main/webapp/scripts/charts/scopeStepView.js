@@ -68,7 +68,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			
 			
 			$.ajax({
-				url : squashtm.app.contextRoot + "/" + workspaceName + '-workspace/tree/' + ids,
+				url : squashtm.app.contextRoot + workspaceName + '-workspace/tree/' + ids,
 				datatype : 'json' 
 				
 				

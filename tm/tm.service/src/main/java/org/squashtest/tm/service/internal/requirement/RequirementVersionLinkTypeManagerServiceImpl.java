@@ -71,7 +71,7 @@ public class RequirementVersionLinkTypeManagerServiceImpl implements Requirement
 
 	@Override
 	public void changeDefault(Long linkTypeId) {
-		RequirementVersionLinkType newDefaultReqLinkType = linkTypeDao.findOne(linkTypeId);
+		RequirementVersionLinkType newDefaultReqLinkType = linkTypeDao.getOne(linkTypeId);
 		List<RequirementVersionLinkType> allReqLinkTypes = linkTypeDao.getAllRequirementVersionLinkTypes();
 		for(RequirementVersionLinkType linkType : allReqLinkTypes) {
 			linkType.setDefault(false);
@@ -84,7 +84,7 @@ public class RequirementVersionLinkTypeManagerServiceImpl implements Requirement
 	public Map<String, Boolean> changeRole1(Long linkTypeId, String newRole1) {
 		Map<String, Boolean> result = new HashMap<>();
 
-		RequirementVersionLinkType linkType = linkTypeDao.findOne(linkTypeId);
+		RequirementVersionLinkType linkType = linkTypeDao.getOne(linkTypeId);
 		RequirementVersionLinkType copy = linkType.createCopy();
 		copy.setRole1(newRole1);
 
@@ -102,7 +102,7 @@ public class RequirementVersionLinkTypeManagerServiceImpl implements Requirement
 	public Map<String, Boolean> changeRole2(Long linkTypeId, String newRole2) {
 		Map<String, Boolean> result = new HashMap<>();
 
-		RequirementVersionLinkType linkType = linkTypeDao.findOne(linkTypeId);
+		RequirementVersionLinkType linkType = linkTypeDao.getOne(linkTypeId);
 		RequirementVersionLinkType copy = linkType.createCopy();
 		copy.setRole2(newRole2);
 
@@ -120,7 +120,7 @@ public class RequirementVersionLinkTypeManagerServiceImpl implements Requirement
 	public Map<String, Boolean> changeCode1(Long linkTypeId, String newCode1) {
 		Map<String, Boolean> result = new HashMap<>();
 
-		RequirementVersionLinkType linkType = linkTypeDao.findOne(linkTypeId);
+		RequirementVersionLinkType linkType = linkTypeDao.getOne(linkTypeId);
 		RequirementVersionLinkType copy = linkType.createCopy();
 		copy.setRole1Code(newCode1);
 
@@ -139,7 +139,7 @@ public class RequirementVersionLinkTypeManagerServiceImpl implements Requirement
 	public Map<String, Boolean> changeCode2(Long linkTypeId, String newCode2) {
 		Map<String, Boolean> result = new HashMap<>();
 
-		RequirementVersionLinkType linkType = linkTypeDao.findOne(linkTypeId);
+		RequirementVersionLinkType linkType = linkTypeDao.getOne(linkTypeId);
 		RequirementVersionLinkType copy = linkType.createCopy();
 		copy.setRole2Code(newCode2);
 
@@ -166,7 +166,7 @@ public class RequirementVersionLinkTypeManagerServiceImpl implements Requirement
 
 	@Override
 	public void deleteLinkType(Long linkTypeId) {
-		RequirementVersionLinkType linkTypeToDelete = linkTypeDao.findOne(linkTypeId);
+		RequirementVersionLinkType linkTypeToDelete = linkTypeDao.getOne(linkTypeId);
 		if(linkTypeDao.isLinkTypeDefault(linkTypeId)) {
 			throw new LinkTypeIsDefaultTypeException();
 		} else {
@@ -178,7 +178,7 @@ public class RequirementVersionLinkTypeManagerServiceImpl implements Requirement
 
 	@Override
 	public boolean doesContainDefault(List<Long> linkTypesIdsToCheck) {
-		Iterable<RequirementVersionLinkType> linkTypesToCheck = linkTypeDao.findAll(linkTypesIdsToCheck);
+		Iterable<RequirementVersionLinkType> linkTypesToCheck = linkTypeDao.findAllById(linkTypesIdsToCheck);
 		for(RequirementVersionLinkType linkType : linkTypesToCheck) {
 			if(linkType.isDefault()) {
 				return true;

@@ -50,10 +50,10 @@ public class InfoListBindingManagerServiceImpl implements InfoListBindingManager
 
 	@Override
 	public void bindListToProjectReqCategory(long infoListId, long projectId) {
-		GenericProject project = genericProjectDao.findOne(projectId);
+		GenericProject project = genericProjectDao.getOne(projectId);
 		/* If Project is a bound Project, modifications must be done in the Template. */
 		checkIfParameterIsModifiable(project);
-		InfoList infoList = infoListDao.findOne(infoListId);
+		InfoList infoList = infoListDao.getOne(infoListId);
 		InfoListItem defaultItem = infoList.getDefaultItem();
 		project.setRequirementCategories(infoList);
 		infoListDao.setDefaultCategoryForProject(projectId, defaultItem);
@@ -70,10 +70,10 @@ public class InfoListBindingManagerServiceImpl implements InfoListBindingManager
 
 	@Override
 	public void bindListToProjectTcNature(long infoListId, long projectId) {
-		GenericProject project = genericProjectDao.findOne(projectId);
+		GenericProject project = genericProjectDao.getOne(projectId);
 		/* If Project is a bound Project, modifications must be done in the Template. */
 		checkIfParameterIsModifiable(project);
-		InfoList infoList = infoListDao.findOne(infoListId);
+		InfoList infoList = infoListDao.getOne(infoListId);
 		InfoListItem defaultItem = infoList.getDefaultItem();
 		project.setTestCaseNatures(infoList);
 		infoListDao.setDefaultNatureForProject(projectId, defaultItem);
@@ -89,10 +89,10 @@ public class InfoListBindingManagerServiceImpl implements InfoListBindingManager
 
 	@Override
 	public void bindListToProjectTcType(long infoListId, long projectId) {
-		GenericProject project = genericProjectDao.findOne(projectId);
+		GenericProject project = genericProjectDao.getOne(projectId);
 		/* If Project is a bound Project, modifications must be done in the Template. */
 		checkIfParameterIsModifiable(project);
-		InfoList infoList = infoListDao.findOne(infoListId);
+		InfoList infoList = infoListDao.getOne(infoListId);
 		InfoListItem defaultItem = infoList.getDefaultItem();
 		project.setTestCaseTypes(infoList);
 		infoListDao.setDefaultTypeForProject(projectId, defaultItem);

@@ -68,7 +68,7 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 	@PreAuthorize(CAN_EXECUTE_BY_TESTSUITE_ID)
 	public Execution startResume(long testSuiteId) {
 		Execution execution;
-		TestSuite suite = suiteDao.findOne(testSuiteId);
+		TestSuite suite = suiteDao.getOne(testSuiteId);
 		String testerLogin = findUserLoginIfTester(suite);
 		IterationTestPlanItem item = suite.findFirstExecutableTestPlanItem(testerLogin);
 		execution = findUnexecutedOrCreateExecution(item);
@@ -106,7 +106,7 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 	@PreAuthorize(CAN_EXECUTE_BY_TESTSUITE_ID)
 	public void deleteAllExecutions(long testSuiteId) {
 		// getTest plan
-		TestSuite testSuite = suiteDao.findOne(testSuiteId);
+		TestSuite testSuite = suiteDao.getOne(testSuiteId);
 		List<IterationTestPlanItem> suiteTestPlan = testSuite.getTestPlan();
 		if (!suiteTestPlan.isEmpty()) {
 			// delete all executions
@@ -134,7 +134,7 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 	 */
 	@Override
 	public boolean hasMoreExecutableItems(long testSuiteId, long testPlanItemId) {
-		TestSuite testSuite = suiteDao.findOne(testSuiteId);
+		TestSuite testSuite = suiteDao.getOne(testSuiteId);
 		String testerLogin = findUserLoginIfTester(testSuite);
 		return !testSuite.isLastExecutableTestPlanItem(testPlanItemId, testerLogin);
 
@@ -146,7 +146,7 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 	 */
 	@Override
 	public boolean hasPreviousExecutableItems(long testSuiteId, long testPlanItemId) {
-		TestSuite testSuite = suiteDao.findOne(testSuiteId);
+		TestSuite testSuite = suiteDao.getOne(testSuiteId);
 		String testerLogin = findUserLoginIfTester(testSuite);
 		return !testSuite.isFirstExecutableTestPlanItem(testPlanItemId, testerLogin);
 	}
@@ -158,7 +158,7 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 	@PreAuthorize(CAN_EXECUTE_BY_TESTSUITE_ID)
 	public Execution startResumeNextExecution(long testSuiteId, long testPlanItemId) {
 		Execution execution;
-		TestSuite testSuite = suiteDao.findOne(testSuiteId);
+		TestSuite testSuite = suiteDao.getOne(testSuiteId);
 		String testerLogin = findUserLoginIfTester(testSuite);
 		IterationTestPlanItem item = testSuite.findNextExecutableTestPlanItem(testPlanItemId, testerLogin);
 		execution = findUnexecutedOrCreateExecution(item);

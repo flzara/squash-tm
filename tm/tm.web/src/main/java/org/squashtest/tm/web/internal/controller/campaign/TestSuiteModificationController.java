@@ -249,7 +249,7 @@ public class TestSuiteModificationController {
 	@ResponseBody
 	public String getExecutionStatus(@PathVariable long suiteId) {
 
-		return testSuiteDao.findOne(suiteId).getExecutionStatus().toString();
+		return testSuiteDao.getOne(suiteId).getExecutionStatus().toString();
 
 	}
 

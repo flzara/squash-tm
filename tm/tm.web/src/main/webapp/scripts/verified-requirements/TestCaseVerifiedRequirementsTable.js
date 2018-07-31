@@ -117,7 +117,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 				var stepIndex = span.text();
 				var stepId = span.attr("dataId");
 				var link = $("<a/>", {
-					'href' : squashtm.app.contextRoot + "/test-steps/" + stepId,
+					'href' : squashtm.app.contextRoot + "test-steps/" + stepId,
 					'target':'blank'
 				});
 				link.text(stepIndex);

@@ -217,6 +217,18 @@ public class IndexationServiceImpl implements IndexationService {
 		}
 	}
 
+	/*
+	 *  2018-07-26 (upgrade to Spring Boot 2.0.3) : 
+	 *  Disabled the call to "clear", which now clears the entities before the entity manager
+	 *  had a change to commit changes to the database. After some archeology it appears that it was needed 
+	 *  back in the days of revision 7236 where the flush mode was set to manual (???). Some time later the said 
+	 *  flushmode was removed in version 8090 but the call to "clear" was left in place. I'm not sure why it was 
+	 *  happily working up to Hibernate 5.0 + Lucene 4.X but now it doesn't anymore. 
+	 *  
+	 *  The upgrade is still in progress and clearing the reasons of the session clear might appear 
+	 *  later, hence I'm leaving it commented here to help future maintainer with background info. But if 
+	 *  it all works fine as is just remove the commented operations, say as part of a TM 20 RC1 SNAPSHOT. 
+	 */
 	private void doReindex(FullTextEntityManager ftem, ScrollableResults scroll) {
 		// update index going through the search results
 		int batch = 0;
@@ -225,12 +237,12 @@ public class IndexationServiceImpl implements IndexationService {
 
 			if (++batch % BATCH_SIZE == 0) { // commit batch
 				ftem.flushToIndexes();
-				ftem.clear();
+				//ftem.clear();
 			}
 		}
 		// flush remaining item
 		ftem.flushToIndexes();
-		ftem.clear();
+		//ftem.clear();
 	}
 
 	private ScrollableResults getScrollableResults(FullTextEntityManager ftem, Class<?> entity, Collection<Long> ids) {

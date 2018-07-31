@@ -30,19 +30,19 @@ public class ParameterModificationServiceImplTest extends Specification {
 
 	ParameterModificationServiceImpl service = new ParameterModificationServiceImpl();
 	ParameterDao parameterDao = Mock()
-	
+
 	def setup() {
 		service.parameterDao = parameterDao;
 	}
-	
+
 	def "should delete parameter "(){
 		given:
 		Parameter parameter = Mock()
-		parameterDao.findById(1L) >> parameter
-			
+		parameterDao.findById(1L) >> Optional.of (parameter)
+
 		when :
 		service.removeById(1L)
-		
+
 		then:
 		1* parameterDao.delete(parameter)
 	}

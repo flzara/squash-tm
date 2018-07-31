@@ -62,7 +62,7 @@ define(["jquery", "backbone", "squash.translator"], function($, Backbone, transl
 			search.fields["requirement.id"].values = ids.toString().split(",");
 				    
 			var queryString = "searchModel=" + encodeURIComponent(JSON.stringify(search));
-			var urlSearch = squashtm.app.contextRoot + "/advanced-search/results?requirement&" + queryString;
+			var urlSearch = squashtm.app.contextRoot + "advanced-search/results?requirement&" + queryString;
 
 			var todisplay;
 			if (nbtc === 0) {

@@ -27,6 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.customfield.*;
 import org.squashtest.tm.event.ChangeCustomFieldCodeEvent;
 import org.squashtest.tm.exception.DuplicateNameException;
@@ -71,7 +72,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	private ApplicationEventPublisher eventPublisher;
 
 	/**
-	 * @see org.squashtest.tm.service.customfield.CustomFieldFinderService#findSortedCustomFields(Pageable)
+	 * @see org.squashtest.tm.service.customfield.CustomFieldFinderService#findSortedCustomFields(PagingAndSorting)
 	 */
 	@Override
 	public Page<CustomField> findSortedCustomFields(Pageable pageable) {
@@ -83,7 +84,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	 */
 	@Override
 	public void deleteCustomField(long customFieldId) {
-		CustomField customField = customFieldDao.findById(customFieldId);
+		CustomField customField = customFieldDao.getOne(customFieldId);
 		/* TODO: Wow */
 		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllByCustomFieldIdOrderByPositionAsc(customFieldId);
 		List<Long> bindingIds = new ArrayList<>();
@@ -138,7 +139,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	@Override
 	public void changeName(long customFieldId, String newName) {
 		String trimedNewName = newName.trim();
-		CustomField customField = customFieldDao.findById(customFieldId);
+		CustomField customField = customFieldDao.getOne(customFieldId);
 		String oldName = customField.getName();
 		if (customFieldDao.findByName(trimedNewName) != null) {
 			throw new DuplicateNameException(oldName, trimedNewName);
@@ -153,7 +154,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	 */
 	@Override
 	public void changeOptional(Long customFieldId, Boolean optional) {
-		CustomField customField = customFieldDao.findById(customFieldId);
+		CustomField customField = customFieldDao.getOne(customFieldId);
 		if (!optional) {
 			checkDefaultValueExists(customField);
 			if(customField.getInputType()!=DROPDOWN_LIST){
@@ -209,7 +210,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	}
 
 	/**
-	 * @see org.squashtest.tm.service.customfield.CustomCustomFieldManagerService#changeOptionCode(Long, String,
+	 * @see org.squashtest.tm.service.customfield.CustomCustomFieldManagerService#changeOptionCode(long, String, String)
 	 *      String)
 	 */
 	@Override
@@ -265,7 +266,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	 */
 	@Override
 	public void changeCode(long customFieldId, String code) {
-		CustomField field = customFieldDao.findById(customFieldId);
+		CustomField field = customFieldDao.getOne(customFieldId);
 		checkDuplicateCode(field, code);
 		String oldCode = field.getCode();
 		field.setCode(code);

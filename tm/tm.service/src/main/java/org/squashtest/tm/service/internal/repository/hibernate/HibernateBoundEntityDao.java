@@ -33,6 +33,8 @@ import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.customfield.*;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.project.ProjectTemplate;
+import org.squashtest.tm.domain.project.ProjectVisitor;
 import org.squashtest.tm.service.internal.repository.BoundEntityDao;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
@@ -79,29 +81,38 @@ public class HibernateBoundEntityDao implements BoundEntityDao {
 	@PersistenceContext
 	private EntityManager em;
 
-	@Inject
-	private GenericProjectDao genericProjectDao;
-
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<BoundEntity> findAllForBinding(CustomFieldBinding customFieldBinding) {
+		
+		GenericProject project = customFieldBinding.getBoundProject();
+		final List<BoundEntity> entities = new ArrayList<>();
+		
+		project.accept(new ProjectVisitor() {			
+			@Override
+			public void visit(ProjectTemplate projectTemplate) {
+				// noop
+			}
+			
+			@Override
+			public void visit(Project project) {
+				BindableEntity boundType = customFieldBinding.getBoundEntity();
+				String queryName = BOUND_ENTITIES_IN_PROJECT_QUERY.get(boundType);
+				Query q = em.createNamedQuery(queryName);
+				q.setParameter(ParameterNames.PROJECT_ID, project.getId());
 
-		if(genericProjectDao.isProjectTemplate(customFieldBinding.getBoundProject().getId())){
-			return new ArrayList<>();
-		}
+				List<Long> entityIds = q.getResultList();
 
-		BindableEntity boundType = customFieldBinding.getBoundEntity();
-		Project boundProject = (Project) customFieldBinding.getBoundProject();
-		String queryName = BOUND_ENTITIES_IN_PROJECT_QUERY.get(boundType);
-		Query q = em.createNamedQuery(queryName);
-		q.setParameter(ParameterNames.PROJECT_ID, boundProject.getId());
-
-		List<Long> entityIds = q.getResultList();
-
-		return entityIds.stream()
-			.map(entityId -> new BoundEntityImpl(entityId, boundType, boundProject))
-			.collect(toList());
+				List<BoundEntity> collected = entityIds.stream()
+					.map(entityId -> new BoundEntityImpl(entityId, boundType, project))
+					.collect(toList());
+				
+				entities.addAll(collected);
+			}
+		});
+		
+		return entities;
 	}
 
 

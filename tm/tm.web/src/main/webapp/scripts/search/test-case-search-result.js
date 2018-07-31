@@ -77,7 +77,7 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.ro
 
 					$.ajax({
 						type: "POST",
-						url: squashtm.app.contextRoot + "/requirement-versions/" + id + "/verifying-test-cases/" + st
+						url: squashtm.app.contextRoot + "requirement-versions/" + id + "/verifying-test-cases/" + st
 					}).done(function () {
 						$("#back").click();
 					});
@@ -88,13 +88,13 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.ro
 
 					switch (this.associationType) {
 						case "campaign" :
-							url = squashtm.app.contextRoot + "/campaigns/" + id + "/test-plan";
+							url = squashtm.app.contextRoot + "campaigns/" + id + "/test-plan";
 							break;
 						case "iteration" :
-							url = squashtm.app.contextRoot + "/iterations/" + id + "/test-plan";
+							url = squashtm.app.contextRoot + "iterations/" + id + "/test-plan";
 							break;
 						case "testsuite" :
-							url = squashtm.app.contextRoot + "/test-suites/" + id + "/test-plan";
+							url = squashtm.app.contextRoot + "test-suites/" + id + "/test-plan";
 							break;
 						default :
 							throw "unknown association type " + associationType;
@@ -337,7 +337,7 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.ro
 
 				function loadCombos(comboname) {
 					$.ajax({
-						url: squashtm.app.contextRoot + "/test-cases/" + comboname + "-data",
+						url: squashtm.app.contextRoot + "test-cases/" + comboname + "-data",
 						dataType: 'json'
 					})
 						.success(function (json) {
@@ -403,7 +403,7 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.ro
 							for (var i = 0; i < ids.length; i++) {
 								if (columns[index] === "importance") {
 									if (importanceAuto === true) {
-										urlPOST = squashtm.app.contextRoot + "/test-cases/" + ids[i] + "/importanceAuto";
+										urlPOST = squashtm.app.contextRoot + "test-cases/" + ids[i] + "/importanceAuto";
 										$.post(urlPOST, {
 											importanceAuto: importanceAuto
 										}).success(function (data) {
@@ -412,16 +412,16 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.ro
 											table._fnDraw();
 										});
 									} else {
-										$.post(squashtm.app.contextRoot + "/test-cases/" + ids[i], {
+										$.post(squashtm.app.contextRoot + "test-cases/" + ids[i], {
 											value: value,
 											id: "test-case-" + columns[index]
 										});
-										$.post(squashtm.app.contextRoot + "/test-cases/" + ids[i] + "/importanceAuto", {
+										$.post(squashtm.app.contextRoot + "test-cases/" + ids[i] + "/importanceAuto", {
 											importanceAuto: importanceAuto
 										});
 									}
 								} else {
-									urlPOST = squashtm.app.contextRoot + "/test-cases/" + ids[i];
+									urlPOST = squashtm.app.contextRoot + "test-cases/" + ids[i];
 									$.post(urlPOST, {
 											value: value,
 											id: "test-case-" + columns[index]

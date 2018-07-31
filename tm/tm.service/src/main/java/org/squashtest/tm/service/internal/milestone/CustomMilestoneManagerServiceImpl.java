@@ -86,7 +86,7 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 	@Override
 	public void changeLabel(long milestoneId, String newLabel) {
 		checkLabelAvailability(newLabel);
-		Milestone m = milestoneDao.findOne(milestoneId);
+		Milestone m = milestoneDao.getOne(milestoneId);
 		m.setLabel(newLabel);
 	}
 
@@ -104,7 +104,7 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 	@Override
 	public void removeMilestones(Collection<Long> ids) {
 		for (final Long id : ids) {
-			Milestone milestone = milestoneDao.findOne(id);
+			Milestone milestone = milestoneDao.getOne(id);
 			deleteMilestoneBinding(milestone);
 			deleteMilestone(milestone);
 		}
@@ -124,12 +124,12 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 
 	@Override
 	public Milestone findById(long milestoneId) {
-		return milestoneDao.findOne(milestoneId);
+		return milestoneDao.getOne(milestoneId);
 	}
 
 	@Override
 	public List<Milestone> findAllByIds(List<Long> milestoneIds) {
-		return milestoneDao.findAll(milestoneIds);
+		return milestoneDao.findAllById(milestoneIds);
 	}
 
 	@Override
@@ -159,7 +159,7 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 
 	@Override
 	public boolean canEditMilestone(long milestoneId) {
-		Milestone milestone = milestoneDao.findOne(milestoneId);
+		Milestone milestone = milestoneDao.getOne(milestoneId);
 		// admin can edit all milestones
 		if (!permissionEvaluationService.hasRole(ADMIN_ROLE)) {
 			// project manager can't edit global milestone or milestone they don't own
@@ -203,7 +203,7 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 	public List<Milestone> findAllVisibleToCurrentUser() {
 
 		List<Long> milestoneIds = findAllIdsVisibleToCurrentUser();
-		return milestoneDao.findAll(milestoneIds);
+		return milestoneDao.findAllById(milestoneIds);
 	}
 
 

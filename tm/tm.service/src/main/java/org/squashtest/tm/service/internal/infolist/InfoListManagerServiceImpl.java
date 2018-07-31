@@ -60,7 +60,7 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 
 	@Override
 	public InfoList findById(Long id) {
-		return infoListDao.findOne(id);
+		return infoListDao.getOne(id);
 	}
 
 	@Override
@@ -106,7 +106,7 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 		InfoList infoList = findById(infoListId);
 		SystemInfoListCode.verifyModificationPermission(infoList);
 
-		List<InfoListItem> items = infoListItemDao.findAll(itemsIds);
+		List<InfoListItem> items = infoListItemDao.findAllById(itemsIds);
 		for (InfoListItem item : items) {
 			infoList.removeItem(item);
 		}
@@ -122,7 +122,7 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 	@Override
 	public void remove(long infoListId) {
 
-		InfoList infoList = infoListDao.findOne(infoListId);
+		InfoList infoList = infoListDao.getOne(infoListId);
 		SystemInfoListCode.verifyModificationPermission(infoList);
 
 		infoListDao.unbindFromProject(infoListId);

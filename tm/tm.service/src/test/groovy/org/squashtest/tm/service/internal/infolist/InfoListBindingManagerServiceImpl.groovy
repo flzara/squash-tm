@@ -56,8 +56,8 @@ public class InfoListBindingManagerServiceImplTest extends Specification {
 
 		and:
 
-		genericProjectDao.findOne(404L) >> project
-		infoListDao.findOne(7331L) >> infoList
+		genericProjectDao.getOne(404L) >> project
+		infoListDao.getOne(7331L) >> infoList
 
 		when:
 
@@ -83,8 +83,8 @@ public class InfoListBindingManagerServiceImplTest extends Specification {
 
 		and:
 
-		genericProjectDao.findOne(404L) >> project
-		infoListDao.findOne(7331L) >> infoList
+		genericProjectDao.getOne(404L) >> project
+		infoListDao.getOne(7331L) >> infoList
 
 		when:
 
@@ -112,8 +112,8 @@ public class InfoListBindingManagerServiceImplTest extends Specification {
 
 		and:
 
-		genericProjectDao.findOne(404L) >> template
-		infoListDao.findOne(7331L) >> infoList
+		genericProjectDao.getOne(404L) >> template
+		infoListDao.getOne(7331L) >> infoList
 
 		and:
 
@@ -146,8 +146,8 @@ public class InfoListBindingManagerServiceImplTest extends Specification {
 
 		and:
 
-		genericProjectDao.findOne(404L) >> project
-		infoListDao.findOne(7331L) >> infoList
+		genericProjectDao.getOne(404L) >> project
+		infoListDao.getOne(7331L) >> infoList
 
 		when:
 
@@ -173,8 +173,8 @@ public class InfoListBindingManagerServiceImplTest extends Specification {
 
 		and:
 
-		genericProjectDao.findOne(404L) >> project
-		infoListDao.findOne(7331L) >> infoList
+		genericProjectDao.getOne(404L) >> project
+		infoListDao.getOne(7331L) >> infoList
 
 		when:
 
@@ -202,8 +202,8 @@ public class InfoListBindingManagerServiceImplTest extends Specification {
 
 		and:
 
-		genericProjectDao.findOne(404L) >> template
-		infoListDao.findOne(7331L) >> infoList
+		genericProjectDao.getOne(404L) >> template
+		infoListDao.getOne(7331L) >> infoList
 
 		and:
 
@@ -236,8 +236,8 @@ public class InfoListBindingManagerServiceImplTest extends Specification {
 
 		and:
 
-		genericProjectDao.findOne(404L) >> project
-		infoListDao.findOne(7331L) >> infoList
+		genericProjectDao.getOne(404L) >> project
+		infoListDao.getOne(7331L) >> infoList
 
 		when:
 
@@ -263,8 +263,8 @@ public class InfoListBindingManagerServiceImplTest extends Specification {
 
 		and:
 
-		genericProjectDao.findOne(404L) >> project
-		infoListDao.findOne(7331L) >> infoList
+		genericProjectDao.getOne(404L) >> project
+		infoListDao.getOne(7331L) >> infoList
 
 		when:
 
@@ -292,8 +292,8 @@ public class InfoListBindingManagerServiceImplTest extends Specification {
 
 		and:
 
-		genericProjectDao.findOne(404L) >> template
-		infoListDao.findOne(7331L) >> infoList
+		genericProjectDao.getOne(404L) >> template
+		infoListDao.getOne(7331L) >> infoList
 
 		and:
 

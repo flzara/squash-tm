@@ -88,7 +88,7 @@ define(['jquery', 'squash.attributeparser',	'handlebars', 'squash.configmanager'
 
 			_loadThenOpen : function(){
 				var self =this;
-				var url = window.squashtm.app.contextRoot+'/campaigns/'+this.options.campaignId+'/iterations';
+				var url = window.squashtm.app.contextRoot + 'campaigns/'+this.options.campaignId+'/iterations';
 				$.getJSON(url, function(json){
 					self._createModel(json);
 					self.reset();
@@ -167,7 +167,7 @@ define(['jquery', 'squash.attributeparser',	'handlebars', 'squash.configmanager'
 			},
 
 			commitThenClose : function(){
-				var url = window.squashtm.app.contextRoot + '/campaigns/'+this.options.campaignId+'/iterations/planning',
+				var url = window.squashtm.app.contextRoot + 'campaigns/'+this.options.campaignId+'/iterations/planning',
 					self = this;
 
 				var dateFormat = this.options.dateformat;

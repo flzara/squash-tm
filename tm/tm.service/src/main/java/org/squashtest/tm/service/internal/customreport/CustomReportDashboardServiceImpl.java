@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.customreport;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -82,7 +83,7 @@ public class CustomReportDashboardServiceImpl implements
 
 	@Override
 	public CustomReportDashboard findById(Long id) {
-		return customReportDashboardDao.findOne(id);
+		return customReportDashboardDao.getOne(id);
 	}
 
 	@Override
@@ -114,7 +115,7 @@ public class CustomReportDashboardServiceImpl implements
 	}
 
 	private void updateChartBinding(CustomReportChartBinding transientBinding) {
-		CustomReportChartBinding persistedBinding = chartBindingDao.findOne(transientBinding.getId());
+		CustomReportChartBinding persistedBinding = chartBindingDao.getOne(transientBinding.getId());
 		if(permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN,"WRITE",persistedBinding.getDashboard())
 				&& persistedBinding.hasMoved(transientBinding)){
 			persistedBinding.move(transientBinding);
@@ -122,7 +123,7 @@ public class CustomReportDashboardServiceImpl implements
 	}
 
 	private void updateReportBinding(CustomReportReportBinding transientBinding) {
-		CustomReportReportBinding persistedBinding = reportBindingDao.findOne(transientBinding.getId());
+		CustomReportReportBinding persistedBinding = reportBindingDao.getOne(transientBinding.getId());
 		if(permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN,"WRITE",persistedBinding.getDashboard())
 			&& persistedBinding.hasMoved(transientBinding)){
 			persistedBinding.move(transientBinding);
@@ -133,14 +134,20 @@ public class CustomReportDashboardServiceImpl implements
 	@PreAuthorize("hasPermission(#id, 'org.squashtest.tm.domain.customreport.CustomReportChartBinding' ,'WRITE') "
 			+ OR_HAS_ROLE_ADMIN)
 	public void unbindChart(Long id) {
-		chartBindingDao.delete(id);
+		Optional<CustomReportChartBinding> optBinding = chartBindingDao.findById(id);
+		if (optBinding.isPresent()) {
+			chartBindingDao.delete(optBinding.get());
+		}
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#id, 'org.squashtest.tm.domain.customreport.CustomReportReportBinding' ,'WRITE') "
 		+ OR_HAS_ROLE_ADMIN)
 	public void unbindReport(Long id) {
-		reportBindingDao.delete(id);
+		Optional<CustomReportReportBinding> optBinding = reportBindingDao.findById(id);
+		if (optBinding.isPresent()) {
+			reportBindingDao.delete(optBinding.get());
+		}
 	}
 
 	@Override
@@ -148,7 +155,7 @@ public class CustomReportDashboardServiceImpl implements
 			+ OR_HAS_ROLE_ADMIN)
 	public CustomReportChartBinding changeBindedChart(long bindingId,
 			long chartNodeId) {
-		CustomReportChartBinding chartBinding = chartBindingDao.findOne(bindingId);
+		CustomReportChartBinding chartBinding = chartBindingDao.getOne(bindingId);
 		ChartDefinition chartDefinition = crlnService.findChartDefinitionByNodeId(chartNodeId);
 		chartBinding.setChart(chartDefinition);
 		return chartBinding;
@@ -159,7 +166,7 @@ public class CustomReportDashboardServiceImpl implements
 		+ OR_HAS_ROLE_ADMIN)
 	public CustomReportReportBinding changeBindedReport(long bindingId,
 													  long reportNodeId) {
-		CustomReportReportBinding reportBinding = reportBindingDao.findOne(bindingId);
+		CustomReportReportBinding reportBinding = reportBindingDao.getOne(bindingId);
 		ReportDefinition reportDefinition = crlnService.findReportDefinitionByNodeId(reportNodeId);
 		reportBinding.setReport(reportDefinition);
 		return reportBinding;
@@ -231,7 +238,7 @@ public class CustomReportDashboardServiceImpl implements
 			return false;
 		}
 		Long dashboardId = Long.parseLong(candidateDashboardId);
-		CustomReportLibraryNode node = customReportLibraryNodeDao.findOne(dashboardId);
-		return node != null && permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN,"READ",node);
+		Optional<CustomReportLibraryNode> node = customReportLibraryNodeDao.findById(dashboardId);
+		return node.isPresent() && permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN,"READ",node.get());
 	}
 }

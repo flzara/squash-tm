@@ -22,12 +22,16 @@ package org.squashtest.tm.internal.test;
 
 import org.jooq.*;
 import org.jooq.exception.DataTypeException;
+import org.jooq.exception.IOException;
 import org.jooq.exception.MappingException;
 
+import java.io.OutputStream;
+import java.io.Writer;
 import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public class StubJooqRecord implements Record {
 
@@ -44,6 +48,126 @@ public class StubJooqRecord implements Record {
 
 	@Override
 	public <T> Field<T> field(Field<T> field) {
+		return null;
+	}
+
+	@Override
+	public <T> Record with(Field<T> field, T t) {
+		return null;
+	}
+
+	@Override
+	public <T, U> Record with(Field<T> field, U u, Converter<? extends T, ? super U> converter) {
+		return null;
+	}
+
+	@Override
+	public Stream<Object> intoStream() {
+		return null;
+	}
+
+	@Override
+	public String formatJSON() {
+		return null;
+	}
+
+	@Override
+	public String formatJSON(JSONFormat jsonFormat) {
+		return null;
+	}
+
+	@Override
+	public void formatJSON(OutputStream outputStream) throws IOException {
+
+	}
+
+	@Override
+	public void formatJSON(OutputStream outputStream, JSONFormat jsonFormat) throws IOException {
+
+	}
+
+	@Override
+	public void formatJSON(Writer writer) throws IOException {
+
+	}
+
+	@Override
+	public void formatJSON(Writer writer, JSONFormat jsonFormat) throws IOException {
+
+	}
+
+	@Override
+	public String formatXML() {
+		return null;
+	}
+
+	@Override
+	public String formatXML(XMLFormat xmlFormat) {
+		return null;
+	}
+
+	@Override
+	public void formatXML(OutputStream outputStream) throws IOException {
+
+	}
+
+	@Override
+	public void formatXML(OutputStream outputStream, XMLFormat xmlFormat) throws IOException {
+
+	}
+
+	@Override
+	public void formatXML(Writer writer) throws IOException {
+
+	}
+
+	@Override
+	public void formatXML(Writer writer, XMLFormat xmlFormat) throws IOException {
+
+	}
+
+	@Override
+	public <T, U> U getValue(Field<T> field, Converter<? super T, ? extends U> converter) throws IllegalArgumentException, DataTypeException {
+		return null;
+	}
+
+	@Override
+	public <T, U> U getValue(Field<T> field, Converter<? super T, ? extends U> converter, U u) throws IllegalArgumentException, DataTypeException {
+		return null;
+	}
+
+	@Override
+	public <U> U getValue(String s, Converter<?, ? extends U> converter) throws IllegalArgumentException, DataTypeException {
+		return null;
+	}
+
+	@Override
+	public <U> U getValue(String s, Converter<?, ? extends U> converter, U u) throws IllegalArgumentException, DataTypeException {
+		return null;
+	}
+
+	@Override
+	public <U> U getValue(Name name, Converter<?, ? extends U> converter) throws IllegalArgumentException, DataTypeException {
+		return null;
+	}
+
+	@Override
+	public <U> U getValue(int i, Converter<?, ? extends U> converter) throws IllegalArgumentException, DataTypeException {
+		return null;
+	}
+
+	@Override
+	public <U> U getValue(int i, Converter<?, ? extends U> converter, U u) throws IllegalArgumentException, DataTypeException {
+		return null;
+	}
+
+	@Override
+	public <T, U> void setValue(Field<T> field, U u, Converter<? extends T, ? super U> converter) {
+
+	}
+
+	@Override
+	public Configuration configuration() {
 		return null;
 	}
 
@@ -522,15 +646,7 @@ public class StubJooqRecord implements Record {
 		return null;
 	}
 
-	@Override
-	public <T, U> U getValue(Field<T> field, Converter<? super T, U> converter) throws IllegalArgumentException, DataTypeException {
-		return null;
-	}
 
-	@Override
-	public <T, U> U getValue(Field<T> field, Converter<? super T, U> converter, U defaultValue) throws IllegalArgumentException, DataTypeException {
-		return null;
-	}
 
 	@Override
 	public Object getValue(String fieldName) throws IllegalArgumentException {
@@ -552,15 +668,6 @@ public class StubJooqRecord implements Record {
 		return null;
 	}
 
-	@Override
-	public <U> U getValue(String fieldName, Converter<?, U> converter) throws IllegalArgumentException, DataTypeException {
-		return null;
-	}
-
-	@Override
-	public <U> U getValue(String fieldName, Converter<?, U> converter, U defaultValue) throws IllegalArgumentException, DataTypeException {
-		return null;
-	}
 
 	@Override
 	public Object getValue(Name fieldName) throws IllegalArgumentException {
@@ -572,10 +679,6 @@ public class StubJooqRecord implements Record {
 		return null;
 	}
 
-	@Override
-	public <U> U getValue(Name fieldName, Converter<?, U> converter) throws IllegalArgumentException, DataTypeException {
-		return null;
-	}
 
 	@Override
 	public Object getValue(int index) throws IllegalArgumentException {
@@ -597,25 +700,13 @@ public class StubJooqRecord implements Record {
 		return null;
 	}
 
-	@Override
-	public <U> U getValue(int index, Converter<?, U> converter) throws IllegalArgumentException, DataTypeException {
-		return null;
-	}
-
-	@Override
-	public <U> U getValue(int index, Converter<?, U> converter, U defaultValue) throws IllegalArgumentException, DataTypeException {
-		return null;
-	}
 
 	@Override
 	public <T> void setValue(Field<T> field, T value) {
 
 	}
 
-	@Override
-	public <T, U> void setValue(Field<T> field, U value, Converter<T, ? super U> converter) {
 
-	}
 
 	@Override
 	public void attach(Configuration configuration) {

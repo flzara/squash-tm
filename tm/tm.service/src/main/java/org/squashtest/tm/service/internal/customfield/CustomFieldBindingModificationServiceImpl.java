@@ -164,7 +164,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	public void addNewCustomFieldBinding(long projectId, BindableEntity entity, long customFieldId,
 										 Set<RenderingLocation> locations) {
 
-		GenericProject genericProject = genericProjectDao.findOne(projectId);
+		GenericProject genericProject = genericProjectDao.getOne(projectId);
 		if(entity == BindableEntity.REQUIREMENT_FOLDER){
 			List<CustomFieldBinding> customFieldBindingList = new ArrayList<>();
 			customFieldBindingList.add(createBinding(genericProject, BindableEntity.REQUIREMENT_FOLDER, customFieldId, locations));
@@ -257,7 +257,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 							   Set<RenderingLocation> locations) {
 
 			CustomFieldBinding newBinding = new CustomFieldBinding();
-			CustomField field = customFieldDao.findById(customFieldId);
+			CustomField field = customFieldDao.getOne(customFieldId);
 			Long newIndex = customFieldBindingDao.countAllForProjectAndEntity(genericProject.getId(), entity) + 1;
 
 			newBinding.setBoundProject(genericProject);

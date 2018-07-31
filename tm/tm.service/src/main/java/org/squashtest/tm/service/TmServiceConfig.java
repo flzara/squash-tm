@@ -28,7 +28,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
-import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.transaction.config.TransactionManagementConfigUtils;
 import org.squashtest.tm.domain.campaign.*;
 import org.squashtest.tm.domain.event.RequirementCreationEventPublisherAspect;
@@ -122,9 +121,14 @@ public class TmServiceConfig {
 
 	@Bean
 	public static ConfigFileApplicationListener configFileApplicationListener() {
+		
 		final String[] propertiesFiles = {
+			/*
+			 * XXX I'm failry sure those two commented properties files simply don't exist. 
+			 * Remove them definitely during the dev of TM 20 if no one complained.
+			 * 
 			"squashtest.core.datasource.jdbc.config",
-			"squashtest.tm.hibernate.config",
+			"squashtest.tm.hibernate.config",*/
 			"squashtest.tm.cfg"
 		};
 

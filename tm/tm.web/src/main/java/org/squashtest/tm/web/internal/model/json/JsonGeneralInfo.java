@@ -56,7 +56,11 @@ public class JsonGeneralInfo {
 		this.createdOn = DateUtils.formatIso8601DateTime(mixin.getCreatedOn());
 		this.createdBy = HtmlUtils.htmlEscape(mixin.getCreatedBy());
 		this.modifiedOn = DateUtils.formatIso8601DateTime(mixin.getLastModifiedOn());
-		this.modifiedBy =  HtmlUtils.htmlEscape(mixin.getLastModifiedBy());
+		// modifiedBy can be null, but that would make HtmlUtils complain.
+		// so we must null-check here first
+		if (mixin.getLastModifiedBy() != null) {
+			this.modifiedBy = HtmlUtils.htmlEscape(mixin.getLastModifiedBy());
+		}
 	}
 
 	public String getCreatedOn() {

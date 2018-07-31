@@ -32,31 +32,32 @@
     <google.http.oauth.version>1.23.0</google.http.oauth.version>
 
     <guava.version>18.0</guava.version>
-    <h2.version>1.4.187</h2.version>
-    <hibernate.search.version>5.4.0.Final</hibernate.search.version>
-    <jackson.version>2.8.8</jackson.version>
+    <h2.version>1.4.197</h2.version>
+
+    <hibernate.search.version>5.9.2.Final</hibernate.search.version>
+
+    <!-- Spring Boot version 2.0.3 implies Jackson 2.9.6 -->
+    <jackson.version>2.9.6</jackson.version>
     <javax.cache-api.version>1.1.0</javax.cache-api.version>
     <javax.inject.version>1</javax.inject.version>
     <jericho-html.version>3.3</jericho-html.version>
     <mysql-connector-java.version>5.1.39</mysql-connector-java.version>
     <poi.version>3.12</poi.version>
 
-    <!-- warning : postgresql.version and querysdl.version should match that of spring-data-jpa -->
-    <postgresql.version>9.4.1209.jre7</postgresql.version>
-    <querydsl.version>4.1.2</querydsl.version>
+    <!-- warning : querysdl.version should match that of spring-data-jpa -->
+    <postgresql.version>42.2.4</postgresql.version>
+    <querydsl.version>4.1.4</querydsl.version>
     <spock.version>1.1-groovy-2.4</spock.version>
     <spring-security-oauth2.version>2.0.14.RELEASE</spring-security-oauth2.version>
-    <spring-security.version>4.1.4.RELEASE</spring-security.version>
-    <thymeleaf-extras-springsecurity4.version>3.0.2.RELEASE</thymeleaf-extras-springsecurity4.version>
-    <thymeleaf-layout-dialect.version>2.2.2</thymeleaf-layout-dialect.version>
 
-    <!-- THYMELEAF STACK VERSION OVERRIDE (see https://docs.spring.io/spring-boot/docs/1.4.7.RELEASE/reference/htmlsingle/#howto-use-thymeleaf-3) -->
-    <thymeleaf.version>3.0.3.RELEASE</thymeleaf.version>
-    <!-- /THYMELEAF STACK VERSION OVERRIDE  -->
-    <tomcat.version>8.0.23</tomcat.version>
+    <!-- Spring Boot version 2.0.3.RELEASE implies Spring Sec version 5.0.6.RELEASE-->
+    <spring-security.version>5.0.6.RELEASE</spring-security.version>
+
+    <!-- thymeleaf-springsec4 : see comment on the artifact dependency management declaration -->
+    <thymeleaf-extras-springsecurity4.version>3.0.2.RELEASE</thymeleaf-extras-springsecurity4.version>
 
     <unitils.version>3.4.2</unitils.version>
-    <validation-api.version>1.1.0.Final</validation-api.version>
+    <validation-api.version>2.0.1.Final</validation-api.version>
     <xml-resolver.version>1.2</xml-resolver.version>
 
   </properties>
@@ -175,12 +176,17 @@
         		Some dependencies of Jasperreports are a mess (not jasper reports itself
         		though) : itext and castor-xml. Their own dependencies must also be
         		managed here.
+        		Note that the version of itext here has been slightly modified by the JR 
+        		team and is served by their own maven repository
         	 -->
 
           <exclusion>
             <!--
 		  		Pulled by itext. But no we wont do xmlsecurity in our documents
 		  		so we just exclude them.
+		  		Beside the lib changed its groupid from 'bouncycastle' to 'org.bouncycastle', 
+		  		which effectively allows Maven to pull both set of bouncycastle artifacts 
+		  		with no regard for the Shrödinbugs it induces at runtime.  
 		  	-->
             <groupId>bouncycastle</groupId>
             <artifactId>*</artifactId>
@@ -261,12 +267,6 @@
       </dependency>
 
       <dependency>
-        <groupId>com.querydsl</groupId>
-        <artifactId>querydsl-jpa</artifactId>
-        <version>${querydsl.version}</version>
-      </dependency>
-
-      <dependency>
         <!-- This is useful for IDEs to generate some metadata. Do not remove -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-configuration-processor</artifactId>
@@ -307,6 +307,12 @@
 
       <dependency>
         <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-jooq</artifactId>
+        <version>${spring.boot.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-log4j</artifactId>
         <version>${spring.boot.version}</version>
       </dependency>
@@ -335,8 +341,6 @@
         <version>${spring.boot.version}</version>
       </dependency>
 
-      <!-- /THYMELEAF STACK VERSION OVERRIDE -->
-
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-web</artifactId>
@@ -355,29 +359,26 @@
         <version>${spring-security.version}</version>
       </dependency>
 
-      <!-- THYMELEAF STACK VERSION OVERRIDE -->
-      <dependency>
+      <!--dependency>
         <groupId>org.thymeleaf</groupId>
         <artifactId>thymeleaf</artifactId>
         <version>${thymeleaf.version}</version>
-      </dependency>
+      </dependency-->
 
       <dependency>
+        <!--
+          Squash TM 19, 20/07/2018
+
+          Upgrade to Spring Boot 2 -> Spring Framework 5 with Spring Security 5.
+
+          For now thymeleaf-extras-springsecurity5 is not yet available. But Note that
+          it will require thymeleaf-spring5:3.0.10.RELEASE
+          (see https://github.com/thymeleaf/thymeleaf-extras-springsecurity/issues/47),
+          so remember to redeclare thymeleaf-spring5 too when upgrading
+        -->
         <groupId>org.thymeleaf.extras</groupId>
         <artifactId>thymeleaf-extras-springsecurity4</artifactId>
         <version>${thymeleaf-extras-springsecurity4.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>nz.net.ultraq.thymeleaf</groupId>
-        <artifactId>thymeleaf-layout-dialect</artifactId>
-        <version>${thymeleaf-layout-dialect.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.thymeleaf</groupId>
-        <artifactId>thymeleaf-spring4</artifactId>
-        <version>${thymeleaf.version}</version>
       </dependency>
 
       <dependency>

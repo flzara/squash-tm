@@ -69,8 +69,8 @@ class AdministrationServiceImplTest extends Specification {
 		User user = Mock()
 		Team team = Mock()
 		def teams = [team]
-		userDao.findOne(1L)>>user
-		teamDao.findAll([2L])>> teams
+		userDao.getOne(1L)>>user
+		teamDao.findAllById([2L])>> teams
 
 		//aclService.updateDerivedPermissions(1L) >> void
 
@@ -85,7 +85,7 @@ class AdministrationServiceImplTest extends Specification {
 		given :
 		User user = Mock()
 		def teamIds = [2L]
-		userDao.findOne(1L) >> user
+		userDao.getOne(1L) >> user
 		when :
 		service.deassociateTeams(1L, [2L])
 		then :
@@ -133,7 +133,7 @@ class AdministrationServiceImplTest extends Specification {
 
 		and:
 		UsersGroup defaultGroup = Mock()
-		groupDao.findOne(10L) >> defaultGroup
+		groupDao.getOne(10L) >> defaultGroup
 
 		when:
 		service.addUser(newUser, 10L, "y2j")
@@ -151,7 +151,7 @@ class AdministrationServiceImplTest extends Specification {
 
 		and:
 		UsersGroup defaultGroup = Mock()
-		groupDao.findOne(10L) >> defaultGroup
+		groupDao.getOne(10L) >> defaultGroup
 
 		when:
 		service.createUserWithoutCredentials(newUser, 10L)
@@ -169,7 +169,7 @@ class AdministrationServiceImplTest extends Specification {
 		user.active >> true
 
 		and:
-		userDao.findOne(10L) >> user
+		userDao.getOne(10L) >> user
 
 		and:
 		adminAuthentService.userExists("chris.jericho") >> false
@@ -191,7 +191,7 @@ class AdministrationServiceImplTest extends Specification {
 		user.active >> true
 
 		and:
-		userDao.findOne(10L) >> user
+		userDao.getOne(10L) >> user
 
 		and:
 		adminAuthentService.userExists("chris.jericho") >> true

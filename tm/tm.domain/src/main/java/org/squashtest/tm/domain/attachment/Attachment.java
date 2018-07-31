@@ -138,7 +138,7 @@ public class Attachment implements Identified {
 		name = shortName + '.' + type;
 	}
 
-	public final void setType(String strType) {
+	public void setType(String strType) {
 		this.type = strType.trim();
 	}
 
@@ -149,15 +149,15 @@ public class Attachment implements Identified {
 		}
 	}
 
-	public final String getType() {
+	public String getType() {
 		return type;
 	}
 
-	public final void setAddedOn(Date addedOn) {
+	public void setAddedOn(Date addedOn) {
 		this.addedOn = addedOn;
 	}
 
-	public final Date getAddedOn() {
+	public Date getAddedOn() {
 		return addedOn;
 	}
 
