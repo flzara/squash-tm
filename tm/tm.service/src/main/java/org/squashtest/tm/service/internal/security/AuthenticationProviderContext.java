@@ -81,7 +81,7 @@ public class AuthenticationProviderContext {
 	/**
 	 * names of the auth provider.
 	 */
-	@Value("${authentication.provider}")
+	@Value("${authentication.provider:internal}")
 	private String[] currentProviderNames;
 
 	/**
