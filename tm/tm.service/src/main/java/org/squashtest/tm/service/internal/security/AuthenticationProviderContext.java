@@ -21,8 +21,10 @@
 package org.squashtest.tm.service.internal.security;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -77,10 +79,10 @@ public class AuthenticationProviderContext {
 	 */
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationProviderContext.class);
 	/**
-	 * name of the current auth provider.
+	 * names of the auth provider.
 	 */
-	@Value("${authentication.provider:internal}")
-	private String currentProviderName;
+	@Value("${authentication.provider}")
+	private String[] currentProviderNames;
 
 	/**
 	 * list of configured provider features.
@@ -88,7 +90,7 @@ public class AuthenticationProviderContext {
 	@Inject
 	private List<AuthenticationProviderFeatures> providersFeatures = new ArrayList<>();
 	
-	private AuthenticationProviderFeatures primaryProviderFeature;
+	private AuthenticationProviderFeatures defaultProviderFeature = DefaultAuthenticationProviderFeatures.INSTANCE;
 	
 	@Inject
 	@Named("squashtest.core.user.UserContextService")
@@ -101,40 +103,14 @@ public class AuthenticationProviderContext {
 		super();
 	}
 	
-	/*
-	 * Finalize the bean creation by locating which of the features is the primary one
-	 */
-	@PostConstruct
-	public void afterPropertiesSet(){
-
-		for (AuthenticationProviderFeatures features : providersFeatures) {
-			if (currentProviderName.equals(features.getProviderName())) {
-				this.primaryProviderFeature = features;
-				LOGGER.trace("located the primary authentication provider features named '{}'", currentProviderName);
-				break;
-			}
-		}
-
-		if (this.primaryProviderFeature == null){
-			LOGGER.error("Provider features named {} could not be found in list {}", currentProviderName, providersFeatures);
-	
-			throw new IllegalStateException("Features for authentication provider named '" + currentProviderName
-					+ "' not available. Please check the application property 'authentication.provider'. The default value is 'internal' and refers to "
-					+ "the native authentication manager of Squash-TM. "
-					+ "If plugins that provides with alternate authentication system are deployed, please check the documentation to know if the property "
-					+ "should be set and to which value.");
-		}
-	}
-
-	
 	/**
 	 * <p>Returns the features supported by the Authentication provider. If the current user authenticated via 
-	 * a provider that support different features than the primary they will be returned, otherwise the primary 
+	 * a provider that support different features than the primary they will be returned, otherwise the primary
 	 * is returned. </p>
 	 * 
 	 * <p>
 	 * 	This implementation will retrieve the Authentication informations from the security context. If there 
-	 * is no Authentication available (eg, the security context is undefined at the moment), the primary 
+	 * is no Authentication available (eg, the security context is undefined at the moment), the default
 	 * features will be returned.
 	 * </p>
 	 * 
@@ -149,9 +125,9 @@ public class AuthenticationProviderContext {
 			return optFeatures.get();
 		}
 		
-		// if not available, use the main provider
+		// if not available, use the default provider
 		else{
-			return primaryProviderFeature;
+			return defaultProviderFeature;
 		}
 
 	}
@@ -173,7 +149,7 @@ public class AuthenticationProviderContext {
 			features = ((FeaturesAwareAuthentication)authentication).getFeatures();
 		}
 		
-		return (features != null) ? features : primaryProviderFeature;
+		return (features != null) ? features : defaultProviderFeature;
 	}
 	
 	/**
@@ -182,7 +158,7 @@ public class AuthenticationProviderContext {
 	 * @return
 	 */
 	public AuthenticationProviderFeatures getPrimaryProviderFeatures() {
-		return primaryProviderFeature;
+		return defaultProviderFeature;
 	}
 
 	/**
@@ -194,7 +170,27 @@ public class AuthenticationProviderContext {
 	}
 
 	private void checkConfiguration() {
-		Assert.propertyNotBlank(currentProviderName, "currentPropertyName should not be blank");
+		Arrays.asList(currentProviderNames).forEach(name -> Assert.propertyNotBlank(name,"currentPropertyName should not be blank" ));
+
+		for (String providerName : currentProviderNames) {
+
+			if (!providersFeatures.stream().map(AuthenticationProviderFeatures::getProviderName).collect(Collectors.toList()).contains(providerName)) {
+
+				LOGGER.error("Provider features named {} could not be found in list {}", providerName, providersFeatures);
+
+				throw new IllegalStateException("Features for authentication provider named '" + providerName
+					+ "' not available. Please check the application property 'authentication.provider'. The default value is 'internal' and refers to "
+					+ "the native authentication manager of Squash-TM. "
+					+ "If plugins that provides with alternate authentication system are deployed, please check the documentation to know if the property "
+					+ "should be set and to which value.");
+
+			} else {
+
+				LOGGER.trace("located the authentication provider features named '{}'", providerName);
+
+			}
+		}
+
 		getCurrentProviderFeatures();
 	}
 
