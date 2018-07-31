@@ -57,7 +57,7 @@ class RequirementCoverageStatIT extends DbunitServiceSpecification {
 	}
 
 	def setBidirectionalReqReqVersion(Long reqVersionId, Long reqId) {
-		def reqVer = requirementVersionDao.findOne(reqVersionId)
+		def reqVer = requirementVersionDao.getOne(reqVersionId)
 		def req = requirementDao.findById(reqId)
 		reqVer.setRequirement(req)
 	}

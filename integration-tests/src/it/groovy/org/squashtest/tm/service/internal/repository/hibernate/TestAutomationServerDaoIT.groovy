@@ -42,7 +42,7 @@ class TestAutomationServerDaoIT extends DbunitDaoSpecification {
 	def "should find a server by id"(){
 
 		when :
-		def res = serverDao.findOne(-1L)
+		def res = serverDao.getOne(-1L)
 
 		then :
 		res.id==-1L

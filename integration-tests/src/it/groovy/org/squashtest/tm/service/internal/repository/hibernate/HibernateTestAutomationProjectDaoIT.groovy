@@ -59,7 +59,7 @@ class HibernateTestAutomationProjectDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateTestAutomationDao.sandbox.xml")
 	def "should find a project by example"(){
 		given :
-		TestAutomationServer server = serverDao.findOne(-1L)
+		TestAutomationServer server = serverDao.getOne(-1L)
 		TestAutomationProject project = new TestAutomationProject("roberto1", "Project Roberto 1",  server)
 
 		when :
@@ -87,7 +87,7 @@ class HibernateTestAutomationProjectDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateTestAutomationDao.sandbox.xml")
 	def "should rant because too many matches for the given example"(){
 		given :
-		TestAutomationServer server = serverDao.findOne(-1L)
+		TestAutomationServer server = serverDao.getOne(-1L)
 		TestAutomationProject project = new TestAutomationProject(null, server)
 
 		when :

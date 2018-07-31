@@ -78,7 +78,7 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 		when:
 		service.changeName(-10100L, "newName")
 		then:
-		parameterDao.findById(-10100L).name == "newName"
+		parameterDao.getOne(-10100L).name == "newName"
 	}
 
 	@DataSet("ParameterModificationServiceIT.should change parameter name.xml")
@@ -100,7 +100,7 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 		when:
 		service.changeDescription(-10100L, "newDescription")
 		then:
-		parameterDao.findById(-10100L).description == "newDescription"
+		parameterDao.getOne(-10100L).description == "newDescription"
 	}
 
 	@DataSet("ParameterModificationServiceIT.xml")
@@ -108,7 +108,7 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 
 		when:
 		TestCase testCase = testCaseDao.findById(-100L)
-		Parameter param = parameterDao.findById(-10100L)
+		Parameter param = parameterDao.getOne(-10100L)
 		parameterDao.delete(param)
 		then:
 		em.flush()

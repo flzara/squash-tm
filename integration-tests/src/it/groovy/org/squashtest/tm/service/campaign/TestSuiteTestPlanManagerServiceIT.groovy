@@ -60,7 +60,7 @@ import javax.inject.Inject
 
 		when:
 		service.addTestCasesToIterationAndTestSuite([-1L, -2L, -3L, -4L], testSuiteId);
-		TestSuite ts = testSuiteDao.findOne(-1L)
+		TestSuite ts = testSuiteDao.getOne(-1L)
 		Iteration iter = ts.getIteration()
 
 		then:
@@ -76,7 +76,7 @@ import javax.inject.Inject
 
 		when:
 		service.detachTestPlanFromTestSuite([-1L, -2L], testSuiteId)
-		TestSuite ts = testSuiteDao.findOne(-1L)
+		TestSuite ts = testSuiteDao.getOne(-1L)
 		Iteration iter = ts.getIteration()
 
 		then:
@@ -92,7 +92,7 @@ import javax.inject.Inject
 
 		when:
 		service.detachTestPlanFromTestSuiteAndRemoveFromIteration([-1L, -2L], testSuiteId)
-		TestSuite ts = testSuiteDao.findOne(-1L)
+		TestSuite ts = testSuiteDao.getOne(-1L)
 		Iteration iter = ts.getIteration()
 
 		then:
@@ -122,10 +122,10 @@ import javax.inject.Inject
 
 		then:
 
-		TestSuite suite1 = testSuiteDao.findOne(-1L);
+		TestSuite suite1 = testSuiteDao.getOne(-1L);
 		suite1.getTestPlan().size() == 1;
 
-		TestSuite suite2 = testSuiteDao.findOne(-2L);
+		TestSuite suite2 = testSuiteDao.getOne(-2L);
 		suite2.getTestPlan().size() == 1;
 	}
 
@@ -153,10 +153,10 @@ import javax.inject.Inject
 
 		then:
 
-		TestSuite suite1 = testSuiteDao.findOne(-1L);
+		TestSuite suite1 = testSuiteDao.getOne(-1L);
 		suite1.getTestPlan().size() == 2;
 
-		TestSuite suite2 = testSuiteDao.findOne(-2L);
+		TestSuite suite2 = testSuiteDao.getOne(-2L);
 		suite2.getTestPlan().size() == 2;
 	}
 
@@ -184,10 +184,10 @@ import javax.inject.Inject
 
 		then:
 
-		TestSuite suite1 = testSuiteDao.findOne(-1L);
+		TestSuite suite1 = testSuiteDao.getOne(-1L);
 		suite1.getTestPlan().size() == 3;
 
-		TestSuite suite2 = testSuiteDao.findOne(-2L);
+		TestSuite suite2 = testSuiteDao.getOne(-2L);
 		suite2.getTestPlan().size() == 3;
 
 		Iteration iteration = iterationDao.findById(-1L);

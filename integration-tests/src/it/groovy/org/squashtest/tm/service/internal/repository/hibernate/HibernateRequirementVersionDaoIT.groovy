@@ -75,7 +75,7 @@ class HibernateRequirementVersionDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateRequirementVersionDaoIT.should find all requirements versions by id.xml")
 	def "should find all requirements versions by id"() {
 		when:
-		def res = versionDao.findAll([-10L, -20L])
+		def res = versionDao.findAllById([-10L, -20L])
 
 		then:
 		res.containsExactlyIds([-10L, -20L])

@@ -34,6 +34,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -256,7 +257,8 @@ public class RequirementExcelExporter {
 			row.createCell(colIndex++).setCellValue(reqModel.getCriticality().toString());
 			row.createCell(colIndex++).setCellValue(reqModel.getCategoryCode());
 			row.createCell(colIndex++).setCellValue(reqModel.getStatus().toString());
-			row.createCell(colIndex++).setCellValue(HtmlUtils.htmlUnescape(reqModel.getDescription()));
+			String description = reqModel.getDescription();
+			row.createCell(colIndex++).setCellValue(HtmlUtils.htmlUnescape(defaultIfBlank(reqModel.getDescription(), "")));
 			row.createCell(colIndex++).setCellValue(reqModel.getRequirementVersionCoveragesSize());
 			row.createCell(colIndex++).setCellValue(reqModel.getAttachmentListSize());
 			row.createCell(colIndex++).setCellValue(format(reqModel.getCreatedOn()));

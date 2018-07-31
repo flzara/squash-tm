@@ -54,8 +54,8 @@ class CustomReportLibraryNodeServiceIT extends DbunitServiceSpecification {
 
 	def "should add new folder to library"() {
 		given :
-		def parent = crlnDao.findOne(-1L)
-		def library = crlDao.findOne(-1L)
+		def parent = crlnDao.getOne(-1L)
+		def library = crlDao.getOne(-1L)
 
 		CustomReportFolder folder = new CustomReportFolder()
 		folder.setName("newFolder")
@@ -65,7 +65,7 @@ class CustomReportLibraryNodeServiceIT extends DbunitServiceSpecification {
 		def resId = res.getId()
 		getSession().flush()
 		getSession().clear()
-		def newChildAfterPersist = crlnDao.findOne(resId)
+		def newChildAfterPersist = crlnDao.getOne(resId)
 		def parentNode = newChildAfterPersist.getParent()
 		def entityLinkedToNode = newChildAfterPersist.getEntity()
 		def projectLinked = entityLinkedToNode.getProject();
@@ -106,12 +106,12 @@ class CustomReportLibraryNodeServiceIT extends DbunitServiceSpecification {
 		then:
 
 		deletedNodesIds.each {
-			def node = crlnDao.findOne(it)
+			def node = crlnDao.getOne(it)
 			assert node == null
 		}
 
 		siblingIds.each {
-			def node = crlnDao.findOne(it)
+			def node = crlnDao.getOne(it)
 			assert node != null
 		}
 
@@ -132,7 +132,7 @@ class CustomReportLibraryNodeServiceIT extends DbunitServiceSpecification {
 
 
 		then:
-		CustomReportLibraryNode node = crlnDao.findOne(nodeId)
+		CustomReportLibraryNode node = crlnDao.getOne(nodeId)
 		node.name == newName
 		node.entity.name == newName
 

@@ -22,7 +22,8 @@ package org.squashtest.it.basespecs
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityManagerFactory
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext
 import javax.persistence.PersistenceUnit
 import javax.persistence.SynchronizationType;
@@ -47,20 +48,20 @@ import spock.lang.Specification
  */
 @Rollback
 abstract class DbunitMappingSpecification extends DatasourceDependantSpecification {
-	
+
 	@PersistenceUnit
 	EntityManagerFactory emf;
-	
+
 
 	/**
 	 * Runs action closure in a new transaction created from a new session.
 	 * @param action
 	 * @return propagates closure result.
 	 */
-	
+
 	def final doInTransaction(def action) {
 
-		
+
 		Session s = createManager()
 		Transaction tx = s.beginTransaction()
 
@@ -70,7 +71,7 @@ abstract class DbunitMappingSpecification extends DatasourceDependantSpecificati
 			s.flush()
 			tx.commit()
 			return res
-		} 
+		}
 		catch(Exception wtf){
 			// that catch block is useful so that we can probe a breakpoint in there
 			throw wtf;
@@ -86,11 +87,11 @@ abstract class DbunitMappingSpecification extends DatasourceDependantSpecificati
 	 * @param fixture
 	 * @return
 	 */
-	
+
 	def final persistFixture(Object... fixtures) {
 		doInTransaction { session ->
-			fixtures.each { fixture -> 
-				session.persist fixture 
+			fixtures.each { fixture ->
+				session.persist fixture
 			}
 		}
 	}
@@ -99,32 +100,35 @@ abstract class DbunitMappingSpecification extends DatasourceDependantSpecificati
 	 * @param fixture
 	 * @return
 	 */
-	
+
 	def final deleteFixture(Object... fixtures) {
 		doInTransaction { session ->
 			fixtures.each { fixture ->
-				if (fixture.id != null){							
-					def persistent = session.load(fixture.class, fixture.id)
-					if (persistent != null){
+				if (fixture.id != null){
+					try{
+						def persistent = session.load(fixture.class, fixture.id)
 						session.delete persistent
 					}
-				} 
+					catch(EntityNotFoundException ex){
+						// nothing, a non existent entity doesn't need deletion
+					}
+				}
 			}
 		}
 	}
-	
-	
-	// the two methods below create an entity manager and bind them to 
-	// the future transaction, so that other parties (like hibernate search bridges) 
+
+
+	// the two methods below create an entity manager and bind them to
+	// the future transaction, so that other parties (like hibernate search bridges)
 	// know where to find the correct instance of the entity manager
 	def createManager(){
-		
+
 		EntityManager localEm = emf.createEntityManager();
 		EntityManagerHolder emHolder = new EntityManagerHolder(localEm);
 		TransactionSynchronizationManager.bindResource(emf, emHolder);
 		return localEm.unwrap(Session.class);
 	}
-	
+
 	def destroyManager(){
 		EntityManagerHolder emHolder = (EntityManagerHolder) TransactionSynchronizationManager.unbindResource(emf);
 		EntityManagerFactoryUtils.closeEntityManager(emHolder.getEntityManager());
