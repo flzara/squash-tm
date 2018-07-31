@@ -20,6 +20,8 @@
  */
 package org.squashtest.it.basespecs
 
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource;
@@ -36,6 +38,7 @@ import javax.persistence.PersistenceContext;
 import spock.lang.Specification
 
 
+@ImportAutoConfiguration(HibernateJpaAutoConfiguration)
 @ContextConfiguration(classes = [DatasourceSpecConfig, RepositoryConfig, JooqSpecConfig, ScriptedExecutionConfiguration])
 @TestPropertySource(["classpath:other_properties.properties", "classpath:hibernate.properties"])
 class DatasourceDependantSpecification extends Specification {

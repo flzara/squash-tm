@@ -98,6 +98,11 @@ public class StubValidatorFactory implements ValidatorFactory {
 	}
 
 	@Override
+	public ClockProvider getClockProvider() {
+		return null;
+	}
+
+	@Override
 	public void close() {
 		// noop
 	}

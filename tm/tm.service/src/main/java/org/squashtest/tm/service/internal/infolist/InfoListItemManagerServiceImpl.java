@@ -70,7 +70,7 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 
 	@Override
 	public void changeColour(long infoListItemId, String newColour) {
-		InfoListItem item = itemDao.findOne(infoListItemId);
+		InfoListItem item = itemDao.getOne(infoListItemId);
 		SystemInfoListItemCode.verifyModificationPermission(item);
 		item.setColour(newColour);
 	}

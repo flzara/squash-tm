@@ -27,7 +27,7 @@
     <!-- yet we're stuck at 1.8.5 - won't compile with newer versions -->
     <aspectj.version>1.8.5</aspectj.version>
     <groovy-eclipse-batch.version>2.4.3-01</groovy-eclipse-batch.version>
-    <groovy-eclipse-compiler.version>2.9.2-01</groovy-eclipse-compiler.version>
+    <groovy-eclipse-compiler.version>3.0.0-01</groovy-eclipse-compiler.version>
     <!-- groovy version syncd w/ spring boot version -->
     <groovy.version>2.4.7</groovy.version>
 
@@ -59,7 +59,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.3</version>
+          <version>3.7.0</version>
           <configuration>
             <!-- Std java compiler plugin is configured to compile groovy using groovy-eclipse-compiler -->
             <source>${java.version}</source>
@@ -528,19 +528,15 @@
     </repository>
   </repositories>
 
+
   <pluginRepositories>
-    <!--<pluginRepository>-->
-    <!--<releases>-->
-    <!--<enabled>false</enabled>-->
-    <!--</releases>-->
-    <!--<snapshots>-->
-    <!--<enabled>true</enabled>-->
-    <!--</snapshots>-->
-    <!--<id>squashtest-snapshot</id>-->
-    <!--<name>SquashTest snapshot repository</name>-->
-    <!--<url>http://repo.squashtest.org/maven2/snapshots</url>-->
-    <!--</pluginRepository>-->
+    <pluginRepository>
+      <id>groovy-bintray</id>
+      <name>Groovy Bintray</name>
+      <url>https://dl.bintray.com/groovy/maven</url>
+    </pluginRepository>
   </pluginRepositories>
+
 
   <distributionManagement>
     <repository>

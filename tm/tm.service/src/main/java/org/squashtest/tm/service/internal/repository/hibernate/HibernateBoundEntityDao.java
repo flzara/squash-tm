@@ -38,6 +38,7 @@ import org.squashtest.tm.domain.project.ProjectVisitor;
 import org.squashtest.tm.service.internal.repository.BoundEntityDao;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
+import org.squashtest.tm.domain.project.GenericProject;
 
 @Repository
 public class HibernateBoundEntityDao implements BoundEntityDao {

@@ -32,7 +32,7 @@
     <google.http.oauth.version>1.23.0</google.http.oauth.version>
 
     <guava.version>18.0</guava.version>
-    <h2.version>1.4.197</h2.version>
+    <h2.version>1.4.187</h2.version>
 
     <hibernate.search.version>5.9.2.Final</hibernate.search.version>
 
@@ -176,7 +176,7 @@
         		Some dependencies of Jasperreports are a mess (not jasper reports itself
         		though) : itext and castor-xml. Their own dependencies must also be
         		managed here.
-        		Note that the version of itext here has been slightly modified by the JR 
+        		Note that the version of itext here has been slightly modified by the JR
         		team and is served by their own maven repository
         	 -->
 
@@ -184,9 +184,9 @@
             <!--
 		  		Pulled by itext. But no we wont do xmlsecurity in our documents
 		  		so we just exclude them.
-		  		Beside the lib changed its groupid from 'bouncycastle' to 'org.bouncycastle', 
-		  		which effectively allows Maven to pull both set of bouncycastle artifacts 
-		  		with no regard for the Shrödinbugs it induces at runtime.  
+		  		Beside the lib changed its groupid from 'bouncycastle' to 'org.bouncycastle',
+		  		which effectively allows Maven to pull both set of bouncycastle artifacts
+		  		with no regard for the Shrödinbugs it induces at runtime.
 		  	-->
             <groupId>bouncycastle</groupId>
             <artifactId>*</artifactId>

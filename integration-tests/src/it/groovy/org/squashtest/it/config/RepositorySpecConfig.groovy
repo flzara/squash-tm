@@ -21,6 +21,8 @@
 package org.squashtest.it.config
 
 import org.spockframework.mock.MockNature
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
 import org.squashtest.tm.service.attachment.AttachmentManagerService
 import spock.mock.DetachedMockFactory
 

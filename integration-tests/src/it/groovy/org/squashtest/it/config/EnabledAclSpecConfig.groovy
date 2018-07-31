@@ -24,6 +24,8 @@ import org.springframework.cache.CacheManager
 import org.springframework.security.acls.domain.PermissionFactory
 import org.springframework.security.acls.model.ObjectIdentityGenerator
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy
+import org.springframework.security.crypto.password.MessageDigestPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
 
 import javax.inject.Inject
 import javax.sql.DataSource
@@ -32,8 +34,6 @@ import org.springframework.context.annotation.*
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured
 import org.springframework.security.acls.jdbc.LookupStrategy
 import org.springframework.security.acls.model.AclCache
-import org.springframework.security.authentication.encoding.PasswordEncoder
-import org.springframework.security.authentication.encoding.ShaPasswordEncoder
 import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
 import org.squashtest.tm.service.SecurityConfig
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManager
@@ -71,7 +71,7 @@ class EnabledAclSpecConfig {
 
 	@Bean
 	PasswordEncoder passwordEncoder() {
-		new ShaPasswordEncoder()
+		new MessageDigestPasswordEncoder("SHA-1")
 	}
 
 	@Bean
