@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.security;
 
+import org.springframework.stereotype.Component;
 import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
 
 /**
@@ -28,6 +29,7 @@ import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatu
  * @author Gregory Fouquet
  * 
  */
+@Component
 public class InternalAuthenticationProviderFeatures implements AuthenticationProviderFeatures {
 
 	// make class Singleton

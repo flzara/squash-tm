@@ -32,7 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.AdviceMode;
@@ -62,7 +61,7 @@ import org.springframework.security.config.annotation.method.configuration.Globa
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
-import org.squashtest.tm.api.security.authentication.SquashConditionalAuthenticationProvider;
+import org.squashtest.tm.api.security.authentication.ConditionalOnAuthProviderProperty;
 import org.squashtest.tm.security.acls.CustomPermissionFactory;
 import org.squashtest.tm.security.acls.Slf4jAuditLogger;
 import org.squashtest.tm.service.feature.FeatureManager;
@@ -124,7 +123,7 @@ public class SecurityConfig {
 	 *
 	 */
 	@Configuration
-	@SquashConditionalAuthenticationProvider(value = "internal", matchIfMissing = true)
+	@ConditionalOnAuthProviderProperty(value = "internal", matchIfMissing = true)
 	@Order(10) // WebSecurityConfigurerAdapter default order is 100, we need to init this before. Also ldap order is 1, we need to init this after.
 	public static class InternalAuthenticationConfig extends GlobalAuthenticationConfigurerAdapter {
 		@Inject

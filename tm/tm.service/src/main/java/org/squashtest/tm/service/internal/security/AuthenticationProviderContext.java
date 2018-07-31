@@ -170,24 +170,24 @@ public class AuthenticationProviderContext {
 	}
 
 	private void checkConfiguration() {
-		Arrays.asList(currentProviderNames).forEach(name -> Assert.propertyNotBlank(name,"currentPropertyName should not be blank" ));
+
+		if (currentProviderNames.length == 0) {
+			LOGGER.error("The number of defined authentication.provider is {}", currentProviderNames.length);
+			throw new IllegalStateException("currentPropertyName should not be empty");
+		} else {
+			Arrays.asList(currentProviderNames).forEach(name -> Assert.propertyNotBlank(name,"currentPropertyName should not be blank" ));
+		}
 
 		for (String providerName : currentProviderNames) {
-
 			if (!providersFeatures.stream().map(AuthenticationProviderFeatures::getProviderName).collect(Collectors.toList()).contains(providerName)) {
-
 				LOGGER.error("Provider features named {} could not be found in list {}", providerName, providersFeatures);
-
 				throw new IllegalStateException("Features for authentication provider named '" + providerName
 					+ "' not available. Please check the application property 'authentication.provider'. The default value is 'internal' and refers to "
 					+ "the native authentication manager of Squash-TM. "
 					+ "If plugins that provides with alternate authentication system are deployed, please check the documentation to know if the property "
 					+ "should be set and to which value.");
-
 			} else {
-
 				LOGGER.trace("located the authentication provider features named '{}'", providerName);
-
 			}
 		}
 
