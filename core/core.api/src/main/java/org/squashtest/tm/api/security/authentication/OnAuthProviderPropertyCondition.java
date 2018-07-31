@@ -36,19 +36,19 @@ import java.util.*;
 /**
  *
  * This is a custom OnPropertyCondition class to replace {@link OnPropertyCondition} and used
- * in {@link SquashConditionalAuthenticationProvider}.
+ * in {@link ConditionalOnAuthProviderProperty}.
  * instead of the original havingValue() check, here we check if lists or arrays contains a specific value
  *
  */
 @Order(Ordered.HIGHEST_PRECEDENCE + 40)
-public class SquashAuthenticationCondition extends SpringBootCondition {
+public class OnAuthProviderPropertyCondition extends SpringBootCondition {
 
 	private static final String AUTH_PROVIDER = "authentication.provider";
 
 	@Override
 	public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {
 		List<AnnotationAttributes> allAnnotationAttributes =
-			annotationAttributesFromMultiValueMap(metadata.getAllAnnotationAttributes(SquashConditionalAuthenticationProvider.class.getName()));
+			annotationAttributesFromMultiValueMap(metadata.getAllAnnotationAttributes(ConditionalOnAuthProviderProperty.class.getName()));
 		List<ConditionMessage> noMatch = new ArrayList<>();
 		List<ConditionMessage> match = new ArrayList<>();
 		for (AnnotationAttributes annotationAttributes : allAnnotationAttributes) {
@@ -85,21 +85,21 @@ public class SquashAuthenticationCondition extends SpringBootCondition {
 
 	private ConditionOutcome determineOutcome(AnnotationAttributes annotationAttributes,
 											  PropertyResolver resolver) {
-		SquashAuthenticationCondition.Spec spec = new SquashAuthenticationCondition.Spec(annotationAttributes);
+		OnAuthProviderPropertyCondition.Spec spec = new OnAuthProviderPropertyCondition.Spec(annotationAttributes);
 		List<String> missingProperties = new ArrayList<>();
 		List<String> nonMatchingProperties = new ArrayList<>();
 		spec.collectProperties(resolver, missingProperties, nonMatchingProperties);
 		if (!missingProperties.isEmpty()) {
-			return ConditionOutcome.noMatch(ConditionMessage.forCondition(SquashConditionalAuthenticationProvider.class, spec)
+			return ConditionOutcome.noMatch(ConditionMessage.forCondition(ConditionalOnAuthProviderProperty.class, spec)
 				.didNotFind("property", "properties")
 				.items(ConditionMessage.Style.QUOTE, missingProperties));
 		}
 		if (!nonMatchingProperties.isEmpty()) {
-			return ConditionOutcome.noMatch(ConditionMessage.forCondition(SquashConditionalAuthenticationProvider.class, spec)
+			return ConditionOutcome.noMatch(ConditionMessage.forCondition(ConditionalOnAuthProviderProperty.class, spec)
 				.found("different value in property", "different value in properties")
 				.items(ConditionMessage.Style.QUOTE, nonMatchingProperties));
 		}
-		return ConditionOutcome.match(ConditionMessage.forCondition(SquashConditionalAuthenticationProvider.class, spec)
+		return ConditionOutcome.match(ConditionMessage.forCondition(ConditionalOnAuthProviderProperty.class, spec)
 			.because("matched"));
 	}
 
