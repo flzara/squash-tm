@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -33,7 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.AdviceMode;
@@ -53,6 +51,7 @@ import org.springframework.security.acls.domain.*;
 import org.springframework.security.acls.jdbc.BasicLookupStrategy;
 import org.springframework.security.acls.model.*;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -62,14 +61,11 @@ import org.springframework.security.config.annotation.method.configuration.Globa
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
+import org.squashtest.tm.api.security.authentication.ConditionalOnAuthProviderProperty;
 import org.squashtest.tm.security.acls.CustomPermissionFactory;
 import org.squashtest.tm.security.acls.Slf4jAuditLogger;
 import org.squashtest.tm.service.feature.FeatureManager;
-import org.squashtest.tm.service.internal.security.AffirmativeBasedCompositePermissionEvaluator;
-import org.squashtest.tm.service.internal.security.InternalAuthenticationProviderFeatures;
-import org.squashtest.tm.service.internal.security.SquashUserDetailsManager;
-import org.squashtest.tm.service.internal.security.SquashUserDetailsManagerImpl;
-import org.squashtest.tm.service.internal.security.SquashUserDetailsManagerProxyFactory;
+import org.squashtest.tm.service.internal.security.*;
 import org.squashtest.tm.service.internal.spring.ArgumentPositionParameterNameDiscoverer;
 import org.squashtest.tm.service.internal.spring.CompositeDelegatingParameterNameDiscoverer;
 import org.squashtest.tm.service.security.acls.ExtraPermissionEvaluator;
@@ -127,8 +123,8 @@ public class SecurityConfig {
 	 *
 	 */
 	@Configuration
-	@ConditionalOnProperty(name = "authentication.provider", matchIfMissing = true, havingValue = "internal")
-	@Order(0) // WebSecurityConfigurerAdapter default order is 100, we need to init this before
+	@ConditionalOnAuthProviderProperty(value = "internal", matchIfMissing = true)
+	@Order(10) // WebSecurityConfigurerAdapter default order is 100, we need to init this before. Also ldap order is 1, we need to init this after.
 	public static class InternalAuthenticationConfig extends GlobalAuthenticationConfigurerAdapter {
 		@Inject
 		private SquashUserDetailsManager squashUserDetailsManager;
@@ -137,14 +133,21 @@ public class SecurityConfig {
 		private PasswordEncoder passwordEncoder;
 
 		@Override
-		public void init(AuthenticationManagerBuilder auth) throws Exception {
-			auth
-				.userDetailsService(squashUserDetailsManager)
-				.passwordEncoder(passwordEncoder);
-
+		public void configure(AuthenticationManagerBuilder auth) throws Exception{
+			auth.authenticationProvider(daoAuthenticationProvider());
 			auth.eraseCredentials(false);
 		}
 
+		@Bean
+		public DaoAuthenticationProvider daoAuthenticationProvider() {
+			LOGGER.info("initializing : daoAuthenticationProvider");
+			SquashDaoAuthenticationProvider provider = new SquashDaoAuthenticationProvider();
+
+			provider.setUserDetailsService(squashUserDetailsManager);
+			provider.setPasswordEncoder(passwordEncoder);
+
+			return provider;
+		}
 
 	}
 

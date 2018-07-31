@@ -20,45 +20,43 @@
  */
 package org.squashtest.tm.service.internal.security;
 
-import org.springframework.stereotype.Component;
 import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
 
 /**
- * Features of Squash internal (db-based) authentication provider.
- * 
- * @author Gregory Fouquet
- * 
+ * Features of Squash default authentication provider.
+ *
+ * @author zyang
+ *
  */
-@Component
-public class InternalAuthenticationProviderFeatures implements AuthenticationProviderFeatures {
 
-	// make class Singleton
-	public static final InternalAuthenticationProviderFeatures INSTANCE = new InternalAuthenticationProviderFeatures();
+public class DefaultAuthenticationProviderFeatures implements AuthenticationProviderFeatures {
 
-	// private constructor
-	private InternalAuthenticationProviderFeatures(){}
+	public static final DefaultAuthenticationProviderFeatures INSTANCE = new DefaultAuthenticationProviderFeatures();
+
+	private DefaultAuthenticationProviderFeatures(){}
+
 
 	/**
-	 * @return false
-	 * @see org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures#isManagedPassword()
+	 * @return true
+	 * @see AuthenticationProviderFeatures#isManagedPassword()
 	 */
 	@Override
 	public boolean isManagedPassword() {
-		return false;
+		return true;
 	}
 
 	/**
 	 * @return "internal"
-	 * @see org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures#getProviderName()
+	 * @see AuthenticationProviderFeatures#getProviderName()
 	 */
 	@Override
 	public String getProviderName() {
-		return "internal";
+		return "default";
 	}
 
 	/**
 	 * @return false
-	 * @see org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures#shouldCreateMissingUser()
+	 * @see AuthenticationProviderFeatures#shouldCreateMissingUser()
 	 */
 	@Override
 	public boolean shouldCreateMissingUser() {
