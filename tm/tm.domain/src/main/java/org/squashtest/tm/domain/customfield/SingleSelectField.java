@@ -179,7 +179,7 @@ public class SingleSelectField extends CustomField {
 		return null;
 	}
 
-	private String findColourOf(String previousLabel) {
+	public String findColourOf(String previousLabel) {
 
 		for (CustomFieldOption option : options) {
 			if (previousLabel.equals(option.getLabel())) {
