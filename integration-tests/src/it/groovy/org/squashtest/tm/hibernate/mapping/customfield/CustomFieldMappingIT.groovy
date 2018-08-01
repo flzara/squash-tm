@@ -76,8 +76,8 @@ class CustomFieldMappingIT extends DbunitMappingSpecification {
 		cf.name = "batman"
 		cf.code="code1"
 		cf.label = cf.name
-		cf.addOption(new CustomFieldOption("leatherpants", "code2"))
-		cf.addOption(new CustomFieldOption("batarang", "code3"))
+		cf.addOption(new CustomFieldOption("leatherpants", "code2","#000000"))
+		cf.addOption(new CustomFieldOption("batarang", "code3","#ff0000"))
 		persistFixture cf
 
 		when:
@@ -90,6 +90,7 @@ class CustomFieldMappingIT extends DbunitMappingSpecification {
 
 		then:
 		res.options*.label == ["leatherpants", "batarang"]
+		res.options*.colour == ["#000000", "#ff0000"]
 
 		cleanup :
 		deleteFixture cf
@@ -101,8 +102,8 @@ class CustomFieldMappingIT extends DbunitMappingSpecification {
 		cf.name = "batman"
 		cf.code="code1"
 		cf.label = cf.name
-		cf.addOption(new CustomFieldOption("leatherpants", "code2"))
-		cf.addOption(new CustomFieldOption("batarang", "code3"))
+		cf.addOption(new CustomFieldOption("leatherpants", "code2","#000000"))
+		cf.addOption(new CustomFieldOption("batarang", "code3","#ff0000"))
 		persistFixture cf
 
 		when:
@@ -123,6 +124,7 @@ class CustomFieldMappingIT extends DbunitMappingSpecification {
 
 		then:
 		res.options*.label == ["leatherpants"]
+		res.options*.colour == ["#000000"]
 
 		cleanup :
 		deleteFixture cf
@@ -134,8 +136,8 @@ class CustomFieldMappingIT extends DbunitMappingSpecification {
 		cf.name="batman"
 		cf.code = "code1"
 		cf.label = cf.name
-		cf.addOption(new CustomFieldOption("leatherpants", "code2"))
-		cf.addOption(new CustomFieldOption("batarang", "code3"))
+		cf.addOption(new CustomFieldOption("leatherpants", "code2","#000000"))
+		cf.addOption(new CustomFieldOption("batarang", "code3","#ff0000"))
 		persistFixture cf
 
 		when:
@@ -155,6 +157,38 @@ class CustomFieldMappingIT extends DbunitMappingSpecification {
 
 		then:
 		res.options*.label == ["leatherpants", "bataring"]
+
+		cleanup :
+		deleteFixture cf
+	}
+
+	def "should change the colour of a single select field's option"() {
+		given:
+		def cf = new SingleSelectField()
+		cf.name="batman"
+		cf.code = "code1"
+		cf.label = cf.name
+		cf.addOption(new CustomFieldOption("leatherpants", "code2","#000000"))
+		cf.addOption(new CustomFieldOption("batarang", "code3","#ff0000"))
+		persistFixture cf
+
+		when:
+		def changeOptionColour = {
+			def r = it.get(CustomField, cf.id)
+			r.options[1].colour = "#0000ff"
+		}
+
+		def loadFixture = {
+			def res = it.get(CustomField, cf.id)
+			res.options.each { it.label }
+			return res
+		}
+
+		doInTransaction changeOptionColour
+		def res = doInTransaction(loadFixture)
+
+		then:
+		res.options*.colour == ["#000000", "#0000ff"]
 
 		cleanup :
 		deleteFixture cf

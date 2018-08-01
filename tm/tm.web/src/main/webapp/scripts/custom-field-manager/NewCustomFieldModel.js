@@ -49,7 +49,8 @@ define(
 							inputType : "PLAIN_TEXT",
 							optional : true,
 							defaultValue : "",
-							options : [][2]
+							options : [][2],
+							defaultColour : ""
 						},
 
 						resetDefaultValue : function() {
@@ -214,6 +215,13 @@ define(
 							} else if (this.optionCodeAlreadyDefined(option[1])) {
 								errors = errors || {};
 								errors.optionCode = "message.optionCodeAlreadyDefined";
+							}
+
+							// validate option colour
+							if (isBlank(option[2])) {
+								errors = errors || {};
+								errors.optionCode = "message.notBlank";
+
 							}
 
 							return errors;

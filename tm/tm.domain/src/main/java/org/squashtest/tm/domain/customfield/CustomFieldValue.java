@@ -39,28 +39,27 @@ import java.util.Date;
 @DiscriminatorColumn(name = "FIELD_TYPE", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("CF")
 public class CustomFieldValue implements Identified, SingleValuedCustomFieldValue {
-	private static final Logger LOGGER = LoggerFactory.getLogger(CustomFieldValue.class);
 	public static final int MAX_SIZE = 255;
+	private static final Logger LOGGER = LoggerFactory.getLogger(CustomFieldValue.class);
+	protected Long boundEntityId;
+
 	@Id
 	@Column(name = "CFV_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "custom_field_value_cfv_id_seq")
 	@SequenceGenerator(name = "custom_field_value_cfv_id_seq", sequenceName = "custom_field_value_cfv_id_seq", allocationSize = 1)
 	private Long id;
-
-	protected Long boundEntityId;
-
 	@Enumerated(EnumType.STRING)
 	protected BindableEntity boundEntityType;
-
 	@ManyToOne(cascade = CascadeType.DETACH)
 	@JoinColumn(name = "CFB_ID")
 	protected CustomFieldBinding binding;
-
 	@Size(min = 0, max = MAX_SIZE)
 	protected String value;
-
 	@Column(name = "CF_ID")
 	protected Long cufId;
+
+	@Size(max = 7)
+	private String colour;
 
 	public CustomFieldValue() {
 		super();
@@ -115,6 +114,10 @@ public class CustomFieldValue implements Identified, SingleValuedCustomFieldValu
 		return binding;
 	}
 
+	public void setBinding(CustomFieldBinding binding) {
+		this.binding = binding;
+	}
+
 	public CustomField getCustomField() {
 		return doGetCustomField();
 	}
@@ -124,10 +127,6 @@ public class CustomFieldValue implements Identified, SingleValuedCustomFieldValu
 			return binding.getCustomField();
 		}
 		return null;
-	}
-
-	public void setBinding(CustomFieldBinding binding) {
-		this.binding = binding;
 	}
 
 	public Long getBoundEntityId() {
@@ -187,6 +186,14 @@ public class CustomFieldValue implements Identified, SingleValuedCustomFieldValu
 		}
 		return null;
 
+	}
+
+	public String getColour() {
+		return colour;
+	}
+
+	public void setColour(String colour) {
+		this.colour = colour;
 	}
 
 	@Override

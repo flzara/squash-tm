@@ -25,9 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
-import org.squashtest.tm.domain.customfield.BoundEntity;
-import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.domain.customfield.RawValue;
+import org.squashtest.tm.domain.customfield.*;
 import org.squashtest.tm.domain.library.ExportData;
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.Library;
@@ -49,6 +47,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import java.util.*;
 
+import static org.squashtest.tm.domain.customfield.InputType.DROPDOWN_LIST;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 /**
@@ -128,8 +127,8 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	protected abstract PasteStrategy<FOLDER, NODE> getPasteToFolderStrategy();
 
 	protected abstract PasteStrategy<LIBRARY, NODE> getPasteToLibraryStrategy();
-	
-	
+
+
 	@Override
 	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	public final List<NODE> findLibraryRootContent(long libraryId) {
@@ -236,6 +235,18 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 			if (initialCustomFieldValues.containsKey(customFieldId)) {
 				RawValue newValue = initialCustomFieldValues.get(customFieldId);
 				newValue.setValueFor(value);
+
+				CustomField associatedCUF = value.getCustomField();
+
+				if (associatedCUF.getInputType() == DROPDOWN_LIST) {
+					String color = ((SingleSelectField)associatedCUF).getOptions()
+						.stream()
+						.filter(customFieldOption -> customFieldOption.getLabel().equals(newValue.getValue()))
+						.findFirst()
+						.orElse(new CustomFieldOption("","",""))
+						.getColour();
+					value.setColour(color);
+				}
 			}
 		}
 	}

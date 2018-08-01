@@ -20,33 +20,13 @@
  */
 package org.squashtest.tm.service.internal.customfield;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.IdentifiedUtil;
-import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customfield.BoundEntity;
-import org.squashtest.tm.domain.customfield.CustomField;
-import org.squashtest.tm.domain.customfield.CustomFieldBinding;
-import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.domain.customfield.RawValue;
-import org.squashtest.tm.domain.customfield.RenderingLocation;
-import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.customfield.*;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.annotation.CachableType;
@@ -58,26 +38,30 @@ import org.squashtest.tm.service.internal.repository.CustomFieldValueDao.CustomF
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.*;
+import java.util.Map.Entry;
+
 import static java.util.stream.Collectors.*;
+import static org.squashtest.tm.domain.customfield.InputType.DROPDOWN_LIST;
 
 @Service("squashtest.tm.service.CustomFieldValueManagerService")
 @Transactional
 public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldValueService {
 
 	@Inject
+	CustomReportLibraryNodeDao customReportLibraryNodeDao;
+	@Inject
 	@Named("defaultEditionStatusStrategy")
 	private ValueEditionStatusStrategy defaultEditionStatusStrategy;
-
 	@Inject
 	@Named("requirementBoundEditionStatusStrategy")
 	private ValueEditionStatusStrategy requirementBoundEditionStatusStrategy;
-
-	@Inject
-	CustomReportLibraryNodeDao customReportLibraryNodeDao;
-
 	@Inject
 	private CustomFieldValueDao customFieldValueDao;
-
 
 
 	@Inject
@@ -126,17 +110,17 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	@Transactional(readOnly = true)
 	public List<CustomFieldValue> findAllCustomFieldValues(long boundEntityId, BindableEntity bindableEntity) {
 		List<CustomFieldValue> customFieldValueList = new ArrayList<>();
-		if(bindableEntity == BindableEntity.PROJECT) {
-			customFieldValueList =customFieldValueDao.findAllCustomValues(boundEntityId, bindableEntity);
-		}else if(bindableEntity == BindableEntity.CUSTOM_REPORT_PROJECT) {
+		if (bindableEntity == BindableEntity.PROJECT) {
+			customFieldValueList = customFieldValueDao.findAllCustomValues(boundEntityId, bindableEntity);
+		} else if (bindableEntity == BindableEntity.CUSTOM_REPORT_PROJECT) {
 			Long projectId = customReportLibraryNodeDao.findCurrentProjectFromCustomReportFoldersId(boundEntityId);
-			customFieldValueList =customFieldValueDao.findAllCustomValues(projectId, BindableEntity.PROJECT);
+			customFieldValueList = customFieldValueDao.findAllCustomValues(projectId, BindableEntity.PROJECT);
 		} else {
 			BoundEntity boundEntity = boundEntityDao.findBoundEntity(boundEntityId, bindableEntity);
 			if (!permissionService.canRead(boundEntity)) {
 				throw new AccessDeniedException("Access is denied");
 			}
-			customFieldValueList=  findAllCustomFieldValues(boundEntity);
+			customFieldValueList = findAllCustomFieldValues(boundEntity);
 		}
 		return customFieldValueList;
 	}
@@ -164,7 +148,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	// same : no sec, a gesture of mercy for the database
 	@Override
 	public List<CustomFieldValue> findAllCustomFieldValues(Collection<? extends BoundEntity> boundEntities,
-														   Collection<CustomField> restrictedToThoseCustomfields) {
+	                                                       Collection<CustomField> restrictedToThoseCustomfields) {
 
 		// first, because the entities might be of different kind we must segregate them.
 		Map<BindableEntity, List<Long>> compositeIds = breakEntitiesIntoCompositeIds(boundEntities);
@@ -195,9 +179,9 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	}
 
 	public void cascadeCustomFieldValuesCreationNotCreatedFolderYet(CustomFieldBinding binding, BoundEntity entity) {
-				CustomFieldValue value = binding.createNewValue();
-				value.setBoundEntity(entity);
-				customFieldValueDao.save(value);
+		CustomFieldValue value = binding.createNewValue();
+		value.setBoundEntity(entity);
+		customFieldValueDao.save(value);
 	}
 
 	@Override
@@ -418,6 +402,10 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 		newValue.setValueFor(changedValue);
 
+		if (isFromADropdownList(changedValue)) {
+			changedValue.setColour(findColourByValue(changedValue, newValue.getValue()));
+		}
+
 		if (BindableEntity.TEST_CASE == boundEntity.getBoundEntityType()) {
 			indexationService.reindexTestCase(boundEntityId);
 		}
@@ -425,6 +413,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 			indexationService.reindexRequirementVersion(boundEntityId);
 		}
 	}
+
 
 	// This method is just here to use the @CacheResult annotation
 	@CacheResult(type = CachableType.CUSTOM_FIELD)
@@ -465,7 +454,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 	}
 
-	private void findUpdatedCufValue(List<CustomFieldValue> valuesToUpdate,CustomFieldValue updatedCUFValue ){
+	private void findUpdatedCufValue(List<CustomFieldValue> valuesToUpdate, CustomFieldValue updatedCUFValue) {
 		for (CustomFieldValue formerCUFValue : valuesToUpdate) {
 			if (formerCUFValue.representsSameCustomField(updatedCUFValue)) {
 				// here we use a RawValue as a container that hides us the arity of the value (single or multi-valued)
@@ -475,8 +464,6 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 			}
 		}
 	}
-
-
 
 
 	@Override
@@ -537,9 +524,9 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	 */
 	private ValueEditionStatusStrategy editableStrategy(BindableEntity bindableEntity) {
 
-		if(bindableEntity.equals(BindableEntity.REQUIREMENT_VERSION)){
+		if (bindableEntity.equals(BindableEntity.REQUIREMENT_VERSION)) {
 			return requirementBoundEditionStatusStrategy;
-		}else {
+		} else {
 			return defaultEditionStatusStrategy;
 		}
 	}
@@ -549,6 +536,20 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		List<Long> valueIds = IdentifiedUtil.extractIds(values);
 		customFieldValueDao.deleteAll(valueIds);
 
+	}
+
+	private boolean isFromADropdownList(CustomFieldValue changedValue) {
+		return changedValue.getBinding().getCustomField().getInputType() == DROPDOWN_LIST;
+	}
+
+
+	private String findColourByValue(CustomFieldValue changedValue, String value) {
+		return ((SingleSelectField) changedValue.getBinding().getCustomField()).getOptions()
+			.stream()
+			.filter(customFieldOption -> customFieldOption.getLabel().equals(value))
+			.findFirst()
+			.orElse(new CustomFieldOption("", "", ""))
+			.getColour();
 	}
 
 }

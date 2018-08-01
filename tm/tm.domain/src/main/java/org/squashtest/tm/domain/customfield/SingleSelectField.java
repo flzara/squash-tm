@@ -241,7 +241,8 @@ public class SingleSelectField extends CustomField {
 		List<CustomFieldOption> newOptions = new ArrayList<>(optionsLabels.size());
 		for (String optionLabel : optionsLabels) {
 			String code = findCodeOf(optionLabel);
-			newOptions.add(new CustomFieldOption(optionLabel, code));
+			String colour = findColourOf(optionLabel);
+			newOptions.add(new CustomFieldOption(optionLabel, code, colour));
 		}
 		return newOptions;
 	}

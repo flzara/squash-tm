@@ -141,6 +141,10 @@ public class CustomFieldBinding implements Identified{
 			case NUMERIC:
 				value = new NumericCustomFieldValue();
 				break;
+			case DROPDOWN_LIST:
+				value = new CustomFieldValue();
+				value.setColour(customField.getDefaultColour());
+				break;
 			default:
 				value = new CustomFieldValue();
 		}

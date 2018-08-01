@@ -49,14 +49,12 @@ import java.util.Date;
 @DiscriminatorColumn(name = "FIELD_TYPE", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("CF")
 @HasDefaultAsRequired
-public class CustomField implements Identified{
-	private static final Logger LOGGER = LoggerFactory.getLogger(CustomField.class);
-
+public class CustomField implements Identified {
 	public static final String CODE_REGEXP = "^[A-Za-z0-9_^;]*$";
 	public static final String OPTION_REGEXP = "^[A-Za-z0-9_]*$";
 	public static final int MIN_CODE_SIZE = 1;
 	public static final int MAX_CODE_SIZE = 30;
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(CustomField.class);
 	@Id
 	@Column(name = "CF_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "custom_field_cf_id_seq")
@@ -83,8 +81,11 @@ public class CustomField implements Identified{
 
 	@NotBlank
 	@Size(min = MIN_CODE_SIZE, max = MAX_CODE_SIZE)
-	@Pattern(regexp = CODE_REGEXP,message = "{org.squashtest.tm.validation.constraint.onlyStdChars}")
+	@Pattern(regexp = CODE_REGEXP, message = "{org.squashtest.tm.validation.constraint.onlyStdChars}")
 	protected String code = "";
+
+	@Size(max = 7)
+	private String defaultColour;
 
 	/**
 	 * For ORM purposes.
@@ -129,19 +130,6 @@ public class CustomField implements Identified{
 		return defaultValue;
 	}
 
-	public Date getDefaultValueAsDate() {
-		// TODO copypasta, slap this into utility class
-		if (this.inputType == InputType.DATE_PICKER) {
-			try {
-				return DateUtils.parseIso8601Date(defaultValue);
-			} catch (ParseException e) {
-				LOGGER.warn(e.getMessage(), e);
-			}
-		}
-		return null;
-
-	}
-
 	public void setDefaultValue(String defaultValue) {
 		String dValue = defaultValue;
 		if (this.inputType == InputType.DATE_PICKER) {
@@ -153,6 +141,19 @@ public class CustomField implements Identified{
 		}
 
 		this.defaultValue = dValue;
+	}
+
+	public Date getDefaultValueAsDate() {
+		// TODO copypasta, slap this into utility class
+		if (this.inputType == InputType.DATE_PICKER) {
+			try {
+				return DateUtils.parseIso8601Date(defaultValue);
+			} catch (ParseException e) {
+				LOGGER.warn(e.getMessage(), e);
+			}
+		}
+		return null;
+
 	}
 
 	@Override
@@ -170,6 +171,14 @@ public class CustomField implements Identified{
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public String getDefaultColour() {
+		return defaultColour;
+	}
+
+	public void setDefaultColour(String defaultColour) {
+		this.defaultColour = defaultColour;
 	}
 
 	public void accept(CustomFieldVisitor visitor) {

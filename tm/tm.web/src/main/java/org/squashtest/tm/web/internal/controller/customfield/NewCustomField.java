@@ -37,20 +37,20 @@ public class NewCustomField extends CustomField {
 	public CustomField createTransientEntity() {
 		CustomField res;
 		switch (inputType) {
-		case DROPDOWN_LIST:
-			res = createSingleSelectField();
-			break;
-		case RICH_TEXT :
-			res = createRichTextField();
-			break;
-		case TAG :
-			res = createTag();
-			break;
-		case NUMERIC:
-			res = createNumeric();
-			break;
-		default:
-			res = new CustomField(inputType);
+			case DROPDOWN_LIST:
+				res = createSingleSelectField();
+				break;
+			case RICH_TEXT:
+				res = createRichTextField();
+				break;
+			case TAG:
+				res = createTag();
+				break;
+			case NUMERIC:
+				res = createNumeric();
+				break;
+			default:
+				res = new CustomField(inputType);
 		}
 		res.setCode(getCode());
 		res.setLabel(getLabel());
@@ -69,22 +69,26 @@ public class NewCustomField extends CustomField {
 		CustomField res;
 		SingleSelectField ssf = new SingleSelectField();
 
-		for(String[] option : options) {
+		if (!getDefaultColour().isEmpty()) {
+			ssf.setDefaultColour(getDefaultColour());
+		}
+
+		for (String[] option : options) {
 			String label = option[0];
 			String code = option[1];
 			String colour = option[2];
-			ssf.addOption(new CustomFieldOption(label, code, colour) );
+			ssf.addOption(new CustomFieldOption(label, code, colour));
 		}
 
 		res = ssf;
 		return res;
 	}
 
-	private CustomField createRichTextField(){
+	private CustomField createRichTextField() {
 		return new RichTextField();
 	}
 
-	private CustomField createTag(){
+	private CustomField createTag() {
 		return new MultiSelectField();
 	}
 

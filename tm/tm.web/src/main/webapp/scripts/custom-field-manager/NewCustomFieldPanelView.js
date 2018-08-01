@@ -412,18 +412,23 @@ define(
 
 			removeOption: function (event) {
 				// target of click event is a <span> inside of <button>, so we use currentTarget
-				var button = event.currentTarget, $button = $(button), option = $button.data("value"), row = $button
-					.parents("tr")[0];
+				var button = event.currentTarget,
+					$button = $(button),
+					option = $button.data("value"),
+					row = $button.parents("tr")[0];
 
 				this.model.removeOption(option);
 				this.optionsTable.dataTable().fnDeleteRow(row);
 			},
 
 			changeDefaultOption: function (event) {
-				var checkbox = event.currentTarget, option = checkbox.value, defaultValue = checkbox.checked ? option
-					: "", uncheckSelector = ".is-default>input:checkbox" +
-					(checkbox.checked ? "[value!='" + option + "']" : ""), optionsInput = Forms
-					.input(this.$("input[name='options']"));
+				var checkbox = event.currentTarget,
+					option = checkbox.value,
+					defaultValue = checkbox.checked ? option : "",
+					uncheckSelector = ".is-default>input:checkbox" + (checkbox.checked ? "[value!='" + option + "']" : ""),
+					optionsInput = Forms.input(this.$("input[name='options']")),
+					row = $(checkbox).parents("tr")[0],
+					defaultColour = $(row).find('.colour > input').val();
 
 				optionsInput.clearState();
 
@@ -434,6 +439,7 @@ define(
 				}
 
 				this.model.set("defaultValue", defaultValue);
+				this.model.set("defaultColour", defaultColour);
 				this.optionsTable.find(uncheckSelector).attr("checked", false);
 
 			},

@@ -18,20 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
-	"jeditable.simpleJEditable", "jeditable.selectJEditable", "app/util/StringUtil", "app/lnf/Forms",
-	"jquery.squash.oneshotdialog", "squash.configmanager", "app/ws/squashtm.notification", "squash.translator",
-	"jquery.squash", "jqueryui",
-	"jquery.squash.togglepanel", "squashtable", "jquery.squash.confirmdialog", "jeditable.datepicker",
-	"jquery.squash.formdialog", "jquery.squash.tagit"  ],
-	function($, NewCustomFieldOptionDialog, Backbone, _, SimpleJEditable,SelectJEditable, StringUtil, Forms, oneshot, confman, notification, translator) {
+define(["jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
+		"jeditable.simpleJEditable", "jeditable.selectJEditable", "app/util/StringUtil", "app/lnf/Forms",
+		"jquery.squash.oneshotdialog", "squash.configmanager", "app/ws/squashtm.notification", "squash.translator",
+		"jquery.squash", "jqueryui",
+		"jquery.squash.togglepanel", "squashtable", "jquery.squash.confirmdialog", "jeditable.datepicker",
+		"jquery.squash.formdialog", "jquery.squash.tagit"],
+	function ($, NewCustomFieldOptionDialog, Backbone, _, SimpleJEditable, SelectJEditable, StringUtil, Forms, oneshot, confman, notification, translator) {
 		var cfMod = squashtm.app.cfMod;
 		/*
 		 * Defines the controller for the custom fields table.
 		 */
 		var CustomFieldModificationView = Backbone.View.extend({
-			el : "#information-content",
-			initialize : function() {
+			el: "#information-content",
+			initialize: function () {
 				this.inputType = $("#cuf-inputType").data("type");
 
 				this.optionalCheckbox = this.$("#cf-optional").get(0);
@@ -51,44 +51,44 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 				// to the toggle panel header.
 				// TODO change our way to make toggle panels buttons
 				this.$("#add-cuf-option-button").on("click",
-						$.proxy(this.openAddOptionPopup, this));
+					$.proxy(this.openAddOptionPopup, this));
 
 				// dialog is moved from DOM when widgetized => we
 				// need to store it
 				this.confirmDeletionDialog = this.$(
-						"#delete-warning-pane").confirmDialog();
+					"#delete-warning-pane").confirmDialog();
 				// ...and we cannot use the events hash
 				this.confirmDeletionDialog.on(
-						"confirmdialogconfirm", $.proxy(
-								this.deleteCustomField, this));
+					"confirmdialogconfirm", $.proxy(
+						this.deleteCustomField, this));
 			},
 
-			events : {
-				"click #cf-optional" : "confirmOptional",
-				"click .is-default>input:checkbox" : "changeDefaultOption",
-				"click .opt-label" : "openRenameOptionPopup",
-				"click .opt-code" : "openChangeOptionCodePopup",
-				"click #delete-cuf-button" : "confirmCustomFieldDeletion",
+			events: {
+				"click #cf-optional": "confirmOptional",
+				"click .is-default>input:checkbox": "changeDefaultOption",
+				"click .opt-label": "openRenameOptionPopup",
+				"click .opt-code": "openChangeOptionCodePopup",
+				"click #delete-cuf-button": "confirmCustomFieldDeletion",
 				"change .opt-colour>input": "changeColour"
 			},
 
-			confirmCustomFieldDeletion : function(event) {
+			confirmCustomFieldDeletion: function (event) {
 				this.confirmDeletionDialog.confirmDialog("open");
 			},
 
-			deleteCustomField : function(event) {
+			deleteCustomField: function (event) {
 				var self = this;
 
 				$.ajax({
-					type : "delete",
-					url : document.location.href
-				}).done(function() {
+					type: "delete",
+					url: document.location.href
+				}).done(function () {
 					self.trigger("customfield.delete");
 				});
 
 			},
 
-			confirmOptional : function(event) {
+			confirmOptional: function (event) {
 				var self = this;
 				var checked = event.target.checked;
 
@@ -100,25 +100,25 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 					if (StringUtil.isBlank(defaultValue) ||
 						defaultValue === cfMod.richEditPlaceHolder ||
 						defaultValue === cfMod.noDateLabel) {
-							notification.showError(cfMod.mandatoryNeedsDefaultMessage);
-							event.target.checked = true;
-							return;
+						notification.showError(cfMod.mandatoryNeedsDefaultMessage);
+						event.target.checked = true;
+						return;
 					}
 					var message = cfMod.confirmMandatoryMessage;
 					message = self.replacePlaceHolderByValue(0,
-							message, defaultValue);
+						message, defaultValue);
 					oneshot.show(cfMod.confirmMandatoryTitle,
-							message, { width : '500px'} )
-							.done(function() {
-								self.sendOptional(checked);
-							})
-							.fail(function() {
-								event.target.checked = true;
-							});
+						message, {width: '500px'})
+						.done(function () {
+							self.sendOptional(checked);
+						})
+						.fail(function () {
+							event.target.checked = true;
+						});
 				}
 			},
 
-			findDefaultValue : function() {
+			findDefaultValue: function () {
 				var defaultValueDiv = this.$('#cuf-default-value');
 
 				if (defaultValueDiv && defaultValueDiv.length > 0) {
@@ -126,7 +126,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 
 				} else if (this.optionsTable) {
 					var checkedDefault = this.optionsTable
-							.find('td.is-default input:checked');
+						.find('td.is-default input:checked');
 					if (checkedDefault) {
 						return checkedDefault.val();
 					}
@@ -134,31 +134,31 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 				return "";
 			},
 
-			replacePlaceHolderByValue : function(index, message,
-					replaceValue) {
+			replacePlaceHolderByValue: function (index, message,
+																					 replaceValue) {
 				var pattern = /\{[\d,\w,\s]*\}/;
 				var match = pattern.exec(message);
 				var pHolder = match[index];
 				return message.replace(pHolder, replaceValue);
 			},
 
-			sendOptional : function(optional) {
+			sendOptional: function (optional) {
 				var self = this;
 				return $.ajax({
-					url : cfMod.customFieldUrl + "/optional",
-					type : "post",
-					data : {
-						'value' : optional
+					url: cfMod.customFieldUrl + "/optional",
+					type: "post",
+					data: {
+						'value': optional
 					},
-					dataType : "json"
+					dataType: "json"
 				})
-				.fail(function(){
-					self.cancelOptionalChange();
-				});
+					.fail(function () {
+						self.cancelOptionalChange();
+					});
 
 			},
 
-			changeDefaultOption : function(event) {
+			changeDefaultOption: function (event) {
 				var self = this;
 				var checkbox = event.currentTarget;
 				var option = checkbox.value;
@@ -169,52 +169,55 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 					return;
 				}
 				var uncheckSelector = ".is-default>input:checkbox" + (checkbox.checked ? "[value!='" + option + "']" : "");
-
+				var row = $(checkbox).parents("tr")[0];
+				var colour = this.optionsTable.fnGetData(row)['opt-colour'];
+				var defaultColour = checkbox.checked ? colour : "";
 
 				$.ajax({
-					url : cfMod.customFieldUrl + "/defaultValue",
-					type : 'POST',
-					data : {
-						'value' : defaultValue
+					url: cfMod.customFieldUrl + "/defaultOption",
+					type: 'POST',
+					data: {
+						'value': defaultValue,
+						'colour': defaultColour
 					}
-				}).done(function() {
+				}).done(function () {
 					self.optionsTable.find(uncheckSelector).attr("checked", false);
-				}).fail(function() {
+				}).fail(function () {
 					checkbox.checked = !checkbox.checked;
 				});
 			},
 
 
-			openRenameOptionPopup : function(event) {
+			openRenameOptionPopup: function (event) {
 				var self = this;
 				var labelCell = event.currentTarget;
 				var previousValue = $(labelCell).text();
 
 				self.renameCufOptionPopup.find(
-						"#rename-cuf-option-previous").text(
-						previousValue);
+					"#rename-cuf-option-previous").text(
+					previousValue);
 				self.renameCufOptionPopup.find(
-						"#rename-cuf-option-label").val(
-						previousValue);
+					"#rename-cuf-option-label").val(
+					previousValue);
 				self.renameCufOptionPopup.formDialog("open");
 			},
 
-			openChangeOptionCodePopup : function(event) {
+			openChangeOptionCodePopup: function (event) {
 				var self = this;
 				var codeCell = event.currentTarget;
 				var previousValue = $(codeCell).text();
 				var label = $(codeCell).parent("tr").find(
-						"td.opt-label").text();
+					"td.opt-label").text();
 				self.changeOptionCodePopup.find(
-						"#change-cuf-option-code-label")
-						.text(label);
+					"#change-cuf-option-code-label")
+					.text(label);
 				self.changeOptionCodePopup.find(
-						"#change-cuf-option-code").val(
-						previousValue);
+					"#change-cuf-option-code").val(
+					previousValue);
 				self.changeOptionCodePopup.formDialog("open");
 			},
 
-			changeColour : function(event) {
+			changeColour: function (event) {
 				var self = this;
 				var colourInput = event.currentTarget;
 				var colour = $(colourInput).val();
@@ -223,70 +226,69 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 				var data = self.optionsTable.fnGetData(row);
 				var label = data['opt-label'];
 				$.ajax({
-					type : 'POST',
-					data : {
-						'value' : colour
+					type: 'POST',
+					data: {
+						'value': colour
 					},
-					dataType : "json",
-					url : cfMod.optionsTable.ajaxSource	+ "/" + label + "/colour"
+					dataType: "json",
+					url: cfMod.optionsTable.ajaxSource + "/" + label + "/colour"
 				});
 			},
 
-			renameOption : function() {
+			renameOption: function () {
 				var self = this;
 				var previousValue = self.renameCufOptionPopup.find(
-						"#rename-cuf-option-previous").text();
+					"#rename-cuf-option-previous").text();
 				var newValue = self.renameCufOptionPopup.find(
-						"#rename-cuf-option-label").val();
+					"#rename-cuf-option-label").val();
 
-				if (newValue.trim() === ""){
+				if (newValue.trim() === "") {
 					// Error
 					var errormsg = translator.get("squashtm.domain.exception.option.pattern");
 					document.getElementById("nospace").innerHTML = errormsg;
 				}
 				else {
-				$.ajax({
-					type : 'POST',
-					data : {
-						'value' : newValue
-					},
-					dataType : "json",
-					url : cfMod.optionsTable.ajaxSource	+ "/" + _.unescape(previousValue) + "/label"
-				}).done(function(data) {
-					self.optionsTable.refresh();
-					self.renameCufOptionPopup.formDialog('close');
-				});
+					$.ajax({
+						type: 'POST',
+						data: {
+							'value': newValue
+						},
+						dataType: "json",
+						url: cfMod.optionsTable.ajaxSource + "/" + _.unescape(previousValue) + "/label"
+					}).done(function (data) {
+						self.optionsTable.refresh();
+						self.renameCufOptionPopup.formDialog('close');
+					});
 				}
 
 			},
 
-			changeOptionCode : function() {
+			changeOptionCode: function () {
 				var self = this;
 				var label = self.changeOptionCodePopup.find(
-						"#change-cuf-option-code-label").text();
+					"#change-cuf-option-code-label").text();
 				var newValue = self.changeOptionCodePopup.find(
-						"#change-cuf-option-code").val();
+					"#change-cuf-option-code").val();
 				$.ajax({
-					type : 'POST',
-					data : {
-						'value' : newValue
+					type: 'POST',
+					data: {
+						'value': newValue
 					},
-					dataType : "json",
-					url : cfMod.optionsTable.ajaxSource	+ "/" + label + "/code"
-				}).done(function(data) {
+					dataType: "json",
+					url: cfMod.optionsTable.ajaxSource + "/" + label + "/code"
+				}).done(function (data) {
 					self.optionsTable.refresh();
 					self.changeOptionCodePopup.formDialog('close');
 				});
 
 			},
 
-			configureButtons : function() {
+			configureButtons: function () {
 				$.squash.decorateButtons();
 			},
 
 
-
-			configureEditables : function() {
+			configureEditables: function () {
 				var self = this;
 				this.makeSimpleJEditable("cuf-label");
 				this.makeSimpleJEditable("cuf-code");
@@ -294,58 +296,58 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 				if (this.inputType === "PLAIN_TEXT" || this.inputType === "NUMERIC") {
 					this.makeDefaultSimpleJEditable();
 					$("#cuf-default-value").click(
-							self.disableOptionalChange);
+						self.disableOptionalChange);
 				}
 				else if (this.inputType === "CHECKBOX") {
 					this.makeDefaultSelectJEditable();
 					$("#cuf-default-value").click(
-							self.disableOptionalChange);
+						self.disableOptionalChange);
 				} else if (this.inputType === "DATE_PICKER") {
 					this.makeDefaultDatePickerEditable();
 				}
-				else if (this.inputType === "TAG"){
+				else if (this.inputType === "TAG") {
 					this.makeDefaultTagsEditable();
 				}
-				else if (this.inputType === "RICH_TEXT"){
+				else if (this.inputType === "RICH_TEXT") {
 					this.makeDefaultRichTextEditable();
 				}
 
 			},
-			makeDefaultSimpleJEditable : function() {
+			makeDefaultSimpleJEditable: function () {
 				var self = this;
 				new SimpleJEditable({
-					targetUrl : cfMod.customFieldUrl + "/defaultValue",
-					componentId : "cuf-default-value",
-					jeditableSettings : {
-						name : "value",
-						callback : self.enableOptionalChange,
-						onsubmit : function(){
+					targetUrl: cfMod.customFieldUrl + "/defaultValue",
+					componentId: "cuf-default-value",
+					jeditableSettings: {
+						name: "value",
+						callback: self.enableOptionalChange,
+						onsubmit: function () {
 							return self._validate(this);
 						}
 					}
 				});
 			},
-			makeDefaultSelectJEditable : function() {
+			makeDefaultSelectJEditable: function () {
 				var self = this;
 				new SelectJEditable({
-					language : {
-						richEditPlaceHolder : cfMod.richEditPlaceHolder,
-						okLabel : cfMod.okLabel,
-						cancelLabel : cfMod.cancelLabel
+					language: {
+						richEditPlaceHolder: cfMod.richEditPlaceHolder,
+						okLabel: cfMod.okLabel,
+						cancelLabel: cfMod.cancelLabel
 					},
-					target : cfMod.customFieldUrl,
-					componentId : "cuf-default-value",
-					jeditableSettings : {
-						callback : self.enableOptionalChange,
-						data : JSON.stringify(cfMod.checkboxJsonDefaultValues),
-						name : "value",
-						onsubmit : function(){
+					target: cfMod.customFieldUrl,
+					componentId: "cuf-default-value",
+					jeditableSettings: {
+						callback: self.enableOptionalChange,
+						data: JSON.stringify(cfMod.checkboxJsonDefaultValues),
+						name: "value",
+						onsubmit: function () {
 							return self._validate(this);
 						}
 					}
 				});
 			},
-			makeDefaultDatePickerEditable : function(inputId) {
+			makeDefaultDatePickerEditable: function (inputId) {
 				var self = this;
 				var datepick = this.$("#cuf-default-value");
 
@@ -353,7 +355,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 				var dateSettings = confman.getStdDatepicker();
 
 				// we need a custom post function
-				var postfn = function(value){
+				var postfn = function (value) {
 					var revert = this.revert;
 					var localizedDate = value;
 					var postDateFormat = $.datepicker.ATOM;
@@ -361,27 +363,27 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 					var postDate = $.datepicker.formatDate(postDateFormat, date);
 
 					return $.ajax({
-						url : cfMod.customFieldUrl + "/defaultValue",
-						type : 'POST',
-						data : { value : postDate }
+						url: cfMod.customFieldUrl + "/defaultValue",
+						type: 'POST',
+						data: {value: postDate}
 					})
-					.done(function(){
-						$("#cuf-default-value").text(value);
-					})
-					.fail(function(){
-						$("#cuf-default-value").text(revert);
-					});
+						.done(function () {
+							$("#cuf-default-value").text(value);
+						})
+						.fail(function () {
+							$("#cuf-default-value").text(revert);
+						});
 
 				};
 
 
 				// make editable
 				datepick.editable(postfn, {
-					type : 'datepicker',
-					tooltip : cfMod.richEditPlaceHolder,
-					datepicker : dateSettings,
-					name : "value",
-					onsubmit : function(){
+					type: 'datepicker',
+					tooltip: cfMod.richEditPlaceHolder,
+					datepicker: dateSettings,
+					name: "value",
+					onsubmit: function () {
 						return self._validate(this);
 					}
 				});
@@ -389,102 +391,102 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 
 			},
 
-			makeDefaultTagsEditable : function(){
+			makeDefaultTagsEditable: function () {
 				var ul = this.$("#cuf-default-value");
 
 				var conf = confman.getStdTagit();
 				ul.squashTagit(conf);
 
-				ul.on('squashtagitaftertagadded squashtagitaftertagremoved', function(event, ui){
+				ul.on('squashtagitaftertagadded squashtagitaftertagremoved', function (event, ui) {
 					// Contrary to Custom Field Values, the default value of a Custom Field
 					// is stored as a semicolumn separated string instead of a collection of labels.
 
-					if (! ul.squashTagit("validate", event, ui)){
+					if (!ul.squashTagit("validate", event, ui)) {
 						return;
 					}
 
 					var values = ul.squashTagit('assignedTags').join('|');
 					$.ajax({
-						url : cfMod.customFieldUrl + '/defaultValue',
-						type : 'post',
-						data : {
-							'id' : 'cuf-default-value',
-							'value' : values
+						url: cfMod.customFieldUrl + '/defaultValue',
+						type: 'post',
+						data: {
+							'id': 'cuf-default-value',
+							'value': values
 						}
 					});
 				});
 
 			},
 
-			makeDefaultRichTextEditable : function(){
+			makeDefaultRichTextEditable: function () {
 
 				var area = this.$("#cuf-default-value"),
 					self = this;
 
 				var conf = confman.getJeditableCkeditor();
-				conf.onsubmit = function(settings, ed){
+				conf.onsubmit = function (settings, ed) {
 					var cked = CKEDITOR.instances[$("textarea", ed).attr('id')];
 					return self._validate(cked.getData());
 				};
 				conf.name = "value";
 
-				area.editable(cfMod.customFieldUrl + "/defaultValue",conf);
+				area.editable(cfMod.customFieldUrl + "/defaultValue", conf);
 
 			},
 
 			// accepts a string or the editor itself
-			_validate : function(arg){
+			_validate: function (arg) {
 				var value = (typeof arg === "string") ? arg : $(arg).val().value;
 				var validated = true;
 
-				if (this.isFieldMandatory()	&& StringUtil.isBlank(value)) {
+				if (this.isFieldMandatory() && StringUtil.isBlank(value)) {
 					notification.showError(cfMod.defaultValueMandatoryMessage);
 					validated = false;
 				}
 				return validated;
 			},
 
-			disableOptionalChange : function() {
+			disableOptionalChange: function () {
 				$("#cf-optional").attr("disabled", true);
 			},
 
-			enableOptionalChange : function() {
+			enableOptionalChange: function () {
 				$("#cf-optional").removeAttr("disabled");
 			},
 
-			cancelOptionalChange : function(){
+			cancelOptionalChange: function () {
 				var opt = $("#cf-optional"),
 					active = opt.prop("checked");
 
-				opt.prop("checked", ! active);
+				opt.prop("checked", !active);
 			},
 
-			isFieldMandatory : function() {
-				if (!! this.optionalCheckbox){
+			isFieldMandatory: function () {
+				if (!!this.optionalCheckbox) {
 					return !this.optionalCheckbox.checked;
 				}
-				else{
+				else {
 					return false;
 				}
 			},
 
-			renameCuf : function() {
+			renameCuf: function () {
 				var newNameVal = $("#rename-cuf-input").val();
 				$.ajax({
-					type : 'POST',
-					data : {
-						'value' : newNameVal
+					type: 'POST',
+					data: {
+						'value': newNameVal
 					},
-					dataType : "json",
-					url : cfMod.customFieldUrl + "/name"
+					dataType: "json",
+					url: cfMod.customFieldUrl + "/name"
 
-				}).done(function(data) {
+				}).done(function (data) {
 					$('#cuf-name-header').html(data.newName);
 					$('#rename-cuf-popup').formDialog('close');
 				});
 			},
 
-			configureRenamePopup : function() {
+			configureRenamePopup: function () {
 
 				var dialog = $("#rename-cuf-popup");
 
@@ -494,27 +496,26 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 
 				dialog.on('formdialogcancel', this.closePopup);
 
-				dialog.on('formdialogopen', function(event, ui) {
+				dialog.on('formdialogopen', function (event, ui) {
 					var name = $.trim($('#cuf-name-header').text());
 					$("#rename-cuf-input").val($.trim(name));
 				});
 
-				$("#rename-cuf-button").on('click', function(){
+				$("#rename-cuf-button").on('click', function () {
 					dialog.formDialog('open');
 				});
 
 
-
 			},
 
-			closePopup : function() {
+			closePopup: function () {
 				$(this).formDialog('close');
 			},
 
-			makeSimpleJEditable : function(inputId) {
+			makeSimpleJEditable: function (inputId) {
 				var self = this;
 
-				var onerror = function(settings, original, xhr) {
+				var onerror = function (settings, original, xhr) {
 					xhr.errorIsHandled = true;
 					var errormsg = notification.getErrorMessage(xhr);
 					Forms.input(self.$("#" + inputId)).setState("error", errormsg);
@@ -522,107 +523,109 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 				};
 
 				new SimpleJEditable({
-					targetUrl : cfMod.customFieldUrl,
-					componentId : inputId,
-					jeditableSettings : {
+					targetUrl: cfMod.customFieldUrl,
+					componentId: inputId,
+					jeditableSettings: {
 						onerror: onerror,
-						onsubmit: function() { Forms.input(self.$("#" + inputId)).clearState(); }
+						onsubmit: function () {
+							Forms.input(self.$("#" + inputId)).clearState();
+						}
 					}
 				});
 			},
 
-			configureOptionTable : function() {
+			configureOptionTable: function () {
 				var self = this;
 				if (this.inputType !== "DROPDOWN_LIST") {
 					return;
 				}
 				var config = $
-						.extend(
+					.extend(
+						{
+							"oLanguage": {
+								"sUrl": cfMod.optionsTable.languageUrl
+							},
+							"bJQueryUI": true,
+							"bAutoWidth": false,
+							"bFilter": false,
+							"bPaginate": true,
+							"sPaginationType": "squash",
+							"iDisplayLength": cfMod.optionsTable.displayLength,
+							"bServerSide": true,
+							"sAjaxSource": cfMod.optionsTable.ajaxSource,
+							"bDeferRender": true,
+							"bRetrieve": true,
+							"sDom": 't<"dataTables_footer"lp>',
+							"iDeferLoading": 0,
+							"fnRowCallback": function () {
+							},
+							"aoColumnDefs": [
 								{
-									"oLanguage" : {
-										"sUrl" : cfMod.optionsTable.languageUrl
-									},
-									"bJQueryUI" : true,
-									"bAutoWidth" : false,
-									"bFilter" : false,
-									"bPaginate" : true,
-									"sPaginationType" : "squash",
-									"iDisplayLength" : cfMod.optionsTable.displayLength,
-									"bServerSide" : true,
-									"sAjaxSource" : cfMod.optionsTable.ajaxSource,
-									"bDeferRender" : true,
-									"bRetrieve" : true,
-									"sDom" : 't<"dataTables_footer"lp>',
-									"iDeferLoading" : 0,
-									"fnRowCallback" : function() {
-									},
-									"aoColumnDefs" : [
-											{
-												'bSortable' : false,
-												'sWidth' : '2em',
-												'sClass' : 'centered ui-state-default drag-handle select-handle',
-												'aTargets' : [ 0 ],
-												'mDataProp' : 'entity-index'
-											},
-											{
-												'bSortable' : false,
-												"aTargets" : [ 1 ],
-												"sClass" : "opt-label linkWise",
-												"mDataProp" : "opt-label"
-											},
-											{
-												'bSortable' : false,
-												"aTargets" : [ 2 ],
-												"sClass" : "opt-code linkWise",
-												"mDataProp" : "opt-code"
-											},
-										{
-											'bSortable' : false,
-											"aTargets" : [ 3 ],
-											"sClass" : "opt-colour colour centered",
-											"mDataProp" : "opt-colour"
-										},
-											{
-												'bSortable' : false,
-												'aTargets' : [ 4 ],
-												'sClass' : "is-default",
-												'mDataProp' : 'opt-default'
-											},
-											{
-												'bSortable' : false,
-												'sWidth' : '2em',
-												'sClass' : 'delete-button',
-												'aTargets' : [ 5 ],
-												'mDataProp' : 'empty-delete-holder'
-											} ]
-								}, squashtm.datatable.defaults);
+									'bSortable': false,
+									'sWidth': '2em',
+									'sClass': 'centered ui-state-default drag-handle select-handle',
+									'aTargets': [0],
+									'mDataProp': 'entity-index'
+								},
+								{
+									'bSortable': false,
+									"aTargets": [1],
+									"sClass": "opt-label linkWise",
+									"mDataProp": "opt-label"
+								},
+								{
+									'bSortable': false,
+									"aTargets": [2],
+									"sClass": "opt-code linkWise",
+									"mDataProp": "opt-code"
+								},
+								{
+									'bSortable': false,
+									"aTargets": [3],
+									"sClass": "opt-colour colour centered",
+									"mDataProp": "opt-colour"
+								},
+								{
+									'bSortable': false,
+									'aTargets': [4],
+									'sClass': "is-default",
+									'mDataProp': 'opt-default'
+								},
+								{
+									'bSortable': false,
+									'sWidth': '2em',
+									'sClass': 'delete-button',
+									'aTargets': [5],
+									'mDataProp': 'empty-delete-holder'
+								}]
+						}, squashtm.datatable.defaults);
 
 				var squashSettings = {
-					enableHover : true,
-					enableDnD : true,
-					confirmPopup : {
-						oklabel : cfMod.confirmLabel,
-						cancellabel : cfMod.cancelLabel
+					enableHover: true,
+					enableDnD: true,
+					confirmPopup: {
+						oklabel: cfMod.confirmLabel,
+						cancellabel: cfMod.cancelLabel
 					},
 
-					deleteButtons : {
-						url : cfMod.optionsTable.ajaxSource	+ "/{opt-label}",
-						popupmessage : "<div class='display-table-row'><div class='display-table-cell warning-cell'><div class='generic-error-signal'></div></div><div class='display-table-cell'>"+cfMod.optionsTable.deleteConfirmMessage+"</span></div></div>",
-						tooltip : cfMod.optionsTable.deleteTooltip,
-						success : function(data) {
+					deleteButtons: {
+						url: cfMod.optionsTable.ajaxSource + "/{opt-label}",
+						popupmessage: "<div class='display-table-row'><div class='display-table-cell warning-cell'><div class='generic-error-signal'></div></div><div class='display-table-cell'>" + cfMod.optionsTable.deleteConfirmMessage + "</span></div></div>",
+						tooltip: cfMod.optionsTable.deleteTooltip,
+						success: function (data) {
 							self.optionsTable.refresh();
 						},
-						dataType : "json"
+						dataType: "json"
 					},
 
-					functions : {
-						dropHandler : function(dropData) {
+					functions: {
+						dropHandler: function (dropData) {
 							var url = cfMod.optionsTable.ajaxSource + '/positions';
-							$.post(url,	dropData, function() {
+							$.post(url, dropData, function () {
 								self.optionsTable.refresh();
 							});
 						},
-						getODataId : function(arg) {
+						getODataId: function (arg) {
 							return this.fnGetData(arg)['opt-label'];
 						}
 					}
@@ -631,10 +634,10 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 
 				this.optionsTable = this.$("table");
 				this.optionsTable.squashTable(config,
-						squashSettings);
+					squashSettings);
 			},
 
-			openAddOptionPopup : function() {
+			openAddOptionPopup: function () {
 				if (this.inputType !== "DROPDOWN_LIST") {
 					return;
 				}
@@ -642,7 +645,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 
 				function discard() {
 					self.newOptionDialog
-							.off("newOption.cancel newOption.confirm");
+						.off("newOption.cancel newOption.confirm");
 					self.newOptionDialog.undelegateEvents();
 					self.newOptionDialog = null;
 				}
@@ -653,20 +656,20 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 				}
 
 				self.newOptionDialog = new NewCustomFieldOptionDialog(
-						{
-							model : {
-								label : "",
-								code : ""
-							}
-						});
+					{
+						model: {
+							label: "",
+							code: ""
+						}
+					});
 
 				self.newOptionDialog
-						.on("newOption.cancel", discard);
+					.on("newOption.cancel", discard);
 				self.newOptionDialog.on("newOption.confirm",
-						discardAndRefresh);
+					discardAndRefresh);
 			},
 
-			configureRenameOptionPopup : function() {
+			configureRenameOptionPopup: function () {
 				if (this.inputType !== "DROPDOWN_LIST") {
 					return;
 				}
@@ -678,18 +681,18 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 
 				dialog.formDialog();
 
-				dialog.on('formdialogconfirm', function(){
+				dialog.on('formdialogconfirm', function () {
 					self.renameOption.call(self);
 				});
 
 				dialog.on('formdialogcancel', this.closePopup);
 
-				$("#rename-cuf-option-popup").on('click', function(){
+				$("#rename-cuf-option-popup").on('click', function () {
 					dialog.formDialog('open');
 				});
 			},
 
-			configureChangeOptionCodePopup : function() {
+			configureChangeOptionCodePopup: function () {
 				if (this.inputType !== "DROPDOWN_LIST") {
 					return;
 				}
@@ -701,18 +704,18 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 				this.changeOptionCodePopup = dialog;
 
 				dialog.formDialog();
-				dialog.on('formdialogconfirm', function(){
+				dialog.on('formdialogconfirm', function () {
 					self.changeOptionCode.call(self);
 				});
 
 				dialog.on('formdialogcancel', this.closePopup);
 
-				$("#change-cuf-option-code-popup").on('click', function(){
+				$("#change-cuf-option-code-popup").on('click', function () {
 					dialog.formDialog('open');
 				});
 
 			}
 
+		});
+		return CustomFieldModificationView;
 	});
-	return CustomFieldModificationView;
-});

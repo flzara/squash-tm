@@ -43,6 +43,7 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.squashtest.tm.domain.customfield.InputType.DROPDOWN_LIST;
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 
 /**
@@ -155,7 +156,12 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 		CustomField customField = customFieldDao.findById(customFieldId);
 		if (!optional) {
 			checkDefaultValueExists(customField);
-			addDefaultValueToCustomFields(customFieldId, customField.getDefaultValue());
+			if(customField.getInputType()!=DROPDOWN_LIST){
+				addDefaultValueToCustomFields(customFieldId, customField.getDefaultValue());
+			}else{
+				addDefaultValueAndColourToCustomFields(customFieldId, customField.getDefaultValue(), customField.getDefaultColour());
+			}
+
 		}
 		customField.setOptional(optional);
 	}
@@ -174,6 +180,19 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 			for (CustomFieldValue value : values) {
 				if (value.getValue() == null || value.getValue().isEmpty()) {
 					value.setValue(defaulfValue);
+				}
+			}
+		}
+	}
+
+	private void addDefaultValueAndColourToCustomFields(Long customFieldId, String defaulfValue, String defaulfColour) {
+		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllByCustomFieldIdOrderByPositionAsc(customFieldId);
+		for (CustomFieldBinding binding : bindings) {
+			List<CustomFieldValue> values = customFieldValueDao.findAllCustomValuesOfBinding(binding.getId());
+			for (CustomFieldValue value : values) {
+				if (value.getValue() == null || value.getValue().isEmpty()) {
+					value.setValue(defaulfValue);
+					value.setColour(defaulfColour);
 				}
 			}
 		}
