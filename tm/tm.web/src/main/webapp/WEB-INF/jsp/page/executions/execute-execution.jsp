@@ -312,7 +312,7 @@
                              titleKey="execute.panel.comment.title"
                              open="true">
 							<jsp:attribute name="body">
-								<div id="execution-comment" ${descrRicheditAttributes}>${hu:clean(executionStep.comment)} </div>
+								<div id="execution-comment" ${descrRicheditAttributes}>${hu:clean(executionStep.comment)}</div>
 							</jsp:attribute>
           </comp:toggle-panel>
         </div>
