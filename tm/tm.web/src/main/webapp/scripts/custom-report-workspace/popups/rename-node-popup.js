@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['backbone', 'jquery', 'tree', 'workspace.event-bus', '../permissions-rules', 'jquery.squash.formdialog', "app/util/StringUtil"],
-	function (Backbone, $, zetree, eventBus, rules,StringUtil) {
+define(['backbone', 'jquery', 'tree', 'workspace.event-bus', '../permissions-rules', 'app/util/StringUtil', 'jquery.squash.formdialog'],
+	function (Backbone, $, zetree, eventBus, rules, StringUtil) {
 
 		function warnMilestones(node) {
 			var nbmilestones = parseInt(node.attr('milestones'), 10);
