@@ -75,17 +75,8 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 				var axis = this.getAxis();
 				var dataTypeWithFixedColor = ["LEVEL_ENUM", "EXECUTION_STATUS"];
 
-				// test on the x axis
-				var xAxisDatatype = axis[0].columnPrototype.dataType;
-				var xShouldGetColors = dataTypeWithFixedColor.includes(xAxisDatatype);
-
-				// test on the y axis if present
-				if (typeof axis[1] !== 'undefined') {
-					var yAxisDatatype = axis[1].columnPrototype.dataType;
-					var yShouldGetColors = dataTypeWithFixedColor.includes(yAxisDatatype);
-				}
-
-				return xShouldGetColors || yShouldGetColors;
+				return axis.length === 1 && dataTypeWithFixedColor.includes(axis[0].columnPrototype.dataType) ||
+					axis.length === 2 && dataTypeWithFixedColor.includes(axis[1].columnPrototype.dataType);
 			},
 
 			// By default a chart won't have any color, so we won't change the finalConf.seriesColors => jqplot will use its default colours
