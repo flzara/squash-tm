@@ -20,20 +20,18 @@
  */
 package org.squashtest.tm.service.testcase
 
-
-import javax.inject.Inject
-
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.testcase.ParameterAssignationMode
 import org.squashtest.tm.exception.CyclicStepCallException
-import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder
 import org.squashtest.tm.service.testcase.CallStepManagerService
 import org.squashtest.tm.service.testcase.TestCaseModificationService
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @NotThreadSafe
 @UnitilsSupport

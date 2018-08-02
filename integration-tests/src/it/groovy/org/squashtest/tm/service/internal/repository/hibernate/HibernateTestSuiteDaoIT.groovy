@@ -22,7 +22,7 @@ package org.squashtest.tm.service.internal.repository.hibernate
 
 import org.hibernate.Query
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.it.basespecs.DbunitDaoSpecification;
+import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.domain.campaign.TestPlanStatistics
 import org.squashtest.tm.domain.campaign.TestPlanStatus
 import org.squashtest.tm.service.internal.repository.TestSuiteDao

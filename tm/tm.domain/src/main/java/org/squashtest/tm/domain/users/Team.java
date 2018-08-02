@@ -34,7 +34,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 import org.squashtest.tm.domain.audit.Auditable;
 
 @Entity

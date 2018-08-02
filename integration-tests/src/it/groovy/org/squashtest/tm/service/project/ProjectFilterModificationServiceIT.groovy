@@ -20,16 +20,15 @@
  */
 package org.squashtest.tm.service.project
 
-import javax.inject.Inject
-
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.project.Project
-import org.squashtest.it.basespecs.DbunitServiceSpecification;
 import org.squashtest.tm.service.project.ProjectFilterModificationService
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @NotThreadSafe
 @UnitilsSupport

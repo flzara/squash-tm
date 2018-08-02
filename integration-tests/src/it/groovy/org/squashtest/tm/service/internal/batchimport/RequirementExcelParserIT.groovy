@@ -23,16 +23,15 @@ package org.squashtest.tm.service.internal.batchimport
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.requirement.RequirementCriticality
 import org.squashtest.tm.domain.requirement.RequirementStatus
-import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.service.batchimport.excel.ColumnMismatch
 import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException
 import org.squashtest.tm.service.importer.ImportStatus
 import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.ExcelWorkbookParser
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn
-
 import spock.unitils.UnitilsSupport
 
 @UnitilsSupport

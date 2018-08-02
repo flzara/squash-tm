@@ -21,12 +21,12 @@
 package org.squashtest.tm.service.connectionhistory
 
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
-import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
-import org.squashtest.it.basespecs.DbunitServiceSpecification
-import org.squashtest.tm.service.connectionhistory.ConnectionLogFinderService;
-import org.squashtest.tm.domain.users.ConnectionLog;
+import org.squashtest.tm.domain.users.ConnectionLog
+import org.squashtest.tm.service.connectionhistory.ConnectionLogFinderService
 import org.unitils.dbunit.annotation.DataSet
 import spock.lang.Unroll
 import spock.unitils.UnitilsSupport

@@ -24,11 +24,11 @@ import org.hibernate.Query
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.customfield.CustomFieldValue
 import org.squashtest.tm.domain.testcase.*
 import org.squashtest.tm.exception.library.CannotMoveInHimselfException
-import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao
 import org.unitils.dbunit.annotation.DataSet
 import org.unitils.dbunit.annotation.ExpectedDataSet

@@ -21,21 +21,18 @@
 package org.squashtest.it.config
 
 import org.spockframework.mock.MockNature
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
-import org.squashtest.tm.service.attachment.AttachmentManagerService
-import spock.mock.DetachedMockFactory
-
-import javax.validation.ValidatorFactory
-
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
-import org.squashtest.tm.service.bugtracker.BugTrackersService
 import org.squashtest.it.stub.validation.StubValidatorFactory
+import org.squashtest.tm.service.attachment.AttachmentManagerService
+import org.squashtest.tm.service.bugtracker.BugTrackersService
+import spock.mock.DetachedMockFactory
+
+import javax.validation.ValidatorFactory
 
 /**
  * Configuration for Repository (DAO) specifications. Instanciates repository layer beans.

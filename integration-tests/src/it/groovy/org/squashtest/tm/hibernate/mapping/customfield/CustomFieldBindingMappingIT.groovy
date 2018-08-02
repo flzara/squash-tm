@@ -21,9 +21,8 @@
 package org.squashtest.tm.hibernate.mapping.customfield
 
 import org.hibernate.Session
-import org.hibernate.SessionFactory
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.it.basespecs.DbunitDaoSpecification;
+import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.CustomFieldBinding
@@ -32,9 +31,9 @@ import org.squashtest.tm.domain.project.Project
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 
-import javax.inject.Inject
 import javax.persistence.EntityManager
-import javax.persistence.PersistenceContext;;
+import javax.persistence.PersistenceContext
+;
 
 /**
  * @author Gregory Fouquet
@@ -44,7 +43,7 @@ import javax.persistence.PersistenceContext;;
 @Transactional
 @DataSet
 class CustomFieldBindingMappingIT extends DbunitDaoSpecification {
-	@PersistenceContext 
+	@PersistenceContext
 	EntityManager em
 
 	Session getSession() {

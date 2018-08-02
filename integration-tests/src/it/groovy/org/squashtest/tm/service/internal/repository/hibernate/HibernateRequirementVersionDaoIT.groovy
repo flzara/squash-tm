@@ -20,22 +20,17 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
-import javax.inject.Inject
-
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.transaction.annotation.Transactional
-import org.hibernate.Query
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting
-import org.squashtest.tm.core.foundation.collection.SortOrder
-import org.squashtest.tm.service.internal.repository.RequirementVersionDao
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort.Direction
+import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.service.internal.repository.RequirementDeletionDao
+import org.squashtest.tm.service.internal.repository.RequirementVersionDao
 import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.tm.tools.unittest.assertions.ListAssertions
-import org.squashtest.it.basespecs.DbunitDaoSpecification;
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @UnitilsSupport
 class HibernateRequirementVersionDaoIT extends DbunitDaoSpecification {

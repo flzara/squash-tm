@@ -20,28 +20,17 @@
  */
 package org.squashtest.it.basespecs
 
-import javax.inject.Inject;
+import org.hibernate.Session
+import org.hibernate.Transaction
+import org.springframework.orm.jpa.EntityManagerFactoryUtils
+import org.springframework.orm.jpa.EntityManagerHolder
+import org.springframework.test.annotation.Rollback
+import org.springframework.transaction.support.TransactionSynchronizationManager
+
 import javax.persistence.EntityManager
 import javax.persistence.EntityManagerFactory
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.PersistenceContext
+import javax.persistence.EntityNotFoundException
 import javax.persistence.PersistenceUnit
-import javax.persistence.SynchronizationType;
-import javax.transaction.TransactionManager;
-
-import org.hibernate.Session
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction
-import org.springframework.orm.jpa.EntityManagerFactoryUtils;
-import org.springframework.orm.jpa.EntityManagerHolder;
-import org.springframework.test.annotation.Rollback
-import org.springframework.test.context.ContextConfiguration
-import org.springframework.transaction.annotation.Transactional
-import org.springframework.transaction.support.TransactionSynchronizationManager;
-import org.squashtest.it.config.ServiceSpecConfig
-import org.squashtest.it.utils.SkipAll;
-
-import spock.lang.Specification
 
 /**
  * Superclass for hibernate mapping integration tests.

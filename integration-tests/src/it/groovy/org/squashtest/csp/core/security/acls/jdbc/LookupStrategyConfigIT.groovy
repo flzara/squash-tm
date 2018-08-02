@@ -20,8 +20,6 @@
  */
 package org.squashtest.csp.core.security.acls.jdbc
 
-import javax.inject.Inject
-
 import org.springframework.security.acls.domain.PrincipalSid
 import org.springframework.security.acls.jdbc.BasicLookupStrategy
 import org.springframework.security.acls.model.ObjectIdentity
@@ -32,9 +30,9 @@ import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.it.config.EnabledAclSpecConfig
 import org.squashtest.test.unitils.dbunit.datasetloadstrategy.DeleteInsertLoadStrategy
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.unitils.UnitilsSupport
 
+import javax.inject.Inject
 
 @Transactional
 @UnitilsSupport

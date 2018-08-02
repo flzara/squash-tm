@@ -20,16 +20,16 @@
  */
 package org.squashtest.it.infrastructure;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
 import org.dbunit.dataset.IDataSet;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.jdbc.Work;
 import org.unitils.dbunit.datasetloadstrategy.impl.CleanInsertLoadStrategy;
 import org.unitils.dbunit.util.DbUnitDatabaseConnection;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class DeleteDataSetLoadStrategy extends CleanInsertLoadStrategy {
 
@@ -40,8 +40,8 @@ public class DeleteDataSetLoadStrategy extends CleanInsertLoadStrategy {
                }
            });
         }
-	
-	
+
+
 	public void delete(Session session, IDataSet dataSet){
 		try{
 			String [] tables = dataSet.getTableNames();
@@ -49,45 +49,45 @@ public class DeleteDataSetLoadStrategy extends CleanInsertLoadStrategy {
 			for (int i=tables.length-1; i>=0;i--){
 				builder.append("delete from "+tables[i]+";");
 			}
-			
+
 			Query query = session.createSQLQuery(builder.toString());
-			
+
 			query.executeUpdate();
-	
+
 			commit(session);
-			
-			
+
+
 		}catch(Exception e){
 			throw new RuntimeException(e);
 		}
-		
-		
+
+
 	}
-	
-	
+
+
 	public void execute(Connection connection, IDataSet dataSet){
 	try{
-			
+
 			String [] tables = dataSet.getTableNames();
 			StringBuilder builder = new StringBuilder();
 			for (int i=tables.length-1; i>=0;i--){
 				builder.append("delete from "+tables[i]+";");
 			}
-			
-			
+
+
 			PreparedStatement statement = connection.prepareStatement(builder.toString());
-			
+
 			statement.execute();
 
 			connection.commit();
-			
-			
-			
+
+
+
 		}catch(Exception e){
 			throw new RuntimeException(e);
-		}	
+		}
 	}
-	
+
 	@Override
 	public void execute(DbUnitDatabaseConnection dbUnitDatabaseConnection,
 			IDataSet dataSet) {

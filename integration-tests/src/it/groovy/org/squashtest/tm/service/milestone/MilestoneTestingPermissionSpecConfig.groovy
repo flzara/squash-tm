@@ -20,15 +20,12 @@
  */
 package org.squashtest.tm.service.milestone
 
-import org.springframework.context.annotation.*
-import org.springframework.context.annotation.aspectj.EnableSpringConfigured
-import org.springframework.security.acls.model.AclService;
-import org.squashtest.it.stub.security.StubPermissionEvaluationService
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Primary
 import org.squashtest.it.stub.security.StubPermissionEvaluator
-import org.squashtest.it.stub.security.StubPermissionOnOddEntitiesEvaluationService;
+import org.squashtest.it.stub.security.StubPermissionOnOddEntitiesEvaluationService
 import org.squashtest.tm.service.security.PermissionEvaluationService
-import org.squashtest.tm.service.security.acls.domain.InheritableAclsObjectIdentityRetrievalStrategy
-import org.squashtest.tm.service.security.acls.jdbc.JdbcManageableAclService;
 
 /**
  * Configuration for Service specification. Instanciates service and repo layer beans
@@ -38,18 +35,18 @@ import org.squashtest.tm.service.security.acls.jdbc.JdbcManageableAclService;
 @Configuration
 class MilestoneTestingPermissionSpecConfig {
 
-	
+
 	@Bean StubPermissionEvaluator permissionEvaluator() {
 		new StubPermissionEvaluator()
 	}
-	
-	
+
+
 	@Bean(name = "squashtest.core.security.PermissionEvaluationService")
 	@Primary
 	PermissionEvaluationService permissionEvaluationService() {
 		new StubPermissionOnOddEntitiesEvaluationService()
 	}
 
-	
+
 
 }

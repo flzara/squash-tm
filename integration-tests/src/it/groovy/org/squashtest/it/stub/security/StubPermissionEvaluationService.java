@@ -20,13 +20,12 @@
  */
 package org.squashtest.it.stub.security;
 
-import java.util.*;
-
 import org.hibernate.Hibernate;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 import javax.validation.constraints.NotNull;
+import java.util.*;
 
 
 public class StubPermissionEvaluationService implements PermissionEvaluationService {

@@ -50,7 +50,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.customreport.CustomReportChartBinding;

@@ -19,23 +19,18 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.campaign
-import org.unitils.dbunit.annotation.DataSet;
-
-import spock.unitils.UnitilsSupport;
-import javax.inject.Inject
-import javax.validation.ConstraintViolation
-import javax.validation.ConstraintViolationException
-import javax.validation.Path
 
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.domain.campaign.Campaign
-import org.squashtest.tm.domain.campaign.CampaignFolder
-import org.squashtest.tm.domain.campaign.Iteration
-import org.squashtest.tm.domain.project.GenericProject
-import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.exception.DuplicateNameException
 import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.tm.domain.campaign.Campaign
+import org.squashtest.tm.domain.campaign.Iteration
+import org.squashtest.tm.exception.DuplicateNameException
 import org.squashtest.tm.service.project.GenericProjectManagerService
+import org.unitils.dbunit.annotation.DataSet
+import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
+import javax.persistence.PersistenceException
 
 @Transactional
 @UnitilsSupport
@@ -56,34 +51,7 @@ class CampaignModificationServiceIT extends DbunitServiceSpecification {
 	private long folderId = -1l;
 	private long libId = -1l
 
-	
 
-	def "should not accept a rename to empty string"(){
-		given :
-		def campaign = new Campaign(name:"campa");
-		navService.addCampaignToCampaignFolder(folderId, campaign)
-
-		when :
-		try{
-			service.rename(campaign.id, "")
-		}catch(ConstraintViolationException cve){
-			Set cv = cve.getConstraintViolations();
-
-			ConstraintViolation a;
-			Iterator iter = cv.iterator()
-			while(iter.hasNext()){
-				a=iter.next();
-			}
-
-			String me = a.getMessage();
-			Path p = a.getPropertyPath();
-			String name = p.toString();
-
-			String breakStr;
-		}
-		then :
-		true;
-	}
 
 
 	def "should not rename a campaign"(){

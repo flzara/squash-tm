@@ -21,16 +21,11 @@
 package org.squashtest.core.api.repository
 
 import org.springframework.test.annotation.Rollback
-import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.ContextHierarchy;
-import org.squashtest.it.basespecs.DatasourceDependantSpecification;
-import org.squashtest.it.utils.SkipAll
+import org.squashtest.it.basespecs.DatasourceDependantSpecification
 import org.squashtest.tm.api.repository.SqlQueryRunner
-import org.squashtest.tm.service.internal.api.repository.HibernateSqlQueryRunner;
 import org.unitils.database.annotations.Transactional
 import org.unitils.database.util.TransactionMode
 import org.unitils.dbunit.annotation.DataSet
-import spock.lang.Specification
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject

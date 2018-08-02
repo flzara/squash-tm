@@ -18,11 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.security;
-
-import static org.junit.Assert.*
-
-import javax.inject.Inject
+package org.squashtest.tm.service.security
 
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.ContextHierarchy
@@ -30,8 +26,9 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.it.config.EnabledAclSpecConfig
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @UnitilsSupport
 @Transactional

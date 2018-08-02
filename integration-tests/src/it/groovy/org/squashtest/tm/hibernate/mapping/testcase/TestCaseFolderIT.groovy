@@ -20,11 +20,8 @@
  */
 package org.squashtest.tm.hibernate.mapping.testcase
 
-import org.springframework.test.annotation.Rollback
-import org.springframework.transaction.annotation.Transactional
-import org.squashtest.it.basespecs.DbunitMappingSpecification;
+import org.squashtest.it.basespecs.DbunitMappingSpecification
 import org.squashtest.tm.domain.testcase.TestCaseFolder
-
 
 class TestCaseFolderIT extends DbunitMappingSpecification {
 	def "should persist and retrieve a folder"() {

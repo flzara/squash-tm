@@ -18,17 +18,17 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository.hibernate;
+package org.squashtest.tm.service.internal.repository.hibernate
 
-import javax.inject.Inject;
+import org.squashtest.it.basespecs.DbunitDaoSpecification
+import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao
+import org.unitils.dbunit.annotation.DataSet
+import spock.unitils.UnitilsSupport
 
-import static org.squashtest.tm.domain.execution.ExecutionStatus.*
+import javax.inject.Inject
 
-import org.squashtest.it.basespecs.DbunitDaoSpecification;
-import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
-import org.unitils.dbunit.annotation.DataSet;
-
-import spock.unitils.UnitilsSupport;
+import static org.squashtest.tm.domain.execution.ExecutionStatus.FAILURE
+import static org.squashtest.tm.domain.execution.ExecutionStatus.RUNNING;
 
 
 @UnitilsSupport

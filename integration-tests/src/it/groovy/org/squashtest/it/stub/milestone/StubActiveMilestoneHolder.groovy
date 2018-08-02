@@ -18,18 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.it.stub.milestone;
+package org.squashtest.it.stub.milestone
 
+import org.squashtest.tm.domain.milestone.Milestone
+import org.squashtest.tm.service.internal.dto.json.JsonMilestone
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
 
 import javax.persistence.EntityManager
-import javax.persistence.PersistenceContext;
-
-import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
-import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
-import java.util.Optional
-
-
+import javax.persistence.PersistenceContext
 
 public class StubActiveMilestoneHolder implements ActiveMilestoneHolder {
 

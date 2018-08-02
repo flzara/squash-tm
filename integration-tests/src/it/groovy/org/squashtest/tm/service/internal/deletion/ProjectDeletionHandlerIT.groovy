@@ -18,21 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.deletion;
-
-import javax.inject.Inject
+package org.squashtest.tm.service.internal.deletion
 
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.campaign.CampaignLibrary
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.requirement.RequirementLibrary
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
-import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.service.internal.repository.ProjectDao
 import org.squashtest.tm.service.security.ObjectIdentityService
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @UnitilsSupport
 @Transactional

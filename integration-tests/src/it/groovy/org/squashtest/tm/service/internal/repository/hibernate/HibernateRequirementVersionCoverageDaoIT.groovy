@@ -20,27 +20,20 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
-import java.util.List;
-
-import javax.inject.Inject
-
-import org.springframework.transaction.annotation.Transactional
-import org.hibernate.Query
-import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
+import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.core.foundation.collection.SortOrder
-import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
-import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.RequirementVersionCoverage
 import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao
 import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.tm.tools.unittest.assertions.ListAssertions
-import org.squashtest.it.basespecs.DbunitDaoSpecification;
 import org.unitils.dbunit.annotation.DataSet
-import static org.squashtest.tm.core.foundation.collection.SortOrder.*;
-import spock.lang.Unroll;
+import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
+
+import static org.squashtest.tm.core.foundation.collection.SortOrder.ASCENDING
 
 @UnitilsSupport
 class HibernateRequirementVersionCoverageDaoIT extends DbunitDaoSpecification {

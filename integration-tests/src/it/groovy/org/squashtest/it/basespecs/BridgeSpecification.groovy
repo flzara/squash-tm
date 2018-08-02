@@ -20,20 +20,15 @@
  */
 package org.squashtest.it.basespecs
 
-import javax.persistence.EntityManager
-
 import org.apache.lucene.document.Document
 import org.apache.lucene.document.Field
-import org.apache.lucene.document.Field.Index
-import org.apache.lucene.document.Field.Store
-import org.apache.lucene.document.Field.TermVector
 import org.hibernate.Session
 import org.hibernate.search.bridge.LuceneOptions
 
 /**
  * Superclass for a hibernate search bridge specification.
- * 
- * 
+ *
+ *
  * @author Gregory Fouquet
  *
  */
@@ -44,13 +39,13 @@ abstract class BridgeSpecification extends DbunitDaoSpecification {
 
 	Session getSession() {
 		em.unwrap(Session.class)
-	}	
-	
+	}
+
 	def setup() {
 		lucene.getStore() >> Field.Store.YES
 		lucene.getIndex() >> Field.Index.ANALYZED
 		lucene.getTermVector() >> Field.TermVector.NO
 
 	}
-	
+
 }

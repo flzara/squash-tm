@@ -20,21 +20,21 @@
  */
 package org.squashtest.tm.service.internal.chart
 
-import javax.inject.Inject
-
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.CustomFieldBinding
 import org.squashtest.tm.event.ChangeCustomFieldCodeEvent
 import org.squashtest.tm.event.CreateCustomFieldBindingEvent
 import org.squashtest.tm.event.DeleteCustomFieldBindingEvent
-import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.lang.Ignore
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
+
 @UnitilsSupport
 @Transactional
 @Ignore(value="The column prototype modification was implemented in 1.13 then desactivated because CUF in chart won't be part of 1.13. If the cuf part of 1.14 remove this annotation")

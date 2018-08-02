@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.milestone
 
-import javax.inject.Inject
-
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.ContextHierarchy
 import org.springframework.transaction.annotation.Transactional
@@ -29,21 +27,22 @@ import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.it.stub.security.UserContextHelper
 import org.squashtest.tm.domain.milestone.Milestone
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @UnitilsSupport
 @Transactional
 @ContextHierarchy(
 	// using an alternate stubbing for the permission evaluation
-	@ContextConfiguration(name="permissioncontext", classes = [MilestoneTestingPermissionSpecConfig], inheritLocations=false)	
+	@ContextConfiguration(name="permissioncontext", classes = [MilestoneTestingPermissionSpecConfig], inheritLocations=false)
 
 )
 class MilestoneManagerAsProjectLeaderServiceIT extends DbunitServiceSpecification {
 	@Inject
 	MilestoneManagerService manager
-	
+
 	def setup(){
 		UserContextHelper.setUsername("chef")
 	}
@@ -130,7 +129,7 @@ class MilestoneManagerAsProjectLeaderServiceIT extends DbunitServiceSpecificatio
 		   -6    |     -9    |       false     |   false ||      [-1, -2, -3, -4]       |  [-3, -4, -5, -6]           |	  [-1, -3, -5, -7]               |     [-5, -6, -8, -9, -11]
 		   -8    |     -7    |       false     |   false ||      [-1, -2, -3, -4]       |  [-3, -4, -5, -6]           |	  [-1, -3, -5, -7]               |     [-5, -6, -7, -8, -9, -11]
 		   -8    |     -9    |       false     |   false ||      [-1, -2, -3, -4]       |  [-3, -4, -5, -6]           |	  [-1, -3, -5, -7]               |     [-5, -6, -8, -9, -11]
-			
+
 
 			-1    |     -7    |       true      |   false ||      [-1, -2, -3, -4]       |  [-1, -2, -3, -4, -5, -6]     |    [-1, -3, -5, -7]             |     [-1, -3, -5, -6, -7, -8, -9, -11]
 			-1    |     -9    |       true      |   false ||      [-1, -2, -3, -4]       |  [-3, -4, -5, -6]           |    [-1, -3, -5, -7]               |     [-5, -6, -8, -9, -11]
@@ -144,7 +143,7 @@ class MilestoneManagerAsProjectLeaderServiceIT extends DbunitServiceSpecificatio
 			-6    |     -9    |       false     |   true  ||      [-1, -2, -3, -4] |  [-3, -4, -5, -6]     |    [-1, -3, -5, -6, -7, -8]        |     [-5, -6, -8, -9, -11]
 			-8    |     -7    |       false     |   true  ||      [-1, -2, -3, -4] |  [-3, -4, -5, -6]     |    [-1, -3, -5, -6, -7]            |     [-5, -6, -7, -8, -9, -11]
 			-8    |     -9    |       false     |   true  ||      [-1, -2, -3, -4] |  [-3, -4, -5, -6]     |    [-1, -3, -5, -6, -7]            |     [-5, -6, -8, -9, -11]
-	
+
 	}
 
 
@@ -184,8 +183,8 @@ class MilestoneManagerAsProjectLeaderServiceIT extends DbunitServiceSpecificatio
 			-6    |     -5    | true    ||  _
 			-6    |     -10   | true    ||  _
 			-6    |     -11   | true    ||  _
-		
-			
+
+
 
 	}
 
@@ -215,7 +214,7 @@ class MilestoneManagerAsProjectLeaderServiceIT extends DbunitServiceSpecificatio
 			-7L   |      false           |     false        ||   [-3, -4, -5, -6]    |  []                |     []            |     []
 			-8L   |      false           |     false        ||   [-1, -3]            |  []                |     []            |     []
 			-9L   |      false           |     false        ||   [-3, -5]            |  []                |     []            |     []
-	 
+
 			-1L   |       true           |      true        ||   [-1, -3]            |  [-1, -5]          |     [-1, -5]      |     []
 			-2L   |       true           |      true        ||   [-3, -5]            |  [-6, -9]          |     [-6, -9]      |     []
 			-6L   |       true           |      true        ||   [-1, -2, -3, -4]    |  [-1, -3 ,-5 ,-7]  | [-1, -3 ,-5 ,-7]  |     []

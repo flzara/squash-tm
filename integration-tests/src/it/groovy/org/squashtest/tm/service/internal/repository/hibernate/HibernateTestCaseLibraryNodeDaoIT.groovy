@@ -20,18 +20,15 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
-import javax.inject.Inject
-
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
 import org.unitils.dbunit.annotation.DataSet
-import spock.lang.Ignore
-
 import spock.unitils.UnitilsSupport
 
+import javax.inject.Inject
 
 @UnitilsSupport
 @Transactional

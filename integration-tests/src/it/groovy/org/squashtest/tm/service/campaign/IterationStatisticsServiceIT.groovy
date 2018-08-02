@@ -20,25 +20,24 @@
  */
 package org.squashtest.tm.service.campaign
 
-import javax.inject.Inject;
-
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
-import spock.unitils.UnitilsSupport;
+import spock.unitils.UnitilsSupport
 
+import javax.inject.Inject
 
 @UnitilsSupport
 @Transactional
 class IterationStatisticsServiceIT extends DbunitServiceSpecification {
 
-	
+
 	@Inject
 	private IterationStatisticsService service
-	
+
 	@DataSet("IterationStatisticsServiceIT.xml")
 	def "should gather iteration statistics" (){
-		
+
 		given :
 		def iterationId = -1L
 		def nameAndRef = (1..5).collect{"ts " + it}
@@ -47,9 +46,9 @@ class IterationStatisticsServiceIT extends DbunitServiceSpecification {
 		def result = service.gatherTestSuiteTestInventoryStatistics(iterationId)
 		then :
 	    result.testsuiteName == nameAndRef
-		
+
 	}
-	
-	
-	
+
+
+
 }

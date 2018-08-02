@@ -20,9 +20,6 @@
  */
 package org.squashtest.it.utils
 
-import java.lang.reflect.Array
-import java.util.List;
-
 class CollectionComparisonUtils {
 
 	/**
@@ -30,21 +27,21 @@ class CollectionComparisonUtils {
 	 * 	<ul>
 	 * 		<li>[1, 2, 3, 4, 5] matchesPartialOrder [ 1, [3, 2, 4], 5 ]</li>
 	 * 		<li>[1, 2, 4, 3, 5] matchesPartialOrder [ [4, 1, 2], 3, [ 5 ] ]</li>
-	 * 		<li>[1, 2, 3, 4, 5] matchesPartialOrder [[5, 4, 3, 2, 1]]</li> 
+	 * 		<li>[1, 2, 3, 4, 5] matchesPartialOrder [[5, 4, 3, 2, 1]]</li>
 	 * 	<ul>
-	 * 
+	 *
 	 * @param List toTest  : a flattened list of items partially ordered, that we want to see if they match our pattern
-	 * @param List&lt;Collection&gt; pattern : a ordered list of collection of non ordered items. 
+	 * @param List&lt;Collection&gt; pattern : a ordered list of collection of non ordered items.
 	 * @return
 	 */
 	static def matchesPartialOrder = { toTest, pattern ->
 		long processedSize = 0;
-		
+
 		for (int i=0;i<pattern.size();i++){
-			
+
 			def congruentItems;
 			def congruentSize;
-			
+
 			def item = pattern[i];
 			if (item instanceof Collection){
 				congruentItems = item
@@ -52,18 +49,18 @@ class CollectionComparisonUtils {
 			else{
 				congruentItems = [item] as List
 			}
-			
+
 			congruentSize = congruentItems.size()
-			
+
 			// select the next items to be compared to the congruent items defined in the pattern
 			def _subtest = toTest[processedSize ..< processedSize+congruentSize]
-			
+
 			if (_subtest as Set != congruentItems as Set){
 				return false
 			}
 			processedSize += congruentSize
-		}	
-		
+		}
+
 		return true;
 	}
 

@@ -20,25 +20,16 @@
  */
 package org.squashtest.tm.service.campaign
 
-import javax.inject.Inject
-
-import org.hibernate.SessionFactory
-import org.hibernate.Query
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.campaign.TestSuite
-import org.squashtest.tm.domain.execution.Execution
-import org.squashtest.tm.domain.execution.ExecutionStatus
 import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.service.campaign.IterationModificationService
-import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType
-import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue
 import org.unitils.dbunit.annotation.DataSet
-import org.unitils.dbunit.annotation.ExpectedDataSet
-
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @UnitilsSupport
 @Transactional

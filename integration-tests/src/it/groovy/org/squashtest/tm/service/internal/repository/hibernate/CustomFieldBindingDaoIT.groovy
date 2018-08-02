@@ -20,18 +20,15 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
-
-import javax.inject.Inject;
-
 import org.hibernate.Query
-import org.squashtest.it.basespecs.DbunitDaoSpecification;
-import org.squashtest.tm.domain.customfield.CustomFieldBinding;
-import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
-import org.squashtest.tm.service.internal.repository.hibernate.CustomFieldBindingDaoImpl.NewBindingPosition;
-import org.unitils.dbunit.annotation.DataSet;
+import org.squashtest.it.basespecs.DbunitDaoSpecification
+import org.squashtest.tm.domain.customfield.CustomFieldBinding
+import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao
+import org.squashtest.tm.service.internal.repository.hibernate.CustomFieldBindingDaoImpl.NewBindingPosition
+import org.unitils.dbunit.annotation.DataSet
+import spock.unitils.UnitilsSupport
 
-import spock.unitils.UnitilsSupport;
-
+import javax.inject.Inject
 
 @UnitilsSupport
 @DataSet

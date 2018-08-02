@@ -23,7 +23,6 @@ package org.squashtest.tm.service.milestone
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
-import org.squashtest.tm.service.internal.dto.json.JsonMilestone
 import org.squashtest.tm.service.internal.milestone.MilestoneModelServiceImpl
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport

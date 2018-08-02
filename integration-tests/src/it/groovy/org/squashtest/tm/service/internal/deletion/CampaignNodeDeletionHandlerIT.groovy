@@ -22,17 +22,16 @@ package org.squashtest.tm.service.internal.deletion
 
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.attachment.AttachmentList
-import org.squashtest.tm.domain.bugtracker.IssueList;
+import org.squashtest.tm.domain.bugtracker.IssueList
 import org.squashtest.tm.domain.campaign.*
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStatus
-import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler
 import org.unitils.dbunit.annotation.DataSet
-
-import spock.lang.Unroll;
+import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject

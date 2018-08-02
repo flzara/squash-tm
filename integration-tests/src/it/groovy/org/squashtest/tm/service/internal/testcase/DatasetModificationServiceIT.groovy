@@ -18,28 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.testcase;
+package org.squashtest.tm.service.internal.testcase
 
-import javax.inject.Inject
-
-import org.hibernate.SessionFactory;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.it.basespecs.DbunitServiceSpecification;
-import org.squashtest.tm.domain.testcase.Dataset;
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.tm.domain.testcase.Dataset
 import org.squashtest.tm.domain.testcase.DatasetParamValue
 import org.squashtest.tm.domain.testcase.Parameter
 import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.service.internal.repository.ParameterDao;
-import org.squashtest.tm.service.internal.repository.DatasetDao;
-import org.squashtest.tm.service.internal.repository.DatasetParamValueDao;
-import org.squashtest.tm.service.internal.repository.TestCaseDao;
-import org.squashtest.tm.service.testcase.ParameterFinder;
-import org.squashtest.tm.service.testcase.ParameterModificationService;
-import org.squashtest.tm.service.testcase.DatasetModificationService;
-import org.unitils.dbunit.annotation.DataSet;
-import org.unitils.dbunit.annotation.ExpectedDataSet;
+import org.squashtest.tm.service.testcase.DatasetModificationService
+import org.squashtest.tm.service.testcase.ParameterModificationService
+import org.unitils.dbunit.annotation.DataSet
+import spock.unitils.UnitilsSupport
 
-import spock.unitils.UnitilsSupport;
+import javax.inject.Inject
 
 @UnitilsSupport
 @Transactional

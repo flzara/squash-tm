@@ -20,15 +20,12 @@
  */
 package org.squashtest.tm.hibernate.mapping.testcase
 
-
-import javax.validation.ConstraintViolationException;
+import org.squashtest.it.basespecs.DbunitMappingSpecification
 import org.squashtest.tm.domain.infolist.InfoListItem
-import org.hibernate.JDBCException
-import org.hibernate.SessionFactory
-import org.squashtest.tm.tools.unittest.hibernate.HibernateOperationCategory
-import org.squashtest.it.basespecs.DbunitMappingSpecification;
 import org.squashtest.tm.domain.testcase.Dataset
 import org.squashtest.tm.domain.testcase.TestCase
+
+import javax.persistence.PersistenceException
 
 class DatasetMappingIT extends DbunitMappingSpecification {
 
@@ -52,7 +49,8 @@ class DatasetMappingIT extends DbunitMappingSpecification {
 		})
 
 		then:
-		thrown(ConstraintViolationException)
+		def ex = thrown PersistenceException
+		ex.cause instanceof org.hibernate.exception.ConstraintViolationException
 
 		cleanup :
 		deleteFixture tc

@@ -21,7 +21,7 @@
 package org.squashtest.tm.service.internal.repository.hibernate
 
 import org.hibernate.HibernateException
-import org.squashtest.it.basespecs.DbunitDaoSpecification;
+import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering
 import org.squashtest.tm.core.foundation.collection.DefaultColumnFiltering
 import org.squashtest.tm.core.foundation.collection.Filtering
@@ -77,18 +77,18 @@ class HibernateIterationDaoIT extends DbunitDaoSpecification {
 		sorting.getSortings() >> []
 		sorting.getFirstItemIndex() >> 0
 		sorting.getPageSize() >> 500
-		
+
 		and:
 		Filtering filtering = Mock()
 		filtering.isDefined() >> hasFiltering
-		 
+
 		when:
 		def res = iterationDao.findIndexedTestPlan(-1L, sorting, filtering, columnFiltering)
-		
+
 		then:
 		notThrown(HibernateException)
-		
-		where: 
+
+		where:
 		hasFiltering << [true, false]
 	}
 
@@ -101,18 +101,18 @@ class HibernateIterationDaoIT extends DbunitDaoSpecification {
 		sorting.getSortings() >> []
 		sorting.getFirstItemIndex() >> 0
 		sorting.getPageSize() >> 500
-		
+
 		and:
 		Filtering filtering = Mock()
 		filtering.isDefined() >> hasFiltering
-		 
+
 		when:
 		def res = iterationDao.findTestPlan(-1L, sorting, filtering, columnFiltering)
-		
+
 		then:
 		notThrown(HibernateException)
-		
-		where: 
+
+		where:
 		hasFiltering << [true, false]
 	}
 }

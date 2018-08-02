@@ -18,23 +18,18 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository.hibernate;
+package org.squashtest.tm.service.internal.repository.hibernate
 
-import javax.inject.Inject;
+import org.squashtest.it.basespecs.DbunitDaoSpecification
+import org.squashtest.tm.domain.testautomation.AutomatedTest
+import org.squashtest.tm.domain.testautomation.TestAutomationProject
+import org.squashtest.tm.domain.testautomation.TestAutomationServer
+import org.squashtest.tm.service.internal.repository.AutomatedTestDao
+import org.unitils.dbunit.annotation.DataSet
+import spock.lang.Unroll
+import spock.unitils.UnitilsSupport
 
-import static org.squashtest.tm.domain.execution.ExecutionStatus.*
-
-import org.squashtest.it.basespecs.DbunitDaoSpecification;
-import org.squashtest.tm.domain.testautomation.AutomatedTest;
-import org.squashtest.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
-import org.squashtest.tm.service.internal.repository.AutomatedTestDao;
-import org.unitils.dbunit.annotation.DataSet;
-
-import spock.lang.Unroll;
-import spock.unitils.UnitilsSupport;
-
+import javax.inject.Inject
 
 @UnitilsSupport
 @DataSet("HibernateAutomatedTestDaoIT.sandbox.xml")

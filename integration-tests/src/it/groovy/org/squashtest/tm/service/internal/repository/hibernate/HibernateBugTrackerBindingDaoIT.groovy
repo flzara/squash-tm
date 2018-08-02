@@ -20,17 +20,16 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
-import javax.inject.Inject
-
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.it.basespecs.DbunitDaoSpecification;
+import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding
-import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.service.internal.repository.BugTrackerBindingDao
 import org.squashtest.tm.service.internal.repository.ProjectDao
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @UnitilsSupport
 @Transactional
@@ -42,7 +41,7 @@ class HibernateBugTrackerBindingDaoIT extends DbunitDaoSpecification {
 
 	@DataSet("HibernateBugTrackerBindingDaoIT.should delete bugtrackerBinding.xml")
 	def "should delete bugtrackerProject but not Project" () {
-		
+
 		when:
 		BugTrackerBinding binding = findEntity(BugTrackerBinding, -1L)
 		// Note : without the "useless" cast, delete(ID id) is called instead of delete(ENTITY entity)
@@ -52,5 +51,5 @@ class HibernateBugTrackerBindingDaoIT extends DbunitDaoSpecification {
 		!found(BugTrackerBinding.class, -1L);
 		found(Project.class, -1L);
 	}
-	
+
 }

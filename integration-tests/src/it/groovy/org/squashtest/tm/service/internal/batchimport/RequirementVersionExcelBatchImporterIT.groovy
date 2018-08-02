@@ -20,18 +20,12 @@
  */
 package org.squashtest.tm.service.internal.batchimport
 
-import javax.inject.Inject
-
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.it.stub.security.UserContextHelper
-import org.squashtest.tm.domain.requirement.Requirement
-import org.squashtest.tm.domain.requirement.RequirementCriticality
-import org.squashtest.tm.domain.requirement.RequirementStatus
-import org.squashtest.tm.domain.requirement.RequirementVersion
-import org.squashtest.tm.domain.requirement.RequirementVersionLink
+import org.squashtest.tm.domain.requirement.*
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
 import org.squashtest.tm.service.importer.EntityType
 import org.squashtest.tm.service.importer.ImportLog
@@ -40,8 +34,9 @@ import org.squashtest.tm.service.internal.repository.RequirementVersionLinkDao
 import org.squashtest.tm.service.internal.repository.RequirementVersionLinkTypeDao
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @UnitilsSupport
 @Transactional
@@ -59,7 +54,7 @@ class RequirementVersionExcelBatchImporterIT extends DbunitServiceSpecification{
 	private RequirementVersionLinkDao reqlinkDao
 	@Inject
 	private RequirementVersionLinkTypeDao reqlinkTypeDao
-	
+
 	def setup(){
 		UserContextHelper.setUsername("chef")
 	}
@@ -874,9 +869,9 @@ class RequirementVersionExcelBatchImporterIT extends DbunitServiceSpecification{
 		milestones*.label==["My milestone 3"]
 
 	}
-	
+
 	// ********************** requirement links ***************************
-	
+
 	private void fixRequirements(){
 		// setup : must fix the reciprocal references from requirement to requirement version
 		// (it had to be stripped from the dataset because it wouldn't be inserted otherwise)
@@ -890,108 +885,108 @@ class RequirementVersionExcelBatchImporterIT extends DbunitServiceSpecification{
 		]
 		.each { k,v -> executeSQL("update REQUIREMENT set current_version_id = $v where rln_id = $k") }
 	}
-	
+
 	private boolean assertLinkCorrect(RequirementVersionLink link, boolean direction, String expectedRole){
-		
+
 		if (link == null) return false
-		
+
 		String roleAttribute = (direction) ? "role2Code" : "role1Code"
 		String actualRole = link.linkType."$roleAttribute"
-		
-		return (link.linkDirection == direction ) && 
+
+		return (link.linkDirection == direction ) &&
 				(expectedRole.equals(actualRole))
 	}
-	
+
 	@DataSet("batchimport.reqlinks.sandbox.xml")
 	def "should create a link successfully"(){
-		
+
 		setup :
-			fixRequirements()		
-		
+			fixRequirements()
+
 		when :
 			ImportLog summary = importFile("import/requirements/reqlink-create-ok.xls")
 			summary.recompute();
-			
+
 			RequirementVersionLink req2ToUnrelated = reqlinkDao.findByReqVersionsIds(-256l, -261l)
 			RequirementVersionLink unrelatedToReq2 = reqlinkDao.findByReqVersionsIds(-261l, -256l)
-			
-		then :		
+
+		then :
 			summary.reqlinksSuccesses == 1
-		
+
 			assertLinkCorrect(req2ToUnrelated, false, "PARENT")
 			assertLinkCorrect(unrelatedToReq2, true, "CHILD")
-					
+
 	}
-	
+
 	@DataSet("batchimport.reqlinks.sandbox.xml")
 	def "should update a link successfully"(){
-		
-		setup : 
+
+		setup :
 			fixRequirements()
-			
+
 		when :
 			ImportLog summary = importFile("import/requirements/reqlink-update-ok.xls")
 			summary.recompute();
-			
+
 			RequirementVersionLink req3ToReq1 = reqlinkDao.findByReqVersionsIds(-259, -255l)
 			RequirementVersionLink req1ToReq3 = reqlinkDao.findByReqVersionsIds(-255l, -259l)
-			
-		then :			
+
+		then :
 			summary.reqlinksSuccesses == 1
-			
+
 			assertLinkCorrect(req3ToReq1, false, "PARENT")
 			assertLinkCorrect(req1ToReq3, true, "CHILD")
-			
+
 	}
-	
+
 	@DataSet("batchimport.reqlinks.sandbox.xml")
 	def "should delete a link successfully"(){
-		
+
 		setup :
 			fixRequirements()
-			
+
 		when :
 			ImportLog summary = importFile("import/requirements/reqlink-delete-ok.xls")
 			summary.recompute();
-			
+
 			RequirementVersionLink req3_v1ToReq1 = reqlinkDao.findByReqVersionsIds(-257, -255l)
 			RequirementVersionLink req1ToReq3_v1 = reqlinkDao.findByReqVersionsIds(-255l, -257l)
-			
+
 		then :
 			summary.reqlinksSuccesses == 1
-			
+
 			req3_v1ToReq1 == null
 			req1ToReq3_v1 == null
-			
+
 	}
-	
-	
+
+
 	@DataSet("batchimport.reqlinks.sandbox.xml")
 	def "link import have failures and 1 warning"(){
-		
+
 		setup :
 			fixRequirements()
-		
+
 		and :
 			def defaultLink = reqlinkTypeDao.defaultRequirementVersionLinkType
-			
+
 		when :
 			ImportLog summary = importFile("import/requirements/reqlink-error-warning.xls")
 			summary.recompute();
-			
+
 			// this link is the one with warnings
 			// impact is that role moved from PARENT-CHILD to RELATED-RELATED (default)
 			RequirementVersionLink req3ToRelated3 = reqlinkDao.findByReqVersionsIds(-259, -260l)
 			RequirementVersionLink related3ToReq3 = reqlinkDao.findByReqVersionsIds(-260l, -259l)
-			
-			
+
+
 		then :
 			summary.reqlinksWarnings == 1
 			summary.reqlinksFailures == 3
-			
+
 			assertLinkCorrect(req3ToRelated3, false, defaultLink.role1Code)
 			assertLinkCorrect(related3ToReq3, true, defaultLink.role2Code)
-			
+
 	}
-	
+
 }

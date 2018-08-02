@@ -20,30 +20,15 @@
  */
 package org.squashtest.it.config
 
-import org.jooq.SQLDialect
-import org.jooq.impl.DataSourceConnectionProvider
-import org.jooq.impl.DefaultConfiguration
-import org.jooq.impl.DefaultDSLContext
-import org.jooq.impl.DefaultExecuteListenerProvider
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration
-import org.springframework.boot.autoconfigure.jooq.JooqExceptionTranslator
-import org.springframework.boot.autoconfigure.jooq.SpringTransactionProvider
 import org.springframework.context.MessageSource
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.PropertySource
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured
-import org.springframework.core.env.Environment
-import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy
-import org.springframework.transaction.PlatformTransactionManager
 import org.squashtest.it.stub.messages.MessageSourceStub
-
-import javax.inject.Inject
-import javax.sql.DataSource
 
 /**
  * Class responsible for creating Jooq Related Beans. As in IT Spring boot Autoconfigure are deactivated, we need to add beans manually

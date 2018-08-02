@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.administration;
 
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 
 public class ClientModel {
 

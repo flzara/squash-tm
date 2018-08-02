@@ -21,13 +21,11 @@
 package org.squashtest.tm.service.internal.repository.hibernate
 
 import org.springframework.data.domain.Sort
-import org.squashtest.it.basespecs.DbunitDaoSpecification;
+import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.domain.project.GenericProject
-import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.project.ProjectTemplate
 import org.squashtest.tm.service.internal.repository.GenericProjectDao
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 

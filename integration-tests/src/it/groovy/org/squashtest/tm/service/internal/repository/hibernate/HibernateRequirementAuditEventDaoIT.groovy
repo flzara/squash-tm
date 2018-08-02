@@ -24,7 +24,7 @@ import org.spockframework.util.NotThreadSafe
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.it.basespecs.DbunitDaoSpecification;
+import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.domain.event.RequirementAuditEvent
 import org.squashtest.tm.domain.event.RequirementCreation
 import org.squashtest.tm.domain.event.RequirementLargePropertyChange

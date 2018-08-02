@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.domain.customfield;
 
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 import org.springframework.util.DigestUtils;
 import org.squashtest.tm.domain.Sizes;
 

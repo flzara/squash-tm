@@ -489,7 +489,7 @@ public class ChartDataFinder {
 		// if there are two (trend or cumulative chart) it's the second one
 		List<AxisColumn> axis = definition.getAxis();
 		Long colorCufId = axis.get(axis.size() - 1).getCufId();
-		SingleSelectField cuf = (SingleSelectField) customFieldDao.findById(colorCufId);
+		SingleSelectField cuf = (SingleSelectField) customFieldDao.getOne(colorCufId);
 
 		List<String> colours = new ArrayList<>();
 		for (Object[] abs : abscissa) {

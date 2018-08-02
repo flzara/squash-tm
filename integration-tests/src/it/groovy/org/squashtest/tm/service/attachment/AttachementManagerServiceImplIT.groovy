@@ -20,24 +20,20 @@
  */
 package org.squashtest.tm.service.attachment
 
-import javax.inject.Inject
-
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
 import org.springframework.core.io.ClassPathResource
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.attachment.Attachment
-import org.squashtest.tm.domain.project.GenericProject
-import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.service.project.GenericProjectManagerService
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
 import org.squashtest.tm.service.testcase.TestCaseModificationService
-import org.unitils.dbunit.annotation.DataSet;
-
+import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @UnitilsSupport
 @Transactional
@@ -51,7 +47,7 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 	@Inject AttachmentManagerService attachService;
 
 	@Inject GenericProjectManagerService genericProjectManager
-	
+
 	// IDs : see dataset
 	int folderId = -1;
 	int testCaseId=-2;

@@ -21,7 +21,7 @@
 package org.squashtest.tm.domain.infolist;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 import org.squashtest.tm.domain.Identified;
 
 import javax.persistence.*;

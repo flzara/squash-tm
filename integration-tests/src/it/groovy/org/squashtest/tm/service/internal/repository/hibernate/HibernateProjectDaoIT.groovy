@@ -20,11 +20,10 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
-import org.squashtest.it.basespecs.DbunitDaoSpecification;
+import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.service.internal.repository.ProjectDao
 import org.unitils.dbunit.annotation.DataSet
-import spock.lang.IgnoreRest
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject

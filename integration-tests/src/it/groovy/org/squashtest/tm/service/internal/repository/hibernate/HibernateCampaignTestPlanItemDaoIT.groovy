@@ -20,36 +20,30 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
-import javax.inject.Inject
-
-import org.hibernate.Query
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.it.basespecs.DbunitDaoSpecification;
-import org.squashtest.tm.core.foundation.collection.Paging
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem
-import org.squashtest.tm.domain.campaign.TestPlanStatistics
-import org.squashtest.tm.domain.campaign.TestPlanStatus
+import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.service.internal.repository.CampaignTestPlanItemDao
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @UnitilsSupport
 @Transactional
 class HibernateCampaignTestPlanItemDaoIT extends DbunitDaoSpecification {
 	@Inject CampaignTestPlanItemDao campaignTestPlanItemDao
-	
+
 	@DataSet("HibernateCampaignTestPlanItemDaoIT.should find test case ids.xml")
 	def "should find test cases ids"(){
 		given :
 		def campaignId = -1L
-		
-		when : 
+
+		when :
 		def result = campaignTestPlanItemDao.findPlannedTestCasesIdsByCampaignId(campaignId)
-		
-		then : 
+
+		then :
 		result.size() == 2;
 		result.containsAll([-1L, -2L]);
 	}
-	
+
 }

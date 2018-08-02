@@ -20,8 +20,7 @@
  */
 package org.squashtest.tm.hibernate.mapping.customfield
 
-import org.squashtest.tm.tools.unittest.hibernate.HibernateOperationCategory
-import org.squashtest.it.basespecs.DbunitMappingSpecification;
+import org.squashtest.it.basespecs.DbunitMappingSpecification
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.CustomFieldOption
 import org.squashtest.tm.domain.customfield.InputType

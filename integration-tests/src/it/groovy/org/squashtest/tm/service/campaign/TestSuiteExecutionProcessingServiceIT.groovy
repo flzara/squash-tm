@@ -20,24 +20,19 @@
  */
 package org.squashtest.tm.service.campaign
 
-import javax.inject.Inject
-
 import org.spockframework.util.NotThreadSafe
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.domain.campaign.TestSuite;
-import org.squashtest.tm.domain.execution.Execution
-import org.squashtest.tm.exception.execution.EmptyTestSuiteTestPlanException;
-import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException
-import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.it.basespecs.DbunitServiceSpecification
-import org.squashtest.it.stub.security.StubAuthentication;
 import org.squashtest.it.stub.security.StubPermissionEvaluationService
-import org.squashtest.it.stub.security.UserContextHelper;
+import org.squashtest.it.stub.security.UserContextHelper
+import org.squashtest.tm.domain.campaign.TestSuite
+import org.squashtest.tm.domain.execution.Execution
+import org.squashtest.tm.exception.execution.EmptyTestSuiteTestPlanException
+import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @NotThreadSafe
 @UnitilsSupport
@@ -49,7 +44,7 @@ class TestSuiteExecutionProcessingServiceIT extends DbunitServiceSpecification {
 
 	@Inject
 	private StubPermissionEvaluationService stubPermissionEvaluationService
-	
+
 	def setup(){
 		UserContextHelper.setUsername("Joe")
 	}

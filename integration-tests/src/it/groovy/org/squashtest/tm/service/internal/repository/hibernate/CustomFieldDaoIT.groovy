@@ -20,20 +20,15 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
-import org.squashtest.it.basespecs.DbunitDaoSpecification;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting
-import org.squashtest.tm.core.foundation.collection.SortOrder
-import org.squashtest.tm.core.foundation.collection.SpringPaginationUtils;
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
+import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.domain.customfield.CustomField
-import org.squashtest.tm.domain.customfield.CustomFieldBinding
 import org.squashtest.tm.domain.customfield.InputType
 import org.squashtest.tm.service.internal.repository.CustomFieldDao
 import org.unitils.dbunit.annotation.DataSet
-import spock.lang.Ignore
 import spock.unitils.UnitilsSupport
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Sort
 
 import javax.inject.Inject
 
@@ -71,7 +66,7 @@ class CustomFieldDaoIT extends DbunitDaoSpecification {
 	def "should delete custom field" () {
 		given:
 		CustomField cuf =  em.find(CustomField, -1L)
-                
+
 		when:
 		customFieldDao.delete(cuf)
 		then:

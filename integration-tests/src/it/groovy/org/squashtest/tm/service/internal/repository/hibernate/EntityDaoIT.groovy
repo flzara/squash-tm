@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
-import org.squashtest.it.basespecs.DbunitDaoSpecification;
+import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.service.internal.repository.EntityDao
 import org.unitils.dbunit.annotation.DataSet

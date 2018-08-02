@@ -20,19 +20,17 @@
  */
 package org.squashtest.tm.service.security.acls.jdbc
 
-import javax.inject.Inject;
-
-import org.spockframework.util.NotThreadSafe;
-import org.springframework.security.acls.domain.ObjectIdentityImpl;
-import org.springframework.security.acls.model.ObjectIdentity;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.it.basespecs.DbunitServiceSpecification;
-import org.unitils.dbunit.annotation.DataSet;
-import org.squashtest.tm.domain.project.Project;
-
+import org.spockframework.util.NotThreadSafe
+import org.springframework.security.acls.domain.ObjectIdentityImpl
+import org.springframework.security.acls.model.ObjectIdentity
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.tm.domain.project.Project
+import org.unitils.dbunit.annotation.DataSet
 import spock.lang.Unroll
-import spock.unitils.UnitilsSupport;
+import spock.unitils.UnitilsSupport
 
+import javax.inject.Inject
 
 /*
  * The dataset in this test is the following :

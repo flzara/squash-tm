@@ -20,49 +20,24 @@
  */
 package org.squashtest.tm.service.internal.chart.engine
 
-import javax.inject.Inject;
-
-import org.hibernate.Query;
-import org.hibernate.type.LongType;
-import org.spockframework.util.NotThreadSafe;
+import com.querydsl.jpa.hibernate.HibernateQuery
+import org.hibernate.Query
+import org.hibernate.type.LongType
+import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.it.basespecs.DbunitDaoSpecification;
-import org.squashtest.tm.domain.bugtracker.QIssue;
-import org.squashtest.tm.domain.campaign.QCampaign;
-import org.squashtest.tm.domain.campaign.QIteration;
-import org.squashtest.tm.domain.campaign.QIterationTestPlanItem;
-import org.squashtest.tm.domain.execution.QExecution;
-import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.jpql.ExtOps;
-import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
-import org.squashtest.tm.domain.requirement.QRequirement;
-import org.squashtest.tm.domain.requirement.QRequirementVersion;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage;
-import org.squashtest.tm.domain.testcase.QTestCase;
-import org.squashtest.tm.domain.testcase.QTestStep;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestStep;
-import org.squashtest.it.basespecs.DbunitServiceSpecification
-import org.unitils.dbunit.annotation.DataSet;
-import org.squashtest.tm.domain.testautomation.QAutomatedTest;
-
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.Ops;
-import com.querydsl.core.types.Ops.AggOps;
-import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.QBean;
-import com.querydsl.core.types.Ops.MathOps;
-import com.querydsl.core.types.dsl.EntityPathBase;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.PathBuilder;
-import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.JPASubQuery;
-import com.querydsl.jpa.hibernate.HibernateQuery;
-
-import spock.unitils.UnitilsSupport;
-
+import org.squashtest.it.basespecs.DbunitDaoSpecification
+import org.squashtest.tm.domain.bugtracker.QIssue
+import org.squashtest.tm.domain.campaign.QCampaign
+import org.squashtest.tm.domain.campaign.QIteration
+import org.squashtest.tm.domain.campaign.QIterationTestPlanItem
+import org.squashtest.tm.domain.execution.QExecution
+import org.squashtest.tm.domain.requirement.QRequirement
+import org.squashtest.tm.domain.requirement.QRequirementVersion
+import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage
+import org.squashtest.tm.domain.testcase.QTestCase
+import org.squashtest.tm.domain.testcase.QTestStep
+import org.unitils.dbunit.annotation.DataSet
+import spock.unitils.UnitilsSupport
 
 @NotThreadSafe
 @UnitilsSupport

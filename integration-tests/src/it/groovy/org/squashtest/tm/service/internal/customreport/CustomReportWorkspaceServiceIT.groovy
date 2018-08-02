@@ -20,16 +20,13 @@
  */
 package org.squashtest.tm.service.internal.customreport
 
-import javax.inject.Inject
-
-import org.hibernate.SessionFactory
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.service.customreport.CustomReportWorkspaceService;
-import org.squashtest.tm.service.internal.repository.CustomReportLibraryDao;
 import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.tm.service.customreport.CustomReportWorkspaceService
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @UnitilsSupport
 @Transactional
@@ -38,7 +35,7 @@ class CustomReportWorkspaceServiceIT extends DbunitServiceSpecification {
 
 	@Inject
 	CustomReportWorkspaceService service;
-	
+
 	def "should find all crl"() {
 		when:
 		def res = service.findAllLibraries();
@@ -47,7 +44,7 @@ class CustomReportWorkspaceServiceIT extends DbunitServiceSpecification {
 		res != null;
 		res.size()==2;
 	}
-	
+
 	def "should find all root nodes"() {
 		when:
 		def res = service.findRootNodes();

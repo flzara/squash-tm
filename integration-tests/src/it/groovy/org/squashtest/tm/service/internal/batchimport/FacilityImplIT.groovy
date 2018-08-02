@@ -20,32 +20,27 @@
  */
 package org.squashtest.tm.service.internal.batchimport
 
-import static org.squashtest.tm.service.importer.ImportStatus.*
-import static org.squashtest.tm.service.internal.batchimport.Messages.*
-
-import javax.inject.Inject
-import javax.inject.Provider
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.hibernate.SessionFactory
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.domain.infolist.ListItemReference
-import org.squashtest.tm.domain.testcase.ActionTestStep
-import org.squashtest.tm.domain.testcase.CallTestStep
-import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.domain.testcase.TestCaseImportance
-import org.squashtest.tm.domain.testcase.TestCaseStatus
 import org.squashtest.it.basespecs.DbunitServiceSpecification
-import org.squashtest.it.stub.security.UserContextHelper;
+import org.squashtest.it.stub.security.UserContextHelper
+import org.squashtest.tm.domain.infolist.ListItemReference
+import org.squashtest.tm.domain.testcase.*
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
+import javax.inject.Provider
+import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext
+
+import static org.squashtest.tm.service.importer.ImportStatus.FAILURE
+import static org.squashtest.tm.service.importer.ImportStatus.WARNING
+import static org.squashtest.tm.service.internal.batchimport.Messages.*
 
 /**
  <b> To walk you through that dataset :</b><br/><br/>
@@ -105,7 +100,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 	@Inject
 	private CustomFieldValueFinderService cufFinder
 
-	@PersistenceContext 
+	@PersistenceContext
 	EntityManager em
 
 	@Inject
@@ -124,7 +119,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		impl.validator.milestonesEnabled = true;
 
 		addMixins()
-		
+
 		UserContextHelper.setUsername("Bob")
 	}
 

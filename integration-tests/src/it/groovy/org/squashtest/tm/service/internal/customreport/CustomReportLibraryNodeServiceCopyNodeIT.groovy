@@ -23,20 +23,18 @@ package org.squashtest.tm.service.internal.customreport
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.chart.*
 import org.squashtest.tm.domain.customreport.*
 import org.squashtest.tm.domain.report.ReportDefinition
 import org.squashtest.tm.domain.tree.TreeLibraryNode
-import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryDao
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
-import org.springframework.orm.jpa.JpaTransactionManager
 
 import javax.inject.Inject
-
 
 @UnitilsSupport
 @DataSet("CustomReportLibraryNodeServiceIT.sandboxCopyNode.xml")

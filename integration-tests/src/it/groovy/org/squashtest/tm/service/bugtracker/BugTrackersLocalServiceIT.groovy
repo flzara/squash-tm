@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException
 import org.squashtest.csp.core.bugtracker.domain.*
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.SortOrder
@@ -34,7 +35,6 @@ import org.squashtest.tm.domain.bugtracker.IssueOwnership
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStep
 import org.squashtest.tm.domain.servers.AuthenticationStatus
-import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
 import spock.lang.Ignore
 import spock.unitils.UnitilsSupport

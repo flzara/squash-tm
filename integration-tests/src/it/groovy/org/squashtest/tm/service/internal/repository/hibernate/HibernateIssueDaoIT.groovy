@@ -21,10 +21,10 @@
 package org.squashtest.tm.service.internal.repository.hibernate
 
 import org.springframework.data.domain.Pageable
-import org.squashtest.it.basespecs.DbunitDaoSpecification;
+import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.core.foundation.collection.SortOrder
-import org.squashtest.tm.core.foundation.collection.SpringPaginationUtils;
+import org.squashtest.tm.core.foundation.collection.SpringPaginationUtils
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.CampaignFolder
 import org.squashtest.tm.domain.campaign.Iteration
@@ -112,7 +112,7 @@ class HibernateIssueDaoIT
 			SortOrder getSortOrder() {
 				(props.sortOrder ?: SortOrder.ASCENDING)
 			}
-			
+
 			Pageable toPageable(){
 				return SpringPaginationUtils.toPageable(this);
 			}

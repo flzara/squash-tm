@@ -18,45 +18,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository.hibernate;
+package org.squashtest.tm.service.internal.repository.hibernate
 
-import static org.junit.Assert.*
+import org.squashtest.it.basespecs.DbunitDaoSpecification
+import org.squashtest.tm.domain.testcase.TestCaseLibrary
+import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao
+import org.unitils.dbunit.annotation.DataSet
+import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
-
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.springframework.transaction.annotation.Transactional
-import org.squashtest.it.basespecs.DbunitDaoSpecification;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.domain.testcase.TestCaseFolder
-import org.squashtest.tm.domain.testcase.TestCaseLibrary
-import org.squashtest.tm.service.internal.repository.ProjectDao;
-import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao
-import org.unitils.dbunit.annotation.DataSet;
-
-import spock.lang.Ignore
-import spock.unitils.UnitilsSupport;
 
 @UnitilsSupport
 @DataSet
 class HibernateTestCaseLibraryDaoIT extends DbunitDaoSpecification {
-	
+
 	@Inject TestCaseLibraryDao dao
 
-	
+
 
 	def "should find library by id"() {
-		
-		when : 
+
+		when :
 			TestCaseLibrary tcln = dao.findById(-1l)
-			
+
 		then :
 			tcln != null
 	}
-	
-	
+
+
 
 }

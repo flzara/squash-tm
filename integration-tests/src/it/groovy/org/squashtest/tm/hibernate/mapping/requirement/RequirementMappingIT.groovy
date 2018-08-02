@@ -20,20 +20,14 @@
  */
 package org.squashtest.tm.hibernate.mapping.requirement
 
-
-import javax.validation.ConstraintViolationException;
-
-import org.hibernate.JDBCException
-import org.squashtest.csp.core.bugtracker.domain.BugTracker
-import org.squashtest.it.basespecs.DbunitMappingSpecification;
-import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.it.basespecs.DbunitMappingSpecification
+import org.squashtest.tm.domain.infolist.InfoListItem
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementStatus
-import org.squashtest.tm.domain.requirement.RequirementSyncExtender;
 import org.squashtest.tm.domain.requirement.RequirementVersion
-import org.squashtest.tm.domain.testcase.RequirementVersionCoverage
-import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException
+
+import javax.persistence.PersistenceException
 
 class RequirementMappingIT extends DbunitMappingSpecification {
 
@@ -93,7 +87,8 @@ class RequirementMappingIT extends DbunitMappingSpecification {
 		persistFixture requirement
 
 		then :
-		thrown (ConstraintViolationException)
+		def ex = thrown PersistenceException
+		ex.cause instanceof org.hibernate.exception.ConstraintViolationException
 	}
 
 

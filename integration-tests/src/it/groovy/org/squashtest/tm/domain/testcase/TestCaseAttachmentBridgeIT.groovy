@@ -27,7 +27,7 @@ import org.apache.lucene.document.Field.TermVector
 import org.hibernate.Session
 import org.hibernate.search.bridge.LuceneOptions
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.it.basespecs.DbunitDaoSpecification;
+import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 

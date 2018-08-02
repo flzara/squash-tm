@@ -20,23 +20,12 @@
  */
 package org.squashtest.tm.domain.requirement
 
-import javax.inject.Inject;
-
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field.Index;
-import org.apache.lucene.document.Field.Store;
-import org.apache.lucene.document.Field.TermVector;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.search.bridge.LuceneOptions;
+import org.hibernate.Session
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.it.basespecs.BridgeSpecification;
-import org.squashtest.it.basespecs.DbunitDaoSpecification
-import org.squashtest.tm.domain.testcase.TestCaseAttachmentBridge
-import org.unitils.dbunit.annotation.DataSet;
-
-import spock.lang.Unroll;
-import spock.unitils.UnitilsSupport;
+import org.squashtest.it.basespecs.BridgeSpecification
+import org.unitils.dbunit.annotation.DataSet
+import spock.lang.Unroll
+import spock.unitils.UnitilsSupport
 
 /**
  * @author Gregory Fouquet

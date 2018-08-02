@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.domain.customfield;
 
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 import org.squashtest.tm.exception.WrongStringSizeException;
 import org.squashtest.tm.exception.customfield.CannotDeleteDefaultOptionException;
 import org.squashtest.tm.exception.customfield.CodeAlreadyExistsException;

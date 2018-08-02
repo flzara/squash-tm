@@ -39,7 +39,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.chart.SpecializedEntityType.EntityRole;

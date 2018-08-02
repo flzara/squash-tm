@@ -22,8 +22,7 @@ package org.squashtest.tm.service.internal.repository.hibernate
 
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
-import org.squashtest.it.basespecs.DbunitDaoSpecification;
+import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
@@ -34,6 +33,7 @@ import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.service.internal.repository.TestCaseDeletionDao
+import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
 import org.unitils.dbunit.annotation.DataSet
 import org.unitils.dbunit.datasetloadstrategy.impl.CleanInsertLoadStrategy
 import spock.unitils.UnitilsSupport

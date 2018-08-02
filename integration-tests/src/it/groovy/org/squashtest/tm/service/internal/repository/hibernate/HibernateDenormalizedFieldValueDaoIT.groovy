@@ -18,50 +18,49 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository.hibernate;
-
-import javax.inject.Inject;
+package org.squashtest.tm.service.internal.repository.hibernate
 
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.it.basespecs.DbunitDaoSpecification;
-import org.squashtest.tm.domain.customfield.RenderingLocation;
-import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
-import org.squashtest.tm.service.internal.repository.DenormalizedFieldValueDao;
-import org.unitils.dbunit.annotation.DataSet;
+import org.squashtest.it.basespecs.DbunitDaoSpecification
+import org.squashtest.tm.domain.customfield.RenderingLocation
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType
+import org.squashtest.tm.service.internal.repository.DenormalizedFieldValueDao
+import org.unitils.dbunit.annotation.DataSet
+import spock.unitils.UnitilsSupport
 
-import spock.unitils.UnitilsSupport;
+import javax.inject.Inject
 
 @UnitilsSupport
 @Transactional
 public class HibernateDenormalizedFieldValueDaoIT  extends DbunitDaoSpecification {
 	@Inject
 	DenormalizedFieldValueDao dfvDao
-	
+
 	@DataSet("HibernateDenormalizedFieldValueDaoIT.dfvs.xml")
 	def "should find all dfv for entity"(){
-		given: 
+		given:
 		def entityId = -500L
 		def entityType = DenormalizedFieldHolderType.EXECUTION
-		
-		when : 
+
+		when :
 		def result = dfvDao.findDFVForEntity(entityId, entityType)
-		
-		then : 
+
+		then :
 		result.size() == 2
 		result.get(0).value == "truc0"
 		result.get(1).value == "truc1"
 	}
-	
+
 	@DataSet("HibernateDenormalizedFieldValueDaoIT.dfvs.xml")
 	def "should count all dfv for entity"(){
-		given: 
+		given:
 		def entityId = -500L
 		def entityType = DenormalizedFieldHolderType.EXECUTION
-		
-		when : 
+
+		when :
 		def result = dfvDao.countDenormalizedFields(entityId, entityType)
-		
-		then : 
+
+		then :
 		result == 2
 	}
 
@@ -70,12 +69,12 @@ public class HibernateDenormalizedFieldValueDaoIT  extends DbunitDaoSpecificatio
 		given:
 		def entityId = -6001L
 		def entityType = DenormalizedFieldHolderType.EXECUTION_STEP
-		
+
 		when :
 		def result = dfvDao.findDFVForEntityAndRenderingLocation(entityId, entityType, RenderingLocation.STEP_TABLE)
-		
+
 		then :
 		result.size() == 1
-		result.get(0).value == "truc2" 
+		result.get(0).value == "truc2"
 	}
 }

@@ -20,14 +20,14 @@
  */
 package org.squashtest.test.unitils.dbunit.datasetloadstrategy
 
-import java.sql.SQLException;
+import org.dbunit.DatabaseUnitException
+import org.dbunit.dataset.IDataSet
+import org.dbunit.operation.CompositeOperation
+import org.dbunit.operation.DatabaseOperation
+import org.unitils.dbunit.datasetloadstrategy.impl.BaseDataSetLoadStrategy
+import org.unitils.dbunit.util.DbUnitDatabaseConnection
 
-import org.dbunit.DatabaseUnitException;
-import org.dbunit.dataset.IDataSet;
-import org.dbunit.operation.CompositeOperation;
-import org.dbunit.operation.DatabaseOperation;
-import org.unitils.dbunit.datasetloadstrategy.impl.BaseDataSetLoadStrategy;
-import org.unitils.dbunit.util.DbUnitDatabaseConnection;
+import java.sql.SQLException
 
 class DeleteInsertLoadStrategy extends BaseDataSetLoadStrategy {
 	static final DatabaseOperation DELETE_INSERT = new CompositeOperation(DatabaseOperation.DELETE, DatabaseOperation.INSERT)

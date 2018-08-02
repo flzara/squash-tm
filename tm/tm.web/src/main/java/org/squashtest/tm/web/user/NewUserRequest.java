@@ -20,15 +20,15 @@
  */
 package org.squashtest.tm.web.user;
 
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.squashtest.tm.domain.users.User;
 
 /**
  * Data holder for a request of user creation.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class NewUserRequest {
 	@NotBlank

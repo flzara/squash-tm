@@ -18,20 +18,16 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.project;
+package org.squashtest.tm.service.project
 
-import static org.junit.Assert.*;
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.tm.domain.NamedReference
+import org.squashtest.tm.service.project.ProjectTemplateManagerService
+import org.unitils.dbunit.annotation.DataSet
+import spock.unitils.UnitilsSupport
 
-import javax.inject.Inject;
-
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.NamedReference;
-import org.squashtest.it.basespecs.DbunitServiceSpecification;
-import org.squashtest.tm.service.project.ProjectManagerService;
-import org.squashtest.tm.service.project.ProjectTemplateManagerService;
-import org.unitils.dbunit.annotation.DataSet;
-
-import spock.unitils.UnitilsSupport;
+import javax.inject.Inject
 
 /**
  * @author Gregory Fouquet

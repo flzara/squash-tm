@@ -22,21 +22,16 @@ package org.squashtest.it.basespecs
 
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.transaction.aspectj.AspectJTransactionManagementConfiguration;
+import org.springframework.test.context.TestPropertySource
 import org.squashtest.it.config.DatasourceSpecConfig
 import org.squashtest.it.config.JooqSpecConfig
-import org.squashtest.it.config.RepositorySpecConfig
 import org.squashtest.tm.service.RepositoryConfig
-import org.squashtest.tm.service.internal.campaign.scripted.ScriptedExecutionConfiguration;
-
-import javax.persistence.EntityManager
-import javax.persistence.PersistenceContext;
-
+import org.squashtest.tm.service.internal.campaign.scripted.ScriptedExecutionConfiguration
 import spock.lang.Specification
 
+import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext
 
 @ImportAutoConfiguration(HibernateJpaAutoConfiguration)
 @ContextConfiguration(classes = [DatasourceSpecConfig, RepositoryConfig, JooqSpecConfig, ScriptedExecutionConfiguration])

@@ -20,25 +20,22 @@
  */
 package org.squashtest.tm.service.internal.chart.engine
 
-import org.hibernate.Query;
-import org.hibernate.type.LongType;
-import org.spockframework.util.NotThreadSafe;
+import com.querydsl.core.BooleanBuilder
+import com.querydsl.core.types.dsl.EntityPathBase
+import com.querydsl.core.types.dsl.PathBuilder
+import org.hibernate.Query
+import org.hibernate.type.LongType
+import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.it.basespecs.DbunitDaoSpecification;
-import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
-import org.squashtest.tm.domain.requirement.QRequirementVersion;
+import org.squashtest.it.basespecs.DbunitDaoSpecification
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
+import org.squashtest.tm.domain.requirement.QRequirementVersion
 import org.squashtest.tm.domain.testcase.QTestCase
-import org.unitils.dbunit.annotation.DataSet;
-
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.dsl.EntityPathBase;
-import com.querydsl.core.types.dsl.PathBuilder;
+import org.unitils.dbunit.annotation.DataSet
+import spock.lang.Unroll
+import spock.unitils.UnitilsSupport
 
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.*
-
-import spock.lang.Unroll;
-import spock.unitils.UnitilsSupport;
-
 
 /**
  * This class will test the {@link QueryPlanner}. It role is to create the

@@ -21,23 +21,21 @@
 package org.squashtest.tm.service.internal.repository.hibernate
 
 import com.querydsl.jpa.impl.JPAQueryFactory
-import org.squashtest.tm.domain.attachment.QAttachmentList
-
-import javax.inject.Inject
-import javax.persistence.Query
-
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
-import org.squashtest.tm.tools.unittest.assertions.ListAssertions
 import org.squashtest.it.basespecs.DbunitDaoSpecification
+import org.squashtest.tm.domain.attachment.QAttachmentList
 import org.squashtest.tm.service.internal.repository.AttachmentListDao
 import org.squashtest.tm.service.internal.repository.RequirementDao
 import org.squashtest.tm.service.internal.repository.RequirementDeletionDao
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao
+import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
+import org.squashtest.tm.tools.unittest.assertions.ListAssertions
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
+import javax.persistence.Query
 
 @NotThreadSafe
 @UnitilsSupport

@@ -20,16 +20,14 @@
  */
 package org.squashtest.tm.service.campaign
 
-import org.springframework.transaction.annotation.Transactional
-import javax.inject.Inject
-
 import org.hibernate.HibernateException
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @UnitilsSupport
 @Transactional

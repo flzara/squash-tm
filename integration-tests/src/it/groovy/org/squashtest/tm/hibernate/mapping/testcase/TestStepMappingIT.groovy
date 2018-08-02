@@ -20,14 +20,8 @@
  */
 package org.squashtest.tm.hibernate.mapping.testcase
 
-
-import javax.inject.Inject
-
-import org.hibernate.SessionFactory
-import org.squashtest.tm.tools.unittest.hibernate.HibernateOperationCategory
-import org.squashtest.it.basespecs.DbunitMappingSpecification;
+import org.squashtest.it.basespecs.DbunitMappingSpecification
 import org.squashtest.tm.domain.testcase.ActionTestStep
-import org.squashtest.tm.domain.testcase.TestCase
 
 class TestStepMappingIT extends DbunitMappingSpecification {
 

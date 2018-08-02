@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.project.GenericProjectCopyParameter;
 

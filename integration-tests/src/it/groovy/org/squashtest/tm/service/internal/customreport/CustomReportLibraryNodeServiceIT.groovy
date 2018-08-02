@@ -20,23 +20,18 @@
  */
 package org.squashtest.tm.service.internal.customreport
 
-import javax.inject.Inject
-
-import org.hibernate.SessionFactory
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.domain.chart.ChartDefinition;
-import org.squashtest.tm.domain.tree.TreeEntity
-import org.squashtest.tm.domain.customreport.CustomReportFolder;
-import org.squashtest.tm.domain.customreport.CustomReportLibrary;
-import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
-import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
-import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
-import org.squashtest.tm.service.internal.repository.CustomReportLibraryDao;
-import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao;
 import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.tm.domain.customreport.CustomReportFolder
+import org.squashtest.tm.domain.customreport.CustomReportLibrary
+import org.squashtest.tm.domain.customreport.CustomReportLibraryNode
+import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService
+import org.squashtest.tm.service.internal.repository.CustomReportLibraryDao
+import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @UnitilsSupport
 @Transactional

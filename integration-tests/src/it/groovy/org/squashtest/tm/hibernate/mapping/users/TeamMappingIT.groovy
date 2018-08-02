@@ -20,8 +20,7 @@
  */
 package org.squashtest.tm.hibernate.mapping.users
 
-import org.squashtest.tm.tools.unittest.hibernate.HibernateOperationCategory
-import org.squashtest.it.basespecs.DbunitMappingSpecification;
+import org.squashtest.it.basespecs.DbunitMappingSpecification
 import org.squashtest.tm.domain.users.Team
 
 /**

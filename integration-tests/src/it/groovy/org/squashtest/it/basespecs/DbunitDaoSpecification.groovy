@@ -20,17 +20,12 @@
  */
 package org.squashtest.it.basespecs
 
-import org.hibernate.Query
 import org.hibernate.Session
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.ContextHierarchy;
-import org.springframework.test.context.TestPropertySource
+import org.springframework.test.context.ContextHierarchy
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.it.config.RepositorySpecConfig;
-import org.squashtest.tm.service.RepositoryConfig
-
-import spock.lang.Specification
+import org.squashtest.it.config.RepositorySpecConfig
 
 /**
  * Superclass for a DB-driven DAO test. The test will populate the database using a DBUnit dataset with the same name as the test.

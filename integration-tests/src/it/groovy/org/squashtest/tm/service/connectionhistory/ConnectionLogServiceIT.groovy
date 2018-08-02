@@ -21,20 +21,11 @@
 package org.squashtest.tm.service.connectionhistory
 
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting
-import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.it.basespecs.DbunitServiceSpecification
-import org.squashtest.tm.service.connectionhistory.ConnectionLogService;
-import org.squashtest.tm.domain.users.ConnectionLog;
-import org.unitils.dbunit.annotation.DataSet
-import spock.lang.Unroll
+import org.squashtest.tm.service.connectionhistory.ConnectionLogService
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
-
-import static org.squashtest.tm.core.foundation.collection.SortOrder.ASCENDING
-import static org.squashtest.tm.core.foundation.collection.SortOrder.DESCENDING
 
 /**
  * @author aguilhem

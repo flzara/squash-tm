@@ -20,20 +20,11 @@
  */
 package org.squashtest.tm.hibernate.mapping.requirement
 
-
-import org.hibernate.Hibernate
 import org.hibernate.Session
-import org.hibernate.exception.GenericJDBCException
-
-import javax.validation.ConstraintViolationException
-
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.it.basespecs.DbunitMappingSpecification;
-import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.it.basespecs.DbunitMappingSpecification
 import org.squashtest.tm.domain.requirement.RequirementFolder
-import org.squashtest.tm.domain.requirement.RequirementVersion
+
+import javax.persistence.PersistenceException
 
 class RequirementFolderMappingIT extends DbunitMappingSpecification {
 	def "should persist and retrieve a requirement folder"() {
@@ -60,7 +51,7 @@ class RequirementFolderMappingIT extends DbunitMappingSpecification {
 		persistFixture f
 
 		then:
-		thrown(ConstraintViolationException)
+		thrown(PersistenceException)
 	}
 
 

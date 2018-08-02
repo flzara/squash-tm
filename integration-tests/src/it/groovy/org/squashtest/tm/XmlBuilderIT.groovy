@@ -18,12 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm;
-import groovy.xml.MarkupBuilder;
+package org.squashtest.tm
 
-import org.junit.Test;
-
-import static org.junit.Assert.*;
+import groovy.xml.MarkupBuilder
+import org.junit.Test
 
 class XmlBuilderIT {
 	@Test

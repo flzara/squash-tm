@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.testautomation
 
-import org.hibernate.exception.ConstraintViolationException
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
@@ -33,6 +32,7 @@ import spock.unitils.UnitilsSupport
 import javax.inject.Inject
 import javax.persistence.FlushModeType
 import javax.persistence.PersistenceException
+import javax.validation.ConstraintViolationException
 
 @NotThreadSafe
 @UnitilsSupport

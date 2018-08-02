@@ -20,21 +20,20 @@
  */
 package org.squashtest.tm.service.internal.batchimport
 
-import javax.inject.Inject
-
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementVersion
-import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.service.importer.EntityType
 import org.squashtest.tm.service.importer.ImportLog
 import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementExcelBatchImporter
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @UnitilsSupport
 @Transactional

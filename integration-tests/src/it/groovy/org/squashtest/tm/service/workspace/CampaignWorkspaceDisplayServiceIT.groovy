@@ -25,18 +25,10 @@ import org.apache.commons.collections.map.MultiValueMap
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
-import org.squashtest.tm.domain.campaign.Campaign
-import org.squashtest.tm.domain.campaign.CampaignFolder
-import org.squashtest.tm.domain.campaign.CampaignLibrary
-import org.squashtest.tm.domain.library.Library
-import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.service.internal.campaign.CampaignWorkspaceDisplayService
 import org.squashtest.tm.service.internal.dto.PermissionWithMask
 import org.squashtest.tm.service.internal.dto.UserDto
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode
-import org.squashtest.tm.service.internal.repository.hibernate.HibernateCampaignDao
-import org.squashtest.tm.service.internal.repository.hibernate.HibernateCampaignFolderDao
-import org.squashtest.tm.service.internal.repository.hibernate.HibernateIterationDao
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 

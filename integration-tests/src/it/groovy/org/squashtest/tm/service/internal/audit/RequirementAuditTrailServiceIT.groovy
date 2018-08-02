@@ -18,25 +18,19 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.audit;
+package org.squashtest.tm.service.internal.audit
 
-import static org.junit.Assert.*;
-
-import javax.inject.Inject;
-
+import org.spockframework.util.NotThreadSafe
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.PageRequest
-import org.spockframework.util.NotThreadSafe;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.core.foundation.collection.Paging;
-import org.squashtest.tm.domain.event.RequirementAuditEvent;
-import org.squashtest.it.basespecs.DbunitServiceSpecification;
-import org.squashtest.tm.service.audit.RequirementAuditTrailService;
-import org.unitils.dbunit.annotation.DataSet;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.springframework.data.domain.Pageable
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.tm.service.audit.RequirementAuditTrailService
+import org.unitils.dbunit.annotation.DataSet
+import spock.unitils.UnitilsSupport
 
-import spock.unitils.UnitilsSupport;
+import javax.inject.Inject
 
 /**
  * @author Gregory Fouquet

@@ -20,13 +20,11 @@
  */
 package org.squashtest.tm.service.internal.repository
 
+import org.squashtest.it.basespecs.DbunitDaoSpecification
+import org.unitils.dbunit.annotation.DataSet
+import spock.unitils.UnitilsSupport
+
 import javax.inject.Inject
-
-import org.squashtest.it.basespecs.DbunitDaoSpecification;
-import org.unitils.dbunit.annotation.DataSet;
-
-import spock.lang.Specification
-import spock.unitils.UnitilsSupport;
 
 /**
  * @author Gregory Fouquet

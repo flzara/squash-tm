@@ -18,16 +18,15 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.milestone;
+package org.squashtest.tm.service.milestone
 
-import javax.inject.Inject;
-
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
-
-import spock.lang.Unroll;
-import spock.unitils.UnitilsSupport;
 import org.unitils.dbunit.annotation.DataSet
+import spock.lang.Unroll
+import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @UnitilsSupport
 @Transactional
@@ -35,7 +34,7 @@ public class MilestoneBindingServiceIT extends DbunitServiceSpecification{
 
 	@Inject
 	MilestoneBindingManagerService manager
-	
+
 	@DataSet("/org/squashtest/tm/service/milestone/MilestoneBindingManagerServiceIT.xml")
 	def "one project to find them all and in darkness bind them"(){
 		given :
@@ -52,7 +51,7 @@ public class MilestoneBindingServiceIT extends DbunitServiceSpecification{
 		   -2L     | _
 		   -3L     | _
 	}
-	
+
 	@DataSet("/org/squashtest/tm/service/milestone/MilestoneBindingManagerServiceIT.xml")
 	def "one project to find them all (bindable)"(){
 		given :
@@ -67,7 +66,7 @@ public class MilestoneBindingServiceIT extends DbunitServiceSpecification{
 		   -2L     || [-4, -5]
 		   -3L     || [-1, -2, -3, -4, -5]
 	}
-	
+
 	@DataSet("/org/squashtest/tm/service/milestone/MilestoneBindingManagerServiceIT.xml")
 	def "one milestone to find them all (bindable)"(){
 		given :
@@ -83,7 +82,7 @@ public class MilestoneBindingServiceIT extends DbunitServiceSpecification{
 		   -3L     || [-3]
 		   -4L     || [-2, -3]
 	}
-	
+
 	@DataSet("/org/squashtest/tm/service/milestone/MilestoneBindingManagerServiceIT.xml")
 	def "one project to find them all (binded)"(){
 		given :
@@ -98,7 +97,7 @@ public class MilestoneBindingServiceIT extends DbunitServiceSpecification{
 		   -2L     || [-1, -2, -3]
 		   -3L     || []
 	}
-	
+
 	@DataSet("/org/squashtest/tm/service/milestone/MilestoneBindingManagerServiceIT.xml")
 	def "one milestone to find them all (binded)"(){
 		given :
@@ -114,20 +113,20 @@ public class MilestoneBindingServiceIT extends DbunitServiceSpecification{
 		   -3L     || [-1, -2]
 		   -4L     || [-1]
 	}
-	
+
 	@Unroll
 	@DataSet("/org/squashtest/tm/service/milestone/MilestoneBindingManagerServiceIT.xml")
 	def "Free milestones from the evil project"(){
-	
-		given : 
+
+		given :
 		when :
 		manager.unbindMilestonesFromProject(milestoneIds, projectId)
 		def result = manager.getAllBindedMilestoneForProject(projectId)
 
 		then :
-		result.collect{it.id} as Set == ids as Set 
-		
-		where : 
+		result.collect{it.id} as Set == ids as Set
+
+		where :
 		milestoneIds                | projectId     || ids
 		[-1L]                       |     -1L       || [-2, -3 , -4, -5]
 		[-1L, -2L]                  |    -1L        || [-3, -4, -5]

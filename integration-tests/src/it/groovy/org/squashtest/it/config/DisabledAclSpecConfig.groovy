@@ -26,7 +26,7 @@ import org.springframework.security.acls.model.AclService
 import org.springframework.security.acls.model.ObjectIdentityGenerator
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy
 import org.springframework.security.crypto.password.MessageDigestPasswordEncoder
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.squashtest.it.stub.security.StubAclService
 import org.squashtest.it.stub.security.StubObjectIdentityRetrievalGenerator
 import org.squashtest.it.stub.security.StubUserDetailsManager

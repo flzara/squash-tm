@@ -21,22 +21,23 @@
 package org.squashtest.it.config
 
 import org.springframework.cache.CacheManager
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.aspectj.EnableSpringConfigured
 import org.springframework.security.acls.domain.PermissionFactory
+import org.springframework.security.acls.jdbc.LookupStrategy
+import org.springframework.security.acls.model.AclCache
 import org.springframework.security.acls.model.ObjectIdentityGenerator
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy
 import org.springframework.security.crypto.password.MessageDigestPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService
+import org.squashtest.tm.service.SecurityConfig
+import org.squashtest.tm.service.internal.security.SquashUserDetailsManager
 
 import javax.inject.Inject
 import javax.sql.DataSource
-
-import org.springframework.context.annotation.*
-import org.springframework.context.annotation.aspectj.EnableSpringConfigured
-import org.springframework.security.acls.jdbc.LookupStrategy
-import org.springframework.security.acls.model.AclCache
-import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
-import org.squashtest.tm.service.SecurityConfig
-import org.squashtest.tm.service.internal.security.SquashUserDetailsManager
 
 /**
  * Instantiates a minimal Acl context. Most services are configured with DisabledAclSpecConfig, which shortcuts the ACL context

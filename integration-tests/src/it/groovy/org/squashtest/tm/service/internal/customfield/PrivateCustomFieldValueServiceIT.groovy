@@ -20,19 +20,15 @@
  */
 package org.squashtest.tm.service.internal.customfield
 
-import spock.lang.IgnoreRest
-
-import javax.inject.Inject
-
-import org.hibernate.SessionFactory
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @UnitilsSupport
 @Transactional

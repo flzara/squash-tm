@@ -21,10 +21,6 @@
 package org.squashtest.csp.core.security.acls.jdbc
 
 import org.junit.Ignore
-
-import javax.inject.Inject
-import javax.sql.DataSource
-
 import org.springframework.security.acls.domain.ObjectIdentityImpl
 import org.springframework.security.acls.model.ObjectIdentity
 import org.springframework.test.annotation.Rollback
@@ -39,10 +35,10 @@ import org.squashtest.tm.service.security.acls.jdbc.UnknownAclClassException
 import org.squashtest.tm.service.security.acls.model.ObjectAclService
 import org.unitils.dbunit.annotation.DataSet
 import org.unitils.dbunit.annotation.ExpectedDataSet
-
-import spock.lang.IgnoreRest
 import spock.unitils.UnitilsSupport
 
+import javax.inject.Inject
+import javax.sql.DataSource
 
 @UnitilsSupport
 @Rollback

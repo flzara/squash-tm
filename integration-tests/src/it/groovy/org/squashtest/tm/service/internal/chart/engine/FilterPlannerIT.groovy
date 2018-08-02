@@ -20,45 +20,19 @@
  */
 package org.squashtest.tm.service.internal.chart.engine
 
-import static org.squashtest.tm.domain.EntityType.*
-import static org.squashtest.tm.domain.chart.ColumnType.*
-import static org.squashtest.tm.domain.chart.DataType.*
-import static org.squashtest.tm.domain.chart.Operation.*
-
-import java.util.List;
-
-import org.hibernate.Query
-import org.hibernate.type.LongType
+import com.querydsl.core.types.Projections
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.it.basespecs.DbunitDaoSpecification;
-import org.squashtest.tm.domain.EntityType
-import org.squashtest.tm.domain.campaign.QCampaign
-import org.squashtest.tm.domain.campaign.QIteration
-import org.squashtest.tm.domain.campaign.QIterationTestPlanItem
-import org.squashtest.tm.domain.chart.ColumnType
-import org.squashtest.tm.domain.chart.AxisColumn
-import org.squashtest.tm.domain.chart.ColumnPrototype
-import org.squashtest.tm.domain.chart.DataType
-import org.squashtest.tm.domain.chart.Filter;
-import org.squashtest.tm.domain.chart.MeasureColumn
-import org.squashtest.tm.domain.chart.Operation
-import org.squashtest.tm.domain.chart.SpecializedEntityType;
-import org.squashtest.tm.domain.execution.QExecution
-import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
-import org.squashtest.tm.domain.requirement.QRequirement
-import org.squashtest.tm.domain.requirement.QRequirementVersion
-import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage
-import org.squashtest.tm.domain.testcase.QTestCase
-import org.squashtest.tm.domain.bugtracker.QIssue
+import org.squashtest.it.basespecs.DbunitDaoSpecification
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
 import org.unitils.dbunit.annotation.DataSet
-import com.querydsl.core.types.dsl.Expressions;
-import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
-import com.querydsl.core.types.Projections
-import com.querydsl.core.types.Ops.AggOps;
-import static org.squashtest.tm.service.internal.chart.engine.ChartEngineTestUtils.*;
+import static org.squashtest.tm.domain.EntityType.TEST_CASE
+import static org.squashtest.tm.domain.chart.ColumnType.ATTRIBUTE
+import static org.squashtest.tm.domain.chart.DataType.NUMERIC
+import static org.squashtest.tm.domain.chart.Operation.EQUALS
+import static org.squashtest.tm.service.internal.chart.engine.ChartEngineTestUtils.*
 
 @NotThreadSafe
 @UnitilsSupport

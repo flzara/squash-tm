@@ -20,39 +20,37 @@
  */
 package org.squashtest.it.basespecs
 
-import javax.persistence.EntityManager
-import javax.persistence.EntityNotFoundException
-import javax.persistence.PersistenceContext
-
 import org.hibernate.Query
 import org.hibernate.Session
 import org.hibernate.transform.ResultTransformer
 import org.hibernate.type.LongType
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.ContextHierarchy;
+import org.springframework.test.context.ContextHierarchy
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.it.config.DisabledAclSpecConfig;
-import org.squashtest.it.config.DisabledPermissionSpecConfig;
+import org.squashtest.it.config.DisabledAclSpecConfig
+import org.squashtest.it.config.DisabledPermissionSpecConfig
 import org.squashtest.it.config.DynamicServiceConfig
 import org.squashtest.it.config.ServiceSpecConfig
 import org.squashtest.tm.service.BugTrackerConfig
 import org.squashtest.tm.service.SchedulerConfig
 import org.squashtest.tm.service.TmServiceConfig
 
+import javax.persistence.EntityNotFoundException
+
 /**
  * <p>Superclass for a DB-driven services test. The test will populate the database using a DBUnit dataset with the same name as the test.
  * Subclasses should be annotated @UnitilsSupport</p>
- * 
- * 
+ *
+ *
  * <p>
- * 	The following configuration initialize the repository and service layers. Also, by default the following systems are disabled : 
+ * 	The following configuration initialize the repository and service layers. Also, by default the following systems are disabled :
  * 	<ul>
  * 		<li>the permission system</li>
  * 		<li>the acl management system</li>
  * </ul>
- * 
- * Those features belong to separate context configuration, that may be overriden locally by test classes that need them by using 
+ *
+ * Those features belong to separate context configuration, that may be overriden locally by test classes that need them by using
  * EnabledPermissionSpecConfig and EnabledAclSpecConfig. See use of @ContextHierarchy for details on how you do that (and set inheritLocations to false).
  * </p>
  */
@@ -74,15 +72,15 @@ abstract class DbunitServiceSpecification extends DatasourceDependantSpecificati
 	protected Session getSession() {
 		return em.unwrap(Session.class)
 	}
-	
+
 	void flush(){
 		session.flush()
 	}
-	
+
 	void commit(){
 		session.transaction.commit()
 	}
-	
+
 	void flushAndClear(){
 		em.flush()
 		em.clear()
@@ -121,15 +119,15 @@ abstract class DbunitServiceSpecification extends DatasourceDependantSpecificati
 		def result = getSession().createQuery("from " + className + " where id in (:ids)")
 			.setParameterList("ids", ids, LongType.INSTANCE)
 			.list()
-			
+
 		result = result*.id
 
 		ids.each { assert !result.contains(it) }
 
 		return true
 	}
-	
-	
+
+
 	protected boolean allNotDeleted(String className, List<Long> ids) {
 		Query query = getSession().createQuery("from " + className + " where id in (:ids)")
 		query.setParameterList("ids", ids, LongType.INSTANCE)

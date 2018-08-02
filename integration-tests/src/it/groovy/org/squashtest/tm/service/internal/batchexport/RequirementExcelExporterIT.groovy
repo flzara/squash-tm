@@ -20,22 +20,18 @@
  */
 package org.squashtest.tm.service.internal.batchexport
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import org.junit.runner.RunWith;
-import org.spockframework.runtime.Sputnik;
+import org.junit.runner.RunWith
+import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
-import org.squashtest.tm.service.internal.repository.RequirementDao
-import org.squashtest.tm.domain.requirement.RequirementVersion
-import org.unitils.dbunit.annotation.DataSet
 import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.service.internal.repository.RequirementDao
+import org.unitils.dbunit.annotation.DataSet
+import spock.unitils.UnitilsSupport
 
-import spock.unitils.UnitilsSupport;
+import javax.inject.Inject
+import javax.inject.Named
 
 @UnitilsSupport
 @Transactional

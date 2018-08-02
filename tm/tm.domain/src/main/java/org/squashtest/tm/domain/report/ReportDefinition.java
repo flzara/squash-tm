@@ -21,7 +21,7 @@
 package org.squashtest.tm.domain.report;
 
 import org.hibernate.annotations.Type;
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;

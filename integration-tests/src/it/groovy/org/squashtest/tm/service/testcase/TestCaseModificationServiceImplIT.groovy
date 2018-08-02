@@ -25,18 +25,14 @@ import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.it.stub.security.UserContextHelper
-import org.squashtest.tm.domain.audit.AuditableMixin
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
-import org.squashtest.tm.domain.testcase.Parameter
-import org.squashtest.tm.domain.testcase.Dataset
 import org.squashtest.tm.exception.DuplicateNameException
 import org.squashtest.tm.service.project.GenericProjectManagerService
 import org.unitils.dbunit.annotation.DataSet
-import spock.lang.IgnoreIf
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject

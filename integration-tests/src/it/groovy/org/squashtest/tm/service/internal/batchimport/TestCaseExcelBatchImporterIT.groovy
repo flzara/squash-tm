@@ -20,25 +20,24 @@
  */
 package org.squashtest.tm.service.internal.batchimport
 
-import javax.inject.Inject
-
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.it.stub.security.UserContextHelper
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.domain.testcase.TestStep
-import org.squashtest.it.basespecs.DbunitServiceSpecification
-import org.squashtest.it.stub.security.UserContextHelper;
 import org.squashtest.tm.service.importer.ImportLog
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @UnitilsSupport
 @Transactional
 @RunWith(Sputnik)
 class TestCaseExcelBatchImporterIT extends DbunitServiceSpecification{
-	
+
 	def setup(){
 		UserContextHelper.setUsername("Bob")
 	}

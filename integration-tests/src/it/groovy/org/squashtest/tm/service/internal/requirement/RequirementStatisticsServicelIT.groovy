@@ -20,27 +20,18 @@
  */
 package org.squashtest.tm.service.internal.requirement
 
+import org.spockframework.util.NotThreadSafe
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.tm.domain.requirement.RequirementCriticality
+import org.squashtest.tm.service.internal.repository.RequirementDao
+import org.squashtest.tm.service.internal.repository.RequirementVersionDao
+import org.squashtest.tm.service.requirement.RequirementStatisticsService
+import org.squashtest.tm.service.statistics.requirement.*
+import org.unitils.dbunit.annotation.DataSet
+import spock.unitils.UnitilsSupport
+
 import javax.inject.Inject
-
-import org.spockframework.util.NotThreadSafe;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.it.basespecs.DbunitServiceSpecification;
-import org.squashtest.tm.service.statistics.requirement.RequirementBoundTestCasesStatistics;
-import org.squashtest.tm.service.statistics.requirement.RequirementStatusesStatistics;
-import org.squashtest.tm.service.statistics.requirement.RequirementCriticalityStatistics;
-import org.squashtest.tm.service.statistics.requirement.RequirementBoundDescriptionStatistics;
-import org.squashtest.tm.service.statistics.requirement.RequirementCoverageStatistics;
-import org.squashtest.tm.service.statistics.requirement.RequirementValidationStatistics;
-import org.squashtest.tm.service.requirement.RequirementStatisticsService;
-
-import org.squashtest.tm.domain.requirement.RequirementCriticality;
-
-import org.unitils.dbunit.annotation.DataSet;
-
-import org.squashtest.tm.service.internal.repository.RequirementDao;
-import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
-
-import spock.unitils.UnitilsSupport;
 
 @NotThreadSafe
 @UnitilsSupport

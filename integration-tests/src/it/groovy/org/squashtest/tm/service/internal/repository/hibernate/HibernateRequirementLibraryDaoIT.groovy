@@ -18,20 +18,15 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository.hibernate;
+package org.squashtest.tm.service.internal.repository.hibernate
 
-import javax.inject.Inject;
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.tm.service.internal.repository.RequirementLibraryDao
+import org.unitils.dbunit.annotation.DataSet
+import spock.unitils.UnitilsSupport
 
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.requirement.RequirementFolder;
-import org.squashtest.tm.domain.requirement.RequirementLibrary;
-import org.squashtest.tm.service.internal.repository.ProjectDao;
-import org.squashtest.tm.service.internal.repository.RequirementLibraryDao;
-import org.squashtest.it.basespecs.DbunitServiceSpecification;
-import org.unitils.dbunit.annotation.DataSet;
-
-import spock.unitils.UnitilsSupport;
+import javax.inject.Inject
 
 @Transactional
 @UnitilsSupport

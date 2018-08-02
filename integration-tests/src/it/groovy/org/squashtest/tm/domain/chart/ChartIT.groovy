@@ -24,9 +24,8 @@ import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
-import org.squashtest.tm.domain.EntityType;
-import org.unitils.dbunit.annotation.DataSet;
-
+import org.squashtest.tm.domain.EntityType
+import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
@@ -36,7 +35,7 @@ class ChartIT extends DbunitServiceSpecification{
 
 	@DataSet("charts.xml")
 	def "Should find chart definition"(){
-		
+
 		when :
 		def result = findEntity(ChartDefinition.class, -1L)
 		then :
@@ -45,10 +44,10 @@ class ChartIT extends DbunitServiceSpecification{
 		result.visibility == Visibility.PUBLIC
 		result.type == ChartType.PIE
 	}
-	
+
 	@DataSet("charts.xml")
 	def "Should find chart definition filters"(){
-		
+
 		when :
 		def result = findEntity(ChartDefinition.class, -1L)
 		then :
@@ -56,10 +55,10 @@ class ChartIT extends DbunitServiceSpecification{
 		result.filters.values == [["2000-12-12"]]
 	}
 
-	
+
 	@DataSet("charts.xml")
 	def "Should find chart definition axis"(){
-		
+
 		when :
 		def result = findEntity(ChartDefinition.class, -1L)
 		then :
@@ -67,10 +66,10 @@ class ChartIT extends DbunitServiceSpecification{
 		result.axis.operation == [Operation.NONE]
 		result.axis.column.dataType == [DataType.NUMERIC]
 	}
-	
+
 	@DataSet("charts.xml")
 	def "Should find chart definition measures columns"(){
-		
+
 		when :
 		def result = findEntity(ChartDefinition.class, -1L)
 		then :
@@ -78,15 +77,15 @@ class ChartIT extends DbunitServiceSpecification{
 		result.measures.operation == (0..5).collect{if (it == 1) Operation.BY_MONTH else Operation.BY_DAY }
 	}
 
-	
+
 	@DataSet("charts.xml")
 	def "Should find chart definition scope"(){
-		
+
 		when :
 		def result = findEntity(ChartDefinition.class, -1L)
 		then :
-		result.scope.type ==  (1..4).collect{ if (it == 4) EntityType.PROJECT else EntityType.TEST_CASE } 
+		result.scope.type ==  (1..4).collect{ if (it == 4) EntityType.PROJECT else EntityType.TEST_CASE }
 		result.scope.id == [-1, -2, -3, -1]
 	}
-	
+
 }

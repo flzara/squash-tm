@@ -20,26 +20,25 @@
  */
 package org.squashtest.tm.service.internal.deletion
 
-import javax.inject.Inject
-
-import org.springframework.test.annotation.Rollback;
+import org.springframework.test.annotation.Rollback
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
-import org.squashtest.tm.domain.attachment.AttachmentList;
+import org.squashtest.tm.domain.attachment.AttachmentList
 import org.squashtest.tm.domain.requirement.Requirement
-import org.squashtest.tm.domain.requirement.RequirementVersion
-import org.squashtest.tm.domain.requirement.RequirementFolder;
+import org.squashtest.tm.domain.requirement.RequirementFolder
 import org.squashtest.tm.domain.requirement.RequirementLibrary
+import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.service.internal.repository.RequirementDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.internal.requirement.RequirementNodeDeletionHandler
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.unitils.UnitilsSupport
-import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
+
+import javax.inject.Inject
 
 @UnitilsSupport
 @Transactional
@@ -79,7 +78,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
             })
 
     }
-    
+
     def cleanup(){
         milestoneHolder.clearContext()
     }
@@ -88,9 +87,9 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
     @DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
     def "should delete the requirement and cascade to its versions"(){
 
-            setup : 
+            setup :
             setCurrentVersion()
-        
+
             when :
             def result = deletionHandler.deleteNodes([-11L])
             flushAndClear()
@@ -98,7 +97,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
             then :
             result.removed*.resid.containsAll([-11L])
 
-            allDeleted("CustomFieldValue", [-1111L, -1112L, -1121L, -1122L])		
+            allDeleted("CustomFieldValue", [-1111L, -1112L, -1121L, -1122L])
             allDeleted("RequirementVersion", [-111L, -112L])
             allDeleted("AttachmentList", [-111L, -112L])
             allDeleted("Requirement", [-11L])
@@ -114,9 +113,9 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
     @DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
     def "should delete a folder and all its dependencies"(){
 
-            setup : 
+            setup :
             setCurrentVersion()
-        
+
             when :
             def result = deletionHandler.deleteNodes([-1L])
             flush()
@@ -135,9 +134,9 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
     @DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
     def "should delete a folder and all its dependencies including attachments"(){
 
-            setup : 
+            setup :
             setCurrentVersion()
-        
+
             when :
             def result = deletionHandler.deleteNodes([-1L])
             flush()
@@ -153,9 +152,9 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
     @DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
     def "should delete a folder and all its dependencies including audit events"(){
 
-            setup : 
+            setup :
             setCurrentVersion()
-        
+
             when :
             def result = deletionHandler.deleteNodes([-1L])
             flush()
@@ -172,7 +171,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 
     @DataSet("RequirementNodeDeletionHandlerIT.should update tc importance.xml")
     def "should update test case importance when requirement is deleted"(){
-        
+
             when :
             def result = deletionHandler.deleteNodes([-11L])
             flush()
@@ -189,10 +188,10 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 
     @DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
     def "when specifically targetting a requirement, should remove it and attach its children to its former parent"(){
- 
-            setup : 
+
+            setup :
             setCurrentVersion()
-        
+
             when :
             def lib = findEntity(RequirementLibrary.class, -1L)
             def result = deletionHandler.deleteNodes([-3L])
@@ -219,9 +218,9 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
     @DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
     def "when a folder is removed, the SimpleResource is removed too and so is the attachmentlist"(){
 
-            setup : 
+            setup :
             setCurrentVersion()
-        
+
             when :
             deletionHandler.deleteNodes([-1L])
             flush()
@@ -237,9 +236,9 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 
     @DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
     def "should delete a requirement in a hierarchy"(){
-            setup : 
+            setup :
             setCurrentVersion()
-        
+
             when :
             deletionHandler.deleteNodes([-15L])
             flush()
@@ -250,35 +249,35 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
     // ********************* test with milestones *******************
 
 
-  
+
     @DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.milestones.xml")
     def "active milestone not related : do not delete anything"(){
 
         setup :
             setCurrentVersion()
             milestoneHolder.setActiveMilestone(-2L)
-                        
+
         when :
             deletionHandler.deleteNodes([-12L])
             flush()
-            
+
         then :
             found(RequirementVersion.class, -121L)
             found(Requirement.class, -12L)
 
     }
-    
+
     @DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.milestones.xml")
     def "active milestone related + requirement has only one version + that version has only that milestone : delete the requirement"(){
 
         setup :
             setCurrentVersion()
             milestoneHolder.setActiveMilestone(-1L)
-                        
+
         when :
             deletionHandler.deleteNodes([-12L])
             flush()
-            
+
         then :
             allDeleted("Requirement", [-12L])
             allDeleted("RequirementVersion", [-121L])
@@ -290,32 +289,32 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
         setup :
             setCurrentVersion()
             milestoneHolder.setActiveMilestone(-1L)
-                        
+
         when :
             deletionHandler.deleteNodes([-11L])
             flush()
-            
+
         then :
             allNotDeleted("Requirement", [-11L])
             allNotDeleted("RequirementVersion", [-112L])
             allDeleted("RequirementVersion", [-111L])
     }
-    
-        
-    @DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.milestones.xml")       
+
+
+    @DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.milestones.xml")
     def "active milestone related + requirement has one version + that version has two milestones : unbind from the milestone"(){
          setup :
             setCurrentVersion()
             milestoneHolder.setActiveMilestone(-1L)
-                        
+
         when :
             deletionHandler.deleteNodes([-13L])
             flush()
-            
+
         then :
             allNotDeleted("Requirement", [-13L])
             allNotDeleted("RequirementVersion", [-123L])
-            
+
             def milestones = getSession().createQuery("select v.milestones from RequirementVersion v where v.id = -123").list()
             milestones.size() == 1
             milestones[0].id == -2L

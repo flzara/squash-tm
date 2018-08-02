@@ -41,11 +41,10 @@
 package org.squashtest.tm.service.internal.repository.hibernate
 
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.core.foundation.collection.*
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting
-import org.squashtest.it.basespecs.DbunitDaoSpecification;
 
 import javax.inject.Inject
 

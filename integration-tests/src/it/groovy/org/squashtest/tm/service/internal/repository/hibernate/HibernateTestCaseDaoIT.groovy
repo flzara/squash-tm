@@ -22,8 +22,7 @@ package org.squashtest.tm.service.internal.repository.hibernate
 
 import org.springframework.data.domain.Pageable
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.tools.unittest.assertions.ListAssertions
-import org.squashtest.it.basespecs.DbunitDaoSpecification;
+import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.core.foundation.collection.Paging
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.core.foundation.collection.SortOrder
@@ -31,6 +30,7 @@ import org.squashtest.tm.core.foundation.collection.SpringPaginationUtils
 import org.squashtest.tm.domain.NamedReferencePair
 import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.service.internal.repository.TestCaseDao
+import org.squashtest.tm.tools.unittest.assertions.ListAssertions
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 

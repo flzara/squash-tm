@@ -20,17 +20,16 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
-import javax.inject.Inject
-
+import org.squashtest.it.basespecs.DbunitDaoSpecification
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting
+import org.squashtest.tm.core.foundation.collection.SortOrder
+import org.squashtest.tm.domain.execution.ExecutionStatus
 import org.squashtest.tm.service.internal.repository.ExecutionDao
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
-import org.squashtest.tm.core.foundation.collection.SortOrder
-import org.squashtest.it.basespecs.DbunitDaoSpecification;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting
-import org.squashtest.tm.domain.execution.ExecutionStatus
+
+import javax.inject.Inject
 
 /**
  * Dataset "HibernateExecutionDaoIT.should find executions by test case.xml" explained

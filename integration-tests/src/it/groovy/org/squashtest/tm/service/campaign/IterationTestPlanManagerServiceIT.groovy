@@ -22,11 +22,10 @@ package org.squashtest.tm.service.campaign
 
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.it.utils.CollectionComparisonUtils
 import org.squashtest.tm.core.foundation.collection.*
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
-import org.squashtest.tm.domain.users.User
-import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
 import spock.lang.Unroll
 import spock.unitils.UnitilsSupport

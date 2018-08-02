@@ -20,19 +20,18 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
-import javax.inject.Inject
-
-import org.squashtest.it.basespecs.DbunitDaoSpecification;
-import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.it.basespecs.DbunitDaoSpecification
+import org.squashtest.tm.domain.testcase.Dataset
 import org.squashtest.tm.service.internal.repository.DatasetDao
 import org.unitils.dbunit.annotation.DataSet
-import org.unitils.dbunit.annotation.ExpectedDataSet;
-
+import org.unitils.dbunit.annotation.ExpectedDataSet
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @UnitilsSupport
 class HibernateDatasetDaoIT extends DbunitDaoSpecification {
-	
+
 	@Inject DatasetDao datasetDao;
 
 
@@ -41,11 +40,11 @@ class HibernateDatasetDaoIT extends DbunitDaoSpecification {
 	def "should remove used dataset"(){
 		given : "a dataset "
 		Dataset dataset = session.get(Dataset.class, -1L)
-		when : 		
+		when :
 		datasetDao.delete(dataset)
 		session.flush()
 		then : "expected dataset is verified"
 		notThrown(Exception.class)
-		
+
 	}
 }

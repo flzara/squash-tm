@@ -20,24 +20,12 @@
  */
 package org.squashtest.tm.hibernate.mapping.testcase
 
-
-import org.hibernate.JDBCException
-import org.hibernate.SessionFactory
-import org.squashtest.tm.tools.unittest.hibernate.HibernateOperationCategory
-import org.squashtest.it.basespecs.DbunitMappingSpecification;
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem
-import org.squashtest.tm.domain.execution.Execution
-import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.it.basespecs.DbunitMappingSpecification
+import org.squashtest.tm.domain.infolist.InfoListItem
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementVersion
-import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage
 import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.domain.testcase.TestCaseExecutionMode
-import org.squashtest.tm.domain.testcase.TestCaseImportance
-import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
-
-import spock.lang.Unroll
 
 class RequirementVersionCoverageMappingIT extends DbunitMappingSpecification {
 

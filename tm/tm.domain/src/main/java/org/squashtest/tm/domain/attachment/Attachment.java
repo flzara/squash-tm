@@ -25,7 +25,7 @@ import java.util.Locale;
 
 import javax.persistence.*;
 
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.squashtest.tm.domain.Identified;
 

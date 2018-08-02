@@ -20,18 +20,17 @@
  */
 package org.squashtest.tm.service.requirement
 
-import javax.inject.Inject
-
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.infolist.ListItemReference
 import org.squashtest.tm.domain.requirement.RequirementCriticality
 import org.squashtest.tm.exception.DuplicateNameException
-import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
-
-import spock.lang.Stepwise;
+import spock.lang.Stepwise
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @UnitilsSupport
 @Transactional

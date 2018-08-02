@@ -22,7 +22,7 @@ package org.squashtest.tm.domain.resource;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.*;
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;

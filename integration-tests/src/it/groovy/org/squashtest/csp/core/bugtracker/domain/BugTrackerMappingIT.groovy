@@ -20,8 +20,7 @@
  */
 package org.squashtest.csp.core.bugtracker.domain
 
-import org.springframework.transaction.annotation.Transactional
-import org.squashtest.it.basespecs.DbunitMappingSpecification;
+import org.squashtest.it.basespecs.DbunitMappingSpecification
 
 /**
  * @author Gregory Fouquet
@@ -34,13 +33,13 @@ class BugTrackerMappingIT extends DbunitMappingSpecification {
 
 		when:
 		persistFixture bt
-		
+
 		BugTracker bt2 = doInTransaction{session -> session.get(BugTracker, bt.id)}
 
 		then:
 		bt2 != null
 		bt2.name == "foo"
-		
+
 		cleanup :
 		deleteFixture bt
 	}

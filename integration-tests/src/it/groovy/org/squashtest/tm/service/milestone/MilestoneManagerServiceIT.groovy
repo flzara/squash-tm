@@ -20,17 +20,17 @@
  */
 package org.squashtest.tm.service.milestone
 
-import javax.inject.Inject
-
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.milestone.Milestone
 import org.squashtest.tm.domain.milestone.MilestoneStatus
 import org.squashtest.tm.exception.milestone.MilestoneLabelAlreadyExistsException
-import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
+import javax.persistence.PersistenceException
 
 @UnitilsSupport
 @Transactional
@@ -99,7 +99,7 @@ class MilestoneManagerServiceIT extends DbunitServiceSpecification {
 		manager.addMilestone(milestone)
 		def milestoneAdded = manager.findByName("Milestone |");
 		then :
-		thrown(javax.validation.ConstraintViolationException)
+		thrown(PersistenceException)
 	}
 
 	@Unroll("for project : #id is bound to template : #boundToTemplate")

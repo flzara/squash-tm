@@ -20,19 +20,13 @@
  */
 package org.squashtest.it.stub.security
 
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Primary
-import org.springframework.stereotype.Component
-
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
 import org.springframework.dao.DataAccessException
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.squashtest.tm.service.internal.security.SquashUserDetailsManager;
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.userdetails.UsernameNotFoundException
+import org.squashtest.tm.service.internal.security.SquashUserDetailsManager
+
+import javax.validation.constraints.NotNull
 
 /**
  * Not @Component because it has to be marked as @Primary
@@ -68,10 +62,10 @@ class StubUserDetailsManager implements SquashUserDetailsManager {
 	public boolean userExists(String username) {
 		return true;
 	}
-	
+
 	@Override
 	public void changeUserLogin(String newLogin, String oldLogin) {
-		
+
 	}
 
 	@Override

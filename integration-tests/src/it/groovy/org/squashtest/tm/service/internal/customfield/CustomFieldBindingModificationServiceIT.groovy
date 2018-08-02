@@ -21,9 +21,8 @@
 package org.squashtest.tm.service.internal.customfield
 
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.domain.customfield.BindableEntity
-import org.squashtest.tm.domain.customfield.CustomFieldBinding
 import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport

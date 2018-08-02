@@ -20,19 +20,20 @@
  */
 package org.squashtest.tm.service.internal.batchimport
 
-import static org.squashtest.tm.service.internal.batchimport.Existence.*
-import static org.squashtest.tm.service.internal.batchimport.StepType.*
-
-import javax.inject.Inject
-import javax.inject.Provider
-
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
+import javax.inject.Provider
+
+import static org.squashtest.tm.service.internal.batchimport.Existence.EXISTS
+import static org.squashtest.tm.service.internal.batchimport.Existence.NOT_EXISTS
+import static org.squashtest.tm.service.internal.batchimport.StepType.ACTION
+import static org.squashtest.tm.service.internal.batchimport.StepType.CALL
 
 
 @UnitilsSupport

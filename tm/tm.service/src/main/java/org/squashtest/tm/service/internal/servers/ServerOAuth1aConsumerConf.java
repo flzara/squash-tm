@@ -21,7 +21,7 @@
 package org.squashtest.tm.service.internal.servers;
 
 
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.servers.OAuth1aCredentials;
 import org.squashtest.tm.domain.servers.OAuth1aCredentials.SignatureMethod;
@@ -40,7 +40,7 @@ public class ServerOAuth1aConsumerConf implements ServerAuthConfiguration {
 	/**
 	 * Identifier of the OAuth endpoint Squash-TM is supposed to dock to
 	 */
-	
+
 	@NotBlank
 	private String consumerKey = "";
 

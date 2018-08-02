@@ -22,9 +22,9 @@ package org.squashtest.tm.service.campaign
 
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.TestSuite
-import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.service.internal.repository.IterationDao
 import org.squashtest.tm.service.internal.repository.TestSuiteDao
 import org.unitils.dbunit.annotation.DataSet

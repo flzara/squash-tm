@@ -20,15 +20,14 @@
  */
 package org.squashtest.tm.service.user
 
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.ContextHierarchy;
+import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.ContextHierarchy
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.it.config.EnabledAclSpecConfig
 import org.squashtest.tm.domain.users.Team
 import org.squashtest.tm.domain.users.User
 import org.squashtest.tm.exception.NameAlreadyInUseException
-import org.squashtest.tm.service.SecurityConfig;
-import org.squashtest.it.basespecs.DbunitServiceSpecification
-import org.squashtest.it.config.EnabledAclSpecConfig;
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 

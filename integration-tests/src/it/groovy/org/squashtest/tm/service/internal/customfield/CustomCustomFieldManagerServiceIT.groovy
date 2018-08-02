@@ -20,19 +20,14 @@
  */
 package org.squashtest.tm.service.internal.customfield
 
-import javax.inject.Inject
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.hibernate.SessionFactory
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.domain.customfield.CustomFieldValue
-import org.squashtest.tm.service.internal.repository.CustomFieldValueDao
 import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.tm.domain.customfield.CustomFieldValue
 import org.squashtest.tm.service.customfield.CustomFieldManagerService
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @UnitilsSupport
 @Transactional

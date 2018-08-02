@@ -39,7 +39,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.validation.constraint.HasDefaultItem;
