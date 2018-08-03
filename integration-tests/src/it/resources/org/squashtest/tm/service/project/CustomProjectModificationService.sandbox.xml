@@ -21,7 +21,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.17.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.19.0.dtd">
 <dataset>
 
   <!-- ========================== teams ================================ -->
@@ -226,7 +226,7 @@
   <!-- Test Project-1 > Folder Test 1 > Campaign Test 1 > Iteration - 1 > Test Suite 1-->
   <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-159"/>
   <TEST_SUITE ID="-2" NAME="Test Suite 1" ATTACHMENT_LIST_ID="-159" CREATED_BY="DBU" CREATED_ON="2010-02-01"/>
-  <ITERATION_TEST_SUITE ITERATION_ID="-83" TEST_SUITE_ID="-2"/>
+  <ITERATION_TEST_SUITE ITERATION_ID="-83" TEST_SUITE_ID="-2" ITERATION_TEST_SUITE_ORDER="0"/>
 
   <!-- Projet 1 > camp1 > ite1 -->
   <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-131" />
@@ -260,7 +260,7 @@
   <!-- TEST SUITE -->
   <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-158"/>
   <TEST_SUITE ID="-1" NAME="test 1" ATTACHMENT_LIST_ID="-158" CREATED_BY="DBU" CREATED_ON="2010-02-01"/>
-  <ITERATION_TEST_SUITE ITERATION_ID="-85" TEST_SUITE_ID="-1"/>
+  <ITERATION_TEST_SUITE ITERATION_ID="-85" TEST_SUITE_ID="-1" ITERATION_TEST_SUITE_ORDER="0"/>
 
   <!-- ========================== milestones bindings ================================ -->
 

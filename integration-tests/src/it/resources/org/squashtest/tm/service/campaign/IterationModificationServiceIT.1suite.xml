@@ -21,7 +21,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.11.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.19.0.dtd">
 <dataset>
 <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1"/>
 <CAMPAIGN_LIBRARY CL_ID="-1" ATTACHMENT_LIST_ID="-1"/>
@@ -35,7 +35,7 @@
 <CAMPAIGN_ITERATION CAMPAIGN_ID="-1" ITERATION_ORDER="0" ITERATION_ID="-1"/>
 
 <TEST_SUITE CREATED_BY="mpagnon" ID="-1" CREATED_ON="2014-04-14" ATTACHMENT_LIST_ID="-1" NAME="suite"/>
-<ITERATION_TEST_SUITE TEST_SUITE_ID="-1" ITERATION_ID="-1"/>
+<ITERATION_TEST_SUITE TEST_SUITE_ID="-1" ITERATION_ID="-1" ITERATION_TEST_SUITE_ORDER="0"/>
 
 
 </dataset>
