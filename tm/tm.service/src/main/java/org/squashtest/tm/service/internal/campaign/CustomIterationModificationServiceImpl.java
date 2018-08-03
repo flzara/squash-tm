@@ -281,6 +281,17 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	}
 
 	@Override
+	@PreAuthorize(LINK_ITERATION_OR_ROLE_ADMIN)
+	public void changeTestSuitePosition(long iterationId, int newIndex, List<Long> itemIds) {
+
+		Iteration iteration = iterationDao.findById(iterationId);
+
+		List<TestSuite> items = suiteDao.findAll(itemIds);
+
+		iteration.moveTestSuites(newIndex, items);
+	}
+
+	@Override
 	@PreAuthorize(CREATE_ITERATION_OR_ROLE_ADMIN)
 	@PreventConcurrents(
 		simplesLocks = {@PreventConcurrent(entityType = Iteration.class, paramName = ITERATION_ID),

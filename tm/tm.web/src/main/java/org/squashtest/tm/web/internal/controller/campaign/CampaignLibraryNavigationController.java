@@ -43,6 +43,7 @@ import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationExcepti
 import org.squashtest.tm.service.campaign.CampaignFinder;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
+import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.execution.ExecutionFinder;
@@ -356,6 +357,20 @@ public class CampaignLibraryNavigationController extends
 
 		try {
 			campaignLibraryNavigationService.moveIterationsWithinCampaign(destinationId, nodeIds, position);
+		} catch (AccessDeniedException ade) {
+			throw new RightsUnsuficientsForOperationException(ade);
+		}
+
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/iterations/{destinationId}/content/{nodeIds}/{position}", method = RequestMethod.PUT)
+	public void moveTestSuiteNodes(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
+	                      @PathVariable("destinationId") long destinationId,
+	                      @PathVariable("position") int position) {
+
+		try {
+			iterationModificationService.changeTestSuitePosition(destinationId, position, Arrays.asList(nodeIds));
 		} catch (AccessDeniedException ade) {
 			throw new RightsUnsuficientsForOperationException(ade);
 		}

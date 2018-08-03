@@ -70,4 +70,66 @@
     </addColumn>
   </changeSet>
 
+  <changeSet id="tm-1.19.0-SQTM-409-iteration-test-suite-remove-constraint" author="cholc">
+    <comment>To drop an unique constraint, you need the constraint's name, which we don't have, so here we copy the column and delete the original</comment>
+
+    <addColumn tableName="ITERATION_TEST_SUITE">
+      <column name="TEST_SUITE_ID_TEMP" type="BIGINT">
+        <constraints nullable="true" unique="false" />
+      </column>
+    </addColumn>
+
+    <dropForeignKeyConstraint baseTableName="ITERATION_TEST_SUITE" constraintName="fk_iteration_test_suite_suite"/>
+
+    <update tableName="ITERATION_TEST_SUITE">
+      <column name="TEST_SUITE_ID_TEMP" type="BIGINT" valueComputed="TEST_SUITE_ID"/>
+    </update>
+
+    <dropColumn columnName="TEST_SUITE_ID" tableName="ITERATION_TEST_SUITE"/>
+
+    <renameColumn columnDataType="BIGINT" newColumnName="TEST_SUITE_ID" oldColumnName="TEST_SUITE_ID_TEMP" tableName="ITERATION_TEST_SUITE"/>
+
+    <addNotNullConstraint tableName="ITERATION_TEST_SUITE" columnName="TEST_SUITE_ID" columnDataType="BIGINT"/>
+
+    <addForeignKeyConstraint baseColumnNames="TEST_SUITE_ID"
+                             baseTableName="ITERATION_TEST_SUITE"
+                             constraintName="fk_iteration_test_suite_suite"
+                             referencedColumnNames="ID"
+                             referencedTableName="TEST_SUITE"/>
+  </changeSet>
+
+  <changeSet id="tm-1.19.0-SQTM-409-iteration-test-suite-order" author="cholc">
+    <comment>add an order to iterations' test suites</comment>
+    <addColumn tableName="ITERATION_TEST_SUITE">
+      <column name="ITERATION_TEST_SUITE_ORDER" type="INT">
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="tm-1.19.0-SQTM-409-iteration-test-suite-order-generation" author="cholc">
+    <comment>will compute the order of the test suites in the iterations, should work for all databases</comment>
+    <sql>
+      UPDATE ITERATION_TEST_SUITE ITS
+      SET
+          ITERATION_TEST_SUITE_ORDER = (SELECT
+                  SUB_QUERY.ORDER_DEF
+              FROM
+                  (SELECT
+                      ITS1.ITERATION_ID AS I_ID,
+                      ITS1.TEST_SUITE_ID AS TS_ID,
+                      (COUNT(*) - 1) AS ORDER_DEF
+                  FROM
+                      ITERATION_TEST_SUITE ITS1
+                  INNER JOIN ITERATION_TEST_SUITE ITS2 ON ITS1.ITERATION_ID = ITS2.ITERATION_ID
+                      AND ITS1.TEST_SUITE_ID >= ITS2.TEST_SUITE_ID
+                   GROUP BY ITS1.ITERATION_ID , ITS1.TEST_SUITE_ID) AS SUB_QUERY
+              WHERE
+                  SUB_QUERY.I_ID = ITS.ITERATION_ID
+                  AND SUB_QUERY.TS_ID = ITS.TEST_SUITE_ID);
+    </sql>
+    <addUniqueConstraint tableName="ITERATION_TEST_SUITE" columnNames="ITERATION_ID, ITERATION_TEST_SUITE_ORDER"
+                         constraintName="uc_iteration_iteration_test_suite_order"/>
+    <addNotNullConstraint tableName="ITERATION_TEST_SUITE" columnName="ITERATION_TEST_SUITE_ORDER" columnDataType="INT"/>
+  </changeSet>
+
 </databaseChangeLog>

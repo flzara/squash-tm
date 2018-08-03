@@ -290,12 +290,6 @@ define(['jquery', 'underscore', 'workspace.tree-node-copier', 'workspace.permiss
 			return;
 		}
 
-		// we also reject testsuites
-		var firstNode = nodeData.o[0];
-		if ($(firstNode).is(":test-suite")) {
-			return;
-		}
-
 		var rawurl = targetTreeNode.getMoveUrl();
 		var nodeIds = $(nodes).treeNode().all('getResId').join(',');
 		var url;
