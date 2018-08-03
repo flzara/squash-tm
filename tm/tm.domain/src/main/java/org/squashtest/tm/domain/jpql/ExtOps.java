@@ -24,22 +24,22 @@ import com.querydsl.core.types.Operator;
 
 /**
  * <p>These Operators for QueryDsl represents the operators supported by our extensions
- * of JPQL (see {@link SessionFactoryEnhancer}).</p>
- * 
+ * of JPQL (see the hibernate dialect extensions).</p>
+ *
  * <h4>usage</h4>
- * 
+ *
  * <p>
  * 	Example :
- * 
+ *
  * 	<pre>Expressions.simpleOperation(Long.class, ExAggOps.S_SUM, mySubQueryExpression)</pre>
  * 	<pre>Expressions.simpleOperation(String.class, ExAggOps.ORDERED_GROUP_CONCAT_DIR, attrConcatPath, Expressions.constant('order by'), attrSortPath, Expressions.constant('asc'))</pre>
- * 
- *  The usage syntax for GROUP_CONCAT is explained in {@link SessionFactoryEnhancer}
+ *
+ *  The usage syntax for GROUP_CONCAT is explained in the various Hibernate dialect extensions.
  * </p>
- * 
+ *
  * </p>
- * 
- * 
+ *
+ *
  * @author bsiri
  *
  */
@@ -60,7 +60,7 @@ public enum ExtOps implements Operator {
 
 	// boolean case when
 	TRUE_IF(Boolean.class),
-	
+
 	// by_day date operator
 	YEAR_MONTH_DAY(Integer.class);
 

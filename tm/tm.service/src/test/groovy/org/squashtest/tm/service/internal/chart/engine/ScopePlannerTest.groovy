@@ -55,7 +55,6 @@ import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.requirement.QRequirement;
 import org.squashtest.tm.service.campaign.CampaignLibraryFinderService
-import org.squashtest.tm.service.internal.chart.ColumnPrototypeModification;
 import org.squashtest.tm.service.internal.chart.engine.ScopePlanner.ScopeUtils;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService
 import org.squashtest.tm.service.security.PermissionEvaluationService

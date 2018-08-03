@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
@@ -41,7 +42,7 @@ public interface CustomCustomReportLibraryNodeDao {
 	Long countNodeFromEntity(TreeEntity treeEntity);
 
 	@Query(name="BoundEntityDao.findCurrentProjectFromCustomReportFoldersId")
-	Long findCurrentProjectFromCustomReportFoldersId(Long id);
+	Long findCurrentProjectFromCustomReportFoldersId(@Param("clnId") Long id);
 
 	List<Long> findAllNodeIdsForLibraryEntity(Long libraryId);
 }

@@ -27,12 +27,16 @@ import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMI
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -54,9 +58,6 @@ import org.squashtest.tm.service.internal.chart.engine.ChartDataFinder;
 import org.squashtest.tm.service.internal.repository.CustomChartDefinitionDao;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.project.ProjectFinder;
-
-import java.util.Optional;
-import com.querydsl.jpa.hibernate.HibernateQueryFactory;
 
 @Service("squashtest.tm.service.ChartModificationService")
 public class ChartModificationServiceImpl implements ChartModificationService {
@@ -93,7 +94,7 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 	@Override
 	public Map<EntityType, Set<ColumnPrototype>> getColumnPrototypes() {
 
-		HibernateQueryFactory factory = new HibernateQueryFactory(session());
+		JPAQueryFactory factory = new JPAQueryFactory(em);
 		QColumnPrototype prototype = QColumnPrototype.columnPrototype;
 
 		Map<EntityType, Set<ColumnPrototype>> prototypes;
@@ -103,6 +104,8 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 
 		return prototypes;
 	}
+
+
 
 	@Override
 	public void update(ChartDefinition chartDef) {

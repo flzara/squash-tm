@@ -31,6 +31,7 @@ import org.squashtest.tm.domain.campaign.QCampaign
 import org.squashtest.tm.domain.campaign.QIteration
 import org.squashtest.tm.domain.campaign.QIterationTestPlanItem
 import org.squashtest.tm.domain.execution.QExecution
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
 import org.squashtest.tm.domain.requirement.QRequirement
 import org.squashtest.tm.domain.requirement.QRequirementVersion
 import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage
@@ -74,7 +75,7 @@ class QueryDslMappingIT extends DbunitDaoSpecification {
 	def "should accept a long dereferencing until project.id"(){
 
 		given :
-		HibernateQuery q = new HibernateQuery(getSession())
+		HibernateQuery q = new ExtendedHibernateQuery(getSession())
 		def tc = QTestCase.testCase
 		q.from(tc)
 				.where(tc.project.id.eq(-11111l))
