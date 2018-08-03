@@ -20,31 +20,18 @@
  */
 package org.squashtest.it.basespecs
 
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
-import org.springframework.context.annotation.EnableLoadTimeWeaving
-import org.springframework.context.annotation.Import
+import org.springframework.beans.factory.config.BeanDefinition
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.DependsOn
+import org.springframework.context.annotation.Role
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured
 import org.springframework.context.annotation.aspectj.SpringConfiguredConfiguration
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestPropertySource
-import org.squashtest.it.config.DatasourceSpecConfig
-import org.squashtest.it.config.JooqSpecConfig
-import org.squashtest.tm.service.RepositoryConfig
-import org.squashtest.tm.service.internal.campaign.scripted.ScriptedExecutionConfiguration
+import org.squashtest.it.config.SpringConfSpecConfig
 import spock.lang.Specification
 
-import javax.persistence.EntityManager
-import javax.persistence.PersistenceContext
-
-@ContextConfiguration(classes = [DatasourceSpecConfig, RepositoryConfig, JooqSpecConfig, ScriptedExecutionConfiguration])
-@TestPropertySource(["classpath:other_properties.properties", "classpath:hibernate.properties"])
-@ImportAutoConfiguration(HibernateJpaAutoConfiguration)
-class DatasourceDependantSpecification extends SpringConfigurableConfiguration {
-
-	@PersistenceContext
-	EntityManager em;
-
-
+@EnableSpringConfigured
+@ContextConfiguration(classes = SpringConfSpecConfig)
+class SpringConfigurableConfiguration extends Specification{
 
 }

@@ -63,7 +63,7 @@ class CustomFieldBindingModificationServiceIT extends DbunitServiceSpecification
 
 	}
 
-	def "when removing a custom field binding, should cascade delete the concerned custom field values"(){
+	def "when removing a  field binding, should cascade delete the concerned custom field values"(){
 
 		when :
 		service.removeCustomFieldBindings([-111L, -112L])
