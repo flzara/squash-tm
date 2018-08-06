@@ -30,16 +30,16 @@ import static org.squashtest.tm.api.security.acls.Roles.*;
  */
 public final class Authorizations {
 
-	
+
 	/* -- Roles -- */
 
 	/**
 	 * use {@link org.squashtest.tm.api.security.acls.Roles#ROLE_ADMIN} instead.
-	 * @deprecated 
+	 * @deprecated
 	 */
-	@Deprecated 
+	@Deprecated
 	public static final String ROLE_ADMIN = "ROLE_ADMIN";
-	
+
 	/* -- ADMIN -- */
 
 	public static final String READ = "READ";
@@ -124,7 +124,8 @@ public final class Authorizations {
 		+ OR_HAS_ROLE_ADMIN;
 
 	public static final String DELETE_ITERATION_OR_ROLE_ADMIN = "hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'DELETE') " + OR_HAS_ROLE_ADMIN;
-
+	public static final String LINK_ITERATION_OR_ROLE_ADMIN =
+		"hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'LINK')" + OR_HAS_ROLE_ADMIN;
 	/* -- TEST SUITES -- */
 	public static final String READ_TESTSUITE = "hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'READ')";
 	public static final String READ_TS_OR_ROLE_ADMIN = READ_TESTSUITE + OR_HAS_ROLE_ADMIN;

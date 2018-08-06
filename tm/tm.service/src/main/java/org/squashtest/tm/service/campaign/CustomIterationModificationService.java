@@ -78,6 +78,9 @@ public interface CustomIterationModificationService extends IterationFinder {
 
 	List<TestSuite> findAllTestSuites(long iterationId);
 
+
+	void changeTestSuitePosition(long iterationId, int newIndex, List<Long>itemIds);
+
 	/**
 	 * <p>
 	 * That method will remove each test suite, leaving it's test plan items linked to no test_suite

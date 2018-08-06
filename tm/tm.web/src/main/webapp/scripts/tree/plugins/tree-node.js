@@ -97,6 +97,7 @@ define(['jquery'], function($){
 			case "drive" :
 			case "folder":
 			case "requirement" :
+			case "iteration" :
 			case "campaign" :	url += '/content/{nodeIds}/{position}'; break;
 			default : throw "move aborted : node type '"+this.getDomType()+"' cannot receive moved content.";
 		}

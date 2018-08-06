@@ -303,7 +303,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			table = ITS;
 			fatherColumn = ITS.ITERATION_ID;
 			childColumn = ITS.TEST_SUITE_ID;
-			orderColumn = ITS.TEST_SUITE_ID;
+			orderColumn = ITS.ITERATION_TEST_SUITE_ORDER;
 
 		}
 		List<Long> openedEntityIds = (List<Long>) expansionCandidates.get(resType);
@@ -360,7 +360,8 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 				TS.NAME,
 				TS.EXECUTION_STATUS,
 				MC.MILESTONE_ID,
-				M.STATUS
+				M.STATUS,
+				ITS.ITERATION_TEST_SUITE_ORDER
 			)
 			.from(TS)
 			.innerJoin(ITS).on(TS.ID.eq(ITS.TEST_SUITE_ID))
@@ -369,6 +370,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.leftJoin(M).on(MC.MILESTONE_ID.eq(M.MILESTONE_ID))
 			.where(TS.ID.in(fatherChildrenEntity.values()))
 			.groupBy(TS.ID, MC.MILESTONE_ID, M.STATUS)
+			.orderBy(ITS.ITERATION_TEST_SUITE_ORDER)
 			.fetch()
 			.stream()
 			.map(r -> {

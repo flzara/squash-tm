@@ -26,9 +26,37 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
+  <include file="tm.data-1.19.0-SQTM-409.xml" relativeToChangelogFile="true" />
+
+
   <!-- ========================================INCLUDE CHANGELOG================================================ -->
   <include file="../../../main/liquibase/tm/tm.changelog-1.19.0.xml"
            relativeToChangelogFile="true" />
   <!-- ========================================================================================================= -->
 
+
+  <changeSet id="tm-1.19.0-SQTM-409" author="cholc" dbms="mysql, postgresql, h2">
+    <preConditions>
+      <sqlCheck expectedResult="13">
+          select count(*) from
+            ITERATION_TEST_SUITE
+          where
+            (ITERATION_ID=-15 and TEST_SUITE_ID=-6 and ITERATION_TEST_SUITE_ORDER=2) or
+            (ITERATION_ID=-15 and TEST_SUITE_ID=-7 and ITERATION_TEST_SUITE_ORDER=1) or
+            (ITERATION_ID=-15 and TEST_SUITE_ID=-8 and ITERATION_TEST_SUITE_ORDER=0) or
+            (ITERATION_ID=-16 and TEST_SUITE_ID=-9 and ITERATION_TEST_SUITE_ORDER=4) or
+            (ITERATION_ID=-16 and TEST_SUITE_ID=-10 and ITERATION_TEST_SUITE_ORDER=3) or
+            (ITERATION_ID=-16 and TEST_SUITE_ID=-11 and ITERATION_TEST_SUITE_ORDER=2) or
+            (ITERATION_ID=-16 and TEST_SUITE_ID=-12 and ITERATION_TEST_SUITE_ORDER=1) or
+            (ITERATION_ID=-16 and TEST_SUITE_ID=-13 and ITERATION_TEST_SUITE_ORDER=0)or
+            (ITERATION_ID=-17 and TEST_SUITE_ID=-14 and ITERATION_TEST_SUITE_ORDER=4) or
+            (ITERATION_ID=-17 and TEST_SUITE_ID=-15 and ITERATION_TEST_SUITE_ORDER=3) or
+            (ITERATION_ID=-17 and TEST_SUITE_ID=-16 and ITERATION_TEST_SUITE_ORDER=2) or
+            (ITERATION_ID=-17 and TEST_SUITE_ID=-17 and ITERATION_TEST_SUITE_ORDER=1) or
+            (ITERATION_ID=-17 and TEST_SUITE_ID=-18 and ITERATION_TEST_SUITE_ORDER=0);
+      </sqlCheck>
+
+    </preConditions>
+    <comment>We check that there is no duplicate for (TEST_CASE_ID, STEP_ORDER)</comment>
+  </changeSet>
 </databaseChangeLog>

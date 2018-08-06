@@ -130,6 +130,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	/* *********************** Test suites ********************************** */
 
 	@OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	@OrderColumn(name = "ITERATION_TEST_SUITE_ORDER")
 	@JoinTable(name = "ITERATION_TEST_SUITE", joinColumns = @JoinColumn(name = ITERATION_ID), inverseJoinColumns = @JoinColumn(name = "TEST_SUITE_ID"))
 	private List<TestSuite> testSuites = new ArrayList<>();
 
@@ -343,6 +344,13 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 			}
 		}
 		return list;
+	}
+
+	public void moveTestSuites(int newIndex, List<TestSuite> movedItems) {
+		if (!testSuites.isEmpty()) {
+			testSuites.removeAll(movedItems);
+			testSuites.addAll(newIndex, movedItems);
+		}
 	}
 
 	public void removeTestSuite(@NotNull TestSuite testSuite) {
