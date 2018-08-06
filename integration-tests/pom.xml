@@ -17,6 +17,7 @@
     <database.changelog>../database/src/main/liquibase/global.changelog-master.xml</database.changelog>
     <database.dialect>h2</database.dialect>
     <database.drivername>org.h2.Driver</database.drivername>
+    <database.metadata>org.dbunit.database.DefaultMetadataHandler</database.metadata>
     <database.password>sa</database.password>
     <database.schemaName>public</database.schemaName>
     <database.typefactory>org.dbunit.ext.h2.H2DataTypeFactory</database.typefactory>
@@ -377,6 +378,7 @@
       <properties>
         <database.dialect>mysql</database.dialect>
         <database.drivername>com.mysql.jdbc.Driver</database.drivername>
+        <database.metadata>org.dbunit.ext.mysql.MySqlMetadataHandler</database.metadata>
         <database.password>${it.database.password}</database.password>
         <database.schemaName>${it.database.schemaName}</database.schemaName>
         <database.typefactory>org.dbunit.ext.mysql.MySqlDataTypeFactory</database.typefactory>
@@ -428,6 +430,7 @@
       <properties>
         <database.dialect>postgresql</database.dialect>
         <database.drivername>org.postgresql.Driver</database.drivername>
+        <database.metadata>org.dbunit.database.DefaultMetadataHandler</database.metadata>
         <database.password>${it.database.password}</database.password>
         <database.schemaName>public</database.schemaName>
         <database.typefactory>org.dbunit.ext.postgresql.PostgresqlDataTypeFactory</database.typefactory>
