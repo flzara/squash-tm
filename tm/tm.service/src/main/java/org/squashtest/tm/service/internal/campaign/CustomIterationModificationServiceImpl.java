@@ -287,7 +287,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 		Iteration iteration = iterationDao.findById(iterationId);
 
-		List<TestSuite> items = suiteDao.findAll(itemIds);
+		List<TestSuite> items = suiteDao.findAllById(itemIds);
 
 		iteration.moveTestSuites(newIndex, items);
 	}
