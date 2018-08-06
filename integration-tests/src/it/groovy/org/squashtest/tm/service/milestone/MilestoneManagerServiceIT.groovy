@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.milestone
 
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.milestone.Milestone
@@ -99,7 +100,7 @@ class MilestoneManagerServiceIT extends DbunitServiceSpecification {
 		manager.addMilestone(milestone)
 		def milestoneAdded = manager.findByName("Milestone |");
 		then :
-		thrown(PersistenceException)
+		thrown(DataIntegrityViolationException)
 	}
 
 	@Unroll("for project : #id is bound to template : #boundToTemplate")

@@ -63,16 +63,7 @@ public abstract class FolderModificationController<FOLDER extends Folder<?>> {
 	public ModelAndView showFolder(@PathVariable long folderId, HttpServletRequest request) {
 		FOLDER folder = getFolderModificationService().findFolder(folderId);
 		boolean hasFolderCUF = false;
-		BindableEntity entity = null;
-		if(folder.getClass() == CampaignFolder.class){
-			entity= BindableEntity.CAMPAIGN_FOLDER;
-		} else if(folder.getClass() == RequirementFolder.class){
-			entity = BindableEntity.REQUIREMENT_FOLDER;
-		}else if(folder.getClass() == TestCaseFolder.class){
-			entity = BindableEntity.TESTCASE_FOLDER;
-		}else if(folder.getClass() == CustomReportFolder.class){
-			entity = BindableEntity.CUSTOM_REPORT_FOLDER;
-		}
+		BindableEntity entity = folder.getBoundEntityType();
 
 		if(entity != null) {
 			hasFolderCUF = cufValueService.hasCustomFields(folder.getId(), entity);

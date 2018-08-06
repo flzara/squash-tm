@@ -29,6 +29,7 @@ import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryDao
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao
 import org.unitils.dbunit.annotation.DataSet
+import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
@@ -73,6 +74,7 @@ class CustomReportLibraryNodeServiceIT extends DbunitServiceSpecification {
 		projectLinked.getId() == -1L
 	}
 
+	@Unroll
 	def "should find descendants for nodes"() {
 
 		when:
@@ -93,21 +95,22 @@ class CustomReportLibraryNodeServiceIT extends DbunitServiceSpecification {
 		[-2L,-6L]			||	[-6L,-11L,-12L,-13L,-14L,-15L,-2L,-3L,-4L,-5L,-16L]
 	}
 
+	@Unroll
 	def "should delete various nodes"() {
 
 		when:
 		service.delete(nodesIds)
+		/*getSession().flush()
+		getSession().clear()*/
 
 		then:
 
-		deletedNodesIds.each {
-			def node = crlnDao.getOne(it)
-			assert node == null
+		deletedNodesIds.every {
+			! found(CustomReportLibraryNode, it)
 		}
 
-		siblingIds.each {
-			def node = crlnDao.getOne(it)
-			assert node != null
+		siblingIds.every {
+			found (CustomReportLibraryNode, it)
 		}
 
 		where:
@@ -120,6 +123,7 @@ class CustomReportLibraryNodeServiceIT extends DbunitServiceSpecification {
 		[-11L,-15L]		||	[-10L,-20L,-30L,-40L,-2L,-3L,-4L,-5L,-7L,-6L,-12L,-13L,-14L,-16L]	|	[-11L,-15L]
 	}
 
+	@Unroll
 	def "should rename node and entity"() {
 
 		when:

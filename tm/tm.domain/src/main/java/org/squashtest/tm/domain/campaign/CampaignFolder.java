@@ -47,7 +47,7 @@ import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "CLN_ID")
-public class CampaignFolder extends CampaignLibraryNode implements Folder<CampaignLibraryNode>, BoundEntity {
+public class CampaignFolder extends CampaignLibraryNode implements Folder<CampaignLibraryNode>{
 	/**
 	 * Delegate implementation of folder responsibilities.
 	 */

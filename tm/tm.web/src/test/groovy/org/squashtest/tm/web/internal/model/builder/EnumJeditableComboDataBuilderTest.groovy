@@ -35,15 +35,15 @@ import spock.lang.Specification
 class EnumJeditableComboDataBuilderTest extends Specification {
 	EnumJeditableComboDataBuilder builder = new EnumJeditableComboDataBuilder();
 	Locale locale = Locale.default
-	
+
 	def setup() {
 		new JsonHelper(new ObjectMapper())
-		
+
 		builder.model = DummyEnum.values()
 		builder.labelFormatter = new DummyLabelFormatter()
 		builder.modelComparator = new DummyEnumComparator()
 	}
-	
+
 	def "should build ordered map using given comparator"() {
 		when:
 		def res = builder
@@ -53,7 +53,7 @@ class EnumJeditableComboDataBuilderTest extends Specification {
 		then:
 		res == ["ONE": "un", "TWO" : "deux"]
 	}
-	
+
 	def "should build unordered map"() {
 		given:
 		builder.modelComparator = null
@@ -66,7 +66,7 @@ class EnumJeditableComboDataBuilderTest extends Specification {
 		then:
 		res == ["TWO": "deux", "ONE" : "un"]
 	}
-	
+
 	def "should build map containing the selected item"() {
 		given:
 		builder.modelComparator = null
@@ -80,7 +80,7 @@ class EnumJeditableComboDataBuilderTest extends Specification {
 		then:
 		res == ["ONE": "un", "TWO" : "deux", "selected": "TWO"]
 	}
-	
+
 	def "should build json using given comparator"() {
 		when:
 		def res = builder
@@ -90,12 +90,12 @@ class EnumJeditableComboDataBuilderTest extends Specification {
 		then:
 		res == '{"ONE":"un","TWO":"deux"}';
 	}
-	
+
 	def "labels should be formatted using the given locale"() {
 		given:
 		builder.modelComparator = null
-		
-		and: 
+
+		and:
 		LabelFormatter formatter = Mock()
 		builder.labelFormatter = formatter
 
@@ -125,7 +125,7 @@ public enum DummyEnum {
 	DummyEnum(int order) {
 		this.order = order
 	}
-	
+
 }
 
 
@@ -145,15 +145,15 @@ public class DummyLabelFormatter implements LabelFormatter<DummyEnum> {
 	}
 
 
-	@Override 
-	// 2018/07/23 : compiler seemingly fails to detect the generic type  
-	// DummyEnum but is happy with Object 
+
+	// 2018/07/23 : compiler seemingly fails to detect the generic type
+	// DummyEnum but is happy with Object
 	public String formatLabel(Object toFormat) {
 		switch (toFormat) {
 			case DummyEnum.ONE : return "un"
 			case DummyEnum.TWO : return "deux"
 			default : return "default"
-		}		
+		}
 	}
 
 	/**
@@ -171,7 +171,7 @@ public class DummyLabelFormatter implements LabelFormatter<DummyEnum> {
 	public LabelFormatter<DummyEnum> plainText() {
 		return this;
 	}
-	
+
 }
 
 

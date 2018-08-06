@@ -26,6 +26,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -44,7 +45,7 @@ import org.squashtest.tm.web.config.ResourceResolverProperties;
  * @author Gregory Fouquet
  * @since 1.13.0
  */
-@SpringBootApplication(exclude = { JpaRepositoriesAutoConfiguration.class,
+@SpringBootApplication(exclude = {JpaRepositoriesAutoConfiguration.class,
 		BatchAutoConfiguration.class})
 @EnableConfigurationProperties({ResourceResolverProperties.class, SquashPathProperties.class})
 @EnableWebSecurity

@@ -88,7 +88,7 @@ class HibernateRequirementDeletionDaoIT extends DbunitDaoSpecification {
 		em.flush()
 
 		//then find all
-		def resReqVers = versionDao.findAll([-10L, -11L, -12L, -13L, -14L, -15L, -20L, -21L, -22L, -23L, -24L, -25L, -30L, -40L])
+		def resReqVers = versionDao.findAllById([-10L, -11L, -12L, -13L, -14L, -15L, -20L, -21L, -22L, -23L, -24L, -25L, -30L, -40L])
 		def resReq = requirementDao.findAllByIds([-10L, -20L, -30L, -40L])
 
 		String sql_select_resource = "select res_id from RESOURCE where res_id in (-10, 11, -12, -13, -14, -15, -20, -21, -22, -23, -24, -25, -30, -40)";

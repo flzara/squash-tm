@@ -20,10 +20,12 @@
  */
 package org.squashtest.it.config
 
+import org.mockito.mock.MockName
 import org.spockframework.mock.MockNature
 import org.springframework.context.annotation.*
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
+import org.squashtest.tm.service.advancedsearch.IndexationService
 import org.squashtest.tm.service.bugtracker.BugTrackersService
 import org.squashtest.tm.service.internal.security.ObjectIdentityServiceImpl
 import org.squashtest.tm.service.internal.security.SpringSecurityUserContextService
@@ -53,6 +55,12 @@ class ServiceSpecConfig {
 	@Primary
 	BugTrackersService bugTrackerService() {
 		new DetachedMockFactory().createMock("bugTrackerService", BugTrackersService, MockNature.MOCK, [:])
+	}
+
+	@Bean("squashtest.tm.service.IndexationService")
+	@Primary
+	IndexationService indexationService(){
+		return new DetachedMockFactory().createMock("squashtest.tm.service.IndexationService", IndexationService, MockNature.MOCK, [:])
 	}
 
 	@Bean

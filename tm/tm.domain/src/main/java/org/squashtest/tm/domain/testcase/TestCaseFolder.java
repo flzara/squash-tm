@@ -44,7 +44,7 @@ import org.squashtest.tm.domain.project.Project;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
-public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCaseLibraryNode>, BoundEntity {
+public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCaseLibraryNode>{
 	/**
 	 * Delegate implementation of folder responsibilities.
 	 */

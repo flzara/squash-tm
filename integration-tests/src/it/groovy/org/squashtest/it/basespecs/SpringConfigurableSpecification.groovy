@@ -20,18 +20,12 @@
  */
 package org.squashtest.it.basespecs
 
-import org.springframework.beans.factory.config.BeanDefinition
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.DependsOn
-import org.springframework.context.annotation.Role
-import org.springframework.context.annotation.aspectj.EnableSpringConfigured
-import org.springframework.context.annotation.aspectj.SpringConfiguredConfiguration
+
 import org.springframework.test.context.ContextConfiguration
 import org.squashtest.it.config.SpringConfSpecConfig
 import spock.lang.Specification
 
-@EnableSpringConfigured
 @ContextConfiguration(classes = SpringConfSpecConfig)
-class SpringConfigurableConfiguration extends Specification{
+class SpringConfigurableSpecification extends Specification{
 
 }

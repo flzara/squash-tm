@@ -21,14 +21,16 @@
 package org.squashtest.tm.domain.library;
 
 
+import org.squashtest.tm.domain.customfield.BoundEntity;
+
 /**
  * Interface of a Library folder.
- * 
+ *
  * @author bsiri, Gregory Fouquet
- * 
+ *
  * @param <NODE>
  *            Type of nodes
  */
-public interface Folder<NODE extends LibraryNode> extends LibraryNode, NodeContainer<NODE> {	
-	
+public interface Folder<NODE extends LibraryNode> extends LibraryNode, NodeContainer<NODE>, BoundEntity {
+
 }

@@ -33,7 +33,9 @@ import org.jooq.impl.DefaultExecuteListenerProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.autoconfigure.transaction.PlatformTransactionManagerCustomizer;
 import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
@@ -63,7 +65,6 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 // Transaction management
 @EnableTransactionManagement(order = Ordered.HIGHEST_PRECEDENCE + 100, mode = AdviceMode.PROXY, proxyTargetClass = false)
 @Import({SpringConfiguredConfiguration.class,AspectJTransactionManagementConfiguration.class})
-
 // Hibernate autoconf
 @EntityScan({
 	// annotated packages
@@ -77,7 +78,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 // Spring Data JPA
 @EnableJpaRepositories("org.squashtest.tm.service.internal.repository")
 public class RepositoryConfig {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(RepositoryConfig.class);
 
 	@Inject
@@ -99,26 +100,26 @@ public class RepositoryConfig {
 		LOGGER.info("init LocalValudatorFactory");
 		return new LocalValidatorFactoryBean();
 	}
-	
-	
+
+
 	/*
 	 * Because the SessionFieldBridge are @Configurable we need to ensure that SpringConfiguredConfiguration is ready
-	 * when the EntityManagerFactory is created (by the autoconfiguration class HibernateJpaConfiguration). Since there 
-	 * is no way to ensure the order of autoconfiguration application we resort to hacks such as here. 
-	 * 
-	 * Technically this bean will register a configurer for the transaction manager that does nothing (which will then be 
-	 * created early as part of the EMF configuration), and incidentally allows us to declare @DependsOn. I couldn't find 
-	 * of any other cleaner, functional way to make it work.  
-	 * 
+	 * when the EntityManagerFactory is created (by the autoconfiguration class HibernateJpaConfiguration). Since there
+	 * is no way to ensure the order of autoconfiguration application we resort to hacks such as here.
+	 *
+	 * Technically this bean will register a configurer for the transaction manager that does nothing (which will then be
+	 * created early as part of the EMF configuration), and incidentally allows us to declare @DependsOn. I couldn't find
+	 * of any other cleaner, functional way to make it work.
+	 *
 	 * @return some useless bytecode that will sit in the RAM forever
 	 */
 	@Bean
 	@DependsOn(SpringConfiguredConfiguration.BEAN_CONFIGURER_ASPECT_BEAN_NAME)
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 	public PlatformTransactionManagerCustomizer<PlatformTransactionManager> platformTransactionManagerCustomize(){
-		return (manager) -> {};		
+		return (manager) -> {};
 	}
-	
+
 
 	@Bean
 	public org.jooq.Configuration jooqConfiguration(TransactionProvider transactionProvider, ConnectionProvider connectionProvider, DefaultExecuteListenerProvider defaultExecuteListenerProvider) {

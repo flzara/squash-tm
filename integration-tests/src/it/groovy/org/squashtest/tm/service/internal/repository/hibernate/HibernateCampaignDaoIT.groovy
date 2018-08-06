@@ -78,8 +78,11 @@ class HibernateCampaignDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateCampaignDaoIT.campaign with test plan.xml")
 	def "should find test plan filtered by auto-mode: #autoMode"() {
 		given:
-		PagingAndMultiSorting sort = Mock()
-		sort.sortings >> []
+		PagingAndMultiSorting sort = Mock {
+			shouldDisplayAll() >> true
+			getSortings() >> []
+		}
+
 
 		and:
 		ColumnFiltering filt = Mock()

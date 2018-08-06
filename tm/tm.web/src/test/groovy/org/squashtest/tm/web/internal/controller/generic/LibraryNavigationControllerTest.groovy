@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.web.internal.controller.generic
 
+import org.squashtest.tm.domain.customfield.BindableEntity
+
 import java.util.Optional
 import org.squashtest.tm.core.foundation.exception.NullArgumentException
 import org.squashtest.tm.domain.attachment.AttachmentList
@@ -144,10 +146,10 @@ class DummyFolder extends DummyNode implements Folder<DummyNode> {
 	@Override
 	public List<String> getContentNames() { return null; }
 
-	@Override
+
 	public void addContent(Object contentToAdd) throws DuplicateNameException, NullArgumentException {}
 
-	@Override
+
 	public void addContent(Object contentToAdd, int position) throws DuplicateNameException, NullArgumentException {}
 
 	@Override
@@ -180,6 +182,16 @@ class DummyFolder extends DummyNode implements Folder<DummyNode> {
 	// see #addContent(DummyNode)
 	void addContent(DummyNode node, int position) throws DuplicateNameException, NullArgumentException {
 
+	}
+
+	@Override
+	Long getBoundEntityId() {
+		return null
+	}
+
+	@Override
+	BindableEntity getBoundEntityType() {
+		return null
 	}
 }
 

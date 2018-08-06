@@ -41,7 +41,7 @@ import java.util.List;
 @SuppressWarnings("rawtypes")
 @Entity
 @PrimaryKeyJoinColumn(name = "RLN_ID")
-public class RequirementFolder extends RequirementLibraryNode<SimpleResource> implements Folder<RequirementLibraryNode>, BoundEntity {
+public class RequirementFolder extends RequirementLibraryNode<SimpleResource> implements Folder<RequirementLibraryNode>{
 	/**
 	 * Delegate implementation of folder responsibilities.
 	 */

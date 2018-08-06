@@ -25,6 +25,13 @@
     <!-- On Jenkins server these relative paths are not interpreted in the same way by liquibase and the datasource. These
       props should be overridden with absolute paths (which don't work under windows...) -->
     <dbunit-database.url>jdbc:h2:${project.build.directory}/database/squash-it-dbunit/squash-it</dbunit-database.url>
+
+    <!--
+      has to override locally because this version is necessary for compiling IT sources.
+      However setting it in the parent pom would crash the compilation of core.api.
+
+    -->
+    <groovy-eclipse-batch.version>2.4.15-01</groovy-eclipse-batch.version>
     <hibernate.dialect>org.squashtest.tm.domain.jpql.H2EnhancedDialect</hibernate.dialect>
 
     <hibernate.new_generator_mappings>false</hibernate.new_generator_mappings>
@@ -35,13 +42,6 @@
 
     <skipITs>false</skipITs>
     <squashtest.rootDir>${project.build.directory}</squashtest.rootDir>
-
-    <!--
-      has to override locally because this version is necessary for compiling IT sources.
-      However setting it in the parent pom would crash the compilation of core.api.
-
-    -->
-    <groovy-eclipse-batch.version>2.4.15-01</groovy-eclipse-batch.version>
   </properties>
 
   <dependencyManagement>
@@ -82,7 +82,6 @@
       <artifactId>spring-boot-starter-jdbc</artifactId>
 
     </dependency>
-
 
     <dependency>
       <groupId>org.apache.commons</groupId>

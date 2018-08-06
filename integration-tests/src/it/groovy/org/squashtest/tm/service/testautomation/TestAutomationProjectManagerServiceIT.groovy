@@ -32,7 +32,7 @@ import spock.unitils.UnitilsSupport
 import javax.inject.Inject
 import javax.persistence.FlushModeType
 import javax.persistence.PersistenceException
-import javax.validation.ConstraintViolationException
+import org.hibernate.exception.ConstraintViolationException
 
 @NotThreadSafe
 @UnitilsSupport

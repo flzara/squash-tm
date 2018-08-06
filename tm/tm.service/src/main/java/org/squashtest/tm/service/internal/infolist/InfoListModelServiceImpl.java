@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.infolist;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
@@ -117,9 +118,9 @@ public class InfoListModelServiceImpl implements InfoListModelService {
 	private Function<Record, JsonInfoList> getInfoListTransformer() {
 		return r -> {
 			Long id = r.get(INFO_LIST.INFO_LIST_ID);
-			String code = HtmlUtils.htmlEscape(r.get(INFO_LIST.CODE));
-			String label = HtmlUtils.htmlEscape(r.get(INFO_LIST.LABEL));
-			String description = HtmlUtils.htmlEscape(r.get(INFO_LIST.DESCRIPTION));
+			String code = HtmlUtils.htmlEscape(defaultIfBlank(r.get(INFO_LIST.CODE), ""));
+			String label = HtmlUtils.htmlEscape(defaultIfBlank(r.get(INFO_LIST.LABEL), ""));
+			String description = HtmlUtils.htmlEscape(defaultIfBlank(r.get(INFO_LIST.DESCRIPTION), ""));
 			return new JsonInfoList(id, "todo", code, label, description);
 		};
 	}

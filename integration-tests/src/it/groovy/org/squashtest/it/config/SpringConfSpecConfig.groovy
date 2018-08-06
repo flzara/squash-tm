@@ -31,7 +31,7 @@ import org.springframework.context.annotation.aspectj.SpringConfiguredConfigurat
 
 @Configuration
 @EnableSpringConfigured
-@Import(SpringConfiguredConfiguration)
+//@Import(SpringConfiguredConfiguration)
 class SpringConfSpecConfig {
 
 
@@ -41,4 +41,5 @@ class SpringConfSpecConfig {
 	public Object whatever(){
 		return new Object()
 	}
+
 }

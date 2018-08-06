@@ -25,6 +25,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
+
 import org.hibernate.*;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.api.repository.SqlQueryRunner;
@@ -41,7 +43,7 @@ public class HibernateSqlQueryRunner implements SqlQueryRunner {
 
 
 	private static final String UNCHECKED = "unchecked";
-	
+
 	private static final QueryExecution<Query> EXECUTE_LIST = new QueryExecution<Query>() {
 		@Override
 		@SuppressWarnings(UNCHECKED)
@@ -59,7 +61,7 @@ public class HibernateSqlQueryRunner implements SqlQueryRunner {
 	};
 
 
-	@Inject
+	@PersistenceUnit
 	EntityManagerFactory entityManagerFactory;
 
 	/**
