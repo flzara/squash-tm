@@ -576,6 +576,9 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			case LIST:
 				query = buildQueryForListCriterium(fieldKey, fieldModel, qb);
 				break;
+			case MULTILIST:
+				query = buildQueryForMultiListCriterium(fieldKey, fieldModel, qb);
+				break;
 			case TEXT:
 				query = buildQueryForTextCriterium(fieldKey, fieldModel, qb);
 				break;
@@ -598,6 +601,77 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 				break;
 		}
 		return query;
+	}
+
+	private Query buildQueryForMultiListCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
+
+		AdvancedSearchMultiListFieldModel multiListModel = (AdvancedSearchMultiListFieldModel) fieldModel;
+		if (multiListModel.getMinValue() != null || multiListModel.getMaxValue() != null && multiListModel.getValues() != null) {
+			return buildLuceneMultiListQuery(qb, fieldKey, multiListModel.getMinValue(), multiListModel.getMaxValue(),multiListModel.getValues(),false);
+		}
+		return null;
+
+
+	}
+
+	private Query buildLuceneMultiListQuery(QueryBuilder qb, String fieldKey, Integer minValue, Integer maxValue, List<String> values, boolean isTag) {
+		Query mainQuery = null;
+		if (!values.isEmpty()) {
+			if (minValue == null) {
+				Query query;
+
+				for (String fieldName : values) {
+					String paddedMaxValue = padRawValue(maxValue);
+
+					query = qb.bool()
+						.must(qb.range().onField(fieldName).ignoreFieldBridge().below(paddedMaxValue).createQuery())
+						.createQuery();
+
+					if (query != null && mainQuery == null) {
+						mainQuery = query;
+					} else if (query != null) {
+						mainQuery = qb.bool().should(mainQuery).should(query).createQuery();
+					}
+				}
+
+			} else if (maxValue == null) {
+				for (String fieldName : values) {
+					Query query;
+
+					String paddedMinValue = padRawValue(minValue);
+
+					query = qb.bool()
+						.must(qb.range().onField(fieldName).ignoreFieldBridge().above(paddedMinValue).createQuery())
+						.createQuery();
+
+					if (query != null && mainQuery == null) {
+						mainQuery = query;
+					} else if (query != null) {
+						mainQuery = qb.bool().should(mainQuery).should(query).createQuery();
+					}
+				}
+			} else {
+				for (String fieldName : values) {
+					Query query;
+
+
+					String paddedMaxValue = padRawValue(maxValue);
+					String paddedMinValue = padRawValue(minValue);
+
+					query = qb.bool().must(qb.range().onField(fieldName).ignoreFieldBridge().from(paddedMinValue)
+						.to(paddedMaxValue).createQuery()).createQuery();
+
+					if (query != null && mainQuery == null) {
+						mainQuery = query;
+					} else if (query != null) {
+						mainQuery = qb.bool().should(mainQuery).should(query).createQuery();
+					}
+				}
+			}
+		}else {
+			mainQuery = qb.all().createQuery();
+		}
+		return qb.bool().must(mainQuery).createQuery();
 	}
 
 

@@ -112,5 +112,5 @@ public interface LinkedRequirementVersionManagerService {
 	void checkIfVersionsAreLinkable(RequirementVersion reqVersion, RequirementVersion relatedReqVersion)
 		throws UnlinkableLinkedRequirementVersionException;
 
-
+	List<RequirementVersionLinkType> findAllRequirementVersionLinkType();
 }

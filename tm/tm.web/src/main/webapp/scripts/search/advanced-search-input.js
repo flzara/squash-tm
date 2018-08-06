@@ -21,7 +21,7 @@
 define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translator", "app/ws/squashtm.notification", "underscore", "workspace.projects",
          "squash.configmanager", "./SearchDateWidget", "./SearchRangeWidget","./SearchNumericRangeWidget",
 		"./SearchExistsWidget","./SearchMultiAutocompleteWidget", "./SearchMultiSelectWidget", "./SearchMultiSelectProjectWidget",  "./SearchCheckboxWidget",
-		"./SearchComboMultiselectWidget", "./SearchRadioWidget", "./SearchTagsWidget", "./SearchMultiCascadeFlatWidget", "./SearchDateCustomFieldWidget",
+		"./SearchComboMultiselectWidget", "./SearchRadioWidget", "./SearchTagsWidget", "./SearchMultiCascadeFlatWidget", "./SearchDateCustomFieldWidget","./SearchComboExistsMultiselectWidget",
 		"jquery.squash", "jqueryui", "jquery.squash.togglepanel", "squashtable",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
 		"jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, translator, notification, _, projects) {
@@ -220,6 +220,9 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 								break;
 							case "numericrange":
 								self.makeNumericRangeField(tableid, field.id, field.title, searchModel[field.id]);
+								break;
+							case "comboexistsmultiselect":
+								self.makeComboExistsMultiselect(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
 								break;
 						}
 
@@ -472,6 +475,14 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 			$fieldDom.searchComboMultiSelectWidget();
 			$fieldDom.searchComboMultiSelectWidget("createDom", "F"+fieldId, options);
 			$fieldDom.searchComboMultiSelectWidget("fieldvalue", enteredValue);
+		},
+
+		makeComboExistsMultiselect : function(tableId, fieldId, fieldTitle, options, enteredValue) {
+			var context = {"comboexistsmultiselect-id": fieldId, "comboexistsmultiselect-title": fieldTitle};
+			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#comboexistsmultiselect-template", context));
+			$fieldDom.searchComboExistsMultiselectWidget();
+			$fieldDom.searchComboExistsMultiselectWidget("createDom", "F"+fieldId, options);
+			$fieldDom.searchComboExistsMultiselectWidget("fieldvalue", enteredValue);
 		},
 
 		makeTagsField : function(tableId, fieldId, fieldTitle, options, enteredValue) {

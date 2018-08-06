@@ -272,7 +272,9 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 
 		return codes;
 	}
-
+	public List<RequirementVersionLinkType> findAllRequirementVersionLinkType() {
+					return getAllReqVersionLinkTypes();
+	}
 	@Override
 	public void postponeTestCaseToNewRequirementVersion(RequirementVersion previousVersion, RequirementVersion newVersion) {
 		for (TestCase testCaseToPostpone : verifyingTestCaseManagerService.findAllByRequirementVersion(previousVersion.getId())) {

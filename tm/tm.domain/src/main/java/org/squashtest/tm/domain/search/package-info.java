@@ -34,14 +34,13 @@
 	// returns either 0 or 1 when the given version is the current version of the requirement
 	@NamedQuery(name = "requirementVersion.countCurrentVersion", query = "select count(cur) from Requirement r join r.resource cur where cur.id = :id and cur.status != :obsolete"),
 	@NamedQuery(name = "requirementVersion.countAttachments", query = "select count(att) from RequirementVersion rv join rv.attachmentList al join al.attachments att where rv.id = :id"),
+	@NamedQuery(name = "search.countRequirementLinks", query = "select case rvl.linkDirection when true then linkType.role1Code else linkType.role2Code end as relationRole, sum(CASE when origVer.id = :versionId then 1 else 0 end)as count from RequirementVersionLink rvl  join rvl.requirementVersion origVer join rvl.linkType linkType group by linkType.role1Code,linkType.role2Code, rvl.linkDirection"),
 
 	// ====== TestCase queries ======
 	@NamedQuery(name = "testCase.countAttachments", query = "select count(att) from TestCase tc join tc.attachmentList al join al.attachments att where tc.id = :id"),
 
-	// ====== Execution queries ======
 	// I believe that query is not used. TODO : assert whether we can remove this
 	@NamedQuery(name = "execution.countAttachments", query = "select count(att) from Execution tc join tc.attachmentList al join al.attachments att where tc.id = :id"),
-
 })
 package org.squashtest.tm.domain.search;
 

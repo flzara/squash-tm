@@ -231,6 +231,7 @@ public abstract class SearchInterfaceDescription {
 	protected static final String EMPTY = "";
 	protected static final String TRUE = "true";
 	protected static final String FALSE = "false";
+	protected static final String COMBOEXISTSMULTISELECT = "comboexistsmultiselect";
 
 	@Inject
 	private InternationalizationHelper messageSource;

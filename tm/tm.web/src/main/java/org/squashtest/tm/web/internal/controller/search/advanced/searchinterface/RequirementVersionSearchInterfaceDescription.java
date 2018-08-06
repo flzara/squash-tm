@@ -35,10 +35,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
-import org.squashtest.tm.service.internal.dto.UserDto;
+import org.squashtest.tm.domain.requirement.RequirementVersionLinkType;
 import org.squashtest.tm.service.internal.dto.json.JsonInfoList;
 import org.squashtest.tm.service.internal.dto.json.JsonInfoListItem;
 import org.squashtest.tm.service.internal.dto.json.JsonProject;
+import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerService;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -54,6 +55,8 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 	@Inject
 	protected UserAccountService userAccountService;
 
+	@Inject
+	LinkedRequirementVersionManagerService linkedRequirementVersionManagerService;
 
 	public SearchInputPanelModel createRequirementInformationPanel(Locale locale) {
 		SearchInputPanelModel panel = new SearchInputPanelModel();
@@ -204,6 +207,11 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 		parentRequirementsField.addPossibleValue(optionBuilder
 				.labelI18nKey("search.requirement.association.parentRequirement.none").optionKey(NONE).build());
 
+		SearchInputFieldModel linkTypeField = new SearchInputFieldModel("link-type", getMessageSource().internationalize(
+			"search.requirement.version-links.type.label", locale), COMBOEXISTSMULTISELECT);
+		panel.addField(linkTypeField);
+
+		populateRequirementLinkInputs(linkTypeField, locale);
 		return panel;
 	}
 
@@ -318,6 +326,23 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 		}
 
 		model.setPossibleValues(new ArrayList<>(listsByListCode.values()));
+
+	}
+
+	public void populateRequirementLinkInputs(SearchInputFieldModel linkField, Locale locale){
+		List<SearchInputPossibleValueModel> possibleValues = new ArrayList<>();
+		linkField.addPossibleValue(new SearchInputPossibleValueModel(getMessageSource().internationalize("search.requirement.version-links.atleastone",locale),ATLEASTONE));
+		linkField.addPossibleValue(new SearchInputPossibleValueModel(getMessageSource().internationalize("search.requirement.version-links.none",locale),NONE));
+		List<RequirementVersionLinkType> linkedList = linkedRequirementVersionManagerService.findAllRequirementVersionLinkType();
+		for (RequirementVersionLinkType link : linkedList) {
+			SearchInputPossibleValueModel searchInputPossibleValueModel1 = new SearchInputPossibleValueModel(link.getRole1Code(), link.getRole1Code());
+			possibleValues.add(searchInputPossibleValueModel1);
+			if(!link.getRole1Code().equals(link.getRole2Code())){
+				SearchInputPossibleValueModel searchInputPossibleValueModel2 = new SearchInputPossibleValueModel(link.getRole2Code(), link.getRole2Code());
+				possibleValues.add(searchInputPossibleValueModel2);
+			}
+		}
+		linkField.addPossibleValues(possibleValues);
 
 	}
 }

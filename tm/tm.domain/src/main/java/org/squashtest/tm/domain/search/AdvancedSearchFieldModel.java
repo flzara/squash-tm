@@ -31,6 +31,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 		property = "type")
 @JsonSubTypes({
 	@Type(value = AdvancedSearchListFieldModel.class, name = "LIST"),
+	@Type(value = AdvancedSearchMultiListFieldModel.class, name = "MULTILIST"),
 	@Type(value = AdvancedSearchSingleFieldModel.class, name = "SINGLE"),
 	@Type(value = AdvancedSearchTextFieldModel.class, name = "TEXT"),
 	@Type(value = AdvancedSearchRangeFieldModel.class, name = "RANGE"),

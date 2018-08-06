@@ -20,16 +20,55 @@
  */
 package org.squashtest.tm.domain.search;
 
-public enum AdvancedSearchFieldModelType {
-	// @formatter:off
-	SINGLE,
-	LIST,
-	TEXT,
-	TIME_INTERVAL,
-	RANGE,
-	NUMERIC_RANGE,
-	TAGS,
-	MULTILIST,
-	CF_TIME_INTERVAL;
-	// @formatter:on
+import java.util.ArrayList;
+import java.util.List;
+
+public class AdvancedSearchMultiListFieldModel implements AdvancedSearchFieldModel{
+
+	private AdvancedSearchFieldModelType type = AdvancedSearchFieldModelType.MULTILIST;
+
+	private List<String> values = new ArrayList<>();
+
+	private Integer minValue;
+
+	private Integer maxValue;
+
+	private boolean ignoreBridge = false;
+
+	@Override
+	public AdvancedSearchFieldModelType getType(){
+		return this.type;
+	}
+
+	public List<String> getValues() {
+		return values;
+	}
+
+	public void setValues(List<String> values) {
+		this.values = values;
+	}
+
+
+	public Integer getMinValue() {
+		return minValue;
+	}
+
+	public void setMinValue(Integer minValue) {
+		this.minValue = minValue;
+	}
+
+	public Integer getMaxValue() {
+		return maxValue;
+	}
+
+	public void setMaxValue(Integer maxValue) {
+		this.maxValue = maxValue;
+	}
+
+
+	@Override
+	public boolean isIgnoreBridge() {
+		return this.ignoreBridge;
+	}
+
 }

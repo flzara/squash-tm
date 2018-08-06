@@ -84,7 +84,8 @@ public class RequirementSearchController extends GlobalSearchController {
 		.mapAttribute("requirement-testcase-nb", "testcases", RequirementVersion.class)
 		.mapAttribute("requirement-attachment-nb", "attachments", RequirementVersion.class)
 		.mapAttribute("requirement-created-by", "createdBy", RequirementVersion.class)
-		.mapAttribute("requirement-modified-by", "lastModifiedBy", RequirementVersion.class);
+		.mapAttribute("requirement-modified-by", "lastModifiedBy", RequirementVersion.class)
+		.mapAttribute("links", "links", RequirementVersion.class);
 
 
 
