@@ -26,6 +26,7 @@ define(["jquery", "milestone-manager/milestone-activation", "squash.attributepar
 		return {
 			init: function () {
 
+
 				// ************ variables ********************
 
 				var checkbox = $("#toggle-milestone-checkbox"),
@@ -35,7 +36,16 @@ define(["jquery", "milestone-manager/milestone-activation", "squash.attributepar
 				var enabled = milestoneDao.isEnabled(),
 					milestone = milestoneDao.getActiveMilestone();
 
-
+				
+				// early exit if the milestone feature is not enabled
+				// sorry if I'm lazy here but the test consists of detecting 
+				// the presence or absence of the checkbox. I don't have time 
+				// to do better at the moment.
+				if (checkbox.length===0){
+					return;
+				}
+				
+				
 				// ****** util functions ********************
 
 
