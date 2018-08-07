@@ -29,34 +29,65 @@ import org.hibernate.search.bridge.LuceneOptions;
 import org.hibernate.type.LongType;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.requirement.RequirementVersionLinkType;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class RequirementLinkListBridge extends SessionFieldBridge {
 
 	private static final int EXPECTED_LENGTH = 7;
-	private String padRawValue(BigInteger rawValue){
+
+	private String padRawValue(BigInteger rawValue) {
 		return StringUtils.leftPad(rawValue.toString(), EXPECTED_LENGTH, '0');
 	}
+
+	private String padRawValue(BigDecimal rawValue) {
+		return StringUtils.leftPad(rawValue.toString(), EXPECTED_LENGTH, '0');
+	}
+
 	@Override
 	protected void writeFieldToDocument(String name, Session session, Object value, Document document, LuceneOptions luceneOptions) {
 
 		RequirementVersion r = (RequirementVersion) value;
+		List<RequirementVersionLinkType> list = session.createNamedQuery("RequirementVersionLinkType.getAllRequirementVersionLinkTypes").setReadOnly(true)
+			.list();
 
-		List<Object>  linkCount = session.createSQLQuery("SELECT case requirement_version_link.LINK_DIRECTION when true then requirement_version_link_type.role_1_code else requirement_version_link_type.role_2_code end as relationRole , SUM(CASE WHEN requirement_version_link.REQUIREMENT_VERSION_ID = :id THEN 1 ELSE 0 END) as count FROM public.requirement_version_link, public.requirement_version_link_type WHERE requirement_version_link.link_type_id = requirement_version_link_type.type_id group by relationRole")
+		Map<String, String> map = new HashMap<>();
+		for (RequirementVersionLinkType type : list) {
+			map.put(type.getRole1Code(), padRawValue(BigInteger.valueOf(0)));
+			if (!map.containsKey(type.getRole2Code())) {
+				map.put(type.getRole2Code(), padRawValue(BigInteger.valueOf(0)));
+			}
+		}
+		List<Object> linkCount = session.createNativeQuery("SELECT case requirement_version_link.LINK_DIRECTION when true then requirement_version_link_type.role_1_code else requirement_version_link_type.role_2_code end as relationRole , SUM(CASE WHEN requirement_version_link.REQUIREMENT_VERSION_ID =:id THEN 1 ELSE 0 END) as count FROM requirement_version_link requirement_version_link, requirement_version_link_type requirement_version_link_type WHERE requirement_version_link.link_type_id = requirement_version_link_type.type_id group by relationRole;")
 			.setReadOnly(true)
 			.setParameter("id", r.getId())
 			.list();
-		for(Object  result  : linkCount) {
+
+
+		for (Object result : linkCount) {
 			Object[] temp = (Object[]) result;
 
-			Field field = new Field((String) temp[0], padRawValue((BigInteger) temp[1]), luceneOptions.getStore(), luceneOptions.getIndex(),
-				luceneOptions.getTermVector());
-			field.setBoost( luceneOptions.getBoost());
-			document.add(field);
-
+			if (temp[1].getClass().equals(BigDecimal.class)) {
+				map.put((String) temp[0], padRawValue((BigDecimal) temp[1]));
+			}
+			if (temp[1].getClass().equals(BigInteger.class)) {
+				map.put((String) temp[0], padRawValue((BigInteger) temp[1]));
+			}
 		}
+
+		Field field = null;
+		for (Map.Entry<String, String> entry : map.entrySet()) {
+			field = new Field(entry.getKey(), entry.getValue(), luceneOptions.getStore(), luceneOptions.getIndex(),
+				luceneOptions.getTermVector());
+			field.setBoost(luceneOptions.getBoost());
+			document.add(field);
+		}
+
+
 	}
 }

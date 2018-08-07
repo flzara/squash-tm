@@ -87,7 +87,7 @@ define([ "jquery", "jqueryui" ], function($) {
 			var input = $("select", $(".combo-type"));
 			input.html("");
 			var typeopt;
-			for ( var j = 2, len2 = options.length; j < len; j++) {
+			for ( var j = 2, len2 = options.length; j < len2; j++) {
 				typeopt = $('<option>', {
 					'text' : options[j].value,
 					'value' : options[j].code,
