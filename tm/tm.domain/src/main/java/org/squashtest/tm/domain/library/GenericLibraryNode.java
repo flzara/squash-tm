@@ -33,17 +33,8 @@ import org.apache.lucene.analysis.charfilter.HTMLStripCharFilterFactory;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.hibernate.annotations.Type;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Analyzer;
-import org.hibernate.search.annotations.AnalyzerDef;
-import org.hibernate.search.annotations.CharFilterDef;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.Fields;
-import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.Store;
-import org.hibernate.search.annotations.TokenFilterDef;
-import org.hibernate.search.annotations.TokenizerDef;
+import org.hibernate.search.annotations.*;
+
 import javax.validation.constraints.NotBlank;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
@@ -68,6 +59,10 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 	private Project project;
 
 	@NotBlank
+	@SortableFields({
+		@SortableField(forField = "label"),
+		@SortableField(forField = "labelUpperCased")
+	})
 	@Fields({
 		@Field,
 		@Field(name = "label", analyze = Analyze.NO, store = Store.YES),

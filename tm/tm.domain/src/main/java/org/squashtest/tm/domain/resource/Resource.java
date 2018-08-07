@@ -52,6 +52,10 @@ public abstract class Resource implements AttachmentHolder, Identified {
 
 	@NotBlank
 	@Size(max = Sizes.NAME_MAX)
+	@SortableFields({
+		@SortableField(forField = "label"),
+		@SortableField(forField = "labelUpperCased")
+	})
 	@Fields({
 		@Field,
 		@Field(name = "label", analyze = Analyze.NO, store = Store.YES),

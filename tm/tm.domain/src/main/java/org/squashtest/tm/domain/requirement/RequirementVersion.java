@@ -45,15 +45,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.ClassBridge;
-import org.hibernate.search.annotations.ClassBridges;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.Parameter;
-import org.hibernate.search.annotations.Store;
+import org.hibernate.search.annotations.*;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.customfield.BindableEntity;
@@ -110,12 +102,14 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	@NotNull
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@Size(min = 0, max = MAX_REF_SIZE)
+	@SortableField
 	private String reference = "";
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = LevelEnumBridge.class)
+	@SortableField
 	private RequirementCriticality criticality = RequirementCriticality.UNDEFINED;
 
 	@NotNull
@@ -123,6 +117,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	@JoinColumn(name = "CATEGORY")
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = InfoListItemBridge.class)
+	@SortableField
 	private InfoListItem category;
 
 	@NotNull
@@ -130,6 +125,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	@Column(name = "REQUIREMENT_STATUS")
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = LevelEnumBridge.class)
+	@SortableField
 	private RequirementStatus status = RequirementStatus.WORK_IN_PROGRESS;
 
 	@NotNull

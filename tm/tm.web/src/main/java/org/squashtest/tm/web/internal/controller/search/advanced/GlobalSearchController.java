@@ -48,7 +48,7 @@ import java.util.*;
  * Created by jsimon on 04/05/2016.
  */
 
-@RequestMapping("/advanced-search")
+@RequestMapping("advanced-search")
 public abstract class GlobalSearchController {
 
 	@Inject

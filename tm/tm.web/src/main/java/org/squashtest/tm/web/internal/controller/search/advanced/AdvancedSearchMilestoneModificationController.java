@@ -41,7 +41,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.search.MilestoneMassModifData;
 
 @Controller
-@RequestMapping("/advanced-search")
+@RequestMapping("advanced-search")
 public class AdvancedSearchMilestoneModificationController {
 
 	private static final String IDS = "ids[]";

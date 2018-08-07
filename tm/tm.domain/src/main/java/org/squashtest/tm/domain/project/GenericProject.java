@@ -51,6 +51,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.SortableField;
 import org.hibernate.search.annotations.Store;
 import javax.validation.constraints.NotBlank;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
@@ -102,6 +103,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 	@NotBlank
 	@Size(max = Sizes.NAME_MAX)
 	@Field(analyze = Analyze.NO, store = Store.YES)
+	@SortableField
 	private String name;
 
 	private boolean active = true;
