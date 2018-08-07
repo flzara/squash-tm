@@ -65,7 +65,8 @@ define(["jquery", "./abstractCustomReportChart",
 							show: true,
 							labelsFromSeries: true,
 							formatString: '%g',
-							textColor: "slategray",
+							// 99% sure the textColor option is useless here
+							textColor: "hotpink",
 							hideZeros: true
 						}
 					},
@@ -79,17 +80,22 @@ define(["jquery", "./abstractCustomReportChart",
 							ticks: ticks,
 							tickOptions: {
 								fontSize: sizeDependantconf.fontSize,
-								showGridline: false
+								showGridline: false,
+								textColor: '#000000'
 							},
 							label: this.getXAxisLabel(),//we have inversed axis for this kind of charts ie horizontal bar charts
 							labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
 							labelOptions: {
-								angle: -90
+								angle: -90,
+								textColor: '#000000'
 							}
 						},
 						xaxis: {
 							label: this.getYAxisLabel(),//we have inversed axis for this kind of charts ie horizontal bar charts
 							labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+							labelOptions:{
+								textColor: '#000000'
+							},
 							tickOptions: {
 								gridStyle: {
 									lineDash: [5],

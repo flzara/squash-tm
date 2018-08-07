@@ -55,7 +55,7 @@ define(["jquery", "./abstractCustomReportChart",
 							show: true,
 							labelsFromSeries: true,
 							formatString: '%.1f',
-							textColor: "slategray",
+							textColor: "#000000",
 							location: 'n',
 							hideZeros: true
 						}
@@ -70,14 +70,21 @@ define(["jquery", "./abstractCustomReportChart",
 							ticks: ticks,
 							tickOptions: {
 								angle: -30,
-								showGridline: false
+								showGridline: false,
+								textColor: '#000000'
 							},
 							labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-							label: this.getXAxisLabel()
+							label: this.getXAxisLabel(),
+							labelOptions:{
+								textColor: '#000000'
+							}
 						},
 						yaxis: {
 							label: this.getYAxisLabel(),
 							labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+							labelOptions:{
+								textColor: '#000000'
+							},
 							tickOptions: {
 								gridStyle: {
 									lineDash: [5],
@@ -87,7 +94,8 @@ define(["jquery", "./abstractCustomReportChart",
 									lineDash: [5],
 									strokeStyle: '#c3c3c3'
 								},
-								fontSize: '12px'
+								fontSize: '12px',
+								textColor: '#000000'
 							}
 
 						}

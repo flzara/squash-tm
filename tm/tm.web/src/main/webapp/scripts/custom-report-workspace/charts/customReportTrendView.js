@@ -83,10 +83,14 @@ define(["jquery", "./abstractCustomReportChart",
 							tickOptions: {
 								fontSize: sizeDependantconf.fontSize,
 								showGridline: false,
-								angle: -30
+								angle: -30,
+								textColor: '#000000'
 							},
 							label: this.getXAxisLabel(),
-							labelRenderer: $.jqplot.CanvasAxisLabelRenderer
+							labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+							labelOptions:{
+								textColor: '#000000'
+							}
 						},
 						yaxis: {
 							tickOptions: {
@@ -98,11 +102,15 @@ define(["jquery", "./abstractCustomReportChart",
 								markStyle: {
 									lineDash: [5],
 									strokeStyle: '#c3c3c3'
-								}
+								},
+								textColor: '#000000'
 							},
 							min: 0,
 							label: this.getYAxisLabel(),
-							labelRenderer: $.jqplot.CanvasAxisLabelRenderer
+							labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+							labelOptions:{
+								textColor: '#000000'
+							}
 						}
 					}
 				});

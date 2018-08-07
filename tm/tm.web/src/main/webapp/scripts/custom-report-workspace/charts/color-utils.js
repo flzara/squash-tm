@@ -22,43 +22,43 @@ define(['jquery', 'underscore'], function ($, _) {
 
 	var ColorsEnum = {
 		// RequirementStatus / TestCaseStatus
-		WORK_IN_PROGRESS: "#fabf00",
-		UNDER_REVIEW: "#6bbfbd",
-		APPROVED: "#6bbf00",
-		OBSOLETE: "#b5b5b5",
-		TO_BE_UPDATED: "#ff8700",
+		WORK_IN_PROGRESS: "#E9C63E",
+		UNDER_REVIEW: "#5BBAA8",
+		APPROVED: "#599949",
+		OBSOLETE: "#E0E0E0",
+		TO_BE_UPDATED: "#F38D2D",
 
 		// RequirementCriticality
-		MINOR: "#258123",
-		MAJOR: "#ffd423",
-		CRITICAL: "#FF0000",
-		// UNDEFINED: ""
+		MINOR: "#F9D667",
+		MAJOR: "#E66400",
+		CRITICAL: "#CC2C00",
+		UNDEFINED: "#E0E0E0",
 
 		// TestCaseExecutionMode
 		AUTOMATED: "#258123",
-		MANUAL: "#284bee",
+		MANUAL: "#284BEE",
 
 		// TestCaseImportance
-		VERY_HIGH: "#FF0000",
-		HIGH: "#ffd423",
-		MEDIUM: "#258123",
-		LOW: "#284bee",
+		VERY_HIGH: "#CC2C00",
+		HIGH: "#E66400",
+		MEDIUM: "#FEA412",
+		LOW: "#F9D667",
 
 		// CampaignStatus / IterationStatus
-		UNDEFINED: "#b5b5b5",
-		PLANNED: "#6bbfbd",
-		IN_PROGRESS: "#fabf00",
-		FINISHED: "#6bbf00",
-		ARCHIVED: "#536dec",
+		// UNDEFINED: "#c6c6c6",
+		PLANNED: "#E9C63E",
+		IN_PROGRESS: "#5BBAA8",
+		FINISHED: "#599949",
+		ARCHIVED: "#F38D3D",
 
 		//ExecutionStatus
-		SETTLED: "#006700",
-		UNTESTABLE: "#f4f4f4",
-		BLOCKED: "#ffd423",
-		FAILURE: "#FF0000",
-		SUCCESS: "#258123",
-		RUNNING: "#284bee",
-		READY: "#bababb"
+		SETTLED: "#2F4233",
+		UNTESTABLE: "#F4F4DE",
+		BLOCKED: "#F2C830",
+		FAILURE: "#B22C2C",
+		SUCCESS: "#2D7243",
+		RUNNING: "#4288CE",
+		READY: "#BAB4B9"
 		// WARNING: "#536dec",
 		// ERROR: "#536dec",
 		// NOT_RUN: "#536dec",

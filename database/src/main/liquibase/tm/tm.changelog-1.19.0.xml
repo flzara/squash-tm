@@ -132,4 +132,142 @@
     <addNotNullConstraint tableName="ITERATION_TEST_SUITE" columnName="ITERATION_TEST_SUITE_ORDER" columnDataType="INT"/>
   </changeSet>
 
+  <changeSet id="tm-1.19.0-SQTM-399-infolist-items-default-colours" author="cholc">
+    <comment>Requirement categories colours</comment>
+
+    <update tableName="INFO_LIST_ITEM">
+      <column name="COLOUR" value="#C3AB77"/>
+      <where>CODE = 'CAT_TEST_REQUIREMENT'</where>
+    </update>
+
+    <update tableName="INFO_LIST_ITEM">
+      <column name="COLOUR" value="#CDCDCD"/>
+      <where>CODE = 'CAT_UNDEFINED'</where>
+    </update>
+
+    <update tableName="INFO_LIST_ITEM">
+      <column name="COLOUR" value="#8F6057"/>
+      <where>CODE = 'CAT_ERGONOMIC'</where>
+    </update>
+
+    <update tableName="INFO_LIST_ITEM">
+      <column name="COLOUR" value="#FCCA46"/>
+      <where>CODE = 'CAT_PERFORMANCE'</where>
+    </update>
+
+    <update tableName="INFO_LIST_ITEM">
+      <column name="COLOUR" value="#233D4D"/>
+      <where>CODE = 'CAT_TECHNICAL'</where>
+    </update>
+
+    <update tableName="INFO_LIST_ITEM">
+      <column name="COLOUR" value="#094C75"/>
+      <where>CODE = 'CAT_USER_STORY'</where>
+    </update>
+
+    <update tableName="INFO_LIST_ITEM">
+      <column name="COLOUR" value="#FE7F2D"/>
+      <where>CODE = 'CAT_SECURITY'</where>
+    </update>
+
+    <update tableName="INFO_LIST_ITEM">
+      <column name="COLOUR" value="#7594CD"/>
+      <where>CODE = 'CAT_FUNCTIONAL'</where>
+    </update>
+
+    <update tableName="INFO_LIST_ITEM">
+      <column name="COLOUR" value="#BB5759"/>
+      <where>CODE = 'CAT_NON_FUNCTIONAL'</where>
+    </update>
+
+    <update tableName="INFO_LIST_ITEM">
+      <column name="COLOUR" value="#A1C181"/>
+      <where>CODE = 'CAT_USE_CASE'</where>
+    </update>
+
+    <update tableName="INFO_LIST_ITEM">
+      <column name="COLOUR" value="#619B8A"/>
+      <where>CODE = 'CAT_BUSINESS'</where>
+    </update>
+
+    <comment>Test cases natures colours</comment>
+
+    <update tableName="INFO_LIST_ITEM">
+      <column name="COLOUR" value="#A1C181"/>
+      <where>CODE = 'NAT_USER_TESTING'</where>
+    </update>
+
+    <update tableName="INFO_LIST_ITEM">
+      <column name="COLOUR" value="#FCCA46"/>
+      <where>CODE = 'NAT_PERFORMANCE_TESTING'</where>
+    </update>
+
+    <update tableName="INFO_LIST_ITEM">
+      <column name="COLOUR" value="#FE7F2D"/>
+      <where>CODE = 'NAT_SECURITY_TESTING'</where>
+    </update>
+
+    <update tableName="INFO_LIST_ITEM">
+      <column name="COLOUR" value="#233D4D"/>
+      <where>CODE = 'NAT_ATDD'</where>
+    </update>
+
+    <update tableName="INFO_LIST_ITEM">
+      <column name="COLOUR" value="#CDCDCD"/>
+      <where>CODE = 'NAT_UNDEFINED'</where>
+    </update>
+
+    <update tableName="INFO_LIST_ITEM">
+      <column name="COLOUR" value="#7594CD"/>
+      <where>CODE = 'NAT_FUNCTIONAL_TESTING'</where>
+    </update>
+
+    <update tableName="INFO_LIST_ITEM">
+      <column name="COLOUR" value="#BB5759"/>
+      <where>CODE = 'NAT_NON_FUNCTIONAL_TESTING'</where>
+    </update>
+
+    <update tableName="INFO_LIST_ITEM">
+      <column name="COLOUR" value="#619B8A"/>
+      <where>CODE = 'NAT_BUSINESS_TESTING'</where>
+    </update>
+
+    <comment>Test cases types colours</comment>
+
+    <update tableName="INFO_LIST_ITEM">
+      <column name="COLOUR" value="#CDCDCD"/>
+      <where>CODE = 'TYP_UNDEFINED'</where>
+    </update>
+
+    <update tableName="INFO_LIST_ITEM">
+      <column name="COLOUR" value="#5B9367"/>
+      <where>CODE = 'TYP_COMPLIANCE_TESTING'</where>
+    </update>
+
+    <update tableName="INFO_LIST_ITEM">
+      <column name="COLOUR" value="#CD533B"/>
+      <where>CODE = 'TYP_CORRECTION_TESTING'</where>
+    </update>
+
+    <update tableName="INFO_LIST_ITEM">
+      <column name="COLOUR" value="#D8A86E"/>
+      <where>CODE = 'TYP_EVOLUTION_TESTING'</where>
+    </update>
+
+    <update tableName="INFO_LIST_ITEM">
+      <column name="COLOUR" value="#F2E77E"/>
+      <where>CODE = 'TYP_REGRESSION_TESTING'</where>
+    </update>
+
+    <update tableName="INFO_LIST_ITEM">
+      <column name="COLOUR" value="#2D5635"/>
+      <where>CODE = 'TYP_END_TO_END_TESTING'</where>
+    </update>
+
+    <update tableName="INFO_LIST_ITEM">
+      <column name="COLOUR" value="#F2E2CE"/>
+      <where>CODE = 'TYP_PARTNER_TESTING'</where>
+    </update>
+  </changeSet>
+
 </databaseChangeLog>
