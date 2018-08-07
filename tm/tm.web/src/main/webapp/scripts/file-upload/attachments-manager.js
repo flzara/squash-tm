@@ -29,9 +29,9 @@
  *
  */
 
-define(["jquery", "squash.translator", "app/ws/squashtm.notification", "./jquery.squash.attachmentsDialog",
+define(["jquery", "squash.translator", "app/ws/squashtm.notification", "../app/util/StringUtil", "./jquery.squash.attachmentsDialog",
 		"jquery.squash.confirmdialog", "squashtable"],
-	function ($, translator, notification) {
+	function ($, translator, notification, StringUtil) {
 
 		function getMessages() {
 			return translator.get({
@@ -138,7 +138,7 @@ define(["jquery", "squash.translator", "app/ws/squashtm.notification", "./jquery
 						name = table.getDataById(id).name;
 
 					var index = name.lastIndexOf('.');
-					$("#rename-attachment-input").val(name.substring(0, index));
+					$("#rename-attachment-input").val(StringUtil.unescape(name).substring(0, index));
 
 					$("#rename-attachment-dialog").data('attachmentId', id)
 						.confirmDialog('open');
