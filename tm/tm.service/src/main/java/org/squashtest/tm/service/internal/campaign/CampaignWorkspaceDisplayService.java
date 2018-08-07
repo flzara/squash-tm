@@ -369,7 +369,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.leftJoin(MC).on(CI.CAMPAIGN_ID.eq(MC.CAMPAIGN_ID))
 			.leftJoin(M).on(MC.MILESTONE_ID.eq(M.MILESTONE_ID))
 			.where(TS.ID.in(fatherChildrenEntity.values()))
-			.groupBy(TS.ID, MC.MILESTONE_ID, M.STATUS)
+			.groupBy(TS.ID, MC.MILESTONE_ID, M.STATUS, ITS.ITERATION_TEST_SUITE_ORDER)
 			.orderBy(ITS.ITERATION_TEST_SUITE_ORDER)
 			.fetch()
 			.stream()
