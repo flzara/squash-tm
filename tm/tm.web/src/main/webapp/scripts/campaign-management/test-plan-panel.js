@@ -51,7 +51,7 @@ define(['squash.translator', './test-plan-panel/table', './test-plan-panel/popup
 		});
 
 		conf.urls = {
-			testplanUrl : baseURL + '/campaigns/'+conf.data.campaignId+'/test-plan/'
+			testplanUrl : baseURL + 'campaigns/'+conf.data.campaignId+'/test-plan/'
 		};
 
 		// because of the filtermode in the table we have to alias some properties of the conf :
@@ -78,15 +78,15 @@ define(['squash.translator', './test-plan-panel/table', './test-plan-panel/popup
 			});
 		}
 
-		if (conf.features.linkable){ 
+		if (conf.features.linkable){
 			$("#add-test-case-button").on('click', function(){
-				document.location.href=conf.urls.testplanUrl + "/manager";
+				document.location.href=conf.urls.testplanUrl + "manager";
 			});
 
 
 			$("#remove-test-plan-button").on('click', function(){
 				$("#delete-multiple-test-cases-dialog").formDialog('open');
-			}); 
+			});
 		}
 
 

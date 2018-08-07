@@ -35,7 +35,7 @@ define(['jquery', 'underscore', 'handlebars', 'squash.translator', 'app/ws/squas
 				var table = $("#campaign-test-plans-table").squashTable();
 				var drawParameters = table.getAjaxParameters();
 
-				var url = conf.urls.testplanUrl + '/order';
+				var url = conf.urls.testplanUrl + 'order';
 				$.post(url, drawParameters, 'json')
 					.success(function () {
 						table.data('sortmode').resetTableOrder(table);

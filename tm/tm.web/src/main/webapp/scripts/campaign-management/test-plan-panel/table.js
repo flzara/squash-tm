@@ -52,7 +52,7 @@ define(['jquery', '../../test-plan-panel/sortmode', 'squash.configmanager',
         function($, smode, confman, fmode, translator) {
 
 	function createTableConfiguration(conf){
- 
+
 		var rowCallback = function(row, data, displayIndex) {
 
 			var $row = $(row);
@@ -133,23 +133,23 @@ define(['jquery', '../../test-plan-panel/sortmode', 'squash.configmanager',
 		};
 
 		var preDrawCallback = function(settings){
-			
+
 			/*
-			 * The column dataset.selected.name is visible if : 
+			 * The column dataset.selected.name is visible if :
 			 * 1/ the dataset column is being filtered (we want to see the filter) or
 			 * 2/ at least one row contains a non empty dataset
-			 * 
+			 *
 			 */
 			var alldata = this.fnGetData();
-			
+
 			var dsFilterOn = this.data('filtermode').isFiltering('dataset.selected.name'),
 			rowsHavingDataset = $.grep(alldata, function(model){ return model.dataset.available.length !== 0 ;});
 
-			
+
 			var dsColIdx = this.getColumnIndexByName('dataset.selected.name'),
 				dsColVis = (dsFilterOn || rowsHavingDataset.length!==0);
-			
-	
+
+
 			this.fnSetColumnVis(dsColIdx, dsColVis, false);
 			this.data('showDatasets', dsColVis);
 		};
@@ -172,7 +172,7 @@ define(['jquery', '../../test-plan-panel/sortmode', 'squash.configmanager',
 			squashSettings.functions = {
 				dropHandler : function(dropData){
 					var ids = dropData.itemIds.join(',');
-					var url	= conf.urls.testplanUrl + '/' + ids + '/position/' + dropData.newIndex;
+					var url	= conf.urls.testplanUrl + ids + '/position/' + dropData.newIndex;
 					$.post(url, function(){
 						$("#campaign-test-plans-table").squashTable().refresh();
 					});
@@ -205,7 +205,7 @@ define(['jquery', '../../test-plan-panel/sortmode', 'squash.configmanager',
 			var table = $("#campaign-test-plans-table");
 			table.data('sortmode', sortmode);
 			table.data('filtermode', filtermode);
-			
+
 			table.squashTable(tableconf.tconf, tableconf.sconf);
 
 			// glue code between the filter and the sort mode

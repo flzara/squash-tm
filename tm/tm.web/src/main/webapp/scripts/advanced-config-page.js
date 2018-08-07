@@ -44,7 +44,7 @@ require(["common"], function() {
 				var enabled = $(event.currentTarget).prop("checked");
 
 				$.ajax({
-					url: squashtm.appRoot + "/features/case-insensitive-login",
+					url: squashtm.appRoot + "features/case-insensitive-login",
 					method: "post",
 					data: { enabled: enabled }
 				}).fail(function() {
@@ -74,7 +74,7 @@ require(["common"], function() {
 				var enabled = $(event.currentTarget).prop("checked");
 
 				$.ajax({
-					url: squashtm.appRoot + "/features/stack-trace",
+					url: squashtm.appRoot + "features/stack-trace",
 					method: "post",
 					data: { enabled: enabled }
 				}).fail(function() {
@@ -92,7 +92,7 @@ require(["common"], function() {
 				var enabled = $(event.currentTarget).prop("checked");
 
 				$.ajax({
-					url: squashtm.appRoot + "/features/file-repository",
+					url: squashtm.appRoot + "features/file-repository",
 					method: "post",
 					data: { enabled: enabled }
 				}).fail(function() {
