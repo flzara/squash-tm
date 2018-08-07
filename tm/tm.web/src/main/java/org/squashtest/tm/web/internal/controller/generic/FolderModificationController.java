@@ -20,29 +20,30 @@
  */
 package org.squashtest.tm.web.internal.controller.generic;
 
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
+
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.attachment.Attachment;
-import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.library.Folder;
-import org.squashtest.tm.domain.requirement.RequirementFolder;
-import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.library.FolderModificationService;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import java.util.Set;
-
-import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 public abstract class FolderModificationController<FOLDER extends Folder<?>> {
 

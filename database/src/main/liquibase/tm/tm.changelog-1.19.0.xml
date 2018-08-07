@@ -131,6 +131,14 @@
                          constraintName="uc_iteration_iteration_test_suite_order"/>
     <addNotNullConstraint tableName="ITERATION_TEST_SUITE" columnName="ITERATION_TEST_SUITE_ORDER" columnDataType="INT"/>
   </changeSet>
+  
+  
+  <changeSet id="tm-1.19.0-up-sb2-1" author="bsiri">
+  	<comment>Passwords are now much longer since we also store the salt. </comment>
+  	
+  	<modifyDataType tableName="AUTH_USER" columnName="PASSWORD" newDataType="VARCHAR(255)"/>
+  
+  </changeSet>
 
   <changeSet id="tm-1.19.0-SQTM-399-infolist-items-default-colours" author="cholc">
     <comment>Requirement categories colours</comment>

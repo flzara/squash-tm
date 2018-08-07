@@ -31,6 +31,7 @@ import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -93,6 +94,9 @@ import org.squashtest.tm.service.security.acls.domain.InheritableAclsObjectIdent
 @SuppressWarnings("squid:S1192")
 @Configuration
 public class SecurityConfig {
+	private static final String DBTYPE_POSTGRES = "POSTGRES";
+
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(SecurityConfig.class);
 
 
@@ -233,6 +237,9 @@ public class SecurityConfig {
 
 	@Autowired(required = false)
 	private Collection<ExtraPermissionEvaluator> extraPermissionEvaluators = Collections.emptyList();
+	
+	@Value("${jooq.sql.dialect:'MYSQL'}") 
+	private String dbType;
 
 
 
@@ -258,9 +265,7 @@ public class SecurityConfig {
 	}
 
 
-
 	@Bean
-	// the aclCache is created below
 	public BasicLookupStrategy lookupStrategy(DataSource dataSource, CacheManager cacheManager) {
 		BasicLookupStrategy strategy = new BasicLookupStrategy(dataSource, aclCache(cacheManager), aclAuthorizationStrategy(), grantingStrategy());
 
@@ -293,7 +298,19 @@ public class SecurityConfig {
 				"where((u.PARTY_ID = tmemb.USER_ID) or (u.PARTY_ID = party.PARTY_ID)) and u.ACTIVE = true and (\n");
 		// formatter:on
 
-		strategy.setLookupObjectIdentitiesWhereClause("(oid.IDENTITY = ? and ocl.CLASSNAME = ?)");
+		/*
+		 * Well Spring isn't much in a hurry to fix https://github.com/spring-projects/spring-security/issues/5455 so 
+		 * I just hack my way out and wait for better days
+		 */
+		String oIDWhereClause = null;
+		if (DBTYPE_POSTGRES.equals(dbType)){
+			oIDWhereClause = "(oid.IDENTITY::varchar(36) = ? and ocl.CLASSNAME = ?)";
+		}
+		else{
+			oIDWhereClause = "(oid.IDENTITY = ? and ocl.CLASSNAME = ?)";
+		}
+		strategy.setLookupObjectIdentitiesWhereClause(oIDWhereClause);
+		
 		strategy.setLookupPrimaryKeysWhereClause("(oid.ID = ?)");
 		strategy.setOrderByClause(") order by oid.IDENTITY asc, gp.PERMISSION_ORDER asc");
 		strategy.setPermissionFactory(permissionFactory());
