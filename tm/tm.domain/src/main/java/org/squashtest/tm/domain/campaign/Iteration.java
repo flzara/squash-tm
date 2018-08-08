@@ -30,10 +30,8 @@ import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.Store;
+import org.hibernate.search.annotations.*;
+
 import javax.validation.constraints.NotBlank;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.squashtest.tm.domain.Identified;
@@ -75,6 +73,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	@NotBlank
 	@Size(max = Sizes.NAME_MAX)
 	@Field(analyze = Analyze.NO, store = Store.YES)
+	@SortableField
 	private String name;
 
 	@NotNull

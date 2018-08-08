@@ -80,6 +80,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@NotNull
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@Size(min = 0, max = MAX_REF_SIZE)
+	@SortableField
 	private String reference = "";
 
 	@Lob
@@ -120,6 +121,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@Enumerated(STRING)
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = LevelEnumBridge.class)
+	@SortableField
 	private TestCaseImportance importance = LOW;
 
 	@NotNull
