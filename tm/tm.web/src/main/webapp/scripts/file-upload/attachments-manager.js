@@ -29,7 +29,7 @@
  *
  */
 
-define(["jquery", "squash.translator", "app/ws/squashtm.notification", "../app/util/StringUtil", "./jquery.squash.attachmentsDialog",
+define(["jquery", "squash.translator", "app/ws/squashtm.notification", "app/util/StringUtil", "./jquery.squash.attachmentsDialog",
 		"jquery.squash.confirmdialog", "squashtable"],
 	function ($, translator, notification, StringUtil) {
 
@@ -135,10 +135,10 @@ define(["jquery", "squash.translator", "app/ws/squashtm.notification", "../app/u
 				}
 				else {
 					var id = selectedIds[0],
-						name = table.getDataById(id).name;
+						name = StringUtil.unescape(table.getDataById(id).name);
 
 					var index = name.lastIndexOf('.');
-					$("#rename-attachment-input").val(StringUtil.unescape(name).substring(0, index));
+					$("#rename-attachment-input").val(name.substring(0, index));
 
 					$("#rename-attachment-dialog").data('attachmentId', id)
 						.confirmDialog('open');
