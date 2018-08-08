@@ -652,20 +652,6 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 			'change input[name="srv-auth-policy"]' : 'updatePolicy'
 		},
 
-		specificModelEvents: function(){
-			this.listenTo(this.model, 'change:policy', this.showSaveReminder);
-			this.listenTo(this.model, 'change:policy', this.render);
-		},
-
-		render: function(){
-			var policy = this.model.get('policy');
-			if (policy === 'USER'){
-				this.$main.hide();
-			}
-			else{
-				BasePanelView.prototype.render.call(this);
-			}
-		},
 
 		// ******* ajax **************
 
@@ -758,15 +744,6 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 			this.$el.html(loadTemplate('#messagepane-template'));
 		},
 
-		/*
-		disable : function(){
-			this.$el.addClass('disabled-transparent');
-		},
-
-		enable : function(){
-			this.$el.removeClass('disabled-transparent');
-		},
-		*/
 
 		displayMessage : function(status, msg){
 			var icon = this.iconMap[status];
