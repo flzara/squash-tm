@@ -40,6 +40,7 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.*;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import javax.inject.Inject;
 import java.util.HashMap;
@@ -139,7 +140,7 @@ public class TestAutomationServerManagementAdminController {
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, HtmlUtils.htmlEscape(item.getName()));
 			res.put(BASE_URL_KEY, HtmlUtils.htmlEscape(item.getBaseURL().toString()));
 			res.put(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, formatUsername(HtmlUtils.htmlEscape(auditable.getCreatedBy())));
-			res.put(DataTableModelConstants.DEFAULT_LAST_MODIFIED_BY_KEY, formatUsername(HtmlUtils.htmlEscape(auditable.getLastModifiedBy())));
+			res.put(DataTableModelConstants.DEFAULT_LAST_MODIFIED_BY_KEY, formatUsername(HTMLCleanupUtils.escapeOrDefault(auditable.getLastModifiedBy(), null)));
 			res.put(DataTableModelConstants.DEFAULT_LAST_MODIFIED_ON_KEY,
 				messageSource.localizeDate(auditable.getLastModifiedOn(), locale));
 			res.put(DataTableModelConstants.DEFAULT_CREATED_ON_KEY,

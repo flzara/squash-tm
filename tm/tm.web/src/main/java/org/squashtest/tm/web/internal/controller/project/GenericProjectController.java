@@ -472,12 +472,12 @@ public class GenericProjectController {
 			Map<String, Object> data = new HashMap<>(14);
 
 			final AuditableMixin auditable = (AuditableMixin) project;
-						
+
 			data.put("project-id", project.getId());
 			data.put("index", getCurrentIndex());
 			data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, HtmlUtils.htmlEscape(project.getName()));
 			data.put(ACTIVE, messageSource.internationalizeYesNo(project.isActive(), locale));
-			data.put(LABEL, HtmlUtils.htmlEscape(project.getLabel()));
+			data.put(LABEL, HTMLCleanupUtils.escapeOrDefault(project.getLabel(), ""));
 			data.put(DataTableModelConstants.DEFAULT_CREATED_ON_KEY, messageSource.localizeDate(auditable.getCreatedOn(), locale));
 			data.put(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, HtmlUtils.htmlEscape(auditable.getCreatedBy()));
 			data.put("last-mod-on", messageSource.localizeDate(auditable.getLastModifiedOn(), locale));

@@ -99,7 +99,7 @@ public class MilestoneDataTableModelHelper  extends DataTableModelBuilder<Milest
 		row.put("created-on", messageSource.localizeDate(auditable.getCreatedOn(), locale).substring(0, 10));
 		row.put("created-by", HtmlUtils.htmlEscape(auditable.getCreatedBy()));
 		row.put("last-mod-on", messageSource.localizeDate(auditable.getLastModifiedOn(), locale));
-		row.put("last-mod-by", HtmlUtils.htmlEscape(auditable.getLastModifiedBy()));
+		row.put("last-mod-by", HTMLCleanupUtils.escapeOrDefault(auditable.getLastModifiedBy(), null));
 		row.put("bindableToObject", item.getStatus().isBindableToObject());
 		row.put("delete", "");
 		row.put("checkbox", "");

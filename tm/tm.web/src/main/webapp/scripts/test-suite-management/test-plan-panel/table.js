@@ -484,7 +484,7 @@ define(
 				squashSettings.functions = {};
 				squashSettings.functions.dropHandler = function (dropData) {
 					var ids = dropData.itemIds.join(',');
-					var url = initconf.urls.testplanUrl + '/' + ids + '/position/' + dropData.newIndex;
+					var url = initconf.urls.testplanUrl + ids + '/position/' + dropData.newIndex;
 					$.post(url, function () {
 						$("#test-suite-test-plans-table").squashTable().refresh();
 					});

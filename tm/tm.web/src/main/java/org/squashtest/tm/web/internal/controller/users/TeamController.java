@@ -72,6 +72,7 @@ import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 /**
  * @author mpagnon
@@ -305,7 +306,7 @@ public class TeamController extends PartyControllerSupport {
 			res.put(DataTableModelConstants.DEFAULT_CREATED_ON_KEY, messageSource.localizeDate(auditable.getCreatedOn(), locale));
 			res.put(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, HtmlUtils.htmlEscape(auditable.getCreatedBy()));
 			res.put("last-mod-on", messageSource.localizeDate(auditable.getLastModifiedOn(), locale));
-			res.put("last-mod-by", HtmlUtils.htmlEscape(auditable.getLastModifiedBy()));
+			res.put("last-mod-by", HTMLCleanupUtils.escapeOrDefault(auditable.getLastModifiedBy(), null));
 			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			return res;
 		}

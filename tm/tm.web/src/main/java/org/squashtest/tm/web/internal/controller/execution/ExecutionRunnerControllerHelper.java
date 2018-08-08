@@ -238,7 +238,7 @@ public class ExecutionRunnerControllerHelper {
 		boolean wasNeverExecuted = executionProcessingService.wasNeverRun(executionId);
 		int stepOrder = wasNeverExecuted ? 0 : step.getExecutionStepOrder() + 1;
 
-		String currentStepUrl = contextPath + "/" + MessageFormat.format(CURRENT_STEP_URL_PATTERN, executionId);
+		String currentStepUrl = contextPath + MessageFormat.format(CURRENT_STEP_URL_PATTERN, executionId);
 
 		state.setBaseStepUrl(currentStepUrl);
 		// Issue 7137 - setting null to the referencedTestcaseId attribute when the test case is deleted

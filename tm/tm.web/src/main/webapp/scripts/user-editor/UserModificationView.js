@@ -31,11 +31,11 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/u
 			this.configureEditables();
 			this.configureDeletionDialog();
 			this.configureActivation();
-			
+
 			this.model = new Backbone.Model({
 				hasAuthentication : UMod.user.hasAuthentication
 			});
-			
+
 
 			if (this.model.get("hasAuthentication")) {
 				this.resetPasswordPopup = this.createResetPasswordPopup();
@@ -45,7 +45,7 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/u
 					el : "#auth-pop-pane",
 					popupId : "create-auth-popup",
 					openerId : "create-auth-button",
-					url: UMod.user.url.admin + "authentication", 
+					url: UMod.user.url.admin + "authentication",
 					type: "put",
 					model : this.model
 				});
@@ -68,7 +68,7 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/u
 		confirmUserDeletion : function(event) {
 			this.confirmDeletionDialog.confirmDialog("open");
 		},
-		
+
 		changeUserGroup : function(event) {
 			var url = UMod.user.url.changeGroup;
 			$.ajax({
@@ -78,7 +78,7 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/u
 				dataType : 'json'
 			});
 		},
-		
+
 		deleteUser : function(event) {
 			var self = this;
 			$.ajax({
@@ -97,10 +97,10 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/u
 			$.squash.decorateButtons();
 		},
 
-		
+
 
 		configureEditables : function() {
-			this.makeSimpleJEditable("user-login"); 
+			this.makeSimpleJEditable("user-login");
 			this.makeSimpleJEditable("user-first-name");
 			this.makeSimpleJEditable("user-last-name");
 			this.makeSimpleJEditable("user-email");
@@ -110,18 +110,18 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/u
 			this.confirmDeletionDialog = $("#delete-warning-pane").confirmDialog();
 			this.confirmDeletionDialog.on("confirmdialogconfirm", $.proxy(this.deleteUser, this));
 		},
-		
+
 		configureActivation : function(){
 
 			var activCbx = $("#toggle-activation-checkbox"),
 				activConf = attrparser.parse(activCbx.data('def'));
-			
+
 			activCbx.switchButton(activConf);
-			
+
 			//a bit of css tweak now
 			activCbx.siblings('.switch-button-background').css({position : 'relative', top : '5px'});
 		},
-		
+
 		toggleUserActivation : function(){
 			var shouldActivate = $("#toggle-activation-checkbox").prop('checked');
 			if (shouldActivate){
@@ -130,35 +130,35 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/u
 			else{
 				this.deactivateUser();
 			}
-				
-		},		
-		
+
+		},
+
 		activateUser : function(){
-			$.post(UMod.user.url.admin + '/activate')
+			$.post(UMod.user.url.admin + 'activate')
 			.done(function(){
 				$("#user-name-deactivated-hint").addClass('not-displayed');
 			});
 		},
-		
+
 		deactivateUser : function(){
-			$.post(UMod.user.url.admin + '/deactivate')
+			$.post(UMod.user.url.admin + 'deactivate')
 			.done(function(){
 				$("#user-name-deactivated-hint").removeClass('not-displayed');
-			});			
+			});
 		},
-		
+
 		makeSimpleJEditable : function(inputId) {
 			var self = this;
 
 			var onerror = function(settings, original, xhr) {
 				xhr.errorIsHandled = true;
 				var errormsg = notification.getErrorMessage(xhr);
-				Forms.input(self.$("#" + inputId)).setState("error", errormsg);					
+				Forms.input(self.$("#" + inputId)).setState("error", errormsg);
 				return ($.editable.types[settings.type].reset || $.editable.types.defaults.reset).apply(this, arguments);
 			};
 
 			new SimpleJEditable({
-				targetUrl : UMod.user.url.admin,  
+				targetUrl : UMod.user.url.admin,
 				componentId : inputId,
 				jeditableSettings : {
 					onerror: onerror,
@@ -172,7 +172,7 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/u
 				el: "#pass-pop-pane",
 				popupId: "password-reset-popup",
 				openerId: "reset-password-button",
-				url: UMod.user.url.admin, 
+				url: UMod.user.url.admin,
 				type: "post",
 				model: this.model
 			});
@@ -181,7 +181,7 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/u
 		onChangeHasAuthentication : function() {
 			if (this.model.get("hasAuthentication")) {
 				this.resetPasswordPopup = this.resetPasswordPopup || this.createResetPasswordPopup();
-				
+
 				this.$("#reset-password-button").removeClass("not-displayed");
 				this.$("#create-auth-button").addClass("not-displayed");
 
