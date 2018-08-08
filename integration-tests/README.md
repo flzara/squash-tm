@@ -28,14 +28,12 @@ This profile is automatically activated on windows environments
 	
 * `mysql` : performs integration tests against _mysql_ It requires these properties : 
 	* `it.database.url` : the test database url
-	* `it.legacy.database.url` : the database url for "legacy" (non db-unit) tests
 	* `it.database.schemaName` : the test database name
 	* `it.database.username` : a user with DDL grants
 	* `it.database.password` : the username's password
 
 * `postgresql` : performs integration tests against _postgres_ It requires these properties : 
 	* `it.database.url` : the test database url
-	* `it.legacy.database.url` : the database url for "legacy" (non db-unit) tests
 	* `it.database.username` : a user with DDL grants
 	* `it.database.password` : the username's password
 

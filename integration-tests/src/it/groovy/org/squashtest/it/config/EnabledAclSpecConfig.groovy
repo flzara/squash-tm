@@ -20,11 +20,13 @@
  */
 package org.squashtest.it.config
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.CacheManager
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured
+import org.springframework.core.env.AbstractEnvironment
 import org.springframework.security.acls.domain.PermissionFactory
 import org.springframework.security.acls.jdbc.LookupStrategy
 import org.springframework.security.acls.model.AclCache
@@ -35,6 +37,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService
 import org.squashtest.tm.service.SecurityConfig
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManager
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 
 import javax.inject.Inject
 import javax.sql.DataSource
@@ -58,17 +61,25 @@ import javax.sql.DataSource
  * @since 1.13.0
  */
 @Configuration
-@ComponentScan(
-basePackages = ["org.squashtest.tm.security.acls","org.squashtest.tm.service.security", "org.squashtest.tm.service.internal.security"]
-)
+@ComponentScan(basePackages = [
+	"org.squashtest.tm.security.acls",
+	"org.squashtest.tm.service.security",
+	"org.squashtest.tm.service.internal.security"
+])
 @EnableSpringConfigured
 class EnabledAclSpecConfig {
 
 	@Inject
 	DataSource dataSource
 
+	@Inject
+	private AbstractEnvironment springEnv;
 
-	SecurityConfig seconf = getSeconf();
+	SecurityConfig seconf = null;
+
+	public getSpringEnv(){
+		return springEnv
+	}
 
 	@Bean
 	PasswordEncoder passwordEncoder() {
@@ -124,6 +135,12 @@ class EnabledAclSpecConfig {
 				AclCache aclCache(CacheManager cacheManager) {
 					return new NullAclCache()
 				}
+			}
+
+			// also set the database type, used for creating the BasicLookupStrategy
+			String dbtype = getSpringEnv().getRequiredProperty("jooq.sql.dialect")
+			use(ReflectionCategory){
+				SecurityConfig.set "field": "dbType", "of": seconf, "to": dbtype
 			}
 		}
 		seconf
