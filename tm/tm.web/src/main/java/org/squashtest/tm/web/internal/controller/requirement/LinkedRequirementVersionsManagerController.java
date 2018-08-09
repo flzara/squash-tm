@@ -198,56 +198,67 @@ public class LinkedRequirementVersionsManagerController {
 	public Map<String, Object> addDefaultLinkWithVersionIdAndNodeId(
 		@PathVariable(REQUIREMENT_VERSION_ID) long requirementVersionId,
 		@PathVariable("requirementNodesIds") List<Long> requirementNodesIds) {
-
 		Collection<LinkedRequirementVersionException> rejections =
 			linkedReqVersionManager.addLinkedReqVersionsToReqVersion(requirementVersionId, requirementNodesIds);
 		return buildSummary(rejections);
 	}
 
 	@ResponseBody
-	@RequestMapping(method = RequestMethod.POST, params = {"reqVersionNodeId", "relatedReqVersionNodeId"})
+	@RequestMapping(method = RequestMethod.POST, params = {"reqVersionNodeId", "relatedReqVersionNodeIds"})
 	public Map<String, Object> addDefaultLinkWithNodeIds(
 		@RequestParam("reqVersionNodeId") long reqVersionNodeId,
-		@RequestParam("relatedReqVersionNodeId") long relatedReqVersionNodeId) {
-
-		Collection<LinkedRequirementVersionException> rejections =
-			linkedReqVersionManager.addDefaultLinkWithNodeIds(reqVersionNodeId, relatedReqVersionNodeId);
-		return buildSummary(rejections);
+		@RequestParam("relatedReqVersionNodeIds") List<Long>  relatedReqVersionNodeIds) {
+		Map<String, Object> map = new HashMap<>();
+		for (Long id : relatedReqVersionNodeIds) {
+			Collection<LinkedRequirementVersionException> rejections =
+				linkedReqVersionManager.addDefaultLinkWithNodeIds(reqVersionNodeId, id);
+			map.putAll(buildSummary(rejections));
+		}
+		return map;
 	}
+
 
 	@ResponseBody
 	@RequestMapping(value = "/{relatedId}", method = RequestMethod.POST, params = {IS_RELATED_ID_A_NODE_ID, REQ_VERSION_LINK_TYPE_ID, REQ_VERSION_LINK_TYPE_DIRECTION})
 	public void updateLinkTypeAndDirection(
 		@PathVariable(REQUIREMENT_VERSION_ID) long requirementVersionId,
-		@PathVariable("relatedId") long paramRelatedId,
+		@PathVariable("relatedId") List<Long> paramRelatedIds,
 		@RequestParam(IS_RELATED_ID_A_NODE_ID) boolean isRelatedIdANodeId,
 		@RequestParam(REQ_VERSION_LINK_TYPE_ID) long reqVersionLinkTypeId,
 		@RequestParam(REQ_VERSION_LINK_TYPE_DIRECTION) boolean reqVersionLinkTypeDirection) {
 
-		long relatedId = paramRelatedId;
-
-		linkedReqVersionManager.updateLinkTypeAndDirection(
-			requirementVersionId, relatedId, isRelatedIdANodeId,
-			reqVersionLinkTypeId, reqVersionLinkTypeDirection);
+		for(Long paramRelatedId : paramRelatedIds) {
+			long relatedId = paramRelatedId;
+			linkedReqVersionManager.updateLinkTypeAndDirection(
+				requirementVersionId, relatedId, isRelatedIdANodeId,
+				reqVersionLinkTypeId, reqVersionLinkTypeDirection);
+		}
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/{relatedId}", params = {IS_RELATED_ID_A_NODE_ID}, method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
-	public Map<String, String> getRequirementVersionInformation(@PathVariable long relatedId, @RequestParam(IS_RELATED_ID_A_NODE_ID) boolean isRelatedIdANodeId) {
-
+	@RequestMapping(value = "/{relatedIds}", params = {IS_RELATED_ID_A_NODE_ID}, method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
+	public Map<String, String> getRequirementVersionInformation(@PathVariable List<Long> relatedIds, @RequestParam(IS_RELATED_ID_A_NODE_ID) boolean isRelatedIdANodeId) {
+		String name = "";
+		String description = "";
 		Map<String, String> versionInfosMap = new HashMap<>();
-
-		RequirementVersion latestVersion;
-		if (isRelatedIdANodeId) {
-			// If the relatedId is a node's one, we have to get the corresponding latest version.
-			Requirement selectedRequirement = requirementFinder.findRequirement(relatedId);
-			latestVersion = selectedRequirement.findLastNonObsoleteVersion();
-		} else {
-			latestVersion = requirementVersionFinder.findById(relatedId);
+		for(Long relatedId : relatedIds) {
+			RequirementVersion latestVersion;
+			if (isRelatedIdANodeId) {
+				// If the relatedId is a node's one, we have to get the corresponding latest version.
+				Requirement selectedRequirement = requirementFinder.findRequirement(relatedId);
+				latestVersion = selectedRequirement.findLastNonObsoleteVersion();
+			} else {
+				latestVersion = requirementVersionFinder.findById(relatedId);
+			}
+			if(name.equals("")) {
+				name = name + HtmlUtils.htmlEscape(latestVersion.getName());
+			}else{
+				name =   name + ", " + HtmlUtils.htmlEscape(latestVersion.getName()) ;
+			}
+			description = description + HTMLCleanupUtils.cleanHtml(latestVersion.getDescription());
 		}
-		versionInfosMap.put("versionName", HtmlUtils.htmlEscape(latestVersion.getName()));
-		versionInfosMap.put("versionDescription", HTMLCleanupUtils.cleanHtml(latestVersion.getDescription()));
-
+		versionInfosMap.put("versionName", name );
+		versionInfosMap.put("versionDescription",description);
 		return versionInfosMap;
 	}
 
@@ -258,7 +269,7 @@ public class LinkedRequirementVersionsManagerController {
 	}
 
 	private Map<String, Object> buildSummary(Collection<LinkedRequirementVersionException> rejections) {
-		return LinkedRequirementVersionActionSummaryBuilder.buildAddActionSummary(rejections);
+		return  LinkedRequirementVersionActionSummaryBuilder.buildAddActionSummary(rejections);
 	}
 
 	private List<RequirementVersionLinkType> internationalizeLinkTypesRoles(List<RequirementVersionLinkType> listToInternationalize, Locale locale) {

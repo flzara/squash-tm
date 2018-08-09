@@ -33,6 +33,8 @@
 <c:url var="requirementUrl" value="/requirements/${ requirement.id }" />
 <c:url var="linkedReqVersionsUrl" value="/requirement-versions/${ requirementVersion.id }/linked-requirement-versions" />
 
+<f:message var="modifylabel" key="label.Modify" />
+<f:message var="removeLabel" key="label.Delete" />
 <layout:tree-picker-layout  workspaceTitleKey="workspace.requirement.title"
               highlightedWorkspace="requirement"
               linkable="requirement"
@@ -65,6 +67,18 @@
       <div class="unsnap"></div>
   </jsp:attribute>
   <jsp:attribute name="tablePane">
+      <div class="right btn-toolbar">
+        <span class="btn-group">
+          <button id="modify-linked-requirement-button" class="sq-btn btn-sm" title="${modifylabel}" value="${modifylabel}">
+          ${modifylabel}
+            <span class="ui-icon ui-icon-pencil"></span>
+          </button>
+          <button id="remove-linked-requirement-button" class="sq-btn btn-sm" value="${removeLabel}" title="${removeLabel}">
+            ${removeLabel}
+            <span class="ui-icon ui-icon-trash"></span>
+          </button>
+        </span>
+      </div>
     <comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ requirementUrl }" />
 
     <reqs:linked-requirements-table

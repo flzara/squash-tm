@@ -117,7 +117,7 @@ class LinkedRequirementVersionManagerServiceImplTest extends Specification {
 
 	}
 
-	def "#addLinkedReqVersionsToReqVersion: Should throw 3 exceptions and add 1 link."() {
+	def "#addLinkedReqVersionsToReqVersion: Should throw 3 exceptions."() {
 
 		given: "Input data"
 			long mainRvId = 321L
@@ -210,8 +210,103 @@ class LinkedRequirementVersionManagerServiceImplTest extends Specification {
 			def result = service.addLinkedReqVersionsToReqVersion(mainRvId, reqVerIdsToLink)
 
 		then:
-			1*reqVersionLinkDao.addLink(_)
 			result.size() == 3
 	}
 
+
+	def "#addLinkedReqVersionsToReqVersion: Should add 1 link."() {
+
+		given: "Input data"
+		long mainRvId = 321L
+		long mainReqId = 1L
+
+		long rv1Id = 123L
+		long req1Id = 2L
+
+		long rv2Id = 456L
+		long req2Id = 3L
+
+		long rv3Id = 789L
+		long req3Id = mainReqId
+
+		long rv4Id = 951L
+		long req4Id = 5L
+
+		List<Long> reqVerIdsToLink = [rv1Id, rv2Id, rv3Id, rv4Id]
+
+		and: "Mock dao data"
+
+		RequirementVersion mainRv = Mock(RequirementVersion.class)
+		mainRv.getId() >> mainRvId
+		Requirement mainReq = Mock(Requirement.class)
+		mainReq.getId() >> mainReqId
+		mainRv.isLinkable() >> true
+		mainRv.getRequirement() >> mainReq
+
+		RequirementVersion rv1 = Mock(RequirementVersion.class)
+		rv1.getId() >> rv1Id
+		Requirement req1 = Mock(Requirement.class)
+		req1.getId() > req1Id
+		req1.getResource() >> rv1
+		rv1.isLinkable() >> true
+		rv1.getRequirement() >> req1
+		req1.accept(_) >> { RequirementNodeWalker visitor ->
+			visitor.visit(req1)
+		}
+
+		RequirementVersion rv2 = Mock(RequirementVersion.class)
+		rv2.getId() >> rv2Id
+		Requirement req2 = Mock(Requirement.class)
+		req2.getId() >> req2Id
+		req2.getResource() >> rv2
+		rv2.isLinkable() >> true
+		rv2.getRequirement() >> req2
+		req2.accept(_) >> { RequirementNodeWalker visitor ->
+			visitor.visit(req2)
+		}
+
+		RequirementVersion rv3 = Mock(RequirementVersion.class)
+		rv3.getId() >> rv3Id
+		Requirement req3 = Mock(Requirement.class)
+		req3.getId() >> req3Id
+		req3.getResource() >> rv3
+		rv3.isLinkable() >> true
+		rv3.getRequirement() >> req3
+		req3.accept(_) >> { RequirementNodeWalker visitor ->
+			visitor.visit(req3)
+		}
+
+		RequirementVersion rv4 = Mock(RequirementVersion.class)
+		rv4.getId() >> rv4Id
+		Requirement req4 = Mock(Requirement.class)
+		req4.getId() >> req4Id
+		req4.getResource() >> rv4
+		rv4.isLinkable() >> false
+		rv4.getRequirement() >> req4
+		req4.accept(_) >> { RequirementNodeWalker visitor ->
+			visitor.visit(req4)
+		}
+
+		List<LibraryNodeDao> reqList = [req2] as List
+
+		RequirementVersionLinkType defaultType = Mock()
+
+		and: "Mock dao methods"
+		requirementLibraryNodeDao.findAllByIds(reqVerIdsToLink) >> reqList
+		reqVersionDao.getOne(_) >> mainRv
+		reqVersionLinkDao.linkAlreadyExists(mainRvId, _) >> { args ->
+			if(args[1] == rv1Id) true
+			else false
+		}
+		reqVersionLinkTypeDao.getDefaultRequirementVersionLinkType() >> defaultType
+
+		and: "Mock service method"
+		activeMilestoneHolder.getActiveMilestone() >> Optional.ofNullable(null)
+
+		when:
+		def result = service.addLinkedReqVersionsToReqVersion(mainRvId, reqVerIdsToLink)
+
+		then:
+		1*reqVersionLinkDao.addLink(_)
+	}
 }

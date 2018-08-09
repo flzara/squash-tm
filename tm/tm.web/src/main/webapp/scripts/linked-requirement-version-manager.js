@@ -101,8 +101,10 @@ require([ "common" ], function() {
 
 			var ids =	[];
 			var node = 0;
+			var nodes = [];
+			var send = "";
 			var selectedNodes = $( '#linkable-requirements-tree' ).jstree('get_selected');
-			if( selectedNodes.length === 1 && selectedNodes.not(':library, :folder').length === 1 ) {
+			if( selectedNodes.length >0  && selectedNodes.not(':library, :folder').length === selectedNodes.length ) {
 				 node = selectedNodes.treeNode();
 				 ids = node.all('getResId');
 			}
@@ -162,12 +164,12 @@ require([ "common" ], function() {
 				lock();
         var ids = getReqVersionsIdFromTree();
 
-        if (ids.length !== 1) {
+        if (ids.length === 0) {
         	notification.showError(msg.get('message.SelectOneRequirement'));
         	unlock();
         	deselectTree();
         	return;
-        } else if (ids.length === 1) {
+        } else if (ids.length >0) {
         	// Adding default linkType
         	bind(ids).success(function(rejections) {
 						// If rejections happened, showing
@@ -232,6 +234,43 @@ require([ "common" ], function() {
         		});
         	});
 			};
+
+			/* Trigger unbind-selected-versions event */
+			$('#remove-linked-requirement-button').on("click", function (event) {
+				squash.vent.trigger("linkedrequirementversions:unbind-selected", {source: event});
+			});
+
+			$('#modify-linked-requirement-button').on("click", function (event) {
+				// read the ids from the table selection
+				var ids = table().getSelectedIds();
+
+				if (ids.length === 0) {
+					$(this).formDialog('close');
+					$.squash.openMessage(msg.get("popup.title.error"), msg.get("message.EmptyTableSelection"));
+				}else{
+					bind(ids).success(function(rejections) {
+						var simplerejections =[];
+						// If rejections happened, showing
+						for(var value in (rejections)){
+							if(value !=="alreadyLinkedRejections") {
+								simplerejections.push(value);
+							}
+						}
+
+						if(Object.keys(simplerejections).length > 0 ) {
+							showAddSummary(rejections);
+							unlock();
+							deselectTree();
+							// Else, opening the popup
+						} else {
+							table().refresh();
+							openChooseTypeDialog(window.squashtm.bindingsManager.requirementVersion.id, ids, false);
+						}
+					});
+				}
+
+			});
+
 			chooseLinkTypeDialog.on('formdialogopen', onLinkTypeDialogOpen);
 
 			var onLinkTypeDialogConfirm = function() {

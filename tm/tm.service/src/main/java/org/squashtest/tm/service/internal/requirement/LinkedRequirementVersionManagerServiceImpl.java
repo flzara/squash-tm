@@ -119,16 +119,24 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 				checkIfSameRequirement(mainReqVersion, otherRequirementVersion);
 				checkIfVersionsAreLinkable(mainReqVersion, otherRequirementVersion);
 
-				/* No exception -> Adding */
-				RequirementVersionLink newReqVerLink =
-					new RequirementVersionLink(
-						mainReqVersion,
-						otherRequirementVersion,
-						reqVersionLinkTypeDao.getDefaultRequirementVersionLinkType(),
-						false);
-				reqVersionLinkDao.addLink(newReqVerLink);
 			} catch (LinkedRequirementVersionException exception) {
 				rejections.add(exception);
+			}
+		}
+		if(rejections.isEmpty()){
+			for (RequirementVersion otherRequirementVersion : requirementVersions) {
+				try {
+					/* No exception -> Adding */
+					RequirementVersionLink newReqVerLink =
+						new RequirementVersionLink(
+							mainReqVersion,
+							otherRequirementVersion,
+							reqVersionLinkTypeDao.getDefaultRequirementVersionLinkType(),
+							false);
+					reqVersionLinkDao.addLink(newReqVerLink);
+				} catch (LinkedRequirementVersionException exception) {
+					rejections.add(exception);
+				}
 			}
 		}
 		return rejections;
