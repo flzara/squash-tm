@@ -33,6 +33,7 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
@@ -81,7 +82,7 @@ import java.util.Map;
 		data.put("test-suite-name", HtmlUtils.htmlEscape(testSuiteNameList(testPlanItem)));
 		data.put("raw-exec-status", item.getExecutionStatus().name());
 		data.put("exec-status", translate(item.getExecutionStatus()));
-		data.put("last-exec-by", HtmlUtils.htmlEscape(item.getLastExecutedBy()));
+		data.put("last-exec-by", HTMLCleanupUtils.escapeOrDefault(item.getLastExecutedBy(), null));
 		data.put("last-exec-on", i18nHelper.localizeShortDate(item.getLastExecutedOn(), locale));
 		data.put("dataset", HtmlUtils.htmlEscape(formatDatasetName(item)));
 

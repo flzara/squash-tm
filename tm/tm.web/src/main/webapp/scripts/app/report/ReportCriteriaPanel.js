@@ -253,7 +253,7 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 				var jstype = jsTreeType(dom);
 				var nodelimit = nodeLimit(dom);
 				var isStrict = isStrictSelection(dom);
-				var url = config.contextPath + "/" + type + "-browser/drives";
+				var url = config.contextPath + type + "-browser/drives";
 
 				$.get(url, "linkables", "json").done(function(data) {
 					var settings = _.clone(config);
