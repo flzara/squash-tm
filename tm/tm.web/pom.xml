@@ -125,23 +125,23 @@
     <dependency>
       <groupId>org.hibernate.validator</groupId>
       <artifactId>hibernate-validator</artifactId>
-      <!-- todo : wtf, version is supposed to be managed by spring-boot-starter-web -->
-      <!--version>6.0.10.Final</version-->
     </dependency>
 
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-hibernate5</artifactId>
+      <exclusions>
+        <exclusion>
+          <!-- unneeded because of  javax.transaction:javax.transaction-api -->
+          <groupId>javax.transaction</groupId>
+          <artifactId>jta</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
       <groupId>net.sf.jasperreports</groupId>
       <artifactId>jasperreports</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.glassfish</groupId>
-      <artifactId>javax.el</artifactId>
     </dependency>
 
     <dependency>
@@ -153,31 +153,6 @@
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
     </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.jetty.orbit</groupId>
-      <artifactId>javax.servlet.jsp</artifactId>
-      <exclusions>
-        <exclusion>
-          <!-- When not excluded, there is a signature clash with some other javax.servlet dep -->
-          <groupId>org.eclipse.jetty.orbit</groupId>
-          <artifactId>javax.servlet</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <!--
-    	DEPRECRATION NOTICE (1.19.0) : Remove this if
-    	1.19.0 is tested and released successfully, which means
-    	this dependency wasn't needed after all.
-
-    	REASON : I don't think we need this at tm.web top level
-    	(we don't do commons logging).
-
-    dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jcl-over-slf4j</artifactId>
-    </dependency -->
 
     <dependency>
       <groupId>net.htmlparser.jericho</groupId>
@@ -236,6 +211,21 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
+      <exclusions>
+        <exclusion>
+          <!-- 
+      	 	Because of the Mantis plugin (more specifically, axis), we cannot
+      	 	rely purely on spring-jcl because it specifically requires 
+      	 	org.apache.commons.logging.impl.LogFactoryImpl (which is not exposed by 
+      	 	spring-jcl). 
+      	 	
+      	 	So as explain in the javadoc of spring-jcl package org.apache.commons.logging.impl, 
+      	 	we are switching to jcl-over-slf4j (see import below).   
+      	  -->
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-jcl</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -314,6 +304,20 @@
     </dependency>
 
     <dependency>
+      <!-- 
+    		jcl-over-slf4j was required after all because
+    		spring-jcl wouldn't work with axis (in the mantis 
+    		plugin). Note : due to this we are supposed 
+    		to
+    		
+    		Sorry, couldn't find a better place.
+    	  -->
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-properties-migrator</artifactId>
       <scope>runtime</scope>
@@ -323,12 +327,6 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>org.squashtest.tm.tools.unittest</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -344,6 +342,20 @@
       <groupId>org.apache.tomcat.embed</groupId>
       <artifactId>tomcat-embed-core</artifactId>
       <scope>${appserver.scope}</scope>
+      <exclusions>
+        <!-- 
+      re-excluding tomcat annotations as intended by Spring Boot, 
+      see https://github.com/spring-projects/spring-boot/issues/10133
+      and https://github.com/spring-projects/spring-boot/commit/0aedd3f11de9fe2fff927d3f3c921ae40feded95
+      
+      REASON : we now rely on the official javax.annotation-api artifact
+      
+       -->
+        <exclusion>
+          <groupId>org.apache.tomcat</groupId>
+          <artifactId>tomcat-annotations-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -351,6 +363,55 @@
       <artifactId>tomcat-embed-jasper</artifactId>
       <scope>${appserver.scope}</scope>
     </dependency>
+
+    <!-- =================================================
+    	DEPRECATED DEPENDENCIES
+    	
+    	Jasper JSP impl
+    	++++++++++++++++
+    	
+    	This artifact is a relic from the former, 
+    	Jetty + OSGI era
+    	
+    	javax.servlet.jsp stuffs are now served by 
+    	org.apache.tomcat.embed:tomcat-embed-jasper
+    	
+    	In external deployement, the external tomcat 
+    	should provide it too.
+    	
+      <groupId>org.eclipse.jetty.orbit</groupId>
+      <artifactId>javax.servlet.jsp</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.jetty.orbit</groupId>
+          <artifactId>javax.servlet</artifactId>
+        </exclusion>
+      </exclusions>
+
+    
+    	slf4j bridge
+    	+++++++++++++++++++++
+    	
+    	already brought in by spring-boot-starter-logging
+    	(using an implementation from apache common-logging)
+    
+	    <dependency>
+	      <groupId>org.slf4j</groupId>
+	      <artifactId>slf4j-log4j12</artifactId>
+	      <scope>test</scope>
+	    </dependency>
+	    
+	    javax.el
+	    +++++++++++++++++
+	    
+	    provided by tomcat-embed-el
+	    
+	    <dependency>
+	      <groupId>org.glassfish</groupId>
+	      <artifactId>javax.el</artifactId>
+	    </dependency>
+    
+    ===================================================== -->
 
   </dependencies>
   <build>
@@ -432,25 +493,27 @@
     </pluginManagement>
 
     <plugins>
-      <plugin>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <configuration>
-          <rules>
-            <banDuplicateClasses />
-            <findAllDuplicate>true</findAllDuplicate>
-            <requireMavenVersion>
-              <version>3.1.0</version>
-            </requireMavenVersion>
-          </rules>
-        </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>extra-enforcer-rules</artifactId>
-            <version>1.0-beta-3</version>
-          </dependency>
-        </dependencies>
-      </plugin>
+      <!--plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>        
+		<executions>
+          <execution>
+			<id>tm-enforce</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+			<configuration>
+			  <rules>
+				<banDuplicateClasses />
+				<findAllDuplicate>true</findAllDuplicate>
+				<requireMavenVersion>
+				  <version>3.1.0</version>
+				</requireMavenVersion>
+			  </rules>
+			</configuration>
+          </execution>
+        </executions>
+      </plugin-->
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

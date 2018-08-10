@@ -11,10 +11,6 @@
   <name>${project.groupId}.${project.artifactId}</name>
   <description>Squash TM API required to provide reports as plugins</description>
 
-  <properties>
-    <!--<sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>-->
-  </properties>
-
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -32,6 +28,12 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
+    </dependency>
+
+    <dependency>
+      <!--  see comment in the bom, about the exclusions for jasperreports -->
+      <groupId>org.eclipse.jdt</groupId>
+      <artifactId>ecj</artifactId>
     </dependency>
 
     <dependency>

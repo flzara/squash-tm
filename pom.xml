@@ -313,11 +313,90 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-enforcer-plugin</artifactId>
           <version>1.4.1</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>extra-enforcer-rules</artifactId>
+              <version>1.0-beta-9</version>
+            </dependency>
+          </dependencies>
         </plugin>
       </plugins>
     </pluginManagement>
 
     <plugins>
+      <plugin>
+        <!-- 
+      		We don't want commons-logging, we want to bridge it to slf4j using
+      		spring-jcl implementation (not jcl-over-slf4j).
+      		So here we check that no commons-logging gets included by mistake. 
+      	  -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>ban-unwanted-stuffs</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <bannedDependencies>
+                  <excludes>
+                    <exclude>commons-logging:commons-logging</exclude>
+                  </excludes>
+                </bannedDependencies>
+                <banDuplicateClasses>
+                  <findAllDuplicates>true</findAllDuplicates>
+                  <!-- 
+                  	Known harmless duplicates :
+                  	
+                  		1/ com.google.code.findbugs:jsr305 and com.google.code.findbugs:annotations.
+                  		
+                  		jsr305 should be removed in favor of annotations (a superset) unfortunately 
+                  		it is so ubiquitous that excluding it from every depending artifacts 
+                  		would be a pain. The weight of the involved jars are negligible and 
+                  		both can be shipped without significant memory penalty. 
+                  		
+                  		
+                  		2/ io.cucumber.gherkin (5.0.0) and io.cucumber.gherkin-jvm-deps.
+                  		
+                  		Gherkin already inlines every classes from the jvm-deps artifact, 
+                  		while still depending on it. However this might not be true for 
+                  		future versions of Gherkin (the pom for version 6.0.0 looks very
+                  		different) so I prefer to let them live together. The weight of 
+                  		both jar is negligible here too (barely 250k of duplicate classes)
+                  		
+                  		
+                  		3/ org.apache.tomcat.embed:tomcat-embed-core and javax.servlet:javax.servlet-api
+                  		
+                  		See https://github.com/spring-projects/spring-boot/issues/8943 for discussion.
+                  		
+                  		Ideally we should exclude spring-boot-starter-tomcat in tm.web and we could still compile 
+                  		(the customization of a Tomcat container only depend on Spring Boot core artifact), 
+                  		as long as the official javax.* apis are available.
+                  		
+                  		Tomcat embed core would be needed only at runtime, or not at all if deployed in 
+                  		an external Tomcat. But for this to happen we need it in the classpath. So we must 
+                  		live with the class conflict here untill a better option comes around.
+                   -->
+                  <ignoreWhenIdentical>true</ignoreWhenIdentical>
+                  <ignoreClasses>
+                    <!-- conflict in the mantis plugin but I suspect no severe consequences (it worked until now right ?) -->
+                    <ignoreClass>javax.xml.namespace.QName</ignoreClass>
+                    <!-- conflict with the javax.servlet-api, see comment above -->
+                    <ignoreClass>javax.servlet.*</ignoreClass>
+                  </ignoreClasses>
+                </banDuplicateClasses>
+                <requireMavenVersion>
+                  <version>3.1.0</version>
+                </requireMavenVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <plugin>
         <!-- This plugin sorts the poms so that they are simpler to manage and merge -->
         <groupId>com.google.code.sortpom</groupId>
@@ -470,7 +549,6 @@
             <!-- excluding node module for jenkins -->
             <exclude>tm/tm.web/node_module/**</exclude>
 
-
           </excludes>
           <mapping>
             <tag>DYNASCRIPT_STYLE</tag>
@@ -528,7 +606,6 @@
     </repository>
   </repositories>
 
-
   <pluginRepositories>
     <pluginRepository>
       <id>groovy-bintray</id>
@@ -536,7 +613,6 @@
       <url>https://dl.bintray.com/groovy/maven</url>
     </pluginRepository>
   </pluginRepositories>
-
 
   <distributionManagement>
     <repository>

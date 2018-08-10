@@ -66,13 +66,15 @@
       <artifactId>log4j</artifactId>
       <scope>test</scope>
     </dependency>
-	-->
+
 
     <dependency>
+    	slf4j bridge already brought in by spring boot starter logging
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <scope>test</scope>
     </dependency>
+	-->
 
     <dependency>
       <groupId>${project.groupId}</groupId>

@@ -17,7 +17,6 @@
     <objenesis.version>[2.2,)</objenesis.version>
   </properties>
 
-
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -74,6 +73,12 @@
     <dependency>
       <groupId>org.unitils</groupId>
       <artifactId>unitils-core</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.unitils</groupId>

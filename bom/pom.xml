@@ -19,12 +19,15 @@
   <properties>
     <!-- jasperreports.version defined in parent pom because it's used in plugin mgt -->
     <cglib-nodep.version>3.2.4</cglib-nodep.version>
+    <commons-beanutils.version>1.9.0</commons-beanutils.version>
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-compress.version>1.16.1</commons-compress.version>
     <commons-fileupload.version>1.3.2</commons-fileupload.version>
     <commons-io.version>2.4</commons-io.version>
     <commons-lang3.version>3.3.2</commons-lang3.version>
     <commons-validator.version>1.5.1</commons-validator.version>
+    <!-- ecj.version should match that pulled by org.apache.tomcat.embed:tomcat-embed-jasper -->
+    <ecj.version>3.12.3</ecj.version>
     <ehcache.version>3.3.0</ehcache.version>
     <gherkin.version>5.0.0</gherkin.version>
 
@@ -82,6 +85,19 @@
         <artifactId>cglib-nodep</artifactId>
         <version>${cglib-nodep.version}</version>
       </dependency>
+
+      <dependency>
+        <groupId>commons-beanutils</groupId>
+        <artifactId>commons-beanutils</artifactId>
+        <version>${commons-beanutils.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
       <dependency>
         <groupId>commons-collections</groupId>
         <artifactId>commons-collections</artifactId>
@@ -116,6 +132,19 @@
         <groupId>commons-validator</groupId>
         <artifactId>commons-validator</artifactId>
         <version>${commons-validator.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <!-- see comment in the exlude section of net.sf.jasperreports:jasperreports -->
+        <groupId>org.eclipse.jdt</groupId>
+        <artifactId>ecj</artifactId>
+        <version>${ecj.version}</version>
       </dependency>
 
       <dependency>
@@ -156,8 +185,27 @@
 
       <dependency>
         <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-core</artifactId>
+        <!-- here our transaction api will be javax.transaction-api instead -->
+        <exclusions>
+          <exclusion>
+            <groupId>org.jboss.spec.javax.transaction</groupId>
+            <artifactId>jboss-transaction-api_1.2_spec</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.hibernate</groupId>
         <artifactId>hibernate-search-orm</artifactId>
         <version>${hibernate.search.version}</version>
+        <!-- same here : our transaction api will be javax.transaction-api instead. Not sure why I have to exclude it here too. -->
+        <exclusions>
+          <exclusion>
+            <groupId>org.jboss.spec.javax.transaction</groupId>
+            <artifactId>jboss-transaction-api_1.2_spec</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
@@ -176,46 +224,116 @@
         		Some dependencies of Jasperreports are a mess (not jasper reports itself
         		though) : itext and castor-xml. Their own dependencies must also be
         		managed here.
+        		
         		Note that the version of itext here has been slightly modified by the JR
-        		team and is served by their own maven repository
+        		team and is served by their own maven repository.
+        		
+        		Note: no wild card used here for duplicate dependencies because maven-enforcer-plugin
+        		doesn't handle them well (see https://issues.apache.org/jira/browse/MENFORCER-195).
+        		Each offending dependency will be listed explicitly instead.
         	 -->
 
-          <exclusion>
-            <!--
-		  		Pulled by itext. But no we wont do xmlsecurity in our documents
+          <!--
+		  		Bouncycastle is pulled by itext. But no we wont do xmlsecurity in our documents
 		  		so we just exclude them.
 		  		Beside the lib changed its groupid from 'bouncycastle' to 'org.bouncycastle',
-		  		which effectively allows Maven to pull both set of bouncycastle artifacts
-		  		with no regard for the Shrödinbugs it induces at runtime.
+		  		which effectively allows Maven to pull both set of bouncycastle artifacts (as shown by 
+		  		dependency:tree -Dverbose) with no regard for the Shrödinbugs it induces at runtime.
+		  		
+		  		Note : we don't use the wildcard notation here because maven-enforcer-plugin
+		  		cant handle it properly (see https://issues.apache.org/jira/browse/MENFORCER-195)
+		  		so we explicitly declare the three of them.
 		  	-->
+          <exclusion>
             <groupId>bouncycastle</groupId>
-            <artifactId>*</artifactId>
+            <artifactId>bcmail-jdk14</artifactId>
           </exclusion>
 
           <exclusion>
-            <!--
-          		I could argue how castor-xml pulls both
-          		stax:stax-api:1.0.1 and javax:xml:stream:stax-api:1.0-2
-          		but since stax-api is now part of java rt since 1.6
-          		we just remove both altogether.
-          	 -->
-            <groupId>*</groupId>
+            <groupId>bouncycastle</groupId>
+            <artifactId>bcprov-jdk14</artifactId>
+          </exclusion>
+
+          <exclusion>
+            <groupId>bouncycastle</groupId>
+            <artifactId>bctsp-jdk14</artifactId>
+          </exclusion>
+
+          <!--
+        		I could argue how castor-xml pulls both
+        		stax:stax-api:1.0.1 and javax:xml:stream:stax-api:1.0-2
+        		but since stax-api is now part of java rt since 1.6
+        		we just remove both altogether.
+        	 -->
+          <exclusion>
+            <groupId>stax</groupId>
             <artifactId>stax-api</artifactId>
           </exclusion>
 
           <exclusion>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>*</artifactId>
+            <groupId>javax.xml.stream</groupId>
+            <artifactId>stax-api</artifactId>
           </exclusion>
 
+          <!--  we don't do report on lucene indexes -->
+          <exclusion>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+          </exclusion>
+
+          <exclusion>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-analyzers-common</artifactId>
+          </exclusion>
+
+          <exclusion>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-queryparser</artifactId>
+          </exclusion>
+
+          <!-- xml-api part of the java runtime already -->
           <exclusion>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
           </exclusion>
 
+          <!-- no, we don't do BI either -->
           <exclusion>
             <groupId>org.olap4j</groupId>
             <artifactId>olap4j</artifactId>
+          </exclusion>
+
+          <!-- no commons logging -->
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+
+          <!-- 
+          	Jasper Reports compiles java with
+          	org.eclipse.jdt.core.compiler:ecj, which is a subset 
+          	of the broader org.eclipse.jdt:ecj pulled 
+          	by tomcat-embed-jasper in the tm.web project. 
+          	
+          	Previous versions of tomcat-embed-jasper also 
+          	ran using the core.compiler ecj variant but as 
+          	of 8.5.31 (and probably earlier) 
+          	the later is used. In order to avoid ending 
+          	with both jars in the final assembly we now 
+          	wire Jasper Reports with org.eclipse.jdt:ecj.
+          	
+          	Projects that pull jasperreports as configured by 
+          	this bom should be aware of this : they should 
+          	add org.eclipse.jdt:ecj to their dependencies.
+          	
+          	Even better, they should simply depend on 
+          	org.squashtest.tm:core.report.api and not worry 
+          	about this.
+            -->
+
+          <exclusion>
+            <groupId>org.eclipse.jdt.core.compiler</groupId>
+            <artifactId>ecj</artifactId>
           </exclusion>
 
         </exclusions>
@@ -432,6 +550,12 @@
         <artifactId>querydsl-apt</artifactId>
         <version>${querydsl.version}</version>
         <scope>provided</scope>
+        <exclusions>
+          <exclusion>
+            <groupId>javax.jdo</groupId>
+            <artifactId>jdo-api</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
