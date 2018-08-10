@@ -129,7 +129,7 @@ define(['jquery', 'workspace.event-bus', 'app/util/ComponentUtil', 'squash.statu
 				var table = $("#test-suite-test-plans-table").squashTable();
 				var drawParameters = table.getAjaxParameters();
 
-				var url = conf.urls.testplanUrl + '/order';
+				var url = conf.urls.testplanUrl + 'order';
 				$.post(url, drawParameters, 'json').success(function () {
 					table.data('sortmode').resetTableOrder(table);
 					eventBus.trigger('context.content-modified');
