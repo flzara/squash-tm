@@ -24,7 +24,7 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 		"./SearchComboMultiselectWidget", "./SearchRadioWidget", "./SearchTagsWidget", "./SearchMultiCascadeFlatWidget", "./SearchDateCustomFieldWidget","./SearchComboExistsMultiselectWidget",
 		"jquery.squash", "jqueryui", "jquery.squash.togglepanel", "squashtable",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
-		"jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, translator, notification, _, projects) {
+		"jquery.squash.confirmdialog","jquery.cookie"], function($, Backbone, Handlebars, translator, notification, _, projects) {
 
 	// Prefiling all the request
 	$.ajaxPrefilter(function (options, originalOptions, jqXHR) {
@@ -91,6 +91,23 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 			// templates are no longer needed
 			this.templates = {};
 
+			prefillPermiterPanel = function(){
+			var panel = $('#perimeter-panel-id');
+			var options = $($($($(panel.children()[0]).children()[0]).children()[0]).children()[0]);
+			var place = "toSelect"+location.search;
+			var toselect = $.cookie(place);
+				options.children().each(function(){
+				if(toselect !==null) {
+					if (this.selected) {
+						if (!toselect.includes(this.value)) {
+							this.selected = false;
+						}
+					}
+				}
+			});
+
+			};
+			prefillPermiterPanel();
 			resizePerimeter = function(event) {
 				var sizeWithPadding =  $('#perimeter-panel-id').css('width');
 				var sizeWithoutPadding = parseInt(sizeWithPadding, 10) - 20;
@@ -557,6 +574,10 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 					var value = field.fieldvalue();
 					if( value ) {
 						jsonVariable[newKey] = value;
+					}
+					if(newKey ===	"project.id" ||newKey ===	"requirement.project.id"){
+						var cookiename = "toSelect"+location.search;
+						$.cookie(cookiename, JSON.stringify(value.values));
 					}
 				}
 			}
