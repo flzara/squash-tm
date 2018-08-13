@@ -107,6 +107,7 @@ public final class HTMLCleanupUtils {
 					.addAttributes("table", "align", "border", "cellpadding", "cellspacing", CLASS, "dir", STYLE)
 					.addAttributes("ul", CLASS, STYLE)
 					.addAttributes("ol", CLASS, STYLE)
+					.addAttributes("td", CLASS, STYLE)
 				, outputSettings);
 		}
 		return StringUtils.EMPTY;
