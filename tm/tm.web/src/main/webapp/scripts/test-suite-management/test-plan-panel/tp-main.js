@@ -63,7 +63,7 @@ define(['squash.translator', './table', './popups','app/util/ButtonUtil'], funct
 
 		conf.urls = {
 			 testplanUrl : baseURL + 'test-suites/'+conf.basic.testsuiteId+'/test-plan/',
-			 executionsUrl : baseURL + '/executions/',
+			 executionsUrl : baseURL + 'executions/',
 			 testplanManagerUrl : baseURL + 'test-suites/' + conf.basic.testsuiteId +'/test-plan-manager'
 		};
 
