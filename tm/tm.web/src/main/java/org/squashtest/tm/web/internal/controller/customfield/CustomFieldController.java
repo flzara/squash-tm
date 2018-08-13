@@ -112,6 +112,10 @@ public class CustomFieldController {
 		switch (customField.getInputType()) {
 			case DROPDOWN_LIST:
 				SingleSelectField cuf = customFieldManager.findSingleSelectFieldById(customFieldId);
+				List<CustomFieldOption> options = cuf.getOptions();
+				for(CustomFieldOption option : options){
+					option.setLabel(HtmlUtils.htmlUnescape(option.getLabel()));
+				}
 				model.addAttribute(CUSTOM_FIELD, cuf);
 				break;
 			case NUMERIC:
