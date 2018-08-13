@@ -145,7 +145,7 @@ public class VerifyingTestCaseManagerController {
 
 	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases/manager", method = RequestMethod.GET)
 	public String showManager(@PathVariable long requirementVersionId, Model model,
-							  @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
+							  @CookieValue(value = "jstree_verif_open", required = false, defaultValue = "") String[] openedNodes) {
 
 		RequirementVersion requirementVersion = requirementVersionFinder.findById(requirementVersionId);
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(requirementVersion);

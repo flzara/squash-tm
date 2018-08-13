@@ -137,7 +137,7 @@ public class VerifiedRequirementsManagerController {
 
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions/manager", method = RequestMethod.GET)
 	public String showTestCaseManager(@PathVariable long testCaseId, Model model,
-									  @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
+									  @CookieValue(value = "jstree_verif_open", required = false, defaultValue = "") String[] openedNodes) {
 
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
 		PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(testCase, "LINK"));

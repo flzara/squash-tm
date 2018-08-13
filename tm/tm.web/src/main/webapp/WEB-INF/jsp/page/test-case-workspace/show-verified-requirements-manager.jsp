@@ -120,7 +120,7 @@
               }
 
               tree.jstree('deselect_all');
-
+              $.cookie("jstree_verif_open", $.cookie("jstree_open"),{ path: '/squash/test-cases/'});
               if (ids.length > 0) {
                 $.post('${ addVerifiedRequirementsUrl }', {requirementsIds: ids}, addHandler);
               }

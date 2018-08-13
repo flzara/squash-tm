@@ -25,7 +25,7 @@
  */
 require([ "common" ], function() {
 	require([ "jquery", "app/squash.wreqr.init", "workspace.event-bus", "workspace.tree-event-handler",
-    "squash.translator", "app/ws/squashtm.notification", "verifying-test-cases/VerifyingTestCasesPanel", "jqueryui", "jquery.squash.messagedialog", "squashtable", "app/ws/squashtm.workspace" ],
+    "squash.translator", "app/ws/squashtm.notification", "verifying-test-cases/VerifyingTestCasesPanel", "jqueryui", "jquery.squash.messagedialog", "squashtable", "app/ws/squashtm.workspace", "jquery.cookie" ],
 			function($, squash, eventBus, treehandler, msg, notification, VerifyingTestCasesPanel) {
 		"use strict";
 
@@ -123,6 +123,7 @@ require([ "common" ], function() {
 			});
 
 			// init the panel
+
 			new VerifyingTestCasesPanel({ apiUrl: window.squashtm.bindingsManager.bindingsUrl })
 
 			$("#add-summary-dialog").messageDialog();
@@ -138,9 +139,8 @@ require([ "common" ], function() {
 					notification.showError(msg.get('message.emptySelectionTestCase'));
 					return;
 				}
-
 				tree.jstree('deselect_all');
-
+				$.cookie("jstree_verif_open", $.cookie("jstree_open"),{ path: '/squash/requirement-versions/'});
 				bind(ids).success(function(data){
 					showAddSummary(data);
 					table().refresh();
