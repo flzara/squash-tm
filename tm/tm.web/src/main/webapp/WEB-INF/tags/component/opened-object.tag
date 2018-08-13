@@ -36,9 +36,11 @@
 	require(["common"], function () {
 		require(["jquery", "workspace.event-bus"], function ($, eventBus) {
 			function releaseEntity() {
+				var baseUrl = '${objectUrl}'.replace(/\/?$/, '');
+				
 				$.ajax({
 					type: 'DELETE',
-					url: '${objectUrl}' + '/opened-entity',
+					url: baseUrl + '/opened-entity',
 					async: false
 				});
 			}

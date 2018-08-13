@@ -21,7 +21,6 @@
 package org.squashtest.tm.service.internal.batchimport;
 
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory;
-import org.apache.log4j.pattern.RelativeTimePatternConverter.CachedTimestamp
 import org.squashtest.tm.domain.customfield.CustomFieldValue
 import org.squashtest.tm.domain.customfield.InputType
 import org.squashtest.tm.domain.testcase.Parameter;
@@ -33,7 +32,8 @@ import spock.lang.Specification;
  * @author Gregory Fouquet
  *
  */
-class FacilityImplHelperTest extends Specification {
+class FacilityImplHelperTest
+ extends Specification {
 
 	def "should truncate to 5 characters"() {
 		expect:
