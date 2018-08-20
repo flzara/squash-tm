@@ -92,14 +92,15 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
 	@OrderColumn(name = "STEP_ORDER")
 	@JoinTable(name = "TEST_CASE_STEPS", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "STEP_ID"))
-	@FieldBridge(impl = CollectionSizeBridge.class)
+	@FieldBridge(impl = NumericCollectionSizeBridge.class)
 	@Field(analyze = Analyze.NO, store = Store.YES)
+	@SortableField
 	private List<TestStep> steps = new ArrayList<>();
 
 	@NotNull
 	@OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
 	@JoinColumn(name = "VERIFYING_TEST_CASE_ID")
-	@FieldBridge(impl = CollectionSizeBridge.class)
+	@FieldBridge(impl = NumericCollectionSizeBridge.class)
 	@Field(name = "requirements", analyze = Analyze.NO, store = Store.YES)
 	private Set<RequirementVersionCoverage> requirementVersionCoverages = new HashSet<>(0);
 
@@ -107,14 +108,16 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@OneToMany(cascade = {CascadeType.ALL}, mappedBy = "testCase")
 	@OrderBy("name")
 	@Field(analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl = CollectionSizeBridge.class)
+	@FieldBridge(impl = NumericCollectionSizeBridge.class)
+	@SortableField
 	private Set<Parameter> parameters = new HashSet<>(0);
 
 	@NotNull
 	@OneToMany(cascade = {CascadeType.ALL}, mappedBy = "testCase")
 	@OrderBy("name")
 	@Field(analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl = CollectionSizeBridge.class)
+	@FieldBridge(impl = NumericCollectionSizeBridge.class)
+	@SortableField
 	private Set<Dataset> datasets = new HashSet<>(0);
 
 	@NotNull
@@ -129,6 +132,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@JoinColumn(name = "TC_NATURE")
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = InfoListItemBridge.class)
+	@SortableField
 	private InfoListItem nature = null;
 
 	@NotNull
@@ -136,6 +140,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@JoinColumn(name = "TC_TYPE")
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = InfoListItemBridge.class)
+	@SortableField
 	private InfoListItem type = null;
 
 
@@ -144,6 +149,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@Column(name = "TC_STATUS")
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = LevelEnumBridge.class)
+	@SortableField
 	private TestCaseStatus status = TestCaseStatus.WORK_IN_PROGRESS;
 
 	@NotNull
@@ -174,6 +180,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@Enumerated(value = STRING)
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = EnumBridge.class)
+	@SortableField
 	@NotNull
 	private TestCaseKind kind = STANDARD;
 

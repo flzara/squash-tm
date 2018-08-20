@@ -98,7 +98,7 @@ public class CampaignSearchController extends GlobalSearchController {
 		.mapAttribute("itpi-status", "executionStatus", IterationTestPlanItem.class)
 		.mapAttribute("itpi-executed-by", "lastExecutedBy", IterationTestPlanItem.class)
 		.mapAttribute("itpi-executed-on", "lastExecutedOn", IterationTestPlanItem.class)
-		.mapAttribute("itpi-datasets", "", IterationTestPlanItem.class)
+		.mapAttribute("itpi-datasets", "datasets", IterationTestPlanItem.class)
 		.mapAttribute("tc-weight", "referencedTestCase.importance", IterationTestPlanItem.class);
 
 

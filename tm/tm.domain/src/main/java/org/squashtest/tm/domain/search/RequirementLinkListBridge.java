@@ -20,14 +20,11 @@
  */
 package org.squashtest.tm.domain.search;
 
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.hibernate.Session;
 import org.hibernate.search.bridge.LuceneOptions;
-import org.hibernate.type.LongType;
-import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.requirement.RequirementVersionLinkType;
 

@@ -23,9 +23,13 @@ package org.squashtest.tm.domain.campaign;
 import org.apache.lucene.document.*;
 import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
+import org.hibernate.search.bridge.MetadataProvidingFieldBridge;
+import org.hibernate.search.bridge.spi.FieldMetadataBuilder;
+import org.hibernate.search.bridge.spi.FieldType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.testcase.TestCase;
+
 
 
 /**
@@ -42,14 +46,12 @@ import org.squashtest.tm.domain.testcase.TestCase;
 // would be efficient considering how expensive that operation is (ie, getting a handle on the right session - unlike what is done in SessionFieldBridge -
 // invoke Persistence.getPersistenceUtil() etc)
 // So I keep the code simple and let the test case load. It's still faster than unrolling the natural way including testcase classbridges
-public class IterationItemBundleClassBridge implements FieldBridge{
-
+public class IterationItemBundleClassBridge implements FieldBridge, MetadataProvidingFieldBridge {
 
 	public static final String FIELD_TC_ID 				= "referencedTestCase.id";
 	public static final String FIELD_TC_NAME 			= "referencedTestCase.name";
 	public static final String FIELD_TC_REFERENCE 		= "referencedTestCase.reference";
 	public static final String FIELD_TC_IMPORTANCE		= "referencedTestCase.importance";
-
 	private static final Logger LOGGER = LoggerFactory.getLogger(IterationItemBundleClassBridge.class);
 
 	@Override
@@ -61,13 +63,13 @@ public class IterationItemBundleClassBridge implements FieldBridge{
 			LOGGER.debug("preparing indexation bundle for iteration test plan item "+item.getId());
 		}
 
-		indexTestCase(item, document);
+		indexTestCase(item, document,luceneOptions);
 
 	}
 
 	// ************************** test case indexation ***************************************
 
-	private void indexTestCase(IterationTestPlanItem item, Document document){
+	private void indexTestCase(IterationTestPlanItem item, Document document, LuceneOptions luceneOptions){
 
 		LOGGER.debug("indexing referencedTestCase :");
 
@@ -79,15 +81,45 @@ public class IterationItemBundleClassBridge implements FieldBridge{
 		TestCase tc = item.getReferencedTestCase();
 		String importance = tc.getImportance().getLevel()+"-"+tc.getImportance().toString();
 			// note : not indexing testcase id as a LongField because result is weird
-		Field tcId = new StringField(FIELD_TC_ID, tc.getId().toString(), Field.Store.YES);
-		Field tcName = new StringField(FIELD_TC_NAME, tc.getName().toLowerCase(), Field.Store.YES);
-		Field tcRef = new StringField(FIELD_TC_REFERENCE, tc.getReference().toLowerCase(), Field.Store.YES);
-		Field tcImportance = new StringField(FIELD_TC_IMPORTANCE, importance, Field.Store.YES);
-		document.add(tcId);
-		document.add(tcName);
-		document.add(tcRef);
-		document.add(tcImportance);
+
+		applyToLuceneStringOptions(luceneOptions, FIELD_TC_NAME, tc.getName().toLowerCase(),  document);
+		applyToLuceneStringOptions(luceneOptions, FIELD_TC_REFERENCE, tc.getReference().toLowerCase(),  document);
+		applyToLuceneStringOptions(luceneOptions, FIELD_TC_IMPORTANCE, importance, document);
+
+		Integer result = new Integer(tc.getId().toString());
+		if ( result == null ) {
+			if ( luceneOptions.indexNullAs() != null ) {
+				luceneOptions.addFieldToDocument( FIELD_TC_ID, luceneOptions.indexNullAs(), document );
+			}
+		}
+		else {
+			applyToLuceneOptions( luceneOptions, FIELD_TC_ID, result, document );
+		}
 	}
 
+
+
+	protected void applyToLuceneOptions(LuceneOptions luceneOptions, String name, Number value, Document document) {
+		luceneOptions.addNumericFieldToDocument( name, value, document );
+		document.add(new NumericDocValuesField(name,  new Long(value.longValue())));
+	}
+
+	protected void applyToLuceneStringOptions(LuceneOptions luceneOptions, String name, String value, Document document) {
+		luceneOptions.addSortedDocValuesFieldToDocument( name, value, document );
+		document.add(new StringField(name,  value, Field.Store.YES));
+	}
+
+	@Override
+	public void configureFieldMetadata(String name, FieldMetadataBuilder fieldMetadataBuilder) {
+		fieldMetadataBuilder.field(FIELD_TC_NAME,FieldType.STRING).sortable(true);
+		fieldMetadataBuilder.field(FIELD_TC_REFERENCE,FieldType.STRING).sortable(true);
+		fieldMetadataBuilder.field(FIELD_TC_IMPORTANCE,FieldType.STRING).sortable(true);
+		fieldMetadataBuilder.field(FIELD_TC_ID,FieldType.LONG).sortable(true);
+		fieldMetadataBuilder.field("datasets",FieldType.STRING).sortable(true);
+		fieldMetadataBuilder.field("label",FieldType.STRING
+
+		).sortable(true);
+
+	}
 
 }

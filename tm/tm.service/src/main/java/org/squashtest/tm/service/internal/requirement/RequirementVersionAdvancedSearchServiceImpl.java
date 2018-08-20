@@ -73,7 +73,9 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 		new SortField("requirement.project.name", SortField.Type.STRING, false),
 		new SortField("reference", SortField.Type.STRING, false), new SortField("criticality", SortField.Type.STRING, false),
 		new SortField("category", SortField.Type.STRING, false), new SortField("status", SortField.Type.STRING, false),
-		new SortField("labelUpperCased", SortField.Type.STRING, false)};
+		new SortField("labelUpperCased", SortField.Type.STRING, false),new SortField("createdBy", SortField.Type.STRING,false),
+		new SortField("lastModifiedBy",  SortField.Type.STRING, false)
+	};
 
 	private static final List<String> LONG_SORTABLE_FIELDS = Arrays.asList("requirement.id", "id",
 		"testcases", "attachments");

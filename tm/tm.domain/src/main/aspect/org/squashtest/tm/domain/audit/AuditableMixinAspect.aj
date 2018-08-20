@@ -29,11 +29,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.NumericField;
-import org.hibernate.search.annotations.Store;
+import org.hibernate.search.annotations.*;
 import org.squashtest.tm.domain.search.NotGMTDateBridge;
 
 /**
@@ -58,6 +54,7 @@ public aspect AuditableMixinAspect {
 	}
 
 	@Field(analyze=Analyze.NO, store=Store.YES)
+	@SortableField(forField = "createdBy")
 	public String AuditableMixin.getCreatedBy() {
 		return this.getAudit().getCreatedBy();
 	}
@@ -69,6 +66,7 @@ public aspect AuditableMixinAspect {
 	}
 
 	@Field(analyze=Analyze.NO, store=Store.YES)
+	@SortableField(forField = "lastModifiedBy")
 	public String AuditableMixin.getLastModifiedBy() {
 		return this.getAudit().getLastModifiedBy();
 	}

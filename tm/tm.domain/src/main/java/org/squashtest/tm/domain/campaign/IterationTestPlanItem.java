@@ -61,7 +61,6 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.library.HasExecutionStatus;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.search.CollectionSizeBridge;
 import org.squashtest.tm.domain.search.LevelEnumBridge;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testcase.Dataset;
@@ -109,28 +108,33 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	@Enumerated(EnumType.STRING)
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = LevelEnumBridge.class)
+	@SortableField
 	private ExecutionStatus executionStatus = ExecutionStatus.READY;
 
-        // FIXME it seems this field isn't really used after all
-        // please use getTestCase.getName() instead
-        // better yet, ditch the attribute and column if one day
-        // we have time for non-essential codebase cleaning ...
+	/**
+	 FIXME it seems this field isn't really used after all
+         please use getTestCase.getName() instead
+         better yet, ditch the attribute and column if one day
+     */
 	private String label = "";
 
 	@FieldBridge(impl = UserLoginBridgeAdaptor.class)
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@ManyToOne
+	@SortableField
 	@JoinColumn(name = "USER_ID")
 	private User user;
 
 	@Column(insertable = false)
 	@Field(analyze = Analyze.NO, store = Store.YES)
+	@SortableField
 	private String lastExecutedBy;
 
 	@Column(insertable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	@Field(analyze = Analyze.NO, store = Store.YES)
-	@DateBridge(resolution = Resolution.DAY)
+	@CalendarBridge (resolution = Resolution.DAY)
+	@SortableField
 	private Date lastExecutedOn;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -516,11 +520,13 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = LevelEnumBridge.class)
+	@SortableField
 	public TestCaseExecutionMode getExecutionMode() {
 		Execution latest = getLatestExecution();
 
 		return latest == null ? TestCaseExecutionMode.UNDEFINED : latest.getExecutionMode();
 	}
+
 
 	public Dataset getReferencedDataset() {
 		return referencedDataset;

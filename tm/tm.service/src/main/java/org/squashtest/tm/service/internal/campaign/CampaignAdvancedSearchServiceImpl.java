@@ -83,11 +83,12 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		new SortField("itpi-mode", SortField.Type.STRING, false),
 		new SortField("itpi-status", SortField.Type.STRING, false),
 		new SortField("itpi-executed-by", SortField.Type.STRING, false),
-		new SortField("itpi-executed-on", SortField.Type.STRING, false),
+		new SortField("itpi-executed-on", SortField.Type.LONG, false),
 		new SortField("itpi-datasets", SortField.Type.STRING, false)};
 
 	// FIXME This list which contains sweet FA is used to decide when a field should be processed as a numeric field or a text field. Looks like horseshit to me.
-	private static final List<String> LONG_SORTABLE_FIELDS = Collections.singletonList("");
+	private static final String LAST_EXECUTE_ON_FIELD_NAME ="lastExecutedOn";
+	private static final List<String> LONG_SORTABLE_FIELDS = Collections.singletonList(LAST_EXECUTE_ON_FIELD_NAME);
 
 	private static final String TEST_SUITE_ID_FIELD_NAME = "testSuites.id";
 	private static final String ITERATION_ID_FIELD_NAME = "iteration.id";

@@ -93,7 +93,8 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	@NotNull
 	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH }, mappedBy = "verifiedRequirementVersion", fetch=FetchType.LAZY)
 	@Field(name = "testcases", analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl = CollectionSizeBridge.class)
+	@FieldBridge(impl = NumericCollectionSizeBridge.class)
+	@SortableField(forField = "testcases")
 	private Set<RequirementVersionCoverage> requirementVersionCoverages = new HashSet<>();
 
 	/***
@@ -135,6 +136,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	private Requirement requirement;
 
 	@Field(analyze = Analyze.NO, store = Store.YES)
+	@SortableField
 	private int versionNumber = 1;
 
 

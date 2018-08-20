@@ -23,14 +23,19 @@ package org.squashtest.tm.domain.testcase;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.NumericDocValuesField;
+import org.apache.lucene.index.IndexableField;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.bridge.LuceneOptions;
+import org.hibernate.search.bridge.MetadataProvidingFieldBridge;
+import org.hibernate.search.bridge.spi.FieldMetadataBuilder;
+import org.hibernate.search.bridge.spi.FieldType;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.search.SessionFieldBridge;
 
-public class TestCaseIterationBridge extends SessionFieldBridge{
+public class TestCaseIterationBridge extends SessionFieldBridge implements MetadataProvidingFieldBridge {
 
 	private static final Integer EXPECTED_LENGTH = 7;
 	
@@ -53,12 +58,36 @@ public class TestCaseIterationBridge extends SessionFieldBridge{
 
 		TestCase testcase = (TestCase) value;
 		
-		Long numberOfIterations = findNumberOfIterations(session, testcase.getId());
-		
-		Field field = new Field(name, padRawValue(numberOfIterations), luceneOptions.getStore(),
-	    luceneOptions.getIndex(), luceneOptions.getTermVector() );
-	    field.setBoost( luceneOptions.getBoost());
-	    document.add(field);
+		Long count = findNumberOfIterations(session, testcase.getId());
+		Integer result = new Integer(count.toString());
+		if ( result == null ) {
+			if ( luceneOptions.indexNullAs() != null ) {
+				luceneOptions.addFieldToDocument( name, luceneOptions.indexNullAs(), document );
+			}
+		}
+		else {
+			applyToLuceneOptions( luceneOptions, name, count, document );
+		}
 	}
 
+
+	protected void applyToLuceneOptions(LuceneOptions luceneOptions, String name, Number value, Document document) {
+		luceneOptions.addNumericFieldToDocument( name, value, document );
+		document.add(new NumericDocValuesField(name,  new Long(value.longValue())));
+	}
+
+	public Object get(final String name, final Document document) {
+		final IndexableField field = document.getField( name );
+		if ( field != null ) {
+			return field.numericValue();
+		}
+		else {
+			return null;
+		}
+	}
+
+	@Override
+	public void configureFieldMetadata(String name, FieldMetadataBuilder fieldMetadataBuilder) {
+		fieldMetadataBuilder.field(name , FieldType.LONG).sortable( true );
+	}
 }

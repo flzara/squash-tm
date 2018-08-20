@@ -20,34 +20,56 @@
  */
 package org.squashtest.tm.domain.requirement;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
+import org.apache.lucene.document.NumericDocValuesField;
+import org.apache.lucene.index.IndexableField;
 import org.hibernate.Session;
 import org.hibernate.search.bridge.LuceneOptions;
+import org.hibernate.search.bridge.MetadataProvidingFieldBridge;
+import org.hibernate.search.bridge.spi.FieldMetadataBuilder;
+import org.hibernate.search.bridge.spi.FieldType;
 import org.squashtest.tm.domain.search.SessionFieldBridge;
 
-public class RequirementVersionAttachmentBridge extends SessionFieldBridge{
+public class RequirementVersionAttachmentBridge  extends  SessionFieldBridge implements MetadataProvidingFieldBridge {
 
-	private static final Integer EXPECTED_LENGTH = 7;
-	
-	private String padRawValue(long rawValue){
-		return StringUtils.leftPad(Long.toString(rawValue), EXPECTED_LENGTH, '0');
-	}
-	
 	@Override
 	protected void writeFieldToDocument(String name, Session session, Object value, Document document, LuceneOptions luceneOptions){
+
 		RequirementVersion reqVer =  (RequirementVersion) value;
-		
-		long count = (Long) session.getNamedQuery("requirementVersion.countAttachments")
+
+		Long count = (Long) session.getNamedQuery("requirementVersion.countAttachments")
 				.setReadOnly(true)
 				.setParameter("id", reqVer.getId())
 				.uniqueResult();
-		
-		Field field = new Field(name, padRawValue(count), luceneOptions.getStore(), luceneOptions.getIndex(),
-				luceneOptions.getTermVector());
-		field.setBoost(luceneOptions.getBoost());
-		
-		document.add(field);
+
+		Integer result = new Integer(count.toString());
+		if ( result == null ) {
+			if ( luceneOptions.indexNullAs() != null ) {
+				luceneOptions.addFieldToDocument( name, luceneOptions.indexNullAs(), document );
+			}
+		}
+		else {
+			applyToLuceneOptions( luceneOptions, name, count, document );
+		}
+	}
+
+	protected void applyToLuceneOptions(LuceneOptions luceneOptions, String name, Number value, Document document) {
+		luceneOptions.addNumericFieldToDocument( name, value, document );
+		document.add(new NumericDocValuesField(name,  new Long(value.longValue())));
+	}
+
+	public Object get(final String name, final Document document) {
+		final IndexableField field = document.getField( name );
+		if ( field != null ) {
+			return field.numericValue();
+		}
+		else {
+			return null;
+		}
+	}
+
+	@Override
+	public void configureFieldMetadata(String name, FieldMetadataBuilder fieldMetadataBuilder) {
+		fieldMetadataBuilder.field(name , FieldType.LONG).sortable( true );
 	}
 }

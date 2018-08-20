@@ -31,6 +31,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.SequenceGenerator;
 
+import org.hibernate.search.annotations.*;
 import org.squashtest.tm.domain.SelfClassAware;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.audit.Auditable;
@@ -52,6 +53,8 @@ public abstract class TestCaseLibraryNode extends GenericLibraryNode implements 
 	@Column(name = "TCLN_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "test_case_library_node_tcln_id_seq")
 	@SequenceGenerator(name = "test_case_library_node_tcln_id_seq", sequenceName = "test_case_library_node_tcln_id_seq", allocationSize = 1)
+	@NumericField(forField = "id")
+	@SortableField
 	private Long id;
 
 	public TestCaseLibraryNode() {

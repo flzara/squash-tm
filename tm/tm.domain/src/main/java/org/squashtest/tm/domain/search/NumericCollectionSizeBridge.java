@@ -20,30 +20,34 @@
  */
 package org.squashtest.tm.domain.search;
 
-import java.util.Collection;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.NumericDocValuesField;
+import org.apache.lucene.index.IndexableField;
 import org.hibernate.*;
 import org.hibernate.collection.internal.AbstractPersistentCollection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
-import org.hibernate.search.bridge.StringBridge;
+import org.hibernate.search.bridge.LuceneOptions;
+import org.hibernate.search.bridge.MetadataProvidingFieldBridge;
+import org.hibernate.search.bridge.spi.FieldMetadataBuilder;
+import org.hibernate.search.bridge.spi.FieldType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.Identified;
 
+
+import java.util.Collection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 // TODO: extract the logic regarding finding and eventually managing a session(roughly the same than SessionFieldBridge)
 // here, we try to extract it from a hibernate object, but it wont work on non-proxied hibernate entities
 // the SessionFieldBridge is injected with the EntityManager via aspects and often fails to retrieve the current session, which is not much better
-public class CollectionSizeBridge implements StringBridge {
+public class NumericCollectionSizeBridge implements MetadataProvidingFieldBridge {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CollectionSizeBridge.class);
-
-	private static final int EXPECTED_LENGTH = 7;
+	private static final Logger LOGGER = LoggerFactory.getLogger(NumericCollectionSizeBridge.class);
 
 	private static final Pattern PATTERN = Pattern.compile(	"^([\\w\\.]+)\\.(\\w+)$");
 
@@ -52,26 +56,6 @@ public class CollectionSizeBridge implements StringBridge {
 
 	private String entityClass = null;
 	private String collectionPath = null;
-
-	private String padRawValue(Integer rawValue){
-		return StringUtils.leftPad(Integer.toString(rawValue), EXPECTED_LENGTH, '0');
-	}
-
-	@Override
-	public String objectToString(Object value) {
-
-		Collection<?> collection = (Collection<?>) value;
-
-		// if Hibernate : special treatment
-		if (isHibernate(collection)){
-			return handleHibernateCollection(collection);
-		}
-		// else, standard treatment
-		else{
-			return padRawValue(collection.size());
-		}
-
-	}
 
 
 	/*
@@ -120,9 +104,9 @@ public class CollectionSizeBridge implements StringBridge {
 		}
 	}
 
-	private String handleHibernateCollection(Collection<?> collection) {
+	private Integer handleHibernateCollection(Collection<?> collection) {
 
-		Integer count = null;
+		Integer count = 0;
 
 		AbstractPersistentCollection hibCollection = downCastCollection(collection);
 
@@ -170,7 +154,7 @@ public class CollectionSizeBridge implements StringBridge {
 			count = fallbackHibernate(collection);
 		}
 
-		return padRawValue(count);
+		return count;
 
 	}
 
@@ -314,5 +298,55 @@ public class CollectionSizeBridge implements StringBridge {
 	}
 
 
+
+
+	@Override
+	public void set(String name, Object value, Document document, LuceneOptions luceneOptions) {
+
+		Collection<?> collection = (Collection<?>) value;
+		Integer result = new Integer(0);
+		// if Hibernate : special treatment
+		if (isHibernate(collection)){
+			result = handleHibernateCollection(collection);
+			}
+		// else, standard treatment
+		else{
+			result =  new Integer(collection.size());
+		}
+		if ( result == null ) {
+			if ( luceneOptions.indexNullAs() != null ) {
+				luceneOptions.addFieldToDocument( name, luceneOptions.indexNullAs(), document );
+			}
+		}
+		else {
+			applyToLuceneOptions( luceneOptions, name, result, document );
+		}
+
+
+
+	}
+
+	protected void applyToLuceneOptions(LuceneOptions luceneOptions, String name, Number value, Document document) {
+		luceneOptions.addNumericFieldToDocument( name, value, document );
+		document.add(new NumericDocValuesField(name,  new Long(value.longValue())));
+	}
+
+
+
+	public Object get(final String name, final Document document) {
+		final IndexableField field = document.getField( name );
+		if ( field != null ) {
+			return field.numericValue();
+		}
+		else {
+			return null;
+		}
+	}
+
+
+	@Override
+	public void configureFieldMetadata(String name, FieldMetadataBuilder fieldMetadataBuilder) {
+		fieldMetadataBuilder.field(name , FieldType.LONG).sortable(true);
+	}
 }
 
