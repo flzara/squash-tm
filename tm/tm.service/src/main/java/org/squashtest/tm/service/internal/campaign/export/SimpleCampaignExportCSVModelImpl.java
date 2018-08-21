@@ -326,7 +326,9 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 			newItpi.addIssue(r.get(ITPI_ISSUE));
 		}
 
-		newItpi.getTestSuiteList().add(r.get(TS_NAME));
+		if(r.get(TS_NAME) != null){
+			newItpi.getTestSuiteList().add(r.get(TS_NAME));
+		}
 
 		if(r.get(DATASET_NAME) != null){
 			newItpi.setDataset(r.get(DATASET_NAME));
