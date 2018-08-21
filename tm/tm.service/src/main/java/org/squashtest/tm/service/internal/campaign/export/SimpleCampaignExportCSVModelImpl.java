@@ -237,11 +237,10 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 
 			} else {
 
-				populateCurrentItpi(r, currentItpi);
+				populateItpi(r, currentItpi);
 
-				if(r.get(TC_REQUIREMENT_VERIFIED) != null){
-					currentTestCase.addRequirement(r.get(TC_REQUIREMENT_VERIFIED));
-				}
+				populateTestCase(r, currentTestCase);
+
 			}
 		}
 
@@ -284,33 +283,35 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 			.fetch().iterator();
 	}
 
-	private void populateCurrentItpi(Record r, ITPIDto currentItpi) {
-		if(r.get(TS_NAME) != null && !currentItpi.getTestSuiteList().contains(r.get(TS_NAME))){
-			currentItpi.getTestSuiteList().add(r.get(TS_NAME));
-		}
-		if(r.get(TC_MILESTONE.LABEL) != null && !currentItpi.getTestCase().getMilestoneList().contains(r.get(TC_MILESTONE.LABEL))){
-			currentItpi.getTestCase().addMilestone(r.get(TC_MILESTONE.LABEL));
+	private void populateItpi(Record r, ITPIDto itpi) {
+		if(r.get(TS_NAME) != null && !itpi.getTestSuiteList().contains(r.get(TS_NAME))){
+			itpi.getTestSuiteList().add(r.get(TS_NAME));
 		}
 
 		if(r.get(ITPI_EXECUTION) != null){
-			currentItpi.addExecution(r.get(ITPI_EXECUTION));
+			itpi.addExecution(r.get(ITPI_EXECUTION));
 		}
 
 		if(r.get(ITPI_ISSUE) != null){
-			currentItpi.addIssue(r.get(ITPI_ISSUE));
+			itpi.addIssue(r.get(ITPI_ISSUE));
+		}
+	}
+
+	private void populateTestCase(Record r, TestCaseDto currentTestCase) {
+
+		if(r.get(TC_MILESTONE.LABEL) != null && !currentTestCase.getMilestoneList().contains(r.get(TC_MILESTONE.LABEL))){
+			currentTestCase.addMilestone(r.get(TC_MILESTONE.LABEL));
+		}
+
+		if(r.get(TC_REQUIREMENT_VERIFIED) != null){
+			currentTestCase.addRequirement(r.get(TC_REQUIREMENT_VERIFIED));
 		}
 	}
 
 	private TestCaseDto createNewTestCaseDto(Record r) {
 		TestCaseDto newTestCase = new TestCaseDto(r.get(TC_ID), r.get(TC_REFERENCE), r.get(TC_NAME), r.get(TC_IMPORTANCE), r.get(TC_NATURE), r.get(TC_TYPE), r.get(TC_STATUS), r.get(PROJECT_ID), r.get(PROJECT_NAME));
 
-		if(r.get(TC_MILESTONE.LABEL) != null){
-			newTestCase.addMilestone(r.get(TC_MILESTONE.LABEL));
-		}
-
-		if(r.get(TC_REQUIREMENT_VERIFIED) != null){
-			newTestCase.addRequirement(r.get(TC_REQUIREMENT_VERIFIED));
-		}
+		populateTestCase(r, newTestCase);
 
 		return newTestCase;
 	}
@@ -318,17 +319,7 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 	private ITPIDto createNewItpiDto(Record r) {
 		ITPIDto newItpi = new ITPIDto(r.get(ITPI_ID), r.get(ITPI_STATUS), r.get(USER_LOGIN), r.get(ITPI_LAST_EXECUTED_ON));
 
-		if(r.get(ITPI_EXECUTION) != null){
-			newItpi.addExecution(r.get(ITPI_EXECUTION));
-		}
-
-		if(r.get(ITPI_ISSUE) != null){
-			newItpi.addIssue(r.get(ITPI_ISSUE));
-		}
-
-		if(r.get(TS_NAME) != null){
-			newItpi.getTestSuiteList().add(r.get(TS_NAME));
-		}
+		populateItpi(r, newItpi);
 
 		if(r.get(DATASET_NAME) != null){
 			newItpi.setDataset(r.get(DATASET_NAME));
