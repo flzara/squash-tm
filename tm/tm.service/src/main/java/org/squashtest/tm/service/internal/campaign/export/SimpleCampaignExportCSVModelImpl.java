@@ -26,9 +26,9 @@ import java.util.*;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.jooq.DSLContext;
-import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.TableField;
 import org.springframework.context.annotation.Scope;
@@ -36,21 +36,15 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.customfield.CustomField;
-import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.domain.customfield.InputType;
-import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.jooq.domain.tables.records.*;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
-import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.internal.dto.*;
 
-import static org.jooq.impl.DSL.count;
 import static org.squashtest.tm.jooq.domain.Tables.*;
 
 @Component
@@ -109,13 +103,6 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 
 	private static final org.squashtest.tm.jooq.domain.tables.Milestone IT_MILESTONE = MILESTONE.as("it_milestone");
 
-
-	@Inject
-	private CustomFieldHelperService cufHelperService;
-
-	@Inject
-	private BugTrackersLocalService bugTrackerService;
-
 	@Inject
 	private FeatureManager featureManager;
 
@@ -127,13 +114,13 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 	private Campaign campaign;
 	private CampaignDto campaignDto;
 
-	private List<CustomField> campCUFModel;
-	private List<CustomField> iterCUFModel;
-	private List<CustomField> tcCUFModel;
+	private List<CustomFieldDto> campCUFModel = new ArrayList<>();
+	private SortedSet<CustomFieldDto> iterCUFModel = new TreeSet<>(Comparator.comparing(CustomFieldDto::getId));
+	private SortedSet<CustomFieldDto> tcCUFModel = new TreeSet<>(Comparator.comparing(CustomFieldDto::getId));
 
-	private List<CustomFieldValue> campCUFValues;
-	private MultiValueMap iterCUFValues; // <Long, Collection<CustomFieldValue>>
-	private MultiValueMap tcCUFValues; // same here
+	private Map<Long, CustomFieldValueDto> campCUFValues = new HashMap<>();
+	private MultiValueMap iterCUFValues = new MultiValueMap(); // <Long, Collection<CustomFieldValueDto>>
+	private MultiValueMap tcCUFValues = new MultiValueMap(); // same here
 
 	private int nbColumns;
 
@@ -174,35 +161,58 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 
 		Iterator<Record> iterator = getIterationJooqQueryIterator();
 
-		List<TestCaseDto> allTestCases = populateCampaignDto(iterator);
+		List<Long> allTestCaseIds = populateCampaignDto(iterator);
 
-		Collection<IterationDto> iterations = campaignDto.getIterationMap().values();
+		Set<Long> allIterationIds = campaignDto.getIterationMap().keySet();
 
-//		// cufs for the campaign
-//		CustomFieldHelper<Campaign> campHelper = cufHelperService.newHelper(campaign);
-//		campCUFModel = campHelper.getCustomFieldConfiguration();
-//		campCUFValues = campHelper.getCustomFieldValues();
-//
-//		// cufs for the iterations
-//		CustomFieldHelper<Iteration> iterHelper = cufHelperService.newHelper(iterations).includeAllCustomFields();
-//		iterCUFModel = iterHelper.getCustomFieldConfiguration();
-//		List<CustomFieldValue> iterValues = iterHelper.getCustomFieldValues();
-//
-//		// cufs for the test cases
-//		CustomFieldHelper<TestCase> tcHelper = cufHelperService.newHelper(allTestCases).includeAllCustomFields();
-//		tcCUFModel = tcHelper.getCustomFieldConfiguration();
-//		List<CustomFieldValue> tcValues = tcHelper.getCustomFieldValues();
-//
-//		nbColumns = 25 + campCUFModel.size() + iterCUFModel.size() + tcCUFModel.size();
-//
-//		// index the custom field values with a map for faster reference later
-//		createCustomFieldValuesIndex(iterValues, tcValues);
+		// cufs for the campaign
+		populateCampCUFModelAndCampCUFValues();
+
+		// cufs for the iterations
+		populateCUFModelAndCufValues("ITERATION", iterCUFModel, iterCUFValues, allIterationIds);
+
+		// cufs for the test cases
+		populateCUFModelAndCufValues("TEST_CASE", tcCUFModel, tcCUFValues, allTestCaseIds);
+
+		nbColumns = 25 + campCUFModel.size() + iterCUFModel.size() + tcCUFModel.size();
 
 	}
 
-	private List<TestCaseDto> populateCampaignDto(Iterator<Record> iterator) {
+	private void populateCUFModelAndCufValues(String entityType, Collection<CustomFieldDto> cufModel, MultiValueMap cufValues, Collection<Long> entityIdList) {
+		DSL.select(CUSTOM_FIELD_VALUE.CFV_ID, CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID, CUSTOM_FIELD_VALUE.CF_ID, CUSTOM_FIELD_VALUE.VALUE,
+			CUSTOM_FIELD.CODE, CUSTOM_FIELD.INPUT_TYPE)
+			.from(CUSTOM_FIELD_VALUE)
+			.innerJoin(CUSTOM_FIELD_BINDING).on(CUSTOM_FIELD_BINDING.CFB_ID.eq(CUSTOM_FIELD_VALUE.CFB_ID))
+			.innerJoin(CUSTOM_FIELD).on(CUSTOM_FIELD.CF_ID.eq(CUSTOM_FIELD_BINDING.CF_ID))
+			.where((CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID.in(entityIdList)).and(CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE.eq(entityType)))
+			.fetch().forEach(r ->{
+			CustomFieldDto newCFDto = new CustomFieldDto(r.get(CUSTOM_FIELD_VALUE.CF_ID), r.get(CUSTOM_FIELD.CODE), r.get(CUSTOM_FIELD.INPUT_TYPE));
+			cufModel.add(newCFDto);
 
-		List<TestCaseDto> allTestCases = new ArrayList<>();
+			CustomFieldValueDto newCFVDto = new CustomFieldValueDto(r.get(CUSTOM_FIELD_VALUE.CFV_ID), r.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID), r.get(CUSTOM_FIELD_VALUE.CF_ID), r.get(CUSTOM_FIELD_VALUE.VALUE));
+			cufValues.put(r.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID), newCFVDto);
+		});
+	}
+
+	private void populateCampCUFModelAndCampCUFValues() {
+		DSL.select(CUSTOM_FIELD_VALUE.CFV_ID, CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID, CUSTOM_FIELD_VALUE.CF_ID, CUSTOM_FIELD_VALUE.VALUE,
+			CUSTOM_FIELD.CODE, CUSTOM_FIELD.INPUT_TYPE)
+			.from(CUSTOM_FIELD_VALUE)
+			.innerJoin(CUSTOM_FIELD_BINDING).on(CUSTOM_FIELD_BINDING.CFB_ID.eq(CUSTOM_FIELD_VALUE.CFB_ID))
+			.innerJoin(CUSTOM_FIELD).on(CUSTOM_FIELD.CF_ID.eq(CUSTOM_FIELD_BINDING.CF_ID))
+			.where((CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID.eq(campaign.getId())).and(CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE.eq("CAMPAIGN")))
+			.fetch().forEach(r ->{
+				CustomFieldDto newCFDto = new CustomFieldDto(r.get(CUSTOM_FIELD_VALUE.CF_ID), r.get(CUSTOM_FIELD.CODE), r.get(CUSTOM_FIELD.INPUT_TYPE));
+				campCUFModel.add(newCFDto);
+
+				CustomFieldValueDto newCFVDto = new CustomFieldValueDto(r.get(CUSTOM_FIELD_VALUE.CFV_ID), r.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID), r.get(CUSTOM_FIELD_VALUE.CF_ID), r.get(CUSTOM_FIELD_VALUE.VALUE));
+				campCUFValues.put(r.get(CUSTOM_FIELD_VALUE.CF_ID), newCFVDto);
+		});
+	}
+
+	private List<Long> populateCampaignDto(Iterator<Record> iterator) {
+
+		List<Long> allTestCases = new ArrayList<>();
 
 		IterationDto currentIteration = new IterationDto();
 		ITPIDto currentItpi = new ITPIDto();
@@ -225,7 +235,7 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 
 				TestCaseDto newTestCase = createNewTestCaseDto(r);
 
-				allTestCases.add(newTestCase);
+				allTestCases.add(r.get(TC_ID));
 
 				newItpi.setTestCase(newTestCase);
 
@@ -328,37 +338,6 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 		return newItpi;
 	}
 
-	private List<TestCase> collectAllTestCases(List<Iteration> iterations) {
-		// aggregate the test cases in one collection
-		List<TestCase> allTestCases = new ArrayList<>();
-		for (Iteration iteration : iterations) {
-			addIterationTestCases(iteration, allTestCases);
-		}
-		return allTestCases;
-	}
-
-	private void addIterationTestCases(Iteration iteration, List<TestCase> allTestCases) {
-		for (IterationTestPlanItem item : iteration.getTestPlans()) {
-			if (!item.isTestCaseDeleted()) {
-				allTestCases.add(item.getReferencedTestCase());
-			}
-		}
-	}
-
-	private void createCustomFieldValuesIndex(List<CustomFieldValue> iterValues, List<CustomFieldValue> tcValues) {
-
-		iterCUFValues = new MultiValueMap();
-		tcCUFValues = new MultiValueMap();
-
-		for (CustomFieldValue value : iterValues) {
-			iterCUFValues.put(value.getBoundEntityId(), value);
-		}
-
-		for (CustomFieldValue value : tcValues) {
-			tcCUFValues.put(value.getBoundEntityId(), value);
-		}
-	}
-
 	@Override
 	public Row getHeader() {
 
@@ -404,26 +383,22 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 		headerCells.add(new CellImpl("TC_TYPE"));
 		headerCells.add(new CellImpl("TC_STATUS"));
 
-//		Collections.sort(campCUFModel, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
-//		Collections.sort(iterCUFModel, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
-//		Collections.sort(tcCUFModel, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
+		campCUFModel.sort(Comparator.comparing(CustomFieldDto::getId));
 
+		// campaign custom fields
+		for (CustomFieldDto cufModel : campCUFModel) {
+			headerCells.add(new CellImpl("CPG_CUF_" + cufModel.getCode()));
+		}
 
+		// iteration custom fields
+		for (CustomFieldDto cufModel : iterCUFModel) {
+			headerCells.add(new CellImpl("IT_CUF_" + cufModel.getCode()));
+		}
 
-//		// campaign custom fields
-//		for (CustomField cufModel : campCUFModel) {
-//			headerCells.add(new CellImpl("CPG_CUF_" + cufModel.getCode()));
-//		}
-//
-//		// iteration custom fields
-//		for (CustomField cufModel : iterCUFModel) {
-//			headerCells.add(new CellImpl("IT_CUF_" + cufModel.getCode()));
-//		}
-//
-//		// test case custom fields
-//		for (CustomField cufModel : tcCUFModel) {
-//			headerCells.add(new CellImpl("TC_CUF_" + cufModel.getCode()));
-//		}
+		// test case custom fields
+		for (CustomFieldDto cufModel : tcCUFModel) {
+			headerCells.add(new CellImpl("TC_CUF_" + cufModel.getCode()));
+		}
 
 		return new RowImpl(headerCells, separator);
 
@@ -476,7 +451,7 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 			populateTestCaseRowData(dataCells);
 
 			// custom fields
-			//populateCustomFields(dataCells);
+			populateCustomFields(dataCells);
 
 			// move to the next occurence
 			moveNext();
@@ -488,23 +463,22 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 		@SuppressWarnings("unchecked")
 		private void populateCustomFields(List<CellImpl> dataCells) {
 
-			List<CustomFieldValue> cValues = campCUFValues;
 			// ensure that the CUF values are processed in the correct order
-			for (CustomField model : campCUFModel) {
-				String strValue = getValue(cValues, model);
+			for (CustomFieldDto model : campCUFModel) {
+				String strValue = getCampaignCufValue(campCUFValues.get(model.getId()), model);
 				dataCells.add(new CellImpl(strValue));
 			}
 
-			Collection<CustomFieldValue> iValues = (Collection<CustomFieldValue>) iterCUFValues.get(iteration.getId());
-			for (CustomField model : iterCUFModel) {
+			Collection<CustomFieldValueDto> iValues = (Collection<CustomFieldValueDto>) iterCUFValues.get(iteration.getId());
+			for (CustomFieldDto model : iterCUFModel) {
 				String strValue = getValue(iValues, model);
 				dataCells.add(new CellImpl(strValue));
 			}
 
 			TestCaseDto testCase = itp.getTestCase();
 
-			Collection<CustomFieldValue> tcValues = (Collection<CustomFieldValue>) tcCUFValues.get(testCase.getId());
-			for (CustomField model : tcCUFModel) {
+			Collection<CustomFieldValueDto> tcValues = (Collection<CustomFieldValueDto>) tcCUFValues.get(testCase.getId());
+			for (CustomFieldDto model : tcCUFModel) {
 				String strValue = getValue(tcValues, model);
 				dataCells.add(new CellImpl(strValue));
 			}
@@ -577,8 +551,17 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 
 		// ******************************** data formatting ***************************
 
+		private String getCampaignCufValue(CustomFieldValueDto customFieldValueDto, CustomFieldDto model) {
+			if(customFieldValueDto != null && customFieldValueDto.getValue() != null){
+				if(model.getInputType().equals("NUMERIC")){
+					return NumericCufHelper.formatOutputNumericCufValue(customFieldValueDto.getValue());
+				}
+				return customFieldValueDto.getValue();
+			}
+			return "";
+		}
 		// returns the correct value if found, or "" if not found
-		private String getValue(Collection<CustomFieldValue> values, CustomField model) {
+		private String getValue(Collection<CustomFieldValueDto> values, CustomFieldDto model) {
 
 			if (values != null) {
 				return formatOutputValue(values, model);
@@ -586,11 +569,11 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 			return "";
 		}
 
-		private String formatOutputValue(Collection<CustomFieldValue> values ,CustomField model) {
-			for (CustomFieldValue value : values) {
-				CustomField customField = value.getBinding().getCustomField();
-				if (customField.getCode().equals(model.getCode())) {
-					if (customField.getInputType().equals(InputType.NUMERIC)) {
+		private String formatOutputValue(Collection<CustomFieldValueDto> values ,CustomFieldDto model) {
+			for (CustomFieldValueDto value : values) {
+				Long customFieldId = value.getCufId();
+				if (customFieldId == model.getId()) {
+					if (model.getInputType().equals("NUMERIC")) {
 						return NumericCufHelper.formatOutputNumericCufValue(value.getValue());
 					}
 					return value.getValue();
@@ -599,22 +582,9 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 			return "";
 		}
 
-
-			private int getNbIssues(IterationTestPlanItem itp) {
-
-			return bugTrackerService.findNumberOfIssueForItemTestPlanLastExecution(itp.getId());
-
-		}
-
 		private String formatDate(Date date) {
 
 			return date == null ? "" : dateFormat.format(date);
-
-		}
-
-
-		private String formatUser(User user) {
-			return user == null ? "" : user.getLogin();
 
 		}
 
