@@ -21,22 +21,24 @@
 package org.squashtest.tm.service.internal.dto;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class TestCaseDto {
 	private Long id;
-	private String reference;
-	private String name;
-	private String importance;
-	private String nature;
-	private String type;
-	private String status;
-	private Integer requirementCount;
+	private String reference="";
+	private String name="";
+	private String importance="";
+	private String nature="";
+	private String type="";
+	private String status="";
+	private Set<Long> requirementSet = new HashSet<>();
 	private Long projectId;
-	private String projectName;
+	private String projectName="";
 	private List<String> milestoneList = new ArrayList<>();
 
-	public TestCaseDto(Long id, String reference, String name, String importance, String nature, String type, String status, Integer requirementCount, Long projectId, String projectName) {
+	public TestCaseDto(Long id, String reference, String name, String importance, String nature, String type, String status, Long projectId, String projectName) {
 		super();
 		this.id = id;
 		this.reference = reference;
@@ -45,7 +47,6 @@ public class TestCaseDto {
 		this.nature = nature;
 		this.type = type;
 		this.status = status;
-		this.requirementCount = requirementCount;
 		this.projectId = projectId;
 		this.projectName = projectName;
 	}
@@ -110,14 +111,6 @@ public class TestCaseDto {
 		this.status = status;
 	}
 
-	public Integer getRequirementCount() {
-		return requirementCount;
-	}
-
-	public void setRequirementCount(Integer requirementCount) {
-		this.requirementCount = requirementCount;
-	}
-
 	public Long getProjectId() {
 		return projectId;
 	}
@@ -144,5 +137,17 @@ public class TestCaseDto {
 
 	public void setMilestoneList(List<String> milestoneList) {
 		this.milestoneList = milestoneList;
+	}
+
+	public Set<Long> getRequirementSet() {
+		return requirementSet;
+	}
+
+	public void setRequirementSet(Set<Long> requirementSet) {
+		this.requirementSet = requirementSet;
+	}
+
+	public void addRequirement(Long requirementId){
+		requirementSet.add(requirementId);
 	}
 }
