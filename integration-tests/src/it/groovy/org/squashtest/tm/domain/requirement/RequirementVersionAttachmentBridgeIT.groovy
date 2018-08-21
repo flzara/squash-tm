@@ -45,7 +45,7 @@ class RequirementVersionAttachmentBridgeIT extends BridgeSpecification {
 		then:
 		doc.fields.size() == 1
 		doc.fields[0].name == "foo"
-		doc.fields[0].fieldsData == "0000002"
+		doc.fields[0].fieldsData == 2
 	}
 
 }
