@@ -72,7 +72,12 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 		},
 
 		fieldvalue : function(value) {
-			return fieldValue.call(this,"SINGLE", value);
+			if(value) {
+				return fieldValue.call(this, "SINGLE", value.toLowerCase());
+			}else {
+				return fieldValue.call(this, "SINGLE", value);
+
+			}
 		}
 	});
 
@@ -573,6 +578,9 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 				if(field && !!field.fieldvalue()){
 					var value = field.fieldvalue();
 					if( value ) {
+						if (value.type == "SINGLE") {
+						value.value = value.value.toLowerCase();
+					}
 						jsonVariable[newKey] = value;
 					}
 					if(newKey ===	"project.id" ||newKey ===	"requirement.project.id"){

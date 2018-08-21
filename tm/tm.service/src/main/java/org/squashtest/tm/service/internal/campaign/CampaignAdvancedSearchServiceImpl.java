@@ -115,6 +115,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		/* Removing these criteria from the main model */
 		removeMilestoneSearchFields(model);
 
+
 		/* Building main Lucene Query with this main model */
 		Query luceneQuery = buildCoreLuceneQuery(qb, model);
 		/* If requested, add milestones criteria with the copied model */

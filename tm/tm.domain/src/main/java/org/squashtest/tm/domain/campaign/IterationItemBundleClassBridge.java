@@ -106,7 +106,7 @@ public class IterationItemBundleClassBridge implements FieldBridge, MetadataProv
 
 	protected void applyToLuceneStringOptions(LuceneOptions luceneOptions, String name, String value, Document document) {
 		luceneOptions.addSortedDocValuesFieldToDocument( name, value, document );
-		document.add(new StringField(name,  value, Field.Store.YES));
+		document.add(new TextField(name,  value, Field.Store.YES));
 	}
 
 	@Override
