@@ -20,31 +20,27 @@
  */
 package org.squashtest.tm.service.internal.dto;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ITPIDto {
 	private Long id;
-	private String status;
-	private String userName;
+	private String status="";
+	private String userName="";
 	private Date lastExecutedOn;
-	private Integer executionCount;
-	private Integer issueCount;
-	private String dataset;
+	private Set<Long> executionSet = new HashSet<>();
+	private Set<Long> issueSet = new HashSet<>();
+	private String dataset="";
 	private List<String> testSuiteList = new ArrayList<>();
 	private TestCaseDto testCase;
 
-	public ITPIDto(Long id, String status, String userName, Date lastExecutedOn, Integer executionCount, Integer issueCount, String dataset) {
+	public ITPIDto(Long id, String status, String userName, Date lastExecutedOn) {
 		super();
 		this.id = id;
 		this.status = status;
-		this.userName = userName;
+		if(userName != null){
+			this.userName = userName;
+		}
 		this.lastExecutedOn = lastExecutedOn;
-		this.executionCount = executionCount;
-		this.issueCount = issueCount;
-		this.dataset = dataset;
 	}
 
 	public ITPIDto(){
@@ -81,22 +77,6 @@ public class ITPIDto {
 
 	public void setLastExecutedOn(Date lastExecutedOn) {
 		this.lastExecutedOn = lastExecutedOn;
-	}
-
-	public Integer getExecutionCount() {
-		return executionCount;
-	}
-
-	public void setExecutionCount(Integer executionCount) {
-		this.executionCount = executionCount;
-	}
-
-	public Integer getIssueCount() {
-		return issueCount;
-	}
-
-	public void setIssueCount(Integer issueCount) {
-		this.issueCount = issueCount;
 	}
 
 	public String getDataset() {
@@ -138,5 +118,29 @@ public class ITPIDto {
 			builder.append(suite).append(", ");
 		}
 		return builder.toString().replaceFirst(", $", "");	//this eliminates the last comma
+	}
+
+	public Set<Long> getExecutionSet() {
+		return executionSet;
+	}
+
+	public void setExecutionSet(Set<Long> executionSet) {
+		this.executionSet = executionSet;
+	}
+
+	public Set<Long> getIssueSet() {
+		return issueSet;
+	}
+
+	public void setIssueSet(Set<Long> issueSet) {
+		this.issueSet = issueSet;
+	}
+
+	public void addExecution(Long executionId){
+		executionSet.add(executionId);
+	}
+
+	public void addIssue(Long issueId){
+		issueSet.add(issueId);
 	}
 }
