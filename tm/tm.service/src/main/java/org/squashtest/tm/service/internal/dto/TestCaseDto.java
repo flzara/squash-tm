@@ -20,9 +20,7 @@
  */
 package org.squashtest.tm.service.internal.dto;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class TestCaseDto {
@@ -35,8 +33,10 @@ public class TestCaseDto {
 	private String status="";
 	private Set<Long> requirementSet = new HashSet<>();
 	private Long projectId;
-	private String projectName="";
-	private List<String> milestoneList = new ArrayList<>();
+	private String projectName = "";
+	private Set<String> milestoneSet = new HashSet<>();
+	private String description = "";
+	private String prerequisite = "";
 
 	public TestCaseDto(Long id, String reference, String name, String importance, String nature, String type, String status, Long projectId, String projectName) {
 		super();
@@ -128,15 +128,15 @@ public class TestCaseDto {
 	}
 
 	public void addMilestone(String milestoneLabel){
-		milestoneList.add(milestoneLabel);
+		milestoneSet.add(milestoneLabel);
 	}
 
-	public List<String> getMilestoneList() {
-		return milestoneList;
+	public Set<String> getMilestoneSet() {
+		return milestoneSet;
 	}
 
-	public void setMilestoneList(List<String> milestoneList) {
-		this.milestoneList = milestoneList;
+	public void setMilestoneSet(Set<String> milestoneSet) {
+		this.milestoneSet = milestoneSet;
 	}
 
 	public Set<Long> getRequirementSet() {
@@ -149,5 +149,21 @@ public class TestCaseDto {
 
 	public void addRequirement(Long requirementId){
 		requirementSet.add(requirementId);
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getPrerequisite() {
+		return prerequisite;
+	}
+
+	public void setPrerequisite(String prerequisite) {
+		this.prerequisite = prerequisite;
 	}
 }

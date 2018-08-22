@@ -96,7 +96,7 @@ public class SimpleCampaignExportCSVModelImpl extends AbstractCampaignExportCSVM
 			.fetch().iterator();
 	}
 
-	List<Long> populateCampaignDto(Iterator<Record> iterator) {
+	private List<Long> populateCampaignDto(Iterator<Record> iterator) {
 
 		List<Long> allTestCases = new ArrayList<>();
 
@@ -112,7 +112,7 @@ public class SimpleCampaignExportCSVModelImpl extends AbstractCampaignExportCSVM
 				);
 				currentIteration = campaignDto.getIteration(r.get(ITERATION_ID));
 			}
-			if(r.get(IT_MILESTONE.LABEL) != null && !currentIteration.getMilestoneList().contains(r.get(IT_MILESTONE.LABEL))){
+			if(r.get(IT_MILESTONE.LABEL) != null){
 				currentIteration.addMilestone(r.get(IT_MILESTONE.LABEL));
 			}
 			if(currentIteration.getTestPlan(r.get(ITPI_ID)) == null){
@@ -128,7 +128,6 @@ public class SimpleCampaignExportCSVModelImpl extends AbstractCampaignExportCSVM
 				currentIteration.addTestPlan(newItpi);
 				currentItpi = currentIteration.getTestPlan(r.get(ITPI_ID));
 
-				currentItpi.setTestCase(newTestCase);
 				currentTestCase = currentItpi.getTestCase();
 
 			} else {
@@ -144,12 +143,12 @@ public class SimpleCampaignExportCSVModelImpl extends AbstractCampaignExportCSVM
 	}
 
 	private void populateItpi(Record r, ITPIDto itpi) {
-		if(r.get(TS_NAME) != null && !itpi.getTestSuiteList().contains(r.get(TS_NAME))){
-			itpi.getTestSuiteList().add(r.get(TS_NAME));
+		if(r.get(TS_NAME) != null){
+			itpi.getTestSuiteSet().add(r.get(TS_NAME));
 		}
 
 		if(r.get(ITPI_EXECUTION) != null){
-			itpi.addExecution(r.get(ITPI_EXECUTION));
+			itpi.addExecution(new ExecutionDto(r.get(ITPI_EXECUTION)));
 		}
 
 		if(r.get(ITPI_ISSUE) != null){
@@ -159,7 +158,7 @@ public class SimpleCampaignExportCSVModelImpl extends AbstractCampaignExportCSVM
 
 	private void populateTestCase(Record r, TestCaseDto currentTestCase) {
 
-		if(r.get(TC_MILESTONE.LABEL) != null && !currentTestCase.getMilestoneList().contains(r.get(TC_MILESTONE.LABEL))){
+		if(r.get(TC_MILESTONE.LABEL) != null){
 			currentTestCase.addMilestone(r.get(TC_MILESTONE.LABEL));
 		}
 
@@ -342,11 +341,11 @@ public class SimpleCampaignExportCSVModelImpl extends AbstractCampaignExportCSVM
 			dataCells.add(new CellImpl(testCase.getProjectId().toString()));
 			dataCells.add(new CellImpl(testCase.getProjectName()));
 			if (milestonesEnabled) {
-				dataCells.add(new CellImpl(formatMilestone(testCase.getMilestoneList())));
+				dataCells.add(new CellImpl(formatMilestone(testCase.getMilestoneSet())));
 			}
 			dataCells.add(new CellImpl(testCase.getImportance()));
 			dataCells.add(new CellImpl(itp.getTestSuiteNames().replace(", ", ",").replace("<", "&lt;").replace(">", "&gt;")));
-			dataCells.add(new CellImpl(Integer.toString(itp.getExecutionSet().size())));
+			dataCells.add(new CellImpl(Integer.toString(itp.getExecutionMap().size())));
 			dataCells.add(new CellImpl(Integer.toString(testCase.getRequirementSet().size())));
 			dataCells.add(new CellImpl(Integer.toString(itp.getIssueSet().size())));
 			dataCells.add(new CellImpl(itp.getDataset()));
@@ -359,7 +358,7 @@ public class SimpleCampaignExportCSVModelImpl extends AbstractCampaignExportCSVM
 			dataCells.add(new CellImpl(testCase.getStatus()));
 		}
 
-		private String formatMilestone(List<String> milestones) {
+		private String formatMilestone(Set<String> milestones) {
 
 			StringBuilder sb = new StringBuilder();
 			for (String m : milestones) {
@@ -377,7 +376,7 @@ public class SimpleCampaignExportCSVModelImpl extends AbstractCampaignExportCSVM
 			dataCells.add(new CellImpl(Integer.toString(iterIndex + 1)));
 			dataCells.add(new CellImpl(iteration.getName()));
 			if (milestonesEnabled) {
-				dataCells.add(new CellImpl(formatMilestone(iteration.getMilestoneList())));
+				dataCells.add(new CellImpl(formatMilestone(iteration.getMilestoneSet())));
 			}
 			dataCells.add(new CellImpl(formatDate(iteration.getScheduledStartDate())));
 			dataCells.add(new CellImpl(formatDate(iteration.getScheduledEndDate())));
