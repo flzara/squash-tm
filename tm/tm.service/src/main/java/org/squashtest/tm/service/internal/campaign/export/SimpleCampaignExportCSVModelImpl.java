@@ -20,144 +20,26 @@
  */
 package org.squashtest.tm.service.internal.campaign.export;
 
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import javax.inject.Inject;
-
-import org.apache.commons.collections.MultiMap;
-import org.apache.commons.collections.map.MultiValueMap;
-import org.jooq.DSLContext;
 import org.jooq.Record;
-import org.jooq.TableField;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.campaign.Campaign;
-import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.jooq.domain.tables.records.*;
-import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
-import org.squashtest.tm.service.customfield.CustomFieldHelperService;
-import org.squashtest.tm.service.feature.FeatureManager;
-import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.internal.dto.*;
 
 import static org.squashtest.tm.jooq.domain.Tables.*;
 
 @Component
 @Scope("prototype")
-public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVModel {
-
-	private static final TableField<IterationRecord, Long> ITERATION_ID = ITERATION.ITERATION_ID;
-
-	private static final TableField<IterationRecord, String> ITERATION_NAME = ITERATION.NAME;
-
-	private static final TableField<IterationRecord, Timestamp> ITERATION_SCHEDULED_END_DATE = ITERATION.SCHEDULED_END_DATE;
-
-	private static final TableField<IterationRecord, Timestamp> ITERATION_SCHEDULED_START_DATE = ITERATION.SCHEDULED_START_DATE;
-
-	private static final TableField<IterationRecord, Timestamp> ITERATION_ACTUAL_END_DATE = ITERATION.ACTUAL_END_DATE;
-
-	private static final TableField<IterationRecord, Timestamp> ITERATION_ACTUAL_START_DATE = ITERATION.ACTUAL_START_DATE;
-
-	private static final TableField<IterationTestPlanItemRecord, Long> ITPI_ID = ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID;
-
-	private static final TableField<IterationTestPlanItemRecord, String> ITPI_STATUS = ITERATION_TEST_PLAN_ITEM.EXECUTION_STATUS;
-
-	private static final TableField<CoreUserRecord, String> USER_LOGIN = CORE_USER.LOGIN;
-
-	private static final TableField<IterationTestPlanItemRecord, Timestamp> ITPI_LAST_EXECUTED_ON = ITERATION_TEST_PLAN_ITEM.LAST_EXECUTED_ON;
-
-	private static final TableField<ItemTestPlanExecutionRecord, Long> ITPI_EXECUTION = ITEM_TEST_PLAN_EXECUTION.EXECUTION_ID;
-
-	private static final TableField<DatasetRecord, String> DATASET_NAME = DATASET.NAME;
-
-	private static final TableField<TestCaseRecord, Long> TC_ID = TEST_CASE.TCLN_ID;
-
-	private static final TableField<TestCaseRecord, String> TC_IMPORTANCE = TEST_CASE.IMPORTANCE;
-
-	private static final TableField<TestCaseRecord, String> TC_REFERENCE = TEST_CASE.REFERENCE;
-
-	private static final TableField<InfoListItemRecord, String> TC_NATURE = INFO_LIST_ITEM.as("info_list_1").CODE;
-
-	private static final TableField<InfoListItemRecord, String> TC_TYPE = INFO_LIST_ITEM.as("info_list_2").CODE;
-
-	private static final TableField<TestCaseRecord, String> TC_STATUS = TEST_CASE.TC_STATUS;
-
-	private static final TableField<RequirementVersionCoverageRecord, Long> TC_REQUIREMENT_VERIFIED = REQUIREMENT_VERSION_COVERAGE.REQUIREMENT_VERSION_COVERAGE_ID;
-
-	private static final TableField<TestCaseLibraryNodeRecord, String> TC_NAME = TEST_CASE_LIBRARY_NODE.NAME;
-
-	private static final TableField<ProjectRecord, Long> PROJECT_ID = PROJECT.PROJECT_ID;
-
-	private static final TableField<ProjectRecord, String> PROJECT_NAME = PROJECT.NAME;
-
-	private static final TableField<IssueRecord, Long> ITPI_ISSUE = ISSUE.ISSUE_ID;
-
-	private static final TableField<TestSuiteRecord, String> TS_NAME = TEST_SUITE.NAME;
-
-	private static final org.squashtest.tm.jooq.domain.tables.Milestone TC_MILESTONE = MILESTONE.as("tc_milestone");
-
-	private static final org.squashtest.tm.jooq.domain.tables.Milestone IT_MILESTONE = MILESTONE.as("it_milestone");
-
-	@Inject
-	private FeatureManager featureManager;
-
-	@Inject
-	private DSLContext DSL;
-
-	private char separator = ';';
-
-	private Campaign campaign;
-	private CampaignDto campaignDto;
-
-	private List<CustomFieldDto> campCUFModel = new ArrayList<>();
-	private SortedSet<CustomFieldDto> iterCUFModel = new TreeSet<>(Comparator.comparing(CustomFieldDto::getId));
-	private SortedSet<CustomFieldDto> tcCUFModel = new TreeSet<>(Comparator.comparing(CustomFieldDto::getId));
-
-	private Map<Long, CustomFieldValueDto> campCUFValues = new HashMap<>();
-	private MultiValueMap iterCUFValues = new MultiValueMap(); // <Long, Collection<CustomFieldValueDto>>
-	private MultiValueMap tcCUFValues = new MultiValueMap(); // same here
-
-	private int nbColumns;
-
-	private boolean milestonesEnabled;
+public class SimpleCampaignExportCSVModelImpl extends AbstractCampaignExportCSVModel {
 
 	public SimpleCampaignExportCSVModelImpl() {
 		super();
 
 	}
 
-	@Override
-	public void setCampaign(Campaign campaign) {
-		this.campaign = campaign;
-	}
-
-	@Override
-	public void setSeparator(char separator) {
-		this.separator = separator;
-	}
-
-	@Override
-	public char getSeparator() {
-		return separator;
-	}
-
-	@Override
-	public void init() {
-		campaignDto = createCampaignDto(campaign);
-		initIterationsAndCustomFields();
-		milestonesEnabled = featureManager.isEnabled(Feature.MILESTONE);
-	}
-
-	private CampaignDto createCampaignDto(Campaign campaign) {
-		return new CampaignDto(campaign.getId(), campaign.getScheduledStartDate(), campaign.getScheduledEndDate(), campaign.getActualStartDate(), campaign.getActualEndDate());
-	}
-
-	private void initIterationsAndCustomFields() {
+	void initIterationsAndCustomFields() {
 
 		Iterator<Record> iterator = getIterationJooqQueryIterator();
 
@@ -178,39 +60,43 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 
 	}
 
-	private void populateCUFModelAndCufValues(String entityType, Collection<CustomFieldDto> cufModel, MultiValueMap cufValues, Collection<Long> entityIdList) {
-		DSL.select(CUSTOM_FIELD_VALUE.CFV_ID, CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID, CUSTOM_FIELD_VALUE.CF_ID, CUSTOM_FIELD_VALUE.VALUE,
-			CUSTOM_FIELD.CODE, CUSTOM_FIELD.INPUT_TYPE)
-			.from(CUSTOM_FIELD_VALUE)
-			.innerJoin(CUSTOM_FIELD_BINDING).on(CUSTOM_FIELD_BINDING.CFB_ID.eq(CUSTOM_FIELD_VALUE.CFB_ID))
-			.innerJoin(CUSTOM_FIELD).on(CUSTOM_FIELD.CF_ID.eq(CUSTOM_FIELD_BINDING.CF_ID))
-			.where((CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID.in(entityIdList)).and(CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE.eq(entityType)))
-			.fetch().forEach(r ->{
-			CustomFieldDto newCFDto = new CustomFieldDto(r.get(CUSTOM_FIELD_VALUE.CF_ID), r.get(CUSTOM_FIELD.CODE), r.get(CUSTOM_FIELD.INPUT_TYPE));
-			cufModel.add(newCFDto);
-
-			CustomFieldValueDto newCFVDto = new CustomFieldValueDto(r.get(CUSTOM_FIELD_VALUE.CFV_ID), r.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID), r.get(CUSTOM_FIELD_VALUE.CF_ID), r.get(CUSTOM_FIELD_VALUE.VALUE));
-			cufValues.put(r.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID), newCFVDto);
-		});
+	Iterator<Record> getIterationJooqQueryIterator() {
+		return
+			DSL.select(
+			ITERATION_ID, ITERATION_NAME, ITERATION_SCHEDULED_END_DATE, ITERATION_SCHEDULED_START_DATE, ITERATION_ACTUAL_END_DATE, ITERATION_ACTUAL_START_DATE,
+			ITPI_ID, ITPI_STATUS, USER_LOGIN, ITPI_LAST_EXECUTED_ON, ITPI_EXECUTION, DATASET_NAME, IT_MILESTONE.LABEL,
+			TC_ID, TC_IMPORTANCE, TC_REFERENCE, TC_NATURE, TC_TYPE, TC_STATUS, TC_REQUIREMENT_VERIFIED,
+			TC_NAME, PROJECT_ID, PROJECT_NAME, ITPI_ISSUE,
+			TS_NAME, TC_MILESTONE.LABEL)
+			.from(ITERATION)
+			.leftJoin(CAMPAIGN_ITERATION).on(ITERATION_ID.eq(CAMPAIGN_ITERATION.ITERATION_ID))
+			.leftJoin(CAMPAIGN).on(CAMPAIGN.CLN_ID.eq(CAMPAIGN_ITERATION.CAMPAIGN_ID))
+			.leftJoin(ITEM_TEST_PLAN_LIST).on(ITEM_TEST_PLAN_LIST.ITERATION_ID.eq(ITERATION_ID))
+			.leftJoin(ITERATION_TEST_PLAN_ITEM).on(ITPI_ID.eq(ITEM_TEST_PLAN_LIST.ITEM_TEST_PLAN_ID))
+			.leftJoin(TEST_CASE).on(TC_ID.eq(ITERATION_TEST_PLAN_ITEM.TCLN_ID))
+			.leftJoin(TEST_CASE_LIBRARY_NODE).on(TEST_CASE_LIBRARY_NODE.TCLN_ID.eq(TC_ID))
+			.leftJoin(PROJECT).on(PROJECT_ID.eq(TEST_CASE_LIBRARY_NODE.PROJECT_ID))
+			.leftJoin(REQUIREMENT_VERSION_COVERAGE).on(REQUIREMENT_VERSION_COVERAGE.VERIFYING_TEST_CASE_ID.eq(TC_ID))
+			.leftJoin(DATASET).on(DATASET.DATASET_ID.eq(ITERATION_TEST_PLAN_ITEM.DATASET_ID))
+			.leftJoin(ITEM_TEST_PLAN_EXECUTION).on(ITEM_TEST_PLAN_EXECUTION.ITEM_TEST_PLAN_ID.eq(ITPI_ID))
+			.leftJoin(EXECUTION).on(EXECUTION.EXECUTION_ID.eq(ITEM_TEST_PLAN_EXECUTION.EXECUTION_ID))
+			.leftJoin(ISSUE_LIST).on(ISSUE_LIST.ISSUE_LIST_ID.eq(EXECUTION.ISSUE_LIST_ID))
+			.leftJoin(ISSUE).on(ISSUE.ISSUE_LIST_ID.eq(ISSUE_LIST.ISSUE_LIST_ID))
+			.leftJoin(TEST_SUITE_TEST_PLAN_ITEM).on(TEST_SUITE_TEST_PLAN_ITEM.TPI_ID.eq(ITPI_ID))
+			.leftJoin(TEST_SUITE).on(TEST_SUITE.ID.eq(TEST_SUITE_TEST_PLAN_ITEM.SUITE_ID))
+			.leftJoin(MILESTONE_TEST_CASE).on(MILESTONE_TEST_CASE.TEST_CASE_ID.eq(TC_ID))
+			.leftJoin(TC_MILESTONE).on(TC_MILESTONE.MILESTONE_ID.eq(MILESTONE_TEST_CASE.MILESTONE_ID))
+			.leftJoin(MILESTONE_CAMPAIGN).on(MILESTONE_CAMPAIGN.CAMPAIGN_ID.eq(CAMPAIGN.CLN_ID))
+			.leftJoin(IT_MILESTONE).on(IT_MILESTONE.MILESTONE_ID.eq(MILESTONE_CAMPAIGN.MILESTONE_ID))
+			.leftJoin(CORE_USER).on(CORE_USER.PARTY_ID.eq(ITERATION_TEST_PLAN_ITEM.USER_ID))
+			.leftJoin(INFO_LIST_ITEM.as("info_list_1")).on(INFO_LIST_ITEM.as("info_list_1").ITEM_ID.eq(TEST_CASE.TC_TYPE))
+			.leftJoin(INFO_LIST_ITEM.as("info_list_2")).on(INFO_LIST_ITEM.as("info_list_2").ITEM_ID.eq(TEST_CASE.TC_NATURE))
+			.where(CAMPAIGN.CLN_ID.eq(campaign.getId()))
+			.orderBy(ITERATION_ID, TC_ID)
+			.fetch().iterator();
 	}
 
-	private void populateCampCUFModelAndCampCUFValues() {
-		DSL.select(CUSTOM_FIELD_VALUE.CFV_ID, CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID, CUSTOM_FIELD_VALUE.CF_ID, CUSTOM_FIELD_VALUE.VALUE,
-			CUSTOM_FIELD.CODE, CUSTOM_FIELD.INPUT_TYPE)
-			.from(CUSTOM_FIELD_VALUE)
-			.innerJoin(CUSTOM_FIELD_BINDING).on(CUSTOM_FIELD_BINDING.CFB_ID.eq(CUSTOM_FIELD_VALUE.CFB_ID))
-			.innerJoin(CUSTOM_FIELD).on(CUSTOM_FIELD.CF_ID.eq(CUSTOM_FIELD_BINDING.CF_ID))
-			.where((CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID.eq(campaign.getId())).and(CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE.eq("CAMPAIGN")))
-			.fetch().forEach(r ->{
-				CustomFieldDto newCFDto = new CustomFieldDto(r.get(CUSTOM_FIELD_VALUE.CF_ID), r.get(CUSTOM_FIELD.CODE), r.get(CUSTOM_FIELD.INPUT_TYPE));
-				campCUFModel.add(newCFDto);
-
-				CustomFieldValueDto newCFVDto = new CustomFieldValueDto(r.get(CUSTOM_FIELD_VALUE.CFV_ID), r.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID), r.get(CUSTOM_FIELD_VALUE.CF_ID), r.get(CUSTOM_FIELD_VALUE.VALUE));
-				campCUFValues.put(r.get(CUSTOM_FIELD_VALUE.CF_ID), newCFVDto);
-		});
-	}
-
-	private List<Long> populateCampaignDto(Iterator<Record> iterator) {
+	List<Long> populateCampaignDto(Iterator<Record> iterator) {
 
 		List<Long> allTestCases = new ArrayList<>();
 
@@ -255,42 +141,6 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 		}
 
 		return allTestCases;
-	}
-
-	private Iterator<Record> getIterationJooqQueryIterator() {
-		return
-			DSL.select(
-			ITERATION_ID, ITERATION_NAME, ITERATION_SCHEDULED_END_DATE, ITERATION_SCHEDULED_START_DATE, ITERATION_ACTUAL_END_DATE, ITERATION_ACTUAL_START_DATE,
-			ITPI_ID, ITPI_STATUS, USER_LOGIN, ITPI_LAST_EXECUTED_ON, ITPI_EXECUTION, DATASET_NAME, IT_MILESTONE.LABEL,
-			TC_ID, TC_IMPORTANCE, TC_REFERENCE, TC_NATURE, TC_TYPE, TC_STATUS, TC_REQUIREMENT_VERIFIED,
-			TC_NAME, PROJECT_ID, PROJECT_NAME, ITPI_ISSUE,
-			TS_NAME, TC_MILESTONE.LABEL)
-			.from(ITERATION)
-			.leftJoin(CAMPAIGN_ITERATION).on(ITERATION_ID.eq(CAMPAIGN_ITERATION.ITERATION_ID))
-			.leftJoin(CAMPAIGN).on(CAMPAIGN.CLN_ID.eq(CAMPAIGN_ITERATION.CAMPAIGN_ID))
-			.leftJoin(ITEM_TEST_PLAN_LIST).on(ITEM_TEST_PLAN_LIST.ITERATION_ID.eq(ITERATION_ID))
-			.leftJoin(ITERATION_TEST_PLAN_ITEM).on(ITPI_ID.eq(ITEM_TEST_PLAN_LIST.ITEM_TEST_PLAN_ID))
-			.leftJoin(TEST_CASE).on(TC_ID.eq(ITERATION_TEST_PLAN_ITEM.TCLN_ID))
-			.leftJoin(TEST_CASE_LIBRARY_NODE).on(TEST_CASE_LIBRARY_NODE.TCLN_ID.eq(TC_ID))
-			.leftJoin(PROJECT).on(PROJECT_ID.eq(TEST_CASE_LIBRARY_NODE.PROJECT_ID))
-			.leftJoin(REQUIREMENT_VERSION_COVERAGE).on(REQUIREMENT_VERSION_COVERAGE.VERIFYING_TEST_CASE_ID.eq(TC_ID))
-			.leftJoin(DATASET).on(DATASET.DATASET_ID.eq(ITERATION_TEST_PLAN_ITEM.DATASET_ID))
-			.leftJoin(ITEM_TEST_PLAN_EXECUTION).on(ITEM_TEST_PLAN_EXECUTION.ITEM_TEST_PLAN_ID.eq(ITPI_ID))
-			.leftJoin(EXECUTION).on(EXECUTION.EXECUTION_ID.eq(ITEM_TEST_PLAN_EXECUTION.EXECUTION_ID))
-			.leftJoin(ISSUE_LIST).on(ISSUE_LIST.ISSUE_LIST_ID.eq(EXECUTION.ISSUE_LIST_ID))
-			.leftJoin(ISSUE).on(ISSUE.ISSUE_LIST_ID.eq(ISSUE_LIST.ISSUE_LIST_ID))
-			.leftJoin(TEST_SUITE_TEST_PLAN_ITEM).on(TEST_SUITE_TEST_PLAN_ITEM.TPI_ID.eq(ITPI_ID))
-			.leftJoin(TEST_SUITE).on(TEST_SUITE.ID.eq(TEST_SUITE_TEST_PLAN_ITEM.SUITE_ID))
-			.leftJoin(MILESTONE_TEST_CASE).on(MILESTONE_TEST_CASE.TEST_CASE_ID.eq(TC_ID))
-			.leftJoin(TC_MILESTONE).on(TC_MILESTONE.MILESTONE_ID.eq(MILESTONE_TEST_CASE.MILESTONE_ID))
-			.leftJoin(MILESTONE_CAMPAIGN).on(MILESTONE_CAMPAIGN.CAMPAIGN_ID.eq(CAMPAIGN.CLN_ID))
-			.leftJoin(IT_MILESTONE).on(IT_MILESTONE.MILESTONE_ID.eq(MILESTONE_CAMPAIGN.MILESTONE_ID))
-			.leftJoin(CORE_USER).on(CORE_USER.PARTY_ID.eq(ITERATION_TEST_PLAN_ITEM.USER_ID))
-			.leftJoin(INFO_LIST_ITEM.as("info_list_1")).on(INFO_LIST_ITEM.as("info_list_1").ITEM_ID.eq(TEST_CASE.TC_TYPE))
-			.leftJoin(INFO_LIST_ITEM.as("info_list_2")).on(INFO_LIST_ITEM.as("info_list_2").ITEM_ID.eq(TEST_CASE.TC_NATURE))
-			.where(CAMPAIGN.CLN_ID.eq(campaign.getId()))
-			.orderBy(ITERATION_ID, TC_ID)
-			.fetch().iterator();
 	}
 
 	private void populateItpi(Record r, ITPIDto itpi) {
