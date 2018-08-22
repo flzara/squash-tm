@@ -76,6 +76,10 @@ public abstract class AbstractCampaignExportCSVModel implements WritableCampaign
 
 	static final TableField<TestCaseRecord, String> TC_STATUS = TEST_CASE.TC_STATUS;
 
+	static final TableField<TestCaseRecord, String> TC_PREREQUISITE = TEST_CASE.PREREQUISITE;
+
+	static final TableField<TestCaseLibraryNodeRecord, String> TC_DESCRIPTION = TEST_CASE_LIBRARY_NODE.DESCRIPTION;
+
 	static final TableField<RequirementVersionCoverageRecord, Long> TC_REQUIREMENT_VERIFIED = REQUIREMENT_VERSION_COVERAGE.REQUIREMENT_VERSION_COVERAGE_ID;
 
 	static final TableField<TestCaseLibraryNodeRecord, String> TC_NAME = TEST_CASE_LIBRARY_NODE.NAME;
@@ -91,6 +95,16 @@ public abstract class AbstractCampaignExportCSVModel implements WritableCampaign
 	static final Milestone TC_MILESTONE = MILESTONE.as("tc_milestone");
 
 	static final Milestone IT_MILESTONE = MILESTONE.as("it_milestone");
+
+	static final TableField<ExecutionRecord, Long> EXECUTION_ID = EXECUTION.EXECUTION_ID;
+
+	static final TableField<ExecutionRecord, String> EXECUTION_MODE = EXECUTION.EXECUTION_MODE;
+
+	static final TableField<ExecutionRecord, String> EXECUTION_STATUS = EXECUTION.EXECUTION_STATUS;
+
+	static final TableField<ExecutionStepRecord, Long> EXECUTION_STEP_ID = EXECUTION_STEP.EXECUTION_STEP_ID;
+
+	static final TableField<ExecutionStepRecord, String> EXECUTION_STEP_STATUS = EXECUTION_STEP.EXECUTION_STATUS;
 
 	@Inject
 	private FeatureManager featureManager;
@@ -110,10 +124,12 @@ public abstract class AbstractCampaignExportCSVModel implements WritableCampaign
 	List<CustomFieldDto> campCUFModel = new ArrayList<>();
 	SortedSet<CustomFieldDto> iterCUFModel = new TreeSet<>(Comparator.comparing(CustomFieldDto::getId));
 	SortedSet<CustomFieldDto> tcCUFModel = new TreeSet<>(Comparator.comparing(CustomFieldDto::getId));
+	SortedSet<CustomFieldDto> execCUFModel = new TreeSet<>(Comparator.comparing(CustomFieldDto::getId));
 
 	Map<Long, CustomFieldValueDto> campCUFValues = new HashMap<>();
 	MultiValueMap iterCUFValues = new MultiValueMap(); // <Long, Collection<CustomFieldValueDto>>
 	MultiValueMap tcCUFValues = new MultiValueMap(); // same here
+	MultiValueMap execCUFValues = new MultiValueMap(); // same here
 
 	public AbstractCampaignExportCSVModel() {
 		super();
@@ -181,8 +197,6 @@ public abstract class AbstractCampaignExportCSVModel implements WritableCampaign
 			campCUFValues.put(r.get(CUSTOM_FIELD_VALUE.CF_ID), newCFVDto);
 		});
 	}
-
-	abstract List<Long> populateCampaignDto(Iterator<Record> iterator);
 
 
 }

@@ -29,7 +29,7 @@ public class IterationDto {
 	private Date scheduledEndDate;
 	private Date actualStartDate;
 	private Date actualEndDate;
-	private List<String> milestoneList = new ArrayList<>();
+	private Set<String> milestoneSet = new HashSet<>();
 	private Map<Long, ITPIDto> testPlans = new HashMap<>();
 	private List<ITPIDto> testPlanList = new ArrayList<>();
 
@@ -112,16 +112,16 @@ public class IterationDto {
 		testPlanList.add(itpi);
 	}
 
-	public List<String> getMilestoneList() {
-		return milestoneList;
+	public Set<String> getMilestoneSet() {
+		return milestoneSet;
 	}
 
-	public void setMilestoneList(List<String> milestoneList) {
-		this.milestoneList = milestoneList;
+	public void setMilestoneSet(Set<String> milestoneSet) {
+		this.milestoneSet = milestoneSet;
 	}
 
 	public void addMilestone(String milestoneLabel){
-		milestoneList.add(milestoneLabel);
+		milestoneSet.add(milestoneLabel);
 	}
 
 	public List<ITPIDto> getTestPlanList(){

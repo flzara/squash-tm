@@ -27,10 +27,10 @@ public class ITPIDto {
 	private String status="";
 	private String userName="";
 	private Date lastExecutedOn;
-	private Set<Long> executionSet = new HashSet<>();
+	private Map<Long, ExecutionDto> executionMap = new HashMap<>();
 	private Set<Long> issueSet = new HashSet<>();
 	private String dataset="";
-	private List<String> testSuiteList = new ArrayList<>();
+	private Set<String> testSuiteSet = new HashSet<>();
 	private TestCaseDto testCase;
 
 	public ITPIDto(Long id, String status, String userName, Date lastExecutedOn) {
@@ -87,12 +87,12 @@ public class ITPIDto {
 		this.dataset = dataset;
 	}
 
-	public List<String> getTestSuiteList() {
-		return testSuiteList;
+	public Set<String> getTestSuiteSet() {
+		return testSuiteSet;
 	}
 
-	public void setTestSuiteList(List<String> testSuiteList) {
-		this.testSuiteList = testSuiteList;
+	public void setTestSuiteSet(Set<String> testSuiteSet) {
+		this.testSuiteSet = testSuiteSet;
 	}
 
 	public TestCaseDto getTestCase() {
@@ -114,18 +114,10 @@ public class ITPIDto {
 
 		StringBuilder builder = new StringBuilder();
 
-		for (String suite : testSuiteList) {
+		for (String suite : testSuiteSet) {
 			builder.append(suite).append(", ");
 		}
 		return builder.toString().replaceFirst(", $", "");	//this eliminates the last comma
-	}
-
-	public Set<Long> getExecutionSet() {
-		return executionSet;
-	}
-
-	public void setExecutionSet(Set<Long> executionSet) {
-		this.executionSet = executionSet;
 	}
 
 	public Set<Long> getIssueSet() {
@@ -136,11 +128,31 @@ public class ITPIDto {
 		this.issueSet = issueSet;
 	}
 
-	public void addExecution(Long executionId){
-		executionSet.add(executionId);
+	public void addExecution(ExecutionDto execution){
+		executionMap.put(execution.getId(), execution);
 	}
 
 	public void addIssue(Long issueId){
 		issueSet.add(issueId);
+	}
+
+	public ExecutionDto getLatestExecution() {
+		if(!executionMap.isEmpty()){
+			Long max = Collections.max(executionMap.keySet());
+			return executionMap.get(max);
+		}
+		return null;
+	}
+
+	public Map<Long, ExecutionDto> getExecutionMap() {
+		return executionMap;
+	}
+
+	public void setExecutionMap(Map<Long, ExecutionDto> executionMap) {
+		this.executionMap = executionMap;
+	}
+
+	public ExecutionDto getExecution(Long executionId){
+		return this.executionMap.get(executionId);
 	}
 }

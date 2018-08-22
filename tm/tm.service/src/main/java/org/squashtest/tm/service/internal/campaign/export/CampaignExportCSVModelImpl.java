@@ -20,62 +20,21 @@
  */
 package org.squashtest.tm.service.internal.campaign.export;
 
-import org.apache.commons.collections.map.MultiValueMap;
+import org.jooq.Record;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.campaign.Campaign;
-import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.customfield.CustomField;
-import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.domain.customfield.InputType;
-import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.execution.ExecutionStatus;
-import org.squashtest.tm.domain.execution.ExecutionStep;
-import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
-import org.squashtest.tm.service.customfield.CustomFieldHelper;
-import org.squashtest.tm.service.customfield.CustomFieldHelperService;
-import org.squashtest.tm.service.feature.FeatureManager;
-import org.squashtest.tm.service.feature.FeatureManager.Feature;
-import org.squashtest.tm.service.internal.dto.NumericCufHelper;
 
-import javax.inject.Inject;
+import org.squashtest.tm.service.internal.dto.*;
+
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Predicate;
 
+import static org.squashtest.tm.jooq.domain.Tables.*;
+
 @Component
 @Scope("prototype")
-public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
-
-	@Inject
-	private CustomFieldHelperService cufHelperService;
-
-	@Inject
-	private BugTrackersLocalService bugTrackerService;
-
-	@Inject
-	private FeatureManager featureManager;
-
-	private char separator = ';';
-
-	private Campaign campaign;
-
-	private List<CustomField> campCUFModel;
-	private List<CustomField> iterCUFModel;
-	private List<CustomField> tcCUFModel;
-	private List<CustomField> execCUFModel;
-
-	private List<CustomFieldValue> campCUFValues;
-	private MultiValueMap iterCUFValues; // <Long, Collection<CustomFieldValue>>
-	private MultiValueMap tcCUFValues; // same here
-	private MultiValueMap execCUFValues; // same here
-
-	private int nbColumns;
-	private boolean milestonesEnabled;
+public class CampaignExportCSVModelImpl extends AbstractCampaignExportCSVModel {
 
 	public CampaignExportCSVModelImpl() {
 		super();
@@ -83,120 +42,189 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 	}
 
 	@Override
-	public void setCampaign(Campaign campaign) {
-		this.campaign = campaign;
-	}
+	void initIterationsAndCustomFields() {
+		Iterator<Record> iterator = getIterationJooqQueryIterator();
 
-	@Override
-	public char getSeparator() {
-		return separator;
-	}
+		List<Long> allTestCaseIds = new ArrayList<>();
 
-	@Override
-	public void setSeparator(char separator) {
-		this.separator = separator;
-	}
+		Set<Long> allIterationIds = campaignDto.getIterationMap().keySet();
 
-	@Override
-	public void init() {
-		initCustomFields();
-		milestonesEnabled = featureManager.isEnabled(Feature.MILESTONE);
-	}
+		List<Long> allExecutionIds = new ArrayList<>();
 
-	private void initCustomFields() {
-
-		List<Iteration> iterations = campaign.getIterations();
-		List<TestCase> allTestCases = collectAllTestCases(iterations);
-		List<Execution> allExecs = collectAllExecs(iterations);
-		List<ExecutionStep> allExecSteps = collectLatestExecutionStep(iterations);
+		populateCampaignDto(iterator, allTestCaseIds, allExecutionIds);
 
 		// cufs for the campaign
-		CustomFieldHelper<Campaign> campHelper = cufHelperService.newHelper(campaign);
-		campCUFModel = campHelper.getCustomFieldConfiguration();
-		campCUFValues = campHelper.getCustomFieldValues();
-		Collections.sort(campCUFValues, (a, b) -> a.getCustomField().getId()< b.getCustomField().getId() ? -1 : a.getCustomField().getId() == b.getCustomField().getId() ? 0 : 1);
+		populateCampCUFModelAndCampCUFValues();
 
 		// cufs for the iterations
-		CustomFieldHelper<Iteration> iterHelper = cufHelperService.newHelper(iterations).includeAllCustomFields();
-		iterCUFModel = iterHelper.getCustomFieldConfiguration();
-		List<CustomFieldValue> iterValues = iterHelper.getCustomFieldValues();
-		Collections.sort(iterValues, (a, b) -> a.getCustomField().getId()< b.getCustomField().getId() ? -1 : a.getCustomField().getId() == b.getCustomField().getId() ? 0 : 1);
+		populateCUFModelAndCufValues("ITERATION", iterCUFModel, iterCUFValues, allIterationIds);
 
 		// cufs for the test cases
-		CustomFieldHelper<TestCase> tcHelper = cufHelperService.newHelper(allTestCases).includeAllCustomFields();
-		tcCUFModel = tcHelper.getCustomFieldConfiguration();
-		List<CustomFieldValue> tcValues = tcHelper.getCustomFieldValues();
-		Collections.sort(tcValues, (a, b) -> a.getCustomField().getId()< b.getCustomField().getId() ? -1 : a.getCustomField().getId() == b.getCustomField().getId() ? 0 : 1);
+		populateCUFModelAndCufValues("TEST_CASE", tcCUFModel, tcCUFValues, allTestCaseIds);
 
 		// cufs for the executions
-		CustomFieldHelper<Execution> execHelper = cufHelperService.newHelper(allExecs).includeAllCustomFields();
-		execCUFModel = execHelper.getCustomFieldConfiguration();
-		List<CustomFieldValue> execValues = execHelper.getCustomFieldValues();
-		Collections.sort(execValues, (a, b) -> a.getCustomField().getId()< b.getCustomField().getId() ? -1 : a.getCustomField().getId() == b.getCustomField().getId() ? 0 : 1);
+		populateCUFModelAndCufValues("EXECUTION", execCUFModel, execCUFValues, allExecutionIds);
 
 		nbColumns = 25 + campCUFModel.size() + iterCUFModel.size() + tcCUFModel.size() + execCUFModel.size();
-
-		// index the custom field values with a map for faster reference later
-		createCustomFieldValuesIndex(iterValues, tcValues, execValues);
-
 	}
 
-	private List<TestCase> collectAllTestCases(List<Iteration> iterations) {
-		// aggregate the test cases in one collection
-		List<TestCase> allTestCases = new ArrayList<>();
-		for (Iteration iteration : iterations) {
-			addIterationTestCases(iteration, allTestCases);
-		}
-		return allTestCases;
+	@Override
+	Iterator<Record> getIterationJooqQueryIterator() {
+		return
+			DSL.select(
+				ITERATION_ID, ITERATION_NAME, ITERATION_SCHEDULED_END_DATE, ITERATION_SCHEDULED_START_DATE, ITERATION_ACTUAL_END_DATE, ITERATION_ACTUAL_START_DATE,
+				ITPI_ID, ITPI_STATUS, USER_LOGIN, ITPI_LAST_EXECUTED_ON, ITPI_EXECUTION, DATASET_NAME, IT_MILESTONE.LABEL,
+				TC_ID, TC_IMPORTANCE, TC_REFERENCE, TC_NATURE, TC_TYPE, TC_STATUS, TC_REQUIREMENT_VERIFIED,
+				TC_NAME, TC_PREREQUISITE, TC_DESCRIPTION, PROJECT_ID, PROJECT_NAME, ITPI_ISSUE,
+				TS_NAME, TC_MILESTONE.LABEL,
+				EXECUTION_ID, EXECUTION_MODE, EXECUTION_STATUS, EXECUTION_STEP_ID, EXECUTION_STEP_STATUS)
+				.from(ITERATION)
+				.leftJoin(CAMPAIGN_ITERATION).on(ITERATION_ID.eq(CAMPAIGN_ITERATION.ITERATION_ID))
+				.leftJoin(CAMPAIGN).on(CAMPAIGN.CLN_ID.eq(CAMPAIGN_ITERATION.CAMPAIGN_ID))
+				.leftJoin(ITEM_TEST_PLAN_LIST).on(ITEM_TEST_PLAN_LIST.ITERATION_ID.eq(ITERATION_ID))
+				.leftJoin(ITERATION_TEST_PLAN_ITEM).on(ITPI_ID.eq(ITEM_TEST_PLAN_LIST.ITEM_TEST_PLAN_ID))
+				.leftJoin(TEST_CASE).on(TC_ID.eq(ITERATION_TEST_PLAN_ITEM.TCLN_ID))
+				.leftJoin(TEST_CASE_LIBRARY_NODE).on(TEST_CASE_LIBRARY_NODE.TCLN_ID.eq(TC_ID))
+				.leftJoin(PROJECT).on(PROJECT_ID.eq(TEST_CASE_LIBRARY_NODE.PROJECT_ID))
+				.leftJoin(REQUIREMENT_VERSION_COVERAGE).on(REQUIREMENT_VERSION_COVERAGE.VERIFYING_TEST_CASE_ID.eq(TC_ID))
+				.leftJoin(DATASET).on(DATASET.DATASET_ID.eq(ITERATION_TEST_PLAN_ITEM.DATASET_ID))
+				.leftJoin(ITEM_TEST_PLAN_EXECUTION).on(ITEM_TEST_PLAN_EXECUTION.ITEM_TEST_PLAN_ID.eq(ITPI_ID))
+				.leftJoin(EXECUTION).on(EXECUTION_ID.eq(ITEM_TEST_PLAN_EXECUTION.EXECUTION_ID))
+				.leftJoin(EXECUTION_EXECUTION_STEPS).on(EXECUTION_EXECUTION_STEPS.EXECUTION_ID.eq(EXECUTION_ID))
+				.leftJoin(EXECUTION_STEP).on(EXECUTION_STEP_ID.eq(EXECUTION_EXECUTION_STEPS.EXECUTION_STEP_ID))
+				.leftJoin(ISSUE_LIST).on(ISSUE_LIST.ISSUE_LIST_ID.eq(EXECUTION.ISSUE_LIST_ID))
+				.leftJoin(ISSUE).on(ISSUE.ISSUE_LIST_ID.eq(ISSUE_LIST.ISSUE_LIST_ID))
+				.leftJoin(TEST_SUITE_TEST_PLAN_ITEM).on(TEST_SUITE_TEST_PLAN_ITEM.TPI_ID.eq(ITPI_ID))
+				.leftJoin(TEST_SUITE).on(TEST_SUITE.ID.eq(TEST_SUITE_TEST_PLAN_ITEM.SUITE_ID))
+				.leftJoin(MILESTONE_TEST_CASE).on(MILESTONE_TEST_CASE.TEST_CASE_ID.eq(TC_ID))
+				.leftJoin(TC_MILESTONE).on(TC_MILESTONE.MILESTONE_ID.eq(MILESTONE_TEST_CASE.MILESTONE_ID))
+				.leftJoin(MILESTONE_CAMPAIGN).on(MILESTONE_CAMPAIGN.CAMPAIGN_ID.eq(CAMPAIGN.CLN_ID))
+				.leftJoin(IT_MILESTONE).on(IT_MILESTONE.MILESTONE_ID.eq(MILESTONE_CAMPAIGN.MILESTONE_ID))
+				.leftJoin(CORE_USER).on(CORE_USER.PARTY_ID.eq(ITERATION_TEST_PLAN_ITEM.USER_ID))
+				.leftJoin(INFO_LIST_ITEM.as("info_list_1")).on(INFO_LIST_ITEM.as("info_list_1").ITEM_ID.eq(TEST_CASE.TC_TYPE))
+				.leftJoin(INFO_LIST_ITEM.as("info_list_2")).on(INFO_LIST_ITEM.as("info_list_2").ITEM_ID.eq(TEST_CASE.TC_NATURE))
+				.where(CAMPAIGN.CLN_ID.eq(campaign.getId()))
+				.orderBy(ITERATION_ID, TC_ID, EXECUTION_ID, EXECUTION_STEP_ID)
+				.fetch().iterator();
 	}
 
-	private void addIterationTestCases(Iteration iteration, List<TestCase> allTestCases) {
-		for (IterationTestPlanItem item : iteration.getTestPlans()) {
-			if (!item.isTestCaseDeleted()) {
-				allTestCases.add(item.getReferencedTestCase());
+	private void populateCampaignDto(Iterator<Record> iterator, List<Long> allTestCaseIds, List<Long> allExecutionIds) {
+
+		IterationDto currentIteration = new IterationDto();
+		ITPIDto currentItpi = new ITPIDto();
+		TestCaseDto currentTestCase = new TestCaseDto();
+		ExecutionDto currentExecution = new ExecutionDto();
+
+		while (iterator.hasNext()){
+			Record r = iterator.next();
+			if(campaignDto.getIteration(r.get(ITERATION_ID)) == null){
+				campaignDto.addIteration(
+					new IterationDto(r.get(ITERATION_ID), r.get(ITERATION_NAME), r.get(ITERATION_SCHEDULED_START_DATE), r.get(ITERATION_SCHEDULED_END_DATE), r.get(ITERATION_ACTUAL_START_DATE), r.get(ITERATION_ACTUAL_END_DATE))
+				);
+				currentIteration = campaignDto.getIteration(r.get(ITERATION_ID));
 			}
-		}
-	}
+			if(r.get(IT_MILESTONE.LABEL) != null){
+				currentIteration.addMilestone(r.get(IT_MILESTONE.LABEL));
+			}
+			if(currentIteration.getTestPlan(r.get(ITPI_ID)) == null){
 
-	private List<Execution> collectAllExecs(List<Iteration> iterations) {
-		// aggregate the executions in one collection
-		List<Execution> allExecs = new ArrayList<>();
-		for (Iteration iteration : iterations) {
-			allExecs.addAll(iteration.getExecutions());
-		}
-		return allExecs;
-	}
+				ITPIDto newItpi = createNewItpiDto(r);
 
-	private List<ExecutionStep> collectLatestExecutionStep(List<Iteration> iterations) {
-		List<ExecutionStep> execSteps = new ArrayList<>();
-		for (Iteration iteration : iterations) {
-			for (IterationTestPlanItem item : iteration.getTestPlans()) {
-				if (!item.isTestCaseDeleted() && item.getLatestExecution() != null) {
-					execSteps.addAll(item.getLatestExecution().getSteps());
+				TestCaseDto newTestCase = createNewTestCaseDto(r);
+
+				allTestCaseIds.add(r.get(TC_ID));
+
+				newItpi.setTestCase(newTestCase);
+
+				currentIteration.addTestPlan(newItpi);
+				currentItpi = currentIteration.getTestPlan(r.get(ITPI_ID));
+				currentTestCase = currentItpi.getTestCase();
+
+				if(r.get(EXECUTION_ID) != null){
+					ExecutionDto newExecution = createNewExecutionDto(r);
+
+					currentItpi.addExecution(newExecution);
+
+					currentExecution = currentItpi.getExecution(r.get(EXECUTION_ID));
+					allExecutionIds.add(r.get(EXECUTION_ID));
 				}
+
+
+			} else {
+
+				populateItpi(r, currentItpi);
+
+				populateTestCase(r, currentTestCase);
+
+				if(!currentExecution.getId().equals(r.get(EXECUTION_ID))){
+
+					ExecutionDto newExecution = createNewExecutionDto(r);
+
+					currentItpi.addExecution(newExecution);
+
+					currentExecution = currentItpi.getExecution(r.get(EXECUTION_ID));
+					allExecutionIds.add(r.get(EXECUTION_ID));
+				}
+
+				if(currentExecution.getStep(r.get(EXECUTION_STEP_ID)) == null){
+					currentExecution.addStep(new ExecutionStepDto(r.get(EXECUTION_STEP_ID), r.get(EXECUTION_STEP_STATUS)));
+				}
+
 			}
 		}
-		return execSteps;
 	}
 
-	private void createCustomFieldValuesIndex(List<CustomFieldValue> iterValues, List<CustomFieldValue> tcValues,
-	                                          List<CustomFieldValue> execValues) {
-
-		iterCUFValues = new MultiValueMap();
-		tcCUFValues = new MultiValueMap();
-		execCUFValues = new MultiValueMap();
-
-		for (CustomFieldValue value : iterValues) {
-			iterCUFValues.put(value.getBoundEntityId(), value);
+	private void populateItpi(Record r, ITPIDto itpi) {
+		if(r.get(TS_NAME) != null){
+			itpi.getTestSuiteSet().add(r.get(TS_NAME));
 		}
 
-		for (CustomFieldValue value : tcValues) {
-			tcCUFValues.put(value.getBoundEntityId(), value);
+		if(r.get(ITPI_ISSUE) != null){
+			itpi.addIssue(r.get(ITPI_ISSUE));
+		}
+	}
+
+	private void populateTestCase(Record r, TestCaseDto currentTestCase) {
+
+		if(r.get(TC_MILESTONE.LABEL) != null){
+			currentTestCase.addMilestone(r.get(TC_MILESTONE.LABEL));
 		}
 
-		for (CustomFieldValue value : execValues) {
-			execCUFValues.put(value.getBoundEntityId(), value);
+		if(r.get(TC_REQUIREMENT_VERIFIED) != null){
+			currentTestCase.addRequirement(r.get(TC_REQUIREMENT_VERIFIED));
 		}
+	}
+
+	private TestCaseDto createNewTestCaseDto(Record r) {
+		TestCaseDto newTestCase = new TestCaseDto(r.get(TC_ID), r.get(TC_REFERENCE), r.get(TC_NAME), r.get(TC_IMPORTANCE), r.get(TC_NATURE), r.get(TC_TYPE), r.get(TC_STATUS), r.get(PROJECT_ID), r.get(PROJECT_NAME));
+		if(r.get(TC_DESCRIPTION) != null){
+			newTestCase.setDescription(r.get(TC_DESCRIPTION));
+		}
+		if(r.get(TC_PREREQUISITE) != null){
+			newTestCase.setPrerequisite(r.get(TC_PREREQUISITE));
+		}
+		populateTestCase(r, newTestCase);
+
+		return newTestCase;
+	}
+
+	private ITPIDto createNewItpiDto(Record r) {
+		ITPIDto newItpi = new ITPIDto(r.get(ITPI_ID), r.get(ITPI_STATUS), r.get(USER_LOGIN), r.get(ITPI_LAST_EXECUTED_ON));
+
+		populateItpi(r, newItpi);
+
+		if(r.get(DATASET_NAME) != null){
+			newItpi.setDataset(r.get(DATASET_NAME));
+		}
+
+		return newItpi;
+	}
+
+	private ExecutionDto createNewExecutionDto(Record r) {
+		ExecutionDto newExecution = new ExecutionDto(r.get(EXECUTION_ID), r.get(EXECUTION_STATUS), r.get(EXECUTION_MODE).equals("AUTOMATED"));
+		newExecution.addStep(new ExecutionStepDto(r.get(EXECUTION_STEP_ID), r.get(EXECUTION_STEP_STATUS)));
+
+		return  newExecution;
 	}
 
 	@Override
@@ -210,13 +238,10 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 		headerCells.add(new CellImpl("CPG_ACTUAL_START_ON"));
 		headerCells.add(new CellImpl("CPG_ACTUAL_END_ON"));
 
-		Collections.sort(campCUFModel, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
-		Collections.sort(iterCUFModel, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
-		Collections.sort(tcCUFModel, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
-		Collections.sort(execCUFModel, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
+		campCUFModel.sort(Comparator.comparing(CustomFieldDto::getId));
 
 		// campaign custom fields
-		for (CustomField cufModel : campCUFModel) {
+		for (CustomFieldDto cufModel : campCUFModel) {
 			headerCells.add(new CellImpl("CPG_CUF_" + cufModel.getCode()));
 		}
 
@@ -231,7 +256,7 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 		headerCells.add(new CellImpl("IT_ACTUAL_END_ON"));
 
 		// iteration custom fields
-		for (CustomField cufModel : iterCUFModel) {
+		for (CustomFieldDto cufModel : iterCUFModel) {
 			headerCells.add(new CellImpl("IT_CUF_" + cufModel.getCode()));
 		}
 
@@ -259,12 +284,12 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 		headerCells.add(new CellImpl("PREREQUISITE"));
 
 		// test case custom fields
-		for (CustomField cufModel : tcCUFModel) {
+		for (CustomFieldDto cufModel : tcCUFModel) {
 			headerCells.add(new CellImpl("TC_CUF_" + cufModel.getCode()));
 		}
 
 		// execution custom fields
-		for (CustomField cufModel : execCUFModel) {
+		for (CustomFieldDto cufModel : execCUFModel) {
 			headerCells.add(new CellImpl("EXEC_CUF_" + cufModel.getCode()));
 		}
 
@@ -284,8 +309,8 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 		private int iterIndex = -1;
 		private int itpIndex = -1;
 
-		private Iteration iteration = new Iteration(); // initialized to dummy value for for bootstrap purposes
-		private IterationTestPlanItem itp; // null means "no more"
+		private IterationDto iteration = new IterationDto(); // initialized to dummy value for for bootstrap purposes
+		private ITPIDto itp; // null means "no more"
 
 		private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
@@ -330,12 +355,10 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 
 		@SuppressWarnings("unchecked")
 		private void populateExecutionCUFRowData(List<CellImpl> dataCells) {
-			Execution exe = itp.getLatestExecution();
+			ExecutionDto exe = itp.getLatestExecution();
 			if (exe != null) {
-
-				Collection<CustomFieldValue> execValues = (Collection<CustomFieldValue>) execCUFValues
-					.get(exe.getId());
-				for (CustomField model : execCUFModel) {
+				Collection<CustomFieldValueDto> execValues = (Collection<CustomFieldValueDto>) execCUFValues.get(exe.getId());
+				for (CustomFieldDto model : execCUFModel) {
 					String strValue = getValue(execValues, model);
 					dataCells.add(new CellImpl(strValue));
 				}
@@ -345,36 +368,33 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 		@SuppressWarnings("unchecked")
 		private void populateTestCaseRowData(List<CellImpl> dataCells) {
 
-			TestCase testCase = itp.getReferencedTestCase();
+			TestCaseDto testCase = itp.getTestCase();
 
 			dataCells.add(new CellImpl(testCase.getName()));
-			dataCells.add(new CellImpl(testCase.getProject().getName()));
+			dataCells.add(new CellImpl(testCase.getProjectName()));
 			if (milestonesEnabled) {
-				dataCells.add(new CellImpl(formatMilestone(testCase.getMilestones())));
+				dataCells.add(new CellImpl(formatMilestone(testCase.getMilestoneSet())));
 			}
-			dataCells.add(new CellImpl(testCase.getImportance().toString()));
+			dataCells.add(new CellImpl(testCase.getImportance()));
 			dataCells.add(new CellImpl(itp.getTestSuiteNames().replace("<", "&lt;").replace(">", "&gt;")));
-			dataCells.add(new CellImpl(Integer.toString(itp.getExecutions().size())));
-			dataCells.add(new CellImpl(Integer.toString(testCase.getRequirementVersionCoverages().size())));
-			dataCells.add(new CellImpl(Integer.toString(getNbIssues(itp))));
-			dataCells.add(new CellImpl((itp.getReferencedDataset() == null) ? "" : itp.getReferencedDataset().getName()));
-			dataCells.add(new CellImpl(itp.getExecutionStatus().toString()));
+			dataCells.add(new CellImpl(Integer.toString(itp.getExecutionMap().size())));
+			dataCells.add(new CellImpl(Integer.toString(testCase.getRequirementSet().size())));
+			dataCells.add(new CellImpl(Integer.toString(itp.getIssueSet().size())));
+			dataCells.add(new CellImpl(itp.getDataset()));
+			dataCells.add(new CellImpl(itp.getStatus()));
 			dataCells.add(new CellImpl(formatLongText(calculateSuccessRate() + " %")));
-			dataCells.add(new CellImpl(formatUser(itp.getUser())));
+			dataCells.add(new CellImpl(itp.getUserName()));
 			dataCells.add(new CellImpl(formatDate(itp.getLastExecutedOn())));
 			dataCells.add(new CellImpl(formatLongText(testCase.getDescription())));
 			dataCells.add(new CellImpl(testCase.getReference()));
-			dataCells.add(new CellImpl(testCase.getNature().getCode()));
-			dataCells.add(new CellImpl(testCase.getType().getCode()));
-			dataCells.add(new CellImpl(testCase.getStatus().toString()));
+			dataCells.add(new CellImpl(testCase.getNature()));
+			dataCells.add(new CellImpl(testCase.getType()));
+			dataCells.add(new CellImpl(testCase.getStatus()));
 			dataCells.add(new CellImpl(formatLongText(testCase.getPrerequisite())));
 
-			Collection<CustomFieldValue> tcValues = (Collection<CustomFieldValue>) tcCUFValues.get(testCase.getId());
-			for (CustomField model : tcCUFModel) {
+			Collection<CustomFieldValueDto> tcValues = (Collection<CustomFieldValueDto>) tcCUFValues.get(testCase.getId());
+			for (CustomFieldDto model : tcCUFModel) {
 				String strValue = getValue(tcValues, model);
-				if (model.getInputType().equals(InputType.NUMERIC)) {
-					strValue = NumericCufHelper.formatOutputNumericCufValue(strValue);
-				}
 				dataCells.add(new CellImpl(strValue));
 			}
 		}
@@ -383,28 +403,25 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 		private void populateIterationRowData(List<CellImpl> dataCells) {
 			dataCells.add(new CellImpl("#" + (iterIndex + 1) + " " + iteration.getName()));
 			if (milestonesEnabled) {
-				dataCells.add(new CellImpl(formatMilestone(iteration.getMilestones())));
+				dataCells.add(new CellImpl(formatMilestone(iteration.getMilestoneSet())));
 			}
 			dataCells.add(new CellImpl(formatDate(iteration.getScheduledStartDate())));
 			dataCells.add(new CellImpl(formatDate(iteration.getScheduledEndDate())));
 			dataCells.add(new CellImpl(formatDate(iteration.getActualStartDate())));
 			dataCells.add(new CellImpl(formatDate(iteration.getActualEndDate())));
 
-			Collection<CustomFieldValue> iValues = (Collection<CustomFieldValue>) iterCUFValues.get(iteration.getId());
-			for (CustomField model : iterCUFModel) {
+			Collection<CustomFieldValueDto> iValues = (Collection<CustomFieldValueDto>) iterCUFValues.get(iteration.getId());
+			for (CustomFieldDto model : iterCUFModel) {
 				String strValue = getValue(iValues, model);
-				if (model.getInputType().equals(InputType.NUMERIC)) {
-					strValue = NumericCufHelper.formatOutputNumericCufValue(strValue);
-				}
 				dataCells.add(new CellImpl(strValue));
 			}
 		}
 
-		private String formatMilestone(Set<Milestone> milestones) {
+		private String formatMilestone(Set<String> milestones) {
 
 			StringBuilder sb = new StringBuilder();
-			for (Milestone m : milestones) {
-				sb.append(m.getLabel());
+			for (String m : milestones) {
+				sb.append(m);
 				sb.append("|");
 			}
 			sb.setLength(Math.max(sb.length() - 1, 0));
@@ -418,12 +435,8 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 			dataCells.add(new CellImpl(formatDate(campaign.getActualStartDate())));
 			dataCells.add(new CellImpl(formatDate(campaign.getActualEndDate())));
 
-			List<CustomFieldValue> cValues = campCUFValues;
-			for (CustomField model : campCUFModel) {
-				String strValue = getValue(cValues, model);
-				if (model.getInputType().equals(InputType.NUMERIC)) {
-					strValue = NumericCufHelper.formatOutputNumericCufValue(strValue);
-				}
+			for (CustomFieldDto model : campCUFModel) {
+				String strValue = getCampaignCufValue(campCUFValues.get(model.getId()), model);
 				dataCells.add(new CellImpl(strValue));
 			}
 		}
@@ -435,8 +448,18 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 
 		// ******************************** data formatting ***************************
 
+		private String getCampaignCufValue(CustomFieldValueDto customFieldValueDto, CustomFieldDto model) {
+			if(customFieldValueDto != null && customFieldValueDto.getValue() != null){
+				if(model.getInputType().equals("NUMERIC")){
+					return NumericCufHelper.formatOutputNumericCufValue(customFieldValueDto.getValue());
+				}
+				return customFieldValueDto.getValue();
+			}
+			return "";
+		}
+
 		// returns the correct value if found, or "--" if not found
-		private String getValue(Collection<CustomFieldValue> values, CustomField model) {
+		private String getValue(Collection<CustomFieldValueDto> values, CustomFieldDto model) {
 
 			if (values != null) {
 				return formatOutputValue(values, model);
@@ -445,24 +468,17 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 			return "--";
 		}
 
-		private String formatOutputValue(Collection<CustomFieldValue> values, CustomField model) {
-			for (CustomFieldValue value : values) {
-				CustomField customField = value.getBinding().getCustomField();
-				if (customField.getCode().equals(model.getCode())) {
-					if (customField.getInputType().equals(InputType.NUMERIC)) {
+		private String formatOutputValue(Collection<CustomFieldValueDto> values, CustomFieldDto model) {
+			for (CustomFieldValueDto value : values) {
+				Long customFieldId = value.getCufId();
+				if (customFieldId == model.getId()) {
+					if (model.getInputType().equals("NUMERIC")) {
 						return NumericCufHelper.formatOutputNumericCufValue(value.getValue());
 					}
 					return value.getValue();
 				}
 			}
 			return "";
-		}
-
-
-		private int getNbIssues(IterationTestPlanItem aitp) {
-
-			return bugTrackerService.findNumberOfIssueForItemTestPlanLastExecution(aitp.getId());
-
 		}
 
 		private String formatDate(Date date) {
@@ -474,11 +490,6 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 		private String formatLongText(String text) {
 			// TODO something more useful ?
 			return text == null ? "--" : text;
-		}
-
-		private String formatUser(User user) {
-			return user == null ? "--" : user.getLogin();
-
 		}
 
 		// ****************** iterator mechanics here ****************
@@ -506,9 +517,8 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 		private boolean moveToNextIteration() {
 
 			iterIndex++;
-			if (campaign.getIterations().size() > iterIndex) {
-
-				iteration = campaign.getIterations().get(iterIndex);
+			if (campaignDto.getIterationList().size() > iterIndex) {
+				iteration = campaignDto.getIterationList().get(iterIndex);
 				itpIndex = -1;
 
 				return true;
@@ -523,9 +533,9 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 		// if successful, the inner pointer to the next test case will be set accordingly
 		private boolean moveToNextTestCase() {
 
-			IterationTestPlanItem nextITP = null;
+			ITPIDto nextITP = null;
 
-			List<IterationTestPlanItem> items = iteration.getTestPlans();
+			List<ITPIDto> items = iteration.getTestPlanList();
 			int nbItems = items.size();
 
 			do {
@@ -536,13 +546,13 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 					break;
 				}
 
-				IterationTestPlanItem item = items.get(itpIndex);
+				ITPIDto item = items.get(itpIndex);
 				if (!item.isTestCaseDeleted()) {
 					nextITP = item;
 				}
 
 			}
-			while (nextITP == null && nbItems > itpIndex); // NOSONAR this might always be true but I dont wanna induce bugs
+			while (nextITP == null && nbItems > itpIndex); // NOSONAR might always be true but I dont wanna induce bugs
 
 			itp = nextITP;
 
@@ -551,13 +561,13 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 
 		private int calculateSuccessRate() {
 			int successRate = 0;
-			Execution lastExec = itp.getLatestExecution();
+			ExecutionDto lastExec = itp.getLatestExecution();
 			if (lastExec != null) {
 				if (lastExec.isAutomated()) {
-					successRate = lastExec.getExecutionStatus() == ExecutionStatus.SUCCESS ? 100 : 0;
+					successRate = lastExec.getStatus().equals("SUCCESS") ? 100 : 0;
 				} else {
-					Predicate<ExecutionStep> predicate = step -> step.getExecutionStatus() == ExecutionStatus.SUCCESS;
-					List<ExecutionStep> steps = itp.getLatestExecution().getSteps();
+					Predicate<ExecutionStepDto> predicate = step -> step.getStatus().equals("SUCCESS");
+					Collection<ExecutionStepDto> steps = itp.getLatestExecution().getSteps().values();
 					int success = (int) steps.stream().filter(predicate).count();
 					successRate = success * 100/ steps.size() ;
 				}
@@ -566,6 +576,11 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 		}
 
 
+	}
+
+	//Private method for unit test purpose
+	private void setCampaignDto(CampaignDto campaignDto){
+		this.campaignDto = campaignDto;
 	}
 
 }

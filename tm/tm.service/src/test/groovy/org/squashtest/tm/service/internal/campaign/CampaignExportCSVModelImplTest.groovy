@@ -20,39 +20,35 @@
  */
 package org.squashtest.tm.service.internal.campaign
 
-import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.customfield.CustomFieldValue
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage
 import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.service.bugtracker.BugTrackersLocalService
-import org.squashtest.tm.service.customfield.CustomFieldHelperService
 import org.squashtest.tm.service.internal.campaign.export.CampaignExportCSVModelImpl
+import org.squashtest.tm.service.internal.dto.CampaignDto
+import org.squashtest.tm.service.internal.dto.ITPIDto
+import org.squashtest.tm.service.internal.dto.IterationDto
+import org.squashtest.tm.service.internal.dto.TestCaseDto
+import spock.lang.Ignore
 import spock.lang.Specification
 
 class CampaignExportCSVModelImplTest extends Specification {
 
-	CustomFieldHelperService cufHelperService
-
 	CampaignExportCSVModelImpl model
 
-	BugTrackersLocalService bugTrackerService
 
 
 	def setup(){
 
-		cufHelperService = Mock()
-
 		model = new CampaignExportCSVModelImpl()
-		model.cufHelperService = cufHelperService
-		model.bugTrackerService = bugTrackerService
 
 	}
 
 
-
+	//[SQTM-451] Non relevant test after Campaign Export optimization. Tested method no longer exist.
+	@Ignore
 	def "should collect all the test cases of a bunch of iterations"(){
 
 		given :
@@ -98,7 +94,8 @@ class CampaignExportCSVModelImplTest extends Specification {
 			] as List
 	}
 
-
+	//[SQTM-451] Non relevant test after Campaign Export optimization. Tested method no longer exist.
+	@Ignore
 	def "should index the custom field values"(){
 
 		given :
@@ -191,7 +188,7 @@ class CampaignExportCSVModelImplTest extends Specification {
 
 			def campaign = data["campaign"]
 
-			model.campaign = campaign
+			model.setCampaignDto(campaign)
 
 
 		and : "initial iterator state : iteration2, itp2"
@@ -218,7 +215,7 @@ class CampaignExportCSVModelImplTest extends Specification {
 		given :
 			def data = createCampaign()
 			def campaign = data["campaign"]
-			model.campaign = campaign
+			model.setCampaignDto(campaign)
 
 		and : "initial iterator state : iteration 4 itp 2"
 			def iterator = model.dataIterator()
@@ -241,7 +238,7 @@ class CampaignExportCSVModelImplTest extends Specification {
 		given :
 			def data = createCampaign()
 			def campaign = data["campaign"]
-			model.campaign = campaign
+			model.setCampaignDto(campaign)
 
 		and : "initial iterator state : iteration 2 itp 3"
 			def iterator = model.dataIterator()
@@ -263,7 +260,7 @@ class CampaignExportCSVModelImplTest extends Specification {
 		given :
 			def data = createCampaign()
 			def campaign = data["campaign"]
-			model.campaign = campaign
+			model.setCampaignDto(campaign)
 
 		and : "initial iterator state : iteration 2"
 			def iterator = model.dataIterator()
@@ -288,7 +285,7 @@ class CampaignExportCSVModelImplTest extends Specification {
 		given :
 			def data = createCampaign()
 			def campaign = data["campaign"]
-			model.campaign = campaign
+			model.setCampaignDto(campaign)
 
 		and : "initial iterator state : iteration 4"
 			def iterator = model.dataIterator()
@@ -311,7 +308,7 @@ class CampaignExportCSVModelImplTest extends Specification {
 		given :
 			def data = createCampaign()
 			def campaign = data["campaign"]
-			model.campaign = campaign
+			model.setCampaignDto(campaign)
 
 		and : "initial iterator state : iteration 0 (dummy)"
 			def iterator = model.dataIterator()
@@ -332,7 +329,7 @@ class CampaignExportCSVModelImplTest extends Specification {
 		given :
 			def data = createCampaign()
 			def campaign = data["campaign"]
-			model.campaign = campaign
+			model.setCampaignDto(campaign)
 
 		and : "initial iterator state : iteration 2"
 			def iterator = model.dataIterator()
@@ -354,7 +351,7 @@ class CampaignExportCSVModelImplTest extends Specification {
 		given :
 			def data = createCampaign()
 			def campaign = data["campaign"]
-			model.campaign = campaign
+			model.setCampaignDto(campaign)
 
 		and : "we don't tweak initial iterator state "
 			def iterator = model.dataIterator()
@@ -390,35 +387,35 @@ class CampaignExportCSVModelImplTest extends Specification {
 
 		//the test cases
 
-		TestCase tc1 = new TestCase(name:"tc1");
-		TestCase tc2 = new TestCase(name:"tc2");
-		TestCase tc3 = new TestCase(name:"tc3");
-		TestCase tc4 = new TestCase(name:"tc4");
-		TestCase tc5 = new TestCase(name:"tc5");
-		TestCase tc6 = new TestCase(name:"tc6");
+		TestCaseDto tc1 = new TestCaseDto(name:"tc1");
+		TestCaseDto tc2 = new TestCaseDto(name:"tc2");
+		TestCaseDto tc3 = new TestCaseDto(name:"tc3");
+		TestCaseDto tc4 = new TestCaseDto(name:"tc4");
+		TestCaseDto tc5 = new TestCaseDto(name:"tc5");
+		TestCaseDto tc6 = new TestCaseDto(name:"tc6");
 
 
 
 		//the iterations
 
-		Iteration iter1 = new Iteration(name:"iter1")
-		Iteration iter2 = new Iteration(name:"iter2")
-		Iteration iter3 = new Iteration(name:"iter3")
-		Iteration iter4 = new Iteration(name:"iter4")
+		IterationDto iter1 = new IterationDto(name:"iter1")
+		IterationDto iter2 = new IterationDto(name:"iter2")
+		IterationDto iter3 = new IterationDto(name:"iter3")
+		IterationDto iter4 = new IterationDto(name:"iter4")
 
 
 		//the test plan
 
-		IterationTestPlanItem item21 = new IterationTestPlanItem(tc1)
-		IterationTestPlanItem item22 = new IterationTestPlanItem(tc2)
-		IterationTestPlanItem item23 = new IterationTestPlanItem(tc3)
+		ITPIDto item21 = new ITPIDto(testCase:tc1)
+		ITPIDto item22 = new ITPIDto(testCase:tc2)
+		ITPIDto item23 = new ITPIDto(testCase:tc3)
 
-		IterationTestPlanItem item31 = new IterationTestPlanItem(tc6)
+		ITPIDto item31 = new ITPIDto(testCase:tc6)
 
-		IterationTestPlanItem item41 = new IterationTestPlanItem(tc5)
-		IterationTestPlanItem item42 = new IterationTestPlanItem(tc2)
-		IterationTestPlanItem item43 = new IterationTestPlanItem(tc6)
-		IterationTestPlanItem item44 = new IterationTestPlanItem(tc4)
+		ITPIDto item41 = new ITPIDto(testCase:tc5)
+		ITPIDto item42 = new ITPIDto(testCase:tc2)
+		ITPIDto item43 = new ITPIDto(testCase:tc6)
+		ITPIDto item44 = new ITPIDto(testCase:tc4)
 
 
 
@@ -429,13 +426,13 @@ class CampaignExportCSVModelImplTest extends Specification {
 		[item41, item42, item43, item44].each { iter4.addTestPlan it}
 
 		//now let's assume that test case 5 and 6 where deleted
-		item41.referencedTestCase = null
-		item43.referencedTestCase = null
-		item31.referencedTestCase = null
+		item41.testCase = null
+		item43.testCase = null
+		item31.testCase = null
 
 		//the campaign
 
-		Campaign campaign = new Campaign()
+		CampaignDto campaign = new CampaignDto()
 
 		[iter1, iter2, iter3, iter4].each{ campaign.addIteration it }
 
