@@ -23,6 +23,7 @@ package org.squashtest.tm.domain.testcase;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.*;
+import org.hibernate.search.annotations.Index;
 import org.hibernate.search.bridge.builtin.EnumBridge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,21 +79,21 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private final int version = 1;
 
 	@NotNull
-	@Field(analyze = Analyze.NO, store = Store.YES)
+	@Field(analyze = Analyze.NO, store = Store.YES, boost=@Boost(2f), bridge = @FieldBridge(impl = StringFieldBridge.class))
 	@Size(min = 0, max = MAX_REF_SIZE)
-	@SortableField
+	@SortableField(forField = "reference")
 	private String reference = "";
 
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
-	@Field
+	@Field(index = Index.YES, analyzer = @Analyzer(definition = "htmlStrip"), store = Store.YES, boost=@Boost(2f))
 	private String prerequisite = "";
 
 	@NotNull
 	@OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
 	@OrderColumn(name = "STEP_ORDER")
 	@JoinTable(name = "TEST_CASE_STEPS", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "STEP_ID"))
-	@FieldBridge(impl = NumericCollectionSizeBridge.class)
+	@FieldBridge(impl = CollectionSizeBridge.class)
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@SortableField
 	private List<TestStep> steps = new ArrayList<>();
@@ -100,15 +101,15 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@NotNull
 	@OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
 	@JoinColumn(name = "VERIFYING_TEST_CASE_ID")
-	@FieldBridge(impl = NumericCollectionSizeBridge.class)
-	@Field(name = "requirements", analyze = Analyze.NO, store = Store.YES)
+	@Field(name = "requirements", analyze = Analyze.NO, store = Store.YES,bridge = @FieldBridge(impl = CollectionSizeBridge.class))
+	@SortableField(forField ="requirements")
 	private Set<RequirementVersionCoverage> requirementVersionCoverages = new HashSet<>(0);
 
 	@NotNull
 	@OneToMany(cascade = {CascadeType.ALL}, mappedBy = "testCase")
 	@OrderBy("name")
 	@Field(analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl = NumericCollectionSizeBridge.class)
+	@FieldBridge(impl = CollectionSizeBridge.class)
 	@SortableField
 	private Set<Parameter> parameters = new HashSet<>(0);
 
@@ -116,7 +117,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@OneToMany(cascade = {CascadeType.ALL}, mappedBy = "testCase")
 	@OrderBy("name")
 	@Field(analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl = NumericCollectionSizeBridge.class)
+	@FieldBridge(impl = CollectionSizeBridge.class)
 	@SortableField
 	private Set<Dataset> datasets = new HashSet<>(0);
 

@@ -48,7 +48,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 // So I keep the code simple and let the test case load. It's still faster than unrolling the natural way including testcase classbridges
 public class IterationItemBundleClassBridge implements FieldBridge, MetadataProvidingFieldBridge {
 
-	public static final String FIELD_TC_ID 				= "referencedTestCase.id";
+	public static final String FIELD_TC_ID 			= "referencedTestCase.id";
 	public static final String FIELD_TC_NAME 			= "referencedTestCase.name";
 	public static final String FIELD_TC_REFERENCE 		= "referencedTestCase.reference";
 	public static final String FIELD_TC_IMPORTANCE		= "referencedTestCase.importance";
@@ -106,7 +106,7 @@ public class IterationItemBundleClassBridge implements FieldBridge, MetadataProv
 
 	protected void applyToLuceneStringOptions(LuceneOptions luceneOptions, String name, String value, Document document) {
 		luceneOptions.addSortedDocValuesFieldToDocument( name, value, document );
-		document.add(new TextField(name,  value, Field.Store.YES));
+		document.add(new StringField(name, value, Field.Store.YES));
 	}
 
 	@Override

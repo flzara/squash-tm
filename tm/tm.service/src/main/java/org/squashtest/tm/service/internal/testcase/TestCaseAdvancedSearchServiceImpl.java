@@ -78,9 +78,12 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		new SortField("project.name", SortField.Type.STRING, false),
 		new SortField("reference", SortField.Type.STRING, false), new SortField("importance", SortField.Type.STRING, false),
 		new SortField("label", SortField.Type.STRING, false),new SortField("createdBy", SortField.Type.STRING,false),
-		new SortField("lastModifiedBy",  SortField.Type.STRING, false)};
+		new SortField("lastModifiedBy",  SortField.Type.STRING, false),new SortField("id",  SortField.Type.STRING, false),
+		new SortField("requirements",  SortField.Type.STRING, false),new SortField("steps",  SortField.Type.STRING, false)
 
-	private static final List<String> LONG_SORTABLE_FIELDS = Arrays.asList("requirements", "steps", "id", "iterations",
+	};
+
+	private static final List<String> LONG_SORTABLE_FIELDS = Arrays.asList("iterations",
 		"attachments");
 
 	private static final String FAKE_TC_ID = "-9000";

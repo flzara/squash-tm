@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -45,10 +44,8 @@ import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionH
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
-import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.infolist.InfoListItemComparatorSource;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
@@ -74,11 +71,11 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 		new SortField("reference", SortField.Type.STRING, false), new SortField("criticality", SortField.Type.STRING, false),
 		new SortField("category", SortField.Type.STRING, false), new SortField("status", SortField.Type.STRING, false),
 		new SortField("labelUpperCased", SortField.Type.STRING, false),new SortField("createdBy", SortField.Type.STRING,false),
-		new SortField("lastModifiedBy",  SortField.Type.STRING, false)
+		new SortField("id",  SortField.Type.STRING, false),new SortField("lastModifiedBy",  SortField.Type.STRING, false),
+		new SortField("requirement.id",  SortField.Type.STRING, false),new SortField("testcases",  SortField.Type.STRING, false)
 	};
 
-	private static final List<String> LONG_SORTABLE_FIELDS = Arrays.asList("requirement.id", "id",
-		"testcases", "attachments");
+	private static final List<String> LONG_SORTABLE_FIELDS = Arrays.asList("attachments");
 	private static final List<String> INT_SORTABLE_FIELDS = Arrays.asList("requirement.versions","versionNumber");
 
 	private static final String FAKE_REQUIREMENT_VERSION_ID = "-9000";

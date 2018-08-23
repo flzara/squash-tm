@@ -23,11 +23,14 @@ package org.squashtest.tm.domain.resource;
 import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.*;
 import javax.validation.constraints.NotBlank;
+
+import org.hibernate.search.annotations.Index;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.audit.Auditable;
+import org.squashtest.tm.domain.search.StringFieldBridge;
 import org.squashtest.tm.domain.search.UpperCasedStringBridge;
 
 import javax.persistence.*;
@@ -58,7 +61,7 @@ public abstract class Resource implements AttachmentHolder, Identified {
 	})
 	@Fields({
 		@Field,
-		@Field(name = "label", analyze = Analyze.NO, store = Store.YES),
+		@Field(name = "label", analyze = Analyze.NO, store = Store.YES,bridge = @FieldBridge(impl = StringFieldBridge.class)),
 		@Field(
 			name = "labelUpperCased",
 			analyze = Analyze.NO,
@@ -71,7 +74,7 @@ public abstract class Resource implements AttachmentHolder, Identified {
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
 	@Fields({
-		@Field(),
+		@Field(analyzer = @Analyzer(definition = "htmlStrip"),index= Index.YES,name = "description",store = Store.YES),
 		@Field(
 			name = "hasDescription",
 			analyze = Analyze.NO,

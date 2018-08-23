@@ -59,7 +59,6 @@ public class RequirementVersionDescriptionBridge implements FieldBridge{
 		Field field = new Field(name, String.valueOf(val), luceneOptions.getStore(),
 				   luceneOptions.getIndex(), luceneOptions.getTermVector() );
 				   field.setBoost( luceneOptions.getBoost());
-
 		document.add(field);
 	}
 }

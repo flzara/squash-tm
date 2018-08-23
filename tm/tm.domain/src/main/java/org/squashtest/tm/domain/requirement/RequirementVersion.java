@@ -93,7 +93,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	@NotNull
 	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH }, mappedBy = "verifiedRequirementVersion", fetch=FetchType.LAZY)
 	@Field(name = "testcases", analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl = NumericCollectionSizeBridge.class)
+	@FieldBridge(impl = CollectionSizeBridge.class)
 	@SortableField(forField = "testcases")
 	private Set<RequirementVersionCoverage> requirementVersionCoverages = new HashSet<>();
 
@@ -101,7 +101,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	 * The requirement reference. It should usually be set by the Requirement.
 	 */
 	@NotNull
-	@Field(analyze = Analyze.NO, store = Store.YES)
+	@Field(name = "reference",analyze = Analyze.NO,store = Store.YES,bridge = @FieldBridge(impl = StringFieldBridge.class))
 	@Size(min = 0, max = MAX_REF_SIZE)
 	@SortableField
 	private String reference = "";

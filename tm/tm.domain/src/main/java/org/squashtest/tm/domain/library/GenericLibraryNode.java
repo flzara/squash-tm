@@ -72,7 +72,7 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
-	@Field(analyzer = @Analyzer(definition = "htmlStrip"))
+	@Field(index= Index.YES, analyzer = @Analyzer(definition = "htmlStrip"), store = Store.YES)
 	private String description;
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REMOVE }, fetch = FetchType.LAZY)

@@ -578,7 +578,7 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 				if(field && !!field.fieldvalue()){
 					var value = field.fieldvalue();
 					if( value ) {
-						if (value.type == "SINGLE") {
+						if (value.type == "SINGLE" || value.type == "TEXT" ) {
 						value.value = value.value.toLowerCase();
 					}
 						jsonVariable[newKey] = value;
