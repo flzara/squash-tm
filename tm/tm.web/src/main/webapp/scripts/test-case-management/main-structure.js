@@ -147,6 +147,19 @@ define(["jquery",
 
 	}
 
+	//SQTM-453 : name might be too long and ihm is broken
+	function initName() {
+		var divHeight = $('#test-case-name-div').height();
+		if (divHeight < 35) {
+			$('div.fragment-tabs').css('top', '70px');
+		} else if (divHeight < 60) {
+			$('div.fragment-tabs').css('top', '90px');
+		} else {
+			$('div.fragment-tabs').css('top', '110px');
+		}
+	}
+
+
 	function initFragmentTab(){
 
 		var fragConf = {active: 1
@@ -203,6 +216,7 @@ define(["jquery",
 		initNewVersionDialog(settings);
 		initFragmentTab();
 		initReloadSteps(settings);
+		initName();
 	}
 
 	return {

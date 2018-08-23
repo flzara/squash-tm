@@ -45,6 +45,8 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 
 		function init(conf) {
 
+			initName();
+
 			initTranslator();
 
 			basicwidg.init();
@@ -72,6 +74,18 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 			initBugtracker(conf);
 
 			initStatus(conf);
+		}
+
+		//SQTM-453 : name might be too long and ihm is broken
+		function initName() {
+			var divHeight = $('#campaign-name-div').height();
+			if (divHeight < 35) {
+				$('div.fragment-tabs').css('top', '70px');
+			} else if (divHeight < 60) {
+				$('div.fragment-tabs').css('top', '90px');
+			} else {
+				$('div.fragment-tabs').css('top', '110px');
+			}
 		}
 
 		// Load all the needed message properties to the cache

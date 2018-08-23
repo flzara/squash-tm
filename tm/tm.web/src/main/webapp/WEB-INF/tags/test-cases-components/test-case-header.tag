@@ -38,21 +38,21 @@
     <input type="button" class="sq-btn btn-sm" id="toggle-expand-left-frame-button" title="${toggleLibraryTooltip}"/>
   </div>
 </c:if>
-	<div style="float: left; height: 100%;" class="small-margin-left">
+	<div style="float: left; height: 100%; width: 95%;" class="small-margin-left">
 		<h2>
-	
-			
+
+
 			<a id="test-case-name" href="${ testCaseUrl }/info">
-				<c:out value="${testCase.fullName}" escapeXml="true" /> 
+				<c:out value="${testCase.fullName}" escapeXml="true" />
 			</a>
-			
+
 			<%-- raw reference and name because we need to get the name and only the name for modification, and then re-compose the title with the reference  --%>
 			<span id="test-case-raw-reference" style="display: none">
-				<c:out value="${ testCase.reference }" escapeXml="true" /> 
-			</span> 
-			
+				<c:out value="${ testCase.reference }" escapeXml="true" />
+			</span>
+
 			<span id="test-case-raw-name" style="display: none">
-				<c:out value="${ testCase.name }" escapeXml="true" /> 
+				<c:out value="${ testCase.name }" escapeXml="true" />
 			</span>
 		</h2>
 	</div>

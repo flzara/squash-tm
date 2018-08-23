@@ -9,6 +9,8 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 						squash, VerifyingTestCasesPanel, LinkedRequirementsPanel, CoveverageStatView, bugtrackerPanel, StringUtil) {
 
 		// event subscription
+		pubsub.subscribe('reload.requirement.name', initName);
+
 		pubsub.subscribe('reload.requirement.toolbar', initToolbar);
 
 		pubsub.subscribe('reload.requirement.generalinfo', initGeneralinfos);
@@ -31,6 +33,18 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 
 
 		// ********************** library *************************
+
+		//SQTM-453 : name might be too long and ihm is broken
+		function initName() {
+			var divHeight = $('#requirement-version-name-div').height();
+			if (divHeight < 35) {
+				$('div.fragment-tabs').css('top', '70px');
+			} else if (divHeight < 60) {
+				$('div.fragment-tabs').css('top', '90px');
+			} else {
+				$('div.fragment-tabs').css('top', '110px');
+			}
+		}
 
 		function initToolbar() {
 

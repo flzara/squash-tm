@@ -94,7 +94,7 @@
 <f:message var="confirmLabel" key="label.Confirm" />
 <f:message var="cancelLabel" key="label.Cancel" />
 
-<div class="ui-widget-header ui-state-default ui-corner-all fragment-header">
+<div id="campaign-name-div" class="ui-widget-header ui-state-default ui-corner-all fragment-header">
   <c:if test="${ not param.isInfoPage }">
     <div id="right-frame-button">
 		<f:message var="toggleLibraryTooltip" key="tooltip.toggleLibraryDisplay" />
@@ -102,7 +102,7 @@
     </div>
   </c:if>
 
-  <div class="snap-left" style="height: 100%;" class="small-margin-left">
+  <div class="snap-left" style="height: 100%; width:95%" class="small-margin-left">
     <h2>
       <a id="campaign-name" href="${ campaignUrl }/info">
         <c:out value="${ campaign.fullName }" escapeXml="true" />
