@@ -47,11 +47,11 @@ public class CampaignExportCSVModelImpl extends AbstractCampaignExportCSVModel {
 
 		List<Long> allTestCaseIds = new ArrayList<>();
 
-		Set<Long> allIterationIds = campaignDto.getIterationMap().keySet();
-
 		List<Long> allExecutionIds = new ArrayList<>();
 
 		populateCampaignDto(iterator, allTestCaseIds, allExecutionIds);
+
+		Set<Long> allIterationIds = campaignDto.getIterationMap().keySet();
 
 		// cufs for the campaign
 		populateCampCUFModelAndCampCUFValues();
@@ -65,7 +65,7 @@ public class CampaignExportCSVModelImpl extends AbstractCampaignExportCSVModel {
 		// cufs for the executions
 		populateCUFModelAndCufValues("EXECUTION", execCUFModel, execCUFValues, allExecutionIds);
 
-		nbColumns = 25 + campCUFModel.size() + iterCUFModel.size() + tcCUFModel.size() + execCUFModel.size();
+		nbColumns = 28 + campCUFModel.size() + iterCUFModel.size() + tcCUFModel.size() + execCUFModel.size();
 	}
 
 	@Override
@@ -76,24 +76,24 @@ public class CampaignExportCSVModelImpl extends AbstractCampaignExportCSVModel {
 				ITPI_ID, ITPI_STATUS, USER_LOGIN, ITPI_LAST_EXECUTED_ON, ITPI_EXECUTION, DATASET_NAME, IT_MILESTONE.LABEL,
 				TC_ID, TC_IMPORTANCE, TC_REFERENCE, TC_NATURE, TC_TYPE, TC_STATUS, TC_REQUIREMENT_VERIFIED,
 				TC_NAME, TC_PREREQUISITE, TC_DESCRIPTION, PROJECT_ID, PROJECT_NAME, ITPI_ISSUE,
-				TS_NAME, TC_MILESTONE.LABEL,
+				TSu_NAME, TC_MILESTONE.LABEL,
 				EXECUTION_ID, EXECUTION_MODE, EXECUTION_STATUS, EXECUTION_STEP_ID, EXECUTION_STEP_STATUS)
 				.from(ITERATION)
-				.leftJoin(CAMPAIGN_ITERATION).on(ITERATION_ID.eq(CAMPAIGN_ITERATION.ITERATION_ID))
-				.leftJoin(CAMPAIGN).on(CAMPAIGN.CLN_ID.eq(CAMPAIGN_ITERATION.CAMPAIGN_ID))
-				.leftJoin(ITEM_TEST_PLAN_LIST).on(ITEM_TEST_PLAN_LIST.ITERATION_ID.eq(ITERATION_ID))
-				.leftJoin(ITERATION_TEST_PLAN_ITEM).on(ITPI_ID.eq(ITEM_TEST_PLAN_LIST.ITEM_TEST_PLAN_ID))
-				.leftJoin(TEST_CASE).on(TC_ID.eq(ITERATION_TEST_PLAN_ITEM.TCLN_ID))
-				.leftJoin(TEST_CASE_LIBRARY_NODE).on(TEST_CASE_LIBRARY_NODE.TCLN_ID.eq(TC_ID))
-				.leftJoin(PROJECT).on(PROJECT_ID.eq(TEST_CASE_LIBRARY_NODE.PROJECT_ID))
-				.leftJoin(REQUIREMENT_VERSION_COVERAGE).on(REQUIREMENT_VERSION_COVERAGE.VERIFYING_TEST_CASE_ID.eq(TC_ID))
+				.innerJoin(CAMPAIGN_ITERATION).on(ITERATION_ID.eq(CAMPAIGN_ITERATION.ITERATION_ID))
+				.innerJoin(CAMPAIGN).on(CAMPAIGN.CLN_ID.eq(CAMPAIGN_ITERATION.CAMPAIGN_ID))
+				.innerJoin(ITEM_TEST_PLAN_LIST).on(ITEM_TEST_PLAN_LIST.ITERATION_ID.eq(ITERATION_ID))
+				.innerJoin(ITERATION_TEST_PLAN_ITEM).on(ITPI_ID.eq(ITEM_TEST_PLAN_LIST.ITEM_TEST_PLAN_ID))
+				.innerJoin(TEST_CASE).on(TC_ID.eq(ITERATION_TEST_PLAN_ITEM.TCLN_ID))
+				.innerJoin(TEST_CASE_LIBRARY_NODE).on(TEST_CASE_LIBRARY_NODE.TCLN_ID.eq(TC_ID))
+				.innerJoin(PROJECT).on(PROJECT_ID.eq(TEST_CASE_LIBRARY_NODE.PROJECT_ID))
+				.leftJoin(REQUIREMENT_VERSION_COVERAGE.as("tc_rvc")).on(REQUIREMENT_VERSION_COVERAGE.as("tc_rvc").VERIFYING_TEST_CASE_ID.eq(TC_ID))
 				.leftJoin(DATASET).on(DATASET.DATASET_ID.eq(ITERATION_TEST_PLAN_ITEM.DATASET_ID))
 				.leftJoin(ITEM_TEST_PLAN_EXECUTION).on(ITEM_TEST_PLAN_EXECUTION.ITEM_TEST_PLAN_ID.eq(ITPI_ID))
 				.leftJoin(EXECUTION).on(EXECUTION_ID.eq(ITEM_TEST_PLAN_EXECUTION.EXECUTION_ID))
 				.leftJoin(EXECUTION_EXECUTION_STEPS).on(EXECUTION_EXECUTION_STEPS.EXECUTION_ID.eq(EXECUTION_ID))
 				.leftJoin(EXECUTION_STEP).on(EXECUTION_STEP_ID.eq(EXECUTION_EXECUTION_STEPS.EXECUTION_STEP_ID))
 				.leftJoin(ISSUE_LIST).on(ISSUE_LIST.ISSUE_LIST_ID.eq(EXECUTION.ISSUE_LIST_ID))
-				.leftJoin(ISSUE).on(ISSUE.ISSUE_LIST_ID.eq(ISSUE_LIST.ISSUE_LIST_ID))
+				.leftJoin(ISSUE.as("exec_issue")).on(ISSUE.as("exec_issue").ISSUE_LIST_ID.eq(ISSUE_LIST.ISSUE_LIST_ID))
 				.leftJoin(TEST_SUITE_TEST_PLAN_ITEM).on(TEST_SUITE_TEST_PLAN_ITEM.TPI_ID.eq(ITPI_ID))
 				.leftJoin(TEST_SUITE).on(TEST_SUITE.ID.eq(TEST_SUITE_TEST_PLAN_ITEM.SUITE_ID))
 				.leftJoin(MILESTONE_TEST_CASE).on(MILESTONE_TEST_CASE.TEST_CASE_ID.eq(TC_ID))
@@ -175,8 +175,8 @@ public class CampaignExportCSVModelImpl extends AbstractCampaignExportCSVModel {
 	}
 
 	private void populateItpi(Record r, ITPIDto itpi) {
-		if(r.get(TS_NAME) != null){
-			itpi.getTestSuiteSet().add(r.get(TS_NAME));
+		if(r.get(TSu_NAME) != null){
+			itpi.getTestSuiteSet().add(r.get(TSu_NAME));
 		}
 
 		if(r.get(ITPI_ISSUE) != null){
@@ -232,7 +232,7 @@ public class CampaignExportCSVModelImpl extends AbstractCampaignExportCSVModel {
 
 		List<CellImpl> headerCells = new ArrayList<>(nbColumns);
 
-		// campaign fixed fields
+		// campaign fixed fields (4)
 		headerCells.add(new CellImpl("CPG_SCHEDULED_START_ON"));
 		headerCells.add(new CellImpl("CPG_SCHEDULED_END_ON"));
 		headerCells.add(new CellImpl("CPG_ACTUAL_START_ON"));
@@ -245,7 +245,7 @@ public class CampaignExportCSVModelImpl extends AbstractCampaignExportCSVModel {
 			headerCells.add(new CellImpl("CPG_CUF_" + cufModel.getCode()));
 		}
 
-		// iteration fixed fields
+		// iteration fixed fields (5)
 		headerCells.add(new CellImpl("ITERATION"));
 		if (milestonesEnabled) {
 			headerCells.add(new CellImpl("IT_MILESTONE"));
@@ -260,7 +260,7 @@ public class CampaignExportCSVModelImpl extends AbstractCampaignExportCSVModel {
 			headerCells.add(new CellImpl("IT_CUF_" + cufModel.getCode()));
 		}
 
-		// test case fixed fields
+		// test case fixed fields (18)
 		headerCells.add(new CellImpl("TEST_CASE"));
 		headerCells.add(new CellImpl("TC_PROJECT"));
 		if (milestonesEnabled) {

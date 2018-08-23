@@ -80,7 +80,7 @@ public abstract class AbstractCampaignExportCSVModel implements WritableCampaign
 
 	static final TableField<TestCaseLibraryNodeRecord, String> TC_DESCRIPTION = TEST_CASE_LIBRARY_NODE.DESCRIPTION;
 
-	static final TableField<RequirementVersionCoverageRecord, Long> TC_REQUIREMENT_VERIFIED = REQUIREMENT_VERSION_COVERAGE.REQUIREMENT_VERSION_COVERAGE_ID;
+	static final TableField<RequirementVersionCoverageRecord, Long> TC_REQUIREMENT_VERIFIED = REQUIREMENT_VERSION_COVERAGE.as("tc_rvc").REQUIREMENT_VERSION_COVERAGE_ID;
 
 	static final TableField<TestCaseLibraryNodeRecord, String> TC_NAME = TEST_CASE_LIBRARY_NODE.NAME;
 
@@ -88,9 +88,9 @@ public abstract class AbstractCampaignExportCSVModel implements WritableCampaign
 
 	static final TableField<ProjectRecord, String> PROJECT_NAME = PROJECT.NAME;
 
-	static final TableField<IssueRecord, Long> ITPI_ISSUE = ISSUE.ISSUE_ID;
+	static final TableField<IssueRecord, Long> ITPI_ISSUE = ISSUE.as("exec_issue").ISSUE_ID;
 
-	static final TableField<TestSuiteRecord, String> TS_NAME = TEST_SUITE.NAME;
+	static final TableField<TestSuiteRecord, String> TSu_NAME = TEST_SUITE.NAME;
 
 	static final Milestone TC_MILESTONE = MILESTONE.as("tc_milestone");
 
@@ -105,6 +105,22 @@ public abstract class AbstractCampaignExportCSVModel implements WritableCampaign
 	static final TableField<ExecutionStepRecord, Long> EXECUTION_STEP_ID = EXECUTION_STEP.EXECUTION_STEP_ID;
 
 	static final TableField<ExecutionStepRecord, String> EXECUTION_STEP_STATUS = EXECUTION_STEP.EXECUTION_STATUS;
+
+	static final TableField<ExecutionStepRecord, String> ES_LAST_EXECUTED_BY = EXECUTION_STEP.LAST_EXECUTED_BY;
+
+	static final TableField<ExecutionStepRecord, Timestamp> ES_LAST_EXECUTED_ON = EXECUTION_STEP.LAST_EXECUTED_ON;
+
+	static final TableField<ExecutionStepRecord, String> ES_COMMENT = EXECUTION_STEP.COMMENT;
+
+	static final TableField<ExecutionExecutionStepsRecord, Integer> ES_ORDER = EXECUTION_EXECUTION_STEPS.EXECUTION_STEP_ORDER;
+
+	static final TableField<TestCaseStepsRecord, Integer> TS_ORDER = TEST_CASE_STEPS.STEP_ORDER;
+
+	static final TableField<TestCaseStepsRecord, Long> TS_ID = TEST_CASE_STEPS.STEP_ID;
+
+	static final TableField<CallTestStepRecord, Long> CTS_CALLED_TS = CALL_TEST_STEP.CALLED_TEST_CASE_ID;
+
+	static final TableField<RequirementVersionCoverageRecord, Long> TS_REQUIREMENT_VERIFIED = REQUIREMENT_VERSION_COVERAGE.as("ts_rvc").REQUIREMENT_VERSION_COVERAGE_ID;
 
 	@Inject
 	private FeatureManager featureManager;
@@ -125,11 +141,13 @@ public abstract class AbstractCampaignExportCSVModel implements WritableCampaign
 	SortedSet<CustomFieldDto> iterCUFModel = new TreeSet<>(Comparator.comparing(CustomFieldDto::getId));
 	SortedSet<CustomFieldDto> tcCUFModel = new TreeSet<>(Comparator.comparing(CustomFieldDto::getId));
 	SortedSet<CustomFieldDto> execCUFModel = new TreeSet<>(Comparator.comparing(CustomFieldDto::getId));
+	SortedSet<CustomFieldDto> esCUFModel = new TreeSet<>(Comparator.comparing(CustomFieldDto::getId));
 
 	Map<Long, CustomFieldValueDto> campCUFValues = new HashMap<>();
 	MultiValueMap iterCUFValues = new MultiValueMap(); // <Long, Collection<CustomFieldValueDto>>
 	MultiValueMap tcCUFValues = new MultiValueMap(); // same here
 	MultiValueMap execCUFValues = new MultiValueMap(); // same here
+	MultiValueMap esCUFValues = new MultiValueMap(); // same here
 
 	public AbstractCampaignExportCSVModel() {
 		super();
