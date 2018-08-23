@@ -39,7 +39,6 @@ import org.hibernate.annotations.Type;
 import javax.validation.constraints.NotBlank;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
@@ -84,12 +83,11 @@ DenormalizedFieldHolder, BoundEntity {
 
 	static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
 
-	public static final String NO_DATASET_USED_LABEL = "";
-	public static final String NO_DATASET_APPLICABLE_LABEL = null;
 	private static final String PARAM_PREFIX = "\\Q${\\E";
 	private static final String PARAM_SUFFIX = "\\Q}\\E";
 	private static final String PARAM_PATTERN = PARAM_PREFIX + "([A-Za-z0-9_-]{1,255})" + PARAM_SUFFIX;
 	private static final String NO_PARAM = "&lt;no_value&gt;";
+	private static final int EXECUTION_NAME_MAX_LENGTH = 308;
 
 
 	static {
@@ -151,7 +149,7 @@ DenormalizedFieldHolder, BoundEntity {
 	private TestCaseStatus status = TestCaseStatus.WORK_IN_PROGRESS;
 
 	@NotBlank
-	@Size(max = Sizes.NAME_MAX)
+	@Size(max = EXECUTION_NAME_MAX_LENGTH)
 	private String name;
 
 	@Column

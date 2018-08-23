@@ -59,6 +59,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 
 
 	public static final int MAX_REF_SIZE = 50;
+	private static final String FULL_NAME_SEPARATOR = " - ";
 
 	@Embedded
 	@Valid
@@ -197,7 +198,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 		if (StringUtils.isBlank(reference)) {
 			return getName();
 		} else {
-			return getReference() + " - " + getName();
+			return getReference() + FULL_NAME_SEPARATOR + getName();
 		}
 	}
 

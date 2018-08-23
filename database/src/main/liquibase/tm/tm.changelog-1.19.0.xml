@@ -131,13 +131,13 @@
                          constraintName="uc_iteration_iteration_test_suite_order"/>
     <addNotNullConstraint tableName="ITERATION_TEST_SUITE" columnName="ITERATION_TEST_SUITE_ORDER" columnDataType="INT"/>
   </changeSet>
-  
-  
+
+
   <changeSet id="tm-1.19.0-up-sb2-1" author="bsiri">
   	<comment>Passwords are now much longer since we also store the salt. </comment>
-  	
+
   	<modifyDataType tableName="AUTH_USER" columnName="PASSWORD" newDataType="VARCHAR(255)"/>
-  
+
   </changeSet>
 
   <changeSet id="tm-1.19.0-SQTM-399-infolist-items-default-colours" author="cholc">
@@ -276,6 +276,12 @@
       <column name="COLOUR" value="#F2E2CE"/>
       <where>CODE = 'TYP_PARTNER_TESTING'</where>
     </update>
+  </changeSet>
+
+  <changeSet id="tm-1.19.0-SQTM-453-execution-name-maxlength" author="jprioux">
+    <comment>Increase max length for execution name</comment>
+    <modifyDataType tableName="EXECUTION" columnName="NAME" newDataType="VARCHAR(308)" ></modifyDataType>
+    <addNotNullConstraint tableName="EXECUTION" columnDataType="java.sql.Types.VARCHAR(308)" columnName="NAME"/>
   </changeSet>
 
 </databaseChangeLog>
