@@ -136,7 +136,7 @@
     </div>
   </c:if>
 
-  <div class="small-margin-left">
+  <div style="float:left;height:100%;width:90%;" class="small-margin-left">
     <h2>
 
       <a id="iteration-name" href="${ iterationUrl }/info">

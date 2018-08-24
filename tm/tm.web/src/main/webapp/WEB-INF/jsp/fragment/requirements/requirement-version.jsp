@@ -150,14 +150,14 @@ that page won't be editable if
 </script>
 
 <%-- ----------------------------------- TITLE ----------------------------------------------%>
-<div id="requirement-version-name-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
+<div class="ui-widget-header ui-corner-all ui-state-default fragment-header">
 <c:if test="${ not param.isInfoPage }">
  <div id="right-frame-button">
 	<f:message var="toggleLibraryTooltip" key="tooltip.toggleLibraryDisplay" />
 	<input type="button" class="sq-btn btn-sm" id="toggle-expand-left-frame-button" title="${toggleLibraryTooltip}"/>
   </div>
   </c:if>
-	<div style="float:left;height:100%; width: 95%;" class="small-margin-left">
+	<div style="float:left;height:100%; width: 90%;" class="small-margin-left">
   		<h2>
 			<c:set var="completeRequirementName" value="${ requirementVersion.name }" />
 			<c:if test="${not empty requirementVersion.reference && fn:length(requirementVersion.reference) > 0}" >

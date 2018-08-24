@@ -38,7 +38,7 @@
     <input type="button" class="sq-btn btn-sm" id="toggle-expand-left-frame-button" title="${toggleLibraryTooltip}"/>
   </div>
 </c:if>
-	<div style="float: left; height: 100%; width: 95%;" class="small-margin-left">
+	<div style="float: left; height: 100%; width: 90%;" class="small-margin-left">
 		<h2>
 
 

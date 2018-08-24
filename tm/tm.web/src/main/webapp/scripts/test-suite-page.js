@@ -43,6 +43,18 @@ require(["common"], function () {
 				});
 			}
 
+			//SQTM-453 : name might be too long and ihm is broken
+			function initName() {
+				var divHeight = $('div.fragment-header').height();
+				if (divHeight < 35) {
+					$('div.fragment-tabs').css('top', '70px');
+				} else if (divHeight < 60) {
+					$('div.fragment-tabs').css('top', '90px');
+				} else {
+					$('div.fragment-tabs').css('top', '110px');
+				}
+			}
+
 			function initExecutionStatus() {
 				var refreshTestSuiteInfo = _.bind(function () {
 					$.ajax({
@@ -168,6 +180,9 @@ require(["common"], function () {
 				initExecutionStatus();
 				// test suite dialog init
 				initRenameDialog();
+
+				//init title name
+				initName();
 
 				// registers contextual events
 				// TODO should be unregistered before ?

@@ -149,7 +149,7 @@ define(["jquery",
 
 	//SQTM-453 : name might be too long and ihm is broken
 	function initName() {
-		var divHeight = $('#test-case-name-div').height();
+		var divHeight = $('div.fragment-header').height();
 		if (divHeight < 35) {
 			$('div.fragment-tabs').css('top', '70px');
 		} else if (divHeight < 60) {
