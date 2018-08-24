@@ -114,6 +114,10 @@ public abstract class AbstractCampaignExportCSVModel implements WritableCampaign
 
 	static final TableField<ExecutionExecutionStepsRecord, Integer> ES_ORDER = EXECUTION_EXECUTION_STEPS.EXECUTION_STEP_ORDER;
 
+	static final TableField<ExecutionStepRecord, Long> ES_TS_ID = EXECUTION_STEP.TEST_STEP_ID;
+
+	static final TableField<RequirementVersionCoverageRecord, Long> ES_REQUIREMENT_VERIFIED = REQUIREMENT_VERSION_COVERAGE.as("es_rvc").REQUIREMENT_VERSION_COVERAGE_ID;
+
 	static final TableField<TestCaseStepsRecord, Integer> TS_ORDER = TEST_CASE_STEPS.STEP_ORDER;
 
 	static final TableField<TestCaseStepsRecord, Long> TS_ID = TEST_CASE_STEPS.STEP_ID;
@@ -121,6 +125,8 @@ public abstract class AbstractCampaignExportCSVModel implements WritableCampaign
 	static final TableField<CallTestStepRecord, Long> CTS_CALLED_TS = CALL_TEST_STEP.CALLED_TEST_CASE_ID;
 
 	static final TableField<RequirementVersionCoverageRecord, Long> TS_REQUIREMENT_VERIFIED = REQUIREMENT_VERSION_COVERAGE.as("ts_rvc").REQUIREMENT_VERSION_COVERAGE_ID;
+
+	static final TableField<IssueRecord, Long> ES_ISSUE = ISSUE.as("es_issue").ISSUE_ID;
 
 	@Inject
 	private FeatureManager featureManager;

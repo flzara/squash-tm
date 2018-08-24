@@ -104,7 +104,7 @@ public class CampaignExportCSVModelImpl extends AbstractCampaignExportCSVModel {
 				.leftJoin(INFO_LIST_ITEM.as("info_list_1")).on(INFO_LIST_ITEM.as("info_list_1").ITEM_ID.eq(TEST_CASE.TC_TYPE))
 				.leftJoin(INFO_LIST_ITEM.as("info_list_2")).on(INFO_LIST_ITEM.as("info_list_2").ITEM_ID.eq(TEST_CASE.TC_NATURE))
 				.where(CAMPAIGN.CLN_ID.eq(campaign.getId()))
-				.orderBy(ITERATION_ID, TC_ID, EXECUTION_ID, EXECUTION_STEP_ID)
+				.orderBy(ITERATION_ID, ITPI_ID, EXECUTION_ID, EXECUTION_STEP_ID)
 				.fetch().iterator();
 	}
 
@@ -140,7 +140,7 @@ public class CampaignExportCSVModelImpl extends AbstractCampaignExportCSVModel {
 				currentItpi = currentIteration.getTestPlan(r.get(ITPI_ID));
 				currentTestCase = currentItpi.getTestCase();
 
-				if(r.get(EXECUTION_ID) != null){
+				if(r.get(EXECUTION_ID) != null && r.get(EXECUTION_ID) != null){
 					ExecutionDto newExecution = createNewExecutionDto(r);
 
 					currentItpi.addExecution(newExecution);

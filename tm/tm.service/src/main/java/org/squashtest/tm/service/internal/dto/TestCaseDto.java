@@ -20,8 +20,7 @@
  */
 package org.squashtest.tm.service.internal.dto;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class TestCaseDto {
 	private Long id;
@@ -37,6 +36,7 @@ public class TestCaseDto {
 	private Set<String> milestoneSet = new HashSet<>();
 	private String description = "";
 	private String prerequisite = "";
+	private Map<Long, TestStepDto> stepMap = new HashMap<>();
 
 	public TestCaseDto(Long id, String reference, String name, String importance, String nature, String type, String status, Long projectId, String projectName) {
 		super();
@@ -165,5 +165,21 @@ public class TestCaseDto {
 
 	public void setPrerequisite(String prerequisite) {
 		this.prerequisite = prerequisite;
+	}
+
+	public Map<Long, TestStepDto> getStepMap() {
+		return stepMap;
+	}
+
+	public void setStepMap(Map<Long, TestStepDto> stepMap) {
+		this.stepMap = stepMap;
+	}
+
+	public void addStep(TestStepDto step){
+		this.stepMap.put(step.getId(), step);
+	}
+
+	public TestStepDto getStep(Long id){
+		return this.stepMap.get(id);
 	}
 }

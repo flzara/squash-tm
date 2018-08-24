@@ -92,7 +92,7 @@ public class SimpleCampaignExportCSVModelImpl extends AbstractCampaignExportCSVM
 			.leftJoin(INFO_LIST_ITEM.as("info_list_1")).on(INFO_LIST_ITEM.as("info_list_1").ITEM_ID.eq(TEST_CASE.TC_TYPE))
 			.leftJoin(INFO_LIST_ITEM.as("info_list_2")).on(INFO_LIST_ITEM.as("info_list_2").ITEM_ID.eq(TEST_CASE.TC_NATURE))
 			.where(CAMPAIGN.CLN_ID.eq(campaign.getId()))
-			.orderBy(ITERATION_ID, TC_ID)
+			.orderBy(ITERATION_ID, ITPI_ID)
 			.fetch().iterator();
 	}
 
