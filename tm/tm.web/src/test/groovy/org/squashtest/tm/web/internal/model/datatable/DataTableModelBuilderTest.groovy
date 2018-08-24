@@ -20,14 +20,11 @@
  */
 package org.squashtest.tm.web.internal.model.datatable
 
-import net.sf.cglib.reflect.FastClassEmitter.GetIndexCallback;
-
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
 
 import spock.lang.Specification
-import spock.lang.Unroll;
 
 /**
  * @author Gregory
@@ -44,7 +41,7 @@ class DataTableModelBuilderTest extends Specification {
 		project.getName() >> "bar"
 
 		req.getProject() >> project
-		
+
 		return req
 	}
 
@@ -55,19 +52,19 @@ class DataTableModelBuilderTest extends Specification {
 
 		return holder
 	}
-	
+
 	class TestDataTableModelBuilder extends DataTableModelBuilder<Requirement> {
 					protected Object buildItemData(Requirement item) {
 						Project p = item.getProject()
-						
-						
+
+
 						[
 							item.getId(),
 							getCurrentIndex(),
-							// p.getName() // GRF there's a funky error (NPE) when reading p.name, I think it's caused by the fact that the Project class is enhanced by CGlib 
+							// p.getName() // GRF there's a funky error (NPE) when reading p.name, I think it's caused by the fact that the Project class is enhanced by CGlib
 							"bar",
 							item.getName(),
-							"" ] 
+							"" ]
 					}
 				}
 
