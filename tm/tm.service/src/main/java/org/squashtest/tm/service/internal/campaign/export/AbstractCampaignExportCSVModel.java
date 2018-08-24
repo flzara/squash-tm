@@ -38,6 +38,10 @@ import static org.squashtest.tm.jooq.domain.Tables.*;
 import static org.squashtest.tm.jooq.domain.Tables.MILESTONE;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_SUITE;
 
+/**
+ * Abstract class for CampaignExportCSVModel. Mainly use to store JOOQ field shortcut...
+ * @author aguilhem
+ */
 public abstract class AbstractCampaignExportCSVModel implements WritableCampaignCSVModel {
 
 	static final TableField<IterationRecord, Long> ITERATION_ID = ITERATION.ITERATION_ID;
@@ -186,10 +190,24 @@ public abstract class AbstractCampaignExportCSVModel implements WritableCampaign
 		return new CampaignDto(campaign.getId(), campaign.getScheduledStartDate(), campaign.getScheduledEndDate(), campaign.getActualStartDate(), campaign.getActualEndDate());
 	}
 
+	/**
+	 * Populate campaignDto with all necessary entities dto depending on campaign export type.
+	 */
 	abstract void initIterationsAndCustomFields();
 
+	/**
+	 * Create Jooq request with all necessary field for campaign export.
+	 * @return an iterator of the Jooq request result set
+	 */
 	abstract Iterator<Record> getIterationJooqQueryIterator();
 
+	/**
+	 * Find CUFs for a given entity type and all CUF values associated to these cufs for given entity list
+	 * @param entityType CUF entity type value. String representation of a {@link org.squashtest.tm.domain.customfield.BindableEntity}.
+	 * @param cufModel the {@link Collection} of {@link CustomFieldDto} to populate.
+	 * @param cufValues the {@link MultiValueMap} of {@link CustomFieldDto} to populate.
+	 * @param entityIdList the {@link Collection} of entity Id whom CUF value are desired
+	 */
 	void populateCUFModelAndCufValues(String entityType, Collection<CustomFieldDto> cufModel, MultiValueMap cufValues, Collection<Long> entityIdList) {
 		DSL.select(CUSTOM_FIELD_VALUE.CFV_ID, CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID, CUSTOM_FIELD_VALUE.CF_ID, CUSTOM_FIELD_VALUE.VALUE,
 			CUSTOM_FIELD.CODE, CUSTOM_FIELD.INPUT_TYPE)
@@ -221,6 +239,31 @@ public abstract class AbstractCampaignExportCSVModel implements WritableCampaign
 			campCUFValues.put(r.get(CUSTOM_FIELD_VALUE.CF_ID), newCFVDto);
 		});
 	}
+
+	void populateTestCase(Record r, TestCaseDto currentTestCase) {
+
+		if(r.get(TC_MILESTONE.LABEL) != null){
+			currentTestCase.addMilestone(r.get(TC_MILESTONE.LABEL));
+		}
+
+		if(r.get(TC_REQUIREMENT_VERIFIED) != null){
+			currentTestCase.addRequirement(r.get(TC_REQUIREMENT_VERIFIED));
+		}
+	}
+
+	ITPIDto createNewItpiDto(Record r) {
+		ITPIDto newItpi = new ITPIDto(r.get(ITPI_ID), r.get(ITPI_STATUS), r.get(USER_LOGIN), r.get(ITPI_LAST_EXECUTED_ON));
+
+		populateItpi(r, newItpi);
+
+		if(r.get(DATASET_NAME) != null){
+			newItpi.setDataset(r.get(DATASET_NAME));
+		}
+
+		return newItpi;
+	}
+
+	protected abstract void populateItpi(Record r, ITPIDto newItpi);
 
 
 }

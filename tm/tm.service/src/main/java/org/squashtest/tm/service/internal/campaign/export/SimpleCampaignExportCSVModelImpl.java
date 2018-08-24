@@ -142,7 +142,8 @@ public class SimpleCampaignExportCSVModelImpl extends AbstractCampaignExportCSVM
 		return allTestCases;
 	}
 
-	private void populateItpi(Record r, ITPIDto itpi) {
+	@Override
+	protected void populateItpi(Record r, ITPIDto itpi) {
 		if(r.get(TSu_NAME) != null){
 			itpi.getTestSuiteSet().add(r.get(TSu_NAME));
 		}
@@ -156,35 +157,12 @@ public class SimpleCampaignExportCSVModelImpl extends AbstractCampaignExportCSVM
 		}
 	}
 
-	private void populateTestCase(Record r, TestCaseDto currentTestCase) {
-
-		if(r.get(TC_MILESTONE.LABEL) != null){
-			currentTestCase.addMilestone(r.get(TC_MILESTONE.LABEL));
-		}
-
-		if(r.get(TC_REQUIREMENT_VERIFIED) != null){
-			currentTestCase.addRequirement(r.get(TC_REQUIREMENT_VERIFIED));
-		}
-	}
-
 	private TestCaseDto createNewTestCaseDto(Record r) {
 		TestCaseDto newTestCase = new TestCaseDto(r.get(TC_ID), r.get(TC_REFERENCE), r.get(TC_NAME), r.get(TC_IMPORTANCE), r.get(TC_NATURE), r.get(TC_TYPE), r.get(TC_STATUS), r.get(PROJECT_ID), r.get(PROJECT_NAME));
 
 		populateTestCase(r, newTestCase);
 
 		return newTestCase;
-	}
-
-	private ITPIDto createNewItpiDto(Record r) {
-		ITPIDto newItpi = new ITPIDto(r.get(ITPI_ID), r.get(ITPI_STATUS), r.get(USER_LOGIN), r.get(ITPI_LAST_EXECUTED_ON));
-
-		populateItpi(r, newItpi);
-
-		if(r.get(DATASET_NAME) != null){
-			newItpi.setDataset(r.get(DATASET_NAME));
-		}
-
-		return newItpi;
 	}
 
 	@Override

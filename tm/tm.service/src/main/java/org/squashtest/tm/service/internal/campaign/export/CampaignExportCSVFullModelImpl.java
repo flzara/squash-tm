@@ -268,24 +268,14 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 		return step;
 	}
 
-	private void populateItpi(Record r, ITPIDto itpi) {
+	@Override
+	protected void populateItpi(Record r, ITPIDto itpi) {
 		if(r.get(TSu_NAME) != null){
 			itpi.getTestSuiteSet().add(r.get(TSu_NAME));
 		}
 
 		if(r.get(ITPI_ISSUE) != null){
 			itpi.addIssue(r.get(ITPI_ISSUE));
-		}
-	}
-
-	private void populateTestCase(Record r, TestCaseDto currentTestCase) {
-
-		if(r.get(TC_MILESTONE.LABEL) != null){
-			currentTestCase.addMilestone(r.get(TC_MILESTONE.LABEL));
-		}
-
-		if(r.get(TC_REQUIREMENT_VERIFIED) != null){
-			currentTestCase.addRequirement(r.get(TC_REQUIREMENT_VERIFIED));
 		}
 	}
 
@@ -309,18 +299,6 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 		populateTestCase(r, newTestCase);
 
 		return newTestCase;
-	}
-
-	private ITPIDto createNewItpiDto(Record r) {
-		ITPIDto newItpi = new ITPIDto(r.get(ITPI_ID), r.get(ITPI_STATUS), r.get(USER_LOGIN), r.get(ITPI_LAST_EXECUTED_ON));
-
-		populateItpi(r, newItpi);
-
-		if(r.get(DATASET_NAME) != null){
-			newItpi.setDataset(r.get(DATASET_NAME));
-		}
-
-		return newItpi;
 	}
 
 	private ExecutionDto createNewExecutionDto(Record r) {
@@ -961,25 +939,6 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 			cachedItpcellFixed.clear();
 			cachedItpcellCuf.clear();
 			cachedItpcellReady = false;
-		}
-
-		private final class TestStepExaminer implements TestStepVisitor {
-
-			private boolean isActionStep;
-
-			public boolean isActionStep() {
-				return isActionStep;
-			}
-
-			@Override
-			public void visit(ActionTestStep visited) {
-				this.isActionStep = true;
-			}
-
-			@Override
-			public void visit(CallTestStep visited) {
-				this.isActionStep = false;
-			}
 		}
 
 	}
