@@ -58,7 +58,7 @@
           <td class="not-displayed">${ team.id }</td>
           <td >${ teamStat.index + 1 }</td>
           <td><c:out value="${ team.name }" /> </td>
-          <td>${hu:clean( team.description) }" </td>
+          <td>${hu:clean( team.description) } </td>
           <td>${ fn:length(team.members) }</td>
           <td><comp:date value="${ team.createdOn }" /></td>
           <td><c:out value="${ team.createdBy }" /> </td>
