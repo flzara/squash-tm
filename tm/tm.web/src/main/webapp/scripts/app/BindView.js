@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "app/lnf/Forms" ], function($, Backbone, _, Forms) {
+define(["jquery", "backbone", "underscore", "app/lnf/Forms"], function ($, Backbone, _, Forms) {
 	"use strict";
 	/**
 	 * Backbone.BindView
@@ -43,7 +43,7 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms" ], function($, Back
 	/**
 	 * change event callback which sets the current model's property
 	 */
-	var setProp = function(event) {
+	var setProp = function (event) {
 		if (!!this.model && !event.wasBound) {
 			var control = event.target;
 			this.model.set($(control).data("prop"), $(control).val());
@@ -56,7 +56,7 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms" ], function($, Back
 	 * only for checkboxes as they have no value attribute so generic method won't work.
 	 * model attribute setted at true if checkbox checked, false on uncheck
 	 */
-	var setPropCheckBox = function(event) {
+	var setPropCheckBox = function (event) {
 		if (!!this.model && !event.wasBound) {
 			var control = event.target;
 			this.model.set($(control).data("prop"), $(control).is(":checked"));
@@ -68,13 +68,11 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms" ], function($, Back
 	 * events hash used for model binding
 	 */
 	var defaultBindingsEvents = {
-		"change input:text[data-prop]" : setProp,
-		"change textarea[data-prop]" : setProp,
-		"change input:checkbox[data-prop]" : setPropCheckBox,
-		"change select[data-prop]" : setProp,
-		 "change input#option-colour[data-prop]" : setProp
-		// the following doesn't work for a reason...
-		// "change input:color[data-prop]" : setProp
+		"change input:text[data-prop]": setProp,
+		"change textarea[data-prop]": setProp,
+		"change input:checkbox[data-prop]": setPropCheckBox,
+		"change select[data-prop]": setProp,
+		"change input#option-colour[data-prop]": setProp
 	};
 
 	function bindingsEvents(view) {
@@ -83,9 +81,9 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms" ], function($, Back
 
 		_.chain(defaultBindingsEvents)
 			.pairs()
-			.each(function(pair) {
+			.each(function (pair) {
 				events[pair[0] + selector] = pair[1];
-		});
+			});
 
 		return events;
 	}
@@ -117,23 +115,23 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms" ], function($, Back
 	 *          property name
 	 * @return matching `.form-group`
 	 */
-	BindView.prototype.$boundControl = function(prop) {
+	BindView.prototype.$boundControl = function (prop) {
 		var selector = "[data-prop='" + prop + "']" + bindingSelectorPostfix(this);
 		return this.$(".control-group").has(selector);
 	};
 
-	BindView.prototype.boundControl = function(prop) {
+	BindView.prototype.boundControl = function (prop) {
 		return Forms.control(this.$boundControl(prop));
 	};
 
-	BindView.prototype.resetState = function(prop) {
+	BindView.prototype.resetState = function (prop) {
 		return Forms.form(this.$el).clearState();
 	};
 
 	/**
 	 * extend wraps the custom initialize so that it calls BindView's initialize function
 	 */
-	BindView.extend = function(protoProps, staticProps) {
+	BindView.extend = function (protoProps, staticProps) {
 		// TODO useless ?
 		var parent = this;
 

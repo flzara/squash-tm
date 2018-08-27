@@ -112,7 +112,8 @@ define(
 				data: [],
 				rowCallback: function (row) {
 					var colorPicker = $("input[name='option-colour']", row);
-					confman.getStandardIEColorPicker(colorPicker)
+					var conf = confman.getStandardColorPicker();
+					colorPicker.spectrum(conf);
 				}
 			});
 		}

@@ -56,7 +56,7 @@ define(["backbone", "squash.translator", "../app/squash.backbone.validation", "a
 				code: "",
 				isDefault: false,
 				iconName: "",
-				colour: "#000000"
+				colour: ""
 			},
 
 			validation: {

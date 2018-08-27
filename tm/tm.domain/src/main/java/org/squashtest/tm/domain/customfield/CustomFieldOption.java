@@ -46,7 +46,6 @@ public class CustomFieldOption {
 	private String code = "";
 
 	@Size(max = 7)
-	@NotBlank
 	private String colour;
 
 	public CustomFieldOption(String label, String code) {

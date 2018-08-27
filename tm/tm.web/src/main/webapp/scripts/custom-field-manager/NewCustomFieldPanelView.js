@@ -59,10 +59,12 @@ define(
 					removeCell = row.find(".remove-row"),
 					colourCell = row.find(".colour"),
 					option = aData[0],
+					code = aData[1],
 					checked = option === self.model.get("defaultValue"),
-					colour = aData[2],
+					colour = colourCell.find('input').val() || aData[2],
 					tplData = {
 						option: option,
+						code: code,
 						checked: checked,
 						colour: colour
 					};
@@ -78,7 +80,8 @@ define(
 
 
 				var colorPicker = $(".colour > input", row);
-				confman.getStandardIEColorPicker(colorPicker);
+				var conf = confman.getStandardColorPicker();
+				colorPicker.spectrum(conf);
 			};
 		}
 
@@ -341,8 +344,10 @@ define(
 				var src = $("#new-option-pane-tpl").html();
 				var tpl = Handlebars.compile(src);
 				this.$("#new-option-pane").html(tpl({}));
+
 				var colorPicker = $("[name*='new-option-colour']");
-				confman.getStandardIEColorPicker(colorPicker);
+				var conf = confman.getStandardColorPicker();
+				colorPicker.spectrum(conf)
 			},
 
 			renderRichText: function () {
@@ -445,10 +450,10 @@ define(
 			},
 
 			changeColour: function (event) {
-				var colourInput = event.currentTarget;
-				var value = $(colourInput).val();
-				var code = $(colourInput).attr('data-value');
-				// really IE? no find function?
+				var colourInput = event.currentTarget,
+					value = $(colourInput).val(),
+					code = $(colourInput).attr('data-value');
+
 				_.find(this.model.attributes.options, function (option) {
 					return option[1] === code;
 				})[2] = value;

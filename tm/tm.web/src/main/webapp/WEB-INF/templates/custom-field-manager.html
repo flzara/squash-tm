@@ -311,7 +311,7 @@
             <div class="control-group">
               <label class="control-label" for="new-option-colour" th:text="#{label.colour}">Code</label>
               <div class="controls">
-                <input name="new-option-colour" type="color"/>
+                <input name="new-option-colour" type="text"/>
                 <span class="not-displayed help-inline">&nbsp;</span>
               </div>
             </div>
@@ -361,7 +361,7 @@
           </script>
 
           <script id="colour-cell-tpl" type="text/x-handlebars-template" th:inline="text">
-            <input type="color" value="{{colour}}" data-value="{{option}}" />
+            <input type="text" value="{{colour}}" data-value="{{code}}" />
           </script>
 
         </div>

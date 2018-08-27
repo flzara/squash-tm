@@ -28,8 +28,10 @@ define(["jquery", "backbone", "handlebars", "app/lnf/Forms", "app/ws/squashtm.no
 			this.$el.find("input:text").val("");
 			this._resetForm();
 
-			var colorPicker = $('#new-cuf-option-colour');
-			confman.getStandardIEColorPicker(colorPicker);
+			var colorPicker = $('#new-cuf-option-colour'),
+				conf = confman.getStandardColorPicker(colorPicker);
+			colorPicker.spectrum(conf);
+
 			this.$el.formDialog({
 				autoOpen: true
 			});
@@ -105,7 +107,7 @@ define(["jquery", "backbone", "handlebars", "app/lnf/Forms", "app/ws/squashtm.no
 		_resetForm: function () {
 			this.$textFields = this.$el.find("input:text");
 			this.$textFields.val("");
-			this.$el.find("input#new-cuf-option-colour").spectrum("set", '#000000');
+			this.$el.find("input#new-cuf-option-colour").spectrum("set", '');
 			//	this.$errorMessages.text("");
 			Forms.form(this.$el).clearState();
 			if (this.$el.data().formDialog !== undefined) {
@@ -123,7 +125,7 @@ define(["jquery", "backbone", "handlebars", "app/lnf/Forms", "app/ws/squashtm.no
 			var $el = this.$el;
 			this.model.label = $el.find("#new-cuf-option-label").val();
 			this.model.code = $el.find("#new-cuf-option-code").val();
-			this.model.colour = $el.find("#new-cuf-option-colour").val() || "#000000";
+			this.model.colour = $el.find("#new-cuf-option-colour").val() || "";
 		}
 
 	});

@@ -53,7 +53,7 @@
   </script>
 
   <script id="colour-cell-tpl" type="text/x-handlebars-template" th:inline="text">
-    <input type="color" value="{{value}}" name="{{name}}" code="{{code}}"></input>
+    <input type="text" value="{{value}}" name="{{name}}" code="{{code}}"/>
   </script>
 
   <script id="remove-cell-tpl" type="text/x-handlebars-template" th:inline="text">
@@ -268,7 +268,7 @@
             <div class="control-group">
               <label class="control-label" for="option-colour" th:text="#{label.colour}">Colour</label>
               <div class="controls">
-                <input id="option-colour" data-prop="colour" data-view="option" type="color"/>
+                <input id="option-colour" data-prop="colour" data-view="option" type="text"/>
                 <span class="help-inline">&nbsp;</span>
               </div>
             </div>

@@ -1040,11 +1040,12 @@ define(["jquery",
 
 			var $item = $(item);
 			var data = $item.text();
-			var template = '<input type="color" value="' + data + '"/>';
+			var template = '<input type="text" value="' + data + '"/>';
 			$item.html(template);
 
 			var colorPicker = $("input", $item);
-			confman.getStandardIEColorPicker(colorPicker);
+			var conf = confman.getStandardColorPicker();
+			colorPicker.spectrum(conf);
 		});
 	}
 

@@ -217,13 +217,6 @@ define(
 								errors.optionCode = "message.optionCodeAlreadyDefined";
 							}
 
-							// validate option colour
-							if (isBlank(option[2])) {
-								errors = errors || {};
-								errors.optionCode = "message.notBlank";
-
-							}
-
 							return errors;
 						},
 

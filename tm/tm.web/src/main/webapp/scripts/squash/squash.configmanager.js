@@ -18,9 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "squash.translator", "datepicker/jquery.squash.datepicker-locales", "squash.dateutils", "underscore",
-		"squash.cssloader", "spectrum"],
-	function ($, translator, regionale, dateutils, _, cssloader) {
+define(["jquery", "squash.translator", "datepicker/jquery.squash.datepicker-locales", "squash.dateutils", "underscore","spectrum"],
+	function ($, translator, regionale, dateutils, _) {
 
 		function stdJeditable() {
 
@@ -92,7 +91,7 @@ define(["jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loca
 			});
 
 			return {
-			customConfig : squashtm.app.contextRoot + 'styles/ckeditor/ckeditor-config.js',
+				customConfig: squashtm.app.contextRoot + 'styles/ckeditor/ckeditor-config.js',
 				lang: lang/*,
 			disallowedContent : 'img'*/
 			};
@@ -315,25 +314,17 @@ define(["jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loca
 
 		// if the user is on internet explorer (which doesn't support HTML5, thus no input type color) we will use a polyfill
 		// from what I understand spectrum grafts itself to jquery
-		function getStandardIEColorPicker(jQueryOject) {
+		function getStandardColorPicker() {
 
-			var ua = window.navigator.userAgent;
-			var msie = ua.indexOf("MSIE ");
+			return {
+				cancelText: translator.get("label.Cancel"),
+				chooseText: translator.get("label.Modify"),
+				preferredFormat: "hex",
+				showPalette: true,
+				showInitial: true,
+				allowEmpty: true
+			};
 
-			if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {
-				jQueryOject.spectrum({
-					cancelText: translator.get("label.Cancel"),
-					chooseText: translator.get("label.Modify"),
-					preferredFormat: "hex",
-					showPalette: true,
-					showInitial: true
-				});
-			}
-
-			// load the polyfill css if a link with a href ending with spectrum.ccs is absent
-			if (!$("link[href$='spectrum.css']").length) {
-				cssloader.cssFromPath("spectrum.css");
-			}
 		}
 
 		return {
@@ -346,7 +337,7 @@ define(["jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loca
 			toJeditableSelectFormat: _toJeditableSelectFormat,
 			getStdTagit: stdTagit,
 			getJeditableDatepicker: jeditableDatepicker,	// experimental
-			getStandardIEColorPicker: getStandardIEColorPicker
+			getStandardColorPicker: getStandardColorPicker
 		};
 
 	});

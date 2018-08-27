@@ -83,8 +83,9 @@ define(["jquery", "backbone", "underscore", "handlebars", "./IconSelectDialog", 
 					.addClass("sq-icon")
 					.html(translator.get("label.infoListItems.icon.none"));
 
-				var colorPicker = $("#new-info-list-item-colour");
-				confman.getStandardIEColorPicker(colorPicker);
+				var colorPicker = $("#new-info-list-item-colour"),
+					conf = confman.getStandardColorPicker();
+				colorPicker.spectrum(conf);
 				return this;
 			},
 
@@ -224,7 +225,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./IconSelectDialog", 
 				var self = this;
 				self.model.label = $el.find("#new-info-list-item-label").val();
 				self.model.code = $el.find("#new-info-list-item-code").val();
-				self.model.colour = $el.find("#new-info-list-item-colour").val() || "#000000";
+				self.model.colour = $el.find("#new-info-list-item-colour").val();
 				var selected = $el.find("#new-info-list-item-icon");
 				var classList = selected.attr('class').split(/\s+/);
 

@@ -58,7 +58,6 @@ public abstract class InfoListItem implements Identified {
 	private String iconName = "";
 
 	@Size(max = 7)
-	@NotBlank
 	private String colour;
 
 	public InfoListItem() {
