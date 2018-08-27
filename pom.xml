@@ -4,7 +4,7 @@
 
   <groupId>org.squashtest.tm</groupId>
   <artifactId>squash-tm</artifactId>
-  <version>1.18.2.RC2-SNAPSHOT</version>
+  <version>1.18.2.RC2</version>
   <packaging>pom</packaging>
 
   <name>squash-tm</name>
@@ -508,7 +508,7 @@
   <scm>
     <connection>scm:hg:${project.basedir}</connection>
     <developerConnection>scm:hg:${project.basedir}</developerConnection>
-    <tag>HEAD</tag>
+    <tag>squash-tm-1.18.2.RC2</tag>
   </scm>
 
   <repositories>
