@@ -140,7 +140,7 @@ public class CampaignExportCSVModelImpl extends AbstractCampaignExportCSVModel {
 				currentItpi = currentIteration.getTestPlan(r.get(ITPI_ID));
 				currentTestCase = currentItpi.getTestCase();
 
-				if(r.get(EXECUTION_ID) != null && r.get(EXECUTION_ID) != null){
+				if(r.get(EXECUTION_ID) != null){
 					ExecutionDto newExecution = createNewExecutionDto(r);
 
 					currentItpi.addExecution(newExecution);
@@ -156,7 +156,7 @@ public class CampaignExportCSVModelImpl extends AbstractCampaignExportCSVModel {
 
 				populateTestCase(r, currentTestCase);
 
-				if(!currentExecution.getId().equals(r.get(EXECUTION_ID))){
+				if(r.get(EXECUTION_ID) != null && !currentExecution.getId().equals(r.get(EXECUTION_ID))){
 
 					ExecutionDto newExecution = createNewExecutionDto(r);
 
@@ -166,7 +166,7 @@ public class CampaignExportCSVModelImpl extends AbstractCampaignExportCSVModel {
 					allExecutionIds.add(r.get(EXECUTION_ID));
 				}
 
-				if(currentExecution.getStep(r.get(EXECUTION_STEP_ID)) == null){
+				if(r.get(EXECUTION_STEP_ID) != null && currentExecution.getStep(r.get(EXECUTION_STEP_ID)) == null){
 					currentExecution.addStep(new ExecutionStepDto(r.get(EXECUTION_STEP_ID), r.get(EXECUTION_STEP_STATUS)));
 				}
 
