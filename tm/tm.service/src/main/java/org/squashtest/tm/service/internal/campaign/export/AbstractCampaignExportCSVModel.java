@@ -219,12 +219,7 @@ public abstract class AbstractCampaignExportCSVModel implements WritableCampaign
 			CustomFieldDto newCFDto = new CustomFieldDto(r.get(CUSTOM_FIELD_VALUE.CF_ID), r.get(CUSTOM_FIELD.CODE), r.get(CUSTOM_FIELD.INPUT_TYPE));
 			cufModel.add(newCFDto);
 
-			CustomFieldValueDto newCFVDto;
-			if(r.get(CUSTOM_FIELD_VALUE.VALUE) != null){
-				newCFVDto = new CustomFieldValueDto(r.get(CUSTOM_FIELD_VALUE.CFV_ID), r.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID), r.get(CUSTOM_FIELD_VALUE.CF_ID), r.get(CUSTOM_FIELD_VALUE.VALUE));
-			} else {
-				newCFVDto = new CustomFieldValueDto(r.get(CUSTOM_FIELD_VALUE.CFV_ID), r.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID), r.get(CUSTOM_FIELD_VALUE.CF_ID), r.get(CUSTOM_FIELD_VALUE.LARGE_VALUE));
-			}
+			CustomFieldValueDto newCFVDto = createCUFValueDto(r);
 			cufValues.put(r.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID), newCFVDto);
 		});
 	}
@@ -240,14 +235,22 @@ public abstract class AbstractCampaignExportCSVModel implements WritableCampaign
 			CustomFieldDto newCFDto = new CustomFieldDto(r.get(CUSTOM_FIELD_VALUE.CF_ID), r.get(CUSTOM_FIELD.CODE), r.get(CUSTOM_FIELD.INPUT_TYPE));
 			campCUFModel.add(newCFDto);
 
-			CustomFieldValueDto newCFVDto;
-			if(r.get(CUSTOM_FIELD_VALUE.VALUE) != null){
-				newCFVDto = new CustomFieldValueDto(r.get(CUSTOM_FIELD_VALUE.CFV_ID), r.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID), r.get(CUSTOM_FIELD_VALUE.CF_ID), r.get(CUSTOM_FIELD_VALUE.VALUE));
-			} else {
-				newCFVDto = new CustomFieldValueDto(r.get(CUSTOM_FIELD_VALUE.CFV_ID), r.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID), r.get(CUSTOM_FIELD_VALUE.CF_ID), r.get(CUSTOM_FIELD_VALUE.LARGE_VALUE));
-			}
+			CustomFieldValueDto newCFVDto = createCUFValueDto(r);
 			campCUFValues.put(r.get(CUSTOM_FIELD_VALUE.CF_ID), newCFVDto);
 		});
+	}
+
+	private CustomFieldValueDto createCUFValueDto(Record r){
+		CustomFieldValueDto newCFVDto;
+		if(r.get(CUSTOM_FIELD_VALUE.VALUE) != null){
+			newCFVDto = new CustomFieldValueDto(r.get(CUSTOM_FIELD_VALUE.CFV_ID), r.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID), r.get(CUSTOM_FIELD_VALUE.CF_ID), r.get(CUSTOM_FIELD_VALUE.VALUE));
+		} else if(r.get(CUSTOM_FIELD_VALUE.LARGE_VALUE) != null) {
+			newCFVDto = new CustomFieldValueDto(r.get(CUSTOM_FIELD_VALUE.CFV_ID), r.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID), r.get(CUSTOM_FIELD_VALUE.CF_ID), r.get(CUSTOM_FIELD_VALUE.LARGE_VALUE));
+		} else {
+			newCFVDto = new CustomFieldValueDto(r.get(CUSTOM_FIELD_VALUE.CFV_ID), r.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID), r.get(CUSTOM_FIELD_VALUE.CF_ID));
+		}
+
+		return newCFVDto;
 	}
 
 	void populateTestCase(Record r, TestCaseDto currentTestCase) {
