@@ -304,9 +304,10 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 
 	private ExecutionDto createNewExecutionDto(Record r) {
 		ExecutionDto newExecution = new ExecutionDto(r.get(EXECUTION_ID), r.get(EXECUTION_STATUS), r.get(EXECUTION_MODE).equals("AUTOMATED"));
-		ExecutionStepDto executionStepDto = createExecutionStepDto(r);
-		newExecution.addStep(executionStepDto);
-
+		if(r.get(EXECUTION_STEP_ID) != null){
+			ExecutionStepDto executionStepDto = createExecutionStepDto(r);
+			newExecution.addStep(executionStepDto);
+		}
 		return  newExecution;
 	}
 

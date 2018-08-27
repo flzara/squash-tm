@@ -34,6 +34,13 @@ public class CustomFieldValueDto {
 		this.value = value;
 	}
 
+	public CustomFieldValueDto(Long id, Long boundEntityId, Long cufId) {
+		super();
+		this.id = id;
+		this.boundEntityId = boundEntityId;
+		this.cufId = cufId;
+	}
+
 	public CustomFieldValueDto(){
 		super();
 	}
