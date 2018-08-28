@@ -198,7 +198,9 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 
 					currentExecution = currentItpi.getExecution(r.get(EXECUTION_ID));
 
-					currentExecutionStep = currentExecution.getStep(r.get(EXECUTION_STEP_ID));
+					if(r.get(EXECUTION_STEP_ID) != null){
+						currentExecutionStep = currentExecution.getStep(r.get(EXECUTION_STEP_ID));
+					}
 
 					allExecutionIds.add(r.get(EXECUTION_ID));
 				}

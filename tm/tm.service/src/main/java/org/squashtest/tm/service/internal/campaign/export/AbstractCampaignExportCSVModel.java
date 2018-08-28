@@ -76,9 +76,9 @@ public abstract class AbstractCampaignExportCSVModel implements WritableCampaign
 
 	static final TableField<TestCaseRecord, String> TC_REFERENCE = TEST_CASE.REFERENCE;
 
-	static final TableField<InfoListItemRecord, String> TC_NATURE = INFO_LIST_ITEM.as("info_list_1").CODE;
+	static final TableField<InfoListItemRecord, String> TC_TYPE = INFO_LIST_ITEM.as("info_list_1").CODE;
 
-	static final TableField<InfoListItemRecord, String> TC_TYPE = INFO_LIST_ITEM.as("info_list_2").CODE;
+	static final TableField<InfoListItemRecord, String> TC_NATURE = INFO_LIST_ITEM.as("info_list_2").CODE;
 
 	static final TableField<TestCaseRecord, String> TC_STATUS = TEST_CASE.TC_STATUS;
 
