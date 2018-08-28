@@ -782,6 +782,11 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 						execStep = steps.get(stepIndex);
 						testStep = null;
 						foundNextStep = true;
+						/* Issue 6351: We also have to import ITPI without any Test Step. */
+					} else if(stepsSize == 0){
+						execStep = null;
+						testStep = null;
+						foundNextStep = true;
 					} else {
 						execStep = null;
 						testStep = null;
