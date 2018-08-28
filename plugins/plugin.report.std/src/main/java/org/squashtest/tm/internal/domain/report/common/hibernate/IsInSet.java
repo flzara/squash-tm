@@ -55,7 +55,7 @@ public abstract class IsInSet<T extends Number> extends ReportCriterion {
 
 		List<?> values = getTypedParameters();
 
-		if (values != null) {
+		if (!values.isEmpty()) {
 			criterion = Property.forName(getEntityAlias() + "." + getAttributePath()).in(values);
 
 		}
