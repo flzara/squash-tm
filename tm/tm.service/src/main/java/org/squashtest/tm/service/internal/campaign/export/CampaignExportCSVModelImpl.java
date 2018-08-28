@@ -544,7 +544,7 @@ public class CampaignExportCSVModelImpl extends AbstractCampaignExportCSVModel {
 			if (lastExec != null) {
 				if (lastExec.isAutomated()) {
 					successRate = lastExec.getStatus().equals("SUCCESS") ? 100 : 0;
-				} else {
+				} else if(!lastExec.getSteps().isEmpty()) {
 					Predicate<ExecutionStepDto> predicate = step -> step.getStatus().equals("SUCCESS");
 					Collection<ExecutionStepDto> steps = itp.getLatestExecution().getSteps().values();
 					int success = (int) steps.stream().filter(predicate).count();
