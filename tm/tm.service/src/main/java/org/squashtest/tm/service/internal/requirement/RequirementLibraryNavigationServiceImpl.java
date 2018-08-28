@@ -79,10 +79,7 @@ import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
-import org.squashtest.tm.service.internal.batchexport.ExportDao;
-import org.squashtest.tm.service.internal.batchexport.RequirementExcelExporter;
-import org.squashtest.tm.service.internal.batchexport.RequirementExportModel;
-import org.squashtest.tm.service.internal.batchexport.SearchRequirementExcelExporter;
+import org.squashtest.tm.service.internal.batchexport.*;
 import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementExcelBatchImporter;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
@@ -121,6 +118,8 @@ public class RequirementLibraryNavigationServiceImpl extends
 	private static final String TARGET_ID = "targetId";
 	private static final String EXPORT = "EXPORT";
 	private static final String NODE_IDS = "nodeIds";
+	private static final String FULL = "full";
+	private static final String SIMPLE = "simple";
 
 	@Inject
 	private RequirementLibraryDao requirementLibraryDao;
@@ -172,6 +171,9 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 	@Inject
 	private Provider<SearchRequirementExcelExporter> searchExporterProvider;
+
+	@Inject
+	private Provider<SearchSimpleRequirementExcelExporter> searchSimpleExporterProvider;
 
 	@Inject
 	private RequirementExcelBatchImporter batchImporter;
@@ -687,7 +689,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 	@Override
 	public File searchExportRequirementAsExcel(List<Long> nodeIds,
-	                                           boolean keepRteFormat, MessageSource messageSource) {
+	                                           boolean keepRteFormat, MessageSource messageSource, String type) {
 
 		PermissionsUtils.checkPermission(permissionService, nodeIds, EXPORT, RequirementLibraryNode.class.getName());
 
@@ -695,12 +697,24 @@ public class RequirementLibraryNavigationServiceImpl extends
 		reqIds.addAll(requirementDao.findAllRequirementsIdsByNodes(nodeIds));
 
 		List<Long> reqVersionIds = requirementDao.findIdsVersionsForAll(new ArrayList<>(reqIds));
+		RequirementExportModel exportModel = new RequirementExportModel();
+		File file;
+		if(type.equals(SIMPLE)){
+			exportModel =exportDao.findAllSearchRequirementModel(reqVersionIds);
+			SearchSimpleRequirementExcelExporter exporter = searchSimpleExporterProvider.get();
+			exporter.getMessageSource(messageSource);
+			exporter.appendToWorkbook(exportModel, keepRteFormat);
+			file =  exporter.print();
 
-		RequirementExportModel exportModel = exportDao.findAllRequirementModel(reqVersionIds);
+		}else {
+			exportModel = exportDao.findAllRequirementModel(reqVersionIds);
+			SearchRequirementExcelExporter exporter = searchExporterProvider.get();
+			exporter.appendToWorkbook(exportModel, keepRteFormat);
+			file =  exporter.print();
 
-		RequirementExcelExporter exporter = searchExporterProvider.get();
-		exporter.appendToWorkbook(exportModel, keepRteFormat);
-		return exporter.print();
+		}
+
+		return file;
 	}
 
 	@Override

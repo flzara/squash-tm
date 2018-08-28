@@ -247,6 +247,30 @@
               <input type="text" id="export-test-case-filename" size="255" style="width: 350px" />
             </div>
 
+
+
+
+
+            <div class="std-padding std-margin-top">
+
+              <div class="grey-round-panel snap-left" style="width: 43%;">
+                <input type="radio" name="format" data-val="simple" class="centered" checked="checked" id="export-simple-format-excel" data-def="evt=desable"/>
+                <label for="export-simple-format-excel" class="ui-helper-reset"> <span style="text-decoration: underline;" th:text="#{requirement.export.dialog.search.simple.import.label}"></span>
+                  <div class="nota-bene" th:text="#{requirement.export.dialog.search.simple.import}"></div></label>
+              </div>
+              <div class="grey-round-panel snap-right" style="width: 43%;">
+                <input type="radio" name="format" data-val="full" class="centered" id="export-full-format-excel" data-def="evt=desable"/>
+                <label for="export-full-format-excel" class="ui-helper-reset"> <span style="text-decoration: underline;"  th:text="#{requirement.export.dialog.search.full.import.label}"></span>
+                  <div class="nota-bene" th:text="#{requirement.export.dialog.search.full.import}"></div></label>
+              </div>
+
+              <div class="unsnap"></div>
+
+            </div>
+
+
+
+
             <div class="std-margin-top">
               <input type="checkbox" id="export-test-case-includecalls" />
               <span th:text="#{test-case.export.dialog.includecall}"></span>

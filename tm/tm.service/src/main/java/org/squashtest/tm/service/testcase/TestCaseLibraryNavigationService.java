@@ -210,7 +210,7 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 	 * @param includeCalledTests
 	 * @return
 	 */
-	File searchExportTestCaseAsExcel( List<Long> nodeIds, boolean includeCalledTests, boolean keepRteFormat, MessageSource messageSource);
+	File searchExportTestCaseAsExcel( List<Long> nodeIds, boolean includeCalledTests, boolean keepRteFormat, MessageSource messageSource, String type);
 
 
 	List<String> getParentNodesAsStringList(Long nodeId);

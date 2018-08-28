@@ -129,6 +129,7 @@ public class RequirementExportModel {
 		private RequirementStatus status;
 		private String description;
 		private Long requirementVersionCoveragesSize;
+		private Long requirementVersionNumberSize;
 		private Long attachmentListSize;
 		private Date createdOn;
 		private String createdBy;
@@ -145,8 +146,8 @@ public class RequirementExportModel {
 				String reference, String name,
 				RequirementCriticality criticality, String categoryCode,
 				RequirementStatus status, String description,
-				Long requirementVersionCoveragesSize, Long attachmentListSize,
-				Date createdOn, String createdBy, Date lastModifiedOn,
+				Long requirementVersionCoveragesSize, Long requirementVersionNumberSize,
+				Long attachmentListSize, Date createdOn, String createdBy, Date lastModifiedOn,
 				String lastModifiedBy, String milestonesLabels) {
 			super();
 			this.id = id;
@@ -161,6 +162,7 @@ public class RequirementExportModel {
 			this.status = status;
 			this.description = description;
 			this.requirementVersionCoveragesSize = requirementVersionCoveragesSize;
+			this.requirementVersionNumberSize = requirementVersionNumberSize;
 			this.attachmentListSize = attachmentListSize;
 			this.createdOn = createdOn;
 			this.createdBy = createdBy;
@@ -285,6 +287,14 @@ public class RequirementExportModel {
 			this.requirementVersionCoveragesSize = requirementVersionCoveragesSize;
 		}
 
+		public Long getRequirementVersionNumberSize() {
+			return requirementVersionNumberSize;
+		}
+
+		public void setRequirementVersionNumberSize(Long requirementVersionNumberSize) {
+			this.requirementVersionNumberSize = requirementVersionNumberSize;
+		}
+
 		public Long getAttachmentListSize() {
 			return attachmentListSize;
 		}
@@ -296,6 +306,7 @@ public class RequirementExportModel {
 		public Date getCreatedOn() {
 			return createdOn;
 		}
+
 
 		public void setCreatedOn(Date createdOn) {
 			this.createdOn = createdOn;
@@ -351,7 +362,9 @@ public class RequirementExportModel {
 					+ ", criticality=" + criticality + ", categoryCode="
 					+ categoryCode + ", status=" + status + ", description="
 					+ description + ", requirementVersionCoveragesSize="
-					+ requirementVersionCoveragesSize + ", attachmentListSize="
+					+ requirementVersionCoveragesSize
+					+ ", requirementVersionNumberSize="
+					+ requirementVersionNumberSize+ ", attachmentListSize="
 					+ attachmentListSize + ", createdOn=" + createdOn
 					+ ", createdBy=" + createdBy + ", lastModifiedOn="
 					+ lastModifiedOn + ", lastModifiedBy=" + lastModifiedBy

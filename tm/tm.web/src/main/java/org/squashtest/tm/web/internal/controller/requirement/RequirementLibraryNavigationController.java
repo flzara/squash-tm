@@ -254,11 +254,11 @@ public class RequirementLibraryNavigationController extends
 	@ResponseBody
 	@RequestMapping(value = "/searchExports", method = RequestMethod.GET)
 	public FileSystemResource searchExportRequirementExcel(@RequestParam(FILENAME) String filename,
-														   @RequestParam(NODES) List<Long> nodeIds, @RequestParam(RequestParams.RTEFORMAT) Boolean keepRteFormat, HttpServletResponse response) {
+														   @RequestParam(NODES) List<Long> nodeIds, @RequestParam(RequestParams.RTEFORMAT) Boolean keepRteFormat, @RequestParam(RequestParams.TYPE) String type, HttpServletResponse response) {
 		response.setContentType("application/octet-stream");
 		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".xls");
 
-		File export = requirementLibraryNavigationService.searchExportRequirementAsExcel(nodeIds, keepRteFormat, getMessageSource());
+		File export = requirementLibraryNavigationService.searchExportRequirementAsExcel(nodeIds, keepRteFormat, getMessageSource(), type);
 
 		return new FileSystemResource(export);
 	}

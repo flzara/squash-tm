@@ -241,14 +241,14 @@ public class TestCaseLibraryNavigationController extends
 		FILENAME, NODES, CALLS, RequestParams.RTEFORMAT})
 	@ResponseBody
 	public FileSystemResource searchExportAsExcel(@RequestParam(FILENAME) String filename,
-												  @RequestParam(NODES) List<Long> nodeIds, @RequestParam(CALLS) Boolean includeCalledTests, @RequestParam(RequestParams.RTEFORMAT) Boolean keepRteFormat,
+												  @RequestParam(NODES) List<Long> nodeIds, @RequestParam(CALLS) Boolean includeCalledTests, @RequestParam(RequestParams.TYPE) String type,@RequestParam(RequestParams.RTEFORMAT) Boolean keepRteFormat,
 												  HttpServletResponse response) throws FileNotFoundException {
 
 		response.setContentType(APPLICATION_SLASH_OCTET_STREAM);
 		response.setHeader(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + filename + ".xls");
 
 		File export = testCaseLibraryNavigationService.searchExportTestCaseAsExcel(nodeIds, includeCalledTests,
-			keepRteFormat, getMessageSource());
+			keepRteFormat, getMessageSource(), type);
 		return new FileSystemResource(export);
 
 	}

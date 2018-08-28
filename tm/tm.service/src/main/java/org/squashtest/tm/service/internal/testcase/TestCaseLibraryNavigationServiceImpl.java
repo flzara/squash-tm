@@ -107,6 +107,9 @@ public class TestCaseLibraryNavigationServiceImpl
 	private static final String SOURCE_NODES_IDS = "sourceNodesIds";
 	private static final String TARGET_ID = "targetId";
 	private static final String TARGET_IDS = "targetIds";
+	private static final String FULL = "full";
+	private static final String SIMPLE = "simple";
+
 
 	@Inject
 	private TestCaseLibraryDao testCaseLibraryDao;
@@ -558,14 +561,18 @@ public class TestCaseLibraryNavigationServiceImpl
 	@Override
 	@SuppressWarnings("unchecked")
 	public File searchExportTestCaseAsExcel(List<Long> nodeIds, boolean includeCalledTests, boolean keepRteFormat,
-											MessageSource messageSource) {
+											MessageSource messageSource, String type) {
 
 		Collection<Long> allIds = findTestCaseIdsFromSelection(CollectionUtils.EMPTY_COLLECTION, nodeIds,
 			includeCalledTests);
 		allIds = securityFilterIds(allIds, TEST_CASE_CLASS_NAME, EXPORT);
-
-		return excelService.searchExportAsExcel(new ArrayList<>(allIds), keepRteFormat, messageSource);
-
+		File file;
+		if(type.equals(SIMPLE)){
+			file =  excelService.searchSimpleExportAsExcel(new ArrayList<>(allIds), keepRteFormat, messageSource, type);
+		}else {
+			file = excelService.searchExportAsExcel(new ArrayList<>(allIds), keepRteFormat, messageSource, type);
+		}
+		return file;
 	}
 
 

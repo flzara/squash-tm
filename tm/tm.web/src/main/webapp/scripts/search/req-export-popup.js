@@ -79,11 +79,14 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 			var url = window.squashtm.app.contextRoot + 'requirement-browser/searchExports';
 			var filename = this.$el.find("#export-name-input").val();
 			var keepRte = this.$el.find("#export-keepRteFormat").prop('checked');
+			var type = this.$el.find('input[name="format"]:checked').data('val');
 
 			var params = {
 				'filename' : filename,
 				'nodes' : nodes.join(),
-				'keep-rte-format' : keepRte
+				'keep-rte-format' : keepRte,
+				'type' : type
+
 			};
 
 			return url+"?"+$.param(params);
@@ -102,7 +105,7 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 		}
 
 
-	});
+		});
 
 	return View;
 });

@@ -18,6 +18,11 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+/*
+ * A widget designed to display field for requirement links
+ * @author bbflessel
+ */
 define([ "jquery", "jqueryui" ], function($) {
 
 	var searchwidget = $.widget("search.searchComboExistsMultiselectWidget", {

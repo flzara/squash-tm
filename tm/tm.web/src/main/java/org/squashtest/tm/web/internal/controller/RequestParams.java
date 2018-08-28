@@ -60,6 +60,7 @@ public final class RequestParams {
 	public static final String RTEFORMAT = "keep-rte-format";
 	public static final String PROJECT_ID = "projectId";
 	public static final String NAME = "name";
+	public static final String TYPE = "type";
 	public static final String MODEL = "model";
 	public static final String NODE_IDS = "nodeIds";
 	public static final String CAMPAIGN_ID = "campaignId";

@@ -179,7 +179,7 @@ RequirementLibraryFinderService {
 	 * @param nodeIds List of nodeIds (ie req id or folder id) selected for export
 	 */
 	File searchExportRequirementAsExcel(List<Long> nodeIds,
-			boolean keepRteFormat, MessageSource messageSource);
+			boolean keepRteFormat, MessageSource messageSource,String type);
 
 	ImportLog simulateImportExcelRequirement(File xls);
 

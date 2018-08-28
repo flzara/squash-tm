@@ -86,6 +86,17 @@ public class ExportDao {
 		return model;
 	}
 
+	public RequirementExportModel findAllSearchRequirementModel(List<Long> versionIds){
+
+		RequirementExportModel model = new RequirementExportModel();
+
+		List<RequirementModel> requirementsModel = findRequirementModel(versionIds);
+
+		model.setRequirementsModels(requirementsModel);
+
+		return model;
+	}
+
 
 	public ExportModel findModel(List<Long> tclnIds){
 
@@ -104,6 +115,19 @@ public class ExportDao {
 		model.setTestSteps(stepModels);
 		model.setParameters(paramModels);
 		model.setDatasets(datasetModels);
+
+		return model;
+
+	}
+
+
+	public ExportModel findSimpleModel(List<Long> tclnIds){
+
+		ExportModel model = new ExportModel();
+
+		List<TestCaseModel> tclnModels = findTestCaseModels(tclnIds);
+
+		model.setTestCases(tclnModels);
 
 		return model;
 

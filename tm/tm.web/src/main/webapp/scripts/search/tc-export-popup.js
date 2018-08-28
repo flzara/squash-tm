@@ -80,12 +80,14 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 			var filename = this.$el.find("#export-test-case-filename").val();
 			var calledTestCases = this.$el.find("#export-test-case-includecalls").prop('checked');
 			var keepRte = this.$el.find("#export-test-case-keepRteFormat").prop('checked');
+			var type = this.$el.find('input[name="format"]:checked').data('val');
 
 			var params = {
 				'filename' : filename,
 				'nodes' : nodes.join(),
 				'calls':calledTestCases,
-				'keep-rte-format' : keepRte
+				'keep-rte-format' : keepRte,
+				'type' : type
 			};
 
 			return url+"?"+$.param(params);
@@ -102,8 +104,7 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 			var prefix =  translator.get("label.lower.dash.exportTestCase");
 			var date =  dateutils.format(new Date(), "yyyyMMdd_HHmmss");
 			return prefix + "_" + date;
-		}
-
+		},
 
 	});
 

@@ -65,12 +65,19 @@ public class TestCaseExcelExporterService {
 	@Inject
 	private Provider<SearchTestCaseExcelExporter> searchExporterProvider;
 
+	@Inject
+	private Provider<SearchSimpleTestCaseExcelExporter> simpleSearchExporterProvider;
+
 	public File exportAsExcel(List<Long> testCaseIds, boolean keepRteFormat, MessageSource messageSource){
 		return doExportAsExcel(testCaseIds, keepRteFormat, messageSource, exporterProvider.get());
 	}
 
-	public File searchExportAsExcel(List<Long> testCaseIds, boolean keepRteFormat, MessageSource messageSource){
+	public File searchExportAsExcel(List<Long> testCaseIds, boolean keepRteFormat, MessageSource messageSource, String type){
 		return doExportAsExcel(testCaseIds, keepRteFormat, messageSource, searchExporterProvider.get());
+	}
+
+	public File searchSimpleExportAsExcel(List<Long> testCaseIds, boolean keepRteFormat, MessageSource messageSource, String type){
+		return doSimpleExportAsExcel(testCaseIds, keepRteFormat, messageSource, simpleSearchExporterProvider.get());
 	}
 
 	private File doExportAsExcel(List<Long> testCaseIds, boolean keepRteFormat, MessageSource messageSource, ExcelExporter exporter){
@@ -100,6 +107,26 @@ public class TestCaseExcelExporterService {
 
 		return exporter.print();
 
+	}
+
+	private File doSimpleExportAsExcel(List<Long> testCaseIds, boolean keepRteFormat, MessageSource messageSource, SimpleExcelExporter exporter){
+
+		// let's chunk the job by batches of 50 test cases
+		List<Long> ids;
+		int idx=0;
+		int max = Math.min(idx+BATCH_SIZE, testCaseIds.size());
+		exporter.setMessageSource(messageSource);
+
+		while (idx < testCaseIds.size()){
+
+			ids = testCaseIds.subList(idx, max);
+			ExportModel model = exportDao.findSimpleModel(ids);
+			exporter.simpleAppendToWorkbook(model, keepRteFormat);
+
+			idx = max;
+			max = Math.min(idx+BATCH_SIZE, testCaseIds.size());
+		}
+		return exporter.print();
 	}
 
 
@@ -233,7 +260,6 @@ public class TestCaseExcelExporterService {
 		Collections.sort(models.getDatasets(), DatasetModel.COMPARATOR);
 		Collections.sort(models.getCoverages(), CoverageModel.TC_COMPARATOR);
 	}
-
 
 
 }
