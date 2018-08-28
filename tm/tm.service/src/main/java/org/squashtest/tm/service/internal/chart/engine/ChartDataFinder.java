@@ -485,11 +485,11 @@ public class ChartDataFinder {
 	}
 
 	private void getColours(ChartSeries chartSeries, DetailedChartQuery definition, List<Object[]> abscissa) {
-		//if there's only one axis (with a measure => bar chart, or not => pie chart), the first axis is the one with the colors
+		// if there's only one axis (with a measure => bar chart, or not => pie chart), the first axis is the one with the colors
 		// if there are two (trend or cumulative chart) it's the second one
 		List<AxisColumn> axis = definition.getAxis();
 		Long colorCufId = axis.get(axis.size() - 1).getCufId();
-		SingleSelectField cuf = (SingleSelectField) customFieldDao.getOne(colorCufId);
+		SingleSelectField cuf = customFieldDao.findSingleSelectFieldById(colorCufId);
 
 		List<String> colours = new ArrayList<>();
 		for (Object[] abs : abscissa) {

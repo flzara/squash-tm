@@ -20,7 +20,7 @@
  */
 define(['jquery', 'underscore'], function ($, _) {
 
-	var ColorsEnum = {
+	var ColoursEnum = {
 		// RequirementStatus / TestCaseStatus
 		WORK_IN_PROGRESS: "#E9C63E",
 		UNDER_REVIEW: "#5BBAA8",
@@ -66,25 +66,46 @@ define(['jquery', 'underscore'], function ($, _) {
 
 	};
 
-	function getAssociatedColors(legends) {
+	var colourFiller = [
+		"#B22C2C",
+		"#2D7243",
+		"#4288CE"
+	];
+
+	function getAssociatedColours(legends) {
 		var flatLegends = _.flatten(legends);
-		var colors = [];
+		var colours = [];
 
 		try {
 			for (var i = 0; i < flatLegends.length; i++) {
-				colors.push(ColorsEnum[flatLegends[i]])
+				colours.push(ColoursEnum[flatLegends[i]])
 			}
 		} catch (e) {
 			// if a color is missing in the enum (or if there is any error), we reset the colors,
 			// jqplot will use its standard colors
-			colors = [];
+			colours = [];
 		}
 
-		return colors;
+		return colours;
+	}
+
+	function completeColourArray(colourArray) {
+		var newColour,
+			emptyElementIndex,
+			emptyElementNumber = 0;
+
+		do {
+			emptyElementIndex = colourArray.findIndex(function (element) {return !element;});
+			newColour = colourFiller[emptyElementNumber % colourFiller.length];
+			colourArray[emptyElementIndex] = newColour;
+			emptyElementNumber++;
+		} while (colourArray.includes("") || colourArray.includes(null));
+		return colourArray;
 	}
 
 	return {
-		getAssociatedColors: getAssociatedColors
+		getAssociatedColours: getAssociatedColours,
+		completeColourArray: completeColourArray
 	};
 
 });

@@ -29,8 +29,8 @@
  *
  */
 define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "underscore", "squash.translator", "handlebars",
-		"text!./empty-chart.html!strip", "../utils", "squash.dateutils", "./color-utils", "dashboard/jqplot-ext/jqplot.squash.stylableGridRenderer"],
-	function ($, Backbone, attrparser, eventbus, _, translator, Handlebars, emptyChartTemplate, chartUtils, dateUtils, colorUtils) {
+		"text!./empty-chart.html!strip", "../utils", "squash.dateutils", "../../colour-utils", "dashboard/jqplot-ext/jqplot.squash.stylableGridRenderer"],
+	function ($, Backbone, attrparser, eventbus, _, translator, Handlebars, emptyChartTemplate, chartUtils, dateUtils, colourUtils) {
 		"use strict";
 		var squashtm = window.squashtm;
 
@@ -81,13 +81,13 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 
 			// By default a chart won't have any color, so we won't change the finalConf.seriesColors => jqplot will use its default colours
 			// In the case of an infolist, the model will have colours fetched from the server, the info is stored in the jsonChart
-			// In the case of a level enum or an execution status, we will get the colours from the colorUtils
+			// In the case of a level enum or an execution status, we will get the colours from the colourUtils
 			setColors: function (finalConf, legends) {
 
 				var colors = this.model.get('colours');
 
 				if (colors.length === 0 && this.isFixedList()) {
-					colors = colorUtils.getAssociatedColors(legends);
+					colors = colourUtils.getAssociatedColours(legends);
 				}
 
 				if (colors.length > 0) {

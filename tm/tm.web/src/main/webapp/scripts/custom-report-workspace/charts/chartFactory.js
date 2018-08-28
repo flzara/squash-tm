@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(["backbone", "./chart-render-utils", "./customReportPieView", "./customReportBarView",
-		"./customReportLineView", "./customReportCumulativeView", "./customReportComparativeView", "./customReportTrendView", "squash.translator", "../utils"],
-	function (Backbone, renderUtils, PieView, BarView, LineView, CumulativeView, ComparativeView, TrendView, translator, chartUtils) {
+		"./customReportLineView", "./customReportCumulativeView", "./customReportComparativeView", "./customReportTrendView", "squash.translator", "../utils","../../colour-utils"],
+	function (Backbone, renderUtils, PieView, BarView, LineView, CumulativeView, ComparativeView, TrendView, translator, chartUtils, colourUtils) {
 
 		/**
 		 * Generate a bar chart. Other type of graph have the same kind of arguments and behavior
@@ -410,8 +410,15 @@ define(["backbone", "./chart-render-utils", "./customReportPieView", "./customRe
 			// the sake of consistency
 		}
 
+		function completeColour(json) {
+			if (json.colours &&(json.colours.includes("") || json.colours.includes(null))) {
+				json.colours = colourUtils.completeColourArray(json.colours)
+			}
+		}
+
 		function buildChart(viewID, jsonChart, vueConf) {
 			jsonChart = renderUtils.toChartInstance(jsonChart);
+			completeColour(jsonChart);
 			switch (jsonChart.type) {
 				case 'PIE' :
 					return generatePieChart(viewID, jsonChart, vueConf);
