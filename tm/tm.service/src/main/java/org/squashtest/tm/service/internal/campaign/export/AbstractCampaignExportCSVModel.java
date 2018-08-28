@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.campaign.export;
 
 import org.apache.commons.collections.map.MultiValueMap;
 import org.jooq.DSLContext;
+import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.TableField;
 import org.squashtest.tm.domain.campaign.Campaign;
@@ -37,6 +38,7 @@ import java.util.*;
 import static org.squashtest.tm.jooq.domain.Tables.*;
 import static org.squashtest.tm.jooq.domain.Tables.MILESTONE;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_SUITE;
+import static org.jooq.impl.DSL.groupConcat;
 
 /**
  * Abstract class for CampaignExportCSVModel. Mainly use to store JOOQ field shortcut...
@@ -209,7 +211,9 @@ public abstract class AbstractCampaignExportCSVModel implements WritableCampaign
 	 * @param entityIdList the {@link Collection} of entity Id whom CUF value are desired
 	 */
 	void populateCUFModelAndCufValues(String entityType, Collection<CustomFieldDto> cufModel, MultiValueMap cufValues, Collection<Long> entityIdList) {
-		DSL.select(CUSTOM_FIELD_VALUE.CFV_ID, CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID, CUSTOM_FIELD_VALUE.CF_ID, CUSTOM_FIELD_VALUE.VALUE, CUSTOM_FIELD_VALUE.LARGE_VALUE,
+
+		Field<String> tagLabels = DSL.select(groupConcat(CUSTOM_FIELD_VALUE_OPTION.LABEL, " | ")).from(CUSTOM_FIELD_VALUE_OPTION).where(CUSTOM_FIELD_VALUE_OPTION.CFV_ID.eq(CUSTOM_FIELD_VALUE.CFV_ID)).orderBy(CUSTOM_FIELD_VALUE_OPTION.POSITION).asField("tag_labels");
+		DSL.select(CUSTOM_FIELD_VALUE.CFV_ID, CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID, CUSTOM_FIELD_VALUE.CF_ID, CUSTOM_FIELD_VALUE.VALUE, CUSTOM_FIELD_VALUE.LARGE_VALUE, tagLabels,
 			CUSTOM_FIELD.CODE, CUSTOM_FIELD.INPUT_TYPE)
 			.from(CUSTOM_FIELD_VALUE)
 			.innerJoin(CUSTOM_FIELD_BINDING).on(CUSTOM_FIELD_BINDING.CFB_ID.eq(CUSTOM_FIELD_VALUE.CFB_ID))
@@ -225,7 +229,8 @@ public abstract class AbstractCampaignExportCSVModel implements WritableCampaign
 	}
 
 	void populateCampCUFModelAndCampCUFValues() {
-		DSL.select(CUSTOM_FIELD_VALUE.CFV_ID, CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID, CUSTOM_FIELD_VALUE.CF_ID, CUSTOM_FIELD_VALUE.VALUE, CUSTOM_FIELD_VALUE.LARGE_VALUE,
+		Field<String> tagLabels = DSL.select(groupConcat(CUSTOM_FIELD_VALUE_OPTION.LABEL, " | ")).from(CUSTOM_FIELD_VALUE_OPTION).where(CUSTOM_FIELD_VALUE_OPTION.CFV_ID.eq(CUSTOM_FIELD_VALUE.CFV_ID)).orderBy(CUSTOM_FIELD_VALUE_OPTION.POSITION).asField("tag_labels");
+		DSL.select(CUSTOM_FIELD_VALUE.CFV_ID, CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID, CUSTOM_FIELD_VALUE.CF_ID, CUSTOM_FIELD_VALUE.VALUE, CUSTOM_FIELD_VALUE.LARGE_VALUE, tagLabels,
 			CUSTOM_FIELD.CODE, CUSTOM_FIELD.INPUT_TYPE)
 			.from(CUSTOM_FIELD_VALUE)
 			.innerJoin(CUSTOM_FIELD_BINDING).on(CUSTOM_FIELD_BINDING.CFB_ID.eq(CUSTOM_FIELD_VALUE.CFB_ID))
@@ -241,11 +246,14 @@ public abstract class AbstractCampaignExportCSVModel implements WritableCampaign
 	}
 
 	private CustomFieldValueDto createCUFValueDto(Record r){
+		Field<String> tagLabels = DSL.select(groupConcat(CUSTOM_FIELD_VALUE_OPTION.LABEL, " | ")).from(CUSTOM_FIELD_VALUE_OPTION).where(CUSTOM_FIELD_VALUE_OPTION.CFV_ID.eq(CUSTOM_FIELD_VALUE.CFV_ID)).orderBy(CUSTOM_FIELD_VALUE_OPTION.POSITION).asField("tag_labels");
 		CustomFieldValueDto newCFVDto;
 		if(r.get(CUSTOM_FIELD_VALUE.VALUE) != null){
 			newCFVDto = new CustomFieldValueDto(r.get(CUSTOM_FIELD_VALUE.CFV_ID), r.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID), r.get(CUSTOM_FIELD_VALUE.CF_ID), r.get(CUSTOM_FIELD_VALUE.VALUE));
 		} else if(r.get(CUSTOM_FIELD_VALUE.LARGE_VALUE) != null) {
 			newCFVDto = new CustomFieldValueDto(r.get(CUSTOM_FIELD_VALUE.CFV_ID), r.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID), r.get(CUSTOM_FIELD_VALUE.CF_ID), r.get(CUSTOM_FIELD_VALUE.LARGE_VALUE));
+		} else if(r.get(tagLabels) != null) {
+			newCFVDto = new CustomFieldValueDto(r.get(CUSTOM_FIELD_VALUE.CFV_ID), r.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID), r.get(CUSTOM_FIELD_VALUE.CF_ID), r.get(tagLabels));
 		} else {
 			newCFVDto = new CustomFieldValueDto(r.get(CUSTOM_FIELD_VALUE.CFV_ID), r.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID), r.get(CUSTOM_FIELD_VALUE.CF_ID));
 		}
