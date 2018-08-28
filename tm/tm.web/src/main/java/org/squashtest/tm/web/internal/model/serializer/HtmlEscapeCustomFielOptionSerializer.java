@@ -34,9 +34,9 @@ public class HtmlEscapeCustomFielOptionSerializer extends JsonSerializer<CustomF
 	@Override
 	public void serialize(CustomFieldModelFactory.CustomFieldOptionModel option, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
 
-		String label = HtmlUtils.htmlUnescape(option.getLabel());
+		String label = HTMLCleanupUtils.cleanAndUnescapeHTML(option.getLabel());
 		option.setLabel(HTMLCleanupUtils.stripJavascript(label));
-		String code =  HtmlUtils.htmlUnescape(option.getCode());
+		String code =  HTMLCleanupUtils.cleanAndUnescapeHTML(option.getCode());
 		option.setCode(HTMLCleanupUtils.stripJavascript(code));
 		jsonGenerator.writeObject(option);
 	}
