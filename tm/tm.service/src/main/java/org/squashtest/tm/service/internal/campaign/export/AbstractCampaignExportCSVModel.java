@@ -212,7 +212,8 @@ public abstract class AbstractCampaignExportCSVModel implements WritableCampaign
 	 */
 	void populateCUFModelAndCufValues(String entityType, Collection<CustomFieldDto> cufModel, MultiValueMap cufValues, Collection<Long> entityIdList) {
 
-		Field<String> tagLabels = DSL.select(groupConcat(CUSTOM_FIELD_VALUE_OPTION.LABEL, " | ")).from(CUSTOM_FIELD_VALUE_OPTION).where(CUSTOM_FIELD_VALUE_OPTION.CFV_ID.eq(CUSTOM_FIELD_VALUE.CFV_ID)).orderBy(CUSTOM_FIELD_VALUE_OPTION.POSITION).asField("tag_labels");
+		Field<String> tagLabels = DSL.select(groupConcat(CUSTOM_FIELD_VALUE_OPTION.LABEL, " | ")).from(CUSTOM_FIELD_VALUE_OPTION).where(CUSTOM_FIELD_VALUE_OPTION.CFV_ID.eq(CUSTOM_FIELD_VALUE.CFV_ID)).asField("tag_labels");
+
 		DSL.select(CUSTOM_FIELD_VALUE.CFV_ID, CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID, CUSTOM_FIELD_VALUE.CF_ID, CUSTOM_FIELD_VALUE.VALUE, CUSTOM_FIELD_VALUE.LARGE_VALUE, tagLabels,
 			CUSTOM_FIELD.CODE, CUSTOM_FIELD.INPUT_TYPE)
 			.from(CUSTOM_FIELD_VALUE)
@@ -229,7 +230,8 @@ public abstract class AbstractCampaignExportCSVModel implements WritableCampaign
 	}
 
 	void populateCampCUFModelAndCampCUFValues() {
-		Field<String> tagLabels = DSL.select(groupConcat(CUSTOM_FIELD_VALUE_OPTION.LABEL, " | ")).from(CUSTOM_FIELD_VALUE_OPTION).where(CUSTOM_FIELD_VALUE_OPTION.CFV_ID.eq(CUSTOM_FIELD_VALUE.CFV_ID)).orderBy(CUSTOM_FIELD_VALUE_OPTION.POSITION).asField("tag_labels");
+		Field<String> tagLabels = DSL.select(groupConcat(CUSTOM_FIELD_VALUE_OPTION.LABEL, " | ")).from(CUSTOM_FIELD_VALUE_OPTION).where(CUSTOM_FIELD_VALUE_OPTION.CFV_ID.eq(CUSTOM_FIELD_VALUE.CFV_ID)).asField("tag_labels");
+
 		DSL.select(CUSTOM_FIELD_VALUE.CFV_ID, CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID, CUSTOM_FIELD_VALUE.CF_ID, CUSTOM_FIELD_VALUE.VALUE, CUSTOM_FIELD_VALUE.LARGE_VALUE, tagLabels,
 			CUSTOM_FIELD.CODE, CUSTOM_FIELD.INPUT_TYPE)
 			.from(CUSTOM_FIELD_VALUE)
@@ -246,7 +248,9 @@ public abstract class AbstractCampaignExportCSVModel implements WritableCampaign
 	}
 
 	private CustomFieldValueDto createCUFValueDto(Record r){
-		Field<String> tagLabels = DSL.select(groupConcat(CUSTOM_FIELD_VALUE_OPTION.LABEL, " | ")).from(CUSTOM_FIELD_VALUE_OPTION).where(CUSTOM_FIELD_VALUE_OPTION.CFV_ID.eq(CUSTOM_FIELD_VALUE.CFV_ID)).orderBy(CUSTOM_FIELD_VALUE_OPTION.POSITION).asField("tag_labels");
+
+		Field<String> tagLabels = DSL.select(groupConcat(CUSTOM_FIELD_VALUE_OPTION.LABEL, " | ")).from(CUSTOM_FIELD_VALUE_OPTION).where(CUSTOM_FIELD_VALUE_OPTION.CFV_ID.eq(CUSTOM_FIELD_VALUE.CFV_ID)).asField("tag_labels");
+
 		CustomFieldValueDto newCFVDto;
 		if(r.get(CUSTOM_FIELD_VALUE.VALUE) != null){
 			newCFVDto = new CustomFieldValueDto(r.get(CUSTOM_FIELD_VALUE.CFV_ID), r.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID), r.get(CUSTOM_FIELD_VALUE.CF_ID), r.get(CUSTOM_FIELD_VALUE.VALUE));
