@@ -157,10 +157,12 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 		CustomField customField = customFieldDao.getOne(customFieldId);
 		if (!optional) {
 			checkDefaultValueExists(customField);
-			if(customField.getInputType()!=DROPDOWN_LIST){
+			if (customField.getInputType() != DROPDOWN_LIST) {
 				addDefaultValueToCustomFields(customFieldId, customField.getDefaultValue());
-			}else{
-				addDefaultValueAndColourToCustomFields(customFieldId, customField.getDefaultValue(), customField.getDefaultColour());
+			} else {
+				SingleSelectField correspondingSSF = customFieldDao.findSingleSelectFieldById(customFieldId);
+				String defaultColour = correspondingSSF.findColourOf(correspondingSSF.getDefaultValue());
+				addDefaultValueAndColourToCustomFields(customFieldId, customField.getDefaultValue(), defaultColour);
 			}
 
 		}
@@ -224,6 +226,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 		SingleSelectField customField = customFieldDao.findSingleSelectFieldById(customFieldId);
 		customField.changeOptionColour(optionLabel, newColour);
 	}
+
 	/**
 	 * @see org.squashtest.tm.service.customfield.CustomCustomFieldManagerService#addOption(Long, CustomFieldOption)
 	 */

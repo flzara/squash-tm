@@ -69,10 +69,6 @@ public class NewCustomField extends CustomField {
 		CustomField res;
 		SingleSelectField ssf = new SingleSelectField();
 
-		if (!getDefaultColour().isEmpty()) {
-			ssf.setDefaultColour(getDefaultColour());
-		}
-
 		for (String[] option : options) {
 			String label = option[0];
 			String code = option[1];

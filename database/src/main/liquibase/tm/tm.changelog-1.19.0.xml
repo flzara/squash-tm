@@ -61,15 +61,6 @@
     </addColumn>
   </changeSet>
 
-  <changeSet id="tm-1.19.0-SQTM-400-custom-field" author="cholc">
-    <comment>Stores the default colour of the custom field, needed to create an entity with a default CUF of type list</comment>
-    <addColumn tableName="CUSTOM_FIELD">
-      <column name="DEFAULT_COLOUR" type="VARCHAR(7)">
-        <constraints nullable="true"/>
-      </column>
-    </addColumn>
-  </changeSet>
-
   <changeSet id="tm-1.19.0-SQTM-409-iteration-test-suite-remove-constraint" author="cholc">
     <comment>To drop an unique constraint, you need the constraint's name, which we don't have, so here we copy the column and delete the original</comment>
 

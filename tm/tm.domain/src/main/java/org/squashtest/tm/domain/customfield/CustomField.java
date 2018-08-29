@@ -84,9 +84,6 @@ public class CustomField implements Identified {
 	@Pattern(regexp = CODE_REGEXP, message = "{org.squashtest.tm.validation.constraint.onlyStdChars}")
 	protected String code = "";
 
-	@Size(max = 7)
-	private String defaultColour;
-
 	/**
 	 * For ORM purposes.
 	 */
@@ -171,14 +168,6 @@ public class CustomField implements Identified {
 
 	public void setCode(String code) {
 		this.code = code;
-	}
-
-	public String getDefaultColour() {
-		return defaultColour;
-	}
-
-	public void setDefaultColour(String defaultColour) {
-		this.defaultColour = defaultColour;
 	}
 
 	public void accept(CustomFieldVisitor visitor) {

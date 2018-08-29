@@ -233,18 +233,6 @@ public class CustomFieldController {
 		return defaultValue;
 	}
 
-
-	@RequestMapping(value = "/{customFieldId}/defaultOption", method = RequestMethod.POST, params = {JEditablePostParams.VALUE, "colour"})
-	@ResponseBody
-	public String changeDefaultOption(@PathVariable long customFieldId,
-	                                  @RequestParam(JEditablePostParams.VALUE) String defaultValue,
-	                                  @RequestParam("colour") String defaultColour) {
-		customFieldManager.changeDefaultValue(customFieldId, defaultValue);
-		customFieldManager.changeDefaultColour(customFieldId, defaultColour);
-		return defaultValue;
-	}
-
-
 	/**
 	 * Changes the label of the concerned custom-field's option
 	 *

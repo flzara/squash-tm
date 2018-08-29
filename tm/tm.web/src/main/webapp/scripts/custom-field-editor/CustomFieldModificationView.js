@@ -169,16 +169,12 @@ define(["jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 					return;
 				}
 				var uncheckSelector = ".is-default>input:checkbox" + (checkbox.checked ? "[value!='" + option + "']" : "");
-				var row = $(checkbox).parents("tr")[0];
-				var colour = this.optionsTable.fnGetData(row)['opt-colour'];
-				var defaultColour = checkbox.checked ? colour : "";
 
 				$.ajax({
-					url: cfMod.customFieldUrl + "/defaultOption",
+					url: cfMod.customFieldUrl + "/defaultValue",
 					type: 'POST',
 					data: {
-						'value': defaultValue,
-						'colour': defaultColour
+						'value': defaultValue
 					}
 				}).done(function () {
 					self.optionsTable.find(uncheckSelector).attr("checked", false);
