@@ -480,7 +480,7 @@ public class RequirementVersionModificationController {
 		identity.put("restype", "requirements");
 		identity.put("resid", version.getRequirement().getId().toString());
 
-		String rootPath = "/requirement-versions/" + requirementVersionId.toString();
+		String rootPath = "requirement-versions/" + requirementVersionId.toString();
 
 		Boolean editable = permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "LINK", version);
 

@@ -556,7 +556,7 @@ public class TestCaseModificationController {
 		identity.put("restype", "test-cases");
 		identity.put("resid", testCaseId.toString());
 
-		String rootPath = "/test-cases/" + testCaseId.toString();
+		String rootPath = "test-cases/" + testCaseId.toString();
 
 		Boolean editable = permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "LINK", tc);
 

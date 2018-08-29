@@ -519,7 +519,7 @@ public class CampaignModificationController {
 		identity.put("restype", "campaigns");
 		identity.put("resid", campaignId.toString());
 
-		String rootPath = "/campaigns/" + campaignId.toString();
+		String rootPath = "campaigns/" + campaignId.toString();
 
 		Boolean editable = permissionService.hasRole("ROLE_ADMIN") || permissionService.hasRole("ROLE_TM_PROJECT_MANAGER");
 
