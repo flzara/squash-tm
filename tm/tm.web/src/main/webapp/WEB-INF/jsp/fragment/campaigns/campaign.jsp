@@ -285,8 +285,7 @@
       </comp:toggle-panel>
 
 
-      <div id="iteration-planning-popup" class="popup-dialog not-displayed" title="${iterationPlanningTitle}"
-        data-def="dateformat=${dateformat}, campaignId=${campaign.id}">
+      <div id="iteration-planning-popup" class="popup-dialog not-displayed" title="${iterationPlanningTitle}" data-def="dateformat=${dateformat}, campaignId=${campaign.id}">
 
         <div data-def="state=edit">
           <table class="iteration-planning-content" class="unstyled-table">

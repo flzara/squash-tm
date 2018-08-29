@@ -273,9 +273,7 @@
 						<c:if test="${ ! adminproject.template }">
 						<div class="display-table-row"	id="project-bugtracker-project-name-row"
 								<c:if test="${ !adminproject.project.bugtrackerConnected }">style="display:none"</c:if>>
-							<label for="project-bugtracker-project-name"
-									class="display-table-cell" style="vertical-align: middle";
-									>
+							<label for="project-bugtracker-project-name" class="display-table-cell" style="vertical-align: middle">
 								<f:message key="project.bugtracker.project.name.label" />
 							</label>
 

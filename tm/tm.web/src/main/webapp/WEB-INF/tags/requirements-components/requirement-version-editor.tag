@@ -424,8 +424,7 @@
 	<c:if test="${ writable }">
 
 		<f:message var="renameDialogTitle" key="dialog.rename-requirement.title"/>
-		<div id="rename-requirement-dialog" class="not-displayed popup-dialog"
-			 title="${renameDialogTitle}">
+		<div id="rename-requirement-dialog" class="not-displayed popup-dialog" title="${renameDialogTitle}">
 
 			<c:if test="${milestoneConf.showMultipleBindingMessage}">
 				<div data-milestones="${milestoneConf.totalMilestones}"

@@ -38,7 +38,7 @@
 
 
 
-<div id="delete-attachment-dialog" title="${deleteDialogTitle}"class="not-displayed">
+<div id="delete-attachment-dialog" title="${deleteDialogTitle}" class="not-displayed">
 	<span style="font-weight:bold"><f:message key="message.ConfirmRemoveAttachments" /></span>
 	<div class="popup-dialog-buttonpane">
 		<input type="button" value="${confirmLabel}"/>
