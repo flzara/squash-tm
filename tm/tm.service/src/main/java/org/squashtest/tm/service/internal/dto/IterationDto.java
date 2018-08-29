@@ -23,7 +23,7 @@ package org.squashtest.tm.service.internal.dto;
 import java.util.*;
 
 public class IterationDto {
-	private Long id;
+	private Long id = -1L;
 	private String name="";
 	private Date scheduledStartDate;
 	private Date scheduledEndDate;

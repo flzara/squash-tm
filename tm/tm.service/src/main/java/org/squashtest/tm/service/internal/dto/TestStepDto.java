@@ -25,9 +25,9 @@ import java.util.Set;
 
 public class TestStepDto {
 
-	private Long id;
+	private Long id = -1L;
 
-	private Integer stepOrder;
+	private Integer stepOrder = -1;
 
 	private Long calledTestCaseId = -1L;
 

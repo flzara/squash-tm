@@ -23,7 +23,7 @@ package org.squashtest.tm.service.internal.dto;
 import java.util.*;
 
 public class ITPIDto {
-	private Long id;
+	private Long id = -1L;
 	private String status="";
 	private String userName="";
 	private Date lastExecutedOn;

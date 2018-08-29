@@ -23,7 +23,7 @@ package org.squashtest.tm.service.internal.dto;
 import java.util.*;
 
 public class TestCaseDto {
-	private Long id;
+	private Long id = -1L;
 	private String reference="";
 	private String name="";
 	private String importance="";
@@ -31,7 +31,7 @@ public class TestCaseDto {
 	private String type="";
 	private String status="";
 	private Set<Long> requirementSet = new HashSet<>();
-	private Long projectId;
+	private Long projectId = -1L;
 	private String projectName = "";
 	private Set<String> milestoneSet = new HashSet<>();
 	private String description = "";
