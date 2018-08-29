@@ -25,13 +25,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ExecutionStepDto {
-	private Long id;
+	private Long id = -1L;
 	private String status="";
 	private Integer stepOrder;
 	private String lastExecutedBy = "";
 	private Date lastExecutedOn;
 	private String comment = "";
-	private Long testStepId;
+	private Long testStepId = -1L;
 	private Set<Long> requirementSet = new HashSet<>();
 	private Set<Long> issueSet = new HashSet<>();
 
