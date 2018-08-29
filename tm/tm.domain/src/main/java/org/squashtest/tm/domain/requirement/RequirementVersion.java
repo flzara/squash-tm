@@ -143,6 +143,8 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	@ManyToMany
 	@JoinTable(name = "MILESTONE_REQ_VERSION", joinColumns = @JoinColumn(name = "REQ_VERSION_ID"), inverseJoinColumns = @JoinColumn(name = "MILESTONE_ID"))
+	@Field(analyze = Analyze.NO, store = Store.YES, bridge = @FieldBridge(impl = CollectionSizeBridge.class))
+	@SortableField
 	private Set<Milestone> milestones = new HashSet<>();
 
 	@Transient

@@ -26,6 +26,8 @@ import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.Indexed;
 import javax.validation.constraints.NotBlank;
+
+import org.hibernate.search.annotations.SortableField;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.audit.Auditable;
@@ -57,6 +59,7 @@ public class Milestone implements Identified {
 	@Column(name = MILESTONE_ID)
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "milestone_milestone_id_seq")
 	@SequenceGenerator(name = "milestone_milestone_id_seq", sequenceName = "milestone_milestone_id_seq", allocationSize = 1)
+	@SortableField
 	private Long id;
 
 	@Lob
