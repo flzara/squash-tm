@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.campaign.export.CampaignExportCSVModel;
-import org.squashtest.tm.domain.testcase.*;
 import org.squashtest.tm.service.internal.dto.*;
 
 import java.text.SimpleDateFormat;
@@ -45,6 +44,8 @@ import static org.squashtest.tm.jooq.domain.Tables.*;
  * - using hibernate cursors to maintain the size of the cache to an acceptable level, - iterate over the execution
  * steps directly instead of the clumsy iterator mechanics, - The datacells should return data only when requested -
  * fetch the number of issues for itp and test steps more efficiently !!
+ *
+ * edit aguilhem 29/08/2018: optimization done, using jooq request instead of hibernate. Probably some more optimization can be made...
  */
 @Component
 @Scope("prototype")
