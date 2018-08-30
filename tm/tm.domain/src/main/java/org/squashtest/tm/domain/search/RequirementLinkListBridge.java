@@ -60,7 +60,7 @@ public class RequirementLinkListBridge extends SessionFieldBridge {
 				map.put(type.getRole2Code(), padRawValue(BigInteger.valueOf(0)));
 			}
 		}
-		List<Object> linkCount = session.createNativeQuery("SELECT case requirement_version_link.LINK_DIRECTION when true then requirement_version_link_type.role_1_code else requirement_version_link_type.role_2_code end as relationRole , SUM(CASE WHEN requirement_version_link.REQUIREMENT_VERSION_ID =:id THEN 1 ELSE 0 END) as count FROM requirement_version_link requirement_version_link, requirement_version_link_type requirement_version_link_type WHERE requirement_version_link.link_type_id = requirement_version_link_type.type_id group by relationRole;")
+		List<Object> linkCount = session.createNativeQuery("SELECT case REQUIREMENT_VERSION_LINK.LINK_DIRECTION when true then REQUIREMENT_VERSION_LINK_TYPE.role_1_code else REQUIREMENT_VERSION_LINK_TYPE.role_2_code end as relationRole , SUM(CASE WHEN REQUIREMENT_VERSION_LINK.REQUIREMENT_VERSION_ID =:id THEN 1 ELSE 0 END) as count FROM REQUIREMENT_VERSION_LINK, REQUIREMENT_VERSION_LINK_TYPE WHERE REQUIREMENT_VERSION_LINK.link_type_id = REQUIREMENT_VERSION_LINK_TYPE.type_id group by relationRole;")
 			.setReadOnly(true)
 			.setParameter("id", r.getId())
 			.list();
