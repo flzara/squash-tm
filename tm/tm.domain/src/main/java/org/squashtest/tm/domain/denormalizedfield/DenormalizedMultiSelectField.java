@@ -35,11 +35,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OrderColumn;
 
 import org.apache.commons.lang3.StringUtils;
-import org.squashtest.tm.domain.customfield.CustomFieldOption;
-import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.domain.customfield.CustomFieldValueOption;
-import org.squashtest.tm.domain.customfield.MultiSelectField;
-import org.squashtest.tm.domain.customfield.RawValue;
+import org.squashtest.tm.domain.customfield.*;
 
 @Entity
 @DiscriminatorValue("MFV")
@@ -48,7 +44,7 @@ public class DenormalizedMultiSelectField extends DenormalizedFieldValue {
 	@ElementCollection
 	@CollectionTable(name = "DENORMALIZED_FIELD_OPTION", joinColumns = @JoinColumn(name = "DFV_ID"))
 	@OrderColumn(name = "POSITION")
-	private Set<CustomFieldOption> options = new HashSet<>();
+	private Set<DenormalizedCustomFieldOption> options = new HashSet<>();
 
 	@ElementCollection
 	@CollectionTable(name = "DENORMALIZED_FIELD_VALUE_OPTION", joinColumns = @JoinColumn(name = "DFV_ID"))
@@ -94,7 +90,7 @@ public class DenormalizedMultiSelectField extends DenormalizedFieldValue {
 		}
 	}
 
-	public Set<CustomFieldOption> getOptions() {
+	public Set<DenormalizedCustomFieldOption> getOptions() {
 		return Collections.unmodifiableSet(options);
 	}
 

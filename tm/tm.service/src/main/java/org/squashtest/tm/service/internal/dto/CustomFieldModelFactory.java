@@ -251,7 +251,7 @@ public class CustomFieldModelFactory {
 		MultiSelectFieldModel model = new MultiSelectFieldModel();
 		populateCustomFieldModel(model, field);
 
-		for (CustomFieldOption option : field.getOptions()){
+		for (DenormalizedCustomFieldOption option : field.getOptions()){
 			CustomFieldOptionModel newOption = new CustomFieldOptionModel();
 			newOption.setLabel(option.getLabel());
 			newOption.setCode(option.getCode());
