@@ -72,7 +72,7 @@ public class DenormalizedSingleSelectField extends DenormalizedFieldValue {
 	 * @param option : the new option
 	 */
 	// made 'final' because it's used in the constructor (and SONAR complained about that)
-	public final void addOption(CustomFieldOption option) {
+	public final void addOption(DenormalizedCustomFieldOption option) {
 		checkLabelAvailable(option.getLabel());
 		checkCodeAvailable(option.getCode());
 		// TODO fix [Task 1682] and remove this line
