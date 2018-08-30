@@ -29,6 +29,7 @@ import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
 import org.squashtest.tm.service.internal.helper.HyphenedStringHelper;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import javax.inject.Provider;
 import java.util.List;
@@ -70,7 +71,7 @@ public class DriveNodeBuilder<LN extends LibraryNode> extends
 		node.setTitle(HtmlUtils.htmlEscape(model.getProject().getName()));
 		node.addAttr("name", model.getClassSimpleName());
 		node.addAttr("id", model.getClassSimpleName() + '-' + model.getId());
-		node.addAttr("title", HtmlUtils.htmlEscape(model.getProject().getLabel()));
+		node.addAttr("title", HTMLCleanupUtils.escapeOrDefault(model.getProject().getLabel(), ""));
 		node.addAttr("project", model.getProject().getId());
 		node.addAttr("wizards", model.getEnabledPlugins());
 
