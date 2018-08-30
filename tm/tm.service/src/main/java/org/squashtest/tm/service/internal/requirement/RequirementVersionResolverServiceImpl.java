@@ -32,7 +32,7 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.requirement.RequirementVersionResolverService;
 
-
+@Transactional
 @Service("squashtest.tm.service.RequirementVersionResolverService")
 public class RequirementVersionResolverServiceImpl implements RequirementVersionResolverService{
 

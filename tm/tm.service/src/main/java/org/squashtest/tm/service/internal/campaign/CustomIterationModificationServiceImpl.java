@@ -427,6 +427,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Override
 	@PreAuthorize(READ_ITERATION_OR_ROLE_ADMIN)
+	@Transactional(readOnly=true)
 	public Collection<Milestone> findAllMilestones(long iterationId) {
 		return milestoneService.findMilestonesForIteration(iterationId);
 	}

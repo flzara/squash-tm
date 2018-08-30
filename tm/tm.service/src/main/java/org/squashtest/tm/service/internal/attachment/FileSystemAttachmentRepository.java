@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentContent;
 import org.squashtest.tm.service.attachment.RawAttachment;
@@ -44,6 +45,7 @@ import java.util.List;
 
 @Component("fileSystemAttachmentRepository")
 @ConditionalOnProperty(name = "squashtm.feature.file.repository", havingValue = "true")
+@Transactional
 public class FileSystemAttachmentRepository implements AttachmentRepository {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemAttachmentRepository.class);

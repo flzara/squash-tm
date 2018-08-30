@@ -34,7 +34,6 @@ import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.project.Project;
 
-@Transactional(readOnly = true)
 public interface CampaignFinder {
 
 	@PostAuthorize("hasPermission(returnObject,'READ')"+ OR_HAS_ROLE_ADMIN)

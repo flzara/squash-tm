@@ -52,6 +52,5 @@ public interface IterationFinder {
 
 	/* ********************** milestones section ******************* */
 
-	@Transactional(readOnly=true)
 	Collection<Milestone> findAllMilestones(long iterationId);
 }

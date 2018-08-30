@@ -22,7 +22,6 @@ package org.squashtest.tm.service.user;
 
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.users.Team;
 
 /**
@@ -30,7 +29,6 @@ import org.squashtest.tm.domain.users.Team;
  * @author mpagnon
  *
  */
-@Transactional(readOnly = true)
 public interface TeamFinderService extends CustomTeamFinderService {
 	
 	List<Team> findAll();

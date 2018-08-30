@@ -25,11 +25,9 @@ import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 
 
-@Transactional(readOnly = true)
 public interface BugTrackerFinderService {
 
 	/**

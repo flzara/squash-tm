@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.user;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -46,6 +47,7 @@ import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 
 @Service("CustomTeamModificationService")
 @PreAuthorize(HAS_ROLE_ADMIN)
+@Transactional
 public class CustomTeamModificationServiceImpl implements CustomTeamModificationService {
 
 	@Inject

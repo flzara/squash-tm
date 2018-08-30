@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.attachment;
 
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentContent;
 import org.squashtest.tm.service.attachment.RawAttachment;
@@ -30,7 +29,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-@Transactional
 public interface AttachmentRepository {
 
 	AttachmentContent createContent(RawAttachment rawAttachment, long attachmentListId) throws IOException;

@@ -37,7 +37,6 @@ import org.squashtest.tm.service.annotation.PreventConcurrent;
  * 
  * @author François Gaillard
  */
-@Transactional
 public interface TestSuiteTestPlanManagerService {
 
 	/**
@@ -45,7 +44,6 @@ public interface TestSuiteTestPlanManagerService {
 	 * 
 	 * @param testSuiteId
 	 */
-	@Transactional(readOnly = true)
 	TestSuite findTestSuite(long testSuiteId);
 	
 
@@ -56,7 +54,6 @@ public interface TestSuiteTestPlanManagerService {
 	 * @param suiteId
 	 * @return the test plan of given iteration filtered by the current user
 	 */
-	@Transactional(readOnly = true)
 	PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findAssignedTestPlan(long suiteId, PagingAndMultiSorting sorting, ColumnFiltering filtering);
 	
 	
@@ -133,13 +130,10 @@ public interface TestSuiteTestPlanManagerService {
 	 */
 	void unbindTestPlanToMultipleSuites(List<Long> unboundTestSuiteIds, List<Long> itpIds);
 
-	@PreventConcurrent(entityType=TestSuite.class,paramName="suiteId")
 	void addTestCasesToIterationAndTestSuite(List<Long> testCaseIds, @Id long suiteId);
 
-	@PreventConcurrent(entityType=TestSuite.class,paramName="suiteId")
 	void detachTestPlanFromTestSuite(List<Long> testPlanIds, @Id long suiteId);
 
-	@PreventConcurrent(entityType=TestSuite.class,paramName="suiteId")
 	boolean detachTestPlanFromTestSuiteAndRemoveFromIteration(List<Long> testPlanIds, @Id long suiteId);
 
 	/**
@@ -147,7 +141,6 @@ public interface TestSuiteTestPlanManagerService {
 	 * @param suiteId : the id of the concerned TestSuite
 	 * @return the distinct ids of the TestCases referenced in the suite's test plan.
 	 */
-	@Transactional(readOnly = true)
 	List<Long> findPlannedTestCasesIds(Long suiteId);
 
 

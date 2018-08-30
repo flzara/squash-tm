@@ -49,6 +49,7 @@ import java.util.Set;
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
 
+@Transactional
 @Service("squashtest.tm.service.BugTrackerManagerService")
 public class BugTrackerManagerServiceImpl implements BugTrackerManagerService, BugTrackerSystemManager {
 

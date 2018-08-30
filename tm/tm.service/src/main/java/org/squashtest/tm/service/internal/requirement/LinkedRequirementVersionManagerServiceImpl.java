@@ -76,6 +76,7 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 
 	@Override
 	@PreAuthorize(READ_REQVERSION_OR_ROLE_ADMIN)
+	@Transactional(readOnly = true)
 	public PagedCollectionHolder<List<LinkedRequirementVersion>>
 	findAllByRequirementVersion(long requirementVersionId, PagingAndSorting pagingAndSorting) {
 

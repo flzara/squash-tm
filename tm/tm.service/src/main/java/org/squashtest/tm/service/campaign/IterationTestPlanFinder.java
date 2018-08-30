@@ -30,8 +30,6 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.users.User;
 
-//@Transactional(readOnly = true)
-@Transactional
 public interface IterationTestPlanFinder {
 
 

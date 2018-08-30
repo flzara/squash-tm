@@ -74,6 +74,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 
 
 	@Override
+	@Transactional(readOnly = true)
 	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'READ') "
 		+ OR_HAS_ROLE_ADMIN)
 	public TestSuite findTestSuite(long testSuiteId) {
@@ -131,6 +132,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	 * @see TestSuiteTestPlanManagerService# findAssignedTestPlan(long, PagingAndMultiSorting)
 	 **/
 	@Override
+	@Transactional(readOnly = true)
 	public PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findAssignedTestPlan(long testSuiteId,
 																						  PagingAndMultiSorting sorting, ColumnFiltering columnFiltering) {
 
@@ -214,6 +216,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	@PreAuthorize(HAS_LINK_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestSuite.class, paramName = "suiteId")
 	public boolean detachTestPlanFromTestSuiteAndRemoveFromIteration(List<Long> testPlanIds, @Id long suiteId) {

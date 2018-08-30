@@ -27,7 +27,6 @@ import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 
-@Transactional
 public interface ParameterModificationService extends ParameterFinder{
 
 	/**

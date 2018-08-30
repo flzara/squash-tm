@@ -54,7 +54,6 @@ public interface LinkedRequirementVersionManagerService {
 	 *
 	 * @return A {@link PagedCollectionHolder} corresponding to the given {@link PagingAndSorting}, containing all the {@link LinkedRequirementVersion}
 	 */
-	@Transactional(readOnly = true)
 	PagedCollectionHolder<List<LinkedRequirementVersion>> findAllByRequirementVersion(
 		long requirementVersionId, PagingAndSorting pagingAndSorting);
 

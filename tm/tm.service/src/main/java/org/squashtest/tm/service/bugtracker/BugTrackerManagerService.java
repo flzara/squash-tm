@@ -22,11 +22,9 @@ package org.squashtest.tm.service.bugtracker;
 
 import java.util.Collection;
 
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.exception.DuplicateNameException;
 
-@Transactional
 public interface BugTrackerManagerService extends BugTrackerFinderService {
 
 	/**

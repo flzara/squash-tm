@@ -97,7 +97,6 @@ public interface CustomRequirementVersionManagerService {
 	 * @param pas
 	 * @return
 	 */
-	@Transactional(readOnly = true)
 	Page<RequirementVersion> findAllByRequirement(long requirementId, @NotNull Pageable pas);
 
 	/**
@@ -105,10 +104,8 @@ public interface CustomRequirementVersionManagerService {
 	 * @param id
 	 * @return
 	 */
-	@Transactional(readOnly=true)
 	List<RequirementVersion> findAllByRequirement(long requirementId);
 
-	@Transactional(readOnly=true)
 	Long findReqVersionIdByRequirementAndVersionNumber(long requirementId, Integer versionNumber);
 
 	RequirementVersion findByRequirementIdAndVersionNumber(long requirementId, int versionNumber);
@@ -123,10 +120,8 @@ public interface CustomRequirementVersionManagerService {
 
 	void unbindMilestones(long versionId, Collection<Long> milestoneIds);
 
-	@Transactional(readOnly=true)
 	Collection<Milestone> findAssociableMilestones(long versionId);
 
-	@Transactional(readOnly=true)
 	Collection<Milestone> findAllMilestones(long versionId);
 
 	Collection<Milestone> findAssociableMilestonesForMassModif(List<Long> reqVersionIds);

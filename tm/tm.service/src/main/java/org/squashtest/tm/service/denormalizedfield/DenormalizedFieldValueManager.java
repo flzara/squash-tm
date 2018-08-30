@@ -35,7 +35,6 @@ import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
  * @author mpagnon
  *
  */
-@Transactional
 public interface DenormalizedFieldValueManager {
 
 	/**

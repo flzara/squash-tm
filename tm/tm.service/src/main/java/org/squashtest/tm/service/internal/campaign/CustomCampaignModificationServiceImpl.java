@@ -49,8 +49,8 @@ import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 import org.squashtest.tm.service.statistics.campaign.ManyCampaignStatisticsBundle;
 
-@Service("CustomCampaignModificationService")
 @Transactional
+@Service("CustomCampaignModificationService")
 public class CustomCampaignModificationServiceImpl implements CustomCampaignModificationService {
 
 	private static final String READ_CAMPAIGN_OR_ADMIN = "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ')" + OR_HAS_ROLE_ADMIN;

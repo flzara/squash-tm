@@ -24,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.tm.domain.event.RequirementLargePropertyChange;
 import org.squashtest.tm.service.audit.RequirementAuditTrailService;
@@ -38,6 +39,7 @@ import javax.persistence.PersistenceContext;
  *
  */
 @Service("squashtest.tm.service.audit.RequirementAuditTrailService")
+@Transactional(readOnly = true)
 public class RequirementAuditTrailServiceImpl implements RequirementAuditTrailService {
 	@Inject
 	private RequirementAuditEventDao auditEventDao;

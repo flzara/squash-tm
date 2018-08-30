@@ -180,6 +180,7 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public PagedCollectionHolder<List<TestCase>> findAllByRequirementVersion(long requirementVersionId,
 			PagingAndSorting pagingAndSorting) {
 		List<TestCase> verifiers = testCaseDao.findAllByVerifiedRequirementVersion(requirementVersionId,
@@ -191,6 +192,7 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<TestCase> findAllByRequirementVersion(long requirementVersionId) {
 
 		DefaultPagingAndSorting pas = new DefaultPagingAndSorting( "Project.name", true);

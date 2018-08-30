@@ -221,6 +221,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 
 	@Override
 	@PreAuthorize(READ_REQUIREMENT_OR_ROLE_ADMIN)
+	@Transactional(readOnly=true)
 	public List<RequirementVersion> findAllByRequirement(long requirementId) {
 		Pageable pageable = new PageRequest(0, Integer.MAX_VALUE, Sort.Direction.DESC, "versionNumber");
 		return findAllByRequirement(requirementId, pageable).getContent();
@@ -427,6 +428,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public Long findReqVersionIdByRequirementAndVersionNumber(
 		long requirementId, Integer versionNumber) {
 		RequirementVersion requirementVersion = requirementVersionDao.findByRequirementIdAndVersionNumber(requirementId, versionNumber);

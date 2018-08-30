@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.report;
 import org.hibernate.Session;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.report.ReportDefinition;
@@ -35,6 +36,7 @@ import javax.persistence.PersistenceContext;
 
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
+@Transactional
 @Service("squashtest.tm.service.ReportModificationService")
 public class ReportModificationServiceImpl implements ReportModificationService{
 

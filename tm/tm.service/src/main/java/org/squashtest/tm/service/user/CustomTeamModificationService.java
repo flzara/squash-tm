@@ -22,7 +22,6 @@ package org.squashtest.tm.service.user;
 
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 
@@ -31,7 +30,7 @@ import org.squashtest.tm.exception.NameAlreadyInUseException;
  * @author mpagnon
  *
  */
-@Transactional
+
 public interface CustomTeamModificationService extends CustomTeamFinderService{
 	
 	/**

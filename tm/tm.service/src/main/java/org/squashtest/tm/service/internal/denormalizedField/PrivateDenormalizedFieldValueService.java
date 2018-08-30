@@ -36,7 +36,6 @@ import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager
  * @author mpagnon
  *
  */
-@Transactional
 public interface PrivateDenormalizedFieldValueService extends DenormalizedFieldValueManager {
 
 	

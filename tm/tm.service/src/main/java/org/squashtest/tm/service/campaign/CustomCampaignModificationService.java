@@ -32,7 +32,6 @@ import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 import org.squashtest.tm.service.statistics.campaign.ManyCampaignStatisticsBundle;
 
-@Transactional
 public interface CustomCampaignModificationService {
 
 	void rename(long campaignId, String newName);

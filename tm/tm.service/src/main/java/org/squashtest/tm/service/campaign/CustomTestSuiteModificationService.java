@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.campaign;
 
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
@@ -32,7 +31,6 @@ import java.util.List;
  * Test-Suite modification services which cannot be dynamically generated.
  *
  */
-@Transactional
 public interface CustomTestSuiteModificationService extends TestSuiteFinder{
 
 	/**

@@ -26,6 +26,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.customfield.*;
@@ -53,6 +54,7 @@ import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
  * @author mpagnon
  *
  */
+@Transactional
 @Service("CustomCustomFieldManagerService")
 public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldManagerService {
 
@@ -83,6 +85,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	 * @see org.squashtest.tm.service.customfield.CustomCustomFieldManagerService#deleteCustomField(long)
 	 */
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deleteCustomField(long customFieldId) {
 		CustomField customField = customFieldDao.getOne(customFieldId);
 		/* TODO: Wow */
@@ -101,6 +104,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	 * @see org.squashtest.tm.service.customfield.CustomCustomFieldManagerService#deleteCustomField(long)
 	 */
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deleteCustomField(List<Long> customFieldIds) {
 		for (Long id : customFieldIds) {
 			deleteCustomField(id);
@@ -137,6 +141,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	 * @see org.squashtest.tm.service.customfield.CustomCustomFieldManagerService#changeName(long, String)
 	 */
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void changeName(long customFieldId, String newName) {
 		String trimedNewName = newName.trim();
 		CustomField customField = customFieldDao.getOne(customFieldId);
@@ -153,6 +158,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	 * @see org.squashtest.tm.service.customfield.CustomCustomFieldManagerService#changeOptional(Long, Boolean)
 	 */
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void changeOptional(Long customFieldId, Boolean optional) {
 		CustomField customField = customFieldDao.getOne(customFieldId);
 		if (!optional) {
@@ -206,6 +212,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	 *      String)
 	 */
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void changeOptionLabel(Long customFieldId, String optionLabel, String newLabel) {
 		SingleSelectField customField = customFieldDao.findSingleSelectFieldById(customFieldId);
 		customField.changeOptionLabel(optionLabel, newLabel);
@@ -216,12 +223,14 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	 *      String)
 	 */
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void changeOptionCode(long customFieldId, String optionLabel, String newCode) {
 		SingleSelectField customField = customFieldDao.findSingleSelectFieldById(customFieldId);
 		customField.changeOptionCode(optionLabel, newCode);
 	}
 
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void changeOptionColour(long customFieldId, String optionLabel, String newColour) {
 		SingleSelectField customField = customFieldDao.findSingleSelectFieldById(customFieldId);
 		customField.changeOptionColour(optionLabel, newColour);
@@ -231,6 +240,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	 * @see org.squashtest.tm.service.customfield.CustomCustomFieldManagerService#addOption(Long, CustomFieldOption)
 	 */
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void addOption(Long customFieldId, CustomFieldOption option) {
 		SingleSelectField customField = customFieldDao.findSingleSelectFieldById(customFieldId);
 		customField.addOption(option);
@@ -249,6 +259,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	 * @see org.squashtest.tm.service.customfield.CustomCustomFieldManagerService#removeOption(long, String)
 	 */
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void removeOption(long customFieldId, String optionLabel) {
 		SingleSelectField customField = customFieldDao.findSingleSelectFieldById(customFieldId);
 		customField.removeOption(optionLabel);
@@ -259,6 +270,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	 *      List)
 	 */
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void changeOptionsPositions(long customFieldId, int newIndex, List<String> optionsLabels) {
 		SingleSelectField customField = customFieldDao.findSingleSelectFieldById(customFieldId);
 		customField.moveOptions(newIndex, optionsLabels);
@@ -268,6 +280,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	 * @see org.squashtest.tm.service.customfield.CustomCustomFieldManagerService#changeCode(long, String)
 	 */
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void changeCode(long customFieldId, String code) {
 		CustomField field = customFieldDao.getOne(customFieldId);
 		checkDuplicateCode(field, code);

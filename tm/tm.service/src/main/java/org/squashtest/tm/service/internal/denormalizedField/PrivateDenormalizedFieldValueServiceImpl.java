@@ -31,6 +31,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.customfield.*;
 import org.squashtest.tm.domain.denormalizedfield.*;
 import org.squashtest.tm.domain.execution.Execution;
@@ -45,6 +46,7 @@ import org.squashtest.tm.service.internal.repository.ExecutionDao;
  * @author mpagnon
  *
  */
+@Transactional
 @Service("squashtest.tm.service.DenormalizedFieldValueManager")
 public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormalizedFieldValueService {
 	@Inject

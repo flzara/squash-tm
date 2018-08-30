@@ -62,7 +62,6 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 * as many time with a different dataset.
 	 * {@link Id} annotation is used by {@link PreventConcurrent}, {@link BatchPreventConcurrent} and {@link PreventConcurrents} in sub classes
 	 */
-	@PreventConcurrent(entityType=Iteration.class,paramName= ITERATION_ID)
 	void addTestCasesToIteration(List<Long> testCaseIds,@Id long iterationId);
 
 	/**
@@ -73,7 +72,6 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 * @param iterationId
 	 */
 
-	@PreventConcurrent(entityType=Iteration.class,paramName= ITERATION_ID)
 	void addTestCaseToIteration(Long testCaseId, Long datasetId, @Id long iterationId);
 
 	/**
@@ -91,7 +89,6 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 * @param iterationTestPlanIds
 	 * @param iterationId
 	 */
-	@PreventConcurrent(entityType=Iteration.class,paramName= ITERATION_ID)
 	void copyTestPlanItems(List<Long> iterationTestPlanIds, @Id long iterationId);
 
 	void changeTestPlanPosition(long iterationId, int newPosition, List<Long> itemIds);
@@ -108,7 +105,6 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 *            the id of the iteration
 	 * @return true if at least one test plan item was not deleted (because of insufficient rights on executed item)
 	 */
-	@PreventConcurrent(entityType=Iteration.class,paramName= ITERATION_ID)
 	boolean removeTestPlansFromIteration(List<Long> testPlanIds,@Id long iterationId);
 
 	/**
@@ -163,7 +159,6 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 * @param testPlan
 	 * @param iterationId
 	 */
-	@PreventConcurrent(entityType=Iteration.class,paramName= ITERATION_ID)
 	void addTestPlanToIteration(List<IterationTestPlanItem> testPlan,@Id long iterationId);
 
 	/**

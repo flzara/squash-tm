@@ -29,7 +29,6 @@ import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 
-@Transactional
 public interface AttachmentManagerService extends AttachmentFinderService {
 	/**
 	 * @param attachmentListId

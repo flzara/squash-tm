@@ -23,7 +23,6 @@ package org.squashtest.tm.service.report;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.report.ReportDefinition;
 
-@Transactional
 public interface ReportModificationService {
 
 	ReportDefinition findById (long id);

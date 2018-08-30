@@ -20,21 +20,16 @@
  */
 package org.squashtest.tm.service.user;
 
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.transaction.annotation.Transactional;
+
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.domain.users.Team;
-import org.squashtest.tm.service.security.Authorizations;
-
-import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 
 /**
  * Dynamically generated methods for {@link Team} modification.
  * @author mpagnon
  *
  */
-@Transactional
-@PreAuthorize(HAS_ROLE_ADMIN)
+
 @DynamicManager(name = "squashtest.tm.service.TeamModificationService", entity = Team.class)
 public interface TeamModificationService extends CustomTeamModificationService, TeamFinderService {
 

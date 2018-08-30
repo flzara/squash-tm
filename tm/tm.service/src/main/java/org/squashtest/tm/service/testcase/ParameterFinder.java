@@ -30,7 +30,6 @@ import org.squashtest.tm.domain.testcase.Parameter;
  * @author flaurens, mpagnon
  *
  */
-@Transactional(readOnly = true)
 public interface ParameterFinder {
 
 

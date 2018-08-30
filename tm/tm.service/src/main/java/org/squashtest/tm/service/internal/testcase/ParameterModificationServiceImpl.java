@@ -27,6 +27,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
@@ -36,6 +37,7 @@ import org.squashtest.tm.service.internal.repository.TestStepDao;
 import org.squashtest.tm.service.testcase.DatasetModificationService;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
 
+@Transactional
 @Service("squashtest.tm.service.ParameterModificationService")
 public class ParameterModificationServiceImpl implements ParameterModificationService {
 
@@ -58,6 +60,7 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	 *
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public List<Parameter> findOwnParameters(long testCaseId) {
 		return parameterDao.findOwnParametersByTestCase(testCaseId);
 	}

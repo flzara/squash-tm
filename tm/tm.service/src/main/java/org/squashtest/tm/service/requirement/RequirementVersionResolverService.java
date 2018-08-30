@@ -23,7 +23,6 @@ package org.squashtest.tm.service.requirement;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 
-@Transactional
 public interface RequirementVersionResolverService {
 
 	/**

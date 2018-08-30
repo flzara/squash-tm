@@ -49,6 +49,7 @@ import java.util.List;
 
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
+@Transactional
 @Service("CustomTestSuiteModificationService")
 public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteModificationService {
 
@@ -99,6 +100,7 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 
 
 	@Override
+	@Transactional(readOnly = true)
 	@PreAuthorize(HAS_READ_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
 	public TestSuite findById(long suiteId) {
 		return testSuiteDao.getOne(suiteId);

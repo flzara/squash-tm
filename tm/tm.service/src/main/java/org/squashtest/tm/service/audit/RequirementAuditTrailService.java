@@ -33,7 +33,6 @@ import org.squashtest.tm.domain.event.RequirementLargePropertyChange;
  * @author Gregory Fouquet
  * 
  */
-@Transactional(readOnly = true)
 public interface RequirementAuditTrailService {
 	RequirementLargePropertyChange findLargePropertyChangeById(long eventId);
 	
