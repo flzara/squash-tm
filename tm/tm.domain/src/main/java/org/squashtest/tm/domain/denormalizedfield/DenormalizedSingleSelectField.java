@@ -20,10 +20,7 @@
  */
 package org.squashtest.tm.domain.denormalizedfield;
 
-import org.squashtest.tm.domain.customfield.CustomField;
-import org.squashtest.tm.domain.customfield.CustomFieldOption;
-import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.domain.customfield.SingleSelectField;
+import org.squashtest.tm.domain.customfield.*;
 import org.squashtest.tm.exception.WrongStringSizeException;
 import org.squashtest.tm.exception.customfield.CodeAlreadyExistsException;
 import org.squashtest.tm.exception.customfield.CodeDoesNotMatchesPatternException;
@@ -49,7 +46,7 @@ public class DenormalizedSingleSelectField extends DenormalizedFieldValue {
 	@CollectionTable(name = "DENORMALIZED_FIELD_OPTION", joinColumns = @JoinColumn(name = "DFV_ID"))
 	@OrderColumn(name = "POSITION")
 	@Valid
-	private List<CustomFieldOption> options = new ArrayList<>();
+	private List<DenormalizedCustomFieldOption> options = new ArrayList<>();
 
 	/**
 	 * Created a SingleSelectField with a
@@ -59,7 +56,7 @@ public class DenormalizedSingleSelectField extends DenormalizedFieldValue {
 	}
 
 	public DenormalizedSingleSelectField(CustomFieldValue customFieldValue, Long denormalizedFieldHolderId,
-										 DenormalizedFieldHolderType denormalizedFieldHolderType) {
+	                                     DenormalizedFieldHolderType denormalizedFieldHolderType) {
 		super(customFieldValue, denormalizedFieldHolderId, denormalizedFieldHolderType);
 		SingleSelectField singleSelectField = (SingleSelectField) customFieldValue.getCustomField();
 		for (CustomFieldOption option : singleSelectField.getOptions()) {
@@ -72,8 +69,7 @@ public class DenormalizedSingleSelectField extends DenormalizedFieldValue {
 	 * Will check if label and the code are available among the existing options. If so, will add the new option at the
 	 * end of the list. Else will throw a NameAlreadyInUseException or CodeAlreadyExistsException.
 	 *
-	 * @param option
-	 *            : the new option
+	 * @param option : the new option
 	 */
 	// made 'final' because it's used in the constructor (and SONAR complained about that)
 	public final void addOption(CustomFieldOption option) {
@@ -121,7 +117,7 @@ public class DenormalizedSingleSelectField extends DenormalizedFieldValue {
 
 	private int findIndexOfCode(String newCode) {
 
-		for (CustomFieldOption option : options) {
+		for (DenormalizedCustomFieldOption option : options) {
 			if (newCode.equals(option.getCode())) {
 				return options.indexOf(option);
 			}
@@ -131,7 +127,7 @@ public class DenormalizedSingleSelectField extends DenormalizedFieldValue {
 
 	private int findIndexOfLabel(String previousLabel) {
 
-		for (CustomFieldOption option : options) {
+		for (DenormalizedCustomFieldOption option : options) {
 			if (previousLabel.equals(option.getLabel())) {
 				return options.indexOf(option);
 			}
@@ -139,7 +135,7 @@ public class DenormalizedSingleSelectField extends DenormalizedFieldValue {
 		return -1;
 	}
 
-	public List<CustomFieldOption> getOptions() {
+	public List<DenormalizedCustomFieldOption> getOptions() {
 		return Collections.unmodifiableList(options);
 	}
 

@@ -33,11 +33,7 @@ import javax.inject.Inject;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.customfield.CustomField;
-import org.squashtest.tm.domain.customfield.CustomFieldOption;
-import org.squashtest.tm.domain.customfield.InputType;
-import org.squashtest.tm.domain.customfield.MultiSelectField;
-import org.squashtest.tm.domain.customfield.SingleSelectField;
+import org.squashtest.tm.domain.customfield.*;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedMultiSelectField;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedSingleSelectField;
@@ -225,7 +221,7 @@ public class CustomFieldModelFactory {
 
 		populateCustomFieldModel(model, customField);
 
-		for (CustomFieldOption option : customField.getOptions()) {
+		for (DenormalizedCustomFieldOption option : customField.getOptions()) {
 			CustomFieldOptionModel newOption = new CustomFieldOptionModel();
 			newOption.setLabel(option.getLabel());
 			newOption.setCode(option.getCode());

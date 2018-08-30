@@ -20,12 +20,7 @@
  */
 package org.squashtest.tm.domain.customfield;
 
-import javax.validation.constraints.NotBlank;
-import org.springframework.util.DigestUtils;
-import org.squashtest.tm.domain.Sizes;
-
 import javax.persistence.Embeddable;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 /**
@@ -34,40 +29,22 @@ import javax.validation.constraints.Size;
  * @author Gregory Fouquet
  */
 @Embeddable
-public class CustomFieldOption {
-	@NotBlank
-	@Size(max = Sizes.LABEL_MAX)
-	private String label;
-
-	@NotBlank
-	@Size(max = 30)
-	//The message here is in resource bundle ValidationMessages in tm.service module
-	@Pattern(regexp = CustomField.CODE_REGEXP, message = "{org.squashtest.tm.validation.constraint.onlyStdChars}")
-	private String code = "";
+public class CustomFieldOption extends DenormalizedCustomFieldOption {
 
 	@Size(max = 7)
 	private String colour;
 
 	public CustomFieldOption(String label, String code) {
-		this.label = label;
-		this.code = code;
+		super(label, code);
 	}
 
 	public CustomFieldOption(String label, String code, String colour) {
-		this.label = label;
-		this.code = code;
+		super(label, code);
 		this.colour = colour;
 	}
 
 	public CustomFieldOption(String label) {
-
-		// when no code is supplied we need to create it.
-		// To do so we md5-hash it then truncate to 30 characters because we
-		// don't care anyway.
-		String generatedCode = DigestUtils.md5DigestAsHex(label.getBytes());
-
-		this.label = label;
-		this.code = generatedCode.substring(0, 30);
+		super(label);
 	}
 
 	/**
@@ -77,35 +54,6 @@ public class CustomFieldOption {
 		super();
 	}
 
-	/**
-	 * @return the label
-	 */
-	public String getLabel() {
-		return label;
-	}
-
-	public void setLabel(String label) {
-		this.label = label.trim();
-	}
-
-	/**
-	 * @return the code
-	 */
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 57; // NOSONAR : look somewhere else
-		int result = 53; // NOSONAR : look somewhere else
-		result = prime * result + (label == null ? 0 : label.hashCode());
-		return result;
-	}
 
 	public String getColour() {
 		return colour;
@@ -114,27 +62,5 @@ public class CustomFieldOption {
 	public void setColour(String colour) {
 		this.colour = colour;
 	}
-
-	@Override//NOSONAR code generation, assumed to be safe
-	public boolean equals(Object obj) { // GENERATED:START
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof CustomFieldOption)) {
-			return false;
-		}
-		CustomFieldOption other = (CustomFieldOption) obj;
-		if (label == null) {
-			if (other.label != null) {
-				return false;
-			}
-		} else if (!label.equals(other.label)) {
-			return false;
-		}
-		return true;
-	}// GENERATED:END
 
 }
