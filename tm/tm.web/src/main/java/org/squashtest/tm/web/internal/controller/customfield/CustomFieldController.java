@@ -50,6 +50,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -397,7 +398,7 @@ public class CustomFieldController {
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 			res.put("opt-label", HtmlUtils.htmlEscape(item.getLabel()));
 			res.put("opt-code", HtmlUtils.htmlEscape(item.getCode()));
-			res.put("opt-colour", HtmlUtils.htmlEscape(item.getColour()));
+			res.put("opt-colour", HTMLCleanupUtils.escapeOrDefault(item.getColour(), ""));
 			res.put("opt-default", "<input type='checkbox' name='default' value='" + HtmlUtils.htmlEscape(item.getLabel()) + "'" + checked
 				+ "/>");
 			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");

@@ -56,6 +56,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.service.internal.dto.json.JsonInfoListItem;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 // XSS OK
 @Controller
@@ -258,7 +259,7 @@ public class InfoListController {
 			data.put("label", HtmlUtils.htmlEscape(item.getLabel()));
 			data.put("code", HtmlUtils.htmlEscape(item.getCode()));
 			data.put("iconName", item.getIconName());
-			data.put("colour", HtmlUtils.htmlEscape(item.getColour()));
+			data.put("colour", HTMLCleanupUtils.escapeOrDefault(item.getColour(), ""));
 			data.put(DataTableModelConstants.DEFAULT_EMPTY_ICON_HOLDER_KEY, "");
 			data.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			return data;
