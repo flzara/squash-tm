@@ -22,43 +22,43 @@ define(['jquery', 'underscore'], function ($, _) {
 
 	var ColoursEnum = {
 		// RequirementStatus / TestCaseStatus
-		WORK_IN_PROGRESS: "#E9C63E",
-		UNDER_REVIEW: "#5BBAA8",
-		APPROVED: "#599949",
-		OBSOLETE: "#E0E0E0",
-		TO_BE_UPDATED: "#F38D2D",
+		WORK_IN_PROGRESS: "#C9E8AA",
+		UNDER_REVIEW: "#A3D86E",
+		APPROVED: "#56AD25",
+		OBSOLETE: "#D9D9D9",
+		TO_BE_UPDATED: "#FFFF00",
 
 		// RequirementCriticality
-		MINOR: "#F9D667",
-		MAJOR: "#E66400",
-		CRITICAL: "#CC2C00",
-		UNDEFINED: "#E0E0E0",
+		MINOR: "#FBD329",
+		MAJOR: "#FDA627",
+		CRITICAL: "#FD7927",
+		UNDEFINED: "#FCEDB6",
 
 		// TestCaseExecutionMode
 		AUTOMATED: "#258123",
 		MANUAL: "#284BEE",
 
 		// TestCaseImportance
-		VERY_HIGH: "#CC2C00",
-		HIGH: "#E66400",
-		MEDIUM: "#FEA412",
-		LOW: "#F9D667",
+		VERY_HIGH: "#FD7927",
+		HIGH: "#FDA627",
+		MEDIUM: "#FBD329",
+		LOW: "#FCEDB6",
 
 		// CampaignStatus / IterationStatus
-		// UNDEFINED: "#c6c6c6",
+		// UNDEFINED: "#E0E0E0",
 		PLANNED: "#E9C63E",
 		IN_PROGRESS: "#5BBAA8",
 		FINISHED: "#599949",
 		ARCHIVED: "#F38D3D",
 
 		//ExecutionStatus
-		SETTLED: "#2F4233",
-		UNTESTABLE: "#F4F4DE",
-		BLOCKED: "#F2C830",
-		FAILURE: "#B22C2C",
-		SUCCESS: "#2D7243",
-		RUNNING: "#4288CE",
-		READY: "#BAB4B9"
+		SETTLED: "#99FF99",
+		UNTESTABLE: "#969696",
+		BLOCKED: "#FFCC00",
+		FAILURE: "#FF3300",
+		SUCCESS: "#99CC00",
+		RUNNING: "#6699FF",
+		READY: "#BDD3FF"
 		// WARNING: "#536dec",
 		// ERROR: "#536dec",
 		// NOT_RUN: "#536dec",
