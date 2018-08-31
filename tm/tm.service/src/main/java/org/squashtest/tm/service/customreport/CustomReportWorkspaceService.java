@@ -27,7 +27,6 @@ import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 
-@Transactional
 public interface CustomReportWorkspaceService {
 	/**
 	 * Returns all the CustomReportLibrary

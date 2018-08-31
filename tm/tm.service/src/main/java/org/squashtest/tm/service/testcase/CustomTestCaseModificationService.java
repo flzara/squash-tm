@@ -55,10 +55,8 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 
         void changeImportance(long testCaseId, TestCaseImportance importance);
 
-	@PreventConcurrent(entityType=TestCase.class)
 	ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep);
 
-	@PreventConcurrent(entityType=TestCase.class)
 	ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep, int index);
 
 	/**
@@ -70,7 +68,6 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 * @param testCase
 	 * @param customFieldValues
 	 */
-	@PreventConcurrent(entityType=TestCase.class)
 	ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep, Map<Long, RawValue> customFieldValues);
 
 	/**
@@ -83,7 +80,6 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 * @param customFieldValues
 	 * @param index
 	 */
-	@PreventConcurrent(entityType=TestCase.class)
 	ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep, Map<Long, RawValue> customFieldValues,int index);
 
 	void updateTestStepAction(long testStepId, String newAction);
@@ -94,7 +90,6 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 * @deprecated does not seem to be used any longer
 	 */
 	@Deprecated
-	@PreventConcurrent(entityType=TestCase.class)
 	void changeTestStepPosition(@Id long testCaseId, long testStepId, int newStepPosition);
 
 	/**
@@ -107,16 +102,12 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 * @param movedSteps
 	 *            the list of steps to move, sorted by rank among each others.
 	 */
-	@PreventConcurrent(entityType=TestCase.class)
 	void changeTestStepsPosition(@Id long testCaseId, int newPosition, List<Long> stepIds);
 
-	@PreventConcurrent(entityType=TestCase.class)
 	void removeStepFromTestCase(@Id long testCaseId, long testStepId);
 
-	@PreventConcurrent(entityType=TestCase.class)
 	void removeStepFromTestCaseByIndex(@Id long testCaseId, int stepIndex);
 
-	@PreventConcurrent(entityType=TestCase.class)
 	List<TestStep> removeListOfSteps(@Id long testCaseId, List<Long> testStepIds);
 
 	/**
@@ -133,7 +124,6 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 * @return true if the copied step is instance of CallStep, false otherwise
 	 *
 	 */
-	@PreventConcurrent(entityType=TestCase.class)
 	boolean pasteCopiedTestStep(@Id long testCaseId, long idInsertion, long copiedTestStepId);
 
 	/**
@@ -148,7 +138,6 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 * @return true if the copied step is instance of CallStep, false otherwise
 	 *
 	 */
-	@PreventConcurrent(entityType=TestCase.class)
 	boolean pasteCopiedTestStepToLastIndex(@Id long testCaseId, long copiedTestStepId);
 
 
@@ -160,7 +149,6 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 * @param copiedTestStepIds
 	 * @return
 	 */
-	@PreventConcurrent(entityType=TestCase.class)
 	boolean pasteCopiedTestSteps(@Id long testCaseId, long idInsertion, List<Long> copiedTestStepIds);
 
 
@@ -171,7 +159,6 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 * @param copiedTestStepIds
 	 * @return
 	 */
-	@PreventConcurrent(entityType=TestCase.class)
 	boolean pasteCopiedTestStepToLastIndex(@Id long testCaseId, List<Long> copiedTestStepIds);
 
 

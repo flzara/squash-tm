@@ -494,7 +494,8 @@ public class CampaignLibraryNavigationServiceImpl
 
 	@Override
 	@PreventConcurrents(simplesLocks = {
-		@PreventConcurrent(entityType = CampaignLibraryNode.class, paramName = DESTINATION_ID)}, batchsLocks = {
+		@PreventConcurrent(entityType = CampaignLibraryNode.class, paramName = DESTINATION_ID)},
+		batchsLocks = {
 		@BatchPreventConcurrent(entityType = CampaignLibrary.class, paramName = "sourceNodesIds", coercer = CampaignLibraryIdsCoercerForArray.class),
 		@BatchPreventConcurrent(entityType = CampaignLibraryNode.class, paramName = "sourceNodesIds", coercer = CLNAndParentIdsCoercerForArray.class)})
 	public List<CampaignLibraryNode> copyNodesToFolder(@Id(DESTINATION_ID) long destinationId,

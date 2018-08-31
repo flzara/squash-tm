@@ -35,6 +35,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.infolist.InfoList;
@@ -45,6 +46,8 @@ import org.squashtest.tm.service.infolist.InfoListManagerService;
 import org.squashtest.tm.service.infolist.IsBoundInfoListAdapter;
 import org.squashtest.tm.service.internal.repository.InfoListDao;
 import org.squashtest.tm.service.internal.repository.InfoListItemDao;
+
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
 
 @Transactional
 @Service("squashtest.tm.service.InfoListManagerService")
@@ -69,6 +72,7 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 	}
 
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public void changeDescription(long infoListId, String newDescription) {
 		InfoList infoList = findById(infoListId);
 		SystemInfoListCode.verifyModificationPermission(infoList);
@@ -77,6 +81,7 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 	}
 
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public void changeLabel(long infoListId, String newLabel) {
 		InfoList infoList = findById(infoListId);
 		SystemInfoListCode.verifyModificationPermission(infoList);
@@ -85,6 +90,7 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 	}
 
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public void changeCode(long infoListId, String newCode) {
 		InfoList infoList = findById(infoListId);
 		checkDuplicateCode(infoList, newCode);
@@ -101,6 +107,7 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 	}
 
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public void changeItemsPositions(long infoListId, int newIndex, List<Long> itemsIds) {
 
 		InfoList infoList = findById(infoListId);
@@ -120,6 +127,7 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 	}
 
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public void remove(long infoListId) {
 
 		InfoList infoList = infoListDao.getOne(infoListId);
@@ -150,6 +158,7 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 	 * @see org.squashtest.tm.service.infolist.InfoListManagerService#remove(java.util.List)
 	 */
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public void remove(List<Long> ids) {
 		for (long id : ids) {
 			remove(id);
@@ -207,6 +216,7 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 	 * @see org.squashtest.tm.service.infolist.InfoListManagerService#persist(org.squashtest.tm.domain.infolist.InfoList)
 	 */
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public InfoList persist(InfoList infoList) {
 		infoListDao.save(infoList);
 

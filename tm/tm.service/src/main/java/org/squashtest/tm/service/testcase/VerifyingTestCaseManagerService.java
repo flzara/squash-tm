@@ -86,7 +86,6 @@ public interface VerifyingTestCaseManagerService {
 	 * @param pagingAndSorting
 	 * @return
 	 */
-	@Transactional(readOnly = true)
 	PagedCollectionHolder<List<TestCase>> findAllByRequirementVersion(long requirementId,
 			PagingAndSorting pagingAndSorting);
 
@@ -95,7 +94,6 @@ public interface VerifyingTestCaseManagerService {
 	 * @param requirementVersionId
 	 * @return
 	 */
-	@Transactional(readOnly = true)
 	List<TestCase> findAllByRequirementVersion(long requirementVersionId);
 
 }

@@ -29,21 +29,16 @@ import org.squashtest.tm.domain.infolist.InfoList;
 
 public interface InfoListManagerService extends InfoListFinderService {
 
-	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	void changeDescription(long infoListId, String newDescription);
 
-	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	void changeLabel(long infoListId, String newLabel);
 
-	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	void changeCode(long infoListId, String newCode);
 
-	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	void changeItemsPositions(long infoListId, int newIndex, List<Long> itemsIds);
 
 	boolean isUsedByOneOrMoreProject(long infoListId);
 
-	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	void remove(long infoListId);
 
 	/**
@@ -51,12 +46,10 @@ public interface InfoListManagerService extends InfoListFinderService {
 	 *
 	 * @param ids
 	 */
-	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	void remove(List<Long> ids);
 
 	/**
 	 * @param infoList
 	 */
-	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	InfoList persist(InfoList infoList);
 }

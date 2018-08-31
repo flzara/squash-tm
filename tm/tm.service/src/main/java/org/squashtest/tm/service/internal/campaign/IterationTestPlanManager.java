@@ -31,7 +31,6 @@ import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
  * @author Gregory Fouquet
  *
  */
-@Service
 public interface IterationTestPlanManager {
 
 	Execution addExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException;

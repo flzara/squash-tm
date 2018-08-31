@@ -31,15 +31,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * 
  */
 public interface DataTable10Model<T> {
-	@JsonProperty
+
 	long getDraw();
 
-	@JsonProperty
 	long getRecordsTotal();
 
-	@JsonProperty
 	long getRecordsFiltered();
 
-	@JsonProperty
 	List<T> getData();
 }

@@ -38,7 +38,6 @@ public interface AutomatedExecutionManagerService {
 	 *            id of the automated exec extender
 	 * @param stateChange
 	 */
-	@PreAuthorize("hasRole('ROLE_TA_API_CLIENT')")
 	void changeExecutionState(long id, @NotNull TestExecutionStatus stateChange);
 
 }

@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.requirement.RequirementVersionLink;
 import org.squashtest.tm.domain.requirement.RequirementVersionLinkType;
@@ -90,6 +91,7 @@ public class RequirementVersionLinkDaoImpl extends HibernateEntityDao<Requiremen
 	}
 
 	@Override
+	@Modifying
 	public void setLinksTypeToDefault(RequirementVersionLinkType linkTypeToReplace,
 									  RequirementVersionLinkType defaultLinkType) {
 		Query updateQuery = entityManager.createNamedQuery("RequirementVersionLink.setLinksTypeToDefault");
