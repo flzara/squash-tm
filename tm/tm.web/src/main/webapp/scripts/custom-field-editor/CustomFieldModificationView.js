@@ -193,7 +193,7 @@ define(["jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 					"#rename-cuf-option-previous").text(
 					previousValue);
 				self.renameCufOptionPopup.find(
-					"#rename-cuf-option-label").val(
+					"#rename-cuf-option-label").text(
 					previousValue);
 				self.renameCufOptionPopup.formDialog("open");
 			},
@@ -208,7 +208,7 @@ define(["jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 					"#change-cuf-option-code-label")
 					.text(label);
 				self.changeOptionCodePopup.find(
-					"#change-cuf-option-code").val(
+					"#change-cuf-option-code").text(
 					previousValue);
 				self.changeOptionCodePopup.formDialog("open");
 			},
@@ -683,8 +683,9 @@ define(["jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 
 				dialog.on('formdialogcancel', this.closePopup);
 
-				$("#rename-cuf-option-popup").on('click', function () {
-					dialog.formDialog('open');
+				dialog.on('formdialogopen', function (event, ui) {
+					var input = $("#rename-cuf-option-label");
+					input.val($.trim(input[0].textContent));
 				});
 			},
 
@@ -706,8 +707,9 @@ define(["jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 
 				dialog.on('formdialogcancel', this.closePopup);
 
-				$("#change-cuf-option-code-popup").on('click', function () {
-					dialog.formDialog('open');
+				dialog.on('formdialogopen', function (event, ui) {
+					var input = $("#change-cuf-option-code");
+					input.val($.trim(input[0].textContent));
 				});
 
 			}
