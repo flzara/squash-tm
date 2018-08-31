@@ -34,7 +34,9 @@ import javax.persistence.PersistenceContext;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneHolder;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
@@ -51,6 +53,10 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.UserContextService;
 import org.squashtest.tm.service.user.UserAccountService;
 
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.MILESTONE_FEAT_ENABLED;
+
+@Transactional
 @Service("CustomMilestoneManager")
 public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomMilestoneManagerServiceImpl.class);
@@ -77,6 +83,7 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 	private EntityManager em;
 
 	@Override
+	@PreAuthorize(MILESTONE_FEAT_ENABLED)
 	public void addMilestone(Milestone milestone) {
 		checkLabelAvailability(milestone.getLabel());
 		milestone.setOwner(userService.findCurrentUser());
@@ -84,6 +91,7 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 	}
 
 	@Override
+	@PreAuthorize(MILESTONE_FEAT_ENABLED)
 	public void changeLabel(long milestoneId, String newLabel) {
 		checkLabelAvailability(newLabel);
 		Milestone m = milestoneDao.getOne(milestoneId);
@@ -102,6 +110,7 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 	}
 
 	@Override
+	@PreAuthorize(MILESTONE_FEAT_ENABLED)
 	public void removeMilestones(Collection<Long> ids) {
 		for (final Long id : ids) {
 			Milestone milestone = milestoneDao.getOne(id);
@@ -123,11 +132,13 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Milestone findById(long milestoneId) {
 		return milestoneDao.getOne(milestoneId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Milestone> findAllByIds(List<Long> milestoneIds) {
 		return milestoneDao.findAllById(milestoneIds);
 	}
@@ -200,6 +211,7 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Milestone> findAllVisibleToCurrentUser() {
 
 		List<Long> milestoneIds = findAllIdsVisibleToCurrentUser();
@@ -208,6 +220,7 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Long> findAllIdsVisibleToCurrentUser() {
 		UserDto user = userService.findCurrentUserDto();
 		if (user.isAdmin()){
@@ -254,6 +267,7 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 	}
 
 	@Override
+	@PreAuthorize(MILESTONE_FEAT_ENABLED)
 	public void cloneMilestone(long motherId, Milestone milestone, boolean bindToRequirements, boolean bindToTestCases) {
 		Milestone mother = findById(motherId);
 		boolean copyAllPerimeter = permissionEvaluationService.hasRole(ADMIN_ROLE)
@@ -324,6 +338,7 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 	}
 
 	@Override
+	@PreAuthorize(MILESTONE_FEAT_ENABLED)
 	public void synchronize(long sourceId, long targetId, boolean extendPerimeter, boolean isUnion) {
 
 		Milestone source = findById(sourceId);
@@ -467,6 +482,7 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 	 * @see org.squashtest.tm.service.milestone.CustomMilestoneManager#enableFeature()
 	 */
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void enableFeature() {
 		// NOOP (AFAIK)
 
@@ -477,6 +493,7 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void disableFeature() {
 		LOGGER.info("Disabling the Milestones feature : I am about to nuke all milestones from database");
 
@@ -511,6 +528,7 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Milestone findByName(String name) {
 		return milestoneDao.findByName(name);
 	}

@@ -34,7 +34,6 @@ import org.squashtest.tm.service.servers.StoredCredentialsManager;
 
 public interface CustomBugTrackerModificationService {
 
-	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeName(long bugtrackerId, String newName);
 
 
@@ -47,7 +46,6 @@ public interface CustomBugTrackerModificationService {
 	 * @param bugtracker
 	 * @return
 	 */
-	@PreAuthorize(HAS_ROLE_ADMIN)
 	AuthenticationProtocol[] getSupportedProtocols(BugTracker bugtracker);
 
 
@@ -58,7 +56,6 @@ public interface CustomBugTrackerModificationService {
 	 * @param bugtrackerId
 	 * @param policy
 	 */
-	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeAuthenticationPolicy(long bugtrackerId, AuthenticationPolicy policy);
 
 
@@ -70,7 +67,6 @@ public interface CustomBugTrackerModificationService {
 	 * @param bugtrackerId
 	 * @param protocol
 	 */
-	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeAuthenticationProtocol(long bugtrackerId, AuthenticationProtocol protocol);
 
 	/**
@@ -80,7 +76,6 @@ public interface CustomBugTrackerModificationService {
 	 *
 	 * @return
 	 */
-	@PreAuthorize(HAS_ROLE_ADMIN)
 	boolean isCredentialsServiceAvailable();
 
 	/**
@@ -89,7 +84,6 @@ public interface CustomBugTrackerModificationService {
 	 * @param serverId
 	 * @param credentials
 	 */
-	@PreAuthorize(HAS_ROLE_ADMIN)
 	void storeCredentials(long serverId, ManageableCredentials credentials);
 
 
@@ -99,7 +93,6 @@ public interface CustomBugTrackerModificationService {
 	 * @param serverId
 	 * @param conf
 	 */
-	@PreAuthorize(HAS_ROLE_ADMIN)
 	void storeAuthConfiguration(long serverId, ServerAuthConfiguration conf);
 
 
@@ -109,7 +102,6 @@ public interface CustomBugTrackerModificationService {
 	 * @param serverId
 	 * @return
 	 */
-	@PreAuthorize(HAS_ROLE_ADMIN)
 	ManageableCredentials findCredentials(long serverId);
 
 	/**
@@ -118,7 +110,6 @@ public interface CustomBugTrackerModificationService {
 	 * @param serverId
 	 * @return
 	 */
-	@PreAuthorize(HAS_ROLE_ADMIN)
 	ServerAuthConfiguration findAuthConfiguration(long serverId);
 
 
@@ -132,7 +123,6 @@ public interface CustomBugTrackerModificationService {
 	 * @throws org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException if the credentials where rejected, or could not be built due to incomplete data
 	 * @return
 	 */
-	@PreAuthorize(HAS_ROLE_ADMIN)
 	void testCredentials(long bugtrackerId, ManageableCredentials credentials);
 
 
@@ -141,7 +131,6 @@ public interface CustomBugTrackerModificationService {
 	 * @see StoredCredentialsManager#deleteAppLevelCredentials(long)
 	 * @param serverId
 	 */
-	@PreAuthorize(HAS_ROLE_ADMIN)
 	void deleteCredentials(long serverId);
 
 
@@ -150,7 +139,6 @@ public interface CustomBugTrackerModificationService {
 	 * @see StoredCredentialsManager#deleteServerAuthConfiguration(long)
 	 * @param serverId
 	 */
-	@PreAuthorize(HAS_ROLE_ADMIN)
 	void deleteAuthConfiguration(long serverId);
 
 }

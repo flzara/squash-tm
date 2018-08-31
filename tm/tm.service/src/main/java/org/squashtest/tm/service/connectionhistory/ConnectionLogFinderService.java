@@ -29,7 +29,6 @@ import java.util.List;
  * {@link ConnectionLog} retrieval methods
  * @author aguilhem
  */
-@Transactional(readOnly = true)
 public interface ConnectionLogFinderService extends CustomConnectionLogFinderService {
 	List<ConnectionLog> findAll();
 }

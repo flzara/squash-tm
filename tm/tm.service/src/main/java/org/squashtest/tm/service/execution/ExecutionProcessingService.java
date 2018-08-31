@@ -51,7 +51,6 @@ public interface ExecutionProcessingService {
 	 * @param executionId
 	 * @return the first occurence of a running or ready ExecutionStep
 	 */
-	@Transactional(readOnly = true)
 	ExecutionStep findRunnableExecutionStep(long executionId) throws ExecutionHasNoStepsException;
 
 	List<ExecutionStep> getExecutionSteps(Long executionId);
@@ -64,7 +63,6 @@ public interface ExecutionProcessingService {
 	 * @param executionStepRank
 	 * @return
 	 */
-	@Transactional(readOnly = true)
 	ExecutionStep findStepAt(long executionId, int executionStepIndex);
 
 	/***

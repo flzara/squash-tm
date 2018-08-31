@@ -31,7 +31,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
@@ -45,6 +47,9 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.UserContextService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
+@Transactional
 @Service("squashtest.tm.service.MilestoneBindingManagerService")
 public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManagerService {
 
@@ -127,6 +132,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 	}
 
 	@Override
+	@PostFilter("hasPermission(filterObject , 'MANAGEMENT')" + OR_HAS_ROLE_ADMIN)
 	public List<GenericProject> getAllBindableProjectForMilestone(Long milestoneId) {
 
 		List<GenericProject> projectBoundToMilestone = getAllProjectForMilestone(milestoneId);

@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.execution;
 import org.springframework.data.domain.Example;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -67,11 +68,13 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 
 
 	@Override
+	@Transactional(readOnly = false)
 	public Execution findAndInitExecution(Long executionId) {
 		return executionDao.findAndInit(executionId);
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	@PreAuthorize(EXECUTE_EXECUTION_OR_ROLE_ADMIN)
 	public void setExecutionDescription(Long executionId, String description) {
 		Execution execution = executionDao.getOne(executionId);
@@ -79,16 +82,19 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<ExecutionStep> findExecutionSteps(long executionId) {
 		return executionDao.findSteps(executionId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public int findExecutionRank(Long executionId) {
 		return executionDao.findExecutionRank(executionId);
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	@PreAuthorize(EXECUTE_EXECSTEP_OR_ROLE_ADMIN)
 	public void setExecutionStepComment(Long executionStepId, String comment) {
 		ExecutionStep executionStep = executionStepDao.findById(executionStepId);
@@ -96,6 +102,7 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public PagedCollectionHolder<List<ExecutionStep>> findExecutionSteps(long executionId, Paging filter) {
 		List<ExecutionStep> list = executionDao.findStepsFiltered(executionId, filter);
 		long count = executionDao.countSteps(executionId);
@@ -104,11 +111,13 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 
 	@Override
 	@PreAuthorize(EXECUTE_EXECUTION_OR_ROLE_ADMIN)
+	@Transactional(readOnly = false)
 	public List<SuppressionPreviewReport> simulateExecutionDeletion(Long executionId) {
 		return deletionHandler.simulateExecutionDeletion(executionId);
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	@PreAuthorize("hasPermission(#execution, 'EXECUTE') " + OR_HAS_ROLE_ADMIN)
 	public void deleteExecution(Execution execution) {
 		TestCase testCase = execution.getReferencedTestCase();
@@ -119,21 +128,25 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Execution findById(long id) {
 		return executionDao.getOne(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public ExecutionStep findExecutionStepById(long id) {
 		return executionStepDao.findById(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Execution> findAllByTestCaseIdOrderByRunDate(long testCaseId, Paging paging) {
 		return executionDao.findAllByTestCaseIdOrderByRunDate(testCaseId, paging);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public PagedCollectionHolder<List<Execution>> findAllByTestCaseId(long testCaseId, PagingAndSorting pas) {
 		List<Execution> executions = executionDao.findAllByTestCaseId(testCaseId, pas);
 		long count = executionDao.countByTestCaseId(testCaseId);
@@ -141,6 +154,7 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public boolean exists(long id) {
 		// !!! since recent change in Spring Data, the former dao method #exists(ID) have been
 		// deleted, leaving us only with the query-by-example option. I'd rather load the entity outright.
@@ -148,6 +162,7 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	@PreAuthorize(EXECUTE_EXECUTION_OR_ROLE_ADMIN)
 	public void setExecutionStatus(Long executionId, ExecutionStatus status) {
 		Execution execution = executionDao.getOne(executionId);
@@ -156,6 +171,7 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public long updateSteps(long executionId) {
 		Execution execution = executionDao.getOne(executionId);
 		List<ExecutionStep> toBeUpdated = executionStepModifHelper.findStepsToUpdate(execution);

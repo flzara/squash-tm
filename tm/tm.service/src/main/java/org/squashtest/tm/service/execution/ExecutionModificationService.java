@@ -30,7 +30,6 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 
-@Transactional(readOnly = false)
 public interface ExecutionModificationService extends ExecutionFinder {
 
 	Execution findAndInitExecution(Long executionId);

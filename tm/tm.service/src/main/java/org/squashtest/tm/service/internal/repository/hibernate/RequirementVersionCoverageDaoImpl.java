@@ -30,6 +30,7 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.type.LongType;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
@@ -147,6 +148,7 @@ private int compareReqMilestoneDate(RequirementVersion req1, RequirementVersion 
 
 
 	@Override
+	@Transactional(readOnly=true)
 	public List<RequirementVersion> findDistinctRequirementVersionsByTestCases(Collection<Long> testCaseIds) {
 		PagingAndSorting pas = new DefaultPagingAndSorting("RequirementVersion.name", true);
 		return findDistinctRequirementVersionsByTestCases(testCaseIds, pas);

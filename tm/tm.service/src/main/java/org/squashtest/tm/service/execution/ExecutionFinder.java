@@ -29,7 +29,6 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 
-@Transactional(readOnly = true)
 public interface ExecutionFinder {
 	Execution findById(long id);
 

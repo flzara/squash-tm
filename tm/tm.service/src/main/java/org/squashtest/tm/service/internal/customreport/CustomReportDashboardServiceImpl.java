@@ -32,6 +32,7 @@ import javax.persistence.PersistenceContext;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
@@ -51,6 +52,7 @@ import org.squashtest.tm.service.internal.repository.CustomReportReportBindingDa
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.PartyPreferenceService;
 
+@Transactional
 @Service("org.squashtest.tm.service.customreport.CustomReportDashboardService")
 public class CustomReportDashboardServiceImpl implements
 		CustomReportDashboardService {

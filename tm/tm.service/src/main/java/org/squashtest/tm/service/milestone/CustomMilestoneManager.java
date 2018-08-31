@@ -32,18 +32,14 @@ import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneHolder;
 import org.squashtest.tm.domain.project.GenericProject;
 
-@Transactional
 public interface CustomMilestoneManager extends MilestoneFinderService {
 
-	@PreAuthorize(MILESTONE_FEAT_ENABLED)
 	void addMilestone(Milestone milestone);
 
-	@PreAuthorize(MILESTONE_FEAT_ENABLED)
 	void changeLabel(long milestoneId, String newLabel);
 
 	List<Milestone> findAll();
 
-	@PreAuthorize(MILESTONE_FEAT_ENABLED)
 	void removeMilestones(Collection<Long> ids);
 
 
@@ -86,10 +82,8 @@ public interface CustomMilestoneManager extends MilestoneFinderService {
 
 	boolean isBoundToATemplate(Long milestoneId);
 
-	@PreAuthorize(MILESTONE_FEAT_ENABLED)
 	void cloneMilestone(long motherId, Milestone milestone, boolean bindToRequirements, boolean bindToTestCases);
 
-	@PreAuthorize(MILESTONE_FEAT_ENABLED)
 	void synchronize(long sourceId, long targetId, boolean extendPerimeter, boolean isUnion);
 
 	/**
@@ -103,13 +97,11 @@ public interface CustomMilestoneManager extends MilestoneFinderService {
 	/**
 	 * performs necessary operation when this feature is enabled. Should *not* persist the feature's state.
 	 */
-	@PreAuthorize(HAS_ROLE_ADMIN)
 	void enableFeature();
 
 	/**
 	 * performs necessary operation when this feature is enabled. Should *not* persist the feature's state.
 	 */
-	@PreAuthorize(HAS_ROLE_ADMIN)
 	void disableFeature();
 
 	boolean isBoundToAtleastOneObject(long milestoneId);

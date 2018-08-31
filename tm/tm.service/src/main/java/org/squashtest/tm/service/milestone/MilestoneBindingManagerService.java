@@ -30,7 +30,6 @@ import org.squashtest.tm.domain.project.GenericProject;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 
-@Transactional
 public interface MilestoneBindingManagerService {
 
 	/**
@@ -76,7 +75,6 @@ public interface MilestoneBindingManagerService {
 	 * @param milestoneId the id of milestone
 	 * @return list of all bindable project for milestone
 	 */
-	@PostFilter("hasPermission(filterObject , 'MANAGEMENT')" + OR_HAS_ROLE_ADMIN)
 	List<GenericProject> getAllBindableProjectForMilestone(Long milestoneId);
 
 	/**

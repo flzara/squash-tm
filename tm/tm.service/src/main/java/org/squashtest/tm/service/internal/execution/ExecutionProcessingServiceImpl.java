@@ -82,6 +82,7 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public ExecutionStep findRunnableExecutionStep(long executionId) throws ExecutionHasNoStepsException {
 		Execution execution = executionDao.getOne(executionId);
 
@@ -96,6 +97,7 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public ExecutionStep findStepAt(long executionId, int executionStepIndex) {
 		Execution execution = executionDao.findAndInit(executionId);
 

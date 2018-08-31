@@ -53,7 +53,6 @@ public interface CustomRequirementVersionCoverageDao extends EntityDao<Requireme
 	 * @param testCaseIds : the ids of the verifying {@link TestCase}s
 	 * @return : a list of {@link RequirementVersion} representing all distinct requirements for the given test cases
 	 */
-	@Transactional(readOnly=true)
 	List<RequirementVersion> findDistinctRequirementVersionsByTestCases(Collection<Long> testCaseIds);
 
 

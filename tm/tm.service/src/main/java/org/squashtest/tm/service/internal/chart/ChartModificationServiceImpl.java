@@ -40,6 +40,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.Workspace;
@@ -59,6 +60,7 @@ import org.squashtest.tm.service.internal.repository.CustomChartDefinitionDao;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.project.ProjectFinder;
 
+@Transactional
 @Service("squashtest.tm.service.ChartModificationService")
 public class ChartModificationServiceImpl implements ChartModificationService {
 

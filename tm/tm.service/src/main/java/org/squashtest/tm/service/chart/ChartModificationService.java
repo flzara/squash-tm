@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.Workspace;
@@ -32,7 +31,6 @@ import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartInstance;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
 
-@Transactional
 public interface ChartModificationService {
 
 	void persist(ChartDefinition newChartDefinition);

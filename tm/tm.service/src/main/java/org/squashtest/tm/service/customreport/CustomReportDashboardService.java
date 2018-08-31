@@ -30,7 +30,6 @@ import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportReportBinding;
 
-@Transactional
 public interface CustomReportDashboardService {
 
 	/**

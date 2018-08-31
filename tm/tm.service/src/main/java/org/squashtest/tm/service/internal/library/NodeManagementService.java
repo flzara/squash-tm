@@ -33,7 +33,6 @@ public interface NodeManagementService<MANAGED extends LibraryNode, NODE extends
 	 * @param nodeId
 	 * @return
 	 */
-	@Transactional(readOnly = true)
 	MANAGED findNode(long nodeId);
 
 	/**

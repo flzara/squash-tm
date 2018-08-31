@@ -42,7 +42,9 @@ import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 public class ConnectionLogFinderServiceImpl implements ConnectionLogFinderService{
 	@Inject
 	ConnectionLogDao connectionLogDao;
+
 	@Override
+	@org.springframework.transaction.annotation.Transactional(readOnly = true)
 	public List<ConnectionLog> findAll() {
 		return connectionLogDao.findAll();
 	}

@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.bugtracker;
 
 import javax.inject.Inject;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
@@ -37,6 +38,8 @@ import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 import org.squashtest.tm.service.servers.ManageableCredentials;
 import org.squashtest.tm.service.servers.ServerAuthConfiguration;
 import org.squashtest.tm.service.servers.StoredCredentialsManager;
+
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 
 /**
  *
@@ -61,6 +64,7 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 
 
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void changeName(long bugtrackerId, String newName) {
 		String trimedNewName = newName.trim();
 		BugTracker bugTracker = bugTrackerDao.getOne(bugtrackerId);
@@ -78,30 +82,35 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 
 
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public boolean isCredentialsServiceAvailable() {
 		return credentialsManager.isSecretConfigured();
 	}
 
 
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void storeCredentials(long serverId, ManageableCredentials credentials) {
 		credentialsManager.storeAppLevelCredentials(serverId, credentials);
 	}
 
 
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public ManageableCredentials findCredentials(long serverId) {
 		return credentialsManager.findAppLevelCredentials(serverId);
 	}
 
 
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deleteCredentials(long serverId) {
 		credentialsManager.deleteAppLevelCredentials(serverId);
 	}
 
 
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public AuthenticationProtocol[] getSupportedProtocols(BugTracker bugtracker) {
 		InternalBugtrackerConnector connector = connectorFactory.createConnector(bugtracker);
 		return connector.getSupportedAuthProtocols();
@@ -109,6 +118,7 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 
 
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void changeAuthenticationPolicy(long bugtrackerId, AuthenticationPolicy policy) {
 		BugTracker tracker = bugTrackerDao.getOne(bugtrackerId);
 		tracker.setAuthenticationPolicy(policy);
@@ -116,6 +126,7 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 
 
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void changeAuthenticationProtocol(long bugtrackerId, AuthenticationProtocol protocol) {
 		BugTracker tracker = bugTrackerDao.getOne(bugtrackerId);
 		tracker.setAuthenticationProtocol(protocol);
@@ -126,6 +137,7 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 
 
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void testCredentials(long bugtrackerId, ManageableCredentials credentials) {
 
 		BugTracker bt = bugTrackerDao.getOne(bugtrackerId);
@@ -141,18 +153,21 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 
 
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void storeAuthConfiguration(long serverId, ServerAuthConfiguration conf) {
 		credentialsManager.storeServerAuthConfiguration(serverId, conf);
 	}
 
 
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public ServerAuthConfiguration findAuthConfiguration(long serverId) {
 		return credentialsManager.findServerAuthConfiguration(serverId);
 	}
 
 
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deleteAuthConfiguration(long serverId) {
 		credentialsManager.deleteServerAuthConfiguration(serverId);
 	}
