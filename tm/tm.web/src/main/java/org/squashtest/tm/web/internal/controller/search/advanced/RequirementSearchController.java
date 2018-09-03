@@ -20,12 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.search.advanced;
 
-import java.io.IOException;
-import java.util.*;
-
-import javax.inject.Inject;
-
-import java.util.Optional;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,7 +47,9 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.inject.Inject;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Created by jsimon on 04/05/2016.
@@ -87,44 +84,50 @@ public class RequirementSearchController extends GlobalSearchController {
 		.mapAttribute("requirement-modified-by", "lastModifiedBy", RequirementVersion.class);
 
 
-
 	@RequestMapping(value = RESULTS, params = REQUIREMENT)
 	public String getRequirementSearchResultPage(Model model, @RequestParam String searchModel,
-			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
+	                                             @RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
 
 		Optional<Milestone> activeMilestone = getActiveMilestoneHolder().getActiveMilestone();
-		initResultModel(model, searchModel, associateResultWithType, id, REQUIREMENT,activeMilestone);
+		initResultModel(model, searchModel, associateResultWithType, id, REQUIREMENT, activeMilestone);
 		return "requirement-search-result.html";
 	}
 
-
 	@RequestMapping(method = RequestMethod.GET, params = "searchDomain=requirement")
 	public String showRequirementSearchPage(Model model,
-										 @RequestParam(required = false, defaultValue = "") String associateResultWithType,
-										 @RequestParam(required = false, defaultValue = "") Long id, Locale locale) {
+	                                        @RequestParam(required = false, defaultValue = "") String associateResultWithType,
+	                                        @RequestParam(required = false, defaultValue = "") Long id, Locale locale) {
 
 		Optional<Milestone> activeMilestone = getActiveMilestoneHolder().getActiveMilestone();
-		initModel(model, associateResultWithType, id, locale, REQUIREMENT,activeMilestone);
-		return  "requirement-search-input.html";
+		initModel(model, associateResultWithType, id, locale, REQUIREMENT, activeMilestone);
+		return "requirement-search-input.html";
 	}
 
+	@RequestMapping(value = RESULTS, method = RequestMethod.POST, params = "searchDomain=requirement")
+	public String showRequirementSearchResultPageFilledWithParams(Model model,
+	                                                              @RequestParam String searchModel, @RequestParam(required = false) String associateResultWithType,
+	                                                              @RequestParam(required = false) Long id) {
+
+		model.addAttribute(SEARCH_MODEL, searchModel);
+		return getRequirementSearchResultPage(model, "", associateResultWithType, id);
+	}
 
 	@RequestMapping(method = RequestMethod.POST, params = "searchDomain=requirement")
 	public String showRequirementSearchPageFilledWithParams(Model model,
-														 @RequestParam String searchModel, @RequestParam(required = false) String associateResultWithType,
-														 @RequestParam(required = false) Long id, Locale locale) {
+	                                                        @RequestParam String searchModel, @RequestParam(required = false) String associateResultWithType,
+	                                                        @RequestParam(required = false) Long id, Locale locale) {
 
 		model.addAttribute(SEARCH_MODEL, searchModel);
 		return showRequirementSearchPage(model, associateResultWithType, id, locale);
 	}
 
 
-	@RequestMapping(value = TABLE, method = RequestMethod.POST, params = { RequestParams.MODEL, REQUIREMENT,
-		RequestParams.S_ECHO_PARAM })
+	@RequestMapping(value = TABLE, method = RequestMethod.POST, params = {RequestParams.MODEL, REQUIREMENT,
+		RequestParams.S_ECHO_PARAM})
 	@ResponseBody
 	public DataTableModel getRequirementTableModel(final DataTableDrawParameters params, final Locale locale,
-												   @RequestParam(value = RequestParams.MODEL) String model,
-												   @RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id)
+	                                               @RequestParam(value = RequestParams.MODEL) String model,
+	                                               @RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id)
 		throws IOException {
 
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);

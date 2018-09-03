@@ -21,9 +21,6 @@
 package org.squashtest.tm.web.internal.controller.search.advanced;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.Optional;
-
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -63,6 +60,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 /**
  * Created by jsimon on 04/05/2016.
@@ -120,6 +118,15 @@ public class CampaignSearchController extends GlobalSearchController {
 
 		model.addAttribute(SEARCH_MODEL, searchModel);
 		return showCampaignSearchPage(model, openedNodes, elementId, associateResultWithType, id, locale);
+	}
+
+	@RequestMapping(value = RESULTS, method = RequestMethod.POST, params = "searchDomain=campaign")
+	public String showCampaignResultSearchResultPageFilledWithParams(Model model,
+	                                                              @RequestParam String searchModel, @RequestParam(required = false) String associateResultWithType,
+	                                                              @RequestParam(required = false) Long id) {
+
+		model.addAttribute(SEARCH_MODEL, searchModel);
+		return getCampaignSearchResultPage(model, "", associateResultWithType, id);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, params = "searchDomain=campaign")

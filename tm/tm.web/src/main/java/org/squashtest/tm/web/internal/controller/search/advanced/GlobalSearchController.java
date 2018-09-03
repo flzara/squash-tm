@@ -51,46 +51,8 @@ import java.util.*;
 @RequestMapping("/advanced-search")
 public abstract class GlobalSearchController {
 
-	@Inject
-	private SearchInputInterfaceHelper searchInputInterfaceHelper;
-
-	@Inject
-	private InternationalizationHelper messageSource;
-
-	public InternationalizationHelper getMessageSource() {
-		return messageSource;
-	}
-
-	@Inject
-	private PermissionEvaluationService permissionService;
-
-	public PermissionEvaluationService getPermissionService() {
-		return permissionService;
-	}
-
-	@Inject
-	private ActiveMilestoneHolder activeMilestoneHolder;
-
-	public ActiveMilestoneHolder getActiveMilestoneHolder() {
-		return activeMilestoneHolder;
-	}
-
-	@Inject
-	private CampaignAdvancedSearchService campaignAdvancedSearchService;
-
-	@Inject
-	private UserAccountService userAccountService;
-
-	@Inject
-	private ProjectFinder projectFinder;
-
 	protected static final String PROJECTS_META = "projects";
 	protected static final Logger LOGGER = LoggerFactory.getLogger(GlobalSearchController.class);
-
-	protected interface FormModelBuilder {
-		SearchInputInterfaceModel build(Locale locale, boolean isMilestoneMode);
-	}
-
 	protected static final String NAME = "name";
 	protected static final String IDS = "ids[]";
 	protected static final String CAMPAIGN = "campaign";
@@ -101,8 +63,26 @@ public abstract class GlobalSearchController {
 	protected static final String TESTCASE_VIA_REQUIREMENT = "testcaseViaRequirement";
 	protected static final String RESULTS = "/results";
 	protected static final String TABLE = "/table";
-
 	protected Map<String, FormModelBuilder> formModelBuilder = new HashMap<>();
+
+	@Inject
+	private SearchInputInterfaceHelper searchInputInterfaceHelper;
+	@Inject
+	private InternationalizationHelper messageSource;
+	@Inject
+	private PermissionEvaluationService permissionService;
+	@Inject
+	private ActiveMilestoneHolder activeMilestoneHolder;
+	@Inject
+	private CampaignAdvancedSearchService campaignAdvancedSearchService;
+	@Inject
+	private UserAccountService userAccountService;
+	@Inject
+	private ProjectFinder projectFinder;
+
+	protected interface FormModelBuilder {
+		SearchInputInterfaceModel build(Locale locale, boolean isMilestoneMode);
+	}
 
 	{
 		formModelBuilder.put(TESTCASE, new FormModelBuilder() {
@@ -161,6 +141,18 @@ public abstract class GlobalSearchController {
 		});
 	}
 
+	public InternationalizationHelper getMessageSource() {
+		return messageSource;
+	}
+
+	public PermissionEvaluationService getPermissionService() {
+		return permissionService;
+	}
+
+	public ActiveMilestoneHolder getActiveMilestoneHolder() {
+		return activeMilestoneHolder;
+	}
+
 	protected void initModel(Model model, String associateResultWithType, Long id, Locale locale, String domain, Optional<Milestone> activeMilestone) {
 		initModelForPage(model, associateResultWithType, id, activeMilestone);
 		model.addAttribute(SEARCH_DOMAIN, domain);
@@ -178,7 +170,9 @@ public abstract class GlobalSearchController {
 
 	protected void initResultModel(Model model, String searchModel, String associateResultWithType, Long id, String domain, Optional<Milestone> activeMilestone) {
 		initModelForPage(model, associateResultWithType, id, activeMilestone);
-		model.addAttribute(SEARCH_MODEL, searchModel);
+		if (!searchModel.isEmpty()) {
+			model.addAttribute(SEARCH_MODEL, searchModel);
+		}
 		model.addAttribute(SEARCH_DOMAIN, domain);
 		populateMetadata(model);
 	}
@@ -231,6 +225,10 @@ public abstract class GlobalSearchController {
 	}
 
 	protected abstract WorkspaceDisplayService workspaceDisplayService();
+
+	protected interface FormModelBuilder {
+		SearchInputInterfaceModel build(Locale locale, boolean isMilestoneMode);
+	}
 
 }
 
