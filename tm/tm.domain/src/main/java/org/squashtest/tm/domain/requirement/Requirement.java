@@ -51,6 +51,8 @@ import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.library.NodeVisitor;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.search.CollectionSizeBridge;
+import org.squashtest.tm.domain.search.StringFieldBridge;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.NoVerifiableRequirementVersionException;
 import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
@@ -83,6 +85,8 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 
 	@OneToMany(mappedBy = "requirement", cascade = {CascadeType.ALL})
 	@OrderBy("versionNumber DESC")
+	@Field(analyze = Analyze.NO, store = Store.YES, bridge = @FieldBridge(impl = CollectionSizeBridge.class))
+	@SortableField
 	private List<RequirementVersion> versions = new ArrayList<>();
 
 
