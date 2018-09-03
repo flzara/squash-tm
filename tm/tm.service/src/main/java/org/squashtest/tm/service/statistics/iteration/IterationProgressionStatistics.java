@@ -38,7 +38,7 @@ private Collection<String> i18nErrors;
 
 	private List<Object[]> cumulativeExecutionsPerDate;
 
-	private StatisticUtils statisticUtils;
+	private StatisticUtils statisticUtils = new StatisticUtils();
 
 	public ScheduledIteration getScheduledIteration() {
 		return scheduledIteration;
