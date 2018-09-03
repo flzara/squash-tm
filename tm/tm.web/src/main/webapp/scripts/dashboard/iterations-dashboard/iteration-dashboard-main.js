@@ -18,9 +18,11 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["require", 'squash.translator', "./iteration-progression-view", "./nonexecuted-testcase-importance-pie", "./testcase-status-pie",
-		"../basic-objects/success-rate-view", "./test-inventory-table", "dashboard/SuperMasterView"],
-	function (require, translator, ProgressionPlot, ImportancePie, StatusPie, SuccessRateDonut, InventoryTable, SuperMasterView) {
+define(["require", 'squash.translator', "./iteration-progression-view", "./nonexecuted-testcase-importance-pie",
+		"./testcase-status-pie", "../basic-objects/success-rate-view", "./test-inventory-table", "dashboard/SuperMasterView"
+		, "../dashboard-utils"],
+	function (require, translator, ProgressionPlot, ImportancePie, StatusPie, SuccessRateDonut, InventoryTable,
+						SuperMasterView, utils) {
 
 		function doInit(settings) {
 
@@ -127,9 +129,11 @@ define(["require", 'squash.translator', "./iteration-progression-view", "./nonex
 						break;
 				}
 
-				var queryString = "searchModel=" + encodeURIComponent(JSON.stringify(search));
-				document.location.href = squashtm.app.contextRoot + "advanced-search/results?campaign&" + queryString;
-
+				var token = $("meta[name='_csrf']").attr("content");
+				utils.post(squashtm.app.contextRoot + "advanced-search/results?searchDomain=campaign", {
+					searchModel: JSON.stringify(search),
+					_csrf: token
+				});
 			});
 		}
 

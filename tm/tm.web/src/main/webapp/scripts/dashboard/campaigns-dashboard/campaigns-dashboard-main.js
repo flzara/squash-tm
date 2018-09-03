@@ -19,9 +19,10 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "require", "squash.translator", "./campaign-progression-view", "./test-inventory-table",
-		"./nonexecuted-testcase-importance-pie", "./testcase-status-pie", "../basic-objects/success-rate-view", "../SuperMasterView" ],
+		"./nonexecuted-testcase-importance-pie", "./testcase-status-pie", "../basic-objects/success-rate-view",  
+		"../SuperMasterView", "../dashboard-utils" ],
 		function(require, translator, ProgressionPlot, InventoryTable, ImportancePie, StatusPie, SuccessRateDonut,
-				SuperMasterView) {
+				SuperMasterView, utils) {
 
 			function initCharts() {
 
@@ -69,7 +70,6 @@ define([ "require", "squash.translator", "./campaign-progression-view", "./test-
 
 				 return res;
 			}
-
 
 			function addClickSearchEvent(pie, type) {
 
@@ -123,9 +123,11 @@ define([ "require", "squash.translator", "./campaign-progression-view", "./test-
 						break;
 				}
 
-					var queryString = "searchModel=" + encodeURIComponent(JSON.stringify(search));
-					document.location.href = squashtm.app.contextRoot + "advanced-search/results?campaign&" + queryString;
-
+					var token = $("meta[name='_csrf']").attr("content");
+					utils.post(squashtm.app.contextRoot + "advanced-search/results?searchDomain=campaign", {
+						searchModel: JSON.stringify(search),
+						_csrf: token
+					});
 				});
 			}
 
