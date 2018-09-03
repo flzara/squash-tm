@@ -113,6 +113,7 @@ depTree.txt
 tm/tm.web/src/main/resources/config/application-jlo_mysql.properties
 tm/tm.web/src/main/resources/config/application-jpr_mysql.properties
 tm/tm.web/src/main/resources/config/application-jpr_postgresql.properties
+tm/tm.web/src/main/resources/config/application-mah_postgresql.properties
 tm/tm.web/src/main/resources/config/application-jlo_postgresql.properties
 tm/tm.web/src/main/resources/config/application-cho_mysql.properties
 tm/tm.web/src/main/resources/config/application-jth.properties
