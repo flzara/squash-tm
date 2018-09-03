@@ -30,7 +30,7 @@
  /** sprite: sprites-icons; sprite-image: url('../images/sprites-icons.png'); sprite-layout: vertical */
 
 
-.linkWise:HOVER {
+td.linkWise:HOVER {
 
     text-decoration: underline;
     cursor: pointer;

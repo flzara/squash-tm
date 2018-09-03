@@ -66,10 +66,10 @@ define(["jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 			events: {
 				"click #cf-optional": "confirmOptional",
 				"click .is-default>input:checkbox": "changeDefaultOption",
-				"click .opt-label": "openRenameOptionPopup",
-				"click .opt-code": "openChangeOptionCodePopup",
+				"click td.opt-label": "openRenameOptionPopup",
+				"click td.opt-code": "openChangeOptionCodePopup",
 				"click #delete-cuf-button": "confirmCustomFieldDeletion",
-				"change .opt-colour>input": "changeColour"
+				"change td.opt-colour>input": "changeColour"
 			},
 
 			confirmCustomFieldDeletion: function (event) {
