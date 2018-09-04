@@ -20,21 +20,12 @@
  */
 package org.squashtest.tm.web.internal.controller.execution;
 
-import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
-
-import java.text.MessageFormat;
-import java.util.Locale;
-
-import javax.inject.Inject;
-import javax.servlet.ServletContext;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.squashtest.tm.service.internal.bugtracker.BugTrackerConnectorFactory;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.tm.domain.execution.Execution;
@@ -47,9 +38,19 @@ import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService;
 import org.squashtest.tm.service.campaign.TestSuiteFinder;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
+import org.squashtest.tm.service.internal.bugtracker.BugTrackerConnectorFactory;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
+import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.model.json.JsonStepInfo;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+
+import javax.inject.Inject;
+import javax.servlet.ServletContext;
+import java.text.MessageFormat;
+import java.util.Locale;
+
+import static java.util.stream.Collectors.toList;
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 /**
  *
@@ -171,11 +172,17 @@ public class TestSuiteExecutionRunnerController {
 
 		try{
 			Project project = suiteFinder.findById(testSuiteId).getProject();
+			String projectNames = JsonHelper.serialize(project.getBugtrackerBinding().getProjectNames()
+				.stream()
+				.map(HTMLCleanupUtils::cleanAndUnescapeHTML)
+				.collect(toList()));
 			BugTracker bugtracker = project.findBugTracker();
 			BugTrackerInterfaceDescriptor descriptor = bugTrackersLocalService.getInterfaceDescriptor(bugtracker);
 			model.addAttribute("interfaceDescriptor", descriptor);
 			model.addAttribute("bugTracker", bugtracker);
 			model.addAttribute("isOslc", btFactory.isOslcConnector(bugtracker.getKind()));
+			model.addAttribute("projectId", project.getId());
+			model.addAttribute("projectNames", projectNames);
 		}
 		catch(NoBugTrackerBindingException ex){
 			LOGGER.debug("Well, no bugtracker then. It's fine.", ex);
