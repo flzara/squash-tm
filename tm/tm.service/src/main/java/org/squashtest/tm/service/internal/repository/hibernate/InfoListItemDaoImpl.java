@@ -29,11 +29,11 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 public class InfoListItemDaoImpl implements CustomInfoListItemDao {
-	@PersistenceContext
-	private EntityManager entityManager;
-
 	private static final String ITEM_CODE = "itemCode";
 	private static final String PROJECT_ID = "projectId";
+
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	@Override
 	public boolean isCategoryConsistent(long projectId, String itemCode) {
@@ -86,9 +86,13 @@ public class InfoListItemDaoImpl implements CustomInfoListItemDao {
 
 	@Override
 	public boolean isUsed(long infoListItemId) {
-		Query q = entityManager.createNamedQuery("infoListItem.isUsed");
+		Query q = entityManager.createNamedQuery("infoListItem.isUsedInRequirements");
 		q.setParameter("id", infoListItemId);
-		return (Long) q.getSingleResult() > 0;
+
+		// [Issue 7568] separated the previous query in two simpler ones to improve the performance
+		Query q1 = entityManager.createNamedQuery("infoListItem.isUsedInTestCases");
+		q1.setParameter("id", infoListItemId);
+		return (Long) q.getSingleResult() > 0 || (Long) q1.getSingleResult() > 0;
 	}
 
 	@Override

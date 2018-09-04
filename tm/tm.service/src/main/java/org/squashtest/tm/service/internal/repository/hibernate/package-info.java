@@ -928,7 +928,8 @@
 	@NamedQuery(name="infoListItem.foundCategoryInProject", query="select count(item) from GenericProject p join p.requirementCategories categories join categories.items item where item.code = :itemCode and p.id = :projectId"),
 	@NamedQuery(name="infoListItem.foundNatureInProject", query="select count(item) from GenericProject p join p.testCaseNatures natures join natures.items item where item.code = :itemCode and p.id = :projectId"),
 	@NamedQuery(name="infoListItem.foundTypeInProject", query="select count(item) from GenericProject p join p.testCaseTypes types join types.items item where item.code = :itemCode and p.id = :projectId"),
-	@NamedQuery(name="infoListItem.isUsed", query="select count(*) from  RequirementVersion req, TestCase tc  where req.category.id= :id or tc.nature.id = :id or tc.type.id = :id"),
+	@NamedQuery(name="infoListItem.isUsedInRequirements", query="select count(*) from RequirementVersion req where req.category.id= :id"),
+	@NamedQuery(name="infoListItem.isUsedInTestCases", query="select count(*) from TestCase tc where tc.nature.id = :id or tc.type.id = :id"),
 
 
 	//SystemListItem
