@@ -105,10 +105,11 @@ define(["jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 						return;
 					}
 					var message = cfMod.confirmMandatoryMessage;
-					message = self.replacePlaceHolderByValue(0,
-						message, defaultValue);
+					message = self.replacePlaceHolderByValue(0, message, defaultValue);
+					var escapedMessage = $("<span/>").html(message).text();
+
 					oneshot.show(cfMod.confirmMandatoryTitle,
-						message, {width: '500px'})
+						escapedMessage, {width: '500px'})
 						.done(function () {
 							self.sendOptional(checked);
 						})
