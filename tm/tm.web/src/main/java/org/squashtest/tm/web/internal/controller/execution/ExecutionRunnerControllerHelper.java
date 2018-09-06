@@ -20,14 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.execution;
 
-import java.text.MessageFormat;
-import java.util.Collections;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
@@ -50,6 +42,13 @@ import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentT
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+
+import javax.inject.Inject;
+import java.text.MessageFormat;
+import java.util.Collections;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 //XSS ok bflessel
 /**
  * Helper class for Controllers which need to show classic and optimized execution runners.
@@ -203,8 +202,7 @@ public class ExecutionRunnerControllerHelper {
 
 		boolean hasNextTestCase = testSuiteExecutionProcessingService.hasMoreExecutableItems(testSuiteId, item.getId());
 
-		String nextExecutionUrl = contextPath + "/"
-			+ MessageFormat.format(NEXT_EXECUTION_URL, testSuiteId, item.getId());
+		String nextExecutionUrl = contextPath  + MessageFormat.format(NEXT_EXECUTION_URL, testSuiteId, item.getId());
 
 		state.setLastTestCase(!hasNextTestCase);
 		state.setNextTestCaseUrl(nextExecutionUrl);
