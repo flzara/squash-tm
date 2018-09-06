@@ -172,12 +172,12 @@ public class TestSuiteExecutionRunnerController {
 
 		try{
 			Project project = suiteFinder.findById(testSuiteId).getProject();
+			BugTracker bugtracker = project.findBugTracker();
+			BugTrackerInterfaceDescriptor descriptor = bugTrackersLocalService.getInterfaceDescriptor(bugtracker);
 			String projectNames = JsonHelper.serialize(project.getBugtrackerBinding().getProjectNames()
 				.stream()
 				.map(HTMLCleanupUtils::cleanAndUnescapeHTML)
 				.collect(toList()));
-			BugTracker bugtracker = project.findBugTracker();
-			BugTrackerInterfaceDescriptor descriptor = bugTrackersLocalService.getInterfaceDescriptor(bugtracker);
 			model.addAttribute("interfaceDescriptor", descriptor);
 			model.addAttribute("bugTracker", bugtracker);
 			model.addAttribute("isOslc", btFactory.isOslcConnector(bugtracker.getKind()));
