@@ -29,7 +29,9 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Pagings;
@@ -53,6 +55,7 @@ import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
@@ -114,7 +117,7 @@ public class CustomFieldController {
 			case DROPDOWN_LIST:
 				SingleSelectField cuf = customFieldManager.findSingleSelectFieldById(customFieldId);
 				List<CustomFieldOption> options = cuf.getOptions();
-				for(CustomFieldOption option : options){
+				for (CustomFieldOption option : options) {
 					option.setLabel(HtmlUtils.htmlUnescape(option.getLabel()));
 				}
 				model.addAttribute(CUSTOM_FIELD, cuf);
@@ -242,11 +245,11 @@ public class CustomFieldController {
 	 * @param newLabel      : the new label for the concerned custom-field's option
 	 * @return
 	 */
-	@RequestMapping(value = "/{customFieldId}/options/{optionLabel}/label", method = RequestMethod.POST, params = {JEditablePostParams.VALUE})
+	@RequestMapping(value = "/{customFieldId}/options/label", method = RequestMethod.POST, params = {JEditablePostParams.VALUE, "optionLabel"})
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
-	public void changeOptionLabel(@PathVariable long customFieldId, @PathVariable String optionLabel,
-	                              @RequestParam(JEditablePostParams.VALUE) String newLabel) {
+	public void changeOptionLabel(@PathVariable long customFieldId,
+	                              @RequestParam(JEditablePostParams.VALUE) String newLabel, @RequestParam("optionLabel") String optionLabel) {
 		try {
 			customFieldManager.changeOptionLabel(customFieldId, optionLabel, newLabel);
 		} catch (DomainException e) {
@@ -255,11 +258,11 @@ public class CustomFieldController {
 		}
 	}
 
-	@RequestMapping(value = "/{customFieldId}/options/{optionLabel}/colour", method = RequestMethod.POST, params = {JEditablePostParams.VALUE})
+	@RequestMapping(value = "/{customFieldId}/options/colour", method = RequestMethod.POST, params = {JEditablePostParams.VALUE, "optionLabel"})
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
-	public void changeOptionColour(@PathVariable long customFieldId, @PathVariable String optionLabel,
-	                               @RequestParam(JEditablePostParams.VALUE) String newLabel) {
+	public void changeOptionColour(@PathVariable long customFieldId,
+	                               @RequestParam(JEditablePostParams.VALUE) String newLabel, @RequestParam("optionLabel") String optionLabel) {
 		try {
 			customFieldManager.changeOptionColour(customFieldId, optionLabel, newLabel);
 		} catch (DomainException e) {
@@ -276,11 +279,11 @@ public class CustomFieldController {
 	 * @param newCode       : the new code for the concerned custom-field's option
 	 * @return
 	 */
-	@RequestMapping(value = "/{customFieldId}/options/{optionLabel}/code", method = RequestMethod.POST, params = {JEditablePostParams.VALUE})
+	@RequestMapping(value = "/{customFieldId}/options/code", method = RequestMethod.POST, params = {JEditablePostParams.VALUE, "optionLabel"})
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
-	public void changeOptionCode(@PathVariable long customFieldId, @PathVariable String optionLabel,
-	                             @RequestParam(JEditablePostParams.VALUE) String newCode) {
+	public void changeOptionCode(@PathVariable long customFieldId,
+	                             @RequestParam(JEditablePostParams.VALUE) String newCode, @RequestParam("optionLabel") String optionLabel) {
 		try {
 			customFieldManager.changeOptionCode(customFieldId, optionLabel, newCode);
 		} catch (DomainException e) {
@@ -312,12 +315,17 @@ public class CustomFieldController {
 	 * Remove a customField's option
 	 *
 	 * @param customFieldId : the id of the concerned custom-field
-	 * @param optionLabel   : the label of the option to remove
 	 */
-	@RequestMapping(value = "/{customFieldId}/options/{optionLabel}", method = RequestMethod.DELETE)
+	// issue 7620 replaced the value "/{customFieldId}/options/{optionLabel}" by the actual one because Squash allows
+	// slashes in item optionLabels
+	@RequestMapping(value = "/{customFieldId}/options/**", method = RequestMethod.DELETE)
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
-	public void removeOption(@PathVariable long customFieldId, @PathVariable String optionLabel) {
+	public void removeOption(@PathVariable long customFieldId, HttpServletRequest request) {
+		String path = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+		String bestMatchPattern = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
+		AntPathMatcher apm = new AntPathMatcher();
+		String optionLabel = apm.extractPathWithinPattern(bestMatchPattern, path);
 		customFieldManager.removeOption(customFieldId, HtmlUtils.htmlUnescape(optionLabel));
 	}
 

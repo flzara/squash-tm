@@ -225,10 +225,11 @@ define(["jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 				$.ajax({
 					type: 'POST',
 					data: {
-						'value': colour
+						'value': colour,
+						'optionLabel': label
 					},
 					dataType: "json",
-					url: cfMod.optionsTable.ajaxSource + "/" + label + "/colour"
+					url: cfMod.optionsTable.ajaxSource + "/colour"
 				});
 			},
 
@@ -248,10 +249,11 @@ define(["jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 					$.ajax({
 						type: 'POST',
 						data: {
-							'value': newValue
+							'value': newValue,
+							'optionLabel': previousValue
 						},
 						dataType: "json",
-						url: cfMod.optionsTable.ajaxSource + "/" + _.unescape(previousValue) + "/label"
+						url: cfMod.optionsTable.ajaxSource + "/label"
 					}).done(function (data) {
 						self.optionsTable.refresh();
 						self.renameCufOptionPopup.formDialog('close');
@@ -269,10 +271,11 @@ define(["jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 				$.ajax({
 					type: 'POST',
 					data: {
-						'value': newValue
+						'value': newValue,
+						'optionLabel': label
 					},
 					dataType: "json",
-					url: cfMod.optionsTable.ajaxSource + "/" + label + "/code"
+					url: cfMod.optionsTable.ajaxSource + "/code"
 				}).done(function (data) {
 					self.optionsTable.refresh();
 					self.changeOptionCodePopup.formDialog('close');
