@@ -148,7 +148,7 @@ public class TestSuiteDaoImpl implements CustomTestSuiteDao {
 		List<Object[]> tuples = query.getResultList();
 
 		for (Object[] tuple:tuples) {
-			report.set((ExecutionStatus) tuple[0], ((Long) tuple[1]).intValue());
+			report.set(((ExecutionStatus) tuple[0]).getCanonicalStatus(), ((Long) tuple[1]).intValue());
 		}
 
 		return report;
