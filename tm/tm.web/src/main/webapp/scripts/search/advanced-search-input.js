@@ -18,13 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translator", "app/ws/squashtm.notification", "underscore", "workspace.projects",
-         "squash.configmanager", "./SearchDateWidget", "./SearchRangeWidget","./SearchNumericRangeWidget",
-		"./SearchExistsWidget","./SearchMultiAutocompleteWidget", "./SearchMultiSelectWidget", "./SearchMultiSelectProjectWidget",  "./SearchCheckboxWidget",
-		"./SearchComboMultiselectWidget", "./SearchRadioWidget", "./SearchTagsWidget", "./SearchMultiCascadeFlatWidget", "./SearchDateCustomFieldWidget","./SearchComboExistsMultiselectWidget",
-		"jquery.squash", "jqueryui", "jquery.squash.togglepanel", "squashtable",
-		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
-		"jquery.squash.confirmdialog","jquery.cookie"], function($, Backbone, Handlebars, translator, notification, _, projects) {
+define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translator", "app/ws/squashtm.notification", "underscore", "workspace.projects",
+	"squash.configmanager", "./SearchDateWidget", "./SearchRangeWidget", "./SearchNumericRangeWidget",
+	"./SearchExistsWidget", "./SearchMultiAutocompleteWidget", "./SearchMultiSelectWidget", "./SearchMultiSelectProjectWidget", "./SearchCheckboxWidget",
+	"./SearchComboMultiselectWidget", "./SearchRadioWidget", "./SearchTagsWidget", "./SearchMultiCascadeFlatWidget", "./SearchDateCustomFieldWidget", "./SearchComboExistsMultiselectWidget",
+	"jquery.squash", "jqueryui", "jquery.squash.togglepanel", "squashtable",
+	"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
+	"jquery.squash.confirmdialog", "jquery.cookie"], function ($, Backbone, Handlebars, translator, notification, _, projects) {
 
 	// Prefiling all the request
 	$.ajaxPrefilter(function (options, originalOptions, jqXHR) {
@@ -38,9 +38,9 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 			var text = $(this.element.children()[0]).val();
 			var id = $(this.element).attr("id");
 			return {
-				"type" : fieldType,
-				"value" : text,
-				"ignoreBridge" : this.options.ignoreBridge
+				"type": fieldType,
+				"value": text,
+				"ignoreBridge": this.options.ignoreBridge
 			};
 		} else {
 			$(this.element.children()[0]).val(value.value);
@@ -49,32 +49,32 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 
 	// text area widget
 	var searchTextAreaWidget = $.widget("search.searchTextAreaWidget", {
-		options : {
-			ignoreBridge : false
+		options: {
+			ignoreBridge: false
 		},
 
-		_create : function() {
+		_create: function () {
 			this._super();
 		},
 
-		fieldvalue : function(value) {
+		fieldvalue: function (value) {
 			return fieldValue.call(this, "TEXT", value);
 		}
 	});
 
 	// text field widget
 	var searchTextFieldWidget = $.widget("search.searchTextFieldWidget", {
-		options : {
-			ignoreBridge : false
+		options: {
+			ignoreBridge: false
 		},
 
-		_create : function() {
+		_create: function () {
 		},
 
-		fieldvalue : function(value) {
-			if(value) {
+		fieldvalue: function (value) {
+			if (value) {
 				return fieldValue.call(this, "SINGLE", value.toLowerCase());
-			}else {
+			} else {
 				return fieldValue.call(this, "SINGLE", value);
 
 			}
@@ -84,11 +84,11 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 
 	var TestCaseSearchInputPanel = Backbone.View.extend({
 
-		el : "#advanced-search-input-panel",
+		el: "#advanced-search-input-panel",
 
-		initialize : function(options) {
+		initialize: function (options) {
 			this.options = options;
-			this.model = {fields : []};
+			this.model = {fields: []};
 			// init templates cache
 			this.templates = {};
 			this.getInputInterfaceModel();
@@ -96,60 +96,60 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 			// templates are no longer needed
 			this.templates = {};
 
-			prefillPermiterPanel = function(){
-			var panel = $('#perimeter-panel-id');
-			var options = $($($($(panel.children()[0]).children()[0]).children()[0]).children()[0]);
-			var place = "toSelect"+location.search;
-			var toselect = $.cookie(place);
-				options.children().each(function(){
-				if(toselect !==null) {
-					if (this.selected) {
-						if (!toselect.includes(this.value)) {
-							this.selected = false;
+			prefillPermiterPanel = function () {
+				var panel = $('#perimeter-panel-id');
+				var options = $($($($(panel.children()[0]).children()[0]).children()[0]).children()[0]);
+				var place = "toSelect" + location.search;
+				var toselect = $.cookie(place);
+				options.children().each(function () {
+					if (toselect !== null) {
+						if (this.selected) {
+							if (!toselect.includes(this.value)) {
+								this.selected = false;
+							}
 						}
 					}
-				}
-			});
+				});
 
 			};
 			prefillPermiterPanel();
-			resizePerimeter = function(event) {
-				var sizeWithPadding =  $('#perimeter-panel-id').css('width');
+			resizePerimeter = function (event) {
+				var sizeWithPadding = $('#perimeter-panel-id').css('width');
 				var sizeWithoutPadding = parseInt(sizeWithPadding, 10) - 20;
 				$("#perimeter-multiple-custom").css('width', sizeWithoutPadding);
-				};
+			};
 
 			resizePerimeter();
-			$( window ).on('resize', resizePerimeter);
+			$(window).on('resize', resizePerimeter);
 			window.onresize = resizePerimeter;
 
 		},
 
-		events : {
-			"click #advanced-search-button" : "showResults"
+		events: {
+			"click #advanced-search-button": "showResults"
 
 		},
 
-		getInputInterfaceModel : function() {
+		getInputInterfaceModel: function () {
 			var self = this;
 
-			var formBuilder = function(formModel) {
-				$.each(formModel.panels || {}, function(index, panel) {
+			var formBuilder = function (formModel) {
+				$.each(formModel.panels || {}, function (index, panel) {
 					var context = {
-						"toggle-panel-id": panel.id+"-panel-id",
-						"toggle-panel-table-id": panel.id+"-panel-table-id",
-						"toggle-panel-icon" : panel.cssClasses,
-						"toggle-panel-title" : panel.title,
-						"toggle-panel-state" : (panel.open) ? "expand" : "collapse"
+						"toggle-panel-id": panel.id + "-panel-id",
+						"toggle-panel-table-id": panel.id + "-panel-table-id",
+						"toggle-panel-icon": panel.cssClasses,
+						"toggle-panel-title": panel.title,
+						"toggle-panel-state": (panel.open) ? "expand" : "collapse"
 					};
-					var tableid = panel.id+"-panel-table-id";
-					var source ;
+					var tableid = panel.id + "-panel-table-id";
+					var source;
 
 					// First A
 
 					var panelName = panel.id;
 					// compiles the panel template
-					if ( panelName == "perimeter" ) {
+					if (panelName == "perimeter") {
 						source = self.$("#toggle-panel-perimeter-template").html();
 					}
 					else if (panelName == "general-information") {
@@ -173,22 +173,21 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 					var marshalledSearchModel = self.$("#searchModel").text();
 					var searchModel = {};
 
-					if(marshalledSearchModel){
+					if (marshalledSearchModel) {
 						searchModel = JSON.parse(marshalledSearchModel).fields;
 					}
 
 					var searchDomain = self.$("#searchDomain").text();
 
 					var html = template(context);
-					self.$("#advanced-search-input-form-panel-"+panel.location).append(html);
-					self.$("#advanced-search-input-form-panel-"+panel.location).addClass(searchDomain);
+					self.$("#advanced-search-input-form-panel-" + panel.location).append(html);
+					self.$("#advanced-search-input-form-panel-" + panel.location).addClass(searchDomain);
 
-		 // First C
-					for (var i = 0, field; i < panel.fields.length; i++){
+					// First C
+					for (var i = 0, field; i < panel.fields.length; i++) {
 						field = panel.fields[i];
 						var inputType = field.inputType.toLowerCase();
-						switch(inputType)
-						{
+						switch (inputType) {
 							case "textfield" :
 								self.makeTextField(tableid, field.id, field.title, searchModel[field.id], field.ignoreBridge);
 								break;
@@ -220,10 +219,10 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 								self.makeRangeField(tableid, field.id, field.title, searchModel[field.id]);
 								break;
 							case "exists" :
-								self.makeExistsField(tableid, field.id, field.title, field.possibleValues,searchModel[field.id]);
+								self.makeExistsField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
 								break;
 							case "existsbefore" :
-								self.makeExistsBeforeField(tableid, field.id, field.title, field.possibleValues,searchModel[field.id]);
+								self.makeExistsBeforeField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
 								break;
 							case "date":
 								self.makeDateField(tableid, field.id, field.title, searchModel[field.id]);
@@ -261,14 +260,14 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 
 		},
 
-		_processModel : function(formBuilder) {
+		_processModel: function (formBuilder) {
 			if (!!squashtm.app.searchFormModel) {
 
 				formBuilder(squashtm.app.searchFormModel);
 
 				// last detail, we must also hook the project selector with the nature an type selectors
 				var self = this;
-				$("#perimeter-multiple-custom").on('change', function(){
+				$("#perimeter-multiple-custom").on('change', function () {
 					self._updateAvailableInfolists();
 				});
 				// also, update immediately
@@ -276,15 +275,15 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 
 			} else { // TODO legacy, remove that in Squash 1.9
 				$.ajax({
-					url : squashtm.app.contextRoot + "advanced-search/input?"+this.$("#searchDomain").text(),
-					data : "nodata",
-					dataType : "json"
-				}).success(function() {
+					url: squashtm.app.contextRoot + "advanced-search/input?" + this.$("#searchDomain").text(),
+					data: "nodata",
+					dataType: "json"
+				}).success(function () {
 					formBuilder(squashtm.app.searchFormModel);
 
 					// last detail, we must also hook the project selector with the nature an type selectors
 					var self = this;
-					$("#perimeter-multiple-custom").on('change', function(){
+					$("#perimeter-multiple-custom").on('change', function () {
 						self._updateAvailableInfolists();
 					});
 					// also, update immediately
@@ -299,35 +298,35 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 		 * @param context the params given to the template
 		 * @returns
 		 */
-		_compileTemplate : function(selector, context) {
-				var template = this.templates[selector];
+		_compileTemplate: function (selector, context) {
+			var template = this.templates[selector];
 
-				if (!template) {
-					var source = this.$(selector).html();
-					template = Handlebars.compile(source);
-					this.templates[selector] = template;
-				}
+			if (!template) {
+				var source = this.$(selector).html();
+				template = Handlebars.compile(source);
+				this.templates[selector] = template;
+			}
 
-				return template(context);
+			return template(context);
 		},
 
-		_appendFieldDom : function(tableId, fieldId, fieldHtml) {
-			this.$("#"+tableId).append(fieldHtml);
+		_appendFieldDom: function (tableId, fieldId, fieldHtml) {
+			this.$("#" + tableId).append(fieldHtml);
 			var escapedId = fieldId.replace(/\./g, "\\.");
 			return this.$("#" + escapedId);
 		},
 
-		makeRadioField : function(tableId, fieldId, fieldTitle, options, enteredValue, ignoreBridge) {
+		makeRadioField: function (tableId, fieldId, fieldTitle, options, enteredValue, ignoreBridge) {
 			var context = {"text-radio-id": fieldId, "text-radio-title": fieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#radio-button-template", context));
 
-			$fieldDom.searchRadioWidget({"ignoreBridge" : ignoreBridge});
-			$fieldDom.searchRadioWidget("createDom", "F"+fieldId, options);
+			$fieldDom.searchRadioWidget({"ignoreBridge": ignoreBridge});
+			$fieldDom.searchRadioWidget("createDom", "F" + fieldId, options);
 			$fieldDom.searchRadioWidget("fieldvalue", enteredValue);
 
 		},
 
-		makeRangeField : function(tableId, fieldId, fieldTitle, enteredValue) {
+		makeRangeField: function (tableId, fieldId, fieldTitle, enteredValue) {
 			var context = {"text-range-id": fieldId, "text-range-title": fieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#range-template", context));
 
@@ -336,7 +335,7 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 
 		},
 
-		makeNumericRangeField : function(tableId, fieldId, fieldTitle, enteredValue) {
+		makeNumericRangeField: function (tableId, fieldId, fieldTitle, enteredValue) {
 			var context = {"text-range-id": fieldId, "text-range-title": fieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#numeric-range-template", context));
 
@@ -345,104 +344,104 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 
 		},
 
-		makeExistsField : function(tableId, fieldId, fieldTitle, options, enteredValue) {
+		makeExistsField: function (tableId, fieldId, fieldTitle, options, enteredValue) {
 			var context = {"text-exists-id": fieldId, "text-exists-title": fieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#exists-template", context));
 			$fieldDom.searchExistsWidget();
-			$fieldDom.searchExistsWidget("createDom", "F"+fieldId, options);
+			$fieldDom.searchExistsWidget("createDom", "F" + fieldId, options);
 			$fieldDom.searchExistsWidget("fieldvalue", enteredValue);
 		},
 
-		makeExistsBeforeField : function(tableId, fieldId, fieldTitle, options, enteredValue) {
+		makeExistsBeforeField: function (tableId, fieldId, fieldTitle, options, enteredValue) {
 			var context = {"text-exists-id": fieldId, "text-exists-title": fieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#existsbefore-template", context));
 			$fieldDom.searchExistsWidget();
-			$fieldDom.searchExistsWidget("createDom", "F"+fieldId, options);
+			$fieldDom.searchExistsWidget("createDom", "F" + fieldId, options);
 			$fieldDom.searchExistsWidget("fieldvalue", enteredValue);
 		},
 
-		makeDateField : function(tableId, fieldId, fieldTitle, enteredValue) {
+		makeDateField: function (tableId, fieldId, fieldTitle, enteredValue) {
 			var context = {"text-date-id": fieldId, "text-date-title": fieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#date-template", context));
 			$fieldDom.searchDateWidget();
-			$fieldDom.searchDateWidget("createDom", "F"+fieldId);
+			$fieldDom.searchDateWidget("createDom", "F" + fieldId);
 			$fieldDom.searchDateWidget("fieldvalue", enteredValue);
 		},
 
-		makeCustomFieldDateSearch : function(tableId, fieldId, fieldTitle, enteredValue) {
+		makeCustomFieldDateSearch: function (tableId, fieldId, fieldTitle, enteredValue) {
 			var context = {"text-date-id": fieldId, "text-date-title": fieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#cf-date-template", context));
 			$fieldDom.searchDateCustomFieldWidget();
-			$fieldDom.searchDateCustomFieldWidget("createDom", "F"+fieldId);
+			$fieldDom.searchDateCustomFieldWidget("createDom", "F" + fieldId);
 			$fieldDom.searchDateCustomFieldWidget("fieldvalue", enteredValue);
 		},
 
-		makeCheckboxField : function(tableId, fieldId, fieldTitle, options, enteredValue) {
+		makeCheckboxField: function (tableId, fieldId, fieldTitle, options, enteredValue) {
 			var context = {"text-checkbox-id": fieldId, "text-checkbox-title": fieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#checkbox-template", context));
 			$fieldDom.searchCheckboxWidget();
-			$fieldDom.searchCheckboxWidget("createDom", "F"+fieldId, options);
-			$fieldDom.searchCheckboxWidget("fieldvalue", (enteredValue !== undefined)? enteredValue.value : false);
+			$fieldDom.searchCheckboxWidget("createDom", "F" + fieldId, options);
+			$fieldDom.searchCheckboxWidget("fieldvalue", (enteredValue !== undefined) ? enteredValue.value : false);
 
 		},
 
-		makeTextField : function(tableId, fieldId, fieldTitle, enteredValue, ignoreBridge) {
+		makeTextField: function (tableId, fieldId, fieldTitle, enteredValue, ignoreBridge) {
 			var context = {
 				"text-field-id": fieldId,
 				"text-field-title": fieldTitle,
-				fieldValue : !!enteredValue ? enteredValue.value : ""
+				fieldValue: !!enteredValue ? enteredValue.value : ""
 			};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#textfield-template", context));
-			$fieldDom.searchTextFieldWidget({"ignoreBridge" : ignoreBridge});
+			$fieldDom.searchTextFieldWidget({"ignoreBridge": ignoreBridge});
 		},
 
-		makeTextFieldId : function(tableId, fieldId, fieldTitle, enteredValue, ignoreBridge) {
+		makeTextFieldId: function (tableId, fieldId, fieldTitle, enteredValue, ignoreBridge) {
 			var context = {
 				"text-field-id": fieldId,
 				"text-field-title": fieldTitle,
-				fieldValue : !!enteredValue ? enteredValue.value : ""
+				fieldValue: !!enteredValue ? enteredValue.value : ""
 			};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#textfield-id-template", context));
-			$fieldDom.searchTextFieldWidget({"ignoreBridge" : ignoreBridge});
+			$fieldDom.searchTextFieldWidget({"ignoreBridge": ignoreBridge});
 		},
 
-		makeTextFieldReference : function(tableId, fieldId, fieldTitle, enteredValue, ignoreBridge) {
+		makeTextFieldReference: function (tableId, fieldId, fieldTitle, enteredValue, ignoreBridge) {
 			var context = {
 				"text-field-id": fieldId,
 				"text-field-title": fieldTitle,
-				fieldValue : !!enteredValue ? enteredValue.value : ""
+				fieldValue: !!enteredValue ? enteredValue.value : ""
 			};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#textfield-reference-template", context));
-			$fieldDom.searchTextFieldWidget({"ignoreBridge" : ignoreBridge});
+			$fieldDom.searchTextFieldWidget({"ignoreBridge": ignoreBridge});
 		},
 
-		makeTextArea : function(tableId, fieldId, fieldTitle, enteredValue) {
+		makeTextArea: function (tableId, fieldId, fieldTitle, enteredValue) {
 			var context = {
 				"text-area-id": fieldId,
 				"text-area-title": fieldTitle,
-				fieldValue : !!enteredValue ? enteredValue.value : ""
+				fieldValue: !!enteredValue ? enteredValue.value : ""
 			};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#textarea-template", context));
 			$fieldDom.searchTextAreaWidget();
 		},
 
-		makeMultiselect : function(tableId, fieldId, fieldTitle, options, enteredValue) {
+		makeMultiselect: function (tableId, fieldId, fieldTitle, options, enteredValue) {
 			// adds a "selected" property to options
 			enteredValue = enteredValue || {};
 			// no enteredValue.values means 'select everything'
-			_.each(options, function(option) {
-				option.selected = (!enteredValue.values) || (enteredValue.values.length === 0)|| _.contains(enteredValue.values, option.code);
+			_.each(options, function (option) {
+				option.selected = (!enteredValue.values) || (enteredValue.values.length === 0) || _.contains(enteredValue.values, option.code);
 			});
 			var context = {"multiselect-id": fieldId, "multiselect-title": fieldTitle, options: options};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#multiselect-template", context));
 			$fieldDom.searchMultiSelectWidget();
 		},
 
-		makeMultiselectPerimeter : function(tableId, fieldId, fieldTitle, options, enteredValue) {
+		makeMultiselectPerimeter: function (tableId, fieldId, fieldTitle, options, enteredValue) {
 			// adds a "selected" property to options
 			enteredValue = enteredValue || {};
 			// no enteredValue.values means 'select everything', empty array mean everything
-			_.each(options, function(option) {
+			_.each(options, function (option) {
 				// Issue 4970 : _.contains failed because tried to find a string in a collection of int
 				// the check on isNaN is not necessary but rather be safe than sorry
 				var code = parseInt(option.code, 10);
@@ -456,11 +455,11 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 
 		},
 
-		makeMultiCascadeFlat : function(tableId, fieldId, fieldTitle, unsortedOptions, enteredValue){
+		makeMultiCascadeFlat: function (tableId, fieldId, fieldTitle, unsortedOptions, enteredValue) {
 			enteredValue = enteredValue || {};
 
 			// issue 4597 : sort the lists alphabetically
-			var options = unsortedOptions.sort(function(l1, l2){
+			var options = unsortedOptions.sort(function (l1, l2) {
 				return l1.value.localeCompare(l2.value);
 			});
 
@@ -470,53 +469,55 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 			 *	So, setting the state of the primary select must be induced from the secondary selected values
 			 */
 
-			_.each(options, function(primaryOpt){
-				_.each(primaryOpt.subInput.possibleValues, function(secondaryOpt){
-					secondaryOpt.selected = (! enteredValue.values) || (enteredValue.values.length === 0)|| _.contains(enteredValue.values, secondaryOpt.code);
+			_.each(options, function (primaryOpt) {
+				_.each(primaryOpt.subInput.possibleValues, function (secondaryOpt) {
+					secondaryOpt.selected = (!enteredValue.values) || (enteredValue.values.length === 0) || _.contains(enteredValue.values, secondaryOpt.code);
 				});
 
-				primaryOpt.selected = _.some(primaryOpt.subInput.possibleValues, function(sub){return (sub.selected === true);});
+				primaryOpt.selected = _.some(primaryOpt.subInput.possibleValues, function (sub) {
+					return (sub.selected === true);
+				});
 			});
 
-			var context = {"multicascadeflat-id" : fieldId, "multicascadeflat-title" : fieldTitle, options : options};
+			var context = {"multicascadeflat-id": fieldId, "multicascadeflat-title": fieldTitle, options: options};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#multicascadeflat-template", context));
-			$fieldDom.searchMultiCascadeFlatWidget({ lists : options });
+			$fieldDom.searchMultiCascadeFlatWidget({lists: options});
 		},
 
-		makeMultiAutocomplete : function(tableId, fieldId, fieldTitle, options, enteredValue) {
+		makeMultiAutocomplete: function (tableId, fieldId, fieldTitle, options, enteredValue) {
 			var context = {"multiautocomplete-id": fieldId, "multiautocomplete-title": fieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#multiautocomplete-template", context));
-			$fieldDom.searchMultiAutocompleteWidget({fieldId : fieldId, options : options});
+			$fieldDom.searchMultiAutocompleteWidget({fieldId: fieldId, options: options});
 			$fieldDom.searchMultiAutocompleteWidget("fieldvalue", enteredValue);
 
 		},
 
-		makeComboMultiselect : function(tableId, fieldId, fieldTitle, options, enteredValue) {
+		makeComboMultiselect: function (tableId, fieldId, fieldTitle, options, enteredValue) {
 			var context = {"combomultiselect-id": fieldId, "combomultiselect-title": fieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#combomultiselect-template", context));
 			$fieldDom.searchComboMultiSelectWidget();
-			$fieldDom.searchComboMultiSelectWidget("createDom", "F"+fieldId, options);
+			$fieldDom.searchComboMultiSelectWidget("createDom", "F" + fieldId, options);
 			$fieldDom.searchComboMultiSelectWidget("fieldvalue", enteredValue);
 		},
 
-		makeComboExistsMultiselect : function(tableId, fieldId, fieldTitle, options, enteredValue) {
+		makeComboExistsMultiselect: function (tableId, fieldId, fieldTitle, options, enteredValue) {
 			var context = {"comboexistsmultiselect-id": fieldId, "comboexistsmultiselect-title": fieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#comboexistsmultiselect-template", context));
 			$fieldDom.searchComboExistsMultiselectWidget();
-			$fieldDom.searchComboExistsMultiselectWidget("createDom", "F"+fieldId, options);
+			$fieldDom.searchComboExistsMultiselectWidget("createDom", "F" + fieldId, options);
 			$fieldDom.searchComboExistsMultiselectWidget("fieldvalue", enteredValue);
 		},
 
-		makeTagsField : function(tableId, fieldId, fieldTitle, options, enteredValue) {
+		makeTagsField: function (tableId, fieldId, fieldTitle, options, enteredValue) {
 			var context = {"tags-id": fieldId, "tags-title": fieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#tags-template", context));
 			$fieldDom.searchTagsWidget({
-				available : options,
-				state : enteredValue
+				available: options,
+				state: enteredValue
 			});
 		},
 
-		extractSearchModel : function(){
+		extractSearchModel: function () {
 
 			var fields = this.$el.find("div.search-input");
 			var jsonVariable = {};
@@ -525,7 +526,7 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 			// We need to get the id value and stuff from the project from the tree and put them on the jsonVariable
 			// This method extractModel puts them in the model and it's been sent to the controller (check showResults to see the url)
 
-			if( !!$("#tree").attr("id") ){
+			if (!!$("#tree").attr("id")) {
 				var key;
 				var selectedInTree = $("#tree").jstree('get_selected');
 
@@ -533,35 +534,37 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 				// BE CAREFULL : This won't work anymore if multiple node type can be selected.
 				var type = selectedInTree.attr('restype');
 
-				switch (type){
+				switch (type) {
 
-				case 'campaign-libraries' :
-					key =  "project.id";
-					break;
-				case 'campaign-folders' :
-					selectedInTree = selectedInTree.find("[restype=campaigns]"); //select sub campaign for folders
-					key =  "campaign.id";
-					break;
-				case 'campaigns' :
-					key =  "campaign.id";
-					break;
-				case 'iterations' :
-					key =  "iteration.id";
-					break;
-				case 'test-suites' :
-					key =  "testSuites.id";
-					break;
+					case 'campaign-libraries' :
+						key = "project.id";
+						break;
+					case 'campaign-folders' :
+						selectedInTree = selectedInTree.find("[restype=campaigns]"); //select sub campaign for folders
+						key = "campaign.id";
+						break;
+					case 'campaigns' :
+						key = "campaign.id";
+						break;
+					case 'iterations' :
+						key = "iteration.id";
+						break;
+					case 'test-suites' :
+						key = "testSuites.id";
+						break;
 				}
 
 				var attrName = key == 'project.id' ? 'project' : 'resid';
 
-				var ids =_.map(selectedInTree, function(node){return $(node).attr(attrName);});
-                if (ids!==undefined&&ids.length>0) {
-                    jsonVariable[key] = {type : "LIST", values : ids};
-                }
-                else {
-                    jsonVariable["project.id"] = {type : "LIST", values : []};
-                }
+				var ids = _.map(selectedInTree, function (node) {
+					return $(node).attr(attrName);
+				});
+				if (ids !== undefined && ids.length > 0) {
+					jsonVariable[key] = {type: "LIST", values: ids};
+				}
+				else {
+					jsonVariable["project.id"] = {type: "LIST", values: []};
+				}
 
 
 			}
@@ -574,33 +577,33 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 				var wtype = $($field.children()[0]).attr("data-widgetname");
 				var newKey = $field.attr("id");
 				var escapedKey = newKey.replace(/\./g, "\\.");
-				var field = $("#"+escapedKey).data("search"+wtype+"Widget");
-				if(field && !!field.fieldvalue()){
+				var field = $("#" + escapedKey).data("search" + wtype + "Widget");
+				if (field && !!field.fieldvalue()) {
 					var value = field.fieldvalue();
-					if( value ) {
+					if (value) {
 						if ((value.type == "SINGLE" || value.type == "TEXT") && wtype !== "Checkbox") {
-						value.value = value.value.toLowerCase();
-					}
+							value.value = value.value.toLowerCase();
+						}
 						jsonVariable[newKey] = value;
 					}
-					if(newKey ===	"project.id" ||newKey ===	"requirement.project.id"){
-						var cookiename = "toSelect"+location.search;
+					if (newKey === "project.id" || newKey === "requirement.project.id") {
+						var cookiename = "toSelect" + location.search;
 						$.cookie(cookiename, JSON.stringify(value.values));
 					}
 				}
 			}
 
-			this.model = {fields : jsonVariable};
+			this.model = {fields: jsonVariable};
 		},
 
-		post : function (URL, PARAMS) {
-			var temp=document.createElement("form");
-			temp.action=URL;
-			temp.method="POST";
-			temp.style.display="none";
-			temp.acceptCharset="UTF-8";
+		post: function (URL, PARAMS) {
+			var temp = document.createElement("form");
+			temp.action = URL;
+			temp.method = "POST";
+			temp.style.display = "none";
+			temp.acceptCharset = "UTF-8";
 
-			for ( var x in PARAMS) {
+			for (var x in PARAMS) {
 				if (PARAMS.hasOwnProperty(x)) {
 					var opt = document.createElement("textarea");
 					opt.name = x;
@@ -614,34 +617,37 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 			return temp;
 		},
 
-		showResults : function() {
+		showResults: function () {
 
 			this.extractSearchModel();
 
-			if (this.emptyCriteria()){
+			if (this.emptyCriteria()) {
 				var message = translator.get('search.validate.empty.label');
 				notification.showInfo(message);
 				return;
 			}
 
 			var searchModel = JSON.stringify(this.model);
-			var queryString = "searchModel=" + encodeURIComponent(searchModel);
+			var data = {
+				searchModel: searchModel,
+				_csrf: $("meta[name='_csrf']").attr("content")
+			};
 
-			if(!!$("#associationType").length){
+			if (!!$("#associationType").length) {
 				var associateResultWithType = $("#associationType").text();
-				queryString += "&associateResultWithType=" + encodeURIComponent(associateResultWithType);
-
 				var id = $("#associationId").text();
-				queryString += "&id=" + encodeURIComponent(id);
+
+				data.associateResultWithType = associateResultWithType;
+				data.id = id;
 
 			}
 
-			document.location.href = squashtm.app.contextRoot + "advanced-search/results?"+$("#searchDomain").text() + "&" + queryString;
+			this.post(squashtm.app.contextRoot + "advanced-search/results?searchDomain=" + $("#searchDomain").text(), data);
 		},
 
-		emptyCriteria : function(){
+		emptyCriteria: function () {
 			var hasCriteria = false;
-			$.each(this.model.fields, function(namename,field){
+			$.each(this.model.fields, function (namename, field) {
 				// we must distinguish singlevalued and multivalued fields
 				// singlevalued fields define a property 'value', while multivalued fields define a property 'values'.
 				// a singlevalued field is empty if the property 'value' is empty,
@@ -655,7 +661,7 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 		},
 
 		// that method knows about fields 'projects', 'nature', 'type' and 'category'
-		_updateAvailableInfolists : function(){
+		_updateAvailableInfolists: function () {
 
 			var selectedProjectIds = $("#perimeter-multiple-custom").val(),
 				allProjects = projects.getAll(),
@@ -673,20 +679,20 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 
 			// TODO : check that
 			if (allProjects !== null) {
-			for (var i=0; i < allProjects.length; i++){
-				var project = allProjects[i],
-					pId = project.id;
+				for (var i = 0; i < allProjects.length; i++) {
+					var project = allProjects[i],
+						pId = project.id;
 
 
-				// collecting which info lists are used by the current selection
-				// use of  ""+ dirty trick to cast that int to string
-				if ( $.inArray(""+pId, selectedProjectIds) !== -1) {
-					natListCodes.push( project.testCaseNatures.code );
-					typListCodes.push( project.testCaseTypes.code );
-					catListCodes.push (project.requirementCategories.code);
+					// collecting which info lists are used by the current selection
+					// use of  ""+ dirty trick to cast that int to string
+					if ($.inArray("" + pId, selectedProjectIds) !== -1) {
+						natListCodes.push(project.testCaseNatures.code);
+						typListCodes.push(project.testCaseTypes.code);
+						catListCodes.push(project.requirementCategories.code);
+					}
+
 				}
-
-			}
 			}
 			// now remove the duplicates
 			natListCodes = _.uniq(natListCodes, true);
@@ -694,9 +700,15 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 			catListCodes = _.uniq(catListCodes, true);
 
 			// finally update the info lists
-			_.each(natListCodes, function(code) {nature.searchMultiCascadeFlatWidget("showPrimary", code);});
-			_.each(typListCodes, function(code) {type.searchMultiCascadeFlatWidget("showPrimary", code);});
-			_.each(catListCodes, function(code) {category.searchMultiCascadeFlatWidget("showPrimary", code);});
+			_.each(natListCodes, function (code) {
+				nature.searchMultiCascadeFlatWidget("showPrimary", code);
+			});
+			_.each(typListCodes, function (code) {
+				type.searchMultiCascadeFlatWidget("showPrimary", code);
+			});
+			_.each(catListCodes, function (code) {
+				category.searchMultiCascadeFlatWidget("showPrimary", code);
+			});
 
 
 		}
@@ -704,7 +716,7 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 
 	});
 
-	$(document).keyup(function(event) {
+	$(document).keyup(function (event) {
 		if (event.keyCode == 13) {
 			$("#advanced-search-button").click();
 		}
