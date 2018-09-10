@@ -80,10 +80,6 @@ public abstract class GlobalSearchController {
 	@Inject
 	private ProjectFinder projectFinder;
 
-	protected interface FormModelBuilder {
-		SearchInputInterfaceModel build(Locale locale, boolean isMilestoneMode);
-	}
-
 	{
 		formModelBuilder.put(TESTCASE, new FormModelBuilder() {
 			@Override
