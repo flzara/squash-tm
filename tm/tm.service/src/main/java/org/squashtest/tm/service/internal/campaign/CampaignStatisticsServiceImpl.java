@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
@@ -371,7 +370,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService 
 			Long id = (Long) tuple[0];
 
 			if (!id.equals(currentId)) {
-				String name = HtmlUtils.htmlEscape((String) tuple[1]);
+				String name = (String) tuple[1];
 				newStatistics = new CampaignTestInventoryStatistics();
 				newStatistics.setCampaignName(name);
 				result.add(newStatistics);
