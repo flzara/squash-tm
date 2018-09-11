@@ -224,10 +224,10 @@
         		Some dependencies of Jasperreports are a mess (not jasper reports itself
         		though) : itext and castor-xml. Their own dependencies must also be
         		managed here.
-        		
+
         		Note that the version of itext here has been slightly modified by the JR
         		team and is served by their own maven repository.
-        		
+
         		Note: no wild card used here for duplicate dependencies because maven-enforcer-plugin
         		doesn't handle them well (see https://issues.apache.org/jira/browse/MENFORCER-195).
         		Each offending dependency will be listed explicitly instead.
@@ -237,9 +237,9 @@
 		  		Bouncycastle is pulled by itext. But no we wont do xmlsecurity in our documents
 		  		so we just exclude them.
 		  		Beside the lib changed its groupid from 'bouncycastle' to 'org.bouncycastle',
-		  		which effectively allows Maven to pull both set of bouncycastle artifacts (as shown by 
+		  		which effectively allows Maven to pull both set of bouncycastle artifacts (as shown by
 		  		dependency:tree -Dverbose) with no regard for the Shrödinbugs it induces at runtime.
-		  		
+
 		  		Note : we don't use the wildcard notation here because maven-enforcer-plugin
 		  		cant handle it properly (see https://issues.apache.org/jira/browse/MENFORCER-195)
 		  		so we explicitly declare the three of them.
@@ -309,25 +309,25 @@
             <artifactId>commons-logging</artifactId>
           </exclusion>
 
-          <!-- 
+          <!--
           	Jasper Reports compiles java with
-          	org.eclipse.jdt.core.compiler:ecj, which is a subset 
-          	of the broader org.eclipse.jdt:ecj pulled 
-          	by tomcat-embed-jasper in the tm.web project. 
-          	
-          	Previous versions of tomcat-embed-jasper also 
-          	ran using the core.compiler ecj variant but as 
-          	of 8.5.31 (and probably earlier) 
-          	the later is used. In order to avoid ending 
-          	with both jars in the final assembly we now 
+          	org.eclipse.jdt.core.compiler:ecj, which is a subset
+          	of the broader org.eclipse.jdt:ecj pulled
+          	by tomcat-embed-jasper in the tm.web project.
+
+          	Previous versions of tomcat-embed-jasper also
+          	ran using the core.compiler ecj variant but as
+          	of 8.5.31 (and probably earlier)
+          	the later is used. In order to avoid ending
+          	with both jars in the final assembly we now
           	wire Jasper Reports with org.eclipse.jdt:ecj.
-          	
-          	Projects that pull jasperreports as configured by 
-          	this bom should be aware of this : they should 
+
+          	Projects that pull jasperreports as configured by
+          	this bom should be aware of this : they should
           	add org.eclipse.jdt:ecj to their dependencies.
-          	
-          	Even better, they should simply depend on 
-          	org.squashtest.tm:core.report.api and not worry 
+
+          	Even better, they should simply depend on
+          	org.squashtest.tm:core.report.api and not worry
           	about this.
             -->
 
@@ -451,6 +451,13 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-test</artifactId>
         <version>${spring.boot.version}</version>
+        <exclusions>
+          <exclusion>
+            <!-- unneeded because of org.json:json -->
+            <groupId>com.vaadin.external.google</groupId>
+            <artifactId>android-json</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
