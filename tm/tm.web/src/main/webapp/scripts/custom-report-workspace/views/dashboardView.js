@@ -381,7 +381,10 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 			},
 
 			initFavoriteButton: function () {
-				$("#change-favorite-dashboard-button").buttonmenu();
+				// Issue 7636 set the anchor to right, if the user can't rename the dashboard, the menu isn't correctly displayed
+				$("#change-favorite-dashboard-button").buttonmenu({
+					anchor: "right"
+				});
 				return this;
 			},
 
@@ -569,10 +572,10 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 
 			resizeItem: function (e, ui, $widget) {
 				var bindingId = $widget.attr("data-binding-id");//get binding id
-				if ( $widget.attr("data-type") === "chart") {
+				if ($widget.attr("data-type") === "chart") {
 					this.redrawChart(bindingId);
 				}
-				if ( $widget.attr("data-type") === "report") {
+				if ($widget.attr("data-type") === "report") {
 					this.redrawReport(bindingId);
 				}
 			},
