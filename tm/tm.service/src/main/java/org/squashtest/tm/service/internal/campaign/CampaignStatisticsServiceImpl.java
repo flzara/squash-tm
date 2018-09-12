@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
@@ -234,6 +235,9 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService 
 
 			// scheduled iterations
 			progression.setScheduledIterations(scheduledIterations);    //we want them in any case
+			// Issue 7635, XSS when generating campaing dashboard
+			progression.getScheduledIterations().forEach(
+				scheduledIteration -> scheduledIteration.setName(HtmlUtils.htmlEscape(scheduledIteration.getName())));
 			ScheduledIteration.checkIterationsDatesIntegrity(scheduledIterations);
 
 			progression.computeSchedule();
