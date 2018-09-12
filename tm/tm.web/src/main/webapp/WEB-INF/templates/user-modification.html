@@ -387,7 +387,7 @@ th:title="#{user.account.password.reset.label}">
 
   <div id="add-permission-dialog" class="not-displayed popup-dialog" title="AddPermission"
     th:title="#{title.AddPermission}">
-    <div class="main">
+    <div  data-def="state=main">
       <table id="add-permission-dialog-table">
         <tr>
           <td>
@@ -415,12 +415,13 @@ th:title="#{user.account.password.reset.label}">
         </tr>
       </table>
     </div>
-    <div class="wait" th:include="fragments-utils/static-panels :: small-please-wait" >zzz</div>
-    <div class="no-more-projects" th:text="#{message.AllProjectsAlreadyLinkedToUser}">no more teams to bind</div>
+    <div  data-def="state=wait" th:include="fragments-utils/static-panels :: small-please-wait" >zzz</div>
+    <div  data-def="state=no-more-projects" th:text="#{message.AllProjectsAlreadyLinkedToUser}">no more teams to bind</div>
 
     <div class="popup-dialog-buttonpane">
-      <input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}" />
-      <input class="cancel" type="button" value="cancel" th:value="#{label.Cancel}" />
+      <input type="button" th:value="#{label.fem.addAnother}" value="add another" data-def="evt=add-another, state=main" />
+      <input type="button" th:value="#{label.Add}" value="add" data-def="evt=add-close, state=main" />
+      <input type="button" th:value="#{label.Close}" value="cancel" data-def="evt=cancel, state=main no-more-projects" />
     </div>
   </div>
 
