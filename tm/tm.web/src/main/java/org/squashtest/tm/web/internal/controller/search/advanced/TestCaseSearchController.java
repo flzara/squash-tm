@@ -170,7 +170,7 @@ public class TestCaseSearchController extends GlobalSearchController {
 		return "test-case-search-result.html";
 	}
 
-	@RequestMapping(value = RESULTS, params = TESTCASE_VIA_REQUIREMENT)
+	@RequestMapping(value = RESULTS, params ="searchDomain=testcaseViaRequirement")
 	public String getTestCaseViaRequirementSearchResultPage(Model model, @RequestParam String searchModel,
 											  @RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
 		Optional<Milestone> activeMilestone = getActiveMilestoneHolder().getActiveMilestone();
