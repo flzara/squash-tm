@@ -21,12 +21,13 @@
 package org.squashtest.tm.domain.customfield;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.Hibernate;
+import org.hibernate.proxy.HibernateProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldVisitor;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedMultiSelectField;
-import org.squashtest.tm.domain.denormalizedfield.DenormalizedNumericValue;
 
 import java.util.List;
 
@@ -78,11 +79,12 @@ public class RawValue implements DenormalizedFieldVisitor {
 
 
 	public void setValueFor(CustomFieldValue field){
-		if (MultiValuedCustomFieldValue.class.isAssignableFrom(field.getClass())){
-			setValueFor((MultiValuedCustomFieldValue) field);
+		CustomFieldValue unproxiedField = initializeAndUnproxy(field);
+		if (MultiValuedCustomFieldValue.class.isAssignableFrom(unproxiedField.getClass())){
+			setValueFor((MultiValuedCustomFieldValue) unproxiedField);
 
-		} else if (SingleValuedCustomFieldValue.class.isAssignableFrom(field.getClass())) {
-			setValueFor((SingleValuedCustomFieldValue)field);
+		} else if (SingleValuedCustomFieldValue.class.isAssignableFrom(unproxiedField.getClass())) {
+			setValueFor((SingleValuedCustomFieldValue)unproxiedField);
 
 		}  else {
 			logError(field);
@@ -147,6 +149,21 @@ public class RawValue implements DenormalizedFieldVisitor {
 	@Override
 	public void visit(DenormalizedMultiSelectField multiselect) {
 		multiselect.setValues(values);
+	}
+
+	// stolen from stackoverflow https://stackoverflow.com/questions/2216547/converting-hibernate-proxy-to-real-entity-object
+	private <T> T initializeAndUnproxy(T entity) {
+		if (entity == null) {
+			throw new
+				NullPointerException("Entity passed for initialization is null");
+		}
+
+		Hibernate.initialize(entity);
+		if (entity instanceof HibernateProxy) {
+			entity = (T) ((HibernateProxy) entity).getHibernateLazyInitializer()
+				.getImplementation();
+		}
+		return entity;
 	}
 
 

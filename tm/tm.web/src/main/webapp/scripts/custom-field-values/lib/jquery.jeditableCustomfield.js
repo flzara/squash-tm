@@ -350,10 +350,8 @@ define(
 				switch(type) {
 					case 'plainText':
 					case 'datePicker':
-						var test1 = StringUtils.isBlank(input.value);
 						return StringUtils.isBlank(input.value);
 					case 'richText':
-						var test2 = StringUtils.isBlank(CKEDITOR.instances[input.id].document.getBody().getChild(0).getText());
 						return StringUtils.isBlank(CKEDITOR.instances[input.id].document.getBody().getChild(0).getText());
 					case 'tag':
 						return input.length < 2;
