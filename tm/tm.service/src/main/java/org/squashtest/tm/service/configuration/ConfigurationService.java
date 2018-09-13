@@ -32,6 +32,7 @@ public interface ConfigurationService {
 		String UPLOAD_SIZE_LIMIT = "uploadfilter.upload.sizeLimitInBytes";
 		String UPLOAD_EXTENSIONS_WHITELIST = "uploadfilter.fileExtensions.whitelist";
 		String IMPORT_SIZE_LIMIT = "uploadfilter.upload.import.sizeLimitInBytes";
+		String TOTAL_ACTIVATED_USERS = "total.activated.users";
 	}
 
 	void createNewConfiguration(String key, String value);

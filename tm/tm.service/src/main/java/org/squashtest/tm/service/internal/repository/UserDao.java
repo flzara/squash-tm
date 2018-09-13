@@ -66,4 +66,7 @@ public interface UserDao extends JpaRepository<User, Long>, CustomUserDao {
 	@Query
 	@Modifying
 	void unassignFromAllIterationTestPlan(@Param("userId") long userId);
+
+	@Query
+	int countAllByActiveIsTrue();
 }

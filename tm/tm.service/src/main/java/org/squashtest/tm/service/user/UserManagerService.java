@@ -192,4 +192,11 @@ public interface UserManagerService {
 	 */
 	List<String> findAllDuplicateLogins();
 
+	/**
+	 * count total number of activated users
+	 *
+	 * @return the sum
+	 */
+	int countAllActiveUsers();
+
 }

@@ -534,6 +534,8 @@ public class AdministrationServiceImpl implements AdministrationService {
 		return (String) query.uniqueResult();
 	}
 
-
-
+	@Override
+	public int countAllActiveUsers() {
+		return userDao.countAllByActiveIsTrue();
+	}
 }
