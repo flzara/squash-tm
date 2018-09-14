@@ -41,7 +41,10 @@ import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.squashtest.tm.domain.chart.DataType.LIST;
 
@@ -492,8 +495,15 @@ public class ChartDataFinder {
 		SingleSelectField cuf = customFieldDao.findSingleSelectFieldById(colorCufId);
 
 		List<String> colours = new ArrayList<>();
-		for (Object[] abs : abscissa) {
-			colours.add(cuf.findColourOf(abs[axis.size() - 1].toString()));
+
+		// in case of a trend or cumulative chart, we need to filter the abscissa and get them by order of arrival, that's
+		// how they're displayed in jqplot (I hope so...)
+
+		Set<String> uniqueAbscissaLabel = abscissa.stream().map(objects -> (String) objects[axis.size()-1])
+			.collect(Collectors.toCollection(LinkedHashSet::new));
+
+		for (String abs : uniqueAbscissaLabel) {
+			colours.add(cuf.findColourOf(abs));
 		}
 		chartSeries.setColours(colours);
 	}
