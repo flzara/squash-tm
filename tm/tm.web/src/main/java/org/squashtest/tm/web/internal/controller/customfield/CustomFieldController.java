@@ -287,7 +287,7 @@ public class CustomFieldController {
 		try {
 			customFieldManager.changeOptionCode(customFieldId, optionLabel, newCode);
 		} catch (DomainException e) {
-			e.setObjectName("change-cuf-option-code");
+			e.setObjectName("change-cuf-option");
 			throw e;
 		}
 	}
