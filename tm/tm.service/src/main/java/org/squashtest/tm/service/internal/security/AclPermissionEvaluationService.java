@@ -20,17 +20,6 @@
  */
 package org.squashtest.tm.service.internal.security;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.acls.domain.PermissionFactory;
 import org.springframework.security.acls.model.Permission;
@@ -41,6 +30,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.security.acls.CustomPermission;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.UserContextService;
+
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import java.lang.reflect.Field;
+import java.util.*;
 
 /**
  * TODO this service can be queried many times by a controller outside of a tx, which means lots of shord lived tx and
@@ -135,7 +129,7 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 			Authentication authentication = userContextService.getAuthentication();
 			Field[] fields = CustomPermission.class.getFields();
 			// TODO below is a hacky enum of all rights, should be externalized.
-			findPermission(fields, object,authentication);
+			hasMore = findPermission(fields, object,authentication);
 
 		}
 		return hasMore;
