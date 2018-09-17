@@ -23,7 +23,6 @@ package org.squashtest.tm.service.internal.campaign.export;
 import org.jooq.Record;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
 import org.squashtest.tm.service.internal.dto.*;
 
 import java.text.SimpleDateFormat;
@@ -92,7 +91,7 @@ public class CampaignExportCSVModelImpl extends AbstractCampaignExportCSVModel {
 				.leftJoin(EXECUTION).on(EXECUTION_ID.eq(ITEM_TEST_PLAN_EXECUTION.EXECUTION_ID))
 				.leftJoin(EXECUTION_EXECUTION_STEPS).on(EXECUTION_EXECUTION_STEPS.EXECUTION_ID.eq(EXECUTION_ID))
 				.leftJoin(EXECUTION_STEP).on(EXECUTION_STEP_ID.eq(EXECUTION_EXECUTION_STEPS.EXECUTION_STEP_ID))
-				.leftJoin(ISSUE_LIST).on(ISSUE_LIST.ISSUE_LIST_ID.eq(EXECUTION.ISSUE_LIST_ID))
+				.leftJoin(ISSUE_LIST).on(ISSUE_LIST.ISSUE_LIST_ID.eq(EXECUTION.ISSUE_LIST_ID).or(ISSUE_LIST.ISSUE_LIST_ID.eq(EXECUTION_STEP.ISSUE_LIST_ID)))
 				.leftJoin(ISSUE.as("exec_issue")).on(ISSUE.as("exec_issue").ISSUE_LIST_ID.eq(ISSUE_LIST.ISSUE_LIST_ID))
 				.leftJoin(TEST_SUITE_TEST_PLAN_ITEM).on(TEST_SUITE_TEST_PLAN_ITEM.TPI_ID.eq(ITPI_ID))
 				.leftJoin(TEST_SUITE).on(TEST_SUITE.ID.eq(TEST_SUITE_TEST_PLAN_ITEM.SUITE_ID))
@@ -115,18 +114,18 @@ public class CampaignExportCSVModelImpl extends AbstractCampaignExportCSVModel {
 		TestCaseDto currentTestCase = new TestCaseDto();
 		ExecutionDto currentExecution = new ExecutionDto();
 
-		while (iterator.hasNext()){
+		while (iterator.hasNext()) {
 			Record r = iterator.next();
-			if(campaignDto.getIteration(r.get(ITERATION_ID)) == null){
+			if (campaignDto.getIteration(r.get(ITERATION_ID)) == null) {
 				campaignDto.addIteration(
 					new IterationDto(r.get(ITERATION_ID), r.get(ITERATION_NAME), r.get(ITERATION_SCHEDULED_START_DATE), r.get(ITERATION_SCHEDULED_END_DATE), r.get(ITERATION_ACTUAL_START_DATE), r.get(ITERATION_ACTUAL_END_DATE))
 				);
 				currentIteration = campaignDto.getIteration(r.get(ITERATION_ID));
 			}
-			if(r.get(IT_MILESTONE.LABEL) != null){
+			if (r.get(IT_MILESTONE.LABEL) != null) {
 				currentIteration.addMilestone(r.get(IT_MILESTONE.LABEL));
 			}
-			if(currentIteration.getTestPlan(r.get(ITPI_ID)) == null){
+			if (currentIteration.getTestPlan(r.get(ITPI_ID)) == null) {
 
 				ITPIDto newItpi = createNewItpiDto(r);
 
@@ -140,7 +139,7 @@ public class CampaignExportCSVModelImpl extends AbstractCampaignExportCSVModel {
 				currentItpi = currentIteration.getTestPlan(r.get(ITPI_ID));
 				currentTestCase = currentItpi.getTestCase();
 
-				if(r.get(EXECUTION_ID) != null){
+				if (r.get(EXECUTION_ID) != null) {
 					ExecutionDto newExecution = createNewExecutionDto(r);
 
 					currentItpi.addExecution(newExecution);
@@ -156,7 +155,7 @@ public class CampaignExportCSVModelImpl extends AbstractCampaignExportCSVModel {
 
 				populateTestCase(r, currentTestCase);
 
-				if(r.get(EXECUTION_ID) != null && !currentExecution.getId().equals(r.get(EXECUTION_ID))){
+				if (r.get(EXECUTION_ID) != null && !currentExecution.getId().equals(r.get(EXECUTION_ID))) {
 
 					ExecutionDto newExecution = createNewExecutionDto(r);
 
@@ -166,7 +165,7 @@ public class CampaignExportCSVModelImpl extends AbstractCampaignExportCSVModel {
 					allExecutionIds.add(r.get(EXECUTION_ID));
 				}
 
-				if(r.get(EXECUTION_STEP_ID) != null && currentExecution.getStep(r.get(EXECUTION_STEP_ID)) == null){
+				if (r.get(EXECUTION_STEP_ID) != null && currentExecution.getStep(r.get(EXECUTION_STEP_ID)) == null) {
 					currentExecution.addStep(new ExecutionStepDto(r.get(EXECUTION_STEP_ID), r.get(EXECUTION_STEP_STATUS)));
 				}
 
@@ -176,21 +175,21 @@ public class CampaignExportCSVModelImpl extends AbstractCampaignExportCSVModel {
 
 	@Override
 	protected void populateItpi(Record r, ITPIDto itpi) {
-		if(r.get(TSu_NAME) != null){
+		if (r.get(TSu_NAME) != null) {
 			itpi.getTestSuiteSet().add(r.get(TSu_NAME));
 		}
 
-		if(r.get(ITPI_ISSUE) != null){
+		if (r.get(ITPI_ISSUE) != null) {
 			itpi.addIssue(r.get(ITPI_ISSUE));
 		}
 	}
 
 	private TestCaseDto createNewTestCaseDto(Record r) {
 		TestCaseDto newTestCase = new TestCaseDto(r.get(TC_ID), r.get(TC_REFERENCE), r.get(TC_NAME), r.get(TC_IMPORTANCE), r.get(TC_NATURE), r.get(TC_TYPE), r.get(TC_STATUS), r.get(PROJECT_ID), r.get(PROJECT_NAME));
-		if(r.get(TC_DESCRIPTION) != null){
+		if (r.get(TC_DESCRIPTION) != null) {
 			newTestCase.setDescription(r.get(TC_DESCRIPTION));
 		}
-		if(r.get(TC_PREREQUISITE) != null){
+		if (r.get(TC_PREREQUISITE) != null) {
 			newTestCase.setPrerequisite(r.get(TC_PREREQUISITE));
 		}
 		populateTestCase(r, newTestCase);
@@ -200,10 +199,10 @@ public class CampaignExportCSVModelImpl extends AbstractCampaignExportCSVModel {
 
 	private ExecutionDto createNewExecutionDto(Record r) {
 		ExecutionDto newExecution = new ExecutionDto(r.get(EXECUTION_ID), r.get(EXECUTION_STATUS), r.get(EXECUTION_MODE).equals("AUTOMATED"));
-		if(r.get(EXECUTION_STEP_ID) != null){
+		if (r.get(EXECUTION_STEP_ID) != null) {
 			newExecution.addStep(new ExecutionStepDto(r.get(EXECUTION_STEP_ID), r.get(EXECUTION_STEP_STATUS)));
 		}
-		return  newExecution;
+		return newExecution;
 	}
 
 	@Override
@@ -428,8 +427,8 @@ public class CampaignExportCSVModelImpl extends AbstractCampaignExportCSVModel {
 		// ******************************** data formatting ***************************
 
 		private String getCampaignCufValue(CustomFieldValueDto customFieldValueDto, CustomFieldDto model) {
-			if(customFieldValueDto != null && customFieldValueDto.getValue() != null){
-				if(model.getInputType().equals("NUMERIC")){
+			if (customFieldValueDto != null && customFieldValueDto.getValue() != null) {
+				if (model.getInputType().equals("NUMERIC")) {
 					return NumericCufHelper.formatOutputNumericCufValue(customFieldValueDto.getValue());
 				}
 				return customFieldValueDto.getValue();
@@ -544,11 +543,11 @@ public class CampaignExportCSVModelImpl extends AbstractCampaignExportCSVModel {
 			if (lastExec != null) {
 				if (lastExec.isAutomated()) {
 					successRate = lastExec.getStatus().equals("SUCCESS") ? 100 : 0;
-				} else if(!lastExec.getSteps().isEmpty()) {
+				} else if (!lastExec.getSteps().isEmpty()) {
 					Predicate<ExecutionStepDto> predicate = step -> step.getStatus().equals("SUCCESS");
 					Collection<ExecutionStepDto> steps = itp.getLatestExecution().getSteps().values();
 					int success = (int) steps.stream().filter(predicate).count();
-					successRate = success * 100/ steps.size() ;
+					successRate = success * 100 / steps.size();
 				}
 			}
 			return successRate;

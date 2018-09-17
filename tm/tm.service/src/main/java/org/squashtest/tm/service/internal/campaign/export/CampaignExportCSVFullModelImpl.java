@@ -112,7 +112,7 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 				TS_ORDER, TS_ID, CTS_CALLED_TS, TS_REQUIREMENT_VERIFIED,
 				EXECUTION_ID, EXECUTION_MODE, EXECUTION_STATUS,
 				EXECUTION_STEP_ID, EXECUTION_STEP_STATUS, ES_LAST_EXECUTED_BY, ES_LAST_EXECUTED_ON, ES_COMMENT, ES_ORDER, ES_TS_ID, ES_ISSUE, ES_REQUIREMENT_VERIFIED
-				)
+			)
 				.from(ITERATION)
 				.innerJoin(CAMPAIGN_ITERATION).on(ITERATION_ID.eq(CAMPAIGN_ITERATION.ITERATION_ID))
 				.innerJoin(CAMPAIGN).on(CAMPAIGN.CLN_ID.eq(CAMPAIGN_ITERATION.CAMPAIGN_ID))
@@ -130,11 +130,11 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 				.leftJoin(DATASET).on(DATASET.DATASET_ID.eq(ITERATION_TEST_PLAN_ITEM.DATASET_ID))
 				.leftJoin(ITEM_TEST_PLAN_EXECUTION).on(ITEM_TEST_PLAN_EXECUTION.ITEM_TEST_PLAN_ID.eq(ITPI_ID))
 				.leftJoin(EXECUTION).on(EXECUTION_ID.eq(ITEM_TEST_PLAN_EXECUTION.EXECUTION_ID))
-				.leftJoin(ISSUE_LIST.as("exec_issue_list")).on(ISSUE_LIST.as("exec_issue_list").ISSUE_LIST_ID.eq(EXECUTION.ISSUE_LIST_ID))
+				.leftJoin(EXECUTION_EXECUTION_STEPS).on(EXECUTION_EXECUTION_STEPS.EXECUTION_ID.eq(EXECUTION.EXECUTION_ID))
+				.leftJoin(EXECUTION_STEP).on(EXECUTION_STEP.EXECUTION_STEP_ID.eq(EXECUTION_EXECUTION_STEPS.EXECUTION_STEP_ID))
+				.leftJoin(ISSUE_LIST.as("exec_issue_list")).on(ISSUE_LIST.as("exec_issue_list").ISSUE_LIST_ID.eq(EXECUTION.ISSUE_LIST_ID).or(ISSUE_LIST.as("exec_issue_list").ISSUE_LIST_ID.eq(EXECUTION_STEP.ISSUE_LIST_ID)))      // used to get execution's issues (which includes its steps issues)
 				.leftJoin(ISSUE.as("exec_issue")).on(ISSUE.as("exec_issue").ISSUE_LIST_ID.eq(ISSUE_LIST.as("exec_issue_list").ISSUE_LIST_ID))
-				.leftJoin(EXECUTION_EXECUTION_STEPS).on(EXECUTION_EXECUTION_STEPS.EXECUTION_ID.eq(EXECUTION_ID))
-				.leftJoin(EXECUTION_STEP).on(EXECUTION_STEP_ID.eq(EXECUTION_EXECUTION_STEPS.EXECUTION_STEP_ID))
-				.leftJoin(ISSUE_LIST.as("es_issue_list")).on(ISSUE_LIST.as("es_issue_list").ISSUE_LIST_ID.eq(EXECUTION_STEP.ISSUE_LIST_ID))
+				.leftJoin(ISSUE_LIST.as("es_issue_list")).on(ISSUE_LIST.as("es_issue_list").ISSUE_LIST_ID.eq(EXECUTION_STEP.ISSUE_LIST_ID))     // used to get only the step's issues
 				.leftJoin(ISSUE.as("es_issue")).on(ISSUE.as("es_issue").ISSUE_LIST_ID.eq(ISSUE_LIST.as("es_issue_list").ISSUE_LIST_ID))
 				.leftJoin(VERIFYING_STEPS.as("es_verifying_step")).on(VERIFYING_STEPS.as("es_verifying_step").TEST_STEP_ID.eq(EXECUTION_STEP.TEST_STEP_ID))
 				.leftJoin(REQUIREMENT_VERSION_COVERAGE.as("es_rvc")).on(ES_REQUIREMENT_VERIFIED.eq(VERIFYING_STEPS.as("es_verifying_step").REQUIREMENT_VERSION_COVERAGE_ID))
@@ -160,18 +160,18 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 		ExecutionDto currentExecution = new ExecutionDto();
 		ExecutionStepDto currentExecutionStep = new ExecutionStepDto();
 
-		while (iterator.hasNext()){
+		while (iterator.hasNext()) {
 			Record r = iterator.next();
-			if(campaignDto.getIteration(r.get(ITERATION_ID)) == null){
+			if (campaignDto.getIteration(r.get(ITERATION_ID)) == null) {
 				campaignDto.addIteration(
 					new IterationDto(r.get(ITERATION_ID), r.get(ITERATION_NAME), r.get(ITERATION_SCHEDULED_START_DATE), r.get(ITERATION_SCHEDULED_END_DATE), r.get(ITERATION_ACTUAL_START_DATE), r.get(ITERATION_ACTUAL_END_DATE))
 				);
 				currentIteration = campaignDto.getIteration(r.get(ITERATION_ID));
 			}
-			if(r.get(IT_MILESTONE.LABEL) != null){
+			if (r.get(IT_MILESTONE.LABEL) != null) {
 				currentIteration.addMilestone(r.get(IT_MILESTONE.LABEL));
 			}
-			if(currentIteration.getTestPlan(r.get(ITPI_ID)) == null){
+			if (currentIteration.getTestPlan(r.get(ITPI_ID)) == null) {
 
 				ITPIDto newItpi = createNewItpiDto(r);
 
@@ -185,21 +185,21 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 				currentItpi = currentIteration.getTestPlan(r.get(ITPI_ID));
 				currentTestCase = currentItpi.getTestCase();
 
-				if(r.get(TS_ID) != null){
+				if (r.get(TS_ID) != null) {
 					TestStepDto step = createTestStepDto(r);
 					currentTestCase.addStep(step);
 					currentTestStep = currentTestCase.getStep(r.get(TS_ID));
 				}
 
 
-				if(r.get(EXECUTION_ID) != null){
+				if (r.get(EXECUTION_ID) != null) {
 					ExecutionDto newExecution = createNewExecutionDto(r);
 
 					currentItpi.addExecution(newExecution);
 
 					currentExecution = currentItpi.getExecution(r.get(EXECUTION_ID));
 
-					if(r.get(EXECUTION_STEP_ID) != null){
+					if (r.get(EXECUTION_STEP_ID) != null) {
 						currentExecutionStep = currentExecution.getStep(r.get(EXECUTION_STEP_ID));
 					}
 
@@ -213,16 +213,16 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 
 				populateTestCase(r, currentTestCase);
 
-				if(currentTestStep.getId().equals(r.get(TS_ID)) && r.get(TS_REQUIREMENT_VERIFIED) != null){
+				if (currentTestStep.getId().equals(r.get(TS_ID)) && r.get(TS_REQUIREMENT_VERIFIED) != null) {
 					currentTestStep.addRequirement(r.get(TS_REQUIREMENT_VERIFIED));
-				} else if (r.get(TS_ID) != null){
+				} else if (r.get(TS_ID) != null) {
 					TestStepDto step = createTestStepDto(r);
 					currentTestCase.addStep(step);
 					currentTestStep = currentTestCase.getStep(r.get(TS_ID));
 				}
 
-				if(r.get(EXECUTION_ID) != null){
-					if(!currentExecution.getId().equals(r.get(EXECUTION_ID))){
+				if (r.get(EXECUTION_ID) != null) {
+					if (!currentExecution.getId().equals(r.get(EXECUTION_ID))) {
 
 						ExecutionDto newExecution = createNewExecutionDto(r);
 
@@ -231,8 +231,8 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 						currentExecution = currentItpi.getExecution(r.get(EXECUTION_ID));
 						allExecutionIds.add(r.get(EXECUTION_ID));
 
-					} else if(r.get(EXECUTION_STEP_ID) != null){
-						if(!currentExecutionStep.getId().equals(r.get(EXECUTION_STEP_ID))) {
+					} else if (r.get(EXECUTION_STEP_ID) != null) {
+						if (!currentExecutionStep.getId().equals(r.get(EXECUTION_STEP_ID))) {
 							ExecutionStepDto newES = createExecutionStepDto(r);
 
 							currentExecution.addStep(newES);
@@ -251,10 +251,10 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 
 	private ExecutionStepDto createExecutionStepDto(Record r) {
 		ExecutionStepDto es = new ExecutionStepDto(r.get(EXECUTION_STEP_ID), r.get(EXECUTION_STEP_STATUS), r.get(ES_ORDER), r.get(ES_TS_ID));
-		if(r.get(ES_COMMENT) != null){
+		if (r.get(ES_COMMENT) != null) {
 			es.setComment(r.get(ES_COMMENT));
 		}
-		if(r.get(ES_LAST_EXECUTED_BY) != null){
+		if (r.get(ES_LAST_EXECUTED_BY) != null) {
 			es.setLastExecutedBy(r.get(ES_LAST_EXECUTED_BY));
 		}
 		es.setLastExecutedOn(r.get(ES_LAST_EXECUTED_ON));
@@ -264,9 +264,9 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 
 	private TestStepDto createTestStepDto(Record r) {
 		TestStepDto step = new TestStepDto(r.get(TS_ID), r.get(TS_ORDER));
-		if(r.get(CTS_CALLED_TS) != null){
+		if (r.get(CTS_CALLED_TS) != null) {
 			step.setCalledTestCaseId(r.get(CTS_CALLED_TS));
-		} else if (r.get(TS_REQUIREMENT_VERIFIED) != null){
+		} else if (r.get(TS_REQUIREMENT_VERIFIED) != null) {
 			step.addRequirement(r.get(TS_REQUIREMENT_VERIFIED));
 		}
 		return step;
@@ -274,30 +274,30 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 
 	@Override
 	protected void populateItpi(Record r, ITPIDto itpi) {
-		if(r.get(TSu_NAME) != null){
+		if (r.get(TSu_NAME) != null) {
 			itpi.getTestSuiteSet().add(r.get(TSu_NAME));
 		}
 
-		if(r.get(ITPI_ISSUE) != null){
+		if (r.get(ITPI_ISSUE) != null) {
 			itpi.addIssue(r.get(ITPI_ISSUE));
 		}
 	}
 
-	private void populateExecutionStepDto(Record r, ExecutionStepDto executionStepDto){
-		if(r.get(ES_REQUIREMENT_VERIFIED) != null){
+	private void populateExecutionStepDto(Record r, ExecutionStepDto executionStepDto) {
+		if (r.get(ES_REQUIREMENT_VERIFIED) != null) {
 			executionStepDto.addRequirement(r.get(ES_REQUIREMENT_VERIFIED));
 		}
-		if(r.get(ES_ISSUE) != null){
-			executionStepDto.addIssue(r.get(ITPI_ISSUE));
+		if (r.get(ES_ISSUE) != null) {
+			executionStepDto.addIssue(r.get(ES_ISSUE));
 		}
 	}
 
 	private TestCaseDto createNewTestCaseDto(Record r) {
 		TestCaseDto newTestCase = new TestCaseDto(r.get(TC_ID), r.get(TC_REFERENCE), r.get(TC_NAME), r.get(TC_IMPORTANCE), r.get(TC_NATURE), r.get(TC_TYPE), r.get(TC_STATUS), r.get(PROJECT_ID), r.get(PROJECT_NAME));
-		if(r.get(TC_DESCRIPTION) != null){
+		if (r.get(TC_DESCRIPTION) != null) {
 			newTestCase.setDescription(r.get(TC_DESCRIPTION));
 		}
-		if(r.get(TC_PREREQUISITE) != null){
+		if (r.get(TC_PREREQUISITE) != null) {
 			newTestCase.setPrerequisite(r.get(TC_PREREQUISITE));
 		}
 		populateTestCase(r, newTestCase);
@@ -307,11 +307,11 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 
 	private ExecutionDto createNewExecutionDto(Record r) {
 		ExecutionDto newExecution = new ExecutionDto(r.get(EXECUTION_ID), r.get(EXECUTION_STATUS), r.get(EXECUTION_MODE).equals("AUTOMATED"));
-		if(r.get(EXECUTION_STEP_ID) != null){
+		if (r.get(EXECUTION_STEP_ID) != null) {
 			ExecutionStepDto executionStepDto = createExecutionStepDto(r);
 			newExecution.addStep(executionStepDto);
 		}
-		return  newExecution;
+		return newExecution;
 	}
 
 	private List<Long> collectLatestExecutionStepId(Collection<IterationDto> iterations) {
@@ -690,8 +690,8 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 		// ******************************** data formatting ***************************
 
 		private String getCampaignCufValue(CustomFieldValueDto customFieldValueDto, CustomFieldDto model) {
-			if(customFieldValueDto != null && customFieldValueDto.getValue() != null){
-				if(model.getInputType().equals("NUMERIC")){
+			if (customFieldValueDto != null && customFieldValueDto.getValue() != null) {
+				if (model.getInputType().equals("NUMERIC")) {
 					return NumericCufHelper.formatOutputNumericCufValue(customFieldValueDto.getValue());
 				}
 				return customFieldValueDto.getValue();
@@ -784,7 +784,7 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 						testStep = null;
 						foundNextStep = true;
 						/* Issue 6351: We also have to import ITPI without any Test Step. */
-					} else if(stepsSize == 0){
+					} else if (stepsSize == 0) {
 						execStep = null;
 						testStep = null;
 						foundNextStep = true;
@@ -853,7 +853,7 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 			TestCaseDto result = new TestCaseDto();
 			TestStepDto currentStep = new TestStepDto();
 			result.setId(calledTestId);
-			Iterator<Record5<Long, Integer, Long, Long, Long>> iterator = DSL.select(TC_ID,TS_ORDER, TS_ID, CTS_CALLED_TS, TS_REQUIREMENT_VERIFIED)
+			Iterator<Record5<Long, Integer, Long, Long, Long>> iterator = DSL.select(TC_ID, TS_ORDER, TS_ID, CTS_CALLED_TS, TS_REQUIREMENT_VERIFIED)
 				.from(TEST_CASE)
 				.leftJoin(TEST_CASE_STEPS).on(TEST_CASE_STEPS.TEST_CASE_ID.eq(TC_ID))
 				.leftJoin(CALL_TEST_STEP).on(CALL_TEST_STEP.TEST_STEP_ID.eq(TS_ID))
@@ -864,13 +864,13 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 				.orderBy(TS_ORDER)
 				.fetch().iterator();
 
-			while (iterator.hasNext()){
+			while (iterator.hasNext()) {
 				Record r = iterator.next();
-				if(!currentStep.getId().equals(r.get(TS_ID))){
+				if (!currentStep.getId().equals(r.get(TS_ID))) {
 					TestStepDto dto = createTestStepDto(r);
 					result.addStep(dto);
 					currentStep = result.getStep(r.get(TS_ID));
-				} else if(r.get(TS_REQUIREMENT_VERIFIED) != null){
+				} else if (r.get(TS_REQUIREMENT_VERIFIED) != null) {
 					currentStep.addRequirement(r.get(TS_REQUIREMENT_VERIFIED));
 				}
 			}
