@@ -193,6 +193,20 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 			return (nodes.filter(':exportable').length == nodes.length) && (nodes.length>0);
 		};
 
+		this.whyCantCreateTcFromReq = function(){
+			var nodes = copier.bufferedNodesForTc();
+
+			if (nodes.length===0){
+				return "empty-selection";
+			}
+
+			return "yes-you-can";
+		};
+
+		this.CantCreateTcFromReq = $.proxy(function(nodes){
+			return (this.whyCantCreateTcFromReq(nodes) === "yes-you-can");
+		}, this);
+
 		this.canSearch = function(nodes){
 			return true;
 		};
@@ -261,6 +275,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 			'import-excel-tree-button' : this.canImport,
 			'import-links-excel-tree-button' : this.canImport,
 			'export-tree-button' : this.canExport,
+			'create-tc-from-req-tree-button' : this.CantCreateTcFromReq,
 			'export-gherkin-tree-button' : this.canExport,
 			'delete-node-tree-button' : this.canDelete,
 			'search-tree-button' : this.canSearch

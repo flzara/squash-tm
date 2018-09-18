@@ -23,6 +23,7 @@ package org.squashtest.tm.web.internal.controller.testcase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -34,6 +35,7 @@ import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.*;
+import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationException;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.library.LibraryNavigationService;
 import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
@@ -67,6 +69,9 @@ public class TestCaseLibraryNavigationController extends
 	private static final String APPLICATION_SLASH_OCTET_STREAM = "application/octet-stream";
 	private static final String ATTACHMENT_FILENAME = "attachment; filename=";
 	private static final String CONTENT_DISPOSITION = "Content-Disposition";
+	private static final String FOLDERS = "folders";
+	private static final String DRIVES = "drives";
+	private static final String TESTCASES = "test-cases";
 
 	@Inject
 	private Provider<TestCaseLibraryTreeNodeBuilder> testCaseLibraryTreeNodeBuilder;
@@ -169,6 +174,37 @@ public class TestCaseLibraryNavigationController extends
 
 		return createTreeNodeFromLibraryNode(testCase);
 	}
+
+
+	@ResponseBody
+	@RequestMapping(value = "/{destinationType}/{destinationId}/content/newTestCases", method = RequestMethod.POST, params = {"nodeIds[]"})
+	public void copyFromReqToTestCases(@RequestParam("nodeIds[]") Long[] nodeIds,
+												   @PathVariable("destinationId") long destinationId, @PathVariable("destinationType") String destType) {
+
+		try {
+			switch (destType) {
+				case FOLDERS:
+					testCaseLibraryNavigationService.copyReqToTestCasesToFolder(destinationId, nodeIds);
+					break;
+				case DRIVES:
+					testCaseLibraryNavigationService.copyReqToTestCasesToLibrairy(destinationId, nodeIds);
+					break;
+				case TESTCASES:
+					testCaseLibraryNavigationService.copyReqToTestCasesToTestCases(destinationId, nodeIds);
+					break;
+				default:
+					throw new IllegalArgumentException("copy nodes : specified destination type doesn't exists : "
+						+ destType);
+			}
+		} catch (AccessDeniedException ade) {
+			throw new RightsUnsuficientsForOperationException(ade);
+		}
+
+	}
+
+
+
+
 
 	@ResponseBody
 	@RequestMapping(value = "/drives", method = RequestMethod.GET, params = {"linkables"})

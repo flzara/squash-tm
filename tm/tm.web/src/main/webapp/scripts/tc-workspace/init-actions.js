@@ -60,6 +60,18 @@ define(["jquery","backbone", "tree","./permissions-rules", "workspace.contextual
 		}
 	}
 
+	function pasteFromReqToTcIfOk(tree){
+		if (rules.CantCreateTcFromReq()) {
+			copier.pasteNodesForTcFromCookie();
+		}else{
+			var why = rules.whyCantCreateTcFromReq();
+			showError(why);
+		}
+		}
+
+
+
+
 	function loadSearchFragment(url){
 		ctxcontent.loadWith(url);
 	}
@@ -181,6 +193,12 @@ define(["jquery","backbone", "tree","./permissions-rules", "workspace.contextual
 			tree.on("rename.squashtree", function(){
 				$("#rename-node-dialog").formDialog("open");
 			});
+
+			// ****************** Create testcases from requirements ******************
+			$("#create-tc-from-req-tree-button").on("click", function(){
+				pasteFromReqToTcIfOk(tree);
+			});
+
 
 			// ****************** import tc ******************
 			// NOTE : DO NOT BIND USING $("menu").on("click", "button", handler), this breaks under (true) IE8. See #3268

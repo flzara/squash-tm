@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
+import static org.squashtest.tm.jooq.domain.Tables.*;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 import java.io.File;
@@ -27,12 +28,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -42,6 +38,7 @@ import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.jooq.DSLContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -50,6 +47,7 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.RawValue;
@@ -58,9 +56,11 @@ import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.*;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
+import org.squashtest.tm.exception.library.NameAlreadyExistsAtDestinationException;
 import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.Ids;
@@ -73,6 +73,7 @@ import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.internal.batchexport.TestCaseExcelExporterService;
 import org.squashtest.tm.service.internal.batchimport.TestCaseExcelBatchImporter;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
+import org.squashtest.tm.service.internal.customreport.NameResolver;
 import org.squashtest.tm.service.internal.importer.TestCaseImporter;
 import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
@@ -87,11 +88,10 @@ import org.squashtest.tm.service.internal.testcase.coercers.TestCaseLibraryIdsCo
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
+import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.testcase.TestCaseStatisticsService;
-
-import java.util.Optional;
 
 @Service("squashtest.tm.service.TestCaseLibraryNavigationService")
 @Transactional
@@ -170,6 +170,15 @@ public class TestCaseLibraryNavigationServiceImpl
 
 	@Inject
 	private PrivateCustomFieldValueService customValueService;
+
+	@Inject
+	private DSLContext DSL;
+
+	@Inject
+	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
+
+	@Inject
+	private NameResolver nameResolver;
 
 	@Override
 	protected NodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> getDeletionHandler() {
@@ -335,12 +344,77 @@ public class TestCaseLibraryNavigationServiceImpl
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary' , 'CREATE' )"
 		+ OR_HAS_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCaseLibrary.class)
+	public void addFromReqTestCaseToLibrary(@Id long libraryId, TestCase testCase, RequirementVersion verison, Integer position) {
+		TestCaseLibrary library = testCaseLibraryDao.findById(libraryId);
+
+		if (!library.isContentNameAvailable(testCase.getName())) {
+			resolveNameConflict(library.getContentNames(), testCase,1);
+		}
+			if (position != null) {
+				library.addContent(testCase, position);
+			} else {
+				library.addContent(testCase);
+			}
+
+			replaceInfoListReferences(testCase);
+			testCaseDao.safePersist(testCase);
+			createCustomFieldValuesForTestCase(testCase);
+			List<Long> milestones = new ArrayList<>();
+			milestoneService.findAssociableMilestonesToRequirementVersion(verison.getId()).forEach((e) -> milestones.add(e.getId()));
+			milestoneService.bindTestCaseToMilestones(testCase.getId(),milestones );
+			verifiedRequirementsManagerService.addVerifiedRequirementVersionsToTestCaseFromReq(verison,testCase);
+	}
+
+
+	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary' , 'CREATE' )"
+		+ OR_HAS_ROLE_ADMIN)
+	@PreventConcurrent(entityType = TestCaseLibrary.class)
+	public void addFromReqFolderToLibrary(@Id long destinationId, TestCaseFolder newFolder) {
+
+		TestCaseLibrary container = getLibraryDao().findById(destinationId);
+		if(container.getContentNames().contains(newFolder.getName())){
+			resolveNameConflict(container.getContentNames(), newFolder, 1);
+		}
+
+		container.addContent(newFolder);
+
+		new NatureTypeChainFixer().fix(newFolder);
+
+		getFolderDao().persist(newFolder);
+
+		new CustomFieldValuesFixer().fix(newFolder);
+
+		generateCustomField(newFolder);
+	}
+
+	void resolveNameConflict(List<String> target, TestCaseLibraryNode node, int i) {
+		String copySuffix = "-Copie ";
+		String testedName = node.getName() + copySuffix + i;
+		if(target.contains(testedName)){
+			resolveNameConflict(target, node, i + 1);
+		} else {
+			node.setName(testedName);
+		}
+	}
+
+
+
+
+
+
+
+	@Override
+	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary' , 'CREATE' )"
+		+ OR_HAS_ROLE_ADMIN)
+	@PreventConcurrent(entityType = TestCaseLibrary.class)
 	public void addTestCaseToLibrary(@Id long libraryId, TestCase testCase, Map<Long, RawValue> customFieldValues,
 									 Integer position, List<Long> milestoneIds) {
 		addTestCaseToLibrary(libraryId, testCase, position);
 		initCustomFieldValues(testCase, customFieldValues);
 		milestoneService.bindTestCaseToMilestones(testCase.getId(), milestoneIds);
 	}
+
+
 
 	@Override
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.testcase.TestCaseFolder' , 'CREATE') "
@@ -367,11 +441,57 @@ public class TestCaseLibraryNavigationServiceImpl
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.testcase.TestCaseFolder' , 'CREATE') "
 		+ OR_HAS_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCaseLibraryNode.class)
+	public void addFromReqTestCaseToFolder(@Id long folderId, TestCase testCase, RequirementVersion version, Integer position) {
+		TestCaseFolder folder = testCaseFolderDao.findById(folderId);
+		if (!folder.isContentNameAvailable(testCase.getName())) {
+
+			resolveNameConflict(folder.getContentNames(), testCase, 1);
+		} else {
+			if (position != null) {
+				folder.addContent(testCase, position);
+			} else {
+				folder.addContent(testCase);
+			}
+			replaceInfoListReferences(testCase);
+			testCaseDao.safePersist(testCase);
+			createCustomFieldValuesForTestCase(testCase);
+			List<Long> milestones = new ArrayList<>();
+			milestoneService.findAssociableMilestonesToRequirementVersion(version.getId()).forEach((e) -> milestones.add(e.getId()));
+			verifiedRequirementsManagerService.addVerifiedRequirementVersionsToTestCaseFromReq(version,testCase);
+		}
+	}
+
+
+	@Override
+	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.testcase.TestCaseFolder' , 'CREATE') "
+		+ OR_HAS_ROLE_ADMIN)
+	@PreventConcurrent(entityType = TestCaseLibraryNode.class)
 	public void addTestCaseToFolder(@Id long folderId, TestCase testCase, Map<Long, RawValue> customFieldValues,
 									Integer position, List<Long> milestoneIds) {
 		addTestCaseToFolder(folderId, testCase, position);
 		initCustomFieldValues(testCase, customFieldValues);
 		milestoneService.bindTestCaseToMilestones(testCase.getId(), milestoneIds);
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.testcase.TestCaseFolder' , 'CREATE' )"
+		+ OR_HAS_ROLE_ADMIN)
+	@PreventConcurrent(entityType = TestCaseLibraryNode.class)
+	public void addReqFolderToTcFolder(@Id long destinationId, TestCaseFolder newFolder) {
+		TestCaseFolder container = getFolderDao().findById(destinationId);
+		if(container.getContentNames().contains(newFolder.getName())){
+			resolveNameConflict(container.getContentNames(), newFolder, 1);
+		}
+
+
+		container.addContent(newFolder);
+
+		new NatureTypeChainFixer().fix(newFolder);
+
+		getFolderDao().persist(newFolder);
+
+		new CustomFieldValuesFixer().fix(newFolder);
+		generateCustomField(newFolder);
 	}
 
 	@Override
@@ -813,6 +933,21 @@ public class TestCaseLibraryNavigationServiceImpl
 	}
 
 	@Override
+	public void copyReqToTestCasesToFolder(long destinationId, Long[] sourceNodesIds) {
+		if (sourceNodesIds.length == 0) {
+			return;
+		}
+		try {
+		PasteStrategy<TestCaseFolder, TestCaseLibraryNode> pasteStrategy = getPasteToFolderStrategy();
+			makeMoverStrategy(pasteStrategy);
+
+		 pasteStrategy.pasteReqToTestCasesNodes(destinationId, Arrays.asList(sourceNodesIds));
+		} catch (NullArgumentException | DuplicateNameException dne) {
+			throw new NameAlreadyExistsAtDestinationException(dne);
+		}
+	}
+
+	@Override
 	@PreventConcurrents(simplesLocks = {
 		@PreventConcurrent(entityType = TestCaseLibrary.class, paramName = DESTINATION_ID)}, batchsLocks = {
 		@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName = TARGET_ID, coercer = TCLNAndParentIdsCoercerForArray.class),
@@ -820,6 +955,40 @@ public class TestCaseLibraryNavigationServiceImpl
 	public List<TestCaseLibraryNode> copyNodesToLibrary(@Id(DESTINATION_ID) long destinationId,
 														@Ids(TARGET_ID) Long[] targetId) {
 		return super.copyNodesToLibrary(destinationId, targetId);
+	}
+
+	@Override
+	public void copyReqToTestCasesToLibrairy(long destinationId, Long[] targetId) {
+		if (targetId.length == 0) {
+			return;
+		}
+		try {
+			PasteStrategy<TestCaseLibrary, TestCaseLibraryNode> pasteStrategy = getPasteToLibraryStrategy();
+			makeMoverStrategy(pasteStrategy);
+
+			pasteStrategy.pasteReqToTestCasesNodes(destinationId, Arrays.asList(targetId));
+		} catch (NullArgumentException | DuplicateNameException dne) {
+			throw new NameAlreadyExistsAtDestinationException(dne);
+		}
+	}
+
+	@Override
+	public void copyReqToTestCasesToTestCases(long destinationId, Long[] targetId) {
+		TestCaseFolder folder = findParentIfExists(destinationId);
+		if (null == folder){
+			Long tclId =  DSL
+				.select(
+					TEST_CASE_LIBRARY.TCL_ID
+				)
+				.from(org.squashtest.tm.jooq.domain.tables.TestCaseLibrary.TEST_CASE_LIBRARY)
+				.join(PROJECT).using(TEST_CASE_LIBRARY.TCL_ID)
+				.join(TEST_CASE_LIBRARY_NODE).using(TEST_CASE_LIBRARY_NODE.PROJECT_ID)
+				.where(TEST_CASE_LIBRARY_NODE.TCLN_ID.equal(destinationId))
+				.fetchOne(TEST_CASE_LIBRARY.TCL_ID);
+			copyReqToTestCasesToLibrairy(tclId, targetId);
+		}else  {
+			copyReqToTestCasesToFolder(folder.getId(),targetId);
+		}
 	}
 
 	@Override

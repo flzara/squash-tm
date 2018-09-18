@@ -68,6 +68,8 @@ public interface LibraryNavigationService<LIBRARY extends Library<? extends NODE
 
 	void moveNodesToFolder(long destinationId, Long[] targetId);
 
+	void copyReqToTestCasesNodesToFolder(long destinationId, Long[] sourceNodesIds);
+
 	void moveNodesToLibrary(long destinationId, Long[] targetId);
 
 	void moveNodesToFolder(long destinationId, Long[] targetId, int position);
@@ -130,6 +132,7 @@ public interface LibraryNavigationService<LIBRARY extends Library<? extends NODE
 	 */
 	FOLDER findParentIfExists(LibraryNode node);
 
+	FOLDER findParentIfExists(Long node);
 	/**
 	 * That method should find the library of the root node
 	 *
@@ -137,5 +140,7 @@ public interface LibraryNavigationService<LIBRARY extends Library<? extends NODE
 	 * @return the library or null
 	 */
 	LIBRARY findLibraryOfRootNodeIfExist(NODE node);
+
+	LIBRARY findLibraryOfRootNodeIfExist(Long node);
 
 }

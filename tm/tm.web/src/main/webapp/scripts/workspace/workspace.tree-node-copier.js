@@ -59,11 +59,19 @@ define([ 'jquery', 'underscore', 'squash.translator', "jquery.squash.oneshotdial
 			return JSON.parse(data);
 		};
 
+		var retrieveReqForTc = function() {
+			var data = $.cookie('reqToTc-copy-nodes');
+			return JSON.parse(data);
+		};
+
 		var store = function(data) {
 
 			var jsonData = JSON.stringify(data);
+			if(this.pathname == "/squash/requirement-workspace/") {
 
-			$.cookie('squash-copy-nodes', jsonData);
+				$.cookie('reqToTc-copy-nodes', jsonData, {path: "/squash/test-case-workspace"});
+			}
+				$.cookie('squash-copy-nodes', jsonData);
 		};
 
 		var readNodesData = function(tree) {
@@ -91,6 +99,15 @@ define([ 'jquery', 'underscore', 'squash.translator', "jquery.squash.oneshotdial
 			}
 		};
 
+		this.bufferedNodesForTc = function() {
+			var data = retrieveReqForTc();
+			if (data === null) {
+				return $();
+			}else {
+				return  data;
+			}
+		};
+
 		// assumes that all checks are green according to the rules of this workspace.
 		this.copyNodesToCookie = function() {
 
@@ -113,6 +130,20 @@ define([ 'jquery', 'underscore', 'squash.translator', "jquery.squash.oneshotdial
 			warnIfisCrossProjectOperation.call(this, target, data).done(function() {
 				doPaste(tree, target, data);
 			});
+
+		};
+
+		this.pasteNodesForTcFromCookie = function() {
+
+			var tree = this.tree;
+
+			var dataForReqToTc = retrieveReqForTc();
+			var data = retrieve();
+			var target = tree.jstree('get_selected');
+
+			// warn user if not same libraries
+			doPasteFromReqToTc(tree, target, data,dataForReqToTc);
+			tree.jstree('refresh');
 
 		};
 
@@ -207,6 +238,19 @@ define([ 'jquery', 'underscore', 'squash.translator', "jquery.squash.oneshotdial
 			tree.jstree('copyNodes', nodes, target).fail(function(json) {
 				tree.jstree('refresh');
 			});
+		};
+
+		var doPasteFromReqToTc = function(tree, target, data,dataForReqToTc) {
+			target.open();
+
+			// now we can proceed
+
+			tree.jstree('copyNodesFromReqToTc', dataForReqToTc, target).done(function() {
+				tree.jstree('refresh_selected');
+			}).fail(function(json) {
+				tree.jstree('refresh');
+			});
+
 		};
 
 	}

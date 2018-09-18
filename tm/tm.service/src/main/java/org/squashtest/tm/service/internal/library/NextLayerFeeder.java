@@ -89,6 +89,29 @@ public class NextLayerFeeder implements NodeVisitor {
 		source.accept(this);
 	}
 
+	public void feedNextLayerFromReqToTc(TreeNode destination, TreeNode source,
+							  Collection<NodePairing> nextLayer, Collection<? extends TreeNode> outputList) {
+		this.nextLayer = nextLayer;
+		this.destination = destination;
+		this.outputList = outputList;
+		TestCaseFolder tfolder = new TestCaseFolder();
+		if(source.getClass()== Requirement.class) {
+			Requirement req = (Requirement) source;
+			if(req.hasContent()){
+				List<TreeNode> sourceContent = new ArrayList<>(req.getOrderedContent());
+				sourceContent.removeAll(this.outputList);
+
+				nextLayer.add(new NodePairing((NodeContainer<TreeNode>) destination, sourceContent));
+			}
+		}else {
+			RequirementFolder reqFolder = (RequirementFolder) source;
+			if(reqFolder.hasContent()){
+				List<TreeNode> sourceContent = new ArrayList<>(reqFolder.getOrderedContent());
+				sourceContent.removeAll(outputList);
+				nextLayer.add(new NodePairing((NodeContainer<TreeNode>)destination, sourceContent));
+			}
+		}
+	}
 
 	@Override
 	public void visit(CampaignFolder campaignFolder) {

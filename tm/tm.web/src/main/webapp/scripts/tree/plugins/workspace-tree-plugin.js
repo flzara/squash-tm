@@ -412,6 +412,44 @@ define(['jquery', 'underscore', 'workspace.tree-node-copier', 'workspace.permiss
 		return deferred.promise();
 	}
 
+					function copyNodesFromReqToTc(nodes, target) {
+
+						var deferred = $.Deferred();
+
+						var tree = this;
+
+						var url = target.getMoveUrlForTcFromReq();
+						var tcModels = [];
+						var allIds = [];
+						nodes.nodes.forEach(function(y) {
+							allIds.push(y.resid);
+						});
+
+						var params = {
+							'nodeIds[]' : allIds,
+							tcModels :tcModels
+						};
+
+						//special delivery for pasting iterations to campaigns
+						$.when(tree.open_node(target)).then(function() {
+							$.post(url, params, 'json')
+								.done(function(jsonData) {
+									// insertCopiedNodes(jsonData, target, tree);
+									tree.open_node(target, deferred.resolve);
+									if (typeof (refreshStatistics) == "function") {
+										refreshStatistics();
+									}
+									/* Issue #6438: We have to refresh the test-plan table
+                           * if we just copied a test-suite in an iteration. */
+								})
+								.error(deferred.reject);
+
+
+						});
+
+						return deferred.promise();
+					}
+
 
 	/* *******************************************************************************
 							// Library part
@@ -494,6 +532,8 @@ define(['jquery', 'underscore', 'workspace.tree-node-copier', 'workspace.permiss
 				postNewNode : postNewNode,
 
 				copyNodes : copyNodes,
+
+				copyNodesFromReqToTc : copyNodesFromReqToTc,
 
 				refresh_selected : function() {
 					var selected = this.get_selected();

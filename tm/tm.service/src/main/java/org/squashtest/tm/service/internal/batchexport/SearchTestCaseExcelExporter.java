@@ -28,7 +28,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;

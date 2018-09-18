@@ -174,6 +174,19 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 	}
 
 	@Override
+	public TreeNode performOperationFromReqToTc(TreeNode toMove, TreeNode transformed, NodeContainer<TreeNode> destination, Integer position) {
+		//initialize attributes
+		this.destination = destination;
+		movedNode = null;
+		//process
+		processNodesFRomReqToTc(transformed, position);
+		movedNode = transformed;
+		movedNode.accept(treeNodeUpdater);
+		this.projectChanged = true;
+		return movedNode;
+	}
+
+	@Override
 	public boolean isOkToGoDeeper() {
 		return this.projectChanged;
 	}
@@ -205,6 +218,16 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 			throw new IllegalArgumentException("Libraries cannot be copied nor moved !");
 		}
 	}
+
+
+	protected void processNodesFRomReqToTc(TreeNode toMove, Integer position) { //NOSONAR the cyclomatic complexity here is perfectly manageable by a standard instance of homo computernicus
+		EntityType visitedType = whichVisitor.getTypeOf(toMove);
+		NodeCollaborators nc = collaboratorsByType.get(visitedType);
+		movedTcIds.add(toMove.getId());
+
+
+	}
+
 
 	private void fillingreqVersionIds(List<RequirementVersion> requirementVersions,List<Long> reqVersionIds){
 		for (RequirementVersion requirementVersion : requirementVersions) {

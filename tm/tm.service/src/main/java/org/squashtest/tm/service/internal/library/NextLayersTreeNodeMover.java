@@ -77,6 +77,12 @@ public class NextLayersTreeNodeMover  implements NodeVisitor, PasteOperation {
 		return toMove;
 	}
 
+	@Override
+	public TreeNode performOperationFromReqToTc(TreeNode source, TreeNode transformed, NodeContainer<TreeNode> destination, Integer position) {
+		this.destination = destination;
+		transformed.accept(treeNodeUpdater);
+		return transformed;	}
+
 	/**************************************************** PRIVATE **********************************************************/
 	@Override
 	public boolean isOkToGoDeeper() {

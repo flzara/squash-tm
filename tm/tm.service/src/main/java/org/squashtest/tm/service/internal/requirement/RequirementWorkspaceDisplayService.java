@@ -28,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.requirement.*;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
-import org.squashtest.tm.domain.synchronisation.SynchronisationStatus;
 import org.squashtest.tm.jooq.domain.tables.*;
 import org.squashtest.tm.jooq.domain.tables.Requirement;
 import org.squashtest.tm.jooq.domain.tables.RequirementFolder;
@@ -48,9 +47,7 @@ import java.util.stream.Collectors;
 
 import static org.jooq.impl.DSL.count;
 import static org.squashtest.tm.domain.requirement.ManagementMode.SYNCHRONIZED;
-import static org.squashtest.tm.domain.requirement.RequirementFolderSyncExtenderType.TARGET;
-import static org.squashtest.tm.domain.synchronisation.SynchronisationStatus.FAILURE;
-import static org.squashtest.tm.domain.synchronisation.SynchronisationStatus.SUCCESS;
+
 import static org.squashtest.tm.jooq.domain.Tables.*;
 
 @Service("requirementWorkspaceDisplayService")

@@ -87,7 +87,6 @@ define(['jquery'], function($){
 
 	}
 
-
 	function getMoveUrl(){
 
 		var representation =   _getSemiSpecializedTypeName(this);
@@ -101,6 +100,14 @@ define(['jquery'], function($){
 			case "campaign" :	url += '/content/{nodeIds}/{position}'; break;
 			default : throw "move aborted : node type '"+this.getDomType()+"' cannot receive moved content.";
 		}
+
+		return url;
+	}
+
+	function getMoveUrlForTcFromReq(){
+
+		var representation =   _getSemiSpecializedTypeName(this);
+		var url = this.getBrowserUrl() + '/' + representation + '/' +this.getResId() +'/content/newTestCases' ;
 
 		return url;
 	}
@@ -546,7 +553,7 @@ define(['jquery'], function($){
 			var attributes;
 
 			if (arguments.length === 0) {
-				attributes = [ "restype", "resid" ];
+				attributes = [ "restype", "resid", "name", "reference" ];
 			}
 			else {
 				attributes = arguments[0];
@@ -613,6 +620,8 @@ define(['jquery'], function($){
 		this.refreshLabel = refreshLabel;
 
 		this.getCopyUrl = getCopyUrl;
+
+		this.getMoveUrlForTcFromReq = getMoveUrlForTcFromReq;
 
 		this.getMoveUrl = getMoveUrl;
 

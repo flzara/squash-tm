@@ -203,7 +203,18 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	}
 
 	@Override
+	public FOLDER findParentIfExists(Long node) {
+		return getFolderDao().findParentOf(node);
+	}
+
+	@Override
 	public LIBRARY findLibraryOfRootNodeIfExist(NODE node) {
+		return getLibraryDao().findByRootContent(node);
+	}
+
+	@Override
+	public LIBRARY findLibraryOfRootNodeIfExist(Long nodeId) {
+		NODE node = getLibraryNodeDao().findById(nodeId);
 		return getLibraryDao().findByRootContent(node);
 	}
 
@@ -277,8 +288,8 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 			makeMoverStrategy(pasteStrategy);
 			pasteStrategy.pasteNodes(destinationId, Arrays.asList(targetIds));
 		} catch (NullArgumentException | DuplicateNameException dne) {
-			throw new NameAlreadyExistsAtDestinationException(dne);
-		}
+		throw new NameAlreadyExistsAtDestinationException(dne);
+	}
 
 	}
 
@@ -320,6 +331,21 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		return pasteStrategy.pasteNodes(destinationId, Arrays.asList(sourceNodesIds));
 
 	}
+
+	@Override
+	public void copyReqToTestCasesNodesToFolder(long destinationId, Long[] sourceNodesIds) {
+		if (sourceNodesIds.length == 0) {
+			return;
+		}
+		try {
+			PasteStrategy<FOLDER, NODE> pasteStrategy = getPasteToFolderStrategy();
+			makeMoverStrategy(pasteStrategy);
+			pasteStrategy.pasteNodes(destinationId, Arrays.asList(sourceNodesIds), 0);
+		} catch (NullArgumentException | DuplicateNameException dne) {
+			throw new NameAlreadyExistsAtDestinationException(dne);
+		}
+	}
+
 
 	@Override
 	public List<NODE> copyNodesToLibrary(long destinationId, Long[] targetIds) {

@@ -41,6 +41,7 @@ public interface PasteOperation {
 	 */
 	TreeNode performOperation(TreeNode source, NodeContainer<TreeNode> destination, Integer position);
 
+	TreeNode performOperationFromReqToTc(TreeNode source, TreeNode transformed, NodeContainer<TreeNode> destination, Integer position);
 
 	
 	/**

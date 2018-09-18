@@ -24,12 +24,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.squashtest.tm.domain.requirement.RequirementCoverageStat;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException;
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
+import org.squashtest.tm.service.internal.requirement.VerifiedRequirementsManagerServiceImpl;
 
 /**
  * Service for management of Requirements verified by a {@link TestCase}
@@ -48,6 +50,9 @@ public interface VerifiedRequirementsManagerService extends VerifiedRequirements
 	 */
 	Collection<VerifiedRequirementException> addVerifiedRequirementsToTestCase(List<Long> requirementsIds,
 			long testCaseId);
+
+	void addVerifiedRequirementVersionsToTestCaseFromReq(
+		RequirementVersion requirementVersion, TestCase testCase);
 
 	/**
 	 * Adds a list of requirement's current requirement-versions to the ones verified by the step's test case and bind them to the step. If the version  already verified by the test case, it is only bound to the step.

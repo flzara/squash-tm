@@ -322,6 +322,21 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	}
 
 	@Override
+	public void addVerifiedRequirementVersionsToTestCaseFromReq(
+		RequirementVersion requirementVersion, TestCase testCase) {
+
+				RequirementVersionCoverage coverage = new RequirementVersionCoverage(
+					requirementVersion, testCase);
+				requirementVersionCoverageDao.persist(coverage);
+				indexationService.reindexTestCase(testCase.getId());
+				indexationService.reindexRequirementVersion(requirementVersion
+					.getId());
+
+	}
+
+
+
+	@Override
 	@PreAuthorize(LINK_TESTSTEP_OR_ROLE_ADMIN)
 	public Collection<VerifiedRequirementException> addVerifiedRequirementsToTestStep(
 		List<Long> requirementsIds, long testStepId) {
