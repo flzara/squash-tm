@@ -111,7 +111,7 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 			/* ************** some events ****************** */
 
 			this.attachRadio.click(function () {
-				toAttachMode();			
+				toAttachMode();
 			});
 
 			this.reportRadio.click(function () {
@@ -125,8 +125,8 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 			var toAttachMode = $.proxy(function () {
 				flipToMain();
 				this.issueCreate.hide();
-				this.issueSearch.show();				
-				this.issueSearch.html(this.template(this.model.attributes.selectDialog));	
+				this.issueSearch.show();
+				this.issueSearch.html(this.template(this.model.attributes.selectDialog));
 			}, self);
 
 			var toReportMode = $.proxy(function () {
@@ -158,7 +158,7 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 
 			var createViewForModel = $.proxy(function () {
 				var template = Handlebars.compile(source);
-				this.template = template;	
+				this.template = template;
 
 			}, self);
 
@@ -182,21 +182,17 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 				if (!this.mdlTemplate) {
 					flipToPleaseWait();
 					$.ajax({
-							url: self.reportUrl,
-							type: "GET",
-							data: {"project-name": self.selectedProject},
-							dataType: "json"
-						})
-						.done(function (response) {		
+						url: self.reportUrl,
+						type: "GET",
+						data: {"project-name": self.selectedProject},
+						dataType: "json"
+					})
+						.done(function (response) {
 							self.mdlTemplate = response;
 							flipToMain();
 							jobDone.resolve();
 						})
-						.fail(function () {
-							jobDone.reject();
-							self.issueCreate.html('');
-							self.issueSearch.html('');
-						});
+						.fail(jobDone.reject);
 				}
 				else {
 					jobDone.resolve();
@@ -212,7 +208,8 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 			// error handler is not present.
 			var bugReportError = $.proxy(function (jqXHR, textStatus, errorThrown) {
 				try {
-					var message = $.parseJSON(jqXHR.responseText).fieldValidationErrors[0].errorMessage;
+					var response = $.parseJSON(jqXHR.responseText);
+					var message = response.fieldValidationErrors ? response.fieldValidationErrors[0].errorMessage : response.trace;
 					this.error.find('.error-message').text(message);
 				} catch (ex) {
 					// well maybe that wasn't for us after all
@@ -231,9 +228,9 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 				storage.set("bugtracker.projects-preferences", projectPrefs);
 				self.selectedProject = project;
 				self.mdlTemplate = null;
-				resetModel().done(function(){
+				resetModel().done(function () {
 					self.issueSearch.html(self.template(self.model.attributes.selectDialog));
-					self.issueCreate.html(self.template(self.model.attributes.createDialog));	
+					self.issueCreate.html(self.template(self.model.attributes.createDialog));
 				});
 			};
 
@@ -269,8 +266,8 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 
 				var template = Handlebars.compile(self.find("#project-selector-tpl").html());
 				self.find("#project-selector").html(template({options: data}));
-				resetModel().done(function(){
-					self.reportRadio.click();	
+				resetModel().done(function () {
+					self.reportRadio.click();
 				});
 				self.formDialog("open");
 

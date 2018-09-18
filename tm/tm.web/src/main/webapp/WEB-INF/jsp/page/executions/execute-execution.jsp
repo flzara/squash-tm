@@ -155,7 +155,6 @@
           });
         });
       });
-      hasAttach
 
 
     </script>
