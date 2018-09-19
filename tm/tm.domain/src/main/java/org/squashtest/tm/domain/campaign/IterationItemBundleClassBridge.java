@@ -100,7 +100,7 @@ public class IterationItemBundleClassBridge implements FieldBridge, MetadataProv
 
 
 	protected void applyToLuceneOptions(LuceneOptions luceneOptions, String name, Number value, Document document) {
-		luceneOptions.addNumericFieldToDocument( name, value, document );
+			luceneOptions.addNumericFieldToDocument( name, value, document );
 		document.add(new NumericDocValuesField(name,  new Long(value.longValue())));
 	}
 

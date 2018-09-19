@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.customfield;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -63,15 +64,25 @@ public class CustomFieldBindingManagerController {
 
 			// Issue 6781 - only 10 CUFS were displaying for test case, just use the same method than the others
 			List<CustomFieldBinding> testCaseBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.TEST_CASE);
+			Collections.sort(testCaseBindings, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
 			List<CustomFieldBinding> testStepBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.TEST_STEP);
+			Collections.sort(testStepBindings, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
 			List<CustomFieldBinding> requirementBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.REQUIREMENT_VERSION);
+			Collections.sort(requirementBindings, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
 			List<CustomFieldBinding> campaignBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.CAMPAIGN);
+			Collections.sort(campaignBindings, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
 			List<CustomFieldBinding> iterationBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.ITERATION);
+			Collections.sort(iterationBindings, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
 			List<CustomFieldBinding> testSuiteBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.TEST_SUITE);
+			Collections.sort(testSuiteBindings, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
 			List<CustomFieldBinding> executionBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.EXECUTION);
+			Collections.sort(executionBindings, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
 			List<CustomFieldBinding> executionStepBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.EXECUTION_STEP);
-			List<CustomFieldBinding> projectsBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.PROJECT);
-			List<CustomFieldBinding> crFoldersBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.REQUIREMENT_FOLDER);
+			Collections.sort(executionStepBindings, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
+//			List<CustomFieldBinding> projectsBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.PROJECT);
+//			Collections.sort(projectsBindings, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
+//			List<CustomFieldBinding> crFoldersBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.REQUIREMENT_FOLDER);
+//			Collections.sort(crFoldersBindings, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
 
 			mav = new ModelAndView("project-tabs/custom-field-binding.html");
 			mav.addObject("testCaseBindings", testCaseBindings);
@@ -82,8 +93,8 @@ public class CustomFieldBindingManagerController {
 			mav.addObject("testSuiteBindings", testSuiteBindings);
 			mav.addObject("executionBindings", executionBindings);
 			mav.addObject("executionStepBindings", executionStepBindings);
-			mav.addObject("projectsBindings", projectsBindings);
-			mav.addObject("crFoldersBindings", crFoldersBindings);
+//			mav.addObject("projectsBindings", projectsBindings);
+//			mav.addObject("crFoldersBindings", crFoldersBindings);
 
 			mav.addObject("projectIdentifier", projectId);
 			mav.addObject("isTemplate", ProjectHelper.isTemplate(project));

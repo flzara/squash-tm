@@ -49,13 +49,13 @@ define([ "jquery", "./entity-manager" ], function(jquery, EntityManager) {
 	}
 
 
-	function makeCrFoldersConf(conf) {
-		return $.extend({}, conf.general, conf.crFoldersSettings);
-	}
-
-	function makeProjectConf(conf) {
-		return $.extend({}, conf.general, conf.projectSettings);
-	}
+	// function makeCrFoldersConf(conf) {
+	// 	return $.extend({}, conf.general, conf.crFoldersSettings);
+	// }
+	//
+	// function makeProjectConf(conf) {
+	// 	return $.extend({}, conf.general, conf.projectSettings);
+	// }
 
 	function makeExecStepConf(conf) {
 		return $.extend({}, conf.general, conf.execStepSettings);
@@ -103,14 +103,14 @@ define([ "jquery", "./entity-manager" ], function(jquery, EntityManager) {
 			var execStepConf = makeExecStepConf(this.config);
 			new EntityManager(execStepConf);
 
-			// project
-			var projectConf = makeProjectConf(this.config);
-			new EntityManager(projectConf);
-
-			// folders
-			var crFoldersConf = makeCrFoldersConf(this.config);
-			new EntityManager(crFoldersConf);
-
+			// // project
+			// var projectConf = makeProjectConf(this.config);
+			// new EntityManager(projectConf);
+			//
+			// // folders
+			// var crFoldersConf = makeCrFoldersConf(this.config);
+			// new EntityManager(crFoldersConf);
+			//
 
 
 		}

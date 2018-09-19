@@ -50,10 +50,10 @@
 
 <div id="cuf-binding-administration">
 
-<div id="project-binding-manager"
-	 th:include="project-tabs/custom-field-binding :: cuf-unit-binder"
-	 th:with="HTMLID='project',bindings=${projectsBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).PROJECT}">
-</div>
+<!--<div id="project-binding-manager"-->
+	 <!--th:include="project-tabs/custom-field-binding :: cuf-unit-binder"-->
+	 <!--th:with="HTMLID='project',bindings=${projectsBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).PROJECT}">-->
+<!--</div>-->
 
 
 <div id="requirements-binding-manager"
@@ -96,10 +96,10 @@
 	 th:with="HTMLID='execution-steps',bindings=${executionStepBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).EXECUTION_STEP}">
 </div>
 
-  <div id="crFolders-binding-manager"
-       th:include="project-tabs/custom-field-binding :: cuf-unit-binder"
-       th:with="HTMLID='crFolders',bindings=${crFoldersBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).REQUIREMENT_FOLDER}">
-  </div>
+  <!--<div id="crFolders-binding-manager"-->
+       <!--th:include="project-tabs/custom-field-binding :: cuf-unit-binder"-->
+       <!--th:with="HTMLID='crFolders',bindings=${crFoldersBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).REQUIREMENT_FOLDER}">-->
+  <!--</div>-->
 
 
 <script type="text/javascript" th:inline="javascript">
@@ -149,23 +149,6 @@
 	    			tableDeleteMessageSecond : /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.REQUIREMENT_VERSION})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
 	       			tableRenderingLocations : []
 		    	},
-
-          projectSettings : {
-            entityType : 'PROJECT',
-            mainSelector : "#project-binding-manager",
-            tableDeferLoading : /*[[ ${projectsBindings.size()} ]]*/ 3,
-            tableDeleteMessageSecond : /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.PROJECT})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
-            tableRenderingLocations : []
-          },
-
-          crFoldersSettings : {
-            entityType : 'REQUIREMENT_FOLDER',
-            mainSelector : "#crFolders-binding-manager",
-            tableDeferLoading : /*[[ ${crFoldersBindings.size()} ]]*/ 3,
-            tableDeleteMessageSecond : /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.REQUIREMENT_FOLDER})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
-            tableRenderingLocations : []
-          },
-
 
 
 	    		campSettings : {
@@ -339,7 +322,7 @@
 				</table>
 			</div>
       <br/>
-      <span th:if="${isTemplate}" th:text="#{message.customfieldbinding.bind.message.warningForTemplate}"></span>
+      <span th:if="${isTemplate}" th:text="#{message.customfieldbinding.bind message.customfieldbinding.bind.message.warningForTemplate}"></span>
 
             <div class="popup-dialog-buttonpane">
               <input type="button" th:value="#{label.Confirm}" data-def="state=select, mainbtn=select, evt=confirm" />
