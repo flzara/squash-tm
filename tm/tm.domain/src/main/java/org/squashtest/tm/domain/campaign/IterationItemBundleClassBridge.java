@@ -93,7 +93,7 @@ public class IterationItemBundleClassBridge implements FieldBridge, MetadataProv
 			}
 		}
 		else {
-			applyToLuceneOptions( luceneOptions, FIELD_TC_ID, result, document );
+			applyToLuceneStringOptions( luceneOptions, FIELD_TC_ID, result.toString(), document );
 		}
 	}
 
@@ -106,7 +106,7 @@ public class IterationItemBundleClassBridge implements FieldBridge, MetadataProv
 
 	protected void applyToLuceneStringOptions(LuceneOptions luceneOptions, String name, String value, Document document) {
 		luceneOptions.addSortedDocValuesFieldToDocument( name, value, document );
-		document.add(new StringField(name, value, Field.Store.YES));
+		document.add(new TextField(name, value, Field.Store.YES));
 	}
 
 	@Override
@@ -114,7 +114,7 @@ public class IterationItemBundleClassBridge implements FieldBridge, MetadataProv
 		fieldMetadataBuilder.field(FIELD_TC_NAME,FieldType.STRING).sortable(true);
 		fieldMetadataBuilder.field(FIELD_TC_REFERENCE,FieldType.STRING).sortable(true);
 		fieldMetadataBuilder.field(FIELD_TC_IMPORTANCE,FieldType.STRING).sortable(true);
-		fieldMetadataBuilder.field(FIELD_TC_ID,FieldType.LONG).sortable(true);
+		fieldMetadataBuilder.field(FIELD_TC_ID,FieldType.STRING).sortable(true);
 		fieldMetadataBuilder.field("datasets",FieldType.STRING).sortable(true);
 		fieldMetadataBuilder.field("label",FieldType.STRING
 
