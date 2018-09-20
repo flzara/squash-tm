@@ -20,34 +20,22 @@
  */
 package org.squashtest.tm.service.internal.batchexport;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.CoverageModel;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.DatasetModel;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.ParameterModel;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.TestStepModel;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.*;
 import org.squashtest.tm.service.internal.batchexport.RequirementExportModel.RequirementLinkModel;
 import org.squashtest.tm.service.internal.batchexport.RequirementExportModel.RequirementModel;
 import org.squashtest.tm.service.internal.library.HibernatePathService;
 import org.squashtest.tm.service.internal.library.PathService;
 import org.squashtest.tm.service.internal.repository.hibernate.EasyConstructorResultTransformer;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.*;
 
 @Repository
 public class ExportDao {
@@ -55,21 +43,19 @@ public class ExportDao {
 
 	private static final String TEST_CASE_IDS = "testCaseIds";
 
-	private static final String VERSION_IDS= "versionIds";
+	private static final String VERSION_IDS = "versionIds";
 	@PersistenceContext
 	private EntityManager em;
 
 	@Inject
 	private PathService pathService;
 
-	public ExportDao(){
+	public ExportDao() {
 		super();
 	}
 
 
-
-
-	public RequirementExportModel findAllRequirementModel(List<Long> versionIds){
+	public RequirementExportModel findAllRequirementModel(List<Long> versionIds) {
 
 		RequirementExportModel model = new RequirementExportModel();
 
@@ -86,7 +72,7 @@ public class ExportDao {
 		return model;
 	}
 
-	public RequirementExportModel findAllSearchRequirementModel(List<Long> versionIds){
+	public RequirementExportModel findAllSearchRequirementModel(List<Long> versionIds) {
 
 		RequirementExportModel model = new RequirementExportModel();
 
@@ -98,7 +84,7 @@ public class ExportDao {
 	}
 
 
-	public ExportModel findModel(List<Long> tclnIds){
+	public ExportModel findModel(List<Long> tclnIds) {
 
 		ExportModel model = new ExportModel();
 
@@ -121,7 +107,7 @@ public class ExportDao {
 	}
 
 
-	public ExportModel findSimpleModel(List<Long> tclnIds){
+	public ExportModel findSimpleModel(List<Long> tclnIds) {
 
 		ExportModel model = new ExportModel();
 
@@ -134,7 +120,7 @@ public class ExportDao {
 	}
 
 	private void setPathForCoverage(List<CoverageModel> coverageModels) {
-		for (CoverageModel model : coverageModels){
+		for (CoverageModel model : coverageModels) {
 			model.setReqPath(getRequirementPath(model.getRequirementId(), model.getRequirementProjectName()));
 			model.setTcPath(pathService.buildTestCasePath(model.getTcId()));
 		}
@@ -147,7 +133,7 @@ public class ExportDao {
 	}
 
 
-	private List<TestCaseModel> findTestCaseModels(List<Long> tclnIds){
+	private List<TestCaseModel> findTestCaseModels(List<Long> tclnIds) {
 
 		List<TestCaseModel> models = new ArrayList<>(tclnIds.size());
 		List<TestCaseModel> buffer;
@@ -161,16 +147,16 @@ public class ExportDao {
 		models.addAll(buffer);
 
 		//get the cufs
-		List<CustomField> cufModels = loadModels("testCase.excelExportCUF", tclnIds, TEST_CASE_IDS,CustomField.class);
+		List<CustomField> cufModels = loadModels("testCase.excelExportCUF", tclnIds, TEST_CASE_IDS, CustomField.class);
 
 		// add them to the test case models
-		for (TestCaseModel model : models){
+		for (TestCaseModel model : models) {
 			Long id = model.getId();
 			ListIterator<CustomField> cufIter = cufModels.listIterator();
 
-			while (cufIter.hasNext()){
+			while (cufIter.hasNext()) {
 				CustomField cuf = cufIter.next();
-				if (id.equals(cuf.getOwnerId())){
+				if (id.equals(cuf.getOwnerId())) {
 					model.addCuf(cuf);
 					cufIter.remove();
 				}
@@ -183,7 +169,7 @@ public class ExportDao {
 	}
 
 
-	private List<TestStepModel> findStepsModel(List<Long> tcIds){
+	private List<TestStepModel> findStepsModel(List<Long> tcIds) {
 
 		List<TestStepModel> models = new ArrayList<>(tcIds.size());
 		List<TestStepModel> buffer;
@@ -199,13 +185,13 @@ public class ExportDao {
 		List<CustomField> cufModels = loadModels("testStep.excelExportCUF", tcIds, TEST_CASE_IDS, CustomField.class);
 
 		// add them to the test case models
-		for (TestStepModel model : models){
+		for (TestStepModel model : models) {
 			Long id = model.getId();
 			ListIterator<CustomField> cufIter = cufModels.listIterator();
 
-			while (cufIter.hasNext()){
+			while (cufIter.hasNext()) {
 				CustomField cuf = cufIter.next();
-				if (id.equals(cuf.getOwnerId())){
+				if (id.equals(cuf.getOwnerId())) {
 					model.addCuf(cuf);
 					cufIter.remove();
 				}
@@ -217,19 +203,18 @@ public class ExportDao {
 		return models;
 	}
 
-	private List<ParameterModel> findParametersModel(List<Long> tcIds){
+	private List<ParameterModel> findParametersModel(List<Long> tcIds) {
 		return loadModels("parameter.excelExport", tcIds, TEST_CASE_IDS, ParameterModel.class);
 	}
 
 
-	private List<DatasetModel> findDatasetsModel(List<Long> tcIds){
+	private List<DatasetModel> findDatasetsModel(List<Long> tcIds) {
 
 		return loadModels("dataset.excelExport", tcIds, TEST_CASE_IDS, DatasetModel.class);
 	}
 
 
-
-	private Session getStatelessSession(){
+	private Session getStatelessSession() {
 		Session s = em.unwrap(Session.class);
 		s.setFlushMode(FlushMode.MANUAL);
 		return s;
@@ -239,7 +224,7 @@ public class ExportDao {
 		return loadModels("requirementVersion.excelExportCoverage", versionIds, VERSION_IDS, CoverageModel.class);
 	}
 
-	private List<RequirementLinkModel> findRequirementLinksModel(List<Long> versionIds){
+	private List<RequirementLinkModel> findRequirementLinksModel(List<Long> versionIds) {
 		// get the models
 		List<RequirementLinkModel> models = loadModels("requirementVersion.excelExportRequirementLinks", versionIds, VERSION_IDS, RequirementLinkModel.class);
 
@@ -258,13 +243,13 @@ public class ExportDao {
 
 
 	private List<RequirementModel> findRequirementModel(List<Long> versionIds) {
-		List<RequirementModel> requirementModels = loadModels("requirement.findVersionsModels", versionIds,VERSION_IDS,
-				RequirementModel.class);
+		List<RequirementModel> requirementModels = loadModels("requirement.findVersionsModels", versionIds, VERSION_IDS,
+			RequirementModel.class);
 		getOtherProperties(requirementModels);
 		return requirementModels;
 	}
 
-	private void getOtherProperties(List<RequirementModel> requirementModels){
+	private void getOtherProperties(List<RequirementModel> requirementModels) {
 		for (RequirementModel requirementModel : requirementModels) {
 			requirementModel.setPath(getPathAsString(requirementModel));
 			getModelRequirementPosition(requirementModel);
@@ -283,15 +268,15 @@ public class ExportDao {
 	}
 
 	private void getModelRequirementPosition(RequirementModel requirementModel) {
-			Long reqId = requirementModel.getRequirementId();
-			int index = getRequirementPositionInLibrary(reqId);
-			if (index == 0) {
-				index = getRequirementPositionInFolder(reqId);
-			}
-			if (index == 0) {
-				index = getPositionChildrenRequirement(reqId);
-			}
-			requirementModel.setRequirementIndex(index);
+		Long reqId = requirementModel.getRequirementId();
+		int index = getRequirementPositionInLibrary(reqId);
+		if (index == 0) {
+			index = getRequirementPositionInFolder(reqId);
+		}
+		if (index == 0) {
+			index = getPositionChildrenRequirement(reqId);
+		}
+		requirementModel.setRequirementIndex(index);
 	}
 
 
@@ -305,7 +290,7 @@ public class ExportDao {
 	}
 
 
-	private int getRequirementPositionInLibrary(Long reqId){
+	private int getRequirementPositionInLibrary(Long reqId) {
 		return requirementVersionQuery("requirement.findVersionsModelsIndexInLibrary", reqId, 0);
 	}
 
@@ -315,7 +300,7 @@ public class ExportDao {
 	}
 
 
-	private String getRequirementPath(Long requirementId, String requirementProjectName){
+	private String getRequirementPath(Long requirementId, String requirementProjectName) {
 		StringBuilder sb = new StringBuilder(HibernatePathService.PATH_SEPARATOR);
 		sb.append(requirementProjectName);
 		sb.append(HibernatePathService.PATH_SEPARATOR);
@@ -328,30 +313,30 @@ public class ExportDao {
 
 	}
 
-	private List<Long> gatherRequirementIdsFromLinkModels(List<RequirementLinkModel> models){
+	private List<Long> gatherRequirementIdsFromLinkModels(List<RequirementLinkModel> models) {
 		Set<Long> ids = new HashSet<>(models.size());
-		for (RequirementLinkModel model : models){
+		for (RequirementLinkModel model : models) {
 			ids.add(model.getReqId());
 			ids.add(model.getRelReqId());
 		}
 		return new ArrayList<>(ids);
 	}
 
-	private Map<Long, String> gatherRequirementPaths(List<Long> requirementIds){
+	private Map<Long, String> gatherRequirementPaths(List<Long> requirementIds) {
 
 		int nbReqs = requirementIds.size();
 
 		List<String> pathes = pathService.buildRequirementsPaths(requirementIds);
 		Map<Long, String> pathById = new HashMap<>(nbReqs);
-		for (int i=0; i < nbReqs; i++){
+		for (int i = 0; i < nbReqs; i++) {
 			pathById.put(requirementIds.get(i), pathes.get(i));
 		}
 
 		return pathById;
 	}
 
-	private void assignPaths(List<RequirementLinkModel> models, Map<Long, String> pathById){
-		for (RequirementLinkModel model : models){
+	private void assignPaths(List<RequirementLinkModel> models, Map<Long, String> pathById) {
+		for (RequirementLinkModel model : models) {
 			String reqPath = pathById.get(model.getReqId());
 			String relPath = pathById.get(model.getRelReqId());
 			model.setReqPath(reqPath);
@@ -381,7 +366,8 @@ public class ExportDao {
 
 	@SuppressWarnings("unchecked")
 	private <R> List<R> loadModels(String queryName, List<Long> ids, String paramName,
-			Class<R> resclass) {
+	                               Class<R> resclass) {
+		ids = !ids.isEmpty() ? ids : Collections.singletonList(-1L);
 		Session session = getStatelessSession();
 		Query q = session.getNamedQuery(queryName);
 		q.setParameterList(paramName, ids, LongType.INSTANCE);
