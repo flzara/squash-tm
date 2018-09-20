@@ -58,9 +58,6 @@ public class CustomFieldValue implements Identified, SingleValuedCustomFieldValu
 	@Column(name = "CF_ID")
 	protected Long cufId;
 
-	@Size(max = 7)
-	private String colour;
-
 	public CustomFieldValue() {
 		super();
 	}
@@ -159,7 +156,6 @@ public class CustomFieldValue implements Identified, SingleValuedCustomFieldValu
 		this.boundEntityType = entityType;
 	}
 
-
 	public CustomFieldValue copy() {
 		CustomFieldValue copy = new CustomFieldValue();
 		copy.setBinding(binding);
@@ -186,14 +182,6 @@ public class CustomFieldValue implements Identified, SingleValuedCustomFieldValu
 		}
 		return null;
 
-	}
-
-	public String getColour() {
-		return colour;
-	}
-
-	public void setColour(String colour) {
-		this.colour = colour;
 	}
 
 	@Override

@@ -46,7 +46,6 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import static java.util.stream.Collectors.*;
-import static org.squashtest.tm.domain.customfield.InputType.DROPDOWN_LIST;
 
 @Service("squashtest.tm.service.CustomFieldValueManagerService")
 @Transactional
@@ -400,10 +399,6 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 		newValue.setValueFor(changedValue);
 
-		if (isFromADropdownList(changedValue)) {
-			changedValue.setColour(findColourByValue(changedValue, newValue.getValue()));
-		}
-
 		if (BindableEntity.TEST_CASE == boundEntity.getBoundEntityType()) {
 			indexationService.reindexTestCase(boundEntity.getId());
 		}
@@ -411,7 +406,6 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 			indexationService.reindexRequirementVersion(boundEntity.getId());
 		}
 	}
-
 
 	// This method is just here to use the @CacheResult annotation
 	@CacheResult(type = CachableType.CUSTOM_FIELD)
@@ -534,20 +528,6 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		List<Long> valueIds = IdentifiedUtil.extractIds(values);
 		customFieldValueDao.deleteAll(valueIds);
 
-	}
-
-	private boolean isFromADropdownList(CustomFieldValue changedValue) {
-		return changedValue.getBinding().getCustomField().getInputType() == DROPDOWN_LIST;
-	}
-
-
-	private String findColourByValue(CustomFieldValue changedValue, String value) {
-		return ((SingleSelectField) changedValue.getBinding().getCustomField()).getOptions()
-			.stream()
-			.filter(customFieldOption -> customFieldOption.getLabel().equals(value))
-			.findFirst()
-			.orElse(new CustomFieldOption("", "", ""))
-			.getColour();
 	}
 
 }

@@ -52,15 +52,6 @@
     </addColumn>
   </changeSet>
 
-  <changeSet id="tm-1.19.0-SQTM-400-custom-field-value" author="cholc">
-    <comment>Stores the colour of the selected custom field option, so it can be displayed in a chart later</comment>
-    <addColumn tableName="CUSTOM_FIELD_VALUE">
-      <column name="COLOUR" type="VARCHAR(7)">
-        <constraints nullable="true"/>
-      </column>
-    </addColumn>
-  </changeSet>
-
   <changeSet id="tm-1.19.0-SQTM-409-iteration-test-suite-remove-constraint" author="cholc">
     <comment>To drop an unique constraint, you need the constraint's name, which we don't have, so here we copy the column and delete the original</comment>
 
