@@ -67,9 +67,38 @@ define(['jquery', 'underscore'], function ($, _) {
 	};
 
 	var colourFiller = [
-		"#B22C2C",
-		"#2D7243",
-		"#4288CE"
+		"#f44336",
+		"#e91e63",
+		"#9c27b0",
+		"#673ab7",
+		"#3f51b5",
+		"#2196f3",
+		"#03a9f4",
+		"#00bcd4",
+		"#009688",
+		"#4caf50",
+		"#8bc34a",
+		"#cddc39",
+		"#ffeb3b",
+		"#ffc107",
+		"#ff9800",
+		"#ff5722",
+		"#ba000d",
+		"#b0003a",
+		"#6a0080",
+		"#320b86",
+		"#002984",
+		"#0069c0",
+		"#007ac1",
+		"#008ba3",
+		"#00675b",
+		"#087f23",
+		"#5a9216",
+		"#99aa00",
+		"#c8b900",
+		"#c79100",
+		"#c66900",
+		"#c41c00"
 	];
 
 	function getAssociatedColours(legends) {
@@ -95,7 +124,9 @@ define(['jquery', 'underscore'], function ($, _) {
 			emptyElementNumber = 0;
 
 		do {
-			emptyElementIndex = colourArray.findIndex(function (element) {return !element;});
+			emptyElementIndex = colourArray.findIndex(function (element) {
+				return !element;
+			});
 			newColour = colourFiller[emptyElementNumber % colourFiller.length];
 			colourArray[emptyElementIndex] = newColour;
 			emptyElementNumber++;
