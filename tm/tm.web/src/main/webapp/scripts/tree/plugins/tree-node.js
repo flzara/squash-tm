@@ -29,36 +29,36 @@
  */
 
 
-define(['jquery'], function($){
+define(['jquery', 'app/util/StringUtil'], function ($, StringUtil) {
 
 	// *********************** functions ************************************
 	// 'library' and 'folder' are still named 'library' and 'folder'. Others
 	// will be renamed according to their subtypes.
-	function _getSemiSpecializedTypeName(node){
+	function _getSemiSpecializedTypeName(node) {
 		var type = node.getDomType();
 		var typeRepresentation = "";
 
-		if ((type==='folder') || (type === 'drive')){
-			return type+'s';
+		if ((type === 'folder') || (type === 'drive')) {
+			return type + 's';
 		}
-		else{
+		else {
 			return node.getResType();
 		}
 	}
 
-	function getResourceUrl(){
+	function getResourceUrl() {
 		return this.getBaseUrl() + this.getResType() + "/" + this.getResId();
 	}
 
-	function getBaseUrl(){
-		return this.tree.data.squash.rootUrl ;
+	function getBaseUrl() {
+		return this.tree.data.squash.rootUrl;
 	}
 
-	function getBrowserUrl(){
+	function getBrowserUrl() {
 		return this.getBaseUrl() + this.getWorkspace() + "-browser";
 	}
 
-	function getContentUrl(){
+	function getContentUrl() {
 
 		var wkspce = this.getWorkspace();
 		var id = this.getResId();
@@ -69,102 +69,118 @@ define(['jquery'], function($){
 	}
 
 
-	function getCopyUrl(){
+	function getCopyUrl() {
 
-		var representation =   _getSemiSpecializedTypeName(this);
-		var url = this.getBrowserUrl() + '/' + representation + '/' +this.getResId();
+		var representation = _getSemiSpecializedTypeName(this);
+		var url = this.getBrowserUrl() + '/' + representation + '/' + this.getResId();
 
 		switch (this.getDomType()) {
 			case "drive" :
 			case "folder":
-			case "requirement" :	url += '/content/new'; break;
-			case "campaign" :		url += '/iterations/new'; break;
-			case "iteration":		url += '/test-suites/new'; break;
-			default : throw "copy aborted : node type '"+this.getDomType()+"' cannot receive new content.";
+			case "requirement" :
+				url += '/content/new';
+				break;
+			case "campaign" :
+				url += '/iterations/new';
+				break;
+			case "iteration":
+				url += '/test-suites/new';
+				break;
+			default :
+				throw "copy aborted : node type '" + this.getDomType() + "' cannot receive new content.";
 		}
 
 		return url;
 
 	}
 
-	function getMoveUrl(){
+	function getMoveUrl() {
 
-		var representation =   _getSemiSpecializedTypeName(this);
-		var url = this.getBrowserUrl() + '/' + representation + '/' +this.getResId();
+		var representation = _getSemiSpecializedTypeName(this);
+		var url = this.getBrowserUrl() + '/' + representation + '/' + this.getResId();
 
 		switch (this.getDomType()) {
 			case "drive" :
 			case "folder":
 			case "requirement" :
 			case "iteration" :
-			case "campaign" :	url += '/content/{nodeIds}/{position}'; break;
-			default : throw "move aborted : node type '"+this.getDomType()+"' cannot receive moved content.";
+			case "campaign" :
+				url += '/content/{nodeIds}/{position}';
+				break;
+			default :
+				throw "move aborted : node type '" + this.getDomType() + "' cannot receive moved content.";
 		}
 
 		return url;
 	}
 
-	function getMoveUrlForTcFromReq(){
+	function getMoveUrlForTcFromReq() {
 
-		var representation =   _getSemiSpecializedTypeName(this);
-		var url = this.getBrowserUrl() + '/' + representation + '/' +this.getResId() +'/content/newTestCases' ;
+		var representation = _getSemiSpecializedTypeName(this);
+		var url = this.getBrowserUrl() + '/' + representation + '/' + this.getResId() + '/content/newTestCases';
 
 		return url;
 	}
 
 
-	function getDeleteUrl(){
+	function getDeleteUrl() {
 		var specific = "";
 		var options = "";
-		switch (this.getDomType()){
+		switch (this.getDomType()) {
 			case "folder" :
 			case "test-case" :
 			case "requirement" :
 			case "dashboard" :
 			case "report":
-      case "chart":
-			case "campaign"		: specific = "/content"; break;
-			case "iteration"	: specific = "/iterations"; break;
-			case "test-suite"	: specific = '/test-suites'; options="?remove_from_iter={remove_from_iter}"; break;
+			case "chart":
+			case "campaign"    :
+				specific = "/content";
+				break;
+			case "iteration"  :
+				specific = "/iterations";
+				break;
+			case "test-suite"  :
+				specific = '/test-suites';
+				options = "?remove_from_iter={remove_from_iter}";
+				break;
 		}
-		return this.getBrowserUrl()+specific+"/{nodeIds}" + options;
+		return this.getBrowserUrl() + specific + "/{nodeIds}" + options;
 	}
 
-	function refreshLabel(){
+	function refreshLabel() {
 
 		var label = null;
 		var name;
 
 
-		switch(this.getResType()){
+		switch (this.getResType()) {
 
-		case 'requirements' :
-		case 'test-cases' :
-		case 'campaigns' :
-		case 'iterations' :
-			name = this.getName();
-			var reference = this.getReference() || "";
+			case 'requirements' :
+			case 'test-cases' :
+			case 'campaigns' :
+			case 'iterations' :
+				name = this.getName();
+				var reference = this.getReference() || "";
 
-			if (reference.length > 0) {
-				reference += " - ";
-			}
+				if (reference.length > 0) {
+					reference += " - ";
+				}
 
-			label = reference + name;
-			break;
+				label = reference + name;
+				break;
 
-		default :
-			label = this.getName();
-			break;
+			default :
+				label = this.getName();
+				break;
 		}
 
-		this.tree.set_text(this, label);
+		this.tree.set_text(this, StringUtil.escapeHtml(label));
 	}
-
 
 
 	// *********************** plugin definition ************************************
 
-	$.fn.treeNode = function() {
+	$.fn.treeNode = function () {
 
 		// check validity of this call to treeNode();
 		var lt = this.length;
@@ -182,74 +198,74 @@ define(['jquery'], function($){
 
 		// ************ basic getters
 
-		this.getDomId = function() {
+		this.getDomId = function () {
 			return this.reference.attr('id');
 		};
 
-		this.getDomType = function() {
+		this.getDomType = function () {
 			return this.reference.attr('rel');
 		};
 
 		// equivalent to getDomType
-		this.getRel = function(){
+		this.getRel = function () {
 			return this.reference.attr('rel');
 		};
 
-		this.getResId = function() {
+		this.getResId = function () {
 			return this.reference.attr('resid');
 		};
 
-		this.getResType = function() {
+		this.getResType = function () {
 			return this.reference.attr('restype');
 		};
 
-		this.getIdentity = function(){
+		this.getIdentity = function () {
 			return {
-				resid : this.reference.attr('resid'),
-				restype : this.reference.attr('restype')
+				resid: this.reference.attr('resid'),
+				restype: this.reference.attr('restype')
 			};
 		};
 
-		this.isEditable = function() {
+		this.isEditable = function () {
 			return this.reference.attr('editable') === "true";
 		};
 
-		this.isCreatable = function() {
+		this.isCreatable = function () {
 			return this.reference.attr('creatable') === "true";
 		};
 
-		this.isMilestoneCreatable = function(){
+		this.isMilestoneCreatable = function () {
 			return this.reference.attr('milestone-creatable-deletable') === "true";
 		};
 
-		this.isMilestoneEditable = function(){
+		this.isMilestoneEditable = function () {
 			return this.reference.attr('milestone-editable') === "true";
 		};
 
-		this.isDeletable = function() {
+		this.isDeletable = function () {
 			return this.reference.attr('deletable') === "true";
 		};
 
-		this.isExportable = function() {
+		this.isExportable = function () {
 			return this.reference.attr('exportable') === "true";
 		};
 
 		/**
 		 * Checks if some permission is authorized for this node.
 		 */
-		this.isAuthorized = function(permission) {
+		this.isAuthorized = function (permission) {
 			// binds a permission to its quality,
 			var qualities = {
-				READ : "readable",
-				WRITE : "editable",
-				CREATE : "creatable",
-				DELETE : "deletable",
-				EXECUTE : "executable",
-				EXPORT : "exportable",
-        //Issue 6138 for jirareq
-        //We now need to have the import right directly in the library node
-        IMPORT : "importable",
-				MANAGEMENT : "manageable"
+				READ: "readable",
+				WRITE: "editable",
+				CREATE: "creatable",
+				DELETE: "deletable",
+				EXECUTE: "executable",
+				EXPORT: "exportable",
+				//Issue 6138 for jirareq
+				//We now need to have the import right directly in the library node
+				IMPORT: "importable",
+				MANAGEMENT: "manageable"
 			};
 
 			if (permission === "ANY") {
@@ -270,55 +286,55 @@ define(['jquery'], function($){
 		 *            an object with an id property which will be used to
 		 *            perform the check
 		 */
-		this.isWorkspaceWizardEnabled = function(wizard) {
+		this.isWorkspaceWizardEnabled = function (wizard) {
 			// enabled wizards list is flattened into comma-separated string
 			var enabledWizardsAttr = this.getLibrary().attr("wizards");
 			var enabledWizards = (enabledWizardsAttr === undefined) ? []
-					: enabledWizardsAttr.split(",");
+				: enabledWizardsAttr.split(",");
 			return enabledWizards
-					&& ($.inArray(wizard.id, enabledWizards) > -1);
+				&& ($.inArray(wizard.id, enabledWizards) > -1);
 		};
 
-		this.getName = function() {
+		this.getName = function () {
 			return this.reference.attr('name');
 		};
 
-		this.getReference = function() {
+		this.getReference = function () {
 			return this.reference.attr('reference');
 		};
 
-		this.getIndex = function() {
+		this.getIndex = function () {
 			return this.reference.attr('iterationIndex');
 		};
 
-		this.getPath = function() {
-			return '/'+this.getAncestors().all('getName').join().replace(/,/g, '/');
+		this.getPath = function () {
+			return '/' + this.getAncestors().all('getName').join().replace(/,/g, '/');
 		};
 
-		this.getProjectId = function() {
+		this.getProjectId = function () {
 			return this.getLibrary().attr('project');
 		};
 
 		// ************ some setters **************
 
-		this.setAttr = function(attrName, value){
+		this.setAttr = function (attrName, value) {
 			this.reference.attr(attrName, value);
 			this.refreshLabel();
 		};
 
-		this.setName = function(name) {
+		this.setName = function (name) {
 			this.reference.attr('name', name);
 			this.refreshLabel();
 		};
 
-		this.setReference = function(reference) {
+		this.setReference = function (reference) {
 			this.reference.attr('reference', reference);
 			this.refreshLabel();
 		};
 
 		// ************ relationships getters
 
-		this.getLibrary = function() {
+		this.getLibrary = function () {
 			if (this.reference.is(':library')) {
 				return this;
 			} else {
@@ -327,87 +343,89 @@ define(['jquery'], function($){
 			}
 		};
 
-		this.getParent = function() {
+		this.getParent = function () {
 			return this.reference.parents("li").first().treeNode();
 		};
 
-		this.getWorkspace = function() {
+		this.getWorkspace = function () {
 			return this.getLibrary().getResType().replace('-libraries', '');
 		};
 
-		this.getChildren = function() {
-			var children =  this.tree._get_children(this);
+		this.getChildren = function () {
+			var children = this.tree._get_children(this);
 			return (children.length) ? children.treeNode() : $();
 		};
 
-		this.getFlatSubtree = function(){
-			var subtree= this.find('li');
+		this.getFlatSubtree = function () {
+			var subtree = this.find('li');
 			return (subtree.length) ? subtree.treeNode() : $();
 		};
 
-		this.getAncestors = function() {
+		this.getAncestors = function () {
 			return this.parents('li', this.tree).add(this).treeNode();
 		};
 
 		// ***************** tree actions
 
-		this.deselectChildren = function(){
+		this.deselectChildren = function () {
 			var children = this.find('a.jstree-clicked').parent('li').not(this);
 			this.tree.deselect_node(children);
 		};
 
-		this.refresh = function() {
-			if (this.canContainNodes()){
-				if (this.isLoaded()){
+		this.refresh = function () {
+			if (this.canContainNodes()) {
+				if (this.isLoaded()) {
 					this.tree.refresh(this);
 				}
-				else{
+				else {
 					return this.load();
 				}
 			}
 		};
 
-		this.isOpen = function() {
+		this.isOpen = function () {
 			// note : the original #isOpen() from the tree core module returns true when open, but when it's closed it returns anything but a boolean
 			var isOpen = this.tree.is_open(this);
 			return (!isOpen) ? false : true;
 		};
 
-		this.open = function() {
+		this.open = function () {
 			var defer = $.Deferred();
 			this.tree.open_node(this, defer.resolve);
 			return defer.promise();
 		};
 
-		this.isLoaded = function(){
+		this.isLoaded = function () {
 			return this.tree._is_loaded(this);
 		};
 
-		this.load = function() {
+		this.load = function () {
 			var defer = $.Deferred();
 			this.tree.load_node(this, defer.resolve, defer.reject);
 			return defer.promise();
 		};
 
-		this.close = function() {
+		this.close = function () {
 			this.tree.close_node(this);
 		};
 
-		this.appendNode = function(data) {
+		this.appendNode = function (data) {
 			var defer = $.Deferred();
 			var res = this.tree.create_node(this, 'last', data, defer.resolve,
-					true);
+				true);
 			var newNode = res.treeNode();
-			return [ newNode, defer.promise() ];
+			return [newNode, defer.promise()];
 		};
 
 
 		/* Will move around the nodes without triggering events.
 		 * Moved nodes will be removed from their container.
 		 */
-		this.moveTo = function(target){
+		this.moveTo = function (target) {
 
-			if (this.length===0) {return;}
+			if (this.length === 0) {
+				return;
+			}
 
 			var oldParents = this.all('getParent');
 
@@ -415,15 +433,15 @@ define(['jquery'], function($){
 			this.removeMe();
 
 			// if the target was empty, now it isn't anymore.
-			if (target.hasClass('jstree-leaf')){
+			if (target.hasClass('jstree-leaf')) {
 				target.removeClass('jstree-leaf').addClass('jstree-closed');
 			}
 
 			// if the target was loaded, we must actually move the nodes in there because they won't be fetched
 			// from the server again. We create the <ul/> in the process if need be.
-			if (target.isLoaded){
+			if (target.isLoaded) {
 				var ul = (target.find('> ul'));
-				if (ul.length===0){
+				if (ul.length === 0) {
 					ul = $("<ul/>");
 					target.append(ul);
 				}
@@ -437,48 +455,48 @@ define(['jquery'], function($){
 		/*
 		 * post processing after movements. For now, only synchronized requirements needs that.
 		 */
-		this.afterMove = function(newParent, oldParents){
+		this.afterMove = function (newParent, oldParents) {
 			var requirements = this.getFlatSubtree().add(this).filter(':requirement[synchronized="true"]');
 
 			var parents = $(newParent).add(oldParents);
-			if (parents.length === 0){
+			if (parents.length === 0) {
 				// this is not supposed to happen, but meh.
 				return;
 			}
 			parents = parents.treeNode();
-			if (! parents.areSameLibs()){
+			if (!parents.areSameLibs()) {
 				requirements.removeAttr('synchronized');
 			}
-			if(squashtm && squashtm.app && squashtm.app.wreqr){
+			if (squashtm && squashtm.app && squashtm.app.wreqr) {
 				var wreqr = squashtm.app.wreqr;
 				wreqr.trigger("tree.moveNodes.done");
 			}
 		};
 
-		this.select = function() {
+		this.select = function () {
 			this.tree.select_node(this);
 		};
 
-		this.deselect = function() {
+		this.deselect = function () {
 			this.tree.deselect_node(this);
 		};
 
-		this.deselect_all = function() {
+		this.deselect_all = function () {
 			this.tree.deselect_all();
 		};
 
-		this.removeMe = function(){
+		this.removeMe = function () {
 			var tr = this.tree;
-			this.each(function(elt){
+			this.each(function (elt) {
 				tr.delete_node(this);
 			});
 		};
 
 		// *********** tests **********************
 
-		this.match = function(matchObject) {
-			for ( var ppt in matchObject) {
-				if ((this.attr(ppt) != matchObject[ppt])){
+		this.match = function (matchObject) {
+			for (var ppt in matchObject) {
+				if ((this.attr(ppt) != matchObject[ppt])) {
 					return false;
 				}
 			}
@@ -487,10 +505,10 @@ define(['jquery'], function($){
 
 
 		//TODO : this test relates to the configuration of the "types" plugin of their instance of jstree.
-		this.acceptsAsContent = function(nodes) {
+		this.acceptsAsContent = function (nodes) {
 
 			// reject if this node cannot have children anyhow
-			if (! this.canContainNodes()){
+			if (!this.canContainNodes()) {
 				return false;
 			}
 
@@ -500,7 +518,7 @@ define(['jquery'], function($){
 			//might throw npe if the conf is invalid, and so is good candidate for fail-fast warning
 			var validChildrenTypes = typePluginConf[thisRel].valid_children;
 
-			if (! validChildrenTypes instanceof Array ){
+			if (!validChildrenTypes instanceof Array) {
 				validChildrenTypes = [validChildrenTypes];
 			}
 
@@ -509,7 +527,7 @@ define(['jquery'], function($){
 		};
 
 
-		this.canContainNodes = function(){
+		this.canContainNodes = function () {
 			//might throw npe if the conf is invalid, and so is good candidate for fail-fast warning
 			var typePluginConf = this.tree._get_settings().types.types;
 			var thisRel = this.getDomType();
@@ -525,14 +543,14 @@ define(['jquery'], function($){
 		// returns a collection of object which properties are the lowercased
 		// name of the
 		// methods (minus 'get' if present) and the corresponding values.
-		this.all = function(strOrArray) {
-			return this.collect(function(elt) {
+		this.all = function (strOrArray) {
+			return this.collect(function (elt) {
 				if (typeof strOrArray == 'string') {
 					return $(elt).treeNode()[strOrArray]();
 				} else {
 					var data = {};
 					var localNode = $(elt).treeNode();
-					for ( var i = 0; i < strOrArray.length; i++) {
+					for (var i = 0; i < strOrArray.length; i++) {
 						var func = strOrArray[i];
 						var res = localNode[func]();
 						data[func.toLowerCase().replace('get', '')] = res;
@@ -548,21 +566,21 @@ define(['jquery'], function($){
 		// the specified attributes.
 		//
 		// if no argument is specified, defaults to restype and resid.
-		this.toData = function() {
+		this.toData = function () {
 
 			var attributes;
 
 			if (arguments.length === 0) {
-				attributes = [ "restype", "resid", "name", "reference" ];
+				attributes = ["restype", "resid", "name", "reference"];
 			}
 			else {
 				attributes = arguments[0];
 			}
 
-			return this.collect(function(elt) {
+			return this.collect(function (elt) {
 				var res = {};
 				var localNode = $(elt);
-				for ( var i in attributes) {
+				for (var i in attributes) {
 					if (attributes.hasOwnProperty(i)) {
 						var attr = attributes[i];
 						res[attr] = localNode.attr(attr);
@@ -575,15 +593,15 @@ define(['jquery'], function($){
 		// given a matchObject describing the name/value dom attributes they all
 		// must share,
 		// returns true if they all have the same or false if they differ.
-		this.allMatch = function(matchObject) {
+		this.allMatch = function (matchObject) {
 
-			if (this.length === 0){
+			if (this.length === 0) {
 				return false;
 			}
 
 			var shrinkingSet = this;
 
-			for ( var ppt in matchObject) {
+			for (var ppt in matchObject) {
 				if (matchObject.hasOwnProperty(ppt)) {
 					var selector = "[" + ppt + "='" + matchObject[ppt] + "']";
 					shrinkingSet = shrinkingSet.filter(selector);
@@ -594,17 +612,17 @@ define(['jquery'], function($){
 		};
 
 
-		this.areEither = function(typesArray){
+		this.areEither = function (typesArray) {
 			var collected = this.all('getDomType');
 			return $(collected).not(typesArray).length === 0;
 		};
 
-        this.areSameLibs = function() {
-            var libs = this.collect(function(elt) {
-                    return $(elt).treeNode().getLibrary().getDomId();
-            });
-            return ($.unique(libs).length == 1);
-        };
+		this.areSameLibs = function () {
+			var libs = this.collect(function (elt) {
+				return $(elt).treeNode().getLibrary().getDomId();
+			});
+			return ($.unique(libs).length == 1);
+		};
 
 
 		// *************** urls *******************************

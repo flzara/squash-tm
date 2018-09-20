@@ -183,7 +183,7 @@
                            style="vertical-align:middle">Action</label>
                     <div th:case="${true}" class=" controls"><textarea class="test-step-attr" name="action"
                                                                        id="test-step-action"
-                                                                       sq:unsafe-html="${testStepViewAction} ">do this</textarea>
+                                                                       th:text="${testStepViewAction} ">do this</textarea>
                       <span class="help-inline">&nbsp;</span><span>&nbsp;</span></div>
                     <span th:case="${false}" sq:unsafe-html="${testStepViewAction}">do this</span>
                   </div>
@@ -193,7 +193,7 @@
                            style="vertical-align:middle">Expected result</label>
                     <div th:case="${true}" class=" controls"><textarea class=" test-step-attr" name="expectedResult"
                                                                        id="test-step-expectedResult"
-                                                                       sq:unsafe-html="${testStepViewExpectedResult}">see that</textarea>
+                                                                       th:text="${testStepViewExpectedResult}">see that</textarea>
                       <span class="help-inline">&nbsp;</span>
                     </div>
                     <span th:case="${false}" sq:unsafe-html="${testStepViewExpectedResult}">do this</span>

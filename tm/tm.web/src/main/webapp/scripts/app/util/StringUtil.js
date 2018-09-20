@@ -110,12 +110,20 @@ define(["jquery"], function ($) {
 		return txt.value;
 	}
 
+	function escapeHtml(html) {
+		var text = document.createTextNode(html);
+		var p = document.createElement('p');
+		p.appendChild(text);
+		return p.innerHTML;
+	}
+
 	return {
 		isBlank: isBlank,
 		isEmpty: isEmpty,
 		parseSequence: parseSequence,
 		getParsedSequenceAttribute: getParsedSequenceAttribute,
 		coerceToBoolean: coerceToBoolean,
-		unescape: unescape
+		unescape: unescape,
+		escapeHtml: escapeHtml
 	};
 });

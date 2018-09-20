@@ -95,7 +95,7 @@ public class TestStepController {
 		TestStepView testStepView = new TestStepViewBuilder().buildTestStepView(testStep);
 		generateTestStepInfo(model, testStepView, testStep);
 
-		return "edit-test-step.html";
+  		return "edit-test-step.html";
 	}
 
 	private void generateTestStepInfo(Model model, AbstractTestStepView<?> testStepView,
@@ -103,8 +103,8 @@ public class TestStepController {
 		Locale locale = LocaleContextHolder.getLocale();
 		model.addAttribute("testStepView", testStepView);
 		if (testStepView.actionStep != null) {
-			model.addAttribute("testStepViewAction", HtmlUtils.htmlEscape(testStepView.actionStep.getAction()));
-			model.addAttribute("testStepViewExpectedResult", HtmlUtils.htmlEscape(testStepView.actionStep.getExpectedResult()));
+			model.addAttribute("testStepViewAction", testStepView.actionStep.getAction());
+			model.addAttribute("testStepViewExpectedResult", testStepView.actionStep.getExpectedResult());
 		}
 		model.addAttribute("workspace", "test-case");
 		model.addAttribute("testCase", testStepView.testCase);
