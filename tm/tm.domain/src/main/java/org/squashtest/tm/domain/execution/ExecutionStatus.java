@@ -20,16 +20,11 @@
  */
 package org.squashtest.tm.domain.execution;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
+
+import java.util.*;
 
 /**
  *
@@ -622,7 +617,9 @@ public enum ExecutionStatus implements Internationalizable, Level {
 
 		ExecutionStatus newStatus = ExecutionStatus.READY;
 
-		if (report.has(BLOCKED)) {
+		if(report.getTotal()==0){
+			// issue 7662, if there are no statuses, the status stays READY
+		}else if (report.has(BLOCKED)) {
 			newStatus = BLOCKED;
 
 		} else if (report.allOf(UNTESTABLE)) {
