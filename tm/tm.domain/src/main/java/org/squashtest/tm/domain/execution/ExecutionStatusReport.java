@@ -20,13 +20,8 @@
  */
 package org.squashtest.tm.domain.execution;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import javax.validation.constraints.NotNull;
+import java.util.*;
 
 /**
  * Bean to hold the occurrence of execution steps status from a list of execution steps.
@@ -43,7 +38,7 @@ public class ExecutionStatusReport {
 		}
 	}
 
-	private int getTotal() {
+	int getTotal() {
 		int total = 0;
 
 		for (Integer partial : statusCount.values()) {
