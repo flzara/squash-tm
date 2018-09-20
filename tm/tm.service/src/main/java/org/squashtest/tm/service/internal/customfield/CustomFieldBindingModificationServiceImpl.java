@@ -165,25 +165,11 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 										 Set<RenderingLocation> locations) {
 
 		GenericProject genericProject = genericProjectDao.getOne(projectId);
-		if(entity == BindableEntity.REQUIREMENT_FOLDER){
-			List<CustomFieldBinding> customFieldBindingList = new ArrayList<>();
-			customFieldBindingList.add(createBinding(genericProject, BindableEntity.REQUIREMENT_FOLDER, customFieldId, locations));
-//			customFieldBindingList.add(createBinding(genericProject, BindableEntity.CUSTOM_REPORT_FOLDER, customFieldId, locations));
-			customFieldBindingList.add(createBinding(genericProject, BindableEntity.CAMPAIGN_FOLDER, customFieldId, locations));
-			customFieldBindingList.add(createBinding(genericProject, BindableEntity.TESTCASE_FOLDER, customFieldId, locations));
-			if (!genericProjectDao.isProjectTemplate(projectId)) {
-				for(CustomFieldBinding newBinding: customFieldBindingList) {
-					customValueService.cascadeCustomFieldValuesCreation(newBinding);
-				}
-			}
-		}else{
-			CustomFieldBinding newBinding = createBinding(genericProject, entity, customFieldId, locations);
-			/* Create all the cufValues for the existing Entities. */
-			if (!genericProjectDao.isProjectTemplate(projectId)) {
+
+		CustomFieldBinding newBinding = createBinding(genericProject, entity, customFieldId, locations);
+		/* Create all the cufValues for the existing Entities. */
+		if (!genericProjectDao.isProjectTemplate(projectId)) {
 				customValueService.cascadeCustomFieldValuesCreation(newBinding);
-		}
-
-
 		}
 	}
 
@@ -218,8 +204,6 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 		 * equivalent bindings in the bound Projects. */
 		if(!bindingIds.isEmpty()) {
 			List<Long> bindingIdsToRemove = new ArrayList<>(bindingIds);
-			List<Long> result = customFieldBindingDao.findEquivalentBindingsForOtherFolders(bindingIds);
-			bindingIdsToRemove.addAll(result);
 			bindingIdsToRemove.addAll(customFieldBindingDao.findEquivalentBindingsForBoundProjects(bindingIds));
 			customValueService.cascadeCustomFieldValuesDeletion(bindingIdsToRemove);
 			customFieldBindingDao.removeCustomFieldBindings(bindingIdsToRemove);
@@ -244,11 +228,9 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public void moveCustomFieldbindings(List<Long> bindingIds, int newIndex) {
 		if (!bindingIds.isEmpty()) {
-			List<Long> bindingIdsToMove = new ArrayList<>(bindingIds);
-			bindingIdsToMove.addAll(customFieldBindingDao.findEquivalentBindingsForOtherFolders(bindingIds));
-			List<CustomFieldBinding> bindingList = customFieldBindingDao.findAllAlike(bindingIdsToMove.get(0));
+			List<CustomFieldBinding> bindingList = customFieldBindingDao.findAllAlike(bindingIds.get(0));
 			PositionAwareBindingList reorderList = new PositionAwareBindingList(bindingList);
-			reorderList.reorderItems(bindingIdsToMove, newIndex);
+			reorderList.reorderItems(bindingIds, newIndex);
 		}
 
 	}

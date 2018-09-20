@@ -49,13 +49,21 @@ define([ "jquery", "./entity-manager" ], function(jquery, EntityManager) {
 	}
 
 
-	// function makeCrFoldersConf(conf) {
-	// 	return $.extend({}, conf.general, conf.crFoldersSettings);
-	// }
-	//
-	// function makeProjectConf(conf) {
-	// 	return $.extend({}, conf.general, conf.projectSettings);
-	// }
+	function makeTcFoldersConf(conf) {
+		return $.extend({}, conf.general, conf.tcFoldersSettings);
+	}
+
+	function makeReqFoldersConf(conf) {
+		return $.extend({}, conf.general, conf.reqFoldersSettings);
+	}
+
+	function makeCampaignFoldersConf(conf) {
+		return $.extend({}, conf.general, conf.campaignFoldersSettings);
+	}
+
+	function makeProjectConf(conf) {
+		return $.extend({}, conf.general, conf.projectsSettings);
+	}
 
 	function makeExecStepConf(conf) {
 		return $.extend({}, conf.general, conf.execStepSettings);
@@ -103,14 +111,22 @@ define([ "jquery", "./entity-manager" ], function(jquery, EntityManager) {
 			var execStepConf = makeExecStepConf(this.config);
 			new EntityManager(execStepConf);
 
-			// // project
-			// var projectConf = makeProjectConf(this.config);
-			// new EntityManager(projectConf);
-			//
-			// // folders
-			// var crFoldersConf = makeCrFoldersConf(this.config);
-			// new EntityManager(crFoldersConf);
-			//
+			// project
+			var projectConf = makeProjectConf(this.config);
+			new EntityManager(projectConf);
+
+			// testcase folders
+			var tcFoldersConf = makeTcFoldersConf(this.config);
+			new EntityManager(tcFoldersConf);
+
+			// requirement folders
+			var reqFoldersConf = makeReqFoldersConf(this.config);
+			new EntityManager(reqFoldersConf);
+
+			// campaign folders
+			var campaignFoldersConf = makeCampaignFoldersConf(this.config);
+			new EntityManager(campaignFoldersConf);
+
 
 
 		}

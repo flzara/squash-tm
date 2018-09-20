@@ -79,10 +79,15 @@ public class CustomFieldBindingManagerController {
 			Collections.sort(executionBindings, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
 			List<CustomFieldBinding> executionStepBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.EXECUTION_STEP);
 			Collections.sort(executionStepBindings, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
-//			List<CustomFieldBinding> projectsBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.PROJECT);
-//			Collections.sort(projectsBindings, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
-//			List<CustomFieldBinding> crFoldersBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.REQUIREMENT_FOLDER);
-//			Collections.sort(crFoldersBindings, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
+			List<CustomFieldBinding> projectsBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.PROJECT);
+			Collections.sort(projectsBindings, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
+			List<CustomFieldBinding> campaignFoldersBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.CAMPAIGN_FOLDER);
+			Collections.sort(campaignFoldersBindings, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
+			List<CustomFieldBinding> reqFoldersBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.REQUIREMENT_FOLDER);
+			Collections.sort(reqFoldersBindings, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
+			List<CustomFieldBinding> tcFoldersBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.TESTCASE_FOLDER);
+			Collections.sort(tcFoldersBindings, (a, b) -> a.getId()< b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
+
 
 			mav = new ModelAndView("project-tabs/custom-field-binding.html");
 			mav.addObject("testCaseBindings", testCaseBindings);
@@ -93,8 +98,10 @@ public class CustomFieldBindingManagerController {
 			mav.addObject("testSuiteBindings", testSuiteBindings);
 			mav.addObject("executionBindings", executionBindings);
 			mav.addObject("executionStepBindings", executionStepBindings);
-//			mav.addObject("projectsBindings", projectsBindings);
-//			mav.addObject("crFoldersBindings", crFoldersBindings);
+			mav.addObject("projectsBindings", projectsBindings);
+			mav.addObject("tcFoldersBindings", tcFoldersBindings);
+			mav.addObject("reqFoldersBindings", reqFoldersBindings);
+			mav.addObject("campaignFoldersBindings", campaignFoldersBindings);
 
 			mav.addObject("projectIdentifier", projectId);
 			mav.addObject("isTemplate", ProjectHelper.isTemplate(project));
