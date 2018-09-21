@@ -47,14 +47,14 @@ public class NotDeletableCampaignsPreviewReport implements SuppressionPreviewRep
 
 		if(hasRights){
 			builder.append(source.getMessage(ADMIN_MESSAGE_KEY_1, null, locale));
-			builder.append("<span class='red-warning-message'>");
+			builder.append(" <span class='red-warning-message'>");
 			builder.append(source.getMessage(ADMIN_MESSAGE_KEY_2, null, locale));
 			builder.append(" </span>");
 			builder.append(setToString(nodeNames));
 			builder.append(source.getMessage(ADMIN_MESSAGE_KEY_3, null, locale));
 			builder.append("<span class='red-warning-message'> ");
 			builder.append(source.getMessage(ADMIN_MESSAGE_KEY_4, null, locale));
-			builder.append("</span>");
+			builder.append(" </span>");
 			builder.append(source.getMessage(ADMIN_MESSAGE_KEY_5, null, locale));
 		} else {
 			builder.append(source.getMessage(NORIGHT_MESSAGE_KEY_1, null, locale));
