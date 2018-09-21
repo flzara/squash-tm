@@ -20,29 +20,24 @@
  */
 package org.squashtest.tm.service.internal.batchexport;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.HtmlUtils;
-import org.squashtest.tm.core.foundation.lang.DateUtils;
-import org.squashtest.tm.domain.customfield.InputType;
-import org.squashtest.tm.domain.testcase.TestCaseKind;
-import org.squashtest.tm.service.campaign.IterationModificationService;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.*;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.*;
-import org.squashtest.tm.service.internal.dto.NumericCufHelper;
+import org.squashtest.tm.service.testcase.TestCaseFinder;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -74,6 +69,9 @@ class SimpleExcelExporter {
 	private MessageSource messageSource;
 
 	private String errorCellTooLargeMessage;
+
+	@Inject
+	private TestCaseFinder testCaseFinder;
 
 	private static final TestCaseSheetColumn[] BASIC_TC_COLUMNS = {TestCaseSheetColumn.PROJECT_ID,
 		TestCaseSheetColumn.PROJECT_NAME,
@@ -175,20 +173,23 @@ class SimpleExcelExporter {
 		int cIdx = 0;
 
 		for (TestCaseModel tcm : models) {
-
 			r = tcSheet.createRow(rIdx);
-
+				String importance =handleMessages(IMPORTANCE+tcm.getWeight().toString());
+				String nature = handleMessages(tcm.getNature().getLabel());
+				String type = handleMessages(tcm.getType().getLabel());
+				String status = handleMessages(STATUS+tcm.getStatus().toString());
 			try {
 				r.createCell(cIdx++).setCellValue(tcm.getProjectName());
 				r.createCell(cIdx++).setCellValue(tcm.getId());
 				r.createCell(cIdx++).setCellValue(tcm.getReference());
 				r.createCell(cIdx++).setCellValue(tcm.getName());
-				r.createCell(cIdx++).setCellValue(IMPORTANCE+tcm.getWeight().toString());
-				r.createCell(cIdx++).setCellValue(getMessage(tcm.getNature().getLabel()));
-				r.createCell(cIdx++).setCellValue(getMessage(tcm.getType().getLabel()));
-				r.createCell(cIdx++).setCellValue(STATUS+tcm.getStatus().toString());
+				r.createCell(cIdx++).setCellValue(importance);
+				r.createCell(cIdx++).setCellValue(nature);
+				r.createCell(cIdx++).setCellValue(type);
+				r.createCell(cIdx++).setCellValue(status);
 				if (milestonesEnabled) {
-					r.createCell(cIdx++).setCellValue(tcm.getMilestone());
+					TestCase tc = testCaseFinder.findById(tcm.getId());
+					r.createCell(cIdx++).setCellValue(tc.getMilestones().size());
 				}
 				r.createCell(cIdx++).setCellValue(tcm.getNbReq());
 				r.createCell(cIdx++).setCellValue(tcm.getNbCaller());
@@ -265,5 +266,14 @@ class SimpleExcelExporter {
 	private String getMessage(String key) {
 		Locale locale = LocaleContextHolder.getLocale();
 		return messageSource.getMessage(key, null, locale);
+	}
+
+
+	private String handleMessages(String key) {
+		try {
+			return getMessage(key);
+		} catch (NoSuchMessageException e) {
+			return key;
+		}
 	}
 }

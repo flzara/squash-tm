@@ -63,25 +63,13 @@ public class SearchSimpleRequirementExcelExporter extends RequirementSearchExcel
 	
 	@Override
 	protected int doOptionalCreateSheetHeader(Row h, int cIdx) {
-		int columnIndexOptional = cIdx;
-		if (milestonesEnabled) {
-			for (TemplateColumn t : MILESTONE_SEARCH_REQ_COLUMNS){
-				h.createCell(columnIndexOptional++).setCellValue(t.getHeader());
-			}
-		}
-		return columnIndexOptional;
-	}
+		return cIdx;
+}
 
 	@Override
 	protected int doOptionnalAppendRequirement(Row row, int colIndex,
-			RequirementModel reqModel) {
-		int columnIndexOptional = colIndex;
-		Requirement req = nav.findRequirement(reqModel.getRequirementId());
-		if (milestonesEnabled) {
-			RequirementVersion requirementVersion = requirementVersionManagerService.findById(reqModel.getId());
-			row.createCell(columnIndexOptional++).setCellValue(requirementVersion.getMilestones().size());
-		}
-		return columnIndexOptional;
+											   RequirementModel reqModel) {
+		return colIndex;
 	}
 
 }

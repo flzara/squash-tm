@@ -27,9 +27,11 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
@@ -37,6 +39,7 @@ import org.squashtest.tm.service.internal.batchexport.RequirementExportModel.Req
 import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet;
+import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -85,6 +88,9 @@ public class RequirementSearchExcelExporter {
 	private MessageSource messageSource;
 
 	private String errorCellTooLargeMessage;
+
+	@Inject
+	private RequirementVersionManagerService requirementVersionManagerService;
 
 	@Inject
 	public RequirementSearchExcelExporter(FeatureManager featureManager, MessageSource messageSource) {
@@ -163,7 +169,7 @@ public class RequirementSearchExcelExporter {
 	}
 
 	private void createRequirementHeaders() {
-		List<RequirementSheetColumn> columns = milestonesEnabled ? REQUIREMENT_COLUMNS_MILESTONES : REQUIREMENT_COLUMNS;
+		List<RequirementSheetColumn> columns = REQUIREMENT_COLUMNS;
 		createSheetHeaders(REQUIREMENT_SHEET, columns);
 	}
 
@@ -173,15 +179,19 @@ public class RequirementSearchExcelExporter {
 		int colIndex = 0;
 
 		try {
+			String criticality = handleMessages(CRITICALITY+reqModel.getCriticality().toString());
+			String category = handleMessages(CATEGORY+reqModel.getCategoryCode());
+			String status = handleMessages(STATUS+reqModel.getStatus().toString());
 			row.createCell(colIndex++).setCellValue(reqModel.getProjectName());
 			row.createCell(colIndex++).setCellValue(reqModel.getRequirementId());
 			row.createCell(colIndex++).setCellValue(reqModel.getReference());
 			row.createCell(colIndex++).setCellValue(reqModel.getName());
-			row.createCell(colIndex++).setCellValue(CRITICALITY+reqModel.getCriticality().toString());
-			row.createCell(colIndex++).setCellValue(CATEGORY+reqModel.getCategoryCode());
-			row.createCell(colIndex++).setCellValue(STATUS+reqModel.getStatus().toString());
+			row.createCell(colIndex++).setCellValue(criticality);
+			row.createCell(colIndex++).setCellValue(category);
+			row.createCell(colIndex++).setCellValue(status);
 			if (milestonesEnabled) {
-				row.createCell(colIndex++).setCellValue(reqModel.getMilestonesLabels());
+				RequirementVersion requirementVersion = requirementVersionManagerService.findById(reqModel.getId());
+				row.createCell(colIndex++).setCellValue(requirementVersion.getMilestones().size());
 			}
 			row.createCell(colIndex++).setCellValue(reqModel.getRequirementVersionNumber());
 			row.createCell(colIndex++).setCellValue(reqModel.getRequirementVersionNumberSize());
@@ -265,6 +275,14 @@ public class RequirementSearchExcelExporter {
 	public void getMessageSource(MessageSource source){
 		this.messageSource = source;
 
+	}
+
+	private String handleMessages(String key) {
+		try {
+			return getMessage(key);
+		} catch (NoSuchMessageException e) {
+			return key;
+		}
 	}
 
 
