@@ -79,7 +79,6 @@
       <h3 th:text="#{workspace.test-case.title}"></h3>
   </div>
     <div class="tg-body">
-<div>
   <div id="test-cases-binding-manager"
        th:include="project-tabs/custom-field-binding :: cuf-unit-binder"
        th:with="HTMLID='test-cases',bindings=${testCaseBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).TEST_CASE}">
@@ -96,7 +95,6 @@
   </div>
 
 
-</div>
     </div>
 </div>
 
@@ -104,7 +102,7 @@
     <div class="tg-head">
       <h3 th:text="#{user-preferences.tree-order.campaign.title }"></h3>
     </div>
-    <div class="tg-body">
+    <div class="tg-body ">
     <div id="campaigns-binding-manager"
          th:include="project-tabs/custom-field-binding :: cuf-unit-binder"
          th:with="HTMLID='campaigns',bindings=${campaignBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).CAMPAIGN}">
@@ -308,7 +306,7 @@
 ============================================================================ -->
 
 	<div th:fragment="cuf-unit-binder" id="binding-manager">
-		<div class="collapse sq-tg">
+		<div class="expand sq-tg">
 			<div class="tg-head">
 				<h3 th:text="#{project.cufbinding.__${HTMLID}__.panel.title}"></h3>
 				<div class="tg-toolbar">
