@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase
 
-import java.util.Optional
 import org.springframework.context.MessageSource
 import org.squashtest.tm.domain.testcase.*
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State
@@ -176,6 +175,7 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 		tc.getMilestones() >> []
 		tc.getId() >> 23L
 		tc.getName() >> "test case"
+		tc.getFullName() >> "test case"
 		tcfm.getTestCase() >> tc
 		Map<Long, String> customFieldValues = [:]
 		tcfm.getCufs() >> customFieldValues
@@ -211,6 +211,7 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 		tcfm.getCufs() >> customFieldValues
 		tcfm.getCustomFields() >> [:]
 		tcfm.getName() >> "test case"
+		tc.getFullName() >> "test case"
 		when:
 		def res = controller.addNewTestCaseToFolder(10, tcfm)
 

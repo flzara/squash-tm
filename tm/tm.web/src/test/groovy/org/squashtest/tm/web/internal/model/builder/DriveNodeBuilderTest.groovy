@@ -156,6 +156,7 @@ class DriveNodeBuilderTest extends NodeBuildingSpecification {
 			getId()>>23L
 			getKind() >> TestCaseKind.STANDARD
 			getName() >> "Test case"
+			getFullName() >> "Test case"
 		}
 
 		Milestone m = Mock()
