@@ -26,6 +26,9 @@ import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.SystemListItem;
 
+import java.util.Collection;
+import java.util.List;
+
 public interface InfoListItemDao extends CustomInfoListItemDao, JpaRepository<InfoListItem, Long> {
 
 	@Query(name = "systemListItem.getSystemRequirementCategory")
@@ -39,6 +42,9 @@ public interface InfoListItemDao extends CustomInfoListItemDao, JpaRepository<In
 
 	@Query
 	InfoListItem findByCode(@Param("code") String code);
+
+	@Query
+	List<InfoListItem> findByCodeIn(@Param("code") Collection<String> code);
 
 	@Query
 	InfoListItem findDefaultRequirementCategory(@Param("projectId") long projectId);

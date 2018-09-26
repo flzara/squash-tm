@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.squashtest.tm.domain.chart.DataType.INFO_LIST_ITEM;
 import static org.squashtest.tm.domain.chart.DataType.LIST;
 
 
@@ -434,9 +435,7 @@ public class ChartDataFinder {
 		ChartSeries chartSeries = new ChartSeries();
 		postProcessAbsciss(abscissa, chartSeries, definition);
 
-		if (shouldGetColours(definition)) {
-			getColours(chartSeries, definition, abscissa);
-		}
+
 		for (int m = 0; m < measize; m++) {
 			MeasureColumn measure = definition.getMeasures().get(m);
 			chartSeries.addSerie(measure.getLabel(), series[m]);
@@ -447,8 +446,9 @@ public class ChartDataFinder {
 
 	private void postProcessAbsciss(List<Object[]> abscissa, ChartSeries chartSeries, DetailedChartQuery definition) {
 		List<AxisColumn> columns = definition.getAxis();
+		getColours(chartSeries, definition, abscissa);
 		for (int i = 0; i < columns.size(); i++) {
-			postProcessColumn(abscissa, chartSeries, columns, i);
+			postProcessColumn(abscissa, columns, i);
 		}
 		chartSeries.setAbscissa(abscissa);
 	}
@@ -457,10 +457,11 @@ public class ChartDataFinder {
 	 * As 1.13.3 we only need to postprocess infolist items. If another fancy business rule appears,
 	 * change the if to switch, and branch other absciss post process here
 	 */
-	private void postProcessColumn(List<Object[]> abscissa, ChartSeries chartSeries, List<AxisColumn> columns, int i) {
+	private void postProcessColumn(List<Object[]> abscissa, List<AxisColumn> columns, int i) {
 		AxisColumn axisColumn = columns.get(i);
-		if (axisColumn.getDataType() == DataType.INFO_LIST_ITEM) {
-			postProcessInfoListItem(abscissa, chartSeries, i);
+		if (axisColumn.getDataType() == INFO_LIST_ITEM) {
+			postProcessInfoListItem(abscissa, i);
+
 		}
 	}
 
@@ -469,43 +470,59 @@ public class ChartDataFinder {
 	 * select count(*), CODE from INFOLIST_ITEM group by CODE, and we want the label :
 	 * with i18n support if the INFOLIST_ITEM is in default system list
 	 */
-	private void postProcessInfoListItem(List<Object[]> abscissa, ChartSeries chartSeries, int i) {
-		List<String> colours = new ArrayList<>();
+	private void postProcessInfoListItem(List<Object[]> abscissa, int i) {
 		for (Object[] obj : abscissa) {
 			String code = obj[i].toString();
 			InfoListItem infoListItem = infoListItemDao.findByCode(code);
 			obj[i] = infoListItem.getLabel();
-			colours.add(infoListItem.getColour());
 		}
-		chartSeries.setColours(colours);
-	}
-
-	private boolean shouldGetColours(DetailedChartQuery definition) {
-		List<AxisColumn> axis = definition.getAxis();
-		return axis.size() == 1 && axis.get(0).getDataType() == LIST ||
-			axis.size() == 2 && axis.get(1).getDataType() == LIST;
-
 	}
 
 	private void getColours(ChartSeries chartSeries, DetailedChartQuery definition, List<Object[]> abscissa) {
-		// if there's only one axis (with a measure => bar chart, or not => pie chart), the first axis is the one with the colors
-		// if there are two (trend or cumulative chart) it's the second one
+		// here we will only get colours in the case where we work with a CUF List or an InfoList
+		// colours associated to "fixed list" (some classes implement Level), the colours are on the client in colours-utils.js
+		// colours-utils.js also includes the part where we fill the empty colours
 		List<AxisColumn> axis = definition.getAxis();
-		Long colorCufId = axis.get(axis.size() - 1).getCufId();
-		SingleSelectField cuf = customFieldDao.findSingleSelectFieldById(colorCufId);
-
 		List<String> colours = new ArrayList<>();
 
-		// in case of a trend or cumulative chart, we need to filter the abscissa and get them by order of arrival, that's
-		// how they're displayed in jqplot (I hope so...)
+		// if there's only one axis (with a measure => bar chart, or not => pie chart), the first axis is the one with the colors
+		// if there are two (trend or cumulative chart) it's the second one
+		// hence the axis.size()-1
 
-		Set<String> uniqueAbscissaLabel = abscissa.stream().map(objects -> (String) objects[axis.size()-1])
-			.collect(Collectors.toCollection(LinkedHashSet::new));
+		if (axis.get(axis.size() - 1).getDataType() == LIST) {
 
-		for (String abs : uniqueAbscissaLabel) {
-			colours.add(cuf.findColourOf(abs));
+			Long colorCufId = axis.get(axis.size() - 1).getCufId();
+			SingleSelectField cuf = customFieldDao.findSingleSelectFieldById(colorCufId);
+
+			// in case of a trend or cumulative chart, we need to filter the abscissa and get them by order of arrival, that's
+			// how they're displayed in jqplot
+			Set<String> uniqueAbscissaLabel = abscissa.stream()
+				.map(objects -> (String) objects[axis.size() - 1])
+				.collect(Collectors.toCollection(LinkedHashSet::new));
+
+			for (String abs : uniqueAbscissaLabel) {
+				colours.add(cuf.findColourOf(abs));
+			}
+
+			chartSeries.setColours(colours);
+
+		} else if (axis.get(axis.size() - 1).getDataType() == INFO_LIST_ITEM) {
+			Set<String> uniqueAbscissaCode = abscissa.stream()
+				.map(objects -> (String) objects[axis.size() - 1])
+				.collect(Collectors.toCollection(LinkedHashSet::new));
+
+			List<InfoListItem> items = infoListItemDao.findByCodeIn(uniqueAbscissaCode);
+
+			// we need to keep the colours in the same order as the uniqueAbscissaLabel, that's how jqplot works
+			for (String code : uniqueAbscissaCode) {
+				InfoListItem correspondingILI = items.stream()
+					.filter(infoListItem -> infoListItem.getCode().equals(code))
+					.findFirst()
+					.get();
+				colours.add(correspondingILI.getColour());
+			}
+
+			chartSeries.setColours(colours);
 		}
-		chartSeries.setColours(colours);
 	}
-
 }

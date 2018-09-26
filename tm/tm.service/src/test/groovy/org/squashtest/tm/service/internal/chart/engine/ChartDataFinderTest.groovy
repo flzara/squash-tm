@@ -20,16 +20,15 @@
  */
 package org.squashtest.tm.service.internal.chart.engine
 
+import com.querydsl.core.Tuple
+import org.squashtest.tm.domain.chart.AxisColumn
+import org.squashtest.tm.domain.chart.ChartSeries
 import org.squashtest.tm.domain.chart.DataType
+import org.squashtest.tm.domain.chart.MeasureColumn
 import org.squashtest.tm.domain.infolist.InfoListItem
 import org.squashtest.tm.domain.infolist.UserListItem
 import org.squashtest.tm.service.internal.repository.InfoListItemDao
 import spock.lang.Specification
-import com.querydsl.core.Tuple
-import org.squashtest.tm.domain.chart.AxisColumn
-import org.squashtest.tm.domain.chart.ChartSeries;
-import org.squashtest.tm.domain.chart.MeasureColumn
-
 
 class ChartDataFinderTest extends Specification {
 
@@ -38,7 +37,7 @@ class ChartDataFinderTest extends Specification {
 	private InfoListItem item2 = new UserListItem();
 	private InfoListItem item3 = new UserListItem();
 
-	def setup(){
+	def setup() {
 		infoListItemDao.findByCode("code1") >> item1
 		infoListItemDao.findByCode("code2") >> item2
 		infoListItemDao.findByCode("code3") >> item3
@@ -46,24 +45,32 @@ class ChartDataFinderTest extends Specification {
 		item1.setLabel("label1")
 		item2.setLabel("label2")
 		item3.setLabel("label3")
+
+		item1.setCode("code1")
+		item2.setCode("code2")
+		item3.setCode("code3")
+
+		item1.setColour("#000000")
+		item2.setColour("#FFFFFF")
+		item3.setColour("#000FFF")
 	}
 
-	def "should build a ChartSeries from a result set"(){
+	def "should build a ChartSeries from a result set"() {
 
-		given : "the definition"
+		given: "the definition"
 		DetailedChartQuery definition = new DetailedChartQuery(
-				measures : [
-					measure("total steps"),
-					measure("total requirements")
-				],
-				axis : [
-					axis("project label",DataType.STRING),
-					axis("test case importance",DataType.LEVEL_ENUM)
-				]
+			measures: [
+				measure("total steps"),
+				measure("total requirements")
+			],
+			axis: [
+				axis("project label", DataType.STRING),
+				axis("test case importance", DataType.LEVEL_ENUM)
+			]
 		)
 
 
-		and : "the tuples"
+		and: "the tuples"
 		def tuples = [
 			tuple("project1", "HIGH", 40, 8),
 			tuple("project1", "MEDIUM", 84, 15),
@@ -72,15 +79,15 @@ class ChartDataFinderTest extends Specification {
 			tuple("project2", "HIGH", 35, 10)
 		]
 
-		and : "the rest"
+		and: "the rest"
 
 		ChartDataFinder finder = new ChartDataFinder()
 
-		when :
+		when:
 
 		ChartSeries series = finder.makeSeries(definition, tuples)
 
-		then :
+		then:
 		series.abscissa == [
 			["project1", "HIGH"] as Object[],
 			["project1", "MEDIUM"] as Object[],
@@ -90,25 +97,25 @@ class ChartDataFinderTest extends Specification {
 		]
 
 		series.series == [
-			"total steps" : [40,84,100,15,35],
-			"total requirements" : [8,15,35,56,10]
+			"total steps"       : [40, 84, 100, 15, 35],
+			"total requirements": [8, 15, 35, 56, 10]
 		]
 
 	}
 
-	def "should convert infolist item code to infolist item label"(){
-		given : "the definition"
+	def "should convert infolist item code to infolist item label and get its colour"() {
+		given: "the definition"
 		DetailedChartQuery definition = new DetailedChartQuery(
-			measures : [
+			measures: [
 				measure("total testcase")
 			],
-			axis : [
-				axis("project label",DataType.STRING),
-				axis("test case category",DataType.INFO_LIST_ITEM)
+			axis: [
+				axis("project label", DataType.STRING),
+				axis("test case category", DataType.INFO_LIST_ITEM)
 			]
 		)
 
-		and:"the absciss"
+		and: "the absciss"
 		def abscissa = [
 			["project1", "code1"] as Object[],
 			["project1", "code2"] as Object[],
@@ -119,12 +126,12 @@ class ChartDataFinderTest extends Specification {
 		and: "the rest"
 		ChartSeries series = new ChartSeries()
 		ChartDataFinder finder = new ChartDataFinder()
-		finder.infoListItemDao = infoListItemDao;
+		finder.infoListItemDao = infoListItemDao
+		finder.infoListItemDao.findByCodeIn(_) >> [item1, item2, item3]
+		when:
+		finder.postProcessAbsciss(abscissa, series, definition)
 
-		when :
-		finder.postProcessAbsciss(abscissa,series,definition)
-
-		then :
+		then:
 		series.abscissa == [
 			["project1", "label1"] as Object[],
 			["project1", "label2"] as Object[],
@@ -132,6 +139,8 @@ class ChartDataFinderTest extends Specification {
 			["project2", "label1"] as Object[],
 			["project2", "label2"] as Object[],
 		]
+
+		series.colours == ["#000000", "#FFFFFF", "#000FFF"]
 
 	}
 
@@ -141,16 +150,16 @@ class ChartDataFinderTest extends Specification {
 		m
 	}
 
-	def axis(label,dataType){
+	def axis(label, dataType) {
 		AxisColumn a = Mock(AxisColumn)
-		a.getLabel()>>label
-		a.getDataType()>>dataType
+		a.getLabel() >> label
+		a.getDataType() >> dataType
 		a
 	}
 
-	def tuple(Object... values){
+	def tuple(Object... values) {
 		Tuple t = Mock(Tuple)
-		t.get(_,_) >> { idx, type -> values[idx]}
+		t.get(_, _) >> { idx, type -> values[idx] }
 		return t
 	}
 }
