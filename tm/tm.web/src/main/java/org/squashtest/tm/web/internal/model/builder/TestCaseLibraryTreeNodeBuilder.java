@@ -23,6 +23,7 @@ package org.squashtest.tm.web.internal.model.builder;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.*;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
@@ -106,7 +107,7 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 			// name and title
 			builtNode.addAttr("name", visited.getName());
 			builtNode.addAttr("reference", visited.getReference());
-			builtNode.setTitle(visited.getFullName());
+			builtNode.setTitle(HtmlUtils.htmlEscape(visited.getFullName()));
 
 			// other attributes
 			builtNode.addAttr("status", status.toString().toLowerCase());
