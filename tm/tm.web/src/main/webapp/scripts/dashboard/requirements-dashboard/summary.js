@@ -18,62 +18,71 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "squash.translator"], function($, Backbone, translator){
+define(["jquery", "backbone", "squash.translator", "../dashboard-utils"], function ($, Backbone, translator, utils) {
 
 	return Backbone.View.extend({
-		
-		initialize : function(){
-			
+
+		initialize: function () {
+
 			var template = this.$el.text().split('|');
 
-			this.hasItemsMsg = template[0];	
-			this.zeroItemsMsg = template[1];		
-			
+			this.hasItemsMsg = template[0];
+			this.zeroItemsMsg = template[1];
+
 			this.render();
 			this.listenTo(this.model, 'change:boundTestCasesStatistics', this.render);
 		},
-		
+
 		// dirty but effective way to know how many requirements we have here.
-		render : function(){
-			
-			if (! this.model.isAvailable()){
+		render: function () {
+
+			if (!this.model.isAvailable()) {
 				return;
 			}
-			
+
 			var stats = this.model.get('boundTestCasesStatistics');
 			var nbtc = stats.zeroTestCases + stats.oneTestCase + stats.manyTestCases;
-		
-			var ids = this.model.get('selectedIds');
-				
-			var search = {
-					fields: {
-						"requirement.id": {
-							type:"LIST",
-							values:""
-						}	 
-					}
-			};
-			
-			search.fields.isCurrentVersion = {};
-			search.fields.isCurrentVersion.type = "SINGLE";
-			search.fields.isCurrentVersion.value = "1";
-			search.fields.isCurrentVersion.ignoreBridge = "false";
-				 
-			search.fields["requirement.id"].values = ids.toString().split(",");
-				    
-			var queryString = "searchModel=" + encodeURIComponent(JSON.stringify(search));
-			var urlSearch = squashtm.app.contextRoot + "advanced-search/results?requirement&" + queryString;
 
 			var todisplay;
 			if (nbtc === 0) {
 				todisplay = this.zeroItemsMsg;
 			} else {
-				todisplay = this.hasItemsMsg.replace('{placeholder}', '<span style="font-weight:bold;color:black;">'+nbtc+'</span>').replace('{details}', '<span><b><a href=' + urlSearch + '>'+ translator.get("dashboard.test-cases.detail")+ '</b></a></span>');
-			
+				todisplay = this.hasItemsMsg.replace('{placeholder}', '<span style="font-weight:bold;color:black;">' + nbtc + '</span>').replace('{details}', '<span class="to-search"><b><a href="#">' + translator.get("dashboard.test-cases.detail") + '</b></a></span>');
+
 			}
-			
+
 			this.$el.html(todisplay);
+		},
+
+		events: {
+			"click .to-search": "redirectToSearchResult"
+		},
+
+		redirectToSearchResult: function () {
+			var ids = this.model.get('selectedIds');
+
+			var search = {
+				fields: {
+					"requirement.id": {
+						type: "LIST",
+						values: ""
+					}
+				}
+			};
+
+			search.fields.isCurrentVersion = {};
+			search.fields.isCurrentVersion.type = "SINGLE";
+			search.fields.isCurrentVersion.value = "1";
+			search.fields.isCurrentVersion.ignoreBridge = "false";
+
+			search.fields["requirement.id"].values = ids.toString().split(",");
+
+			var token = $("meta[name='_csrf']").attr("content");
+			utils.post(squashtm.app.contextRoot + "advanced-search/results?searchDomain=requirement", {
+				searchModel: JSON.stringify(search),
+				_csrf: token
+			});
 		}
-		
+
 	});
 });
