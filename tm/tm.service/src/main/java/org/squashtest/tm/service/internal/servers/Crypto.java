@@ -63,9 +63,21 @@ import java.util.Base64;
  * <p>
  * 	<h4>Q/A</h4>
  *  <b>Q: My goodness, SHA-1 ?</b>
- *  <p>R: according to OWASP, "[if error]..., replace PBKDF2WithHmacSHA512 with PBKDF2WithHmacSHA1. Both are adequate to the task
+ *  <p>A: according to OWASP, "[if error]..., replace PBKDF2WithHmacSHA512 with PBKDF2WithHmacSHA1. Both are adequate to the task
  *  but you may be criticized when people see "SHA1" in the specification (SHA1 can be unsafe outside of the context of PBKDF2)."
  *  Source: https://www.owasp.org/index.php/Hashing_Java
+ *  </p>
+ *
+ *  <b>Q: My goodness, key length 128 ?</b>
+ *  <p>A: According to the French ANSSI report : Référentiel Général de Sécurité (Annexe B1) Version 2.0, for symmetric
+ *  	encryption a key length and bloc size of 128 are still suitable for secure storage even beyond year 2020 (provided
+ *  	there are no flaws elsewhere in the cryptographic process). Hence the choice of AES/CBC.
+ *  	Source : https://www.ssi.gouv.fr/uploads/2014/11/RGS_v-2-0_B1.pdf
+ *  </p>
+ *
+ *  <b>Q: My goodness, 65556 iterations ?</b>
+ *  <p>A: Fair point, the value is indeed low. The truth is, that's because the implementation I took inspiration from (yet not mindlessly copypasted) used it.
+ *  	After double checking it is indeed pretty low since a powerful app server should iterate 100k to 200k.
  *  </p>
  * </p>
  *

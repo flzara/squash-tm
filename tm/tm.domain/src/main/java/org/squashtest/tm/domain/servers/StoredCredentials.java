@@ -57,7 +57,7 @@ import java.util.Set;
  * - machine credentials
  *
  * The variety of possible content represented in this uniform entity poses extra complexity for handling the data properly and
- * makes the business less expressibe. It is manageable for now but in the future it could be wise to separate the payload (the encrypted data)
+ * makes the business less expressive. It is manageable for now but in the future it could be wise to separate the payload (the encrypted data)
  * from the purpose (user credentials, configuration, or whatever we will need to encrypt next).
  */
 @Entity
