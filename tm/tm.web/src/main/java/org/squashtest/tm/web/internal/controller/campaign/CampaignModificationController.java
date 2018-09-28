@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.controller.campaign;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -49,6 +50,7 @@ import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
+import org.squashtest.tm.service.user.PartyPreferenceService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
@@ -134,6 +136,9 @@ public class CampaignModificationController {
 	@Inject
 	private Provider<ExecutionStatusJeditableComboDataBuilder> executionStatusComboBuilderProvider;
 
+	@Inject
+	private PartyPreferenceService partyPreferenceService;
+
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
 	public ModelAndView refreshStats(@PathVariable long campaignId) {
 
@@ -170,6 +175,7 @@ public class CampaignModificationController {
 		TestPlanStatistics statistics = campaignModService.findCampaignStatistics(campaignId);
 		boolean hasCUF = cufValueService.hasCustomFields(campaign);
 		DataTableModel attachments = attachmentHelper.findPagedAttachments(campaign);
+		Map<String, String> userPrefs = partyPreferenceService.findPreferencesForCurrentUser();
 
 		model.addAttribute(CAMPAIGN, campaign);
 		model.addAttribute("statistics", statistics);
@@ -181,6 +187,7 @@ public class CampaignModificationController {
 		model.addAttribute("campaignStatusComboJson", buildStatusComboData());
 		model.addAttribute("campaignStatusLabel", formatStatus(campaign.getStatus()));
 		model.addAttribute("statuses", getStatuses(campaign.getProject().getId()));
+		model.addAttribute("userPrefs", new JSONObject(userPrefs));
 
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(campaign);
 		model.addAttribute("milestoneConf", milestoneConf);

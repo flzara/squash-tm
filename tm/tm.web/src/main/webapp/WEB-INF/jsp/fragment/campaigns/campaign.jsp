@@ -380,16 +380,20 @@
 
 
 <script type="text/javascript">
+  squashtm.app = squashtm.app || {};
+  squashtm.app.campaignWorkspaceConf = squashtm.app.campaignWorkspaceConf || {};
+  squashtm.app.userPrefs = ${userPrefs};
 
   squashtm.workspace = squashtm.workspace || {};
   squashtm.workspace.shouldShowFavoriteDashboard = squashtm.workspace.shouldShowFavoriteDashboard || {};
   squashtm.workspace.canShowFavoriteDashboard = squashtm.workspace.canShowFavoriteDashboard || {};
-
   squashtm.workspace.shouldShowFavoriteDashboard = ${shouldShowDashboard};
   squashtm.workspace.canShowFavoriteDashboard = ${canShowDashboard};
 
   require(["common"], function () {
-    require(["campaign-management"], function (manager) {
+    require(["campaign-management", "dashboard/second-level-wreqr"], function (manager, secondLevelWreqr) {
+
+      secondLevelWreqr.init("${campaignUrl}");
 
       var conf = {
         data: {

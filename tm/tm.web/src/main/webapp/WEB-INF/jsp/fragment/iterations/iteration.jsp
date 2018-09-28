@@ -116,6 +116,12 @@
 <script type="text/javascript">
   squashtm = squashtm || {};
   squashtm.page = squashtm.page || {};
+  squashtm.app = squashtm.app || {};
+  squashtm.app.campaignWorkspaceConf = squashtm.app.campaignWorkspaceConf || {};
+  squashtm.app.userPrefs = ${userPrefs};
+  //favorite dashboard
+  squashtm.workspace.canShowFavoriteDashboard = ${canShowDashboard};
+  squashtm.workspace.shouldShowFavoriteDashboard = ${shouldShowDashboard};
   var config = squashtm.page;
   config.isFullPage = ${ not empty param.isInfoPage and param.isInfoPage };
   config.writable = ${not empty writable and writable};
@@ -409,9 +415,7 @@
           };
           datePickers.init(conf);
           datePickersAuto.init(conf);
-          //favorite dashboard
-          squashtm.workspace.canShowFavoriteDashboard = ${canShowDashboard};
-          squashtm.workspace.shouldShowFavoriteDashboard = ${shouldShowDashboard};
+
         });
       });
     });

@@ -210,7 +210,7 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 
 			var wreqr = squashtm.app.wreqr;
 			wreqr.on("favoriteDashboard.showDefault", function () {
-				//[Issue 6476] We want to reload the page with the dashboar tab selected
+				//[Issue 6476] We want to reload the page with the dashboard tab selected
 				//as we will NOT modify contextual content and a bunch of controllers for that, we'll use a pure client side solution based on global var
 				var selectedIteration = tree.jstree("get_selected").filter("[restype='iterations']");
 				if(selectedIteration.length > 0 ){

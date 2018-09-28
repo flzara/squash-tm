@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -46,6 +47,7 @@ import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
+import org.squashtest.tm.service.user.PartyPreferenceService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
@@ -122,6 +124,9 @@ public class IterationModificationController {
 	@Inject
 	private CustomReportDashboardService customReportDashboardService;
 
+	@Inject
+	private PartyPreferenceService partyPreferenceService;
+
 	@RequestMapping(method = RequestMethod.GET)
 	public String showIteration(Model model, @PathVariable long iterationId) {
 
@@ -146,7 +151,7 @@ public class IterationModificationController {
 		DataTableModel attachmentsModel = attachmentHelper.findPagedAttachments(iteration);
 		Map<String, String> assignableUsers = getAssignableUsers(iterationId);
 		Map<String, String> weights = getWeights();
-
+		Map<String, String> userPrefs = partyPreferenceService.findPreferencesForCurrentUser();
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(iteration);
 
 		model.addAttribute(ITERATION_KEY, iteration);
@@ -159,6 +164,7 @@ public class IterationModificationController {
 		model.addAttribute("milestoneConf", milestoneConf);
 		model.addAttribute("iterationStatusComboJson", buildStatusComboData());
 		model.addAttribute("iterationStatusLabel", formatStatus(iteration.getStatus()));
+		model.addAttribute("userPrefs", new JSONObject(userPrefs));
 
 		boolean shouldShowDashboard = customReportDashboardService.shouldShowFavoriteDashboardInWorkspace(Workspace.CAMPAIGN);
 		boolean canShowDashboard = customReportDashboardService.canShowDashboardInWorkspace(Workspace.CAMPAIGN);

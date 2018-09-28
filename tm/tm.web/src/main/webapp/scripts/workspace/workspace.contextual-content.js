@@ -24,7 +24,7 @@
  *
  */
 
-define([ "app/pubsub", "jquery", "workspace.event-bus", "jqueryui" ], function(ps, $, eventBus) {
+define(["app/pubsub", "jquery", "workspace.event-bus", "jqueryui"], function (ps, $, eventBus) {
 
 	$.ajaxPrefilter(function (options, originalOptions, jqXHR) {
 		var token = $("meta[name='_csrf']").attr("content");
@@ -37,37 +37,40 @@ define([ "app/pubsub", "jquery", "workspace.event-bus", "jqueryui" ], function(p
 	if (squashtm.workspace.contextualContent !== undefined) {
 		return squashtm.workspace.contextualContent;
 	} else {
-		$.fn.contextualContent = function() {
+		$.fn.contextualContent = function () {
 
 			this.currentUrl = "";
 			this.eventBus = eventBus;
 			this.currentXhr = {
-				readyState : 4,
-				abort : function() {
+				readyState: 4,
+				abort: function () {
 				}
 			};
 
 
 			/* **************** super private ************* */
 
-			var _cleanPopups = function() {
+			var _cleanPopups = function () {
 				$(".ui-dialog-content.is-contextual").dialog("destroy").remove();
 			};
 
 			/* ******************* private **************** */
 
-			var cleanContent = $.proxy(function() {
+			var cleanContent = $.proxy(function () {
 				// notify the handlers that we're moving to another content
 				this.eventBus.clearContextualListeners();
 
 				// clean the content
 				_cleanPopups();
 
-				this.empty();
-
+				if (this.length) {
+					this.empty();
+				} else {
+					$(this.selector).empty();
+				}
 			}, this);
 
-			var abortIfRunning = $.proxy(function() {
+			var abortIfRunning = $.proxy(function () {
 				if (this.currentXhr.readyState != 4) {
 					this.currentXhr.abort();
 				}
@@ -98,7 +101,11 @@ define([ "app/pubsub", "jquery", "workspace.event-bus", "jqueryui" ], function(p
 					this.currentUrl = url;
 					this.currentXhr = $.get(url, params, 'html').success(function (html) {
 						cleanContent();
-						self.html(html);
+						if (self.length) {
+							self.html(html);
+						} else {
+							$(self.selector).html(html);
+						}
 
 					});
 					return this.currentXhr;
@@ -106,7 +113,7 @@ define([ "app/pubsub", "jquery", "workspace.event-bus", "jqueryui" ], function(p
 
 			};
 
-			this.unload = function() {
+			this.unload = function () {
 				cleanContent();
 				this.currentUrl = "";
 				abortIfRunning();

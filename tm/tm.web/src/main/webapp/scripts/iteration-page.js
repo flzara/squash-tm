@@ -24,9 +24,9 @@ require(["common"], function () {
 	require(["jquery", "underscore", "app/pubsub", "squash.basicwidgets", "contextual-content-handlers",
 			"jquery.squash.fragmenttabs", "bugtracker/bugtracker-panel", "workspace.event-bus", "workspace.routing",
 			"iteration-management", "app/ws/squashtm.workspace", "custom-field-values", "squash.configmanager",
-			"favorite-dashboard", "./user-account/user-prefs", "test-automation/auto-execution-buttons-panel", "jquery.squash.formdialog"],
+			"favorite-dashboard", "./user-account/user-prefs", "dashboard/second-level-wreqr", "test-automation/auto-execution-buttons-panel", "jquery.squash.formdialog"],
 		function ($, _, ps, basicwidg, contentHandlers, Frag, bugtracker, eventBus, routing, itermanagement, WS, cufvalues,
-							confman, favoriteView, userPrefs) {
+							confman, favoriteView, userPrefs, secondLevelWreqr) {
 
 			// *********** event handler ***************
 
@@ -179,6 +179,7 @@ require(["common"], function () {
 				});
 
 				// ********** dashboard **************
+				secondLevelWreqr.init(config.iterationURL);
 				var shouldShowFavoriteDashboard = userPrefs.shouldShowFavoriteDashboardInWorkspace();
 
 				if (shouldShowFavoriteDashboard) {

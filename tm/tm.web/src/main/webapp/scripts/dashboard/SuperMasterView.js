@@ -21,53 +21,53 @@
 /*
  * settings : {
  *	master : a css selector that identifies the master dom element initialization,
- *	model : a javascript object, workspace-dependent, containing the data that will be plotted (optional, may be undefined),  
- *	
+ *	model : a javascript object, workspace-dependent, containing the data that will be plotted (optional, may be undefined),
+ *
  *  url : the url where to use fetch the data
  *	rendering : one of "toggle-panel", "plain". This is a hint that tells how to render the dashboard master,
  *	listenTree : boolean. If true, the model will listen to the tree. It false, it won"t. Default is false.
  *	cacheKey : string. If defined, will use the cache with that key.
  * }
- * 
- * Note : "master" and "model" must be provided as javascript object. The other data such as "url", "rendering", "listenTree" etc 
- * can be read from the DOM, using a "data-def" clause on the master dom element.  
- * 
+ *
+ * Note : "master" and "model" must be provided as javascript object. The other data such as "url", "rendering", "listenTree" etc
+ * can be read from the DOM, using a "data-def" clause on the master dom element.
+ *
  */
 define([ "jquery", "underscore", "squash.attributeparser", "./basic-objects/model",
 		"./basic-objects/timestamp-label", "./basic-objects/figleaf-view", "backbone","user-account/user-prefs" ], function($, _, attrparser, StatModel,
 		Timestamp, FigLeafView, Backbone, userPrefs) {
 /**
  * When creating a SuperMasterView, one can pas as an option an initCharts function :
- * <code> 
+ * <code>
  * new View({
- *   el: ..., 
- *   model: ..., 
+ *   el: ...,
+ *   model: ...,
  *   initCharts: function() {
  *     // create chart views
  *     ...
- *     
+ *
  *     return [ ... ]; // array of created views
  *   });
  *  </code>
- *  
- *  `initCharts` shall be called when this view is initialized with `this` bound to this view. 
+ *
+ *  `initCharts` shall be called when this view is initialized with `this` bound to this view.
  *  It should return an array of subviews which will be appended to this high level view's subviews.
  */
 	var SuperMasterView = Backbone.View.extend({
 		options: {
 			initCharts: function() { return []; }
-		}, 
+		},
 
 		initialize : function(options) {
 			// read the conf elements from the dom
-			var domconf = attrparser.parse(this.$el.data("def"));
+			var domconf = attrparser.parse(this.$el.data("def") || "");
 			var modelconf = $.extend(true, {}, options.modelSettings, domconf);
-			
-			this.options.initCharts = options.initCharts || this.options.initCharts; 
-			
+
+			this.options.initCharts = options.initCharts || this.options.initCharts;
+
 			// coerce string|boolean to boolean
 			var isTreeListener = (modelconf.listenTree === "true") || (modelconf.listenTree === true);
-			
+
 			// create the model
 			this.model = new StatModel(modelconf.model, {
 				url : modelconf.url,
@@ -75,11 +75,11 @@ define([ "jquery", "underscore", "squash.attributeparser", "./basic-objects/mode
 				syncmode : (isTreeListener) ? "tree-listener" : "passive",
 						cacheKey : modelconf.cacheKey
 			});
-			
+
 			this.initFigleaves();
 			this.initViews();
 		},
-		
+
 		events : {
 			"click .dashboard-refresh-button" : "syncmodel",
 			"click .show-favorite-dashboard-button" : "showFavoriteDashboard",
