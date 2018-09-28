@@ -57,8 +57,8 @@
 			<th data-def="select, map=issue-id, link-new-tab={issue-url}, sWidth=2.5em, sortable">${interfaceDescriptor.tableIssueIDHeader}</th>
 			<th data-def="map=BtProject"><f:message key="bugtracker.project"/></th>
 			<th data-def="map=issue-summary">${interfaceDescriptor.tableSummaryHeader}</th>
-			<th data-def="map=issue-priority">${interfaceDescriptor.tablePriorityHeader}</th>
-			<th data-def="map=issue-status">${interfaceDescriptor.tableStatusHeader}</th>
+			<th data-def="map=issue-priority , sortable">${interfaceDescriptor.tablePriorityHeader}</th>
+			<th data-def="map=issue-status , sortable">${interfaceDescriptor.tableStatusHeader}</th>
 			<th data-def="map=issue-assignee">${interfaceDescriptor.tableAssigneeHeader}</th>
 			<th data-def="map=issue-owner"><f:message key="iteration.issues.table.column-header.reportedin.label" /></th>
 		</tr>
