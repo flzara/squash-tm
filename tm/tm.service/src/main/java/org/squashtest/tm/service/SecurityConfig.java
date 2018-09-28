@@ -23,11 +23,13 @@ package org.squashtest.tm.service;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.sql.DataSource;
 
+import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +61,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.MessageDigestPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
@@ -94,7 +98,17 @@ import org.squashtest.tm.service.security.acls.domain.InheritableAclsObjectIdent
 @SuppressWarnings("squid:S1192")
 @Configuration
 public class SecurityConfig {
+
+
+	private static final String BCRYPT_ALG = "bcrypt";
+	private static final String SHA1_ALG = "sha-1";
 	private static final String DBTYPE_POSTGRES = "POSTGRES";
+
+	/**
+	 * This property indicates which password hashing algorithm is currently used for user password hashing.
+	 *
+	 */
+	public static final String CURRENT_USER_PASSWORD_HASH_SCHEME = BCRYPT_ALG;
 
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SecurityConfig.class);
@@ -341,9 +355,24 @@ public class SecurityConfig {
 	@Bean
     @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 	@Order(0)
-	// XXX : time to migrate to a stronger encryption scheme. See DelegatingPasswordEncoder for password migration strategies.
-	public PasswordEncoder shaPasswordEncoder() {
-		return new MessageDigestPasswordEncoder("SHA-1");
+	/**
+	 * The password encoder now hashes password with BCrypt. To ease the migration from the antediluvian SHA-1 format
+	 * a SHA-1 encoder is included to let the user authenticate, but all newer passwords will be saved with BCrypt from
+	 * now on.
+	 */
+	public PasswordEncoder passwordEncoder() {
+		PasswordEncoder legacyEncoder = new MessageDigestPasswordEncoder("SHA-1");
+		PasswordEncoder bcryptEncoder = new BCryptPasswordEncoder();
+
+		Map<String, PasswordEncoder> encodersMap = new ImmutableMap.Builder<String, PasswordEncoder>()
+										  	.put(SHA1_ALG, legacyEncoder)
+											.put(BCRYPT_ALG, bcryptEncoder)
+											.build();
+
+		DelegatingPasswordEncoder compositeEncoder = new DelegatingPasswordEncoder(CURRENT_USER_PASSWORD_HASH_SCHEME, encodersMap);
+		compositeEncoder.setDefaultPasswordEncoderForMatches(legacyEncoder);
+
+		return compositeEncoder;
 	}
 
 	@Bean(name = "userDetailsManager.caseSensitive")

@@ -68,13 +68,11 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 
 	@Override
 	public void changeAuthenticatedUserPassword(String plainOldPassword, String plainNewPassword) {
-
 		String encNewPasswd = encode(plainNewPassword);
 		userManager.changePassword(plainOldPassword, encNewPasswd);
 	}
 
 	private String encode(String plainNewPassword) {
-		//return encoder.encodePassword(plainNewPassword, salt);
 		return encoder.encode(plainNewPassword);
 	}
 
