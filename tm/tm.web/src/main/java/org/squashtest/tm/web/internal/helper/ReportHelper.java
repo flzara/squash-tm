@@ -96,7 +96,6 @@ public class ReportHelper {
 	@Inject
 	private InternationalizationHelper i18nHelper;
 
-	private Locale locale = LocaleContextHolder.getLocale();
 
 	public Map<String, List<String>> getAttributesFromReportDefinition(ReportDefinition def){
 
@@ -214,6 +213,7 @@ public class ReportHelper {
 	private void getAttributesFromDate(Map<String, List<String>> attributes, Input input, Map<String, Criteria> criteriaMap ) {
 		DateInput dateInput = (DateInput) input;
 		Criteria crit = criteriaMap.get(dateInput.getName());
+		Locale locale = LocaleContextHolder.getLocale();
 		if (crit instanceof SimpleCriteria) {
 			SimpleCriteria sCrit = (SimpleCriteria) crit;
 			Date date = (Date) sCrit.getValue();
@@ -242,44 +242,46 @@ public class ReportHelper {
 	private void getAttributesFromPicker(Map<String, List<String>> attributes, List<String> targetIds, String entity) {
 		List<String> names = new ArrayList<>();
 		List<Long> ids = new ArrayList<>();
+		Locale locale = LocaleContextHolder.getLocale();
+		
 		switch (entity) {
 			case CAMPAIGN_ID:
 			case CAMPAIGN_IDS:
 				targetIds.forEach(id -> ids.add(Long.parseLong(id)));
 				List<Campaign> campaigns = campaignModificationService.findAllByIds(ids);
 				campaigns.forEach(o -> names.add(o.getName()));
-				attributes.put(i18nHelper.internationalize("report.executionprogression.main.campaign.label",locale), names);
+				attributes.put(i18nHelper.internationalize("label.campaigns",locale), names);
 				break;
 			case ITERATION_ID:
 			case ITERATION_IDS:
 				targetIds.forEach(id -> ids.add(Long.parseLong(id)));
 				List<Iteration> iterations = iterationModificationService.findAllByIds(ids);
 				iterations.forEach(o -> names.add(o.getName()));
-				attributes.put(i18nHelper.internationalize("chart.entityType.ITERATION",locale), names);
+				attributes.put(i18nHelper.internationalize("label.iterations",locale), names);
 				break;
 			case REQUIREMENTS_IDS:
 				targetIds.forEach(id -> ids.add(Long.parseLong(id)));
 				List<Requirement> requirements = requirementVersionManagerService.findRequirementsAllByIds(ids);
 				requirements.forEach(o -> names.add(o.getName()));
-				attributes.put(i18nHelper.internationalize("chart.entityType.REQUIREMENT",locale), names);
+				attributes.put(i18nHelper.internationalize("label.requirements",locale), names);
 				break;
 			case TESTCASES_IDS:
 				targetIds.forEach(id -> ids.add(Long.parseLong(id)));
 				List<TestCase> testCases = testCaseModificationService.findAllByIds(ids);
 				testCases.forEach(o -> names.add(o.getName()));
-				attributes.put(i18nHelper.internationalize("label.testCase",locale), names);
+				attributes.put(i18nHelper.internationalize("label.testCases",locale), names);
 				break;
 			case PROJECT_IDS:
 				targetIds.forEach(id -> ids.add(Long.parseLong(id)));
 				List<GenericProject> genericProjects = projectManagerService.findAllByIds(ids);
 				genericProjects.forEach(o -> names.add(o.getName()));
-				attributes.put(i18nHelper.internationalize("label.project",locale), names);
+				attributes.put(i18nHelper.internationalize("label.projects",locale), names);
 				break;
 			case MILESTONES:
 				targetIds.forEach(id -> ids.add(Long.parseLong(id)));
 				List<Milestone> milestones = milestoneManagerService.findAllByIds(ids);
 				milestones.forEach(o -> names.add(o.getLabel()));
-				attributes.put(i18nHelper.internationalize("label.Mileston",locale), names);
+				attributes.put(i18nHelper.internationalize("label.Milestones",locale), names);
 				break;
 			case TAGS:
 				targetIds.forEach(o -> names.add(o.toString()));
