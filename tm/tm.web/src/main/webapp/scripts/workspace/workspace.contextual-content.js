@@ -63,6 +63,8 @@ define(["app/pubsub", "jquery", "workspace.event-bus", "jqueryui"], function (ps
 				// clean the content
 				_cleanPopups();
 
+				// hack : if contextualContent is required after the DOM is present, 'this' will be empty so we need re-select the element
+				//TODO: do the whole front with angular
 				if (this.length) {
 					this.empty();
 				} else {
@@ -101,6 +103,7 @@ define(["app/pubsub", "jquery", "workspace.event-bus", "jqueryui"], function (ps
 					this.currentUrl = url;
 					this.currentXhr = $.get(url, params, 'html').success(function (html) {
 						cleanContent();
+						// hack : if contextualContent is required after the DOM is present, 'this' will be empty so we need re-select the element
 						if (self.length) {
 							self.html(html);
 						} else {

@@ -22,36 +22,45 @@ define(["backbone.wreqr", "workspace.contextual-content"], function (backboneWre
 
 	function init(currentUrl) {
 
-		window.squashtm.app.wreqr = window.squashtm.app.wreqr || new backboneWreqr.EventAggregator();
 
-		//copy paste of what's in camp-workspace/init-actions.js but without the parts linked to the tree
+		// In most cases, the wreqr will be initialised and its events will be defined in a workspace.
+		// Here we will initialise it if it's not already done, otherwise we could interfere with what's done in init-actions among others
 
-		var wreqr = squashtm.app.wreqr;
-		wreqr.on("favoriteDashboard.showDefault", function () {
-			if(currentUrl.includes("iterations")){
-				squashtm.workspace.shouldShowFavoriteDashboardTab = true;
-			}
-			ctxcontent.unload();
-			ctxcontent.loadWith(currentUrl);
-		});
+		if (!window.squashtm.app.wreqr) {
+			window.squashtm.app.wreqr = new backboneWreqr.EventAggregator();
 
-		wreqr.on("favoriteDashboard.showFavorite", function () {
-			if(currentUrl.includes("iterations")){
-				squashtm.workspace.shouldShowFavoriteDashboardTab = true;
-			}
-			ctxcontent.unload();
-			ctxcontent.loadWith(currentUrl);
-		});
+			//copy paste of what's in camp-workspace/init-actions.js but without the parts linked to the tree
 
-		wreqr.on("favoriteDashboard.milestone.showDefault", function () {
-			ctxcontent.unload();
-			ctxcontent.loadWith(squashtm.app.contextRoot + "campaign-browser/dashboard-milestones");
-		});
+			var wreqr = squashtm.app.wreqr;
+			wreqr.on("favoriteDashboard.showDefault", function () {
+				// in the case of an interface, we must select the correct tab after reloading the page
+				if (currentUrl.includes("iterations")) {
+					squashtm.workspace.shouldShowFavoriteDashboardTab = true;
+				}
+				ctxcontent.unload();
+				ctxcontent.loadWith(currentUrl);
+			});
 
-		wreqr.on("favoriteDashboard.milestone.showFavorite", function () {
-			ctxcontent.unload();
-			ctxcontent.loadWith(squashtm.app.contextRoot + "campaign-browser/dashboard-milestones");
-		});
+			wreqr.on("favoriteDashboard.showFavorite", function () {
+				if (currentUrl.includes("iterations")) {
+					squashtm.workspace.shouldShowFavoriteDashboardTab = true;
+				}
+				ctxcontent.unload();
+				ctxcontent.loadWith(currentUrl);
+			});
+
+			wreqr.on("favoriteDashboard.milestone.showDefault", function () {
+				ctxcontent.unload();
+				ctxcontent.loadWith(squashtm.app.contextRoot + "campaign-browser/dashboard-milestones");
+			});
+
+			wreqr.on("favoriteDashboard.milestone.showFavorite", function () {
+				ctxcontent.unload();
+				ctxcontent.loadWith(squashtm.app.contextRoot + "campaign-browser/dashboard-milestones");
+			});
+		}
+
+
 	}
 
 	return {

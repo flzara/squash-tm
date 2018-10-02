@@ -117,7 +117,9 @@
   squashtm = squashtm || {};
   squashtm.page = squashtm.page || {};
   squashtm.app = squashtm.app || {};
+  squashtm.workspace = squashtm.workspace || {};
   squashtm.app.campaignWorkspaceConf = squashtm.app.campaignWorkspaceConf || {};
+
   squashtm.app.userPrefs = ${userPrefs};
   //favorite dashboard
   squashtm.workspace.canShowFavoriteDashboard = ${canShowDashboard};
