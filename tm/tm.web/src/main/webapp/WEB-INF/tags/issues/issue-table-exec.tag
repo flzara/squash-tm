@@ -120,8 +120,8 @@
 			<th data-def="map=remote-id, link-new-tab={issue-url}, center, select, double-narrow, sortable">${interfaceDescriptor.tableIssueIDHeader}</th>
 			<th data-def="map=BtProject"><f:message key="bugtracker.project" /></th>
 			<th data-def="map=summary">${interfaceDescriptor.tableSummaryHeader}</th>
-			<th data-def="map=priority">${interfaceDescriptor.tablePriorityHeader}</th>
-			<th data-def="map=status">${interfaceDescriptor.tableStatusHeader}</th>
+			<th data-def="map=priority, sortable">${interfaceDescriptor.tablePriorityHeader}</th>
+			<th data-def="map=status, sortable">${interfaceDescriptor.tableStatusHeader}</th>
 			<th data-def="map=assignee">${interfaceDescriptor.tableAssigneeHeader}</th>
 			<th data-def="map=owner">${interfaceDescriptor.tableReportedInHeader}</th>
 			<th data-def="map=empty-delete-holder, narrow, center${deleteBtnClause}"></th>
