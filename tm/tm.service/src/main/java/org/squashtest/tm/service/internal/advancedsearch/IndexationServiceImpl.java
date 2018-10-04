@@ -156,6 +156,7 @@ public class IndexationServiceImpl implements IndexationService {
 	}
 
 	private void reindexEntity(Class<?> clazz, long id) {
+		LOGGER.debug("reindexing {}#{}", clazz.getSimpleName(), id);
 		FullTextEntityManager ftem = Search.getFullTextEntityManager(em);
 		ftem.index(ftem.getReference(clazz, id));
 	}
@@ -209,7 +210,14 @@ public class IndexationServiceImpl implements IndexationService {
 
 	// Batched versions
 	private <T> void batchReindex(Class<T> entity, Collection<Long> ids) {
+
 		if (!ids.isEmpty()) {
+
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("batch reindexing a total of {} '{}'", ids.size(), entity.getSimpleName());
+				LOGGER.trace("ids are : {}", ids);
+			}
+
 			FullTextEntityManager ftem = getFullTextSession();
 
 			ScrollableResults scroll = getScrollableResults(ftem, entity, ids);

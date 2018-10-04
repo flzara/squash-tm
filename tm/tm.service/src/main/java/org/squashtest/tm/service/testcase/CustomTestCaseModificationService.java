@@ -55,8 +55,24 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 
         void changeImportance(long testCaseId, TestCaseImportance importance);
 
+	/**
+	 * Inserts the given step in last position of the test script of the test case identified by the given id.
+	 *
+	 * @param parentTestCaseId
+	 * @param newTestStep
+	 * @return
+	 */
 	ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep);
 
+	/**
+	 * Inserts the given step at specified index in the test script of the test case identified by the given id. If position is
+	 * negative, the step will be inserted in last position instead.
+	 *
+	 * @param parentTestCaseId
+	 * @param newTestStep
+	 * @param index
+	 * @return
+	 */
 	ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep, int index);
 
 	/**

@@ -40,4 +40,5 @@ public interface Sorting {
 	 * @return String
 	 */
 	SortOrder getSortOrder();
+
 }

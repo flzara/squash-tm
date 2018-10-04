@@ -30,4 +30,5 @@ import org.springframework.data.domain.Pageable;
  */
 public interface PagingAndSorting extends Paging, Sorting {
 	Pageable toPageable();
+
 }

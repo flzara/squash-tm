@@ -22,6 +22,10 @@ package org.squashtest.tm.domain;
 
 import org.apache.commons.collections.Transformer;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Collect ids of {@link Identified} object. 
  * 
@@ -32,5 +36,9 @@ public class IdCollector implements Transformer{
 	@Override
 	public Object transform(Object input) {
 		return ((Identified)input).getId();
+	}
+
+	public static List<Long> collect(Collection<? extends Identified> identified){
+		return identified.stream().map(Identified::getId).collect(Collectors.toList());
 	}
 }

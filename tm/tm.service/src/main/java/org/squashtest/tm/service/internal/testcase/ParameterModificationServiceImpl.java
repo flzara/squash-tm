@@ -26,6 +26,8 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testcase.Parameter;
@@ -40,6 +42,8 @@ import org.squashtest.tm.service.testcase.ParameterModificationService;
 @Transactional
 @Service("squashtest.tm.service.ParameterModificationService")
 public class ParameterModificationServiceImpl implements ParameterModificationService {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(ParameterModificationServiceImpl.class);
 
 	@Inject
 	private ParameterDao parameterDao;
@@ -160,7 +164,11 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	 */
 	@Override
 	public void createParamsForStep(TestStep step) {
+		LOGGER.debug("creating parameters for step #{}", step.getId());
 		Set<String> parameterNames = new ParameterNamesFinder().findParametersNamesInActionAndExpectedResult(step);
+
+		LOGGER.trace("discovered parameters in step : {} ", parameterNames);
+
 		for (String name : parameterNames) {
 			createParameterIfNotExists(name, step.getTestCase());
 		}
@@ -179,6 +187,7 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 		if (testCase != null) {
 			Parameter parameter = testCase.findParameterByName(name);
 			if (parameter == null) {
+				LOGGER.debug("declaring new parameter '{}' in test case #{}", name, testCase.getId());
 				parameter = new Parameter(name);
 				addNewParameterToTestCase(parameter, testCase);
 			}

@@ -33,6 +33,7 @@ import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;
+import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
@@ -50,7 +51,7 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 					@NamedQuery(name = "testAutmationProject.delete", query = "delete TestAutomationProject p where p.id in (:projectIds)")
 })
 @Entity
-public class TestAutomationProject {
+public class TestAutomationProject implements Identified {
 
 	@Id
 	@Column(name = "TA_PROJECT_ID")

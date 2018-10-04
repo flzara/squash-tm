@@ -22,6 +22,8 @@ package org.squashtest.tm.service.internal.customfield;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.MultiValueMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,6 +52,8 @@ import static java.util.stream.Collectors.*;
 @Service("squashtest.tm.service.CustomFieldValueManagerService")
 @Transactional
 public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldValueService {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(PrivateCustomFieldValueServiceImpl.class);
 
 	@Inject
 	CustomReportLibraryNodeDao customReportLibraryNodeDao;
@@ -216,11 +220,18 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	@Override
 	public void createAllCustomFieldValues(BoundEntity entity, Project project) {
 
+		LOGGER.debug("creating customfield values for entity {}#{}", entity.getBoundEntityType(), entity.getBoundEntityId());
+
 		if (project == null) {
 			project = entity.getProject();
 		}
 
 		List<CustomFieldBinding> bindings = optimizedFindCustomField(entity, project);
+
+		if (LOGGER.isTraceEnabled()){
+			List<String> codes = bindings.stream().map(b -> b.getCustomField().getCode()).collect(toList());
+			LOGGER.trace("creating values for customfields : {}", codes);
+		}
 
 		/* **************************************************************************************************
 		 * [Issue 3808]

@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.core.foundation.collection;
 
+
 /**
  * Defines a paging to apply when querying for a collection.
  * @author Gregory Fouquet
@@ -47,5 +48,6 @@ public interface Paging {
 	 * @return true if the query should return all the valid rows (ie, the paging should not be applied)
 	 */
 	boolean shouldDisplayAll();
+
 
 }
