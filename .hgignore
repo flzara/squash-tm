@@ -125,6 +125,7 @@ tm/tm.web/src/main/resources/config/application-agu_mysql.properties
 tm/tm.web/src/main/resources/config/application-cho_postgresql.properties
 tm/tm.web/src/main/resources/config/application-cho.properties
 tm/tm.web/src/main/resources/config/application-zya_postgresql.properties
+tm/tm.web/src/main/resources/config/application-mah_mysql.properties
 syntax: regexp
 ^plugins/plugin\.testautomation\.jenkins/META-INF$
 syntax: regexp
