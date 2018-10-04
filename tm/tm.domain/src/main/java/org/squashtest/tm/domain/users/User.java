@@ -171,7 +171,7 @@ public class User extends Party {
 	}
 
 	@Override
-	void accept(PartyVisitor visitor) {
+	public void accept(PartyVisitor visitor) {
 		visitor.visit(this);
 	}
 

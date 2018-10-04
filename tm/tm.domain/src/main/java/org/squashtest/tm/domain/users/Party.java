@@ -68,7 +68,7 @@ public abstract class Party implements Identified{
 		return TYPE;
 	}
 
-	abstract void accept(PartyVisitor visitor);
+	public abstract void accept(PartyVisitor visitor);
 
 
 }
