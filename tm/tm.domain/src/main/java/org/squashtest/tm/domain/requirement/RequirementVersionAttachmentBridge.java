@@ -20,8 +20,11 @@
  */
 package org.squashtest.tm.domain.requirement;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
 import org.apache.lucene.document.NumericDocValuesField;
+import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexableField;
 import org.hibernate.Session;
 import org.hibernate.search.bridge.LuceneOptions;
@@ -31,6 +34,8 @@ import org.hibernate.search.bridge.spi.FieldType;
 import org.squashtest.tm.domain.search.SessionFieldBridge;
 
 public class RequirementVersionAttachmentBridge  extends  SessionFieldBridge implements MetadataProvidingFieldBridge {
+
+	private static final Integer EXPECTED_LENGTH = 7;
 
 	@Override
 	protected void writeFieldToDocument(String name, Session session, Object value, Document document, LuceneOptions luceneOptions){
@@ -45,7 +50,7 @@ public class RequirementVersionAttachmentBridge  extends  SessionFieldBridge imp
 		Integer result = new Integer(count.toString());
 		if ( result == null ) {
 			if ( luceneOptions.indexNullAs() != null ) {
-				luceneOptions.addFieldToDocument( name, luceneOptions.indexNullAs(), document );
+				luceneOptions.addSortedDocValuesFieldToDocument( name, luceneOptions.indexNullAs(), document );
 			}
 		}
 		else {
@@ -54,8 +59,8 @@ public class RequirementVersionAttachmentBridge  extends  SessionFieldBridge imp
 	}
 
 	protected void applyToLuceneOptions(LuceneOptions luceneOptions, String name, Number value, Document document) {
-		luceneOptions.addNumericFieldToDocument( name, value, document );
-		document.add(new NumericDocValuesField(name,  new Long(value.longValue())));
+		luceneOptions.addSortedDocValuesFieldToDocument( name, value.toString(), document );
+		document.add(new TextField(name,padRawValue(value.longValue()), Field.Store.YES));
 	}
 
 	public Object get(final String name, final Document document) {
@@ -70,6 +75,10 @@ public class RequirementVersionAttachmentBridge  extends  SessionFieldBridge imp
 
 	@Override
 	public void configureFieldMetadata(String name, FieldMetadataBuilder fieldMetadataBuilder) {
-		fieldMetadataBuilder.field(name , FieldType.LONG).sortable( true );
+		fieldMetadataBuilder.field(name , FieldType.STRING).sortable( true );
+	}
+
+	private String padRawValue(long rawValue) {
+		return StringUtils.leftPad(Long.toString(rawValue), EXPECTED_LENGTH, '0');
 	}
 }

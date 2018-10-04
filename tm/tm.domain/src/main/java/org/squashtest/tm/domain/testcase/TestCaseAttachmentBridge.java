@@ -21,9 +21,7 @@
 package org.squashtest.tm.domain.testcase;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.NumericDocValuesField;
+import org.apache.lucene.document.*;
 import org.apache.lucene.index.IndexableField;
 import org.hibernate.Session;
 import org.hibernate.search.bridge.LuceneOptions;
@@ -53,7 +51,7 @@ public class TestCaseAttachmentBridge extends SessionFieldBridge implements Meta
 		Integer result = new Integer(attCount.toString());
 		if ( result == null ) {
 			if ( luceneOptions.indexNullAs() != null ) {
-				luceneOptions.addFieldToDocument( name, luceneOptions.indexNullAs(), document );
+				luceneOptions.addSortedDocValuesFieldToDocument( name, luceneOptions.indexNullAs(), document );
 			}
 		}
 		else {
@@ -62,8 +60,9 @@ public class TestCaseAttachmentBridge extends SessionFieldBridge implements Meta
 	}
 
 	protected void applyToLuceneOptions(LuceneOptions luceneOptions, String name, Number value, Document document) {
-		luceneOptions.addNumericFieldToDocument( name, value, document );
-		document.add(new NumericDocValuesField(name,  new Long(value.longValue())));
+		luceneOptions.addSortedDocValuesFieldToDocument( name, value.toString(), document );
+		document.add(new TextField(name,padRawValue(value.longValue()), Field.Store.YES));
+
 	}
 
 	public Object get(final String name, final Document document) {
@@ -78,6 +77,6 @@ public class TestCaseAttachmentBridge extends SessionFieldBridge implements Meta
 
 	@Override
 	public void configureFieldMetadata(String name, FieldMetadataBuilder fieldMetadataBuilder) {
-		fieldMetadataBuilder.field(name , FieldType.LONG).sortable( true );
+		fieldMetadataBuilder.field(name , FieldType.STRING).sortable( true );
 	}
 }

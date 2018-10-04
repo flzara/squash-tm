@@ -22,12 +22,17 @@ package org.squashtest.tm.domain.requirement;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.TextField;
 import org.hibernate.Session;
 import org.hibernate.search.bridge.LuceneOptions;
+import org.hibernate.search.bridge.MetadataProvidingFieldBridge;
+import org.hibernate.search.bridge.spi.FieldMetadataBuilder;
+import org.hibernate.search.bridge.spi.FieldType;
 import org.hibernate.type.LongType;
 import org.squashtest.tm.domain.search.SessionFieldBridge;
 
-public class RequirementCountChildrenBridge extends SessionFieldBridge{
+public class RequirementCountChildrenBridge extends SessionFieldBridge implements MetadataProvidingFieldBridge {
 	private static final int EXPECTED_LENGTH = 7;
 	private String padRawValue(Long rawValue){
 		return StringUtils.leftPad(Long.toString(rawValue), EXPECTED_LENGTH, '0');
@@ -42,8 +47,14 @@ public class RequirementCountChildrenBridge extends SessionFieldBridge{
 									.setParameter("id", r.getId(), LongType.INSTANCE)
 									.uniqueResult();
 
-		luceneOptions.addFieldToDocument(name, padRawValue(childCount), document);
-
+		luceneOptions.addSortedDocValuesFieldToDocument(name, childCount.toString(), document);
+		document.add(new TextField(name,  padRawValue(childCount.longValue()), Field.Store.YES));
 
 	}
+
+	@Override
+	public void configureFieldMetadata(String name, FieldMetadataBuilder fieldMetadataBuilder) {
+		fieldMetadataBuilder.field(name , FieldType.STRING).sortable( true );
+	}
+
 }

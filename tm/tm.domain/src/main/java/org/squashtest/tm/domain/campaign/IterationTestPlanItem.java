@@ -62,6 +62,7 @@ import org.squashtest.tm.domain.library.HasExecutionStatus;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.search.LevelEnumBridge;
+import org.squashtest.tm.domain.search.NotGMTDateBridge;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -132,9 +133,9 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 
 	@Column(insertable = false)
 	@Temporal(TemporalType.TIMESTAMP)
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	@CalendarBridge (resolution = Resolution.DAY)
+	@Field(analyze=Analyze.NO, store=Store.YES, bridge=@FieldBridge(impl= NotGMTDateBridge.class))
 	@SortableField
+	@NumericField
 	private Date lastExecutedOn;
 
 	@ManyToOne(fetch = FetchType.LAZY)
