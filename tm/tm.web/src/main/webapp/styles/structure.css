@@ -1952,3 +1952,8 @@ opacity:0.2;
 	right: 0;
 	left: 0;
 }
+
+/* Issue 7707 */
+#link-type label:after {
+	vertical-align: top;
+}
