@@ -66,6 +66,6 @@ class TestCaseAttachmentBridgeIT extends DbunitDaoSpecification {
 		then:
 		doc.fields.size() == 1
 		doc.fields[0].name == "foo"
-		doc.fields[0].fieldsData == 2
+		doc.fields[0].fieldsData == "0000002"
 	}
 }

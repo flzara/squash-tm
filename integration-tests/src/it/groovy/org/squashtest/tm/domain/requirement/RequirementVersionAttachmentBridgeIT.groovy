@@ -33,19 +33,19 @@ import spock.unitils.UnitilsSupport
 @Transactional
 class RequirementVersionAttachmentBridgeIT extends BridgeSpecification {
 	RequirementVersionAttachmentBridge bridge = new RequirementVersionAttachmentBridge()
-	
+
 	@DataSet("RequirementVersionBridgeIT.dataset.xml")
 	def "should count requirement's attachments"() {
 		given:
 		RequirementVersion req = session.load(RequirementVersion, -10L)
-		
+
 		when:
 		bridge.writeFieldToDocument("foo", session, req, doc, lucene)
-		
+
 		then:
 		doc.fields.size() == 1
 		doc.fields[0].name == "foo"
-		doc.fields[0].fieldsData == 2
+		doc.fields[0].fieldsData == "0000002"
 	}
 
 }
