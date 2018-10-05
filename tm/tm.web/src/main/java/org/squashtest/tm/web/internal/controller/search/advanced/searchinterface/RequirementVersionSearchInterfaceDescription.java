@@ -48,6 +48,7 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 public class RequirementVersionSearchInterfaceDescription extends SearchInterfaceDescription {
 
 	private static final String COLUMN_1 = "column1";
+	private static final String REQUIREMENT_VERSION_LINK_TYPE_LABEL = "requirement-version.link.type";
 
 	@Inject
 	private RequirementVersionAdvancedSearchService advancedSearchService;
@@ -335,14 +336,22 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 		linkField.addPossibleValue(new SearchInputPossibleValueModel(getMessageSource().internationalize("search.requirement.version-links.none",locale),NONE));
 		List<RequirementVersionLinkType> linkedList = linkedRequirementVersionManagerService.findAllRequirementVersionLinkType();
 		for (RequirementVersionLinkType link : linkedList) {
-			SearchInputPossibleValueModel searchInputPossibleValueModel1 = new SearchInputPossibleValueModel(link.getRole1Code(), link.getRole1Code());
+			// Issue 7703 - display role instead of roleCode
+			String role = getRoleFromLinkType(link.getRole1(), locale);
+			SearchInputPossibleValueModel searchInputPossibleValueModel1 = new SearchInputPossibleValueModel(role, link.getRole1Code());
 			possibleValues.add(searchInputPossibleValueModel1);
 			if(!link.getRole1Code().equals(link.getRole2Code())){
-				SearchInputPossibleValueModel searchInputPossibleValueModel2 = new SearchInputPossibleValueModel(link.getRole2Code(), link.getRole2Code());
+				role = getRoleFromLinkType(link.getRole2(), locale);
+				SearchInputPossibleValueModel searchInputPossibleValueModel2 = new SearchInputPossibleValueModel(role, link.getRole2Code());
 				possibleValues.add(searchInputPossibleValueModel2);
 			}
 		}
 		linkField.addPossibleValues(possibleValues);
 
+	}
+
+	private String getRoleFromLinkType(String role, Locale locale) {
+		return role.contains(REQUIREMENT_VERSION_LINK_TYPE_LABEL) ? getMessageSource()
+			.internationalize(role, locale) : role;
 	}
 }
