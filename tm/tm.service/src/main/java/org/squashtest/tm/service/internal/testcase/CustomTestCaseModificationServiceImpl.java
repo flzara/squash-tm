@@ -81,6 +81,7 @@ import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.squashtest.tm.service.security.Authorizations.*;
 
@@ -931,6 +932,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	public Collection<Long> findBindedMilestonesIdForMassModif(List<Long> testCaseIds) {
 
+		LOGGER.debug("searching for milestone ids that are bound to all the following test cases : {}", testCaseIds);
+
+		LOGGER.trace("gathering the milestones");
 		Collection<Milestone> milestones = null;
 
 		for (Long testCaseId : testCaseIds) {
@@ -943,23 +947,31 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 				milestones = new ArrayList<>(mil);
 			}
 		}
+
+
+		LOGGER.trace("filtering by status");
+
 		filterLockedAndPlannedStatus(milestones);
 
-		return CollectionUtils.collect(milestones, new Transformer() {
+		List<Long> milestoneIds = IdCollector.collect(milestones);
 
-			@Override
-			public Object transform(Object milestone) {
+		if (LOGGER.isTraceEnabled()){
+			LOGGER.trace("found {} milestones, ids are : {}", milestoneIds.size(), milestoneIds);
+		}
 
-				return ((Milestone) milestone).getId();
-			}
-		});
+		return milestoneIds;
 	}
 
 
 	@Override
 	public boolean haveSamePerimeter(List<Long> testCaseIds) {
-		if (testCaseIds.size() != 1) {
+		LOGGER.debug("testing whether the following test cases have the same milestone perimeter : {}", testCaseIds);
 
+		if (testCaseIds.size() > 1) {
+
+			// XXX this implementation actually compares the perimeter of the first test case of the list
+			// with that of each others, yet other's perimeters aren't compared as well
+			// This isn't consistent with the method name and no javadoc explains what this method is supposed to do.
 			Long first = testCaseIds.remove(0);
 			List<Milestone> toCompare = testCaseDao.findById(first).getProject().getMilestones();
 
@@ -992,9 +1004,11 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	// returns a tuple-2 with first element : project ID, second element : test name
 	private Couple<Long, String> extractAutomatedProjectAndTestName(Long testCaseId, String testPath) {
+		LOGGER.debug("extracting project and test name for automated test path '{}', in the context of test case #{}", testPath, testCaseId);
 
 		// first we reject the operation if the script name is malformed
 		if (!PathUtils.isPathWellFormed(testPath)) {
+			LOGGER.error("automated test path '{}' is malformed !", testPath);
 			throw new MalformedScriptPathException();
 		}
 
@@ -1009,30 +1023,27 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		TestCase tc = testCaseDao.findById(testCaseId);
 		GenericProject tmproject = tc.getProject();
 
+		Collection<TestAutomationProject> taProjects = tmproject.getTestAutomationProjects();
+
+		if (LOGGER.isTraceEnabled()) {
+			List<String> taProjectNames = taProjects.stream()
+											  .map(TestAutomationProject::getJobName)
+											  .collect(Collectors.toList());
+			LOGGER.trace("available automation projects for test case #{} : {}", testCaseId, taProjectNames);
+		}
+		/*
 		TestAutomationProject tap = (TestAutomationProject) CollectionUtils.find(tmproject.getTestAutomationProjects(),
 			new HasSuchLabel(projectLabel));
+		*/
+		Optional<TestAutomationProject> tap = taProjects.stream().filter(taProj -> taProj.getLabel().equals(projectLabel)).findAny();
 
 		// if the project couldn't be found we must also reject the operation
-		if (tap == null) {
+		if (! tap.isPresent()) {
+			LOGGER.error("expected testautomation project '{}' but it appears that it doesn't belong to the TA projects within the scope of test case #{} ", projectLabel);
 			throw new UnallowedTestAssociationException();
 		}
 
-		return new Couple<>(tap.getId(), testName);
-	}
-
-
-	private static final class HasSuchLabel implements Predicate {
-		private String label;
-
-		HasSuchLabel(String label) {
-			this.label = label;
-		}
-
-		@Override
-		public boolean evaluate(Object object) {
-			TestAutomationProject tap = (TestAutomationProject) object;
-			return tap.getLabel().equals(label);
-		}
+		return new Couple<>(tap.get().getId(), testName);
 	}
 
 
