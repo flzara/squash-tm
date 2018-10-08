@@ -21,9 +21,23 @@
 package org.squashtest.tm.service.importer;
 
 
-
+/**
+ * A Target is a reference to an entity that an import instruction will create, modify or delete. It is different from
+ * {@link org.squashtest.tm.domain.EntityReference} in the sense that the later identities an instance by its ID while the
+ * Target identifies it by other features (eg its path, or index within a collection + target of the owner of the collection).
+ * This allows for useful use cases like exporting a test case from an instance of Squash A and importing in instance B,
+ * which have each their own ID spaces.
+ *
+ */
 public interface Target {
 	EntityType getType();
 
-	boolean isWellFormed(); // what is supposed to be well formed ?
+	/**
+	 * Self-validation method, which says whether the target instance has every piece of information required to
+	 * completely designate a specific instance of the entity (see class-level comment). In other word, is the
+	 * target syntactically correct.
+	 *
+	 * @return true if all required information are present and with no formatting errors.
+	 */
+	boolean isWellFormed();
 }

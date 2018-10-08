@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.internal.batchimport.excel.ExcelBatchImporter;
@@ -36,8 +37,16 @@ public class TestCaseExcelBatchImporter extends ExcelBatchImporter {
 			EntityType.PARAMETER, EntityType.DATASET, EntityType.TEST_STEP, EntityType.DATASET_PARAM_VALUES,
 			EntityType.COVERAGE);
 
+
+	public TestCaseExcelBatchImporter() {
+		super(LoggerFactory.getLogger(TestCaseExcelBatchImporter.class));
+	}
+
 	@Override
 	public List<Instruction<?>> findInstructionsByEntity(ExcelWorkbookParser parser, EntityType entityType) {
+
+		LOGGER.debug("creating instructions for entity type : {}", entityType);
+
 		List<Instruction<?>> instructions = new ArrayList<>();
 
 		switch (entityType) {

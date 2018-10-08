@@ -66,4 +66,9 @@ class TargetStatus {// NOSONAR this class is not final so that it can
         return id;
     }
 
+    @Override
+    public String toString(){
+    	return "[Existence : " + status + ", id : "+ null + "]";
+	}
+
 }

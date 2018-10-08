@@ -36,50 +36,90 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
 public abstract class ExcelBatchImporter {
+
 	@Inject
 	private Provider<SimulationFacility> simulatorProvider;
 
 	@Inject
 	private Provider<FacilityImpl> facilityImplProvider;
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseExcelBatchImporter.class);
+	/*
+		1/ The logger is set by constructor, check the subclasses.
+
+		2/ It has protected scope so that subclasses can access it.
+
+		3/ I need this logger to be accessible from the subclasses and I
+		wasn't sure about having one single static property for receiving
+		two loggers instances (one for the TestCase importer and the other
+		one for Requirement importer). So I made the loggers non-static.
+		I still use the static naming convention though.
+
+	*/
+	// NOSONAR see comment above
+	protected final Logger LOGGER;
+
+
+	protected ExcelBatchImporter(Logger logger){
+		this.LOGGER = logger;
+	}
+
 
 	public ImportLog simulateImport(File excelFile) {
+		LOGGER.debug("beginning import simulation");
 
 		SimulationFacility simulator = simulatorProvider.get();
 
+		LOGGER.trace("parsing excel file");
 		ExcelWorkbookParser parser = ExcelWorkbookParser.createParser(excelFile);
 		parser.parse().releaseResources();
+		LOGGER.trace("parsing done");
 
 		LogTrain unknownHeaders = parser.logUnknownHeaders();
 
 		List<Instruction<?>> instructions = buildOrderedInstruction(parser);
+		if (LOGGER.isTraceEnabled()){
+			LOGGER.trace("{} instructions created", instructions.size());
+		}
+
+
+		LOGGER.trace("running import simulation");
 		ImportLog importLog = run(instructions, simulator);
 
 		importLog.appendLogTrain(unknownHeaders);
+
+		LOGGER.trace("done");
 		return importLog;
 
 	}
 
 	@CacheScope
 	public ImportLog performImport(File excelFile) {
+		LOGGER.debug("beginning import");
 
 		FacilityImpl impl = facilityImplProvider.get();
 
+		LOGGER.trace("parsing excel file");
 		ExcelWorkbookParser parser = ExcelWorkbookParser.createParser(excelFile);
 		parser.parse().releaseResources();
+		LOGGER.trace("parsing done");
 
 		LogTrain unknownHeaders = parser.logUnknownHeaders();
 
 		List<Instruction<?>> instructions = buildOrderedInstruction(parser);
+		if (LOGGER.isTraceEnabled()){
+			LOGGER.trace("{} instructions created", instructions.size());
+		}
 
+		LOGGER.trace("running import");
 		ImportLog importLog = run(instructions, impl);
 
+		LOGGER.trace("post processing");
 		impl.postprocess(instructions);
 
 		importLog.appendLogTrain(unknownHeaders);
+
+		LOGGER.trace("done");
 		return importLog;
 
 	}
@@ -97,10 +137,18 @@ public abstract class ExcelBatchImporter {
 		ImportLog importLog = new ImportLog();
 
 		for (Instruction<?> instruction : instructions) {
+			if (LOGGER.isTraceEnabled()) {
+				LOGGER.debug("execution of instruction : (line {}) {} '{}'", instruction.getLine(), instruction.getMode(), instruction.getTarget());
+			}
 			LogTrain logs = instruction.execute(facility);
+			LOGGER.debug("completed execution of instruction : (line {}) {} '{}'", instruction.getLine(), instruction.getMode(), instruction.getTarget());
 
 			if (logs.hasNoErrorWhatsoever()) {
+				LOGGER.debug("no errors");
 				logs.addEntry(LogEntry.ok().forTarget(instruction.getTarget()).build());
+			}
+			else{
+				LOGGER.debug("some errors where raised and will be reported to the user");
 			}
 
 			logs.setForAll(instruction.getMode());
@@ -118,7 +166,12 @@ public abstract class ExcelBatchImporter {
 	public List<Instruction<?>> buildOrderedInstruction(ExcelWorkbookParser parser) {
 		List<Instruction<?>> instructions = new ArrayList<>();
 		for (EntityType entity : getEntityType()) {
+			LOGGER.debug("building instructions for entity type : '{}'", entity);
+
 			List<Instruction<?>> entityInstructions = findInstructionsByEntity(parser, entity);
+
+			LOGGER.trace("found {} instructions for entity type '{}'", entityInstructions.size(), entity);
+
 			instructions.addAll(entityInstructions);
 		}
 		return instructions;

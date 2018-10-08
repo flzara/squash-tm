@@ -252,16 +252,20 @@ public class Model {
 	// ****************************************
 
 	public TargetStatus getStatus(TestCaseTarget target) {
-
+		LOGGER.debug("searching status for test case target : '{}'", target);
 		if (!testCaseStatusByTarget.containsKey(target)) {
 			mainInitTestCase(target);
 		}
 
-		return testCaseStatusByTarget.get(target);
+		TargetStatus status = testCaseStatusByTarget.get(target);
+		LOGGER.trace("status for test case target '{}' : {}", target, status);
+
+		return status;
 
 	}
 
 	public void setExists(TestCaseTarget target, Long id) {
+		LOGGER.trace("setting test case target '{}' to ");
 		testCaseStatusByTarget.put(target, new TargetStatus(Existence.EXISTS,
 			id));
 	}
