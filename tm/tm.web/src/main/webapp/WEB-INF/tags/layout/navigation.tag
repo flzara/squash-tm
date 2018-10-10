@@ -33,6 +33,7 @@
 <f:message var="reqTitle" 	key="workspace.requirement.button.label"/>
 <f:message var="tcTitle" 	key="workspace.test-case.button.label"/>
 <f:message var="campTitle" 	key="workspace.campaign.button.label"/>
+<f:message var="automTitle" key="workspace.automation.button.label"/>
 <f:message var="bugTitle" 	key="workspace.bugtracker.button.label"/>
 <f:message var="repoTitle" 	key="workspace.report.button.label"/>
 <f:message var="customReportTitle" 	key="workspace.custom-report.title.long"/>
@@ -45,6 +46,7 @@
 		<a id="requirement-link" 	style="margin-top: 15px;"	class="navigation-link navigation-requirement"	href="${rootctxt}/requirement-workspace/"	title="${reqTitle}"></a>
 		<a id="test-case-link"	 	style="margin-top: 10px;"	class="navigation-link navigation-test-case" 	href="${rootctxt}/test-case-workspace/"		title="${tcTitle}"></a>
 		<a id="campaign-link"	 	style="margin-top: 10px;"	class="navigation-link navigation-campaign"		href="${rootctxt}/campaign-workspace/"		title="${campTitle}"></a>
+		<a id="automation-link"	 	style="margin-top: 10px;"	class="navigation-link navigation-automation"		href="${rootctxt}/automation-workspace/"		title="${automTitle}"></a>
 	</div>
 
 	<div id="nav_logo">

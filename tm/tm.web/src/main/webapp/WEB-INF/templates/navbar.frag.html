@@ -66,6 +66,12 @@
                th:title="#{workspace.campaign.button.label}"
                th:classappend="${highlight == 'campaign'} ? 'navigation-selected'"></a>
 
+      <a id="automation-link"
+         style="margin-top: 10px;"
+         class="navigation-link navigation-automation"
+         th:href="@{/automation-workspace/}"
+         th:title="#{workspace.automation.button.label}"
+         th:classappend="${highlight == 'automation'} ? 'navigation-selected'"></a>
 
     <div id="nav_logo" >
     	<div id="test_mgt_nav" style="margin-bottom: 40px;">

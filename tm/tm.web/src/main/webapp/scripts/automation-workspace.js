@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) Henix, henix.fr
  *
@@ -18,12 +18,23 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.api.workspace;
+require([ "common" ], function() {
+	"use strict";
 
-public enum WorkspaceType {
-	TEST_CASE_WORKSPACE,
-	REQUIREMENT_WORKSPACE,
-	CAMPAIGN_WORKSPACE,
-	CUSTOM_REPORT_WORKSPACE,
-	AUTOMATION_WORKSPACE
-}
+	require([ "jquery", './automation-workspace/automation-workspace-main' ,"app/ws/squashtm.workspace" ,'backbone.wreqr','backbone','./automation-workspace/automation-router', 'jquery.cookie' ],
+			function($, AutomationWorkspace, WS, wreqr, Backbone, router) {
+		$(function() {
+			window.squashtm.app.router = router.init();
+			//setting the event bus at global level so it will be avaible for all objects in workspace
+			window.squashtm.app.wreqr = new wreqr.EventAggregator();
+			//starting the history push state router
+			Backbone.history.start();
+			WS.init();
+
+			$.cookie("workspace-prefs", null, {
+				path : '/'
+			});
+			AutomationWorkspace.init(window.squashtm.app.automationWorkspaceConf);
+		});
+	});
+});

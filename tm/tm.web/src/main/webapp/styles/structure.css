@@ -641,6 +641,14 @@ html.execute-html body.ieo-body {
 	background-image: url(../images/Button_Nav_Campaign_on.png); /** sprite-ref: sprites-icons; */
 }
 
+.navigation-automation{
+	background-image: url(../images/Button_Nav_Campaign_off.png); /** sprite-ref: sprites-icons; */
+}
+
+.navigation-automation:hover, .navigation-automation.navigation-selected{
+	background-image: url(../images/Button_Nav_Campaign_on.png); /** sprite-ref: sprites-icons; */
+}
+
 .navigation-bugtracker{
 	background-image: url(../images/Button_Nav_Bugtracker_off.png); /** sprite-ref: sprites-icons; */
 }
