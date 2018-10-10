@@ -266,4 +266,44 @@
     <addNotNullConstraint tableName="EXECUTION" columnDataType="java.sql.Types.VARCHAR(308)" columnName="NAME"/>
   </changeSet>
 
+  <changeSet id="tm-1.19.0-SQTM-508-automation-request" author="aboittiaux">
+    <comment>Create table AUTOMATION_REQUEST to Gherkin's test cases</comment>
+    <createTable tableName="AUTOMATION_REQUEST">
+      <column name="AUTOMATION_REQUEST_ID" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="REQUEST_STATUS" type="VARCHAR(50)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="TRANSMISSION_DATE" type="DATETIME"/>
+      <column name="USER_ID" type="BIGINT"/>
+      <column name="AUTOMATION_PRIORITY" type="VARCHAR(20)" defaultValue="LOW">
+        <constraints nullable="false"/>
+      </column>
+      <column name="AUTOMATION_FINALE_DATE" type="DATETIME"/>
+      <column name="TEST_CASE_ID" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createIndex tableName="AUTOMATION_REQUEST" indexName="automation_request_user_id_idx">
+      <column name="USER_ID"/>
+    </createIndex>
+
+    <createIndex tableName="AUTOMATION_REQUEST" indexName="automation_request_test_case_id_idx">
+      <column name="TEST_CASE_ID"/>
+    </createIndex>
+
+    <addForeignKeyConstraint baseTableName="AUTOMATION_REQUEST" baseColumnNames="USER_ID"
+    constraintName="fk_automation_request_user" referencedColumnNames="PARTY_ID" referencedTableName="CORE_USER"/>
+
+    <addForeignKeyConstraint baseTableName="AUTOMATION_REQUEST" baseColumnNames="TEST_CASE_ID"
+                             constraintName="fk_automation_request_test_case" referencedColumnNames="TCLN_ID" referencedTableName="TEST_CASE"/>
+
+    <addColumn tableName="TEST_CASE">
+      <column name="AUTOMATISABLE" type="CHAR" defaultValue="N" remarks="Y: Yes, N: No, M: Maybe"/>
+    </addColumn>
+
+  </changeSet>
+
 </databaseChangeLog>

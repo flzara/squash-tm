@@ -40,6 +40,7 @@ import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.*;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.exception.UnallowedTestAssociationException;
 import org.squashtest.tm.exception.UnknownEntityException;
@@ -186,6 +187,12 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@SortableField
 	@NotNull
 	private TestCaseKind kind = STANDARD;
+
+	@OneToOne(mappedBy = "testCase", optional = true)
+	private AutomationRequest automationRequest;
+
+	@Enumerated(EnumType.STRING)
+	private TestCaseAutomatisable automatisable;
 
 
 	// *************************** CODE *************************************
@@ -908,6 +915,22 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	public void setKind(TestCaseKind kind) {
 		this.kind = kind;
+	}
+
+	public AutomationRequest getAutomationRequest() {
+		return automationRequest;
+	}
+
+	public void setAutomationRequest(AutomationRequest automationRequest) {
+		this.automationRequest = automationRequest;
+	}
+
+	public TestCaseAutomatisable getAutomatisable() {
+		return automatisable;
+	}
+
+	public void setAutomatisable(TestCaseAutomatisable automatisable) {
+		this.automatisable = automatisable;
 	}
 }
 
