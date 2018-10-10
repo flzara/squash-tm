@@ -102,12 +102,15 @@ public class FileSystemAttachmentRepository implements AttachmentRepository {
 		for (Long attachmentListId : attachmentListIds) {
 			String folderPath = findFolderPath(attachmentListId);
 			File folder = new File(folderPath);
-			try {
-				FileUtils.cleanDirectory(folder);
-				Files.deleteIfExists(Paths.get(folderPath));
-			} catch (IOException e) {
-				LOGGER.error("Unable to delete " + folderPath);
-				throw new RuntimeException(e);
+			// Issue 7720
+			if (folder.exists()) {
+				try {
+					FileUtils.cleanDirectory(folder);
+					Files.deleteIfExists(Paths.get(folderPath));
+				} catch (IOException e) {
+					LOGGER.error("Unable to delete " + folderPath);
+					throw new RuntimeException(e);
+				}
 			}
 		}
 	}
