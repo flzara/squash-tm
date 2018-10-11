@@ -241,6 +241,8 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 		copyRequirementVersionCoverage(source, copyTestCase);
 		copyAttachment(copyTestCase);
 
+		copyTestCase.getActionSteps().forEach(this::copyAttachment);
+
 		batchRequirement++;
 		if (batchRequirement % 10 == 0) {
 			flush();
