@@ -60,6 +60,8 @@ public interface AttachmentManagerService extends AttachmentFinderService {
 	 */
 	void copyContent(Attachment attachment);
 
+	void copyAttachments(AttachmentHolder attachmentHolder);
+
 	/**
 	 * Remove the EXTERNAL content of an list of {@link AttachmentList}. It DO NOT REMOVE DATA FROM DATABASE
 	 * It's a noop for intern storage, hibernate clean blobs automatically.

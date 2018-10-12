@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.testcase
 
+import org.squashtest.tm.service.attachment.AttachmentManagerService
 import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.ActionTestStep
@@ -44,6 +45,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	PrivateCustomFieldValueService cufValuesService = Mock()
 	ParameterModificationService parameterModificationService = Mock()
 	UnsecuredAutomatedTestManagerService taService = Mock()
+	AttachmentManagerService attachmentManagerService = Mock()
 
 	MockFactory mockFactory = new MockFactory()
 
@@ -58,6 +60,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		service.customFieldValuesService = cufValuesService
 		service.parameterModificationService = parameterModificationService
 		service.taService = taService
+		service.attachmentManagerService = attachmentManagerService
 	}
 
 	def "should find test case and add a step"() {

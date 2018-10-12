@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.testcase;
 
 import java.util.Optional;
+
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
@@ -61,6 +62,7 @@ import org.squashtest.tm.exception.testautomation.MalformedScriptPathException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
+import org.squashtest.tm.service.attachment.AttachmentManagerService;
 import org.squashtest.tm.service.campaign.IterationTestPlanFinder;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
@@ -145,6 +147,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Inject
 	private IndexationService indexationService;
+
+	@Inject
+	private AttachmentManagerService attachmentManagerService;
 
 
 	/* *************** TestCase section ***************************** */
@@ -309,7 +314,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@Deprecated
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	@PreventConcurrent(entityType=TestCase.class)
+	@PreventConcurrent(entityType = TestCase.class)
 	public void changeTestStepPosition(@Id long testCaseId, long testStepId, int newStepPosition) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		int index = findTestStepInTestCase(testCase, testStepId);
@@ -471,6 +476,18 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		// attach it to the test case
 		TestCase testCase = testCaseDao.findById(testCaseId);
 
+		TestStepVisitor visitor = new TestStepVisitor() {
+			@Override
+			public void visit(ActionTestStep visited) {
+				attachmentManagerService.copyAttachments(visited);
+			}
+
+			@Override
+			public void visit(CallTestStep visited) {
+
+			}
+		};
+
 		for (TestStep original : originals) {
 
 			LOGGER.trace("copying step #{}", original.getId());
@@ -478,6 +495,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			TestStep copyStep = original.createCopy();
 			testStepDao.persist(copyStep);
 			LOGGER.trace("new step #{} created", copyStep.getId());
+			copyStep.accept(visitor);
 
 			LOGGER.trace("adding step");
 			if (position != null && position < testCase.getSteps().size()) {
