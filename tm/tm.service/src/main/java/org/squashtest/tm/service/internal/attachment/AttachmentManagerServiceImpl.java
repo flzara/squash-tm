@@ -226,6 +226,15 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	}
 
 	@Override
+	public void copyAttachments(AttachmentHolder attachmentHolder) {
+		em.flush();
+		AttachmentList attachmentList = attachmentHolder.getAttachmentList();
+		for (Attachment attachment : attachmentList.getAllAttachments()) {
+			copyContent(attachment);
+		}
+	}
+
+	@Override
 	public void cleanContent(List<Long> attachmentListIds) {
 		getAttachmentRepository().deleteContent(attachmentListIds);
 	}
