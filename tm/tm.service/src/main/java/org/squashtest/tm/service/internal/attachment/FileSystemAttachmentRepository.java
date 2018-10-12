@@ -84,6 +84,12 @@ public class FileSystemAttachmentRepository implements AttachmentRepository {
 		Files.delete(Paths.get(path));
 	}
 
+	/**
+	 * This method is responsible for copying content from an original attachment.
+	 * As all copies are done in domain objects in Squash TM, we cannot easily interact with Hibernate session to force flush during copy operation
+	 * So the strategy here is to copy the ID of the original attachment into a transient attribute of the new one and use this id after persist to retrieve and copy original content
+	 * @param copy The copy with it's attachmentToCopyId initialized
+	 */
 	@Override
 	public void copyContent(Attachment copy) {
 		Long sourceId = copy.getAttachmentToCopyId();
