@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.*;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -39,6 +40,7 @@ import org.squashtest.tm.exception.execution.ExecutionWasDeleted;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.annotation.*;
+import org.squashtest.tm.service.attachment.AttachmentManagerService;
 import org.squashtest.tm.service.campaign.CustomIterationModificationService;
 import org.squashtest.tm.service.campaign.CustomTestSuiteModificationService;
 import org.squashtest.tm.service.campaign.IterationStatisticsService;
@@ -136,6 +138,9 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Inject
 	private ScriptedTestCaseExecutionHelper scriptedTestCaseExecutionHelper;
+
+	@Inject
+	private AttachmentManagerService attachmentManagerService;
 
 	@Override
 	@PreventConcurrent(entityType = CampaignLibraryNode.class)
@@ -352,6 +357,13 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		// if we don't persist before we add, add will trigger an update of item.testPlan which fail because execution
 		// has no id yet. this is caused by weird mapping (https://hibernate.onjira.com/browse/HHH-5732)
 		executionDao.save(execution);
+		// we can now copy attachment contents of test case and test step,
+		// witch is a NOOP in database attachment mode (blob copy handled by Hibernate)
+		// but will actually do the blob copy in file system attachment mode
+		attachmentManagerService.copyAttachments(execution);
+		for (ExecutionStep executionStep : execution.getSteps()) {
+			attachmentManagerService.copyAttachments(executionStep);
+		}
 		return execution;
 	}
 
