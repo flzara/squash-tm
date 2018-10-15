@@ -130,7 +130,7 @@ define(['jquery', 'underscore'], function ($, _) {
 			newColour = colourFiller[emptyElementNumber % colourFiller.length];
 			colourArray[emptyElementIndex] = newColour;
 			emptyElementNumber++;
-		} while (colourArray.includes("") || colourArray.includes(null));
+		} while (_.contains(colourArray, "") || _.contains(colourArray, null));
 		return colourArray;
 	}
 

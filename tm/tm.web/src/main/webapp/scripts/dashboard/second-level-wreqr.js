@@ -34,7 +34,7 @@ define(["backbone.wreqr", "workspace.contextual-content"], function (backboneWre
 			var wreqr = squashtm.app.wreqr;
 			wreqr.on("favoriteDashboard.showDefault", function () {
 				// in the case of an interface, we must select the correct tab after reloading the page
-				if (currentUrl.includes("iterations")) {
+				if (_.contains(currentUrl, "iterations")) {
 					squashtm.workspace.shouldShowFavoriteDashboardTab = true;
 				}
 				ctxcontent.unload();
@@ -42,7 +42,7 @@ define(["backbone.wreqr", "workspace.contextual-content"], function (backboneWre
 			});
 
 			wreqr.on("favoriteDashboard.showFavorite", function () {
-				if (currentUrl.includes("iterations")) {
+				if (_.contains(currentUrl, "iterations")) {
 					squashtm.workspace.shouldShowFavoriteDashboardTab = true;
 				}
 				ctxcontent.unload();
