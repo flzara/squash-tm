@@ -18,14 +18,29 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.service.internal.repository
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.querydsl.QuerydslPredicateExecutor;
-import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
+import org.squashtest.it.basespecs.DbunitDaoSpecification
+import org.unitils.dbunit.annotation.DataSet
+import spock.unitils.UnitilsSupport
 
-public interface AutomationRequestDao extends JpaRepository<AutomationRequest, Long>, QuerydslPredicateExecutor<AutomationRequest> {
+import javax.inject.Inject
 
-	AutomationRequest findByTestCaseId(long testCaseId);
+
+@UnitilsSupport
+class AutomationRequestDaoIT extends DbunitDaoSpecification{
+
+
+	@Inject
+	private AutomationRequestDao requestDao;
+
+
+	@DataSet("AutomationRequestDaoIT.sample.xml")
+	def "should retrieve requests with paging, sorting and predicate"(){
+
+
+
+	}
+
 
 }

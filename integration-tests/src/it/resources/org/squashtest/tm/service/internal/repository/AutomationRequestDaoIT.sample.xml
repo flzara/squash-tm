@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.19.0.dtd">
+<dataset>
+
+  <!-- shared attachment lists and issue lists, because we're lazy -->
+
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1000"/>
+  <ISSUE_LIST ISSUE_LIST_ID="-1000"/>
+
+  <!-- a project -->
+
+  <REQUIREMENT_LIBRARY RL_ID="-10" ATTACHMENT_LIST_ID="-1000"/>
+  <TEST_CASE_LIBRARY TCL_ID="-10" ATTACHMENT_LIST_ID="-1000"/>
+  <CAMPAIGN_LIBRARY CL_ID="-10" ATTACHMENT_LIST_ID="-1000"/>
+  <PROJECT PROJECT_ID="-10" NAME="Test Project-1" DESCRIPTION="&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam felis ante,&lt;/p&gt;" LABEL="Lorem ipsum dolor sit amet, " ACTIVE="true" CREATED_BY="admin" CREATED_ON="2011-09-30 10:24:47.0" CL_ID="-10" TCL_ID="-10" RL_ID="-10" ATTACHMENT_LIST_ID="-1000"/>
+
+
+  <!-- users -->
+
+  <CORE_PARTY PARTY_ID="-1L" />
+  <CORE_PARTY PARTY_ID="-2L" />
+  <CORE_PARTY PARTY_ID="-3L" />
+  <CORE_PARTY PARTY_ID="-4L" />
+
+  <CORE_USER PARTY_ID="-1l" LOGIN="Bob"     CREATED_BY="admin" CREATED_ON="2018-10-15"/>
+  <CORE_USER PARTY_ID="-2l" LOGIN="Robert"  CREATED_BY="admin" CREATED_ON="2018-10-15"/>
+  <CORE_USER PARTY_ID="-3l" LOGIN="Mike"    CREATED_BY="admin" CREATED_ON="2018-10-15"/>
+  <CORE_USER PARTY_ID="-4l" LOGIN="Larry"   CREATED_BY="admin" CREATED_ON="2018-10-15"/>
+
+
+  <!-- test cases -->
+
+  <TEST_CASE_LIBRARY_NODE TCLN_ID="-1L" NAME="test-case-1" CREATED_BY="admin" CREATED_ON="2018-10-15" ATTACHMENT_LIST_ID="-1000"/>
+  <TEST_CASE_LIBRARY_NODE TCLN_ID="-2L" NAME="test-case-2" CREATED_BY="admin" CREATED_ON="2018-10-15" ATTACHMENT_LIST_ID="-1000"/>
+  <TEST_CASE_LIBRARY_NODE TCLN_ID="-3L" NAME="test-case-3" CREATED_BY="admin" CREATED_ON="2018-10-15" ATTACHMENT_LIST_ID="-1000"/>
+  <TEST_CASE_LIBRARY_NODE TCLN_ID="-4L" NAME="test-case-4" CREATED_BY="admin" CREATED_ON="2018-10-15" ATTACHMENT_LIST_ID="-1000"/>
+
+  <TEST_CASE TCLN_ID="-1L" VERSION="1" PREREQUISITE="whatever" />
+  <TEST_CASE TCLN_ID="-2L" VERSION="1" PREREQUISITE="whatever" />
+  <TEST_CASE TCLN_ID="-3L" VERSION="1" PREREQUISITE="whatever" />
+  <TEST_CASE TCLN_ID="-4L" VERSION="1" PREREQUISITE="whatever" />
+
+
+  <!-- Requests -->
+
+  <AUTOMATION_REQUEST id="-1L" transmissionDate="2018-10-11" user="-1L" />
+
+
+</dataset>

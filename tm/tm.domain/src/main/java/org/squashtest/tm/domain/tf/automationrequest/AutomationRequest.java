@@ -34,7 +34,7 @@ public class AutomationRequest {
 	@Id
 	@Column(name="AUTOMATION_REQUEST_ID")
 	@GeneratedValue(generator = "automation_request_automation_request_id_seq", strategy = GenerationType.AUTO)
-	@SequenceGenerator(name = "automation_request_automation_request_id_seq", sequenceName = "automation_request_automation_request_id_seq",allocationSize = 1)
+	@SequenceGenerator(name = "automation_request_automation_request_id_seq", sequenceName = "automation_request_automation_request_id_seq", allocationSize = 1)
 	private Long id;
 
 	@NotNull
