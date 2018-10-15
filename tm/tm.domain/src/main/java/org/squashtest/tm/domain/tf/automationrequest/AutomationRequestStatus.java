@@ -21,22 +21,34 @@
 package org.squashtest.tm.domain.tf.automationrequest;
 
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
+import org.squashtest.tm.domain.Level;
 
-public enum AutomationRequestStatus implements Internationalizable {
+public enum AutomationRequestStatus implements Internationalizable, Level {
 
-	VALID,            // The automation request is valid.
-	TO_VALIDATE,      // The automation request is to be validate.
-	TRANSMITTED,      // The automation request is transmitted.
-	WORK_IN_PROGRESS, // The automation enginner is automating the test case.
-	EXECUTABLE,       // The automated test case is executable.
-	CANCELED,         // The automation of test case is canceled.
-	TO_UPDATE,        // The automation of test case to be updated.
-	DELETED;          // The automation request is deleted.
+	TO_VALIDATE(0),      // The automation request is to be validate.
+	VALID(1),            // The automation request is valid.
+	TRANSMITTED(2),      // The automation request is transmitted.
+	WORK_IN_PROGRESS(3), // The automation enginner is automating the test case.
+	EXECUTABLE(4),       // The automated test case is executable.
+	CANCELED(5),         // The automation of test case is canceled.
+	TO_UPDATE(6),        // The automation of test case to be updated.
+	DELETED(7);          // The automation request is deleted.
 
 	private static final String I18N_KEY_ROOT = "automation-request.request_status.";
+
+	private final int level;
+
+	AutomationRequestStatus(int level) {
+		this.level = level;
+	}
 
 	@Override
 	public String getI18nKey() {
 		return I18N_KEY_ROOT + name();
+	}
+
+	@Override
+	public int getLevel() {
+		return level;
 	}
 }
