@@ -47,8 +47,8 @@ public class AutomationRequest {
 	private Date transmissionDate;
 
 	@ManyToOne
-	@JoinColumn(name = "AUTOMATION_USER_ID")
-	private User automationUser;
+	@JoinColumn(name = "ASSIGNED_TO")
+	private User assignedTo;
 
 	@NotNull
 	@Column(name = "AUTOMATION_PRIORITY")
@@ -95,12 +95,12 @@ public class AutomationRequest {
 		this.transmissionDate = transmissionDate;
 	}
 
-	public User getAutomationUser() {
-		return automationUser;
+	public User getAssignedTo() {
+		return assignedTo;
 	}
 
-	public void setAutomationUser(User automationUser) {
-		this.automationUser = automationUser;
+	public void setAssignedTo(User assignedTo) {
+		this.assignedTo = assignedTo;
 	}
 
 	public Integer getAutomationPriority() {

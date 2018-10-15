@@ -276,7 +276,7 @@
         <constraints nullable="false"/>
       </column>
       <column name="TRANSMITTED_ON" type="DATETIME"/>
-      <column name="AUTOMATION_USER_ID" type="BIGINT"/>
+      <column name="ASSIGNED_TO" type="BIGINT"/>
       <column name="AUTOMATION_PRIORITY" type="INT"/>
       <column name="ASSIGNED_ON" type="DATETIME"/>
       <column name="TEST_CASE_ID" type="BIGINT"/>
@@ -284,8 +284,8 @@
       <column name="TRANSMITTED_BY" type="BIGINT"/>
     </createTable>
 
-    <createIndex tableName="AUTOMATION_REQUEST" indexName="automation_request_user_id_idx">
-      <column name="AUTOMATION_USER_ID"/>
+    <createIndex tableName="AUTOMATION_REQUEST" indexName="automation_request_assigned_to_idx">
+      <column name="ASSIGNED_TO"/>
     </createIndex>
 
     <createIndex tableName="AUTOMATION_REQUEST" indexName="automation_request_created_by_idx">
@@ -300,8 +300,8 @@
       <column name="TEST_CASE_ID"/>
     </createIndex>
 
-    <addForeignKeyConstraint baseTableName="AUTOMATION_REQUEST" baseColumnNames="AUTOMATION_USER_ID"
-    constraintName="fk_automation_request_automation_user" referencedColumnNames="PARTY_ID" referencedTableName="CORE_USER" onDelete="SET NULL"/>
+    <addForeignKeyConstraint baseTableName="AUTOMATION_REQUEST" baseColumnNames="ASSIGNED_TO"
+    constraintName="fk_automation_request_automation_assigned_to" referencedColumnNames="PARTY_ID" referencedTableName="CORE_USER" onDelete="SET NULL"/>
 
     <addForeignKeyConstraint baseTableName="AUTOMATION_REQUEST" baseColumnNames="TRANSMITTED_BY"
                              constraintName="fk_automation_request_transmitted_by" referencedColumnNames="PARTY_ID" referencedTableName="CORE_USER" onDelete="SET NULL"/>
