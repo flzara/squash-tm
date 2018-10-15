@@ -25,9 +25,9 @@ import org.squashtest.tm.domain.Level;
 
 public enum TestCaseAutomatable implements Internationalizable, Level {
 
-	Y(1), // The test case is automatisable
-	N(2), // The test case isn't automatisable
-	M(3); // The test case can be automatisable
+	Y(1), // The test case is automatable
+	N(2), // The test case isn't automatable
+	M(3); // The test case can be automatable
 
 	private static final String I18N_KEY_ROOT = "test-case.automatisable.";
 
