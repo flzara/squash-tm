@@ -188,11 +188,11 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@NotNull
 	private TestCaseKind kind = STANDARD;
 
-	@OneToOne(mappedBy = "testCase", optional = true)
+	@OneToOne(mappedBy = "testCase", optional = true, fetch = LAZY, cascade = CascadeType.ALL)
 	private AutomationRequest automationRequest;
 
 	@Enumerated(EnumType.STRING)
-	private TestCaseAutomatisable automatisable;
+	private TestCaseAutomatable automatable;
 
 
 	// *************************** CODE *************************************
@@ -925,12 +925,12 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		this.automationRequest = automationRequest;
 	}
 
-	public TestCaseAutomatisable getAutomatisable() {
-		return automatisable;
+	public TestCaseAutomatable getAutomatable() {
+		return automatable;
 	}
 
-	public void setAutomatisable(TestCaseAutomatisable automatisable) {
-		this.automatisable = automatisable;
+	public void setAutomatable(TestCaseAutomatable automatable) {
+		this.automatable = automatable;
 	}
 }
 

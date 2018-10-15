@@ -24,15 +24,14 @@ import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 
 public enum AutomationRequestStatus implements Internationalizable {
 
-	VALID,
-	TO_VALIDATE,
-	TRANSMITTED,
-	WORK_IN_PROGRESS,
-	EXECUTABLE,
-	CANCELED,
-	SUSPENDED,
-	TO_UPDATE,
-	DELETED;
+	VALID,            // The automation request is valid.
+	TO_VALIDATE,      // The automation request is to be validate.
+	TRANSMITTED,      // The automation request is transmitted.
+	WORK_IN_PROGRESS, // The automation enginner is automating the test case.
+	EXECUTABLE,       // The automated test case is executable.
+	CANCELED,         // The automation of test case is canceled.
+	TO_UPDATE,        // The automation of test case to be updated.
+	DELETED;          // The automation request is deleted.
 
 	private static final String I18N_KEY_ROOT = "automation-request.request_status.";
 

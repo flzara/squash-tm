@@ -42,27 +42,34 @@ public class AutomationRequest {
 	@Column(name = "REQUEST_STATUS")
 	private AutomationRequestStatus requestStatus = AutomationRequestStatus.TO_VALIDATE;
 
-	@Column(name = "TRANSMISSION_DATE")
+	@Column(name = "TRANSMITTED_ON")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date transmissionDate;
 
-	@OneToOne
-	@JoinColumn(name = "USER_ID")
-	private User user;
+	@ManyToOne
+	@JoinColumn(name = "AUTOMATION_USER_ID")
+	private User automationUser;
 
 	@NotNull
 	@Column(name = "AUTOMATION_PRIORITY")
-	@Enumerated(EnumType.STRING)
-	private AutomationRequestPriority automationPriority = AutomationRequestPriority.LOW;
+	private Integer automationPriority;
 
-	@Column(name = "AUTOMATION_FINALE_DATE")
+	@Column(name = "ASSIGNED_ON")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date automationFinaleDate;
+	private Date assigmentDate;
 
 	@NotNull
 	@OneToOne(optional = false)
 	@JoinColumn(name="TEST_CASE_ID")
 	private TestCase testCase;
+
+	@ManyToOne
+	@JoinColumn(name = "CREATED_BY")
+	private User createdBy;
+
+	@ManyToOne
+	@JoinColumn(name = "TRANSMITTED_BY")
+	private User transmittedBy;
 
 	public Long getId() {
 		return id;
@@ -88,19 +95,19 @@ public class AutomationRequest {
 		this.transmissionDate = transmissionDate;
 	}
 
-	public User getUser() {
-		return user;
+	public User getAutomationUser() {
+		return automationUser;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setAutomationUser(User automationUser) {
+		this.automationUser = automationUser;
 	}
 
-	public AutomationRequestPriority getAutomationPriority() {
+	public Integer getAutomationPriority() {
 		return automationPriority;
 	}
 
-	public void setAutomationPriority(AutomationRequestPriority automationPriority) {
+	public void setAutomationPriority(Integer automationPriority) {
 		this.automationPriority = automationPriority;
 	}
 
@@ -112,11 +119,29 @@ public class AutomationRequest {
 		this.testCase = testCase;
 	}
 
-	public Date getAutomationFinaleDate() {
-		return automationFinaleDate;
+
+
+	public Date getAssigmentDate() {
+		return assigmentDate;
 	}
 
-	public void setAutomationFinaleDate(Date automationFinaleDate) {
-		this.automationFinaleDate = automationFinaleDate;
+	public void setAssigmentDate(Date assigmentDate) {
+		this.assigmentDate = assigmentDate;
+	}
+
+	public User getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(User createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public User getTransmittedBy() {
+		return transmittedBy;
+	}
+
+	public void setTransmittedBy(User transmittedBy) {
+		this.transmittedBy = transmittedBy;
 	}
 }

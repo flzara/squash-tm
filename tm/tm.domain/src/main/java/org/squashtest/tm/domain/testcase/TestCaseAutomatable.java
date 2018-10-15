@@ -23,15 +23,17 @@ package org.squashtest.tm.domain.testcase;
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 import org.squashtest.tm.domain.Level;
 
-public enum TestCaseAutomatisable implements Internationalizable, Level {
+public enum TestCaseAutomatable implements Internationalizable, Level {
 
-	Y(1), N(2), M(3);
+	Y(1), // The test case is automatisable
+	N(2), // The test case isn't automatisable
+	M(3); // The test case can be automatisable
 
 	private static final String I18N_KEY_ROOT = "test-case.automatisable.";
 
 	private final int level;
 
-	private TestCaseAutomatisable(int value) {
+	private TestCaseAutomatable(int value) {
 		this.level = value;
 	}
 
@@ -40,7 +42,7 @@ public enum TestCaseAutomatisable implements Internationalizable, Level {
 		return I18N_KEY_ROOT + name();
 	}
 
-	public static TestCaseAutomatisable defaultValue() {
+	public static TestCaseAutomatable defaultValue() {
 		return N;
 	}
 

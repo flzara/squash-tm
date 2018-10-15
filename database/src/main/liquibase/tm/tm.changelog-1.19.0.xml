@@ -275,33 +275,45 @@
       <column name="REQUEST_STATUS" type="VARCHAR(50)">
         <constraints nullable="false"/>
       </column>
-      <column name="TRANSMISSION_DATE" type="DATETIME"/>
-      <column name="USER_ID" type="BIGINT"/>
-      <column name="AUTOMATION_PRIORITY" type="VARCHAR(20)" defaultValue="LOW">
-        <constraints nullable="false"/>
-      </column>
-      <column name="AUTOMATION_FINALE_DATE" type="DATETIME"/>
-      <column name="TEST_CASE_ID" type="BIGINT">
-        <constraints nullable="false"/>
-      </column>
+      <column name="TRANSMITTED_ON" type="DATETIME"/>
+      <column name="AUTOMATION_USER_ID" type="BIGINT"/>
+      <column name="AUTOMATION_PRIORITY" type="INT"/>
+      <column name="ASSIGNED_ON" type="DATETIME"/>
+      <column name="TEST_CASE_ID" type="BIGINT"/>
+      <column name="CREATED_BY" type="BIGINT"/>
+      <column name="TRANSMITTED_BY" type="BIGINT"/>
     </createTable>
 
     <createIndex tableName="AUTOMATION_REQUEST" indexName="automation_request_user_id_idx">
-      <column name="USER_ID"/>
+      <column name="AUTOMATION_USER_ID"/>
+    </createIndex>
+
+    <createIndex tableName="AUTOMATION_REQUEST" indexName="automation_request_created_by_idx">
+      <column name="CREATED_BY"/>
+    </createIndex>
+
+    <createIndex tableName="AUTOMATION_REQUEST" indexName="automation_request_transmitted_by_idx">
+      <column name="TRANSMITTED_BY"/>
     </createIndex>
 
     <createIndex tableName="AUTOMATION_REQUEST" indexName="automation_request_test_case_id_idx">
       <column name="TEST_CASE_ID"/>
     </createIndex>
 
-    <addForeignKeyConstraint baseTableName="AUTOMATION_REQUEST" baseColumnNames="USER_ID"
-    constraintName="fk_automation_request_user" referencedColumnNames="PARTY_ID" referencedTableName="CORE_USER"/>
+    <addForeignKeyConstraint baseTableName="AUTOMATION_REQUEST" baseColumnNames="AUTOMATION_USER_ID"
+    constraintName="fk_automation_request_automation_user" referencedColumnNames="PARTY_ID" referencedTableName="CORE_USER" onDelete="SET NULL"/>
+
+    <addForeignKeyConstraint baseTableName="AUTOMATION_REQUEST" baseColumnNames="TRANSMITTED_BY"
+                             constraintName="fk_automation_request_transmitted_by" referencedColumnNames="PARTY_ID" referencedTableName="CORE_USER" onDelete="SET NULL"/>
+
+    <addForeignKeyConstraint baseTableName="AUTOMATION_REQUEST" baseColumnNames="CREATED_BY"
+                             constraintName="fk_automation_request_created_by" referencedColumnNames="PARTY_ID" referencedTableName="CORE_USER" onDelete="SET NULL"/>
 
     <addForeignKeyConstraint baseTableName="AUTOMATION_REQUEST" baseColumnNames="TEST_CASE_ID"
-                             constraintName="fk_automation_request_test_case" referencedColumnNames="TCLN_ID" referencedTableName="TEST_CASE"/>
+                             constraintName="fk_automation_request_test_case" referencedColumnNames="TCLN_ID" referencedTableName="TEST_CASE" onDelete="SET NULL"/>
 
     <addColumn tableName="TEST_CASE">
-      <column name="AUTOMATISABLE" type="CHAR" defaultValue="N" remarks="Y: Yes, N: No, M: Maybe"/>
+      <column name="AUTOMATABLE" type="CHAR" defaultValue="N" remarks="Y: Yes, N: No, M: Maybe"/>
     </addColumn>
 
   </changeSet>
