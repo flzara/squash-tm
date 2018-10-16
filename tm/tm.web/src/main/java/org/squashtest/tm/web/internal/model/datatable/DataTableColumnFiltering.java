@@ -22,8 +22,10 @@ package org.squashtest.tm.web.internal.model.datatable;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
@@ -47,14 +49,18 @@ public class DataTableColumnFiltering implements ColumnFiltering {
 	}
 
 	@Override
+	public List<String> getFilteredAttributes() {
+
+		List<String> attributes = params.getsSearches().values().stream()
+										.filter(s -> !StringUtils.isBlank(s))
+										.collect(Collectors.toList());
+
+		return attributes;
+	}
+
+	@Override
 	public boolean isDefined() {
-		Collection<String> values = params.getsSearches().values();
-		for (String value : values) {
-			if (!StringUtils.isBlank(value)) {
-				return true;
-			}
-		}
-		return false;
+		return ! getFilteredAttributes().isEmpty();
 	}
 
 	@Override

@@ -19,6 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.core.foundation.collection;
+
+import java.util.List;
+
 /**
  * Interface for column-filtering instructions.
  * Because filtering requires significantly more processing, services and dao using it should first check {@link #isDefined()} first before triggering the additional
@@ -34,6 +37,12 @@ public interface ColumnFiltering {
 	 * @return true if any filtering is required.
 	 */
 	boolean isDefined();
+
+	/**
+	 *
+	 * @return the list of names of the filtered attributes
+	 */
+	List<String> getFilteredAttributes();
 
 	/**
 	 *

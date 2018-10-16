@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.tf.automationrequest;
 
+import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
 
@@ -29,7 +30,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "AUTOMATION_REQUEST")
-public class AutomationRequest {
+public class AutomationRequest implements Identified {
 
 	@Id
 	@Column(name="AUTOMATION_REQUEST_ID")

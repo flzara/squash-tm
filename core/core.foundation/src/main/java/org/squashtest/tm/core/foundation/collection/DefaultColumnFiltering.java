@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.core.foundation.collection;
 
+import java.util.Collections;
+import java.util.List;
+
 public final class DefaultColumnFiltering implements ColumnFiltering{
 
 	public static final DefaultColumnFiltering NO_FILTERING = new DefaultColumnFiltering();
@@ -31,6 +34,11 @@ public final class DefaultColumnFiltering implements ColumnFiltering{
 	@Override
 	public boolean isDefined() {
 		return false;
+	}
+
+	@Override
+	public List<String> getFilteredAttributes() {
+		return Collections.emptyList();
 	}
 
 	@Override

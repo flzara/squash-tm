@@ -20,11 +20,21 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 
-public interface AutomationRequestDao extends JpaRepository<AutomationRequest, Long>, CustomAutomationRequestDao {
+public interface CustomAutomationRequestDao {
 
-	AutomationRequest findByTestCaseId(long testCaseId);
+
+	/**
+	 * Will retrieve a list of automated
+	 *
+	 * @param pageable
+	 * @param filtering
+	 * @return
+	 */
+	Page<AutomationRequest> findAll(Pageable pageable, ColumnFiltering filtering);
 
 }
