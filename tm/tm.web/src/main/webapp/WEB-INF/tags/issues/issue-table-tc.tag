@@ -33,7 +33,7 @@
 <%@ attribute name="dataUrl" required="true" description="where the table will fetch its data" %>
 <%@ attribute name="tableEntries" required="false" type="java.lang.Object" description="if set, must be valid aaData for datatables. Will then defer the ajax loading of the table." %>
 
-<c:url var="executionUrl" value="/executions/"/>
+<c:url var="executionUrl" value="/executions"/>
 <c:url var="tableLanguageUrl" value="/datatables/messages" />
 <%--
 	columns are :
