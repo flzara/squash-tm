@@ -341,9 +341,6 @@ public class TestCaseLibraryNavigationServiceImpl
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary' , 'CREATE' )"
-		+ OR_HAS_ROLE_ADMIN)
-	@PreventConcurrent(entityType = TestCaseLibrary.class)
 	public void addFromReqTestCaseToLibrary(@Id long libraryId, TestCase testCase, RequirementVersion verison, Integer position) {
 		TestCaseLibrary library = testCaseLibraryDao.findById(libraryId);
 
@@ -358,7 +355,8 @@ public class TestCaseLibraryNavigationServiceImpl
 
 			replaceInfoListReferences(testCase);
 			testCaseDao.safePersist(testCase);
-			createCustomFieldValuesForTestCase(testCase);
+			// Issue 7714 - unicity constrainst violation due to double save
+			//createCustomFieldValuesForTestCase(testCase);
 			List<Long> milestones = new ArrayList<>();
 			milestoneService.findAssociableMilestonesToRequirementVersion(verison.getId()).forEach((e) -> milestones.add(e.getId()));
 			milestoneService.bindTestCaseToMilestones(testCase.getId(),milestones );
@@ -366,9 +364,6 @@ public class TestCaseLibraryNavigationServiceImpl
 	}
 
 
-	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary' , 'CREATE' )"
-		+ OR_HAS_ROLE_ADMIN)
-	@PreventConcurrent(entityType = TestCaseLibrary.class)
 	public void addFromReqFolderToLibrary(@Id long destinationId, TestCaseFolder newFolder) {
 
 		TestCaseLibrary container = getLibraryDao().findById(destinationId);
@@ -382,9 +377,9 @@ public class TestCaseLibraryNavigationServiceImpl
 
 		getFolderDao().persist(newFolder);
 
-		new CustomFieldValuesFixer().fix(newFolder);
+		//new CustomFieldValuesFixer().fix(newFolder);
 
-		generateCustomField(newFolder);
+		//generateCustomField(newFolder);
 	}
 
 	void resolveNameConflict(List<String> target, TestCaseLibraryNode node, int i) {
@@ -438,9 +433,6 @@ public class TestCaseLibraryNavigationServiceImpl
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.testcase.TestCaseFolder' , 'CREATE') "
-		+ OR_HAS_ROLE_ADMIN)
-	@PreventConcurrent(entityType = TestCaseLibraryNode.class)
 	public void addFromReqTestCaseToFolder(@Id long folderId, TestCase testCase, RequirementVersion version, Integer position) {
 		TestCaseFolder folder = testCaseFolderDao.findById(folderId);
 		if (!folder.isContentNameAvailable(testCase.getName())) {
@@ -454,7 +446,7 @@ public class TestCaseLibraryNavigationServiceImpl
 			}
 			replaceInfoListReferences(testCase);
 			testCaseDao.safePersist(testCase);
-			createCustomFieldValuesForTestCase(testCase);
+			//createCustomFieldValuesForTestCase(testCase);
 			List<Long> milestones = new ArrayList<>();
 			milestoneService.findAssociableMilestonesToRequirementVersion(version.getId()).forEach((e) -> milestones.add(e.getId()));
 			verifiedRequirementsManagerService.addVerifiedRequirementVersionsToTestCaseFromReq(version,testCase);
@@ -474,9 +466,6 @@ public class TestCaseLibraryNavigationServiceImpl
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.testcase.TestCaseFolder' , 'CREATE' )"
-		+ OR_HAS_ROLE_ADMIN)
-	@PreventConcurrent(entityType = TestCaseLibraryNode.class)
 	public void addReqFolderToTcFolder(@Id long destinationId, TestCaseFolder newFolder) {
 		TestCaseFolder container = getFolderDao().findById(destinationId);
 		if(container.getContentNames().contains(newFolder.getName())){
@@ -490,8 +479,8 @@ public class TestCaseLibraryNavigationServiceImpl
 
 		getFolderDao().persist(newFolder);
 
-		new CustomFieldValuesFixer().fix(newFolder);
-		generateCustomField(newFolder);
+		//new CustomFieldValuesFixer().fix(newFolder);
+		//generateCustomField(newFolder);
 	}
 
 	@Override

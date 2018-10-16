@@ -20,19 +20,9 @@
  */
 package org.squashtest.tm.service.internal.library;
 
-import java.util.*;
-
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.hibernate.Session;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.Search;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.TreeNode;
 import org.squashtest.tm.domain.project.GenericLibrary;
@@ -48,8 +38,13 @@ import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.annotation.CacheScope;
 import org.squashtest.tm.service.internal.repository.EntityDao;
-import org.squashtest.tm.service.internal.testcase.CustomTestStepModificationServiceImpl;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.*;
 
 /**
  * Careful : As of Squash TM 1.5.0 this object becomes stateful, in layman words you need one instance per operation. <br/>
@@ -87,7 +82,6 @@ import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
  * @Scope("prototype")
  */
 public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends TreeNode> {
-	private static final Logger LOGGER = LoggerFactory.getLogger(PasteStrategy.class);
 	private static final Integer WHATEVER_POSITION = null;
 
 	// **************** collaborators **************************
@@ -142,12 +136,12 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	public void setNextLayerFeederOperationFactory(Provider<NextLayerFeeder> nextLayerFeederOperationFactory) {
 		this.nextLayerFeederOperationFactory = nextLayerFeederOperationFactory;
 	}
-	
-	
-	
+
+
+
 	// ******************* code *****************************
 
-	
+
 	@CacheScope
 	public List<NODE> pasteNodes(long containerId, List<Long> list) {
 		return internalPasteNodes(containerId, list, WHATEVER_POSITION);
@@ -304,12 +298,10 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	}
 
 	private NODE transform(NODE srcNode,NodeContainer<TreeNode> destination){
-		LOGGER.debug("Paste");
 		isReqMother = false;
 		RequirementLibraryNode reqNode = em.find(RequirementLibraryNode.class,srcNode.getId());
 		if(reqNode.getClass()== Requirement.class) {
 			Requirement req = (Requirement) reqNode;
-			LOGGER.debug("Importance de l'exigence {} ", req.getCriticality().getCode());
 			TestCase newTestCase = new TestCase();
 			newTestCase.setImportanceAuto(true);
 			newTestCase.setImportance(deduceImportanceFromRequirementCriticality(req.getCriticality()));
