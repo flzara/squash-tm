@@ -20,36 +20,39 @@
  */
 package org.squashtest.tm.core.foundation.collection;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-/**
- * Interface for column-filtering instructions.
- * Because filtering requires significantly more processing, services and dao using it should first check {@link #isDefined()} first before triggering the additional
- * filtering mechanisms.
- *
- *
- * @author flaurens
- *
- */
-public interface ColumnFiltering {
+public class SimpleColumnFiltering implements ColumnFiltering {
 
-	/**
-	 * @return true if any filtering is required.
-	 */
-	boolean isDefined();
+	private Map<String, String> filters = new HashMap<>();
 
-	/**
-	 *
-	 * @return the list of names of the filtered attributes
-	 */
-	List<String> getFilteredAttributes();
+	@Override
+	public boolean isDefined() {
+		return ! filters.keySet().isEmpty();
+	}
+
+	@Override
+	public List<String> getFilteredAttributes() {
+		return new ArrayList<>(filters.keySet());
+	}
+
+	public SimpleColumnFiltering addFilter(String property, String value){
+		filters.put(property, value);
+		return this;
+	}
 
 
-	String getFilter(String mDataProp);
+	@Override
+	public String getFilter(String mDataProp) {
+		return filters.get(mDataProp);
+	}
 
-	boolean hasFilter(String mDataProp);
-
-
+	@Override
+	public boolean hasFilter(String mDataProp) {
+		return filters.get(mDataProp) != null;
+	}
 
 }
-

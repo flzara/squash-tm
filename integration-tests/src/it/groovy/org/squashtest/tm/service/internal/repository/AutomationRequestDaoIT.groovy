@@ -20,28 +20,17 @@
  */
 package org.squashtest.tm.service.internal.repository
 
-import com.querydsl.core.types.Expression
-import com.querydsl.core.types.Order
-import com.querydsl.core.types.OrderSpecifier
-import com.querydsl.core.types.Predicate
-import com.querydsl.core.types.dsl.CaseBuilder
-import com.querydsl.core.types.dsl.ComparableOperation
-import com.querydsl.core.types.dsl.EnumPath
-import com.querydsl.core.types.dsl.Expressions
-import com.querydsl.core.types.dsl.PathBuilder
+
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
-import org.springframework.data.querydsl.QSort
-import org.springframework.data.querydsl.binding.QuerydslPredicateBuilder
 import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering
 import org.squashtest.tm.core.foundation.collection.DefaultColumnFiltering
-import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
+import org.squashtest.tm.core.foundation.collection.SimpleColumnFiltering
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus
-import org.squashtest.tm.domain.tf.automationrequest.QAutomationRequest
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 
@@ -74,7 +63,9 @@ class AutomationRequestDaoIT extends DbunitDaoSpecification{
 	}
 
 
-	// ********************* paging, sorting and filtering *************************
+	// ****************************** paging *****************************************
+
+
 
 
 	/*
@@ -102,9 +93,9 @@ class AutomationRequestDaoIT extends DbunitDaoSpecification{
 
 
 	@DataSet("AutomationRequestDaoIT.sample.xml")
-	def "should find sorted, paged with a defined yet empty filter"(){
+	def "should find that the specified paging will partition the total in two pages (no sort, no filter)"(){
 		given :
-		Pageable pageable = PageRequest.of(1, 2, Sort.Direction.ASC, "transmissionDate")
+		Pageable pageable = PageRequest.of(1, 2, Sort.unsorted())
 
 		and :
 		ColumnFiltering filter = new DefaultColumnFiltering();
@@ -116,63 +107,157 @@ class AutomationRequestDaoIT extends DbunitDaoSpecification{
 		page.totalElements == 4
 		page.totalPages == 2
 
-		page.content.collect {it.id } == [-4L, -3L]
-
 	}
 
-/*
-	@DataSet("AutomationRequestDaoIT.sample.xml")
-	def "should sort by workflow"(){
-
-		given :
-		QAutomationRequest qAutomationRequest = QAutomationRequest.automationRequest;
-		EnumPath<AutomationRequestStatus> status = qAutomationRequest.requestStatus
-
-		ComparableOperation<Integer> workflow = new CaseBuilder().when(status.eq(AutomationRequestStatus.VALID)).then(1)
-																.when(status.eq(AutomationRequestStatus.TRANSMITTED)).then(2)
-																.when(status.eq(AutomationRequestStatus.WORK_IN_PROGRESS)).then(3)
-																.otherwise(4)
-
-		ExtendedHibernateQuery<AutomationRequest> query = new ExtendedHibernateQuery<>(getSession())
-																.from(qAutomationRequest)
-																.orderBy(workflow.asc())
-
-		when :
-
-		def requests = query.fetch()
-
-		then :
-		requests.collect { it.id } == [-4L, -2L, -1L, -3L]
-	}
-
+	// ************************ sorting ******************************
 
 	@DataSet("AutomationRequestDaoIT.sample.xml")
-	def "should sort by workflow again"(){
-
+	def "should find sorted by transmissionDate (ie with trivial comparison semantics)"(){
 		given :
+		Pageable pageable = PageRequest.of(0, 4, Sort.Direction.ASC, "transmissionDate")
 
-		QAutomationRequest qAutomationRequest = QAutomationRequest.automationRequest;
-		EnumPath<AutomationRequestStatus> status = qAutomationRequest.requestStatus
-
-		ComparableOperation<Integer> workflow = new CaseBuilder().when(status.eq(AutomationRequestStatus.VALID)).then(1)
-			.when(status.eq(AutomationRequestStatus.TRANSMITTED)).then(2)
-			.when(status.eq(AutomationRequestStatus.WORK_IN_PROGRESS)).then(3)
-			.otherwise(4)
-
-		and:
-		QSort sort = new QSort(workflow.asc())
-
-		Pageable pageable = PageRequest.of(0, 10, sort)
+		and :
+		ColumnFiltering filter = new DefaultColumnFiltering();
 
 		when :
-		Page<AutomationRequest> page = requestDao.findAll(pageable)
+		Page<AutomationRequest> page = requestDao.findAll(pageable, filter)
 
 		then :
-		page.totalElements == 4
-		page.totalPages == 1
 
-		page.content.collect { it.id } == [-4L, -2L, -1L, -3L]
+		page.content.collect {it.id } == [-2L, -1L, -4L, -3L]
+
 	}
-*/
+
+	@DataSet("AutomationRequestDaoIT.sample.xml")
+	def "should find sorted by workflow status (ie with trivial comparison semantics), paged with a defined yet empty filter"(){
+		given :
+		Pageable pageable = PageRequest.of(0, 10, Sort.Direction.ASC, "requestStatus")
+
+		and :
+		ColumnFiltering filter = new DefaultColumnFiltering();
+
+		when :
+		Page<AutomationRequest> page = requestDao.findAll(pageable, filter)
+
+		then :
+
+		page.content.collect {it.id } == [-4L, -2L, -1L, -3L]
+
+	}
+
+	@DataSet("AutomationRequestDaoIT.sample.xml")
+	def "should find sorted by assignee login (ie on attribute of a joined entity)"(){
+		given :
+		// we also sort by request id to ensure the order of the result
+		Pageable pageable = PageRequest.of(0, 10, Sort.Direction.ASC, "assignedTo.login", "id")
+
+		and :
+		ColumnFiltering filter = new DefaultColumnFiltering();
+
+		when :
+		Page<AutomationRequest> page = requestDao.findAll(pageable, filter)
+
+		then :
+
+		page.content.collect {it.id } == [-4L, -3L, -1L, -2L]
+
+	}
+
+
+	@DataSet("AutomationRequestDaoIT.sample.xml")
+	def "should find sorted by project name (ie on attribute of a far joined entity)"(){
+		given :
+		// we also sort by request id to ensure the order of the result
+		Pageable pageable = PageRequest.of(0, 10, Sort.Direction.ASC, "testCase.project.name", "id")
+
+		and :
+		ColumnFiltering filter = new DefaultColumnFiltering();
+
+		when :
+		Page<AutomationRequest> page = requestDao.findAll(pageable, filter)
+
+		then :
+
+		page.content.collect {it.id } == [-3L, -2L, -4L, -1L]
+
+	}
+
+
+	// ************************* filtering *********************************
+
+	@DataSet("AutomationRequestDaoIT.sample.xml")
+	def "should filter by assignee name (ie with like)"(){
+		given :
+		Pageable pageable = PageRequest.of(0, 10, Sort.unsorted())
+
+		and :
+		ColumnFiltering filter = new SimpleColumnFiltering()
+									.addFilter("assignedTo.login", "L")
+
+		when :
+		Page<AutomationRequest> page = requestDao.findAll(pageable, filter)
+
+		then :
+		page.totalElements == 2
+		page.content.collect {it.id } as Set == [-1L, -2L] as Set
+	}
+
+
+	@DataSet("AutomationRequestDaoIT.sample.xml")
+	def "should filter by request status (ie with enum equality)"(){
+		given :
+		Pageable pageable = PageRequest.of(0, 10, Sort.unsorted())
+
+		and :
+		ColumnFiltering filter = new SimpleColumnFiltering()
+			.addFilter("requestStatus", "VALID")
+
+		when :
+		Page<AutomationRequest> page = requestDao.findAll(pageable, filter)
+
+		then :
+		page.totalElements == 1
+		page.content.collect {it.id } as Set == [-4L] as Set
+	}
+
+
+	@DataSet("AutomationRequestDaoIT.sample.xml")
+	def "should filter by priority (ie with integer equality)"(){
+		given :
+		Pageable pageable = PageRequest.of(0, 10, Sort.unsorted())
+
+		and :
+		ColumnFiltering filter = new SimpleColumnFiltering()
+			.addFilter("automationPriority", "1000")
+
+		when :
+		Page<AutomationRequest> page = requestDao.findAll(pageable, filter)
+
+		then :
+		page.totalElements == 1
+		page.content.collect {it.id } as Set == [-4L] as Set
+	}
+
+
+	@DataSet("AutomationRequestDaoIT.sample.xml")
+	def "should filter by transmissionDate (between dates)"(){
+		given :
+		Pageable pageable = PageRequest.of(0, 10, Sort.unsorted())
+
+		and :
+		ColumnFiltering filter = new SimpleColumnFiltering()
+			.addFilter("transmissionDate", "2018-10-11 - 2018-10-13")
+
+		when :
+		Page<AutomationRequest> page = requestDao.findAll(pageable, filter)
+
+		then :
+		page.totalElements == 3
+		page.content.collect {it.id } as Set == [-4L, -2L, -1L] as Set
+	}
+
+
+
+
 
 }

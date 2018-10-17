@@ -63,36 +63,26 @@ public class DataTableColumnFiltering implements ColumnFiltering {
 		return ! getFilteredAttributes().isEmpty();
 	}
 
-	@Override
-	public String getFilter(Integer index) {
-		return params.getsSearches(index);
-	}
-
-	@Override
-	public boolean hasFilter(Integer index) {
-		return !StringUtils.isBlank(getFilter(index));
-	}
 
 	@Override
 	public String getFilter(String mDataProp) {
-		return getFilter(this.dataProps.get(mDataProp));
+		Integer index = indexOf(mDataProp);
+		return params.getsSearches(index);
 	}
+
 
 	@Override
 	public boolean hasFilter(String mDataProp) {
 		if (this.dataProps.containsKey(mDataProp)) {
-			return hasFilter(this.dataProps.get(mDataProp));
+			String filter = getFilter(mDataProp);
+			return ! StringUtils.isBlank(filter);
 		} else {
 			return false;
 		}
 	}
 
-	@Override
-	/**
-	 * @deprecated does not seem to be used any longer
-	 */
-	@Deprecated
-	public String getFilter(String mDataProp, int offset) {
-		return getFilter(this.dataProps.get(mDataProp) + offset);
+	private Integer indexOf(String prop){
+		return dataProps.get(prop);
 	}
+
 }

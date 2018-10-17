@@ -57,7 +57,7 @@ public class AutomationRequest implements Identified {
 
 	@Column(name = "ASSIGNED_ON")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date assigmentDate;
+	private Date assignmentDate;
 
 	@NotNull
 	@OneToOne(optional = false)
@@ -122,12 +122,12 @@ public class AutomationRequest implements Identified {
 
 
 
-	public Date getAssigmentDate() {
-		return assigmentDate;
+	public Date getAssignmentDate() {
+		return assignmentDate;
 	}
 
-	public void setAssigmentDate(Date assigmentDate) {
-		this.assigmentDate = assigmentDate;
+	public void setAssignmentDate(Date assignmentDate) {
+		this.assignmentDate = assignmentDate;
 	}
 
 	public User getCreatedBy() {

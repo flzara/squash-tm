@@ -41,15 +41,6 @@ public final class DefaultColumnFiltering implements ColumnFiltering{
 		return Collections.emptyList();
 	}
 
-	@Override
-	public String getFilter(Integer index) {
-		return "";
-	}
-
-	@Override
-	public boolean hasFilter(Integer index) {
-		return false;
-	}
 
 	@Override
 	public String getFilter(String mDataProp) {
@@ -59,10 +50,5 @@ public final class DefaultColumnFiltering implements ColumnFiltering{
 	@Override
 	public boolean hasFilter(String mDataProp) {
 		return false;
-	}
-
-	@Override
-	public String getFilter(String mDataProp, int offset) {
-		return "";
 	}
 }

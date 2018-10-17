@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 
 
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.hibernate.HibernateQuery;
 import org.hibernate.Session;
 import org.slf4j.Logger;
@@ -36,10 +37,11 @@ import org.squashtest.tm.domain.jpql.ExtendedHibernateQueryFactory;
 import org.squashtest.tm.domain.project.QProject;
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.domain.tf.automationrequest.QAutomationRequest;
 import org.squashtest.tm.domain.users.QUser;
 import org.squashtest.tm.service.internal.repository.CustomAutomationRequestDao;
-import static org.squashtest.tm.service.internal.spring.SpringPagingToQueryDsl.*;
+import static org.squashtest.tm.service.internal.api.repository.PagingToQueryDsl.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -93,13 +95,14 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 		fetchRequest.offset(pageable.getOffset()).limit(pageable.getPageSize());
 
 		// apply sorting
-		OrderSpecifier<?>[] orderSpecifiers = sortFor(AutomationRequest.class)
-												  .from(pageable.getSort())
-												  .build();
+		OrderSpecifier<?>[] orderSpecifiers = toQueryDslSorting(pageable.getSort());
 
 		fetchRequest.orderBy(orderSpecifiers);
 
-		// TODO : apply filter
+		// apply filter
+		Predicate predicate = toQueryDslPredicate(filtering);
+
+		fetchRequest.where(predicate);
 
 		// fetch
 		List<AutomationRequest> requests = fetchRequest.fetch();
@@ -113,17 +116,47 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 
 	}
 
+	private Predicate toQueryDslPredicate(ColumnFiltering filtering) {
+		return filteringFor(AutomationRequest.class)
+				   .from(filtering)
+				   		.comparing(
+				   			"transmissionDate",
+							"assignmentDate",
+							"transmittedBy")
+				   		.withBetweenDates()
+				   		.comparing(
+				   			"assignedTo.login",
+							"createdBy.login",
+							"transmittedBy.login",
+							"testCase.reference",
+							"testCase.name",
+							"testCase.project.name")
+				   		.withLike()
+				   .build();
+	}
+
+	private OrderSpecifier<?>[] toQueryDslSorting(Sort sort) {
+		return sortFor(AutomationRequest.class)
+			  .from(sort)
+				.knowingThat("requestStatus")
+				.hasClass(AutomationRequestStatus.class)
+			  .build();
+	}
+
 	private long countRequests(ColumnFiltering filtering){
 
 		LOGGER.trace("counting all automation requests, filter by : {}", filtering.getFilteredAttributes());
 
 		// create base query
-		HibernateQuery<AutomationRequest> fetchRequest = createFindAllBaseQuery();
+		HibernateQuery<AutomationRequest> countRequest = createFindAllBaseQuery();
 
-		// TODO : apply filter
+		// apply filter
+		Predicate predicate = toQueryDslPredicate(filtering);
+
+		countRequest.where(predicate);
 
 		// counting
-		long count = fetchRequest.fetchCount();
+		long count = countRequest.fetchCount();
 
 		return count;
 	}
