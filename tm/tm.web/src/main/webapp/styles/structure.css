@@ -642,11 +642,11 @@ html.execute-html body.ieo-body {
 }
 
 .navigation-automation{
-	background-image: url(../images/Button_Nav_Campaign_off.png); /** sprite-ref: sprites-icons; */
+	background-image: url(../images/Button_Nav_TestCase_off.png); /** sprite-ref: sprites-icons; */
 }
 
 .navigation-automation:hover, .navigation-automation.navigation-selected{
-	background-image: url(../images/Button_Nav_Campaign_on.png); /** sprite-ref: sprites-icons; */
+	background-image: url(../images/Button_Nav_TestCase_on.png); /** sprite-ref: sprites-icons; */
 }
 
 .navigation-bugtracker{
@@ -1964,4 +1964,9 @@ opacity:0.2;
 /* Issue 7707 */
 #link-type label:after {
 	vertical-align: top;
+}
+
+/**** AUTOMATION WORKSPACE ****/
+.automation-subtitle-header {
+
 }
