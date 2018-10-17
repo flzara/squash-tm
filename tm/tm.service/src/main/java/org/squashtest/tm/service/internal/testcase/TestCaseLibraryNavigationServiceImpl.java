@@ -377,9 +377,9 @@ public class TestCaseLibraryNavigationServiceImpl
 
 		getFolderDao().persist(newFolder);
 
-		//new CustomFieldValuesFixer().fix(newFolder);
+		new CustomFieldValuesFixer().fix(newFolder);
 
-		//generateCustomField(newFolder);
+		generateCustomField(newFolder);
 	}
 
 	void resolveNameConflict(List<String> target, TestCaseLibraryNode node, int i) {
@@ -479,8 +479,8 @@ public class TestCaseLibraryNavigationServiceImpl
 
 		getFolderDao().persist(newFolder);
 
-		//new CustomFieldValuesFixer().fix(newFolder);
-		//generateCustomField(newFolder);
+		new CustomFieldValuesFixer().fix(newFolder);
+		generateCustomField(newFolder);
 	}
 
 	@Override
