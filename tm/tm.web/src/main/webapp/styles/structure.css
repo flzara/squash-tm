@@ -1968,5 +1968,8 @@ opacity:0.2;
 
 /**** AUTOMATION WORKSPACE ****/
 .automation-subtitle-header {
-
+	position: absolute;
+	top: 28px;
+	left: 20%;
+	width: 79%;
 }
