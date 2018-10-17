@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm</artifactId>
-    <version>1.19.0.IT6-SNAPSHOT</version>
+    <version>1.19.0.IT6</version>
   </parent>
 
   <groupId>org.squashtest.tm</groupId>
