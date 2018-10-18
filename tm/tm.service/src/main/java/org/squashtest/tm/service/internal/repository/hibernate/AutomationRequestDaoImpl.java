@@ -36,6 +36,7 @@ import org.squashtest.tm.domain.IdCollector;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQueryFactory;
 import org.squashtest.tm.domain.project.QProject;
 import org.squashtest.tm.domain.testcase.QTestCase;
+import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.domain.tf.automationrequest.QAutomationRequest;
@@ -117,29 +118,27 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	}
 
 	private Predicate toQueryDslPredicate(ColumnFiltering filtering) {
-		return filteringFor(AutomationRequest.class)
+		return filterConverter(AutomationRequest.class)
 				   .from(filtering)
-				   		.comparing(
+				   		// types not mentioned here are considered as String
+				   		.typeFor("requestStatus").isClass(AutomationRequestStatus.class)
+				   		.typeFor("kind").isClass(TestCaseKind.class)
+				   		.typeFor("id", "automationPriority").isClass(Long.class)
+
+				   		// filter operation not mentioned here are considered as Equality (or Like if the property is a String)
+				   		.compare(
 				   			"transmissionDate",
 							"assignmentDate",
 							"transmittedBy")
 				   		.withBetweenDates()
-				   		.comparing(
-				   			"assignedTo.login",
-							"createdBy.login",
-							"transmittedBy.login",
-							"testCase.reference",
-							"testCase.name",
-							"testCase.project.name")
-				   		.withLike()
 				   .build();
 	}
 
 	private OrderSpecifier<?>[] toQueryDslSorting(Sort sort) {
-		return sortFor(AutomationRequest.class)
+		return sortConverter(AutomationRequest.class)
 			  .from(sort)
-				.knowingThat("requestStatus")
-				.hasClass(AutomationRequestStatus.class)
+				   .typeFor("requestStatus")
+					.isClass(AutomationRequestStatus.class)
 			  .build();
 	}
 

@@ -24,20 +24,101 @@ package org.squashtest.tm.service.internal.api.repository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.*;
+import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
+import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.Level;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.ParseException;
+import java.time.temporal.Temporal;
 import java.util.*;
 import java.util.stream.Collectors;
 
 /**
+ * <p>
  * DSL class that will translate generic paging, sorting and filtering beans into their QueryDsl-specific variants,
  * e.g. a {@link org.springframework.data.querydsl.QSort} out of a reqular {@link org.springframework.data.domain.Sort}
+ * </p>
+ *
+ * <p>
+ *     This toolkit proposes two dsl-like modules, one for converting the sort objects, and the other for the filtering
+ *     objects.
+ * </p>
+ *
+ * <h4>SortConverter usage</h4>
+ *
+ * <p>
+ *     SortConverter is intended for conversion from Spring's {@link Sort} to QueryDsl's {@link OrderSpecifier}.
+ *     A SortConverter is created using PagingToQueryDsl{@link #sortConverter()}. It requires configuration, the bare minimum
+ *     are of course the Sort object to be converted, and the class of the query root entity (the type of the entity returned
+ *     in the paged result).
+ * </p>
+ *
+ * <p>
+ *     From there the Sort object can be converted as is, with respect to the name of the sorted property, the sort direction
+ *     and the null handling.
+ * </p>
+ *
+ * <p>
+ *     Important : please note that the name of the property must be the full path starting from the root entity.
+ *     For instance, if the root entity is a test case and we wish to sort on its project name, the property name
+ *     must be 'project.name' and not just 'name'.
+ * </p>
+ *
+ * <p>
+ *     The properties will be sorted according to their natural ordering, which is fine most of the time. However in some
+ *     occasions the sorting is unnatural and needs to be specified. For this kind of corner cases you can tell wich type
+ *     the property is and if a special sort semantic applies to that type it will be used instead.
+ *     The prominent use case is {@link Level} enums. By telling the SortConverter that an property
+ *     is a Level enum, the generated {@link OrderSpecifier} will use a case-when-else structure, with one entry
+ *     for each level.
+ * </p>
+ *
+ *
+ * <h4>ColumnFilteringConverter usage</h4>
+ *
+ * <p>
+ *     ColumnFilteringConverter is intended for conversion from our own API {@link ColumnFiltering} to QueryDsl's {@link Predicate}.
+ *     The generated predicate will be the conjunction of all the conditions stated in the filter, meaning they are AND'ed together.
+ *     A ColumnFilteringConverter is created using PagingToQueryDsl{@link #filterConverter()}. It requires configuration, the bare
+ *     minimum are of course the ColumnFiltering object to be converted, and the class of the query root entity (the type of the entity
+ *     returned in the paged result).
+ * </p>
+ *
+ * <p>
+ *     Important : same remark about the property names as for SortConverter : please use qualified property path.
+ * </p>
+ *
+ * <p>
+ *     By default every property will be considered as a String, and will filtered using a Like. Most of the time though this
+ *     is not enough, because the exact type is often required by the underlying Hibernate's parameter assignation routines.
+ *     To help the converter parsing the filter values and deserializing (from their initial String form) into the proper type
+ *     you can specify the property types just like for the SortConverter.
+ * </p>
+ *
+ * <p>
+ * 		Moreover you can also tune the comparison operator. For instance you can use either Like or (strict) Equality for
+ * 	String comparison. Unless specified otherwise Equality will be the default operation (because it is suitable for every type).
+ * 	The alternate comparison operators are :
+ * 		<ul>
+ * 		 <li>for Strings : like </li>
+ * 		 <li>dates : date between</li>
+ * 		</ul>
+ *
+ * 	Note : More operator might be desired in the future (eg the IN list operation).
+ * </p>
+ *
+ * <p>
+ *     Important : no input validation will be made here. Be sure that your inputs are correctly formatted, any exception
+ *     will be rethrowed.
+ * </p>
+ *
  *
  */
 public final class PagingToQueryDsl {
@@ -48,19 +129,19 @@ public final class PagingToQueryDsl {
 		super();
 	}
 
-	public static SortConverter sort(){
+	public static SortConverter sortConverter(){
 		return new SortConverter();
 	}
 
-	public static SortConverter sortFor(Class<?> entity){
+	public static SortConverter sortConverter(Class<?> entity){
 		return new SortConverter(entity);
 	}
 
-	public static ColumnFilteringConverter filteringFor(){
+	public static ColumnFilteringConverter filterConverter(){
 		return new ColumnFilteringConverter();
 	}
 
-	public static ColumnFilteringConverter filteringFor(Class<?> entity){
+	public static ColumnFilteringConverter filterConverter(Class<?> entity){
 		return new ColumnFilteringConverter(entity);
 	}
 
@@ -70,7 +151,6 @@ public final class PagingToQueryDsl {
 	public static final class SortConverter extends BaseDslProcessor{
 
 		private Sort from;
-		private Map<String, Class<?>> typesByProperty = new HashMap<>();
 
 		SortConverter() {
 			super(null);
@@ -90,9 +170,8 @@ public final class PagingToQueryDsl {
 			return this;
 		}
 
-
-		public KnowingThat knowingThat(String... propertyNames){
-			return new KnowingThat(this, propertyNames);
+		public PropertyTypesConfigurer<SortConverter> typeFor(String... propertyNames){
+			return new PropertyTypesConfigurer<>(this, propertyNames);
 		}
 
 		public OrderSpecifier<?>[] build() {
@@ -131,9 +210,9 @@ public final class PagingToQueryDsl {
 
 			Expression expression = pptPath;
 
-			// now look for possible "knowingThat" clauses, which may trigger special treatment
-			if (typesByProperty.containsKey(property)){
-				Class pptClass = typesByProperty.get(property);
+			// look for special sorting semantics
+			if (propertyTypes.containsKey(property)){
+				Class pptClass = propertyTypes.get(property);
 
 				if (isLevelEnum(pptClass)){
 					expression = orderByLevel(pptPath, pptClass);
@@ -200,28 +279,6 @@ public final class PagingToQueryDsl {
 		}
 
 
-		private void registerPropertyType(String propertyName, Class<?> propClass){
-			typesByProperty.put(propertyName, propClass);
-		}
-
-		// more DSL sugar coating
-		public static final class KnowingThat{
-			private SortConverter converter;
-			private String[] propertyNames;
-			KnowingThat(SortConverter parent, String[] propertyNames){
-				this.converter = parent;
-				this.propertyNames = propertyNames;
-			}
-
-			public SortConverter hasClass(Class<?> clazz){
-				for (String prop : propertyNames) {
-					converter.registerPropertyType(prop, clazz);
-				}
-				return converter;
-			}
-
-		}
-
 	}
 
 
@@ -231,7 +288,7 @@ public final class PagingToQueryDsl {
 
 		private ColumnFiltering from;
 
-		private Map<String, CompOperator> comparisonByProperty = new HashMap<>();
+		private Map<String, CompOperator> propertyComparison = new HashMap<>();
 
 
 		public ColumnFilteringConverter forEntity(Class<?> entity){
@@ -252,9 +309,15 @@ public final class PagingToQueryDsl {
 			return this;
 		}
 
-		public ComparisonHint comparing(String... properties){
-			return new ComparisonHint(this, properties);
+
+		public PropertyTypesConfigurer<ColumnFilteringConverter> typeFor(String... propertyNames){
+			return new PropertyTypesConfigurer<>(this, propertyNames);
 		}
+
+		public ComparisonOperationConfigurer compare(String... properties){
+			return new ComparisonOperationConfigurer(this, properties);
+		}
+
 
 		public Predicate build(){
 
@@ -272,29 +335,36 @@ public final class PagingToQueryDsl {
 
 		}
 
+		// ************** expression building *************************
+
 		private BooleanExpression convert(String property){
 
 			EntityPathBase<?> pptPath = toEntityPath(property);
 			String value = from.getFilter(property);
 
 			BooleanExpression finalExpression;
-			CompOperator operator = comparisonByProperty.getOrDefault(property, CompOperator.EQUALITY);
+			Object comparisonParameters = resolveParameters(property, value);
+
+			CompOperator operator = resolveOperator(property);
+
 			switch(operator){
 				case DATE_BETWEEN:
-					finalExpression = asBetweenDateExpression(pptPath, value);
+					finalExpression = asBetweenDateExpression(pptPath, (Couple<Date, Date>) comparisonParameters);
 					break;
 
 				case LIKE:
-					finalExpression = asLikeExpression(pptPath, value);
+					finalExpression = asLikeExpression(pptPath, (String) comparisonParameters);
 					break;
 				default:
 					// else defaults to strict equality
-					finalExpression = pptPath.eq(Expressions.constant(value));
+					finalExpression = pptPath.eq(Expressions.constant(comparisonParameters));
 					break;
 			}
 
 			return finalExpression;
 		}
+
+
 
 		private BooleanExpression asLikeExpression(Expression pptPath, String value){
 			String searchTerm = "%"+value.replaceAll("%", "\\%")+"%";
@@ -304,46 +374,145 @@ public final class PagingToQueryDsl {
 		}
 
 
-		private BooleanExpression asBetweenDateExpression(Expression pptPath, String strDates) {
+		private BooleanExpression asBetweenDateExpression(Expression pptPath, Couple<Date, Date> dates) {
 			BooleanExpression finalExpression;
 			DateExpression asDate = Expressions.asDate(pptPath);
 
-			Date begin = null;
-			Date end = null;
-			try {
-				String[] dates = strDates.split(" - ");
-				begin = DateUtils.parseIso8601Date(dates[0]);
-				end = DateUtils.parseIso8601Date(dates[1]);
-
-				// actually we want begin -1 day and end +1 day
-				// because 1/ the boundaries are inclusive and 2/ unfortunately we have no certainties on the timezone
-				GregorianCalendar calendar = new GregorianCalendar();
-
-				calendar.setTime(begin);
-				calendar.add(Calendar.DATE, -1);
-				begin = calendar.getTime();
-
-				calendar.setTime(end);
-				calendar.add(Calendar.DATE, 1);
-				end = calendar.getTime();
-
-			}
-			catch (ParseException ex){
-				throw new RuntimeException("Encountered exception while parsing dates, probably not in yyyy-mm-dd format : '"+ strDates +"'", ex);
-			}
+			Date begin = dates.getA1();
+			Date end = dates.getA2();
 
 			finalExpression = asDate.after(begin).and(asDate.before(end));
 			return finalExpression;
 		}
 
 
-		// more DSL sugar coating
-		public static final class ComparisonHint{
+		// ******************** types resolution *************************
+
+
+		private Class<?> resolveClass(String property){
+
+			// was an operator specified for that property ?
+			CompOperator operator = propertyComparison.get(property);
+
+			// was a class specified for that property ? If not found, see if we can deduce it from
+			// the operation, and if not consider it a String
+			Class<?> pptClass = propertyTypes.computeIfAbsent(property, s -> {
+				Class<?> res;
+				// default is String if no context can help
+				if (operator == null){
+					res = String.class;
+				}
+				else switch (operator){
+					case DATE_BETWEEN: res = Date.class; break; // ah, possibly a date
+					default : res = String.class; break; // no luck
+				}
+				return res;
+			});
+
+			return pptClass;
+
+		}
+
+		private CompOperator resolveOperator(String property){
+
+			// was a type specified for that property ? Default is String
+			Class<?> pptClass = propertyTypes.getOrDefault(property, String.class);
+
+			// was an operator specified for that property ? If specified, use it, else compute the default.
+			CompOperator operator = propertyComparison.computeIfAbsent(property, s ->
+				(String.class.isAssignableFrom(pptClass)) ? CompOperator.LIKE : CompOperator.EQUALITY
+			);
+
+			return operator;
+
+		}
+
+
+
+		// ************ parameters parsing ***********************
+
+		private Object resolveParameters(String property, String value){
+			Object result;
+
+			Class<?> pptClass = resolveClass(property);
+
+			if (pptClass.isEnum()){
+				result = Enum.valueOf((Class<? extends Enum>)pptClass, value);
+			}
+			else if (Date.class.isAssignableFrom(pptClass)){
+				if (value.contains(" - ")){
+					result = parseAsCoupleDates(value);
+				}
+				else {
+					result = parseAsDate(value);
+				}
+			}
+			else if (isInteger(pptClass)){
+				result = Long.valueOf(value);
+			}
+			else if (isDecimal(pptClass)){
+				result = Double.valueOf(value);
+			}
+			//default is String
+			else{
+				result = value;
+			}
+
+			return result;
+
+		}
+
+		private boolean isInteger(Class<?> clazz){
+			return (Long.class.isAssignableFrom(clazz)) ||
+					   (Integer.class.isAssignableFrom(clazz)) ||
+					   (BigInteger.class.isAssignableFrom(clazz));
+		}
+
+		private boolean isDecimal(Class<?> clazz){
+			return (Float.class.isAssignableFrom(clazz)) ||
+					   Double.class.isAssignableFrom(clazz) ||
+					   BigDecimal.class.isAssignableFrom(clazz);
+		}
+
+
+		private Date parseAsDate(String value){
+			try{
+				return DateUtils.parseIso8601Date(value);
+			}
+			catch (ParseException ex){
+				throw new RuntimeException("Encountered exception while parsing dates, probably not in yyyy-mm-dd format : '"+ value +"'", ex);
+			}
+		}
+
+		private Couple<Date, Date> parseAsCoupleDates(String strDates){
+			String[] splitDates = strDates.split(" - ");
+
+			Date begin = parseAsDate(splitDates[0]);
+			Date end = parseAsDate(splitDates[1]);
+
+			// actually we want begin -1 day and end +1 day
+			// because 1/ the boundaries are inclusive and 2/ unfortunately we have no certainties on the timezone
+			GregorianCalendar calendar = new GregorianCalendar();
+
+			calendar.setTime(begin);
+			calendar.add(Calendar.DATE, -1);
+			begin = calendar.getTime();
+
+			calendar.setTime(end);
+			calendar.add(Calendar.DATE, 1);
+			end = calendar.getTime();
+
+			return new Couple<>(begin, end);
+		}
+
+		// ********* DSL submodule for comparison operations *******
+
+		public static final class ComparisonOperationConfigurer {
 
 			private ColumnFilteringConverter converter;
 			private String[] properties;
 
-			ComparisonHint(ColumnFilteringConverter converter, String[] propertyNames){
+			ComparisonOperationConfigurer(ColumnFilteringConverter converter, String[] propertyNames){
 				this.converter = converter;
 				this.properties = propertyNames;
 			}
@@ -365,7 +534,7 @@ public final class PagingToQueryDsl {
 
 			private void registerHint(CompOperator operation){
 				for (String prop : properties){
-					converter.comparisonByProperty.put(prop, operation);
+					converter.propertyComparison.put(prop, operation);
 				}
 			}
 
@@ -385,11 +554,11 @@ public final class PagingToQueryDsl {
 
 		Class<?> entity;
 		PathBuilder basePath;
+		Map<String, Class<?>> propertyTypes = new HashMap<>();
 
 		BaseDslProcessor(Class<?> entity){
 			this.entity = entity;
 		}
-
 
 
 		void initBasePath() {
@@ -403,6 +572,10 @@ public final class PagingToQueryDsl {
 		}
 
 
+		void registerPropertyType(String propertyName, Class<?> propClass){
+			propertyTypes.put(propertyName, propClass);
+		}
+
 
 		EntityPathBase<?> toEntityPath(String property){
 			PathBuilder<?> finalPath = basePath;
@@ -415,6 +588,26 @@ public final class PagingToQueryDsl {
 			return finalPath;
 		}
 
+
+
+		// Sub-DSL module for property type configuration
+		public static final class PropertyTypesConfigurer<CONVERTER_SUBTYPE extends BaseDslProcessor> {
+			private CONVERTER_SUBTYPE converter;
+			private String[] propertyNames;
+
+			PropertyTypesConfigurer(CONVERTER_SUBTYPE parent, String... propertyNames){
+				this.converter = parent;
+				this.propertyNames = propertyNames;
+			}
+
+			public CONVERTER_SUBTYPE isClass(Class<?> clazz){
+				for (String prop : propertyNames) {
+					converter.registerPropertyType(prop, clazz);
+				}
+				return converter;
+			}
+
+		}
 
 
 	}
