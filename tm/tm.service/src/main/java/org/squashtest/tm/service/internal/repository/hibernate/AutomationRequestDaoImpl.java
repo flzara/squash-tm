@@ -42,7 +42,7 @@ import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.domain.tf.automationrequest.QAutomationRequest;
 import org.squashtest.tm.domain.users.QUser;
 import org.squashtest.tm.service.internal.repository.CustomAutomationRequestDao;
-import static org.squashtest.tm.service.internal.api.repository.PagingToQueryDsl.*;
+import static org.squashtest.tm.service.internal.helper.PagingToQueryDsl.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -137,8 +137,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	private OrderSpecifier<?>[] toQueryDslSorting(Sort sort) {
 		return sortConverter(AutomationRequest.class)
 			  .from(sort)
-				   .typeFor("requestStatus")
-					.isClass(AutomationRequestStatus.class)
+				   .typeFor("requestStatus").isClass(AutomationRequestStatus.class)
 			  .build();
 	}
 

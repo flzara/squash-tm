@@ -18,13 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.api.repository;
+package org.squashtest.tm.service.internal.helper;
 
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.*;
-import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
@@ -36,7 +35,6 @@ import org.squashtest.tm.domain.Level;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.ParseException;
-import java.time.temporal.Temporal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -73,7 +71,7 @@ import java.util.stream.Collectors;
  *
  * <p>
  *     The properties will be sorted according to their natural ordering, which is fine most of the time. However in some
- *     occasions the sorting is unnatural and needs to be specified. For this kind of corner cases you can tell wich type
+ *     occasions the sorting is unnatural and needs to be specified. For this kind of corner cases you can tell which type
  *     the property is and if a special sort semantic applies to that type it will be used instead.
  *     The prominent use case is {@link Level} enums. By telling the SortConverter that an property
  *     is a Level enum, the generated {@link OrderSpecifier} will use a case-when-else structure, with one entry
@@ -550,7 +548,7 @@ public final class PagingToQueryDsl {
 
 	// ********************** base class for both **************************
 
-	private static class BaseDslProcessor {
+	static class BaseDslProcessor {
 
 		Class<?> entity;
 		PathBuilder basePath;
@@ -566,7 +564,7 @@ public final class PagingToQueryDsl {
 			basePath = new PathBuilder<Object>(entity, alias);
 		}
 
-		private String createAlias() {
+		String createAlias() {
 			String simpleName = entity.getSimpleName();
 			return simpleName.substring(0, 1).toLowerCase() + simpleName.substring(1);
 		}
