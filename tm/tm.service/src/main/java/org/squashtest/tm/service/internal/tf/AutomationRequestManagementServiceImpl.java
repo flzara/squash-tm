@@ -74,10 +74,6 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	@Override
 	public Page<AutomationRequest> findRequestsAssignedToCurrentUser(Pageable pageable, ColumnFiltering filtering) {
 		String username = userCtxt.getUsername();
-
-		ColumnFiltering forcedFilter = new SimpleColumnFiltering(filtering)
-										   	.addFilter("assignedTo.login", username);
-
 		return requestDao.findAllForAssignee(username, pageable, filtering);
 	}
 

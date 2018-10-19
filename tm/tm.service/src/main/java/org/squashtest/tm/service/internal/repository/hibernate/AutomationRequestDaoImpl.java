@@ -34,6 +34,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
+import org.squashtest.tm.core.foundation.collection.SimpleColumnFiltering;
 import org.squashtest.tm.domain.IdCollector;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQueryFactory;
 import org.squashtest.tm.domain.project.QProject;
@@ -73,7 +74,10 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	public Page<AutomationRequest> findAllForAssignee(String username, Pageable pageable, ColumnFiltering filtering) {
 		LOGGER.debug("searching for automation requests, paged and filtered for user : '{}'", username);
 
-		return innerFindAll(pageable, filtering, (converter) -> {
+		ColumnFiltering filterWithAssignee = new SimpleColumnFiltering(filtering)
+												 .addFilter("assignedTo.login", username);
+
+		return innerFindAll(pageable, filterWithAssignee, (converter) -> {
 			// force equality comparison for the assigned user login
 			converter.compare("assignedTo.login").withEquality();
 		});
