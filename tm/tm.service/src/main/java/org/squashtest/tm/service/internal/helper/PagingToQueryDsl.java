@@ -24,6 +24,7 @@ package org.squashtest.tm.service.internal.helper;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.*;
+import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
@@ -35,6 +36,7 @@ import org.squashtest.tm.domain.Level;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.ParseException;
+import java.time.temporal.Temporal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -146,7 +148,7 @@ public final class PagingToQueryDsl {
 	// ************** Spring Sort conversion *******************************
 
 
-	public static final class SortConverter extends BaseDslProcessor{
+	public static final class SortConverter extends BaseConverter {
 
 		private Sort from;
 
@@ -282,7 +284,7 @@ public final class PagingToQueryDsl {
 
 	// ************** Squash ColumnFiltering conversion ********************
 
-	public static final class ColumnFilteringConverter extends BaseDslProcessor{
+	public static final class ColumnFilteringConverter extends BaseConverter {
 
 		private ColumnFiltering from;
 
@@ -368,7 +370,6 @@ public final class PagingToQueryDsl {
 			String searchTerm = "%"+value.replaceAll("%", "\\%")+"%";
 			StringExpression asString = Expressions.asString(pptPath);
 			return asString.likeIgnoreCase(searchTerm);
-
 		}
 
 
@@ -379,7 +380,7 @@ public final class PagingToQueryDsl {
 			Date begin = dates.getA1();
 			Date end = dates.getA2();
 
-			finalExpression = asDate.after(begin).and(asDate.before(end));
+			finalExpression = asDate.between(begin, end);
 			return finalExpression;
 		}
 
@@ -434,10 +435,10 @@ public final class PagingToQueryDsl {
 
 			Class<?> pptClass = resolveClass(property);
 
-			if (pptClass.isEnum()){
+			if (isEnum(pptClass)){
 				result = Enum.valueOf((Class<? extends Enum>)pptClass, value);
 			}
-			else if (Date.class.isAssignableFrom(pptClass)){
+			else if (canCoerceToDate(pptClass)){
 				if (value.contains(" - ")){
 					result = parseAsCoupleDates(value);
 				}
@@ -445,10 +446,10 @@ public final class PagingToQueryDsl {
 					result = parseAsDate(value);
 				}
 			}
-			else if (isInteger(pptClass)){
+			else if (canCoerceToInteger(pptClass)){
 				result = Long.valueOf(value);
 			}
-			else if (isDecimal(pptClass)){
+			else if (canCoerceToDecimal(pptClass)){
 				result = Double.valueOf(value);
 			}
 			//default is String
@@ -460,16 +461,27 @@ public final class PagingToQueryDsl {
 
 		}
 
-		private boolean isInteger(Class<?> clazz){
+		private boolean canCoerceToInteger(Class<?> clazz){
 			return (Long.class.isAssignableFrom(clazz)) ||
 					   (Integer.class.isAssignableFrom(clazz)) ||
-					   (BigInteger.class.isAssignableFrom(clazz));
+					   (BigInteger.class.isAssignableFrom(clazz)) ||
+					   Short.class.isAssignableFrom(clazz);
 		}
 
-		private boolean isDecimal(Class<?> clazz){
+		private boolean canCoerceToDecimal(Class<?> clazz){
 			return (Float.class.isAssignableFrom(clazz)) ||
 					   Double.class.isAssignableFrom(clazz) ||
 					   BigDecimal.class.isAssignableFrom(clazz);
+		}
+
+		private boolean isEnum(Class<?> clazz){
+			return clazz.isEnum();
+		}
+
+		private boolean canCoerceToDate(Class<?> clazz){
+			return Date.class.isAssignableFrom(clazz) ||
+					   Temporal.class.isAssignableFrom(clazz) ||
+					   LocalDate.class.isAssignableFrom(clazz);
 		}
 
 
@@ -487,18 +499,6 @@ public final class PagingToQueryDsl {
 
 			Date begin = parseAsDate(splitDates[0]);
 			Date end = parseAsDate(splitDates[1]);
-
-			// actually we want begin -1 day and end +1 day
-			// because 1/ the boundaries are inclusive and 2/ unfortunately we have no certainties on the timezone
-			GregorianCalendar calendar = new GregorianCalendar();
-
-			calendar.setTime(begin);
-			calendar.add(Calendar.DATE, -1);
-			begin = calendar.getTime();
-
-			calendar.setTime(end);
-			calendar.add(Calendar.DATE, 1);
-			end = calendar.getTime();
 
 			return new Couple<>(begin, end);
 		}
@@ -548,13 +548,13 @@ public final class PagingToQueryDsl {
 
 	// ********************** base class for both **************************
 
-	static class BaseDslProcessor {
+	static class BaseConverter {
 
 		Class<?> entity;
 		PathBuilder basePath;
 		Map<String, Class<?>> propertyTypes = new HashMap<>();
 
-		BaseDslProcessor(Class<?> entity){
+		BaseConverter(Class<?> entity){
 			this.entity = entity;
 		}
 
@@ -589,7 +589,7 @@ public final class PagingToQueryDsl {
 
 
 		// Sub-DSL module for property type configuration
-		public static final class PropertyTypesConfigurer<CONVERTER_SUBTYPE extends BaseDslProcessor> {
+		public static final class PropertyTypesConfigurer<CONVERTER_SUBTYPE extends BaseConverter> {
 			private CONVERTER_SUBTYPE converter;
 			private String[] propertyNames;
 
