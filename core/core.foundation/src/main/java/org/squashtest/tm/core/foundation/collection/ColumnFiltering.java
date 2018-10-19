@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.core.foundation.collection;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -32,6 +33,12 @@ import java.util.List;
  *
  */
 public interface ColumnFiltering {
+
+	static final ColumnFiltering UNFILTERED = new EmptyFiltering();
+
+	public static ColumnFiltering unfiltered(){
+		return UNFILTERED;
+	}
 
 	/**
 	 * @return true if any filtering is required.
@@ -49,6 +56,35 @@ public interface ColumnFiltering {
 
 	boolean hasFilter(String mDataProp);
 
+
+
+	static final class EmptyFiltering implements ColumnFiltering{
+
+		private EmptyFiltering() {
+			super();
+		}
+
+		@Override
+		public boolean isDefined() {
+			return false;
+		}
+
+		@Override
+		public List<String> getFilteredAttributes() {
+			return Collections.emptyList();
+		}
+
+
+		@Override
+		public String getFilter(String mDataProp) {
+			return "";
+		}
+
+		@Override
+		public boolean hasFilter(String mDataProp) {
+			return false;
+		}
+	}
 
 
 }

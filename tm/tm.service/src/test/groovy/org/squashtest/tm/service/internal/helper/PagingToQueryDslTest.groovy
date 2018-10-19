@@ -27,7 +27,7 @@ import com.querydsl.core.types.dsl.EntityPathBase
 import com.querydsl.core.types.dsl.PathBuilder
 import org.joda.time.LocalDate
 import org.springframework.data.domain.Sort
-import org.squashtest.tm.core.foundation.collection.DefaultColumnFiltering
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering
 import org.squashtest.tm.core.foundation.collection.SimpleColumnFiltering
 import org.squashtest.tm.core.foundation.lang.Couple
 import org.squashtest.tm.domain.customfield.BindableEntity
@@ -477,9 +477,9 @@ class PagingToQueryDslTest extends Specification {
 		thrown IllegalStateException
 
 		where :
-		entity		|	springsort           				| reason
-		null		|	DefaultColumnFiltering.NO_FILTERING | "the class for the root entity"
-		TestCase	|	null                   				| "the filter object to convert"
+		entity		|	springsort                 		| reason
+		null		|	ColumnFiltering.unfiltered() | "the class for the root entity"
+		TestCase	|	null                         | "the filter object to convert"
 
 	}
 

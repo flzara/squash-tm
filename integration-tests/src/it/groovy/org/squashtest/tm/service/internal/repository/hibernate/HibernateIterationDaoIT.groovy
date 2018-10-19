@@ -23,7 +23,7 @@ package org.squashtest.tm.service.internal.repository.hibernate
 import org.hibernate.HibernateException
 import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering
-import org.squashtest.tm.core.foundation.collection.DefaultColumnFiltering
+
 import org.squashtest.tm.core.foundation.collection.Filtering
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting
 import org.squashtest.tm.domain.campaign.TestPlanStatistics
@@ -73,7 +73,7 @@ class HibernateIterationDaoIT extends DbunitDaoSpecification {
 	def "[Issue 2828] should not break when looking up indexed test plan with filtering : #hasFiltering"() {
 		given:
 		PagingAndMultiSorting sorting = Mock()
-		ColumnFiltering columnFiltering = DefaultColumnFiltering.NO_FILTERING
+		ColumnFiltering columnFiltering = ColumnFiltering.unfiltered()
 		sorting.getSortings() >> []
 		sorting.getFirstItemIndex() >> 0
 		sorting.getPageSize() >> 500
@@ -97,7 +97,7 @@ class HibernateIterationDaoIT extends DbunitDaoSpecification {
 	def "[Issue 2828] should not break when looking up test plan with filtering : #hasFiltering"() {
 		given:
 		PagingAndMultiSorting sorting = Mock()
-		ColumnFiltering columnFiltering = DefaultColumnFiltering.NO_FILTERING
+		ColumnFiltering columnFiltering = ColumnFiltering.unfiltered()
 		sorting.getSortings() >> []
 		sorting.getFirstItemIndex() >> 0
 		sorting.getPageSize() >> 500

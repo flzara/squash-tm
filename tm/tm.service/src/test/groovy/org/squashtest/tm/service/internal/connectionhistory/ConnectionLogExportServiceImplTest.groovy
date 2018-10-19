@@ -21,7 +21,7 @@
 package org.squashtest.tm.service.internal.connectionhistory
 
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering
-import org.squashtest.tm.core.foundation.collection.DefaultColumnFiltering
+
 import org.squashtest.tm.domain.users.ConnectionLog
 import org.squashtest.tm.service.internal.repository.ConnectionLogDao
 import spock.lang.Specification
@@ -38,7 +38,7 @@ class ConnectionLogExportServiceImplTest extends Specification{
 
     def "should create a file" () {
 		given :
-		ColumnFiltering filtering = DefaultColumnFiltering.NO_FILTERING;
+		ColumnFiltering filtering = ColumnFiltering.unfiltered();
 		ConnectionLog connectionLog = new ConnectionLog();
 		connectionLog.id = 1
 		connectionLog.login = "test"

@@ -27,7 +27,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering
-import org.squashtest.tm.core.foundation.collection.DefaultColumnFiltering
+
 import org.squashtest.tm.core.foundation.collection.SimpleColumnFiltering
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus
@@ -98,7 +98,7 @@ class AutomationRequestDaoIT extends DbunitDaoSpecification{
 		Pageable pageable = PageRequest.of(1, 2, Sort.unsorted())
 
 		and :
-		ColumnFiltering filter = new DefaultColumnFiltering();
+		ColumnFiltering filter = ColumnFiltering.unfiltered()
 
 		when :
 		Page<AutomationRequest> page = requestDao.findAll(pageable, filter)
@@ -117,7 +117,7 @@ class AutomationRequestDaoIT extends DbunitDaoSpecification{
 		Pageable pageable = PageRequest.of(0, 4, Sort.Direction.ASC, "transmissionDate")
 
 		and :
-		ColumnFiltering filter = new DefaultColumnFiltering();
+		ColumnFiltering filter = ColumnFiltering.unfiltered();
 
 		when :
 		Page<AutomationRequest> page = requestDao.findAll(pageable, filter)
@@ -134,7 +134,7 @@ class AutomationRequestDaoIT extends DbunitDaoSpecification{
 		Pageable pageable = PageRequest.of(0, 10, Sort.Direction.ASC, "requestStatus")
 
 		and :
-		ColumnFiltering filter = new DefaultColumnFiltering();
+		ColumnFiltering filter = ColumnFiltering.unfiltered();
 
 		when :
 		Page<AutomationRequest> page = requestDao.findAll(pageable, filter)
@@ -152,7 +152,7 @@ class AutomationRequestDaoIT extends DbunitDaoSpecification{
 		Pageable pageable = PageRequest.of(0, 10, Sort.Direction.ASC, "assignedTo.login", "id")
 
 		and :
-		ColumnFiltering filter = new DefaultColumnFiltering();
+		ColumnFiltering filter = ColumnFiltering.unfiltered();
 
 		when :
 		Page<AutomationRequest> page = requestDao.findAll(pageable, filter)
@@ -171,7 +171,7 @@ class AutomationRequestDaoIT extends DbunitDaoSpecification{
 		Pageable pageable = PageRequest.of(0, 10, Sort.Direction.ASC, "testCase.project.name", "id")
 
 		and :
-		ColumnFiltering filter = new DefaultColumnFiltering();
+		ColumnFiltering filter = ColumnFiltering.unfiltered();
 
 		when :
 		Page<AutomationRequest> page = requestDao.findAll(pageable, filter)

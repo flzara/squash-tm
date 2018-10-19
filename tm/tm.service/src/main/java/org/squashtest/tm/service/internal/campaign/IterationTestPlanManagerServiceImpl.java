@@ -287,7 +287,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		Paging noPaging = Pagings.NO_PAGING;
 		PagingAndMultiSorting sorting = new DelegatePagingAndMultiSorting(noPaging, newSorting);
 		Filtering filtering = DefaultFiltering.NO_FILTERING;
-		ColumnFiltering columnFiltering = DefaultColumnFiltering.NO_FILTERING;
+		ColumnFiltering columnFiltering = ColumnFiltering.unfiltered();
 
 		List<IterationTestPlanItem> items = iterationDao.findTestPlan(iterationId, sorting, filtering, columnFiltering);
 
@@ -418,7 +418,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	public PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findTestPlan(long iterationId,
 																				  PagingAndSorting filter) {
 		List<IndexedIterationTestPlanItem> testPlan = iterationDao.findIndexedTestPlan(iterationId, filter,
-			DefaultFiltering.NO_FILTERING, DefaultColumnFiltering.NO_FILTERING);
+			DefaultFiltering.NO_FILTERING, ColumnFiltering.unfiltered());
 		long count = iterationDao.countTestPlans(iterationId, DefaultFiltering.NO_FILTERING);
 		return new PagingBackedPagedCollectionHolder<>(filter, count, testPlan);
 	}
