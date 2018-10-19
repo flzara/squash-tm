@@ -186,7 +186,7 @@ class AutomationRequestDaoIT extends DbunitDaoSpecification{
 	// ************************* filtering *********************************
 
 	@DataSet("AutomationRequestDaoIT.sample.xml")
-	def "should filter by assignee name (ie with like)"(){
+	def "should filter by assignee name (with like)"(){
 		given :
 		Pageable pageable = PageRequest.of(0, 10, Sort.unsorted())
 
@@ -200,6 +200,25 @@ class AutomationRequestDaoIT extends DbunitDaoSpecification{
 		then :
 		page.totalElements == 2
 		page.content.collect {it.id } as Set == [-1L, -2L] as Set
+	}
+
+
+	@DataSet("AutomationRequestDaoIT.sample.xml")
+	def "should filter by assignee name (with equality)"(){
+		given :
+		Pageable pageable = PageRequest.of(0, 10, Sort.unsorted())
+
+		and :
+		ColumnFiltering filter = new SimpleColumnFiltering()
+			.addFilter("assignedTo.login", "L")
+
+		when :
+		Page<AutomationRequest> page = requestDao.findAllForAssignee("L", pageable, filter)
+
+		then :
+		// no one has a login of exactly 'L'
+		page.totalElements == 0
+		page.content.collect {it.id } == []
 	}
 
 

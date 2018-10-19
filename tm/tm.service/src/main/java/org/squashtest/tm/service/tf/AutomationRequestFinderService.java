@@ -22,6 +22,7 @@ package org.squashtest.tm.service.tf;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 
 /**
@@ -58,5 +59,25 @@ public interface AutomationRequestFinderService {
 	 * @return
 	 */
 	Page<AutomationRequest> findRequests(Pageable pageable);
+
+	/**
+	 * Given the specified pagination, sorting and filtering, retrieve the corresponding
+	 * requests.
+	 *
+	 * @param pageable
+	 * @param filtering
+	 * @return
+	 */
+	Page<AutomationRequest> findRequests(Pageable pageable, ColumnFiltering filtering);
+
+	/**
+	 * Given the specified pagination, sorting and filtering, retrieve the corresponding
+	 * requests, restricted to the automated requests assigned to the current user.
+	 *
+	 * @param pageable
+	 * @param filtering
+	 * @return
+	 */
+	Page<AutomationRequest> findRequestsAssignedToCurrentUser(Pageable pageable, ColumnFiltering filtering);
 
 }

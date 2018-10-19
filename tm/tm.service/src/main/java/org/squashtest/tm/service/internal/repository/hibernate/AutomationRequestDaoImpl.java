@@ -21,9 +21,11 @@
 package org.squashtest.tm.service.internal.repository.hibernate;
 
 
+import com.google.common.base.Predicates;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.hibernate.HibernateQuery;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +49,7 @@ import static org.squashtest.tm.service.internal.helper.PagingToQueryDsl.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.function.Consumer;
 
 
 public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
@@ -62,6 +65,23 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 
 		LOGGER.debug("searching for automation requests, paged and filtered");
 
+		return innerFindAll(pageable, filtering, null);
+
+	}
+
+	@Override
+	public Page<AutomationRequest> findAllForAssignee(String username, Pageable pageable, ColumnFiltering filtering) {
+		LOGGER.debug("searching for automation requests, paged and filtered for user : '{}'", username);
+
+		return innerFindAll(pageable, filtering, (converter) -> {
+			// force equality comparison for the assigned user login
+			converter.compare("assignedTo.login").withEquality();
+		});
+	}
+
+	private Page<AutomationRequest> innerFindAll(Pageable pageable, ColumnFiltering filtering, FilterOverride filterOverride){
+
+
 		if (LOGGER.isTraceEnabled()){
 			LOGGER.trace("page size : {}, page num : {}, filter by : {}",
 				pageable.getPageSize(),
@@ -69,43 +89,40 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 				filtering.getFilteredAttributes());
 		}
 
+		//create the base query
+		HibernateQuery<AutomationRequest> baseQuery = createFindAllBaseQuery();
+
+		// apply the filter
+		Predicate predicate = toQueryDslPredicate(filtering, filterOverride);
+
+		baseQuery.where(predicate);
+
+
 		LOGGER.trace("fetching automation requests");
-		List<AutomationRequest> requests = findRequests(pageable, filtering);
+		List<AutomationRequest> requests = findRequests(baseQuery, pageable);
 
 		LOGGER.trace("counting automation requests");
-		long count = countRequests(filtering);
+		long count = countRequests(baseQuery);
 
 		return new PageImpl<AutomationRequest>(requests, pageable, count);
-
 	}
-
-
-
 
 
 
 	// *************** boilerplate ****************
 
+	private List<AutomationRequest> findRequests(HibernateQuery<AutomationRequest> baseQuery, Pageable pageable){
 
-	private List<AutomationRequest> findRequests(Pageable pageable, ColumnFiltering filtering){
+		// first, clone the baseQuery to make sure we won't alter the original
+		HibernateQuery<AutomationRequest> fetchRequest = baseQuery.clone();
 
-		// create base query
-		HibernateQuery<AutomationRequest> fetchRequest = createFindAllBaseQuery();
-
-		// apply paging
+		// apply paging and sorting
 		fetchRequest.offset(pageable.getOffset()).limit(pageable.getPageSize());
 
-		// apply sorting
 		OrderSpecifier<?>[] orderSpecifiers = toQueryDslSorting(pageable.getSort());
-
 		fetchRequest.orderBy(orderSpecifiers);
 
-		// apply filter
-		Predicate predicate = toQueryDslPredicate(filtering);
 
-		fetchRequest.where(predicate);
-
-		// fetch
 		List<AutomationRequest> requests = fetchRequest.fetch();
 
 		if (LOGGER.isTraceEnabled()) {
@@ -117,52 +134,17 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 
 	}
 
-	private Predicate toQueryDslPredicate(ColumnFiltering filtering) {
-		return filterConverter(AutomationRequest.class)
-				   .from(filtering)
-				   		// types not mentioned here are considered as String
-				   		.typeFor("requestStatus").isClass(AutomationRequestStatus.class)
-				   		.typeFor("kind").isClass(TestCaseKind.class)
-				   		.typeFor("id", "automationPriority").isClass(Long.class)
 
-				   		// filter operation not mentioned here are considered as Equality (or Like if the property is a String)
-				   		.compare(
-				   			"transmissionDate",
-							"assignmentDate",
-							"transmittedBy")
-				   		.withBetweenDates()
-				   .build();
-	}
 
-	private OrderSpecifier<?>[] toQueryDslSorting(Sort sort) {
-		return sortConverter(AutomationRequest.class)
-			  .from(sort)
-				   .typeFor("requestStatus").isClass(AutomationRequestStatus.class)
-			  .build();
-	}
+	private long countRequests(HibernateQuery<AutomationRequest> baseQuery){
 
-	private long countRequests(ColumnFiltering filtering){
-
-		LOGGER.trace("counting all automation requests, filter by : {}", filtering.getFilteredAttributes());
-
-		// create base query
-		HibernateQuery<AutomationRequest> countRequest = createFindAllBaseQuery();
-
-		// apply filter
-		Predicate predicate = toQueryDslPredicate(filtering);
-
-		countRequest.where(predicate);
+		// clone the base query
+		HibernateQuery<AutomationRequest> countRequest = baseQuery.clone();
 
 		// counting
 		long count = countRequest.fetchCount();
 
 		return count;
-	}
-
-
-
-	private Session getSession(){
-		return entityManager.unwrap(Session.class);
 	}
 
 
@@ -175,15 +157,60 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 		QUser transmittedBy = new QUser("transmittedBy");
 		QUser createdBy = new QUser("createdBy");
 
-		return (HibernateQuery<AutomationRequest>) new ExtendedHibernateQueryFactory(getSession())
+		HibernateQuery<AutomationRequest> querydslRequest = (HibernateQuery<AutomationRequest>) new ExtendedHibernateQueryFactory(getSession())
 					.from(request)
 					.leftJoin(request.testCase, testCase)
 					.leftJoin(testCase.project, project)
 					.leftJoin(request.assignedTo, assignedTo)
 					.leftJoin(request.transmittedBy, transmittedBy)
 					.leftJoin(request.createdBy, createdBy);
+
+
+		return querydslRequest;
 	}
 
 
+
+
+	private Predicate toQueryDslPredicate(ColumnFiltering filtering, FilterOverride override) {
+		ColumnFilteringConverter converter = filterConverter(AutomationRequest.class)
+				   .from(filtering)
+				   // types not mentioned here are considered as String
+				   .typeFor("requestStatus").isClass(AutomationRequestStatus.class)
+				   .typeFor("kind").isClass(TestCaseKind.class)
+				   .typeFor("id", "automationPriority").isClass(Long.class)
+
+				   // filter operation not mentioned here are considered as Equality (or Like if the property is a String)
+				   .compare(
+					   "transmissionDate",
+					   "assignmentDate",
+					   "transmittedBy")
+				   .withBetweenDates();
+
+		// override if necessary
+		if (override != null){
+			override.accept(converter);
+		}
+
+		return converter.build();
+
+	}
+
+	private OrderSpecifier<?>[] toQueryDslSorting(Sort sort) {
+		return sortConverter(AutomationRequest.class)
+				   .from(sort)
+				   .typeFor("requestStatus").isClass(AutomationRequestStatus.class)
+				   .build();
+	}
+
+
+
+
+	private Session getSession(){
+		return entityManager.unwrap(Session.class);
+	}
+
+
+	private static interface FilterOverride extends Consumer<ColumnFilteringConverter>{};
 
 }

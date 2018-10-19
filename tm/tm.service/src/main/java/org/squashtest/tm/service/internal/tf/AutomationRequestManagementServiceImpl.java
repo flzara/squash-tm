@@ -24,8 +24,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
+import org.squashtest.tm.core.foundation.collection.SimpleColumnFiltering;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.service.internal.repository.AutomationRequestDao;
+import org.squashtest.tm.service.security.UserContextService;
 import org.squashtest.tm.service.tf.AutomationRequestFinderService;
 
 import javax.inject.Inject;
@@ -37,6 +40,9 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 	@Inject
 	private AutomationRequestDao requestDao;
+
+	@Inject
+	private UserContextService userCtxt;
 
 
 	// *************** implementation of the finder interface *************************
@@ -56,9 +62,24 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	@Override
 	@Transactional(readOnly = true)
 	public Page<AutomationRequest> findRequests(Pageable pageable) {
-		return null;
+		return requestDao.findAll(pageable);
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public Page<AutomationRequest> findRequests(Pageable pageable, ColumnFiltering filtering) {
+		return requestDao.findAll(pageable, filtering);
+	}
+
+	@Override
+	public Page<AutomationRequest> findRequestsAssignedToCurrentUser(Pageable pageable, ColumnFiltering filtering) {
+		String username = userCtxt.getUsername();
+
+		ColumnFiltering forcedFilter = new SimpleColumnFiltering(filtering)
+										   	.addFilter("assignedTo.login", username);
+
+		return requestDao.findAllForAssignee(username, pageable, filtering);
+	}
 
 	// *************** implementation of the management interface *************************
 

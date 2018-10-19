@@ -29,6 +29,18 @@ public class SimpleColumnFiltering implements ColumnFiltering {
 
 	private Map<String, String> filters = new HashMap<>();
 
+	public SimpleColumnFiltering(){
+		super();
+	}
+
+	public SimpleColumnFiltering(ColumnFiltering other){
+		super();
+		for (String ppt : other.getFilteredAttributes()){
+			String value = other.getFilter(ppt);
+			filters.put(ppt, value);
+		}
+	}
+
 	@Override
 	public boolean isDefined() {
 		return ! filters.keySet().isEmpty();
@@ -54,5 +66,6 @@ public class SimpleColumnFiltering implements ColumnFiltering {
 	public boolean hasFilter(String mDataProp) {
 		return filters.get(mDataProp) != null;
 	}
+
 
 }

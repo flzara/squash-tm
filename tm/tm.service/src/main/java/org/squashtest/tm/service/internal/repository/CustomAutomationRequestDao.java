@@ -29,12 +29,25 @@ public interface CustomAutomationRequestDao {
 
 
 	/**
-	 * Will retrieve a list of automated
+	 * Will retrieve a list of automated requests, paged filtered and sorted.
 	 *
 	 * @param pageable
 	 * @param filtering
 	 * @return
 	 */
 	Page<AutomationRequest> findAll(Pageable pageable, ColumnFiltering filtering);
+
+
+	/**
+	 * Retrieve a list of automated requests, paged filtered and sorted, where the
+	 * user refered to by its username is the assignee (will force equality on the
+	 * assignee username instead of using 'like').
+	 *
+	 * @param username
+	 * @param pageable
+	 * @param filtering
+	 * @return
+	 */
+	Page<AutomationRequest> findAllForAssignee(String username, Pageable pageable, ColumnFiltering filtering);
 
 }
