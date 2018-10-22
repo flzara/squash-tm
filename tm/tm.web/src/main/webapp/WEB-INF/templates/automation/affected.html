@@ -1,0 +1,79 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<div th:fragment="automation-affected-view">
+  <div class="left btn-toolbar">
+    <div class="btn-group">
+      <button id="select-affected-button" class="sq-btn">Tout sélectionner</button>
+      <button id="filter-affected-button" class="sq-btn">Filtrer</button>
+    </div>
+  </div>
+  <div class="right btn-toolbar">
+    <div class="btn-group">
+      <button id="desassigned-affected-button" class="sq-btn">Je me désassigne</button>
+      <button id="start-affected-button" class="sq-btn">Automatisation en cours</button>
+      <button id="automated-affected-button" class="sq-btn">Automatisé</button>
+    </div>
+  </div>
+  <table id="affected-table">
+    <thead>
+    <tr >
+      <th></th>
+      <th>#</th>
+      <th th:text="#{automation.datatable.headers.project}">Project</th>
+      <th th:text="#{automation.datatable.headers.id}">id</th>
+      <th th:text="#{automation.datatable.headers.reference}">Réf.</th>
+      <th th:text="#{automation.datatable.headers.label}">Libellé</th>
+      <th th:text="#{automation.datatable.headers.format}">Format</th>
+      <th th:text="#{automation.datatable.headers.createdby}">Testeur</th>
+      <th th:text="#{automation.datatable.headers.transmittedby}">Ayant transmis</th>
+      <th th:text="#{automation.datatable.headers.transmittedon}">Date de transmission</th>
+      <th th:text="#{automation.datatable.headers.priority}">Priorité</th>
+      <th th:text="#{automation.datatable.headers.status}">Statut</th>
+      <th th:text="#{automation.datatable.headers.assignedto}">Automaticien</th>
+      <th th:text="#{automation.datatable.headers.affectedon}">Date d'affectation</th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td style="text-align:center"><input type="checkbox"/></td>
+      <td >1</td>
+      <td >Project XX</td>
+      <td>2</td>
+      <td >Reference YY</td>
+      <td >Label YY</td>
+      <td ></td>
+      <td >Testeur ??</td>
+      <td >Transmitted By AA</td>
+      <td >Transmission On ??</td>
+      <td >Priority</td>
+      <td>Automatisation en cours</td>
+      <td >Peter Parker</td>
+      <td >Affected On</td>
+      <td>IMAGE</td>
+    </tr>
+    </tbody>
+  </table>
+
+  </div>
+</div>

@@ -49,21 +49,7 @@
       contextRoot: /*[[ @{/} ]]*/"http://localhost:8080/squash",
 
       automationWorkspaceConf: {
-        tree: {
-          model: /*[[${ rootModel }]]*/ '',
-          workspace: "automation",
-          treeselector: "#tree",
-          selectedNode: /*[[${selectedNode}]]*/[]
-        },
-        treemenu: {
-          wizards: /*[[${ wizards }]]*/ '',
-        },
-        toggleWS: {
-          expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>',
-          collapseSidebarLabel: /*[[ #{report.workspace.togglebutton.normal.label} ]]*/ '<<',
-          workspace: pathname
-        },
-        activeMilestone: /*[[${activeMilestone}]]*/{}
+
       },
       defaultInfoList: /*[[${defaultInfoLists}]]*/{},
       testCaseImportance: /*[[${testCaseImportance}]]*/{},
@@ -83,7 +69,6 @@
   <script data-main="../../scripts/automation-workspace.js"
           th:attr="data-main=@{/scripts/automation-workspace.js}"
           src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
-
 
 </head>
 <body>
@@ -107,26 +92,41 @@
   <div class="ui-widget-header ui-corner-all ui-state-default fragment-header automation-subtitle-header">
     <h2 th:text="#{workspace.automation.header.subtitle}">Suivi des demandes d'automatisation</h2>
   </div>
-  <div class="fragment-tabs fragment-body">
+
+  <div id="affected-tabs" style="margin-top:60px;">
 
     <!--  ------------------ main tab panel --------------------------------- -->
-    <ul class="tab-menu">
-      <li>
-        <a href="#tab-tf-informations" />
+    <ul>
+      <li id="affected-tab">
+        <a href="#affected" >M'étant affectés</a>
       </li>
-      <li>
-        <a href="#tab-tf-" />
+      <li id="traitment-tab">
+        <a href="#traitment">A traiter</a>
       </li>
-      <li>
-        <a href="#tab-tf-" />
+      <li id="global-tab">
+        <a href="#global">Vue globale</a>
       </li>
     </ul>
-
-
-    <div id="tab-tf-informations">
-
+  </div>
+  <div id="automation-content">
+    <div id="contextual-content-wrapper">
+      <!--empty -->
     </div>
   </div>
 </div>
+
+<!-- BACKBONE VIEWS TEMPLATES -->
+<!-- SHOW AFFECTED -->
+<script id="tpl-show-affected" type="text/x-handlebars-template"
+        th:inline="text"
+        th:include="automation/affected.html :: automation-affected-view"/>
+
+<script id="tpl-show-global" type="text/x-handlebars-template"
+        th:inline="text"
+        th:include="automation/global.html :: automation-global-view"/>
+
+<script id="tpl-show-traitment" type="text/x-handlebars-template"
+        th:inline="text"
+        th:include="automation/traitment.html :: automation-traitment-view"/>
 </body>
 </html>
