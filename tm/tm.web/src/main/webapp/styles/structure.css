@@ -1973,3 +1973,45 @@ opacity:0.2;
 	left: 20%;
 	width: 79%;
 }
+
+#tf-affected-tabs {
+  border-bottom: 1px solid black !important;
+  margin-top: 70px;
+  margin-bottom: 20px;
+}
+#tf-affected-tabs ul {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  left: -38px;
+  top: 5px;
+}
+#tf-affected-tabs ul li {
+  list-style: none;
+  text-decoration: none;
+  margin-right: 1px;
+}
+#tf-affected-tabs ul li a {
+  border-radius: 5px 5px 0px 0px;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 0.5em 1em;
+  font-size: 1.2em;
+  color: white;
+  background-image: url(/squash/styles/jquery/ui/images/ui-bg_glass_45_2b2b2b_1x400.png);
+}
+#tf-affected-tabs ul li a:hover {
+  background-image: url(/squash/styles/jquery/ui/images/ui-bg_glass_75_2b2b2b_1x400.png);
+
+}
+#tf-affected-tabs ul a.tf-selected {
+  cursor: text;
+  background-image: url(/squash/styles/jquery/ui/images/ui-bg_glass_45_6eac2c_1x400.png);
+  border: 1px solid #acdd4a;
+}
+#tf-affected-tabs ul a.tf-selected:hover {
+  background-image: url(/squash/styles/jquery/ui/images/ui-bg_glass_45_6eac2c_1x400.png);
+}
+#tf-affected-tabs ul a.tf-selected:focus {
+  border: 1px solid rgb(81,147,228);
+}

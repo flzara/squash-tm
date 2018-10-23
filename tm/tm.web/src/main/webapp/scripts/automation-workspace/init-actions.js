@@ -22,23 +22,39 @@ define(['jquery', 'workspace.contextual-content'/*, 'squash.translator'*/, 'work
  function($, ctxcontent/*, translator*/, urlBuilder) {
 
 
-		function _BindButtons() {
-			$("#filter-affected-button").on("click", function(){
-			});
-			$("#select-affected-button").on("click", function(){
-			});
-			$("#desassigned-affected-button").on("click", function(){
-			});
-			$("#start-affected-button").on("click", function(){
-			});
-			$("#automated-affected-button").on("click", function(){
-			});
+		function _initTabs() {
+			var url = $(location).attr("href");
+			if (url.indexOf("#traitment") != -1) {
+				addSelectClass("#traitment-tab a");
+			} else if (url.indexOf("#global") != -1) {
+				addSelectClass("#global-tab a");
+			} else {
+				addSelectedTabClass("#affected-tab a");
+			}
 
-			
-
+			$("#tf-affected-tabs").find("a").on("click", function() {
+				if (! $(this).hasClass('tf-selected')) {
+					selectTab(this);
+				}
+			});
 		}
+		function selectTab(elt) {
+			var elts = $(elt).parent().parent().children();
+			var i;
+
+			for (i = 0; i < elts.length; i++) {
+				$(elts[i]).find("a").removeClass("tf-selected");
+			}
+
+			addSelectedTabClass(elt);
+		}
+		function addSelectedTabClass(elt) {
+			$(elt).addClass("tf-selected");
+		}
+
+
 		function init() {
-			_BindButtons();
+			_initTabs();
 		}
 
 		return {
