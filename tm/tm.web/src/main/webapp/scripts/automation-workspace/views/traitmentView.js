@@ -26,10 +26,96 @@ define(["jquery", "underscore", "backbone", "handlebars"],
             el: "#contextual-content-wrapper",
             initialize: function () {
                 this.render();
+                this.bindButtons();
+                this.getDatatable().squashTable(this.getDatatableSettings());
             },
 
             events: {
 
+            },
+
+            getDatatableSettings: function () {
+                
+                var datatableSettings = {
+                    
+                    //TODO récupéter la liste des demandes dynamiquement
+                    aaData: [{
+                        "id": "2",
+                        "project": "Projet",
+                        "reference": "refe",
+                        "label": "titre",
+                        "format": "gherkin",
+                        "createdby": "admin",
+                        "transmittedby": "testeur",
+                        "transmittedon": "10/02/2015",
+                        "priority": "2",
+                        "status": "En cours",
+                        "affectedon": "22/10/2018",
+                        "image": "image"
+                    }],
+                    aoColumnDefs: [{
+                        'bVisible': true,
+                        'bSortable': false,
+                        'aTargets': [0]
+                    },
+                    {
+                        'bVisible': true,
+                        'bSortable': true,
+                        'aTargets': [1]
+                    }, {
+                        'bVisible': true,
+                        'bSortable': true,
+                        'aTargets': [2]
+                    }, {
+                        'bVisible': true,
+                        'bSortable': true,
+                        'aTargets': [3]
+                    }, {
+                        'bVisible': true,
+                        'bSortable': true,
+                        'aTargets': [4]
+                    }, {
+                        'bVisible': true,
+                        'bSortable': true,
+                        'aTargets': [5]
+                    }, {
+                        'bVisible': true,
+                        'bSortable': true,
+                        'aTargets': [6]
+                    }, {
+                        'bVisible': true,
+                        'bSortable': true,
+                        'aTargets': [7]
+                    }, {
+                        'bVisible': true,
+                        'bSortable': true,
+                        'aTargets': [8]
+                    }, {
+                        'bVisible': true,
+                        'bSortable': true,
+                        'aTargets': [9]
+                    }, {
+                        'bVisible': true,
+                        'bSortable': true,
+                        'aTargets': [10]
+                    }, {
+                        'bVisible': true,
+                        'bSortable': true,
+                        'aTargets': [11]
+                    }, {
+                        'bVisible': true,
+                        'bSortable': false,
+                        'aTargets': [12]
+                    },],
+                    bServerSide: false,
+                    bFilter: true
+                };
+                console.log(datatableSettings)
+                return datatableSettings;
+            },
+
+            getDatatable: function() {
+                return this.$el.find("#traitment-table");
             },
 
             render: function () {
@@ -38,6 +124,18 @@ define(["jquery", "underscore", "backbone", "handlebars"],
                 var template = Handlebars.compile(source);
 
                 this.$el.append(template);
+            },
+
+            bindButtons: function () {
+                $("#select-traitment-button").on("click", function () {
+                    console.log("Traitment select");
+                });
+                $("#filter-traitment-button").on("click", function () {
+                    console.log("Traitment filter");
+                });
+                $("#assigned-traitment-button").on("click", function () {
+                    console.log("Traitment assigned");
+                });
             }
 
 

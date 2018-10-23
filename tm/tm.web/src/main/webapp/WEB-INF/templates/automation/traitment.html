@@ -22,5 +22,43 @@
 -->
 <div th:fragment="automation-traitment-view">
 
-  <span>Traitement view</span>
+    <div class="left btn-toolbar">
+      <div class="btn-group">
+        <button id="select-traitment-button" class="sq-btn" th:title="#{label.SelectAllForSelection}" th:text="#{label.SelectAllForSelection}"></button>
+        <button id="filter-traitment-button" class="sq-btn">
+            <span class="ui-icon ui-icon-refresh"></span>
+            <span th:text="#{label.Filter}"></span>
+            </button>
+        </button>
+      </div>
+    </div>
+    <div class="right btn-toolbar">
+      <div class="btn-group">
+        <button id="assigned-traitment-button" class="sq-btn" th:title="#{automation.label.affected}" th:text="#{automation.label.affected}"></button>
+      </div>
+    </div>
+    <table id="traitment-table">
+      <thead>
+      <tr >
+        <th data-def="map=id, select" >#</th>
+        <th data-def="map=project" th:text="#{automation.datatable.headers.project}"></th>
+        <th data-def="map=id" th:text="#{automation.datatable.headers.id}"></th>
+        <th data-def="map=reference" th:text="#{automation.datatable.headers.reference}"></th>
+        <th data-def="map=label" th:text="#{automation.datatable.headers.label}"></th>
+        <th data-def="map=format" th:text="#{automation.datatable.headers.format}"></th>
+        <th data-def="map=createdby" th:text="#{automation.datatable.headers.createdby}"></th>
+        <th data-def="map=transmittedby" th:text="#{automation.datatable.headers.transmittedby}"></th>
+        <th data-def="map=transmittedon"th:text="#{automation.datatable.headers.transmittedon}"></th>
+        <th data-def="map=priority" th:text="#{automation.datatable.headers.priority}"></th>
+        <th data-def="map=status" th:text="#{automation.datatable.headers.status}"></th>
+        <th data-def="map=affectedon" th:text="#{automation.datatable.headers.affectedon}"></th>
+        <th data-def="map=image"></th>
+      </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+  
+    </div>
+  
 </div>

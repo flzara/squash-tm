@@ -26,26 +26,59 @@ define(["jquery", "underscore", "backbone", "handlebars", "squashtable", "squash
 
             el: "#contextual-content-wrapper",
             initialize: function () {
+                console.log(this)
                 var self = this;
                 this.render();
                 var table = self.getAffectedTable();
-                var datatableSettings = {
-                    aoColumnDefs: [{
-                        'bVisible': true,
-                        'bSortable': false,
-                        'aTargets': [0]
-                    },{
-                        'bVisible': true,
-                        'bSortable': false,
-                        'aTargets': [14]
-                    }],
-                    bServerSide: false
-                };
-                table.squashTable(datatableSettings);
+
+                table.squashTable(self.getDatatableSettings());
+
+                self.bindButtons();
             },
 
             getAffectedTable: function () {
                 return this.$el.find("#affected-table");
+            },
+
+            getDatatableSettings: function () {
+                console.log(this.loadData());
+                
+                var datatableSettings = {
+                    //TODO récupéter la liste des demandes dynamiquement
+                    aaData: [{
+                        "entity-index": "2",
+                        "project-name": "Projet",
+                        "entity-id": "4",
+                        "reference": "refe",
+                        "name": "titre",
+                        "format": "gherkin",
+                        "created-by": "admin",
+                        "transmitted-by": "testeur",
+                        "transmitted-on": "10/02/2015",
+                        "priority": "2",
+                        "status": "En cours",
+                        "assigned-to": "admin",
+                        "assigned-on": "22/10/2018",
+                        "image": "image"
+                    }],
+                    
+                    bServerSide: false,
+                    bFilter: true
+                };
+                console.log(datatableSettings)
+                return datatableSettings;
+            },
+
+            loadData: function() {
+
+                return $.ajax({
+                    method: "GET",
+                    contentType: "application/json",
+                    url: squashtm.app.contextRoot + "automation-workspace/automation-request",
+                    succes: function(response) {
+                        console.log("La réponse" + response);
+                    }
+                })
             },
 
             render: function () {
@@ -54,6 +87,23 @@ define(["jquery", "underscore", "backbone", "handlebars", "squashtable", "squash
                 var template = Handlebars.compile(source);
 
                 this.$el.append(template);
+            },
+
+            bindButtons: function () {
+                $("#filter-affected-button").on("click", function () {
+                    console.log();
+                });
+                $("#select-affected-button").on("click", function () {
+                });
+                $("#desassigned-affected-button").on("click", function () {
+                    console.log("Affected desassigned");
+                });
+                $("#start-affected-button").on("click", function () {
+                    console.log("Affected start");
+                });
+                $("#automated-affected-button").on("click", function () {
+                    console.log("Affected automated");
+                });
             }
 
 

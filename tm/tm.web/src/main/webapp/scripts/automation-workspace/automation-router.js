@@ -46,7 +46,7 @@ define(['jquery', 'backbone', 'workspace.routing', './views/affectedView', './vi
 
 			traitment: function () {
 				this.activeView = new traitmentView();
-			},
+			}
 
 		});
 
