@@ -1970,8 +1970,7 @@ opacity:0.2;
 .automation-subtitle-header {
 	position: absolute;
 	top: 28px;
-	left: 20%;
-	width: 79%;
+	width:99%;
 }
 
 #tf-affected-tabs {

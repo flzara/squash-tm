@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'backbone', 'workspace.routing', './views/affectedView', './views/globalView', './views/traitmentView'],
-	function ($, Backbone, urlBuilder, affectedView, globalView, traitmentView) {
+define(['jquery', 'backbone', 'workspace.routing', './views/assignedView', './views/globalView', './views/traitmentView'],
+	function ($, Backbone, urlBuilder, assignedView, globalView, traitmentView) {
 		"use strict";
 
 
@@ -30,14 +30,14 @@ define(['jquery', 'backbone', 'workspace.routing', './views/affectedView', './vi
 			},
 
 			routes: {
-				"": "affected",
-				"affected": "affected",
+				"": "assigned",
+				"assigned": "assigned",
 				"global": "global",
 				"traitment": "traitment",
 			},
 
-			affected: function () {
-				this.activeView = new affectedView();
+			assigned: function () {
+				this.activeView = new assignedView();
 			},
 
 			global: function () {

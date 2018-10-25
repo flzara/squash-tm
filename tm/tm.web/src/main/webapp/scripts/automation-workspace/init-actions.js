@@ -29,7 +29,7 @@ define(['jquery', 'workspace.contextual-content'/*, 'squash.translator'*/, 'work
 			} else if (url.indexOf("#global") != -1) {
 				addSelectClass("#global-tab a");
 			} else {
-				addSelectedTabClass("#affected-tab a");
+				addSelectedTabClass("#assigned-tab a");
 			}
 
 			$("#tf-affected-tabs").find("a").on("click", function() {

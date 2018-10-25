@@ -49,7 +49,6 @@
       contextRoot: /*[[ @{/} ]]*/"http://localhost:8080/squash",
 
       automationWorkspaceConf: {
-
       },
       defaultInfoList: /*[[${defaultInfoLists}]]*/{},
       testCaseImportance: /*[[${testCaseImportance}]]*/{},
@@ -98,14 +97,14 @@
 
     <!--  ------------------ main tab panel --------------------------------- -->
     <ul>
-      <li id="affected-tab">
-        <a href="#affected" >M'étant affectés</a>
+      <li id="assigned-tab">
+        <a href="#assigned" th:text="#{automation.label.automation_in_progress}">M'étant affectés</a>
       </li>
       <li id="traitment-tab">
-        <a href="#traitment">A traiter</a>
+        <a href="#traitment" th:text="#{automation.label.traitment}">A traiter</a>
       </li>
       <li id="global-tab">
-        <a href="#global">Vue globale</a>
+        <a href="#global" th:text="#{automation.label.globale_view}">Vue globale</a>
       </li>
     </ul>
   </div>
@@ -119,9 +118,9 @@
 
 <!-- BACKBONE VIEWS TEMPLATES -->
 <!-- SHOW AFFECTED -->
-<script id="tpl-show-affected" type="text/x-handlebars-template"
+<script id="tpl-show-assigned" type="text/x-handlebars-template"
         th:inline="text"
-        th:include="automation/affected.html :: automation-affected-view"/>
+        th:include="automation/assigned.html :: automation-assigned-view"/>
 
 <script id="tpl-show-global" type="text/x-handlebars-template"
         th:inline="text"

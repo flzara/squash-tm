@@ -110,7 +110,6 @@ define(["jquery", "underscore", "backbone", "handlebars"],
                     bServerSide: false,
                     bFilter: true
                 };
-                console.log(datatableSettings)
                 return datatableSettings;
             },
 

@@ -18,15 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "underscore", "backbone", "handlebars", "squashtable", "squash.translator"],
-    function ($, _, Backbone, Handlebars) {
+define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", 'squash.dateutils', "squashtable"],
+    function ($, _, Backbone, Handlebars, translator, dateutils) {
         "use strict";
 
         var View = Backbone.View.extend({
-
-            el: "#contextual-content-wrapper",
+        el: "#contextual-content-wrapper",
             initialize: function () {
-                console.log(this)
                 var self = this;
                 this.render();
                 var table = self.getAffectedTable();
@@ -37,53 +35,47 @@ define(["jquery", "underscore", "backbone", "handlebars", "squashtable", "squash
             },
 
             getAffectedTable: function () {
-                return this.$el.find("#affected-table");
+                return this.$el.find("#assigned-table");
             },
 
             getDatatableSettings: function () {
-                console.log(this.loadData());
-                
+                var data = this.loadData().aaData;
+                data = this.convertDate(data);
                 var datatableSettings = {
-                    //TODO récupéter la liste des demandes dynamiquement
-                    aaData: [{
-                        "entity-index": "2",
-                        "project-name": "Projet",
-                        "entity-id": "4",
-                        "reference": "refe",
-                        "name": "titre",
-                        "format": "gherkin",
-                        "created-by": "admin",
-                        "transmitted-by": "testeur",
-                        "transmitted-on": "10/02/2015",
-                        "priority": "2",
-                        "status": "En cours",
-                        "assigned-to": "admin",
-                        "assigned-on": "22/10/2018",
-                        "image": "image"
-                    }],
-                    
+                    aaData: data,
                     bServerSide: false,
                     bFilter: true
                 };
-                console.log(datatableSettings)
                 return datatableSettings;
             },
 
-            loadData: function() {
-
-                return $.ajax({
+            loadData: function () {
+                var rep;
+                $.ajax({
                     method: "GET",
                     contentType: "application/json",
                     url: squashtm.app.contextRoot + "automation-workspace/automation-request",
-                    succes: function(response) {
-                        console.log("La réponse" + response);
+                    async: false,
+                    success: function (data) {
+                        rep = data
                     }
                 })
+                return rep;
+            },
+
+            convertDate: function (data) {
+                var format = translator.get('squashtm.dateformat');
+                for (var e = 0; e < data.length; e++) {
+                    var element = data[e];
+                    element["assigned-on"] = dateutils.format(element["assigned-on"], format);
+                    element["transmitted-on"] = dateutils.format(element["transmitted-on"], format);
+                }
+                return data;
             },
 
             render: function () {
                 this.$el.html("");
-                var source = $("#tpl-show-affected").html();
+                var source = $("#tpl-show-assigned").html();
                 var template = Handlebars.compile(source);
 
                 this.$el.append(template);

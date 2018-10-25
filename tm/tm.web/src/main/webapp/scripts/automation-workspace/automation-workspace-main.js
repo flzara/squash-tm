@@ -32,21 +32,15 @@ define(['squash.translator', './init-actions'],
 				"label-never": "label.lower.Never"
 			});
 		}
-		function initTab() {
-			/*$("#affected-tabs").tabs({
-      	cache : true,
-      					active: 0
-      				});*/
-		}
 
-		function init() {
+		function init(conf) {
 			initI18n();
 			initTabbedPane();
 			actions.init();
-			initTab();
 		}
 
 		return {
+			
 			init: init
 		};
 	});

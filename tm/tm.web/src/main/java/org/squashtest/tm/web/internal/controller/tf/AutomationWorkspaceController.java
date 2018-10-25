@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.controller.tf;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
@@ -29,6 +30,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
@@ -96,41 +98,40 @@ public class AutomationWorkspaceController {
 	}
 
 	@RequestMapping(value="automation-request", method= RequestMethod.GET)
+	@ResponseBody
 	public DataTableModel getAutomationRequestModel(final DataTableDrawParameters params, final Locale locale) {
+
 		Pageable pageable = SpringPagination.pageable(params);
 		ColumnFiltering filtering = new DataTableColumnFiltering(params);
 		Page<AutomationRequest> automationRequestPage = automationRequestFinderService.findRequestsAssignedToCurrentUser(pageable, filtering);
-		LOGGER.info("CONTROLLER {}", automationRequestPage.getContent().size());
-		return new AutomationRequestDataTableModelHelper(messageSource, locale, automationRequestFinderService).buildDataModel(automationRequestPage, "");
+
+		return new AutomationRequestDataTableModelHelper(messageSource).buildDataModel(automationRequestPage, "");
 	}
 
 	private static final class AutomationRequestDataTableModelHelper extends DataTableModelBuilder<AutomationRequest> {
 		private InternationalizationHelper messageSource;
-		private Locale locale;
-		private AutomationRequestFinderService automationRequestFinderService;
+		private Locale locale = LocaleContextHolder.getLocale();
 
-		private AutomationRequestDataTableModelHelper(InternationalizationHelper messageSource, Locale locale, AutomationRequestFinderService automationRequestFinderService) {
-			this.messageSource = messageSource;
-			this.locale = locale;
-			this.automationRequestFinderService = automationRequestFinderService;
+		private AutomationRequestDataTableModelHelper(InternationalizationHelper messageSource) {
+			this.messageSource = messageSource;;
 		}
 
 		@Override
 		protected Object buildItemData(AutomationRequest item) {
-			Map<String, Object> data = new HashMap<>(12);
-			data.put(DataTableModelConstants.PROJECT_NAME_KEY, item.getTestCase().getProject().getLabel());
-			data.put("reference", item.getTestCase().getReference());
-			data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, item.getTestCase().getFullName());
-			data.put("format", item.getTestCase().getKind());
+			Map<String, Object> data = new HashMap<>(13);
+			data.put(DataTableModelConstants.PROJECT_NAME_KEY, item.getTestCase() != null ?  item.getTestCase().getProject().getLabel(): null);
+			data.put("reference", item.getTestCase() != null ? item.getTestCase().getReference(): null);
+			data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, item.getTestCase() != null ? item.getTestCase().getFullName(): null);
+			data.put("format", item.getTestCase() != null ? item.getTestCase().getKind(): null);
 			data.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
-			data.put("transmitted-by", item.getTransmittedBy().getName());
+			data.put(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, item.getCreatedBy() != null? item.getCreatedBy().getLogin(): null);
+			data.put("transmitted-by", item.getTransmittedBy() != null ?item.getTransmittedBy().getLogin(): null);
 			data.put("transmitted-on", item.getTransmissionDate());
 			data.put("priority", item.getAutomationPriority());
 			data.put("status", item.getRequestStatus().name());
-			data.put("assigned-to", item.getAssignedTo().getName());
+			data.put("assigned-to", item.getAssignedTo() != null ? item.getAssignedTo().getLogin(): null);
 			data.put("assigned-on", item.getAssignmentDate());
 			data.put("entity-index", getCurrentIndex());
-
 			return data;
 		}
 	}
