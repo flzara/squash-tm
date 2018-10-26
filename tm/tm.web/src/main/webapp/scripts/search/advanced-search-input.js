@@ -104,7 +104,7 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 				options.children().each(function () {
 					if (toselect !== null) {
 						if (this.selected) {
-							if (!_.contains(toselect, this.value)) {
+							if (toselect.indexOf(this.value) === -1) {
 								this.selected = false;
 							}
 						}
