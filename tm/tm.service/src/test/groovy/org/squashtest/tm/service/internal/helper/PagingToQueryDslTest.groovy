@@ -344,7 +344,7 @@ class PagingToQueryDslTest extends Specification {
 		thrown RuntimeException
 	}
 
-	def "should parse a duration (a pair of date, with a 1 extra day before and after)"(){
+	def "should parse a duration (a pair of date)"(){
 
 		given :
 		def duration = "2018-10-11 - 2018-10-22" // happy Apollo 7 anniversary !
