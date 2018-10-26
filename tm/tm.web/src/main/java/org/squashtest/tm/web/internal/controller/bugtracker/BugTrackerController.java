@@ -705,7 +705,7 @@ public class BugTrackerController {
 
 		List<String> remoteReqIds = bugTrackersLocalService.findAllRemoteReqIdByServerUrlVerifiedByATestCase(entity.getBugTracker().getUrl(), entity.getReferencedTestCase().getId());
 		if(!remoteReqIds.isEmpty()){
-			bugTrackersLocalService.linkIssueToRemoteRequirements(issue.getId(), remoteReqIds, entity.getBugTracker());
+			bugTrackersLocalService.linkIssueToRemoteRequirements(postedIssue.getId(), remoteReqIds, entity.getBugTracker());
 		}
 
 		return result;
