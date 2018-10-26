@@ -21,37 +21,51 @@
 
 -->
 <div th:fragment="automation-assigned-view">
+  
+    <div style="margin-bottom: 40px">
+      <span style="font-style: italic" th:text="#{automation.message.assigned}"></span>
+      <div style="float: right">
+          <button id="automated-affected-button" class="sq-btn btn-lg tf-blue-btn" th:title="#{automation.label.automated}" th:text="#{automation.label.automated}"></button>
+        <button id="start-affected-button" class="sq-btn btn-lg  tf-gray-btn" th:title="#{automation.label.disaseembled}" th:text="#{automation.label.disaseembled}"></button>
+        
+      </div>
+    </div>
+
   <div class="left btn-toolbar">
     <div class="btn-group">
-      <button id="filter-affected-button" class="sq-btn" >
+      <button id="filter-affected-button" class="sq-btn">
         <span class="ui-icon ui-icon-refresh"></span>
         <span th:text="#{label.Filter}"></span>
       </button>
-      <button id="select-affected-button" class="sq-btn" th:title="#{label.SelectAllForSelection}"
-        th:text="#{label.SelectAllForSelection}"></button>
+      <!-- <button id="select-affected-button" class="sq-btn" th:title="#{label.SelectAllForSelection}"
+        th:text="#{label.SelectAllForSelection}"></button> -->
 
     </div>
   </div>
   <div class="right btn-toolbar">
     <div class="btn-group">
-      <button id="desassigned-affected-button" class="sq-btn" th:title="#{automation.label.export}" th:text="#{automation.label.export}"></button>
+
+      <button id="select-affected-button" class="sq-btn btn-sm tf-light-gray-btn" th:title="#{label.SelectAllForSelection}" th:text="#{label.SelectAllForSelection}"></button>
+      <button id="select-affected-button" class="sq-btn btn-sm tf-light-gray-btn" th:title="#{label.SelectNoneForSelection}" th:text="#{label.selectNoneForSelection}"></button>
+      <!-- <button id="desassigned-affected-button" class="sq-btn" th:title="#{automation.label.export}" th:text="#{automation.label.export}"></button>
       <button id="start-affected-button" class="sq-btn" th:title="#{automation.label.disaseembled}" th:text="#{automation.label.disaseembled}"></button>
-      <button id="automated-affected-button" class="sq-btn" th:title="#{automation.label.automated}" th:text="#{automation.label.automated}"></button>
+      <button id="automated-affected-button" class="sq-btn" th:title="#{automation.label.automated}" th:text="#{automation.label.automated}"></button> -->
     </div>
   </div>
   <table id="assigned-table">
     <thead>
       <tr>
-        <th data-def="map=entity-index, select, sClass=button-cell">#</th>
-        <th data-def="map=project-name, sortable" th:text="#{automation.datatable.headers.project}" class="datatable-filterable"></th>
-        <th data-def="map=entity-id, sortable" th:text="#{automation.datatable.headers.id}" class="datatable-filterable"></th>
-        <th data-def="map=reference, sortable" th:text="#{automation.datatable.headers.reference}" class="datatable-filterable"></th>
-        <th data-def="map=name, sortable" th:text="#{automation.datatable.headers.label}" class="datatable-filterable"></th>
-        <th data-def="map=format, sortable" th:text="#{automation.datatable.headers.format}" class="datatable-filterable"></th>
-        <th data-def="map=created-by, sortable" th:text="#{automation.datatable.headers.createdby}" class="datatable-filterable"></th>
-        <th data-def="map=transmitted-on, sortable" th:text="#{automation.datatable.headers.transmittedon}" class="datatable-filterable"></th>
-        <th data-def="map=priority, sortable" th:text="#{automation.datatable.headers.priority}" class="datatable-filterable"></th>
-        <th data-def="map=assigned-on, sortable,sType = squashdateShort" th:text="#{automation.datatable.headers.affectedon}" class="datatable-filterable"></th>
+        <th>#</th>
+        <th th:text="#{automation.datatable.headers.project}" class="datatable-filterable"></th>
+        <th th:text="#{automation.datatable.headers.id}" class="datatable-filterable"></th>
+        <th th:text="#{automation.datatable.headers.reference}" class="datatable-filterable"></th>
+        <th th:text="#{automation.datatable.headers.label}" class="datatable-filterable"></th>
+        <th th:text="#{automation.datatable.headers.format}" class="datatable-filterable"></th>
+        <th th:text="#{automation.datatable.headers.createdby}" class="datatable-filterable"></th>
+        <th th:text="#{automation.datatable.headers.transmittedon}" class="datatable-filterable"></th>
+        <th th:text="#{automation.datatable.headers.priority}" class="datatable-filterable"></th>
+        <th th:text="#{automation.datatable.headers.affectedon}" class="datatable-filterable"></th>
+        <th th:text="#{automation.datatable.headers.script}" class="datatable-filterable"></th>
       </tr>
     </thead>
     <tbody>

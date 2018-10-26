@@ -28,9 +28,9 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 var self = this;
                 this.render();
                 var table = self.getAffectedTable();
-
+                var conf = self.getDatatableSettings();
+                console.log(conf.data)
                 table.squashTable(self.getDatatableSettings());
-
                 self.bindButtons();
             },
 
@@ -39,28 +39,60 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
             },
 
             getDatatableSettings: function () {
-                var data = this.loadData().aaData;
-                data = this.convertDate(data);
+
                 var datatableSettings = {
-                    aaData: data,
-                    bServerSide: false,
+                    sAjaxSource: squashtm.app.contextRoot + "automation-workspace/automation-request",
+                    aoColumnDefs : [ {
+                        bSortable: false,
+                        aTargets : [ 0 ],
+                        sClass: 'centered select-handle',
+                        mDataProp : "entity-index",
+                        sWidth: "2.5em"
+					}, {
+						bSortable: true,
+						aTargets : [ 1 ],
+						mDataProp : "project-name"
+					},{
+						bSortable: true,
+						aTargets : [ 2 ],
+						mDataProp : "entity-id"
+					},{
+						bSortable: true,
+						aTargets : [ 3 ],
+						mDataProp : "reference"
+					},{
+						bSortable: true,
+						aTargets : [ 4 ],
+						mDataProp : "name"
+					},{
+						bSortable: true,
+						aTargets : [ 5 ],
+						mDataProp : "format"
+					},{
+						bSortable: true,
+						aTargets : [ 6 ],
+						mDataProp : "created-by"
+					},{
+						bSortable: true,
+						aTargets : [ 7 ],
+						mDataProp : "transmitted-on"
+					},{
+						bSortable: true,
+						aTargets : [ 8 ],
+						mDataProp : "priority"
+					},{
+						bSortable: true,
+						aTargets : [ 9 ],
+						mDataProp : "assigned-on"
+					},{
+						bSortable: true,
+						aTargets : [ 10 ],
+						mDataProp : "script"
+					}],
+                    /*aaData: data,*/
                     bFilter: true
                 };
                 return datatableSettings;
-            },
-
-            loadData: function () {
-                var rep;
-                $.ajax({
-                    method: "GET",
-                    contentType: "application/json",
-                    url: squashtm.app.contextRoot + "automation-workspace/automation-request",
-                    async: false,
-                    success: function (data) {
-                        rep = data
-                    }
-                })
-                return rep;
             },
 
             convertDate: function (data) {

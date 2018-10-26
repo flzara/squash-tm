@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
@@ -97,7 +98,7 @@ public class AutomationWorkspaceController {
 		return WorkspaceType.AUTOMATION_WORKSPACE;
 	}
 
-	@RequestMapping(value="automation-request", method= RequestMethod.GET)
+	@RequestMapping(value="automation-request", params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getAutomationRequestModel(final DataTableDrawParameters params, final Locale locale) {
 
@@ -118,20 +119,19 @@ public class AutomationWorkspaceController {
 
 		@Override
 		protected Object buildItemData(AutomationRequest item) {
-			Map<String, Object> data = new HashMap<>(13);
-			data.put(DataTableModelConstants.PROJECT_NAME_KEY, item.getTestCase() != null ?  item.getTestCase().getProject().getLabel(): null);
+			Map<String, Object> data = new HashMap<>(11);
+			data.put(DataTableModelConstants.PROJECT_NAME_KEY, item.getTestCase() != null ? HtmlUtils.htmlEscape(item.getTestCase().getProject().getName()): null);
 			data.put("reference", item.getTestCase() != null ? item.getTestCase().getReference(): null);
-			data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, item.getTestCase() != null ? item.getTestCase().getFullName(): null);
-			data.put("format", item.getTestCase() != null ? item.getTestCase().getKind(): null);
-			data.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
+			data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, item.getTestCase() != null ? HtmlUtils.htmlEscape(item.getTestCase().getFullName()): null);
+			data.put("format", item.getTestCase() != null ? messageSource.internationalize(item.getTestCase().getKind().getI18nKey(), locale) : null);
+			data.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getTestCase() != null ? item.getTestCase().getId() : null);
 			data.put(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, item.getCreatedBy() != null? item.getCreatedBy().getLogin(): null);
-			data.put("transmitted-by", item.getTransmittedBy() != null ?item.getTransmittedBy().getLogin(): null);
-			data.put("transmitted-on", item.getTransmissionDate());
+			data.put("transmitted-on", messageSource.localizeShortDate(item.getTransmissionDate(), locale));
 			data.put("priority", item.getAutomationPriority());
-			data.put("status", item.getRequestStatus().name());
-			data.put("assigned-to", item.getAssignedTo() != null ? item.getAssignedTo().getLogin(): null);
-			data.put("assigned-on", item.getAssignmentDate());
+			data.put("assigned-on", messageSource.localizeShortDate(item.getAssignmentDate(), locale));
 			data.put("entity-index", getCurrentIndex());
+			data.put("script", (item.getTestCase() != null && item.getTestCase().getAutomatedTest() != null) ? item.getTestCase().getAutomatedTest().getFullLabel(): null);
+
 			return data;
 		}
 	}

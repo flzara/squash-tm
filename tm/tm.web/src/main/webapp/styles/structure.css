@@ -2014,3 +2014,47 @@ opacity:0.2;
 #tf-affected-tabs ul a.tf-selected:focus {
   border: 1px solid rgb(81,147,228);
 }
+
+.tf-blue-btn {
+	background: #0078AE url("jquery/ui/images/ui-bg_glass_45_0078ae_1x400.png")!important;
+	border: #77D5F7!important;
+	
+
+
+}
+.tf-blue-btn:hover {
+	border: 1px solid #2e2e2e;
+    background: #2b2b2b url(/squash/styles/images/ui-bg_glass_75_2b2b2b_1x400-7bf1397b640453b0f8fe4730546a298d.png) 50% 50% repeat-x;
+    font-weight: normal;
+    color: #ffffff;
+}
+.tf-gray-btn {
+	background: #808080 url("jquery/ui/images/ui-bg_glass_45_0078ae_1x400.png")!important;
+	border: #999999!important;
+}
+.tf-gray-btn:hover {
+	border: 1px solid #2e2e2e;
+    background: #2b2b2b url(/squash/styles/images/ui-bg_glass_75_2b2b2b_1x400-7bf1397b640453b0f8fe4730546a298d.png) 50% 50% repeat-x;
+    font-weight: normal;
+    color: #ffffff;
+}
+.tf-red-btn {
+	background: #0078AE url("jquery/ui/images/ui-bg_glass_45_0078ae_1x400.png")!important;
+	border: #77D5F7!important;
+}
+.tf-red-btn:hover {
+	border: 1px solid #2e2e2e;
+    background: #2b2b2b url(/squash/styles/images/ui-bg_glass_75_2b2b2b_1x400-7bf1397b640453b0f8fe4730546a298d.png) 50% 50% repeat-x;
+    font-weight: normal;
+    color: #ffffff;
+}
+.tf-light-gray-btn {
+	background: #E6E6E6 url("jquery/ui/images/ui-bg_glass_45_808080_1x400.png")!important;
+	border: #E6E6E6!important;
+}
+.tf-light-gray-btn:hover {
+	border: 1px solid #2e2e2e;
+    background: #2b2b2b url(/squash/styles/images/ui-bg_glass_75_2b2b2b_1x400-7bf1397b640453b0f8fe4730546a298d.png) 50% 50% repeat-x;
+    font-weight: normal;
+    color: #ffffff;
+}
