@@ -25,9 +25,9 @@ define(['jquery', 'workspace.contextual-content'/*, 'squash.translator'*/, 'work
 		function _initTabs() {
 			var url = $(location).attr("href");
 			if (url.indexOf("#traitment") != -1) {
-				addSelectClass("#traitment-tab a");
+				addSelectedTabClass("#traitment-tab a");
 			} else if (url.indexOf("#global") != -1) {
-				addSelectClass("#global-tab a");
+				addSelectedTabClass("#global-tab a");
 			} else {
 				addSelectedTabClass("#assigned-tab a");
 			}

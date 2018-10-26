@@ -155,5 +155,28 @@
       </script>
       </div>
 
+  <!-- AUTOMATION MAIN MENUBAR FRAGMENT -->
+  <div class="main-menubar" th:fragment="automation-menubar">
+    <div>
+      <div class="icon"><span class="ui-icon ui-icon-person"></span></div>
+      <a id="menu-account-link" href="user-account.html" th:href="@{/user-account}">
+        <span th:text="#{workspace.menubar.account.label}">Mon compte</span>&nbsp;(<span th:text="${sec.authentication.name}">Zoltan</span>)
+      </a>
+    </div>
+
+    <div th:if="${sec.isAuthenticated()}">
+      <!--
+                CRSF : since '/logout' modifies the application state it must not be
+                called by GET : a POST + csrf token is more appropriate.
+                The logout menu is bound by javascript in app/ws/squashtm.workspace.js
+            -->
+      <div class="icon"><span class="ui-icon ui-icon-power"></span></div>
+      <a id="menu-logout-link" th:href="@{/logged-out}"  th:text="#{workspace.menubar.logout.label}">logout</a>
+    </div>
+    <script type="text/javascript" >
+      publish("load.logout");
+    </script>
+  </div>
+
 </body>
 </html>

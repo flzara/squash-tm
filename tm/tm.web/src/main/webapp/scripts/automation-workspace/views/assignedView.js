@@ -28,20 +28,48 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 var self = this;
                 this.render();
                 var table = self.getAffectedTable();
-                var conf = self.getDatatableSettings();
-                console.log(conf.data)
-                table.squashTable(self.getDatatableSettings());
+                table.squashTable(self.getDatatableSettings(), self.t1);
                 self.bindButtons();
+                console.log(self.t1)
             },
 
             getAffectedTable: function () {
                 return this.$el.find("#assigned-table");
             },
 
+            t1: {
+
+				buttons: [{
+					tdSelector: '>tbody>tr>td.tc-ic',
+					jquery: true,
+					//tooltip: translator.get('dialog.unbind-testcase.tooltip'),
+					uiIcon: function (row, data) {
+						return (data['tc-ic'] !== null) ? 'ui-icon-trash' : 'ui-icon-minus';
+					},
+					/*
+					 * the delete button must be drawn if
+					 * - the user can delete and the item was not executed or
+					 * - the user can extended delete and item was executed
+					 */
+					/*condition: function (row, data) {
+						return (data['last-exec-on'] === null) ?
+							initconf.permissions.deletable :
+							initconf.permissions.extendedDeletable;
+					},*/
+					onClick: function (table, cell) {
+						console.log("click")
+					}
+				}]},
+
             getDatatableSettings: function () {
 
                 var datatableSettings = {
                     sAjaxSource: squashtm.app.contextRoot + "automation-workspace/automation-request",
+                    fnPreDrawCallback: function (settings) {
+                    },
+                    fnRowCallback: function (row, data, displayIndex) {
+                    },
+                    aaSorting:[[7,'desc'], [8,'desc']],
                     aoColumnDefs : [ {
                         bSortable: false,
                         aTargets : [ 0 ],
@@ -49,11 +77,11 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         mDataProp : "entity-index",
                         sWidth: "2.5em"
 					}, {
-						bSortable: true,
+                        bSortable: true,
 						aTargets : [ 1 ],
 						mDataProp : "project-name"
 					},{
-						bSortable: true,
+                        bSortable: true,
 						aTargets : [ 2 ],
 						mDataProp : "entity-id"
 					},{
@@ -61,48 +89,55 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 						aTargets : [ 3 ],
 						mDataProp : "reference"
 					},{
-						bSortable: true,
+                        bSortable: true,
 						aTargets : [ 4 ],
 						mDataProp : "name"
 					},{
-						bSortable: true,
+                        bSortable: true,
 						aTargets : [ 5 ],
 						mDataProp : "format"
 					},{
-						bSortable: true,
+                        bSortable: true,
 						aTargets : [ 6 ],
 						mDataProp : "created-by"
 					},{
-						bSortable: true,
+                        bSortable: true,
 						aTargets : [ 7 ],
-						mDataProp : "transmitted-on"
+                        mDataProp : "transmitted-on",
+                        sWidth: "13em"
 					},{
-						bSortable: true,
+                        bSortable: true,
 						aTargets : [ 8 ],
 						mDataProp : "priority"
 					},{
-						bSortable: true,
+                        bSortable: true,
 						aTargets : [ 9 ],
-						mDataProp : "assigned-on"
+                        mDataProp : "assigned-on",
+                        sWidth: "12em"
 					},{
-						bSortable: true,
+                        bSortable: true,
 						aTargets : [ 10 ],
 						mDataProp : "script"
+					},{
+                        bSortable: false,
+						aTargets : [ 11 ],
+                        mDataProp : "tc-id",
+                        render: function(data, type, row, meta) {
+                            return "";
+                        }
+					},{
+                        bSortable: false,
+						aTargets : [ 12 ],
+                        mDataProp : "checkbox",
+                        render: function ( data, type, row, meta ) {
+                            return '<input type="checkbox" />';
+                        },
+                        sClass: 'centered',
+                        sWidth: "2.5em"
 					}],
-                    /*aaData: data,*/
                     bFilter: true
                 };
                 return datatableSettings;
-            },
-
-            convertDate: function (data) {
-                var format = translator.get('squashtm.dateformat');
-                for (var e = 0; e < data.length; e++) {
-                    var element = data[e];
-                    element["assigned-on"] = dateutils.format(element["assigned-on"], format);
-                    element["transmitted-on"] = dateutils.format(element["transmitted-on"], format);
-                }
-                return data;
             },
 
             render: function () {

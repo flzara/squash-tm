@@ -71,15 +71,17 @@
 
 </head>
 <body>
-<div class="noprint" id="navigation" th:include="navbar.frag :: navbar('automation')">NAVBAR</div>
-
+<div id="navigation">
+  <div id="test_mgt_nav" class="squash-navbar">
+    <div id="nav_logo" >
+      <div class="vertical-logo"></div>
+    </div>
+  </div>
+</div>
 <div id="workspace">
   <div id="workspace-title" class="noprint">
-    <div class="snap-left">
-      <h2 th:text="#{workspace.automation.title}">Espace Automatisation</h2>
-    </div>
-    <div class="snap-right">
-      <div class="main-menubar" th:include="menubar.frag :: menubar">MENUBAR</div>
+    <div class="snap-right" style="margin-top:5px;">
+      <div class="main-menubar" th:include="menubar.frag :: automation-menubar">MENUBAR</div>
       <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">NOTIFICATION</div>
     </div>
   </div>

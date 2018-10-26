@@ -119,7 +119,7 @@ public class AutomationWorkspaceController {
 
 		@Override
 		protected Object buildItemData(AutomationRequest item) {
-			Map<String, Object> data = new HashMap<>(11);
+			Map<String, Object> data = new HashMap<>(13);
 			data.put(DataTableModelConstants.PROJECT_NAME_KEY, item.getTestCase() != null ? HtmlUtils.htmlEscape(item.getTestCase().getProject().getName()): null);
 			data.put("reference", item.getTestCase() != null ? item.getTestCase().getReference(): null);
 			data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, item.getTestCase() != null ? HtmlUtils.htmlEscape(item.getTestCase().getFullName()): null);
@@ -131,7 +131,8 @@ public class AutomationWorkspaceController {
 			data.put("assigned-on", messageSource.localizeShortDate(item.getAssignmentDate(), locale));
 			data.put("entity-index", getCurrentIndex());
 			data.put("script", (item.getTestCase() != null && item.getTestCase().getAutomatedTest() != null) ? item.getTestCase().getAutomatedTest().getFullLabel(): null);
-
+			data.put("checkbox", "");
+			data.put("tc-id", item.getTestCase() != null ? item.getTestCase().getId(): null);
 			return data;
 		}
 	}
