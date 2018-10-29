@@ -48,6 +48,7 @@ import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestLibrary;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.exception.CompositeDomainException;
@@ -198,6 +199,10 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		project.setCustomReportLibrary(crl);
 		em.persist(crl);
 
+		AutomationRequestLibrary arl = new AutomationRequestLibrary();
+		project.setAutomationRequestLibrary(arl);
+		em.persist(arl);
+
 		//add the tree node for the CustomReportLibrary as for custom report workspace library
 		//object and their representation in tree are distinct entities
 		CustomReportLibraryNode crlNode = new CustomReportLibraryNode(CustomReportTreeDefinition.LIBRARY, crl.getId(), project.getName(), crl);
@@ -214,6 +219,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		objectIdentityService.addObjectIdentity(rl.getId(), rl.getClass());
 		objectIdentityService.addObjectIdentity(cl.getId(), cl.getClass());
 		objectIdentityService.addObjectIdentity(crl.getId(), crl.getClass());
+		objectIdentityService.addObjectIdentity(arl.getId(), arl.getClass());
 
 	}
 

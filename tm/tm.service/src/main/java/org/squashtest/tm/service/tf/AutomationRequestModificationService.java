@@ -18,20 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.service.tf;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
+public interface AutomationRequestModificationService extends AutomationRequestFinderService{
 
-public interface AutomationRequestDao extends JpaRepository<AutomationRequest, Long>, CustomAutomationRequestDao {
-
-	AutomationRequest findByTestCaseId(long testCaseId);
-
-	@Modifying
-	@Query("delete from AutomationRequest ar where ar.project.id = :projectId")
-	void batchDeleteByProjectId(@Param("projectId") long projectId);
+	void deleteRequestByProjectId(long projectId);
 
 }

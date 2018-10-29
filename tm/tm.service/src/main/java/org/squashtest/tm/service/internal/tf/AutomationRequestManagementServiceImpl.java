@@ -29,12 +29,13 @@ import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.service.internal.repository.AutomationRequestDao;
 import org.squashtest.tm.service.security.UserContextService;
 import org.squashtest.tm.service.tf.AutomationRequestFinderService;
+import org.squashtest.tm.service.tf.AutomationRequestModificationService;
 
 import javax.inject.Inject;
 
 @Service
 @Transactional
-public class AutomationRequestManagementServiceImpl implements AutomationRequestFinderService {
+public class AutomationRequestManagementServiceImpl implements AutomationRequestFinderService, AutomationRequestModificationService {
 
 	@Inject
 	private AutomationRequestDao requestDao;
@@ -77,7 +78,10 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 	// *************** implementation of the management interface *************************
 
-
+	@Override
+	public void deleteRequestByProjectId(long projectId) {
+		requestDao.batchDeleteByProjectId(projectId);
+	}
 
 
 	// **************************** boiler plate code *************************************

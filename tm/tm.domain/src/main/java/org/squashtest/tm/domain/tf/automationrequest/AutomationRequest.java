@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.tf.automationrequest;
 
 import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
 
@@ -71,6 +72,10 @@ public class AutomationRequest implements Identified {
 	@ManyToOne
 	@JoinColumn(name = "TRANSMITTED_BY")
 	private User transmittedBy;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "PROJECT_ID")
+	private Project project;
 
 	public Long getId() {
 		return id;
@@ -145,4 +150,29 @@ public class AutomationRequest implements Identified {
 	public void setTransmittedBy(User transmittedBy) {
 		this.transmittedBy = transmittedBy;
 	}
+
+
+	public Project getProject() {
+		return project;
+	}
+
+
+	/**
+	 * A setter with a fancier name than setProject, that remains consistent with the similar method one can find in
+	 * other library-based entities
+	 *
+	 * @param project
+	 */
+	public void notifyAssociatedWithProject(Project project){
+		this.project = project;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
+	}
+
+	public AutomationRequestLibrary getLibrary(){
+		return  this.project.getAutomationRequestLibrary();
+	}
 }
+

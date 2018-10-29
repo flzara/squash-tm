@@ -284,6 +284,9 @@
       <column name="TEST_CASE_ID" type="BIGINT"/>
       <column name="CREATED_BY" type="BIGINT"/>
       <column name="TRANSMITTED_BY" type="BIGINT"/>
+      <column name="PROJECT_ID" type="BIGINT" remarks="fk to the host project" >
+        <constraints foreignKeyName="fk_automation_request_project" nullable="false" references="PROJECT(PROJECT_ID)"/>
+      </column>
     </createTable>
 
     <createIndex tableName="AUTOMATION_REQUEST" indexName="automation_request_assigned_to_idx">

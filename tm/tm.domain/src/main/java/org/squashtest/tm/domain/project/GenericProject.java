@@ -70,6 +70,7 @@ import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestLibrary;
 import org.squashtest.tm.exception.NoBugTrackerBindingException;
 
 /**
@@ -127,6 +128,10 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	@JoinColumn(name = "CRL_ID")
 	private CustomReportLibrary customReportLibrary;
+
+	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@JoinColumn(name = "ARL_ID")
+	private AutomationRequestLibrary automationRequestLibrary;
 
 	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "project")
 	private BugTrackerBinding bugtrackerBinding;
@@ -239,6 +244,16 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 		notifyLibraryAssociation(campaignLibrary);
 	}
 
+	public AutomationRequestLibrary getAutomationRequestLibrary() {
+		return automationRequestLibrary;
+	}
+
+	public void setAutomationRequestLibrary(AutomationRequestLibrary automationRequestLibrary) {
+		this.automationRequestLibrary = automationRequestLibrary;
+		if (automationRequestLibrary != null){
+			automationRequestLibrary.notifyAssociatedWithProject(this);
+		}
+	}
 
 	public CustomReportLibrary getCustomReportLibrary() {
 		return customReportLibrary;
