@@ -70,19 +70,17 @@ public class AutomationWorkspaceController {
 	private InternationalizationHelper messageSource;
 
 	private final DatatableMapper<String> automationRequestMapper = new NameBasedMapper()
-		.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, "name", Project.class)
-		.mapAttribute("reference", "reference", TestCase.class)
-		.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "name", TestCase.class)
-		.mapAttribute("format", "kind", TestCase.class)
-		.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, "id", AutomationRequest.class)
-		.mapAttribute(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, "createdBy", AutomationRequest.class)
-		.mapAttribute("transmitted-by", "transmittedBy", AutomationRequest.class)
-		.mapAttribute("transmitted-on", "transmissionDate", AutomationRequest.class)
-		.mapAttribute("priority", "automationPriority", AutomationRequest.class)
-		.mapAttribute("status", "requestStatus", AutomationRequest.class)
-		.mapAttribute("assigned-to", "assignedTo", AutomationRequest.class)
-		.mapAttribute("assigned-on", "assignmentDate", AutomationRequest.class)
-		.map("entity-index", "index(AutomationRequest)");
+		.map(DataTableModelConstants.PROJECT_NAME_KEY, "testCase.project.name")
+		.map("reference", "testCase.reference")
+		.map(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "testCase.name")
+		.map("format", "testCase.kind")
+		.map(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, "id")
+		.map(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, "createdBy")
+		.map("transmitted-on", "transmissionDate")
+		.map("priority", "automationPriority")
+		.map("status", "requestStatus")
+		.map("assigned-on", "assignmentDate")
+		/*.map("entity-index", "index(AutomationRequest)")*/;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale) {
@@ -102,8 +100,10 @@ public class AutomationWorkspaceController {
 	@ResponseBody
 	public DataTableModel getAutomationRequestModel(final DataTableDrawParameters params, final Locale locale) {
 
-		Pageable pageable = SpringPagination.pageable(params);
+		Pageable pageable = SpringPagination.pageable(params,automationRequestMapper);
 		ColumnFiltering filtering = new DataTableColumnFiltering(params);
+		LOGGER.info("List column filter {}",filtering.getFilteredAttributes().size());
+		LOGGER.info("Taille des filtres {} ",params.getmDataProp().size());
 		Page<AutomationRequest> automationRequestPage = automationRequestFinderService.findRequestsAssignedToCurrentUser(pageable, filtering);
 
 		return new AutomationRequestDataTableModelHelper(messageSource).buildDataModel(automationRequestPage, "");

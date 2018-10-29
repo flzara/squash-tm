@@ -113,12 +113,12 @@ define(['jquery', 'squash.translator', 'datepicker/jquery.squash.datepicker-loca
 									$(".rangedatepicker div td").hover(function(event) {
 										event.stopPropagation();
 									});
-									
-									if (!$("#okbutton",
+									var id = "#okbutton"+this.id;
+									if (!$(id,
 											".rangedatepicker div .ui-datepicker-buttonpane").length) {
 										var self = this;
 										$(
-												'<button type="button" id="okbutton" class="ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all" data-handler="hide" data-event="click">Ok</button>')
+												`<button type="button" id="${id}" class="ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all" data-handler="hide" data-event="click">Ok</button>`)
 												.appendTo(
 														$('.ui-datepicker-buttonpane', this))
 												.on('click', function() {

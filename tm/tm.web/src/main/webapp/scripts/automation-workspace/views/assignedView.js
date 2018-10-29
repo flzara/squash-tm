@@ -18,126 +18,118 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", 'squash.dateutils', "squashtable"],
-    function ($, _, Backbone, Handlebars, translator, dateutils) {
+define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", 'squash.dateutils', "./filter", "squashtable"],
+    function ($, _, Backbone, Handlebars, translator, dateutils, filtermode) {
         "use strict";
 
         var View = Backbone.View.extend({
         el: "#contextual-content-wrapper",
             initialize: function () {
-                var self = this;
                 this.render();
-                var table = self.getAffectedTable();
-                table.squashTable(self.getDatatableSettings(), self.t1);
-                self.bindButtons();
-                console.log(self.t1)
-            },
-
-            getAffectedTable: function () {
-                return this.$el.find("#assigned-table");
-            },
-
-            t1: {
-
-				buttons: [{
-					tdSelector: '>tbody>tr>td.tc-ic',
-					jquery: true,
-					//tooltip: translator.get('dialog.unbind-testcase.tooltip'),
-					uiIcon: function (row, data) {
-						return (data['tc-ic'] !== null) ? 'ui-icon-trash' : 'ui-icon-minus';
-					},
-					/*
-					 * the delete button must be drawn if
-					 * - the user can delete and the item was not executed or
-					 * - the user can extended delete and item was executed
-					 */
-					/*condition: function (row, data) {
-						return (data['last-exec-on'] === null) ?
-							initconf.permissions.deletable :
-							initconf.permissions.extendedDeletable;
-					},*/
-					onClick: function (table, cell) {
-						console.log("click")
-					}
-				}]},
-
-            getDatatableSettings: function () {
 
                 var datatableSettings = {
                     sAjaxSource: squashtm.app.contextRoot + "automation-workspace/automation-request",
-                    fnPreDrawCallback: function (settings) {
-                    },
-                    fnRowCallback: function (row, data, displayIndex) {
-                    },
-                    aaSorting:[[7,'desc'], [8,'desc']],
-                    aoColumnDefs : [ {
-                        bSortable: false,
-                        aTargets : [ 0 ],
-                        sClass: 'centered select-handle',
-                        mDataProp : "entity-index",
-                        sWidth: "2.5em"
+                    "aaSorting":[[8,'desc'],[7,'asc']],
+                    "bDeferRender" : true,
+                    "aoColumnDefs" : [ {
+                        "bSortable": false,
+                        "aTargets" : [ 0 ],
+                        "sClass": 'centered select-handle',
+                        "mDataProp" : "entity-index",
+                        "sWidth": "2.5em"
 					}, {
-                        bSortable: true,
-						aTargets : [ 1 ],
-						mDataProp : "project-name"
+                        "bSortable": true,
+						"aTargets" : [ 1 ],
+						"mDataProp" : "project-name"
 					},{
-                        bSortable: true,
-						aTargets : [ 2 ],
-						mDataProp : "entity-id"
+                        "bSortable": true,
+						"aTargets" : [ 2 ],
+                        "mDataProp" : "entity-id",
+                        "sWidth": "4em"
 					},{
-						bSortable: true,
-						aTargets : [ 3 ],
-						mDataProp : "reference"
+						"bSortable": true,
+						"aTargets" : [ 3 ],
+						"mDataProp" : "reference"
 					},{
-                        bSortable: true,
-						aTargets : [ 4 ],
-						mDataProp : "name"
+                        "bSortable": true,
+						"aTargets" : [ 4 ],
+						"mDataProp" : "name"
 					},{
-                        bSortable: true,
-						aTargets : [ 5 ],
-						mDataProp : "format"
+                        "bSortable": true,
+						"aTargets" : [ 5 ],
+                        "mDataProp" : "format",
+                        "sWidth": "7em"
 					},{
-                        bSortable: true,
-						aTargets : [ 6 ],
-						mDataProp : "created-by"
+                        "bSortable": true,
+						"aTargets" : [ 6 ],
+						"mDataProp" : "created-by"
 					},{
-                        bSortable: true,
-						aTargets : [ 7 ],
-                        mDataProp : "transmitted-on",
-                        sWidth: "13em"
+                        "bSortable": true,
+						"aTargets" : [ 7 ],
+                        "mDataProp" : "transmitted-on",
+                        "sWidth": "13em"
 					},{
-                        bSortable: true,
-						aTargets : [ 8 ],
-						mDataProp : "priority"
+                        "bSortable": true,
+						"aTargets" : [ 8 ],
+                        "mDataProp" : "priority",
+                        "sWidth": "6em"
 					},{
-                        bSortable: true,
-						aTargets : [ 9 ],
-                        mDataProp : "assigned-on",
-                        sWidth: "12em"
+                        "bSortable": true,
+						"aTargets" : [ 9 ],
+                        "mDataProp" : "assigned-on",
+                        "sWidth": "12em"
 					},{
-                        bSortable: true,
-						aTargets : [ 10 ],
-						mDataProp : "script"
+                        "bSortable": true,
+						"aTargets" : [ 10 ],
+						"mDataProp" : "script"
 					},{
-                        bSortable: false,
-						aTargets : [ 11 ],
-                        mDataProp : "tc-id",
-                        render: function(data, type, row, meta) {
-                            return "";
+                        "bSortable": false,
+						"aTargets" : [ 11 ],
+                        "mDataProp" : "tc-id",
+                        "mRender": function(data, type, row, meta) {
+                            return `<a href="${squashtm.app.contextRoot}test-cases/${data}/info">Lien</a>`;
                         }
 					},{
-                        bSortable: false,
-						aTargets : [ 12 ],
-                        mDataProp : "checkbox",
-                        render: function ( data, type, row, meta ) {
+                        "bSortable": false,
+						"aTargets" : [ 12 ],
+                        "mDataProp" : "checkbox",
+                        "mRender": function ( data, type, row, meta ) {
                             return '<input type="checkbox" />';
                         },
-                        sClass: 'centered',
-                        sWidth: "2.5em"
+                        "sClass": 'centered',
+                        "sWidth": "2.5em"
 					}],
-                    bFilter: true
+                    "bFilter": true,
+                    
                 };
-                return datatableSettings;
+                
+                
+                
+                var $table = $("#assigned-table");
+                var fmode = filtermode.newInst(datatableSettings);
+
+                $table.data('filtermode', fmode);
+                var sqtable = $table.squashTable(datatableSettings);
+                console.log(sqtable)
+                
+                
+                function toggleSortmode(locked) {
+					/*if (locked) {
+						sortmode.disableReorder();
+					}
+					else {
+						sortmode.enableReorder();
+					}*/
+				}
+
+				toggleSortmode(fmode.isFiltering());
+
+				sqtable.toggleFiltering = function () {
+					var isFiltering = fmode.toggleFilter();
+					toggleSortmode(isFiltering);
+				};
+
+                this.bindButtons();
             },
 
             render: function () {
@@ -149,8 +141,10 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
             },
 
             bindButtons: function () {
+                var table = this.$el.find("#assigned-table");
                 $("#filter-affected-button").on("click", function () {
-                    console.log();
+                    var domtable =  $("#assigned-table").squashTable();
+			        domtable.toggleFiltering();
                 });
                 $("#select-affected-button").on("click", function () {
                 });
