@@ -38,7 +38,7 @@ public interface AutomationRequestFinderService {
 	 * @return an AutomationRequest if found
 	 * @throws javax.persistence.EntityNotFoundException if not
 	 */
-	AutomationRequest findRequestById(long id);
+	AutomationRequest findRequestById(long requestId);
 
 	/**
 	 * Same as {@link #findRequestById(long)}, except we do so by using the

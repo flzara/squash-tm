@@ -377,7 +377,7 @@
     <sql>
       insert into ACL_CLASS(ID, CLASSNAME) values(7, 'org.squashtest.tm.domain.tf.automationrequest.AutomationRequestLibrary');
 
-      insert into ACL_GROUP(ID, QUALIFIED_NAME) values(10, 'squashtest.acl.group.tf.AutomatedTestWriter');
+      insert into ACL_GROUP(ID, QUALIFIED_NAME) values(10, 'squashtest.acl.group.tm.AutomatedTestWriter');
 
       insert into ACL_GROUP_PERMISSION(ACL_GROUP_ID, PERMISSION_MASK, CLASS_ID)
       select AGP2.ACL_GROUP_ID, AGP2.PERMISSION_MASK, 7

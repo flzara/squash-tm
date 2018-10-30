@@ -54,6 +54,8 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testcase.*;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
+import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.exception.UnallowedTestAssociationException;
@@ -65,10 +67,7 @@ import org.squashtest.tm.service.campaign.IterationTestPlanFinder;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.library.NodeManagementService;
-import org.squashtest.tm.service.internal.repository.ActionTestStepDao;
-import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
-import org.squashtest.tm.service.internal.repository.TestCaseDao;
-import org.squashtest.tm.service.internal.repository.TestStepDao;
+import org.squashtest.tm.service.internal.repository.*;
 import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
@@ -77,6 +76,7 @@ import org.squashtest.tm.service.testcase.CustomTestCaseModificationService;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
+import org.squashtest.tm.service.user.UserAccountService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -113,6 +113,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	private TestStepDao testStepDao;
 
 	@Inject
+	private AutomationRequestDao requestDao;
+
+	@Inject
 	@Named("squashtest.tm.service.internal.TestCaseManagementService")
 	private NodeManagementService<TestCase, TestCaseLibraryNode, TestCaseFolder> testCaseManagementService;
 
@@ -145,6 +148,10 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Inject
 	private IndexationService indexationService;
+
+	@Inject
+	private UserAccountService userAccountService;
+
 
 
 	/* *************** TestCase section ***************************** */
@@ -1073,4 +1080,27 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 
+	// ********************* Automation request *********************** */
+
+
+	@Override
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
+	public void createRequestForTestCase(long testCaseId) {
+		TestCase testCase = testCaseDao.findById(testCaseId);
+		Project project = testCase.getProject();
+
+		AutomationRequest request = new AutomationRequest();
+
+
+		testCase.setAutomationRequest(request);
+		request.setTestCase(testCase);
+		request.setProject(project);
+
+		User currentUser = userAccountService.findCurrentUser();
+		request.setCreatedBy(currentUser);
+
+		requestDao.save(request);
+		project.getAutomationRequestLibrary().addContent(request);
+
+	}
 }

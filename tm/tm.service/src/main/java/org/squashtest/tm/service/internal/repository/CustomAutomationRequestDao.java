@@ -25,17 +25,29 @@ import org.springframework.data.domain.Pageable;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 
+import java.util.Collection;
+
 public interface CustomAutomationRequestDao {
 
+
+	/**
+	 * Will retrieve a list of automated requests, paged and sorted.
+	 *
+	 * @param pageable
+	 * @param inProjectIds list of project ids the current user can read
+	 * @return
+	 */
+	Page<AutomationRequest> findAll(Pageable pageable, Collection<Long> inProjectIds);
 
 	/**
 	 * Will retrieve a list of automated requests, paged filtered and sorted.
 	 *
 	 * @param pageable
 	 * @param filtering
+	 * @param inProjectIds list of project ids the current user can read
 	 * @return
 	 */
-	Page<AutomationRequest> findAll(Pageable pageable, ColumnFiltering filtering);
+	Page<AutomationRequest> findAll(Pageable pageable, ColumnFiltering filtering, Collection<Long> inProjectIds);
 
 
 	/**
@@ -46,8 +58,9 @@ public interface CustomAutomationRequestDao {
 	 * @param username
 	 * @param pageable
 	 * @param filtering
+	 * @param inProjectIds list of project ids the current user can read
 	 * @return
 	 */
-	Page<AutomationRequest> findAllForAssignee(String username, Pageable pageable, ColumnFiltering filtering);
+	Page<AutomationRequest> findAllForAssignee(String username, Pageable pageable, ColumnFiltering filtering, Collection<Long> inProjectIds);
 
 }

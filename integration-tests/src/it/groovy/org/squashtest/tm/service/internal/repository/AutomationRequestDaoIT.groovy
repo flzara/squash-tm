@@ -101,7 +101,7 @@ class AutomationRequestDaoIT extends DbunitDaoSpecification{
 		ColumnFiltering filter = ColumnFiltering.unfiltered()
 
 		when :
-		Page<AutomationRequest> page = requestDao.findAll(pageable, filter)
+		Page<AutomationRequest> page = requestDao.findAll(pageable, filter, [-20L, -10L])
 
 		then :
 		page.totalElements == 4
@@ -120,7 +120,7 @@ class AutomationRequestDaoIT extends DbunitDaoSpecification{
 		ColumnFiltering filter = ColumnFiltering.unfiltered();
 
 		when :
-		Page<AutomationRequest> page = requestDao.findAll(pageable, filter)
+		Page<AutomationRequest> page = requestDao.findAll(pageable, filter, [-20L, -10L])
 
 		then :
 
@@ -137,7 +137,7 @@ class AutomationRequestDaoIT extends DbunitDaoSpecification{
 		ColumnFiltering filter = ColumnFiltering.unfiltered();
 
 		when :
-		Page<AutomationRequest> page = requestDao.findAll(pageable, filter)
+		Page<AutomationRequest> page = requestDao.findAll(pageable, filter, [-20L, -10L])
 
 		then :
 
@@ -155,7 +155,7 @@ class AutomationRequestDaoIT extends DbunitDaoSpecification{
 		ColumnFiltering filter = ColumnFiltering.unfiltered();
 
 		when :
-		Page<AutomationRequest> page = requestDao.findAll(pageable, filter)
+		Page<AutomationRequest> page = requestDao.findAll(pageable, filter, [-20L, -10L])
 
 		then :
 
@@ -174,7 +174,7 @@ class AutomationRequestDaoIT extends DbunitDaoSpecification{
 		ColumnFiltering filter = ColumnFiltering.unfiltered();
 
 		when :
-		Page<AutomationRequest> page = requestDao.findAll(pageable, filter)
+		Page<AutomationRequest> page = requestDao.findAll(pageable, filter, [-20L, -10L])
 
 		then :
 
@@ -195,7 +195,7 @@ class AutomationRequestDaoIT extends DbunitDaoSpecification{
 									.addFilter("assignedTo.login", "L")
 
 		when :
-		Page<AutomationRequest> page = requestDao.findAll(pageable, filter)
+		Page<AutomationRequest> page = requestDao.findAll(pageable, filter, [-20L, -10L])
 
 		then :
 		page.totalElements == 2
@@ -213,7 +213,7 @@ class AutomationRequestDaoIT extends DbunitDaoSpecification{
 			.addFilter("assignedTo.login", "L")
 
 		when :
-		Page<AutomationRequest> page = requestDao.findAllForAssignee("L", pageable, filter)
+		Page<AutomationRequest> page = requestDao.findAllForAssignee("L", pageable, filter, [-20L, -10L])
 
 		then :
 		// no one has a login of exactly 'L'
@@ -232,7 +232,7 @@ class AutomationRequestDaoIT extends DbunitDaoSpecification{
 			.addFilter("requestStatus", "VALID")
 
 		when :
-		Page<AutomationRequest> page = requestDao.findAll(pageable, filter)
+		Page<AutomationRequest> page = requestDao.findAll(pageable, filter, [-20L, -10L])
 
 		then :
 		page.totalElements == 1
@@ -250,7 +250,7 @@ class AutomationRequestDaoIT extends DbunitDaoSpecification{
 			.addFilter("automationPriority", "1000")
 
 		when :
-		Page<AutomationRequest> page = requestDao.findAll(pageable, filter)
+		Page<AutomationRequest> page = requestDao.findAll(pageable, filter, [-20L, -10L])
 
 		then :
 		page.totalElements == 1
@@ -268,7 +268,7 @@ class AutomationRequestDaoIT extends DbunitDaoSpecification{
 			.addFilter("transmissionDate", "2018-10-11 - 2018-10-13")
 
 		when :
-		Page<AutomationRequest> page = requestDao.findAll(pageable, filter)
+		Page<AutomationRequest> page = requestDao.findAll(pageable, filter, [-20L, -10L])
 
 		then :
 		page.totalElements == 3

@@ -49,6 +49,7 @@ import static org.squashtest.tm.service.internal.helper.PagingToQueryDsl.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -62,16 +63,25 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 
 
 	@Override
-	public Page<AutomationRequest> findAll(Pageable pageable, ColumnFiltering filtering) {
+	public Page<AutomationRequest> findAll(Pageable pageable, Collection<Long> inProjectIds) {
 
-		LOGGER.debug("searching for automation requests, paged and filtered");
+		LOGGER.debug("searching for automation requests, paged");
 
-		return innerFindAll(pageable, filtering, null);
+		return innerFindAll(pageable, new SimpleColumnFiltering(), null, inProjectIds);
 
 	}
 
 	@Override
-	public Page<AutomationRequest> findAllForAssignee(String username, Pageable pageable, ColumnFiltering filtering) {
+	public Page<AutomationRequest> findAll(Pageable pageable, ColumnFiltering filtering, Collection<Long> inProjectIds) {
+
+		LOGGER.debug("searching for automation requests, paged and filtered");
+
+		return innerFindAll(pageable, filtering, null, inProjectIds);
+
+	}
+
+	@Override
+	public Page<AutomationRequest> findAllForAssignee(String username, Pageable pageable, ColumnFiltering filtering, Collection<Long> inProjectIds) {
 		LOGGER.debug("searching for automation requests, paged and filtered for user : '{}'", username);
 
 		ColumnFiltering filterWithAssignee = new SimpleColumnFiltering(filtering)
@@ -80,13 +90,14 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 		return innerFindAll(pageable, filterWithAssignee, (converter) -> {
 			// force equality comparison for the assigned user login
 			converter.compare("assignedTo.login").withEquality();
-		});
+		}, inProjectIds);
 	}
 
-	private Page<AutomationRequest> innerFindAll(Pageable pageable, ColumnFiltering filtering, FilterOverride filterOverride){
+	private Page<AutomationRequest> innerFindAll(Pageable pageable, ColumnFiltering filtering, FilterOverride filterOverride, Collection<Long> inProjectIds){
 
 
 		if (LOGGER.isTraceEnabled()){
+			LOGGER.trace("searching in projects : {}", inProjectIds);
 			LOGGER.trace("page size : {}, page num : {}, filter by : {}",
 				pageable.getPageSize(),
 				pageable.getPageNumber(),
@@ -94,7 +105,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 		}
 
 		//create the base query
-		HibernateQuery<AutomationRequest> baseQuery = createFindAllBaseQuery();
+		HibernateQuery<AutomationRequest> baseQuery = createFindAllBaseQuery(inProjectIds);
 
 		// apply the filter
 		Predicate predicate = toQueryDslPredicate(filtering, filterOverride);
@@ -152,7 +163,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	}
 
 
-	private HibernateQuery<AutomationRequest> createFindAllBaseQuery(){
+	private HibernateQuery<AutomationRequest> createFindAllBaseQuery(Collection<Long> inProjectIds){
 
 		QAutomationRequest request = QAutomationRequest.automationRequest;
 		QTestCase testCase = QTestCase.testCase;
@@ -167,7 +178,8 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 					.leftJoin(testCase.project, project)
 					.leftJoin(request.assignedTo, assignedTo)
 					.leftJoin(request.transmittedBy, transmittedBy)
-					.leftJoin(request.createdBy, createdBy);
+					.leftJoin(request.createdBy, createdBy)
+					.where(project.id.in(inProjectIds));
 
 
 		return querydslRequest;

@@ -22,20 +22,29 @@ package org.squashtest.tm.service.internal.tf;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.service.internal.repository.AutomationRequestDao;
+import org.squashtest.tm.service.project.ProjectFinder;
+import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.security.UserContextService;
 import org.squashtest.tm.service.tf.AutomationRequestFinderService;
 import org.squashtest.tm.service.tf.AutomationRequestModificationService;
 
 import javax.inject.Inject;
+import java.util.List;
 
 @Service
 @Transactional
 public class AutomationRequestManagementServiceImpl implements AutomationRequestFinderService, AutomationRequestModificationService {
+
+	private static final String CAN_READ_REQUEST_OR_ADMIN = "hasPermission(#requestId, 'org.squashtest.tm.domain.tf.automationrequest.AUTOMATION_REQUEST', READ) " + Authorizations.OR_HAS_ROLE_ADMIN;
+
+	private static final String CAN_READ_TESTCASE_OR_ADMIN = "hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')" + Authorizations.OR_HAS_ROLE_ADMIN;
 
 	@Inject
 	private AutomationRequestDao requestDao;
@@ -43,42 +52,55 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	@Inject
 	private UserContextService userCtxt;
 
+	@Inject
+	private ProjectFinder projectFinder;
+
 
 	// *************** implementation of the finder interface *************************
 
 	@Override
 	@Transactional(readOnly = true)
-	public AutomationRequest findRequestById(long id) {
-		return requestDao.getOne(id);
+	@PreAuthorize(CAN_READ_REQUEST_OR_ADMIN)
+	public AutomationRequest findRequestById(long requestId) {
+		return requestDao.getOne(requestId);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize(CAN_READ_TESTCASE_OR_ADMIN)
 	public AutomationRequest findRequestByTestCaseId(long testCaseId) {
 		return requestDao.findByTestCaseId(testCaseId);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize(CAN_READ_TESTCASE_OR_ADMIN)
 	public Page<AutomationRequest> findRequests(Pageable pageable) {
-		return requestDao.findAll(pageable);
+		List<Long> projectIds = projectFinder.findAllReadableIds();
+		return requestDao.findAll(pageable, projectIds);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize(CAN_READ_TESTCASE_OR_ADMIN)
 	public Page<AutomationRequest> findRequests(Pageable pageable, ColumnFiltering filtering) {
-		return requestDao.findAll(pageable, filtering);
+		List<Long> projectIds = projectFinder.findAllReadableIds();
+		return requestDao.findAll(pageable, filtering, projectIds);
 	}
 
 	@Override
+	@PreAuthorize(CAN_READ_TESTCASE_OR_ADMIN)
 	public Page<AutomationRequest> findRequestsAssignedToCurrentUser(Pageable pageable, ColumnFiltering filtering) {
+		List<Long> projectIds = projectFinder.findAllReadableIds();
 		String username = userCtxt.getUsername();
-		return requestDao.findAllForAssignee(username, pageable, filtering);
+		return requestDao.findAllForAssignee(username, pageable, filtering, projectIds);
 	}
 
 	// *************** implementation of the management interface *************************
 
+
 	@Override
+	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
 	public void deleteRequestByProjectId(long projectId) {
 		requestDao.batchDeleteByProjectId(projectId);
 	}

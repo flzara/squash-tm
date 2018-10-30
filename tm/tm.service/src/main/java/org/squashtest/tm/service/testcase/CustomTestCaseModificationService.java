@@ -243,4 +243,11 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	Collection<Long> findBindedMilestonesIdForMassModif(List<Long> testCaseIds);
 
 	boolean haveSamePerimeter(List<Long> testCaseIds);
+
+
+	// ********************* Automation request *********************** */
+
+	void createRequestForTestCase(long testCaseId);
+
+
 }
