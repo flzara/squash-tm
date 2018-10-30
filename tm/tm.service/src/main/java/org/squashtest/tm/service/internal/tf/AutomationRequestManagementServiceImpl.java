@@ -42,7 +42,7 @@ import java.util.List;
 @Transactional
 public class AutomationRequestManagementServiceImpl implements AutomationRequestFinderService, AutomationRequestModificationService {
 
-	private static final String CAN_READ_REQUEST_OR_ADMIN = "hasPermission(#requestId, 'org.squashtest.tm.domain.tf.automationrequest.AUTOMATION_REQUEST', READ) " + Authorizations.OR_HAS_ROLE_ADMIN;
+	private static final String CAN_READ_REQUEST_OR_ADMIN = "hasPermission(#requestId, 'org.squashtest.tm.domain.tf.automationrequest.AutomationRequest', READ) " + Authorizations.OR_HAS_ROLE_ADMIN;
 
 	private static final String CAN_READ_TESTCASE_OR_ADMIN = "hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')" + Authorizations.OR_HAS_ROLE_ADMIN;
 
@@ -74,7 +74,7 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 	@Override
 	@Transactional(readOnly = true)
-	@PreAuthorize(CAN_READ_TESTCASE_OR_ADMIN)
+	@PreAuthorize(CAN_READ_REQUEST_OR_ADMIN)
 	public Page<AutomationRequest> findRequests(Pageable pageable) {
 		List<Long> projectIds = projectFinder.findAllReadableIds();
 		return requestDao.findAll(pageable, projectIds);
@@ -82,14 +82,14 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 	@Override
 	@Transactional(readOnly = true)
-	@PreAuthorize(CAN_READ_TESTCASE_OR_ADMIN)
+	@PreAuthorize(CAN_READ_REQUEST_OR_ADMIN)
 	public Page<AutomationRequest> findRequests(Pageable pageable, ColumnFiltering filtering) {
 		List<Long> projectIds = projectFinder.findAllReadableIds();
 		return requestDao.findAll(pageable, filtering, projectIds);
 	}
 
 	@Override
-	@PreAuthorize(CAN_READ_TESTCASE_OR_ADMIN)
+	@PreAuthorize(CAN_READ_REQUEST_OR_ADMIN)
 	public Page<AutomationRequest> findRequestsAssignedToCurrentUser(Pageable pageable, ColumnFiltering filtering) {
 		List<Long> projectIds = projectFinder.findAllReadableIds();
 		String username = userCtxt.getUsername();
