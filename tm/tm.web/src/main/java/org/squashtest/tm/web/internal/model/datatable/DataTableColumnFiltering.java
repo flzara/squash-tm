@@ -20,25 +20,31 @@
  */
 package org.squashtest.tm.web.internal.model.datatable;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
+import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 
 public class DataTableColumnFiltering implements ColumnFiltering {
 
 	private final DataTableDrawParameters params;
 	private Map<Object, Integer> dataProps = new HashMap<>();
+	private DatatableMapper mapper;
 
 	public DataTableColumnFiltering(DataTableDrawParameters params) {
 		super();
 		this.params = params;
 		createDataProps();
+	}
+
+	public DataTableColumnFiltering(DataTableDrawParameters params, DatatableMapper mapper) {
+		super();
+		this.params = params;
+		this.mapper = mapper;
+		createDataPropsAutomation();
 	}
 
 	private void createDataProps() {
@@ -48,15 +54,32 @@ public class DataTableColumnFiltering implements ColumnFiltering {
 		}
 	}
 
+	private void createDataPropsAutomation() {
+		Set<Entry<Integer, Object>> entries = params.getmDataProp().entrySet();
+		for (Entry<Integer, Object> entry :entries) {
+			if(!"tc-id".equals(entry.getValue()) && !"checkbox".equals(entry.getValue())) {
+				dataProps.put(mapper.getMapping(entry.getValue()), entry.getKey());
+			}
+		}
+	}
+
 	@Override
 	public List<String> getFilteredAttributes() {
 
-		List<String> attributes = params.getsSearches().values().stream()
-										.filter(s -> !StringUtils.isBlank(s))
-										.collect(Collectors.toList());
 
-		return attributes;
+		List<String> attr = new ArrayList<>();
+		Set<Entry<Integer, String>> entries = params.getsSearches().entrySet();
+		Object mDataIndex;
+		for(int x=0; x<entries.size(); x++) {
+			if(!StringUtils.isBlank(params.getsSearches(x))) {
+				mDataIndex = params.getmDataProp(x);
+				attr.add(mapper.getMapping(mDataIndex));
+			}
+		}
+
+		return attr;
 	}
+
 
 	@Override
 	public boolean isDefined() {

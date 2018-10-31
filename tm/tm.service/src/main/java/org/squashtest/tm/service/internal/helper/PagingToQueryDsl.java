@@ -346,7 +346,11 @@ public final class PagingToQueryDsl {
 			Object comparisonParameters = resolveParameters(property, value);
 
 			CompOperator operator = resolveOperator(property);
-
+			if(operator.equals(CompOperator.DATE)) {
+				if(value.contains(" - ")) {
+					operator = CompOperator.DATE_BETWEEN;
+				}
+			}
 			switch(operator){
 				case DATE_BETWEEN:
 					finalExpression = asBetweenDateExpression(pptPath, (Couple<Date, Date>) comparisonParameters);
@@ -402,7 +406,7 @@ public final class PagingToQueryDsl {
 					res = String.class;
 				}
 				else switch (operator){
-					case DATE_BETWEEN: res = Date.class; break; // ah, possibly a date
+					case DATE: res = Date.class; break; // ah, possibly a date
 					default : res = String.class; break; // no luck
 				}
 				return res;
@@ -487,7 +491,7 @@ public final class PagingToQueryDsl {
 
 		private Date parseAsDate(String value){
 			try{
-				return DateUtils.parseIso8601Date(value);
+				return DateUtils.parseDdMmYyyyDate(value);
 			}
 			catch (ParseException ex){
 				throw new RuntimeException("Encountered exception while parsing dates, probably not in yyyy-mm-dd format : '"+ value +"'", ex);
@@ -530,6 +534,11 @@ public final class PagingToQueryDsl {
 				return converter;
 			}
 
+			public ColumnFilteringConverter withDates(){
+				registerHint(CompOperator.DATE);
+				return converter;
+			}
+
 			private void registerHint(CompOperator operation){
 				for (String prop : properties){
 					converter.propertyComparison.put(prop, operation);
@@ -541,7 +550,8 @@ public final class PagingToQueryDsl {
 		private enum CompOperator{
 			EQUALITY,
 			LIKE,
-			DATE_BETWEEN
+			DATE_BETWEEN,
+			DATE
 		}
 	}
 

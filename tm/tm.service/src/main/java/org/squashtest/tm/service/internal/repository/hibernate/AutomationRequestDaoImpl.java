@@ -85,11 +85,12 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 		LOGGER.debug("searching for automation requests, paged and filtered for user : '{}'", username);
 
 		ColumnFiltering filterWithAssignee = new SimpleColumnFiltering(filtering)
-												 .addFilter("assignedTo.login", username);
+												 .addFilter("assignedTo.login", username)
+												.addFilter("requestStatus", AutomationRequestStatus.WORK_IN_PROGRESS.toString());
 
 		return innerFindAll(pageable, filterWithAssignee, (converter) -> {
 			// force equality comparison for the assigned user login
-			converter.compare("assignedTo.login").withEquality();
+			converter.compare("assignedTo.login, requestStatus").withEquality();
 		}, inProjectIds);
 	}
 
@@ -193,15 +194,16 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 				   .from(filtering)
 				   // types not mentioned here are considered as String
 				   .typeFor("requestStatus").isClass(AutomationRequestStatus.class)
-				   .typeFor("kind").isClass(TestCaseKind.class)
+				   .typeFor("testCase.kind").isClass(TestCaseKind.class)
 				   .typeFor("id", "automationPriority").isClass(Long.class)
-
+					.typeFor("testCase.id").isClass(Long.class)
 				   // filter operation not mentioned here are considered as Equality (or Like if the property is a String)
 				   .compare(
 					   "transmissionDate",
 					   "assignmentDate",
 					   "transmittedBy")
-				   .withBetweenDates();
+				   .withDates()
+					.compare("id", "automationPriority").withEquality();
 
 		// override if necessary
 		if (override != null){

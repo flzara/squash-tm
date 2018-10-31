@@ -74,16 +74,20 @@ public class AutomationWorkspaceController {
 		.map("reference", "testCase.reference")
 		.map(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "testCase.name")
 		.map("format", "testCase.kind")
-		.map(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, "id")
+		.map(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, "testCase.id")
 		.map(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, "createdBy")
 		.map("transmitted-on", "transmissionDate")
 		.map("priority", "automationPriority")
 		.map("status", "requestStatus")
 		.map("assigned-on", "assignmentDate")
-		/*.map("entity-index", "index(AutomationRequest)")*/;
+		.map("script", "testCase.automatedTest.name")
+		.map("entity-index", "index(AutomationRequest)");
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale) {
+
+		//model.addAttribute()
+
 		return getWorkspaceViewName();
 	}
 
@@ -101,9 +105,7 @@ public class AutomationWorkspaceController {
 	public DataTableModel getAutomationRequestModel(final DataTableDrawParameters params, final Locale locale) {
 
 		Pageable pageable = SpringPagination.pageable(params,automationRequestMapper);
-		ColumnFiltering filtering = new DataTableColumnFiltering(params);
-		LOGGER.info("List column filter {}",filtering.getFilteredAttributes().size());
-		LOGGER.info("Taille des filtres {} ",params.getmDataProp().size());
+		ColumnFiltering filtering = new DataTableColumnFiltering(params, automationRequestMapper);
 		Page<AutomationRequest> automationRequestPage = automationRequestFinderService.findRequestsAssignedToCurrentUser(pageable, filtering);
 
 		return new AutomationRequestDataTableModelHelper(messageSource).buildDataModel(automationRequestPage, "");

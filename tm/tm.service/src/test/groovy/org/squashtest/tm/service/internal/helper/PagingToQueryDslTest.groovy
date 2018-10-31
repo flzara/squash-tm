@@ -47,7 +47,7 @@ import static org.squashtest.tm.service.internal.helper.PagingToQueryDsl.ColumnF
 
 class PagingToQueryDslTest extends Specification {
 
-	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd")
+	SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy")
 
 
 
@@ -245,7 +245,7 @@ class PagingToQueryDslTest extends Specification {
 		fconv()                                           |	"name"      |	String |	"no type specified so resorting to default"
 		fconv(["name": String])                           |	"name"      |	String |	"because type was explicitly specified"
 		fconv(["createdOn": Date])                        |	"createdOn" |	Date   |	"because type was explicitly specified"
-		fconv([:], ["createdOn": "datebetween"])          |	"createdOn" |	Date   |	"because was inferred from comparison operator"
+		fconv([:], ["createdOn": "date"])                 |	"createdOn" |	Date   |	"because was inferred from comparison operator"
 		fconv(["createdOn": Date], ["createdOn": "like"]) |	"createdOn" |	Date   |	"because when declared type and comparison operator are conflicting, the declared type takes precedence"
 	}
 
@@ -261,7 +261,7 @@ class PagingToQueryDslTest extends Specification {
 		converter                                | property    | operator     |	reason
 		fconv()                                  | "name"      | LIKE         |	"property class resolved to string and default operation for string is like"
 		fconv(["createdOn":Date])                | "createdOn" | EQUALITY     |	"property is not a string and default operation in this case is equality"
-		fconv([:], ["createdOn": "datebetween"]) | "createdOn" | DATE_BETWEEN |	"operator was specified as date between"
+		fconv([:], ["createdOn": "date"])        | "createdOn" | DATE         |	"operator was specified as date between"
 		fconv([:], ["createdOn": "like"])        | "createdOn" | LIKE         |	"operator was specified as like"
 		fconv([:], ["createdOn": "equality"])    | "createdOn" | EQUALITY     |	"operator was specified as equality"
 
@@ -332,7 +332,7 @@ class PagingToQueryDslTest extends Specification {
 	def "should parse the parameter as a date"(){
 
 		expect:
-		filterConverter(TestCase).parseAsDate("2018-10-19") instanceof Date
+		filterConverter(TestCase).parseAsDate("19/10/2018") instanceof Date
 
 	}
 
@@ -347,17 +347,17 @@ class PagingToQueryDslTest extends Specification {
 	def "should parse a duration (a pair of date)"(){
 
 		given :
-		def duration = "2018-10-11 - 2018-10-22" // happy Apollo 7 anniversary !
+		def duration = "11/10/2018 - 22/10/2018" // happy Apollo 7 anniversary !
 
 		when :
 		def res = filterConverter(TestCase).parseAsCoupleDates(duration)
 
 		then :
 		res.a1 instanceof Date
-		formatter.format(res.a1) == "2018-10-11"
+		formatter.format(res.a1) == "11/10/2018"
 
 		res.a2 instanceof Date
-		formatter.format(res.a2) == "2018-10-22"
+		formatter.format(res.a2) == "22/10/2018"
 
 	}
 
@@ -372,8 +372,8 @@ class PagingToQueryDslTest extends Specification {
 		value  						| converter							| correct							|	resolvedmsg
 		"bob"						| fconv(["ppt":String])				| { it == "bob" }					|	"a String"
 		"MEDIUM"					| fconv(["ppt":TestCaseImportance])	| { it == MEDIUM}					|	"an Enum"
-		"2018-10-19"				| fconv(["ppt":Date])				| { it instanceof Date} 			|	"a Date"
-		"2018-10-11 - 2018-10-22"	| fconv(["ppt":Date])				| { it instanceof Couple}			|	"a duration (pair of date)"
+		"19/10/2018"				| fconv(["ppt":Date])				| { it instanceof Date} 			|	"a Date"
+		"11/10/2018 - 22/10/2018"	| fconv(["ppt":Date])				| { it instanceof Couple}			|	"a duration (pair of date)"
 		"205"						| fconv(["ppt":Integer])			| { it == 205L}						|	"a long int"
 		"5.5"						| fconv(["ppt":Float])				| { it > 5.4999D && it <5.5001D}	|	"a double precision"
 
@@ -387,7 +387,7 @@ class PagingToQueryDslTest extends Specification {
 			converter.initBasePath()
 
 			def path = converter.toEntityPath("property")
-			def duration = new Couple(formatter.parse("2018-10-11"), formatter.parse("2018-10-22"))
+			def duration = new Couple(formatter.parse("11/10/2018"), formatter.parse("22/10/2018"))
 
 
 		when :
@@ -420,7 +420,7 @@ class PagingToQueryDslTest extends Specification {
 	def "should create the boolean expression corresponding to each of a set of property"(){
 
 		given :
-		def filter = filter(name: "Bob", createdOn: "2018-10-11 - 2018-10-22", "project.name": "Project")
+		def filter = filter(name: "Bob", createdOn: "11/10/2018 - 22/10/2018", "project.name": "Project")
 
 		and :
 		def converter = filterConverter(TestCase).from(filter)
@@ -449,13 +449,13 @@ class PagingToQueryDslTest extends Specification {
 	def "and now, should generate a complete predicate"(){
 
 		given :
-		def filter = filter(name: "Bob", createdOn: "2018-10-11 - 2018-10-22", "project.name": "Project")
+		def filter = filter(name: "Bob", createdOn: "11/10/2018 - 22/10/2018", "project.name": "Project")
 
 		and :
 		// this definition of converter is same as method "should create a boolean expression etc" above,
 		// but uses default behaviors and infer-by-context mechanism for types and operation resolution
 		def converter = filterConverter(TestCase).from(filter)
-			.compare("createdOn").withBetweenDates()
+			.compare("createdOn").withDates()
 			.compare("name").withEquality()
 
 		when:
@@ -507,7 +507,7 @@ class PagingToQueryDslTest extends Specification {
 		opermap.each { k,v ->
 			def opConfig = converter.compare(k)
 			switch(v){
-				case "datebetween" 	: opConfig.withBetweenDates(); break;
+				case "date" 	    : opConfig.withDates(); break;
 				case "equality"		: opConfig.withEquality(); break;
 				case "like"			: opConfig.withLike(); break;
 				default				: throw new UnsupportedOperationException("operator $v not yet supported, update this test !")
