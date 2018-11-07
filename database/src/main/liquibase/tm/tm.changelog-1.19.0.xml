@@ -266,4 +266,27 @@
     <addNotNullConstraint tableName="EXECUTION" columnDataType="java.sql.Types.VARCHAR(308)" columnName="NAME"/>
   </changeSet>
 
+
+  <changeSet id="tm-1.19.0-SQTM-512-scm-server-management" author="jlor">
+    <comment>Add new table for scm (source code management) server.</comment>
+
+    <createTable tableName="SCM_SERVER">
+
+      <column name="SCM_SERVER_ID" type="BIGINT" autoIncrement="true" remarks="The auto-generated id of the scm server.">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="NAME" type="VARCHAR(255)" remarks="The scm server name.">
+        <constraints unique="true"/>
+      </column>
+      <column name="URL" type="VARCHAR(255)" remarks="The scm server url.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="KIND" type="VARCHAR(30)" defaultValue="git" remarks="The kind of scm server.">
+        <constraints nullable="false"/>
+      </column>
+
+    </createTable>
+
+  </changeSet>
+
 </databaseChangeLog>
