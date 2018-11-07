@@ -1979,13 +1979,12 @@ opacity:0.2;
   margin-bottom: 20px;
 }
 #tf-affected-tabs ul {
-  display: flex;
-  flex-direction: row;
   position: relative;
   left: -38px;
   top: 5px;
 }
 #tf-affected-tabs ul li {
+  display: inline;
   list-style: none;
   text-decoration: none;
   margin-right: 1px;
@@ -2018,7 +2017,7 @@ opacity:0.2;
 .tf-blue-btn {
 	background: #0078AE !important;
 	border: #77D5F7!important;
-	
+
 
 
 }
