@@ -20,7 +20,7 @@
  */
 define(['jquery', 'squash.translator', 'datepicker/jquery.squash.datepicker-locales',
 		'jeditable.datepicker'], function($, translator, regionale){
-	
+
 	return {
 		init : function(){
 			var localemeta = {
@@ -118,7 +118,7 @@ define(['jquery', 'squash.translator', 'datepicker/jquery.squash.datepicker-loca
 											".rangedatepicker div .ui-datepicker-buttonpane").length) {
 										var self = this;
 										$(
-												`<button type="button" id="${id}" class="ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all" data-handler="hide" data-event="click">Ok</button>`)
+												'<button type="button" id="' + id + '" class="ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all" data-handler="hide" data-event="click">Ok</button>')
 												.appendTo(
 														$('.ui-datepicker-buttonpane', this))
 												.on('click', function() {
@@ -138,7 +138,7 @@ define(['jquery', 'squash.translator', 'datepicker/jquery.squash.datepicker-loca
 									}
 								}
 							}).hide();
-			
+
 			$('.rangedatepicker-input').on('focus', function(e) {
 				var v = this.value, d;
 
@@ -164,7 +164,7 @@ define(['jquery', 'squash.translator', 'datepicker/jquery.squash.datepicker-loca
 			});
 		}
 	};
-	
+
 });
 
 

@@ -92,8 +92,8 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "mDataProp": "tc-id",
                         "sClass": "center",
                         "mRender": function (data, type, row, meta) {
-                            return `<a href="${squashtm.app.contextRoot}test-cases/${data}/info" style="margin: auto">
-                            <img src="/squash/images/icon-lib/eye.png" width="20" height="20" border="0"></a>`;
+                            return '<a href="' + squashtm.app.contextRoot + 'test-cases/' + data + '/info" style="margin: auto">'
+                            				+ '<img src="/squash/images/icon-lib/eye.png" width="20" height="20" border="0"></a>';
                         }
                     }, {
                         "bSortable": false,
@@ -108,10 +108,10 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             var input = "";
                             var $row = $(row);
                             if (checked) {
-                                input = `<input type="checkbox" class="editor-active" checked>`;
+                                input = '<input type="checkbox" class="editor-active" checked>';
                                 $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight")
                             } else {
-                                input = `<input type="checkbox" class="editor-active">`;
+                                input = '<input type="checkbox" class="editor-active">';
                             }
                             return input;
                         },
@@ -197,7 +197,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         editable.name = "path";
                         var cell = $row.find('.assigned-script');
                         var entityId = data["entity-id"];
-                        var url = `${squashtm.app.contextRoot}test-cases/${entityId}/test-automation/tests`;
+                        var url = squashtm.app.contextRoot + 'test-cases/' + entityId + '/test-automation/tests';
                         cell.editable(url, editable);
                     },
 
@@ -288,7 +288,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 return ids;
             },
 
-            checkScriptAutoIsPresent(table) {
+            checkScriptAutoIsPresent: function(table) {
                 var selectedRows = table.getSelectedRows();
                 var datas = table.fnGetData();
                 var scripts = [];
@@ -321,7 +321,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     } else {
                         $(requestIds).each(function () {
                             $.ajax({
-                                url: `${squashtm.app.contextRoot}automation-request/desassigned/${this}`,
+                                url: squashtm.app.contextRoot + 'automation-request/desassigned/' + this,
                                 method: 'POST'
                             }).success(function () {
                                 domtable.refresh();
@@ -339,7 +339,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     } else {
                         $(requestIds).each(function () {
                             $.ajax({
-                                url: `${squashtm.app.contextRoot}automation-request/${this}`,
+                                url: squashtm.app.contextRoot + 'automation-request/' + this,
                                 method: 'POST'
                             }).success(function () {
                                 domtable.refresh();

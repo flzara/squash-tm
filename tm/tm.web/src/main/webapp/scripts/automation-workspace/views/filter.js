@@ -33,7 +33,7 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 			var table = $(tableSelector),
 				self = this;
 			this.active = false;
-			this.key = `automation-filter-${initConf.customKey}`; 
+			this.key = 'automation-filter-' + initConf.customKey;
 			table.find('>thead>tr').addClass("tp-filtermode-disabled");
 
 			this._save = function (_search) {
@@ -145,7 +145,7 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 					var $th = $(this),
 						col = columnDefs[idx],
 						colFilter = findColFilterByName(filter, col.mDataProp);
-					
+
 					if ($th.is('.tp-th-filter') && !!colFilter) {
 						$th.find('.filter_input').val(colFilter.sSearch);
 					}
