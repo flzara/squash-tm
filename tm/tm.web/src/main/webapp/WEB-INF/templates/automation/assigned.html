@@ -29,6 +29,7 @@
       padding: 0.3em 1em;
       line-height: 1.4em;
       font-family: Verdana, Arial, sans-serif;
+      cursor: pointer;
     }
 
     button.tf-sm {
@@ -38,6 +39,7 @@
       padding: 0.3em 1em;
       background-color: #2e2e2e15;
       border: 1px solid #2e2e2e2d;
+      cursor: pointer;
     }
 
     button.tf-lg.blue {
@@ -86,7 +88,7 @@
   <div class="right btn-toolbar">
     <div class="btn-group">
       <button id="select-affected-button" class="tf-sm" th:title="#{label.SelectAllForSelection}" th:text="#{label.SelectAllForSelection}"></button>
-      <button id="deselect-affected-button" class="tf-sm" th:title="#{label.SelectNoneForSelection}" th:text="#{label.DeselectAll}"></button>
+      <button id="deselect-affected-button" class="tf-sm" th:title="#{label.DeselectAll}" th:text="#{label.DeselectAll}"></button>
     </div>
   </div>
   <div style="width:100%; overflow: auto;">
