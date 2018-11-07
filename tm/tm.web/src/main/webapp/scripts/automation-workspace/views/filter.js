@@ -22,7 +22,7 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 	function ($, rangedatepicker, translator, storage, strUtils, _, attrparser) {
 
 		"use strict";
-		var tableSelector = ".assigned-table";
+		var tableSelector = ".automation-table";
 
 		var formats = translator.get({
 			"GHERKIN": "test-case.format.gherkin",
@@ -33,9 +33,8 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 			var table = $(tableSelector),
 				self = this;
 			this.active = false;
-			this.key = "automation-filter-assigned"; 
+			this.key = `automation-filter-${initConf.customKey}`; 
 			table.find('>thead>tr').addClass("tp-filtermode-disabled");
-
 
 			this._save = function (_search) {
 				var sTable = table.squashTable(),
@@ -141,12 +140,12 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 				}
 
 				var headers = table.find('thead>tr>th');
-
+				var columnDefs = initConf.aoColumnDefs;
 				headers.each(function (idx) {
 					var $th = $(this),
 						col = columnDefs[idx],
 						colFilter = findColFilterByName(filter, col.mDataProp);
-
+					
 					if ($th.is('.tp-th-filter') && !!colFilter) {
 						$th.find('.filter_input').val(colFilter.sSearch);
 					}
@@ -163,25 +162,21 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 				assignedTime = table.find(".tp-th-affectedon"),
 				transmittedTime = table.find(".tp-th-transmittedon");
 
-			_createCombo(userCombo, "#filter-mode-combo", formats);
 			_createCombo(formatCombo, "#filter-mode-combo", formats);
+			var users = squashtm.app.assignableUsers;
+
+			_createCombo(userCombo, "#filter-mode-combo", users);
 
 			_createTimePicker(transmittedTime);
 			_createTimePicker(assignedTime);
 
 			this.loadSearchCols = function () {
 				var state = storage.get(this.key);
+				var columnDefs = initConf.aoColumnDefs;
 				if (state === undefined || state.active === false) {
 					return undefined;
 				}
 				else {
-					// return an object compliant with the datatable initialization option
-					/*
-					 * Issue 6576
-					 *
-					 * Because the search model that was saved may not match the column defs of the table
-					 * being loaded here, we must adapt the returned object to the new table definition.
-					 */
 					return _.map(columnDefs, function (col, idx) {
 						var f = findColFilterByName(state.filter, col.mDataProp);
 						var search = (!!f) ? f.sSearch : '';
@@ -211,7 +206,7 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 				rangedatepicker.init();
 			});
 
-			/*var state = storage.get(this.key);
+			var state = storage.get(this.key);
 
 			if (state !== undefined) {
 				this.active = state.active;
@@ -222,14 +217,11 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 				else {
 					hideInputs();
 				}
-			};*/
+			};
 
 			this.toggleFilter = function () {
 
 				var filterObject = undefined;
-
-				// note that, depending on the branch,
-				// the filter object is different;
 				if (this.active) {
 					this.active = false;
 					filterObject = table.squashTable().fnSettings().aoPreSearchCols;

@@ -197,6 +197,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 				   .typeFor("testCase.kind").isClass(TestCaseKind.class)
 				   .typeFor("id", "automationPriority").isClass(Long.class)
 					.typeFor("testCase.id").isClass(Long.class)
+					.typeFor("createdBy").isClass(Long.class)
 				   // filter operation not mentioned here are considered as Equality (or Like if the property is a String)
 				   .compare(
 					   "transmissionDate",

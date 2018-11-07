@@ -24,10 +24,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.squashtest.tm.service.tf.AutomationRequestService;
+import org.squashtest.tm.service.tf.AutomationRequestModificationService;
 
 import javax.inject.Inject;
-import java.util.List;
 
 @Controller
 @RequestMapping("/automation-request")
@@ -35,17 +34,18 @@ public class AutomationModificationController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AutomationModificationController.class);
 
-
 	@Inject
-	private AutomationRequestService automationRequestService;
+	private AutomationRequestModificationService automationRequestModificationService;
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, value="/{autoReqIds}")
 	public void changeStatus(@PathVariable(value="autoReqIds") Long autoReqIds) {
-		LOGGER.info("Controller {}", autoReqIds);
+		automationRequestModificationService.updateAutomationRequestsToExecutable(autoReqIds);
+	}
 
-		//TODO le servie pour update le status de la demande d'automatisation
-
-		automationRequestService.updateAutomationRequestsToExecutable(autoReqIds);
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.POST, value="desassigned/{autoReqIds}")
+	public void desassignedUser(@PathVariable(value="autoReqIds") Long autoReqIds) {
+		automationRequestModificationService.desassignedUser(autoReqIds);
 	}
 }

@@ -52,7 +52,6 @@ public class AutomationRequest implements Identified {
 	@JoinColumn(name = "ASSIGNED_TO")
 	private User assignedTo;
 
-	@NotNull
 	@Column(name = "AUTOMATION_PRIORITY")
 	private Integer automationPriority;
 

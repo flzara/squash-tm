@@ -34,4 +34,8 @@ public interface AutomationRequestDao extends JpaRepository<AutomationRequest, L
 	@Query("delete from AutomationRequest ar where ar.project.id = :projectId")
 	void batchDeleteByProjectId(@Param("projectId") long projectId);
 
+	@Modifying
+	@Query("update AutomationRequest ar set ar.assignedTo = NULL, ar.assignmentDate = NULL where ar.id = :requestId")
+	void desassignedUser(@Param("requestId") long requestId);
+
 }

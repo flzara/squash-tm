@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.service.internal.repository.AutomationRequestDao;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.security.Authorizations;
@@ -37,12 +38,13 @@ import org.squashtest.tm.service.tf.AutomationRequestModificationService;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
 public class AutomationRequestManagementServiceImpl implements AutomationRequestFinderService, AutomationRequestModificationService {
 
-	private static final String CAN_READ_REQUEST_OR_ADMIN = "hasPermission(#requestId, 'org.squashtest.tm.domain.tf.automationrequest.AutomationRequest', READ) " + Authorizations.OR_HAS_ROLE_ADMIN;
+	private static final String CAN_READ_REQUEST_OR_ADMIN = "hasPermission(#requestId, 'org.squashtest.tm.domain.tf.automationrequest.AutomationRequest', 'READ') " + Authorizations.OR_HAS_ROLE_ADMIN;
 
 	private static final String CAN_READ_TESTCASE_OR_ADMIN = "hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')" + Authorizations.OR_HAS_ROLE_ADMIN;
 
@@ -74,7 +76,7 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 	@Override
 	@Transactional(readOnly = true)
-	@PreAuthorize(CAN_READ_REQUEST_OR_ADMIN)
+	//@PreAuthorize(CAN_READ_REQUEST_OR_ADMIN)
 	public Page<AutomationRequest> findRequests(Pageable pageable) {
 		List<Long> projectIds = projectFinder.findAllReadableIds();
 		return requestDao.findAll(pageable, projectIds);
@@ -82,14 +84,14 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 	@Override
 	@Transactional(readOnly = true)
-	@PreAuthorize(CAN_READ_REQUEST_OR_ADMIN)
+	//@PreAuthorize(CAN_READ_REQUEST_OR_ADMIN)
 	public Page<AutomationRequest> findRequests(Pageable pageable, ColumnFiltering filtering) {
 		List<Long> projectIds = projectFinder.findAllReadableIds();
 		return requestDao.findAll(pageable, filtering, projectIds);
 	}
 
 	@Override
-	@PreAuthorize(CAN_READ_REQUEST_OR_ADMIN)
+	//@PreAuthorize(CAN_READ_REQUEST_OR_ADMIN)
 	public Page<AutomationRequest> findRequestsAssignedToCurrentUser(Pageable pageable, ColumnFiltering filtering) {
 		List<Long> projectIds = projectFinder.findAllReadableIds();
 		String username = userCtxt.getUsername();
@@ -105,6 +107,21 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 		requestDao.batchDeleteByProjectId(projectId);
 	}
 
+	@Override
+	public void desassignedUser(long requestId) {
+	 	requestDao.desassignedUser(requestId);
+	}
+
+	@Override
+	public void updateAutomationRequestsToExecutable(Long id) {
+		Optional<AutomationRequest> optionalAutomationRequest = requestDao.findById(id);
+		if(optionalAutomationRequest.isPresent()) {
+			AutomationRequest automationRequest = optionalAutomationRequest.get();
+			automationRequest.setRequestStatus(AutomationRequestStatus.EXECUTABLE);
+			automationRequest.setAssignedTo(null);
+			automationRequest.setAssignmentDate(null);
+		}
+	}
 
 	// **************************** boiler plate code *************************************
 

@@ -60,12 +60,17 @@
       border: 1px solid #2e2e2e;
       color: white;
     }
+
+    .th_input {
+      display: block;
+      margin: auto;
+    }
   </style>
   <div style="margin-bottom: 40px">
     <span style="font-style: italic; font-weight: bold; font-size:15px" th:text="#{automation.message.assigned}"></span>
     <div style="float: right">
       <button id="automated-affected-button" class="tf-lg blue" th:title="#{automation.label.automated}" th:text="#{automation.label.automated}"></button>
-      <button id="start-affected-button" class="tf-lg gray" th:title="#{automation.label.disaseembled}" th:text="#{automation.label.disaseembled}"></button>
+      <button id="desassigned-affected-button" class="tf-lg gray" th:title="#{automation.label.disaseembled}" th:text="#{automation.label.disaseembled}"></button>
 
     </div>
   </div>
@@ -76,23 +81,16 @@
         <span class="ui-icon ui-icon-refresh"></span>
         <span th:text="#{label.Filter}"></span>
       </button>
-      <!-- <button id="select-affected-button" class="sq-btn" th:title="#{label.SelectAllForSelection}"
-        th:text="#{label.SelectAllForSelection}"></button> -->
-
     </div>
   </div>
   <div class="right btn-toolbar">
     <div class="btn-group">
-
       <button id="select-affected-button" class="tf-sm" th:title="#{label.SelectAllForSelection}" th:text="#{label.SelectAllForSelection}"></button>
       <button id="deselect-affected-button" class="tf-sm" th:title="#{label.SelectNoneForSelection}" th:text="#{label.DeselectAll}"></button>
-      <!-- <button id="desassigned-affected-button" class="sq-btn" th:title="#{automation.label.export}" th:text="#{automation.label.export}"></button>
-      <button id="start-affected-button" class="sq-btn" th:title="#{automation.label.disaseembled}" th:text="#{automation.label.disaseembled}"></button>
-      <button id="automated-affected-button" class="sq-btn" th:title="#{automation.label.automated}" th:text="#{automation.label.automated}"></button> -->
     </div>
   </div>
   <div style="width:100%; overflow: auto;">
-    <table id="assigned-table" class="assigned-table">
+    <table id="automation-table" class="automation-table">
       <thead>
         <tr>
           <th class="no-user-select">#</th>
@@ -108,6 +106,7 @@
           <th th:text="#{automation.datatable.headers.script}" class="assigned-script"></th>
           <th class="no-user-select"></th>
           <th class="no-user-select"></th>
+          <th></th>
         </tr>
       </thead>
       <tbody>

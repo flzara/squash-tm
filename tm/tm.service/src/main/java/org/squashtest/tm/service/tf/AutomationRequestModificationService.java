@@ -24,4 +24,8 @@ public interface AutomationRequestModificationService extends AutomationRequestF
 
 	void deleteRequestByProjectId(long projectId);
 
+	void desassignedUser(long requestId);
+
+	void updateAutomationRequestsToExecutable(Long id);
+
 }

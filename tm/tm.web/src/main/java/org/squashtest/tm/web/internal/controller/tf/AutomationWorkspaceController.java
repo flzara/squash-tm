@@ -37,6 +37,7 @@ import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
+import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.Dataset;
@@ -44,6 +45,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.tf.AutomationRequestFinderService;
+import org.squashtest.tm.service.user.UserManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.*;
@@ -67,6 +69,9 @@ public class AutomationWorkspaceController {
 	private AutomationRequestFinderService automationRequestFinderService;
 
 	@Inject
+	private UserManagerService userManagerService;
+
+	@Inject
 	private InternationalizationHelper messageSource;
 
 	private final DatatableMapper<String> automationRequestMapper = new NameBasedMapper()
@@ -75,18 +80,19 @@ public class AutomationWorkspaceController {
 		.map(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "testCase.name")
 		.map("format", "testCase.kind")
 		.map(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, "testCase.id")
-		.map(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, "createdBy")
+		.mapAttribute(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, "lastModifiedBy", TestCase.class)
 		.map("transmitted-on", "transmissionDate")
 		.map("priority", "automationPriority")
 		.map("status", "requestStatus")
 		.map("assigned-on", "assignmentDate")
 		.map("script", "testCase.automatedTest.name")
-		.map("entity-index", "index(AutomationRequest)");
+		.map("entity-index", "index(AutomationRequest)")
+		.map("requestId", "id");
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale) {
 
-		//model.addAttribute()
+		model.addAttribute("assignableUsers", getAssignableUsers());
 
 		return getWorkspaceViewName();
 	}
@@ -111,6 +117,29 @@ public class AutomationWorkspaceController {
 		return new AutomationRequestDataTableModelHelper(messageSource).buildDataModel(automationRequestPage, "");
 	}
 
+	private Map<String, String> getAssignableUsers() {
+
+		Locale locale = LocaleContextHolder.getLocale();
+		//TestSuite ts = service.findById(testSuiteId);
+
+		List<User> usersList = new ArrayList<>();//= iterationTestPlanFinder.findAssignableUserForTestPlan(ts.getIteration().getId());
+		usersList.add(userManagerService.findByLogin("admin"));
+		usersList.add(userManagerService.findByLogin("User-1"));
+		//Collections.sort(usersList, new TestSuiteModificationController.UserLoginComparator());
+
+		//String unassignedLabel = messageSource.internationalize("label.Unassigned", locale);
+
+		Map<String, String> jsonUsers = new LinkedHashMap<>(usersList.size());
+
+		//jsonUsers.put(User.NO_USER_ID.toString(), unassignedLabel);
+		for (User user : usersList) {
+			jsonUsers.put(user.getId().toString(),HtmlUtils.htmlEscape( user.getLogin()));
+		}
+
+		return jsonUsers;
+	}
+
+
 	private static final class AutomationRequestDataTableModelHelper extends DataTableModelBuilder<AutomationRequest> {
 		private InternationalizationHelper messageSource;
 		private Locale locale = LocaleContextHolder.getLocale();
@@ -121,21 +150,25 @@ public class AutomationWorkspaceController {
 
 		@Override
 		protected Object buildItemData(AutomationRequest item) {
-			Map<String, Object> data = new HashMap<>(13);
+			final AuditableMixin auditable = (AuditableMixin) item.getTestCase();
+			Map<String, Object> data = new HashMap<>(14);
 			data.put(DataTableModelConstants.PROJECT_NAME_KEY, item.getTestCase() != null ? HtmlUtils.htmlEscape(item.getTestCase().getProject().getName()): null);
-			data.put("reference", item.getTestCase() != null ? item.getTestCase().getReference(): null);
+			data.put("reference", (item.getTestCase() != null && !item.getTestCase().getReference().isEmpty()) ? item.getTestCase().getReference(): "-");
 			data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, item.getTestCase() != null ? HtmlUtils.htmlEscape(item.getTestCase().getFullName()): null);
 			data.put("format", item.getTestCase() != null ? messageSource.internationalize(item.getTestCase().getKind().getI18nKey(), locale) : null);
 			data.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getTestCase() != null ? item.getTestCase().getId() : null);
-			data.put(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, item.getCreatedBy() != null? item.getCreatedBy().getLogin(): null);
+			data.put(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, (item.getTestCase() != null && auditable.getLastModifiedBy() != null)? auditable.getLastModifiedBy(): auditable.getCreatedBy());
 			data.put("transmitted-on", messageSource.localizeShortDate(item.getTransmissionDate(), locale));
-			data.put("priority", item.getAutomationPriority());
+			data.put("priority", item.getAutomationPriority() != null ? item.getAutomationPriority() : "-");
 			data.put("assigned-on", messageSource.localizeShortDate(item.getAssignmentDate(), locale));
 			data.put("entity-index", getCurrentIndex());
 			data.put("script", (item.getTestCase() != null && item.getTestCase().getAutomatedTest() != null) ? item.getTestCase().getAutomatedTest().getFullLabel(): null);
 			data.put("checkbox", "");
 			data.put("tc-id", item.getTestCase() != null ? item.getTestCase().getId(): null);
+			data.put("requestId", item.getId());
 			return data;
 		}
+
+
 	}
 }
