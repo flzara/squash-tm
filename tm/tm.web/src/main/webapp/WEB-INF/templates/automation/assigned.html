@@ -21,99 +21,61 @@
 
 -->
 <div th:fragment="automation-assigned-view">
-  <style type="text/css">
-    button.tf-lg {
-      font-size: 15px;
-      color: white;
-      border-radius: 5px;
-      padding: 0.3em 1em;
-      line-height: 1.4em;
-      font-family: Verdana, Arial, sans-serif;
-      cursor: pointer;
-    }
+  <div id="divTable" style="display: none">
+    <div style="margin-bottom: 40px">
+      <span style="font-style: italic; font-weight: bold; font-size:15px" th:text="#{automation.message.assigned}"></span>
+      <div style="float: right">
+        <button id="automated-affected-button" class="tf-lg blue" th:title="#{automation.label.automated}" th:text="#{automation.label.automated}"></button>
+        <button id="desassigned-affected-button" class="tf-lg gray" th:title="#{automation.label.disaseembled}" th:text="#{automation.label.disaseembled}"></button>
 
-    button.tf-sm {
-      font-size: 9px;
-      color: black;
-      border-radius: 5px;
-      padding: 0.3em 1em;
-      background-color: #2e2e2e15;
-      border: 1px solid #2e2e2e2d;
-      cursor: pointer;
-    }
+      </div>
+    </div>
 
-    button.tf-lg.blue {
-      background-color: #0078AE;
-      border: 1px solid #77D5F7;
-    }
+    <div class="left btn-toolbar">
+      <div class="btn-group">
+        <button id="filter-affected-button" class="sq-btn">
+          <span class="ui-icon ui-icon-refresh"></span>
+          <span th:text="#{label.Filter}"></span>
+        </button>
+      </div>
+    </div>
+    <div class="right btn-toolbar">
+      <div class="btn-group">
+        <button id="select-affected-button" class="tf-sm" th:title="#{label.SelectAllForSelection}" th:text="#{label.SelectAllForSelection}"></button>
+        <button id="deselect-affected-button" class="tf-sm" th:title="#{label.DeselectAll}" th:text="#{label.DeselectAll}"></button>
+      </div>
+    </div>
 
-    button.tf-lg.gray {
-      background-color: #808080;
-      border: 1px solid #999999;
-    }
-
-    button.tf-lg:hover {
-      background: #2b2b2b url(/squash/styles/images/ui-bg_glass_75_2b2b2b_1x400.png) 50% 50% repeat-x;
-      border: 1px solid #2e2e2e;
-    }
-
-    button.tf-sm:hover {
-      background: #2b2b2b url(/squash/styles/images/ui-bg_glass_75_2b2b2b_1x400.png) 50% 50% repeat-x;
-      border: 1px solid #2e2e2e;
-      color: white;
-    }
-
-    .th_input {
-      display: block;
-      margin: auto;
-    }
-  </style>
-  <div style="margin-bottom: 40px">
-    <span style="font-style: italic; font-weight: bold; font-size:15px" th:text="#{automation.message.assigned}"></span>
-    <div style="float: right">
-      <button id="automated-affected-button" class="tf-lg blue" th:title="#{automation.label.automated}" th:text="#{automation.label.automated}"></button>
-      <button id="desassigned-affected-button" class="tf-lg gray" th:title="#{automation.label.disaseembled}" th:text="#{automation.label.disaseembled}"></button>
-
+    <div style="width:100%; overflow: auto;">
+      <table id="automation-table" class="automation-table">
+        <thead>
+          <tr>
+            <th class="no-user-select">#</th>
+            <th th:text="#{automation.datatable.headers.project}" class="no-user-select tp-th-filter tp-th-project-name"></th>
+            <th th:text="#{automation.datatable.headers.id}" class="no-user-select tp-th-filter tp-th-id"></th>
+            <th th:text="#{automation.datatable.headers.reference}" class="no-user-select tp-th-filter tp-th-reference"></th>
+            <th th:text="#{automation.datatable.headers.label}" class="no-user-select tp-th-filter tp-th-label"></th>
+            <th th:text="#{automation.datatable.headers.format}" class="no-user-select tp-th-filter tp-th-format"></th>
+            <th th:text="#{automation.datatable.headers.createdby}" class="no-user-select tp-th-filter tp-th-createdby"></th>
+            <th th:text="#{automation.datatable.headers.priority}" class="no-user-select tp-th-filter tp-th-priority"></th>
+            <th th:text="#{automation.datatable.headers.transmittedon}" class="no-user-select tp-th-filter tp-th-transmittedon"></th>
+            <th th:text="#{automation.datatable.headers.affectedon}"></th>
+            <th th:text="#{automation.datatable.headers.script}" class="assigned-script"></th>
+            <th class="no-user-select"></th>
+            <th class="no-user-select"></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
     </div>
   </div>
-
-  <div class="left btn-toolbar">
-    <div class="btn-group">
-      <button id="filter-affected-button" class="sq-btn">
-        <span class="ui-icon ui-icon-refresh"></span>
-        <span th:text="#{label.Filter}"></span>
-      </button>
+  <div id="divBtn" style="display: none">
+    <div style="text-align: center">
+      <h2 th:text="#{automation.label.assigned.none}"></h2>
+      <button id="btn-no-assigned" th:text="#{automation.label.button.assigned.none}" th:title="#{automation.label.button.assigned.none}"
+        class="sq-btn" style="margin-top: 20px; width:15%"></button>
     </div>
   </div>
-  <div class="right btn-toolbar">
-    <div class="btn-group">
-      <button id="select-affected-button" class="tf-sm" th:title="#{label.SelectAllForSelection}" th:text="#{label.SelectAllForSelection}"></button>
-      <button id="deselect-affected-button" class="tf-sm" th:title="#{label.DeselectAll}" th:text="#{label.DeselectAll}"></button>
-    </div>
-  </div>
-  <div style="width:100%; overflow: auto;">
-    <table id="automation-table" class="automation-table">
-      <thead>
-        <tr>
-          <th class="no-user-select">#</th>
-          <th th:text="#{automation.datatable.headers.project}" class="no-user-select tp-th-filter tp-th-project-name"></th>
-          <th th:text="#{automation.datatable.headers.id}" class="no-user-select tp-th-filter tp-th-id"></th>
-          <th th:text="#{automation.datatable.headers.reference}" class="no-user-select tp-th-filter tp-th-reference"></th>
-          <th th:text="#{automation.datatable.headers.label}" class="no-user-select tp-th-filter tp-th-label"></th>
-          <th th:text="#{automation.datatable.headers.format}" class="no-user-select tp-th-filter tp-th-format"></th>
-          <th th:text="#{automation.datatable.headers.createdby}" class="no-user-select tp-th-filter tp-th-createdby"></th>
-          <th th:text="#{automation.datatable.headers.priority}" class="no-user-select tp-th-filter tp-th-priority"></th>
-          <th th:text="#{automation.datatable.headers.transmittedon}" class="no-user-select tp-th-filter tp-th-transmittedon"></th>
-          <th th:text="#{automation.datatable.headers.affectedon}"></th>
-          <th th:text="#{automation.datatable.headers.script}" class="assigned-script"></th>
-          <th class="no-user-select"></th>
-          <th class="no-user-select"></th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-      </tbody>
-    </table>
-  </div>
-</div>
 </div>

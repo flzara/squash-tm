@@ -27,10 +27,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
@@ -80,7 +77,7 @@ public class AutomationWorkspaceController {
 		.map(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "testCase.name")
 		.map("format", "testCase.kind")
 		.map(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, "testCase.id")
-		.mapAttribute(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, "lastModifiedBy", TestCase.class)
+		.map(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, "transmittedBy")
 		.map("transmitted-on", "transmissionDate")
 		.map("priority", "automationPriority")
 		.map("status", "requestStatus")
@@ -93,7 +90,6 @@ public class AutomationWorkspaceController {
 	public String showWorkspace(Model model, Locale locale) {
 
 		model.addAttribute("assignableUsers", getAssignableUsers());
-
 		return getWorkspaceViewName();
 	}
 
@@ -115,6 +111,35 @@ public class AutomationWorkspaceController {
 		Page<AutomationRequest> automationRequestPage = automationRequestFinderService.findRequestsAssignedToCurrentUser(pageable, filtering);
 
 		return new AutomationRequestDataTableModelHelper(messageSource).buildDataModel(automationRequestPage, "");
+	}
+
+	@RequestMapping(value="automation-request/traitment", params = RequestParams.S_ECHO_PARAM)
+	@ResponseBody
+	public DataTableModel getAutomationRequestTraitmentModel(final DataTableDrawParameters params, final Locale locale) {
+
+		Pageable pageable = SpringPagination.pageable(params,automationRequestMapper);
+		ColumnFiltering filtering = new DataTableColumnFiltering(params, automationRequestMapper);
+		Page<AutomationRequest> automationRequestPage = automationRequestFinderService.findRequestsWithTransmittedStatus(pageable, filtering);
+
+		return new AutomationRequestDataTableModelHelper(messageSource).buildDataModel(automationRequestPage, "");
+	}
+
+	@RequestMapping(value = "count", method = RequestMethod.GET)
+	@ResponseBody
+	public Integer countAutomationRequestToCurrentUser() {
+		return automationRequestFinderService.countAutomationRequestForCurrentUser();
+	}
+
+	@RequestMapping(value = "assigned/testers/{requestStatus}", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<Long, String> getTestersForCurrentUser(@PathVariable List<String> requestStatus) {
+		return automationRequestFinderService.getCreatedByForCurrentUser(requestStatus);
+	}
+
+	@RequestMapping(value = "testers/{requestStatus}", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<Long, String> getTesters(@PathVariable List<String> requestStatus) {
+		return automationRequestFinderService.getCreatedByForAutomationRequests(requestStatus);
 	}
 
 	private Map<String, String> getAssignableUsers() {
@@ -157,7 +182,7 @@ public class AutomationWorkspaceController {
 			data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, item.getTestCase() != null ? HtmlUtils.htmlEscape(item.getTestCase().getFullName()): null);
 			data.put("format", item.getTestCase() != null ? messageSource.internationalize(item.getTestCase().getKind().getI18nKey(), locale) : null);
 			data.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getTestCase() != null ? item.getTestCase().getId() : null);
-			data.put(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, (item.getTestCase() != null && auditable.getLastModifiedBy() != null)? auditable.getLastModifiedBy(): auditable.getCreatedBy());
+			data.put(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, item.getTransmittedBy() != null ? item.getTransmittedBy().getLogin(): item.getCreatedBy().getLogin());
 			data.put("transmitted-on", messageSource.localizeShortDate(item.getTransmissionDate(), locale));
 			data.put("priority", item.getAutomationPriority() != null ? item.getAutomationPriority() : "-");
 			data.put("assigned-on", messageSource.localizeShortDate(item.getAssignmentDate(), locale));
@@ -171,4 +196,5 @@ public class AutomationWorkspaceController {
 
 
 	}
+
 }

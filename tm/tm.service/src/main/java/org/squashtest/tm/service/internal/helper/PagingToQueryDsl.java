@@ -359,6 +359,7 @@ public final class PagingToQueryDsl {
 				case LIKE:
 					finalExpression = asLikeExpression(pptPath, (String) comparisonParameters);
 					break;
+
 				default:
 					// else defaults to strict equality
 					finalExpression = pptPath.eq(Expressions.constant(comparisonParameters));
@@ -544,6 +545,8 @@ public final class PagingToQueryDsl {
 					converter.propertyComparison.put(prop, operation);
 				}
 			}
+
+
 
 		}
 

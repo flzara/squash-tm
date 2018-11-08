@@ -28,4 +28,8 @@ public interface AutomationRequestModificationService extends AutomationRequestF
 
 	void updateAutomationRequestsToExecutable(Long id);
 
+	void updateAutomationRequestsToNotAutomatable(Long id);
+
+	void assignedToAutomationRequest(Long id);
+
 }

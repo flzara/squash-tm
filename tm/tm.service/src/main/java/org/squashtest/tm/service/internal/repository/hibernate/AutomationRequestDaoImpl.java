@@ -27,6 +27,9 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.hibernate.HibernateQuery;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
+import org.jooq.Condition;
+import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -36,6 +39,8 @@ import org.springframework.data.domain.Sort;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.SimpleColumnFiltering;
 import org.squashtest.tm.domain.IdCollector;
+import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.audit.QAuditableSupport;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQueryFactory;
 import org.squashtest.tm.domain.project.QProject;
 import org.squashtest.tm.domain.testcase.QTestCase;
@@ -44,13 +49,19 @@ import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.domain.tf.automationrequest.QAutomationRequest;
 import org.squashtest.tm.domain.users.QUser;
+import org.squashtest.tm.jooq.domain.tables.CoreUser;
 import org.squashtest.tm.service.internal.repository.CustomAutomationRequestDao;
+
+import static org.squashtest.tm.jooq.domain.Tables.AUTOMATION_REQUEST;
+import static org.squashtest.tm.jooq.domain.Tables.CORE_USER;
 import static org.squashtest.tm.service.internal.helper.PagingToQueryDsl.*;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 
@@ -61,6 +72,8 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	@PersistenceContext
 	private EntityManager entityManager;
 
+	@Inject
+	private DSLContext DSL;
 
 	@Override
 	public Page<AutomationRequest> findAll(Pageable pageable, Collection<Long> inProjectIds) {
@@ -92,6 +105,40 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 			// force equality comparison for the assigned user login
 			converter.compare("assignedTo.login, requestStatus").withEquality();
 		}, inProjectIds);
+	}
+
+	@Override
+	public Page<AutomationRequest> findAllForTraitment(Pageable pageable, ColumnFiltering columnFiltering, Collection<Long> inProjectIds) {
+		ColumnFiltering filterWithTraitment = new SimpleColumnFiltering(columnFiltering).addFilter("requestStatus", AutomationRequestStatus.TRANSMITTED.toString());
+		return innerFindAll(pageable, filterWithTraitment, (converter) -> {
+			converter.compare("requestStatus").withEquality();
+		}, inProjectIds);
+	}
+
+	@Override
+	public Integer countAutomationRequestForCurrentUser(Long idUser) {
+
+		return DSL.selectCount().from(AUTOMATION_REQUEST)
+			.where(AUTOMATION_REQUEST.ASSIGNED_TO.eq(idUser))
+			.and(AUTOMATION_REQUEST.REQUEST_STATUS.eq(AutomationRequestStatus.WORK_IN_PROGRESS.toString()))
+			.fetchOne().value1();
+	}
+
+
+	@Override
+	public Map<Long, String> getCreatedByForCurrentUser(Long idUser, List<String> requestStatus) {
+
+		Condition condition = org.jooq.impl.DSL.trueCondition();
+		if(idUser != null) {
+			condition = AUTOMATION_REQUEST.ASSIGNED_TO.eq(idUser);
+		}
+
+		return DSL.selectDistinct(CORE_USER.PARTY_ID, CORE_USER.LOGIN).from(CORE_USER)
+			.join(AUTOMATION_REQUEST).on(CORE_USER.PARTY_ID.eq(AUTOMATION_REQUEST.TRANSMITTED_BY))
+			.where(condition)
+			.and(AUTOMATION_REQUEST.REQUEST_STATUS.in(requestStatus))
+			.fetch().intoMap(CORE_USER.PARTY_ID, CORE_USER.LOGIN);
+
 	}
 
 	private Page<AutomationRequest> innerFindAll(Pageable pageable, ColumnFiltering filtering, FilterOverride filterOverride, Collection<Long> inProjectIds){
@@ -196,13 +243,12 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 				   .typeFor("requestStatus").isClass(AutomationRequestStatus.class)
 				   .typeFor("testCase.kind").isClass(TestCaseKind.class)
 				   .typeFor("id", "automationPriority").isClass(Long.class)
-					.typeFor("testCase.id").isClass(Long.class)
-					.typeFor("createdBy").isClass(Long.class)
+			       .typeFor("testCase.id").isClass(Long.class)
+			       .typeFor("createdBy", "transmittedBy").isClass(Long.class)
 				   // filter operation not mentioned here are considered as Equality (or Like if the property is a String)
 				   .compare(
 					   "transmissionDate",
-					   "assignmentDate",
-					   "transmittedBy")
+					   "assignmentDate")
 				   .withDates()
 					.compare("id", "automationPriority").withEquality();
 

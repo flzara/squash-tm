@@ -30,6 +30,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.service.internal.repository.AutomationRequestDao;
+import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.security.UserContextService;
@@ -37,8 +38,7 @@ import org.squashtest.tm.service.tf.AutomationRequestFinderService;
 import org.squashtest.tm.service.tf.AutomationRequestModificationService;
 
 import javax.inject.Inject;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Transactional
@@ -50,6 +50,9 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 	@Inject
 	private AutomationRequestDao requestDao;
+
+	@Inject
+	private UserDao userDao;
 
 	@Inject
 	private UserContextService userCtxt;
@@ -76,7 +79,6 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 	@Override
 	@Transactional(readOnly = true)
-	//@PreAuthorize(CAN_READ_REQUEST_OR_ADMIN)
 	public Page<AutomationRequest> findRequests(Pageable pageable) {
 		List<Long> projectIds = projectFinder.findAllReadableIds();
 		return requestDao.findAll(pageable, projectIds);
@@ -84,18 +86,24 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 	@Override
 	@Transactional(readOnly = true)
-	//@PreAuthorize(CAN_READ_REQUEST_OR_ADMIN)
 	public Page<AutomationRequest> findRequests(Pageable pageable, ColumnFiltering filtering) {
 		List<Long> projectIds = projectFinder.findAllReadableIds();
 		return requestDao.findAll(pageable, filtering, projectIds);
 	}
 
 	@Override
-	//@PreAuthorize(CAN_READ_REQUEST_OR_ADMIN)
 	public Page<AutomationRequest> findRequestsAssignedToCurrentUser(Pageable pageable, ColumnFiltering filtering) {
 		List<Long> projectIds = projectFinder.findAllReadableIds();
 		String username = userCtxt.getUsername();
 		return requestDao.findAllForAssignee(username, pageable, filtering, projectIds);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Page<AutomationRequest> findRequestsWithTransmittedStatus(Pageable pageble, ColumnFiltering filtering) {
+		List<Long> projectIds = projectFinder.findAllReadableIds();
+
+		return requestDao.findAllForTraitment(pageble, filtering, projectIds);
 	}
 
 	// *************** implementation of the management interface *************************
@@ -121,6 +129,45 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 			automationRequest.setAssignedTo(null);
 			automationRequest.setAssignmentDate(null);
 		}
+	}
+
+	@Override
+	public void updateAutomationRequestsToNotAutomatable(Long id) {
+		Optional<AutomationRequest> optionalAutomationRequest = requestDao.findById(id);
+		if(optionalAutomationRequest.isPresent()) {
+			AutomationRequest automationRequest = optionalAutomationRequest.get();
+			automationRequest.setRequestStatus(AutomationRequestStatus.NOT_AUTOMATABLE);
+		}
+	}
+
+	@Override
+	public void assignedToAutomationRequest(Long id) {
+		String username = userCtxt.getUsername();
+		Optional<AutomationRequest> optionalAutomationRequest = requestDao.findById(id);
+		if(optionalAutomationRequest.isPresent()) {
+			AutomationRequest automationRequest = optionalAutomationRequest.get();
+			automationRequest.setRequestStatus(AutomationRequestStatus.WORK_IN_PROGRESS);
+			automationRequest.setAssignedTo(userDao.findUserByLogin(username));
+			automationRequest.setAssignmentDate(new Date());
+		}
+	}
+
+	@Override
+	public Map<Long, String> getCreatedByForCurrentUser(List<String> requestStatus) {
+		String userName = userCtxt.getUsername();
+		return requestDao.getCreatedByForCurrentUser(userDao.findUserByLogin(userName).getId(), requestStatus);
+	}
+
+	@Override
+	public Map<Long, String> getCreatedByForAutomationRequests(List<String> requestStatus) {
+		return requestDao.getCreatedByForCurrentUser(null, requestStatus);
+	}
+
+	@Override
+	public Integer countAutomationRequestForCurrentUser() {
+
+		String userName = userCtxt.getUsername();
+		return requestDao.countAutomationRequestForCurrentUser(userDao.findUserByLogin(userName).getId());
 	}
 
 	// **************************** boiler plate code *************************************

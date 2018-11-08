@@ -18,103 +18,267 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "underscore", "backbone", "handlebars"],
-    function ($, _, Backbone, Handlebars) {
+define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", 'app/ws/squashtm.notification', "workspace.storage", "./sort", "./filter", "squash.configmanager", "squashtable", "jeditable"],
+    function ($, _, Backbone, Handlebars, translator, notification, storage, sortmode, filtermode, confman) {
         "use strict";
 
         var View = Backbone.View.extend({
             el: "#contextual-content-wrapper",
+            key: "checkbox-traitment",
+            storage: storage,
             initialize: function () {
                 this.render();
-                this.bindButtons();
-                this.getDatatable().squashTable(this.getDatatableSettings());
-            },
-
-            events: {
-
-            },
-
-            getDatatableSettings: function () {
-                
+                var self = this;
+                var requestStatus = ["TRANSMITTED"];
+                $.ajax({
+                    url: squashtm.app.contextRoot + "automation-workspace/testers/" + requestStatus,
+                    method: "GET",
+                    // data: {
+                    //     requestStatus : JSON.stringify(requestStatus)
+                    // }
+                }).success(function(data){
+                    console.log(data)
+                })
                 var datatableSettings = {
-                    
+                    sAjaxSource: squashtm.app.contextRoot + "automation-workspace/automation-request/traitment",
                     //TODO récupéter la liste des demandes dynamiquement
-                    aaData: [{
-                        "id": "2",
-                        "project": "Projet",
-                        "reference": "refe",
-                        "label": "titre",
-                        "format": "gherkin",
-                        "createdby": "admin",
-                        "transmittedby": "testeur",
-                        "transmittedon": "10/02/2015",
-                        "priority": "2",
-                        "status": "En cours",
-                        "affectedon": "22/10/2018",
-                        "image": "image"
-                    }],
-                    aoColumnDefs: [{
-                        'bVisible': true,
-                        'bSortable': false,
-                        'aTargets': [0]
+                    "aaSorting": [[7, 'desc'], [8, 'asc']],
+                    "bDeferRender": true,
+                    "aoColumnDefs": [{
+                        "bSortable": false,
+                        "aTargets": [0],
+                        "sClass": 'centered select-handle',
+                        "mDataProp": "entity-index",
+                        "sWidth": "2.5em"
                     },
                     {
-                        'bVisible': true,
-                        'bSortable': true,
-                        'aTargets': [1]
+                        "bSortable": true,
+                        "aTargets": [1],
+                        "mDataProp": "project-name"
                     }, {
-                        'bVisible': true,
-                        'bSortable': true,
-                        'aTargets': [2]
+                        "bSortable": true,
+                        "aTargets": [2],
+                        "mDataProp": "entity-id",
+                        "sWidth": "4em",
+                        "sClass": "entity_id"
                     }, {
-                        'bVisible': true,
-                        'bSortable': true,
-                        'aTargets': [3]
+                        "bSortable": true,
+                        "aTargets": [3],
+                        "mDataProp": "reference"
                     }, {
-                        'bVisible': true,
-                        'bSortable': true,
-                        'aTargets': [4]
+                        "bSortable": true,
+                        "aTargets": [4],
+                        "mDataProp": "name"
                     }, {
-                        'bVisible': true,
-                        'bSortable': true,
-                        'aTargets': [5]
+                        "bSortable": true,
+                        "aTargets": [5],
+                        "mDataProp": "format",
+                        "sWidth": "7em"
                     }, {
-                        'bVisible': true,
-                        'bSortable': true,
-                        'aTargets': [6]
+                        "bSortable": true,
+                        "aTargets": [6],
+                        "mDataProp": "created-by"
                     }, {
-                        'bVisible': true,
-                        'bSortable': true,
-                        'aTargets': [7]
+                        "bSortable": true,
+                        "aTargets": [7],
+                        "mDataProp": "priority",
+                        "sWidth": "6em"
                     }, {
-                        'bVisible': true,
-                        'bSortable': true,
-                        'aTargets': [8]
+                        "bSortable": true,
+                        "aTargets": [8],
+                        "mDataProp": "transmitted-on",
+                        "sWidth": "14em"
                     }, {
-                        'bVisible': true,
-                        'bSortable': true,
-                        'aTargets': [9]
+                        "bSortable": false,
+                        "aTargets": [9],
+                        "mDataProp": "tc-id",
+                        "sClass": "centered",
+                        "sWidth": "2.5em",
+                        "mRender": function (data, type, row, meta) {
+                            return '<a href="' + squashtm.app.contextRoot + 'test-cases/' + data + '/info"><img src="/squash/images/icon-lib/eye.png"></a>';
+                        }
                     }, {
-                        'bVisible': true,
-                        'bSortable': true,
-                        'aTargets': [10]
+                        "bSortable": false,
+                        "aTargets": [10],
+                        "mDataProp": "checkbox",
+                        "sClass": "centered",
+                        "mRender": function (data, type, row) {
+                            var store = self.storage.get(self.key);
+                            var checked = false;
+                            if (_.contains(store, row["tc-id"])) {
+                                checked = true;
+                            }
+                            var input = "";
+                            var $row = $(row);
+                            if (checked) {
+                                input = '<input type="checkbox" class="editor-active" checked>';
+                                $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight")
+                            } else {
+                                input = '<input type="checkbox" class="editor-active">';
+                            }
+                            return input;
+                        },
+                        "sWidth": "2.5em"
                     }, {
-                        'bVisible': true,
-                        'bSortable': true,
-                        'aTargets': [11]
-                    }, {
-                        'bVisible': true,
-                        'bSortable': false,
-                        'aTargets': [12]
-                    },],
-                    bServerSide: false,
-                    bFilter: true
+                        "mDataProp": "requestId",
+                        "bVisible": false,
+                        "aTargets": [11]
+                    }],
+                    "bFilter": true,
+                    fnRowCallback: function (row, data, displayIndex) {
+                        var $row = $(row);
+                        var edObj = $.extend(true, {}, $.editable.types.text);
+                        var edFnButtons = $.editable.types.defaults.buttons;
+                        var edFnElements = $.editable.types.text.element;
+
+                        if ($row.find("input[type=checkbox]")[0].checked) {
+                            $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight")
+                        }
+
+                        $row.on("change", "input[type=checkbox]", function () {
+
+                            if (this.checked) {
+                                $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight")
+                            } else {
+                                $row.removeClass("ui-state-row-selected").addClass("ui-state-highlight")
+                            }
+                            var store = self.storage.get(self.key);
+                            if (store === undefined) {
+                                var tab = [];
+                                tab.push(data["tc-id"])
+                                self.storage.set(self.key, tab);
+                            } else {
+                                if (this.checked) {
+                                    store.push(data["tc-id"]);
+
+                                } else {
+                                    var idx = store.indexOf(data["tc-id"]);
+                                    store.splice(idx, 1);
+                                }
+                                self.storage.set(self.key, store);
+                            }
+                        })
+
+                        $row.on("click", "td.select-handle", function () {
+                            if (!$row.hasClass("ui-state-row-selected")) {
+                                $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight")
+                            }
+
+                        })
+                        edObj.buttons = function (settings, original) {
+                            //first apply the original function
+                            edFnButtons.call(this, settings, original);
+
+                            // now add our own button
+                            var btnChoose = $("<button/>", {
+                                'text': translator.get('label.dot.pick'),
+                                'id': 'ta-script-picker-button'
+                            });
+
+                            var btnRemove = $("<button/>", {
+                                'text': translator.get('label.Remove'),
+                                'id': 'ta-script-remove-button'
+                            });
+
+                            this.append(btnChoose)
+                                .append(btnRemove);
+
+                        };
+
+                        // this is overriden so as to enforce the width.
+                        edObj.element = function (settings, original) {
+                            var input = edFnElements.call(this, settings, original);
+                            input.css('width', '70%');
+                            input.css('height', '16px');
+                            return input;
+                        };
+
+                        $.editable.addInputType('ta-picker', edObj);
+                        var editable = confman.getStdJeditable();
+                        editable.type = 'ta-picker';
+                        editable.name = "path";
+                        var cell = $row.find('.assigned-script');
+                        var entityId = data["entity-id"];
+                        var url = squashtm.app.contextRoot + 'test-cases/' + entityId + '/test-automation/tests';
+                        cell.editable(url, editable);
+                    },
+
+                    fnDrawCallback: function () {
+                        this.data("sortmode").update();
+                    },
                 };
-                return datatableSettings;
+                var $table = $("#automation-table");
+                datatableSettings.customKey = "traitment";
+                var fmode = filtermode.newInst(datatableSettings);
+                var smode = sortmode.newInst(datatableSettings);
+                datatableSettings.searchCols = fmode.loadSearchCols();
+                datatableSettings.aaSorting = smode.loadaaSorting();
+                $table.data('filtermode', fmode);
+                $table.data('sortmode', smode);
+                var sqtable = $table.squashTable(datatableSettings);
+                sqtable.toggleFiltering = function () {
+                    fmode.toggleFilter();
+                };
+                this.bindButtons();
             },
 
-            getDatatable: function() {
-                return this.$el.find("#traitment-table");
+            selectAll: function (table) {
+                var rows = table.fnGetNodes();
+                var ids = [];
+                var self =this;
+                $(rows).each(function (index, row) {
+                    var tcId =parseInt($('.entity_id', row).text(), 10);
+                    ids.push(tcId);
+                    var $row = $(row);
+                    var checkbox = $row.find("input[type=checkbox]")
+                    if (!$row.hasClass("ui-state-row-selected")) {
+                        checkbox[0].checked = true
+                    } else {
+                        checkbox[0].checked = false
+                    }
+                    var store = self.storage.get(self.key);
+                    if (store === undefined) {
+                        var tab = [];
+                        tab.push(tcId)
+                        self.storage.set(self.key, tab);
+                    } else {
+                        if (checkbox[0].checked) {
+                            store.push(tcId);
+
+                        } else {
+                            var idx = store.indexOf(tcId);
+                            store.splice(idx, 1);
+                        }
+                        self.storage.set(self.key, store);
+                    }
+
+                })
+                table.selectRows(ids);
+            },
+
+            deselectAll: function (table) {
+                table.deselectRows();
+                var rows = table.fnGetNodes();
+                $(rows).each(function (index, row) {
+                    var $row = $(row);
+                    var checkbox = $row.find("input[type=checkbox]");
+                    checkbox[0].checked = false
+
+                })
+
+                this.storage.remove(this.key)
+            },
+
+            getSelectedRequestIds: function (table) {
+                var selectedRows = table.getSelectedRows();
+                var datas = table.fnGetData();
+                var ids = [];
+                $(selectedRows).each(function (index, data) {
+                    var idx = data._DT_RowIndex;
+                    var requestId = datas[idx].requestId
+                    ids.push(requestId);
+                })
+                return ids;
             },
 
             render: function () {
@@ -125,15 +289,44 @@ define(["jquery", "underscore", "backbone", "handlebars"],
                 this.$el.append(template);
             },
 
+            actions: function(table, url) {
+                var requestIds = this.getSelectedRequestIds(table);
+                    if (requestIds.length === 0 || requestIds === undefined) {
+                        notification.showWarning(translator.get("automation.notification.selectedRow.none"));
+                    } else {
+                        $(requestIds).each(function () {
+                            $.ajax({
+                                url: squashtm.app.contextRoot + url + this,
+                                method: 'POST'
+                            }).success(function () {
+                                table.refresh();
+                            });
+                        });
+                    }
+            },
+
             bindButtons: function () {
+
+                var self = this;
+                var domtable = $("#automation-table").squashTable();
                 $("#select-traitment-button").on("click", function () {
-                    console.log("Traitment select");
+                    self.selectAll(domtable);
                 });
+
+                $("#deselect-traitment-button").on("click", function () {
+                    self.deselectAll(domtable);
+                });
+
                 $("#filter-traitment-button").on("click", function () {
-                    console.log("Traitment filter");
+                    domtable.toggleFiltering();
                 });
                 $("#assigned-traitment-button").on("click", function () {
-                    console.log("Traitment assigned");
+                    self.actions(domtable, "automation-request/assigned/");
+                    self.storage.remove(self.key);
+                });
+                $("#no-automation-traitment-button").on("click", function () {
+                    self.actions(domtable, "automation-request/notautomatable/");
+                    self.storage.remove(self.key);
                 });
             }
 

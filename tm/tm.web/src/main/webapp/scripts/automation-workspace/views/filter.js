@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspace.storage", "app/util/StringUtil", "underscore", "squash.attributeparser"],
-	function ($, rangedatepicker, translator, storage, strUtils, _, attrparser) {
+define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspace.storage", "app/util/StringUtil", "underscore"],
+	function ($, rangedatepicker, translator, storage, strUtils, _) {
 
 		"use strict";
 		var tableSelector = ".automation-table";
@@ -145,7 +145,6 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 					var $th = $(this),
 						col = columnDefs[idx],
 						colFilter = findColFilterByName(filter, col.mDataProp);
-
 					if ($th.is('.tp-th-filter') && !!colFilter) {
 						$th.find('.filter_input').val(colFilter.sSearch);
 					}
@@ -163,9 +162,77 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 				transmittedTime = table.find(".tp-th-transmittedon");
 
 			_createCombo(formatCombo, "#filter-mode-combo", formats);
-			var users = squashtm.app.assignableUsers;
 
-			_createCombo(userCombo, "#filter-mode-combo", users);
+			var url = squashtm.app.contextRoot;
+			var requestStatus = [];
+			if (initConf.customKey === "assigned") {
+				requestStatus = ["WORK_IN_PROGRESS"];
+				url = url + "automation-workspace/assigned/testers/";
+			} else if (initConf.customKey === "traitment") {
+				requestStatus = ["TRANSMITTED"];
+				url = url + "automation-workspace/testers/";
+			} else {
+				requestStatus = ["TRANSMITTED", "WORK_IN_PROGRESS", "EXECUTABLE"];
+				url = url + "automation-workspace/testers/";
+			}
+			var self = this;
+			$.ajax({
+				url: url + requestStatus,
+				method: "GET",
+			}).success(function (data) {
+			var combo = $("<select id='" + "#filter-mode-combo"+ "' class='th_input filter_input' />");
+
+				var nullOption = new Option("", "");
+				$(nullOption).html("");
+
+				combo.append(nullOption);
+
+				$.each(data, function (index, value) {
+					var o = new Option(value, index);
+					$(o).html(value);
+					combo.append(o);
+				});
+				var div = $(userCombo).find("div.DataTables_sort_wrapper");
+				var span = div.find("span");
+				$(div).append(span.before(combo));
+
+				var allInputs = table.find(".th_input");
+				allInputs.click(function (event) {
+					event.stopPropagation();
+				}).keypress(function (event) {
+					if (event.which == 13) {
+						event.stopPropagation();
+						event.preventDefault();
+						event.target.blur();
+						event.target.focus();
+					}
+				});
+
+				table.find("th").hover(function (event) {
+					event.stopPropagation();
+				});
+
+				allInputs.change(function () {
+					var sTable = table.squashTable(),
+						settings = sTable.fnSettings(),
+						api = settings.oApi,
+						headers = table.find("th");
+
+					var visiIndex = headers.index($(this).parents("th:first")),
+						realIndex = api._fnVisibleToColumnIndex(settings, visiIndex);
+
+
+					var realInput = $(this).parent().find(".filter_input").get(0);
+					sTable.fnFilter(realInput.value, realIndex);
+					self._save();
+				});
+				var state = storage.get(self.key);
+				if (state !== undefined) {
+					self.active = state.active;
+					restoreInputs(state.filter);
+				};
+
+			});
 
 			_createTimePicker(transmittedTime);
 			_createTimePicker(assignedTime);
@@ -213,8 +280,7 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 				restoreInputs(state.filter);
 				if (this.active) {
 					showInputs();
-				}
-				else {
+				} else {
 					hideInputs();
 				}
 			};
@@ -225,66 +291,23 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 				if (this.active) {
 					this.active = false;
 					filterObject = table.squashTable().fnSettings().aoPreSearchCols;
-
 					this._save(filterObject);
-
 					flushTableFilter();
 					hideInputs();
 
-				}
-				else {
+				} else {
 					this.active = true;
 					var state = storage.get(this.key);
 
 					if (state !== undefined) {
 						restoreTableFilter(state.filter);
 					}
-
 					showInputs();
-
 					this._save();
-
 				}
-
-
 				table.squashTable().refresh();
-
 				return this.active;
 			};
-
-			var allInputs = table.find(".th_input");
-
-
-
-			allInputs.click(function (event) {
-				event.stopPropagation();
-			}).keypress(function (event) {
-				if (event.which == 13) {
-					event.stopPropagation();
-					event.preventDefault();
-					event.target.blur();
-					event.target.focus();
-				}
-			});
-
-			table.find("th").hover(function (event) {
-				event.stopPropagation();
-			});
-
-			allInputs.change(function () {
-				var sTable = table.squashTable(),
-					settings = sTable.fnSettings(),
-					api = settings.oApi,
-					headers = table.find("th");
-
-				var visiIndex = headers.index($(this).parents("th:first")),
-					realIndex = api._fnVisibleToColumnIndex(settings, visiIndex);
-
-
-				var realInput = $(this).parent().find(".filter_input").get(0);
-				sTable.fnFilter(realInput.value, realIndex);
-				self._save();
-			});
 		}
 
 		return {

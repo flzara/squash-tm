@@ -26,6 +26,8 @@ import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 public interface CustomAutomationRequestDao {
 
@@ -62,5 +64,25 @@ public interface CustomAutomationRequestDao {
 	 * @return
 	 */
 	Page<AutomationRequest> findAllForAssignee(String username, Pageable pageable, ColumnFiltering filtering, Collection<Long> inProjectIds);
+
+	/**
+	 * Retrieve a list of automated requests, paged filtered and sorted, where
+	 * the status of automation request is Transmitted.
+	 *
+	 * @param pageable
+	 * @param columnFiltering
+	 * @param inProjectIds
+	 * @return
+	 */
+	Page<AutomationRequest> findAllForTraitment(Pageable pageable, ColumnFiltering columnFiltering, Collection<Long> inProjectIds);
+
+	/**
+	 * Count Automation request to the current User.
+	 * @param idUser
+	 * @return
+	 */
+	Integer countAutomationRequestForCurrentUser(Long idUser);
+
+	Map<Long, String> getCreatedByForCurrentUser(Long idUser, List<String> requestStatus);
 
 }

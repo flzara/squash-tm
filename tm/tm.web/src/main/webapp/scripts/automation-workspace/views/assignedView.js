@@ -29,6 +29,21 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
             initialize: function () {
                 this.render();
                 var self = this;
+                $.ajax({
+                    url: squashtm.app.contextRoot + "automation-workspace/count",
+                    method: "GET"
+                }).success(function (data) {
+                    if (data !== 0) {
+                        squashtm.app.visible = true;
+                        $("#divTable").show();
+                        $("#divBtn").hide();
+                    } else {
+                        squashtm.app.visible = false;
+                        $("#divTable").hide();
+                        $("#divBtn").show();
+                    }
+                })
+                
                 var datatableSettings = {
                     sAjaxSource: squashtm.app.contextRoot + "automation-workspace/automation-request",
                     "aaSorting": [[7, 'desc'], [8, 'asc']],
@@ -37,8 +52,8 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "bSortable": false,
                         "aTargets": [0],
                         "sClass": 'centered select-handle',
-                        "mDataProp": "entity-index",
-                        "sWidth": "2.5em"
+                        "mDataProp": "entity-index"/*,
+                        "sWidth": "2.5em"*/
                     }, {
                         "bSortable": true,
                         "aTargets": [1],
@@ -47,7 +62,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "bSortable": true,
                         "aTargets": [2],
                         "mDataProp": "entity-id",
-                        "sWidth": "4em",
+                        // "sWidth": "4em",
                         "sClass": "entity_id"
                     }, {
                         "bSortable": true,
@@ -60,8 +75,8 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }, {
                         "bSortable": true,
                         "aTargets": [5],
-                        "mDataProp": "format",
-                        "sWidth": "7em"
+                        "mDataProp": "format"/*,
+                        "sWidth": "7em"*/
                     }, {
                         "bSortable": true,
                         "aTargets": [6],
@@ -69,18 +84,18 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }, {
                         "bSortable": true,
                         "aTargets": [7],
-                        "mDataProp": "priority",
-                        "sWidth": "6em"
+                        "mDataProp": "priority"/*,
+                        "sWidth": "6em"*/
                     }, {
                         "bSortable": true,
                         "aTargets": [8],
-                        "mDataProp": "transmitted-on",
-                        "sWidth": "13em"
+                        "mDataProp": "transmitted-on"/*,
+                        "sWidth": "13em"*/
                     }, {
                         "bSortable": true,
                         "aTargets": [9],
-                        "mDataProp": "assigned-on",
-                        "sWidth": "12em"
+                        "mDataProp": "assigned-on"/*,
+                        "sWidth": "12em"*/
                     }, {
                         "bSortable": true,
                         "aTargets": [10],
@@ -93,7 +108,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "sClass": "center",
                         "mRender": function (data, type, row, meta) {
                             return '<a href="' + squashtm.app.contextRoot + 'test-cases/' + data + '/info" style="margin: auto">'
-                            				+ '<img src="/squash/images/icon-lib/eye.png" width="20" height="20" border="0"></a>';
+                                + '<img src="/squash/images/icon-lib/eye.png" width="20" height="20" border="0"></a>';
                         }
                     }, {
                         "bSortable": false,
@@ -114,8 +129,8 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                 input = '<input type="checkbox" class="editor-active">';
                             }
                             return input;
-                        },
-                        "sWidth": "2.5em"
+                        }/*,
+                        "sWidth": "2.5em"*/
                     }, {
                         "mDataProp": "requestId",
                         "bVisible": false,
@@ -205,11 +220,13 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         this.data("sortmode").update();
                     },
                 };
-
                 var $table = $("#automation-table");
                 datatableSettings.customKey = "assigned";
                 var fmode = filtermode.newInst(datatableSettings);
                 var smode = sortmode.newInst(datatableSettings);
+                
+                
+                
                 datatableSettings.searchCols = fmode.loadSearchCols();
                 datatableSettings.aaSorting = smode.loadaaSorting();
                 $table.data('filtermode', fmode);
@@ -224,9 +241,9 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
             selectAll: function (table) {
                 var rows = table.fnGetNodes();
                 var ids = [];
-                var self =this;
+                var self = this;
                 $(rows).each(function (index, row) {
-                    var tcId =parseInt($('.entity_id', row).text(), 10);
+                    var tcId = parseInt($('.entity_id', row).text(), 10);
                     ids.push(tcId);
                     var $row = $(row);
                     var checkbox = $row.find("input[type=checkbox]")
@@ -288,7 +305,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 return ids;
             },
 
-            checkScriptAutoIsPresent: function(table) {
+            checkScriptAutoIsPresent: function (table) {
                 var selectedRows = table.getSelectedRows();
                 var datas = table.fnGetData();
                 var scripts = [];
@@ -328,6 +345,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             });
                         });
                     }
+                    self.storage.remove(self.key);
                 });
                 $("#automated-affected-button").on("click", function () {
                     var requestIds = self.getSelectedRequestIds(domtable);
@@ -346,7 +364,15 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             });
                         });
                     }
+                    self.storage.remove(self.key);
 
+                });
+
+              //  $("#tf-affected-tabs").find("a")"
+                $("#btn-no-assigned").on("click", function() {
+                    location.href= "#traitment";
+                    $("#traitment-tab a").addClass("tf-selected");
+                    $("#assigned-tab a").removeClass("tf-selected");
                 });
             }
 

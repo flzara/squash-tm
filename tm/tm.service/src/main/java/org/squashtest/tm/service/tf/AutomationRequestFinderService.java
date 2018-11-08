@@ -25,6 +25,9 @@ import org.springframework.data.domain.Pageable;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Service for retrieval of {@link org.squashtest.tm.domain.tf.automationrequest.AutomationRequest}.
  *
@@ -79,5 +82,24 @@ public interface AutomationRequestFinderService {
 	 * @return
 	 */
 	Page<AutomationRequest> findRequestsAssignedToCurrentUser(Pageable pageable, ColumnFiltering filtering);
+
+	/**
+	 * Given the specified pagination, sorting and filtering, retrieve the corresponding
+	 * requests, restricted to the automated requests with status TRANSMITTED
+	 * @param pageble
+	 * @param filtering
+	 * @return
+	 */
+	Page<AutomationRequest> findRequestsWithTransmittedStatus(Pageable pageble, ColumnFiltering filtering);
+
+	/**
+	 *
+	 * @return
+	 */
+	Integer countAutomationRequestForCurrentUser();
+
+	Map<Long, String> getCreatedByForCurrentUser(List<String> requestStatus);
+
+	Map<Long, String> getCreatedByForAutomationRequests(List<String> requestStatus);
 
 }
