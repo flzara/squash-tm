@@ -89,6 +89,12 @@
 
     <dependency>
       <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.scm.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
       <artifactId>core.testautomation.api</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -232,7 +238,7 @@
     </dependency>
 
     <!-- dependency>
-    	spring boot starter logging already brings in 
+    	spring boot starter logging already brings in
     	org.apache.logging.log4j:log4j-slf4j-impl
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>

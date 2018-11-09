@@ -12,4 +12,11 @@
   <name>${project.groupId}.${project.artifactId}</name>
   <description>Squash TM API / SPI required by scm connector implementations</description>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.bugtracker.api</artifactId>
+      <version>1.19.0.IT7-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
 </project>
