@@ -24,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
+import org.squashtest.tm.domain.users.User;
 
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,7 @@ public interface AutomationRequestFinderService {
 	/**
 	 * WYSIWYG
 	 *
-	 * @param id
+	 * @param requestId
 	 * @return an AutomationRequest if found
 	 * @throws javax.persistence.EntityNotFoundException if not
 	 */
@@ -93,13 +94,36 @@ public interface AutomationRequestFinderService {
 	Page<AutomationRequest> findRequestsWithTransmittedStatus(Pageable pageble, ColumnFiltering filtering);
 
 	/**
+	 * Given the specified pagination, sorting and filtering, retrieve the corresponding
+	 * requests, restricted to the automated requests with these status : TRANSMITTED, WORK_IN_PROGRESS, EXECUTABLE
+	 *
+	 * @param pageable
+	 * @param filtering
+	 * @return
+	 */
+	Page<AutomationRequest> findRequestsForGlobal(Pageable pageable, ColumnFiltering filtering);
+
+
+	/**
 	 *
 	 * @return
 	 */
 	Integer countAutomationRequestForCurrentUser();
 
+	/**
+	 *
+	 * @param requestStatus
+	 * @return
+	 */
 	Map<Long, String> getCreatedByForCurrentUser(List<String> requestStatus);
 
+	/**
+	 *
+	 * @param requestStatus
+	 * @return
+	 */
 	Map<Long, String> getCreatedByForAutomationRequests(List<String> requestStatus);
+
+	List<User> getAssignedToForAutomationRequests();
 
 }

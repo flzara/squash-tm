@@ -84,7 +84,9 @@ public class AutomationWorkspaceController {
 		.map("assigned-on", "assignmentDate")
 		.map("script", "testCase.automatedTest.name")
 		.map("entity-index", "index(AutomationRequest)")
-		.map("requestId", "id");
+		.map("requestId", "id")
+		.map("assigned-to", "assignedTo")
+		.map("status", "requestStatus");
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale) {
@@ -124,6 +126,18 @@ public class AutomationWorkspaceController {
 		return new AutomationRequestDataTableModelHelper(messageSource).buildDataModel(automationRequestPage, "");
 	}
 
+	@RequestMapping(value="automation-request/global", params = RequestParams.S_ECHO_PARAM)
+	@ResponseBody
+	public DataTableModel getAutomationRequestGlobalModel(final DataTableDrawParameters params, final Locale locale) {
+
+		Pageable pageable = SpringPagination.pageable(params,automationRequestMapper);
+		ColumnFiltering filtering = new DataTableColumnFiltering(params, automationRequestMapper);
+		Page<AutomationRequest> automationRequestPage = automationRequestFinderService.findRequestsForGlobal(pageable, filtering);
+
+		return new AutomationRequestDataTableModelHelper(messageSource).buildDataModel(automationRequestPage, "");
+	}
+
+
 	@RequestMapping(value = "count", method = RequestMethod.GET)
 	@ResponseBody
 	public Integer countAutomationRequestToCurrentUser() {
@@ -147,12 +161,11 @@ public class AutomationWorkspaceController {
 		Locale locale = LocaleContextHolder.getLocale();
 		//TestSuite ts = service.findById(testSuiteId);
 
-		List<User> usersList = new ArrayList<>();//= iterationTestPlanFinder.findAssignableUserForTestPlan(ts.getIteration().getId());
-		usersList.add(userManagerService.findByLogin("admin"));
-		usersList.add(userManagerService.findByLogin("User-1"));
+		List<User> usersList = automationRequestFinderService.getAssignedToForAutomationRequests();
+
 		//Collections.sort(usersList, new TestSuiteModificationController.UserLoginComparator());
 
-		//String unassignedLabel = messageSource.internationalize("label.Unassigned", locale);
+		String unassignedLabel = messageSource.internationalize("label.Unassigned", locale);
 
 		Map<String, String> jsonUsers = new LinkedHashMap<>(usersList.size());
 
@@ -179,7 +192,7 @@ public class AutomationWorkspaceController {
 			Map<String, Object> data = new HashMap<>(14);
 			data.put(DataTableModelConstants.PROJECT_NAME_KEY, item.getTestCase() != null ? HtmlUtils.htmlEscape(item.getTestCase().getProject().getName()): null);
 			data.put("reference", (item.getTestCase() != null && !item.getTestCase().getReference().isEmpty()) ? item.getTestCase().getReference(): "-");
-			data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, item.getTestCase() != null ? HtmlUtils.htmlEscape(item.getTestCase().getFullName()): null);
+			data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, item.getTestCase() != null ? HtmlUtils.htmlEscape(item.getTestCase().getName()): null);
 			data.put("format", item.getTestCase() != null ? messageSource.internationalize(item.getTestCase().getKind().getI18nKey(), locale) : null);
 			data.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getTestCase() != null ? item.getTestCase().getId() : null);
 			data.put(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, item.getTransmittedBy() != null ? item.getTransmittedBy().getLogin(): item.getCreatedBy().getLogin());
@@ -191,6 +204,8 @@ public class AutomationWorkspaceController {
 			data.put("checkbox", "");
 			data.put("tc-id", item.getTestCase() != null ? item.getTestCase().getId(): null);
 			data.put("requestId", item.getId());
+			data.put("assigned-to", item.getAssignedTo() != null ? item.getAssignedTo().getLogin() : "-");
+			data.put("status", messageSource.internationalize(item.getRequestStatus().getI18nKey(), locale));
 			return data;
 		}
 

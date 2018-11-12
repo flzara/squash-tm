@@ -50,12 +50,6 @@
 
       automationWorkspaceConf: {
       },
-      defaultInfoList: /*[[${defaultInfoLists}]]*/{},
-      testCaseImportance: /*[[${testCaseImportance}]]*/{},
-      testCaseStatus: /*[[${testCaseStatus}]]*/{},
-      requirementStatus: /*[[${requirementStatus}]]*/{},
-      requirementCriticality: /*[[${requirementCriticality}]]*/{},
-      executionStatus: /*[[${executionStatus}]]*/{},
       assignableUsers: /*[[${assignableUsers}]]*/{}
     };
 
@@ -90,27 +84,27 @@
     <!-- 		above the stacking context of the contextual content. -->
     <!-- 		An interesting article on that matter : http://philipwalton.com/articles/what-no-one-told-you-about-z-index/   -->
   </div>
-  <div class="ui-widget-header ui-corner-all ui-state-default fragment-header automation-subtitle-header">
+  <div class="ui-widget-header ui-corner-all ui-state-default fragment-header tf-automation-subtitle-header">
     <h2 th:text="#{workspace.automation.header.subtitle}">Suivi des demandes d'automatisation</h2>
   </div>
-  
 
-  <div id="tf-affected-tabs">
+
+  <div id="tf-automation-tabs">
 
     <!--  ------------------ main tab panel --------------------------------- -->
     <ul>
-      <li id="assigned-tab">
-        <a href="#assigned" th:text="#{automation.label.automation_in_progress}">M'étant affectés</a>
+      <li id="tf-assigned-tab">
+        <a href="#assigned" th:text="#{automation.label.automation_in_progress}">M'étant assignés</a>
       </li>
-      <li id="traitment-tab">
+      <li id="tf-traitment-tab">
         <a href="#traitment" th:text="#{automation.label.traitment}">A traiter</a>
       </li>
-      <li id="global-tab">
+      <li id="tf-global-tab">
         <a href="#global" th:text="#{automation.label.globale_view}">Vue globale</a>
       </li>
     </ul>
   </div>
-  <div id="automation-content">
+  <div id="tf-automation-content">
     <div id="contextual-content-wrapper">
       <!--empty -->
     </div>

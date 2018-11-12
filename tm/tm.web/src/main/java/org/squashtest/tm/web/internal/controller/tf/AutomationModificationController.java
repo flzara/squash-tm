@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.service.tf.AutomationRequestModificationService;
 
 import javax.inject.Inject;
+import java.util.List;
 
 @Controller
 @RequestMapping("/automation-request")
@@ -51,7 +52,7 @@ public class AutomationModificationController {
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, value="assigned/{autoReqIds}")
-	public void assignedUser(@PathVariable(value="autoReqIds") Long autoReqIds) {
+	public void assignedUser(@PathVariable(value="autoReqIds") List<Long> autoReqIds) {
 		automationRequestModificationService.assignedToAutomationRequest(autoReqIds);
 	}
 

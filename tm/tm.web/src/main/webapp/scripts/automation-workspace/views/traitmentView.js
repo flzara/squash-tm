@@ -37,13 +37,13 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     //     requestStatus : JSON.stringify(requestStatus)
                     // }
                 }).success(function(data){
-                    console.log(data)
+                    //console.log(data)
                 })
                 var datatableSettings = {
                     sAjaxSource: squashtm.app.contextRoot + "automation-workspace/automation-request/traitment",
-                    //TODO récupéter la liste des demandes dynamiquement
                     "aaSorting": [[7, 'desc'], [8, 'asc']],
                     "bDeferRender": true,
+                    "iDisplayLength" : 25,
                     "aoColumnDefs": [{
                         "bSortable": false,
                         "aTargets": [0],
@@ -59,7 +59,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "bSortable": true,
                         "aTargets": [2],
                         "mDataProp": "entity-id",
-                        "sWidth": "4em",
+                        "sWidth": "3em",
                         "sClass": "entity_id"
                     }, {
                         "bSortable": true,
@@ -305,6 +305,23 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }
             },
 
+            assigned: function(table, url) {
+								var self = this;
+								var requestIds = this.getSelectedRequestIds(table);
+										if (requestIds.length === 0 || requestIds === undefined) {
+												notification.showWarning(translator.get("automation.notification.selectedRow.none"));
+										} else {
+												//$(requestIds).each(function () {
+														$.ajax({
+																url: squashtm.app.contextRoot + url + requestIds,
+																method: 'POST',
+														}).success(function () {
+																table.refresh();
+														});
+											 // });
+										}
+						},
+
             bindButtons: function () {
 
                 var self = this;
@@ -321,7 +338,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     domtable.toggleFiltering();
                 });
                 $("#assigned-traitment-button").on("click", function () {
-                    self.actions(domtable, "automation-request/assigned/");
+                    self.assigned(domtable, "automation-request/assigned/");
                     self.storage.remove(self.key);
                 });
                 $("#no-automation-traitment-button").on("click", function () {

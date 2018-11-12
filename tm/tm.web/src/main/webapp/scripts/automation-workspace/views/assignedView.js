@@ -43,11 +43,12 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         $("#divBtn").show();
                     }
                 })
-                
+
                 var datatableSettings = {
                     sAjaxSource: squashtm.app.contextRoot + "automation-workspace/automation-request",
                     "aaSorting": [[7, 'desc'], [8, 'asc']],
                     "bDeferRender": true,
+                    "iDisplayLength" : 25,
                     "aoColumnDefs": [{
                         "bSortable": false,
                         "aTargets": [0],
@@ -105,15 +106,16 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "bSortable": false,
                         "aTargets": [11],
                         "mDataProp": "tc-id",
-                        "sClass": "center",
+                        "sClass": "centered",
+                        "sWidth": "2.5em",
                         "mRender": function (data, type, row, meta) {
-                            return '<a href="' + squashtm.app.contextRoot + 'test-cases/' + data + '/info" style="margin: auto">'
-                                + '<img src="/squash/images/icon-lib/eye.png" width="20" height="20" border="0"></a>';
+                            return '<a href="' + squashtm.app.contextRoot + 'test-cases/' + data + '/info"><img src="/squash/images/icon-lib/eye.png"></a>';
                         }
                     }, {
                         "bSortable": false,
                         "aTargets": [12],
                         "mDataProp": "checkbox",
+                        "sClass": "centered",
                         "mRender": function (data, type, row) {
                             var store = self.storage.get(self.key);
                             var checked = false;
@@ -129,8 +131,8 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                 input = '<input type="checkbox" class="editor-active">';
                             }
                             return input;
-                        }/*,
-                        "sWidth": "2.5em"*/
+                        },
+                        "sWidth": "2.5em"
                     }, {
                         "mDataProp": "requestId",
                         "bVisible": false,
@@ -224,9 +226,9 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 datatableSettings.customKey = "assigned";
                 var fmode = filtermode.newInst(datatableSettings);
                 var smode = sortmode.newInst(datatableSettings);
-                
-                
-                
+
+
+
                 datatableSettings.searchCols = fmode.loadSearchCols();
                 datatableSettings.aaSorting = smode.loadaaSorting();
                 $table.data('filtermode', fmode);
@@ -368,11 +370,10 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
                 });
 
-              //  $("#tf-affected-tabs").find("a")"
                 $("#btn-no-assigned").on("click", function() {
                     location.href= "#traitment";
-                    $("#traitment-tab a").addClass("tf-selected");
-                    $("#assigned-tab a").removeClass("tf-selected");
+                    $("#tf-traitment-tab a").addClass("tf-selected");
+                    $("#tf-assigned-tab a").removeClass("tf-selected");
                 });
             }
 

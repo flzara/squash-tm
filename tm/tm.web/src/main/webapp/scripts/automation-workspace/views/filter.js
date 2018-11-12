@@ -27,7 +27,14 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 		var formats = translator.get({
 			"GHERKIN": "test-case.format.gherkin",
 			"STANDARD": "test-case.format.standard"
-		})
+		});
+
+		var statuses = translator.get({
+			"TRANSMITTED": "automation-request.request_status.TRANSMITTED",
+			"WORK_IN_PROGRESS": "automation-request.request_status.WORK_IN_PROGRESS",
+			"EXECUTABLE": "automation-request.request_status.EXECUTABLE"
+		});
+
 
 		function filterMode(initConf) {
 			var table = $(tableSelector),
@@ -156,12 +163,20 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 			table.find('.tp-th-project-name,.tp-th-id,.tp-th-reference,.tp-th-label,.tp-th-priority,.tp-th-script')
 				.append("<input class='th_input filter_input'/>");
 
+			$('.tp-th-label .th_input').css('width', '90%');
+
 			var userCombo = table.find(".tp-th-createdby"),
-				formatCombo = table.find(".tp-th-format"),
-				assignedTime = table.find(".tp-th-affectedon"),
-				transmittedTime = table.find(".tp-th-transmittedon");
+				  formatCombo = table.find(".tp-th-format"),
+					statusCombo = table.find(".tp-th-status"),
+					assignedToCombo = table.find(".tp-th-assignedto"),
+				  assignedTime = table.find(".tp-th-affectedon"),
+				  transmittedTime = table.find(".tp-th-transmittedon");
 
 			_createCombo(formatCombo, "#filter-mode-combo", formats);
+			_createCombo(statusCombo, "#filter-mode-combo", statuses);
+
+			var users = squashtm.app.assignableUsers;
+			_createCombo(assignedToCombo, "#filter-mode-combo", users);
 
 			var url = squashtm.app.contextRoot;
 			var requestStatus = [];

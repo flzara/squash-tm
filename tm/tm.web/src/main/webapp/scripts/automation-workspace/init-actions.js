@@ -18,21 +18,21 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'workspace.contextual-content'/*, 'squash.translator'*/, 'workspace.routing'],
- function($, ctxcontent/*, translator*/, urlBuilder) {
+define(['jquery', 'workspace.contextual-content', 'workspace.routing'],
+ function($, ctxcontent, urlBuilder) {
 
 
 		function _initTabs() {
 			var url = $(location).attr("href");
 			if (url.indexOf("#traitment") != -1) {
-				addSelectedTabClass("#traitment-tab a");
+				addSelectedTabClass("#tf-traitment-tab a");
 			} else if (url.indexOf("#global") != -1) {
-				addSelectedTabClass("#global-tab a");
+				addSelectedTabClass("#tf-global-tab a");
 			} else {
-				addSelectedTabClass("#assigned-tab a");
+				addSelectedTabClass("#tf-assigned-tab a");
 			}
 
-			$("#tf-affected-tabs").find("a").on("click", function() {
+			$("#tf-automation-tabs").find("a").on("click", function() {
 				if (! $(this).hasClass('tf-selected')) {
 					selectTab(this);
 				}

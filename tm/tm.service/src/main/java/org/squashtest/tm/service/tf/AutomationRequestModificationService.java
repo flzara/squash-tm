@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.tf;
 
+import java.util.List;
+
 public interface AutomationRequestModificationService extends AutomationRequestFinderService{
 
 	void deleteRequestByProjectId(long projectId);
@@ -31,5 +33,7 @@ public interface AutomationRequestModificationService extends AutomationRequestF
 	void updateAutomationRequestsToNotAutomatable(Long id);
 
 	void assignedToAutomationRequest(Long id);
+
+	void assignedToAutomationRequest(List<Long> ids);
 
 }
