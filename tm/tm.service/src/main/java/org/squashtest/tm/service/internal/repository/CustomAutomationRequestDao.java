@@ -24,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
+import org.squashtest.tm.domain.users.User;
 
 import java.util.Collection;
 import java.util.List;
@@ -71,10 +72,20 @@ public interface CustomAutomationRequestDao {
 	 *
 	 * @param pageable
 	 * @param columnFiltering
-	 * @param inProjectIds
+	 * @param inProjectIds list of project ids the current user can read
 	 * @return
 	 */
 	Page<AutomationRequest> findAllForTraitment(Pageable pageable, ColumnFiltering columnFiltering, Collection<Long> inProjectIds);
+
+	/**
+	 * Will retrieve a list of automated requests, paged filtered and sorted, where
+	 * the status of automation request is 'TRANSMITTED', 'WORK_IN_PROGRESS' or 'EXECUTABLE'
+	 * @param pageable
+	 * @param columnFiltering
+	 * @param inProjectIds list of project ids the current user can read
+	 * @return
+	 */
+	Page<AutomationRequest> findAllForGlobal(Pageable pageable, ColumnFiltering filtering, Collection<Long> inProjectIds);
 
 	/**
 	 * Count Automation request to the current User.
@@ -83,6 +94,17 @@ public interface CustomAutomationRequestDao {
 	 */
 	Integer countAutomationRequestForCurrentUser(Long idUser);
 
-	Map<Long, String> getCreatedByForCurrentUser(Long idUser, List<String> requestStatus);
+	/**
+	 * Retrieve all the 'transmitted by' users login mapped by id, filtered by automation request status
+	 * if idUser is not null, we add the 'assigned to' condition to the request
+	 * @param idUser
+	 * @param requestStatus
+	 * @return
+	 */
+	Map<Long, String> getTransmittedByForCurrentUser(Long idUser, List<String> requestStatus);
+
+	List<User> getAssignedToForAutomationRequests();
+
+	void updateAutomationRequestToAssigned(Long idUser, List<Long> ids);
 
 }

@@ -30,8 +30,8 @@ public enum AutomationRequestStatus implements Internationalizable, Level {
 	TRANSMITTED(2),      // The automation request is transmitted.
 	WORK_IN_PROGRESS(3), // The automation enginner is automating the test case.
 	EXECUTABLE(4),       // The automated test case is executable.
-	OBSOLETE(7),		 // The automation request is obsolete.
-	NOT_AUTOMATABLE(8);
+	OBSOLETE(5),		 // The automation request is obsolete.
+	NOT_AUTOMATABLE(6);  // The automation request is non automatable.
 
 	private static final String I18N_KEY_ROOT = "automation-request.request_status.";
 

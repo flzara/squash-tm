@@ -124,6 +124,7 @@ import java.util.stream.Collectors;
 public final class PagingToQueryDsl {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PagingToQueryDsl.class);
+	private static final String LIST_SEPARATOR = ";";
 
 	private PagingToQueryDsl(){
 		super();
@@ -360,6 +361,10 @@ public final class PagingToQueryDsl {
 					finalExpression = asLikeExpression(pptPath, (String) comparisonParameters);
 					break;
 
+				case IN:
+					finalExpression = pptPath.in((ArrayList) comparisonParameters);
+					break;
+
 				default:
 					// else defaults to strict equality
 					finalExpression = pptPath.eq(Expressions.constant(comparisonParameters));
@@ -439,6 +444,14 @@ public final class PagingToQueryDsl {
 			Object result;
 
 			Class<?> pptClass = resolveClass(property);
+			if (isEnumList(pptClass, value)) {
+				String[] values = value.split(LIST_SEPARATOR);
+				Collection c = new ArrayList<>();
+				for (int i = 0; i < values.length; i++) {
+					c.add(Enum.valueOf((Class<? extends Enum>)pptClass, values[i]));
+				}
+				return c;
+			}
 
 			if (isEnum(pptClass)){
 				result = Enum.valueOf((Class<? extends Enum>)pptClass, value);
@@ -481,6 +494,10 @@ public final class PagingToQueryDsl {
 
 		private boolean isEnum(Class<?> clazz){
 			return clazz.isEnum();
+		}
+
+		private boolean isEnumList(Class<?> clazz, String value) {
+			return (value.contains(LIST_SEPARATOR) && clazz.isEnum());
 		}
 
 		private boolean canCoerceToDate(Class<?> clazz){
@@ -530,6 +547,11 @@ public final class PagingToQueryDsl {
 				return converter;
 			}
 
+			public ColumnFilteringConverter withIn(){
+				registerHint(CompOperator.IN);
+				return converter;
+			}
+
 			public ColumnFilteringConverter withBetweenDates(){
 				registerHint(CompOperator.DATE_BETWEEN);
 				return converter;
@@ -554,7 +576,8 @@ public final class PagingToQueryDsl {
 			EQUALITY,
 			LIKE,
 			DATE_BETWEEN,
-			DATE
+			DATE,
+			IN
 		}
 	}
 

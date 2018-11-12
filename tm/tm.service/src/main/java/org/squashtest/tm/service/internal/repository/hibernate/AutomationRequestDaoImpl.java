@@ -49,8 +49,10 @@ import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.domain.tf.automationrequest.QAutomationRequest;
 import org.squashtest.tm.domain.users.QUser;
+import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.jooq.domain.tables.CoreUser;
 import org.squashtest.tm.service.internal.repository.CustomAutomationRequestDao;
+import org.squashtest.tm.service.internal.repository.UserDao;
 
 import static org.squashtest.tm.jooq.domain.Tables.AUTOMATION_REQUEST;
 import static org.squashtest.tm.jooq.domain.Tables.CORE_USER;
@@ -59,9 +61,8 @@ import static org.squashtest.tm.service.internal.helper.PagingToQueryDsl.*;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.sql.Timestamp;
+import java.util.*;
 import java.util.function.Consumer;
 
 
@@ -74,6 +75,9 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 
 	@Inject
 	private DSLContext DSL;
+
+	@Inject
+	private UserDao userDao;
 
 	@Override
 	public Page<AutomationRequest> findAll(Pageable pageable, Collection<Long> inProjectIds) {
@@ -116,6 +120,26 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	}
 
 	@Override
+	public Page<AutomationRequest> findAllForGlobal(Pageable pageable, ColumnFiltering filtering, Collection<Long> inProjectIds) {
+		LOGGER.debug("searching for automation requests, paged and filtered");
+
+		ColumnFiltering filterWithAssignee;
+
+		if (filtering.getFilter("requestStatus").isEmpty()) {
+			filterWithAssignee = new SimpleColumnFiltering(filtering).addFilter("requestStatus", AutomationRequestStatus.WORK_IN_PROGRESS.toString() + ";"
+				+ AutomationRequestStatus.TRANSMITTED.toString() + ";" + AutomationRequestStatus.EXECUTABLE.toString());
+			return innerFindAll(pageable, filterWithAssignee, (converter) -> {
+				converter.compare("requestStatus").withIn();
+			}, inProjectIds);
+		} else  {
+			filterWithAssignee = new SimpleColumnFiltering(filtering);
+			return innerFindAll(pageable, filterWithAssignee, (converter) -> {
+				converter.compare("requestStatus").withEquality();
+			}, inProjectIds);
+		}
+	}
+
+	@Override
 	public Integer countAutomationRequestForCurrentUser(Long idUser) {
 
 		return DSL.selectCount().from(AUTOMATION_REQUEST)
@@ -126,7 +150,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 
 
 	@Override
-	public Map<Long, String> getCreatedByForCurrentUser(Long idUser, List<String> requestStatus) {
+	public Map<Long, String> getTransmittedByForCurrentUser(Long idUser, List<String> requestStatus) {
 
 		Condition condition = org.jooq.impl.DSL.trueCondition();
 		if(idUser != null) {
@@ -138,6 +162,30 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 			.where(condition)
 			.and(AUTOMATION_REQUEST.REQUEST_STATUS.in(requestStatus))
 			.fetch().intoMap(CORE_USER.PARTY_ID, CORE_USER.LOGIN);
+
+	}
+
+	@Override
+	public List<User> getAssignedToForAutomationRequests() {
+		List<User> users = new ArrayList<>();
+
+		DSL.selectDistinct(CORE_USER.PARTY_ID).from(CORE_USER)
+					.join(AUTOMATION_REQUEST).on(CORE_USER.PARTY_ID.eq(AUTOMATION_REQUEST.ASSIGNED_TO))
+					.fetch().forEach(r -> {
+								User user = userDao.getOne(r.get(CORE_USER.PARTY_ID));
+								users.add(user);
+							});
+
+		return users;
+	}
+
+	@Override
+	public void updateAutomationRequestToAssigned(Long idUser, List<Long> ids) {
+
+		DSL.update(AUTOMATION_REQUEST).set(AUTOMATION_REQUEST.ASSIGNED_TO, idUser)
+									  .set(AUTOMATION_REQUEST.REQUEST_STATUS, AutomationRequestStatus.WORK_IN_PROGRESS.toString())
+									  .set(AUTOMATION_REQUEST.ASSIGNED_ON, new Timestamp(new Date().getTime()))
+									  .where(AUTOMATION_REQUEST.AUTOMATION_REQUEST_ID.in(ids)).execute();
 
 	}
 
@@ -244,7 +292,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 				   .typeFor("testCase.kind").isClass(TestCaseKind.class)
 				   .typeFor("id", "automationPriority").isClass(Long.class)
 			       .typeFor("testCase.id").isClass(Long.class)
-			       .typeFor("createdBy", "transmittedBy").isClass(Long.class)
+			       .typeFor("createdBy", "transmittedBy", "assignedTo").isClass(Long.class)
 				   // filter operation not mentioned here are considered as Equality (or Like if the property is a String)
 				   .compare(
 					   "transmissionDate",

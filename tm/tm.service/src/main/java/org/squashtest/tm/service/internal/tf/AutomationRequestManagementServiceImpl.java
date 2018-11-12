@@ -29,6 +29,7 @@ import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
+import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.internal.repository.AutomationRequestDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.project.ProjectFinder;
@@ -102,9 +103,15 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	@Transactional(readOnly = true)
 	public Page<AutomationRequest> findRequestsWithTransmittedStatus(Pageable pageble, ColumnFiltering filtering) {
 		List<Long> projectIds = projectFinder.findAllReadableIds();
-
 		return requestDao.findAllForTraitment(pageble, filtering, projectIds);
 	}
+
+	@Override
+	public Page<AutomationRequest> findRequestsForGlobal(Pageable pageable, ColumnFiltering filtering) {
+		List<Long> projectIds = projectFinder.findAllReadableIds();
+		return requestDao.findAllForGlobal(pageable, filtering, projectIds);
+	}
+
 
 	// *************** implementation of the management interface *************************
 
@@ -153,14 +160,25 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	}
 
 	@Override
+	public void assignedToAutomationRequest(List<Long> ids) {
+		String username = userCtxt.getUsername();
+		requestDao.updateAutomationRequestToAssigned(userDao.findUserByLogin(username).getId(), ids);
+	}
+
+	@Override
 	public Map<Long, String> getCreatedByForCurrentUser(List<String> requestStatus) {
 		String userName = userCtxt.getUsername();
-		return requestDao.getCreatedByForCurrentUser(userDao.findUserByLogin(userName).getId(), requestStatus);
+		return requestDao.getTransmittedByForCurrentUser(userDao.findUserByLogin(userName).getId(), requestStatus);
 	}
 
 	@Override
 	public Map<Long, String> getCreatedByForAutomationRequests(List<String> requestStatus) {
-		return requestDao.getCreatedByForCurrentUser(null, requestStatus);
+		return requestDao.getTransmittedByForCurrentUser(null, requestStatus);
+	}
+
+	@Override
+	public List<User> getAssignedToForAutomationRequests() {
+		return requestDao.getAssignedToForAutomationRequests();
 	}
 
 	@Override
