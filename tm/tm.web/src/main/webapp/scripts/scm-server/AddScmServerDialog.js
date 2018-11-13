@@ -32,7 +32,7 @@ define(['jquery', 'backbone', "squash.translator", "app/util/StringUtil", "app/l
           	url: $("#url")
           },
 
-					initialize : function() {
+					initialize : function(scmServersTable) {
 						var self = this;
 						var $el = this.$el;
 
@@ -40,12 +40,16 @@ define(['jquery', 'backbone', "squash.translator", "app/util/StringUtil", "app/l
 
             $el.on('formdialogconfirm', function() {
             	self.addNewScmServer(function() {
+            		scmServersTable.refresh();
             		$el.formDialog('close');
             	});
             });
 
             $el.on('formdialogaddanother', function() {
-            	self.addNewScmServer();
+            	self.addNewScmServer(function() {
+            		scmServersTable.refresh();
+            		$el.formDialog('cleanup');
+            	});
             });
 
             $el.on('formdialogcancel', function() {

@@ -94,11 +94,11 @@
 	          <div class="unsnap"></div>
             <div>
               <table id="scm-server-table"
-                th:attr="data-def='pre-sort=2-asc, pre-filled, datakeys-id=entity-id'">
+                th:attr="data-def='pre-sort=2-asc, pre-filled, datakeys-id=server-id, ajaxsource='+@{/administration/scm-servers}">
                 <thead>
                   <tr>
-                    <th th:attr="data-def='invisible, map=entity-id'" class="not-displayed">Id</th>
-                    <th th:attr="data-def='select, map=entity-index'">#</th>
+                    <th th:attr="data-def='invisible, map=server-id'" class="not-displayed">Id</th>
+                    <th th:attr="data-def='select, map=server-index'">#</th>
                     <th th:attr="data-def='sortable, map=name'" th:text="#{label.Name}">Name</th>
                     <th th:attr="data-def='sortable, map=kind'" th:text="#{label.Kind}">Kind</th>
                     <th th:attr="data-def='sortable, map=url, link-new-tab={url}'" th:text="#{label.Url}">Url</th>
@@ -109,7 +109,7 @@
                   <tr th:each="server, iterStat : ${scmServers}" th:object="${server}">
                     <td th:text="*{id}" class="not-displayed">1</td>
                     <td th:text="${iterStat.count}">1</td>
-                    <td th:text="*{name}">The_Project Github Server</td>
+                    <td th:text="*{name}">Github Server</td>
                     <td th:text="*{kind}">Git</td>
                     <td th:text="*{url}">https://github.com/TheProject</td>
                     <td></td>
