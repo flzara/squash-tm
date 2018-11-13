@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.scmserver;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.scm.ScmServer;
+import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.internal.repository.ScmServerDao;
 import org.squashtest.tm.service.scmserver.ScmServerManagerService;
 
@@ -39,5 +40,13 @@ public class ScmServerManagerServiceImpl implements ScmServerManagerService {
 	@Override
 	public List<ScmServer> findAllOrderByName() {
 		return scmServerDao.findAllByOrderByNameAsc();
+	}
+
+	@Override
+	public ScmServer createNewScmServer(ScmServer newScmServer) {
+		if(scmServerDao.isServerNameAlreadyInUse(newScmServer.getName())) {
+			throw new NameAlreadyInUseException("ScmServer", newScmServer.getName());
+		}
+		return scmServerDao.save(newScmServer);
 	}
 }

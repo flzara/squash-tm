@@ -39,8 +39,8 @@ public class ScmServer {
 	private String name;
 
 	@Column(name = "URL")
-	@Size(max = 255)
-	private URL url;
+	@org.hibernate.validator.constraints.URL
+	private String url;
 
 	@Column(name = "KIND")
 	@Size(max = 30)
@@ -60,10 +60,10 @@ public class ScmServer {
 		this.name = name;
 	}
 
-	public URL getUrl() {
+	public String getUrl() {
 		return url;
 	}
-	public void setUrl(URL url) {
+	public void setUrl(String url) {
 		this.url = url;
 	}
 

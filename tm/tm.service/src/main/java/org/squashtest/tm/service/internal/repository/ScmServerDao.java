@@ -21,6 +21,8 @@
 package org.squashtest.tm.service.internal.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.scm.ScmServer;
 
 import java.util.List;
@@ -32,4 +34,12 @@ public interface ScmServerDao extends JpaRepository<ScmServer, Long> {
 	 * @return The List of the ScmServers ordered by name.
 	 */
 	List<ScmServer> findAllByOrderByNameAsc();
+
+	/**
+	 * Check whether the given server name is already in use for another ScmServer.
+	 * @param scmServerName The ScmServer name to check.
+	 * @return True if the name is already in use, False otherwise.
+	 */
+	@Query
+	boolean isServerNameAlreadyInUse(@Param("name") String scmServerName);
 }

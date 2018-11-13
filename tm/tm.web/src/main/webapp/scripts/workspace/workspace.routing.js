@@ -179,7 +179,7 @@ define([], function(){
 		'execute.stepbyindex' :				root + '/execute/{\\d+}/step/index/{\\d+}',
 		'execute.prologue' :				root + '/execute/{\\d+}/step/prologue',
 
-
+		'administration.scm-servers' : root + '/administration/scm-servers',
 		'administration.bugtrackers'	:	root + '/administration/bugtrackers',
 		'customfield.values' :				root + '/custom-fields/values',
 		'customfield.values.get' :			root + '/custom-fields/values?boundEntityId={\\d+}&boundEntityType={[A-Z_]+}',

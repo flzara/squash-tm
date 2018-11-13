@@ -1039,7 +1039,10 @@
   	@NamedQuery(name = "StoredCredentials.findServerAuthConfByServerId",
 		query = "select sc from StoredCredentials sc join sc.authenticatedServer server " +
 					"where server.id = :serverId and sc.contentType = 'CONF' " +
-					"and sc.authenticatedUser is null")
+					"and sc.authenticatedUser is null"),
+
+	// ScmServers
+	@NamedQuery(name="ScmServer.isServerNameAlreadyInUse", query="select case when (count(s) > 0) then true else false end from ScmServer s where s.name = :name")
 
 
 })

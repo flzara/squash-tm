@@ -31,4 +31,11 @@ public interface ScmServerManagerService {
 	 * @return The List of ScmServers ordered by name.
 	 */
 	List<ScmServer> findAllOrderByName();
+
+	/**
+	 * Create a new ScmServer with its attributes.
+	 * @param newScmServer The ScmServer with its attributes to create.
+	 */
+	ScmServer createNewScmServer(ScmServer newScmServer);
+
 }

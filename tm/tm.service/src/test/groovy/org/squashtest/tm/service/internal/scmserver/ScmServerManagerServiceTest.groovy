@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.scmserver
 
 import org.squashtest.tm.domain.scm.ScmServer
+import org.squashtest.tm.exception.NameAlreadyInUseException
 import org.squashtest.tm.service.internal.repository.ScmServerDao
 import spock.lang.Specification
 
@@ -33,14 +34,14 @@ class ScmServerManagerServiceTest extends Specification {
 		scmServerManagerService.scmServerDao = scmServerDao
 	}
 
-	def "#findAllOrderByName() - Should find all the ScmServers"() {
+	def "#findAllOrderByName() - [Nominal] Should find all the ScmServers"() {
 		given: "Mock data"
 			ScmServer s1 = Mock()
 			ScmServer s2 = Mock()
 			ScmServer s3 = Mock()
 		and: "Expected result"
 			List<ScmServer> expectedList = [s1, s2, s3] as List
-		and: "Mock dao method"
+		and: "Mock Dao method"
 			scmServerDao.findAllByOrderByNameAsc() >> expectedList
 		when:
 			List<ScmServer> resultList = scmServerManagerService.findAllOrderByName()
@@ -48,14 +49,40 @@ class ScmServerManagerServiceTest extends Specification {
 			resultList == expectedList
 	}
 
-	def "#findAllOrderByName() - Should find no ScmServer"() {
+	def "#findAllOrderByName() - [Empty] Should find no ScmServer"() {
 		given: "Expected result"
 			List<ScmServer> expectedList = [] as List
-		and: "Mock dao method"
+		and: "Mock Dao method"
 			scmServerDao.findAllByOrderByNameAsc() >> expectedList
 		when:
 			List<ScmServer> resultList = scmServerManagerService.findAllOrderByName()
 		then:
 			resultList == expectedList
+	}
+
+	def "#createNewScmServer(ScmServer) - [Nominal] Should create a new ScmServer"() {
+		given: "Mock data"
+			ScmServer newScmServer = Mock()
+		and: "Mock expected result"
+			ScmServer expectedScmServer = Mock()
+		and: "Mock Dao methods"
+			scmServerDao.isServerNameAlreadyInUse(newScmServer) >> false
+			scmServerDao.save(newScmServer) >> expectedScmServer
+		when:
+			ScmServer createdScmServer = scmServerManagerService.createNewScmServer(newScmServer)
+		then:
+			createdScmServer == expectedScmServer
+	}
+
+	def "#createNewScmServer(ScmServer) - [Exception] Should try to create a new ScmServer with a name already used and throw a NameAlreadyInUseException"() {
+		given: "Mock data"
+			ScmServer newScmServer = Mock()
+			newScmServer.getName() >> "Github_Server"
+		and: "Mock Dao method"
+			scmServerDao.isServerNameAlreadyInUse(newScmServer.getName()) >> true
+		when:
+			scmServerManagerService.createNewScmServer(newScmServer)
+		then:
+			thrown NameAlreadyInUseException
 	}
 }

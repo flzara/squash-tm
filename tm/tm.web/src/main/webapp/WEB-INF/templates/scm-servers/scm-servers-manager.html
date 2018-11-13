@@ -37,20 +37,7 @@
   <script type="text/javascript" th:inline="javascript">
     var squashtm = {};
     squashtm.app = {
-      contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
-      ckeditorSettings : {
-        ckeditor : {
-          customConfig : /*[[ @{/styles/ckeditor/ckeditor-config.js} ]]*/'http://localhost:8080/squash/styles/ckeditor/ckeditor-config.js',
-          language : /*[[#{rich-edit.language.value}]]*/'en'
-        },
-        placeholder : /*[[#{rich-edit.placeholder}]]*/'Click to edit ...',
-        submit : /*[[#{rich-edit.button.ok.label}]]*/'OK',
-        cancel : /*[[#{label.Cancel}]]*/'Cancel',
-        indicator : '<div class="processing-indicator"/>'
-      },
-      messages: {
-        "message.notBlank": /*[[ #{message.notBlank} ]]*/ "Value should not be blank",
-      },
+      contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash"
     };
   </script>
   <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
@@ -96,11 +83,11 @@
             <div class="toolbar">
               <!-- The labels below are suitable for general servers. We could change the keys to make them more general. -->
               <button class="snap-right sq-btn" type="button" value="Delete server" th:value="#{label.testAutomationServer.delete}"
-                    th:title="#{label.testAutomationServer.delete}"   id="delete-scm-server">
+                    th:title="#{label.testAutomationServer.delete}" id="delete-scm-server">
                 <span class="ui-icon ui-icon-trash">-</span><span th:text="#{label.Delete}"/>
               </button>
 	            <button class="snap-right sq-btn" type="button" value="Add server" th:value="#{label.testAutomationServer.add}"
-	           	  th:title="#{label.testAutomationServer.add}"   id="add-scm-server">
+	           	  th:title="#{label.testAutomationServer.add}" id="add-scm-server">
 				        <span class="ui-icon ui-icon-plus">+</span><span th:text="#{label.Add}"/>
 				      </button>
  			      </div>
@@ -139,8 +126,56 @@
 
             </div>
           </div>
+
+          <!-- ==================== POPUPS ==================== -->
+          <!-- ==================== Add Popup ==================== -->
+          <div id="add-scm-server-popup" class="not-displayed popup-dialog form-horizontal"
+               title="Add a new Scm Server" th:title="#{title.newScmServer}">
+            <div>
+              <div class="control-group">
+                <label class="control-label" for="name" th:text="#{label.Name}">Name</label>
+                <div class="controls">
+                  <input id="name" name="name" class="strprop" value="" size="50" maxlength="50" type="text" data-def="maininput" />
+                  <br/>
+                  <span class="help-inline">&nbsp;</span>
+                </div>
+              </div>
+
+              <div class="control-group">
+                <label class="control-label" for="kind" th:text="#{label.Kind}">Type</label>
+                <div class="controls">
+                  <select id ="kind" name="kind" th:remove="all-but-first">
+                    <option th:each="kind: ${scmKinds}" value="git" th:value="${kind}" th:text="${kind}">git</option>
+                    <option value="git">Git</option>
+                    <option value="mercurial">Mercurial</option>
+                    <option value="subversion">Subversion</option>
+                  </select>
+                  <br/>
+                  <span class="help-inline">&nbsp;</span>
+                </div>
+              </div>
+
+              <div class="control-group">
+                <label class="control-label" for="url" th:text="#{label.Url}">URL</label>
+                <div class="controls">
+                  <input id="url" name="url" class="strprop" value="" size="50" maxlength="255" type="text" />
+                  <br/>
+                  <span class="help-inline">&nbsp;</span>
+                  <span class="error-message url-error">&nbsp;</span>
+                </div>
+              </div>
+
+            </div>
+            <div class="popup-dialog-buttonpane">
+              <input class="sq-btn" type="button" value="Add another" th:value="#{label.addAnother}" data-def="evt=addanother, mainbtn" />
+              <input class="sq-btn" type="button" value="Add" th:value="#{label.Add}" data-evt="confirm" />
+              <input class="sq-btn" type="button" value="Cancel" th:value="#{label.Close}" data-evt="cancel" />
+            </div>
+          </div>
+
         </div>
       </div>
+
     </div>
   </div>
 </body>

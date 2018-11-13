@@ -18,24 +18,47 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ 'jquery', 'backbone', "underscore", 'app/util/ButtonUtil',  'squash.translator',
-         "app/ws/squashtm.notification", "jquery.squash.confirmdialog", 'squashtable',	'jqueryui', 'jquery.squash.formdialog' ],
-         function($, Backbone, _, ButtonUtil, translator, notification) {
-	"use strict";
+define(['jquery', 'backbone', "squash.translator", "./AddScmServerDialog", "jquery.squash.confirmdialog", 'squashtable',	'jqueryui', 'jquery.squash.formdialog' ],
+		function($, Backbone, translator, AddScmServerDialog) {
+			"use strict";
 
 	var ScmServersTableView = Backbone.View.extend({
+
 		el : "#scm-server-table-pane",
+
+		events: {
+
+			"click #add-scm-server" : "openAddScmServerDialog"
+		},
+
 		initialize : function() {
 
-			// DOM initialized table
-			this.table = this.$("table");
-			this.table.squashTable(squashtm.datatable.defaults, {
+			this.initTable();
+			this.AddScmServerDialog = new AddScmServerDialog(this.table);
+
+		},
+
+		/* ==== Table functions ==== */
+
+		initTable : function() {
+
+//			this.table = this.$("table");
+			var squashSettings = {
 				deleteButtons : {
-					delegate : "#",
-					tooltip : translator.get('label.Remove')
-				}
-			});
+        	delegate : "#",
+        	tooltip : translator.get('label.Remove')
+        }
+			};
+			this.table = this.$el.find('table').squashTable(squashtm.datatable.defaults, squashSettings);
+		},
+
+		/* ==== Add ScmServer Popup functions =====*/
+		openAddScmServerDialog : function() {
+
+			this.AddScmServerDialog.open();
 		}
+
 	});
+
 	return ScmServersTableView;
 });

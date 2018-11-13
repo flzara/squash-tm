@@ -25,18 +25,25 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.scm.ScmServer;
+import org.squashtest.tm.service.internal.scmserver.ScmConnectorRegistry;
 import org.squashtest.tm.service.scmserver.ScmServerManagerService;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/administration/scm-servers")
 public class ScmServerManagementAdminController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ScmServerManagementAdminController.class);
+
+	@Inject
+	private ScmConnectorRegistry scmConnectorRegistry;
 
 	@Inject
 	private ScmServerManagerService scmServerManager;
@@ -46,11 +53,18 @@ public class ScmServerManagementAdminController {
 		LOGGER.trace("Loading scm servers management page.");
 
 		List<ScmServer> scmServers = scmServerManager.findAllOrderByName();
+		Set<String> scmKinds = scmConnectorRegistry.getRegisteredScmKinds();
 
 		ModelAndView mav = new ModelAndView("scm-servers/scm-servers-manager.html");
 		mav.addObject("scmServers", scmServers);
-
+		mav.addObject("scmKinds", scmKinds);
 		return mav;
+	}
+
+	@RequestMapping(method = RequestMethod.POST)
+	@ResponseBody
+	public ScmServer createNewScmServer(@Valid ScmServer newScmServer) {
+		return scmServerManager.createNewScmServer(newScmServer);
 	}
 
 
