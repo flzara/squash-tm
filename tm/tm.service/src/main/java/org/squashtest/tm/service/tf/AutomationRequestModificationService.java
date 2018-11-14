@@ -26,13 +26,11 @@ public interface AutomationRequestModificationService extends AutomationRequestF
 
 	void deleteRequestByProjectId(long projectId);
 
-	void desassignedUser(long requestId);
+	void unassignedUser(List<Long> requestId);
 
-	void updateAutomationRequestsToExecutable(Long id);
+	void updateAutomationRequestsToExecutable(List<Long> id);
 
-	void updateAutomationRequestsToNotAutomatable(Long id);
-
-	void assignedToAutomationRequest(Long id);
+	void updateAutomationRequestsToNotAutomatable(List<Long> id);
 
 	void assignedToAutomationRequest(List<Long> ids);
 

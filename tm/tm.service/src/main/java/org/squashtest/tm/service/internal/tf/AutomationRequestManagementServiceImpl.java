@@ -123,46 +123,35 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	}
 
 	@Override
-	public void desassignedUser(long requestId) {
-	 	requestDao.desassignedUser(requestId);
+	public void unassignedUser(List<Long> requestIds) {
+		requestDao.unassignedUser(requestIds);
 	}
 
 	@Override
-	public void updateAutomationRequestsToExecutable(Long id) {
-		Optional<AutomationRequest> optionalAutomationRequest = requestDao.findById(id);
-		if(optionalAutomationRequest.isPresent()) {
-			AutomationRequest automationRequest = optionalAutomationRequest.get();
-			automationRequest.setRequestStatus(AutomationRequestStatus.EXECUTABLE);
-			automationRequest.setAssignedTo(null);
-			automationRequest.setAssignmentDate(null);
+	public void updateAutomationRequestsToExecutable(List<Long> ids) {
+
+		if(requestDao.countTATestWithoutScript(ids) == 0) {
+			List<AutomationRequest> automationRequestList = requestDao.findAllById(ids);
+			for (AutomationRequest automationRequest: automationRequestList) {
+				automationRequest.setAssignmentDate(null);
+				automationRequest.setAssignedTo(null);
+				automationRequest.setRequestStatus(AutomationRequestStatus.EXECUTABLE);
+			}
+		} else {
+
 		}
 	}
 
 	@Override
-	public void updateAutomationRequestsToNotAutomatable(Long id) {
-		Optional<AutomationRequest> optionalAutomationRequest = requestDao.findById(id);
-		if(optionalAutomationRequest.isPresent()) {
-			AutomationRequest automationRequest = optionalAutomationRequest.get();
-			automationRequest.setRequestStatus(AutomationRequestStatus.NOT_AUTOMATABLE);
-		}
-	}
-
-	@Override
-	public void assignedToAutomationRequest(Long id) {
-		String username = userCtxt.getUsername();
-		Optional<AutomationRequest> optionalAutomationRequest = requestDao.findById(id);
-		if(optionalAutomationRequest.isPresent()) {
-			AutomationRequest automationRequest = optionalAutomationRequest.get();
-			automationRequest.setRequestStatus(AutomationRequestStatus.WORK_IN_PROGRESS);
-			automationRequest.setAssignedTo(userDao.findUserByLogin(username));
-			automationRequest.setAssignmentDate(new Date());
-		}
+	public void updateAutomationRequestsToNotAutomatable(List<Long> ids) {
+		requestDao.updateAutomationRequestNotAutomatable(ids);
 	}
 
 	@Override
 	public void assignedToAutomationRequest(List<Long> ids) {
 		String username = userCtxt.getUsername();
-		requestDao.updateAutomationRequestToAssigned(userDao.findUserByLogin(username).getId(), ids);
+		User user = userDao.findUserByLogin(username);
+		requestDao.updateAutomationRequestToAssigned(user, ids);
 	}
 
 	@Override

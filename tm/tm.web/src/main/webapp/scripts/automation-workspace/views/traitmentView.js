@@ -36,14 +36,14 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     // data: {
                     //     requestStatus : JSON.stringify(requestStatus)
                     // }
-                }).success(function(data){
+                }).success(function (data) {
                     //console.log(data)
                 })
                 var datatableSettings = {
                     sAjaxSource: squashtm.app.contextRoot + "automation-workspace/automation-request/traitment",
                     "aaSorting": [[7, 'desc'], [8, 'asc']],
                     "bDeferRender": true,
-                    "iDisplayLength" : 25,
+                    "iDisplayLength": 25,
                     "aoColumnDefs": [{
                         "bSortable": false,
                         "aTargets": [0],
@@ -225,17 +225,13 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
             selectAll: function (table) {
                 var rows = table.fnGetNodes();
                 var ids = [];
-                var self =this;
+                var self = this;
                 $(rows).each(function (index, row) {
-                    var tcId =parseInt($('.entity_id', row).text(), 10);
+                    var tcId = parseInt($('.entity_id', row).text(), 10);
                     ids.push(tcId);
                     var $row = $(row);
-                    var checkbox = $row.find("input[type=checkbox]")
-                    if (!$row.hasClass("ui-state-row-selected")) {
-                        checkbox[0].checked = true
-                    } else {
-                        checkbox[0].checked = false
-                    }
+                    var checkbox = $row.find("input[type=checkbox]");
+                    checkbox[0].checked = true
                     var store = self.storage.get(self.key);
                     if (store === undefined) {
                         var tab = [];
@@ -289,38 +285,19 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 this.$el.append(template);
             },
 
-            actions: function(table, url) {
+            actions: function (table, url) {
                 var requestIds = this.getSelectedRequestIds(table);
-                    if (requestIds.length === 0 || requestIds === undefined) {
-                        notification.showWarning(translator.get("automation.notification.selectedRow.none"));
-                    } else {
-                        $(requestIds).each(function () {
-                            $.ajax({
-                                url: squashtm.app.contextRoot + url + this,
-                                method: 'POST'
-                            }).success(function () {
-                                table.refresh();
-                            });
+                if (requestIds.length === 0 || requestIds === undefined) {
+                    notification.showWarning(translator.get("automation.notification.selectedRow.none"));
+                } else {
+                        $.ajax({
+                            url: squashtm.app.contextRoot + url + requestIds,
+                            method: 'POST'
+                        }).success(function () {
+                            table.refresh();
                         });
-                    }
+                }
             },
-
-            assigned: function(table, url) {
-								var self = this;
-								var requestIds = this.getSelectedRequestIds(table);
-										if (requestIds.length === 0 || requestIds === undefined) {
-												notification.showWarning(translator.get("automation.notification.selectedRow.none"));
-										} else {
-												//$(requestIds).each(function () {
-														$.ajax({
-																url: squashtm.app.contextRoot + url + requestIds,
-																method: 'POST',
-														}).success(function () {
-																table.refresh();
-														});
-											 // });
-										}
-						},
 
             bindButtons: function () {
 
@@ -338,7 +315,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     domtable.toggleFiltering();
                 });
                 $("#assigned-traitment-button").on("click", function () {
-                    self.assigned(domtable, "automation-request/assigned/");
+                    self.actions(domtable, "automation-request/assigned/");
                     self.storage.remove(self.key);
                 });
                 $("#no-automation-traitment-button").on("click", function () {

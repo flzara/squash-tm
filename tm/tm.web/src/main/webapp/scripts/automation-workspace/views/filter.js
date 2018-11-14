@@ -78,7 +78,6 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 					$(o).html(value);
 					combo.append(o);
 				});
-
 				th.append(combo);
 			}
 
@@ -164,7 +163,7 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 				.append("<input class='th_input filter_input'/>");
 
 			$('.tp-th-label .th_input').css('width', '90%');
-
+			
 			var userCombo = table.find(".tp-th-createdby"),
 				  formatCombo = table.find(".tp-th-format"),
 					statusCombo = table.find(".tp-th-status"),

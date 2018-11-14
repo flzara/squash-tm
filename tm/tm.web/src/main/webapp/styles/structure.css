@@ -2103,6 +2103,7 @@ button.tf-sm:hover {
 .th_input {
 	display: block;
 	margin: auto;
+	width: 90%;
 }
 
 button.tf-lg.orange {
@@ -2110,7 +2111,12 @@ button.tf-lg.orange {
 	border: 1px solid #e63900;
 }
 
+.rangedatepicker-input {
+	width: 90%;
+}
+
 button.tf-lg.lightblue {
 	background-color: rgb(80, 174, 218);
 	border: 1px solid #77D5F7;
 }
+

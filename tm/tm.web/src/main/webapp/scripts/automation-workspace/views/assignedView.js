@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", 'app/ws/squashtm.notification', "workspace.storage", "./sort", "./filter", "squash.configmanager", "squashtable", "jeditable"],
+define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", 'app/ws/squashtm.notification', "workspace.storage", "./sort", "./filter", "squash.configmanager", "squashtable", "jeditable", "jquery.squash.formdialog"],
     function ($, _, Backbone, Handlebars, translator, notification, storage, sortmode, filtermode, confman) {
         "use strict";
 
@@ -48,7 +48,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     sAjaxSource: squashtm.app.contextRoot + "automation-workspace/automation-request",
                     "aaSorting": [[7, 'desc'], [8, 'asc']],
                     "bDeferRender": true,
-                    "iDisplayLength" : 25,
+                    "iDisplayLength": 25,
                     "aoColumnDefs": [{
                         "bSortable": false,
                         "aTargets": [0],
@@ -195,8 +195,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                 'id': 'ta-script-remove-button'
                             });
 
-                            this.append(btnChoose)
-                                .append(btnRemove);
+                            this.append(btnRemove);
 
                         };
 
@@ -226,9 +225,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 datatableSettings.customKey = "assigned";
                 var fmode = filtermode.newInst(datatableSettings);
                 var smode = sortmode.newInst(datatableSettings);
-
-
-
                 datatableSettings.searchCols = fmode.loadSearchCols();
                 datatableSettings.aaSorting = smode.loadaaSorting();
                 $table.data('filtermode', fmode);
@@ -238,6 +234,10 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     fmode.toggleFilter();
                 };
                 this.bindButtons();
+                $('.DataTables_sort_wrapper').css('height', '100%');
+
+                //$(".tp-th-project-name .DataTables_sort_icon").insertBefore(".th_input");
+
             },
 
             selectAll: function (table) {
@@ -249,11 +249,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     ids.push(tcId);
                     var $row = $(row);
                     var checkbox = $row.find("input[type=checkbox]")
-                    if (!$row.hasClass("ui-state-row-selected")) {
-                        checkbox[0].checked = true
-                    } else {
-                        checkbox[0].checked = false
-                    }
+                    checkbox[0].checked = true
                     var store = self.storage.get(self.key);
                     if (store === undefined) {
                         var tab = [];
@@ -338,13 +334,12 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     if (requestIds.length === 0 || requestIds === undefined) {
                         notification.showWarning(translator.get("automation.notification.selectedRow.none"));
                     } else {
-                        $(requestIds).each(function () {
-                            $.ajax({
-                                url: squashtm.app.contextRoot + 'automation-request/desassigned/' + this,
-                                method: 'POST'
-                            }).success(function () {
-                                domtable.refresh();
-                            });
+
+                        $.ajax({
+                            url: squashtm.app.contextRoot + 'automation-request/desassigned/' + requestIds,
+                            method: 'POST'
+                        }).success(function () {
+                            domtable.refresh();
                         });
                     }
                     self.storage.remove(self.key);
@@ -357,21 +352,19 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     } else if (scripts.length !== 0) {
                         notification.showWarning(translator.get("automation.notification.script.none"));
                     } else {
-                        $(requestIds).each(function () {
-                            $.ajax({
-                                url: squashtm.app.contextRoot + 'automation-request/' + this,
-                                method: 'POST'
-                            }).success(function () {
-                                domtable.refresh();
-                            });
+                        $.ajax({
+                            url: squashtm.app.contextRoot + 'automation-request/' + requestIds,
+                            method: 'POST'
+                        }).success(function () {
+                            domtable.refresh();
                         });
                     }
                     self.storage.remove(self.key);
 
                 });
 
-                $("#btn-no-assigned").on("click", function() {
-                    location.href= "#traitment";
+                $("#btn-no-assigned").on("click", function () {
+                    location.href = "#traitment";
                     $("#tf-traitment-tab a").addClass("tf-selected");
                     $("#tf-assigned-tab a").removeClass("tf-selected");
                 });

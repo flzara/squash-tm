@@ -40,14 +40,14 @@ public class AutomationModificationController {
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, value="/{autoReqIds}")
-	public void changeStatus(@PathVariable(value="autoReqIds") Long autoReqIds) {
+	public void changeStatusToExecutable(@PathVariable(value="autoReqIds") List<Long> autoReqIds) {
 		automationRequestModificationService.updateAutomationRequestsToExecutable(autoReqIds);
 	}
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, value="desassigned/{autoReqIds}")
-	public void desassignedUser(@PathVariable(value="autoReqIds") Long autoReqIds) {
-		automationRequestModificationService.desassignedUser(autoReqIds);
+	public void desassignedUser(@PathVariable(value="autoReqIds") List<Long> autoReqIds) {
+		automationRequestModificationService.unassignedUser(autoReqIds);
 	}
 
 	@ResponseBody
@@ -58,7 +58,7 @@ public class AutomationModificationController {
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, value="notautomatable/{autoReqIds}")
-	public void requestNotAutomatable(@PathVariable(value="autoReqIds") Long autoReqIds) {
+	public void requestNotAutomatable(@PathVariable(value="autoReqIds") List<Long> autoReqIds) {
 		automationRequestModificationService.updateAutomationRequestsToNotAutomatable(autoReqIds);
 	}
 

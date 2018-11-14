@@ -36,6 +36,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.SimpleColumnFiltering;
 import org.squashtest.tm.domain.IdCollector;
@@ -54,8 +57,7 @@ import org.squashtest.tm.jooq.domain.tables.CoreUser;
 import org.squashtest.tm.service.internal.repository.CustomAutomationRequestDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 
-import static org.squashtest.tm.jooq.domain.Tables.AUTOMATION_REQUEST;
-import static org.squashtest.tm.jooq.domain.Tables.CORE_USER;
+import static org.squashtest.tm.jooq.domain.Tables.*;
 import static org.squashtest.tm.service.internal.helper.PagingToQueryDsl.*;
 
 import javax.inject.Inject;
@@ -148,6 +150,17 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 			.fetchOne().value1();
 	}
 
+	@Override
+	public Integer countTATestWithoutScript(List<Long> reqIds) {
+
+		return DSL.selectCount().from(AUTOMATION_REQUEST)
+			.innerJoin(TEST_CASE).on(AUTOMATION_REQUEST.TEST_CASE_ID.eq(TEST_CASE.TCLN_ID))
+			.innerJoin(AUTOMATED_TEST).on(TEST_CASE.TA_TEST.eq(AUTOMATED_TEST.TEST_ID))
+			.where(AUTOMATION_REQUEST.AUTOMATION_REQUEST_ID.in(reqIds))
+			.and(AUTOMATED_TEST.NAME.isNull())
+			.fetchOne().value1();
+	}
+
 
 	@Override
 	public Map<Long, String> getTransmittedByForCurrentUser(Long idUser, List<String> requestStatus) {
@@ -180,13 +193,31 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	}
 
 	@Override
-	public void updateAutomationRequestToAssigned(Long idUser, List<Long> ids) {
+	public void updateAutomationRequestToAssigned(User user, List<Long> ids) {
+		entityManager.createQuery("UPDATE AutomationRequest req SET req.requestStatus = :reqStatus," +
+			" req.assignedTo = :user, req.assignmentDate = :assignedOn WHERE req.id in :ids")
+			.setParameter("reqStatus", AutomationRequestStatus.WORK_IN_PROGRESS)
+			.setParameter("user", user)
+			.setParameter("assignedOn", new Timestamp(new Date().getTime()))
+			.setParameter("ids", ids).executeUpdate();
 
-		DSL.update(AUTOMATION_REQUEST).set(AUTOMATION_REQUEST.ASSIGNED_TO, idUser)
-									  .set(AUTOMATION_REQUEST.REQUEST_STATUS, AutomationRequestStatus.WORK_IN_PROGRESS.toString())
-									  .set(AUTOMATION_REQUEST.ASSIGNED_ON, new Timestamp(new Date().getTime()))
-									  .where(AUTOMATION_REQUEST.AUTOMATION_REQUEST_ID.in(ids)).execute();
+	}
 
+	@Override
+	public void updateAutomationRequestNotAutomatable(List<Long> ids) {
+		entityManager.createQuery("UPDATE AutomationRequest req SET req.requestStatus = :reqStatus WHERE req.id in :ids")
+			.setParameter("reqStatus", AutomationRequestStatus.NOT_AUTOMATABLE)
+			.setParameter("ids", ids)
+			.executeUpdate();
+	}
+
+	@Override
+	public void unassignedUser(List<Long> requestIds) {
+		entityManager.createQuery("update AutomationRequest ar set ar.assignedTo = NULL, ar.assignmentDate = NULL," +
+			" ar.requestStatus = :requestStatus where ar.id = :requestIds")
+			.setParameter("requestStatus", AutomationRequestStatus.TRANSMITTED)
+		    .setParameter("requestIds", requestIds)
+			.executeUpdate();
 	}
 
 	private Page<AutomationRequest> innerFindAll(Pageable pageable, ColumnFiltering filtering, FilterOverride filterOverride, Collection<Long> inProjectIds){
