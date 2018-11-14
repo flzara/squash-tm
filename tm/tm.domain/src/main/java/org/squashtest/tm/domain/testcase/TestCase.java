@@ -53,6 +53,7 @@ import java.util.*;
 
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
+import static org.squashtest.tm.domain.testcase.TestCaseAutomatable.N;
 import static org.squashtest.tm.domain.testcase.TestCaseImportance.LOW;
 import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD;
 
@@ -192,7 +193,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private AutomationRequest automationRequest;
 
 	@Enumerated(EnumType.STRING)
-	private TestCaseAutomatable automatable;
+	private TestCaseAutomatable automatable= N;
 
 
 	// *************************** CODE *************************************
@@ -833,6 +834,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		res.type = null;
 		res.importance = null;
 		res.status = null;
+		res.automatable = null;
 
 		return res;
 	}

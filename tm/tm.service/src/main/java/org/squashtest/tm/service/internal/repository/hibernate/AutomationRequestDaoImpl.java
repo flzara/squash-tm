@@ -47,6 +47,7 @@ import org.squashtest.tm.domain.audit.QAuditableSupport;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQueryFactory;
 import org.squashtest.tm.domain.project.QProject;
 import org.squashtest.tm.domain.testcase.QTestCase;
+import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
@@ -306,7 +307,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 					.leftJoin(request.assignedTo, assignedTo)
 					.leftJoin(request.transmittedBy, transmittedBy)
 					.leftJoin(request.createdBy, createdBy)
-					.where(project.id.in(inProjectIds));
+					.where(project.id.in(inProjectIds).and(request.testCase.automatable.eq(TestCaseAutomatable.Y)));
 
 
 		return querydslRequest;
