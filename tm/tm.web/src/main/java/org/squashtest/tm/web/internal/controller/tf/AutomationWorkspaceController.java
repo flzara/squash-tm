@@ -40,6 +40,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.tf.AutomationRequestFinderService;
 import org.squashtest.tm.service.user.UserManagerService;
@@ -90,10 +91,19 @@ public class AutomationWorkspaceController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale) {
-
-		model.addAttribute("assignableUsers", getAssignableUsers());
+		Map<Long, String> assignableUsers = automationRequestFinderService.getCreatedByForCurrentUser
+			(Arrays.asList(AutomationRequestStatus.WORK_IN_PROGRESS.toString()));
+		Map<Long, String> traitmentUsers = automationRequestFinderService.getCreatedByForAutomationRequests
+			(Arrays.asList(AutomationRequestStatus.TRANSMITTED.toString()));
+		Map<Long, String> globalUsers = automationRequestFinderService.getCreatedByForAutomationRequests
+			(Arrays.asList(AutomationRequestStatus.WORK_IN_PROGRESS.toString(), AutomationRequestStatus.TRANSMITTED.toString(), AutomationRequestStatus.EXECUTABLE.toString()));
+		model.addAttribute("assignableUsers", assignableUsers);
+		model.addAttribute("traitmentUsers", traitmentUsers);
+		model.addAttribute("globalUsers", globalUsers);
+		model.addAttribute("assignableUsersGlobalView",getAssignableUsersGlobalView());
 		return getWorkspaceViewName();
 	}
+
 
 
 	protected String getWorkspaceViewName() {
@@ -156,20 +166,12 @@ public class AutomationWorkspaceController {
 		return automationRequestFinderService.getCreatedByForAutomationRequests(requestStatus);
 	}
 
-	private Map<String, String> getAssignableUsers() {
-
-		Locale locale = LocaleContextHolder.getLocale();
-		//TestSuite ts = service.findById(testSuiteId);
+	private Map<String, String> getAssignableUsersGlobalView() {
 
 		List<User> usersList = automationRequestFinderService.getAssignedToForAutomationRequests();
 
-		//Collections.sort(usersList, new TestSuiteModificationController.UserLoginComparator());
-
-		String unassignedLabel = messageSource.internationalize("label.Unassigned", locale);
-
 		Map<String, String> jsonUsers = new LinkedHashMap<>(usersList.size());
 
-		//jsonUsers.put(User.NO_USER_ID.toString(), unassignedLabel);
 		for (User user : usersList) {
 			jsonUsers.put(user.getId().toString(),HtmlUtils.htmlEscape( user.getLogin()));
 		}

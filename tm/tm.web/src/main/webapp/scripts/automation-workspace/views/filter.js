@@ -174,80 +174,12 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 			_createCombo(formatCombo, "#filter-mode-combo", formats);
 			_createCombo(statusCombo, "#filter-mode-combo", statuses);
 
-			var users = squashtm.app.assignableUsers;
-			_createCombo(assignedToCombo, "#filter-mode-combo", users);
+			var users = initConf.testers;
+			var globalAssigned = squashtm.app.assignableUsersGlobalView;
+			_createCombo(assignedToCombo, "#filter-mode-combo", globalAssigned);
+			_createCombo(userCombo, "#filter-mode-combo", users);
 
-			var url = squashtm.app.contextRoot;
-			var requestStatus = [];
-			if (initConf.customKey === "assigned") {
-				requestStatus = ["WORK_IN_PROGRESS"];
-				url = url + "automation-workspace/assigned/testers/";
-			} else if (initConf.customKey === "traitment") {
-				requestStatus = ["TRANSMITTED"];
-				url = url + "automation-workspace/testers/";
-			} else {
-				requestStatus = ["TRANSMITTED", "WORK_IN_PROGRESS", "EXECUTABLE"];
-				url = url + "automation-workspace/testers/";
-			}
 			var self = this;
-			$.ajax({
-				url: url + requestStatus,
-				method: "GET",
-			}).success(function (data) {
-			var combo = $("<select id='" + "#filter-mode-combo"+ "' class='th_input filter_input' />");
-
-				var nullOption = new Option("", "");
-				$(nullOption).html("");
-
-				combo.append(nullOption);
-
-				$.each(data, function (index, value) {
-					var o = new Option(value, index);
-					$(o).html(value);
-					combo.append(o);
-				});
-				var div = $(userCombo).find("div.DataTables_sort_wrapper");
-				var span = div.find("span");
-				$(div).append(span.before(combo));
-
-				var allInputs = table.find(".th_input");
-				allInputs.click(function (event) {
-					event.stopPropagation();
-				}).keypress(function (event) {
-					if (event.which == 13) {
-						event.stopPropagation();
-						event.preventDefault();
-						event.target.blur();
-						event.target.focus();
-					}
-				});
-
-				table.find("th").hover(function (event) {
-					event.stopPropagation();
-				});
-
-				allInputs.change(function () {
-					var sTable = table.squashTable(),
-						settings = sTable.fnSettings(),
-						api = settings.oApi,
-						headers = table.find("th");
-
-					var visiIndex = headers.index($(this).parents("th:first")),
-						realIndex = api._fnVisibleToColumnIndex(settings, visiIndex);
-
-
-					var realInput = $(this).parent().find(".filter_input").get(0);
-					sTable.fnFilter(realInput.value, realIndex);
-					self._save();
-				});
-				var state = storage.get(self.key);
-				if (state !== undefined) {
-					self.active = state.active;
-					restoreInputs(state.filter);
-				};
-
-			});
-
 			_createTimePicker(transmittedTime);
 			_createTimePicker(assignedTime);
 
@@ -322,6 +254,41 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 				table.squashTable().refresh();
 				return this.active;
 			};
+			var allInputs = table.find(".th_input");
+				allInputs.click(function (event) {
+					event.stopPropagation();
+				}).keypress(function (event) {
+					if (event.which == 13) {
+						event.stopPropagation();
+						event.preventDefault();
+						event.target.blur();
+						event.target.focus();
+					}
+				});
+
+				table.find("th").hover(function (event) {
+					event.stopPropagation();
+				});
+
+				allInputs.change(function () {
+					var sTable = table.squashTable(),
+						settings = sTable.fnSettings(),
+						api = settings.oApi,
+						headers = table.find("th");
+
+					var visiIndex = headers.index($(this).parents("th:first")),
+						realIndex = api._fnVisibleToColumnIndex(settings, visiIndex);
+
+
+					var realInput = $(this).parent().find(".filter_input").get(0);
+					sTable.fnFilter(realInput.value, realIndex);
+					self._save();
+				});
+				var state = storage.get(self.key);
+				if (state !== undefined) {
+					self.active = state.active;
+					restoreInputs(state.filter);
+				};
 		}
 
 		return {

@@ -233,6 +233,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
                 var $table = $("#automation-table");
                 datatableSettings.customKey = "global";
+                datatableSettings.testers = squashtm.app.globalUsers;
                 var fmode = filtermode.newInst(datatableSettings);
                 var smode = sortmode.newInst(datatableSettings);
                 datatableSettings.searchCols = fmode.loadSearchCols();

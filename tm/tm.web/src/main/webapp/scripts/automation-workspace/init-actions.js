@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(['jquery', 'workspace.contextual-content', 'workspace.routing'],
- function($, ctxcontent, urlBuilder) {
+	function ($, ctxcontent, urlBuilder) {
 
 
 		function _initTabs() {
@@ -32,10 +32,45 @@ define(['jquery', 'workspace.contextual-content', 'workspace.routing'],
 				addSelectedTabClass("#tf-assigned-tab a");
 			}
 
-			$("#tf-automation-tabs").find("a").on("click", function() {
-				if (! $(this).hasClass('tf-selected')) {
-					selectTab(this);
+			$("#tf-automation-tabs").find("a").on("click", function () {
+				var model = squashtm.app;
+				var url = model.contextRoot;
+				var requestStatus = [];
+				var href = $(this).attr("href");
+				if (href === "#assigned") {
+					requestStatus = ["WORK_IN_PROGRESS"];
+					url = url + "automation-workspace/assigned/testers/";
+				} else if (href === "#traitment") {
+					requestStatus = ["TRANSMITTED"];
+					url = url + "automation-workspace/testers/";
+				} else {
+					requestStatus = ["TRANSMITTED", "WORK_IN_PROGRESS", "EXECUTABLE"];
+					url = url + "automation-workspace/testers/";
 				}
+				var self = this;
+				$.ajax({
+					url: url + requestStatus,
+					method: "GET",
+				}).success(function (data) {
+					switch (href) {
+						case "#assigned":
+							model.assignableUsers = data;
+							break;
+						case "#traitment":
+							model.traitmentUsers = data;
+							break;
+						case "#global":
+							model.globalUsers = data;
+							break;
+						default:
+							break;
+
+					}					
+				});
+				if (!$(self).hasClass('tf-selected')) {
+					selectTab(self);
+				}
+
 			});
 		}
 		function selectTab(elt) {
@@ -58,7 +93,7 @@ define(['jquery', 'workspace.contextual-content', 'workspace.routing'],
 		}
 
 		return {
-			init:init
+			init: init
 		};
- }
+	}
 )
