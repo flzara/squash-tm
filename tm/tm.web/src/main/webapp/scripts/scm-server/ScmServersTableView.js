@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'backbone', "squash.translator", "./AddScmServerDialog", "jquery.squash.confirmdialog", 'squashtable',	'jqueryui', 'jquery.squash.formdialog' ],
-		function($, Backbone, translator, AddScmServerDialog) {
+define(['jquery', 'backbone', "squash.translator", "./AddScmServerDialog", "./DeleteScmServerDialog", "jquery.squash.confirmdialog", 'squashtable',	'jqueryui', 'jquery.squash.formdialog' ],
+		function($, Backbone, translator, AddScmServerDialog, DeleteScmServerDialog) {
 			"use strict";
 
 	var ScmServersTableView = Backbone.View.extend({
@@ -35,6 +35,7 @@ define(['jquery', 'backbone', "squash.translator", "./AddScmServerDialog", "jque
 
 			this.initTable();
 			this.AddScmServerDialog = new AddScmServerDialog(this.table);
+			this.DeleteScmServerDialog = new DeleteScmServerDialog(this.table);
 
 		},
 
@@ -42,10 +43,9 @@ define(['jquery', 'backbone', "squash.translator", "./AddScmServerDialog", "jque
 
 		initTable : function() {
 
-//			this.table = this.$("table");
 			var squashSettings = {
 				deleteButtons : {
-        	delegate : "#",
+        	delegate : "#delete-scm-server-popup",
         	tooltip : translator.get('label.Remove')
         }
 			};

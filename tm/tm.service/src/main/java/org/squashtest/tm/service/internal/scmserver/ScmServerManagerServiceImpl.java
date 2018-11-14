@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.scmserver;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.scm.ScmServer;
@@ -30,6 +31,8 @@ import org.squashtest.tm.service.scmserver.ScmServerManagerService;
 import javax.inject.Inject;
 import java.util.List;
 
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+
 @Service
 @Transactional
 public class ScmServerManagerServiceImpl implements ScmServerManagerService {
@@ -38,15 +41,23 @@ public class ScmServerManagerServiceImpl implements ScmServerManagerService {
 	private ScmServerDao scmServerDao;
 
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public List<ScmServer> findAllOrderByName() {
 		return scmServerDao.findAllByOrderByNameAsc();
 	}
 
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public ScmServer createNewScmServer(ScmServer newScmServer) {
 		if(scmServerDao.isServerNameAlreadyInUse(newScmServer.getName())) {
 			throw new NameAlreadyInUseException("ScmServer", newScmServer.getName());
 		}
 		return scmServerDao.save(newScmServer);
+	}
+
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public void deleteSingleScmServer(long scmServerId) {
+		scmServerDao.deleteById(scmServerId);
 	}
 }

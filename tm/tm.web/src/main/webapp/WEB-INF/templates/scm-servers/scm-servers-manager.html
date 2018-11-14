@@ -102,7 +102,7 @@
                     <th th:attr="data-def='sortable, map=name'" th:text="#{label.Name}">Name</th>
                     <th th:attr="data-def='sortable, map=kind'" th:text="#{label.Kind}">Kind</th>
                     <th th:attr="data-def='sortable, map=url, link-new-tab={url}'" th:text="#{label.Url}">Url</th>
-                    <th th:attr="data-def='delete-button=#remove-scm-server-confirm-dialog , map=empty-delete-holder'"></th>
+                    <th th:attr="data-def='delete-button=#delete-scm-server-popup , map=empty-delete-holder'"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -170,6 +170,39 @@
               <input class="sq-btn" type="button" value="Add another" th:value="#{label.addAnother}" data-def="evt=addanother, mainbtn" />
               <input class="sq-btn" type="button" value="Add" th:value="#{label.Add}" data-evt="confirm" />
               <input class="sq-btn" type="button" value="Cancel" th:value="#{label.Close}" data-evt="cancel" />
+            </div>
+          </div>
+
+          <!-- ==================== Delete Popup ==================== -->
+          <div id="delete-scm-server-popup" class="not-displayed popup-dialog"
+               title="Delete a Scm Server" th:title="#{title.deleteScmServer}">
+            <div class="display-table-row">
+              <div class="display-table-cell warning-cell">
+                <div class="generic-error-signal"></div>
+              </div>
+              <div class="display-table-cell">
+                <!-- _____________CASE 1_______________ -->
+                <div data-def="state=default">
+                  <p th:text="#{message.scmServer.remove.confirm}">
+                    Confirmez vous la suppression de ce serveur de gestion de code source ?
+                  </p>
+                </div>
+                <!-- _____________CASE 2_______________ -->
+                <div data-def="state=bound-to-project">
+                  <p>
+                    <span th:text="#{message.scmServer.boundToTmProject}">
+                      Ce serveur d’exécution est associé a au moins un projet TM.
+                    </span>
+                  </p>
+                  <p th:text="#{message.scmServer.remove.confirm}">
+                    Confirmez vous la suppression de ce serveur d'exécution ?
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="popup-dialog-buttonpane">
+              <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm"/>
+              <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
             </div>
           </div>
 

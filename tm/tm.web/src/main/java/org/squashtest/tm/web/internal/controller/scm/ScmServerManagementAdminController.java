@@ -24,9 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -83,6 +81,12 @@ public class ScmServerManagementAdminController {
 	@ResponseBody
 	public ScmServer createNewScmServer(@Valid ScmServer newScmServer) {
 		return scmServerManager.createNewScmServer(newScmServer);
+	}
+
+	@RequestMapping(value = "/{scmServerId}", method = RequestMethod.DELETE)
+	@ResponseBody
+	public void deleteSingleScmServer(@PathVariable long scmServerId) {
+		scmServerManager.deleteSingleScmServer(scmServerId);
 	}
 
 	protected DataTableModel buildScmServerTableModel(List<ScmServer> scmServers, String sEcho) {

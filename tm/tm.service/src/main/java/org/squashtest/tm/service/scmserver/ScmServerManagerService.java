@@ -38,4 +38,10 @@ public interface ScmServerManagerService {
 	 */
 	ScmServer createNewScmServer(ScmServer newScmServer);
 
+	/**
+	 * Delete the single ScmServer with the given Id.
+	 * @param scmServerId The Id of the ScmServer to delete.
+	 */
+	void deleteSingleScmServer(long scmServerId);
+
 }
