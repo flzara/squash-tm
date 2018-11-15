@@ -22,7 +22,6 @@ package org.squashtest.tm.web.internal.controller.scm;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -83,10 +82,10 @@ public class ScmServerManagementAdminController {
 		return scmServerManager.createNewScmServer(newScmServer);
 	}
 
-	@RequestMapping(value = "/{scmServerId}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/{scmServerIds}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public void deleteSingleScmServer(@PathVariable long scmServerId) {
-		scmServerManager.deleteSingleScmServer(scmServerId);
+	public void deleteScmServers(@PathVariable List<Long> scmServerIds) {
+		scmServerManager.deleteScmServers(scmServerIds);
 	}
 
 	protected DataTableModel buildScmServerTableModel(List<ScmServer> scmServers, String sEcho) {

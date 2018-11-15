@@ -29,6 +29,7 @@ import org.squashtest.tm.service.internal.repository.ScmServerDao;
 import org.squashtest.tm.service.scmserver.ScmServerManagerService;
 
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.List;
 
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
@@ -57,7 +58,7 @@ public class ScmServerManagerServiceImpl implements ScmServerManagerService {
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
-	public void deleteSingleScmServer(long scmServerId) {
-		scmServerDao.deleteById(scmServerId);
+	public void deleteScmServers(Collection<Long> scmServerIds) {
+		scmServerDao.deleteByIds(scmServerIds);
 	}
 }

@@ -22,6 +22,7 @@ package org.squashtest.tm.service.scmserver;
 
 import org.squashtest.tm.domain.scm.ScmServer;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface ScmServerManagerService {
@@ -39,9 +40,9 @@ public interface ScmServerManagerService {
 	ScmServer createNewScmServer(ScmServer newScmServer);
 
 	/**
-	 * Delete the single ScmServer with the given Id.
-	 * @param scmServerId The Id of the ScmServer to delete.
+	 * Delete the ScmServers with the given Ids.
+	 * @param scmServerIds The Ids of the ScmServers to delete.
 	 */
-	void deleteSingleScmServer(long scmServerId);
+	void deleteScmServers(Collection<Long> scmServerIds);
 
 }

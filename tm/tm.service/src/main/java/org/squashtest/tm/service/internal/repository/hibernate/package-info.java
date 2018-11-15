@@ -1042,7 +1042,8 @@
 					"and sc.authenticatedUser is null"),
 
 	// ScmServers
-	@NamedQuery(name="ScmServer.isServerNameAlreadyInUse", query="select case when (count(s) > 0) then true else false end from ScmServer s where s.name = :name")
+	@NamedQuery(name="ScmServer.isServerNameAlreadyInUse", query="select case when (count(s) > 0) then true else false end from ScmServer s where s.name = :name"),
+	@NamedQuery(name="ScmServer.deleteByIds", query="delete from ScmServer s where s.id in (:scmServerIds)")
 
 
 })

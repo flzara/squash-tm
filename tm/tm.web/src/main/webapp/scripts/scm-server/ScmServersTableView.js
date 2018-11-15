@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'backbone', "squash.translator", "./AddScmServerDialog", "./DeleteScmServerDialog", "jquery.squash.confirmdialog", 'squashtable',	'jqueryui', 'jquery.squash.formdialog' ],
-		function($, Backbone, translator, AddScmServerDialog, DeleteScmServerDialog) {
+define(['jquery', 'backbone', "squash.translator", "./AddScmServerDialog", "./DeleteScmServerDialog", "./DeleteMultipleScmServersDialog", "jquery.squash.confirmdialog", 'squashtable',	'jqueryui', 'jquery.squash.formdialog' ],
+		function($, Backbone, translator, AddScmServerDialog, DeleteScmServerDialog, DeleteMultipleScmServersDialog) {
 			"use strict";
 
 	var ScmServersTableView = Backbone.View.extend({
@@ -27,8 +27,8 @@ define(['jquery', 'backbone', "squash.translator", "./AddScmServerDialog", "./De
 		el : "#scm-server-table-pane",
 
 		events: {
-
-			"click #add-scm-server" : "openAddScmServerDialog"
+			"click #add-scm-server" : "openAddScmServerDialog",
+			"click #delete-scm-servers" : "openDeleteMultipleScmServersDialog"
 		},
 
 		initialize : function() {
@@ -36,11 +36,11 @@ define(['jquery', 'backbone', "squash.translator", "./AddScmServerDialog", "./De
 			this.initTable();
 			this.AddScmServerDialog = new AddScmServerDialog(this.table);
 			this.DeleteScmServerDialog = new DeleteScmServerDialog(this.table);
+			this.DeleteMultipleScmServersDialog = new DeleteMultipleScmServersDialog(this.table);
 
 		},
 
 		/* ==== Table functions ==== */
-
 		initTable : function() {
 
 			var squashSettings = {
@@ -56,6 +56,12 @@ define(['jquery', 'backbone', "squash.translator", "./AddScmServerDialog", "./De
 		openAddScmServerDialog : function() {
 
 			this.AddScmServerDialog.open();
+		},
+
+		/* ==== Delete Multiple ScmServers Popup function ==== */
+		openDeleteMultipleScmServersDialog : function() {
+
+			this.DeleteMultipleScmServersDialog.open();
 		}
 
 	});

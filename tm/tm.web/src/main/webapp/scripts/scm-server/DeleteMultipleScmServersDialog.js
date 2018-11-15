@@ -18,27 +18,29 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
- define(['jquery', 'backbone', "squash.translator", "workspace.routing", 'jquery.squash.formdialog'],
+ define(['jquery', 'backbone', "squash.translator", "workspace.routing", 'jquery.squash.formdialog', "jquery.squash.messagedialog"],
  		function($, Backbone, translator, routing) {
  			"use strict";
 
- 		var DeleteScmServerDialog = Backbone.View.extend({
+ 		var DeleteMultipleScmServerDialog = Backbone.View.extend({
 
- 			el: "#delete-scm-server-popup",
+ 			el: "#multiple-delete-scm-server-popup",
 
  			initialize: function(scmServersTable) {
  				var self = this;
  				var $el = this.$el;
+ 				this.scmServersTable = scmServersTable;
       	$el.formDialog();
+      	this.errorDialog = $('#generic-error-dialog').messageDialog();
 
 				$el.on('formdialogopen', function() {
-					// TODO: Check if the Server is associated with one or more SquashTm Projects.
+					// TODO: Check if the Servers are associated with one or more SquashTm Projects.
 					// Display the corresponding state.
 					$el.formDialog('setState', 'default');
 				});
 
       	$el.on('formdialogconfirm', function() {
-        	self.deleteOneScmServer(function() {
+        	self.deleteScmServers(function() {
           	scmServersTable.refresh();
             $el.formDialog('close');
           });
@@ -49,23 +51,35 @@
         });
  			},
 
- 			deleteOneScmServer: function(callback) {
- 				var serverId = this.$el.data('entity-id');
- 				this.doDeleteOneScmServer(serverId).success(callback);
+ 			/**
+ 			* Open this dialog.
+ 			*/
+ 			open : function() {
+				var serverIds = this.scmServersTable.getSelectedIds();
+				if(serverIds.length === 0) {
+					this.errorDialog.messageDialog('open');
+				} else {
+					this.$el.formDialog('open');
+				}
+ 			},
+
+ 			deleteScmServers: function(callback) {
+ 				var serverIds = this.scmServersTable.getSelectedIds();
+ 				this.doDeleteOneScmServer(serverIds).success(callback);
  			},
  			/**
- 			* Send Ajax Delete Request to delete the ScmServer with the given Id.
- 			*	@param serverId: The Id of the ScmServer to delete.
+ 			* Send Ajax Delete Request to delete the ScmServers with the given Ids.
+ 			*	@param serverIds: The Ids of the ScmServers to delete.
  			*	@return Promise of Delete Request.
  			*/
- 			doDeleteOneScmServer: function(serverId) {
+ 			doDeleteOneScmServer: function(serverIds) {
  				return $.ajax({
- 					url: routing.buildURL('administration.scm-server', serverId),
+ 					url: routing.buildURL('administration.scm-server', serverIds),
  					method: 'DELETE'
  				});
  			}
 
  		});
 
- 		return DeleteScmServerDialog;
+ 		return DeleteMultipleScmServerDialog;
  });

@@ -86,13 +86,12 @@ class ScmServerManagerServiceTest extends Specification {
 			thrown NameAlreadyInUseException
 	}
 
-	def '#deleteSingleScmServer(long) - [Nominal] Should delete a single ScmServer'() {
+	def '#deleteScmServers(Collection<Long>) - [Nominal] Should delete several ScmServers'() {
 		given: "Mock data"
-			ScmServer server = Mock()
-			server.getId() >> 37
+			Collection<Long> serverIds = [1, 5, 15]
 		when:
-			scmServerManagerService.deleteSingleScmServer(server.getId())
+			scmServerManagerService.deleteScmServers(serverIds)
 		then:
-			1 * scmServerDao.deleteById(server.getId())
+			1 * scmServerDao.deleteByIds(serverIds)
 	}
 }

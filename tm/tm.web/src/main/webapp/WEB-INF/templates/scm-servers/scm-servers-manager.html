@@ -83,7 +83,7 @@
             <div class="toolbar">
               <!-- The labels below are suitable for general servers. We could change the keys to make them more general. -->
               <button class="snap-right sq-btn" type="button" value="Delete server" th:value="#{label.testAutomationServer.delete}"
-                    th:title="#{label.testAutomationServer.delete}" id="delete-scm-server">
+                    th:title="#{label.testAutomationServer.delete}" id="delete-scm-servers">
                 <span class="ui-icon ui-icon-trash">-</span><span th:text="#{label.Delete}"/>
               </button>
 	            <button class="snap-right sq-btn" type="button" value="Add server" th:value="#{label.testAutomationServer.add}"
@@ -181,21 +181,21 @@
                 <div class="generic-error-signal"></div>
               </div>
               <div class="display-table-cell">
-                <!-- _____________CASE 1_______________ -->
+                <!-------- Case 1 - The Server is bound to no Project -------->
                 <div data-def="state=default">
                   <p th:text="#{message.scmServer.remove.confirm}">
-                    Confirmez vous la suppression de ce serveur de gestion de code source ?
+                    Confirmez-vous la suppression de ce serveur de gestion de code source ?
                   </p>
                 </div>
-                <!-- _____________CASE 2_______________ -->
+                <!-------- Case 2- The Server is bound to at least one Project -------->
                 <div data-def="state=bound-to-project">
                   <p>
                     <span th:text="#{message.scmServer.boundToTmProject}">
-                      Ce serveur d’exécution est associé a au moins un projet TM.
+                      Ce serveur d’exécution est associé à au moins un projet TM.
                     </span>
                   </p>
                   <p th:text="#{message.scmServer.remove.confirm}">
-                    Confirmez vous la suppression de ce serveur d'exécution ?
+                    Confirmez-vous la suppression de ce serveur de gestion de code source ?
                   </p>
                 </div>
               </div>
@@ -206,6 +206,50 @@
             </div>
           </div>
 
+          <!-- ==================== Multiple Delete Popup ==================== -->
+          <div id="multiple-delete-scm-server-popup" class="not-displayed popup-dialog"
+               title="Delete multiple Scm Servers" th:title="#{title.deleteScmServers}">
+            <div class="display-table-row">
+              <div class="display-table-cell warning-cell">
+                <div class="generic-error-signal"></div>
+              </div>
+              <div class="display-table-cell">
+                <!-------- Case 1 - Servers are bound to no Project -------->
+                <div data-def="state=default">
+                  <p th:text="#{message.scmServers.remove.confirm}">
+                    Confirmez-vous la suppression de ces serveurs de gestion de code source ?
+                  </p>
+                </div>
+                <!-------- Case 2- Servers are bound to at least one Project -------->
+                <div data-def="state=bound-to-project">
+                  <p>
+                    <span th:text="#{message.scmServers.boundToTmProject}">
+                      Des serveurs de la sélection sont assoiés à au moins un projet TM.
+                    </span>
+                  </p>
+                  <p th:text="#{message.scmServer.remove.confirm}">
+                    Confirmez-vous la suppression de ces serveurs de gestion de code source ?
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="popup-dialog-buttonpane">
+              <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm"/>
+              <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
+            </div>
+          </div>
+
+          <!--   GENERIC ERROR POPUP  -->
+          <div id="generic-error-dialog" class="not-displayed popup-dialog" th:title="#{popup.title.error}">
+            <div>
+              <div class="display-table-row">
+                <div class="generic-error-main display-table-cell" style="padding-top:20px">
+                  <span th:text="#{message.EmptyTableSelection}"></span>
+                </div>
+              </div>
+            </div>
+            <input type="button" th:value="#{label.Ok}"/>
+          </div>
         </div>
       </div>
 

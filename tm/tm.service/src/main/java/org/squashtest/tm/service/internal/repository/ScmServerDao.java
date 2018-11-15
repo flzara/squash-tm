@@ -21,10 +21,12 @@
 package org.squashtest.tm.service.internal.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.scm.ScmServer;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface ScmServerDao extends JpaRepository<ScmServer, Long> {
@@ -42,4 +44,11 @@ public interface ScmServerDao extends JpaRepository<ScmServer, Long> {
 	 */
 	@Query
 	boolean isServerNameAlreadyInUse(@Param("name") String scmServerName);
+	/**
+	 * Delete the ScmServers with the given Ids.
+	 * @param scmServerIds The Ids of the ScmServers to delete.
+	 */
+	@Query
+	@Modifying
+	void deleteByIds(@Param("scmServerIds") Collection<Long> scmServerIds);
 }
