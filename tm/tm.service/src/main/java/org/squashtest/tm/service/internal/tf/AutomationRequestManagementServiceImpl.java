@@ -128,33 +128,6 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	}
 
 	@Override
-	public void updateAutomationRequestsToExecutable(List<Long> ids) {
-
-		if(requestDao.countTATestWithoutScript(ids) == 0) {
-			List<AutomationRequest> automationRequestList = requestDao.findAllById(ids);
-			for (AutomationRequest automationRequest: automationRequestList) {
-				automationRequest.setAssignmentDate(null);
-				automationRequest.setAssignedTo(null);
-				automationRequest.setRequestStatus(AutomationRequestStatus.EXECUTABLE);
-			}
-		} else {
-
-		}
-	}
-
-	@Override
-	public void updateAutomationRequestsToNotAutomatable(List<Long> ids) {
-		requestDao.updateAutomationRequestNotAutomatable(ids);
-	}
-
-	@Override
-	public void assignedToAutomationRequest(List<Long> ids) {
-		String username = userCtxt.getUsername();
-		User user = userDao.findUserByLogin(username);
-		requestDao.updateAutomationRequestToAssigned(user, ids);
-	}
-
-	@Override
 	public Map<Long, String> getCreatedByForCurrentUser(List<String> requestStatus) {
 		String userName = userCtxt.getUsername();
 		return requestDao.getTransmittedByForCurrentUser(userDao.findUserByLogin(userName).getId(), requestStatus);
@@ -175,6 +148,25 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 		String userName = userCtxt.getUsername();
 		return requestDao.countAutomationRequestForCurrentUser(userDao.findUserByLogin(userName).getId());
+	}
+
+	@Override
+	public void changeStatus(List<Long> reqIds, AutomationRequestStatus automationRequestStatus) {
+		String username = userCtxt.getUsername();
+		User user = userDao.findUserByLogin(username);
+		switch (automationRequestStatus) {
+			case NOT_AUTOMATABLE:
+				requestDao.updateAutomationRequestNotAutomatable(reqIds);
+				break;
+			case WORK_IN_PROGRESS:
+				requestDao.updateAutomationRequestToAssigned(user, reqIds);
+				break;
+			case EXECUTABLE:
+				requestDao.updateStatusToExecutable(reqIds);
+				break;
+				default:
+					break;
+		}
 	}
 
 	// **************************** boiler plate code *************************************

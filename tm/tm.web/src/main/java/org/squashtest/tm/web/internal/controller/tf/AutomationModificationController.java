@@ -24,24 +24,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.service.tf.AutomationRequestModificationService;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Locale;
+
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 @Controller
 @RequestMapping("/automation-request")
 public class AutomationModificationController {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AutomationModificationController.class);
-
 	@Inject
 	private AutomationRequestModificationService automationRequestModificationService;
 
+	@RequestMapping(method = RequestMethod.POST, value="/{autoReqIds}", params = {"id=automation-request-status", VALUE})
 	@ResponseBody
-	@RequestMapping(method = RequestMethod.POST, value="/{autoReqIds}")
-	public void changeStatusToExecutable(@PathVariable(value="autoReqIds") List<Long> autoReqIds) {
-		automationRequestModificationService.updateAutomationRequestsToExecutable(autoReqIds);
+	public void changeStatus(@PathVariable List<Long> autoReqIds, @RequestParam(VALUE) AutomationRequestStatus status) {
+		automationRequestModificationService.changeStatus(autoReqIds, status);
 	}
 
 	@ResponseBody
@@ -49,17 +52,4 @@ public class AutomationModificationController {
 	public void desassignedUser(@PathVariable(value="autoReqIds") List<Long> autoReqIds) {
 		automationRequestModificationService.unassignedUser(autoReqIds);
 	}
-
-	@ResponseBody
-	@RequestMapping(method = RequestMethod.POST, value="assigned/{autoReqIds}")
-	public void assignedUser(@PathVariable(value="autoReqIds") List<Long> autoReqIds) {
-		automationRequestModificationService.assignedToAutomationRequest(autoReqIds);
-	}
-
-	@ResponseBody
-	@RequestMapping(method = RequestMethod.POST, value="notautomatable/{autoReqIds}")
-	public void requestNotAutomatable(@PathVariable(value="autoReqIds") List<Long> autoReqIds) {
-		automationRequestModificationService.updateAutomationRequestsToNotAutomatable(autoReqIds);
-	}
-
 }

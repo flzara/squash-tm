@@ -113,4 +113,6 @@ public interface CustomAutomationRequestDao {
 
 	Integer countTATestWithoutScript(List<Long> reqIds);
 
+	void updateStatusToExecutable(List<Long> reqIds);
+
 }

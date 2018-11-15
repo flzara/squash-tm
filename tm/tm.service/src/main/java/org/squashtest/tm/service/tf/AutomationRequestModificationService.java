@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.tf;
 
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
+
 import java.util.List;
 
 public interface AutomationRequestModificationService extends AutomationRequestFinderService{
@@ -28,10 +30,6 @@ public interface AutomationRequestModificationService extends AutomationRequestF
 
 	void unassignedUser(List<Long> requestId);
 
-	void updateAutomationRequestsToExecutable(List<Long> id);
-
-	void updateAutomationRequestsToNotAutomatable(List<Long> id);
-
-	void assignedToAutomationRequest(List<Long> ids);
+	void changeStatus(List<Long> reqIds, AutomationRequestStatus automationRequestStatus);
 
 }

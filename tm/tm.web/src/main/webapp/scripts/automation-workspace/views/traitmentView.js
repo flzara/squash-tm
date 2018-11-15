@@ -286,14 +286,19 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 this.$el.append(template);
             },
 
-            actions: function (table, url) {
+            actions: function (table, url, status) {
                 var requestIds = this.getSelectedRequestIds(table);
+
                 if (requestIds.length === 0 || requestIds === undefined) {
                     notification.showWarning(translator.get("automation.notification.selectedRow.none"));
                 } else {
                         $.ajax({
                             url: squashtm.app.contextRoot + url + requestIds,
-                            method: 'POST'
+                            method: 'POST',
+                            data: {
+                                "id": "automation-request-status",
+                                "value": status
+                            }
                         }).success(function () {
                             table.refresh();
                         });
@@ -316,11 +321,11 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     domtable.toggleFiltering();
                 });
                 $("#assigned-traitment-button").on("click", function () {
-                    self.actions(domtable, "automation-request/assigned/");
+                    self.actions(domtable, "automation-request/", "WORK_IN_PROGRESS");
                     self.storage.remove(self.key);
                 });
                 $("#no-automation-traitment-button").on("click", function () {
-                    self.actions(domtable, "automation-request/notautomatable/");
+                    self.actions(domtable, "automation-request/", "NOT_AUTOMATABLE");
                     self.storage.remove(self.key);
                 });
             }

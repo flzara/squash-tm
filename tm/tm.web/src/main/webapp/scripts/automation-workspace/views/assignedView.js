@@ -355,7 +355,11 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     } else {
                         $.ajax({
                             url: squashtm.app.contextRoot + 'automation-request/' + requestIds,
-                            method: 'POST'
+                            method: 'POST',
+                            data: {
+                                "id": "automation-request-status",
+                                "value": "EXECUTABLE"
+                            }
                         }).success(function () {
                             domtable.refresh();
                         });

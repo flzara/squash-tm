@@ -332,14 +332,16 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     notification.showWarning(translator.get("automation.notification.selectedRow.none"));
                 } else {
 
-                    //$(requestIds).each(function () {
                     $.ajax({
                         url: squashtm.app.contextRoot + url + requestIds,
-                        method: 'POST'
+                        method: 'POST',
+                        data: {
+                            "id": "automation-request-status",
+                            "value": "WORK_IN_PROGRESS"
+                        }
                     }).success(function () {
                         table.refresh();
                     });
-                    // });
                 }
             },
 
@@ -356,7 +358,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     self.deselectAll(domtable);
                 });
                 $("#assigned-global-button").on("click", function () {
-                    self.assigned(domtable, "automation-request/assigned/");
+                    self.assigned(domtable, "automation-request/");
                     self.deselectAll(domtable);
                 });
             }

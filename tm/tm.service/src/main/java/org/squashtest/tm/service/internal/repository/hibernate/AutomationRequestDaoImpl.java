@@ -213,6 +213,14 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	}
 
 	@Override
+	public void updateStatusToExecutable(List<Long> ids) {
+		entityManager.createQuery("UPDATE AutomationRequest req SET req.requestStatus = :reqStatus, req.assignmentDate = NULL, req.assignedTo = NULL WHERE req.id in :ids")
+			.setParameter("reqStatus", AutomationRequestStatus.EXECUTABLE)
+			.setParameter("ids", ids)
+			.executeUpdate();
+	}
+
+	@Override
 	public void unassignedUser(List<Long> requestIds) {
 		entityManager.createQuery("update AutomationRequest ar set ar.assignedTo = NULL, ar.assignmentDate = NULL," +
 			" ar.requestStatus = :requestStatus where ar.id in :requestIds")
