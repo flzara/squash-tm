@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.scmserver;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +47,11 @@ public class ScmServerManagerServiceImpl implements ScmServerManagerService {
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public List<ScmServer> findAllOrderByName() {
 		return scmServerDao.findAllByOrderByNameAsc();
+	}
+
+	@Override
+	public Page<ScmServer> findAllSortedScmServers(Pageable pageable) {
+		return scmServerDao.findAll(pageable);
 	}
 
 	@Override

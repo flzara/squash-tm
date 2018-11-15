@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.scmserver;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.squashtest.tm.domain.scm.ScmServer;
 
 import java.util.Collection;
@@ -32,7 +34,12 @@ public interface ScmServerManagerService {
 	 * @return The List of ScmServers ordered by name.
 	 */
 	List<ScmServer> findAllOrderByName();
-
+	/**
+	 * Find all ScmServers sorted according to the given Pageable.
+	 * @param pageable The Pageable against which the Page will be built.
+	 * @return The Page of ScmServers sorted according to the given Pageable.
+	 */
+	Page<ScmServer> findAllSortedScmServers(Pageable pageable);
 	/**
 	 * Create a new ScmServer with its attributes.
 	 * @param newScmServer The ScmServer with its attributes to create.

@@ -20,6 +20,11 @@
  */
 package org.squashtest.tm.service.internal.scmserver
 
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
+import org.springframework.data.domain.Sort.Order
+import org.springframework.data.domain.Sort.Direction
 import org.squashtest.tm.domain.scm.ScmServer
 import org.squashtest.tm.exception.NameAlreadyInUseException
 import org.squashtest.tm.service.internal.repository.ScmServerDao
@@ -34,13 +39,16 @@ class ScmServerManagerServiceTest extends Specification {
 		scmServerManagerService.scmServerDao = scmServerDao
 	}
 
-	def "#findAllOrderByName() - [Nominal] Should find all the ScmServers"() {
+	def "#findAllOrderByName() - [Nominal] Should find all the ScmServers ordered by name"() {
 		given: "Mock data"
 			ScmServer s1 = Mock()
+			s1.name = "GitHub"
 			ScmServer s2 = Mock()
+			s2.name = "BitBucket"
 			ScmServer s3 = Mock()
+			s3.name = "Assembla"
 		and: "Expected result"
-			List<ScmServer> expectedList = [s1, s2, s3] as List
+			List<ScmServer> expectedList = [s3, s2, s1] as List
 		and: "Mock Dao method"
 			scmServerDao.findAllByOrderByNameAsc() >> expectedList
 		when:
@@ -58,6 +66,65 @@ class ScmServerManagerServiceTest extends Specification {
 			List<ScmServer> resultList = scmServerManagerService.findAllOrderByName()
 		then:
 			resultList == expectedList
+	}
+
+	def "#findAllSortedScmServers(Pageable) - [Nominal] Should find all the ScmServers sorted by name"() {
+		given: "Mock servers"
+			ScmServer s1 = Mock()
+			s1.name = "BitBucket"
+			ScmServer s2 = Mock()
+			s2.name = "GitHub"
+			ScmServer s3 = Mock()
+			s3.name = "Assembla"
+		and: "Mock pageable"
+			Order order = new Order(Direction.DESC, "name")
+			Sort sort = new Sort(order)
+			Pageable p = Mock()
+			p.getSort() >> sort
+		and: "Expected result"
+			Page<ScmServer> expectedPage = [s2, s1, s3] as Page
+		and: "Mock Dao method"
+			scmServerDao.findAll(p) >> expectedPage
+		when:
+			Page<ScmServer> resultPage = scmServerManagerService.findAllSortedScmServers(p)
+		then:
+			resultPage == expectedPage
+	}
+
+	def "#findAllSortedScmServers(Pageable) - [Nominal] Should find all the ScmServers sorted by kind"() {
+		given: "Mock servers"
+			ScmServer s1 = Mock()
+			s1.kind = "git"
+			ScmServer s2 = Mock()
+			s2.kind = "mercurial"
+			ScmServer s3 = Mock()
+			s3.kind = "subversion"
+		and: "Mock pageable"
+			Order order = new Order(Direction.DESC, "kind")
+			Sort sort = new Sort(order)
+			Pageable p = Mock()
+			p.getSort() >> sort
+		and: "Expected result"
+			Page<ScmServer> expectedPage = [s3, s2, s1] as Page
+		and: "Mock Dao method"
+			scmServerDao.findAll(p) >> expectedPage
+		when:
+			Page<ScmServer> resultPage = scmServerManagerService.findAllSortedScmServers(p)
+		then:
+			resultPage == expectedPage
+	}
+
+	def "#findAllSortedScmServers(Pageable) - [Empty] Should find no ScmServer"() {
+		given: "Mock data"
+			Pageable p = Mock()
+		and: "Expected result"
+			Page<ScmServer> expectedPage = [] as Page
+		and: "Mock Dao method"
+			scmServerDao.findAll(p) >> expectedPage
+		when:
+			Page<ScmServer> resultPage = scmServerManagerService.findAllSortedScmServers(p)
+		then:
+			resultPage == expectedPage
 	}
 
 	def "#createNewScmServer(ScmServer) - [Nominal] Should create a new ScmServer"() {

@@ -22,6 +22,8 @@ package org.squashtest.tm.web.internal.controller.scm;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -36,6 +38,9 @@ import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
+import org.squashtest.tm.web.internal.model.datatable.SpringPagination;
+import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -44,11 +49,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY;
+
 @Controller
 @RequestMapping("/administration/scm-servers")
 public class ScmServerManagementAdminController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ScmServerManagementAdminController.class);
+
+	private static final String URL = "url";
+	private static final String KIND = "kind";
+
+	private final DatatableMapper<String> scmServerTableMapper = new NameBasedMapper()
+			.map(DEFAULT_ENTITY_NAME_KEY, DEFAULT_ENTITY_NAME_KEY)
+			.map(KIND, KIND)
+			.map(URL, URL);
 
 	@Inject
 	private ScmConnectorRegistry scmConnectorRegistry;
@@ -72,8 +87,9 @@ public class ScmServerManagementAdminController {
 	@RequestMapping(method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getScmServersTableModel(final DataTableDrawParameters params) {
-		List<ScmServer> scmServers = scmServerManager.findAllOrderByName();
-		return buildScmServerTableModel(scmServers, params.getsEcho());
+		Pageable pageable = SpringPagination.pageable(params, scmServerTableMapper);
+		Page<ScmServer> scmServers = scmServerManager.findAllSortedScmServers(pageable);
+		return new ScmServerDataTableModelHelper().buildDataModel(scmServers, params.getsEcho());
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
@@ -86,12 +102,6 @@ public class ScmServerManagementAdminController {
 	@ResponseBody
 	public void deleteScmServers(@PathVariable List<Long> scmServerIds) {
 		scmServerManager.deleteScmServers(scmServerIds);
-	}
-
-	protected DataTableModel buildScmServerTableModel(List<ScmServer> scmServers, String sEcho) {
-		PagingAndSorting pagingAndSorting = new DefaultPagingAndSorting("ScmServer.name");
-		PagedCollectionHolder<List<ScmServer>>  pagedCollectionHolder = new PagingBackedPagedCollectionHolder<>(pagingAndSorting, scmServers.size(), scmServers);
-		return new ScmServerDataTableModelHelper().buildDataModel(pagedCollectionHolder, sEcho);
 	}
 
 	private class ScmServerDataTableModelHelper extends DataTableModelBuilder<ScmServer> {
