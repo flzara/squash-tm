@@ -114,7 +114,7 @@ public class AutomationWorkspaceController {
 		return WorkspaceType.AUTOMATION_WORKSPACE;
 	}
 
-	@RequestMapping(value="automation-request", params = RequestParams.S_ECHO_PARAM)
+	@RequestMapping(value="automation-requests", params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getAutomationRequestModel(final DataTableDrawParameters params, final Locale locale) {
 
@@ -125,7 +125,7 @@ public class AutomationWorkspaceController {
 		return new AutomationRequestDataTableModelHelper(messageSource).buildDataModel(automationRequestPage, "");
 	}
 
-	@RequestMapping(value="automation-request/traitment", params = RequestParams.S_ECHO_PARAM)
+	@RequestMapping(value="automation-requests/traitment", params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getAutomationRequestTraitmentModel(final DataTableDrawParameters params, final Locale locale) {
 
@@ -136,7 +136,7 @@ public class AutomationWorkspaceController {
 		return new AutomationRequestDataTableModelHelper(messageSource).buildDataModel(automationRequestPage, "");
 	}
 
-	@RequestMapping(value="automation-request/global", params = RequestParams.S_ECHO_PARAM)
+	@RequestMapping(value="automation-requests/global", params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getAutomationRequestGlobalModel(final DataTableDrawParameters params, final Locale locale) {
 
