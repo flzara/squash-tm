@@ -105,14 +105,16 @@ public interface CustomAutomationRequestDao {
 
 	List<User> getAssignedToForAutomationRequests();
 
-	void updateAutomationRequestToAssigned(User user, List<Long> ids);
+	void updateAutomationRequestToAssigned(User user, List<Long> reqIds);
 
-	void updateAutomationRequestNotAutomatable(List<Long> ids);
+	void updateAutomationRequestNotAutomatable(List<Long> reqIds);
 
-	void unassignedUser(List<Long> requestId);
+	void unassignedUser(List<Long> reqIds);
 
 	Integer countTATestWithoutScript(List<Long> reqIds);
 
 	void updateStatusToExecutable(List<Long> reqIds);
+
+	void updatePriority(List<Long> reqIds, Integer priority);
 
 }

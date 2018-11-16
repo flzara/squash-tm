@@ -45,7 +45,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 })
 
                 var datatableSettings = {
-                    sAjaxSource: squashtm.app.contextRoot + "automation-workspace/automation-request",
+                    sAjaxSource: squashtm.app.contextRoot + "automation-workspace/automation-requests",
                     "aaSorting": [[7, 'desc'], [8, 'asc']],
                     "bDeferRender": true,
                     "iDisplayLength": 25,
@@ -337,7 +337,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     } else {
 
                         $.ajax({
-                            url: squashtm.app.contextRoot + 'automation-request/desassigned/' + requestIds,
+                            url: squashtm.app.contextRoot + 'automation-requests/desassigned/' + requestIds,
                             method: 'POST'
                         }).success(function () {
                             domtable.refresh();
@@ -354,7 +354,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         notification.showWarning(translator.get("automation.notification.script.none"));
                     } else {
                         $.ajax({
-                            url: squashtm.app.contextRoot + 'automation-request/' + requestIds,
+                            url: squashtm.app.contextRoot + 'automation-requests/' + requestIds,
                             method: 'POST',
                             data: {
                                 "id": "automation-request-status",

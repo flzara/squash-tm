@@ -274,7 +274,7 @@
       <column name="AUTOMATION_REQUEST_ID" type="BIGINT" autoIncrement="true">
         <constraints primaryKey="true" nullable="false"/>
       </column>
-      <column name="REQUEST_STATUS" type="VARCHAR(20)">
+      <column name="REQUEST_STATUS" type="VARCHAR(20)" defaultValue="TO_VALIDATE">
         <constraints nullable="false"/>
       </column>
       <column name="TRANSMITTED_ON" type="DATETIME"/>
@@ -318,7 +318,7 @@
                              constraintName="fk_automation_request_test_case" referencedColumnNames="TCLN_ID" referencedTableName="TEST_CASE" onDelete="SET NULL"/>
 
     <addColumn tableName="TEST_CASE">
-      <column name="AUTOMATABLE" type="CHAR" defaultValue="N" remarks="Y: Yes, N: No, M: Maybe"/>
+      <column name="AUTOMATABLE" type="CHAR" defaultValue="M" remarks="Y: Yes, N: No, M: Maybe"/>
     </addColumn>
 
   </changeSet>
@@ -385,7 +385,16 @@
       where CLASS_ID = 3;
 
       insert into ACL_GROUP_PERMISSION(ACL_GROUP_ID, CLASS_ID, PERMISSION_MASK) values
+      (2, 7, 8192),
+      (4, 7, 8192),
+      (5, 7, 8192),
+      (5, 7, 16384),
+      (6, 7, 8192),
+      (7, 7, 8192),
+      (8, 7, 8192),
+      (9, 7, 8192),
       (10, 3, 1),
+      (10, 4, 1),
       (10, 7, 1),
       (10, 7, 2),
       (10, 7, 4),
@@ -393,7 +402,8 @@
       (10, 7, 64),
       (10, 7, 256),
       (10, 7, 1024),
-      (10, 7, 4096);
+      (10, 7, 4096),
+      (10, 7, 16384);
     </sql>
 
 

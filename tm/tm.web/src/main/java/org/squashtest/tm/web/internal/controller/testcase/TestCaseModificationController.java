@@ -303,6 +303,16 @@ public class TestCaseModificationController {
 		return HTMLCleanupUtils.cleanHtml(testCaseDescription);
 	}
 
+	@RequestMapping(method = RequestMethod.POST, params = {"id=test-case-automatable", VALUE})
+	@ResponseBody
+	public void changeAutomatable(@RequestParam(VALUE) TestCaseAutomatable testCaseAutomatable, @PathVariable long testCaseId) {
+
+		testCaseModificationService.changeAutomatable(testCaseAutomatable, testCaseId);
+
+	}
+
+
+
 
 	@ResponseBody
 	@RequestMapping(value = "/new-version", method = RequestMethod.GET)

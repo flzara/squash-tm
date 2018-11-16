@@ -221,6 +221,14 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	}
 
 	@Override
+	public void updatePriority(List<Long> ids, Integer priority) {
+		entityManager.createQuery("UPDATE AutomationRequest req SET req.automationPriority = :priority WHERE req.id in :ids")
+			.setParameter("priority", priority)
+			.setParameter("ids", ids)
+			.executeUpdate();
+	}
+
+	@Override
 	public void unassignedUser(List<Long> requestIds) {
 		entityManager.createQuery("update AutomationRequest ar set ar.assignedTo = NULL, ar.assignmentDate = NULL," +
 			" ar.requestStatus = :requestStatus where ar.id in :requestIds")

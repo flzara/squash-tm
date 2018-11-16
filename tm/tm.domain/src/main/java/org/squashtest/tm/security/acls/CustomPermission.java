@@ -23,13 +23,13 @@ package org.squashtest.tm.security.acls;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.model.Permission;
 /**
- * 
+ *
  * @author mpagnon
  *
  */
 public class CustomPermission extends BasePermission {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	public static final Permission MANAGEMENT = new CustomPermission(1 << 5, 'M'); //NONSONAR 32
@@ -40,7 +40,9 @@ public class CustomPermission extends BasePermission {
 	public static final Permission ATTACH = new CustomPermission(1 << 10, 'T'); //NONSONAR 1024
 	public static final Permission EXTENDED_DELETE = new CustomPermission(1 << 11, 'S'); //NONSONAR 2048
 	public static final Permission READ_UNASSIGNED = new CustomPermission(1 << 12, 'U'); //NONSONAR 4096
-	
+	public static final Permission WRITE_AS_FUNCTIONAL = new CustomPermission(1 << 13, 'F'); //NONSONAR 8192
+	public static final Permission WRITE_AS_AUTOMATION = new CustomPermission(1 << 14, 'A'); //NONSONAR 16384
+
 	public CustomPermission(int mask) {
 		super(mask);
 	}

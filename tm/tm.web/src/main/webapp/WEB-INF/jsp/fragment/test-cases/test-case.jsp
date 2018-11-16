@@ -53,6 +53,7 @@
 <c:url var="customFieldsValuesURL" value="/custom-fields/values"/>
 <c:url var="btEntityUrl" value="/bugtracker/test-case/${testCase.id}"/>
 <c:url var="automationUrl" value="/test-cases/${testCase.id}/test-automation"/>
+<c:url var="automationRequestUrl" value="/automation-requests/${testCase.automationRequest.id}"/>
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <%--
@@ -183,6 +184,9 @@
       <tc:test-case-attribut testCase="${testCase}" writable="${writable}"
                              testCaseImportanceLabel="${testCaseImportanceLabel}"/>
 
+        <%-- ------------------------- Automation Panel ------------------------- --%>
+      <tc:test-case-automation testCase="${testCase}"/>
+
 
         <%----------------------------------- Prerequisites -----------------------------------------------%>
       <c:if test="${!scripted}">
@@ -250,7 +254,8 @@
             importanceAutoUrl: "${importanceAutoUrl}",
             cufValuesUrl: "${customFieldsValuesURL}?boundEntityId=${testCase.boundEntityId}&boundEntityType=${testCase.boundEntityType}",
             bugtrackerUrl: "${btEntityUrl}",
-            automationUrl: "${automationUrl}"
+            automationUrl: "${automationUrl}",
+            automationRequestUrl: "${automationRequestUrl}"
           },
           writable: ${writable},
           testCaseImportanceComboJson: ${testCaseImportanceComboJson},

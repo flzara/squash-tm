@@ -30,7 +30,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 this.render();
                 var self = this;
                 var datatableSettings = {
-                    sAjaxSource: squashtm.app.contextRoot + "automation-workspace/automation-request/global",
+                    sAjaxSource: squashtm.app.contextRoot + "automation-workspace/automation-requests/global",
                     "aaSorting": [[8, 'asc'], [7, 'desc'], [10, 'asc']],
                     "bDeferRender": true,
                     "iDisplayLength": 25,
@@ -358,7 +358,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     self.deselectAll(domtable);
                 });
                 $("#assigned-global-button").on("click", function () {
-                    self.assigned(domtable, "automation-request/");
+                    self.assigned(domtable, "automation-requests/");
                     self.deselectAll(domtable);
                 });
             }

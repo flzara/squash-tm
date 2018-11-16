@@ -40,7 +40,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     //console.log(data)
                 })
                 var datatableSettings = {
-                    sAjaxSource: squashtm.app.contextRoot + "automation-workspace/automation-request/traitment",
+                    sAjaxSource: squashtm.app.contextRoot + "automation-workspace/automation-requests/traitment",
                     "aaSorting": [[7, 'desc'], [8, 'asc']],
                     "bDeferRender": true,
                     "iDisplayLength": 25,
@@ -321,11 +321,11 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     domtable.toggleFiltering();
                 });
                 $("#assigned-traitment-button").on("click", function () {
-                    self.actions(domtable, "automation-request/", "WORK_IN_PROGRESS");
+                    self.actions(domtable, "automation-requests/", "WORK_IN_PROGRESS");
                     self.storage.remove(self.key);
                 });
                 $("#no-automation-traitment-button").on("click", function () {
-                    self.actions(domtable, "automation-request/", "NOT_AUTOMATABLE");
+                    self.actions(domtable, "automation-requests/", "NOT_AUTOMATABLE");
                     self.storage.remove(self.key);
                 });
             }

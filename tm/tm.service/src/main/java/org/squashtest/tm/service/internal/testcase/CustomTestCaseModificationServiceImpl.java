@@ -994,6 +994,19 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		return true;
 	}
 
+	@Override
+	public void changeAutomatable(TestCaseAutomatable automatable, Long testCaseId) {
+		TestCase tc = testCaseDao.findById(testCaseId);
+		if (! automatable.equals(tc.getAutomatable())) {
+			tc.setAutomatable(automatable);
+		}
+
+		if (automatable.equals(TestCaseAutomatable.Y) && tc.getAutomationRequest() == null) {
+			createRequestForTestCase(testCaseId);
+		}
+
+	}
+
 
 	/* *******************************************************
 		private stuffs etc

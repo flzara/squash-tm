@@ -35,7 +35,7 @@ import java.util.Locale;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 @Controller
-@RequestMapping("/automation-request")
+@RequestMapping("/automation-requests")
 public class AutomationModificationController {
 
 	@Inject
@@ -45,6 +45,13 @@ public class AutomationModificationController {
 	@ResponseBody
 	public void changeStatus(@PathVariable List<Long> autoReqIds, @RequestParam(VALUE) AutomationRequestStatus status) {
 		automationRequestModificationService.changeStatus(autoReqIds, status);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value="/{autoReqIds}", params = {"id=automation-request-priority", VALUE})
+	@ResponseBody
+	public Integer changePriority(@PathVariable List<Long> autoReqIds, @RequestParam(VALUE) Integer newPriority) {
+		automationRequestModificationService.changePriority(autoReqIds, newPriority);
+		return newPriority;
 	}
 
 	@ResponseBody

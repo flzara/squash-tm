@@ -65,7 +65,6 @@ public class AutomationRequestLibrary {
 	 * the project. Most of the time you won't need to iterate over the rootContent (use an appropriate service for that).
 	 */
 	@OneToMany // no cascade is desired because we need to handle it manually
-	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "AUTOMATION_REQUEST_LIBRARY_CONTENT", joinColumns = @JoinColumn(name = "LIBRARY_ID"), inverseJoinColumns = @JoinColumn(name = "CONTENT_ID"))
 	@BatchSize(size=10)
 	private List<AutomationRequest> rootContent = new ArrayList<>();
