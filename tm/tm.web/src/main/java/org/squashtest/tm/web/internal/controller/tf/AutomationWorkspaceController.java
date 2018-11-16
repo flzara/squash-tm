@@ -39,6 +39,7 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.domain.users.User;
@@ -53,6 +54,8 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 import javax.inject.Inject;
 import javax.xml.datatype.DatatypeConstants;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This controller is dedicated to the initial page of Automation workspace
@@ -100,7 +103,17 @@ public class AutomationWorkspaceController {
 		model.addAttribute("assignableUsers", assignableUsers);
 		model.addAttribute("traitmentUsers", traitmentUsers);
 		model.addAttribute("globalUsers", globalUsers);
-		model.addAttribute("assignableUsersGlobalView",getAssignableUsersGlobalView());
+		model.addAttribute("assignableUsersGlobalView", getAssignableUsersGlobalView());
+
+		Map<String, String> tcKinds =
+			Arrays.stream(TestCaseKind.values()).collect(Collectors.toMap(Enum::toString, e -> messageSource.internationalize(e.getI18nKey(), locale)));
+		model.addAttribute("tcKinds", tcKinds);
+
+		Map<String, String> autoReqStatuses =
+			Stream.of(AutomationRequestStatus.TRANSMITTED, AutomationRequestStatus.WORK_IN_PROGRESS, AutomationRequestStatus.EXECUTABLE)
+				  .collect(Collectors.toMap(Enum::toString, e -> messageSource.internationalize(e.getI18nKey(), locale)));
+		model.addAttribute("autoReqStatuses", autoReqStatuses);
+
 		return getWorkspaceViewName();
 	}
 

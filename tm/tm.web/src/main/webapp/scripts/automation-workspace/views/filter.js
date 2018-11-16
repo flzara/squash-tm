@@ -24,18 +24,6 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 		"use strict";
 		var tableSelector = ".automation-table";
 
-		var formats = translator.get({
-			"GHERKIN": "test-case.format.gherkin",
-			"STANDARD": "test-case.format.standard"
-		});
-
-		var statuses = translator.get({
-			"TRANSMITTED": "automation-request.request_status.TRANSMITTED",
-			"WORK_IN_PROGRESS": "automation-request.request_status.WORK_IN_PROGRESS",
-			"EXECUTABLE": "automation-request.request_status.EXECUTABLE"
-		});
-
-
 		function filterMode(initConf) {
 			var table = $(tableSelector),
 				self = this;
@@ -140,7 +128,6 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 			}
 
 			function restoreInputs(filter) {
-
 				if (state === null) {
 					return;
 				}
@@ -157,13 +144,15 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 				});
 			};
 
+			var model = squashtm.app;
+
 			var tableId = table.attr("id");
 			$(tableId + "_filter").hide();
 			table.find('.tp-th-project-name,.tp-th-id,.tp-th-reference,.tp-th-label,.tp-th-priority,.tp-th-script')
 				.append("<input class='th_input filter_input'/>");
 
 			$('.tp-th-label .th_input').css('width', '90%');
-			
+
 			var userCombo = table.find(".tp-th-createdby"),
 				  formatCombo = table.find(".tp-th-format"),
 					statusCombo = table.find(".tp-th-status"),
@@ -171,11 +160,11 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 				  assignedTime = table.find(".tp-th-affectedon"),
 				  transmittedTime = table.find(".tp-th-transmittedon");
 
-			_createCombo(formatCombo, "#filter-mode-combo", formats);
-			_createCombo(statusCombo, "#filter-mode-combo", statuses);
+			_createCombo(formatCombo, "#filter-mode-combo", model.tcKinds);
+			_createCombo(statusCombo, "#filter-mode-combo", model.autoReqStatuses);
 
 			var users = initConf.testers;
-			var globalAssigned = squashtm.app.assignableUsersGlobalView;
+			var globalAssigned = model.assignableUsersGlobalView;
 			_createCombo(assignedToCombo, "#filter-mode-combo", globalAssigned);
 			_createCombo(userCombo, "#filter-mode-combo", users);
 

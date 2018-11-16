@@ -209,15 +209,10 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         editable.name = "path";
                         var cell = $row.find('.assigned-script');
                         var entityId = data["entity-id"];
-                        var url = squashtm.app.contextRoot + 'test-cases/' + entityId + '/test-automation/tests';
+                        var model = squashtm.app;
+                        var url = model.contextRoot + 'test-cases/' + entityId + '/test-automation/tests';
 
-                        // A METTRE AILLEURS...
-                        var statuses = translator.get({
-                            "TRANSMITTED": "automation-request.request_status.TRANSMITTED",
-                            "WORK_IN_PROGRESS": "automation-request.request_status.WORK_IN_PROGRESS",
-                            "EXECUTABLE": "automation-request.request_status.EXECUTABLE"
-                        });
-                        if (data['status'] === statuses['WORK_IN_PROGRESS'] || data['status'] === statuses['EXECUTABLE']) {
+                        if (data['status'] === model.autoReqStatuses['WORK_IN_PROGRESS'] || data['status'] === model.autoReqStatuses['EXECUTABLE']) {
                             cell.editable(url, editable);
                         } else {
                             cell.text('-');
