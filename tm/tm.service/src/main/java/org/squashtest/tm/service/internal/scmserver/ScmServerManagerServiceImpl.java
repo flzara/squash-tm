@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.scmserver;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -40,6 +42,7 @@ import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 @Transactional
 public class ScmServerManagerServiceImpl implements ScmServerManagerService {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(ScmServerManagerServiceImpl.class);
 	@Inject
 	private ScmServerDao scmServerDao;
 
@@ -56,13 +59,33 @@ public class ScmServerManagerServiceImpl implements ScmServerManagerService {
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
+	public ScmServer findScmServer(long scmServerId) {
+		return scmServerDao.getOne(scmServerId);
+	}
+
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public ScmServer createNewScmServer(ScmServer newScmServer) {
 		if(scmServerDao.isServerNameAlreadyInUse(newScmServer.getName())) {
 			throw new NameAlreadyInUseException("ScmServer", newScmServer.getName());
 		}
 		return scmServerDao.save(newScmServer);
 	}
-
+	@Override
+	public String updateName(long scmServerId, String newName) {
+		ScmServer scmServer = scmServerDao.getOne(scmServerId);
+		String formerName = scmServer.getName();
+		if(formerName.equals(newName)) {
+			LOGGER.debug("Did not update the ScmServer name because the submitted name is identical to the former one.");
+			return formerName;
+		}
+		if(scmServerDao.isServerNameAlreadyInUse(newName)) {
+			throw new NameAlreadyInUseException("ScmServer", newName);
+		}
+		scmServer.setName(newName);
+		scmServerDao.save(scmServer);
+		return newName;
+	}
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deleteScmServers(Collection<Long> scmServerIds) {

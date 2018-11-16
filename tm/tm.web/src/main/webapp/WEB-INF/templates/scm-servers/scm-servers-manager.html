@@ -26,24 +26,24 @@
   <title th:text="#{label.scmServersList}">Liste des serveurs de gestion de code source</title>
 
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta name="_csrf" th:content="${_csrf.token}"/>
-    <!-- default header name is X-CSRF-TOKEN -->
-    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-    <!-- ... -->
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <!-- default header name is X-CSRF-TOKEN -->
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+  <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
+  <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
+  <!-- ... -->
   <style th:include="admin/admin-subpage.frag:: subpage-css" th:remove="tag"></style>
 
-  <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
-  <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
   <script type="text/javascript" th:inline="javascript">
     var squashtm = {};
     squashtm.app = {
       contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash"
     };
   </script>
-  <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
-  <script data-main="../../scripts/scm-servers-manager.js"
-    th:attr="data-main=@{/scripts/scm-servers-manager.js}" src="../../scripts/require.js"
-    th:src="@{/scripts/require-min.js}">
+  <script data-main="../../scripts/scm-servers-manager.js" th:attr="data-main=@{/scripts/scm-servers-manager.js}"
+          src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
 
   </script>
 </head>
@@ -99,7 +99,7 @@
                   <tr>
                     <th th:attr="data-def='invisible, map=server-id'" class="not-displayed">Id</th>
                     <th th:attr="data-def='select, map=server-index'">#</th>
-                    <th th:attr="data-def='sortable, map=name'" th:text="#{label.Name}">Name</th>
+                    <th th:attr="data-def='sortable, map=name, link='+@{/administration/scm-server/{server-id}}" th:text="#{label.Name}">Name</th>
                     <th th:attr="data-def='sortable, map=kind'" th:text="#{label.Kind}">Kind</th>
                     <th th:attr="data-def='sortable, map=url, link-new-tab={url}'" th:text="#{label.Url}">Url</th>
                     <th th:attr="data-def='delete-button=#delete-scm-server-popup , map=empty-delete-holder'"></th>

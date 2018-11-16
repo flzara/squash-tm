@@ -1,0 +1,162 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:c="http://java.sun.com/jsp/jstl/core">
+<head>
+  <title th:text="#{title.scmServerConfiguration}">Configuration du Serveur de Gestion de Code Source</title>
+
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <!-- default header name is X-CSRF-TOKEN -->
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+  <script th:src="@{/scripts/pubsub-boot.js}"></script>
+  <!-- ... -->
+  <style th:include="admin/admin-subpage.frag:: subpage-css" th:remove="tag"></style>
+  <script type="text/javascript" th:inline="javascript" th:include="fragments-utils/various-headers :: env-setup"></script>
+
+  <script type="text/javascript" th:inline="javascript">
+  /*<![CDATA[*/
+    var squashtm = {};
+    squashtm.app = {
+		  contextRoot : /*[[ @{/} ]]*/ "http://localhost:8080/squash"
+		};
+		squashtm.pageConfiguration = {
+		  url: /*[[ @{/administration/scm-server/}+${scmServer.id} ]]*/ "http://localhost/scm-server/{serverId}"
+		};
+		var conf = {};
+		conf.serverName = /*[[ ${scmServer.name} ]]*/ "GitHub Server";
+		/*]]>*/
+  </script>
+
+  <script th:attr="data-main=@{/scripts/scm-server/scm-server-details.js}" th:src="@{/scripts/require-min.js}"></script>
+
+</head>
+
+<body>
+<div id="navigation" th:include="navbar.frag :: navbar('')">NAVBAR</div>
+<div id="workspace">
+  <div id="workspace-title">
+    <div class="snap-left">
+      <h2 th:text="#{label.administration}" class="admin">Administration</h2>
+    </div>
+    <div class="snap-right">
+      <div class="main-menubar " th:include="menubar.frag :: menubar">MENUBAR</div>
+      <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">NOTIFICATION</div>
+    </div>
+  </div>
+  <div id="sub-page" class="sub-page">
+
+    <div id="sub-page-header" class="sub-page-header">
+
+      <div id="sub-page-title" class="sub-page-title">
+        <h2 th:text="#{title.scmServerConfiguration}">Configuration du Serveur de Gestion de Code Source</h2>
+      </div>
+
+      <div id="sub-page-buttons" class="sub-page-buttons">
+
+        <input id="back" type="button" th:value="#{label.Back}" class="sq-btn" value="#{label.Back}"
+               th:onclick="'document.location.href=\''+@{/administration/scm-servers}+'\''"/>
+
+      </div>
+
+      <div class="unsnap"></div>
+    </div>
+
+    <div id="sub-page-content" class="sub-page-content">
+
+      <div id="information-content">
+        <div id="scm-server-name-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
+          <div style="float: left; height: 3em">
+            <h2>
+              <label for="scm-server-name-header" th:text="#{label.scmServer}">Serveur de Gestion de Code Source</label>
+              <a id="scm-server-name-header" href="#" th:text="${scmServer.name}">GitHub Server</a>
+            </h2>
+          </div>
+          <div class="snap-right"></div>
+          <div class="unsnap"></div>
+        </div>
+
+        <div class="fragment-body unstyled">
+
+          <div id="scm-server-toolbar" class="toolbar-class ui-corner-all ">
+            <div class="toolbar-button-panel">
+              <input type="button" th:value="#{label.Rename}" value="Rename" id="rename-scm-server-button" class="sq-btn"/>
+            </div>
+          </div>
+
+          <br/>
+          <br/>
+
+          <div class="sq-tg expand">
+
+            <div class="tg-head">
+              <h3 th:text="#{title.InfoOnServer}"></h3>
+            </div>
+
+            <div id="scm-server-info-panel" class="information-panel tg-body">
+              <div class="display-table" id="scm-server-infos-table">
+
+                <div class="display-table-row">
+                  <label for="scm-server-url" th:text="#{label.URL}">URL</label>
+                  <div class="display-table-cell">
+                    <span id="scm-server-url" th:text="${scmServer.url}">http://github.com</span>
+                    <a id="scm-server-url-link" target="blank" th:href="${scmServer.url}"
+                       th:text="'['+#{label.BrowseTo}+']'"></a>
+                    <span class="error-message url-error"></span>
+                  </div>
+                </div>
+
+                <div class="display-table-row">
+                  <label for="scm-server-kind" th:text="#{label.Kind}">Kind</label>
+                  <div id="scm-server-kind" class="display-table-cell" th:text="${scmServer.kind}">git</div>
+                  <span class="error-message login-error"></span>
+                </div>
+
+              </div>
+            </div>
+            <br/>
+
+          </div>
+
+        </div>
+
+        <!---- RENAME POPUP ---->
+        <div id="rename-scm-server-popup" class="not-displayed popup-dialog" th:title="#{title.RenameServer}">
+          <label for="rename-scm-server-input" th:text="#{ label.Rename }">Rename</label>
+          <input type="text" id="rename-scm-server-input" maxlength="255" size="50"/>
+          <br/>
+          <span class="error-message name-error"></span>
+          <div class="popup-dialog-buttonpane">
+            <input type="button" value="ok" th:value="#{label.Confirm}" data-def="evt=confirm, mainbtn"/>
+            <input type="button" value="cl" th:value="#{label.Cancel}" data-def="evt=cancel"/>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -127,6 +127,18 @@ class ScmServerManagerServiceTest extends Specification {
 			resultPage == expectedPage
 	}
 
+	def "#findScmServer(long) - [Nominal] Should find a ScmServer"() {
+		given: "Mock data"
+			ScmServer expectedServer = Mock()
+			long serverId = 4
+		and: "Mock Dao method"
+			scmServerDao.getOne(serverId) >> expectedServer
+		when:
+			ScmServer foundServer = scmServerManagerService.findScmServer(serverId)
+		then:
+			foundServer == expectedServer
+	}
+
 	def "#createNewScmServer(ScmServer) - [Nominal] Should create a new ScmServer"() {
 		given: "Mock data"
 			ScmServer newScmServer = Mock()
@@ -150,6 +162,67 @@ class ScmServerManagerServiceTest extends Specification {
 		when:
 			scmServerManagerService.createNewScmServer(newScmServer)
 		then:
+			thrown NameAlreadyInUseException
+	}
+
+	def "#updateName(long, String) - [Nominal] Should update the name of a ScmServer"() {
+		given: "Mock data"
+			long serverId = 90
+			ScmServer server = new ScmServer()
+			server.id = serverId
+			server.name = "GitHub Server"
+		and:
+			String newName = "GitLab Server"
+		and: "Mock Dao methods"
+			scmServerDao.getOne(serverId) >> server
+			scmServerDao.isServerNameAlreadyInUse(newName) >> false
+		when:
+			String resultName = scmServerManagerService.updateName(serverId, newName)
+		then:
+			server.id == serverId
+			server.name == newName
+			1 * scmServerDao.save(server)
+			resultName == newName
+	}
+
+	def "#updateName(long, String) - [Nothing] Should try to update the name of a ScmServer with the same name and do nothing"() {
+		given: "Mock data"
+			long serverId = 90
+			String serverName = "GitHub Server"
+			ScmServer server = new ScmServer()
+			server.id = serverId
+			server.name = serverName
+		and: "Mock Dao methods"
+			scmServerDao.getOne(serverId) >> server
+		when:
+			String resultName = scmServerManagerService.updateName(serverId, serverName)
+		then:
+			server.id == serverId
+			server.name == serverName
+			0 * scmServerDao.isServerNameAlreadyInUse()
+			0 * scmServerDao.save(server)
+			resultName == serverName
+	}
+
+	def "#updateName(long, String) - [Exception] Should try to update the name of a ScmServer with an already used name and throw a NameAlreadyInUseException"() {
+		given: "Mock data"
+			long serverId = 90
+			String serverName = "GitHub Server"
+			ScmServer server = new ScmServer()
+			server.id = serverId
+			server.name = serverName
+		and:
+			String newName ="GitLab Server"
+		and: "Mock Dao methods"
+			scmServerDao.getOne(serverId) >> server
+			scmServerDao.isServerNameAlreadyInUse(newName) >> true
+		when:
+			scmServerManagerService.updateName(serverId, newName)
+		then:
+			server.id == serverId
+			server.name == serverName
+			0 * scmServerDao.isServerNameAlreadyInUse()
+			0 * scmServerDao.save(server)
 			thrown NameAlreadyInUseException
 	}
 

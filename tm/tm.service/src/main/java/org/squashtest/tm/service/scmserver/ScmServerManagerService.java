@@ -41,11 +41,23 @@ public interface ScmServerManagerService {
 	 */
 	Page<ScmServer> findAllSortedScmServers(Pageable pageable);
 	/**
+	 * Find the ScmServer with the given Id.
+	 * @param scmServerId The Id of the ScmServer to find.
+	 * @return The ScmServer with the given Id.
+	 */
+	ScmServer findScmServer(long scmServerId);
+	/**
 	 * Create a new ScmServer with its attributes.
 	 * @param newScmServer The ScmServer with its attributes to create.
+	 * @return The ScmServer newly created
 	 */
 	ScmServer createNewScmServer(ScmServer newScmServer);
-
+	/**
+	 * Update the name of the ScmServer with the given Id with the given name.
+	 * @param scmServerId The Id of the ScmServer which name is to update.
+	 * @param newName The new name to give the ScmServer.
+	 */
+	String updateName(long scmServerId, String newName);
 	/**
 	 * Delete the ScmServers with the given Ids.
 	 * @param scmServerIds The Ids of the ScmServers to delete.
