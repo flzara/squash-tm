@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.scm;
 
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -47,8 +46,8 @@ public class ScmServerModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = NAME)
 	@ResponseBody
-	public String updateName(@PathVariable long scmServerId, @RequestParam String newName) {
-		return scmServerManager.updateName(scmServerId, newName);
+	public String updateName(@PathVariable long scmServerId, @RequestParam String name) {
+		return scmServerManager.updateName(scmServerId, name);
 	}
 
 }
