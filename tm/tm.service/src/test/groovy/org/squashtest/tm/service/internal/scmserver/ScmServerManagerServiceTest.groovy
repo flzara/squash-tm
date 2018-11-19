@@ -192,7 +192,7 @@ class ScmServerManagerServiceTest extends Specification {
 			ScmServer server = new ScmServer()
 			server.id = serverId
 			server.name = serverName
-		and: "Mock Dao methods"
+		and: "Mock Dao method"
 			scmServerDao.getOne(serverId) >> server
 		when:
 			String resultName = scmServerManagerService.updateName(serverId, serverName)
@@ -224,6 +224,98 @@ class ScmServerManagerServiceTest extends Specification {
 			0 * scmServerDao.isServerNameAlreadyInUse()
 			0 * scmServerDao.save(server)
 			thrown NameAlreadyInUseException
+	}
+
+	def "#updateUrl(long, String) - [Nominal] Should update the Url of a ScmServer"() {
+		given: "Mock data"
+			long serverId = 50
+			ScmServer server = new ScmServer()
+			server.id = serverId
+			server.url = "http://github.com"
+		and:
+			String newUrl = "http://gitlab.com"
+		and: "Mock Dao method"
+			scmServerDao.getOne(serverId) >> server
+		when:
+			String resultUrl = scmServerManagerService.updateUrl(serverId, newUrl)
+		then:
+			server.id == serverId
+			server.url == newUrl
+			1 * scmServerDao.save(server)
+			resultUrl == newUrl
+	}
+
+	def "#updateUrl(long, String) - [Nothing] Should try to update the Url of a ScmServer with the same Url and do nothing"() {
+		given: "Mock data"
+			long serverId = 50
+			String serverUrl = "http://github.com"
+			ScmServer server = new ScmServer()
+			server.id = serverId
+			server.url = serverUrl
+		and: "Mock Dao method"
+			scmServerDao.getOne(serverId) >> server
+		when:
+			String resultUrl = scmServerManagerService.updateUrl(serverId, serverUrl)
+		then:
+			server.id == serverId
+			server.url == serverUrl
+			0 * scmServerDao.save(server)
+			resultUrl == serverUrl
+	}
+
+	def "#updateUrl(long, String) - [Exception] Should try to update the Url of a ScmServer with an malformed Url and throw an Exception"() {
+		given: "Mock data"
+			long serverId = 50
+			String serverUrl = "http://github.com"
+			ScmServer server = new ScmServer()
+			server.id = serverId
+			server.url = serverUrl
+		and:
+			String malformedUrl = "malformedUrl"
+		and: "Mock Dao methods"
+			scmServerDao.getOne(serverId) >> server
+			scmServerDao.save(server) >> { throw new Exception() }
+		when:
+			scmServerManagerService.updateUrl(serverId, malformedUrl)
+		then:
+			thrown Exception
+	}
+
+	def "#updateKind(long, String) - [Nominal] Should update the kind of a ScmServer"() {
+		given: "Mock data"
+			long serverId = 10
+			ScmServer server = new ScmServer()
+			server.id = serverId
+			server.kind = "git"
+		and:
+			String newKind = "mercurial"
+		and: "Mock Dao method"
+			scmServerDao.getOne(serverId) >> server
+		when:
+			String resultKind = scmServerManagerService.updateKind(serverId, newKind)
+		then:
+			server.id == serverId
+			server.kind == newKind
+			1 * scmServerDao.save(server)
+			resultKind == newKind
+	}
+
+	def "#updateKind(long, String) - [Nothing] Should try to update the kind of a ScmServer with the same kind and do nothing"() {
+		given: "Mock data"
+			long serverId = 10
+			String serverKind = "git"
+			ScmServer server = new ScmServer()
+			server.id = serverId
+			server.kind = serverKind
+		and: "Mock Dao method"
+			scmServerDao.getOne(serverId) >> server
+		when:
+			String resultKind = scmServerManagerService.updateKind(serverId, serverKind)
+		then:
+			server.id == serverId
+			server.kind == serverKind
+			0 * scmServerDao.save(server)
+			resultKind == serverKind
 	}
 
 	def '#deleteScmServers(Collection<Long>) - [Nominal] Should delete several ScmServers'() {

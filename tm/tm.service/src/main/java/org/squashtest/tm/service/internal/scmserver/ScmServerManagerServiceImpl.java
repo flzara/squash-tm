@@ -86,6 +86,33 @@ public class ScmServerManagerServiceImpl implements ScmServerManagerService {
 		scmServerDao.save(scmServer);
 		return newName;
 	}
+
+	@Override
+	public String updateUrl(long scmServerId, String newUrl) {
+		ScmServer scmServer = scmServerDao.getOne(scmServerId);
+		String formerUrl = scmServer.getUrl();
+		if(formerUrl.equals(newUrl)) {
+			LOGGER.debug("Did not update the ScmServer Url because the submitted Url is identical to the former one.");
+			return formerUrl;
+		}
+		scmServer.setUrl(newUrl);
+		scmServerDao.save(scmServer);
+		return newUrl;
+	}
+
+	@Override
+	public String updateKind(long scmServerId, String newKind) {
+		ScmServer scmServer = scmServerDao.getOne(scmServerId);
+		String formerKind = scmServer.getKind();
+		if(formerKind.equals(newKind)) {
+			LOGGER.debug("Did not update the ScmServer kind because the submitted kind is identical to the former one.");
+			return formerKind;
+		}
+		scmServer.setKind(newKind);
+		scmServerDao.save(scmServer);
+		return newKind;
+	}
+
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deleteScmServers(Collection<Long> scmServerIds) {

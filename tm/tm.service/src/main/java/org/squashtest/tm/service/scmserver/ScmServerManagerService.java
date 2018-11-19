@@ -56,8 +56,23 @@ public interface ScmServerManagerService {
 	 * Update the name of the ScmServer with the given Id with the given name.
 	 * @param scmServerId The Id of the ScmServer which name is to update.
 	 * @param newName The new name to give the ScmServer.
+	 * @return The new name of the ScmServer.
 	 */
 	String updateName(long scmServerId, String newName);
+	/**
+	 * Update the Url of the ScmServer with the given Id with the given Url.
+	 * @param scmServerId The Id of the ScmServer which Url is to update.
+	 * @param url The new Url to give to the scmServer
+	 * @return The new Url of the ScmServer.
+	 */
+	String updateUrl(long scmServerId, String url);
+	/**
+	 * Update the kind of the ScmServer with the given Id with the given kind.
+	 * @param scmServerId The Id of the ScmServer which kind is to update.
+	 * @param kind The new kind to give to the scmServer
+	 * @return The new kind of the ScmServer.
+	 */
+	String updateKind(long scmServerId, String kind);
 	/**
 	 * Delete the ScmServers with the given Ids.
 	 * @param scmServerIds The Ids of the ScmServers to delete.

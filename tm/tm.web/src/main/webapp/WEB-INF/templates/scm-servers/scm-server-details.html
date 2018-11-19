@@ -42,10 +42,9 @@
 		  contextRoot : /*[[ @{/} ]]*/ "http://localhost:8080/squash"
 		};
 		squashtm.pageConfiguration = {
-		  url: /*[[ @{/administration/scm-server/}+${scmServer.id} ]]*/ "http://localhost/scm-server/{serverId}"
+		  url: /*[[ @{/administration/scm-server/}+${scmServer.id} ]]*/ "http://localhost/scm-server/4",
+		  scmServerKinds: /*[[ ${scmServerKinds} ]]*/
 		};
-		var conf = {};
-		conf.serverName = /*[[ ${scmServer.name} ]]*/ "GitHub Server";
 		/*]]>*/
   </script>
 

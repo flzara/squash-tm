@@ -31,5 +31,43 @@ require([ "common" ], function() {
 			RenameScmServerDialog.open();
 		});
 
+		/* JEditable for Url modification. */
+		new SimpleJEditable({
+			// targetUrl: The target Url is the current Url.
+			componentId: "scm-server-url",
+			jeditableSettings: {
+				name: 'url',
+				callback: function(value) {
+					$(this).siblings('#scm-server-url-link').attr('href', value);
+				}
+			}
+		});
+
+		$('#scm-server-url').click(function() {
+			$(this).siblings('.error-message').text('');
+		});
+
+		/* JEditable for Kind modification. */
+		var mapScmKinds = function(kindsArray) {
+			var result = {};
+			kindsArray.forEach(function(kind) {
+				result[kind] = kind;
+			});
+			return result;
+		};
+
+		var scmKinds = mapScmKinds(squashtm.pageConfiguration.scmServerKinds);
+
+		new SimpleJEditable({
+			// targetUrl is the current one.
+			componentId: "scm-server-kind",
+			jeditableSettings: {
+				name: 'kind',
+				data: scmKinds,
+				type: 'select'
+			}
+		});
+
+
 	});
 });
