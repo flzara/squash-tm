@@ -42,10 +42,19 @@ class DerivedPermissionsManager {
 
 	private static final String PERM_MANAGEMENT = Integer.toString(CustomPermission.MANAGEMENT.getMask());
 
+	private static final String PERM_AUTOMATION_PROGRAMMER = Integer.toString(CustomPermission.WRITE_AS_AUTOMATION.getMask());
+
+	private static final String PERM_FUNCTIONAL_TESTER = Integer.toString(CustomPermission.WRITE_AS_FUNCTIONAL.getMask());
+
 
 	private static final String REMOVE_CORE_PARTY_MANAGER_AUTHORITY = "delete from CORE_PARTY_AUTHORITY where PARTY_ID in (:ids) and AUTHORITY = 'ROLE_TM_PROJECT_MANAGER'";
 	private static final String INSERT_CORE_PARTY_MANAGER_AUTHORITY = "insert into CORE_PARTY_AUTHORITY(PARTY_ID, AUTHORITY) values (:id, 'ROLE_TM_PROJECT_MANAGER')";
 
+	private static final String REMOVE_CORE_PARTY_AUTHORITIES = "delete from CORE_PARTY_AUTHORITY where PARTY_ID in (:ids) and AUTHORITY in ('ROLE_TM_PROJECT_MANAGER','ROLE_TF_FUNCTIONAL_TESTER', 'ROLE_TF_AUTOMATION_PROGRAMMER')";
+	private static final String INSERT_CORE_PARTY_FUNCTIONAL_TESTER_AUTHORITY = "insert into CORE_PARTY_AUTHORITY(PARTY_ID, AUTHORITY) values (:id, 'ROLE_TF_FUNCTIONAL_TESTER')";
+
+	private static final String REMOVE_CORE_PARTY_AUTOMATION_PROGRAMMER_AUTHORITY = "delete into CORE_PARTY_AUTHORITY(PARTY_ID, AUTHORITY) values (:id, 'ROLE_TF_AUTOMATION_PROGRAMMER')";
+	private static final String INSERT_CORE_PARTY_AUTOMATION_PROGRAMMER_AUTHORITY = "insert into CORE_PARTY_AUTHORITY(PARTY_ID, AUTHORITY) values (:id, 'ROLE_TF_AUTOMATION_PROGRAMMER')";
 
 	private static final String CHECK_OBJECT_IDENTITY_EXISTENCE =
 		"select aoi.ID from ACL_OBJECT_IDENTITY aoi " +
@@ -84,6 +93,24 @@ class DerivedPermissionsManager {
 			"and acc.CLASSNAME in ('org.squashtest.tm.domain.project.Project', 'org.squashtest.tm.domain.project.ProjectTemplate') " +
 			"and arse.PARTY_ID in (:ids)";
 
+	private static final String RETAIN_USERS_AUTOMATING_ANYTHING =
+		"select arse.PARTY_ID from ACL_RESPONSIBILITY_SCOPE_ENTRY arse " +
+			"inner join ACL_OBJECT_IDENTITY aoi on arse.OBJECT_IDENTITY_ID = aoi.ID " +
+			"inner join ACL_CLASS acc on aoi.CLASS_ID = acc.ID " +
+			"inner join ACL_GROUP_PERMISSION acp on acp.ACL_GROUP_ID = arse.ACL_GROUP_ID " +
+			"where acp.CLASS_ID = acc.ID and acp.PERMISSION_MASK = " + PERM_AUTOMATION_PROGRAMMER + " " +
+			"and acc.CLASSNAME = 'org.squashtest.tm.domain.tf.automationrequest.AutomationRequestLibrary' " +
+			"and arse.PARTY_ID in (:ids)";
+
+	private static final String RETAIN_USERS_TESTING_ANYTHING =
+		"select arse.PARTY_ID from ACL_RESPONSIBILITY_SCOPE_ENTRY arse " +
+			"inner join ACL_OBJECT_IDENTITY aoi on arse.OBJECT_IDENTITY_ID = aoi.ID " +
+			"inner join ACL_CLASS acc on aoi.CLASS_ID = acc.ID " +
+			"inner join ACL_GROUP_PERMISSION acp on acp.ACL_GROUP_ID = arse.ACL_GROUP_ID " +
+			"where acp.CLASS_ID = acc.ID and acp.PERMISSION_MASK = " + PERM_FUNCTIONAL_TESTER + " " +
+			"and acc.CLASSNAME = 'org.squashtest.tm.domain.tf.automationrequest.AutomationRequestLibrary' " +
+			"and arse.PARTY_ID in (:ids)";
+
 
 	private static final String RETAIN_MEMBERS_OF_TEAMS_MANAGING_ANYTHING =
 		"select cu.PARTY_ID from CORE_USER cu " +
@@ -94,6 +121,28 @@ class DerivedPermissionsManager {
 			"inner join ACL_GROUP_PERMISSION acp on acp.ACL_GROUP_ID = arse.ACL_GROUP_ID " +
 			"where acp.CLASS_ID = acc.ID and acp.PERMISSION_MASK = " + PERM_MANAGEMENT + " " +
 			"and acc.CLASSNAME in ('org.squashtest.tm.domain.project.Project', 'org.squashtest.tm.domain.project.ProjectTemplate') " +
+			"and cu.PARTY_ID in (:ids)";
+
+	private static final String RETAIN_MEMBERS_OF_TEAMS_AUTOMATING_ANYTHING =
+		"select cu.PARTY_ID from CORE_USER cu " +
+			"inner join CORE_TEAM_MEMBER ctm on ctm.USER_ID = cu.PARTY_ID " +
+			"inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on arse.PARTY_ID = ctm.TEAM_ID " +
+			"inner join ACL_OBJECT_IDENTITY aoi on arse.OBJECT_IDENTITY_ID = aoi.ID " +
+			"inner join ACL_CLASS acc on aoi.CLASS_ID = acc.ID " +
+			"inner join ACL_GROUP_PERMISSION acp on acp.ACL_GROUP_ID = arse.ACL_GROUP_ID " +
+			"where acp.CLASS_ID = acc.ID and acp.PERMISSION_MASK = " + PERM_AUTOMATION_PROGRAMMER + " " +
+			"and acc.CLASSNAME = 'org.squashtest.tm.domain.tf.automationrequest.AutomationRequestLibrary' " +
+			"and cu.PARTY_ID in (:ids)";
+
+	private static final String RETAIN_MEMBERS_OF_TEAMS_TESTING_ANYTHING =
+		"select cu.PARTY_ID from CORE_USER cu " +
+			"inner join CORE_TEAM_MEMBER ctm on ctm.USER_ID = cu.PARTY_ID " +
+			"inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on arse.PARTY_ID = ctm.TEAM_ID " +
+			"inner join ACL_OBJECT_IDENTITY aoi on arse.OBJECT_IDENTITY_ID = aoi.ID " +
+			"inner join ACL_CLASS acc on aoi.CLASS_ID = acc.ID " +
+			"inner join ACL_GROUP_PERMISSION acp on acp.ACL_GROUP_ID = arse.ACL_GROUP_ID " +
+			"where acp.CLASS_ID = acc.ID and acp.PERMISSION_MASK = " + PERM_FUNCTIONAL_TESTER + " " +
+			"and acc.CLASSNAME = 'org.squashtest.tm.domain.tf.automationrequest.AutomationRequestLibrary' "  +
 			"and cu.PARTY_ID in (:ids)";
 
 	@PersistenceContext
@@ -160,11 +209,19 @@ class DerivedPermissionsManager {
 
 	private void updateAuthsForThoseUsers(Collection<Long> userIds) {
 
-		removeProjectManagerAuthorities(userIds);
+		removeAuthorities(userIds);
 
-		Collection<Long> managerIds = retainUsersManagingAnything(userIds);
+		Collection<Long> managerIds = retainUsersPermissionOnAnything(userIds, RETAIN_USERS_MANAGING_ANYTHING, RETAIN_MEMBERS_OF_TEAMS_MANAGING_ANYTHING);
 
-		grantProjectManagerAuthorities(managerIds);
+		grantProjectAuthorities(managerIds, INSERT_CORE_PARTY_MANAGER_AUTHORITY);
+
+		Collection<Long> automationIds = retainUsersPermissionOnAnything(userIds, RETAIN_USERS_AUTOMATING_ANYTHING, RETAIN_MEMBERS_OF_TEAMS_AUTOMATING_ANYTHING);
+
+		grantProjectAuthorities(automationIds, INSERT_CORE_PARTY_AUTOMATION_PROGRAMMER_AUTHORITY);
+
+		Collection<Long> testingIds = retainUsersPermissionOnAnything(userIds, RETAIN_USERS_TESTING_ANYTHING, RETAIN_MEMBERS_OF_TEAMS_TESTING_ANYTHING);
+
+		grantProjectAuthorities(testingIds, INSERT_CORE_PARTY_FUNCTIONAL_TESTER_AUTHORITY);
 	}
 
 
@@ -233,22 +290,22 @@ class DerivedPermissionsManager {
 		return executeRequestAndConvertIds(query);
 	}
 
-	private void removeProjectManagerAuthorities(Collection<Long> ids) {
+	private void removeAuthorities(Collection<Long> ids) {
 		if (!ids.isEmpty()) {
-			Query query = em.createNativeQuery(REMOVE_CORE_PARTY_MANAGER_AUTHORITY);
+			Query query = em.createNativeQuery(REMOVE_CORE_PARTY_AUTHORITIES);
 			query.setParameter("ids", ids);
 			query.executeUpdate();
 		}
 	}
 
-	private Collection<Long> retainUsersManagingAnything(Collection<Long> ids) {
+	private Collection<Long> retainUsersPermissionOnAnything(Collection<Long> ids, String sqlUser, String sqlTeam) {
 		if (!ids.isEmpty()) {
 
 			Set<Long> userIds = new HashSet<>();
 			Collection<Long> buffer;
 
 			// first, get users directly managing anything
-			Query query = em.createNativeQuery(RETAIN_USERS_MANAGING_ANYTHING);
+			Query query = em.createNativeQuery(sqlUser);
 			query.setParameter("ids", ids);
 
 
@@ -256,7 +313,7 @@ class DerivedPermissionsManager {
 			userIds.addAll(buffer);
 
 			// second, get users managing through teams or project leaders (which sounds quite silly I agree)
-			query = em.createNativeQuery(RETAIN_MEMBERS_OF_TEAMS_MANAGING_ANYTHING);
+			query = em.createNativeQuery(sqlTeam);
 			query.setParameter("ids", ids);
 
 			buffer = executeRequestAndConvertIds(query);
@@ -268,10 +325,11 @@ class DerivedPermissionsManager {
 		}
 	}
 
-	private void grantProjectManagerAuthorities(Collection<Long> ids) {
+
+	private void grantProjectAuthorities(Collection<Long> ids, String sql) {
 		Query query;
 		for (Long id : ids) {
-			query = em.createNativeQuery(INSERT_CORE_PARTY_MANAGER_AUTHORITY);
+			query = em.createNativeQuery(sql);
 			query.setParameter("id", id);
 			query.executeUpdate();
 		}

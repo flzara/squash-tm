@@ -53,8 +53,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "bSortable": false,
                         "aTargets": [0],
                         "sClass": 'centered select-handle',
-                        "mDataProp": "entity-index"/*,
-                        "sWidth": "2.5em"*/
+                        "mDataProp": "entity-index"
                     }, {
                         "bSortable": true,
                         "aTargets": [1],
@@ -63,7 +62,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "bSortable": true,
                         "aTargets": [2],
                         "mDataProp": "entity-id",
-                        // "sWidth": "4em",
                         "sClass": "entity_id"
                     }, {
                         "bSortable": true,
@@ -76,8 +74,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }, {
                         "bSortable": true,
                         "aTargets": [5],
-                        "mDataProp": "format"/*,
-                        "sWidth": "7em"*/
+                        "mDataProp": "format"
                     }, {
                         "bSortable": true,
                         "aTargets": [6],
@@ -85,18 +82,15 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }, {
                         "bSortable": true,
                         "aTargets": [7],
-                        "mDataProp": "priority"/*,
-                        "sWidth": "6em"*/
+                        "mDataProp": "priority"
                     }, {
                         "bSortable": true,
                         "aTargets": [8],
-                        "mDataProp": "transmitted-on"/*,
-                        "sWidth": "13em"*/
+                        "mDataProp": "transmitted-on"
                     }, {
                         "bSortable": true,
                         "aTargets": [9],
-                        "mDataProp": "assigned-on"/*,
-                        "sWidth": "12em"*/
+                        "mDataProp": "assigned-on"
                     }, {
                         "bSortable": true,
                         "aTargets": [10],
