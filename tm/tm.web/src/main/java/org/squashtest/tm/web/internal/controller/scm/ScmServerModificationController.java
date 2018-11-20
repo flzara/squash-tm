@@ -24,7 +24,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.scm.ScmServer;
-import org.squashtest.tm.jooq.domain.tables.records.ScmServerRecord;
 import org.squashtest.tm.service.internal.scmserver.ScmConnectorRegistry;
 import org.squashtest.tm.service.scmserver.ScmServerManagerService;
 

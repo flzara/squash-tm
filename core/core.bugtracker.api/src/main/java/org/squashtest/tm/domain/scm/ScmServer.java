@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.scm;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.net.URL;
 
@@ -36,6 +37,7 @@ public class ScmServer {
 
 	@Column(name = "NAME")
 	@Size(max = 255)
+	@NotBlank
 	private String name;
 
 	@Column(name = "URL")
