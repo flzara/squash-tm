@@ -26,6 +26,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
             el: "#contextual-content-wrapper",
             key: "checkbox-assigned",
             storage: storage,
+            selected: 0,
             initialize: function () {
                 this.render();
                 var self = this;
@@ -170,9 +171,9 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
                         $row.on("click", "td.select-handle", function () {
                             if (!$row.hasClass("ui-state-row-selected")) {
-                                $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight")
-                            }
+                                $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight");
 
+                            }
                         })
                         edObj.buttons = function (settings, original) {
                             //first apply the original function
@@ -212,7 +213,17 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     },
 
                     fnDrawCallback: function () {
+                        self.selected = 0;
                         this.data("sortmode").update();
+                        var rows = this.fnGetNodes();
+                        $(rows).each(function (index, row) {
+                            var $row = $(row);
+                            if ($row.hasClass("ui-state-row-selected")) {
+                                self.selected = self.selected + 1;
+                            }
+
+                        })
+                        self.changeNumberSelectedRows(self.selected);
                     },
                 };
                 var $table = $("#automation-table");
@@ -230,9 +241,20 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 };
                 this.bindButtons();
                 $('.DataTables_sort_wrapper').css('height', '100%');
+                sqtable.on('change', function () {
 
-                //$(".tp-th-project-name .DataTables_sort_icon").insertBefore(".th_input");
+                    if (sqtable.getSelectedRows().length > self.selected) {
+                        self.selected = self.selected + 1;
+                    } else {
+                        self.selected = self.selected - 1;
+                    }
 
+                    self.changeNumberSelectedRows(self.selected);
+                });
+            },
+
+            changeNumberSelectedRows: function (number) {
+                $("#selectedRows").text(number);
             },
 
             selectAll: function (table) {
@@ -263,6 +285,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
                 })
                 table.selectRows(ids);
+                this.changeNumberSelectedRows(table.getSelectedRows().length);
             },
 
             deselectAll: function (table) {
@@ -275,7 +298,8 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
                 })
 
-                this.storage.remove(this.key)
+                this.storage.remove(this.key);
+                this.changeNumberSelectedRows(table.getSelectedRows().length);
             },
 
             render: function () {

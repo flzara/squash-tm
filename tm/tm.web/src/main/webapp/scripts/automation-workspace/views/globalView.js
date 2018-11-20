@@ -26,6 +26,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
             el: "#contextual-content-wrapper",
             key: "checkbox-global",
             storage: storage,
+            selected: 0,
             initialize: function () {
                 this.render();
                 var self = this;
@@ -222,7 +223,17 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     },
 
                     fnDrawCallback: function () {
+                        self.selected = 0;
                         this.data("sortmode").update();
+                        var rows = this.fnGetNodes();
+                        $(rows).each(function (index, row) {
+                            var $row = $(row);
+                            if ($row.hasClass("ui-state-row-selected")) {
+                                self.selected = self.selected + 1;
+                            }
+
+                        })
+                        self.changeNumberSelectedRows(self.selected);
                     },
                 };
 
@@ -240,6 +251,20 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     fmode.toggleFilter();
                 };
                 this.bindButtons();
+                sqtable.on('change', function () {
+
+                    if (sqtable.getSelectedRows().length > self.selected) {
+                        self.selected = self.selected + 1;
+                    } else {
+                        self.selected = self.selected - 1;
+                    }
+
+                    self.changeNumberSelectedRows(self.selected);
+                });
+            },
+
+            changeNumberSelectedRows: function (number) {
+                $("#selectedRows").text(number);
             },
 
             selectAll: function (table) {
