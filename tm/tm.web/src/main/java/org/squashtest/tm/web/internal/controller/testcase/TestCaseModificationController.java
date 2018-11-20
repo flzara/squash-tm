@@ -62,6 +62,7 @@ import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.ParameterFinder;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
+import org.squashtest.tm.service.tf.AutomationRequestModificationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
@@ -177,6 +178,9 @@ public class TestCaseModificationController {
 
 	@Inject
 	private PermissionEvaluationService permissionService;
+
+	@Inject
+	private AutomationRequestModificationService automationRequestModificationService;
 
 	/**
 	 * Returns the fragment html view of test case
@@ -308,11 +312,15 @@ public class TestCaseModificationController {
 	public void changeAutomatable(@RequestParam(VALUE) TestCaseAutomatable testCaseAutomatable, @PathVariable long testCaseId) {
 
 		testCaseModificationService.changeAutomatable(testCaseAutomatable, testCaseId);
-
 	}
 
-
-
+	@RequestMapping(method = RequestMethod.POST, params = {"id=automation-request-priority", VALUE})
+	@ResponseBody
+	public Integer changePriority(@RequestParam(VALUE) String priority, @PathVariable long testCaseId) {
+		Integer newPriority = Integer.parseInt(priority);
+		automationRequestModificationService.changePriority(Arrays.asList(testCaseId), newPriority);
+		return newPriority;
+	}
 
 	@ResponseBody
 	@RequestMapping(value = "/new-version", method = RequestMethod.GET)

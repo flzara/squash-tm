@@ -30,11 +30,11 @@ define([ "jquery", "backbone", "underscore", "squash.translator", "squash.config
 					self.settings = options.settings;
 
 					self.initAutomationRequestBlock();
+					var automatableRadio = $("input[type=radio][name=test-case-automatable]");
 
-					if(self.settings.writable){
-
+					if (self.settings.writable) {
 						this.priorityEditable = new SimpleJEditable({
-							targetUrl : this.settings.urls.automationRequestUrl,
+							targetUrl : this.settings.urls.testCaseUrl,
 							componentId : "automation-request-priority",
 							jeditableSettings : {
 								maxLength : 50,
@@ -42,7 +42,7 @@ define([ "jquery", "backbone", "underscore", "squash.translator", "squash.config
 						});
 
 
-						$('input[type=radio][name=test-case-automatable]').on('change', function() {
+						automatableRadio.on('change', function() {
 
 							$.ajax({
 								url:  self.settings.urls.testCaseUrl,
@@ -55,6 +55,8 @@ define([ "jquery", "backbone", "underscore", "squash.translator", "squash.config
 									self.initAutomationRequestBlock();
 							});
 						});
+					} else {
+						automatableRadio.attr('disabled', true);
 					}
 
 				},

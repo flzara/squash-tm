@@ -38,7 +38,6 @@
 
 
 <c:url var="testCaseUrl" value="/test-cases/${testCase.id}"/>
-<c:url var="automationRequestUrl" value="/automation-requests/${testCase.automationRequest.id}"/>
 
 <f:message var="labelAutomation" key="label.automation"/>
 
@@ -71,9 +70,7 @@
 			<label class="display-table-cell" for="automation-request-priority">
 				<f:message key="label.priority"/>
 			</label>
-			<div class="display-table-cell" id="automation-request-priority">
-				<c:out value="${ testCase.automationRequest.automationPriority }" escapeXml="true"/>
-			</div>
+			<div class="display-table-cell" id="automation-request-priority"><c:out value="${ testCase.automationRequest.automationPriority }" escapeXml="true"/></div>
 		</div>
 
 		<div class="display-table-row test-case-automation-request-block">

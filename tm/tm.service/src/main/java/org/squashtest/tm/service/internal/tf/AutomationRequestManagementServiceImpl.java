@@ -170,8 +170,8 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	}
 
 	@Override
-	public void changePriority(List<Long> reqIds, Integer priority) {
-		requestDao.updatePriority(reqIds, priority);
+	public void changePriority(List<Long> tcIds, Integer priority) {
+		requestDao.updatePriority(tcIds, priority);
 	}
 
 	// **************************** boiler plate code *************************************

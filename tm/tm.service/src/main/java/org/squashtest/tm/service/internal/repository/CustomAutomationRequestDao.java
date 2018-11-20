@@ -115,6 +115,6 @@ public interface CustomAutomationRequestDao {
 
 	void updateStatusToExecutable(List<Long> reqIds);
 
-	void updatePriority(List<Long> reqIds, Integer priority);
+	void updatePriority(List<Long> tcIds, Integer priority);
 
 }

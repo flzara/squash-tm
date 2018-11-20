@@ -47,12 +47,6 @@ public class AutomationModificationController {
 		automationRequestModificationService.changeStatus(autoReqIds, status);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value="/{autoReqIds}", params = {"id=automation-request-priority", VALUE})
-	@ResponseBody
-	public Integer changePriority(@PathVariable List<Long> autoReqIds, @RequestParam(VALUE) Integer newPriority) {
-		automationRequestModificationService.changePriority(autoReqIds, newPriority);
-		return newPriority;
-	}
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, value="desassigned/{autoReqIds}")

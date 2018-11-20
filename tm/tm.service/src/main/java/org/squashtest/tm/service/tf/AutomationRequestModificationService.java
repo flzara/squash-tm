@@ -32,6 +32,6 @@ public interface AutomationRequestModificationService extends AutomationRequestF
 
 	void changeStatus(List<Long> reqIds, AutomationRequestStatus automationRequestStatus);
 
-	void changePriority(List<Long> reqIds, Integer priority);
+	void changePriority(List<Long> tcIds, Integer priority);
 
 }
