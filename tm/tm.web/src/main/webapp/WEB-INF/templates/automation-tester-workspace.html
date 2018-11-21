@@ -65,8 +65,8 @@
   </script>
   <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
 
-  <script data-main="../../scripts/automation-workspace.js"
-          th:attr="data-main=@{/scripts/automation-workspace.js}"
+  <script data-main="../../scripts/automation-tester-workspace.js"
+          th:attr="data-main=@{/scripts/automation-tester-workspace.js}"
           src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
 </head>
 <body>
@@ -84,14 +84,44 @@
     <!-- 		An interesting article on that matter : http://philipwalton.com/articles/what-no-one-told-you-about-z-index/   -->
   </div>
   <div class="ui-widget-header ui-corner-all ui-state-default fragment-header tf-automation-subtitle-header">
-    <h2 th:text="#{workspace.automation.header.subtitle}">Suivi des demandes d'automatisation</h2>
+    <h2 th:text="#{workspace.automation.tester.header.subtitle}">Suivi des demandes d'automatisation - Vue testeur fonctionnel</h2>
   </div>
 
+  <div id="tf-automation-tabs">
+
+    <!--  ------------------ main tab panel --------------------------------- -->
+    <ul>
+      <li id="tf-transmitted-tab">
+        <a href="#transmitted" th:text="#{automation.label.transmitted}">A transmettre</a>
+      </li>
+      <li id="tf-validate-tab">
+        <a href="#validate" th:text="#{automation.label.validate}">A valider pour automatisation</a>
+      </li>
+      <li id="tf-global-tab">
+        <a href="#global" th:text="#{automation.label.globale_view}">Vue globale</a>
+      </li>
+    </ul>
+  </div>
+  <div id="tf-automation-content">
+    <div id="contextual-content-wrapper">
+      <!--empty -->
+    </div>
+  </div>
 
 </div>
 
 
 <!-- BACKBONE VIEWS TEMPLATES -->
-<!-- SHOW AFFECTED -->
+<script id="tpl-show-transmitted" type="text/x-handlebars-template"
+        th:inline="text"
+        th:include="automation-tester/transmitted.html :: automation-transmitted-view"/>
+
+<script id="tpl-show-global" type="text/x-handlebars-template"
+        th:inline="text"
+        th:include="automation-tester/global.html :: automation-global-view"/>
+
+<script id="tpl-show-validate" type="text/x-handlebars-template"
+        th:inline="text"
+        th:include="automation-tester/validate.html :: automation-validate-view"/>
 </body>
 </html>

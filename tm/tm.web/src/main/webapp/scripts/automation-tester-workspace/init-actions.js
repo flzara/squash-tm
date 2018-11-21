@@ -24,12 +24,12 @@ define(['jquery', 'workspace.contextual-content', 'workspace.routing'],
 
 		function _initTabs() {
 			var url = $(location).attr("href");
-			if (url.indexOf("#traitment") != -1) {
-				addSelectedTabClass("#tf-traitment-tab a");
+			if (url.indexOf("#validate") != -1) {
+				addSelectedTabClass("#tf-validate-tab a");
 			} else if (url.indexOf("#global") != -1) {
 				addSelectedTabClass("#tf-global-tab a");
 			} else {
-				addSelectedTabClass("#tf-assigned-tab a");
+				addSelectedTabClass("#tf-transmitted-tab a");
 			}
 
 			$("#tf-automation-tabs").find("a").on("click", function () {
