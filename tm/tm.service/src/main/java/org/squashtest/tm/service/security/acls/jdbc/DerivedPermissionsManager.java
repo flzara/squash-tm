@@ -42,19 +42,12 @@ class DerivedPermissionsManager {
 
 	private static final String PERM_MANAGEMENT = Integer.toString(CustomPermission.MANAGEMENT.getMask());
 
-	private static final String PERM_AUTOMATION_PROGRAMMER = Integer.toString(CustomPermission.WRITE_AS_AUTOMATION.getMask());
 
-	private static final String PERM_FUNCTIONAL_TESTER = Integer.toString(CustomPermission.WRITE_AS_FUNCTIONAL.getMask());
-
-
-	private static final String REMOVE_CORE_PARTY_MANAGER_AUTHORITY = "delete from CORE_PARTY_AUTHORITY where PARTY_ID in (:ids) and AUTHORITY = 'ROLE_TM_PROJECT_MANAGER'";
+	private static final String REMOVE_CORE_PARTY_MANAGER_AUTHORITY = "delete from CORE_PARTY_AUTHORITY where PARTY_ID in (:ids) and AUTHORITY in ('ROLE_TM_PROJECT_MANAGER', 'ROLE_TF_AUTOMATION_PROGRAMMER', 'ROLE_TF_FUNCTIONAL_TESTER')";
 	private static final String INSERT_CORE_PARTY_MANAGER_AUTHORITY = "insert into CORE_PARTY_AUTHORITY(PARTY_ID, AUTHORITY) values (:id, 'ROLE_TM_PROJECT_MANAGER')";
-
-	private static final String REMOVE_CORE_PARTY_AUTHORITIES = "delete from CORE_PARTY_AUTHORITY where PARTY_ID in (:ids) and AUTHORITY in ('ROLE_TM_PROJECT_MANAGER','ROLE_TF_FUNCTIONAL_TESTER', 'ROLE_TF_AUTOMATION_PROGRAMMER')";
 	private static final String INSERT_CORE_PARTY_FUNCTIONAL_TESTER_AUTHORITY = "insert into CORE_PARTY_AUTHORITY(PARTY_ID, AUTHORITY) values (:id, 'ROLE_TF_FUNCTIONAL_TESTER')";
-
-	private static final String REMOVE_CORE_PARTY_AUTOMATION_PROGRAMMER_AUTHORITY = "delete into CORE_PARTY_AUTHORITY(PARTY_ID, AUTHORITY) values (:id, 'ROLE_TF_AUTOMATION_PROGRAMMER')";
 	private static final String INSERT_CORE_PARTY_AUTOMATION_PROGRAMMER_AUTHORITY = "insert into CORE_PARTY_AUTHORITY(PARTY_ID, AUTHORITY) values (:id, 'ROLE_TF_AUTOMATION_PROGRAMMER')";
+
 
 	private static final String CHECK_OBJECT_IDENTITY_EXISTENCE =
 		"select aoi.ID from ACL_OBJECT_IDENTITY aoi " +
@@ -94,22 +87,26 @@ class DerivedPermissionsManager {
 			"and arse.PARTY_ID in (:ids)";
 
 	private static final String RETAIN_USERS_AUTOMATING_ANYTHING =
-		"select arse.PARTY_ID from ACL_RESPONSIBILITY_SCOPE_ENTRY arse " +
-			"inner join ACL_OBJECT_IDENTITY aoi on arse.OBJECT_IDENTITY_ID = aoi.ID " +
-			"inner join ACL_CLASS acc on aoi.CLASS_ID = acc.ID " +
-			"inner join ACL_GROUP_PERMISSION acp on acp.ACL_GROUP_ID = arse.ACL_GROUP_ID " +
-			"where acp.CLASS_ID = acc.ID and acp.PERMISSION_MASK = " + PERM_AUTOMATION_PROGRAMMER + " " +
-			"and acc.CLASSNAME = 'org.squashtest.tm.domain.tf.automationrequest.AutomationRequestLibrary' " +
-			"and arse.PARTY_ID in (:ids)";
+		"select distinct arse.PARTY_ID from ACL_RESPONSIBILITY_SCOPE_ENTRY arse " +
+			"where arse.ACL_GROUP_ID = 10 and arse.ACL_GROUP_ID != 5 " +
+			"and arse.PARTY_ID in (:ids) "+
+		" union " +
+		"select distinct cu.PARTY_ID from ACL_RESPONSIBILITY_SCOPE_ENTRY arse " +
+		"inner join CORE_TEAM_MEMBER ctm on ctm.TEAM_ID = arse.PARTY_ID " +
+		"inner join CORE_USER cu on cu.PARTY_ID = ctm.USER_ID " +
+		"where arse.ACL_GROUP_ID = 10 and arse.ACL_GROUP_ID != 5 " +
+			"and cu.PARTY_ID in (:ids)";
 
 	private static final String RETAIN_USERS_TESTING_ANYTHING =
-		"select arse.PARTY_ID from ACL_RESPONSIBILITY_SCOPE_ENTRY arse " +
-			"inner join ACL_OBJECT_IDENTITY aoi on arse.OBJECT_IDENTITY_ID = aoi.ID " +
-			"inner join ACL_CLASS acc on aoi.CLASS_ID = acc.ID " +
-			"inner join ACL_GROUP_PERMISSION acp on acp.ACL_GROUP_ID = arse.ACL_GROUP_ID " +
-			"where acp.CLASS_ID = acc.ID and acp.PERMISSION_MASK = " + PERM_FUNCTIONAL_TESTER + " " +
-			"and acc.CLASSNAME = 'org.squashtest.tm.domain.tf.automationrequest.AutomationRequestLibrary' " +
-			"and arse.PARTY_ID in (:ids)";
+		"select distinct arse.PARTY_ID from ACL_RESPONSIBILITY_SCOPE_ENTRY arse " +
+			"where arse.ACL_GROUP_ID != 10 and arse.ACL_GROUP_ID != 5 " +
+			"and arse.PARTY_ID in (:ids)"+
+			" union " +
+			"select distinct cu.PARTY_ID from ACL_RESPONSIBILITY_SCOPE_ENTRY arse " +
+			"inner join CORE_TEAM_MEMBER ctm on ctm.TEAM_ID = arse.PARTY_ID " +
+			"inner join CORE_USER cu on cu.PARTY_ID = ctm.USER_ID " +
+			"where arse.ACL_GROUP_ID != 10 and arse.ACL_GROUP_ID != 5 " +
+			"and cu.PARTY_ID in (:ids)";
 
 
 	private static final String RETAIN_MEMBERS_OF_TEAMS_MANAGING_ANYTHING =
@@ -121,28 +118,6 @@ class DerivedPermissionsManager {
 			"inner join ACL_GROUP_PERMISSION acp on acp.ACL_GROUP_ID = arse.ACL_GROUP_ID " +
 			"where acp.CLASS_ID = acc.ID and acp.PERMISSION_MASK = " + PERM_MANAGEMENT + " " +
 			"and acc.CLASSNAME in ('org.squashtest.tm.domain.project.Project', 'org.squashtest.tm.domain.project.ProjectTemplate') " +
-			"and cu.PARTY_ID in (:ids)";
-
-	private static final String RETAIN_MEMBERS_OF_TEAMS_AUTOMATING_ANYTHING =
-		"select cu.PARTY_ID from CORE_USER cu " +
-			"inner join CORE_TEAM_MEMBER ctm on ctm.USER_ID = cu.PARTY_ID " +
-			"inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on arse.PARTY_ID = ctm.TEAM_ID " +
-			"inner join ACL_OBJECT_IDENTITY aoi on arse.OBJECT_IDENTITY_ID = aoi.ID " +
-			"inner join ACL_CLASS acc on aoi.CLASS_ID = acc.ID " +
-			"inner join ACL_GROUP_PERMISSION acp on acp.ACL_GROUP_ID = arse.ACL_GROUP_ID " +
-			"where acp.CLASS_ID = acc.ID and acp.PERMISSION_MASK = " + PERM_AUTOMATION_PROGRAMMER + " " +
-			"and acc.CLASSNAME = 'org.squashtest.tm.domain.tf.automationrequest.AutomationRequestLibrary' " +
-			"and cu.PARTY_ID in (:ids)";
-
-	private static final String RETAIN_MEMBERS_OF_TEAMS_TESTING_ANYTHING =
-		"select cu.PARTY_ID from CORE_USER cu " +
-			"inner join CORE_TEAM_MEMBER ctm on ctm.USER_ID = cu.PARTY_ID " +
-			"inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on arse.PARTY_ID = ctm.TEAM_ID " +
-			"inner join ACL_OBJECT_IDENTITY aoi on arse.OBJECT_IDENTITY_ID = aoi.ID " +
-			"inner join ACL_CLASS acc on aoi.CLASS_ID = acc.ID " +
-			"inner join ACL_GROUP_PERMISSION acp on acp.ACL_GROUP_ID = arse.ACL_GROUP_ID " +
-			"where acp.CLASS_ID = acc.ID and acp.PERMISSION_MASK = " + PERM_FUNCTIONAL_TESTER + " " +
-			"and acc.CLASSNAME = 'org.squashtest.tm.domain.tf.automationrequest.AutomationRequestLibrary' "  +
 			"and cu.PARTY_ID in (:ids)";
 
 	@PersistenceContext
@@ -209,19 +184,23 @@ class DerivedPermissionsManager {
 
 	private void updateAuthsForThoseUsers(Collection<Long> userIds) {
 
-		removeAuthorities(userIds);
+		removeProjectManagerAuthorities(userIds);
 
-		Collection<Long> managerIds = retainUsersPermissionOnAnything(userIds, RETAIN_USERS_MANAGING_ANYTHING, RETAIN_MEMBERS_OF_TEAMS_MANAGING_ANYTHING);
+		Collection<Long> managerIds = retainUsersManagingAnything(userIds);
 
-		grantProjectAuthorities(managerIds, INSERT_CORE_PARTY_MANAGER_AUTHORITY);
+		grantProjectManagerAuthorities(managerIds);
 
-		Collection<Long> automationIds = retainUsersPermissionOnAnything(userIds, RETAIN_USERS_AUTOMATING_ANYTHING, RETAIN_MEMBERS_OF_TEAMS_AUTOMATING_ANYTHING);
+		Collection<Long> automationIds = retainsUsersAutomatingAnything(userIds);
 
-		grantProjectAuthorities(automationIds, INSERT_CORE_PARTY_AUTOMATION_PROGRAMMER_AUTHORITY);
+		automationIds.removeAll(managerIds);
 
-		Collection<Long> testingIds = retainUsersPermissionOnAnything(userIds, RETAIN_USERS_TESTING_ANYTHING, RETAIN_MEMBERS_OF_TEAMS_TESTING_ANYTHING);
+		grantAuthorities(automationIds, INSERT_CORE_PARTY_AUTOMATION_PROGRAMMER_AUTHORITY);
 
-		grantProjectAuthorities(testingIds, INSERT_CORE_PARTY_FUNCTIONAL_TESTER_AUTHORITY);
+		Collection<Long> testingids = retainsUsersTestingAnything(userIds);
+
+		testingids.removeAll(managerIds);
+
+		grantAuthorities(testingids, INSERT_CORE_PARTY_FUNCTIONAL_TESTER_AUTHORITY);
 	}
 
 
@@ -290,22 +269,22 @@ class DerivedPermissionsManager {
 		return executeRequestAndConvertIds(query);
 	}
 
-	private void removeAuthorities(Collection<Long> ids) {
+	private void removeProjectManagerAuthorities(Collection<Long> ids) {
 		if (!ids.isEmpty()) {
-			Query query = em.createNativeQuery(REMOVE_CORE_PARTY_AUTHORITIES);
+			Query query = em.createNativeQuery(REMOVE_CORE_PARTY_MANAGER_AUTHORITY);
 			query.setParameter("ids", ids);
 			query.executeUpdate();
 		}
 	}
 
-	private Collection<Long> retainUsersPermissionOnAnything(Collection<Long> ids, String sqlUser, String sqlTeam) {
+	private Collection<Long> retainUsersManagingAnything(Collection<Long> ids) {
 		if (!ids.isEmpty()) {
 
 			Set<Long> userIds = new HashSet<>();
 			Collection<Long> buffer;
 
 			// first, get users directly managing anything
-			Query query = em.createNativeQuery(sqlUser);
+			Query query = em.createNativeQuery(RETAIN_USERS_MANAGING_ANYTHING);
 			query.setParameter("ids", ids);
 
 
@@ -313,7 +292,7 @@ class DerivedPermissionsManager {
 			userIds.addAll(buffer);
 
 			// second, get users managing through teams or project leaders (which sounds quite silly I agree)
-			query = em.createNativeQuery(sqlTeam);
+			query = em.createNativeQuery(RETAIN_MEMBERS_OF_TEAMS_MANAGING_ANYTHING);
 			query.setParameter("ids", ids);
 
 			buffer = executeRequestAndConvertIds(query);
@@ -325,17 +304,70 @@ class DerivedPermissionsManager {
 		}
 	}
 
+	private Collection<Long> retainsUsersAutomatingAnything(Collection<Long> ids) {
 
-	private void grantProjectAuthorities(Collection<Long> ids, String sql) {
+		if (!ids.isEmpty()) {
+
+			Set<Long> userIds = new HashSet<>();
+			Collection<Long> buffer;
+
+			// first, get users directly managing anything
+			Query query = em.createNativeQuery(RETAIN_USERS_AUTOMATING_ANYTHING);
+			query.setParameter("ids", ids);
+
+
+			buffer = executeRequestAndConvertIds(query);
+			userIds.addAll(buffer);
+
+			return userIds;
+		} else {
+			return Collections.emptyList();
+		}
+	}
+
+	private Collection<Long> retainsUsersTestingAnything(Collection<Long> ids) {
+
+		if (!ids.isEmpty()) {
+
+			Set<Long> userIds = new HashSet<>();
+			Collection<Long> buffer;
+
+			// first, get users directly managing anything
+			Query query = em.createNativeQuery(RETAIN_USERS_TESTING_ANYTHING);
+			query.setParameter("ids", ids);
+
+
+			buffer = executeRequestAndConvertIds(query);
+			userIds.addAll(buffer);
+
+			return userIds;
+		} else {
+			return Collections.emptyList();
+		}
+	}
+
+	private void grantProjectManagerAuthorities(Collection<Long> ids) {
 		Query query;
 		for (Long id : ids) {
-			query = em.createNativeQuery(sql);
+			query = em.createNativeQuery(INSERT_CORE_PARTY_MANAGER_AUTHORITY);
 			query.setParameter("id", id);
 			query.executeUpdate();
 		}
 
 
 	}
+
+	private void grantAuthorities(Collection<Long> ids, String queryString) {
+		Query query;
+		for (Long id : ids) {
+			query = em.createNativeQuery(queryString);
+			query.setParameter("id", id);
+			query.executeUpdate();
+		}
+
+
+	}
+
 
 	private void flush() {
 		em.flush();
