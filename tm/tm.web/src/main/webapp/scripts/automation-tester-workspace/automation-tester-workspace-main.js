@@ -18,22 +18,29 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-var squashtm = squashtm || {};
+define(['squash.translator', './init-actions'],
+	function (translator, actions) {
+	"use strict";
 
-define([ "jquery", "jquery.squash.buttonmenu" ], function($) {
-	squashtm.navbar = {
-		init : function() {
-			var linkName = $("#navigation").data("highlight");
-			$("#"+linkName+"-link").addClass('navigation-selected');
-			$("#bugtracker-link").buttonmenu({display:"block"});
-			$("#automation-link-ul").buttonmenu({display:"block"});
-
-			var bugTrackerList = $("#bugtracker-link").next('ul');
-			if (bugTrackerList.children().length > 7){
-				bugTrackerList.css("overflow-y", "scroll");
-			}
+		function initTabbedPane() {
+    			$("#tabbed-pane").tabs();
 		}
-	};
 
-	return squashtm.navbar;
-});
+		function initI18n() {
+			translator.load({
+				"date-format": "squashtm.dateformat",
+				"label-never": "label.lower.Never"
+			});
+		}
+
+		function init(conf) {
+			initI18n();
+			initTabbedPane();
+			actions.init();
+		}
+
+		return {
+			
+			init: init
+		};
+	});

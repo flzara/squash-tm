@@ -18,16 +18,40 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', "squashtable"],
-	function ($) {
-	"use-strict";
+define(['jquery', 'backbone', 'workspace.routing'],
+	function ($, Backbone, urlBuilder) {
+		"use strict";
 
-			function init() {
-			console.log("init table")
-					$("#affected-table").squashTable();
+
+		var router = Backbone.Router.extend({
+			activeView: null,
+			initialize: function () {
+
+			},
+
+			routes: {
+				"": "assigned",
+				"assigned": "assigned",
+				"global": "global",
+				"traitment": "traitment",
+			},
+
+			assigned: function () {
+
+			},
+
+			global: function () {
+			},
+
+			traitment: function () {
 			}
 
-			return {
-				init:init
-			};
-});
+		});
+
+		function init() {
+			return new router;
+		}
+		return {
+			init: init
+		};
+	})

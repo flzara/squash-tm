@@ -237,6 +237,14 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 			.executeUpdate();
 	}
 
+	@Override
+	public List<Long> getReqIdsByTcIds(List<Long> tcIds) {
+		return DSL.selectDistinct(AUTOMATION_REQUEST.AUTOMATION_REQUEST_ID)
+			.from(AUTOMATION_REQUEST)
+			.where(AUTOMATION_REQUEST.TEST_CASE_ID.in(tcIds))
+			.fetch(AUTOMATION_REQUEST.AUTOMATION_REQUEST_ID);
+	}
+
 	private Page<AutomationRequest> innerFindAll(Pageable pageable, ColumnFiltering filtering, FilterOverride filterOverride, Collection<Long> inProjectIds){
 
 

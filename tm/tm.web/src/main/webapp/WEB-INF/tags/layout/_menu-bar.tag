@@ -44,11 +44,13 @@
 <f:message var="cancelLabel" key="label.Cancel" />
 
 
+<sec:authorize access="(hasRole('ROLE_TF_FUNCTIONAL_TESTER') and hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')) or (hasRole('ROLE_TF_FUNCTIONAL_TESTER') and !hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')) or hasRole('ROLE_ADMIN')">
 	<div style="display: inline-flex;">
  	 <input type="checkbox" id="menu-toggle-filter-ckbox" ${filterCheckedClause}></input>
   	 <div class="icon iconmargin menubarmargintop"><span class="ui-icon  ui-icon-volume-off rotateright"></span></div>
  	 <a id="menu-project-filter-link" style=" margin-top: 3px" href="#" class="${filterLabelClass}">${filterLabelText}</a>
 	</div>
+	</sec:authorize>
 
 <sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
   <div>

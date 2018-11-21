@@ -24,6 +24,7 @@ import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -170,6 +171,7 @@ public class AutomationRequest implements Identified {
 		this.project = project;
 	}
 
+	@AclConstrainedObject
 	public AutomationRequestLibrary getLibrary(){
 		return  this.project.getAutomationRequestLibrary();
 	}

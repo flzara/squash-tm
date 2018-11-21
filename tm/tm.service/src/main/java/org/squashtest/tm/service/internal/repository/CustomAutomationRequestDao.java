@@ -117,4 +117,6 @@ public interface CustomAutomationRequestDao {
 
 	void updatePriority(List<Long> tcIds, Integer priority);
 
+	List<Long> getReqIdsByTcIds(List<Long> tcIds);
+
 }

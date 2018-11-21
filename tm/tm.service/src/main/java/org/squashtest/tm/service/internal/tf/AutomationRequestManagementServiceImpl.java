@@ -34,6 +34,8 @@ import org.squashtest.tm.service.internal.repository.AutomationRequestDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.security.Authorizations;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.UserContextService;
 import org.squashtest.tm.service.tf.AutomationRequestFinderService;
 import org.squashtest.tm.service.tf.AutomationRequestModificationService;
@@ -49,6 +51,8 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 	private static final String CAN_READ_TESTCASE_OR_ADMIN = "hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')" + Authorizations.OR_HAS_ROLE_ADMIN;
 
+	private static final String CAN_WRITE_REQUEST_OR_ADMIN = "hasPermission(#reqIds, 'org.squashtest.tm.domain.tf.automationrequest.AutomationRequest', 'WRITE') " + Authorizations.OR_HAS_ROLE_ADMIN;
+
 	@Inject
 	private AutomationRequestDao requestDao;
 
@@ -60,6 +64,9 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 	@Inject
 	private ProjectFinder projectFinder;
+
+	@Inject
+	private PermissionEvaluationService permissionEvaluationService;
 
 
 	// *************** implementation of the finder interface *************************
@@ -156,12 +163,15 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 		User user = userDao.findUserByLogin(username);
 		switch (automationRequestStatus) {
 			case NOT_AUTOMATABLE:
+				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, "WRITE_AS_AUTOMATION", AutomationRequest.class.getName());
 				requestDao.updateAutomationRequestNotAutomatable(reqIds);
 				break;
 			case WORK_IN_PROGRESS:
+				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, "WRITE_AS_AUTOMATION", AutomationRequest.class.getName());
 				requestDao.updateAutomationRequestToAssigned(user, reqIds);
 				break;
 			case EXECUTABLE:
+				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, "WRITE_AS_AUTOMATION", AutomationRequest.class.getName());
 				requestDao.updateStatusToExecutable(reqIds);
 				break;
 				default:
@@ -171,6 +181,8 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 	@Override
 	public void changePriority(List<Long> tcIds, Integer priority) {
+		List<Long> reqIds = requestDao.getReqIdsByTcIds(tcIds);
+		PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, "WRITE_AS_FUNCTIONAL", AutomationRequest.class.getName());
 		requestDao.updatePriority(tcIds, priority);
 	}
 
