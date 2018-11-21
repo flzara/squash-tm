@@ -23,11 +23,14 @@ package org.squashtest.tm.web.internal.controller.scm;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.domain.scm.ScmRepository;
 import org.squashtest.tm.domain.scm.ScmServer;
 import org.squashtest.tm.service.internal.scmserver.ScmConnectorRegistry;
+import org.squashtest.tm.service.scmserver.ScmRepositoryManagerService;
 import org.squashtest.tm.service.scmserver.ScmServerManagerService;
 
 import javax.inject.Inject;
+import java.util.List;
 import java.util.Set;
 
 @Controller
@@ -42,14 +45,18 @@ public class ScmServerModificationController {
 	private ScmServerManagerService scmServerManager;
 	@Inject
 	private ScmConnectorRegistry scmServerRegistry;
+	@Inject
+	private ScmRepositoryManagerService scmRepositoryManagerService;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showInfos(@PathVariable long scmServerId) {
 		ScmServer scmServer = scmServerManager.findScmServer(scmServerId);
 		Set<String> scmServerKinds = scmServerRegistry.getRegisteredScmKinds();
+		List<ScmRepository> scmRepositories = scmRepositoryManagerService.findByScmServerOrderByPath(scmServerId);
 		ModelAndView mav = new ModelAndView("scm-servers/scm-server-details.html");
 		mav.addObject("scmServer", scmServer);
 		mav.addObject("scmServerKinds", scmServerKinds);
+		mav.addObject("scmRepositories", scmRepositories);
 		return mav;
 	}
 

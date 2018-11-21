@@ -19,13 +19,14 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function() {
-	require(["jquery", "app/ws/squashtm.workspace", "jeditable.simpleJEditable", "./scm-server/RenameScmServerDialog"],
-	function($, WS, SimpleJEditable, RenameScmServerDialog) {
+	require(["jquery", "app/ws/squashtm.workspace", "jeditable.simpleJEditable", "./scm-server/RenameScmServerDialog", "./scm-server/ScmRepositoriesTableView"],
+	function($, WS, SimpleJEditable, RenameScmServerDialog, ScmRepositoriesTableView) {
 
 		WS.init();
 
 		var nameLabel = $('#scm-server-name-header');
 		var RenameScmServerDialog = new RenameScmServerDialog(nameLabel);
+		new ScmRepositoriesTableView();
 
 		$('#rename-scm-server-button').click(function() {
 			RenameScmServerDialog.open();

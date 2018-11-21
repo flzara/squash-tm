@@ -91,7 +91,7 @@
           <div style="float: left; height: 3em">
             <h2>
               <label for="scm-server-name-header" th:text="#{label.scmServer}">Serveur de Gestion de Code Source</label>
-              <a id="scm-server-name-header" href="#" th:text="${scmServer.name}">GitHub Server</a>
+              <span id="scm-server-name-header" th:text="${scmServer.name}">GitHub Server</span>
             </h2>
           </div>
           <div class="snap-right"></div>
@@ -140,6 +140,56 @@
 
           </div>
 
+          <div class="sq-tg expand">
+
+            <div class="tg-head">
+              <h3 th:text="#{title.Repositories}"/>
+            </div>
+
+            <div class="tg-body information-panel">
+
+              <!-----===== Repositories Table =====----->
+              <div id="scm-repository-table-pane">
+                <div class="toolbar">
+                  <button class="snap-right sq-btn" type="button" value="Delete repositories" th:value="#{label.scmRepository.delete}"
+                          th:title="#{label.scmRepository.delete}" id="delete-scm-repositories">
+                    <span class="ui-icon ui-icon-trash">-</span><span th:text="#{label.Delete}"/>
+                  </button>
+                  <button class="snap-right sq-btn" type="button" value="Create a repository" th:value="#{label.scmRepository.create}"
+                          th:title="#{label.scmRepository.create}" id="add-scm-repository">
+                    <span class="ui-icon ui-icon-plus">+</span><span th:text="#{label.Add}"/>
+                  </button>
+                </div>
+                <div class="unsnap"></div>
+                <div>
+                  <table id="scm-repository-table"
+                         th:attr="data-def='pre-sort=2-asc, pre-filled, datakeys-id=repository-id, ajaxsource='+@{/administration/scm-repositories}">
+                    <thead>
+                    <tr>
+                      <th th:attr="data-def='invisible, map=repository-id'" class="not-displayed">Id</th>
+                      <th th:attr="data-def='select, map=repository-index'">#</th>
+                      <th th:attr="data-def='sortable, map=path'" th:text="#{label.Path}">Chemin</th>
+                      <th th:attr="data-def='sortable, map=folder'" th:text="#{label.WorkingFolder}">Dossier de Travail</th>
+                      <th th:attr="data-def='sortable, map=branch'" th:text="#{label.WorkingBranch}">Branche de Travail</th>
+                      <th th:attr="data-def='delete-button=#delete-scm-repository-popup , map=empty-delete-holder'"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="repository, iterStat : ${scmRepositories}" th:object="${repository}">
+                      <td th:text="*{id}" class="not-displayed">1</td>
+                      <td th:text="${iterStat.count}">1</td>
+                      <td th:text="*{repositoryPath}">/home/repositories/repo1</td>
+                      <td th:text="*{folderPath}">resources/features</td>
+                      <td th:text="*{branch}">master</td>
+                      <td></td>
+                    </tr>
+                    </tbody>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
         </div>
 
         <!---- RENAME POPUP ---->
