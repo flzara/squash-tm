@@ -31,8 +31,8 @@ public class ScmServer {
 
 	@Id
 	@Column(name = "SCM_SERVER_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator ="scm_server_server_id_seq")
-	@SequenceGenerator(name = "scm_server_server_id_seq", sequenceName = "scm_server_server_id_seq")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator ="scm_server_id_seq")
+	@SequenceGenerator(name = "scm_server_id_seq", sequenceName = "scm_server_id_seq")
 	private Long id;
 
 	@Column(name = "NAME")
