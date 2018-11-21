@@ -276,12 +276,35 @@
         <constraints primaryKey="true" nullable="false"/>
       </column>
       <column name="NAME" type="VARCHAR(255)" remarks="The scm server name.">
-        <constraints unique="true"/>
+        <constraints unique="true" nullable="false"/>
       </column>
       <column name="URL" type="VARCHAR(255)" remarks="The scm server url.">
         <constraints nullable="false"/>
       </column>
       <column name="KIND" type="VARCHAR(30)" defaultValue="git" remarks="The kind of scm server.">
+        <constraints nullable="false"/>
+      </column>
+
+    </createTable>
+
+  </changeSet>
+
+  <changeSet id="tm-1.19.0-SQTM-512-scm-repository-management" author="jlor">
+    <comment>Add new table for scm (source code management) repository.</comment>
+
+    <createTable tableName="SCM_REPOSITORY">
+
+      <column name="SCM_REPOSITORY_ID" type="BIGINT" autoIncrement="true" remarks="The auto-generated id of the scm repository.">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="SCM_SERVER_ID" type="BIGINT" remarks="The foreign key to the related SCM_SEVER">
+        <constraints nullable="false" foreignKeyName="fk_scm_repository_scm_server" references="SCM_SERVER(SCM_SERVER_ID)"/>
+      </column>
+      <column name="REPOSITORY_PATH" type="VARCHAR(255)" remarks="The absolute path to the local repository on the local server.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="FOLDER_PATH" type="VARCHAR(255)" remarks="The relative path of the working folder in which SquashTM will push."/>
+      <column name="BRANCH" type="VARCHAR(255)" remarks="The name of the working branch on which SquashTM will push.">
         <constraints nullable="false"/>
       </column>
 
