@@ -295,6 +295,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
                 })
                 table.selectRows(ids);
+                this.changeNumberSelectedRows(table.getSelectedRows().length);
             },
 
             deselectAll: function (table) {
@@ -308,6 +309,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 })
 
                 this.storage.remove(this.key)
+                this.changeNumberSelectedRows(table.getSelectedRows().length);
             },
 
             render: function () {
