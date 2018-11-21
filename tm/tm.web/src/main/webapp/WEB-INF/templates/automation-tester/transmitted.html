@@ -25,8 +25,8 @@
     <div style="margin-bottom: 40px">
       <span style="font-style: italic; font-weight: bold; font-size:15px" th:text="#{automation.message.assigned}"></span>
       <div style="float: right">
-        <button id="automated-affected-button" class="tf-lg blue" th:title="#{automation.label.automated}" th:text="#{automation.label.automated}"></button>
-        <button id="desassigned-affected-button" class="tf-lg gray" th:title="#{automation.label.disaseembled}" th:text="#{automation.label.disaseembled}"></button>
+        <button id="transmitted-button" class="tf-lg blue" th:title="#{automation.label.automated}" th:text="#{automation.label.automated}"></button>
+        <button id="no-valid-button" class="tf-lg gray" th:title="#{automation.label.disaseembled}" th:text="#{automation.label.disaseembled}"></button>
 
       </div>
     </div>
@@ -59,9 +59,6 @@
             <th th:text="#{automation.datatable.headers.format}" class="no-user-select tp-th-filter tp-th-format"></th>
             <th th:text="#{automation.datatable.headers.createdby}" class="no-user-select tp-th-filter tp-th-createdby"></th>
             <th th:text="#{automation.datatable.headers.priority}" class="no-user-select tp-th-filter tp-th-priority"></th>
-            <th th:text="#{automation.datatable.headers.transmittedon}" class="no-user-select tp-th-filter tp-th-transmittedon"></th>
-            <th th:text="#{automation.datatable.headers.assignedon}"></th>
-            <th th:text="#{automation.datatable.headers.script}" class="assigned-script"></th>
             <th class="no-user-select"></th>
             <th class="no-user-select"></th>
             <th></th>

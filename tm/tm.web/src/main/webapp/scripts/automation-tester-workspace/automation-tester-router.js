@@ -37,15 +37,15 @@ define(['jquery', 'backbone', 'workspace.routing', './views/validateView', './vi
 			},
 
 			validate: function () {
-				this.validateView = new validateView();
+				this.activeView = new validateView();
 			},
 
 			global: function () {
-				this.globalView = new globalView();
+				this.activeView = new globalView();
 			},
 
 			transmitted: function () {
-				this.transmittedView = new transmittedView();
+				this.activeView = new transmittedView();
 			}
 
 		});

@@ -103,6 +103,16 @@ public interface AutomationRequestFinderService {
 	 */
 	Page<AutomationRequest> findRequestsForGlobal(Pageable pageable, ColumnFiltering filtering);
 
+	/**
+	 * Given the specified pagination, sorting and filtering, retrieve the corresponding
+	 * requests, restricted to the automated requests with status : VALIDATE
+	 *
+	 * @param pageable
+	 * @param filtering
+	 * @return
+	 */
+	Page<AutomationRequest> findRequestsToTransmitted(Pageable pageable, ColumnFiltering filtering);
+
 
 	/**
 	 *

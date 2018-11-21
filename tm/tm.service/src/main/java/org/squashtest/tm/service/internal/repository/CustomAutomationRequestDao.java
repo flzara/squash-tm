@@ -88,6 +88,16 @@ public interface CustomAutomationRequestDao {
 	Page<AutomationRequest> findAllForGlobal(Pageable pageable, ColumnFiltering filtering, Collection<Long> inProjectIds);
 
 	/**
+	 * Will retrieve a list of automated requests, paged filtered and sorted, where
+	 * the status of automation request is 'VALIDATE'
+	 * @param pageable
+	 * @param filtering
+	 * @param inProjectIds list of project ids the current user can read
+	 * @return
+	 */
+	Page<AutomationRequest> findAllValidate(Pageable pageable, ColumnFiltering filtering, Collection<Long> inProjectIds);
+
+	/**
 	 * Count Automation request to the current User.
 	 * @param idUser
 	 * @return

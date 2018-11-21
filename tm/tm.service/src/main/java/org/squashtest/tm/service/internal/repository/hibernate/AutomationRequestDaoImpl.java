@@ -143,6 +143,17 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	}
 
 	@Override
+	public Page<AutomationRequest> findAllValidate(Pageable pageable, ColumnFiltering filtering, Collection<Long> inProjectIds) {
+		ColumnFiltering filterWithAssignee = new SimpleColumnFiltering(filtering)
+			.addFilter("requestStatus", AutomationRequestStatus.VALID.toString());
+
+		return innerFindAll(pageable, filterWithAssignee, (converter) -> {
+			// force equality comparison for the assigned user login
+			converter.compare("requestStatus").withEquality();
+		}, inProjectIds);
+	}
+
+	@Override
 	public Integer countAutomationRequestForCurrentUser(Long idUser) {
 
 		return DSL.selectCount().from(AUTOMATION_REQUEST)

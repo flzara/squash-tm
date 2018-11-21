@@ -557,42 +557,9 @@
   <changeSet id="tm-1.19.0-SQTM-510-add-roles-automation" author="aboittiaux">
     <sql>
       insert into CORE_PARTY_AUTHORITY(PARTY_ID, AUTHORITY)
-      select distinct arse.PARTY_ID ,'ROLE_TF_FUNCTIONAL_TESTER' from ACL_RESPONSIBILITY_SCOPE_ENTRY arse
-      inner join ACL_OBJECT_IDENTITY aoi on arse.OBJECT_IDENTITY_ID = aoi.ID
-      inner join ACL_CLASS acc on aoi.CLASS_ID = acc.ID
-      inner join ACL_GROUP_PERMISSION acp on acp.ACL_GROUP_ID = arse.ACL_GROUP_ID
-      where acp.CLASS_ID = acc.ID and acp.PERMISSION_MASK = 8192
-      and acc.CLASSNAME = 'org.squashtest.tm.domain.tf.automationrequest.AutomationRequestLibrary'
-      and arse.PARTY_ID in (select PARTY_ID from CORE_USER)
-      union
       select distinct cu.PARTY_ID, 'ROLE_TF_FUNCTIONAL_TESTER' from CORE_USER cu
-      inner join CORE_TEAM_MEMBER ctm on ctm.USER_ID = cu.PARTY_ID
-      inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on arse.PARTY_ID = ctm.TEAM_ID
-      inner join ACL_OBJECT_IDENTITY aoi on arse.OBJECT_IDENTITY_ID = aoi.ID
-      inner join ACL_CLASS acc on aoi.CLASS_ID = acc.ID
-      inner join ACL_GROUP_PERMISSION acp on acp.ACL_GROUP_ID = arse.ACL_GROUP_ID
-      where acp.CLASS_ID = acc.ID and acp.PERMISSION_MASK = 8192
-      and acc.CLASSNAME = 'org.squashtest.tm.domain.tf.automationrequest.AutomationRequestLibrary'
-      and cu.PARTY_ID in (select PARTY_ID from CORE_USER);
-
-      insert into CORE_PARTY_AUTHORITY(PARTY_ID, AUTHORITY)
-      select distinct arse.PARTY_ID ,'ROLE_TF_AUTOMATION_PROGRAMMER' from ACL_RESPONSIBILITY_SCOPE_ENTRY arse
-      inner join ACL_OBJECT_IDENTITY aoi on arse.OBJECT_IDENTITY_ID = aoi.ID
-      inner join ACL_CLASS acc on aoi.CLASS_ID = acc.ID
-      inner join ACL_GROUP_PERMISSION acp on acp.ACL_GROUP_ID = arse.ACL_GROUP_ID
-      where acp.CLASS_ID = acc.ID and acp.PERMISSION_MASK = 16384
-      and acc.CLASSNAME = 'org.squashtest.tm.domain.tf.automationrequest.AutomationRequestLibrary'
-      and arse.PARTY_ID in (select PARTY_ID from CORE_USER)
-      union
-      select distinct cu.PARTY_ID, 'ROLE_TF_AUTOMATION_PROGRAMMER' from CORE_USER cu
-      inner join CORE_TEAM_MEMBER ctm on ctm.USER_ID = cu.PARTY_ID
-      inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on arse.PARTY_ID = ctm.TEAM_ID
-      inner join ACL_OBJECT_IDENTITY aoi on arse.OBJECT_IDENTITY_ID = aoi.ID
-      inner join ACL_CLASS acc on aoi.CLASS_ID = acc.ID
-      inner join ACL_GROUP_PERMISSION acp on acp.ACL_GROUP_ID = arse.ACL_GROUP_ID
-      where acp.CLASS_ID = acc.ID and acp.PERMISSION_MASK = 16384
-      and acc.CLASSNAME = 'org.squashtest.tm.domain.tf.automationrequest.AutomationRequestLibrary'
-      and cu.PARTY_ID in (select PARTY_ID from CORE_USER);
+      left join CORE_PARTY_AUTHORITY cpa on cu.PARTY_ID = cpa.PARTY_ID
+      where cpa.AUTHORITY is null;
     </sql>
 
   </changeSet>

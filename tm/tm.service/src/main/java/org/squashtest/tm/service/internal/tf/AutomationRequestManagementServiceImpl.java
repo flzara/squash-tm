@@ -114,11 +114,18 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Page<AutomationRequest> findRequestsForGlobal(Pageable pageable, ColumnFiltering filtering) {
 		List<Long> projectIds = projectFinder.findAllReadableIds();
 		return requestDao.findAllForGlobal(pageable, filtering, projectIds);
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public Page<AutomationRequest> findRequestsToTransmitted(Pageable pageable, ColumnFiltering filtering) {
+		List<Long> projectIds = projectFinder.findAllReadableIds();
+		return requestDao.findAllValidate(pageable, filtering, projectIds);
+	}
 
 	// *************** implementation of the management interface *************************
 
