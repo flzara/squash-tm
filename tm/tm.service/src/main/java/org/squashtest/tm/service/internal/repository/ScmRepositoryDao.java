@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.squashtest.tm.domain.scm.ScmRepository;
 
@@ -29,7 +31,15 @@ public interface ScmRepositoryDao extends JpaRepository<ScmRepository, Long> {
 
 	/**
 	 * Find the ScmRepositories contained in the ScmServer with the given Id ordered by path.
+	 * @param scmServerId The Id of the ScmServer containing the wanted ScmRepositories.
 	 * @return The List of the ScmRepositories contained in the given ScmServer ordered by path.
 	 */
 	List<ScmRepository> findByScmServerIdOrderByRepositoryPathAsc(Long scmServerId);
+	/**
+	 * Find the ScmRepositories contained in the ScmServer with the given Id oredered by path.
+	 * @param scmServerId The Id of the ScmServer containing the wanted ScmRepositories.
+	 * @param pageable The Pageable against which the Page will be built.
+	 * @return The Page of the ScmRepositories contained in the given ScmServer built according the given Pageable.
+	 */
+	Page<ScmRepository> findByScmServerId(Long scmServerId, Pageable pageable);
 }

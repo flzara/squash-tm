@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.service.internal.scmserver
 
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.squashtest.tm.domain.scm.ScmRepository
 import org.squashtest.tm.domain.scm.ScmServer
 import org.squashtest.tm.service.internal.repository.ScmRepositoryDao
@@ -71,5 +74,44 @@ class ScmRepositoryManagerServiceTest extends Specification {
 			resultList == expectedList
 	}
 
+
+	def "#findPagedScmRepositoriesByScmServer(Long, Pageable) - [Nominal] Should find all the ScmRepositories sorted by path"() {
+		given: "Mock server"
+			long serverId = 5
+		and: "Mock data"
+			ScmRepository r1 = Mock()
+			r1.repositoryPath = "/home/repositories/repo1"
+			ScmRepository r2 = Mock()
+			r2.repositoryPath = "/home/repositories/repo2"
+			ScmRepository r3 = Mock()
+			r3.repositoryPath = "/home/repositories/repo3"
+		and: "Mock pageable"
+			Sort.Order order = new Sort.Order(Sort.Direction.DESC, "path")
+			Sort sort = new Sort(order)
+			Pageable pageable = Mock()
+			pageable.getSort() >> sort
+		and: "Expected result"
+			Page<ScmServer> expectedPage = [r3, r2, r1] as Page
+		and: "Mock Dao method"
+			scmRepositoryDao.findByScmServerId(serverId, pageable) >> expectedPage
+		when:
+			Page<ScmServer> resultPage = scmRepositoryManagerService.findPagedScmRepositoriesByScmServer(serverId, pageable)
+		then:
+			resultPage == expectedPage
+	}
+
+	def "#findPagedScmRepositoriesByScmServer(Long, Pageable) - [Empty] Should find no ScmRepositories"() {
+		given: "Mock data"
+			long serverId = 5
+			Pageable pageable = Mock()
+		and: "Expected result"
+			Page<ScmRepository> expectedPage = [] as Page
+		and: "Mock Dao method"
+			scmRepositoryDao.findByScmServerId(serverId, pageable) >> expectedPage
+		when:
+			Page<ScmServer> resultPage = scmRepositoryManagerService.findPagedScmRepositoriesByScmServer(serverId, pageable)
+		then:
+			resultPage == expectedPage
+	}
 
 }

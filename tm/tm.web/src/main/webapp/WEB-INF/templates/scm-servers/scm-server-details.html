@@ -163,7 +163,7 @@
                 <div class="unsnap"></div>
                 <div>
                   <table id="scm-repository-table"
-                         th:attr="data-def='pre-sort=2-asc, pre-filled, datakeys-id=repository-id, ajaxsource='+@{/administration/scm-repositories}">
+                         th:attr="data-def='pre-sort=2-asc, pre-filled, datakeys-id=repository-id, ajaxsource='+@{/administration/scm-server/__${scmServer.id}__/repositories}">
                     <thead>
                     <tr>
                       <th th:attr="data-def='invisible, map=repository-id'" class="not-displayed">Id</th>

@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.service.internal.scmserver;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.scm.ScmRepository;
@@ -45,4 +48,8 @@ public class ScmRepositoryManagerServiceImpl implements ScmRepositoryManagerServ
 		return scmRepositoryDao.findByScmServerIdOrderByRepositoryPathAsc(scmServerId);
 	}
 
+	@Override
+	public Page<ScmRepository> findPagedScmRepositoriesByScmServer(Long scmServerId, Pageable pageable) {
+		return scmRepositoryDao.findByScmServerId(scmServerId, pageable);
+	}
 }
