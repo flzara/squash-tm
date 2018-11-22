@@ -161,12 +161,12 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 				  transmittedTime = table.find(".tp-th-transmittedon");
 
 			_createCombo(formatCombo, "#filter-mode-combo", model.tcKinds);
-			_createCombo(statusCombo, "#filter-mode-combo", model.autoReqStatuses);
+			//_createCombo(statusCombo, "#filter-mode-combo", model.autoReqStatuses);
 
 			var users = initConf.testers;
 			var globalAssigned = model.assignableUsersGlobalView;
-			_createCombo(assignedToCombo, "#filter-mode-combo", globalAssigned);
-			_createCombo(userCombo, "#filter-mode-combo", users);
+			//_createCombo(assignedToCombo, "#filter-mode-combo", globalAssigned);
+			//_createCombo(userCombo, "#filter-mode-combo", users);
 
 			var self = this;
 			_createTimePicker(transmittedTime);

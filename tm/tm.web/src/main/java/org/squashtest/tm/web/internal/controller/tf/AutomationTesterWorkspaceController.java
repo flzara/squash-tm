@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
+import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.service.tf.AutomationRequestFinderService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -38,7 +39,10 @@ import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 import javax.inject.Inject;
+import java.util.Arrays;
 import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/automation-tester-workspace")
@@ -69,7 +73,9 @@ public class AutomationTesterWorkspaceController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale) {
-
+		Map<String, String> tcKinds =
+			Arrays.stream(TestCaseKind.values()).collect(Collectors.toMap(Enum::toString, e -> messageSource.internationalize(e.getI18nKey(), locale)));
+		model.addAttribute("tcKinds", tcKinds);
 		return getWorkspaceViewName();
 	}
 

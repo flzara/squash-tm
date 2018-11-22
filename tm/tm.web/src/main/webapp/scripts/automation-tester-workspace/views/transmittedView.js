@@ -102,6 +102,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "bVisible": false,
                         "aTargets": [10]
                     }],
+                    "bFilter": true,
                     fnRowCallback: function (row, data, displayIndex) {
                         var $row = $(row);
                         if ($row.find("input[type=checkbox]")[0].checked) {
@@ -154,14 +155,14 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                 self.selected = self.selected + 1;
                             }
 
-                        })
+                        });
                         self.changeNumberSelectedRows(self.selected);
                     },
 
                 }
                 var $table = $("#automation-table");
-                // datatableSettings.customKey = "transmitted";
-                // datatableSettings.testers = squashtm.app.assignableUsers;
+                datatableSettings.customKey = "transmitted";
+                datatableSettings.testers = squashtm.app.assignableUsers;
                  var fmode = filtermode.newInst(datatableSettings);
                  var smode = sortmode.newInst(datatableSettings);
                  datatableSettings.searchCols = fmode.loadSearchCols();
@@ -170,17 +171,15 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                  $table.data('sortmode', smode);
                 var sqtable = $table.squashTable(datatableSettings);
                 sqtable.toggleFiltering = function () {
-                    //fmode.toggleFilter();
+                    fmode.toggleFilter();
                 };
-                //$('.DataTables_sort_wrapper').css('height', '100%');
                 sqtable.on('change', function () {
 
                     if (sqtable.getSelectedRows().length > self.selected) {
                         self.selected = self.selected + 1;
-                    } else {
+                    } else if(sqtable.getSelectedRows().length < self.selected && self.selected !== 0) {
                         self.selected = self.selected - 1;
                     }
-
                     self.changeNumberSelectedRows(self.selected);
                 });
                 self.bindButtons();

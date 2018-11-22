@@ -245,7 +245,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
                     if (sqtable.getSelectedRows().length > self.selected) {
                         self.selected = self.selected + 1;
-                    } else {
+                    } else if (sqtable.getSelectedRows().length < self.selected && self.selected !== 0) {
                         self.selected = self.selected - 1;
                     }
 
