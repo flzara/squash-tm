@@ -192,6 +192,18 @@
           </div>
         </div>
 
+        <!---- RENAME POPUP ---->
+        <div id="rename-scm-server-popup" class="not-displayed popup-dialog" th:title="#{title.RenameServer}">
+          <label for="rename-scm-server-input" th:text="#{ label.Rename }">Rename</label>
+          <input type="text" id="rename-scm-server-input" maxlength="255" size="50"/>
+          <br/>
+          <span class="error-message name-error"></span>
+          <div class="popup-dialog-buttonpane">
+            <input type="button" value="ok" th:value="#{label.Confirm}" data-def="evt=confirm, mainbtn"/>
+            <input type="button" value="cl" th:value="#{label.Cancel}" data-def="evt=cancel"/>
+          </div>
+        </div>
+
         <!---- ADD POPUP ----->
         <div id="add-scm-repository-popup" class="not-displayed popup-dialog form-horizontal"
              title="Add a new Scm Repository" th:title="#{title.newScmRepository}">
@@ -232,18 +244,38 @@
           </div>
         </div>
 
-        <!---- RENAME POPUP ---->
-        <div id="rename-scm-server-popup" class="not-displayed popup-dialog" th:title="#{title.RenameServer}">
-          <label for="rename-scm-server-input" th:text="#{ label.Rename }">Rename</label>
-          <input type="text" id="rename-scm-server-input" maxlength="255" size="50"/>
-          <br/>
-          <span class="error-message name-error"></span>
+        <!---- DELETE Popup ---->
+        <div id="delete-scm-repository-popup" class="not-displayed popup-dialog"
+             title="Delete a Scm Repository" th:title="#{title.deleteScmRepository}">
+          <div class="display-table-row">
+            <div class="display-table-cell warning-cell">
+              <div class="generic-error-signal"></div>
+            </div>
+            <div class="display-table-cell">
+              <!-------- Case 1 - The Repository is bound to no Project -------->
+              <div data-def="state=default">
+                <p th:text="#{message.scmRepository.delete.confirm}">
+                  Confirmez-vous la suppression de ce dépôt ?
+                </p>
+              </div>
+              <!-------- Case 2- The Repository is bound to at least one Project -------->
+              <div data-def="state=bound-to-project">
+                <p>
+                    <span th:text="#{message.scmRepository.boundToTmProject}">
+                      Ce dépôt est associé à au moins un Projet TM.
+                    </span>
+                </p>
+                <p th:text="#{message.scmRepository.delete.confirm}">
+                  Confirmez-vous la suppression de ce dépôt ?
+                </p>
+              </div>
+            </div>
+          </div>
           <div class="popup-dialog-buttonpane">
-            <input type="button" value="ok" th:value="#{label.Confirm}" data-def="evt=confirm, mainbtn"/>
-            <input type="button" value="cl" th:value="#{label.Cancel}" data-def="evt=cancel"/>
+            <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm"/>
+            <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
           </div>
         </div>
-
       </div>
     </div>
   </div>

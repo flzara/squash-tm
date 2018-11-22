@@ -130,4 +130,12 @@ class ScmRepositoryManagerServiceTest extends Specification {
 			createdRepo == repo
 	}
 
+	def "#deleteScmrepositories(Collection<Long>) - [Nominal] - Should delete several ScmRepositories"() {
+		given: "Mock data"
+			Collection<Long> repoIds = [14, 5, 9]
+		when:
+			scmRepositoryManagerService.deleteScmRepositories(repoIds)
+		then:
+			1 * scmRepositoryDao.deleteByIds(repoIds)
+	}
 }

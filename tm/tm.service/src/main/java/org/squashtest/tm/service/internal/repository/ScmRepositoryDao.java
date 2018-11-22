@@ -23,8 +23,12 @@ package org.squashtest.tm.service.internal.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.scm.ScmRepository;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface ScmRepositoryDao extends JpaRepository<ScmRepository, Long> {
@@ -42,4 +46,12 @@ public interface ScmRepositoryDao extends JpaRepository<ScmRepository, Long> {
 	 * @return The Page of the ScmRepositories contained in the given ScmServer built according the given Pageable.
 	 */
 	Page<ScmRepository> findByScmServerId(Long scmServerId, Pageable pageable);
+	/**
+	 * Delete the ScmRepositories with the given Ids.
+	 * @param scmRepositoriesIds The Ids of the ScmRepositories to delete.
+	 */
+	@Query
+	@Modifying
+	void deleteByIds(@Param("scmRepositoriesIds") Collection<Long> scmRepositoriesIds);
+
 }

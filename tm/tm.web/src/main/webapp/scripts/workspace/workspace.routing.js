@@ -182,6 +182,7 @@ define([], function(){
 		'administration.scm-servers' : root + '/administration/scm-servers',
 		'administration.scm-servers.delete' : root + '/administration/scm-servers/{\\d+}',
 		'administration.scm-server.repositories' : root + '/administration/scm-server/{\\d+}/repositories',
+		'administration.scm-repositories.delete' : root + '/administration/scm-repositories/{\\d+}',
 		'administration.bugtrackers'	:	root + '/administration/bugtrackers',
 		'customfield.values' :				root + '/custom-fields/values',
 		'customfield.values.get' :			root + '/custom-fields/values?boundEntityId={\\d+}&boundEntityType={[A-Z_]+}',

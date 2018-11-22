@@ -24,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.squashtest.tm.domain.scm.ScmRepository;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface ScmRepositoryManagerService {
@@ -34,7 +35,6 @@ public interface ScmRepositoryManagerService {
 	 * @return The List of the ScmRepositories contained in the given ScmServer ordered by path.
 	 */
 	List<ScmRepository> findByScmServerOrderByPath(Long scmServerId);
-
 	/**
 	 * Find the ScmRepositories contained in the ScmServer with the given Id, formatted as a Page to comply the given Pageable.
 	 * @param scmServerId The Id of the ScmServer containing the wanted ScmRepositories.
@@ -48,4 +48,9 @@ public interface ScmRepositoryManagerService {
 	 * @return The ScmRepository newly created.
 	 */
 	ScmRepository createNewScmRepository(ScmRepository newScmRepository);
+	/**
+	 * Delete the ScmRepositories with the given Ids.
+	 * @param scmRepositoriesIds The Ids of the ScmRepositories to delete.
+	 */
+	void deleteScmRepositories(Collection<Long> scmRepositoriesIds);
 }

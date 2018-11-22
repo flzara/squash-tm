@@ -31,6 +31,7 @@ import org.squashtest.tm.service.scmserver.ScmRepositoryManagerService;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.util.Collection;
 import java.util.List;
 
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
@@ -56,5 +57,11 @@ public class ScmRepositoryManagerServiceImpl implements ScmRepositoryManagerServ
 	@Override
 	public ScmRepository createNewScmRepository(ScmRepository newScmRepository) {
 		return scmRepositoryDao.save(newScmRepository);
+	}
+
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public void deleteScmRepositories(Collection<Long> scmRepositoriesIds) {
+		scmRepositoryDao.deleteByIds(scmRepositoriesIds);
 	}
 }

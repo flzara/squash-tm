@@ -1043,8 +1043,9 @@
 
 	// ScmServers
 	@NamedQuery(name="ScmServer.isServerNameAlreadyInUse", query="select case when (count(s) > 0) then true else false end from ScmServer s where s.name = :name"),
-	@NamedQuery(name="ScmServer.deleteByIds", query="delete from ScmServer s where s.id in (:scmServerIds)")
-
+	@NamedQuery(name="ScmServer.deleteByIds", query="delete from ScmServer s where s.id in (:scmServerIds)"),
+	// ScmRepositories
+	@NamedQuery(name="ScmRepository.deleteByIds", query="delete from ScmRepository r where r.id in (:scmRepositoriesIds)")
 
 })
 //@formatter:on

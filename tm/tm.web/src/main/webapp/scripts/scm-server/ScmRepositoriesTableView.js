@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'backbone', 'squash.translator', './AddScmRepositoryDialog', 'squashtable'],
-	function($, Backbone, translator, AddScmRepositoryDialog) {
+define(['jquery', 'backbone', 'squash.translator', './AddScmRepositoryDialog', './DeleteScmRepositoryDialog', 'squashtable'],
+	function($, Backbone, translator, AddScmRepositoryDialog, DeleteScmRepositoryDialog) {
 	"use strict";
 
 	var ScmRepositoriesTableView = Backbone.View.extend({
@@ -32,6 +32,7 @@ define(['jquery', 'backbone', 'squash.translator', './AddScmRepositoryDialog', '
 		initialize: function() {
 			let table = this.initTable();
 			this.AddScmRepositoryDialog = new AddScmRepositoryDialog(table);
+			this.DeleteScmRepositoryDialog = new DeleteScmRepositoryDialog(table);
 		},
 
 		initTable: function() {
