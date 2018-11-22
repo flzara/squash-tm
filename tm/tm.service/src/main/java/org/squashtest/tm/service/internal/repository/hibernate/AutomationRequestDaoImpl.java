@@ -21,29 +21,21 @@
 package org.squashtest.tm.service.internal.repository.hibernate;
 
 
-import com.google.common.base.Predicates;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.hibernate.HibernateQuery;
-import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
-import org.jooq.impl.DSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.SimpleColumnFiltering;
 import org.squashtest.tm.domain.IdCollector;
-import org.squashtest.tm.domain.audit.AuditableMixin;
-import org.squashtest.tm.domain.audit.QAuditableSupport;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQueryFactory;
 import org.squashtest.tm.domain.project.QProject;
 import org.squashtest.tm.domain.testcase.QTestCase;
@@ -54,7 +46,7 @@ import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.domain.tf.automationrequest.QAutomationRequest;
 import org.squashtest.tm.domain.users.QUser;
 import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.jooq.domain.tables.CoreUser;
+import org.squashtest.tm.exception.tf.IllegalAutomationRequestStatusException;
 import org.squashtest.tm.service.internal.repository.CustomAutomationRequestDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 
@@ -72,6 +64,8 @@ import java.util.function.Consumer;
 public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AutomationRequestDaoImpl.class);
+
+	private static final String ILLEGAL_STATUS = "One or more AutomationRequest do not have the expected status";
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -205,30 +199,67 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	}
 
 	@Override
+	public Map<Long, String> getUsersCreatedTestCase(List<String> automationRequestStatus, List<Long> readablesProject) {
+
+		return DSL.selectDistinct(CORE_USER.PARTY_ID, CORE_USER.LOGIN)
+			.from(CORE_USER)
+			.innerJoin(TEST_CASE_LIBRARY_NODE).on(TEST_CASE_LIBRARY_NODE.CREATED_BY.eq(CORE_USER.LOGIN))
+			.innerJoin(AUTOMATION_REQUEST).on(AUTOMATION_REQUEST.TEST_CASE_ID.eq(TEST_CASE_LIBRARY_NODE.TCLN_ID))
+			.where(TEST_CASE_LIBRARY_NODE.PROJECT_ID.in(readablesProject)
+				.and(AUTOMATION_REQUEST.REQUEST_STATUS.in(automationRequestStatus))
+				.and(TEST_CASE_LIBRARY_NODE.LAST_MODIFIED_BY.isNull()))
+			.union(
+				DSL.selectDistinct(CORE_USER.PARTY_ID, CORE_USER.LOGIN)
+				.from(CORE_USER)
+					.innerJoin(TEST_CASE_LIBRARY_NODE).on(TEST_CASE_LIBRARY_NODE.CREATED_BY.eq(CORE_USER.LOGIN))
+					.innerJoin(AUTOMATION_REQUEST).on(AUTOMATION_REQUEST.TEST_CASE_ID.eq(TEST_CASE_LIBRARY_NODE.TCLN_ID))
+					.where(TEST_CASE_LIBRARY_NODE.PROJECT_ID.in(readablesProject)
+					.and(AUTOMATION_REQUEST.REQUEST_STATUS.in(automationRequestStatus))
+					.and(TEST_CASE_LIBRARY_NODE.LAST_MODIFIED_BY.eq(CORE_USER.LOGIN))))
+			.fetchMap(CORE_USER.PARTY_ID, CORE_USER.LOGIN);
+
+	}
+
+	@Override
 	public void updateAutomationRequestToAssigned(User user, List<Long> ids) {
-		entityManager.createQuery("UPDATE AutomationRequest req SET req.requestStatus = :reqStatus," +
-			" req.assignedTo = :user, req.assignmentDate = :assignedOn WHERE req.id in :ids")
+		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest req SET req.requestStatus = :reqStatus," +
+			" req.assignedTo = :user, req.assignmentDate = :assignedOn WHERE req.id in :ids ")
 			.setParameter("reqStatus", AutomationRequestStatus.WORK_IN_PROGRESS)
+			.setParameter("reqStatusInitial", Arrays.asList(AutomationRequestStatus.TRANSMITTED, AutomationRequestStatus.WORK_IN_PROGRESS, AutomationRequestStatus.EXECUTABLE))
 			.setParameter("user", user)
 			.setParameter("assignedOn", new Timestamp(new Date().getTime()))
 			.setParameter("ids", ids).executeUpdate();
 
+		if(ids.size() != automationRequestUpdates) {
+			throw new IllegalAutomationRequestStatusException(ILLEGAL_STATUS);
+		}
 	}
 
 	@Override
 	public void updateAutomationRequestNotAutomatable(List<Long> ids) {
-		entityManager.createQuery("UPDATE AutomationRequest req SET req.requestStatus = :reqStatus WHERE req.id in :ids")
+		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest req SET req.requestStatus = :reqStatus WHERE req.id in :ids and req.requestStatus = :reqStatusInitial")
 			.setParameter("reqStatus", AutomationRequestStatus.NOT_AUTOMATABLE)
+			.setParameter("reqStatusInitial", AutomationRequestStatus.TRANSMITTED)
 			.setParameter("ids", ids)
 			.executeUpdate();
+
+		if(ids.size() != automationRequestUpdates) {
+			throw new IllegalAutomationRequestStatusException(ILLEGAL_STATUS);
+		}
 	}
 
 	@Override
 	public void updateStatusToExecutable(List<Long> ids) {
-		entityManager.createQuery("UPDATE AutomationRequest req SET req.requestStatus = :reqStatus, req.assignmentDate = NULL, req.assignedTo = NULL WHERE req.id in :ids")
+		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest req SET req.requestStatus = :reqStatus," +
+			" req.assignmentDate = NULL, req.assignedTo = NULL WHERE req.id in :ids and req.requestStatus = :reqStatusInitial")
 			.setParameter("reqStatus", AutomationRequestStatus.EXECUTABLE)
+			.setParameter("reqStatusInitial", AutomationRequestStatus.WORK_IN_PROGRESS)
 			.setParameter("ids", ids)
 			.executeUpdate();
+
+		if(ids.size() != automationRequestUpdates) {
+			throw new IllegalAutomationRequestStatusException(ILLEGAL_STATUS);
+		}
 	}
 
 	@Override
@@ -254,6 +285,33 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 			.from(AUTOMATION_REQUEST)
 			.where(AUTOMATION_REQUEST.TEST_CASE_ID.in(tcIds))
 			.fetch(AUTOMATION_REQUEST.AUTOMATION_REQUEST_ID);
+	}
+
+	@Override
+	public void updateStatusToTransmitted(List<Long> reqIds, User transmittedBy) {
+		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest ar SET ar.transmissionDate = :transmittedOn, " +
+			"ar.requestStatus = :requestStatus, ar.transmittedBy = :transmittedBy where ar.id in :requestIds")
+			.setParameter("transmittedOn", new Timestamp(new Date().getTime()))
+			.setParameter("requestStatus", AutomationRequestStatus.TRANSMITTED)
+			.setParameter("transmittedBy", transmittedBy)
+			.setParameter("requestIds", reqIds).executeUpdate();
+
+			if(reqIds.size() != automationRequestUpdates) {
+				throw new IllegalAutomationRequestStatusException(ILLEGAL_STATUS);
+			}
+	}
+
+	@Override
+	public void updateStatusToValidate(List<Long> reqIds) {
+		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest ar SET ar.transmissionDate = NULL, " +
+			"ar.requestStatus = :requestStatus, ar.transmittedBy = NULL where ar.id in :requestIds and ar.requestStatus = :requestInitialStatus")
+			.setParameter("requestStatus", AutomationRequestStatus.TO_VALIDATE)
+			.setParameter("requestInitialStatus", AutomationRequestStatus.VALID)
+			.setParameter("requestIds", reqIds).executeUpdate();
+
+		if(reqIds.size() != automationRequestUpdates) {
+			throw new IllegalAutomationRequestStatusException(ILLEGAL_STATUS);
+		}
 	}
 
 	private Page<AutomationRequest> innerFindAll(Pageable pageable, ColumnFiltering filtering, FilterOverride filterOverride, Collection<Long> inProjectIds){
@@ -283,6 +341,26 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 		long count = countRequests(baseQuery);
 
 		return new PageImpl<AutomationRequest>(requests, pageable, count);
+	}
+
+	@Override
+	public Page<AutomationRequest> findAllForGlobalTester(Pageable pageable, ColumnFiltering filtering, Collection<Long> inProjectIds) {
+		LOGGER.debug("searching for automation requests, paged and filtered");
+
+		ColumnFiltering filterWithAssignee;
+
+		if (filtering.getFilter("requestStatus").isEmpty()) {
+			filterWithAssignee = new SimpleColumnFiltering(filtering).addFilter("requestStatus", AutomationRequestStatus.OBSOLETE.toString() + ";"
+				+ AutomationRequestStatus.NOT_AUTOMATABLE.toString() + ";" + AutomationRequestStatus.TO_VALIDATE.toString());
+			return innerFindAll(pageable, filterWithAssignee, (converter) -> {
+				converter.compare("requestStatus").withIn();
+			}, inProjectIds);
+		} else  {
+			filterWithAssignee = new SimpleColumnFiltering(filtering);
+			return innerFindAll(pageable, filterWithAssignee, (converter) -> {
+				converter.compare("requestStatus").withEquality();
+			}, inProjectIds);
+		}
 	}
 
 

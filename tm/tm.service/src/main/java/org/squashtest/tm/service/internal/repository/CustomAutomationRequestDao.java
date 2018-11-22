@@ -24,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.domain.users.User;
 
 import java.util.Collection;
@@ -128,5 +129,13 @@ public interface CustomAutomationRequestDao {
 	void updatePriority(List<Long> tcIds, Integer priority);
 
 	List<Long> getReqIdsByTcIds(List<Long> tcIds);
+
+	void updateStatusToTransmitted(List<Long> reqIds, User transmittedBy);
+
+	void updateStatusToValidate(List<Long> reqIds);
+
+	Map<Long, String> getUsersCreatedTestCase(List<String> automationRequestStatus, List<Long> readablesProject);
+
+	Page<AutomationRequest> findAllForGlobalTester(Pageable pageable, ColumnFiltering filtering, Collection<Long> inProjectIds);
 
 }

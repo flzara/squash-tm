@@ -34,6 +34,7 @@ import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.tf.AutomationRequestFinderService;
 import org.squashtest.tm.service.user.UserManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -65,6 +66,9 @@ public class AutomationWorkspaceController {
 	@Inject
 	private InternationalizationHelper messageSource;
 
+	@Inject
+	private PermissionEvaluationService permissionEvaluationService;
+
 	private final DatatableMapper<String> automationRequestMapper = new NameBasedMapper()
 		.map(DataTableModelConstants.PROJECT_NAME_KEY, "testCase.project.name")
 		.map("reference", "testCase.reference")
@@ -79,8 +83,7 @@ public class AutomationWorkspaceController {
 		.map("script", "testCase.automatedTest.name")
 		.map("entity-index", "index(AutomationRequest)")
 		.map("requestId", "id")
-		.map("assigned-to", "assignedTo")
-		.map("status", "requestStatus");
+		.map("assigned-to", "assignedTo");
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale) {
@@ -125,7 +128,7 @@ public class AutomationWorkspaceController {
 		ColumnFiltering filtering = new DataTableColumnFiltering(params, automationRequestMapper);
 		Page<AutomationRequest> automationRequestPage = automationRequestFinderService.findRequestsAssignedToCurrentUser(pageable, filtering);
 
-		return new AutomationRequestDataTableModelHelper(messageSource).buildDataModel(automationRequestPage, "");
+		return new AutomationRequestDataTableModelHelper(messageSource, permissionEvaluationService).buildDataModel(automationRequestPage, "");
 	}
 
 	@RequestMapping(value="automation-requests/traitment", params = RequestParams.S_ECHO_PARAM)
@@ -136,7 +139,7 @@ public class AutomationWorkspaceController {
 		ColumnFiltering filtering = new DataTableColumnFiltering(params, automationRequestMapper);
 		Page<AutomationRequest> automationRequestPage = automationRequestFinderService.findRequestsWithTransmittedStatus(pageable, filtering);
 
-		return new AutomationRequestDataTableModelHelper(messageSource).buildDataModel(automationRequestPage, "");
+		return new AutomationRequestDataTableModelHelper(messageSource, permissionEvaluationService).buildDataModel(automationRequestPage, "");
 	}
 
 	@RequestMapping(value="automation-requests/global", params = RequestParams.S_ECHO_PARAM)
@@ -147,7 +150,7 @@ public class AutomationWorkspaceController {
 		ColumnFiltering filtering = new DataTableColumnFiltering(params, automationRequestMapper);
 		Page<AutomationRequest> automationRequestPage = automationRequestFinderService.findRequestsForGlobal(pageable, filtering);
 
-		return new AutomationRequestDataTableModelHelper(messageSource).buildDataModel(automationRequestPage, "");
+		return new AutomationRequestDataTableModelHelper(messageSource, permissionEvaluationService).buildDataModel(automationRequestPage, "");
 	}
 
 

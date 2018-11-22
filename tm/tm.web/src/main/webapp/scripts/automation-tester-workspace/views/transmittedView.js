@@ -31,7 +31,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 this.render();
                 var self = this;
                 var datatableSettings = {
-                    sAjaxSource: squashtm.app.contextRoot + "automation-tester-workspace/transmitted",
+                    sAjaxSource: squashtm.app.contextRoot + "automation-tester-workspace/automation-request/transmitted",
                     "iDisplayLength": 25,
                     "bDeferRender": true,
                     "aaSorting": [[7, "desc"], [5, "desc"]],
@@ -72,9 +72,20 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }, {
                         "bSortable": false,
                         "aTargets": [8],
-                        "mDataProp": "tc-id",
+                        "mDataProp": "writable",
                         "sClass": "centered",
-                        "sWidth": "2.5em"
+                        "sWidth": "2.5em",
+                        "mRender": function (data, type, row) {
+
+                            var render = "";
+                            if(data) {
+                                render = "<a class='table-button edit-pencil'></a>"
+                            } else {
+                                render = '<a href="' + squashtm.app.contextRoot + 'test-cases/' + row["entity-id"] + '/info"><img src="/squash/images/icon-lib/eye.png"></a>'
+                            }
+
+                            return render;
+                        }
                     }, {
                         "bSortable": false,
                         "aTargets": [9],
@@ -109,7 +120,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight")
                         }
                         $row.on("change", "input[type=checkbox]", function () {
-                            
+
                             if (this.checked) {
                                 $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight")
                             } else {
@@ -138,11 +149,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
                             }
                         })
-                        
-                        // var cell = $row.find('.assigned-script');
-                        // var entityId = data["entity-id"];
-                        // var url = squashtm.app.contextRoot + 'test-cases/' + entityId + '/test-automation/tests';
-                        // cell.editable(url, editable);
                     },
 
                     fnDrawCallback: function () {
@@ -162,13 +168,13 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 }
                 var $table = $("#automation-table");
                 datatableSettings.customKey = "transmitted";
-                datatableSettings.testers = squashtm.app.assignableUsers;
-                 var fmode = filtermode.newInst(datatableSettings);
-                 var smode = sortmode.newInst(datatableSettings);
-                 datatableSettings.searchCols = fmode.loadSearchCols();
-                 datatableSettings.aaSorting = smode.loadaaSorting();
-                 $table.data('filtermode', fmode);
-                 $table.data('sortmode', smode);
+                datatableSettings.testers = squashtm.app.testerTransmitted;
+                var fmode = filtermode.newInst(datatableSettings);
+                var smode = sortmode.newInst(datatableSettings);
+                datatableSettings.searchCols = fmode.loadSearchCols();
+                datatableSettings.aaSorting = smode.loadaaSorting();
+                $table.data('filtermode', fmode);
+                $table.data('sortmode', smode);
                 var sqtable = $table.squashTable(datatableSettings);
                 sqtable.toggleFiltering = function () {
                     fmode.toggleFilter();
@@ -177,7 +183,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
                     if (sqtable.getSelectedRows().length > self.selected) {
                         self.selected = self.selected + 1;
-                    } else if(sqtable.getSelectedRows().length < self.selected && self.selected !== 0) {
+                    } else if (sqtable.getSelectedRows().length < self.selected && self.selected !== 0) {
                         self.selected = self.selected - 1;
                     }
                     self.changeNumberSelectedRows(self.selected);
@@ -197,23 +203,26 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     var tcId = parseInt($('.entity_id', row).text(), 10);
                     ids.push(tcId);
                     var $row = $(row);
-                    var checkbox = $row.find("input[type=checkbox]")
-                    checkbox[0].checked = true
-                    var store = self.storage.get(self.key);
-                    if (store === undefined) {
-                        var tab = [];
-                        tab.push(tcId)
-                        self.storage.set(self.key, tab);
-                    } else {
-                        if (checkbox[0].checked) {
-                            store.push(tcId);
-
+                    var checkbox = $row.find("input[type=checkbox]");
+                    if (checkbox[0] !== undefined) {
+                        checkbox[0].checked = true
+                        var store = self.storage.get(self.key);
+                        if (store === undefined) {
+                            var tab = [];
+                            tab.push(tcId)
+                            self.storage.set(self.key, tab);
                         } else {
-                            var idx = store.indexOf(tcId);
-                            store.splice(idx, 1);
+                            if (checkbox[0].checked) {
+                                store.push(tcId);
+
+                            } else {
+                                var idx = store.indexOf(tcId);
+                                store.splice(idx, 1);
+                            }
+                            self.storage.set(self.key, store);
                         }
-                        self.storage.set(self.key, store);
                     }
+
 
                 })
                 table.selectRows(ids);
@@ -226,8 +235,9 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 $(rows).each(function (index, row) {
                     var $row = $(row);
                     var checkbox = $row.find("input[type=checkbox]");
-                    checkbox[0].checked = false
-
+                    if(checkbox[0] !== undefined) {
+                        checkbox[0].checked = false
+                    }
                 })
 
                 this.storage.remove(this.key);
@@ -268,51 +278,52 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 })
                 return scripts;
             },
+
+            changeStatus: function (ids, status, table) {
+                $.ajax({
+                    url: squashtm.app.contextRoot + 'automation-requests/' + ids,
+                    method: 'POST',
+                    data: {
+                        "id": "automation-request-status",
+                        "value": status
+                    }
+                }).success(function () {
+                    table.refresh();
+                });
+            },
+
             bindButtons: function () {
                 var self = this;
                 var domtable = $("#automation-table").squashTable();
                 $("#filter-affected-button").on("click", function () {
                     domtable.toggleFiltering();
                 });
+
                 $("#select-affected-button").on("click", function () {
                     self.selectAll(domtable);
                 });
+
                 $("#deselect-affected-button").on("click", function () {
                     self.deselectAll(domtable);
                 });
+
                 $("#no-valid-button").on("click", function () {
                     var requestIds = self.getSelectedRequestIds(domtable);
                     if (requestIds.length === 0 || requestIds === undefined) {
                         notification.showWarning(translator.get("automation.notification.selectedRow.none"));
                     } else {
+                        self.changeStatus(requestIds, "TO_VALIDATE", domtable);
 
-                        $.ajax({
-                            url: squashtm.app.contextRoot + 'automation-requests/desassigned/' + requestIds,
-                            method: 'POST'
-                        }).success(function () {
-                            domtable.refresh();
-                        });
                     }
                     self.storage.remove(self.key);
                 });
+
                 $("#transmitted-button").on("click", function () {
                     var requestIds = self.getSelectedRequestIds(domtable);
-                    var scripts = self.checkScriptAutoIsPresent(domtable);
                     if (requestIds.length === 0 || requestIds === undefined) {
                         notification.showWarning(translator.get("automation.notification.selectedRow.none"));
-                    } else if (scripts.length !== 0) {
-                        notification.showWarning(translator.get("automation.notification.script.none"));
                     } else {
-                        $.ajax({
-                            url: squashtm.app.contextRoot + 'automation-requests/' + requestIds,
-                            method: 'POST',
-                            data: {
-                                "id": "automation-request-status",
-                                "value": "EXECUTABLE"
-                            }
-                        }).success(function () {
-                            domtable.refresh();
-                        });
+                        self.changeStatus(requestIds, "TRANSMITTED", domtable);
                     }
                     self.storage.remove(self.key);
 

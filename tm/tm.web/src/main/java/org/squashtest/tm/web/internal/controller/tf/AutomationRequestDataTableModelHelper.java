@@ -21,29 +21,37 @@
 package org.squashtest.tm.web.internal.controller.tf;
 
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
+import org.squashtest.tm.service.internal.security.AclPermissionEvaluationService;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 
+import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+@Component
 public class AutomationRequestDataTableModelHelper extends DataTableModelBuilder<AutomationRequest> {
 	private InternationalizationHelper messageSource;
 	private Locale locale = LocaleContextHolder.getLocale();
+	private PermissionEvaluationService permissionEvaluationService;
 
-	public AutomationRequestDataTableModelHelper(InternationalizationHelper messageSource) {
-		this.messageSource = messageSource;;
+
+	public AutomationRequestDataTableModelHelper(InternationalizationHelper messageSource, PermissionEvaluationService permissionEvaluationService) {
+		this.messageSource = messageSource;
+		this.permissionEvaluationService = permissionEvaluationService;
 	}
 
 	@Override
 	protected Object buildItemData(AutomationRequest item) {
 		final AuditableMixin auditable = (AuditableMixin) item.getTestCase();
-		Map<String, Object> data = new HashMap<>(14);
+		Map<String, Object> data = new HashMap<>(15);
 		data.put(DataTableModelConstants.PROJECT_NAME_KEY, item.getTestCase() != null ? HtmlUtils.htmlEscape(item.getTestCase().getProject().getName()): null);
 		data.put("reference", (item.getTestCase() != null && !item.getTestCase().getReference().isEmpty()) ? item.getTestCase().getReference(): "-");
 		data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, item.getTestCase() != null ? HtmlUtils.htmlEscape(item.getTestCase().getName()): null);
@@ -60,6 +68,8 @@ public class AutomationRequestDataTableModelHelper extends DataTableModelBuilder
 		data.put("requestId", item.getId());
 		data.put("assigned-to", item.getAssignedTo() != null ? item.getAssignedTo().getLogin() : "-");
 		data.put("status", messageSource.internationalize(item.getRequestStatus().getI18nKey(), locale));
+		data.put("writable", permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", item.getTestCase()));
+
 		return data;
 	}
 

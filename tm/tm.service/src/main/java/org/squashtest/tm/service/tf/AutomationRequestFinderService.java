@@ -136,4 +136,21 @@ public interface AutomationRequestFinderService {
 
 	List<User> getAssignedToForAutomationRequests();
 
+	/**
+	 *
+	 * @param requestStatus
+	 * @return
+	 */
+	Map<Long, String> getCreatedByForTester(List<String> requestStatus);
+
+	/**
+	 * Given the specified pagination, sorting and filtering, retrieve the corresponding
+	 * requests, restricted to the automated requests with these status : OBSOLETE, TO_VALIDATE, NOT_AUTOMATABLE
+	 *
+	 * @param pageable
+	 * @param filtering
+	 * @return
+	 */
+	Page<AutomationRequest> findRequestsForGlobalTestView(Pageable pageable, ColumnFiltering filtering);
+
 }

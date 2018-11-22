@@ -30,6 +30,8 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.exception.tf.IllegalAutomationRequestStatusException;
+import org.squashtest.tm.security.acls.CustomPermission;
 import org.squashtest.tm.service.internal.repository.AutomationRequestDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.project.ProjectFinder;
@@ -51,7 +53,11 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 	private static final String CAN_READ_TESTCASE_OR_ADMIN = "hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')" + Authorizations.OR_HAS_ROLE_ADMIN;
 
-	private static final String CAN_WRITE_REQUEST_OR_ADMIN = "hasPermission(#reqIds, 'org.squashtest.tm.domain.tf.automationrequest.AutomationRequest', 'WRITE') " + Authorizations.OR_HAS_ROLE_ADMIN;
+	private static final String STATUS_NOT_PERMITTED = "Unknown status";
+
+	private static final String WRITE_AS_FUNCTIONAL = "WRITE_AS_FUNCTIONAL";
+
+	private static final String WRITE_AS_AUTOMATION = "WRITE_AS_AUTOMATION";
 
 	@Inject
 	private AutomationRequestDao requestDao;
@@ -170,27 +176,48 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 		User user = userDao.findUserByLogin(username);
 		switch (automationRequestStatus) {
 			case NOT_AUTOMATABLE:
-				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, "WRITE_AS_AUTOMATION", AutomationRequest.class.getName());
+				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_AUTOMATION, AutomationRequest.class.getName());
 				requestDao.updateAutomationRequestNotAutomatable(reqIds);
 				break;
 			case WORK_IN_PROGRESS:
-				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, "WRITE_AS_AUTOMATION", AutomationRequest.class.getName());
+				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_AUTOMATION, AutomationRequest.class.getName());
 				requestDao.updateAutomationRequestToAssigned(user, reqIds);
 				break;
 			case EXECUTABLE:
-				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, "WRITE_AS_AUTOMATION", AutomationRequest.class.getName());
+				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_AUTOMATION, AutomationRequest.class.getName());
 				requestDao.updateStatusToExecutable(reqIds);
 				break;
+			case TRANSMITTED:
+				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_FUNCTIONAL, AutomationRequest.class.getName());
+				requestDao.updateStatusToTransmitted(reqIds, user);
+				break;
+			case TO_VALIDATE:
+				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_FUNCTIONAL, AutomationRequest.class.getName());
+				requestDao.updateStatusToValidate(reqIds);
+				break;
 				default:
-					break;
+					throw new IllegalAutomationRequestStatusException(STATUS_NOT_PERMITTED);
 		}
 	}
 
 	@Override
 	public void changePriority(List<Long> tcIds, Integer priority) {
 		List<Long> reqIds = requestDao.getReqIdsByTcIds(tcIds);
-		PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, "WRITE_AS_FUNCTIONAL", AutomationRequest.class.getName());
+		PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_FUNCTIONAL, AutomationRequest.class.getName());
 		requestDao.updatePriority(tcIds, priority);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Map<Long, String> getCreatedByForTester(List<String> requestStatus) {
+		List<Long> projectIds = projectFinder.findAllReadableIds();
+		return requestDao.getUsersCreatedTestCase(requestStatus, projectIds);
+	}
+
+	@Override
+	public Page<AutomationRequest> findRequestsForGlobalTestView(Pageable pageable, ColumnFiltering filtering) {
+		List<Long> projectIds = projectFinder.findAllReadableIds();
+		return requestDao.findAllForGlobalTester(pageable,filtering, projectIds);
 	}
 
 	// **************************** boiler plate code *************************************

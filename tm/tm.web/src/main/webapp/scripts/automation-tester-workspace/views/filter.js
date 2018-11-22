@@ -154,19 +154,28 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 			$('.tp-th-label .th_input').css('width', '90%');
 
 			var userCombo = table.find(".tp-th-createdby"),
-				  formatCombo = table.find(".tp-th-format"),
-					statusCombo = table.find(".tp-th-status"),
-					assignedToCombo = table.find(".tp-th-assignedto"),
-				  assignedTime = table.find(".tp-th-affectedon"),
-				  transmittedTime = table.find(".tp-th-transmittedon");
+				formatCombo = table.find(".tp-th-format"),
+				statusCombo = table.find(".tp-th-status"),
+				assignedToCombo = table.find(".tp-th-assignedto"),
+				assignedTime = table.find(".tp-th-affectedon"),
+				transmittedTime = table.find(".tp-th-transmittedon");
 
-			_createCombo(formatCombo, "#filter-mode-combo", model.tcKinds);
-			//_createCombo(statusCombo, "#filter-mode-combo", model.autoReqStatuses);
+			if(userCombo.length !== 0) {
+				var users = initConf.testers;
+				_createCombo(userCombo, "#filter-mode-combo", users);
+			}
 
-			var users = initConf.testers;
-			var globalAssigned = model.assignableUsersGlobalView;
-			//_createCombo(assignedToCombo, "#filter-mode-combo", globalAssigned);
-			//_createCombo(userCombo, "#filter-mode-combo", users);
+			if(formatCombo.length !== 0) {
+				_createCombo(formatCombo, "#filter-mode-combo", model.tcKinds);
+			}
+
+			if(statusCombo.length !== 0) {
+				_createCombo(statusCombo, "#filter-mode-combo", model.autoReqStatuses);
+			}
+
+			if(assignedToCombo.length !== 0) {
+				//_createCombo(assignedToCombo, "#filter-mode-combo", model.assignableUsersGlobalView);
+			}
 
 			var self = this;
 			_createTimePicker(transmittedTime);
@@ -244,40 +253,40 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 				return this.active;
 			};
 			var allInputs = table.find(".th_input");
-				allInputs.click(function (event) {
+			allInputs.click(function (event) {
+				event.stopPropagation();
+			}).keypress(function (event) {
+				if (event.which == 13) {
 					event.stopPropagation();
-				}).keypress(function (event) {
-					if (event.which == 13) {
-						event.stopPropagation();
-						event.preventDefault();
-						event.target.blur();
-						event.target.focus();
-					}
-				});
+					event.preventDefault();
+					event.target.blur();
+					event.target.focus();
+				}
+			});
 
-				table.find("th").hover(function (event) {
-					event.stopPropagation();
-				});
+			table.find("th").hover(function (event) {
+				event.stopPropagation();
+			});
 
-				allInputs.change(function () {
-					var sTable = table.squashTable(),
-						settings = sTable.fnSettings(),
-						api = settings.oApi,
-						headers = table.find("th");
+			allInputs.change(function () {
+				var sTable = table.squashTable(),
+					settings = sTable.fnSettings(),
+					api = settings.oApi,
+					headers = table.find("th");
 
-					var visiIndex = headers.index($(this).parents("th:first")),
-						realIndex = api._fnVisibleToColumnIndex(settings, visiIndex);
+				var visiIndex = headers.index($(this).parents("th:first")),
+					realIndex = api._fnVisibleToColumnIndex(settings, visiIndex);
 
 
-					var realInput = $(this).parent().find(".filter_input").get(0);
-					sTable.fnFilter(realInput.value, realIndex);
-					self._save();
-				});
-				var state = storage.get(self.key);
-				if (state !== undefined) {
-					self.active = state.active;
-					restoreInputs(state.filter);
-				};
+				var realInput = $(this).parent().find(".filter_input").get(0);
+				sTable.fnFilter(realInput.value, realIndex);
+				self._save();
+			});
+			var state = storage.get(self.key);
+			if (state !== undefined) {
+				self.active = state.active;
+				restoreInputs(state.filter);
+			};
 		}
 
 		return {

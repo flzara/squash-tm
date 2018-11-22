@@ -31,6 +31,8 @@ import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.tf.AutomationRequestFinderService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -43,6 +45,7 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Controller
 @RequestMapping("/automation-tester-workspace")
@@ -50,6 +53,9 @@ public class AutomationTesterWorkspaceController {
 
 	@Inject
 	private InternationalizationHelper messageSource;
+
+	@Inject
+	private PermissionEvaluationService permissionEvaluationService;
 
 	@Inject
 	private AutomationRequestFinderService automationRequestFinderService;
@@ -68,14 +74,18 @@ public class AutomationTesterWorkspaceController {
 		.map("script", "testCase.automatedTest.name")
 		.map("entity-index", "index(AutomationRequest)")
 		.map("requestId", "id")
-		.map("assigned-to", "assignedTo")
-		.map("status", "requestStatus");
+		.map("assigned-to", "assignedTo");
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale) {
 		Map<String, String> tcKinds =
 			Arrays.stream(TestCaseKind.values()).collect(Collectors.toMap(Enum::toString, e -> messageSource.internationalize(e.getI18nKey(), locale)));
+		Map<String, String> autoReqStatuses =
+			Stream.of(AutomationRequestStatus.OBSOLETE, AutomationRequestStatus.TO_VALIDATE, AutomationRequestStatus.NOT_AUTOMATABLE)
+				.collect(Collectors.toMap(Enum::toString, e -> messageSource.internationalize(e.getI18nKey(), locale)));
+		model.addAttribute("autoReqStatuses", autoReqStatuses);
 		model.addAttribute("tcKinds", tcKinds);
+		model.addAttribute("testerTransmitted", automationRequestFinderService.getCreatedByForTester(Arrays.asList(AutomationRequestStatus.VALID.name())));
 		return getWorkspaceViewName();
 	}
 
@@ -87,13 +97,24 @@ public class AutomationTesterWorkspaceController {
 		return WorkspaceType.AUTOMATION_TESTER_WORKSPACE;
 	}
 
-	@RequestMapping(value="/transmitted", params = RequestParams.S_ECHO_PARAM)
+	@RequestMapping(value="/automation-request/transmitted", params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getTransmittedModel(final DataTableDrawParameters params, final Locale locale) {
 		Pageable pageable = SpringPagination.pageable(params,automationRequestMapper);
 		ColumnFiltering filtering = new DataTableColumnFiltering(params, automationRequestMapper);
 		Page<AutomationRequest> automationRequestPage = automationRequestFinderService.findRequestsToTransmitted(pageable, filtering);
 
-		return new AutomationRequestDataTableModelHelper(messageSource).buildDataModel(automationRequestPage, "");
+		return new AutomationRequestDataTableModelHelper(messageSource, permissionEvaluationService).buildDataModel(automationRequestPage, "");
+	}
+
+	@RequestMapping(value="/automation-request/global", params = RequestParams.S_ECHO_PARAM)
+	@ResponseBody
+	public DataTableModel getAutomationRequestGlobalModel(final DataTableDrawParameters params, final Locale locale) {
+
+		Pageable pageable = SpringPagination.pageable(params,automationRequestMapper);
+		ColumnFiltering filtering = new DataTableColumnFiltering(params, automationRequestMapper);
+		Page<AutomationRequest> automationRequestPage = automationRequestFinderService.findRequestsForGlobalTestView(pageable, filtering);
+
+		return new AutomationRequestDataTableModelHelper(messageSource, permissionEvaluationService).buildDataModel(automationRequestPage, "");
 	}
 }

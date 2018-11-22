@@ -57,7 +57,7 @@ public class DataTableColumnFiltering implements ColumnFiltering {
 	private void createDataPropsAutomation() {
 		Set<Entry<Integer, Object>> entries = params.getmDataProp().entrySet();
 		for (Entry<Integer, Object> entry :entries) {
-			if(!"tc-id".equals(entry.getValue()) && !"checkbox".equals(entry.getValue())) {
+			if(!"tc-id".equals(entry.getValue()) && !"checkbox".equals(entry.getValue()) && !"writable".equals(entry.getValue())) {
 				dataProps.put(mapper.getMapping(entry.getValue()), entry.getKey());
 			}
 		}

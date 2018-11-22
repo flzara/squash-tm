@@ -385,12 +385,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     self.storage.remove(self.key);
 
                 });
-
-                /*$("#btn-no-assigned").on("click", function () {
-                    location.href = "#traitment";
-                    $("#tf-traitment-tab a").addClass("tf-selected");
-                    $("#tf-assigned-tab a").removeClass("tf-selected");
-                });*/
             }
 
 
