@@ -258,7 +258,7 @@
                   Confirmez-vous la suppression de ce dépôt ?
                 </p>
               </div>
-              <!-------- Case 2- The Repository is bound to at least one Project -------->
+              <!-------- Case 2 - The Repository is bound to at least one Project -------->
               <div data-def="state=bound-to-project">
                 <p>
                     <span th:text="#{message.scmRepository.boundToTmProject}">
@@ -276,6 +276,52 @@
             <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
           </div>
         </div>
+
+        <!---- MULTIPLE DELETE Popup ---->
+        <div id="delete-scm-repositories-popup" class="not-displayed popup-dialog"
+             title="Delete a Scm Repository" th:title="#{title.deleteScmRepositories}">
+          <div class="display-table-row">
+            <div class="display-table-cell warning-cell">
+              <div class="generic-error-signal"></div>
+            </div>
+            <div class="display-table-cell">
+              <!-------- Case 1 - None of the repositories in selection are bound to a Project -------->
+              <div data-def="state=default">
+                <p th:text="#{message.scmRepositories.delete.confirm}">
+                  Confirmez-vous la suppression de ces dépôt ?
+                </p>
+              </div>
+              <!-------- Case 2 - Repositories in selection are bound to at least one Project -------->
+              <div data-def="state=bound-to-project">
+                <p>
+                  <span th:text="#{message.scmRepositories.boundToTmProject}">
+                    Des dépôts de la sélection sont associés à au moins un Projet TM.
+                  </span>
+                </p>
+                <p th:text="#{message.scmRepositories.delete.confirm}">
+                  Confirmez-vous la suppression de ces dépôt ?
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="popup-dialog-buttonpane">
+            <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm"/>
+            <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
+          </div>
+        </div>
+
+        <!--   GENERIC ERROR POPUP  -->
+        <div id="generic-error-dialog" class="not-displayed popup-dialog" th:title="#{popup.title.error}">
+          <div>
+            <div class="display-table-row">
+              <div class="generic-error-main display-table-cell" style="padding-top:20px">
+                <span th:text="#{message.EmptyTableSelection}"></span>
+              </div>
+            </div>
+          </div>
+          <input type="button" th:value="#{label.Ok}"/>
+        </div>
+
       </div>
     </div>
   </div>

@@ -18,21 +18,23 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'backbone', 'squash.translator', './AddScmRepositoryDialog', './DeleteScmRepositoryDialog', 'squashtable'],
-	function($, Backbone, translator, AddScmRepositoryDialog, DeleteScmRepositoryDialog) {
+define(['jquery', 'backbone', 'squash.translator', './AddScmRepositoryDialog', './DeleteScmRepositoryDialog', './DeleteMultipleScmRepositoriesDialog', 'squashtable'],
+	function($, Backbone, translator, AddScmRepositoryDialog, DeleteScmRepositoryDialog, DeleteMultipleScmRepositoriesDialog) {
 	"use strict";
 
 	var ScmRepositoriesTableView = Backbone.View.extend({
 		el: '#scm-repository-table-pane',
 
 		events: {
-			"click #add-scm-repository" : "openAddScmRepositoryDialog"
+			"click #add-scm-repository" : "openAddScmRepositoryDialog",
+			"click #delete-scm-repositories" : "openDeleteMultipleRepositoriesDialog"
 		},
 
 		initialize: function() {
 			let table = this.initTable();
 			this.AddScmRepositoryDialog = new AddScmRepositoryDialog(table);
 			this.DeleteScmRepositoryDialog = new DeleteScmRepositoryDialog(table);
+			this.DeleteMultipleScmRepositoriesDialog = new DeleteMultipleScmRepositoriesDialog(table);
 		},
 
 		initTable: function() {
@@ -47,6 +49,10 @@ define(['jquery', 'backbone', 'squash.translator', './AddScmRepositoryDialog', '
 
 		openAddScmRepositoryDialog: function() {
 			this.AddScmRepositoryDialog.open();
+		},
+
+		openDeleteMultipleRepositoriesDialog: function() {
+			this.DeleteMultipleScmRepositoriesDialog.open();
 		}
 
 	});
