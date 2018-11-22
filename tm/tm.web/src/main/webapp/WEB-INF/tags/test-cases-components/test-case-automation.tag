@@ -52,23 +52,23 @@
 		<div class="display-table-row">
 			<label class="display-table-cell" for="test-case-automation-indicator"><f:message key="test-case.automation-indicator.label"/></label>
 			<div class="display-table-cell" id="test-case-automation-indicator">
-				  <span>
+				  <label>
 				  	<input type="radio" name="test-case-automatable" value="M" ${toInstruct}>
 				  	<f:message key="test-case.automation-to-instruct" />
-				  </span>
-				  <span>
+				  </label>
+				  <label>
 					<input type="radio" name="test-case-automatable" value="Y" ${toAutomate}>
 					<f:message key="test-case.automation-to-automate" />
-				  </span>
-				  <span>
+				  </label>
+				  <label>
 					<input type="radio" name="test-case-automatable" value="N" ${toNotAutomate}>
 					<f:message key="test-case.automation-to-not-automate" />
-				  </span>
+				  </label>
 			</div>
 		</div>
 		<div class="display-table-row test-case-automation-request-block">
 			<label class="display-table-cell" for="automation-request-priority">
-				<f:message key="label.priority"/>
+				<f:message key="test-case.automation-priority.label"/>
 			</label>
 			<div class="display-table-cell" id="automation-request-priority"><c:out value="${ testCase.automationRequest.automationPriority }" escapeXml="true"/></div>
 		</div>

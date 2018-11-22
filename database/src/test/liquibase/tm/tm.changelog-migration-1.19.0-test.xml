@@ -68,4 +68,13 @@
       </sqlCheck>
     </preConditions>
   </changeSet>
+
+  <changeSet id="tm-1.19.0-SQTM-524" author="jprioux" dbms="mysql, postgresql, h2">
+    <preConditions>
+      <sqlCheck expectedResult="2">
+        select count(*) from PROJECT
+        where ALLOW_AUTOMATION_WORKFLOW = 0;
+      </sqlCheck>
+    </preConditions>
+  </changeSet>
 </databaseChangeLog>

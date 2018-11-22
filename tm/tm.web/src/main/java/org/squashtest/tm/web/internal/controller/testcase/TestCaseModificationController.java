@@ -33,6 +33,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.tm.api.plugin.PluginValidationException;
 import org.squashtest.tm.core.foundation.collection.*;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.squashtest.tm.domain.IdentifiedUtil;
@@ -49,6 +50,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.servers.AuthenticationStatus;
 import org.squashtest.tm.domain.testcase.*;
 import org.squashtest.tm.exception.UnknownEntityException;
+import org.squashtest.tm.exception.customfield.WrongCufNumericFormatException;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
@@ -316,10 +318,15 @@ public class TestCaseModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = {"id=automation-request-priority", VALUE})
 	@ResponseBody
-	public Integer changePriority(@RequestParam(VALUE) String priority, @PathVariable long testCaseId) {
-		Integer newPriority = Integer.parseInt(priority);
-		automationRequestModificationService.changePriority(Arrays.asList(testCaseId), newPriority);
-		return newPriority;
+	public Integer changePriority(@RequestParam(VALUE) String priority, @PathVariable long testCaseId, Locale locale) {
+		try {
+			Integer newPriority = Integer.parseInt(priority);
+			automationRequestModificationService.changePriority(Collections.singletonList(testCaseId), newPriority);
+			return newPriority;
+		} catch(NumberFormatException nfe) {
+			throw new WrongCufNumericFormatException(nfe);
+		}
+
 	}
 
 	@ResponseBody

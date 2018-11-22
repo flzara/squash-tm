@@ -564,5 +564,15 @@
 
   </changeSet>
 
+  <changeSet id="tm-1.19.0-SQTM-524-automation-workflow-by-project" author="jprioux">
+    <comment>add a boolean in project table to activate or not the automation workflow</comment>
+    <addColumn tableName="PROJECT">
+      <column name="ALLOW_AUTOMATION_WORKFLOW" type="BOOLEAN"
+              defaultValueBoolean="false">
+              <constraints nullable="false" />
+      </column>
+    </addColumn>
+  </changeSet>
+
 
 </databaseChangeLog>

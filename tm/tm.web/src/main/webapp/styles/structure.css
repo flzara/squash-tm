@@ -1966,6 +1966,11 @@ opacity:0.2;
 	vertical-align: top;
 }
 
+#test-case-automation-indicator label:after {
+	content: "";
+	display: inline-block;
+}
+
 /**** TF - AUTOMATION WORKSPACE ****/
 .tf-automation-subtitle-header {
 	position: absolute;

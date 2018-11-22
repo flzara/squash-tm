@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "squash.translator", "squash.configmanager", "jeditable.simpleJEditable", "jquery.squash.jeditable"],
-		function($, Backbone, _, translator, confman, SimpleJEditable) {
+define([ "jquery", "backbone", "underscore", "squash.translator", "squash.configmanager", "jeditable.simpleJEditable", "app/ws/squashtm.notification", "jquery.squash.jeditable"],
+		function($, Backbone, _, translator, confman, SimpleJEditable, notification) {
 
 			var AutomationPanel = Backbone.View.extend({
 
@@ -37,7 +37,11 @@ define([ "jquery", "backbone", "underscore", "squash.translator", "squash.config
 							targetUrl : this.settings.urls.testCaseUrl,
 							componentId : "automation-request-priority",
 							jeditableSettings : {
-								maxLength : 50,
+								'maxLength' : 50,
+								'onerror' : function(settings, self, xhr){
+                						notification.showError(xhr);
+                						self.reset();
+                					}
 							}
 						});
 
