@@ -42,4 +42,10 @@ public interface ScmRepositoryManagerService {
 	 * @return The Page of ScmRepositories built according to the given Pageable.
 	 */
 	Page<ScmRepository> findPagedScmRepositoriesByScmServer(Long scmServerId, Pageable pageable);
+	/**
+	 * Create a new ScmRepository with its attributes.
+	 * @param newScmRepository The ScmRepository with its attributes to create.
+	 * @return The ScmRepository newly created.
+	 */
+	ScmRepository createNewScmRepository(ScmRepository newScmRepository);
 }

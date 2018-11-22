@@ -60,7 +60,7 @@
  			*/
  			doDeleteOneScmServer: function(serverId) {
  				return $.ajax({
- 					url: routing.buildURL('administration.scm-server', serverId),
+ 					url: routing.buildURL('administration.scm-servers.delete', serverId),
  					method: 'DELETE'
  				});
  			}

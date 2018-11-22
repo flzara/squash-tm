@@ -180,7 +180,8 @@ define([], function(){
 		'execute.prologue' :				root + '/execute/{\\d+}/step/prologue',
 
 		'administration.scm-servers' : root + '/administration/scm-servers',
-		'administration.scm-server' : root + '/administration/scm-servers/{\\d+}',
+		'administration.scm-servers.delete' : root + '/administration/scm-servers/{\\d+}',
+		'administration.scm-server.repositories' : root + '/administration/scm-server/{\\d+}/repositories',
 		'administration.bugtrackers'	:	root + '/administration/bugtrackers',
 		'customfield.values' :				root + '/custom-fields/values',
 		'customfield.values.get' :			root + '/custom-fields/values?boundEntityId={\\d+}&boundEntityType={[A-Z_]+}',

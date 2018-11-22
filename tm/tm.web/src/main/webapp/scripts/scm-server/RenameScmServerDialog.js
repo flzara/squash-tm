@@ -34,13 +34,13 @@
       	$el.formDialog();
 
 				$el.on('formdialogopen', function() {
-					self.input.val(conf.serverName);
+					self.input.val(squashtm.pageConfiguration.scmServerName);
 				});
 
       	$el.on('formdialogconfirm', function() {
         	self.renameScmServer(function(newName) {
         		nameLabel.text(newName);
-        		conf.serverName = newName;
+        		squashtm.pageConfiguration.scmServerName = newName;
             $el.formDialog('close');
           });
         });

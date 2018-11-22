@@ -43,10 +43,10 @@
 		};
 		squashtm.pageConfiguration = {
 		  url: /*[[ @{/administration/scm-server/}+${scmServer.id} ]]*/ "http://localhost/scm-server/4",
-		  scmServerKinds: /*[[ ${scmServerKinds} ]]*/
+		  scmServerKinds: /*[[ ${scmServerKinds} ]]*/,
+		  scmServerId: /*[[ ${scmServer.id} ]]*/ "4",
+		  scmServerName: /*[[ ${scmServer.name} ]]*/ "GitHub Server"
 		};
-		var conf = {};
-		conf.serverName = /*[[ ${scmServer.name} ]]*/ "GitHub Server";
 		/*]]>*/
   </script>
 
@@ -151,12 +151,12 @@
               <!-----===== Repositories Table =====----->
               <div id="scm-repository-table-pane">
                 <div class="toolbar">
-                  <button class="snap-right sq-btn" type="button" value="Delete repositories" th:value="#{label.scmRepository.delete}"
-                          th:title="#{label.scmRepository.delete}" id="delete-scm-repositories">
+                  <button id="delete-scm-repositories" class="snap-right sq-btn" type="button" value="Delete repositories" th:value="#{label.scmRepository.delete}"
+                          th:title="#{label.scmRepository.delete}">
                     <span class="ui-icon ui-icon-trash">-</span><span th:text="#{label.Delete}"/>
                   </button>
-                  <button class="snap-right sq-btn" type="button" value="Create a repository" th:value="#{label.scmRepository.create}"
-                          th:title="#{label.scmRepository.create}" id="add-scm-repository">
+                  <button id="add-scm-repository" class="snap-right sq-btn" type="button" value="Create a repository" th:value="#{label.scmRepository.create}"
+                          th:title="#{label.scmRepository.create}">
                     <span class="ui-icon ui-icon-plus">+</span><span th:text="#{label.Add}"/>
                   </button>
                 </div>
@@ -189,6 +189,46 @@
 
             </div>
 
+          </div>
+        </div>
+
+        <!---- ADD POPUP ----->
+        <div id="add-scm-repository-popup" class="not-displayed popup-dialog form-horizontal"
+             title="Add a new Scm Repository" th:title="#{title.newScmRepository}">
+          <div>
+            <div class="control-group">
+              <label class="control-label" for="path" th:text="#{label.Path}">Name</label>
+              <div class="controls">
+                <input id="path" name="path" class="strprop" value="" size="50" maxlength="50" type="text" data-def="maininput" />
+                <br/>
+                <span class="help-inline">&nbsp;</span>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <label class="control-label" for="folder" th:text="#{label.WorkingFolder}">Name</label>
+              <div class="controls">
+                <input id="folder" name="folder" class="strprop" value="" size="50" maxlength="50" type="text" />
+                <br/>
+                <span class="help-inline">&nbsp;</span>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <label class="control-label" for="branch" th:text="#{label.WorkingBranch}">URL</label>
+              <div class="controls">
+                <input id="branch" name="branch" class="strprop" value="" size="50" maxlength="255" type="text" />
+                <br/>
+                <span class="help-inline">&nbsp;</span>
+                <span class="error-message url-error">&nbsp;</span>
+              </div>
+            </div>
+
+          </div>
+          <div class="popup-dialog-buttonpane">
+            <input class="sq-btn" type="button" value="Add another" th:value="#{label.addAnother}" data-def="evt=addanother, mainbtn" />
+            <input class="sq-btn" type="button" value="Add" th:value="#{label.Add}" data-evt="confirm" />
+            <input class="sq-btn" type="button" value="Cancel" th:value="#{label.Close}" data-evt="cancel" />
           </div>
         </div>
 

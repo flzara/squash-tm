@@ -114,4 +114,20 @@ class ScmRepositoryManagerServiceTest extends Specification {
 			resultPage == expectedPage
 	}
 
+
+	def "#createNewScmRepository(ScmRepository) - [Nominal] Should create a new ScmRepository with its attributes"() {
+		given: "Mock repository"
+			ScmRepository repo = new ScmRepository()
+			repo.repositoryPath = "/home/repositories/repo1"
+			repo.folderPath = "resources/features"
+			repo.branch = "master"
+			repo.scmServerId = 3
+		and: "Mock Dao method"
+			scmRepositoryDao.save(repo) >> repo
+		when:
+			ScmRepository createdRepo = scmRepositoryManagerService.createNewScmRepository(repo)
+		then:
+			createdRepo == repo
+	}
+
 }

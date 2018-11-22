@@ -18,14 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'backbone', 'squash.translator', 'squashtable'], function($, Backbone, translator) {
+define(['jquery', 'backbone', 'squash.translator', './AddScmRepositoryDialog', 'squashtable'],
+	function($, Backbone, translator, AddScmRepositoryDialog) {
 	"use strict";
 
 	var ScmRepositoriesTableView = Backbone.View.extend({
 		el: '#scm-repository-table-pane',
 
+		events: {
+			"click #add-scm-repository" : "openAddScmRepositoryDialog"
+		},
+
 		initialize: function() {
-			this.initTable();
+			let table = this.initTable();
+			this.AddScmRepositoryDialog = new AddScmRepositoryDialog(table);
 		},
 
 		initTable: function() {
@@ -35,7 +41,11 @@ define(['jquery', 'backbone', 'squash.translator', 'squashtable'], function($, B
 					tooltip : translator.get('label.Remove')
 				}
 			};
-			this.table = this.$el.find('table').squashTable(squashtm.datatable.defaults, squashSettings);
+			return this.$el.find('table').squashTable(squashtm.datatable.defaults, squashSettings);
+		},
+
+		openAddScmRepositoryDialog: function() {
+			this.AddScmRepositoryDialog.open();
 		}
 
 	});

@@ -52,4 +52,9 @@ public class ScmRepositoryManagerServiceImpl implements ScmRepositoryManagerServ
 	public Page<ScmRepository> findPagedScmRepositoriesByScmServer(Long scmServerId, Pageable pageable) {
 		return scmRepositoryDao.findByScmServerId(scmServerId, pageable);
 	}
+
+	@Override
+	public ScmRepository createNewScmRepository(ScmRepository newScmRepository) {
+		return scmRepositoryDao.save(newScmRepository);
+	}
 }

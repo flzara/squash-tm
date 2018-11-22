@@ -38,6 +38,7 @@ import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -109,6 +110,12 @@ public class ScmServerModificationController {
 		Pageable pageable = SpringPagination.pageable(params, scmRepositoryTableMapper);
 		Page<ScmRepository> scmRepositories = scmRepositoryManager.findPagedScmRepositoriesByScmServer(scmServerId, pageable);
 		return new ScmRepositoryDataTableModelHelper().buildDataModel(scmRepositories, params.getsEcho());
+	}
+
+	@RequestMapping(value = "/repositories", method = RequestMethod.POST)
+	@ResponseBody
+	public ScmRepository createNewScmRepository(@Valid ScmRepository scmRepository) {
+		return scmRepositoryManager.createNewScmRepository(scmRepository);
 	}
 
 	private class ScmRepositoryDataTableModelHelper extends DataTableModelBuilder<ScmRepository> {
