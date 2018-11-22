@@ -43,6 +43,7 @@ import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 public class ScmServerManagerServiceImpl implements ScmServerManagerService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ScmServerManagerServiceImpl.class);
+
 	@Inject
 	private ScmServerDao scmServerDao;
 
@@ -53,6 +54,7 @@ public class ScmServerManagerServiceImpl implements ScmServerManagerService {
 	}
 
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public Page<ScmServer> findAllSortedScmServers(Pageable pageable) {
 		return scmServerDao.findAll(pageable);
 	}
@@ -72,6 +74,7 @@ public class ScmServerManagerServiceImpl implements ScmServerManagerService {
 		return scmServerDao.save(newScmServer);
 	}
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public String updateName(long scmServerId, String newName) {
 		ScmServer scmServer = scmServerDao.getOne(scmServerId);
 		String formerName = scmServer.getName();
@@ -88,6 +91,7 @@ public class ScmServerManagerServiceImpl implements ScmServerManagerService {
 	}
 
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public String updateUrl(long scmServerId, String newUrl) {
 		ScmServer scmServer = scmServerDao.getOne(scmServerId);
 		String formerUrl = scmServer.getUrl();
@@ -101,6 +105,7 @@ public class ScmServerManagerServiceImpl implements ScmServerManagerService {
 	}
 
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public String updateKind(long scmServerId, String newKind) {
 		ScmServer scmServer = scmServerDao.getOne(scmServerId);
 		String formerKind = scmServer.getKind();
