@@ -54,10 +54,10 @@
 
 	<div id="nav_logo">
 		<div style="margin-bottom: 40px;">
-		<sec:authorize access="!hasRole('ROLE_TF_FUNCTIONAL_TESTER') and hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')">
+		<sec:authorize access="!hasRole('ROLE_TF_FUNCTIONAL_TESTER') and hasRole('ROLE_TF_AUTOMATION_PROGRAMMER') and !hasRole('ROLE_ADMIN')">
 		  <a id="automation-link"	 	style="margin-top: 10px;"	class="navigation-link navigation-automation"	href="${rootctxt}/automation-workspace/"	title="${automTitle}"></a>
 		  </sec:authorize>
-		  <sec:authorize access="hasRole('ROLE_TF_FUNCTIONAL_TESTER') and !hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')">
+		  <sec:authorize access="hasRole('ROLE_TF_FUNCTIONAL_TESTER') and !hasRole('ROLE_TF_AUTOMATION_PROGRAMMER') and !hasRole('ROLE_ADMIN')">
 		  <a id="automation-tester-link"	 	style="margin-top: 10px;"	class="navigation-link navigation-automation"	href="${rootctxt}/automation-tester-workspace/"	title="${automTesterTitle}"></a>
 		  </sec:authorize>
 		  <sec:authorize access="(hasRole('ROLE_TF_FUNCTIONAL_TESTER') and hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')) or hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')">

@@ -68,11 +68,11 @@
 
           <a id="automation-link" style="margin-top: 10px;" class="navigation-link navigation-automation" th:href="@{/automation-workspace/}"
             th:title="#{workspace.automation.button.label}" th:classappend="${highlight == 'automation'} ? 'navigation-selected'"
-            th:if="${!sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')}"></a>
+            th:if="${!sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')} and ${!sec.hasRole('ROLE_ADMIN')}"></a>
 
           <a id="automation-tester-link" style="margin-top: 10px;" class="navigation-link navigation-automation"
             th:href="@{/automation-tester-workspace/}" th:title="#{workspace.automation.button.label}" th:classappend="${highlight == 'automation'} ? 'navigation-selected'"
-            th:if="${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${!sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')}"></a>
+            th:if="${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${!sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')} and ${!sec.hasRole('ROLE_ADMIN')}"></a>
 
           <a id="automation-link-ul" style="margin-top: 10px;" class="navigation-link navigation-automation" th:title="#{workspace.automation.button.label}"
             th:classappend="${highlight == 'automation'} ? 'navigation-selected'" th:if="(${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')}) or ${sec.hasRole('ROLE_ADMIN')} or ${sec.hasRole('ROLE_TM_PROJECT_MANAGER')}"></a>

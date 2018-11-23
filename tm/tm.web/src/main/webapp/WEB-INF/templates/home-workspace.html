@@ -89,7 +89,7 @@
     </div>
 
     <div id="home-workspace">
-      <div id="element-toolbar" class="toolbar-class ui-corner-all">
+      <div id="element-toolbar" class="toolbar-class ui-corner-all" th:if="${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} or ${sec.hasRole('ROLE_TM_PROJECT_MANAGER')} or ${sec.hasRole('ROLE_ADMIN')}">
           <div class="snap-left">
             <input type="button" th:attr="value=#{workspace.home.label.message},title=#{workspace.home.title.message}" id="show-welcome-message" class="sq-btn btn-sm" />
             <input type="button" th:attr="value=#{workspace.home.label.dashboard},title=#{workspace.home.title.dashboard}" id="show-favorite-dashboard" class="sq-btn btn-sm" />
