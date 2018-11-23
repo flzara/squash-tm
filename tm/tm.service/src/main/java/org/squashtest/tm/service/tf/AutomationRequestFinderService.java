@@ -113,6 +113,15 @@ public interface AutomationRequestFinderService {
 	 */
 	Page<AutomationRequest> findRequestsToTransmitted(Pageable pageable, ColumnFiltering filtering);
 
+	/**
+	 * Given the specified pagination, sorting and filtering, retrieve the corresponding
+	 * requests, restricted to the automated requests with status : TO_VALID
+	 *
+	 * @param pageable
+	 * @param filtering
+	 * @return
+	 */
+	Page<AutomationRequest> findRequestsToValidate(Pageable pageable, ColumnFiltering filtering);
 
 	/**
 	 *

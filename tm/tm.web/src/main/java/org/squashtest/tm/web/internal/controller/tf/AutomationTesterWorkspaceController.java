@@ -100,9 +100,19 @@ public class AutomationTesterWorkspaceController {
 	@RequestMapping(value="/automation-request/transmitted", params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getTransmittedModel(final DataTableDrawParameters params, final Locale locale) {
-		Pageable pageable = SpringPagination.pageable(params,automationRequestMapper);
+		Pageable pageable = SpringPagination.pageable(params, automationRequestMapper);
 		ColumnFiltering filtering = new DataTableColumnFiltering(params, automationRequestMapper);
 		Page<AutomationRequest> automationRequestPage = automationRequestFinderService.findRequestsToTransmitted(pageable, filtering);
+
+		return new AutomationRequestDataTableModelHelper(messageSource, permissionEvaluationService).buildDataModel(automationRequestPage, "");
+	}
+
+	@RequestMapping(value="/automation-request/validate", params = RequestParams.S_ECHO_PARAM)
+	@ResponseBody
+	public DataTableModel getValidateModel(final DataTableDrawParameters params, final Locale locale) {
+		Pageable pageable = SpringPagination.pageable(params, automationRequestMapper);
+		ColumnFiltering filtering = new DataTableColumnFiltering(params, automationRequestMapper);
+		Page<AutomationRequest> automationRequestPage = automationRequestFinderService.findRequestsToValidate(pageable, filtering);
 
 		return new AutomationRequestDataTableModelHelper(messageSource, permissionEvaluationService).buildDataModel(automationRequestPage, "");
 	}

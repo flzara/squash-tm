@@ -90,13 +90,23 @@ public interface CustomAutomationRequestDao {
 
 	/**
 	 * Will retrieve a list of automated requests, paged filtered and sorted, where
-	 * the status of automation request is 'VALIDATE'
+	 * the status of automation request is 'VALID'
 	 * @param pageable
 	 * @param filtering
 	 * @param inProjectIds list of project ids the current user can read
 	 * @return
 	 */
-	Page<AutomationRequest> findAllValidate(Pageable pageable, ColumnFiltering filtering, Collection<Long> inProjectIds);
+	Page<AutomationRequest> findAllValid(Pageable pageable, ColumnFiltering filtering, Collection<Long> inProjectIds);
+
+	/**
+	 * Will retrieve a list of automated requests, paged filtered and sorted, where
+	 * the status of automation request is 'TO_VALIDATE'
+	 * @param pageable
+	 * @param filtering
+	 * @param inProjectIds list of project ids the current user can read
+	 * @return
+	 */
+	Page<AutomationRequest> findAllToValidate(Pageable pageable, ColumnFiltering filtering, Collection<Long> inProjectIds);
 
 	/**
 	 * Count Automation request to the current User.

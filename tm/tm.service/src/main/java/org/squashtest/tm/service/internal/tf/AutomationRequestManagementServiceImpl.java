@@ -130,10 +130,15 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	@Transactional(readOnly = true)
 	public Page<AutomationRequest> findRequestsToTransmitted(Pageable pageable, ColumnFiltering filtering) {
 		List<Long> projectIds = projectFinder.findAllReadableIds();
-		return requestDao.findAllValidate(pageable, filtering, projectIds);
+		return requestDao.findAllValid(pageable, filtering, projectIds);
 	}
 
-	// *************** implementation of the management interface *************************
+	@Override
+	public Page<AutomationRequest> findRequestsToValidate(Pageable pageable, ColumnFiltering filtering) {
+		List<Long> projectIds = projectFinder.findAllReadableIds();
+		return requestDao.findAllToValidate(pageable, filtering, projectIds);
+	}
+// *************** implementation of the management interface *************************
 
 
 	@Override
