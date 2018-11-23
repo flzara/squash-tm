@@ -138,4 +138,8 @@ public interface CustomAutomationRequestDao {
 
 	Page<AutomationRequest> findAllForGlobalTester(Pageable pageable, ColumnFiltering filtering, Collection<Long> inProjectIds);
 
+	void updateStatusToValide(List<Long> reqIds);
+
+	void updateStatusToObsolete(List<Long> reqIds);
+
 }

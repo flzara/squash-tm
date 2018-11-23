@@ -195,6 +195,14 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_FUNCTIONAL, AutomationRequest.class.getName());
 				requestDao.updateStatusToValidate(reqIds);
 				break;
+			case OBSOLETE:
+				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_FUNCTIONAL, AutomationRequest.class.getName());
+				requestDao.updateStatusToObsolete(reqIds);
+				break;
+			case VALID:
+				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_FUNCTIONAL, AutomationRequest.class.getName());
+				requestDao.updateStatusToValide(reqIds);
+				break;
 				default:
 					throw new IllegalAutomationRequestStatusException(STATUS_NOT_PERMITTED);
 		}

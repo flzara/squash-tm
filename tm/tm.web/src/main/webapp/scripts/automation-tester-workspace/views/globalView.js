@@ -290,6 +290,20 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 })
                 return scripts;
             },
+
+            changeStatus: function(ids, status, table) {
+                $.ajax({
+                    url: squashtm.app.contextRoot + 'automation-requests/' + ids,
+                    method: 'POST',
+                    data: {
+                        "id": "automation-request-status",
+                        "value": status
+                    }
+                }).success(function () {
+                    table.refresh();
+                });
+            },
+
             bindButtons: function () {
                 var self = this;
                 var domtable = $("#automation-table").squashTable();
@@ -302,48 +316,36 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 $("#deselect-affected-button").on("click", function () {
                     self.deselectAll(domtable);
                 });
-                $("#desassigned-affected-button").on("click", function () {
+                $("#valid-button").on("click", function () {
                     var requestIds = self.getSelectedRequestIds(domtable);
                     if (requestIds.length === 0 || requestIds === undefined) {
                         notification.showWarning(translator.get("automation.notification.selectedRow.none"));
                     } else {
-
-                        $.ajax({
-                            url: squashtm.app.contextRoot + 'automation-requests/desassigned/' + requestIds,
-                            method: 'POST'
-                        }).success(function () {
-                            domtable.refresh();
-                        });
+                        self.changeStatus(requestIds, "VALID", domtable);
                     }
                     self.storage.remove(self.key);
                 });
-                $("#automated-affected-button").on("click", function () {
+                $("#obsolete-button").on("click", function () {
+                    console.log("obsolete")
                     var requestIds = self.getSelectedRequestIds(domtable);
-                    var scripts = self.checkScriptAutoIsPresent(domtable);
                     if (requestIds.length === 0 || requestIds === undefined) {
                         notification.showWarning(translator.get("automation.notification.selectedRow.none"));
-                    } else if (scripts.length !== 0) {
-                        notification.showWarning(translator.get("automation.notification.script.none"));
                     } else {
-                        $.ajax({
-                            url: squashtm.app.contextRoot + 'automation-requests/' + requestIds,
-                            method: 'POST',
-                            data: {
-                                "id": "automation-request-status",
-                                "value": "EXECUTABLE"
-                            }
-                        }).success(function () {
-                            domtable.refresh();
-                        });
+                        self.changeStatus(requestIds, "OBSOLETE", domtable);
                     }
                     self.storage.remove(self.key);
 
                 });
 
-                $("#btn-no-assigned").on("click", function () {
-                    location.href = "#traitment";
-                    $("#tf-traitment-tab a").addClass("tf-selected");
-                    $("#tf-assigned-tab a").removeClass("tf-selected");
+                $("#cancel-transmission-button").on("click", function () {
+                    console.log("cancel")
+                    var requestIds = self.getSelectedRequestIds(domtable);
+                    if (requestIds.length === 0 || requestIds === undefined) {
+                        notification.showWarning(translator.get("automation.notification.selectedRow.none"));
+                    } else {
+                        self.changeStatus(requestIds, "VALID", domtable);
+                    }
+                    self.storage.remove(self.key);
                 });
             }
 

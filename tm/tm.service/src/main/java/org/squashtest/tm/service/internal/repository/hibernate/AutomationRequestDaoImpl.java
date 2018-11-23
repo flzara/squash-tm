@@ -351,7 +351,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 
 		if (filtering.getFilter("requestStatus").isEmpty()) {
 			filterWithAssignee = new SimpleColumnFiltering(filtering).addFilter("requestStatus", AutomationRequestStatus.OBSOLETE.toString() + ";"
-				+ AutomationRequestStatus.NOT_AUTOMATABLE.toString() + ";" + AutomationRequestStatus.TO_VALIDATE.toString());
+				+ AutomationRequestStatus.NOT_AUTOMATABLE.toString() + ";" + AutomationRequestStatus.TO_VALIDATE.toString() + ";" + AutomationRequestStatus.TRANSMITTED.toString());
 			return innerFindAll(pageable, filterWithAssignee, (converter) -> {
 				converter.compare("requestStatus").withIn();
 			}, inProjectIds);
@@ -363,7 +363,30 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 		}
 	}
 
+	@Override
+	public void updateStatusToValide(List<Long> reqIds) {
+		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest ar set ar.requestStatus = :reqStatus where ar.id in :reqIds and ar.requestStatus in :reqStatusInitial")
+			.setParameter("reqStatus", AutomationRequestStatus.VALID)
+			.setParameter("reqStatusInitial", Arrays.asList(AutomationRequestStatus.TO_VALIDATE, AutomationRequestStatus.TRANSMITTED))
+			.setParameter("reqIds", reqIds)
+			.executeUpdate();
+		if(reqIds.size() != automationRequestUpdates) {
+			throw new IllegalAutomationRequestStatusException(ILLEGAL_STATUS);
+		}
+	}
 
+	@Override
+	public void updateStatusToObsolete(List<Long> reqIds) {
+		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest ar set ar.requestStatus = :reqStatus where ar.id in :reqIds and ar.requestStatus in :reqStatusInitial")
+			.setParameter("reqStatus", AutomationRequestStatus.OBSOLETE)
+			.setParameter("reqStatusInitial", Arrays.asList(AutomationRequestStatus.EXECUTABLE, AutomationRequestStatus.WORK_IN_PROGRESS))
+			.setParameter("reqIds", reqIds)
+			.executeUpdate();
+		if(reqIds.size() != automationRequestUpdates) {
+			throw new IllegalAutomationRequestStatusException(ILLEGAL_STATUS);
+		}
+
+	}
 
 	// *************** boilerplate ****************
 
