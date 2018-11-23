@@ -32,7 +32,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 var self = this;
                 var datatableSettings = {
                     sAjaxSource: squashtm.app.contextRoot + "automation-tester-workspace/automation-request/global",
-                    "aaSorting": [[4, 'asc']],
+                    "aaSorting": [[8, 'asc'], [7, "desc"]],
                     "bDeferRender": true,
                     "iDisplayLength": 25,
                     "aoColumnDefs": [{
@@ -292,6 +292,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
             },
 
             changeStatus: function (ids, status, table) {
+                var self = this;
                 $.ajax({
                     url: squashtm.app.contextRoot + 'automation-requests/' + ids,
                     method: 'POST',
@@ -301,6 +302,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }
                 }).success(function () {
                     table.refresh();
+                    self.storage.remove(self.key);
                 });
             },
 
@@ -323,7 +325,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     } else {
                         self.changeStatus(requestIds, "VALID", domtable);
                     }
-                    self.storage.remove(self.key);
                 });
                 $("#obsolete-button").on("click", function () {
                     var requestIds = self.getSelectedRequestIds(domtable);
@@ -332,8 +333,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     } else {
                         self.changeStatus(requestIds, "OBSOLETE", domtable);
                     }
-                    self.storage.remove(self.key);
-
                 });
 
                 $("#cancel-transmission-button").on("click", function () {
@@ -343,7 +342,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     } else {
                         self.changeStatus(requestIds, "VALID", domtable);
                     }
-                    self.storage.remove(self.key);
+                    
                 });
             }
 

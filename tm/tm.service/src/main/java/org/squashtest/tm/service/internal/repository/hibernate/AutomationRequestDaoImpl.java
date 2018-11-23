@@ -363,7 +363,8 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 
 		if (filtering.getFilter("requestStatus").isEmpty()) {
 			filterWithAssignee = new SimpleColumnFiltering(filtering).addFilter("requestStatus", AutomationRequestStatus.OBSOLETE.toString() + ";"
-				+ AutomationRequestStatus.NOT_AUTOMATABLE.toString() + ";" + AutomationRequestStatus.TO_VALIDATE.toString() + ";" + AutomationRequestStatus.TRANSMITTED.toString());
+				+ AutomationRequestStatus.NOT_AUTOMATABLE.toString() + ";" + AutomationRequestStatus.TO_VALIDATE.toString() +
+				";" + AutomationRequestStatus.TRANSMITTED.toString() + ";" + AutomationRequestStatus.VALID.toString());
 			return innerFindAll(pageable, filterWithAssignee, (converter) -> {
 				converter.compare("requestStatus").withIn();
 			}, inProjectIds);
