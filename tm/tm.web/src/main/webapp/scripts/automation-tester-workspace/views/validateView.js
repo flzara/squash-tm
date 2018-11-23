@@ -24,7 +24,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", "
 
         var View = Backbone.View.extend({
             el: "#contextual-content-wrapper",
-            key: "checkbox-transmitted",
+            key: "checkbox-validate",
             storage: storage,
             selected: 0,
             initialize: function () {
@@ -176,7 +176,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", "
 
                 }
                 var $table = $("#automation-table");
-                datatableSettings.customKey = "transmitted";
+                datatableSettings.customKey = "validate";
                 datatableSettings.testers = squashtm.app.testerTransmitted;
                 var fmode = filtermode.newInst(datatableSettings);
                 var smode = sortmode.newInst(datatableSettings);
@@ -298,9 +298,10 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", "
                             }
                         }).success(function () {
                             domtable.refresh();
+                            self.storage.remove(self.key);
                         });
                     }
-                    self.storage.remove(self.key);
+
 
                 });
 
