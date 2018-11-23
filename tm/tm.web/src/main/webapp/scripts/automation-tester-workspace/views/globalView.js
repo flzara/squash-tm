@@ -21,7 +21,7 @@
 define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", 'app/ws/squashtm.notification', "workspace.storage", "./sort", "./filter", "squash.configmanager", "squashtable", "jeditable", "jquery.squash.formdialog"],
     function ($, _, Backbone, Handlebars, translator, notification, storage, sortmode, filtermode, confman) {
         "use strict";
-        
+
         var View = Backbone.View.extend({
             el: "#contextual-content-wrapper",
             key: "checkbox-tester-global",
@@ -73,7 +73,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "aTargets": [7],
                         "mDataProp": "priority",
                         "sWidth": "6em"
-                    },{
+                    }, {
                         "bSortable": true,
                         "aTargets": [8],
                         "mDataProp": "status",
@@ -92,7 +92,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "mRender": function (data, type, row) {
 
                             var render = "";
-                            if(data) {
+                            if (data) {
                                 render = "<a class='table-button edit-pencil'></a>"
                             } else {
                                 render = '<a href="' + squashtm.app.contextRoot + 'test-cases/' + row["entity-id"] + '/info"><img src="/squash/images/icon-lib/eye.png"></a>'
@@ -204,7 +204,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 });
                 self.bindButtons();
 
-                
+
             },
 
             changeNumberSelectedRows: function (number) {
@@ -291,7 +291,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 return scripts;
             },
 
-            changeStatus: function(ids, status, table) {
+            changeStatus: function (ids, status, table) {
                 $.ajax({
                     url: squashtm.app.contextRoot + 'automation-requests/' + ids,
                     method: 'POST',
@@ -326,7 +326,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     self.storage.remove(self.key);
                 });
                 $("#obsolete-button").on("click", function () {
-                    console.log("obsolete")
                     var requestIds = self.getSelectedRequestIds(domtable);
                     if (requestIds.length === 0 || requestIds === undefined) {
                         notification.showWarning(translator.get("automation.notification.selectedRow.none"));
@@ -338,7 +337,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 });
 
                 $("#cancel-transmission-button").on("click", function () {
-                    console.log("cancel")
                     var requestIds = self.getSelectedRequestIds(domtable);
                     if (requestIds.length === 0 || requestIds === undefined) {
                         notification.showWarning(translator.get("automation.notification.selectedRow.none"));
