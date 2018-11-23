@@ -18,8 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'backbone', 'squash.translator', './AddScmRepositoryDialog', './DeleteScmRepositoryDialog', './DeleteMultipleScmRepositoriesDialog', 'squashtable'],
-	function($, Backbone, translator, AddScmRepositoryDialog, DeleteScmRepositoryDialog, DeleteMultipleScmRepositoriesDialog) {
+define(['jquery', 'backbone', 'squash.translator', './AddScmRepositoryDialog', './DeleteScmRepositoryDialog',
+	'./DeleteMultipleScmRepositoriesDialog', './ChangeAttributeDialog', 'squashtable'],
+	function($, Backbone, translator, AddScmRepositoryDialog, DeleteScmRepositoryDialog,
+		DeleteMultipleScmRepositoriesDialog, ChangeAttributeDialog) {
 	"use strict";
 
 	var ScmRepositoriesTableView = Backbone.View.extend({
@@ -27,7 +29,8 @@ define(['jquery', 'backbone', 'squash.translator', './AddScmRepositoryDialog', '
 
 		events: {
 			"click #add-scm-repository" : "openAddScmRepositoryDialog",
-			"click #delete-scm-repositories" : "openDeleteMultipleRepositoriesDialog"
+			"click #delete-scm-repositories" : "openDeleteMultipleRepositoriesDialog",
+			'click #scm-repository-table td.col-path' : 'openChangePathPopup'
 		},
 
 		initialize: function() {
@@ -35,6 +38,7 @@ define(['jquery', 'backbone', 'squash.translator', './AddScmRepositoryDialog', '
 			this.AddScmRepositoryDialog = new AddScmRepositoryDialog(table);
 			this.DeleteScmRepositoryDialog = new DeleteScmRepositoryDialog(table);
 			this.DeleteMultipleScmRepositoriesDialog = new DeleteMultipleScmRepositoriesDialog(table);
+			this.ChangeAttributeDialog = new ChangeAttributeDialog(table);
 		},
 
 		initTable: function() {
@@ -53,6 +57,10 @@ define(['jquery', 'backbone', 'squash.translator', './AddScmRepositoryDialog', '
 
 		openDeleteMultipleRepositoriesDialog: function() {
 			this.DeleteMultipleScmRepositoriesDialog.open();
+		},
+
+		openChangePathPopup: function(event) {
+			this.ChangeAttributeDialog.openForPath(event);
 		}
 
 	});

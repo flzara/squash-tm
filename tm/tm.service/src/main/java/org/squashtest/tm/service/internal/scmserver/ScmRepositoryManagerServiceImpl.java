@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.scmserver;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -40,6 +42,8 @@ import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 @Transactional
 public class ScmRepositoryManagerServiceImpl implements ScmRepositoryManagerService {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(ScmRepositoryManagerServiceImpl.class);
+
 	@Inject
 	private ScmRepositoryDao scmRepositoryDao;
 
@@ -57,6 +61,20 @@ public class ScmRepositoryManagerServiceImpl implements ScmRepositoryManagerServ
 	@Override
 	public ScmRepository createNewScmRepository(ScmRepository newScmRepository) {
 		return scmRepositoryDao.save(newScmRepository);
+	}
+
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public String updatePath(long scmRepositoryId, String newPath) {
+		ScmRepository scmRepository = scmRepositoryDao.getOne(scmRepositoryId);
+		String formerPath = scmRepository.getRepositoryPath();
+		if(formerPath.equals(newPath)) {
+			LOGGER.debug("Did not update the ScmRepository path because the submitted path is identical to the former one");
+			return formerPath;
+		}
+		scmRepository.setRepositoryPath(newPath);
+		scmRepositoryDao.save(scmRepository);
+		return newPath;
 	}
 
 	@Override

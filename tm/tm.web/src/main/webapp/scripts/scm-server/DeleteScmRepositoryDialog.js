@@ -60,7 +60,7 @@ define(['jquery', 'backbone', "squash.translator", "workspace.routing", 'jquery.
 		*/
 		doDeleteOneScmRepository: function(repositoryId) {
 			return $.ajax({
-				url: routing.buildURL('administration.scm-repositories.delete', repositoryId),
+				url: routing.buildURL('administration.scm-repositories', repositoryId),
 				method: 'DELETE'
 			});
 		}

@@ -53,7 +53,7 @@ define(['jquery', 'backbone', "squash.translator", "app/util/StringUtil", "app/l
             });
 
             $el.on('formdialogcancel', function() {
-            	$el.formDialog('close')
+            	$el.formDialog('close');
             });
           },
 
