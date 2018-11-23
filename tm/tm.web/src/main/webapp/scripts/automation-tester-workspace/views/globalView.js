@@ -35,7 +35,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     "aaSorting": [[4, 'asc']],
                     "bDeferRender": true,
                     "iDisplayLength": 25,
-                    "aoColumns": [{
+                    "aoColumnDefs": [{
                         "bSortable": false,
                         "aTargets": [0],
                         "sClass": 'centered select-handle',

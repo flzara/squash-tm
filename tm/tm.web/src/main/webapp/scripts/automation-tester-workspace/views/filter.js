@@ -140,6 +140,7 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 						colFilter = findColFilterByName(filter, col.mDataProp);
 					if ($th.is('.tp-th-filter') && !!colFilter) {
 						$th.find('.filter_input').val(colFilter.sSearch);
+						$th.find('.rangedatepicker-input').val(colFilter.sSearch);
 					}
 				});
 			};
