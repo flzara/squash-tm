@@ -230,7 +230,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 			.union(
 				DSL.selectDistinct(CORE_USER.PARTY_ID, CORE_USER.LOGIN)
 				.from(CORE_USER)
-					.innerJoin(TEST_CASE_LIBRARY_NODE).on(TEST_CASE_LIBRARY_NODE.CREATED_BY.eq(CORE_USER.LOGIN))
+					.innerJoin(TEST_CASE_LIBRARY_NODE).on(TEST_CASE_LIBRARY_NODE.LAST_MODIFIED_BY.eq(CORE_USER.LOGIN))
 					.innerJoin(AUTOMATION_REQUEST).on(AUTOMATION_REQUEST.TEST_CASE_ID.eq(TEST_CASE_LIBRARY_NODE.TCLN_ID))
 					.where(TEST_CASE_LIBRARY_NODE.PROJECT_ID.in(readablesProject)
 					.and(AUTOMATION_REQUEST.REQUEST_STATUS.in(automationRequestStatus))
