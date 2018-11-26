@@ -78,6 +78,21 @@
       <c:if test="${ empty project.testAutomationServer}">
       <c:set var="dispayedJobBlock" value="display: none"/>
       </c:if>
+
+      <div id="project-workflow-option-table" class="display-table">
+              <div class="display-table-row">
+                <div class="display-table-cell">
+                  <label for="toggle-WORKFLOW-checkbox" class="display-table-cell" style="vertical-align:bottom">
+                    <f:message key="label.workflow.modification" />
+                  </label>
+                </div>
+                <div class="display-table-cell">
+                  <input id="toggle-WORKFLOW-checkbox" type="checkbox" data-def="width=35, on_label=${inactive},
+                         off_label=${active}, checked=${!allowAutomationWorkflow}" style="display: none;" />
+                </div>
+              </div>
+          </div>
+
       <fieldset class="ta-projects-block  ta-block" style="${dispayedJobBlock}">
         <legend>
           <f:message key="label.jobs" />

@@ -720,6 +720,10 @@ require(["common"], function() {
 		 		  toggleIfParameterIsEnabled(toggleExec);
 		 		});
 
+		 		$("#toggle-WORKFLOW-checkbox").change(function() {
+          toggleIfParameterIsEnabled(toggleWorkflow);
+        });
+
 		 		$("#toggle-UNTESTABLE-checkbox").change(function() {
 		 		  toggleIfParameterIsEnabled(toggleStatusActivation, "UNTESTABLE");
 		 		});
@@ -746,6 +750,20 @@ require(["common"], function() {
 			});
 
 	}
+
+	function toggleWorkflow(){
+  		var shouldActivate = ! $("#toggle-WORKFLOW-checkbox").prop('checked');
+
+  			$.ajax({
+  				type: 'POST',
+  				url: "${projectUrl}",
+  				data : {
+  				  id : project-automation-workflow,
+  					value : shouldActivate
+  				}
+  			});
+
+  	}
 
 	function refreshTableAndPopup(){
 		$("#user-permissions-table").squashTable().refresh();

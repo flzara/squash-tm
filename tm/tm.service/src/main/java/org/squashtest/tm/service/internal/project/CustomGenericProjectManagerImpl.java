@@ -1022,4 +1022,18 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 			throw new LockedParameterException();
 		}
 	}
+
+	@Override
+	public void changeAutomationWorkflow(long projectId, boolean active) {
+		GenericProject genericProject = genericProjectDao.getOne(projectId);
+		if(!genericProject.isBoundToTemplate()) {
+			genericProject.setAllowAutomationWorkflow(active);
+			/* If project is a Template, propagate on all the bound projects. */
+			if (ProjectHelper.isTemplate(genericProject)) {
+				templateDao.propagateAllowAutomationWorkflow(projectId, active);
+			}
+		} else {
+			throw new LockedParameterException();
+		}
+	}
 }

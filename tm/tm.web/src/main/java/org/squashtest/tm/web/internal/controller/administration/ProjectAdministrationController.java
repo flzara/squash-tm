@@ -166,6 +166,7 @@ public class ProjectAdministrationController {
 		mav.addObject("attachments", attachmentsHelper.findAttachments(adminProject.getProject()));
 		mav.addObject("allowedStatuses", allowedStatuses);
 		mav.addObject("allowTcModifDuringExec", adminProject.allowTcModifDuringExec());
+		mav.addObject("allowAutomationWorkflow", adminProject.allowAutomationWorkflow());
 
 
 		return mav;

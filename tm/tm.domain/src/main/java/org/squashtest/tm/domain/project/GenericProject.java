@@ -165,6 +165,8 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 
 	private boolean allowTcModifDuringExec = false;
 
+	private boolean allowAutomationWorkflow = false;
+
 	public GenericProject() {
 		super();
 	}
@@ -490,4 +492,11 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 		return template != null;
 	}
 
+	public boolean isAllowAutomationWorkflow() {
+		return allowAutomationWorkflow;
+	}
+
+	public void setAllowAutomationWorkflow(boolean allowAutomationWorkflow) {
+		this.allowAutomationWorkflow = allowAutomationWorkflow;
+	}
 }
