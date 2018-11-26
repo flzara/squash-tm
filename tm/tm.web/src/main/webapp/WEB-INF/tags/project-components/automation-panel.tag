@@ -39,6 +39,8 @@
 <f:message var="closeLabel" key="label.Close" />
 <f:message var="okLabel" key="label.Ok" />
 <f:message var="noServerLabel" key="label.NoServer" />
+<f:message var="active" key="label.active" />
+<f:message var="inactive" key="label.inactive" />
 
 <c:url var="listRemoteProjectsURL" value="/test-automation/servers/projects-list" />
 
@@ -56,6 +58,20 @@
 <comp:toggle-panel id="test-automation-management-panel" titleKey="project.testauto.panel.title" open="true">
 
   <jsp:attribute name="body">
+
+  <div id="project-workflow-option-table" class="display-table">
+              <div class="display-table-row">
+                <div class="display-table-cell">
+                  <label class="display-table-cell" style="vertical-align:bottom">
+                    <f:message key="label.workflow.modification" />
+                  </label>
+                </div>
+                <div class="display-table-cell">
+                  <input id="toggle-WORKFLOW-checkbox" type="checkbox" data-def="width=35, on_label=${inactive},
+                         off_label=${active}, checked=${!allowAutomationWorkflow}" style="display: none;" />
+                </div>
+              </div>
+          </div>
     <div class="ta-main-div">
 
       	<%-- =================================== server block =============================================================== --%>
@@ -79,19 +95,7 @@
       <c:set var="dispayedJobBlock" value="display: none"/>
       </c:if>
 
-      <div id="project-workflow-option-table" class="display-table">
-              <div class="display-table-row">
-                <div class="display-table-cell">
-                  <label for="toggle-WORKFLOW-checkbox" class="display-table-cell" style="vertical-align:bottom">
-                    <f:message key="label.workflow.modification" />
-                  </label>
-                </div>
-                <div class="display-table-cell">
-                  <input id="toggle-WORKFLOW-checkbox" type="checkbox" data-def="width=35, on_label=${inactive},
-                         off_label=${active}, checked=${!allowAutomationWorkflow}" style="display: none;" />
-                </div>
-              </div>
-          </div>
+      
 
       <fieldset class="ta-projects-block  ta-block" style="${dispayedJobBlock}">
         <legend>
