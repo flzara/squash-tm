@@ -218,6 +218,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         } else {
                             cell.text('-');
                         }
+                        cell.css({"font-style": "italic", "text-decoration": "underline"});
 
 
                     },

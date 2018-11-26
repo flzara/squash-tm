@@ -201,7 +201,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             input.css('height', '16px');
                             return input;
                         };
-
+                        
                         $.editable.addInputType('ta-picker', edObj);
                         var editable = confman.getStdJeditable();
                         editable.type = 'ta-picker';
@@ -210,6 +210,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         var entityId = data["entity-id"];
                         var url = squashtm.app.contextRoot + 'test-cases/' + entityId + '/test-automation/tests';
                         cell.editable(url, editable);
+                        cell.css({"font-style": "italic", "text-decoration": "underline"});
                     },
 
                     fnDrawCallback: function () {
