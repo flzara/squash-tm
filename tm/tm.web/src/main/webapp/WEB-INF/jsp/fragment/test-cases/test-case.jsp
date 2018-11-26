@@ -112,6 +112,7 @@
 <%-- ----------------------------------- Variables ----------------------------------------------%>
 
 <c:set var="scripted" value="${testCase.isScripted()}"/>
+<c:set var="allowAutomationWorkflow" value="${testCase.project.isAllowAutomationWorkflow()}"/>
 
 <%---------------------------- Test Case Header ------------------------------%>
 
@@ -185,8 +186,9 @@
                              testCaseImportanceLabel="${testCaseImportanceLabel}"/>
 
         <%-- ------------------------- Automation Panel ------------------------- --%>
-      <tc:test-case-automation testCase="${testCase}"/>
-
+      <c:if test="${allowAutomationWorkflow}">
+        <tc:test-case-automation testCase="${testCase}"/>
+      </c:if>
 
         <%----------------------------------- Prerequisites -----------------------------------------------%>
       <c:if test="${!scripted}">
