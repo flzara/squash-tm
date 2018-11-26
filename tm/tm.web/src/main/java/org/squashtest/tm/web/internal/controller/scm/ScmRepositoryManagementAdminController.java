@@ -32,6 +32,8 @@ import java.util.List;
 public class ScmRepositoryManagementAdminController {
 
 	private static final String PATH = "path";
+	private static final String FOLDER = "folder";
+	private static final String BRANCH = "branch";
 
 	@Inject
 	ScmRepositoryManagerService scmRepositoryManager;
@@ -46,5 +48,17 @@ public class ScmRepositoryManagementAdminController {
 	@ResponseBody
 	public String updatePath(@PathVariable long scmRepositoryId, String path) {
 		return scmRepositoryManager.updatePath(scmRepositoryId, path);
+	}
+
+	@RequestMapping(value = "/{scmRepositoryId}", method = RequestMethod.POST, params = FOLDER)
+	@ResponseBody
+	public String updateFolder(@PathVariable long scmRepositoryId, String folder) {
+		return scmRepositoryManager.updateFolder(scmRepositoryId, folder);
+	}
+
+	@RequestMapping(value = "/{scmRepositoryId}", method = RequestMethod.POST, params = BRANCH)
+	@ResponseBody
+	public String updateBranch(@PathVariable long scmRepositoryId, String branch) {
+		return scmRepositoryManager.updateBranch(scmRepositoryId, branch);
 	}
 }

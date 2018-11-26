@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'backbone', 'squash.translator', 'workspace.routing', 'app/util/StringUtil'],
-	function($, Backbone, translator, routing, StringUtils) {
+define(['jquery', 'backbone', 'squash.translator', 'workspace.routing', 'app/util/StringUtil', 'app/lnf/Forms'],
+	function($, Backbone, translator, routing, StringUtils, Forms) {
 
 	var ChangeAttributeDialog = Backbone.View.extend({
 
@@ -48,19 +48,63 @@ define(['jquery', 'backbone', 'squash.translator', 'workspace.routing', 'app/uti
 			});
 		},
 		/**
-		* Prepare the configuration of the dialog for path modification.
+		* Prepare the configuration of the dialog for repository path modification.
 		*/
 		openForPath(event) {
-			let title = translator.get('title.ChangePath');
-			let label = translator.get('label.Path');
+			let self = this;
+			let title = translator.get('title.ChangeRepositoryPath');
+			let label = translator.get('label.RepositoryPath');
 
 			let tableCell = event.currentTarget;
-			let path = $(tableCell).text();
+			let repositoryPath = $(tableCell).text();
 
 			let row = tableCell.parentElement;
-			this.repositoryId = this.table.fnGetData(row)['repository-id'];
+			// notify repository ID
+			self.repositoryId = self.table.fnGetData(row)['repository-id'];
+			// notify mode
+			self.mode = 'path';
 
-			this.adaptAndOpenDialog(title, label, path);
+			self.adaptAndOpenDialog(title, label, repositoryPath);
+		},
+		/**
+		* Prepare the configuration of the dialog for folder path modification.
+		*/
+		openForFolder(event) {
+			let self = this;
+
+			let title = translator.get('title.ChangeWorkingFolderPath');
+			let label = translator.get('label.WorkingFolderPath');
+
+			let tableCell = event.currentTarget;
+			let folderPath = $(tableCell).text();
+
+			let row = tableCell.parentElement;
+			// notify repository ID
+			self.repositoryId = self.table.fnGetData(row)['repository-id'];
+			// notify mode
+			self.mode = 'folder';
+
+			self.adaptAndOpenDialog(title, label, folderPath);
+		},
+		/**
+		* Prepare the configuration of the dialog for folder path modification.
+		*/
+		openForBranch(event) {
+			let self = this;
+
+			let title = translator.get('title.ChangeWorkingBranch');
+			let label = translator.get('label.WorkingBranch');
+
+			let tableCell = event.currentTarget;
+			let branch = $(tableCell).text();
+
+			let row = tableCell.parentElement;
+			// notify repository ID
+			self.repositoryId = self.table.fnGetData(row)['repository-id'];
+			// notify mode
+			self.mode = 'branch';
+
+			self.adaptAndOpenDialog(title, label, branch);
 		},
 		/**
 		* Adapt the dialog title and label according to the attribute being modified.
@@ -68,14 +112,14 @@ define(['jquery', 'backbone', 'squash.translator', 'workspace.routing', 'app/uti
 		*/
 		adaptAndOpenDialog(title, label, value) {
 			let self = this;
+			// clear errors
+			Forms.input(self.input).clearState();
 			// title
 			self.ChangeAttributeDialog.prev('.ui-dialog-titlebar').find('.ui-dialog-title').text(title);
 			// label
 			self.ChangeAttributeDialog.find('#change-attribute-label').text(label);
 			// value
 			self.input.val(value);
-			// notify mode
-			self.mode = 'path';
 			// open
 			self.ChangeAttributeDialog.formDialog('open');
 		},
@@ -85,6 +129,9 @@ define(['jquery', 'backbone', 'squash.translator', 'workspace.routing', 'app/uti
 		*/
 		updateAttribute(callback) {
 			let self = this;
+
+			// clear errors
+			Forms.input(self.input).clearState();
 
 			let mode = self.mode;
 			let value = self.input.val();

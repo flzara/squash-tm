@@ -74,7 +74,6 @@ class ScmRepositoryManagerServiceTest extends Specification {
 			resultList == expectedList
 	}
 
-
 	def "#findPagedScmRepositoriesByScmServer(Long, Pageable) - [Nominal] Should find all the ScmRepositories sorted by path"() {
 		given: "Mock server"
 			long serverId = 5
@@ -113,7 +112,6 @@ class ScmRepositoryManagerServiceTest extends Specification {
 		then:
 			resultPage == expectedPage
 	}
-
 
 	def "#createNewScmRepository(ScmRepository) - [Nominal] Should create a new ScmRepository with its attributes"() {
 		given: "Mock repository"
@@ -165,6 +163,80 @@ class ScmRepositoryManagerServiceTest extends Specification {
 			repo.repositoryPath == repoPath
 			0 * scmRepositoryDao.save(repo)
 			resultPath == repoPath
+	}
+
+	def "#updateFolder(long, String) - [Nominal] Should update the folder path of the ScmRepository"() {
+		given: "Mock data"
+			long repoId = 1
+			ScmRepository repo = new ScmRepository()
+			repo.id = repoId
+			repo.folderPath = "/resources/features"
+		and: "Expceted result"
+			String newFolderPath = "/resources/gherkin/features"
+		and: "Mock Dao method"
+			scmRepositoryDao.getOne(repoId) >> repo
+		when:
+			String resultFolderPath = scmRepositoryManagerService.updateFolder(repoId, newFolderPath)
+		then:
+			repoId == repoId
+			repo.folderPath == newFolderPath
+			1 * scmRepositoryDao.save(repo)
+			resultFolderPath == newFolderPath
+	}
+
+	def "#updateFolder(long, String) - [Nothing] Should try to update the folder path of a ScmRepository with the same path and do nothing"() {
+		given: "Mock data"
+			long repoId = 1
+			String repoFolder = "/resources/features"
+			ScmRepository repo = new ScmRepository()
+			repo.id = repoId
+			repo.folderPath = repoFolder
+		and: "Mock Dao method"
+			scmRepositoryDao.getOne(repoId) >> repo
+		when:
+			String resultFolderPath = scmRepositoryManagerService.updateFolder(repoId, repoFolder)
+		then:
+			repo.id == repoId
+			repo.folderPath == repoFolder
+			0 * scmRepositoryDao.save(repo)
+			resultFolderPath == repoFolder
+	}
+
+	def "#updateBranch(long, String) - [Nominal] Should update the working branch of the ScmRepository"() {
+		given: "Mock data"
+			long repoId = 7
+			ScmRepository repo = new ScmRepository()
+			repo.id = repoId
+			repo.branch = "master"
+		and: "Expceted result"
+			String newBranch = "develop"
+		and: "Mock Dao method"
+			scmRepositoryDao.getOne(repoId) >> repo
+		when:
+			String resultBranch = scmRepositoryManagerService.updateBranch(repoId, newBranch)
+		then:
+			repoId == repoId
+			repo.branch == newBranch
+			1 * scmRepositoryDao.save(repo)
+			resultBranch == newBranch
+	}
+
+	def "#updateBranch(long, String) - [Nothing] Should try to update the folder path of a ScmRepository with the same path and do nothing"() {
+		given: "Mock data"
+			long repoId = 7
+			String repoBranch = "develop"
+			ScmRepository repo = new ScmRepository()
+			repo.id = repoId
+			repo.branch = repoBranch
+		and: "Mock Dao method"
+			scmRepositoryDao.getOne(repoId) >> repo
+		when:
+			String resultFolderPath = scmRepositoryManagerService.updateBranch(repoId, repoBranch)
+		then:
+			repo.id == repoId
+			repo.branch == repoBranch
+			0 * scmRepositoryDao.save(repo)
+			resultFolderPath == repoBranch
 	}
 
 	def "#deleteScmrepositories(Collection<Long>) - [Nominal] - Should delete several ScmRepositories"() {

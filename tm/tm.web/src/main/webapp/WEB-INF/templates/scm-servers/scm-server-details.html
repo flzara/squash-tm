@@ -168,7 +168,7 @@
                     <tr>
                       <th th:attr="data-def='invisible, map=repository-id'" class="not-displayed">Id</th>
                       <th th:attr="data-def='select, map=repository-index'">#</th>
-                      <th th:attr="data-def='sortable, map=path, sClass=col-path'" th:text="#{label.Path}">Chemin</th>
+                      <th th:attr="data-def='sortable, map=path, sClass=col-path'" th:text="#{label.RepositoryPath}">Chemin</th>
                       <th th:attr="data-def='sortable, map=folder, sClass=col-folder'" th:text="#{label.WorkingFolder}">Dossier de Travail</th>
                       <th th:attr="data-def='sortable, map=branch, sClass=col-branch'" th:text="#{label.WorkingBranch}">Branche de Travail</th>
                       <th th:attr="data-def='delete-button=#delete-scm-repository-popup , map=empty-delete-holder'"></th>
@@ -210,7 +210,7 @@
              title="Add a new Scm Repository" th:title="#{title.newScmRepository}">
           <div>
             <div class="control-group">
-              <label class="control-label" for="path" th:text="#{label.Path}">Name</label>
+              <label class="control-label" for="path" th:text="#{label.RepositoryPath}">Name</label>
               <div class="controls">
                 <input id="path" name="path" class="strprop" value="" size="50" maxlength="50" type="text" data-def="maininput" />
                 <br/>
@@ -248,17 +248,15 @@
         <!--   CHANGE ATTRIBUTE POPUP -->
         <div id="change-attribute-popup" class="not-displayed popup-dialog" data-def='nocleanup' th:title="#{title.Empty}">
 
-          <table class="form-horizontal">
-            <tr class="control-group">
-              <td>
-                <label id='change-attribute-label' for="change-attribute-input" class="control-label" th:text="#{label.Empty}">Vide</label>
-              </td>
-              <td class="controls">
+          <div class="form-horizontal">
+            <div class="control-group">
+              <label id='change-attribute-label' for="change-attribute-input" class="control-label" th:text="#{label.Empty}">Vide</label>
+              <div class="controls">
                 <input id="change-attribute-input" name="change-attribute-input" type="text" maxlength="50" size="50" />
                 <span class="help-inline red-warning-message">&nbsp;</span>
-              </td>
-            </tr>
-          </table>
+              </div>
+            </div>
+          </div>
 
           <div class="popup-dialog-buttonpane">
             <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm" />

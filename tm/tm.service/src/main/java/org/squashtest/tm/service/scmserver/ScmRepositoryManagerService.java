@@ -56,6 +56,20 @@ public interface ScmRepositoryManagerService {
 	 */
 	String updatePath(long scmRepositoryId, String newPath);
 	/**
+	 * Update the working folder path of the ScmRepository with the given Id to the new given path.
+	 * @param scmRepositoryId The Id of the ScmRepository which folder path is to update.
+	 * @param newFolderPath The new working folder of the ScmRepository.
+	 * @return The new path of the ScmRepository working folder.
+	 */
+	String updateFolder(long scmRepositoryId, String newFolderPath);
+	/**
+	 * Update the working branch of the ScmRepository with the given Id to the new given branch.
+	 * @param scmRepositoryId The Id of the ScmRepository which branch is to update.
+	 * @param newBranch The new branch of the ScmRepository.
+	 * @return The new branch of the ScmRepository.
+	 */
+	String updateBranch(long scmRepositoryId, String newBranch);
+	/**
 	 * Delete the ScmRepositories with the given Ids.
 	 * @param scmRepositoriesIds The Ids of the ScmRepositories to delete.
 	 */
