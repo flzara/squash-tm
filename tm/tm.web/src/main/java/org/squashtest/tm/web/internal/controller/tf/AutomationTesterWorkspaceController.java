@@ -66,7 +66,7 @@ public class AutomationTesterWorkspaceController {
 		.map(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "testCase.name")
 		.map("format", "testCase.kind")
 		.map(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, "testCase.id")
-		.map(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, "transmittedBy")
+		.map(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, "testCase.audit.createdBy")
 		.map("transmitted-on", "transmissionDate")
 		.map("priority", "automationPriority")
 		.map("status", "requestStatus")

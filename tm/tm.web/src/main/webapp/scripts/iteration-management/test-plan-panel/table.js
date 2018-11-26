@@ -76,7 +76,7 @@ define(
 			// execution mode icon
 			var $exectd = $row.find('.exec-mode').text('');
 			if (data['exec-mode'] === "M") {
-				$exectd.append('<span class"exec-mode-icon exec-mode-manual"/>').attr('title', '');
+				$exectd.append('<span class="exec-mode-icon exec-mode-manual"/>').attr('title', '');
 			} else {
 				$exectd.append('<span class="exec-mode-icon exec-mode-automated"/>').attr('title',
 					_conf.autoexecutionTooltip);

@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
-import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
@@ -76,7 +75,7 @@ public class AutomationWorkspaceController {
 		.map(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "testCase.name")
 		.map("format", "testCase.kind")
 		.map(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, "testCase.id")
-		.mapAttribute(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, "testCase.audit.createdBy", TestCase.class)
+		.map(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, "transmittedBy")
 		.map("transmitted-on", "transmissionDate")
 		.map("priority", "automationPriority")
 		.map("status", "requestStatus")
