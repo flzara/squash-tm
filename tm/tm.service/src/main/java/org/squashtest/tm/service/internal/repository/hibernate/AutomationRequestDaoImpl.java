@@ -242,7 +242,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	@Override
 	public void updateAutomationRequestToAssigned(User user, List<Long> ids) {
 		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest req SET req.requestStatus = :reqStatus," +
-			" req.assignedTo = :user, req.assignmentDate = :assignedOn WHERE req.id in :ids ")
+			" req.assignedTo = :user, req.assignmentDate = :assignedOn WHERE req.id in :ids and req.requestStatus in :reqStatusInitial")
 			.setParameter("reqStatus", AutomationRequestStatus.WORK_IN_PROGRESS)
 			.setParameter("reqStatusInitial", Arrays.asList(AutomationRequestStatus.TRANSMITTED, AutomationRequestStatus.WORK_IN_PROGRESS, AutomationRequestStatus.EXECUTABLE))
 			.setParameter("user", user)
@@ -463,7 +463,9 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 					.leftJoin(request.assignedTo, assignedTo)
 					.leftJoin(request.transmittedBy, transmittedBy)
 					.leftJoin(request.createdBy, createdBy)
-					.where(project.id.in(inProjectIds).and(request.testCase.automatable.eq(TestCaseAutomatable.Y)));
+					.where(project.id.in(inProjectIds)
+						.and(request.testCase.automatable.eq(TestCaseAutomatable.Y))
+						.and(project.allowAutomationWorkflow.isTrue()));
 
 
 		return querydslRequest;
