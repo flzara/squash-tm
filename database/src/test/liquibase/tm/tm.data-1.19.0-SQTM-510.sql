@@ -1,6 +1,6 @@
 insert into ACL_OBJECT_IDENTITY (ID, IDENTITY, CLASS_ID)
 values
-(-30, 2, 1);
+(30, 2, 1);
 
 insert into CORE_PARTY(PARTY_ID)
 values
@@ -18,5 +18,5 @@ values
 
 insert into ACL_RESPONSIBILITY_SCOPE_ENTRY(PARTY_ID, ACL_GROUP_ID, OBJECT_IDENTITY_ID)
 values
-( -40, (select ag.ID from ACL_GROUP ag where ag.QUALIFIED_NAME='squashtest.acl.group.tm.ProjectManager'), -30),
-( -41,(select ag.ID from ACL_GROUP ag where ag.QUALIFIED_NAME='squashtest.acl.group.tm.TestEditor'), -30);
+(-40, (select ag.ID from ACL_GROUP ag where ag.QUALIFIED_NAME='squashtest.acl.group.tm.ProjectManager'), 30),
+(-41, (select ag.ID from ACL_GROUP ag where ag.QUALIFIED_NAME='squashtest.acl.group.tm.TestEditor'), 30);
