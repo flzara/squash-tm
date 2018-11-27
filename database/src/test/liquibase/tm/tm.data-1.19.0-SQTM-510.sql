@@ -1,6 +1,6 @@
 insert into ACL_OBJECT_IDENTITY (ID, IDENTITY, CLASS_ID)
 values
-(-30,-25, 1);
+(-30, 2, 1);
 
 insert into CORE_PARTY(PARTY_ID)
 values

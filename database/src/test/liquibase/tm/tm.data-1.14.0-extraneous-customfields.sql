@@ -6,14 +6,14 @@
 
 -- create a project
 
-insert into TEST_CASE_LIBRARY(tcl_id, attachment_list_id) values (-1, -900);
-insert into REQUIREMENT_LIBRARY(rl_id, attachment_list_id) values (-1, -900);
-insert into CAMPAIGN_LIBRARY(cl_id, attachment_list_id) values (-1, -900);
-insert into CUSTOM_REPORT_LIBRARY(crl_id, attachment_list_id) values (-1, -900);
+insert into TEST_CASE_LIBRARY(tcl_id, attachment_list_id) values (1, -900);
+insert into REQUIREMENT_LIBRARY(rl_id, attachment_list_id) values (1, -900);
+insert into CAMPAIGN_LIBRARY(cl_id, attachment_list_id) values (1, -900);
+insert into CUSTOM_REPORT_LIBRARY(crl_id, attachment_list_id) values (1, -900);
 
  insert into PROJECT(project_id, name, created_by, created_on, attachment_list_id, req_categories_list, tc_natures_list, tc_types_list,
 tcl_id, cl_id, rl_id, crl_id)
-values (-1, 'project', 'admin', '2016-06-29', -900, -1, -2, -3, -1, -1, -1, -1);
+values (1, 'project', 'admin', '2016-06-29', -900, -1, -2, -3, 1, 1, 1, 1);
 
 -- create a couple of custom fields
 -- first a combobox, second a tag list
@@ -33,15 +33,15 @@ values (-1, 'bob', 0, 'bob'),
 -- bind that to the test cases of the project
 
 insert into CUSTOM_FIELD_BINDING(cfb_id, cf_id, bound_entity, bound_project_id, position)
-values (-1,-1, 'TEST_CASE', -1, 0),
-        (-2, -2, 'TEST_CASE', -1, 1),
-        (-3, -1, 'TEST_STEP', -1, 0);
+values (-1,-1, 'TEST_CASE', 1, 0),
+        (-2, -2, 'TEST_CASE', 1, 1),
+        (-3, -1, 'TEST_STEP', 1, 0);
 
 -- create a couple of test cases : one is ok, the other one suffers from 6340
 
 insert into TEST_CASE_LIBRARY_NODE(tcln_id, name, created_by, created_on, project_id, attachment_list_id)
-values (-1, 'tc-6340-fine', 'admin', '2016-06-29', -1, -900),
-        (-2, 'tc-6340-wrong', 'admin', '2016-06-29', -1, -900);
+values (-1, 'tc-6340-fine', 'admin', '2016-06-29', 1, -900),
+        (-2, 'tc-6340-wrong', 'admin', '2016-06-29', 1, -900);
 
 insert into TEST_CASE(tcln_id, version, tc_nature, tc_type, prerequisite)
 values (-1, 1, -12, -20, ''),
