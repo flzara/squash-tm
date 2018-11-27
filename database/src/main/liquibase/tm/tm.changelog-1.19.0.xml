@@ -473,7 +473,7 @@
       -- create the libraries
 
       insert into AUTOMATION_REQUEST_LIBRARY (ARL_ID)
-      select P.PROJECT_ID from PROJECT p;
+      select p.PROJECT_ID from PROJECT p;
 
 
       -- attachments, step 1 :
