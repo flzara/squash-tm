@@ -2,18 +2,18 @@
 
 -- create an attachment list. All will refer to it.
 
- insert into ATTACHMENT_LIST(attachment_list_id) values (-1);
+ insert into ATTACHMENT_LIST(attachment_list_id) values (-900);
 
 -- create a project
 
-insert into TEST_CASE_LIBRARY(tcl_id, attachment_list_id) values (-1, -1);
-insert into REQUIREMENT_LIBRARY(rl_id, attachment_list_id) values (-1, -1);
-insert into CAMPAIGN_LIBRARY(cl_id, attachment_list_id) values (-1, -1);
-insert into CUSTOM_REPORT_LIBRARY(crl_id, attachment_list_id) values (-1, -1);
+insert into TEST_CASE_LIBRARY(tcl_id, attachment_list_id) values (-1, -900);
+insert into REQUIREMENT_LIBRARY(rl_id, attachment_list_id) values (-1, -900);
+insert into CAMPAIGN_LIBRARY(cl_id, attachment_list_id) values (-1, -900);
+insert into CUSTOM_REPORT_LIBRARY(crl_id, attachment_list_id) values (-1, -900);
 
  insert into PROJECT(project_id, name, created_by, created_on, attachment_list_id, req_categories_list, tc_natures_list, tc_types_list,
 tcl_id, cl_id, rl_id, crl_id)
-values (-1, 'project', 'admin', '2016-06-29', -1, -1, -2, -3, -1, -1, -1, -1);
+values (-1, 'project', 'admin', '2016-06-29', -900, -1, -2, -3, -1, -1, -1, -1);
 
 -- create a couple of custom fields
 -- first a combobox, second a tag list
@@ -40,8 +40,8 @@ values (-1,-1, 'TEST_CASE', -1, 0),
 -- create a couple of test cases : one is ok, the other one suffers from 6340
 
 insert into TEST_CASE_LIBRARY_NODE(tcln_id, name, created_by, created_on, project_id, attachment_list_id)
-values (-1, 'tc-6340-fine', 'admin', '2016-06-29', -1, -1),
-        (-2, 'tc-6340-wrong', 'admin', '2016-06-29', -1, -1);
+values (-1, 'tc-6340-fine', 'admin', '2016-06-29', -1, -900),
+        (-2, 'tc-6340-wrong', 'admin', '2016-06-29', -1, -900);
 
 insert into TEST_CASE(tcln_id, version, tc_nature, tc_type, prerequisite)
 values (-1, 1, -12, -20, ''),
@@ -106,10 +106,10 @@ values (-1, -1, 0),
 -- creating their denormalized values (for the ok execution and the not ok execution)
 
 insert into DENORMALIZED_FIELD_VALUE(dfv_id, code, denormalized_field_holder_id, denormalized_field_holder_type, label, value, input_type, field_type)
-values (-1, 'SSF1', -1, 'EXECUTION', 'mylist#1', 'bob', 'DROPDOWN_LIST', 'SSF'), 
+values (-1, 'SSF1', -1, 'EXECUTION', 'mylist#1', 'bob', 'DROPDOWN_LIST', 'SSF'),
         (-2, 'MSF1', -1, 'EXECUTION', 'mytags#1', null, 'TAG', 'MSF'),
-        (-3, 'SSF1', -2, 'EXECUTION', 'mylist#1', 'bob', 'DROPDOWN_LIST', 'SSF'), 
-        (-4, 'SSF1', -2, 'EXECUTION', 'mylist#1', 'bob', 'DROPDOWN_LIST', 'SSF'), 
+        (-3, 'SSF1', -2, 'EXECUTION', 'mylist#1', 'bob', 'DROPDOWN_LIST', 'SSF'),
+        (-4, 'SSF1', -2, 'EXECUTION', 'mylist#1', 'bob', 'DROPDOWN_LIST', 'SSF'),
         (-5, 'MSF1', -2, 'EXECUTION', 'mytags#1', null, 'TAG', 'MSF'),
         (-6, 'MSF1', -2, 'EXECUTION', 'mytags#1', null, 'TAG', 'MSF'),
         (-7, 'SSF1', -1, 'EXECUTION_STEP', 'mylist#1', 'mike', 'DROPDOWN_LIST', 'SSF'),
@@ -136,7 +136,7 @@ values (-1, 'bob', 0, 'bob'),
         (-6, 'tag2', 1, 'tag2'),
         (-6, 'changed', 2, 'changed'),
         (-6, 'changed too', 3, 'changed too');
-        
+
 
 insert into DENORMALIZED_FIELD_VALUE_OPTION(dfv_id, label, position)
 values (-2, 'changed', 0),
