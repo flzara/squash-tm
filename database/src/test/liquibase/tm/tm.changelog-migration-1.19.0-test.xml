@@ -73,7 +73,7 @@
     <preConditions>
       <sqlCheck expectedResult="2">
         select count(*) from PROJECT
-        where ALLOW_AUTOMATION_WORKFLOW = 0;
+        where not ALLOW_AUTOMATION_WORKFLOW;
       </sqlCheck>
     </preConditions>
   </changeSet>
