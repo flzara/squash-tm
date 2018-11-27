@@ -524,7 +524,15 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 	public boolean isAutomated() {
-		return automatedTest != null && getProject().isTestAutomationEnabled();
+		boolean isAutomated = false;
+		if(getProject().isAllowAutomationWorkflow()) {
+			if(this.automatable.equals(TestCaseAutomatable.Y)) {
+				isAutomated = automatedTest != null && getProject().isTestAutomationEnabled();
+			}
+		} else {
+			isAutomated = automatedTest != null && getProject().isTestAutomationEnabled();
+		}
+		return isAutomated;
 	}
 
 	// ***************** (detached) custom field section *************

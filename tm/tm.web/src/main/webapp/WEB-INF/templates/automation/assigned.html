@@ -40,8 +40,10 @@
       </div>
     </div>
     <div class="right btn-toolbar">
+      <div>
         <span th:text="#{automation.label.selected.rows}">Nombre de lignes actives:</span><span id="selectedRows">0</span>
-      <div class="btn-group">
+      </div>
+      <div class="btn-group" style="margin-top: 5px">
         <button id="select-affected-button" class="tf-sm" th:title="#{label.SelectAllForSelection}" th:text="#{label.SelectAllForSelection}"></button>
         <button id="deselect-affected-button" class="tf-sm" th:title="#{label.DeselectAll}" th:text="#{label.DeselectAll}"></button>
       </div>

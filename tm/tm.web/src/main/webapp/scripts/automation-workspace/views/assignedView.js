@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", 'app/ws/squashtm.notification', "workspace.storage", "./sort", "./filter", "squash.configmanager", "squashtable", "jeditable", "jquery.squash.formdialog"],
-    function ($, _, Backbone, Handlebars, translator, notification, storage, sortmode, filtermode, confman) {
+define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", 'app/ws/squashtm.notification', "workspace.storage", "./sort", "./filter", "squash.configmanager", "tree/plugins/plugin-factory", "squashtable", "jeditable", "jqueryui", "jquery.squash.formdialog"],
+    function ($, _, Backbone, Handlebars, translator, notification, storage, sortmode, filtermode, confman, treefactory) {
         "use strict";
 
         var View = Backbone.View.extend({
@@ -104,7 +104,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "sClass": "centered",
                         "sWidth": "2.5em",
                         "mRender": function (data, type, row, meta) {
-                            return '<a href="' + squashtm.app.contextRoot + 'test-cases/' + data + '/info"><img src="/squash/images/icon-lib/eye.png"></a>';
+                            return '<a href="' + squashtm.app.contextRoot + 'test-cases/' + data + '/info" class="table-button edit-pencil"></a>';
                         }
                     }, {
                         "bSortable": false,
@@ -182,7 +182,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             // now add our own button
                             var btnChoose = $("<button/>", {
                                 'text': translator.get('label.dot.pick'),
-                                'id': 'ta-script-picker-button'
+                                'id': 'ta-script-picker-button' + data["tc-id"]
                             });
 
                             var btnRemove = $("<button/>", {
@@ -191,6 +191,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             });
 
                             this.append(btnRemove);
+                            this.append(btnChoose);
 
                         };
 
@@ -201,8 +202,8 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             input.css('height', '16px');
                             return input;
                         };
-                        
                         $.editable.addInputType('ta-picker', edObj);
+
                         var editable = confman.getStdJeditable();
                         editable.type = 'ta-picker';
                         editable.name = "path";
@@ -210,7 +211,25 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         var entityId = data["entity-id"];
                         var url = squashtm.app.contextRoot + 'test-cases/' + entityId + '/test-automation/tests';
                         cell.editable(url, editable);
-                        cell.css({"font-style": "italic", "text-decoration": "underline"});
+                        cell.css({ "font-style": "italic"});
+                        var cellId = "assigned-script" + data["tc-id"];
+                        var testAutomationUrl = squashtm.app.contextRoot + "test-cases/" + data["tc-id"] + "/test-automation/tests";
+                        cell.attr("id", cellId);
+                        var settings = {
+                            url: testAutomationUrl,
+                            id: cellId
+                        }
+                        cell.on('click', '#ta-script-picker-button' + data['tc-id'], function () {
+                            self._initPickerPopup(settings);
+                            var popup = $("#ta-picker-popup").formDialog();
+                            popup.formDialog('open');
+                            return false;//for some reason jeditable would trigger 'submit' if we let go
+                        });
+                        cell.on('click', '#ta-script-remove-button', function () {
+                            var popup = $("#ta-remove-popup").formDialog();
+                            popup.formDialog('open');
+                            return false;// see comment above
+                        });
                     },
 
                     fnDrawCallback: function () {
@@ -256,6 +275,161 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
             changeNumberSelectedRows: function (number) {
                 $("#selectedRows").text(number);
+            },
+
+            _initPickerPopup: function (settings) {
+
+                var dialog = $("#ta-picker-popup");
+
+                var testAutomationTree = dialog.find(".structure-tree");
+
+                // init
+
+                dialog.formDialog({
+                    height: 500
+                });
+
+                // cache
+                dialog.data('model-cache', undefined);
+
+
+
+                // ************ model loading *************************
+
+                var initDialogCache = function () {
+
+                    dialog.formDialog('setState', 'pleasewait');
+
+                    return $.ajax({
+                        url: settings.url,
+                        type: 'GET',
+                        dataType: 'json'
+                    })
+                        .done(function (json) {
+                            dialog.data('model-cache', json);
+                            createTree();
+                            dialog.formDialog('setState', 'main');
+                        })
+                        .fail(function (jsonError) {
+                            dialog.formDialog('close');
+                        });
+                };
+
+                var createTree = function () {
+
+                    treefactory.configure('simple-tree'); // will add the 'squash' plugin if doesn't exist yet
+                    var instanceTree = testAutomationTree.jstree({
+                        "json_data": {
+                            "data": dialog.data('model-cache')
+                        },
+
+                        "types": {
+                            "max_depth": -2, // unlimited without check
+                            "max_children": -2, // unlimited w/o check
+                            "valid_children": ["drive"],
+                            "types": {
+                                "drive": {
+                                    "valid_children": ["ta-test", "folder"],
+                                    "select_node": true
+                                },
+                                "ta-test": {
+                                    "valid_chidlren": "none",
+                                    "select_node": true
+                                },
+                                "folder": {
+                                    "valid_children": ["ta-test", "folder"],
+                                    "select_node": true
+                                }
+                            }
+                        },
+
+                        "ui": {
+                            "select_multiple_modifier": false
+                        },
+
+                        "themes": {
+                            "theme": "squashtest",
+                            "dots": true,
+                            "icons": true,
+                            "url": squashtm.app.contextRoot + "styles/squash.tree.css"
+                        },
+
+                        "core": {
+                            "animation": 0
+                        },
+
+                        conditionalselect: function () {
+                            return true;
+                        },
+
+                        "plugins": ["json_data", "types", "ui", "themes", "squash", 'conditionalselect']
+
+                    });
+
+                    $(window).bind('select_node.jstree', function () {
+                        console.log('select_node.jstree');
+                    });
+                    $(window).bind('click.jstree', function () {
+                        console.log('click.jstree');
+                    });
+
+                };
+
+                var reset = function () {
+                    if (testAutomationTree.jstree('get_selected').length > 0) {
+                        testAutomationTree.jstree('get_selected').deselect();
+                    }
+                };
+
+                // ****************** transaction ************
+
+
+                var submit = function () {
+
+                    try {
+
+                        var node = testAutomationTree.jstree('get_selected');
+
+                        if (node.length < 1) {
+                            throw "no-selection";
+                        }
+
+                        var nodePath = node.getPath();
+                        $("#" + settings.id).find('form input[name="path"]').val(nodePath);
+                        dialog.formDialog('close');
+
+                    } catch (exception) {
+                        var errmsg = exception;
+                        if (exception == "no-selection") {
+                            errmsg = translator.get('test-case.testautomation.popup.error.noselect');
+                        }
+                        dialog.formDialog('showError', errmsg);
+                    }
+
+                };
+
+                // ************ events *********************
+
+                dialog.on('formdialogconfirm', submit);
+
+                dialog.on('formdialogcancel', function () {
+                    dialog.formDialog('close');
+                });
+
+                dialog.on("formdialogopen", function () {
+                    if (dialog.data('model-cache') === undefined) {
+                        dialog.initAjax = initDialogCache();
+                    } else {
+                        reset();
+                    }
+                });
+
+                dialog.on('formdialogclose', function () {
+                    if (dialog.initAjax) {
+                        dialog.initAjax.abort();
+                    }
+
+                });
             },
 
             selectAll: function (table) {

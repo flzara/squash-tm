@@ -39,8 +39,11 @@
       </div>
     </div>
     <div class="right btn-toolbar">
-      <span th:text="#{automation.label.selected.rows}">Nombre de lignes actives:</span><span id="selectedRows">0</span>
-      <div class="btn-group">
+      <div>
+        <span th:text="#{automation.label.selected.rows}">Nombre de lignes actives:</span><span id="selectedRows">0</span>
+      </div>
+      <div class="btn-group" style="margin-top: 5px">
+
         <button id="select-validate-button" class="tf-sm" th:title="#{label.SelectAllForSelection}" th:text="#{label.SelectAllForSelection}"></button>
         <button id="deselect-validate-button" class="tf-sm" th:title="#{label.DeselectAll}" th:text="#{label.DeselectAll}"></button>
       </div>

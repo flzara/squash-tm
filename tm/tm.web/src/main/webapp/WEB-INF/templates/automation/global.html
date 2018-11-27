@@ -37,8 +37,10 @@
     </div>
   </div>
   <div class="right btn-toolbar">
+    <div>
       <span th:text="#{automation.label.selected.rows}">Nombre de lignes actives:</span><span id="selectedRows">0</span>
-    <div class="btn-group">
+    </div>
+    <div class="btn-group" style="margin-top: 5px">
       <button id="select-global-button" class="tf-sm" th:title="#{label.SelectAllForSelection}" th:text="#{label.SelectAllForSelection}"></button>
       <button id="deselect-global-button" class="tf-sm" th:title="#{label.DeselectAll}" th:text="#{label.DeselectAll}"></button>
     </div>
@@ -46,24 +48,24 @@
   <div style="width:100%; overflow: auto;">
     <table id="automation-table" class="automation-table">
       <thead>
-      <tr>
-        <th class="no-user-select">#</th>
-        <th th:text="#{automation.datatable.headers.project}" class="no-user-select tp-th-filter tp-th-project-name"></th>
-        <th th:text="#{automation.datatable.headers.id}" class="no-user-select tp-th-filter tp-th-id"></th>
-        <th th:text="#{automation.datatable.headers.reference}" class="no-user-select tp-th-filter tp-th-reference"></th>
-        <th th:text="#{automation.datatable.headers.label}" class="no-user-select tp-th-filter tp-th-label"></th>
-        <th th:text="#{automation.datatable.headers.format}" class="no-user-select tp-th-filter tp-th-format"></th>
-        <th th:text="#{automation.datatable.headers.createdby}" class="no-user-select tp-th-filter tp-th-createdby"></th>
-        <th th:text="#{automation.datatable.headers.priority}" class="no-user-select tp-th-filter tp-th-priority"></th>
-        <th th:text="#{automation.datatable.headers.status}" class="no-user-select tp-th-filter tp-th-status"></th>
-        <th th:text="#{automation.datatable.headers.assignedto}" class="no-user-select tp-th-filter tp-th-assignedto"></th>
-        <th th:text="#{automation.datatable.headers.transmittedon}" class="no-user-select tp-th-filter tp-th-transmittedon"></th>
-        <th th:text="#{automation.datatable.headers.assignedon}"></th>
-        <th th:text="#{automation.datatable.headers.script}" class="assigned-script"></th>
-        <th class="no-user-select"></th>
-        <th class="no-user-select"></th>
-        <th></th>
-      </tr>
+        <tr>
+          <th class="no-user-select">#</th>
+          <th th:text="#{automation.datatable.headers.project}" class="no-user-select tp-th-filter tp-th-project-name"></th>
+          <th th:text="#{automation.datatable.headers.id}" class="no-user-select tp-th-filter tp-th-id"></th>
+          <th th:text="#{automation.datatable.headers.reference}" class="no-user-select tp-th-filter tp-th-reference"></th>
+          <th th:text="#{automation.datatable.headers.label}" class="no-user-select tp-th-filter tp-th-label"></th>
+          <th th:text="#{automation.datatable.headers.format}" class="no-user-select tp-th-filter tp-th-format"></th>
+          <th th:text="#{automation.datatable.headers.createdby}" class="no-user-select tp-th-filter tp-th-createdby"></th>
+          <th th:text="#{automation.datatable.headers.priority}" class="no-user-select tp-th-filter tp-th-priority"></th>
+          <th th:text="#{automation.datatable.headers.status}" class="no-user-select tp-th-filter tp-th-status"></th>
+          <th th:text="#{automation.datatable.headers.assignedto}" class="no-user-select tp-th-filter tp-th-assignedto"></th>
+          <th th:text="#{automation.datatable.headers.transmittedon}" class="no-user-select tp-th-filter tp-th-transmittedon"></th>
+          <th th:text="#{automation.datatable.headers.assignedon}"></th>
+          <th th:text="#{automation.datatable.headers.script}" class="assigned-script"></th>
+          <th class="no-user-select"></th>
+          <th class="no-user-select"></th>
+          <th></th>
+        </tr>
       </thead>
       <tbody>
       </tbody>
