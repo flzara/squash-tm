@@ -40,6 +40,7 @@ import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.*;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.exception.UnallowedTestAssociationException;
 import org.squashtest.tm.exception.UnknownEntityException;
@@ -52,6 +53,8 @@ import java.util.*;
 
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
+import static org.squashtest.tm.domain.testcase.TestCaseAutomatable.M;
+import static org.squashtest.tm.domain.testcase.TestCaseAutomatable.N;
 import static org.squashtest.tm.domain.testcase.TestCaseImportance.LOW;
 import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD;
 
@@ -186,6 +189,12 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@SortableField
 	@NotNull
 	private TestCaseKind kind = STANDARD;
+
+	@OneToOne(mappedBy = "testCase", optional = true, fetch = LAZY, cascade = CascadeType.ALL)
+	private AutomationRequest automationRequest;
+
+	@Enumerated(EnumType.STRING)
+	private TestCaseAutomatable automatable = M;
 
 
 	// *************************** CODE *************************************
@@ -515,7 +524,15 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 	public boolean isAutomated() {
-		return automatedTest != null && getProject().isTestAutomationEnabled();
+		boolean isAutomated = false;
+		if(getProject().isAllowAutomationWorkflow()) {
+			if(this.automatable.equals(TestCaseAutomatable.Y)) {
+				isAutomated = automatedTest != null && getProject().isTestAutomationEnabled();
+			}
+		} else {
+			isAutomated = automatedTest != null && getProject().isTestAutomationEnabled();
+		}
+		return isAutomated;
 	}
 
 	// ***************** (detached) custom field section *************
@@ -826,6 +843,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		res.type = null;
 		res.importance = null;
 		res.status = null;
+		res.automatable = null;
 
 		return res;
 	}
@@ -908,6 +926,22 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	public void setKind(TestCaseKind kind) {
 		this.kind = kind;
+	}
+
+	public AutomationRequest getAutomationRequest() {
+		return automationRequest;
+	}
+
+	public void setAutomationRequest(AutomationRequest automationRequest) {
+		this.automationRequest = automationRequest;
+	}
+
+	public TestCaseAutomatable getAutomatable() {
+		return automatable;
+	}
+
+	public void setAutomatable(TestCaseAutomatable automatable) {
+		this.automatable = automatable;
 	}
 }
 

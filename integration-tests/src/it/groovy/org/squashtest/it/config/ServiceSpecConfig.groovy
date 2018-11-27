@@ -22,6 +22,7 @@ package org.squashtest.it.config
 
 import org.mockito.mock.MockName
 import org.spockframework.mock.MockNature
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.*
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
@@ -63,16 +64,24 @@ class ServiceSpecConfig {
 		return new DetachedMockFactory().createMock("squashtest.tm.service.IndexationService", IndexationService, MockNature.MOCK, [:])
 	}
 
-	@Bean
-	UserContextService userContextService(){
-		new SpringSecurityUserContextService();
-	}
+
 
 	@Bean
 	static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
 		new PropertySourcesPlaceholderConfigurer();
 	}
 
+
+	/*
+	 * Here the real instance is light enough and non invasive. We can still mock it later.
+	 * Note : the bean is ConditionalOnMissingBean because an instance of SpringSecurityUserContextService
+	 * may or may not be present, depending on EnabledAclSpecConfig is present in the test context.
+	 */
+	@Bean
+	@ConditionalOnMissingBean(UserContextService)
+	UserContextService userContextService(){
+		new SpringSecurityUserContextService();
+	}
 
 
 

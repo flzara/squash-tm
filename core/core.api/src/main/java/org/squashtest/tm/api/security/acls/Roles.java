@@ -37,6 +37,10 @@ public interface Roles {
 	
 	public static final String ROLE_TM_USER = "ROLE_TM_USER";
 	
-	public static final String ROLE_TA_API_CLIENT = "ROLE_TA_API_CLIENT"; 
+	public static final String ROLE_TA_API_CLIENT = "ROLE_TA_API_CLIENT";
+
+	public static final String ROLE_TF_FUNCTIONAL_TESTER = "ROLE_TF_FUNCTIONAL_TESTER";
+
+	public static final String ROLE_TF_AUTOMATION_PROGRAMMER = "ROLE_TF_AUTOMATION_PROGRAMMER";
 	
 }

@@ -43,6 +43,7 @@ import org.squashtest.tm.domain.project.ProjectVisitor;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestLibrary;
 import org.squashtest.tm.exception.library.CannotDeleteProjectException;
 import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
@@ -59,6 +60,7 @@ import org.squashtest.tm.service.internal.testcase.TestCaseNodeDeletionHandler;
 import org.squashtest.tm.service.milestone.MilestoneBindingManagerService;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.security.ObjectIdentityService;
+import org.squashtest.tm.service.tf.AutomationRequestModificationService;
 
 @Component("squashtest.tm.service.deletion.ProjectDeletionHandler")
 public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
@@ -74,6 +76,10 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 	private TestCaseNodeDeletionHandler testCaseDeletionHandker;
 	@Inject
 	private RequirementNodeDeletionHandler requirementDeletionHandler;
+
+	@Inject
+	private AutomationRequestModificationService autorequestModificationService;
+
 	@Inject
 	private ObjectIdentityService objectIdentityService;
 	@Inject
@@ -174,6 +180,8 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 
 		CustomReportLibrary customReportLibrary = genericProject.getCustomReportLibrary();
 		deleteCustomReportLibraryContent(customReportLibrary);
+
+		autorequestModificationService.deleteRequestByProjectId(genericProject.getId());
 	}
 
 	private void deleteCustomReportLibraryContent(CustomReportLibrary customReportLibrary) {
@@ -204,16 +212,20 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 		long tclId = project.getTestCaseLibrary().getId();
 		long clId = project.getCampaignLibrary().getId();
 		long crlId = project.getCustomReportLibrary().getId();
+		long arlId = project.getAutomationRequestLibrary().getId();
+
 		//remove arse for libraries
 		projectPermissionManagementService.removeAllPermissionsFromObject(RequirementLibrary.class, rlId);
 		projectPermissionManagementService.removeAllPermissionsFromObject(TestCaseLibrary.class, tclId);
 		projectPermissionManagementService.removeAllPermissionsFromObject(CampaignLibrary.class, clId);
 		projectPermissionManagementService.removeAllPermissionsFromObject(CustomReportLibrary.class, crlId);
+		projectPermissionManagementService.removeAllPermissionsFromObject(AutomationRequestLibrary.class, arlId);
 		//remove aoi for libaries
 		objectIdentityService.removeObjectIdentity(rlId, RequirementLibrary.class);
 		objectIdentityService.removeObjectIdentity(tclId, TestCaseLibrary.class);
 		objectIdentityService.removeObjectIdentity(clId, CampaignLibrary.class);
 		objectIdentityService.removeObjectIdentity(crlId, CustomReportLibrary.class);
+		objectIdentityService.removeObjectIdentity(arlId, AutomationRequestLibrary.class);
 		//remove arse for project
 		//and remove aoi for project
 		project.accept(new ProjectVisitor() {

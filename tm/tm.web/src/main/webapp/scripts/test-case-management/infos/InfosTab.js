@@ -21,6 +21,7 @@
 define([ "jquery", "backbone", "underscore",
          "./GeneralInfosPanel",
          "./PrerequisitePanel",
+         "./AutomationPanel",
          "../../test-automation/testcase-test-automation",
          "../../verified-requirements/TestCaseVerifiedRequirementsPanel",
          "bugtracker/bugtracker-panel",
@@ -28,7 +29,7 @@ define([ "jquery", "backbone", "underscore",
          "squash.translator",
          "custom-field-values",
          "squashtable"], function($,
-		Backbone, _, GeneralInfosPanel, PrerequisitePanel, testcaseTestAutomation,
+		Backbone, _, GeneralInfosPanel, PrerequisitePanel, AutomationPanel, testcaseTestAutomation,
 		TestCaseVerifiedRequirementsPanel, bugtrackerPanel, eventBus, translator, cufvalues) {
 
 
@@ -50,6 +51,12 @@ define([ "jquery", "backbone", "underscore",
 
 			// prerequisite
 			this.prerequisitePanel = new PrerequisitePanel({
+				settings : this.settings,
+				parentTab : this
+			});
+
+			// automation
+			this.automationPanel = new AutomationPanel({
 				settings : this.settings,
 				parentTab : this
 			});

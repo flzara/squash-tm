@@ -34,7 +34,10 @@ public enum PermissionWithMask {
 	EXECUTE("executable",128),
 	LINK("linkable",256),
 	IMPORT("importable",512),
-	ATTACH("attachable",1024);
+	ATTACH("attachable",1024),
+	WRITE_AS_FUNCTIONAL("editableAsFunctional", 8192),
+	WRITE_AS_AUTOMATION("editableAsAutomation", 16384);
+
 
 	private final String quality;
 

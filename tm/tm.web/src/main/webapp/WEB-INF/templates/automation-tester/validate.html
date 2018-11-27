@@ -1,0 +1,75 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<div th:fragment="automation-validate-view">
+  <div id="divTable">
+    <div style="margin-bottom: 40px">
+      <span style="font-style: italic; font-weight: bold; font-size:15px" th:text="#{automation.message.assigned}"></span>
+      <div style="float: right">
+        <button id="validate-button" class="tf-lg blue" th:title="#{automation.label.validate}" th:text="#{automation.label.validate}"></button>
+
+      </div>
+    </div>
+
+    <div class="left btn-toolbar">
+      <div class="btn-group">
+        <button id="filter-validate-button" class="sq-btn">
+          <span class="ui-icon ui-icon-refresh"></span>
+          <span th:text="#{label.Filter}"></span>
+        </button>
+      </div>
+    </div>
+    <div class="right btn-toolbar">
+      <div>
+        <span th:text="#{automation.label.selected.rows}">Nombre de lignes actives:</span><span id="selectedRows">0</span>
+      </div>
+      <div class="btn-group" style="margin-top: 5px">
+
+        <button id="select-validate-button" class="tf-sm" th:title="#{label.SelectAllForSelection}" th:text="#{label.SelectAllForSelection}"></button>
+        <button id="deselect-validate-button" class="tf-sm" th:title="#{label.DeselectAll}" th:text="#{label.DeselectAll}"></button>
+      </div>
+    </div>
+
+    <div style="width:100%; overflow: auto;">
+      <table id="automation-table" class="automation-table">
+        <thead>
+          <tr>
+            <th class="no-user-select">#</th>
+            <th id="project-name" th:text="#{automation.datatable.headers.project}" class="no-user-select tp-th-filter tp-th-project-name"></th>
+            <th th:text="#{automation.datatable.headers.id}" class="no-user-select tp-th-filter tp-th-id"></th>
+            <th th:text="#{automation.datatable.headers.reference}" class="no-user-select tp-th-filter tp-th-reference"></th>
+            <th th:text="#{automation.datatable.headers.label}" class="no-user-select tp-th-filter tp-th-label"></th>
+            <th th:text="#{automation.datatable.headers.format}" class="no-user-select tp-th-filter tp-th-format"></th>
+            <th th:text="#{automation.datatable.headers.createdby}" class="no-user-select tp-th-filter tp-th-createdby"></th>
+            <th th:text="#{automation.datatable.headers.priority}" class="no-user-select tp-th-filter tp-th-priority"></th>
+            <th th:text="#{automation.datatable.headers.status}" class="no-user-select tp-th-filter tp-th-status"></th>
+            <th class="no-user-select"></th>
+            <th class="no-user-select"></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

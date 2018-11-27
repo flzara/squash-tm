@@ -130,6 +130,9 @@ define(['jquery'], function($) {
 	
 	return {
 		parse : function(seq){
+			if(seq === undefined) {
+			  seq = "";
+			}
 			return _parseSequence({}, seq);
 		},
 		setValue : setValue,

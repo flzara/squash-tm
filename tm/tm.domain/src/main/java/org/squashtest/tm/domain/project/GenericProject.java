@@ -70,6 +70,7 @@ import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestLibrary;
 import org.squashtest.tm.exception.NoBugTrackerBindingException;
 
 /**
@@ -128,6 +129,10 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 	@JoinColumn(name = "CRL_ID")
 	private CustomReportLibrary customReportLibrary;
 
+	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@JoinColumn(name = "ARL_ID")
+	private AutomationRequestLibrary automationRequestLibrary;
+
 	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "project")
 	private BugTrackerBinding bugtrackerBinding;
 
@@ -159,6 +164,8 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 	private Set<Milestone> milestones = new HashSet<>();
 
 	private boolean allowTcModifDuringExec = false;
+
+	private boolean allowAutomationWorkflow = false;
 
 	public GenericProject() {
 		super();
@@ -239,6 +246,16 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 		notifyLibraryAssociation(campaignLibrary);
 	}
 
+	public AutomationRequestLibrary getAutomationRequestLibrary() {
+		return automationRequestLibrary;
+	}
+
+	public void setAutomationRequestLibrary(AutomationRequestLibrary automationRequestLibrary) {
+		this.automationRequestLibrary = automationRequestLibrary;
+		if (automationRequestLibrary != null){
+			automationRequestLibrary.notifyAssociatedWithProject(this);
+		}
+	}
 
 	public CustomReportLibrary getCustomReportLibrary() {
 		return customReportLibrary;
@@ -475,4 +492,11 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 		return template != null;
 	}
 
+	public boolean isAllowAutomationWorkflow() {
+		return allowAutomationWorkflow;
+	}
+
+	public void setAllowAutomationWorkflow(boolean allowAutomationWorkflow) {
+		this.allowAutomationWorkflow = allowAutomationWorkflow;
+	}
 }

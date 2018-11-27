@@ -20,23 +20,31 @@
  */
 package org.squashtest.tm.web.internal.model.datatable;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
+import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 
 public class DataTableColumnFiltering implements ColumnFiltering {
 
 	private final DataTableDrawParameters params;
 	private Map<Object, Integer> dataProps = new HashMap<>();
+	private DatatableMapper mapper;
 
 	public DataTableColumnFiltering(DataTableDrawParameters params) {
 		super();
 		this.params = params;
 		createDataProps();
+	}
+
+	public DataTableColumnFiltering(DataTableDrawParameters params, DatatableMapper mapper) {
+		super();
+		this.params = params;
+		this.mapper = mapper;
+		createDataPropsAutomation();
 	}
 
 	private void createDataProps() {
@@ -46,47 +54,58 @@ public class DataTableColumnFiltering implements ColumnFiltering {
 		}
 	}
 
-	@Override
-	public boolean isDefined() {
-		Collection<String> values = params.getsSearches().values();
-		for (String value : values) {
-			if (!StringUtils.isBlank(value)) {
-				return true;
+	private void createDataPropsAutomation() {
+		Set<Entry<Integer, Object>> entries = params.getmDataProp().entrySet();
+		for (Entry<Integer, Object> entry :entries) {
+			if(!"tc-id".equals(entry.getValue()) && !"checkbox".equals(entry.getValue()) && !"writable".equals(entry.getValue())) {
+				dataProps.put(mapper.getMapping(entry.getValue()), entry.getKey());
 			}
 		}
-		return false;
 	}
 
 	@Override
-	public String getFilter(Integer index) {
-		return params.getsSearches(index);
+	public List<String> getFilteredAttributes() {
+
+
+		List<String> attr = new ArrayList<>();
+		Set<Entry<Integer, String>> entries = params.getsSearches().entrySet();
+		Object mDataIndex;
+		for(int x=0; x<entries.size(); x++) {
+			if(!StringUtils.isBlank(params.getsSearches(x))) {
+				mDataIndex = params.getmDataProp(x);
+				attr.add(mapper.getMapping(mDataIndex));
+			}
+		}
+
+		return attr;
 	}
 
+
 	@Override
-	public boolean hasFilter(Integer index) {
-		return !StringUtils.isBlank(getFilter(index));
+	public boolean isDefined() {
+		return ! getFilteredAttributes().isEmpty();
 	}
+
 
 	@Override
 	public String getFilter(String mDataProp) {
-		return getFilter(this.dataProps.get(mDataProp));
+		Integer index = indexOf(mDataProp);
+		return params.getsSearches(index);
 	}
+
 
 	@Override
 	public boolean hasFilter(String mDataProp) {
 		if (this.dataProps.containsKey(mDataProp)) {
-			return hasFilter(this.dataProps.get(mDataProp));
+			String filter = getFilter(mDataProp);
+			return ! StringUtils.isBlank(filter);
 		} else {
 			return false;
 		}
 	}
 
-	@Override
-	/**
-	 * @deprecated does not seem to be used any longer
-	 */
-	@Deprecated
-	public String getFilter(String mDataProp, int offset) {
-		return getFilter(this.dataProps.get(mDataProp) + offset);
+	private Integer indexOf(String prop){
+		return dataProps.get(prop);
 	}
+
 }

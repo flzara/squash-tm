@@ -18,43 +18,28 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.core.foundation.collection;
+package org.squashtest.tm.exception.tf;
 
-public final class DefaultColumnFiltering implements ColumnFiltering{
+import org.squashtest.tm.core.foundation.exception.ActionException;
 
-	public static final DefaultColumnFiltering NO_FILTERING = new DefaultColumnFiltering();
+/**
+ * Created by jprioux on 27/11/2018.
+ */
+public class WrongPriorityFormatException extends ActionException {
+	private static final long serialVersionUID = 1311622741005559766L;
 
-	public DefaultColumnFiltering() {
+	private static final String WRONG_PRIORITY_VALUE_KEY = "automation.exception.wrong.priority.numeric.value";
+
+	public WrongPriorityFormatException() {
 		super();
 	}
 
-	@Override
-	public boolean isDefined() {
-		return false;
+	public WrongPriorityFormatException(Exception cause) {
+		super(cause);
 	}
 
 	@Override
-	public String getFilter(Integer index) {
-		return "";
-	}
-
-	@Override
-	public boolean hasFilter(Integer index) {
-		return false;
-	}
-
-	@Override
-	public String getFilter(String mDataProp) {
-		return "";
-	}
-
-	@Override
-	public boolean hasFilter(String mDataProp) {
-		return false;
-	}
-
-	@Override
-	public String getFilter(String mDataProp, int offset) {
-		return "";
+	public String getI18nKey() {
+		return WRONG_PRIORITY_VALUE_KEY;
 	}
 }

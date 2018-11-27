@@ -172,7 +172,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 		Paging noPaging = Pagings.NO_PAGING;
 		PagingAndMultiSorting sorting = new DelegatePagingAndMultiSorting(noPaging, newSorting);
 		Filtering filtering = DefaultFiltering.NO_FILTERING;
-		ColumnFiltering columnFiltering = DefaultColumnFiltering.NO_FILTERING;
+		ColumnFiltering columnFiltering = ColumnFiltering.unfiltered();
 
 		List<IterationTestPlanItem> items = testSuiteDao.findTestPlan(suiteId, sorting, filtering, columnFiltering);
 

@@ -20,7 +20,7 @@
  */
 define(['jquery', 'squash.translator', 'datepicker/jquery.squash.datepicker-locales',
 		'jeditable.datepicker'], function($, translator, regionale){
-	
+
 	return {
 		init : function(){
 			var localemeta = {
@@ -113,7 +113,7 @@ define(['jquery', 'squash.translator', 'datepicker/jquery.squash.datepicker-loca
 									$(".rangedatepicker div td").hover(function(event) {
 										event.stopPropagation();
 									});
-									
+									var id = "#okbutton"+this.id;
 									if (!$("#okbutton",
 											".rangedatepicker div .ui-datepicker-buttonpane").length) {
 										var self = this;
@@ -138,7 +138,7 @@ define(['jquery', 'squash.translator', 'datepicker/jquery.squash.datepicker-loca
 									}
 								}
 							}).hide();
-			
+
 			$('.rangedatepicker-input').on('focus', function(e) {
 				var v = this.value, d;
 
@@ -164,7 +164,7 @@ define(['jquery', 'squash.translator', 'datepicker/jquery.squash.datepicker-loca
 			});
 		}
 	};
-	
+
 });
 
 

@@ -26,6 +26,8 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.StatelessSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementations of {@link com.querydsl.jpa.hibernate.SessionHolder} that wont crash due to
@@ -36,7 +38,7 @@ import org.hibernate.StatelessSession;
  *
  */
 class FixedSessionHolders {
-
+	public static final Logger LOGGER = LoggerFactory.getLogger(FixedSessionHolders.class);
 	private FixedSessionHolders(){}
 
 	public static SessionHolder defaultSessionHolder(Session session){
@@ -61,6 +63,7 @@ class FixedSessionHolders {
 
 		@Override
 		public Query createQuery(String queryString) {
+			LOGGER.info("Query String {}", queryString);
 			return session.createQuery(queryString);
 		}
 

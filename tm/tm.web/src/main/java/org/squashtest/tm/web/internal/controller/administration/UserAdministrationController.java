@@ -82,7 +82,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 
 	private static final PagingAndSorting TEAMS_DEFAULT_PAGING = new DefaultPagingAndSorting("name");
 	private static final Filtering TEAMS_DEFAULT_FILTERING = DefaultFiltering.NO_FILTERING;
-	private static final ColumnFiltering CONNECTION_COLUMN_DEFAULT_FILTERING = DefaultColumnFiltering.NO_FILTERING;
+	private static final ColumnFiltering CONNECTION_COLUMN_DEFAULT_FILTERING = ColumnFiltering.unfiltered();
 
 	private static final PagingAndSorting CONNECTIONS_DEFAULT_PAGING = new DefaultPagingAndSorting("id");
 

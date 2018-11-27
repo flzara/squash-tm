@@ -34,76 +34,84 @@
 
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
 <head>
-  <link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" sq:css="squash.core.css" />
-  <link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.blue.css" sq:css="squash.blue.css" />
-  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css"
+    sq:css="squash.core.css" />
+  <link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.blue.css"
+    sq:css="squash.blue.css" />
+  <meta name="_csrf" th:content="${_csrf.token}" />
   <!-- default header name is X-CSRF-TOKEN -->
-  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}" />
 </head>
+
 <body>
   <div id="workspace" th:fragment="navbar(highlight)">
     <div id="test_mgt_nav" class="squash-navbar" th:with="bugtrackers = ${bugtrackers == null ? #workspace.visibleBugtrackers() : bugtrackers}">
 
-      <a id="requirement-link"
-      			style="margin-top: 15px;"
-               	class="navigation-link navigation-requirement navigation-link-first"
-               	th:href="@{/requirement-workspace/}"
-               	th:title="#{workspace.requirement.button.label}"
-               	th:classappend="${highlight == 'requirement'} ? 'navigation-selected'">
+      <a id="requirement-link" style="margin-top: 15px;" class="navigation-link navigation-requirement navigation-link-first"
+        th:href="@{/requirement-workspace/}" th:title="#{workspace.requirement.button.label}" th:classappend="${highlight == 'requirement'} ? 'navigation-selected'"
+        th:if="(${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')}) or (${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${!sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')}) or ${sec.hasRole('ROLE_ADMIN')} or ${sec.hasRole('ROLE_TM_PROJECT_MANAGER')}">
       </a>
-      <a id="test-case-link"
-      			style="margin-top: 10px;"
-               class="navigation-link navigation-test-case"
-               th:href="@{/test-case-workspace/}"
-               th:title="#{workspace.test-case.button.label}"
-               th:classappend="${highlight == 'test-case'} ? 'navigation-selected'"></a>
+      <a id="test-case-link" style="margin-top: 10px;" class="navigation-link navigation-test-case" th:href="@{/test-case-workspace/}"
+        th:title="#{workspace.test-case.button.label}" th:classappend="${highlight == 'test-case'} ? 'navigation-selected'"
+        th:if="(${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')}) or (${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${!sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')}) or ${sec.hasRole('ROLE_ADMIN')} or ${sec.hasRole('ROLE_TM_PROJECT_MANAGER')}"></a>
 
-      <a id="campaign-link"
-      			style="margin-top: 10px;"
-               class="navigation-link navigation-campaign"
-               th:href="@{/campaign-workspace/}"
-               th:title="#{workspace.campaign.button.label}"
-               th:classappend="${highlight == 'campaign'} ? 'navigation-selected'"></a>
+      <a id="campaign-link" style="margin-top: 10px;" class="navigation-link navigation-campaign" th:href="@{/campaign-workspace/}"
+        th:title="#{workspace.campaign.button.label}" th:classappend="${highlight == 'campaign'} ? 'navigation-selected'"
+        th:if="(${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')}) or (${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${!sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')}) or ${sec.hasRole('ROLE_ADMIN')} or ${sec.hasRole('ROLE_TM_PROJECT_MANAGER')}"></a>
 
 
-    <div id="nav_logo" >
-    	<div id="test_mgt_nav" style="margin-bottom: 40px;">
-	      <a id="home-link"
-	               class="navigation-link navigation-home"
-	               style="margin-top:70px;"
-	               th:href="@{/home-workspace/}"
-	               th:title="#{workspace.home.button.label}"
-	               th:classappend="${highlight == 'home'} ? 'navigation-selected'">
-	      </a>
 
-	      <a id="custom-report-link"
-	               class="navigation-link navigation-custom-report"
-	               th:href="@{/custom-report-workspace/}"
-	               th:title="#{workspace.custom-report.title.long}"
-	               th:classappend="${highlight == 'custom-report'} ? 'navigation-selected'"></a>
+      <div id="nav_logo">
+        <div id="test_mgt_nav" style="margin-bottom: 40px; margin-top:70px;">
 
-	      <a id="bugtracker-link"
-	                class="navigation-link navigation-bugtracker"
-	                th:classappend="${#lists.isEmpty(bugtrackers)} ? 'not-displayed'"
-	                th:title="#{workspace.bugtracker.button.label}"></a>
+          <a id="automation-link" style="margin-top: 10px;" class="navigation-link navigation-automation" th:href="@{/automation-workspace/}"
+            th:title="#{workspace.automation.button.label}" th:classappend="${highlight == 'automation'} ? 'navigation-selected'"
+            th:if="${!sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')} and ${!sec.hasRole('ROLE_ADMIN')}"></a>
 
-	      <ul class="not-displayed width:130px;" style="max-height: 12.8em;">
-	        <li th:each="bugtracker : ${bugtrackers}" >
-	          <a th:id="'bugtracker-'+${bugtracker.id}" th:href="${bugtracker.iframeFriendly} ? @{/bugtracker/}+${bugtracker.id}+'/workspace' : ${bugtracker.URL}"
-	                                th:target="${bugtracker.iframeFriendly} ? '' : '_blank'"
-	                                th:text="${bugtracker.name}">mantis</a>
-	        </li>
-	      </ul>
+          <a id="automation-tester-link" style="margin-top: 10px;" class="navigation-link navigation-automation"
+            th:href="@{/automation-tester-workspace/}" th:title="#{workspace.automation.button.label}" th:classappend="${highlight == 'automation'} ? 'navigation-selected'"
+            th:if="${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${!sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')} and ${!sec.hasRole('ROLE_ADMIN')}"></a>
 
-    	</div>
-    	<div class="vertical-logo"></div>
+          <a id="automation-link-ul" style="margin-top: 10px;" class="navigation-link navigation-automation" th:title="#{workspace.automation.button.label}"
+            th:classappend="${highlight == 'automation'} ? 'navigation-selected'" th:if="(${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')}) or ${sec.hasRole('ROLE_ADMIN')} or ${sec.hasRole('ROLE_TM_PROJECT_MANAGER')}"></a>
+          <ul class="not-displayed width:130px;" style="max-height: 12.8em;">
+            <li>
+              <a th:id="automation-link" th:href="@{/automation-workspace/}" th:text="#{workspace.automation.button.label}"></a>
+            </li>
+            <li>
+              <a th:id="automation-tester-link" th:href="@{/automation-tester-workspace/}" th:text="#{workspace.automation.tester.button.label}"></a>
+            </li>
+          </ul>
+
+          <a id="home-link" class="navigation-link navigation-home" th:href="@{/home-workspace/}" th:title="#{workspace.home.button.label}"
+            th:classappend="${highlight == 'home'} ? 'navigation-selected'">
+          </a>
+
+          <a id="custom-report-link" class="navigation-link navigation-custom-report" th:href="@{/custom-report-workspace/}"
+            th:title="#{workspace.custom-report.title.long}" th:classappend="${highlight == 'custom-report'} ? 'navigation-selected'"
+            th:if="(${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')}) or (${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${!sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')}) or ${sec.hasRole('ROLE_ADMIN')} or ${sec.hasRole('ROLE_TM_PROJECT_MANAGER')}"></a>
+
+          <a id="bugtracker-link" class="navigation-link navigation-bugtracker" th:classappend="${#lists.isEmpty(bugtrackers)} ? 'not-displayed'"
+            th:title="#{workspace.bugtracker.button.label}" th:if="(${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')}) or (${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${!sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')}) or ${sec.hasRole('ROLE_ADMIN')} or ${sec.hasRole('ROLE_TM_PROJECT_MANAGER')}"></a>
+
+          <ul class="not-displayed width:130px;" style="max-height: 12.8em;">
+            <li th:each="bugtracker : ${bugtrackers}">
+              <a th:id="'bugtracker-'+${bugtracker.id}" th:href="${bugtracker.iframeFriendly} ? @{/bugtracker/}+${bugtracker.id}+'/workspace' : ${bugtracker.URL}"
+                th:target="${bugtracker.iframeFriendly} ? '' : '_blank'" th:text="${bugtracker.name}">mantis</a>
+            </li>
+          </ul>
+
+        </div>
+        <div class="vertical-logo"></div>
+      </div>
     </div>
-   </div>
 
-<script type="text/javascript">
-publish("load.navBar");
-</script>
+    <script type="text/javascript">
+      publish("load.navBar");
+    </script>
   </div>
 </body>
+
 </html>

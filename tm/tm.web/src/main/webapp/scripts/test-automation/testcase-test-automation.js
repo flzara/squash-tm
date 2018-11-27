@@ -250,7 +250,7 @@ define([ "jquery", "workspace.event-bus", "squash.translator", "squash.configman
 				}
 
 				var nodePath = node.getPath();
-
+				console.log($("#ta-script-picker-span").find('form input[name="path"]'))
 				$("#ta-script-picker-span").find('form input[name="path"]').val(nodePath);
 				dialog.formDialog('close');
 

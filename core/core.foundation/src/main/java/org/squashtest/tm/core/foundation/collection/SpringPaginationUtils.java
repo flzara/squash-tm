@@ -60,7 +60,7 @@ public final class SpringPaginationUtils {
                     sort = new Sort(dir, pas.getSortedAttribute());
             }
 
-            return new PageRequest(pagenum, pagesize, sort);
+            return PageRequest.of(pagenum, pagesize, sort);
     }
 
     /**
@@ -70,7 +70,7 @@ public final class SpringPaginationUtils {
      * @return Pageable
      */
     public static Pageable defaultPaging(){
-        return new PageRequest(0, DEFAULT_SIZE);
+        return PageRequest.of(0, DEFAULT_SIZE);
     }
 
     /**
@@ -81,7 +81,7 @@ public final class SpringPaginationUtils {
      * @return Pageable
      */
     public static Pageable defaultPaging(String attribute){
-        return new PageRequest(0, DEFAULT_SIZE, Direction.ASC, attribute);
+        return PageRequest.of(0, DEFAULT_SIZE, Direction.ASC, attribute);
     }
 
 }

@@ -516,6 +516,12 @@ public class GenericProjectController {
 		projectManager.changeAllowTcModifDuringExec(projectId, active);
 	}
 
+	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = {"id=project-automation-workflow",VALUE})
+	@ResponseBody
+	public void changeAutomationWorkflow(@PathVariable long projectId, @RequestParam(VALUE) boolean active) {
+		projectManager.changeAutomationWorkflow(projectId, active);
+	}
+
 	@RequestMapping(value = PROJECT_ID_URL + "/disable-execution-status/{executionStatus}", method = RequestMethod.POST)
 	@ResponseBody
 	public void disableExecutionStatusOnProject(@PathVariable long projectId, @PathVariable String executionStatus) {

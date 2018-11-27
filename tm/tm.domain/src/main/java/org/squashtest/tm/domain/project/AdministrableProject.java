@@ -92,4 +92,8 @@ public class AdministrableProject {
 	public boolean allowTcModifDuringExec() {
 		return project.allowTcModifDuringExec();
 	}
+
+	public boolean allowAutomationWorkflow() {
+		return project.isAllowAutomationWorkflow();
+	}
 }

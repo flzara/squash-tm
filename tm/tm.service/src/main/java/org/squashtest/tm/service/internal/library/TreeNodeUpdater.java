@@ -44,6 +44,8 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestLibrary;
 import org.squashtest.tm.service.infolist.InfoListItemManagerService;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.repository.IssueDao;
@@ -164,6 +166,7 @@ public class TreeNodeUpdater implements NodeVisitor {
 		}
 		updateAutomationParams(testCase);
 		updateNatureAndType(testCase);
+		updateAutomationRequests(testCase);
 	}
 
 	/**
@@ -241,6 +244,20 @@ public class TreeNodeUpdater implements NodeVisitor {
 			testCase.setType(project.getTestCaseTypes().getDefaultItem());
 		}
 
+	}
+
+	private void updateAutomationRequests(TestCase testCase){
+		if (testCase.getAutomationRequest() != null){
+			Project project = testCase.getProject();
+			AutomationRequest request = testCase.getAutomationRequest();
+
+			AutomationRequestLibrary formerLibrary = request.getLibrary();
+			AutomationRequestLibrary newLibrary = project.getAutomationRequestLibrary();
+
+			formerLibrary.removeContent(request);
+			newLibrary.addContent(request);
+			request.notifyAssociatedWithProject(project);
+		}
 	}
 
 	private void updateCategory(RequirementVersion requirement) {

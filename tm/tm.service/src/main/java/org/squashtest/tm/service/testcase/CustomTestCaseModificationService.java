@@ -29,10 +29,7 @@ import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
-import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.domain.testcase.*;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
@@ -53,7 +50,7 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 
 	void changeReference(long testCaseId, String reference);
 
-        void changeImportance(long testCaseId, TestCaseImportance importance);
+	void changeImportance(long testCaseId, TestCaseImportance importance);
 
 	/**
 	 * Inserts the given step in last position of the test script of the test case identified by the given id.
@@ -243,4 +240,13 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	Collection<Long> findBindedMilestonesIdForMassModif(List<Long> testCaseIds);
 
 	boolean haveSamePerimeter(List<Long> testCaseIds);
+
+	void changeAutomatable(TestCaseAutomatable automatable, Long testCaseId);
+
+
+	// ********************* Automation request *********************** */
+
+	void createRequestForTestCase(long testCaseId);
+
+
 }

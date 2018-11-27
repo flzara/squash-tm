@@ -266,4 +266,313 @@
     <addNotNullConstraint tableName="EXECUTION" columnDataType="java.sql.Types.VARCHAR(308)" columnName="NAME"/>
   </changeSet>
 
+
+
+  <changeSet id="tm-1.19.0-SQTM-508-automation-request" author="aboittiaux">
+    <comment>Create table AUTOMATION_REQUEST to Gherkin's test cases</comment>
+    <createTable tableName="AUTOMATION_REQUEST">
+      <column name="AUTOMATION_REQUEST_ID" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="REQUEST_STATUS" type="VARCHAR(20)" defaultValue="TO_VALIDATE">
+        <constraints nullable="false"/>
+      </column>
+      <column name="TRANSMITTED_ON" type="DATETIME"/>
+      <column name="ASSIGNED_TO" type="BIGINT"/>
+      <column name="AUTOMATION_PRIORITY" type="INT"/>
+      <column name="ASSIGNED_ON" type="DATETIME"/>
+      <column name="TEST_CASE_ID" type="BIGINT"/>
+      <column name="CREATED_BY" type="BIGINT"/>
+      <column name="TRANSMITTED_BY" type="BIGINT"/>
+      <column name="PROJECT_ID" type="BIGINT" remarks="fk to the host project" >
+        <constraints foreignKeyName="fk_automation_request_project" nullable="false" references="PROJECT(PROJECT_ID)"/>
+      </column>
+    </createTable>
+
+    <createIndex tableName="AUTOMATION_REQUEST" indexName="automation_request_assigned_to_idx">
+      <column name="ASSIGNED_TO"/>
+    </createIndex>
+
+    <createIndex tableName="AUTOMATION_REQUEST" indexName="automation_request_created_by_idx">
+      <column name="CREATED_BY"/>
+    </createIndex>
+
+    <createIndex tableName="AUTOMATION_REQUEST" indexName="automation_request_transmitted_by_idx">
+      <column name="TRANSMITTED_BY"/>
+    </createIndex>
+
+    <createIndex tableName="AUTOMATION_REQUEST" indexName="automation_request_test_case_id_idx">
+      <column name="TEST_CASE_ID"/>
+    </createIndex>
+
+    <addForeignKeyConstraint baseTableName="AUTOMATION_REQUEST" baseColumnNames="ASSIGNED_TO"
+    constraintName="fk_automation_request_automation_assigned_to" referencedColumnNames="PARTY_ID" referencedTableName="CORE_USER" onDelete="SET NULL"/>
+
+    <addForeignKeyConstraint baseTableName="AUTOMATION_REQUEST" baseColumnNames="TRANSMITTED_BY"
+                             constraintName="fk_automation_request_transmitted_by" referencedColumnNames="PARTY_ID" referencedTableName="CORE_USER" onDelete="SET NULL"/>
+
+    <addForeignKeyConstraint baseTableName="AUTOMATION_REQUEST" baseColumnNames="CREATED_BY"
+                             constraintName="fk_automation_request_created_by" referencedColumnNames="PARTY_ID" referencedTableName="CORE_USER" onDelete="SET NULL"/>
+
+    <addForeignKeyConstraint baseTableName="AUTOMATION_REQUEST" baseColumnNames="TEST_CASE_ID"
+                             constraintName="fk_automation_request_test_case" referencedColumnNames="TCLN_ID" referencedTableName="TEST_CASE" onDelete="SET NULL"/>
+
+    <addColumn tableName="TEST_CASE">
+      <column name="AUTOMATABLE" type="CHAR" defaultValue="M" remarks="Y: Yes, N: No, M: Maybe"/>
+    </addColumn>
+
+  </changeSet>
+
+
+
+  <!--  Feature SQTM-519 : the AutomationRequestLibrary -->
+
+  <changeSet id="tm-1.19.0-SQTM-519-automation-request-library-1" author="bsiri">
+
+    <comment>Creating the AutomationRequestLibrary</comment>
+
+    <createTable tableName="AUTOMATION_REQUEST_LIBRARY">
+
+      <column name="ARL_ID" type="BIGINT" autoIncrement="true" remarks="autoincremented primary key">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="PK_AUTOMATION_REQUEST_LIBRARY" />
+      </column>
+
+      <column name="ATTACHMENT_LIST_ID" type="BIGINT"
+              remarks="fk to the attachment list">
+        <constraints nullable="true"
+                     references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" foreignKeyName="fk_autorequestLib_attachment_list" />
+      </column>
+
+    </createTable>
+
+    <createIndex tableName="AUTOMATION_REQUEST_LIBRARY" indexName="idx_automation_request_library">
+      <column name="ARL_ID" />
+    </createIndex>
+
+  </changeSet>
+
+
+  <changeSet id="tm-1.19.0-SQTM-519-automation-request-library-2" author="bsiri">
+    <comment>New entries in the ACL infrastructure.</comment>
+
+    <!--
+      Magic number listing :
+      * next generated ACL_CLASS.ID : 7 (AutomatedRequest)
+      * next generated ACL_GROUP.ID : 10 (TestAutomationWriter)
+      * CLASS_ID of test case library : 3
+
+      Note : there is no ACL_GROUP with ID 1 and 3 for obscure reasons.
+
+      The following script will insert the new ACL_CLASS (the automation request library) and the new ACL_GROUP
+      (AutomatedTestWriter).
+
+      Then it will batch insert in ACL_GROUP_PERMISSION, for each user profile, the same permission for automation
+      requests than it enjoys for the test cases.
+
+      Only exception is the test automation writer, which can read the test case, write the automation requests and
+      that's all.
+
+      About the PERMISSION_MASKs, the bitmaks are defined in java classes BasePermission and CustomPermission.
+     -->
+    <sql>
+      insert into ACL_CLASS(ID, CLASSNAME) values(7, 'org.squashtest.tm.domain.tf.automationrequest.AutomationRequestLibrary');
+
+      insert into ACL_GROUP(ID, QUALIFIED_NAME) values(10, 'squashtest.acl.group.tm.AutomatedTestWriter');
+
+      insert into ACL_GROUP_PERMISSION(ACL_GROUP_ID, PERMISSION_MASK, CLASS_ID)
+      select AGP2.ACL_GROUP_ID, AGP2.PERMISSION_MASK, 7
+      from ACL_GROUP_PERMISSION AGP2
+      where CLASS_ID = 3;
+
+      insert into ACL_GROUP_PERMISSION(ACL_GROUP_ID, CLASS_ID, PERMISSION_MASK) values
+      (2, 7, 8192),
+      (5, 7, 8192),
+      (5, 7, 16384),
+      (6, 7, 8192),
+      (7, 7, 8192),
+      (8, 7, 8192),
+      (9, 7, 8192),
+      (10, 3, 1),
+      (10, 4, 1),
+      (10, 7, 1),
+      (10, 7, 2),
+      (10, 7, 4),
+      (10, 7, 8),
+      (10, 7, 64),
+      (10, 7, 256),
+      (10, 7, 1024),
+      (10, 7, 4096),
+      (10, 7, 16384);
+    </sql>
+
+
+  </changeSet>
+
+
+  <changeSet id="tm-1.19.0-SQTM-519-automation-request-library-3" author="bsiri">
+
+    <comment>The automation request library content table</comment>
+
+    <createTable tableName="AUTOMATION_REQUEST_LIBRARY_CONTENT">
+
+      <column name="LIBRARY_ID" type="BIGINT" remarks="Foreign key to the library">
+        <constraints nullable="false" foreignKeyName="fk_automation_rquest_lib_content_lib" references="AUTOMATION_REQUEST_LIBRARY(ARL_ID)" />
+      </column>
+
+      <column name="CONTENT_ID" type="BIGINT" remarks="Foreign key to the content">
+        <constraints nullable="false" unique="true" foreignKeyName="fk_automation_request_lib_content_content"
+                     references="AUTOMATION_REQUEST(AUTOMATION_REQUEST_ID)" />
+      </column>
+    </createTable>
+
+    <createIndex tableName="AUTOMATION_REQUEST_LIBRARY_CONTENT" indexName="idx_automation_request_lib_content_content">
+      <column name="CONTENT_ID" />
+    </createIndex>
+
+    <createIndex tableName="AUTOMATION_REQUEST_LIBRARY_CONTENT" indexName="idx_automation_request_lib_content_lib">
+      <column name="LIBRARY_ID" />
+    </createIndex>
+
+  </changeSet>
+
+
+  <changeSet id="tm-1.19.0-SQTM-519-automation-request-library-4" author="bsiri">
+
+    <comment>Add a Project fk to the AutomationRequestLibrary</comment>
+
+    <addColumn tableName="PROJECT">
+      <column name="ARL_ID" type="BIGINT" remarks="fk to the automation request library" >
+        <constraints foreignKeyName="fk_project_arl" references="AUTOMATION_REQUEST_LIBRARY(ARL_ID)" nullable="true"/>
+      </column>
+    </addColumn>
+
+  </changeSet>
+
+
+  <changeSet id="tm-1.19.0-SQTM-519-automation-request-library-5" author="bsiri">
+
+    <comment>Create one such library for each existing projects</comment>
+
+    <!--
+    about the magic numbers, see autorequest-lib-2
+
+    This script will create
+    - one AutomationRequestLibrary per project,
+    - one attachment list for them
+    - wire them together,
+    - the corresponding entry in ACL_OBJECT_IDENTITY
+    - and finally the corresponding entries in ACL_RESPONSIBILITY_SCOPE_ENTRY
+
+    In the following queries the IDs for the attachment lists and ARL libraries are imposed (rather than
+    autogenerated) in order to simplify the operations. In particular the ARL ids are set to be the same
+    than the projects they depend on.
+    -->
+
+    <sql>
+      <![CDATA[
+      -- create the libraries
+
+      insert into AUTOMATION_REQUEST_LIBRARY (ARL_ID)
+      select P.PROJECT_ID from PROJECT p;
+
+
+      -- attachments, step 1 :
+      -- create a ranking table, akin to what would ROW_NUMBER() order by id desc would say
+
+      create table ARL_RANK as
+      select alib.arl_id, count(alib2.arl_id)  as ranking
+      from AUTOMATION_REQUEST_LIBRARY alib,
+      AUTOMATION_REQUEST_LIBRARY alib2
+      where alib.arl_id <= alib2.arl_id
+      group by alib.arl_id
+      order by ranking asc;
+
+
+      -- attachments, step 2 :
+      -- create a table that pairs library ids with predictable, consecutive attachment_list_ids using the rank
+      -- calculated earlier
+
+      create table ARL_ATTACHLIST_PAIRING as
+      select arl.arl_id, (select max(al.attachment_list_id) from ATTACHMENT_LIST al) + arl.ranking as attachment_list_id
+      from ARL_RANK arl;
+
+
+      -- attachments, step 3 :
+      -- insert the attachment lists and update fk in the automation request library
+      insert into ATTACHMENT_LIST(ATTACHMENT_LIST_ID)
+      select pair.attachment_list_id from ARL_ATTACHLIST_PAIRING pair;
+
+
+      update AUTOMATION_REQUEST_LIBRARY arl
+      set ATTACHMENT_LIST_ID = (select pair.attachment_list_id from ARL_ATTACHLIST_PAIRING pair where pair.arl_id = arl.arl_id);
+
+      -- attachments, step 4 and final :
+      -- drop the temporary tables
+
+      drop table ARL_ATTACHLIST_PAIRING;
+
+      drop table ARL_RANK;
+
+      -- wire the project to the ARL library
+
+      update PROJECT P
+      set ARL_ID = PROJECT_ID;
+
+
+      -- insert the acl object identities
+      insert into ACL_OBJECT_IDENTITY(IDENTITY, CLASS_ID)
+      select arl.arl_id, 7 from AUTOMATION_REQUEST_LIBRARY arl;
+
+
+      -- add the user/team permissions in ACL_RESPONSIBILITY_SCOPE_ENTRY
+      -- each user will receive the same acl_group on each arl library than on the project it depends on
+      -- (this last sentence is the idea behind the auto join on acl_object_identity in this query)
+      insert into ACL_RESPONSIBILITY_SCOPE_ENTRY(party_id, acl_group_id, object_identity_id)
+      select distinct arse.party_id, arse.acl_group_id, arl_oid.id
+      from ACL_RESPONSIBILITY_SCOPE_ENTRY arse
+      inner join ACL_OBJECT_IDENTITY oid on (arse.object_identity_id = oid.id and oid.class_id = 1)
+      inner join ACL_OBJECT_IDENTITY arl_oid on (oid.identity = arl_oid.identity and arl_oid.class_id = 7);
+
+    ]]>
+    </sql>
+
+
+  </changeSet>
+
+  <changeSet id="tm-1.19.0-SQTM-519-automation-request-library-6" author="bsiri" dbms="postgresql">
+    <comment>reset postgresql sequences</comment>
+
+    <sql>
+      select setval('automation_request_library_arl_id_seq', (select MAX(ARL_ID) from AUTOMATION_REQUEST_LIBRARY));
+      select setval('attachment_list_attachment_list_id_seq', (select MAX(ATTACHMENT_LIST_ID) from ATTACHMENT_LIST));
+      select setval('acl_object_identity_id_seq', (SELECT MAX(ID) from ACL_OBJECT_IDENTITY));
+      select setval('acl_responsibility_scope_entry_id_seq', (select MAX(ID) from ACL_RESPONSIBILITY_SCOPE_ENTRY));
+    </sql>
+
+  </changeSet>
+
+
+  <!--  /Feature SQTM-519 : the AutomationRequestLibrary -->
+
+  <changeSet id="tm-1.19.0-SQTM-510-add-roles-automation" author="aboittiaux">
+    <sql>
+      insert into CORE_PARTY_AUTHORITY(PARTY_ID, AUTHORITY)
+      select distinct cu.PARTY_ID, 'ROLE_TF_FUNCTIONAL_TESTER' from CORE_USER cu
+      left join CORE_PARTY_AUTHORITY cpa on cu.PARTY_ID = cpa.PARTY_ID
+      where cpa.AUTHORITY is null;
+    </sql>
+
+  </changeSet>
+
+  <changeSet id="tm-1.19.0-SQTM-524-automation-workflow-by-project" author="jprioux">
+    <comment>add a boolean in project table to activate or not the automation workflow</comment>
+    <addColumn tableName="PROJECT">
+      <column name="ALLOW_AUTOMATION_WORKFLOW" type="BOOLEAN"
+              defaultValueBoolean="false">
+              <constraints nullable="false" />
+      </column>
+    </addColumn>
+  </changeSet>
+
+
 </databaseChangeLog>

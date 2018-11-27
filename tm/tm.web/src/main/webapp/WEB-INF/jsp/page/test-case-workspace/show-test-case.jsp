@@ -29,28 +29,28 @@
 
 <layout:info-page-layout titleKey="workspace.test-case.title" highlightedWorkspace="test-case" isSubPaged="true" >
 
-	<jsp:attribute name="head">	
+	<jsp:attribute name="head">
 		<comp:sq-css name="squash.green.css" />
 	</jsp:attribute>
-	
+
 	<jsp:attribute name="titlePane">
-		<h2><f:message key="workspace.test-case.title" /></h2>	
+		<h2><f:message key="workspace.test-case.title" /></h2>
 	</jsp:attribute>
-	
+
 	<jsp:attribute name="subPageTitle">
 		<h2><f:message key="subpage.test-case.info.title" /></h2>
 	</jsp:attribute>
-	
+
 	<jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" id="back" class="sq-btn" value="${backButtonLabel}" onclick="document.location.href=squashtm.workspace.backurl"/>	
+		<input type="button" id="back" class="sq-btn" value="${backButtonLabel}" onclick="window.history.back();"/>
 	</jsp:attribute>
-	
-	<jsp:attribute name="informationContent">	
+
+	<jsp:attribute name="informationContent">
 		<jsp:include page="/WEB-INF/jsp/fragment/test-cases/test-case.jsp" >
 			<jsp:param name="isInfoPage" value="true" />
 		</jsp:include>
 	</jsp:attribute>
 
-    
+
 </layout:info-page-layout>

@@ -34,6 +34,7 @@ import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.project.*;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestLibrary;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.domain.users.User;
@@ -96,6 +97,10 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 		ObjectIdentity crlibraryRef = createCustomReportLibraryIdentity(project);
 		aclService.removeAllResponsibilities(user.getId(), crlibraryRef);
+
+
+		ObjectIdentity arlibraryRef = createAutomationRequestLibraryIdentity(project);
+		aclService.removeAllResponsibilities(user.getId(), arlibraryRef);
 	}
 
 	private ObjectIdentity createProjectIdentity(long projectId) {
@@ -133,6 +138,10 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 	private ObjectIdentity createCustomReportLibraryIdentity(GenericProject project) {
 		return new ObjectIdentityImpl(CustomReportLibrary.class, project.getCustomReportLibrary().getId());
+	}
+
+	private ObjectIdentity createAutomationRequestLibraryIdentity(GenericProject project) {
+		return new ObjectIdentityImpl(AutomationRequestLibrary.class, project.getAutomationRequestLibrary().getId());
 	}
 
 	@Transactional(readOnly = true)
@@ -231,6 +240,9 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		ObjectIdentity crlibraryRef = createCustomReportLibraryIdentity(project);
 		aclService.addNewResponsibility(party.getId(), crlibraryRef, permissionName);
 
+		ObjectIdentity arlibraryRef = createAutomationRequestLibraryIdentity(project);
+		aclService.addNewResponsibility(party.getId(), arlibraryRef, permissionName);
+
 	}
 
 	@Override
@@ -252,6 +264,9 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 		ObjectIdentity crlibraryRef = createCustomReportLibraryIdentity(project);
 		aclService.removeAllResponsibilities(partyId, crlibraryRef);
+
+		ObjectIdentity arlibraryRef = createAutomationRequestLibraryIdentity(project);
+		aclService.removeAllResponsibilities(partyId, arlibraryRef);
 	}
 
 	@Override

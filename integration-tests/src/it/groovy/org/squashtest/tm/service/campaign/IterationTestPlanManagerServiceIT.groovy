@@ -50,7 +50,7 @@ class IterationTestPlanManagerServiceIT extends DbunitServiceSpecification {
 
 		given :
 		def pagingsorting = new TestPagingMultiSorting(attributes)
-		def columnsorting = DefaultColumnFiltering.NO_FILTERING
+		def columnsorting = ColumnFiltering.unfiltered()
 
 		and:
 

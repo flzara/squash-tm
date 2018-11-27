@@ -49,6 +49,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.servers.AuthenticationStatus;
 import org.squashtest.tm.domain.testcase.*;
 import org.squashtest.tm.exception.UnknownEntityException;
+import org.squashtest.tm.exception.tf.WrongPriorityFormatException;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
@@ -62,6 +63,7 @@ import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.ParameterFinder;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
+import org.squashtest.tm.service.tf.AutomationRequestModificationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
@@ -177,6 +179,9 @@ public class TestCaseModificationController {
 
 	@Inject
 	private PermissionEvaluationService permissionService;
+
+	@Inject
+	private AutomationRequestModificationService automationRequestModificationService;
 
 	/**
 	 * Returns the fragment html view of test case
@@ -303,6 +308,25 @@ public class TestCaseModificationController {
 		return HTMLCleanupUtils.cleanHtml(testCaseDescription);
 	}
 
+	@RequestMapping(method = RequestMethod.POST, params = {"id=test-case-automatable", VALUE})
+	@ResponseBody
+	public void changeAutomatable(@RequestParam(VALUE) TestCaseAutomatable testCaseAutomatable, @PathVariable long testCaseId) {
+
+		testCaseModificationService.changeAutomatable(testCaseAutomatable, testCaseId);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, params = {"id=automation-request-priority", VALUE})
+	@ResponseBody
+	public Integer changePriority(@RequestParam(VALUE) String priority, @PathVariable long testCaseId, Locale locale) {
+		try {
+			Integer newPriority = Integer.parseInt(priority);
+			automationRequestModificationService.changePriority(Collections.singletonList(testCaseId), newPriority);
+			return newPriority;
+		} catch(NumberFormatException nfe) {
+			throw new WrongPriorityFormatException(nfe);
+		}
+
+	}
 
 	@ResponseBody
 	@RequestMapping(value = "/new-version", method = RequestMethod.GET)

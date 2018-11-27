@@ -336,7 +336,7 @@
           <div id="project-exec-option-table" class="display-table">
               <div class="display-table-row">
                 <div class="display-table-cell">
-                  <label for="toggle-EXECUTION-checkbox" class="display-table-cell" style="vertical-align:bottom">
+                  <label class="display-table-cell" style="vertical-align:bottom">
                     <f:message key="label.execution.modification" />
                   </label>
                 </div>
@@ -360,7 +360,7 @@
 					<div id="project-description-table" class="display-table">
 						<div class="display-table-row">
 							<div class="display-table-cell" style="vertical-align: middle">
-								<label for="toggle-UNTESTABLE-checkbox" class="display-table-cell">
+								<label class="display-table-cell">
 									<f:message key="label.status.options.optional" />
 								</label>
 							</div>
@@ -715,10 +715,15 @@ require(["common"], function() {
 		 		configureActivation("UNTESTABLE");
 		 		configureActivation("SETTLED");
 		 		configureActivation("EXECUTION");
+		 		configureActivation("WORKFLOW");
 
 		 		$("#toggle-EXECUTION-checkbox").change(function() {
 		 		  toggleIfParameterIsEnabled(toggleExec);
 		 		});
+
+		 		$("#toggle-WORKFLOW-checkbox").change(function() {
+          toggleIfParameterIsEnabled(toggleWorkflow);
+        });
 
 		 		$("#toggle-UNTESTABLE-checkbox").change(function() {
 		 		  toggleIfParameterIsEnabled(toggleStatusActivation, "UNTESTABLE");
@@ -746,6 +751,20 @@ require(["common"], function() {
 			});
 
 	}
+
+	function toggleWorkflow(){
+  		var shouldActivate = ! $("#toggle-WORKFLOW-checkbox").prop('checked');
+
+  			$.ajax({
+  				type: 'POST',
+  				url: "${projectUrl}",
+  				data : {
+  				  id : "project-automation-workflow",
+  					value : shouldActivate
+  				}
+  			});
+
+  	}
 
 	function refreshTableAndPopup(){
 		$("#user-permissions-table").squashTable().refresh();

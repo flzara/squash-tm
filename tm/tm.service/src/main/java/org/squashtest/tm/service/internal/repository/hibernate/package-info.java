@@ -508,6 +508,8 @@
 
 	// Project Template
 	@NamedQuery(name = "ProjectTemplate.propagateAllowTcModifDuringExec", query = "update GenericProject set allowTcModifDuringExec = :active where template.id = :templateId"),
+	@NamedQuery(name = "ProjectTemplate.propagateAllowAutomationWorkflow", query = "update GenericProject set allowAutomationWorkflow = :active where template.id = :templateId"),
+
 
 	//Project
 	@NamedQuery(name = "Project.findAllByName", query = "from Project where name in (:names)"),

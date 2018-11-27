@@ -105,6 +105,9 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "app/util/St
 
 						$(this.importanceEditable).on("selectJEditable.refresh", this.onRefreshImportance);
 
+
+
+
 					}
 
 					this.identity = { resid : this.settings.testCaseId, restype : "test-cases"  };

@@ -19,6 +19,10 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.core.foundation.collection;
+
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Interface for column-filtering instructions.
  * Because filtering requires significantly more processing, services and dao using it should first check {@link #isDefined()} first before triggering the additional
@@ -30,6 +34,12 @@ package org.squashtest.tm.core.foundation.collection;
  */
 public interface ColumnFiltering {
 
+	static final ColumnFiltering UNFILTERED = new EmptyFiltering();
+
+	public static ColumnFiltering unfiltered(){
+		return UNFILTERED;
+	}
+
 	/**
 	 * @return true if any filtering is required.
 	 */
@@ -37,22 +47,45 @@ public interface ColumnFiltering {
 
 	/**
 	 *
-	 * @param index index
-	 *
-	 * @return the filter String for a column given its index
+	 * @return the list of names of the filtered attributes
 	 */
-	String getFilter(Integer index);
+	List<String> getFilteredAttributes();
+
 
 	String getFilter(String mDataProp);
 
 	boolean hasFilter(String mDataProp);
 
-	boolean hasFilter(Integer index);
 
-	/**
-	 * @deprecated does not seem to be used any longer
-	 */
-	@Deprecated
-	String getFilter(String mDataProp, int offset);
+
+	static final class EmptyFiltering implements ColumnFiltering{
+
+		private EmptyFiltering() {
+			super();
+		}
+
+		@Override
+		public boolean isDefined() {
+			return false;
+		}
+
+		@Override
+		public List<String> getFilteredAttributes() {
+			return Collections.emptyList();
+		}
+
+
+		@Override
+		public String getFilter(String mDataProp) {
+			return "";
+		}
+
+		@Override
+		public boolean hasFilter(String mDataProp) {
+			return false;
+		}
+	}
+
+
 }
 

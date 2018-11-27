@@ -1809,6 +1809,8 @@ define(["jquery",
 		this.drawIcon = _drawIcon;
 		this.autonum = _autonum;
 
+		this.bindClickHandlerToSelectHandle = _bindClickHandlerToSelectHandle;
+
 		this.getColumnNameByIndex = _getColumnNameByIndex;
 		this.getColumnIndexByName = _getColumnIndexByName;
 

@@ -26,6 +26,7 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
@@ -176,6 +177,7 @@
         </c:if>
 			</jsp:attribute>
 		</comp:toggle-panel>
+
 		<comp:toggle-panel id="project-permission-panel" titleKey="user.project-rights.title.label" open="true">
 			<jsp:attribute name="body">
 				<table id="project-permission-table" data-def="hover">
@@ -194,6 +196,7 @@
 			</jsp:attribute>
 		</comp:toggle-panel>
 
+<sec:authorize access="(hasRole('ROLE_TF_FUNCTIONAL_TESTER') and hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')) or (hasRole('ROLE_TF_FUNCTIONAL_TESTER') and !hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')) or hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')">
 		<comp:toggle-panel id="tree-order-panel" titleKey="user-preferences.tree-order.title" open="true" >
 			<jsp:attribute name="body">
 				<div class="display-table">
@@ -231,12 +234,11 @@
 				</div>
 			</jsp:attribute>
 		</comp:toggle-panel>
-
-    <f:message var="automatic" key="user-preferences.bugtracker-management.label.automatic"/>
+		<f:message var="automatic" key="user-preferences.bugtracker-management.label.automatic"/>
     <f:message var="manual" key="user-preferences.bugtracker-management.label.manual"/>
+
     <comp:toggle-panel id="bugtracker-configuration-panel" titleKey="user-preferences.bugtracker-management.title"  open="true">
 		  <jsp:attribute name="body">
-
         <div id="user-preferences.bugtracker-management-table" class="display-table">
           <div class="display-table-row">
             <div class="display-table-cell">
@@ -244,7 +246,6 @@
                 <f:message key="user-preferences.bugtracker-management.presentation.label"/>
               </label>
             </div>
-
             <div class="display-table-cell">
               <input id="toggle-BUGTRACKER-MODE-checkbox" type="checkbox"
                      data-def="width=35, on_label=${automatic}, off_label=${manual}, checked=${test}"
@@ -255,86 +256,82 @@
      	</jsp:attribute>
    	</comp:toggle-panel>
 
+    <f:message var="milestoneReferentialMode" key="user-preferences.tree-order.referentiel.label" />
+    <f:message var="milestoneMilestoneMode" key="user-preferences.milestone" />
 
+    <c:if test="${ milestoneFeatureEnabled }">
+      <comp:toggle-panel id="library-display-mode-panel" titleKey="user-preferences.tree-order.mode.title" open="true" >
+        <jsp:attribute name="body">
+          <div class="display-table">
+            <div class="display-table-row">
+              <div class="display-table-cell" style="vertical-align: bottom;">
+              <label for="toggle-activation-checkbox" ><f:message key="user-preferences.tree-order.mode.label"/></label>
+              </div>
+              <div class="display-table-cell">
+                        <input id="toggle-milestone-checkbox" type="checkbox"
+                                data-def="width=35, on_label='${milestoneMilestoneMode}', off_label='${milestoneReferentialMode}'" style="display: none;"/>
+              </div>
+            </div>
 
+            <div class="display-table-row">
+              <div class="display-table-cell">
+                <label for="choose-your-mode" ><f:message key="user-preferences.milestone"/></label>
+              </div>
+              <c:choose>
+                <c:when  test= "${ milestoneList.size() != 0}">
+                  <div id="labelchoose" class="customHeigth">
+                    <c:if test="${not empty activeMilestone}">
+                      <span id="toggle-milestone-label" >${activeMilestone.label}</span>
+                    </c:if>
+                    <c:if test="${empty activeMilestone}">
+                      <span id="toggle-milestone-label" class="disabled-transparent"><f:message key="label.Choose"/></span>
+                    </c:if>
+                  </div>
 
-        <f:message var="milestoneReferentialMode" key="user-preferences.tree-order.referentiel.label" />
-        <f:message var="milestoneMilestoneMode" key="user-preferences.milestone" />
+                  <div class="bind-milestone-dialog popup-dialog not-displayed" title="${bindMilestoneDialogTitle}">
+                    <div>
+                      <table class="bind-milestone-dialog-table" data-def="filter, pre-sort=2-desc">
+                        <thead>
+                          <th data-def="sClass=bind-milestone-dialog-check, map=empty-delete-holder"></th>
+                          <th data-def="map=label, sortable" ><f:message key="label.Label"/></th>
+                          <th data-def="map=status, sortable"><f:message key="label.Status"/></th>
+                          <th data-def="map=date, sortable"><f:message key="label.EndDate"/></th>
+                          <th data-def="map=description, sortable" ><f:message key="label.Description"/></th>
+                        </thead>
+                        <tbody>
 
-          <c:if test="${ milestoneFeatureEnabled }">
-        	<comp:toggle-panel id="library-display-mode-panel" titleKey="user-preferences.tree-order.mode.title" open="true" >
-			<jsp:attribute name="body">
-				<div class="display-table">
-				<div class="display-table-row">
-					<div class="display-table-cell" style="vertical-align: bottom;">
-					<label for="toggle-activation-checkbox" ><f:message key="user-preferences.tree-order.mode.label"/></label>
-					</div>
-					<div class="display-table-cell">
-                 		<input id="toggle-milestone-checkbox" type="checkbox"
-                 	          data-def="width=35, on_label='${milestoneMilestoneMode}', off_label='${milestoneReferentialMode}'" style="display: none;"/>
-          </div>
-        </div>
+                        </tbody>
+                      </table>
 
-        <div class="display-table-row">
-          <div class="display-table-cell">
-            <label for="choose-your-mode" ><f:message key="user-preferences.milestone"/></label>
-          </div>
-          <c:choose>
-				     <c:when  test= "${ milestoneList.size() != 0}">
-          <div id="labelchoose" class="customHeigth">
-            <c:if test="${not empty activeMilestone}">
-              <span id="toggle-milestone-label" >${activeMilestone.label}</span>
-            </c:if>
-            <c:if test="${empty activeMilestone}">
-              <span id="toggle-milestone-label" class="disabled-transparent"><f:message key="label.Choose"/></span>
-            </c:if>
-          </div>
-
-                <div class="bind-milestone-dialog popup-dialog not-displayed" title="${bindMilestoneDialogTitle}">
-                  <div>
-
-                    <table class="bind-milestone-dialog-table" data-def="filter, pre-sort=2-desc">
-                      <thead>
-                        <th data-def="sClass=bind-milestone-dialog-check, map=empty-delete-holder"></th>
-                        <th data-def="map=label, sortable" ><f:message key="label.Label"/></th>
-                        <th data-def="map=status, sortable"><f:message key="label.Status"/></th>
-                        <th data-def="map=date, sortable"><f:message key="label.EndDate"/></th>
-                        <th data-def="map=description, sortable" ><f:message key="label.Description"/></th>
-                      </thead>
-                      <tbody>
-
-                      </tbody>
-                    </table>
-
-                    <div class="bind-milestone-dialog-selectors">
-                      <ul style="list-style-type: none;">
-                        <li class="clickable-item extra-small-margin-top"><span class="bind-milestone-dialog-selectall"    ><f:message key="label.selectAllForSelection"/></span></li>
-                        <li class="clickable-item extra-small-margin-top"><span class="bind-milestone-dialog-selectnone"   ><f:message key="label.selectNoneForSelection"/></span></li>
-                        <li class="clickable-item extra-small-margin-top"><span class="bind-milestone-dialog-invertselect" ><f:message key="label.invertSelect"/></span></li>
-                      </ul>
+                      <div class="bind-milestone-dialog-selectors">
+                        <ul style="list-style-type: none;">
+                          <li class="clickable-item extra-small-margin-top"><span class="bind-milestone-dialog-selectall"    ><f:message key="label.selectAllForSelection"/></span></li>
+                          <li class="clickable-item extra-small-margin-top"><span class="bind-milestone-dialog-selectnone"   ><f:message key="label.selectNoneForSelection"/></span></li>
+                          <li class="clickable-item extra-small-margin-top"><span class="bind-milestone-dialog-invertselect" ><f:message key="label.invertSelect"/></span></li>
+                        </ul>
+                      </div>
                     </div>
 
+                    <div class="popup-dialog-buttonpane" >
+                      <input type="button" class="bind-milestone-dialog-confirm" data-def="evt=confirm, mainbtn" value="${confirmLabel}" />
+                      <input type="button" class="bind-milestone-dialog-cancel" data-def="evt=cancel" value="${cancelLabel}" />
+                    </div>
                   </div>
-
-                  <div class="popup-dialog-buttonpane" >
-                    <input type="button" class="bind-milestone-dialog-confirm" data-def="evt=confirm, mainbtn" value="${confirmLabel}" />
-                    <input type="button" class="bind-milestone-dialog-cancel" data-def="evt=cancel" value="${cancelLabel}" />
-                  </div>
-
-                </div>
-        </div>
-        		</c:when>
-			   <c:otherwise>
-         <div >
-           <f:message key="message.library-display-mode.no-milestones"/>
-         </div>
-               </c:otherwise>
+                </c:when>
+                <c:otherwise>
+                   <div >
+                     <f:message key="message.library-display-mode.no-milestones"/>
+                   </div>
+                </c:otherwise>
               </c:choose>
-			</jsp:attribute>
+            </div>
+          </div>
+			  </jsp:attribute>
 			</comp:toggle-panel>
-		 </c:if>
 
-	</div>
+		 </c:if>
+</sec:authorize>
+  </div>
     <c:if test="${ not authenticationProvider.managedPassword }">
 	   <comp:user-account-password-popup/>
     </c:if>
