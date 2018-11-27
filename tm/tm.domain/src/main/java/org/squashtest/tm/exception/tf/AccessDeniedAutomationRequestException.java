@@ -22,26 +22,24 @@ package org.squashtest.tm.exception.tf;
 
 import org.squashtest.tm.core.foundation.exception.ActionException;
 
-public class IllegalAutomationRequestStatusException extends ActionException {
+/**
+ * Created by jprioux on 27/11/2018.
+ */
+public class AccessDeniedAutomationRequestException extends ActionException {
+	private static final long serialVersionUID = -8653418650092479409L;
 
-	private static final long serialVersionUID = 2964227342181214684L;
+	private static final String ACCESS_DENIED_AUTOMATION_REQUEST_KEY = "automation.exception.access-denied.label";
 
-	private static final String ILLEGAL_AUTOMATION_REQUEST_STATUS_KEY = "automation.exception.illegal.status.label";
-
-	public IllegalAutomationRequestStatusException() {
+	public AccessDeniedAutomationRequestException() {
 		super();
 	}
 
-	public IllegalAutomationRequestStatusException(String message) {
-		super(message);
-	}
-
-	public IllegalAutomationRequestStatusException(Exception cause) {
+	public AccessDeniedAutomationRequestException(Exception cause) {
 		super(cause);
 	}
 
 	@Override
 	public String getI18nKey() {
-		return ILLEGAL_AUTOMATION_REQUEST_STATUS_KEY;
+		return ACCESS_DENIED_AUTOMATION_REQUEST_KEY;
 	}
 }

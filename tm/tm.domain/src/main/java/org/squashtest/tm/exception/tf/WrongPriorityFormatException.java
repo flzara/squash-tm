@@ -22,26 +22,24 @@ package org.squashtest.tm.exception.tf;
 
 import org.squashtest.tm.core.foundation.exception.ActionException;
 
-public class IllegalAutomationRequestStatusException extends ActionException {
+/**
+ * Created by jprioux on 27/11/2018.
+ */
+public class WrongPriorityFormatException extends ActionException {
+	private static final long serialVersionUID = 1311622741005559766L;
 
-	private static final long serialVersionUID = 2964227342181214684L;
+	private static final String WRONG_PRIORITY_VALUE_KEY = "automation.exception.wrong.priority.numeric.value";
 
-	private static final String ILLEGAL_AUTOMATION_REQUEST_STATUS_KEY = "automation.exception.illegal.status.label";
-
-	public IllegalAutomationRequestStatusException() {
+	public WrongPriorityFormatException() {
 		super();
 	}
 
-	public IllegalAutomationRequestStatusException(String message) {
-		super(message);
-	}
-
-	public IllegalAutomationRequestStatusException(Exception cause) {
+	public WrongPriorityFormatException(Exception cause) {
 		super(cause);
 	}
 
 	@Override
 	public String getI18nKey() {
-		return ILLEGAL_AUTOMATION_REQUEST_STATUS_KEY;
+		return WRONG_PRIORITY_VALUE_KEY;
 	}
 }
