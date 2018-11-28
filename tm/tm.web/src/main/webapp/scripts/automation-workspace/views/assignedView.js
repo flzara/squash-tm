@@ -189,9 +189,9 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                 'text': translator.get('label.Remove'),
                                 'id': 'ta-script-remove-button'
                             });
-
-                            this.append(btnRemove);
+                            this.append("<br />");
                             this.append(btnChoose);
+                            this.append(btnRemove);
 
                         };
 
@@ -226,6 +226,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             return false;//for some reason jeditable would trigger 'submit' if we let go
                         });
                         cell.on('click', '#ta-script-remove-button', function () {
+                        		self._initRemovePopup(settings);
                             var popup = $("#ta-remove-popup").formDialog();
                             popup.formDialog('open');
                             return false;// see comment above
@@ -275,6 +276,23 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
             changeNumberSelectedRows: function (number) {
                 $("#selectedRows").text(number);
+            },
+
+            _initRemovePopup(settings) {
+            		var dialog = $("#ta-remove-popup");
+
+            		dialog.formDialog();
+
+            		dialog.on('formdialogconfirm', function(){
+            			dialog.formDialog('close');
+            			var form = $(".assigned-script>form");
+            			form.find('input').val('');
+            			form.submit();
+            		});
+
+            		dialog.on('formdialogcancel', function(){
+            			dialog.formDialog('close');
+            		});
             },
 
             _initPickerPopup: function (settings) {
@@ -418,17 +436,17 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
                 dialog.on("formdialogopen", function () {
                     if (dialog.data('model-cache') === undefined) {
-                        dialog.initAjax = initDialogCache();
+                    		dialog.initAjax = initDialogCache();
                     } else {
-                        reset();
+                    		reset();
                     }
+
                 });
 
                 dialog.on('formdialogclose', function () {
                     if (dialog.initAjax) {
                         dialog.initAjax.abort();
                     }
-
                 });
             },
 
