@@ -72,7 +72,8 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", "
                         "bSortable": true,
                         "aTargets": [7],
                         "mDataProp": "priority",
-                        "sWidth": "6em"
+                        "sWidth": "6em",
+                        "sClass": "priority"
                     }, {
                         "bSortable": true,
                         "aTargets": [8],
@@ -157,7 +158,17 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", "
                                 $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight");
 
                             }
-                        })
+                        });
+
+                        var cell = $row.find('.priority');
+                        var entityId = data["entity-id"];
+                        var editable = confman.getStdJeditable();
+                        cell.attr("id", "automation-request-priority");
+                        editable.params = {
+                            "id": "automation-request-priority"
+                        }
+                        var url = squashtm.app.contextRoot + 'test-cases/' + entityId;
+                        cell.editable(url, editable);
                     },
 
                     fnDrawCallback: function () {

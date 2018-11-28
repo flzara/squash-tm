@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", 'app/ws/squashtm.notification', "workspace.storage", "../../automation-table/sort", "../../automation-table/filter", "squashtable", "jeditable", "jquery.squash.formdialog"],
-    function ($, _, Backbone, Handlebars, translator, notification, storage, sortmode, filtermode) {
+define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", 'app/ws/squashtm.notification', "workspace.storage", "../../automation-table/sort", "../../automation-table/filter", "squash.configmanager", "squashtable", "jeditable", "jquery.squash.formdialog"],
+    function ($, _, Backbone, Handlebars, translator, notification, storage, sortmode, filtermode, confman) {
         "use strict";
 
         var View = Backbone.View.extend({
@@ -83,7 +83,8 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }, {
                         "bSortable": true,
                         "aTargets": [7],
-                        "mDataProp": "priority"
+                        "mDataProp": "priority",
+                        "sClass": "priority"
                     }, {
                         "bSortable": false,
                         "aTargets": [8],
@@ -166,8 +167,20 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                 $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight");
 
                             }
-                        })
+                        });
+                        var cell = $row.find('.priority');
+                        var entityId = data["entity-id"];
+                        var editable = confman.getStdJeditable();
+                        cell.attr("id", "automation-request-priority");
+                        editable.params = {
+                            "id": "automation-request-priority"
+                        }
+                        var url = squashtm.app.contextRoot + 'test-cases/' + entityId;
+                        cell.editable(url, editable);
+
                     },
+
+                    
 
                     fnDrawCallback: function () {
                         self.selected = 0;
