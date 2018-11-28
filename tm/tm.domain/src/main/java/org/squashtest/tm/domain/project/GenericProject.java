@@ -67,6 +67,7 @@ import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
+import org.squashtest.tm.domain.scm.ScmRepository;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
@@ -137,6 +138,10 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 	@JoinColumn(name = "TA_SERVER_ID")
 	@ManyToOne(fetch = FetchType.LAZY)
 	private TestAutomationServer testAutomationServer;
+
+	@JoinColumn(name = "SCM_REPOSITORY_ID")
+	@ManyToOne(fetch = FetchType.LAZY)
+	private ScmRepository scmRepository;
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE }, fetch = FetchType.LAZY)
 	@JoinColumn(name = "ATTACHMENT_LIST_ID", updatable = false)
@@ -475,4 +480,11 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 		return template != null;
 	}
 
+	public ScmRepository getScmRepository() {
+		return scmRepository;
+	}
+
+	public void setScmRepository(ScmRepository scmRepository) {
+		this.scmRepository = scmRepository;
+	}
 }

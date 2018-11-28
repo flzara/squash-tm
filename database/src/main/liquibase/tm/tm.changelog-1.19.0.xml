@@ -312,4 +312,15 @@
 
   </changeSet>
 
+  <changeSet id="tm-1.19.0-SQTM-512-project-scm-repository-binding" author="jlor">
+    <comment>Add foreign key in project table to reference a scm (source code management) repository.</comment>
+
+    <addColumn tableName="PROJECT">
+      <column name="SCM_REPOSITORY_ID" type="BIGINT">
+        <constraints foreignKeyName="fk_project_scm_repository" references="SCM_REPOSITORY(SCM_REPOSITORY_ID)"/>
+      </column>
+    </addColumn>
+
+  </changeSet>
+
 </databaseChangeLog>
