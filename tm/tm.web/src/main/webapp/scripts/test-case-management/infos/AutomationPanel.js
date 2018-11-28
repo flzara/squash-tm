@@ -37,14 +37,13 @@ define([ "jquery", "backbone", "underscore", "squash.translator", "squash.config
 							targetUrl : this.settings.urls.testCaseUrl,
 							componentId : "automation-request-priority",
 							jeditableSettings : {
-								'maxLength' : 50,
+								'maxlength' : 9,
 								'onerror' : function(settings, self, xhr){
                 						notification.showError(xhr);
                 						self.reset();
                 					}
 							}
 						});
-
 
 						automatableRadio.on('change', function() {
 

@@ -55,7 +55,8 @@ define([ "jquery", "squash.configmanager", "jquery.squash.jeditable" ], function
 		this.refresh = function(){
 
 		};
-		var effectiveSettings = $.extend(true, {}, settings.jeditableSettings, defaultSettings);
+
+		var effectiveSettings = $.extend(true, {}, defaultSettings, settings.jeditableSettings);
 		this.instance = $(component).editable(targetUrl, effectiveSettings).addClass("editable");
 
 	};
