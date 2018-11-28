@@ -110,22 +110,34 @@
   </div>
 </div>
 <div style="display: none">
-<div id="ta-picker-popup" class="popup-dialog" title="${testAutomationPickerTitle}">
+  <div id="ta-picker-popup" class="popup-dialog" th:title="#{test-case.testautomation.popup.title}">
 
-  <div class="ta-picker-structure-maindiv">
+    <div class="ta-picker-structure-maindiv">
 
-    <div data-def="state=main" class="structure-treepanel has-standard-margin">
-      <div class="structure-tree"></div>
+      <div data-def="state=main" class="structure-treepanel has-standard-margin">
+        <div class="structure-tree"></div>
+      </div>
+
+    </div>
+
+    <div class="popup-dialog-buttonpane">
+      <input type="button" th:value="#{label.Choose}" data-def="mainbtn, evt=confirm"/>
+      <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel" />
     </div>
 
   </div>
+  <div id="ta-remove-popup" class="popup-dialog" th:title="#{dialog.unbind-ta-script.title}">
 
-  <div class="popup-dialog-buttonpane">
-    <input type="button" value="${testAutomationPickerOk}" data-def="mainbtn, evt=confirm"/>
-    <input type="button" value="${labelCancel}" data-def="evt=cancel" />
+    <div class="std-margin-top std-margin-bottom">
+      <span th:text="#{dialog.unbind-ta-script.message}"></span>
+    </div>
+
+    <div class="popup-dialog-buttonpane">
+      <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm"/>
+      <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
+    </div>
+
   </div>
-
-</div>
 </div>
 
 <!-- BACKBONE VIEWS TEMPLATES -->
