@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", 'app/ws/squashtm.notification', "workspace.storage", "./sort", "./filter", "squash.configmanager", "squashtable", "jeditable", "jquery.squash.formdialog"],
+define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", 'app/ws/squashtm.notification', "workspace.storage", "../../automation-table/sort", "../../automation-table/filter", "squash.configmanager", "squashtable", "jeditable", "jquery.squash.formdialog"],
     function ($, _, Backbone, Handlebars, translator, notification, storage, sortmode, filtermode, confman) {
         "use strict";
 
@@ -182,7 +182,8 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
                 var $table = $("#automation-table");
                 datatableSettings.customKey = "tester-global";
-                datatableSettings.testers = squashtm.app.testerTransmitted;
+                datatableSettings.testers = squashtm.app.testerGlobalView;
+                datatableSettings.statuses = squashtm.app.autoReqStatusesGlobalView;
                 var fmode = filtermode.newInst(datatableSettings);
                 var smode = sortmode.newInst(datatableSettings);
                 datatableSettings.searchCols = fmode.loadSearchCols();
@@ -301,8 +302,9 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "value": status
                     }
                 }).success(function () {
-                    table.refresh();
                     self.storage.remove(self.key);
+                    table.refresh();
+                    
                 });
             },
 

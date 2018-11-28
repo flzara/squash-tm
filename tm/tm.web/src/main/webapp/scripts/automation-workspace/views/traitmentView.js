@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", 'app/ws/squashtm.notification', "workspace.storage", "./sort", "./filter", "squash.configmanager", "squashtable", "jeditable"],
+define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", 'app/ws/squashtm.notification', "workspace.storage", "../../automation-table/sort", "../../automation-table/filter", "squash.configmanager", "squashtable", "jeditable"],
     function ($, _, Backbone, Handlebars, translator, notification, storage, sortmode, filtermode, confman) {
         "use strict";
 
@@ -30,16 +30,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
             initialize: function () {
                 this.render();
                 var self = this;
-                var requestStatus = ["TRANSMITTED"];
-                $.ajax({
-                    url: squashtm.app.contextRoot + "automation-workspace/testers/" + requestStatus,
-                    method: "GET",
-                    // data: {
-                    //     requestStatus : JSON.stringify(requestStatus)
-                    // }
-                }).success(function (data) {
-                    //console.log(data)
-                })
                 var datatableSettings = {
                     sAjaxSource: squashtm.app.contextRoot + "automation-workspace/automation-requests/traitment",
                     "aaSorting": [[7, 'desc'], [8, 'asc']],

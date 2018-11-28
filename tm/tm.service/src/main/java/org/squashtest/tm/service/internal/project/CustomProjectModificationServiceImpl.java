@@ -159,6 +159,19 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 		}
 	}
 
+	/**
+	 * Optimized implementation with SQL and no hibernate entities.
+	 */
+	@Override
+	public List<Long> findAllReadableIdsForAutomationWriter() {
+		UserDto currentUser = userAccountService.findCurrentUserDto();
+		if (currentUser.isAdmin()) {
+			return projectDao.findAllProjectIds();
+		} else {
+			return projectDao.findAllProjectIdsForAutomationWriter(currentUser.getPartyIds());
+		}
+	}
+
 	@Override
 	public List<Long> findAllReadableIds() {
 		UserDto currentUser = userAccountService.findCurrentUserDto();

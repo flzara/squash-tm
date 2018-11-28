@@ -21,7 +21,7 @@
 
 -->
 <div th:fragment="automation-transmitted-view">
-  <div id="divTable">
+  <div id="divTable" style="display: none">
     <div style="margin-bottom: 40px">
       <span style="font-style: italic; font-weight: bold; font-size:15px" th:text="#{automation.message.to_transmit}"></span>
       <div style="float: right">
@@ -69,6 +69,14 @@
         <tbody>
         </tbody>
       </table>
+    </div>
+  </div>
+
+  <div id="divBtn" style="display: none">
+    <div style="text-align: center">
+      <h2 th:text="#{automation.label.transmitted.none}"></h2>
+      <button id="btn-no-assigned" th:text="#{automation.label.button.transmitted.none}" th:title="#{automation.label.button.transmitted.none}"
+        class="sq-btn" style="margin-top: 20px; width:15%"></button>
     </div>
   </div>
 </div>

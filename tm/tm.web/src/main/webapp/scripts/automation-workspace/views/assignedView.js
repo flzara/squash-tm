@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", 'app/ws/squashtm.notification', "workspace.storage", "./sort", "./filter", "squash.configmanager", "tree/plugins/plugin-factory", "squashtable", "jeditable", "jqueryui", "jquery.squash.formdialog"],
+define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", 'app/ws/squashtm.notification', "workspace.storage", "../../automation-table/sort", "../../automation-table/filter", "squash.configmanager", "tree/plugins/plugin-factory", "squashtable", "jeditable", "jqueryui", "jquery.squash.formdialog"],
     function ($, _, Backbone, Handlebars, translator, notification, storage, sortmode, filtermode, confman, treefactory) {
         "use strict";
 

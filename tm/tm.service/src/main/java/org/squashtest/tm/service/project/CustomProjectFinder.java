@@ -59,4 +59,6 @@ public interface CustomProjectFinder {
 
 	Collection<JsonProject> findAllProjects(List<Long> readableProjectIds, UserDto currentUser);
 
+	List<Long> findAllReadableIdsForAutomationWriter();
+
 }

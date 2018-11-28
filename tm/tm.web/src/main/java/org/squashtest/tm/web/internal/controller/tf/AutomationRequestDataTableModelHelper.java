@@ -57,7 +57,7 @@ public class AutomationRequestDataTableModelHelper extends DataTableModelBuilder
 		data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, item.getTestCase() != null ? HtmlUtils.htmlEscape(item.getTestCase().getName()): null);
 		data.put("format", item.getTestCase() != null ? messageSource.internationalize(item.getTestCase().getKind().getI18nKey(), locale) : null);
 		data.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getTestCase() != null ? item.getTestCase().getId() : null);
-		data.put(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, item.getTransmittedBy() != null ? item.getTransmittedBy().getLogin(): item.getCreatedBy().getLogin());
+		data.put(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, auditable.getLastModifiedBy());
 		data.put("transmitted-on", messageSource.localizeShortDate(item.getTransmissionDate(), locale));
 		data.put("priority", item.getAutomationPriority() != null ? item.getAutomationPriority() : "-");
 		data.put("assigned-on", messageSource.localizeShortDate(item.getAssignmentDate(), locale));

@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", 'app/ws/squashtm.notification', "workspace.storage", "./sort", "./filter", "squashtable", "jeditable", "jquery.squash.formdialog"],
+define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", 'app/ws/squashtm.notification', "workspace.storage", "../../automation-table/sort", "../../automation-table/filter", "squashtable", "jeditable", "jquery.squash.formdialog"],
     function ($, _, Backbone, Handlebars, translator, notification, storage, sortmode, filtermode) {
         "use strict";
 
@@ -29,6 +29,21 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
             selected: 0,
             initialize: function () {
                 this.render();
+                $.ajax({
+                    url: squashtm.app.contextRoot + "automation-tester-workspace/count",
+                    method: "GET"
+                }).success(function (data) {
+                    if (data !== 0) {
+                        squashtm.app.visible = true;
+                        $("#divTable").show();
+                        $("#divBtn").hide();
+                    } else {
+                        squashtm.app.visible = false;
+                        $("#divTable").hide();
+                        $("#divBtn").show();
+                    }
+                });
+
                 var self = this;
                 var datatableSettings = {
                     sAjaxSource: squashtm.app.contextRoot + "automation-tester-workspace/automation-request/transmitted",
@@ -333,9 +348,9 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 });
 
                 $("#btn-no-assigned").on("click", function () {
-                    location.href = "#traitment";
-                    $("#tf-traitment-tab a").addClass("tf-selected");
-                    $("#tf-assigned-tab a").removeClass("tf-selected");
+                    location.href = "#validate";
+                    $("#tf-validate-tab a").addClass("tf-selected");
+                    $("#tf-transmitted-tab a").removeClass("tf-selected");
                 });
             }
 

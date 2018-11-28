@@ -109,4 +109,17 @@ public class ProjectDaoImpl extends HibernateEntityDao<Project> implements Custo
 				.and(ACL_CLASS.CLASSNAME.eq("org.squashtest.tm.domain.project.Project")))
 			.fetch(ACL_OBJECT_IDENTITY.IDENTITY, Long.class);
 	}
+
+	@Override
+	public List<Long> findAllProjectIdsForAutomationWriter(List<Long> partyIds) {
+		return DSL
+			.selectDistinct(ACL_OBJECT_IDENTITY.IDENTITY)
+			.from(ACL_RESPONSIBILITY_SCOPE_ENTRY)
+			.join(ACL_OBJECT_IDENTITY).on(ACL_OBJECT_IDENTITY.ID.eq(ACL_RESPONSIBILITY_SCOPE_ENTRY.OBJECT_IDENTITY_ID))
+			.join(ACL_CLASS).on(ACL_CLASS.ID.eq(ACL_OBJECT_IDENTITY.CLASS_ID))
+			.where(ACL_RESPONSIBILITY_SCOPE_ENTRY.PARTY_ID.in(partyIds)
+				.and(ACL_CLASS.CLASSNAME.eq("org.squashtest.tm.domain.project.Project"))
+				.and(ACL_RESPONSIBILITY_SCOPE_ENTRY.ACL_GROUP_ID.eq(10L)))
+			.fetch(ACL_OBJECT_IDENTITY.IDENTITY, Long.class);
+	}
 }

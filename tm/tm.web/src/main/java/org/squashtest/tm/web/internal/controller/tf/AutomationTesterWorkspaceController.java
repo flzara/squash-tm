@@ -24,9 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
@@ -41,9 +39,7 @@ import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 import javax.inject.Inject;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -66,7 +62,7 @@ public class AutomationTesterWorkspaceController {
 		.map(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "testCase.name")
 		.map("format", "testCase.kind")
 		.map(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, "testCase.id")
-		.map(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, "testCase.audit.createdBy")
+		.map(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, "testCase.audit.lastModifiedBy")
 		.map("transmitted-on", "transmissionDate")
 		.map("priority", "automationPriority")
 		.map("status", "requestStatus")
@@ -80,12 +76,26 @@ public class AutomationTesterWorkspaceController {
 	public String showWorkspace(Model model, Locale locale) {
 		Map<String, String> tcKinds =
 			Arrays.stream(TestCaseKind.values()).collect(Collectors.toMap(Enum::toString, e -> messageSource.internationalize(e.getI18nKey(), locale)));
-		Map<String, String> autoReqStatuses =
+		Map<String, String> autoReqStatusesValidateView =
 			Stream.of(AutomationRequestStatus.OBSOLETE, AutomationRequestStatus.TO_VALIDATE, AutomationRequestStatus.NOT_AUTOMATABLE)
 				.collect(Collectors.toMap(Enum::toString, e -> messageSource.internationalize(e.getI18nKey(), locale)));
-		model.addAttribute("autoReqStatuses", autoReqStatuses);
+		Map<String, String> autoReqStatusesGlobalView =
+			Stream.of(AutomationRequestStatus.values())
+				.collect(Collectors.toMap(Enum::toString, e -> messageSource.internationalize(e.getI18nKey(), locale)));
+		model.addAttribute("autoReqStatusesValidateView", autoReqStatusesValidateView);
+		model.addAttribute("autoReqStatusesGlobalView", autoReqStatusesGlobalView);
 		model.addAttribute("tcKinds", tcKinds);
-		model.addAttribute("testerTransmitted", automationRequestFinderService.getCreatedByForTester(Arrays.asList(AutomationRequestStatus.VALID.name())));
+		model.addAttribute("testerTransmitted", automationRequestFinderService.getCreatedByForAutomationRequests(Arrays.asList(AutomationRequestStatus.VALID.name())));
+		model.addAttribute("testerValidate",
+			automationRequestFinderService.getCreatedByForAutomationRequests(Arrays.asList(AutomationRequestStatus.TO_VALIDATE.name())));
+
+		List<String> allStatus = new ArrayList<>();
+		for (AutomationRequestStatus automationRequestStatus: AutomationRequestStatus.values()) {
+			allStatus.add(automationRequestStatus.name());
+		}
+		model.addAttribute("testerGlobalView",
+			automationRequestFinderService.getCreatedByForAutomationRequests(allStatus));
+
 		return getWorkspaceViewName();
 	}
 
@@ -123,8 +133,20 @@ public class AutomationTesterWorkspaceController {
 
 		Pageable pageable = SpringPagination.pageable(params,automationRequestMapper);
 		ColumnFiltering filtering = new DataTableColumnFiltering(params, automationRequestMapper);
-		Page<AutomationRequest> automationRequestPage = automationRequestFinderService.findRequestsForGlobalTestView(pageable, filtering);
+		Page<AutomationRequest> automationRequestPage = automationRequestFinderService.findRequests(pageable, filtering);
 
 		return new AutomationRequestDataTableModelHelper(messageSource, permissionEvaluationService).buildDataModel(automationRequestPage, "");
+	}
+
+	@RequestMapping(value = "/count", method = RequestMethod.GET)
+	@ResponseBody
+	public Integer countAutomationRequestValid() {
+		return automationRequestFinderService.countAutomationRequestValid();
+	}
+
+	@RequestMapping(value = "/lastModifiedBy/{reqStatuses}", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<Long, String> getLastModifiedBy(@PathVariable List<String> reqStatuses) {
+		return automationRequestFinderService.getCreatedByForAutomationRequests(reqStatuses);
 	}
 }

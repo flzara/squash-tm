@@ -114,7 +114,7 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 	@Override
 	public Page<AutomationRequest> findRequestsAssignedToCurrentUser(Pageable pageable, ColumnFiltering filtering) {
-		List<Long> projectIds = projectFinder.findAllReadableIds();
+		List<Long> projectIds = projectFinder.findAllReadableIdsForAutomationWriter();
 		String username = userCtxt.getUsername();
 		return requestDao.findAllForAssignee(username, pageable, filtering, projectIds);
 	}
@@ -122,14 +122,14 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	@Override
 	@Transactional(readOnly = true)
 	public Page<AutomationRequest> findRequestsWithTransmittedStatus(Pageable pageble, ColumnFiltering filtering) {
-		List<Long> projectIds = projectFinder.findAllReadableIds();
+		List<Long> projectIds = projectFinder.findAllReadableIdsForAutomationWriter();
 		return requestDao.findAllForTraitment(pageble, filtering, projectIds);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public Page<AutomationRequest> findRequestsForGlobal(Pageable pageable, ColumnFiltering filtering) {
-		List<Long> projectIds = projectFinder.findAllReadableIds();
+		List<Long> projectIds = projectFinder.findAllReadableIdsForAutomationWriter();
 		return requestDao.findAllForGlobal(pageable, filtering, projectIds);
 	}
 
@@ -200,12 +200,8 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 				requestDao.updateStatusToExecutable(reqIds);
 				break;
 			case TRANSMITTED:
-				try {
 					PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_FUNCTIONAL, AutomationRequest.class.getName());
 					requestDao.updateStatusToTransmitted(reqIds, user);
-				} catch(AccessDeniedException ade) {
-					throw new AccessDeniedAutomationRequestException(ade);
-				}
 				break;
 			case TO_VALIDATE:
 				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_FUNCTIONAL, AutomationRequest.class.getName());
@@ -242,6 +238,11 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	public Page<AutomationRequest> findRequestsForGlobalTestView(Pageable pageable, ColumnFiltering filtering) {
 		List<Long> projectIds = projectFinder.findAllReadableIds();
 		return requestDao.findAllForGlobalTester(pageable,filtering, projectIds);
+	}
+
+	@Override
+	public Integer countAutomationRequestValid() {
+		return requestDao.countAutomationRequestValid();
 	}
 
 	// **************************** boiler plate code *************************************

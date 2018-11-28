@@ -162,4 +162,6 @@ public interface AutomationRequestFinderService {
 	 */
 	Page<AutomationRequest> findRequestsForGlobalTestView(Pageable pageable, ColumnFiltering filtering);
 
+	Integer countAutomationRequestValid();
+
 }

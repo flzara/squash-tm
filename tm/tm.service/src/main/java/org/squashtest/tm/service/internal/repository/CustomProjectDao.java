@@ -51,4 +51,6 @@ public interface CustomProjectDao {
 	 */
 	List<Long> findAllProjectIds(List<Long> partyIds);
 
+	List<Long> findAllProjectIdsForAutomationWriter(List<Long> partyIds);
+
 }

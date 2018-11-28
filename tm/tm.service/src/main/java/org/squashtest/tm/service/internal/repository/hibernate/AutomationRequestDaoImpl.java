@@ -169,9 +169,15 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	@Override
 	public Integer countAutomationRequestForCurrentUser(Long idUser) {
 
-		return DSL.selectCount().from(AUTOMATION_REQUEST)
+		return DSL.selectCount()
+			.from(AUTOMATION_REQUEST)
+			.innerJoin(TEST_CASE).on(TEST_CASE.TCLN_ID.eq(AUTOMATION_REQUEST.TEST_CASE_ID))
+			.innerJoin(TEST_CASE_LIBRARY_NODE).on(TEST_CASE.TCLN_ID.eq(TEST_CASE_LIBRARY_NODE.TCLN_ID))
+			.innerJoin(PROJECT).on(PROJECT.PROJECT_ID.eq(TEST_CASE_LIBRARY_NODE.PROJECT_ID))
 			.where(AUTOMATION_REQUEST.ASSIGNED_TO.eq(idUser))
 			.and(AUTOMATION_REQUEST.REQUEST_STATUS.eq(AutomationRequestStatus.WORK_IN_PROGRESS.toString()))
+			.and(PROJECT.ALLOW_AUTOMATION_WORKFLOW.isTrue())
+			.and(TEST_CASE.AUTOMATABLE.eq(TestCaseAutomatable.Y.name()))
 			.fetchOne().value1();
 	}
 
@@ -196,7 +202,8 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 		}
 
 		return DSL.selectDistinct(CORE_USER.PARTY_ID, CORE_USER.LOGIN).from(CORE_USER)
-			.join(AUTOMATION_REQUEST).on(CORE_USER.PARTY_ID.eq(AUTOMATION_REQUEST.TRANSMITTED_BY))
+			.innerJoin(TEST_CASE_LIBRARY_NODE).on(CORE_USER.LOGIN.eq(TEST_CASE_LIBRARY_NODE.LAST_MODIFIED_BY))
+			.innerJoin(AUTOMATION_REQUEST).on(TEST_CASE_LIBRARY_NODE.TCLN_ID.eq(AUTOMATION_REQUEST.TEST_CASE_ID))
 			.where(condition)
 			.and(AUTOMATION_REQUEST.REQUEST_STATUS.in(requestStatus))
 			.fetch().intoMap(CORE_USER.PARTY_ID, CORE_USER.LOGIN);
@@ -406,6 +413,20 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 			throw new IllegalAutomationRequestStatusException(ILLEGAL_STATUS);
 		}
 
+	}
+
+	@Override
+	public Integer countAutomationRequestValid() {
+		return DSL.selectCount()
+			.from(AUTOMATION_REQUEST)
+			.innerJoin(TEST_CASE).on(TEST_CASE.TCLN_ID.eq(AUTOMATION_REQUEST.TEST_CASE_ID))
+			.innerJoin(TEST_CASE_LIBRARY_NODE).on(TEST_CASE.TCLN_ID.eq(TEST_CASE_LIBRARY_NODE.TCLN_ID))
+			.innerJoin(PROJECT).on(PROJECT.PROJECT_ID.eq(TEST_CASE_LIBRARY_NODE.PROJECT_ID))
+			.where(AUTOMATION_REQUEST.REQUEST_STATUS.eq(AutomationRequestStatus.VALID.name()))
+			.and(PROJECT.ALLOW_AUTOMATION_WORKFLOW.isTrue())
+			.and(TEST_CASE.AUTOMATABLE.eq(TestCaseAutomatable.Y.name()))
+			.fetchOne()
+			.value1();
 	}
 
 	// *************** boilerplate ****************

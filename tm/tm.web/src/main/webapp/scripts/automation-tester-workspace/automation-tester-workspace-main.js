@@ -34,9 +34,11 @@ define(['squash.translator', './init-actions'],
 		}
 
 		function init(conf) {
+			
 			initI18n();
 			initTabbedPane();
 			actions.init();
+			
 		}
 
 		return {

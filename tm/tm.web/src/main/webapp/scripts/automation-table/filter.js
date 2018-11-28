@@ -62,7 +62,13 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 				combo.append(nullOption);
 
 				$.each(content, function (index, value) {
-					var o = new Option(value, index);
+					var o;
+					if(th.hasClass("tp-th-createdby")) {
+						o = new Option(value, value);
+					} else {
+						o = new Option(value, index);
+					}
+
 					$(o).html(value);
 					combo.append(o);
 				});
@@ -171,11 +177,11 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 			}
 
 			if(statusCombo.length !== 0) {
-				_createCombo(statusCombo, "#filter-mode-combo", model.autoReqStatuses);
+				_createCombo(statusCombo, "#filter-mode-combo", initConf.statuses);
 			}
 
 			if(assignedToCombo.length !== 0) {
-				//_createCombo(assignedToCombo, "#filter-mode-combo", model.assignableUsersGlobalView);
+				_createCombo(assignedToCombo, "#filter-mode-combo", model.assignableUsersGlobalView);
 			}
 
 			var self = this;

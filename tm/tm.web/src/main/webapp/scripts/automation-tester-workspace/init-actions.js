@@ -37,36 +37,35 @@ define(['jquery', 'workspace.contextual-content', 'workspace.routing'],
 				var url = model.contextRoot;
 				var requestStatus = [];
 				var href = $(this).attr("href");
-				if (href === "#assigned") {
-					requestStatus = ["WORK_IN_PROGRESS"];
-					url = url + "automation-workspace/assigned/testers/";
-				} else if (href === "#traitment") {
-					requestStatus = ["TRANSMITTED"];
-					url = url + "automation-workspace/testers/";
+				if (href === "#transmitted") {
+					requestStatus = ["VALID"];
+				} else if (href === "#validate") {
+					requestStatus = ["TO_VALIDATE"];
 				} else {
-					requestStatus = ["TRANSMITTED", "WORK_IN_PROGRESS", "EXECUTABLE"];
+					requestStatus = ["TO_VALIDATE", "VALID", "TRANSMITTED", "WORK_IN_PROGRESS", "EXECUTABLE", "OBSOLETE", "NOT_AUTOMATABLE"];
 					url = url + "automation-workspace/testers/";
 				}
 				var self = this;
-				/*$.ajax({
-					url: url + requestStatus,
+				$.ajax({
+					url: model.contextRoot + "automation-tester-workspace/lastModifiedBy/" + requestStatus,
 					method: "GET",
 				}).success(function (data) {
 					switch (href) {
-						case "#assigned":
-							model.assignableUsers = data;
+						case "#transmitted":
+							model.testerTransmitted = data;
+							console.log(model.testerTransmitted)
 							break;
-						case "#traitment":
-							model.traitmentUsers = data;
+						case "#validate":
+							model.testerValidate = data;
 							break;
 						case "#global":
-							model.globalUsers = data;
+							model.testerGlobalView = data;
 							break;
 						default:
 							break;
 
 					}					
-				});*/
+				});
 				if (!$(self).hasClass('tf-selected')) {
 					selectTab(self);
 				}

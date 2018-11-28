@@ -152,4 +152,6 @@ public interface CustomAutomationRequestDao {
 
 	void updateStatusToObsolete(List<Long> reqIds);
 
+	Integer countAutomationRequestValid();
+
 }
