@@ -35,6 +35,7 @@
 <f:message var="tcTitle" 	key="workspace.test-case.button.label"/>
 <f:message var="campTitle" 	key="workspace.campaign.button.label"/>
 <f:message var="automTitle" key="workspace.automation.button.label"/>
+<f:message var="automProgTitle" key="workspace.automation.programmer.button.label"/>
 <f:message var="automTesterTitle" key="workspace.automation.tester.button.label"/>
 <f:message var="bugTitle" 	key="workspace.bugtracker.button.label"/>
 <f:message var="repoTitle" 	key="workspace.report.button.label"/>
@@ -55,7 +56,7 @@
 	<div id="nav_logo">
 		<div style="margin-bottom: 40px;">
 		<sec:authorize access="!hasRole('ROLE_TF_FUNCTIONAL_TESTER') and hasRole('ROLE_TF_AUTOMATION_PROGRAMMER') and !hasRole('ROLE_ADMIN')">
-		  <a id="automation-link"	 	style="margin-top: 10px;"	class="navigation-link navigation-automation"	href="${rootctxt}/automation-workspace/"	title="${automTitle}"></a>
+		  <a id="automation-link"	 	style="margin-top: 10px;"	class="navigation-link navigation-automation"	href="${rootctxt}/automation-workspace/"	title="${automProgTitle}"></a>
 		  </sec:authorize>
 		  <sec:authorize access="hasRole('ROLE_TF_FUNCTIONAL_TESTER') and !hasRole('ROLE_TF_AUTOMATION_PROGRAMMER') and !hasRole('ROLE_ADMIN')">
 		  <a id="automation-tester-link"	 	style="margin-top: 10px;"	class="navigation-link navigation-automation"	href="${rootctxt}/automation-tester-workspace/"	title="${automTesterTitle}"></a>
@@ -63,7 +64,7 @@
 		  <sec:authorize access="(hasRole('ROLE_TF_FUNCTIONAL_TESTER') and hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')) or hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')">
 		  <a id="automation-link-ul"	 	style="margin-top: 10px;"	class="navigation-link navigation-automation"	href="${rootctxt}/automation-workspace/"	title="${automTitle}"></a>
 		  <ul class="not-displayed width:130px;" style="max-height: 12.8em;">
-      				<li><a id="automation-link" href="${rootctxt}/automation-workspace/" title="${automTitle}" ${targetClause}><c:out value="${automTitle}"/></a></li>
+      				<li><a id="automation-link" href="${rootctxt}/automation-workspace/" title="${automTitle}" ${targetClause}><c:out value="${automProgTitle}"/></a></li>
       				<li><a id="automation-tester-link" href="${rootctxt}/automation-tester-workspace/" title="${automTesterTitle}" ${targetClause}><c:out value="${automTesterTitle}"/></a></li>
       			</ul>
       </sec:authorize>
