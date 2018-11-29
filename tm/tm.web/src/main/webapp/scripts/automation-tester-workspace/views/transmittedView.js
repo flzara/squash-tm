@@ -176,6 +176,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             "id": "automation-request-priority"
                         }
                         editable.maxlength = 9;
+                        editable.onblur = 'cancel';
                         var url = squashtm.app.contextRoot + 'test-cases/' + entityId;
                         cell.editable(url, editable);
 
