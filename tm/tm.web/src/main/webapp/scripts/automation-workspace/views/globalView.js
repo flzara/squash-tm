@@ -72,7 +72,11 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "bSortable": true,
                         "aTargets": [7],
                         "mDataProp": "priority",
-                        "sWidth": "6em"
+                        "sWidth": "6em",
+                        "mRender": function (data, type, row, meta) {
+                            if (data === null) { return '-'; }
+                            return data;
+                        }
                     }, {
                         "bSortable": true,
                         "aTargets": [8],

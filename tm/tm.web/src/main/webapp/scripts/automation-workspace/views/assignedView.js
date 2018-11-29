@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", 'app/ws/squashtm.notification', "workspace.storage", "../../automation-table/sort", "../../automation-table/filter", "squash.configmanager", "tree/plugins/plugin-factory", "squashtable", "jeditable", "jqueryui", "jeditable.simpleJEditable","jquery.squash.formdialog"],
+define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", 'app/ws/squashtm.notification', "workspace.storage", "../../automation-table/sort", "../../automation-table/filter", "squash.configmanager", "tree/plugins/plugin-factory", "squashtable", "jeditable", "jqueryui", "jeditable.simpleJEditable", "jquery.squash.formdialog"],
     function ($, _, Backbone, Handlebars, translator, notification, storage, sortmode, filtermode, confman, treefactory) {
         "use strict";
 
@@ -83,7 +83,11 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }, {
                         "bSortable": true,
                         "aTargets": [7],
-                        "mDataProp": "priority"
+                        "mDataProp": "priority",
+                        "mRender": function (data, type, row, meta) {
+                            if (data === null) { return '-'; }
+                            return data;
+                        }
                     }, {
                         "bSortable": true,
                         "aTargets": [8],
@@ -136,7 +140,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     "bFilter": true,
 
                     fnRowCallback: function (row, data, displayIndex) {
-                        
+
                         var $row = $(row);
                         var edObj = $.extend(true, {}, $.editable.types.text);
                         var edFnButtons = $.editable.types.defaults.buttons;
@@ -211,18 +215,18 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         var entityId = data["entity-id"];
                         var url = squashtm.app.contextRoot + 'test-cases/' + entityId + '/test-automation/tests';
                         cell.editable(url, editable);
-                        cell.css({ "font-style": "italic"});
-                        
+                        cell.css({ "font-style": "italic" });
+
                         cell.attr("id", cellId);
                         var settings = {
                             url: url,
                             id: cellId
                         }
 
-                        cell.on("click", function() {
-                            $("td[id!="+cellId+"]").find("form button[type=cancel]").click();
+                        cell.on("click", function () {
+                            $("td[id!=" + cellId + "]").find("form button[type=cancel]").click();
                         })
-                        
+
                         cell.on('click', '#ta-script-picker-button', function () {
                             self._initPickerPopup(settings);
                             var popup = $("#ta-picker-popup").formDialog();
@@ -230,7 +234,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             return false;//for some reason jeditable would trigger 'submit' if we let go
                         });
                         cell.on('click', '#ta-script-remove-button', function () {
-                        		self._initRemovePopup(settings);
+                            self._initRemovePopup(settings);
                             var popup = $("#ta-remove-popup").formDialog();
                             popup.formDialog('open');
                             return false;// see comment above
@@ -283,20 +287,20 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
             },
 
             _initRemovePopup(settings) {
-            		var dialog = $("#ta-remove-popup");
+                var dialog = $("#ta-remove-popup");
 
-            		dialog.formDialog();
+                dialog.formDialog();
 
-            		dialog.on('formdialogconfirm', function(){
-            			dialog.formDialog('close');
-            			var form = $(".assigned-script>form");
-            			form.find('input').val('');
-            			form.submit();
-            		});
+                dialog.on('formdialogconfirm', function () {
+                    dialog.formDialog('close');
+                    var form = $(".assigned-script>form");
+                    form.find('input').val('');
+                    form.submit();
+                });
 
-            		dialog.on('formdialogcancel', function(){
-            			dialog.formDialog('close');
-            		});
+                dialog.on('formdialogcancel', function () {
+                    dialog.formDialog('close');
+                });
             },
 
             _initPickerPopup: function (settings) {
@@ -314,7 +318,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
                 var initDialogCache = function () {
                     // cache
-                dialog.data('model-cache', undefined);
+                    dialog.data('model-cache', undefined);
                     dialog.formDialog('setState', 'pleasewait');
 
                     return $.ajax({
@@ -425,9 +429,9 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
                 dialog.on("formdialogopen", function () {
                     if (dialog.data('model-cache') === undefined) {
-                    		dialog.initAjax = initDialogCache();
+                        dialog.initAjax = initDialogCache();
                     } else {
-                    		reset();
+                        reset();
                     }
 
                 });

@@ -2016,9 +2016,7 @@ opacity:0.2;
 #tf-automation-tabs ul a.tf-selected:hover {
   	background-image: url(/squash/styles/jquery/ui/images/ui-bg_glass_45_6eac2c_1x400.png);
 }
-#tf-automation-tabs ul a.tf-selected:focus {
-  	border: 1px solid rgb(81,147,228);
-}
+
 #tf-automation-content {
 	width: 99%;
 }

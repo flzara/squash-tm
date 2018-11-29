@@ -73,7 +73,11 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "bSortable": true,
                         "aTargets": [7],
                         "mDataProp": "priority",
-                        "sWidth": "6em"
+                        "sWidth": "6em",
+                        "mRender": function (data, type, row, meta) {
+                            if (data === null) { return '-'; }
+                            return data;
+                        }
                     }, {
                         "bSortable": true,
                         "aTargets": [8],
@@ -309,16 +313,16 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 if (requestIds.length === 0 || requestIds === undefined) {
                     notification.showWarning(translator.get("automation.notification.selectedRow.none"));
                 } else {
-                        $.ajax({
-                            url: squashtm.app.contextRoot + url + requestIds,
-                            method: 'POST',
-                            data: {
-                                "id": "automation-request-status",
-                                "value": status
-                            }
-                        }).success(function () {
-                            table.refresh();
-                        });
+                    $.ajax({
+                        url: squashtm.app.contextRoot + url + requestIds,
+                        method: 'POST',
+                        data: {
+                            "id": "automation-request-status",
+                            "value": status
+                        }
+                    }).success(function () {
+                        table.refresh();
+                    });
                 }
             },
 
