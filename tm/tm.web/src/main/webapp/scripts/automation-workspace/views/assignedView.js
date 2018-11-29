@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", 'app/ws/squashtm.notification', "workspace.storage", "../../automation-table/sort", "../../automation-table/filter", "squash.configmanager", "tree/plugins/plugin-factory", "squashtable", "jeditable", "jqueryui", "jquery.squash.formdialog"],
+define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", 'app/ws/squashtm.notification', "workspace.storage", "../../automation-table/sort", "../../automation-table/filter", "squash.configmanager", "tree/plugins/plugin-factory", "squashtable", "jeditable", "jqueryui", "jeditable.simpleJEditable","jquery.squash.formdialog"],
     function ($, _, Backbone, Handlebars, translator, notification, storage, sortmode, filtermode, confman, treefactory) {
         "use strict";
 
@@ -136,6 +136,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     "bFilter": true,
 
                     fnRowCallback: function (row, data, displayIndex) {
+                        
                         var $row = $(row);
                         var edObj = $.extend(true, {}, $.editable.types.text);
                         var edFnButtons = $.editable.types.defaults.buttons;
@@ -182,14 +183,13 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             // now add our own button
                             var btnChoose = $("<button/>", {
                                 'text': translator.get('label.dot.pick'),
-                                'id': 'ta-script-picker-button' + data["tc-id"]
+                                'id': 'ta-script-picker-button'
                             });
 
                             var btnRemove = $("<button/>", {
                                 'text': translator.get('label.Remove'),
                                 'id': 'ta-script-remove-button'
                             });
-                            this.append("<br />");
                             this.append(btnChoose);
                             this.append(btnRemove);
 
@@ -203,7 +203,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             return input;
                         };
                         $.editable.addInputType('ta-picker', edObj);
-
+                        var cellId = "assigned-script" + data["tc-id"];
                         var editable = confman.getStdJeditable();
                         editable.type = 'ta-picker';
                         editable.name = "path";
@@ -212,14 +212,18 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         var url = squashtm.app.contextRoot + 'test-cases/' + entityId + '/test-automation/tests';
                         cell.editable(url, editable);
                         cell.css({ "font-style": "italic"});
-                        var cellId = "assigned-script" + data["tc-id"];
-                        var testAutomationUrl = squashtm.app.contextRoot + "test-cases/" + data["tc-id"] + "/test-automation/tests";
+                        
                         cell.attr("id", cellId);
                         var settings = {
-                            url: testAutomationUrl,
+                            url: url,
                             id: cellId
                         }
-                        cell.on('click', '#ta-script-picker-button' + data['tc-id'], function () {
+
+                        cell.on("click", function() {
+                            $("td[id!="+cellId+"]").find("form button[type=cancel]").click();
+                        })
+                        
+                        cell.on('click', '#ta-script-picker-button', function () {
                             self._initPickerPopup(settings);
                             var popup = $("#ta-picker-popup").formDialog();
                             popup.formDialog('open');
@@ -296,7 +300,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
             },
 
             _initPickerPopup: function (settings) {
-
                 var dialog = $("#ta-picker-popup");
 
                 var testAutomationTree = dialog.find(".structure-tree");
@@ -307,15 +310,11 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     height: 500
                 });
 
-                // cache
-                dialog.data('model-cache', undefined);
-
-
-
                 // ************ model loading *************************
 
                 var initDialogCache = function () {
-
+                    // cache
+                dialog.data('model-cache', undefined);
                     dialog.formDialog('setState', 'pleasewait');
 
                     return $.ajax({
@@ -383,14 +382,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "plugins": ["json_data", "types", "ui", "themes", "squash", 'conditionalselect']
 
                     });
-
-                    $(window).bind('select_node.jstree', function () {
-                        console.log('select_node.jstree');
-                    });
-                    $(window).bind('click.jstree', function () {
-                        console.log('click.jstree');
-                    });
-
                 };
 
                 var reset = function () {
@@ -403,7 +394,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
 
                 var submit = function () {
-
                     try {
 
                         var node = testAutomationTree.jstree('get_selected');
@@ -413,7 +403,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         }
 
                         var nodePath = node.getPath();
-                        $("#" + settings.id).find('form input[name="path"]').val(nodePath);
+                        $("#" + settings.id).find('form input[name=path]').val(nodePath);
                         dialog.formDialog('close');
 
                     } catch (exception) {
@@ -423,7 +413,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         }
                         dialog.formDialog('showError', errmsg);
                     }
-
                 };
 
                 // ************ events *********************

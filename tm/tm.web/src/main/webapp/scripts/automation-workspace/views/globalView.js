@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", 'app/ws/squashtm.notification', "workspace.storage", "../../automation-table/sort", "../../automation-table/filter", "squash.configmanager", "squashtable", "jeditable"],
-    function ($, _, Backbone, Handlebars, translator, notification, storage, sortmode, filtermode, confman) {
+define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", 'app/ws/squashtm.notification', "workspace.storage", "../../automation-table/sort", "../../automation-table/filter", "squash.configmanager", "tree/plugins/plugin-factory", "squashtable", "jeditable"],
+    function ($, _, Backbone, Handlebars, translator, notification, storage, sortmode, filtermode, confman, treefactory) {
         "use strict";
 
         var View = Backbone.View.extend({
@@ -190,7 +190,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                 'text': translator.get('label.Remove'),
                                 'id': 'ta-script-remove-button'
                             });
-
                             this.append(btnChoose)
                                 .append(btnRemove);
 
@@ -205,20 +204,38 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         };
 
                         $.editable.addInputType('ta-picker', edObj);
+                        var cellId = "assigned-script" + data["entity-id"];
                         var editable = confman.getStdJeditable();
                         editable.type = 'ta-picker';
                         editable.name = "path";
                         var cell = $row.find('.assigned-script');
                         var entityId = data["entity-id"];
-                        var model = squashtm.app;
-                        var url = model.contextRoot + 'test-cases/' + entityId + '/test-automation/tests';
+                        var url = squashtm.app.contextRoot + 'test-cases/' + entityId + '/test-automation/tests';
+                        cell.editable(url, editable);
+                        cell.css({ "font-style": "italic" });
 
-                        if (data['status'] === model.autoReqStatuses['WORK_IN_PROGRESS'] || data['status'] === model.autoReqStatuses['EXECUTABLE']) {
-                            cell.editable(url, editable);
-                        } else {
-                            cell.text('-');
+                        cell.attr("id", cellId);
+                        var settings = {
+                            url: url,
+                            id: cellId
                         }
-                        cell.css({"font-style": "italic"});
+
+                        cell.on("click", function () {
+                            $("td[id!=" + cellId + "]").find("form button[type=cancel]").click();
+                        })
+
+                        cell.on('click', '#ta-script-picker-button', function () {
+                            self._initPickerPopup(settings);
+                            var popup = $("#ta-picker-popup").formDialog();
+                            popup.formDialog('open');
+                            return false;//for some reason jeditable would trigger 'submit' if we let go
+                        });
+                        cell.on('click', '#ta-script-remove-button', function () {
+                            self._initRemovePopup(settings);
+                            var popup = $("#ta-remove-popup").formDialog();
+                            popup.formDialog('open');
+                            return false;// see comment above
+                        });
 
 
                     },
@@ -262,6 +279,163 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }
 
                     self.changeNumberSelectedRows(self.selected);
+                });
+            },
+
+            _initRemovePopup(settings) {
+                var dialog = $("#ta-remove-popup");
+
+                dialog.formDialog();
+
+                dialog.on('formdialogconfirm', function () {
+                    dialog.formDialog('close');
+                    var form = $(".assigned-script>form");
+                    form.find('input').val('');
+                    form.submit();
+                });
+
+                dialog.on('formdialogcancel', function () {
+                    dialog.formDialog('close');
+                });
+            },
+
+            _initPickerPopup: function (settings) {
+                var dialog = $("#ta-picker-popup");
+
+                var testAutomationTree = dialog.find(".structure-tree");
+
+                // init
+
+                dialog.formDialog({
+                    height: 500
+                });
+
+                // ************ model loading *************************
+
+                var initDialogCache = function () {
+                    // cache
+                    dialog.data('model-cache', undefined);
+                    dialog.formDialog('setState', 'pleasewait');
+
+                    return $.ajax({
+                        url: settings.url,
+                        type: 'GET',
+                        dataType: 'json'
+                    })
+                        .done(function (json) {
+                            dialog.data('model-cache', json);
+                            createTree();
+                            dialog.formDialog('setState', 'main');
+                        })
+                        .fail(function (jsonError) {
+                            dialog.formDialog('close');
+                        });
+                };
+
+                var createTree = function () {
+
+                    treefactory.configure('simple-tree'); // will add the 'squash' plugin if doesn't exist yet
+                    var instanceTree = testAutomationTree.jstree({
+                        "json_data": {
+                            "data": dialog.data('model-cache')
+                        },
+
+                        "types": {
+                            "max_depth": -2, // unlimited without check
+                            "max_children": -2, // unlimited w/o check
+                            "valid_children": ["drive"],
+                            "types": {
+                                "drive": {
+                                    "valid_children": ["ta-test", "folder"],
+                                    "select_node": true
+                                },
+                                "ta-test": {
+                                    "valid_chidlren": "none",
+                                    "select_node": true
+                                },
+                                "folder": {
+                                    "valid_children": ["ta-test", "folder"],
+                                    "select_node": true
+                                }
+                            }
+                        },
+
+                        "ui": {
+                            "select_multiple_modifier": false
+                        },
+
+                        "themes": {
+                            "theme": "squashtest",
+                            "dots": true,
+                            "icons": true,
+                            "url": squashtm.app.contextRoot + "styles/squash.tree.css"
+                        },
+
+                        "core": {
+                            "animation": 0
+                        },
+
+                        conditionalselect: function () {
+                            return true;
+                        },
+
+                        "plugins": ["json_data", "types", "ui", "themes", "squash", 'conditionalselect']
+
+                    });
+                };
+
+                var reset = function () {
+                    if (testAutomationTree.jstree('get_selected').length > 0) {
+                        testAutomationTree.jstree('get_selected').deselect();
+                    }
+                };
+
+                // ****************** transaction ************
+
+
+                var submit = function () {
+                    try {
+
+                        var node = testAutomationTree.jstree('get_selected');
+
+                        if (node.length < 1) {
+                            throw "no-selection";
+                        }
+
+                        var nodePath = node.getPath();
+                        $("#" + settings.id).find('form input[name=path]').val(nodePath);
+                        dialog.formDialog('close');
+
+                    } catch (exception) {
+                        var errmsg = exception;
+                        if (exception == "no-selection") {
+                            errmsg = translator.get('test-case.testautomation.popup.error.noselect');
+                        }
+                        dialog.formDialog('showError', errmsg);
+                    }
+                };
+
+                // ************ events *********************
+
+                dialog.on('formdialogconfirm', submit);
+
+                dialog.on('formdialogcancel', function () {
+                    dialog.formDialog('close');
+                });
+
+                dialog.on("formdialogopen", function () {
+                    if (dialog.data('model-cache') === undefined) {
+                        dialog.initAjax = initDialogCache();
+                    } else {
+                        reset();
+                    }
+
+                });
+
+                dialog.on('formdialogclose', function () {
+                    if (dialog.initAjax) {
+                        dialog.initAjax.abort();
+                    }
                 });
             },
 
