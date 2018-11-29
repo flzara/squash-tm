@@ -171,6 +171,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         editable.params = {
                             "id": "automation-request-priority"
                         }
+                        editable.maxlength = 9;
                         var url = squashtm.app.contextRoot + 'test-cases/' + entityId;
                         cell.editable(url, editable);
                     },
@@ -314,7 +315,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 }).success(function () {
                     self.storage.remove(self.key);
                     table.refresh();
-                    
+
                 });
             },
 
@@ -354,7 +355,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     } else {
                         self.changeStatus(requestIds, "VALID", domtable);
                     }
-                    
+
                 });
             }
 
