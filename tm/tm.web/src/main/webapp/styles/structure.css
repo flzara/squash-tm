@@ -642,11 +642,11 @@ html.execute-html body.ieo-body {
 }
 
 .navigation-automation{
-	background-image: url(../images/Button_Nav_TestCase_off.png); /** sprite-ref: sprites-icons; */
+	background-image: url(../images/Button_ExecServer_off.png); /** sprite-ref: sprites-icons; */
 }
 
 .navigation-automation:hover, .navigation-automation.navigation-selected{
-	background-image: url(../images/Button_Nav_TestCase_on.png); /** sprite-ref: sprites-icons; */
+	background-image: url(../images/Button_ExecServer_on.png); /** sprite-ref: sprites-icons; */
 }
 
 .navigation-bugtracker{
