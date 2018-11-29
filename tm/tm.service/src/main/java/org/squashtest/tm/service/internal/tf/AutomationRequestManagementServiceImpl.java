@@ -21,21 +21,16 @@
 package org.squashtest.tm.service.internal.tf;
 
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.exception.tf.AccessDeniedAutomationRequestException;
 import org.squashtest.tm.exception.tf.IllegalAutomationRequestStatusException;
-import org.squashtest.tm.security.acls.CustomPermission;
 import org.squashtest.tm.service.internal.repository.AutomationRequestDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.project.ProjectFinder;
@@ -177,7 +172,6 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 	@Override
 	public Integer countAutomationRequestForCurrentUser() {
-
 		String userName = userCtxt.getUsername();
 		return requestDao.countAutomationRequestForCurrentUser(userDao.findUserByLogin(userName).getId());
 	}
@@ -200,8 +194,8 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 				requestDao.updateStatusToExecutable(reqIds);
 				break;
 			case TRANSMITTED:
-					PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_FUNCTIONAL, AutomationRequest.class.getName());
-					requestDao.updateStatusToTransmitted(reqIds, user);
+				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_FUNCTIONAL, AutomationRequest.class.getName());
+				requestDao.updateStatusToTransmitted(reqIds, user);
 				break;
 			case TO_VALIDATE:
 				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_FUNCTIONAL, AutomationRequest.class.getName());
@@ -215,8 +209,8 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_FUNCTIONAL, AutomationRequest.class.getName());
 				requestDao.updateStatusToValide(reqIds);
 				break;
-				default:
-					throw new IllegalAutomationRequestStatusException(STATUS_NOT_PERMITTED);
+			default:
+				throw new IllegalAutomationRequestStatusException(STATUS_NOT_PERMITTED);
 		}
 	}
 

@@ -325,7 +325,6 @@ public class TestCaseModificationController {
 		} catch(NumberFormatException nfe) {
 			throw new WrongPriorityFormatException(nfe);
 		}
-
 	}
 
 	@ResponseBody
