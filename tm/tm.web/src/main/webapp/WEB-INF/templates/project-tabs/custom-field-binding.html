@@ -31,112 +31,71 @@
 
 
 <div th:remove="all">
-<script type="text/javascript">
-	var require = {
-	    baseUrl: '../../scripts/'
-	};
-</script>
-<script type="text/javascript" src="../../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
-<script type="text/javascript" src="../../../js/thymol.js"></script>
-<script type="text/javascript" src="../../../scripts/require.js"></script>
-<script type="text/javascript" src="../../scripts/common.js"></script>
+	<script type="text/javascript">
+		var require = {
+			baseUrl: '../../scripts/'
+		};
+	</script>
+	<script type="text/javascript" src="../../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
+	<script type="text/javascript" src="../../../js/thymol.js"></script>
+	<script type="text/javascript" src="../../../scripts/require.js"></script>
+	<script type="text/javascript" src="../../scripts/common.js"></script>
 
-<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" sq:css="squash.core.css" />
-<link rel="shortcut icon" type="image/x-icon" media="all" href="../../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}"/>
-<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../../tm/tm.web/src/main/webapp/styles/squash.blue.css" sq:css="squash.grey.css" />
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css"
+	 sq:css="squash.core.css" />
+	<link rel="shortcut icon" type="image/x-icon" media="all" href="../../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico"
+	 th:href="@{/images/favicon.ico}" />
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../../tm/tm.web/src/main/webapp/styles/squash.blue.css"
+	 sq:css="squash.grey.css" />
 
 </div>
 
 
 <div id="cuf-binding-administration">
+	<fieldset>
+		<legend th:text="#{workspace.requirement.button.label}" style="width: 100%; padding: 5px; font-family: Verdana, Arial, sans-serif; font-size: 16px;"></legend>
+		<div id="requirements-binding-manager" th:include="project-tabs/custom-field-binding :: cuf-unit-binder" th:with="HTMLID='requirements',bindings=${requirementBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).REQUIREMENT_VERSION}">
+		</div>
 
-<div id="project-binding-manager"
-	 th:include="project-tabs/custom-field-binding :: cuf-unit-binder"
-	 th:with="HTMLID='project',bindings=${projectsBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).PROJECT}">
+		<div id="reqFolders-binding-manager" th:include="project-tabs/custom-field-binding :: cuf-unit-binder" th:with="HTMLID='reqFolders',bindings=${reqFoldersBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).REQUIREMENT_FOLDER}">
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<legend th:text="#{workspace.test-case.title}" style="width: 100%; padding: 5px; font-family: Verdana, Arial, sans-serif; font-size: 16px;"></legend>
+		<div id="test-cases-binding-manager" th:include="project-tabs/custom-field-binding :: cuf-unit-binder" th:with="HTMLID='test-cases',bindings=${testCaseBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).TEST_CASE}">
+		</div>
+
+		<div id="tcFolders-binding-manager" th:include="project-tabs/custom-field-binding :: cuf-unit-binder" th:with="HTMLID='tcFolders',bindings=${tcFoldersBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).TESTCASE_FOLDER}">
+		</div>
+
+		<div id="test-steps-binding-manager" th:include="project-tabs/custom-field-binding :: cuf-unit-binder" th:with="HTMLID='test-steps',bindings=${testStepBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).TEST_STEP}">
+		</div>
+	</fieldset>
+
+
+	<fieldset>
+		<legend th:text="#{user-preferences.tree-order.campaign.title}" style="width: 100%; padding: 5px; font-family: Verdana, Arial, sans-serif; font-size: 16px;"></legend>
+
+		<div id="campaigns-binding-manager" th:include="project-tabs/custom-field-binding :: cuf-unit-binder" th:with="HTMLID='campaigns',bindings=${campaignBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).CAMPAIGN}">
+		</div>
+
+		<div id="campaignFolders-binding-manager" th:include="project-tabs/custom-field-binding :: cuf-unit-binder" th:with="HTMLID='campaignFolders',bindings=${campaignFoldersBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).CAMPAIGN_FOLDER}">
+		</div>
+
+		<div id="executions-binding-manager" th:include="project-tabs/custom-field-binding :: cuf-unit-binder" th:with="HTMLID='executions',bindings=${executionBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).EXECUTION}">
+		</div>
+
+		<div id="execution-steps-binding-manager" th:include="project-tabs/custom-field-binding :: cuf-unit-binder" th:with="HTMLID='execution-steps',bindings=${executionStepBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).EXECUTION_STEP}">
+		</div>
+
+		<div id="iterations-binding-manager" th:include="project-tabs/custom-field-binding :: cuf-unit-binder" th:with="HTMLID='iterations',bindings=${iterationBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).ITERATION}">
+		</div>
+
+		<div id="test-suites-binding-manager" th:include="project-tabs/custom-field-binding :: cuf-unit-binder" th:with="HTMLID='test-suites',bindings=${testSuiteBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).TEST_SUITE}">
+		</div>
+
 </div>
-
-<div class="collapse sq-tg">
-  <div class="tg-head">
-    <h3 th:text="#{workspace.requirement.button.label}"></h3>
-  </div>
-    <div class="tg-body">
-
-  <div id="requirements-binding-manager"
-       th:include="project-tabs/custom-field-binding :: cuf-unit-binder"
-       th:with="HTMLID='requirements',bindings=${requirementBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).REQUIREMENT_VERSION}">
-  </div>
-
-  <div id="reqFolders-binding-manager"
-       th:include="project-tabs/custom-field-binding :: cuf-unit-binder"
-       th:with="HTMLID='reqFolders',bindings=${reqFoldersBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).REQUIREMENT_FOLDER}">
-  </div>
-    </div>
-</div>
-
-
-  <div class="collapse sq-tg">
-    <div class="tg-head">
-      <h3 th:text="#{workspace.test-case.title}"></h3>
-  </div>
-    <div class="tg-body">
-  <div id="test-cases-binding-manager"
-       th:include="project-tabs/custom-field-binding :: cuf-unit-binder"
-       th:with="HTMLID='test-cases',bindings=${testCaseBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).TEST_CASE}">
-  </div>
-
-  <div id="tcFolders-binding-manager"
-       th:include="project-tabs/custom-field-binding :: cuf-unit-binder"
-       th:with="HTMLID='tcFolders',bindings=${tcFoldersBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).TESTCASE_FOLDER}">
-  </div>
-
-  <div id="test-steps-binding-manager"
-       th:include="project-tabs/custom-field-binding :: cuf-unit-binder"
-       th:with="HTMLID='test-steps',bindings=${testStepBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).TEST_STEP}">
-  </div>
-
-
-    </div>
-</div>
-
-  <div class="collapse sq-tg">
-    <div class="tg-head">
-      <h3 th:text="#{user-preferences.tree-order.campaign.title }"></h3>
-    </div>
-    <div class="tg-body ">
-    <div id="campaigns-binding-manager"
-         th:include="project-tabs/custom-field-binding :: cuf-unit-binder"
-         th:with="HTMLID='campaigns',bindings=${campaignBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).CAMPAIGN}">
-    </div>
-
-    <div id="campaignFolders-binding-manager"
-         th:include="project-tabs/custom-field-binding :: cuf-unit-binder"
-         th:with="HTMLID='campaignFolders',bindings=${campaignFoldersBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).CAMPAIGN_FOLDER}">
-    </div>
-
-      <div id="executions-binding-manager"
-           th:include="project-tabs/custom-field-binding :: cuf-unit-binder"
-           th:with="HTMLID='executions',bindings=${executionBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).EXECUTION}">
-      </div>
-
-      <div id="execution-steps-binding-manager"
-           th:include="project-tabs/custom-field-binding :: cuf-unit-binder"
-           th:with="HTMLID='execution-steps',bindings=${executionStepBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).EXECUTION_STEP}">
-      </div>
-
-      <div id="iterations-binding-manager"
-           th:include="project-tabs/custom-field-binding :: cuf-unit-binder"
-           th:with="HTMLID='iterations',bindings=${iterationBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).ITERATION}">
-      </div>
-
-      <div id="test-suites-binding-manager"
-           th:include="project-tabs/custom-field-binding :: cuf-unit-binder"
-           th:with="HTMLID='test-suites',bindings=${testSuiteBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).TEST_SUITE}">
-      </div>
-
-
-    </div>
-  </div>
-  </div>
 
 
 
@@ -150,148 +109,148 @@
 
 
 <script type="text/javascript" th:inline="javascript">
-//<![CDATA[
+	//<![CDATA[
 
-    require(["common"], function(){
-	    require(["domReady", "require"],function(domReady, require){
+	require(["common"], function () {
+		require(["domReady", "require"], function (domReady, require) {
 
-	    	var config = {
+			var config = {
 
-	    		general : {
-		    		projectId : /*[[${projectIdentifier}]]*/10,
-		    		areBindingsModifiable : /*[[${!isBoundToTemplate}]]*/true,
-		    		tableLanguageUrl: /*[[ @{/datatables/messages} ]]*/ "http://localhost:8080/squash/datatables/messages",
-		        	baseURL: /*[[ @{/custom-fields-binding} ]]*/ "http://localhost:8080/squash/custom-fields-binding",
-		        	oklabel : /*[[ #{label.Confirm} ]]*/ "ouaiche",
-		        	cancellabel : /*[[ #{label.Cancel} ]]*/ "nope",
-	       			popupTitle : /*[[#{message.customfieldbinding.bind}]]*/'bind new custom fields',
-	       			tableDeleteMessageFirst : /*[[#{message.customfieldbinding.unbind.message.first}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
-	       			tableDeleteMessageThird : /*[[#{message.customfieldbinding.unbind.message.third}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
-	       			tableDeleteMessageFourth : /*[[#{message.customfieldbinding.unbind.message.fourth}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
-	       			tableDeleteTooltip : /*[[#{label.CustomField.delete}]]*/ 'retirer',
-	       			addCustomField : /*[[#{label.CustomField.add}]]*/ 'ajouter',
-	       			removeCustomField : /*[[#{label.CustomField.remove}]]*/ 'retirer',
-		        },
+				general: {
+					projectId: /*[[${projectIdentifier}]]*/10,
+					areBindingsModifiable: /*[[${!isBoundToTemplate}]]*/true,
+					tableLanguageUrl: /*[[ @{/datatables/messages} ]]*/ "http://localhost:8080/squash/datatables/messages",
+					baseURL: /*[[ @{/custom-fields-binding} ]]*/ "http://localhost:8080/squash/custom-fields-binding",
+					oklabel: /*[[ #{label.Confirm} ]]*/ "ouaiche",
+					cancellabel: /*[[ #{label.Cancel} ]]*/ "nope",
+					popupTitle: /*[[#{message.customfieldbinding.bind}]]*/'bind new custom fields',
+					tableDeleteMessageFirst: /*[[#{message.customfieldbinding.unbind.message.first}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
+					tableDeleteMessageThird: /*[[#{message.customfieldbinding.unbind.message.third}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
+					tableDeleteMessageFourth: /*[[#{message.customfieldbinding.unbind.message.fourth}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
+					tableDeleteTooltip: /*[[#{label.CustomField.delete}]]*/ 'retirer',
+					addCustomField: /*[[#{label.CustomField.add}]]*/ 'ajouter',
+					removeCustomField: /*[[#{label.CustomField.remove}]]*/ 'retirer',
+				},
 
-	    		tcSettings : {
-	    			entityType : 'TEST_CASE',
-	    			mainSelector : "#test-cases-binding-manager",
-	    			tableDeferLoading : /*[[ ${testCaseBindings.size()} ]]*/ 3,
-	       			tableDeleteMessageSecond : /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.TEST_CASE})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
-	       			tableRenderingLocations : []
-		    	},
+				tcSettings: {
+					entityType: 'TEST_CASE',
+					mainSelector: "#test-cases-binding-manager",
+					tableDeferLoading: /*[[ ${testCaseBindings.size()} ]]*/ 3,
+					tableDeleteMessageSecond: /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.TEST_CASE})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
+					tableRenderingLocations: []
+				},
 
-	    		tstepSettings : {
-	    			entityType : 'TEST_STEP',
-	    			mainSelector : "#test-steps-binding-manager",
-	    			tableDeferLoading : /*[[ ${testStepBindings.size()} ]]*/ 3,
-	    			tableDeleteMessageSecond : /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.TEST_STEP})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
-	       			tableRenderingLocations : ['STEP_TABLE']
-	    		},
+				tstepSettings: {
+					entityType: 'TEST_STEP',
+					mainSelector: "#test-steps-binding-manager",
+					tableDeferLoading: /*[[ ${testStepBindings.size()} ]]*/ 3,
+					tableDeleteMessageSecond: /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.TEST_STEP})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
+					tableRenderingLocations: ['STEP_TABLE']
+				},
 
-	    		reqSettings : {
-	    			entityType : 'REQUIREMENT_VERSION',
-	    			mainSelector : "#requirements-binding-manager",
-	    			tableDeferLoading : /*[[ ${requirementBindings.size()} ]]*/ 3,
-	    			tableDeleteMessageSecond : /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.REQUIREMENT_VERSION})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
-	       			tableRenderingLocations : []
-		    	},
-
-
-	    		campSettings : {
-	    			entityType : 'CAMPAIGN',
-	    			mainSelector : "#campaigns-binding-manager",
-	    			tableDeferLoading : /*[[ ${campaignBindings.size()} ]]*/ 3,
-	    			tableDeleteMessageSecond : /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.CAMPAIGN})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
-	       			tableRenderingLocations : []
-		    	},
-
-	    		iterSettings : {
-	    			entityType : 'ITERATION',
-	    			mainSelector : "#iterations-binding-manager",
-	    			tableDeferLoading : /*[[ ${iterationBindings.size()} ]]*/ 3,
-	    			tableDeleteMessageSecond : /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.ITERATION})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
-	       			tableRenderingLocations : []
-		    	},
-
-	    		tsSettings : {
-	    			entityType : 'TEST_SUITE',
-	    			mainSelector : "#test-suites-binding-manager",
-	    			tableDeferLoading : /*[[ ${testSuiteBindings.size()} ]]*/ 3,
-	    			tableDeleteMessageSecond : /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.TEST_SUITE})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
-	       			tableRenderingLocations : []
-	    	},
-
-    		execSettings : {
-    			entityType : 'EXECUTION',
-    			mainSelector : "#executions-binding-manager",
-    			panelTitle : /*[[ #{project.cufbinding.executions.panel.title}  ]]*/"test suite bindings",
-    			tableDeferLoading : /*[[ ${executionBindings.size()} ]]*/ 3,
-    			tableDeleteMessageFirst : /*[[#{message.customfieldbinding.unbind.message.first}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
-       			tableDeleteMessageSecond : /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.EXECUTION})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
-       			tableDeleteMessageThird : /*[[#{message.customfieldbinding.unbind.message.third}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
-       			tableDeleteMessageFourth : /*[[#{message.customfieldbinding.unbind.message.fourth}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
-    			tableDeleteTooltip : /*[[#{label.CustomField.delete}]]*/ 'retirer',
-           		tableRenderingLocations : []
-	    	},
-
-    		execStepSettings : {
-    			entityType : 'EXECUTION_STEP',
-    			mainSelector : "#execution-steps-binding-manager",
-    			panelTitle : /*[[ #{project.cufbinding.execution-steps.panel.title}  ]]*/"test suite bindings",
-    			tableDeferLoading : /*[[ ${executionStepBindings.size()} ]]*/ 3,
-    			tableDeleteMessageFirst : /*[[#{message.customfieldbinding.unbind.message.first}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
-       			tableDeleteMessageSecond : /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.EXECUTION_STEP})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
-       			tableDeleteMessageThird : /*[[#{message.customfieldbinding.unbind.message.third}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
-       			tableDeleteMessageFourth : /*[[#{message.customfieldbinding.unbind.message.fourth}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
-    			tableDeleteTooltip : /*[[#{label.CustomField.delete}]]*/ 'retirer',
-           		tableRenderingLocations : ['STEP_TABLE']
-		    	},
-          campaignFoldersSettings : {
-            entityType : 'CAMPAIGN_FOLDER',
-            mainSelector : "#campaignFolders-binding-manager",
-            tableDeferLoading : /*[[ ${campaignFoldersBindings.size()} ]]*/ 3,
-            tableDeleteMessageSecond : /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.CAMPAIGN_FOLDER})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
-            tableRenderingLocations : []
-          },
-
-          reqFoldersSettings : {
-            entityType : 'REQUIREMENT_FOLDER',
-            mainSelector : "#reqFolders-binding-manager",
-            tableDeferLoading : /*[[ ${reqFoldersBindings.size()} ]]*/ 3,
-            tableDeleteMessageSecond : /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.REQUIREMENT_FOLDER})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
-            tableRenderingLocations : []
-          },
-
-          tcFoldersSettings : {
-            entityType : 'TESTCASE_FOLDER',
-            mainSelector : "#tcFolders-binding-manager",
-            tableDeferLoading : /*[[ ${tcFoldersBindings.size()} ]]*/ 3,
-            tableDeleteMessageSecond : /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.TESTCASE_FOLDER})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
-            tableRenderingLocations : []
-          },
-
-          projectsSettings : {
-            entityType : 'PROJECT',
-            mainSelector : "#project-binding-manager",
-            tableDeferLoading : /*[[ ${projectsBindings.size()} ]]*/ 3,
-            tableDeleteMessageSecond : /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.PROJECT})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
-            tableRenderingLocations : []
-          }
+				reqSettings: {
+					entityType: 'REQUIREMENT_VERSION',
+					mainSelector: "#requirements-binding-manager",
+					tableDeferLoading: /*[[ ${requirementBindings.size()} ]]*/ 3,
+					tableDeleteMessageSecond: /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.REQUIREMENT_VERSION})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
+					tableRenderingLocations: []
+				},
 
 
+				campSettings: {
+					entityType: 'CAMPAIGN',
+					mainSelector: "#campaigns-binding-manager",
+					tableDeferLoading: /*[[ ${campaignBindings.size()} ]]*/ 3,
+					tableDeleteMessageSecond: /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.CAMPAIGN})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
+					tableRenderingLocations: []
+				},
 
-        };
+				iterSettings: {
+					entityType: 'ITERATION',
+					mainSelector: "#iterations-binding-manager",
+					tableDeferLoading: /*[[ ${iterationBindings.size()} ]]*/ 3,
+					tableDeleteMessageSecond: /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.ITERATION})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
+					tableRenderingLocations: []
+				},
 
-	    	domReady(function(){
-	        	require(["custom-field-binding"], function(main){
-	        		main.setConfig(config).init();
-	        	});
-	    	});
+				tsSettings: {
+					entityType: 'TEST_SUITE',
+					mainSelector: "#test-suites-binding-manager",
+					tableDeferLoading: /*[[ ${testSuiteBindings.size()} ]]*/ 3,
+					tableDeleteMessageSecond: /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.TEST_SUITE})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
+					tableRenderingLocations: []
+				},
+
+				execSettings: {
+					entityType: 'EXECUTION',
+					mainSelector: "#executions-binding-manager",
+					panelTitle: /*[[ #{project.cufbinding.executions.panel.title}  ]]*/"test suite bindings",
+					tableDeferLoading: /*[[ ${executionBindings.size()} ]]*/ 3,
+					tableDeleteMessageFirst: /*[[#{message.customfieldbinding.unbind.message.first}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
+					tableDeleteMessageSecond: /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.EXECUTION})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
+					tableDeleteMessageThird: /*[[#{message.customfieldbinding.unbind.message.third}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
+					tableDeleteMessageFourth: /*[[#{message.customfieldbinding.unbind.message.fourth}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
+					tableDeleteTooltip: /*[[#{label.CustomField.delete}]]*/ 'retirer',
+					tableRenderingLocations: []
+				},
+
+				execStepSettings: {
+					entityType: 'EXECUTION_STEP',
+					mainSelector: "#execution-steps-binding-manager",
+					panelTitle: /*[[ #{project.cufbinding.execution-steps.panel.title}  ]]*/"test suite bindings",
+					tableDeferLoading: /*[[ ${executionStepBindings.size()} ]]*/ 3,
+					tableDeleteMessageFirst: /*[[#{message.customfieldbinding.unbind.message.first}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
+					tableDeleteMessageSecond: /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.EXECUTION_STEP})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
+					tableDeleteMessageThird: /*[[#{message.customfieldbinding.unbind.message.third}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
+					tableDeleteMessageFourth: /*[[#{message.customfieldbinding.unbind.message.fourth}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
+					tableDeleteTooltip: /*[[#{label.CustomField.delete}]]*/ 'retirer',
+					tableRenderingLocations: ['STEP_TABLE']
+				},
+				campaignFoldersSettings: {
+					entityType: 'CAMPAIGN_FOLDER',
+					mainSelector: "#campaignFolders-binding-manager",
+					tableDeferLoading: /*[[ ${campaignFoldersBindings.size()} ]]*/ 3,
+					tableDeleteMessageSecond: /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.CAMPAIGN_FOLDER})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
+					tableRenderingLocations: []
+				},
+
+				reqFoldersSettings: {
+					entityType: 'REQUIREMENT_FOLDER',
+					mainSelector: "#reqFolders-binding-manager",
+					tableDeferLoading: /*[[ ${reqFoldersBindings.size()} ]]*/ 3,
+					tableDeleteMessageSecond: /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.REQUIREMENT_FOLDER})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
+					tableRenderingLocations: []
+				},
+
+				tcFoldersSettings: {
+					entityType: 'TESTCASE_FOLDER',
+					mainSelector: "#tcFolders-binding-manager",
+					tableDeferLoading: /*[[ ${tcFoldersBindings.size()} ]]*/ 3,
+					tableDeleteMessageSecond: /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.TESTCASE_FOLDER})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
+					tableRenderingLocations: []
+				},
+
+				projectsSettings: {
+					entityType: 'PROJECT',
+					mainSelector: "#project-binding-manager",
+					tableDeferLoading: /*[[ ${projectsBindings.size()} ]]*/ 3,
+					tableDeleteMessageSecond: /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.PROJECT})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
+					tableRenderingLocations: []
+				}
 
 
-	    });
-    });
+
+			};
+
+			domReady(function () {
+				require(["custom-field-binding"], function (main) {
+					main.setConfig(config).init();
+				});
+			});
+
+
+		});
+	});
 
 //]]>
 
@@ -301,7 +260,7 @@
 
 
 <div th:remove="all">
-<!--  ==========================================================================
+	<!--  ==========================================================================
 				TEMPLATE FRAGMENT DEFINITION + other stuffs removed at runtime
 ============================================================================ -->
 
@@ -310,18 +269,17 @@
 			<div class="tg-head">
 				<h3 th:text="#{project.cufbinding.__${HTMLID}__.panel.title}"></h3>
 				<div class="tg-toolbar">
-					<button class="sq-icon-btn btn-sm" type="submit" value="+"  th:title="#{label.CustomField.add}" >
-		                <span class="ui-icon ui-icon-plus squared-icons">+</span>
-		            </button>
-		            <button class="sq-icon-btn btn-sm" type="submit" value="-" th:title="#{label.CustomField.deleteMultiple}" >
-		                <span class="ui-icon ui-icon-minus squared-icons">-</span>
-		            </button>
+					<button class="sq-icon-btn btn-sm" type="submit" value="+" th:title="#{label.CustomField.add}">
+						<span class="ui-icon ui-icon-plus squared-icons">+</span>
+					</button>
+					<button class="sq-icon-btn btn-sm" type="submit" value="-" th:title="#{label.CustomField.deleteMultiple}">
+						<span class="ui-icon ui-icon-minus squared-icons">-</span>
+					</button>
 				</div>
 			</div>
-			<div id="panel" th:id="${HTMLID}+'-binding-panel'" class="tg-body cuf-binding-panel"
-					        th:with="availableLocations=${bindableEntity.getValidRenderingLocations()}">
+			<div id="panel" th:id="${HTMLID}+'-binding-panel'" class="tg-body cuf-binding-panel" th:with="availableLocations=${bindableEntity.getValidRenderingLocations()}">
 
-				<table id="table" class="cuf-binding-table unstyled-table" th:id="${HTMLID}+'-binding-table'" >
+				<table id="table" class="cuf-binding-table unstyled-table" th:id="${HTMLID}+'-binding-table'">
 					<thead>
 						<tr>
 							<th>id</th>
@@ -369,23 +327,23 @@
 
 		<div id="popup" th:id="${HTMLID}+'-binding-popup'" class="popup-dialog cuf-binding-popup" th:title="#{message.customfieldbinding.bind}">
 
-            <div data-def="state=pleasewait">
-              <div class="wait please-wait-message waiting-loading full-size-hack" th:text="#{message.PleaseWait}">zzz</div>
-            </div>
+			<div data-def="state=pleasewait">
+				<div class="wait please-wait-message waiting-loading full-size-hack" th:text="#{message.PleaseWait}">zzz</div>
+			</div>
 
 			<div data-def="state=select" class="component left-div dataTables_wrapper">
-				<table class="dataTable" >
+				<table class="dataTable">
 					<thead>
 						<tr>
 							<th width="25px" class="th-check ui-state-default"></th>
-							<th width="70px" class="th-name ui-state-default"  th:text="#{project.cufbinding.popup.table.name}">name</th>
+							<th width="70px" class="th-name ui-state-default" th:text="#{project.cufbinding.popup.table.name}">name</th>
 							<th width="70px" class="th-type ui-state-default" th:text="#{project.cufbinding.popup.table.type}">type</th>
 							<th width="70px" class="th-optional ui-state-default" th:text="#{project.cufbinding.popup.table.optional}">optional</th>
 						</tr>
 					</thead>
 					<tbody class="available-fields">
 						<tr th:remove="all">
-							<td class="td-check" data-id="5"><input type="checkbox"/></td>
+							<td class="td-check" data-id="5"><input type="checkbox" /></td>
 							<td class="td-name">text-field 5</td>
 							<td class="td-type">text field</td>
 							<td class="td-optional">yes</td>
@@ -393,7 +351,7 @@
 					</tbody>
 					<tbody class="row-template-holder">
 						<tr>
-							<td class="td-check"><input type="checkbox"/></td>
+							<td class="td-check"><input type="checkbox" /></td>
 							<td class="td-name"></td>
 							<td class="td-type"></td>
 							<td class="td-optional"></td>
@@ -401,80 +359,82 @@
 					</tbody>
 				</table>
 			</div>
-      <br/>
-      <span th:if="${isTemplate}" th:text="#{message.customfieldbinding.bind.message.warningForTemplate}"></span>
-
-            <div class="popup-dialog-buttonpane">
-              <input type="button" th:value="#{label.Confirm}" data-def="state=select, mainbtn=select, evt=confirm" />
-              <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel, mainbtn=pleasewait"/>
-            </div>
-		</div>
-
-		<div id="popup-delete" th:id="${HTMLID}+'-binding-popup-delete'" class="popup-dialog not-displayed cuf-binding-popup-delete" th:title="#{message.customfieldbinding.unbind.tooltip}">
-
-			<div class='display-table-row'>
-			<div class='display-table-cell warning-cell'>
-			<div class='generic-error-signal'></div></div>
-			<div class='display-table-cell'>
-        <div th:text="#{message.customfieldbinding.unbind.message.first }"></div>
-        <span class='red-warning-message' th:text="#{message.customfieldbinding.unbind.message.second2 }"></span>
-        <span class='red-warning-message' th:text="#{message.customfieldbinding.unbind.message.third }"></span><br/>
-        <span th:if="${isTemplate}" class='red-warning-message' th:text="#{message.customfieldbinding.unbind.message.warningForTemplate}"></span>
-        <span class='bold-warning-message'>
-          <div th:text="#{message.customfieldbinding.unbind.message.fourth }"></div>
-        </span>
-      </div>
-      </div>
+			<br />
+			<span th:if="${isTemplate}" th:text="#{message.customfieldbinding.bind.message.warningForTemplate}"></span>
 
 			<div class="popup-dialog-buttonpane">
-			  <input type="button" th:value="#{label.Confirm}" data-def="mainbtn,evt=confirm" />
-              <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
+				<input type="button" th:value="#{label.Confirm}" data-def="state=select, mainbtn=select, evt=confirm" />
+				<input type="button" th:value="#{label.Cancel}" data-def="evt=cancel, mainbtn=pleasewait" />
 			</div>
-	</div>
+		</div>
+
+		<div id="popup-delete" th:id="${HTMLID}+'-binding-popup-delete'" class="popup-dialog not-displayed cuf-binding-popup-delete"
+		 th:title="#{message.customfieldbinding.unbind.tooltip}">
+
+			<div class='display-table-row'>
+				<div class='display-table-cell warning-cell'>
+					<div class='generic-error-signal'></div>
+				</div>
+				<div class='display-table-cell'>
+					<div th:text="#{message.customfieldbinding.unbind.message.first }"></div>
+					<span class='red-warning-message' th:text="#{message.customfieldbinding.unbind.message.second2 }"></span>
+					<span class='red-warning-message' th:text="#{message.customfieldbinding.unbind.message.third }"></span><br />
+					<span th:if="${isTemplate}" class='red-warning-message' th:text="#{message.customfieldbinding.unbind.message.warningForTemplate}"></span>
+					<span class='bold-warning-message'>
+						<div th:text="#{message.customfieldbinding.unbind.message.fourth }"></div>
+					</span>
+				</div>
+			</div>
+
+			<div class="popup-dialog-buttonpane">
+				<input type="button" th:value="#{label.Confirm}" data-def="mainbtn,evt=confirm" />
+				<input type="button" th:value="#{label.Cancel}" data-def="evt=cancel" />
+			</div>
+		</div>
 
 	</div>
 
 </div>
 
 <div th:remove="all">
-<link rel="stylesheet" type="text/css" href="../../scripts/custom-field-binding/cuf-binding-styles.css"/>
-<script type="text/javascript" >
-	/* code to tests the fragment. Note that it will not invoke the module 'squash.cuf-binding-manager',
-	but rather one of its submodules*/
+	<link rel="stylesheet" type="text/css" href="../../scripts/custom-field-binding/cuf-binding-styles.css" />
+	<script type="text/javascript">
+		/* code to tests the fragment. Note that it will not invoke the module 'squash.cuf-binding-manager',
+		but rather one of its submodules*/
 
-   require(["domReady", "require"],function(domReady, require){
+		require(["domReady", "require"], function (domReady, require) {
 
-	   settings = {
-    		projectId : 14,
-    		tableLanguageUrl:  "http://localhost:8080/squash/datatables/messages",
-        	baseURL: "http://localhost:8080/squash/custom-fields-binding",
-        	oklabel : "ouaiche",
-        	cancellabel : "nope",
-        	confirmActionLabel : /*   */ "Retirer les champs personalis�s s�lectionn�es de ce projet ?"
+			settings = {
+				projectId: 14,
+				tableLanguageUrl: "http://localhost:8080/squash/datatables/messages",
+				baseURL: "http://localhost:8080/squash/custom-fields-binding",
+				oklabel: "ouaiche",
+				cancellabel: "nope",
+				confirmActionLabel: /*   */ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
 
-    		entityType : 'TEST_CASE',
-   			mainSelector : '#binding-manager',
+				entityType: 'TEST_CASE',
+				mainSelector: '#binding-manager',
 
-   			panelTitle : "test case workspace",
-   			tableDeferLoading : 3,
-   			popupTitle : 'bind new custom fields',
+				panelTitle: "test case workspace",
+				tableDeferLoading: 3,
+				popupTitle: 'bind new custom fields',
 
-   			tableDeleteMessage : "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
-   			tableDeleteTooltip : 'retirer',
-   			tableRenderingLocations : ['bob'],
+				tableDeleteMessage: "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
+				tableDeleteTooltip: 'retirer',
+				tableRenderingLocations: ['bob'],
 
-   			tableUnbindMessage : "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
-   			tableUnbindTooltip : 'retirer',
-   			tableRenderingLocations : ['bob']
-		};
+				tableUnbindMessage: "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
+				tableUnbindTooltip: 'retirer',
+				tableRenderingLocations: ['bob']
+			};
 
-		domReady(function(){
-			require(["custom-field-binding", "custom-field-binding/entity-manager"], function(main, EntityManager){
-        		new EntityManager(settings);
-        	});
+			domReady(function () {
+				require(["custom-field-binding", "custom-field-binding/entity-manager"], function (main, EntityManager) {
+					new EntityManager(settings);
+				});
+			});
+
 		});
 
-   });
-
-</script>
+	</script>
 </div>
