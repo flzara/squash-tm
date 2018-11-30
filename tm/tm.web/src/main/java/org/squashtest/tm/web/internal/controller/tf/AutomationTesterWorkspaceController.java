@@ -24,7 +24,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
@@ -85,16 +88,16 @@ public class AutomationTesterWorkspaceController {
 		model.addAttribute("autoReqStatusesValidateView", autoReqStatusesValidateView);
 		model.addAttribute("autoReqStatusesGlobalView", autoReqStatusesGlobalView);
 		model.addAttribute("tcKinds", tcKinds);
-		model.addAttribute("testerTransmitted", automationRequestFinderService.getCreatedByForAutomationRequests(Arrays.asList(AutomationRequestStatus.VALID.name())));
+		model.addAttribute("testerTransmitted", automationRequestFinderService.getTcLastModifiedByForAutomationRequests(Collections.singletonList(AutomationRequestStatus.VALID.name())));
 		model.addAttribute("testerValidate",
-			automationRequestFinderService.getCreatedByForAutomationRequests(Arrays.asList(AutomationRequestStatus.TO_VALIDATE.name())));
+			automationRequestFinderService.getTcLastModifiedByForAutomationRequests(Collections.singletonList(AutomationRequestStatus.TO_VALIDATE.name())));
 
 		List<String> allStatus = new ArrayList<>();
 		for (AutomationRequestStatus automationRequestStatus: AutomationRequestStatus.values()) {
 			allStatus.add(automationRequestStatus.name());
 		}
 		model.addAttribute("testerGlobalView",
-			automationRequestFinderService.getCreatedByForAutomationRequests(allStatus));
+			automationRequestFinderService.getTcLastModifiedByForAutomationRequests(allStatus));
 
 		return getWorkspaceViewName();
 	}
@@ -147,6 +150,6 @@ public class AutomationTesterWorkspaceController {
 	@RequestMapping(value = "/lastModifiedBy/{reqStatuses}", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<Long, String> getLastModifiedBy(@PathVariable List<String> reqStatuses) {
-		return automationRequestFinderService.getCreatedByForAutomationRequests(reqStatuses);
+		return automationRequestFinderService.getTcLastModifiedByForAutomationRequests(reqStatuses);
 	}
 }

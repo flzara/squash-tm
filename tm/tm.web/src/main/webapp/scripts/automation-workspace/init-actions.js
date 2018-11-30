@@ -65,8 +65,17 @@ define(['jquery', 'workspace.contextual-content', 'workspace.routing'],
 						default:
 							break;
 
-					}					
+					}
 				});
+
+				if ("#global" === href) {
+					$.ajax({
+						url: model.contextRoot + "automation-workspace/assignee",
+						method: "GET",
+					}).success(function (data) {
+						model.assignableUsersGlobalView = data;
+					});
+				}
 				if (!$(self).hasClass('tf-selected')) {
 					selectTab(self);
 				}

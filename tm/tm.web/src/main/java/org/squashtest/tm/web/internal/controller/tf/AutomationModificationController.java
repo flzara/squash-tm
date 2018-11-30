@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
@@ -35,7 +34,6 @@ import org.squashtest.tm.web.internal.model.testautomation.TATestNodeListBuilder
 import javax.inject.Inject;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
@@ -73,9 +71,6 @@ public class AutomationModificationController {
 	@RequestMapping(value = "{testCaseId}/tests", method = RequestMethod.POST, params = {PATH})
 	@ResponseBody
 	public String bindAutomatedTest(@PathVariable(TEST_CASE_ID) long testCaseId, @RequestParam(PATH) String testPath) {
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Bind automated test " + testPath + " to TC#" + testCaseId);
-		}
 		testCaseModificationService.bindAutomatedTestByAutomationProgrammer(testCaseId, testPath);
 		return testPath;
 	}
@@ -83,10 +78,6 @@ public class AutomationModificationController {
 	@RequestMapping(value = "{testCaseId}/tests", method = RequestMethod.GET)
 	@ResponseBody
 	public Collection<TATestNode> findAssignableAutomatedTests(@PathVariable(TEST_CASE_ID) Long testCaseId) {
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Find assignable automated tests for TC#" + testCaseId);
-		}
-
 		Collection<TestAutomationProjectContent> projectContents = testCaseModificationService.findAssignableAutomationTestsToAutomationProgramer(testCaseId);
 		return new TATestNodeListBuilder().build(projectContents);
 

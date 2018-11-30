@@ -50,15 +50,15 @@ import org.squashtest.tm.exception.tf.IllegalAutomationRequestStatusException;
 import org.squashtest.tm.service.internal.repository.CustomAutomationRequestDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 
-import static org.squashtest.tm.jooq.domain.Tables.*;
-import static org.squashtest.tm.service.internal.helper.PagingToQueryDsl.*;
-
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.function.Consumer;
+
+import static org.squashtest.tm.jooq.domain.Tables.*;
+import static org.squashtest.tm.service.internal.helper.PagingToQueryDsl.*;
 
 
 public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
@@ -182,18 +182,6 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	}
 
 	@Override
-	public Integer countTATestWithoutScript(List<Long> reqIds) {
-
-		return DSL.selectCount().from(AUTOMATION_REQUEST)
-			.innerJoin(TEST_CASE).on(AUTOMATION_REQUEST.TEST_CASE_ID.eq(TEST_CASE.TCLN_ID))
-			.innerJoin(AUTOMATED_TEST).on(TEST_CASE.TA_TEST.eq(AUTOMATED_TEST.TEST_ID))
-			.where(AUTOMATION_REQUEST.AUTOMATION_REQUEST_ID.in(reqIds))
-			.and(AUTOMATED_TEST.NAME.isNull())
-			.fetchOne().value1();
-	}
-
-
-	@Override
 	public Map<Long, String> getTransmittedByForCurrentUser(Long idUser, List<String> requestStatus) {
 
 		Condition condition = org.jooq.impl.DSL.trueCondition();
@@ -211,39 +199,11 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	}
 
 	@Override
-	public List<User> getAssignedToForAutomationRequests() {
-		List<User> users = new ArrayList<>();
+	public Map<Long, String> getAssignedToForAutomationRequests() {
 
-		DSL.selectDistinct(CORE_USER.PARTY_ID).from(CORE_USER)
-					.join(AUTOMATION_REQUEST).on(CORE_USER.PARTY_ID.eq(AUTOMATION_REQUEST.ASSIGNED_TO))
-					.fetch().forEach(r -> {
-								User user = userDao.getOne(r.get(CORE_USER.PARTY_ID));
-								users.add(user);
-							});
-
-		return users;
-	}
-
-	@Override
-	public Map<Long, String> getUsersCreatedTestCase(List<String> automationRequestStatus, List<Long> readablesProject) {
-
-		return DSL.selectDistinct(CORE_USER.PARTY_ID, CORE_USER.LOGIN)
-			.from(CORE_USER)
-			.innerJoin(TEST_CASE_LIBRARY_NODE).on(TEST_CASE_LIBRARY_NODE.CREATED_BY.eq(CORE_USER.LOGIN))
-			.innerJoin(AUTOMATION_REQUEST).on(AUTOMATION_REQUEST.TEST_CASE_ID.eq(TEST_CASE_LIBRARY_NODE.TCLN_ID))
-			.where(TEST_CASE_LIBRARY_NODE.PROJECT_ID.in(readablesProject)
-				.and(AUTOMATION_REQUEST.REQUEST_STATUS.in(automationRequestStatus))
-				.and(TEST_CASE_LIBRARY_NODE.LAST_MODIFIED_BY.isNull()))
-			.union(
-				DSL.selectDistinct(CORE_USER.PARTY_ID, CORE_USER.LOGIN)
-				.from(CORE_USER)
-					.innerJoin(TEST_CASE_LIBRARY_NODE).on(TEST_CASE_LIBRARY_NODE.LAST_MODIFIED_BY.eq(CORE_USER.LOGIN))
-					.innerJoin(AUTOMATION_REQUEST).on(AUTOMATION_REQUEST.TEST_CASE_ID.eq(TEST_CASE_LIBRARY_NODE.TCLN_ID))
-					.where(TEST_CASE_LIBRARY_NODE.PROJECT_ID.in(readablesProject)
-					.and(AUTOMATION_REQUEST.REQUEST_STATUS.in(automationRequestStatus))
-					.and(TEST_CASE_LIBRARY_NODE.LAST_MODIFIED_BY.eq(CORE_USER.LOGIN))))
-			.fetchMap(CORE_USER.PARTY_ID, CORE_USER.LOGIN);
-
+		return DSL.selectDistinct(CORE_USER.PARTY_ID, CORE_USER.LOGIN).from(CORE_USER)
+					.innerJoin(AUTOMATION_REQUEST).on(CORE_USER.PARTY_ID.eq(AUTOMATION_REQUEST.ASSIGNED_TO))
+					.fetch().intoMap(CORE_USER.PARTY_ID, CORE_USER.LOGIN);
 	}
 
 	@Override
@@ -367,27 +327,6 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 		long count = countRequests(baseQuery);
 
 		return new PageImpl<AutomationRequest>(requests, pageable, count);
-	}
-
-	@Override
-	public Page<AutomationRequest> findAllForGlobalTester(Pageable pageable, ColumnFiltering filtering, Collection<Long> inProjectIds) {
-		LOGGER.debug("searching for automation requests, paged and filtered");
-
-		ColumnFiltering filterWithAssignee;
-
-		if (filtering.getFilter("requestStatus").isEmpty()) {
-			filterWithAssignee = new SimpleColumnFiltering(filtering).addFilter("requestStatus", AutomationRequestStatus.OBSOLETE.toString() + ";"
-				+ AutomationRequestStatus.NOT_AUTOMATABLE.toString() + ";" + AutomationRequestStatus.TO_VALIDATE.toString() +
-				";" + AutomationRequestStatus.TRANSMITTED.toString() + ";" + AutomationRequestStatus.VALID.toString());
-			return innerFindAll(pageable, filterWithAssignee, (converter) -> {
-				converter.compare("requestStatus").withIn();
-			}, inProjectIds);
-		} else  {
-			filterWithAssignee = new SimpleColumnFiltering(filtering);
-			return innerFindAll(pageable, filterWithAssignee, (converter) -> {
-				converter.compare("requestStatus").withEquality();
-			}, inProjectIds);
-		}
 	}
 
 	@Override

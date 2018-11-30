@@ -42,7 +42,8 @@ import org.squashtest.tm.service.tf.AutomationRequestFinderService;
 import org.squashtest.tm.service.tf.AutomationRequestModificationService;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -155,18 +156,21 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	}
 
 	@Override
-	public Map<Long, String> getCreatedByForCurrentUser(List<String> requestStatus) {
+	@Transactional(readOnly = true)
+	public Map<Long, String> getTcLastModifiedByForCurrentUser(List<String> requestStatus) {
 		String userName = userCtxt.getUsername();
 		return requestDao.getTransmittedByForCurrentUser(userDao.findUserByLogin(userName).getId(), requestStatus);
 	}
 
 	@Override
-	public Map<Long, String> getCreatedByForAutomationRequests(List<String> requestStatus) {
+	@Transactional(readOnly = true)
+	public Map<Long, String> getTcLastModifiedByForAutomationRequests(List<String> requestStatus) {
 		return requestDao.getTransmittedByForCurrentUser(null, requestStatus);
 	}
 
 	@Override
-	public List<User> getAssignedToForAutomationRequests() {
+	@Transactional(readOnly = true)
+	public Map<Long, String> getAssignedToForAutomationRequests() {
 		return requestDao.getAssignedToForAutomationRequests();
 	}
 
@@ -219,19 +223,6 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 		List<Long> reqIds = requestDao.getReqIdsByTcIds(tcIds);
 		PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_FUNCTIONAL, AutomationRequest.class.getName());
 		requestDao.updatePriority(tcIds, priority);
-	}
-
-	@Transactional(readOnly = true)
-	@Override
-	public Map<Long, String> getCreatedByForTester(List<String> requestStatus) {
-		List<Long> projectIds = projectFinder.findAllReadableIds();
-		return requestDao.getUsersCreatedTestCase(requestStatus, projectIds);
-	}
-
-	@Override
-	public Page<AutomationRequest> findRequestsForGlobalTestView(Pageable pageable, ColumnFiltering filtering) {
-		List<Long> projectIds = projectFinder.findAllReadableIds();
-		return requestDao.findAllForGlobalTester(pageable,filtering, projectIds);
 	}
 
 	@Override

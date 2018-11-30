@@ -24,7 +24,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
-import org.squashtest.tm.domain.users.User;
 
 import java.util.List;
 import java.util.Map;
@@ -124,44 +123,31 @@ public interface AutomationRequestFinderService {
 	Page<AutomationRequest> findRequestsToValidate(Pageable pageable, ColumnFiltering filtering);
 
 	/**
-	 *
+	 * Count the number of AutomationRequests assignee to current user.
 	 * @return
 	 */
 	Integer countAutomationRequestForCurrentUser();
 
 	/**
-	 *
+	 * Get users who last modified TC for current user.
 	 * @param requestStatus
 	 * @return
 	 */
-	Map<Long, String> getCreatedByForCurrentUser(List<String> requestStatus);
+	Map<Long, String> getTcLastModifiedByForCurrentUser(List<String> requestStatus);
 
 	/**
-	 *
+	 * Get users who last modified TC.
 	 * @param requestStatus
 	 * @return
 	 */
-	Map<Long, String> getCreatedByForAutomationRequests(List<String> requestStatus);
+	Map<Long, String> getTcLastModifiedByForAutomationRequests(List<String> requestStatus);
 
-	List<User> getAssignedToForAutomationRequests();
-
-	/**
-	 *
-	 * @param requestStatus
-	 * @return
-	 */
-	Map<Long, String> getCreatedByForTester(List<String> requestStatus);
+	Map<Long, String> getAssignedToForAutomationRequests();
 
 	/**
-	 * Given the specified pagination, sorting and filtering, retrieve the corresponding
-	 * requests, restricted to the automated requests with these status : OBSOLETE, TO_VALIDATE, NOT_AUTOMATABLE
-	 *
-	 * @param pageable
-	 * @param filtering
+	 * Count the number of AurtomationRequest with Valid status.
 	 * @return
 	 */
-	Page<AutomationRequest> findRequestsForGlobalTestView(Pageable pageable, ColumnFiltering filtering);
-
 	Integer countAutomationRequestValid();
 
 }

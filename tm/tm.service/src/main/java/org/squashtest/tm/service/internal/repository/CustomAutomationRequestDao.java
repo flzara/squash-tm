@@ -24,7 +24,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
-import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.domain.users.User;
 
 import java.util.Collection;
@@ -124,15 +123,13 @@ public interface CustomAutomationRequestDao {
 	 */
 	Map<Long, String> getTransmittedByForCurrentUser(Long idUser, List<String> requestStatus);
 
-	List<User> getAssignedToForAutomationRequests();
+	Map<Long, String> getAssignedToForAutomationRequests();
 
 	void updateAutomationRequestToAssigned(User user, List<Long> reqIds);
 
 	void updateAutomationRequestNotAutomatable(List<Long> reqIds);
 
 	void unassignedUser(List<Long> reqIds);
-
-	Integer countTATestWithoutScript(List<Long> reqIds);
 
 	void updateStatusToExecutable(List<Long> reqIds);
 
@@ -143,10 +140,6 @@ public interface CustomAutomationRequestDao {
 	void updateStatusToTransmitted(List<Long> reqIds, User transmittedBy);
 
 	void updateStatusToValidate(List<Long> reqIds);
-
-	Map<Long, String> getUsersCreatedTestCase(List<String> automationRequestStatus, List<Long> readablesProject);
-
-	Page<AutomationRequest> findAllForGlobalTester(Pageable pageable, ColumnFiltering filtering, Collection<Long> inProjectIds);
 
 	void updateStatusToValide(List<Long> reqIds);
 

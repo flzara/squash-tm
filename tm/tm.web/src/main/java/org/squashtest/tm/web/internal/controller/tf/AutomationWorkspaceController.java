@@ -26,24 +26,21 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.HtmlUtils;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
-import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
-import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
-import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.service.tf.AutomationRequestFinderService;
 import org.squashtest.tm.service.user.UserManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.*;
-import org.squashtest.tm.web.internal.model.testautomation.TATestNode;
-import org.squashtest.tm.web.internal.model.testautomation.TATestNodeListBuilder;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
@@ -91,16 +88,18 @@ public class AutomationWorkspaceController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale) {
-		Map<Long, String> assignableUsers = automationRequestFinderService.getCreatedByForCurrentUser
-			(Arrays.asList(AutomationRequestStatus.WORK_IN_PROGRESS.toString()));
-		Map<Long, String> traitmentUsers = automationRequestFinderService.getCreatedByForAutomationRequests
-			(Arrays.asList(AutomationRequestStatus.TRANSMITTED.toString()));
-		Map<Long, String> globalUsers = automationRequestFinderService.getCreatedByForAutomationRequests
+		Map<Long, String> assignableUsers = automationRequestFinderService.getTcLastModifiedByForCurrentUser
+			(Collections.singletonList(AutomationRequestStatus.WORK_IN_PROGRESS.toString()));
+		Map<Long, String> traitmentUsers = automationRequestFinderService.getTcLastModifiedByForAutomationRequests
+			(Collections.singletonList(AutomationRequestStatus.TRANSMITTED.toString()));
+		Map<Long, String> globalUsers = automationRequestFinderService.getTcLastModifiedByForAutomationRequests
 			(Arrays.asList(AutomationRequestStatus.WORK_IN_PROGRESS.toString(), AutomationRequestStatus.TRANSMITTED.toString(), AutomationRequestStatus.EXECUTABLE.toString()));
+
+		Map<Long, String> assignableUsersGlobalView = automationRequestFinderService.getAssignedToForAutomationRequests();
 		model.addAttribute("assignableUsers", assignableUsers);
 		model.addAttribute("traitmentUsers", traitmentUsers);
 		model.addAttribute("globalUsers", globalUsers);
-		model.addAttribute("assignableUsersGlobalView", getAssignableUsersGlobalView());
+		model.addAttribute("assignableUsersGlobalView", assignableUsersGlobalView);
 
 		Map<String, String> tcKinds =
 			Arrays.stream(TestCaseKind.values()).collect(Collectors.toMap(Enum::toString, e -> messageSource.internationalize(e.getI18nKey(), locale)));
@@ -167,26 +166,18 @@ public class AutomationWorkspaceController {
 	@RequestMapping(value = "assigned/testers/{requestStatus}", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<Long, String> getTestersForCurrentUser(@PathVariable List<String> requestStatus) {
-		return automationRequestFinderService.getCreatedByForCurrentUser(requestStatus);
+		return automationRequestFinderService.getTcLastModifiedByForCurrentUser(requestStatus);
 	}
 
 	@RequestMapping(value = "testers/{requestStatus}", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<Long, String> getTesters(@PathVariable List<String> requestStatus) {
-		return automationRequestFinderService.getCreatedByForAutomationRequests(requestStatus);
+		return automationRequestFinderService.getTcLastModifiedByForAutomationRequests(requestStatus);
 	}
 
-	private Map<String, String> getAssignableUsersGlobalView() {
-
-		List<User> usersList = automationRequestFinderService.getAssignedToForAutomationRequests();
-
-		Map<String, String> jsonUsers = new LinkedHashMap<>(usersList.size());
-
-		for (User user : usersList) {
-			jsonUsers.put(user.getId().toString(),HtmlUtils.htmlEscape( user.getLogin()));
-		}
-
-		return jsonUsers;
+	@RequestMapping(value = "assignee", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<Long, String> getAssignee() {
+		return automationRequestFinderService.getAssignedToForAutomationRequests();
 	}
-
 }

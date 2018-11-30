@@ -25,13 +25,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
-import org.squashtest.tm.service.internal.security.AclPermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 
-import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
