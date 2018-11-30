@@ -122,9 +122,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     "bFilter": true,
                     fnRowCallback: function (row, data, displayIndex) {
                         var $row = $(row);
-                        var edObj = $.extend(true, {}, $.editable.types.text);
-                        var edFnButtons = $.editable.types.defaults.buttons;
-                        var edFnElements = $.editable.types.text.element;
 
                         if ($row.find("input[type=checkbox]")[0].checked) {
                             $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight")
@@ -160,42 +157,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             }
 
                         })
-                        edObj.buttons = function (settings, original) {
-                            //first apply the original function
-                            edFnButtons.call(this, settings, original);
-
-                            // now add our own button
-                            var btnChoose = $("<button/>", {
-                                'text': translator.get('label.dot.pick'),
-                                'id': 'ta-script-picker-button'
-                            });
-
-                            var btnRemove = $("<button/>", {
-                                'text': translator.get('label.Remove'),
-                                'id': 'ta-script-remove-button'
-                            });
-
-                            this.append(btnChoose)
-                                .append(btnRemove);
-
-                        };
-
-                        // this is overriden so as to enforce the width.
-                        edObj.element = function (settings, original) {
-                            var input = edFnElements.call(this, settings, original);
-                            input.css('width', '70%');
-                            input.css('height', '16px');
-                            return input;
-                        };
-
-                        $.editable.addInputType('ta-picker', edObj);
-                        var editable = confman.getStdJeditable();
-                        editable.type = 'ta-picker';
-                        editable.name = "path";
-                        var cell = $row.find('.assigned-script');
-                        var entityId = data["entity-id"];
-                        var url = squashtm.app.contextRoot + 'test-cases/' + entityId + '/test-automation/tests';
-                        cell.editable(url, editable);
                     },
 
                     fnDrawCallback: function () {

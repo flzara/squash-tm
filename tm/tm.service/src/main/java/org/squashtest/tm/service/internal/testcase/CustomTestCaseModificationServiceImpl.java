@@ -56,6 +56,7 @@ import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testcase.*;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
@@ -73,11 +74,14 @@ import org.squashtest.tm.service.internal.repository.*;
 import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.tm.service.testcase.CustomTestCaseModificationService;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
+import org.squashtest.tm.service.tf.AutomationRequestFinderService;
 import org.squashtest.tm.service.user.UserAccountService;
 
 import javax.inject.Inject;
@@ -97,6 +101,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomTestCaseModificationServiceImpl.class);
 
 	private static final int STEP_LAST_POS = -1;
+
+	private static final String WRITE_AS_AUTOMATION = "WRITE_AS_AUTOMATION";
 
 	@Inject
 	private TestCaseDao testCaseDao;
@@ -156,6 +162,12 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Inject
 	private UserAccountService userAccountService;
+
+	@Inject
+	private AutomationRequestFinderService automationRequestFinderService;
+
+	@Inject
+	private PermissionEvaluationService permissionEvaluationService;
 
 
 	/* *************** TestCase section ***************************** */
@@ -878,6 +890,65 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		} else {
 			throw new InconsistentInfoListItemException("type", typeCode);
 		}
+	}
+
+	@Override
+	public AutomatedTest bindAutomatedTestByAutomationProgrammer(Long testCaseId, String testPath) {
+
+
+		LOGGER.debug("binding test case #{} to automated test (path '{}')", testCaseId, testPath);
+
+		AutomationRequest automationRequest = automationRequestFinderService.findRequestByTestCaseId(testCaseId);
+		AutomatedTest newTest = null;
+
+		if((AutomationRequestStatus.WORK_IN_PROGRESS.equals(automationRequest.getRequestStatus())
+			|| AutomationRequestStatus.EXECUTABLE.equals(automationRequest.getRequestStatus()))
+			&& automationRequest.getProject().isAllowAutomationWorkflow()
+			&& TestCaseAutomatable.Y.equals(automationRequest.getTestCase().getAutomatable())) {
+			PermissionsUtils.checkPermission(permissionEvaluationService, Collections.singletonList(automationRequest.getId()), WRITE_AS_AUTOMATION, AutomationRequest.class.getName());
+
+			if (StringUtils.isBlank(testPath)) {
+				LOGGER.trace("path is blank -> resetting binding to null");
+				removeAutomation(testCaseId);
+				return null;
+			} else {
+
+				Couple<Long, String> projectAndTestname = extractAutomatedProjectAndTestName(testCaseId, testPath);
+
+				// once it's okay we commit the test association
+				return bindAutomatedTest(testCaseId, projectAndTestname.getA1(), projectAndTestname.getA2());
+			}
+
+		} else {
+			throw new IllegalArgumentException();
+		}
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Collection<TestAutomationProjectContent> findAssignableAutomationTestsToAutomationProgramer(long testCaseId) {
+		LOGGER.debug("looking for assignable automated tests for test case #{}", testCaseId);
+		AutomationRequest automationRequest = automationRequestFinderService.findRequestByTestCaseId(testCaseId);
+		Collection<TestAutomationProject> taProjects = null;
+
+		if((AutomationRequestStatus.WORK_IN_PROGRESS.equals(automationRequest.getRequestStatus())
+			|| AutomationRequestStatus.EXECUTABLE.equals(automationRequest.getRequestStatus()))
+			&& automationRequest.getProject().isAllowAutomationWorkflow()
+			&& TestCaseAutomatable.Y.equals(automationRequest.getTestCase().getAutomatable())) {
+			PermissionsUtils.checkPermission(permissionEvaluationService, Collections.singletonList(automationRequest.getId()), WRITE_AS_AUTOMATION, AutomationRequest.class.getName());
+			TestCase testCase = testCaseDao.findById(testCaseId);
+
+			taProjects = testCase.getProject().getTestAutomationProjects();
+
+			if (LOGGER.isTraceEnabled()) {
+				List<Long> taProjectIds = IdCollector.collect(taProjects);
+				LOGGER.trace("involved test automation projects are : {}", taProjectIds);
+			}
+		} else {
+			throw new IllegalArgumentException();
+		}
+
+		return taService.listTestsInProjects(taProjects);
 	}
 
 	/* ********************************************************************************

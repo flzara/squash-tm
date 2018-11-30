@@ -214,13 +214,15 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         editable.name = "path";
                         var cell = $row.find('.assigned-script');
                         var entityId = data["entity-id"];
-                        var url = squashtm.app.contextRoot + 'test-cases/' + entityId + '/test-automation/tests';
+                        var url = squashtm.app.contextRoot + 'automation-requests/' + entityId + '/tests';
                         cell.editable(url, editable);
                         cell.css({ "font-style": "italic" });
 
                         cell.attr("id", cellId);
+                        
+                        var urlTa = squashtm.app.contextRoot + 'automation-requests/' + entityId + '/tests';
                         var settings = {
-                            url: url,
+                            url: urlTa,
                             id: cellId
                         }
 
