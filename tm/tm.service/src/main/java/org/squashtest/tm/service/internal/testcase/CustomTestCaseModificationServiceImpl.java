@@ -1083,14 +1083,17 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public void changeAutomatable(TestCaseAutomatable automatable, Long testCaseId) {
 		TestCase tc = testCaseDao.findById(testCaseId);
-		if (! automatable.equals(tc.getAutomatable())) {
-			tc.setAutomatable(automatable);
-		}
+		if (tc.getProject().isAllowAutomationWorkflow()) {
+			if (!automatable.equals(tc.getAutomatable())) {
+				tc.setAutomatable(automatable);
+			}
 
-		if (automatable.equals(TestCaseAutomatable.Y) && tc.getAutomationRequest() == null) {
-			createRequestForTestCase(testCaseId);
+			if (automatable.equals(TestCaseAutomatable.Y) && tc.getAutomationRequest() == null) {
+				createRequestForTestCase(testCaseId);
+			}
 		}
 
 	}

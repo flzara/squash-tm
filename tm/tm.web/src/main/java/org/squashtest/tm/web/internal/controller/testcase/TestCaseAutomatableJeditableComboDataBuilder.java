@@ -18,36 +18,30 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.testcase;
+package org.squashtest.tm.web.internal.controller.testcase;
 
-import org.squashtest.tm.core.foundation.i18n.Internationalizable;
-import org.squashtest.tm.domain.Level;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
+import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
+import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
 
-public enum TestCaseAutomatable implements Internationalizable, Level {
+import javax.inject.Inject;
 
-	M(1), // The test case can be automatable
-	Y(2), // The test case is automatable
-	N(3); // The test case isn't automatable
+/**
+ * Created by jprioux on 30/11/2018.
+ */
+@Component
+@Scope("prototype")
+public class TestCaseAutomatableJeditableComboDataBuilder extends EnumJeditableComboDataBuilder<TestCaseAutomatable, TestCaseAutomatableJeditableComboDataBuilder> {
 
-	private static final String I18N_KEY_ROOT = "test-case.automatable.";
-
-	private final int level;
-
-	private TestCaseAutomatable(int value) {
-		this.level = value;
+	public TestCaseAutomatableJeditableComboDataBuilder() {
+		super();
+		setModel(TestCaseAutomatable.values());
 	}
 
-	@Override
-	public String getI18nKey() {
-		return I18N_KEY_ROOT + name();
-	}
-
-	public static TestCaseAutomatable defaultValue() {
-		return N;
-	}
-
-	@Override
-	public int getLevel() {
-		return level;
+	@Inject
+	public void setLabelFormatter(LevelLabelFormatter formatter) {
+		super.setLabelFormatter(formatter);
 	}
 }

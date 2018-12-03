@@ -357,13 +357,14 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.ro
 
 
 				/*
-               * configure the comboboxes. Note that the type and nature combos cannot
-               * be initialized before we know which test cases were selected.
-               */
+				 * configure the comboboxes. Note that the type and nature combos cannot
+				 * be initialized before we know which test cases were selected.
+				 */
 				$("#nature-combo").append('<select/>');
 				$("#type-combo").append('<select/>');
 				loadCombos("importance-combo");
 				loadCombos("status-combo");
+				loadCombos("automatable-combo");
 
 				addModifyResultDialog.on('change', ':checkbox', function (evt) {
 					var cbx = $(evt.currentTarget),
@@ -392,7 +393,7 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.ro
 				addModifyResultDialog.on("confirmdialogconfirm", function () {
 					var table = $('#test-case-search-result-table').dataTable();
 					var ids = self.getIdsOfEditableSelectedTableRowList(table);
-					var columns = ["importance", "status", "type", "nature"];
+					var columns = ["importance", "status", "type", "nature", "automatable"];
 					var rows = table.fnGetNodes();
 					var importanceAuto = $('#importanceAuto').prop('checked');
 					var urlPOST;

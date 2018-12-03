@@ -65,6 +65,9 @@ public class TestCaseController {
 	@Inject
 	private Provider<TestCaseStatusJeditableComboDataBuilder> statusComboBuilderProvider;
 
+	@Inject
+	private Provider<TestCaseAutomatableJeditableComboDataBuilder> automatableComboBuilderProvider;
+
 
 	@Inject
 	private VerifiedRequirementsFinderService verifiedRequirementsFinderService;
@@ -85,7 +88,7 @@ public class TestCaseController {
 	/**
 	 * Fetches and returns a list of json test cases from their containers
 	 *
-	 * @param foldersIds non null list of folders ids.
+	 * @param folderIds non null list of folders ids.
 	 * @return
 	 */
 	@ResponseBody
@@ -252,6 +255,12 @@ public class TestCaseController {
 	@ResponseBody
 	public Object buildStatusComboData(Locale locale) {
 		return statusComboBuilderProvider.get().useLocale(locale).buildMap();
+	}
+
+	@RequestMapping(value = "/automatable-combo-data", method = RequestMethod.GET)
+	@ResponseBody
+	public String buildAutomatableComboData(Locale locale) {
+		return automatableComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
 
 }

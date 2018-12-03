@@ -315,7 +315,7 @@
                   <input id="importance-checkbox" type="checkbox" ></input>
                 </td>
                 <td>
-                  <label th:text="#{test-case.importance.label}"></label>
+                  <label for="importance-checkbox" th:text="#{test-case.importance.label}"></label>
                 </td>
                 <td id="importance-combo"></td>
                 <td>
@@ -329,29 +329,39 @@
                   <input id="status-checkbox" type="checkbox"></input>
                 </td>
                 <td>
-                  <label th:text="#{test-case.status.label}"></label>
+                  <label for="status-checkbox" th:text="#{test-case.status.label}"></label>
                 </td>
                 <td id="status-combo"></td>
               </tr>
               <tr>
                 <td>
-                  <span  id="type-disabled-icon" class="sq-icon icon-red-cross not-displayed mass-change-forbidden sq-icon-checkboxmargin" ></span>
+                  <span id="type-disabled-icon" class="sq-icon icon-red-cross not-displayed mass-change-forbidden sq-icon-checkboxmargin" ></span>
                   <input id="type-checkbox" type="checkbox" class="mass-change-allowed"></input>
                 </td>
                 <td>
-                  <label th:text="#{test-case.type.label}"></label>
+                  <label for="type-checkbox" th:text="#{test-case.type.label}"></label>
                 </td>
                 <td id="type-combo"></td>
               </tr>
               <tr>
                 <td>
-                  <span  id="nature-disabled-icon" class="sq-icon icon-red-cross not-displayed mass-change-forbidden sq-icon-checkboxmargin" ></span>
+                  <span id="nature-disabled-icon" class="sq-icon icon-red-cross not-displayed mass-change-forbidden sq-icon-checkboxmargin" ></span>
                   <input id="nature-checkbox" type="checkbox" class="mass-change-allowed"></input>
                 </td>
                 <td>
-                  <label th:text="#{test-case.nature.label}"></label>
+                  <label for="nature-checkbox" th:text="#{test-case.nature.label}"></label>
                 </td>
-                <td id="nature-combo" ></td>
+                <td id="nature-combo"></td>
+              </tr>
+              <tr>
+                <td>
+                  <span id="automatable-disabled-icon" class="sq-icon icon-red-cross not-displayed mass-change-forbidden sq-icon-checkboxmargin" ></span>
+                  <input id="automatable-checkbox" type="checkbox" class="mass-change-allowed"></input>
+                </td>
+                <td>
+                  <label for="automatable-checkbox" th:text="#{test-case.automation-indicator.label}"></label>
+                </td>
+                <td id="automatable-combo"></td>
               </tr>
             </table>
           </div>

@@ -54,15 +54,15 @@
 			<div class="display-table-cell" id="test-case-automation-indicator">
 				  <label>
 				  	<input type="radio" name="test-case-automatable" value="M" ${toInstruct}>
-				  	<f:message key="test-case.automation-to-instruct" />
+				  	<f:message key="test-case.automatable.M" />
 				  </label>
 				  <label>
 					<input type="radio" name="test-case-automatable" value="Y" ${toAutomate}>
-					<f:message key="test-case.automation-to-automate" />
+					<f:message key="test-case.automatable.Y" />
 				  </label>
 				  <label>
 					<input type="radio" name="test-case-automatable" value="N" ${toNotAutomate}>
-					<f:message key="test-case.automation-to-not-automate" />
+					<f:message key="test-case.automatable.N" />
 				  </label>
 			</div>
 		</div>
