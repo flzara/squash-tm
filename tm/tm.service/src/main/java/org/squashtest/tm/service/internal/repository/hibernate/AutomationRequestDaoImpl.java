@@ -43,10 +43,12 @@ import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.*;
 import org.squashtest.tm.domain.tf.automationrequest.QAutomationRequest;
 import org.squashtest.tm.domain.users.QUser;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.tf.IllegalAutomationRequestStatusException;
+import org.squashtest.tm.service.internal.helper.PagingToQueryDsl;
 import org.squashtest.tm.service.internal.repository.CustomAutomationRequestDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 
@@ -66,6 +68,9 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AutomationRequestDaoImpl.class);
 
 	private static final String ILLEGAL_STATUS = "One or more AutomationRequest do not have the expected status";
+	
+	private static final String DEFAULT_GLOBAL_STATUS_FILTER = 	String.join(PagingToQueryDsl.LIST_SEPARATOR, WORK_IN_PROGRESS.toString(), TRANSMITTED.toString(), EXECUTABLE.toString() );
+	private static final String DEFAULT_TO_VALIDATE_FILTER = 	String.join(PagingToQueryDsl.LIST_SEPARATOR, OBSOLETE.toString(), TO_VALIDATE.toString(), NOT_AUTOMATABLE.toString() ); 
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -100,69 +105,50 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 
 		ColumnFiltering filterWithAssignee = new SimpleColumnFiltering(filtering)
 												 .addFilter("assignedTo.login", username)
-												.addFilter("requestStatus", AutomationRequestStatus.WORK_IN_PROGRESS.toString());
+												.addFilter("requestStatus", WORK_IN_PROGRESS.toString());
 
 		return innerFindAll(pageable, filterWithAssignee, (converter) -> {
 			// force equality comparison for the assigned user login
-			converter.compare("assignedTo.login, requestStatus").withEquality();
+			converter.compare("assignedTo.login").withEquality();
 		}, inProjectIds);
 	}
 
 	@Override
-	public Page<AutomationRequest> findAllForTraitment(Pageable pageable, ColumnFiltering columnFiltering, Collection<Long> inProjectIds) {
-		ColumnFiltering filterWithTraitment = new SimpleColumnFiltering(columnFiltering).addFilter("requestStatus", AutomationRequestStatus.TRANSMITTED.toString());
-		return innerFindAll(pageable, filterWithTraitment, (converter) -> {
-			converter.compare("requestStatus").withEquality();
-		}, inProjectIds);
+	public Page<AutomationRequest> findAllTransmitted(Pageable pageable, ColumnFiltering columnFiltering, Collection<Long> inProjectIds) {
+		ColumnFiltering filterWithTraitment = overrideStatusFilter(columnFiltering, TRANSMITTED.toString());
+
+		return innerFindAll(pageable, filterWithTraitment, null, inProjectIds);
 	}
 
 	@Override
 	public Page<AutomationRequest> findAllForGlobal(Pageable pageable, ColumnFiltering filtering, Collection<Long> inProjectIds) {
+		
 		LOGGER.debug("searching for automation requests, paged and filtered");
-
-		ColumnFiltering filterWithAssignee;
-
-		if (filtering.getFilter("requestStatus").isEmpty()) {
-			filterWithAssignee = new SimpleColumnFiltering(filtering).addFilter("requestStatus", AutomationRequestStatus.WORK_IN_PROGRESS.toString() + ";"
-				+ AutomationRequestStatus.TRANSMITTED.toString() + ";" + AutomationRequestStatus.EXECUTABLE.toString());
-			return innerFindAll(pageable, filterWithAssignee, (converter) -> {
-				converter.compare("requestStatus").withIn();
-			}, inProjectIds);
-		} else  {
-			filterWithAssignee = new SimpleColumnFiltering(filtering);
-			return innerFindAll(pageable, filterWithAssignee, (converter) -> {
-				converter.compare("requestStatus").withEquality();
-			}, inProjectIds);
-		}
+		
+		ColumnFiltering effectiveFilter = withStatusFilterOrDefault(filtering, DEFAULT_GLOBAL_STATUS_FILTER);
+		
+		return innerFindAll(pageable, effectiveFilter, (converter) -> {
+			converter.compare("requestStatus").withIn();
+		}, inProjectIds);
+		
 	}
 
 	@Override
 	public Page<AutomationRequest> findAllValid(Pageable pageable, ColumnFiltering filtering, Collection<Long> inProjectIds) {
-		ColumnFiltering filterWithAssignee = new SimpleColumnFiltering(filtering)
-			.addFilter("requestStatus", AutomationRequestStatus.VALID.toString());
+		ColumnFiltering filterWithAssignee = overrideStatusFilter(filtering, VALID.toString());
 
-		return innerFindAll(pageable, filterWithAssignee, (converter) -> {
-			// force equality comparison for the assigned user login
-			converter.compare("requestStatus").withEquality();
-		}, inProjectIds);
+		return innerFindAll(pageable, filterWithAssignee, null, inProjectIds);
 	}
 
 	@Override
 	public Page<AutomationRequest> findAllToValidate(Pageable pageable, ColumnFiltering filtering, Collection<Long> inProjectIds) {
-		ColumnFiltering filter;
-		if (filtering.getFilter("requestStatus").isEmpty()) {
-			filter = new SimpleColumnFiltering(filtering).addFilter("requestStatus", AutomationRequestStatus.OBSOLETE.toString() + ";"
-				+ AutomationRequestStatus.TO_VALIDATE.toString() + ";" + AutomationRequestStatus.NOT_AUTOMATABLE.toString());
-			return innerFindAll(pageable, filter, (converter) -> {
-				converter.compare("requestStatus").withIn();
-			}, inProjectIds);
-		} else  {
-			filter = new SimpleColumnFiltering(filtering);
-			return innerFindAll(pageable, filter, (converter) -> {
-				converter.compare("requestStatus").withEquality();
-			}, inProjectIds);
-		}
-
+		
+		ColumnFiltering effective = withStatusFilterOrDefault(filtering, DEFAULT_TO_VALIDATE_FILTER);
+		
+		return innerFindAll(pageable, effective, (converter) -> {
+			converter.compare("requestStatus").withIn();
+		}, inProjectIds);
+		
 	}
 
 
@@ -175,9 +161,9 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 			.innerJoin(TEST_CASE_LIBRARY_NODE).on(TEST_CASE.TCLN_ID.eq(TEST_CASE_LIBRARY_NODE.TCLN_ID))
 			.innerJoin(PROJECT).on(PROJECT.PROJECT_ID.eq(TEST_CASE_LIBRARY_NODE.PROJECT_ID))
 			.where(AUTOMATION_REQUEST.ASSIGNED_TO.eq(idUser))
-			.and(AUTOMATION_REQUEST.REQUEST_STATUS.eq(AutomationRequestStatus.WORK_IN_PROGRESS.toString()))
+			.and(AUTOMATION_REQUEST.REQUEST_STATUS.eq(WORK_IN_PROGRESS.toString()))
 			.and(PROJECT.ALLOW_AUTOMATION_WORKFLOW.isTrue())
-			.and(TEST_CASE.AUTOMATABLE.eq(TestCaseAutomatable.Y.name()))
+			.and(TEST_CASE.AUTOMATABLE.eq(TestCaseAutomatable.Y.toString()))
 			.fetchOne().value1();
 	}
 
@@ -210,8 +196,8 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	public void updateAutomationRequestToAssigned(User user, List<Long> ids) {
 		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest req SET req.requestStatus = :reqStatus," +
 			" req.assignedTo = :user, req.assignmentDate = :assignedOn WHERE req.id in :ids and req.requestStatus in :reqStatusInitial")
-			.setParameter("reqStatus", AutomationRequestStatus.WORK_IN_PROGRESS)
-			.setParameter("reqStatusInitial", Arrays.asList(AutomationRequestStatus.TRANSMITTED, AutomationRequestStatus.WORK_IN_PROGRESS, AutomationRequestStatus.EXECUTABLE))
+			.setParameter("reqStatus", WORK_IN_PROGRESS)
+			.setParameter("reqStatusInitial", Arrays.asList(TRANSMITTED, WORK_IN_PROGRESS, EXECUTABLE))
 			.setParameter("user", user)
 			.setParameter("assignedOn", new Timestamp(new Date().getTime()))
 			.setParameter("ids", ids).executeUpdate();
@@ -224,8 +210,8 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	@Override
 	public void updateAutomationRequestNotAutomatable(List<Long> ids) {
 		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest req SET req.requestStatus = :reqStatus WHERE req.id in :ids and req.requestStatus = :reqStatusInitial")
-			.setParameter("reqStatus", AutomationRequestStatus.NOT_AUTOMATABLE)
-			.setParameter("reqStatusInitial", AutomationRequestStatus.TRANSMITTED)
+			.setParameter("reqStatus", NOT_AUTOMATABLE)
+			.setParameter("reqStatusInitial", TRANSMITTED)
 			.setParameter("ids", ids)
 			.executeUpdate();
 
@@ -238,8 +224,8 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	public void updateStatusToExecutable(List<Long> ids) {
 		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest req SET req.requestStatus = :reqStatus," +
 			" req.assignmentDate = NULL, req.assignedTo = NULL WHERE req.id in :ids and req.requestStatus = :reqStatusInitial")
-			.setParameter("reqStatus", AutomationRequestStatus.EXECUTABLE)
-			.setParameter("reqStatusInitial", AutomationRequestStatus.WORK_IN_PROGRESS)
+			.setParameter("reqStatus", EXECUTABLE)
+			.setParameter("reqStatusInitial", WORK_IN_PROGRESS)
 			.setParameter("ids", ids)
 			.executeUpdate();
 
@@ -260,7 +246,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	public void unassignRequests(List<Long> requestIds) {
 		entityManager.createQuery("update AutomationRequest ar set ar.assignedTo = NULL, ar.assignmentDate = NULL," +
 			" ar.requestStatus = :requestStatus where ar.id in :requestIds")
-			.setParameter("requestStatus", AutomationRequestStatus.TRANSMITTED)
+			.setParameter("requestStatus", TRANSMITTED)
 		    .setParameter("requestIds", requestIds)
 			.executeUpdate();
 	}
@@ -278,7 +264,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest ar SET ar.transmissionDate = :transmittedOn, " +
 			"ar.requestStatus = :requestStatus, ar.transmittedBy = :transmittedBy where ar.id in :requestIds")
 			.setParameter("transmittedOn", new Timestamp(new Date().getTime()))
-			.setParameter("requestStatus", AutomationRequestStatus.TRANSMITTED)
+			.setParameter("requestStatus", TRANSMITTED)
 			.setParameter("transmittedBy", transmittedBy)
 			.setParameter("requestIds", reqIds).executeUpdate();
 
@@ -291,8 +277,8 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	public void updateStatusToValidate(List<Long> reqIds) {
 		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest ar SET ar.transmissionDate = NULL, " +
 			"ar.requestStatus = :requestStatus, ar.transmittedBy = NULL where ar.id in :requestIds and ar.requestStatus = :requestInitialStatus")
-			.setParameter("requestStatus", AutomationRequestStatus.TO_VALIDATE)
-			.setParameter("requestInitialStatus", AutomationRequestStatus.VALID)
+			.setParameter("requestStatus", TO_VALIDATE)
+			.setParameter("requestInitialStatus", VALID)
 			.setParameter("requestIds", reqIds).executeUpdate();
 
 		if(reqIds.size() != automationRequestUpdates) {
@@ -332,8 +318,8 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	@Override
 	public void updateStatusToValide(List<Long> reqIds) {
 		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest ar set ar.requestStatus = :reqStatus where ar.id in :reqIds and ar.requestStatus in :reqStatusInitial")
-			.setParameter("reqStatus", AutomationRequestStatus.VALID)
-			.setParameter("reqStatusInitial", Arrays.asList(AutomationRequestStatus.TO_VALIDATE, AutomationRequestStatus.TRANSMITTED))
+			.setParameter("reqStatus", VALID)
+			.setParameter("reqStatusInitial", Arrays.asList(TO_VALIDATE, TRANSMITTED))
 			.setParameter("reqIds", reqIds)
 			.executeUpdate();
 		if(reqIds.size() != automationRequestUpdates) {
@@ -344,8 +330,8 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	@Override
 	public void updateStatusToObsolete(List<Long> reqIds) {
 		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest ar set ar.requestStatus = :reqStatus where ar.id in :reqIds and ar.requestStatus in :reqStatusInitial")
-			.setParameter("reqStatus", AutomationRequestStatus.OBSOLETE)
-			.setParameter("reqStatusInitial", Arrays.asList(AutomationRequestStatus.EXECUTABLE, AutomationRequestStatus.WORK_IN_PROGRESS))
+			.setParameter("reqStatus", OBSOLETE)
+			.setParameter("reqStatusInitial", Arrays.asList(EXECUTABLE, WORK_IN_PROGRESS))
 			.setParameter("reqIds", reqIds)
 			.executeUpdate();
 		if(reqIds.size() != automationRequestUpdates) {
@@ -361,9 +347,9 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 			.innerJoin(TEST_CASE).on(TEST_CASE.TCLN_ID.eq(AUTOMATION_REQUEST.TEST_CASE_ID))
 			.innerJoin(TEST_CASE_LIBRARY_NODE).on(TEST_CASE.TCLN_ID.eq(TEST_CASE_LIBRARY_NODE.TCLN_ID))
 			.innerJoin(PROJECT).on(PROJECT.PROJECT_ID.eq(TEST_CASE_LIBRARY_NODE.PROJECT_ID))
-			.where(AUTOMATION_REQUEST.REQUEST_STATUS.eq(AutomationRequestStatus.VALID.name()))
+			.where(AUTOMATION_REQUEST.REQUEST_STATUS.eq(VALID.toString()))
 			.and(PROJECT.ALLOW_AUTOMATION_WORKFLOW.isTrue())
-			.and(TEST_CASE.AUTOMATABLE.eq(TestCaseAutomatable.Y.name()))
+			.and(TEST_CASE.AUTOMATABLE.eq(TestCaseAutomatable.Y.toString()))
 			.fetchOne()
 			.value1();
 	}
@@ -457,6 +443,20 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 
 		return converter.build();
 
+	}
+	
+	private ColumnFiltering withStatusFilterOrDefault(ColumnFiltering filtering, String statusFilter){
+		ColumnFiltering effective = filtering;
+		if (filtering.getFilter("requestStatus").isEmpty()){ 
+			effective = overrideStatusFilter(filtering, statusFilter);
+		}
+		return effective;				
+	}
+	
+	
+	private ColumnFiltering overrideStatusFilter(ColumnFiltering filtering, String statusFilter){
+		return new SimpleColumnFiltering(filtering)
+				 .addFilter("requestStatus",statusFilter);
 	}
 
 	private OrderSpecifier<?>[] toQueryDslSorting(Sort sort) {

@@ -124,7 +124,7 @@ import java.util.stream.Collectors;
 public final class PagingToQueryDsl {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PagingToQueryDsl.class);
-	private static final String LIST_SEPARATOR = ";";
+	public static final String LIST_SEPARATOR = ";";
 
 	private PagingToQueryDsl(){
 		super();
@@ -362,7 +362,7 @@ public final class PagingToQueryDsl {
 					break;
 
 				case IN:
-					finalExpression = pptPath.in((ArrayList) comparisonParameters);
+					finalExpression = asInExpression(pptPath, comparisonParameters);
 					break;
 
 				default:
@@ -374,6 +374,19 @@ public final class PagingToQueryDsl {
 			return finalExpression;
 		}
 
+		
+		private BooleanExpression asInExpression(EntityPathBase<?> pptPath, Object comparisonParameters) {
+			Collection<Object> effectiveParameters;
+			if (Collection.class.isAssignableFrom(comparisonParameters.getClass())){
+				effectiveParameters = (Collection)comparisonParameters;
+			}
+			else{
+				effectiveParameters = new ArrayList<>(1);
+				effectiveParameters.add(comparisonParameters);
+			}
+			
+			return pptPath.in((ArrayList) effectiveParameters);
+		}
 
 
 		private BooleanExpression asLikeExpression(Expression pptPath, String value){

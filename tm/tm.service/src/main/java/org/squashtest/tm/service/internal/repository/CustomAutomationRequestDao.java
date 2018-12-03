@@ -75,7 +75,7 @@ public interface CustomAutomationRequestDao {
 	 * @param inProjectIds list of project ids the current user can read
 	 * @return
 	 */
-	Page<AutomationRequest> findAllForTraitment(Pageable pageable, ColumnFiltering columnFiltering, Collection<Long> inProjectIds);
+	Page<AutomationRequest> findAllTransmitted(Pageable pageable, ColumnFiltering columnFiltering, Collection<Long> inProjectIds);
 
 	/**
 	 * Will retrieve a list of automated requests, paged filtered and sorted, where

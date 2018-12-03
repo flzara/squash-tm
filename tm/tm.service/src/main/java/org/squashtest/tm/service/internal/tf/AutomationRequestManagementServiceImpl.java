@@ -119,7 +119,7 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	@Transactional(readOnly = true)
 	public Page<AutomationRequest> findRequestsWithTransmittedStatus(Pageable pageble, ColumnFiltering filtering) {
 		List<Long> projectIds = projectFinder.findAllReadableIdsForAutomationWriter();
-		return requestDao.findAllForTraitment(pageble, filtering, projectIds);
+		return requestDao.findAllTransmitted(pageble, filtering, projectIds);
 	}
 
 	@Override
