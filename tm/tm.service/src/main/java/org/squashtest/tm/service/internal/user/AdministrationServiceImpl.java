@@ -385,6 +385,10 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deassociateTeams(long userId, List<Long> teamIds) {
 		User user = userDao.getOne(userId);
+		List<Team> teams = teamDao.findAllById(teamIds);
+		for (Team team : teams) {
+			team.removeMember(user);
+		}
 		user.removeTeams(teamIds);
 		aclService.updateDerivedPermissions(userId);
 	}

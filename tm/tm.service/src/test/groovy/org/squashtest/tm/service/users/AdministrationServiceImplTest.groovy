@@ -84,8 +84,11 @@ class AdministrationServiceImplTest extends Specification {
 	def "should deassociate team from user"(){
 		given :
 		User user = Mock()
+		Team team = Mock()
+		def teams = [team]
 		def teamIds = [2L]
 		userDao.getOne(1L) >> user
+		teamDao.findAllById(teamIds)>> teams
 		when :
 		service.deassociateTeams(1L, [2L])
 		then :

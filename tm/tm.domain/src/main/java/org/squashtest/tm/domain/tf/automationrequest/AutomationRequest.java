@@ -125,8 +125,6 @@ public class AutomationRequest implements Identified {
 		this.testCase = testCase;
 	}
 
-
-
 	public Date getAssignmentDate() {
 		return assignmentDate;
 	}
