@@ -89,7 +89,6 @@ define([ "require", "./panel", "./table", "./popup", "./popupDelete" ], function
 	}
 
 	function getPopupConf(settings) {
-	console.log(settings)
 		return {
 			projectId : settings.projectId,
 			bindableEntity : settings.entityType,
