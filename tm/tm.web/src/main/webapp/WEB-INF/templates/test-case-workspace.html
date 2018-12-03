@@ -149,13 +149,21 @@
               </div>
 
               <div class="button-group">
-                <a id="rename-node-tree-button" class="sq-icon-btn" th:title="#{tree.button.rename-node.label} + '...'"
-                  title="rename node" role="button">
+                <a id="update-node-tree-button" class="buttonmenu sq-icon-btn" th:title="#{tree.button.update-node.label} + '...'"
+                  title="update node" role="buttonmenu">
                   <span class="ui-icon ui-icon-pencil"></span>
                 </a>
+                <ul id="update-node-tree-menu" class="not-displayed">
+                  <li id="rename-node-tree-button" class="ui-state-disabled cursor-pointer">
+                    <a th:text="#{tree.button.rename-node.label} + '...'">Rename ...</a>
+                  </li>
+                  <li id="modify-tc-tree-button" class="cursor-pointer">
+                    <a th:text="#{label.Modify}+'...'">Modify ...</a>
+                  </li>
+                </ul>
 
                 <a id="tree-import-button" class="buttonmenu sq-icon-btn"
-                  th:title="#{squashtm.treemenu.import.label}+'...'" title="rename node" role="buttonmenu">
+                  th:title="#{squashtm.treemenu.import.label}+'...'" title="import export" role="buttonmenu">
                   <span class="ui-icon ui-icon-transferthick-e-w"></span>
                 </a>
                 <ul id="tree-import-menu" class="not-displayed">

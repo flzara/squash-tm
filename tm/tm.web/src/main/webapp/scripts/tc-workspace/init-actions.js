@@ -190,6 +190,10 @@ define(["jquery","backbone", "tree","./permissions-rules", "workspace.contextual
 				$("#rename-node-dialog").formDialog("open");
 			});
 
+			$("#modify-tc-tree-button").on("click", function(){
+				//TODO pop up de la recherche
+			});
+
 			tree.on("rename.squashtree", function(){
 				$("#rename-node-dialog").formDialog("open");
 			});

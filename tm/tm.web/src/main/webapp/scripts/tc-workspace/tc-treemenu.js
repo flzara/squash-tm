@@ -30,6 +30,7 @@ define(["jquery", "./utils", "./permissions-rules", "workspace/WorkspaceTreeMenu
 			"#copy-node-tree-button",
 			"#paste-node-tree-button",
 			"#rename-node-tree-button",
+			"#update-node-tree-button",
 			"#import-excel-tree-button",
 			"#import-links-excel-tree-button",
 			"#export-tree-button",
