@@ -129,7 +129,14 @@ public interface CustomAutomationRequestDao {
 
 	void updateAutomationRequestNotAutomatable(List<Long> reqIds);
 
-	void unassignedUser(List<Long> reqIds);
+
+	/**
+	 * Will unassign the automation requests, identified by their ids, from the user that handle them, and voids the
+	 * assignation date and resets their statuses to 'TRANSMITTED'
+	 *
+	 * @param reqIds
+	 */
+	void unassignRequests(List<Long> reqIds);
 
 	void updateStatusToExecutable(List<Long> reqIds);
 

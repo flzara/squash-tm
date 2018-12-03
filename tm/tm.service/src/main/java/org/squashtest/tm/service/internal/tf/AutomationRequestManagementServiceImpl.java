@@ -151,8 +151,8 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	}
 
 	@Override
-	public void unassignedUser(List<Long> requestIds) {
-		requestDao.unassignedUser(requestIds);
+	public void unassignRequests(List<Long> requestIds) {
+		requestDao.unassignRequests(requestIds);
 	}
 
 	@Override
