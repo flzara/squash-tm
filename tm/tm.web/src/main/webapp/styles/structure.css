@@ -2002,19 +2002,19 @@ opacity:0.2;
   	padding: 0.5em 1em;
   	font-size: 1.2em;
   	color: white;
-  	background-image: url(/squash/styles/jquery/ui/images/ui-bg_glass_45_2b2b2b_1x400.png);
+  	background: #2b2b2b url(/squash/styles/jquery/ui/images/ui-bg_glass_45_2b2b2b_1x400.png) 50% 50% repeat-x;
 }
 #tf-automation-tabs ul li a:hover {
-  	background-image: url(/squash/styles/jquery/ui/images/ui-bg_glass_75_2b2b2b_1x400.png);
+  	background: #2b2b2b url(/squash/styles/jquery/ui/images/ui-bg_glass_75_2b2b2b_1x400.png) 50% 50% repeat-x;
 
 }
 #tf-automation-tabs ul a.tf-selected {
   	cursor: text;
-  	background-image: url(/squash/styles/jquery/ui/images/ui-bg_glass_45_6eac2c_1x400.png);
+  	background: #6eac2c url(/squash/styles/jquery/ui/images/ui-bg_glass_45_6eac2c_1x400.png) 50% 50% repeat-x;
   	border: 1px solid #acdd4a;
 }
 #tf-automation-tabs ul a.tf-selected:hover {
-  	background-image: url(/squash/styles/jquery/ui/images/ui-bg_glass_45_6eac2c_1x400.png);
+  	background: #6eac2c url(/squash/styles/jquery/ui/images/ui-bg_glass_45_6eac2c_1x400.png) 50% 50% repeat-x;
 }
 
 #tf-automation-content {
