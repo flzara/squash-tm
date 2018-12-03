@@ -41,6 +41,7 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
 import org.squashtest.tm.service.internal.repository.TestCaseDeletionDao;
 
+
 /*
  * we'll perform a lot of operation using SQL because Hibernate whine at bulk-delete on polymorphic entities.
  *
@@ -52,6 +53,7 @@ import org.squashtest.tm.service.internal.repository.TestCaseDeletionDao;
 public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implements TestCaseDeletionDao {
 
 	private static final String TEST_CASES_IDS = "testCaseIds";
+	private static final String AUTOMATION_REQUEST_IDS = "automationRequestIds";
 	private static final String TEST_STEP_IDS = "testStepIds";
 	private static final String FOLDER_IDS = "folderIds";
 	private static final String ITP_HAVING_NO_EXEC_IDS = "itpHavingNoExecIds";
@@ -93,6 +95,13 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 		TestCaseFolder folder = (TestCaseFolder) query.uniqueResult();
 		if (folder != null) {
 			folder.removeContent(node);
+		}
+	}
+
+	@Override
+	public void removeAutomationRequest(List<Long> automationRequestIds) {
+		if (!automationRequestIds.isEmpty()) {
+			executeDeleteSQLQuery(NativeQueries.AUTOMATION_REQUEST_SQL_REMOVE_LIBRARY_CONTENT_FROMLIST, AUTOMATION_REQUEST_IDS, automationRequestIds);
 		}
 	}
 

@@ -31,6 +31,7 @@ public interface TestCaseDeletionDao extends DeletionDao {
 	List<Long> findTestCaseFolderAttachmentListIds(List<Long> folderIds);
 
 	//data removers
+	void removeAutomationRequest(List<Long> automationRequestIds);
 	void removeAllSteps(List<Long> testStepIds);
 	void removeCampaignTestPlanInboundReferences(List<Long> testCaseIds);
 	void removeOrSetIterationTestPlanInboundReferencesToNull(List<Long> testCaseIds);
@@ -47,7 +48,7 @@ public interface TestCaseDeletionDao extends DeletionDao {
 
 	/**
 	 * Given a list of TestCaseLibraryNode ids, will tell which ones are folder ids and which ones are campaigns.
-	 * 
+	 *
 	 * @param originalIds the requirement library node ids we want to sort out.
 	 * @return an array of list of ids : result[0] are the folder ids and result[1] are the test case ids.
 	 */
@@ -55,7 +56,7 @@ public interface TestCaseDeletionDao extends DeletionDao {
 
 	/**
 	 * Given a list of ids, retain only the ids of test cases that were not deleted
-	 * 
+	 *
 	 * @param originalIds
 	 * @return
 	 */
@@ -64,7 +65,7 @@ public interface TestCaseDeletionDao extends DeletionDao {
 	/**
 	 * Given their ids, return the ids of test cases one cannot remove
 	 * due to restrictions on the status of their milestones
-	 * 
+	 *
 	 * @param originalId
 	 * @return
 	 */

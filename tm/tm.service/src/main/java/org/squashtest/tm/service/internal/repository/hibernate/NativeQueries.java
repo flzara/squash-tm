@@ -172,6 +172,8 @@ public final class NativeQueries {
 
 	public static final String TESTCASE_SQL_SET_NULL_CALLING_EXECUTION_STEPS = "update EXECUTION_STEP set test_step_id = null where test_step_id in (:testStepIds)";
 
+	public static final String AUTOMATION_REQUEST_SQL_REMOVE_LIBRARY_CONTENT_FROMLIST = "delete from AUTOMATION_REQUEST_LIBRARY_CONTENT where content_id in (:automationRequestIds)";
+
 	public static final String TESTCASE_SQL_REMOVEVERIFYINGTESTCASELIST = "delete from REQUIREMENT_VERSION_COVERAGE where verifying_test_case_id in (:testCaseIds)";
 
 	public static final String TESTCASE_SQL_REMOVEVERIFYINGTESTSTEPLIST = "delete from VERIFYING_STEPS where TEST_STEP_ID in (:testStepIds)";

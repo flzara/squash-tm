@@ -49,11 +49,7 @@ import org.squashtest.tm.service.deletion.SingleOrMultipleMilestonesReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.deletion.LockedFileInferenceGraph.Node;
-import org.squashtest.tm.service.internal.repository.AutomatedTestDao;
-import org.squashtest.tm.service.internal.repository.FolderDao;
-import org.squashtest.tm.service.internal.repository.TestCaseDao;
-import org.squashtest.tm.service.internal.repository.TestCaseDeletionDao;
-import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
+import org.squashtest.tm.service.internal.repository.*;
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
 import org.squashtest.tm.service.internal.testcase.TestCaseNodeDeletionHandler;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
@@ -99,6 +95,9 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 
 	@Inject
 	private ActiveMilestoneHolder activeMilestoneHolder;
+
+	@Inject
+	private AutomationRequestDao requestDao;
 
 	@Override
 	protected FolderDao<TestCaseFolder, TestCaseLibraryNode> getFolderDao() {
@@ -266,6 +265,9 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 			List<Long> testCaseAttachmentIds = 	deletionDao.findTestCaseAttachmentListIds(tcIds);
 			List<Long> testStepAttachmentIds = 	deletionDao.findTestStepAttachmentListIds(stepIds);
 			List<Long> testCaseFolderAttachmentIds = deletionDao.findTestCaseFolderAttachmentListIds(folderIds);
+
+			List<Long> automationRequestIds = requestDao.getReqIdsByTcIds(tcIds);
+			deletionDao.removeAutomationRequest(automationRequestIds);
 
 			deletionDao.removeCampaignTestPlanInboundReferences(tcIds);
 			deletionDao.removeOrSetIterationTestPlanInboundReferencesToNull(tcIds);
