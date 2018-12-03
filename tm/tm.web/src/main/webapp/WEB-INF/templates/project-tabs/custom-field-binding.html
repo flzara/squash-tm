@@ -94,18 +94,8 @@
 
 		<div id="test-suites-binding-manager" th:include="project-tabs/custom-field-binding :: cuf-unit-binder" th:with="HTMLID='test-suites',bindings=${testSuiteBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).TEST_SUITE}">
 		</div>
-
+  </fieldset>
 </div>
-
-
-
-
-
-
-
-
-
-
 
 
 <script type="text/javascript" th:inline="javascript">
@@ -228,17 +218,7 @@
 					tableDeferLoading: /*[[ ${tcFoldersBindings.size()} ]]*/ 3,
 					tableDeleteMessageSecond: /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.TESTCASE_FOLDER})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
 					tableRenderingLocations: []
-				},
-
-				projectsSettings: {
-					entityType: 'PROJECT',
-					mainSelector: "#project-binding-manager",
-					tableDeferLoading: /*[[ ${projectsBindings.size()} ]]*/ 3,
-					tableDeleteMessageSecond: /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.PROJECT})}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
-					tableRenderingLocations: []
 				}
-
-
 
 			};
 

@@ -61,10 +61,6 @@ define([ "jquery", "./entity-manager" ], function(jquery, EntityManager) {
 		return $.extend({}, conf.general, conf.campaignFoldersSettings);
 	}
 
-	function makeProjectConf(conf) {
-		return $.extend({}, conf.general, conf.projectsSettings);
-	}
-
 	function makeExecStepConf(conf) {
 		return $.extend({}, conf.general, conf.execStepSettings);
 	}
@@ -110,10 +106,6 @@ define([ "jquery", "./entity-manager" ], function(jquery, EntityManager) {
 			// execution step
 			var execStepConf = makeExecStepConf(this.config);
 			new EntityManager(execStepConf);
-
-			// project
-			var projectConf = makeProjectConf(this.config);
-			new EntityManager(projectConf);
 
 			// testcase folders
 			var tcFoldersConf = makeTcFoldersConf(this.config);
