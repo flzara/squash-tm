@@ -398,6 +398,11 @@
 				availableTAServers="${availableTAServers}"/>
 
 			<%----------------------------- /TEST AUTOMATION PROJECT -------------------------------------------%>
+
+			<%----------------- Source Code Management -----------------%>
+			  <pc:scm-panel project="${adminproject.project}" availableScmServers="${availableScmServers}"/>
+			<%----------------- /Source Code Management -----------------%>
+
 			<%----------------------------- ATTACHMENT -------------------------------------------%>
 
 			<at:attachment-bloc editable="${ true }"  workspaceName="administration" attachListId="${adminproject.project.attachmentList.id}" attachmentSet="${attachments}"/>

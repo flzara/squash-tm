@@ -450,6 +450,19 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		return availableTaProjects;
 	}
 
+	/* ----- Scm Repository Section----- */
+
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public void bindScmRepository(long projectId, long scmRepositoryId) {
+		genericProjectDao.bindScmRepository(projectId, scmRepositoryId);
+	}
+
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public void unbindScmRepository(long projectId) {
+		genericProjectDao.unbindScmRepository(projectId);
+	}
 
 	// ********************************** bugtracker section
 	// *************************************

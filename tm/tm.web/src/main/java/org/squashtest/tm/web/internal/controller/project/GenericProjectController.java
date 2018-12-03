@@ -45,6 +45,7 @@ import org.squashtest.tm.exception.NoBugTrackerBindingException;
 import org.squashtest.tm.exception.user.LoginDoNotExistException;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
+import org.squashtest.tm.service.scmserver.ScmRepositoryManagerService;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectFinderService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.administration.PartyPermissionDatatableModelHelper;
@@ -408,6 +409,21 @@ public class GenericProjectController {
 		return projectManager.findAllAvailableTaProjects(projectId);
 
 	}
+
+	/* ------- Scm Serves & Repositories ------ */
+
+	@RequestMapping(value = PROJECT_ID_URL + "/scm-repository", method = RequestMethod.POST)
+	@ResponseBody
+	public void bindScmRepository(@PathVariable long projectId, @RequestParam long scmRepositoryId) {
+		projectManager.bindScmRepository(projectId, scmRepositoryId);
+	}
+
+	@RequestMapping(value = PROJECT_ID_URL + "/scm-repository", method = RequestMethod.DELETE)
+	@ResponseBody
+	public void unbindScmRepository(@PathVariable long projectId) {
+		projectManager.unbindScmRepository(projectId);
+	}
+
 	// ************************* plugins administration ***********************
 
 	@RequestMapping(value = PROJECT_ID_URL + "/plugins/{pluginId}", method = RequestMethod.POST)

@@ -504,7 +504,8 @@
 	@NamedQuery(name = "GenericProject.findBoundTestAutomationProjectLabels", query = "select tap.label from GenericProject p join p.testAutomationProjects tap where p.id = :projectId"),
 	@NamedQuery(name = "GenericProject.findBoundTemplateId", query = "select t.id from GenericProject p join p.template t where p.id = :projectId"),
 	@NamedQuery(name = "GenericProject.findBoundTemplateIdsFromBindingIds", query = "select t.id from CustomFieldBinding cfb join cfb.boundProject p join p.template t where cfb.id in (:bindingIds)"),
-
+	@NamedQuery(name = "GenericProject.bindScmRepository", query = "update GenericProject p set p.scmRepository = (from ScmRepository r where r.id = :scmRepositoryId) where p.id = :projectId"),
+	@NamedQuery(name = "GenericProject.unbindScmRepository", query = "update GenericProject p set p.scmRepository = null where p.id = :projectId"),
 
 	// Project Template
 	@NamedQuery(name = "ProjectTemplate.propagateAllowTcModifDuringExec", query = "update GenericProject set allowTcModifDuringExec = :active where template.id = :templateId"),

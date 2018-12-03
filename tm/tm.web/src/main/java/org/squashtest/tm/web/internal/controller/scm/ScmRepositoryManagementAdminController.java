@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.controller.scm;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.squashtest.tm.domain.scm.ScmRepository;
 import org.squashtest.tm.service.scmserver.ScmRepositoryManagerService;
 
 import javax.inject.Inject;
@@ -60,5 +61,11 @@ public class ScmRepositoryManagementAdminController {
 	@ResponseBody
 	public String updateBranch(@PathVariable long scmRepositoryId, String branch) {
 		return scmRepositoryManager.updateBranch(scmRepositoryId, branch);
+	}
+
+	@RequestMapping(method = RequestMethod.GET, params = "scmServerId")
+	@ResponseBody
+	public List<ScmRepository> getScmRepositories(long scmServerId) {
+		return scmRepositoryManager.findByScmServerOrderByPath(scmServerId);
 	}
 }

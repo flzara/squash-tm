@@ -23,7 +23,6 @@ package org.squashtest.tm.service.internal.project
 import org.squashtest.tm.domain.campaign.CampaignLibrary
 import org.squashtest.tm.domain.execution.ExecutionStatus
 import org.squashtest.tm.domain.infolist.InfoList
-import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.requirement.RequirementLibrary
 import org.squashtest.tm.domain.requirement.RequirementLibraryPluginBinding
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
@@ -34,7 +33,6 @@ import org.squashtest.tm.service.internal.repository.ProjectTemplateDao;
 import javax.persistence.EntityManager;
 
 import org.hibernate.Session
-import org.hibernate.SessionFactory
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding
 import org.squashtest.tm.domain.customreport.CustomReportLibrary
@@ -684,5 +682,24 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		project2.allowTcModifDuringExec()
 
 
+	}
+
+	def "#bindScmRepository(long, long) - Should bind the ScmRepository to the Project"() {
+		given: "Mock data"
+			long projectId = 12
+			long repositoryId = 29
+		when:
+			manager.bindScmRepository(projectId, repositoryId)
+		then:
+			1 * genericProjectDao.bindScmRepository(projectId, repositoryId)
+	}
+
+	def "#unbindScmRepository(long) - Should unbind the ScmRepository from the Project"() {
+		given: "Mock data"
+			long projectId = 12
+		when:
+			manager.unbindScmRepository(projectId)
+		then:
+			1 * genericProjectDao.unbindScmRepository(projectId)
 	}
 }

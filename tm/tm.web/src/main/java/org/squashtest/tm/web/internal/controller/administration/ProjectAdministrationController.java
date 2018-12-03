@@ -54,12 +54,14 @@ import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.AdministrableProject;
 import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.scm.ScmServer;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.project.GenericProjectFinder;
 import org.squashtest.tm.service.project.ProjectTemplateFinder;
+import org.squashtest.tm.service.scmserver.ScmServerManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectFinderService;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
@@ -96,6 +98,9 @@ public class ProjectAdministrationController {
 	private TestAutomationServerManagerService taServerService;
 	@Inject
 	private TestAutomationProjectFinderService taProjectFinderService;
+
+	@Inject
+	private ScmServerManagerService scmServerService;
 
 	@Inject
 	private WorkspaceWizardManager pluginManager;
@@ -140,6 +145,10 @@ public class ProjectAdministrationController {
 		// test automation data
 		Collection<TestAutomationServer> availableTAServers = taServerService.findAllOrderedByName();
 		Map<String, URL> jobUrls = taProjectFinderService.findProjectUrls(adminProject.getProject().getTestAutomationProjects());
+
+		// source code management
+		Collection<ScmServer> availableScmServers = scmServerService.findAllOrderByName();
+
 		// bugtracker data
 		Map<Long, String> comboDataMap = createComboDataForBugtracker(locale);
 
@@ -159,6 +168,7 @@ public class ProjectAdministrationController {
 		mav.addObject("adminproject", adminProject);
 		mav.addObject("templatesList", templatesList);
 		mav.addObject("availableTAServers", availableTAServers);
+		mav.addObject("availableScmServers", availableScmServers);
 		mav.addObject("bugtrackersList", JsonHelper.serialize(comboDataMap));
 		mav.addObject("bugtrackersListEmpty", comboDataMap.size() == 1);
 		mav.addObject("userPermissions", partyPermissions);
