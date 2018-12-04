@@ -576,5 +576,16 @@
     </addColumn>
   </changeSet>
 
+  <changeSet id="tm-1.19.0-SQTM-create-auth-users" author="bsiri">
+    <comment>add the missing entries in AUTH_USER for users that only exist in CORE_USER (eg a user created by LDAP)</comment>
+    <sql>
+      insert into AUTH_USER (login, password, active)
+      select cu.LOGIN, '', cu.active
+      from CORE_USER cu
+      left join AUTH_USER au on cu.login = au.login
+      where au.login is null;
+    </sql>
+  </changeSet>
+
 
 </databaseChangeLog>

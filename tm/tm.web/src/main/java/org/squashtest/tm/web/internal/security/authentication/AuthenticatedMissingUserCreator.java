@@ -28,6 +28,11 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.core.Ordered;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.provisioning.UserDetailsManager;
+import org.squashtest.tm.api.security.acls.Roles;
 import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
 import org.squashtest.tm.api.security.authentication.FeaturesAwareAuthentication;
 import org.squashtest.tm.domain.users.User;
@@ -35,6 +40,9 @@ import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
 import org.squashtest.tm.service.internal.security.AuthenticationProviderContext;
 import org.squashtest.tm.service.user.AdministrationService;
 import org.squashtest.tm.web.internal.annotation.ApplicationComponent;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * This class checks if an {@link User} matches the authenticated user. If not, creates this user.
@@ -51,6 +59,9 @@ public class AuthenticatedMissingUserCreator implements ApplicationListener<Auth
 
 	@Inject
 	private AdministrationService userAccountManager;
+
+	@Inject
+	private UserDetailsManager userDetailsManager;
 
 	/**
 	 *
@@ -99,7 +110,15 @@ public class AuthenticatedMissingUserCreator implements ApplicationListener<Auth
 
 	private void createUserFromPrincipal(Authentication principal) {
 		try {
-			userAccountManager.createUserFromLogin(principal.getName());
+			String username = principal.getName();			
+
+			userAccountManager.createUserFromLogin(username);
+
+			Collection<SimpleGrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority(Roles.ROLE_TM_USER));
+			org.springframework.security.core.userdetails.User springUser = new org.springframework.security.core.userdetails.User(username, "", authorities);
+			userDetailsManager.createUser(springUser);
+
+
 
 		} catch (LoginAlreadyExistsException e) {
 			LOGGER.warn("Something went wrong while trying to create missing authenticated user", e);
