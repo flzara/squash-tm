@@ -68,9 +68,9 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AutomationRequestDaoImpl.class);
 
 	private static final String ILLEGAL_STATUS = "One or more AutomationRequest do not have the expected status";
-	
+
 	private static final String DEFAULT_GLOBAL_STATUS_FILTER = 	String.join(PagingToQueryDsl.LIST_SEPARATOR, WORK_IN_PROGRESS.toString(), TRANSMITTED.toString(), EXECUTABLE.toString() );
-	private static final String DEFAULT_TO_VALIDATE_FILTER = 	String.join(PagingToQueryDsl.LIST_SEPARATOR, OBSOLETE.toString(), TO_VALIDATE.toString(), NOT_AUTOMATABLE.toString() ); 
+	private static final String DEFAULT_TO_VALIDATE_FILTER = 	String.join(PagingToQueryDsl.LIST_SEPARATOR, OBSOLETE.toString(), TO_VALIDATE.toString(), NOT_AUTOMATABLE.toString() );
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -122,15 +122,15 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 
 	@Override
 	public Page<AutomationRequest> findAllForGlobal(Pageable pageable, ColumnFiltering filtering, Collection<Long> inProjectIds) {
-		
+
 		LOGGER.debug("searching for automation requests, paged and filtered");
-		
+
 		ColumnFiltering effectiveFilter = withStatusFilterOrDefault(filtering, DEFAULT_GLOBAL_STATUS_FILTER);
-		
+
 		return innerFindAll(pageable, effectiveFilter, (converter) -> {
 			converter.compare("requestStatus").withIn();
 		}, inProjectIds);
-		
+
 	}
 
 	@Override
@@ -142,13 +142,13 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 
 	@Override
 	public Page<AutomationRequest> findAllToValidate(Pageable pageable, ColumnFiltering filtering, Collection<Long> inProjectIds) {
-		
+
 		ColumnFiltering effective = withStatusFilterOrDefault(filtering, DEFAULT_TO_VALIDATE_FILTER);
-		
+
 		return innerFindAll(pageable, effective, (converter) -> {
 			converter.compare("requestStatus").withIn();
 		}, inProjectIds);
-		
+
 	}
 
 
@@ -319,7 +319,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	public void updateStatusToValide(List<Long> reqIds) {
 		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest ar set ar.requestStatus = :reqStatus where ar.id in :reqIds and ar.requestStatus in :reqStatusInitial")
 			.setParameter("reqStatus", VALID)
-			.setParameter("reqStatusInitial", Arrays.asList(TO_VALIDATE, TRANSMITTED))
+			.setParameter("reqStatusInitial", Arrays.asList(TO_VALIDATE, TRANSMITTED, OBSOLETE, NOT_AUTOMATABLE))
 			.setParameter("reqIds", reqIds)
 			.executeUpdate();
 		if(reqIds.size() != automationRequestUpdates) {
@@ -444,16 +444,16 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 		return converter.build();
 
 	}
-	
+
 	private ColumnFiltering withStatusFilterOrDefault(ColumnFiltering filtering, String statusFilter){
 		ColumnFiltering effective = filtering;
-		if (filtering.getFilter("requestStatus").isEmpty()){ 
+		if (filtering.getFilter("requestStatus").isEmpty()){
 			effective = overrideStatusFilter(filtering, statusFilter);
 		}
-		return effective;				
+		return effective;
 	}
-	
-	
+
+
 	private ColumnFiltering overrideStatusFilter(ColumnFiltering filtering, String statusFilter){
 		return new SimpleColumnFiltering(filtering)
 				 .addFilter("requestStatus",statusFilter);
