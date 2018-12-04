@@ -74,7 +74,7 @@ public interface ScmServerManagerService {
 	 */
 	String updateKind(long scmServerId, String kind);
 	/**
-	 * Delete the ScmServers with the given Ids.
+	 * Delete the ScmServers with the given Ids. Also deletes the ScmRepositories contained in these ScmServers.
 	 * @param scmServerIds The Ids of the ScmServers to delete.
 	 */
 	void deleteScmServers(Collection<Long> scmServerIds);

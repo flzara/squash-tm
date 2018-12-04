@@ -28,7 +28,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.scm.ScmRepository;
+import org.squashtest.tm.domain.scm.ScmServer;
 import org.squashtest.tm.service.internal.repository.ScmRepositoryDao;
+import org.squashtest.tm.service.internal.repository.ScmServerDao;
 import org.squashtest.tm.service.scmserver.ScmRepositoryManagerService;
 
 import javax.inject.Inject;
@@ -46,6 +48,8 @@ public class ScmRepositoryManagerServiceImpl implements ScmRepositoryManagerServ
 
 	@Inject
 	private ScmRepositoryDao scmRepositoryDao;
+	@Inject
+	private ScmServerDao scmServerDao;
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
@@ -59,8 +63,10 @@ public class ScmRepositoryManagerServiceImpl implements ScmRepositoryManagerServ
 	}
 
 	@Override
-	public ScmRepository createNewScmRepository(ScmRepository newScmRepository) {
-		return scmRepositoryDao.save(newScmRepository);
+	public void createNewScmRepository(long scmServerId, ScmRepository newScmRepository) {
+		ScmServer scmServer = scmServerDao.getOne(scmServerId);
+		newScmRepository.setScmServer(scmServer);
+		scmRepositoryDao.save(newScmRepository);
 	}
 
 	@Override

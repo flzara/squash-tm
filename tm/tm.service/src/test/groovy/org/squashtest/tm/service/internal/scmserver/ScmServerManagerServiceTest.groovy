@@ -320,10 +320,20 @@ class ScmServerManagerServiceTest extends Specification {
 
 	def '#deleteScmServers(Collection<Long>) - [Nominal] Should delete several ScmServers'() {
 		given: "Mock data"
-			Collection<Long> serverIds = [1, 5, 15]
+			Collection<Long> serverIds = [1L, 5L, 15L]
+		and:
+			ScmServer s1 = Mock()
+			ScmServer s2 = Mock()
+			ScmServer s3 = Mock()
+		and: "Mock Dao methods"
+			scmServerDao.getOne(1L) >> s1
+			scmServerDao.getOne(5L) >> s2
+			scmServerDao.getOne(15L) >> s3
 		when:
 			scmServerManagerService.deleteScmServers(serverIds)
 		then:
-			1 * scmServerDao.deleteByIds(serverIds)
+			1 * scmServerDao.delete(s1)
+			1 * scmServerDao.delete(s2)
+			1 * scmServerDao.delete(s3)
 	}
 }

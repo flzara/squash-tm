@@ -121,6 +121,9 @@ public class ScmServerManagerServiceImpl implements ScmServerManagerService {
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deleteScmServers(Collection<Long> scmServerIds) {
-		scmServerDao.deleteByIds(scmServerIds);
+		for(Long serverId : scmServerIds) {
+			ScmServer server = scmServerDao.getOne(serverId);
+			scmServerDao.delete(server);
+		}
 	}
 }

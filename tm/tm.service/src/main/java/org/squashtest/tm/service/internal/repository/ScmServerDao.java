@@ -44,11 +44,4 @@ public interface ScmServerDao extends JpaRepository<ScmServer, Long> {
 	 */
 	@Query
 	boolean isServerNameAlreadyInUse(@Param("name") String scmServerName);
-	/**
-	 * Delete the ScmServers with the given Ids.
-	 * @param scmServerIds The Ids of the ScmServers to delete.
-	 */
-	@Query
-	@Modifying
-	void deleteByIds(@Param("scmServerIds") Collection<Long> scmServerIds);
 }

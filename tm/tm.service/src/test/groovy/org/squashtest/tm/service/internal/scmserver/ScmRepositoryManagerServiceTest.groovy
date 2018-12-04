@@ -26,15 +26,18 @@ import org.springframework.data.domain.Sort
 import org.squashtest.tm.domain.scm.ScmRepository
 import org.squashtest.tm.domain.scm.ScmServer
 import org.squashtest.tm.service.internal.repository.ScmRepositoryDao
+import org.squashtest.tm.service.internal.repository.ScmServerDao
 import spock.lang.Specification
 
 class ScmRepositoryManagerServiceTest extends Specification {
 
 	private ScmRepositoryManagerServiceImpl scmRepositoryManagerService = new ScmRepositoryManagerServiceImpl()
 	private ScmRepositoryDao scmRepositoryDao = Mock()
+	private ScmServerDao scmServerDao = Mock()
 
 	def setup() {
 		scmRepositoryManagerService.scmRepositoryDao = scmRepositoryDao
+		scmRepositoryManagerService.scmServerDao = scmServerDao
 	}
 
 	def "#findByScmServerOrderByPath(Long) - [Nominal] Should find all ScmRepositories ordered by path"() {
@@ -119,13 +122,17 @@ class ScmRepositoryManagerServiceTest extends Specification {
 			repo.repositoryPath = "/home/repositories/repo1"
 			repo.folderPath = "resources/features"
 			repo.branch = "master"
-			repo.scmServerId = 3
-		and: "Mock Dao method"
+		and:
+			long serverId = 12
+			ScmServer server = new ScmServer()
+			server.id = serverId
+		and: "Mock Dao methods"
+			scmServerDao.getOne(serverId) >> server
 			scmRepositoryDao.save(repo) >> repo
 		when:
-			ScmRepository createdRepo = scmRepositoryManagerService.createNewScmRepository(repo)
+			scmRepositoryManagerService.createNewScmRepository(serverId, repo)
 		then:
-			createdRepo == repo
+			1 * scmRepositoryDao.save(repo)
 	}
 
 	def "#updatePath(long, String) - [Nominal] Should update the path of the ScmRepository"() {

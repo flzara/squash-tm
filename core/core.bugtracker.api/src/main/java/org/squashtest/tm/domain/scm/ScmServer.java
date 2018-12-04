@@ -24,6 +24,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.net.URL;
+import java.util.List;
 
 @Entity
 @Table(name = "SCM_SERVER")
@@ -47,6 +48,9 @@ public class ScmServer {
 	@Column(name = "KIND")
 	@Size(max = 30)
 	private String kind;
+
+	@OneToMany(mappedBy = "scmServer", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	private List<ScmRepository> repositories;
 
 	public Long getId() {
 		return id;
@@ -74,5 +78,12 @@ public class ScmServer {
 	}
 	public void setKind(String kind) {
 		this.kind = kind;
+	}
+
+	public List<ScmRepository> getRepositories() {
+		return repositories;
+	}
+	public void setRepositories(List<ScmRepository> repositories) {
+		this.repositories = repositories;
 	}
 }

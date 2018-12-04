@@ -83,7 +83,7 @@
 		*/
 		doAddNewScmRepository : function(newScmRepository) {
 			return $.ajax({
-				url : routing.buildURL('administration.scm-server.repositories', newScmRepository.serverId),
+				url : routing.buildURL('administration.scm-server.repositories', squashtm.pageConfiguration.scmServerId),
 				type : 'POST',
 				dataType: 'json',
 				data : newScmRepository
@@ -101,12 +101,10 @@
 			let path = this.inputs['path'].val();
 			let folder = this.inputs['folder'].val();
 			let branch = this.inputs['branch'].val();
-			let serverId = squashtm.pageConfiguration.scmServerId;
 			return {
 				"repositoryPath": path,
 				"folderPath": folder,
-				"branch": branch,
-				"scmServerId": serverId
+				"branch": branch
 			};
 		},
 

@@ -43,11 +43,11 @@ public interface ScmRepositoryManagerService {
 	 */
 	Page<ScmRepository> findPagedScmRepositoriesByScmServer(Long scmServerId, Pageable pageable);
 	/**
-	 * Create a new ScmRepository with its attributes.
+	 * Create a new ScmRepository with its attributes and bind it to the given ScmServer.
+	 * @param scmServerId The Id of the ScmServer which contains the new ScmRepository.
 	 * @param newScmRepository The ScmRepository with its attributes to create.
-	 * @return The ScmRepository newly created.
 	 */
-	ScmRepository createNewScmRepository(ScmRepository newScmRepository);
+	void createNewScmRepository(long scmServerId, ScmRepository newScmRepository);
 	/**
 	 * Update the path of the ScmRepository with the given Id to the new given path.
 	 * @param scmRepositoryId The Id of the ScmRepository which path is to update.

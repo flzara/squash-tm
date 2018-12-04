@@ -114,8 +114,8 @@ public class ScmServerModificationController {
 
 	@RequestMapping(value = "/repositories", method = RequestMethod.POST)
 	@ResponseBody
-	public ScmRepository createNewScmRepository(@Valid ScmRepository scmRepository) {
-		return scmRepositoryManager.createNewScmRepository(scmRepository);
+	public void createNewScmRepository(@PathVariable long scmServerId, @Valid ScmRepository scmRepository) {
+		scmRepositoryManager.createNewScmRepository(scmServerId, scmRepository);
 	}
 
 	private class ScmRepositoryDataTableModelHelper extends DataTableModelBuilder<ScmRepository> {

@@ -45,9 +45,9 @@ public class ScmRepository {
 	@NotBlank
 	private String branch;
 
-	@Column(name = "SCM_SERVER_ID")
-	@NotNull
-	private Long scmServerId;
+	@ManyToOne
+	@JoinColumn(name = "SCM_SERVER_ID", nullable = false)
+	private ScmServer scmServer;
 
 	public Long getId() {
 		return id;
@@ -77,10 +77,10 @@ public class ScmRepository {
 		this.folderPath = folderPath;
 	}
 
-	public Long getScmServerId() {
-		return scmServerId;
+	public ScmServer getScmServer() {
+		return scmServer;
 	}
-	public void setScmServerId(Long scmServerId) {
-		this.scmServerId = scmServerId;
+	public void setScmServer(ScmServer scmServer) {
+		this.scmServer = scmServer;
 	}
 }
