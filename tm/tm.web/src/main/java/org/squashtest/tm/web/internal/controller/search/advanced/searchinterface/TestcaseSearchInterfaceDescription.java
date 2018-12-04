@@ -30,6 +30,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
@@ -266,6 +267,27 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 		SearchInputFieldModel modifiedOnField = new SearchInputFieldModel("lastModifiedOn", getMessageSource()
 				.internationalize("search.testcase.history.modifiedOn.label", locale), DATE);
 		panel.addField(modifiedOnField);
+
+		return panel;
+	}
+
+	public SearchInputPanelModel createAutomationPanel(Locale locale) {
+
+		SearchInputPanelModel panel = new SearchInputPanelModel();
+		panel.setTitle(getMessageSource().internationalize("search.testcase.automation.panel.title", locale));
+		panel.setOpen(true);
+		panel.setId("automation");
+		panel.setLocation(COLUMN_1);
+		panel.addCssClass("search-icon-automation");
+
+		SearchInputFieldModel automationField = new SearchInputFieldModel("automatable", getMessageSource()
+			.internationalize("test-case.automation-indicator.label", locale), MULTISELECT);
+		panel.addField(automationField);
+
+		List<SearchInputPossibleValueModel> automationOptions = levelComboBuilder(TestCaseAutomatable.values())
+			.useLocale(locale).build();
+		automationField.addPossibleValues(automationOptions);
+
 
 		return panel;
 	}

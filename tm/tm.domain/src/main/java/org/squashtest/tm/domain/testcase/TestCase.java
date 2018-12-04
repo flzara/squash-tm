@@ -193,6 +193,9 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@OneToOne(mappedBy = "testCase", optional = true, fetch = LAZY, cascade = CascadeType.ALL)
 	private AutomationRequest automationRequest;
 
+	@Field(analyze = Analyze.NO, store = Store.YES)
+	@FieldBridge(impl = LevelEnumBridge.class)
+	@SortableField
 	@Enumerated(EnumType.STRING)
 	private TestCaseAutomatable automatable = M;
 

@@ -29,6 +29,7 @@ import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.campaign.IterationModificationService;
@@ -65,6 +66,10 @@ public class TestCaseSearchResultDataTableModelBuilder extends DataTableModelBui
 		return status.getLevel() + "-" + messageSource.internationalize(status, locale);
 	}
 
+	private String formatAutomatable(TestCaseAutomatable automatable, Locale locale) {
+		return automatable.getLevel() + "-" + messageSource.internationalize(automatable, locale);
+	}
+
 	private boolean isTestCaseEditable(TestCase item) {
 		return item.isModifiable() && permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", item);
 	}
@@ -93,6 +98,7 @@ public class TestCaseSearchResultDataTableModelBuilder extends DataTableModelBui
 		res.put("test-case-nature", HtmlUtils.htmlEscape(formatInfoItem(item.getNature(), locale)));
 		res.put("test-case-type", HtmlUtils.htmlEscape(formatInfoItem(item.getType(), locale)));
 		res.put("test-case-status", formatStatus(item.getStatus(), locale));
+		res.put("test-case-automatable", formatAutomatable(item.getAutomatable(), locale));
 		res.put("test-case-milestone-nb", item.getMilestones().size());
 		res.put("test-case-requirement-nb", item.getVerifiedRequirementVersions().size());
 		res.put("test-case-teststep-nb", item.getSteps().size());

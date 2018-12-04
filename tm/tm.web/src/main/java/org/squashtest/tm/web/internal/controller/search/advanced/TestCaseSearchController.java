@@ -80,6 +80,7 @@ public class TestCaseSearchController extends GlobalSearchController {
 		.mapAttribute("test-case-nature", "nature", TestCase.class)
 		.mapAttribute("test-case-type", "type", TestCase.class)
 		.mapAttribute("test-case-status", "status", TestCase.class)
+		.mapAttribute("test-case-automatable", "automatable", TestCase.class)
 		.mapAttribute("test-case-milestone-nb", "milestones", TestCase.class)
 		.mapAttribute("test-case-requirement-nb", "requirements", TestCase.class)
 		.mapAttribute("test-case-teststep-nb", "steps", TestCase.class)
