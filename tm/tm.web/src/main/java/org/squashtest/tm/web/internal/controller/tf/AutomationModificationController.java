@@ -61,10 +61,9 @@ public class AutomationModificationController {
 		automationRequestModificationService.changeStatus(autoReqIds, status);
 	}
 
-
 	@ResponseBody
-	@RequestMapping(method = RequestMethod.POST, value="desassigned/{autoReqIds}")
-	public void desassignedUser(@PathVariable(value="autoReqIds") List<Long> autoReqIds) {
+	@RequestMapping(method = RequestMethod.POST, value="unassigned/{autoReqIds}")
+	public void unassignedUser(@PathVariable(value="autoReqIds") List<Long> autoReqIds) {
 		automationRequestModificationService.unassignRequests(autoReqIds);
 	}
 

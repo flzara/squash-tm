@@ -534,14 +534,14 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 $("#deselect-affected-button").on("click", function () {
                     self.deselectAll(domtable);
                 });
-                $("#desassigned-affected-button").on("click", function () {
+                $("#unassigned-affected-button").on("click", function () {
                     var requestIds = self.getSelectedRequestIds(domtable);
                     if (requestIds.length === 0 || requestIds === undefined) {
                         notification.showWarning(translator.get("automation.notification.selectedRow.none"));
                     } else {
 
                         $.ajax({
-                            url: squashtm.app.contextRoot + 'automation-requests/desassigned/' + requestIds,
+                            url: squashtm.app.contextRoot + 'automation-requests/unassigned/' + requestIds,
                             method: 'POST'
                         }).success(function () {
                             domtable.refresh();
