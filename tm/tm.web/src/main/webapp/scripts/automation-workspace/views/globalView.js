@@ -215,35 +215,39 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         var cell = $row.find('.assigned-script');
                         var entityId = data["entity-id"];
                         var url = squashtm.app.contextRoot + 'automation-requests/' + entityId + '/tests';
-                        cell.editable(url, editable);
-                        cell.css({ "font-style": "italic" });
 
-                        cell.attr("id", cellId);
-                        
-                        var urlTa = squashtm.app.contextRoot + 'automation-requests/' + entityId + '/tests';
-                        var settings = {
-                            url: urlTa,
-                            id: cellId
-                        }
+												if ((data['status'] === squashtm.app.autoReqStatuses['WORK_IN_PROGRESS'] || data['status'] === squashtm.app.autoReqStatuses['EXECUTABLE'])
+														&& data['script'] !== 'no-test-automation-project') {
+														cell.editable(url, editable);
+														cell.css({ "font-style": "italic" });
 
-                        cell.on("click", function () {
-                            $("td[id!=" + cellId + "]").find("form button[type=cancel]").click();
-                        })
+														cell.attr("id", cellId);
 
-                        cell.on('click', '#ta-script-picker-button', function () {
-                            self._initPickerPopup(settings);
-                            var popup = $("#ta-picker-popup").formDialog();
-                            popup.formDialog('open');
-                            return false;//for some reason jeditable would trigger 'submit' if we let go
-                        });
-                        cell.on('click', '#ta-script-remove-button', function () {
-                            self._initRemovePopup(settings);
-                            var popup = $("#ta-remove-popup").formDialog();
-                            popup.formDialog('open');
-                            return false;// see comment above
-                        });
+														var urlTa = squashtm.app.contextRoot + 'automation-requests/' + entityId + '/tests';
+														var settings = {
+																url: urlTa,
+																id: cellId
+														}
 
+														cell.on("click", function () {
+																$("td[id!=" + cellId + "]").find("form button[type=cancel]").click();
+														})
 
+														cell.on('click', '#ta-script-picker-button', function () {
+																self._initPickerPopup(settings);
+																var popup = $("#ta-picker-popup").formDialog();
+																popup.formDialog('open');
+																return false;//for some reason jeditable would trigger 'submit' if we let go
+														});
+														cell.on('click', '#ta-script-remove-button', function () {
+																self._initRemovePopup(settings);
+																var popup = $("#ta-remove-popup").formDialog();
+																popup.formDialog('open');
+																return false;// see comment above
+														});
+												} else {
+														cell.text('-');
+												}
                     },
 
                     fnDrawCallback: function () {

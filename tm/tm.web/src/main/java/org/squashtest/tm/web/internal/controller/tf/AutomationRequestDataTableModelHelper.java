@@ -40,6 +40,8 @@ public class AutomationRequestDataTableModelHelper extends DataTableModelBuilder
 	private Locale locale = LocaleContextHolder.getLocale();
 	private PermissionEvaluationService permissionEvaluationService;
 
+	private static final String NO_TEST_AUTOMATION_PROJECT = "no-test-automation-project";
+
 
 	public AutomationRequestDataTableModelHelper(InternationalizationHelper messageSource, PermissionEvaluationService permissionEvaluationService) {
 		this.messageSource = messageSource;
@@ -60,7 +62,7 @@ public class AutomationRequestDataTableModelHelper extends DataTableModelBuilder
 		data.put("priority", item.getAutomationPriority());
 		data.put("assigned-on", messageSource.localizeShortDate(item.getAssignmentDate(), locale));
 		data.put("entity-index", getCurrentIndex());
-		data.put("script", (item.getTestCase() != null && item.getTestCase().getAutomatedTest() != null) ? item.getTestCase().getAutomatedTest().getFullLabel(): null);
+		data.put("script", populateScriptAuto(item));
 		data.put("checkbox", "");
 		data.put("tc-id", item.getTestCase() != null ? item.getTestCase().getId(): null);
 		data.put("requestId", item.getId());
@@ -69,6 +71,17 @@ public class AutomationRequestDataTableModelHelper extends DataTableModelBuilder
 		data.put("writable", permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", item.getTestCase()));
 
 		return data;
+	}
+
+	// Issue 7880 - we need to check the case when the project has no ta projects
+	private String populateScriptAuto(AutomationRequest item) {
+		if (item.getTestCase() != null && item.getTestCase().getAutomatedTest() != null && item.getProject().isTestAutomationEnabled()) {
+			return item.getTestCase().getAutomatedTest().getFullLabel();
+		} else if (!item.getProject().hasTestAutomationProjects()) {
+			return NO_TEST_AUTOMATION_PROJECT;
+		} else {
+			return null;
+		}
 	}
 
 }
