@@ -94,7 +94,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "mRender": function (data, type, row) {
 
                             var render = "";
-                            if(data) {
+                            if (data) {
                                 render = '<a href="' + squashtm.app.contextRoot + 'test-cases/' + row["entity-id"] + '/info" class="table-button edit-pencil"></a>'
                             } else {
                                 render = '<a href="' + squashtm.app.contextRoot + 'test-cases/' + row["entity-id"] + '/info"><img src="/squash/images/icon-lib/eye.png"></a>'
@@ -115,7 +115,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             }
                             var input = "";
                             var $row = $(row);
-                            if(row['writable']) {
+                            if (row['writable']) {
                                 if (checked) {
                                     input = '<input type="checkbox" class="editor-active" checked>';
                                     $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight");
@@ -169,16 +169,22 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             }
                         });
                         var cell = $row.find('.priority');
-                        var entityId = data["entity-id"];
-                        var editable = confman.getStdJeditable();
-                        cell.attr("id", "automation-request-priority");
-                        editable.params = {
-                            "id": "automation-request-priority"
+                        if (data['writable']) {
+                            var entityId = data["entity-id"];
+                            var editable = confman.getStdJeditable();
+                            cell.attr("id", "automation-request-priority");
+                            editable.params = {
+                                "id": "automation-request-priority"
+                            }
+                            editable.maxlength = 9;
+                            editable.onblur = 'cancel';
+                            var url = squashtm.app.contextRoot + 'test-cases/' + entityId;
+                            cell.editable(url, editable);
+                        } else {
+                            if (cell.text() === '') {
+                                cell.text('-');
+                            }
                         }
-                        editable.maxlength = 9;
-                        editable.onblur = 'cancel';
-                        var url = squashtm.app.contextRoot + 'test-cases/' + entityId;
-                        cell.editable(url, editable);
 
                     },
 
@@ -268,7 +274,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 $(rows).each(function (index, row) {
                     var $row = $(row);
                     var checkbox = $row.find("input[type=checkbox]");
-                    if(checkbox[0] !== undefined) {
+                    if (checkbox[0] !== undefined) {
                         checkbox[0].checked = false
                     }
                 })

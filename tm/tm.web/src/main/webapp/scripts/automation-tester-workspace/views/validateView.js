@@ -109,13 +109,15 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", "
                             }
                             var input = "";
                             var $row = $(row);
-                            if (checked) {
-                                input = '<input type="checkbox" class="editor-active" checked>';
-                                $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight")
-                            } else {
-                                input = '<input type="checkbox" class="editor-active">';
+                            if (row['writable']) {
+                                if (checked) {
+                                    input = '<input type="checkbox" class="editor-active" checked>';
+                                    $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight")
+                                } else {
+                                    input = '<input type="checkbox" class="editor-active">';
+                                }
+                                return input;
                             }
-                            return input;
                         },
                         "sWidth": "2.5em"
                     }, {
@@ -126,7 +128,8 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", "
                     "bFilter": true,
                     fnRowCallback: function (row, data, displayIndex) {
                         var $row = $(row);
-                        if ($row.find("input[type=checkbox]")[0].checked) {
+                        var checkbox = $row.find("input[type=checkbox]")[0];
+                        if (checkbox !== undefined && checkbox.checked) {
                             $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight")
                         }
                         $row.on("change", "input[type=checkbox]", function () {
@@ -161,16 +164,22 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", "
                         });
 
                         var cell = $row.find('.priority');
-                        var entityId = data["entity-id"];
-                        var editable = confman.getStdJeditable();
-                        cell.attr("id", "automation-request-priority");
-                        editable.params = {
-                            "id": "automation-request-priority"
+                        if (data['writable']) {
+                            var entityId = data["entity-id"];
+                            var editable = confman.getStdJeditable();
+                            cell.attr("id", "automation-request-priority");
+                            editable.params = {
+                                "id": "automation-request-priority"
+                            }
+                            editable.maxlength = 9;
+                            editable.onblur = 'cancel';
+                            var url = squashtm.app.contextRoot + 'test-cases/' + entityId;
+                            cell.editable(url, editable);
+                        } else {
+                            if (cell.text() === '') {
+                                cell.text('-');
+                            }
                         }
-                        editable.maxlength = 9;
-                        editable.onblur = 'cancel';
-                        var url = squashtm.app.contextRoot + 'test-cases/' + entityId;
-                        cell.editable(url, editable);
                     },
 
                     fnDrawCallback: function () {
