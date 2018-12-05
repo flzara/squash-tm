@@ -34,9 +34,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.squashtest.tm.api.security.acls.Roles;
 import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
+import org.squashtest.tm.api.security.authentication.ExtraAccountInformationAuthentication;
 import org.squashtest.tm.api.security.authentication.FeaturesAwareAuthentication;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.domain.users.UsersGroup;
 import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
+import org.squashtest.tm.service.internal.repository.UsersGroupDao;
 import org.squashtest.tm.service.internal.security.AuthenticationProviderContext;
 import org.squashtest.tm.service.user.AdministrationService;
 import org.squashtest.tm.web.internal.annotation.ApplicationComponent;
@@ -63,6 +66,7 @@ public class AuthenticatedMissingUserCreator implements ApplicationListener<Auth
 	@Inject
 	private UserDetailsManager userDetailsManager;
 
+	
 	/**
 	 *
 	 */
@@ -110,18 +114,47 @@ public class AuthenticatedMissingUserCreator implements ApplicationListener<Auth
 
 	private void createUserFromPrincipal(Authentication principal) {
 		try {
-			String username = principal.getName();			
-
-			userAccountManager.createUserFromLogin(username);
-
-			Collection<SimpleGrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority(Roles.ROLE_TM_USER));
-			org.springframework.security.core.userdetails.User springUser = new org.springframework.security.core.userdetails.User(username, "", authorities);
-			userDetailsManager.createUser(springUser);
-
-
+			
+			// first create the user account (CORE_USER), otherwise the spring security account will not work
+			createUserAccount(principal);
+						
+			// create the spring security user (AUTH_USER)
+			createSpringSecAccount(principal);
 
 		} catch (LoginAlreadyExistsException e) {
 			LOGGER.warn("Something went wrong while trying to create missing authenticated user", e);
 		}
+	}
+	
+	
+	private void createUserAccount(Authentication principal){
+		String username = principal.getName().trim();			
+
+		// create the user account (CORE_USER)
+		User user = User.createFromLogin(username);
+		
+		
+		// populate it if the Authentication implements ExtraAccountInformationAuthentication
+		if (ExtraAccountInformationAuthentication.class.isAssignableFrom(principal.getClass())){
+
+			ExtraAccountInformationAuthentication extra = (ExtraAccountInformationAuthentication) principal;
+		
+			user.setFirstName(extra.getFirstName());
+			user.setLastName(extra.getLastName());
+			user.setEmail(extra.getEmail());
+			
+		}
+		
+		userAccountManager.createUserWithoutCredentials(user, UsersGroup.USER);
+		
+	}
+	
+	private void createSpringSecAccount(Authentication principal){
+		String username = principal.getName().trim();
+
+		
+		Collection<SimpleGrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority(Roles.ROLE_TM_USER));
+		org.springframework.security.core.userdetails.User springUser = new org.springframework.security.core.userdetails.User(username, "", authorities);
+		userDetailsManager.createUser(springUser);
 	}
 }

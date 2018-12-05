@@ -146,6 +146,15 @@ public interface UserManagerService {
 	 * @param groupId
 	 */
 	void createUserWithoutCredentials(User user, long groupId);
+	
+	/**
+	 * Creates a user without credentials. This should be used when
+	 * authentication is managed by an external provider only.
+	 *
+	 * @param user
+	 * @param groupId
+	 */
+	void createUserWithoutCredentials(User user, String usergroupName);
 
 	/**
 	 * Creates authentication data for given user.

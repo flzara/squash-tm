@@ -22,8 +22,10 @@ package org.squashtest.tm.web.internal.security.authentication
 
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.provisioning.UserDetailsManager
 import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.domain.users.UsersGroup
 import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
 import org.squashtest.tm.service.internal.security.AuthenticationProviderContext
 import org.squashtest.tm.service.user.AdministrationService;
@@ -42,13 +44,16 @@ class AuthenticatedMissingUserCreatorTest extends Specification {
 	AdministrationService userAccountManager = Mock()
 	Authentication principal = Mock();
 	AuthenticationSuccessEvent authenticatedEvent = new AuthenticationSuccessEvent(principal)
-
+	UserDetailsManager userDetailsManager = Mock()
+	
 	def setup() {
 		
 		authProviderContext.getProviderFeatures(principal) >> features
 		
 		listener.authProviderContext  = authProviderContext
 		listener.userAccountManager = userAccountManager
+		listener.userDetailsManager = userDetailsManager
+		
 		principal.getName() >> "chris.jericho"
 	}
 
@@ -82,6 +87,8 @@ class AuthenticatedMissingUserCreatorTest extends Specification {
 		listener.onApplicationEvent authenticatedEvent
 
 		then:
-		1 * userAccountManager.createUserFromLogin("chris.jericho") >> Mock(User)
+		1 * userAccountManager.createUserWithoutCredentials({
+			it -> it.login == "chris.jericho"
+		}, UsersGroup.USER)
 	}
 }

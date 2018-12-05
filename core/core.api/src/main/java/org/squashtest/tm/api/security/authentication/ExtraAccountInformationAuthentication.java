@@ -20,31 +20,26 @@
  */
 package org.squashtest.tm.api.security.authentication;
 
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 
-
 /**
- * <p>
- * 	Third-party {@link AuthenticationProvider} may tie to the Authentication object they produce to their own {@link AuthenticationProviderFeatures} with this.
- * 	When Squash is presented an FeaturesAwareAuthentication, it will try first to honor these features instead of the primary {@link AuthenticationProviderFeatures}.
- * </p> 
- * 
- *  <p>
- *   This is very useful when the said authentication provider is not the primary one (ie, not set as such in application property 'authentication.provider').
- *  </p>
+ * Implementors carry more information regarding the user account. These extra information are typically hosted on the remote authentication provider and used by Squash TM when (and if) the user account must 
+ * be created. Remember that account creation can occur only if the associated {@link AuthenticationProviderFeatures} permits it, eg {@link AuthenticationProviderFeatures#shouldCreateMissingUser()} is true. 
  * 
  * @author bsiri
  *
  */
-public interface FeaturesAwareAuthentication extends Authentication {
 
-	/**
-	 * Return the features specific to the authentication provider that created this Authentication instead of 
-	 * the primary. If null, the primary will be used instead.
-	 * 
-	 * @return
-	 */
-	AuthenticationProviderFeatures getFeatures();
+/*
+ * This solution for the user account information is not really satisfying but is imposed by package visibility : we cannot manipulate org.squashtest.tm.domain.users.User directly, because it is not visible to 
+ * this artifact.  
+ */
+public interface ExtraAccountInformationAuthentication extends Authentication{
+
+	String getFirstName();
+	
+	String getLastName();
+	
+	String getEmail();
 	
 }

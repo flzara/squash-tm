@@ -471,6 +471,16 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 		userDao.save(user);
 	}
+	
+	@Override
+	public void createUserWithoutCredentials(User user, String usergroupName) {
+		checkLoginAvailability(user.getLogin());
+
+		UsersGroup group = groupDao.findByQualifiedName(usergroupName);
+		user.setGroup(group);
+
+		userDao.save(user);
+	}
 
 	/**
 	 * @see org.squashtest.tm.service.user.AdministrationService#createAuthentication(long,
