@@ -54,34 +54,44 @@
 <div id="cuf-binding-administration">
 	<fieldset>
 		<legend th:text="#{workspace.requirement.button.label}" style="width: 100%; padding: 5px; font-family: Verdana, Arial, sans-serif; font-size: 16px;"></legend>
+
+    <div id="reqFolders-binding-manager" th:include="project-tabs/custom-field-binding :: cuf-unit-binder" th:with="HTMLID='reqFolders',bindings=${reqFoldersBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).REQUIREMENT_FOLDER}">
+    </div>
+
 		<div id="requirements-binding-manager" th:include="project-tabs/custom-field-binding :: cuf-unit-binder" th:with="HTMLID='requirements',bindings=${requirementBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).REQUIREMENT_VERSION}">
 		</div>
 
-		<div id="reqFolders-binding-manager" th:include="project-tabs/custom-field-binding :: cuf-unit-binder" th:with="HTMLID='reqFolders',bindings=${reqFoldersBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).REQUIREMENT_FOLDER}">
-		</div>
 	</fieldset>
 
 	<fieldset>
 		<legend th:text="#{workspace.test-case.title}" style="width: 100%; padding: 5px; font-family: Verdana, Arial, sans-serif; font-size: 16px;"></legend>
-		<div id="test-cases-binding-manager" th:include="project-tabs/custom-field-binding :: cuf-unit-binder" th:with="HTMLID='test-cases',bindings=${testCaseBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).TEST_CASE}">
-		</div>
 
-		<div id="tcFolders-binding-manager" th:include="project-tabs/custom-field-binding :: cuf-unit-binder" th:with="HTMLID='tcFolders',bindings=${tcFoldersBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).TESTCASE_FOLDER}">
+    <div id="tcFolders-binding-manager" th:include="project-tabs/custom-field-binding :: cuf-unit-binder" th:with="HTMLID='tcFolders',bindings=${tcFoldersBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).TESTCASE_FOLDER}">
+    </div>
+
+		<div id="test-cases-binding-manager" th:include="project-tabs/custom-field-binding :: cuf-unit-binder" th:with="HTMLID='test-cases',bindings=${testCaseBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).TEST_CASE}">
 		</div>
 
 		<div id="test-steps-binding-manager" th:include="project-tabs/custom-field-binding :: cuf-unit-binder" th:with="HTMLID='test-steps',bindings=${testStepBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).TEST_STEP}">
 		</div>
+
 	</fieldset>
 
 
 	<fieldset>
 		<legend th:text="#{user-preferences.tree-order.campaign.title}" style="width: 100%; padding: 5px; font-family: Verdana, Arial, sans-serif; font-size: 16px;"></legend>
 
+    <div id="campaignFolders-binding-manager" th:include="project-tabs/custom-field-binding :: cuf-unit-binder" th:with="HTMLID='campaignFolders',bindings=${campaignFoldersBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).CAMPAIGN_FOLDER}">
+    </div>
+
 		<div id="campaigns-binding-manager" th:include="project-tabs/custom-field-binding :: cuf-unit-binder" th:with="HTMLID='campaigns',bindings=${campaignBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).CAMPAIGN}">
 		</div>
 
-		<div id="campaignFolders-binding-manager" th:include="project-tabs/custom-field-binding :: cuf-unit-binder" th:with="HTMLID='campaignFolders',bindings=${campaignFoldersBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).CAMPAIGN_FOLDER}">
-		</div>
+    <div id="iterations-binding-manager" th:include="project-tabs/custom-field-binding :: cuf-unit-binder" th:with="HTMLID='iterations',bindings=${iterationBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).ITERATION}">
+    </div>
+
+    <div id="test-suites-binding-manager" th:include="project-tabs/custom-field-binding :: cuf-unit-binder" th:with="HTMLID='test-suites',bindings=${testSuiteBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).TEST_SUITE}">
+    </div>
 
 		<div id="executions-binding-manager" th:include="project-tabs/custom-field-binding :: cuf-unit-binder" th:with="HTMLID='executions',bindings=${executionBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).EXECUTION}">
 		</div>
@@ -89,11 +99,6 @@
 		<div id="execution-steps-binding-manager" th:include="project-tabs/custom-field-binding :: cuf-unit-binder" th:with="HTMLID='execution-steps',bindings=${executionStepBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).EXECUTION_STEP}">
 		</div>
 
-		<div id="iterations-binding-manager" th:include="project-tabs/custom-field-binding :: cuf-unit-binder" th:with="HTMLID='iterations',bindings=${iterationBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).ITERATION}">
-		</div>
-
-		<div id="test-suites-binding-manager" th:include="project-tabs/custom-field-binding :: cuf-unit-binder" th:with="HTMLID='test-suites',bindings=${testSuiteBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).TEST_SUITE}">
-		</div>
   </fieldset>
 </div>
 
