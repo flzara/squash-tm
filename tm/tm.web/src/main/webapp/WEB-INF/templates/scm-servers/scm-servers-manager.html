@@ -41,6 +41,9 @@
     squashtm.app = {
       contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash"
     };
+    squashtm.pageConfiguration = {
+      scmServerKinds: /*[[ ${scmKinds} ]]*/,
+    };
   </script>
   <script data-main="../../scripts/scm-servers-manager.js" th:attr="data-main=@{/scripts/scm-servers-manager.js}"
           src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
@@ -250,6 +253,19 @@
             </div>
             <input type="button" th:value="#{label.Ok}"/>
           </div>
+
+          <!--   GENERIC INFO POPUP  -->
+          <div id="generic-info-dialog" class="not-displayed popup-dialog" th:title="#{popup.title.Info}">
+            <div>
+              <div class="display-table-row">
+                <div class="generic-info-main display-table-cell" style="padding-top:20px">
+                  <span th:text="#{message.scmServerKind.noConnector}"></span>
+                </div>
+              </div>
+            </div>
+            <input type="button" th:value="#{label.Ok}"/>
+          </div>
+
         </div>
       </div>
 

@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'backbone', "squash.translator", "./AddScmServerDialog", "./DeleteScmServerDialog", "./DeleteMultipleScmServersDialog", "jquery.squash.confirmdialog", 'squashtable',	'jqueryui', 'jquery.squash.formdialog' ],
+define(['jquery', 'backbone', "squash.translator", "./AddScmServerDialog", "./DeleteScmServerDialog", "./DeleteMultipleScmServersDialog", "jquery.squash.messagedialog", 'squashtable'],
 		function($, Backbone, translator, AddScmServerDialog, DeleteScmServerDialog, DeleteMultipleScmServersDialog) {
 			"use strict";
 
@@ -38,6 +38,7 @@ define(['jquery', 'backbone', "squash.translator", "./AddScmServerDialog", "./De
 			this.DeleteScmServerDialog = new DeleteScmServerDialog(this.table);
 			this.DeleteMultipleScmServersDialog = new DeleteMultipleScmServersDialog(this.table);
 
+			this.infoDialog = $('#generic-info-dialog').messageDialog();
 		},
 
 		/* ==== Table functions ==== */
@@ -54,8 +55,11 @@ define(['jquery', 'backbone', "squash.translator", "./AddScmServerDialog", "./De
 
 		/* ==== Add ScmServer Popup functions =====*/
 		openAddScmServerDialog : function() {
-
-			this.AddScmServerDialog.open();
+			if(squashtm.pageConfiguration.scmServerKinds.length === 0) {
+				this.infoDialog.messageDialog('open');
+			} else {
+				this.AddScmServerDialog.open();
+			}
 		},
 
 		/* ==== Delete Multiple ScmServers Popup function ==== */
