@@ -65,7 +65,7 @@ define(['jquery', 'backbone', "squash.translator", "app/util/StringUtil", "app/l
 						this.clearErrorMessages();
 
 						if(!this.checkBlankInputsAndDisplayErrors()) {
-							let newScmServer = this.retrieveNewScmServerParams();
+							var newScmServer = this.retrieveNewScmServerParams();
 							this.doAddNewScmServer(newScmServer)
 								.success(callback);
 						}
@@ -80,9 +80,9 @@ define(['jquery', 'backbone', "squash.translator", "app/util/StringUtil", "app/l
 					* }
 					*/
 					retrieveNewScmServerParams : function() {
-						let name = this.inputs['name'].val();
-						let kind = this.inputs['kind'].val();
-						let url = this.inputs['url'].val();
+						var name = this.inputs['name'].val();
+						var kind = this.inputs['kind'].val();
+						var url = this.inputs['url'].val();
 						return {
 							"name": name,
 							"kind": kind,
@@ -120,8 +120,8 @@ define(['jquery', 'backbone', "squash.translator", "app/util/StringUtil", "app/l
 					* Clear all error messages in this dialog.
 					*/
 					clearErrorMessages : function() {
-						for(let key in this.inputs) {
-							let element = this.inputs[key];
+						for(var key in this.inputs) {
+							var element = this.inputs[key];
 							Forms.input(element).clearState();
 						}
 						this.$el.find('.url-error').text('');
@@ -135,9 +135,9 @@ define(['jquery', 'backbone', "squash.translator", "app/util/StringUtil", "app/l
 
           	var oneInputIsBlank = false;
 
-          	for(let key in this.inputs) {
-          		let element = this.inputs[key];
-          		let value = element.val();
+          	for(var key in this.inputs) {
+          		var element = this.inputs[key];
+          		var value = element.val();
           		if(StringUtils.isBlank(value)) {
           			oneInputIsBlank = true;
           			Forms.input(element).setState("error", translator.get("message.notBlank"));

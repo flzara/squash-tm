@@ -67,7 +67,7 @@
 			// if no blanks (except folder)
 			if(!this.checkBlankInputsAndDisplayErrors()) {
 				// retrieve parameters
-				let newScmRepository = this.retrieveNewScmRepositoryParams();
+				var newScmRepository = this.retrieveNewScmRepositoryParams();
 				// create the repository
 				this.doAddNewScmRepository(newScmRepository)
 					.success(callback);
@@ -99,10 +99,10 @@
 		* }
 		*/
 		retrieveNewScmRepositoryParams : function() {
-			let name = this.inputs['name'].val();
-			let path = this.inputs['path'].val();
-			let folder = this.inputs['folder'].val();
-			let branch = this.inputs['branch'].val();
+			var name = this.inputs['name'].val();
+			var path = this.inputs['path'].val();
+			var folder = this.inputs['folder'].val();
+			var branch = this.inputs['branch'].val();
 			return {
 				"name": name,
 				"repositoryPath": path,
@@ -115,8 +115,8 @@
 		* Clear all error messages in this dialog.
 		*/
 		clearErrorMessages: function() {
-			for(let key in this.inputs) {
-				let element = this.inputs[key];
+			for(var key in this.inputs) {
+				var element = this.inputs[key];
 				Forms.input(element).clearState();
 			}
 		},
@@ -125,11 +125,11 @@
 		* @return True if at least one entry is left blank (except folder), else returns False.
 		*/
 		checkBlankInputsAndDisplayErrors: function() {
-			let oneInputIsBlank = false;
-			let constrainedInputs = _.omit(this.inputs, 'folder');
-			for(let key in constrainedInputs) {
-				let element = constrainedInputs[key];
-				let value = element.val();
+			var oneInputIsBlank = false;
+			var constrainedInputs = _.omit(this.inputs, 'folder');
+			for(var key in constrainedInputs) {
+				var element = constrainedInputs[key];
+				var value = element.val();
 				if(StringUtils.isBlank(value)) {
 					oneInputIsBlank = true;
 					Forms.input(element).setState("error", translator.get("message.notBlank"));

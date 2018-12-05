@@ -50,7 +50,7 @@ define(['jquery', 'backbone', "squash.translator", "workspace.routing", 'jquery.
 		},
 
 		deleteOneScmRepository: function(callback) {
-			let repositoryId = this.$el.data('entity-id');
+			var repositoryId = this.$el.data('entity-id');
 			this.doDeleteOneScmRepository(repositoryId).success(callback);
 		},
 		/**

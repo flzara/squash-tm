@@ -36,7 +36,7 @@ define(['jquery', 'backbone', 'squash.translator', './AddScmRepositoryDialog', '
 		},
 
 		initialize: function() {
-			let table = this.initTable();
+			var table = this.initTable();
 			this.AddScmRepositoryDialog = new AddScmRepositoryDialog(table);
 			this.DeleteScmRepositoryDialog = new DeleteScmRepositoryDialog(table);
 			this.DeleteMultipleScmRepositoriesDialog = new DeleteMultipleScmRepositoriesDialog(table);

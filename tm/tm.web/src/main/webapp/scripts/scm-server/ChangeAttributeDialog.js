@@ -28,8 +28,8 @@ define(['jquery', 'backbone', 'squash.translator', 'workspace.routing', 'app/uti
 		input: $('#change-attribute-input'),
 
 		initialize: function(scmRepositoriesTable) {
-			let self = this;
-			let $el = this.$el
+			var self = this;
+			var $el = this.$el
 
 			self.ChangeAttributeDialog = $el.formDialog();
 			self.table = scmRepositoriesTable;
@@ -51,14 +51,14 @@ define(['jquery', 'backbone', 'squash.translator', 'workspace.routing', 'app/uti
 		* Prepare the configuration of the dialog for repository path modification.
 		*/
 		openForPath(event) {
-			let self = this;
-			let title = translator.get('title.ChangeRepositoryPath');
-			let label = translator.get('label.RepositoryPath');
+			var self = this;
+			var title = translator.get('title.ChangeRepositoryPath');
+			var label = translator.get('label.RepositoryPath');
 
-			let tableCell = event.currentTarget;
-			let repositoryPath = $(tableCell).text();
+			var tableCell = event.currentTarget;
+			var repositoryPath = $(tableCell).text();
 
-			let row = tableCell.parentElement;
+			var row = tableCell.parentElement;
 			// notify repository ID
 			self.repositoryId = self.table.fnGetData(row)['repository-id'];
 			// notify mode
@@ -70,15 +70,15 @@ define(['jquery', 'backbone', 'squash.translator', 'workspace.routing', 'app/uti
 		* Prepare the configuration of the dialog for folder path modification.
 		*/
 		openForFolder(event) {
-			let self = this;
+			var self = this;
 
-			let title = translator.get('title.ChangeWorkingFolderPath');
-			let label = translator.get('label.WorkingFolderPath');
+			var title = translator.get('title.ChangeWorkingFolderPath');
+			var label = translator.get('label.WorkingFolderPath');
 
-			let tableCell = event.currentTarget;
-			let folderPath = $(tableCell).text();
+			var tableCell = event.currentTarget;
+			var folderPath = $(tableCell).text();
 
-			let row = tableCell.parentElement;
+			var row = tableCell.parentElement;
 			// notify repository ID
 			self.repositoryId = self.table.fnGetData(row)['repository-id'];
 			// notify mode
@@ -90,15 +90,15 @@ define(['jquery', 'backbone', 'squash.translator', 'workspace.routing', 'app/uti
 		* Prepare the configuration of the dialog for folder path modification.
 		*/
 		openForBranch(event) {
-			let self = this;
+			var self = this;
 
-			let title = translator.get('title.ChangeWorkingBranch');
-			let label = translator.get('label.WorkingBranch');
+			var title = translator.get('title.ChangeWorkingBranch');
+			var label = translator.get('label.WorkingBranch');
 
-			let tableCell = event.currentTarget;
-			let branch = $(tableCell).text();
+			var tableCell = event.currentTarget;
+			var branch = $(tableCell).text();
 
-			let row = tableCell.parentElement;
+			var row = tableCell.parentElement;
 			// notify repository ID
 			self.repositoryId = self.table.fnGetData(row)['repository-id'];
 			// notify mode
@@ -111,7 +111,7 @@ define(['jquery', 'backbone', 'squash.translator', 'workspace.routing', 'app/uti
 		* Also fill the only input with the current value of this attribute.
 		*/
 		adaptAndOpenDialog(title, label, value) {
-			let self = this;
+			var self = this;
 			// clear errors
 			Forms.input(self.input).clearState();
 			// title
@@ -128,16 +128,16 @@ define(['jquery', 'backbone', 'squash.translator', 'workspace.routing', 'app/uti
 		* If everything is valid, update the attribute of the ScmRepository and execute the callback function.
 		*/
 		updateAttribute(callback) {
-			let self = this;
+			var self = this;
 
 			// clear errors
 			Forms.input(self.input).clearState();
 
-			let mode = self.mode;
-			let value = self.input.val();
-			let repositoryId = self.repositoryId;
+			var mode = self.mode;
+			var value = self.input.val();
+			var repositoryId = self.repositoryId;
 
-			let data = {};
+			var data = {};
 			data[mode] = value;
 
 			if(mode !== 'folder' && StringUtils.isBlank(value)) {
