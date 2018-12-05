@@ -281,43 +281,6 @@ class ScmServerManagerServiceTest extends Specification {
 			thrown Exception
 	}
 
-	def "#updateKind(long, String) - [Nominal] Should update the kind of a ScmServer"() {
-		given: "Mock data"
-			long serverId = 10
-			ScmServer server = new ScmServer()
-			server.id = serverId
-			server.kind = "git"
-		and:
-			String newKind = "mercurial"
-		and: "Mock Dao method"
-			scmServerDao.getOne(serverId) >> server
-		when:
-			String resultKind = scmServerManagerService.updateKind(serverId, newKind)
-		then:
-			server.id == serverId
-			server.kind == newKind
-			1 * scmServerDao.save(server)
-			resultKind == newKind
-	}
-
-	def "#updateKind(long, String) - [Nothing] Should try to update the kind of a ScmServer with the same kind and do nothing"() {
-		given: "Mock data"
-			long serverId = 10
-			String serverKind = "git"
-			ScmServer server = new ScmServer()
-			server.id = serverId
-			server.kind = serverKind
-		and: "Mock Dao method"
-			scmServerDao.getOne(serverId) >> server
-		when:
-			String resultKind = scmServerManagerService.updateKind(serverId, serverKind)
-		then:
-			server.id == serverId
-			server.kind == serverKind
-			0 * scmServerDao.save(server)
-			resultKind == serverKind
-	}
-
 	def '#deleteScmServers(Collection<Long>) - [Nominal] Should delete several ScmServers'() {
 		given: "Mock data"
 			Collection<Long> serverIds = [1L, 5L, 15L]

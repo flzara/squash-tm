@@ -48,27 +48,5 @@ require([ "common" ], function() {
 			$(this).siblings('.error-message').text('');
 		});
 
-		/* JEditable for Kind modification. */
-		var mapScmKinds = function(kindsArray) {
-			var result = {};
-			kindsArray.forEach(function(kind) {
-				result[kind] = kind;
-			});
-			return result;
-		};
-
-		var scmKinds = mapScmKinds(squashtm.pageConfiguration.scmServerKinds);
-
-		new SimpleJEditable({
-			// targetUrl is the current one.
-			componentId: "scm-server-kind",
-			jeditableSettings: {
-				name: 'kind',
-				data: scmKinds,
-				type: 'select'
-			}
-		});
-
-
 	});
 });

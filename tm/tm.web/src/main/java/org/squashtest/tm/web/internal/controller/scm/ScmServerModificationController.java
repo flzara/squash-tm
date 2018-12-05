@@ -99,12 +99,6 @@ public class ScmServerModificationController {
 		return scmServerManager.updateUrl(scmServerId, url);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = KIND)
-	@ResponseBody
-	public String updateKind(@PathVariable long scmServerId, @RequestParam String kind) {
-		return scmServerManager.updateKind(scmServerId, kind);
-	}
-
 	@RequestMapping(value = "/repositories", method = RequestMethod.GET, params = S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getScmRepositoriesTableModel(@PathVariable long scmServerId, DataTableDrawParameters params) {

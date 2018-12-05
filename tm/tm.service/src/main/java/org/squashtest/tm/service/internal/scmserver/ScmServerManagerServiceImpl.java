@@ -106,20 +106,6 @@ public class ScmServerManagerServiceImpl implements ScmServerManagerService {
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
-	public String updateKind(long scmServerId, String newKind) {
-		ScmServer scmServer = scmServerDao.getOne(scmServerId);
-		String formerKind = scmServer.getKind();
-		if(formerKind.equals(newKind)) {
-			LOGGER.debug("Did not update the ScmServer kind because the submitted kind is identical to the former one.");
-			return formerKind;
-		}
-		scmServer.setKind(newKind);
-		scmServerDao.save(scmServer);
-		return newKind;
-	}
-
-	@Override
-	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deleteScmServers(Collection<Long> scmServerIds) {
 		for(Long serverId : scmServerIds) {
 			ScmServer server = scmServerDao.getOne(serverId);
