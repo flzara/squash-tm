@@ -79,7 +79,7 @@
 				<f:message key="requirement.rate.cover" />
 			</label>
 			<div class="display-table-cell">
-				<span title="${titleValidationRequirement}">{{coverage.requirementVersionRate}} % </span>
+				<span title="${titleCoverageRequirement}">{{coverage.requirementVersionRate}} % </span>
 			</div>
 			{{#if isAncestor}}
 			<div class="display-table-cell">
