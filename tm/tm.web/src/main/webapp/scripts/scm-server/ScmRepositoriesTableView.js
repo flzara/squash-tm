@@ -30,6 +30,7 @@ define(['jquery', 'backbone', 'squash.translator', './AddScmRepositoryDialog', '
 		events: {
 			"click #add-scm-repository" : "openAddScmRepositoryDialog",
 			"click #delete-scm-repositories" : "openDeleteMultipleRepositoriesDialog",
+			'click #scm-repository-table td.col-name' : 'openChangeNamePopup',
 			'click #scm-repository-table td.col-path' : 'openChangePathPopup',
 			'click #scm-repository-table td.col-folder' : 'openChangeFolderPopup',
 			'click #scm-repository-table td.col-branch' : 'openChangeBranchPopup'
@@ -59,6 +60,10 @@ define(['jquery', 'backbone', 'squash.translator', './AddScmRepositoryDialog', '
 
 		openDeleteMultipleRepositoriesDialog: function() {
 			this.DeleteMultipleScmRepositoriesDialog.open();
+		},
+
+		openChangeNamePopup: function(event) {
+			this.ChangeAttributeDialog.openForName(event);
 		},
 
 		openChangePathPopup: function(event) {

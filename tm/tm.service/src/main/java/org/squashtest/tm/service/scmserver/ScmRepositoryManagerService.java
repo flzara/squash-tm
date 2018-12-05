@@ -49,6 +49,13 @@ public interface ScmRepositoryManagerService {
 	 */
 	void createNewScmRepository(long scmServerId, ScmRepository newScmRepository);
 	/**
+	 * Update the name of the ScmRepository with the given Id to the new given name.
+	 * @param scmRepositoryId The Id of the ScmRepository which name is to update.
+	 * @param newName The new name of the ScmRepository.
+	 * @return The new name of the ScmRepository.
+	 */
+	String updateName(long scmRepositoryId, String newName);
+	/**
 	 * Update the path of the ScmRepository with the given Id to the new given path.
 	 * @param scmRepositoryId The Id of the ScmRepository which path is to update.
 	 * @param newPath The new path of the ScmRepository.

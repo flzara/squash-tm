@@ -32,6 +32,7 @@ import java.util.List;
 @RequestMapping("/administration/scm-repositories")
 public class ScmRepositoryManagementAdminController {
 
+	private static final String NAME = "name";
 	private static final String PATH = "path";
 	private static final String FOLDER = "folder";
 	private static final String BRANCH = "branch";
@@ -43,6 +44,12 @@ public class ScmRepositoryManagementAdminController {
 	@ResponseBody
 	public void deleteScmRepositories(@PathVariable List<Long> scmRepositoriesIds) {
 		scmRepositoryManager.deleteScmRepositories(scmRepositoriesIds);
+	}
+
+	@RequestMapping(value = "/{scmRepositoryId}", method = RequestMethod.POST, params = NAME)
+	@ResponseBody
+	public String updateName(@PathVariable long scmRepositoryId, String name) {
+		return scmRepositoryManager.updateName(scmRepositoryId, name);
 	}
 
 	@RequestMapping(value = "/{scmRepositoryId}", method = RequestMethod.POST, params = PATH)

@@ -70,6 +70,19 @@ public class ScmRepositoryManagerServiceImpl implements ScmRepositoryManagerServ
 	}
 
 	@Override
+	public String updateName(long scmRepositoryId, String newName) {
+		ScmRepository scmRepository = scmRepositoryDao.getOne(scmRepositoryId);
+		String formerName = scmRepository.getName();
+		if(formerName.equals(newName)) {
+			LOGGER.debug("Did not update the ScmRepository name because the submitted name is identical to the former one");
+			return formerName;
+		}
+		scmRepository.setName(newName);
+		scmRepositoryDao.save(scmRepository);
+		return newName;
+	}
+
+	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public String updatePath(long scmRepositoryId, String newPath) {
 		ScmRepository scmRepository = scmRepositoryDao.getOne(scmRepositoryId);
