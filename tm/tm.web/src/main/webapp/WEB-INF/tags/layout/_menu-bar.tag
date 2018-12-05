@@ -44,7 +44,7 @@
 <f:message var="cancelLabel" key="label.Cancel" />
 
 
-<sec:authorize access="(hasRole('ROLE_TF_FUNCTIONAL_TESTER') and hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')) or (hasRole('ROLE_TF_FUNCTIONAL_TESTER') and !hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')) or hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')">
+<sec:authorize access="hasRole('ROLE_TF_FUNCTIONAL_TESTER') or hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')">
 	<div style="display: inline-flex;">
  	 <input type="checkbox" id="menu-toggle-filter-ckbox" ${filterCheckedClause}></input>
   	 <div class="icon iconmargin menubarmargintop"><span class="ui-icon  ui-icon-volume-off rotateright"></span></div>
@@ -75,10 +75,10 @@
 <c:url var="logoutUrl" value="/logged-out" />
 </sec:authorize>
 <div>
-	<%-- 
+	<%--
 		CRSF : since '/logout' modifies the application state it must not be
 		called by GET : a POST + csrf token is more appropriate.
-		The logout menu is bound by javascript in app/ws/squashtm.workspace.js  
+		The logout menu is bound by javascript in app/ws/squashtm.workspace.js
 	--%>
   <div class="icon"><span class="ui-icon ui-icon-power"></span></div>
   <a id="menu-logout-link" href="${ logoutUrl }"  >

@@ -43,9 +43,10 @@
 
 <c:set var="visibleBugtrackers" value="${wu:getVisibleBugtrackers(pageContext.servletContext)}"/>
 <c:set var="hideClass"			value="${empty visibleBugtrackers ? 'not-displayed' : ''}"/>
+<c:set var="canNavigate" value="hasRole('ROLE_TF_FUNCTIONAL_TESTER') or hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')" />
 
 <div id="navigation" data-highlight="${ highlighted }">
-<sec:authorize access="(hasRole('ROLE_TF_FUNCTIONAL_TESTER') and hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')) or (hasRole('ROLE_TF_FUNCTIONAL_TESTER') and !hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')) or hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')">
+<sec:authorize access="${canNavigate}">
 	<div id="test_mgt_nav">
 		<a id="requirement-link" 	style="margin-top: 15px;"	class="navigation-link navigation-requirement"	href="${rootctxt}/requirement-workspace/"	title="${reqTitle}"></a>
 		<a id="test-case-link"	 	style="margin-top: 10px;"	class="navigation-link navigation-test-case" 	href="${rootctxt}/test-case-workspace/"		title="${tcTitle}"></a>
@@ -69,7 +70,7 @@
       				<li><a id="automation-tester-link" href="${rootctxt}/automation-tester-workspace/" title="${automTesterTitle}" ${targetClause}><c:out value="${automTesterTitle}"/></a></li>
       			</ul>
       </sec:authorize>
-			<sec:authorize access="(hasRole('ROLE_TF_FUNCTIONAL_TESTER') and hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')) or (hasRole('ROLE_TF_FUNCTIONAL_TESTER') and !hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')) or hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')">
+			<sec:authorize access="${canNavigate}">
 			<a id="custom-report-link"	 	class="navigation-link navigation-custom-report" 			href="${rootctxt}/custom-report-workspace/"			title="${customReportTitle}"></a>
 			<a id="bugtracker-link"	 	class="navigation-link navigation-bugtracker ${hideClass}" 	title="${bugTitle}"></a>
 			<ul class="not-displayed width:130px;" style="max-height: 12.8em;">

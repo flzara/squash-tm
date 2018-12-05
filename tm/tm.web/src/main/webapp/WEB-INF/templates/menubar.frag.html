@@ -40,7 +40,7 @@
   <div class="main-menubar" th:fragment="menubar">
     <div th:remove="tag" class="this div exists for settings only, it will never be rendered" th:with="filter = ${(projectFilter == null) ? #workspace.projectFilter() : projectFilter}">
 
-      <div th:if="(${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')}) or (${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${!sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')}) or ${sec.hasRole('ROLE_ADMIN')} or ${sec.hasRole('ROLE_TM_PROJECT_MANAGER')}"
+      <div th:if="${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} or ${sec.hasRole('ROLE_ADMIN')} or ${sec.hasRole('ROLE_TM_PROJECT_MANAGER')}"
         style="display: inline-flex;">
         <input type="checkbox" id="menu-toggle-filter-ckbox" th:checked="${filter.enabled}"></input>
         <div class="icon iconmargin menubarmargintop"><span class="ui-icon  ui-icon-volume-off rotateright"></span></div>
@@ -63,10 +63,10 @@
       </div>
 
       <div th:if="${sec.isAuthenticated()}">
-        <!-- 
+        <!--
 				CRSF : since '/logout' modifies the application state it must not be
 				called by GET : a POST + csrf token is more appropriate.
-				The logout menu is bound by javascript in app/ws/squashtm.workspace.js  
+				The logout menu is bound by javascript in app/ws/squashtm.workspace.js
 			-->
         <div class="icon"><span class="ui-icon ui-icon-power"></span></div>
         <a id="menu-logout-link" th:href="@{/logged-out}" th:text="#{workspace.menubar.logout.label}">logout</a>

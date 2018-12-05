@@ -47,24 +47,25 @@
 
 <body>
   <div id="workspace" th:fragment="navbar(highlight)">
-    <div id="test_mgt_nav" class="squash-navbar" th:with="bugtrackers = ${bugtrackers == null ? #workspace.visibleBugtrackers() : bugtrackers}">
+    <div id="test_mgt_nav" class="squash-navbar" th:with="bugtrackers = ${bugtrackers == null ? #workspace.visibleBugtrackers() : bugtrackers},
+      canNavigate = ${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} or ${sec.hasRole('ROLE_ADMIN')} or ${sec.hasRole('ROLE_TM_PROJECT_MANAGER')}">
 
       <a id="requirement-link" style="margin-top: 15px;" class="navigation-link navigation-requirement navigation-link-first"
         th:href="@{/requirement-workspace/}" th:title="#{workspace.requirement.button.label}" th:classappend="${highlight == 'requirement'} ? 'navigation-selected'"
-        th:if="(${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')}) or (${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${!sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')}) or ${sec.hasRole('ROLE_ADMIN')} or ${sec.hasRole('ROLE_TM_PROJECT_MANAGER')}">
+        th:if="${canNavigate}">
       </a>
       <a id="test-case-link" style="margin-top: 10px;" class="navigation-link navigation-test-case" th:href="@{/test-case-workspace/}"
         th:title="#{workspace.test-case.button.label}" th:classappend="${highlight == 'test-case'} ? 'navigation-selected'"
-        th:if="(${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')}) or (${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${!sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')}) or ${sec.hasRole('ROLE_ADMIN')} or ${sec.hasRole('ROLE_TM_PROJECT_MANAGER')}"></a>
+        th:if="${canNavigate}"></a>
 
       <a id="campaign-link" style="margin-top: 10px;" class="navigation-link navigation-campaign" th:href="@{/campaign-workspace/}"
         th:title="#{workspace.campaign.button.label}" th:classappend="${highlight == 'campaign'} ? 'navigation-selected'"
-        th:if="(${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')}) or (${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${!sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')}) or ${sec.hasRole('ROLE_ADMIN')} or ${sec.hasRole('ROLE_TM_PROJECT_MANAGER')}"></a>
+        th:if="${canNavigate}"></a>
 
 
 
       <div id="nav_logo">
-        <div id="test_mgt_nav" style="margin-bottom: 40px; margin-top:70px;">
+        <div id="test_mgt_nav_bottom" style="margin-bottom: 40px; margin-top:70px;">
           <a id="home-link" class="navigation-link navigation-home" th:href="@{/home-workspace/}" th:title="#{workspace.home.button.label}"
             th:classappend="${highlight == 'home'} ? 'navigation-selected'">
           </a>
@@ -90,10 +91,10 @@
 
           <a id="custom-report-link" class="navigation-link navigation-custom-report" th:href="@{/custom-report-workspace/}"
             th:title="#{workspace.custom-report.title.long}" th:classappend="${highlight == 'custom-report'} ? 'navigation-selected'"
-            th:if="(${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')}) or (${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${!sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')}) or ${sec.hasRole('ROLE_ADMIN')} or ${sec.hasRole('ROLE_TM_PROJECT_MANAGER')}"></a>
+            th:if="${canNavigate}"></a>
 
           <a id="bugtracker-link" class="navigation-link navigation-bugtracker" th:classappend="${#lists.isEmpty(bugtrackers)} ? 'not-displayed'"
-            th:title="#{workspace.bugtracker.button.label}" th:if="(${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')}) or (${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${!sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')}) or ${sec.hasRole('ROLE_ADMIN')} or ${sec.hasRole('ROLE_TM_PROJECT_MANAGER')}"></a>
+            th:title="#{workspace.bugtracker.button.label}" th:if="${canNavigate}"></a>
 
           <ul class="not-displayed width:130px;" style="max-height: 12.8em;">
             <li th:each="bugtracker : ${bugtrackers}">

@@ -196,7 +196,7 @@
 			</jsp:attribute>
 		</comp:toggle-panel>
 
-<sec:authorize access="(hasRole('ROLE_TF_FUNCTIONAL_TESTER') and hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')) or (hasRole('ROLE_TF_FUNCTIONAL_TESTER') and !hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')) or hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')">
+<sec:authorize access="hasRole('ROLE_TF_FUNCTIONAL_TESTER') or hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')">
 		<comp:toggle-panel id="tree-order-panel" titleKey="user-preferences.tree-order.title" open="true" >
 			<jsp:attribute name="body">
 				<div class="display-table">
