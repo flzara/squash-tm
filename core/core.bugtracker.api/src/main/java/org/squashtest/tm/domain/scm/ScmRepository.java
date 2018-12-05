@@ -23,6 +23,7 @@ package org.squashtest.tm.domain.scm;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "SCM_REPOSITORY")
@@ -33,6 +34,11 @@ public class ScmRepository {
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "scm_repository_id_seq")
 	@SequenceGenerator(name = "scm_repository_id_seq", sequenceName = "scm_repository_id_seq")
 	private Long id;
+
+	@Column(name = "NAME")
+	@NotBlank
+	@Size(max = 255)
+	private String name;
 
 	@Column(name = "REPOSITORY_PATH")
 	@NotBlank
@@ -54,6 +60,13 @@ public class ScmRepository {
 	}
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getBranch() {

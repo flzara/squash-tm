@@ -27,6 +27,7 @@
 		el: '#add-scm-repository-popup',
 
 		inputs: {
+			name: $('#name'),
 			path: $('#path'),
 			folder: $('#folder'),
 			branch: $('#branch'),
@@ -98,10 +99,12 @@
 		* }
 		*/
 		retrieveNewScmRepositoryParams : function() {
+			let name = this.inputs['name'].val();
 			let path = this.inputs['path'].val();
 			let folder = this.inputs['folder'].val();
 			let branch = this.inputs['branch'].val();
 			return {
+				"name": name,
 				"repositoryPath": path,
 				"folderPath": folder,
 				"branch": branch

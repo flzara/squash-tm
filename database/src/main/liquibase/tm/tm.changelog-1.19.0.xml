@@ -300,6 +300,11 @@
       <column name="SCM_SERVER_ID" type="BIGINT" remarks="The foreign key to the related SCM_SEVER">
         <constraints nullable="false" foreignKeyName="fk_scm_repository_scm_server" references="SCM_SERVER(SCM_SERVER_ID)"/>
       </column>
+
+      <column name="NAME" type="VARCHAR(255)" remarks="The unique name of the repository.">
+        <constraints unique="true" nullable="false" />
+      </column>
+
       <column name="REPOSITORY_PATH" type="VARCHAR(255)" remarks="The absolute path to the local repository on the local server.">
         <constraints nullable="false"/>
       </column>

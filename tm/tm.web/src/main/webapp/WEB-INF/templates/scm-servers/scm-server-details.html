@@ -168,6 +168,7 @@
                     <tr>
                       <th th:attr="data-def='invisible, map=repository-id'" class="not-displayed">Id</th>
                       <th th:attr="data-def='select, map=repository-index'">#</th>
+                      <th th:attr="data-def='sortable, map=name, sClass=col-name'" th:text="#{label.Name}">My_Repository</th>
                       <th th:attr="data-def='sortable, map=path, sClass=col-path'" th:text="#{label.RepositoryPath}">Chemin</th>
                       <th th:attr="data-def='sortable, map=folder, sClass=col-folder'" th:text="#{label.WorkingFolder}">Dossier de Travail</th>
                       <th th:attr="data-def='sortable, map=branch, sClass=col-branch'" th:text="#{label.WorkingBranch}">Branche de Travail</th>
@@ -178,7 +179,8 @@
                     <tr th:each="repository, iterStat : ${scmRepositories}" th:object="${repository}">
                       <td th:text="*{id}" class="not-displayed">1</td>
                       <td th:text="${iterStat.count}">1</td>
-                      <td th:text="*{repositoryPath}">/home/repositories/repo1</td>
+                      <td th:text="*{name}">Bank_Application</td>
+                      <td th:text="*{repositoryPath}">/home/repositories/bank_application</td>
                       <td th:text="*{folderPath}">resources/features</td>
                       <td th:text="*{branch}">master</td>
                       <td></td>
@@ -193,7 +195,7 @@
           </div>
         </div>
 
-        <!---- RENAME POPUP ---->
+        <!---- RENAME SERVER OPUP ---->
         <div id="rename-scm-server-popup" class="not-displayed popup-dialog" th:title="#{title.RenameServer}">
           <label for="rename-scm-server-input" th:text="#{ label.Rename }">Rename</label>
           <input type="text" id="rename-scm-server-input" maxlength="255" size="50"/>
@@ -205,14 +207,24 @@
           </div>
         </div>
 
-        <!---- ADD POPUP ----->
+        <!---- ADD REPOSITORY POPUP ----->
         <div id="add-scm-repository-popup" class="not-displayed popup-dialog form-horizontal"
              title="Add a new Scm Repository" th:title="#{title.newScmRepository}">
           <div>
+
+            <div class="control-group">
+              <label class="control-label" for="path" th:text="#{label.Name}">Name</label>
+              <div class="controls">
+                <input id="name" name="name" class="strprop" value="" size="50" maxlength="255" type="text" data-def="maininput" />
+                <br/>
+                <span class="help-inline">&nbsp;</span>
+              </div>
+            </div>
+
             <div class="control-group">
               <label class="control-label" for="path" th:text="#{label.RepositoryPath}">Name</label>
               <div class="controls">
-                <input id="path" name="path" class="strprop" value="" size="50" maxlength="50" type="text" data-def="maininput" />
+                <input id="path" name="path" class="strprop" value="" size="50" maxlength="50" type="text" />
                 <br/>
                 <span class="help-inline">&nbsp;</span>
               </div>

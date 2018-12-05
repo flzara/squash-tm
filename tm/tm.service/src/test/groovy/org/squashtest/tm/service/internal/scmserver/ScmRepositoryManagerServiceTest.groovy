@@ -119,6 +119,7 @@ class ScmRepositoryManagerServiceTest extends Specification {
 	def "#createNewScmRepository(ScmRepository) - [Nominal] Should create a new ScmRepository with its attributes"() {
 		given: "Mock repository"
 			ScmRepository repo = new ScmRepository()
+			repo.name = "My_Project"
 			repo.repositoryPath = "/home/repositories/repo1"
 			repo.folderPath = "resources/features"
 			repo.branch = "master"

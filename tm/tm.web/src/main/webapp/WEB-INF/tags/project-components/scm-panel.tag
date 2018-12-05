@@ -59,7 +59,7 @@
 				<f:message key="label.ScmRepository" />
 			</legend>
 			<c:set var="scmRepositoryName"
-            				value="${ (not empty project.scmRepository) ? project.scmRepository.repositoryPath : noRepositoryLabel}"/>
+            				value="${ (not empty project.scmRepository) ? project.scmRepository.name : noRepositoryLabel}"/>
 			<div id="selected-scm-repository">
 				<c:out value="${scmRepositoryName}" escapeXml="true" />
 			</div>

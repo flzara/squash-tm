@@ -76,6 +76,7 @@ public class ScmServerModificationController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showInfos(@PathVariable long scmServerId) {
+
 		ScmServer scmServer = scmServerManager.findScmServer(scmServerId);
 		Set<String> scmServerKinds = scmServerRegistry.getRegisteredScmKinds();
 		List<ScmRepository> scmRepositories = scmRepositoryManager.findByScmServerOrderByPath(scmServerId);
@@ -126,6 +127,7 @@ public class ScmServerModificationController {
 
 			row.put("repository-id", item.getId().toString());
 			row.put("repository-index", Long.toString(getCurrentIndex()));
+			row.put("name", item.getName());
 			row.put("path", item.getRepositoryPath());
 			row.put("folder", item.getFolderPath());
 			row.put("branch", item.getBranch());
