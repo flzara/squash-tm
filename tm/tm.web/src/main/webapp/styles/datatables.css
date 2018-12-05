@@ -53,6 +53,16 @@ div.dataTables_wrapper th.ui-state-default, div.dataTables_wrapper td.drag-handl
     outline: medium none;
 }
 
+div.dataTables_wrapper th.ui-state-default, div.dataTables_wrapper td.drag-handle, td.no-select-handle {
+	/*background: url("jquery/ui/images/ui-bg_glass_75_e6e6e6_1x400.png") repeat-x scroll 50% 50% #E6E6E6;*/
+	background-image : none;
+	background-color : #E6E6E6;
+    border: 1px solid #D3D3D3;
+    color: #555555;
+    font-weight: normal;
+    outline: medium none;
+}
+
 
 div.dataTables_wrapper a.ui-button-icon-only[role="button"] {
 	width:1.5em;

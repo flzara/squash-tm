@@ -38,7 +38,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     "aoColumnDefs": [{
                         "bSortable": false,
                         "aTargets": [0],
-                        "sClass": 'centered select-handle',
+                        "sClass": 'centered no-select-handle',
                         "mDataProp": "entity-index",
                         "sWidth": "2.5em"
                     }, {
@@ -216,38 +216,38 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         var entityId = data["entity-id"];
                         var url = squashtm.app.contextRoot + 'automation-requests/' + entityId + '/tests';
 
-												if ((data['status'] === squashtm.app.autoReqStatuses['WORK_IN_PROGRESS'] || data['status'] === squashtm.app.autoReqStatuses['EXECUTABLE'])
-														&& data['script'] !== 'no-test-automation-project') {
-														cell.editable(url, editable);
-														cell.css({ "font-style": "italic" });
+                        if ((data['status'] === squashtm.app.autoReqStatuses['WORK_IN_PROGRESS'] || data['status'] === squashtm.app.autoReqStatuses['EXECUTABLE'])
+                            && data['script'] !== 'no-test-automation-project') {
+                            cell.editable(url, editable);
+                            cell.css({ "font-style": "italic" });
 
-														cell.attr("id", cellId);
+                            cell.attr("id", cellId);
 
-														var urlTa = squashtm.app.contextRoot + 'automation-requests/' + entityId + '/tests';
-														var settings = {
-																url: urlTa,
-																id: cellId
-														}
+                            var urlTa = squashtm.app.contextRoot + 'automation-requests/' + entityId + '/tests';
+                            var settings = {
+                                url: urlTa,
+                                id: cellId
+                            }
 
-														cell.on("click", function () {
-																$("td[id!=" + cellId + "]").find("form button[type=cancel]").click();
-														})
+                            cell.on("click", function () {
+                                $("td[id!=" + cellId + "]").find("form button[type=cancel]").click();
+                            })
 
-														cell.on('click', '#ta-script-picker-button', function () {
-																self._initPickerPopup(settings);
-																var popup = $("#ta-picker-popup").formDialog();
-																popup.formDialog('open');
-																return false;//for some reason jeditable would trigger 'submit' if we let go
-														});
-														cell.on('click', '#ta-script-remove-button', function () {
-																self._initRemovePopup(settings);
-																var popup = $("#ta-remove-popup").formDialog();
-																popup.formDialog('open');
-																return false;// see comment above
-														});
-												} else {
-														cell.text('-');
-												}
+                            cell.on('click', '#ta-script-picker-button', function () {
+                                self._initPickerPopup(settings);
+                                var popup = $("#ta-picker-popup").formDialog();
+                                popup.formDialog('open');
+                                return false;//for some reason jeditable would trigger 'submit' if we let go
+                            });
+                            cell.on('click', '#ta-script-remove-button', function () {
+                                self._initRemovePopup(settings);
+                                var popup = $("#ta-remove-popup").formDialog();
+                                popup.formDialog('open');
+                                return false;// see comment above
+                            });
+                        } else {
+                            cell.text('-');
+                        }
                     },
 
                     fnDrawCallback: function () {

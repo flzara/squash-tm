@@ -38,7 +38,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     "aoColumnDefs": [{
                         "bSortable": false,
                         "aTargets": [0],
-                        "sClass": 'centered select-handle',
+                        "sClass": 'centered no-select-handle',
                         "mDataProp": "entity-index",
                         "sWidth": "2.5em"
                     }, {
@@ -216,6 +216,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     self.changeNumberSelectedRows(self.selected);
                 });
                 self.bindButtons();
+                console.log(sqtable)
 
 
             },
