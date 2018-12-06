@@ -26,6 +26,7 @@ import org.squashtest.tm.domain.scm.ScmRepository;
 import org.squashtest.tm.service.scmserver.ScmRepositoryManagerService;
 
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.List;
 
 @Controller
@@ -36,6 +37,7 @@ public class ScmRepositoryManagementAdminController {
 	private static final String PATH = "path";
 	private static final String FOLDER = "folder";
 	private static final String BRANCH = "branch";
+	private static final String ID_EQUAL_IS_BOUND = "id=is-bound";
 
 	@Inject
 	ScmRepositoryManagerService scmRepositoryManager;
@@ -75,4 +77,12 @@ public class ScmRepositoryManagementAdminController {
 	public List<ScmRepository> getScmRepositories(long scmServerId) {
 		return scmRepositoryManager.findByScmServerOrderByPath(scmServerId);
 	}
+
+	@RequestMapping(value = "/{scmRepositoryIds}", method = RequestMethod.GET, params = ID_EQUAL_IS_BOUND)
+	@ResponseBody
+	public boolean isOneRepositoryBoundToProject(@PathVariable Collection<Long> scmRepositoryIds) {
+		return scmRepositoryManager.isOneRepositoryBoundToProject(scmRepositoryIds);
+	}
+
+
 }

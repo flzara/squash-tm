@@ -125,6 +125,11 @@ public class ScmRepositoryManagerServiceImpl implements ScmRepositoryManagerServ
 	}
 
 	@Override
+	public boolean isOneRepositoryBoundToProject(Collection<Long> scmRepositoryIds) {
+		return scmRepositoryDao.isOneRepositoryBoundToProject(scmRepositoryIds);
+	}
+
+	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deleteScmRepositories(Collection<Long> scmRepositoriesIds) {
 		scmRepositoryDao.releaseScmRepositoriesFromProjects(scmRepositoriesIds);

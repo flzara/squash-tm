@@ -32,9 +32,15 @@ define(['jquery', 'backbone', "squash.translator", "workspace.routing", 'jquery.
 			$el.formDialog();
 
 			$el.on('formdialogopen', function() {
-				// TODO: Check if the Repository is associated with one or more SquashTM Projects.
-				// Display the coresponding state.
-				$el.formDialog('setState', 'default');
+				$el.formDialog('setState', 'wait');
+				var repositoryId = $el.data('entity-id');
+				self.doCheckIfRepositoryIsBoundToProject(repositoryId).success(function(isBound) {
+					if(isBound) {
+						$el.formDialog('setState', 'bound-to-project');
+					} else {
+						$el.formDialog('setState', 'default');
+					}
+				});
 			});
 
 			$el.on('formdialogconfirm', function() {
@@ -62,6 +68,20 @@ define(['jquery', 'backbone', "squash.translator", "workspace.routing", 'jquery.
 			return $.ajax({
 				url: routing.buildURL('administration.scm-repositories', repositoryId),
 				method: 'DELETE'
+			});
+		},
+		/**
+		* Send Ajax GET Request to check if the ScmRepository with the given Id is bound to a Project.
+		* @param repositoryId: The Id of the ScmRepository to check.
+		* @return Promise of GET Request.
+		*/
+		doCheckIfRepositoryIsBoundToProject: function(repositoryId) {
+			return $.ajax({
+				url: routing.buildURL('administration.scm-repositories', repositoryId),
+				method: 'GET',
+				data: {
+					id: 'is-bound'
+				}
 			});
 		}
 

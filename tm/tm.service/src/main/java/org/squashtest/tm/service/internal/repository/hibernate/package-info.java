@@ -1048,7 +1048,8 @@
 	@NamedQuery(name="ScmServer.releaseContainedScmRepositoriesFromProjects", query="update GenericProject p set p.scmRepository = null where p.scmRepository.id in (select r.id from ScmRepository r where r.scmServer.id in (:scmServerIds))"),
 	// ScmRepositories
 	@NamedQuery(name="ScmRepository.deleteByIds", query="delete from ScmRepository r where r.id in (:scmRepositoriesIds)"),
-	@NamedQuery(name="ScmRepository.releaseScmRepositoriesFromProjects", query="update GenericProject p set p.scmRepository = null where p.scmRepository.id in (:scmRepositoriesIds)")
+	@NamedQuery(name="ScmRepository.releaseScmRepositoriesFromProjects", query="update GenericProject p set p.scmRepository = null where p.scmRepository.id in (:scmRepositoriesIds)"),
+	@NamedQuery(name="ScmRepository.isOneRepositoryBoundToProject", query="select case when (count(r) > 0) then true else false end from GenericProject p join p.scmRepository r where r.id in (:scmRepositoryIds)")
 
 })
 //@formatter:on

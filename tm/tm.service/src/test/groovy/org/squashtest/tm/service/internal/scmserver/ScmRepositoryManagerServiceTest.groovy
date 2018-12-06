@@ -283,7 +283,29 @@ class ScmRepositoryManagerServiceTest extends Specification {
 			0 * scmRepositoryDao.save(repo)
 			resultFolderPath == repoBranch
 	}
-	
+
+	def "#isOneRepositoryBoundToProject(Collection<Long>) - [Yes] Should verify that at least one ScmRepository is bound to a Project and return true"() {
+		given: "Mock data"
+			Collection<Long> repoIds = [2, 3]
+		and: "Mock Dao method"
+			scmRepositoryDao.isOneRepositoryBoundToProject(repoIds) >> true
+		when:
+			boolean result = scmRepositoryManagerService.isOneRepositoryBoundToProject(repoIds)
+		then:
+			result == true
+	}
+
+	def "#isOneRepositoryBoundToProject(Collection<Long>) - [No] Should verify that none of the ScmRepository is bound to a Project and return false"() {
+		given: "Mock data"
+			Collection<Long> repoIds = [2, 3]
+		and: "Mock Dao method"
+			scmRepositoryDao.isOneRepositoryBoundToProject(repoIds) >> false
+		when:
+			boolean result = scmRepositoryManagerService.isOneRepositoryBoundToProject(repoIds)
+		then:
+			result == false
+	}
+
 	def "#deleteScmrepositories(Collection<Long>) - [Nominal] - Should delete several ScmRepositories"() {
 		given: "Mock data"
 			Collection<Long> repoIds = [14, 5, 9]

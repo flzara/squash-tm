@@ -47,6 +47,13 @@ public interface ScmRepositoryDao extends JpaRepository<ScmRepository, Long> {
 	 */
 	Page<ScmRepository> findByScmServerId(Long scmServerId, Pageable pageable);
 	/**
+	 * Check whether at least one of the given ScmRepositories is bound to a Project.
+	 * @param scmRepositoryIds The Ids of the ScmRepositories.
+	 * @return True if at least one of the given ScmRepositories is bound to a Project. False otherwise.
+	 */
+	@Query
+	boolean isOneRepositoryBoundToProject(@Param("scmRepositoryIds") Collection<Long> scmRepositoryIds);
+	/**
 	 * Delete the ScmRepositories with the given Ids.
 	 * @param scmRepositoriesIds The Ids of the ScmRepositories to delete.
 	 */

@@ -35,7 +35,14 @@ define(['jquery', 'backbone', "squash.translator", "workspace.routing", 'jquery.
       	this.errorDialog = $('#generic-error-dialog').messageDialog();
 
 				$el.on('formdialogopen', function() {
-					// TODO: Check if the Repositories are associated with one or more SquashTm Projects.
+					var repositoryIds = self.scmRepositoriesTable.getSelectedIds();
+					self.doCheckIfOneRepositoryIsBoundToProject(repositoryIds).success(function(isBound) {
+						if(isBound) {
+							$el.formDialog('setState', 'bound-to-project');
+						} else {
+							$el.formDialog('setState', 'default');
+						}
+					});
 					// Display the corresponding state.
 					$el.formDialog('setState', 'default');
 				});
@@ -60,6 +67,7 @@ define(['jquery', 'backbone', "squash.translator", "workspace.routing", 'jquery.
 				if(repositoryIds.length === 0) {
 					this.errorDialog.messageDialog('open');
 				} else {
+					this.$el.formDialog('setState', 'wait');
 					this.$el.formDialog('open');
 				}
  			},
@@ -78,7 +86,21 @@ define(['jquery', 'backbone', "squash.translator", "workspace.routing", 'jquery.
  					url: routing.buildURL('administration.scm-repositories', repositoryIds),
  					method: 'DELETE'
  				});
- 			}
+ 			},
+			/**
+  		* Send Ajax GET Request to check if at least one of the ScmRepositories with the given Ids is bound to a Project.
+  		* @param repositoryId: The Ids of the ScmRepositories to check.
+  		* @return Promise of GET Request.
+  		*/
+  		doCheckIfOneRepositoryIsBoundToProject: function(repositoryIds) {
+  			return $.ajax({
+  				url: routing.buildURL('administration.scm-repositories', repositoryIds),
+  				method: 'GET',
+  				data: {
+  					id: 'is-bound'
+  				}
+  			});
+  		}
 
  		});
 

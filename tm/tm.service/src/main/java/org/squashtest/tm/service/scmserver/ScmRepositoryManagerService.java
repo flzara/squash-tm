@@ -81,4 +81,11 @@ public interface ScmRepositoryManagerService {
 	 * @param scmRepositoriesIds The Ids of the ScmRepositories to delete.
 	 */
 	void deleteScmRepositories(Collection<Long> scmRepositoriesIds);
+	/**
+	 * Check if at least one of the ScmRepositories with the given Ids is bound to a Project.
+	 * @param scmRepositoryIds The Ids of the ScmRepositories
+	 * @return True if at least one of the given ScmRepository is bound to a Project.
+	 * False otherwise.
+	 */
+	boolean isOneRepositoryBoundToProject(Collection<Long> scmRepositoryIds);
 }
