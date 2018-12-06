@@ -28,7 +28,7 @@ define(["jquery", "backbone", "jeditable.selectJEditable", "workspace.routing", 
 			repoFieldset: $('#scm-repositories-fieldset'),
 
 			initialize: function(projectId, boundServerId, boundRepositoryId, availableScmServers) {
-				let self = this;
+				var self = this;
 				self.projectId = projectId;
 				self.currentServer = boundServerId;
 				self.currentRepository = boundRepositoryId;
@@ -45,8 +45,8 @@ define(["jquery", "backbone", "jeditable.selectJEditable", "workspace.routing", 
 			* @param scmServers: The Collection of ScmServers.
 			*/
 			initServerComboBox: function(scmServers) {
-				let self = this;
-				let formattedServers = self.formatScmServers(scmServers);
+				var self = this;
+				var formattedServers = self.formatScmServers(scmServers);
 				return new SelectJEditable({
 					componentId: 'selected-scm-server',
 					jeditableSettings: {
@@ -85,12 +85,12 @@ define(["jquery", "backbone", "jeditable.selectJEditable", "workspace.routing", 
 			* }
 			*/
 			formatScmServers: function(scmServers) {
-				let result = {
+				var result = {
 					'0' : translator.get('label.NoServer'),
 					'selected': '0'
 				};
 				for(n in scmServers) {
-					let server = scmServers[n];
+					var server = scmServers[n];
 					result[server.id] = server.name;
 				}
 				return result;
@@ -100,10 +100,10 @@ define(["jquery", "backbone", "jeditable.selectJEditable", "workspace.routing", 
 			* @param serverId: The id of the server which Repositories are to load.
 			*/
 			initRepositoryComboBox: function(serverId) {
-				let self = this;
+				var self = this;
 				self.doLoadRepositories(serverId).success(function(scmRepositories) {
 						self.reforgeRepositoryComboBox();
-						let formattedScmRepositories = self.formatScmRepos(scmRepositories);
+						var formattedScmRepositories = self.formatScmRepos(scmRepositories);
 						self.repositoryCombo = new SelectJEditable({
 							componentId: 'selected-scm-repository',
 							jeditableSettings: {
@@ -140,13 +140,13 @@ define(["jquery", "backbone", "jeditable.selectJEditable", "workspace.routing", 
 			* Format the ScmRepositories Collection to fill the SelectJEditable.
 			*/
 			formatScmRepos: function(scmRepositories) {
-				let result = {
+				var result = {
 					'0' : translator.get('label.none'),
 					'selected': '0'
 				};
 				for(n in scmRepositories) {
-					let repo = scmRepositories[n];
-					result[repo.id] = repo.repositoryPath;
+					var repo = scmRepositories[n];
+					result[repo.id] = repo.name;
 				}
 				return result;
 			},
@@ -168,10 +168,10 @@ define(["jquery", "backbone", "jeditable.selectJEditable", "workspace.routing", 
 			* Reforge the Repository ComboBox. This is the only solution found to reset the values of Select.
 			*/
 			reforgeRepositoryComboBox: function() {
-				let self = this;
+				var self = this;
 				self.repositoryComboBox = null;
 				$('#selected-scm-repository').remove();
-				let newDiv = $("<div id='selected-scm-repository'>" + translator.get('label.None') + "</div>");
+				var newDiv = $("<div id='selected-scm-repository'>" + translator.get('label.None') + "</div>");
 				$('#scm-repositories-fieldset').append(newDiv);
 			},
 			/*
@@ -180,7 +180,7 @@ define(["jquery", "backbone", "jeditable.selectJEditable", "workspace.routing", 
 			* @return The Promise of the POST Request.
 			*/
 			doBindRepositoryToProject(repositoryId) {
-				let projectId = this.projectId;
+				var projectId = this.projectId;
 				return $.ajax({
 					method: 'POST',
 					url: routing.buildURL('generic-projects.scm-repository', projectId),
@@ -194,7 +194,7 @@ define(["jquery", "backbone", "jeditable.selectJEditable", "workspace.routing", 
 			* @return The Promise of the DELETE Request.
 			*/
 			doUnbindRepositoryToProject() {
-				let projectId = this.projectId;
+				var projectId = this.projectId;
 				return $.ajax({
 					method: 'DELETE',
 					url: routing.buildURL('generic-projects.scm-repository', projectId)
