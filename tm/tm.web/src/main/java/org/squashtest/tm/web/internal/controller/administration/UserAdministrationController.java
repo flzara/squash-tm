@@ -157,33 +157,13 @@ public class UserAdministrationController extends PartyControllerSupport {
 	@ResponseBody
 	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "password")
 	public void addUser(@ModelAttribute("add-user") @Valid UserForm userForm) {
-		if (!currentProviderFeatures().isManagedPassword()) {
-			adminService.addUser(userForm.getUser(), userForm.getGroupId(), userForm.getPassword());
-
-		} else {
-			// If this happens, it's either a bug or a forged request
-			LOGGER.warn(
-				"Received a password while passwords are managed by auth provider. This is either a bug or a forged request. User form : {}",
-				ToStringBuilder.reflectionToString(userForm));
-			throw new IllegalArgumentException(
-				"Received a password while passwords are managed by auth provider. This is either a bug or a forged request.");
-		}
+		adminService.addUser(userForm.getUser(), userForm.getGroupId(), userForm.getPassword());
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "noPassword")
 	public void addUserWithoutCredentials(@ModelAttribute("add-user") @Valid UserForm userForm) {
-		if (currentProviderFeatures().isManagedPassword()) {
-			adminService.createUserWithoutCredentials(userForm.getUser(), userForm.getGroupId());
-
-		} else {
-			// If this happens, it's either a bug or a forged request
-			LOGGER.warn(
-				"Received no password while passwords are managed by Squash. This is either a bug or a forged request. User form : {}",
-				ToStringBuilder.reflectionToString(userForm));
-			throw new IllegalArgumentException(
-				"Received no password while passwords are managed by Squash. This is either a bug or a forged request.");
-		}
+		adminService.createUserWithoutCredentials(userForm.getUser(), userForm.getGroupId());
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -280,11 +260,8 @@ public class UserAdministrationController extends PartyControllerSupport {
 	@ResponseBody
 	public void createAuthentication(@ModelAttribute @Valid PasswordResetForm form, @PathVariable long userId) {
 		LOGGER.trace("Create authentication for user #" + userId);
-		if (!currentProviderFeatures().isManagedPassword()) {
-			adminService.createAuthentication(userId, form.getPassword());
-		}
-		// when password are managed, we should not create internal
-		// authentications.
+
+		adminService.createAuthentication(userId, form.getPassword());
 	}
 
 	// *********************************************************************************

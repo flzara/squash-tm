@@ -171,8 +171,8 @@
                           th:attr="data-def='width=35, on_label='+#{label.active}+', off_label='+#{label.inactive}" />
                       </div>
                     </div>
-                    <div class="display-table-row" th:unless="${authenticationProvider.managedPassword}">
-                      <label for="reset-password-button" th:text="#{label.password}">Password</label>
+                    <div class="display-table-row">
+                      <label for="reset-password-button" th:text="#{label.localPassword}">Password</label>
                       <div class="display-table-cell">
                         <a id="reset-password-button" th:text="#{user.button.reset.password}"
                           th:class="${ !user.hasAuthentication } ? 'not-displayed'">Reset</a>
@@ -180,12 +180,7 @@
                           th:class="${ user.hasAuthentication } ? 'not-displayed'">Create authentication</a>
                       </div>
                     </div>
-                    <div class="display-table-row" th:if="${authenticationProvider.managedPassword}">
-                      <label for="password-info" th:text="#{label.password}">Password</label>
-                      <div class="display-table-cell">
-                        <span id="password-info" th:text="#{message.managedPassword}">Managed by auth provider</span>
-                      </div>
-                    </div>
+                   
                     <div class="display-table-row">
                       <label for="user-first-name" th:text="#{label.FirstName}">First name</label>
                       <div id="user-first-name" class="display-table-cell" th:text="${ user.firstName }">Machinou</div>
@@ -305,7 +300,7 @@
   <div id="pass-pop-pane" class="not-displayed"></div>
   <div id="auth-pop-pane" class="not-displayed"></div>
   <script id="password-reset-popup-tpl" type="text/x-handlebars-template" th:inline="text">
-  <div id="{{popupId}}" class="not-displayed popup-dialog" th:unless="${authenticationProvider.managedPassword}"
+  <div id="{{popupId}}" class="not-displayed popup-dialog"
 th:title="#{user.account.password.reset.label}">
     <div id="user-account-password-panel">
 

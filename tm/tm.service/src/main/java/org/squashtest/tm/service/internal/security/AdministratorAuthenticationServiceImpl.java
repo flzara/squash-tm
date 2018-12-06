@@ -27,6 +27,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
@@ -36,6 +37,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.security.AdministratorAuthenticationService;
 import static org.squashtest.tm.api.security.acls.Roles.*;
 
@@ -67,9 +69,16 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 	}
 
 	@Override
-	public void changeAuthenticatedUserPassword(String plainOldPassword, String plainNewPassword) {
-		String encNewPasswd = encode(plainNewPassword);
+	public void changeAuthenticatedUserPassword(String plainOldPassword, String clearNewPassword) {
+		String encNewPasswd = encode(clearNewPassword);
 		userManager.changePassword(plainOldPassword, encNewPasswd);
+	}
+	
+
+	@Override
+	public boolean hasAuthenticatedUserLocalPassword() {
+		UserDetails user = userManager.loadUserByUsername(UserContextHolder.getUsername());
+		return ! StringUtils.isBlank(user.getPassword());
 	}
 
 	private String encode(String plainNewPassword) {
@@ -89,16 +98,26 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 
 	}
 
+	
+
 	@Override
-	public void resetUserPassword(String login, String plainTextPassword) {
+	public void resetAuthenticatedUserPassword(String clearNewPassword) {
+		String login = UserContextHolder.getUsername();
+		resetUserPassword(login, clearNewPassword);
+		
+	}
+	
+	@Override
+	public void resetUserPassword(String login, String clearNewPassword) {
 		UserDetails user = userManager.loadUserByUsername(login);
-		String encodedPassword = encode(plainTextPassword);
+		String encodedPassword = encode(clearNewPassword);
 		UserDetails updateCommand = new User(login, encodedPassword, user.isEnabled(), true, true, true,
 			user.getAuthorities());
 		LOGGER.debug("reset password for user {}", login);
 		userManager.updateUser(updateCommand);
 
 	}
+	
 
 	@Override
 	public void changeUserlogin(String newLogin, String oldLogin) {

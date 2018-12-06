@@ -31,6 +31,13 @@ import javax.validation.constraints.Size;
  */
 //XSS bflessel ok
 public class PasswordChangeForm {
+	
+	/**
+	 * Flag that says that the user has currently no local password and is now creating one. In effect 
+	 * this means that the old password will be ignored (ie won't be checked first).
+	 */
+	private boolean initializing = false;
+	
 	@NotNull
 	private String oldPassword;
 
@@ -70,4 +77,15 @@ public class PasswordChangeForm {
 	public String getNewPassword() {
 		return newPassword;
 	}
+
+	public boolean isInitializing() {
+		return initializing;
+	}
+
+	public void setInitializing(boolean initializing) {
+		this.initializing = initializing;
+	}
+	
+	
+	
 }

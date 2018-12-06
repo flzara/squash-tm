@@ -55,10 +55,7 @@ define([ "jquery", "squash.translator",
 	}
 
 	function buildPasswordValidation(settings) {
-		if (settings.managedPassword === true) {
-			// password is managed by provider, we don't perform any password check
-			return function() { return true; };
-		}
+
 
 		var language = settings.language;
 		return function() {
@@ -107,11 +104,8 @@ define([ "jquery", "squash.translator",
 			groupId : $("#add-user-group").val()
 		};
 
-		if (settings.managedPassword) {
-			form.noPassword = true;
-		} else {
-			form.password = $("#add-user-password").val();
-		}
+
+		form.password = $("#add-user-password").val();
 
 		return form;
 	}

@@ -85,8 +85,7 @@
             login : "${loginLabel}",
             dates : "${datesLabel}"
 
-          },
-          managedPassword: ${ authenticationProvider.managedPassword }
+          }
         }
       },
       squashtm.app.connectionsManager = {
@@ -227,28 +226,22 @@
             </select>
             </td>
           </tr>
-<c:if test="${ not authenticationProvider.managedPassword }">
-                <tr>
-                  <td> <label for="add-user-password"><f:message key="user.account.newpass.label" /></label> </td>
-                  <td><input type="password" id="add-user-password" size="30" /></td>
-                </tr>
-                <tr>
-                  <td><comp:error-message forField="password" /></td>
-                </tr>
-                <tr>
-                  <td><label for="new-user-confirmpass"><f:message key="user.account.confirmpass.label"/></label></td>
-                  <td><input type="password" id="new-user-confirmpass" size="30"/> </td>
-                </tr>
-                <tr>
-                  <td><comp:error-message forField="confirmpass" /></td>
-                </tr>
-</c:if>
- <c:if test="${ authenticationProvider.managedPassword }">
-                <tr>
-                  <td><label><f:message key="label.password" /></label></td>
-                  <td><span><f:message key="message.managedPassword" /></span></td>
-                </tr>
-</c:if>
+
+           <tr>
+             <td> <label for="add-user-password"><f:message key="user.account.newpass.label" /></label> </td>
+             <td><input type="password" id="add-user-password" size="30" /></td>
+           </tr>
+           <tr>
+             <td><comp:error-message forField="password" /></td>
+           </tr>
+           <tr>
+             <td><label for="new-user-confirmpass"><f:message key="user.account.confirmpass.label"/></label></td>
+             <td><input type="password" id="new-user-confirmpass" size="30"/> </td>
+           </tr>
+           <tr>
+             <td><comp:error-message forField="confirmpass" /></td>
+           </tr>
+
         </table>
 
 

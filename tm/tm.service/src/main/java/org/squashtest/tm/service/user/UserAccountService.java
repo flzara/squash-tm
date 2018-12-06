@@ -25,11 +25,13 @@ import java.util.Collection;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.exception.WrongPasswordException;
 import org.squashtest.tm.service.internal.dto.UserDto;
 
 //TODO : same methods but with no parameters (UserContextService will give us the user)
 public interface UserAccountService {
 
+	
 	/* ** services using an ID : the calling user is not the modified user ** */
 
 	void modifyUserFirstName(long userId, String newName);
@@ -61,9 +63,34 @@ public interface UserAccountService {
 
 	Party getParty(Long id);
 
+	
+
 	void setCurrentUserEmail(String newEmail);
 
+	/**
+	 * Will change the local password for the current user (ie the password for the internal authentication provider). The old password will be tested 
+	 * first; in case of check failure a {@link WrongPasswordException} will be thrown. 
+	 * 
+	 * @param oldPasswd
+	 * @param newPasswd
+	 * @throws WrongPasswordException
+	 */
 	void setCurrentUserPassword(String oldPasswd, String newPasswd);
+	
+	/**
+	 * Will force the local password for the current user (ie the password for the internal authentication provider) to the new value.
+	 * 
+	 * @param newPasswd
+	 */
+	void setCurrentUserPassword(String newPasswd);
+
+	/**
+	 * returns whether the current user has a local password defined
+	 * 
+	 * @return
+	 */
+	boolean hasCurrentUserPasswordDefined();
+	
 
 	Collection<Milestone> findAllMilestonesForUser(long userId);
 

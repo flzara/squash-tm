@@ -32,7 +32,7 @@
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 
 
-<f:message var="userAccountPasswordLabel" key="label.password" />
+<f:message var="userAccountPasswordLabel" key="label.localPassword" />
 <f:message var="bindMilestoneDialogTitle" key="message.PickAMilestone"/>
 <f:message var="confirmLabel" key="label.Confirm"/>
 <f:message var="cancelLabel" key="label.Cancel"/>
@@ -162,19 +162,10 @@
 						<label ><f:message key="label.Group"/></label>
 						<div class="display-table-cell"><span><f:message key="user.account.group.${user.group.qualifiedName}.label" /></span></div>
 					</div>
-        <c:if test="${ authenticationProvider.managedPassword }">
-        <div class="display-table-row">
-          <label for="managed-pwd"><f:message key="label.password"/></label>
-          <div class="display-table-cell">
-            <span id="managed-pwd"><f:message key="message.managedPassword" /></span>
-          </div>
-        </div>
-        </c:if>
-				</div>
-				<br/>
-        <c:if test="${ not authenticationProvider.managedPassword }">
+ 
+        
 				<input type="button" id="change-password-button" value="${ userAccountPasswordLabel }" class="button" />
-        </c:if>
+       
 			</jsp:attribute>
 		</comp:toggle-panel>
 
@@ -332,9 +323,9 @@
 		 </c:if>
 </sec:authorize>
   </div>
-    <c:if test="${ not authenticationProvider.managedPassword }">
-	   <comp:user-account-password-popup/>
-    </c:if>
+
+	   <comp:user-account-password-popup hasLocalPassword="${hasLocalPassword}"/>
+
 	</jsp:attribute>
 </layout:info-page-layout>
 

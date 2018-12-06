@@ -28,6 +28,11 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 
+<%-- Indicates whether the user already has a local password defined --%>
+
+<%@ attribute name="hasLocalPassword" required="true" type="java.lang.Boolean" %>
+
+
 <c:url var="userAccountUrl" value="/user-account/update" />
 
 <f:message var="oldPassError" key="user.account.oldpass.error" />
@@ -45,7 +50,7 @@
 
     <div id="user-account-password-panel">
       
-      <div >
+      <div id="old-password-field">
         <label><f:message key="user.account.oldpass.label"/></label>
         <input type="password" id="oldPassword"/>
         <comp:error-message forField="oldPassword" />
@@ -82,10 +87,16 @@ require( ["common"], function(){
 	$(function(){
 		
 		var pwdDialog = $("#password-change-popup");
-		pwdDialog.formDialog({width : 420});
+		pwdDialog.formDialog({
+			width : 420, 
+			initializing : ${not hasLocalPassword}			
+		});
 		
 		pwdDialog.on('formdialogconfirm', function(){
-			if (! validatePassword()) return;		
+			
+			// 
+			var initializing = pwdDialog.formDialog('option', 'initializing');
+			if (! validatePassword(initializing)) return;
 			
 			var oldPassword= $("#oldPassword").val();
 			var newPassword = $("#newPassword").val();
@@ -94,10 +105,12 @@ require( ["common"], function(){
 				url : "${userAccountUrl}",
 				type : "POST",
 				dataType : "json",
-				data : { "oldPassword" : oldPassword, "newPassword" : newPassword }
+				data : { "initializing" : initializing, "oldPassword" : oldPassword, "newPassword" : newPassword }
 			})
 			.done(function(){
+				// close the dialog, set the initializing flag to false and notify the user of the completion
 				pwdDialog.formDialog('close');
+				pwdDialog.formDialog('option', 'initializing', false);
 				notification.showInfo("${passSuccess}");
 			});
 		});
@@ -107,13 +120,27 @@ require( ["common"], function(){
 		});
 		
 		$("#change-password-button").on('click', function(){
+			initDialogForm();
 			pwdDialog.formDialog('open');
 		});
 	});
+	
+	
+	function initDialogForm(){
+		// hide the field 'old password' if there is no password defined yet.
+		if ($("#password-change-popup").formDialog('option', 'initializing')){
+			$("#old-password-field").hide();
+		}
+		else{
+			$("#old-password-field").show();
+		}
+	} 
 
 	
-	<%-- we validate the passwords only. Note that validation also occurs server side. --%>
-	function validatePassword(){
+	<%-- Validates that the password fields are filled in and match. The old password must also be filled in unless the user is indeed defining a local password 
+	for the first time. 
+	Note that validation also occurs server side. --%>
+	function validatePassword(initializing){
 		
 		//first, clear error messages
 		$("#user-account-password-panel span.error-message").html('');
@@ -131,8 +158,8 @@ require( ["common"], function(){
 			return filled;
 		}
 		
-		oldPassOkey = filledOrDie("#oldPassword", "oldPassword-error", "${oldPassError}");
-		newPassOkey = filledOrDie("#newPassword", "newPassword-error", "${newPassError}");;
+		oldPassOkey = initializing || filledOrDie("#oldPassword", "oldPassword-error", "${oldPassError}");
+		newPassOkey = filledOrDie("#newPassword", "newPassword-error", "${newPassError}");
 		newPassOkey = filledOrDie("#user-account-confirmpass", "user-account-confirmpass-error", "${confirmPassError}");
 		
 		if ((newPassOkay==true) && (confirmPassOkay==true)){

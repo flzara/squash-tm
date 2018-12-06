@@ -101,6 +101,7 @@ public class UserAccountController {
 		Party party = userService.getParty(idUser);
 		Map<String, String> map  =  partyPreferenceService.findPreferences(party);
 		String bugtrackerMode= map.get(SQUASH_BUGTRACKER_MODE);
+		boolean hasLocalPassword = userService.hasCurrentUserPasswordDefined();
 
 		List<Milestone> milestoneList = milestoneManager.findAllVisibleToCurrentUser();
 
@@ -113,6 +114,7 @@ public class UserAccountController {
 		mav.addObject("milestoneList", milestoneList);
 		mav.addObject("projectPermissions", projectPermissions);
 		mav.addObject("bugtrackerMode", bugtrackerMode);
+		mav.addObject("hasLocalPassword", hasLocalPassword);
 
 		// also, active milestone
 		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
@@ -131,10 +133,15 @@ public class UserAccountController {
 
 	}
 
-	@RequestMapping(value="/update", method=RequestMethod.POST, params={"oldPassword", "newPassword"})
+	@RequestMapping(value="/update", method=RequestMethod.POST, params={"initializing", "oldPassword", "newPassword"})
 	@ResponseBody
 	public void changePassword(@ModelAttribute @Valid PasswordChangeForm form){
-		userService.setCurrentUserPassword(form.getOldPassword(), form.getNewPassword());
+		if (form.isInitializing()){
+			userService.setCurrentUserPassword(form.getNewPassword());
+		}
+		else{
+			userService.setCurrentUserPassword(form.getOldPassword(), form.getNewPassword());
+		}
 	}
 
 	@RequestMapping(value="/update", method=RequestMethod.POST, params={"id=user-account-email", VALUE}, produces = "text/plain;charset=UTF-8")

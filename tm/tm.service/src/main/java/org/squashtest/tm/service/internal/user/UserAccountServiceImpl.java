@@ -24,6 +24,7 @@ import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.ROLE_ADMIN;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 import javax.inject.Inject;
 
@@ -174,16 +175,37 @@ public class UserAccountServiceImpl implements UserAccountService {
 
 	@Override
 	public void setCurrentUserPassword(String oldPass, String newPass) {
+		internalSetCurrentUserPassword(  () -> authService.changeAuthenticatedUserPassword(oldPass, newPass) ); 
+		
+	}
+	
+
+	@Override
+	public void setCurrentUserPassword(String newPasswd) {
+		internalSetCurrentUserPassword( () -> authService.resetAuthenticatedUserPassword(newPasswd));
+	}
+	
+	
+	// note : the function type Runnable is unfortunate because it suggests we expect a result.
+	// Actually we expect nothing, but there is currently 
+	// no functional interface that accepts no arg and return nothing
+	private void internalSetCurrentUserPassword(Runnable action){
 		if (!authService.canModifyUser()) {
 			throw new UnauthorizedPasswordChange(
 					"The authentication service do not allow users to change their passwords using Squash");
 		}
 		try {
-			authService.changeAuthenticatedUserPassword(oldPass, newPass);
+			action.run();
 		} catch (BadCredentialsException bce) {
 			throw new WrongPasswordException("wrong password", bce);
 		}
+	}
+	
+	
 
+	@Override
+	public boolean hasCurrentUserPasswordDefined() {
+		return authService.hasAuthenticatedUserLocalPassword();
 	}
 
 	// Feature 6763 - Update the last connection date, before doing it we set a boolean to true,

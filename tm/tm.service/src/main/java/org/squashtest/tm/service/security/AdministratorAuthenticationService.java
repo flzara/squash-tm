@@ -44,7 +44,7 @@ public interface AdministratorAuthenticationService extends UserAuthenticationSe
 	
 	void createUser(UserDetails userDetails);
 
-	void resetUserPassword(String login, String plainTextPassword);
+	void resetUserPassword(String login, String clearNewPassword);
 
 	void deactivateAccount(String login);
 	
