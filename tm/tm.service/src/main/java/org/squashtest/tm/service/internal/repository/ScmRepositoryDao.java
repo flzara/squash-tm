@@ -54,4 +54,11 @@ public interface ScmRepositoryDao extends JpaRepository<ScmRepository, Long> {
 	@Modifying
 	void deleteByIds(@Param("scmRepositoriesIds") Collection<Long> scmRepositoriesIds);
 
+	/**
+	 * Unbind all the given ScmRepositories from their Projects.
+	 * @param scmRepositoriesIds The Ids of the ScmRepositories which will be unbound from their Project.
+	 */
+	@Query
+	@Modifying
+	void releaseScmRepositoriesFromProjects(@Param("scmRepositoriesIds") Collection<Long> scmRepositoriesIds);
 }

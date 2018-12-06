@@ -127,6 +127,7 @@ public class ScmRepositoryManagerServiceImpl implements ScmRepositoryManagerServ
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deleteScmRepositories(Collection<Long> scmRepositoriesIds) {
+		scmRepositoryDao.releaseScmRepositoriesFromProjects(scmRepositoriesIds);
 		scmRepositoryDao.deleteByIds(scmRepositoriesIds);
 	}
 }

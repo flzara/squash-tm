@@ -107,9 +107,15 @@ public class ScmServerManagerServiceImpl implements ScmServerManagerService {
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deleteScmServers(Collection<Long> scmServerIds) {
+		scmServerDao.releaseContainedScmRepositoriesFromProjects(scmServerIds);
 		for(Long serverId : scmServerIds) {
 			ScmServer server = scmServerDao.getOne(serverId);
 			scmServerDao.delete(server);
 		}
 	}
+
+//	@Override
+//	public boolean isServerBoundToProject(long scmServerId) {
+//		return scmServerDao.isServerBoundToProject(scmServerId);
+//	}
 }
