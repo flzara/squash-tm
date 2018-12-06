@@ -23,8 +23,8 @@ package org.squashtest.tm.service.internal.scmserver
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
-import org.springframework.data.domain.Sort.Order
 import org.springframework.data.domain.Sort.Direction
+import org.springframework.data.domain.Sort.Order
 import org.squashtest.tm.domain.scm.ScmServer
 import org.squashtest.tm.exception.NameAlreadyInUseException
 import org.squashtest.tm.service.internal.repository.ScmServerDao
@@ -279,6 +279,28 @@ class ScmServerManagerServiceTest extends Specification {
 			scmServerManagerService.updateUrl(serverId, malformedUrl)
 		then:
 			thrown Exception
+	}
+
+	def "isOneServerBoundToProject(Collection<Long>) - [True] Should verify that the ScmServers contain a ScmRepository bound to a Project and return true"() {
+		given:
+			Collection<Long> serverIds = [5, 27]
+		and:
+			scmServerDao.isOneServerBoundToProject(serverIds) >> true
+		when:
+			boolean result = scmServerManagerService.isOneServerBoundToProject(serverIds)
+		then:
+			result == true
+	}
+
+	def "isOneServerBoundToProject(Collection<Long>) - [False] Should verify that the ScmServers do not contain any ScmRepository bound to a Project and return false"() {
+		given:
+			Collection<Long> serverIds = [5, 27]
+		and:
+			scmServerDao.isOneServerBoundToProject(serverIds) >> false
+		when:
+			boolean result = scmServerManagerService.isOneServerBoundToProject(serverIds)
+		then:
+			result == false
 	}
 
 	def '#deleteScmServers(Collection<Long>) - [Nominal] Should delete several ScmServers'() {
