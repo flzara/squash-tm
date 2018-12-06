@@ -28,7 +28,9 @@
 
   <include file="tm.data-1.19.0-SQTM-409.xml" relativeToChangelogFile="true" />
 
+  <!-- note : this dataset is also used for tests for SQTM-504 -->
   <include file="tm.data-1.19.0-SQTM-510.xml" relativeToChangelogFile="true" />
+
   <!-- ========================================INCLUDE CHANGELOG================================================ -->
   <include file="../../../main/liquibase/tm/tm.changelog-1.19.0.xml"
            relativeToChangelogFile="true" />
@@ -77,4 +79,21 @@
       </sqlCheck>
     </preConditions>
   </changeSet>
+
+
+  <changeSet id="tm-1.19.0-SQTM-504-test1" author="bsiri">
+    <preConditions>
+      <sqlCheck expectedResult="0">
+        select count(*)
+        from CORE_USER cu
+        where cu.login not in (
+          select au.login from AUTH_USER au
+        );
+      </sqlCheck>
+    </preConditions>
+    <comment>checking that user that had no entry in AUTH_USER (eg, pure LDAP users) now have an entry there.</comment>
+  </changeSet>
+
+
+
 </databaseChangeLog>
