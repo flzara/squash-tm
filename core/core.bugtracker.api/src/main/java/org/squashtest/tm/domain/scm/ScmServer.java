@@ -24,6 +24,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -50,7 +51,7 @@ public class ScmServer {
 	private String kind;
 
 	@OneToMany(mappedBy = "scmServer", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-	private List<ScmRepository> repositories;
+	private List<ScmRepository> repositories = new ArrayList<>();
 
 	public Long getId() {
 		return id;
