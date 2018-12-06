@@ -23,7 +23,8 @@ package org.squashtest.tm.web.internal.security.authentication
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.provisioning.UserDetailsManager
-import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
+import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures
+import org.squashtest.tm.api.security.authentication.ExtraAccountInformationAuthentication;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup
 import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
@@ -89,6 +90,37 @@ class AuthenticatedMissingUserCreatorTest extends Specification {
 		then:
 		1 * userAccountManager.createUserWithoutCredentials({
 			it -> it.login == "chris.jericho"
+		}, UsersGroup.USER)
+	}
+
+	def "should create stub user with extra information if it does not exist and extra are available"(){
+
+		given :
+		features.shouldCreateMissingUser() >> true
+
+		// override the principal to make it implement ExtraAccountInformationAuthentication
+		principal = Mock(ExtraAccountInformationAuthentication){
+			getName() >> "chris.jericho"
+			getFirstName() >> "Chris"
+			getLastName() >> "Jericho"
+			getEmail() >> "chris.jericho@awesome.com"
+		}
+
+		authenticatedEvent = new AuthenticationSuccessEvent(principal)
+		authProviderContext.getProviderFeatures(principal) >> features
+
+		and :
+		userAccountManager.findByLogin("chris.jericho") >> null
+
+		when :
+		listener.onApplicationEvent authenticatedEvent
+
+		then :
+		1 * userAccountManager.createUserWithoutCredentials({
+			it -> it.login == "chris.jericho" &&
+				it.firstName == "Chris" &&
+				it.lastName == "Jericho" &&
+				it.email == "chris.jericho@awesome.com"
 		}, UsersGroup.USER)
 	}
 }
