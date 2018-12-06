@@ -168,14 +168,12 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 		this.whyCantRename = function(nodes){
 
 			if (! milestonesAllowEdition(nodes)){
-				$("#update-node-tree-button").prop("disabled", true);
 				return "milestone-denied";
 			}
 			else if (nodes.length !== 1){
 				return "not-unique";
 			}
 			else if (nodes.filter(':editable').not(':library').length !== 1){
-      	$("#update-node-tree-button").prop("disabled", true);
 				return "permission-denied";
 			}
 			else {
@@ -274,7 +272,6 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 			'copy-node-tree-button' : this.canCopy,
 			'paste-node-tree-button' : this.canPaste,
 			'rename-node-tree-button' : this.canRename,
-			'update-node-tree-button' : this.canRename,
 			'import-excel-tree-button' : this.canImport,
 			'import-links-excel-tree-button' : this.canImport,
 			'export-tree-button' : this.canExport,

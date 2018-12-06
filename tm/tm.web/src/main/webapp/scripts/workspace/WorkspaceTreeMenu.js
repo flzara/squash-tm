@@ -65,7 +65,6 @@ define(['jquery', 'workspace/WorkspaceWizardMenu', 'jquery.squash.buttonmenu'], 
 		function createWidgets() {
 			$("#tree-create-button").buttonmenu();
 			$("#tree-import-button").buttonmenu();
-			$("#update-node-tree-button").buttonmenu();
 		}
 
 
