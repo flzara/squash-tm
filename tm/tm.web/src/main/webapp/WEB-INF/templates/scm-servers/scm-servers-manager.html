@@ -42,7 +42,7 @@
       contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash"
     };
     squashtm.pageConfiguration = {
-      scmServerKinds: /*[[ ${scmKinds} ]]*/,
+      scmServerKinds: /*[[ ${scmKinds} ]]*/
     };
   </script>
   <script data-main="../../scripts/scm-servers-manager.js" th:attr="data-main=@{/scripts/scm-servers-manager.js}"
@@ -184,6 +184,8 @@
                 <div class="generic-error-signal"></div>
               </div>
               <div class="display-table-cell">
+                <!-------- Case 0 - Wait -------->
+                <div  data-def="state=wait" th:include="fragments-utils/static-panels :: small-please-wait" >Waiting</div>
                 <!-------- Case 1 - The Server is bound to no Project -------->
                 <div data-def="state=default">
                   <p th:text="#{message.scmServer.delete.confirm}">

@@ -32,9 +32,15 @@
       	$el.formDialog();
 
 				$el.on('formdialogopen', function() {
-					// TODO: Check if the Server is associated with one or more SquashTm Projects.
-					// Display the corresponding state.
-					$el.formDialog('setState', 'default');
+					$el.formDialog('setState', 'wait');
+					var serverId = $el.data('entity-id');
+					self.doCheckIfServerIsBoundToProject(serverId).success(function(isBound) {
+						if(isBound) {
+							$el.formDialog('setState', 'bound-to-project');
+						} else {
+							$el.formDialog('setState', 'default');
+						}
+					});
 				});
 
       	$el.on('formdialogconfirm', function() {
@@ -62,6 +68,21 @@
  				return $.ajax({
  					url: routing.buildURL('administration.scm-servers.delete', serverId),
  					method: 'DELETE'
+ 				});
+ 			},
+			/**
+			* Send Ajax GET Request to check if the ScmServer with the given Id contains at least one ScmRepository which is
+			* bound to a Project.
+			* @param serverId: The Id of the ScmServer to check.
+			* @return Promise of GET Request.
+			*/
+ 			doCheckIfServerIsBoundToProject: function(serverId) {
+ 				return $.ajax({
+ 					url: routing.buildURL('administration.scm-servers.delete', serverId),
+ 					method: 'GET',
+ 					data: {
+ 						id: 'is-bound'
+ 					}
  				});
  			}
 

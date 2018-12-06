@@ -59,6 +59,7 @@ public class ScmServerManagementAdminController {
 
 	private static final String URL = "url";
 	private static final String KIND = "kind";
+	private static final String ID_EQUALS_IS_BOUND = "id=is-bound";
 
 	private final DatatableMapper<String> scmServerTableMapper = new NameBasedMapper()
 			.map(DEFAULT_ENTITY_NAME_KEY, DEFAULT_ENTITY_NAME_KEY)
@@ -96,6 +97,12 @@ public class ScmServerManagementAdminController {
 	@ResponseBody
 	public ScmServer createNewScmServer(@Valid ScmServer newScmServer) {
 		return scmServerManager.createNewScmServer(newScmServer);
+	}
+
+	@RequestMapping(value = "/{scmServerIds}", method = RequestMethod.GET, params = ID_EQUALS_IS_BOUND)
+	@ResponseBody
+	public boolean isOneServerBoundToProject(@PathVariable List<Long> scmServerIds) {
+		return scmServerManager.isOneServerBoundToProject(scmServerIds);
 	}
 
 	@RequestMapping(value = "/{scmServerIds}", method = RequestMethod.DELETE)

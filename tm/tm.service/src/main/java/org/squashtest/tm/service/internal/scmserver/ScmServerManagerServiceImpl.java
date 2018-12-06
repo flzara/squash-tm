@@ -114,8 +114,8 @@ public class ScmServerManagerServiceImpl implements ScmServerManagerService {
 		}
 	}
 
-//	@Override
-//	public boolean isServerBoundToProject(long scmServerId) {
-//		return scmServerDao.isServerBoundToProject(scmServerId);
-//	}
+	@Override
+	public boolean isOneServerBoundToProject(Collection<Long> scmServerIds) {
+		return scmServerDao.isOneServerBoundToProject(scmServerIds);
+	}
 }

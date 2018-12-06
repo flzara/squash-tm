@@ -72,11 +72,11 @@ public interface ScmServerManagerService {
 	 */
 	void deleteScmServers(Collection<Long> scmServerIds);
 	/**
-	 * Check if the ScmServer with the given Id contains at least one ScmRepository which is bound to a Project.
-	 * @param scmServerId The Id of the ScmServer
-	 * @return True if the given ScmServer contains at least one ScmRepository which is bound to a Project.
+	 * Check if at least one of the ScmServers with the given Ids contain at least one ScmRepository which is bound to a Project.
+	 * @param scmServerIds The Ids of the ScmServers
+	 * @return True if at least one of the given ScmServers contain at least one ScmRepository which is bound to a Project.
 	 * False otherwise.
 	 */
-//	boolean isServerBoundToProject(long scmServerId);
+	boolean isOneServerBoundToProject(Collection<Long> scmServerIds);
 
 }

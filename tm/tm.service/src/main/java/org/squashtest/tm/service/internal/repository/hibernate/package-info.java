@@ -1044,7 +1044,7 @@
 
 	// ScmServers
 	@NamedQuery(name="ScmServer.isServerNameAlreadyInUse", query="select case when (count(s) > 0) then true else false end from ScmServer s where s.name = :name"),
-//	@NamedQuery(name="ScmServer.isServerBoundToProject", query="select case when (count(s) > 0) then true else false end from GenericProject p join p.scmRepository r join r.scmServer s where s.id = :scmServerId"),
+	@NamedQuery(name="ScmServer.isOneServerBoundToProject", query="select case when (count(s) > 0) then true else false end from GenericProject p join p.scmRepository r join r.scmServer s where s.id in (:scmServerIds)"),
 	@NamedQuery(name="ScmServer.releaseContainedScmRepositoriesFromProjects", query="update GenericProject p set p.scmRepository = null where p.scmRepository.id in (select r.id from ScmRepository r where r.scmServer.id in (:scmServerIds))"),
 	// ScmRepositories
 	@NamedQuery(name="ScmRepository.deleteByIds", query="delete from ScmRepository r where r.id in (:scmRepositoriesIds)"),

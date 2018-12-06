@@ -46,12 +46,12 @@ public interface ScmServerDao extends JpaRepository<ScmServer, Long> {
 	boolean isServerNameAlreadyInUse(@Param("name") String scmServerName);
 
 	/**
-	 * Check whether the given ScmServer contains a ScmRepository which is bound to a Project.
-	 * @param scmServerId The Id of the ScmServer.
-	 * @return True if the given ScmServer contains a ScmRepository which is bound to a Project. False otherwise.
+	 * Check whether at least one of the given ScmServers contains a ScmRepository which is bound to a Project.
+	 * @param scmServerIds The Ids of the ScmServers.
+	 * @return True if at least one of the given ScmServers contain a ScmRepository which is bound to a Project. False otherwise.
 	 */
-//	@Query
-//	boolean isServerBoundToProject(@Param("scmServerId") long scmServerId);
+	@Query
+	boolean isOneServerBoundToProject(@Param("scmServerIds") Collection<Long> scmServerIds);
 
 	/**
 	 * Release the ScmRepositories contained in the given ScmServers from their Projects.
