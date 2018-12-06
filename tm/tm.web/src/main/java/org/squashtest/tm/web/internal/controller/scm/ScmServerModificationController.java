@@ -53,7 +53,6 @@ public class ScmServerModificationController {
 
 	private static final String NAME = "name";
 	private static final String URL = "url";
-	private static final String KIND = "kind";
 	private static final String PATH = "path";
 	private static final String REPOSITORY_PATH = "repositoryPath";
 
