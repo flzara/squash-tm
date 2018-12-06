@@ -1035,6 +1035,7 @@
 		REQ_CATEGORIES_LIST CDATA "1"
 		TC_NATURES_LIST CDATA "2"
 		TC_TYPES_LIST CDATA "3"
+		ALLOW_AUTOMATION_WORKFLOW #IMPLIED
 		>
 
 	<!ELEMENT PROJECT_FILTER EMPTY>
@@ -1256,6 +1257,7 @@
 		TC_TYPE CDATA "20"
 		TC_STATUS (WORK_IN_PROGRESS|UNDER_REVIEW|APPROVED|OBSOLETE|TO_BE_UPDATED) "WORK_IN_PROGRESS"
 		TC_KIND (STANDARD|GHERKIN) "STANDARD"
+		AUTOMATABLE "Y"
 		>
 
 
@@ -1330,10 +1332,13 @@
 	<!ELEMENT attachment EMPTY>
 	<!ELEMENT attachment_content EMPTY>
 	<!ELEMENT attachment_list EMPTY>
-	<!ELEMENT auth_user EMPTY>
+	<!ELEMENT automation_request_library_content EMPTY>
 	<!ELEMENT automated_execution_extender EMPTY>
 	<!ELEMENT automated_suite EMPTY>
 	<!ELEMENT automated_test EMPTY>
+	<!ELEMENT automation_request EMPTY>
+	<!ELEMENT automation_request_library EMPTY>
+	<!ELEMENT auth_user EMPTY>
 	<!ELEMENT bugtracker EMPTY>
 	<!ELEMENT bugtracker_binding EMPTY>
 	<!ELEMENT bugtracker_project EMPTY>

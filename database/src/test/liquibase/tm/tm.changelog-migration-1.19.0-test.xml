@@ -62,7 +62,7 @@
 
   <changeSet id="tm-1.19.0-SQTM-510" author="aboittiaux" dbms="mysql, postgresql, h2">
     <preConditions>
-      <sqlCheck expectedResult="5">
+      <sqlCheck expectedResult="4">
         select count(*) from CORE_PARTY_AUTHORITY
         where AUTHORITY = 'ROLE_TF_FUNCTIONAL_TESTER';
       </sqlCheck>

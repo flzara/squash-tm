@@ -171,6 +171,7 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 		Set<Team> teams = user.getTeams();
 		for (Team team : teams) {
 			teamIds.add(team.getId());
+			team.removeMember(user);
 		}
 		user.removeTeams(teamIds);
 

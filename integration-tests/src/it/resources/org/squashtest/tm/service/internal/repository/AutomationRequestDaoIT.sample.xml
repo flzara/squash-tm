@@ -13,14 +13,14 @@
   <TEST_CASE_LIBRARY TCL_ID="-10" ATTACHMENT_LIST_ID="-1000"/>
   <CAMPAIGN_LIBRARY CL_ID="-10" ATTACHMENT_LIST_ID="-1000"/>
   <AUTOMATION_REQUEST_LIBRARY ARL_ID="-10" ATTACHMENT_LIST_ID="-1000"/>
-  <PROJECT PROJECT_ID="-10" NAME="Test Project-1" DESCRIPTION="&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam felis ante,&lt;/p&gt;" LABEL="Lorem ipsum dolor sit amet, " ACTIVE="true" CREATED_BY="admin" CREATED_ON="2011-09-30 10:24:47.0" CL_ID="-10" TCL_ID="-10" RL_ID="-10" ARL_ID="-10" ATTACHMENT_LIST_ID="-1000"/>
+  <PROJECT PROJECT_ID="-10" NAME="Test Project-1" DESCRIPTION="&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam felis ante,&lt;/p&gt;" LABEL="Lorem ipsum dolor sit amet, " ACTIVE="true" CREATED_BY="admin" CREATED_ON="2011-09-30 10:24:47.0" CL_ID="-10" TCL_ID="-10" RL_ID="-10" ARL_ID="-10" ATTACHMENT_LIST_ID="-1000" ALLOW_AUTOMATION_WORKFLOW="true"/>
 
 
   <REQUIREMENT_LIBRARY RL_ID="-20" ATTACHMENT_LIST_ID="-1000"/>
   <TEST_CASE_LIBRARY TCL_ID="-20" ATTACHMENT_LIST_ID="-1000"/>
   <CAMPAIGN_LIBRARY CL_ID="-20" ATTACHMENT_LIST_ID="-1000"/>
   <AUTOMATION_REQUEST_LIBRARY ARL_ID="-20" ATTACHMENT_LIST_ID="-1000"/>
-  <PROJECT PROJECT_ID="-20" NAME="Test Project-2" DESCRIPTION="&lt;p&gt;blahblah ipsum,&lt;/p&gt;" LABEL="lorem et caetera" ACTIVE="true" CREATED_BY="admin" CREATED_ON="2011-09-30 10:24:47.0" CL_ID="-20" TCL_ID="-20" RL_ID="-20" ARL_ID="-20" ATTACHMENT_LIST_ID="-1000"/>
+  <PROJECT PROJECT_ID="-20" NAME="Test Project-2" DESCRIPTION="&lt;p&gt;blahblah ipsum,&lt;/p&gt;" LABEL="lorem et caetera" ACTIVE="true" CREATED_BY="admin" CREATED_ON="2011-09-30 10:24:47.0" CL_ID="-20" TCL_ID="-20" RL_ID="-20" ARL_ID="-20" ATTACHMENT_LIST_ID="-1000" ALLOW_AUTOMATION_WORKFLOW="true"/>
 
 
 

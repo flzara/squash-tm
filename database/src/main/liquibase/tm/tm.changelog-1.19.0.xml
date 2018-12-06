@@ -561,7 +561,8 @@
       insert into CORE_PARTY_AUTHORITY(PARTY_ID, AUTHORITY)
       select distinct cu.PARTY_ID, 'ROLE_TF_FUNCTIONAL_TESTER' from CORE_USER cu
       left join CORE_PARTY_AUTHORITY cpa on cu.PARTY_ID = cpa.PARTY_ID
-      where cpa.AUTHORITY is null;
+      left join CORE_GROUP_MEMBER ctm on ctm.PARTY_ID = cu.PARTY_ID
+      where cpa.AUTHORITY is null and ctm.GROUP_ID = 2;
     </sql>
 
   </changeSet>

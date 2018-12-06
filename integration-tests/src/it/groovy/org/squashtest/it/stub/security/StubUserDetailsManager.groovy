@@ -70,7 +70,7 @@ class StubUserDetailsManager implements SquashUserDetailsManager {
 
 	@Override
 	public List<GrantedAuthority> loadAuthoritiesByUsername(
-			@NotNull String username) {
+			String username) {
 		return Collections.emptyList
 	}
 
