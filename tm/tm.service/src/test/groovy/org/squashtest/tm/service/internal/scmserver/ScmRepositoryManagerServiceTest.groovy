@@ -283,13 +283,14 @@ class ScmRepositoryManagerServiceTest extends Specification {
 			0 * scmRepositoryDao.save(repo)
 			resultFolderPath == repoBranch
 	}
-
+	
 	def "#deleteScmrepositories(Collection<Long>) - [Nominal] - Should delete several ScmRepositories"() {
 		given: "Mock data"
 			Collection<Long> repoIds = [14, 5, 9]
 		when:
 			scmRepositoryManagerService.deleteScmRepositories(repoIds)
 		then:
+			1 * scmRepositoryDao.releaseScmRepositoriesFromProjects(repoIds)
 			1 * scmRepositoryDao.deleteByIds(repoIds)
 	}
 }

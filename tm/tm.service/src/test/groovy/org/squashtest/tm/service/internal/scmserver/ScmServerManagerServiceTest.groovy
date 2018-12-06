@@ -317,6 +317,7 @@ class ScmServerManagerServiceTest extends Specification {
 		when:
 			scmServerManagerService.deleteScmServers(serverIds)
 		then:
+			1 * scmServerDao.releaseContainedScmRepositoriesFromProjects(serverIds)
 			1 * scmServerDao.delete(s1)
 			1 * scmServerDao.delete(s2)
 			1 * scmServerDao.delete(s3)
