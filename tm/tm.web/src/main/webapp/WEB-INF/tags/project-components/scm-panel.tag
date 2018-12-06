@@ -29,7 +29,7 @@
 	description="The Collection of the available Scm Servers"%>
 <%@ attribute name="project" type="java.lang.Object" required="true" description="The TM Project"%>
 
-<c:set var="scmServerId" value="${(not empty project.scmRepository) ? project.scmRepository.scmServerId : 0}"/>
+<c:set var="scmServerId" value="${(not empty project.scmRepository) ? project.scmRepository.scmServer.id : 0}"/>
 <c:set var="scmRepositoryId" value="${(not empty project.scmRepository) ? project.scmRepository.id : 0}"/>
 
 <f:message var="noServerLabel" key="label.NoServer" />
