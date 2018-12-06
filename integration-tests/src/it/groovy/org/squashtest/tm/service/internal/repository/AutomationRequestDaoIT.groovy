@@ -247,7 +247,7 @@ class AutomationRequestDaoIT extends DbunitDaoSpecification{
 
 		and :
 		ColumnFiltering filter = new SimpleColumnFiltering()
-			.addFilter("transmissionDate", "2018-10-11 - 2018-10-13")
+			.addFilter("transmissionDate", "11/10/2018 - 13/10/2018")
 
 		when :
 		Page<AutomationRequest> page = requestDao.findAll(pageable, filter, [-20L, -10L])
