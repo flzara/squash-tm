@@ -25,8 +25,8 @@
  *
  */
 
-define([ 'jquery', 'underscore', 'squash.translator', "jquery.squash.oneshotdialog", "workspace.projects" ],
-		function($, _, translator, oneshot, projects) {
+define([ 'jquery', 'underscore', 'squash.translator', "jquery.squash.oneshotdialog", "workspace.projects", "workspace.storage" ],
+		function($, _, translator, oneshot, projects, storage) {
 
 	squashtm = squashtm || {};
 	squashtm.workspace = squashtm.workspace || {};
@@ -51,27 +51,28 @@ define([ 'jquery', 'underscore', 'squash.translator', "jquery.squash.oneshotdial
 
 
 		var reset = function() {
-			$.cookie('squash-copy-nodes', null);
+			storage.remove('squash-copy-nodes');
 		};
 
 		var retrieve = function() {
-			var data = $.cookie('squash-copy-nodes');
+			var data = storage.get('squash-copy-nodes') || null;
 			return JSON.parse(data);
 		};
 
 		var retrieveReqForTc = function() {
-			var data = $.cookie('reqToTc-copy-nodes');
+			var data = storage.get('reqToTc-copy-nodes') || null;
 			return JSON.parse(data);
 		};
 
 		var store = function(data) {
 
 			var jsonData = JSON.stringify(data);
+			
 			if(this.pathname == "/squash/requirement-workspace/") {
-
-				$.cookie('reqToTc-copy-nodes', jsonData, {path: "/squash/test-case-workspace"});
+				storage.set('reqToTc-copy-nodes', jsonData, {path: "/squash/test-case-workspace"});
 			}
-				$.cookie('squash-copy-nodes', jsonData);
+			
+			storage.set('squash-copy-nodes', jsonData);
 		};
 
 		var readNodesData = function(tree) {
