@@ -588,5 +588,9 @@
     </sql>
   </changeSet>
 
+  <changeSet id="tm-1.19.0-Mantis-7833" author="jprioux">
+    <comment>Increase remote project id limit to 100 for redmine bt project keys</comment>
+    <modifyDataType tableName="REQUIREMENT_SYNC_EXTENDER" columnName="REMOTE_PROJECT_ID" newDataType="VARCHAR(100)"/>
+  </changeSet>
 
 </databaseChangeLog>
