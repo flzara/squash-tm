@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -119,7 +120,7 @@ public class ProjectDaoImpl extends HibernateEntityDao<Project> implements Custo
 			.join(ACL_CLASS).on(ACL_CLASS.ID.eq(ACL_OBJECT_IDENTITY.CLASS_ID))
 			.where(ACL_RESPONSIBILITY_SCOPE_ENTRY.PARTY_ID.in(partyIds)
 				.and(ACL_CLASS.CLASSNAME.eq("org.squashtest.tm.domain.project.Project"))
-				.and(ACL_RESPONSIBILITY_SCOPE_ENTRY.ACL_GROUP_ID.eq(10L)))
+				.and(ACL_RESPONSIBILITY_SCOPE_ENTRY.ACL_GROUP_ID.in(Arrays.asList(5L, 10L))))
 			.fetch(ACL_OBJECT_IDENTITY.IDENTITY, Long.class);
 	}
 }

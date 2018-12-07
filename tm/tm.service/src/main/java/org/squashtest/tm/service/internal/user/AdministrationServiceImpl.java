@@ -213,6 +213,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 		UsersGroup group = groupDao.getOne(groupId);
 		User user = userDao.getOne(userId);
 		user.setGroup(group);
+		aclService.updateDerivedPermissions(userId);
 	}
 
 	@Override
