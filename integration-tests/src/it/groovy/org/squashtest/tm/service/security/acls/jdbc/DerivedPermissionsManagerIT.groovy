@@ -192,7 +192,7 @@ class DerivedPermissionsManagerIT extends DbunitServiceSpecification {
 	def "should grant project manager authority to user"(){
 
 		when :
-		manager.grantProjectManagerAuthorities([-34L])
+		manager.grantAuthorities([-34L], manager.INSERT_CORE_PARTY_MANAGER_AUTHORITY)
 
 		then :
 		executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY
@@ -203,7 +203,10 @@ class DerivedPermissionsManagerIT extends DbunitServiceSpecification {
 	def "should filter out users that don't manage anything"(){
 
 		expect :
-		manager.retainUsersManagingAnything([-34L, -35L, -36L, -37L]) as Set == [-35L, -36L, -37L] as Set
+		manager.retainsUsersAuthoritiesOnAnything(
+			[-34L, -35L, -36L, -37L],
+			manager.RETAIN_USERS_MANAGING_ANYTHING,
+			manager.RETAIN_MEMBERS_OF_TEAMS_MANAGING_ANYTHING) as Set == [-35L, -36L, -37L] as Set
 
 	}
 
