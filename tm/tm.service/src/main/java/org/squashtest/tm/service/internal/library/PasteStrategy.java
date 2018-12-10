@@ -20,9 +20,11 @@
  */
 package org.squashtest.tm.service.internal.library;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.Search;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.TreeNode;
 import org.squashtest.tm.domain.project.GenericLibrary;
@@ -39,6 +41,7 @@ import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.annotation.CacheScope;
 import org.squashtest.tm.service.internal.repository.EntityDao;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
+import org.squashtest.tm.service.testcase.fromreq.ReqToTestCaseConfiguration;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -70,10 +73,9 @@ import java.util.*;
  * added to the destination</li>
  * </ul>
  *
- * @author gfouquet, mpagnon, bsiri
- *
  * @param <CONTAINER>
  * @param <NODE>
+ * @author gfouquet, mpagnon, bsiri
  */
 
 /*
@@ -138,7 +140,6 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	}
 
 
-
 	// ******************* code *****************************
 
 
@@ -148,8 +149,8 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	}
 
 	@CacheScope
-	public List<NODE> pasteReqToTestCasesNodes(long containerId, List<Long> list) {
-		return internalReqToTestCasesPasteNodes(containerId, list, WHATEVER_POSITION);
+	public List<NODE> pasteReqToTestCasesNodes(long containerId, List<Long> list, ReqToTestCaseConfiguration configuration) {
+		return internalReqToTestCasesPasteNodes(containerId, list, configuration, WHATEVER_POSITION);
 	}
 
 	@CacheScope
@@ -157,15 +158,15 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		return internalPasteNodes(containerId, list, position);
 	}
 
-	private List<NODE> internalReqToTestCasesPasteNodes(long containerId, List<Long> list, Integer position) {
+	private List<NODE> internalReqToTestCasesPasteNodes(long containerId, List<Long> list, ReqToTestCaseConfiguration configuration, Integer position) {
 
 		initFromReqToTestCases(containerId, list);
-		processFirstLayerFromReqToTc(position);
+		processFirstLayerFromReqToTc(position, configuration);
 		while (!nextLayer.isEmpty()) {
 
 			removeProcessedNodesFromCache();
 			shiftToNextLayer();
-			processLayerFromReqToTc();
+			processLayerFromReqToTc(configuration);
 
 		}
 		reindexAfterCopy();
@@ -205,9 +206,9 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		// init the source layer
 		sourceLayer = new HashSet<>();
 		CONTAINER container = containerDao.findById(containerId);
-		NodePairing pairing = new NodePairing((NodeContainer<TreeNode>)container);
+		NodePairing pairing = new NodePairing((NodeContainer<TreeNode>) container);
 
-		for (Long contentId : list){
+		for (Long contentId : list) {
 			NODE srcNode = em.find(nodeType, contentId);
 			pairing.addContent(srcNode);
 		}
@@ -222,9 +223,9 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 
 		sourceLayer = new HashSet<>();
 		CONTAINER container = containerDao.findById(containerId);
-		NodePairing pairing = new NodePairing((NodeContainer<TreeNode>)container);
+		NodePairing pairing = new NodePairing((NodeContainer<TreeNode>) container);
 
-		for (Long contentId : list){
+		for (Long contentId : list) {
 			RequirementLibraryNode srcNode = em.find(RequirementLibraryNode.class, contentId);
 			pairing.addContent(srcNode);
 		}
@@ -244,14 +245,14 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		// (sourceLayer contains only one pairing at that time)
 		NodePairing pairing = sourceLayer.iterator().next();
 
-		CONTAINER container = (CONTAINER)pairing.getContainer();
+		CONTAINER container = (CONTAINER) pairing.getContainer();
 		Collection<TreeNode> newContent = pairing.getNewContent();
 
-		for (NODE srcNode : (Collection<NODE>)newContent) {
+		for (NODE srcNode : (Collection<NODE>) newContent) {
 			NODE outputNode = (NODE) firstOperation.performOperation(srcNode, (NodeContainer<TreeNode>) container,
-					position);
+				position);
 			outputList.add(outputNode);
-			if (position != null){
+			if (position != null) {
 				position++;
 			}
 			if (firstOperation.isOkToGoDeeper()) {
@@ -264,31 +265,30 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	}
 
 
-
 	@SuppressWarnings("unchecked")
-	private void processFirstLayerFromReqToTc(Integer position) {
+	private void processFirstLayerFromReqToTc(Integer position, ReqToTestCaseConfiguration configuration) {
 
 		NodePairing pairing = sourceLayer.iterator().next();
 
-		CONTAINER container = (CONTAINER)pairing.getContainer();
+		CONTAINER container = (CONTAINER) pairing.getContainer();
 		Collection<TreeNode> newContent = pairing.getNewContent();
 
-		for (NODE srcNode : (Collection<NODE>)newContent) {
-			NODE transform = transform(srcNode,(NodeContainer<TreeNode>)container);
-			NODE outputNode = (NODE) firstOperation.performOperationFromReqToTc(srcNode, transform,(NodeContainer<TreeNode>) container,
-				position);
+		for (NODE srcNode : (Collection<NODE>) newContent) {
+			NODE transform = transform(srcNode, (NodeContainer<TreeNode>) container, configuration);
+			NODE outputNode = (NODE) firstOperation.performOperationFromReqToTc(srcNode, transform,
+				(NodeContainer<TreeNode>) container, position);
 			outputList.add(outputNode);
-			if (position != null){
+			if (position != null) {
 				position++;
 			}
 			if (firstOperation.isOkToGoDeeper()) {
-				if(isReqMother){
-					NODE transformMother =transformReqMotherInReqFolder(srcNode,(NodeContainer<TreeNode>)container);
-					NODE outputMotherNode = (NODE) firstOperation.performOperationFromReqToTc(srcNode, transformMother,(NodeContainer<TreeNode>) container,
+				if (isReqMother) {
+					NODE transformMother = transformReqMotherInReqFolder(srcNode, (NodeContainer<TreeNode>) container);
+					NODE outputMotherNode = (NODE) firstOperation.performOperationFromReqToTc(srcNode, transformMother, (NodeContainer<TreeNode>) container,
 						position);
 					outputList.add(outputMotherNode);
 					appendNextLayerNodesFromReqToTc(srcNode, outputMotherNode);
-				}else {
+				} else {
 					appendNextLayerNodesFromReqToTc(srcNode, outputNode);
 				}
 			}
@@ -297,10 +297,10 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		tcIdsToIndex.addAll(firstOperation.getTestCaseToIndex());
 	}
 
-	private NODE transform(NODE srcNode,NodeContainer<TreeNode> destination){
+	private NODE transform(NODE srcNode, NodeContainer<TreeNode> destination, ReqToTestCaseConfiguration configuration) {
 		isReqMother = false;
-		RequirementLibraryNode reqNode = em.find(RequirementLibraryNode.class,srcNode.getId());
-		if(reqNode.getClass()== Requirement.class) {
+		RequirementLibraryNode reqNode = em.find(RequirementLibraryNode.class, srcNode.getId());
+		if (reqNode.getClass() == Requirement.class) {
 			Requirement req = (Requirement) reqNode;
 			TestCase newTestCase = new TestCase();
 			newTestCase.setImportanceAuto(true);
@@ -309,24 +309,25 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 			newTestCase.setDescription(req.getDescription());
 			newTestCase.setReference(req.getReference());
 			newTestCase.notifyAssociatedWithProject((Project) destination.getProject());
-			if(req.hasContent()){
+			newTestCase.extendWithScript(configuration.getScriptLanguage(), configuration.getLocale());
+			if (req.hasContent()) {
 				isReqMother = true;
 			}
-			if(destination.getClass()== TestCaseLibrary.class){
-				testCaseLibraryNavigationService.addFromReqTestCaseToLibrary(destination.getId(), newTestCase, req.getCurrentVersion(),0);
-			}else if(destination.getClass() == TestCaseFolder.class){
-				testCaseLibraryNavigationService.addFromReqTestCaseToFolder(destination.getId(), newTestCase, req.getCurrentVersion(),0);
+			if (destination.getClass() == TestCaseLibrary.class) {
+				testCaseLibraryNavigationService.addFromReqTestCaseToLibrary(destination.getId(), newTestCase, req.getCurrentVersion(), 0);
+			} else if (destination.getClass() == TestCaseFolder.class) {
+				testCaseLibraryNavigationService.addFromReqTestCaseToFolder(destination.getId(), newTestCase, req.getCurrentVersion(), 0);
 			}
 			return (NODE) newTestCase;
-		}else {
+		} else {
 			RequirementFolder folder = (RequirementFolder) reqNode;
 			TestCaseFolder tcFolder = new TestCaseFolder();
 			tcFolder.setDescription(folder.getName());
 			tcFolder.setName(folder.getName());
-			tcFolder.notifyAssociatedWithProject((Project)destination.getProject());
-			if(destination.getClass()== TestCaseLibrary.class) {
+			tcFolder.notifyAssociatedWithProject((Project) destination.getProject());
+			if (destination.getClass() == TestCaseLibrary.class) {
 				testCaseLibraryNavigationService.addFromReqFolderToLibrary(destination.getId(), tcFolder);
-			}else if(destination.getClass() == TestCaseFolder.class){
+			} else if (destination.getClass() == TestCaseFolder.class) {
 				testCaseLibraryNavigationService.addReqFolderToTcFolder(destination.getId(), tcFolder);
 			}
 			return (NODE) tcFolder;
@@ -335,11 +336,11 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	}
 
 
-	private NODE transformReqMotherInReqFolder(NODE srcNode,NodeContainer<TreeNode> destination){
+	private NODE transformReqMotherInReqFolder(NODE srcNode, NodeContainer<TreeNode> destination) {
 		isReqMother = false;
-		RequirementLibraryNode reqNode = em.find(RequirementLibraryNode.class,srcNode.getId());
+		RequirementLibraryNode reqNode = em.find(RequirementLibraryNode.class, srcNode.getId());
 		NODE node = null;
-		if(reqNode.getClass()== Requirement.class) {
+		if (reqNode.getClass() == Requirement.class) {
 			Requirement req = (Requirement) reqNode;
 			TestCaseFolder tcFolder = new TestCaseFolder();
 			tcFolder.setDescription(req.getDescription());
@@ -352,7 +353,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 			}
 			node = (NODE) tcFolder;
 		}
-	return node;
+		return node;
 	}
 
 	/**
@@ -360,7 +361,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	 */
 	private void processLayer() {
 
-		for (NodePairing pairing : sourceLayer){
+		for (NodePairing pairing : sourceLayer) {
 			NodeContainer<TreeNode> destination = pairing.getContainer();
 			Collection<TreeNode> sources = pairing.getNewContent();
 			for (TreeNode source : sources) {
@@ -377,15 +378,15 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	}
 
 
-	private void processLayerFromReqToTc() {
+	private void processLayerFromReqToTc(ReqToTestCaseConfiguration configuration) {
 
-		for (NodePairing pairing : sourceLayer){
+		for (NodePairing pairing : sourceLayer) {
 			NodeContainer<TreeNode> destination = pairing.getContainer();
 			Collection<TreeNode> sources = pairing.getNewContent();
 
 			for (TreeNode source : sources) {
-				NODE transsform = transform((NODE) source, destination);
-				TreeNode outputNode = nextsOperation.performOperationFromReqToTc(source, transsform, destination, WHATEVER_POSITION);
+				NODE transform = transform((NODE) source, destination, configuration);
+				TreeNode outputNode = nextsOperation.performOperationFromReqToTc(source, transform, destination, WHATEVER_POSITION);
 				if (nextsOperation.isOkToGoDeeper()) {
 					if (isReqMother) {
 						NODE transformMother = transformReqMotherInReqFolder((NODE) source, destination);
@@ -422,6 +423,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		NextLayerFeeder feeder = nextLayerFeederOperationFactory.get();
 		feeder.feedNextLayerFromReqToTc(destNode, sourceNode, this.nextLayer, this.outputList);
 	}
+
 	private void reindexAfterCopy() {
 		//Flushing session now, as reindex will clear the HibernateSession when FullTextSession will be cleared.
 		em.unwrap(Session.class).flush();
@@ -446,8 +448,8 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		ftem.flushToIndexes();
 
 		Collection<TreeNode> nextNodes = new HashSet<>();
-		for (NodePairing nextPairing : nextLayer){
-			nextNodes.add((TreeNode)nextPairing.getContainer());
+		for (NodePairing nextPairing : nextLayer) {
+			nextNodes.add((TreeNode) nextPairing.getContainer());
 			nextNodes.addAll(nextPairing.getNewContent());
 		}
 
@@ -457,20 +459,20 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		 *  indeed a TestCaseLibrary is not a TreeNode.
 		 */
 		Session session = em.unwrap(Session.class);
-		for (NodePairing processed : sourceLayer){
+		for (NodePairing processed : sourceLayer) {
 			Collection<Object> toEvict = new HashSet<>();
 			toEvict.add(processed.getContainer());
 			toEvict.addAll(processed.getNewContent());
 
 
-			for (Object evi : toEvict){
+			for (Object evi : toEvict) {
 				/*
 				 * evict a node only if :
 				 * - not evicted already,
 				 * - not a library (or at flush time the project will rant)
 				 */
-				if (! nextNodes.contains(evi) &&
-						!GenericLibrary.class.isAssignableFrom(evi.getClass())){
+				if (!nextNodes.contains(evi) &&
+					!GenericLibrary.class.isAssignableFrom(evi.getClass())) {
 					session.evict(evi);
 				}
 			}
@@ -480,11 +482,11 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 
 	public void setNodeType(Class<NODE> nodeType) {
 		this.nodeType = nodeType;
-}
+	}
 
 	public TestCaseImportance deduceImportanceFromRequirementCriticality(RequirementCriticality requirementCriticality) {
 		TestCaseImportance testCaseImportance = TestCaseImportance.LOW;
-		if(RequirementCriticality.CRITICAL.equals(requirementCriticality)) {
+		if (RequirementCriticality.CRITICAL.equals(requirementCriticality)) {
 			testCaseImportance = TestCaseImportance.HIGH;
 		} else if (RequirementCriticality.MAJOR.equals(requirementCriticality)) {
 			testCaseImportance = TestCaseImportance.MEDIUM;

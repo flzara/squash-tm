@@ -40,6 +40,7 @@ import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.library.LibraryNavigationService;
 import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
+import org.squashtest.tm.service.testcase.fromreq.ReqToTestCaseConfiguration;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
@@ -179,18 +180,23 @@ public class TestCaseLibraryNavigationController extends
 	@ResponseBody
 	@RequestMapping(value = "/{destinationType}/{destinationId}/content/newTestCases", method = RequestMethod.POST, params = {"nodeIds[]"})
 	public void copyFromReqToTestCases(@RequestParam("nodeIds[]") Long[] nodeIds,
-												   @PathVariable("destinationId") long destinationId, @PathVariable("destinationType") String destType) {
+									   @PathVariable("destinationId") long destinationId,
+									   @PathVariable("destinationType") String destType,
+									   @RequestParam("tcKind") String tcKind,
+									   Locale locale) {
+
+		ReqToTestCaseConfiguration configuration = new ReqToTestCaseConfiguration(tcKind, locale.getLanguage());
 
 		try {
 			switch (destType) {
 				case FOLDERS:
-					testCaseLibraryNavigationService.copyReqToTestCasesToFolder(destinationId, nodeIds);
+					testCaseLibraryNavigationService.copyReqToTestCasesToFolder(destinationId, nodeIds, configuration);
 					break;
 				case DRIVES:
-					testCaseLibraryNavigationService.copyReqToTestCasesToLibrairy(destinationId, nodeIds);
+					testCaseLibraryNavigationService.copyReqToTestCasesToLibrary(destinationId, nodeIds, configuration);
 					break;
 				case TESTCASES:
-					testCaseLibraryNavigationService.copyReqToTestCasesToTestCases(destinationId, nodeIds);
+					testCaseLibraryNavigationService.copyReqToTestCasesToTestCases(destinationId, nodeIds, configuration);
 					break;
 				default:
 					throw new IllegalArgumentException("copy nodes : specified destination type doesn't exists : "

@@ -92,6 +92,7 @@ import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.testcase.TestCaseStatisticsService;
+import org.squashtest.tm.service.testcase.fromreq.ReqToTestCaseConfiguration;
 
 @Service("squashtest.tm.service.TestCaseLibraryNavigationService")
 @Transactional
@@ -922,7 +923,8 @@ public class TestCaseLibraryNavigationServiceImpl
 	}
 
 	@Override
-	public void copyReqToTestCasesToFolder(long destinationId, Long[] sourceNodesIds) {
+	@PreventConcurrent(entityType=TestCaseLibraryNode.class)
+	public void copyReqToTestCasesToFolder(@Id long destinationId, Long[] sourceNodesIds, ReqToTestCaseConfiguration configuration) {
 		if (sourceNodesIds.length == 0) {
 			return;
 		}
@@ -930,7 +932,7 @@ public class TestCaseLibraryNavigationServiceImpl
 		PasteStrategy<TestCaseFolder, TestCaseLibraryNode> pasteStrategy = getPasteToFolderStrategy();
 			makeMoverStrategy(pasteStrategy);
 
-		 pasteStrategy.pasteReqToTestCasesNodes(destinationId, Arrays.asList(sourceNodesIds));
+		 pasteStrategy.pasteReqToTestCasesNodes(destinationId, Arrays.asList(sourceNodesIds), configuration);
 		} catch (NullArgumentException | DuplicateNameException dne) {
 			throw new NameAlreadyExistsAtDestinationException(dne);
 		}
@@ -947,7 +949,8 @@ public class TestCaseLibraryNavigationServiceImpl
 	}
 
 	@Override
-	public void copyReqToTestCasesToLibrairy(long destinationId, Long[] targetId) {
+	@PreventConcurrent(entityType = TestCaseLibrary.class)
+	public void copyReqToTestCasesToLibrary(long destinationId, Long[] targetId, ReqToTestCaseConfiguration configuration) {
 		if (targetId.length == 0) {
 			return;
 		}
@@ -955,14 +958,14 @@ public class TestCaseLibraryNavigationServiceImpl
 			PasteStrategy<TestCaseLibrary, TestCaseLibraryNode> pasteStrategy = getPasteToLibraryStrategy();
 			makeMoverStrategy(pasteStrategy);
 
-			pasteStrategy.pasteReqToTestCasesNodes(destinationId, Arrays.asList(targetId));
+			pasteStrategy.pasteReqToTestCasesNodes(destinationId, Arrays.asList(targetId), configuration);
 		} catch (NullArgumentException | DuplicateNameException dne) {
 			throw new NameAlreadyExistsAtDestinationException(dne);
 		}
 	}
 
 	@Override
-	public void copyReqToTestCasesToTestCases(long destinationId, Long[] targetId) {
+	public void copyReqToTestCasesToTestCases(long destinationId, Long[] targetId, ReqToTestCaseConfiguration configuration) {
 		TestCaseFolder folder = findParentIfExists(destinationId);
 		if (null == folder){
 			Long tclId =  DSL
@@ -974,9 +977,9 @@ public class TestCaseLibraryNavigationServiceImpl
 				.join(TEST_CASE_LIBRARY_NODE).using(TEST_CASE_LIBRARY_NODE.PROJECT_ID)
 				.where(TEST_CASE_LIBRARY_NODE.TCLN_ID.equal(destinationId))
 				.fetchOne(TEST_CASE_LIBRARY.TCL_ID);
-			copyReqToTestCasesToLibrairy(tclId, targetId);
+			copyReqToTestCasesToLibrary(tclId, targetId, configuration);
 		}else  {
-			copyReqToTestCasesToFolder(folder.getId(),targetId);
+			copyReqToTestCasesToFolder(folder.getId(),targetId, configuration);
 		}
 	}
 

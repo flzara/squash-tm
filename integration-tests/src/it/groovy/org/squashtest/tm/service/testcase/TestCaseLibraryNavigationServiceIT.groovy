@@ -412,7 +412,6 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
         tcl.content.find({ it.id == -1L })
     }
 
-
     @DataSet("TestCaseLibraryNavigationServiceIT.test-case-gathering.xml")
     @Unroll("should retrieve a total of #expectedNumber test case ids for the given selection")
     def "should retrieve test case ids from a hierarchy"() {
@@ -428,7 +427,6 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
         [-15L]       | [-237L, -249L]        | 9
 
     }
-
 
     def findCufValuesForEntity(BindableEntity tctype, long tcId) {
         Query query = session.createQuery("from CustomFieldValue cv where cv.boundEntityType = :type and cv.boundEntityId = :id")
