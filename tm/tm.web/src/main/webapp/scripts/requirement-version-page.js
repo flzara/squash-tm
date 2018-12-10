@@ -372,16 +372,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 						return;
 					} else {
 						var relatedReqNodeId = relatedReqNodeIds[0];
-						bind(relatedReqNodeId).success(function (rejections) {
-							if (Object.keys(rejections).length > 0) {
-								// If the link was not created, display summary
-								showAddSummary(rejections);
-							} else {
-								// Else, open the popup to choose type
-								table.refresh();
-								openChooseTypeDialog(currentVersionId, relatedReqNodeId, true);
-							}
-						});
+						openChooseTypeDialog(currentVersionId, relatedReqNodeId, true);
 					}
 				});
 
@@ -470,13 +461,19 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 					var selectedTypeDirection = parseInt(selectedTypeIdAndDirection[1]);
 					var params = {
 						reqVersionLinkTypeId: selectedTypeId,
-						isRelatedIdANodeId: self.data("isRelatedIdANodeId"),
-						reqVersionLinkTypeDirection: selectedTypeDirection
+						reqVersionLinkTypeDirection: selectedTypeDirection,
 					};
 
-					bind(relatedReqVersionId, params).success(function (data) {
+					bind(relatedReqVersionId, params).success(function (rejections) {
+
+					if (Object.keys(rejections).length > 0) {
+          								// If the link was not created, display summary
+          								showAddSummary(rejections);
+          							} else {
+          								// Else, open the popup to choose type
+          								table.refresh();
+          							}
 						self.formDialog('close');
-						table.refresh();
 					});
 				});
 

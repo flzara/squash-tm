@@ -22,6 +22,7 @@ package org.squashtest.tm.service.requirement;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -93,6 +94,9 @@ public interface LinkedRequirementVersionManagerService {
 		long requirementVersionId, long relatedRequirementNodeId, boolean isRelatedIdANodeId,
 		long reqVersionLinkTypeId, boolean reqVersionLinkTypeDirection);
 
+	Collection<LinkedRequirementVersionException> addLinkWithNodeIds(
+		Long reqVersionNodeId, Long relatedReqVersionNodeId, long reqVersionLinkTypeId, boolean reqVersionLinkTypeDirection);
+
 	void copyRequirementVersionLinks(RequirementVersion previousVersion, RequirementVersion newVersion);
 
 	RequirementVersionLink addDetailedReqVersionLink(
@@ -112,4 +116,6 @@ public interface LinkedRequirementVersionManagerService {
 		throws UnlinkableLinkedRequirementVersionException;
 
 	List<RequirementVersionLinkType> findAllRequirementVersionLinkType();
+
+	Map<String, String> getRequirementVersionInformation(List<Long> requirementVersionids);
 }

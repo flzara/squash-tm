@@ -136,6 +136,50 @@
   </div>
 </script>
 
+<script type="text/x-handlebars-template" id="create-link-type-dialog-tpl">
+  <div id="{{dialogId}}" class="not-displayed popup-dialog" title="<f:message key='requirement-version.link.type.dialog.title'/>"
+  		style="margin: 5px; width: 100%;" >
+
+    <div data-def="state=confirm">
+      <table id="involved-req-versions" style="table-layout: fixed;">
+      	<tr>
+      		<td style="width: 45%; overflow: hidden; float: left; word-wrap: break-word;">
+				<span style="font-weight: bold; float: left;"><c:out value="${requirementVersion.name}"/> </span>
+      		</td>
+      		<td style="width: 45%; overflow: hidden; float: right;">
+      			<span id="relatedRequirementName" style="font-weight: bold; float: right;">${{relatedRequirement.name}}</span>
+      		</td>
+      	</tr>
+      	<%-- ---- We don't want to display the descriptions anymore ----
+      	<tr>
+      		<td>
+      			<span>${requirementVersion.description}</span>
+      		</td>
+      		<td>
+      			<span id="relatedRequirementDescription">${{relatedRequirement.description}}</span>
+      		</td>
+      	</tr>
+      	--%>
+      </table>
+
+      <div style="text-align: center; margin-top: 10px; padding-right: 10%;">
+      	<label><f:message key="requirement-version.link.type.dialog.title"/></label>
+      	<select id="link-types-options">
+      		<option value="1_0">Related - Related</option>
+      		<option value="2_0">Parent - Child</option>
+      		<option value="2_1">Child - Parent</option>
+      	</select>
+      </div>
+    </div>
+
+	<div data-def="state=wait"></div>
+    <div class="popup-dialog-buttonpane">
+      <input type="button" class="button" value="${labelConfirm}" data-def="evt=confirm, mainbtn"/>
+      <input type="button" class="button" value="${labelClose}" data-def="evt=cancel"/>
+    </div>
+  </div>
+</script>
+
 <script type="text/x-handlebars-template" id="add-summary-dialog-tpl">
 	<div id="add-summary-dialog" class="not-displayed" title="<f:message key='requirement-version.linked-requirement-versions.add-summary-dialog.title' />">
 		<ul><li>summary message here</li></ul>

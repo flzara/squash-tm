@@ -70,7 +70,7 @@ import java.util.*;
 
 /**
  * Controller for the management of Requirement Versions linked to other Requirement Versions.
- *
+ * <p>
  * Created by jlor on 11/05/2017.
  */
 // XSS OK
@@ -194,29 +194,20 @@ public class LinkedRequirementVersionsManagerController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/{requirementNodesIds}", method = RequestMethod.POST)
-	public Map<String, Object> addDefaultLinkWithVersionIdAndNodeId(
+	@RequestMapping(value = "/{requirementNodesIds}", method = RequestMethod.POST, params = {REQ_VERSION_LINK_TYPE_ID, REQ_VERSION_LINK_TYPE_DIRECTION})
+	public Map<String, Object> adLinkWithVersionIdAndNodeId(
 		@PathVariable(REQUIREMENT_VERSION_ID) long requirementVersionId,
-		@PathVariable("requirementNodesIds") List<Long> requirementNodesIds) {
-		Collection<LinkedRequirementVersionException> rejections =
-			linkedReqVersionManager.addLinkedReqVersionsToReqVersion(requirementVersionId, requirementNodesIds);
-		return buildSummary(rejections);
-	}
-
-	@ResponseBody
-	@RequestMapping(method = RequestMethod.POST, params = {"reqVersionNodeId", "relatedReqVersionNodeIds"})
-	public Map<String, Object> addDefaultLinkWithNodeIds(
-		@RequestParam("reqVersionNodeId") long reqVersionNodeId,
-		@RequestParam("relatedReqVersionNodeIds") List<Long>  relatedReqVersionNodeIds) {
+		@PathVariable("requirementNodesIds") List<Long> requirementNodesIds,
+		@RequestParam(REQ_VERSION_LINK_TYPE_ID) long reqVersionLinkTypeId,
+		@RequestParam(REQ_VERSION_LINK_TYPE_DIRECTION) boolean reqVersionLinkTypeDirection) {
 		Map<String, Object> map = new HashMap<>();
-		for (Long id : relatedReqVersionNodeIds) {
-			Collection<LinkedRequirementVersionException> rejections =
-				linkedReqVersionManager.addDefaultLinkWithNodeIds(reqVersionNodeId, id);
+		for (Long ids : requirementNodesIds) {
+			Collection<LinkedRequirementVersionException> rejections = linkedReqVersionManager.addLinkWithNodeIds(requirementVersionId, ids, reqVersionLinkTypeId, reqVersionLinkTypeDirection);
 			map.putAll(buildSummary(rejections));
 		}
+
 		return map;
 	}
-
 
 	@ResponseBody
 	@RequestMapping(value = "/{relatedId}", method = RequestMethod.POST, params = {IS_RELATED_ID_A_NODE_ID, REQ_VERSION_LINK_TYPE_ID, REQ_VERSION_LINK_TYPE_DIRECTION})
@@ -226,8 +217,8 @@ public class LinkedRequirementVersionsManagerController {
 		@RequestParam(IS_RELATED_ID_A_NODE_ID) boolean isRelatedIdANodeId,
 		@RequestParam(REQ_VERSION_LINK_TYPE_ID) long reqVersionLinkTypeId,
 		@RequestParam(REQ_VERSION_LINK_TYPE_DIRECTION) boolean reqVersionLinkTypeDirection) {
-
-		for(Long paramRelatedId : paramRelatedIds) {
+		Map<String, Object> map = new HashMap<>();
+		for (Long paramRelatedId : paramRelatedIds) {
 			long relatedId = paramRelatedId;
 			linkedReqVersionManager.updateLinkTypeAndDirection(
 				requirementVersionId, relatedId, isRelatedIdANodeId,
@@ -238,28 +229,7 @@ public class LinkedRequirementVersionsManagerController {
 	@ResponseBody
 	@RequestMapping(value = "/{relatedIds}", params = {IS_RELATED_ID_A_NODE_ID}, method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	public Map<String, String> getRequirementVersionInformation(@PathVariable List<Long> relatedIds, @RequestParam(IS_RELATED_ID_A_NODE_ID) boolean isRelatedIdANodeId) {
-		String name = "";
-		String description = "";
-		Map<String, String> versionInfosMap = new HashMap<>();
-		for(Long relatedId : relatedIds) {
-			RequirementVersion latestVersion;
-			if (isRelatedIdANodeId) {
-				// If the relatedId is a node's one, we have to get the corresponding latest version.
-				Requirement selectedRequirement = requirementFinder.findRequirement(relatedId);
-				latestVersion = selectedRequirement.findLastNonObsoleteVersion();
-			} else {
-				latestVersion = requirementVersionFinder.findById(relatedId);
-			}
-			if(name.equals("")) {
-				name = name + HtmlUtils.htmlEscape(latestVersion.getName());
-			}else{
-				name =   name + ", " + HtmlUtils.htmlEscape(latestVersion.getName()) ;
-			}
-			description = description + HTMLCleanupUtils.cleanHtml(latestVersion.getDescription());
-		}
-		versionInfosMap.put("versionName", name );
-		versionInfosMap.put("versionDescription",description);
-		return versionInfosMap;
+		return linkedReqVersionManager.getRequirementVersionInformation(relatedIds);
 	}
 
 	@ResponseBody
@@ -269,7 +239,7 @@ public class LinkedRequirementVersionsManagerController {
 	}
 
 	private Map<String, Object> buildSummary(Collection<LinkedRequirementVersionException> rejections) {
-		return  LinkedRequirementVersionActionSummaryBuilder.buildAddActionSummary(rejections);
+		return LinkedRequirementVersionActionSummaryBuilder.buildAddActionSummary(rejections);
 	}
 
 	private List<RequirementVersionLinkType> internationalizeLinkTypesRoles(List<RequirementVersionLinkType> listToInternationalize, Locale locale) {

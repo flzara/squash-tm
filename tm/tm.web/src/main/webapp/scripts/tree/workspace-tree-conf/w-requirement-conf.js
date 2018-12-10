@@ -42,7 +42,7 @@ define(["workspace.event-bus"], function(eventBus){
 				},
 				"dnd" : {
         					drop_finish : function(dropData) {
-										var selection = dropData.o.not(':library, :folder');
+										var selection = dropData.o.not(':library');
 										var calledids = [];
 										if(selection.length > 0) {
         							var node = dropData.o.treeNode();

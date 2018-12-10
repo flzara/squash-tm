@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
@@ -228,6 +229,15 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		symmetricalLinkToUpdate.setLinkDirection(!linkDirection);
 	}
 
+	@PreAuthorize(LINK_REQVERSION_OR_ROLE_ADMIN)
+	@Override
+	public Collection<LinkedRequirementVersionException> addLinkWithNodeIds(Long requirementVersionId, Long relatedReqVersionNodeId, long reqVersionLinkTypeId, boolean reqVersionLinkTypeDirection) {
+
+		List<Long> requirementVersions = Collections.singletonList(relatedReqVersionNodeId);
+		RequirementVersionLinkType type = reqVersionLinkTypeDao.getOne(reqVersionLinkTypeId);
+		boolean outboundDirection = reqVersionLinkTypeDirection;
+		return addLinkedReqVersionsToReqVersion(requirementVersionId, requirementVersions, type, outboundDirection);
+	}
 
 	@Override
 	public void copyRequirementVersionLinks(RequirementVersion previousVersion, RequirementVersion newVersion) {
@@ -311,16 +321,12 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		}
 	}
 
-	;
-
 	@Override
 	public void checkIfSameRequirement(RequirementVersion reqVersion, RequirementVersion relatedReqVersion) {
 		if (reqVersion.getRequirement().getId().equals(relatedReqVersion.getRequirement().getId())) {
 			throw new SameRequirementLinkedRequirementVersionException();
 		}
 	}
-
-	;
 
 	@Override
 	public void checkIfVersionsAreLinkable(RequirementVersion reqVersion, RequirementVersion relatedReqVersion) {
@@ -329,7 +335,60 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		}
 	}
 
-	;
+	@Override
+	public Map<String, String> getRequirementVersionInformation(List<Long> requirementVersionids) {
+		List<RequirementVersion> requirementVersions = findRequirementVersions(requirementVersionids);
+		String name = "";
+		Map<String, String> versionInfosMap = new HashMap<>();
+		for (RequirementVersion relatedId : requirementVersions) {
+				if (name.equals("")) {
+					name = name + HtmlUtils.htmlEscape(relatedId.getName());
+				} else {
+					name = name + ", " + HtmlUtils.htmlEscape(relatedId.getName());
+				}
+		}
+		versionInfosMap.put("versionName", name);
+		return versionInfosMap;
+	}
+
+	private Collection<LinkedRequirementVersionException> addLinkedReqVersionsToReqVersion
+		(Long mainReqVersionId, List<Long> otherReqVersionsIds, RequirementVersionLinkType requirementVersionLinkType, boolean linkDirection) {
+
+		List<RequirementVersion> requirementVersions = findRequirementVersions(otherReqVersionsIds);
+		List<LinkedRequirementVersionException> rejections = new ArrayList<>();
+		RequirementVersion mainReqVersion = reqVersionDao.getOne(mainReqVersionId);
+
+		for (RequirementVersion otherRequirementVersion : requirementVersions) {
+
+			try {
+				checkIfLinkAlreadyExists(mainReqVersion, otherRequirementVersion);
+				checkIfSameRequirement(mainReqVersion, otherRequirementVersion);
+				checkIfVersionsAreLinkable(mainReqVersion, otherRequirementVersion);
+
+			} catch (LinkedRequirementVersionException exception) {
+				rejections.add(exception);
+			}
+		}
+
+		if(rejections.isEmpty()){
+			for (RequirementVersion otherRequirementVersion : requirementVersions) {
+				try {
+					/* No exception -> Adding */
+					RequirementVersionLink newReqVerLink =
+						new RequirementVersionLink(
+							mainReqVersion,
+							otherRequirementVersion,
+							requirementVersionLinkType,
+							linkDirection);
+					reqVersionLinkDao.addLink(newReqVerLink);
+				} catch (LinkedRequirementVersionException exception) {
+					rejections.add(exception);
+				}
+			}
+		}
+
+		return rejections;
+	}
 
 	private List<RequirementVersion> findRequirementVersions(
 		List<Long> requirementNodesIds) {

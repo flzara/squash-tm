@@ -91,6 +91,12 @@ define([ "jquery", "app/squash.wreqr.init", "backbone", "handlebars", "underscor
 			});
 			this.$el.append(linkTypeDialog);
 
+			var tmplLinkTypeCreate = Handlebars.compile($("#create-link-type-dialog-tpl").html());
+      			var linkCreateTypeDialog = tmplLinkTypeCreate({
+      				dialogId : "create-link-type-dialog"
+      			});
+      			this.$el.append(linkCreateTypeDialog);
+
 			var tmplSummaryDialog = Handlebars.compile($("#add-summary-dialog-tpl").html());
       var addSummaryDialog = tmplSummaryDialog();
       this.$el.append(addSummaryDialog);
