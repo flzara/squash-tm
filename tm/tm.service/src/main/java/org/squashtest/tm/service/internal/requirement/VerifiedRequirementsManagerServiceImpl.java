@@ -326,7 +326,7 @@ public class VerifiedRequirementsManagerServiceImpl implements
 		RequirementVersion requirementVersion, TestCase testCase) {
 
 				RequirementVersionCoverage coverage = new RequirementVersionCoverage(
-					requirementVersion, testCase);
+					requirementVersion, testCase, false);
 				requirementVersionCoverageDao.persist(coverage);
 				indexationService.reindexTestCase(testCase.getId());
 				indexationService.reindexRequirementVersion(requirementVersion

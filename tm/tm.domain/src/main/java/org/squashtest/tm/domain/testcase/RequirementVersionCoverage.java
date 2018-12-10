@@ -63,7 +63,7 @@ import org.squashtest.tm.exception.testcase.StepDoesNotBelongToTestCaseException
 	@NamedQuery(name = "RequirementVersionCoverage.numberByTestCase", query = "select count(rvc) from RequirementVersionCoverage rvc join rvc.verifyingTestCase tc where tc.id = :tcId"),
 	@NamedQuery(name = "RequirementVersionCoverage.numberByTestCases", query = "select count(rvc) from RequirementVersionCoverage rvc join rvc.verifyingTestCase tc where tc.id in :tcIds"),
 	@NamedQuery(name = "RequirementVersionCoverage.numberDistinctVerifiedByTestCases", query = "select count(distinct rv) from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingTestCase tc where tc.id in :tcIds"),
-	@NamedQuery(name = "RequirementVersionCoverage.byRequirementVersionsAndTestStep", query = "select rvc from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingSteps step where step.id = :stepId and rv.id in :rvIds"), })
+	@NamedQuery(name = "RequirementVersionCoverage.byRequirementVersionsAndTestStep", query = "select rvc from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingSteps step where step.id = :stepId and rv.id in :rvIds"),})
 @Entity
 public class RequirementVersionCoverage implements Identified {
 	@Id
@@ -74,7 +74,7 @@ public class RequirementVersionCoverage implements Identified {
 	private Long id;
 
 	@NotNull
-	@ManyToOne(cascade=CascadeType.DETACH)
+	@ManyToOne(cascade = CascadeType.DETACH)
 	@JoinColumn(name = "VERIFYING_TEST_CASE_ID", referencedColumnName = "TCLN_ID")
 	private TestCase verifyingTestCase;
 
@@ -83,7 +83,7 @@ public class RequirementVersionCoverage implements Identified {
 	private RequirementVersion verifiedRequirementVersion;
 
 	@NotNull
-	@ManyToMany(mappedBy="requirementVersionCoverages", cascade=CascadeType.DETACH)
+	@ManyToMany(mappedBy = "requirementVersionCoverages", cascade = CascadeType.DETACH)
 	private Set<ActionTestStep> verifyingSteps = new HashSet<>();
 
 	RequirementVersionCoverage() {
@@ -105,8 +105,24 @@ public class RequirementVersionCoverage implements Identified {
 	 * @param testCase
 	 */
 	public RequirementVersionCoverage(RequirementVersion requirementVersion, TestCase testCase) {
+		this(requirementVersion, testCase, true);
+	}
+
+	/**
+	 * @throws RequirementAlreadyVerifiedException
+	 * @throws RequirementVersionNotLinkableException
+	 * @param requirement
+	 * @param testCase
+	 */
+	public RequirementVersionCoverage(Requirement requirement, TestCase testCase) {
+		this(requirement.getCurrentVersion(), testCase);
+	}
+
+	public RequirementVersionCoverage(RequirementVersion requirementVersion, TestCase testCase, boolean performStatusCheck) {
 		// check - these can throw exception (not so good a practice) so they **must** be performed before we change the passed args state
-		requirementVersion.checkLinkable();
+		if (performStatusCheck) {
+			requirementVersion.checkLinkable();
+		}
 		if (testCase != null) {
 			testCase.checkRequirementNotVerified(requirementVersion);
 		}
@@ -118,16 +134,6 @@ public class RequirementVersionCoverage implements Identified {
 			testCase.addRequirementCoverage(this);
 			this.verifyingTestCase = testCase;
 		}
-	}
-
-	/**
-	 * @throws RequirementAlreadyVerifiedException
-	 * @throws RequirementVersionNotLinkableException
-	 * @param requirement
-	 * @param testCase
-	 */
-	public RequirementVersionCoverage(Requirement requirement, TestCase testCase) {
-		this(requirement.getCurrentVersion(), testCase);
 	}
 
 	public TestCase getVerifyingTestCase() {
@@ -200,8 +206,6 @@ public class RequirementVersionCoverage implements Identified {
 	}
 
 
-
-
 	public RequirementVersionCoverage copyForRequirementVersion(RequirementVersion rvCopy) {
 		RequirementVersionCoverage rvcCopy = new RequirementVersionCoverage();
 		rvcCopy.verifyingTestCase = this.verifyingTestCase;
@@ -236,7 +240,7 @@ public class RequirementVersionCoverage implements Identified {
 	 * @return a copy of this RequirementVersionCoverage, or NULL if that was impossible.
 	 */
 	public RequirementVersionCoverage copyForTestCase(TestCase tcCopy) {
-		if (! this.verifiedRequirementVersion.isLinkable()){
+		if (!this.verifiedRequirementVersion.isLinkable()) {
 			return null;
 		}
 		// copy verified requirement
@@ -306,7 +310,7 @@ public class RequirementVersionCoverage implements Identified {
 	 * Check if this {@link RequirementVersionCoverage} is linked to one or more {@link TestStep}
 	 * @return
 	 */
-	public boolean hasSteps(){
+	public boolean hasSteps() {
 		return !verifyingSteps.isEmpty();
 	}
 
