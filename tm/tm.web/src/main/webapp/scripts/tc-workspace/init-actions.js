@@ -57,18 +57,6 @@ define(["jquery", "backbone", "tree", "./permissions-rules", "workspace.contextu
 		}
 	}
 
-	function pasteFromReqToTcIfOk(tree) {
-		var configuration = {
-			tcKind: 'GHERKIN'
-		};
-		if (rules.CantCreateTcFromReq()) {
-			copier.pasteNodesForTcFromCookie(configuration);
-		} else {
-			var why = rules.whyCantCreateTcFromReq();
-			showError(why);
-		}
-	}
-
 
 	function loadSearchFragment(url) {
 		ctxcontent.loadWith(url);
@@ -194,7 +182,7 @@ define(["jquery", "backbone", "tree", "./permissions-rules", "workspace.contextu
 
 			// ****************** Create testcases from requirements ******************
 			$("#create-tc-from-req-tree-button").on("click", function () {
-				pasteFromReqToTcIfOk(tree);
+				$("#create-from-requirement-dialog").formDialog("open");
 			});
 
 

@@ -18,31 +18,42 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['./add-folder-popup', './add-test-case-popup' ,
-        './rename-node-popup', './delete-node-popup',
-        './import-excel-popup',
-        './export-popup','./export-gherkin-popup', './create-from-requirement-popup'],
-		function(folderpopup, tcpopup, renamepopup, deletepopup, importpopup, exportpopup, exportgherkinpopup, createfromreq){
+define(['jquery', 'tree', 'workspace.event-bus', '../permissions-rules', "workspace.tree-node-copier", 'jquery.squash.formdialog'],
+	function ($, zetree, eventBus, rules, copier) {
+
+		function init() {
+
+			var dialog = $("#create-from-requirement-dialog").formDialog();
+
+			var tree = zetree.get();
+
+			dialog.on('formdialogconfirm', function () {
+				pasteFromReqToTcIfOk(tree);
+				dialog.formDialog('close');
+			});
+
+			dialog.on('formdialogcancel', function () {
+				dialog.formDialog('close');
+			});
+
+		}
+
+		function pasteFromReqToTcIfOk(tree) {
+			var tcKind = $('#create-from-requirement-format').val();
+			var configuration = {
+				tcKind: tcKind
+			};
+			if (rules.CantCreateTcFromReq()) {
+				copier.pasteNodesForTcFromCookie(configuration);
+			} else {
+				var why = rules.whyCantCreateTcFromReq();
+				showError(why);
+			}
+		}
 
 
-	function init(){
+		return {
+			init: init
+		};
 
-		folderpopup.init();
-		tcpopup.init();
-		renamepopup.init();
-
-		importpopup.init();
-		exportpopup.init();
-		exportgherkinpopup.init();
-
-		deletepopup.init();
-
-		createfromreq.init();
-
-	}
-
-	return {
-		init : init
-	};
-
-});
+	});
