@@ -2161,6 +2161,13 @@ define(["jquery",
 						},
 						tdSelector: 'td.' + cls
 					});
+				}, 
+				'render-yesno' : function(conf, value){
+					conf.current.mRender = function(value){
+						return (value === "false" || value === false) ? 
+								translator.get('label.No') :
+								translator.get('label.Yes');
+					}
 				}
 			}
 		}

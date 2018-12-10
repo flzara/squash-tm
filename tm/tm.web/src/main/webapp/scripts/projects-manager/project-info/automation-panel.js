@@ -217,6 +217,7 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 
 				initTable : function(){
 					var self = this;
+					
 					this.table = $("#ta-projects-table").squashTable({}, {
 						buttons:[{
 								tdSelector:"td.edit-job-button",
@@ -225,18 +226,24 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 									var row = cell.parentNode.parentNode;
 									var jobId = table.getODataId(row);
 									var data = table.getDataById(jobId);
+									
+									// coerce string to boolean if needed
+									// indeed "canGherkin" can be a stringified boolean because the initial table model is read from html as string by default
+									var canGherkin = data['gherkin'];
+									canGherkin = (canGherkin === "false") ? false : (canGherkin === "true") ? true : canGherkin;
 									var taProject = {
 											id : data['entity-id'],
 											jobName :data["jobName"],
 											label : data["label"],
-											slaves : data["slaves"]
+											slaves : data["slaves"],
+											canRunGherkin : canGherkin
 									};
 									self.popups.editTAProjectPopup.$el.data('projectId', jobId).data('taProject', taProject);
 									self.openAuthenticationPopup();
 								}
 							}
 						]
-				});
+					});
 				},
 				openBindPopup : function() {
 					this.popups.bindPopup.show();

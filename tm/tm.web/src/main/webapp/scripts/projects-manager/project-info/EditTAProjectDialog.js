@@ -29,7 +29,8 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 		defaults : {
 			label : "",
 			jobName : "",
-			slaves : ""
+			slaves : "",
+			canRunGherkin : false
 		},
 
 		validateAll : function() {
@@ -65,6 +66,7 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 			// model prop which name matches the textbox name
 			"blur input:text.strprop" : "changeStrProp",
 			"change select" : "changeStrProp",
+			"change #ta-project-cangherkin" : "changeCanRunGherkin",
 			"formdialogconfirm" : "confirm",
 			"formdialogcancel" : "cancel",
 			"formdialogclose" : "close"
@@ -73,6 +75,11 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 		changeStrProp : function(event) {
 			var textbox = event.target;
 			this.model.set(textbox.name, textbox.value);
+		},
+		
+		changeCanRunGherkin : function(event){
+			var state = event.currentTarget.checked;
+			this.model.set("canRunGherkin", state);
 		},
 
 		cancel : function(event) {
@@ -132,6 +139,7 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 			// populate inputs
 			this.$el.find("input[name=label]").val(taProject.label);
 			this.$el.find("input[name=slaves]").val(taProject.slaves);
+			this.$el.find("input[name=canRunGherkin]").prop('checked', taProject.canRunGherkin);
 
 			/* If the user is Admin, we don't ask for credentials */
 			if(this.isAdmin) {
@@ -165,6 +173,7 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 		},
 
 		_updateComboDatasAndOpen : function(taProjects) {
+			// update the combos
 			var $jobNameSelect = this.$el.find("select[name=jobName]");
 			$jobNameSelect.empty(); // remove old options
 			$.each(taProjects, function(index) {
@@ -178,6 +187,8 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 				option.attr("value", jobName);
 				$jobNameSelect.append(option);
 			}
+						
+			// open
 			this.$el.formDialog("setState", "main");
 
 		},

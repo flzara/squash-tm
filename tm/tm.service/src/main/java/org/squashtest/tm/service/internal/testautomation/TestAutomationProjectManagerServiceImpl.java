@@ -113,12 +113,21 @@ public class TestAutomationProjectManagerServiceImpl implements TestAutomationPr
 		TestAutomationProject project = projectDao.findById(projectId);
 		project.setSlaves(slaveList);
 	}
+	
+	
+
+	@Override
+	public void changeCanRunGherking(long projectId, boolean canRunGherkin) {
+		TestAutomationProject project = projectDao.findById(projectId);
+		project.setCanRunGherkin(canRunGherkin);
+	}
 
 	@Override
 	public void editProject(long projectId, TestAutomationProject newValues) {
 		changeJobName(projectId, newValues.getJobName());
 		changeLabel(projectId, newValues.getLabel());
 		changeSlaves(projectId, newValues.getSlaves());
+		changeCanRunGherking(projectId, newValues.isCanRunGherkin());
 	}
 
 	@Override

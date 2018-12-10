@@ -369,13 +369,17 @@ public class GenericProjectController {
 	@RequestMapping(value = PROJECT_ID_URL + "/test-automation-projects", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getAutomatedProjectsTableModel(@PathVariable long projectId, final DataTableDrawParameters params) {
+		return internalAutomatedProjectsTableModel(projectId, params);
+
+	}
+
+	private DataTableModel internalAutomatedProjectsTableModel(long projectId, final DataTableDrawParameters params) {
 		List<TestAutomationProject> taProjects = projectManager.findBoundTestAutomationProjects(projectId);
 
 		PagedCollectionHolder<List<TestAutomationProject>> holder = new SinglePageCollectionHolder<>(
 			taProjects);
 		Map<String, URL> jobUrls = testAutomationProjectFinder.findProjectUrls(taProjects);
 		return new TestAutomationTableModel(jobUrls).buildDataModel(holder, params.getsEcho());
-
 	}
 
 	@RequestMapping(value = PROJECT_ID_URL + "/test-automation-projects/new", method = RequestMethod.POST)
@@ -448,6 +452,7 @@ public class GenericProjectController {
 			res.put("jobName", HtmlUtils.htmlEscape(item.getJobName()));
 			res.put("slaves", HtmlUtils.htmlEscape(item.getSlaves()));
 			res.put("url", jobUrls.get(item.getJobName()));
+			res.put("gherkin", item.isCanRunGherkin());
 			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			res.put(DataTableModelConstants.DEFAULT_EMPTY_EDIT_HOLDER_KEY, " ");
 			return res;

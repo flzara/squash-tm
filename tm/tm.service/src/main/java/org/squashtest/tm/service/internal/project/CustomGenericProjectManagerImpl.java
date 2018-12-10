@@ -151,7 +151,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		List<? extends GenericProject> securedResultset = new LinkedList<>(resultset);
 		CollectionUtils.filter(securedResultset, new IsManagerOnObject());
 
-		// Consolidate projects with additional information neeeded to do the
+		// Consolidate projects with additional information needed to do the
 		// sorting
 		List<ProjectForCustomCompare> projects = consolidateProjects(securedResultset);
 		sortProjects(projects, sorting);
