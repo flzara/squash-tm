@@ -58,11 +58,11 @@ public final class HTMLCleanupUtils {
 		String unescaped = HtmlUtils.htmlUnescape(fixedHtml);
 		return HtmlUtils.htmlEscape(unescaped);
 	}
-	
+
 	/**
 	 * If the argument is not null, returns the HTML-escaped version,
 	 * else returns the default value
-	 * 
+	 *
 	 * @param toEscape
 	 * @return
 	 */
@@ -108,6 +108,7 @@ public final class HTMLCleanupUtils {
 					.addAttributes("ul", CLASS, STYLE)
 					.addAttributes("ol", CLASS, STYLE)
 					.addAttributes("td", CLASS, STYLE)
+					.addTags("s")
 				, outputSettings);
 		}
 		return StringUtils.EMPTY;

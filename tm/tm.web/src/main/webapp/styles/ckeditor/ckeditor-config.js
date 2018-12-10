@@ -3,7 +3,7 @@ CKEDITOR.editorConfig = function( config ){
 	config.toolbar = 'Squash';
 	config.toolbar_Squash =
 		[
-		['Bold','Italic','Underline','NumberedList','BulletedList'],
+		['Bold','Italic','Underline','Strike','NumberedList','BulletedList'],
 		['Link'],
 		['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
 		['TextColor'],['Font'],['FontSize'],
