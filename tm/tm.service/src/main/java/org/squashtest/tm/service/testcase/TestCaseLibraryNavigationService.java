@@ -270,7 +270,7 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 	public List<TestCaseLibraryNode> copyNodesToLibrary(@Id(DESTINATION_ID) long destinationId, @Ids(TARGET_ID) Long[] targetId);
 
 	@PreventConcurrent(entityType = TestCaseLibrary.class)
-	void copyReqToTestCasesToLibrary(@Id long destinationId, @Ids(TARGET_ID) Long[] targetId, ReqToTestCaseConfiguration configuration);
+	void copyReqToTestCasesToLibrary(@Id long destinationId, Long[] targetId, ReqToTestCaseConfiguration configuration);
 
 	void copyReqToTestCasesToTestCases(@Id long destinationId, @Ids(TARGET_ID) Long[] targetId, ReqToTestCaseConfiguration configuration);
 

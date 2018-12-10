@@ -924,6 +924,8 @@ public class TestCaseLibraryNavigationServiceImpl
 
 	@Override
 	@PreventConcurrent(entityType=TestCaseLibraryNode.class)
+	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.testcase.TestCaseFolder', 'CREATE')"
+		+ OR_HAS_ROLE_ADMIN)
 	public void copyReqToTestCasesToFolder(@Id long destinationId, Long[] sourceNodesIds, ReqToTestCaseConfiguration configuration) {
 		if (sourceNodesIds.length == 0) {
 			return;
@@ -949,8 +951,10 @@ public class TestCaseLibraryNavigationServiceImpl
 	}
 
 	@Override
+	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary', 'CREATE')"
+		+ OR_HAS_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCaseLibrary.class)
-	public void copyReqToTestCasesToLibrary(long destinationId, Long[] targetId, ReqToTestCaseConfiguration configuration) {
+	public void copyReqToTestCasesToLibrary(@Id long destinationId, Long[] targetId, ReqToTestCaseConfiguration configuration) {
 		if (targetId.length == 0) {
 			return;
 		}
