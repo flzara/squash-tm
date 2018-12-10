@@ -29,8 +29,10 @@ import java.util.Map;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
@@ -79,6 +81,8 @@ public class CampaignSearchResultDataTableModelBuilder extends DataTableModelBui
 		res.put("itpi-datasets", formatDatasetsItem(item));
 		res.put("empty-opentree-holder", " ");
 		res.put("empty-openinterface2-holder", " ");
+		res.put("test-case-automation-request-status", item.getReferencedTestCase().getAutomationRequest() != null ? formatAutomationRequestStatus(item.getReferencedTestCase().getAutomationRequest().getRequestStatus(), locale) : "-");
+		res.put("test-case-automatable", item.getReferencedTestCase().getAutomationRequest() != null ? formatTcAutomatable(item.getReferencedTestCase().getAutomatable(), locale): "");
 		return res;
 	}
 
@@ -93,6 +97,16 @@ public class CampaignSearchResultDataTableModelBuilder extends DataTableModelBui
 	private String formatImportance(TestCaseImportance importance, Locale locale) {
 
 		return importance.getLevel() + "-" + messageSource.internationalize(importance, locale);
+	}
+
+	private String formatTcAutomatable(TestCaseAutomatable testCaseAutomatable, Locale locale) {
+
+		return testCaseAutomatable.getLevel() + "-" + messageSource.internationalize(testCaseAutomatable, locale);
+	}
+
+	private String formatAutomationRequestStatus(AutomationRequestStatus automationRequestStatus, Locale locale) {
+
+		return automationRequestStatus.getLevel() + "-" + messageSource.internationalize(automationRequestStatus, locale);
 	}
 
 	private String formatDatasetsItem(IterationTestPlanItem item) {

@@ -26,6 +26,7 @@ import java.util.Locale;
 
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.internal.dto.json.JsonProject;
@@ -148,6 +149,26 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 
 	public SearchInputPanelModel createPerimeterPanel(Locale locale,Collection<JsonProject> jsProjects) {
 		return perimeterPanelBuilder(locale).cssClass("search-icon-perimeter").htmlId("project.id").build(jsProjects);
+	}
+
+	public SearchInputPanelModel createAutomationPanel(Locale locale) {
+
+		SearchInputPanelModel panel = new SearchInputPanelModel();
+		panel.setTitle(getMessageSource().internationalize("search.testcase.automation.panel.title", locale));
+		panel.setOpen(true);
+		panel.setId("automation");
+		panel.setLocation(COLUMN_1);
+
+		SearchInputFieldModel automationField = new SearchInputFieldModel("referencedTestCase.automatable", getMessageSource()
+			.internationalize("test-case.automation-indicator.label", locale), MULTISELECT);
+		panel.addField(automationField);
+
+		List<SearchInputPossibleValueModel> automationOptions = levelComboBuilder(TestCaseAutomatable.values())
+			.useLocale(locale).build();
+		automationField.addPossibleValues(automationOptions);
+
+
+		return panel;
 	}
 
 }

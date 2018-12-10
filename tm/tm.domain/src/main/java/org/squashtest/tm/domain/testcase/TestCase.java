@@ -190,6 +190,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@NotNull
 	private TestCaseKind kind = STANDARD;
 
+	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	@OneToOne(mappedBy = "testCase", optional = true, fetch = LAZY, cascade = CascadeType.ALL)
 	private AutomationRequest automationRequest;
 

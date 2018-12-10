@@ -150,6 +150,8 @@ public class SearchInputInterfaceHelper {
 		// Attributes
 		model.addPanel(campaignSearchInterfaceDescription.createAttributePanel(locale,users ));
 
+		model.addPanel(campaignSearchInterfaceDescription.createAutomationPanel(locale));
+
 		// Milestones
 		if (!isMilestoneMode && featureManager.isEnabled(FeatureManager.Feature.MILESTONE)) {
 			model.addPanel(requirementVersionSearchInterfaceDescription.createMilestonePanel(locale));

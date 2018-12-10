@@ -138,6 +138,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	@NumericField
 	private Date lastExecutedOn;
 
+	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TCLN_ID", referencedColumnName = "TCLN_ID")
 	private TestCase referencedTestCase;

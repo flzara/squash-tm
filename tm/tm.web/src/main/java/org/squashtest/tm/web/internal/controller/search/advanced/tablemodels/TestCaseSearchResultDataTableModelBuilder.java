@@ -32,6 +32,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -70,6 +71,10 @@ public class TestCaseSearchResultDataTableModelBuilder extends DataTableModelBui
 		return automatable.getLevel() + "-" + messageSource.internationalize(automatable, locale);
 	}
 
+	private String formatAutomationStatus(AutomationRequestStatus automationRequestStatus, Locale locale) {
+		return automationRequestStatus.getLevel() + "-" + messageSource.internationalize(automationRequestStatus, locale);
+	}
+
 	private boolean isTestCaseEditable(TestCase item) {
 		return item.isModifiable() && permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", item);
 	}
@@ -106,6 +111,7 @@ public class TestCaseSearchResultDataTableModelBuilder extends DataTableModelBui
 		res.put("test-case-attachment-nb", item.getAllAttachments().size());
 		res.put("test-case-created-by", HtmlUtils.htmlEscape(formatUsername(auditable.getCreatedBy())));
 		res.put("test-case-modified-by", HtmlUtils.htmlEscape(formatUsername(auditable.getLastModifiedBy())));
+		res.put("test-case-automation-request-status", item.getAutomationRequest() != null ? formatAutomationStatus(item.getAutomationRequest().getRequestStatus(), locale) : "-");
 		res.put("empty-openinterface2-holder", " ");
 		res.put("empty-opentree-holder", " ");
 		return res;

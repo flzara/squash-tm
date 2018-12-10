@@ -1,12 +1,12 @@
 define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squashtm.workspace",
-		"contextual-content-handlers", "workspace.event-bus", "jquery.squash.fragmenttabs",
-		"custom-field-values", "squash.configmanager", "jeditable.simpleJEditable", "app/ws/squashtm.notification",
-		"workspace.routing", "squash.translator", "file-upload", "milestones/entity-milestone-count-notifier",
-		"app/squash.wreqr.init", "verifying-test-cases/VerifyingTestCasesPanel", "req-workspace/linked-requirements-panel", "req-workspace/requirement-coverage-stat-view",
-		"bugtracker/bugtracker-panel", "app/util/StringUtil", "jquery.squash.confirmdialog", "jquery.squash.formdialog"],
+	"contextual-content-handlers", "workspace.event-bus", "jquery.squash.fragmenttabs",
+	"custom-field-values", "squash.configmanager", "jeditable.simpleJEditable", "app/ws/squashtm.notification",
+	"workspace.routing", "squash.translator", "file-upload", "milestones/entity-milestone-count-notifier",
+	"app/squash.wreqr.init", "verifying-test-cases/VerifyingTestCasesPanel", "req-workspace/linked-requirements-panel", "req-workspace/requirement-coverage-stat-view",
+	"bugtracker/bugtracker-panel", "app/util/StringUtil", "jquery.squash.confirmdialog", "jquery.squash.formdialog"],
 	function (module, $, pubsub, basicwidg, WS, contentHandlers, eventBus, Frag,
-						cufvalues, confman, SimpleJEditable, notification, routing, translator, upload, milestoneNotifier,
-						squash, VerifyingTestCasesPanel, LinkedRequirementsPanel, CoveverageStatView, bugtrackerPanel, StringUtil) {
+		cufvalues, confman, SimpleJEditable, notification, routing, translator, upload, milestoneNotifier,
+		squash, VerifyingTestCasesPanel, LinkedRequirementsPanel, CoveverageStatView, bugtrackerPanel, StringUtil) {
 
 		// event subscription
 		pubsub.subscribe('reload.requirement.name', initName);
@@ -105,7 +105,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 					targetUrl: baseURL,
 					componentId: "requirement-reference",
 					submitCallback: function (reference) {
-						eventBus.trigger('node.update-reference', {identity: config.basic.identity, newRef: reference});
+						eventBus.trigger('node.update-reference', { identity: config.basic.identity, newRef: reference });
 					},
 					jeditableSettings: {
 						maxLength: 50
@@ -122,7 +122,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 				// ********* CATEGORIES *****************
 				var categSelect = $("#requirement-category");
 				var catconf = confman.getJeditableSelect();
-				catconf.data = unescapeData(confman.toJeditableSelectFormat(config.basic.categories.items, {'code': 'friendlyLabel'}));
+				catconf.data = unescapeData(confman.toJeditableSelectFormat(config.basic.categories.items, { 'code': 'friendlyLabel' }));
 
 				categSelect.editable(function (value, settings) {
 					var icon,
@@ -140,7 +140,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 					}
 
 					// trigger the event
-					$.post(baseURL, {id: 'requirement-category', value: value})
+					$.post(baseURL, { id: 'requirement-category', value: value })
 						.done(function (response) {
 							eventBus.trigger('node.attribute-changed', {
 								identity: config.basic.identity,
@@ -238,17 +238,17 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 			var table = $("#verifying-test-cases-table").squashTable({
 				aaData: config.basic.verifyingTestcases
 			}, {
-				unbindButtons: {
-					delegate: "#unbind-active-row-dialog",
-					tooltip: translator.get('dialog.unbind-ta-project.tooltip')
-				},
-				tooltips: [{
-					tdSelector: 'td.verif-tc-description',
-					value: function (row, data) {
-						return data["tc-description"];
-					}
-				}]
-			});
+					unbindButtons: {
+						delegate: "#unbind-active-row-dialog",
+						tooltip: translator.get('dialog.unbind-ta-project.tooltip')
+					},
+					tooltips: [{
+						tdSelector: 'td.verif-tc-description',
+						value: function (row, data) {
+							return data["tc-description"];
+						}
+					}]
+				});
 
 			if (config.permissions.linkable) {
 
@@ -258,7 +258,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 				});
 
 				$('#remove-verifying-test-case-button').on("click", function (event) {
-					squash.vent.trigger("verifying-test-cases:unbind-selected", {source: event});
+					squash.vent.trigger("verifying-test-cases:unbind-selected", { source: event });
 				});
 
 				squash.vent.on("verifyingtestcasespanel:unbound", function (event) {
@@ -268,7 +268,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 					});
 				});
 
-				var verifPanel = new VerifyingTestCasesPanel({apiUrl: routing.buildURL('requirements.testcases', config.basic.currentVersionId)});
+				var verifPanel = new VerifyingTestCasesPanel({ apiUrl: routing.buildURL('requirements.testcases', config.basic.currentVersionId) });
 
 				eventBus.one("contextualcontent.clear", function () {
 					verifPanel.remove();
@@ -280,11 +280,12 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 		function initLinkedRequirementsPanel() {
 			var config = module.config();
 
-			function openChooseTypeDialog(reqVersionId, relatedId, isRelatedIdANodeId) {
+			function openChooseTypeDialog(reqVersionId, relatedId, isRelatedIdANodeId, edit) {
 				var linkTypeDialog = $("#choose-link-type-dialog");
 				linkTypeDialog.data('reqVersionId', reqVersionId);
 				linkTypeDialog.data('relatedReqNodeId', relatedId);
 				linkTypeDialog.data('isRelatedIdANodeId', isRelatedIdANodeId);
+				linkTypeDialog.data('edit', edit);
 				linkTypeDialog.formDialog('open');
 			}
 
@@ -304,7 +305,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 						onClick: function (table, cell) {
 							var row = cell.parentNode.parentNode;
 							var modifiedVersionId = table.getODataId(row);
-							openChooseTypeDialog(config.basic.currentVersionId, modifiedVersionId, false);
+							openChooseTypeDialog(config.basic.currentVersionId, modifiedVersionId, false, true);
 						}
 					}],
 					tooltips: [{
@@ -321,7 +322,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 				var apiUrl = routing.buildURL('requirements.linkedRequirementVersions', currentVersionId);
 				// 'squash/requirement-versions/{currentReqVerId}/linked-requirement-versions'
 
-				var linkedReqPanel = new LinkedRequirementsPanel({apiUrl: apiUrl});
+				var linkedReqPanel = new LinkedRequirementsPanel({ apiUrl: apiUrl });
 				var chooseLinkTypeDialog = $("#choose-link-type-dialog").formDialog();
 				var addSummaryDialog = $("#add-summary-dialog").messageDialog();
 
@@ -333,7 +334,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 
 				/* Trigger unbind-selected-versions event */
 				$('#unbind-requirements-button').on("click", function (event) {
-					squash.vent.trigger("linkedrequirementversions:unbind-selected", {source: event});
+					squash.vent.trigger("linkedrequirementversions:unbind-selected", { source: event });
 				});
 
 				/* Event handler listening to unbound-versions event */
@@ -372,7 +373,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 						return;
 					} else {
 						var relatedReqNodeId = relatedReqNodeIds[0];
-						openChooseTypeDialog(currentVersionId, relatedReqNodeId, true);
+						openChooseTypeDialog(currentVersionId, relatedReqNodeId, true, false);
 					}
 				});
 
@@ -412,7 +413,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 					var getRelatedReqVersionInfos = LinkedRequirementsPanel.bindingActionCallback(apiUrl, "GET");
 
 					/* Fetching related RequirementVersion attributes in order to display them in the popup. */
-					var reqVersionsInfos = getRelatedReqVersionInfos(relatedId, {"isRelatedIdANodeId": isRelatedIdANodeId}).success(
+					var reqVersionsInfos = getRelatedReqVersionInfos(relatedId, { "isRelatedIdANodeId": isRelatedIdANodeId }).success(
 						function (relatedReqVersionInfos) {
 							var relatedVersionName = relatedReqVersionInfos.versionName;
 							var relatedVersionDescription = relatedReqVersionInfos.versionDescription;
@@ -463,16 +464,19 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 						reqVersionLinkTypeId: selectedTypeId,
 						reqVersionLinkTypeDirection: selectedTypeDirection,
 					};
+					if (self.data("edit")) {
+						params.isRelatedIdANodeId = self.data("isRelatedIdANodeId")
+					}
 
 					bind(relatedReqVersionId, params).success(function (rejections) {
-
-					if (Object.keys(rejections).length > 0) {
-          								// If the link was not created, display summary
-          								showAddSummary(rejections);
-          							} else {
-          								// Else, open the popup to choose type
-          								table.refresh();
-          							}
+						
+						if (rejections != null && Object.keys(rejections).length > 0) {
+							// If the link was not created, display summary
+							showAddSummary(rejections);
+						} else {
+							// Else, open the popup to choose type
+							table.refresh();
+						}
 						self.formDialog('close');
 					});
 				});
@@ -642,7 +646,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 			};
 
 			var newversiondialog = $("#confirm-new-version-dialog");
-			newversiondialog.confirmDialog({confirm: confirmHandler});
+			newversiondialog.confirmDialog({ confirm: confirmHandler });
 
 
 			// *********** status modification **********
@@ -677,7 +681,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 
 				renameDialog.on('formdialogconfirm', function () {
 					var url = config.urls.baseURL,
-						params = {newName: $("#rename-requirement-input").val()};
+						params = { newName: $("#rename-requirement-input").val() };
 
 					$.ajax({
 						url: url,
@@ -686,7 +690,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 						data: params
 					}).success(function (json) {
 						renameDialog.formDialog('close');
-						eventBus.trigger('node.rename', {identity: config.basic.identity, newName: json.newName});
+						eventBus.trigger('node.rename', { identity: config.basic.identity, newName: json.newName });
 					});
 
 				});

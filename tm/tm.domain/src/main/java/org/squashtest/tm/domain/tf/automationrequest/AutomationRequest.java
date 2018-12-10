@@ -20,6 +20,10 @@
  */
 package org.squashtest.tm.domain.tf.automationrequest;
 
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.SortableField;
+import org.hibernate.search.annotations.Store;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -43,6 +47,8 @@ public class AutomationRequest implements Identified {
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "REQUEST_STATUS")
+	@Field(analyze = Analyze.NO, store = Store.YES)
+	@SortableField
 	private AutomationRequestStatus requestStatus = AutomationRequestStatus.TO_VALIDATE;
 
 	@Column(name = "TRANSMITTED_ON")

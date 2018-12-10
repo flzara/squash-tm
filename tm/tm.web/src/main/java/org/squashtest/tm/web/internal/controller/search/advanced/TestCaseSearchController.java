@@ -43,6 +43,7 @@ import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
@@ -87,7 +88,9 @@ public class TestCaseSearchController extends GlobalSearchController {
 		.mapAttribute("test-case-iteration-nb", "iterations", TestCase.class)
 		.mapAttribute("test-case-attachment-nb", "attachments", TestCase.class)
 		.mapAttribute("test-case-created-by", "createdBy", TestCase.class)
-		.mapAttribute("test-case-modified-by", "lastModifiedBy", TestCase.class);
+		.mapAttribute("test-case-modified-by", "lastModifiedBy", TestCase.class)
+		.mapAttribute("test-case-automation-request-status", "requestStatus", AutomationRequest.class);
+
 
 
 	@Inject

@@ -122,53 +122,57 @@ define(["jquery", "backbone", "squash.translator", "jeditable.simpleJEditable", 
 							"aTargets": [10],
 							"mDataProp": "test-case-automatable",
 							"bSortable": true
-						},
+						}, {
+               							"aTargets": [11],
+               							"mDataProp": "test-case-automation-request-status",
+               							"bSortable": true
+               						},
 						{
-							"aTargets": [11],
+							"aTargets": [12],
 							"mDataProp": "test-case-milestone-nb",
 							"bSortable": true,
 							"sClass": "centered"
 						},
 						{
-							"aTargets": [12],
+							"aTargets": [13],
 							"mDataProp": "test-case-requirement-nb",
 							"bSortable": true,
 							"sClass": "centered"
 						}, {
-							"aTargets": [13],
+							"aTargets": [14],
 							"mDataProp": "test-case-teststep-nb",
 							"bSortable": true,
 							"sClass": "centered"
 						}, {
-							"aTargets": [14],
+							"aTargets": [15],
 							"mDataProp": "test-case-iteration-nb",
 							"bSortable": true,
 							"sClass": "centered"
 						}, {
-							"aTargets": [15],
+							"aTargets": [16],
 							"mDataProp": "test-case-attachment-nb",
 							"bSortable": true
 						}, {
-							"aTargets": [16],
+							"aTargets": [17],
 							"mDataProp": "test-case-created-by",
 							"bSortable": true
 						}, {
-							"aTargets": [17],
+							"aTargets": [18],
 							"mDataProp": "test-case-modified-by",
 							"bSortable": true
 						}, {
-							"aTargets": [18],
+							"aTargets": [19],
 							"mDataProp": "empty-openinterface2-holder",
 							"sClass": "centered search-open-interface2-holder",
 							"sWidth": "2em",
 							"bSortable": false
 						}, {
-							"aTargets": [19],
+							"aTargets": [20],
 							"mDataProp": "editable",
 							"bVisible": false,
 							"bSortable": false
 						}, {
-							"aTargets": [20],
+							"aTargets": [21],
 							"mDataProp": "test-case-weight-auto",
 							"bVisible": false,
 							"bSortable": false
@@ -249,57 +253,61 @@ define(["jquery", "backbone", "squash.translator", "jeditable.simpleJEditable", 
 							"bSortable": true
 						}, {
 							"aTargets": [10],
+							"mDataProp": "test-case-automation-request-status",
+							"bSortable": true
+						}, {
+							"aTargets": [11],
 							"mDataProp": "test-case-milestone-nb",
 							"bSortable": true,
 							"sClass": "centered"
 						}, {
-							"aTargets": [11],
+							"aTargets": [12],
 							"mDataProp": "test-case-requirement-nb",
 							"bSortable": true,
 							"sClass": "centered"
 						}, {
-							"aTargets": [12],
+							"aTargets": [13],
 							"mDataProp": "test-case-teststep-nb",
 							"bSortable": true,
 							"sClass": "centered"
 						}, {
-							"aTargets": [13],
+							"aTargets": [14],
 							"mDataProp": "test-case-iteration-nb",
 							"bSortable": true,
 							"sClass": "centered"
 						}, {
-							"aTargets": [14],
+							"aTargets": [15],
 							"mDataProp": "test-case-attachment-nb",
 							"bSortable": true,
 							"sClass": "centered"
 						}, {
-							"aTargets": [15],
+							"aTargets": [16],
 							"mDataProp": "test-case-created-by",
 							"bSortable": true
 						}, {
-							"aTargets": [16],
+							"aTargets": [17],
 							"mDataProp": "test-case-modified-by",
 							"bSortable": true
 						}, {
-							"aTargets": [17],
+							"aTargets": [18],
 							"mDataProp": "empty-openinterface2-holder",
 							"sClass": "centered search-open-interface2-holder",
 							"sWidth": "2em",
 							"bSortable": false
 						}, {
-							"aTargets": [18],
+							"aTargets": [19],
 							"mDataProp": "empty-opentree-holder",
 							"sClass": "centered search-open-tree-holder",
 							"sWidth": "2em",
 							"bSortable": false
 						}, {
-							"aTargets": [19],
+							"aTargets": [20],
 							"mDataProp": "editable",
 							"bVisible": false,
 							"bSortable": false
 						},
 						{
-							"aTargets": [20],
+							"aTargets": [21],
 							"mDataProp": "test-case-weight-auto",
 							"bVisible": false,
 							"bSortable": false
