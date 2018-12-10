@@ -195,7 +195,7 @@ public class LinkedRequirementVersionsManagerController {
 
 	@ResponseBody
 	@RequestMapping(value = "/{requirementNodesIds}", method = RequestMethod.POST, params = {REQ_VERSION_LINK_TYPE_ID, REQ_VERSION_LINK_TYPE_DIRECTION})
-	public Map<String, Object> adLinkWithVersionIdAndNodeId(
+	public Map<String, Object> addLinkWithVersionIdAndNodeId(
 		@PathVariable(REQUIREMENT_VERSION_ID) long requirementVersionId,
 		@PathVariable("requirementNodesIds") List<Long> requirementNodesIds,
 		@RequestParam(REQ_VERSION_LINK_TYPE_ID) long reqVersionLinkTypeId,
