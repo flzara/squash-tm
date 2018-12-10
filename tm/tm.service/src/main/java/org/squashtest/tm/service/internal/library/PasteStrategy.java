@@ -344,7 +344,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 			Requirement req = (Requirement) reqNode;
 			TestCaseFolder tcFolder = new TestCaseFolder();
 			tcFolder.setDescription(req.getDescription());
-			tcFolder.setName(req.getName() + "- Container");
+			tcFolder.setName(req.createFolderNameFromRequirement());
 			tcFolder.notifyAssociatedWithProject((Project) destination.getProject());
 			if (destination.getClass() == TestCaseLibrary.class) {
 				testCaseLibraryNavigationService.addFromReqFolderToLibrary(destination.getId(), tcFolder);

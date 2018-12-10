@@ -44,8 +44,10 @@ import javax.persistence.OrderColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.search.annotations.*;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
+import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.NodeContainerVisitor;
@@ -72,7 +74,7 @@ import org.squashtest.tm.exception.requirement.IllegalRequirementVersionCreation
 @Indexed
 @PrimaryKeyJoinColumn(name = "RLN_ID")
 @ClassBridges({
-	@ClassBridge(name = "children", analyze = Analyze.NO, store = Store.YES, impl=RequirementCountChildrenBridge.class)
+	@ClassBridge(name = "children", analyze = Analyze.NO, store = Store.YES, impl = RequirementCountChildrenBridge.class)
 })
 public class Requirement extends RequirementLibraryNode<RequirementVersion> implements NodeContainer<Requirement> {
 
@@ -88,7 +90,6 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	@Field(analyze = Analyze.NO, store = Store.YES, bridge = @FieldBridge(impl = CollectionSizeBridge.class))
 	@SortableField
 	private List<RequirementVersion> versions = new ArrayList<>();
-
 
 
 	/*
@@ -537,6 +538,10 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 		return sortedVersions.isEmpty() ? null : sortedVersions.get(sortedVersions.lastKey());
 	}
 
+	public String createFolderNameFromRequirement() {
+		RequirementVersion currentVersion = this.getCurrentVersion();
+		return StringUtils.abbreviate(currentVersion.getFullName(), Sizes.NAME_MAX);
+	}
 
 	// **************** requirement sync section *****************
 
