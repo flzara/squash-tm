@@ -134,7 +134,7 @@ define([ 'jquery', 'underscore', 'squash.translator', "jquery.squash.oneshotdial
 
 		};
 
-		this.pasteNodesForTcFromCookie = function() {
+		this.pasteNodesForTcFromCookie = function(configuration) {
 
 			var tree = this.tree;
 
@@ -143,7 +143,7 @@ define([ 'jquery', 'underscore', 'squash.translator', "jquery.squash.oneshotdial
 			var target = tree.jstree('get_selected');
 
 			// warn user if not same libraries
-			doPasteFromReqToTc(tree, target, data,dataForReqToTc);
+			doPasteFromReqToTc(tree, target, data,dataForReqToTc, configuration);
 			tree.jstree('refresh');
 
 		};
@@ -241,12 +241,12 @@ define([ 'jquery', 'underscore', 'squash.translator', "jquery.squash.oneshotdial
 			});
 		};
 
-		var doPasteFromReqToTc = function(tree, target, data,dataForReqToTc) {
+		var doPasteFromReqToTc = function(tree, target, data,dataForReqToTc, configuration) {
 			target.open();
 
 			// now we can proceed
 
-			tree.jstree('copyNodesFromReqToTc', dataForReqToTc, target).done(function() {
+			tree.jstree('copyNodesFromReqToTc', dataForReqToTc, target, configuration).done(function() {
 				tree.jstree('refresh_selected');
 			}).fail(function(json) {
 				tree.jstree('refresh');
