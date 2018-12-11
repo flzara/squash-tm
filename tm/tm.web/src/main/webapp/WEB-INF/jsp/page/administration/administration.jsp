@@ -34,6 +34,7 @@
 <c:url var="welcomeUrl"               value="/administration/welcome-message" />
 <c:url var="customFieldsUrl"          value="/administration/custom-fields" />
 <c:url var="testAutomationServerUrl"  value="/administration/test-automation-servers" />
+<c:url var="scmServerUrl"             value="/administration/scm-servers" />
 <c:url var="indexUrl"                 value="/administration/indexes" />
 <c:url var="milestoneUrl"             value="/administration/milestones" />
 <c:url var="reqLinkTypeUrl"           value="/administration/requirement-link-types" />
@@ -57,10 +58,10 @@
       <div id="admin-link-pane">
 
         <sec:authorize access=" hasRole('ROLE_ADMIN')">
-        <a href="${ usersUrl }" class="unstyledLink">
-          <span id="user-admin" class="admin-section-icon admin-user-icon"></span>
-          <span class="admin-section-label"><f:message key="label.userManagement" /></span>
-        </a>
+          <a href="${ usersUrl }" class="unstyledLink">
+            <span id="user-admin" class="admin-section-icon admin-user-icon"></span>
+            <span class="admin-section-label"><f:message key="label.userManagement" /></span>
+          </a>
         </sec:authorize>
 
         <a href="${ projectsUrl }" class="unstyledLink">
@@ -70,12 +71,11 @@
 
         <sec:authorize var="isAdmin" access="hasRole('ROLE_ADMIN')" />
         <c:if test="${ isAdmin or milestoneFeatureEnabled }">
-        <a href="${ milestoneUrl }" class="unstyledLink">
-          <span id="milestone-admin" class="admin-section-icon admin-milestone-icon"></span>
-          <span class="admin-section-label"><f:message key="label.milestoneManagement" /></span>
-        </a>
+          <a href="${ milestoneUrl }" class="unstyledLink">
+            <span id="milestone-admin" class="admin-section-icon admin-milestone-icon"></span>
+            <span class="admin-section-label"><f:message key="label.milestoneManagement" /></span>
+          </a>
         </c:if>
-
 
         <sec:authorize access=" hasRole('ROLE_ADMIN')">
 
@@ -94,7 +94,6 @@
           <span class="admin-section-label"><f:message key="label.reqLinkTypeManagement" /></span>
         </a>
 
-
         <a href="${ bugtrackerUrl }" class="unstyledLink">
           <span id="bug-tracker-admin" class="admin-section-icon admin-bugtracker-icon"></span>
           <span class="admin-section-label"><f:message key="label.bugtrackerManagement" /></span>
@@ -103,7 +102,12 @@
         <a href="${testAutomationServerUrl}" class="unstyledLink">
           <span id="test-automation-servers-admin" class="admin-section-icon admin-test-automation-servers-icon"></span>
           <span class="admin-section-label"><f:message key="label.testAutomationServersManagement"/></span>
-         </a>
+        </a>
+
+        <a href="${scmServerUrl}" class="unstyledLink">
+          <span id="scm-servers-admin" class="admin-section-icon admin-scm-servers-icon"></span>
+          <span class="admin-section-label"><f:message key="label.scmServersManagement"/></span>
+        </a>
 
         <a href="${ indexUrl }" class="unstyledLink">
           <span id="index-admin" class="admin-section-icon admin-index-icon"></span>

@@ -504,7 +504,8 @@
 	@NamedQuery(name = "GenericProject.findBoundTestAutomationProjectLabels", query = "select tap.label from GenericProject p join p.testAutomationProjects tap where p.id = :projectId"),
 	@NamedQuery(name = "GenericProject.findBoundTemplateId", query = "select t.id from GenericProject p join p.template t where p.id = :projectId"),
 	@NamedQuery(name = "GenericProject.findBoundTemplateIdsFromBindingIds", query = "select t.id from CustomFieldBinding cfb join cfb.boundProject p join p.template t where cfb.id in (:bindingIds)"),
-
+	@NamedQuery(name = "GenericProject.bindScmRepository", query = "update GenericProject p set p.scmRepository = (from ScmRepository r where r.id = :scmRepositoryId) where p.id = :projectId"),
+	@NamedQuery(name = "GenericProject.unbindScmRepository", query = "update GenericProject p set p.scmRepository = null where p.id = :projectId"),
 
 	// Project Template
 	@NamedQuery(name = "ProjectTemplate.propagateAllowTcModifDuringExec", query = "update GenericProject set allowTcModifDuringExec = :active where template.id = :templateId"),
@@ -1041,8 +1042,16 @@
   	@NamedQuery(name = "StoredCredentials.findServerAuthConfByServerId",
 		query = "select sc from StoredCredentials sc join sc.authenticatedServer server " +
 					"where server.id = :serverId and sc.contentType = 'CONF' " +
-					"and sc.authenticatedUser is null")
+					"and sc.authenticatedUser is null"),
 
+	// ScmServers
+	@NamedQuery(name="ScmServer.isServerNameAlreadyInUse", query="select case when (count(s) > 0) then true else false end from ScmServer s where s.name = :name"),
+	@NamedQuery(name="ScmServer.isOneServerBoundToProject", query="select case when (count(s) > 0) then true else false end from GenericProject p join p.scmRepository r join r.scmServer s where s.id in (:scmServerIds)"),
+	@NamedQuery(name="ScmServer.releaseContainedScmRepositoriesFromProjects", query="update GenericProject p set p.scmRepository = null where p.scmRepository.id in (select r.id from ScmRepository r where r.scmServer.id in (:scmServerIds))"),
+	// ScmRepositories
+	@NamedQuery(name="ScmRepository.deleteByIds", query="delete from ScmRepository r where r.id in (:scmRepositoriesIds)"),
+	@NamedQuery(name="ScmRepository.releaseScmRepositoriesFromProjects", query="update GenericProject p set p.scmRepository = null where p.scmRepository.id in (:scmRepositoriesIds)"),
+	@NamedQuery(name="ScmRepository.isOneRepositoryBoundToProject", query="select case when (count(r) > 0) then true else false end from GenericProject p join p.scmRepository r where r.id in (:scmRepositoryIds)")
 
 })
 //@formatter:on

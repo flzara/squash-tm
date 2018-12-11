@@ -89,6 +89,12 @@
 
     <dependency>
       <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.scm.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
       <artifactId>core.testautomation.api</artifactId>
       <version>${project.version}</version>
     </dependency>

@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.repository;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -54,5 +55,12 @@ public interface GenericProjectDao extends JpaRepository<GenericProject, Long>, 
 	@Query
 	TestAutomationServer findTestAutomationServer(@Param(ParameterNames.PROJECT_ID) long projectId);
 
+	@Query
+	@Modifying
+	void bindScmRepository(@Param("projectId") long projectId, @Param("scmRepositoryId") long scmRepositoryId);
+
+	@Query
+	@Modifying
+	void unbindScmRepository(@Param("projectId") long projectId);
 
 }

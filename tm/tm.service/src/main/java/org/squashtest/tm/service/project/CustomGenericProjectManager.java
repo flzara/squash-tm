@@ -105,6 +105,20 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 
 	void unbindTestAutomationProject(long projectId, long taProjectId);
 
+	/* ----- Scm Repositories Section ----- */
+
+	/**
+	 * Bind the given Project to the given ScmRepository.
+	 * @param projectId The id of the Project to bind.
+	 * @param scmRepositoryId The id of the ScmRepository to bind.
+	 */
+	void bindScmRepository(long projectId, long scmRepositoryId);
+	/**
+	 * Unbind the given Project from its ScmRepository.
+	 * @param projectId The id of the Project to unbind.
+	 */
+	void unbindScmRepository(long projectId);
+
 	// ****************************** bugtracker section ****************************
 
 	/**

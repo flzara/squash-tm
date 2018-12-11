@@ -179,7 +179,11 @@ define([], function(){
 		'execute.stepbyindex' :				root + '/execute/{\\d+}/step/index/{\\d+}',
 		'execute.prologue' :				root + '/execute/{\\d+}/step/prologue',
 
-
+		'administration.scm-servers' : root + '/administration/scm-servers',
+		'administration.scm-servers.delete' : root + '/administration/scm-servers/{\\d+}',
+		'administration.scm-server.repositories' : root + '/administration/scm-server/{\\d+}/repositories',
+		'administration.scm-repositories' : root + '/administration/scm-repositories/{\\d+}',
+		'administration.scm-repositories.list' : root + '/administration/scm-repositories',
 		'administration.bugtrackers'	:	root + '/administration/bugtrackers',
 		'customfield.values' :				root + '/custom-fields/values',
 		'customfield.values.get' :			root + '/custom-fields/values?boundEntityId={\\d+}&boundEntityType={[A-Z_]+}',
@@ -217,6 +221,7 @@ define([], function(){
 		'project.new' :						root + '/projects/new',
 		'generic.project.description' :		root + '/generic-projects/{\\d+}/description',
 		'generic.template.new' :			root + '/generic-projects/new-template',
+		'generic-projects.scm-repository' :			root + '/generic-projects/{\\d+}/scm-repository',
 		'template.new' :					root + '/project-templates/new',
 		'template' :						root + '/project-templates?dropdownList',
 		'execution.update-from-tc' :		root + '/execute/{\\d+}/update-from-tc',
