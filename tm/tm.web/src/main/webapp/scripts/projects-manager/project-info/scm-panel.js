@@ -89,7 +89,7 @@ define(["jquery", "backbone", "jeditable.selectJEditable", "workspace.routing", 
 					'0' : translator.get('label.NoServer'),
 					'selected': '0'
 				};
-				for(n in scmServers) {
+				for(var n in scmServers) {
 					var server = scmServers[n];
 					result[server.id] = server.name;
 				}
@@ -144,7 +144,7 @@ define(["jquery", "backbone", "jeditable.selectJEditable", "workspace.routing", 
 					'0' : translator.get('label.none'),
 					'selected': '0'
 				};
-				for(n in scmRepositories) {
+				for(var n in scmRepositories) {
 					var repo = scmRepositories[n];
 					result[repo.id] = repo.name;
 				}
@@ -179,7 +179,7 @@ define(["jquery", "backbone", "jeditable.selectJEditable", "workspace.routing", 
 			* @param repositoryId: The id of the ScmRepository to bind to the Project.
 			* @return The Promise of the POST Request.
 			*/
-			doBindRepositoryToProject(repositoryId) {
+			doBindRepositoryToProject: function(repositoryId) {
 				var projectId = this.projectId;
 				return $.ajax({
 					method: 'POST',
@@ -193,7 +193,7 @@ define(["jquery", "backbone", "jeditable.selectJEditable", "workspace.routing", 
 			* Create the DELETE Request to unbind a ScmRepository from the current Project.
 			* @return The Promise of the DELETE Request.
 			*/
-			doUnbindRepositoryToProject() {
+			doUnbindRepositoryToProject : function() {
 				var projectId = this.projectId;
 				return $.ajax({
 					method: 'DELETE',
