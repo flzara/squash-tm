@@ -129,7 +129,7 @@
 
             <input type="button" th:if="!${associateResult}" th:value="#{label.Export}" id="export-search-result-button"
               class="button ui-button ui-widget ui-state-default ui-corner-all" role="button" aria-disabled="false" />
-
+            <span th:text="${allowAutomationWorkflow}"></span>
 
             <div class="unsnap"></div>
           </div>
@@ -141,8 +141,9 @@
 
           <div id="search-results">
             <div id="search-results-panel" class="table-tab-wrap">
+
               <table id="test-case-search-result-table" th:attr="data-def='filter, hover, datakeys-id=test-case-id'"
-                class="unstyled-table" th:with="milestoneColVisible=${application.milestoneFeatureEnabled and not isMilestoneMode}">
+                class="unstyled-table" th:with="milestoneColVisible=${application.milestoneFeatureEnabled and not isMilestoneMode}, automationColVisible=${automationColVisible}">
                 <thead>
                   <tr>
                     <th th:attr="data-def='select, map=user-index'">#</th>
@@ -158,9 +159,9 @@
                     <th th:attr="data-def='map=test-case-type'" th:text="#{test-case.type.label}">test-case type</th>
                     <th th:attr="data-def='map=test-case-status'" th:text="#{test-case.status.label}">test-case
                       status</th>
-                    <th th:attr="data-def='map=test-case-automatable'" th:text="#{test-case.automation-indicator.label.short}">test-case
+                    <th th:attr="data-def='map=test-case-automatable' + (${(not automationColVisible)} ?',invisible':'')" th:text="#{test-case.automation-indicator.label.short}">test-case
                       automatable</th>
-                    <th th:attr="data-def='map=test-case-automation-request-status'" th:text="#{test-case.automation-status.label.short}">test-case
+                    <th th:attr="data-def='map=test-case-automation-request-status' + (${(not automationColVisible)} ?',invisible':'')" th:text="#{test-case.automation-status.label.short}">test-case
                       automatable</th>
                     <th th:attr="data-def='map=test-case-milestone-nb' + (${(not milestoneColVisible)} ?',invisible':'')"
                       th:text="#{label.milestoneNb}" th:title="#{label.long.numberOfAssociatedMilestones}">milestone nb</th>
@@ -365,7 +366,7 @@
                 </td>
                 <td id="nature-combo"></td>
               </tr>
-              <tr>
+              <tr th:if="${automationColVisible}">
                 <td>
                   <span id="automatable-disabled-icon" class="sq-icon icon-red-cross not-displayed mass-change-forbidden sq-icon-checkboxmargin"></span>
                   <input id="automatable-checkbox" type="checkbox" class="mass-change-allowed"></input>

@@ -34,6 +34,7 @@ import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.service.internal.dto.json.JsonInfoList;
 import org.squashtest.tm.service.internal.dto.json.JsonInfoListItem;
 import org.squashtest.tm.service.internal.dto.json.JsonProject;
@@ -287,7 +288,13 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 			.useLocale(locale).build();
 		automationField.addPossibleValues(automationOptions);
 
+		SearchInputFieldModel automationRequestField = new SearchInputFieldModel("automationRequest.requestStatus", getMessageSource()
+			.internationalize("test-case.automation-status.label", locale), MULTISELECT);
+		panel.addField(automationRequestField);
 
+		List<SearchInputPossibleValueModel> automationRequestOptions = levelComboBuilder(AutomationRequestStatus.values())
+			.useLocale(locale).build();
+		automationRequestField.addPossibleValues(automationRequestOptions);
 		return panel;
 	}
 

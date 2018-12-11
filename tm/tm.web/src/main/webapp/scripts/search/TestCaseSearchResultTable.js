@@ -123,10 +123,10 @@ define(["jquery", "backbone", "squash.translator", "jeditable.simpleJEditable", 
 							"mDataProp": "test-case-automatable",
 							"bSortable": true
 						}, {
-               							"aTargets": [11],
-               							"mDataProp": "test-case-automation-request-status",
-               							"bSortable": true
-               						},
+							"aTargets": [11],
+							"mDataProp": "test-case-automation-request-status",
+							"bSortable": true
+						},
 						{
 							"aTargets": [12],
 							"mDataProp": "test-case-milestone-nb",
@@ -247,7 +247,7 @@ define(["jquery", "backbone", "squash.translator", "jeditable.simpleJEditable", 
 							"mDataProp": "test-case-status",
 							"bSortable": true,
 							"sClass": "editable editable_status"
-						},  {
+						}, {
 							"aTargets": [9],
 							"mDataProp": "test-case-automatable",
 							"bSortable": true

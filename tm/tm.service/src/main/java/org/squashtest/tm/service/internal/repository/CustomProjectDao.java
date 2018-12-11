@@ -53,4 +53,6 @@ public interface CustomProjectDao {
 
 	List<Long> findAllProjectIdsForAutomationWriter(List<Long> partyIds);
 
+	Integer countProjectsAllowAutomationWorkflow();
+
 }

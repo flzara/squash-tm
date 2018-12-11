@@ -223,7 +223,6 @@ public class TestCaseSearchController extends GlobalSearchController {
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
 
 		addMilestoneToSearchModel(searchModel);
-
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testCaseSearchResultMapper);
 
 		PagedCollectionHolder<List<TestCase>> holder =

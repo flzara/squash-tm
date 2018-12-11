@@ -61,4 +61,6 @@ public interface CustomProjectFinder {
 
 	List<Long> findAllReadableIdsForAutomationWriter();
 
+	Integer countProjectsAllowAutomationWorkflow();
+
 }

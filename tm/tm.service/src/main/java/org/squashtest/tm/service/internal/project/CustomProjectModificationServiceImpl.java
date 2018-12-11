@@ -190,6 +190,11 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 		return jsonProjects.values();
 	}
 
+	@Override
+	public Integer countProjectsAllowAutomationWorkflow() {
+		return projectDao.countProjectsAllowAutomationWorkflow();
+	}
+
 	protected Map<Long, JsonProject> doFindAllProjects(List<Long> readableProjectIds) {
 		// As projects are objects with complex relationship we pre fetch some of the relation to avoid unnecessary joins or requests, and unnecessary conversion in DTO after fetch
 		// We do that only on collaborators witch should not be too numerous versus the number of projects

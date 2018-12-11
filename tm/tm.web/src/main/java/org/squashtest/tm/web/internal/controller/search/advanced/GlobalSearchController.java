@@ -87,9 +87,9 @@ public abstract class GlobalSearchController {
 				UserDto currentUser = userAccountService.findCurrentUserDto();
 				List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
 				Collection<JsonProject> jsProjects = projectFinder.findAllProjects(readableProjectIds, currentUser);
-
+				Integer allowAutomationWorkflow = projectFinder.countProjectsAllowAutomationWorkflow();
 				SearchInputInterfaceModel model = searchInputInterfaceHelper.getTestCaseSearchInputInterfaceModel(locale,
-					isMilestoneMode, readableProjectIds, jsProjects);
+					isMilestoneMode, readableProjectIds, jsProjects, allowAutomationWorkflow);
 				populateMetadata(model, jsProjects);
 				return model;
 			}
@@ -197,6 +197,12 @@ public abstract class GlobalSearchController {
 
 	private void initModelForPage(Model model, String associateResultWithType, Long id, Optional<Milestone> activeMilestone) {
 		model.addAttribute("isMilestoneMode", activeMilestone.isPresent());
+		Integer projectsAllowAtuomationWorkflow = projectFinder.countProjectsAllowAutomationWorkflow();
+		Boolean automationColVisible = false;
+		if (projectsAllowAtuomationWorkflow > 0) {
+			automationColVisible = true;
+		}
+		model.addAttribute("automationColVisible", automationColVisible);
 		if (StringUtils.isNotBlank(associateResultWithType)) {
 			model.addAttribute("associateResult", true);
 			model.addAttribute("associateResultWithType", associateResultWithType);

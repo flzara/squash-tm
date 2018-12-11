@@ -123,4 +123,13 @@ public class ProjectDaoImpl extends HibernateEntityDao<Project> implements Custo
 				.and(ACL_RESPONSIBILITY_SCOPE_ENTRY.ACL_GROUP_ID.in(Arrays.asList(5L, 10L))))
 			.fetch(ACL_OBJECT_IDENTITY.IDENTITY, Long.class);
 	}
+
+	@Override
+	public Integer countProjectsAllowAutomationWorkflow() {
+		return DSL
+			.selectCount()
+			.from(PROJECT)
+			.where(PROJECT.ALLOW_AUTOMATION_WORKFLOW.eq(true))
+			.fetchOne().value1();
+	}
 }

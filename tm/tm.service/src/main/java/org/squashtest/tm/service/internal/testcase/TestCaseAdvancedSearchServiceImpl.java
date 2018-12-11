@@ -82,8 +82,8 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		new SortField("requirements",  SortField.Type.STRING, false),new SortField("steps",  SortField.Type.STRING, false),
 		new SortField("attachments",  SortField.Type.STRING, false),
 		new SortField("iterations",  SortField.Type.STRING, false),
-		new SortField("automatable", SortField.Type.STRING, false),
-		new SortField("automationRequest.requestStatus", SortField.Type.STRING, false)
+		new SortField("automatable", SortField.Type.STRING, false)/*,
+		new SortField("automationRequest.requestStatus", SortField.Type.STRING, false)*/
 
 	};
 
@@ -224,6 +224,8 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			result = fieldName.replaceFirst("TestCase.", "");
 		} else if (fieldName.startsWith("Project.")) {
 			result = fieldName.replaceFirst("Project.", "project.");
+		} else if (fieldName.startsWith("AutomationRequest.")) {
+			result = fieldName.replaceFirst("AutomationRequest.", "automationRequest.");
 		}
 		return result;
 	}

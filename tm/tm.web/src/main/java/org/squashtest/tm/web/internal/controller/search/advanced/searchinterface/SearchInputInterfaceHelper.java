@@ -103,7 +103,7 @@ public class SearchInputInterfaceHelper {
 		return model;
 	}
 
-	public SearchInputInterfaceModel getTestCaseSearchInputInterfaceModel(Locale locale, boolean isMilestoneMode, List<Long> readableProjectIds, Collection<JsonProject> jsProjects) {
+	public SearchInputInterfaceModel getTestCaseSearchInputInterfaceModel(Locale locale, boolean isMilestoneMode, List<Long> readableProjectIds, Collection<JsonProject> jsProjects, Integer allowAutomationWorkflow) {
 
 		SearchInputInterfaceModel model = new SearchInputInterfaceModel();
 
@@ -121,7 +121,9 @@ public class SearchInputInterfaceHelper {
 		model.addPanel(testcaseVersionSearchInterfaceDescription.createAttributePanel(locale,jsProjects));
 
 		// Automation
-		model.addPanel(testcaseVersionSearchInterfaceDescription.createAutomationPanel(locale));
+		if(allowAutomationWorkflow > 0) {
+			model.addPanel(testcaseVersionSearchInterfaceDescription.createAutomationPanel(locale));
+		}
 
 		// Milestones
 		if (!isMilestoneMode && featureManager.isEnabled(FeatureManager.Feature.MILESTONE)) {
