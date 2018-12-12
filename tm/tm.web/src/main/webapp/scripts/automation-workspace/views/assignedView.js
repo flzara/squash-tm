@@ -91,19 +91,24 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }, {
                         "bSortable": true,
                         "aTargets": [8],
+                        "mDataProp": "status"
+                    },
+                    {
+                        "bSortable": true,
+                        "aTargets": [9],
                         "mDataProp": "transmitted-on"
                     }, {
                         "bSortable": true,
-                        "aTargets": [9],
+                        "aTargets": [10],
                         "mDataProp": "assigned-on"
                     }, {
                         "bSortable": true,
-                        "aTargets": [10],
+                        "aTargets": [11],
                         "mDataProp": "script",
                         "sClass": "assigned-script"
                     }, {
                         "bSortable": false,
-                        "aTargets": [11],
+                        "aTargets": [12],
                         "mDataProp": "tc-id",
                         "sClass": "centered",
                         "sWidth": "2.5em",
@@ -112,7 +117,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         }
                     }, {
                         "bSortable": false,
-                        "aTargets": [12],
+                        "aTargets": [13],
                         "mDataProp": "checkbox",
                         "sClass": "centered",
                         "mRender": function (data, type, row) {
@@ -135,7 +140,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }, {
                         "mDataProp": "requestId",
                         "bVisible": false,
-                        "aTargets": [13]
+                        "aTargets": [14]
                     }],
                     "bFilter": true,
 
@@ -215,34 +220,34 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         var entityId = data["entity-id"];
                         var url = squashtm.app.contextRoot + 'automation-requests/' + entityId + '/tests';
                         if (data['script'] !== 'no-test-automation-project') {
-														cell.editable(url, editable);
-														cell.css({ "font-style": "italic" });
-														var urlTa = squashtm.app.contextRoot + 'automation-requests/' + entityId + '/tests';
-														cell.attr("id", cellId);
-														var settings = {
-																url: urlTa,
-																id: cellId
-														}
+                            cell.editable(url, editable);
+                            cell.css({ "font-style": "italic" });
+                            var urlTa = squashtm.app.contextRoot + 'automation-requests/' + entityId + '/tests';
+                            cell.attr("id", cellId);
+                            var settings = {
+                                url: urlTa,
+                                id: cellId
+                            }
 
-														cell.on("click", function () {
-																$("td[id!=" + cellId + "]").find("form button[type=cancel]").click();
-														})
+                            cell.on("click", function () {
+                                $("td[id!=" + cellId + "]").find("form button[type=cancel]").click();
+                            })
 
-														cell.on('click', '#ta-script-picker-button', function () {
-																self._initPickerPopup(settings);
-																var popup = $("#ta-picker-popup").formDialog();
-																popup.formDialog('open');
-																return false;//for some reason jeditable would trigger 'submit' if we let go
-														});
-														cell.on('click', '#ta-script-remove-button', function () {
-																self._initRemovePopup(settings);
-																var popup = $("#ta-remove-popup").formDialog();
-																popup.formDialog('open');
-																return false;// see comment above
-														});
-												} else {
-														cell.text('-');
-												}
+                            cell.on('click', '#ta-script-picker-button', function () {
+                                self._initPickerPopup(settings);
+                                var popup = $("#ta-picker-popup").formDialog();
+                                popup.formDialog('open');
+                                return false;//for some reason jeditable would trigger 'submit' if we let go
+                            });
+                            cell.on('click', '#ta-script-remove-button', function () {
+                                self._initRemovePopup(settings);
+                                var popup = $("#ta-remove-popup").formDialog();
+                                popup.formDialog('open');
+                                return false;// see comment above
+                            });
+                        } else {
+                            cell.text('-');
+                        }
                     },
 
                     fnDrawCallback: function () {
@@ -262,6 +267,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 var $table = $("#automation-table");
                 datatableSettings.customKey = "assigned";
                 datatableSettings.testers = squashtm.app.assignableUsers;
+                datatableSettings.statuses = squashtm.app.autoReqStatuses;
                 var fmode = filtermode.newInst(datatableSettings);
                 var smode = sortmode.newInst(datatableSettings);
                 datatableSettings.searchCols = fmode.loadSearchCols();
@@ -512,33 +518,62 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 return ids;
             },
 
-            checkScriptAutoIsPresent: function (table) {
+            checkScriptAutoIsAbsent: function (table) {
                 var selectedRows = table.getSelectedRows();
                 var datas = table.fnGetData();
-                var scripts = [];
+                var count = 0;
                 $(selectedRows).each(function (index, data) {
                     var idx = data._DT_RowIndex;
                     var script = datas[idx].script;
-                    if (script == null) {
-                        scripts.push(script);
+                    var format = datas[idx].format;
+                    console.log(script == null && "gherkin" !== format.toLowerCase())
+                    if (script == null && "gherkin" !== format.toLowerCase()) {
+                        count = count + 1;
                     }
 
                 })
-                return scripts;
+                return count;
+            },
+
+            updateStatus: function(table, status) {
+                var requestIds = this.getSelectedRequestIds(table);
+                if (requestIds.length === 0 || requestIds === undefined) {
+                    notification.showWarning(translator.get("automation.notification.selectedRow.none"));
+                } else {
+
+                    $.ajax({
+                        url: squashtm.app.contextRoot + 'automation-requests/' + requestIds,
+                        method: 'POST',
+                        data: {
+                            "id": "automation-request-status",
+                            "value": status
+                        }
+                    }).success(function () {
+                        table.refresh();
+                    });
+                }
+                this.storage.remove(this.key);
+                this.deselectAll(table);
             },
             bindButtons: function () {
                 var self = this;
                 var domtable = $("#automation-table").squashTable();
-                $("#filter-affected-button").on("click", function () {
+                $("#filter-automation-button").on("click", function () {
                     domtable.toggleFiltering();
                 });
-                $("#select-affected-button").on("click", function () {
+                $("#select-automation-button").on("click", function () {
                     self.selectAll(domtable);
                 });
-                $("#deselect-affected-button").on("click", function () {
+                $("#deselect-automation-button").on("click", function () {
                     self.deselectAll(domtable);
                 });
-                $("#unassigned-affected-button").on("click", function () {
+                $("#workinprogress-automation-button").on("click", function () {
+                    self.updateStatus(domtable, "WORK_IN_PROGRESS");
+                });
+                $("#rejected-automation-button").on("click", function() {
+                    self.updateStatus(domtable, "NOT_AUTOMATABLE");
+                })
+                $("#unassigned-automation-button").on("click", function () {
                     var requestIds = self.getSelectedRequestIds(domtable);
                     if (requestIds.length === 0 || requestIds === undefined) {
                         notification.showWarning(translator.get("automation.notification.selectedRow.none"));
@@ -553,12 +588,12 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }
                     self.storage.remove(self.key);
                 });
-                $("#automated-affected-button").on("click", function () {
+                $("#automated-automation-button").on("click", function () {
                     var requestIds = self.getSelectedRequestIds(domtable);
-                    var scripts = self.checkScriptAutoIsPresent(domtable);
+                    var scripts = self.checkScriptAutoIsAbsent(domtable);
                     if (requestIds.length === 0 || requestIds === undefined) {
                         notification.showWarning(translator.get("automation.notification.selectedRow.none"));
-                    } else if (scripts.length !== 0) {
+                    } else if (scripts !== 0) {
                         notification.showWarning(translator.get("automation.notification.script.none"));
                     } else {
                         $.ajax({

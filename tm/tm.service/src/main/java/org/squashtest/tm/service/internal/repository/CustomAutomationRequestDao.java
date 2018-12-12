@@ -24,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.domain.users.User;
 
 import java.util.Collection;
@@ -125,11 +126,6 @@ public interface CustomAutomationRequestDao {
 
 	Map<Long, String> getAssignedToForAutomationRequests();
 
-	void updateAutomationRequestToAssigned(User user, List<Long> reqIds);
-
-	void updateAutomationRequestNotAutomatable(List<Long> reqIds);
-
-
 	/**
 	 * Will unassign the automation requests, identified by their ids, from the user that handle them, and voids the
 	 * assignation date and resets their statuses to 'TRANSMITTED'
@@ -137,8 +133,6 @@ public interface CustomAutomationRequestDao {
 	 * @param reqIds
 	 */
 	void unassignRequests(List<Long> reqIds);
-
-	void updateStatusToExecutable(List<Long> reqIds);
 
 	void updatePriority(List<Long> tcIds, Integer priority);
 
@@ -153,5 +147,9 @@ public interface CustomAutomationRequestDao {
 	void updateStatusToObsolete(List<Long> reqIds);
 
 	Integer countAutomationRequestValid();
+
+	void assignedToRequestIds(List<Long> reqIds, User user);
+
+	void updateAutomationRequestStatus(List<Long> reqIds, AutomationRequestStatus requestStatus, List<AutomationRequestStatus> initialStatus);
 
 }

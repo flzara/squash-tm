@@ -24,7 +24,12 @@
   <div style="margin-bottom: 40px">
     <span style="font-style: italic; font-weight: bold; font-size:15px" th:text="#{automation.message.global}"></span>
     <div style="float: right">
-      <button id="assigned-global-button" class="tf-lg lightblue" th:title="#{automation.label.progress}" th:text="#{automation.label.progress}"></button>
+      <button id="rejected-automation-button" class="sq-btn" th:title="#{automation.label.rejected}" th:text="#{automation.label.rejected}"
+      style="float:right"></button>
+    <button id="workinprogress-automation-button" class="sq-btn" th:title="#{automation.label.work_in_progress}" th:text="#{automation.label.work_in_progress}"
+      style="float:right"></button>
+    <button id="automated-automation-button" class="sq-btn" th:title="#{automation.label.automated}" th:text="#{automation.label.automated}"
+      style="float:right"></button>
     </div>
   </div>
 

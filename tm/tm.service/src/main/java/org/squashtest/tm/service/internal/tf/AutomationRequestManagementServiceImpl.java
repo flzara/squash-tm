@@ -42,8 +42,12 @@ import org.squashtest.tm.service.tf.AutomationRequestFinderService;
 import org.squashtest.tm.service.tf.AutomationRequestModificationService;
 
 import javax.inject.Inject;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.*;
 
 @Service
 @Transactional
@@ -181,21 +185,28 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	}
 
 	@Override
+	public void assignedToRequest(List<Long> requestIds) {
+		String username = userCtxt.getUsername();
+		User user = userDao.findUserByLogin(username);
+		requestDao.assignedToRequestIds(requestIds, user);
+	}
+
+	@Override
 	public void changeStatus(List<Long> reqIds, AutomationRequestStatus automationRequestStatus) {
 		String username = userCtxt.getUsername();
 		User user = userDao.findUserByLogin(username);
 		switch (automationRequestStatus) {
 			case NOT_AUTOMATABLE:
 				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_AUTOMATION, AutomationRequest.class.getName());
-				requestDao.updateAutomationRequestNotAutomatable(reqIds);
+				requestDao.updateAutomationRequestStatus(reqIds, NOT_AUTOMATABLE, Collections.singletonList(TRANSMITTED));
 				break;
 			case WORK_IN_PROGRESS:
 				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_AUTOMATION, AutomationRequest.class.getName());
-				requestDao.updateAutomationRequestToAssigned(user, reqIds);
+				requestDao.updateAutomationRequestStatus(reqIds, WORK_IN_PROGRESS, Arrays.asList(TRANSMITTED, EXECUTABLE));
 				break;
 			case EXECUTABLE:
 				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_AUTOMATION, AutomationRequest.class.getName());
-				requestDao.updateStatusToExecutable(reqIds);
+				requestDao.updateAutomationRequestStatus(reqIds, EXECUTABLE, Arrays.asList(TRANSMITTED, WORK_IN_PROGRESS));
 				break;
 			case TRANSMITTED:
 				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_FUNCTIONAL, AutomationRequest.class.getName());

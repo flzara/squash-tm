@@ -22,18 +22,25 @@
 -->
 <div th:fragment="automation-assigned-view">
   <div id="divTable" style="display: none">
-    <div style="margin-bottom: 40px">
-      <span style="font-style: italic; font-weight: bold; font-size:15px" th:text="#{automation.message.assigned}"></span>
-      <div style="float: right">
-        <button id="automated-affected-button" class="tf-lg blue" th:title="#{automation.label.automated}" th:text="#{automation.label.automated}"></button>
-        <button id="unassigned-affected-button" class="tf-lg gray" th:title="#{automation.label.disaseembled}" th:text="#{automation.label.disaseembled}"></button>
-
+    <div style="margin-bottom: 20px">
+      <div style="margin-bottom: 10px">
+        <span style="font-style: italic; font-weight: bold; font-size:15px" th:text="#{automation.message.assigned}"></span>
+        <button id="rejected-automation-button" class="sq-btn" th:title="#{automation.label.rejected}" th:text="#{automation.label.rejected}"
+          style="float:right"></button>
+        <button id="workinprogress-automation-button" class="sq-btn" th:title="#{automation.label.work_in_progress}" th:text="#{automation.label.work_in_progress}"
+          style="float:right"></button>
+        <button id="automated-automation-button" class="sq-btn" th:title="#{automation.label.automated}" th:text="#{automation.label.automated}"
+          style="float:right"></button>
+      </div>
+      <div>
+        <div style="text-align: right;">
+          <button id="unassigned-automation-button" class="sq-btn" th:title="#{automation.label.disaseembled}" th:text="#{automation.label.disaseembled}"></button>
+        </div>
       </div>
     </div>
-
     <div class="left btn-toolbar">
       <div class="btn-group">
-        <button id="filter-affected-button" class="sq-btn">
+        <button id="filter-automation-button" class="sq-btn">
           <span class="ui-icon ui-icon-refresh"></span>
           <span th:text="#{label.Filter}"></span>
         </button>
@@ -44,8 +51,8 @@
         <span th:text="#{automation.label.selected.rows}">Nombre de lignes actives:</span><span id="selectedRows">0</span>
       </div>
       <div class="btn-group" style="margin-top: 5px">
-        <button id="select-affected-button" class="tf-sm" th:title="#{label.SelectAllForSelection}" th:text="#{label.SelectAllForSelection}"></button>
-        <button id="deselect-affected-button" class="tf-sm" th:title="#{label.DeselectAll}" th:text="#{label.DeselectAll}"></button>
+        <button id="select-automation-button" class="tf-sm" th:title="#{label.SelectAllForSelection}" th:text="#{label.SelectAllForSelection}"></button>
+        <button id="deselect-automation-button" class="tf-sm" th:title="#{label.DeselectAll}" th:text="#{label.DeselectAll}"></button>
       </div>
     </div>
 
@@ -61,6 +68,7 @@
             <th th:text="#{automation.datatable.headers.format}" class="no-user-select tp-th-filter tp-th-format"></th>
             <th th:text="#{automation.datatable.headers.createdby}" class="no-user-select tp-th-filter tp-th-createdby"></th>
             <th th:text="#{automation.datatable.headers.priority}" class="no-user-select tp-th-filter tp-th-priority"></th>
+            <th th:text="#{automation.datatable.headers.status}" class="no-user-select tp-th-filter tp-th-status"></th>
             <th th:text="#{automation.datatable.headers.transmittedon}" class="no-user-select tp-th-filter tp-th-transmittedon"></th>
             <th th:text="#{automation.datatable.headers.assignedon}"></th>
             <th th:text="#{automation.datatable.headers.script}" class="assigned-script"></th>

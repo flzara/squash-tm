@@ -78,14 +78,19 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             if (data === null) { return '-'; }
                             return data;
                         }
-                    }, {
+                    },{
                         "bSortable": true,
                         "aTargets": [8],
+                        "mDataProp": "status",
+                        "sWidth": "12em"
+                    }, {
+                        "bSortable": true,
+                        "aTargets": [9],
                         "mDataProp": "transmitted-on",
                         "sWidth": "14em"
                     }, {
                         "bSortable": false,
-                        "aTargets": [9],
+                        "aTargets": [10],
                         "mDataProp": "tc-id",
                         "sClass": "centered",
                         "sWidth": "2.5em",
@@ -94,7 +99,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         }
                     }, {
                         "bSortable": false,
-                        "aTargets": [10],
+                        "aTargets": [11],
                         "mDataProp": "checkbox",
                         "sClass": "centered",
                         "mRender": function (data, type, row) {
@@ -117,7 +122,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }, {
                         "mDataProp": "requestId",
                         "bVisible": false,
-                        "aTargets": [11]
+                        "aTargets": [12]
                     }],
                     "bFilter": true,
                     fnRowCallback: function (row, data, displayIndex) {
@@ -176,6 +181,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 var $table = $("#automation-table");
                 datatableSettings.customKey = "traitment";
                 datatableSettings.testers = squashtm.app.traitmentUsers;
+                datatableSettings.statuses = squashtm.app.autoReqStatuses;
                 var fmode = filtermode.newInst(datatableSettings);
                 var smode = sortmode.newInst(datatableSettings);
                 datatableSettings.searchCols = fmode.loadSearchCols();
@@ -268,18 +274,17 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 this.$el.append(template);
             },
 
-            actions: function (table, url, status) {
+            actions: function (table, url) {
                 var requestIds = this.getSelectedRequestIds(table);
 
                 if (requestIds.length === 0 || requestIds === undefined) {
                     notification.showWarning(translator.get("automation.notification.selectedRow.none"));
                 } else {
                     $.ajax({
-                        url: squashtm.app.contextRoot + url + requestIds,
+                        url: squashtm.app.contextRoot + url,
                         method: 'POST',
                         data: {
-                            "id": "automation-request-status",
-                            "value": status
+                            "reqIds": requestIds
                         }
                     }).success(function () {
                         table.refresh();
@@ -303,11 +308,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     domtable.toggleFiltering();
                 });
                 $("#assigned-traitment-button").on("click", function () {
-                    self.actions(domtable, "automation-requests/", "WORK_IN_PROGRESS");
-                    self.storage.remove(self.key);
-                });
-                $("#no-automation-traitment-button").on("click", function () {
-                    self.actions(domtable, "automation-requests/", "NOT_AUTOMATABLE");
+                    self.actions(domtable, "automation-requests/assignee");
                     self.storage.remove(self.key);
                 });
             }

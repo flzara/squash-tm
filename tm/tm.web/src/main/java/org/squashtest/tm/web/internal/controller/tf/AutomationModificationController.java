@@ -81,4 +81,10 @@ public class AutomationModificationController {
 		return new TATestNodeListBuilder().build(projectContents);
 
 	}
+
+	@RequestMapping(value = "/assignee", method = RequestMethod.POST, params = {"reqIds[]"})
+	@ResponseBody
+	public void assigneeToAutomationReq(@RequestParam("reqIds[]") List<Long> requestids) {
+		automationRequestModificationService.assignedToRequest(requestids);
+	}
 }

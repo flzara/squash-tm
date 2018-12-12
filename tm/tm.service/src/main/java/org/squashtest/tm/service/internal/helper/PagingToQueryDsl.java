@@ -365,6 +365,10 @@ public final class PagingToQueryDsl {
 					finalExpression = asInExpression(pptPath, comparisonParameters);
 					break;
 
+				case IS_NULL:
+					finalExpression = isNull(pptPath);
+					break;
+
 				default:
 					// else defaults to strict equality
 					finalExpression = pptPath.eq(Expressions.constant(comparisonParameters));
@@ -395,6 +399,10 @@ public final class PagingToQueryDsl {
 			return asString.likeIgnoreCase(searchTerm);
 		}
 
+		private BooleanExpression isNull(Expression pptPath) {
+			StringExpression asString = Expressions.asString(pptPath);
+			return asString.isNull();
+		}
 
 		private BooleanExpression asBetweenDateExpression(Expression pptPath, Couple<Date, Date> dates) {
 			BooleanExpression finalExpression;
@@ -478,7 +486,12 @@ public final class PagingToQueryDsl {
 				}
 			}
 			else if (canCoerceToInteger(pptClass)){
-				result = Long.valueOf(value);
+				if(value != null) {
+					result = Long.valueOf(value);
+				} else {
+					result = value;
+				}
+
 			}
 			else if (canCoerceToDecimal(pptClass)){
 				result = Double.valueOf(value);
@@ -510,7 +523,11 @@ public final class PagingToQueryDsl {
 		}
 
 		private boolean isEnumList(Class<?> clazz, String value) {
-			return (value.contains(LIST_SEPARATOR) && clazz.isEnum());
+			boolean isEnumList = false;
+			if(value != null) {
+				isEnumList = (value.contains(LIST_SEPARATOR) && clazz.isEnum()) ;
+			}
+			return isEnumList;
 		}
 
 		private boolean canCoerceToDate(Class<?> clazz){
@@ -575,6 +592,11 @@ public final class PagingToQueryDsl {
 				return converter;
 			}
 
+			public ColumnFilteringConverter isNull(){
+				registerHint(CompOperator.IS_NULL);
+				return converter;
+			}
+
 			private void registerHint(CompOperator operation){
 				for (String prop : properties){
 					converter.propertyComparison.put(prop, operation);
@@ -590,7 +612,8 @@ public final class PagingToQueryDsl {
 			LIKE,
 			DATE_BETWEEN,
 			DATE,
-			IN
+			IN,
+			IS_NULL
 		}
 	}
 

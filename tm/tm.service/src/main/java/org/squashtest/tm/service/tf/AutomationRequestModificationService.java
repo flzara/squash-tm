@@ -40,4 +40,6 @@ public interface AutomationRequestModificationService extends AutomationRequestF
 
 	void changePriority(List<Long> tcIds, Integer priority);
 
+	void assignedToRequest(List<Long> requestIds);
+
 }
