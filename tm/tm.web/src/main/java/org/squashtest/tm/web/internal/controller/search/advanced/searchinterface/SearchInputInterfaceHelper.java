@@ -43,6 +43,7 @@ public class SearchInputInterfaceHelper {
 	private static final String TEXTFIELD = "textfield";
 	private static final String COMBOMULTISELECT = "combomultiselect";
 	private static final String TAGS = "tags";
+	private static final String REQUIREMENT = "requirement";
 
 	@Inject
 	protected InternationalizationHelper messageSource;
@@ -67,7 +68,7 @@ public class SearchInputInterfaceHelper {
 
 	public SearchInputInterfaceModel getRequirementSearchInputInterfaceModel(
 		Locale locale, boolean isMilestoneMode, List<Long> readableProjectIds,
-		Collection<JsonProject> jsProjects) {
+		Collection<JsonProject> jsProjects, Integer allowAutomationWorkflow) {
 
 		SearchInputInterfaceModel model = new SearchInputInterfaceModel();
 
@@ -152,6 +153,7 @@ public class SearchInputInterfaceHelper {
 		// Attributes
 		model.addPanel(campaignSearchInterfaceDescription.createAttributePanel(locale,users ));
 
+		// Automation
 		model.addPanel(campaignSearchInterfaceDescription.createAutomationPanel(locale));
 
 		// Milestones

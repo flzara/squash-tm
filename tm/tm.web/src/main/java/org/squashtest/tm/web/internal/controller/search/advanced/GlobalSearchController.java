@@ -101,9 +101,9 @@ public abstract class GlobalSearchController {
 				UserDto currentUser = userAccountService.findCurrentUserDto();
 				List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
 				Collection<JsonProject> jsProjects = projectFinder.findAllProjects(readableProjectIds, currentUser);
-
+				Integer allowAutomationWorkflow = projectFinder.countProjectsAllowAutomationWorkflow();
 				SearchInputInterfaceModel model = searchInputInterfaceHelper.
-					getRequirementSearchInputInterfaceModel(locale, isMilestoneMode, readableProjectIds, jsProjects);
+					getRequirementSearchInputInterfaceModel(locale, isMilestoneMode, readableProjectIds, jsProjects, allowAutomationWorkflow);
 				populateMetadata(model, jsProjects);
 				return model;
 			}
@@ -128,9 +128,9 @@ public abstract class GlobalSearchController {
 				UserDto currentUser = userAccountService.findCurrentUserDto();
 				List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
 				Collection<JsonProject> jsProjects = projectFinder.findAllProjects(readableProjectIds, currentUser);
-
+				Integer allowAutomationWorkflow = projectFinder.countProjectsAllowAutomationWorkflow();
 				SearchInputInterfaceModel model = searchInputInterfaceHelper
-					.getRequirementSearchInputInterfaceModel(locale, isMilestoneMode, readableProjectIds, jsProjects);
+					.getRequirementSearchInputInterfaceModel(locale, isMilestoneMode, readableProjectIds, jsProjects, allowAutomationWorkflow);
 				populateMetadata(model, jsProjects);
 				return model;
 			}

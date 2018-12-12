@@ -154,7 +154,7 @@
 					<div id="search-results">
 						<div id="search-results-panel" class="table-tab-wrap">
 							<table id="campaign-search-result-table" th:attr="data-def='filter, hover,pre-sort=1-asc|2-asc|3-asc, datakeys-id=itpi-id'"
-							 class="unstyled-table">
+							 class="unstyled-table" th:with="automationColVisible=${automationColVisible}">
 								<thead>
 									<tr>
 										<th th:attr="data-def='select, map=entity-index'">#</th>
@@ -163,9 +163,9 @@
 										<th th:attr="data-def='map=iteration-name, sortable'" th:text="#{label.Iteration}">iteration name</th>
 										<th th:attr="data-def='map=itpi-label, sortable'" th:text="#{label.Label}">itpi label</th>
 										<th th:attr="data-def='map=tc-weight, sortable'" th:text="#{label.Importance}">tc-weight</th>
-										<th th:attr="data-def='map=test-case-automatable'" th:text="#{test-case.automation-indicator.label.short}">test-case
+										<th th:attr="data-def='map=test-case-automatable, sortable'  + (${(not automationColVisible)} ?',invisible':'')" th:text="#{test-case.automation-indicator.label.short}">test-case
 											automatable</th>
-										<th th:attr="data-def='map=test-case-automation-request-status'" th:text="#{test-case.automation-status.label.short}">test-case
+										<th th:attr="data-def='map=test-case-automation-request-status, sortable' + (${(not automationColVisible)} ?',invisible':'')" th:text="#{test-case.automation-status.label.short}">test-case
 											automatable</th>
 										<th th:attr="data-def='map=itpi-mode, sortable, narrow, center, sClass=exec-mode'" th:text="#{label.Mode}"
 										 class="no-user-select tp-th-filter tp-th-exec-mode">execution mode</th>

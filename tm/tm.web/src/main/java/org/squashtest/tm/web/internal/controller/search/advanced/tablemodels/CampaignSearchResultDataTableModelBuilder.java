@@ -81,8 +81,13 @@ public class CampaignSearchResultDataTableModelBuilder extends DataTableModelBui
 		res.put("itpi-datasets", formatDatasetsItem(item));
 		res.put("empty-opentree-holder", " ");
 		res.put("empty-openinterface2-holder", " ");
-		res.put("test-case-automation-request-status", item.getReferencedTestCase().getAutomationRequest() != null ? formatAutomationRequestStatus(item.getReferencedTestCase().getAutomationRequest().getRequestStatus(), locale) : "-");
-		res.put("test-case-automatable", item.getReferencedTestCase().getAutomationRequest() != null ? formatTcAutomatable(item.getReferencedTestCase().getAutomatable(), locale): "");
+		if(item.getProject().isAllowAutomationWorkflow()) {
+			res.put("test-case-automation-request-status", item.getReferencedTestCase().getAutomationRequest() != null ? formatAutomationRequestStatus(item.getReferencedTestCase().getAutomationRequest().getRequestStatus(), locale) : "-");
+			res.put("test-case-automatable", item.getReferencedTestCase().getAutomationRequest() != null ? formatTcAutomatable(item.getReferencedTestCase().getAutomatable(), locale): "");
+		} else {
+			res.put("test-case-automatable", "-");
+			res.put("test-case-automation-request-status", "-");
+		}
 		return res;
 	}
 

@@ -29,7 +29,7 @@ import org.hibernate.search.bridge.spi.FieldType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.testcase.TestCase;
-
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 
 
 /**
@@ -48,10 +48,12 @@ import org.squashtest.tm.domain.testcase.TestCase;
 // So I keep the code simple and let the test case load. It's still faster than unrolling the natural way including testcase classbridges
 public class IterationItemBundleClassBridge implements FieldBridge, MetadataProvidingFieldBridge {
 
-	public static final String FIELD_TC_ID 			= "referencedTestCase.id";
+	public static final String FIELD_TC_ID 			    = "referencedTestCase.id";
 	public static final String FIELD_TC_NAME 			= "referencedTestCase.name";
 	public static final String FIELD_TC_REFERENCE 		= "referencedTestCase.reference";
 	public static final String FIELD_TC_IMPORTANCE		= "referencedTestCase.importance";
+	public static final String FIELD_TC_AUTOMATABLE		= "referencedTestCase.automatable";
+	public static final String FIELD_TC_REQ_STATUS		= "referencedTestCase.automationRequest.requestStatus";
 	private static final Logger LOGGER = LoggerFactory.getLogger(IterationItemBundleClassBridge.class);
 
 	@Override
@@ -80,11 +82,13 @@ public class IterationItemBundleClassBridge implements FieldBridge, MetadataProv
 
 		TestCase tc = item.getReferencedTestCase();
 		String importance = tc.getImportance().getLevel()+"-"+tc.getImportance().toString();
+		String automatable = tc.getAutomatable().getLevel()+"-"+tc.getAutomatable().toString();
 			// note : not indexing testcase id as a LongField because result is weird
 
 		applyToLuceneStringOptions(luceneOptions, FIELD_TC_NAME, tc.getName().toLowerCase(),  document);
 		applyToLuceneStringOptions(luceneOptions, FIELD_TC_REFERENCE, tc.getReference().toLowerCase(),  document);
 		applyToLuceneStringOptions(luceneOptions, FIELD_TC_IMPORTANCE, importance, document);
+		applyToLuceneStringOptions(luceneOptions, FIELD_TC_AUTOMATABLE, automatable, document);
 
 		Integer result = new Integer(tc.getId().toString());
 		if ( result == null ) {
@@ -95,6 +99,14 @@ public class IterationItemBundleClassBridge implements FieldBridge, MetadataProv
 		else {
 			applyToLuceneStringOptions( luceneOptions, FIELD_TC_ID, result.toString(), document );
 		}
+
+		AutomationRequest req = tc.getAutomationRequest();
+		if(req == null) {
+			return;
+		}
+		String requestStatus = req.getRequestStatus().getLevel()+"-"+req.getRequestStatus().toString();
+
+		applyToLuceneStringOptions(luceneOptions, FIELD_TC_REQ_STATUS, requestStatus, document);
 	}
 
 
@@ -116,9 +128,9 @@ public class IterationItemBundleClassBridge implements FieldBridge, MetadataProv
 		fieldMetadataBuilder.field(FIELD_TC_IMPORTANCE,FieldType.STRING).sortable(true);
 		fieldMetadataBuilder.field(FIELD_TC_ID,FieldType.STRING).sortable(true);
 		fieldMetadataBuilder.field("datasets",FieldType.STRING).sortable(true);
-		fieldMetadataBuilder.field("label",FieldType.STRING
-
-		).sortable(true);
+		fieldMetadataBuilder.field("label",FieldType.STRING).sortable(true);
+		fieldMetadataBuilder.field(FIELD_TC_REQ_STATUS,FieldType.STRING).sortable(true);
+		fieldMetadataBuilder.field(FIELD_TC_AUTOMATABLE,FieldType.STRING).sortable(true);
 
 	}
 

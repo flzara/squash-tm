@@ -103,7 +103,6 @@ public class TestCaseSearchResultDataTableModelBuilder extends DataTableModelBui
 		res.put("test-case-nature", HtmlUtils.htmlEscape(formatInfoItem(item.getNature(), locale)));
 		res.put("test-case-type", HtmlUtils.htmlEscape(formatInfoItem(item.getType(), locale)));
 		res.put("test-case-status", formatStatus(item.getStatus(), locale));
-		res.put("test-case-automatable", formatAutomatable(item.getAutomatable(), locale));
 		res.put("test-case-milestone-nb", item.getMilestones().size());
 		res.put("test-case-requirement-nb", item.getVerifiedRequirementVersions().size());
 		res.put("test-case-teststep-nb", item.getSteps().size());
@@ -111,7 +110,15 @@ public class TestCaseSearchResultDataTableModelBuilder extends DataTableModelBui
 		res.put("test-case-attachment-nb", item.getAllAttachments().size());
 		res.put("test-case-created-by", HtmlUtils.htmlEscape(formatUsername(auditable.getCreatedBy())));
 		res.put("test-case-modified-by", HtmlUtils.htmlEscape(formatUsername(auditable.getLastModifiedBy())));
-		res.put("test-case-automation-request-status", item.getAutomationRequest() != null ? formatAutomationStatus(item.getAutomationRequest().getRequestStatus(), locale) : "-");
+
+		if(item.getProject().isAllowAutomationWorkflow()) {
+			res.put("test-case-automatable", formatAutomatable(item.getAutomatable(), locale));
+			res.put("test-case-automation-request-status", item.getAutomationRequest() != null ? formatAutomationStatus(item.getAutomationRequest().getRequestStatus(), locale) : "-");
+		} else {
+			res.put("test-case-automatable", "-");
+			res.put("test-case-automation-request-status", "-");
+		}
+
 		res.put("empty-openinterface2-holder", " ");
 		res.put("empty-opentree-holder", " ");
 		return res;

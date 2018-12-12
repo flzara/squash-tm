@@ -43,6 +43,7 @@ define(["jquery", "backbone", "squash.translator", "jeditable.simpleJEditable", 
 				this.getTableRowId = $.proxy(this._getTableRowId, this);
 				this.tableRowCallback = $.proxy(this._tableRowCallback, this);
 				this.addAssociationCheckboxes = $.proxy(this._addAssociationCheckboxes, this);
+				this.addSelectEditableToAutomatable = $.proxy(this._addSelectEditableToAutomatable, this);
 
 				var tableConf;
 				var squashConf;
@@ -121,7 +122,8 @@ define(["jquery", "backbone", "squash.translator", "jeditable.simpleJEditable", 
 						}, {
 							"aTargets": [10],
 							"mDataProp": "test-case-automatable",
-							"bSortable": true
+							"bSortable": true,
+							"sClass": "editable editable_automatable"
 						}, {
 							"aTargets": [11],
 							"mDataProp": "test-case-automation-request-status",
@@ -250,7 +252,8 @@ define(["jquery", "backbone", "squash.translator", "jeditable.simpleJEditable", 
 						}, {
 							"aTargets": [9],
 							"mDataProp": "test-case-automatable",
-							"bSortable": true
+							"bSortable": true,
+							"sClass": "editable editable_automatable"
 						}, {
 							"aTargets": [10],
 							"mDataProp": "test-case-automation-request-status",
@@ -446,6 +449,8 @@ define(["jquery", "backbone", "squash.translator", "jeditable.simpleJEditable", 
 					this.addSelectEditableToNature(row, data);
 					this.addSelectEditableToStatus(row, data);
 					this.addSelectEditableToType(row, data);
+					console.log(data)
+					this.addSelectEditableToAutomatable(row, data);
 				} else {
 					$(row).addClass("nonEditable");
 					$(row).attr('title', squashtm.app.testcaseSearchResultConf.messages.nonEditableTooltip);
@@ -488,6 +493,22 @@ define(["jquery", "backbone", "squash.translator", "jeditable.simpleJEditable", 
 						$.cookie("workspace-prefs", "TEST_CASE-" + id, { path: "/" });
 						window.location = squashtm.app.contextRoot + "test-case-workspace/";
 					});
+			},
+
+			_addSelectEditableToAutomatable: function (row, data) {
+				console.log(data)
+				var urlPOST = squashtm.app.contextRoot + "test-cases/" + data["test-case-id"];
+				var urlGET = squashtm.app.contextRoot + "test-cases/automatable-combo-data";
+				var ok = translator.get("rich-edit.button.ok.label");
+				var cancel = translator.get("label.Cancel");
+				//TODO use SelectJEditable obj
+				$('.editable_automatable', row).editable(urlPOST, {
+					type: 'select',
+					submit: ok,
+					cancel: cancel,
+					loadurl: urlGET,
+					submitdata: function () { return { id: 'test-case-automatable' }; }
+				});
 			},
 
 			refresh: function () {

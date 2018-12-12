@@ -310,9 +310,10 @@ public class TestCaseModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = {"id=test-case-automatable", VALUE})
 	@ResponseBody
-	public void changeAutomatable(@RequestParam(VALUE) TestCaseAutomatable testCaseAutomatable, @PathVariable long testCaseId) {
+	public String changeAutomatable(@RequestParam(VALUE) TestCaseAutomatable testCaseAutomatable, @PathVariable long testCaseId, Locale locale) {
 
 		testCaseModificationService.changeAutomatable(testCaseAutomatable, testCaseId);
+		return formatAutomatable(testCaseAutomatable, locale);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = {"id=automation-request-priority", VALUE})
@@ -495,6 +496,10 @@ public class TestCaseModificationController {
 
 	private String formatStatus(TestCaseStatus status, Locale locale) {
 		return levelLabelFormatterProvider.get().useLocale(locale).formatLabel(status);
+	}
+
+	private String formatAutomatable(TestCaseAutomatable automatable, Locale locale) {
+		return levelLabelFormatterProvider.get().useLocale(locale).formatLabel(automatable);
 	}
 
 
