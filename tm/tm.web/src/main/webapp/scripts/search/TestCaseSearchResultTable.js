@@ -449,7 +449,6 @@ define(["jquery", "backbone", "squash.translator", "jeditable.simpleJEditable", 
 					this.addSelectEditableToNature(row, data);
 					this.addSelectEditableToStatus(row, data);
 					this.addSelectEditableToType(row, data);
-					console.log(data)
 					this.addSelectEditableToAutomatable(row, data);
 				} else {
 					$(row).addClass("nonEditable");
@@ -496,7 +495,6 @@ define(["jquery", "backbone", "squash.translator", "jeditable.simpleJEditable", 
 			},
 
 			_addSelectEditableToAutomatable: function (row, data) {
-				console.log(data)
 				var urlPOST = squashtm.app.contextRoot + "test-cases/" + data["test-case-id"];
 				var urlGET = squashtm.app.contextRoot + "test-cases/automatable-combo-data";
 				var ok = translator.get("rich-edit.button.ok.label");
