@@ -20,5 +20,13 @@
  */
 package org.squashtest.tm.core.scm.spi;
 
+import org.squashtest.tm.domain.servers.AuthenticationProtocol;
+import org.squashtest.tm.domain.servers.Credentials;
+
 public interface ScmConnector {
+
+	boolean supports(AuthenticationProtocol protocol);
+
+	void synchronize(Credentials credentials);
+
 }

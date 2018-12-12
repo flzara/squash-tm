@@ -22,8 +22,12 @@ package org.squashtest.tm.domain.scm;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.channels.FileLock;
+import java.util.function.Supplier;
 
 @Entity
 @Table(name = "SCM_REPOSITORY")
@@ -54,6 +58,22 @@ public class ScmRepository {
 	@ManyToOne
 	@JoinColumn(name = "SCM_SERVER_ID", nullable = false)
 	private ScmServer scmServer;
+
+	public <T> T doWithLock(Supplier<T> operation) throws IOException {
+		File file = new File(getRepositoryPath());
+		T result = null;
+		try (
+			FileInputStream in = new FileInputStream(file);
+			// Lock the file repository
+			FileLock lock = in.getChannel().lock()) {
+
+			result = operation.get();
+
+		} catch(IOException ioEx) {
+			throw new IOException();
+		}
+		return result;
+	}
 
 	public Long getId() {
 		return id;
