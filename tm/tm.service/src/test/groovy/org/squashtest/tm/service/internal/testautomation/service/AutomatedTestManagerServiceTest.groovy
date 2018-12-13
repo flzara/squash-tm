@@ -20,45 +20,43 @@
  */
 package org.squashtest.tm.service.internal.testautomation.service
 
+import org.apache.commons.io.FileUtils
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.scm.ScmRepository
+import org.squashtest.tm.service.internal.repository.TestAutomationServerDao
+import spock.lang.Shared
+
 import javax.inject.Provider
 
-import org.squashtest.tm.core.foundation.lang.Couple
-import org.squashtest.tm.domain.campaign.Campaign
-import org.squashtest.tm.domain.campaign.Iteration
-import org.squashtest.tm.domain.customfield.CustomField
-import org.squashtest.tm.domain.customfield.CustomFieldBinding
-import org.squashtest.tm.domain.customfield.CustomFieldValue
-import org.squashtest.tm.domain.execution.Execution
-import org.squashtest.tm.domain.execution.ExecutionStatus
-import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender
-import org.squashtest.tm.domain.testautomation.AutomatedSuite
-import org.squashtest.tm.domain.testautomation.AutomatedTest
+
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
-import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
 import org.squashtest.tm.service.internal.testautomation.AutomatedTestManagerServiceImpl
 import org.squashtest.tm.service.internal.testautomation.FetchTestListFuture
 import org.squashtest.tm.service.internal.testautomation.FetchTestListTask
-import org.squashtest.tm.service.internal.testautomation.TaParametersBuilder
 import org.squashtest.tm.service.internal.testautomation.TestAutomationConnectorRegistry
 import org.squashtest.tm.service.internal.testautomation.TestAutomationTaskExecutor
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent
-import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector
-import org.squashtest.tm.service.testautomation.spi.UnknownConnectorKind
 
 import spock.lang.Specification
+
+import java.nio.file.Files
+import java.util.stream.Collectors
 
 class AutomatedTestManagerServiceTest extends Specification {
 
 
 	TestAutomationConnectorRegistry connectorRegistry;
 	AutomatedTestManagerServiceImpl service;
-
-
 	TestAutomationTaskExecutor executor;
-	CustomFieldValueFinderService finder = Mock()
-	Provider builderProvider = Mock()
+
+	@Shared
+	ScmRepository scm = initScmRepository()
+
+	def cleanupSpec(){
+		FileUtils.forceDelete(scm.baseRepositoryFolder)
+	}
+
 
 	def setup(){
 		connectorRegistry = Mock()
@@ -70,91 +68,252 @@ class AutomatedTestManagerServiceTest extends Specification {
 	}
 
 
+	// ************** listing tests from server *********************
+
+	def "should gather tests from remote server"(){
 
 
-	def "should build a bunch of tasks to fetch the test lists"(){
+		given : "the automation projects"
+		TestAutomationProject project1 = Mock()
+		TestAutomationProject project2 = Mock()
+
+
+		and : "the futures"
+		FetchTestListFuture future1 = Mock ()
+		FetchTestListFuture future2 = Mock ()
+
+
+		and : "the results"
+		TestAutomationProjectContent result1 = Mock()
+		TestAutomationProjectContent result2 = Mock()
+
+
+		when :
+		def res = service.listTestsFromServer( [ project1, project2])
+
+		then :
+
+		res == [result1, result2]
+
+		1 * executor.sumbitFetchTestListTask({ it -> it.project == project1}) >> future1
+		1 * executor.sumbitFetchTestListTask({ it -> it.project == project2}) >> future2
+
+
+		1 * future1.get(_,_) >> result1
+		1 * future2.get(_,_) >> result2
+
+	}
+
+	def "should handle a fetch task failure"(){
 
 		given :
-		List<TestAutomationProject> projects = [
-			Mock(TestAutomationProject),
-			Mock(TestAutomationProject),
-			Mock(TestAutomationProject)
+		// has to mock a lot of things because of the logging
+		TestAutomationProject project = new TestAutomationProject(
+			"main job",
+			new TestAutomationServer("main server", new URL("http://testauto.org"), "admin", "admin")
+		)
+		FetchTestListTask task = new FetchTestListTask(connectorRegistry, project)
+
+		and :
+		Exception ex = new Exception()
+		FetchTestListFuture fail = Mock{
+			get(_,_) >> { throw ex }
+			getTask() >> task
+		}
+
+		when :
+		def content = service.extractFromFuture(fail)
+
+		then :
+		content.project == project
+		content.knownProblem == ex
+
+	}
+
+
+	// **************** listing tests from Git **********************
+
+
+	def "should return distinct scms referenced by the various test automation projects"(){
+
+		given :
+
+		def projects = [
+			Mock(TestAutomationProject){
+				getTmProject() >> Mock(Project){
+					getScmRepository()>> scm
+				}
+				getLabel() >> "I reference the SCM"
+			},
+			Mock(TestAutomationProject){
+				getTmProject() >> Mock(Project){
+					getScmRepository()>> null
+				}
+				getLabel() >> "I reference no scm"
+			},
+			Mock(TestAutomationProject){
+				getTmProject() >> Mock(Project){
+					getScmRepository()>> Mock(ScmRepository){ getName() >> "different repo"}
+				}
+				getLabel() >> "I reference a different SCM"
+			},
+			Mock(TestAutomationProject){
+				getTmProject() >> Mock(Project){
+					getScmRepository()>> scm
+				}
+				getLabel() >> "I reference the same SCM than the first item"
+			}
 		]
 
 		when :
-		def res = service.prepareAllFetchTestListTasks(projects)
+		def res = service.gatherRepositories(projects)
 
 		then :
-		res.collect {
-			[
-				it.project,
-				it.connectorRegistry
-			]
-		} == [
-			[
-				projects[0],
-				connectorRegistry
-			],
-			[
-				projects[1],
-				connectorRegistry
-			],
-			[
-				projects[2],
-				connectorRegistry]
-		]
+		res.size() == 2
+		res.collect {it.name} as Set == ["my repository", "different repo"] as Set
+
 	}
 
-	def "should submit a bunch of tasks"(){
 
-		given :
-		List<FetchTestListTask> tasks = [
-			Mock(FetchTestListTask),
-			Mock(FetchTestListTask),
-			Mock(FetchTestListTask)
-		]
-
-		and :
-		List<FetchTestListFuture> futures = [
-			Mock(FetchTestListFuture),
-			Mock(FetchTestListFuture),
-			Mock(FetchTestListFuture)
-		]
-
-		and :
-		executor.sumbitFetchTestListTask(tasks[0]) >> futures[0]
-		executor.sumbitFetchTestListTask(tasks[1]) >> futures[1]
-		executor.sumbitFetchTestListTask(tasks[2]) >> futures[2]
+	
+	// note : this test and the method it tests should rather be relocated in the ScmRepository entity itself
+	def "should return the list of test in the squash folder as relative to the base repository path"(){
 
 		when :
-		def res = service.submitAllFetchTestListTasks(tasks)
+		def res = service.collectTestRelativePath(scm).collect(Collectors.toList()).sort()
 
-		then :
-		res == futures
+		then:
+		res == ["squash/220_test2.ta", "squash/815_test1.ta", "squash/subfolder/999_test3.ta"]
+
 	}
 
-	def "should collect test list results"(){
+
+	def "should not list from repository if there are no repository to list from"(){
 
 		given :
-		TestAutomationProjectContent content1 = Mock()
-		TestAutomationProjectContent content2 = Mock()
-
-		and :
-		FetchTestListFuture fut1 =  Mock()
-		fut1.get(_,_) >> content1
-
-		FetchTestListTask task2 = Mock()
-		task2.buildFailedResult(_) >> content2
-		FetchTestListFuture fut2 = Mock()
-
-		fut2.getTask() >> task2
-		fut2.get(_,_) >> { throw new Exception() }
+		TestAutomationProject p1 = Mock(TestAutomationProject){
+			isCanRunGherkin() >> true
+			getTmProject() >> Mock(Project){
+				getScmRepository() >> null
+			}
+		}
 
 		when :
-		def res = service.collectAllTestLists([fut1, fut2])
+		def res = service.listTestsFromScm([p1])
 
 		then :
-		res == [content1, content2]
+		! res.isPresent()
+
 	}
+
+
+	def "should not list from repository if there are no Gherkin-able projects"(){
+
+		given :
+		TestAutomationProject p1 = Mock(TestAutomationProject){
+			isCanRunGherkin() >> false
+			getTmProject() >> Mock(Project){
+				getScmRepository()>> scm
+			}
+		}
+
+		when :
+		def res = service.listTestsFromScm([p1])
+
+		then:
+		! res.isPresent()
+
+	}
+
+
+	def "should return the content of the scm as automated tests that belong to a Gherkin-able project"(){
+
+		given: "a server"
+		TestAutomationServer server = new TestAutomationServer("leroy_jenkins", new URL("http://myci:8080/jenkins"), "admin", "admin")
+
+		and : "the projects"
+
+		def projects = [
+			Mock(TestAutomationProject){
+				getServer() >> server
+				isCanRunGherkin() >> false
+				getTmProject() >> Mock(Project){
+					getScmRepository()>> scm
+				}
+				getLabel() >> "Something else"
+			},
+			Mock(TestAutomationProject){
+				getServer() >> server
+				isCanRunGherkin() >> true
+				getTmProject() >> Mock(Project){
+					getScmRepository()>> scm
+				}
+				getLabel() >> "Gherkin Project"
+			}
+		]
+
+		when :
+		def res = service.listTestsFromScm(projects)
+
+		then :
+		res.isPresent()
+
+		def projectContent = res.get()
+		projectContent.project.getLabel() == "Gherkin Project"
+		projectContent.tests.collect { it.fullLabel } == [
+		    "/Gherkin Project/squash/220_test2.ta",
+			"/Gherkin Project/squash/815_test1.ta",
+			"/Gherkin Project/squash/subfolder/999_test3.ta",
+		]
+		projectContent.tests.collect {it.project }.unique().label == ["Gherkin Project"]
+
+
+	}
+
+	// ******************** scaffolding *****************************
+
+
+	/*
+	 * Defines a repository as follow
+	 *
+	 * /(TMP_DIR)/ATMSTest_{random int}
+	 * 	+ squash
+	 * 	|	+ 815_test1.ta
+	 * 	|	+ 220_test2.ta
+	 * 	|	- subfolder
+	 * 	|		- 999_test3.ta
+	 * 	+ unrelated_file.txt
+	 * 	+ unrelated_folder
+	 * 		+another_file.txt
+	 */
+	def initScmRepository(){
+
+		// create the file structure
+		File base = Files.createTempDirectory("ATMSTest_").toFile()
+		base.deleteOnExit()
+
+		FileTreeBuilder builder = new FileTreeBuilder(base)
+		builder{
+			dir("squash") {
+				file "815_test1.ta"
+				file "220_test2.ta"
+				dir ("subfolder"){
+					file "999_test3.ta"
+				}
+			}
+			file "unrelated_file.txt"
+			dir("unrelated_folder"){
+				file "another_file.txt"
+			}
+
+		}
+
+		// now we can create the ScmRepository
+
+		return new ScmRepository( name: "my repository", repositoryPath: base.absolutePath, folderPath: "squash")
+
+
+	}
+
 
 }

@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.domain.scm;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -27,6 +30,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.channels.FileLock;
+import java.util.Collection;
 import java.util.function.Supplier;
 
 @Entity
@@ -44,10 +48,18 @@ public class ScmRepository {
 	@Size(max = 255)
 	private String name;
 
+	/**
+	 * The path of the base folder
+	 *
+	 */
 	@Column(name = "REPOSITORY_PATH")
 	@NotBlank
 	private String repositoryPath;
 
+	/**
+	 * The path of the working folder
+	 *
+	 */
 	@Column(name = "FOLDER_PATH")
 	private String folderPath;
 
@@ -62,16 +74,16 @@ public class ScmRepository {
 	public <T> T doWithLock(Supplier<T> operation) throws IOException {
 		File file = new File(getRepositoryPath());
 		T result = null;
-		try (
+		/*try (
 			FileInputStream in = new FileInputStream(file);
 			// Lock the file repository
-			FileLock lock = in.getChannel().lock()) {
+			FileLock lock = in.getChannel().lock()) {*/
 
 			result = operation.get();
-
+/*
 		} catch(IOException ioEx) {
 			throw new IOException();
-		}
+		}*/
 		return result;
 	}
 
@@ -116,4 +128,34 @@ public class ScmRepository {
 	public void setScmServer(ScmServer scmServer) {
 		this.scmServer = scmServer;
 	}
+
+
+	/**
+	 * Returns the repository base directory as a File
+	 *
+	 * @return
+	 */
+	public File getBaseRepositoryFolder(){
+		return new File(getRepositoryPath());
+	}
+
+	/**
+	 * Returns the repository working folder as a File
+	 *
+	 * @return
+	 */
+	public File getWorkingFolder(){
+		if (StringUtils.isBlank(folderPath)){
+			return getBaseRepositoryFolder();
+		}
+		else{
+			return FileUtils.getFile(repositoryPath, folderPath);
+		}
+	}
+
+	public Collection<File> listWorkingFolderContent() throws IOException{
+		File workingFolder = getWorkingFolder();
+		return doWithLock(() -> FileUtils.listFiles(workingFolder, null, true));
+	}
+
 }

@@ -20,10 +20,8 @@
  */
 package org.squashtest.tm.service.testautomation.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
@@ -114,7 +112,7 @@ public class TestAutomationProjectContent {
 	}
 
 	/**
-	 * Adds a batch of tests without params. Tests are added in the order of the given colleciton.
+	 * Adds a batch of tests without params. Tests are added in the order of the given collection.
 	 *
 	 * @param tests
 	 */
@@ -122,6 +120,29 @@ public class TestAutomationProjectContent {
 		for (AutomatedTest test : tests) {
 			doAppendTest(test);
 		}
+	}
+
+	/**
+	 * Appends the automated test of the otherContent into this instance. Duplicate automated tests won't be included.
+	 * It is assumed that the TestAutomationProject of this instance and the otherContent are the same (instance equality), otherwise
+	 * an {@link IllegalArgumentException} will be thrown.
+	 *
+	 * @param otherContent
+	 * @throws IllegalArgumentException if this instance and the other instance reference different TestAutomationProjects
+	 */
+	public final void mergeContent(TestAutomationProjectContent otherContent){
+
+		if (project != otherContent.getProject()){
+			throw new IllegalArgumentException("attempted to merge automated tests from project '"+project.getLabel() +"' with project '"+otherContent.getProject().getLabel()+"' !");
+		}
+
+		Set<String> myTestPaths = getTests().stream().map(AutomatedTest::getName).collect(Collectors.toSet());
+
+		otherContent.getTests().forEach(otherTest -> {
+			if (! myTestPaths.contains(otherTest.getName())){
+				doAppendTest(otherTest);
+			}
+		});
 	}
 
 }
