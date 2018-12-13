@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.core.scm.spi;
 
-import org.squashtest.tm.domain.scm.ScmServer;
+import org.squashtest.tm.domain.scm.ScmRepository;
 
 public interface ScmConnectorProvider {
 
@@ -31,8 +31,8 @@ public interface ScmConnectorProvider {
 	String getScmKind();
 
 	/**
-	 * Create a ScmConnector suitable for the given ScmServer.
-	 * @return The ScmConnector suitable for the given ScmServer.
+	 * Create a ScmConnector suitable for the given ScmRepository.
+	 * @return The ScmConnector suitable for the given ScmRepository.
 	 */
-	ScmConnector createScmConnector(ScmServer scmServer);
+	ScmConnector createScmConnector(ScmRepository scmRepository);
 }
