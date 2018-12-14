@@ -141,7 +141,7 @@ class AutomationRequestDaoIT extends DbunitDaoSpecification{
 
 		then :
 
-		page.content.collect {it.id } == [-4L, -2L, -1L, -3L]
+		page.content.collect {it.id } == [-2L, -3L, -4L, -1L]
 
 	}
 
