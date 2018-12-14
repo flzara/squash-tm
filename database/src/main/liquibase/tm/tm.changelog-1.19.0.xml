@@ -274,7 +274,7 @@
       <column name="AUTOMATION_REQUEST_ID" type="BIGINT" autoIncrement="true">
         <constraints primaryKey="true" nullable="false"/>
       </column>
-      <column name="REQUEST_STATUS" type="VARCHAR(20)" defaultValue="TO_VALIDATE">
+      <column name="REQUEST_STATUS" type="VARCHAR(20)" defaultValue="WORK_IN_PROGRESS">
         <constraints nullable="false"/>
       </column>
       <column name="TRANSMITTED_ON" type="DATETIME"/>
@@ -592,7 +592,7 @@
     <comment>Increase remote project id limit to 100 for redmine bt project keys</comment>
     <modifyDataType tableName="REQUIREMENT_SYNC_EXTENDER" columnName="REMOTE_PROJECT_ID" newDataType="VARCHAR(100)"/>
   </changeSet>
-  
+
   <changeSet id="tm-1.19.0-SQTM-536-autoexec-gherkin-1" author="bsiri">
     <comment>Add a flag to the test automation project that tells whether it is able to run Gherkin tests.</comment>
 
