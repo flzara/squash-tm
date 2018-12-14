@@ -50,7 +50,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "bSortable": true,
                         "aTargets": [2],
                         "mDataProp": "entity-id",
-                        "sWidth": "3em",
                         "sClass": "entity_id"
                     }, {
                         "bSortable": true,
@@ -63,8 +62,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }, {
                         "bSortable": true,
                         "aTargets": [5],
-                        "mDataProp": "format",
-                        "sWidth": "7em"
+                        "mDataProp": "format"
                     }, {
                         "bSortable": true,
                         "aTargets": [6],
@@ -73,7 +71,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "bSortable": true,
                         "aTargets": [7],
                         "mDataProp": "priority",
-                        "sWidth": "6em",
                         "mRender": function (data, type, row, meta) {
                             if (data === null) { return '-'; }
                             return data;
@@ -81,13 +78,11 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     },{
                         "bSortable": true,
                         "aTargets": [8],
-                        "mDataProp": "status",
-                        "sWidth": "12em"
+                        "mDataProp": "status"
                     }, {
                         "bSortable": true,
                         "aTargets": [9],
-                        "mDataProp": "transmitted-on",
-                        "sWidth": "14em"
+                        "mDataProp": "transmitted-on"
                     }, {
                         "bSortable": false,
                         "aTargets": [10],
@@ -254,14 +249,14 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 this.changeNumberSelectedRows(table.getSelectedRows().length);
             },
 
-            getSelectedRequestIds: function (table) {
+            getSelectedTcIds: function (table) {
                 var selectedRows = table.getSelectedRows();
                 var datas = table.fnGetData();
                 var ids = [];
                 $(selectedRows).each(function (index, data) {
                     var idx = data._DT_RowIndex;
-                    var requestId = datas[idx].requestId
-                    ids.push(requestId);
+                    var tcId = datas[idx]["entity-id"]
+                    ids.push(tcId);
                 })
                 return ids;
             },
@@ -274,21 +269,22 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 this.$el.append(template);
             },
 
-            actions: function (table, url) {
-                var requestIds = this.getSelectedRequestIds(table);
+            assigned: function (table, url) {
+                var tcIds = this.getSelectedTcIds(table);
 
-                if (requestIds.length === 0 || requestIds === undefined) {
+                if (tcIds.length === 0 || tcIds === undefined) {
                     notification.showWarning(translator.get("automation.notification.selectedRow.none"));
                 } else {
                     $.ajax({
                         url: squashtm.app.contextRoot + url,
                         method: 'POST',
                         data: {
-                            "reqIds": requestIds
+                            "tcIds": tcIds
                         }
                     }).success(function () {
                         table.refresh();
                     });
+                    this.deselectAll(table);
                 }
             },
 
@@ -308,7 +304,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     domtable.toggleFiltering();
                 });
                 $("#assigned-traitment-button").on("click", function () {
-                    self.actions(domtable, "automation-requests/assignee");
+                    self.assigned(domtable, "automation-requests/assignee");
                     self.storage.remove(self.key);
                 });
             }

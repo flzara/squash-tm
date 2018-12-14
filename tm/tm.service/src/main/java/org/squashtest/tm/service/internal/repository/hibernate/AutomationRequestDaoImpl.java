@@ -231,10 +231,11 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	}
 
 	@Override
-	public void unassignRequests(List<Long> requestIds) {
+	public void unassignRequests(List<Long> requestIds, User assignee) {
 		entityManager.createQuery("update AutomationRequest ar set ar.assignedTo = NULL, ar.assignmentDate = NULL" +
-			" where ar.id in :requestIds")
+			" where ar.id in :requestIds and ar.assignedTo = :assignee")
 		    .setParameter("requestIds", requestIds)
+			.setParameter("assignee", assignee)
 			.executeUpdate();
 	}
 
@@ -258,19 +259,6 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 			if(reqIds.size() != automationRequestUpdates) {
 				throw new IllegalAutomationRequestStatusException(ILLEGAL_STATUS);
 			}
-	}
-
-	@Override
-	public void updateStatusToValidate(List<Long> reqIds) {
-		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest ar SET ar.transmissionDate = NULL, " +
-			"ar.requestStatus = :requestStatus, ar.transmittedBy = NULL where ar.id in :requestIds and ar.requestStatus = :requestInitialStatus")
-			.setParameter("requestStatus", WORK_IN_PROGRESS)
-			.setParameter("requestInitialStatus", READY_TO_TRANSMIT)
-			.setParameter("requestIds", reqIds).executeUpdate();
-
-		if(reqIds.size() != automationRequestUpdates) {
-			throw new IllegalAutomationRequestStatusException(ILLEGAL_STATUS);
-		}
 	}
 
 	private Page<AutomationRequest> innerFindAll(Pageable pageable, ColumnFiltering filtering, FilterOverride filterOverride, Collection<Long> inProjectIds){
@@ -300,31 +288,6 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 		long count = countRequests(baseQuery);
 
 		return new PageImpl<AutomationRequest>(requests, pageable, count);
-	}
-
-	@Override
-	public void updateStatusToValide(List<Long> reqIds) {
-		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest ar set ar.requestStatus = :reqStatus where ar.id in :reqIds and ar.requestStatus in :reqStatusInitial")
-			.setParameter("reqStatus", READY_TO_TRANSMIT)
-			.setParameter("reqStatusInitial", Arrays.asList(WORK_IN_PROGRESS, TRANSMITTED, SUSPENDED, REJECTED))
-			.setParameter("reqIds", reqIds)
-			.executeUpdate();
-		if(reqIds.size() != automationRequestUpdates) {
-			throw new IllegalAutomationRequestStatusException(ILLEGAL_STATUS);
-		}
-	}
-
-	@Override
-	public void updateStatusToObsolete(List<Long> reqIds) {
-		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest ar set ar.requestStatus = :reqStatus where ar.id in :reqIds and ar.requestStatus in :reqStatusInitial")
-			.setParameter("reqStatus", SUSPENDED)
-			.setParameter("reqStatusInitial", Arrays.asList(AUTOMATED, WORK_IN_PROGRESS))
-			.setParameter("reqIds", reqIds)
-			.executeUpdate();
-		if(reqIds.size() != automationRequestUpdates) {
-			throw new IllegalAutomationRequestStatusException(ILLEGAL_STATUS);
-		}
-
 	}
 
 	@Override

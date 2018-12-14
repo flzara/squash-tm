@@ -29,19 +29,17 @@ public interface AutomationRequestModificationService extends AutomationRequestF
 	void deleteRequestByProjectId(long projectId);
 
 	/**
-	 * Will unassign the automation requests, identified by their ids, from the user that handle them, and voids the
-	 * assignation date and resets their statuses to 'TRANSMITTED'
-	 *
-	 * @param requestIds
+	 * Will unassign the automation requests, identified by their ids, from the user that handle them.
+	 * @param tcIds
 	 */
-	void unassignRequests(List<Long> requestIds);
+	void unassignRequests(List<Long> tcIds);
 
-	void changeStatus(List<Long> requestIds, AutomationRequestStatus automationRequestStatus);
+	void changeStatus(List<Long> tcIds, AutomationRequestStatus automationRequestStatus);
 
 	void changeStatusByTestCases(List<Long> tcIds, AutomationRequestStatus automationRequestStatus);
 
 	void changePriority(List<Long> tcIds, Integer priority);
 
-	void assignedToRequest(List<Long> requestIds);
+	void assignedToRequest(List<Long> tcIds);
 
 }

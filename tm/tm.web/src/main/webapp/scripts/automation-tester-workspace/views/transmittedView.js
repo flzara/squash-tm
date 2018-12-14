@@ -90,7 +90,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "aTargets": [8],
                         "mDataProp": "writable",
                         "sClass": "centered",
-                        "sWidth": "2.5em",
                         "mRender": function (data, type, row) {
 
                             var render = "";
@@ -124,8 +123,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                 }
                             }
                             return input;
-                        },
-                        "sWidth": "2.5em"
+                        }
                     }, {
                         "mDataProp": "requestId",
                         "bVisible": false,
@@ -291,44 +289,36 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 this.$el.append(template);
             },
 
-            getSelectedRequestIds: function (table) {
+            getSelectedTcIds: function (table) {
                 var selectedRows = table.getSelectedRows();
                 var datas = table.fnGetData();
                 var ids = [];
                 $(selectedRows).each(function (index, data) {
                     var idx = data._DT_RowIndex;
-                    var requestId = datas[idx].requestId
-                    ids.push(requestId);
+                    var tcId = datas[idx]["entity-id"]
+                    ids.push(tcId);
                 })
                 return ids;
             },
 
-            checkScriptAutoIsPresent: function (table) {
-                var selectedRows = table.getSelectedRows();
-                var datas = table.fnGetData();
-                var scripts = [];
-                $(selectedRows).each(function (index, data) {
-                    var idx = data._DT_RowIndex;
-                    var script = datas[idx].script;
-                    if (script == null) {
-                        scripts.push(script);
-                    }
-
-                })
-                return scripts;
-            },
-
-            changeStatus: function (ids, status, table) {
-                $.ajax({
-                    url: squashtm.app.contextRoot + 'automation-requests/' + ids,
-                    method: 'POST',
-                    data: {
-                        "id": "automation-request-status",
-                        "value": status
-                    }
-                }).success(function () {
-                    table.refresh();
-                });
+            changeStatus: function (status, table) {
+                var tcIds = this.getSelectedTcIds(table);
+                if (tcIds.length === 0 || tcIds === undefined) {
+                    notification.showWarning(translator.get("automation.notification.selectedRow.none"));
+                } else {
+                    $.ajax({
+                        url: squashtm.app.contextRoot + 'automation-requests/' + tcIds,
+                        method: 'POST',
+                        data: {
+                            "id": "automation-request-status",
+                            "value": status
+                        }
+                    }).success(function () {
+                        table.refresh();
+                    });
+                    this.storage.remove(this.key);
+                    this.deselectAll(table)
+                }
             },
 
             bindButtons: function () {
@@ -346,26 +336,8 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     self.deselectAll(domtable);
                 });
 
-                $("#no-valid-button").on("click", function () {
-                    var requestIds = self.getSelectedRequestIds(domtable);
-                    if (requestIds.length === 0 || requestIds === undefined) {
-                        notification.showWarning(translator.get("automation.notification.selectedRow.none"));
-                    } else {
-                        self.changeStatus(requestIds, "WORK_IN_PROGRESS", domtable);
-
-                    }
-                    self.storage.remove(self.key);
-                });
-
-                $("#transmitted-button").on("click", function () {
-                    var requestIds = self.getSelectedRequestIds(domtable);
-                    if (requestIds.length === 0 || requestIds === undefined) {
-                        notification.showWarning(translator.get("automation.notification.selectedRow.none"));
-                    } else {
-                        self.changeStatus(requestIds, "TRANSMITTED", domtable);
-                    }
-                    self.storage.remove(self.key);
-
+                $("#transmitted-automation-button").on("click", function () {
+                    self.changeStatus("TRANSMITTED", domtable);
                 });
 
                 $("#btn-no-assigned").on("click", function () {

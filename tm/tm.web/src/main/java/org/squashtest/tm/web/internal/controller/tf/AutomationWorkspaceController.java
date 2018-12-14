@@ -158,7 +158,7 @@ public class AutomationWorkspaceController {
 
 		Pageable pageable = SpringPagination.pageable(params,automationRequestMapper);
 		ColumnFiltering filtering = new DataTableColumnFiltering(params, automationRequestMapper);
-		Page<AutomationRequest> automationRequestPage = automationRequestFinderService.findRequestsForGlobal(pageable, filtering);
+		Page<AutomationRequest> automationRequestPage = automationRequestFinderService.findRequests(pageable, filtering);
 
 		return new AutomationRequestDataTableModelHelper(messageSource, permissionEvaluationService).buildDataModel(automationRequestPage, "");
 	}

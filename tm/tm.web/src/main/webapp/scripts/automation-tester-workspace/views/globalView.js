@@ -49,7 +49,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "bSortable": true,
                         "aTargets": [2],
                         "mDataProp": "entity-id",
-                        "sWidth": "4em",
                         "sClass": "entity_id"
                     }, {
                         "bSortable": true,
@@ -62,8 +61,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }, {
                         "bSortable": true,
                         "aTargets": [5],
-                        "mDataProp": "format",
-                        "sWidth": "7em"
+                        "mDataProp": "format"
                     }, {
                         "bSortable": true,
                         "aTargets": [6],
@@ -72,18 +70,15 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "bSortable": true,
                         "aTargets": [7],
                         "mDataProp": "priority",
-                        "sWidth": "6em",
                         "sClass": "priority"
                     }, {
                         "bSortable": true,
                         "aTargets": [8],
-                        "mDataProp": "status",
-                        "sWidth": "6em"
+                        "mDataProp": "status"
                     }, {
                         "bSortable": true,
                         "aTargets": [9],
-                        "mDataProp": "transmitted-on",
-                        "sWidth": "13em"
+                        "mDataProp": "transmitted-on"
                     }, {
                         "bSortable": false,
                         "aTargets": [10],
@@ -225,9 +220,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     self.changeNumberSelectedRows(self.selected);
                 });
                 self.bindButtons();
-                console.log(sqtable)
-
-
             },
 
             changeNumberSelectedRows: function (number) {
@@ -287,47 +279,38 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 this.$el.append(template);
             },
 
-            getSelectedRequestIds: function (table) {
+            getSelectedTcIds: function (table) {
                 var selectedRows = table.getSelectedRows();
                 var datas = table.fnGetData();
                 var ids = [];
                 $(selectedRows).each(function (index, data) {
                     var idx = data._DT_RowIndex;
-                    var requestId = datas[idx].requestId
-                    ids.push(requestId);
+                    var tcId = datas[idx]["entity-id"]
+                    ids.push(tcId);
                 })
                 return ids;
             },
 
-            checkScriptAutoIsPresent: function (table) {
-                var selectedRows = table.getSelectedRows();
-                var datas = table.fnGetData();
-                var scripts = [];
-                $(selectedRows).each(function (index, data) {
-                    var idx = data._DT_RowIndex;
-                    var script = datas[idx].script;
-                    if (script == null) {
-                        scripts.push(script);
-                    }
+            changeStatus: function (status, table) {
+                var tcIds = this.getSelectedTcIds(table);
+                if (tcIds.length === 0 || tcIds === undefined) {
+                    notification.showWarning(translator.get("automation.notification.selectedRow.none"));
+                } else {
+                    $.ajax({
+                        url: squashtm.app.contextRoot + 'automation-requests/' + tcIds,
+                        method: 'POST',
+                        data: {
+                            "id": "automation-request-status",
+                            "value": status
+                        }
+                    }).success(function () {
+                       
+                        table.refresh();
 
-                })
-                return scripts;
-            },
-
-            changeStatus: function (ids, status, table) {
-                var self = this;
-                $.ajax({
-                    url: squashtm.app.contextRoot + 'automation-requests/' + ids,
-                    method: 'POST',
-                    data: {
-                        "id": "automation-request-status",
-                        "value": status
-                    }
-                }).success(function () {
-                    self.storage.remove(self.key);
-                    table.refresh();
-
-                });
+                    });
+                    this.storage.remove(this.key);
+                    this.deselectAll(table)
+                }
             },
 
             bindButtons: function () {
@@ -342,31 +325,21 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 $("#deselect-affected-button").on("click", function () {
                     self.deselectAll(domtable);
                 });
-                $("#valid-button").on("click", function () {
-                    var requestIds = self.getSelectedRequestIds(domtable);
-                    if (requestIds.length === 0 || requestIds === undefined) {
-                        notification.showWarning(translator.get("automation.notification.selectedRow.none"));
-                    } else {
-                        self.changeStatus(requestIds, "READY_TO_TRANSMIT", domtable);
-                    }
+                $("#suspended-automation-button").on("click", function () {
+                    self.changeStatus("SUSPENDED", domtable);
+
                 });
-                $("#obsolete-button").on("click", function () {
-                    var requestIds = self.getSelectedRequestIds(domtable);
-                    if (requestIds.length === 0 || requestIds === undefined) {
-                        notification.showWarning(translator.get("automation.notification.selectedRow.none"));
-                    } else {
-                        self.changeStatus(requestIds, "SUSPENDED", domtable);
-                    }
+                $("#ready-automation-button").on("click", function () {
+                    self.changeStatus("READY_TO_TRANSMIT", domtable);
                 });
 
-                $("#cancel-transmission-button").on("click", function () {
-                    var requestIds = self.getSelectedRequestIds(domtable);
-                    if (requestIds.length === 0 || requestIds === undefined) {
-                        notification.showWarning(translator.get("automation.notification.selectedRow.none"));
-                    } else {
-                        self.changeStatus(requestIds, "READY_TO_TRANSMIT", domtable);
-                    }
+                $("#work_in_progress-automation-button").on("click", function () {
+                    self.changeStatus("WORK_IN_PROGRESS", domtable);
 
+                });
+
+                $("#transmitted-automation-button").on("click", function () {
+                    self.changeStatus("TRANSMITTED", domtable);
                 });
             }
 

@@ -49,7 +49,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "bSortable": true,
                         "aTargets": [2],
                         "mDataProp": "entity-id",
-                        "sWidth": "4em",
                         "sClass": "entity_id"
                     }, {
                         "bSortable": true,
@@ -62,8 +61,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }, {
                         "bSortable": true,
                         "aTargets": [5],
-                        "mDataProp": "format",
-                        "sWidth": "7em"
+                        "mDataProp": "format"
                     }, {
                         "bSortable": true,
                         "aTargets": [6],
@@ -72,7 +70,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "bSortable": true,
                         "aTargets": [7],
                         "mDataProp": "priority",
-                        "sWidth": "6em",
                         "mRender": function (data, type, row, meta) {
                             if (data === null) { return '-'; }
                             return data;
@@ -80,23 +77,19 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }, {
                         "bSortable": true,
                         "aTargets": [8],
-                        "mDataProp": "status",
-                        "sWidth": "12em"
+                        "mDataProp": "status"
                     }, {
                         "bSortable": true,
                         "aTargets": [9],
-                        "mDataProp": "assigned-to",
-                        "sWidth": "12em"
+                        "mDataProp": "assigned-to"
                     }, {
                         "bSortable": true,
                         "aTargets": [10],
-                        "mDataProp": "transmitted-on",
-                        "sWidth": "13em"
+                        "mDataProp": "transmitted-on"
                     }, {
                         "bSortable": true,
                         "aTargets": [11],
-                        "mDataProp": "assigned-on",
-                        "sWidth": "12em"
+                        "mDataProp": "assigned-on"
                     }, {
                         "bSortable": true,
                         "aTargets": [12],
@@ -506,22 +499,22 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 this.$el.append(template);
             },
 
-            getSelectedRequestIds: function (table) {
+            getSelectedTcIds: function (table) {
                 var selectedRows = table.getSelectedRows();
                 var datas = table.fnGetData();
                 var ids = [];
                 $(selectedRows).each(function (index, data) {
                     var idx = data._DT_RowIndex;
-                    var requestId = datas[idx].requestId
-                    ids.push(requestId);
+                    var tcId = datas[idx]["entity-id"]
+                    ids.push(tcId);
                 })
                 return ids;
             },
 
             checkScriptAutoIsAbsent: function (table) {
-                var requestIds = this.getSelectedRequestIds(table);
+                var tcIds = this.getSelectedTcIds(table);
                 var count = 0;
-                if (requestIds.length === 0 || requestIds === undefined) {
+                if (tcIds.length === 0 || tcIds === undefined) {
                     notification.showWarning(translator.get("automation.notification.selectedRow.none"));
                 } else {
                     var selectedRows = table.getSelectedRows();
@@ -529,8 +522,8 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     
                     $(selectedRows).each(function (index, data) {
                         var idx = data._DT_RowIndex;
-                        var script = datas[idx].script;
-                        var format = datas[idx].format;
+                        var script = datas[idx]["script"];
+                        var format = datas[idx]["format"];
                         if ((script == null && "gherkin" !== format.toLowerCase()) || (script === "no-test-automation-project" && "gherkin" !== format.toLowerCase())) {
                             count = count + 1;
                         }
@@ -541,13 +534,13 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
             },
 
             updateStatus: function(table, status) {
-                var requestIds = this.getSelectedRequestIds(table);
-                if (requestIds.length === 0 || requestIds === undefined) {
+                var tcIds = this.getSelectedTcIds(table);
+                if (tcIds.length === 0 || tcIds === undefined) {
                     notification.showWarning(translator.get("automation.notification.selectedRow.none"));
                 } else {
 
                     $.ajax({
-                        url: squashtm.app.contextRoot + 'automation-requests/' + requestIds,
+                        url: squashtm.app.contextRoot + 'automation-requests/' + tcIds,
                         method: 'POST',
                         data: {
                             "id": "automation-request-status",
@@ -562,16 +555,16 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
             },
 
             actions: function (table, url) {
-                var requestIds = this.getSelectedRequestIds(table);
+                var tcIds = this.getSelectedTcIds(table);
 
-                if (requestIds.length === 0 || requestIds === undefined) {
+                if (tcIds.length === 0 || tcIds === undefined) {
                     notification.showWarning(translator.get("automation.notification.selectedRow.none"));
                 } else {
                     $.ajax({
                         url: squashtm.app.contextRoot + url,
                         method: 'POST',
                         data: {
-                            "reqIds": requestIds
+                            "tcIds": tcIds
                         }
                     }).success(function () {
                         table.refresh();
@@ -595,7 +588,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     self.deselectAll(domtable);
                 });
                 
-                $("#workinprogress-automation-button").on("click", function() {
+                $("#progress-automation-button").on("click", function() {
                     self.updateStatus(domtable, "AUTOMATION_IN_PROGRESS");
                 });
 

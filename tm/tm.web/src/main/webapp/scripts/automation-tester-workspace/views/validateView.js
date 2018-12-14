@@ -49,7 +49,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", "
                         "bSortable": true,
                         "aTargets": [2],
                         "mDataProp": "entity-id",
-                        "sWidth": "4em",
                         "sClass": "entity_id"
                     }, {
                         "bSortable": true,
@@ -62,8 +61,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", "
                     }, {
                         "bSortable": true,
                         "aTargets": [5],
-                        "mDataProp": "format",
-                        "sWidth": "7em"
+                        "mDataProp": "format"
                     }, {
                         "bSortable": true,
                         "aTargets": [6],
@@ -72,13 +70,11 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", "
                         "bSortable": true,
                         "aTargets": [7],
                         "mDataProp": "priority",
-                        "sWidth": "6em",
                         "sClass": "priority"
                     }, {
                         "bSortable": true,
                         "aTargets": [8],
-                        "mDataProp": "status",
-                        "sWidth": "6em"
+                        "mDataProp": "status"
                     }, {
                         "bSortable": false,
                         "aTargets": [9],
@@ -283,14 +279,14 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", "
                 this.$el.append(template);
             },
 
-            getSelectedRequestIds: function (table) {
+            getSelectedTcIds: function (table) {
                 var selectedRows = table.getSelectedRows();
                 var datas = table.fnGetData();
                 var ids = [];
                 $(selectedRows).each(function (index, data) {
                     var idx = data._DT_RowIndex;
-                    var requestId = datas[idx].requestId
-                    ids.push(requestId);
+                    var tcId = datas[idx]["entity-id"]
+                    ids.push(tcId);
                 })
                 return ids;
             },
@@ -307,13 +303,13 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", "
                 $("#deselect-validate-button").on("click", function () {
                     self.deselectAll(domtable);
                 });
-                $("#validate-button").on("click", function () {
-                    var requestIds = self.getSelectedRequestIds(domtable);
-                    if (requestIds.length === 0 || requestIds === undefined) {
+                $("#validate-automation-button").on("click", function () {
+                    var tcIds = self.getSelectedTcIds(domtable);
+                    if (tcIds.length === 0 || tcIds === undefined) {
                         notification.showWarning(translator.get("automation.notification.selectedRow.none"));
                     } else {
                         $.ajax({
-                            url: squashtm.app.contextRoot + 'automation-requests/' + requestIds,
+                            url: squashtm.app.contextRoot + 'automation-requests/' + tcIds,
                             method: 'POST',
                             data: {
                                 "id": "automation-request-status",
@@ -321,8 +317,10 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", "
                             }
                         }).success(function () {
                             domtable.refresh();
-                            self.storage.remove(self.key);
+                            
                         });
+                        self.storage.remove(self.key);
+                        self.deselectAll(domtable);
                     }
 
 

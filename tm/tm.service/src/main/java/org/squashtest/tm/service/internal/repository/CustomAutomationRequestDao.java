@@ -132,19 +132,13 @@ public interface CustomAutomationRequestDao {
 	 *
 	 * @param reqIds
 	 */
-	void unassignRequests(List<Long> reqIds);
+	void unassignRequests(List<Long> reqIds, User assignee);
 
 	void updatePriority(List<Long> tcIds, Integer priority);
 
 	List<Long> getReqIdsByTcIds(List<Long> tcIds);
 
 	void updateStatusToTransmitted(List<Long> reqIds, User transmittedBy);
-
-	void updateStatusToValidate(List<Long> reqIds);
-
-	void updateStatusToValide(List<Long> reqIds);
-
-	void updateStatusToObsolete(List<Long> reqIds);
 
 	Integer countAutomationRequestValid();
 

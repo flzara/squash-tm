@@ -55,16 +55,16 @@ public class AutomationModificationController {
 	@Inject
 	private AutomationRequestModificationService automationRequestModificationService;
 
-	@RequestMapping(method = RequestMethod.POST, value="/{autoReqIds}", params = {"id=automation-request-status", VALUE})
+	@RequestMapping(method = RequestMethod.POST, value="/{tcIds}", params = {"id=automation-request-status", VALUE})
 	@ResponseBody
-	public void changeStatus(@PathVariable List<Long> autoReqIds, @RequestParam(VALUE) AutomationRequestStatus status) {
-		automationRequestModificationService.changeStatus(autoReqIds, status);
+	public void changeStatus(@PathVariable List<Long> tcIds, @RequestParam(VALUE) AutomationRequestStatus status) {
+		automationRequestModificationService.changeStatus(tcIds, status);
 	}
 
 	@ResponseBody
-	@RequestMapping(method = RequestMethod.POST, value="/unassigned", params = {"reqIds[]"})
-	public void unassignedUser(@RequestParam("reqIds[]") List<Long> autoReqIds) {
-		automationRequestModificationService.unassignRequests(autoReqIds);
+	@RequestMapping(method = RequestMethod.POST, value="/unassigned", params = {"tcIds[]"})
+	public void unassignedUser(@RequestParam("tcIds[]") List<Long> tcIds) {
+		automationRequestModificationService.unassignRequests(tcIds);
 	}
 
 	@RequestMapping(value = "{testCaseId}/tests", method = RequestMethod.POST, params = {PATH})
@@ -82,9 +82,9 @@ public class AutomationModificationController {
 
 	}
 
-	@RequestMapping(value = "/assignee", method = RequestMethod.POST, params = {"reqIds[]"})
+	@RequestMapping(value = "/assignee", method = RequestMethod.POST, params = {"tcIds[]"})
 	@ResponseBody
-	public void assigneeToAutomationReq(@RequestParam("reqIds[]") List<Long> requestids) {
-		automationRequestModificationService.assignedToRequest(requestids);
+	public void assigneeToAutomationReq(@RequestParam("tcIds[]") List<Long> tcIds) {
+		automationRequestModificationService.assignedToRequest(tcIds);
 	}
 }

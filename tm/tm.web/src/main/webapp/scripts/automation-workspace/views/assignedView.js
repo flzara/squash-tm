@@ -506,14 +506,14 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 this.$el.append(template);
             },
 
-            getSelectedRequestIds: function (table) {
+            getSelectedTcIds: function (table) {
                 var selectedRows = table.getSelectedRows();
                 var datas = table.fnGetData();
                 var ids = [];
                 $(selectedRows).each(function (index, data) {
                     var idx = data._DT_RowIndex;
-                    var requestId = datas[idx].requestId
-                    ids.push(requestId);
+                    var tcId = datas[idx]["entity-id"];
+                    ids.push(tcId);
                 })
                 return ids;
             },
@@ -524,8 +524,8 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 var count = 0;
                 $(selectedRows).each(function (index, data) {
                     var idx = data._DT_RowIndex;
-                    var script = datas[idx].script;
-                    var format = datas[idx].format;
+                    var script = datas[idx]["script"];
+                    var format = datas[idx]["format"];
                     if ((script == null && "gherkin" !== format.toLowerCase()) || (script === "no-test-automation-project" && "gherkin" !== format.toLowerCase())) {
                         count = count + 1;
                     }
@@ -535,13 +535,13 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
             },
 
             updateStatus: function(table, status) {
-                var requestIds = this.getSelectedRequestIds(table);
-                if (requestIds.length === 0 || requestIds === undefined) {
+                var tcIds = this.getSelectedTcIds(table);
+                if (tcIds.length === 0 || tcIds === undefined) {
                     notification.showWarning(translator.get("automation.notification.selectedRow.none"));
                 } else {
 
                     $.ajax({
-                        url: squashtm.app.contextRoot + 'automation-requests/' + requestIds,
+                        url: squashtm.app.contextRoot + 'automation-requests/' + tcIds,
                         method: 'POST',
                         data: {
                             "id": "automation-request-status",
@@ -573,16 +573,15 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     self.updateStatus(domtable, "REJECTED");
                 })
                 $("#unassigned-automation-button").on("click", function () {
-                    var requestIds = self.getSelectedRequestIds(domtable);
-                    if (requestIds.length === 0 || requestIds === undefined) {
+                    var tcIds = self.getSelectedTcIds(domtable);
+                    if (tcIds.length === 0 || tcIds === undefined) {
                         notification.showWarning(translator.get("automation.notification.selectedRow.none"));
                     } else {
-
                         $.ajax({
                             url: squashtm.app.contextRoot + 'automation-requests/unassigned',
                             method: 'POST',
                             data: {
-                                "reqIds": requestIds
+                                "tcIds": tcIds
                             }
                         }).success(function () {
                             domtable.refresh();
@@ -592,15 +591,15 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     self.deselectAll(domtable);
                 });
                 $("#automated-automation-button").on("click", function () {
-                    var requestIds = self.getSelectedRequestIds(domtable);
+                    var tcIds = self.getSelectedTcIds(domtable);
                     var scripts = self.checkScriptAutoIsAbsent(domtable);
-                    if (requestIds.length === 0 || requestIds === undefined) {
+                    if (tcIds.length === 0 || tcIds === undefined) {
                         notification.showWarning(translator.get("automation.notification.selectedRow.none"));
                     } else if (scripts !== 0) {
                         notification.showWarning(translator.get("automation.notification.script.none"));
                     } else {
                         $.ajax({
-                            url: squashtm.app.contextRoot + 'automation-requests/' + requestIds,
+                            url: squashtm.app.contextRoot + 'automation-requests/' + tcIds,
                             method: 'POST',
                             data: {
                                 "id": "automation-request-status",
