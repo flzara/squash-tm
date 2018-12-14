@@ -665,5 +665,26 @@
 
   </changeSet>
 
+  <changeSet author="jthebault" id="tm-1.19.0-performance-drop-constraint">
+    <comment>Dropping all constraint to Attachment List to avoid massive scans of nearly all squash tm entity tables
+      when deleting an entity </comment>
+
+    <dropForeignKeyConstraint baseTableName="ACTION_TEST_STEP" constraintName="fk_action_test_step_attachment_list"/>
+    <dropForeignKeyConstraint baseTableName="CAMPAIGN_LIBRARY" constraintName="fk_campLib_attachment_list"/>
+    <dropForeignKeyConstraint baseTableName="CAMPAIGN_LIBRARY_NODE" constraintName="fk_campNode_attachment_list"/>
+    <dropForeignKeyConstraint baseTableName="CUSTOM_REPORT_LIBRARY" constraintName="fk_crl_attachment_list"/>
+    <dropForeignKeyConstraint baseTableName="EXECUTION" constraintName="fk_execution_attachment_list"/>
+    <dropForeignKeyConstraint baseTableName="EXECUTION_STEP" constraintName="fk_execution_step__attachment_list"/>
+    <dropForeignKeyConstraint baseTableName="ITERATION" constraintName="fk_iteration__attachment_list"/>
+    <dropForeignKeyConstraint baseTableName="PROJECT" constraintName="fk_project_attachment_list"/>
+    <dropForeignKeyConstraint baseTableName="REQUIREMENT_LIBRARY" constraintName="fk_reqLib_attachment_list"/>
+    <dropForeignKeyConstraint baseTableName="RESOURCE" constraintName="fk_resource_attachment_list"/>
+    <dropForeignKeyConstraint baseTableName="TEST_CASE_LIBRARY" constraintName="fk_tcLib_attachment_list"/>
+    <dropForeignKeyConstraint baseTableName="TEST_CASE_LIBRARY_NODE" constraintName="fk_tcNode_attachment_list"/>
+    <dropForeignKeyConstraint baseTableName="TEST_SUITE" constraintName="fk_test_suite_attachment_list"/>
+  </changeSet>
+
+
+
 
 </databaseChangeLog>
