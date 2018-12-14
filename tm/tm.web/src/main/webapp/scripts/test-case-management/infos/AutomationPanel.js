@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "squash.translator", "squash.configmanager", "jeditable.simpleJEditable", "app/ws/squashtm.notification", "jquery.squash.jeditable"],
-		function($, Backbone, _, translator, confman, SimpleJEditable, notification) {
+define([ "jquery", "backbone", "underscore", "squash.translator", "squash.configmanager", "jeditable.simpleJEditable", "jeditable.selectJEditable", "app/ws/squashtm.notification", "jquery.squash.jeditable"],
+		function($, Backbone, _, translator, confman, SimpleJEditable, SelectJEditable, notification) {
 
 			var AutomationPanel = Backbone.View.extend({
 
@@ -44,6 +44,15 @@ define([ "jquery", "backbone", "underscore", "squash.translator", "squash.config
                 					}
 							}
 						});
+
+						this.statusEditable = new SelectJEditable({
+							target : this.settings.urls.testCaseUrl,
+							componentId : "automation-request-status",
+							jeditableSettings : {
+								data : this.settings.automReqStatusComboJson
+							}
+						});
+
 
 						automatableRadio.on('change', function() {
 

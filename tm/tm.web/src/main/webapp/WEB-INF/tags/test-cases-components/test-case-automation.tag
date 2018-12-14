@@ -34,7 +34,7 @@
 <c:set var="toInstruct" 	value="${(testCase.automatable == 'M') ? 'checked=\"checked\"' : ''}"/>
 <c:set var="toAutomate" 	value="${(testCase.automatable == 'Y') ? 'checked=\"checked\"' : ''}"/>
 <c:set var="toNotAutomate" 	value="${(testCase.automatable == 'N') ? 'checked=\"checked\"' : ''}"/>
-<c:set var="requestStatus" 	value="${(testCase.automationRequest != null) ? testCase.automationRequest.requestStatus.getI18nKey() : 'automation-request.request_status.TO_VALIDATE'}" />
+<c:set var="requestStatus" 	value="${(testCase.automationRequest != null) ? testCase.automationRequest.requestStatus.getI18nKey() : 'automation-request.request_status.WORK_IN_PROGRESS'}" />
 
 
 <c:url var="testCaseUrl" value="/test-cases/${testCase.id}"/>
@@ -78,7 +78,7 @@
 				<f:message key="test-case.automation-status.label"/>
 			</label>
 			<div class="display-table-cell" id="automation-request-status">
-				<f:message key="${requestStatus}"/>
+				<span id="automation-request-status">${ automReqStatusLabel }</span>
 			</div>
 		</div>
 

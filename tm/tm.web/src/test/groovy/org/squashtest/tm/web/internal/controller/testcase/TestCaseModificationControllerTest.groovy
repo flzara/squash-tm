@@ -18,7 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.testcase;
+package org.squashtest.tm.web.internal.controller.testcase
+
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 
 import javax.inject.Provider
 import javax.servlet.http.HttpServletRequest
@@ -158,7 +161,7 @@ class TestCaseModificationControllerTest extends Specification {
 		enrichTC(tc)
 
 		when:
-		ModelAndView res = controller.showTestCase (tcId, null)
+		ModelAndView res = controller.showTestCase (tcId, Locale.FRENCH)
 
 		then:
 		res.viewName == "fragment/test-cases/test-case"
@@ -276,6 +279,11 @@ class TestCaseModificationControllerTest extends Specification {
 		tc.getType() >> typ
 
 		tc.getProject() >> mockFactory.mockProject()
+
+		AutomationRequest request = Mock()
+		request.getRequestStatus() >> AutomationRequestStatus.WORK_IN_PROGRESS
+		request.getRequestStatus().getI18nKey() >> "automation-request.request_status.WORK_IN_PROGRESS"
+		tc.getAutomationRequest() >> request
 	}
 
 }

@@ -36,7 +36,9 @@ public interface AutomationRequestModificationService extends AutomationRequestF
 	 */
 	void unassignRequests(List<Long> requestIds);
 
-	void changeStatus(List<Long> reqIds, AutomationRequestStatus automationRequestStatus);
+	void changeStatus(List<Long> requestIds, AutomationRequestStatus automationRequestStatus);
+
+	void changeStatusByTestCases(List<Long> tcIds, AutomationRequestStatus automationRequestStatus);
 
 	void changePriority(List<Long> tcIds, Integer priority);
 

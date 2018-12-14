@@ -48,6 +48,8 @@ import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.servers.AuthenticationStatus;
 import org.squashtest.tm.domain.testcase.*;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.exception.tf.WrongPriorityFormatException;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
@@ -258,6 +260,8 @@ public class TestCaseModificationController {
 		mav.addObject("testCaseTypes", buildTypeComboData(testCase.getId()));
 		mav.addObject("testCaseStatusComboJson", buildStatusComboData(locale));
 		mav.addObject("testCaseStatusLabel", formatStatus(testCase.getStatus(), locale));
+		mav.addObject("automReqStatusComboJson", buildAutomReqStatusComboData(locale));
+		mav.addObject("automReqStatusLabel", formatAutomReqStatus(testCase.getAutomationRequest(), locale));
 		mav.addObject("attachmentsModel", attachmentHelper.findPagedAttachments(testCase));
 		mav.addObject("callingTestCasesModel", getCallingTestCaseTableModel(testCase.getId(), new DefaultPagingAndSorting("TestCase.name"), ""));
 		mav.addObject("hasCUF", hasCUF);
@@ -326,6 +330,13 @@ public class TestCaseModificationController {
 		} catch(NumberFormatException nfe) {
 			throw new WrongPriorityFormatException(nfe);
 		}
+	}
+
+	@RequestMapping(method = RequestMethod.POST, params = {"id=automation-request-status", VALUE})
+	@ResponseBody
+	public String changeAutomReqStatus(@RequestParam(VALUE) AutomationRequestStatus status, @PathVariable long testCaseId, Locale locale) {
+		automationRequestModificationService.changeStatusByTestCases(Collections.singletonList(testCaseId), status);
+		return internationalizationHelper.internationalize(status, locale);
 	}
 
 	@ResponseBody
@@ -833,5 +844,28 @@ public class TestCaseModificationController {
 		}
 		return models;
 	}
+
+	private String buildAutomReqStatusComboData(Locale locale) {
+		List<AutomationRequestStatus> statuses =
+			Arrays.asList(AutomationRequestStatus.WORK_IN_PROGRESS, AutomationRequestStatus.READY_TO_TRANSMIT, AutomationRequestStatus.SUSPENDED);
+		StringBuilder result = new StringBuilder();
+		result.append("{\"");
+		for (int i = 0; i < statuses.size(); i++) {
+			result.append(statuses.get(i).name()).append("\":\"").append(internationalizationHelper.internationalize(statuses.get(i).getI18nKey(), locale));
+			if (i < 2) {
+				result.append("\",\"");
+			}
+		}
+		result.append("\"}");
+		return result.toString();
+	}
+
+	private String formatAutomReqStatus(AutomationRequest request, Locale locale) {
+		if (request != null) {
+			return internationalizationHelper.internationalize(request.getRequestStatus().getI18nKey(), locale);
+		}
+		return internationalizationHelper.internationalize(AutomationRequestStatus.WORK_IN_PROGRESS, locale);
+	}
+
 
 }

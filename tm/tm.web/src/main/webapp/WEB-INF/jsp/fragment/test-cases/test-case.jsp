@@ -264,6 +264,7 @@
           testCaseNatures: ${json:serialize(testCaseNatures)},
           testCaseTypes: ${json:serialize(testCaseTypes)},
           testCaseStatusComboJson: ${testCaseStatusComboJson},
+          automReqStatusComboJson: ${automReqStatusComboJson},
           importanceAuto: ${testCase.importanceAuto},
           testCaseId: ${testCase.id},
           callingTestCases: ${json:serialize(callingTestCasesModel.aaData)},
