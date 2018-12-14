@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.tf;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +34,7 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.tf.IllegalAutomationRequestStatusException;
 import org.squashtest.tm.service.internal.repository.AutomationRequestDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
+import org.squashtest.tm.service.internal.tf.event.AutomationRequestStatusChangeEvent;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -80,6 +82,9 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 	@Inject
 	private MessageSource messageSource;
+
+	@Inject
+	private ApplicationEventPublisher eventPublisher;
 
 
 	// *************** implementation of the finder interface *************************
@@ -240,6 +245,8 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 			default:
 				throw new IllegalAutomationRequestStatusException(STATUS_NOT_PERMITTED);
 		}
+
+		eventPublisher.publishEvent(new AutomationRequestStatusChangeEvent(reqIds, automationRequestStatus));
 	}
 
 	@Override

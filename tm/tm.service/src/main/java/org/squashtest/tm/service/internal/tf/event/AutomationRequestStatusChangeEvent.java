@@ -18,24 +18,36 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.testcase;
+package org.squashtest.tm.service.internal.tf.event;
 
-import org.apache.commons.lang3.EnumUtils;
-import org.squashtest.tm.core.foundation.i18n.Internationalizable;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 
-public enum TestCaseKind implements Internationalizable {
-	STANDARD, GHERKIN;
+import java.util.List;
 
-	public boolean isScripted() {
-		return this.equals(GHERKIN);
+public class AutomationRequestStatusChangeEvent extends AutomationRequestBaseEvent {
+
+	private AutomationRequestStatus newStatus;
+
+	public AutomationRequestStatusChangeEvent(List<Long> automationRequestIds, AutomationRequestStatus newStatus) {
+
+		super(automationRequestIds);
+
+		if (automationRequestIds == null  || newStatus == null){
+			throw new IllegalArgumentException("null parameters are not allowed");
+		}
+
+		this.newStatus = newStatus;
 	}
 
-	public static TestCaseKind getFromString(String kind){
-		return TestCaseKind.valueOf(kind);
+	public List<Long> getAutomationRequestIds(){
+		return (List<Long>)getSource();
 	}
 
-	@Override
-	public String getI18nKey() {
-		return "test-case.format." + this.name().toLowerCase();
+	public AutomationRequestStatus getNewStatus() {
+		return newStatus;
+	}
+
+	public void setNewStatus(AutomationRequestStatus newStatus) {
+		this.newStatus = newStatus;
 	}
 }

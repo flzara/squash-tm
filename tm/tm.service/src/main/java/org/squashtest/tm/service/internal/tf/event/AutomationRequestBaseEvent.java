@@ -18,24 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.testcase;
+package org.squashtest.tm.service.internal.tf.event;
 
-import org.apache.commons.lang3.EnumUtils;
-import org.squashtest.tm.core.foundation.i18n.Internationalizable;
+import org.squashtest.tm.core.foundation.event.SquashAppEvent;
 
-public enum TestCaseKind implements Internationalizable {
-	STANDARD, GHERKIN;
-
-	public boolean isScripted() {
-		return this.equals(GHERKIN);
-	}
-
-	public static TestCaseKind getFromString(String kind){
-		return TestCaseKind.valueOf(kind);
-	}
-
-	@Override
-	public String getI18nKey() {
-		return "test-case.format." + this.name().toLowerCase();
+public class AutomationRequestBaseEvent extends SquashAppEvent {
+	public AutomationRequestBaseEvent(Object source) {
+		super(source);
 	}
 }

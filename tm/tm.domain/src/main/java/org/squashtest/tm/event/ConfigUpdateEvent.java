@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.event;
 
-import org.springframework.context.ApplicationEvent;
+import org.squashtest.tm.core.foundation.event.SquashAppEvent;
 
-public class ConfigUpdateEvent extends ApplicationEvent {
+public class ConfigUpdateEvent extends SquashAppEvent {
 	/**
 	 * 
 	 */

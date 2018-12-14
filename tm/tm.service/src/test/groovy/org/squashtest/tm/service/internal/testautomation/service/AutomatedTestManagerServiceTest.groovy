@@ -175,7 +175,7 @@ class AutomatedTestManagerServiceTest extends Specification {
 	}
 
 
-	
+
 	// note : this test and the method it tests should rather be relocated in the ScmRepository entity itself
 	def "should return the list of test in the squash folder as relative to the base repository path"(){
 
