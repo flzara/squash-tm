@@ -341,8 +341,8 @@
                   </label>
                 </div>
                 <div class="display-table-cell">
-                  <input id="toggle-EXECUTION-checkbox" type="checkbox" data-def="width=35, on_label=${inactive},
-                         off_label=${active}, checked=${!allowTcModifDuringExec}" style="display: none;" />
+                  <input id="toggle-EXECUTION-checkbox" type="checkbox" data-def="width=35, on_label=${active},
+                         off_label=${inactive}, checked=${allowTcModifDuringExec}" style="display: none;" />
                 </div>
               </div>
           </div>
@@ -745,7 +745,7 @@ require(["common"], function() {
 	});
 
 	function toggleExec(){
-		var shouldActivate = ! $("#toggle-EXECUTION-checkbox").prop('checked');
+		var shouldActivate = $("#toggle-EXECUTION-checkbox").prop('checked');
 
 			$.ajax({
 				type: 'POST',
@@ -758,7 +758,7 @@ require(["common"], function() {
 	}
 
 	function toggleWorkflow(){
-  		var shouldActivate = ! $("#toggle-WORKFLOW-checkbox").prop('checked');
+  		var shouldActivate = $("#toggle-WORKFLOW-checkbox").prop('checked');
 
   			$.ajax({
   				type: 'POST',

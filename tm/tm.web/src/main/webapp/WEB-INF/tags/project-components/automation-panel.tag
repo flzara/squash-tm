@@ -67,8 +67,8 @@
                   </label>
                 </div>
                 <div class="display-table-cell">
-                  <input id="toggle-WORKFLOW-checkbox" type="checkbox" data-def="width=35, on_label=${inactive},
-                         off_label=${active}, checked=${!allowAutomationWorkflow}" style="display: none;" />
+                  <input id="toggle-WORKFLOW-checkbox" type="checkbox" data-def="width=35, on_label=${active},
+                         off_label=${inactive}, checked=${allowAutomationWorkflow}" style="display: none;" />
                 </div>
               </div>
           </div>
@@ -95,7 +95,7 @@
       <c:set var="dispayedJobBlock" value="display: none"/>
       </c:if>
 
-      
+
 
       <fieldset class="ta-projects-block  ta-block" style="${dispayedJobBlock}">
         <legend>
@@ -315,7 +315,7 @@
         <select id="ta-project-jobName" name="jobName"></select>
       </div>
     </div>
-    
+
     <div class="display-table-row">
       <label class="display-table-cell" for="canRunGherkin">
         <f:message key="label.canRunGherkin" />
@@ -324,7 +324,7 @@
         <input type="checkbox" id="ta-project-cangherkin" name="canRunGherkin"/>
       </div>
     </div>
-    
+
     <div class="control-group">
       <label for="slaves">
         <f:message key="label.slaves.input" />
