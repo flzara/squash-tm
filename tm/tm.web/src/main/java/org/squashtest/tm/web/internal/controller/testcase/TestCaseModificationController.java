@@ -335,7 +335,7 @@ public class TestCaseModificationController {
 	@RequestMapping(method = RequestMethod.POST, params = {"id=automation-request-status", VALUE})
 	@ResponseBody
 	public String changeAutomReqStatus(@RequestParam(VALUE) AutomationRequestStatus status, @PathVariable long testCaseId, Locale locale) {
-		automationRequestModificationService.changeStatusByTestCases(Collections.singletonList(testCaseId), status);
+		automationRequestModificationService.changeStatus(Collections.singletonList(testCaseId), status);
 		return internationalizationHelper.internationalize(status, locale);
 	}
 

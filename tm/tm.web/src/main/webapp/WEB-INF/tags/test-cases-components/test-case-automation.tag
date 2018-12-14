@@ -31,16 +31,15 @@
 
 <%@ attribute name="testCase" required="true" type="java.lang.Object" description="the testcase" %>
 
-<c:set var="toInstruct" 	value="${(testCase.automatable == 'M') ? 'checked=\"checked\"' : ''}"/>
-<c:set var="toAutomate" 	value="${(testCase.automatable == 'Y') ? 'checked=\"checked\"' : ''}"/>
-<c:set var="toNotAutomate" 	value="${(testCase.automatable == 'N') ? 'checked=\"checked\"' : ''}"/>
+<c:set var="toInstruct" 	value="${(testCase.automatable == 'M') ? 'checked=\"checked\"' : ''}" />
+<c:set var="toAutomate" 	value="${(testCase.automatable == 'Y') ? 'checked=\"checked\"' : ''}" />
+<c:set var="toNotAutomate" 	value="${(testCase.automatable == 'N') ? 'checked=\"checked\"' : ''}" />
 <c:set var="requestStatus" 	value="${(testCase.automationRequest != null) ? testCase.automationRequest.requestStatus.getI18nKey() : 'automation-request.request_status.WORK_IN_PROGRESS'}" />
 
+<c:url var="testCaseUrl" value="/test-cases/${testCase.id}" />
 
-<c:url var="testCaseUrl" value="/test-cases/${testCase.id}"/>
-
-<f:message var="labelAutomation" key="label.automation"/>
-
+<f:message var="labelAutomation" key="label.automation" />
+<f:message var="transmitLabel" key="automation.label.to_transmit" />
 
 <comp:toggle-panel id="test-case-automation-panel"
 				   title='${labelAutomation}'
@@ -82,6 +81,10 @@
 			</div>
 		</div>
 
+		<div class="display-table-row test-case-automation-request-block">
+			<input type="button" value="${transmitLabel}"  title="${transmitLabel}"
+				id="transmit-test-case-autom-request-button" class="sq-btn" />
+		</div>
 	</div>
 	</jsp:attribute>
 </comp:toggle-panel>

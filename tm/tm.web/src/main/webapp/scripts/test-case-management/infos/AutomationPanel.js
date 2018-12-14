@@ -53,6 +53,19 @@ define([ "jquery", "backbone", "underscore", "squash.translator", "squash.config
 							}
 						});
 
+						$('#transmit-test-case-autom-request-button').on('click', function() {
+							$.ajax({
+								url: self.settings.urls.testCaseUrl,
+								method: 'POST',
+								data: {
+									'id': 'automation-request-status',
+									'value': 'TRANSMITTED'
+								}
+							}).success(function() {
+								$('#automation-request-status').text(translator.get('automation-request.request_status.TRANSMITTED'))
+							});
+						});
+
 
 						automatableRadio.on('change', function() {
 

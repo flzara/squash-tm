@@ -243,12 +243,6 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	}
 
 	@Override
-	public void changeStatusByTestCases(List<Long> tcIds, AutomationRequestStatus automationRequestStatus) {
-		List<Long> reqIds = requestDao.getReqIdsByTcIds(tcIds);
-		changeStatus(reqIds, automationRequestStatus);
-	}
-
-	@Override
 	public void changePriority(List<Long> tcIds, Integer priority) {
 		List<Long> reqIds = requestDao.getReqIdsByTcIds(tcIds);
 		PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_FUNCTIONAL, AutomationRequest.class.getName());
