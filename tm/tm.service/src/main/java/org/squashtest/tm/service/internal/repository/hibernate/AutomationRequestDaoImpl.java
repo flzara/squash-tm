@@ -70,8 +70,8 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	private static final String ILLEGAL_STATUS = "One or more AutomationRequest do not have the expected status";
 
 	private static final String DEFAULT_TRANSMITTED_STATUS_FILTER = String.join(PagingToQueryDsl.LIST_SEPARATOR, WORK_IN_PROGRESS.toString(), TRANSMITTED.toString());
-	private static final String DEFAULT_GLOBAL_STATUS_FILTER = 	String.join(PagingToQueryDsl.LIST_SEPARATOR, WORK_IN_PROGRESS.toString(), TRANSMITTED.toString(), EXECUTABLE.toString() );
-	private static final String DEFAULT_TO_VALIDATE_FILTER = 	String.join(PagingToQueryDsl.LIST_SEPARATOR, OBSOLETE.toString(), TO_VALIDATE.toString(), NOT_AUTOMATABLE.toString() );
+	private static final String DEFAULT_GLOBAL_STATUS_FILTER = 	String.join(PagingToQueryDsl.LIST_SEPARATOR, WORK_IN_PROGRESS.toString(), TRANSMITTED.toString(), AUTOMATED.toString() );
+	private static final String DEFAULT_TO_VALIDATE_FILTER = 	String.join(PagingToQueryDsl.LIST_SEPARATOR, SUSPENDED.toString(), WORK_IN_PROGRESS.toString(), REJECTED.toString() );
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -138,7 +138,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 
 	@Override
 	public Page<AutomationRequest> findAllValid(Pageable pageable, ColumnFiltering filtering, Collection<Long> inProjectIds) {
-		ColumnFiltering filterWithAssignee = overrideStatusFilter(filtering, VALID.toString());
+		ColumnFiltering filterWithAssignee = overrideStatusFilter(filtering, READY_TO_TRANSMIT.toString());
 
 		return innerFindAll(pageable, filterWithAssignee, null, inProjectIds);
 	}
@@ -168,7 +168,6 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 			.and(TEST_CASE.AUTOMATABLE.eq(TestCaseAutomatable.Y.toString()))
 			.fetchOne().value1();
 	}
-
 	@Override
 	public Map<Long, String> getTransmittedByForCurrentUser(Long idUser, List<String> requestStatus) {
 
@@ -181,6 +180,18 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 			.innerJoin(TEST_CASE_LIBRARY_NODE).on(CORE_USER.LOGIN.eq(TEST_CASE_LIBRARY_NODE.LAST_MODIFIED_BY))
 			.innerJoin(AUTOMATION_REQUEST).on(TEST_CASE_LIBRARY_NODE.TCLN_ID.eq(AUTOMATION_REQUEST.TEST_CASE_ID))
 			.where(condition)
+			.and(AUTOMATION_REQUEST.REQUEST_STATUS.in(requestStatus))
+			.fetch().intoMap(CORE_USER.PARTY_ID, CORE_USER.LOGIN);
+
+	}
+
+	@Override
+	public Map<Long, String> getTcLastModifiedByToAutomationRequestNotAssigned(List<String> requestStatus) {
+
+		return DSL.selectDistinct(CORE_USER.PARTY_ID, CORE_USER.LOGIN).from(CORE_USER)
+			.innerJoin(TEST_CASE_LIBRARY_NODE).on(CORE_USER.LOGIN.eq(TEST_CASE_LIBRARY_NODE.LAST_MODIFIED_BY))
+			.innerJoin(AUTOMATION_REQUEST).on(TEST_CASE_LIBRARY_NODE.TCLN_ID.eq(AUTOMATION_REQUEST.TEST_CASE_ID))
+			.where(AUTOMATION_REQUEST.ASSIGNED_TO.isNull())
 			.and(AUTOMATION_REQUEST.REQUEST_STATUS.in(requestStatus))
 			.fetch().intoMap(CORE_USER.PARTY_ID, CORE_USER.LOGIN);
 
@@ -221,9 +232,8 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 
 	@Override
 	public void unassignRequests(List<Long> requestIds) {
-		entityManager.createQuery("update AutomationRequest ar set ar.assignedTo = NULL, ar.assignmentDate = NULL," +
-			" ar.requestStatus = :requestStatus where ar.id in :requestIds")
-			.setParameter("requestStatus", TRANSMITTED)
+		entityManager.createQuery("update AutomationRequest ar set ar.assignedTo = NULL, ar.assignmentDate = NULL" +
+			" where ar.id in :requestIds")
 		    .setParameter("requestIds", requestIds)
 			.executeUpdate();
 	}
@@ -254,8 +264,8 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	public void updateStatusToValidate(List<Long> reqIds) {
 		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest ar SET ar.transmissionDate = NULL, " +
 			"ar.requestStatus = :requestStatus, ar.transmittedBy = NULL where ar.id in :requestIds and ar.requestStatus = :requestInitialStatus")
-			.setParameter("requestStatus", TO_VALIDATE)
-			.setParameter("requestInitialStatus", VALID)
+			.setParameter("requestStatus", WORK_IN_PROGRESS)
+			.setParameter("requestInitialStatus", READY_TO_TRANSMIT)
 			.setParameter("requestIds", reqIds).executeUpdate();
 
 		if(reqIds.size() != automationRequestUpdates) {
@@ -295,8 +305,8 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	@Override
 	public void updateStatusToValide(List<Long> reqIds) {
 		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest ar set ar.requestStatus = :reqStatus where ar.id in :reqIds and ar.requestStatus in :reqStatusInitial")
-			.setParameter("reqStatus", VALID)
-			.setParameter("reqStatusInitial", Arrays.asList(TO_VALIDATE, TRANSMITTED, OBSOLETE, NOT_AUTOMATABLE))
+			.setParameter("reqStatus", READY_TO_TRANSMIT)
+			.setParameter("reqStatusInitial", Arrays.asList(WORK_IN_PROGRESS, TRANSMITTED, SUSPENDED, REJECTED))
 			.setParameter("reqIds", reqIds)
 			.executeUpdate();
 		if(reqIds.size() != automationRequestUpdates) {
@@ -307,8 +317,8 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	@Override
 	public void updateStatusToObsolete(List<Long> reqIds) {
 		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest ar set ar.requestStatus = :reqStatus where ar.id in :reqIds and ar.requestStatus in :reqStatusInitial")
-			.setParameter("reqStatus", OBSOLETE)
-			.setParameter("reqStatusInitial", Arrays.asList(EXECUTABLE, WORK_IN_PROGRESS))
+			.setParameter("reqStatus", SUSPENDED)
+			.setParameter("reqStatusInitial", Arrays.asList(AUTOMATED, WORK_IN_PROGRESS))
 			.setParameter("reqIds", reqIds)
 			.executeUpdate();
 		if(reqIds.size() != automationRequestUpdates) {
@@ -324,7 +334,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 			.innerJoin(TEST_CASE).on(TEST_CASE.TCLN_ID.eq(AUTOMATION_REQUEST.TEST_CASE_ID))
 			.innerJoin(TEST_CASE_LIBRARY_NODE).on(TEST_CASE.TCLN_ID.eq(TEST_CASE_LIBRARY_NODE.TCLN_ID))
 			.innerJoin(PROJECT).on(PROJECT.PROJECT_ID.eq(TEST_CASE_LIBRARY_NODE.PROJECT_ID))
-			.where(AUTOMATION_REQUEST.REQUEST_STATUS.eq(VALID.toString()))
+			.where(AUTOMATION_REQUEST.REQUEST_STATUS.eq(READY_TO_TRANSMIT.toString()))
 			.and(PROJECT.ALLOW_AUTOMATION_WORKFLOW.isTrue())
 			.and(TEST_CASE.AUTOMATABLE.eq(TestCaseAutomatable.Y.toString()))
 			.fetchOne()
@@ -333,9 +343,11 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 
 	@Override
 	public void assignedToRequestIds(List<Long> reqIds, User user) {
-		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest ar set ar.assignedTo = :assignee where ar.id in :reqIds")
+		int automationRequestUpdates = entityManager
+			.createQuery("UPDATE AutomationRequest ar SET ar.assignedTo = :assignee, ar.assignmentDate = :assignedOn where ar.id in :reqIds")
 			.setParameter("assignee", user)
 			.setParameter("reqIds", reqIds)
+			.setParameter("assignedOn", new Timestamp(new Date().getTime()))
 			.executeUpdate();
 		if(reqIds.size() != automationRequestUpdates) {
 			throw new IllegalAutomationRequestStatusException(ILLEGAL_STATUS);

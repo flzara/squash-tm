@@ -23,27 +23,22 @@
 <div th:fragment="automation-transmitted-view">
   <div id="divTable" style="display: none">
     <div style="margin-bottom: 40px">
-      <span style="font-style: italic; font-weight: bold; font-size:15px" th:text="#{automation.message.to_transmit}"></span>
+      <span style="font-style: italic;color: gray; font-size:15px" th:text="#{automation.message.to_transmit}"></span>
       <div style="float: right">
-        <button id="transmitted-button" class="tf-lg blue" th:title="#{automation.label.to_transmit}" th:text="#{automation.label.to_transmit}"></button>
-        <button id="no-valid-button" class="tf-lg gray" th:title="#{automation.label.not_valid}" th:text="#{automation.label.not_valid}"></button>
-
+        <button id="transmitted-button" class="tf-lg green" th:title="#{automation.label.to_transmit}" th:text="#{automation.label.to_transmit}"></button>
       </div>
     </div>
 
     <div class="left btn-toolbar">
       <div class="btn-group">
-        <button id="filter-affected-button" class="sq-btn">
-          <span class="ui-icon ui-icon-refresh"></span>
+        <button id="filter-affected-button" class="tf green">
           <span th:text="#{label.Filter}"></span>
         </button>
       </div>
     </div>
     <div class="right btn-toolbar">
-      <div>
-        <span th:text="#{automation.label.selected.rows}">Nombre de lignes actives:</span><span id="selectedRows">0</span>
-      </div>
       <div class="btn-group" style="margin-top: 5px">
+        <span th:text="#{automation.label.selected.rows}">Nombre de lignes actives:</span><span id="selectedRows">0</span>
         <button id="select-affected-button" class="tf-sm" th:title="#{label.SelectAllForSelection}" th:text="#{label.SelectAllForSelection}"></button>
         <button id="deselect-affected-button" class="tf-sm" th:title="#{label.DeselectAll}" th:text="#{label.DeselectAll}"></button>
       </div>

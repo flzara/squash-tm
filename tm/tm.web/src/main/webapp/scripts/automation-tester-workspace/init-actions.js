@@ -38,11 +38,11 @@ define(['jquery', 'workspace.contextual-content', 'workspace.routing'],
 				var requestStatus = [];
 				var href = $(this).attr("href");
 				if (href === "#transmitted") {
-					requestStatus = ["VALID"];
+					requestStatus = ["READY_TO_TRANSMIT"];
 				} else if (href === "#validate") {
-					requestStatus = ["TO_VALIDATE"];
+					requestStatus = ["WORK_IN_PROGRESS"];
 				} else {
-					requestStatus = ["TO_VALIDATE", "VALID", "TRANSMITTED", "WORK_IN_PROGRESS", "EXECUTABLE", "OBSOLETE", "NOT_AUTOMATABLE"];
+					requestStatus = ["AUTOMATION_IN_PROGRESS", "READY_TO_TRANSMIT", "TRANSMITTED", "WORK_IN_PROGRESS", "AUTOMATED", "SUSPENDED", "REJECTED"];
 					url = url + "automation-workspace/testers/";
 				}
 				var self = this;

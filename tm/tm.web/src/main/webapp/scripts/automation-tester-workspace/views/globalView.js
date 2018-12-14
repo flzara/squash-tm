@@ -347,7 +347,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     if (requestIds.length === 0 || requestIds === undefined) {
                         notification.showWarning(translator.get("automation.notification.selectedRow.none"));
                     } else {
-                        self.changeStatus(requestIds, "VALID", domtable);
+                        self.changeStatus(requestIds, "READY_TO_TRANSMIT", domtable);
                     }
                 });
                 $("#obsolete-button").on("click", function () {
@@ -355,7 +355,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     if (requestIds.length === 0 || requestIds === undefined) {
                         notification.showWarning(translator.get("automation.notification.selectedRow.none"));
                     } else {
-                        self.changeStatus(requestIds, "OBSOLETE", domtable);
+                        self.changeStatus(requestIds, "SUSPENDED", domtable);
                     }
                 });
 
@@ -364,7 +364,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     if (requestIds.length === 0 || requestIds === undefined) {
                         notification.showWarning(translator.get("automation.notification.selectedRow.none"));
                     } else {
-                        self.changeStatus(requestIds, "VALID", domtable);
+                        self.changeStatus(requestIds, "READY_TO_TRANSMIT", domtable);
                     }
 
                 });

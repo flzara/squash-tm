@@ -88,14 +88,17 @@ public class AutomationWorkspaceController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale) {
-		Map<Long, String> assignableUsers = automationRequestFinderService.getTcLastModifiedByForCurrentUser
-			(Collections.singletonList(AutomationRequestStatus.WORK_IN_PROGRESS.toString()));
-		Map<Long, String> traitmentUsers = automationRequestFinderService.getTcLastModifiedByForAutomationRequests
-			(Collections.singletonList(AutomationRequestStatus.TRANSMITTED.toString()));
-		Map<Long, String> globalUsers = automationRequestFinderService.getTcLastModifiedByForAutomationRequests
-			(Arrays.asList(AutomationRequestStatus.WORK_IN_PROGRESS.toString(), AutomationRequestStatus.TRANSMITTED.toString(), AutomationRequestStatus.EXECUTABLE.toString()));
+
+		List<String> automationRequestStatus = Stream.of(AutomationRequestStatus.values()).map(Enum:: name).collect(Collectors.toList());
+		Map<Long, String> assignableUsers =automationRequestFinderService.getTcLastModifiedByForCurrentUser(automationRequestStatus);
+		Map<Long, String> globalUsers = automationRequestFinderService
+			.getTcLastModifiedByForAutomationRequests(automationRequestStatus);
+
+		Map<Long, String> traitmentUsers = automationRequestFinderService
+			.getTcLastModifiedByToAutomationRequestNotAssigned(Arrays.asList(AutomationRequestStatus.TRANSMITTED.name(), AutomationRequestStatus.WORK_IN_PROGRESS.name()));
 
 		Map<Long, String> assignableUsersGlobalView = automationRequestFinderService.getAssignedToForAutomationRequests();
+
 		model.addAttribute("assignableUsers", assignableUsers);
 		model.addAttribute("traitmentUsers", traitmentUsers);
 		model.addAttribute("globalUsers", globalUsers);
@@ -105,9 +108,13 @@ public class AutomationWorkspaceController {
 			Arrays.stream(TestCaseKind.values()).collect(Collectors.toMap(Enum::toString, e -> messageSource.internationalize(e.getI18nKey(), locale)));
 		model.addAttribute("tcKinds", tcKinds);
 
-		Map<String, String> autoReqStatuses =
-			Stream.of(AutomationRequestStatus.TRANSMITTED, AutomationRequestStatus.WORK_IN_PROGRESS, AutomationRequestStatus.EXECUTABLE)
+		Map<String, String> autoReqStatusesTraitment =
+			Stream.of(AutomationRequestStatus.TRANSMITTED, AutomationRequestStatus.WORK_IN_PROGRESS)
 				  .collect(Collectors.toMap(Enum::toString, e -> messageSource.internationalize(e.getI18nKey(), locale)));
+		model.addAttribute("autoReqStatusesTraitment", autoReqStatusesTraitment);
+
+		Map<String, String> autoReqStatuses = Stream.of(AutomationRequestStatus.values())
+			.collect(Collectors.toMap(Enum::toString, e -> messageSource.internationalize(e.getI18nKey(), locale)));
 		model.addAttribute("autoReqStatuses", autoReqStatuses);
 
 		return getWorkspaceViewName();
@@ -163,16 +170,22 @@ public class AutomationWorkspaceController {
 		return automationRequestFinderService.countAutomationRequestForCurrentUser();
 	}
 
-	@RequestMapping(value = "assigned/testers/{requestStatus}", method = RequestMethod.GET)
+	@RequestMapping(value = "assigned/testers/{statuses}", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<Long, String> getTestersForCurrentUser(@PathVariable List<String> requestStatus) {
-		return automationRequestFinderService.getTcLastModifiedByForCurrentUser(requestStatus);
+	public Map<Long, String> getTestersForCurrentUser(@PathVariable List<String> statuses) {
+		return automationRequestFinderService.getTcLastModifiedByForCurrentUser(statuses);
 	}
 
-	@RequestMapping(value = "testers/{requestStatus}", method = RequestMethod.GET)
+	@RequestMapping(value = "global/testers/{statuses}", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<Long, String> getTesters(@PathVariable List<String> requestStatus) {
-		return automationRequestFinderService.getTcLastModifiedByForAutomationRequests(requestStatus);
+	public Map<Long, String> getTesters(@PathVariable List<String> statuses) {
+		return automationRequestFinderService.getTcLastModifiedByForAutomationRequests(statuses);
+	}
+
+	@RequestMapping(value = "traitment/testers/{statuses}", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<Long, String> getTestersForTraitment(@PathVariable List<String> statuses) {
+		return automationRequestFinderService.getTcLastModifiedByToAutomationRequestNotAssigned(statuses);
 	}
 
 	@RequestMapping(value = "assignee", method = RequestMethod.GET)

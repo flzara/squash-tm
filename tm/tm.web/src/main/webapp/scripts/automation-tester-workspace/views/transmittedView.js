@@ -351,7 +351,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     if (requestIds.length === 0 || requestIds === undefined) {
                         notification.showWarning(translator.get("automation.notification.selectedRow.none"));
                     } else {
-                        self.changeStatus(requestIds, "TO_VALIDATE", domtable);
+                        self.changeStatus(requestIds, "WORK_IN_PROGRESS", domtable);
 
                     }
                     self.storage.remove(self.key);

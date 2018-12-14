@@ -80,7 +80,7 @@ public interface CustomAutomationRequestDao {
 
 	/**
 	 * Will retrieve a list of automated requests, paged filtered and sorted, where
-	 * the status of automation request is 'TRANSMITTED', 'WORK_IN_PROGRESS' or 'EXECUTABLE'
+	 * the status of automation request is 'TRANSMITTED', 'WORK_IN_PROGRESS' or 'AUTOMATED'
 	 * @param pageable
 	 * @param columnFiltering
 	 * @param inProjectIds list of project ids the current user can read
@@ -90,7 +90,7 @@ public interface CustomAutomationRequestDao {
 
 	/**
 	 * Will retrieve a list of automated requests, paged filtered and sorted, where
-	 * the status of automation request is 'VALID'
+	 * the status of automation request is 'READY_TO_TRANSMIT'
 	 * @param pageable
 	 * @param filtering
 	 * @param inProjectIds list of project ids the current user can read
@@ -100,7 +100,7 @@ public interface CustomAutomationRequestDao {
 
 	/**
 	 * Will retrieve a list of automated requests, paged filtered and sorted, where
-	 * the status of automation request is 'TO_VALIDATE'
+	 * the status of automation request is 'WORK_IN_PROGRESS'
 	 * @param pageable
 	 * @param filtering
 	 * @param inProjectIds list of project ids the current user can read
@@ -151,5 +151,7 @@ public interface CustomAutomationRequestDao {
 	void assignedToRequestIds(List<Long> reqIds, User user);
 
 	void updateAutomationRequestStatus(List<Long> reqIds, AutomationRequestStatus requestStatus, List<AutomationRequestStatus> initialStatus);
+
+	Map<Long, String> getTcLastModifiedByToAutomationRequestNotAssigned(List<String> requestStatus);
 
 }

@@ -32,7 +32,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 var self = this;
                 var datatableSettings = {
                     sAjaxSource: squashtm.app.contextRoot + "automation-workspace/automation-requests/global",
-                    "aaSorting": [[8, 'asc'], [7, 'desc'], [10, 'asc']],
+                    "aaSorting": [[8, 'desc'], [7, 'desc'], [10, 'desc']],
                     "bDeferRender": true,
                     "iDisplayLength": 25,
                     "aoColumnDefs": [{
@@ -518,39 +518,26 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 return ids;
             },
 
-            checkScriptAutoIsPresent: function (table) {
-                var selectedRows = table.getSelectedRows();
-                var datas = table.fnGetData();
-                var scripts = [];
-                $(selectedRows).each(function (index, data) {
-                    var idx = data._DT_RowIndex;
-                    var script = datas[idx].script;
-                    if (script == null) {
-                        scripts.push(script);
-                    }
-
-                })
-                return scripts;
-            },
-
-            assigned: function (table, url) {
-                var self = this;
+            checkScriptAutoIsAbsent: function (table) {
                 var requestIds = this.getSelectedRequestIds(table);
+                var count = 0;
                 if (requestIds.length === 0 || requestIds === undefined) {
                     notification.showWarning(translator.get("automation.notification.selectedRow.none"));
                 } else {
-
-                    $.ajax({
-                        url: squashtm.app.contextRoot + url + requestIds,
-                        method: 'POST',
-                        data: {
-                            "id": "automation-request-status",
-                            "value": "WORK_IN_PROGRESS"
+                    var selectedRows = table.getSelectedRows();
+                    var datas = table.fnGetData();
+                    
+                    $(selectedRows).each(function (index, data) {
+                        var idx = data._DT_RowIndex;
+                        var script = datas[idx].script;
+                        var format = datas[idx].format;
+                        if ((script == null && "gherkin" !== format.toLowerCase()) || (script === "no-test-automation-project" && "gherkin" !== format.toLowerCase())) {
+                            count = count + 1;
                         }
-                    }).success(function () {
-                        table.refresh();
-                    });
+                    })
                 }
+
+                return count;
             },
 
             updateStatus: function(table, status) {
@@ -571,33 +558,67 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     });
                 }
                 this.storage.remove(this.key);
+                this.deselectAll(table);
+            },
+
+            actions: function (table, url) {
+                var requestIds = this.getSelectedRequestIds(table);
+
+                if (requestIds.length === 0 || requestIds === undefined) {
+                    notification.showWarning(translator.get("automation.notification.selectedRow.none"));
+                } else {
+                    $.ajax({
+                        url: squashtm.app.contextRoot + url,
+                        method: 'POST',
+                        data: {
+                            "reqIds": requestIds
+                        }
+                    }).success(function () {
+                        table.refresh();
+                    });
+                }
             },
 
             bindButtons: function () {
                 var self = this;
                 var domtable = $("#automation-table").squashTable();
+
                 $("#filter-global-button").on("click", function () {
                     domtable.toggleFiltering();
                 });
+
                 $("#select-global-button").on("click", function () {
                     self.selectAll(domtable);
                 });
+
                 $("#deselect-global-button").on("click", function () {
                     self.deselectAll(domtable);
                 });
-                $("#assigned-global-button").on("click", function () {
-                    self.assigned(domtable, "automation-requests/");
-                    self.deselectAll(domtable);
-                });
+                
                 $("#workinprogress-automation-button").on("click", function() {
-                    self.updateStatus(domtable, "WORK_IN_PROGRESS");
+                    self.updateStatus(domtable, "AUTOMATION_IN_PROGRESS");
                 });
+
                 $("#automated-automation-button").on("click", function() {
-                    self.updateStatus(domtable, "EXECUTABLE");
-                })
+                    var count = self.checkScriptAutoIsAbsent(domtable);
+                    if(count != 0) {
+                        notification.showWarning(translator.get("automation.notification.script.none"));
+                    } else {
+                        self.updateStatus(domtable, "AUTOMATED");
+                    }
+                });
+
                 $("#rejected-automation-button").on("click", function() {
-                    self.updateStatus(domtable, "OBSOLETE");
-                })
+                    self.updateStatus(domtable, "REJECTED");
+                });
+
+                $("#assigned-automation-button").on("click", function() {
+                    self.actions(domtable, "automation-requests/assignee");
+                });
+
+                $("#unassigned-automation-button").on("click", function() {
+                    self.actions(domtable, "automation-requests/unassigned");
+                });
             }
 
 

@@ -94,7 +94,7 @@ public interface AutomationRequestFinderService {
 
 	/**
 	 * Given the specified pagination, sorting and filtering, retrieve the corresponding
-	 * requests, restricted to the automated requests with these status : TRANSMITTED, WORK_IN_PROGRESS, EXECUTABLE
+	 * requests, restricted to the automated requests with these status : TRANSMITTED, WORK_IN_PROGRESS, AUTOMATED
 	 *
 	 * @param pageable
 	 * @param filtering
@@ -149,5 +149,7 @@ public interface AutomationRequestFinderService {
 	 * @return
 	 */
 	Integer countAutomationRequestValid();
+
+	Map<Long, String> getTcLastModifiedByToAutomationRequestNotAssigned(List<String> requestStatus);
 
 }

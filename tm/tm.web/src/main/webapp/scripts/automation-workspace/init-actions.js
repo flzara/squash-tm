@@ -35,17 +35,17 @@ define(['jquery', 'workspace.contextual-content', 'workspace.routing'],
 			$("#tf-automation-tabs").find("a").on("click", function () {
 				var model = squashtm.app;
 				var url = model.contextRoot;
-				var requestStatus = [];
 				var href = $(this).attr("href");
+				var allStatus = ["AUTOMATION_IN_PROGRESS", "READY_TO_TRANSMIT", "TRANSMITTED", "WORK_IN_PROGRESS", "AUTOMATED", "SUSPENDED", "REJECTED"];
 				if (href === "#assigned") {
-					requestStatus = ["WORK_IN_PROGRESS"];
+					requestStatus = allStatus;
 					url = url + "automation-workspace/assigned/testers/";
 				} else if (href === "#traitment") {
-					requestStatus = ["TRANSMITTED"];
-					url = url + "automation-workspace/testers/";
+					requestStatus = ["TRANSMITTED", "AUTOMATION_IN_PROGRESS"];
+					url = url + "automation-workspace/traitment/testers/";
 				} else {
-					requestStatus = ["TRANSMITTED", "WORK_IN_PROGRESS", "EXECUTABLE"];
-					url = url + "automation-workspace/testers/";
+					requestStatus = allStatus;
+					url = url + "automation-workspace/global/testers/";
 				}
 				var self = this;
 				$.ajax({

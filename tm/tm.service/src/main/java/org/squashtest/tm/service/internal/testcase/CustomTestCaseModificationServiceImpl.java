@@ -25,7 +25,6 @@ import java.util.Optional;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
-import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -902,7 +901,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		AutomatedTest newTest = null;
 
 		if((AutomationRequestStatus.WORK_IN_PROGRESS.equals(automationRequest.getRequestStatus())
-			|| AutomationRequestStatus.EXECUTABLE.equals(automationRequest.getRequestStatus()))
+			|| AutomationRequestStatus.AUTOMATED.equals(automationRequest.getRequestStatus()))
 			&& automationRequest.getProject().isAllowAutomationWorkflow()
 			&& TestCaseAutomatable.Y.equals(automationRequest.getTestCase().getAutomatable())) {
 			PermissionsUtils.checkPermission(permissionEvaluationService, Collections.singletonList(automationRequest.getId()), WRITE_AS_AUTOMATION, AutomationRequest.class.getName());
@@ -932,7 +931,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		Collection<TestAutomationProject> taProjects = null;
 
 		if((AutomationRequestStatus.WORK_IN_PROGRESS.equals(automationRequest.getRequestStatus())
-			|| AutomationRequestStatus.EXECUTABLE.equals(automationRequest.getRequestStatus()))
+			|| AutomationRequestStatus.AUTOMATED.equals(automationRequest.getRequestStatus()))
 			&& automationRequest.getProject().isAllowAutomationWorkflow()
 			&& TestCaseAutomatable.Y.equals(automationRequest.getTestCase().getAutomatable())) {
 			PermissionsUtils.checkPermission(permissionEvaluationService, Collections.singletonList(automationRequest.getId()), WRITE_AS_AUTOMATION, AutomationRequest.class.getName());

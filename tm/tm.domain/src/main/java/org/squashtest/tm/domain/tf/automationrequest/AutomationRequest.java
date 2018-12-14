@@ -49,7 +49,7 @@ public class AutomationRequest implements Identified {
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = EnumBridge.class)
 	@SortableField
-	private AutomationRequestStatus requestStatus = AutomationRequestStatus.TO_VALIDATE;
+	private AutomationRequestStatus requestStatus = AutomationRequestStatus.WORK_IN_PROGRESS;
 
 	@Column(name = "TRANSMITTED_ON")
 	@Temporal(TemporalType.TIMESTAMP)

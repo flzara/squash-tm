@@ -317,7 +317,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", "
                             method: 'POST',
                             data: {
                                 "id": "automation-request-status",
-                                "value": "VALID"
+                                "value": "READY_TO_TRANSMIT"
                             }
                         }).success(function () {
                             domtable.refresh();

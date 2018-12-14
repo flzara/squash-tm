@@ -80,7 +80,7 @@ public class AutomationTesterWorkspaceController {
 		Map<String, String> tcKinds =
 			Arrays.stream(TestCaseKind.values()).collect(Collectors.toMap(Enum::toString, e -> messageSource.internationalize(e.getI18nKey(), locale)));
 		Map<String, String> autoReqStatusesValidateView =
-			Stream.of(AutomationRequestStatus.OBSOLETE, AutomationRequestStatus.TO_VALIDATE, AutomationRequestStatus.NOT_AUTOMATABLE)
+			Stream.of(AutomationRequestStatus.SUSPENDED, AutomationRequestStatus.WORK_IN_PROGRESS, AutomationRequestStatus.REJECTED)
 				.collect(Collectors.toMap(Enum::toString, e -> messageSource.internationalize(e.getI18nKey(), locale)));
 		Map<String, String> autoReqStatusesGlobalView =
 			Stream.of(AutomationRequestStatus.values())
@@ -88,9 +88,9 @@ public class AutomationTesterWorkspaceController {
 		model.addAttribute("autoReqStatusesValidateView", autoReqStatusesValidateView);
 		model.addAttribute("autoReqStatusesGlobalView", autoReqStatusesGlobalView);
 		model.addAttribute("tcKinds", tcKinds);
-		model.addAttribute("testerTransmitted", automationRequestFinderService.getTcLastModifiedByForAutomationRequests(Collections.singletonList(AutomationRequestStatus.VALID.name())));
+		model.addAttribute("testerTransmitted", automationRequestFinderService.getTcLastModifiedByForAutomationRequests(Collections.singletonList(AutomationRequestStatus.READY_TO_TRANSMIT.name())));
 		model.addAttribute("testerValidate",
-			automationRequestFinderService.getTcLastModifiedByForAutomationRequests(Collections.singletonList(AutomationRequestStatus.TO_VALIDATE.name())));
+			automationRequestFinderService.getTcLastModifiedByForAutomationRequests(Collections.singletonList(AutomationRequestStatus.WORK_IN_PROGRESS.name())));
 
 		List<String> allStatus = new ArrayList<>();
 		for (AutomationRequestStatus automationRequestStatus: AutomationRequestStatus.values()) {

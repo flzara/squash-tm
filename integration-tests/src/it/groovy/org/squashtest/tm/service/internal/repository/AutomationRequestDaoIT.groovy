@@ -57,7 +57,7 @@ class AutomationRequestDaoIT extends DbunitDaoSpecification{
 	def "should retrieve a request by test case id"(){
 
 		expect :
-			requestDao.findByTestCaseId(-4L).requestStatus == AutomationRequestStatus.VALID
+			requestDao.findByTestCaseId(-4L).requestStatus == AutomationRequestStatus.READY_TO_TRANSMIT
 
 
 	}
@@ -211,7 +211,7 @@ class AutomationRequestDaoIT extends DbunitDaoSpecification{
 
 		and :
 		ColumnFiltering filter = new SimpleColumnFiltering()
-			.addFilter("requestStatus", "VALID")
+			.addFilter("requestStatus", "READY_TO_TRANSMIT")
 
 		when :
 		Page<AutomationRequest> page = requestDao.findAll(pageable, filter, [-20L, -10L])

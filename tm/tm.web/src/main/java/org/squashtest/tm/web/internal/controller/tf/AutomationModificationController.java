@@ -62,8 +62,8 @@ public class AutomationModificationController {
 	}
 
 	@ResponseBody
-	@RequestMapping(method = RequestMethod.POST, value="unassigned/{autoReqIds}")
-	public void unassignedUser(@PathVariable(value="autoReqIds") List<Long> autoReqIds) {
+	@RequestMapping(method = RequestMethod.POST, value="/unassigned", params = {"reqIds[]"})
+	public void unassignedUser(@RequestParam("reqIds[]") List<Long> autoReqIds) {
 		automationRequestModificationService.unassignRequests(autoReqIds);
 	}
 

@@ -21,31 +21,31 @@
 
 -->
 <div th:fragment="automation-global-view">
-  <div style="margin-bottom: 40px">
-    <span style="font-style: italic; font-weight: bold; font-size:15px" th:text="#{automation.message.global}"></span>
+  <div style="margin-bottom: 60px">
+    <div style="margin-bottom:20px">
+      <span style="font-style: italic; font-size:15px;color: gray;" th:text="#{automation.message.global}"></span>
+      <button id="automated-automation-button" class="tf-lg green" th:title="#{automation.label.automated}" th:text="#{automation.label.automated}"
+        style="float:right"></button>
+    </div>
     <div style="float: right">
-      <button id="rejected-automation-button" class="sq-btn" th:title="#{automation.label.rejected}" th:text="#{automation.label.rejected}"
-      style="float:right"></button>
-    <button id="workinprogress-automation-button" class="sq-btn" th:title="#{automation.label.work_in_progress}" th:text="#{automation.label.work_in_progress}"
-      style="float:right"></button>
-    <button id="automated-automation-button" class="sq-btn" th:title="#{automation.label.automated}" th:text="#{automation.label.automated}"
-      style="float:right"></button>
+      <button id="workinprogress-automation-button" class="tf green" th:title="#{automation.label.work_in_progress}"
+        th:text="#{automation.label.work_in_progress}"></button>
+      <button id="rejected-automation-button" class="tf green" th:title="#{automation.label.rejected}" th:text="#{automation.label.rejected}"></button>
+      <button id="unassigned-automation-button" class="tf gray" th:title="#{automation.label.disaseembled}" th:text="#{automation.label.disaseembled}"></button>
+      <button id="assigned-automation-button" class="tf gray" th:title="#{automation.label.assigned.title}" th:text="#{automation.label.assigned}"></button>
     </div>
   </div>
 
   <div class="left btn-toolbar">
     <div class="btn-group">
-      <button id="filter-global-button" class="sq-btn">
-        <span class="ui-icon ui-icon-refresh"></span>
+      <button id="filter-global-button" class="tf green">
         <span th:text="#{label.Filter}"></span>
       </button>
     </div>
   </div>
   <div class="right btn-toolbar">
-    <div>
-      <span th:text="#{automation.label.selected.rows}">Nombre de lignes actives:</span><span id="selectedRows">0</span>
-    </div>
     <div class="btn-group" style="margin-top: 5px">
+      <span th:text="#{automation.label.selected.rows}">Nombre de lignes actives:</span><span id="selectedRows">0</span>
       <button id="select-global-button" class="tf-sm" th:title="#{label.SelectAllForSelection}" th:text="#{label.SelectAllForSelection}"></button>
       <button id="deselect-global-button" class="tf-sm" th:title="#{label.DeselectAll}" th:text="#{label.DeselectAll}"></button>
     </div>

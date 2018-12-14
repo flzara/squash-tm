@@ -47,7 +47,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
                 var datatableSettings = {
                     sAjaxSource: squashtm.app.contextRoot + "automation-workspace/automation-requests",
-                    "aaSorting": [[7, 'desc'], [8, 'asc']],
+                    "aaSorting": [[8, 'desc'], [7, 'desc'], [9, 'desc']],
                     "bDeferRender": true,
                     "iDisplayLength": 25,
                     "aoColumnDefs": [{
@@ -526,8 +526,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     var idx = data._DT_RowIndex;
                     var script = datas[idx].script;
                     var format = datas[idx].format;
-                    console.log(script == null && "gherkin" !== format.toLowerCase())
-                    if (script == null && "gherkin" !== format.toLowerCase()) {
+                    if ((script == null && "gherkin" !== format.toLowerCase()) || (script === "no-test-automation-project" && "gherkin" !== format.toLowerCase())) {
                         count = count + 1;
                     }
 
@@ -568,10 +567,10 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     self.deselectAll(domtable);
                 });
                 $("#workinprogress-automation-button").on("click", function () {
-                    self.updateStatus(domtable, "WORK_IN_PROGRESS");
+                    self.updateStatus(domtable, "AUTOMATION_IN_PROGRESS");
                 });
                 $("#rejected-automation-button").on("click", function() {
-                    self.updateStatus(domtable, "NOT_AUTOMATABLE");
+                    self.updateStatus(domtable, "REJECTED");
                 })
                 $("#unassigned-automation-button").on("click", function () {
                     var requestIds = self.getSelectedRequestIds(domtable);
@@ -580,13 +579,17 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     } else {
 
                         $.ajax({
-                            url: squashtm.app.contextRoot + 'automation-requests/unassigned/' + requestIds,
-                            method: 'POST'
+                            url: squashtm.app.contextRoot + 'automation-requests/unassigned',
+                            method: 'POST',
+                            data: {
+                                "reqIds": requestIds
+                            }
                         }).success(function () {
                             domtable.refresh();
                         });
                     }
                     self.storage.remove(self.key);
+                    self.deselectAll(domtable);
                 });
                 $("#automated-automation-button").on("click", function () {
                     var requestIds = self.getSelectedRequestIds(domtable);
@@ -601,13 +604,14 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             method: 'POST',
                             data: {
                                 "id": "automation-request-status",
-                                "value": "EXECUTABLE"
+                                "value": "AUTOMATED"
                             }
                         }).success(function () {
                             domtable.refresh();
                         });
                     }
                     self.storage.remove(self.key);
+                    self.deselectAll(domtable);
 
                 });
                 $("#btn-no-assigned").on("click", function () {

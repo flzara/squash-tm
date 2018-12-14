@@ -23,27 +23,23 @@
 <div th:fragment="automation-validate-view">
   <div id="divTable">
     <div style="margin-bottom: 40px">
-      <span style="font-style: italic; font-weight: bold; font-size:15px" th:text="#{automation.message.to_validate}"></span>
+      <span style="font-style: italic; color: gray; font-size:15px" th:text="#{automation.message.to_validate}"></span>
       <div style="float: right">
-        <button id="validate-button" class="tf-lg blue" th:title="#{automation.label.validate}" th:text="#{automation.label.validate}"></button>
+        <button id="validate-button" class="tf green" th:title="#{automation.label.button.validate}" th:text="#{automation.label.button.validate}"></button>
 
       </div>
     </div>
 
     <div class="left btn-toolbar">
       <div class="btn-group">
-        <button id="filter-validate-button" class="sq-btn">
-          <span class="ui-icon ui-icon-refresh"></span>
+        <button id="filter-validate-button" class="tf green">
           <span th:text="#{label.Filter}"></span>
         </button>
       </div>
     </div>
     <div class="right btn-toolbar">
-      <div>
-        <span th:text="#{automation.label.selected.rows}">Nombre de lignes actives:</span><span id="selectedRows">0</span>
-      </div>
       <div class="btn-group" style="margin-top: 5px">
-
+        <span th:text="#{automation.label.selected.rows}">Nombre de lignes actives:</span><span id="selectedRows">0</span>
         <button id="select-validate-button" class="tf-sm" th:title="#{label.SelectAllForSelection}" th:text="#{label.SelectAllForSelection}"></button>
         <button id="deselect-validate-button" class="tf-sm" th:title="#{label.DeselectAll}" th:text="#{label.DeselectAll}"></button>
       </div>
