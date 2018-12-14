@@ -274,7 +274,7 @@
       <column name="AUTOMATION_REQUEST_ID" type="BIGINT" autoIncrement="true">
         <constraints primaryKey="true" nullable="false"/>
       </column>
-      <column name="REQUEST_STATUS" type="VARCHAR(20)" defaultValue="WORK_IN_PROGRESS">
+      <column name="REQUEST_STATUS" type="VARCHAR(25)" defaultValue="WORK_IN_PROGRESS">
         <constraints nullable="false"/>
       </column>
       <column name="TRANSMITTED_ON" type="DATETIME"/>
