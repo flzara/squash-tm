@@ -62,7 +62,7 @@ define([ "jquery", "backbone", "underscore", "squash.translator", "squash.config
 									'value': 'TRANSMITTED'
 								}
 							}).success(function() {
-								$('#automation-request-status').text(translator.get('automation-request.request_status.TRANSMITTED'))
+								$('#automation-request-status').text(translator.get('automation-request.request_status.TRANSMITTED'));
 							});
 						});
 
