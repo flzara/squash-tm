@@ -122,7 +122,9 @@ public class AutomatedTestManagerServiceImpl implements UnsecuredAutomatedTestMa
 			TestAutomationProjectContent fromScm = maybeFromScm.get();
 
 			// lookup in the "fromServers" list which project is referenced there
-			Optional<TestAutomationProjectContent> maybeFromServer = fromServers.stream().filter(proj -> proj == fromScm).findFirst();
+			Optional<TestAutomationProjectContent> maybeFromServer = fromServers.stream()
+					.filter(proj -> proj.getProject().equals(fromScm.getProject()))
+					.findFirst();
 
 			if (maybeFromServer.isPresent()){
 				TestAutomationProjectContent fromServer = maybeFromServer.get();

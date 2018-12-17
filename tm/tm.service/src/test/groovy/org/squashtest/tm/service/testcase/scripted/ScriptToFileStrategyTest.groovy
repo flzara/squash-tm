@@ -21,7 +21,7 @@
 package org.squashtest.tm.service.testcase.scripted
 
 
-import static org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage.GHERKIN
+import static org.squashtest.tm.domain.testcase.TestCaseKind.GHERKIN
 import static org.squashtest.tm.service.testcase.scripted.ScriptToFileStrategy.GHERKIN_STRATEGY
 import org.squashtest.tm.domain.testcase.TestCase
 import spock.lang.Specification
@@ -30,13 +30,13 @@ import spock.lang.Unroll
 class ScriptToFileStrategyTest extends Specification{
 
 
-	@Unroll("should select strategy '#strategy' for scripting language '#lang'")
+	@Unroll("should select strategy '#strategy' for test case kind '#kind'")
 	def "should select strategy"(){
 		expect :
-			ScriptToFileStrategy.strategyFor(lang) == strategy
+			ScriptToFileStrategy.strategyFor(kind) == strategy
 
 		where :
-		lang		|	strategy
+		kind		|	strategy
 		GHERKIN		|	GHERKIN_STRATEGY
 	}
 

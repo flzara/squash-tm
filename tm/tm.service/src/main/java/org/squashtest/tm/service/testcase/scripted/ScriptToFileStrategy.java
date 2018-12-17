@@ -21,8 +21,11 @@
 package org.squashtest.tm.service.testcase.scripted;
 
 import org.apache.commons.lang3.StringUtils;
+import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseKind;
+
 
 /**
  * These are the strategies that comes into play when a ScriptedTestCase is dumped to a file.
@@ -32,8 +35,25 @@ public enum ScriptToFileStrategy {
 
 	GHERKIN_STRATEGY(){
 		@Override
+		public TestCaseKind getHandledKind() {
+			return TestCaseKind.GHERKIN;
+		}
+
+		@Override
 		public String getExtension(){
 			return "feature";
+		}
+
+		@Override
+		public String getWritableFileContent(TestCase testCase) {
+			if (! canHandle(testCase)){
+				throw new IllegalArgumentException("This strategy handles Gherkin test cases, but ");
+			}
+
+			ScriptedTestCaseExtender extender = testCase.getScriptedTestCaseExtender();
+
+			// For now, no metadata are defined so we just return the script as is
+			return extender.getScript();
 		}
 	};
 
@@ -51,18 +71,66 @@ public enum ScriptToFileStrategy {
 	/**
 	 * Selects the correct instance of Strategy for the given language
 	 *
-	 * @param language
+	 * @param kind
 	 * @return
 	 */
-	public static ScriptToFileStrategy strategyFor(ScriptedTestCaseLanguage language){
+	public static ScriptToFileStrategy strategyFor(TestCaseKind kind){
 		ScriptToFileStrategy strategy = null;
-		switch(language){
+		switch(kind){
 			case GHERKIN: strategy = GHERKIN_STRATEGY; break;
-			default : throw new IllegalArgumentException("unimplemented strategy for script language : '"+language+"'");
+			default : throw new IllegalArgumentException("unimplemented script dumping strategy for test case kind : '"+kind+"'");
 		}
 		return strategy;
 	}
 
+
+
+	 // ---- language-specific methods -------
+
+	/**
+	 * Returns the kind of TestCase this strategy is for.
+	 *
+	 * @return
+	 */
+	public abstract TestCaseKind getHandledKind();
+
+
+	/**
+	 * Returns the extension usually associated to files written in this language.
+	 *
+	 * @return
+	 */
+	public abstract String getExtension();
+
+
+	/**
+	 * <p>Returns the content of the script, possibly with additional metadata (eg comments)
+	 * for Squash TM or Squash TA use.</p>
+	 *
+	 * <p>Throws an IllegalArgumentException if the TestCase is not a scripted test case, or if this
+	 * strategy is not suitable for that test case.</p>
+	 * @param testCase
+	 * @return
+	 */
+	public abstract String getWritableFileContent(TestCase testCase);
+
+
+	// --------- common methods --------------
+
+
+	/**
+	 * Returns whether this strategy can handle that test case (ie, the test case
+	 * is a scripted test case and corresponds to the scripting language).
+	 * Is equivalent to (this == ScriptToFileStrategy.strategyFor(testCase))
+	 *
+	 * @param testCase
+	 * @return
+	 */
+	public boolean canHandle(TestCase testCase){
+		TestCaseKind kind = testCase.getKind();
+		return testCase.isScripted() &&
+				   kind == getHandledKind();
+	}
 
 	/**
 	 * Creates the String pattern that helps retrieving a file in a repository.
@@ -81,13 +149,6 @@ public enum ScriptToFileStrategy {
 		return String.format("^%d(_.*)?\\.%s", id, extension);
 
 	}
-
-	/**
-	 * Returns the extension usually associated to files written in this language.
-	 *
-	 * @return
-	 */
-	public abstract String getExtension();
 
 	/**
 	 * Generates a nominal filename for dumping a scripted test case to filesystem
