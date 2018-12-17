@@ -26,10 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -198,6 +195,7 @@ public class AutomatedTestManagerServiceImpl implements UnsecuredAutomatedTestMa
 		// 2 : locate the first Gherkin-able project
 		Optional<TestAutomationProject> maybeGherkinProject = projects.stream()
 																  .filter(TestAutomationProject::isCanRunGherkin)
+																  .sorted(Comparator.comparing(TestAutomationProject::getLabel))
 																  .findFirst();
 
 		// go if there is at least one repo and one gherkin project

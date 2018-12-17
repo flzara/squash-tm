@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.testcase.scripted;
 
-import com.google.common.base.Functions;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.apache.commons.io.FileUtils;
@@ -31,36 +30,52 @@ import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.QProject;
 import org.squashtest.tm.domain.scm.QScmRepository;
 import org.squashtest.tm.domain.scm.ScmRepository;
+import org.squashtest.tm.domain.testautomation.AutomatedTest;
+import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testcase.*;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.domain.tf.automationrequest.QAutomationRequest;
+import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService;
 import org.squashtest.tm.service.internal.tf.event.AutomationRequestStatusChangeEvent;
+import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.service.testcase.scripted.ScriptToFileStrategy;
 
 import static com.querydsl.core.group.GroupBy.*;
 
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
 
 @Component
-public class ScriptedTestCaseEventListener implements ApplicationListener<AutomationRequestStatusChangeEvent> {
+public class ScriptedTestCaseEventListener {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ScriptedTestCaseEventListener.class);
 
+	private static final String SPEL_ARSTATUS = "T(org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus)";
+
 	@PersistenceContext
 	private EntityManager em;
+
+
+	@Inject
+	private TestCaseModificationService tcService;
 
 
 	/**
@@ -70,39 +85,104 @@ public class ScriptedTestCaseEventListener implements ApplicationListener<Automa
 	 *
 	 * @param event
 	 */
-	@Override
-	public void onApplicationEvent(AutomationRequestStatusChangeEvent event) {
+	@Order(10)	// must run before the handler that autoassociates the scripts
+	@EventListener(classes = {AutomationRequestStatusChangeEvent.class}, condition = "#event.newStatus == " + SPEL_ARSTATUS + ".TRANSMITTED")
+	public void commitWhenTransmitted(AutomationRequestStatusChangeEvent event) {
 
-		LOGGER.debug("intercepted AutomationRequestStatusChangeEvent");
+		LOGGER.debug("request status changed : committing test scripts to repositories if needed");
 		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace("new status : '{}' for request ids : '{}'", event.getNewStatus(), event.getAutomationRequestIds());
+			LOGGER.trace("changed request ids : '{}'", event.getAutomationRequestIds());
 		}
 
-		if (newStatusRequiresCommit(event.getNewStatus())){
+		Collection<Long> requestIds = event.getAutomationRequestIds();
 
-			LOGGER.debug("committing test scripts to repositories if needed");
+		Map<ScmRepository, Set<TestCaseAndScript>> scriptsGroupedByScm = findScriptsGroupedByRepoFromRequestId(requestIds);
 
-			Collection<Long> requestIds = event.getAutomationRequestIds();
+		for (Map.Entry<ScmRepository, Set<TestCaseAndScript>> entry : scriptsGroupedByScm.entrySet()){
 
-			Map<ScmRepository, Set<TestCaseAndScript>> scriptsGroupedByScm = findScriptsGroupedByRepoFromRequestId(requestIds);
+			ScmRepository scm = entry.getKey();
+			Set<TestCaseAndScript> tcAndScripts = entry.getValue();
 
-			for (Map.Entry<ScmRepository, Set<TestCaseAndScript>> entry : scriptsGroupedByScm.entrySet()){
-
-				ScmRepository scm = entry.getKey();
-				Set<TestCaseAndScript> tcAndScripts = entry.getValue();
-
-				if (LOGGER.isTraceEnabled()) {
-					LOGGER.trace("committing {} files to repository '{}'", tcAndScripts.size(), scm.getName());
-				}
-
-				exportToScm(scm, tcAndScripts);
+			if (LOGGER.isTraceEnabled()) {
+				LOGGER.trace("committing {} files to repository '{}'", tcAndScripts.size(), scm.getName());
 			}
 
-		}
-		else{
-			LOGGER.debug("no action required");
+			exportToScm(scm, tcAndScripts);
 		}
 
+	}
+
+	/**
+	 * Autobind a test case to an automated test for certain request transitions (if the automation workflow is on),
+	 * if none is bound already, and the test case is a scripted test case.
+	 *
+	 * @param event
+	 */
+	// TODO : hack and ship, refactor asap once shipped
+	@Order(100)
+	@EventListener(classes = {AutomationRequestStatusChangeEvent.class}, condition = "#event.newStatus == " + SPEL_ARSTATUS + ".TRANSMITTED or " +
+																					 "#event.newStatus == " + SPEL_ARSTATUS + ".AUTOMATED")
+	public void associateWhenAvailable(AutomationRequestStatusChangeEvent event){
+
+		LOGGER.debug("request status changed : autoassociating test scripts if needed and possible");
+		if (LOGGER.isTraceEnabled()){
+			LOGGER.trace("changed request ids : '{}'", event.getAutomationRequestIds());
+		}
+
+		Collection<Long> requestIds = event.getAutomationRequestIds();
+
+		Map<ScmRepository, Set<TestCaseAndScript>> scriptsGroupedByScm = findScriptsGroupedByRepoFromRequestId(requestIds);
+
+		for (Map.Entry<ScmRepository, Set<TestCaseAndScript>> entry : scriptsGroupedByScm.entrySet()){
+
+			ScmRepository scm = entry.getKey();
+
+			doWithLock(scm, () -> {
+
+				Set<TestCaseAndScript> tcAndScripts = entry.getValue();
+
+				TestListing listing = new TestListing(scm);
+
+				tcAndScripts.forEach( tcas -> {
+
+					TestCase testCase = tcas.getTestCase();
+
+					// look for a Gherkin-able project
+					Optional<TestAutomationProject> maybeGherkin = testCase.getProject()
+																  .getTestAutomationProjects()
+																  .stream()
+																  .filter(TestAutomationProject::isCanRunGherkin)
+																  .sorted(Comparator.comparing(TestAutomationProject::getLabel))
+																  .findFirst();
+
+					// should the autobind be attempted on this test case that has no automated test, is of kind gherkin with a suitable automation project ?
+					if (testCase.getKind() == TestCaseKind.GHERKIN &&
+						maybeGherkin.isPresent() &&
+							(! testCase.isAutomated())){
+
+						TestAutomationProject gherkinProject = maybeGherkin.get();
+
+						Optional<File> maybeFile = listing.locateTest(tcas);
+
+						if (maybeFile.isPresent()){
+							File testFile = maybeFile.get();
+
+							// make that an automated test. First we need to relativize the path
+							Path scmPath = Paths.get(scm.getRepositoryPath());
+							Path testPath = Paths.get(testFile.getAbsolutePath());
+
+							String relativized = scmPath.relativize(testPath).toString();
+							String normalizedName =  FilenameUtils.normalizeNoEndSeparator(relativized, true);
+
+							tcService.bindAutomatedTest(testCase.getId(), gherkinProject.getId(), normalizedName);
+
+						}
+
+					}
+
+				});
+			});
+		}
 
 	}
 

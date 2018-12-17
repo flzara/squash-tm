@@ -45,7 +45,7 @@ public class TestAutomationProjectContent {
 	public TestAutomationProjectContent(TestAutomationProject project, Exception knownProblem) {
 		super();
 		this.project = project;
-		this.tests = Collections.emptyList();
+		this.tests = new ArrayList<>();
 		this.knownProblem = knownProblem;
 	}
 
