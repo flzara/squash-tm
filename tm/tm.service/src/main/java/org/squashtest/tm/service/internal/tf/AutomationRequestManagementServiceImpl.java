@@ -224,7 +224,7 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 				break;
 			case AUTOMATED:
 				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_AUTOMATION, AutomationRequest.class.getName());
-				requestDao.updateAutomationRequestStatus(reqIds, AUTOMATED, Arrays.asList(TRANSMITTED, WORK_IN_PROGRESS));
+				requestDao.updateAutomationRequestStatus(reqIds, AUTOMATED, Arrays.asList(TRANSMITTED, AUTOMATION_IN_PROGRESS));
 				break;
 			case TRANSMITTED:
 				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_FUNCTIONAL, AutomationRequest.class.getName());

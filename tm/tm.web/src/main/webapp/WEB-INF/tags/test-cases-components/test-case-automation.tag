@@ -27,6 +27,7 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="tc" tagdir="/WEB-INF/tags/test-cases-components" %>
 <%@ taglib prefix="hu" uri="http://org.squashtest.tm/taglib/html-utils" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 
 <%@ attribute name="testCase" required="true" type="java.lang.Object" description="the testcase" %>
@@ -35,6 +36,7 @@
 <c:set var="toAutomate" 	value="${(testCase.automatable == 'Y') ? 'checked=\"checked\"' : ''}" />
 <c:set var="toNotAutomate" 	value="${(testCase.automatable == 'N') ? 'checked=\"checked\"' : ''}" />
 <c:set var="requestStatus" 	value="${(testCase.automationRequest != null) ? testCase.automationRequest.requestStatus.getI18nKey() : 'automation-request.request_status.WORK_IN_PROGRESS'}" />
+<c:set var="canTransmit"    value="hasRole('ROLE_TF_FUNCTIONAL_TESTER') or hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')" />
 
 <c:url var="testCaseUrl" value="/test-cases/${testCase.id}" />
 
@@ -80,11 +82,12 @@
 				<span id="automation-request-status">${ automReqStatusLabel }</span>
 			</div>
 		</div>
-
-		<div class="display-table-row test-case-automation-request-block">
-			<input type="button" value="${transmitLabel}"  title="${transmitLabel}"
-				id="transmit-test-case-autom-request-button" class="sq-btn" />
-		</div>
+		<sec:authorize access="${canTransmit}">
+			<div class="display-table-row test-case-automation-request-block">
+				<input type="button" value="${transmitLabel}"  title="${transmitLabel}"
+					id="transmit-test-case-autom-request-button" class="sq-btn" />
+			</div>
+		</sec:authorize>
 	</div>
 	</jsp:attribute>
 </comp:toggle-panel>
