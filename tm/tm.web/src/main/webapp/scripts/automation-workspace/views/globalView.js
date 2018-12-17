@@ -32,7 +32,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 var self = this;
                 var datatableSettings = {
                     sAjaxSource: squashtm.app.contextRoot + "automation-workspace/automation-requests/global",
-                    "aaSorting": [[8, 'desc'], [7, 'desc'], [10, 'desc']],
+                    "aaSorting": [[8, 'asc'], [7, 'desc'], [10, 'desc']],
                     "bDeferRender": true,
                     "iDisplayLength": 25,
                     "aoColumnDefs": [{
@@ -209,8 +209,8 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         var entityId = data["entity-id"];
                         var url = squashtm.app.contextRoot + 'automation-requests/' + entityId + '/tests';
 
-                        if ((data['status'] === squashtm.app.autoReqStatuses['WORK_IN_PROGRESS'] || data['status'] === squashtm.app.autoReqStatuses['EXECUTABLE'])
-                            && data['script'] !== 'no-test-automation-project') {
+                        if ((data['status'] === squashtm.app.autoReqStatuses['AUTOMATION_IN_PROGRESS'] || data['status'] === squashtm.app.autoReqStatuses['AUTOMATED'])
+                            && data['script'] !== '-') {
                             cell.editable(url, editable);
                             cell.css({ "font-style": "italic" });
 
@@ -519,7 +519,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 } else {
                     var selectedRows = table.getSelectedRows();
                     var datas = table.fnGetData();
-                    
+
                     $(selectedRows).each(function (index, data) {
                         var idx = data._DT_RowIndex;
                         var script = datas[idx]["script"];
@@ -587,7 +587,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 $("#deselect-global-button").on("click", function () {
                     self.deselectAll(domtable);
                 });
-                
+
                 $("#progress-automation-button").on("click", function() {
                     self.updateStatus(domtable, "AUTOMATION_IN_PROGRESS");
                 });

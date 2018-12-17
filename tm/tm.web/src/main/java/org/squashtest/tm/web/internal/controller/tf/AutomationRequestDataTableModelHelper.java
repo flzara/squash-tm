@@ -24,6 +24,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -34,13 +35,19 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import static org.squashtest.tm.domain.testcase.TestCaseKind.GHERKIN;
+import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD;
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.AUTOMATION_IN_PROGRESS;
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.AUTOMATED;
+
+
 @Component
 public class AutomationRequestDataTableModelHelper extends DataTableModelBuilder<AutomationRequest> {
 	private InternationalizationHelper messageSource;
 	private Locale locale = LocaleContextHolder.getLocale();
 	private PermissionEvaluationService permissionEvaluationService;
 
-	private static final String NO_TEST_AUTOMATION_PROJECT = "no-test-automation-project";
+	private static final String NO_SCRIPT_AUTO = "-";
 
 
 	public AutomationRequestDataTableModelHelper(InternationalizationHelper messageSource, PermissionEvaluationService permissionEvaluationService) {
@@ -75,13 +82,19 @@ public class AutomationRequestDataTableModelHelper extends DataTableModelBuilder
 
 	// Issue 7880 - we need to check the case when the project has no ta projects
 	private String populateScriptAuto(AutomationRequest item) {
-		if (item.getTestCase() != null && item.getTestCase().getAutomatedTest() != null && item.getProject().isTestAutomationEnabled()) {
+		if (hasScriptAuto(item)) {
 			return item.getTestCase().getAutomatedTest().getFullLabel();
-		} else if (!item.getProject().hasTestAutomationProjects()) {
-			return NO_TEST_AUTOMATION_PROJECT;
+		} else if (!item.getProject().hasTestAutomationProjects() || GHERKIN.equals(item.getTestCase().getKind())) {
+			return NO_SCRIPT_AUTO;
 		} else {
 			return null;
 		}
+	}
+
+	private boolean hasScriptAuto(AutomationRequest item) {
+		return item.getTestCase() != null && item.getTestCase().getAutomatedTest() != null && item.getProject().isTestAutomationEnabled()
+				&& STANDARD.equals(item.getTestCase().getKind())
+				&& (AUTOMATION_IN_PROGRESS.equals(item.getRequestStatus()) || AUTOMATED.equals(item.getRequestStatus()));
 	}
 
 }

@@ -900,7 +900,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		AutomationRequest automationRequest = automationRequestFinderService.findRequestByTestCaseId(testCaseId);
 		AutomatedTest newTest = null;
 
-		if((AutomationRequestStatus.WORK_IN_PROGRESS.equals(automationRequest.getRequestStatus())
+		if((AutomationRequestStatus.AUTOMATION_IN_PROGRESS.equals(automationRequest.getRequestStatus())
 			|| AutomationRequestStatus.AUTOMATED.equals(automationRequest.getRequestStatus()))
 			&& automationRequest.getProject().isAllowAutomationWorkflow()
 			&& TestCaseAutomatable.Y.equals(automationRequest.getTestCase().getAutomatable())) {
@@ -930,7 +930,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		AutomationRequest automationRequest = automationRequestFinderService.findRequestByTestCaseId(testCaseId);
 		Collection<TestAutomationProject> taProjects = null;
 
-		if((AutomationRequestStatus.WORK_IN_PROGRESS.equals(automationRequest.getRequestStatus())
+		if((AutomationRequestStatus.AUTOMATION_IN_PROGRESS.equals(automationRequest.getRequestStatus())
 			|| AutomationRequestStatus.AUTOMATED.equals(automationRequest.getRequestStatus()))
 			&& automationRequest.getProject().isAllowAutomationWorkflow()
 			&& TestCaseAutomatable.Y.equals(automationRequest.getTestCase().getAutomatable())) {

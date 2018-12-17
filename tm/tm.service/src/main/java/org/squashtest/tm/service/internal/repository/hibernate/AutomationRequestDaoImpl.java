@@ -69,7 +69,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 
 	private static final String ILLEGAL_STATUS = "One or more AutomationRequest do not have the expected status";
 
-	private static final String DEFAULT_TRANSMITTED_STATUS_FILTER = String.join(PagingToQueryDsl.LIST_SEPARATOR, WORK_IN_PROGRESS.toString(), TRANSMITTED.toString());
+	private static final String DEFAULT_TRANSMITTED_STATUS_FILTER = String.join(PagingToQueryDsl.LIST_SEPARATOR, AUTOMATION_IN_PROGRESS.toString(), TRANSMITTED.toString());
 	private static final String DEFAULT_GLOBAL_STATUS_FILTER = 	String.join(PagingToQueryDsl.LIST_SEPARATOR, WORK_IN_PROGRESS.toString(), TRANSMITTED.toString(), AUTOMATED.toString() );
 	private static final String DEFAULT_TO_VALIDATE_FILTER = 	String.join(PagingToQueryDsl.LIST_SEPARATOR, SUSPENDED.toString(), WORK_IN_PROGRESS.toString(), REJECTED.toString() );
 

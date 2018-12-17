@@ -95,7 +95,7 @@ public class AutomationWorkspaceController {
 			.getTcLastModifiedByForAutomationRequests(automationRequestStatus);
 
 		Map<Long, String> traitmentUsers = automationRequestFinderService
-			.getTcLastModifiedByToAutomationRequestNotAssigned(Arrays.asList(AutomationRequestStatus.TRANSMITTED.name(), AutomationRequestStatus.WORK_IN_PROGRESS.name()));
+			.getTcLastModifiedByToAutomationRequestNotAssigned(Arrays.asList(AutomationRequestStatus.TRANSMITTED.name(), AutomationRequestStatus.AUTOMATION_IN_PROGRESS.name()));
 
 		Map<Long, String> assignableUsersGlobalView = automationRequestFinderService.getAssignedToForAutomationRequests();
 
@@ -109,7 +109,7 @@ public class AutomationWorkspaceController {
 		model.addAttribute("tcKinds", tcKinds);
 
 		Map<String, String> autoReqStatusesTraitment =
-			Stream.of(AutomationRequestStatus.TRANSMITTED, AutomationRequestStatus.WORK_IN_PROGRESS)
+			Stream.of(AutomationRequestStatus.TRANSMITTED, AutomationRequestStatus.AUTOMATION_IN_PROGRESS)
 				  .collect(Collectors.toMap(Enum::toString, e -> messageSource.internationalize(e.getI18nKey(), locale)));
 		model.addAttribute("autoReqStatusesTraitment", autoReqStatusesTraitment);
 
