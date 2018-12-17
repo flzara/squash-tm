@@ -145,11 +145,11 @@ public class ScmRepository {
 	 * @return
 	 */
 	public File getWorkingFolder(){
-		if (StringUtils.isBlank(folderPath)){
+		if (StringUtils.isBlank(workingFolderPath)){
 			return getBaseRepositoryFolder();
 		}
 		else{
-			return FileUtils.getFile(repositoryPath, folderPath);
+			return FileUtils.getFile(repositoryPath, workingFolderPath);
 		}
 	}
 
