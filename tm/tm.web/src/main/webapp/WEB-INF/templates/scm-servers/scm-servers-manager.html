@@ -114,7 +114,7 @@
                     <td th:text="${iterStat.count}">1</td>
                     <td th:text="*{name}">Github Server</td>
                     <td th:text="*{kind}">Git</td>
-                    <td th:text="*{url}">https://github.com/TheProject</td>
+                    <td th:text="*{baseUrl}">https://github.com/TheProject</td>
                     <td></td>
                   </tr>
                   <tr th:remove="all">
@@ -164,7 +164,7 @@
                   <input id="url" name="url" class="strprop" value="" size="50" maxlength="255" type="text" />
                   <br/>
                   <span class="help-inline">&nbsp;</span>
-                  <span class="error-message url-error">&nbsp;</span>
+                  <span class="error-message baseUrl-error">&nbsp;</span>
                 </div>
               </div>
 

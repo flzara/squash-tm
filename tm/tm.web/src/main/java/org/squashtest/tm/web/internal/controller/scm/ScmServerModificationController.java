@@ -122,8 +122,8 @@ public class ScmServerModificationController {
 			row.put("repository-index", Long.toString(getCurrentIndex()));
 			row.put("name", item.getName());
 			row.put("path", item.getRepositoryPath());
-			row.put("folder", item.getFolderPath());
-			row.put("branch", item.getBranch());
+			row.put("folder", item.getWorkingFolderPath());
+			row.put("branch", item.getWorkingBranch());
 			row.put("empty-delete-holder", null);
 
 			return row;

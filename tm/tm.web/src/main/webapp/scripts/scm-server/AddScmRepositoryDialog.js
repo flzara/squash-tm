@@ -106,8 +106,8 @@
 			return {
 				"name": name,
 				"repositoryPath": path,
-				"folderPath": folder,
-				"branch": branch
+				"workingFolderPath": folder,
+				"workingBranch": branch
 			};
 		},
 

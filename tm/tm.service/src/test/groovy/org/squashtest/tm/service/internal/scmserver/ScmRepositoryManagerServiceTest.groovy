@@ -121,8 +121,8 @@ class ScmRepositoryManagerServiceTest extends Specification {
 			ScmRepository repo = new ScmRepository()
 			repo.name = "My_Project"
 			repo.repositoryPath = "/home/repositories/repo1"
-			repo.folderPath = "resources/features"
-			repo.branch = "master"
+			repo.workingFolderPath = "resources/features"
+			repo.workingBranch = "master"
 		and:
 			long serverId = 12
 			ScmServer server = new ScmServer()
@@ -215,7 +215,7 @@ class ScmRepositoryManagerServiceTest extends Specification {
 			long repoId = 1
 			ScmRepository repo = new ScmRepository()
 			repo.id = repoId
-			repo.folderPath = "/resources/features"
+			repo.workingFolderPath = "/resources/features"
 		and: "Expected result"
 			String newFolderPath = "/resources/gherkin/features"
 		and: "Mock Dao method"
@@ -224,7 +224,7 @@ class ScmRepositoryManagerServiceTest extends Specification {
 			String resultFolderPath = scmRepositoryManagerService.updateFolder(repoId, newFolderPath)
 		then:
 			repoId == repoId
-			repo.folderPath == newFolderPath
+			repo.workingFolderPath == newFolderPath
 			1 * scmRepositoryDao.save(repo)
 			resultFolderPath == newFolderPath
 	}
@@ -235,14 +235,14 @@ class ScmRepositoryManagerServiceTest extends Specification {
 			String repoFolder = "/resources/features"
 			ScmRepository repo = new ScmRepository()
 			repo.id = repoId
-			repo.folderPath = repoFolder
+			repo.workingFolderPath = repoFolder
 		and: "Mock Dao method"
 			scmRepositoryDao.getOne(repoId) >> repo
 		when:
 			String resultFolderPath = scmRepositoryManagerService.updateFolder(repoId, repoFolder)
 		then:
 			repo.id == repoId
-			repo.folderPath == repoFolder
+			repo.workingFolderPath == repoFolder
 			0 * scmRepositoryDao.save(repo)
 			resultFolderPath == repoFolder
 	}
@@ -252,7 +252,7 @@ class ScmRepositoryManagerServiceTest extends Specification {
 			long repoId = 7
 			ScmRepository repo = new ScmRepository()
 			repo.id = repoId
-			repo.branch = "master"
+			repo.workingBranch = "master"
 		and: "Expceted result"
 			String newBranch = "develop"
 		and: "Mock Dao method"
@@ -261,7 +261,7 @@ class ScmRepositoryManagerServiceTest extends Specification {
 			String resultBranch = scmRepositoryManagerService.updateBranch(repoId, newBranch)
 		then:
 			repoId == repoId
-			repo.branch == newBranch
+			repo.workingBranch == newBranch
 			1 * scmRepositoryDao.save(repo)
 			resultBranch == newBranch
 	}
@@ -272,14 +272,14 @@ class ScmRepositoryManagerServiceTest extends Specification {
 			String repoBranch = "develop"
 			ScmRepository repo = new ScmRepository()
 			repo.id = repoId
-			repo.branch = repoBranch
+			repo.workingBranch = repoBranch
 		and: "Mock Dao method"
 			scmRepositoryDao.getOne(repoId) >> repo
 		when:
 			String resultFolderPath = scmRepositoryManagerService.updateBranch(repoId, repoBranch)
 		then:
 			repo.id == repoId
-			repo.branch == repoBranch
+			repo.workingBranch == repoBranch
 			0 * scmRepositoryDao.save(repo)
 			resultFolderPath == repoBranch
 	}

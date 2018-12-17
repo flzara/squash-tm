@@ -23,7 +23,6 @@ package org.squashtest.tm.service.internal.scmserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -100,12 +99,12 @@ public class ScmRepositoryManagerServiceImpl implements ScmRepositoryManagerServ
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public String updateFolder(long scmRepositoryId, String newFolderPath) {
 		ScmRepository scmRepository = scmRepositoryDao.getOne(scmRepositoryId);
-		String formerFolderPath = scmRepository.getFolderPath();
+		String formerFolderPath = scmRepository.getWorkingFolderPath();
 		if(formerFolderPath.equals(newFolderPath)) {
 			LOGGER.debug("Did not update the ScmRepository folder path because the submitted path is identical to the former one");
 			return formerFolderPath;
 		}
-		scmRepository.setFolderPath(newFolderPath);
+		scmRepository.setWorkingFolderPath(newFolderPath);
 		scmRepositoryDao.save(scmRepository);
 		return newFolderPath;
 	}
@@ -114,12 +113,12 @@ public class ScmRepositoryManagerServiceImpl implements ScmRepositoryManagerServ
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public String updateBranch(long scmRepositoryId, String newBranch) {
 		ScmRepository scmRepository = scmRepositoryDao.getOne(scmRepositoryId);
-		String formerBranch = scmRepository.getBranch();
+		String formerBranch = scmRepository.getWorkingBranch();
 		if(formerBranch.equals(newBranch)) {
 			LOGGER.debug("Did not update the ScmRepository branch because the submitted branch is identical to the former one");
 			return formerBranch;
 		}
-		scmRepository.setBranch(newBranch);
+		scmRepository.setWorkingBranch(newBranch);
 		scmRepositoryDao.save(scmRepository);
 		return newBranch;
 	}

@@ -56,16 +56,16 @@ public class ScmRepository {
 	@NotBlank
 	private String repositoryPath;
 
+	@Column(name = "WORKING_FOLDER_PATH")
+	private String workingFolderPath;
 	/**
 	 * The path of the working folder
 	 *
 	 */
-	@Column(name = "FOLDER_PATH")
-	private String folderPath;
 
-	@Column(name = "BRANCH")
+	@Column(name = "WORKING_BRANCH")
 	@NotBlank
-	private String branch;
+	private String workingBranch;
 
 	@ManyToOne
 	@JoinColumn(name = "SCM_SERVER_ID", nullable = false)
@@ -101,11 +101,11 @@ public class ScmRepository {
 		this.name = name;
 	}
 
-	public String getBranch() {
-		return branch;
+	public String getWorkingBranch() {
+		return workingBranch;
 	}
-	public void setBranch(String branch) {
-		this.branch = branch;
+	public void setWorkingBranch(String workingBranch) {
+		this.workingBranch = workingBranch;
 	}
 
 	public String getRepositoryPath() {
@@ -115,11 +115,11 @@ public class ScmRepository {
 		this.repositoryPath = repositoryPath;
 	}
 
-	public String getFolderPath() {
-		return folderPath;
+	public String getWorkingFolderPath() {
+		return workingFolderPath;
 	}
-	public void setFolderPath(String folderPath) {
-		this.folderPath = folderPath;
+	public void setWorkingFolderPath(String workingFolderPath) {
+		this.workingFolderPath = workingFolderPath;
 	}
 
 	public ScmServer getScmServer() {

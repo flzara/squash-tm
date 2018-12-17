@@ -27,10 +27,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.scm.ScmServer;
 import org.squashtest.tm.service.internal.scmserver.ScmConnectorRegistry;
 import org.squashtest.tm.service.scmserver.ScmServerManagerService;
@@ -120,7 +116,7 @@ public class ScmServerManagementAdminController {
 			row.put("server-index", Long.toString(getCurrentIndex()));
 			row.put("name", item.getName());
 			row.put("kind", item.getKind());
-			row.put("url", item.getUrl());
+			row.put("url", item.getBaseUrl());
 			row.put("empty-delete-holder", null);
 
 			return row;

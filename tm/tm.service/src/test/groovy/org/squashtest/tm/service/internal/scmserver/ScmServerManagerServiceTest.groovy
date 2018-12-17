@@ -231,7 +231,7 @@ class ScmServerManagerServiceTest extends Specification {
 			long serverId = 50
 			ScmServer server = new ScmServer()
 			server.id = serverId
-			server.url = "http://github.com"
+			server.baseUrl = "http://github.com"
 		and:
 			String newUrl = "http://gitlab.com"
 		and: "Mock Dao method"
@@ -240,7 +240,7 @@ class ScmServerManagerServiceTest extends Specification {
 			String resultUrl = scmServerManagerService.updateUrl(serverId, newUrl)
 		then:
 			server.id == serverId
-			server.url == newUrl
+			server.baseUrl == newUrl
 			1 * scmServerDao.save(server)
 			resultUrl == newUrl
 	}
@@ -251,14 +251,14 @@ class ScmServerManagerServiceTest extends Specification {
 			String serverUrl = "http://github.com"
 			ScmServer server = new ScmServer()
 			server.id = serverId
-			server.url = serverUrl
+			server.baseUrl = serverUrl
 		and: "Mock Dao method"
 			scmServerDao.getOne(serverId) >> server
 		when:
 			String resultUrl = scmServerManagerService.updateUrl(serverId, serverUrl)
 		then:
 			server.id == serverId
-			server.url == serverUrl
+			server.baseUrl == serverUrl
 			0 * scmServerDao.save(server)
 			resultUrl == serverUrl
 	}
@@ -269,7 +269,7 @@ class ScmServerManagerServiceTest extends Specification {
 			String serverUrl = "http://github.com"
 			ScmServer server = new ScmServer()
 			server.id = serverId
-			server.url = serverUrl
+			server.baseUrl = serverUrl
 		and:
 			String malformedUrl = "malformedUrl"
 		and: "Mock Dao methods"

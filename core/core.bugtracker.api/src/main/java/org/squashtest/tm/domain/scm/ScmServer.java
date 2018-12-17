@@ -23,7 +23,6 @@ package org.squashtest.tm.domain.scm;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,9 +41,9 @@ public class ScmServer {
 	@NotBlank
 	private String name;
 
-	@Column(name = "URL")
+	@Column(name = "BASE_URL")
 	@org.hibernate.validator.constraints.URL
-	private String url;
+	private String baseUrl;
 
 	@Column(name = "KIND")
 	@Size(max = 30)
@@ -67,11 +66,11 @@ public class ScmServer {
 		this.name = name;
 	}
 
-	public String getUrl() {
-		return url;
+	public String getBaseUrl() {
+		return baseUrl;
 	}
-	public void setUrl(String url) {
-		this.url = url;
+	public void setBaseUrl(String baseUrl) {
+		this.baseUrl = baseUrl;
 	}
 
 	public String getKind() {

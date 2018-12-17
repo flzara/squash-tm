@@ -121,8 +121,8 @@
                 <div class="display-table-row">
                   <label for="scm-server-url" th:text="#{label.URL}">URL</label>
                   <div class="display-table-cell">
-                    <span id="scm-server-url" th:text="${scmServer.url}">http://github.com</span>
-                    <a id="scm-server-url-link" target="blank" th:href="${scmServer.url}"
+                    <span id="scm-server-url" th:text="${scmServer.baseUrl}">http://github.com</span>
+                    <a id="scm-server-url-link" target="blank" th:href="${scmServer.baseUrl}"
                        th:text="'['+#{label.BrowseTo}+']'"></a>
                     <span class="error-message url-error"></span>
                   </div>
@@ -180,8 +180,8 @@
                       <td th:text="${iterStat.count}">1</td>
                       <td th:text="*{name}">Bank_Application</td>
                       <td th:text="*{repositoryPath}">/home/repositories/bank_application</td>
-                      <td th:text="*{folderPath}">resources/features</td>
-                      <td th:text="*{branch}">master</td>
+                      <td th:text="*{workingFolderPath}">resources/features</td>
+                      <td th:text="*{workingBranch}">master</td>
                       <td></td>
                     </tr>
                     </tbody>

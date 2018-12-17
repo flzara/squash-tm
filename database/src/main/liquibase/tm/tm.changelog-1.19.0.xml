@@ -615,10 +615,10 @@
       <column name="NAME" type="VARCHAR(255)" remarks="The scm server name.">
         <constraints unique="true" nullable="false"/>
       </column>
-      <column name="URL" type="VARCHAR(255)" remarks="The scm server url.">
+      <column name="BASE_URL" type="VARCHAR(255)" remarks="The scm server base url.">
         <constraints nullable="false"/>
       </column>
-      <column name="KIND" type="VARCHAR(30)" defaultValue="git" remarks="The kind of scm server.">
+      <column name="KIND" type="VARCHAR(30)" remarks="The kind of scm server.">
         <constraints nullable="false"/>
       </column>
 
@@ -645,8 +645,10 @@
       <column name="REPOSITORY_PATH" type="VARCHAR(255)" remarks="The absolute path to the local repository on the local server.">
         <constraints nullable="false"/>
       </column>
-      <column name="FOLDER_PATH" type="VARCHAR(255)" remarks="The relative path of the working folder in which SquashTM will push."/>
-      <column name="BRANCH" type="VARCHAR(255)" remarks="The name of the working branch on which SquashTM will push.">
+
+      <column name="WORKING_FOLDER_PATH" type="VARCHAR(255)" remarks="The relative path of the working folder in which SquashTM will push."/>
+
+      <column name="WORKING_BRANCH" type="VARCHAR(255)" remarks="The name of the working branch on which SquashTM will push.">
         <constraints nullable="false"/>
       </column>
 
