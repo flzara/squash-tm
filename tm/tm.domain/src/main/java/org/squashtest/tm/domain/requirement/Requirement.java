@@ -78,6 +78,8 @@ import org.squashtest.tm.exception.requirement.IllegalRequirementVersionCreation
 })
 public class Requirement extends RequirementLibraryNode<RequirementVersion> implements NodeContainer<Requirement> {
 
+	private static final String REQUIREMENT_FOLDER_SUFFIX = "_";
+
 	/**
 	 * The resource of this requirement is the latest version of the requirement.
 	 */
@@ -540,7 +542,8 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 
 	public String createFolderNameFromRequirement() {
 		RequirementVersion currentVersion = this.getCurrentVersion();
-		return StringUtils.abbreviate(currentVersion.getFullName(), Sizes.NAME_MAX);
+		String fullName = currentVersion.getFullName()+ REQUIREMENT_FOLDER_SUFFIX;
+		return StringUtils.left(fullName, Sizes.NAME_MAX);
 	}
 
 	// **************** requirement sync section *****************
