@@ -263,8 +263,7 @@ class AutomatedTestManagerServiceTest extends Specification {
 		projectContent.tests.collect { it.fullLabel }.sort() == [
 		    "/Gherkin Project/squash/220_test2.ta",
 			"/Gherkin Project/squash/815_test1.ta",
-			"/Gherkin Project/squash/subfolder/999_test3.ta",
-		].sort();
+			"/Gherkin Project/squash/subfolder/999_test3.ta"].sort();
 		projectContent.tests.collect {it.project }.unique().label == ["Gherkin Project"]
 
 
