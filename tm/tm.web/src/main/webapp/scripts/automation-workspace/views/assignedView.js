@@ -219,7 +219,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         var cell = $row.find('.assigned-script');
                         var entityId = data["entity-id"];
                         var url = squashtm.app.contextRoot + 'automation-requests/' + entityId + '/tests';
-                        if (data['script'] !== 'no-test-automation-project') {
+                        if (data['script'] !== '-') {
                             cell.editable(url, editable);
                             cell.css({ "font-style": "italic" });
                             var urlTa = squashtm.app.contextRoot + 'automation-requests/' + entityId + '/tests';
@@ -245,8 +245,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                 popup.formDialog('open');
                                 return false;// see comment above
                             });
-                        } else {
-                            cell.text('-');
                         }
                     },
 

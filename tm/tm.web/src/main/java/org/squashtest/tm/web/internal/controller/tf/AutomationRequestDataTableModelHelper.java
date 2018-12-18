@@ -39,6 +39,7 @@ import static org.squashtest.tm.domain.testcase.TestCaseKind.GHERKIN;
 import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD;
 import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.AUTOMATION_IN_PROGRESS;
 import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.AUTOMATED;
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.TRANSMITTED;
 
 
 @Component
@@ -47,7 +48,7 @@ public class AutomationRequestDataTableModelHelper extends DataTableModelBuilder
 	private Locale locale = LocaleContextHolder.getLocale();
 	private PermissionEvaluationService permissionEvaluationService;
 
-	private static final String NO_SCRIPT_AUTO = "-";
+	private static final String NO_DATA = "-";
 
 
 	public AutomationRequestDataTableModelHelper(InternationalizationHelper messageSource, PermissionEvaluationService permissionEvaluationService) {
@@ -60,7 +61,7 @@ public class AutomationRequestDataTableModelHelper extends DataTableModelBuilder
 		final AuditableMixin auditable = (AuditableMixin) item.getTestCase();
 		Map<String, Object> data = new HashMap<>(15);
 		data.put(DataTableModelConstants.PROJECT_NAME_KEY, item.getTestCase() != null ? HtmlUtils.htmlEscape(item.getTestCase().getProject().getName()): null);
-		data.put("reference", (item.getTestCase() != null && !item.getTestCase().getReference().isEmpty()) ? item.getTestCase().getReference(): "-");
+		data.put("reference", (item.getTestCase() != null && !item.getTestCase().getReference().isEmpty()) ? item.getTestCase().getReference(): NO_DATA);
 		data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, item.getTestCase() != null ? HtmlUtils.htmlEscape(item.getTestCase().getName()): null);
 		data.put("format", item.getTestCase() != null ? messageSource.internationalize(item.getTestCase().getKind().getI18nKey(), locale) : null);
 		data.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getTestCase() != null ? item.getTestCase().getId() : null);
@@ -73,28 +74,32 @@ public class AutomationRequestDataTableModelHelper extends DataTableModelBuilder
 		data.put("checkbox", "");
 		data.put("tc-id", item.getTestCase() != null ? item.getTestCase().getId(): null);
 		data.put("requestId", item.getId());
-		data.put("assigned-to", item.getAssignedTo() != null ? item.getAssignedTo().getLogin() : "-");
+		data.put("assigned-to", item.getAssignedTo() != null ? item.getAssignedTo().getLogin() : NO_DATA);
 		data.put("status", messageSource.internationalize(item.getRequestStatus().getI18nKey(), locale));
 		data.put("writable", permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", item.getTestCase()));
 
 		return data;
 	}
 
-	// Issue 7880 - we need to check the case when the project has no ta projects
+	// Issue 7880
 	private String populateScriptAuto(AutomationRequest item) {
-		if (hasScriptAuto(item)) {
-			return item.getTestCase().getAutomatedTest().getFullLabel();
-		} else if (!item.getProject().hasTestAutomationProjects() || GHERKIN.equals(item.getTestCase().getKind())) {
-			return NO_SCRIPT_AUTO;
+		if (canChooseScriptAuto(item)) {
+			if (hasScriptAuto(item)) {
+				return item.getTestCase().getAutomatedTest().getFullLabel();
+			} else {
+				return null;
+			}
 		} else {
-			return null;
+			return NO_DATA;
 		}
 	}
 
 	private boolean hasScriptAuto(AutomationRequest item) {
-		return item.getTestCase() != null && item.getTestCase().getAutomatedTest() != null && item.getProject().isTestAutomationEnabled()
-				&& STANDARD.equals(item.getTestCase().getKind())
-				&& (AUTOMATION_IN_PROGRESS.equals(item.getRequestStatus()) || AUTOMATED.equals(item.getRequestStatus()));
+		return item.getTestCase() != null && item.getTestCase().getAutomatedTest() != null && item.getProject().isTestAutomationEnabled();
+	}
+
+	private boolean canChooseScriptAuto(AutomationRequest item) {
+		return STANDARD.equals(item.getTestCase().getKind()) && item.getProject().hasTestAutomationProjects();
 	}
 
 }

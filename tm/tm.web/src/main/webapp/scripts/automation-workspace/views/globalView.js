@@ -209,8 +209,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         var entityId = data["entity-id"];
                         var url = squashtm.app.contextRoot + 'automation-requests/' + entityId + '/tests';
 
-                        if ((data['status'] === squashtm.app.autoReqStatuses['AUTOMATION_IN_PROGRESS'] || data['status'] === squashtm.app.autoReqStatuses['AUTOMATED'])
-                            && data['script'] !== '-') {
+                        if (data['script'] !== '-') {
                             cell.editable(url, editable);
                             cell.css({ "font-style": "italic" });
 
@@ -238,8 +237,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                 popup.formDialog('open');
                                 return false;// see comment above
                             });
-                        } else {
-                            cell.text('-');
                         }
                     },
 
