@@ -56,8 +56,8 @@
 
 	<div id="nav_logo">
 		<div style="margin-bottom: 40px;">
-			<a id="home-link" 		 	class="navigation-link navigation-home" 		href="${rootctxt}/home-workspace/"			title="${homeTitle}"></a>
 			<sec:authorize access="${canNavigate}">
+			<a id="home-link" 		 	class="navigation-link navigation-home" 		href="${rootctxt}/home-workspace/"			title="${homeTitle}"></a>			
 			<a id="custom-report-link"	 	class="navigation-link navigation-custom-report" 			href="${rootctxt}/custom-report-workspace/"			title="${customReportTitle}"></a>
 			<a id="bugtracker-link"	 	class="navigation-link navigation-bugtracker ${hideClass}" 	title="${bugTitle}"></a>
 			<ul class="not-displayed width:130px;" style="max-height: 12.8em;">

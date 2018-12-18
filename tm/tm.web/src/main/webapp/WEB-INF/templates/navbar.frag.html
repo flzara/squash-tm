@@ -67,7 +67,7 @@
       <div id="nav_logo">
         <div id="test_mgt_nav_bottom" style="margin-bottom: 40px; margin-top:70px;">
           <a id="home-link" class="navigation-link navigation-home" th:href="@{/home-workspace/}" th:title="#{workspace.home.button.label}"
-            th:classappend="${highlight == 'home'} ? 'navigation-selected'">
+            th:classappend="${highlight == 'home'} ? 'navigation-selected'" th:if="${canNavigate}">
           </a>
 
           <a id="custom-report-link" class="navigation-link navigation-custom-report" th:href="@{/custom-report-workspace/}"
