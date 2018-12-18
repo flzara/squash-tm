@@ -25,6 +25,7 @@ import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_O
 
 import java.io.IOException;
 
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -160,6 +161,9 @@ public class WebSecurityConfig {
 		@Value("${squash.security.ignored:/scripts/**}")
 		private String[] secIngored;
 
+		@Inject
+		SquashAuthenticationSuccessHandler successHandler;
+
 		@Override
 		public void configure(WebSecurity web) throws Exception {
 			web.debug(debugSecurityFilter)
@@ -239,7 +243,8 @@ public class WebSecurityConfig {
 						.permitAll()
 						.loginPage(LOGIN)
 						.failureUrl("/login?error")
-						.defaultSuccessUrl("/home-workspace")
+						.successHandler(successHandler)
+						//.defaultSuccessUrl("/home-workspace")
 
 				.and()
 					.logout()
@@ -257,6 +262,7 @@ public class WebSecurityConfig {
 			MainEntryPoint entryPoint = new MainEntryPoint(entryPointUrl);
 			return entryPoint;
 		}
+
 	}
 
 

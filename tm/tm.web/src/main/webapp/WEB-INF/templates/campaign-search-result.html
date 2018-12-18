@@ -165,8 +165,6 @@
 										<th th:attr="data-def='map=tc-weight, sortable'" th:text="#{label.Importance}">tc-weight</th>
 										<th th:attr="data-def='map=test-case-automatable, sortable'  + (${(not automationColVisible)} ?',invisible':'')" th:text="#{test-case.automation-indicator.label.short}">test-case
 											automatable</th>
-										<th th:attr="data-def='map=test-case-automation-request-status, sortable' + (${(not automationColVisible)} ?',invisible':'')" th:text="#{test-case.automation-status.label.short}">test-case
-											automatable</th>
 										<th th:attr="data-def='map=itpi-mode, sortable, narrow, center, sClass=exec-mode'" th:text="#{label.Mode}"
 										 class="no-user-select tp-th-filter tp-th-exec-mode">execution mode</th>
 										<th th:attr="data-def='map=itpi-testsuites'" th:text="#{label.testSuite}">Test suite label</th>

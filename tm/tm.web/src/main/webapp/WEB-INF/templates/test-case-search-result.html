@@ -161,8 +161,6 @@
                       status</th>
                     <th th:attr="data-def='map=test-case-automatable' + (${(not automationColVisible)} ?',invisible':'')" th:text="#{test-case.automation-indicator.label.short}">test-case
                       automatable</th>
-                    <th th:attr="data-def='map=test-case-automation-request-status' + (${(not automationColVisible)} ?',invisible':'')" th:text="#{test-case.automation-status.label.short}">test-case
-                      automatable</th>
                     <th th:attr="data-def='map=test-case-milestone-nb' + (${(not milestoneColVisible)} ?',invisible':'')"
                       th:text="#{label.milestoneNb}" th:title="#{label.long.numberOfAssociatedMilestones}">milestone nb</th>
                     <th th:attr="data-def='map=test-case-requirement-nb'" th:text="#{label.numberOfAssociatedRequirements}"

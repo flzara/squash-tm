@@ -98,8 +98,7 @@ public class CampaignSearchController extends GlobalSearchController {
 		.mapAttribute("itpi-executed-on", "lastExecutedOn", IterationTestPlanItem.class)
 		.mapAttribute("itpi-datasets", "datasets", IterationTestPlanItem.class)
 		.mapAttribute("tc-weight", "referencedTestCase.importance", IterationTestPlanItem.class)
-		.mapAttribute("test-case-automatable", "referencedTestCase.automatable", IterationTestPlanItem.class)
-		.mapAttribute("test-case-automation-request-status", "referencedTestCase.automationRequest.requestStatus", IterationTestPlanItem.class);
+		.mapAttribute("test-case-automatable", "referencedTestCase.automatable", IterationTestPlanItem.class);
 
 
 	@RequestMapping(value = RESULTS, params = CAMPAIGN)

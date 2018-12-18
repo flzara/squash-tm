@@ -88,8 +88,7 @@ public class TestCaseSearchController extends GlobalSearchController {
 		.mapAttribute("test-case-iteration-nb", "iterations", TestCase.class)
 		.mapAttribute("test-case-attachment-nb", "attachments", TestCase.class)
 		.mapAttribute("test-case-created-by", "createdBy", TestCase.class)
-		.mapAttribute("test-case-modified-by", "lastModifiedBy", TestCase.class)
-		.mapAttribute("test-case-automation-request-status", "requestStatus", AutomationRequest.class);
+		.mapAttribute("test-case-modified-by", "lastModifiedBy", TestCase.class);
 
 
 

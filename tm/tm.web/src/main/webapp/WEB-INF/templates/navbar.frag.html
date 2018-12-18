@@ -70,6 +70,20 @@
             th:classappend="${highlight == 'home'} ? 'navigation-selected'">
           </a>
 
+          <a id="custom-report-link" class="navigation-link navigation-custom-report" th:href="@{/custom-report-workspace/}"
+            th:title="#{workspace.custom-report.title.long}" th:classappend="${highlight == 'custom-report'} ? 'navigation-selected'"
+            th:if="${canNavigate}"></a>
+
+          <a id="bugtracker-link" class="navigation-link navigation-bugtracker" th:classappend="${#lists.isEmpty(bugtrackers)} ? 'not-displayed'"
+            th:title="#{workspace.bugtracker.button.label}" th:if="${canNavigate}"></a>
+
+          <ul class="not-displayed width:130px;" style="max-height: 12.8em;">
+            <li th:each="bugtracker : ${bugtrackers}">
+              <a th:id="'bugtracker-'+${bugtracker.id}" th:href="${bugtracker.iframeFriendly} ? @{/bugtracker/}+${bugtracker.id}+'/workspace' : ${bugtracker.URL}"
+                th:target="${bugtracker.iframeFriendly} ? '' : '_blank'" th:text="${bugtracker.name}">mantis</a>
+            </li>
+          </ul>
+
           <a id="automation-link" style="margin-top: 10px;" class="navigation-link navigation-automation" th:href="@{/automation-workspace/}"
             th:title="#{workspace.automation.programmer.button.label}" th:classappend="${highlight == 'automation'} ? 'navigation-selected'"
             th:if="${!sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} and ${sec.hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')} and ${!sec.hasRole('ROLE_ADMIN')}"></a>
@@ -86,20 +100,6 @@
             </li>
             <li>
               <a th:id="automation-tester-link" th:href="@{/automation-tester-workspace/}" th:text="#{workspace.automation.tester.button.label}"></a>
-            </li>
-          </ul>
-
-          <a id="custom-report-link" class="navigation-link navigation-custom-report" th:href="@{/custom-report-workspace/}"
-            th:title="#{workspace.custom-report.title.long}" th:classappend="${highlight == 'custom-report'} ? 'navigation-selected'"
-            th:if="${canNavigate}"></a>
-
-          <a id="bugtracker-link" class="navigation-link navigation-bugtracker" th:classappend="${#lists.isEmpty(bugtrackers)} ? 'not-displayed'"
-            th:title="#{workspace.bugtracker.button.label}" th:if="${canNavigate}"></a>
-
-          <ul class="not-displayed width:130px;" style="max-height: 12.8em;">
-            <li th:each="bugtracker : ${bugtrackers}">
-              <a th:id="'bugtracker-'+${bugtracker.id}" th:href="${bugtracker.iframeFriendly} ? @{/bugtracker/}+${bugtracker.id}+'/workspace' : ${bugtracker.URL}"
-                th:target="${bugtracker.iframeFriendly} ? '' : '_blank'" th:text="${bugtracker.name}">mantis</a>
             </li>
           </ul>
 
