@@ -310,7 +310,7 @@ class AutomatedTestManagerServiceTest extends Specification {
 
 		// now we can create the ScmRepository
 
-		return new ScmRepository( name: "my repository", repositoryPath: base.absolutePath, folderPath: "squash")
+		return new ScmRepository( name: "my repository", repositoryPath: base.absolutePath, workingFolderPath: "squash")
 
 
 	}
