@@ -187,7 +187,7 @@
 
         <%-- ------------------------- Automation Panel ------------------------- --%>
       <c:if test="${allowAutomationWorkflow}">
-        <tc:test-case-automation testCase="${testCase}"/>
+        <tc:test-case-automation testCase="${testCase}" writable="${writable}"/>
       </c:if>
 
         <%----------------------------------- Prerequisites -----------------------------------------------%>

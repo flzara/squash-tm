@@ -31,12 +31,12 @@
 
 
 <%@ attribute name="testCase" required="true" type="java.lang.Object" description="the testcase" %>
+<%@ attribute name="writable"  required="true" type="java.lang.Boolean"  description="if the user has write permission on this test case" %>
 
 <c:set var="toInstruct" 	value="${(testCase.automatable == 'M') ? 'checked=\"checked\"' : ''}" />
 <c:set var="toAutomate" 	value="${(testCase.automatable == 'Y') ? 'checked=\"checked\"' : ''}" />
 <c:set var="toNotAutomate" 	value="${(testCase.automatable == 'N') ? 'checked=\"checked\"' : ''}" />
 <c:set var="requestStatus" 	value="${(testCase.automationRequest != null) ? testCase.automationRequest.requestStatus.getI18nKey() : 'automation-request.request_status.WORK_IN_PROGRESS'}" />
-<c:set var="canTransmit"    value="hasRole('ROLE_TF_FUNCTIONAL_TESTER') or hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')" />
 
 <c:url var="testCaseUrl" value="/test-cases/${testCase.id}" />
 
@@ -46,6 +46,14 @@
 <comp:toggle-panel id="test-case-automation-panel"
 				   title='${labelAutomation}'
 				   open="true">
+
+	<jsp:attribute name="panelButtons">
+		<c:if test="${ writable }">
+			<input type="button" value="${transmitLabel}"  title="${transmitLabel}"
+            	id="transmit-test-case-autom-request-button" class="sq-btn test-case-automation-request-block" />
+			</button>
+		</c:if>
+	</jsp:attribute>
 
 	<jsp:attribute name="body">
 	<div id="test-case-automation-table" class="display-table">
@@ -82,12 +90,6 @@
 				<span id="automation-request-status">${ automReqStatusLabel }</span>
 			</div>
 		</div>
-		<sec:authorize access="${canTransmit}">
-			<div class="display-table-row test-case-automation-request-block">
-				<input type="button" value="${transmitLabel}"  title="${transmitLabel}"
-					id="transmit-test-case-autom-request-button" class="sq-btn" />
-			</div>
-		</sec:authorize>
 	</div>
 	</jsp:attribute>
 </comp:toggle-panel>
