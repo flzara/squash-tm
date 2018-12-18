@@ -23,7 +23,7 @@
 <div th:fragment="automation-transmitted-view">
   <div id="divTable" style="display: none">
     <div style="margin-bottom: 40px">
-      <span style="font-style: italic;color: gray; font-size:15px" th:text="#{automation.message.to_transmit}"></span>
+      <span class="tf-message" th:text="#{automation.message.to_transmit}"></span>
       <div style="float: right">
         <button id="transmitted-automation-button" class="tf-lg green" th:title="#{automation.label.to_transmit}" th:text="#{automation.label.to_transmit}"></button>
       </div>

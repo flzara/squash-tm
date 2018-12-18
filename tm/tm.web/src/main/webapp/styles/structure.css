@@ -2067,13 +2067,19 @@ opacity:0.2;
 }
 
 button.tf-lg {
-	font-size: 15px;
+	font-size: 13px;
 	color: white;
 	border-radius: 5px;
 	padding: 0.3em 1em;
 	line-height: 1.4em;
 	font-family: Verdana, Arial, sans-serif;
 	cursor: pointer;
+}
+
+.tf-message{
+	font-style: italic;
+	font-size:1.2em;
+	color: gray;
 }
 
 button.tf {
