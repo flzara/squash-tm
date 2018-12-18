@@ -115,7 +115,7 @@ public class AutomatedTestManagerServiceImpl implements UnsecuredAutomatedTestMa
 		Optional<TestAutomationProjectContent> maybeFromScm = listTestsFromScm(projects);
 
 		// if some content was found in SCM and defined, merge the content
-		if (maybeFromScm != null){
+		if (maybeFromScm.isPresent()){
 			TestAutomationProjectContent fromScm = maybeFromScm.get();
 
 			// lookup in the "fromServers" list which project is referenced there
