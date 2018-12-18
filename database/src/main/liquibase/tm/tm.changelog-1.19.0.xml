@@ -53,11 +53,13 @@
   </changeSet>
 
   <changeSet id="tm-1.19.0-SQTM-409-iteration-test-suite-remove-constraint" author="cholc">
-    <comment>To drop an unique constraint, you need the constraint's name, which we don't have, so here we copy the column and delete the original</comment>
+    <comment>To drop an unique constraint, you need the constraint's name, which we don't have, so here we copy the
+      column and delete the original
+    </comment>
 
     <addColumn tableName="ITERATION_TEST_SUITE">
       <column name="TEST_SUITE_ID_TEMP" type="BIGINT">
-        <constraints nullable="true" unique="false" />
+        <constraints nullable="true" unique="false"/>
       </column>
     </addColumn>
 
@@ -69,7 +71,8 @@
 
     <dropColumn columnName="TEST_SUITE_ID" tableName="ITERATION_TEST_SUITE"/>
 
-    <renameColumn columnDataType="BIGINT" newColumnName="TEST_SUITE_ID" oldColumnName="TEST_SUITE_ID_TEMP" tableName="ITERATION_TEST_SUITE"/>
+    <renameColumn columnDataType="BIGINT" newColumnName="TEST_SUITE_ID" oldColumnName="TEST_SUITE_ID_TEMP"
+                  tableName="ITERATION_TEST_SUITE"/>
 
     <addNotNullConstraint tableName="ITERATION_TEST_SUITE" columnName="TEST_SUITE_ID" columnDataType="BIGINT"/>
 
@@ -93,32 +96,33 @@
     <sql>
       UPDATE ITERATION_TEST_SUITE ITS
       SET
-          ITERATION_TEST_SUITE_ORDER = (SELECT
-                  SUB_QUERY.ORDER_DEF
-              FROM
-                  (SELECT
-                      ITS1.ITERATION_ID AS I_ID,
-                      ITS1.TEST_SUITE_ID AS TS_ID,
-                      (COUNT(*) - 1) AS ORDER_DEF
-                  FROM
-                      ITERATION_TEST_SUITE ITS1
-                  INNER JOIN ITERATION_TEST_SUITE ITS2 ON ITS1.ITERATION_ID = ITS2.ITERATION_ID
-                      AND ITS1.TEST_SUITE_ID >= ITS2.TEST_SUITE_ID
-                   GROUP BY ITS1.ITERATION_ID , ITS1.TEST_SUITE_ID) AS SUB_QUERY
-              WHERE
-                  SUB_QUERY.I_ID = ITS.ITERATION_ID
-                  AND SUB_QUERY.TS_ID = ITS.TEST_SUITE_ID);
+      ITERATION_TEST_SUITE_ORDER = (SELECT
+      SUB_QUERY.ORDER_DEF
+      FROM
+      (SELECT
+      ITS1.ITERATION_ID AS I_ID,
+      ITS1.TEST_SUITE_ID AS TS_ID,
+      (COUNT(*) - 1) AS ORDER_DEF
+      FROM
+      ITERATION_TEST_SUITE ITS1
+      INNER JOIN ITERATION_TEST_SUITE ITS2 ON ITS1.ITERATION_ID = ITS2.ITERATION_ID
+      AND ITS1.TEST_SUITE_ID >= ITS2.TEST_SUITE_ID
+      GROUP BY ITS1.ITERATION_ID , ITS1.TEST_SUITE_ID) AS SUB_QUERY
+      WHERE
+      SUB_QUERY.I_ID = ITS.ITERATION_ID
+      AND SUB_QUERY.TS_ID = ITS.TEST_SUITE_ID);
     </sql>
     <addUniqueConstraint tableName="ITERATION_TEST_SUITE" columnNames="ITERATION_ID, ITERATION_TEST_SUITE_ORDER"
                          constraintName="uc_iteration_iteration_test_suite_order"/>
-    <addNotNullConstraint tableName="ITERATION_TEST_SUITE" columnName="ITERATION_TEST_SUITE_ORDER" columnDataType="INT"/>
+    <addNotNullConstraint tableName="ITERATION_TEST_SUITE" columnName="ITERATION_TEST_SUITE_ORDER"
+                          columnDataType="INT"/>
   </changeSet>
 
 
   <changeSet id="tm-1.19.0-up-sb2-1" author="bsiri">
-  	<comment>Passwords are now much longer since we also store the salt. </comment>
+    <comment>Passwords are now much longer since we also store the salt.</comment>
 
-  	<modifyDataType tableName="AUTH_USER" columnName="PASSWORD" newDataType="VARCHAR(255)"/>
+    <modifyDataType tableName="AUTH_USER" columnName="PASSWORD" newDataType="VARCHAR(255)"/>
 
   </changeSet>
 
@@ -262,10 +266,9 @@
 
   <changeSet id="tm-1.19.0-SQTM-453-execution-name-maxlength" author="jprioux">
     <comment>Increase max length for execution name</comment>
-    <modifyDataType tableName="EXECUTION" columnName="NAME" newDataType="VARCHAR(308)" ></modifyDataType>
+    <modifyDataType tableName="EXECUTION" columnName="NAME" newDataType="VARCHAR(308)"></modifyDataType>
     <addNotNullConstraint tableName="EXECUTION" columnDataType="java.sql.Types.VARCHAR(308)" columnName="NAME"/>
   </changeSet>
-
 
 
   <changeSet id="tm-1.19.0-SQTM-508-automation-request" author="aboittiaux">
@@ -284,7 +287,7 @@
       <column name="TEST_CASE_ID" type="BIGINT"/>
       <column name="CREATED_BY" type="BIGINT"/>
       <column name="TRANSMITTED_BY" type="BIGINT"/>
-      <column name="PROJECT_ID" type="BIGINT" remarks="fk to the host project" >
+      <column name="PROJECT_ID" type="BIGINT" remarks="fk to the host project">
         <constraints foreignKeyName="fk_automation_request_project" nullable="false" references="PROJECT(PROJECT_ID)"/>
       </column>
     </createTable>
@@ -306,23 +309,26 @@
     </createIndex>
 
     <addForeignKeyConstraint baseTableName="AUTOMATION_REQUEST" baseColumnNames="ASSIGNED_TO"
-    constraintName="fk_automation_request_automation_assigned_to" referencedColumnNames="PARTY_ID" referencedTableName="CORE_USER" onDelete="SET NULL"/>
+                             constraintName="fk_automation_request_automation_assigned_to"
+                             referencedColumnNames="PARTY_ID" referencedTableName="CORE_USER" onDelete="SET NULL"/>
 
     <addForeignKeyConstraint baseTableName="AUTOMATION_REQUEST" baseColumnNames="TRANSMITTED_BY"
-                             constraintName="fk_automation_request_transmitted_by" referencedColumnNames="PARTY_ID" referencedTableName="CORE_USER" onDelete="SET NULL"/>
+                             constraintName="fk_automation_request_transmitted_by" referencedColumnNames="PARTY_ID"
+                             referencedTableName="CORE_USER" onDelete="SET NULL"/>
 
     <addForeignKeyConstraint baseTableName="AUTOMATION_REQUEST" baseColumnNames="CREATED_BY"
-                             constraintName="fk_automation_request_created_by" referencedColumnNames="PARTY_ID" referencedTableName="CORE_USER" onDelete="SET NULL"/>
+                             constraintName="fk_automation_request_created_by" referencedColumnNames="PARTY_ID"
+                             referencedTableName="CORE_USER" onDelete="SET NULL"/>
 
     <addForeignKeyConstraint baseTableName="AUTOMATION_REQUEST" baseColumnNames="TEST_CASE_ID"
-                             constraintName="fk_automation_request_test_case" referencedColumnNames="TCLN_ID" referencedTableName="TEST_CASE" onDelete="SET NULL"/>
+                             constraintName="fk_automation_request_test_case" referencedColumnNames="TCLN_ID"
+                             referencedTableName="TEST_CASE" onDelete="SET NULL"/>
 
     <addColumn tableName="TEST_CASE">
       <column name="AUTOMATABLE" type="CHAR" defaultValue="M" remarks="Y: Yes, N: No, M: Maybe"/>
     </addColumn>
 
   </changeSet>
-
 
 
   <!--  Feature SQTM-519 : the AutomationRequestLibrary -->
@@ -334,19 +340,20 @@
     <createTable tableName="AUTOMATION_REQUEST_LIBRARY">
 
       <column name="ARL_ID" type="BIGINT" autoIncrement="true" remarks="autoincremented primary key">
-        <constraints primaryKey="true" nullable="false" primaryKeyName="PK_AUTOMATION_REQUEST_LIBRARY" />
+        <constraints primaryKey="true" nullable="false" primaryKeyName="PK_AUTOMATION_REQUEST_LIBRARY"/>
       </column>
 
       <column name="ATTACHMENT_LIST_ID" type="BIGINT"
               remarks="fk to the attachment list">
         <constraints nullable="true"
-                     references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" foreignKeyName="fk_autorequestLib_attachment_list" />
+                     references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)"
+                     foreignKeyName="fk_autorequestLib_attachment_list"/>
       </column>
 
     </createTable>
 
     <createIndex tableName="AUTOMATION_REQUEST_LIBRARY" indexName="idx_automation_request_library">
-      <column name="ARL_ID" />
+      <column name="ARL_ID"/>
     </createIndex>
 
   </changeSet>
@@ -375,7 +382,8 @@
       About the PERMISSION_MASKs, the bitmaks are defined in java classes BasePermission and CustomPermission.
      -->
     <sql>
-      insert into ACL_CLASS(ID, CLASSNAME) values(7, 'org.squashtest.tm.domain.tf.automationrequest.AutomationRequestLibrary');
+      insert into ACL_CLASS(ID, CLASSNAME) values(7,
+      'org.squashtest.tm.domain.tf.automationrequest.AutomationRequestLibrary');
 
       insert into ACL_GROUP(ID, QUALIFIED_NAME) values(10, 'squashtest.acl.group.tm.AutomatedTestWriter');
 
@@ -418,21 +426,22 @@
     <createTable tableName="AUTOMATION_REQUEST_LIBRARY_CONTENT">
 
       <column name="LIBRARY_ID" type="BIGINT" remarks="Foreign key to the library">
-        <constraints nullable="false" foreignKeyName="fk_automation_rquest_lib_content_lib" references="AUTOMATION_REQUEST_LIBRARY(ARL_ID)" />
+        <constraints nullable="false" foreignKeyName="fk_automation_rquest_lib_content_lib"
+                     references="AUTOMATION_REQUEST_LIBRARY(ARL_ID)"/>
       </column>
 
       <column name="CONTENT_ID" type="BIGINT" remarks="Foreign key to the content">
         <constraints nullable="false" unique="true" foreignKeyName="fk_automation_request_lib_content_content"
-                     references="AUTOMATION_REQUEST(AUTOMATION_REQUEST_ID)" />
+                     references="AUTOMATION_REQUEST(AUTOMATION_REQUEST_ID)"/>
       </column>
     </createTable>
 
     <createIndex tableName="AUTOMATION_REQUEST_LIBRARY_CONTENT" indexName="idx_automation_request_lib_content_content">
-      <column name="CONTENT_ID" />
+      <column name="CONTENT_ID"/>
     </createIndex>
 
     <createIndex tableName="AUTOMATION_REQUEST_LIBRARY_CONTENT" indexName="idx_automation_request_lib_content_lib">
-      <column name="LIBRARY_ID" />
+      <column name="LIBRARY_ID"/>
     </createIndex>
 
   </changeSet>
@@ -443,7 +452,7 @@
     <comment>Add a Project fk to the AutomationRequestLibrary</comment>
 
     <addColumn tableName="PROJECT">
-      <column name="ARL_ID" type="BIGINT" remarks="fk to the automation request library" >
+      <column name="ARL_ID" type="BIGINT" remarks="fk to the automation request library">
         <constraints foreignKeyName="fk_project_arl" references="AUTOMATION_REQUEST_LIBRARY(ARL_ID)" nullable="true"/>
       </column>
     </addColumn>
@@ -572,13 +581,14 @@
     <addColumn tableName="PROJECT">
       <column name="ALLOW_AUTOMATION_WORKFLOW" type="BOOLEAN"
               defaultValueBoolean="false">
-              <constraints nullable="false" />
+        <constraints nullable="false"/>
       </column>
     </addColumn>
   </changeSet>
 
   <changeSet id="tm-1.19.0-SQTM-create-auth-users" author="bsiri">
-    <comment>add the missing entries in AUTH_USER for users that only exist in CORE_USER (eg a user created by LDAP)</comment>
+    <comment>add the missing entries in AUTH_USER for users that only exist in CORE_USER (eg a user created by LDAP)
+    </comment>
     <sql>
       insert into AUTH_USER (login, password, active)
       select cu.LOGIN, '', cu.active
@@ -598,18 +608,19 @@
 
     <addColumn tableName="TEST_AUTOMATION_PROJECT">
       <column name="CAN_RUN_GHERKIN" type="BOOLEAN" defaultValueBoolean="false">
-        <constraints nullable="false" />
+        <constraints nullable="false"/>
       </column>
     </addColumn>
 
   </changeSet>
 
- <changeSet id="tm-1.19.0-SQTM-512-scm-server-management" author="jlor">
+  <changeSet id="tm-1.19.0-SQTM-512-scm-server-management" author="jlor">
     <comment>Add new table for scm (source code management) server.</comment>
 
     <createTable tableName="SCM_SERVER">
 
-      <column name="SCM_SERVER_ID" type="BIGINT" autoIncrement="true" remarks="The auto-generated id of the scm server.">
+      <column name="SCM_SERVER_ID" type="BIGINT" autoIncrement="true"
+              remarks="The auto-generated id of the scm server.">
         <constraints primaryKey="true" nullable="false"/>
       </column>
       <column name="NAME" type="VARCHAR(255)" remarks="The scm server name.">
@@ -631,18 +642,21 @@
 
     <createTable tableName="SCM_REPOSITORY">
 
-      <column name="SCM_REPOSITORY_ID" type="BIGINT" autoIncrement="true" remarks="The auto-generated id of the scm repository.">
+      <column name="SCM_REPOSITORY_ID" type="BIGINT" autoIncrement="true"
+              remarks="The auto-generated id of the scm repository.">
         <constraints primaryKey="true" nullable="false"/>
       </column>
       <column name="SCM_SERVER_ID" type="BIGINT" remarks="The foreign key to the related SCM_SEVER">
-        <constraints nullable="false" foreignKeyName="fk_scm_repository_scm_server" references="SCM_SERVER(SCM_SERVER_ID)"/>
+        <constraints nullable="false" foreignKeyName="fk_scm_repository_scm_server"
+                     references="SCM_SERVER(SCM_SERVER_ID)"/>
       </column>
 
       <column name="NAME" type="VARCHAR(255)" remarks="The unique name of the repository.">
-        <constraints unique="true" nullable="false" />
+        <constraints unique="true" nullable="false"/>
       </column>
 
-      <column name="REPOSITORY_PATH" type="VARCHAR(255)" remarks="The absolute path to the local repository on the local server.">
+      <column name="REPOSITORY_PATH" type="VARCHAR(255)"
+              remarks="The absolute path to the local repository on the local server.">
         <constraints nullable="false"/>
       </column>
 
@@ -665,6 +679,158 @@
       </column>
     </addColumn>
 
+  </changeSet>
+
+  <changeSet id="tm-1.19.0-fixing-postgresql-index" author="jthebault" dbms="postgresql">
+    <sql>
+      create index if not exists idx_fk_acl_grp_permission_acl_grp on acl_group_permission(acl_group_id);
+      create index if not exists idx_fk_acl_obj_id_acl_class on acl_object_identity(class_id);
+      create index if not exists idx_fk_action_test_step_attachment_list on action_test_step(attachment_list_id);
+      create index if not exists idx_fk_arse_party on acl_responsibility_scope_entry(party_id);
+      create index if not exists idx_fk_attachment_att_list on attachment(attachment_list_id);
+      create index if not exists idx_fk_attachment_content on attachment(content_id);
+      create index if not exists idx_fk_audit_event_requirement_version on requirement_audit_event(req_version_id);
+      create index if not exists idx_fk_auto_exec_auto_test on automated_execution_extender(test_id);
+      create index if not exists idx_fk_auto_exec_exec on automated_execution_extender(master_execution_id);
+      create index if not exists idx_fk_auto_exec_suite on automated_execution_extender(suite_id);
+      create index if not exists idx_fk_automated_test_project on automated_test(project_id);
+      create index if not exists idx_fk_automation_request_project on automation_request(project_id);
+      create index if not exists idx_fk_autorequestlib_attachment_list on automation_request_library(attachment_list_id);
+      create index if not exists idx_fk_axis_column_chart_column on chart_axis_column(chart_column_id);
+      create index if not exists idx_fk_bugtracker_binding_bugtracker on bugtracker_binding(bugtracker_id);
+      create index if not exists idx_fk_bugtracker_binding_project on bugtracker_binding(project_id);
+      create index if not exists idx_fk_bugtracker_project_bugtracker_binding on bugtracker_project(bugtracker_binding_id);
+      create index if not exists idx_fk_call_step_called_test_case on call_test_step(called_test_case_id);
+      create index if not exists idx_fk_call_step_dataset on call_test_step(called_dataset);
+      create index if not exists idx_fk_camp_iter_campaign on campaign_iteration(campaign_id);
+      create index if not exists idx_fk_camp_iter_iteration on campaign_iteration(iteration_id);
+      create index if not exists idx_fk_camp_test_plan_item_dataset on campaign_test_plan_item(dataset_id);
+      create index if not exists idx_fk_camp_tp_campaign on campaign_test_plan_item(campaign_id);
+      create index if not exists idx_fk_camp_tp_testcase on campaign_test_plan_item(test_case_id);
+      create index if not exists idx_fk_camp_tp_user on campaign_test_plan_item(user_id);
+      create index if not exists idx_fk_camplib_attachment_list on campaign_library(attachment_list_id);
+      create index if not exists idx_fk_campnode_attachment_list on campaign_library_node(attachment_list_id);
+      create index if not exists idx_fk_cf_option_cf on custom_field_option(cf_id);
+      create index if not exists idx_fk_cfb_bound_project on custom_field_binding(bound_project_id);
+      create index if not exists idx_fk_cfb_cf on custom_field_binding(cf_id);
+      create index if not exists idx_fk_cfb_render_loc_cfb on custom_field_rendering_location(cfb_id);
+      create index if not exists idx_fk_cfv_cf_binding on custom_field_value(cfb_id);
+      create index if not exists idx_fk_cfv_option_cfv on custom_field_value_option(cfv_id);
+      create index if not exists idx_fk_chart_axis_chart_query on chart_axis_column(query_id);
+      create index if not exists idx_fk_chart_bindind_chart_definition_chart_id on custom_report_chart_binding(chart_id);
+      create index if not exists idx_fk_chart_bindind_custom_report_dashboard_crd_id on custom_report_chart_binding(crd_id);
+      create index if not exists idx_fk_chart_bindind_report_definition_report_id on custom_report_report_binding(report_id);
+      create index if not exists idx_fk_chart_filter_chart_column on chart_filter(chart_column_id);
+      create index if not exists idx_fk_chart_filter_chart_query on chart_filter(query_id);
+      create index if not exists idx_fk_chart_filter_value_chart_column on chart_filter_values(filter_id);
+      create index if not exists idx_fk_chart_measure_chart_column on chart_measure_column(chart_column_id);
+      create index if not exists idx_fk_chart_measure_chart_query on chart_measure_column(query_id);
+      create index if not exists idx_fk_chart_owner on chart_definition(user_id);
+      create index if not exists idx_fk_chart_project_scope_chart_definition on chart_project_scope(chart_id);
+      create index if not exists idx_fk_chart_query on chart_definition(query_id);
+      create index if not exists idx_fk_chart_scope_chart_definition on chart_scope(chart_id);
+      create index if not exists idx_fk_cln_project on campaign_library_node(project_id);
+      create index if not exists idx_fk_column_query on chart_column_prototype(subquery_id);
+      create index if not exists idx_fk_column_role_chart_column on chart_column_role(chart_column_id);
+      create index if not exists idx_fk_crl_attachment_list on custom_report_library(attachment_list_id);
+      create index if not exists idx_fk_crln_custom_report_library_crl_id on custom_report_library_node(crl_id);
+      create index if not exists idx_fk_dataset_param_value_dataset on dataset_param_value(dataset_id);
+      create index if not exists idx_fk_dataset_param_value_param on dataset_param_value(param_id);
+      create index if not exists idx_fk_dataset_test_case on dataset(test_case_id);
+      create index if not exists idx_fk_df_option_dfv on denormalized_field_option(dfv_id);
+      create index if not exists idx_fk_dfb_render_loc_dfb on denormalized_field_rendering_location(dfv_id);
+      create index if not exists idx_fk_dfv_cfv_binding on denormalized_field_value(cfv_id);
+      create index if not exists idx_fk_dfv_option_dfv on denormalized_field_value_option(dfv_id);
+      create index if not exists idx_fk_disabled_exec_status_cl_id on disabled_execution_status(cl_id);
+      create index if not exists idx_fk_execution_attachment_list on execution(attachment_list_id);
+      create index if not exists idx_fk_execution_issue_list on execution(issue_list_id);
+      create index if not exists idx_fk_execution_step__attachment_list on execution_step(attachment_list_id);
+      create index if not exists idx_fk_execution_step_issue_list on execution_step(issue_list_id);
+      create index if not exists idx_fk_execution_test_case on execution(tcln_id);
+      create index if not exists idx_fk_executionstep_teststep on execution_step(test_step_id);
+      create index if not exists idx_fk_group_member_party on core_group_member(party_id);
+      create index if not exists idx_fk_grp_member_grp on core_group_member(group_id);
+      create index if not exists idx_fk_info_item_list on info_list_item(list_id);
+      create index if not exists idx_fk_issue_bugtracker on issue(bugtracker_id);
+      create index if not exists idx_fk_issue_issue_list on issue(issue_list_id);
+      create index if not exists idx_fk_iteration__attachment_list on iteration(attachment_list_id);
+      create index if not exists idx_fk_iteration_test_plan_item_dataset on iteration_test_plan_item(dataset_id);
+      create index if not exists idx_fk_iteration_test_suite_suite on iteration_test_suite(test_suite_id);
+      create index if not exists idx_fk_itertestplan_test_case on iteration_test_plan_item(tcln_id);
+      create index if not exists idx_fk_itertestplan_user on iteration_test_plan_item(user_id);
+      create index if not exists idx_fk_libplugin_property_libplugin on library_plugin_binding_property(plugin_binding_id);
+      create index if not exists idx_fk_milestone_binding_milestone on milestone_binding(milestone_id);
+      create index if not exists idx_fk_milestone_binding_perimeter_milestone on milestone_binding_perimeter(milestone_id);
+      create index if not exists idx_fk_milestone_binding_perimeter_project on milestone_binding_perimeter(project_id);
+      create index if not exists idx_fk_milestone_binding_project on milestone_binding(project_id);
+      create index if not exists idx_fk_milestone_owner on milestone(user_id);
+      create index if not exists idx_fk_parameter_test_case on parameter(test_case_id);
+      create index if not exists idx_fk_party_authority_party on core_party_authority(party_id);
+      create index if not exists idx_fk_party_preference_core_party_party_id on party_preference(party_id);
+      create index if not exists idx_fk_project_arl on project(arl_id);
+      create index if not exists idx_fk_project_attachment_list on project(attachment_list_id);
+      create index if not exists idx_fk_project_chart_definition_project_id on chart_definition(project_id);
+      create index if not exists idx_fk_project_cl on project(cl_id);
+      create index if not exists idx_fk_project_crl on project(crl_id);
+      create index if not exists idx_fk_project_custom_report_dashboard_project_id on custom_report_dashboard(project_id);
+      create index if not exists idx_fk_project_custom_report_folder_project_id on custom_report_folder(project_id);
+      create index if not exists idx_fk_project_report_definition_project_id on report_definition(project_id);
+      create index if not exists idx_fk_project_rl on project(rl_id);
+      create index if not exists idx_fk_project_scm_repository on project(scm_repository_id);
+      create index if not exists idx_fk_project_tcl on project(tcl_id);
+      create index if not exists idx_fk_project_template_id on project(template_id);
+      create index if not exists idx_fk_remote_sync__bugtracker__bugtracker_id on remote_synchronisation(server_id);
+      create index if not exists idx_fk_remote_sync__project__project_id on remote_synchronisation(project_id);
+      create index if not exists idx_fk_report_bindind_custom_report_dashboard_crd_id on custom_report_report_binding(crd_id);
+      create index if not exists idx_fk_report_owner on report_definition(user_id);
+      create index if not exists idx_fk_req_folder_simple_resource on requirement_folder(res_id);
+      create index if not exists idx_fk_req_folder_sync_extender__remote_sync_remote_sync_id on requirement_folder_sync_extender(remote_synchronisation_id);
+      create index if not exists idx_fk_req_nature on requirement_version(category);
+      create index if not exists idx_fk_req_sync_extender__remote_sync_remote_sync_id on requirement_sync_extender(remote_synchronisation_id);
+      create index if not exists idx_fk_req_version_link_req_version_link_type_link_type_id on requirement_version_link(link_type_id);
+      create index if not exists idx_fk_reqlib_attachment_list on requirement_library(attachment_list_id);
+      create index if not exists idx_fk_requirement_current_version on requirement(current_version_id);
+      create index if not exists idx_fk_requirement_version_link_related_requirement_version_id on requirement_version_link(related_requirement_version_id);
+      create index if not exists idx_fk_requirement_version_link_requirement_version_id on requirement_version_link(requirement_version_id);
+      create index if not exists idx_fk_requirement_version_requirement on requirement_version(requirement_id);
+      create index if not exists idx_fk_resource_attachment_list on resource(attachment_list_id);
+      create index if not exists idx_fk_resp_scope_acl_grp on acl_responsibility_scope_entry(acl_group_id);
+      create index if not exists idx_fk_resp_scope_obj_id on acl_responsibility_scope_entry(object_identity_id);
+      create index if not exists idx_fk_rln_project on requirement_library_node(project_id);
+      create index if not exists idx_fk_sc_auth_acl_class on acl_group_permission(class_id);
+      create index if not exists idx_fk_scm_repository_scm_server on scm_repository(scm_server_id);
+      create index if not exists idx_fk_stored_credentials_authenticated_server on stored_credentials(authenticated_server);
+      create index if not exists idx_fk_stored_credentials_user on stored_credentials(authenticated_user);
+      create index if not exists idx_fk_sync_extender_requirement on requirement_sync_extender(requirement_id);
+      create index if not exists idx_fk_sync_extender_server on requirement_sync_extender(server_id);
+      create index if not exists idx_fk_ta_project_ta_server on test_automation_project(server_id);
+      create index if not exists idx_fk_ta_project_tm_project on test_automation_project(tm_project_id);
+      create index if not exists idx_fk_tc_nature on test_case(tc_nature);
+      create index if not exists idx_fk_tc_type on test_case(tc_type);
+      create index if not exists idx_fk_tclib_attachment_list on test_case_library(attachment_list_id);
+      create index if not exists idx_fk_tcln_project on test_case_library_node(project_id);
+      create index if not exists idx_fk_tcnode_attachment_list on test_case_library_node(attachment_list_id);
+      create index if not exists idx_fk_team_member_team on core_team_member(team_id);
+      create index if not exists idx_fk_team_member_user on core_team_member(user_id);
+      create index if not exists idx_fk_test_case_ta_test on test_case(ta_test);
+      create index if not exists idx_fk_test_suite_attachment_list on test_suite(attachment_list_id);
+      create index if not exists idx_fk_test_suite_test_plan_item_test_plan_item on test_suite_test_plan_item(tpi_id);
+      create index if not exists idx_fk_test_suite_test_plan_item_test_suite on test_suite_test_plan_item(suite_id);
+      create index if not exists idx_fk_verified_req_version on requirement_version_coverage(verified_req_version_id);
+      create index if not exists idx_fk_verifying_step_action_test_step on verifying_steps(test_step_id);
+      create index if not exists idx_fk_verifying_step_requirement_version_coverage on verifying_steps(requirement_version_coverage_id);
+      create index if not exists idx_fk_verifying_test_case on requirement_version_coverage(verifying_test_case_id);
+      create index if not exists idx_milestone_camp_camp on milestone_campaign(campaign_id);
+      create index if not exists idx_milestone_camp_milestone on milestone_campaign(milestone_id);
+      create index if not exists idx_milestone_rqv_milestone on milestone_req_version(milestone_id);
+      create index if not exists idx_milestone_rqv_rqv on milestone_req_version(req_version_id);
+      create index if not exists idx_milestone_tc_milestone on milestone_test_case(milestone_id);
+      create index if not exists idx_milestone_tc_tc on milestone_test_case(test_case_id);
+      create index if not exists idx_proj_req_categories on project(req_categories_list);
+      create index if not exists idx_proj_tc_natures on project(tc_natures_list);
+      create index if not exists idx_proj_tc_types on project(tc_types_list);
+      create index if not exists idx_tm_project_ta_server on project(ta_server_id);
+    </sql>
   </changeSet>
 
 
