@@ -32,7 +32,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 var self = this;
                 var datatableSettings = {
                     sAjaxSource: squashtm.app.contextRoot + "automation-workspace/automation-requests/global",
-                    "aaSorting": [[8, 'asc'], [7, 'desc'], [10, 'desc']],
+                    "aaSorting": [[8, 'asc'], [7, 'desc'], [11, 'desc']],
                     "bDeferRender": true,
                     "iDisplayLength": 25,
                     "aoColumnDefs": [{
@@ -85,17 +85,17 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }, {
                         "bSortable": true,
                         "aTargets": [10],
-                        "mDataProp": "transmitted-on"
-                    }, {
-                        "bSortable": true,
-                        "aTargets": [11],
-                        "mDataProp": "assigned-on"
-                    }, {
-                        "bSortable": true,
-                        "aTargets": [12],
                         "mDataProp": "script",
                         "sClass": "assigned-script"
                     }, {
+                        "bSortable": true,
+                        "aTargets": [11],
+                        "mDataProp": "transmitted-on"
+                    }, {
+                        "bSortable": true,
+                        "aTargets": [12],
+                        "mDataProp": "assigned-on"
+                    },  {
                         "bSortable": false,
                         "aTargets": [13],
                         "mDataProp": "tc-id",

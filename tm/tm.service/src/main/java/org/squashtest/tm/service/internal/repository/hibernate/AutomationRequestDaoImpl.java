@@ -330,7 +330,6 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 		OrderSpecifier<?>[] orderSpecifiers = toQueryDslSorting(pageable.getSort());
 		fetchRequest.orderBy(orderSpecifiers);
 
-
 		List<AutomationRequest> requests = fetchRequest.fetch();
 
 		if (LOGGER.isTraceEnabled()) {
