@@ -55,16 +55,16 @@ public class ScmServerModificationController {
 	private static final String URL = "url";
 	private static final String PATH = "path";
 	private static final String REPOSITORY_PATH = "repositoryPath";
-
 	private static final String FOLDER = "folder";
-	private static final String FOLDER_PATH = "folderPath";
+	private static final String WORKING_FOLDER_PATH = "workingFolderPath";
 	private static final String BRANCH = "branch";
+	private static final String WORKING_BRANCH = "workingBranch";
 
 	private static final DatatableMapper<String> scmRepositoryTableMapper = new NameBasedMapper(4)
 		.map(DEFAULT_ENTITY_NAME_KEY, DEFAULT_ENTITY_NAME_KEY)
 		.map(PATH, REPOSITORY_PATH)
-		.map(FOLDER, FOLDER_PATH)
-		.map(BRANCH, BRANCH);
+		.map(FOLDER, WORKING_FOLDER_PATH)
+		.map(BRANCH, WORKING_BRANCH);
 
 	@Inject
 	private ScmServerManagerService scmServerManager;

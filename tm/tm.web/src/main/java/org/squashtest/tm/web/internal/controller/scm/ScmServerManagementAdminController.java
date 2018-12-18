@@ -54,13 +54,14 @@ public class ScmServerManagementAdminController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ScmServerManagementAdminController.class);
 
 	private static final String URL = "url";
+	private static final String BASE_URL = "baseUrl";
 	private static final String KIND = "kind";
 	private static final String ID_EQUALS_IS_BOUND = "id=is-bound";
 
 	private final DatatableMapper<String> scmServerTableMapper = new NameBasedMapper()
 			.map(DEFAULT_ENTITY_NAME_KEY, DEFAULT_ENTITY_NAME_KEY)
 			.map(KIND, KIND)
-			.map(URL, URL);
+			.map(URL, BASE_URL);
 
 	@Inject
 	private ScmConnectorRegistry scmConnectorRegistry;

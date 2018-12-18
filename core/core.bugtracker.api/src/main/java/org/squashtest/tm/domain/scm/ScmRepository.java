@@ -27,16 +27,14 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.channels.FileLock;
 import java.util.Collection;
 import java.util.function.Supplier;
 
 @Entity
 @Table(name = "SCM_REPOSITORY")
 public class ScmRepository {
-
+	
 	@Id
 	@Column(name = "SCM_REPOSITORY_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "scm_repository_id_seq")
@@ -56,12 +54,12 @@ public class ScmRepository {
 	@NotBlank
 	private String repositoryPath;
 
-	@Column(name = "WORKING_FOLDER_PATH")
-	private String workingFolderPath;
 	/**
 	 * The path of the working folder
 	 *
 	 */
+	@Column(name = "WORKING_FOLDER_PATH")
+	private String workingFolderPath;
 
 	@Column(name = "WORKING_BRANCH")
 	@NotBlank
