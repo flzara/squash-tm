@@ -232,7 +232,7 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 				break;
 			case WORK_IN_PROGRESS:
 				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_FUNCTIONAL, AutomationRequest.class.getName());
-				requestDao.updateAutomationRequestStatus(reqIds, WORK_IN_PROGRESS, Collections.singletonList(READY_TO_TRANSMIT));
+				requestDao.updateAutomationRequestStatus(reqIds, WORK_IN_PROGRESS, Arrays.asList(REJECTED, WORK_IN_PROGRESS, SUSPENDED));
 				break;
 			case SUSPENDED:
 				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_FUNCTIONAL, AutomationRequest.class.getName());
