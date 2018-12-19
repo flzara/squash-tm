@@ -244,7 +244,7 @@ public class WebSecurityConfig {
 						.loginPage(LOGIN)
 						.failureUrl("/login?error")
 						.successHandler(successHandler)
-						//.defaultSuccessUrl("/home-workspace")
+
 
 				.and()
 					.logout()

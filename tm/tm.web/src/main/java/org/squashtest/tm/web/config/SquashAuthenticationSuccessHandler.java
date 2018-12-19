@@ -20,13 +20,21 @@
  */
 package org.squashtest.tm.web.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -34,13 +42,21 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.stream.Stream;
 
 @Component
 @Configuration
-public class SquashAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+public class SquashAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
 	private static final String ROLE_TF_AUTOMATION_PROGRAMMER= "ROLE_TF_AUTOMATION_PROGRAMMER";
 	private static final String ROLE_TF_FUNCTIONAL_TESTER ="ROLE_TF_FUNCTIONAL_TESTER";
+	private RequestCache requestCache = new HttpSessionRequestCache();
+
+	public SquashAuthenticationSuccessHandler() {
+		super();
+		setUseReferer(true);
+		setAlwaysUseDefaultTargetUrl(false);
+	}
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -49,15 +65,37 @@ public class SquashAuthenticationSuccessHandler implements AuthenticationSuccess
 		User authUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		session.setAttribute("username", authUser.getUsername());
 		response.setStatus(HttpServletResponse.SC_OK);
-
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+		SavedRequest savedRequest = requestCache.getRequest(request, response);
 
-		if(authorities.stream().filter(auth -> ((GrantedAuthority) auth).getAuthority().equals(ROLE_TF_AUTOMATION_PROGRAMMER)).findAny().isPresent() &&
-			!authorities.stream().filter(auth -> ((GrantedAuthority) auth).getAuthority().equals(ROLE_TF_FUNCTIONAL_TESTER)).findAny().isPresent()) {
-			response.sendRedirect(request.getContextPath()+"/automation-workspace");
-		} else {
-			response.sendRedirect(request.getContextPath()+"/home-workspace");
+		if (savedRequest == null) {
+			super.onAuthenticationSuccess(request, response, authentication);
+
+			return;
+		}
+		String targetUrlParameter = getTargetUrlParameter();
+		if (isAlwaysUseDefaultTargetUrl()
+			|| (targetUrlParameter != null && StringUtils.hasText(request
+			.getParameter(targetUrlParameter)))) {
+			requestCache.removeRequest(request, response);
+			super.onAuthenticationSuccess(request, response, authentication);
+
+			return;
 		}
 
+		clearAuthenticationAttributes(request);
+		// Use the DefaultSavedRequest URL
+		String targetUrl = savedRequest.getRedirectUrl();
+		if(authorities.stream().filter(auth -> ((GrantedAuthority) auth).getAuthority().equals(ROLE_TF_AUTOMATION_PROGRAMMER)).findAny().isPresent() &&
+			!authorities.stream().filter(auth -> ((GrantedAuthority) auth).getAuthority().equals(ROLE_TF_FUNCTIONAL_TESTER)).findAny().isPresent()) {
+			getRedirectStrategy().sendRedirect(request, response,"/automation-workspace");
+		} else {
+			getRedirectStrategy().sendRedirect(request, response, targetUrl);
+		}
+	}
+
+	@Override
+	public void setRequestCache(RequestCache requestCache) {
+		this.requestCache = requestCache;
 	}
 }
