@@ -833,5 +833,33 @@
     </sql>
   </changeSet>
 
+  <changeSet author="aboittiaux" id="tm-1.19.0-create-automation-request">
+
+    <sql>
+      create table TC_AUTOMATION (
+        TCLN_ID BIGINT,
+        TM_PROJECT_ID BIGINT
+      );
+      insert into TC_AUTOMATION(TCLN_ID,TM_PROJECT_ID)
+      select tc.TCLN_ID, tap.TM_PROJECT_ID
+      from TEST_CASE tc
+      inner join AUTOMATED_TEST aut on tc.TA_TEST = aut.TEST_ID
+      inner join TEST_AUTOMATION_PROJECT tap on tap.TA_PROJECT_ID = aut.PROJECT_ID
+      where aut.NAME is not null and tc.TC_KIND = 'STANDARD';
+
+      update TEST_CASE set AUTOMATABLE = 'Y' where TCLN_ID in (select tca.TCLN_ID from TC_AUTOMATION tca);
+
+      insert into AUTOMATION_REQUEST(REQUEST_STATUS, TEST_CASE_ID, PROJECT_ID) select 'AUTOMATED',tca.TCLN_ID, tca.TM_PROJECT_ID from TC_AUTOMATION tca;
+
+      insert into AUTOMATION_REQUEST_LIBRARY_CONTENT
+      (CONTENT_ID, LIBRARY_ID) select AUTOMATION_REQUEST.AUTOMATION_REQUEST_ID, AUTOMATION_REQUEST_LIBRARY.ARL_ID from AUTOMATION_REQUEST
+      inner join TEST_CASE on AUTOMATION_REQUEST.TEST_CASE_ID = TEST_CASE.TCLN_ID
+      inner join PROJECT on AUTOMATION_REQUEST.PROJECT_ID = PROJECT.PROJECT_ID
+      inner join AUTOMATION_REQUEST_LIBRARY on AUTOMATION_REQUEST_LIBRARY.ARL_ID = PROJECT.ARL_ID;
+
+      drop table TC_AUTOMATION;
+    </sql>
+
+  </changeSet>
 
 </databaseChangeLog>

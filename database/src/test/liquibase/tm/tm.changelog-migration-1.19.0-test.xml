@@ -31,6 +31,8 @@
   <!-- note : this dataset is also used for tests for SQTM-504 -->
   <include file="tm.data-1.19.0-SQTM-510.xml" relativeToChangelogFile="true" />
 
+
+  <include file="tm.data-1.19.0.automation-migration.xml" relativeToChangelogFile="true" />
   <!-- ========================================INCLUDE CHANGELOG================================================ -->
   <include file="../../../main/liquibase/tm/tm.changelog-1.19.0.xml"
            relativeToChangelogFile="true" />
@@ -73,7 +75,7 @@
 
   <changeSet id="tm-1.19.0-SQTM-524" author="jprioux" dbms="mysql, postgresql, h2">
     <preConditions>
-      <sqlCheck expectedResult="2">
+      <sqlCheck expectedResult="3">
         select count(*) from PROJECT
         where not ALLOW_AUTOMATION_WORKFLOW;
       </sqlCheck>
@@ -95,5 +97,15 @@
   </changeSet>
 
 
+  <changeSet id="tm-1.19.0-automation-migration" author="aboittiaux" dbms="mysql, postgresql">
+    <preConditions>
+      <sqlCheck expectedResult="1">
+        select count(*)
+        from TEST_CASE tc
+        left join AUTOMATION_REQUEST ar on tc.TCLN_ID = ar.TEST_CASE_ID
+        where tc.AUTOMATABLE = 'Y' and ar.AUTOMATION_REQUEST_ID is not null;
+      </sqlCheck>
+    </preConditions>
+  </changeSet>
 
 </databaseChangeLog>
