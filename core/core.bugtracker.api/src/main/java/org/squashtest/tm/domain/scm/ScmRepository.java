@@ -28,13 +28,18 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 @Entity
 @Table(name = "SCM_REPOSITORY")
 public class ScmRepository {
-	
+
+	private static final Map<Long, Object> repositoriesLocks = new ConcurrentHashMap<>();
+
 	@Id
 	@Column(name = "SCM_REPOSITORY_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "scm_repository_id_seq")
@@ -69,19 +74,16 @@ public class ScmRepository {
 	@JoinColumn(name = "SCM_SERVER_ID", nullable = false)
 	private ScmServer scmServer;
 
-	public <T> T doWithLock(Supplier<T> operation ) throws IOException {
-		File file = new File(getRepositoryPath());
-		T result = null;
-		/*try (
-			FileInputStream in = new FileInputStream(file);
-			// Lock the file repository
-			FileLock lock = in.getChannel().lock()) {*/
+	private Object acquireLock() {
+		return repositoriesLocks.computeIfAbsent(id, id -> new Object());
+	}
 
+	public <T> T doWithLock(IOSupplier<T> operation) throws IOException {
+		T result;
+		Object lock = acquireLock();
+		synchronized (lock) {
 			result = operation.get();
-/*
-		} catch(IOException ioEx) {
-			throw new IOException();
-		}*/
+		}
 		return result;
 	}
 
@@ -127,7 +129,6 @@ public class ScmRepository {
 		this.scmServer = scmServer;
 	}
 
-
 	/**
 	 * Returns the repository base directory as a File
 	 *
@@ -156,4 +157,8 @@ public class ScmRepository {
 		return doWithLock(() -> FileUtils.listFiles(workingFolder, null, true));
 	}
 
+	@FunctionalInterface
+	public interface IOSupplier<T> {
+		T get() throws IOException;
+	}
 }
