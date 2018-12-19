@@ -53,7 +53,6 @@ define(['jquery', 'workspace.contextual-content', 'workspace.routing'],
 					switch (href) {
 						case "#transmitted":
 							model.testerTransmitted = data;
-							console.log(model.testerTransmitted)
 							break;
 						case "#validate":
 							model.testerValidate = data;

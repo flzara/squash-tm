@@ -112,10 +112,9 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", "
                                 } else {
                                     input = '<input type="checkbox" class="editor-active">';
                                 }
-                                return input;
                             }
-                        },
-                        "sWidth": "2.5em"
+                            return input;
+                        }
                     }, {
                         "mDataProp": "requestId",
                         "bVisible": false,
@@ -317,7 +316,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", "
                             }
                         }).success(function () {
                             domtable.refresh();
-                            
+
                         });
                         self.storage.remove(self.key);
                         self.deselectAll(domtable);

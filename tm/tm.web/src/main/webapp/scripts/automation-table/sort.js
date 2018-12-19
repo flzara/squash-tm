@@ -41,7 +41,6 @@ define([ "jquery", "workspace.storage"],
         this.storage = storage;
 		this.key = "automation-sort-" + conf.customKey;
         var sorting = conf.aaSorting;
-
         this.update = function(_sort) {
             var _sorting = _sort || $table.squashTable().fnSettings().aaSorting;
             this._saveaaSorting(_sorting)

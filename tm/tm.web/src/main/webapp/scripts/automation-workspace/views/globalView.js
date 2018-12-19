@@ -95,7 +95,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "bSortable": true,
                         "aTargets": [12],
                         "mDataProp": "assigned-on"
-                    },  {
+                    }, {
                         "bSortable": false,
                         "aTargets": [13],
                         "mDataProp": "tc-id",
@@ -509,28 +509,24 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
             },
 
             checkScriptAutoIsAbsent: function (table) {
-                var tcIds = this.getSelectedTcIds(table);
                 var count = 0;
-                if (tcIds.length === 0 || tcIds === undefined) {
-                    notification.showWarning(translator.get("automation.notification.selectedRow.none"));
-                } else {
-                    var selectedRows = table.getSelectedRows();
-                    var datas = table.fnGetData();
+                var selectedRows = table.getSelectedRows();
+                var datas = table.fnGetData();
 
-                    $(selectedRows).each(function (index, data) {
-                        var idx = data._DT_RowIndex;
-                        var script = datas[idx]["script"];
-                        var format = datas[idx]["format"];
-                        if ((script == null && "gherkin" !== format.toLowerCase()) || (script === "no-test-automation-project" && "gherkin" !== format.toLowerCase())) {
-                            count = count + 1;
-                        }
-                    })
-                }
+                $(selectedRows).each(function (index, data) {
+                    var idx = data._DT_RowIndex;
+                    var script = datas[idx]["script"];
+                    var format = datas[idx]["format"];
+                    if ((script === null || script === "-") && "gherkin" !== format.toLowerCase()) {
+                        count = count + 1;
+                    }
+                })
+
 
                 return count;
             },
 
-            updateStatus: function(table, status) {
+            updateStatus: function (table, status) {
                 var tcIds = this.getSelectedTcIds(table);
                 if (tcIds.length === 0 || tcIds === undefined) {
                     notification.showWarning(translator.get("automation.notification.selectedRow.none"));
@@ -585,28 +581,31 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     self.deselectAll(domtable);
                 });
 
-                $("#progress-automation-button").on("click", function() {
+                $("#progress-automation-button").on("click", function () {
                     self.updateStatus(domtable, "AUTOMATION_IN_PROGRESS");
                 });
 
-                $("#automated-automation-button").on("click", function() {
-                    var count = self.checkScriptAutoIsAbsent(domtable);
-                    if(count != 0) {
+                $("#automated-automation-button").on("click", function () {
+                    var tcIds = this.getSelectedTcIds(table);
+                    var scripts = self.checkScriptAutoIsAbsent(domtable);
+                    if (tcIds.length === 0 || tcIds === undefined) {
+                        notification.showWarning(translator.get("automation.notification.selectedRow.none"));
+                    } else if (scripts !== 0) {
                         notification.showWarning(translator.get("automation.notification.script.none"));
                     } else {
                         self.updateStatus(domtable, "AUTOMATED");
                     }
                 });
 
-                $("#rejected-automation-button").on("click", function() {
+                $("#rejected-automation-button").on("click", function () {
                     self.updateStatus(domtable, "REJECTED");
                 });
 
-                $("#assigned-automation-button").on("click", function() {
+                $("#assigned-automation-button").on("click", function () {
                     self.actions(domtable, "automation-requests/assignee");
                 });
 
-                $("#unassigned-automation-button").on("click", function() {
+                $("#unassigned-automation-button").on("click", function () {
                     self.actions(domtable, "automation-requests/unassigned");
                 });
             }

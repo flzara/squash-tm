@@ -524,7 +524,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     var idx = data._DT_RowIndex;
                     var script = datas[idx]["script"];
                     var format = datas[idx]["format"];
-                    if ((script == null && "gherkin" !== format.toLowerCase()) || (script === "no-test-automation-project" && "gherkin" !== format.toLowerCase())) {
+                    if ((script === null || script === "-") && "gherkin" !== format.toLowerCase()) {
                         count = count + 1;
                     }
 
