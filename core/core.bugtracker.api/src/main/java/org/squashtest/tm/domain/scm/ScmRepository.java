@@ -22,21 +22,23 @@ package org.squashtest.tm.domain.scm;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
 
 @Entity
 @Table(name = "SCM_REPOSITORY")
 public class ScmRepository {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(ScmRepository.class);
 
 	private static final Map<Long, Object> repositoriesLocks = new ConcurrentHashMap<>();
 
@@ -80,10 +82,15 @@ public class ScmRepository {
 
 	public <T> T doWithLock(IOSupplier<T> operation) throws IOException {
 		T result;
+
+		LOGGER.trace("attempting to acquire lock on repository '{}'", name);
+
 		Object lock = acquireLock();
 		synchronized (lock) {
+			LOGGER.trace("lock acquired on repository '{}'", name);
 			result = operation.get();
 		}
+		LOGGER.trace("lock released on repository '{}'", name);
 		return result;
 	}
 

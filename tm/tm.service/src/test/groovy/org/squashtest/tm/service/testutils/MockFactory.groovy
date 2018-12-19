@@ -63,35 +63,8 @@ class MockFactory extends Specification {
 
 	}
 
-/*
-	def mockScmRepository(){
-		// create the file structure
-		File base = Files.createTempDirectory("ATMSTest_").toFile()
-		base.deleteOnExit()
 
 
-		FileTreeBuilder builder = new FileTreeBuilder(base)
-		builder {
-			dir("squash") {
-				file "815_test1.ta"
-				file "220_test2.ta"
-				dir("subfolder") {
-					file "999_test3.ta"
-				}
-			}
-			file "unrelated_file.txt"
-			dir("unrelated_folder") {
-				file "another_file.txt"
-			}
-
-		}
-
-		// now we can create the ScmRepository
-		return new ScmRepository( name: "my repository", repositoryPath: base.absolutePath, workingFolderPath: "squash")
-
-
-	}
-*/
 	def mockScmRepository(name = "my repo", workingFolder = "squash", @DelegatesTo(FileTreeBuilder) Closure contentPopulator = null){
 
 		File base = Files.createTempDirectory("ATMSTest_").toFile()

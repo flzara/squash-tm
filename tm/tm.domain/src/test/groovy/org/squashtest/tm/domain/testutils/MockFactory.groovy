@@ -24,8 +24,10 @@ import org.squashtest.tm.domain.infolist.InfoList
 import org.squashtest.tm.domain.infolist.InfoListItem
 import org.squashtest.tm.domain.infolist.ListItemReference
 import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.scm.ScmRepository
+import spock.lang.Specification
 
-import spock.lang.Specification;
+import java.nio.file.Files;
 
 class MockFactory extends Specification {
 
@@ -56,5 +58,41 @@ class MockFactory extends Specification {
 		p
 
 	}
+
+
+
+
+	def mockScmRepository(name = "my repo", workingFolder = "squash", @DelegatesTo(FileTreeBuilder) Closure contentPopulator = null){
+
+		File base = Files.createTempDirectory("ATMSTest_").toFile()
+		base.deleteOnExit()
+
+		FileTreeBuilder builder = new FileTreeBuilder(base)
+
+		// default contentPopulator if it was left null
+		if (contentPopulator == null){
+			contentPopulator = {
+				dir("squash") {
+					file "815_test1.ta"
+					file "220_test2.ta"
+					dir("subfolder") {
+						file "999_test3.ta"
+					}
+				}
+				file "unrelated_file.txt"
+				dir("unrelated_folder") {
+					file "another_file.txt"
+				}
+			}
+		}
+
+		// populate
+		builder.call contentPopulator
+
+		// create
+		def scm = new ScmRepository( name: name, repositoryPath: base.absolutePath, workingFolderPath: workingFolder)
+
+	}
+
 
 }
