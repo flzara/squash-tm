@@ -69,7 +69,7 @@ public class ScmRepository {
 	@JoinColumn(name = "SCM_SERVER_ID", nullable = false)
 	private ScmServer scmServer;
 
-	public <T> T doWithLock(Supplier<T> operation) throws IOException {
+	public <T> T doWithLock(Supplier<T> operation ) throws IOException {
 		File file = new File(getRepositoryPath());
 		T result = null;
 		/*try (

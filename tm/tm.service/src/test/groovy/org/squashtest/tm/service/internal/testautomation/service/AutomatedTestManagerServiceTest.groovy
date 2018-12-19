@@ -23,7 +23,10 @@ package org.squashtest.tm.service.internal.testautomation.service
 import org.apache.commons.io.FileUtils
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.scm.ScmRepository
+import org.squashtest.tm.domain.testcase.TestCaseKind
 import org.squashtest.tm.service.internal.repository.TestAutomationServerDao
+import org.squashtest.tm.service.scmserver.ScmRepositoryManifest
+import org.squashtest.tm.service.testutils.MockFactory
 import spock.lang.Shared
 
 import javax.inject.Provider
@@ -51,10 +54,28 @@ class AutomatedTestManagerServiceTest extends Specification {
 	TestAutomationTaskExecutor executor;
 
 	@Shared
-	ScmRepository scm = initScmRepository()
+	ScmRepository repo1 = new MockFactory().mockScmRepository("ATMSTest_", "squash"){
+		dir("squash"){
+			file "123_feat_gherkin.feature"
+			file "456_another_gherkin.feature"
+			file "1642_unknown_tech.whatever"
+		}
+	}
+
+	@Shared
+	ScmRepository repo2 = new MockFactory().mockScmRepository("ATMSTest2_", "scripts"){
+		dir("scripts"){
+			file "789_ghertest1.feature"
+			file "159_ghertest2.feature"
+			file "1642_whatsis.dunno"
+		}
+	}
+
+
 
 	def cleanupSpec(){
-		FileUtils.forceDelete(scm.baseRepositoryFolder)
+		FileUtils.forceDelete(repo1.baseRepositoryFolder)
+		FileUtils.forceDelete(repo2.baseRepositoryFolder)
 	}
 
 
@@ -89,7 +110,7 @@ class AutomatedTestManagerServiceTest extends Specification {
 
 
 		when :
-		def res = service.listTestsFromServer( [ project1, project2])
+		def res = service.listTestsFromRemoteServers( [ project1, project2])
 
 		then :
 
@@ -131,9 +152,124 @@ class AutomatedTestManagerServiceTest extends Specification {
 	}
 
 
-	// **************** listing tests from Git **********************
+	// **************** listing tests from Scm **********************
+
+	def "should group the automation projects by SCM"(){
+
+		given : "the scms"
+		def scm1 = Mock(ScmRepository)
+		def scm2 = Mock(ScmRepository)
+
+		and : "the projects"
+		def projectWithScm1 = new Project(scmRepository: scm1)
+		def projectWithScm2 = new Project(scmRepository: scm2)
+		def projectWithoutScm = new Project(scmRepository: null)
+
+		and : "the automation projects"
+		def auto11 = new TestAutomationProject(tmProject: projectWithScm1)
+		def auto12 = new TestAutomationProject(tmProject: projectWithScm1)
+
+		def auto21 = new TestAutomationProject(tmProject: projectWithScm2)
+		def auto22 = new TestAutomationProject(tmProject: projectWithScm2)
+
+		def auto3 = new TestAutomationProject(tmProject: projectWithoutScm)
 
 
+		when :
+		def res = service.automationProjectsGroupByScm([auto21, auto12, auto11, auto3, auto22])
+
+		then:
+		res[scm1] as Set == [auto11, auto12] as Set
+		res[scm2] as Set == [auto21, auto22] as Set
+		res.values().flatten().contains(auto3) == false
+
+
+	}
+
+
+	def "group tests by technology"(){
+
+		expect:
+		service.groupTestsByTechnology(repo1) == [
+			(TestCaseKind.STANDARD) : ["squash/1642_unknown_tech.whatever"],
+			(TestCaseKind.GHERKIN)	: ["squash/123_feat_gherkin.feature", "squash/456_another_gherkin.feature"]
+		]
+	}
+
+	def "group automation projects by technology and make them AutomationProjectContent"(){
+
+		given :
+		def reg1 = new TestAutomationProject(label: "regular 1", canRunGherkin: false)
+		def gher1 = new TestAutomationProject(label: "gherkin 1", canRunGherkin: true)
+		def reg2 = new TestAutomationProject(label: "regular 2", canRunGherkin: false)
+		def gher2 = new TestAutomationProject(label: "gherkin 2", canRunGherkin: true)
+
+		when :
+		def res = service.groupProjectsByTechnology([gher2, reg1, reg2, gher1])
+
+		then :
+		res.values().flatten().every {it.class == TestAutomationProjectContent }
+		res[TestCaseKind.STANDARD].collect {it.project} == [reg1, reg2]
+		res[TestCaseKind.GHERKIN].collect {it.project} == [gher1, gher2]
+
+	}
+
+
+	def "should create the automation project contents for 2 scms"(){
+
+		given : "the projects"
+		def projectWithScm1 = new Project(scmRepository: repo1)
+		def projectWithScm2 = new Project(scmRepository: repo2)
+		def projectWithoutScm = new Project(scmRepository: null)
+
+		and : "the automation projects"
+		def gher1 = new TestAutomationProject(label: "gherkin 1", tmProject: projectWithScm1, canRunGherkin: true)
+		def reg1 = new TestAutomationProject(label: "regular 1",tmProject: projectWithScm1, canRunGherkin: false)
+
+		def reg2 = new TestAutomationProject(label: "regular 2", tmProject: projectWithScm2, canRunGherkin: false)
+		def gher2 = new TestAutomationProject(label: "gherkin 2", tmProject: projectWithScm2, canRunGherkin: true)
+
+		def noscm = new TestAutomationProject(tmProject: projectWithoutScm)
+
+
+		when :
+		def contents = service.listTestsFromScm([gher2, reg1, noscm, reg2, gher1])
+
+		then :
+
+		// check gher1 first, must contain gherkin tests from the scm1
+		def contentGher1 = contents.find {it.project == gher1 }
+		contentGher1.tests.collect {it.fullLabel }.sort() == [
+			"/gherkin 1/squash/123_feat_gherkin.feature",
+			"/gherkin 1/squash/456_another_gherkin.feature"
+		]
+
+		// same check for project regular 1, with regular tests from scm1
+		def contentReg1 = contents.find { it.project == reg1 }
+		contentReg1.tests.collect {it.fullLabel }.sort() == [
+			"/regular 1/squash/1642_unknown_tech.whatever"
+		]
+
+		// reg2 contains regular tests from scm2
+		def contentReg2 = contents.find { it.project == reg2}
+		contentReg2.tests.collect {it.fullLabel }.sort() == [
+			"/regular 2/scripts/1642_whatsis.dunno"
+		]
+
+		// gher2 contains gherkin tests from scm2
+		def contentGher2 = contents.find {it.project == gher2 }
+		contentGher2.tests.collect {it.fullLabel }.sort() == [
+			"/gherkin 2/scripts/159_ghertest2.feature",
+			"/gherkin 2/scripts/789_ghertest1.feature"
+		]
+
+		// and no result for the "no scm" project
+		contents.find {it.project == noscm } == null
+
+
+	}
+
+/*
 	def "should return distinct scms referenced by the various test automation projects"(){
 
 		given :
@@ -175,17 +311,6 @@ class AutomatedTestManagerServiceTest extends Specification {
 	}
 
 
-
-	// note : this test and the method it tests should rather be relocated in the ScmRepository entity itself
-	def "should return the list of test in the squash folder as relative to the base repository path"(){
-
-		when :
-		def res = service.collectTestRelativePath(scm).collect(Collectors.toList()).sort()
-
-		then:
-		res == ["squash/220_test2.ta", "squash/815_test1.ta", "squash/subfolder/999_test3.ta"]
-
-	}
 
 
 	def "should not list from repository if there are no repository to list from"(){
@@ -268,51 +393,6 @@ class AutomatedTestManagerServiceTest extends Specification {
 
 
 	}
-
-	// ******************** scaffolding *****************************
-
-
-	/*
-	 * Defines a repository as follow
-	 *
-	 * /(TMP_DIR)/ATMSTest_{random int}
-	 * 	+ squash
-	 * 	|	+ 815_test1.ta
-	 * 	|	+ 220_test2.ta
-	 * 	|	- subfolder
-	 * 	|		- 999_test3.ta
-	 * 	+ unrelated_file.txt
-	 * 	+ unrelated_folder
-	 * 		+another_file.txt
-	 */
-	def initScmRepository(){
-
-		// create the file structure
-		File base = Files.createTempDirectory("ATMSTest_").toFile()
-		base.deleteOnExit()
-
-		FileTreeBuilder builder = new FileTreeBuilder(base)
-		builder{
-			dir("squash") {
-				file "815_test1.ta"
-				file "220_test2.ta"
-				dir ("subfolder"){
-					file "999_test3.ta"
-				}
-			}
-			file "unrelated_file.txt"
-			dir("unrelated_folder"){
-				file "another_file.txt"
-			}
-
-		}
-
-		// now we can create the ScmRepository
-
-		return new ScmRepository( name: "my repository", repositoryPath: base.absolutePath, workingFolderPath: "squash")
-
-
-	}
-
+*/
 
 }

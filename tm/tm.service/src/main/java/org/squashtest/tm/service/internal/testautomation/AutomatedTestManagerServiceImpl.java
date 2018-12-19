@@ -35,20 +35,25 @@ import static java.util.stream.Collectors.toList;
 
 import javax.inject.Inject;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.omg.CORBA.TCKind;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.scm.ScmRepository;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
+import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.service.internal.repository.AutomatedTestDao;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
+import org.squashtest.tm.service.scmserver.ScmRepositoryManifest;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import org.squashtest.tm.service.testcase.scripted.ScriptToFileStrategy;
 
 /**
  *
@@ -109,17 +114,16 @@ public class AutomatedTestManagerServiceImpl implements UnsecuredAutomatedTestMa
 	public Collection<TestAutomationProjectContent> listTestsInProjects(Collection<TestAutomationProject> projects) {
 
 		// 1 : request tests published on automation servers
-		Collection<TestAutomationProjectContent> fromServers = listTestsFromServer(projects);
+		Collection<TestAutomationProjectContent> listedFromServers = listTestsFromRemoteServers(projects);
 
 		// 2 : request tests published in SCM
-		Optional<TestAutomationProjectContent> maybeFromScm = listTestsFromScm(projects);
+		Collection<TestAutomationProjectContent> listedFromScms = listTestsFromScm(projects);
 
 		// if some content was found in SCM and defined, merge the content
-		if (maybeFromScm.isPresent()){
-			TestAutomationProjectContent fromScm = maybeFromScm.get();
+		for (TestAutomationProjectContent fromScm : listedFromScms){
 
 			// lookup in the "fromServers" list which project is referenced there
-			Optional<TestAutomationProjectContent> maybeFromServer = fromServers.stream()
+			Optional<TestAutomationProjectContent> maybeFromServer = listedFromServers.stream()
 					.filter(proj -> proj.getProject().equals(fromScm.getProject()))
 					.findFirst();
 
@@ -130,13 +134,13 @@ public class AutomatedTestManagerServiceImpl implements UnsecuredAutomatedTestMa
 			}
 		}
 
-		// now we can return
-		return fromServers;
+		return listedFromServers;
 	}
 
 	// ************************* method set : fetch tests from server  ************************************
 
-	private Collection<TestAutomationProjectContent> listTestsFromServer(Collection<TestAutomationProject> projects){
+	@Override
+	public Collection<TestAutomationProjectContent> listTestsFromRemoteServers(Collection<TestAutomationProject> projects){
 
 		LOGGER.debug("listing tests on remote test automation projects ");
 		if (LOGGER.isTraceEnabled()){
@@ -171,91 +175,149 @@ public class AutomatedTestManagerServiceImpl implements UnsecuredAutomatedTestMa
 
 
 
-	// ************************* method set : fetch tests from server  ************************************
+	// ************************* method set : fetch tests from scm  ************************************
 
-	/**
-	 * <p>
-	 *     Collects all the automated tests contained in the repositories, and returns them paired to the first Gherkin-able
-	 * automation project in the list.
-	 * </p>
-	 *
-	 * <p>
-	 *     Returns an empty option if no SCM or no Gherkin-able TestAutomationProject is available.
-	 * </p>
-	 *
-	 * @param projects
-	 * @return
-	 */
-	private Optional<TestAutomationProjectContent> listTestsFromScm(Collection<TestAutomationProject> projects){
+	@Override
+	public Collection<TestAutomationProjectContent> listTestsFromScm(Collection<TestAutomationProject> autoprojects){
 
-		// 1 : get the SCMs
-		Collection<ScmRepository> repos = gatherRepositories(projects);
+		List<TestAutomationProjectContent> allContent = new ArrayList<>();
 
-
-		// 2 : locate the first Gherkin-able project
-		Optional<TestAutomationProject> maybeGherkinProject = projects.stream()
-																  .filter(TestAutomationProject::isCanRunGherkin)
-																  .sorted(Comparator.comparing(TestAutomationProject::getLabel))
-																  .findFirst();
-
-		// go if there is at least one repo and one gherkin project
-		if (! repos.isEmpty() && maybeGherkinProject.isPresent()){
-
-			TestAutomationProject gherkinProject = maybeGherkinProject.get();
-
-			// 3 : gather all automated tests, as test belonging to the selected gherkin project
-			Collection<AutomatedTest> allTests = repos.stream()
-													 .flatMap(this::collectTestRelativePath)
-													 .map(path -> new AutomatedTest(path, gherkinProject))
-													 .collect(toList());
-
-			// 4 : return the result
-			return Optional.of(new TestAutomationProjectContent(gherkinProject, allTests));
+		LOGGER.debug("retrieving test automation project content from repositories");
+		if (LOGGER.isTraceEnabled()){
+			List<String> taNames = autoprojects.stream().map(TestAutomationProject::getLabel).collect(toList());
+			LOGGER.trace("automation projects : {}", taNames);
 		}
-		else{
-			return Optional.empty();
+
+		/*
+		 * Here we first group the test automation projects by repositories. Automation projects that belongs to TM projects that have no repository are discarded.
+		 * With each repository :
+		 *  - we list the content of the repository
+		 * 	- automation projects are classified by technology
+		 * 	- tests are classified by technology
+		 * 	- for each technology, tests and projects are paired together
+		 *
+		 * Shortcoming : if a scm is shared between multiple TM projects, the file listing will include more results than
+		 * intended. Typically it can lead to inconsistencies where an automation projects for a TM project A will list
+		 * scripts among which some of them will corresponds to test cases of a TM project B. The solution would be to
+		 * double check with the content of a given project in the database. This would be relatively expensive and for
+		 * now we won't perform such check.
+		 *
+		 */
+		Map<ScmRepository, List<TestAutomationProject>> byTmProject =
+			automationProjectsGroupByScm(autoprojects);
+
+		for (Map.Entry<ScmRepository, List<TestAutomationProject>> groupedAutoprojects : byTmProject.entrySet()){
+
+			ScmRepository scm = groupedAutoprojects.getKey();
+			List<TestAutomationProject> taProjects = groupedAutoprojects.getValue();
+
+			Collection<TestAutomationProjectContent> content = processAutoprojectSubset(scm, taProjects);
+
+			allContent.addAll(content);
+
+		}
+
+		return allContent;
+
+	}
+
+	private Map<ScmRepository, List<TestAutomationProject>> automationProjectsGroupByScm(Collection<TestAutomationProject> autoprojects) {
+		return autoprojects
+			.stream()
+			.filter(auto -> auto.getTmProject().getScmRepository() != null)
+			.collect(Collectors.groupingBy(auto -> auto.getTmProject().getScmRepository()));
+	}
+
+
+	private Collection<TestAutomationProjectContent> processAutoprojectSubset(ScmRepository scm, Collection<TestAutomationProject> projects){
+
+		if (LOGGER.isTraceEnabled()) {
+			List<String> taNames = projects.stream().map(TestAutomationProject::getLabel).collect(toList());
+			LOGGER.trace("inspecting content of repository '{}' and automation projects {}", scm.getName(), taNames);
+		}
+
+		try {
+
+			List<TestAutomationProjectContent> allContent = new ArrayList<>();
+
+			Map<TestCaseKind, List<String>> testsByTech = groupTestsByTechnology(scm);
+			Map<TestCaseKind, List<TestAutomationProjectContent>> projectContentsByTech = groupProjectsByTechnology(projects);
+
+			for (TestCaseKind kind : testsByTech.keySet()) {
+
+				List<String> testPathsForKind = testsByTech.getOrDefault(kind, Collections.emptyList());
+				List<TestAutomationProjectContent> contentForKind = projectContentsByTech.getOrDefault(kind, Collections.emptyList());
+
+				populateProjectContents(testPathsForKind, contentForKind);
+
+				allContent.addAll(contentForKind);
+
+			}
+
+
+			return allContent;
+
+		}
+		catch(Exception exception){
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("Error while retrieving tests from repository '"+scm.getName()+"', " +
+								 "which prevented to populate the automation projects test list", exception);
+			}
+
+			return buildFailedContent(exception, projects);
 		}
 
 	}
 
-	private Collection<ScmRepository> gatherRepositories(Collection<TestAutomationProject> projects){
-		return projects.stream()
-				   .map(taProj -> taProj.getTmProject().getScmRepository())
-				   .filter(scm -> scm != null)
-				   .distinct()
-				   .collect(toList());
+	private Collection<TestAutomationProjectContent> buildFailedContent(Exception ex, Collection<TestAutomationProject> projects){
+		return projects.stream().map(proj -> new TestAutomationProjectContent(proj, ex)).collect(toList());
 	}
 
-
-
-	/*
-	 * Returns paths of the content of the working directory of the repository as a stream of String.
-	 * The returned paths are relative to the base repository directory and use the Unix separator
-	 * regardless of the underlying OS or filesystem.
-	 */
-	private Stream<String> collectTestRelativePath(ScmRepository repository){
-		Path baseAsPath = Paths.get(repository.getRepositoryPath());
-
-		return getScmContentOrLog(repository).stream()
-		   .map(testFile -> {
-				Path testPath = Paths.get(testFile.getAbsolutePath());
-				return baseAsPath.relativize(testPath);
-			})
-			.map(Path::toString)
-			.map(path -> FilenameUtils.normalizeNoEndSeparator(path, true));
-	}
-
-	private Collection<File> getScmContentOrLog(ScmRepository repo){
-		try{
-			return repo.listWorkingFolderContent();
-		}
-		catch(IOException io){
-			LOGGER.error("error while listing content of repository "+repo.getName(), io);
-			return Collections.emptyList();
+	
+	private void populateProjectContents(List<String> testPathsForKind, List<TestAutomationProjectContent> contentForKind) {
+		for (TestAutomationProjectContent content : contentForKind) {
+			TestAutomationProject taProject = content.getProject();
+			for (String path : testPathsForKind) {
+				AutomatedTest taTest = new AutomatedTest(path, taProject);
+				content.appendTest(taTest);
+			}
 		}
 	}
 
 
+
+	// TODO: actually identifying the technology by file extension is weak. We should either
+	// check for metadata in the tests themselves, or double check with the ScriptedTestCaseExtender
+	// that goes along.
+	// Note : the TestCaseKind "STANDARD" corresponds to unidentified technologies
+	private Map<TestCaseKind, List<String>> groupTestsByTechnology(ScmRepository scm) throws IOException{
+		return new ScmRepositoryManifest(scm)
+				   .streamTestsRelativePath()
+				   .sorted()
+				   .collect(Collectors.groupingBy(this::identifyTestKind));
+
+	}
+
+	private Map<TestCaseKind, List<TestAutomationProjectContent>> groupProjectsByTechnology(Collection<TestAutomationProject> autoprojects){
+		return autoprojects
+				   .stream()
+				   .sorted(Comparator.comparing(TestAutomationProject::getLabel))
+				   .map(TestAutomationProjectContent::new)
+				   .collect(Collectors.groupingBy(this::identifyProjectTechnology));
+	}
+
+	private TestCaseKind identifyTestKind(String testPath){
+		return isTestGherkin(testPath) ? TestCaseKind.GHERKIN : TestCaseKind.STANDARD;
+	}
+
+	// naive classifier here !
+	private boolean isTestGherkin(String testPath){
+		return testPath.endsWith(ScriptToFileStrategy.GHERKIN_STRATEGY.getExtension());
+	}
+
+	private TestCaseKind identifyProjectTechnology(TestAutomationProjectContent projectContent){
+		return (projectContent.getProject().isCanRunGherkin()) ? TestCaseKind.GHERKIN : TestCaseKind.STANDARD;
+	}
 
 
 }

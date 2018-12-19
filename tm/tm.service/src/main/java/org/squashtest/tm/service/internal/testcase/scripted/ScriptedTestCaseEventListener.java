@@ -20,34 +20,23 @@
  */
 package org.squashtest.tm.service.internal.testcase.scripted;
 
-import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.filefilter.FileFilterUtils;
-import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.QProject;
 import org.squashtest.tm.domain.scm.QScmRepository;
 import org.squashtest.tm.domain.scm.ScmRepository;
-import org.squashtest.tm.domain.testautomation.AutomatedTest;
+import org.squashtest.tm.domain.testautomation.QTestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testcase.*;
-import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.domain.tf.automationrequest.QAutomationRequest;
-import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService;
 import org.squashtest.tm.service.internal.tf.event.AutomationRequestStatusChangeEvent;
+import org.squashtest.tm.service.scmserver.ScmRepositoryFilesystemService;
+import org.squashtest.tm.service.scmserver.ScmRepositoryManifest;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
-import org.squashtest.tm.service.testcase.scripted.ScriptToFileStrategy;
-
-import static com.querydsl.core.group.GroupBy.*;
 
 
 import javax.inject.Inject;
@@ -55,10 +44,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.UnsupportedCharsetException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -73,6 +58,8 @@ public class ScriptedTestCaseEventListener {
 	@PersistenceContext
 	private EntityManager em;
 
+	@Inject
+	private ScmRepositoryFilesystemService scmService;
 
 	@Inject
 	private TestCaseModificationService tcService;
@@ -96,19 +83,9 @@ public class ScriptedTestCaseEventListener {
 
 		Collection<Long> requestIds = event.getAutomationRequestIds();
 
-		Map<ScmRepository, Set<TestCaseAndScript>> scriptsGroupedByScm = findScriptsGroupedByRepoFromRequestId(requestIds);
+		Collection<Long> testCaseIds = findTestCaseIdsByAutomationRequestIds(requestIds);
 
-		for (Map.Entry<ScmRepository, Set<TestCaseAndScript>> entry : scriptsGroupedByScm.entrySet()){
-
-			ScmRepository scm = entry.getKey();
-			Set<TestCaseAndScript> tcAndScripts = entry.getValue();
-
-			if (LOGGER.isTraceEnabled()) {
-				LOGGER.trace("committing {} files to repository '{}'", tcAndScripts.size(), scm.getName());
-			}
-
-			exportToScm(scm, tcAndScripts);
-		}
+		scmService.createOrUpdateScriptFile(testCaseIds);
 
 	}
 
@@ -118,11 +95,10 @@ public class ScriptedTestCaseEventListener {
 	 *
 	 * @param event
 	 */
-	// TODO : hack and ship, refactor asap once shipped
 	@Order(100)
 	@EventListener(classes = {AutomationRequestStatusChangeEvent.class}, condition = "#event.newStatus == " + SPEL_ARSTATUS + ".TRANSMITTED or " +
 																					 "#event.newStatus == " + SPEL_ARSTATUS + ".AUTOMATED")
-	public void associateWhenAvailable(AutomationRequestStatusChangeEvent event){
+	public void autoBindWhenAvailable(AutomationRequestStatusChangeEvent event){
 
 		LOGGER.debug("request status changed : autoassociating test scripts if needed and possible");
 		if (LOGGER.isTraceEnabled()){
@@ -131,57 +107,30 @@ public class ScriptedTestCaseEventListener {
 
 		Collection<Long> requestIds = event.getAutomationRequestIds();
 
-		Map<ScmRepository, Set<TestCaseAndScript>> scriptsGroupedByScm = findScriptsGroupedByRepoFromRequestId(requestIds);
+		// find the candidates
+		List<TestCase> candidates = findCandidatesForAutobind(requestIds);
 
-		for (Map.Entry<ScmRepository, Set<TestCaseAndScript>> entry : scriptsGroupedByScm.entrySet()){
+		// group them by scm
+		Map<ScmRepository, List<TestCase>> testCasesByScm = candidates.stream().collect(Collectors.groupingBy(tc -> tc.getProject().getScmRepository()));
+
+		for (Map.Entry<ScmRepository, List<TestCase>> entry : testCasesByScm.entrySet()){
 
 			ScmRepository scm = entry.getKey();
+			List<TestCase> testCases = entry.getValue();
 
-			doWithLock(scm, () -> {
+			try {
+				scm.doWithLock(() -> {
 
-				Set<TestCaseAndScript> tcAndScripts = entry.getValue();
+					autoBindWithScm(scm, testCases);
 
-				TestListing listing = new TestListing(scm);
-
-				tcAndScripts.forEach( tcas -> {
-
-					TestCase testCase = tcas.getTestCase();
-
-					// look for a Gherkin-able project
-					Optional<TestAutomationProject> maybeGherkin = testCase.getProject()
-																  .getTestAutomationProjects()
-																  .stream()
-																  .filter(TestAutomationProject::isCanRunGherkin)
-																  .sorted(Comparator.comparing(TestAutomationProject::getLabel))
-																  .findFirst();
-
-					// should the autobind be attempted on this test case that has no automated test, is of kind gherkin with a suitable automation project ?
-					if (testCase.getKind() == TestCaseKind.GHERKIN &&
-						maybeGherkin.isPresent() &&
-							(! testCase.isAutomated())){
-
-						TestAutomationProject gherkinProject = maybeGherkin.get();
-
-						Optional<File> maybeFile = listing.locateTest(tcas);
-
-						if (maybeFile.isPresent()){
-							File testFile = maybeFile.get();
-
-							// make that an automated test. First we need to relativize the path
-							Path scmPath = Paths.get(scm.getRepositoryPath());
-							Path testPath = Paths.get(testFile.getAbsolutePath());
-
-							String relativized = scmPath.relativize(testPath).toString();
-							String normalizedName =  FilenameUtils.normalizeNoEndSeparator(relativized, true);
-
-							tcService.bindAutomatedTest(testCase.getId(), gherkinProject.getId(), normalizedName);
-
-						}
-
-					}
+					return null;
 
 				});
-			});
+			}
+			catch(IOException ex){
+				LOGGER.error("Error while autobinding test cases", ex);
+				// do not let fail the whole operation here, proceed with the next batch
+			}
 		}
 
 	}
@@ -190,406 +139,99 @@ public class ScriptedTestCaseEventListener {
 	// ************* internals **********************
 
 
-	// for now the only status considered is TRANSMITTED, but that could change in the future
-	private boolean newStatusRequiresCommit(AutomationRequestStatus newStatus){
-		return newStatus == AutomationRequestStatus.TRANSMITTED;
-	}
+	private void autoBindWithScm(ScmRepository scm, Collection<TestCase> testCases){
 
+		ScmRepositoryManifest manifest = new ScmRepositoryManifest(scm);
 
+		testCases.forEach( tc -> {
 
-	// TODO : mettre un vrai lock dessus, voir avec Johan
-	private void doWithLock(ScmRepository scm, Action action){
+			// look for a Gherkin-able project
+			Optional<TestAutomationProject> maybeGherkin = findFirstGherkinProject(tc);
+			Optional<File> maybeFile = manifest.locateTest(tc);
 
-		// acquire the lock
+			if (maybeFile.isPresent() && maybeGherkin.isPresent()) {
 
-		try {
-			// now do the work
-			action.act();
-		}
-		finally{
-			// finally, release the lock
-			// also invoke the plugin for actual commit/push
-		}
+				File testFile = maybeFile.get();
+				TestAutomationProject gherkinProject = maybeGherkin.get();
 
+				String normalizedName = manifest.getRelativePath(testFile);
 
-	}
-
-	/**
-	 * Will create the files in the scm if they don't exist, then update the content.
-	 * A lock is acquired on the SCM for the whole operation beforehand.
-	 *
-	 * @param scm
-	 * @param tcAndScripts
-	 */
-	private void exportToScm(ScmRepository scm, Set<TestCaseAndScript> tcAndScripts){
-
-		doWithLock(scm, () ->{
-
-			LOGGER.trace("committing tests to scm : '{}'", scm.getName());
-
-			TestListing listing = new TestListing(scm);
-
-			for (TestCaseAndScript pair : tcAndScripts){
-
-				File testFile = listing.locateOrCreateTestFile(pair);
-
-				// at this point the file is created without error
-				// lets fill the file with the script content
-				printToFile(testFile, pair);
+				tcService.bindAutomatedTest(tc.getId(), gherkinProject.getId(), normalizedName);
 
 			}
+
 		});
+	}
+
+	private Optional<TestAutomationProject> findFirstGherkinProject(TestCase tc) {
+		return tc.getProject()
+			   .getTestAutomationProjects()
+			   .stream()
+			   .filter(TestAutomationProject::isCanRunGherkin)
+			   .sorted(Comparator.comparing(TestAutomationProject::getLabel))
+			   .findFirst();
+	}
+
+
+	/**
+	 * returns the test case ids concerned by the given automation request ids
+	 *
+	 * @param automationRequestIds
+	 * @return
+	 */
+	private Collection<Long> findTestCaseIdsByAutomationRequestIds(Collection<Long> automationRequestIds){
+
+		if (automationRequestIds.isEmpty()){
+			return Collections.emptyList();
+		}
+
+		QAutomationRequest automationRequest = QAutomationRequest.automationRequest;
+		QTestCase testCase = QTestCase.testCase;
+
+		return new JPAQueryFactory(em)
+				   .select(testCase.id)
+					.from(automationRequest)
+					.join(automationRequest.testCase, testCase)
+					.where(automationRequest.id.in(automationRequestIds))
+					.fetch();
 
 	}
 
 
 	/*
-	 *	Returns all the ScriptedTestCaseExtender putatively targeted by the event, grouped by ScmRepository they should be committed into
+	 * Returns the test cases that :
+	 * - cond 1 : are the object of the automation requests (in arguments),
+	 * - cond 2 : are scripted test cases
+	 * - cond 3 : don't have an AutomatedTest bound yet,
+	 * - cond 4 : belong to a project that is connected to a SCM
+	 * - cond 5 : belong to a project that have a (at least one) Gherkin-able TestAutomationProject
 	 */
-	private Map<ScmRepository, Set<TestCaseAndScript>> findScriptsGroupedByRepoFromRequestId(Collection<Long> automationRequestIds){
-
-		LOGGER.debug("looking for repositories and the scripts that should be commited into them");
-
+	private List<TestCase> findCandidatesForAutobind(Collection<Long> automationRequestIds){
 
 		if (automationRequestIds.isEmpty()){
-			return Collections.emptyMap();
+			return Collections.emptyList();
 		}
 
 		QAutomationRequest automationRequest = QAutomationRequest.automationRequest;
 		QTestCase testCase = QTestCase.testCase;
-		QScriptedTestCaseExtender script = QScriptedTestCaseExtender.scriptedTestCaseExtender;
 		QProject project = QProject.project1;
+		QTestAutomationProject automationProject = QTestAutomationProject.testAutomationProject;
 		QScmRepository scm = QScmRepository.scmRepository;
 
-
 		return new JPAQueryFactory(em)
-				   .select(scm, testCase, script)
+				   .select(testCase)
 				   .from(automationRequest)
 				   .join(automationRequest.testCase, testCase)
-				   .join(testCase.scriptedTestCaseExtender, script)
 				   .join(testCase.project, project)
-				   .join(project.scmRepository, scm)
-				   .where(automationRequest.id.in(automationRequestIds))
-				   .transform(groupBy(scm).as(set(
-					   Projections.bean(TestCaseAndScript.class, testCase, testCase.scriptedTestCaseExtender))
-				   ));
+				   .join(project.testAutomationProjects, automationProject)
+				   .join(project.scmRepository, scm) 								// condition 4
+					.where(automationRequest.id.in(automationRequestIds) 			// condition 1
+							   .and(testCase.kind.ne(TestCaseKind.STANDARD))		// condition 2
+							   .and(testCase.automatedTest.isNull())				// condition 3
+								.and(automationProject.canRunGherkin.isTrue())				// condition 5
+					)
+					.fetch();
 
-	}
-
-
-	/********************************************************************************************************
-	 * /!\ /!\/!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\
-	 *
-	 * The following methods below this line are intended to run within the scope of the scm filelock.
-	 * This is hard to enforce so please be careful.
-	 *
-	 * /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\
-	********************************************************************************************************/
-
-
-
-
-	private void printToFile(File dest, TestCaseAndScript tcAndScript){
-		ScriptToFileStrategy strategy = tcAndScript.getStrategy();
-		String content = strategy.getWritableFileContent(tcAndScript.getTestCase());
-
-
-		try {
-			try {
-				// try first with UTF-8
-				FileUtils.write(dest, content, Charset.forName("UTF-8"));
-			} catch (UnsupportedCharsetException ex) {
-				// try again with default charset
-				FileUtils.write(dest, content);
-			}
-		}
-		catch(IOException ex){
-			// waiting for specs about what to do with hardware or permission problems
-			throw new RuntimeException(ex);
-		}
-
-	}
-
-
-	// ********************************* internal classes etc **********************************
-
-	// forces the load and group the test case and the script together
-	// it may help prevent n+1 requests instead of calling script#getTestCase() or
-	// reciprocally testCase.getScriptedTestCaseExtender()
-	public static final class TestCaseAndScript{
-		private TestCase testCase;
-		private ScriptedTestCaseExtender scriptedTestCaseExtender;
-
-		public TestCaseAndScript() {
-			super();
-		}
-
-		public TestCaseAndScript(TestCase testCase, ScriptedTestCaseExtender scriptedTestCaseExtender) {
-			this.testCase = testCase;
-			this.scriptedTestCaseExtender = scriptedTestCaseExtender;
-		}
-
-		public TestCase getTestCase() {
-			return testCase;
-		}
-
-		public void setTestCase(TestCase testCase) {
-			this.testCase = testCase;
-		}
-
-		public ScriptedTestCaseExtender getScriptedTestCaseExtender() {
-			return scriptedTestCaseExtender;
-		}
-
-		public void setScriptedTestCaseExtender(ScriptedTestCaseExtender scriptedTestCaseExtender) {
-			this.scriptedTestCaseExtender = scriptedTestCaseExtender;
-		}
-
-		public ScriptToFileStrategy getStrategy(){
-			return ScriptToFileStrategy.strategyFor(testCase.getKind());
-		}
-
-	}
-
-	/**
-	 * p>Encapsulates the operations aimed at searching a file on the scm.  </p>
-	 *
-	 * <p>It can work by direct I/O calls, or using a cache if limited I/O operations are desired. The cache option
-	 * is the default.</p>
-	 *
-	 * <p>Note : must be used within the scope of a repository lock.</p>
-	 *
-	 */
-	private static final class TestListing{
-
-		private ScmRepository scm;
-		private boolean useCache = true;
-
-		// maps filename by File
-		private Map<String, File> pathCache;
-
-		TestListing(ScmRepository scm){
-			this.scm = scm;
-			initCache();
-		}
-
-		TestListing(ScmRepository scm, boolean useCache){
-			this.scm = scm;
-			this.useCache = useCache;
-			if (useCache){
-				initCache();
-			}
-		}
-
-		private final void initCache(){
-			try {
-				// the pathcache maps a File by its filename
-				pathCache = scm.listWorkingFolderContent()
-							   .stream()
-								.collect(Collectors.toMap(
-									f -> f.getName(),
-									f -> f
-								));
-							   //.collect(Collectors.toMap(File::getName, Functions.identity())); // doesn't compile, dunnowhy
-			}
-			catch (IOException ex){
-				throw new RuntimeException("cannot list content of scm '"+scm.getName()+"'", ex);
-			}
-		}
-
-
-		private File locateOrCreateTestFile(TestCaseAndScript tcAndScript){
-			
-			if (LOGGER.isTraceEnabled()){
-				LOGGER.trace("attempting to locate physical script file for test '{}' in the scm", tcAndScript.getTestCase().getId());
-			}
-
-			File testfile = null;
-
-			Optional<File> maybeTestFile = locateTest(tcAndScript);
-
-			if (maybeTestFile.isPresent()){
-				
-				testfile = maybeTestFile.get();
-
-				LOGGER.trace("found file : '{}'", testfile.getAbsolutePath());
-
-			}
-			else{
-				LOGGER.trace("file not found, attempting to create a new one");
-
-				// roundtrip 1 : attempt the creation with the normal filename
-				try{
-
-					testfile = createTestNominal(tcAndScript);
-
-				}
-				catch(IOException ex){
-					if (SystemUtils.IS_OS_WINDOWS){
-						// maybe the failure is due to long absolute filename
-						LOGGER.trace("failed to create file due to IOException, attempting with the backup filename");
-
-						try{
-							// try again with the backup name
-							testfile = createTestBackup(tcAndScript);
-
-						}
-						catch (IOException rex){
-							// daaaaaamn, now we are in serious troubles
-							throw new RuntimeException(ex);
-						}
-
-					}
-					else{
-						// weeell, what should I do ?
-						throw new RuntimeException(ex);
-					}
-				}
-
-			}
-
-			return testfile;
-		}
-
-		/**
-		 * Attends to retrieve the test file in the repository for a given test.
-		 * The result is returned as an Optional.
-		 *
-		 *
-		 * @param tcAndScript
-		 * @return
-		 */
-		private Optional<File> locateTest(TestCaseAndScript tcAndScript){
-
-			TestCase testCase = tcAndScript.getTestCase();
-			ScriptToFileStrategy strategy = tcAndScript.getStrategy();
-			String pattern = strategy.buildFilenameMatchPattern(testCase);
-
-			Collection<File> files;
-			if (useCache){
-				files = searchInCache(pattern);
-			}
-			else{
-				files = searchOnDrive(pattern);
-			}
-
-			// check for the validity of the result
-			if (files.size() > 2){
-				LOGGER.warn("found two files that are possible candidates for test '{}'. This is an unexpected situation. " +
-								"The commit routine will proceed with the first file in lexicographic order.", testCase.getId());
-			}
-
-			return files.stream().sorted(Comparator.comparing(File::getName)).findFirst();
-
-		}
-
-		/**
-		 * Looks for a test
-		 *
-		 * @param pattern
-		 * @return
-		 */
-		private Collection<File> searchOnDrive(String pattern){
-			File workingFolder = scm.getWorkingFolder();
-			return FileUtils.listFiles(workingFolder, new FilenamePatternFilter(pattern), FileFilterUtils.trueFileFilter());
-		}
-
-		private Collection<File> searchInCache(String pattern){
-			return pathCache.entrySet().stream()
-				.filter(entry -> entry.getKey().matches(pattern))
-				.map(Map.Entry::getValue)
-				.collect(Collectors.toList());
-		}
-
-		/**
-		 * Attempts to create the test file with the preferred name.
-		 *
-		 * @param tcAndScript
-		 * @return
-		 * @throws IOException
-		 */
-		private File createTestNominal(TestCaseAndScript tcAndScript) throws IOException{
-			TestCase testCase = tcAndScript.getTestCase();
-			ScriptToFileStrategy strategy = tcAndScript.getStrategy();
-
-			String filename = strategy.createFilenameFor(testCase);
-
-			return doCreateTest(scm, filename);
-		}
-
-		/**
-		 * Attempts to create the test file with the backup name. Backup means : this is the filename we may need
-		 * in the Windows world.
-		 *
-		 * @param tcAndScript
-		 * @return
-		 * @throws IOException
-		 */
-		private File createTestBackup(TestCaseAndScript tcAndScript) throws IOException{
-			TestCase testCase = tcAndScript.getTestCase();
-			ScriptToFileStrategy strategy = tcAndScript.getStrategy();
-
-			String filename = strategy.backupFilenameFor(testCase);
-
-			return doCreateTest(scm, filename);
-		}
-
-
-
-		/**
-		 * Creates a new file with the given filename in the working folder of the scm
-		 *
-		 * @param scm
-		 * @param filename
-		 * @return
-		 */
-		private File doCreateTest(ScmRepository scm, String filename) throws IOException{
-
-			File workfolder = scm.getWorkingFolder();
-
-			File newFile = new File(workfolder, filename);
-
-			if (newFile.exists()){
-				LOGGER.warn("retrieved physical file '{}' while in the file creation routine... it should have been detected earlier. This is an abnormal situation. " +
-								"Anyway, this file ",
-					newFile.getAbsolutePath());
-			}
-			else{
-				newFile.createNewFile();
-				LOGGER.trace("new file created : '{}'", newFile.getAbsolutePath());
-			}
-
-			return newFile;
-
-		}
-
-
-	}
-
-
-	@FunctionalInterface
-	private interface Action{
-		void act();
-	}
-
-	private static class FilenamePatternFilter implements IOFileFilter{
-
-		private String pattern;
-
-		FilenamePatternFilter(String pattern){
-			this.pattern = pattern;
-		}
-
-		@Override
-		public boolean accept(File file) {
-			String filename = file.getName();
-			return filename.matches(pattern);
-		}
-
-		@Override
-		public boolean accept(File dir, String name) {
-			return name.matches(pattern);
-		}
 	}
 
 }

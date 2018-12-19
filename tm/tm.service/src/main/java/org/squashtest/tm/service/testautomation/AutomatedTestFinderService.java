@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.testautomation;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
@@ -28,15 +29,36 @@ import org.squashtest.tm.service.testautomation.model.TestAutomationProjectConte
 
 public interface AutomatedTestFinderService {
 
-	// *********************** remote calls ************************************
 
 	/**
-	 * Given a collection of {@link TestAutomationProject}, will return the aggregated list of {@link AutomatedTest}
-	 * paired with their owner project.
-	 * 
+	 * Returns the aggregated results of {@link #listTestsFromRemoteServers(Collection)}
+	 * and {@link #listTestsFromScm(Collection)}.
+	 *
 	 * @param projects
 	 * @return
 	 */
 	Collection<TestAutomationProjectContent> listTestsInProjects(Collection<TestAutomationProject> projects);
+
+	/**
+	 * Given a collection of {@link TestAutomationProject}, will fetch the tests published on the remote test servers and
+	 * returns the aggregated list of {@link AutomatedTest} paired with their owner project. The returned instances of
+	 * {@link AutomatedTest} are transient, ie none is retrieved from the database and have no ID.
+	 *
+	 * @param projects
+	 * @return
+	 */
+	Collection<TestAutomationProjectContent> listTestsFromRemoteServers(Collection<TestAutomationProject> projects);
+
+	/**
+	 * Given a collection of {@link TestAutomationProject}, will retrieve the tests from the SCM repositories that <i>could</i>
+	 * run on them. The tests scripts will be paired with an automation project if that project can run the language of those scripts
+	 * (ie if there is a match on supported technology). Furthermore tests hosted in a repository will be paired to an automation project
+	 * only if they are bound to same Squash TM project.
+	 *
+	 * @param projects
+	 * @return
+	 */
+	public Collection<TestAutomationProjectContent> listTestsFromScm(Collection<TestAutomationProject> projects);
+
 
 }
