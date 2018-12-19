@@ -70,11 +70,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }, {
                         "bSortable": true,
                         "aTargets": [7],
-                        "mDataProp": "priority",
-                        "mRender": function (data, type, row, meta) {
-                            if (data === null) { return '-'; }
-                            return data;
-                        }
+                        "mDataProp": "priority"
                     },{
                         "bSortable": true,
                         "aTargets": [8],

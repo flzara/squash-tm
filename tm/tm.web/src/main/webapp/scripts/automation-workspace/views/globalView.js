@@ -69,11 +69,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }, {
                         "bSortable": true,
                         "aTargets": [7],
-                        "mDataProp": "priority",
-                        "mRender": function (data, type, row, meta) {
-                            if (data === null) { return '-'; }
-                            return data;
-                        }
+                        "mDataProp": "priority"
                     }, {
                         "bSortable": true,
                         "aTargets": [8],
@@ -515,9 +511,9 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
                 $(selectedRows).each(function (index, data) {
                     var idx = data._DT_RowIndex;
-                    var script = datas[idx]["script"];
+                    var script = data.cells[9].lastChild.nodeValue;
                     var format = datas[idx]["format"];
-                    if ((script === null || script === "-") && "gherkin" !== format.toLowerCase()) {
+                    if ((script === null || script === " ") && "gherkin" !== format.toLowerCase()) {
                         count = count + 1;
                     }
                 })
