@@ -218,12 +218,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 };
                 sqtable.on('change', function () {
 
-                    if (sqtable.getSelectedRows().length > self.selected) {
-                        self.selected = self.selected + 1;
-                    } else if (sqtable.getSelectedRows().length < self.selected && self.selected !== 0) {
-                        self.selected = self.selected - 1;
-                    }
-                    self.changeNumberSelectedRows(self.selected);
+                    self.changeNumberSelectedRows($("#automation-table").squashTable().getSelectedRows().length);
                 });
                 self.bindButtons();
             },
@@ -238,11 +233,12 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 var self = this;
                 $(rows).each(function (index, row) {
                     var tcId = parseInt($('.entity_id', row).text(), 10);
-                    ids.push(tcId);
+                    
                     var $row = $(row);
                     var checkbox = $row.find("input[type=checkbox]");
                     if (checkbox[0] !== undefined) {
-                        checkbox[0].checked = true
+                        checkbox[0].checked = true;
+                        ids.push(tcId);
                         var store = self.storage.get(self.key);
                         if (store === undefined) {
                             var tab = [];

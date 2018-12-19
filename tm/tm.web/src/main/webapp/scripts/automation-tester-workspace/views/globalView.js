@@ -212,12 +212,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 };
                 sqtable.on('change', function () {
 
-                    if (sqtable.getSelectedRows().length > self.selected) {
-                        self.selected = self.selected + 1;
-                    } else if (sqtable.getSelectedRows().length < self.selected && self.selected !== 0) {
-                        self.selected = self.selected - 1;
-                    }
-                    self.changeNumberSelectedRows(self.selected);
+                    self.changeNumberSelectedRows($("#automation-table").squashTable().getSelectedRows().length);
                 });
                 self.bindButtons();
             },
@@ -232,24 +227,28 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 var self = this;
                 $(rows).each(function (index, row) {
                     var tcId = parseInt($('.entity_id', row).text(), 10);
-                    ids.push(tcId);
+                    
                     var $row = $(row);
                     var checkbox = $row.find("input[type=checkbox]")
-                    checkbox[0].checked = true
-                    var store = self.storage.get(self.key);
-                    if (store === undefined) {
-                        var tab = [];
-                        tab.push(tcId)
-                        self.storage.set(self.key, tab);
-                    } else {
-                        if (checkbox[0].checked) {
-                            store.push(tcId);
-
+                    if (checkbox[0] !== undefined) {
+                        ids.push(tcId);
+                        checkbox[0].checked = true
+                        var store = self.storage.get(self.key);
+                        if (store === undefined) {
+                            var tab = [];
+                            tab.push(tcId)
+                            self.storage.set(self.key, tab);
                         } else {
-                            var idx = store.indexOf(tcId);
-                            store.splice(idx, 1);
+                            if (checkbox[0].checked) {
+                                store.push(tcId);
+
+                            } else {
+                                var idx = store.indexOf(tcId);
+                                store.splice(idx, 1);
+                            }
+                            self.storage.set(self.key, store);
                         }
-                        self.storage.set(self.key, store);
+
                     }
 
                 })
@@ -263,7 +262,9 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 $(rows).each(function (index, row) {
                     var $row = $(row);
                     var checkbox = $row.find("input[type=checkbox]");
-                    checkbox[0].checked = false
+                    if (checkbox[0] !== undefined) {
+                        checkbox[0].checked = false
+                    }
 
                 })
 
