@@ -315,9 +315,14 @@ public class TestCaseModificationController {
 	@RequestMapping(method = RequestMethod.POST, params = {"id=test-case-automatable", VALUE})
 	@ResponseBody
 	public String changeAutomatable(@RequestParam(VALUE) TestCaseAutomatable testCaseAutomatable, @PathVariable long testCaseId, Locale locale) {
-
-		testCaseModificationService.changeAutomatable(testCaseAutomatable, testCaseId);
-		return formatAutomatable(testCaseAutomatable, locale);
+		String newAutomatable = "";
+		boolean allowAutomationWorkflow = testCaseModificationService.changeAutomatable(testCaseAutomatable, testCaseId);
+		if(allowAutomationWorkflow) {
+			newAutomatable = formatAutomatable(testCaseAutomatable, locale);
+		} else {
+			newAutomatable = "-";
+		}
+		return newAutomatable;
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = {"id=automation-request-priority", VALUE})

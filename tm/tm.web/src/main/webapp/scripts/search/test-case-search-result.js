@@ -427,7 +427,11 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.ro
 											value: value,
 											id: "test-case-" + columns[index]
 										}
-									);
+									).success(function (data) {
+                   											// Issue 7341
+                   											// we redraw the table to show the correct importances in the case where "auto" was selected in the "modify" popup
+                   											table._fnDraw();
+                   										});
 								}
 							}
 						}

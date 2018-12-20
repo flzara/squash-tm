@@ -68,29 +68,17 @@ public class SquashAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		SavedRequest savedRequest = requestCache.getRequest(request, response);
 
-		if (savedRequest == null) {
-			super.onAuthenticationSuccess(request, response, authentication);
-
-			return;
-		}
-		String targetUrlParameter = getTargetUrlParameter();
-		if (isAlwaysUseDefaultTargetUrl()
-			|| (targetUrlParameter != null && StringUtils.hasText(request
-			.getParameter(targetUrlParameter)))) {
-			requestCache.removeRequest(request, response);
-			super.onAuthenticationSuccess(request, response, authentication);
-
-			return;
-		}
-
-		clearAuthenticationAttributes(request);
-		// Use the DefaultSavedRequest URL
-		String targetUrl = savedRequest.getRedirectUrl();
 		if(authorities.stream().filter(auth -> ((GrantedAuthority) auth).getAuthority().equals(ROLE_TF_AUTOMATION_PROGRAMMER)).findAny().isPresent() &&
 			!authorities.stream().filter(auth -> ((GrantedAuthority) auth).getAuthority().equals(ROLE_TF_FUNCTIONAL_TESTER)).findAny().isPresent()) {
 			getRedirectStrategy().sendRedirect(request, response,"/automation-workspace");
 		} else {
-			getRedirectStrategy().sendRedirect(request, response, targetUrl);
+			if(savedRequest != null) {
+				String targetUrl = savedRequest.getRedirectUrl();
+				getRedirectStrategy().sendRedirect(request, response, targetUrl);
+			} else {
+				getRedirectStrategy().sendRedirect(request, response,"/home-workspace");
+			}
+
 		}
 	}
 

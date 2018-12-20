@@ -241,7 +241,7 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 
 	boolean haveSamePerimeter(List<Long> testCaseIds);
 
-	void changeAutomatable(TestCaseAutomatable automatable, Long testCaseId);
+	boolean changeAutomatable(TestCaseAutomatable automatable, Long testCaseId);
 
 
 	// ********************* Automation request *********************** */
