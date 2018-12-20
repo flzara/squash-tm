@@ -486,17 +486,20 @@ define(["jquery", "backbone", "squash.translator", "jeditable.simpleJEditable", 
 			},
 
 			_addSelectEditableToAutomatable: function (row, data) {
-				var urlPOST = squashtm.app.contextRoot + "test-cases/" + data["test-case-id"];
-				var urlGET = squashtm.app.contextRoot + "test-cases/automatable-combo-data";
-				var ok = translator.get("rich-edit.button.ok.label");
-				var cancel = translator.get("label.Cancel");
-				$('.editable_automatable', row).editable(urlPOST, {
-					type: 'select',
-					submit: ok,
-					cancel: cancel,
-					loadurl: urlGET,
-					submitdata: function () { return { id: 'test-case-automatable' }; }
-				});
+				if(data["test-case-automatable"] !== "-") {
+					var urlPOST = squashtm.app.contextRoot + "test-cases/" + data["test-case-id"];
+					var urlGET = squashtm.app.contextRoot + "test-cases/automatable-combo-data";
+					var ok = translator.get("rich-edit.button.ok.label");
+					var cancel = translator.get("label.Cancel");
+					$('.editable_automatable', row).editable(urlPOST, {
+						type: 'select',
+						submit: ok,
+						cancel: cancel,
+						loadurl: urlGET,
+						submitdata: function () { return { id: 'test-case-automatable' }; }
+					});
+				}
+
 			},
 
 			refresh: function () {
