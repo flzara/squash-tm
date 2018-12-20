@@ -20,10 +20,7 @@
  */
 package org.squashtest.tm.service.internal.security;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -178,15 +175,23 @@ public class AuthenticationProviderContext {
 			Arrays.asList(currentProviderNames).forEach(name -> Assert.propertyNotBlank(name,"currentPropertyName should not be blank" ));
 		}
 
+		Collection<String> knownProviders =  providersFeatures.stream().map(AuthenticationProviderFeatures::getProviderName).collect(Collectors.toList());
+
 		for (String providerName : currentProviderNames) {
-			if (!providersFeatures.stream().map(AuthenticationProviderFeatures::getProviderName).collect(Collectors.toList()).contains(providerName)) {
+
+			if (! knownProviders.contains(providerName)) {
+
+				String knownAsString = knownProviders.stream().collect(Collectors.joining(", "));
+
 				LOGGER.error("Provider features named {} could not be found in list {}", providerName, providersFeatures);
-				throw new IllegalStateException("Features for authentication provider named '" + providerName
-					+ "' not available. Please check the application property 'authentication.provider'. The default value is 'internal' and refers to "
-					+ "the native authentication manager of Squash-TM. "
-					+ "If plugins that provides with alternate authentication system are deployed, please check the documentation to know if the property "
-					+ "should be set and to which value.");
-			} else {
+
+				throw new IllegalStateException("\nAuthentication Provider named '" + providerName
+					+ "' was not found. Please review the application property 'authentication.provider'. \n"
+					+ "The default value 'internal' enables the  native authentication manager of Squash-TM. "
+					+ "To enable extra authentication providers (eg from a plugin) please refer to the documentation. \n"
+					+ "Providers currently loaded are : " + knownAsString);
+			}
+			else {
 				LOGGER.trace("located the authentication provider features named '{}'", providerName);
 			}
 		}
