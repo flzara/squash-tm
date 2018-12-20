@@ -23,10 +23,58 @@ package org.squashtest.tm.core.scm.spi;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.servers.Credentials;
 
-public interface ScmConnector {
+import java.io.IOException;
 
+public interface ScmConnector {
+	/**
+	 * Tells whether this connector supports the given {@link AuthenticationProtocol}.
+	 * @param protocol The authentication protocol.
+	 * @return True if the given protocol is supported. False otherwise.
+	 */
 	boolean supports(AuthenticationProtocol protocol);
 
-	void synchronize(Credentials credentials);
+	/**
+	 * Initializes the local Source Code Management repository.
+	 * It at least implies the clone of the remote repository on the local files server.
+	 * @throws IOException If an error occurs during the process. The causes can be diverse, including:
+	 * <ul>
+	 *     <li> The connector can not reach the given remote server</li>
+	 *     <li> Squash does not have the rights to write in the local repository path</li>
+	 *     <li> Squash can not write in the repository path due to a concurrent process</li>
+	 *     <li> The local repository path given to the connector exists but is not valid</li>
+	 * </ul>
+	 */
+	void initRepository() throws IOException;
+
+	/**
+	 * Prepares the local Source Code Management repository.
+	 * It sets the repository in a state in which it is ready to accept files creation and modifications,
+	 * then commit and push without side effects.
+	 * It can imply cleaning untracked files, reverting some remaining modifications, switching to the right branch,
+	 * pulling the remote repository.
+	 * @throws IOException If an error occurs during the process. The causes can be diverse, including:
+	 * <ul>
+	 *     <li> The local repository path given to the connector does not exist or is not valid</li>
+	 *     <li> Squash does not have the rights to write in the local repository path</li>
+	 *     <li> Squash can not write in the repository path due to a concurrent process</li>
+	 *     <li> The connector can not reach the given remote server</li>
+	 * </ul>
+	 */
+	void prepareRepository() throws IOException;
+
+	/**
+	 * Synchronizes the local Source Code Management repository with the remote repository.
+	 * Commits all the current files modifications contained in the local repository's working directory
+	 * and pushes them to the remote repository.
+	 * @param credentials The {@link Credentials} which will be used to authenticate to the remote repository.
+	 * @throws IOException If an error occurs during the process. The causes can be divers, including:
+	 * <ul>
+	 *     <li> The local repository path given to the connector does not exist or is not valid</li>
+	 *     <li> Squash does not have the rights to write in the local repository path</li>
+	 *     <li> Squash can not write in the repository path due to a concurrent process</li>
+	 *     <li> The connector can not reach the given remote server</li>
+	 * </code>
+	 */
+	void synchronize(Credentials credentials) throws IOException;
 
 }
