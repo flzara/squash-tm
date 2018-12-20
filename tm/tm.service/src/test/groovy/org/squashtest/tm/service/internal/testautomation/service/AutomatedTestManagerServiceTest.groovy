@@ -54,7 +54,7 @@ class AutomatedTestManagerServiceTest extends Specification {
 	TestAutomationTaskExecutor executor;
 
 	@Shared
-	ScmRepository repo1 = new MockFactory().mockScmRepository("ATMSTest_", "squash"){
+	ScmRepository repo1 = new MockFactory().mockScmRepository(10L, "ATMSTest_", "squash"){
 		dir("squash"){
 			file "123_feat_gherkin.feature"
 			file "456_another_gherkin.feature"
@@ -63,7 +63,7 @@ class AutomatedTestManagerServiceTest extends Specification {
 	}
 
 	@Shared
-	ScmRepository repo2 = new MockFactory().mockScmRepository("ATMSTest2_", "scripts"){
+	ScmRepository repo2 = new MockFactory().mockScmRepository(20L, "ATMSTest2_", "scripts"){
 		dir("scripts"){
 			file "789_ghertest1.feature"
 			file "159_ghertest2.feature"
