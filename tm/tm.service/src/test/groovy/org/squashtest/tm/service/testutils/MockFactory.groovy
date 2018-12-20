@@ -25,6 +25,7 @@ import org.squashtest.tm.domain.infolist.InfoListItem
 import org.squashtest.tm.domain.infolist.ListItemReference
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.scm.ScmRepository
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import spock.lang.Specification
 
 import java.nio.file.Files;
@@ -94,6 +95,9 @@ class MockFactory extends Specification {
 
 		// create
 		def scm = new ScmRepository(id: id, name: name, repositoryPath: base.absolutePath, workingFolderPath: workingFolder)
+
+		// done
+		return scm
 
 	}
 

@@ -37,23 +37,11 @@ import java.util.concurrent.TimeoutException
 class ScmRepositoryTest extends Specification {
 
 	@Shared
-	private ScmRepository scm1 = new MockFactory().mockScmRepository("SRTest_").with{
-		def self = delegate
-		use(ReflectionCategory){
-			ScmRepository.set field: "id", of: self, to: 10L
-		}
-		self
-	}
+	private ScmRepository scm1 = new MockFactory().mockScmRepository(10L,"SRTest_")
 
 
 	@Shared
-	private ScmRepository scm2 = new MockFactory().mockScmRepository("SRTest2_").with{
-		def self = delegate
-		use(ReflectionCategory){
-			ScmRepository.set field: "id", of: self, to: 20L
-		}
-		self
-	}
+	private ScmRepository scm2 = new MockFactory().mockScmRepository(20L,"SRTest2_")
 
 	// hmm, maybe the executor should not be shared
 	@Shared

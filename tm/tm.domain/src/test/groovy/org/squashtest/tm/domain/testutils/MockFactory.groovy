@@ -62,7 +62,7 @@ class MockFactory extends Specification {
 
 
 
-	def mockScmRepository(name = "my repo", workingFolder = "squash", @DelegatesTo(FileTreeBuilder) Closure contentPopulator = null){
+	def mockScmRepository(id = 512L, name = "my repo", workingFolder = "squash", @DelegatesTo(FileTreeBuilder) Closure contentPopulator = null){
 
 		File base = Files.createTempDirectory("ATMSTest_").toFile()
 		base.deleteOnExit()
@@ -90,7 +90,7 @@ class MockFactory extends Specification {
 		builder.call contentPopulator
 
 		// create
-		def scm = new ScmRepository( name: name, repositoryPath: base.absolutePath, workingFolderPath: workingFolder)
+		def scm = new ScmRepository(id: id, name: name, repositoryPath: base.absolutePath, workingFolderPath: workingFolder)
 
 	}
 

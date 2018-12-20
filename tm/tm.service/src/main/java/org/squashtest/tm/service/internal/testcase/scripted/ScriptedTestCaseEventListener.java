@@ -26,6 +26,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.IdCollector;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.QProject;
 import org.squashtest.tm.domain.scm.QScmRepository;
 import org.squashtest.tm.domain.scm.ScmRepository;
@@ -100,22 +102,31 @@ public class ScriptedTestCaseEventListener {
 																					 "#event.newStatus == " + SPEL_ARSTATUS + ".AUTOMATED")
 	public void autoBindWhenAvailable(AutomationRequestStatusChangeEvent event){
 
-		LOGGER.debug("request status changed : autoassociating test scripts if needed and possible");
+		LOGGER.debug("request status changed : autobinding test scripts if needed and possible");
 		if (LOGGER.isTraceEnabled()){
 			LOGGER.trace("changed request ids : '{}'", event.getAutomationRequestIds());
 		}
 
 		Collection<Long> requestIds = event.getAutomationRequestIds();
 
-		// find the candidates
+		/*
+		 * Find the candidate test cases. As per the method findCandidatesForAutobind,
+		 * the returned test cases are Gherkin-read (ie their project have a scm and a
+		 * Gherkin-able test automation project)
+		 */
 		List<TestCase> candidates = findCandidatesForAutobind(requestIds);
 
-		// group them by scm
-		Map<ScmRepository, List<TestCase>> testCasesByScm = candidates.stream().collect(Collectors.groupingBy(tc -> tc.getProject().getScmRepository()));
+		// group them by Tm Project.
+		Map<Project, List<TestCase>> testCasesByProjects = candidates.stream()
+															   .collect(Collectors.groupingBy(tc -> tc.getProject()));
 
-		for (Map.Entry<ScmRepository, List<TestCase>> entry : testCasesByScm.entrySet()){
+		for (Map.Entry<Project, List<TestCase>> entry : testCasesByProjects.entrySet()){
 
-			ScmRepository scm = entry.getKey();
+			Project project = entry.getKey();
+
+			// cannot be null per definition of a candidate TestCase (see above)
+			ScmRepository scm = project.getScmRepository();
+
 			List<TestCase> testCases = entry.getValue();
 
 			try {
@@ -123,12 +134,13 @@ public class ScriptedTestCaseEventListener {
 
 					autoBindWithScm(scm, testCases);
 
+					// no meaningful result to return
 					return null;
 
 				});
 			}
 			catch(IOException ex){
-				LOGGER.error("Error while autobinding test cases", ex);
+				LOGGER.error("Error while autobinding test cases from project '"+project.getName()+"'", ex);
 				// do not let fail the whole operation here, proceed with the next batch
 			}
 		}
@@ -138,32 +150,72 @@ public class ScriptedTestCaseEventListener {
 
 	// ************* internals **********************
 
+	/**
+	 * Will attempt autobinding for the given test cases. The test cases and the SCM are assumed to
+	 * belong to the same TM project.
+	 *
+	 * @param scm
+	 * @param testCases
+	 */
+	private void autoBindWithScm(ScmRepository scm, List<TestCase> testCases){
 
-	private void autoBindWithScm(ScmRepository scm, Collection<TestCase> testCases){
+		LOGGER.debug("autobinding test cases for scm '{}'", scm.getName());
+
+		if (LOGGER.isTraceEnabled()) {
+			List<Long> tcIds = IdCollector.collect(testCases);
+			LOGGER.trace("test case ids : {}", tcIds);
+		}
 
 		ScmRepositoryManifest manifest = new ScmRepositoryManifest(scm);
 
-		testCases.forEach( tc -> {
+		// look for a Gherkin-able project
+		Optional<TestAutomationProject> maybeGherkin = findFirstGherkinProject(testCases);
 
-			// look for a Gherkin-able project
-			Optional<TestAutomationProject> maybeGherkin = findFirstGherkinProject(tc);
-			Optional<File> maybeFile = manifest.locateTest(tc);
 
-			if (maybeFile.isPresent() && maybeGherkin.isPresent()) {
+		if (maybeGherkin.isPresent()){
 
-				File testFile = maybeFile.get();
-				TestAutomationProject gherkinProject = maybeGherkin.get();
+			TestAutomationProject gherkinProject = maybeGherkin.get();
 
-				String normalizedName = manifest.getRelativePath(testFile);
+			testCases.forEach( tc -> {
 
-				tcService.bindAutomatedTest(tc.getId(), gherkinProject.getId(), normalizedName);
+				Optional<File> maybeFile = manifest.locateTest(tc);
 
-			}
+				if (maybeGherkin.isPresent()) {
 
-		});
+					File testFile = maybeFile.get();
+
+					String normalizedName = manifest.getRelativePath(testFile);
+
+					if (LOGGER.isTraceEnabled()){
+						LOGGER.trace("autobinding test case [{}:{}] to script file '{}'", tc.getId(), tc.getName(),  normalizedName);
+					}
+
+					tcService.bindAutomatedTest(tc.getId(), gherkinProject.getId(), normalizedName);
+
+				}
+				else{
+					LOGGER.trace("no script found or test case [{}:{}]", tc.getId(), tc.getName());
+				}
+
+			});
+		}
+		else{
+			// note : the actual program flow ensures that such an automation project will
+			// always be found. The logging here is unlikely to occur
+			LOGGER.debug("no automation project found, skipping");
+		}
+
+
 	}
 
-	private Optional<TestAutomationProject> findFirstGherkinProject(TestCase tc) {
+	// assumes that all the test cases belong to the same tm project
+	private Optional<TestAutomationProject> findFirstGherkinProject(List<TestCase> tcs) {
+		if (tcs.isEmpty()){
+			return Optional.empty();
+		}
+
+		TestCase tc = tcs.get(0);
+
 		return tc.getProject()
 			   .getTestAutomationProjects()
 			   .stream()
@@ -228,7 +280,7 @@ public class ScriptedTestCaseEventListener {
 					.where(automationRequest.id.in(automationRequestIds) 			// condition 1
 							   .and(testCase.kind.ne(TestCaseKind.STANDARD))		// condition 2
 							   .and(testCase.automatedTest.isNull())				// condition 3
-								.and(automationProject.canRunGherkin.isTrue())				// condition 5
+								.and(automationProject.canRunGherkin.isTrue())		// condition 5
 					)
 					.fetch();
 
