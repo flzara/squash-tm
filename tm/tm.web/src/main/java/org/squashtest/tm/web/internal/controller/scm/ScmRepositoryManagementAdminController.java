@@ -33,6 +33,7 @@ import java.util.List;
 @RequestMapping("/administration/scm-repositories")
 public class ScmRepositoryManagementAdminController {
 
+	private static final String SCM_SERVER_ID = "scmServerId";
 	private static final String NAME = "name";
 	private static final String PATH = "path";
 	private static final String FOLDER = "folder";
@@ -72,7 +73,7 @@ public class ScmRepositoryManagementAdminController {
 		return scmRepositoryManager.updateBranch(scmRepositoryId, branch);
 	}
 
-	@RequestMapping(method = RequestMethod.GET, params = "scmServerId")
+	@RequestMapping(method = RequestMethod.GET, params = SCM_SERVER_ID)
 	@ResponseBody
 	public List<ScmRepository> getScmRepositories(long scmServerId) {
 		return scmRepositoryManager.findByScmServerOrderByPath(scmServerId);
