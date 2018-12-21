@@ -459,13 +459,13 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	/* ----- Scm Repository Section----- */
 
 	@Override
-	@PreAuthorize(HAS_ROLE_ADMIN)
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public void bindScmRepository(long projectId, long scmRepositoryId) {
 		genericProjectDao.bindScmRepository(projectId, scmRepositoryId);
 	}
 
 	@Override
-	@PreAuthorize(HAS_ROLE_ADMIN)
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public void unbindScmRepository(long projectId) {
 		genericProjectDao.unbindScmRepository(projectId);
 	}

@@ -157,7 +157,7 @@ public class WebSecurityConfig {
 
 		@Value("${squash.security.preferred-auth-url:/login}")
 		private String entryPointUrl = LOGIN;
-		
+
 		@Value("${squash.security.ignored:/scripts/**}")
 		private String[] secIngored;
 
@@ -170,8 +170,8 @@ public class WebSecurityConfig {
 				.ignoring()
 				.antMatchers(secIngored);
 		}
-		
-		
+
+
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 			// @formatter:off
@@ -186,12 +186,12 @@ public class WebSecurityConfig {
 				.and().frameOptions().sameOrigin()
 
 				//.and() .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
-				
+
 				// cache configuration
 				.and()
 				.requestCache()
 					.requestCache(new HttpSessionRequestCacheWithExceptions(http, "/error"))
-				
+
 				// main entry point for unauthenticated users
 				.and()
 					.exceptionHandling()
@@ -216,11 +216,12 @@ public class WebSecurityConfig {
 						"/administration",
 						"/administration/milestones",
 						"/administration/milestones/**",
+						"/milestone/**",
 						"/administration/info-lists",
 						"/administration/info-lists/**",
 						"/administration/projects",
 						"/administration/projects/**",
-						"/milestone/**"
+						"/administration/scm-repositories"
 					).access(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 					.antMatchers(
 						"/admin",

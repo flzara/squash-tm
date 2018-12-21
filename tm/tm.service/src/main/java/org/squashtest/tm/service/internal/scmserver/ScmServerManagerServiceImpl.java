@@ -37,6 +37,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
 
 @Service
 @Transactional
@@ -48,7 +49,7 @@ public class ScmServerManagerServiceImpl implements ScmServerManagerService {
 	private ScmServerDao scmServerDao;
 
 	@Override
-	@PreAuthorize(HAS_ROLE_ADMIN)
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public List<ScmServer> findAllOrderByName() {
 		return scmServerDao.findAllByOrderByNameAsc();
 	}
