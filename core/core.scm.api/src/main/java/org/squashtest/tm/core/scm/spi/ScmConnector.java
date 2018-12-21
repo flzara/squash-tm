@@ -35,7 +35,7 @@ public interface ScmConnector {
 
 	/**
 	 * Initializes the local Source Code Management repository.
-	 * It at least implies the clone of the remote repository on the local files server.
+	 * It at least implies the clone of the remote repository on the local files server if it does not exist yet.
 	 * @throws IOException If an error occurs during the process. The causes can be diverse, including:
 	 * <ul>
 	 *     <li> The connector can not reach the given remote server</li>
