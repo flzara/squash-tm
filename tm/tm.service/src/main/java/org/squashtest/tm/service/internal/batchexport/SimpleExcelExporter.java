@@ -60,6 +60,7 @@ class SimpleExcelExporter {
 	protected static final String TC_SHEET = TemplateWorksheet.TEST_CASES_SHEET.sheetName;
 	protected static final String STATUS = "requirement.status.";
 	protected static final String IMPORTANCE = "test-case.importance.";
+	protected static final String AUTOMATABLE = "test-case.automatable.";
 
 
 	protected Workbook workbook;
@@ -96,7 +97,8 @@ class SimpleExcelExporter {
 		TestCaseSheetColumn.TC_LAST_MODIFIED_BY,
 		TestCaseSheetColumn.TC_KIND,
 		TestCaseSheetColumn.TC_SCRIPTING_LANGUAGE,
-		TestCaseSheetColumn.TC_SCRIPT
+		TestCaseSheetColumn.TC_SCRIPT,
+		TestCaseSheetColumn.TC_AUTOMATABLE
 	};
 
 
@@ -178,6 +180,7 @@ class SimpleExcelExporter {
 				String nature = handleMessages(tcm.getNature().getLabel());
 				String type = handleMessages(tcm.getType().getLabel());
 				String status = handleMessages(STATUS+tcm.getStatus().toString());
+				String automatable = handleMessages(AUTOMATABLE+tcm.getAutomatable().name());
 			try {
 				r.createCell(cIdx++).setCellValue(tcm.getProjectName());
 				r.createCell(cIdx++).setCellValue(tcm.getId());
@@ -191,6 +194,7 @@ class SimpleExcelExporter {
 					TestCase tc = testCaseFinder.findById(tcm.getId());
 					r.createCell(cIdx++).setCellValue(tc.getMilestones().size());
 				}
+				r.createCell(cIdx++).setCellValue(automatable);
 				r.createCell(cIdx++).setCellValue(tcm.getNbReq());
 				r.createCell(cIdx++).setCellValue(tcm.getNbCaller());
 				r.createCell(cIdx++).setCellValue(tcm.getNbIterations());
@@ -245,6 +249,7 @@ class SimpleExcelExporter {
 		h.createCell(cIdx++).setCellValue(getMessage("test-case.nature.label"));
 		h.createCell(cIdx++).setCellValue(getMessage("test-case.type.label"));
 		h.createCell(cIdx++).setCellValue(getMessage("test-case.status.label"));
+		h.createCell(cIdx++).setCellValue(getMessage("test-case.automation-indicator.label.short"));
 		if (milestonesEnabled) {
 			h.createCell(cIdx++).setCellValue(getMessage("label.milestoneNb"));
 		}

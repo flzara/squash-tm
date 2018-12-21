@@ -29,10 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
-import org.squashtest.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.tm.domain.testcase.TestCaseKind;
-import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.domain.testcase.*;
 import org.squashtest.tm.service.internal.batchexport.RequirementExportModel.RequirementPathSortable;
 
 public class ExportModel {
@@ -236,6 +233,7 @@ public class ExportModel {
 		private TestCaseKind testCaseKind;
 		private ScriptedTestCaseLanguage scriptedTestCaseLanguage;
 		private String tcScript;
+		private TestCaseAutomatable automatable;
 
 
 		// that monster constructor will be used by Hibernate in a hql query
@@ -277,7 +275,7 @@ public class ExportModel {
 		public TestCaseModel(Long projectId, String projectName, Integer order, Long id, String reference, String name,
 							 String milestone,
 							 Boolean weightAuto, TestCaseImportance weight, InfoListItem nature, InfoListItem type,
-							 TestCaseStatus status, String description, String prerequisite, Long nbReq, Long nbCaller,
+							 TestCaseStatus status, TestCaseAutomatable automatable, String description, String prerequisite, Long nbReq, Long nbCaller,
 							 Long nbAttachments, Long nbIterations, Date createdOn, String createdBy, Date lastModifiedOn, String lastModifiedBy,
 							 TestCaseKind testCaseKind, ScriptedTestCaseLanguage scriptedTestCaseLanguage, String tcScript
 		) {
@@ -295,6 +293,7 @@ public class ExportModel {
 			this.nature = nature;
 			this.type = type;
 			this.status = status;
+			this.automatable = automatable;
 			this.description = description;
 			this.prerequisite = prerequisite;
 			this.nbReq = nbReq;
@@ -308,6 +307,7 @@ public class ExportModel {
 			this.testCaseKind = testCaseKind;
 			this.scriptedTestCaseLanguage = scriptedTestCaseLanguage;
 			this.tcScript = tcScript;
+
 		}
 
 		public String getMilestone() {
@@ -524,6 +524,14 @@ public class ExportModel {
 
 		public void setTcScript(String tcScript) {
 			this.tcScript = tcScript;
+		}
+
+		public TestCaseAutomatable getAutomatable() {
+			return automatable;
+		}
+
+		public void setAutomatable(TestCaseAutomatable automatable) {
+			this.automatable = automatable;
 		}
 	}
 

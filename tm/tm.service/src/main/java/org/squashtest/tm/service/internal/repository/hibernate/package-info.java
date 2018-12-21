@@ -305,7 +305,7 @@
 	@NamedQuery(name = "testCase.excelExportDataFromFolder", query =
 	"select p.id, p.name, index(content)+1, tc.id, tc.reference, content.name, "
 	+ "group_concat(milestones.label, 'order by', milestones, 'asc', '|'), tc.importanceAuto, tc.importance, nat, "
-	+ "type, tc.status, content.description, tc.prerequisite, "
+	+ "type, tc.status, tc.automatable, content.description, tc.prerequisite, "
 	+ "("
 	+ "select count (distinct req) from TestCase tc1 left join tc1.requirementVersionCoverages req where tc.id = tc1.id"
 	+ "), "
@@ -327,7 +327,7 @@
 
 	@NamedQuery(name = "testCase.excelExportDataFromLibrary", query = "select p.id, p.name, index(content)+1, tc.id, tc.reference, content.name, "
 	+ "group_concat(milestones.label, 'order by', milestones, 'asc', '|'), tc.importanceAuto, tc.importance, nat, "
-	+ "type, tc.status, content.description, tc.prerequisite, "
+	+ "type, tc.status, tc.automatable, content.description, tc.prerequisite, "
 	+ "("
 	+ "select count (distinct req) from TestCase tc1 left join tc1.requirementVersionCoverages req where tc.id = tc1.id"
 	+ "), "

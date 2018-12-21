@@ -59,7 +59,8 @@ public enum TestCaseSheetColumn implements TemplateColumn {
 	TC_SCRIPT(IGNORED),
 	TC_NB_MILESTONES("#_MIL", IGNORED),
 	TC_NB_STEPS("#_TEST_STEPS", IGNORED),
-	TC_NB_ITERATION("#_ITERATIONS", IGNORED);
+	TC_NB_ITERATION("#_ITERATIONS", IGNORED),
+	TC_AUTOMATABLE(IGNORED);
 
 	public final String header; ; // NOSONAR immutable public field
 	public final ColumnProcessingMode processingMode; ; // NOSONAR immutable public field

@@ -28,6 +28,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
@@ -47,7 +48,8 @@ public class SearchTestCaseExcelExporter extends ExcelExporter {
 
 	private static final TestCaseSheetColumn[] SEARCH_TC_COLUMNS = {
 		TestCaseSheetColumn.TC_NB_STEPS,
-		TestCaseSheetColumn.TC_NB_ITERATION
+		TestCaseSheetColumn.TC_NB_ITERATION,
+		TestCaseSheetColumn.TC_AUTOMATABLE
 	};
 
 	private static final TestCaseSheetColumn MILESTONE_SEARCH_TC_COLUMNS =
@@ -86,6 +88,7 @@ public class SearchTestCaseExcelExporter extends ExcelExporter {
 		}
 		r.createCell(cIdxOptional++).setCellValue(nbSteps);
 		r.createCell(cIdxOptional++).setCellValue(nbIteration);
+		r.createCell(cIdxOptional++).setCellValue(tcm.getAutomatable().name());
 
 
 
