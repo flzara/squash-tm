@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.scm
 
 import org.apache.commons.io.FileUtils
+import org.apache.commons.io.FilenameUtils
 import org.squashtest.tm.domain.testutils.MockFactory
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import spock.lang.Shared
@@ -33,6 +34,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
+import java.util.regex.Pattern
 
 class ScmRepositoryTest extends Specification {
 
@@ -187,6 +189,73 @@ class ScmRepositoryTest extends Specification {
 
 	}
 
+	def "should return the defined working folder"(){
+
+		given :
+		def scm = new ScmRepository(repositoryPath: "/rootfolder", workingFolderPath: "squash")
+
+		when:
+		def root = scm.getWorkingFolder()
+
+		then :
+		normalize(root.path) == "/rootfolder/squash"
+
+	}
+
+	def "should return the base repository folder if no working folder is defined"(){
+
+		given :
+		def scm = new ScmRepository(repositoryPath: "/rootfolder")
+
+		when:
+		def root = scm.getWorkingFolder()
+
+		then :
+		normalize(root.path) == "/rootfolder"
+
+	}
+
+	def "should list the content of a repository"(){
+
+		when :
+		def files = scm1.listWorkingFolderContent()
+
+		then:
+
+		getNormalizedPath(scm1, files) == [
+			"squash/220_test2.ta",
+			"squash/815_test1.ta",
+			"squash/subfolder/999_test3.ta"
+		]
+
+
+	}
+
+
+	// ********* additional tests for 100% coverage ************
+
+	def "all the other getter/setter"(){
+
+		given:
+		def server = Mock(ScmServer)
+		def scm = new ScmRepository(id: 10L, name: "repo", workingBranch: "default", workingFolderPath: "squash", scmServer: server)
+
+		when :
+		def id = scm.id
+		def name = scm.name
+		def workingBranch = scm.workingBranch
+		def workingFolderPath = scm.workingFolderPath
+		def scmServer = scm.scmServer
+
+		then:
+		id == 10L
+		name == "repo"
+		workingBranch == "default"
+		workingFolderPath == "squash"
+		scmServer == server
+	}
+
+
 	// ************* scaffolding *************
 
 
@@ -220,6 +289,19 @@ class ScmRepositoryTest extends Specification {
 
 	def timestamp(){
 		System.nanoTime()
+	}
+
+	def normalize(str){
+		return FilenameUtils.normalize(str , true)
+	}
+
+	def getNormalizedPath(ScmRepository repo, Collection<File> filelist){
+		def basepath = repo.baseRepositoryFolder.path
+		filelist.collect {
+			def path = it.path.substring(basepath.length() +1)
+			return normalize(path)
+		}
+		.sort()
 	}
 
 }

@@ -153,7 +153,7 @@ class ScmRepositoryManifestTest extends Specification{
 	}
 
 
-	def "should retrieve the file for a gherkin test case, resolving potential ambiguity by taking the first in lexicographical order"(){
+	def "should retrieve the script file for a gherkin test case, resolving potential ambiguity by taking the first in lexicographical order"(){
 
 
 		setup:
@@ -163,7 +163,8 @@ class ScmRepositoryManifestTest extends Specification{
 		gherkinFile2.createNewFile()
 
 		and :
-		def manifest = new ScmRepositoryManifest(repo)
+		// disabling cache in order to test a different branching and increasing code coverage
+		def manifest = new ScmRepositoryManifest(repo, false)
 
 		and:
 		def tc = Mock(TestCase){
@@ -186,5 +187,35 @@ class ScmRepositoryManifestTest extends Specification{
 
 	}
 
+	// ********* additional methods to reach 100% **************
+
+	def "getter on the scm"(){
+
+		expect:
+		new ScmRepositoryManifest(repo).scm == repo
+
+	}
+
+
+	def "should throw on IO failure"(){
+
+		given:
+			def scm = new ScmRepository(){
+				{
+					name = "dead repo"
+				}
+				Collection<File> listWorkingFolderContent() throws IOException{
+					throw new IOException("daaaaamn !")
+				}
+			}
+
+		when:
+			new ScmRepositoryManifest(scm)
+
+		then:
+			def ex = thrown Exception
+			ex.message == "cannot list content of scm 'dead repo'"
+
+	}
 
 }

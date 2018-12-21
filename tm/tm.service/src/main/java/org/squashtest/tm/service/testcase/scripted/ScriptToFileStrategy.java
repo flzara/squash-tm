@@ -47,7 +47,7 @@ public enum ScriptToFileStrategy {
 		@Override
 		public String getWritableFileContent(TestCase testCase) {
 			if (! canHandle(testCase)){
-				throw new IllegalArgumentException("This strategy handles Gherkin test cases, but ");
+				throw new IllegalArgumentException("This strategy handles Gherkin test cases, but current test case is of kind "+testCase.getKind());
 			}
 
 			ScriptedTestCaseExtender extender = testCase.getScriptedTestCaseExtender();

@@ -99,8 +99,8 @@ public final class ScmRepositoryManifest {
 		}
 
 		// check for the validity of the result
-		if (files.size() > 2){
-			LOGGER.warn("found two files that are possible candidates for test '{}'. This is an unexpected situation. " +
+		if (files.size() > 1){
+			LOGGER.warn("found two files more more that are possible candidates for test '{}'. This is an unexpected situation. " +
 							"The commit routine will proceed with the first file in lexicographic order.", testCase.getId());
 		}
 

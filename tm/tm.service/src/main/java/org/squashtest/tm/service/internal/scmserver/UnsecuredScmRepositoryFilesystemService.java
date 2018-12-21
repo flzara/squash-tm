@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.scmserver;
 
-import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -35,7 +34,6 @@ import org.squashtest.tm.domain.testcase.QScriptedTestCaseExtender;
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
-import org.squashtest.tm.service.internal.testcase.scripted.ScriptedTestCaseEventListener;
 import org.squashtest.tm.service.scmserver.ScmRepositoryFilesystemService;
 import org.squashtest.tm.service.scmserver.ScmRepositoryManifest;
 import org.squashtest.tm.service.testcase.scripted.ScriptToFileStrategy;
@@ -95,7 +93,7 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	 * @param scm
 	 * @param testCases
 	 */
-	private void exportToScm(ScmRepository scm, Set<TestCase> testCases){
+	private void exportToScm(ScmRepository scm, Collection<TestCase> testCases){
 
 		try {
 
@@ -197,7 +195,7 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 
 		String filename = strategy.createFilenameFor(testCase);
 
-		return doCreateTest(scm, filename);
+		return doCreateTestFile(scm, filename);
 	}
 
 	/**
@@ -213,7 +211,7 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 
 		String filename = strategy.backupFilenameFor(testCase);
 
-		return doCreateTest(scm, filename);
+		return doCreateTestFile(scm, filename);
 	}
 
 
@@ -224,7 +222,7 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	 * @param filename
 	 * @return
 	 */
-	private File doCreateTest(ScmRepository scm, String filename) throws IOException{
+	private File doCreateTestFile(ScmRepository scm, String filename) throws IOException{
 
 		File workfolder = scm.getWorkingFolder();
 
