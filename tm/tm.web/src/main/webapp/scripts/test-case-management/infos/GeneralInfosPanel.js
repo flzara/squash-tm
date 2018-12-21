@@ -50,7 +50,7 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "app/util/St
 							componentId : "test-case-reference",
 							submitCallback : this.updateReferenceInTree,
 							jeditableSettings : {
-								maxLength : 50
+								maxlength : 50
 							}
 						});
 

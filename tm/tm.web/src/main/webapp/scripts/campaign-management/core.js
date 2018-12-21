@@ -112,7 +112,7 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 				var url = conf.data.campaignUrl;
 				var cfg = confman.getStdJeditable();
 				cfg = $.extend(cfg, {
-					maxLength: 50,
+					maxlength: 50,
 					callback: function (value, settings) {
 						var escaped = $("<span/>").html(value).text();
 						eventBus.trigger('node.update-reference', {identity: conf.data.identity, newRef: escaped});

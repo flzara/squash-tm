@@ -108,7 +108,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 						eventBus.trigger('node.update-reference', { identity: config.basic.identity, newRef: reference });
 					},
 					jeditableSettings: {
-						maxLength: 50
+						maxlength: 50
 					}
 				});
 
@@ -469,7 +469,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 					}
 
 					bind(relatedReqVersionId, params).success(function (rejections) {
-						
+
 						if (rejections != null && Object.keys(rejections).length > 0) {
 							// If the link was not created, display summary
 							showAddSummary(rejections);

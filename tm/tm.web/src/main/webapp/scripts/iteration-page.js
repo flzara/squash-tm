@@ -68,7 +68,7 @@ require(["common"], function () {
 					var url = config.iterationURL;
 					var cfg = confman.getStdJeditable();
 					cfg = $.extend(cfg, {
-						maxLength: 50,
+						maxlength: 50,
 						callback: function (value, settings) {
 							var escaped = $("<span/>").html(value).text();
 							eventBus.trigger('node.update-reference', {identity: config.identity, newRef: escaped});
