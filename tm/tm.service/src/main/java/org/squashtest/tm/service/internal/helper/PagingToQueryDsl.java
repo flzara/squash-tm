@@ -35,9 +35,12 @@ import org.squashtest.tm.domain.Level;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.temporal.Temporal;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -346,15 +349,15 @@ public final class PagingToQueryDsl {
 			BooleanExpression finalExpression;
 			Object comparisonParameters = resolveParameters(property, value);
 
-			CompOperator operator = resolveOperator(property);
-			if(operator.equals(CompOperator.DATE)) {
-				if(value.contains(" - ")) {
-					operator = CompOperator.DATE_BETWEEN;
-				}
-			}
+			CompOperator operator = resolveOperator(property, value);
+
 			switch(operator){
 				case DATE_BETWEEN:
 					finalExpression = asBetweenDateExpression(pptPath, (Couple<Date, Date>) comparisonParameters);
+					break;
+
+				case DATE:
+					finalExpression = asDateExpression(pptPath, (Date) comparisonParameters);
 					break;
 
 				case LIKE:
@@ -378,7 +381,7 @@ public final class PagingToQueryDsl {
 			return finalExpression;
 		}
 
-		
+
 		private BooleanExpression asInExpression(EntityPathBase<?> pptPath, Object comparisonParameters) {
 			Collection<Object> effectiveParameters;
 			if (Collection.class.isAssignableFrom(comparisonParameters.getClass())){
@@ -388,7 +391,7 @@ public final class PagingToQueryDsl {
 				effectiveParameters = new ArrayList<>(1);
 				effectiveParameters.add(comparisonParameters);
 			}
-			
+
 			return pptPath.in((ArrayList) effectiveParameters);
 		}
 
@@ -404,12 +407,17 @@ public final class PagingToQueryDsl {
 			return asString.isNull();
 		}
 
+		private BooleanExpression asDateExpression(Expression pptPath, Date value){
+			return asBetweenDateExpression(pptPath, new Couple<>(value, value));
+		}
+
 		private BooleanExpression asBetweenDateExpression(Expression pptPath, Couple<Date, Date> dates) {
 			BooleanExpression finalExpression;
 			DateExpression asDate = Expressions.asDate(pptPath);
 
 			Date begin = dates.getA1();
-			Date end = dates.getA2();
+			// end date is excluded...
+			Date end = new Date(dates.getA2().getTime() + TimeUnit.DAYS.toMillis( 1 ));
 
 			finalExpression = asDate.between(begin, end);
 			return finalExpression;
@@ -443,7 +451,7 @@ public final class PagingToQueryDsl {
 
 		}
 
-		private CompOperator resolveOperator(String property){
+		private CompOperator resolveOperator(String property, String value){
 
 			// was a type specified for that property ? Default is String
 			Class<?> pptClass = propertyTypes.getOrDefault(property, String.class);
@@ -452,6 +460,10 @@ public final class PagingToQueryDsl {
 			CompOperator operator = propertyComparison.computeIfAbsent(property, s ->
 				(String.class.isAssignableFrom(pptClass)) ? CompOperator.LIKE : CompOperator.EQUALITY
 			);
+
+			if (operator.equals(CompOperator.DATE) && value.contains(" - ")) {
+				operator = CompOperator.DATE_BETWEEN;
+			}
 
 			return operator;
 

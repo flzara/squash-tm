@@ -254,7 +254,7 @@ class PagingToQueryDslTest extends Specification {
 	def "should resolve the operator"(){
 
 		expect :
-		converter.resolveOperator(property) == operator
+		converter.resolveOperator(property, "") == operator
 
 		where :
 
@@ -394,7 +394,7 @@ class PagingToQueryDslTest extends Specification {
 			def expr = converter.asBetweenDateExpression(path, duration)
 
 		then :
-			expr.toString() == "testCase.property between Thu Oct 11 00:00:00 CEST 2018 and Mon Oct 22 00:00:00 CEST 2018"
+			expr.toString() == "testCase.property between Thu Oct 11 00:00:00 CEST 2018 and Tue Oct 23 00:00:00 CEST 2018"
 
 	}
 
@@ -462,7 +462,7 @@ class PagingToQueryDslTest extends Specification {
 		def expr = converter.build()
 
 		then:
-		expr.toString() == "testCase.name = Bob && lower(testCase.project.name) like %project% && testCase.createdOn between Thu Oct 11 00:00:00 CEST 2018 and Mon Oct 22 00:00:00 CEST 2018"
+		expr.toString() == "testCase.name = Bob && lower(testCase.project.name) like %project% && testCase.createdOn between Thu Oct 11 00:00:00 CEST 2018 and Tue Oct 23 00:00:00 CEST 2018"
 
 	}
 
