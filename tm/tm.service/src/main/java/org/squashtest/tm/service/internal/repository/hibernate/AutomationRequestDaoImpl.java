@@ -414,7 +414,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 					   "transmissionDate",
 					   "assignmentDate")
 				   .withDates()
-					.compare("id", "automationPriority").withEquality();
+					.compare("id", "automationPriority", "testCase.audit.lastModifiedBy").withEquality();
 
 		// override if necessary
 		if (override != null){

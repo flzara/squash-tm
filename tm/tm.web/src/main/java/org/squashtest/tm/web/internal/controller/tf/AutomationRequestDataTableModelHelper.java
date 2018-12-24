@@ -24,7 +24,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.audit.AuditableMixin;
-import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -35,11 +34,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import static org.squashtest.tm.domain.testcase.TestCaseKind.GHERKIN;
 import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD;
-import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.AUTOMATION_IN_PROGRESS;
-import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.AUTOMATED;
-import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.TRANSMITTED;
 
 
 @Component
@@ -67,7 +62,7 @@ public class AutomationRequestDataTableModelHelper extends DataTableModelBuilder
 		data.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getTestCase() != null ? item.getTestCase().getId() : null);
 		data.put(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, auditable.getLastModifiedBy());
 		data.put("transmitted-on", messageSource.localizeShortDate(item.getTransmissionDate(), locale));
-		data.put("priority", item.getAutomationPriority() != null ? item.getAutomationPriority() : NO_DATA);
+		data.put("priority", item.getAutomationPriority() != null ? item.getAutomationPriority() : null);
 		data.put("assigned-on", messageSource.localizeShortDate(item.getAssignmentDate(), locale));
 		data.put("entity-index", getCurrentIndex());
 		data.put("script", populateScriptAuto(item));
