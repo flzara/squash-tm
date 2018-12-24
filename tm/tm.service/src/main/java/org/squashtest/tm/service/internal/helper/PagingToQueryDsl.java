@@ -498,8 +498,13 @@ public final class PagingToQueryDsl {
 				}
 			}
 			else if (canCoerceToInteger(pptClass)){
-				if(value != null) {
-					result = Long.valueOf(value);
+				if (value != null) {
+					try {
+						result = Long.valueOf(value);
+					} catch (NumberFormatException nfe) {
+						LOGGER.error("Wrong format for numeric value", nfe);
+						result = -52214; // default value
+					}
 				} else {
 					result = value;
 				}
