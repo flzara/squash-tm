@@ -216,15 +216,15 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 		switch (automationRequestStatus) {
 			case REJECTED:
 				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_AUTOMATION, AutomationRequest.class.getName());
-				requestDao.updateAutomationRequestStatus(reqIds, REJECTED, Collections.singletonList(TRANSMITTED));
+				requestDao.updateAutomationRequestStatus(reqIds, REJECTED);
 				break;
 			case AUTOMATION_IN_PROGRESS:
 				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_AUTOMATION, AutomationRequest.class.getName());
-				requestDao.updateAutomationRequestStatus(reqIds, AUTOMATION_IN_PROGRESS, Arrays.asList(TRANSMITTED, AUTOMATED));
+				requestDao.updateAutomationRequestStatus(reqIds, AUTOMATION_IN_PROGRESS);
 				break;
 			case AUTOMATED:
 				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_AUTOMATION, AutomationRequest.class.getName());
-				requestDao.updateAutomationRequestStatus(reqIds, AUTOMATED, Arrays.asList(TRANSMITTED, AUTOMATION_IN_PROGRESS));
+				requestDao.updateStatusToAutomated(reqIds, AUTOMATED, Arrays.asList(TRANSMITTED, AUTOMATION_IN_PROGRESS));
 				break;
 			case TRANSMITTED:
 				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_FUNCTIONAL, AutomationRequest.class.getName());
@@ -232,15 +232,15 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 				break;
 			case WORK_IN_PROGRESS:
 				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_FUNCTIONAL, AutomationRequest.class.getName());
-				requestDao.updateAutomationRequestStatus(reqIds, WORK_IN_PROGRESS, Arrays.asList(REJECTED, WORK_IN_PROGRESS, SUSPENDED));
+				requestDao.updateAutomationRequestStatus(reqIds, WORK_IN_PROGRESS);
 				break;
 			case SUSPENDED:
 				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_FUNCTIONAL, AutomationRequest.class.getName());
-				requestDao.updateAutomationRequestStatus(reqIds, SUSPENDED, Arrays.asList(TRANSMITTED, AUTOMATION_IN_PROGRESS, AUTOMATED));
+				requestDao.updateAutomationRequestStatus(reqIds, SUSPENDED);
 				break;
 			case READY_TO_TRANSMIT:
 				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_FUNCTIONAL, AutomationRequest.class.getName());
-				requestDao.updateAutomationRequestStatus(reqIds, READY_TO_TRANSMIT, Arrays.asList(REJECTED, WORK_IN_PROGRESS, SUSPENDED));
+				requestDao.updateAutomationRequestStatus(reqIds, READY_TO_TRANSMIT);
 				break;
 			default:
 				throw new IllegalAutomationRequestStatusException(STATUS_NOT_PERMITTED);

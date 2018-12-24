@@ -209,13 +209,12 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	}
 
 	@Override
-	public void updateAutomationRequestStatus(List<Long> reqIds, AutomationRequestStatus requestStatus, List<AutomationRequestStatus> initialStatus) {
+	public void updateAutomationRequestStatus(List<Long> reqIds, AutomationRequestStatus requestStatus) {
 
 		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest req SET req.requestStatus = :requestStatus " +
-			"where req.id in :reqIds and req.requestStatus in :initialStatus")
+			"where req.id in :reqIds")
 			.setParameter("requestStatus", requestStatus)
 			.setParameter("reqIds", reqIds)
-			.setParameter("initialStatus", initialStatus)
 			.executeUpdate();
 
 		if(reqIds.size() != automationRequestUpdates) {
@@ -262,6 +261,22 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 			if(reqIds.size() != automationRequestUpdates) {
 				throw new IllegalAutomationRequestStatusException(ILLEGAL_STATUS);
 			}
+	}
+
+	@Override
+	public void updateStatusToAutomated(List<Long> reqIds, AutomationRequestStatus requestStatus, List<AutomationRequestStatus> initialStatus) {
+		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest req SET req.requestStatus = :requestStatus " +
+			"where req.id in :reqIds and req.requestStatus in :initialStatus")
+			.setParameter("requestStatus", requestStatus)
+			.setParameter("reqIds", reqIds)
+			.setParameter("initialStatus", initialStatus)
+			.executeUpdate();
+
+		if(reqIds.size() != automationRequestUpdates) {
+			throw new IllegalAutomationRequestStatusException(ILLEGAL_STATUS);
+		}
+
+
 	}
 
 	private Page<AutomationRequest> innerFindAll(Pageable pageable, ColumnFiltering filtering, FilterOverride filterOverride, Collection<Long> inProjectIds){

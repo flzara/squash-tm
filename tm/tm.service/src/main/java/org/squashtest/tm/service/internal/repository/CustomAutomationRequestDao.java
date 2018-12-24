@@ -140,11 +140,13 @@ public interface CustomAutomationRequestDao {
 
 	void updateStatusToTransmitted(List<Long> reqIds, User transmittedBy);
 
+	void updateStatusToAutomated(List<Long> reqIds, AutomationRequestStatus requestStatus, List<AutomationRequestStatus> initialStatus);
+
 	Integer countAutomationRequestValid();
 
 	void assignedToRequestIds(List<Long> reqIds, User user);
 
-	void updateAutomationRequestStatus(List<Long> reqIds, AutomationRequestStatus requestStatus, List<AutomationRequestStatus> initialStatus);
+	void updateAutomationRequestStatus(List<Long> reqIds, AutomationRequestStatus requestStatus);
 
 	Map<Long, String> getTcLastModifiedByToAutomationRequestNotAssigned(List<String> requestStatus);
 
