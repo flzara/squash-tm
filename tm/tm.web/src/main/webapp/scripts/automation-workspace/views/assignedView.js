@@ -444,7 +444,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 var self = this;
                 $(rows).each(function (index, row) {
                     var tcId = parseInt($('.entity_id', row).text(), 10);
-                    
+
                     var $row = $(row);
                     var checkbox = $row.find("input[type=checkbox]")
                     if (checkbox[0] !== undefined) {
@@ -517,7 +517,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     var idx = data._DT_RowIndex;
                     var script = data.cells[9].lastChild.nodeValue;
                     var format = datas[idx]["format"];
-                    if ((script === null || script === " ") && "gherkin" !== format.toLowerCase()) {
+                    if ((script === null || script === "-") && "gherkin" !== format.toLowerCase()) {
                         count = count + 1;
                     }
 
