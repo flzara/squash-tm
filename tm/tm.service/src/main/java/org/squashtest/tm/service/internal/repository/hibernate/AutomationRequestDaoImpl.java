@@ -181,6 +181,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 			.innerJoin(AUTOMATION_REQUEST).on(TEST_CASE_LIBRARY_NODE.TCLN_ID.eq(AUTOMATION_REQUEST.TEST_CASE_ID))
 			.where(condition)
 			.and(AUTOMATION_REQUEST.REQUEST_STATUS.in(requestStatus))
+			.orderBy(CORE_USER.LOGIN)
 			.fetch().intoMap(CORE_USER.PARTY_ID, CORE_USER.LOGIN);
 
 	}
@@ -193,6 +194,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 			.innerJoin(AUTOMATION_REQUEST).on(TEST_CASE_LIBRARY_NODE.TCLN_ID.eq(AUTOMATION_REQUEST.TEST_CASE_ID))
 			.where(AUTOMATION_REQUEST.ASSIGNED_TO.isNull())
 			.and(AUTOMATION_REQUEST.REQUEST_STATUS.in(requestStatus))
+			.orderBy(CORE_USER.LOGIN)
 			.fetch().intoMap(CORE_USER.PARTY_ID, CORE_USER.LOGIN);
 
 	}
@@ -202,6 +204,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 
 		return DSL.selectDistinct(CORE_USER.PARTY_ID, CORE_USER.LOGIN).from(CORE_USER)
 					.innerJoin(AUTOMATION_REQUEST).on(CORE_USER.PARTY_ID.eq(AUTOMATION_REQUEST.ASSIGNED_TO))
+					.orderBy(CORE_USER.LOGIN)
 					.fetch().intoMap(CORE_USER.PARTY_ID, CORE_USER.LOGIN);
 	}
 
