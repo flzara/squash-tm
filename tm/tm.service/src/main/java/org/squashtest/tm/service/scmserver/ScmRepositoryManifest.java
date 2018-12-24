@@ -115,28 +115,28 @@ public final class ScmRepositoryManifest {
 	 * @return
 	 */
 	public Stream<String> streamTestsRelativePath() throws IOException{
-		Path baseAsPath = Paths.get(scm.getRepositoryPath());
+		Path workfolderAsPath = Paths.get(scm.getRepositoryPath(), scm.getWorkingFolderPath());
 
 		Stream<File> fileStream = (useCache) ? pathCache.values().stream() : scm.listWorkingFolderContent().stream();
 
 		return fileStream
 				   .map(testFile -> {
 					   Path testPath = Paths.get(testFile.getAbsolutePath());
-					   return baseAsPath.relativize(testPath);
+					   return workfolderAsPath.relativize(testPath);
 				   })
 				   .map(Path::toString)
 				   .map(path -> FilenameUtils.normalizeNoEndSeparator(path, true));
 	}
 
 	/**
-	 * Returns path of this file, relative to the root folder of the repository.
+	 * Returns path of this file, relative to the working folder of the repository.
 	 * The file separator is the Unix separator '/'
 	 *
 	 * @param file
 	 * @return
 	 */
 	public String getRelativePath(File file){
-		Path baseAsPath = Paths.get(scm.getRepositoryPath());
+		Path baseAsPath = Paths.get(scm.getRepositoryPath(), scm.getWorkingFolderPath());
 		Path testPath = Paths.get(file.getAbsolutePath());
 
 		Path relative = baseAsPath.relativize(testPath);

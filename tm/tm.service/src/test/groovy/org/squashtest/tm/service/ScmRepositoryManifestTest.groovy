@@ -97,7 +97,7 @@ class ScmRepositoryManifestTest extends Specification{
 	}
 
 
-	def "should return the file path of a file relative to the repo root folder"(){
+	def "should return the file path of a file relative to the repo working folder"(){
 
 		given :
 		def manifest = new ScmRepositoryManifest(repo)
@@ -107,11 +107,11 @@ class ScmRepositoryManifestTest extends Specification{
 		def relative = manifest.getRelativePath(file)
 
 		then :
-		relative == "squash/subfolder/999_test3.ta"
+		relative == "subfolder/999_test3.ta"
 
 	}
 
-	def "should return the list of test path relative to the repo root folder"(){
+	def "should return the list of test path relative to the repo working folder"(){
 
 		given :
 		def manifest = new ScmRepositoryManifest(repo)
@@ -120,7 +120,7 @@ class ScmRepositoryManifestTest extends Specification{
 		def res = manifest.streamTestsRelativePath().collect(Collectors.toList()).sort()
 
 		then:
-		res == ["squash/220_test2.ta", "squash/815_test1.ta", "squash/subfolder/999_test3.ta"]
+		res == ["220_test2.ta", "815_test1.ta", "subfolder/999_test3.ta"]
 
 	}
 

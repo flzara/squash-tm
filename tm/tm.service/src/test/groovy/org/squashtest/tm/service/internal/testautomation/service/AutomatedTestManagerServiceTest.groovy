@@ -57,8 +57,10 @@ class AutomatedTestManagerServiceTest extends Specification {
 	ScmRepository repo1 = new MockFactory().mockScmRepository(10L, "ATMSTest_", "squash"){
 		dir("squash"){
 			file "123_feat_gherkin.feature"
-			file "456_another_gherkin.feature"
 			file "1642_unknown_tech.whatever"
+			dir("sub"){
+				file "456_another_gherkin.feature"
+			}
 		}
 	}
 
@@ -66,8 +68,10 @@ class AutomatedTestManagerServiceTest extends Specification {
 	ScmRepository repo2 = new MockFactory().mockScmRepository(20L, "ATMSTest2_", "scripts"){
 		dir("scripts"){
 			file "789_ghertest1.feature"
-			file "159_ghertest2.feature"
 			file "1642_whatsis.dunno"
+			dir("nested"){
+				file "159_ghertest2.feature"
+			}
 		}
 	}
 
@@ -191,8 +195,8 @@ class AutomatedTestManagerServiceTest extends Specification {
 
 		expect:
 		service.groupTestsByTechnology(repo1) == [
-			(TestCaseKind.STANDARD) : ["squash/1642_unknown_tech.whatever"],
-			(TestCaseKind.GHERKIN)	: ["squash/123_feat_gherkin.feature", "squash/456_another_gherkin.feature"]
+			(TestCaseKind.STANDARD) : ["1642_unknown_tech.whatever"],
+			(TestCaseKind.GHERKIN)	: ["123_feat_gherkin.feature", "sub/456_another_gherkin.feature"]
 		]
 	}
 
@@ -240,159 +244,32 @@ class AutomatedTestManagerServiceTest extends Specification {
 		// check gher1 first, must contain gherkin tests from the scm1
 		def contentGher1 = contents.find {it.project == gher1 }
 		contentGher1.tests.collect {it.fullLabel }.sort() == [
-			"/gherkin 1/squash/123_feat_gherkin.feature",
-			"/gherkin 1/squash/456_another_gherkin.feature"
+			"/gherkin 1/123_feat_gherkin.feature",
+			"/gherkin 1/sub/456_another_gherkin.feature"
 		]
 
 		// same check for project regular 1, with regular tests from scm1
 		def contentReg1 = contents.find { it.project == reg1 }
 		contentReg1.tests.collect {it.fullLabel }.sort() == [
-			"/regular 1/squash/1642_unknown_tech.whatever"
+			"/regular 1/1642_unknown_tech.whatever"
 		]
 
 		// reg2 contains regular tests from scm2
 		def contentReg2 = contents.find { it.project == reg2}
 		contentReg2.tests.collect {it.fullLabel }.sort() == [
-			"/regular 2/scripts/1642_whatsis.dunno"
+			"/regular 2/1642_whatsis.dunno"
 		]
 
 		// gher2 contains gherkin tests from scm2
 		def contentGher2 = contents.find {it.project == gher2 }
 		contentGher2.tests.collect {it.fullLabel }.sort() == [
-			"/gherkin 2/scripts/159_ghertest2.feature",
-			"/gherkin 2/scripts/789_ghertest1.feature"
+			"/gherkin 2/789_ghertest1.feature",
+			"/gherkin 2/nested/159_ghertest2.feature"
 		]
 
 		// and no result for the "no scm" project
 		contents.find {it.project == noscm } == null
 
-
 	}
-
-/*
-	def "should return distinct scms referenced by the various test automation projects"(){
-
-		given :
-
-		def projects = [
-			Mock(TestAutomationProject){
-				getTmProject() >> Mock(Project){
-					getScmRepository()>> scm
-				}
-				getLabel() >> "I reference the SCM"
-			},
-			Mock(TestAutomationProject){
-				getTmProject() >> Mock(Project){
-					getScmRepository()>> null
-				}
-				getLabel() >> "I reference no scm"
-			},
-			Mock(TestAutomationProject){
-				getTmProject() >> Mock(Project){
-					getScmRepository()>> Mock(ScmRepository){ getName() >> "different repo"}
-				}
-				getLabel() >> "I reference a different SCM"
-			},
-			Mock(TestAutomationProject){
-				getTmProject() >> Mock(Project){
-					getScmRepository()>> scm
-				}
-				getLabel() >> "I reference the same SCM than the first item"
-			}
-		]
-
-		when :
-		def res = service.gatherRepositories(projects)
-
-		then :
-		res.size() == 2
-		res.collect {it.name} as Set == ["my repository", "different repo"] as Set
-
-	}
-
-
-
-
-	def "should not list from repository if there are no repository to list from"(){
-
-		given :
-		TestAutomationProject p1 = Mock(TestAutomationProject){
-			isCanRunGherkin() >> true
-			getTmProject() >> Mock(Project){
-				getScmRepository() >> null
-			}
-		}
-
-		when :
-		def res = service.listTestsFromScm([p1])
-
-		then :
-		! res.isPresent()
-
-	}
-
-
-	def "should not list from repository if there are no Gherkin-able projects"(){
-
-		given :
-		TestAutomationProject p1 = Mock(TestAutomationProject){
-			isCanRunGherkin() >> false
-			getTmProject() >> Mock(Project){
-				getScmRepository()>> scm
-			}
-		}
-
-		when :
-		def res = service.listTestsFromScm([p1])
-
-		then:
-		! res.isPresent()
-
-	}
-
-
-	def "should return the content of the scm as automated tests that belong to a Gherkin-able project"(){
-
-		given: "a server"
-		TestAutomationServer server = new TestAutomationServer("leroy_jenkins", new URL("http://myci:8080/jenkins"), "admin", "admin")
-
-		and : "the projects"
-
-		def projects = [
-			Mock(TestAutomationProject){
-				getServer() >> server
-				isCanRunGherkin() >> false
-				getTmProject() >> Mock(Project){
-					getScmRepository()>> scm
-				}
-				getLabel() >> "Something else"
-			},
-			Mock(TestAutomationProject){
-				getServer() >> server
-				isCanRunGherkin() >> true
-				getTmProject() >> Mock(Project){
-					getScmRepository()>> scm
-				}
-				getLabel() >> "Gherkin Project"
-			}
-		]
-
-		when :
-		def res = service.listTestsFromScm(projects)
-
-		then :
-		res.isPresent()
-
-		def projectContent = res.get()
-		projectContent.project.getLabel() == "Gherkin Project"
-		projectContent.tests.collect { it.fullLabel }.sort() == [
-		    "/Gherkin Project/squash/220_test2.ta",
-			"/Gherkin Project/squash/815_test1.ta",
-			"/Gherkin Project/squash/subfolder/999_test3.ta"].sort();
-		projectContent.tests.collect {it.project }.unique().label == ["Gherkin Project"]
-
-
-	}
-*/
 
 }
