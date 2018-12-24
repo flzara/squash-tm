@@ -42,7 +42,7 @@ define(['jquery', 'workspace.contextual-content', 'workspace.routing'],
 				} else if (href === "#validate") {
 					requestStatus = ["WORK_IN_PROGRESS"];
 				} else {
-					requestStatus = ["AUTOMATION_IN_PROGRESS", "READY_TO_TRANSMIT", "TRANSMITTED", "WORK_IN_PROGRESS", "AUTOMATED", "SUSPENDED", "REJECTED"];
+					requestStatus = ["TRANSMITTED", "AUTOMATION_IN_PROGRESS", "SUSPENDED", "REJECTED", "AUTOMATED", "READY_TO_TRANSMIT", "WORK_IN_PROGRESS"];
 					url = url + "automation-workspace/testers/";
 				}
 				var self = this;
@@ -63,7 +63,7 @@ define(['jquery', 'workspace.contextual-content', 'workspace.routing'],
 						default:
 							break;
 
-					}					
+					}
 				});
 				if (!$(self).hasClass('tf-selected')) {
 					selectTab(self);

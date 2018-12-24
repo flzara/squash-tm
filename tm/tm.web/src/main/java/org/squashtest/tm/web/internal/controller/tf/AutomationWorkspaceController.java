@@ -49,6 +49,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.AUTOMATION_IN_PROGRESS;
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.TRANSMITTED;
+
 /**
  * This controller is dedicated to the initial page of Automation workspace
  */
@@ -89,13 +92,18 @@ public class AutomationWorkspaceController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale) {
 
-		List<String> automationRequestStatus = Stream.of(AutomationRequestStatus.values()).map(Enum:: name).collect(Collectors.toList());
-		Map<Long, String> assignableUsers =automationRequestFinderService.getTcLastModifiedByForCurrentUser(automationRequestStatus);
+		Map<String, String> automReqStatuses =
+			Stream.of(AutomationRequestStatus.values())
+				.collect(Collectors.toMap(Enum::name, e -> messageSource.internationalize(e.getI18nKey(), locale),(u, v) -> {
+					throw new IllegalStateException(String.format("Duplicate key %s", u));
+				}, LinkedHashMap::new));
+		List<String> automReqStatusList = new ArrayList<>(automReqStatuses.keySet());
+		Map<Long, String> assignableUsers = automationRequestFinderService.getTcLastModifiedByForCurrentUser(automReqStatusList);
 		Map<Long, String> globalUsers = automationRequestFinderService
-			.getTcLastModifiedByForAutomationRequests(automationRequestStatus);
+			.getTcLastModifiedByForAutomationRequests(automReqStatusList);
 
 		Map<Long, String> traitmentUsers = automationRequestFinderService
-			.getTcLastModifiedByToAutomationRequestNotAssigned(Arrays.asList(AutomationRequestStatus.TRANSMITTED.name(), AutomationRequestStatus.AUTOMATION_IN_PROGRESS.name()));
+			.getTcLastModifiedByToAutomationRequestNotAssigned(Arrays.asList(TRANSMITTED.name(), AUTOMATION_IN_PROGRESS.name()));
 
 		Map<Long, String> assignableUsersGlobalView = automationRequestFinderService.getAssignedToForAutomationRequests();
 
@@ -109,13 +117,11 @@ public class AutomationWorkspaceController {
 		model.addAttribute("tcKinds", tcKinds);
 
 		Map<String, String> autoReqStatusesTraitment =
-			Stream.of(AutomationRequestStatus.TRANSMITTED, AutomationRequestStatus.AUTOMATION_IN_PROGRESS)
+			Stream.of(TRANSMITTED, AUTOMATION_IN_PROGRESS)
 				  .collect(Collectors.toMap(Enum::toString, e -> messageSource.internationalize(e.getI18nKey(), locale)));
 		model.addAttribute("autoReqStatusesTraitment", autoReqStatusesTraitment);
 
-		Map<String, String> autoReqStatuses = Stream.of(AutomationRequestStatus.values())
-			.collect(Collectors.toMap(Enum::toString, e -> messageSource.internationalize(e.getI18nKey(), locale)));
-		model.addAttribute("autoReqStatuses", autoReqStatuses);
+		model.addAttribute("autoReqStatuses", automReqStatuses);
 
 		return getWorkspaceViewName();
 	}

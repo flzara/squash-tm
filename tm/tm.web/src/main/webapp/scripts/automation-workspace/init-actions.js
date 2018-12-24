@@ -36,7 +36,7 @@ define(['jquery', 'workspace.contextual-content', 'workspace.routing'],
 				var model = squashtm.app;
 				var url = model.contextRoot;
 				var href = $(this).attr("href");
-				var allStatus = ["AUTOMATION_IN_PROGRESS", "READY_TO_TRANSMIT", "TRANSMITTED", "WORK_IN_PROGRESS", "AUTOMATED", "SUSPENDED", "REJECTED"];
+				var allStatus = ["TRANSMITTED", "AUTOMATION_IN_PROGRESS", "SUSPENDED", "REJECTED", "AUTOMATED", "READY_TO_TRANSMIT", "WORK_IN_PROGRESS"];
 				if (href === "#assigned") {
 					requestStatus = allStatus;
 					url = url + "automation-workspace/assigned/testers/";

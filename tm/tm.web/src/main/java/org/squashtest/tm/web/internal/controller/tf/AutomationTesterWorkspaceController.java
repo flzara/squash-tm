@@ -46,6 +46,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.*;
+
 @Controller
 @RequestMapping("/automation-tester-workspace")
 public class AutomationTesterWorkspaceController {
@@ -77,25 +79,29 @@ public class AutomationTesterWorkspaceController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale) {
+		Map<String, String> automReqStatuses =
+			Stream.of(AutomationRequestStatus.values())
+				.collect(Collectors.toMap(Enum::name, e -> messageSource.internationalize(e.getI18nKey(), locale),(u, v) -> {
+					throw new IllegalStateException(String.format("Duplicate key %s", u));
+				}, LinkedHashMap::new));
+
 		Map<String, String> tcKinds =
 			Arrays.stream(TestCaseKind.values()).collect(Collectors.toMap(Enum::toString, e -> messageSource.internationalize(e.getI18nKey(), locale)));
-		Map<String, String> autoReqStatusesValidateView =
-			Stream.of(AutomationRequestStatus.SUSPENDED, AutomationRequestStatus.WORK_IN_PROGRESS, AutomationRequestStatus.REJECTED)
-				.collect(Collectors.toMap(Enum::toString, e -> messageSource.internationalize(e.getI18nKey(), locale)));
-		Map<String, String> autoReqStatusesGlobalView =
-			Stream.of(AutomationRequestStatus.values())
-				.collect(Collectors.toMap(Enum::toString, e -> messageSource.internationalize(e.getI18nKey(), locale)));
-		model.addAttribute("autoReqStatusesValidateView", autoReqStatusesValidateView);
-		model.addAttribute("autoReqStatusesGlobalView", autoReqStatusesGlobalView);
-		model.addAttribute("tcKinds", tcKinds);
-		model.addAttribute("testerTransmitted", automationRequestFinderService.getTcLastModifiedByForAutomationRequests(Collections.singletonList(AutomationRequestStatus.READY_TO_TRANSMIT.name())));
-		model.addAttribute("testerValidate",
-			automationRequestFinderService.getTcLastModifiedByForAutomationRequests(Collections.singletonList(AutomationRequestStatus.WORK_IN_PROGRESS.name())));
 
-		List<String> allStatus = new ArrayList<>();
-		for (AutomationRequestStatus automationRequestStatus: AutomationRequestStatus.values()) {
-			allStatus.add(automationRequestStatus.name());
-		}
+		Map<String, String> automReqStatusesValidate =
+			Stream.of(SUSPENDED, REJECTED, WORK_IN_PROGRESS)
+				.collect(Collectors.toMap(Enum::toString, e -> messageSource.internationalize(e.getI18nKey(), locale),(u, v) -> {
+					throw new IllegalStateException(String.format("Duplicate key %s", u));
+				}, LinkedHashMap::new));
+
+		model.addAttribute("autoReqStatusesValidateView", automReqStatusesValidate);
+		model.addAttribute("autoReqStatusesGlobalView", automReqStatuses);
+		model.addAttribute("tcKinds", tcKinds);
+		model.addAttribute("testerTransmitted", automationRequestFinderService.getTcLastModifiedByForAutomationRequests(Collections.singletonList(READY_TO_TRANSMIT.name())));
+		model.addAttribute("testerValidate",
+			automationRequestFinderService.getTcLastModifiedByForAutomationRequests(Collections.singletonList(WORK_IN_PROGRESS.name())));
+
+		List<String> allStatus = new ArrayList<>(automReqStatuses.keySet());
 		model.addAttribute("testerGlobalView",
 			automationRequestFinderService.getTcLastModifiedByForAutomationRequests(allStatus));
 
