@@ -862,4 +862,9 @@
 
   </changeSet>
 
+  <changeSet id="tm-1.19.0-Mantis-7547" author="jprioux">
+    <comment>Increase remote req id limit to 50 for jira</comment>
+    <modifyDataType tableName="REQUIREMENT_SYNC_EXTENDER" columnName="REMOTE_REQ_ID" newDataType="VARCHAR(50)"/>
+  </changeSet>
+
 </databaseChangeLog>
