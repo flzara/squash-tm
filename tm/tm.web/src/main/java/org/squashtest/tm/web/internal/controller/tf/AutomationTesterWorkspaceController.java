@@ -99,7 +99,7 @@ public class AutomationTesterWorkspaceController {
 		model.addAttribute("tcKinds", tcKinds);
 		model.addAttribute("testerTransmitted", automationRequestFinderService.getTcLastModifiedByForAutomationRequests(Collections.singletonList(READY_TO_TRANSMIT.name())));
 		model.addAttribute("testerValidate",
-			automationRequestFinderService.getTcLastModifiedByForAutomationRequests(Collections.singletonList(WORK_IN_PROGRESS.name())));
+			automationRequestFinderService.getTcLastModifiedByForAutomationRequests(Arrays.asList(WORK_IN_PROGRESS.name(), SUSPENDED.name(), REJECTED.name())));
 
 		List<String> allStatus = new ArrayList<>(automReqStatuses.keySet());
 		model.addAttribute("testerGlobalView",
