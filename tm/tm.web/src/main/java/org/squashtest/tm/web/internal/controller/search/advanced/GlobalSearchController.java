@@ -115,8 +115,9 @@ public abstract class GlobalSearchController {
 				UserDto currentUser = userAccountService.findCurrentUserDto();
 				List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
 				Collection<JsonProject> jsProjects = projectFinder.findAllProjects(readableProjectIds, currentUser);
+				Integer allowAutomationWorkflow = projectFinder.countProjectsAllowAutomationWorkflow();
 				SearchInputInterfaceModel model = searchInputInterfaceHelper.getCampaignSearchInputInterfaceModel(locale,
-					isMilestoneMode, readableProjectIds);
+					isMilestoneMode, readableProjectIds, allowAutomationWorkflow);
 				populateMetadata(model, jsProjects);
 				return model;
 			}

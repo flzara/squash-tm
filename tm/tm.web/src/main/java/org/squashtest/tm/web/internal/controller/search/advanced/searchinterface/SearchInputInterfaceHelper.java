@@ -143,7 +143,7 @@ public class SearchInputInterfaceHelper {
 		return model;
 	}
 
-	public SearchInputInterfaceModel getCampaignSearchInputInterfaceModel(Locale locale, boolean isMilestoneMode, List<Long> readableProjectIds) {
+	public SearchInputInterfaceModel getCampaignSearchInputInterfaceModel(Locale locale, boolean isMilestoneMode, List<Long> readableProjectIds, Integer allowAutomationWorkflow) {
 
 		SearchInputInterfaceModel model = new SearchInputInterfaceModel();
 		List<String> users = campaignAdvancedSearchService.findAllAuthorizedUsersForACampaign(readableProjectIds);
@@ -154,7 +154,9 @@ public class SearchInputInterfaceHelper {
 		model.addPanel(campaignSearchInterfaceDescription.createAttributePanel(locale,users ));
 
 		// Automation
-		model.addPanel(campaignSearchInterfaceDescription.createAutomationPanel(locale));
+		if(allowAutomationWorkflow > 0) {
+			model.addPanel(campaignSearchInterfaceDescription.createAutomationPanel(locale));
+		}
 
 		// Milestones
 		if (!isMilestoneMode && featureManager.isEnabled(FeatureManager.Feature.MILESTONE)) {
