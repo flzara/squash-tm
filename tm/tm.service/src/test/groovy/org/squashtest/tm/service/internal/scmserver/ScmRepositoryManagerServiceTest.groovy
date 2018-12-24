@@ -43,8 +43,7 @@ class ScmRepositoryManagerServiceTest extends Specification {
 	def "#findByScmServerOrderByPath(Long) - [Nominal] Should find all ScmRepositories ordered by path"() {
 		given: "Mock server"
 			long serverId = 3
-			ScmServer server = new ScmServer()
-			server.id = serverId
+			ScmServer server = Mock(ScmServer){getId() >> serverId}
 		and: "Mock data"
 			ScmRepository repo1 = new ScmRepository()
 			repo1.repositoryPath = "/home/repositories/repo1"
@@ -65,8 +64,8 @@ class ScmRepositoryManagerServiceTest extends Specification {
 	def "#findByScmServerOrderByPath(Long) - [Empty] Should find no ScmRepository"() {
 		given: "Mock server"
 			long serverId = 3
-			ScmServer server = new ScmServer()
-			server.id = serverId
+			ScmServer server = Mock(ScmServer){getId() >> serverId}
+
 		and: "Expected result"
 			List<ScmRepository> expectedList = [] as List
 		and: "Mock Dao method"
@@ -125,8 +124,8 @@ class ScmRepositoryManagerServiceTest extends Specification {
 			repo.workingBranch = "master"
 		and:
 			long serverId = 12
-			ScmServer server = new ScmServer()
-			server.id = serverId
+			ScmServer server = Mock(ScmServer){getId() >> serverId}
+
 		and: "Mock Dao methods"
 			scmServerDao.getOne(serverId) >> server
 			scmRepositoryDao.save(repo) >> repo

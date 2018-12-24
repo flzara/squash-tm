@@ -117,7 +117,7 @@ public class ScmServerManagementAdminController {
 			row.put("server-index", Long.toString(getCurrentIndex()));
 			row.put("name", item.getName());
 			row.put("kind", item.getKind());
-			row.put("url", item.getBaseUrl());
+			row.put("url", item.getUrl());
 			row.put("empty-delete-holder", null);
 
 			return row;

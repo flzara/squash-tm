@@ -26,8 +26,10 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.domain.Sort.Direction
 import org.springframework.data.domain.Sort.Order
 import org.squashtest.tm.domain.scm.ScmServer
+import org.squashtest.tm.domain.servers.ThirdPartyServer
 import org.squashtest.tm.exception.NameAlreadyInUseException
 import org.squashtest.tm.service.internal.repository.ScmServerDao
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import spock.lang.Specification
 
 class ScmServerManagerServiceTest extends Specification {
@@ -169,7 +171,7 @@ class ScmServerManagerServiceTest extends Specification {
 		given: "Mock data"
 			long serverId = 90
 			ScmServer server = new ScmServer()
-			server.id = serverId
+			setServerId(server, serverId)
 			server.name = "GitHub Server"
 		and:
 			String newName = "GitLab Server"
@@ -190,7 +192,7 @@ class ScmServerManagerServiceTest extends Specification {
 			long serverId = 90
 			String serverName = "GitHub Server"
 			ScmServer server = new ScmServer()
-			server.id = serverId
+			setServerId(server, serverId)
 			server.name = serverName
 		and: "Mock Dao method"
 			scmServerDao.getOne(serverId) >> server
@@ -209,7 +211,7 @@ class ScmServerManagerServiceTest extends Specification {
 			long serverId = 90
 			String serverName = "GitHub Server"
 			ScmServer server = new ScmServer()
-			server.id = serverId
+			setServerId(server, serverId)
 			server.name = serverName
 		and:
 			String newName ="GitLab Server"
@@ -230,8 +232,8 @@ class ScmServerManagerServiceTest extends Specification {
 		given: "Mock data"
 			long serverId = 50
 			ScmServer server = new ScmServer()
-			server.id = serverId
-			server.baseUrl = "http://github.com"
+			setServerId(server, serverId)
+			server.url = "http://github.com"
 		and:
 			String newUrl = "http://gitlab.com"
 		and: "Mock Dao method"
@@ -240,7 +242,7 @@ class ScmServerManagerServiceTest extends Specification {
 			String resultUrl = scmServerManagerService.updateUrl(serverId, newUrl)
 		then:
 			server.id == serverId
-			server.baseUrl == newUrl
+			server.url == newUrl
 			1 * scmServerDao.save(server)
 			resultUrl == newUrl
 	}
@@ -250,15 +252,15 @@ class ScmServerManagerServiceTest extends Specification {
 			long serverId = 50
 			String serverUrl = "http://github.com"
 			ScmServer server = new ScmServer()
-			server.id = serverId
-			server.baseUrl = serverUrl
+			setServerId(server, serverId)
+			server.url = serverUrl
 		and: "Mock Dao method"
 			scmServerDao.getOne(serverId) >> server
 		when:
 			String resultUrl = scmServerManagerService.updateUrl(serverId, serverUrl)
 		then:
 			server.id == serverId
-			server.baseUrl == serverUrl
+			server.url == serverUrl
 			0 * scmServerDao.save(server)
 			resultUrl == serverUrl
 	}
@@ -268,8 +270,8 @@ class ScmServerManagerServiceTest extends Specification {
 			long serverId = 50
 			String serverUrl = "http://github.com"
 			ScmServer server = new ScmServer()
-			server.id = serverId
-			server.baseUrl = serverUrl
+			setServerId(server, serverId)
+			server.url = serverUrl
 		and:
 			String malformedUrl = "malformedUrl"
 		and: "Mock Dao methods"
@@ -321,5 +323,12 @@ class ScmServerManagerServiceTest extends Specification {
 			1 * scmServerDao.delete(s1)
 			1 * scmServerDao.delete(s2)
 			1 * scmServerDao.delete(s3)
+	}
+
+
+	def setServerId(server, id){
+		use(ReflectionCategory){
+			ThirdPartyServer.set field: "id", of: server, to:id
+		}
 	}
 }

@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.domain.scm;
 
+import org.squashtest.tm.domain.servers.ThirdPartyServer;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -28,22 +30,9 @@ import java.util.List;
 
 @Entity
 @Table(name = "SCM_SERVER")
-public class ScmServer {
+@PrimaryKeyJoinColumn(name = "SCM_SERVER_ID")
+public class ScmServer extends ThirdPartyServer {
 
-	@Id
-	@Column(name = "SCM_SERVER_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator ="scm_server_id_seq")
-	@SequenceGenerator(name = "scm_server_id_seq", sequenceName = "scm_server_id_seq")
-	private Long id;
-
-	@Column(name = "NAME")
-	@Size(max = 255)
-	@NotBlank
-	private String name;
-
-	@Column(name = "BASE_URL")
-	@org.hibernate.validator.constraints.URL
-	private String baseUrl;
 
 	@Column(name = "KIND")
 	@Size(max = 30)
@@ -52,26 +41,7 @@ public class ScmServer {
 	@OneToMany(mappedBy = "scmServer", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<ScmRepository> repositories = new ArrayList<>();
 
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
 
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getBaseUrl() {
-		return baseUrl;
-	}
-	public void setBaseUrl(String baseUrl) {
-		this.baseUrl = baseUrl;
-	}
 
 	public String getKind() {
 		return kind;

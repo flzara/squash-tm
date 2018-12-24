@@ -129,8 +129,8 @@ public class SimpleBugtrackerConnectorAdapter extends AbstractInternalConnectorA
 	@Override
 	public URL makeViewIssueUrl(BugTracker bugTracker, String issueId) {
 		URL url = null;
-		URL baseUrl = bugTracker.getURL();
 		try {
+			URL baseUrl = new URL(bugTracker.getUrl());
 			if (baseUrl != null) {
 				String suffix = connector.makeViewIssueUrlSuffix(issueId);
 				url = new URL(baseUrl.toString() + suffix);

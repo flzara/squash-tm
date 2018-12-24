@@ -95,12 +95,12 @@ public class ScmServerManagerServiceImpl implements ScmServerManagerService {
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public String updateUrl(long scmServerId, String newUrl) {
 		ScmServer scmServer = scmServerDao.getOne(scmServerId);
-		String formerUrl = scmServer.getBaseUrl();
+		String formerUrl = scmServer.getUrl();
 		if(formerUrl.equals(newUrl)) {
 			LOGGER.debug("Did not update the ScmServer Url because the submitted Url is identical to the former one.");
 			return formerUrl;
 		}
-		scmServer.setBaseUrl(newUrl);
+		scmServer.setUrl(newUrl);
 		scmServerDao.save(scmServer);
 		return newUrl;
 	}

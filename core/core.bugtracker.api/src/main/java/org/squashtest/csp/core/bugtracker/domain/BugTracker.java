@@ -23,14 +23,7 @@ package org.squashtest.csp.core.bugtracker.domain;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -38,98 +31,36 @@ import org.apache.commons.lang3.StringUtils;
 import javax.validation.constraints.NotBlank;
 import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
+import org.squashtest.tm.domain.servers.ThirdPartyServer;
 
 @Entity
 @Table(name = "BUGTRACKER")
-public class BugTracker {
+@PrimaryKeyJoinColumn(name = "BUGTRACKER_ID")
+public class BugTracker extends ThirdPartyServer {
 	public static final BugTracker NOT_DEFINED;
 
 	static {
 		NOT_DEFINED = new BugTracker();
-		NOT_DEFINED.url = "";
+
+		NOT_DEFINED.setName("");
+		NOT_DEFINED.setUrl("");
+
 		NOT_DEFINED.kind = "none";
-		NOT_DEFINED.name = "";
 		NOT_DEFINED.iframeFriendly = true;
 	}
 
-
-	@Id
-	@GeneratedValue(generator = "bugtracker_bugtracker_id_seq")
-	@SequenceGenerator(name = "bugtracker_bugtracker_id_seq", sequenceName = "bugtracker_bugtracker_id_seq", allocationSize = 1)
-	@Column(name = "BUGTRACKER_ID")
-	private Long id;
-
-	@NotBlank
-	@Size(min = 0, max = 50)
-	private String name;
-
-	@NotBlank
-	@org.hibernate.validator.constraints.URL
-	@Size(min = 0, max = 255)
-	private String url;
 
 	@NotBlank
 	@Size(min = 0, max = 50)
 	private String kind;
 
-	@NotNull
-	@Enumerated(EnumType.STRING)
-	@Column(name="AUTH_POLICY")
-	private AuthenticationPolicy authenticationPolicy = AuthenticationPolicy.USER;
-
-	@NotNull
-	@Enumerated(EnumType.STRING)
-	@Column(name="AUTH_PROTOCOL")
-	private AuthenticationProtocol authenticationProtocol = AuthenticationProtocol.BASIC_AUTH;
-
 
 	private boolean iframeFriendly;
-
 
 	public BugTracker() {
 		super();
 	}
 
-	private void doSetName(String name) {
-		this.name = name.trim();
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		doSetName(name);
-	}
-
-	public String getUrl() {
-		return url;
-	}
-
-	/**
-	 * returns the URL of the registered bugtracker. That url is nothing less than the one defined
-	 * in the configuration files so there is no warranty that that URL will be valid.
-	 *
-	 * @return the URL of that bugtracker or null if no bugtracker is defined or if malformed.
-	 */
-	public URL getURL() {
-		URL bugTrackerUrl = null;
-
-		try {
-
-			bugTrackerUrl = new URL(url);
-
-		} catch (MalformedURLException mue) {
-			// XXX should throw an exception
-			bugTrackerUrl = null;
-		}
-
-		return bugTrackerUrl;
-	}
-
-	public void setUrl(String url) {
-		this.url = StringUtils.trim(url);
-	}
 
 	public String getKind() {
 		return kind;
@@ -139,9 +70,6 @@ public class BugTracker {
 		this.kind = kind;
 	}
 
-	public Long getId() {
-		return id;
-	}
 
 	public boolean isIframeFriendly() {
 		return iframeFriendly;
@@ -151,48 +79,27 @@ public class BugTracker {
 		this.iframeFriendly = iframeFriendly;
 	}
 
-	public AuthenticationPolicy getAuthenticationPolicy() {
-		return authenticationPolicy;
-	}
-
-	public void setAuthenticationPolicy(AuthenticationPolicy authenticationPolicy) {
-		this.authenticationPolicy = authenticationPolicy;
-	}
-
-	public AuthenticationProtocol getAuthenticationProtocol() {
-		return authenticationProtocol;
-	}
-
-	public void setAuthenticationProtocol(AuthenticationProtocol authenticationProtocol) {
-		this.authenticationProtocol = authenticationProtocol;
-	}
 
 	public BugTracker getDetachedBugTracker() {
 		BugTracker detached = new BugTracker();
-		detached.url = this.url;
+
+		detached.setName(this.getName());
+		detached.setUrl(this.getUrl());
+		detached.setAuthenticationPolicy(this.getAuthenticationPolicy());
+		detached.setAuthenticationProtocol(this.getAuthenticationProtocol());
+
 		detached.kind = this.kind;
-		detached.name = this.name;
 		detached.iframeFriendly = this.iframeFriendly;
-		detached.authenticationPolicy = this.authenticationPolicy;
-		detached.authenticationProtocol = this.authenticationProtocol;
 		return detached;
 	}
 
-	/**
-	 * Modifies this BT with sensible defaults so that it is valid, provided it has a url and a kind.
-	 */
-	public void normalize() {
-		if (StringUtils.isBlank(name)) {
-			name = url;
-		}
-	}
 
 	@Override
 	public String toString() {
 		final StringBuffer sb = new StringBuffer("BugTracker{");
-		sb.append("id=").append(id);
-		sb.append(", name='").append(name).append('\'');
-		sb.append(", url='").append(url).append('\'');
+		sb.append("id=").append(getId());
+		sb.append(", name='").append(getName()).append('\'');
+		sb.append(", url='").append(getUrl()).append('\'');
 		sb.append(", kind='").append(kind).append('\'');
 		sb.append('}');
 		return sb.toString();
