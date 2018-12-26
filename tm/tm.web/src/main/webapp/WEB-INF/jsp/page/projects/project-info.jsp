@@ -399,10 +399,6 @@
 
 			<%----------------------------- /TEST AUTOMATION PROJECT -------------------------------------------%>
 
-			<%----------------- Source Code Management -----------------%>
-			  <pc:scm-panel project="${adminproject.project}" availableScmServers="${availableScmServers}"/>
-			<%----------------- /Source Code Management -----------------%>
-
 			<%----------------------------- ATTACHMENT -------------------------------------------%>
 
 			<at:attachment-bloc editable="${ true }"  workspaceName="administration" attachListId="${adminproject.project.attachmentList.id}" attachmentSet="${attachments}"/>
@@ -760,16 +756,25 @@ require(["common"], function() {
 	function toggleWorkflow(){
   		var shouldActivate = $("#toggle-WORKFLOW-checkbox").prop('checked');
 
-  			$.ajax({
-  				type: 'POST',
-  				url: "${projectUrl}",
-  				data : {
-  				  id : "project-automation-workflow",
-  					value : shouldActivate
-  				}
-  			});
+  		$.ajax({
+  		  type: 'POST',
+  		  url: "${projectUrl}",
+  		  data : {
+  		    id : "project-automation-workflow",
+  		    value : shouldActivate
+  		  }
+  		}).done(toggleScmPanel(shouldActivate));
 
-  	}
+  }
+
+  function toggleScmPanel(shouldShowPanel) {
+    var scmPanel = $('#scm-panel-container');
+    if(shouldShowPanel) {
+      scmPanel.removeClass('not-displayed');
+    } else {
+      scmPanel.addClass('not-displayed');
+    }
+  }
 
 	function refreshTableAndPopup(){
 		$("#user-permissions-table").squashTable().refresh();

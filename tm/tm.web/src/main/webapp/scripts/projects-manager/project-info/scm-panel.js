@@ -25,7 +25,7 @@ define(["jquery", "backbone", "jeditable.selectJEditable", "workspace.routing", 
 
 			el: '#scm-panel',
 
-			repoFieldset: $('#scm-repositories-fieldset'),
+			repoFieldset: $('#scm-repositories-div'),
 
 			initialize: function(projectId, boundServerId, boundRepositoryId, availableScmServers) {
 				var self = this;
@@ -171,8 +171,8 @@ define(["jquery", "backbone", "jeditable.selectJEditable", "workspace.routing", 
 				var self = this;
 				self.repositoryComboBox = null;
 				$('#selected-scm-repository').remove();
-				var newDiv = $("<div id='selected-scm-repository'>" + translator.get('label.None') + "</div>");
-				$('#scm-repositories-fieldset').append(newDiv);
+				var newDiv = $("<div id='selected-scm-repository' style='display: inline'>" + translator.get('label.None') + "</div>");
+				$('#scm-repositories-div').append(newDiv);
 			},
 			/*
 			* Create the POST Request to bind a ScmRepository to the current Project.

@@ -35,38 +35,41 @@
 <f:message var="noServerLabel" key="label.NoServer" />
 <f:message var="noRepositoryLabel" key="label.None" />
 
-<comp:toggle-panel id="scm-panel" titleKey="title.scmPanel" open="true">
-	<jsp:attribute name="body">
+<div id="scm-panel">
 
-		<%---- ComboBox avec les Serveurs de Source ----%>
-		<fieldset id="scm-server-fieldset">
+		<fieldset id="scm-fieldset">
 			<legend>
 				<f:message key="label.ScmServer" />
 			</legend>
-			<div id="selected-scm-server">
-				<c:out value="${noServerlabel}" escapeXml="true" />
+			<br />
+			<%---- ComboBox with SCM Severs ----%>
+			<div id="scm-server-div">
+				<label for="selected-scm-server">
+					<f:message key="label.Server" />
+				</label>
+				<div id="selected-scm-server" style="display: inline">
+					<c:out value="${noServerlabel}" escapeXml="true" />
+				</div>
+
+			</div>
+			<br/>
+			<%---- ComboBox with Repositories contained in the selected Server ----%>
+			<c:if test="${ empty project.scmRepository}">
+				<c:set var="repositoriesDisplay" value="display: none"/>
+			</c:if>
+			<div id="scm-repositories-div" style="${repositoriesDisplay}">
+				<label for="selected-scm-repository">
+					<f:message key="label.ScmRepository" />
+				</label>
+				<c:set var="scmRepositoryName"
+								value="${ (not empty project.scmRepository) ? project.scmRepository.name : noRepositoryLabel}"/>
+				<div id="selected-scm-repository" style="display: inline">
+					<c:out value="${scmRepositoryName}" escapeXml="true" />
+				</div>
 			</div>
 		</fieldset>
 
-		<br/>
-
-		<%---- ComboBox avec les Dépôts du Serveur sélectionné ----%>
-		<c:if test="${ empty project.scmRepository}">
-			<c:set var="repositoriesDisplay" value="display: none"/>
-		</c:if>
-		<fieldset id="scm-repositories-fieldset" style="${repositoriesDisplay}">
-			<legend>
-				<f:message key="label.ScmRepository" />
-			</legend>
-			<c:set var="scmRepositoryName"
-            				value="${ (not empty project.scmRepository) ? project.scmRepository.name : noRepositoryLabel}"/>
-			<div id="selected-scm-repository">
-				<c:out value="${scmRepositoryName}" escapeXml="true" />
-			</div>
-		</fieldset>
-
-	</jsp:attribute>
-</comp:toggle-panel>
+</div>
 
 
 <%----- JS Initialization -----%>

@@ -33,6 +33,7 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json"%>
+<%@ taglib prefix="pc" tagdir="/WEB-INF/tags/project-components"%>
 
 <f:message var="confirmLabel" key="label.Confirm" />
 <f:message var="cancelLabel" key="label.Cancel" />
@@ -60,19 +61,20 @@
   <jsp:attribute name="body">
 
   <div id="project-workflow-option-table" class="display-table">
-              <div class="display-table-row">
-                <div class="display-table-cell">
-                  <label class="display-table-cell" style="vertical-align:bottom">
-                    <f:message key="label.workflow.modification" />
-                  </label>
-                </div>
-                <div class="display-table-cell">
-                  <input id="toggle-WORKFLOW-checkbox" type="checkbox" data-def="width=35, on_label=${active},
-                         off_label=${inactive}, checked=${allowAutomationWorkflow}" style="display: none;" />
-                </div>
-              </div>
-          </div>
-    <div class="ta-main-div">
+  	<div class="display-table-row">
+  		<div class="display-table-cell">
+  			<label class="display-table-cell" style="vertical-align:bottom">
+  				<f:message key="label.workflow.modification" />
+  			</label>
+  		</div>
+  		<div class="display-table-cell">
+  			<input id="toggle-WORKFLOW-checkbox" type="checkbox" data-def="width=35, on_label=${active},
+  				off_label=${inactive}, checked=${allowAutomationWorkflow}" style="display: none;" />
+  		</div>
+  	</div>
+  </div>
+
+  <div class="ta-main-div">
 
       	<%-- =================================== server block =============================================================== --%>
 
@@ -150,6 +152,15 @@
       <%-- =================================== /projects block =============================================================== --%>
 
     </div>
+
+    <%-- =============== Source Code Management =============== --%>
+
+    <div id="scm-panel-container" class="${allowAutomationWorkflow ? '' : 'not-displayed'}">
+		<pc:scm-panel project="${adminproject.project}" availableScmServers="${availableScmServers}" />
+    </div>
+
+    <%-- =============== /Source Code Management =============== --%>
+
   </jsp:attribute>
 </comp:toggle-panel>
 <%-- ==================================================================== POPUPS =============================================================== --%>
