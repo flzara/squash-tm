@@ -25,6 +25,7 @@ import org.squashtest.tm.domain.servers.AuthenticationProtocol
 import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials
 import org.squashtest.tm.domain.servers.Credentials
 import org.squashtest.tm.domain.servers.StoredCredentials.ContentType
+import org.squashtest.tm.domain.servers.ThirdPartyServer
 import org.squashtest.tm.domain.servers.StoredCredentials
 import org.squashtest.tm.domain.users.User
 import org.squashtest.tm.service.internal.repository.UserDao
@@ -76,7 +77,7 @@ class StoredCredentialsManagerImplTest extends Specification{
 		findCredQuery.setParameter(_,_) >> findCredQuery
 
 		bt.getId() >> 10L
-		em.find(BugTracker, _) >> bt
+		em.find(ThirdPartyServer, _) >> bt
 
 		userDao.findUserByLogin(_) >> user
 	}

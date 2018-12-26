@@ -121,8 +121,8 @@
                 <div class="display-table-row">
                   <label for="scm-server-url" th:text="#{label.URL}">URL</label>
                   <div class="display-table-cell">
-                    <span id="scm-server-url" th:text="${scmServer.baseUrl}">http://github.com</span>
-                    <a id="scm-server-url-link" target="blank" th:href="${scmServer.baseUrl}"
+                    <span id="scm-server-url" th:text="${scmServer.url}">http://github.com</span>
+                    <a id="scm-server-url-link" target="blank" th:href="${scmServer.url}"
                        th:text="'['+#{label.BrowseTo}+']'"></a>
                     <span class="error-message url-error"></span>
                   </div>

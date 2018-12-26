@@ -78,7 +78,30 @@ public class BugTracker extends ThirdPartyServer {
 	public void setIframeFriendly(boolean iframeFriendly) {
 		this.iframeFriendly = iframeFriendly;
 	}
+	
+	
+	/**
+	 * returns the URL of the registered bugtracker. That url is nothing less than the one defined
+	 * in the configuration files so there is no warranty that that URL will be valid.
+	 *
+	 * @return the URL of that bugtracker or null if no bugtracker is defined or if malformed.
+	 */
+	// do not use anymore, build your own url using getUrl(): String
+	@Deprecated
+	public URL getURL() {
+		URL bugTrackerUrl = null;
 
+		try {
+
+			bugTrackerUrl = new URL(getUrl());
+
+		} catch (MalformedURLException mue) {
+			// XXX should throw an exception
+			bugTrackerUrl = null;
+		}
+
+		return bugTrackerUrl;
+	}
 
 	public BugTracker getDetachedBugTracker() {
 		BugTracker detached = new BugTracker();

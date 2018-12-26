@@ -67,7 +67,7 @@ import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.web.internal.controller.attachment.UploadedData;
 import org.squashtest.tm.web.internal.controller.attachment.UploadedDataPropertyEditorSupport;
-import org.squashtest.tm.web.internal.controller.authentication.ThirdPartyServersAuthenticationController;
+import org.squashtest.tm.web.internal.controller.thirdpartyserver.ThirdPartyServersAuthenticationController;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;

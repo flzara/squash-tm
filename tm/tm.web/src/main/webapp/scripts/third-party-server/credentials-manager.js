@@ -21,7 +21,7 @@
 
 
 /*
- * Handles the authentication options for this bugtracker. The overall layout is as follow :
+ * Handles the authentication options for this third party server. The overall layout is as follow :
  *
  * AuthenticationMasterView
  * 	+ ProtocolView
@@ -37,15 +37,18 @@
  * and pre-rendered whenever possible.
  *
  * 1/ Configuration
+ * 
+ * The configuration is modeled after the java bean ThirdPartyServerCredentialsManagementBean.
  *
  *	{
- *		btUrl : the bugtracker url
+ *		entityUrl : the url of third party server entity 
+ *		remoteUrl : the url of the actual remote server
  *		authPolicy :  either 'USER' and 'APP_LEVEL'
  *		availableProtos : the list of available authentication protocols
  *		selectedProto : the selected protocol chosen among the above
  *		failureMessage : error message if an unrecoverable error was encountered
  *		warningMessage: error message if a recoverable error was encountered
- *		conf : the conf object, which is variable. See the various ConfView implementations.
+ *		authConf : the conf object, which is variable. See the various ConfView implementations.
  *		credentials : the (app-level) credential object, which is variable. See the various CredentialsView implementations.
  *	}
  *
@@ -72,8 +75,8 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 		function($, Backbone, _, Handlebars, notification, StringUtil, translator){
 
 	// async load of the messages we need here
-	translator.load(['bugtracker.admin.messages.testcreds.success',
-		'bugtracker.admin.messages.save.success',
+	translator.load(['thirdpartyserver.admin.messages.testcreds.success',
+		'thirdpartyserver.admin.messages.save.success',
 		'error.generic.label']);
 
 	// ***************** Handlebars helpers ******************************
@@ -159,7 +162,7 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 	 *
 	 * Subclasses must define 'name' and several other methods,
 	 * and their dom must follow the same conventions
-	 * (read bugtracker-info.jsp)
+	 * (read tag/third-party-server-components/authentication-configuration.tag for instance)
 	 */
 	var BasePanelView = Backbone.View.extend({
 
@@ -396,7 +399,8 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 	var AuthenticationModel = Backbone.Model.extend({
 
 		defaults : {
-			btUrl : "",
+			entityUrl : "",
+			remoteUrl : "",
 			protocol: null,		// selected protocol
 
 			// conf mapped by protocol
@@ -418,9 +422,14 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 		},
 
 		initialize: function(){
+			var remoteUrl = this.get('remoteUrl') || "";
 			this.set('authConfMap', {
 				'BASIC_AUTH': new Backbone.Model(),
-				'OAUTH_1A' : new OAuthConfModel()
+				'OAUTH_1A' : new OAuthConfModel({
+					requestTokenUrl: remoteUrl,
+					accessTokenUrl: remoteUrl,
+					userAuthorizationUrl: remoteUrl
+				})
 			});
 			this.set('credentialsMap', {
 				'BASIC_AUTH' : new BasicAuthCredsModel(),
@@ -447,7 +456,7 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 	 */
 	var AuthenticationMasterView = Backbone.View.extend({
 
-		el: "#bugtracker-authentication-masterpane",
+		el: "#server-authentication-masterpane",
 
 		initialize : function(options){
 
@@ -466,7 +475,8 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 
 		initModel : function(mdl){
 			var model = new AuthenticationModel({
-				btUrl : mdl.btUrl,
+				entityUrl : mdl.entityUrl,
+				remoteUrl : mdl.remoteUrl,
 				protocol: mdl.selectedProto,
 				policy: mdl.authPolicy
 			});
@@ -498,6 +508,7 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 			accessTokenUrl: "",
 			userAuthorizationUrl: ""
 		}
+	
 	});
 
 	// ----- protocol conf views -----------------
@@ -506,20 +517,6 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 		el: "#srv-auth-conf-form",
 
 		template: loadTemplate("#oauth-conf-template"),
-
-		// by 'init', we mean initialization of empty fields
-		initModel : function(){
-			// MAAAAGIIIC REAAACH OF REMOTE UNRELATED PROPERTYYYYY ELSEWHERE IN THE DOOOOM !
-			var baseUrl = $("#bugtracker-url").text();
-			var model = this.model;
-			var self = this;
-			['requestTokenUrl', 'userAuthorizationUrl', 'accessTokenUrl'].forEach(function(url){
-				if ( self.isBlank(url) ){
-					model.set(url, baseUrl);
-				}
-			});
-
-		},
 
 		isBlank : function(ppt){
 			return StringUtil.isBlank(this.model.get(ppt));
@@ -531,7 +528,7 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 	// ------- main protocol panel view ---------
 	var ProtocolView = BasePanelView.extend({
 
-		el: "#bugtracker-auth-protocol",
+		el: "#server-auth-protocol",
 		name: "srv-auth-conf",
 
 		viewMap: {
@@ -559,7 +556,7 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 		updateProtocol : function(evt){
 			var val = $(evt.target).val();
 			var self = this;
-			var url = this.model.get('btUrl') + '/authentication-protocol';
+			var url = this.model.get('entityUrl') + '/authentication-protocol';
 
 			$.post(url, {value: val}).done(function(){
 				self.model.set('protocol', val);
@@ -568,7 +565,7 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 
 
 		save : function(){
-			var url = this.model.get('btUrl') + '/authentication-protocol/configuration';
+			var url = this.model.get('entityUrl') + '/authentication-protocol/configuration';
 			var payload = this.preparePayload();
 			var self = this;
 
@@ -581,7 +578,7 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 			.done(function(){
 				//rearm the unsaved data reminder and trigger success
 				self.hideSaveReminder();
-				radio.trigger('srv-auth-conf', 'success', translator.get('bugtracker.admin.messages.save.success'));
+				radio.trigger('srv-auth-conf', 'success', translator.get('thirdpartyserver.admin.messages.save.success'));
 			});
 		}
 
@@ -629,7 +626,7 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 	// ------- main policy panel view ----------------
 	var PolicyView = BasePanelView.extend({
 
-		el: "#bugtracker-auth-policy",
+		el: "#server-auth-policy",
 		name: "srv-auth-creds",
 
 		viewMap: {
@@ -659,7 +656,7 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 			var newPolicy=$(evt.currentTarget).val();
 
 			var self = this;
-			var url = this.model.get('btUrl') + '/authentication-policy';
+			var url = this.model.get('entityUrl') + '/authentication-policy';
 
 			$.post(url, {value: newPolicy}).done(function(){
 				// reset the message pane
@@ -680,19 +677,19 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 		},
 
 		test: function(){
-			var url = this.model.get('btUrl') + '/credentials/validator';
+			var url = this.model.get('entityUrl') + '/credentials/validator';
 			var payload = this.preparePayload();
 
 			this._postCreds(url, payload)
 				.done(function(){
-					radio.trigger('srv-auth-creds', 'success', translator.get('bugtracker.admin.messages.testcreds.success'));
+					radio.trigger('srv-auth-creds', 'success', translator.get('thirdpartyserver.admin.messages.testcreds.success'));
 				});
 
 		},
 
 		save: function(){
-			var testUrl = this.model.get('btUrl') + '/credentials/validator';
-			var saveUrl = this.model.get('btUrl') + '/credentials';
+			var testUrl = this.model.get('entityUrl') + '/credentials/validator';
+			var saveUrl = this.model.get('entityUrl') + '/credentials';
 			var payload = this.preparePayload();
 			var self = this;
 
@@ -703,7 +700,7 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 				.done(function(){
 					//rearm the unsaved data reminder and trigger success
 					self.hideSaveReminder();
-					radio.trigger('srv-auth-creds', 'success',  translator.get('bugtracker.admin.messages.save.success'));
+					radio.trigger('srv-auth-creds', 'success',  translator.get('thirdpartyserver.admin.messages.save.success'));
 				});
 		}
 

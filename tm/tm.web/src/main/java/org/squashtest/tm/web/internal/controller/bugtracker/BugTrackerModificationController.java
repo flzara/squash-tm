@@ -24,7 +24,6 @@ import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -53,6 +52,7 @@ import org.squashtest.tm.service.servers.EncryptionKeyChangedException;
 import org.squashtest.tm.service.servers.ManageableCredentials;
 import org.squashtest.tm.service.servers.MissingEncryptionKeyException;
 import org.squashtest.tm.service.servers.ServerAuthConfiguration;
+import org.squashtest.tm.web.internal.controller.thirdpartyserver.ThirdPartyServerCredentialsManagementBean;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
@@ -82,7 +82,7 @@ public class BugTrackerModificationController {
 
 		BugTracker bugTracker = bugtrackerFinder.findById(bugtrackerId);
 		String jsonBugtrackerKinds = findJsonBugTrackerKinds();
-		BugtrackerCredentialsManagementBean authBean = makeAuthBean(bugTracker, locale);
+		ThirdPartyServerCredentialsManagementBean authBean = makeAuthBean(bugTracker, locale);
 		ModelAndView mav = new ModelAndView("page/bugtrackers/bugtracker-info");
 		mav.addObject("bugtracker", bugTracker);
 		mav.addObject("bugtrackerKinds", jsonBugtrackerKinds);
@@ -174,7 +174,7 @@ public class BugTrackerModificationController {
 		catch(BugTrackerNoCredentialsException ex){
 			// need to rethrow the same exception, with a message in the expected user language
 			LOGGER.debug("server-app credentials test failed : ", ex);
-			String message = i18nHelper.internationalize("bugtracker.admin.messages.testcreds.fail", LocaleContextHolder.getLocale());
+			String message = i18nHelper.internationalize("thirdpartyserver.admin.messages.testcreds.fail", LocaleContextHolder.getLocale());
 			throw new BugTrackerNoCredentialsException(message, ex);
 		}
 	}
@@ -200,14 +200,16 @@ public class BugTrackerModificationController {
 	}
 
 
-	private BugtrackerCredentialsManagementBean makeAuthBean(BugTracker bugTracker, Locale locale){
+	private ThirdPartyServerCredentialsManagementBean makeAuthBean(BugTracker bugTracker, Locale locale){
 		AuthenticationProtocol[] availableProtos = bugtrackerModificationService.getSupportedProtocols(bugTracker);
-		BugtrackerCredentialsManagementBean bean = new BugtrackerCredentialsManagementBean();
+		ThirdPartyServerCredentialsManagementBean bean = new ThirdPartyServerCredentialsManagementBean();
 
 		// defaults
+		bean.setRemoteUrl(bugTracker.getUrl());
 		bean.setAuthPolicy(bugTracker.getAuthenticationPolicy());
 		bean.setSelectedProto(bugTracker.getAuthenticationProtocol());
 		bean.setAvailableProtos(Arrays.asList(availableProtos));
+		
 
 		// now check against the credentials
 		try{
@@ -236,82 +238,6 @@ public class BugTrackerModificationController {
 		}
 
 		return bean;
-
-	}
-
-
-
-	public static final class BugtrackerCredentialsManagementBean{
-
-		// if those Strings remains to null it is a good thing
-		private String failureMessage = null;
-		private String warningMessage = null;
-
-		// the rest is used if the above is null
-		private AuthenticationPolicy authPolicy;
-		private List<AuthenticationProtocol> availableProtos;
-		private AuthenticationProtocol selectedProto;
-
-		// conf
-		private ServerAuthConfiguration authConf;
-		// app-level credentials
-		private ManageableCredentials credentials;
-
-		public String getFailureMessage() {
-			return failureMessage;
-		}
-
-		public void setFailureMessage(String failureMessage) {
-			this.failureMessage = failureMessage;
-		}
-
-		public String getWarningMessage() {
-			return warningMessage;
-		}
-
-		public void setWarningMessage(String warningMessage) {
-			this.warningMessage = warningMessage;
-		}
-
-		public AuthenticationPolicy getAuthPolicy() {
-			return authPolicy;
-		}
-
-		public void setAuthPolicy(AuthenticationPolicy authPolicy) {
-			this.authPolicy = authPolicy;
-		}
-
-		public List<AuthenticationProtocol> getAvailableProtos() {
-			return availableProtos;
-		}
-
-		public void setAvailableProtos(List<AuthenticationProtocol> availableProtos) {
-			this.availableProtos = availableProtos;
-		}
-
-		public AuthenticationProtocol getSelectedProto() {
-			return selectedProto;
-		}
-
-		public void setSelectedProto(AuthenticationProtocol selectedProto) {
-			this.selectedProto = selectedProto;
-		}
-
-		public ServerAuthConfiguration getAuthConf() {
-			return authConf;
-		}
-
-		public void setAuthConf(ServerAuthConfiguration authConf) {
-			this.authConf = authConf;
-		}
-
-		public ManageableCredentials getCredentials() {
-			return credentials;
-		}
-
-		public void setCredentials(ManageableCredentials credentials) {
-			this.credentials = credentials;
-		}
 
 	}
 

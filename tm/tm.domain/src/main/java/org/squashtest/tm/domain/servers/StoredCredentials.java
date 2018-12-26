@@ -97,12 +97,9 @@ public class StoredCredentials {
 	/**
 	 * The server for which this credentials apply
 	 */
-	/*
-	 * TODO : once we really have a proper management of thid party servers, change the class from BugTracker to that class.
-	 */
 	@ManyToOne
 	@JoinColumn(name = "AUTHENTICATED_SERVER")
-	private BugTracker authenticatedServer;
+	private ThirdPartyServer authenticatedServer;
 
 	/**
 	 	The user that own the credentials.
@@ -135,11 +132,11 @@ public class StoredCredentials {
 		this.encryptedCredentials = encryptedCredentials;
 	}
 
-	public BugTracker getAuthenticatedServer() {
+	public ThirdPartyServer getAuthenticatedServer() {
 		return authenticatedServer;
 	}
 
-	public void setAuthenticatedServer(BugTracker authenticatedServer) {
+	public void setAuthenticatedServer(ThirdPartyServer authenticatedServer) {
 		this.authenticatedServer = authenticatedServer;
 	}
 

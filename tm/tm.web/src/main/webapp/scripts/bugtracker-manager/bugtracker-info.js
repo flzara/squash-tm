@@ -22,7 +22,7 @@
  * Handles the page bugtracker-info.jsp
  */
 
-define(['module', 'jquery', 'backbone', './bugtracker-info-backbone', 'squash.basicwidgets', 'jquery.squash.formdialog'],
+define(['module', 'jquery', 'backbone', 'third-party-server/credentials-manager', 'squash.basicwidgets', 'jquery.squash.formdialog'],
 		function(module, $, Backbone, CredentialManagerView, basic){
 
 	var conf = module.config();
@@ -102,7 +102,7 @@ define(['module', 'jquery', 'backbone', './bugtracker-info-backbone', 'squash.ba
 
 		 // *************** authentication **************
 		 var authConf = $.extend({}, conf.authConf);
-		 authConf.btUrl = conf.btUrl;
+		 authConf.entityUrl = conf.btUrl;
 		 
 		 new CredentialManagerView({ conf: authConf });
 

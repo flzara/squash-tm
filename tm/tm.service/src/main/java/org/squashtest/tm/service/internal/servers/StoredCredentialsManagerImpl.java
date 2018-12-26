@@ -36,6 +36,7 @@ import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials;
 import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.domain.servers.StoredCredentials;
 import org.squashtest.tm.domain.servers.StoredCredentials.ContentType;
+import org.squashtest.tm.domain.servers.ThirdPartyServer;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.internal.repository.UserDao;
@@ -255,13 +256,13 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 		// catch : the server had no credentials, so we create new ones
 		catch(NoResultException ex){
 
-			BugTracker bt = em.find(BugTracker.class, serverId);
+			ThirdPartyServer server = em.find(ThirdPartyServer.class, serverId);
 			User user = loadUserOrNull(username);
 
 			sc = new StoredCredentials();
 			sc.setContentType(contentType);
 
-			sc.setAuthenticatedServer(bt);
+			sc.setAuthenticatedServer(server);
 			sc.setAuthenticatedUser(user);
 			sc.setEncryptedCredentials(outcome.getEncryptedText());
 			sc.setEncryptionVersion(outcome.getVersion());
