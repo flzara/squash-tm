@@ -24,6 +24,7 @@ import org.hibernate.search.annotations.*;
 import org.hibernate.search.bridge.builtin.EnumBridge;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.search.LevelEnumBridge;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
@@ -47,7 +48,7 @@ public class AutomationRequest implements Identified {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "REQUEST_STATUS")
 	@Field(analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl = EnumBridge.class)
+	@FieldBridge(impl = LevelEnumBridge.class)
 	@SortableField
 	private AutomationRequestStatus requestStatus = AutomationRequestStatus.WORK_IN_PROGRESS;
 

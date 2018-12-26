@@ -28,11 +28,16 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.tf.IllegalAutomationRequestStatusException;
+import org.squashtest.tm.service.advancedsearch.IndexationService;
+import org.squashtest.tm.service.campaign.IterationTestPlanFinder;
 import org.squashtest.tm.service.internal.repository.AutomationRequestDao;
+import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.internal.tf.event.AutomationRequestStatusChangeEvent;
 import org.squashtest.tm.service.project.ProjectFinder;
@@ -44,10 +49,7 @@ import org.squashtest.tm.service.tf.AutomationRequestFinderService;
 import org.squashtest.tm.service.tf.AutomationRequestModificationService;
 
 import javax.inject.Inject;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.*;
 
@@ -85,6 +87,15 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 	@Inject
 	private ApplicationEventPublisher eventPublisher;
+
+	@Inject
+	private IndexationService indexationService;
+
+	@Inject
+	private IterationTestPlanFinder iterationTestPlanFinder;
+
+	@Inject
+	TestCaseDao testCaseDao;
 
 
 	// *************** implementation of the finder interface *************************
@@ -247,6 +258,12 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 		}
 
 		eventPublisher.publishEvent(new AutomationRequestStatusChangeEvent(reqIds, automationRequestStatus));
+		indexationService.batchReindexAutomationRequest(reqIds);
+		indexationService.batchReindexTc(tcIds);
+		List<TestCase> testCases = testCaseDao.findAllByIds(tcIds);
+		for (TestCase testCase: testCases) {
+			reindexItpisReferencingTestCase(testCase);
+		}
 	}
 
 	@Override
@@ -263,6 +280,13 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 	// **************************** boiler plate code *************************************
 
-
+	private void reindexItpisReferencingTestCase(TestCase testCase) {
+		List<IterationTestPlanItem> itpis = iterationTestPlanFinder.findByReferencedTestCase(testCase);
+		List<Long> itpiIds = new ArrayList();
+		for (IterationTestPlanItem itpi : itpis) {
+			itpiIds.add(itpi.getId());
+		}
+		indexationService.batchReindexItpi(itpiIds);
+	}
 
 }

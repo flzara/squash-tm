@@ -81,8 +81,8 @@ public class IterationItemBundleClassBridge implements FieldBridge, MetadataProv
 		}
 
 		TestCase tc = item.getReferencedTestCase();
-		String importance = tc.getImportance().getLevel()+"-"+tc.getImportance().toString();
-		String automatable = tc.getAutomatable().getLevel()+"-"+tc.getAutomatable().toString();
+		String importance = tc.getImportance().getLevel()+"-"+tc.getImportance().name();
+		String automatable = tc.getAutomatable().getLevel()+"-"+tc.getAutomatable().name();
 			// note : not indexing testcase id as a LongField because result is weird
 
 		applyToLuceneStringOptions(luceneOptions, FIELD_TC_NAME, tc.getName().toLowerCase(),  document);

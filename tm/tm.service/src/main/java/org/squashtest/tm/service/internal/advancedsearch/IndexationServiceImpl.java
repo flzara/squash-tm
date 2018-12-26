@@ -38,6 +38,7 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.library.IndexModel;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.internal.library.AdvancedSearchIndexingMonitor;
@@ -206,6 +207,11 @@ public class IndexationServiceImpl implements IndexationService {
 	@Override
 	public void batchReindexItpi(Collection<Long> itpisIdsToIndex) {
 		batchReindex(IterationTestPlanItem.class, itpisIdsToIndex);
+	}
+
+	@Override
+	public void batchReindexAutomationRequest(Collection<Long> reqIdstoIndex) {
+		batchReindex(AutomationRequest.class, reqIdstoIndex);
 	}
 
 	// Batched versions

@@ -212,6 +212,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		LOGGER.debug("changing test case #{} importance from '{}' to '{}' ", testCase.getId(), testCase.getImportance(), importance);
 		testCase.setImportance(importance);
+		reindexItpisReferencingTestCase(testCase);
+		// Issue #6776 : it seems that the more we fix it the more we break it...
+		indexationService.batchReindexTc(Lists.newArrayList(testCase.getId()));
 	}
 
 	private void reindexItpisReferencingTestCase(TestCase testCase) {

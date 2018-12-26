@@ -70,8 +70,7 @@ import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD;
 	@ClassBridge(name = "executions", store = Store.YES, impl = TestCaseExecutionBridge.class),
 	@ClassBridge(name = "issues", store = Store.YES, impl = TestCaseIssueBridge.class),
 	@ClassBridge(name = "analyzed_cufs", store = Store.YES, impl = AnalyzableCUFBridge.class),
-	@ClassBridge(name = "not_analyzed_cufs", store = Store.YES, analyze = Analyze.NO, impl = NotAnalyzableCUFBridge.class),
-	@ClassBridge(name = "automationRequest", analyze = Analyze.NO, store = Store.YES, impl = TestCaseAutomationRequestBridge.class)
+	@ClassBridge(name = "not_analyzed_cufs", store = Store.YES, analyze = Analyze.NO, impl = NotAnalyzableCUFBridge.class)
 })
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
 public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, BoundEntity, MilestoneHolder {
