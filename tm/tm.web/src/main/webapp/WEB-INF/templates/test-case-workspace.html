@@ -175,6 +175,10 @@
                     <a th:text="#{label.Export.gherkin}+'...'">full ...</a>
                   </li>
 
+                  <li id="transmit-gherkin-tree-button" class="ui-state-disabled cursor-pointer">
+                    <a th:text="#{label.Transmit.gherkin}+'...'">full ...</a>
+                  </li>
+
                   <li th:each="plugin :  ${#workspace.exportPlugins( 'TEST_CASE_WORKSPACE')}"
                     th:id="'export-plugin-'+${pluginStat.index}" class="ui-state-disabled cursor-pointer export-plugin"
                     th:attr="data-module=${plugin.javascriptModuleName}">
@@ -370,6 +374,23 @@
       <div class="popup-dialog-buttonpane">
         <input type="button" th:value="#{label.Confirm}" value="confirm"
           data-def="evt=confirm, mainbtn=confirm, state=confirm" />
+        <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel, mainbtn" />
+      </div>
+
+    </div>
+
+    <div id="transmit-eligible-node-dialog" class="popup-dialog not-displayed" th:title="#{dialog.transmit-tree-node.title}"
+         title="transmit tree node">
+
+      <div data-def="state=confirm">
+
+        <span th:text="#{dialog.transmit.eligible.message}"></span>
+
+      </div>
+
+      <div class="popup-dialog-buttonpane">
+        <input type="button" th:value="#{label.Confirm}" value="confirm"
+               data-def="evt=confirm, mainbtn=confirm, state=confirm" />
         <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel, mainbtn" />
       </div>
 

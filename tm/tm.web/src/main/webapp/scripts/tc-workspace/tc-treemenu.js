@@ -35,6 +35,7 @@ define(["jquery", "./utils", "./permissions-rules", "workspace/WorkspaceTreeMenu
 			"#export-tree-button",
 			"#create-tc-from-req-tree-button",
 			"#export-gherkin-tree-button",
+			"#transmit-gherkin-tree-button",
 			"#delete-node-tree-button",
 			"#search-tree-button"
 		].join(", ");

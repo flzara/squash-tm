@@ -119,13 +119,14 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				PROJECT.PROJECT_ID,
 				PROJECT.NAME,
 				PROJECT.LABEL,
+				PROJECT.ALLOW_AUTOMATION_WORKFLOW,
 				count(selectLibraryContentLibraryId()).as("COUNT_CHILD"))
 			.from(getLibraryTable())
 			.join(PROJECT).using(selectLibraryId())
 			.leftJoin(getLibraryTableContent()).on(selectLibraryId().eq(selectLibraryContentLibraryId()))
 			.where(PROJECT.PROJECT_ID.in(filteredProjectIds))
 			.and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE))
-			.groupBy(selectLibraryId(), PROJECT.PROJECT_ID, PROJECT.NAME, PROJECT.LABEL, selectLibraryContentLibraryId())
+			.groupBy(selectLibraryId(), PROJECT.PROJECT_ID, PROJECT.NAME, PROJECT.LABEL, PROJECT.ALLOW_AUTOMATION_WORKFLOW, selectLibraryContentLibraryId())
 			.fetch()
 			.stream()
 			.map(r -> {
@@ -139,6 +140,10 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				attr.put("id", getClassName() + '-' + libraryId);
 				attr.put("title",removeHtmlForDescription(r.get(PROJECT.LABEL)));
 				attr.put("project", r.get(PROJECT.PROJECT_ID));
+
+				if ("test-case-libraries".equals(getResType())) {
+					attr.put("allowAutomWorkflow", r.get(PROJECT.ALLOW_AUTOMATION_WORKFLOW));
+				}
 
 				Integer countChild = r.get("COUNT_CHILD", Integer.class);
 				if (countChild > 0) {

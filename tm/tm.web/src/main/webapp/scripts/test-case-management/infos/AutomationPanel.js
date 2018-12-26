@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "squash.translator", "squash.configmanager", "jeditable.simpleJEditable", "jeditable.selectJEditable", "app/ws/squashtm.notification", "jquery.squash.jeditable"],
-		function($, Backbone, _, translator, confman, SimpleJEditable, SelectJEditable, notification) {
+define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.translator", "squash.configmanager", "jeditable.simpleJEditable", "jeditable.selectJEditable", "app/ws/squashtm.notification", "jquery.squash.jeditable"],
+		function($, Backbone, _, eventBus, translator, confman, SimpleJEditable, SelectJEditable, notification) {
 
 			var AutomationPanel = Backbone.View.extend({
 
@@ -27,10 +27,10 @@ define([ "jquery", "backbone", "underscore", "squash.translator", "squash.config
 
 				initialize : function(options) {
 					var self = this;
+					this.updateAutomatableInTree = $.proxy(this._updateAutomatableInTree, this);
 					self.settings = options.settings;
 
 					self.initAutomationRequestBlock();
-					var automatableRadio = $("input[type=radio][name=test-case-automatable]");
 
 					if (self.settings.writable) {
 						this.priorityEditable = new SimpleJEditable({
@@ -66,9 +66,9 @@ define([ "jquery", "backbone", "underscore", "squash.translator", "squash.config
 							});
 						});
 
-
+						var automatableRadio = $("input[type=radio][name=test-case-automatable]");
 						automatableRadio.on('change', function() {
-
+							var value = this.value;
 							$.ajax({
 								url:  self.settings.urls.testCaseUrl,
 								method: 'POST',
@@ -78,11 +78,19 @@ define([ "jquery", "backbone", "underscore", "squash.translator", "squash.config
 								}
 							}).success(function() {
 									self.initAutomationRequestBlock();
+									self.updateAutomatableInTree(value);
 							});
 						});
 					} else {
 						automatableRadio.attr('disabled', true);
 					}
+
+				},
+
+				_updateAutomatableInTree : function(value){
+					var self = this;
+					var identity = {resid: self.settings.testCaseId, restype: "test-cases"};
+					eventBus.trigger('node.attribute-changed', {identity : identity, attribute : 'automeligible', value : value.toLowerCase()});
 
 				},
 

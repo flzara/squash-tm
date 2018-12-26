@@ -65,6 +65,7 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	private static final TestCaseLibraryNode TCLN = TEST_CASE_LIBRARY_NODE.as("TCLN");
 	private static final TestCaseFolder TCF = TEST_CASE_FOLDER.as("TCF");
 	private static final TestCase TC = TEST_CASE.as("TC");
+	private static final Project P = PROJECT.as("P");
 	private static final RequirementVersionCoverage RVC = REQUIREMENT_VERSION_COVERAGE.as("RVC");
 	private static final TestCaseSteps TCS = TEST_CASE_STEPS.as("TCS");
 	private static final TclnRelationship TCLNR = TCLN_RELATIONSHIP.as("TCLNR");
@@ -100,7 +101,7 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 	private Map<Long, JsTreeNode> buildTestCaseJsTreeNode(UserDto currentUser, Map<Long, List<Long>> allMilestonesForTCs, List<Long> milestonesModifiable, TestCaseLibraryNodeDistribution nodeDistribution) {
 		return DSL.select(TCLN.TCLN_ID, TCLN.NAME
-			, TC.IMPORTANCE, TC.REFERENCE, TC.TC_STATUS, TC.TC_KIND
+			, TC.IMPORTANCE, TC.REFERENCE, TC.TC_STATUS, TC.TC_KIND, TC.AUTOMATABLE, P.ALLOW_AUTOMATION_WORKFLOW
 			, count(TCS.TEST_CASE_ID).as("STEP_COUNT")
 			, count(RVC.VERIFYING_TEST_CASE_ID).as("COVERAGE_COUNT")
 			)
@@ -108,20 +109,21 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.innerJoin(TC).on(TCLN.TCLN_ID.eq(TC.TCLN_ID))
 			.leftJoin(TCS).on(TCLN.TCLN_ID.eq(TCS.TEST_CASE_ID))
 			.leftJoin(RVC).on(TCLN.TCLN_ID.eq(RVC.VERIFYING_TEST_CASE_ID))
+			.innerJoin(P).on(TCLN.PROJECT_ID.eq(P.PROJECT_ID))
 			.where(TCLN.TCLN_ID.in(nodeDistribution.getTcIds()))
 			//i would love to have the right to do some window function to avoid this messy groupBy clause
-			.groupBy(TCLN.TCLN_ID, TCLN.NAME, TC.IMPORTANCE, TC.REFERENCE, TC.TC_STATUS, TCS.TEST_CASE_ID, RVC.VERIFYING_TEST_CASE_ID, TC.TC_KIND)
+			.groupBy(TCLN.TCLN_ID, TCLN.NAME, TC.IMPORTANCE, TC.REFERENCE, TC.TC_STATUS, TCS.TEST_CASE_ID, RVC.VERIFYING_TEST_CASE_ID, TC.TC_KIND, TC.AUTOMATABLE, P.ALLOW_AUTOMATION_WORKFLOW)
 			.fetch()
 			.stream()
 			.map(r -> {
 				Integer milestonesNumber = getMilestonesNumberForTC(allMilestonesForTCs, r.get(TCLN.TCLN_ID));
 				String isMilestoneModifiable = isMilestoneModifiable(allMilestonesForTCs, milestonesModifiable, r.get(TCLN.TCLN_ID));
-				return buildTestCase(r.get(TCLN.TCLN_ID), r.get(TCLN.NAME), "test-cases",r.get(TC.TC_KIND), r.get(TC.REFERENCE),
+				return buildTestCase(r.get(TCLN.TCLN_ID), r.get(TCLN.NAME), "test-cases", r.get(TC.TC_KIND), r.get(TC.AUTOMATABLE), r.get(P.ALLOW_AUTOMATION_WORKFLOW), r.get(TC.REFERENCE),
 					r.get(TC.IMPORTANCE), r.get(TC.TC_STATUS), r.get("STEP_COUNT", Integer.class), r.get("COVERAGE_COUNT", Integer.class), currentUser, milestonesNumber, isMilestoneModifiable);
 			}).collect(Collectors.toMap(node -> (Long) node.getAttr().get(RES_ID), Function.identity()));
 	}
 
-	private JsTreeNode buildTestCase(Long id, String name, String restype, String kind, String reference, String importance, String status,
+	private JsTreeNode buildTestCase(Long id, String name, String restype, String kind, String automatable, boolean allowAutomWorkflow, String reference, String importance, String status,
 									 Integer stepCount, Integer coverageCount, UserDto currentUser, Integer milestonesNumber, String isMilestoneModifiable) {
 		Map<String, Object> attr = new HashMap<>();
 		Boolean isreqcovered = coverageCount > 0 ||
@@ -137,6 +139,10 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		attr.put("id", "TestCase-" + id);
 		attr.put("rel", "test-case");
 		attr.put("kind", kind.toLowerCase());
+
+		if (allowAutomWorkflow) {
+			attr.put("automEligible", automatable.toLowerCase());
+		}
 
 		attr.put("importance", importance.toLowerCase());
 		attr.put("status", status.toLowerCase());

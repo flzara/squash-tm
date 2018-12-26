@@ -193,6 +193,30 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 			return (nodes.filter(':exportable').length == nodes.length) && (nodes.length>0);
 		};
 
+		this.whyCantTransmit = function(nodes) {
+
+			if (! milestonesAllowEdition(nodes)) {
+				return "milestone-denied";
+			}
+			else if (nodes.length === 0) {
+				return "empty-selection";
+			}
+			else if (nodes.filter(':folder, :library').length !== 0
+						|| nodes.filter(':editable').length !== nodes.length ||  nodes.filter(':test-case[kind="gherkin"]').length !== nodes.length) {
+				return "permission-denied";
+			}
+			else if (nodes.getLibrary().filter(':library[allowautomworkflow="true"]').length !== nodes.getLibrary().length) {
+				return "autom-workflow-disabled"
+			}
+			else {
+				return "yes-you-can";
+			}
+		};
+
+		this.canTransmit = $.proxy(function(nodes) {
+			return (this.whyCantTransmit(nodes) === "yes-you-can");
+		}, this);
+
 		this.whyCantCreateTcFromReq = function(){
 			var nodes = copier.bufferedNodesForTc();
 
@@ -277,6 +301,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 			'export-tree-button' : this.canExport,
 			'create-tc-from-req-tree-button' : this.CantCreateTcFromReq,
 			'export-gherkin-tree-button' : this.canExport,
+			'transmit-gherkin-tree-button' : this.canTransmit,
 			'delete-node-tree-button' : this.canDelete,
 			'search-tree-button' : this.canSearch
 		};

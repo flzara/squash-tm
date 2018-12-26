@@ -18,31 +18,44 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['./add-folder-popup', './add-test-case-popup' ,
-        './rename-node-popup', './delete-node-popup',
-        './transmit-eligible-node-popup', './import-excel-popup',
-        './export-popup','./export-gherkin-popup', './create-from-requirement-popup'],
-		function(folderpopup, tcpopup, renamepopup, deletepopup, importpopup, exportpopup, exportgherkinpopup, createfromreq){
+define(['jquery', 'tree', 'workspace.event-bus', 'squash.translator', 'jquery.squash.formdialog'],
+	function ($, zetree, eventBus, translator) {
+
+		function init() {
+
+			var dialog = $("#transmit-eligible-node-dialog").formDialog();
+
+			var tree = zetree.get();
+
+			dialog.on('formdialogopen', function () {
+				dialog.formDialog('setState', 'confirm');
+			});
+
+			dialog.on('formdialogconfirm', function () {
+				var nodes = tree.jstree('get_selected');
+				var tcIds = nodes.all('getResId');
+				$.ajax({
+					url : squashtm.app.contextRoot + 'automation-requests/' + tcIds,
+					type : 'POST',
+					data : {
+						'id' : 'automation-request-status',
+						'value' : 'TRANSMITTED'
+					}
+				}).success(function() {
+					dialog.formDialog('close');
+				});
+
+			});
+
+			dialog.on('formdialogcancel', function () {
+				dialog.formDialog('close');
+			});
+
+		}
 
 
-	function init(){
+		return {
+			init: init
+		};
 
-		folderpopup.init();
-		tcpopup.init();
-		renamepopup.init();
-
-		importpopup.init();
-		exportpopup.init();
-		exportgherkinpopup.init();
-
-		deletepopup.init();
-
-		createfromreq.init();
-
-	}
-
-	return {
-		init : init
-	};
-
-});
+	});

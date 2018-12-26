@@ -213,6 +213,27 @@ define(["jquery", "backbone", "tree", "./permissions-rules", "workspace.contextu
 				$("#export-gherkin-test-case-dialog").exportGherkinFeatureDialog("open");
 			});
 
+		  // ******************* automation ********************
+
+			$("#transmit-gherkin-tree-button").on("click", function () {
+				var nodes = tree.jstree('get_selected');
+				if (nodes.filter(':test-case[automeligible="y"]').length === nodes.length) {
+					var tcIds = nodes.all('getResId');
+					$.ajax({
+						url : squashtm.app.contextRoot + 'automation-requests/' + tcIds,
+						type : 'POST',
+						data : {
+							'id' : 'automation-request-status',
+							'value' : 'TRANSMITTED'
+						}
+					}).success(function() {
+						$('#automation-request-status').text(translator.get('automation-request.request_status.TRANSMITTED'));
+					});
+				} else {
+					$("#transmit-eligible-node-dialog").formDialog("open");
+				}
+			});
+
 			// *****************  search  ********************
 
 			// $("#search-tree-button").on("click", function(){
