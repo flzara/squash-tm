@@ -99,8 +99,7 @@ class SimpleExcelExporter {
 		TestCaseSheetColumn.TC_LAST_MODIFIED_BY,
 		TestCaseSheetColumn.TC_KIND,
 		TestCaseSheetColumn.TC_SCRIPTING_LANGUAGE,
-		TestCaseSheetColumn.TC_SCRIPT,
-		TestCaseSheetColumn.TC_AUTOMATABLE
+		TestCaseSheetColumn.TC_SCRIPT
 	};
 
 

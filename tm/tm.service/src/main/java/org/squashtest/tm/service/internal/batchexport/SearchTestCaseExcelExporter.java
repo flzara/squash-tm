@@ -48,8 +48,7 @@ public class SearchTestCaseExcelExporter extends ExcelExporter {
 
 	private static final TestCaseSheetColumn[] SEARCH_TC_COLUMNS = {
 		TestCaseSheetColumn.TC_NB_STEPS,
-		TestCaseSheetColumn.TC_NB_ITERATION,
-		TestCaseSheetColumn.TC_AUTOMATABLE
+		TestCaseSheetColumn.TC_NB_ITERATION
 	};
 
 	private static final TestCaseSheetColumn MILESTONE_SEARCH_TC_COLUMNS =
