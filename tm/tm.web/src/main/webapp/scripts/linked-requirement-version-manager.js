@@ -233,12 +233,27 @@ require(["common"], function () {
 						var id = type.id, role1 = type.role1, role2 = type.role2;
 						var optionKey_1 = id + "_" + 0;
 						var optionLabel_1 = role1 + " - " + role2;
-						comboBox.append('<option value = "' + optionKey_1 + '">' + optionLabel_1 + '</option>');
+						var def = type.default;
+						var o;
+						if (def) {
+							o = new Option(optionLabel_1, optionKey_1, true, true);
+							comboBox.append(o);
+						} else {
+							o = new Option(optionLabel_1, optionKey_1);
+							comboBox.append(o);
+						}
 
 						if (role1 !== role2) {
 							var optionKey_2 = id + "_" + 1;
 							var optionLabel_2 = role2 + " - " + role1;
-							comboBox.append('<option value = "' + optionKey_2 + '">' + optionLabel_2 + '</option>');
+							if (type.default) {
+								o = new Option(optionLabel_2, optionKey_2, true, true);
+								comboBox.append(o);
+							} else {
+								o = new Option(optionLabel_2, optionKey_2);
+								comboBox.append(o);
+							}
+
 						}
 					}
 					self.formDialog('setState', 'confirm');
@@ -312,7 +327,7 @@ require(["common"], function () {
 						reqVersionLinkTypeId: selectedTypeId,
 						reqVersionLinkTypeDirection: selectedTypeDirection
 					};
-					if(isRelatedIdANodeId) {
+					if (isRelatedIdANodeId) {
 						params.isRelatedIdANodeId = self.data("isRelatedIdANodeId");
 					}
 					return params;

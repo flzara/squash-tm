@@ -84,7 +84,10 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		new SortField("itpi-status", SortField.Type.STRING, false),
 		new SortField("itpi-executed-by", SortField.Type.STRING, false),
 		new SortField("itpi-executed-on", SortField.Type.LONG, false),
-		new SortField("itpi-datasets", SortField.Type.STRING, false)};
+		new SortField("itpi-datasets", SortField.Type.STRING, false),
+		new SortField("referencedTestCase.importance", SortField.Type.STRING, false),
+		new SortField("referencedTestCase.automatable", SortField.Type.STRING, false),
+		new SortField("referencedTestCase.automationRequest.requestStatus", SortField.Type.STRING, false)};
 
 	// FIXME This list which contains sweet FA is used to decide when a field should be processed as a numeric field or a text field. Looks like horseshit to me.
 	private static final String LAST_EXECUTE_ON_FIELD_NAME ="lastExecutedOn";

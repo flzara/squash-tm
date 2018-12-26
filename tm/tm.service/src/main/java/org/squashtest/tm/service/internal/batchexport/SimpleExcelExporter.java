@@ -192,13 +192,14 @@ class SimpleExcelExporter {
 				r.createCell(cIdx++).setCellValue(nature);
 				r.createCell(cIdx++).setCellValue(type);
 				r.createCell(cIdx++).setCellValue(status);
+				TestCase tc = testCaseFinder.findById(tcm.getId());
 				if (milestonesEnabled) {
-					TestCase tc = testCaseFinder.findById(tcm.getId());
+
 					r.createCell(cIdx++).setCellValue(tc.getMilestones().size());
 				}
 				r.createCell(cIdx++).setCellValue(automatable);
 				r.createCell(cIdx++).setCellValue(tcm.getNbReq());
-				r.createCell(cIdx++).setCellValue(tcm.getNbCaller());
+				r.createCell(cIdx++).setCellValue(tc.getSteps().size());
 				r.createCell(cIdx++).setCellValue(tcm.getNbIterations());
 				r.createCell(cIdx++).setCellValue(tcm.getNbAttachments());
 				r.createCell(cIdx++).setCellValue(tcm.getCreatedBy());

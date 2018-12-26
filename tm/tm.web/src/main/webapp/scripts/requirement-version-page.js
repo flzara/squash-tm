@@ -436,15 +436,29 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 									var role1 = type.role1;
 									var role2 = type.role2;
 
+									var def = type.default;
+
 									/* Creating one option for a non-directional link type, and two for the bi-directional ones. */
 									var optionKey_1 = id + "_" + 0;
 									var optionLabel_1 = role1 + " - " + role2;
-									comboBox.append('<option value = "' + optionKey_1 + '">' + optionLabel_1 + '</option>');
+									var o;
+									console.log(def)
+									if(def) {
+										o = new Option(optionLabel_1, optionKey_1, true, true);
+										comboBox.append(o);
+									} else {
+										o = new Option(optionLabel_1, optionKey_1);
+									}
 
 									if (role1 !== role2) {
 										var optionKey_2 = id + "_" + 1;
 										var optionLabel_2 = role2 + " - " + role1;
-										comboBox.append('<option value = "' + optionKey_2 + '">' + optionLabel_2 + '</option>');
+										if(def) {
+											o = new Option(optionLabel_2, optionKey_2, true, true);
+											comboBox.append(o);
+										} else {
+											o = new Option(optionLabel_2, optionKey_2);
+										}
 									}
 								}
 								self.formDialog('setState', 'confirm');

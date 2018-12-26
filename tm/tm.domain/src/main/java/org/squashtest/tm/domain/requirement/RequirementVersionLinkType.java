@@ -119,6 +119,7 @@ public class RequirementVersionLinkType implements Identified {
 		copy.setRole1Code(this.getRole1Code());
 		copy.setRole2(this.getRole2());
 		copy.setRole2Code(this.getRole2Code());
+		copy.setDefault(this.isDefault);
 		return copy;
 	}
 }

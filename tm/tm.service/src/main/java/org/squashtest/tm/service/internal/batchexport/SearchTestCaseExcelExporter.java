@@ -90,9 +90,6 @@ public class SearchTestCaseExcelExporter extends ExcelExporter {
 		r.createCell(cIdxOptional++).setCellValue(nbIteration);
 		r.createCell(cIdxOptional++).setCellValue(tcm.getAutomatable().name());
 
-
-
-
 		return cIdxOptional;
 	}
 
