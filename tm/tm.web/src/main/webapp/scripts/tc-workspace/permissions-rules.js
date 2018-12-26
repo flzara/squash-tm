@@ -206,7 +206,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 				return "permission-denied";
 			}
 			else if (nodes.getLibrary().filter(':library[allowautomworkflow="true"]').length !== nodes.getLibrary().length) {
-				return "autom-workflow-disabled"
+				return "autom-workflow-disabled";
 			}
 			else {
 				return "yes-you-can";
