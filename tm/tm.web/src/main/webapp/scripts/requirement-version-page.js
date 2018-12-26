@@ -442,7 +442,6 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 									var optionKey_1 = id + "_" + 0;
 									var optionLabel_1 = role1 + " - " + role2;
 									var o;
-									console.log(def)
 									if(def) {
 										o = new Option(optionLabel_1, optionKey_1, true, true);
 										comboBox.append(o);
