@@ -30,7 +30,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "SCM_SERVER")
-@PrimaryKeyJoinColumn(name = "SCM_SERVER_ID")
+@PrimaryKeyJoinColumn(name = "SERVER_ID")
 public class ScmServer extends ThirdPartyServer {
 
 

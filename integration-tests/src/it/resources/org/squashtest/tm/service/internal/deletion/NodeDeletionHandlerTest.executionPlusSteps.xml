@@ -21,7 +21,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.11.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.19.0.dtd">
 <dataset >
 
 	<!-- ========================= attachment lists ========================= -->
@@ -61,7 +61,8 @@
 
 	<!--  =============== their content ================================ -->
 
-	<BUGTRACKER BUGTRACKER_ID="-1" KIND="mantis" NAME="mantis" URL="http://localhost/mantisbt" IFRAME_FRIENDLY="false" />
+  <THIRD_PARTY_SERVER SERVER_ID="-1" NAME="mantis" URL="http://localhost/mantisbt" />
+	<BUGTRACKER BUGTRACKER_ID="-1" KIND="mantis"  IFRAME_FRIENDLY="false" />
 	<ISSUE ISSUE_ID="-5001" REMOTE_ISSUE_ID="-5001" ISSUE_LIST_ID="-500" 	  BUGTRACKER_ID="-1"/>
 	<ISSUE ISSUE_ID="-5002" REMOTE_ISSUE_ID="-5002" ISSUE_LIST_ID="-500"  	  BUGTRACKER_ID="-1"/>
 	<ISSUE ISSUE_ID="-60011" REMOTE_ISSUE_ID="-60011" ISSUE_LIST_ID="-6001"  BUGTRACKER_ID="-1"/>

@@ -73,7 +73,7 @@ public class ScmRepository {
 	private String workingBranch;
 
 	@ManyToOne
-	@JoinColumn(name = "SCM_SERVER_ID", nullable = false)
+	@JoinColumn(name = "SERVER_ID", nullable = false)
 	private ScmServer scmServer;
 
 	private Object acquireLock() {

@@ -648,7 +648,7 @@
   </changeSet>
 
 
-  <changeSet author="bsiri" id="tm-1.19.0-SQTM-534-third-party-server-2">
+  <changeSet author="bsiri" id="tm-1.19.0-SQTM-543-third-party-server-2">
     <comment>migrate data from table BUGTRACKER to table THIRD_PARTY_SERVER</comment>
 
     <sql>
@@ -660,7 +660,7 @@
   </changeSet>
 
 
-  <changeSet author="bsiri" id="tm-1.19.0-SQTM-534-third-party-server-3">
+  <changeSet author="bsiri" id="tm-1.19.0-SQTM-543-third-party-server-3">
 
     <comment>
       Drop the now unused columns from BUGTRACKER and create the FK from BUGTRACKER to THIRD_PARTY_SERVER
@@ -680,7 +680,7 @@
   </changeSet>
 
 
-  <changeSet author="bsiri" id="tm-1.19.0-SQTM-534-third-party-server-4">
+  <changeSet author="bsiri" id="tm-1.19.0-SQTM-543-third-party-server-4">
     <comment>change the foreign key stored_credentials -> bugtracker to stored_credentials -> third_party_server </comment>
 
     <dropForeignKeyConstraint baseTableName="STORED_CREDENTIALS"  constraintName="fk_stored_credentials_authenticated_server"/>
@@ -696,7 +696,7 @@
   </changeSet>
 
 
-  <changeSet author="bsiri" id="tm-1.19.0-SQTM-534-third-party-server-5-h2" dbms="h2">
+  <changeSet author="bsiri" id="tm-1.19.0-SQTM-543-third-party-server-5-h2" dbms="h2">
     <comment>For H2, remove the autoincrement on bugtracker_id</comment>
     <sql>
       alter table BUGTRACKER alter column BUGTRACKER_ID BIGINT NOT NULL;
@@ -707,14 +707,16 @@
     <comment>For Mysql / Maria DB, remove the autoincrement on bugtracker_id</comment>
 
     <sql>
+      set foreign_key_checks=0;
       alter table BUGTRACKER modify column BUGTRACKER_ID BIGINT not null;
+      set foreign_key_checks=1;
     </sql>
 
 
   </changeSet>
 
 
-  <changeSet author="bsiri" id="tm-1.19.0-SQTM-534-third-party-server-5-postgres" dbms="postgresql">
+  <changeSet author="bsiri" id="tm-1.19.0-SQTM-543-third-party-server-5-postgres" dbms="postgresql">
     <comment>For PostGre, remove the autoincrement on bugtracker_id and reset the sequence for third_party_server</comment>
 
     <sql>
@@ -737,16 +739,11 @@
 
     <createTable tableName="SCM_SERVER">
 
-      <column name="SCM_SERVER_ID" type="BIGINT" autoIncrement="false"
+      <column name="SERVER_ID" type="BIGINT" autoIncrement="false"
               remarks="The id of the scm server.">
         <constraints primaryKey="true" nullable="false"/>
       </column>
-      <column name="NAME" type="VARCHAR(255)" remarks="The scm server name.">
-        <constraints unique="true" nullable="false"/>
-      </column>
-      <column name="BASE_URL" type="VARCHAR(255)" remarks="The scm server base url.">
-        <constraints nullable="false"/>
-      </column>
+
       <column name="KIND" type="VARCHAR(30)" remarks="The kind of scm server.">
         <constraints nullable="false"/>
       </column>
@@ -754,7 +751,7 @@
     </createTable>
 
     <addForeignKeyConstraint constraintName="fk_scm_server_third_party_server"
-      baseTableName="SCM_SERVER" baseColumnNames="SCM_SERVER_ID"
+      baseTableName="SCM_SERVER" baseColumnNames="SERVER_ID"
        referencedTableName="THIRD_PARTY_SERVER" referencedColumnNames="SERVER_ID" onDelete="CASCADE"/>
 
   </changeSet>
@@ -768,9 +765,9 @@
               remarks="The auto-generated id of the scm repository.">
         <constraints primaryKey="true" nullable="false"/>
       </column>
-      <column name="SCM_SERVER_ID" type="BIGINT" remarks="The foreign key to the related SCM_SEVER">
+      <column name="SERVER_ID" type="BIGINT" remarks="The foreign key to the related SCM_SEVER">
         <constraints nullable="false" foreignKeyName="fk_scm_repository_scm_server"
-                     references="SCM_SERVER(SCM_SERVER_ID)"/>
+                     references="SCM_SERVER(SERVER_ID)"/>
       </column>
 
       <column name="NAME" type="VARCHAR(255)" remarks="The unique name of the repository.">
@@ -920,7 +917,7 @@
       create index idx_fk_resp_scope_obj_id on acl_responsibility_scope_entry(object_identity_id);
       create index idx_fk_rln_project on requirement_library_node(project_id);
       create index idx_fk_sc_auth_acl_class on acl_group_permission(class_id);
-      create index idx_fk_scm_repository_scm_server on scm_repository(scm_server_id);
+      create index idx_fk_scm_repository_scm_server on scm_repository(server_id);
       create index idx_fk_stored_credentials_user on stored_credentials(authenticated_user);
       create index idx_fk_sync_extender_requirement on requirement_sync_extender(requirement_id);
       create index idx_fk_sync_extender_server on requirement_sync_extender(server_id);

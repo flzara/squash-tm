@@ -22,15 +22,15 @@
 
 -->
 
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.13.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.19.0.dtd">
 <dataset>
 
 	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-11111"/>
 	<PROJECT CREATED_BY="admin" NAME="p" PROJECT_ID="-11111" ATTACHMENT_LIST_ID="-11111" CREATED_ON="2015-11-16"/>
 
 	<!-- bugtracker -->
-
-	<BUGTRACKER URL="http://whatever" NAME="bt1" KIND="dummy" BUGTRACKER_ID="-1"/>
+  <THIRD_PARTY_SERVER SERVER_ID="-1"  URL="http://whatever" NAME="bt1"/>
+  <BUGTRACKER KIND="dummy" BUGTRACKER_ID="-1"/>
 
 	<!--  dummy attachment list, the same for everyone that need one. -->
 	
