@@ -31,6 +31,7 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 					self.settings = options.settings;
 
 					self.initAutomationRequestBlock();
+					var automatableRadio = $("input[type=radio][name=test-case-automatable]");
 
 					if (self.settings.writable) {
 						this.priorityEditable = new SimpleJEditable({
@@ -66,7 +67,6 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 							});
 						});
 
-						var automatableRadio = $("input[type=radio][name=test-case-automatable]");
 						automatableRadio.on('change', function() {
 							var value = this.value;
 							$.ajax({
