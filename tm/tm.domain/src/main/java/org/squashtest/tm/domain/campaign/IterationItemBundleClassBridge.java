@@ -88,8 +88,8 @@ public class IterationItemBundleClassBridge implements FieldBridge, MetadataProv
 		String automatable = tc.getAutomatable().getLevel()+"-"+tc.getAutomatable().name();
 			// note : not indexing testcase id as a LongField because result is weird
 
-		applyToLuceneStringOptions(luceneOptions, FIELD_TC_NAME, tc.getName().toLowerCase(),  document);
-		applyToLuceneStringOptions(luceneOptions, FIELD_TC_REFERENCE, tc.getReference().toLowerCase(),  document);
+		applyToLuceneTextOptions(luceneOptions, FIELD_TC_NAME, tc.getName().toLowerCase(),  document);
+		applyToLuceneTextOptions(luceneOptions, FIELD_TC_REFERENCE, tc.getReference().toLowerCase(),  document);
 		applyToLuceneStringOptions(luceneOptions, FIELD_TC_IMPORTANCE, importance, document);
 		applyToLuceneStringOptions(luceneOptions, FIELD_TC_AUTOMATABLE, automatable, document);
 
@@ -100,7 +100,7 @@ public class IterationItemBundleClassBridge implements FieldBridge, MetadataProv
 			}
 		}
 		else {
-			applyToLuceneStringOptions( luceneOptions, FIELD_TC_ID, result.toString(), document );
+			applyToLuceneTextOptions( luceneOptions, FIELD_TC_ID, result.toString(), document );
 		}
 
 		AutomationRequest req = tc.getAutomationRequest();
@@ -119,6 +119,11 @@ public class IterationItemBundleClassBridge implements FieldBridge, MetadataProv
 
 	protected void applyToLuceneStringOptions(LuceneOptions luceneOptions, String name, String value, Document document) {
 		document.add(new StringField(name, value, Field.Store.YES));
+		luceneOptions.addSortedDocValuesFieldToDocument( name, value, document );
+	}
+
+	protected void applyToLuceneTextOptions(LuceneOptions luceneOptions, String name, String value, Document document) {
+		document.add(new TextField(name, value, Field.Store.YES));
 		luceneOptions.addSortedDocValuesFieldToDocument( name, value, document );
 	}
 
