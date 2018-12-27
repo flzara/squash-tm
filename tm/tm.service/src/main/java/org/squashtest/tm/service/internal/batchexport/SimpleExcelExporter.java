@@ -178,8 +178,8 @@ class SimpleExcelExporter {
 		for (TestCaseModel tcm : models) {
 			r = tcSheet.createRow(rIdx);
 				String importance =handleMessages(IMPORTANCE+tcm.getWeight().toString());
-				String nature = handleMessages(NATURE+tcm.getNature().getLabel());
-				String type = handleMessages(TYPE+tcm.getType().getLabel());
+				String nature = handleMessages(tcm.getNature().getLabel());
+				String type = handleMessages(tcm.getType().getLabel());
 				String status = handleMessages(STATUS+tcm.getStatus().toString());
 				String automatable = handleMessages(AUTOMATABLE+tcm.getAutomatable().name());
 			try {
