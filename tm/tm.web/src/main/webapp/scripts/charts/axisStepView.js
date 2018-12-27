@@ -117,7 +117,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView"],
 			// the updated columns for that role are the new columns, updated with label if any where defined prior to this
 			var updatedCols = _.chain(newCols)
 								.each(function(col){
-									var label = _.chain(oldCols).find(function(co){return co.column.id === col.column.id}).result('label').value() || "";
+									var label = _.chain(oldCols).find(function(co){return co.column.id === col.column.id;}).result('label').value() || "";
 									col.label = label;
 								})
 								.value();

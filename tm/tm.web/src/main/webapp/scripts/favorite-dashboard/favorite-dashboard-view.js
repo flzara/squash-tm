@@ -61,7 +61,7 @@ define(["backbone", "custom-report-workspace/views/dashboardView", "home-workspa
 
 				if (id) {
 					id = Number(id);
-					var modelDef = Backbone.Model.extend({
+					var ModelDef = Backbone.Model.extend({
 						defaults: {
 							id: id,
 							showInClassicWorkspace: true,
@@ -69,7 +69,7 @@ define(["backbone", "custom-report-workspace/views/dashboardView", "home-workspa
 						}
 					});
 
-					var activeModel = new modelDef();
+					var activeModel = new ModelDef();
 					var acls = new AclModel({type: "custom-report-library-node", id: id});
 
 					this.activeView = new DashboardView({

@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "underscore", "backbone","./welcome-message-view","custom-report-workspace/views/dashboardView","./default-dashboard-view", "workspace.routing","squash.attributeparser","app/AclModel","jquery.switchButton"],
-	function ($, _, Backbone,messageView,DashboardView,DefaultDashboardView,urlBuilder,attrparser,AclModel) {
+define(["jquery", "underscore", "backbone", "./welcome-message-view", "custom-report-workspace/views/dashboardView", "./default-dashboard-view", "workspace.routing", "squash.attributeparser", "app/AclModel","jquery.switchButton"],
+	function ($, _, Backbone, MessageView, DashboardView, DefaultDashboardView, urlBuilder, attrparser, AclModel) {
 		"use strict";
 
 	    var View = Backbone.View.extend({
@@ -32,12 +32,12 @@ define(["jquery", "underscore", "backbone","./welcome-message-view","custom-repo
                     this.showMessage();
                 }
             },
-            
+
             events: {
                 "click #show-favorite-dashboard": "chooseFavoriteDarshboard",
                 "click #show-welcome-message" : "chooseWelcomeMessage"
             },
-            
+
             chooseWelcomeMessage : function () {
                 this.clearView();
                 var url = urlBuilder.buildURL("home.content.message");
@@ -49,7 +49,7 @@ define(["jquery", "underscore", "backbone","./welcome-message-view","custom-repo
                     self.showMessage
                 );
             },
-            
+
             chooseFavoriteDarshboard : function () {
             	this.clearView();
                 var url = urlBuilder.buildURL("home.content.dashboard");
@@ -61,22 +61,22 @@ define(["jquery", "underscore", "backbone","./welcome-message-view","custom-repo
                     self.showDashboard
                 );
             },
-            
+
             showMessage : function () {
-                this.activeView = new messageView();
+                this.activeView = new MessageView();
             },
-            
+
             showDashboard : function () {
                 var id = squashtm.app.userPrefs["squash.core.favorite.dashboard.home"];
                 if(id && squashtm.app.homeWorkspaceConf.canShowDashboard){
                     id = Number(id);
-                    var modelDef = Backbone.Model.extend({
+                    var ModelDef = Backbone.Model.extend({
                         defaults: {
                             id: id
                         }
                     });
 
-                    var activeModel = new modelDef();
+                    var activeModel = new ModelDef();
                     var acls = new AclModel({type: "custom-report-library-node", id: id});
 
                     this.activeView = new DashboardView({
@@ -87,11 +87,11 @@ define(["jquery", "underscore", "backbone","./welcome-message-view","custom-repo
                     this.activeView = new DefaultDashboardView({});
                 }
             },
-            
+
             clearView : function () {
                 this.$('#home-content').html("<div id='contextual-content-wrapper' style='height: 90%; width:98%; overflow: auto; position:absolute'></div>");
             }
         });
-       
+
         return View;
     });

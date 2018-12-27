@@ -141,7 +141,7 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 
 				if (protoDatatype === "DATE_AS_STRING") {
 					legends = _.map(legends, function (legend) {
-						return dateUtils.format(legend, "yyyyMMdd", "yyyy-MM-dd")
+						return dateUtils.format(legend, "yyyyMMdd", "yyyy-MM-dd");
 					});
 					return this._formatDateLegend(legends, axis);
 				}

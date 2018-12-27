@@ -54,7 +54,7 @@ define(['module', 'jquery', 'backbone', 'third-party-server/credentials-manager'
 				url : url,
 				type : 'DELETE'
 			}).success(function () {
-		      document.location.href = conf.backUrl
+		      document.location.href = conf.backUrl;
 			});
 		});
 
@@ -103,7 +103,7 @@ define(['module', 'jquery', 'backbone', 'third-party-server/credentials-manager'
 		 // *************** authentication **************
 		 var authConf = $.extend({}, conf.authConf);
 		 authConf.entityUrl = conf.btUrl;
-		 
+
 		 new CredentialManagerView({ conf: authConf });
 
 	});

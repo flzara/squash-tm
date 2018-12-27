@@ -93,7 +93,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 								return p.id !== row[0];
 							});
 						}
-					})
+					});
 				}
 
 				var isModifyMode = this.model.get('chartDef');

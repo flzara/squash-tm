@@ -19,47 +19,47 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require(["common"], function() {
-	require(["jquery", "squash.translator", "workspace.routing",'app/ws/squashtm.notification', 
-	         "squashtable", 
-	         "app/ws/squashtm.workspace", 
-	         "jquery.squash.formdialog"], 
-			function($, translator, routing, notification){					
-		
-		$(function() {		
-		
-			$("#bugtrackers-table").squashTable({},{});						
-		});	
-		
-		
+	require(["jquery", "squash.translator", "workspace.routing",'app/ws/squashtm.notification',
+	         "squashtable",
+	         "app/ws/squashtm.workspace",
+	         "jquery.squash.formdialog"],
+			function($, translator, routing, notification){
+
+		$(function() {
+
+			$("#bugtrackers-table").squashTable({},{});
+		});
+
+
 		// *************** BT ADDITION ********************
-		
+
 		var addBTDialog = $("#add-bugtracker-dialog");
-		
+
 		addBTDialog.formDialog();
-		
+
 		addBTDialog.on('formdialogcancel', function(){
 			addBTDialog.formDialog('close');
 		});
-		
+
 		addBTDialog.on('formdialogconfirm', function(){
 			var url = routing.buildURL('administration.bugtrackers');
 			var params = {
 				name: $( '#add-bugtracker-name' ).val(),
 				url: $( '#add-bugtracker-url' ).val(),
 				kind: $( '#add-bugtracker-kind' ).val(),
-				iframeFriendly: $('#add-bugtracker-iframeFriendly').is(':checked')							
-			}
+				iframeFriendly: $('#add-bugtracker-iframeFriendly').is(':checked')
+			};
 			$.ajax({
 				url : url,
 				type : 'POST',
 				dataType : 'json',
-				data : params				
+				data : params
 			}).success(function(){
 				$('#bugtrackers-table').squashTable().refresh();
 				addBTDialog.formDialog('close');
 			});
 		});
-		
+
 
 		addBTDialog.on('formdialogaddanother', function(){
 			var url = routing.buildURL('administration.bugtrackers');
@@ -67,34 +67,34 @@ require(["common"], function() {
 				name: $( '#add-bugtracker-name' ).val(),
 				url: $( '#add-bugtracker-url' ).val(),
 				kind: $( '#add-bugtracker-kind' ).val(),
-				iframeFriendly: $('#add-bugtracker-iframeFriendly').is(':checked')							
-			}
+				iframeFriendly: $('#add-bugtracker-iframeFriendly').is(':checked')
+			};
 			$.ajax({
 				url : url,
 				type : 'POST',
 				dataType : 'json',
-				data : params				
+				data : params
 			}).success(function(){
 				$('#bugtrackers-table').squashTable().refresh();
 				addBTDialog.formDialog('open');
 			});
 		});
-		
-		
+
+
 		$("#new-bugtracker-button").on('click', function(){
 			addBTDialog.formDialog('open');
 		});
-		
+
 		// *************** BT DELETION ********************
 
 		$("#delete-bugtracker-popup").confirmDialog().on('confirmdialogconfirm', function(){
-			
+
 			var $this = $(this);
 			var id = $this.data('entity-id');
 			var ids = ( !! id) ? [id] : id ;
 			var url = squashtm.app.contextRoot + 'bugtracker/'+ ids.join(",");
 			var table = $("#bugtrackers-table").squashTable();
-			
+
 			$.ajax({
 				url : url,
 				type : 'delete'
@@ -102,8 +102,8 @@ require(["common"], function() {
 			.done(function(){
 				table.refresh();
 			});
-			
-			
+
+
 		});
 
 		$("#delete-bugtracker-button").on('click', function(){
@@ -119,6 +119,6 @@ require(["common"], function() {
 			}
 		});
 
-	
-	});			
-});		
+
+	});
+});

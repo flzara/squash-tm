@@ -232,7 +232,7 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 			// also listen to changes in the model map
 			var confModels = this.getModelMap();
 			_.values(confModels).forEach(function(model){
-				self.listenTo(model, 'change', self.showSaveReminder)
+				self.listenTo(model, 'change', self.showSaveReminder);
 			});
 
 			// additional model events
@@ -351,8 +351,8 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 			var hasObjectName = false;
 			try{
 				var ex = JSON.parse(xhr.responseText);
-				var hasFieldValidationError = (ex.fieldValidationErrors !== undefined);
-				var hasObjectName = (_.find(ex.fieldValidationErrors, function(err){
+				hasFieldValidationError = (ex.fieldValidationErrors !== undefined);
+				hasObjectName = (_.find(ex.fieldValidationErrors, function(err){
 					return ! StringUtil.isBlank(err.objectName);
 				}) !== undefined);
 			}
@@ -466,7 +466,7 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 				model : model,
 				failureMessage: options.conf.failureMessage,
 				warningMessage: options.conf.warningMessage
-			}
+			};
 
 			new ProtocolView(conf);
 			new PolicyView(conf);

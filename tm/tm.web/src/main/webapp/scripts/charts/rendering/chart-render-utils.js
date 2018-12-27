@@ -19,10 +19,10 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(['jquery','underscore'], function($,_){
-	
-	
+
+
 	function toChartInstance(jsonChart){
-		
+
 		return $.extend(true, {}, jsonChart, {
 
 			// allows for indiscriminate reference to a serie by name or index
@@ -32,12 +32,12 @@ define(['jquery','underscore'], function($,_){
 				var name = (isNaN(nameOrIndex)) ? nameOrIndex : this.measures[nameOrIndex].label;
 				return this.series[name];
 
-			}			
+			}
 		});
 	}
-	
+
 	return {
 		toChartInstance : toChartInstance
-	}
-	
+	};
+
 });

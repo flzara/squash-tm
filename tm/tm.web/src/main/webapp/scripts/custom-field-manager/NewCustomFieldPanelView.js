@@ -347,7 +347,7 @@ define(
 
 				var colorPicker = $("[name*='new-option-colour']");
 				var conf = confman.getStandardColorPicker();
-				colorPicker.spectrum(conf)
+				colorPicker.spectrum(conf);
 			},
 
 			renderRichText: function () {

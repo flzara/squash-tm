@@ -29,31 +29,60 @@
     <js>/scripts/automation-tester-workspace/**.js</js>
     <js>/scripts/automation-workspace/**.js</js>
     <js>/scripts/bugtracker/**.js</js>
-    <js>/scripts/dashboard/**.js</js>
+    <js>/scripts/bugtracker-manager/**.js</js>
     <js>/scripts/camp-workspace/**.js</js>
+    <js>/scripts/campaign-folder-management/**.js</js>
     <js>/scripts/campaign-management/**.js</js>
+    <js>/scripts/charts/**.js</js>
+    <js>/scripts/client-manager/**.js</js>
+    <js>/scripts/connections-manager/**.js</js>
     <js>/scripts/contextual-content-handlers/**.js</js>
     <js>/scripts/custom-field-binding/**.js</js>
     <js>/scripts/custom-field-editor/**.js</js>
+    <js>/scripts/custom-field-manager/**.js</js>
     <js>/scripts/custom-field-values/**.js</js>
+    <js>/scripts/custom-report-workspace/**.js</js>
     <js>/scripts/dashboard/**.js</js>
     <js>/scripts/datepicker/**.js</js>
+    <js>/scripts/docx/**.js</js>
+    <js>/scripts/favorite-dashboard/**.js</js>
     <js>/scripts/file-upload/**.js</js>
+    <js>/scripts/home-workspace/**.js</js>
+    <js>/scripts/info-list/**.js</js>
+    <js>/scripts/info-list-manager/**.js</js>
+    <js>/scripts/issues/**.js</js>
     <js>/scripts/iteration-management/**.js</js>
+    <js>/scripts/milestone-manager/**.js</js>
+    <js>/scripts/milestones/**.js</js>
+    <js>/scripts/page-components/**.js</js>
     <js>/scripts/project/**.js</js>
-    <js>/scripts/tc-workspace/**.js</js>
-    <js>/scripts/req-workspace/**.js</js>
-    <js>/scripts/execution-processing/**.js</js>
+    <js>/scripts/project-filter/**.js</js>
     <js>/scripts/projects-manager/**.js</js>
+    <js>/scripts/req-workspace/**.js</js>
+    <js>/scripts/requirement-folder-management/**.js</js>
+    <js>/scripts/requirement-library-management/**.js</js>
+    <js>/scripts/requirement-link-type/**.js</js>
+    <js>/scripts/scm-server/**.js</js>
     <js>/scripts/search/**.js</js>
+    <js>/scripts/serverauth/**.js</js>
     <js>/scripts/squash/**.js</js>
+    <js>/scripts/squashtable/**.js</js>
     <js>/scripts/squashtest/**.js</js>
+    <js>/scripts/tc-workspace/**.js</js>
     <js>/scripts/team-editor/**.js</js>
     <js>/scripts/teams-manager/**.js</js>
+    <js>/scripts/test-automation/**.js</js>
+    <js>/scripts/test-automation-servers-manager/**.js</js>
+    <js>/scripts/test-case-folder-management/**.js</js>
+    <js>/scripts/test-case-library-management/**.js</js>
     <js>/scripts/test-case-management/**.js</js>
+    <js>/scripts/test-plan-management/**.js</js>
+    <js>/scripts/test-plan-panel/**.js</js>
     <js>/scripts/test-step-editor/**.js</js>
+    <js>/scripts/test-suite/**.js</js>
     <js>/scripts/test-suite-management/**.js</js>
     <js>/scripts/tree/**.js</js>
+    <js>/scripts/user-account/**.js</js>
     <js>/scripts/user-editor/**.js</js>
     <js>/scripts/users-manager/**.js</js>
     <js>/scripts/verified-requirements/**.js</js>

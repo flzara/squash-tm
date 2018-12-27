@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./views/folderView", "./views/dashboardView", "./views/chartView", "./views/reportView"],
-	function ($, Backbone, urlBuilder, libraryView, folderView, dashboardView, chartView, reportView) {
+	function ($, Backbone, urlBuilder, LibraryView, FolderView, DashboardView, ChartView, ReportView) {
 		"use strict";
 
 		var LibraryModel = Backbone.Model.extend({
@@ -55,7 +55,7 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 			}
 		});
 
-		var router = Backbone.Router.extend({
+		var Router = Backbone.Router.extend({
 
 			activeView: null,
 
@@ -77,7 +77,7 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 				var activeModel = new LibraryModel({id: id});
 				var cufurl = urlBuilder.buildURL('customfield.values.get',id, 'CUSTOM_REPORT_PROJECT'),	mode =  'jeditable';
 				this.cufurl = cufurl;
-				this.activeView = new libraryView({
+				this.activeView = new LibraryView({
 					model: activeModel
 				});
 
@@ -89,7 +89,7 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 				var acls = new AclModel({type: "custom-report-library-node", id: id});
 				var cufurl = urlBuilder.buildURL('customfield.values.get',id, 'CUSTOM_REPORT_FOLDER'),	mode =  'jeditable';
 				this.cufurl = cufurl;
-				this.activeView = new folderView({
+				this.activeView = new FolderView({
 					model: activeModel,
 					acls: acls,
 				});
@@ -103,10 +103,10 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 					}
 				});
 
-				var activeModel = new modelDef();
+				var activeModel = new ModelDef();
                 var acls = new AclModel({type: "custom-report-library-node", id: id});
 
-				this.activeView = new dashboardView({
+				this.activeView = new DashboardView({
 					model: activeModel,
           acls: acls,
 				});
@@ -114,16 +114,16 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 
 			showChartDetails: function (id) {
 				this.cleanContextContent();
-				var modelDef = Backbone.Model.extend({
+				var ModelDef = Backbone.Model.extend({
 					defaults: {
 						id: id
 					}
 				});
 
-				var activeModel = new modelDef();
+				var activeModel = new ModelDef();
 				var acls = new AclModel({type: "custom-report-library-node", id: id});
 
-				this.activeView = new chartView({
+				this.activeView = new ChartView({
 					model: activeModel,
 					acls: acls,
 
@@ -138,10 +138,10 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 					}
 				});
 
-				var activeModel = new modelDef();
+				var activeModel = new ModelDef();
 				var acls = new AclModel({type: "custom-report-library-node", id: id});
 
-				this.activeView = new reportView({
+				this.activeView = new ReportView({
 					model: activeModel,
 					acls: acls,
 				});
@@ -185,7 +185,7 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 		});
 
 		function init() {
-			return new router();
+			return new Router();
 		}
 
 		// TODO simply return the Router function

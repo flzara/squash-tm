@@ -150,7 +150,7 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 		},
 
 		previousStepAreValid : function() {
-			return _.isEmpty(this.missingStepNames)
+			return _.isEmpty(this.missingStepNames);
 		},
 
 		//as in database we have not a real column prototype for each cu, we need to create synthetic prototype client side.

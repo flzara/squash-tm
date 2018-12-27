@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "underscore", "backbone","handlebars"],
-	function ($, _, Backbone,Handlebars) {
+define(["jquery", "underscore", "backbone", "handlebars"],
+	function ($, _, Backbone, Handlebars) {
 		"use strict";
 
 	    var View = Backbone.View.extend({
@@ -27,23 +27,23 @@ define(["jquery", "underscore", "backbone","handlebars"],
             initialize :  function () {
                 this.render();
             },
-            
+
             events: {
-               
+
             },
-            
+
             render : function () {
                 this.$el.html("");
                 var source = $("#tpl-show-welcome-message").html();
-				var template = Handlebars.compile(source);
+								var template = Handlebars.compile(source);
                 var data = {
                     welcomeMessage : squashtm.app.homeWorkspaceConf.welcomeMessage
-                }
+                };
                 this.$el.append(template(data));
             }
-           
-            
+
+
         });
-       
+
         return View;
     });

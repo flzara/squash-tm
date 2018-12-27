@@ -412,7 +412,7 @@ define(["backbone", "./chart-render-utils", "./customReportPieView", "./customRe
 
 		function completeColour(json) {
 			if (json.colours &&(_.contains(json.colours,"") || _.contains(json.colours,null))) {
-				json.colours = colourUtils.completeColourArray(json.colours)
+				json.colours = colourUtils.completeColourArray(json.colours);
 			}
 		}
 

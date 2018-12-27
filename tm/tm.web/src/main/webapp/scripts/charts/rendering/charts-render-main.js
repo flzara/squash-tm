@@ -20,13 +20,13 @@
  */
 define(["jquery", "./chart-plotter"], function($, ChartPlotter){
 
-	
+
 	function buildChart(divSelector, chartDef){
 		ChartPlotter.buildChart(divSelector, chartDef);
 	}
-	
+
 	return {
 		buildChart : buildChart
-	}
-	
+	};
+
 });
