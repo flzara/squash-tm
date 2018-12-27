@@ -27,6 +27,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -62,24 +63,27 @@ public class SquashAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
 		HttpSession session = request.getSession();
-		User authUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		UserDetails authUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		session.setAttribute("username", authUser.getUsername());
 		response.setStatus(HttpServletResponse.SC_OK);
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		SavedRequest savedRequest = requestCache.getRequest(request, response);
 
-		if(authorities.stream().filter(auth -> ((GrantedAuthority) auth).getAuthority().equals(ROLE_TF_AUTOMATION_PROGRAMMER)).findAny().isPresent() &&
-			!authorities.stream().filter(auth -> ((GrantedAuthority) auth).getAuthority().equals(ROLE_TF_FUNCTIONAL_TESTER)).findAny().isPresent()) {
+		if(isUserProgrammerButNotTester(authorities)) {
 			getRedirectStrategy().sendRedirect(request, response,"/automation-workspace");
-		} else {
-			if(savedRequest != null) {
-				String targetUrl = savedRequest.getRedirectUrl();
-				getRedirectStrategy().sendRedirect(request, response, targetUrl);
-			} else {
-				getRedirectStrategy().sendRedirect(request, response,"/home-workspace");
-			}
-
+		} 
+		else if(savedRequest != null) {
+			String targetUrl = savedRequest.getRedirectUrl();
+			getRedirectStrategy().sendRedirect(request, response, targetUrl);
+		} 
+		else {
+			getRedirectStrategy().sendRedirect(request, response,"/home-workspace");
 		}
+	}
+
+	private boolean isUserProgrammerButNotTester(Collection<? extends GrantedAuthority> authorities) {
+		return authorities.contains(ROLE_TF_AUTOMATION_PROGRAMMER) &&
+				(! authorities.contains(ROLE_TF_FUNCTIONAL_TESTER));				
 	}
 
 	@Override
