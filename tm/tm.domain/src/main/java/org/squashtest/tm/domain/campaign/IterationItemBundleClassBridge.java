@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.campaign;
 
 import org.apache.lucene.document.*;
+import org.apache.lucene.search.SortField;
 import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.hibernate.search.bridge.MetadataProvidingFieldBridge;
@@ -48,13 +49,15 @@ import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 // So I keep the code simple and let the test case load. It's still faster than unrolling the natural way including testcase classbridges
 public class IterationItemBundleClassBridge implements FieldBridge, MetadataProvidingFieldBridge {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(IterationItemBundleClassBridge.class);
+
 	public static final String FIELD_TC_ID 			    = "referencedTestCase.id";
 	public static final String FIELD_TC_NAME 			= "referencedTestCase.name";
 	public static final String FIELD_TC_REFERENCE 		= "referencedTestCase.reference";
 	public static final String FIELD_TC_IMPORTANCE		= "referencedTestCase.importance";
 	public static final String FIELD_TC_AUTOMATABLE		= "referencedTestCase.automatable";
 	public static final String FIELD_TC_REQ_STATUS		= "referencedTestCase.automationRequest.requestStatus";
-	private static final Logger LOGGER = LoggerFactory.getLogger(IterationItemBundleClassBridge.class);
+
 
 	@Override
 	public void set(String name, Object value, Document document, LuceneOptions luceneOptions) {
@@ -109,17 +112,16 @@ public class IterationItemBundleClassBridge implements FieldBridge, MetadataProv
 		applyToLuceneStringOptions(luceneOptions, FIELD_TC_REQ_STATUS, requestStatus, document);
 	}
 
-
-
 	protected void applyToLuceneOptions(LuceneOptions luceneOptions, String name, Number value, Document document) {
 			luceneOptions.addNumericFieldToDocument( name, value, document );
 		document.add(new NumericDocValuesField(name,  new Long(value.longValue())));
 	}
 
 	protected void applyToLuceneStringOptions(LuceneOptions luceneOptions, String name, String value, Document document) {
+		document.add(new StringField(name, value, Field.Store.YES));
 		luceneOptions.addSortedDocValuesFieldToDocument( name, value, document );
-		document.add(new TextField(name, value, Field.Store.YES));
 	}
+
 
 	@Override
 	public void configureFieldMetadata(String name, FieldMetadataBuilder fieldMetadataBuilder) {
@@ -133,5 +135,4 @@ public class IterationItemBundleClassBridge implements FieldBridge, MetadataProv
 		fieldMetadataBuilder.field(FIELD_TC_AUTOMATABLE,FieldType.STRING).sortable(true);
 
 	}
-
 }
