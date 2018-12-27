@@ -23,31 +23,38 @@
 
 
 
-<div th:fragment="toggle-panel(id, titleKey, open, panelButtons, body)">
+<div th:fragment="toggle-panel(id, titleKey, body)"
+		
+		th:with="
+		open=${open} ?: ${true}, 
+		panelButtons=${panelButtons} ?: ${null}
+		">
 
 	<div th:remove="tag">
 		<!--  
 			The Thymealf port of the jsp tag components/toggle-panel.tag.
 			
-			Parameters :
-			- id : the ID of the main pane of the toggle panel. Not null.
-			- titleKey : the i18n key for the panel title. Not Null.
-			- open : boolean, whether the panel starts open or closed. Default true.
-			- panelButtons : the html snippet for the buttons. May be null.
+			Parameters (mandatory) :
+			- id : the ID of the main pane of the toggle panel.
+			- titleKey : the i18n key for the panel title.
 			- body : the html snippet for the panel body.
+			
+			Parameters (optional) :			
+			- open : boolean, whether the panel starts open or closed. Default true.
+			- panelButtons : the html snippet for the buttons. Default null.
 		 -->	
 	</div>
 	
-	<div th:class="sq-tg ${open == false ? 'collapse' :'expand'}">
+	<div class="sq-tg " th:classappend="${(open == false) ? 'collapse' :'expand'}">
 		<div class="tg-head">
-			<h3 >[[#{titleKey}]]</h3>
-			<div class="tg-toolbar">
+			<h3 >[[#{${titleKey}}]]</h3>
+			<div class="tg-toolbar" th:unless="${panelButtons == null}" >
 				<!--  untested, maybe buggy  -->
-				<th:block th:unless="${panelButtons == null}" th:replace="${panelButtons}"/>
+				<th:block th:replace="${panelButtons}"/>
 			</div>
 		</div>
 		
-		<div id="${id}" class="tg-body">
+		<div th:id="${id}" class="tg-body">
 			<th:block th:replace="${body}"/>
 		</div>
 	</div> 

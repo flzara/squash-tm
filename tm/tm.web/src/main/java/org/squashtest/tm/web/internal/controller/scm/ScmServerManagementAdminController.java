@@ -27,10 +27,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.scm.ScmServer;
+import org.squashtest.tm.domain.servers.AuthenticationProtocol;
+import org.squashtest.tm.domain.servers.ThirdPartyServer;
 import org.squashtest.tm.service.internal.scmserver.ScmConnectorRegistry;
+import org.squashtest.tm.service.scmserver.ScmServerCredentialsService;
 import org.squashtest.tm.service.scmserver.ScmServerManagerService;
+import org.squashtest.tm.service.servers.EncryptionKeyChangedException;
+import org.squashtest.tm.service.servers.ManageableCredentials;
+import org.squashtest.tm.service.servers.MissingEncryptionKeyException;
+import org.squashtest.tm.service.servers.ServerAuthConfiguration;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.controller.thirdpartyserver.ThirdPartyServerCredentialsManagementBean;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
@@ -40,10 +50,7 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY;
 
@@ -68,6 +75,8 @@ public class ScmServerManagementAdminController {
 
 	@Inject
 	private ScmServerManagerService scmServerManager;
+
+
 
 	@RequestMapping(method = RequestMethod.GET)
 		public ModelAndView showManager() {
@@ -107,6 +116,8 @@ public class ScmServerManagementAdminController {
 	public void deleteScmServers(@PathVariable List<Long> scmServerIds) {
 		scmServerManager.deleteScmServers(scmServerIds);
 	}
+
+
 
 	private class ScmServerDataTableModelHelper extends DataTableModelBuilder<ScmServer> {
 		@Override

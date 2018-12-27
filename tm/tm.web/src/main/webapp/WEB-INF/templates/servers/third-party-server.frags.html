@@ -51,10 +51,11 @@
 		
 		
 			<!-- protocol configuration -->
-			<div th:replace="fragment-utils/components :: toggle-panel(
+			<div th:replace="fragments-utils/components :: toggle-panel(
 									id='server-auth-protocol', 
 									titleKey='label.ServerAuthProtocol',
-									body=~{::.server-auth-proto-pane}
+									body=~{::.server-auth-proto-pane},
+									open=${false}
 									)">
 									
 
@@ -65,7 +66,7 @@
 							
 						<th:block th:each="proto : ${authConf.availableProtos}">
 							<option th:value="${proto}" th:selected="(${authConf.selectedProto} == ${proto})">
-								[[#{authentication.protocol.__${protocol.toString().toLowerCase()}__}]]
+								[[#{authentication.protocol.__${proto.toString().toLowerCase()}__}]]
 							</option>
 						</th:block>
 						
@@ -79,7 +80,7 @@
 						</div>
 		
 						<div class="centered srv-auth-buttonpane" style="position:relative">
-							<span class="needs-save-msg" style="display:none;"><f:message key="thirdpartyserver.admin.messages.needs-save"/></span>
+							<span class="needs-save-msg" style="display:none;">[[#{thirdpartyserver.admin.messages.needs-save}]]</span>
 							<!-- note : there is no 'test' button, because testing auth-configuration is hard or impossible -->
 							<input type="button" class="sq-btn auth-save" th:value="#{label.save}"/>
 						</div>
@@ -96,10 +97,11 @@
 			</div>
 		
 			<!-- policy configuration -->
-			<div th:replace="fragment-utils/components :: toggle-panel(
+			<div th:replace="fragments-utils/components :: toggle-panel(
 						id='server-auth-policy', 
 						titleKey='label.ServerAuthPolicy',
-						body=~{::.server-auth-policy-pane}
+						body=~{::.server-auth-policy-pane},
+						open=${false}
 						)">
 
 				<div class="adm-srv-auth server-auth-policy-pane">
@@ -159,13 +161,13 @@
 			<script id="oauth-conf-template" type="text/x-handlebars-template">
 				<div class="tbl" style="width:100%">
 				<div>
-					<label><f:message key="thirdpartyserver.admin.protocol.conf.oauth1a.consumerkey"/></label>
+					<label>[[#{thirdpartyserver.admin.protocol.conf.oauth1a.consumerkey}]]</label>
 					<input type="text" value="{{consumerKey}}" data-bind="consumerKey"/>
 					<span class="error-message consumerKey-error"></span>
 				</div>
 
 				<div>
-					<label><f:message key="thirdpartyserver.admin.protocol.conf.oauth1a.request-tokens"/></label>
+					<label>[[#{thirdpartyserver.admin.protocol.conf.oauth1a.request-tokens}]]</label>
 					<div class="flexible">
 						<select data-bind="requestTokenHttpMethod">
 							<option value="GET" 	{{#equal requestTokenHttpMethod 'GET'}}selected="selected"{{/equal}}>GET</option>
@@ -177,7 +179,7 @@
 				</div>
 
 				<div>
-					<label><f:message key="thirdpartyserver.admin.protocol.conf.oauth1a.access-tokens"/></label>
+					<label>[[#{thirdpartyserver.admin.protocol.conf.oauth1a.access-tokens}]]</label>
 					<div class="flexible">
 						<select data-bind="accessTokenHttpMethod">
 							<option value="GET" 	{{#equal accessTokenHttpMethod 'GET'}}selected="selected"{{/equal}}>GET</option>
@@ -189,19 +191,19 @@
 				</div>
 
 				<div>
-					<label><f:message key="thirdpartyserver.admin.protocol.conf.oauth1a.autorize"/></label>
+					<label>[[#{thirdpartyserver.admin.protocol.conf.oauth1a.autorize}]]</label>
 					<input type="text" value="{{userAuthorizationUrl}}" data-bind="userAuthorizationUrl"/>
 					<span class="error-message userAuthorizationUrl-error"></span>
 				</div>
 
 				<div>
-					<label><f:message key="thirdpartyserver.admin.protocol.conf.oauth1a.secret"/></label>
+					<label>[[#{thirdpartyserver.admin.protocol.conf.oauth1a.secret}]]</label>
 					<textarea data-bind="clientSecret" >{{clientSecret}}</textarea>
 					<span class="error-message clientSecret-error"></span>
 				</div>
 
 				<div>
-					<label><f:message key="thirdpartyserver.admin.protocol.conf.oauth1a.sig-method"/></label>
+					<label>[[#{thirdpartyserver.admin.protocol.conf.oauth1a.sig-method}]]</label>
 					<select data-bind="signatureMethod">
 						<option value="HMAC_SHA1" {{#equal signatureMethod 'HMAC_SHA1'}}selected="selected"{{/equal}}>HMAC-SHA1</option>
 						<option value="RSA_SHA1" {{#equal signatureMethod 'RSA_SHA1'}}selected="selected"{{/equal}}>RSA-SHA1</option>
@@ -214,11 +216,11 @@
 			<script id="oauth-creds-template" type="text/x-handlebars-template">
 				<div class="tbl">
 					<div>
-						<label><f:message key="label.Token"/></label>
+						<label>[[#{label.Token}]]</label>
 						<input type="text" value="{{token}}" data-bind="token">
 					</div>
 					<div>
-						<label><f:message key="label.TokenSecret"/></label>
+						<label>[[#{label.TokenSecret}]]</label>
 						<input value="{{tokenSecret}}" data-bind="tokenSecret">
 					</div>
 				</div>
@@ -228,11 +230,11 @@
 			<script id="basic-creds-template" type="text/x-handlebars-template">
 				<div class="tbl">
 					<div>
-						<label><f:message key="label.Login"/></label>
+						<label>[[#{label.Login}]]</label>
 						<input type="text" value="{{username}}" data-bind="username">
 					</div>
 					<div>
-						<label><f:message key="label.Password"/></label>
+						<label>[[#{label.Password}]]</label>
 						<input type="password" value="{{password}}" data-bind="password">
 					</div>
 				</div>

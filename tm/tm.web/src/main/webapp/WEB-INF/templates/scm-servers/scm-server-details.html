@@ -45,7 +45,8 @@
 		  url: /*[[ @{/administration/scm-server/}+${scmServer.id} ]]*/ "http://localhost/scm-server/4",
 		  scmServerKinds: /*[[ ${scmServerKinds} ]]*/,
 		  scmServerId: /*[[ ${scmServer.id} ]]*/ "4",
-		  scmServerName: /*[[ ${scmServer.name} ]]*/ "GitHub Server"
+		  scmServerName: /*[[ ${scmServer.name} ]]*/ "GitHub Server",
+		  authConf: /*[[${authConf}]]*/
 		};
 		/*]]>*/
   </script>
@@ -138,6 +139,16 @@
             <br/>
 
           </div>
+
+          <!-- ------------------------------------------------------------------------------------
+            Credentials management
+          ------------------------------------------------------------------------------------- -->
+
+          <div th:replace="servers/third-party-server.frags :: credentials-manager(${authConf})"/>
+
+          <!-- ------------------------------------------------------------------------------------
+            /Credentials management
+          ------------------------------------------------------------------------------------- -->
 
           <div class="sq-tg expand">
 

@@ -19,8 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function() {
-	require(["jquery", "app/ws/squashtm.workspace", "jeditable.simpleJEditable", "./scm-server/RenameScmServerDialog", "./scm-server/ScmRepositoriesTableView"],
-	function($, WS, SimpleJEditable, RenameScmServerDialog, ScmRepositoriesTableView) {
+	require(["jquery", "app/ws/squashtm.workspace", "jeditable.simpleJEditable", "./scm-server/RenameScmServerDialog", 
+		"./scm-server/ScmRepositoriesTableView", "third-party-server/credentials-manager", "jquery.squash.togglepanel"],
+	function($, WS, SimpleJEditable, RenameScmServerDialog, ScmRepositoriesTableView, CredentialManagerView) {
 
 		WS.init();
 
@@ -47,6 +48,13 @@ require([ "common" ], function() {
 		$('#scm-server-url').click(function() {
 			$(this).siblings('.error-message').text('');
 		});
+
+
+		// ******* authentication ***********
+		 var authConf = $.extend({}, squashtm.pageConfiguration.authConf);
+		 authConf.entityUrl = squashtm.pageConfiguration.url;
+
+		 new CredentialManagerView({ conf: authConf });
 
 	});
 });
