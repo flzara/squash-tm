@@ -115,7 +115,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             var $row = $(row);
                             if (checked) {
                                 input = '<input type="checkbox" class="editor-active" checked>';
-                                $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight")
+                                $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight");
                             } else {
                                 input = '<input type="checkbox" class="editor-active">';
                             }
@@ -136,20 +136,20 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         var edFnElements = $.editable.types.text.element;
 
                         if ($row.find("input[type=checkbox]")[0].checked) {
-                            $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight")
+                            $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight");
                         }
 
                         $row.on("change", "input[type=checkbox]", function () {
 
                             if (this.checked) {
-                                $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight")
+                                $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight");
                             } else {
-                                $row.removeClass("ui-state-row-selected").addClass("ui-state-highlight")
+                                $row.removeClass("ui-state-row-selected").addClass("ui-state-highlight");
                             }
                             var store = self.storage.get(self.key);
                             if (store === undefined) {
                                 var tab = [];
-                                tab.push(data["tc-id"])
+                                tab.push(data["tc-id"]);
                                 self.storage.set(self.key, tab);
                             } else {
                                 if (this.checked) {
@@ -161,14 +161,14 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                 }
                                 self.storage.set(self.key, store);
                             }
-                        })
+                        });
 
                         $row.on("click", "td.select-handle", function () {
                             if (!$row.hasClass("ui-state-row-selected")) {
-                                $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight")
+                                $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight");
                             }
 
-                        })
+                        });
                         edObj.buttons = function (settings, original) {
                             //first apply the original function
                             edFnButtons.call(this, settings, original);
@@ -215,11 +215,11 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             var settings = {
                                 url: urlTa,
                                 id: cellId
-                            }
+                            };
 
                             cell.on("click", function () {
                                 $("td[id!=" + cellId + "]").find("form button[type=cancel]").click();
-                            })
+                            });
 
                             cell.on('click', '#ta-script-picker-button', function () {
                                 self._initPickerPopup(settings);
@@ -246,7 +246,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                 self.selected = self.selected + 1;
                             }
 
-                        })
+                        });
                         self.changeNumberSelectedRows(self.selected);
                     },
                 };
@@ -272,7 +272,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 });
             },
 
-            _initRemovePopup(settings) {
+            _initRemovePopup: function(settings) {
                 var dialog = $("#ta-remove-popup");
 
                 dialog.formDialog();
@@ -289,7 +289,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 });
             },
 
-            _initPickerPopup: function (settings) {
+            _initPickerPopup: function(settings) {
                 var dialog = $("#ta-picker-popup");
 
                 var testAutomationTree = dialog.find(".structure-tree");
@@ -441,14 +441,14 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     var tcId = parseInt($('.entity_id', row).text(), 10);
 
                     var $row = $(row);
-                    var checkbox = $row.find("input[type=checkbox]")
+                    var checkbox = $row.find("input[type=checkbox]");
                     if (checkbox[0] !== undefined) {
                         ids.push(tcId);
-                        checkbox[0].checked = true
+                        checkbox[0].checked = true;
                         var store = self.storage.get(self.key);
                         if (store === undefined) {
                             var tab = [];
-                            tab.push(tcId)
+                            tab.push(tcId);
                             self.storage.set(self.key, tab);
                         } else {
                             if (checkbox[0].checked) {
@@ -463,7 +463,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
                     }
 
-                })
+                });
                 table.selectRows(ids);
                 this.changeNumberSelectedRows(table.getSelectedRows().length);
             },
@@ -475,10 +475,10 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     var $row = $(row);
                     var checkbox = $row.find("input[type=checkbox]");
                     if (checkbox[0] !== undefined) {
-                        checkbox[0].checked = false
+                        checkbox[0].checked = false;
                     }
 
-                })
+                });
 
                 this.storage.remove(this.key);
                 this.changeNumberSelectedRows(table.getSelectedRows().length);
@@ -498,9 +498,9 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 var ids = [];
                 $(selectedRows).each(function (index, data) {
                     var idx = data._DT_RowIndex;
-                    var tcId = datas[idx]["entity-id"]
+                    var tcId = datas[idx]["entity-id"];
                     ids.push(tcId);
-                })
+                });
                 return ids;
             },
 
@@ -516,7 +516,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     if ((script === null || script === "-") && "gherkin" !== format.toLowerCase()) {
                         count = count + 1;
                     }
-                })
+                });
 
 
                 return count;

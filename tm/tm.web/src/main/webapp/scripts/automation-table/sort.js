@@ -43,8 +43,8 @@ define([ "jquery", "workspace.storage"],
         var sorting = conf.aaSorting;
         this.update = function(_sort) {
             var _sorting = _sort || $table.squashTable().fnSettings().aaSorting;
-            this._saveaaSorting(_sorting)
-        }
+            this._saveaaSorting(_sorting);
+        };
 
 		// ******************** I/O ********************
 
@@ -64,7 +64,7 @@ define([ "jquery", "workspace.storage"],
             var sorts = [];
             for(var i=0; i< aaSorting.length; i++) {
                 var sort = aaSorting[i];
-                sorts.push([sort[0], sort[1]])
+                sorts.push([sort[0], sort[1]]);
             }
 			this.storage.set(this.key, sorts);
 		};

@@ -19,11 +19,11 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(['jquery', 'backbone', 'workspace.routing', './views/assignedView', './views/globalView', './views/traitmentView'],
-	function ($, Backbone, urlBuilder, assignedView, globalView, traitmentView) {
+	function ($, Backbone, urlBuilder, AssignedView, GlobalView, TraitmentView) {
 		"use strict";
 
 
-		var router = Backbone.Router.extend({
+		var Router = Backbone.Router.extend({
 			activeView: null,
 			initialize: function () {
 
@@ -37,23 +37,23 @@ define(['jquery', 'backbone', 'workspace.routing', './views/assignedView', './vi
 			},
 
 			assigned: function () {
-				this.activeView = new assignedView();
+				this.activeView = new AssignedView();
 			},
 
 			global: function () {
-				this.activeView = new globalView();
+				this.activeView = new GlobalView();
 			},
 
 			traitment: function () {
-				this.activeView = new traitmentView();
+				this.activeView = new TraitmentView();
 			}
 
 		});
 
 		function init() {
-			return new router;
+			return new Router();
 		}
 		return {
 			init: init
 		};
-	})
+	});

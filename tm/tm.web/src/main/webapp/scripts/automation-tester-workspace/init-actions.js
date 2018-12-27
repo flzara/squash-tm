@@ -94,4 +94,4 @@ define(['jquery', 'workspace.contextual-content', 'workspace.routing'],
 			init: init
 		};
 	}
-)
+);

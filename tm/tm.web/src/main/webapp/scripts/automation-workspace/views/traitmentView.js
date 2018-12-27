@@ -103,7 +103,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             var $row = $(row);
                             if (checked) {
                                 input = '<input type="checkbox" class="editor-active" checked>';
-                                $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight")
+                                $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight");
                             } else {
                                 input = '<input type="checkbox" class="editor-active">';
                             }
@@ -120,20 +120,20 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         var $row = $(row);
 
                         if ($row.find("input[type=checkbox]")[0].checked) {
-                            $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight")
+                            $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight");
                         }
 
                         $row.on("change", "input[type=checkbox]", function () {
 
                             if (this.checked) {
-                                $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight")
+                                $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight");
                             } else {
-                                $row.removeClass("ui-state-row-selected").addClass("ui-state-highlight")
+                                $row.removeClass("ui-state-row-selected").addClass("ui-state-highlight");
                             }
                             var store = self.storage.get(self.key);
                             if (store === undefined) {
                                 var tab = [];
-                                tab.push(data["tc-id"])
+                                tab.push(data["tc-id"]);
                                 self.storage.set(self.key, tab);
                             } else {
                                 if (this.checked) {
@@ -145,14 +145,14 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                 }
                                 self.storage.set(self.key, store);
                             }
-                        })
+                        });
 
                         $row.on("click", "td.select-handle", function () {
                             if (!$row.hasClass("ui-state-row-selected")) {
-                                $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight")
+                                $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight");
                             }
 
-                        })
+                        });
                     },
 
                     fnDrawCallback: function () {
@@ -165,7 +165,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                 self.selected = self.selected + 1;
                             }
 
-                        })
+                        });
                         self.changeNumberSelectedRows(self.selected);
                     },
                 };
@@ -200,16 +200,16 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 var self = this;
                 $(rows).each(function (index, row) {
                     var tcId = parseInt($('.entity_id', row).text(), 10);
-                    
+
                     var $row = $(row);
-                    var checkbox = $row.find("input[type=checkbox]")
+                    var checkbox = $row.find("input[type=checkbox]");
                     if (checkbox[0] !== undefined) {
                         ids.push(tcId);
-                        checkbox[0].checked = true
+                        checkbox[0].checked = true;
                         var store = self.storage.get(self.key);
                         if (store === undefined) {
                             var tab = [];
-                            tab.push(tcId)
+                            tab.push(tcId);
                             self.storage.set(self.key, tab);
                         } else {
                             if (checkbox[0].checked) {
@@ -224,7 +224,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
                     }
 
-                })
+                });
                 table.selectRows(ids);
                 this.changeNumberSelectedRows(table.getSelectedRows().length);
             },
@@ -236,10 +236,10 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     var $row = $(row);
                     var checkbox = $row.find("input[type=checkbox]");
                     if (checkbox[0] !== undefined) {
-                        checkbox[0].checked = false
+                        checkbox[0].checked = false;
                     }
 
-                })
+                });
 
                 this.storage.remove(this.key);
                 this.changeNumberSelectedRows(table.getSelectedRows().length);
@@ -251,9 +251,9 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 var ids = [];
                 $(selectedRows).each(function (index, data) {
                     var idx = data._DT_RowIndex;
-                    var tcId = datas[idx]["entity-id"]
+                    var tcId = datas[idx]["entity-id"];
                     ids.push(tcId);
-                })
+                });
                 return ids;
             },
 

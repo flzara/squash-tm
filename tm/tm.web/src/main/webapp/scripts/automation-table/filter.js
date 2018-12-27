@@ -24,7 +24,8 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 		"use strict";
 		var tableSelector = ".automation-table";
 
-		function filterMode(initConf) {
+		function FilterMode(initConf) {
+			/* jshint validthis:true */
 			var table = $(tableSelector),
 				self = this;
 			this.active = false;
@@ -80,17 +81,17 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 					+ "<input class='rangedatepicker-input' readonly='readonly'/>"
 					+ "<div class='rangedatepicker-div' style='position:absolute;top:auto;left:auto;z-index:1;'></div>"
 					+ "<input type='hidden' class='rangedatepicker-hidden-input filter_input'/>"
-					+ "</div>")
+					+ "</div>");
 			}
 
 			function isDefaultFiltering(currentFilter) {
 				return $.grep(currentFilter, function (o) {
 					return (strUtils.isBlank(o.sSearch));
-				}).length == 0;
+				}).length === 0;
 			}
 
 			function findColFilterByName(filter, mDataProp) {
-				return _.find(filter, function (f) { return f.mDataProp === mDataProp });
+				return _.find(filter, function (f) { return f.mDataProp === mDataProp; });
 			}
 
 
@@ -100,7 +101,7 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 
 			function showInputs() {
 				table.find('>thead>tr').removeClass('tp-filtermode-disabled');
-			};
+			}
 
 			function restoreTableFilter(filter) {
 
@@ -149,7 +150,7 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 						$th.find('.rangedatepicker-input').val(colFilter.sSearch);
 					}
 				});
-			};
+			}
 
 			var model = squashtm.app;
 
@@ -184,7 +185,6 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 				_createCombo(assignedToCombo, "#filter-mode-combo", model.assignableUsersGlobalView);
 			}
 
-			var self = this;
 			_createTimePicker(transmittedTime);
 			_createTimePicker(assignedTime);
 
@@ -234,11 +234,11 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 				} else {
 					hideInputs();
 				}
-			};
+			}
 
 			this.toggleFilter = function () {
 
-				var filterObject = undefined;
+				var filterObject;
 				if (this.active) {
 					this.active = false;
 					filterObject = table.squashTable().fnSettings().aoPreSearchCols;
@@ -289,17 +289,13 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 				sTable.fnFilter(realInput.value, realIndex);
 				self._save();
 			});
-			var state = storage.get(self.key);
-			if (state !== undefined) {
-				self.active = state.active;
-				restoreInputs(state.filter);
-			};
+
 		}
 
 		return {
 			newInst: function (conf) {
-				return new filterMode(conf);
+				return new FilterMode(conf);
 			}
-		}
+		};
 
 	});

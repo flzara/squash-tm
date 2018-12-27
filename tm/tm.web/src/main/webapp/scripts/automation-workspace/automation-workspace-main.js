@@ -40,7 +40,7 @@ define(['squash.translator', './init-actions'],
 		}
 
 		return {
-			
+
 			init: init
 		};
 	});
