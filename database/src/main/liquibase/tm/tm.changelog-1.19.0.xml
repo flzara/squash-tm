@@ -721,7 +721,7 @@
 
     <sql>
       alter table BUGTRACKER alter column BUGTRACKER_ID drop default;
-      drop sequence if exists 'bugtracker_bugtracker_id_seq';
+      drop sequence if exists bugtracker_bugtracker_id_seq;
 
       select setval('third_party_server_server_id_seq', (select max(SERVER_ID) from THIRD_PARTY_SERVER));
     </sql>
