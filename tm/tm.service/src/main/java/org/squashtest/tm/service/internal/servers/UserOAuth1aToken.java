@@ -23,9 +23,9 @@ package org.squashtest.tm.service.internal.servers;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.servers.OAuth1aCredentials;
+import org.squashtest.tm.domain.servers.ThirdPartyServer;
 import org.squashtest.tm.service.servers.ManageableCredentials;
 import org.squashtest.tm.service.servers.ServerAuthConfiguration;
 import org.squashtest.tm.service.servers.StoredCredentialsManager;
@@ -94,7 +94,7 @@ public class UserOAuth1aToken implements ManageableCredentials {
 	}
 
 	@Override
-	public OAuth1aCredentials build(StoredCredentialsManager storeManager, BugTracker server, String username) {
+	public OAuth1aCredentials build(StoredCredentialsManager storeManager, ThirdPartyServer server, String username) {
 
 		OAuth1aCredentials result = null;
 

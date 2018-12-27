@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.service.servers;
 
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.servers.Credentials;
+import org.squashtest.tm.domain.servers.ThirdPartyServer;
 
 /**
  * <p>
@@ -37,7 +37,7 @@ import org.squashtest.tm.domain.servers.Credentials;
  *
  * <p>
  *		In some cases the credentials alone would not suffice, and the server authentication configuration is required.
- *		To that end, the method that build the effective credentials {@link #build(StoredCredentialsManager, BugTracker, String)}
+ *		To that end, the method that build the effective credentials {@link #build(StoredCredentialsManager, ThirdPartyServer, String)}
  *		receives extra parameters that allows for extra operations.
  * </p>
  */
@@ -75,7 +75,7 @@ public interface ManageableCredentials {
 	 *
 	 * @return
 	 */
-	Credentials build(StoredCredentialsManager storeManager, BugTracker server, String username);
+	Credentials build(StoredCredentialsManager storeManager, ThirdPartyServer server, String username);
 
 
 

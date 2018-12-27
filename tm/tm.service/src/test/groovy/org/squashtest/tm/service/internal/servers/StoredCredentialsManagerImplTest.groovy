@@ -391,7 +391,7 @@ class StoredCredentialsManagerImplTest extends Specification{
 		}
 
 		@Override
-		Credentials build(StoredCredentialsManager storeManager, BugTracker server, String username) {
+		Credentials build(StoredCredentialsManager storeManager, ThirdPartyServer server, String username) {
 			return null
 		}
 

@@ -23,9 +23,9 @@ package org.squashtest.tm.service.internal.servers;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials;
 import org.squashtest.tm.domain.servers.Credentials;
+import org.squashtest.tm.domain.servers.ThirdPartyServer;
 import org.squashtest.tm.service.servers.ManageableCredentials;
 import org.squashtest.tm.service.servers.StoredCredentialsManager;
 
@@ -60,7 +60,7 @@ public class ManageableBasicAuthCredentials extends BasicAuthenticationCredentia
 	}
 
 	@Override
-	public Credentials build(StoredCredentialsManager storeManager, BugTracker server, String username) {
+	public Credentials build(StoredCredentialsManager storeManager, ThirdPartyServer server, String username) {
 		if (isValid()){
 			return this;
 		}
