@@ -24,6 +24,7 @@ define(
 	function ($, Backbone, _, SquashTable, oneshot, messages, notif, Handlebars, StringUtil) {
 		"use strict";
 
+		/* jshint validthis:true */
 		messages.load([
 			"message.infoList.remove.first",
 			"message.infoList.remove.second",
@@ -105,7 +106,7 @@ define(
 
 		function popupReindex() {
 			var buttonConf = [];
-			isAdmin && buttonConf.push(gotoIndexButton);
+			if (isAdmin) { buttonConf.push(gotoIndexButton); }
 			buttonConf.push(closeButton);
 			oneshot.show(messages.get("label.Delete"), reindexTemplate()(), {buttons: buttonConf});
 		}
@@ -308,7 +309,7 @@ define(
 				var props = removeProps(false /* not batch */);
 				var tpl = removeTemplate()(props(isBound));
 				oneshot.show(messages.get("label.Delete"), tpl, {width: "50%"}).done(function () {
-					isBound && popupReindex();
+					if (isBound) { popupReindex();}
 					$.ajax(self.apiRoot + "/" + $(tgt).data("value"), {type: "DELETE"})
 						.done(self.refresh);
 				});
@@ -331,7 +332,7 @@ define(
 				var tpl = removeTemplate()(props(hasBound));
 
 				oneshot.show(messages.get("label.Delete"), tpl, {width: "50%"}).done(function () {
-					hasBound && popupReindex();
+					if (hasBound) { popupReindex(); }
 					var ids = rows.data().map(itemIdMapper).join(",");
 					$.ajax(self.apiRoot + "/" + ids, {type: "DELETE"})
 						.done(self.refresh);

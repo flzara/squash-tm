@@ -29,7 +29,7 @@ define(['jquery', 'backbone', 'squash.translator', 'workspace.routing', 'app/uti
 
 		initialize: function(scmRepositoriesTable) {
 			var self = this;
-			var $el = this.$el
+			var $el = this.$el;
 
 			self.ChangeAttributeDialog = $el.formDialog();
 			self.table = scmRepositoriesTable;
@@ -50,7 +50,7 @@ define(['jquery', 'backbone', 'squash.translator', 'workspace.routing', 'app/uti
 		/**
 		* Prepare the configuration of the dialog for repository name modification.
 		*/
-		openForName(event) {
+		openForName: function(event) {
 			var self = this;
 			var title = translator.get('title.ChangeRepositoryName');
 			var label = translator.get('label.Name');
@@ -69,7 +69,7 @@ define(['jquery', 'backbone', 'squash.translator', 'workspace.routing', 'app/uti
 		/**
 		* Prepare the configuration of the dialog for repository path modification.
 		*/
-		openForPath(event) {
+		openForPath: function(event) {
 			var self = this;
 			var title = translator.get('title.ChangeRepositoryPath');
 			var label = translator.get('label.RepositoryPath');
@@ -88,7 +88,7 @@ define(['jquery', 'backbone', 'squash.translator', 'workspace.routing', 'app/uti
 		/**
 		* Prepare the configuration of the dialog for folder path modification.
 		*/
-		openForFolder(event) {
+		openForFolder: function(event) {
 			var self = this;
 
 			var title = translator.get('title.ChangeWorkingFolderPath');
@@ -108,7 +108,7 @@ define(['jquery', 'backbone', 'squash.translator', 'workspace.routing', 'app/uti
 		/**
 		* Prepare the configuration of the dialog for folder path modification.
 		*/
-		openForBranch(event) {
+		openForBranch: function(event) {
 			var self = this;
 
 			var title = translator.get('title.ChangeWorkingBranch');
@@ -129,7 +129,7 @@ define(['jquery', 'backbone', 'squash.translator', 'workspace.routing', 'app/uti
 		* Adapt the dialog title and label according to the attribute being modified.
 		* Also fill the only input with the current value of this attribute.
 		*/
-		adaptAndOpenDialog(title, label, value) {
+		adaptAndOpenDialog: function(title, label, value) {
 			var self = this;
 			// clear errors
 			Forms.input(self.input).clearState();
@@ -146,7 +146,7 @@ define(['jquery', 'backbone', 'squash.translator', 'workspace.routing', 'app/uti
 		* Check the validity of the one-input form. If any error, displays it in the dialog.
 		* If everything is valid, update the attribute of the ScmRepository and execute the callback function.
 		*/
-		updateAttribute(callback) {
+		updateAttribute: function(callback) {
 			var self = this;
 
 			// clear errors
@@ -173,7 +173,7 @@ define(['jquery', 'backbone', 'squash.translator', 'workspace.routing', 'app/uti
 		* @param data: A one-attribute object with the key (path, folder or branch) and the new value to put.
 		* @return The Promise of the Post Request.
 		*/
-		doUpdateAttribute(repositoryId, data) {
+		doUpdateAttribute: function(repositoryId, data) {
 			return $.ajax({
 				url: routing.buildURL('administration.scm-repositories', repositoryId),
 				type: 'POST',

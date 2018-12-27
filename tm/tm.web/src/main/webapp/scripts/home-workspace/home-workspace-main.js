@@ -19,11 +19,11 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(['./home-main-view'],
-    function (mainView) {
+    function (MainView) {
         "use strict";
 
          function init() {
-         		new mainView();
+         		new MainView();
          }
 
          return {

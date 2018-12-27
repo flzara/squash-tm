@@ -126,7 +126,7 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 		};
 
 		function findColFilterByName(filter, mDataProp){
-			return _.find(filter, function(f){return f.mDataProp === mDataProp});
+			return _.find(filter, function(f){return f.mDataProp === mDataProp;});
 		}
 
 
@@ -136,7 +136,7 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 
 		function showInputs() {
 			table.find('>thead>tr').removeClass('tp-filtermode-disabled');
-		};
+		}
 
 
 		/*
@@ -200,7 +200,7 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 					$th.find('.filter_input').val(colFilter.sSearch);
 				}
 			});
-		};
+		}
 
 
 
@@ -342,7 +342,7 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 			else{
 				hideInputs();
 			}
-		};
+		}
 
 
 		// ************** /CONSTRUCTOR **********
@@ -401,7 +401,7 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 
 		this.toggleFilter = function(){
 
-			var filterObject = undefined;
+			var filterObject;
 
 			// note that, depending on the branch,
 			// the filter object is different;
@@ -441,6 +441,6 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 		newInst : function(conf){
 			return new FilterMode(conf);
 		}
-	}
+	};
 
 });

@@ -26,11 +26,11 @@ require([ "common" ], function() {
 		WS.init();
 
 		var nameLabel = $('#scm-server-name-header');
-		var RenameScmServerDialog = new RenameScmServerDialog(nameLabel);
+		var renameScmServerDialog = new RenameScmServerDialog(nameLabel);
 		new ScmRepositoriesTableView();
 
 		$('#rename-scm-server-button').click(function() {
-			RenameScmServerDialog.open();
+			renameScmServerDialog.open();
 		});
 
 		/* JEditable for Url modification. */

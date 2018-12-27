@@ -53,7 +53,7 @@
 			});
 
       $el.on('formdialogcancel', function() {
-      	$el.formDialog('close')
+      	$el.formDialog('close');
       });
 		},
 

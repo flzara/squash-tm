@@ -21,50 +21,50 @@
 /**
  * Here is a good template your could use for your own milestone panels. Please pay attention to the classes
  * milestone-panel-X.
- * 
+ *
  * <div class="milestone-panel-master"> <div class="toolbar"> <input type="button" class="sq-btn
  * milestone-panel-bind-button" value="+"/> <input type="button" class="sq-btn milestone-panel-unbind-button"
  * value="-"/> </div>
- * 
+ *
  * <div class="table-tab-wrap">
- * 
+ *
  * <table class="milestone-panel-table" data-def="..."> table definition goes here </table>
- * 
+ *
  * </div>
- * 
+ *
  * <div class="bind-milestone-dialog popup-dialog not-displayed"> add popup definition goes here, see file
  * jquery.squash.milestoneDialog.js </div>
- * 
+ *
  * <div class="unbind-milestone-dialog popup-dialog not-displayed"> add popup definition goes here, see file
  * jquery.squash.milestoneDialog.js </div>
- * 
+ *
  * <script>
- * 
+ *
  * var conf = { see documentation below }
- * 
+ *
  * require(["milestones/milestone-panel"], function(panel){ panel.init(conf); });
- * 
+ *
  * </script>
- * 
+ *
  * </div>
- * 
- * 
- * 
+ *
+ *
+ *
  * configuration :
  *  {
- * 
+ *
  * element : the jquery selector for the panel (optional), rootPath : the root path for the entity of which we 're
  * managing the milestones. Note that we don't want the root context (eg not '/squash') identity : { resid : the id of
  * the test-case/whatever this panel sits in restype : the type of entity : 'testcases etc' }, currentModel : if
  * provided, the table will be initialized with it, editable : boolean, whether the user can or not edit the table
  * content }
- * 
- * 
+ *
+ *
  * Events :
  *  - node.unbindmilestones : the entity was removed from the scope of one or several milestones. The event comes with a
  * companion data : { identity : identity, milestones : [array, of, milestoneids] }
- * 
- * 
+ *
+ *
  */
 define([ "jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash.translator", "squashtable",
 		"./jquery.squash.milestoneDialog", "jquery.squash.formdialog" ],
@@ -83,7 +83,6 @@ define([ "jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squas
 					if (val['isStatusAllowUnbind'] === false) {
 						locked = true;
 					}
-					;
 				});
 
 				return locked;
@@ -103,13 +102,13 @@ define([ "jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squas
 				/*
 				 * Here we want our table to use a local model for initialization, perform sort and filter operations
 				 * locally, yet be able to reload by ajax.
-				 * 
+				 *
 				 * Configuring all of this at once doesn't work because the table initialize the content once with the
 				 * model and a second time with the ajax source.
-				 * 
+				 *
 				 * So we need to trick it by initializing it with no ajax source specified, then we supply it when it's
 				 * complete.
-				 * 
+				 *
 				 */
 				var tblCnf = {
 					aaData : conf.currentModel,
@@ -157,8 +156,8 @@ define([ "jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squas
 
 				currentTable.on('processing.dt', function(event) {
 					// reapply sorting after processing, so order is correct after _fnAjaxUpdate()
-					currentTable.fnSort(currentTable.fnSettings().aaSorting); 
-				})
+					currentTable.fnSort(currentTable.fnSettings().aaSorting);
+				});
 
 				// editable features :
 				if (conf.editable) {
@@ -195,7 +194,7 @@ define([ "jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squas
 						}
 
 						// else, we're fine
-						else bindDialog.milestoneDialog('setState', 'select-milestone');
+						else { bindDialog.milestoneDialog('setState', 'select-milestone'); }
 
 					});
 

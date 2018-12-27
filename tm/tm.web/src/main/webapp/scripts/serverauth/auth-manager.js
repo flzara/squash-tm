@@ -266,7 +266,7 @@ define(['jquery', 'handlebars', 'workspace.routing',
 		}
 
 		return defer.promise();
-	}
+	};
 
 	// *************** main **********************
 
@@ -282,7 +282,7 @@ define(['jquery', 'handlebars', 'workspace.routing',
 				// arg is an int
 				conf = {
 					serverId : arg
-				}
+				};
 			}
 
 			// find or create the instance of authmanager for this serverid

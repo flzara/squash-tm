@@ -56,7 +56,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./IconSelectDialog", 
 				}
 
 				return res;
-			}
+			};
 		}
 
 		squashtm.reqres.setHandler("list-option:code:validate", checkNotExistsHandler("code", squashtm.app.contextRoot + "info-lists/items/code"));

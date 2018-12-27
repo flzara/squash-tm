@@ -22,7 +22,7 @@ define(["backbone", "squash.translator", "../app/squash.backbone.validation", "a
 	function (Backbone, messages, Validation) {
 		"use strict";
 		messages.load(["message.optionCodeAlreadyDefined", "message.optionLabelAlreadyDefined"]);
-
+		/* jshint validthis:true */
 		/**
 		 * returns a validator function which checks this model's code unicity.
 		 */

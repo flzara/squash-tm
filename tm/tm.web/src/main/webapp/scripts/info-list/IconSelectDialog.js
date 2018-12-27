@@ -131,7 +131,7 @@ define([ "jquery", "backbone", "handlebars", "underscore", "workspace.routing", 
 		cleanup : function() {
 			this.$el.addClass("not-displayed");
 			// if we destroy twice, jqui blows up
-			this.$el.hasClass("ui-dialog-content") && this.$el.formDialog("destroy");
+			if (this.$el.hasClass("ui-dialog-content")) { this.$el.formDialog("destroy"); }
 		},
 
 		remove : function() {

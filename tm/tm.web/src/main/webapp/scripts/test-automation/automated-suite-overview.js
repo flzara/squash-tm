@@ -110,7 +110,7 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 				if (table.length > 0) {
 					table.squashTable().refresh();
 				}
-				squashtm.execution.refreshTestSuiteInfo()
+				squashtm.execution.refreshTestSuiteInfo();
 
 				// TODO : replace the following function that doesn't exist anymore with an event published on the event
 				// bus

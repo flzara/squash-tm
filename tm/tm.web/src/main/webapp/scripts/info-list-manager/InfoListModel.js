@@ -24,6 +24,8 @@ define([ "jquery", "backbone", "underscore", "squash.translator", "app/util/Stri
 
 	messages.load([ "message.noDefaultOption", "message.codeAlreadyDefined", "message.labelAlreadyDefined" ]);
 
+	/* jshint validthis:true */
+
 	var defaultValueByInputType = {
 			PLAIN_TEXT : "",
 			CHECKBOX : "false",

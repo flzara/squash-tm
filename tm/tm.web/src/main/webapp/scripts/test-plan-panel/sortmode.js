@@ -54,15 +54,15 @@ define([ "jquery", "workspace.storage", "app/util/ButtonUtil", "squash.attribute
 		}
 
 		this.key = entityType + "-sort-" + entityId;
-		
+
 
 		this.state = {
 			active : false,		// whether the message is displayed and DnD disabled, and conversely
-			saveable : true 	// whether saving the reordering is allowed or not. Note that it's different 
+			saveable : true 	// whether saving the reordering is allowed or not. Note that it's different
 								// from the state of the Reorder button.
-		};		
+		};
 
-		
+
 
 		// ******************* state logic ***********************
 
@@ -71,31 +71,31 @@ define([ "jquery", "workspace.storage", "app/util/ButtonUtil", "squash.attribute
 			var someSorting = fromIndexedToNamed(_someSorting);
 			var defaultSorting = StaticSortMode.defaultSorting();
 			return (someSorting.length === 1 && someSorting[0][0] === defaultSorting[0][0] && someSorting[0][1] === defaultSorting[0][1]);
-		};
-		
-		/* 
+		}
+
+		/*
 		 * This function will initialize an index that maps
-		 * the name (mDataProp) of a column to its index. 
-		 * 
-		 * We need to handle the conversion between column names 
-		 * and their index. It is so because storing the index 
-		 * (as it should) could lead to inconsistencies because of 
-		 * invisible column, table header being different depending 
+		 * the name (mDataProp) of a column to its index.
+		 *
+		 * We need to handle the conversion between column names
+		 * and their index. It is so because storing the index
+		 * (as it should) could lead to inconsistencies because of
+		 * invisible column, table header being different depending
 		 * on the page it is displayed etc
-		 * 
-		 * The trick here is, when the sortmode is initialized the 
+		 *
+		 * The trick here is, when the sortmode is initialized the
 		 * squashtable might not be ready so we can't rely on its API.
 		 * We have to parse the table header from scratch.
 		 */
-		
+
 
 		var initIndex = $.proxy(function(){
 			this.byIndex = {};
 			this.byName = {};
 			var self = this;
-			
+
 			var headers = $table.find('>thead>tr>th');
-			
+
 			for (var i=0; i< headers.length; i++){
 				var head = $(headers[i]);
 				var opts = attrparser.parse(head.data('def'));
@@ -104,7 +104,7 @@ define([ "jquery", "workspace.storage", "app/util/ButtonUtil", "squash.attribute
 				self.byName[name] = i;
 			}
 		}, this);
-		
+
 		function _convert(inputSorting, mapping){
 			var outputSorting = [];
 			for (var i=0; i<inputSorting.length; i++){
@@ -116,17 +116,17 @@ define([ "jquery", "workspace.storage", "app/util/ButtonUtil", "squash.attribute
 			}
 			return outputSorting;
 		}
-		
+
 		var fromIndexedToNamed = $.proxy(function(sorting){
 			return _convert(sorting, this.byIndex);
 		}, this);
-		
+
 		var fromNamedToIndexed = $.proxy(function(sorting){
 			return _convert(sorting, this.byName);
 		}, this);
-		
+
 		// ****** private state transition function ********
-		
+
 		this._activate = function() {
 			$("#test-plan-sort-mode-message").show();
 			$(".test-plan-table").find(".select-handle").removeClass("drag-handle");
@@ -138,7 +138,7 @@ define([ "jquery", "workspace.storage", "app/util/ButtonUtil", "squash.attribute
 			$(tableSelector).find(".select-handle").addClass("drag-handle");
 			this.state.active = false;
 		};
-		
+
 		this._updateBtnState = function(){
 			if (this.state.active && this.state.saveable && this.reorderable){
 				ButtonUtil.enable($("#reorder-test-plan-button"));
@@ -148,42 +148,42 @@ define([ "jquery", "workspace.storage", "app/util/ButtonUtil", "squash.attribute
 			}
 		};
 
-		
+
 		// ***** public functions ******
-		
+
 		this.enableReorder = function(){
 			this.state.saveable = true;
 			this.update();
 		};
-		
-		this.disableReorder = function(){			
+
+		this.disableReorder = function(){
 			this.state.saveable = false;
 			this.update();
 		};
 
-		
+
 		this.resetTableOrder = function(table) {
 			var defSorting = StaticSortMode.defaultSorting();
 			table.fnSettings().aaSorting = fromNamedToIndexed(defSorting);
 			this.update();
 		};
-		
+
 
 		this.update = function(_sort) {
-			
+
 			var sorting = _sort || $table.squashTable().fnSettings().aaSorting;
-			
+
 			// if has an argument
 			if (isDefaultSorting(sorting)){
 				this._deleteaaSorting();
-				this._deactivate();				
+				this._deactivate();
 			}
 			else{
 				this._saveaaSorting(sorting);
-				this._activate();			
+				this._activate();
 			}
-			
-			// and in any case : 
+
+			// and in any case :
 			this._updateBtnState();
 
 		};
@@ -210,8 +210,8 @@ define([ "jquery", "workspace.storage", "app/util/ButtonUtil", "squash.attribute
 		this._deleteaaSorting = function() {
 			this.storage.remove(this.key);
 		};
-		
-		
+
+
 		// **************** init state ***************
 
 		initIndex();

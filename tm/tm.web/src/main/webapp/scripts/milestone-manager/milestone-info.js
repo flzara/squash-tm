@@ -623,7 +623,7 @@ define(['module', "jquery", "handlebars", "squash.translator", "squash.basicwidg
 	bindProjectDialog.on('formdialogconfirm', function () {
 
 		var ids = getCheckedId();
-		if (ids == 0) {
+		if (ids === 0) {
 			bindProjectDialog.formDialog('close');
 		}
 		else {

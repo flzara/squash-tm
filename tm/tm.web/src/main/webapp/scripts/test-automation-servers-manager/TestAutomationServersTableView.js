@@ -191,8 +191,8 @@ define([ 'jquery', 'backbone', "underscore", './NewTestAutomationServerDialogVie
 			.fail(function(wtf){
 				try {
 					squashtm.notification.handleJsonResponseError(wtf);
-				} catch (wtf) {
-					squashtm.notification.handleGenericResponseError(wtf);
+				} catch (e) {
+					squashtm.notification.handleGenericResponseError(e);
 				}
 			});
 		}

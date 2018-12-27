@@ -2066,7 +2066,7 @@ define(["jquery",
 						url: value,
 						targetClass: cls,
 						condition: function (row, data) {
-							return data['readable']
+							return data['readable'];
 						}
 					});
 				},
@@ -2161,13 +2161,13 @@ define(["jquery",
 						},
 						tdSelector: 'td.' + cls
 					});
-				}, 
+				},
 				'render-yesno' : function(conf, value){
 					conf.current.mRender = function(value){
-						return (value === "false" || value === false) ? 
+						return (value === "false" || value === false) ?
 								translator.get('label.No') :
 								translator.get('label.Yes');
-					}
+					};
 				}
 			}
 		}

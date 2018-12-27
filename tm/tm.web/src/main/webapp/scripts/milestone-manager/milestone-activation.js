@@ -98,6 +98,6 @@ define([ "jquery", "workspace.storage", "jquery.cookie"],
 			return feature.enabled;
 		}
 
-	}
+	};
 
 });

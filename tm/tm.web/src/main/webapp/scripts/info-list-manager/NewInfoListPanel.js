@@ -229,7 +229,7 @@ define(
 				Validation.unbind(this);
 				this.undelegateEvents();
 				this.itemPanel.remove();
-				this.iconPicker && this.iconPicker.remove();
+				if (this.iconPicker) { this.iconPicker.remove(); }
 				BindView.prototype.remove.apply(this, arguments);
 			},
 
@@ -273,7 +273,8 @@ define(
 				var tgt = event.target;
 				var code = tgt.value;
 				this.options.forEach(function (opt) {
-					(opt.get("code") === code) ? opt.set("isDefault", true) : opt.set("isDefault", false);
+					var isDefault = opt.get("code") === code;
+					opt.set("isDefault", isDefault);
 				});
 			},
 
