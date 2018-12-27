@@ -86,7 +86,7 @@ define(['jquery', 'backbone', "squash.translator", "app/util/StringUtil", "app/l
 						return {
 							"name": name,
 							"kind": kind,
-							"baseUrl": url
+							"url": url
 						};
 					},
 
