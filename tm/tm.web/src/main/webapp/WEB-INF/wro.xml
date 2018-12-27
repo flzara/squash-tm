@@ -26,6 +26,7 @@
   <group name="squash-js">
     <js>/scripts/app/**.js</js>
     <js>/scripts/automation-table/**.js</js>
+    <js>/scripts/automation-tester-workspace/**.js</js>
     <js>/scripts/automation-workspace/**.js</js>
     <js>/scripts/bugtracker/**.js</js>
     <js>/scripts/dashboard/**.js</js>

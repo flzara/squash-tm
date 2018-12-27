@@ -19,11 +19,11 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(['jquery', 'backbone', 'workspace.routing', './views/validateView', './views/globalView', './views/transmittedView'],
-	function ($, Backbone, urlBuilder, validateView, globalView, transmittedView) {
+	function ($, Backbone, urlBuilder, ValidateView, GlobalView, TransmittedView) {
 		"use strict";
 
 
-		var router = Backbone.Router.extend({
+		var Router = Backbone.Router.extend({
 			activeView: null,
 			initialize: function () {
 
