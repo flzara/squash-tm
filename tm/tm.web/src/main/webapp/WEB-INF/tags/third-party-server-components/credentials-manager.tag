@@ -25,7 +25,7 @@
 	That tag encapsulates the panes for configuring the modalities of authentication for a third party server.
 	
 	Usage:
-	- server side : requires an instance of ThirdPartyServerCredentialsManagementBean.	
+	- server side : requires an instance of ThirdPartyServerCredentialsManagementBean (named authConf, see below).	
 	- client side : require third-party-server/credentials-manager.js
  --%>
 
@@ -60,7 +60,7 @@
 
 			<%-- protocol conf section --%>
 			<div class="srv-form srv-auth-form-main side-panel std-border std-border-radius"
-			 ${featEnab} style="min-width:50%">
+			 style="min-width:50%">
 
 				<div id="srv-auth-conf-form" class="templated-form" >
 				<%-- templated by handlebars --%>
@@ -109,8 +109,7 @@
 				<%-- app-level credentials section --%>
 				<div class="srv-form">
 					<label><f:message key="thirdpartyserver.admin.policy.squashtm-section"/></label>
-					<div class="srv-auth-form-main std-border std-border-radius
-					${credsEnab} ${credsVisi}" >
+					<div class="srv-auth-form-main std-border std-border-radius" >
 
 						<div id="srv-auth-creds-form" class="templated-form">
 							<%-- templated by handlebars --%>

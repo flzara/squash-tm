@@ -1,0 +1,57 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+
+
+<div th:fragment="toggle-panel(id, titleKey, open, panelButtons, body)">
+
+	<div th:remove="tag">
+		<!--  
+			The Thymealf port of the jsp tag components/toggle-panel.tag.
+			
+			Parameters :
+			- id : the ID of the main pane of the toggle panel. Not null.
+			- titleKey : the i18n key for the panel title. Not Null.
+			- open : boolean, whether the panel starts open or closed. Default true.
+			- panelButtons : the html snippet for the buttons. May be null.
+			- body : the html snippet for the panel body.
+		 -->	
+	</div>
+	
+	<div th:class="sq-tg ${open == false ? 'collapse' :'expand'}">
+		<div class="tg-head">
+			<h3 >[[#{titleKey}]]</h3>
+			<div class="tg-toolbar">
+				<!--  untested, maybe buggy  -->
+				<th:block th:unless="${panelButtons == null}" th:replace="${panelButtons}"/>
+			</div>
+		</div>
+		
+		<div id="${id}" class="tg-body">
+			<th:block th:replace="${body}"/>
+		</div>
+	</div> 
+	
+	
+
+</div>
