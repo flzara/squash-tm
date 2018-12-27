@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'tree', 'workspace.event-bus', 'squash.translator', 'jquery.squash.formdialog'],
-	function ($, zetree, eventBus, translator) {
+define(['jquery', 'tree', 'workspace.event-bus', 'squash.translator', 'underscore', 'jquery.squash.formdialog'],
+	function ($, zetree, eventBus, translator, underscore) {
 
 		function init() {
 
@@ -33,17 +33,22 @@ define(['jquery', 'tree', 'workspace.event-bus', 'squash.translator', 'jquery.sq
 
 			dialog.on('formdialogconfirm', function () {
 				var nodes = tree.jstree('get_selected');
-				var tcIds = nodes.all('getResId');
-				$.ajax({
-					url : squashtm.app.contextRoot + 'automation-requests/' + tcIds,
-					type : 'POST',
-					data : {
-						'id' : 'automation-request-status',
-						'value' : 'TRANSMITTED'
-					}
-				}).success(function() {
-					dialog.formDialog('close');
+				var eligibleNodes = nodes.filter(':test-case[automeligible="y"]');
+				var tcIds = [];
+				eligibleNodes.each(function(elt) {
+					tcIds.push(eligibleNodes[elt].id.replace('TestCase-', ''));
 				});
+				if (tcIds.length !== 0) {
+					$.ajax({
+						url : squashtm.app.contextRoot + 'automation-requests/' + tcIds,
+						type : 'POST',
+						data : {
+							'id' : 'automation-request-status',
+							'value' : 'TRANSMITTED'
+						}
+					});
+				}
+				dialog.formDialog('close');
 
 			});
 
