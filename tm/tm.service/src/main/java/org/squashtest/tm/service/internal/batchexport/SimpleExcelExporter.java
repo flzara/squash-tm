@@ -37,6 +37,7 @@ import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.*;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.*;
+import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
 
 import javax.annotation.PostConstruct;
@@ -73,8 +74,13 @@ class SimpleExcelExporter {
 
 	private String errorCellTooLargeMessage;
 
+	private Integer projectsAllowWorkflow;
+
 	@Inject
 	private TestCaseFinder testCaseFinder;
+
+	@Inject
+	private ProjectFinder projectFinder;
 
 	private static final TestCaseSheetColumn[] BASIC_TC_COLUMNS = {TestCaseSheetColumn.PROJECT_ID,
 		TestCaseSheetColumn.PROJECT_NAME,
@@ -110,12 +116,15 @@ class SimpleExcelExporter {
 		milestonesEnabled = featureManager.isEnabled(Feature.MILESTONE);
 		getMessageSource(messageSource);
 
+
 	}
 
 	@PostConstruct // So these methods are not called directly by constructor
 	public void init() {
 		createWorkbook();
+		getProjectsAllowWorkflow();
 		createHeaders();
+
 	}
 
 	void setMessageSource(MessageSource messageSource) {
@@ -192,11 +201,20 @@ class SimpleExcelExporter {
 				r.createCell(cIdx++).setCellValue(type);
 				r.createCell(cIdx++).setCellValue(status);
 				TestCase tc = testCaseFinder.findById(tcm.getId());
+
+				if(projectsAllowWorkflow > 0) {
+					if(tc.getProject().isAllowAutomationWorkflow()) {
+						r.createCell(cIdx++).setCellValue(automatable);
+					} else {
+						r.createCell(cIdx++).setCellValue("-");
+					}
+
+				}
+
 				if (milestonesEnabled) {
 
 					r.createCell(cIdx++).setCellValue(tc.getMilestones().size());
 				}
-				r.createCell(cIdx++).setCellValue(automatable);
 				r.createCell(cIdx++).setCellValue(tcm.getNbReq());
 				r.createCell(cIdx++).setCellValue(tc.getSteps().size());
 				r.createCell(cIdx++).setCellValue(tcm.getNbIterations());
@@ -251,7 +269,10 @@ class SimpleExcelExporter {
 		h.createCell(cIdx++).setCellValue(getMessage("test-case.nature.label"));
 		h.createCell(cIdx++).setCellValue(getMessage("test-case.type.label"));
 		h.createCell(cIdx++).setCellValue(getMessage("test-case.status.label"));
-		h.createCell(cIdx++).setCellValue(getMessage("test-case.automation-indicator.label.short"));
+		if(projectsAllowWorkflow > 0) {
+			h.createCell(cIdx++).setCellValue(getMessage("test-case.automation-indicator.label.short"));
+		}
+
 		if (milestonesEnabled) {
 			h.createCell(cIdx++).setCellValue(getMessage("label.milestoneNb"));
 		}
@@ -268,6 +289,11 @@ class SimpleExcelExporter {
 	public void getMessageSource(MessageSource source){
 		this.messageSource = source;
 
+	}
+
+	public Integer getProjectsAllowWorkflow() {
+		projectsAllowWorkflow = projectFinder.countProjectsAllowAutomationWorkflow();
+		return projectsAllowWorkflow;
 	}
 
 	private String getMessage(String key) {

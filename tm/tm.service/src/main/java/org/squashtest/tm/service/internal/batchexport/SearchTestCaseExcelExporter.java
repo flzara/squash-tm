@@ -28,12 +28,12 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn;
+import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
 
 @Component
@@ -42,6 +42,9 @@ public class SearchTestCaseExcelExporter extends ExcelExporter {
 
 	@Inject
 	private TestCaseFinder testCaseFinder;
+
+	@Inject
+	ProjectFinder projectFinder;
 
 	@Inject
 	IterationModificationService iterationFinder;
@@ -73,6 +76,10 @@ public class SearchTestCaseExcelExporter extends ExcelExporter {
 		for (TemplateColumn t : SEARCH_TC_COLUMNS) {
 			h.createCell(cIdx++).setCellValue(t.getHeader());
 		}
+
+		if(projectFinder.countProjectsAllowAutomationWorkflow() > 0) {
+			h.createCell(cIdx++).setCellValue("TC_AUTOMATABLE");
+		}
 	}
 
 	@Override
@@ -87,7 +94,14 @@ public class SearchTestCaseExcelExporter extends ExcelExporter {
 		}
 		r.createCell(cIdxOptional++).setCellValue(nbSteps);
 		r.createCell(cIdxOptional++).setCellValue(nbIteration);
-		r.createCell(cIdxOptional++).setCellValue(tcm.getAutomatable().name());
+		if(projectFinder.countProjectsAllowAutomationWorkflow() > 0) {
+			if(tc.getProject().isAllowAutomationWorkflow()) {
+				r.createCell(cIdxOptional++).setCellValue(tcm.getAutomatable().name());
+			} else {
+				r.createCell(cIdxOptional++).setCellValue("-");
+			}
+
+		}
 
 		return cIdxOptional;
 	}
