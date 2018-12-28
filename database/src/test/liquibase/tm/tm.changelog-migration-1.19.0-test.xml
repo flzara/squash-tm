@@ -115,9 +115,9 @@
     <preConditions>
       <sqlCheck expectedResult="3">
         select count(*) from THIRD_PARTY_SERVER
-        where (server_id=-10 and name='mantis server' and url='http://mantisbt.server.org' and AUTH_POLICY='USER' and AUTH_PROTOCOL='BASIC_AUTH')
-        or (server_id=-20 and name='redmine 3 server' and url='http://redmine.server.org' and AUTH_POLICY='APP_LEVEL' and AUTH_PROTOCOL='BASIC_AUTH')
-        or (server_id=-30 and name='jira server' and url='http://jira.server.org' and AUTH_POLICY='USER' and AUTH_PROTOCOL='OAUTH_1A');
+        where (server_id=10 and name='mantis server' and url='http://mantisbt.server.org' and AUTH_POLICY='USER' and AUTH_PROTOCOL='BASIC_AUTH')
+        or (server_id=20 and name='redmine 3 server' and url='http://redmine.server.org' and AUTH_POLICY='APP_LEVEL' and AUTH_PROTOCOL='BASIC_AUTH')
+        or (server_id=30 and name='jira server' and url='http://jira.server.org' and AUTH_POLICY='USER' and AUTH_PROTOCOL='OAUTH_1A');
       </sqlCheck>
     </preConditions>
   </changeSet>
@@ -127,9 +127,9 @@
     <preConditions>
       <sqlCheck expectedResult="3">
         select count(*) from BUGTRACKER
-        where (bugtracker_id=-10 and kind='mantis')
-        or (bugtracker_id=-20 and kind='redmine3')
-        or (bugtracker_id=-30 and kind='jira.rest')
+        where (bugtracker_id=10 and kind='mantis')
+        or (bugtracker_id=20 and kind='redmine3')
+        or (bugtracker_id=30 and kind='jira.rest')
       </sqlCheck>
     </preConditions>
   </changeSet>
@@ -139,9 +139,9 @@
     <preConditions>
       <sqlCheck expectedResult="3">
         select count(*) from STORED_CREDENTIALS
-        where (credential_id=-20 and authenticated_server=-20 and content_type='CRED')
-        or (credential_id=-31 and authenticated_server=-30 and content_type='CRED')
-        or (credential_id=-32 and authenticated_server=-30 and content_type='CONF')
+        where (credential_id=-20 and authenticated_server=20 and content_type='CRED')
+        or (credential_id=-31 and authenticated_server=30 and content_type='CRED')
+        or (credential_id=-32 and authenticated_server=30 and content_type='CONF')
       </sqlCheck>
     </preConditions>
   </changeSet>
