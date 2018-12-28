@@ -43,7 +43,7 @@
 
 	<jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" id="back" class="sq-btn" value="${backButtonLabel}" onclick="window.history.back();"/>
+		<input type="button" id="back" class="sq-btn" value="${backButtonLabel}" onclick="document.location.href=squashtm.workspace.backurl;"/>
 	</jsp:attribute>
 
 	<jsp:attribute name="informationContent">
