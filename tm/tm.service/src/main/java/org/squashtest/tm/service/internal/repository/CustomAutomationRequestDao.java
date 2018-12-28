@@ -122,9 +122,9 @@ public interface CustomAutomationRequestDao {
 	 * @param requestStatus
 	 * @return
 	 */
-	Map<Long, String> getTransmittedByForCurrentUser(Long idUser, List<String> requestStatus);
+	Map<Long, String> getTransmittedByForCurrentUser(Long idUser, List<String> requestStatus, List<Long> projectIds);
 
-	Map<Long, String> getAssignedToForAutomationRequests();
+	Map<Long, String> getAssignedToForAutomationRequests(List<Long> projectIds);
 
 	/**
 	 * Will unassign the automation requests, identified by their ids, from the user that handle them, and voids the
@@ -148,6 +148,6 @@ public interface CustomAutomationRequestDao {
 
 	void updateAutomationRequestStatus(List<Long> reqIds, AutomationRequestStatus requestStatus);
 
-	Map<Long, String> getTcLastModifiedByToAutomationRequestNotAssigned(List<String> requestStatus);
+	Map<Long, String> getTcLastModifiedByToAutomationRequestNotAssigned(List<String> requestStatus, List<Long> projectids);
 
 }

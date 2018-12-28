@@ -164,7 +164,8 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 	@Override
 	public Map<Long, String> getTcLastModifiedByToAutomationRequestNotAssigned(List<String> requestStatus) {
-		return requestDao.getTcLastModifiedByToAutomationRequestNotAssigned(requestStatus);
+		List<Long> projectIds = projectFinder.findAllReadableIds();
+		return requestDao.getTcLastModifiedByToAutomationRequestNotAssigned(requestStatus, projectIds);
 	}
 
 	// *************** implementation of the management interface *************************
@@ -189,19 +190,22 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	@Transactional(readOnly = true)
 	public Map<Long, String> getTcLastModifiedByForCurrentUser(List<String> requestStatus) {
 		String userName = userCtxt.getUsername();
-		return requestDao.getTransmittedByForCurrentUser(userDao.findUserByLogin(userName).getId(), requestStatus);
+		List<Long> projectIds = projectFinder.findAllReadableIds();
+		return requestDao.getTransmittedByForCurrentUser(userDao.findUserByLogin(userName).getId(), requestStatus, projectIds);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public Map<Long, String> getTcLastModifiedByForAutomationRequests(List<String> requestStatus) {
-		return requestDao.getTransmittedByForCurrentUser(null, requestStatus);
+		List<Long> projectIds = projectFinder.findAllReadableIds();
+		return requestDao.getTransmittedByForCurrentUser(null, requestStatus, projectIds);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public Map<Long, String> getAssignedToForAutomationRequests() {
-		return requestDao.getAssignedToForAutomationRequests();
+		List<Long> projectIds = projectFinder.findAllReadableIds();
+		return requestDao.getAssignedToForAutomationRequests(projectIds);
 	}
 
 	@Override

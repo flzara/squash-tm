@@ -37,6 +37,7 @@ import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.SimpleColumnFiltering;
 import org.squashtest.tm.domain.IdCollector;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQueryFactory;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.QProject;
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
@@ -169,7 +170,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 			.fetchOne().value1();
 	}
 	@Override
-	public Map<Long, String> getTransmittedByForCurrentUser(Long idUser, List<String> requestStatus) {
+	public Map<Long, String> getTransmittedByForCurrentUser(Long idUser, List<String> requestStatus, List<Long> projectIds) {
 
 		Condition condition = org.jooq.impl.DSL.trueCondition();
 		if(idUser != null) {
@@ -185,13 +186,14 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 			.and(AUTOMATION_REQUEST.REQUEST_STATUS.in(requestStatus))
 			.and(TEST_CASE.AUTOMATABLE.eq(TestCaseAutomatable.Y.name()))
 			.and(PROJECT.ALLOW_AUTOMATION_WORKFLOW.isTrue())
+			.and(PROJECT.PROJECT_ID.in(projectIds))
 			.orderBy(CORE_USER.LOGIN)
 			.fetch().intoMap(CORE_USER.PARTY_ID, CORE_USER.LOGIN);
 
 	}
 
 	@Override
-	public Map<Long, String> getTcLastModifiedByToAutomationRequestNotAssigned(List<String> requestStatus) {
+	public Map<Long, String> getTcLastModifiedByToAutomationRequestNotAssigned(List<String> requestStatus, List<Long> projectIds) {
 
 		return DSL.selectDistinct(CORE_USER.PARTY_ID, CORE_USER.LOGIN).from(CORE_USER)
 			.innerJoin(TEST_CASE_LIBRARY_NODE).on(CORE_USER.LOGIN.eq(TEST_CASE_LIBRARY_NODE.LAST_MODIFIED_BY))
@@ -202,16 +204,23 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 			.and(AUTOMATION_REQUEST.REQUEST_STATUS.in(requestStatus))
 			.and(TEST_CASE.AUTOMATABLE.eq(TestCaseAutomatable.Y.name()))
 			.and(PROJECT.ALLOW_AUTOMATION_WORKFLOW.isTrue())
+			.and(PROJECT.PROJECT_ID.in(projectIds))
 			.orderBy(CORE_USER.LOGIN)
 			.fetch().intoMap(CORE_USER.PARTY_ID, CORE_USER.LOGIN);
 
 	}
 
 	@Override
-	public Map<Long, String> getAssignedToForAutomationRequests() {
+	public Map<Long, String> getAssignedToForAutomationRequests(List<Long> projectIds) {
 
 		return DSL.selectDistinct(CORE_USER.PARTY_ID, CORE_USER.LOGIN).from(CORE_USER)
 					.innerJoin(AUTOMATION_REQUEST).on(CORE_USER.PARTY_ID.eq(AUTOMATION_REQUEST.ASSIGNED_TO))
+					.innerJoin(TEST_CASE).on(AUTOMATION_REQUEST.TEST_CASE_ID.eq(TEST_CASE.TCLN_ID))
+					.innerJoin(TEST_CASE_LIBRARY_NODE).on(TEST_CASE_LIBRARY_NODE.TCLN_ID.eq(TEST_CASE.TCLN_ID))
+					.innerJoin(PROJECT).on(TEST_CASE_LIBRARY_NODE.PROJECT_ID.eq(PROJECT.PROJECT_ID))
+					.where(PROJECT.ALLOW_AUTOMATION_WORKFLOW.isTrue())
+					.and(PROJECT.PROJECT_ID.in(projectIds))
+					.and(TEST_CASE.AUTOMATABLE.eq(TestCaseAutomatable.Y.name()))
 					.orderBy(CORE_USER.LOGIN)
 					.fetch().intoMap(CORE_USER.PARTY_ID, CORE_USER.LOGIN);
 	}
