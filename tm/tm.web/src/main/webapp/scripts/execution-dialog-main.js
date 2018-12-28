@@ -212,10 +212,10 @@ define(['module',
 
 		if (config.basic.hasDenormCufs) {
 			var denocufurl = routing.buildURL('denormalizefield.values.get',config.basic.id, 'EXECUTION_STEP');
-			var mode = (config.permissions.editable) ? 'jeditable' : 'static';
+			var denomode = (config.permissions.editable) ? 'jeditable' : 'static';
 			$.getJSON(denocufurl)
 			.success(function(denojsonCufs){
-				cufValues.infoSupport.init("#dfv-information-table", denojsonCufs, mode);
+				cufValues.infoSupport.init("#dfv-information-table", denojsonCufs, denomode);
 			});
 		}
 	}

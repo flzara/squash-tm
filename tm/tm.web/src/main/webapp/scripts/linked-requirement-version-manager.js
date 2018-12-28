@@ -157,7 +157,7 @@ require(["common"], function () {
 				var apiUrl = window.squashtm.bindingsManager.bindingsUrl;
 
 				// init the panel
-				new LinkedReqVersionsPanel({ apiUrl: apiUrl })
+				new LinkedReqVersionsPanel({ apiUrl: apiUrl });
 
 				// init the popups
 				var chooseLinkTypeDialog = $("#choose-link-type-dialog").formDialog();
@@ -257,7 +257,7 @@ require(["common"], function () {
 						}
 					}
 					self.formDialog('setState', 'confirm');
-				}
+				};
 
 				/* Trigger unbind-selected-versions event */
 				$('#remove-linked-requirement-button').on("click", function (event) {
@@ -331,7 +331,7 @@ require(["common"], function () {
 						params.isRelatedIdANodeId = self.data("isRelatedIdANodeId");
 					}
 					return params;
-				}
+				};
 
 				createLinkTypeDialog.on('formdialogconfirm', onCreateLinkTypeDialogConfirm);
 

@@ -56,7 +56,7 @@ require(["common"], function(){
 					status: $( '#add-milestone-status' ).val(),
 					endDate: getPostDate($( '#add-milestone-end-date' ).text()),
 					description: $( '#add-milestone-description' ).val()
-			}
+			};
 		}
 
 	ps.subscribe("loaded.milestoneFeatureSwitch", function() {

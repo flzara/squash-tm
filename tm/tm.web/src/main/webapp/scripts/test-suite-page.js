@@ -71,7 +71,6 @@ require(["common"], function () {
 
 						eventBus.trigger('test-suite.execution-status-modified');
 					});
-					$("#general-information-panel").setAttribute
 					general.refresh();
 				}, window);
 

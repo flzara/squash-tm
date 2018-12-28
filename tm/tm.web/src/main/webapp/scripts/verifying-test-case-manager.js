@@ -124,7 +124,7 @@ require([ "common" ], function() {
 
 			// init the panel
 
-			new VerifyingTestCasesPanel({ apiUrl: window.squashtm.bindingsManager.bindingsUrl })
+			new VerifyingTestCasesPanel({ apiUrl: window.squashtm.bindingsManager.bindingsUrl });
 
 			$("#add-summary-dialog").messageDialog();
 

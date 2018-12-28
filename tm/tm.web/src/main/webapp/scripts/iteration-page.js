@@ -61,12 +61,12 @@ require(["common"], function () {
 				// rem : what does it mean ?
 				itermanagement.initEvents();
 
-
+				var url, cfg;
 				// init reference
 				if (config.writable) {
 					var refEditable = $("#iteration-reference").addClass('editable');
-					var url = config.iterationURL;
-					var cfg = confman.getStdJeditable();
+					url = config.iterationURL;
+					cfg = confman.getStdJeditable();
 					cfg = $.extend(cfg, {
 						maxlength: 50,
 						callback: function (value, settings) {
@@ -81,8 +81,8 @@ require(["common"], function () {
 				// init status
 				if (config.writable) {
 					var statusEditable = $("#iteration-status").addClass('editable');
-					var url = config.iterationURL;
-					var cfg = confman.getJeditableSelect();
+					url = config.iterationURL;
+					cfg = confman.getJeditableSelect();
 					cfg = $.extend(cfg, {
 						data: config.iterationStatusComboJson,
 						callback: function (value, settings) {
@@ -112,7 +112,6 @@ require(["common"], function () {
 
 				// ****** tabs configuration *******
 
-
 				var fragConf = {
 					active: 2,
 					/*cookie : {
@@ -133,7 +132,7 @@ require(["common"], function () {
 				}
 
 				if (config.hasFields) {
-					var url = config.customFields.url;
+					url = config.customFields.url;
 					$.getJSON(url)
 						.success(function (jsonCufs) {
 							$("#iteration-custom-fields-content .waiting-loading").hide();

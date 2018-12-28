@@ -87,19 +87,22 @@
     <js>/scripts/users-manager/**.js</js>
     <js>/scripts/verified-requirements/**.js</js>
     <js>/scripts/workspace/**.js</js>
+    <js>/scripts/advanced-config-page.js</js>
+    <js>/scripts/colour-utils.js</js>
     <js>/scripts/common.js</js>
     <js>/scripts/custom-field-manager.js</js>
     <js>/scripts/custom-field-modification.js</js>
     <js>/scripts/edit-test-step.js</js>
-    <js>/scripts/jquery-includes.js</js>
-    <js>/scripts/main-template.js</js>
-    <js>/scripts/print.js</js>
-    <js>/scripts/requirement-search-result.js</js>
-    <js>/scripts/requirement-workspace.js</js>
-    <js>/scripts/team-modification.js</js>
-    <js>/scripts/test-case-search-result.js</js>
-    <js>/scripts/test-automation-servers-manager.js</js>
-    <js>/scripts/user-modification.js</js>
+    <js>/scripts/execution-dialog-main.js</js>
+    <js>/scripts/execution-helper.js</js>
+    <js>/scripts/execution-page</js>
+    <js>/scripts/execution-preview-page.js</js>
+    <js>/scripts/iteration-page.js</js>
+    <js>/scripts/linked-requirement-version-manager.js</js>
+    <js>/scripts/milestone-manager.js</js>
+    <js>/scripts/requirement-version-page.js</js>
+    <js>/scripts/test-suite-page.js</js>
+    <js>/scripts/verifying-test-case-manager.js</js>
   </group>
 
 	<!-- This group is used to produce squash's core css ie non-themed css -->

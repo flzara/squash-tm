@@ -183,7 +183,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 					'cannot-set-status-defaultmsg': 'requirement.status.notAllowed.default'
 				});
 
-				function submitOrConfirm(settings, widget) {
+				var submitOrConfirm = function(settings, widget) {
 					var selected = this.find('select').val(),
 						cansubmit = true;
 
@@ -199,7 +199,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 					}
 
 					return cansubmit;
-				}
+				};
 
 
 				var finalStatusSelectConf = $.extend(true, statusSelectConf,
@@ -377,7 +377,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 					}
 				});
 
-				function showAddSummary(summary) {
+				var showAddSummary = function(summary) {
 					if (summary) {
 						var summaryMessages = {
 							alreadyLinkedRejections: translator.get("requirement-version.linked-requirement-versions.rejection.already-linked-rejection"),
@@ -432,7 +432,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 								var length = typesList.length;
 								for (var i = 0; i < length; i++) {
 									var type = typesList[i];
-									var id = type.id
+									var id = type.id;
 									var role1 = type.role1;
 									var role2 = type.role2;
 
@@ -478,7 +478,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 						reqVersionLinkTypeDirection: selectedTypeDirection,
 					};
 					if (self.data("edit")) {
-						params.isRelatedIdANodeId = self.data("isRelatedIdANodeId")
+						params.isRelatedIdANodeId = self.data("isRelatedIdANodeId");
 					}
 
 					bind(relatedReqVersionId, params).success(function (rejections) {
@@ -509,11 +509,12 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 			// ************************** library ***********************************
 
 			function auditTrailTableRowCallback(row, data, displayIndex) {
+				var url;
 				if (data['event-type'] == 'fat-prop') {
 
 					var eventId = data['event-id'];
 					var proto = $('#show-audit-event-details-template').clone();
-					var url = routing.buildURL('requirements.audittrail.change', eventId);
+					url = routing.buildURL('requirements.audittrail.change', eventId);
 
 					proto.removeClass('not-displayed')
 						.find('span')
@@ -531,7 +532,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 					var msgcell = $(row).find('.event-message-cell');
 
 					var srclabel = translator.get('label.source');
-					var url = data['event-meta'];
+					url = data['event-meta'];
 
 					// 7014 - link must be opened in a new tab
 					var link = '<a href="' + url + '" target="_blank">' + srclabel + '</a>';
@@ -600,7 +601,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 
 			if (config.basic.hasBugtracker) {
 				var targetUrl = config.urls.btEntityUrl;
-				if ($("#tree-panel-left").length != 0) {
+				if ($("#tree-panel-left").length !== 0) {
 					// there is tree
 					targetUrl += "/all";
 				} else {

@@ -107,7 +107,7 @@ define(['jquery', 'underscore'], function ($, _) {
 
 		try {
 			for (var i = 0; i < flatLegends.length; i++) {
-				colours.push(ColoursEnum[flatLegends[i]])
+				colours.push(ColoursEnum[flatLegends[i]]);
 			}
 		} catch (e) {
 			// if a color is missing in the enum (or if there is any error), we reset the colors,
