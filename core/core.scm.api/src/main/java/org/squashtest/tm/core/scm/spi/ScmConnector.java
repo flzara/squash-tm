@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.core.scm.spi;
 
+import org.squashtest.tm.domain.scm.ScmServer;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.servers.Credentials;
 
@@ -32,6 +33,12 @@ public interface ScmConnector {
 	 * @return True if the given protocol is supported. False otherwise.
 	 */
 	boolean supports(AuthenticationProtocol protocol);
+
+	/**
+	 * Get an Array of the AuthenticationProtocols supported by this ScmConnector.
+	 * @return An Array containing all the supported AuthenticationProtocols of this ScmServer
+	 */
+	AuthenticationProtocol[] getSupportedProtocols();
 
 	/**
 	 * Initializes the local Source Code Management repository.

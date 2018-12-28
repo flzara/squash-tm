@@ -24,6 +24,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
+import org.squashtest.tm.domain.scm.ScmServer;
 import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.servers.Credentials;
@@ -47,6 +48,9 @@ public class ScmServerCredentialsServiceImpl implements ScmServerCredentialsServ
 
 	@Inject
 	private StoredCredentialsManager credentialsManager;
+
+	@Inject
+	private ScmConnectorRegistry scmConnectorRegistry;
 
 
 	@Override
@@ -80,8 +84,7 @@ public class ScmServerCredentialsServiceImpl implements ScmServerCredentialsServ
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public AuthenticationProtocol[] getSupportedProtocols(ThirdPartyServer server) {
-		// TODO: retourner les protocoles vraiment supportés par le connecteur qui va bien
-		return new AuthenticationProtocol[]{AuthenticationProtocol.BASIC_AUTH, AuthenticationProtocol.OAUTH_1A};
+		return scmConnectorRegistry.createConnector((ScmServer) server).getSupportedProtocols();
 	}
 
 
