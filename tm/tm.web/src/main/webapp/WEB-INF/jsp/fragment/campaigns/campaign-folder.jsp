@@ -123,14 +123,12 @@
 
 
         <%-- CUF panel --%>
-     <c:if test="${hasFolderCUF}">
       <comp:toggle-panel id="folder-cuf-panel" titleKey="generics.customfieldvalues.title"  open="true">
        <jsp:attribute name="body">
           	<div id="requirement-CUF-table"  class="display-table">
            </div>
        </jsp:attribute>
       </comp:toggle-panel>
-     </c:if>
 
       <at:attachment-bloc editable="${ editable }" workspaceName="${ workspaceName }"
                           attachListId="${ folder.attachmentList.id }" attachmentSet="${attachments}"/>

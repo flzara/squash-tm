@@ -94,14 +94,12 @@
 
 
     <%-- CUF panel --%>
-  <c:if test="${hasFolderCUF}">
     <comp:toggle-panel id="folder-cuf-panel" titleKey="generics.customfieldvalues.title"  open="true">
       <jsp:attribute name="body">
           	<div id="testcase-CUF-table"  class="display-table">
             </div>
    		</jsp:attribute>
    </comp:toggle-panel>
-  </c:if>
 
 
 
