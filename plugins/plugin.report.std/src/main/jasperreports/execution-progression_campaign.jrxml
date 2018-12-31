@@ -364,7 +364,7 @@
 								<textElement verticalAlignment="Middle">
 									<font size="9" isBold="true"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA["Cpg : "+$P{campaign_name}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.campaign.label}+" : "+$P{campaign_name}]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
