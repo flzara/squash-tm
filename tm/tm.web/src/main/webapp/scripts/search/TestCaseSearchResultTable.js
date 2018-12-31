@@ -42,6 +42,7 @@ define(["jquery", "backbone", "squash.translator", "jeditable.simpleJEditable", 
 				this.addTreeLink = $.proxy(this._addTreeLink, this);
 				this.getTableRowId = $.proxy(this._getTableRowId, this);
 				this.tableRowCallback = $.proxy(this._tableRowCallback, this);
+				this.handleAjaxErrorLoc = $.proxy(this._handleAjaxErrorLoc, this);
 				this.addAssociationCheckboxes = $.proxy(this._addAssociationCheckboxes, this);
 				this.addSelectEditableToAutomatable = $.proxy(this._addSelectEditableToAutomatable, this);
 
@@ -66,6 +67,19 @@ define(["jquery", "backbone", "squash.translator", "jeditable.simpleJEditable", 
 						"sServerMethod": "POST",
 						"bDeferRender": true,
 						"bFilter": false,
+						// Issue 7901 - access denied error to handle
+						"fnServerData": function ( sSource, aoData, fnCallback ) {
+	            $.ajax( {
+								"dataType": 'json',
+								"type": "POST",
+								"url": sSource,
+								"data": aoData,
+								"success": fnCallback,
+								"error": function(xhr, textStatus, error) {
+													 notification.showError(translator.get('label.AccessDenied'));
+												 }
+							} );
+						},
 						"fnRowCallback": this.tableRowCallback,
 						"fnDrawCallback": this.tableDrawCallback,
 						"aaSorting": [[2, "asc"], [4, "asc"], [6, "asc"], [5, "asc"]],
@@ -323,6 +337,10 @@ define(["jquery", "backbone", "squash.translator", "jeditable.simpleJEditable", 
 				return rowData[2];
 			},
 
+			_handleAjaxErrorLoc: function(xhr, textStatus, error) {
+				alert('coucou');
+			},
+
 			_addSelectEditableToImportance: function (row, data) {
 				var urlPOST = squashtm.app.contextRoot + "test-cases/" + data["test-case-id"];
 				var urlGET = squashtm.app.contextRoot + "test-cases/" + data["test-case-id"] + "/importance-combo-data";
@@ -427,6 +445,8 @@ define(["jquery", "backbone", "squash.translator", "jeditable.simpleJEditable", 
 				});
 
 			},
+
+
 
 			_tableRowCallback: function (row, data, displayIndex) {
 				if (data["editable"]) {
