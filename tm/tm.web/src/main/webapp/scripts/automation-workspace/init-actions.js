@@ -96,9 +96,21 @@ define(['jquery', 'workspace.contextual-content', 'workspace.routing'],
 			$(elt).addClass("tf-selected");
 		}
 
+		function showWorkflow() {
+			$("#icon-workflow").on("click", function() {
+				var dialog = $("#workflow-popup").formDialog();
+				dialog.formDialog("open");
+			});
+
+			$("#close-automation-workflow").on("click", function() {
+				var dialog = $("#workflow-popup").formDialog();
+				dialog.formDialog("close");
+			});
+		}
 
 		function init() {
 			_initTabs();
+			showWorkflow();
 		}
 
 		return {

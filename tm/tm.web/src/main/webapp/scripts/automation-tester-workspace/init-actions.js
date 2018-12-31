@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'workspace.contextual-content', 'workspace.routing'],
+define(['jquery', 'workspace.contextual-content', 'workspace.routing',"jquery.squash.formdialog"],
 	function ($, ctxcontent, urlBuilder) {
 
 
@@ -86,9 +86,23 @@ define(['jquery', 'workspace.contextual-content', 'workspace.routing'],
 		}
 
 
+		function showWorkflow() {
+			$("#icon-workflow").on("click", function() {
+				var dialog = $("#workflow-popup").formDialog();
+				dialog.formDialog("open");
+			});
+
+			$("#close-automation-workflow").on("click", function() {
+				var dialog = $("#workflow-popup").formDialog();
+				dialog.formDialog("close");
+			});
+		}
+
 		function init() {
 			_initTabs();
+			showWorkflow();
 		}
+
 
 		return {
 			init: init

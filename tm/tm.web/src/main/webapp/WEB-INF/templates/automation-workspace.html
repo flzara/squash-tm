@@ -21,22 +21,22 @@
 
 -->
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
 <head>
   <title th:text="#{squashtm}">Squash</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="_csrf" th:content="${_csrf.token}" />
   <!-- default header name is X-CSRF-TOKEN -->
-  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}" />
   <!-- ... -->
   <!-- common head -->
-  <link rel="stylesheet" type="text/css" media="all"
-        href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" sq:css="squash.core.css"/>
-  <link rel="shortcut icon" type="image/x-icon" media="all"
-        href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}"/>
-  <link rel="stylesheet" type="text/css" media="all"
-        href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.green.css" sq:css="squash.green.css"/>
+  <link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css"
+    sq:css="squash.core.css" />
+  <link rel="shortcut icon" type="image/x-icon" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico"
+    th:href="@{/images/favicon.ico}" />
+  <link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.green.css"
+    sq:css="squash.green.css" />
   <!-- rich jeditable header -->
   <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-2.1.1.min.js"></script>
   <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
@@ -60,94 +60,105 @@
     };
 
     squashtm.workspace = squashtm.workspace || {};
-    squashtm.workspace.projects = /*[[${projects}]]*/ [];
+    squashtm.workspace.projects = /*[[${projects}]]*/[];
 
     /* ]]> */
   </script>
   <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
 
-  <script data-main="../../scripts/automation-workspace.js"
-          th:attr="data-main=@{/scripts/automation-workspace.js}"
-          src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
+  <script data-main="../../scripts/automation-workspace.js" th:attr="data-main=@{/scripts/automation-workspace.js}" src="../../scripts/require.js"
+    th:src="@{/scripts/require-min.js}"></script>
 </head>
+
 <body>
-<div id="navigation" th:include="navbar.frag :: navbar('automation')">NAVBAR</div>
-<div id="workspace">
-  <div id="workspace-title" class="noprint">
-    <div class="snap-right">
-      <div class="main-menubar" th:include="menubar.frag :: menubar">MENUBAR</div>
-      <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">NOTIFICATION</div>
+  <div id="navigation" th:include="navbar.frag :: navbar('automation')">NAVBAR</div>
+  <div id="workspace">
+    <div id="workspace-title" class="noprint">
+      <div class="snap-right">
+        <div class="main-menubar" th:include="menubar.frag :: menubar">MENUBAR</div>
+        <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">NOTIFICATION</div>
+      </div>
+    </div>
+    <div th:remove="all">
+      <!-- 		about the z-index : 1 on the tree-panel-left : this ensure that the stacking context of the tree pane will always be  -->
+      <!-- 		above the stacking context of the contextual content. -->
+      <!-- 		An interesting article on that matter : http://philipwalton.com/articles/what-no-one-told-you-about-z-index/   -->
+    </div>
+    <div class="ui-widget-header ui-corner-all ui-state-default fragment-header tf-automation-subtitle-header">
+      <h2>
+        <span th:text="#{workspace.automation.header.subtitle}">Espace automatisation </span><span
+          class="icon-helper" style="float: right" id="icon-workflow"></span>
+      </h2>
+    </div>
+
+
+    <div id="tf-automation-tabs">
+
+      <!--  ------------------ main tab panel --------------------------------- -->
+      <ul>
+        <li id="tf-assigned-tab">
+          <a href="#assigned" th:text="#{automation.label.automation_in_progress}">M'étant assignés</a>
+        </li>
+        <li id="tf-traitment-tab">
+          <a href="#traitment" th:text="#{automation.label.traitment}">A traiter</a>
+        </li>
+        <li id="tf-global-tab">
+          <a href="#global" th:text="#{automation.label.globale_view}">Vue globale</a>
+        </li>
+      </ul>
+    </div>
+    <div id="tf-automation-content">
+      <div id="contextual-content-wrapper">
+        <!--empty -->
+      </div>
     </div>
   </div>
-  <div th:remove="all">
-    <!-- 		about the z-index : 1 on the tree-panel-left : this ensure that the stacking context of the tree pane will always be  -->
-    <!-- 		above the stacking context of the contextual content. -->
-    <!-- 		An interesting article on that matter : http://philipwalton.com/articles/what-no-one-told-you-about-z-index/   -->
-  </div>
-  <div class="ui-widget-header ui-corner-all ui-state-default fragment-header tf-automation-subtitle-header">
-    <h2 th:text="#{workspace.automation.header.subtitle}">Espace automatisation</h2>
-  </div>
+  <div style="display: none">
+    <div id="ta-picker-popup" class="popup-dialog" th:title="#{test-case.testautomation.popup.title}">
 
+      <div class="ta-picker-structure-maindiv">
 
-  <div id="tf-automation-tabs">
+        <div data-def="state=main" class="structure-treepanel has-standard-margin">
+          <div class="structure-tree"></div>
+        </div>
 
-    <!--  ------------------ main tab panel --------------------------------- -->
-    <ul>
-      <li id="tf-assigned-tab">
-        <a href="#assigned" th:text="#{automation.label.automation_in_progress}">M'étant assignés</a>
-      </li>
-      <li id="tf-traitment-tab">
-        <a href="#traitment" th:text="#{automation.label.traitment}">A traiter</a>
-      </li>
-      <li id="tf-global-tab">
-        <a href="#global" th:text="#{automation.label.globale_view}">Vue globale</a>
-      </li>
-    </ul>
-  </div>
-  <div id="tf-automation-content">
-    <div id="contextual-content-wrapper">
-      <!--empty -->
+      </div>
+
+      <div class="popup-dialog-buttonpane">
+        <input type="button" th:value="#{label.Choose}" data-def="mainbtn, evt=confirm" />
+        <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel" />
+      </div>
+
     </div>
-  </div>
-</div>
-<div style="display: none">
-  <div id="ta-picker-popup" class="popup-dialog" th:title="#{test-case.testautomation.popup.title}">
+    <div id="ta-remove-popup" class="popup-dialog" th:title="#{dialog.unbind-ta-script.title}">
 
-    <div class="ta-picker-structure-maindiv">
+      <div class="std-margin-top std-margin-bottom">
+        <span th:text="#{dialog.unbind-ta-script.message}"></span>
+      </div>
 
-      <div data-def="state=main" class="structure-treepanel has-standard-margin">
-        <div class="structure-tree"></div>
+      <div class="popup-dialog-buttonpane">
+        <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm" />
+        <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel" />
       </div>
 
     </div>
 
-    <div class="popup-dialog-buttonpane">
-      <input type="button" th:value="#{label.Choose}" data-def="mainbtn, evt=confirm"/>
-      <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel" />
-    </div>
+    <div id="workflow-popup" class="popup-dialog" th:title="#{dialog.automation.workflow}">
 
+        <img src="../images/automation_workflow.png" style="width:100%"/>
+  
+        <div class="popup-dialog-buttonpane">
+          <input type="button" th:value="#{label.Close}" id="close-automation-workflow" />
+        </div>
+  
+      </div>
   </div>
-  <div id="ta-remove-popup" class="popup-dialog" th:title="#{dialog.unbind-ta-script.title}">
 
-    <div class="std-margin-top std-margin-bottom">
-      <span th:text="#{dialog.unbind-ta-script.message}"></span>
-    </div>
+  <!-- BACKBONE VIEWS TEMPLATES -->
+  <!-- SHOW AFFECTED -->
+  <script id="tpl-show-assigned" type="text/x-handlebars-template" th:inline="text" th:include="automation/assigned.html :: automation-assigned-view" />
 
-    <div class="popup-dialog-buttonpane">
-      <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm"/>
-      <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
-    </div>
-
-  </div>
-</div>
-
-<!-- BACKBONE VIEWS TEMPLATES -->
-<!-- SHOW AFFECTED -->
-<script id="tpl-show-assigned" type="text/x-handlebars-template"
-        th:inline="text"
-        th:include="automation/assigned.html :: automation-assigned-view"/>
-
-<script id="tpl-show-global" type="text/x-handlebars-template"
+  <script id="tpl-show-global" type="text/x-handlebars-template"
         th:inline="text"
         th:include="automation/global.html :: automation-global-view"/>
 
