@@ -73,6 +73,9 @@
   		</div>
   	</div>
   </div>
+  <div id="automation-workflow-explanation" style="font-size:10px;padding-left:5px;margin:8px 0px 5px 25px;border-left:black solid 2px;">
+	  <div><f:message key="message.project.automation.workflow.active.explanation" /></div>
+  </div>
 
   <div class="ta-main-div">
 
