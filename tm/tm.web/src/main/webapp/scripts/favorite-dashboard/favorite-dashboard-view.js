@@ -102,7 +102,7 @@ define(["backbone", "custom-report-workspace/views/dashboardView", "home-workspa
 			filterByType: function (selectedNodes, type) {
 				var selector = "[restype='" + type + "']";
 
-				if (selectedNodes.size > 0) {
+				if (selectedNodes.size() > 0) {
 					var nodeIds = selectedNodes.filter(selector).map(function (i, e) {
 						return $(e).attr("resid");
 					}).get();
