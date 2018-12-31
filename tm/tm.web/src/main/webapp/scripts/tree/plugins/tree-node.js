@@ -296,11 +296,11 @@ define(['jquery', 'app/util/StringUtil'], function ($, StringUtil) {
 		};
 
 		this.getName = function () {
-			return this.reference.attr('name');
+			return StringUtil.unescape(this.reference.attr('name'));
 		};
 
 		this.getReference = function () {
-			return this.reference.attr('reference');
+			return StringUtil.unescape(this.reference.attr('reference'));
 		};
 
 		this.getIndex = function () {
