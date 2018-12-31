@@ -2164,3 +2164,9 @@ button.tf-lg.lightblue {
 	border: 1px solid #77D5F7;
 }
 
+#automation-workflow-explanation {
+	font-size: 10px;
+	padding-left: 5px;
+	margin: 8px 0px 5px 25px;
+	border-left: black solid 2px;
+}
