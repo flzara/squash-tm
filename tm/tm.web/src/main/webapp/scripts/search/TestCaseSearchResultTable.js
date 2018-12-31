@@ -42,7 +42,6 @@ define(["jquery", "backbone", "squash.translator", "jeditable.simpleJEditable", 
 				this.addTreeLink = $.proxy(this._addTreeLink, this);
 				this.getTableRowId = $.proxy(this._getTableRowId, this);
 				this.tableRowCallback = $.proxy(this._tableRowCallback, this);
-				this.handleAjaxErrorLoc = $.proxy(this._handleAjaxErrorLoc, this);
 				this.addAssociationCheckboxes = $.proxy(this._addAssociationCheckboxes, this);
 				this.addSelectEditableToAutomatable = $.proxy(this._addSelectEditableToAutomatable, this);
 
@@ -335,10 +334,6 @@ define(["jquery", "backbone", "squash.translator", "jeditable.simpleJEditable", 
 
 			_getTableRowId: function (rowData) {
 				return rowData[2];
-			},
-
-			_handleAjaxErrorLoc: function(xhr, textStatus, error) {
-				alert('coucou');
 			},
 
 			_addSelectEditableToImportance: function (row, data) {
