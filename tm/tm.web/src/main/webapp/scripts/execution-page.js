@@ -321,6 +321,11 @@ define(['module', 'jquery', 'app/pubsub', 'squash.basicwidgets', 'app/ws/squasht
 
 			// now we go
 			table.squashTable(tableSettings, squashSettings);
+			$("#verified-requirements-table").squashTable({
+      				'bServerSide' : false,
+      				'sDom' : '<r>t<i>'
+      			});
+
 
 		}
 

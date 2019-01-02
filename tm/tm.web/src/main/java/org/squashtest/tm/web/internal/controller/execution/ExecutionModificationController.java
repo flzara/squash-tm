@@ -179,6 +179,10 @@ public class ExecutionModificationController {
 		mav.addObject("stepsCufDefinitions", stepCufsModels);
 		mav.addObject("statuses", getStatuses(execution.getProject().getId()));
 		mav.addObject("milestoneConf", milestoneConf);
+		if(execution.getReferencedTestCase() != null) {
+			mav.addObject("verifiedReqVersions", execution.getReferencedTestCase().getVerifiedRequirementVersions());
+		}
+
 
 		return mav;
 

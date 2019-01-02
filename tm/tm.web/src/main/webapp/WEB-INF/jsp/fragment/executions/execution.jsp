@@ -36,7 +36,7 @@
 
 <c:url var="executionUrl" value="/executions/${execution.id}"/>
 <s:url var="attachmentsUrl" value="/attach-list/${execution.attachmentList.id}/attachments"/>
-
+<c:url var="verifiedRequirementsTableUrl" value="test-cases/${referencedTc.id}/requirement-versions"/>
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <c:set var="editable" value="${false}"/>
@@ -260,7 +260,36 @@
 	</jsp:attribute>
   </comp:toggle-panel>
 
-
+  <%----------------------------------- Verified Requirements -----------------------------------------------%>
+  <comp:toggle-panel id="execution-verified-requirement-panel"
+                       titleKey="label.verifiedRequirements">
+     <jsp:attribute name="body">
+      <table id="verified-requirements-table" class="unstyled-table">
+        <thead>
+        <tr>
+          <th class="no-user-select" style="width:15px">#</th>
+          <th ><f:message key="label.project"/></th>
+          <th ><f:message key="label.versionId"/></th>
+          <th ><f:message key="label.Reference"/></th>
+          <th ><f:message key="requirement.name.label"/></th>
+          <th ><f:message key="requirement.criticality.label"/></th>
+        </tr>
+        </thead>
+        <tbody>
+          <c:forEach var="reqVer" items="${verifiedReqVersions}" varStatus="loop">
+            <tr >
+              <td class="select-handle centered"> <c:out value="${loop.count}"/></td>
+              <td> <c:out value="${reqVer.requirement.project.name}"/></td>
+              <td> <c:out value="${reqVer.id}"/></td>
+              <td> <c:out value="${reqVer.reference}"/></td>
+              <td> <c:out value="${reqVer.name}"/></td>
+              <td> <f:message key="${reqVer.criticality.i18nKey}"/></td>
+            </tr>
+          </c:forEach>
+        </tbody>
+      </table>
+  	</jsp:attribute>
+    </comp:toggle-panel>
   <%----------------------------------- result summary -----------------------------------------------%>
 
   <c:if test="${execution.automated}">
