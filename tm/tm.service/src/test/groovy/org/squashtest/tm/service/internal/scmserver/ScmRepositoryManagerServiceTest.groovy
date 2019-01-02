@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.scmserver
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
+import org.squashtest.tm.core.scm.spi.ScmConnector
 import org.squashtest.tm.domain.scm.ScmRepository
 import org.squashtest.tm.domain.scm.ScmServer
 import org.squashtest.tm.service.internal.repository.ScmRepositoryDao
@@ -32,12 +33,14 @@ import spock.lang.Specification
 class ScmRepositoryManagerServiceTest extends Specification {
 
 	private ScmRepositoryManagerServiceImpl scmRepositoryManagerService = new ScmRepositoryManagerServiceImpl()
+	private ScmConnectorRegistry scmRegistry = Mock()
 	private ScmRepositoryDao scmRepositoryDao = Mock()
 	private ScmServerDao scmServerDao = Mock()
 
 	def setup() {
 		scmRepositoryManagerService.scmRepositoryDao = scmRepositoryDao
 		scmRepositoryManagerService.scmServerDao = scmServerDao
+		scmRepositoryManagerService.scmRegistry = scmRegistry
 	}
 
 	def "#findByScmServerOrderByPath(Long) - [Nominal] Should find all ScmRepositories ordered by path"() {
@@ -124,15 +127,20 @@ class ScmRepositoryManagerServiceTest extends Specification {
 			repo.workingBranch = "master"
 		and:
 			long serverId = 12
-			ScmServer server = Mock(ScmServer){getId() >> serverId}
-
+			ScmServer server = Mock()
+			server.getId() >> serverId
+		and:
+			ScmConnector connector = Mock()
 		and: "Mock Dao methods"
 			scmServerDao.getOne(serverId) >> server
-			scmRepositoryDao.save(repo) >> repo
+			1 * scmRepositoryDao.save(repo) >> repo
+		and:
+			scmRegistry.createConnector(repo) >> connector
 		when:
 			scmRepositoryManagerService.createNewScmRepository(serverId, repo)
 		then:
-			1 * scmRepositoryDao.save(repo)
+			1 * connector.initRepository()
+			1 * connector.prepareRepository()
 	}
 
 	def "#updateName(long, String) - [Nominal] Should update the name of the ScmRepository"() {
@@ -252,16 +260,21 @@ class ScmRepositoryManagerServiceTest extends Specification {
 			ScmRepository repo = new ScmRepository()
 			repo.id = repoId
 			repo.workingBranch = "master"
-		and: "Expceted result"
+		and:
+			ScmConnector connector = Mock()
+		and: "Expected result"
 			String newBranch = "develop"
 		and: "Mock Dao method"
 			scmRepositoryDao.getOne(repoId) >> repo
+		and: "Mock registry method"
+			scmRegistry.createConnector(repo) >> connector
 		when:
 			String resultBranch = scmRepositoryManagerService.updateBranch(repoId, newBranch)
 		then:
 			repoId == repoId
 			repo.workingBranch == newBranch
 			1 * scmRepositoryDao.save(repo)
+			1 * connector.prepareRepository()
 			resultBranch == newBranch
 	}
 

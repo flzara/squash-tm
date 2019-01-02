@@ -54,6 +54,7 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.*;
 
 import static org.squashtest.tm.web.internal.controller.RequestParams.S_ECHO_PARAM;
@@ -137,7 +138,7 @@ public class ScmServerModificationController {
 
 	@RequestMapping(value = "/repositories", method = RequestMethod.POST)
 	@ResponseBody
-	public void createNewScmRepository(@PathVariable long scmServerId, @Valid ScmRepository scmRepository) {
+	public void createNewScmRepository(@PathVariable long scmServerId, @Valid ScmRepository scmRepository) throws IOException {
 		scmRepositoryManager.createNewScmRepository(scmServerId, scmRepository);
 	}
 

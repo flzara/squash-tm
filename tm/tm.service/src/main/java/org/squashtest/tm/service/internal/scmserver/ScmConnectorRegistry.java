@@ -67,6 +67,7 @@ public class ScmConnectorRegistry {
 			LOGGER.info("Registered Connector of kind '{}' for Source Code Management.", kind);
 		}
 	}
+
 	/**
 	 * Get all the registered  ScmConnector kinds .
 	 * @return A Set of all the ScmConnector kinds registered as Strings.
@@ -74,13 +75,15 @@ public class ScmConnectorRegistry {
 	public Set<String> getRegisteredScmKinds() {
 		return registeredScmConnectorsMap.keySet();
 	}
+
 	/**
-	 * Create a ScmConnector suitable for the given ScmServer.
+	 * Create a ScmConnector suitable for the given ScmServer. Since only a ScmServer is given, the connector is
+	 * restricted to features related to the Server (i.e. supported AuthenticationProtocols). No features acting on
+	 * local or remote repository are available.
 	 * @param scmServer The ScmServer to interact with.
-	 * @return The suitable ScmConnector for the given ScmRepository.
+	 * @return The suitable ScmConnector for the given ScmServer.
 	 */
 	public ScmConnector createConnector(ScmServer scmServer) {
-
 		String kind = scmServer.getKind();
 		LOGGER.debug("Creating connector for source code management of kind '{}'.", kind);
 		ScmConnectorProvider scmConnectorProvider = registeredScmConnectorsMap.get(kind);
@@ -88,6 +91,21 @@ public class ScmConnectorRegistry {
 			throw new IllegalArgumentException("No registered ScmConnectorProvider is of type '" + kind + "'.");
 		}
 		return scmConnectorProvider.createScmConnector(scmServer);
+	}
+
+	/**
+	 * Create a ScmConnector suitable for the given ScmRepository.
+	 * @param scmRepository The ScmRepository to interact with.
+	 * @return The suitable ScmConnector for the given ScmRepository.
+	 */
+	public ScmConnector createConnector(ScmRepository scmRepository) {
+		String kind = scmRepository.getScmServer().getKind();
+		LOGGER.debug("Creating connector for source code management of kind '{}'.", kind);
+		ScmConnectorProvider scmConnectorProvider = registeredScmConnectorsMap.get(kind);
+		if(scmConnectorProvider == null) {
+			throw new IllegalArgumentException("No registered ScmConnectorProvider is of type '" + kind + "'.");
+		}
+		return scmConnectorProvider.createScmConnector(scmRepository);
 	}
 
 }

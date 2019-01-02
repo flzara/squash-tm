@@ -26,6 +26,7 @@ import org.squashtest.tm.domain.scm.ScmRepository;
 import org.squashtest.tm.service.scmserver.ScmRepositoryManagerService;
 
 import javax.inject.Inject;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -69,7 +70,7 @@ public class ScmRepositoryManagementAdminController {
 
 	@RequestMapping(value = "/{scmRepositoryId}", method = RequestMethod.POST, params = BRANCH)
 	@ResponseBody
-	public String updateBranch(@PathVariable long scmRepositoryId, String branch) {
+	public String updateBranch(@PathVariable long scmRepositoryId, String branch) throws IOException {
 		return scmRepositoryManager.updateBranch(scmRepositoryId, branch);
 	}
 

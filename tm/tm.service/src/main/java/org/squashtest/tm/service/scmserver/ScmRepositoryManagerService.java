@@ -24,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.squashtest.tm.domain.scm.ScmRepository;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public interface ScmRepositoryManagerService {
 	 */
 	List<ScmRepository> findByScmServerOrderByPath(Long scmServerId);
 	/**
-	 * Find the ScmRepositories contained in the ScmServer with the given Id, formatted as a Page to comply the given Pageable.
+	 * Find the ScmRepositories contained in the ScmServer with the given Id formatted as a Page to comply the given Pageable.
 	 * @param scmServerId The Id of the ScmServer containing the wanted ScmRepositories.
 	 * @param pageable The Pageable against which the Page will be built.
 	 * @return The Page of ScmRepositories built according to the given Pageable.
@@ -44,10 +45,12 @@ public interface ScmRepositoryManagerService {
 	Page<ScmRepository> findPagedScmRepositoriesByScmServer(Long scmServerId, Pageable pageable);
 	/**
 	 * Create a new ScmRepository with its attributes and bind it to the given ScmServer.
+	 * This implies the creation of the local repository in the file system.
 	 * @param scmServerId The Id of the ScmServer which contains the new ScmRepository.
 	 * @param newScmRepository The ScmRepository with its attributes to create.
+	 * @throws IOException If an error occurs when creating the local repository.
 	 */
-	void createNewScmRepository(long scmServerId, ScmRepository newScmRepository);
+	void createNewScmRepository(long scmServerId, ScmRepository newScmRepository) throws IOException;
 	/**
 	 * Update the name of the ScmRepository with the given Id to the new given name.
 	 * @param scmRepositoryId The Id of the ScmRepository which name is to update.
@@ -71,11 +74,13 @@ public interface ScmRepositoryManagerService {
 	String updateFolder(long scmRepositoryId, String newFolderPath);
 	/**
 	 * Update the working branch of the ScmRepository with the given Id to the new given branch.
+	 * This implies the modification of the local repository state.
 	 * @param scmRepositoryId The Id of the ScmRepository which branch is to update.
 	 * @param newBranch The new branch of the ScmRepository.
 	 * @return The new branch of the ScmRepository.
+	 * @throws IOException If an error occurs when modifying the local repository state.
 	 */
-	String updateBranch(long scmRepositoryId, String newBranch);
+	String updateBranch(long scmRepositoryId, String newBranch) throws IOException;
 	/**
 	 * Delete the ScmRepositories with the given Ids.
 	 * @param scmRepositoriesIds The Ids of the ScmRepositories to delete.
