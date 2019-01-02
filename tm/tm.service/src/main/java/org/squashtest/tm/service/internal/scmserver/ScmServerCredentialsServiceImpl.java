@@ -83,8 +83,8 @@ public class ScmServerCredentialsServiceImpl implements ScmServerCredentialsServ
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
-	public AuthenticationProtocol[] getSupportedProtocols(ThirdPartyServer server) {
-		return scmConnectorRegistry.createConnector((ScmServer) server).getSupportedProtocols();
+	public AuthenticationProtocol[] getSupportedProtocols(ScmServer server) {
+		return scmConnectorRegistry.createConnector(server).getSupportedProtocols();
 	}
 
 

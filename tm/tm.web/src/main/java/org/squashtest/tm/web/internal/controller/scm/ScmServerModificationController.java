@@ -171,7 +171,7 @@ public class ScmServerModificationController {
 	// ********************** internal *****************************************
 
 
-	private ThirdPartyServerCredentialsManagementBean makeAuthBean(ThirdPartyServer server, Locale locale){
+	private ThirdPartyServerCredentialsManagementBean makeAuthBean(ScmServer server, Locale locale){
 		
 		ThirdPartyServerCredentialsManagementBean bean = credentialsBeanHelper.initializeFor(server, locale);
 

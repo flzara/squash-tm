@@ -22,6 +22,7 @@ package org.squashtest.tm.service.scmserver;
 
 
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
+import org.squashtest.tm.domain.scm.ScmServer;
 import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.servers.ThirdPartyServer;
@@ -50,7 +51,7 @@ public interface ScmServerCredentialsService {
 	 * @param server
 	 * @return
 	 */
-	AuthenticationProtocol[] getSupportedProtocols(ThirdPartyServer server);
+	AuthenticationProtocol[] getSupportedProtocols(ScmServer server);
 
 
 	/**
