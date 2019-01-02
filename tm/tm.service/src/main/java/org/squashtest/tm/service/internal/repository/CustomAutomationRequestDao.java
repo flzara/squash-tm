@@ -132,7 +132,7 @@ public interface CustomAutomationRequestDao {
 	 *
 	 * @param reqIds
 	 */
-	void unassignRequests(List<Long> reqIds, User assignee);
+	void unassignRequests(List<Long> reqIds);
 
 	void updatePriority(List<Long> tcIds, Integer priority);
 

@@ -179,11 +179,9 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 	@Override
 	public void unassignRequests(List<Long> tcIds) {
-		String username = userCtxt.getUsername();
-		User user = userDao.findUserByLogin(username);
 		List<Long> requestIds = requestDao.getReqIdsByTcIds(tcIds);
 		PermissionsUtils.checkPermission(permissionEvaluationService, requestIds, WRITE_AS_AUTOMATION, AutomationRequest.class.getName());
-		requestDao.unassignRequests(requestIds, user);
+		requestDao.unassignRequests(requestIds);
 	}
 
 	@Override
@@ -239,7 +237,7 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 				break;
 			case AUTOMATED:
 				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_AUTOMATION, AutomationRequest.class.getName());
-				requestDao.updateStatusToAutomated(reqIds, AUTOMATED, Arrays.asList(TRANSMITTED, AUTOMATION_IN_PROGRESS));
+				requestDao.updateStatusToAutomated(reqIds, AUTOMATED, Arrays.asList(TRANSMITTED, AUTOMATION_IN_PROGRESS, AUTOMATED));
 				break;
 			case TRANSMITTED:
 				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_FUNCTIONAL, AutomationRequest.class.getName());

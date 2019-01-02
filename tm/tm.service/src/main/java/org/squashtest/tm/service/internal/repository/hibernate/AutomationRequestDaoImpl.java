@@ -250,11 +250,10 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	}
 
 	@Override
-	public void unassignRequests(List<Long> requestIds, User assignee) {
+	public void unassignRequests(List<Long> requestIds) {
 		entityManager.createQuery("update AutomationRequest ar set ar.assignedTo = NULL, ar.assignmentDate = NULL" +
-			" where ar.id in :requestIds and ar.assignedTo = :assignee")
+			" where ar.id in :requestIds")
 		    .setParameter("requestIds", requestIds)
-			.setParameter("assignee", assignee)
 			.executeUpdate();
 	}
 
