@@ -90,21 +90,25 @@
 		<%-- policy conf panel --%>
 		<div class="side-panel">
 			<div class="tbl side-panel">
-				<%-- user policy choice --%>
+				<%-- 
+					user policy choice. This pane is disabled (not rendered if 0 or 1 policy only are available). 
+				--%>
+				<c:if test="${authConf.featureAuthPolicySelection}">
 				<div>
 					<label><f:message key="thirdpartyserver.admin.policy.user-section"/></label>
-					<div>
+					<div>						
 						<label style="vertical-align:middle; display:block;">
 							<input type="radio" name="srv-auth-policy" value="USER" ${policyUsr}>
 							<f:message key="thirdpartyserver.admin.policy.users"/>
 						</label>
-
+						
 						<label style="vertical-align:middle; display:block;">
 							<input type="radio" name="srv-auth-policy" value="APP_LEVEL" ${policyApp}>
 							<f:message key="thirdpartyserver.admin.policy.app"/>
 						</label>
 					</div>
 				</div>
+				</c:if>
 
 				<%-- app-level credentials section --%>
 				<div class="srv-form">
@@ -117,7 +121,10 @@
 
 						<div class="centered srv-auth-buttonpane" style="position:relative">
 							<span class="needs-save-msg" style="display:none;"><f:message key="thirdpartyserver.admin.messages.needs-save"/></span>
+							
+							<c:if test="${authConf.featureTestCredentialsButton}">
 							<input type="button" class="sq-btn auth-test" value="${testLabel}"/>
+							</c:if>
 							<input type="button" class="sq-btn auth-save" value="${saveLabel}"/>
 						</div>
 

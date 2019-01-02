@@ -53,6 +53,7 @@ import org.squashtest.tm.service.servers.ManageableCredentials;
 import org.squashtest.tm.service.servers.MissingEncryptionKeyException;
 import org.squashtest.tm.service.servers.ServerAuthConfiguration;
 import org.squashtest.tm.web.internal.controller.thirdpartyserver.ThirdPartyServerCredentialsManagementBean;
+import org.squashtest.tm.web.internal.controller.thirdpartyserver.ThirdPartyServerCredentialsManagementHelper;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
@@ -74,6 +75,9 @@ public class BugTrackerModificationController {
 
 	@Inject
 	private BugTrackerFinderService bugtrackerFinder;
+	
+	@Inject
+	private ThirdPartyServerCredentialsManagementHelper credentialsBeanHelper;
 
 
 
@@ -201,42 +205,12 @@ public class BugTrackerModificationController {
 
 
 	private ThirdPartyServerCredentialsManagementBean makeAuthBean(BugTracker bugTracker, Locale locale){
-		AuthenticationProtocol[] availableProtos = bugtrackerModificationService.getSupportedProtocols(bugTracker);
-		ThirdPartyServerCredentialsManagementBean bean = new ThirdPartyServerCredentialsManagementBean();
+		
+		ThirdPartyServerCredentialsManagementBean bean = credentialsBeanHelper.initializeFor(bugTracker, locale);
 
-		// defaults
-		bean.setRemoteUrl(bugTracker.getUrl());
-		bean.setAuthPolicy(bugTracker.getAuthenticationPolicy());
-		bean.setSelectedProto(bugTracker.getAuthenticationProtocol());
+		AuthenticationProtocol[] availableProtos = bugtrackerModificationService.getSupportedProtocols(bugTracker);
 		bean.setAvailableProtos(Arrays.asList(availableProtos));
 		
-
-		// now check against the credentials
-		try{
-			ManageableCredentials credentials = bugtrackerModificationService.findCredentials(bugTracker.getId());
-			ServerAuthConfiguration configuration = bugtrackerModificationService.findAuthConfiguration(bugTracker.getId());
-
-			bean.setCredentials(credentials);
-			bean.setAuthConf(configuration);
-
-
-		}
-		// no encryption key : blocking error, internationalizable
-		catch(MissingEncryptionKeyException ex){
-			String msg = i18nHelper.internationalize(ex, locale);
-			bean.setFailureMessage(msg);
-		}
-		// key changed : recoverable error, internationalizable
-		catch(EncryptionKeyChangedException ex){
-			String msg = i18nHelper.internationalize(ex, locale);
-			bean.setWarningMessage(msg);
-		}
-		// other exceptions are treated as non blocking, non internationalizable errors
-		catch(Exception ex){
-			LOGGER.error(ex.getMessage(), ex);
-			bean.setWarningMessage(ex.getMessage());
-		}
-
 		return bean;
 
 	}

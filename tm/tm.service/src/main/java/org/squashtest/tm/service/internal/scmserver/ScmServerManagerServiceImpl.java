@@ -28,6 +28,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.scm.ScmServer;
+import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.internal.repository.ScmServerDao;
 import org.squashtest.tm.service.scmserver.ScmServerManagerService;
@@ -69,11 +70,17 @@ public class ScmServerManagerServiceImpl implements ScmServerManagerService {
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public ScmServer createNewScmServer(ScmServer newScmServer) {
+		
 		if(scmServerDao.isServerNameAlreadyInUse(newScmServer.getName())) {
 			throw new NameAlreadyInUseException("ScmServer", newScmServer.getName());
 		}
+		
+		// authentication policy : for now ScmServer only supports APP_LEVEL
+		newScmServer.setAuthenticationPolicy(AuthenticationPolicy.APP_LEVEL);
+		
 		return scmServerDao.save(newScmServer);
 	}
+	
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public String updateName(long scmServerId, String newName) {

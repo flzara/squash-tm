@@ -462,14 +462,20 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 
 			var model = this.initModel(options.conf);
 
-			var conf = {
+			var viewConf = {
 				model : model,
 				failureMessage: options.conf.failureMessage,
-				warningMessage: options.conf.warningMessage
+				warningMessage: options.conf.warningMessage,
+				
+				// UI features
+				features : {
+					featureTestCredentialsButton : options.conf.featureTestCredentialsButton,
+					featureAuthPolicySelection : options.conf.featureAuthPolicySelection
+				}
 			};
 
-			new ProtocolView(conf);
-			new PolicyView(conf);
+			new ProtocolView(viewConf);
+			new PolicyView(viewConf);
 
 		},
 
@@ -629,6 +635,15 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 		el: "#server-auth-policy",
 		name: "srv-auth-creds",
 
+		policySelector : true,
+		testCredentials : true,
+		
+		initialize : function(conf){
+			BasePanelView.prototype.initialize.call(this, conf);
+			this.policySelector = conf.features.featureAuthPolicySelection;
+			this.testCredentials = conf.features.featureTestCredentialsButton;
+		},
+
 		viewMap: {
 			'BASIC_AUTH': BasicAuthCredentialsView,
 			'OAUTH_1A': OAuthCredentialsView
@@ -643,10 +658,17 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 			return this.model.currentCreds();
 		},
 
-		events: {
-			'click .auth-test' : 'test',
-			'click .auth-save' : 'save',
-			'change input[name="srv-auth-policy"]' : 'updatePolicy'
+		events: function(){ 
+			var events = {
+				'click .auth-save' : 'save',
+			};
+			if (this.policySelector){
+				events['change input[name="srv-auth-policy"]'] = 'updatePolicy';
+			}
+			if (this.testCredentials){
+				events['click .auth-test'] = 'test';
+			}
+			return events;
 		},
 
 
@@ -677,6 +699,7 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 		},
 
 		test: function(){
+			var model = this.model;
 			var url = this.model.get('entityUrl') + '/credentials/validator';
 			var payload = this.preparePayload();
 
@@ -693,15 +716,24 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 			var payload = this.preparePayload();
 			var self = this;
 
-			this._postCreds(testUrl, payload)
-				.done(function(){
-					return self._postCreds(saveUrl, payload);
-				})
-				.done(function(){
-					//rearm the unsaved data reminder and trigger success
-					self.hideSaveReminder();
-					radio.trigger('srv-auth-creds', 'success',  translator.get('thirdpartyserver.admin.messages.save.success'));
-				});
+			// test before save - if that feature is enabled, otherwise return an always-resolved promise
+			var deferTest = (this.testCredentials) ? 
+					this._postCreds(testUrl, payload) :
+					this.deferSuccess();
+			
+			// now proceed with saving 
+			deferTest.done(function(){
+				return self._postCreds(saveUrl, payload);
+			})
+			.done(function(){
+				//rearm the unsaved data reminder and trigger success
+				self.hideSaveReminder();
+				radio.trigger('srv-auth-creds', 'success',  translator.get('thirdpartyserver.admin.messages.save.success'));
+			});
+		},
+		
+		deferSuccess : function(){
+			return $.Deferred().resolve().promise();
 		}
 
 

@@ -55,7 +55,7 @@ public final class SpringPagination {
     public static Pageable pageable(DataTableDrawParameters dtParams){
 
         PageNumSize pns = createPageNumSize(dtParams);
-        return new PageRequest(pns.pagenum, pns.pagesize);
+        return PageRequest.of(pns.pagenum, pns.pagesize);
 
     }
 
@@ -72,7 +72,7 @@ public final class SpringPagination {
         // 2 - sorting
         Sort sort = createSort(dtParams, mapper);
 
-        return new PageRequest(pns.pagenum, pns.pagesize, sort);
+        return PageRequest.of(pns.pagenum, pns.pagesize, sort);
 
     }
 

@@ -109,7 +109,7 @@
 					<div class="side-panel">
 						<div class="tbl side-panel">
 							<!-- user policy choice -->
-							<div>
+							<div th:if="${authConf.featureAuthPolicySelection}">
 								<label>[[#{thirdpartyserver.admin.policy.user-section}]]</label>
 								<div>
 									<label style="vertical-align:middle; display:block;">
@@ -135,7 +135,7 @@
 			
 									<div class="centered srv-auth-buttonpane" style="position:relative">
 										<span class="needs-save-msg" style="display:none;">[[#{thirdpartyserver.admin.messages.needs-save}]]</span>
-										<input type="button" class="sq-btn auth-test" th:value="#{label.test}"/>
+										<input type="button" class="sq-btn auth-test" th:value="#{label.test}" th:if="${authConf.featureTestCredentialsButton}"/>
 										<input type="button" class="sq-btn auth-save" th:value="#{label.save}"/>
 									</div>
 			

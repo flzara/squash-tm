@@ -27,6 +27,14 @@ import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.service.servers.ManageableCredentials;
 import org.squashtest.tm.service.servers.ServerAuthConfiguration;
 
+
+/**
+ * <p>This bean holds the necessary elements for the the generation of the credentials management UI subcomponent, used 
+ * in the server administration pages e.g. for BugTracker or ScmServer etc.</p>
+ * 
+ * @author bsiri
+ *
+ */
 public final class ThirdPartyServerCredentialsManagementBean{
 
 	// the error messages. If they remains to null it is a good thing
@@ -48,6 +56,12 @@ public final class ThirdPartyServerCredentialsManagementBean{
 	private ServerAuthConfiguration authConf;
 	// app-level credentials
 	private ManageableCredentials credentials;
+	
+	
+	// UI features
+	private boolean featureTestCredentialsButton = true;
+	private boolean featureAuthPolicySelection = true;
+	
 
 	public String getFailureMessage() {
 		return failureMessage;
@@ -64,6 +78,8 @@ public final class ThirdPartyServerCredentialsManagementBean{
 	public void setWarningMessage(String warningMessage) {
 		this.warningMessage = warningMessage;
 	}
+	
+
 
 	public AuthenticationPolicy getAuthPolicy() {
 		return authPolicy;
@@ -72,6 +88,7 @@ public final class ThirdPartyServerCredentialsManagementBean{
 	public void setAuthPolicy(AuthenticationPolicy authPolicy) {
 		this.authPolicy = authPolicy;
 	}
+
 
 	public List<AuthenticationProtocol> getAvailableProtos() {
 		return availableProtos;
@@ -120,6 +137,23 @@ public final class ThirdPartyServerCredentialsManagementBean{
 	public void setRemoteUrl(String remoteUrl) {
 		this.remoteUrl = remoteUrl;
 	}
-	
 
+	public boolean isFeatureTestCredentialsButton() {
+		return featureTestCredentialsButton;
+	}
+
+	public void setFeatureTestCredentialsButton(boolean featureTestCredentialsButton) {
+		this.featureTestCredentialsButton = featureTestCredentialsButton;
+	}
+
+	public boolean isFeatureAuthPolicySelection() {
+		return featureAuthPolicySelection;
+	}
+
+	public void setFeatureAuthPolicySelection(boolean featureAuthPolicySelection) {
+		this.featureAuthPolicySelection = featureAuthPolicySelection;
+	}
+
+
+	
 }

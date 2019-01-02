@@ -43,6 +43,7 @@ import org.squashtest.tm.service.servers.ManageableCredentials;
 import org.squashtest.tm.service.servers.MissingEncryptionKeyException;
 import org.squashtest.tm.service.servers.ServerAuthConfiguration;
 import org.squashtest.tm.web.internal.controller.thirdpartyserver.ThirdPartyServerCredentialsManagementBean;
+import org.squashtest.tm.web.internal.controller.thirdpartyserver.ThirdPartyServerCredentialsManagementHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
@@ -89,13 +90,12 @@ public class ScmServerModificationController {
 	private ScmConnectorRegistry scmServerRegistry;
 	@Inject
 	private ScmRepositoryManagerService scmRepositoryManager;
-
 	@Inject
 	private ScmServerCredentialsService credentialsService;
-
+	@Inject
+	private ThirdPartyServerCredentialsManagementHelper credentialsBeanHelper;
 	@Inject
 	private InternationalizationHelper i18nHelper;
-
 
 
 	@RequestMapping(method = RequestMethod.GET)
@@ -144,11 +144,6 @@ public class ScmServerModificationController {
 
 	// **************************** credentials management ******************************
 
-	@RequestMapping(value = "/authentication-policy", method = RequestMethod.POST, params = VALUE)
-	@ResponseBody
-	public void changeAuthPolicy(@PathVariable(SERVER_ID) long bugtrackerId, @RequestParam(VALUE) AuthenticationPolicy policy){
-		credentialsService.changeAuthenticationPolicy(bugtrackerId, policy);
-	}
 
 	@RequestMapping(value = "/authentication-protocol", method = RequestMethod.POST, params = VALUE)
 	@ResponseBody
@@ -164,22 +159,6 @@ public class ScmServerModificationController {
 	}
 
 
-	@RequestMapping(value= "/credentials/validator", method = RequestMethod.POST, consumes="application/json")
-	@ResponseBody
-	public void testCredentials(@PathVariable(SERVER_ID) long bugtrackerId ,@RequestBody ManageableCredentials credentials){
-		/*
-		 * catch BugTrackerNoCredentialsException, let fly the others
-		 */
-		try{
-			credentialsService.testCredentials(bugtrackerId, credentials);
-		}
-		catch(BugTrackerNoCredentialsException ex){
-			// need to rethrow the same exception, with a message in the expected user language
-			LOGGER.debug("server-app credentials test failed : ", ex);
-			String message = i18nHelper.internationalize("thirdpartyserver.admin.messages.testcreds.fail", LocaleContextHolder.getLocale());
-			throw new BugTrackerNoCredentialsException(message, ex);
-		}
-	}
 
 	@RequestMapping(value = "/credentials", method = RequestMethod.POST, consumes="application/json")
 	@ResponseBody
@@ -192,41 +171,18 @@ public class ScmServerModificationController {
 
 
 	private ThirdPartyServerCredentialsManagementBean makeAuthBean(ThirdPartyServer server, Locale locale){
+		
+		ThirdPartyServerCredentialsManagementBean bean = credentialsBeanHelper.initializeFor(server, locale);
+
 		AuthenticationProtocol[] availableProtos = credentialsService.getSupportedProtocols(server);
-		ThirdPartyServerCredentialsManagementBean bean = new ThirdPartyServerCredentialsManagementBean();
-
-		// defaults
-		bean.setRemoteUrl(server.getUrl());
-		bean.setAuthPolicy(server.getAuthenticationPolicy());
-		bean.setSelectedProto(server.getAuthenticationProtocol());
 		bean.setAvailableProtos(Arrays.asList(availableProtos));
-
-
-		// now check against the credentials
-		try{
-			ManageableCredentials credentials = credentialsService.findCredentials(server.getId());
-			ServerAuthConfiguration configuration = credentialsService.findAuthConfiguration(server.getId());
-
-			bean.setCredentials(credentials);
-			bean.setAuthConf(configuration);
-
-		}
-
-		// no encryption key : blocking error, internationalizable
-		catch(MissingEncryptionKeyException ex){
-			String msg = i18nHelper.internationalize(ex, locale);
-			bean.setFailureMessage(msg);
-		}
-		// key changed : recoverable error, internationalizable
-		catch(EncryptionKeyChangedException ex){
-			String msg = i18nHelper.internationalize(ex, locale);
-			bean.setWarningMessage(msg);
-		}
-		// other exceptions are treated as non blocking, non internationalizable errors
-		catch(Exception ex){
-			LOGGER.error(ex.getMessage(), ex);
-			bean.setWarningMessage(ex.getMessage());
-		}
+		
+		// force auth policy to app level, no other is supported
+		bean.setAuthPolicy(AuthenticationPolicy.APP_LEVEL);
+		bean.setFeatureAuthPolicySelection(false);
+		
+		//also the credentials are not testable
+		bean.setFeatureTestCredentialsButton(false);
 
 		return bean;
 
