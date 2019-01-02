@@ -20,8 +20,8 @@
  */
 package org.squashtest.tm.service.servers;
 
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.servers.Credentials;
+import org.squashtest.tm.domain.servers.ThirdPartyServer;
 
 import java.util.Optional;
 
@@ -49,7 +49,7 @@ import java.util.Optional;
  * </p>
  *
  * <p>
- *     Historically this class was known as BugTrackerContextHolder but was repurposed as the credentials management
+ *     Historically this class was known as ThirdPartyServerContextHolder but was repurposed as the credentials management
  *     became more advanced (live vs cold credentials etc).
  * </p>
  *
@@ -70,7 +70,7 @@ public interface CredentialsProvider {
 	 * @param server
 	 * @return
 	 */
-	boolean hasCredentials(BugTracker server);
+	boolean hasCredentials(ThirdPartyServer server);
 
 	/**
 	 * Checks whether Squash-TM owns credentials for the given server.
@@ -78,7 +78,7 @@ public interface CredentialsProvider {
 	 * @param server
 	 * @return
 	 */
-	boolean hasAppLevelCredentials(BugTracker server);
+	boolean hasAppLevelCredentials(ThirdPartyServer server);
 
 	/**
 	 * Retrieves the credentials of the current user for the given server, if any.
@@ -86,7 +86,7 @@ public interface CredentialsProvider {
 	 * @param server
 	 * @return
 	 */
-	Optional<Credentials> getCredentials(BugTracker server);
+	Optional<Credentials> getCredentials(ThirdPartyServer server);
 
 	/**
 	 * Retrieves Squash-TM own credentials for the given server, if any.
@@ -94,11 +94,11 @@ public interface CredentialsProvider {
 	 * @param server
 	 * @return
 	 */
-	Optional<Credentials> getAppLevelCredentials(BugTracker server);
+	Optional<Credentials> getAppLevelCredentials(ThirdPartyServer server);
 
 
 	/**
-	 * Store the given credentials into the cache for the given bugtracker
+	 * Store the given credentials into the cache for the given ThirdPartyServer
 	 * (and for the current user). The credentials will be cached only if
 	 * the cache deems them cachable indeed (see documentation in {@link UserCredentialsCache}).
 	 * That method should not be invoked to cache Squash-TM app level credentials. The credentials must not be null.
@@ -106,7 +106,7 @@ public interface CredentialsProvider {
 	 * @param server
 	 * @param credentials
 	 */
-	void cacheCredentials(BugTracker server, Credentials credentials);
+	void cacheCredentials(ThirdPartyServer server, Credentials credentials);
 
 
 	/**
@@ -115,7 +115,7 @@ public interface CredentialsProvider {
 	 *
 	 * @param server
 	 */
-	void uncacheCredentials(BugTracker server);
+	void uncacheCredentials(ThirdPartyServer server);
 
 
 	// ******* UserCredentialsCache plumbing (infrastructure) **************

@@ -24,10 +24,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.domain.servers.Credentials;
+import org.squashtest.tm.domain.servers.ThirdPartyServer;
 import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.servers.CredentialsProvider;
 import org.squashtest.tm.service.servers.ManageableCredentials;
@@ -60,17 +60,17 @@ public class CredentialsProviderImpl implements CredentialsProvider {
 	}
 
 	@Override
-	public boolean hasCredentials(BugTracker server) {
+	public boolean hasCredentials(ThirdPartyServer server) {
 		return getCredentials(server).isPresent();
 	}
 
 	@Override
-	public boolean hasAppLevelCredentials(BugTracker server) {
+	public boolean hasAppLevelCredentials(ThirdPartyServer server) {
 		return getAppLevelCredentials(server).isPresent();
 	}
 
 	@Override
-	public Optional<Credentials> getCredentials(BugTracker server) {
+	public Optional<Credentials> getCredentials(ThirdPartyServer server) {
 		LOGGER.debug("CredentialsProviderImpl : looking for credentials for server '{}' for current user", server.getName());
 
 		Credentials credentials = getCredentialsFromCache(server);
@@ -94,7 +94,7 @@ public class CredentialsProviderImpl implements CredentialsProvider {
 	}
 
 	@Override
-	public Optional<Credentials> getAppLevelCredentials(BugTracker server) {
+	public Optional<Credentials> getAppLevelCredentials(ThirdPartyServer server) {
 
 		LOGGER.debug("CredentialsProviderImpl : looking for app-level credentials for server '{}'", server.getName());
 
@@ -115,7 +115,7 @@ public class CredentialsProviderImpl implements CredentialsProvider {
 
 
 
-	private Credentials getCredentialsFromCache(BugTracker server){
+	private Credentials getCredentialsFromCache(ThirdPartyServer server){
 		UserCredentialsCache userCache = getCache();
 		Credentials credentials = null;
 		if (userCache.hasCredentials(server)){
@@ -125,7 +125,7 @@ public class CredentialsProviderImpl implements CredentialsProvider {
 		return credentials;
 	}
 
-	private Credentials getUserCredentialsFromStore(BugTracker server){
+	private Credentials getUserCredentialsFromStore(ThirdPartyServer server){
 		Credentials result = null;
 		ManageableCredentials managed = storedCredentialsManager.findUserCredentials(server.getId(), currentUser());
 		if (managed != null){
@@ -136,7 +136,7 @@ public class CredentialsProviderImpl implements CredentialsProvider {
 	}
 
 
-	private Credentials getAppLevelCredentialsFromStore(BugTracker server){
+	private Credentials getAppLevelCredentialsFromStore(ThirdPartyServer server){
 		Credentials result = null;
 		ManageableCredentials managed = storedCredentialsManager.unsecuredFindAppLevelCredentials(server.getId());
 		if (managed != null){
@@ -152,7 +152,7 @@ public class CredentialsProviderImpl implements CredentialsProvider {
 
 
 	@Override
-	public void cacheCredentials(BugTracker server, Credentials credentials) {
+	public void cacheCredentials(ThirdPartyServer server, Credentials credentials) {
 		if (server.getAuthenticationPolicy() != AuthenticationPolicy.APP_LEVEL){
 			LOGGER.debug("CredentialsProviderImpl : caching credentials for server '{}'", server.getName());
 			UserCredentialsCache userCache = getCache();
@@ -164,7 +164,7 @@ public class CredentialsProviderImpl implements CredentialsProvider {
 	}
 
 	@Override
-	public void uncacheCredentials(BugTracker server) {
+	public void uncacheCredentials(ThirdPartyServer server) {
 		UserCredentialsCache userCache = getCache();
 		userCache.uncache(server);
 	}

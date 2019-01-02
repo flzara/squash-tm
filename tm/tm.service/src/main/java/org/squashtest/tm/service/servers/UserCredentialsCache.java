@@ -27,10 +27,10 @@ import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials;
 import org.squashtest.tm.domain.servers.Credentials;
+import org.squashtest.tm.domain.servers.ThirdPartyServer;
 
 
 /**
@@ -61,7 +61,7 @@ import org.squashtest.tm.domain.servers.Credentials;
  * </ul>
  *
  * <p>
- *     For the code historians, the philogenetic ancestor of that class was as BugTrackerContext, which has gone extinct circa Squash TM 1.18.
+ *     For the code historians, the philogenetic ancestor of that class was BugTrackerContext, which has gone extinct circa Squash TM 1.18.
  * </p>
  *
  * @author bsiri
@@ -93,15 +93,15 @@ public class UserCredentialsCache implements Serializable {
 	}
 
 
-	public Credentials getCredentials(BugTracker server) {
+	public Credentials getCredentials(ThirdPartyServer server) {
 		return cache.get(server.getId());
 	}
 
 
 
-	public void cacheIfAllowed(BugTracker server, Credentials credentials) {
+	public void cacheIfAllowed(ThirdPartyServer server, Credentials credentials) {
 		if (credentials == null){
-			throw new NullArgumentException("UserCredentialsCache : cannot set credentials if they are null. Perhaps you meant : discardCredentials(BugTracker) ?");
+			throw new NullArgumentException("UserCredentialsCache : cannot set credentials if they are null. Perhaps you meant : discardCredentials(ThirdPartyServer) ?");
 		}
 		LOGGER.trace("UserCredentialsCache #{} : settings credentials of class '{}' for user '{}' (set credentials) ...", credentials.getClass(), this.toString(), user);
 		if (isCachable(credentials)){
@@ -113,12 +113,12 @@ public class UserCredentialsCache implements Serializable {
 		}
 	}
 
-	public void uncache(BugTracker server){
+	public void uncache(ThirdPartyServer server){
 		cache.remove(server.getId());
 	}
 
-	public boolean hasCredentials(BugTracker bugTracker) {
-		return cache.get(bugTracker.getId()) != null;
+	public boolean hasCredentials(ThirdPartyServer server) {
+		return cache.get(server.getId()) != null;
 	}
 
 	/**

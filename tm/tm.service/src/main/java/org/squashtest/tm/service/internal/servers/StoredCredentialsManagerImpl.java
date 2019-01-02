@@ -68,7 +68,7 @@ import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
  * - machine credentials
  *
  * The variety of possible content represented in this uniform entity poses extra complexity for handling the data properly and
- * makes the business less expressibe. It is manageable for now but in the future it could be wise to separate the payload (the encrypted data)
+ * makes the business less expressible. It is manageable for now but in the future it could be wise to separate the payload (the encrypted data)
  * from the purpose (user credentials, configuration, or whatever we will need to encrypt next).
  */
 @Transactional
@@ -83,7 +83,6 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 
 
 	private static final String JACKSON_TYPE_ID_ATTR = "@class";
-	private static final String DEPREC_BASIC_CREDENTIALS = BasicAuthenticationCredentials.class.getName();
 
 	private static final Logger LOGGER= LoggerFactory.getLogger(StoredCredentialsManagerImpl.class);
 
