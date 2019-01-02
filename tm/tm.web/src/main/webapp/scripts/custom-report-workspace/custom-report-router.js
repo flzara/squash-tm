@@ -132,7 +132,7 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 
 			showReportDetails: function (id) {
 				this.cleanContextContent();
-				var modelDef = Backbone.Model.extend({
+				var ModelDef = Backbone.Model.extend({
 					defaults: {
 						id: id
 					}
