@@ -124,6 +124,10 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		if (shouldSearchByMilestones(modelCopy)) {
 			luceneQuery = addAggregatedMilestonesCriteria(luceneQuery, qb, modelCopy);
 		}
+
+		if(shouldSearchByAutomationWorkflow(modelCopy)) {
+			luceneQuery = addAllowAutomationWorkflow(luceneQuery,qb, modelCopy);
+		}
 		return luceneQuery;
 	}
 
@@ -137,6 +141,12 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 		/* Create the query. */
 		return fakeIdToFindNoResultViaLuceneForCreatingQuery(lItpiIds,  qb,  mainQuery,  FAKE_ITPI_ID);
+	}
+
+	public Query addAllowAutomationWorkflow(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy) {
+		addWorkflowAutomationFilter(modelCopy);
+		Query query = buildLuceneQuery(qb,modelCopy);
+		return qb.bool().must(mainQuery).must(query).createQuery();
 	}
 
 	@Override

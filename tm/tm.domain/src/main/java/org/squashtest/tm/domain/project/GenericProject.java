@@ -49,11 +49,11 @@ import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.SortableField;
-import org.hibernate.search.annotations.Store;
+import org.hibernate.search.annotations.*;
+
 import javax.validation.constraints.NotBlank;
+
+import org.hibernate.search.bridge.builtin.BooleanBridge;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.Sizes;
@@ -170,6 +170,9 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 
 	private boolean allowTcModifDuringExec = false;
 
+	@Field(analyze = Analyze.NO, store = Store.YES)
+	@SortableField
+	@FieldBridge(impl = BooleanBridge.class)
 	private boolean allowAutomationWorkflow = false;
 
 	public GenericProject() {

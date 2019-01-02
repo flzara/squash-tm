@@ -135,10 +135,13 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 		// create the main query (search test cases, no milestones)
 		Query luceneQuery = buildCoreLuceneQuery(qb, model);
-
 		// now add the test-cases specific milestones criteria
 		if (shouldSearchByMilestones(modelCopy)) {
 			luceneQuery = addAggregatedMilestonesCriteria(luceneQuery, qb, modelCopy);
+		}
+
+		if(shouldSearchByAutomationWorkflow(modelCopy)) {
+			luceneQuery = addAllowAutomationWorkflow(luceneQuery,qb,modelCopy);
 		}
 
 		return luceneQuery;
@@ -304,6 +307,12 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 		return qb.bool().must(mainQuery).must(idQuery).createQuery();
 
+	}
+
+	public Query addAllowAutomationWorkflow(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy) {
+		addWorkflowAutomationFilter(modelCopy);
+		Query query = buildLuceneQuery(qb,modelCopy);
+		return qb.bool().must(mainQuery).must(query).createQuery();
 	}
 
 }

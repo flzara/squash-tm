@@ -428,6 +428,14 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	}
 
+	public void addWorkflowAutomationFilter(AdvancedSearchModel searchModel) {
+		Map<String, AdvancedSearchFieldModel> fields = searchModel.getFields();
+		AdvancedSearchSingleFieldModel projectAllowAutomationWorkflow = new AdvancedSearchSingleFieldModel();
+
+		projectAllowAutomationWorkflow.setValue("true");
+		fields.put("project.allowAutomationWorkflow", projectAllowAutomationWorkflow);
+	}
+
 	protected Criteria createMilestoneHibernateCriteria(Map<String, AdvancedSearchFieldModel> fields) {
 
 		Session session = em.unwrap(Session.class);
@@ -773,6 +781,25 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		boolean hasCriteria = (searchByMilestone != null && "true".equals(searchByMilestone.getValue())) || (activeMilestoneMode != null && "true".equals(activeMilestoneMode.getValue()));
 
 		return enabled && hasCriteria;
+	}
+
+	public boolean shouldSearchByAutomationWorkflow(AdvancedSearchModel model) {
+		boolean enabled = false;
+		AdvancedSearchListFieldModel searchByAutomatable = (AdvancedSearchListFieldModel) model.getFields().get("automatable");
+		AdvancedSearchListFieldModel searchByAutomationRequest = (AdvancedSearchListFieldModel) model.getFields().get("automationRequest.requestStatus");
+
+		AdvancedSearchListFieldModel searchByTcAutomatable = (AdvancedSearchListFieldModel) model.getFields().get("referencedTestCase.automatable");
+		AdvancedSearchListFieldModel searchByTcAutomationRequest = (AdvancedSearchListFieldModel) model.getFields().get("referencedTestCase.automationRequest.requestStatus");
+
+		if((searchByAutomatable != null && searchByAutomatable.getValues().size() > 0) || (searchByAutomationRequest != null &&searchByAutomationRequest.getValues().size() > 0)) {
+			enabled = true;
+		}
+
+		if((searchByTcAutomatable != null && searchByTcAutomatable.getValues().size() > 0) || (searchByTcAutomationRequest != null &&searchByTcAutomationRequest.getValues().size() > 0)) {
+			enabled = true;
+		}
+
+		return enabled;
 	}
 
 	public List<Long> findAllReadablesId() {
