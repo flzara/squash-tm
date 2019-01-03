@@ -300,7 +300,8 @@ define(['jquery', 'app/util/StringUtil'], function ($, StringUtil) {
 		};
 
 		this.getReference = function () {
-			return StringUtil.unescape(this.reference.attr('reference'));
+			var ref = this.reference.attr('reference');
+			return ref !== undefined ? StringUtil.unescape(ref) : ref;
 		};
 
 		this.getIndex = function () {
