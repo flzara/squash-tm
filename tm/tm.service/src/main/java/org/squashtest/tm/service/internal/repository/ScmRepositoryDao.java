@@ -31,7 +31,7 @@ import org.squashtest.tm.domain.scm.ScmRepository;
 import java.util.Collection;
 import java.util.List;
 
-public interface ScmRepositoryDao extends JpaRepository<ScmRepository, Long> {
+public interface ScmRepositoryDao extends JpaRepository<ScmRepository, Long>, CustomScmRepositoryDao {
 
 	/**
 	 * Find the ScmRepositories contained in the ScmServer with the given Id ordered by path.

@@ -20,24 +20,17 @@
  */
 package org.squashtest.tm.service.internal.scmserver;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.project.QProject;
-import org.squashtest.tm.domain.scm.QScmRepository;
 import org.squashtest.tm.domain.scm.ScmRepository;
-import org.squashtest.tm.domain.testcase.QScriptedTestCaseExtender;
-import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.service.scmserver.ScmRepositoryFilesystemService;
 import org.squashtest.tm.service.scmserver.ScmRepositoryManifest;
 import org.squashtest.tm.service.testcase.scripted.ScriptToFileStrategy;
-import static org.squashtest.tm.service.testcase.scripted.ScriptToFileStrategy.strategyFor;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -45,10 +38,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Optional;
 
-import static com.querydsl.core.group.GroupBy.groupBy;
-import static com.querydsl.core.group.GroupBy.set;
+import static org.squashtest.tm.service.testcase.scripted.ScriptToFileStrategy.strategyFor;
 
 @Service("ScmRepositoryFilesystemService")
 @Transactional(readOnly = true)
@@ -60,43 +53,13 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	private EntityManager em;
 
 	@Override
-	public void createOrUpdateScriptFile(Collection<Long> testCaseIds) {
+	public void createOrUpdateScriptFile(ScmRepository scm, Collection<TestCase> testCases) {
 
-		LOGGER.debug("committing test cases to their repositories");
-		LOGGER.trace("test case ids : '{}'", testCaseIds);
-
-		Map<ScmRepository, Set<TestCase>> scriptsGroupedByScm = findScriptedTestCasesGroupedByRepoById(testCaseIds);
-
-		for (Map.Entry<ScmRepository, Set<TestCase>> entry : scriptsGroupedByScm.entrySet()){
-
-			ScmRepository scm = entry.getKey();
-			Set<TestCase> testCases = entry.getValue();
-
-			if (LOGGER.isTraceEnabled()) {
-				LOGGER.trace("committing {} files to repository '{}'", testCases.size(), scm.getName());
-			}
-
-			exportToScm(scm, testCases);
+		if (LOGGER.isTraceEnabled()) {
+			LOGGER.trace("committing {} files to repository '{}'", testCases.size(), scm.getName());
 		}
-
-
-	}
-
-
-	// **************** internal routines ********************************
-
-
-	/**
-	 * Will create the files in the scm if they don't exist, then update the content.
-	 * A lock is acquired on the SCM for the whole operation beforehand.
-	 *
-	 * @param scm
-	 * @param testCases
-	 */
-	private void exportToScm(ScmRepository scm, Collection<TestCase> testCases){
-
+		// exportToScm
 		try {
-
 			scm.doWithLock(() -> {
 
 				LOGGER.trace("committing tests to scm : '{}'", scm.getName());
@@ -130,6 +93,9 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	}
 
 
+	// **************** internal routines ********************************
+
+
 	/********************************************************************************************************
 	 * /!\ /!\/!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\
 	 *
@@ -138,9 +104,6 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	 *
 	 * /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\
 	 ********************************************************************************************************/
-
-
-
 
 	public File locateOrCreateTestFile(ScmRepositoryManifest manifest, TestCase testCase) throws IOException{
 
@@ -243,7 +206,6 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 
 	}
 
-
 	private void printToFile(File dest, TestCase testCase) throws IOException{
 		ScriptToFileStrategy strategy = strategyFor(testCase.getKind());
 		String content = strategy.getWritableFileContent(testCase);
@@ -255,44 +217,6 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 			// try again with default charset
 			FileUtils.write(dest, content);
 		}
-
-	}
-
-
-
-	// *************** data access methods *******************************
-
-
-	/*
-	 *	Retrieve the test cases grouped by ScmRepository they should be committed into
-	 */
-	private Map<ScmRepository, Set<TestCase>> findScriptedTestCasesGroupedByRepoById(Collection<Long> testCaseIds){
-
-		LOGGER.debug("looking for repositories and the test cases that should be committed into them");
-
-
-		if (testCaseIds.isEmpty()){
-			return Collections.emptyMap();
-		}
-
-		QTestCase testCase = QTestCase.testCase;
-		QScriptedTestCaseExtender script = QScriptedTestCaseExtender.scriptedTestCaseExtender;
-		QProject project = QProject.project1;
-		QScmRepository scm = QScmRepository.scmRepository;
-
-
-		return new JPAQueryFactory(em)
-				   .select(scm, testCase, script)
-				   .from(testCase)
-				   .join(testCase.project, project)
-				   .join(project.scmRepository, scm)
-				   .join(testCase.scriptedTestCaseExtender, script)
-				   .fetchJoin()
-				   .where(testCase.id.in(testCaseIds)
-					  .and(testCase.kind.ne(TestCaseKind.STANDARD)))
-				   .transform(
-				   	groupBy(scm).as(set(testCase))
-				   );
 
 	}
 

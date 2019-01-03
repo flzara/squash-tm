@@ -18,28 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.scmserver;
-
+package org.squashtest.tm.service.internal.repository;
 
 import org.squashtest.tm.domain.scm.ScmRepository;
 import org.squashtest.tm.domain.testcase.TestCase;
 
 import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
-/**
- * This service provides several high-level methods for SCM content management.
- *
- */
-public interface ScmRepositoryFilesystemService {
-
+public interface CustomScmRepositoryDao {
 	/**
-	 * Will create the script files corresponding to the given Test Cases in the scm if they don't exist,
-	 * then update the content.
-	 * Only scripted test cases can exist on the SCM, regular test cases will be ignored.
-	 * A lock must be acquired on the SCM for the whole operation beforehand.
-	 * @param scm The ScmRepository on which the Test Cases will be created/updated
-	 * @param testCases The Collection of Test Cases which script files are to create/update
+	 * Retrieve the Test Cases grouped by ScmRepository they should be committed into.
+	 * @param testCaseIds The Collection of Test Case ids.
+	 * @return A Map of Test Case Sets mapped by ScmRepository
 	 */
-	void createOrUpdateScriptFile(ScmRepository scm, Collection<TestCase> testCases);
-
+	Map<ScmRepository, Set<TestCase>> findScriptedTestCasesGroupedByRepoById(Collection<Long> testCaseIds);
 }

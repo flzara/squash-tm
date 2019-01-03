@@ -26,20 +26,30 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
+import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException;
+import org.squashtest.tm.core.scm.spi.ScmConnector;
 import org.squashtest.tm.domain.IdCollector;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.QProject;
 import org.squashtest.tm.domain.scm.QScmRepository;
 import org.squashtest.tm.domain.scm.ScmRepository;
+import org.squashtest.tm.domain.scm.ScmServer;
+import org.squashtest.tm.domain.servers.AuthenticationProtocol;
+import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.domain.testautomation.QTestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.tm.domain.testcase.*;
+import org.squashtest.tm.domain.testcase.QTestCase;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.domain.tf.automationrequest.QAutomationRequest;
+import org.squashtest.tm.service.internal.repository.ScmRepositoryDao;
+import org.squashtest.tm.service.internal.scmserver.ScmConnectorRegistry;
 import org.squashtest.tm.service.internal.tf.event.AutomationRequestStatusChangeEvent;
 import org.squashtest.tm.service.scmserver.ScmRepositoryFilesystemService;
 import org.squashtest.tm.service.scmserver.ScmRepositoryManifest;
+import org.squashtest.tm.service.servers.CredentialsProvider;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
-
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -47,6 +57,7 @@ import javax.persistence.PersistenceContext;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 
@@ -61,10 +72,19 @@ public class ScriptedTestCaseEventListener {
 	private EntityManager em;
 
 	@Inject
+	private CredentialsProvider credentialsProvider;
+
+	@Inject
+	private ScmConnectorRegistry scmConnectorRegistry;
+
+	@Inject
 	private ScmRepositoryFilesystemService scmService;
 
 	@Inject
 	private TestCaseModificationService tcService;
+
+	@Inject
+	private ScmRepositoryDao scmRepositoryDao;
 
 
 	/**
@@ -87,8 +107,53 @@ public class ScriptedTestCaseEventListener {
 
 		Collection<Long> testCaseIds = findTestCaseIdsByAutomationRequestIds(requestIds);
 
-		scmService.createOrUpdateScriptFile(testCaseIds);
+		LOGGER.debug("committing test cases to their repositories");
+		LOGGER.trace("test case ids : '{}'", testCaseIds);
 
+		Map<ScmRepository, Set<TestCase>> scriptsGroupedByScm = scmRepositoryDao.findScriptedTestCasesGroupedByRepoById(testCaseIds);
+
+		for (Map.Entry<ScmRepository, Set<TestCase>> entry : scriptsGroupedByScm.entrySet()) {
+
+			ScmRepository scm = entry.getKey();
+			Set<TestCase> testCases = entry.getValue();
+
+			// Write files
+			scmService.createOrUpdateScriptFile(scm, testCases);
+			// Synchronize repository
+			synchronizeRepository(scm);
+		}
+	}
+
+	/**
+	 * Given a ScmRepository, check that credentials exist for its ScmServer and are valid.
+	 * Then try to synchronise the repository with the remote one.
+	 * @param scm The ScmRepository to synchronize.
+	 */
+	private void synchronizeRepository(ScmRepository scm) {
+		ScmServer server = scm.getScmServer();
+		ScmConnector connector = scmConnectorRegistry.createConnector(scm);
+
+		Optional<Credentials> maybeCredentials = credentialsProvider.getAppLevelCredentials(server);
+
+		Supplier<BugTrackerNoCredentialsException> throwIfNull = () -> {
+			throw new BugTrackerNoCredentialsException("Cannot authenticate because no valid credentials were found for authentication on the remote server. " +
+				"Squash-TM is supposed to use application-level credentials for that and it seems they were not configured properly. "
+				+ "Please contact your administrator in order to fix the situation.", null);
+		};
+
+		Credentials credentials = maybeCredentials.orElseThrow(throwIfNull);
+
+		AuthenticationProtocol protocol = credentials.getImplementedProtocol();
+		if(!connector.supports(protocol)) {
+			throw new UnsupportedAuthenticationModeException(protocol.toString());
+		}
+
+		try {
+			connector.synchronize(credentials);
+		} catch(IOException ex) {
+			LOGGER.error(ex.getMessage(), ex);
+			throw new RuntimeException(ex);
+		}
 	}
 
 	/**
@@ -223,7 +288,6 @@ public class ScriptedTestCaseEventListener {
 			   .sorted(Comparator.comparing(TestAutomationProject::getLabel))
 			   .findFirst();
 	}
-
 
 	/**
 	 * returns the test case ids concerned by the given automation request ids

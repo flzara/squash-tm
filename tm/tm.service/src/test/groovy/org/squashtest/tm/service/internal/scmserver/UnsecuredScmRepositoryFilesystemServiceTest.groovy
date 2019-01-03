@@ -231,7 +231,7 @@ go home quickly before someone notices that the ITs are broken"""
 		}
 
 		when:
-		service.exportToScm(scm, [updateTc, newTc])
+		service.createOrUpdateScriptFile(scm, [updateTc, newTc])
 
 		then:
 		File newScript = new File(scm.workingFolder, "123_yes_test_case.feature")
