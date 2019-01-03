@@ -18,26 +18,58 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'tree', '../permissions-rules', 'workspace/workspace.delnode-popup'], function($, zetree, rules){
+define(['jquery', 'tree', '../permissions-rules', './lolmode2', 'workspace/workspace.delnode-popup'], 
+		function($, zetree, rules, lolmode){
 	
 	function init(){
 
 		var tree = zetree.get();
 		var dialog = $("#delete-node-dialog").delnodeDialog({
 			tree : tree,
-			rules : rules
+			rules : rules,
+			position : 'center'
 		});
 
 
 		dialog.on('delnodedialogconfirm', function(){
-			dialog.delnodeDialog('performDeletion');
+			dispatch(dialog, tree);
 		});
 		
 		dialog.on('delnodedialogcancel', function(){
 			dialog.delnodeDialog('close');
 		});
 		
+		dialog.on('delnodedialogclose', function(){
+			var opts = dialog.delnodeDialog('option');
+			if (!!  opts.lol){
+				opts.lol.clean();
+				delete opts.lol;
+			}
+		});
+		
+		// DEBUG
+		debug();
+		
 	}
+	
+	
+	function dispatch(dialog, tree){
+		var node = tree.jstree('get_selected');
+		if (node.is(':folder') && node.hasClass('jstree-leaf')){
+			var lol = lolmode.getNew(dialog);
+			dialog.delnodeDialog('option', 'lol', lol);
+		}
+		else{
+			dialog.delnodeDialog('performDeletion');
+		}
+	}
+	
+	
+	function debug(){
+		
+
+	}
+	
 	
 	return {
 		init : init
