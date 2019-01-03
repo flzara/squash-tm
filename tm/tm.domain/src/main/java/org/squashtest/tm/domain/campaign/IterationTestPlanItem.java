@@ -117,6 +117,8 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
          please use getTestCase.getName() instead
          better yet, ditch the attribute and column if one day
      */
+	@Field(analyze = Analyze.NO, store = Store.YES)
+	@SortableField
 	private String label = "";
 
 	@FieldBridge(impl = UserLoginBridgeAdaptor.class)

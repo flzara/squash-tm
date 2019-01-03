@@ -77,7 +77,6 @@ public class IterationItemBundleClassBridge implements FieldBridge, MetadataProv
 	private void indexTestCase(IterationTestPlanItem item, Document document, LuceneOptions luceneOptions){
 
 		LOGGER.debug("indexing referencedTestCase :");
-
 		// abort if no test case to index
 		if (item.isTestCaseDeleted()){
 			return;
@@ -135,7 +134,6 @@ public class IterationItemBundleClassBridge implements FieldBridge, MetadataProv
 		fieldMetadataBuilder.field(FIELD_TC_IMPORTANCE,FieldType.STRING).sortable(true);
 		fieldMetadataBuilder.field(FIELD_TC_ID,FieldType.STRING).sortable(true);
 		fieldMetadataBuilder.field("datasets",FieldType.STRING).sortable(true);
-		fieldMetadataBuilder.field("label",FieldType.STRING).sortable(true);
 		fieldMetadataBuilder.field(FIELD_TC_REQ_STATUS,FieldType.STRING).sortable(true);
 		fieldMetadataBuilder.field(FIELD_TC_AUTOMATABLE,FieldType.STRING).sortable(true);
 
