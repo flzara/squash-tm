@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.testcase
 
+import org.squashtest.tm.core.foundation.collection.Paging
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.customfield.CustomField
@@ -27,9 +28,11 @@ import org.squashtest.tm.domain.customfield.CustomFieldBinding
 import org.squashtest.tm.domain.customfield.CustomFieldValue
 import org.squashtest.tm.domain.customfield.RawValue
 import org.squashtest.tm.domain.testcase.TestCaseImportance
+import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.service.advancedsearch.IndexationService
 import org.squashtest.tm.service.attachment.AttachmentManagerService
 import org.squashtest.tm.service.campaign.IterationTestPlanFinder
+import org.squashtest.tm.service.internal.repository.ActionTestStepDao
 import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.ActionTestStep
@@ -58,6 +61,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	AttachmentManagerService attachmentManagerService = Mock()
 	IterationTestPlanFinder iterationTestPlanFinder = Mock()
 	IndexationService indexationService = Mock()
+	ActionTestStepDao actionStepDao = Mock()
 
 	MockFactory mockFactory = new MockFactory()
 
@@ -75,6 +79,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		service.attachmentManagerService = attachmentManagerService
 		service.iterationTestPlanFinder = iterationTestPlanFinder
 		service.indexationService = indexationService
+		service.actionStepDao = actionStepDao
 	}
 
 	def "should find test case and add a step at last position"() {
@@ -331,6 +336,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 	}
 
+
 	def "should retrieve the steps of a test case"(){
 		given:
 		def steps = [Mock(ActionTestStep), Mock(ActionTestStep)]
@@ -344,6 +350,104 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	}
 
 
+	def "should update the action and the expected result of a test step"(){
+		given:
+		def step = Mock(ActionTestStep)
+
+		when:
+		service.updateTestStepAction(10L, "Bob")
+		service.updateTestStepExpectedResult(10L, "Mike")
+
+		then:
+		2 * actionStepDao.findById(10L) >> step
+		1 * step.setAction("Bob")
+		1 * step.setExpectedResult("Mike")
+		2 * parameterModificationService.createParamsForStep(10L)
+
+	}
+
+	def "should move a step up in the step list"(){
+		given:
+		def tc = Mock(TestCase)
+		def step1 = Mock(TestStep)
+		def step2 = Mock(TestStep)
+
+		and:
+		testCaseDao.findById(10L) >> tc
+		testStepDao.findListById([1L, 2L]) >> [step1, step2]
+
+		when:
+		service.changeTestStepsPosition(10L, 5, [1L, 2L])
+
+		then:
+		1 * tc.moveSteps(5, [step1, step2])
+
+	}
+
+	def "should remove a step from a test case, by index"(){
+		given:
+		def removedStep = Mock(TestStep)
+		def tc = Mock(TestCase){
+			getSteps() >> [Mock(TestStep), Mock(TestStep), removedStep, Mock(TestStep)]
+		}
+		and:
+		testCaseDao.findById(10L) >> tc
+
+		when:
+		service.removeStepFromTestCaseByIndex(10L, 2)
+
+		then:
+		deletionHandler.deleteStep(tc, removedStep)
+
+	}
+
+	// more cheap code coverage upgrade !
+	def "should find a Hibernate Initialized test case"(){
+		when:
+		service.findTestCaseWithSteps(10L)
+
+		then:
+		1 * testCaseDao.findAndInit(10L)
+	}
+
+	def "should remove a bunch of steps"(){
+
+		given:
+		def tc = Mock(TestCase)
+		def step1 = Mock(TestStep)
+		def step2 = Mock(TestStep)
+
+		and:
+		testCaseDao.findById(10L) >> tc
+		testStepDao.findById(_) >>> [step1, step2]
+
+		when:
+		service.removeListOfSteps(10L, [1L, 2L])
+
+		then:
+		1 * deletionHandler.deleteStep(tc, step1)
+		1 * deletionHandler.deleteStep(tc, step2)
+	}
+
+
+	def "should return a page list of steps"(){
+		given:
+		def paging = Mock(Paging)
+		def steps = [Mock(TestStep), Mock(TestStep), Mock(TestStep), Mock(TestStep)]
+
+		and:
+		testCaseDao.findAllStepsByIdFiltered(10L, paging) >> steps.subList(0,2)
+		testCaseDao.findTestSteps(10L) >> steps
+
+		when:
+		def res = service.findStepsByTestCaseIdFiltered(10L, paging)
+
+		then:
+		res.paging == paging
+		res.totalNumberOfItems == 4
+		res.items == steps.subList(0,2)
+
+	}
 
 	// ****************** test utilities *****************
 
