@@ -20,7 +20,16 @@
  */
 package org.squashtest.tm.service.internal.testcase
 
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem
+import org.squashtest.tm.domain.customfield.BindableEntity
+import org.squashtest.tm.domain.customfield.CustomField
+import org.squashtest.tm.domain.customfield.CustomFieldBinding
+import org.squashtest.tm.domain.customfield.CustomFieldValue
+import org.squashtest.tm.domain.customfield.RawValue
+import org.squashtest.tm.domain.testcase.TestCaseImportance
+import org.squashtest.tm.service.advancedsearch.IndexationService
 import org.squashtest.tm.service.attachment.AttachmentManagerService
+import org.squashtest.tm.service.campaign.IterationTestPlanFinder
 import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.ActionTestStep
@@ -34,6 +43,7 @@ import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestM
 import org.squashtest.tm.service.testcase.ParameterModificationService
 import org.squashtest.tm.service.testutils.MockFactory
 import spock.lang.Specification
+import spock.lang.Unroll
 
 class CustomTestCaseModificationServiceImplTest extends Specification {
 	CustomTestCaseModificationServiceImpl service = new CustomTestCaseModificationServiceImpl()
@@ -46,6 +56,8 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	ParameterModificationService parameterModificationService = Mock()
 	UnsecuredAutomatedTestManagerService taService = Mock()
 	AttachmentManagerService attachmentManagerService = Mock()
+	IterationTestPlanFinder iterationTestPlanFinder = Mock()
+	IndexationService indexationService = Mock()
 
 	MockFactory mockFactory = new MockFactory()
 
@@ -61,23 +73,99 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		service.parameterModificationService = parameterModificationService
 		service.taService = taService
 		service.attachmentManagerService = attachmentManagerService
+		service.iterationTestPlanFinder = iterationTestPlanFinder
+		service.indexationService = indexationService
 	}
 
-	def "should find test case and add a step"() {
+	def "should find test case and add a step at last position"() {
 		given:
 		def testCase = new MockTC(3L, "tc1")
 		testCaseDao.findById(10) >> testCase
 
 		and:
-		def step = new MockActionStep(4L)
+		def firstStep = new MockActionStep(1L)
+		testCase.addStep(firstStep)
+
+		and:
+		def newStep = new MockActionStep(4L)
 
 		when:
-		service.addActionTestStep(10, step)
+		service.addActionTestStep(10, newStep)
 
 		then:
-		testCase.steps == [step]
-		1 * testStepDao.persist(step)
+		testCase.steps == [firstStep, newStep]
+		1 * testStepDao.persist(newStep)
 	}
+
+
+	def "should find test case and add a step at first position"(){
+		given:
+		def testCase = new MockTC(3L, "tc1")
+		testCaseDao.findById(10) >> testCase
+
+		and:
+		def firstStep = new MockActionStep(1L)
+		testCase.addStep(firstStep)
+
+		and:
+		def newStep = new MockActionStep(4L)
+
+		when:
+		service.addActionTestStep(10, newStep, 0)
+
+		then:
+		testCase.steps == [newStep, firstStep]
+		1 * testStepDao.persist(newStep)
+	}
+
+
+
+
+	@Unroll("should add an action step with initial custom field values at #msgposition")
+	def "should add an action step with initial custom field values at given position"(){
+
+		given: "a test case with steps"
+
+		def testCase = new MockTC(3L, "tc1")
+		testCaseDao.findById(10) >> testCase
+		testCase.addStep(initialStep)
+
+		and: "the custom field values for the new step"
+		def cufValues = [
+			(100L) : new RawValue("value 100"),
+			(200L) : new RawValue("value 200")
+		]
+
+		and: "other services"
+		def cufValue1 = mockCuf(100L, "empty 100", newStep)
+		def cufValue2 = mockCuf(200L, "empty 200", newStep)
+		cufValuesService.findAllCustomFieldValues(newStep) >> [ cufValue1, cufValue2 ]
+
+
+		when :
+		action(service, 10L, newStep, cufValues)
+
+		then:
+		testCase.steps == resultsteps
+
+		cufValue1.value == "value 100"
+		cufValue2.value == "value 200"
+
+		where:
+		initialStep << [new MockActionStep(1L),new MockActionStep(1L)]
+		newStep << [new MockActionStep(4L), new MockActionStep(4L)]
+		msgposition << ["last position", "first position"]
+		action << [
+			{tcservice, id, step, cufs -> tcservice.addActionTestStep(id, step, cufs)},	// defaults to last position
+			{tcservice, id, step, cufs -> tcservice.addActionTestStep(id, step, cufs, 0)}, 	// first position
+		]
+		resultsteps << [
+			[initialStep, newStep],
+			[newStep, initialStep]
+		]
+
+	}
+
 
 	def "should find test case and change its step index"() {
 		given:
@@ -159,6 +247,106 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		then : 1 * testCase.removeAutomatedScript()
 	}
 
+
+	def "should rename a test case"(){
+
+		given :
+		def tc = Mock(TestCase){
+			getId() >> 10L
+		}
+
+		when :
+		service.rename(10L, "Bob")
+
+		then :
+		// interactions
+		1 * testCaseManagementService.renameNode(10L, "Bob")
+
+		1 * testCaseDao.findById(10L) >> tc
+		1 * iterationTestPlanFinder.findByReferencedTestCase(tc) >> [
+			Mock(IterationTestPlanItem){
+				getId() >> 1L
+			},
+			Mock(IterationTestPlanItem){
+				getId() >> 2L
+			}
+		]
+		1 *indexationService.batchReindexItpi([1L, 2L])
+		1 * indexationService.batchReindexTc([10L])
+
+	}
+
+
+	def "should change the reference of a test case"(){
+
+		given :
+		def tc = Mock(TestCase){
+			getId() >> 10L
+		}
+
+		when :
+		service.changeReference(10L, "reref")
+
+		then :
+		1 * tc.setReference("reref")
+
+		1 * testCaseDao.findById(10L) >> tc
+		1 * iterationTestPlanFinder.findByReferencedTestCase(tc) >> [
+			Mock(IterationTestPlanItem){
+				getId() >> 1L
+			},
+			Mock(IterationTestPlanItem){
+				getId() >> 2L
+			}
+		]
+		1 *indexationService.batchReindexItpi([1L, 2L])
+		1 * indexationService.batchReindexTc([10L])
+
+	}
+
+	def "should change the importance of a test case"(){
+
+		given :
+		def tc = Mock(TestCase){
+			getId() >> 10L
+		}
+
+		when :
+		service.changeImportance(10L, TestCaseImportance.HIGH)
+
+		then :
+		1 * tc.setImportance(TestCaseImportance.HIGH)
+
+		1 * testCaseDao.findById(10L) >> tc
+		1 * iterationTestPlanFinder.findByReferencedTestCase(tc) >> [
+			Mock(IterationTestPlanItem){
+				getId() >> 1L
+			},
+			Mock(IterationTestPlanItem){
+				getId() >> 2L
+			}
+		]
+		1 *indexationService.batchReindexItpi([1L, 2L])
+		1 * indexationService.batchReindexTc([10L])
+
+	}
+
+	def "should retrieve the steps of a test case"(){
+		given:
+		def steps = [Mock(ActionTestStep), Mock(ActionTestStep)]
+
+		when:
+		def res = service.findStepsByTestCaseId(10L)
+
+		then:
+		1 * testCaseDao.findTestSteps(10L) >> steps
+		res == steps
+	}
+
+
+
+	// ****************** test utilities *****************
+
 	class MockTC extends TestCase{
 		Long overId;
 		MockTC(Long id){
@@ -192,5 +380,17 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		public void setId(Long newId){
 			overId=newId;
 		}
+	}
+
+	def mockCuf(cufId, initialValue, owner){
+		return new CustomFieldValue(owner.getId(), owner.getBoundEntityType(),
+			new CustomFieldBinding(customField :
+				Mock(CustomField){
+					getId() >> cufId
+				},
+				boundEntity : owner.getBoundEntityType()
+			)
+			,
+			initialValue)
 	}
 }
