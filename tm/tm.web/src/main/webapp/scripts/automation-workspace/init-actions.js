@@ -98,6 +98,13 @@ define(['jquery', 'workspace.contextual-content', 'workspace.routing'],
 
 		function showWorkflow() {
 			$("#icon-workflow").on("click", function() {
+				if($("#autom-image").length === 0) {
+					if(squashtm.app.locale === "fr") {
+						$("#workflow-img").append("<img id='autom-image' src='../images/workflow_autom_fr.png' style='width:100%'/>");
+					} else {
+						$("#workflow-img").append("<img id='autom-image' src='../images/workflow_autom_en.png' style='width:100%'/>");
+					}
+				}
 				var dialog = $("#workflow-popup").formDialog();
 				dialog.formDialog("open");
 			});

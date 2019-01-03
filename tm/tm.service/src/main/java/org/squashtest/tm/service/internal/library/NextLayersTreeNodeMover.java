@@ -80,6 +80,7 @@ public class NextLayersTreeNodeMover  implements NodeVisitor, PasteOperation {
 	@Override
 	public TreeNode performOperationFromReqToTc(TreeNode source, TreeNode transformed, NodeContainer<TreeNode> destination, Integer position) {
 		this.destination = destination;
+		transformed.accept(this);
 		transformed.accept(treeNodeUpdater);
 		return transformed;	}
 

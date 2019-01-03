@@ -86,8 +86,8 @@
     </div>
     <div class="ui-widget-header ui-corner-all ui-state-default fragment-header tf-automation-subtitle-header">
       <h2>
-        <span th:text="#{workspace.automation.header.subtitle}">Espace automatisation </span><span
-          class="icon-helper" style="float: right" id="icon-workflow"></span>
+        <span th:text="#{workspace.automation.header.subtitle}">Espace automatisation </span><span class="icon-helper"
+          style="float: right" id="icon-workflow"></span>
       </h2>
     </div>
 
@@ -144,14 +144,16 @@
     </div>
 
     <div id="workflow-popup" class="popup-dialog" th:title="#{dialog.automation.workflow}">
+      <div id="workflow-img">
 
-        <img src="../images/automation_workflow.png" style="width:100%"/>
-  
-        <div class="popup-dialog-buttonpane">
-          <input type="button" th:value="#{label.Close}" id="close-automation-workflow" />
-        </div>
-  
       </div>
+
+
+      <div class="popup-dialog-buttonpane">
+        <input type="button" th:value="#{label.Close}" id="close-automation-workflow" />
+      </div>
+
+    </div>
   </div>
 
   <!-- BACKBONE VIEWS TEMPLATES -->
