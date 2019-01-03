@@ -59,10 +59,9 @@ class SimpleExcelExporter {
 	private static final String DATA_EXCEED_MAX_CELL_SIZE_MESSAGE = "' : some data exceed the maximum size of an excel cell";
 
 	protected static final String TC_SHEET = TemplateWorksheet.TEST_CASES_SHEET.sheetName;
-	protected static final String STATUS = "requirement.status.";
+	protected static final String STATUS = "test-case.status.";
 	protected static final String IMPORTANCE = "test-case.importance.";
 	protected static final String AUTOMATABLE = "test-case.automatable.";
-	protected static final String NATURE = "test-case.nature.";
 	protected static final String TYPE = "test-case.type.";
 
 
