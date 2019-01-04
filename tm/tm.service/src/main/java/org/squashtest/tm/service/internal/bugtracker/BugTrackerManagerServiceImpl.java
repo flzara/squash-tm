@@ -39,6 +39,7 @@ import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 import org.squashtest.tm.service.internal.repository.IssueDao;
 import org.squashtest.tm.service.internal.repository.RequirementSyncExtenderDao;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
+import org.squashtest.tm.service.servers.StoredCredentialsManager;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -70,6 +71,9 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService, B
 
 	@Inject
 	private RequirementSyncExtenderDao syncreqDao;
+
+	@Inject
+	private StoredCredentialsManager storedCredentialsManager;
 
 
 	@Override
@@ -132,6 +136,7 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService, B
 			deleteBugtrackerToProjectBinding(id);
 			deleteIssueLinkedToBugtracker(id);
 			deleteLinkedSyncedRequirements(id);
+			deleteBugTrackerStoredCredentials(id);
 			deleteBugTracker(id);
 		}
 	}
@@ -153,6 +158,10 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService, B
 
 	private void deleteLinkedSyncedRequirements(final Long bugtrackerId) {
 		syncreqDao.deleteAllByServer(bugtrackerId);
+	}
+
+	private void deleteBugTrackerStoredCredentials(final Long bugtrackerId) {
+		storedCredentialsManager.deleteAppLevelCredentials(bugtrackerId);
 	}
 
 	private void deleteBugTracker(final long bugtrackerId) {
