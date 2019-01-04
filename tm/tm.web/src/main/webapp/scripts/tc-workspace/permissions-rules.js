@@ -201,13 +201,12 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 			else if (nodes.length === 0) {
 				return "empty-selection";
 			}
-			else if (nodes.filter(':folder, :library').length !== 0
-						|| nodes.filter(':editable').length !== nodes.length ||  nodes.filter(':test-case[kind="gherkin"]').length !== nodes.length) {
+			else if (nodes.filter(':editable').length !== nodes.length) {
 				return "permission-denied";
 			}
-			else if (nodes.getLibrary().filter(':library[allowautomworkflow="true"]').length !== nodes.getLibrary().length) {
+/*			else if (_.contains(nodes.all('getLibrary'))) {
 				return "autom-workflow-disabled";
-			}
+			}*/
 			else {
 				return "yes-you-can";
 			}
@@ -301,7 +300,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 			'export-tree-button' : this.canExport,
 			'create-tc-from-req-tree-button' : this.CantCreateTcFromReq,
 			'export-gherkin-tree-button' : this.canExport,
-			'transmit-gherkin-tree-button' : this.canTransmit,
+			'transmit-for-automation-tree-button' : this.canTransmit,
 			'delete-node-tree-button' : this.canDelete,
 			'search-tree-button' : this.canSearch
 		};

@@ -20,9 +20,9 @@
  */
 define(['./add-folder-popup', './add-test-case-popup' ,
         './rename-node-popup', './delete-node-popup',
-        './transmit-eligible-node-popup', './import-excel-popup',
+        './import-excel-popup',
         './export-popup','./export-gherkin-popup', './create-from-requirement-popup'],
-		function(folderpopup, tcpopup, renamepopup, deletepopup, transmitpopup, importpopup, exportpopup, exportgherkinpopup, createfromreq){
+		function(folderpopup, tcpopup, renamepopup, deletepopup, importpopup, exportpopup, exportgherkinpopup, createfromreq){
 
 
 	function init(){
@@ -31,7 +31,6 @@ define(['./add-folder-popup', './add-test-case-popup' ,
 		tcpopup.init();
 		renamepopup.init();
 
-    transmitpopup.init();
 		importpopup.init();
 		exportpopup.init();
 		exportgherkinpopup.init();

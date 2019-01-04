@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "tree", "./permissions-rules", "workspace.contextual-content", "workspace.event-bus", "workspace.routing", "squash.translator",
-	"workspace.tree-node-copier", "workspace.tree-event-handler", "user-account/user-prefs"], function ($, Backbone, zetree, rules, ctxcontent, eventBus, urlBuilder, translator, copier, treehandler, userPrefs) {
+define(["jquery", "backbone", "tree", "underscore", "app/ws/squashtm.notification", "./permissions-rules", "workspace.contextual-content", "workspace.event-bus", "workspace.routing", "squash.translator",
+	"workspace.tree-node-copier", "workspace.tree-event-handler", "user-account/user-prefs"], function ($, Backbone, zetree, _, notification, rules, ctxcontent, eventBus, urlBuilder, translator, copier, treehandler, userPrefs) {
 
 
 	function showError(messageName) {
@@ -214,25 +214,90 @@ define(["jquery", "backbone", "tree", "./permissions-rules", "workspace.contextu
 			});
 
 		  // ******************* automation ********************
+			if (zetree.get(':library').filter('[allowautomworkflow="true"]').length === 0) {
+				$("#transmit-for-automation-tree-button").hide();
+			} else {
+				$("#transmit-for-automation-tree-button").show();
+			}
 
-			$("#transmit-gherkin-tree-button").on("click", function () {
+			$("#transmit-for-automation-tree-button").on("click", function () {
 				var nodes = tree.jstree('get_selected');
-				if (nodes.filter(':test-case[automeligible="y"]').length === nodes.length) {
-					var tcIds = nodes.all('getResId');
-					$.ajax({
-						url : squashtm.app.contextRoot + 'automation-requests/' + tcIds,
-						type : 'POST',
-						data : {
-							'id' : 'automation-request-status',
-							'value' : 'TRANSMITTED'
-						}
-					}).success(function() {
-						$('#automation-request-status').text(translator.get('automation-request.request_status.TRANSMITTED'));
-					});
-				} else {
-					$("#transmit-eligible-node-dialog").formDialog("open");
-				}
+				var libraries = nodes.filter(':library'),
+						folders = nodes.filter(':folder'),
+						testcases = nodes.filter(':test-case');
+				var isEligible = true;
+				var selectedNodes = {
+					"testcases": testcases.length !== 0 ? testcases.treeNode().all('getResId') : [],
+					"libraries": libraries.length !== 0 ? libraries.treeNode().all('getResId') : [],
+					"folders": folders.length !== 0 ? folders.treeNode().all('getResId') : []
+				};
+
+				checkAndTransmit(selectedNodes);
+
 			});
+
+			function checkAndTransmit(selectedNodes) {
+				$.ajax({
+					url : squashtm.app.contextRoot + 'test-cases/eligible-tcs-for-transmission',
+					type : 'POST',
+					data : JSON.stringify(selectedNodes),
+					datatype : 'json',
+					contentType: 'application/json'
+				}).success(function(result) {
+					var tcIds = result['tcIds'],
+							isEligible = result['isEligible'] !== undefined ? result['isEligible'] : true;
+					if (tcIds.length !== 0) {
+						toTransmit(tcIds, isEligible);
+					} else {
+						notification.showError(translator.get('test-case.automation.transmit-all.empty'));
+					}
+				});
+			};
+
+			function toTransmit(tcIds, isEligible) {
+				if (isEligible) {
+					notification.showInfo('Transmission réussie : ' + tcIds.length); // TODO à changer ou enlever
+					$('#automation-request-status').text(translator.get('automation-request.request_status.TRANSMITTED'));
+				} else {
+					initTransmitOnlyEligibleDialog(tcIds);
+				}
+			}
+
+			function transmit(tcIds) {
+				$.ajax({
+					url : squashtm.app.contextRoot + 'automation-requests/' + tcIds,
+					type : 'POST',
+					data : {
+						'id' : 'automation-request-status',
+						'value' : 'TRANSMITTED'
+					}
+				}).success(function() {
+					notification.showInfo('Transmission réussie : ' + tcIds.length);
+					$('#automation-request-status').text(translator.get('automation-request.request_status.TRANSMITTED'));
+				});
+			}
+
+			function initTransmitOnlyEligibleDialog(tcIds) {
+				var dialog = $("#transmit-eligible-node-dialog").formDialog();
+				dialog.formDialog("open");
+
+				dialog.on('formdialogopen', function () {
+					dialog.formDialog('setState', 'confirm');
+				});
+
+				dialog.on('formdialogconfirm', function () {
+					transmit(tcIds);
+					dialog.formDialog('close');
+				});
+
+				dialog.on('formdialogcancel', function () {
+					dialog.formDialog('close');
+				});
+
+				dialog.on('formdialogclose', function () {
+					tcIds = [];
+				});
+			}
 
 			// *****************  search  ********************
 

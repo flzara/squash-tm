@@ -175,8 +175,8 @@
                     <a th:text="#{label.Export.gherkin}+'...'">full ...</a>
                   </li>
 
-                  <li id="transmit-gherkin-tree-button" class="ui-state-disabled cursor-pointer">
-                    <a th:text="#{label.Transmit.gherkin}+'...'">full ...</a>
+                  <li id="transmit-for-automation-tree-button" class="ui-state-disabled cursor-pointer">
+                    <a th:text="#{label.TransmitForAutomation}+'...'">full ...</a>
                   </li>
 
                   <li th:each="plugin :  ${#workspace.exportPlugins( 'TEST_CASE_WORKSPACE')}"
