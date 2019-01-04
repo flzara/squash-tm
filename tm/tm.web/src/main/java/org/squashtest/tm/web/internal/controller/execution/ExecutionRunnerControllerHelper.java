@@ -29,6 +29,7 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.User;
@@ -36,6 +37,8 @@ import org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
+import org.squashtest.tm.service.requirement.VerifiedRequirement;
+import org.squashtest.tm.service.requirement.VerifiedRequirementsFinderService;
 import org.squashtest.tm.service.user.PartyPreferenceService;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
@@ -45,10 +48,7 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import javax.inject.Inject;
 import java.text.MessageFormat;
-import java.util.Collections;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 //XSS ok bflessel
 /**
  * Helper class for Controllers which need to show classic and optimized execution runners.
@@ -96,6 +96,9 @@ public class ExecutionRunnerControllerHelper {
 
 	@Inject
 	private PartyPreferenceService preferenceService;
+
+	@Inject
+	private VerifiedRequirementsFinderService verifiedRequirementsFinderService;
 
 	private ExecutionStep findStepAtIndex(long executionId, int stepIndex) {
 
@@ -303,8 +306,15 @@ public class ExecutionRunnerControllerHelper {
 		model.addAttribute("hasCustomFields", hasCustomFields);
 		model.addAttribute("hasDenormFields", hasDenormFields);
 		model.addAttribute("bugtrackerMode", bugtrackerMode);
+		if(execution.getReferencedTestCase() != null) {
+			List<VerifiedRequirement> verifiedRequirements = verifiedRequirementsFinderService.findAllVerifiedRequirementsByTestCaseId(execution.getReferencedTestCase().getId());
+			List<RequirementVersion> requirementVersions = new ArrayList<>();
+			for (VerifiedRequirement verifiedRequirement : verifiedRequirements) {
+				requirementVersions.add(verifiedRequirement.getVerifiedRequirementVersion());
+			}
+			model.addAttribute("verifiedReqVersions", requirementVersions);
+		}
 
-		model.addAttribute("verifiedReqVersions", execution.getReferencedTestCase().getVerifiedRequirementVersions());
 	}
 
 }

@@ -56,6 +56,7 @@ import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.customfield.CustomFieldHelper;
@@ -64,6 +65,8 @@ import org.squashtest.tm.service.customfield.DenormalizedFieldHelper;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
+import org.squashtest.tm.service.requirement.VerifiedRequirement;
+import org.squashtest.tm.service.requirement.VerifiedRequirementsFinderService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.DataTableColumnDefHelper;
@@ -132,6 +135,9 @@ public class ExecutionModificationController {
 	@Inject
 	private MilestoneUIConfigurationService milestoneConfService;
 
+	@Inject
+	private VerifiedRequirementsFinderService verifiedRequirementsFinderService;
+
 
 
 	// ****** /custom field services ******************
@@ -180,7 +186,13 @@ public class ExecutionModificationController {
 		mav.addObject("statuses", getStatuses(execution.getProject().getId()));
 		mav.addObject("milestoneConf", milestoneConf);
 		if(execution.getReferencedTestCase() != null) {
-			mav.addObject("verifiedReqVersions", execution.getReferencedTestCase().getVerifiedRequirementVersions());
+			List<VerifiedRequirement> verifiedRequirements = verifiedRequirementsFinderService.findAllVerifiedRequirementsByTestCaseId(execution.getReferencedTestCase().getId());
+			List<RequirementVersion> requirementVersions = new ArrayList<>();
+			for (VerifiedRequirement verifiedRequirement : verifiedRequirements) {
+				requirementVersions.add(verifiedRequirement.getVerifiedRequirementVersion());
+			}
+
+			mav.addObject("verifiedReqVersions", requirementVersions);
 		}
 
 
