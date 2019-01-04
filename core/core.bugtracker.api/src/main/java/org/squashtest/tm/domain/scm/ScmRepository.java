@@ -44,8 +44,8 @@ public class ScmRepository {
 
 	@Id
 	@Column(name = "SCM_REPOSITORY_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "scm_repository_id_seq")
-	@SequenceGenerator(name = "scm_repository_id_seq", sequenceName = "scm_repository_id_seq")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "scm_repository_scm_repository_id_seq")
+	@SequenceGenerator(name = "scm_repository_scm_repository_id_seq", sequenceName = "scm_repository_scm_repository_id_seq")
 	private Long id;
 
 	@Column(name = "NAME")
