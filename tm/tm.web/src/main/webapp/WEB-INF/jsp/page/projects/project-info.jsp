@@ -756,15 +756,25 @@ require(["common"], function() {
 	function toggleWorkflow(){
   		var shouldActivate = $("#toggle-WORKFLOW-checkbox").prop('checked');
 
-  		$.ajax({
-  		  type: 'POST',
-  		  url: "${projectUrl}",
-  		  data : {
-  		    id : "project-automation-workflow",
-  		    value : shouldActivate
-  		  }
-  		}).done(toggleScmPanel(shouldActivate));
+  		if (shouldActivate) {
+        $("#automation-workflow-popup").formDialog("open");
+  		} else {
+				changeAllowAutomationWorkflow(shouldActivate);
+				
+  		}
 
+  }
+
+  function changeAllowAutomationWorkflow(shouldActivate) {
+		$.ajax({
+			type: 'POST',
+			url: "${projectUrl}",
+			data : {
+				id : "project-automation-workflow",
+				value : shouldActivate
+			}
+		}).success(toggleScmPanel(shouldActivate));
+		$("#automation-workflow-popup").formDialog("close");
   }
 
   function toggleScmPanel(shouldShowPanel) {
@@ -1090,6 +1100,16 @@ require(["common"], function() {
 
 		});
 
+		var automationWorkflowPopup = $("#automation-workflow-popup").formDialog();
+		automationWorkflowPopup.on("formdialogconfirm", function() {
+			changeAllowAutomationWorkflow($("#toggle-WORKFLOW-checkbox").prop('checked'));
+		});
+
+		automationWorkflowPopup.on("formdialogcancel", function() {
+			automationWorkflowPopup.formDialog("close");
+			$("#toggle-WORKFLOW-checkbox").switchButton({checked: false});
+		});
+
 		//user permissions table
 		var permSettings = {
 			basic : {
@@ -1102,6 +1122,7 @@ require(["common"], function() {
 				deleteMessage : "<f:message key='message.permissions.remove.teamOrUser'/>",
 				deleteTooltip : '<f:message key="tooltips.permissions.remove"/>'
 			}
+
 		};
 
 		projectsManager.projectInfo.initUserPermissions(permSettings);

@@ -73,10 +73,6 @@
   		</div>
   	</div>
   </div>
-  <div id="automation-workflow-explanation">
-	  <div><f:message key="message.project.automation.workflow.active.explanation" /></div>
-  </div>
-
   <div class="ta-main-div">
 
       	<%-- =================================== server block =============================================================== --%>
@@ -398,6 +394,20 @@
   </div>
 </div>
 
+<%-- ================================================
+  Automation Workflow explanation popup.
+================================================= --%>
+<f:message var="unbindPopupTitle" key="dialog.unbind-ta-project.tooltip" />
+<div id="automation-workflow-popup" class="popup-dialog not-displayed" title="${unbindPopupTitle}">
+  <div id="automation-workflow-explanation">
+  	  <div><f:message key="message.project.automation.workflow.active.explanation" /></div>
+    </div>
+  <!-- _____________Buttons_______________ -->
+  <div class="popup-dialog-buttonpane">
+    <input class="confirm" type="button" value="${confirmLabel}" data-def="evt=confirm" />
+    <input class="cancel" type="button" value="${cancelLabel}" data-def="evt=cancel" />
+  </div>
+</div>
 <%-- ===================================
 	Js initialization
 ==================================== --%>
