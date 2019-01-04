@@ -24,6 +24,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -54,12 +56,13 @@ public final class ScmRepositoryManifest {
 	private ScmRepository scm;
 	private boolean useCache = true;
 
-	// maps filename by File
-	private Map<String, File> pathCache = new HashMap<>();
+	// contains all the file paths relative to the working folder
+	private Set<String> pathCache = new HashSet<>();
+
+	private final Path workFolderPath;
 
 	public ScmRepositoryManifest(ScmRepository scm){
-		this.scm = scm;
-		initCache();
+		this(scm, true);
 	}
 
 	public ScmRepository getScm() {
@@ -72,6 +75,7 @@ public final class ScmRepositoryManifest {
 
 	ScmRepositoryManifest(ScmRepository scm, boolean useCache){
 		this.scm = scm;
+		this.workFolderPath = initWorkingFolderPath();
 		this.useCache = useCache;
 		if (useCache){
 			initCache();
@@ -109,23 +113,25 @@ public final class ScmRepositoryManifest {
 	}
 
 	/**
-	 * Returns the list of paths of the tests in the working folder of that repository, relative to the root of the
-	 * repository, as a Stream. The Unix separator is used regardless of the underlying OS.
+	 * Returns the list of paths of the tests in the working folder of that repository, relative to
+	 * that workfolder, as a Stream. The Unix separator is used regardless of the underlying OS.
 	 *
 	 * @return
 	 */
 	public Stream<String> streamTestsRelativePath() throws IOException{
-		Path workfolderAsPath = Paths.get(scm.getRepositoryPath(), scm.getWorkingFolderPath());
 
-		Stream<File> fileStream = (useCache) ? pathCache.values().stream() : scm.listWorkingFolderContent().stream();
+		Stream<String> stream;
 
-		return fileStream
-				   .map(testFile -> {
-					   Path testPath = Paths.get(testFile.getAbsolutePath());
-					   return workfolderAsPath.relativize(testPath);
-				   })
-				   .map(Path::toString)
-				   .map(path -> FilenameUtils.normalizeNoEndSeparator(path, true));
+		if (useCache){
+			stream = pathCache.stream();
+		}
+		else{
+			stream = scm.listWorkingFolderContent()
+				.stream()
+				.map(this::getRelativePath);
+		}
+
+		return stream;
 	}
 
 	/**
@@ -136,11 +142,9 @@ public final class ScmRepositoryManifest {
 	 * @return
 	 */
 	public String getRelativePath(File file){
-		Path baseAsPath = Paths.get(scm.getRepositoryPath(), scm.getWorkingFolderPath());
 		Path testPath = Paths.get(file.getAbsolutePath());
 
-		Path relative = baseAsPath.relativize(testPath);
-
+		Path relative = workFolderPath.relativize(testPath);
 		return FilenameUtils.normalizeNoEndSeparator(relative.toString(), true);
 	}
 
@@ -155,10 +159,11 @@ public final class ScmRepositoryManifest {
 		return FileUtils.listFiles(workingFolder, new FilenamePatternFilter(pattern), FileFilterUtils.trueFileFilter());
 	}
 
-	private Collection<File> searchInCache(String pattern){
-		return pathCache.entrySet().stream()
-			.filter(entry -> entry.getKey().matches(pattern))
-			.map(Map.Entry::getValue)
+	private Collection<File> searchInCache(String regex){
+		Pattern pattern = Pattern.compile(regex+"$");
+		return pathCache.stream()
+			.filter(entry -> pattern.matcher(entry).find())
+			.map(relPath -> new File(scm.getWorkingFolder(), relPath))
 			.collect(Collectors.toList());
 	}
 
@@ -170,17 +175,22 @@ public final class ScmRepositoryManifest {
 			// the pathcache maps a File by its filename
 			pathCache = scm.listWorkingFolderContent()
 							.stream()
-							.collect(Collectors.toMap(
-								f -> f.getName(),
-								f -> f
-							));
-			//.collect(Collectors.toMap(File::getName, Functions.identity())); // doesn't compile, dunnowhy
+							.map(this::getRelativePath)
+							.collect(Collectors.toSet());
 		}
 		catch (IOException ex){
 			throw new RuntimeException("cannot list content of scm '"+scm.getName()+"'", ex);
 		}
 	}
 
+	private final Path initWorkingFolderPath(){
+		String baseDir = scm.getRepositoryPath();
+		if (baseDir == null){
+			throw new IllegalArgumentException("the repository '"+scm.getName()+"' has no base directory defined !");
+		}
+		String folderPath = StringUtils.defaultIfBlank(scm.getWorkingFolderPath(), "");
+		return Paths.get(baseDir, folderPath);
+	}
 
 
 

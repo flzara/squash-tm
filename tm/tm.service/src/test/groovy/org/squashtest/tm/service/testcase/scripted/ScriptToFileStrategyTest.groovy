@@ -86,7 +86,7 @@ class ScriptToFileStrategyTest extends Specification{
 	def "should build a pattern that will locate the filename that corresponds to a scripted test case"(){
 
 		expect :
-		GHERKIN_STRATEGY.buildFilenameMatchPattern(tc(815, "name irrelevant")) == "^815(_.*)?\\.feature"
+		GHERKIN_STRATEGY.buildFilenameMatchPattern(tc(815, "name irrelevant")) == "815(_.*)?\\.feature"
 
 	}
 

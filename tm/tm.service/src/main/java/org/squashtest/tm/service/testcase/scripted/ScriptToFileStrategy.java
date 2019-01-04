@@ -134,7 +134,7 @@ public enum ScriptToFileStrategy {
 
 	/**
 	 * Creates the String pattern that helps retrieving a file in a repository.
-	 * The resulting expression will match strings that start with the test case id,
+	 * The resulting expression can identity strings that ends with the test case id
 	 * followed by <i>possibly</i> an underscore and the rest of the filename, and
 	 * then ends with .extension. The two possibilities corresponds to the nominal
 	 * and backup filenames, see the filename generation methods for details.
@@ -146,7 +146,7 @@ public enum ScriptToFileStrategy {
 		Long id = testCase.getId();
 		String extension = getExtension();
 
-		return String.format("^%d(_.*)?\\.%s", id, extension);
+		return String.format("%d(_.*)?\\.%s", id, extension);
 
 	}
 

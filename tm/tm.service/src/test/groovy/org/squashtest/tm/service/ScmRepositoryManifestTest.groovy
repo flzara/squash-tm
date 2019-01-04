@@ -27,6 +27,7 @@ import org.squashtest.tm.domain.testcase.TestCaseKind
 import org.squashtest.tm.service.scmserver.ScmRepositoryManifest
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import java.util.stream.Collectors
 import org.squashtest.tm.service.testutils.MockFactory
@@ -37,9 +38,24 @@ class ScmRepositoryManifestTest extends Specification{
 	@Shared
 	ScmRepository repo = new MockFactory().mockScmRepository()
 
+	// special file structure, with a somewhat overrepresented filename
+	@Shared
+	ScmRepository repoDuplicates = new MockFactory().mockScmRepository(12L, "duplicates", "squash"){
+		dir("squash"){
+			file "42_ahahah.feature"
+			dir("sub1"){
+				file "42_ahahah.feature"
+			}
+			dir("sub2"){
+				file "42_ahahah.feature"
+				file"555_test5.feature"
+			}
+		}
+	}
 
 	def cleanupSpec(){
 		FileUtils.forceDelete(repo.baseRepositoryFolder)
+		FileUtils.forceDelete(repoDuplicates.baseRepositoryFolder)
 	}
 
 
@@ -152,8 +168,32 @@ class ScmRepositoryManifestTest extends Specification{
 
 	}
 
+	def "should retrieve the file corresponding to a gherkin test case in a nested folder"(){
 
-	def "should retrieve the script file for a gherkin test case, resolving potential ambiguity by taking the first in lexicographical order"(){
+		given :
+		def manifest = new ScmRepositoryManifest(repoDuplicates)
+
+		and:
+		def tc = Mock(TestCase){
+			getId() >> 555L
+			getKind() >> TestCaseKind.GHERKIN
+			getName() >> "test5"
+		}
+
+		when :
+		def maybeFile = manifest.locateTest(tc)
+
+		then :
+		maybeFile.isPresent()
+		def file = maybeFile.get()
+		file.getName() == "555_test5.feature"
+		manifest.getRelativePath(file) == "sub2/555_test5.feature"
+
+
+	}
+
+
+	def "should retrieve the script file for a gherkin test case, resolving ambiguity (on the prefix only) by taking the first in lexicographical order"(){
 
 
 		setup:
@@ -187,6 +227,35 @@ class ScmRepositoryManifestTest extends Specification{
 
 	}
 
+
+	@Unroll("should retrieve the script file for a gherkin test case, resolving ambiguity (on the entire filename) by taking the first in lexicographical order, #humanmsg using cache")
+	def "should retrieve the script file for a gherkin test case, resolving ambiguity (on the entire filename) by taking the first in lexicographical order"(){
+
+		given:
+		def manifest = new ScmRepositoryManifest(repoDuplicates, useCache)
+
+		and:
+		def tc = Mock(TestCase){
+			getId() >> 42L
+			getKind() >> TestCaseKind.GHERKIN
+			getName() >> "ahahah"
+		}
+
+		when:
+		def maybeFile = manifest.locateTest(tc)
+
+		then:
+		maybeFile.isPresent()
+		maybeFile.get().name == "42_ahahah.feature"
+
+		where:
+		humanmsg << ["not", ""]
+		useCache << [false, true]
+
+	}
+
+
+
 	// ********* additional methods to reach 100% **************
 
 	def "getter on the scm"(){
@@ -196,13 +265,25 @@ class ScmRepositoryManifestTest extends Specification{
 
 	}
 
+	def "constructor should fail if the ScmRepository is badly configured"(){
 
-	def "should throw on IO failure"(){
+		when :
+		new ScmRepositoryManifest(new ScmRepository(name:"no base directory !"))
+
+		then:
+		def ex = thrown IllegalArgumentException
+		ex.message == "the repository 'no base directory !' has no base directory defined !"
+
+	}
+
+
+	def "should throw on IO failure when listing the filesystem"(){
 
 		given:
 			def scm = new ScmRepository(){
 				{
 					name = "dead repo"
+					repositoryPath = "/dev/null"
 				}
 				Collection<File> listWorkingFolderContent() throws IOException{
 					throw new IOException("daaaaamn !")
