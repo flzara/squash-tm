@@ -111,8 +111,14 @@
 				</c:if>
 
 				<%-- app-level credentials section --%>
+
 				<div class="srv-form">
-					<label><f:message key="thirdpartyserver.admin.policy.squashtm-section"/></label>
+					<label>
+						<c:choose>
+						<c:when test="${authConf.appLevelCredsAreOptional}"><f:message key="thirdpartyserver.admin.policy.squashtm-section.optional" /></c:when>
+						<c:otherwise><f:message key="thirdpartyserver.admin.policy.squashtm-section" /></c:otherwise>
+						</c:choose>
+					</label>
 					<div class="srv-auth-form-main std-border std-border-radius" >
 
 						<div id="srv-auth-creds-form" class="templated-form">

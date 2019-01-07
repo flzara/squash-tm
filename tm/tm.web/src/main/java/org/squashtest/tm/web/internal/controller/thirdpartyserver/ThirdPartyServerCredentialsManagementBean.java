@@ -61,6 +61,7 @@ public final class ThirdPartyServerCredentialsManagementBean{
 	// UI features
 	private boolean featureTestCredentialsButton = true;
 	private boolean featureAuthPolicySelection = true;
+	private boolean appLevelCredsAreOptional = true; 
 	
 
 	public String getFailureMessage() {
@@ -152,6 +153,14 @@ public final class ThirdPartyServerCredentialsManagementBean{
 
 	public void setFeatureAuthPolicySelection(boolean featureAuthPolicySelection) {
 		this.featureAuthPolicySelection = featureAuthPolicySelection;
+	}
+
+	public boolean isAppLevelCredsAreOptional() {
+		return appLevelCredsAreOptional;
+	}
+
+	public void setAppLevelCredsAreOptional(boolean appLevelCredsAreOptional) {
+		this.appLevelCredsAreOptional = appLevelCredsAreOptional;
 	}
 
 

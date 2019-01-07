@@ -125,8 +125,12 @@
 							</div>
 			
 							<!-- app-level credentials section -->
-							<div class="srv-form">
-								<label>[[#{thirdpartyserver.admin.policy.squashtm-section}]]</label>
+							<div class="srv-form" th:with="
+								squashtmCredentialsLabel = ${authConf.appLevelCredsAreOptional} ? 
+															'thirdpartyserver.admin.policy.squashtm-section.optional' : 
+															'thirdpartyserver.admin.policy.squashtm-section' 
+							">
+								<label>[[#{__${squashtmCredentialsLabel}__}]]</label>
 								<div class="srv-auth-form-main std-border std-border-radius" >
 			
 									<div id="srv-auth-creds-form" class="templated-form">

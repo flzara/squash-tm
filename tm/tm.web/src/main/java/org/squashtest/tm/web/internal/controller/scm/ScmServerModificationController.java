@@ -182,8 +182,9 @@ public class ScmServerModificationController {
 		bean.setAuthPolicy(AuthenticationPolicy.APP_LEVEL);
 		bean.setFeatureAuthPolicySelection(false);
 		
-		//also the credentials are not testable
+		//also the credentials are not optional, and are not testable
 		bean.setFeatureTestCredentialsButton(false);
+		bean.setAppLevelCredsAreOptional(false);
 
 		return bean;
 
