@@ -764,13 +764,13 @@
               remarks="The auto-generated id of the scm repository.">
         <constraints primaryKey="true" nullable="false"/>
       </column>
+
       <column name="SERVER_ID" type="BIGINT" remarks="The foreign key to the related SCM_SEVER">
-        <constraints nullable="false" foreignKeyName="fk_scm_repository_scm_server"
-                     references="SCM_SERVER(SERVER_ID)"/>
+        <constraints nullable="false" foreignKeyName="fk_scm_repository_scm_server" references="SCM_SERVER(SERVER_ID)"/>
       </column>
 
-      <column name="NAME" type="VARCHAR(255)" remarks="The unique name of the repository.">
-        <constraints unique="true" nullable="false"/>
+      <column name="NAME" type="VARCHAR(255)" remarks="The name of the repository.">
+        <constraints nullable="false"/>
       </column>
 
       <column name="REPOSITORY_PATH" type="VARCHAR(255)"
@@ -785,6 +785,8 @@
       </column>
 
     </createTable>
+
+    <addUniqueConstraint tableName="SCM_REPOSITORY" columnNames="NAME, SERVER_ID" />
 
   </changeSet>
 

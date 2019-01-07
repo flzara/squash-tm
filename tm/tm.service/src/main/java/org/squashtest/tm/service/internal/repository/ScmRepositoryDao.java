@@ -47,6 +47,14 @@ public interface ScmRepositoryDao extends JpaRepository<ScmRepository, Long>, Cu
 	 */
 	Page<ScmRepository> findByScmServerId(Long scmServerId, Pageable pageable);
 	/**
+	 * Check whether the given repository name is already in use for a repository contained in the given ScmServer.
+	 * @param scmServerId The id of the ScmServer
+	 * @param scmRepositoryName The ScmRepository name to check
+	 * @return True if a repository with the given name already exists in the given server, False otherwise
+	 */
+	@Query
+	boolean isRepositoryNameAlreadyInUse(@Param("serverId") Long scmServerId, @Param("name") String scmRepositoryName);
+	/**
 	 * Check whether at least one of the given ScmRepositories is bound to a Project.
 	 * @param scmRepositoryIds The Ids of the ScmRepositories.
 	 * @return True if at least one of the given ScmRepositories is bound to a Project. False otherwise.

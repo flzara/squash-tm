@@ -26,6 +26,7 @@ import org.springframework.data.domain.Sort
 import org.squashtest.tm.core.scm.spi.ScmConnector
 import org.squashtest.tm.domain.scm.ScmRepository
 import org.squashtest.tm.domain.scm.ScmServer
+import org.squashtest.tm.exception.NameAlreadyInUseException
 import org.squashtest.tm.service.internal.repository.ScmRepositoryDao
 import org.squashtest.tm.service.internal.repository.ScmServerDao
 import spock.lang.Specification
@@ -132,6 +133,7 @@ class ScmRepositoryManagerServiceTest extends Specification {
 		and:
 			ScmConnector connector = Mock()
 		and: "Mock Dao methods"
+			scmRepositoryDao.isRepositoryNameAlreadyInUse(serverId, repo.name) >> false
 			scmServerDao.getOne(serverId) >> server
 			1 * scmRepositoryDao.save(repo) >> repo
 		and:
@@ -141,6 +143,23 @@ class ScmRepositoryManagerServiceTest extends Specification {
 		then:
 			1 * connector.initRepository()
 			1 * connector.prepareRepository()
+	}
+
+	def "#createNewScmRepository(ScmRepository) - [Exception] Should try to create a new ScmRepository with a name already used and throw a NameAlreadyInUseException"() {
+		given:
+			String repoName = "My_Project"
+			ScmRepository repo = new ScmRepository()
+			repo.name = repoName
+		and:
+			long serverId = 12
+			ScmServer server = Mock()
+			server.getId() >> serverId
+		and:
+			scmRepositoryDao.isRepositoryNameAlreadyInUse(serverId, repoName) >> true
+		when:
+			scmRepositoryManagerService.createNewScmRepository(serverId, repo)
+		then:
+			thrown NameAlreadyInUseException
 	}
 
 	def "#updateName(long, String) - [Nominal] Should update the name of the ScmRepository"() {

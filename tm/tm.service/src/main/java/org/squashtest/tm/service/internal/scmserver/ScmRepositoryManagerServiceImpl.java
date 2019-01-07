@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.squashtest.tm.core.scm.spi.ScmConnector;
 import org.squashtest.tm.domain.scm.ScmRepository;
 import org.squashtest.tm.domain.scm.ScmServer;
+import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.internal.repository.ScmRepositoryDao;
 import org.squashtest.tm.service.internal.repository.ScmServerDao;
 import org.squashtest.tm.service.scmserver.ScmRepositoryManagerService;
@@ -68,6 +69,11 @@ public class ScmRepositoryManagerServiceImpl implements ScmRepositoryManagerServ
 
 	@Override
 	public void createNewScmRepository(long scmServerId, ScmRepository newScmRepository) throws IOException {
+
+		if(scmRepositoryDao.isRepositoryNameAlreadyInUse(scmServerId, newScmRepository.getName())) {
+			throw new NameAlreadyInUseException("ScmRepository", newScmRepository.getName());
+		}
+
 		ScmServer scmServer = scmServerDao.getOne(scmServerId);
 		newScmRepository.setScmServer(scmServer);
 		ScmRepository createdScmRepository = scmRepositoryDao.save(newScmRepository);
