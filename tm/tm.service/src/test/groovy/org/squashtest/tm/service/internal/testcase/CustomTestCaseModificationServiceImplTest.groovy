@@ -27,11 +27,15 @@ import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.CustomFieldBinding
 import org.squashtest.tm.domain.customfield.CustomFieldValue
 import org.squashtest.tm.domain.customfield.RawValue
+import org.squashtest.tm.domain.infolist.InfoListItem
+import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.testcase.TestStep
+import org.squashtest.tm.exception.InconsistentInfoListItemException
 import org.squashtest.tm.service.advancedsearch.IndexationService
 import org.squashtest.tm.service.attachment.AttachmentManagerService
 import org.squashtest.tm.service.campaign.IterationTestPlanFinder
+import org.squashtest.tm.service.infolist.InfoListItemFinderService
 import org.squashtest.tm.service.internal.repository.ActionTestStepDao
 import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.tm.domain.project.Project
@@ -62,6 +66,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	IterationTestPlanFinder iterationTestPlanFinder = Mock()
 	IndexationService indexationService = Mock()
 	ActionTestStepDao actionStepDao = Mock()
+	InfoListItemFinderService infoListItemService = Mock()
 
 	MockFactory mockFactory = new MockFactory()
 
@@ -80,6 +85,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		service.iterationTestPlanFinder = iterationTestPlanFinder
 		service.indexationService = indexationService
 		service.actionStepDao = actionStepDao
+		service.infoListItemService = infoListItemService
 	}
 
 	def "should find test case and add a step at last position"() {
@@ -239,7 +245,30 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	}
 
 
+	def "should decompose an automated test path into a project id and a test path"(){
 
+		given:
+		def autoprojBad = Mock(TestAutomationProject){getLabel() >> "not me"; getId() >> -50L}
+		def autoprojGood = Mock(TestAutomationProject){getLabel() >> "me ! me !"; getId() >> 50L}
+
+		def tc = Mock(TestCase) {
+			getProject() >> Mock(Project) {
+				getTestAutomationProjects() >> [autoprojBad, autoprojGood]
+			}
+		}
+
+		and:
+		testCaseDao.findById(_) >> tc
+
+		when:
+		def res = service.extractAutomatedProjectAndTestName(10L, "/me ! me !/test/path.ta")
+
+		then:
+		res.a1 == autoprojGood.getId()
+		res.a2 == 'test/path.ta'
+
+
+	}
 
 	def "should remove test case link to automated script"(){
 		given: "an automated test case"
@@ -334,6 +363,105 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		1 *indexationService.batchReindexItpi([1L, 2L])
 		1 * indexationService.batchReindexTc([10L])
 
+	}
+
+
+	def "should change the nature of a test case"(){
+
+		given:
+		def tc = Mock(TestCase){
+			getProject() >> {
+				Mock(Project){
+					getId() >> 2L
+				}
+			}
+		}
+		def nature = Mock(InfoListItem)
+
+		and:
+		testCaseDao.findById(_) >> tc
+		infoListItemService.findByCode(_) >> nature
+		infoListItemService.isNatureConsistent(_,_) >> true
+
+		when:
+		service.changeNature(10L, "NAT_BOB")
+
+		then:
+		1 * tc.setNature(nature)
+
+	}
+
+	def "should not change the nature of a test case"(){
+
+		given:
+		def tc = Mock(TestCase){
+			getProject() >> {
+				Mock(Project){
+					getId() >> 2L
+				}
+			}
+		}
+		def nature = Mock(InfoListItem)
+
+		and:
+		testCaseDao.findById(_) >> tc
+		infoListItemService.findByCode(_) >> nature
+		infoListItemService.isNatureConsistent(_,_) >> false
+
+		when:
+		service.changeNature(10L, "NAT_BOB")
+
+		then:
+		thrown InconsistentInfoListItemException
+	}
+
+	def "should change the type of a test case"(){
+
+		given:
+		def tc = Mock(TestCase){
+			getProject() >> {
+				Mock(Project){
+					getId() >> 2L
+				}
+			}
+		}
+		def type = Mock(InfoListItem)
+
+		and:
+		testCaseDao.findById(_) >> tc
+		infoListItemService.findByCode(_) >> type
+		infoListItemService.isTypeConsistent(_,_) >> true
+
+		when:
+		service.changeType(10L, "TYP_MIKE")
+
+		then:
+		1 * tc.setType(type)
+
+	}
+
+	def "should not change the type of a test case"(){
+
+		given:
+		def tc = Mock(TestCase){
+			getProject() >> {
+				Mock(Project){
+					getId() >> 2L
+				}
+			}
+		}
+		def type = Mock(InfoListItem)
+
+		and:
+		testCaseDao.findById(_) >> tc
+		infoListItemService.findByCode(_) >> type
+		infoListItemService.isTypeConsistent(_,_) >> false
+
+		when:
+		service.changeType(10L, "TYP_MIKE")
+
+		then:
+		thrown InconsistentInfoListItemException
 	}
 
 
@@ -448,6 +576,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		res.items == steps.subList(0,2)
 
 	}
+
 
 	// ****************** test utilities *****************
 
