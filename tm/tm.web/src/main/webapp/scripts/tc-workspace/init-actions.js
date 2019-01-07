@@ -252,7 +252,7 @@ define(["jquery", "backbone", "tree", "underscore", "app/ws/squashtm.notificatio
 						notification.showError(translator.get('test-case.automation.transmit-all.empty'));
 					}
 				});
-			};
+			}
 
 			function toTransmit(tcIds, isEligible) {
 				if (isEligible) {
