@@ -20,39 +20,69 @@
  */
 package org.squashtest.tm.domain.testcase;
 
+import java.math.BigInteger;
+
+import javax.persistence.Query;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.NumericDocValuesField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexableField;
 import org.hibernate.Session;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.hibernate.search.bridge.MetadataProvidingFieldBridge;
 import org.hibernate.search.bridge.spi.FieldMetadataBuilder;
 import org.hibernate.search.bridge.spi.FieldType;
-import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.campaign.QIteration;
+import org.squashtest.tm.domain.campaign.QIterationTestPlanItem;
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQueryFactory;
 import org.squashtest.tm.domain.search.SessionFieldBridge;
 
 public class TestCaseIterationBridge extends SessionFieldBridge implements MetadataProvidingFieldBridge {
 
 	private static final Integer EXPECTED_LENGTH = 7;
 	
+	private static final String COUNT_ITER = 
+			"select count(distinct ITER.ITERATION_ID) from ITERATION iter " +
+			"inner join ITEM_TEST_PLAN_LIST ilist on iter.ITERATION_ID = ilist.ITERATION_ID " +
+			"inner join ITERATION_TEST_PLAN_ITEM item on ilist.ITEM_TEST_PLAN_ID = item.ITEM_TEST_PLAN_ID " +
+			"where item.TCLN_ID = :tcId";
+	
 	private String padRawValue(Long rawValue){
 		return StringUtils.leftPad(Long.toString(rawValue), EXPECTED_LENGTH, '0');
 	}
 	
+	
 	private Long findNumberOfIterations(Session session, Long id){
 		
-		return (Long) session.createCriteria(Iteration.class)
-				.createCriteria("testPlans")
-				.createCriteria("referencedTestCase")
-				.add(Restrictions.eq("id", id))
-				.setProjection(Projections.rowCount())
-				.uniqueResult();
+		BigInteger count = (BigInteger) session.createNativeQuery(COUNT_ITER)
+				.setParameter("tcId", id)
+				.getSingleResult();
+		
+		return count.longValue();
+		
+		/*
+		//TODO 
+		Issue 7977 :
+		The following works correctly too but the generated SQL query is so ugly. Yuk.
+		If the native query just above is cleared by the QA and no database-dependant problem
+		arise (I doubt it), remove that commented code.
+		
+		QIteration iteration = QIteration.iteration;
+		QIterationTestPlanItem item = QIterationTestPlanItem.iterationTestPlanItem;
+		QTestCase testCase = QTestCase.testCase;
+		
+		return new ExtendedHibernateQueryFactory(session)
+				.select(iteration.id).distinct()
+				.from(iteration)
+				.join(iteration.testPlans, item)
+				.join(item.referencedTestCase, testCase)
+				.where(testCase.id.eq(id))
+				.fetchCount();
+		*/
 	}
+	
 	
 	@Override
 	protected void writeFieldToDocument(String name, Session session, Object value, Document document, LuceneOptions luceneOptions) {
