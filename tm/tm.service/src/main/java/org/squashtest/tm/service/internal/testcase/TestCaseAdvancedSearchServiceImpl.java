@@ -266,11 +266,12 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			Sort sort = getTestCaseSort(sorting);
 			FullTextQuery hibQuery = ftem.createFullTextQuery(luceneQuery, TestCase.class).setSort(sort);
 
-			// FIXME count + paged query if possible
-			countAll = hibQuery.getResultList().size();
+			countAll = hibQuery.getResultSize();
+			
 			if (!sorting.shouldDisplayAll()){
 				hibQuery.setFirstResult(sorting.getFirstItemIndex()).setMaxResults(sorting.getPageSize());
 			}
+			
 			result = hibQuery.getResultList();
 		}
 		return new PagingBackedPagedCollectionHolder<>(sorting, countAll, result);

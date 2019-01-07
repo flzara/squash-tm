@@ -88,7 +88,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		new SortField("referencedTestCase.importance", SortField.Type.STRING, false),
 		new SortField("referencedTestCase.automatable", SortField.Type.STRING, false)};
 
-	// FIXME This list which contains sweet FA is used to decide when a field should be processed as a numeric field or a text field. Looks like horseshit to me.
+
 	private static final String LAST_EXECUTE_ON_FIELD_NAME ="lastExecutedOn";
 	private static final List<String> LONG_SORTABLE_FIELDS = Collections.singletonList(LAST_EXECUTE_ON_FIELD_NAME);
 
@@ -166,11 +166,8 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 			FullTextQuery fullTextQuery = ftSession.createFullTextQuery(luceneQuery, IterationTestPlanItem.class).setSort(sort);
 
-			// FIXME The 2 lines below seem to
-			// FIXME 1. fetch all the data
-			// FIXME 2. fetch the paged data
-			// FIXME Looks like horseshit to me
-			countAll = fullTextQuery.getResultList().size();
+			countAll = fullTextQuery.getResultSize();
+			
 			result = fullTextQuery.setFirstResult(paging.getFirstItemIndex()).setMaxResults(paging.getPageSize()).getResultList();
 		}
 

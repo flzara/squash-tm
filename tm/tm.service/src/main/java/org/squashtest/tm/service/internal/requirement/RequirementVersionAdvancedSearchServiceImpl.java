@@ -36,6 +36,8 @@ import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -54,6 +56,8 @@ import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchSer
 @Service("squashtest.tm.service.RequirementVersionAdvancedSearchService")
 public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
 	RequirementVersionAdvancedSearchService {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementVersionAdvancedSearchServiceImpl.class);
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -160,11 +164,13 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 	@Override
 	public PagedCollectionHolder<List<RequirementVersion>> searchForRequirementVersions(AdvancedSearchModel model,
 		PagingAndMultiSorting sorting, MessageSource source, Locale locale) {
+		
+		LOGGER.debug("searching requirement versions in index");
 
 		FullTextEntityManager ftSession = Search.getFullTextEntityManager(entityManager);
 
-
 		Query luceneQuery = searchForRequirementVersionQuery(model, ftSession);
+		
 
 		List<RequirementVersion> result = Collections.emptyList();
 		int countAll = 0;
@@ -173,8 +179,9 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 			FullTextQuery hibQuery = ftSession.createFullTextQuery(luceneQuery, RequirementVersion.class)
 				.setSort(sort);
 
-			// FIXME ain't there a way to query for count instead of querying twice the whole resultset ?
-			countAll = hibQuery.getResultList().size();
+			LOGGER.trace("Lucene query is : {}", luceneQuery);
+
+			countAll = hibQuery.getResultSize();
 
 			if (!sorting.shouldDisplayAll()){
 				hibQuery.setFirstResult(sorting.getFirstItemIndex()).setMaxResults(sorting.getPageSize());

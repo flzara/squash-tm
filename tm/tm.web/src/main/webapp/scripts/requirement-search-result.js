@@ -20,11 +20,11 @@
  */
 require([ "common" ], function(common) {
 	require([ "jquery", "search/requirement-search-result", "app/ws/squashtm.workspace" ], function($,
-			TestCaseSearchResultView, WS) {
+			RequirementSearchResultView, WS) {
 
 		$(function() {
 			WS.init();
-			var view = new TestCaseSearchResultView();
+			var view = new RequirementSearchResultView();
 		});
 
 	});
