@@ -511,7 +511,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
                 $(selectedRows).each(function (index, data) {
                     var idx = data._DT_RowIndex;
-                    var script = data.cells[9].lastChild.nodeValue;
+                    var script = data.cells[10].lastChild.nodeValue;
                     var format = datas[idx]["format"];
                     if ((script === null || script === "-") && "gherkin" !== format.toLowerCase()) {
                         count = count + 1;
