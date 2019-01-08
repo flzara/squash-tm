@@ -914,12 +914,12 @@ define(["jquery", 'workspace/workspace.delnode-popup', "jqueryui"],
 		
 		this.nyanPlay = function(){
 			nyannyannyannyan.play();
-		}
+		};
 		
 		this.nyanStopReset = function(){
 			nyannyannyannyan.pause();
 			nyannyannyannyan.currentTime = NYAN_START_TIME;
-		}
+		};
 		
 
 		// ******** events and basic states *************
