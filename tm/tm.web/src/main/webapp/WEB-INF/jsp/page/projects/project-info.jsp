@@ -755,15 +755,35 @@ require(["common"], function() {
 
 	function toggleWorkflow(){
   		var shouldActivate = $("#toggle-WORKFLOW-checkbox").prop('checked');
-
+      console.log(shouldActivate);
   		if (shouldActivate) {
-        $("#automation-workflow-popup").formDialog("open");
+        automationWorkflowPopup.formDialog("open");
   		} else {
 				changeAllowAutomationWorkflow(shouldActivate);
-				
   		}
 
   }
+
+  var changeWorkflowDialogAfter = $("#change-workflow-popup-after");
+  changeWorkflowDialogAfter.formDialog();
+
+  changeWorkflowDialogAfter.on("formdialogconfirm", function() {
+    document.location.href=  squashtm.app.contextRoot + "administration/indexes";
+  });
+
+  changeWorkflowDialogAfter.on("formdialogcancel", function() {
+    changeWorkflowDialogAfter.formDialog("close");
+  });
+
+  var automationWorkflowPopup = $("#automation-workflow-popup").formDialog();
+  automationWorkflowPopup.on("formdialogconfirm", function() {
+    changeAllowAutomationWorkflow($("#toggle-WORKFLOW-checkbox").prop('checked'));
+  });
+
+  automationWorkflowPopup.on("formdialogcancel", function() {
+    automationWorkflowPopup.formDialog("close");
+    $("#toggle-WORKFLOW-checkbox").switchButton({checked: false});
+  });
 
   function changeAllowAutomationWorkflow(shouldActivate) {
 		$.ajax({
@@ -773,8 +793,12 @@ require(["common"], function() {
 				id : "project-automation-workflow",
 				value : shouldActivate
 			}
-		}).success(toggleScmPanel(shouldActivate));
-		$("#automation-workflow-popup").formDialog("close");
+		}).success( function () {
+		  toggleScmPanel(shouldActivate);
+		  $("#automation-workflow-popup").formDialog("close");
+		  changeWorkflowDialogAfter.formDialog("open");
+		  });
+
   }
 
   function toggleScmPanel(shouldShowPanel) {
@@ -1098,16 +1122,6 @@ require(["common"], function() {
 				 notification.showError(translator.get('message.NoMemberSelected'));
 			}
 
-		});
-
-		var automationWorkflowPopup = $("#automation-workflow-popup").formDialog();
-		automationWorkflowPopup.on("formdialogconfirm", function() {
-			changeAllowAutomationWorkflow($("#toggle-WORKFLOW-checkbox").prop('checked'));
-		});
-
-		automationWorkflowPopup.on("formdialogcancel", function() {
-			automationWorkflowPopup.formDialog("close");
-			$("#toggle-WORKFLOW-checkbox").switchButton({checked: false});
 		});
 
 		//user permissions table

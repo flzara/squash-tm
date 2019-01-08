@@ -24,6 +24,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.hibernate.search.jpa.FullTextEntityManager;
+import org.hibernate.search.jpa.Search;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -47,8 +49,11 @@ import org.squashtest.tm.domain.project.*;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestLibrary;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.exception.CompositeDomainException;
@@ -70,6 +75,7 @@ import org.squashtest.tm.service.security.ObjectIdentityService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
+import org.squashtest.tm.service.testcase.CustomTestCaseModificationService;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -122,6 +128,10 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	private CustomFieldBindingModificationService customFieldBindingModificationService;
 	@Inject
 	private CustomReportLibraryNodeDao customReportLibraryNodeDao;
+	@Inject
+	private TestCaseDao testCaseDao;
+	@Inject
+	private CustomTestCaseModificationService customTestCaseModificationService;
 
 	@Inject private MilestoneBindingManagerService milestoneBindingManager;
 
@@ -1039,14 +1049,37 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@Override
 	public void changeAutomationWorkflow(long projectId, boolean active) {
 		GenericProject genericProject = genericProjectDao.getOne(projectId);
+
+
 		if(!genericProject.isBoundToTemplate()) {
 			genericProject.setAllowAutomationWorkflow(active);
+
+			if (active) {
+				List<Long> tcIds = testCaseDao.findAllTestCaseAssociatedToTAScriptByProject(projectId);
+				createAutomationRequestForTc(tcIds);
+			}
 			/* If project is a Template, propagate on all the bound projects. */
 			if (ProjectHelper.isTemplate(genericProject)) {
 				templateDao.propagateAllowAutomationWorkflow(projectId, active);
 			}
 		} else {
 			throw new LockedParameterException();
+		}
+	}
+
+	private void createAutomationRequestForTc(List<Long> tcIds) {
+
+		for(int x = 0; x < tcIds.size(); x++) {
+			Long tcId = tcIds.get(x);
+			TestCase tc = testCaseDao.findById(tcId);
+			tc.setAutomatable(TestCaseAutomatable.Y);
+			customTestCaseModificationService.createRequestForTestCase(tcId, AutomationRequestStatus.AUTOMATED);
+			if (x % 20 == 0) {
+				em.flush();
+				FullTextEntityManager ftem = Search.getFullTextEntityManager(em);
+				ftem.flushToIndexes();
+				em.clear();
+			}
 		}
 	}
 }

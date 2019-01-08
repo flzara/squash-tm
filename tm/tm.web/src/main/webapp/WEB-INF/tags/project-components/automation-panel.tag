@@ -42,6 +42,7 @@
 <f:message var="noServerLabel" key="label.NoServer" />
 <f:message var="active" key="label.active" />
 <f:message var="inactive" key="label.inactive" />
+<f:message var="goToIndexLabel" key="label.GotoIndex" />
 
 <c:url var="listRemoteProjectsURL" value="/test-automation/servers/projects-list" />
 
@@ -251,6 +252,35 @@
 </div>
 
 <%-- ================================================
+	Indexation Popup
+================================================ --%>
+<f:message var="automationWorkflowChange" key="dialog.project.automation-workflow.title" />
+<div id="change-workflow-popup" class="popup-dialog not-displayed" title="${automationWorkflowChange}">
+
+  <div class="display-table-row">
+    <span class="red-warning-message" id="warning-index"><f:message key="dialog.info-list.warning.reindex.before"/></span>
+  </div>
+  <div class="popup-dialog-buttonpane">
+    <input type="button"  value="${confirmLabel}" data-def="mainbtn,evt=confirm" />
+    <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
+  </div>
+
+</div>
+
+<div id="change-workflow-popup-after" class="popup-dialog not-displayed" title="${automationWorkflowChange}">
+
+  <div class="display-table-row">
+    <span class="red-warning-message" id="warning-index-after"><f:message key="dialog.info-list.warning.reindex.after"/></span>
+  </div>
+  <div class="popup-dialog-buttonpane">
+  <c:if test="${isAdmin}">
+    <input type="button" value="${goToIndexLabel}" data-def="evt=confirm" />
+    </c:if>
+    <input type="button"  value="${closeLabel}" data-def="mainbtn, evt=cancel"/>
+  </div>
+
+</div>
+<%-- ================================================
 	Add Project Popup.
 ================================================= --%>
 
@@ -397,8 +427,8 @@
 <%-- ================================================
   Automation Workflow explanation popup.
 ================================================= --%>
-<f:message var="unbindPopupTitle" key="dialog.unbind-ta-project.tooltip" />
-<div id="automation-workflow-popup" class="popup-dialog not-displayed" title="${unbindPopupTitle}">
+<f:message var="automationPopupTitle" key="dialog.project.automation-workflow-change.title" />
+<div id="automation-workflow-popup" class="popup-dialog not-displayed" title="${automationPopupTitle}">
   <div id="automation-workflow-explanation">
   	  <div><f:message key="message.project.automation.workflow.active.explanation" /></div>
     </div>

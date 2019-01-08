@@ -82,8 +82,8 @@ public class SquashAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 	}
 
 	private boolean isUserProgrammerButNotTester(Collection<? extends GrantedAuthority> authorities) {
-		return authorities.contains(ROLE_TF_AUTOMATION_PROGRAMMER) &&
-				(! authorities.contains(ROLE_TF_FUNCTIONAL_TESTER));				
+		return authorities.stream().anyMatch(auth -> ROLE_TF_AUTOMATION_PROGRAMMER.equals(((GrantedAuthority) auth).getAuthority())) &&
+				(! authorities.stream().anyMatch(auth -> ROLE_TF_FUNCTIONAL_TESTER.equals(((GrantedAuthority) auth).getAuthority())));
 	}
 
 	@Override

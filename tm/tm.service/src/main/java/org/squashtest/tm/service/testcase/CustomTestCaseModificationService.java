@@ -30,6 +30,7 @@ import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testcase.*;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
@@ -246,7 +247,7 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 
 	// ********************* Automation request *********************** */
 
-	void createRequestForTestCase(long testCaseId);
+	void createRequestForTestCase(long testCaseId, AutomationRequestStatus automationRequestStatus);
 
 	AutomatedTest bindAutomatedTestByAutomationProgrammer(Long testCaseId, String testPath);
 

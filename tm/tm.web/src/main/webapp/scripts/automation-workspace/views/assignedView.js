@@ -245,6 +245,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     },
 
                     fnDrawCallback: function () {
+                        self.selected = 0;
                         this.data("sortmode").update();
                         var rows = this.fnGetNodes();
                         $(rows).each(function (index, row) {

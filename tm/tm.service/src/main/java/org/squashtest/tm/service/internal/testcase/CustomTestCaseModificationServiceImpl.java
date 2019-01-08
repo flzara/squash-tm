@@ -1089,7 +1089,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			}
 
 			if (automatable.equals(TestCaseAutomatable.Y) && tc.getAutomationRequest() == null) {
-				createRequestForTestCase(testCaseId);
+				createRequestForTestCase(testCaseId, null);
 			}
 		}
 		return tc.getProject().isAllowAutomationWorkflow();
@@ -1186,7 +1186,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	public void createRequestForTestCase(long testCaseId) {
+	public void createRequestForTestCase(long testCaseId, AutomationRequestStatus automationRequestStatus) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		Project project = testCase.getProject();
 
@@ -1196,6 +1196,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		testCase.setAutomationRequest(request);
 		request.setTestCase(testCase);
 		request.setProject(project);
+		if(automationRequestStatus != null) {
+			request.setRequestStatus(automationRequestStatus);
+		}
 
 		User currentUser = userAccountService.findCurrentUser();
 		request.setCreatedBy(currentUser);
@@ -1204,6 +1207,5 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		project.getAutomationRequestLibrary().addContent(request);
 
 	}
-
 
 }

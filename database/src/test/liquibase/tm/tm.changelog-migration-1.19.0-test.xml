@@ -31,8 +31,6 @@
   <!-- note : this dataset is also used for tests for SQTM-504 -->
   <include file="tm.data-1.19.0-SQTM-510.xml" relativeToChangelogFile="true" />
 
-  <include file="tm.data-1.19.0.automation-migration.xml" relativeToChangelogFile="true" />
-
   <include file="tm.data-1.19.0-SQTM-543.xml" relativeToChangelogFile="true" />
 
   <!-- ========================================INCLUDE CHANGELOG================================================ -->
@@ -97,19 +95,6 @@
     </preConditions>
     <comment>checking that user that had no entry in AUTH_USER (eg, pure LDAP users) now have an entry there.</comment>
   </changeSet>
-
-
-  <changeSet id="tm-1.19.0-automation-migration" author="aboittiaux" dbms="mysql, postgresql">
-    <preConditions>
-      <sqlCheck expectedResult="1">
-        select count(*)
-        from TEST_CASE tc
-        left join AUTOMATION_REQUEST ar on tc.TCLN_ID = ar.TEST_CASE_ID
-        where tc.AUTOMATABLE = 'Y' and ar.AUTOMATION_REQUEST_ID is not null;
-      </sqlCheck>
-    </preConditions>
-  </changeSet>
-
 
   <changeSet id="tm-1.19.0-SQTM-543-third-party-server-test-1" author="bsiri">
     <preConditions>

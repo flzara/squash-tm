@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -36,6 +37,7 @@ import org.apache.commons.collections.ListUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.type.LongType;
 import org.squashtest.tm.core.foundation.collection.DefaultSorting;
 import org.squashtest.tm.core.foundation.collection.Paging;
@@ -73,6 +75,7 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 	private static final String TEST_CASE_IDS_PARAM_NAME = "testCaseIds";
 	private static final String TEST_CASES_IDS = "testCasesIds";
 	private static final String UNCHECKED = "unchecked";
+	private static final String PROJECT_ID = "projectId";
 
 	private static final String FIND_DESCENDANT_QUERY = "select DESCENDANT_ID from TCLN_RELATIONSHIP where ANCESTOR_ID in (:list)";
 
@@ -86,6 +89,9 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 	// in that query we only want the steps, but we join also on the caller test cases and projects because we can sort on them
 	private static final String FIND_ALL_CALLING_TEST_STEPS_MAIN_HQL = "select Steps from TestCase as TestCase join TestCase.project as Project " +
 			"join TestCase.steps as Steps where Steps.calledTestCase.id = :" + TEST_CASE_ID_PARAM_NAME;
+
+	private static final String FIND_ALL_ASSOCIATED_TO_TA_SCRIPT = "select tc.id from TestCase tc left join tc.automationRequest req " +
+		"where tc.automatedTest is not null and req.testCase is null and tc.project.id = :" + PROJECT_ID;
 
 	private static List<DefaultSorting> defaultVerifiedTcSorting;
 
@@ -448,6 +454,14 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 
 		return res;
 
+	}
+
+	@Override
+	public List<Long> findAllTestCaseAssociatedToTAScriptByProject(Long projectId) {
+
+		Query query = currentSession().createQuery(FIND_ALL_ASSOCIATED_TO_TA_SCRIPT);
+		query.setParameter(PROJECT_ID, projectId);
+		return query.getResultList();
 	}
 
 	private int compareTcMilestoneDate(TestCase tc1, TestCase tc2){
