@@ -706,46 +706,14 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 
 	@Override
 	public List<Long> findAllEligibleTestCaseIds(List<Long> testCaseIds) {
-
-/*		Condition condition = org.jooq.impl.DSL.trueCondition();
-		if(! NO_ACTIVE_MILESTONE_ID.equals(activeMilestoneId)) {
-			condition = MILESTONE_TEST_CASE.MILESTONE_ID.notIn(activeMilestoneId).or(MILESTONE_TEST_CASE.MILESTONE_ID.isNull());
-		}
-
 		return DSL.selectDistinct(TEST_CASE.TCLN_ID)
-			.from(TEST_CASE)
-			.innerJoin(TEST_CASE_LIBRARY_NODE).on(TEST_CASE.TCLN_ID.eq(TEST_CASE_LIBRARY_NODE.TCLN_ID))
-			.innerJoin(PROJECT).on(TEST_CASE_LIBRARY_NODE.PROJECT_ID.eq(PROJECT.PROJECT_ID))
-			.leftJoin(MILESTONE_TEST_CASE).on(TEST_CASE.TCLN_ID.eq(MILESTONE_TEST_CASE.TEST_CASE_ID))
-			.leftJoin(MILESTONE).on(MILESTONE_TEST_CASE.MILESTONE_ID.eq(MILESTONE.MILESTONE_ID))
-			.where(TEST_CASE.TCLN_ID.in(testCaseIds))
-			.and(PROJECT.ALLOW_AUTOMATION_WORKFLOW.isTrue())
-			.and(TEST_CASE.AUTOMATABLE.eq(TestCaseAutomatable.Y.name()))
-			.and(MILESTONE.STATUS.notIn(MilestoneStatus.LOCKED.name()).or(MILESTONE.STATUS.isNull()))
-			.and(condition)
-			.fetch(TEST_CASE.TCLN_ID);*/
-
-		return DSL.selectDistinct(TEST_CASE.TCLN_ID)
-										    .from(TEST_CASE)
-										    .innerJoin(TEST_CASE_LIBRARY_NODE).on(TEST_CASE.TCLN_ID.eq(TEST_CASE_LIBRARY_NODE.TCLN_ID))
-										    .innerJoin(PROJECT).on(TEST_CASE_LIBRARY_NODE.PROJECT_ID.eq(PROJECT.PROJECT_ID))
-										    .where(TEST_CASE.TCLN_ID.in(testCaseIds))
-										    .and(PROJECT.ALLOW_AUTOMATION_WORKFLOW.isTrue())
-										    .and(TEST_CASE.AUTOMATABLE.eq(TestCaseAutomatable.Y.name()))
-										    .fetch(TEST_CASE.TCLN_ID);
-		/*List<Long> result = new ArrayList<>(eligibleTestCaseIds);*/
-		/*if (! NO_ACTIVE_MILESTONE_ID.equals(activeMilestoneId)) {
-			result = DSL.selectDistinct(MILESTONE_TEST_CASE.TEST_CASE_ID)
-				.from(MILESTONE_TEST_CASE)
-				.where(MILESTONE_TEST_CASE.MILESTONE_ID.eq(activeMilestoneId))
-				.and(MILESTONE_TEST_CASE.TEST_CASE_ID.in(eligibleTestCaseIds)).fetch(MILESTONE_TEST_CASE.TEST_CASE_ID);
-		}*/
-		// Liste des cdt avec jalon verrouillé
-/*		List<Long> TcIdsWithLockedMilestone = DSL.selectDistinct(MILESTONE_TEST_CASE.TEST_CASE_ID).from(MILESTONE_TEST_CASE).innerJoin(MILESTONE).on(MILESTONE_TEST_CASE.MILESTONE_ID.eq(MILESTONE.MILESTONE_ID))
-			.where(MILESTONE.STATUS.eq(MilestoneStatus.LOCKED.name())).and(MILESTONE_TEST_CASE.TEST_CASE_ID.in(result)).fetch(MILESTONE_TEST_CASE.TEST_CASE_ID);
-
-		result.removeAll(TcIdsWithLockedMilestone);*/
-		/*return result;*/
+				  .from(TEST_CASE)
+				  .innerJoin(TEST_CASE_LIBRARY_NODE).on(TEST_CASE.TCLN_ID.eq(TEST_CASE_LIBRARY_NODE.TCLN_ID))
+				  .innerJoin(PROJECT).on(TEST_CASE_LIBRARY_NODE.PROJECT_ID.eq(PROJECT.PROJECT_ID))
+				  .where(TEST_CASE.TCLN_ID.in(testCaseIds))
+				  .and(PROJECT.ALLOW_AUTOMATION_WORKFLOW.isTrue())
+				  .and(TEST_CASE.AUTOMATABLE.eq(TestCaseAutomatable.Y.name()))
+				  .fetch(TEST_CASE.TCLN_ID);
 	}
 
 	@Override
