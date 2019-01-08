@@ -26,10 +26,8 @@ import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.service.internal.repository.BugTrackerBindingDao
 import org.squashtest.tm.service.internal.repository.BugTrackerDao
 import org.squashtest.tm.service.internal.repository.IssueDao
-import org.squashtest.tm.service.internal.servers.ManageableBasicAuthCredentials
-import org.squashtest.tm.service.internal.servers.StoredCredentialsManagerImpl
 import org.squashtest.tm.service.project.GenericProjectManagerService
-import org.squashtest.tm.service.servers.StoredCredentialsManager
+
 import spock.lang.Specification
 
 class BugTrackerManagerServiceImplTest extends Specification  {
@@ -39,7 +37,6 @@ class BugTrackerManagerServiceImplTest extends Specification  {
     GenericProjectManagerService genericProjectManagerService = Mock()
     BugTrackerManagerServiceImpl service = new BugTrackerManagerServiceImpl()
 	org.squashtest.tm.service.internal.repository.RequirementSyncExtenderDao syncreqDao = Mock()
-	StoredCredentialsManager storedCredentialsManager = Mock()
 
     def setup(){
         service.bugTrackerBindingDao = bugTrackerBindingDao
@@ -47,7 +44,6 @@ class BugTrackerManagerServiceImplTest extends Specification  {
         service.issueDao = issueDao
         service.genericProjectManagerService =  genericProjectManagerService
 		service.syncreqDao = syncreqDao;
-		service.storedCredentialsManager = storedCredentialsManager
     }
 
     def "should delete bugtrackers"(){
@@ -56,9 +52,7 @@ class BugTrackerManagerServiceImplTest extends Specification  {
         and : "each bugtracker is bind to 2 projects"
         (1L..5L).each {bugTrackerBindingDao.findByBugtrackerId(it)    >> [it * 10, it *10 + 1].collect{Project p = Mock(); p.getId() >> it;  return new BugTrackerBinding(project:p)}}
         and : "each bugtracker get 3 issues associated "
-		(1L..5L).each{issueDao.getAllIssueFromBugTrackerId(it) >> [it * 10, it *10 + 1, it * 10 + 2].collect{ new Issue(id:it)}}
-		and : "each bugtracker get storedCredentials "
-		(1L..5L).each{storedCredentialsManager.findAppLevelCredentials(it) >> new ManageableBasicAuthCredentials(username: "login", password: "password")}
+        (1L..5L).each{issueDao.getAllIssueFromBugTrackerId(it) >> [it * 10, it *10 + 1, it * 10 + 2].collect{ new Issue(id:it)}}
 
 
         when :
@@ -69,6 +63,5 @@ class BugTrackerManagerServiceImplTest extends Specification  {
         10 * genericProjectManagerService.removeBugTracker(_)
         15 * issueDao.delete(_)
 		5 * syncreqDao.deleteAllByServer(_)
-		5 * storedCredentialsManager.deleteAppLevelCredentials(_)
     }
 }
