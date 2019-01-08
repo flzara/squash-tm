@@ -755,7 +755,6 @@ require(["common"], function() {
 
 	function toggleWorkflow(){
   		var shouldActivate = $("#toggle-WORKFLOW-checkbox").prop('checked');
-      console.log(shouldActivate);
   		if (shouldActivate) {
         automationWorkflowPopup.formDialog("open");
   		} else {
@@ -782,7 +781,7 @@ require(["common"], function() {
 
   automationWorkflowPopup.on("formdialogcancel", function() {
     automationWorkflowPopup.formDialog("close");
-    $("#toggle-WORKFLOW-checkbox").switchButton({checked: false});
+    //$("#toggle-WORKFLOW-checkbox").switchButton({checked: false});
   });
 
   function changeAllowAutomationWorkflow(shouldActivate) {

@@ -91,7 +91,7 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 			"join TestCase.steps as Steps where Steps.calledTestCase.id = :" + TEST_CASE_ID_PARAM_NAME;
 
 	private static final String FIND_ALL_ASSOCIATED_TO_TA_SCRIPT = "select tc.id from TestCase tc left join tc.automationRequest req " +
-		"where tc.automatedTest is not null and req.testCase is null and tc.project.id = :" + PROJECT_ID;
+		"where tc.automatedTest is not null and req.testCase is null and tc.kind = 'STANDARD' and tc.project.id = :" + PROJECT_ID;
 
 	private static List<DefaultSorting> defaultVerifiedTcSorting;
 

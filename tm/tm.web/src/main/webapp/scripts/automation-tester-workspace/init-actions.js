@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'workspace.contextual-content', 'workspace.routing',"jquery.squash.formdialog"],
+define(['jquery', 'workspace.contextual-content', 'workspace.routing', "jquery.squash.formdialog"],
 	function ($, ctxcontent, urlBuilder) {
 
 
@@ -87,10 +87,12 @@ define(['jquery', 'workspace.contextual-content', 'workspace.routing',"jquery.sq
 
 
 		function showWorkflow() {
-			$("#icon-workflow").on("click", function() {
-				if($("#autom-image").length === 0) {
-					if(squashtm.app.locale === "fr") {
+			$("#icon-workflow").on("click", function () {
+				if ($("#autom-image").length === 0) {
+					if (squashtm.app.locale === "fr") {
 						$("#workflow-img").append("<img id='autom-image' src='../images/workflow_autom_fr.png' style='width:100%'/>");
+					} else if (squashtm.app.locale === "de") {
+						$("#workflow-img").append("<img id='autom-image' src='../images/workflow_autom_de.png' style='width:100%'/>");
 					} else {
 						$("#workflow-img").append("<img id='autom-image' src='../images/workflow_autom_en.png' style='width:100%'/>");
 					}
@@ -99,7 +101,7 @@ define(['jquery', 'workspace.contextual-content', 'workspace.routing',"jquery.sq
 				dialog.formDialog("open");
 			});
 
-			$("#close-automation-workflow").on("click", function() {
+			$("#close-automation-workflow").on("click", function () {
 				var dialog = $("#workflow-popup").formDialog();
 				dialog.formDialog("close");
 			});
