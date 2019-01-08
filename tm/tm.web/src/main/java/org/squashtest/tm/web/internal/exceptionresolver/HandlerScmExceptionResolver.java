@@ -25,10 +25,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.tm.core.scm.api.exception.ScmException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class HandlerScmExceptionResolver extends AbstractHandlerExceptionResolver {
@@ -38,9 +41,18 @@ public class HandlerScmExceptionResolver extends AbstractHandlerExceptionResolve
 		if(exceptionIsHandled(ex)) {
 			response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
 			ScmException scmException = (ScmException) ex;
-			return new ModelAndView(new MappingJackson2JsonView(), "exceptions", scmException);
+			List<FieldValidationErrorModel> errors = buildFieldValidationErrors(scmException);
+			return new ModelAndView(new MappingJackson2JsonView(), "fieldValidationErrors", errors);
 		}
 		return null;
+	}
+
+	private List<FieldValidationErrorModel> buildFieldValidationErrors(ScmException scmException) {
+		List<FieldValidationErrorModel> ves = new ArrayList<>();
+
+		ves.add(new FieldValidationErrorModel("", "scm", scmException.getMessage()));
+
+		return ves;
 	}
 
 	private boolean exceptionIsHandled(Exception ex) {

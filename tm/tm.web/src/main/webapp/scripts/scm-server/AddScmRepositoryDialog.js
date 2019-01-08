@@ -78,7 +78,10 @@
 				self.doAddNewScmRepository(newScmRepository)
 					.success(callback)
 					.error(function(xhr) {
-						self.displayErrorPopup(xhr.responseJSON.message);
+						var scmExceptions = xhr.responseJSON.fieldValidationErrors;
+						if(!!scmExceptions) {
+							self.displayErrorPopup(scmExceptions[0].errorMessage);
+						}
 					});
 			}
 		},
