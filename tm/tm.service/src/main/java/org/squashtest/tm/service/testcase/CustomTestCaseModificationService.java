@@ -244,6 +244,8 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 
 	boolean changeAutomatable(TestCaseAutomatable automatable, Long testCaseId);
 
+	Map<String, Object> transmitEligibleNodes(Map<String, List<Long>> selectedNodes);
+
 
 	// ********************* Automation request *********************** */
 

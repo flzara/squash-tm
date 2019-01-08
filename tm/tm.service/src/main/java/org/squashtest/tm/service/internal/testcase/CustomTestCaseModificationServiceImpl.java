@@ -81,6 +81,7 @@ import org.squashtest.tm.service.testcase.ParameterModificationService;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.tf.AutomationRequestFinderService;
+import org.squashtest.tm.service.tf.AutomationRequestModificationService;
 import org.squashtest.tm.service.user.UserAccountService;
 
 import javax.inject.Inject;
@@ -98,9 +99,8 @@ import static org.squashtest.tm.service.security.Authorizations.*;
 public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModificationService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomTestCaseModificationServiceImpl.class);
-
 	private static final int STEP_LAST_POS = -1;
-
+	private static final Long NO_ACTIVE_MILESTONE_ID = -9000L;
 	private static final String WRITE_AS_AUTOMATION = "WRITE_AS_AUTOMATION";
 
 	@Inject
@@ -166,7 +166,16 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	private AutomationRequestFinderService automationRequestFinderService;
 
 	@Inject
+	private AutomationRequestModificationService automationRequestModificationService;
+
+	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
+
+	@Inject
+	private TestCaseFolderDao testCaseFolderDao;
+
+	@Inject
+	private TestCaseLibraryDao testCaseLibraryDao;
 
 
 	/* *************** TestCase section ***************************** */
@@ -1095,9 +1104,51 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		return tc.getProject().isAllowAutomationWorkflow();
 	}
 
+	@Override
+	public Map<String, Object> transmitEligibleNodes(Map<String, List<Long>> selectedNodes) {
+		Map<String, Object> result = new HashMap<>();
 
+		List<Long> testCaseIds = selectedNodes.get("testcases");
+		List<Long> folderIds = selectedNodes.get("folders");
+		List<Long> libraryIds = selectedNodes.get("libraries");
 
-	/* *******************************************************
+		if (! libraryIds.isEmpty()) {
+			List<TestCaseLibraryNode> rootLibraryNodes = new ArrayList<>();
+			for (Long libraryId : libraryIds) {
+				rootLibraryNodes.addAll(testCaseLibraryDao.findAllRootContentById(libraryId));
+			}
+			for (TestCaseLibraryNode node : rootLibraryNodes) {
+				if ((TestCase.class).equals(node.getClass())) {
+					testCaseIds.add(node.getId());
+				} else {
+					folderIds.add(node.getId());
+				}
+			}
+		}
+		if (! folderIds.isEmpty()) {
+			testCaseIds.addAll(testCaseFolderDao.findAllTestCaseIdsFromFolderIds(folderIds));
+		}
+
+		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
+		if (activeMilestoneId.isPresent() && !NO_ACTIVE_MILESTONE_ID.equals(activeMilestoneId.get())) {
+			testCaseIds = testCaseDao.findAllTCIdsForActiveMilestoneInList(activeMilestoneId.get(), testCaseIds);
+		}
+		List<Long> testCaseIdsWithLockedMilestone = testCaseDao.findAllTCIdsWithLockedMilestone(testCaseIds);
+		testCaseIds.removeAll(testCaseIdsWithLockedMilestone);
+
+		List<Long> eligibleTestCaseIds = testCaseDao.findAllEligibleTestCaseIds(testCaseIds);
+		if (! eligibleTestCaseIds.isEmpty()) {
+			// Transmit all eligible test cases
+			automationRequestModificationService.changeStatus(eligibleTestCaseIds, AutomationRequestStatus.TRANSMITTED);
+		}
+		boolean areAllEligible = eligibleTestCaseIds.size() == testCaseIds.size();
+		result.put("areAllEligible", areAllEligible);
+		result.put("eligibleTcIds", eligibleTestCaseIds);
+
+		return result;
+	}
+
+/* *******************************************************
 		private stuffs etc
 	**********************************************************/
 

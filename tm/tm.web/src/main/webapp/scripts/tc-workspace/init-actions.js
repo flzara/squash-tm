@@ -225,7 +225,6 @@ define(["jquery", "backbone", "tree", "underscore", "app/ws/squashtm.notificatio
 				var libraries = nodes.filter(':library'),
 						folders = nodes.filter(':folder'),
 						testcases = nodes.filter(':test-case');
-				var isEligible = true;
 				var selectedNodes = {
 					"testcases": testcases.length !== 0 ? testcases.treeNode().all('getResId') : [],
 					"libraries": libraries.length !== 0 ? libraries.treeNode().all('getResId') : [],
@@ -238,65 +237,28 @@ define(["jquery", "backbone", "tree", "underscore", "app/ws/squashtm.notificatio
 
 			function checkAndTransmit(selectedNodes) {
 				$.ajax({
-					url : squashtm.app.contextRoot + 'test-cases/eligible-tcs-for-transmission',
+					url : squashtm.app.contextRoot + 'test-cases/transmit-eligible-tcs',
 					type : 'POST',
 					data : JSON.stringify(selectedNodes),
 					datatype : 'json',
 					contentType: 'application/json'
 				}).success(function(result) {
-					var tcIds = result['tcIds'],
-							isEligible = result['isEligible'] !== undefined ? result['isEligible'] : true;
-					if (tcIds.length !== 0) {
-						toTransmit(tcIds, isEligible);
+					handleTransmissionMessages(result);
+				});
+			}
+
+			function handleTransmissionMessages(result) {
+				var tcIds = result['eligibleTcIds'],
+						allEligible = result['areAllEligible'];
+				if (tcIds.length !== 0) {
+					if (allEligible) {
+						$('#automation-request-status').text(translator.get('automation-request.request_status.TRANSMITTED'));
 					} else {
-						notification.showError(translator.get('test-case.automation.transmit-all.empty'));
+						notification.showInfo(translator.get('dialog.transmit.eligible.message'));
 					}
-				});
-			}
-
-			function toTransmit(tcIds, isEligible) {
-				if (isEligible) {
-					notification.showInfo('Transmission réussie : ' + tcIds.length); // TODO à changer ou enlever
-					$('#automation-request-status').text(translator.get('automation-request.request_status.TRANSMITTED'));
 				} else {
-					initTransmitOnlyEligibleDialog(tcIds);
+					notification.showError(translator.get('test-case.automation.transmit-all.empty'));
 				}
-			}
-
-			function transmit(tcIds) {
-				$.ajax({
-					url : squashtm.app.contextRoot + 'automation-requests/' + tcIds,
-					type : 'POST',
-					data : {
-						'id' : 'automation-request-status',
-						'value' : 'TRANSMITTED'
-					}
-				}).success(function() {
-					notification.showInfo('Transmission réussie : ' + tcIds.length);
-					$('#automation-request-status').text(translator.get('automation-request.request_status.TRANSMITTED'));
-				});
-			}
-
-			function initTransmitOnlyEligibleDialog(tcIds) {
-				var dialog = $("#transmit-eligible-node-dialog").formDialog();
-				dialog.formDialog("open");
-
-				dialog.on('formdialogopen', function () {
-					dialog.formDialog('setState', 'confirm');
-				});
-
-				dialog.on('formdialogconfirm', function () {
-					transmit(tcIds);
-					dialog.formDialog('close');
-				});
-
-				dialog.on('formdialogcancel', function () {
-					dialog.formDialog('close');
-				});
-
-				dialog.on('formdialogclose', function () {
-					tcIds = [];
-				});
 			}
 
 			// *****************  search  ********************

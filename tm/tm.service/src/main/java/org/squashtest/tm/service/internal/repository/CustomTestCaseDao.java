@@ -190,7 +190,10 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 	 */
 	Map<Long, TestCaseImportance> findAllTestCaseImportanceWithImportanceAuto(Collection<Long> testCaseIds);
 
-	List<Long> findAllTestCaseAssociatedToTAScriptByProject(Long projectId);
+	List<Long> findAllEligibleTestCaseIds(List<Long> testCaseIds);
 
+	List<Long> findAllTCIdsForActiveMilestoneInList(Long activeMilestoneId, List<Long> testCaseIds);
+
+	List<Long> findAllTCIdsWithLockedMilestone(List<Long> testCaseIds);
 
 }

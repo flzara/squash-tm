@@ -27,13 +27,24 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.type.LongType;
+import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
 
+import javax.inject.Inject;
+
+import static org.squashtest.tm.jooq.domain.Tables.AUTOMATION_REQUEST;
+import static org.squashtest.tm.jooq.domain.Tables.TCLN_RELATIONSHIP_CLOSURE;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_FOLDER;
+
 @Repository
 public class HibernateTestCaseFolderDao extends HibernateEntityDao<TestCaseFolder> implements TestCaseFolderDao {
+
+	@Inject
+	private DSLContext DSL;
+
 	@Override
 	public List<TestCaseLibraryNode> findAllContentById(final long folderId) {
 		SetQueryParametersCallback setParams = new SetQueryParametersCallback() {
@@ -76,6 +87,16 @@ public class HibernateTestCaseFolderDao extends HibernateEntityDao<TestCaseFolde
 			}
 		};
 		return executeListNamedQuery("testCaseFolder.findTestCasesFolderIdsInFolderContent", newCallBack1);
+	}
+
+	@Override
+	public List<Long> findAllTestCaseIdsFromFolderIds(List<Long> folderIds) {
+		return DSL.selectDistinct(TCLN_RELATIONSHIP_CLOSURE.DESCENDANT_ID)
+			.from(TCLN_RELATIONSHIP_CLOSURE)
+			.innerJoin(TEST_CASE_FOLDER).on(TCLN_RELATIONSHIP_CLOSURE.ANCESTOR_ID.eq(TEST_CASE_FOLDER.TCLN_ID))
+			.where(TCLN_RELATIONSHIP_CLOSURE.ANCESTOR_ID.in(folderIds))
+				.and(TCLN_RELATIONSHIP_CLOSURE.DESCENDANT_ID.notIn(DSL.select(TEST_CASE_FOLDER.TCLN_ID).from(TEST_CASE_FOLDER)))
+			.fetch(TCLN_RELATIONSHIP_CLOSURE.DESCENDANT_ID);
 	}
 
 	@Override

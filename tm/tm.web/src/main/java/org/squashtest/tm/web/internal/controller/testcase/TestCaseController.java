@@ -23,13 +23,10 @@ package org.squashtest.tm.web.internal.controller.testcase;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.domain.testcase.*;
-import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
-import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
-import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
-import org.squashtest.tm.service.internal.repository.TestCaseLibraryNodeDao;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsFinderService;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
+import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.service.tf.AutomationRequestModificationService;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -78,16 +75,7 @@ public class TestCaseController {
 	private VerifiedRequirementsFinderService verifiedRequirementsFinderService;
 
 	@Inject
-	private AutomationRequestModificationService automationRequestModificationService;
-
-	@Inject
-	private TestCaseFolderDao testCaseFolderDao;
-
-	@Inject
-	private TestCaseLibraryDao testCaseLibraryDao;
-
-	@Inject
-	private TestCaseLibraryNodeDao testCaseDao;
+	private TestCaseModificationService testCaseModificationService;
 
 
 	/**
@@ -197,57 +185,11 @@ public class TestCaseController {
 
 	}
 
-	@RequestMapping(value = "/eligible-tcs-for-transmission", method = RequestMethod.POST, headers = AcceptHeaders.CONTENT_JSON)
+	@RequestMapping(value = "/transmit-eligible-tcs", method = RequestMethod.POST, headers = AcceptHeaders.CONTENT_JSON)
 	@ResponseBody
-	public Map<String, Object> getEligibleTcIdsFromFolderLibraryIds(@RequestBody Map<String, List<Long>> selectedNodes) {
-		Map<String, Object> result = new HashMap<>();
-
-		List<Long> tcIds = selectedNodes.get("testcases");
-		List<TestCaseLibraryNode> tclns = testCaseDao.findAllByIds(tcIds);
-		result = getEligibleTcIdsFromContent(tclns, result);
-
-		List<Long> folderIds = selectedNodes.get("folders");
-		for (Long folderId : folderIds) {
-			List<TestCaseLibraryNode> contentFolder = testCaseFolderDao.findAllContentById(folderId);
-			result = getEligibleTcIdsFromContent(contentFolder, result);
-		}
-
-		List<Long> libraryIds = selectedNodes.get("libraries");
-		for (Long libraryId : libraryIds) {
-			List<TestCaseLibraryNode> contentLibrary = testCaseLibraryDao.findAllRootContentById(libraryId);
-			result = getEligibleTcIdsFromContent(contentLibrary, result);
-		}
-
-		if (result.get("isEligible") == null) {
-			automationRequestModificationService.changeStatus((List<Long>) result.get("tcIds"), AutomationRequestStatus.TRANSMITTED);
-		}
-
-		return result;
+	public Map<String, Object> transmitEligibleNodes(@RequestBody Map<String, List<Long>> selectedNodes) {
+		return testCaseModificationService.transmitEligibleNodes(selectedNodes);
 	}
-
-	private Map<String, Object> getEligibleTcIdsFromContent(List<TestCaseLibraryNode> rootContent, Map<String, Object> result) {
-		List<Long> tcIds = new ArrayList<>();
-		for (TestCaseLibraryNode node : rootContent) {
-			if ((TestCase.class).equals(node.getClass())) {
-				TestCase tc = (TestCase) node;
-				if (TestCaseAutomatable.Y.equals(tc.getAutomatable())) {
-					tcIds.add(tc.getId());
-				} else {
-					result.putIfAbsent("isEligible", false);
-				}
-			} else {
-				List<TestCaseLibraryNode> contentFolder = testCaseFolderDao.findAllContentById(node.getId());
-				result = getEligibleTcIdsFromContent(contentFolder, result);
-			}
-		}
-		if (result.get("tcIds") == null) {
-			result.put("tcIds", tcIds);
-		} else {
-			((List<Long>) result.get("tcIds")).addAll(tcIds);
-		}
-		return result;
-	}
-
 
 	private Set<Long> transformToLongSet(Collection<String> openedNodesIdsString) {
 		Set<Long> openedNodesIds = new HashSet<>();

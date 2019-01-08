@@ -39,6 +39,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.type.LongType;
+import org.jooq.DSLContext;
 import org.squashtest.tm.core.foundation.collection.DefaultSorting;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -49,15 +50,16 @@ import org.squashtest.tm.domain.NamedReference;
 import org.squashtest.tm.domain.NamedReferencePair;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.testcase.CallTestStep;
-import org.squashtest.tm.domain.testcase.ExportTestCaseData;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.domain.milestone.MilestoneStatus;
+import org.squashtest.tm.domain.testcase.*;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomTestCaseDao;
+
+import javax.inject.Inject;
+
+import static org.squashtest.tm.jooq.domain.Tables.*;
+
 /**
  * DAO for org.squashtest.tm.domain.testcase.TestCase
  *
@@ -101,6 +103,10 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 		defaultVerifiedTcSorting.add(new DefaultSorting("TestCase.name"));
 		ListUtils.unmodifiableList(defaultVerifiedTcSorting);
 	}
+
+	@Inject
+	private DSLContext DSL;
+
 
 	@Override
 	public void safePersist(TestCase testCase) {
@@ -698,6 +704,67 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 		return resultMap;
 	}
 
+	@Override
+	public List<Long> findAllEligibleTestCaseIds(List<Long> testCaseIds) {
 
+/*		Condition condition = org.jooq.impl.DSL.trueCondition();
+		if(! NO_ACTIVE_MILESTONE_ID.equals(activeMilestoneId)) {
+			condition = MILESTONE_TEST_CASE.MILESTONE_ID.notIn(activeMilestoneId).or(MILESTONE_TEST_CASE.MILESTONE_ID.isNull());
+		}
+
+		return DSL.selectDistinct(TEST_CASE.TCLN_ID)
+			.from(TEST_CASE)
+			.innerJoin(TEST_CASE_LIBRARY_NODE).on(TEST_CASE.TCLN_ID.eq(TEST_CASE_LIBRARY_NODE.TCLN_ID))
+			.innerJoin(PROJECT).on(TEST_CASE_LIBRARY_NODE.PROJECT_ID.eq(PROJECT.PROJECT_ID))
+			.leftJoin(MILESTONE_TEST_CASE).on(TEST_CASE.TCLN_ID.eq(MILESTONE_TEST_CASE.TEST_CASE_ID))
+			.leftJoin(MILESTONE).on(MILESTONE_TEST_CASE.MILESTONE_ID.eq(MILESTONE.MILESTONE_ID))
+			.where(TEST_CASE.TCLN_ID.in(testCaseIds))
+			.and(PROJECT.ALLOW_AUTOMATION_WORKFLOW.isTrue())
+			.and(TEST_CASE.AUTOMATABLE.eq(TestCaseAutomatable.Y.name()))
+			.and(MILESTONE.STATUS.notIn(MilestoneStatus.LOCKED.name()).or(MILESTONE.STATUS.isNull()))
+			.and(condition)
+			.fetch(TEST_CASE.TCLN_ID);*/
+
+		return DSL.selectDistinct(TEST_CASE.TCLN_ID)
+										    .from(TEST_CASE)
+										    .innerJoin(TEST_CASE_LIBRARY_NODE).on(TEST_CASE.TCLN_ID.eq(TEST_CASE_LIBRARY_NODE.TCLN_ID))
+										    .innerJoin(PROJECT).on(TEST_CASE_LIBRARY_NODE.PROJECT_ID.eq(PROJECT.PROJECT_ID))
+										    .where(TEST_CASE.TCLN_ID.in(testCaseIds))
+										    .and(PROJECT.ALLOW_AUTOMATION_WORKFLOW.isTrue())
+										    .and(TEST_CASE.AUTOMATABLE.eq(TestCaseAutomatable.Y.name()))
+										    .fetch(TEST_CASE.TCLN_ID);
+		/*List<Long> result = new ArrayList<>(eligibleTestCaseIds);*/
+		/*if (! NO_ACTIVE_MILESTONE_ID.equals(activeMilestoneId)) {
+			result = DSL.selectDistinct(MILESTONE_TEST_CASE.TEST_CASE_ID)
+				.from(MILESTONE_TEST_CASE)
+				.where(MILESTONE_TEST_CASE.MILESTONE_ID.eq(activeMilestoneId))
+				.and(MILESTONE_TEST_CASE.TEST_CASE_ID.in(eligibleTestCaseIds)).fetch(MILESTONE_TEST_CASE.TEST_CASE_ID);
+		}*/
+		// Liste des cdt avec jalon verrouillé
+/*		List<Long> TcIdsWithLockedMilestone = DSL.selectDistinct(MILESTONE_TEST_CASE.TEST_CASE_ID).from(MILESTONE_TEST_CASE).innerJoin(MILESTONE).on(MILESTONE_TEST_CASE.MILESTONE_ID.eq(MILESTONE.MILESTONE_ID))
+			.where(MILESTONE.STATUS.eq(MilestoneStatus.LOCKED.name())).and(MILESTONE_TEST_CASE.TEST_CASE_ID.in(result)).fetch(MILESTONE_TEST_CASE.TEST_CASE_ID);
+
+		result.removeAll(TcIdsWithLockedMilestone);*/
+		/*return result;*/
+	}
+
+	@Override
+	public List<Long> findAllTCIdsForActiveMilestoneInList(Long activeMilestoneId, List<Long> testCaseIds) {
+		return DSL.selectDistinct(MILESTONE_TEST_CASE.TEST_CASE_ID)
+			.from(MILESTONE_TEST_CASE)
+			.where(MILESTONE_TEST_CASE.MILESTONE_ID.eq(activeMilestoneId))
+				.and(MILESTONE_TEST_CASE.TEST_CASE_ID.in(testCaseIds))
+			.fetch(MILESTONE_TEST_CASE.TEST_CASE_ID);
+	}
+
+	@Override
+	public List<Long> findAllTCIdsWithLockedMilestone(List<Long> testCaseIds) {
+		return DSL.selectDistinct(MILESTONE_TEST_CASE.TEST_CASE_ID)
+				  .from(MILESTONE_TEST_CASE)
+				  .innerJoin(MILESTONE).on(MILESTONE_TEST_CASE.MILESTONE_ID.eq(MILESTONE.MILESTONE_ID))
+				  .where(MILESTONE.STATUS.eq(MilestoneStatus.LOCKED.name()))
+					.and(MILESTONE_TEST_CASE.TEST_CASE_ID.in(testCaseIds))
+				  .fetch(MILESTONE_TEST_CASE.TEST_CASE_ID);
+	}
 
 }

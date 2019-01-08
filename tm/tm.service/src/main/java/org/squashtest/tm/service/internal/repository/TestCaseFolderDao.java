@@ -26,6 +26,8 @@ import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 
 public interface TestCaseFolderDao extends EntityDao<TestCaseFolder>, FolderDao<TestCaseFolder, TestCaseLibraryNode> {
-	
+
 	List<Long> findTestCasesFolderIdsInFolderContent(long folderId);
+
+	List<Long> findAllTestCaseIdsFromFolderIds(List<Long> folderIds);
 }

@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/milestone-activation'], function($, copier, tree, milestones){
+define(['jquery', 'workspace.tree-node-copier', 'tree', 'underscore', 'milestone-manager/milestone-activation'], function($, copier, tree, underscore, milestones){
 
 	squashtm = squashtm || {};
 	squashtm.workspace = squashtm.workspace || {};
@@ -204,13 +204,21 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 			else if (nodes.filter(':editable').length !== nodes.length) {
 				return "permission-denied";
 			}
-/*			else if (_.contains(nodes.all('getLibrary'))) {
+			else if (! this.isAllowAutomWorkflow(nodes)) {
 				return "autom-workflow-disabled";
-			}*/
+			}
 			else {
 				return "yes-you-can";
 			}
 		};
+
+		this.isAllowAutomWorkflow = function(nodes) {
+			var libraries = nodes.filter(':library');
+			var tcsAndFoldersLibraries = nodes.not(':library').parents(':library');
+
+			return libraries.filter('[allowautomworkflow="true"]').length
+						+ tcsAndFoldersLibraries.filter('[allowautomworkflow="true"]').length === libraries.length + tcsAndFoldersLibraries.length;
+		}
 
 		this.canTransmit = $.proxy(function(nodes) {
 			return (this.whyCantTransmit(nodes) === "yes-you-can");
