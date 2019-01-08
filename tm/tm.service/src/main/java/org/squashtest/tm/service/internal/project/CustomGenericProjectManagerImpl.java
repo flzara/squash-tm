@@ -1046,6 +1046,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		}
 	}
 
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	@Override
 	public void changeAutomationWorkflow(long projectId, boolean active) {
 		GenericProject genericProject = genericProjectDao.getOne(projectId);
