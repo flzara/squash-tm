@@ -690,7 +690,7 @@
 
     <addForeignKeyConstraint constraintName="fk_stored_credentials_authenticated_server"
                              baseTableName="STORED_CREDENTIALS" baseColumnNames="AUTHENTICATED_SERVER"
-                             referencedTableName="THIRD_PARTY_SERVER" referencedColumnNames="SERVER_ID"/>
+                             referencedTableName="THIRD_PARTY_SERVER" referencedColumnNames="SERVER_ID" deleteCascade="true"/>
 
   </changeSet>
 
