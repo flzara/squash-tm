@@ -238,41 +238,6 @@ public class ExportModel {
 
 		// that monster constructor will be used by Hibernate in a hql query
 		public TestCaseModel(Long projectId, String projectName, Integer order, Long id, String reference, String name,
-				String milestone,
-				Boolean weightAuto, TestCaseImportance weight, InfoListItem nature, InfoListItem type,
-				TestCaseStatus status, String description, String prerequisite, Long nbReq, Long nbCaller,
-				Long nbAttachments, Date createdOn, String createdBy, Date lastModifiedOn, String lastModifiedBy,
-				TestCaseKind testCaseKind, ScriptedTestCaseLanguage scriptedTestCaseLanguage, String tcScript
-		) {
-
-			super();
-			this.projectId = projectId;
-			this.projectName = projectName;
-			this.order = order;
-			this.id = id;
-			this.reference = reference;
-			this.name = name;
-			this.milestone = milestone;
-			this.weightAuto = weightAuto ? 1 : 0;
-			this.weight = weight;
-			this.nature = nature;
-			this.type = type;
-			this.status = status;
-			this.description = description;
-			this.prerequisite = prerequisite;
-			this.nbReq = nbReq;
-			this.nbCaller = nbCaller;
-			this.nbAttachments = nbAttachments;
-			this.createdOn = createdOn;
-			this.createdBy = createdBy;
-			this.lastModifiedOn = lastModifiedOn;
-			this.lastModifiedBy = lastModifiedBy;
-			this.testCaseKind = testCaseKind;
-			this.scriptedTestCaseLanguage = scriptedTestCaseLanguage;
-			this.tcScript = tcScript;
-		}
-
-		public TestCaseModel(Long projectId, String projectName, Integer order, Long id, String reference, String name,
 							 String milestone,
 							 Boolean weightAuto, TestCaseImportance weight, InfoListItem nature, InfoListItem type,
 							 TestCaseStatus status, TestCaseAutomatable automatable, String description, String prerequisite, Long nbReq, Long nbCaller,
