@@ -413,7 +413,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 					var getRelatedReqVersionInfos = LinkedRequirementsPanel.bindingActionCallback(apiUrl, "GET");
 
 					/* Fetching related RequirementVersion attributes in order to display them in the popup. */
-					var reqVersionsInfos = getRelatedReqVersionInfos(relatedId, { "isRelatedIdANodeId": isRelatedIdANodeId }).success(
+					getRelatedReqVersionInfos(relatedId, { "isRelatedIdANodeId": isRelatedIdANodeId }).success(
 						function (relatedReqVersionInfos) {
 							var relatedVersionName = relatedReqVersionInfos.versionName;
 							var relatedVersionDescription = relatedReqVersionInfos.versionDescription;
@@ -447,6 +447,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 										comboBox.append(o);
 									} else {
 										o = new Option(optionLabel_1, optionKey_1);
+										comboBox.append(o);
 									}
 
 									if (role1 !== role2) {
@@ -457,6 +458,8 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 											comboBox.append(o);
 										} else {
 											o = new Option(optionLabel_2, optionKey_2);
+											comboBox.append(o);
+
 										}
 									}
 								}
