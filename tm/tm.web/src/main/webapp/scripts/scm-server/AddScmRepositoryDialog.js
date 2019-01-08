@@ -33,9 +33,14 @@
 			branch: $('#branch'),
 		},
 
+		errorPopup: $('.error-popup'),
+
 		initialize: function(scmRepositoriesTable) {
 			var self = this;
-			var $el = this.$el;
+
+			self.errorPopup.popupError();
+
+			var $el = self.$el;
 			$el.formDialog();
 
 			$el.on('formdialogconfirm', function() {
@@ -62,16 +67,27 @@
 		* If everything is valid, create the new ScmRepository to the database and then execute the callback function.
 		*/
 		addNewScmRepository: function(callback) {
+			var self = this;
 			// clear errors
-			this.clearErrorMessages();
+			self.clearErrorMessages();
 			// if no blanks (except folder)
-			if(!this.checkBlankInputsAndDisplayErrors()) {
+			if(!self.checkBlankInputsAndDisplayErrors()) {
 				// retrieve parameters
-				var newScmRepository = this.retrieveNewScmRepositoryParams();
+				var newScmRepository = self.retrieveNewScmRepositoryParams();
 				// create the repository
-				this.doAddNewScmRepository(newScmRepository)
-					.success(callback);
+				self.doAddNewScmRepository(newScmRepository)
+					.success(callback)
+					.error(function(xhr) {
+						self.displayErrorPopup(xhr.responseJSON.message);
+					});
 			}
+		},
+		/**
+		* Open the embedded error popup and display the given message.
+		*/
+		displayErrorPopup: function(message) {
+			this.errorPopup.find('.error-message').html(message);
+			this.errorPopup.popupError("show");
 		},
 		/**
 		* Create Ajax Post Request to create the new ScmRepository.
