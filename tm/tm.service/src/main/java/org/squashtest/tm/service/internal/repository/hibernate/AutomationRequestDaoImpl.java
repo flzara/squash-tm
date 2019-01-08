@@ -456,9 +456,17 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	}
 
 	private ColumnFiltering overrideStatusAndAssignedToFilter(ColumnFiltering filtering, String statusFilter, String userID){
-		return new SimpleColumnFiltering(filtering)
-			.addFilter("requestStatus",statusFilter)
-			.addFilter("assignedTo", userID);
+		ColumnFiltering effective = null;
+		if(filtering.getFilter("requestStatus").isEmpty()) {
+			effective = new SimpleColumnFiltering(filtering)
+				.addFilter("requestStatus",statusFilter)
+				.addFilter("assignedTo", userID);
+		} else {
+			effective = new SimpleColumnFiltering(filtering)
+				.addFilter("requestStatus",filtering.getFilter("requestStatus"))
+				.addFilter("assignedTo", userID);
+		}
+		return effective;
 	}
 
 
