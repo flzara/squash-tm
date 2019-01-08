@@ -711,8 +711,8 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 				  .innerJoin(TEST_CASE_LIBRARY_NODE).on(TEST_CASE.TCLN_ID.eq(TEST_CASE_LIBRARY_NODE.TCLN_ID))
 				  .innerJoin(PROJECT).on(TEST_CASE_LIBRARY_NODE.PROJECT_ID.eq(PROJECT.PROJECT_ID))
 				  .where(TEST_CASE.TCLN_ID.in(testCaseIds))
-				  .and(PROJECT.ALLOW_AUTOMATION_WORKFLOW.isTrue())
-				  .and(TEST_CASE.AUTOMATABLE.eq(TestCaseAutomatable.Y.name()))
+				  	.and(PROJECT.ALLOW_AUTOMATION_WORKFLOW.isTrue())
+				  	.and(TEST_CASE.AUTOMATABLE.eq(TestCaseAutomatable.Y.name()))
 				  .fetch(TEST_CASE.TCLN_ID);
 	}
 

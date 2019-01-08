@@ -218,7 +218,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'underscore', 'milestone
 
 			return libraries.filter('[allowautomworkflow="true"]').length
 						+ tcsAndFoldersLibraries.filter('[allowautomworkflow="true"]').length === libraries.length + tcsAndFoldersLibraries.length;
-		}
+		};
 
 		this.canTransmit = $.proxy(function(nodes) {
 			return (this.whyCantTransmit(nodes) === "yes-you-can");
