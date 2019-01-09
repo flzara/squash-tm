@@ -136,7 +136,9 @@ public class ScriptedTestCaseEventListener {
 		Optional<Credentials> maybeCredentials = credentialsProvider.getAppLevelCredentials(server);
 
 		Supplier<BugTrackerNoCredentialsException> throwIfNull = () -> {
-			throw new BugTrackerNoCredentialsException("Cannot authenticate because no valid credentials were found for authentication on the remote server. " +
+			throw new BugTrackerNoCredentialsException(
+				"Cannot authenticate to the remote server mapped to the repository '" + scm.getName() + "' " +
+				"because no valid credentials were found for authentication. " +
 				"Squash-TM is supposed to use application-level credentials for that and it seems they were not configured properly. "
 				+ "Please contact your administrator in order to fix the situation.", null);
 		};
