@@ -282,7 +282,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	@Override
 	public void updateStatusToAutomated(List<Long> reqIds, AutomationRequestStatus requestStatus, List<AutomationRequestStatus> initialStatus) {
 		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest req SET req.requestStatus = :requestStatus " +
-			"where req.id in :reqIds and req.requestStatus in :initialStatus")
+			"where req.id in :reqIds and req.requestStatus in :initialStatus and req.transmissionDate is not null")
 			.setParameter("requestStatus", requestStatus)
 			.setParameter("reqIds", reqIds)
 			.setParameter("initialStatus", initialStatus)
