@@ -162,7 +162,14 @@ define(['jquery', 'backbone', 'squash.translator', 'workspace.routing', 'app/uti
 			if(mode !== 'folder' && StringUtils.isBlank(value)) {
 				Forms.input(self.input).setState("error", translator.get("message.notBlank"));
 			} else {
-				self.doUpdateAttribute(repositoryId, data).success(callback);
+				self.doUpdateAttribute(repositoryId, data)
+				.success(callback)
+				.error(function(xhr) {
+					var scmExceptions = xhr.responseJSON.fieldValidationErrors;
+						if(!!scmExceptions) {
+							Forms.input(self.input).setState("error", scmExceptions[0].errorMessage);
+						}
+				});
 			}
 		},
 		/**
