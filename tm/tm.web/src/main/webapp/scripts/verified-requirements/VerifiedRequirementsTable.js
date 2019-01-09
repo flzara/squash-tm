@@ -135,13 +135,12 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			} else {
 				notification.showError(translator.get('message.EmptyTableSelection'));
 			}
-
 		},
 
 		_removeRequirements : function() {
 			var self = this;
 			// Issue 4948 : Selected Id(s) can be a number or an array
-			var ids =  (this.toDeleteIds !== undefined) ? this.toDeleteIds : this.$el.getSelectedIds() ;
+			var ids =  (this.toDeleteIds !== undefined && this.toDeleteIds.length !== 0) ? this.toDeleteIds : this.$el.getSelectedIds() ;
 			if (ids.length === 0) {
 				return;
 			}
@@ -149,7 +148,8 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 				url : VRTS.url + '/' + ids.join(','),
 				type : 'delete'
 			}).done(self.refresh);
-			localStorage.removeItem("selectedRow");
+				localStorage.removeItem("selectedRow");
+				self.toDeleteIds = [];
 		},
 
 		configureRemoveRequirementDialogs : function() {
