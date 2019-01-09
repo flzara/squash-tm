@@ -196,6 +196,4 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 
 	List<Long> findAllTCIdsForActiveMilestoneInList(Long activeMilestoneId, List<Long> testCaseIds);
 
-	List<Long> findAllTCIdsWithLockedMilestone(List<Long> testCaseIds);
-
 }

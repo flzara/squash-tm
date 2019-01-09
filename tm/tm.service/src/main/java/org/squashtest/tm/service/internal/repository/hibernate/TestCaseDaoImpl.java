@@ -725,14 +725,4 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 			.fetch(MILESTONE_TEST_CASE.TEST_CASE_ID);
 	}
 
-	@Override
-	public List<Long> findAllTCIdsWithLockedMilestone(List<Long> testCaseIds) {
-		return DSL.selectDistinct(MILESTONE_TEST_CASE.TEST_CASE_ID)
-				  .from(MILESTONE_TEST_CASE)
-				  .innerJoin(MILESTONE).on(MILESTONE_TEST_CASE.MILESTONE_ID.eq(MILESTONE.MILESTONE_ID))
-				  .where(MILESTONE.STATUS.eq(MilestoneStatus.LOCKED.name()))
-					.and(MILESTONE_TEST_CASE.TEST_CASE_ID.in(testCaseIds))
-				  .fetch(MILESTONE_TEST_CASE.TEST_CASE_ID);
-	}
-
 }

@@ -251,13 +251,16 @@ define(["jquery", "backbone", "tree", "underscore", "app/ws/squashtm.notificatio
 				var tcIds = result['eligibleTcIds'],
 						allEligible = result['areAllEligible'];
 				if (tcIds.length !== 0) {
+					var msg = translator.get('test-case.automation.transmit-all.size') + tcIds.length;
 					if (allEligible) {
 						$('#automation-request-status').text(translator.get('automation-request.request_status.TRANSMITTED'));
+						notification.showInfo(msg);
 					} else {
-						notification.showInfo(translator.get('dialog.transmit.eligible.message'));
+						msg += "</br>" + translator.get('dialog.transmit.eligible.message');
+						notification.showInfo(msg);
 					}
 				} else {
-					notification.showError(translator.get('test-case.automation.transmit-all.empty'));
+					notification.showInfo(translator.get('test-case.automation.transmit-all.empty'));
 				}
 			}
 

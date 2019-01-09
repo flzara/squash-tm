@@ -1133,7 +1133,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		if (activeMilestoneId.isPresent() && !NO_ACTIVE_MILESTONE_ID.equals(activeMilestoneId.get())) {
 			testCaseIds = testCaseDao.findAllTCIdsForActiveMilestoneInList(activeMilestoneId.get(), testCaseIds);
 		}
-		List<Long> testCaseIdsWithLockedMilestone = testCaseDao.findAllTCIdsWithLockedMilestone(testCaseIds);
+		List<Long> testCaseIdsWithLockedMilestone = findAllTCIdsWithLockedMilestone(testCaseIds);
 		testCaseIds.removeAll(testCaseIdsWithLockedMilestone);
 
 		List<Long> eligibleTestCaseIds = testCaseDao.findAllEligibleTestCaseIds(testCaseIds);
@@ -1230,6 +1230,19 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			// NOPE
 		}
 
+	}
+
+	private List<Long> findAllTCIdsWithLockedMilestone(List<Long> testCaseIds) {
+		List<Long> result = new ArrayList<>();
+		List<TestCase> testCases = testCaseDao.findAllByIds(testCaseIds);
+		for (TestCase testCase : testCases) {
+			for (Milestone milestone : testCase.getAllMilestones()) {
+				if (MilestoneStatus.LOCKED.equals(milestone.getStatus())) {
+					result.add(testCase.getId());
+				}
+			}
+		}
+		return result;
 	}
 
 	// ********************* Automation request *********************** */
