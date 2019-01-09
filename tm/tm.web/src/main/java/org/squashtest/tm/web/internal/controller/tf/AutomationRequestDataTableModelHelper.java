@@ -24,6 +24,9 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.milestone.MilestoneStatus;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -33,6 +36,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD;
 
@@ -54,7 +58,7 @@ public class AutomationRequestDataTableModelHelper extends DataTableModelBuilder
 	@Override
 	protected Object buildItemData(AutomationRequest item) {
 		final AuditableMixin auditable = (AuditableMixin) item.getTestCase();
-		Map<String, Object> data = new HashMap<>(15);
+		Map<String, Object> data = new HashMap<>(17);
 		data.put(DataTableModelConstants.PROJECT_NAME_KEY, item.getTestCase() != null ? HtmlUtils.htmlEscape(item.getTestCase().getProject().getName()): null);
 		data.put("reference", (item.getTestCase() != null && !item.getTestCase().getReference().isEmpty()) ? item.getTestCase().getReference(): NO_DATA);
 		data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, item.getTestCase() != null ? HtmlUtils.htmlEscape(item.getTestCase().getName()): null);
@@ -71,7 +75,7 @@ public class AutomationRequestDataTableModelHelper extends DataTableModelBuilder
 		data.put("requestId", item.getId());
 		data.put("assigned-to", item.getAssignedTo() != null ? item.getAssignedTo().getLogin() : NO_DATA);
 		data.put("status", messageSource.internationalize(item.getRequestStatus().getI18nKey(), locale));
-		data.put("writable", permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", item.getTestCase()));
+		data.put("writable", isWritable(item.getTestCase()));
 
 		return data;
 	}
@@ -87,6 +91,19 @@ public class AutomationRequestDataTableModelHelper extends DataTableModelBuilder
 		} else {
 			return NO_DATA;
 		}
+	}
+
+	private boolean isWritable(TestCase item) {
+		if (! permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", item)) {
+			return false;
+		}
+		Set<Milestone> milestones = item.getAllMilestones();
+		for (Milestone milestone : milestones) {
+			if (MilestoneStatus.LOCKED.equals(milestone.getStatus())) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private boolean hasScriptAuto(AutomationRequest item) {

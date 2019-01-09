@@ -101,8 +101,12 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             return '<a href="' + squashtm.app.contextRoot + 'test-cases/' + data + '/info"><img src="/squash/images/icon-lib/eye.png" /></a>';
                         }
                     }, {
+												"mDataProp": "writable",
+												"bVisible": false,
+												"aTargets": [14]
+                    },{
                         "bSortable": false,
-                        "aTargets": [14],
+                        "aTargets": [15],
                         "mDataProp": "checkbox",
                         "sClass": "centered",
                         "mRender": function (data, type, row) {
@@ -113,11 +117,13 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             }
                             var input = "";
                             var $row = $(row);
-                            if (checked) {
-                                input = '<input type="checkbox" class="editor-active" checked>';
-                                $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight");
-                            } else {
-                                input = '<input type="checkbox" class="editor-active">';
+                            if (row['writable']) {
+															if (checked) {
+																	input = '<input type="checkbox" class="editor-active" checked>';
+																	$row.addClass("ui-state-row-selected").removeClass("ui-state-highlight");
+															} else {
+																	input = '<input type="checkbox" class="editor-active">';
+															}
                             }
                             return input;
                         },
@@ -125,7 +131,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }, {
                         "mDataProp": "requestId",
                         "bVisible": false,
-                        "aTargets": [15]
+                        "aTargets": [16]
                     }],
                     "bFilter": true,
 
@@ -134,8 +140,8 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         var edObj = $.extend(true, {}, $.editable.types.text);
                         var edFnButtons = $.editable.types.defaults.buttons;
                         var edFnElements = $.editable.types.text.element;
-
-                        if ($row.find("input[type=checkbox]")[0].checked) {
+												var checkbox = $row.find("input[type=checkbox]")[0];
+                        if (checkbox !== undefined && checkbox.checked) {
                             $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight");
                         }
 
