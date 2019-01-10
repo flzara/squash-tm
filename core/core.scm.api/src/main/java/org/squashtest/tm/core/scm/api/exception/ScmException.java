@@ -25,6 +25,11 @@ package org.squashtest.tm.core.scm.api.exception;
  */
 public class ScmException extends RuntimeException {
 
+	/**
+	 * If the exception concerns a field.
+	 */
+	private String field;
+
 	public ScmException(String message) {
 		super(message);
 	}
@@ -33,7 +38,24 @@ public class ScmException extends RuntimeException {
 		super(message, cause);
 	}
 
+	public ScmException(String message, Throwable cause, String field) {
+		super(message, cause);
+		this.field = field;
+	}
+
 	public ScmException(Throwable cause) {
 		super(cause);
+	}
+
+	public String getField() {
+		return field;
+	}
+
+	public void setField(String field) {
+		this.field = field;
+	}
+
+	public boolean hasField() {
+		return field != null && !field.isEmpty();
 	}
 }

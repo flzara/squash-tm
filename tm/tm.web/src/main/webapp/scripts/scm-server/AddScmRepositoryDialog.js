@@ -33,7 +33,7 @@
 			branch: $('#branch'),
 		},
 
-		errorPopup: $('.error-popup'),
+		errorPopup: $('.error-frame'),
 
 		initialize: function(scmRepositoriesTable) {
 			var self = this;
@@ -79,14 +79,14 @@
 					.success(callback)
 					.error(function(xhr) {
 						var scmExceptions = xhr.responseJSON.fieldValidationErrors;
-						if(!!scmExceptions) {
+						if(!!scmExceptions && scmExceptions[0].fieldName === 'scm') {
 							self.displayErrorPopup(scmExceptions[0].errorMessage);
 						}
 					});
 			}
 		},
 		/**
-		* Open the embedded error popup and display the given message.
+		* Open the embedded error frame and display the given message.
 		*/
 		displayErrorPopup: function(message) {
 			this.errorPopup.find('.error-message').html(message);

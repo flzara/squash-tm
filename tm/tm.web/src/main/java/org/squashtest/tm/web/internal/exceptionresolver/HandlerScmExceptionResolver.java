@@ -25,7 +25,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
-import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.tm.core.scm.api.exception.ScmException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,17 +40,24 @@ public class HandlerScmExceptionResolver extends AbstractHandlerExceptionResolve
 		if(exceptionIsHandled(ex)) {
 			response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
 			ScmException scmException = (ScmException) ex;
-			List<FieldValidationErrorModel> errors = buildFieldValidationErrors(scmException);
-			return new ModelAndView(new MappingJackson2JsonView(), "fieldValidationErrors", errors);
+
+			if(scmException.hasField()) {
+				// exception occurred because of a specific field, this happends while creation/preparation
+				List<FieldValidationErrorModel> errors = buildFieldValidationErrors(scmException);
+				return new ModelAndView(new MappingJackson2JsonView(), "fieldValidationErrors", errors);
+			} else {
+				// exception occurred in a general context
+				ActionValidationErrorModel model =
+					new ActionValidationErrorModel(scmException.getClass().getSimpleName(), scmException.getMessage());
+				return new ModelAndView(new MappingJackson2JsonView(), "actionValidationError", model);
+			}
 		}
 		return null;
 	}
 
 	private List<FieldValidationErrorModel> buildFieldValidationErrors(ScmException scmException) {
 		List<FieldValidationErrorModel> ves = new ArrayList<>();
-
-		ves.add(new FieldValidationErrorModel("", "scm", scmException.getMessage()));
-
+		ves.add(new FieldValidationErrorModel("", scmException.getField(), scmException.getMessage()));
 		return ves;
 	}
 

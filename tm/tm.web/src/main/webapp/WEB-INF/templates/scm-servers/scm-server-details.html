@@ -223,7 +223,7 @@
           <div>
 
             <div class="control-group">
-              <label class="control-label" for="path" th:text="#{label.Name}">Name</label>
+              <label class="control-label" for="name" th:text="#{label.Name}">Name</label>
               <div class="controls">
                 <input id="name" name="name" class="strprop" value="" size="50" maxlength="255" type="text" data-def="maininput" />
                 <br/>
@@ -255,7 +255,6 @@
                 <input id="branch" name="branch" class="strprop" value="" size="50" maxlength="255" type="text" />
                 <br/>
                 <span class="help-inline">&nbsp;</span>
-                <span class="error-message url-error">&nbsp;</span>
               </div>
             </div>
 
@@ -266,7 +265,7 @@
             <input class="sq-btn" type="button" value="Cancel" th:value="#{label.Close}" data-evt="cancel" />
           </div>
 
-          <div class="error-popup">
+          <div class="error-frame">
             <span class="error-message scm-error" />
           </div>
 
