@@ -101,7 +101,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             return '<a href="' + squashtm.app.contextRoot + 'test-cases/' + data + '/info"><img src="/squash/images/icon-lib/eye.png" /></a>';
                         }
                     }, {
-												"mDataProp": "writable",
+												"mDataProp": "writableAutom",
 												"bVisible": false,
 												"aTargets": [14]
                     },{
@@ -117,7 +117,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             }
                             var input = "";
                             var $row = $(row);
-                            if (row['writable']) {
+                            if (row['writableAutom']) {
 															if (checked) {
 																	input = '<input type="checkbox" class="editor-active" checked>';
 																	$row.addClass("ui-state-row-selected").removeClass("ui-state-highlight");

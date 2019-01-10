@@ -75,7 +75,8 @@ public class AutomationRequestDataTableModelHelper extends DataTableModelBuilder
 		data.put("requestId", item.getId());
 		data.put("assigned-to", item.getAssignedTo() != null ? item.getAssignedTo().getLogin() : NO_DATA);
 		data.put("status", messageSource.internationalize(item.getRequestStatus().getI18nKey(), locale));
-		data.put("writable", isWritable(item.getTestCase()));
+		data.put("writable", isWritable(item.getTestCase(), true));
+		data.put("writableAutom", isWritable(item.getTestCase(), false));
 
 		return data;
 	}
@@ -93,11 +94,14 @@ public class AutomationRequestDataTableModelHelper extends DataTableModelBuilder
 		}
 	}
 
-	private boolean isWritable(TestCase item) {
-		if (! permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", item)) {
-			return false;
+	private boolean isWritable(TestCase testCase, boolean isTester) {
+		if (isTester) {
+			if (! permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", testCase)) {
+				return false;
+			}
 		}
-		Set<Milestone> milestones = item.getAllMilestones();
+
+		Set<Milestone> milestones = testCase.getAllMilestones();
 		for (Milestone milestone : milestones) {
 			if (MilestoneStatus.LOCKED.equals(milestone.getStatus())) {
 				return false;
