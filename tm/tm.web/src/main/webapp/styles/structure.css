@@ -68,6 +68,7 @@ label.afterDisabled:after, label.ui-helper-reset:after,  input + label:after {
 	position: absolute;
 	right: 0.2cm;
 	top: 0;
+	z-index: 0;
 }
 
 #workspace-title h2 {
