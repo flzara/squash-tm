@@ -88,13 +88,14 @@ define(['jquery', 'workspace.contextual-content', 'workspace.routing', "jquery.s
 
 		function showWorkflow() {
 			$("#icon-workflow").on("click", function () {
+				var url = squashtm.app.contextRoot;
 				if ($("#autom-image").length === 0) {
 					if (squashtm.app.locale === "fr") {
-						$("#workflow-img").append("<img id='autom-image' src='../images/workflow_autom_fr.png' style='width:100%'/>");
+						$("#workflow-img").append("<img id='autom-image' src='" + url+ "images/workflow_autom_fr.png' style='width:100%'/>");
 					} else if (squashtm.app.locale === "de") {
-						$("#workflow-img").append("<img id='autom-image' src='../images/workflow_autom_de.png' style='width:100%'/>");
+						$("#workflow-img").append("<img id='autom-image' src='" + url+ "images/workflow_autom_de.png' style='width:100%'/>");
 					} else {
-						$("#workflow-img").append("<img id='autom-image' src='../images/workflow_autom_en.png' style='width:100%'/>");
+						$("#workflow-img").append("<img id='autom-image' src='" + url+ "images/workflow_autom_en.png' style='width:100%'/>");
 					}
 				}
 				var dialog = $("#workflow-popup").formDialog();
