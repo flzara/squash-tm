@@ -29,6 +29,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
+import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -55,6 +57,10 @@ public abstract class SessionFieldBridge implements FieldBridge {
 	@Inject
 	@Lazy
 	private EntityManager em;
+	
+	@Inject
+	@Lazy
+	protected DSLContext DSL;
 
 	private Session getCurrentSession() {
 		return em.unwrap(Session.class);
