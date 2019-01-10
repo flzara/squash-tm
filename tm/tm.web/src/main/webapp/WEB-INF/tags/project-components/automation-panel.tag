@@ -254,7 +254,7 @@
 <%-- ================================================
 	Indexation Popup
 ================================================ --%>
-<f:message var="automationWorkflowChange" key="dialog.project.automation-workflow.title" />
+<f:message var="automationWorkflowChange" key="dialog.project.automation-workflow-change.title" />
 <div id="change-workflow-popup" class="popup-dialog not-displayed" title="${automationWorkflowChange}">
 
   <div class="display-table-row">
@@ -427,7 +427,7 @@
 <%-- ================================================
   Automation Workflow explanation popup.
 ================================================= --%>
-<f:message var="automationPopupTitle" key="dialog.project.automation-workflow-change.title" />
+<f:message var="automationPopupTitle" key="dialog.project.automation-workflow.title" />
 <div id="automation-workflow-popup" class="popup-dialog not-displayed" title="${automationPopupTitle}">
   <div id="automation-workflow-explanation">
   	  <div><f:message key="message.project.automation.workflow.active.explanation" /></div>
