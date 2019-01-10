@@ -41,6 +41,7 @@ import org.squashtest.tm.service.internal.infolist.InfoListItemComparatorSource;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 
@@ -48,6 +49,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service("squashtest.tm.service.TestCaseAdvancedSearchService")
 public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
@@ -73,6 +75,9 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 	@Inject
 	private MessageSource source;
+
+	@Inject
+	private PermissionEvaluationService permissionEvaluationService;
 
 	private static final SortField[] DEFAULT_SORT_TESTCASES = new SortField[]{
 		new SortField("project.name", SortField.Type.STRING, false),
@@ -183,7 +188,12 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		// add callees ids
 		callingTestCaseIds.addAll(IdentifiedUtil.extractIds(testCases));
 		// get all test cases
-		result.addAll(testCaseDao.findAllByIds(callingTestCaseIds));
+		//[Issue 7901] Only look for test cases user is allowed to read.
+		result.addAll(testCaseDao.findAllByIds(
+			callingTestCaseIds.stream()
+			.filter(testCaseId -> permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "READ", testCaseId, TestCase.class.getName()))
+			.collect(Collectors.toList())
+		));
 		return result;
 	}
 
@@ -267,11 +277,11 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			FullTextQuery hibQuery = ftem.createFullTextQuery(luceneQuery, TestCase.class).setSort(sort);
 
 			countAll = hibQuery.getResultSize();
-			
+
 			if (!sorting.shouldDisplayAll()){
 				hibQuery.setFirstResult(sorting.getFirstItemIndex()).setMaxResults(sorting.getPageSize());
 			}
-			
+
 			result = hibQuery.getResultList();
 		}
 		return new PagingBackedPagedCollectionHolder<>(sorting, countAll, result);
