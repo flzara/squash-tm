@@ -91,7 +91,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             if (data) {
                                 render = '<a href="' + squashtm.app.contextRoot + 'test-cases/' + row["entity-id"] + '/info" class="table-button edit-pencil"></a>';
                             } else {
-                                render = '<a href="' + squashtm.app.contextRoot + 'test-cases/' + row["entity-id"] + '/info"><img src="/squash/images/icon-lib/eye.png"></a>';
+                                render = '<a href="' + squashtm.app.contextRoot + 'test-cases/' + row["entity-id"] + '/info" class="table-button view-eye"></a>';
                             }
 
                             return render;

@@ -164,6 +164,12 @@ a.edit-pencil{
 	height : 16px;	
 }
 
+a.view-eye{
+    background-image: url("../images/icon-lib/eye.png");
+	width : 16px;
+	height : 16px;	
+}
+
 
 .ui-button .ui-icon.table-cell-add,
 a.table-cell-add, 

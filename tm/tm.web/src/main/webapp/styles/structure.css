@@ -2093,6 +2093,28 @@ button.tf {
 	cursor: pointer;
 }
 
+.tf.button-icon {
+	height: 26px; 
+	width: 26px; 
+	padding: 5px;
+	vertical-align: middle;
+}
+
+.tf.button-icon .tf-icon{
+  display: inline-block;
+  height: 16px;
+  width: 16px;
+  background-repeat: no-repeat;
+}
+
+.tf-icon.user-deactivated{
+	background-image: url(../images/icon-user-deactivated.png); 
+}
+
+.tf-icon.user-active{
+	background-image: url(../images/icon-user-active.png);
+} 
+
 button.tf-sm {
 	font-size: 9px;
 	color: black;

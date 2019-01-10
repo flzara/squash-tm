@@ -98,7 +98,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "sClass": "centered",
                         "sWidth": "2.5em",
                         "mRender": function (data, type, row, meta) {
-                            return '<a href="' + squashtm.app.contextRoot + 'test-cases/' + data + '/info"><img src="/squash/images/icon-lib/eye.png" /></a>';
+                            return '<a href="' + squashtm.app.contextRoot + 'test-cases/' + data + '/info" class="table-button view-eye"></a>';
                         }
                     }, {
 												"mDataProp": "writableAutom",
