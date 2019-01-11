@@ -64,7 +64,7 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 
 				$.each(content, function (index, value) {
 					var o;
-					if(th.hasClass("tp-th-createdby")) {
+					if(th.hasClass("tp-th-createdby") || th.hasClass("tp-th-assignedto")) {
 						o = new Option(value, value);
 					} else {
 						o = new Option(value, index);

@@ -129,10 +129,8 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 
 		LOGGER.debug("searching for automation requests, paged and filtered");
 
-		ColumnFiltering effectiveFilter = withStatusFilterOrDefault(filtering, DEFAULT_GLOBAL_STATUS_FILTER);
-
-		return innerFindAll(pageable, effectiveFilter, (converter) -> {
-			converter.compare("requestStatus").withIn();
+		return innerFindAll(pageable, filtering, (converter) -> {
+			converter.compare("assignedTo.login").withEquality();
 		}, inProjectIds);
 
 	}

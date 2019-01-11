@@ -87,7 +87,7 @@ public class AutomationWorkspaceController {
 		.map("script", "testCase.automatedTest.name")
 		.map("entity-index", "index(AutomationRequest)")
 		.map("requestId", "id")
-		.map("assigned-to", "assignedTo");
+		.map("assigned-to", "assignedTo.login");
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale) {
@@ -164,7 +164,7 @@ public class AutomationWorkspaceController {
 
 		Pageable pageable = SpringPagination.pageable(params,automationRequestMapper);
 		ColumnFiltering filtering = new DataTableColumnFiltering(params, automationRequestMapper);
-		Page<AutomationRequest> automationRequestPage = automationRequestFinderService.findRequests(pageable, filtering);
+		Page<AutomationRequest> automationRequestPage = automationRequestFinderService.findRequestsForGlobal(pageable, filtering);
 
 		return new AutomationRequestDataTableModelHelper(messageSource, permissionEvaluationService).buildDataModel(automationRequestPage, "");
 	}
