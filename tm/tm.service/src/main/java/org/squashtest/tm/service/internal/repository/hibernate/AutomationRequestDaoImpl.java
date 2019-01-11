@@ -280,10 +280,12 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	@Override
 	public void updateStatusToAutomated(List<Long> reqIds, AutomationRequestStatus requestStatus, List<AutomationRequestStatus> initialStatus) {
 		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest req SET req.requestStatus = :requestStatus " +
-			"where req.id in :reqIds and req.requestStatus in :initialStatus and req.transmissionDate is not null")
+			"where req.id in :reqIds and req.requestStatus in :initialStatus and ((req.transmissionDate is not null and (select tc.kind from req.testCase tc) = :gherkin) or (select tc.kind from req.testCase tc) = :standard)")
 			.setParameter("requestStatus", requestStatus)
 			.setParameter("reqIds", reqIds)
 			.setParameter("initialStatus", initialStatus)
+			.setParameter("gherkin", TestCaseKind.GHERKIN)
+			.setParameter("standard", TestCaseKind.STANDARD)
 			.executeUpdate();
 
 		if(reqIds.size() != automationRequestUpdates) {
