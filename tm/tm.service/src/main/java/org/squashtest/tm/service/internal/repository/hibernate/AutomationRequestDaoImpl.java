@@ -224,12 +224,13 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	}
 
 	@Override
-	public void updateAutomationRequestStatus(List<Long> reqIds, AutomationRequestStatus requestStatus) {
+	public void updateAutomationRequestStatus(List<Long> reqIds, AutomationRequestStatus requestStatus, List<AutomationRequestStatus> allowedStatuses) {
 
 		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest req SET req.requestStatus = :requestStatus " +
-			"where req.id in :reqIds")
+			"where req.id in :reqIds and req.requestStatus in :allowedStatuses")
 			.setParameter("requestStatus", requestStatus)
 			.setParameter("reqIds", reqIds)
+			.setParameter("allowedStatuses", allowedStatuses)
 			.executeUpdate();
 
 		if(reqIds.size() != automationRequestUpdates) {

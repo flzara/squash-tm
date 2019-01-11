@@ -146,7 +146,7 @@ public interface CustomAutomationRequestDao {
 
 	void assignedToRequestIds(List<Long> reqIds, User user);
 
-	void updateAutomationRequestStatus(List<Long> reqIds, AutomationRequestStatus requestStatus);
+	void updateAutomationRequestStatus(List<Long> reqIds, AutomationRequestStatus requestStatus, List<AutomationRequestStatus> allowedStatuses);
 
 	Map<Long, String> getTcLastModifiedByToAutomationRequestNotAssigned(List<String> requestStatus, List<Long> projectids);
 
