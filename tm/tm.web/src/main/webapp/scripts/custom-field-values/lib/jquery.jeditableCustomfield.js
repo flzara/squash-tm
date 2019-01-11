@@ -54,7 +54,7 @@ define(
 					type : 'POST',
 					contentType : "application/json;charset=UTF-8"
 
-				}
+				};
 
 				var postFunction;
 
