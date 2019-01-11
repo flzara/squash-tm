@@ -1101,6 +1101,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 				createRequestForTestCase(testCaseId, null);
 			}
 		}
+		indexationService.reindexTestCase(testCaseId);
 		return tc.getProject().isAllowAutomationWorkflow();
 	}
 
