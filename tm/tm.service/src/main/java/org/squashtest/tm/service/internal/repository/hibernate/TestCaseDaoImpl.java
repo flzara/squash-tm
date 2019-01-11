@@ -40,6 +40,7 @@ import org.hibernate.Session;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.type.LongType;
 import org.jooq.DSLContext;
+import org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration;
 import org.squashtest.tm.core.foundation.collection.DefaultSorting;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -468,6 +469,14 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 		Query query = currentSession().createQuery(FIND_ALL_ASSOCIATED_TO_TA_SCRIPT);
 		query.setParameter(PROJECT_ID, projectId);
 		return query.getResultList();
+	}
+
+	@Override
+	public Integer findAllTestCaseGherkinAssociatedToTAScriptByProject(Long projectId) {
+		return DSL.selectCount().from(TEST_CASE)
+			.innerJoin(TEST_CASE_LIBRARY_NODE).on(TEST_CASE.TCLN_ID.eq(TEST_CASE_LIBRARY_NODE.TCLN_ID))
+			.innerJoin(PROJECT).on(PROJECT.PROJECT_ID.eq(TEST_CASE_LIBRARY_NODE.PROJECT_ID))
+			.where(TEST_CASE.TC_KIND.eq(TestCaseKind.GHERKIN.name()).and(PROJECT.PROJECT_ID.eq(projectId))).fetchOne().value1();
 	}
 
 	private int compareTcMilestoneDate(TestCase tc1, TestCase tc2){

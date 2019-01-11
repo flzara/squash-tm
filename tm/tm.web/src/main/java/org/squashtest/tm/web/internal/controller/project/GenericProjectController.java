@@ -543,6 +543,12 @@ public class GenericProjectController {
 		projectManager.changeAutomationWorkflow(projectId, active);
 	}
 
+	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.GET, params = {"id=project-automation-workflow"})
+	@ResponseBody
+	public boolean checkIfTcGherkinHaveTaScript(@PathVariable long projectId) {
+		return projectManager.checkIfTcGherkinHaveTaScript(projectId);
+	}
+
 	@RequestMapping(value = PROJECT_ID_URL + "/disable-execution-status/{executionStatus}", method = RequestMethod.POST)
 	@ResponseBody
 	public void disableExecutionStatusOnProject(@PathVariable long projectId, @PathVariable String executionStatus) {

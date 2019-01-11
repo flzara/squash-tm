@@ -756,7 +756,7 @@ require(["common"], function() {
 	function toggleWorkflow(){
   		var shouldActivate = $("#toggle-WORKFLOW-checkbox").prop('checked');
   		if (shouldActivate) {
-        automationWorkflowPopup.formDialog("open");
+        checkTcGherkinWithTaScript();
   		} else {
 				changeAllowAutomationWorkflow(shouldActivate);
   		}
@@ -784,6 +784,24 @@ require(["common"], function() {
     //$("#toggle-WORKFLOW-checkbox").switchButton({checked: false});
   });
 
+  function checkTcGherkinWithTaScript() {
+  var shouldActivate = $("#toggle-WORKFLOW-checkbox").prop('checked');
+    $.ajax({
+      type: 'GET',
+      url: "${projectUrl}",
+      data : {
+        id : "project-automation-workflow"
+      }
+    }).success( function (success) {
+        if (success) {
+          automationWorkflowPopup.formDialog("open");
+        } else {
+          changeAllowAutomationWorkflow(shouldActivate);
+        }
+
+    });
+  }
+
   function changeAllowAutomationWorkflow(shouldActivate) {
 		$.ajax({
 			type: 'POST',
@@ -793,10 +811,10 @@ require(["common"], function() {
 				value : shouldActivate
 			}
 		}).success( function () {
-		  toggleScmPanel(shouldActivate);
-		  $("#automation-workflow-popup").formDialog("close");
-		  changeWorkflowDialogAfter.formDialog("open");
-		  });
+    toggleScmPanel(shouldActivate);
+    $("#automation-workflow-popup").formDialog("close");
+    changeWorkflowDialogAfter.formDialog("open");
+    });
 
   }
 

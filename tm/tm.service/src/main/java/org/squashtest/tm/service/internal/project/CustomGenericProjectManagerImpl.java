@@ -1048,6 +1048,17 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	@Override
+	public boolean checkIfTcGherkinHaveTaScript(Long projectId) {
+		boolean check = false;
+		Integer number = testCaseDao.findAllTestCaseGherkinAssociatedToTAScriptByProject(projectId);
+		if(number > 0) {
+			check = true;
+		}
+		return check;
+	}
+
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
+	@Override
 	public void changeAutomationWorkflow(long projectId, boolean active) {
 		GenericProject genericProject = genericProjectDao.getOne(projectId);
 

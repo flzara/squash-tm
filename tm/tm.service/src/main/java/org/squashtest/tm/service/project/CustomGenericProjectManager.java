@@ -276,4 +276,6 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	void changeAllowTcModifDuringExec(long projectId, boolean active);
 
 	void changeAutomationWorkflow(long projectId, boolean active);
+
+	boolean checkIfTcGherkinHaveTaScript(Long projectId);
 }

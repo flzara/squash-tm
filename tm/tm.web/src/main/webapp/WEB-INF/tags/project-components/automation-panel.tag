@@ -429,7 +429,7 @@
 ================================================= --%>
 <f:message var="automationPopupTitle" key="dialog.project.automation-workflow.title" />
 <div id="automation-workflow-popup" class="popup-dialog not-displayed" title="${automationPopupTitle}">
-  <div id="automation-workflow-explanation">
+  <div>
   	  <div><f:message key="message.project.automation.workflow.active.explanation" /></div>
     </div>
   <!-- _____________Buttons_______________ -->
