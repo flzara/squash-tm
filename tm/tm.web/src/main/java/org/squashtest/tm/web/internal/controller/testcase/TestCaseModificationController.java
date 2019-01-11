@@ -327,11 +327,17 @@ public class TestCaseModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = {"id=automation-request-priority", VALUE})
 	@ResponseBody
-	public Integer changePriority(@RequestParam(VALUE) String priority, @PathVariable long testCaseId, Locale locale) {
+	public String changePriority(@RequestParam(VALUE) String priority, @PathVariable long testCaseId, Locale locale) {
 		try {
-			Integer newPriority = Integer.parseInt(priority);
+			Integer newPriority;
+			if(priority.isEmpty()) {
+				newPriority = null;
+			} else {
+				newPriority = Integer.parseInt(priority);
+			}
 			automationRequestModificationService.changePriority(Collections.singletonList(testCaseId), newPriority);
-			return newPriority;
+
+			return newPriority != null ? newPriority.toString() : "";
 		} catch(NumberFormatException nfe) {
 			throw new WrongPriorityFormatException(nfe);
 		}
