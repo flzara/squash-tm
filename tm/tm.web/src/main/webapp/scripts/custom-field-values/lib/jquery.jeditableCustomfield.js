@@ -54,7 +54,7 @@ define(
 					type : 'POST',
 					contentType : "application/json;charset=UTF-8"
 
-				};
+				}
 
 				var postFunction;
 
@@ -201,6 +201,20 @@ define(
 
 				var conf = getBasicConf();
 				conf.type = 'text';
+
+				_bindEmptyMandatoryCufErrorHandler(cufDefinition, conf, 'plainText', true);
+
+				var postFunction = buildPostFunction(idOrURLOrPostfunction, undefined, cufDefinition.denormalized, "PLAIN_TEXT");
+
+				elts.editable(postFunction, conf);
+
+			}
+
+			function initAsNumeric(elts, cufDefinition, idOrURLOrPostfunction) {
+
+				var conf = getBasicConf();
+				conf.type = 'text';
+				conf.maxlength = 15;
 
 				_bindEmptyMandatoryCufErrorHandler(cufDefinition, conf, 'plainText', true);
 
@@ -406,8 +420,8 @@ define(
 				switch(type){
 				case "DATE_PICKER" : initAsDatePicker(this, cufDefinition, idOrURLOrPostfunction); break;
 				case "DROPDOWN_LIST" : initAsList(this, cufDefinition, idOrURLOrPostfunction); break;
-				case "PLAIN_TEXT" :
-				case "NUMERIC" : initAsPlainText(this, cufDefinition, idOrURLOrPostfunction); break;
+				case "PLAIN_TEXT" : initAsPlainText(this, cufDefinition, idOrURLOrPostfunction); break;
+				case "NUMERIC" : initAsNumeric(this, cufDefinition, idOrURLOrPostfunction); break;
 				case "CHECKBOX" : initAsCheckbox(this, cufDefinition, idOrURLOrPostfunction); break;
 				case "RICH_TEXT" : initAsRichtext(this, cufDefinition, idOrURLOrPostfunction); break;
 				case "TAG" : initAsTag(this, cufDefinition, idOrURLOrPostfunction); break;
