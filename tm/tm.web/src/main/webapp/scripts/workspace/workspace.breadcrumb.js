@@ -238,7 +238,7 @@ define(["jquery", "workspace.routing", "workspace.storage", 'app/util/URLUtils']
 	function track(){
 
 		var breadcrumb = storage.get(storekey) || [];
-    var backUrl;
+		var backUrl;
 
 
 		// step 2
@@ -253,8 +253,8 @@ define(["jquery", "workspace.routing", "workspace.storage", 'app/util/URLUtils']
 		else if (justNavigatedBack(breadcrumb)){
 			breadcrumb.pop();
 			if (breadcrumb.length>0){
-        backUrl = breadcrumb[breadcrumb.length-1];
-        backUrl = resolveUndefinedUrl(backUrl);
+		        backUrl = breadcrumb[breadcrumb.length-1];
+		        backUrl = resolveUndefinedUrl(backUrl);
 				window.squashtm.workspace.backurl = backUrl;
 			}
 		}
@@ -287,9 +287,9 @@ define(["jquery", "workspace.routing", "workspace.storage", 'app/util/URLUtils']
 			}
 
 			// step 5
-      backUrl = breadcrumb[breadcrumb.length-1];
-      backUrl = resolveUndefinedUrl(backUrl);
-      window.squashtm.workspace.backurl = backUrl;
+		    backUrl = breadcrumb[breadcrumb.length-1];
+		    backUrl = resolveUndefinedUrl(backUrl);
+	    	window.squashtm.workspace.backurl = backUrl;
 
 		}
 

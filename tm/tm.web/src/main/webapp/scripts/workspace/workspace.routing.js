@@ -112,8 +112,8 @@ define([], function(){
         'home.content.message': 	        root + '/home-workspace/choose-message',
         'home.content.dashboard': 	        root + '/home-workspace/choose-dashboard',
 		'attachments.manager':				root + '/attach-list/{\\d+}/attachments/manager',
-		'search' :							root + 'advanced-search',
-		'search.results' :					root + 'advanced-search/results',
+		'search' :							root + '/advanced-search',
+		'search.results' :					root + '/advanced-search/results',
 
 		'bugtracker.campaignfolder' :		root + '/bugtracker/campaign-folder/{\\d+}',
 		'bugtracker.execution' :			root + '/bugtracker/execution/{\\d+}',
@@ -179,7 +179,7 @@ define([], function(){
 		'execute.stepbyindex' :				root + '/execute/{\\d+}/step/index/{\\d+}',
 		'execute.prologue' :				root + '/execute/{\\d+}/step/prologue',
 
-		'administration.scm-servers' : root + '/administration/scm-servers',
+		'administration.scm-servers' : 		root + '/administration/scm-servers',
 		'administration.scm-servers.delete' : root + '/administration/scm-servers/{\\d+}',
 		'administration.scm-server.repositories' : root + '/administration/scm-server/{\\d+}/repositories',
 		'administration.scm-repositories' : root + '/administration/scm-repositories/{\\d+}',
