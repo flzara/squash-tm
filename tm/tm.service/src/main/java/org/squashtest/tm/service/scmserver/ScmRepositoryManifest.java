@@ -25,12 +25,11 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squashtest.tm.core.scm.api.exception.ScmException;
 import org.squashtest.tm.domain.scm.ScmRepository;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.service.internal.testcase.scripted.ScriptedTestCaseEventListener;
 import org.squashtest.tm.service.testcase.scripted.ScriptToFileStrategy;
 
 import java.io.File;
@@ -52,6 +51,14 @@ import java.util.stream.Stream;
 public final class ScmRepositoryManifest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ScmRepositoryManifest.class);
+
+	private static final String MISSING_WORKING_FOLDER_LOG_ERROR_MESSAGE =
+		"Attempted to write files in the working folder of repository {} at path {} but could not find it. " +
+			"\nPlease check that the repository is well initialized on local server.";
+
+	private static final String MISSING_WORKING_FOLDER_ERROR_MESSAGE =
+		"Attempted to write in the working folder of repository '%s' but could not find it." +
+			"\nPlease contact an administrator to check that this repository is well initialized on the local server.";
 
 	private ScmRepository scm;
 	private boolean useCache = true;
@@ -167,9 +174,6 @@ public final class ScmRepositoryManifest {
 			.collect(Collectors.toList());
 	}
 
-
-
-
 	private final void initCache(){
 		try {
 			// the pathcache maps a File by its filename
@@ -180,6 +184,10 @@ public final class ScmRepositoryManifest {
 		}
 		catch (IOException ex){
 			throw new RuntimeException("cannot list content of scm '"+scm.getName()+"'", ex);
+		} catch (IllegalArgumentException ex) {
+			LOGGER.error(MISSING_WORKING_FOLDER_LOG_ERROR_MESSAGE, scm.getName(), scm.getWorkingFolder().toString());
+			throw new ScmException(
+				String.format(MISSING_WORKING_FOLDER_ERROR_MESSAGE, scm.getName()), ex);
 		}
 	}
 
