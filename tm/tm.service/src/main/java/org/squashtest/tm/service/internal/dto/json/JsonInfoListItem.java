@@ -33,6 +33,7 @@ public class JsonInfoListItem {
 	private boolean isSystem;
 	private boolean isDenormalized;
 	private String iconName;
+	private Integer itemIndex;
 
 
 	public JsonInfoListItem(){
@@ -112,4 +113,11 @@ public class JsonInfoListItem {
 		this.isDenormalized = isDenormalized;
 	}
 
+	public Integer getItemIndex() {
+		return itemIndex;
+	}
+
+	public void setItemIndex(Integer itemIndex) {
+		this.itemIndex = itemIndex;
+	}
 }

@@ -312,7 +312,7 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 				SearchInputPossibleValueModel listValues = new SearchInputPossibleValueModel(listName, listCode);
 
 				SearchInputFieldModel subInput = new SearchInputFieldModel();
-
+				list.getItems().sort((i1, i2) -> i1.getItemIndex().compareTo(i2.getItemIndex()));
 				for (JsonInfoListItem item : list.getItems()){
 					String itemName = messages.getMessage(item.getLabel(), null, item.getLabel(), locale);
 					String itemCode = item.getCode();

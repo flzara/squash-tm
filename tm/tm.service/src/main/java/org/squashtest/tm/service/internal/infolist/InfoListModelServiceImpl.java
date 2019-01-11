@@ -85,7 +85,7 @@ public class InfoListModelServiceImpl implements InfoListModelService {
 
 	protected Map<Long, JsonInfoList> findInfoListMap(Set<Long> usedInfoListIds) {
 		Result result = DSL.select(INFO_LIST.INFO_LIST_ID, INFO_LIST.CODE, INFO_LIST.LABEL, INFO_LIST.DESCRIPTION
-			, INFO_LIST_ITEM.ITEM_ID, INFO_LIST_ITEM.CODE, INFO_LIST_ITEM.LABEL, INFO_LIST_ITEM.ICON_NAME, INFO_LIST_ITEM.IS_DEFAULT, INFO_LIST_ITEM.ITEM_TYPE)
+			, INFO_LIST_ITEM.ITEM_ID, INFO_LIST_ITEM.CODE, INFO_LIST_ITEM.LABEL, INFO_LIST_ITEM.ICON_NAME, INFO_LIST_ITEM.IS_DEFAULT, INFO_LIST_ITEM.ITEM_TYPE, INFO_LIST_ITEM.ITEM_INDEX)
 			.from(INFO_LIST)
 			.innerJoin(INFO_LIST_ITEM).on(INFO_LIST.INFO_LIST_ID.eq(INFO_LIST_ITEM.LIST_ID))
 			.where(INFO_LIST.INFO_LIST_ID.in(usedInfoListIds))
@@ -108,6 +108,7 @@ public class InfoListModelServiceImpl implements InfoListModelService {
 			jsonInfoListItem.setIconName(r.get(INFO_LIST_ITEM.ICON_NAME));
 			jsonInfoListItem.setDefault(r.get(INFO_LIST_ITEM.IS_DEFAULT));
 			jsonInfoListItem.setSystem(r.get(INFO_LIST_ITEM.ITEM_TYPE).equals(SYSTEM_INFO_LIST_IDENTIFIER));
+			jsonInfoListItem.setItemIndex(r.get(INFO_LIST_ITEM.ITEM_INDEX));
 			jsonInfoListItem.setDenormalized(false);
 			jsonInfoListItem.setFriendlyLabel(HtmlUtils.htmlEscape(messageSource.getMessage(r.get(INFO_LIST_ITEM.LABEL), null, r.get(INFO_LIST_ITEM.LABEL), LocaleContextHolder.getLocale())));
 			jsonInfoListItem.setUri("todo");
