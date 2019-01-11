@@ -514,18 +514,28 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 var count = 0;
                 var selectedRows = table.getSelectedRows();
                 var datas = table.fnGetData();
-
+								var self = this;
                 $(selectedRows).each(function (index, data) {
                     var idx = data._DT_RowIndex;
                     var script = data.cells[10].lastChild.nodeValue;
+                    var status = datas[idx]["status"];
                     var format = datas[idx]["format"];
-                    if ((script === null || script === "-") && "gherkin" !== format.toLowerCase()) {
+                    if (self.noScriptAutoForAllowedStatus(script, status, format)) {
                         count = count + 1;
                     }
                 });
 
 
                 return count;
+            },
+
+            noScriptAutoForAllowedStatus: function(script, status, format) {
+            	var allowedStatusForAutomation = [translator.get('automation-request.request_status.TRANSMITTED'),
+																								translator.get('automation-request.request_status.AUTOMATION_IN_PROGRESS'),
+																								translator.get('automation-request.request_status.AUTOMATED')];
+            	return _.contains(allowedStatusForAutomation, status)
+            				 && (script === null || script === "-" || script === " ")
+            				 && "gherkin" !== format.toLowerCase();
             },
 
             updateStatus: function (table, status) {
