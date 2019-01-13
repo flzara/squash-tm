@@ -23,12 +23,16 @@ package org.squashtest.tm.service.internal.scmserver
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
+import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException
 import org.squashtest.tm.core.scm.spi.ScmConnector
 import org.squashtest.tm.domain.scm.ScmRepository
 import org.squashtest.tm.domain.scm.ScmServer
+import org.squashtest.tm.domain.servers.AuthenticationProtocol
+import org.squashtest.tm.domain.servers.Credentials
 import org.squashtest.tm.exception.NameAlreadyInUseException
 import org.squashtest.tm.service.internal.repository.ScmRepositoryDao
 import org.squashtest.tm.service.internal.repository.ScmServerDao
+import org.squashtest.tm.service.servers.CredentialsProvider
 import spock.lang.Specification
 
 class ScmRepositoryManagerServiceTest extends Specification {
@@ -37,11 +41,13 @@ class ScmRepositoryManagerServiceTest extends Specification {
 	private ScmConnectorRegistry scmRegistry = Mock()
 	private ScmRepositoryDao scmRepositoryDao = Mock()
 	private ScmServerDao scmServerDao = Mock()
+	private CredentialsProvider credentialsProvider = Mock()
 
 	def setup() {
 		scmRepositoryManagerService.scmRepositoryDao = scmRepositoryDao
 		scmRepositoryManagerService.scmServerDao = scmServerDao
 		scmRepositoryManagerService.scmRegistry = scmRegistry
+		scmRepositoryManagerService.credentialsProvider = credentialsProvider
 	}
 
 	def "#findByScmServerOrderByPath(Long) - [Nominal] Should find all ScmRepositories ordered by path"() {
@@ -123,26 +129,30 @@ class ScmRepositoryManagerServiceTest extends Specification {
 		given: "Mock repository"
 			ScmRepository repo = new ScmRepository()
 			repo.name = "My_Project"
-			repo.repositoryPath = "/home/repositories/repo1"
-			repo.workingFolderPath = "resources/features"
-			repo.workingBranch = "master"
-		and:
+		and: "Mock server"
 			long serverId = 12
 			ScmServer server = Mock()
 			server.getId() >> serverId
-		and:
+		and: "Mock credentials"
+			Credentials credentials = Mock()
+			AuthenticationProtocol protocol = GroovyMock()
+			credentials.getImplementedProtocol() >> protocol
+			Optional<Credentials> maybeCredentials = Optional.of(credentials)
+		and: "Mock connector"
 			ScmConnector connector = Mock()
+			connector.supports(protocol) >> true
 		and: "Mock Dao methods"
 			scmRepositoryDao.isRepositoryNameAlreadyInUse(serverId, repo.name) >> false
 			scmServerDao.getOne(serverId) >> server
 			1 * scmRepositoryDao.save(repo) >> repo
 		and:
+			credentialsProvider.getAppLevelCredentials(server) >> maybeCredentials
 			scmRegistry.createConnector(repo) >> connector
 		when:
 			scmRepositoryManagerService.createNewScmRepository(serverId, repo)
 		then:
-			1 * connector.initRepository()
-			1 * connector.prepareRepository()
+			1 * connector.initRepository(credentials)
+			1 * connector.prepareRepository(credentials)
 	}
 
 	def "#createNewScmRepository(ScmRepository) - [Exception] Should try to create a new ScmRepository with a name already used and throw a NameAlreadyInUseException"() {
@@ -160,6 +170,25 @@ class ScmRepositoryManagerServiceTest extends Specification {
 			scmRepositoryManagerService.createNewScmRepository(serverId, repo)
 		then:
 			thrown NameAlreadyInUseException
+	}
+
+	def "#createNewScmRepository(ScmRepository) - [Exception] Should try to create a new ScmRepository with no ScmServer credentials and throw an Exception"() {
+		given:
+			ScmRepository repo = new ScmRepository()
+			repo.name = "One_Repository"
+		and:
+			ScmServer server = Mock()
+			long serverId = 2
+			server.getId() >> serverId
+		and:
+			scmRepositoryDao.isRepositoryNameAlreadyInUse(serverId, repo.name) >> false
+			scmServerDao.getOne(serverId) >> server
+			scmRepositoryDao.save(repo) >> repo
+			credentialsProvider.getAppLevelCredentials(server) >> Optional.empty()
+		when:
+			scmRepositoryManagerService.createNewScmRepository(serverId, repo)
+		then:
+			thrown BugTrackerNoCredentialsException
 	}
 
 	def "#updateName(long, String) - [Nominal] Should update the name of the ScmRepository"() {
@@ -275,17 +304,26 @@ class ScmRepositoryManagerServiceTest extends Specification {
 
 	def "#updateBranch(long, String) - [Nominal] Should update the working branch of the ScmRepository"() {
 		given: "Mock data"
+			ScmServer server = Mock()
+		and:
 			long repoId = 7
 			ScmRepository repo = new ScmRepository()
 			repo.id = repoId
 			repo.workingBranch = "master"
+			repo.scmServer = server
+		and:
+			Credentials credentials = Mock()
+			AuthenticationProtocol protocol = GroovyMock()
+			credentials.getImplementedProtocol() >> protocol
+			Optional<Credentials> maybeCredentials = Optional.of(credentials)
 		and:
 			ScmConnector connector = Mock()
+			connector.supports(protocol) >> true
 		and: "Expected result"
 			String newBranch = "develop"
 		and: "Mock Dao method"
 			scmRepositoryDao.getOne(repoId) >> repo
-		and: "Mock registry method"
+			credentialsProvider.getAppLevelCredentials(server) >> maybeCredentials
 			scmRegistry.createConnector(repo) >> connector
 		when:
 			String resultBranch = scmRepositoryManagerService.updateBranch(repoId, newBranch)
@@ -293,11 +331,11 @@ class ScmRepositoryManagerServiceTest extends Specification {
 			repoId == repoId
 			repo.workingBranch == newBranch
 			1 * scmRepositoryDao.save(repo)
-			1 * connector.prepareRepository()
+			1 * connector.prepareRepository(credentials)
 			resultBranch == newBranch
 	}
 
-	def "#updateBranch(long, String) - [Nothing] Should try to update the folder path of a ScmRepository with the same path and do nothing"() {
+	def "#updateBranch(long, String) - [Nothing] Should try to update the working branch with the same branch and do nothing"() {
 		given: "Mock data"
 			long repoId = 7
 			String repoBranch = "develop"
@@ -313,6 +351,24 @@ class ScmRepositoryManagerServiceTest extends Specification {
 			repo.workingBranch == repoBranch
 			0 * scmRepositoryDao.save(repo)
 			resultFolderPath == repoBranch
+	}
+
+	def "#updateBranch(long, String) - [Exception] Should try to update the working branch with no ScmServer credentials and thrown an Exception"() {
+		given:
+			ScmServer server = Mock()
+		and:
+			ScmRepository repo = new ScmRepository()
+			repo.id = 7
+			repo.workingBranch = "master"
+			repo.scmServer = server
+		and:
+			scmRepositoryDao.getOne(repo.id) >> repo
+			credentialsProvider.getAppLevelCredentials(server) >> Optional.empty()
+		when:
+			scmRepositoryManagerService.updateBranch(repo.id, "develop")
+		then:
+			1 * scmRepositoryDao.save(repo)
+			thrown BugTrackerNoCredentialsException
 	}
 
 	def "#isOneRepositoryBoundToProject(Collection<Long>) - [Yes] Should verify that at least one ScmRepository is bound to a Project and return true"() {

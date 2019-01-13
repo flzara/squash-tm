@@ -26,19 +26,26 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
+import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException;
 import org.squashtest.tm.core.scm.spi.ScmConnector;
 import org.squashtest.tm.domain.scm.ScmRepository;
 import org.squashtest.tm.domain.scm.ScmServer;
+import org.squashtest.tm.domain.servers.AuthenticationProtocol;
+import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.internal.repository.ScmRepositoryDao;
 import org.squashtest.tm.service.internal.repository.ScmServerDao;
 import org.squashtest.tm.service.scmserver.ScmRepositoryManagerService;
+import org.squashtest.tm.service.servers.CredentialsProvider;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
@@ -55,6 +62,8 @@ public class ScmRepositoryManagerServiceImpl implements ScmRepositoryManagerServ
 	private ScmServerDao scmServerDao;
 	@Inject
 	private ScmRepositoryDao scmRepositoryDao;
+	@Inject
+	private CredentialsProvider credentialsProvider;
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
@@ -78,9 +87,56 @@ public class ScmRepositoryManagerServiceImpl implements ScmRepositoryManagerServ
 		newScmRepository.setScmServer(scmServer);
 		ScmRepository createdScmRepository = scmRepositoryDao.save(newScmRepository);
 
-		ScmConnector connector = scmRegistry.createConnector(createdScmRepository);
-		connector.initRepository();
-		connector.prepareRepository();
+		initializeAndPrepareRepository(createdScmRepository);
+	}
+
+	/**
+	 * Given a ScmRepository, check that credentials exist for its ScmServer and are valid.
+	 * Then try to initialize the repository on file system and prepare it.
+	 * @param scmRepository The ScmRepository to synchronize.
+	 */
+	private void initializeAndPrepareRepository(ScmRepository scmRepository) throws IOException {
+		Credentials credentials = checkAndReturnCredentials(scmRepository);
+
+		ScmConnector connector = scmRegistry.createConnector(scmRepository);
+
+		checkIfProtocolIsSupported(credentials, connector);
+
+		connector.initRepository(credentials);
+		connector.prepareRepository(credentials);
+	}
+
+	/**
+	 * Given a ScmRepository, check if the Credentials of its ScmServer are well defined and returns it.
+	 * @param scmRepository The ScmRepository to check
+	 * @return The Credentials if they are well defined
+	 * @throws BugTrackerNoCredentialsException If no Credentials were defined for the ScmServer
+	 */
+	private Credentials checkAndReturnCredentials(ScmRepository scmRepository) {
+		ScmServer server = scmRepository.getScmServer();
+		Optional<Credentials> maybeCredentials = credentialsProvider.getAppLevelCredentials(server);
+		Supplier<BugTrackerNoCredentialsException> throwIfNull = () -> {
+			throw new BugTrackerNoCredentialsException(
+				"Cannot authenticate to the remote server mapped to the repository '" + scmRepository.getName() + "' " +
+					"because no valid credentials were found for authentication. " +
+					"Squash-TM is supposed to use application-level credentials for that and it seems they were not configured properly. "
+					+ "Please contact your administrator in order to fix the situation.", null
+			);
+		};
+		return maybeCredentials.orElseThrow(throwIfNull);
+	}
+
+	/**
+	 * Check if the given AuthenticationProtocol is supported by the ScmConnector.
+	 * @param credentials The Credentials whose AuthentiacationProtocol is to check
+	 * @param connector The ScmConnector
+	 * @throws UnsupportedAuthenticationModeException If the protocol is not supported by the Connector
+	 */
+	private void checkIfProtocolIsSupported(Credentials credentials, ScmConnector connector) {
+		AuthenticationProtocol protocol = credentials.getImplementedProtocol();
+		if(!connector.supports(protocol)) {
+			throw new UnsupportedAuthenticationModeException(protocol.toString());
+		}
 	}
 
 	@Override
@@ -137,10 +193,23 @@ public class ScmRepositoryManagerServiceImpl implements ScmRepositoryManagerServ
 		scmRepositoryDao.save(scmRepository);
 
 		// prepare the local repository to switch branch
-		ScmConnector connector = scmRegistry.createConnector(scmRepository);
-		connector.prepareRepository();
+		prepareRepository(scmRepository);
 
 		return newBranch;
+	}
+	/**
+	 * Given a ScmRepository, check that credentials exist for its ScmServer and are valid.
+	 * Then try prepare this repository.
+	 * @param scmRepository The ScmRepository to synchronize.
+	 */
+	private void prepareRepository(ScmRepository scmRepository) throws IOException {
+		Credentials credentials = checkAndReturnCredentials(scmRepository);
+
+		ScmConnector connector = scmRegistry.createConnector(scmRepository);
+
+		checkIfProtocolIsSupported(credentials, connector);
+
+		connector.prepareRepository(credentials);
 	}
 
 	@Override

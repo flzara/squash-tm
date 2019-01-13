@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.core.scm.spi;
 
-import org.squashtest.tm.domain.scm.ScmServer;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.servers.Credentials;
 
@@ -43,6 +42,7 @@ public interface ScmConnector {
 	/**
 	 * Initializes the local Source Code Management repository.
 	 * It at least implies the clone of the remote repository on the local files server if it does not exist yet.
+	 * @param credentials The {@link Credentials} to authenticate to the remote repository
 	 * @throws IOException If an error occurs during the process. The causes can be diverse, including:
 	 * <ul>
 	 *     <li> The connector can not reach the given remote server</li>
@@ -51,7 +51,7 @@ public interface ScmConnector {
 	 *     <li> The local repository path given to the connector exists but is not valid</li>
 	 * </ul>
 	 */
-	void initRepository() throws IOException;
+	void initRepository(Credentials credentials) throws IOException;
 
 	/**
 	 * Prepares the local Source Code Management repository.
@@ -59,6 +59,7 @@ public interface ScmConnector {
 	 * then commit and push without side effects.
 	 * It can imply cleaning untracked files, reverting some remaining modifications, switching to the right branch,
 	 * pulling the remote repository.
+	 * @param credentials The {@link Credentials} to authenticate to the remote repository
 	 * @throws IOException If an error occurs during the process. The causes can be diverse, including:
 	 * <ul>
 	 *     <li> The local repository path given to the connector does not exist or is not valid</li>
@@ -67,7 +68,7 @@ public interface ScmConnector {
 	 *     <li> The connector can not reach the given remote server</li>
 	 * </ul>
 	 */
-	void prepareRepository() throws IOException;
+	void prepareRepository(Credentials credentials) throws IOException;
 
 	/**
 	 * Synchronizes the local Source Code Management repository with the remote repository.
