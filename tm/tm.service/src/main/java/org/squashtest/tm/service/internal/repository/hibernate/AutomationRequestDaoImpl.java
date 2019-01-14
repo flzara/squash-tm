@@ -324,7 +324,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	}
 
 	@Override
-	public Integer countAutomationRequestValid() {
+	public Integer countAutomationRequestValid(List<Long> readableIds) {
 		return DSL.selectCount()
 			.from(AUTOMATION_REQUEST)
 			.innerJoin(TEST_CASE).on(TEST_CASE.TCLN_ID.eq(AUTOMATION_REQUEST.TEST_CASE_ID))
@@ -333,6 +333,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 			.where(AUTOMATION_REQUEST.REQUEST_STATUS.eq(READY_TO_TRANSMIT.toString()))
 			.and(PROJECT.ALLOW_AUTOMATION_WORKFLOW.isTrue())
 			.and(TEST_CASE.AUTOMATABLE.eq(TestCaseAutomatable.Y.toString()))
+			.and(PROJECT.PROJECT_ID.in(readableIds))
 			.fetchOne()
 			.value1();
 	}

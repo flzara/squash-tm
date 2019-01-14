@@ -142,7 +142,7 @@ public interface CustomAutomationRequestDao {
 
 	void updateStatusToAutomated(List<Long> reqIds, AutomationRequestStatus requestStatus, List<AutomationRequestStatus> initialStatus);
 
-	Integer countAutomationRequestValid();
+	Integer countAutomationRequestValid(List<Long> readableIds);
 
 	void assignedToRequestIds(List<Long> reqIds, User user);
 

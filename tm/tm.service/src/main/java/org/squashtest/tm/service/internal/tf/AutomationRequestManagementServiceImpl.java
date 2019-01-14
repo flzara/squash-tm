@@ -277,7 +277,8 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 	@Override
 	public Integer countAutomationRequestValid() {
-		return requestDao.countAutomationRequestValid();
+		List<Long> projectIds = projectFinder.findAllReadableIds();
+		return requestDao.countAutomationRequestValid(projectIds);
 	}
 
 	// **************************** boiler plate code *************************************
