@@ -20,7 +20,7 @@
  */
 define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.routing","workspace.event-bus", "squash.dateutils",
          'tree', './execution-treemenu',
-        "./CampaignSearchResultTable", "squash.translator", "app/ws/squashtm.notification",
+        "./CampaignSearchResultTable", "squash.translator", "app/ws/squashtm.notification", "workspace.storage",
         "workspace.projects", "./milestone-mass-modif-popup",
         "jquery.squash", "jqueryui",
 		"jquery.squash.togglepanel", "squashtable",
@@ -28,8 +28,10 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 		"jquery.squash.confirmdialog",
 		"jquery.squash.formdialog", "jquery.squash.milestoneDialog" ],
 		function($, Backbone, _, StringUtil, routing, eventBus, dateutils, tree, treemenu, CampaignSearchResultTable,
-				translator, notification, projects, milestoneMassModif) {
+				translator, notification, storage, projects, milestoneMassModif) {
 
+	var SEARCH_MODEL_STORAGE_KEY_PREFIX = "search-model-";
+	
 	// locale-dependant data for the creation of new iterations (see far below)
 	var newIterationLabels = translator.get({
 		name : 'label.generatedIT.name',
@@ -50,7 +52,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 
 			this.getIdsOfEditableSelectedTableRowList = $.proxy(this._getIdsOfEditableSelectedTableRowList, this);
 			this.updateDisplayedValueInColumn =  $.proxy(this._updateDisplayedValueInColumn, this);
-			var model = JSON.parse($("#searchModel").text());
+			var model = this.loadSearchModel();
 			this.model = model;
 			new CampaignSearchResultTable(model, this.isAssociation, this.associationType, this.associationId);
 			this.initTableCallback();
@@ -66,6 +68,23 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 			"click #add-search-result-button" : "addITPI"
 		},
 
+		// [Issue 7692] : the model should be read from the #searchModel element in the page.
+		// If it is not available, attempt to reload it from the store instead.
+		loadSearchModel: function(){
+			var searchDomain = $("#searchDomain").text();
+			// first load from dom
+			var strmodel = $("#searchModel").text();
+			//if absent, load from storage 
+			if (StringUtil.isBlank(strmodel)){
+				strmodel = storage.get(SEARCH_MODEL_STORAGE_KEY_PREFIX + searchDomain);
+			}
+			// still absent -> model is null
+			if (StringUtil.isBlank(strmodel)){
+				strmodel = null;
+			}
+			
+			return JSON.parse(strmodel);
+		},
 
 		initTableCallback : function(){
 			//little hack to select only previously selected campaigns (should be like requirements)

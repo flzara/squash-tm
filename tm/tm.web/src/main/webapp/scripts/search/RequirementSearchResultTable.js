@@ -25,11 +25,11 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 
 	var RequirementSearchResultTable = Backbone.View.extend({
 		el : "#requirement-search-result-table",
-		initialize : function(model, isAssociation, associateType, associateId) {
+		initialize : function(model, isAssociation, associationType, associationId) {
 			this.model = model;
 			this.isAssociation = isAssociation;
-			this.associateType = associateType;
-			this.associateId = associateId;
+			this.associationType = associationType;
+			this.associationId = associationId;
 			this.addSelectEditableToCriticality = $.proxy(this._addSelectEditableToCriticality, this);
 			this.addSelectEditableToCategory = $.proxy(this._addSelectEditableToCategory, this);
 			this.addSelectEditableToStatus = $.proxy(this._addSelectEditableToStatus, this);
@@ -54,8 +54,8 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 						"fnServerParams": function ( aoData )
 							{
 								aoData.push( { "name": "model", "value": JSON.stringify(model) } );
-								aoData.push( { "name": "associateResultWithType", "value": associateType } );
-								aoData.push( { "name": "id", "value":  associateId } );
+								aoData.push( { "name": "associationType", "value": associationType } );
+								aoData.push( { "name": "associationId", "value":  associationId } );
 								aoData.push( { "name": "requirement", "value": "requirement" } );
 							},
 						"sServerMethod": "POST",
@@ -416,9 +416,9 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 			var associatedTo = data["is-associated"];
 
 			if(associatedTo){
-				if(this.associateType == "requirement"){
+				if(this.associationType == "requirement"){
 					$(".is-associated",row).append('<span class="associated-icon-requirement"></span>');
-				} else if(this.associateType == "testcase"){
+				} else if(this.associationType == "testcase"){
 					$(".is-associated",row).append('<span class="associated-icon-testcase" title="'+translator.get('search.associatedwith.testcase.image.tooltip')+'"></span>');
 				} else {
 					$(".is-associated",row).append('<span class="associated-icon-campaign"></span>');

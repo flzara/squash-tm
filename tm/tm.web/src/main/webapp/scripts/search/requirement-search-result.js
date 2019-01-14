@@ -19,16 +19,16 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.routing","workspace.event-bus",
-        "./RequirementSearchResultTable", "squash.translator", "app/ws/squashtm.notification",
+        "./RequirementSearchResultTable", "squash.translator", "app/ws/squashtm.notification", "workspace.storage",
         "workspace.projects", "./milestone-mass-modif-popup","./req-export-popup",
         "jquery.squash", "jqueryui",
 		"jquery.squash.togglepanel", "squashtable",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
 		"jquery.squash.confirmdialog", "jquery.squash.milestoneDialog" ],
 		function($, Backbone, _, StringUtil, routing, eventBus, RequirementSearchResultTable,
-				translator, notification, projects, milestoneMassModif,reqExport) {
+				translator, notification, storage, projects, milestoneMassModif,reqExport) {
 
-
+	var SEARCH_MODEL_STORAGE_KEY_PREFIX = "search-model-";
 
 	var RequirementSearchResultPanel = Backbone.View.extend({
 
@@ -41,7 +41,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 			this.getVersionIdsOfSelectedTableRowList = $.proxy(this._getVersionIdsOfSelectedTableRowList, this);
 			this.getIdsOfEditableSelectedTableRowList = $.proxy(this._getIdsOfEditableSelectedTableRowList, this);
 			this.updateDisplayedValueInColumn =  $.proxy(this._updateDisplayedValueInColumn, this);
-			var model = JSON.parse($("#searchModel").text());
+			var model = this.loadSearchModel();
 			this.isAssociation = !!$("#associationType").length;
 			if(this.isAssociation){
 				this.associationType = $("#associationType").text();
@@ -50,7 +50,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 			this.model = model;
 			new RequirementSearchResultTable(model, this.isAssociation, this.associationType, this.associationId);
 			this.milestoneMassModif = new milestoneMassModif();
-      this.reqExport = new reqExport();
+			this.reqExport = new reqExport();
 			this.initTableCallback();
 
 		},
@@ -67,6 +67,23 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 			"click #modify-search-result-milestone-button" : "editMilestone"
 		},
 
+		// [Issue 7692] : the model should be read from the #searchModel element in the page.
+		// If it is not available, attempt to reload it from the store instead.
+		loadSearchModel: function(){
+			var searchDomain = $("#searchDomain").text();
+			// first load from dom
+			var strmodel = $("#searchModel").text();
+			//if absent, load from storage 
+			if (StringUtil.isBlank(strmodel)){
+				strmodel = storage.get(SEARCH_MODEL_STORAGE_KEY_PREFIX + searchDomain);
+			}
+			// still absent -> model is null
+			if (StringUtil.isBlank(strmodel)){
+				strmodel = null;
+			}
+			
+			return JSON.parse(strmodel);
+		},
 
 		initTableCallback : function(){
 			//little hack to select only previously selected requirement version and not every requirement version
@@ -120,13 +137,26 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 				notification.showError(translator.get('message.noLinesSelected'));
 				return;
 			}
+			
 			var id = this.associationId;
 			var  targetUrl = "";
 			var  returnUrl = "";
-			if("test-case" === this.associationType){
-				targetUrl =  squashtm.app.contextRoot + "test-cases/" + id + "/verified-requirements";
-			}else if ("teststep" === this.associationType){
-				targetUrl = squashtm.app.contextRoot + "test-steps/" + id + "/verified-requirements";
+			
+			switch(this.associationType){
+			case "test-case" : 
+				targetUrl =  squashtm.app.contextRoot + "test-cases/" + id + "/verified-requirements"; 
+				break;
+			case "teststep" : 
+				targetUrl = squashtm.app.contextRoot + "test-steps/" + id + "/verified-requirements"; 
+				break;
+			/*
+			 * [Issue 7692]
+			 * You might wonder, "hey where is the code for relating to another requirement ?" I'd say it was never implemented in the first place, also not my bug.  
+			 */
+			default :
+				notification.showError('This is a programming error : the association context '+this.associationType+
+						' is not supported. Please report this anomaly to the Squash TM support.');
+				return;
 			}
 
 			$.ajax({
@@ -163,7 +193,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 		modifySearch : function(){
 			var token = $("meta[name='_csrf']").attr("content");
 			if(this.isAssociation){
-				this.post(squashtm.app.contextRoot + "advanced-search?searchDomain=requirement&id="+this.associationId+"&associateResultWithType="+this.associationType, {
+				this.post(squashtm.app.contextRoot + "advanced-search?searchDomain=requirement&associationId="+this.associationId+"&associationType="+this.associationType, {
 				searchModel : JSON.stringify(this.model),
 					_csrf : token
 				});
@@ -200,7 +230,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 		newSearch : function(){
 
 			if(this.isAssociation){
-				document.location.href= squashtm.app.contextRoot + "advanced-search?searchDomain=requirement&id="+this.associationId+"&associateResultWithType="+this.associationType;
+				document.location.href= squashtm.app.contextRoot + "advanced-search?searchDomain=requirement&associationId="+this.associationId+"&associationType="+this.associationType;
 			} else {
 				document.location.href= squashtm.app.contextRoot + "advanced-search?searchDomain=requirement";
 			}

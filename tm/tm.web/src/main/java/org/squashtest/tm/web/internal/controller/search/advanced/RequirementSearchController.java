@@ -85,50 +85,62 @@ public class RequirementSearchController extends GlobalSearchController {
 		.mapAttribute("links", "links", RequirementVersion.class);
 
 
-	@RequestMapping(value = RESULTS, params = REQUIREMENT)
-	public String getRequirementSearchResultPage(Model model, @RequestParam String searchModel,
-	                                             @RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
+	// ************** the search page handlers *******************
 
-		Optional<Milestone> activeMilestone = getActiveMilestoneHolder().getActiveMilestone();
-		initResultModel(model, searchModel, associateResultWithType, id, REQUIREMENT, activeMilestone);
-		return "requirement-search-result.html";
-	}
+	@RequestMapping(method = RequestMethod.GET, params = "searchDomain="+REQUIREMENT)
+	public String showRequirementSearchPage(Model pageModel,
+	                                        @RequestParam(required = false, defaultValue = "") String associationType,
+	                                        @RequestParam(required = false) Long associationId) {
 
-	@RequestMapping(method = RequestMethod.GET, params = "searchDomain=requirement")
-	public String showRequirementSearchPage(Model model,
-	                                        @RequestParam(required = false, defaultValue = "") String associateResultWithType,
-	                                        @RequestParam(required = false, defaultValue = "") Long id, Locale locale) {
-
-		Optional<Milestone> activeMilestone = getActiveMilestoneHolder().getActiveMilestone();
-		initModel(model, associateResultWithType, id, locale, REQUIREMENT, activeMilestone);
+		initSearchPageModel(pageModel, "" , associationType, associationId, REQUIREMENT);
 		return "requirement-search-input.html";
 	}
 
-	@RequestMapping(value = RESULTS, method = RequestMethod.POST, params = "searchDomain=requirement")
-	public String showRequirementSearchResultPageFilledWithParams(Model model,
-	                                                              @RequestParam String searchModel, @RequestParam(required = false) String associateResultWithType,
-	                                                              @RequestParam(required = false) Long id) {
 
-		model.addAttribute(SEARCH_MODEL, searchModel);
-		return getRequirementSearchResultPage(model, "", associateResultWithType, id);
+
+	@RequestMapping(method = RequestMethod.POST, params = "searchDomain="+REQUIREMENT)
+	public String showRequirementSearchPagedWithSearchModel(Model pageModel,
+	                                                        @RequestParam String searchModel,
+	                                                        @RequestParam(required = false, defaultValue = "") String associationType,
+	                                                        @RequestParam(required = false) Long associationId) {
+
+		initSearchPageModel(pageModel, searchModel, associationType, associationId, REQUIREMENT);
+		return "requirement-search-input.html";
 	}
+	
+	// ******************* the result page handlers ****************
+	
+	@RequestMapping(method = RequestMethod.POST, value = RESULTS, params = "searchDomain="+REQUIREMENT)
+	public String showRequirementSearchResultPageWithSearchModel(Model pageModel,
+                                                          @RequestParam String searchModel, 
+                                                          @RequestParam(required = false) String associationType,
+                                                          @RequestParam(required = false) Long associationId) {
 
-	@RequestMapping(method = RequestMethod.POST, params = "searchDomain=requirement")
-	public String showRequirementSearchPageFilledWithParams(Model model,
-	                                                        @RequestParam String searchModel, @RequestParam(required = false) String associateResultWithType,
-	                                                        @RequestParam(required = false) Long id, Locale locale) {
-
-		model.addAttribute(SEARCH_MODEL, searchModel);
-		return showRequirementSearchPage(model, associateResultWithType, id, locale);
+		initResultModel(pageModel, searchModel, associationType, associationId, REQUIREMENT);
+		return "requirement-search-result.html";
 	}
+	
 
+	@RequestMapping(method = RequestMethod.GET, value = RESULTS, params = "searchDomain="+REQUIREMENT)
+	public String showRequirementSearchResultPage(Model pageModel,
+	                                             @RequestParam(required = false) String associationType, 
+	                                             @RequestParam(required = false) Long associationId) {
+
+		initResultModel(pageModel, "", associationType, associationId, REQUIREMENT);
+		return "requirement-search-result.html";
+	}
+	
+
+
+	// ********************* other methods **********************************
 
 	@RequestMapping(value = TABLE, method = RequestMethod.POST, params = {RequestParams.MODEL, REQUIREMENT,
 		RequestParams.S_ECHO_PARAM})
 	@ResponseBody
 	public DataTableModel getRequirementTableModel(final DataTableDrawParameters params, final Locale locale,
 	                                               @RequestParam(value = RequestParams.MODEL) String model,
-	                                               @RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id)
+	                                               @RequestParam(required = false) String associationType, 
+	                                               @RequestParam(required = false) Long associationId)
 		throws IOException {
 
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
@@ -140,23 +152,23 @@ public class RequirementSearchController extends GlobalSearchController {
 		PagedCollectionHolder<List<RequirementVersion>> holder = requirementVersionAdvancedSearchService
 			.searchForRequirementVersions(searchModel, paging, getMessageSource(), locale);
 
-		boolean isInAssociationContext = isInAssociationContext(associateResultWithType);
+		boolean isInAssociationContext = isInAssociationContext(associationType);
 
 		Set<Long> ids = null;
 
 		if (isInAssociationContext) {
-			ids = getIdsOfRequirementsAssociatedWithObjects(associateResultWithType, id);
+			ids = getIdsOfRequirementsAssociatedWithObjects(associationType, associationId);
 		}
 
 		return new RequirementSearchResultDataTableModelBuilder(locale, getMessageSource(), getPermissionService(),
 			isInAssociationContext, ids).buildDataModel(holder, params.getsEcho());
 	}
 
-	private Set<Long> getIdsOfRequirementsAssociatedWithObjects(String associateResultWithType, Long id) {
+	private Set<Long> getIdsOfRequirementsAssociatedWithObjects(String associationType, Long id) {
 
 		Set<Long> ids = new HashSet<>();
 
-		if (TESTCASE.equals(associateResultWithType)) {
+		if (TESTCASE.equals(associationType)) {
 			List<VerifiedRequirement> requirements = verifiedRequirementsManagerService
 				.findAllVerifiedRequirementsByTestCaseId(id);
 			for (VerifiedRequirement requirement : requirements) {

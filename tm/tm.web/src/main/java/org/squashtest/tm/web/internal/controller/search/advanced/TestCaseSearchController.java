@@ -113,73 +113,96 @@ public class TestCaseSearchController extends GlobalSearchController {
 	@Inject
 	@Named("testCaseWorkspaceDisplayService")
 	private WorkspaceDisplayService testCaseWorkspaceDisplayService;
+	
+	
+	// ************** the search test case page handlers *******************
 
-	@RequestMapping(method = RequestMethod.GET, params = "searchDomain=test-case")
+	@RequestMapping(method = RequestMethod.GET, params="searchDomain="+TESTCASE)
 	public String showTestCaseSearchPage(Model model,
-								 @RequestParam(required = false, defaultValue = "") String associateResultWithType,
-								 @RequestParam(required = false, defaultValue = "") Long id, Locale locale) {
+								 @RequestParam(required = false, defaultValue = "") String associationType,
+								 @RequestParam(required = false, defaultValue = "") Long associationId) {
 
-		Optional<Milestone> activeMilestone = getActiveMilestoneHolder().getActiveMilestone();
-		initModel(model, associateResultWithType, id, locale, TESTCASE,activeMilestone);
+		initSearchPageModel(model, "", associationType, associationId, TESTCASE);
+		return  "test-case-search-input.html";
+	}
+	
+	
+	@RequestMapping(method = RequestMethod.POST, params="searchDomain="+TESTCASE)
+	public String showTestCaseSearchPageWithSearchModel(Model model,
+												 @RequestParam String searchModel, 
+												 @RequestParam(required = false) String associationType,
+												 @RequestParam(required = false) Long associationId) {
+
+		initSearchPageModel(model, searchModel, associationType, associationId, TESTCASE);
 		return  "test-case-search-input.html";
 	}
 
 
-	@RequestMapping(method = RequestMethod.GET, params = "searchDomain=testcaseViaRequirement")
+	// ************** the search via requirements page handlers *******************
+
+	@RequestMapping(method = RequestMethod.GET, params="searchDomain="+TESTCASE_VIA_REQUIREMENT)
 	public String showTestCaseViaRequirementSearchPage(Model model,
-								 @RequestParam(required = false, defaultValue = "") String associateResultWithType,
-								 @RequestParam(required = false, defaultValue = "") Long id, Locale locale) {
-		Optional<Milestone> activeMilestone = getActiveMilestoneHolder().getActiveMilestone();
-		initModel(model, associateResultWithType, id, locale, TESTCASE_VIA_REQUIREMENT,activeMilestone);
+								 @RequestParam(required = false, defaultValue = "") String associationType,
+								 @RequestParam(required = false, defaultValue = "") Long associationId) {
+
+		initSearchPageModel(model, "", associationType, associationId, TESTCASE_VIA_REQUIREMENT);
 		return  "requirement-search-input.html";
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params ="searchDomain=test-case")
-	public String showTestCaseSearchPageFilledWithParams(Model model,
-												 @RequestParam String searchModel, @RequestParam(required = false) String associateResultWithType,
-												 @RequestParam(required = false) Long id, Locale locale) {
+	@RequestMapping(method = RequestMethod.POST, params="searchDomain="+TESTCASE_VIA_REQUIREMENT)
+	public String showTestCaseViaRequirementSearchPageWithSearchModel(Model model,
+												 @RequestParam String searchModel,
+												 @RequestParam(required = false) String associationType,
+												 @RequestParam(required = false) Long associationId) {
 
-		model.addAttribute(SEARCH_MODEL, searchModel);
-		return showTestCaseSearchPage(model, associateResultWithType, id, locale);
-	}
-
-	@RequestMapping(value = RESULTS, method = RequestMethod.POST, params = "searchDomain=test-case")
-	public String showTestCaseSearchResultPageFilledWithParams(Model model,
-	                                                              @RequestParam String searchModel, @RequestParam(required = false) String associateResultWithType,
-	                                                              @RequestParam(required = false) Long id) {
-
-		model.addAttribute(SEARCH_MODEL, searchModel);
-		return getTestCaseSearchResultPage(model, "", associateResultWithType, id);
-	}
-
-	@RequestMapping(method = RequestMethod.POST, params ="searchDomain=testcaseViaRequirement")
-	public String showTestCaseViaRequirementSearchPageFilledWithParams(Model model,
-												 @RequestParam String searchModel, @RequestParam(required = false) String associateResultWithType,
-												 @RequestParam(required = false) Long id, Locale locale) {
-
-		model.addAttribute(SEARCH_MODEL, searchModel);
-		return showTestCaseViaRequirementSearchPage(model, associateResultWithType, id, locale);
+		initSearchPageModel(model, searchModel, associationType, associationId, TESTCASE_VIA_REQUIREMENT);
+		return  "requirement-search-input.html";
 	}
 
 
+	// ******************* the result page handlers ****************
+	
+	@RequestMapping(method = RequestMethod.POST, value = RESULTS, params="searchDomain="+TESTCASE)
+	public String showTestCaseSearchResultPageFilledWithSearchModel(Model model,
+	                                                              @RequestParam String searchModel,
+	                                                              @RequestParam(required = false) String associationType,
+	                                                              @RequestParam(required = false) Long associationId) {
 
-
-
-	@RequestMapping(value = RESULTS, params = TESTCASE)
-	public String getTestCaseSearchResultPage(Model model, @RequestParam String searchModel,
-											  @RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
-		Optional<Milestone> activeMilestone = getActiveMilestoneHolder().getActiveMilestone();
-		initResultModel(model,searchModel, associateResultWithType, id, TESTCASE,activeMilestone);
+		initResultModel(model, searchModel, associationType, associationId, TESTCASE);
 		return "test-case-search-result.html";
 	}
 
-	@RequestMapping(value = RESULTS, params ="searchDomain=testcaseViaRequirement")
-	public String getTestCaseViaRequirementSearchResultPage(Model model, @RequestParam String searchModel,
-											  @RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
-		Optional<Milestone> activeMilestone = getActiveMilestoneHolder().getActiveMilestone();
-		initResultModel(model,searchModel, associateResultWithType, id, TESTCASE_VIA_REQUIREMENT,activeMilestone);
+	@RequestMapping(method = RequestMethod.GET, value = RESULTS, params="searchDomain="+TESTCASE)
+	public String getTestCaseSearchResultPage(Model model, 
+											  @RequestParam(required = false) String associationType, 
+											  @RequestParam(required = false) Long associationId) {
+
+		initResultModel(model,"", associationType, associationId, TESTCASE);
 		return "test-case-search-result.html";
 	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = RESULTS, params="searchDomain="+TESTCASE_VIA_REQUIREMENT)
+	public String showTestCaseViaRequirementSearchResultPageFilledWithSearchModel(Model model,
+	                                                              @RequestParam String searchModel,
+	                                                              @RequestParam(required = false) String associationType,
+	                                                              @RequestParam(required = false) Long associationId) {
+
+		initResultModel(model, searchModel, associationType, associationId, TESTCASE_VIA_REQUIREMENT);
+		return "test-case-search-result.html";
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value = RESULTS, params="searchDomain="+TESTCASE_VIA_REQUIREMENT)
+	public String getTestCaseViaRequirementSearchResultPage(Model model, 
+											  @RequestParam(required = false) String associationType, 
+											  @RequestParam(required = false) Long associationId) {
+
+		initResultModel(model,"", associationType, associationId, TESTCASE_VIA_REQUIREMENT);
+		return "test-case-search-result.html";
+	}
+
+		
+	
+	// ********************* other methods **********************************
 
 
 	@RequestMapping(value = TABLE, method = RequestMethod.POST, params = { RequestParams.MODEL,
@@ -187,7 +210,8 @@ public class TestCaseSearchController extends GlobalSearchController {
 	@ResponseBody
 	public DataTableModel getTestCaseThroughRequirementTableModel(final DataTableDrawParameters params,
 																  final Locale locale, @RequestParam(value = RequestParams.MODEL) String model,
-																  @RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id)
+																  @RequestParam(required = false) String associationType, 
+																  @RequestParam(required = false) Long associationId)
 		throws IOException {
 
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
@@ -199,12 +223,12 @@ public class TestCaseSearchController extends GlobalSearchController {
 		PagedCollectionHolder<List<TestCase>> holder = testCaseAdvancedSearchService
 			.searchForTestCasesThroughRequirementModel(searchModel, paging, locale);
 
-		boolean isInAssociationContext = isInAssociationContext(associateResultWithType);
+		boolean isInAssociationContext = isInAssociationContext(associationType);
 
 		Set<Long> ids = null;
 
 		if (isInAssociationContext) {
-			ids = getIdsOfTestCasesAssociatedWithObjects(associateResultWithType, id);
+			ids = getIdsOfTestCasesAssociatedWithObjects(associationType, associationId);
 		}
 
 		return new TestCaseSearchResultDataTableModelBuilder(locale, getMessageSource(), getPermissionService(), iterationService,
@@ -216,7 +240,8 @@ public class TestCaseSearchController extends GlobalSearchController {
 	@ResponseBody
 	public DataTableModel getTestCaseTableModel(final DataTableDrawParameters params, final Locale locale,
 												@RequestParam(value = RequestParams.MODEL) String model,
-												@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id)
+												@RequestParam(required = false) String associationType, 
+												@RequestParam(required = false) Long associationId)
 		throws IOException {
 
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
@@ -227,35 +252,35 @@ public class TestCaseSearchController extends GlobalSearchController {
 		PagedCollectionHolder<List<TestCase>> holder =
 				testCaseAdvancedSearchService.searchForTestCases(searchModel, paging, locale);
 
-		boolean isInAssociationContext = isInAssociationContext(associateResultWithType);
+		boolean isInAssociationContext = isInAssociationContext(associationType);
 
 		Set<Long> ids = null;
 
 		if (isInAssociationContext) {
-			ids = getIdsOfTestCasesAssociatedWithObjects(associateResultWithType, id);
+			ids = getIdsOfTestCasesAssociatedWithObjects(associationType, associationId);
 		}
 
 		return new TestCaseSearchResultDataTableModelBuilder(locale, getMessageSource(), getPermissionService(), iterationService,
 			isInAssociationContext, ids).buildDataModel(holder, params.getsEcho());
 	}
 
-	private Set<Long> getIdsOfTestCasesAssociatedWithObjects(String associateResultWithType, Long id) {
+	private Set<Long> getIdsOfTestCasesAssociatedWithObjects(String associationType, Long id) {
 
 		Set<Long> ids = new HashSet<>();
 
-		if (REQUIREMENT.equals(associateResultWithType)) {
+		if (REQUIREMENT.equals(associationType)) {
 			List<TestCase> testCases = verifyingTestCaseManagerService.findAllByRequirementVersion(id);
 			List<Long> tcIds = IdentifiedUtil.extractIds(testCases);
 			ids.addAll(tcIds);
 
-		} else if ("campaign".equals(associateResultWithType)) {
+		} else if ("campaign".equals(associationType)) {
 			List<Long> referencedTestCasesIds = this.campaignTestPlanManagerService.findPlannedTestCasesIds(id);
 			ids.addAll(referencedTestCasesIds);
-		} else if ("iteration".equals(associateResultWithType)) {
+		} else if ("iteration".equals(associationType)) {
 			List<TestCase> testCases = this.iterationTestPlanManagerService.findPlannedTestCases(id);
 			List<Long> tcIds = IdentifiedUtil.extractIds(testCases);
 			ids.addAll(tcIds);
-		} else if ("testsuite".equals(associateResultWithType)) {
+		} else if ("testsuite".equals(associationType)) {
 			List<Long> referencedTestCasesIds = this.testSuiteTestPlanManagerService.findPlannedTestCasesIds(id);
 			ids.addAll(referencedTestCasesIds);
 		}

@@ -136,8 +136,8 @@
 
           <div id="searchModel" class="not-displayed" th:text="${searchModel}"></div>
           <div id="searchDomain" class="not-displayed" th:text="${searchDomain}"></div>
-          <div th:if="${associateResult}" id="associationType" class="not-displayed" th:text="${associateResultWithType}"></div>
-          <div th:if="${associateResult}" id="associationId" class="not-displayed" th:text="${associateId}"></div>
+          <div th:if="${associateResult}" id="associationType" class="not-displayed" th:text="${associationType}"></div>
+          <div th:if="${associateResult}" id="associationId" class="not-displayed" th:text="${associationId}"></div>
 
           <div id="search-results">
             <div id="search-results-panel" class="table-tab-wrap">
@@ -147,7 +147,7 @@
                 <thead>
                   <tr>
                     <th th:attr="data-def='select, map=user-index'">#</th>
-                    <th th:if="${associateResult}" th:attr="data-def='map=is-associated'" th:title="#{'search.associatedwith.'+${associateResultWithType}+'.tooltip'}"></th>
+                    <th th:if="${associateResult}" th:attr="data-def='map=is-associated'" th:title="#{'search.associatedwith.'+${associationType}+'.tooltip'}"></th>
                     <th th:attr="data-def='map=project-name'" th:text="#{label.project}">project name</th>
                     <th th:attr="data-def='sClass=testcaseid,map=test-case-id'">ID</th>
                     <th th:attr="data-def='map=test-case-ref'" th:text="#{label.reference}">test-case reference</th>

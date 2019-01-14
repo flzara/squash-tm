@@ -100,53 +100,51 @@ public class CampaignSearchController extends GlobalSearchController {
 		.mapAttribute("tc-weight", "referencedTestCase.importance", IterationTestPlanItem.class)
 		.mapAttribute("test-case-automatable", "referencedTestCase.automatable", IterationTestPlanItem.class);
 
+	
+	// ************** the search page handlers *******************
+	
 
-	@RequestMapping(value = RESULTS, params = CAMPAIGN)
-	public String getCampaignSearchResultPage(Model model, @RequestParam String searchModel,
-											  @RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
-		Optional<Milestone> activeMilestone = getActiveMilestoneHolder().getActiveMilestone();
-		initResultModel(model, searchModel, associateResultWithType, id, CAMPAIGN, activeMilestone);
-		return "campaign-search-result.html";
-
-	}
-
-	@RequestMapping(method = RequestMethod.POST, params = "searchDomain=campaign")
-	public String showCampaignSearchPageFilledWithParams(Model model,
-														 @RequestParam(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
-														 @RequestParam(value = "workspace-prefs", required = false, defaultValue = "") String elementId,
-														 @RequestParam String searchModel, @RequestParam(required = false) String associateResultWithType,
-														 @RequestParam(required = false) Long id, Locale locale) {
-
-		model.addAttribute(SEARCH_MODEL, searchModel);
-		return showCampaignSearchPage(model, openedNodes, elementId, associateResultWithType, id, locale);
-	}
-
-	@RequestMapping(value = RESULTS, method = RequestMethod.POST, params = "searchDomain=campaign")
-	public String showCampaignResultSearchResultPageFilledWithParams(Model model,
-	                                                              @RequestParam String searchModel, @RequestParam(required = false) String associateResultWithType,
-	                                                              @RequestParam(required = false) Long id) {
-
-		model.addAttribute(SEARCH_MODEL, searchModel);
-		return getCampaignSearchResultPage(model, "", associateResultWithType, id);
-	}
-
-	@RequestMapping(method = RequestMethod.GET, params = "searchDomain=campaign")
-	public String showCampaignSearchPage(Model model, @RequestParam(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
+	
+	@RequestMapping(method = RequestMethod.GET, params = "searchDomain="+CAMPAIGN)
+	public String showCampaignSearchPage(Model pageModel, 
+										@RequestParam(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
 										 @RequestParam(value = "workspace-prefs", required = false, defaultValue = "") String elementEntityReference,
-										 @RequestParam(required = false, defaultValue = "") String associateResultWithType,
-										 @RequestParam(required = false, defaultValue = "") Long id, Locale locale) {
+										 @RequestParam(required = false, defaultValue = "") String associationType,
+										 @RequestParam(required = false, defaultValue = "") Long associationId) {
 
 
+		prepareSearchPageModel(pageModel, "", openedNodes, elementEntityReference, associationType, associationId);
+
+		return "campaign-search-input.html";
+	}
+	
+	
+	@RequestMapping(method = RequestMethod.POST, params = "searchDomain="+CAMPAIGN)
+	public String showCampaignSearchPageWithSearchModel(Model pageModel,
+		 												 @RequestParam String searchModel, 
+														 @RequestParam(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
+														 @RequestParam(value = "workspace-prefs", required = false, defaultValue = "") String elementEntityReference,
+														 @RequestParam(required = false) String associationType,
+														 @RequestParam(required = false) Long associationId) {
+
+		prepareSearchPageModel(pageModel, searchModel, openedNodes, elementEntityReference, associationType, associationId);
+
+		return "campaign-search-input.html";
+	}
+
+	
+	private void prepareSearchPageModel(Model pageModel, String searchModel, String[] openedNodes, String elementEntityReference, String associationType, Long associationId) {
+		
 		String[] nodesToOpen = new String[0];
 
 		if (StringUtils.isBlank(elementEntityReference) || "null".equals(elementEntityReference)) {
 			nodesToOpen = openedNodes;
-			model.addAttribute("selectedNode", "");
+			pageModel.addAttribute("selectedNode", "");
 		} else {
 			try {
 				EntityReference entityReference = EntityReference.fromString(elementEntityReference.toUpperCase());
 				nodesToOpen = getNodeParentsInWorkspace(entityReference);
-				model.addAttribute("selectedNode", getTreeElementIdInWorkspace(entityReference.getId()));
+				pageModel.addAttribute("selectedNode", getTreeElementIdInWorkspace(entityReference.getId()));
 				// WARNING! it was previously catching all Exceptions
 			} catch (CodeDoesNotMatchesPatternException | IllegalArgumentException e) {
 				LOGGER.warn("Error during conversion of the 'workspace-prefs' cookie to an EntityReference.", e);
@@ -155,27 +153,56 @@ public class CampaignSearchController extends GlobalSearchController {
 
 		MultiMap expansionCandidates = mapIdsByType(nodesToOpen);
 
-
-		Optional<Milestone> activeMilestone = getActiveMilestoneHolder().getActiveMilestone();
-		initModel(model, associateResultWithType, id, locale, CAMPAIGN, activeMilestone);
+		initSearchPageModel(pageModel, "",  associationType, associationId, CAMPAIGN);
+		
 		List<Long> projectIds = campaignAdvancedSearchService.findAllReadablesId();
 		UserDto user = userAccountService.findCurrentUserDto();
+		
 		Optional<Long> activeMilestoneId = getActiveMilestoneHolder().getActiveMilestoneId();
 		Collection<JsTreeNode> rootNodes = workspaceDisplayService().findAllLibraries(projectIds, user, expansionCandidates, activeMilestoneId.get());
 
 		boolean isCampaignAvailable = true;
 
+		Optional<Milestone> activeMilestone = getActiveMilestoneHolder().getActiveMilestone();
 		if (activeMilestone.isPresent()) {
-
 			isCampaignAvailable = milestoneMembershipFinder.isMilestoneBoundToACampainInProjects(activeMilestone.get().getId(), projectIds);
 		}
 
-		model.addAttribute("rootModel", rootNodes);
+		pageModel.addAttribute("rootModel", rootNodes);
 
-		model.addAttribute("isCampaignAvailable", isCampaignAvailable);
-
-		return "campaign-search-input.html";
+		pageModel.addAttribute("isCampaignAvailable", isCampaignAvailable);
 	}
+	
+	
+	
+
+	// ******************* the result page handlers ****************
+	
+	@RequestMapping(method = RequestMethod.GET, value = RESULTS, params = "searchDomain="+CAMPAIGN)
+	public String getCampaignSearchResultPage(Model pageModel, 
+											  @RequestParam(required = false) String associationType, 
+											  @RequestParam(required = false) Long associationId) {
+		
+		initResultModel(pageModel, "", associationType, associationId, CAMPAIGN);
+		return "campaign-search-result.html";
+
+	}
+
+
+
+	@RequestMapping(method = RequestMethod.POST, value = RESULTS, params = "searchDomain="+CAMPAIGN)
+	public String showCampaignResultSearchResultPageWithSearchModel(Model pageModel,
+	                                                              @RequestParam String searchModel,
+	                                                              @RequestParam(required = false) String associationType,
+	                                                              @RequestParam(required = false) Long associationId) {
+
+		initResultModel(pageModel, searchModel, associationType, associationId, CAMPAIGN);
+		return "campaign-search-result.html";
+	}
+	
+	
+	// ********************* other methods **********************************
+
 
 
 	@RequestMapping(value = TABLE, method = RequestMethod.POST, params = {RequestParams.MODEL, CAMPAIGN,

@@ -23,6 +23,8 @@ package org.squashtest.tm.web.internal.controller.search.advanced;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContext;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -59,6 +61,7 @@ public abstract class GlobalSearchController {
 	protected static final String TESTCASE = "test-case";
 	protected static final String REQUIREMENT = "requirement";
 	protected static final String SEARCH_MODEL = "searchModel";
+	protected static final String FORM_MODEL = "formModel";
 	protected static final String SEARCH_DOMAIN = "searchDomain";
 	protected static final String TESTCASE_VIA_REQUIREMENT = "testcaseViaRequirement";
 	protected static final String RESULTS = "/results";
@@ -150,23 +153,32 @@ public abstract class GlobalSearchController {
 		return activeMilestoneHolder;
 	}
 
-	protected void initModel(Model model, String associateResultWithType, Long id, Locale locale, String domain, Optional<Milestone> activeMilestone) {
-		initModelForPage(model, associateResultWithType, id, activeMilestone);
+	protected void initSearchPageModel(Model model,  String searchModel, String associationType, Long associationId, String domain) {
+		
+		initModelForPage(model, associationType, associationId);
+		
 		model.addAttribute(SEARCH_DOMAIN, domain);
 
 		FormModelBuilder builder = formModelBuilder.get(domain);
 		if (builder != null) {
-			model.addAttribute("formModel", builder.build(locale, activeMilestone.isPresent()));
-		} else {
+			Locale locale = LocaleContextHolder.getLocale();
+			Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+			model.addAttribute(FORM_MODEL, builder.build(locale, activeMilestone.isPresent()));
+		} 
+		else {
 			LOGGER.error(
 				"Could not find a FormModelBuilder for search domain : {}. This is either caused by a bug or a hand-written request",
 				domain);
 		}
+		if (!searchModel.isEmpty()) {
+			model.addAttribute(SEARCH_MODEL, searchModel);
+		}
 
 	}
 
-	protected void initResultModel(Model model, String searchModel, String associateResultWithType, Long id, String domain, Optional<Milestone> activeMilestone) {
-		initModelForPage(model, associateResultWithType, id, activeMilestone);
+	protected void initResultModel(Model model, String searchModel, String associationType, Long associationId, String domain) {
+				
+		initModelForPage(model, associationType, associationId);
 		if (!searchModel.isEmpty()) {
 			model.addAttribute(SEARCH_MODEL, searchModel);
 		}
@@ -192,23 +204,27 @@ public abstract class GlobalSearchController {
 		}
 	}
 
-	protected boolean isInAssociationContext(String associateResultWithType) {
-		return associateResultWithType != null;
+	protected boolean isInAssociationContext(String associationType) {
+		return associationType != null;
 	}
 
-	private void initModelForPage(Model model, String associateResultWithType, Long id, Optional<Milestone> activeMilestone) {
+	private void initModelForPage(Model model, String associationType, Long associationId) {
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
 		model.addAttribute("isMilestoneMode", activeMilestone.isPresent());
+		
 		Integer projectsAllowAtuomationWorkflow = projectFinder.countProjectsAllowAutomationWorkflow();
 		Boolean automationColVisible = false;
 		if (projectsAllowAtuomationWorkflow > 0) {
 			automationColVisible = true;
 		}
+		
 		model.addAttribute("automationColVisible", automationColVisible);
-		if (StringUtils.isNotBlank(associateResultWithType)) {
+		if (StringUtils.isNotBlank(associationType)) {
 			model.addAttribute("associateResult", true);
-			model.addAttribute("associateResultWithType", associateResultWithType);
-			model.addAttribute("associateId", id);
-		} else {
+			model.addAttribute("associationType", associationType);
+			model.addAttribute("associationId", associationId);
+		} 
+		else {
 			model.addAttribute("associateResult", false);
 		}
 	}

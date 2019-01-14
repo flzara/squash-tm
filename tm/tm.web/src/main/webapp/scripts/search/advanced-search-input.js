@@ -18,14 +18,16 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translator", "app/ws/squashtm.notification", "underscore", "workspace.projects",
+define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translator", "app/ws/squashtm.notification", "underscore", "workspace.projects", "workspace.storage",
 	"squash.configmanager", "./SearchDateWidget", "./SearchRangeWidget", "./SearchNumericRangeWidget",
 	"./SearchExistsWidget", "./SearchMultiAutocompleteWidget", "./SearchMultiSelectWidget", "./SearchMultiSelectProjectWidget", "./SearchCheckboxWidget",
 	"./SearchComboMultiselectWidget", "./SearchRadioWidget", "./SearchTagsWidget", "./SearchMultiCascadeFlatWidget", "./SearchDateCustomFieldWidget", "./SearchComboExistsMultiselectWidget",
 	"jquery.squash", "jqueryui", "jquery.squash.togglepanel", "squashtable",
 	"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
-	"jquery.squash.confirmdialog", "jquery.cookie"], function ($, Backbone, Handlebars, translator, notification, _, projects) {
+	"jquery.squash.confirmdialog", "jquery.cookie"], function ($, Backbone, Handlebars, translator, notification, _, projects, storage) {
 
+	var SEARCH_MODEL_STORAGE_KEY_PREFIX = "search-model-";
+	
 	// Prefiling all the request
 	$.ajaxPrefilter(function (options, originalOptions, jqXHR) {
 		var token = $("meta[name='_csrf']").attr("content");
@@ -616,6 +618,21 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 			temp.submit();
 			return temp;
 		},
+		
+		/* [Issue 7692] : stores the post parameters in the local storage
+		 * it allows for repost when navigating back from a page, ie using
+		 * a GET request.
+		 * 
+		 * Note that historically the search form was posted as part of the 
+		 * query string, and thus the form was always contained in the backurl 
+		 * and GET would always resent (it was also more semantically satisfying).
+		 * However the somewhat large data would cause issues (overflowing the 
+		 * max length of the url) so as a workaround a POST was preferred. 
+		 * Maybe using GET + zipped form content could have worked though.
+		 */ 
+		savePostResultParameters: function(searchDomain, searchModel){
+			storage.set(SEARCH_MODEL_STORAGE_KEY_PREFIX + searchDomain, searchModel);
+		},
 
 		showResults: function () {
 
@@ -627,22 +644,27 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 				return;
 			}
 
+			// the search model
 			var searchModel = JSON.stringify(this.model);
 			var data = {
 				searchModel: searchModel,
 				_csrf: $("meta[name='_csrf']").attr("content")
 			};
+			
+			var searchDomain = $("#searchDomain").text();
+			this.savePostResultParameters(searchDomain, searchModel);
 
+			// create the query string
+			var queryString = "?searchDomain="+searchDomain;
+			
 			if (!!$("#associationType").length) {
-				var associateResultWithType = $("#associationType").text();
-				var id = $("#associationId").text();
-
-				data.associateResultWithType = associateResultWithType;
-				data.id = id;
-
+				var associationType = $("#associationType").text();
+				var associationId = $("#associationId").text();
+				queryString+= "&associationType="+associationType+"&associationId="+associationId;
 			}
 
-			this.post(squashtm.app.contextRoot + "advanced-search/results?searchDomain=" + $("#searchDomain").text(), data);
+			// now post
+			this.post(squashtm.app.contextRoot + "advanced-search/results" + queryString, data);
 		},
 
 		emptyCriteria: function () {

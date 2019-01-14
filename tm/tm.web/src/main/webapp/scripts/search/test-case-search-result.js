@@ -19,13 +19,15 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(["jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.routing", "workspace.event-bus",
-		"./TestCaseSearchResultTable", "squash.translator", "app/ws/squashtm.notification",
+		"./TestCaseSearchResultTable", "squash.translator", "app/ws/squashtm.notification", "workspace.storage",
 		"squash.configmanager", "workspace.projects", "./milestone-mass-modif-popup", "./tc-export-popup", "jquery.squash", "jqueryui",
 		"jquery.squash.togglepanel", "squashtable",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
 		"jquery.squash.confirmdialog", "jquery.squash.milestoneDialog"],
-	function ($, Backbone, _, StringUtil, routing, eventBus, TestCaseSearchResultTable, translator, notification, confman, projects, milestoneMassModif, tcExport) {
+	function ($, Backbone, _, StringUtil, routing, eventBus, TestCaseSearchResultTable, translator, notification, storage, confman, projects, milestoneMassModif, tcExport) {
 
+		var SEARCH_MODEL_STORAGE_KEY_PREFIX = "search-model-";
+	
 		var TestCaseSearchInputPanel = Backbone.View.extend({
 
 			expanded: false,
@@ -36,7 +38,7 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.ro
 				this.getIdsOfSelectedTableRowList = $.proxy(this._getIdsOfSelectedTableRowList, this);
 				this.getIdsOfEditableSelectedTableRowList = $.proxy(this._getIdsOfEditableSelectedTableRowList, this);
 				this.updateDisplayedValueInColumn = $.proxy(this._updateDisplayedValueInColumn, this);
-				var model = JSON.parse($("#searchModel").text());
+				var model = this.loadSearchModel();
 				this.domain = $("#searchDomain").text();
 				this.isAssociation = !!$("#associationType").length;
 				if (this.isAssociation) {
@@ -59,6 +61,24 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.ro
 				"click #associate-all-button": "associateAll",
 				"click #deselect-all-button": "deselectAll",
 				"click #modify-search-result-milestone-button": "editMilestone"
+			},
+
+			// [Issue 7692] : the model should be read from the #searchModel element in the page.
+			// If it is not available, attempt to reload it from the store instead.
+			loadSearchModel: function(){
+				var searchDomain = $("#searchDomain").text();
+				// first load from dom
+				var strmodel = $("#searchModel").text();
+				//if absent, load from storage 
+				if (StringUtil.isBlank(strmodel)){
+					strmodel = storage.get(SEARCH_MODEL_STORAGE_KEY_PREFIX + searchDomain);
+				}
+				// still absent -> model is null
+				if (StringUtil.isBlank(strmodel)){
+					strmodel = null;
+				}
+				
+				return JSON.parse(strmodel);
 			},
 
 
@@ -136,7 +156,7 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.ro
 			modifySearch: function () {
 				var token = $("meta[name='_csrf']").attr("content");
 				if (this.isAssociation) {
-					this.post(squashtm.app.contextRoot + "advanced-search?searchDomain=" + this.domain + "&id=" + this.associationId + "&associateResultWithType=" + this.associationType, {
+					this.post(squashtm.app.contextRoot + "advanced-search?searchDomain=" + this.domain + "&associationId=" + this.associationId + "&associationType=" + this.associationType, {
 						searchModel: JSON.stringify(this.model),
 						_csrf: token
 					});
@@ -170,7 +190,7 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.ro
 			newSearch: function () {
 
 				if (this.isAssociation) {
-					document.location.href = squashtm.app.contextRoot + "advanced-search?searchDomain=" + this.domain + "&id=" + this.associationId + "&associateResultWithType=" + this.associationType;
+					document.location.href = squashtm.app.contextRoot + "advanced-search?searchDomain=" + this.domain + "&associationId=" + this.associationId + "&associationType=" + this.associationType;
 				} else {
 					document.location.href = squashtm.app.contextRoot + "advanced-search?searchDomain=" + this.domain;
 				}

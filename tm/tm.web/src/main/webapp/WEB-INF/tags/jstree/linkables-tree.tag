@@ -84,7 +84,7 @@ require( ["common"], function(){
 			// the button menu
       		if(conf.workspace === "requirement"){
       			$("#search-tree-button").on('click', function(){
-      				document.location.href = squashtm.app.contextRoot + "advanced-search?searchDomain=requirement&id=${elementId}&associateResultWithType=${elementType}";
+      				document.location.href = squashtm.app.contextRoot + "advanced-search?searchDomain=requirement&associationId=${elementId}&associationType=${elementType}";
       			});
 
       		} else if(conf.domain != "requirement"){
@@ -92,16 +92,16 @@ require( ["common"], function(){
       			$("#search-tree-button").buttonmenu();
 
       			$("#test-case-search-button").on('click', function(){
-      				document.location.href = squashtm.app.contextRoot + "advanced-search?searchDomain=test-case&id=${elementId}&associateResultWithType=${elementType}";
+      				document.location.href = squashtm.app.contextRoot + "advanced-search?searchDomain=test-case&associationId=${elementId}&associationType=${elementType}";
       			});
 
       			$("#search-by-requirement-button").on('click', function(){
-      				document.location.href = squashtm.app.contextRoot + "advanced-search?searchDomain=testcaseViaRequirement&id=${elementId}&associateResultWithType=${elementType}";
+      				document.location.href = squashtm.app.contextRoot + "advanced-search?searchDomain=testcaseViaRequirement&associationId=${elementId}&associationType=${elementType}";
       			});
 
       		} else {
       			$("#search-tree-button").on('click', function(){
-      				document.location.href = squashtm.app.contextRoot + "advanced-search?searchDomain=test-case&id=${elementId}&associateResultWithType=${elementType}";
+      				document.location.href = squashtm.app.contextRoot + "advanced-search?searchDomain=test-case&associationId=${elementId}&associationType=${elementType}";
       			});
 
       		}

@@ -24,12 +24,12 @@ define(["jquery", "backbone", "squash.translator", "jeditable.simpleJEditable", 
 
 		var TestCaseSearchResultTable = Backbone.View.extend({
 			el: "#test-case-search-result-table",
-			initialize: function (model, domain, isAssociation, associateType, associateId) {
+			initialize: function (model, domain, isAssociation, associationType, associationId) {
 				this.model = model;
 				this.domain = domain;
 				this.isAssociation = isAssociation;
-				this.associateType = associateType;
-				this.associateId = associateId;
+				this.associationType = associationType;
+				this.associationId = associationId;
 				this.addSelectEditableToImportance = $.proxy(this._addSelectEditableToImportance, this);
 				this.addTooltipToImportance = $.proxy(this._addTooltipToImportance, this);
 				this.addSelectEditableToNature = $.proxy(this._addSelectEditableToNature, this);
@@ -60,8 +60,8 @@ define(["jquery", "backbone", "squash.translator", "jeditable.simpleJEditable", 
 						"fnServerParams": function (aoData) {
 							aoData.push({ "name": domain, "value": domain });
 							aoData.push({ "name": "model", "value": JSON.stringify(model) });
-							aoData.push({ "name": "associateResultWithType", "value": associateType });
-							aoData.push({ "name": "id", "value": associateId });
+							aoData.push({ "name": "associationType", "value": associationType });
+							aoData.push({ "name": "associationId", "value": associationId });
 						},
 						"sServerMethod": "POST",
 						"bDeferRender": true,
@@ -482,7 +482,7 @@ define(["jquery", "backbone", "squash.translator", "jeditable.simpleJEditable", 
 				var associatedTo = data["is-associated"];
 
 				if (associatedTo) {
-					if (this.associateType == "requirement") {
+					if (this.associationType == "requirement") {
 						$(".is-associated", row).append('<span class="associated-icon-requirement" title="' + translator.get('search.associatedwith.requirement.image.tooltip') + '"></span>');
 					} else {
 						$(".is-associated", row).append('<span class="associated-icon-campaign"></span>');
