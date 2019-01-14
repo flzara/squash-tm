@@ -151,7 +151,7 @@ class ScmRepositoryManagerServiceTest extends Specification {
 		when:
 			scmRepositoryManagerService.createNewScmRepository(serverId, repo)
 		then:
-			1 * connector.initRepository(credentials)
+			1 * connector.createRepository(credentials)
 			1 * connector.prepareRepository(credentials)
 	}
 

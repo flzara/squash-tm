@@ -102,7 +102,7 @@ public class ScmRepositoryManagerServiceImpl implements ScmRepositoryManagerServ
 
 		checkIfProtocolIsSupported(credentials, connector);
 
-		connector.initRepository(credentials);
+		connector.createRepository(credentials);
 		connector.prepareRepository(credentials);
 	}
 

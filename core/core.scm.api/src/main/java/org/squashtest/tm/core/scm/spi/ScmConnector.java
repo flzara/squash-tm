@@ -40,8 +40,8 @@ public interface ScmConnector {
 	AuthenticationProtocol[] getSupportedProtocols();
 
 	/**
-	 * Initializes the local Source Code Management repository.
-	 * It at least implies the clone of the remote repository on the local files server if it does not exist yet.
+	 * Creates the local Source Code Management repository.
+	 * It at least implies the clone of the remote repository on the local files server.
 	 * @param credentials The {@link Credentials} to authenticate to the remote repository
 	 * @throws IOException If an error occurs during the process. The causes can be diverse, including:
 	 * <ul>
@@ -51,7 +51,7 @@ public interface ScmConnector {
 	 *     <li> The local repository path given to the connector exists but is not valid</li>
 	 * </ul>
 	 */
-	void initRepository(Credentials credentials) throws IOException;
+	void createRepository(Credentials credentials) throws IOException;
 
 	/**
 	 * Prepares the local Source Code Management repository.
