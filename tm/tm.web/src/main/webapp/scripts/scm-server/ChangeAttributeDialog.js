@@ -72,7 +72,7 @@ define(['jquery', 'backbone', 'squash.translator', 'workspace.routing', 'app/uti
 		openForPath: function(event) {
 			var self = this;
 			var title = translator.get('title.ChangeRepositoryPath');
-			var label = translator.get('label.RepositoryPath');
+			var label = translator.get('label.LocalRepositoryPath');
 
 			var tableCell = event.currentTarget;
 			var repositoryPath = $(tableCell).text();

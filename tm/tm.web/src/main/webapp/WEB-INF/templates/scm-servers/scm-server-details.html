@@ -179,7 +179,7 @@
                       <th th:attr="data-def='invisible, map=repository-id'" class="not-displayed">Id</th>
                       <th th:attr="data-def='select, map=repository-index'">#</th>
                       <th th:attr="data-def='sortable, map=name, sClass=col-name'" th:text="#{label.Name}">My_Repository</th>
-                      <th th:attr="data-def='sortable, map=path, sClass=col-path'" th:text="#{label.RepositoryPath}">Chemin</th>
+                      <th th:attr="data-def='sortable, map=path, sClass=col-path'" th:text="#{label.LocalRepositoryPath}">Chemin</th>
                       <th th:attr="data-def='sortable, map=folder, sClass=col-folder'" th:text="#{label.WorkingFolder}">Dossier de Travail</th>
                       <th th:attr="data-def='sortable, map=branch, sClass=col-branch'" th:text="#{label.WorkingBranch}">Branche de Travail</th>
                       <th th:attr="data-def='delete-button=#delete-scm-repository-popup , map=empty-delete-holder'"></th>
@@ -220,45 +220,54 @@
         <!---- ADD REPOSITORY POPUP ----->
         <div id="add-scm-repository-popup" class="not-displayed popup-dialog form-horizontal"
              title="Add a new Scm Repository" th:title="#{title.newScmRepository}">
-          <div>
+          <table>
 
-            <div class="control-group">
-              <label class="control-label" for="name" th:text="#{label.Name}">Name</label>
-              <div class="controls">
+            <tr class="control-group">
+              <td style="width: 30%;">
+                <label class="control-label" for="name" th:text="#{label.RemoteRepositoryName}">Name</label>
+              </td>
+              <td>
                 <input id="name" name="name" class="strprop" value="" size="50" maxlength="255" type="text" data-def="maininput" />
                 <br/>
                 <span class="help-inline">&nbsp;</span>
-              </div>
-            </div>
+              </td>
+            </tr>
 
-            <div class="control-group">
-              <label class="control-label" for="path" th:text="#{label.RepositoryPath}">Name</label>
-              <div class="controls">
-                <input id="path" name="path" class="strprop" value="" size="50" maxlength="50" type="text" />
-                <br/>
-                <span class="help-inline">&nbsp;</span>
-              </div>
-            </div>
-
-            <div class="control-group">
-              <label class="control-label" for="folder" th:text="#{label.WorkingFolder}">Name</label>
-              <div class="controls">
-                <input id="folder" name="folder" class="strprop" value="" size="50" maxlength="50" type="text" />
-                <br/>
-                <span class="help-inline">&nbsp;</span>
-              </div>
-            </div>
-
-            <div class="control-group">
-              <label class="control-label" for="branch" th:text="#{label.WorkingBranch}">URL</label>
-              <div class="controls">
+            <tr class="control-group">
+              <td style="width: 30%;">
+                <label class="control-label" for="branch" th:text="#{label.WorkingBranch}">URL</label>
+              </td>
+              <td>
                 <input id="branch" name="branch" class="strprop" value="" size="50" maxlength="255" type="text" />
                 <br/>
                 <span class="help-inline">&nbsp;</span>
-              </div>
-            </div>
+              </td>
+            </tr>
 
-          </div>
+            <tr class="control-group">
+              <td style="width: 30%;">
+                <label class="control-label" for="path" th:text="#{label.LocalRepositoryPath}" th:title="#{tooltip.absolutePath}">Path</label>
+              </td>
+              <td>
+                <input id="path" name="path" class="strprop" value="" size="50" maxlength="255" type="text" th:title="#{tooltip.absolutePath}"/>
+                <br/>
+                <span class="help-inline">&nbsp;</span>
+              </td>
+            </tr>
+
+            <tr class="control-group">
+              <td style="width: 30%;">
+                <label class="control-label" for="folder" th:text="#{label.WorkingFolderPath}" th:title="#{tooltip.pathRelativeToRepositoryPath}">Folder</label>
+              </td>
+              <td>
+                <input id="folder" name="folder" class="strprop" value="" size="50" maxlength="255" type="text" th:title="#{tooltip.pathRelativeToRepositoryPath}"/>
+                <br/>
+                <span class="help-inline">&nbsp;</span>
+              </td>
+            </tr>
+
+          </table>
+
           <div class="popup-dialog-buttonpane">
             <input class="sq-btn" type="button" value="Add another" th:value="#{label.addAnother}" data-def="evt=addanother, mainbtn" />
             <input class="sq-btn" type="button" value="Add" th:value="#{label.Add}" data-evt="confirm" />
@@ -276,7 +285,7 @@
 
           <div class="form-horizontal">
             <div class="control-group">
-              <label id='change-attribute-label' for="change-attribute-input" class="control-label" th:text="#{label.Empty}">Vide</label>
+              <label id='change-attribute-label' for="change-attribute-input" class="control-label" th:text="#{label.Empty}" style="width: 30%;">Vide</label>
               <div class="controls">
                 <input id="change-attribute-input" name="change-attribute-input" type="text" maxlength="50" size="50" />
                 <span class="help-inline red-warning-message">&nbsp;</span>
