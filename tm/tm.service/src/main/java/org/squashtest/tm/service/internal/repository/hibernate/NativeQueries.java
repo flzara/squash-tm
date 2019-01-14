@@ -111,7 +111,13 @@ public final class NativeQueries {
 			+ " group by ctpi1.ctpi_id";
 
 	public static final String TESTCASE_SQL_UPDATECALLINGCAMPAIGNITEMTESTPLAN = "update CAMPAIGN_TEST_PLAN_ITEM "
-			+ " set test_plan_order = test_plan_order - :offset" + " where ctpi_id in (:reorderedItemIds)";
+			+ " set test_plan_order = test_plan_order - :offset" + " where ctpi_id in (:reorderedItemIds) order by test_plan_order";
+
+	public static final String TESTCASE_SQL_UPDATECALLINGCAMPAIGNITEMTESTPLANFORPOSTGRESQL = "update CAMPAIGN_TEST_PLAN_ITEM "
+		+ " set test_plan_order = orderedTpi.newOrder "
+		+ " from (select ctpi_id, test_plan_order - :offset as newOrder "
+				+ "from CAMPAIGN_TEST_PLAN_ITEM where ctpi_id in (:reorderedItemIds) order by test_plan_order) orderedTpi"
+		+ " where CAMPAIGN_TEST_PLAN_ITEM.ctpi_id = orderedTpi.ctpi_id";
 
 	public static final String TESTCASE_SQL_REMOVECALLINGCAMPAIGNITEMTESTPLAN = "delete from CAMPAIGN_TEST_PLAN_ITEM where test_case_id in (:testCaseIds)";
 
@@ -144,8 +150,13 @@ public final class NativeQueries {
 
 	public static final String TESTCASE_SQL_UPDATECALLINGITERATIONITEMTESTPLANORDER = " update ITEM_TEST_PLAN_LIST "
 			+ " set item_test_plan_order = item_test_plan_order - :offset "
-			+ " where item_test_plan_id in (:reorderedItemIds)";
+			+ " where item_test_plan_id in (:reorderedItemIds) order by item_test_plan_order";
 
+	public static final String TESTCASE_SQL_UPDATECALLINGITERATIONITEMTESTPLANORDERFORPOSTGRESQL = " update ITEM_TEST_PLAN_LIST "
+		+ " set item_test_plan_order = itpl.newOrder "
+		+ " from (select ITEM_TEST_PLAN_LIST.item_test_plan_id, ITEM_TEST_PLAN_LIST.item_test_plan_order - :offset as newOrder "
+				+ "from ITEM_TEST_PLAN_LIST where item_test_plan_id in (:reorderedItemIds) order by item_test_plan_order) itpl "
+		+ " where ITEM_TEST_PLAN_LIST.item_test_plan_id = itpl.item_test_plan_id";
 
 	// ************ reordering test plan for test suites
 	public static final String TESTCASE_SQL_GETCALLINGTESTSUITEITEMTESTPLANORDEROFFSET = " select itp1.tpi_id, count(itp1.tpi_id) "
@@ -157,8 +168,14 @@ public final class NativeQueries {
 			+ " and itp1.tpi_id not in (:removedItemIds2) " + " group by itp1.tpi_id";
 
 	public static final String TESTCASE_SQL_UPDATECALLINGTESTSUITEITEMTESTPLANORDER = " update TEST_SUITE_TEST_PLAN_ITEM "
-			+ " set test_plan_order = test_plan_order - :offset "
-			+ " where tpi_id in (:reorderedItemIds)";
+		+ " set test_plan_order = test_plan_order - :offset "
+		+ " where tpi_id in (:reorderedItemIds) order by test_plan_order";
+
+	public static final String TESTCASE_SQL_UPDATECALLINGTESTSUITEITEMTESTPLANORDERFORPOSTGRESQL = " update TEST_SUITE_TEST_PLAN_ITEM "
+			+ " set test_plan_order = tstpi.newOrder "
+			+ " from (select TEST_SUITE_TEST_PLAN_ITEM.tpi_id, TEST_SUITE_TEST_PLAN_ITEM.test_plan_order - :offset as newOrder "
+				+ " from TEST_SUITE_TEST_PLAN_ITEM where tpi_id in (:reorderedItemIds) order by test_plan_order) tstpi "
+			+ " where TEST_SUITE_TEST_PLAN_ITEM.tpi_id = tstpi.tpi_id";
 
 	public static final String TESTCASE_SQL_REMOVECALLINGTESTSUITEITEMTESTPLAN = "delete from TEST_SUITE_TEST_PLAN_ITEM where tpi_id in (:itpHavingNoExecIds)";
 	public static final String TESTCASE_SQL_REMOVECALLINGITERATIONITEMTESTPLANFROMLIST = "delete from ITEM_TEST_PLAN_LIST  where item_test_plan_id in (:itpHavingNoExecIds)";

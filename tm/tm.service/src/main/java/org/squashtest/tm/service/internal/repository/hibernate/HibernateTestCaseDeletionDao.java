@@ -33,6 +33,7 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
@@ -40,6 +41,8 @@ import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
 import org.squashtest.tm.service.internal.repository.TestCaseDeletionDao;
+
+import javax.inject.Inject;
 
 
 /*
@@ -58,6 +61,10 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 	private static final String FOLDER_IDS = "folderIds";
 	private static final String ITP_HAVING_NO_EXEC_IDS = "itpHavingNoExecIds";
 	private static final String ITP_HAVING_EXEC_IDS = "itpHavingExecIds";
+	private static final String DATABASE_LABEL_POSTGRESQL = "postgresql";
+
+	@Inject
+	private DataSourceProperties dataSourceProperties;
 
 	@Override
 	public void removeEntities(final List<Long> entityIds) {
@@ -163,11 +170,14 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 	public void removeCampaignTestPlanInboundReferences(List<Long> testCaseIds) {
 
 		if (!testCaseIds.isEmpty()) {
-
+			String campaignUpdateQuery = NativeQueries.TESTCASE_SQL_UPDATECALLINGCAMPAIGNITEMTESTPLAN;
+			String url = dataSourceProperties.getUrl();
+			if (url.contains(DATABASE_LABEL_POSTGRESQL)) {
+				campaignUpdateQuery = NativeQueries.TESTCASE_SQL_UPDATECALLINGCAMPAIGNITEMTESTPLANFORPOSTGRESQL;
+			}
 			// we must reorder the campaign_item_test_plans
-			reorderTestPlan(NativeQueries.TESTCASE_SQL_GETCALLINGCAMPAIGNITEMTESTPLANORDEROFFSET,
-					NativeQueries.TESTCASE_SQL_UPDATECALLINGCAMPAIGNITEMTESTPLAN, testCaseIds,
-					NativeQueries.TESTCASE_SQL_REMOVECALLINGCAMPAIGNITEMTESTPLAN, TEST_CASES_IDS);
+			reorderTestPlan(NativeQueries.TESTCASE_SQL_GETCALLINGCAMPAIGNITEMTESTPLANORDEROFFSET, campaignUpdateQuery,
+				testCaseIds, NativeQueries.TESTCASE_SQL_REMOVECALLINGCAMPAIGNITEMTESTPLAN, TEST_CASES_IDS);
 
 		}
 
@@ -215,15 +225,21 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 	private void removeCallingIterationItemTestPlanHavingNoExecutions(List<Long> itpHavingNoExecIds) {
 		if (!itpHavingNoExecIds.isEmpty()) {
 
+			String testSuiteUpdateQuery = NativeQueries.TESTCASE_SQL_UPDATECALLINGTESTSUITEITEMTESTPLANORDER;
+			String iterationUpdateQuery = NativeQueries.TESTCASE_SQL_UPDATECALLINGITERATIONITEMTESTPLANORDER;
+			String url = dataSourceProperties.getUrl();
+			if (url.contains(DATABASE_LABEL_POSTGRESQL)) {
+				testSuiteUpdateQuery = NativeQueries.TESTCASE_SQL_UPDATECALLINGTESTSUITEITEMTESTPLANORDERFORPOSTGRESQL;
+				iterationUpdateQuery = NativeQueries.TESTCASE_SQL_UPDATECALLINGITERATIONITEMTESTPLANORDERFORPOSTGRESQL;
+			}
+
 			// reorder the test plans for test suites and remove the elements before update
-			reorderTestPlan(NativeQueries.TESTCASE_SQL_GETCALLINGTESTSUITEITEMTESTPLANORDEROFFSET,
-				NativeQueries.TESTCASE_SQL_UPDATECALLINGTESTSUITEITEMTESTPLANORDER, itpHavingNoExecIds,
-				NativeQueries.TESTCASE_SQL_REMOVECALLINGTESTSUITEITEMTESTPLAN, ITP_HAVING_NO_EXEC_IDS);
+			reorderTestPlan(NativeQueries.TESTCASE_SQL_GETCALLINGTESTSUITEITEMTESTPLANORDEROFFSET, testSuiteUpdateQuery,
+				itpHavingNoExecIds, NativeQueries.TESTCASE_SQL_REMOVECALLINGTESTSUITEITEMTESTPLAN, ITP_HAVING_NO_EXEC_IDS);
 
 			// reorder the test plans for iterations and remove the elements before update
-			reorderTestPlan(NativeQueries.TESTCASE_SQL_GETCALLINGITERATIONITEMTESTPLANORDEROFFSET,
-					NativeQueries.TESTCASE_SQL_UPDATECALLINGITERATIONITEMTESTPLANORDER, itpHavingNoExecIds,
-					NativeQueries.TESTCASE_SQL_REMOVECALLINGITERATIONITEMTESTPLANFROMLIST, ITP_HAVING_NO_EXEC_IDS);
+			reorderTestPlan(NativeQueries.TESTCASE_SQL_GETCALLINGITERATIONITEMTESTPLANORDEROFFSET, iterationUpdateQuery,
+				itpHavingNoExecIds, NativeQueries.TESTCASE_SQL_REMOVECALLINGITERATIONITEMTESTPLANFROMLIST, ITP_HAVING_NO_EXEC_IDS);
 
 			// remove the elements themselves
 			executeDeleteSQLQuery(NativeQueries.TESTCASE_SQL_REMOVECALLINGITERATIONITEMTESTPLAN, ITP_HAVING_NO_EXEC_IDS,
