@@ -28,12 +28,11 @@ define([ "jquery", "jquery.squash.buttonmenu" ], function($) {
 			$("#bugtracker-link").buttonmenu({display:"block"});
 			$("#automation-link-ul").buttonmenu({display:"block"});
 			$("#automation-link-ul").on("click", function() {
-				var ul = $("#bugtracker-link").next("ul");
-				ul.hide();
+				var ul = $("#bugtracker-link").buttonmenu("close");
+
 			});
 			$("#bugtracker-link").on("click", function() {
-				var ul = $("#automation-link-ul").next("ul");
-				ul.hide();
+				var ul = $("#automation-link-ul").buttonmenu("close");
 			});
 			var bugTrackerList = $("#bugtracker-link").next('ul');
 			if (bugTrackerList.children().length > 7){
