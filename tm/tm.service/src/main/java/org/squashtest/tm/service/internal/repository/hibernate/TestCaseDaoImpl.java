@@ -476,7 +476,10 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 		return DSL.selectCount().from(TEST_CASE)
 			.innerJoin(TEST_CASE_LIBRARY_NODE).on(TEST_CASE.TCLN_ID.eq(TEST_CASE_LIBRARY_NODE.TCLN_ID))
 			.innerJoin(PROJECT).on(PROJECT.PROJECT_ID.eq(TEST_CASE_LIBRARY_NODE.PROJECT_ID))
-			.where(TEST_CASE.TC_KIND.eq(TestCaseKind.GHERKIN.name()).and(PROJECT.PROJECT_ID.eq(projectId))).fetchOne().value1();
+			.where(TEST_CASE.TC_KIND.eq(TestCaseKind.GHERKIN.name())
+				.and(PROJECT.PROJECT_ID.eq(projectId)))
+				.and(TEST_CASE.TA_TEST.isNotNull())
+			.fetchOne().value1();
 	}
 
 	private int compareTcMilestoneDate(TestCase tc1, TestCase tc2){
