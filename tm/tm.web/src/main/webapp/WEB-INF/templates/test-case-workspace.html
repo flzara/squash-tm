@@ -416,59 +416,27 @@
         </div>
       </div>
 
-       
-     <div class="not-displayed" data-def="state=copyconfirm">        
-     
-     </div>
+       <!--
+      <div class="not-displayed" data-def="state=copyconfirm">        </div>
 
-     <div data-def="state=lol" style="height:300px;">
-     
-     	<div class="delete-node-dialog-lol" style=" 
-	     	background-image:url('/squash/scripts/tc-workspace/popups/nyancat-run.gif'); 
-	     	background-size:100% 100%;
-	     	height:50%;
-	     	width:50%;
-	     	display:inline-block;">
-     	</div>
-     	
-     </div>  
-     
-     <div data-def="state=nicetry" style="height:300px;">
-     	<img src="/squash/scripts/tc-workspace/popups/mouhaha.gif" style="
-     		margin-top: 75px;
-     		margin-left: 20px;
-     	"/>
-     </div>
-     
-     <div data-def="state=gotcha" style="height:300px;">
-     	<img class="delete-node-dialog-gotcha" src="/squash/scripts/tc-workspace/popups/nyancat-wall.gif"
-     		style="
-     		width: 50%;
-     		height:50%;
-     		margin-top: 75px;
-     		margin-left:150px;
-     		"/>
-     </div>
+     <div data-def="state=lol" >
+        <div class="delete-node-dialog-lol" style="overflow:visible; font-size:50px; font-weight:bold;"></div>
+      </div>  -->
 
-      <div class="not-displayed" data-def="state=rejected" th:text="#{dialog.label.delete-node.rejected}">
-      	delete node rejected
-      </div>
+
+
+      <div class="not-displayed" data-def="state=rejected" th:text="#{dialog.label.delete-node.rejected}">delete
+        node rejected</div>
 
       <div class="popup-dialog-buttonpane">
-      
         <input id="del-node-confirm-btn" type="button" th:value="#{label.Confirm}" value="confirm" data-def="evt=confirm, mainbtn=confirm, state=confirm" />
 
         <input type="button" th:value="#{label.Confirm}" value="deadlyconfirm" data-def="state=copyconfirm" />
-
+ <!--
         <input id="del-node-lol-btn" type="button" th:value="#{label.Confirm}" value="deadlyconfirm" data-def="evt=deadlyconfirm, state=lol" />
-      
-        <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel, mainbtn=rejected, state=pleasewait confirm copyconfirm lol nicetry gotcha rejected" />
+        -->
+        <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel, mainbtn=rejected, state=pleasewait confirm copyconfirm lol rejected" />
 
-		<!-- 
-			button must always remain hidden but we cannot use the display:none so we reduce it to 0 dimension. 
-			Its sole purpose is to capture the mainbtn event and rebind the Enter key to something more amusing
-		-->		
-		<input type="button" value="nicetry" data-def="evt=nicetry, mainbtn=lol, state=lol" style="width:0; height:0;padding:0;margin:0"/> 
       </div>
     </div>
   </div>
