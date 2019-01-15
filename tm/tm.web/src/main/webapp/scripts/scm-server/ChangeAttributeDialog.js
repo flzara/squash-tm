@@ -48,25 +48,6 @@ define(['jquery', 'backbone', 'squash.translator', 'workspace.routing', 'app/uti
 			});
 		},
 		/**
-		* Prepare the configuration of the dialog for repository name modification.
-		*/
-		openForName: function(event) {
-			var self = this;
-			var title = translator.get('title.ChangeRepositoryName');
-			var label = translator.get('label.Name');
-
-			var tableCell = event.currentTarget;
-			var repositoryName = $(tableCell).text();
-
-			var row = tableCell.parentElement;
-			// notify repository ID
-			self.repositoryId = self.table.fnGetData(row)['repository-id'];
-			// notify mode
-			self.mode = 'name';
-
-			self.adaptAndOpenDialog(title, label, repositoryName);
-		},
-		/**
 		* Prepare the configuration of the dialog for repository path modification.
 		*/
 		openForPath: function(event) {

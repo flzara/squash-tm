@@ -190,44 +190,7 @@ class ScmRepositoryManagerServiceTest extends Specification {
 		then:
 			thrown BugTrackerNoCredentialsException
 	}
-
-	def "#updateName(long, String) - [Nominal] Should update the name of the ScmRepository"() {
-		given: "Mock data"
-			long repoId = 1
-			ScmRepository repo = new ScmRepository()
-			repo.id = repoId
-			repo.name = "SchoolManagementProject"
-		and: "Expected result"
-			String newName = "ZooManagementProject"
-		and: "Mock Dao method"
-			scmRepositoryDao.getOne(repoId) >> repo
-		when:
-			String resultName = scmRepositoryManagerService.updateName(repoId, newName)
-		then:
-			repo.id == repoId
-			repo.name == newName
-			1 * scmRepositoryDao.save(repo)
-			resultName == newName
-	}
-
-	def "#updatename(long, String) - [Nothing] Should try to update the name of a ScmRepository with the same name and do nothing"() {
-		given: "Mock data"
-		long repoId = 1
-		String repoName = "SchoolProject"
-		ScmRepository repo = new ScmRepository()
-		repo.id = repoId
-		repo.name = repoName
-		and: "Mock Dao method"
-		scmRepositoryDao.getOne(repoId) >> repo
-		when:
-		String resultName = scmRepositoryManagerService.updateName(repoId, repoName)
-		then:
-		repo.id == repoId
-		repo.name == repoName
-		0 * scmRepositoryDao.save(repo)
-		resultName == repoName
-	}
-
+	
 	def "#updatePath(long, String) - [Nominal] Should update the path of the ScmRepository"() {
 		given: "Mock data"
 			long repoId = 6

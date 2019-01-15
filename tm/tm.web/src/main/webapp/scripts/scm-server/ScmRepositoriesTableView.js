@@ -62,10 +62,6 @@ define(['jquery', 'backbone', 'squash.translator', './AddScmRepositoryDialog', '
 			this.DeleteMultipleScmRepositoriesDialog.open();
 		},
 
-		openChangeNamePopup: function(event) {
-			this.ChangeAttributeDialog.openForName(event);
-		},
-
 		openChangePathPopup: function(event) {
 			this.ChangeAttributeDialog.openForPath(event);
 		},
