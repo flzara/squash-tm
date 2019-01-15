@@ -109,7 +109,10 @@ define([ "jquery", "workspace.event-bus", "squash.translator", "squash.configman
 		});
 
 		elt.on('click', '#ta-script-remove-button', function(){
-			$("#ta-remove-popup").formDialog('open');
+			var input = $("#ta-script-picker-span").find("input");
+			if(input.val() !== "") {
+				$("#ta-remove-popup").formDialog('open');
+			}
 			return false;// see comment above
 		});
 
