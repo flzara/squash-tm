@@ -52,13 +52,6 @@ public interface ScmRepositoryManagerService {
 	 */
 	void createNewScmRepository(long scmServerId, ScmRepository newScmRepository) throws IOException;
 	/**
-	 * Update the path of the ScmRepository with the given Id to the new given path.
-	 * @param scmRepositoryId The Id of the ScmRepository which path is to update.
-	 * @param newPath The new path of the ScmRepository.
-	 * @return The new path of the ScmRepository.
-	 */
-	String updatePath(long scmRepositoryId, String newPath);
-	/**
 	 * Update the working folder path of the ScmRepository with the given Id to the new given path.
 	 * @param scmRepositoryId The Id of the ScmRepository which folder path is to update.
 	 * @param newFolderPath The new working folder of the ScmRepository.

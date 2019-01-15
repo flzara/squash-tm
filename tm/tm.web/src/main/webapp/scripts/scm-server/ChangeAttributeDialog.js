@@ -48,25 +48,6 @@ define(['jquery', 'backbone', 'squash.translator', 'workspace.routing', 'app/uti
 			});
 		},
 		/**
-		* Prepare the configuration of the dialog for repository path modification.
-		*/
-		openForPath: function(event) {
-			var self = this;
-			var title = translator.get('title.ChangeRepositoryPath');
-			var label = translator.get('label.LocalRepositoryPath');
-
-			var tableCell = event.currentTarget;
-			var repositoryPath = $(tableCell).text();
-
-			var row = tableCell.parentElement;
-			// notify repository ID
-			self.repositoryId = self.table.fnGetData(row)['repository-id'];
-			// notify mode
-			self.mode = 'path';
-
-			self.adaptAndOpenDialog(title, label, repositoryPath);
-		},
-		/**
 		* Prepare the configuration of the dialog for folder path modification.
 		*/
 		openForFolder: function(event) {

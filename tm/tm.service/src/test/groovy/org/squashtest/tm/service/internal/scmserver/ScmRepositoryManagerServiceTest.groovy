@@ -191,43 +191,6 @@ class ScmRepositoryManagerServiceTest extends Specification {
 			thrown BugTrackerNoCredentialsException
 	}
 	
-	def "#updatePath(long, String) - [Nominal] Should update the path of the ScmRepository"() {
-		given: "Mock data"
-			long repoId = 6
-			ScmRepository repo = new ScmRepository()
-			repo.id = repoId
-			repo.repositoryPath = "/home/repositories/project"
-		and: "Expected result"
-			String newPath = "/home/repositories/another_project"
-		and: "Mock Dao method"
-			scmRepositoryDao.getOne(repoId) >> repo
-		when:
-			String resultPath = scmRepositoryManagerService.updatePath(repoId, newPath)
-		then:
-			repo.id == repoId
-			repo.repositoryPath == newPath
-			1 * scmRepositoryDao.save(repo)
-			resultPath == newPath
-	}
-
-	def "#updatePath(long, String) - [Nothing] Should try to update the path of a ScmRepository with the same path and do nothing"() {
-		given: "Mock data"
-			long repoId = 6
-			String repoPath = "/home/repositories/project"
-			ScmRepository repo = new ScmRepository()
-			repo.id = repoId
-			repo.repositoryPath = repoPath
-		and: "Mock Dao method"
-			scmRepositoryDao.getOne(repoId) >> repo
-		when:
-			String resultPath = scmRepositoryManagerService.updatePath(repoId, repoPath)
-		then:
-			repo.id == repoId
-			repo.repositoryPath == repoPath
-			0 * scmRepositoryDao.save(repo)
-			resultPath == repoPath
-	}
-
 	def "#updateFolder(long, String) - [Nominal] Should update the folder path of the ScmRepository"() {
 		given: "Mock data"
 			long repoId = 1

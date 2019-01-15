@@ -35,7 +35,6 @@ import java.util.List;
 public class ScmRepositoryManagementAdminController {
 
 	private static final String SCM_SERVER_ID = "scmServerId";
-	private static final String PATH = "path";
 	private static final String FOLDER = "folder";
 	private static final String BRANCH = "branch";
 	private static final String ID_EQUAL_IS_BOUND = "id=is-bound";
@@ -47,12 +46,6 @@ public class ScmRepositoryManagementAdminController {
 	@ResponseBody
 	public void deleteScmRepositories(@PathVariable List<Long> scmRepositoriesIds) {
 		scmRepositoryManager.deleteScmRepositories(scmRepositoriesIds);
-	}
-
-	@RequestMapping(value = "/{scmRepositoryId}", method = RequestMethod.POST, params = PATH)
-	@ResponseBody
-	public String updatePath(@PathVariable long scmRepositoryId, String path) {
-		return scmRepositoryManager.updatePath(scmRepositoryId, path);
 	}
 
 	@RequestMapping(value = "/{scmRepositoryId}", method = RequestMethod.POST, params = FOLDER)
