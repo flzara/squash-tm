@@ -781,8 +781,11 @@ require(["common"], function() {
 
   automationWorkflowPopup.on("formdialogcancel", function() {
     automationWorkflowPopup.formDialog("close");
-    //$("#toggle-WORKFLOW-checkbox").switchButton({checked: false});
+    cancelled = true;
+    $("#toggle-WORKFLOW-checkbox").switchButton({checked: false});
+
   });
+  var cancelled = false;
 
   function checkTcGherkinWithTaScript() {
   var shouldActivate = $("#toggle-WORKFLOW-checkbox").prop('checked');
@@ -813,7 +816,10 @@ require(["common"], function() {
 		}).success( function () {
     toggleScmPanel(shouldActivate);
     $("#automation-workflow-popup").formDialog("close");
-    changeWorkflowDialogAfter.formDialog("open");
+    if (!cancelled) {
+      changeWorkflowDialogAfter.formDialog("open");
+    }
+      cancelled = false;
     });
 
   }
