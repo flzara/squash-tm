@@ -232,7 +232,7 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/util/StringUtil
 							"class" : "parameter"
 						});
 						th.text(paramHeaders[i]['name']);
-						th.attr('title', paramHeaders[i]['description']);
+						th.attr('title', StringUtil.truncate(paramHeaders[i]['description'], 30));
 						thAfter.after(th);
 						thAfter = th;
 					}
@@ -247,7 +247,7 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/util/StringUtil
 
 				refreshDataSetParameterDescription : function(parameterId, parameterDescription){
 					var th = this.$("[data-id=" + parameterId + "]");
-					th.attr('title', parameterDescription);
+					th.attr('title', StringUtil.truncate(parameterDescription, 30));
 				}
 			});
 

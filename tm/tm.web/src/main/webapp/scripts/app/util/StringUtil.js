@@ -117,6 +117,10 @@ define(["jquery"], function ($) {
 		return p.innerHTML;
 	}
 
+	function truncate(str, maxlength) {
+		return (str.length > maxlength) ?
+			str.slice(0, maxlength - 1) + '…' : str;
+	}
 	return {
 		isBlank: isBlank,
 		isEmpty: isEmpty,
@@ -124,6 +128,7 @@ define(["jquery"], function ($) {
 		getParsedSequenceAttribute: getParsedSequenceAttribute,
 		coerceToBoolean: coerceToBoolean,
 		unescape: unescape,
-		escapeHtml: escapeHtml
+		escapeHtml: escapeHtml,
+		truncate: truncate
 	};
 });
