@@ -21,6 +21,8 @@
 package org.squashtest.tm.service.internal.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.synchronisation.RemoteSynchronisation;
 
 import java.util.List;
@@ -29,4 +31,12 @@ public interface RemoteSynchronisationDao extends JpaRepository<RemoteSynchronis
 
 	List<RemoteSynchronisation> findByKind(String kind);
 	List<RemoteSynchronisation> findByNameAndKind(String name,String kind);
+
+	/**
+	 * Return the list of {@link RemoteSynchronisation} using the given {@link org.squashtest.tm.domain.servers.ThirdPartyServer}
+	 * @param serverId {@link org.squashtest.tm.domain.servers.ThirdPartyServer} id
+	 * @return list of {@link RemoteSynchronisation} with their {@link org.squashtest.tm.domain.project.Project}
+	 */
+	@Query
+	List<RemoteSynchronisation> findWithProjectByServer(@Param("serverId")Long serverId);
 }

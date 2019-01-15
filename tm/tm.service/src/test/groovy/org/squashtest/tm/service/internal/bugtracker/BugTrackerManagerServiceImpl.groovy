@@ -20,12 +20,16 @@
  */
 package org.squashtest.tm.service.internal.bugtracker
 
+import org.squashtest.csp.core.bugtracker.domain.BugTracker
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding
 import org.squashtest.tm.domain.bugtracker.Issue
 import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.synchronisation.RemoteSynchronisation
+import org.squashtest.tm.exception.bugtracker.CannotDeleteBugtrackerLinkedToSynchronisationException
 import org.squashtest.tm.service.internal.repository.BugTrackerBindingDao
 import org.squashtest.tm.service.internal.repository.BugTrackerDao
 import org.squashtest.tm.service.internal.repository.IssueDao
+import org.squashtest.tm.service.internal.repository.RemoteSynchronisationDao
 import org.squashtest.tm.service.project.GenericProjectManagerService
 
 import spock.lang.Specification
@@ -37,13 +41,15 @@ class BugTrackerManagerServiceImplTest extends Specification  {
     GenericProjectManagerService genericProjectManagerService = Mock()
     BugTrackerManagerServiceImpl service = new BugTrackerManagerServiceImpl()
 	org.squashtest.tm.service.internal.repository.RequirementSyncExtenderDao syncreqDao = Mock()
+	RemoteSynchronisationDao remoteSynchronisationDao = Mock()
 
     def setup(){
         service.bugTrackerBindingDao = bugTrackerBindingDao
         service.bugTrackerDao = bugTrackerDao
         service.issueDao = issueDao
         service.genericProjectManagerService =  genericProjectManagerService
-		service.syncreqDao = syncreqDao;
+		service.syncreqDao = syncreqDao
+		service.remoteSynchronisationDao = remoteSynchronisationDao
     }
 
     def "should delete bugtrackers"(){
@@ -53,15 +59,39 @@ class BugTrackerManagerServiceImplTest extends Specification  {
         (1L..5L).each {bugTrackerBindingDao.findByBugtrackerId(it)    >> [it * 10, it *10 + 1].collect{Project p = Mock(); p.getId() >> it;  return new BugTrackerBinding(project:p)}}
         and : "each bugtracker get 3 issues associated "
         (1L..5L).each{issueDao.getAllIssueFromBugTrackerId(it) >> [it * 10, it *10 + 1, it * 10 + 2].collect{ new Issue(id:it)}}
+		and: "each bugtracker doesn't have associated synchronisation"
+		(1L..5L).each {
+			remoteSynchronisationDao.findWithProjectByServer(it) >> new ArrayList<RemoteSynchronisation>()
+		}
 
+		when:
+		service.deleteBugTrackers(bugtrackerIds)
 
-        when :
-        service.deleteBugTrackers(bugtrackerIds)
-
-        then :
-        5 * bugTrackerDao.delete(_)
-        10 * genericProjectManagerService.removeBugTracker(_)
-        15 * issueDao.delete(_)
+		then:
+		5 * bugTrackerDao.delete(_)
+		10 * genericProjectManagerService.removeBugTracker(_)
+		15 * issueDao.delete(_)
 		5 * syncreqDao.deleteAllByServer(_)
     }
+
+	def "should not delete bugtracker"(){
+		given :"list of ids of the bugtracker to delete"
+		def bugtrackerIds = (1L..5L).collect{it}
+		and: "each bugtracker have a name"
+		(1L..5L).each {bugTrackerDao.getOne(it) >> new BugTracker(name:"toto")}
+		and: "each bugtracker have associated synchronisations"
+		(1L..5L).each {
+			remoteSynchronisationDao.findWithProjectByServer(it) >> [it * 10, it *10 + 1].collect{Project p = Mock(); p.getId() >> it;  return new RemoteSynchronisation(name:"toto",project:p)}
+		}
+
+		when:
+		service.deleteBugTrackers(bugtrackerIds)
+
+		then:
+		0 * bugTrackerDao.delete(_)
+		0 * genericProjectManagerService.removeBugTracker(_)
+		0 * issueDao.delete(_)
+		0 * syncreqDao.deleteAllByServer(_)
+		thrown(CannotDeleteBugtrackerLinkedToSynchronisationException)
+	}
 }

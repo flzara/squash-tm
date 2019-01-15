@@ -1052,8 +1052,10 @@
 	@NamedQuery(name="ScmRepository.isRepositoryNameAlreadyInUse", query="select case when (count(s) > 0) then true else false end from ScmRepository r join r.scmServer s where r.name = :name and s.id = :serverId"),
 	@NamedQuery(name="ScmRepository.deleteByIds", query="delete from ScmRepository r where r.id in (:scmRepositoriesIds)"),
 	@NamedQuery(name="ScmRepository.releaseScmRepositoriesFromProjects", query="update GenericProject p set p.scmRepository = null where p.scmRepository.id in (:scmRepositoriesIds)"),
-	@NamedQuery(name="ScmRepository.isOneRepositoryBoundToProject", query="select case when (count(r) > 0) then true else false end from GenericProject p join p.scmRepository r where r.id in (:scmRepositoryIds)")
+	@NamedQuery(name="ScmRepository.isOneRepositoryBoundToProject", query="select case when (count(r) > 0) then true else false end from GenericProject p join p.scmRepository r where r.id in (:scmRepositoryIds)"),
 
+	// RemoteSynchronisation
+	@NamedQuery(name="RemoteSynchronisation.findWithProjectByServer", query="select rs from RemoteSynchronisation rs join fetch rs.project where rs.server.id = :serverId")
 })
 //@formatter:on
 package org.squashtest.tm.service.internal.repository.hibernate;

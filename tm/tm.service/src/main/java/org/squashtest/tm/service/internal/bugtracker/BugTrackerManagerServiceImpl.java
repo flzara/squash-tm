@@ -29,15 +29,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.tm.domain.bugtracker.Issue;
+import org.squashtest.tm.domain.synchronisation.RemoteSynchronisation;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.exception.NameAlreadyInUseException.EntityType;
+import org.squashtest.tm.exception.bugtracker.CannotDeleteBugtrackerLinkedToSynchronisationException;
 import org.squashtest.tm.service.bugtracker.BugTrackerManagerService;
 import org.squashtest.tm.service.bugtracker.BugTrackerSystemManager;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
-import org.squashtest.tm.service.internal.repository.BugTrackerBindingDao;
-import org.squashtest.tm.service.internal.repository.BugTrackerDao;
-import org.squashtest.tm.service.internal.repository.IssueDao;
-import org.squashtest.tm.service.internal.repository.RequirementSyncExtenderDao;
+import org.squashtest.tm.service.internal.repository.*;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
 
 import javax.inject.Inject;
@@ -45,6 +44,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.StringJoiner;
 
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
@@ -70,6 +70,9 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService, B
 
 	@Inject
 	private RequirementSyncExtenderDao syncreqDao;
+
+	@Inject
+	private RemoteSynchronisationDao remoteSynchronisationDao;
 
 
 	@Override
@@ -129,10 +132,27 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService, B
 	public void deleteBugTrackers(final Collection<Long> bugtrackerIds) {
 
 		for (final Long id : bugtrackerIds) {
+			checkIfHasLinkedSynchronisation(id);
 			deleteBugtrackerToProjectBinding(id);
 			deleteIssueLinkedToBugtracker(id);
 			deleteLinkedSyncedRequirements(id);
 			deleteBugTracker(id);
+		}
+	}
+
+	//[Issue 7742] Throw a custom exception before org.hibernate.exception.ConstraintViolationException happened in method deleteBugTracker.
+	/**
+	 * Check if a bugtracker is used in a {@link RemoteSynchronisation} and, if so, throw a {@link CannotDeleteBugtrackerLinkedToSynchronisationException}
+	 * @param serverId {@link BugTracker} id
+	 * @throws CannotDeleteBugtrackerLinkedToSynchronisationException
+	 */
+	private void checkIfHasLinkedSynchronisation(Long serverId) {
+		final List<RemoteSynchronisation> linkedRemoteSynchronisation = remoteSynchronisationDao.findWithProjectByServer(serverId);
+		if(linkedRemoteSynchronisation.size() != 0){
+			BugTracker bugTracker = bugTrackerDao.getOne(serverId);
+			StringJoiner stringJoiner = new StringJoiner("<br/>");
+			linkedRemoteSynchronisation.forEach(sync -> stringJoiner.add(String.format("%s - %s", sync.getName(), sync.getProject().getName())));
+			throw new CannotDeleteBugtrackerLinkedToSynchronisationException(serverId, bugTracker.getName(), stringJoiner.toString());
 		}
 	}
 
